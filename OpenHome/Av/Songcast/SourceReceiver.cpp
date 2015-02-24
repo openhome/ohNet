@@ -215,6 +215,12 @@ void SourceReceiver::Activate()
 {
     LOG(kSongcast, "SourceReceiver::Activate()\n");
     iActive = true;
+    {
+        AutoMutex _(iLock);
+        if (iTrackUri.Bytes() > 0) {
+            iZoneHandler->SetCurrentSenderUri(iTrackUri);
+        }
+    }
     if (iNoPipelinePrefetchOnActivation) {
         iPipeline.RemoveAll();
     }
@@ -308,6 +314,7 @@ void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
     LOG(kSongcast, ")\n");
     // FIXME - use of iZone/iTrackUri not threadsafe
     if (aZone == iZone && aUri != iTrackUri) {
+        iZoneHandler->SetCurrentSenderUri(aUri);
         iUriLock.Wait();
         iPendingTrackUri.Replace(aUri);
         iUriLock.Signal();
