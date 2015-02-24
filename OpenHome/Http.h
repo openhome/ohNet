@@ -520,6 +520,7 @@ private:
 
 public:
     HttpReader(Environment& aEnv);
+    HttpReader(Environment& aEnv, const Brx& aUserAgent);
     ~HttpReader();
 
     TBool Connect(const Uri& aUri);
@@ -540,6 +541,7 @@ private:
 
 private:
     Environment& iEnv;
+    Bwh iUserAgent;
     SocketTcpClient iTcpClient;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderLocation iHeaderLocation;

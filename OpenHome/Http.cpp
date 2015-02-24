@@ -1172,6 +1172,23 @@ HttpReader::HttpReader(Environment& aEnv)
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 }
 
+HttpReader::HttpReader(Environment& aEnv, const Brx& aUserAgent)
+    : iEnv(aEnv)
+    , iUserAgent(aUserAgent)
+    , iReadBuffer(iTcpClient)
+    , iReaderResponse(aEnv, iReader)
+    , iWriteBuffer(iTcpClient)
+    , iWriterRequest(iWriteBuffer)
+    , iReader(iReadBuffer)
+    , iSocketIsOpen(false)
+    , iConnected(false)
+    , iTotalBytes(0)
+{
+    iReaderResponse.AddHeader(iHeaderContentLength);
+    iReaderResponse.AddHeader(iHeaderLocation);
+    iReaderResponse.AddHeader(iHeaderTransferEncoding);
+}
+
 HttpReader::~HttpReader()
 {
     if (iSocketIsOpen) {
@@ -1306,7 +1323,9 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
         LOG(kHttp, "HttpReader::WriteRequest send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, aUri.PathAndQuery(), Http::eHttp11);
         Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), port);
-        //iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
+        if (iUserAgent.Bytes() > 0) {
+            iWriterRequest.WriteHeader(Http::kHeaderUserAgent, iUserAgent);
+        }
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
     }
