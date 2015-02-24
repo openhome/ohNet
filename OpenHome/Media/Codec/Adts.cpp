@@ -202,11 +202,12 @@ TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
                     break;                          // not a valid header so keep searching
                 }
                 iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);    // record average payload size over 3 frames
-                LOG(kCodec, "CodecAlac::Recognise aac adts\n");
+                LOG(kCodec, "CodecAdts::Recognise aac adts\n");
                 return true;      
             }
             
-            j += adts.PayloadBytes() + adts.HeaderBytes();   // point to where next frame should be
+            TUint size = adts.PayloadBytes() + adts.HeaderBytes();
+            j += size;   // point to where next frame should be
         }
         if (i > 1000) {
             break;      // searched far enough
@@ -258,11 +259,10 @@ void CodecAdts::StreamInitialise()
 
     ProcessAdts(true);  //process first 2 frames to get iOutputSampleRate from the decoder
 
-
     iTrackLengthJiffies = (iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
     iTrackOffset = 0;
 
-    LOG(kCodec, "CodecAac::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
+    LOG(kCodec, "CodecAdts::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
     iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
 }
 
