@@ -53,7 +53,7 @@ Msg* VariableDelay::Pull()
                         DoEnqueue(msg);
                     }
                 }
-            } while (msg == NULL);
+            } while (msg == NULL && iWaitForAudioBeforeGeneratingSilence);
             msg = NULL; // DoEnqueue() above passed ownership of msg back to reservoir
         }
         // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
