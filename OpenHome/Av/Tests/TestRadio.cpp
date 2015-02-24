@@ -105,6 +105,8 @@ void TestRadio::RegisterPlugins(Environment& aEnv)
     // Add content processors
     iPipeline->Add(ContentProcessorFactory::NewM3u());
     iPipeline->Add(ContentProcessorFactory::NewM3u());
+    iPipeline->Add(ContentProcessorFactory::NewM3uX());
+    iPipeline->Add(ContentProcessorFactory::NewM3uX());
     iPipeline->Add(ContentProcessorFactory::NewPls());
     iPipeline->Add(ContentProcessorFactory::NewPls());
     iPipeline->Add(ContentProcessorFactory::NewOpml());

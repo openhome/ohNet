@@ -50,7 +50,7 @@ TBool ContentM3u::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
         Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/mpegurl"))) {
         return true;
     }
-    if (Ascii::Contains(aData, Brn("#EXTM3U"))) {
+    if (Ascii::Contains(aData, Brn("#EXTM3U")) && !Ascii::Contains(aData, Brn("#EXT-X-"))) {
         return true;
     }
     return false;
