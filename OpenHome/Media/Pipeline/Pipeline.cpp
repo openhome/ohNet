@@ -42,6 +42,7 @@ PipelineInitParams::PipelineInitParams()
     , iRampShortJiffies(kShortRampDurationDefault)
     , iRampEmergencyJiffies(kEmergencyRampDurationDefault)
     , iThreadPriorityMax(kThreadPriorityMax)
+    , iMaxLatencyJiffies(kMaxLatencyDefault)
 {
 }
 
@@ -99,6 +100,11 @@ void PipelineInitParams::SetThreadPriorityMax(TUint aPriority)
     iThreadPriorityMax = aPriority;
 }
 
+void PipelineInitParams::SetMaxLatency(TUint aJiffies)
+{
+    iMaxLatencyJiffies = aJiffies;
+}
+
 TUint PipelineInitParams::EncodedReservoirBytes() const
 {
     return iEncodedReservoirBytes;
@@ -149,6 +155,11 @@ TUint PipelineInitParams::ThreadPriorityMax() const
     return iThreadPriorityMax;
 }
 
+TUint PipelineInitParams::MaxLatencyJiffies() const
+{
+    return iMaxLatencyJiffies;
+}
+
 
 // Pipeline
 
@@ -164,8 +175,11 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     , iNextFlushId(MsgFlush::kIdInvalid + 1)
 {
     const TUint perStreamMsgCount = aInitParams->MaxStreamsPerReservoir() * kReservoirCount;
-    const TUint encodedAudioCount = ((aInitParams->EncodedReservoirBytes() + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes) + 200; // +200 mainly allows for additional buffering in Rewinder
-                                                                                                                                            // this may only be required on platforms that don't guarantee priority based thread scheduling
+    TUint encodedAudioCount = ((aInitParams->EncodedReservoirBytes() + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes); // this may only be required on platforms that don't guarantee priority based thread scheduling
+    encodedAudioCount = std::max(encodedAudioCount, // songcast and some hardware inputs won't use the full capacity of each encodedAudio
+                                 (aInitParams->MaxLatencyJiffies() + kSongcastFrameJiffies - 1) / kSongcastFrameJiffies);
+    const TUint maxEncodedReservoirMsgs = encodedAudioCount;
+    encodedAudioCount += kRewinderMaxMsgs; // this may only be required on platforms that don't guarantee priority based thread scheduling
     const TUint msgEncodedAudioCount = encodedAudioCount + 100; // +100 allows for Split()ing by Container and CodecController
     const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationMonitorMaxJiffies();
     const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
@@ -181,7 +195,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     TUint threadPriority = threadPriorityBase;
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iEncodedAudioReservoir = new EncodedAudioReservoir(aInitParams->EncodedReservoirBytes(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
+    iEncodedAudioReservoir = new EncodedAudioReservoir(maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
