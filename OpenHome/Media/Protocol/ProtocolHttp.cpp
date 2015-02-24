@@ -178,6 +178,7 @@ void ProtocolHttp::Interrupt(TBool aInterrupt)
         LOG(kMedia, "ProtocolHttp::Interrupt(%u)\n", aInterrupt);
         if (aInterrupt) {
             iStopped = true;
+            iSem.Signal(); // no need to check iLive - iSem will be cleared when this protocol is next reused anyway
         }
         iTcpClient.Interrupt(aInterrupt);
     }
@@ -669,6 +670,8 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
         }
     }
     if (iContentProcessor != NULL) {
+        iLive = false; /* Only audio streams will result in pipeline msgs and calls to OkToPlay().
+                          Clear 'live' flag for other cases to avoid Stream() waiting on iSem. */
         return iContentProcessor->Stream(*this, iTotalBytes);
     }
 

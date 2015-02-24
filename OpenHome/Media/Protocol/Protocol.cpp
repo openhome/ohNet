@@ -210,7 +210,12 @@ Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemainin
         Brn line;
         try {
             line.Set(aReader.ReadUntil(Ascii::kLf));
-            aBytesRemaining -= (line.Bytes() + 1); // +1 for Ascii::kLf
+            if (aBytesRemaining <= line.Bytes()) {
+                aBytesRemaining = 0;
+            }
+            else {
+                aBytesRemaining -= (line.Bytes() + 1); // +1 for Ascii::kLf
+            }
             if (iPartialLine.Bytes() == 0) {
                 line.Set(Ascii::Trim(line));
             }
@@ -228,7 +233,12 @@ Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemainin
         }
         catch (ReaderError&) {
             line.Set(aReader.ReadRemaining());
-            aBytesRemaining -= line.Bytes();
+            if (aBytesRemaining <= line.Bytes()) {
+                aBytesRemaining = 0;
+            }
+            else {
+                aBytesRemaining -= line.Bytes();
+            }
             if (aBytesRemaining != 0 && line.Bytes() < iPartialLine.MaxBytes() - iPartialLine.Bytes()) {
                 iPartialLine.Append(line);
             }
