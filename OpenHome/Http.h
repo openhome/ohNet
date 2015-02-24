@@ -529,10 +529,10 @@ public:
     TUint ContentLength() const;
     Brn ReadRemaining();
 public: // from IReader
-    Brn Read(TUint aBytes) override;
-    virtual Brn ReadUntil(TByte aSeparator) override;
-    virtual void ReadFlush() override;
-    virtual void ReadInterrupt() override;
+    Brn Read(TUint aBytes);
+    virtual Brn ReadUntil(TByte aSeparator);
+    virtual void ReadFlush();
+    virtual void ReadInterrupt();
 private:
     TUint WriteRequest(const Uri& aUri);
     TBool ConnectAndProcessHeader(const Uri& aUri);
