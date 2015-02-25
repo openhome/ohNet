@@ -3,6 +3,11 @@
 
 using namespace OpenHome;
 
+IFile* FileSystemAnsii::Open(const TChar* aFilename, FileMode aFileMode)
+{
+    return new FileAnsii(aFilename, aFileMode);
+}
+
 FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
     : iFilePtr(NULL)
 {
