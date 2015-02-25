@@ -162,19 +162,19 @@ class BaseDropout( BASE.BaseTest ):
 
     def Cleanup( self ):
         """Perform cleanup on test exit"""
+        if self.slave:
+            self.slave.Shutdown()
+        if self.receiver:
+            self.receiver.Shutdown()
         if self.sender:
             self.sender.playlist.Stop()
             self.sender.Shutdown()
-        if self.receiver:
-            self.receiver.Shutdown()
-        if self.slave:
-            self.slave.Shutdown()
-        if self.soft1:
-            self.soft1.Shutdown()
-        if self.soft2:
-            self.soft2.Shutdown()
         if self.soft3:
             self.soft3.Shutdown()
+        if self.soft2:
+            self.soft2.Shutdown()
+        if self.soft1:
+            self.soft1.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     def SenderSetup( self ):
