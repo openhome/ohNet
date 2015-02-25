@@ -458,6 +458,21 @@ void SuiteM3u::TestRecognise()
     // content with dos line endings
     content.Set(kFile2);
     TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+
+    // M3U with #EXT-X- tags (i.e., an HLS M3U, aka M3UX for our purposes).
+    static const TChar* kFile3 =
+        "#EXTM3U\n"
+        "#EXT-X-TARGETDURATION:10\n"
+        "#EXTINF:9.009,\n"
+        "http://media.example.com/first.ts\n"
+        "#EXTINF:9.009,\n"
+        "http://media.example.com/second.ts\n"
+        "#EXTINF:3.003,\n"
+        "http://media.example.com/third.ts\n"
+        "#EXT-X-ENDLIST\n";
+    content.Set(kFile3);
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
 }
 
 void SuiteM3u::TestParse()
