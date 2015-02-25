@@ -45,6 +45,7 @@ private:
     TUint WriteRequest(TUint64 aOffset);
     Media::ProtocolStreamResult ProcessContent();
     TBool ContinueStreaming(Media::ProtocolStreamResult aResult);
+    TBool IsCurrentStream(TUint aStreamId) const;
 private:
     Tidal* iTidal;
     Media::Supply* iSupply;
@@ -229,7 +230,7 @@ TUint ProtocolTidal::TrySeek(TUint aStreamId, TUint64 aOffset)
     LOG(kMedia, "ProtocolTidal::TrySeek\n");
 
     iLock.Wait();
-    const TBool streamIsValid = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool streamIsValid = IsCurrentStream(aStreamId);
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = aOffset;
@@ -251,7 +252,7 @@ TUint ProtocolTidal::TrySeek(TUint aStreamId, TUint64 aOffset)
 TUint ProtocolTidal::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -271,7 +272,7 @@ TBool ProtocolTidal::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, 
     LOG(kMedia, "> ProtocolTidal::TryGet\n");
     iLock.Wait();
     TBool success = false;
-    if (iProtocolManager->IsCurrentStream(aStreamId)) {
+    if (IsCurrentStream(aStreamId)) {
         success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
     }
     iLock.Signal();
@@ -351,6 +352,14 @@ TBool ProtocolTidal::ContinueStreaming(ProtocolStreamResult aResult)
         return true;
     }
     return false;
+}
+
+TBool ProtocolTidal::IsCurrentStream(TUint aStreamId) const
+{
+    if (iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
 }
 
 ProtocolStreamResult ProtocolTidal::DoStream()
