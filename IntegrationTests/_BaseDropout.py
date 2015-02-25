@@ -108,7 +108,6 @@ class BaseDropout( BASE.BaseTest ):
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
         self.SenderSetup()
-        time.sleep( 3 )
 
         # load sender's playlist and start playback
         self.sender.playlist.repeat = 'on'
