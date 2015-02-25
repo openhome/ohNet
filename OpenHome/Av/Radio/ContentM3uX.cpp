@@ -60,14 +60,10 @@ ContentProcessor* ContentProcessorFactory::NewM3uX()
 }
 
 
-// ContentPls
+// ContentM3uX
 
 TBool ContentM3uX::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx& aData)
 {
-    Bws<100> mimeType(aMimeType);
-    mimeType;
-    Bws<100> data(aData);
-    data;
     if (Ascii::CaseInsensitiveEquals(aMimeType, Brn("application/x-mpegurl")) ||
         Ascii::CaseInsensitiveEquals(aMimeType, Brn("application/vnd.apple.mpegurl"))/* ||
         Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/x-mpegurl")) ||
@@ -119,6 +115,7 @@ ProtocolStreamResult ContentM3uX::Stream(IProtocolReader& aReader, TUint64 aTota
             }
             else if (res == EProtocolStreamSuccess) {
                 streamSucceeded = true;
+                break;  // Successfully processed a variant stream; don't want to process any more.
             }
         }
     }
@@ -128,7 +125,7 @@ ProtocolStreamResult ContentM3uX::Stream(IProtocolReader& aReader, TUint64 aTota
     if (stopped) {
         return EProtocolStreamStopped;
     }
-    else if (bytesRemaining > 0 && bytesRemaining < aTotalBytes) {
+    else if (!streamSucceeded && bytesRemaining > 0 && bytesRemaining < aTotalBytes) {
         // break in stream.  Return an error and let caller attempt to re-establish connection
         return EProtocolStreamErrorRecoverable;
     }
