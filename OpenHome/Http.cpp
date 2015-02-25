@@ -998,7 +998,11 @@ Brn ReaderHttpChunked::Read(TUint aBytes)
     iOutputBuf.SetBytes(0);
     TUint remaining = aBytes;
     while (remaining > 0) {
-        Brn buf = iReader.Read(remaining);
+        TUint bytes = remaining;
+        if (iReader.ReadCapacity() < remaining) {
+            bytes = iReader.ReadCapacity();
+        }
+        Brn buf = iReader.Read(bytes);
         Dechunk(buf);
         remaining -= iDechunkBuf.Bytes();
         iOutputBuf.Append(iDechunkBuf);
@@ -1028,6 +1032,11 @@ void ReaderHttpChunked::ReadFlush()
 void ReaderHttpChunked::ReadInterrupt()
 {
     iReader.ReadInterrupt();
+}
+
+TUint ReaderHttpChunked::ReadCapacity() const
+{
+    return iReader.ReadCapacity();
 }
 
 Brn ReaderHttpChunked::ReadRemaining()
@@ -1294,6 +1303,11 @@ void HttpReader::ReadInterrupt()
 {
     ASSERT(iConnected);
     iReader.ReadInterrupt();
+}
+
+TUint HttpReader::ReadCapacity() const
+{
+    return iReader.ReadCapacity();
 }
 
 TUint HttpReader::WriteRequest(const Uri& aUri)
