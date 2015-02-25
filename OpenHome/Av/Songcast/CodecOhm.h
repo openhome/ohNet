@@ -26,6 +26,7 @@ private: // from IReader
     Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
+    TUint ReadCapacity() const override;
 private:
     void OutputDelay();
 private:

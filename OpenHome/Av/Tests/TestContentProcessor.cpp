@@ -26,6 +26,7 @@ private: // from IProtocolReader
     Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
+    TUint ReadCapacity() const override;
     Brn ReadRemaining() override;
 protected:
     static const TUint kReadBufferSize = 1024 * 8;
@@ -222,6 +223,11 @@ void SuiteContent::ReadFlush()
 void SuiteContent::ReadInterrupt()
 {
     iReadBuffer->ReadInterrupt();
+}
+
+TUint SuiteContent::ReadCapacity() const
+{
+    return iReadBuffer->ReadCapacity();
 }
 
 Brn SuiteContent::ReadRemaining()

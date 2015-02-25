@@ -35,6 +35,7 @@ private: // from IProtocolReader
     Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
+    TUint ReadCapacity() const;
     Brn ReadRemaining();
 private:
     static const TUint kReadBufBytes = 9 * 1024;
@@ -235,6 +236,11 @@ void ProtocolFile::ReadFlush()
 void ProtocolFile::ReadInterrupt()
 {
     iReaderBuf.ReadInterrupt();
+}
+
+TUint ProtocolFile::ReadCapacity() const
+{
+    return iReaderBuf.ReadCapacity();
 }
 
 Brn ProtocolFile::ReadRemaining()

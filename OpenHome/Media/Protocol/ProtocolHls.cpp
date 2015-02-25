@@ -17,11 +17,6 @@
 namespace OpenHome {
 namespace Media {
 
-class HttpReader
-{
-
-};
-
 class ITimerHandler
 {
 public:
@@ -61,30 +56,23 @@ public:
     virtual ~ISegmentUriProvider() {}
 };
 
-// FIXME - must be able to interrupt
 class HlsM3uReader : public ITimerHandler, public ISegmentUriProvider
 {
 private:
     static const TUint kMaxM3uVersion = 2;
     static const TUint kMillisecondsPerSecond = 1000;
-    static const TUint kReadBufferBytes = 9 * 1024; // Based on ProtocolHttp buffer size.
-    static const TUint kWriteBufferBytes = 1024;
-    static const TUint kConnectTimeoutMs = 3000;
 public:
-    HlsM3uReader(Environment& aEnv, ITimer& aTimer);
+    HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer);
     void SetUri(const Uri& aUri);
     TUint Version() const;
+    void Close();
 private: // from ITimerHandler
     void TimerFired() override;
 private: // from ISegmentUriProvider
     TUint NextSegmentUri(Uri& aUri) override;
 public:
     void Interrupt(TBool aInterrupt);
-    void Close();
 private:
-    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
-    void Open();
-    TUint WriteRequest(TUint64 aOffset);
     void ReadNextLine();
     void ReloadVariantPlaylist();
     void PreprocessM3u();
@@ -95,20 +83,8 @@ private:
     // max(targetDuration, sum(newSegmentDurations)-targetDuration);
     Environment& iEnv;
     ITimer& iTimer;
-    Srs<kReadBufferBytes> iReaderBuf;
-    Sws<kWriteBufferBytes> iWriterBuf;
-    Mutex iLock;
-    SocketTcpClient iTcpClient;
-    TBool iSocketIsOpen;
-    WriterHttpRequest iWriterRequest;
-    ReaderHttpResponse iReaderResponse;
-    ReaderHttpChunked iDechunker;
-    HttpHeaderContentType iHeaderContentType;
-    HttpHeaderContentLength iHeaderContentLength;
-    HttpHeaderLocation iHeaderLocation;
-    HttpHeaderTransferEncoding iHeaderTransferEncoding;
+    HttpReader iReader;
     OpenHome::Uri iUri;
-    TBool iActive;
     TUint64 iTotalBytes;
     TUint64 iOffset;
     TUint iVersion;
@@ -121,41 +97,24 @@ private:
 
 class SegmentStreamer : public IProtocolReader
 {
-private:
-    static const TUint kReadBufferBytes = 9 * 1024; // Based on ProtocolHttp buffer size.
-    static const TUint kWriteBufferBytes = 1024;
-    static const TUint kConnectTimeoutMs = 3000;
 public:
-    SegmentStreamer(Environment& aEnv);
+    SegmentStreamer(Environment& aEnv, const Brx& aUserAgent);
     void Stream(ISegmentUriProvider& aSegmentUriProvider);
 public: // from IProtocolReader
     Brn Read(TUint aBytes) override;
     Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
+    TUint ReadCapacity() const override;
     Brn ReadRemaining() override;
 private:
-    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
     void Interrupt(TBool aInterrupt);
-    void Open();
     void Close();
-    TUint WriteRequest(TUint64 aOffset);
     void GetNextSegment();
     void EnsureSegmentIsReady();
 private:
     Environment& iEnv;
-    Srs<kReadBufferBytes> iReaderBuf;
-    Sws<kWriteBufferBytes> iWriterBuf;
-    Mutex iLock;
-    SocketTcpClient iTcpClient;
-    TBool iSocketIsOpen;
-    WriterHttpRequest iWriterRequest;
-    ReaderHttpResponse iReaderResponse;
-    ReaderHttpChunked iDechunker;
-    HttpHeaderContentType iHeaderContentType;
-    HttpHeaderContentLength iHeaderContentLength;
-    HttpHeaderLocation iHeaderLocation;
-    HttpHeaderTransferEncoding iHeaderTransferEncoding;
+    HttpReader iReader;
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint64 iOffset;
@@ -166,7 +125,7 @@ private:
 class ProtocolHls : public Protocol
 {
 public:
-    ProtocolHls(Environment& aEnv);
+    ProtocolHls(Environment& aEnv, const Brx& aUserAgent);
     ~ProtocolHls();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -203,9 +162,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewHls(Environment& aEnv)
+Protocol* ProtocolFactory::NewHls(Environment& aEnv, const Brx& aUserAgent)
 { // static
-    return new ProtocolHls(aEnv);
+    return new ProtocolHls(aEnv, aUserAgent);
 }
 
 
@@ -253,17 +212,10 @@ void TimerGeneric::TimerFired()
 
 // HlsM3uReader
 
-HlsM3uReader::HlsM3uReader(Environment& aEnv, ITimer& aTimer)
+HlsM3uReader::HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer)
     : iEnv(aEnv)
     , iTimer(aTimer)
-    , iWriterBuf(iTcpClient)
-    , iReaderBuf(iTcpClient)
-    , iLock("HMRL")
-    , iSocketIsOpen(false)
-    , iWriterRequest(iWriterBuf)
-    , iReaderResponse(aEnv, iReaderBuf)
-    , iDechunker(iReaderBuf)
-    , iActive(false)
+    , iReader(aEnv, aUserAgent)
     , iTotalBytes(0)
     , iVersion(1)
     , iMediaSequence(0)
@@ -271,10 +223,6 @@ HlsM3uReader::HlsM3uReader(Environment& aEnv, ITimer& aTimer)
     , iTargetDuration(0)
     , iSem("HMRS", 0)
 {
-    iReaderResponse.AddHeader(iHeaderContentType);
-    iReaderResponse.AddHeader(iHeaderContentLength);
-    iReaderResponse.AddHeader(iHeaderLocation);
-    iReaderResponse.AddHeader(iHeaderTransferEncoding);
 }
 
 void HlsM3uReader::SetUri(const Uri& aUri)
@@ -282,7 +230,6 @@ void HlsM3uReader::SetUri(const Uri& aUri)
     iTimer.Cancel();
     iSem.Signal();
     iUri.Replace(aUri.AbsoluteUri());
-    iActive = true;
 
     ReloadVariantPlaylist();
 }
@@ -290,6 +237,11 @@ void HlsM3uReader::SetUri(const Uri& aUri)
 TUint HlsM3uReader::Version() const
 {
     return iVersion;
+}
+
+void HlsM3uReader::Close()
+{
+    iReader.Close();
 }
 
 TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
@@ -356,119 +308,15 @@ void HlsM3uReader::TimerFired()
     iSem.Signal();
 }
 
-TBool HlsM3uReader::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
-{
-    LOG(kMedia, ">HlsM3uReader::Connect\n");
-
-    Endpoint endpoint;
-    try {
-        endpoint.SetAddress(aUri.Host());
-        TInt port = aUri.Port();
-        if (port == -1) {
-            port = (TInt)aDefaultPort;
-        }
-        endpoint.SetPort(port);
-    }
-    catch (NetworkError&) {
-        LOG(kMedia, "<HlsM3uReader::Connect error setting address and port\n");
-        return false;
-    }
-
-    try {
-        Open();
-    }
-    catch (NetworkError&) {
-        LOG(kMedia, "<HlsM3uReader::Connect error opening\n");
-        return false;
-    }
-    try {
-        iTcpClient.Connect(endpoint, kConnectTimeoutMs);
-    }
-    catch (NetworkTimeout&) {
-        Close();
-        LOG(kMedia, "<HlsM3uReader::Connect error connecting\n");
-        return false;
-    }
-
-    LOG(kMedia, "<HlsM3uReader::Connect\n");
-    return true;
-}
-
 void HlsM3uReader::Interrupt(TBool aInterrupt)
 {
-    iLock.Wait();
-    if (iActive) {
-        iTcpClient.Interrupt(aInterrupt);
-    }
-    iLock.Signal();
-}
-
-void HlsM3uReader::Open()
-{
-    LOG(kMedia, "HlsM3uReader::Open\n");
-
-    iTcpClient.Open(iEnv);
-    ASSERT(!iSocketIsOpen);
-    iSocketIsOpen = true;
-}
-
-void HlsM3uReader::Close()
-{
-    LOG(kMedia, "HlsM3uReader::Close\n");
-
-    if (iSocketIsOpen) {
-        iSocketIsOpen = false;
-        iTcpClient.Close();
-    }
-}
-
-TUint HlsM3uReader::WriteRequest(TUint64 /*aOffset*/)
-{
-    //iTcpClient.LogVerbose(true);
-    Close();
-    const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-    if (!Connect(iUri, port)) {
-        LOG(kMedia, "HlsM3uReader::WriteRequest Connection failure\n");
-        return 0;
-    }
-
-    try {
-        LOG(kMedia, "HlsM3uReader::WriteRequest send request\n");
-        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
-        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
-        //iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA? - because it's recommended for various reasons!
-        Http::WriteHeaderConnectionClose(iWriterRequest);
-        iWriterRequest.WriteFlush();
-    }
-    catch(WriterError&) {
-        LOG(kMedia, "HlsM3uReader::WriteRequest writer error\n");
-        return 0;
-    }
-
-    try {
-        LOG(kMedia, "HlsM3uReader::WriteRequest read response\n");
-        //iTcpClient.LogVerbose(true);
-        iReaderResponse.Read();
-        //iTcpClient.LogVerbose(false);
-    }
-    catch(HttpError&) {
-        LOG(kMedia, "HlsM3uReader::WriteRequest http error\n");
-        return 0;
-    }
-    catch(ReaderError&) {
-        LOG(kMedia, "HlsM3uReader::WriteRequest reader error\n");
-        return 0;
-    }
-    const TUint code = iReaderResponse.Status().Code();
-    LOG(kMedia, "HlsM3uReader::WriteRequest response code %d\n", code);
-    return code;
+    iReader.Interrupt(aInterrupt);
 }
 
 void HlsM3uReader::ReadNextLine()
 {
     // May throw ReaderError.
-    iNextLine = iDechunker.ReadUntil('\n');
+    iNextLine = iReader.ReadUntil('\n');
     iOffset += iNextLine.Bytes()+1;  // Separator has been trimmed.
 }
 
@@ -481,28 +329,17 @@ void HlsM3uReader::ReloadVariantPlaylist()
     iSem.Wait();
     iSem.Clear();   // Clear in case iSem has been signalled multiple times. E.g., blocking while filling buffers during last playlist reload.
 
-    TUint code;
-    for (;;) { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
-        code = WriteRequest(0);
-        if (code == 0) {
-            //THROW(InvalidUri/MalformedUri)
-            //return EProtocolStreamErrorUnrecoverable;
-        }
-        // Check for redirection
-        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
-            if (!iHeaderLocation.Received()) {
-                //THROW(InvalidURI);
-                //return EProtocolStreamErrorUnrecoverable;
-            }
-            iUri.Replace(iHeaderLocation.Location());
-            continue;
-        }
-        break;
-    }
-
-    if (code != 0) {
-        iTotalBytes = iHeaderContentLength.ContentLength();
+    iReader.Close();
+    TBool success = iReader.Connect(iUri);
+    if (success) {
+        // FIXME - must handle case of iTotalBytes being 0 - is the case for some M3Us. If so, will just have to read until ReaderError is thrown.
+        iTotalBytes = iReader.ContentLength();
         iOffset = 0;
+    }
+    else {
+        // Failed to connect! Must not continue.
+        // FIXME - throw an exception instead of returning?
+        return;
     }
 
     try {
@@ -640,24 +477,15 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
 
 // SegmentStreamer
 
-SegmentStreamer::SegmentStreamer(Environment& aEnv)
+SegmentStreamer::SegmentStreamer(Environment& aEnv, const Brx& aUserAgent)
     : iEnv(aEnv)
     , iSegmentUriProvider(NULL)
-    , iReaderBuf(iTcpClient)
-    , iWriterBuf(iTcpClient)
-    , iLock("SESL")
-    , iSocketIsOpen(false)
-    , iWriterRequest(iWriterBuf)
-    , iReaderResponse(iEnv, iReaderBuf)
-    , iDechunker(iReaderBuf)
+    , iReader(aEnv, aUserAgent)
+    //, iLock("SESL")
     , iTotalBytes(0)
     , iOffset(0)
     , iSem("SEGS", 0)
 {
-    iReaderResponse.AddHeader(iHeaderContentType);
-    iReaderResponse.AddHeader(iHeaderContentLength);
-    iReaderResponse.AddHeader(iHeaderLocation);
-    iReaderResponse.AddHeader(iHeaderTransferEncoding);
 }
 
 void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
@@ -669,7 +497,7 @@ void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 Brn SegmentStreamer::Read(TUint aBytes)
 {
     EnsureSegmentIsReady();
-    Brn buf = iDechunker.Read(aBytes);
+    Brn buf = iReader.Read(aBytes); // FIXME - aBytes == 9126, iReader buffers 4196, so throws ReaderError
     iOffset += buf.Bytes(); // if bytes remaining < aBytes, must request next segment
     return buf;
 }
@@ -677,137 +505,47 @@ Brn SegmentStreamer::Read(TUint aBytes)
 Brn SegmentStreamer::ReadUntil(TByte aSeparator)
 {
     EnsureSegmentIsReady();
-    Brn buf = iDechunker.ReadUntil(aSeparator);
+    Brn buf = iReader.ReadUntil(aSeparator);
     iOffset += buf.Bytes()+1;   // Separator has been trimmed.
     return buf;
 }
 
 void SegmentStreamer::ReadFlush()
 {
-    iDechunker.ReadFlush();
+    iReader.ReadFlush();
 }
 
 void SegmentStreamer::ReadInterrupt()
 {
-    iDechunker.ReadInterrupt();
+    iReader.ReadInterrupt();
+}
+
+TUint SegmentStreamer::ReadCapacity() const
+{
+    return iReader.ReadCapacity();
 }
 
 Brn SegmentStreamer::ReadRemaining()
 {
-    Brn buf = iDechunker.ReadRemaining();
-    iOffset += buf.Bytes();
+    Brn buf = iReader.ReadRemaining();  // this calls into Srx::Snaffle(), which clears buffer (i.e., can't read any more data!) - so, need to limit read size to something HttpReader will allow (i.e., by setting it, but then need to know read size in advance), have something upstream ask for something more sensible (difficult and unreliable when code is later changed!), or have a member buffer here to fulfill reading a requested aBytes, or have upstream code not immediately call ReadRemaining() when fail to read aBytes into a buffer
+    if (buf.Bytes() == 0) {
+        iOffset = iTotalBytes;
+    }
+    else {
+        iOffset += buf.Bytes(); // When Read() above throws, this only returns ~3K bytes (i.e., remainder of buffer), then starts to return an empty buf; i.e., does not stream remainder of file
+    }
     return buf;
-}
-
-TBool SegmentStreamer::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
-{
-    LOG(kMedia, ">SegmentStreamer::Connect\n");
-
-    Endpoint endpoint;
-    try {
-        endpoint.SetAddress(aUri.Host());
-        TInt port = aUri.Port();
-        if (port == -1) {
-            port = (TInt)aDefaultPort;
-        }
-        endpoint.SetPort(port);
-    }
-    catch (NetworkError&) {
-        LOG(kMedia, "<SegmentStreamer::Connect error setting address and port\n");
-        return false;
-    }
-
-    try {
-        Open();
-    }
-    catch (NetworkError&) {
-        LOG(kMedia, "<SegmentStreamer::Connect error opening\n");
-        return false;
-    }
-    try {
-        iTcpClient.Connect(endpoint, kConnectTimeoutMs);
-    }
-    catch (NetworkTimeout&) {
-        Close();
-        LOG(kMedia, "<SegmentStreamer::Connect error connecting\n");
-        return false;
-    }
-
-    LOG(kMedia, "<SegmentStreamer::Connect\n");
-    return true;
 }
 
 void SegmentStreamer::Interrupt(TBool aInterrupt)
 {
-    iLock.Wait();
-    //if (iActive) {
-    if (iSocketIsOpen) {
-        iTcpClient.Interrupt(aInterrupt);
-    }
-    iLock.Signal();
-}
-
-void SegmentStreamer::Open()
-{
-    LOG(kMedia, "SegmentStreamer::Open\n");
-
-    iTcpClient.Open(iEnv);
-    ASSERT(!iSocketIsOpen);
-    iSocketIsOpen = true;
+    iReader.Interrupt(aInterrupt);
 }
 
 void SegmentStreamer::Close()
 {
     LOG(kMedia, "SegmentStreamer::Close\n");
-
-    if (iSocketIsOpen) {
-        iSocketIsOpen = false;
-        iTcpClient.Close();
-    }
-}
-
-TUint SegmentStreamer::WriteRequest(TUint64 /*aOffset*/)
-{
-    //iTcpClient.LogVerbose(true);
-    Close();
-    const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-    if (!Connect(iUri, port)) {
-        LOG(kMedia, "SegmentStreamer::WriteRequest Connection failure\n");
-        return 0;
-    }
-
-    try {
-        LOG(kMedia, "SegmentStreamer::WriteRequest send request\n");
-        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
-        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
-        //iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
-        Http::WriteHeaderConnectionClose(iWriterRequest);
-        //Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
-        iWriterRequest.WriteFlush();
-    }
-    catch(WriterError&) {
-        LOG(kMedia, "SegmentStreamer::WriteRequest writer error\n");
-        return 0;
-    }
-
-    try {
-        LOG(kMedia, "SegmentStreamer::WriteRequest read response\n");
-        //iTcpClient.LogVerbose(true);
-        iReaderResponse.Read();
-        //iTcpClient.LogVerbose(false);
-    }
-    catch(HttpError&) {
-        LOG(kMedia, "SegmentStreamer::WriteRequest http error\n");
-        return 0;
-    }
-    catch(ReaderError&) {
-        LOG(kMedia, "SegmentStreamer::WriteRequest reader error\n");
-        return 0;
-    }
-    const TUint code = iReaderResponse.Status().Code();
-    LOG(kMedia, "SegmentStreamer::WriteRequest response code %d\n", code);
-    return code;
+    iReader.Close();
 }
 
 void SegmentStreamer::GetNextSegment()
@@ -817,33 +555,23 @@ void SegmentStreamer::GetNextSegment()
     duration;
     iUri.Replace(segment.AbsoluteUri());
 
-    TUint code;
-    for (;;) { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
-        code = WriteRequest(0);
-        if (code == 0) {
-            //THROW(InvalidUri/MalformedUri)
-            //return EProtocolStreamErrorUnrecoverable;
-        }
-        // Check for redirection
-        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
-            if (!iHeaderLocation.Received()) {
-                //THROW(InvalidURI);
-                //return EProtocolStreamErrorUnrecoverable;
-            }
-            iUri.Replace(iHeaderLocation.Location());
-            continue;
-        }
-        break;
-    }
-
-    if (code != 0) {
-        iTotalBytes = iHeaderContentLength.ContentLength();
+    iReader.Close();
+    TBool success = iReader.Connect(iUri);
+    if (success) {
+        // FIXME - must handle case of iTotalBytes being 0 - is the case for some M3Us. If so, will just have to read until ReaderError is thrown.
+        iTotalBytes = iReader.ContentLength();
         iOffset = 0;
+    }
+    else {
+        // Failed to connect! Must not continue.
+        // FIXME - throw an exception instead of returning?
+        return;
     }
 }
 
 void SegmentStreamer::EnsureSegmentIsReady()
 {
+    // FIXME - what if iTotalBytes == 0?
     if (iOffset == iTotalBytes) {
         GetNextSegment();
     }
@@ -852,14 +580,12 @@ void SegmentStreamer::EnsureSegmentIsReady()
 
 // ProtocolHls
 
-static const Brn kUserAgentString("Linn DS"); // FIXME
-
-ProtocolHls::ProtocolHls(Environment& aEnv)
+ProtocolHls::ProtocolHls(Environment& aEnv, const Brx& aUserAgent)
     : Protocol(aEnv)
     , iSupply(NULL)
     , iTimer(iEnv, "PHLS")
-    , iM3uReader(iEnv, iTimer)
-    , iSegmentStreamer(iEnv)
+    , iM3uReader(iEnv, aUserAgent, iTimer)
+    , iSegmentStreamer(iEnv, aUserAgent)
     , iSem("PRTH", 0)
     , iLock("PRHL")
 {
@@ -917,18 +643,18 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
 
     Reinitialise();
-    Uri uri(aUri);
+    Uri uriHls(aUri);
     LOG(kMedia, "ProtocolHls::Stream ");
-    LOG(kMedia, uri.AbsoluteUri());
+    LOG(kMedia, uriHls.AbsoluteUri());
     LOG(kMedia, "\n");
 
-    if (uri.Scheme() != Brn("hls")) {
+    if (uriHls.Scheme() != Brn("hls")) {
         LOG(kMedia, "ProtocolHls::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
 
     if (!iStarted) {
-        StartStream(uri);
+        StartStream(uriHls);
     }
 
 
@@ -943,9 +669,15 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
 
 
+    // Convert hls:// scheme to http:// scheme
+    const Brx& uriHlsBuf = uriHls.AbsoluteUri();
+    Parser p(uriHlsBuf);
+    p.Next(':');    // skip "hls" scheme
+    Bws<Uri::kMaxUriBytes> uriHttpBuf("http:");
+    uriHttpBuf.Append(p.NextToEnd());
+    Uri uriHttp(uriHttpBuf);    // may throw UriError
 
-
-    iM3uReader.SetUri(uri); // rename to Reinitialise()
+    iM3uReader.SetUri(uriHttp); // rename to Reinitialise()
     iSegmentStreamer.Stream(iM3uReader);
 
     if (iContentProcessor == NULL) {

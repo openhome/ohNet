@@ -144,6 +144,11 @@ void CodecOhm::ReadInterrupt()
 {
 }
 
+TUint CodecOhm::ReadCapacity() const
+{
+    return iBuf.MaxBytes();
+}
+
 void CodecOhm::OutputDelay()
 {
     static const TUint kDelayDivisor48k = (48000 * 256) / 1000;

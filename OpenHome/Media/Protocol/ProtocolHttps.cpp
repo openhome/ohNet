@@ -39,6 +39,7 @@ private: // from IProtocolReader
     Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
+    TUint ReadCapacity() const override;
     Brn ReadRemaining() override;
 private:
     void Reinitialise(const Brx& aUri);
@@ -215,6 +216,11 @@ void ProtocolHttps::ReadFlush()
 void ProtocolHttps::ReadInterrupt()
 {
     iDechunker.ReadInterrupt();
+}
+
+TUint ProtocolHttps::ReadCapacity() const
+{
+    return iDechunker.ReadCapacity();
 }
 
 Brn ProtocolHttps::ReadRemaining()

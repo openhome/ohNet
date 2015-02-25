@@ -37,6 +37,7 @@ private: // from IProtocolReader
     Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
+    TUint ReadCapacity() const;
     Brn ReadRemaining();
 private:
     static TBool TryGetTrackId(const Brx& aQuery, Bwx& aTrackId);
@@ -301,6 +302,11 @@ void ProtocolTidal::ReadFlush()
 void ProtocolTidal::ReadInterrupt()
 {
     iReaderBuf.ReadInterrupt();
+}
+
+TUint ProtocolTidal::ReadCapacity() const
+{
+    return iReaderBuf.ReadCapacity();
 }
 
 Brn ProtocolTidal::ReadRemaining()
