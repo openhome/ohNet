@@ -15,6 +15,8 @@ class IPipelineElementDownstream;
 
 class ContentAudio : public ContentProcessor
 {
+private:
+    static const TUint kMaxReadBytes = EncodedAudio::kMaxBytes;
 public:
     ContentAudio(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
     ~ContentAudio();
@@ -23,6 +25,7 @@ private: // from ContentProcessor
     ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
 private:
     Supply* iSupply;
+    Bws<kMaxReadBytes> iBuf;
 };
 
 } // namespace Media
