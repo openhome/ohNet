@@ -40,9 +40,6 @@ TBool MpegTs::Recognise(Brx& aBuf)
 {
     iSize = 0;
 
-    Bws<6144> bufTmp(aBuf);
-    bufTmp;
-
     if (aBuf.Bytes() < kRecogniseBytes) {
         return false; // not enough data to recognise
     }
@@ -104,14 +101,12 @@ TBool MpegTs::Recognise(Brx& aBuf)
         }
 
         if (isPesPacketStart) {
-            TUint streamId = aBuf[offset+3];
-            TUint pesPacketLength = Converter::BeUint16At(aBuf, offset+4);
-            if ((aBuf[offset+6] & 0x80) == 0x80) { // Optional PES header found
-                TUint pesOptionalHeaderLength = aBuf[offset+8];
-                pesBytes += kPesHeaderOptionalFixedBytes + pesOptionalHeaderLength;
-            }
-            streamId;
-            pesPacketLength;
+            //TUint streamId = aBuf[offset+3];
+            //TUint pesPacketLength = Converter::BeUint16At(aBuf, offset+4);
+            //if ((aBuf[offset+6] & 0x80) == 0x80) { // Optional PES header found
+            //    TUint pesOptionalHeaderLength = aBuf[offset+8];
+            //    pesBytes += kPesHeaderOptionalFixedBytes + pesOptionalHeaderLength;
+            //}
         }
 
         iSize = kMpegHeaderBytes+adaptationFieldBytes+pesBytes;
@@ -300,20 +295,14 @@ TBool MpegTs::RecogniseTableSyntax(const Brx& aTableSyntax)
     }
 
     // Parse table syntax section.
-    TUint tableIdExt = Converter::BeUint16At(aTableSyntax, 0);
+    //TUint tableIdExt = Converter::BeUint16At(aTableSyntax, 0);
     if ((aTableSyntax[2] & 0xc0) != 0xc0) {
         return false;
     }
-    TUint versionNumber = aTableSyntax[2] & 0x3e;
-    TUint currentIndicator = aTableSyntax[2] & 0x01;
-    TUint sectionNumber = aTableSyntax[3];    // starts from 0.
-    TUint sectionNumberLast = aTableSyntax[4];
-
-    tableIdExt;
-    versionNumber;
-    currentIndicator;
-    sectionNumber;
-    sectionNumberLast;
+    //TUint versionNumber = aTableSyntax[2] & 0x3e;
+    //TUint currentIndicator = aTableSyntax[2] & 0x01;
+    //TUint sectionNumber = aTableSyntax[3];    // starts from 0.
+    //TUint sectionNumberLast = aTableSyntax[4];
 
     return true;
 }
