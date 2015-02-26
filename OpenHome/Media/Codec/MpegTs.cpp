@@ -149,7 +149,8 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                 return unpacked;
             }
 
-            if (iPacketBytes != 0 && iPacketBytes+iAudioEncoded->Bytes() > kPacketBytes) { // FIXME - should this be > kPacketBytes+kRecogniseBytes, so we know there is enough to buffer from next packet?
+            //if (iPacketBytes != 0 && iPacketBytes+iAudioEncoded->Bytes() > kPacketBytes+kRecogniseBytes) {
+            if (iPacketBytes != 0 && iPacketBytes+iAudioEncoded->Bytes() > kPacketBytes) {
                 // Packet boundary within this message.
                 // Must have iAudioEncoded point at start of next msg.
                 unpack = true;
@@ -172,7 +173,7 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                 unpack = true;
             }
             else {
-                // Remaining audio belongs to current packet (but does not complete current packet
+                // Remaining audio belongs to current packet (but does not complete current packet)
                 iPacketBytes += iAudioEncoded->Bytes();
                 if (unpacked == NULL) {
                     unpacked = iAudioEncoded;
