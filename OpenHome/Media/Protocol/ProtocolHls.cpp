@@ -106,7 +106,6 @@ public: // from IProtocolReader
     Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
-    TUint ReadCapacity() const override;
     Brn ReadRemaining() override;
 private:
     void GetNextSegment();
@@ -140,6 +139,7 @@ private: // from IStreamHandler
 private:
     void Reinitialise();
     void StartStream(const Uri& aUri);
+    TBool IsCurrentStream(TUint aStreamId) const;
 private:
     Supply* iSupply;
     TimerGeneric iTimer;
@@ -518,11 +518,6 @@ void SegmentStreamer::ReadInterrupt()
     iReader.ReadInterrupt();
 }
 
-TUint SegmentStreamer::ReadCapacity() const
-{
-    return iReader.ReadCapacity();
-}
-
 Brn SegmentStreamer::ReadRemaining()
 {
     Brn buf = iReader.ReadRemaining();
@@ -734,7 +729,7 @@ TUint ProtocolHls::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 TUint ProtocolHls::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -775,4 +770,12 @@ void ProtocolHls::StartStream(const Uri& aUri)
     iStreamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(aUri.AbsoluteUri(), totalBytes, seekable, live, *this, iStreamId);
     iStarted = true;
+}
+
+TBool ProtocolHls::IsCurrentStream(TUint aStreamId) const
+{
+    if (iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
 }
