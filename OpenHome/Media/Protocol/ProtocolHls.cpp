@@ -65,13 +65,12 @@ public:
     HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer);
     void SetUri(const Uri& aUri);
     TUint Version() const;
+    void Interrupt(TBool aInterrupt);
     void Close();
 private: // from ITimerHandler
     void TimerFired() override;
 private: // from ISegmentUriProvider
     TUint NextSegmentUri(Uri& aUri) override;
-public:
-    void Interrupt(TBool aInterrupt);
 private:
     void ReadNextLine();
     void ReloadVariantPlaylist();
@@ -100,6 +99,8 @@ class SegmentStreamer : public IProtocolReader
 public:
     SegmentStreamer(Environment& aEnv, const Brx& aUserAgent);
     void Stream(ISegmentUriProvider& aSegmentUriProvider);
+    void Interrupt(TBool aInterrupt);
+    void Close();
 public: // from IProtocolReader
     Brn Read(TUint aBytes) override;
     Brn ReadUntil(TByte aSeparator) override;
@@ -108,8 +109,6 @@ public: // from IProtocolReader
     TUint ReadCapacity() const override;
     Brn ReadRemaining() override;
 private:
-    void Interrupt(TBool aInterrupt);
-    void Close();
     void GetNextSegment();
     void EnsureSegmentIsReady();
 private:
@@ -481,7 +480,6 @@ SegmentStreamer::SegmentStreamer(Environment& aEnv, const Brx& aUserAgent)
     : iEnv(aEnv)
     , iSegmentUriProvider(NULL)
     , iReader(aEnv, aUserAgent)
-    //, iLock("SESL")
     , iTotalBytes(0)
     , iOffset(0)
     , iSem("SEGS", 0)
@@ -497,8 +495,8 @@ void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 Brn SegmentStreamer::Read(TUint aBytes)
 {
     EnsureSegmentIsReady();
-    Brn buf = iReader.Read(aBytes); // FIXME - aBytes == 9126, iReader buffers 4196, so throws ReaderError
-    iOffset += buf.Bytes(); // if bytes remaining < aBytes, must request next segment
+    Brn buf = iReader.Read(aBytes);
+    iOffset += buf.Bytes();
     return buf;
 }
 
@@ -527,12 +525,12 @@ TUint SegmentStreamer::ReadCapacity() const
 
 Brn SegmentStreamer::ReadRemaining()
 {
-    Brn buf = iReader.ReadRemaining();  // this calls into Srx::Snaffle(), which clears buffer (i.e., can't read any more data!) - so, need to limit read size to something HttpReader will allow (i.e., by setting it, but then need to know read size in advance), have something upstream ask for something more sensible (difficult and unreliable when code is later changed!), or have a member buffer here to fulfill reading a requested aBytes, or have upstream code not immediately call ReadRemaining() when fail to read aBytes into a buffer
+    Brn buf = iReader.ReadRemaining();
     if (buf.Bytes() == 0) {
         iOffset = iTotalBytes;
     }
     else {
-        iOffset += buf.Bytes(); // When Read() above throws, this only returns ~3K bytes (i.e., remainder of buffer), then starts to return an empty buf; i.e., does not stream remainder of file
+        iOffset += buf.Bytes();
     }
     return buf;
 }
@@ -609,8 +607,8 @@ void ProtocolHls::Interrupt(TBool aInterrupt)
         if (aInterrupt) {
             iStopped = true;
         }
+        iSegmentStreamer.Interrupt(aInterrupt);
         iM3uReader.Interrupt(aInterrupt);
-        //iTcpClient.Interrupt(aInterrupt);
     }
     iLock.Signal();
 }
@@ -657,17 +655,13 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         StartStream(uriHls);
     }
 
-
-
-    //// don't want to buffer content from a live stream
-    //// ...so need to wait on pipeline signalling it is ready to play
-    //LOG(kMedia, "ProtocolHttp::Stream live stream waiting to be (re-)started\n");
-    //iM3uReader.Close();
-    //iSem.Wait();
-    //LOG(kMedia, "ProtocolHttp::Stream live stream restart\n");
-    //res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
-
-
+    // Don't want to buffer content from a live stream
+    // ...so need to wait on pipeline signalling it is ready to play
+    LOG(kMedia, "ProtocolHls::Stream live stream waiting to be (re-)started\n");
+    iSegmentStreamer.Close();
+    iM3uReader.Close();
+    iSem.Wait();            // FIXME - is Reinitialise() calling iSem.Clear() and messing with this?
+    LOG(kMedia, "ProtocolHls::Stream live stream restart\n");
 
     // Convert hls:// scheme to http:// scheme
     const Brx& uriHlsBuf = uriHls.AbsoluteUri();
@@ -691,6 +685,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     // FIXME - sort this:
     res = EProtocolStreamErrorUnrecoverable;
 
+    iSegmentStreamer.Close();
     iM3uReader.Close();
 
     iLock.Wait();
@@ -715,6 +710,7 @@ void ProtocolHls::Deactivated()
         iContentProcessor->Reset();
         iContentProcessor = NULL;
     }
+    iSegmentStreamer.Close();
     iM3uReader.Close();
 }
 
