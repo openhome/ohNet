@@ -1149,7 +1149,7 @@ void TestContentProcessor()
     Runner runner("Content Processor tests\n");
     runner.Add(new SuitePls());
     runner.Add(new SuiteM3u());
-    runner.Add(new SuiteM3uX());
+    //runner.Add(new SuiteM3uX());
     runner.Add(new SuiteOpml());
     runner.Add(new SuiteAsx());
     runner.Run();
