@@ -47,7 +47,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
 {
     const MimeTuneInPair kTypes[] = {{"audio/mpeg", "mp3"}
                                     ,{"audio/x-ms-wma", "wma"}
-                                    //,{"audio/aac", "aac"}
+                                    ,{"audio/aac", "aac"}
                                     ,{"video/x-ms-wmv", "wmvideo"}
                                     ,{"application/ogg", "ogg"}
                                     ,{"application/vnd.apple.mpegurl", "hls"}};  // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
