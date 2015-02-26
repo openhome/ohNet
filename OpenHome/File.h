@@ -42,6 +42,20 @@ public:
     virtual TUint32 Bytes() const = 0;                          // Size of file
 };
 
+// IFileSystem
+class IFileSystem
+{
+public:
+    virtual IFile* Open(const TChar* aFilename, FileMode aFileMode) = 0; // throws FileOpenError
+    virtual ~IFileSystem() {}
+};
+
+class FileSystemAnsii : public IFileSystem
+{
+public: // IFileSystem
+    IFile* Open(const TChar* aFilename, FileMode aFileMode);
+};
+
 class FileAnsii : public IFile
 {
 public:

@@ -105,6 +105,11 @@ void Srx::ReadInterrupt()
     iSource.ReadInterrupt();
 }
 
+TUint Srx::ReadCapacity() const
+{
+    return iMaxBytes;
+}
+
 Brn Srx::Peek(TUint aBytes)
 {
     Brn buf;
@@ -350,6 +355,11 @@ void ReaderBuffer::ReadFlush()
 
 void ReaderBuffer::ReadInterrupt()
 {
+}
+
+TUint ReaderBuffer::ReadCapacity() const
+{
+    return iBuffer.Bytes(); // Value may change after ::Set() is called.
 }
 
 
