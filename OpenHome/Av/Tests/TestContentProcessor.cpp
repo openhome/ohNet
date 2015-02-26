@@ -652,7 +652,7 @@ void SuiteM3uX::TestParse()
     static const TChar* kFile1 =
         "#EXTM3U\n"
         "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
-        "http://example.com/audio-only.m3u8\n";
+        "http://example.com/audio-only.m3u8\n"
         "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
         "http://example.com/low.m3u8\n"
         "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
