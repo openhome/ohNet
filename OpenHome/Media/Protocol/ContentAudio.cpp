@@ -29,29 +29,40 @@ TBool ContentAudio::Recognise(const Brx& /*aUri*/, const Brx& /*aMimeType*/, con
 ProtocolStreamResult ContentAudio::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
 {
     ProtocolStreamResult res = EProtocolStreamSuccess;
-    TUint bytes = EncodedAudio::kMaxBytes;
+    iBuf.SetBytes(0);
+    TUint remaining = kMaxReadBytes;
     const TBool finite = (aTotalBytes!=0);
     try {
         for (;;) {
-            if (finite && aTotalBytes < bytes) {
-                bytes = (TUint)aTotalBytes;
+            if (finite && aTotalBytes < remaining) {
+                remaining = (TUint)aTotalBytes;
             }
-            Brn buf = aReader.Read(bytes);
-            iSupply->OutputData(buf);
+            while (remaining > 0) {
+                TUint bytes = remaining;
+                if (bytes > kMaxReadBytes) {
+                    bytes = kMaxReadBytes;
+                }
+                Brn buf = aReader.Read(bytes);
+                iBuf.Append(buf);
+                remaining -= buf.Bytes();
+            }
+            iSupply->OutputData(iBuf);
             if (finite) {
-                aTotalBytes -= buf.Bytes();
+                aTotalBytes -= iBuf.Bytes();
                 if (aTotalBytes == 0) {
                     break;
                 }
             }
+            remaining = kMaxReadBytes;
+            iBuf.SetBytes(0);
         }
     }
     catch (ReaderError&) {
         res = EProtocolStreamErrorRecoverable;
-        Brn buf = aReader.ReadRemaining();
-        iSupply->OutputData(buf);
+        iBuf.Append(aReader.ReadRemaining());
+        iSupply->OutputData(iBuf);
         if (finite) {
-            aTotalBytes -= buf.Bytes();
+            aTotalBytes -= iBuf.Bytes();
         }
     }
     return res;

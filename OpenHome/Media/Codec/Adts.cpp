@@ -39,11 +39,12 @@ public:
     CodecAdts();
     ~CodecAdts();
 private: // from CodecBase
-    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
-    void StreamInitialise();
-    void Process();
-    //TBool TrySeek(TUint aStreamId, TUint64 aSample);
-    //void StreamCompleted();
+    TBool SupportsMimeType(const Brx& aMimeType) override;
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
+    void StreamInitialise() override;
+    void Process() override;
+    //TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
+    //void StreamCompleted() override;
 private:
     void ProcessAdts(TBool aParseOnly);
 private:
@@ -67,21 +68,11 @@ CodecBase* CodecFactory::NewAdts()
 }
 
 
-// CodecAdts
-
-CodecAdts::CodecAdts()
-{
-    LOG(kCodec, "CodecAdts::CodecAdts\n");
-}
-
-CodecAdts::~CodecAdts()
-{
-    LOG(kCodec, "CodecAdts::~CodecAdts\n");
-}
+// Adts
 
 Adts::Adts(): iPayloadBytesAve(0)
-{ 
-} 
+{
+}
 
 // ref ISO-IEC-13818-7 p21
 TBool Adts::ReadHeader(Brn aHeader) 
@@ -174,6 +165,33 @@ TBool Adts::ReadHeader(Brn aHeader)
     return true;
 }
 
+
+// CodecAdts
+
+CodecAdts::CodecAdts()
+{
+    LOG(kCodec, "CodecAdts::CodecAdts\n");
+}
+
+CodecAdts::~CodecAdts()
+{
+    LOG(kCodec, "CodecAdts::~CodecAdts\n");
+}
+
+TBool CodecAdts::SupportsMimeType(const Brx& aMimeType)
+{
+    if (CodecAacBase::SupportsMimeType(aMimeType)) {
+        return true;
+    }
+
+    // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
+    static const Brn kMimeHls("application/vnd.apple.mpegurl");
+    if (aMimeType == kMimeHls) {
+        return true;
+    }
+    return false;
+}
+
 TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     LOG(kCodec, "CodecAdts::Recognise\n");
@@ -202,11 +220,12 @@ TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
                     break;                          // not a valid header so keep searching
                 }
                 iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);    // record average payload size over 3 frames
-                LOG(kCodec, "CodecAlac::Recognise aac adts\n");
+                LOG(kCodec, "CodecAdts::Recognise aac adts\n");
                 return true;      
             }
             
-            j += adts.PayloadBytes() + adts.HeaderBytes();   // point to where next frame should be
+            TUint size = adts.PayloadBytes() + adts.HeaderBytes();
+            j += size;   // point to where next frame should be
         }
         if (i > 1000) {
             break;      // searched far enough
@@ -258,11 +277,10 @@ void CodecAdts::StreamInitialise()
 
     ProcessAdts(true);  //process first 2 frames to get iOutputSampleRate from the decoder
 
-
     iTrackLengthJiffies = (iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
     iTrackOffset = 0;
 
-    LOG(kCodec, "CodecAac::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
+    LOG(kCodec, "CodecAdts::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
     iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
 }
 

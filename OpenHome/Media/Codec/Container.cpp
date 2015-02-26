@@ -85,13 +85,8 @@ void ContainerBase::DiscardAudio(TUint aBytes)
     TUint bytesRemaining = aBytes;
 
     while (bytesRemaining > 0) {
-        Msg* msg = iUpstreamElement->Pull();
-        msg = msg->Process(*this);
-        if (msg != NULL) {
-            ASSERT(iPendingMsg == NULL);
-            iPendingMsg = msg;
-            break;
-        }
+
+        // Work with current buffered data, only then pull more data.
         if (iAudioEncoded != NULL) {
             if (iAudioEncoded->Bytes() <= bytesRemaining) {
                 bytesRemaining -= iAudioEncoded->Bytes();
@@ -103,6 +98,17 @@ void ContainerBase::DiscardAudio(TUint aBytes)
                 bytesRemaining = 0;
                 iAudioEncoded->RemoveRef();
                 iAudioEncoded = remainder;
+            }
+        }
+
+        // Exhausted any buffered data; now pull more if required.
+        if (bytesRemaining > 0) {
+            Msg* msg = iUpstreamElement->Pull();
+            msg = msg->Process(*this);
+            if (msg != NULL) {
+                ASSERT(iPendingMsg == NULL);
+                iPendingMsg = msg;
+                break;
             }
         }
     }
