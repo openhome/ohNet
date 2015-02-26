@@ -18,7 +18,6 @@ public:
     virtual Brn ReadUntil(TByte aSeparator) = 0;
     virtual void ReadFlush() = 0;
     virtual void ReadInterrupt() = 0;
-    virtual TUint ReadCapacity() const = 0;
     virtual ~IReader() {};
 };
 
@@ -60,7 +59,6 @@ public: // from IReader
     Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    TUint ReadCapacity() const;
 public:
     Brn Peek(TUint aBytes); // may return <aBytes at end of stream
     Brn Snaffle();
@@ -156,7 +154,6 @@ public: // from IReader
     Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    TUint ReadCapacity() const;
 private:
     Brn iBuffer;
     TUint iOffset;

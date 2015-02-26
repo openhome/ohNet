@@ -483,7 +483,6 @@ public: // from IReader
     Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    TUint ReadCapacity() const;
 private:
     Brn Dechunk(Brn& aBuf);
     void ReadNextChunkSize(Brn& aBuf);
@@ -534,7 +533,6 @@ public: // from IReader
     Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    TUint ReadCapacity() const;
 private:
     TUint WriteRequest(const Uri& aUri);
     TBool ConnectAndProcessHeader(const Uri& aUri);
