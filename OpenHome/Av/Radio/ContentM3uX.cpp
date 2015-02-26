@@ -43,7 +43,11 @@ class ContentM3uX : public Media::ContentProcessor
 {
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
+    void Reset() override;
     Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
+private:
+    TBool iCacheNextUri;
+    Bws<Uri::kMaxUriBytes> iUriHls;
 };
 
 } // namespace Av
@@ -79,6 +83,13 @@ TBool ContentM3uX::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Br
     return false;
 }
 
+void ContentM3uX::Reset()
+{
+    ContentProcessor::Reset();
+    iCacheNextUri = false;
+    iUriHls.SetBytes(0);
+}
+
 // FIXME - need to iterate over to find highest quality stream first
 // Currently, TuneIn only provides one master playlist per stream quality (and we
 // receive streams ordered by quality).
@@ -87,45 +98,93 @@ ProtocolStreamResult ContentM3uX::Stream(IProtocolReader& aReader, TUint64 aTota
     LOG(kMedia, "ContentM3uX::Stream\n");
 
     TUint64 bytesRemaining = aTotalBytes;
-    TBool stopped = false;
-    TBool streamSucceeded = false;
     try {
-        while (!stopped) {
+        TUint bandwidth = 0;
+        TBool isAudio = false;
+        for (;;) {
             Brn line = ReadLine(aReader, bytesRemaining);
-            if (line.Bytes() == 0 || line.BeginsWith(Brn("#"))) {
+            if (line.Bytes() == 0) {// || line.BeginsWith(Brn("#"))) {
                 continue; // empty/comment line
             }
 
             // Only want to stream one variant, but one or more may fail.
             // If that is the case, definitely want to fall through to other variants.
             Parser p(line);
-            Brn scheme = p.Next(':');
-            ProtocolStreamResult res;
-            if (scheme == Brn("http") || scheme == Brn("HTTP")) {
-                Bws<Uri::kMaxUriBytes> uriHls("hls");
-                TUint offset = scheme.Bytes();
-                uriHls.Append(line.Ptr()+offset, line.Bytes()-offset);
-                res = iProtocolSet->Stream(uriHls);
+            Brn prefix = p.Next(':');
+
+            if (prefix == Brn("#EXT-X-STREAM-INF")) {
+                TUint attribBandwidth = 0;
+                TBool attribAudio = false;
+                while (!p.Finished()) {
+                    Brn attrib = p.Next(',');
+                    Parser attribParser(attrib);
+                    Brn attribName = attribParser.Next('=');
+                    Brn attribValue = attribParser.Next();
+                    if (attribName == Brn("BANDWIDTH")) {   // required attrib
+                        attribBandwidth = Ascii::Uint(attribValue);
+                    }
+                    else if (attribName == Brn("CODECS")) {
+                        static const Brn kAudioCodecPrefix("\"mp4a");
+                        if (attribValue.Bytes() >= kAudioCodecPrefix.Bytes()) {
+                            if (Brn(attribValue.Ptr(), kAudioCodecPrefix.Bytes()) == kAudioCodecPrefix) {
+                                attribAudio = true;
+                            }
+                        }
+                    }
+                }
+
+                if (attribAudio && !isAudio) {
+                    // Haven't found an audio-only stream yet, so cache it.
+                    iCacheNextUri = true;
+                    isAudio = true;
+                }
+                else if (attribAudio && attribBandwidth > bandwidth) {
+                    // Found higher-bandwidth audio-only stream, so cache it.
+                    iCacheNextUri = true;
+                    bandwidth = attribBandwidth;
+                }
+                else if (attribBandwidth > bandwidth) {
+                    // Not explicitly an audio-only stream, but higher-bandwidth than existing, so cache it.
+                    iCacheNextUri = true;
+                    bandwidth = attribBandwidth;
+                }
             }
-            else {
-                res = iProtocolSet->Stream(line);
-            }
-            if (res == EProtocolStreamStopped) {
-                stopped = true;
-            }
-            else if (res == EProtocolStreamSuccess) {
-                streamSucceeded = true;
-                break;  // Successfully processed a variant stream; don't want to process any more.
+            else if (iCacheNextUri && (prefix == Brn("http") || prefix == Brn("HTTP"))) {
+                iUriHls.Replace("hls");
+                TUint offset = prefix.Bytes();
+                iUriHls.Append(line.Ptr()+offset, line.Bytes()-offset);
+                iCacheNextUri = false;
             }
         }
     }
     catch (ReaderError&) {
     }
 
-    if (stopped) {
+    // Should get here via a ReaderError.
+    // Need to check if entire M3U has been read, or if there was an unexpected break in stream.
+    if (iUriHls.Bytes() == 0 && bytesRemaining == 0 && bytesRemaining < aTotalBytes) {
+        // Parsed entire file and didn't find stream.
+        return EProtocolStreamErrorUnrecoverable;
+    }
+    else if (iUriHls.Bytes() == 0 && bytesRemaining > 0 && bytesRemaining < aTotalBytes) {
+        // Started parsing, but didn't finish.
+        return EProtocolStreamErrorRecoverable;
+    }
+    else if (iUriHls.Bytes() == 0) {
+        // Didn't find URL for unknown reason; give up.
+        return EProtocolStreamErrorUnrecoverable;
+    }
+
+    TBool streamSucceeded = false;
+    ProtocolStreamResult res = iProtocolSet->Stream(iUriHls);
+    if (res == EProtocolStreamStopped) {
         return EProtocolStreamStopped;
     }
-    else if (!streamSucceeded && bytesRemaining > 0 && bytesRemaining < aTotalBytes) {
+    else if (res == EProtocolStreamSuccess) {
+        streamSucceeded = true;
+    }
+
+    if (!streamSucceeded && bytesRemaining > 0 && bytesRemaining < aTotalBytes) {
         // break in stream.  Return an error and let caller attempt to re-establish connection
         return EProtocolStreamErrorRecoverable;
     }

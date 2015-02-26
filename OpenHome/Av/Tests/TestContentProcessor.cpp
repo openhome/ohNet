@@ -775,7 +775,7 @@ void SuiteM3uX::TestParse()
     iInterruptBytes = kInterruptBytes;
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
     iInterrupt = false;
-    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 10) == EProtocolStreamSuccess); // 10 chars in complete lines read before interruption
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 70) == EProtocolStreamSuccess); // 70 chars in complete lines read before interruption
     TEST(iIndex == 1);
 }
 

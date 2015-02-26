@@ -42,7 +42,7 @@ ContentProcessor* ContentProcessorFactory::NewM3u()
 }
 
 
-// ContentPls
+// ContentM3u
 
 TBool ContentM3u::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx& aData)
 {
