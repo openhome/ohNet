@@ -106,13 +106,14 @@ void CpiDeviceUpnp::InterruptXmlFetch()
 
 void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     if (iNewLocation != NULL) {
-        if (iNewLocation->Location() == aNewLocation->Location()) {
-            aNewLocation->iDevice->RemoveRef();
+        const TBool sameLocation = (iNewLocation->Location() == aNewLocation->Location());
+        iLock.Signal();
+        iNewLocation->iDevice->RemoveRef();
+        if (sameLocation) {
             return;
         }
-        iNewLocation->iDevice->RemoveRef();
         iNewLocation = aNewLocation;
         return;
     }
@@ -125,6 +126,7 @@ void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckCompleted);
     iXmlCheck->CheckContactable(uri, functor);
     xmlFetchManager.Fetch(iXmlCheck);
+    iLock.Signal();
 }
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
@@ -568,8 +570,8 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
             return true;
         }
         deviceUpnp->UpdateMaxAge(aMaxAge);
-        device->RemoveRef();
         iLock.Signal();
+        device->RemoveRef();
         return !iRefreshing;
     }
     iLock.Signal();
