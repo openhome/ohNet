@@ -128,6 +128,14 @@ void ProtocolOhBase::Send(TUint aType)
     }
 }
 
+TBool ProtocolOhBase::IsCurrentStream(TUint aStreamId) const
+{
+    if (iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
+}
+
 void ProtocolOhBase::Interrupt(TBool aInterrupt)
 {
     iSocket.Interrupt(aInterrupt);

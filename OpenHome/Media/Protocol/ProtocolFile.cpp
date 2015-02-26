@@ -37,6 +37,8 @@ private: // from IProtocolReader
     void ReadInterrupt();
     Brn ReadRemaining();
 private:
+    TBool IsCurrentStream(TUint aStreamId) const;
+private:
     static const TUint kReadBufBytes = 9 * 1024;
     Mutex iLock;
     Supply* iSupply;
@@ -95,7 +97,7 @@ void ProtocolFile::Interrupt(TBool aInterrupt)
 
 ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
 {
-    iStreamId = 0;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStop = iSeek = false;
     iSeekPos = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
@@ -167,6 +169,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     iLock.Wait();
     iFileStream.CloseFile();
     iFileOpen = false;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
     if (contentProcessor != NULL) {
         contentProcessor->Reset();
@@ -182,7 +185,7 @@ ProtocolGetResult ProtocolFile::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, T
 TUint ProtocolFile::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     iLock.Wait();
-    const TBool streamIsValid = (iFileOpen && iProtocolManager->IsCurrentStream(aStreamId));
+    const TBool streamIsValid = IsCurrentStream(aStreamId);
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = (TUint32)aOffset;
@@ -199,7 +202,7 @@ TUint ProtocolFile::TrySeek(TUint aStreamId, TUint64 aOffset)
 TUint ProtocolFile::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = IsCurrentStream(aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStop = true;
@@ -240,4 +243,12 @@ void ProtocolFile::ReadInterrupt()
 Brn ProtocolFile::ReadRemaining()
 {
     return iReaderBuf.Snaffle();
+}
+
+TBool ProtocolFile::IsCurrentStream(TUint aStreamId) const
+{
+    if (!iFileOpen || iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
 }

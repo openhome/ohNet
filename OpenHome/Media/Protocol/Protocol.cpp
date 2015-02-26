@@ -313,7 +313,7 @@ void ProtocolManager::Add(Protocol* aProtocol)
 {
     LOG(kMedia, "ProtocolManager::Add(Protocol*)\n");
     iProtocols.push_back(aProtocol);
-    aProtocol->Initialise(*this, iIdProvider, iMsgFactory, *this, iFlushIdProvider);
+    aProtocol->Initialise(*this, iIdProvider, iMsgFactory, iDownstream, iFlushIdProvider);
 }
 
 void ProtocolManager::Add(ContentProcessor* aProcessor)
@@ -333,99 +333,9 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
     }
 }
 
-void ProtocolManager::Push(Msg* aMsg)
-{
-    Msg* msg = aMsg->Process(*this);
-    iDownstream.Push(msg);
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iLock.Wait();
-    iStreamId = aMsg->StreamId();
-    iLock.Signal();
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgHalt* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgFlush* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgWait* aMsg)
-{
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgSilence* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* ProtocolManager::ProcessMsg(MsgQuit* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)
 {
-    Push(iMsgFactory.CreateMsgTrack(aTrack));
+    iDownstream.Push(iMsgFactory.CreateMsgTrack(aTrack));
     ProtocolStreamResult res = Stream(aTrack.Uri());
     return res;
 }
@@ -480,10 +390,4 @@ TBool ProtocolManager::Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, T
         }
     }
     return (res == EProtocolGetSuccess);
-}
-
-TBool ProtocolManager::IsCurrentStream(TUint aStreamId) const
-{
-    AutoMutex _(iLock);
-    return (iStreamId == aStreamId);
 }

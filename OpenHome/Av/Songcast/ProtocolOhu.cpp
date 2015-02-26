@@ -254,7 +254,8 @@ void ProtocolOhu::Interrupt(TBool aInterrupt)
 TUint ProtocolOhu::TryStop(TUint aStreamId)
 {
     LOG(kSongcast, "OHU: TryStop()\n");
-    if (iProtocolManager->IsCurrentStream(aStreamId) && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
+    AutoMutex _(iMutexTransport);
+    if (IsCurrentStream(aStreamId)) {
         iLeaveLock.Wait();
         if (iActive) {
             iNextFlushId = iFlushIdProvider->NextFlushId();

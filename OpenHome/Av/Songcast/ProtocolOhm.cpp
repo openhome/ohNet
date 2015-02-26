@@ -155,7 +155,8 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
 
 TUint ProtocolOhm::TryStop(TUint aStreamId)
 {
-    if (iProtocolManager->IsCurrentStream(aStreamId) && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
+    AutoMutex _(iMutexTransport);
+    if (IsCurrentStream(aStreamId)) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;
         iSocket.ReadInterrupt();

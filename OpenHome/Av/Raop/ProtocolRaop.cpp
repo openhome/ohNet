@@ -53,6 +53,7 @@ void ProtocolRaop::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstrea
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
     iLockRaop.Wait();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iNextFlushId = MsgFlush::kIdInvalid;
     iWaiting = iResumePending = iStopped = false;
     iActive = true;
@@ -109,6 +110,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             // Resume normal operation.
         }
         else if (iStopped) {
+            iStreamId = IPipelineIdProvider::kStreamIdInvalid;
             iSupply->OutputFlush(iNextFlushId);
             iActive = false;
             iLockRaop.Signal();
@@ -275,7 +277,7 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
     TBool stop = false;
     iLockRaop.Wait();
     if (!iStopped && iActive) {
-        stop = iProtocolManager->IsCurrentStream(aStreamId);
+        stop = (iStreamId == aStreamId && aStreamId != IPipelineIdProvider::kStreamIdInvalid);
         if (stop) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
             iStopped = true;

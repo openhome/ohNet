@@ -62,7 +62,7 @@ void ProtocolTone::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstrea
 TUint ProtocolTone::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = (iStreamId == aStreamId && aStreamId != IPipelineIdProvider::kStreamIdInvalid);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStop = true;

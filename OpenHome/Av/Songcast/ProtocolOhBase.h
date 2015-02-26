@@ -39,6 +39,7 @@ protected:
     void SendJoin();
     void SendListen();
     void Send(TUint aType);
+    TBool IsCurrentStream(TUint aStreamId) const;
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
 protected: // from Media::Protocol
@@ -75,8 +76,8 @@ protected:
     Timer* iTimerListen;
     Media::BwsMode iMode;
     TUint iStreamId;
-private:
     Mutex iMutexTransport;
+private:
     Media::TrackFactory& iTrackFactory;
     IOhmTimestamper* iTimestamper;
     Brn iSupportedScheme;

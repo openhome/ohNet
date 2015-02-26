@@ -45,6 +45,7 @@ private:
     TBool Connect();
     ProtocolStreamResult DoStream();
     ProtocolGetResult DoGet(IWriter& aWriter, TUint64 aOffset, TUint aBytes);
+    TBool IsCurrentStream(TUint aStreamId) const;
 private:
     Mutex iLock;
     Supply* iSupply;
@@ -134,6 +135,7 @@ ProtocolStreamResult ProtocolHttps::Stream(const Brx& aUri)
     if (iStopped) {
         iSupply->OutputFlush(iNextFlushId);
     }
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iSocket.Close();
     iLock.Signal();
 
@@ -172,7 +174,7 @@ TUint ProtocolHttps::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 TUint ProtocolHttps::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -191,7 +193,7 @@ TBool ProtocolHttps::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, 
 {
     AutoMutex a(iLock);
     TBool success = false;
-    if (iProtocolManager->IsCurrentStream(aStreamId)) {
+    if (IsCurrentStream(aStreamId)) {
         success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
     }
     return success;
@@ -341,4 +343,12 @@ ProtocolGetResult ProtocolHttps::DoGet(IWriter& aWriter, TUint64 aOffset, TUint 
     }
 
     return EProtocolGetErrorUnrecoverable;
+}
+
+TBool ProtocolHttps::IsCurrentStream(TUint aStreamId) const
+{
+    if (iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
 }

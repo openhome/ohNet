@@ -42,10 +42,12 @@ void ProtocolRtsp::OutputStream() {
 ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
 {
     //iTcpClient.LogVerbose(true);
+    iLock.Wait();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStopped = false;
     iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);
+    iLock.Signal();
     LOG(kMedia, "ProtocolRtsp::Stream ");
     LOG(kMedia, iUri.AbsoluteUri());
     LOG(kMedia, "\n");
@@ -102,6 +104,12 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
             res = EProtocolStreamErrorUnrecoverable;
         }
     }
+    iLock.Wait();
+    if (iStopped) {
+        iSupply->OutputFlush(iNextFlushId);
+    }
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iLock.Signal();
     Close();
     return res;
 }
@@ -237,7 +245,7 @@ ProtocolStreamResult ProtocolRtsp::DoStream()
 TUint ProtocolRtsp::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = (iStreamId == aStreamId && aStreamId != IPipelineIdProvider::kStreamIdInvalid);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;
