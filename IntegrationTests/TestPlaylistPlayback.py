@@ -82,12 +82,12 @@ class Config:
 
         def _AddPlaylist( self, aTracks, aPlLen, aRepeat ):
             """Generate and add playlist to DUT"""
-            # event = threading.Event()
-            #
-            # # noinspection PyUnusedLocal
-            # def EventCb( aService, aSvName, aSvVal, aSvSeq ):
-            #     if aSvName == 'IdArray' and aSvVal not in [0,'0']:
-            #         event.set()
+            event = threading.Event()
+
+            # noinspection PyUnusedLocal
+            def EventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'IdArray' and aSvVal not in [0,'0']:
+                    event.set()
 
             if aPlLen == '@N':
                 self.plLen = random.randint( 8, 30 )
@@ -96,10 +96,10 @@ class Config:
             for i in range( self.plLen ):
                 playlist.append( aTracks[random.randint( 0, len( aTracks )-1)])
             self.dut.playlist.DeleteAllTracks()
-#            self.dut.playlist.AddSubscriber( EventCb )
+            self.dut.playlist.AddSubscriber( EventCb )
             self.dut.playlist.AddPlaylist( playlist )
-#            event.wait( 5 )
-#            self.dut.playlist.RemoveSubscriber( EventCb )
+            event.wait( 5 )
+            self.dut.playlist.RemoveSubscriber( EventCb )
             self.log.Info( self.dev, 'Added playlist of %d tracks' % self.plLen )
             self.repeat = aRepeat
             self.dut.playlist.repeat = self.repeat
@@ -138,7 +138,7 @@ class Config:
 
             # noinspection PyUnusedLocal
             def InfoEventCb( aService, aSvName, aSvVal, aSvSeq ):
-                if aSvName == 'Duration':
+                if aSvName == 'Duration' and aSvVal not in [0,'0']:
                     durationEvent.set()
 
             self.dut.info.AddSubscriber( InfoEventCb )
@@ -151,8 +151,9 @@ class Config:
                     if self.duration > 12:
                         self.secs = random.randint( 5, self.duration-12 )
                     else:
-                        self.log.Warn( self.dev, 'Invalid duration value' )
-                        self.secs = random.randint( 5, 95 )
+                        self.log.Fail( self.dev, 'Invalid track duration <%d>' % self.duration )
+                        self.duration = 100
+                        self.secs = random.randint( 5, 75 )
                 self.dut.time.AddSubscriber( TimeEventCb )
                 secondsEvent.clear()
                 self.dut.playlist.SeekSecondAbsolute( self.secs )
