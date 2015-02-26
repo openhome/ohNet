@@ -112,11 +112,11 @@ private:
     void EnsureSegmentIsReady();
 private:
     Environment& iEnv;
+    ISegmentUriProvider* iSegmentUriProvider;
     HttpReader iReader;
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint64 iOffset;
-    ISegmentUriProvider* iSegmentUriProvider;
     Semaphore iSem;
 };
 
@@ -435,10 +435,6 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
     // If it is relative, it is relative to URI of playlist that contains it.
     static const Brn kSchemeHttp("http");
 
-    Brn split(aSegmentUri.Ptr(), kSchemeHttp.Bytes());
-    split;
-
-
     if (aSegmentUri.Bytes() > kSchemeHttp.Bytes()
             && Brn(aSegmentUri.Ptr(), kSchemeHttp.Bytes()) == kSchemeHttp) {
         // Segment URI is absolute.
@@ -544,8 +540,7 @@ void SegmentStreamer::Close()
 void SegmentStreamer::GetNextSegment()
 {
     Uri segment;
-    TUint duration = iSegmentUriProvider->NextSegmentUri(segment);
-    duration;
+    /*TUint duration = */iSegmentUriProvider->NextSegmentUri(segment);
     iUri.Replace(segment.AbsoluteUri());
 
     iReader.Close();
