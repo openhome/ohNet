@@ -50,7 +50,8 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
                                     ,{"audio/x-ms-wma", "wma"}
                                     ,{"audio/aac", "aac"}
                                     ,{"video/x-ms-wmv", "wmvideo"}
-                                    ,{"application/ogg", "ogg"}};
+                                    ,{"application/ogg", "ogg"}
+                                    ,{"application/vnd.apple.mpegurl", "hls"}};  // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
     const TUint maxFormats = sizeof(kTypes)/sizeof(kTypes[0]);
     TBool first = true;
     for (TUint i=0; i<maxFormats; i++) {

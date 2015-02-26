@@ -11,6 +11,7 @@ class ContentProcessorFactory
 {
 public:
     static Media::ContentProcessor* NewM3u();
+    static Media::ContentProcessor* NewM3uX();
     static Media::ContentProcessor* NewPls();
     static Media::ContentProcessor* NewOpml();
     static Media::ContentProcessor* NewAsx();

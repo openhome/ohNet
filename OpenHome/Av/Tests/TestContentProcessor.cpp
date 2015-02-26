@@ -63,6 +63,17 @@ private:
     void TestParse();
 };
 
+class SuiteM3uX : public SuiteContent
+{
+public:
+    SuiteM3uX();
+private: // from Suite
+    void Test() override;
+private:
+    void TestRecognise();
+    void TestParse();
+};
+
 class SuiteOpml : public SuiteContent
 {
 public:
@@ -452,6 +463,21 @@ void SuiteM3u::TestRecognise()
     // content with dos line endings
     content.Set(kFile2);
     TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+
+    // Master Playlist M3U with #EXT-X- tags (i.e., an HLS M3U, aka M3UX for our purposes).
+    static const TChar* kFile3 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "http://example.com/low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "http://example.com/mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "http://example.com/hi.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
+        "http://example.com/audio-only.m3u8\n";
+    content.Set(kFile3);
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
 }
 
 void SuiteM3u::TestParse()
@@ -533,6 +559,218 @@ void SuiteM3u::TestParse()
     iInterrupt = false;
     TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 34) == EProtocolStreamSuccess); // 34 chars in complete lines read before interruption
     TEST(iIndex == 2);
+}
+
+
+// SuiteM3uX
+
+SuiteM3uX::SuiteM3uX()
+    : SuiteContent("M3uX tests")
+{
+    iProcessor = ContentProcessorFactory::NewM3uX();
+    iProcessor->Initialise(*this);
+}
+
+void SuiteM3uX::Test()
+{
+    TestRecognise();
+    TestParse();
+}
+
+void SuiteM3uX::TestRecognise()
+{
+    // Example playlists.
+    // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
+    // https://developer.apple.com/library/ios/technotes/tn2288/_index.html#//apple_ref/doc/uid/DTS40012238-CH1-BASIC_VARIANT_PLAYLIST
+
+    // recognition by MIME type
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/x-mpegurl"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/vnd.apple.mpegurl"), Brx::Empty()));
+
+    // recognition fails for bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/x-mpegurl"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/mpegurl"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brx::Empty()));
+
+    static const TChar* kFile1 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "http://example.com/low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "http://example.com/mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "http://example.com/hi.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
+        "http://example.com/audio-only.m3u8\n";
+
+    // recognition by MIME type + content
+    Brn content(kFile1);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/x-mpegurl"), content));
+
+    // recognition by content, no MIME
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+    // good content, bad MIME
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
+
+    // bad content, bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("playlist")));
+
+    static const TChar* kFile2 =
+        "#EXTM3U\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\r\n"
+        "http://example.com/low.m3u8\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\r\n"
+        "http://example.com/mid.m3u8\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\r\n"
+        "http://example.com/hi.m3u8\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\r\n"
+        "http://example.com/audio-only.m3u8\r\n";
+    // content with dos line endings
+    content.Set(kFile2);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+
+    // Should fail to recognise standard M3U file.
+    static const TChar* kFile3 =
+        "#EXTM3U\n"
+        "\n"
+        "#EXTINF:123,Sample title\n"
+        "C:\\Documents and Settings\\I\\My Music\\Sample.mp3\n"
+        "\n"
+        "#EXTINF:321,Example title\n"
+        "C:\\Documents and Settings\\I\\My Music\\Greatest Hits\\Example.ogg";
+    content.Set(kFile3);
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+}
+
+void SuiteM3uX::TestParse()
+{
+    iInterruptBytes = 0;
+
+    // standard file with unix line endings and desired stream first
+    static const TChar* kFile1 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
+        "http://example.com/audio-only.m3u8\n";
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "http://example.com/low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "http://example.com/mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "http://example.com/hi.m3u8\n";
+    FileBrx file1(kFile1);
+    iFileStream.SetFile(&file1);
+    const char* expected1[] = {"hls://example.com/audio-only.m3u8"};
+    iExpectedStreams = expected1;
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // standard file with unix line endings and desired stream last
+    static const TChar* kFile2 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "http://example.com/low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "http://example.com/mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "http://example.com/hi.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
+        "http://example.com/audio-only.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file2(kFile2);
+    iFileStream.SetFile(&file2);
+    const char* expected2[] = {"hls://example.com/audio-only.m3u8"};
+    iExpectedStreams = expected2;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // standard file with unix line endings and no CODECS attribute for variants
+    static const TChar* kFile3 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "http://example.com/low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "http://example.com/mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "http://example.com/hi.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file3(kFile3);
+    iFileStream.SetFile(&file3);
+    const char* expected3[] = {"hls://example.com/hi.m3u8"};
+    iExpectedStreams = expected3;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // same file with dos line endings
+    static const TChar* kFile4 =
+        "#EXTM3U\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\r\n"
+        "http://example.com/low.m3u8\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\r\n"
+        "http://example.com/mid.m3u8\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\r\n"
+        "http://example.com/hi.m3u8\r\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\r\n"
+        "http://example.com/audio-only.m3u8\r\n";
+
+    iProcessor->Reset();
+    FileBrx file4(kFile4);
+    iFileStream.SetFile(&file4);
+    iExpectedStreams = expected1;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // file with no line endings should fail to be processed
+    static const TChar* kFile5 =
+        "#EXTM3U"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000"
+        "http://example.com/low.m3u8"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000"
+        "http://example.com/mid.m3u8"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000"
+        "http://example.com/hi.m3u8"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\""
+        "http://example.com/audio-only.m3u8";
+
+    iProcessor->Reset();
+    FileBrx file5(kFile5);
+    iFileStream.SetFile(&file5);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorUnrecoverable);
+
+    // processor passes on EProtocolStreamStopped errors
+    iProcessor->Reset();
+    file1.Seek(0);
+    iFileStream.SetFile(&file1);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iNextResult = EProtocolStreamStopped;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
+
+    // interrupt mid-way through then resume
+    iProcessor->Reset();
+    iReadBuffer->ReadFlush();
+    iFileStream.Seek(0);
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    static const TUint kInterruptBytes = 80; // part way through a [url] line
+    iInterruptBytes = kInterruptBytes;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
+    iInterrupt = false;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 70) == EProtocolStreamSuccess); // 70 chars in complete lines read before interruption
+    TEST(iIndex == 1);
 }
 
 
@@ -911,6 +1149,7 @@ void TestContentProcessor()
     Runner runner("Content Processor tests\n");
     runner.Add(new SuitePls());
     runner.Add(new SuiteM3u());
+    runner.Add(new SuiteM3uX());
     runner.Add(new SuiteOpml());
     runner.Add(new SuiteAsx());
     runner.Run();

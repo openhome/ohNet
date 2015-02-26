@@ -104,6 +104,8 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     }
     iPipeline.Add(ContentProcessorFactory::NewM3u());
     iPipeline.Add(ContentProcessorFactory::NewM3u());
+    iPipeline.Add(ContentProcessorFactory::NewM3uX());
+    iPipeline.Add(ContentProcessorFactory::NewM3uX());
     iPipeline.Add(ContentProcessorFactory::NewPls());
     iPipeline.Add(ContentProcessorFactory::NewPls());
     iPipeline.Add(ContentProcessorFactory::NewOpml());
