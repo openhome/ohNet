@@ -80,14 +80,12 @@ private:
     // FIXME - could have some intelligent logic to limit retries
     // e.g. in addition to waiting for, at the minimum, the target duration (or half target duration if playlist has not changed), could instead choose:
     // max(targetDuration, sum(newSegmentDurations)-targetDuration);
-    Environment& iEnv;
     ITimer& iTimer;
     HttpReader iReader;
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint64 iOffset;
     TUint iVersion;
-    TUint64 iMediaSequence;
     TUint64 iLastSegment;
     TUint iTargetDuration;
     Brn iNextLine;
@@ -111,7 +109,6 @@ private:
     void GetNextSegment();
     void EnsureSegmentIsReady();
 private:
-    Environment& iEnv;
     ISegmentUriProvider* iSegmentUriProvider;
     HttpReader iReader;
     OpenHome::Uri iUri;
@@ -212,12 +209,10 @@ void TimerGeneric::TimerFired()
 // HlsM3uReader
 
 HlsM3uReader::HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer)
-    : iEnv(aEnv)
-    , iTimer(aTimer)
+    : iTimer(aTimer)
     , iReader(aEnv, aUserAgent)
     , iTotalBytes(0)
     , iVersion(1)
-    , iMediaSequence(0)
     , iLastSegment(0)
     , iTargetDuration(0)
     , iSem("HMRS", 0)
@@ -473,8 +468,7 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
 // SegmentStreamer
 
 SegmentStreamer::SegmentStreamer(Environment& aEnv, const Brx& aUserAgent)
-    : iEnv(aEnv)
-    , iSegmentUriProvider(NULL)
+    : iSegmentUriProvider(NULL)
     , iReader(aEnv, aUserAgent)
     , iTotalBytes(0)
     , iOffset(0)
