@@ -60,7 +60,6 @@ TBool MpegTs::Recognise(Brx& aBuf)
     TBool adaptationField = false;
     TUint adaptationFieldBytes = 0;
     if ((aBuf[3] & 0x20) != 0x00) {// && iStreamPid != 0 && pid == iStreamPid) {
-        // Don't handle adaptation field.
         adaptationField = true;
     }
 
@@ -124,7 +123,7 @@ TBool MpegTs::Recognise(Brx& aBuf)
 Msg* MpegTs::ProcessMsg(MsgEncodedStream* aMsg)
 {
     Msg* msg = ContainerBase::ProcessMsg(aMsg);
-    iTotalSize = 0; // FIXME - is this right? is MsgEncodedStream received before or after Recognise()?
+    iTotalSize = 0;
     iPacketBytes = 0;
     iProgramMapPid = 0;
     iStreamPid = 0;
@@ -133,14 +132,13 @@ Msg* MpegTs::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    // FIXME - need to monitor for next packet coming through
-    // also need to be able to resync if sync lost
+    // FIXME - does not currently attempt to find sync word.
+    // Current use does not extend beyond file-based streams with a predictable sync-start.
 
     MsgAudioEncoded* unpacked = NULL;
-    AddToAudioEncoded(aMsg); // FIXME - is this right?
+    AddToAudioEncoded(aMsg);
 
     if (!iPulling) {
-        //AddToAudioEncoded(aMsg); // FIXME - is this right?
         TBool packetsRemaining = true;
 
         while (packetsRemaining) {
@@ -174,10 +172,7 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                 unpack = true;
             }
             else {
-                // Remaining audio belongs to current packet (but does not complete current packet).
-
-                // iPacketBytes != 0 && iPacketBytes+iAudioEncoded.Bytes() < kPacketBytes
-
+                // Remaining audio belongs to current packet (but does not complete current packet
                 iPacketBytes += iAudioEncoded->Bytes();
                 if (unpacked == NULL) {
                     unpacked = iAudioEncoded;
@@ -189,11 +184,8 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
             }
 
             if (unpack) {
-                // FIXME - only want to try recognise when we expect next packet (otherwise, should try resync - so probably buffer at least 188 bytes)
                 iBuf.SetBytes(0);
                 Read(iBuf, kRecogniseBytes);
-                //if (iBuf.Bytes() != kRecogniseBytes) {
-                //    THROW(CodecStreamCorrupt);
 
                 if (iBuf.Bytes() == kRecogniseBytes) {
                     TBool recognised = Recognise(iBuf);
