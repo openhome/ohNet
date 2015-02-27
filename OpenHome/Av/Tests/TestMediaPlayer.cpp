@@ -227,11 +227,14 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
     // Add protocol modules (Radio source can require several stacked Http instances)
+    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
+
     // only add Tidal if we have credible login details
     if (iTidalId.Bytes() > 0) {
         iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));

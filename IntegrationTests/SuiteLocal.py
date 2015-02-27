@@ -69,7 +69,7 @@ tests = [
     [ 'TestRadioPlayChannels',       'local', 'local', radio4,  10,      'on',   1                                        ],
 
     # Tidal
-    [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off',  100,      tidalId,   tidalUser, tidalPwd ],
+    [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off',  120,      tidalId,   tidalUser, tidalPwd ],
     [ 'TestTidalDropout',            'local', 'local', 'local', 3600,    20,     tidalId,  tidalUser, tidalPwd            ],
 
     # Airplay

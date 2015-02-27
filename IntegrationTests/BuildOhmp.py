@@ -18,7 +18,8 @@ kExcludes = ['TestUpnpErrors',
              'Test 3: InsertFailsWhenFull',
              'Test 15: GetTrackByInvalidIdFails',
              'Test 9: TestPlayNoAfterNotifyFailed',
-             'Failed to recognise audio format (iStreamStopped=0, iExpectedFlushId=0)',
+             'Test 8: TestSeekForwardFailStillSeeks',
+             'Failed to recognise audio format (iStreamStopped',
              'Upnp error reporting tests',
              '0 of']
 
