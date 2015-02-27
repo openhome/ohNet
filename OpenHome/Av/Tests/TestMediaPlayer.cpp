@@ -227,8 +227,8 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
     // Add protocol modules (Radio source can require several stacked Http instances)
-    //iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
-    //iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));

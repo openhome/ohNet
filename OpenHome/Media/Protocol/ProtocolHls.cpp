@@ -80,14 +80,12 @@ private:
     // FIXME - could have some intelligent logic to limit retries
     // e.g. in addition to waiting for, at the minimum, the target duration (or half target duration if playlist has not changed), could instead choose:
     // max(targetDuration, sum(newSegmentDurations)-targetDuration);
-    Environment& iEnv;
     ITimer& iTimer;
     HttpReader iReader;
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint64 iOffset;
     TUint iVersion;
-    TUint64 iMediaSequence;
     TUint64 iLastSegment;
     TUint iTargetDuration;
     Brn iNextLine;
@@ -106,18 +104,16 @@ public: // from IProtocolReader
     Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
-    TUint ReadCapacity() const override;
     Brn ReadRemaining() override;
 private:
     void GetNextSegment();
     void EnsureSegmentIsReady();
 private:
-    Environment& iEnv;
+    ISegmentUriProvider* iSegmentUriProvider;
     HttpReader iReader;
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint64 iOffset;
-    ISegmentUriProvider* iSegmentUriProvider;
     Semaphore iSem;
 };
 
@@ -140,6 +136,7 @@ private: // from IStreamHandler
 private:
     void Reinitialise();
     void StartStream(const Uri& aUri);
+    TBool IsCurrentStream(TUint aStreamId) const;
 private:
     Supply* iSupply;
     TimerGeneric iTimer;
@@ -212,12 +209,10 @@ void TimerGeneric::TimerFired()
 // HlsM3uReader
 
 HlsM3uReader::HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer)
-    : iEnv(aEnv)
-    , iTimer(aTimer)
+    : iTimer(aTimer)
     , iReader(aEnv, aUserAgent)
     , iTotalBytes(0)
     , iVersion(1)
-    , iMediaSequence(0)
     , iLastSegment(0)
     , iTargetDuration(0)
     , iSem("HMRS", 0)
@@ -435,10 +430,6 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
     // If it is relative, it is relative to URI of playlist that contains it.
     static const Brn kSchemeHttp("http");
 
-    Brn split(aSegmentUri.Ptr(), kSchemeHttp.Bytes());
-    split;
-
-
     if (aSegmentUri.Bytes() > kSchemeHttp.Bytes()
             && Brn(aSegmentUri.Ptr(), kSchemeHttp.Bytes()) == kSchemeHttp) {
         // Segment URI is absolute.
@@ -477,8 +468,7 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
 // SegmentStreamer
 
 SegmentStreamer::SegmentStreamer(Environment& aEnv, const Brx& aUserAgent)
-    : iEnv(aEnv)
-    , iSegmentUriProvider(NULL)
+    : iSegmentUriProvider(NULL)
     , iReader(aEnv, aUserAgent)
     , iTotalBytes(0)
     , iOffset(0)
@@ -518,11 +508,6 @@ void SegmentStreamer::ReadInterrupt()
     iReader.ReadInterrupt();
 }
 
-TUint SegmentStreamer::ReadCapacity() const
-{
-    return iReader.ReadCapacity();
-}
-
 Brn SegmentStreamer::ReadRemaining()
 {
     Brn buf = iReader.ReadRemaining();
@@ -549,8 +534,7 @@ void SegmentStreamer::Close()
 void SegmentStreamer::GetNextSegment()
 {
     Uri segment;
-    TUint duration = iSegmentUriProvider->NextSegmentUri(segment);
-    duration;
+    /*TUint duration = */iSegmentUriProvider->NextSegmentUri(segment);
     iUri.Replace(segment.AbsoluteUri());
 
     iReader.Close();
@@ -734,7 +718,7 @@ TUint ProtocolHls::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 TUint ProtocolHls::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -775,4 +759,12 @@ void ProtocolHls::StartStream(const Uri& aUri)
     iStreamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(aUri.AbsoluteUri(), totalBytes, seekable, live, *this, iStreamId);
     iStarted = true;
+}
+
+TBool ProtocolHls::IsCurrentStream(TUint aStreamId) const
+{
+    if (iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
 }
