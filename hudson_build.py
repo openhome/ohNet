@@ -35,7 +35,7 @@ class PostActions():
             print ret
             sys.exit(10)
 
-    def arm_tests(self,type,release):
+    def armel_tests(self,type,release):
         # type will be either 'nightly' or 'commit'
         # release will be either '0' or '1'
         rem = remote()
@@ -59,6 +59,10 @@ class PostActions():
         if ret != 0:
             print ret
             sys.exit(10)
+
+    # TODO
+    def armhf_tests(self,type,release):
+        pass
     
 class JenkinsBuild():
     def get_options(self):
@@ -69,7 +73,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-x86, Qnap-x86, Qnap-armel")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-x86, Qnap-x86, Qnap-armel")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -112,6 +116,7 @@ class JenkinsBuild():
                 'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
+                'Linux-armhf': { 'os': 'linux', 'arch': 'armhf', 'publish':True, 'system':'Linux'},
                 'iOs-ARM': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'}, # Old Jenkins label
                 'iOs-x86': { 'os': 'iOs', 'arch':'x86', 'publish':True, 'system':'iOs'},
                 'iOs-armv7': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'},
@@ -138,6 +143,8 @@ class JenkinsBuild():
             os.environ['CS_PLATFORM'] = 'x64'
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
+        if os_platform == 'linux' and arch == 'armhf':
+	        os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'Core' and arch == 'ppc32':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
         if os_platform == 'Core' and (arch == 'armv5' or arch == 'armv6'):
@@ -310,11 +317,17 @@ class JenkinsBuild():
                 postAction.valgrind_parse()
                 postAction.gen_docs()
 
-            if os_platform == 'linux' and arch in ['armel', 'armhf']:
-                postAction.arm_tests('nightly', release)
+            if os_platform == 'linux':
+                if arch == 'armel':
+                    postAction.armel_tests('nightly', release)
+                if arch == 'armhf':
+                    postAction.armhf_tests('nightly', release)
         else:
-            if os_platform == 'linux' and arch in ['armel', 'armhf']:
-                postAction.arm_tests('commit', release)
+            if os_platform == 'linux':
+                if arch == 'armel':
+                    postAction.armel_tests('commit', release)
+                if arch == 'armhf':
+                    postAction.armhf_tests('commit', release)
         if self.platform['publish'] and release == '1':
             self.do_release()
 
