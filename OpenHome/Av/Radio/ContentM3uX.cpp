@@ -46,6 +46,8 @@ private: // from ContentProcessor
     void Reset() override;
     Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
 private:
+    TUint iBandwidth;
+    TBool iIsAudio;
     TBool iCacheNextUri;
     Bws<Uri::kMaxUriBytes> iUriHls;
 };
@@ -86,6 +88,8 @@ TBool ContentM3uX::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Br
 void ContentM3uX::Reset()
 {
     ContentProcessor::Reset();
+    iBandwidth = 0;
+    iIsAudio = false;
     iCacheNextUri = false;
     iUriHls.SetBytes(0);
 }
@@ -99,8 +103,6 @@ ProtocolStreamResult ContentM3uX::Stream(IProtocolReader& aReader, TUint64 aTota
 
     TUint64 bytesRemaining = aTotalBytes;
     try {
-        TUint bandwidth = 0;
-        TBool isAudio = false;
         for (;;) {
             Brn line = ReadLine(aReader, bytesRemaining);
             if (line.Bytes() == 0) {// || line.BeginsWith(Brn("#"))) {
@@ -133,20 +135,21 @@ ProtocolStreamResult ContentM3uX::Stream(IProtocolReader& aReader, TUint64 aTota
                     }
                 }
 
-                if (attribAudio && !isAudio) {
+                if (attribAudio && !iIsAudio) {
                     // Haven't found an audio-only stream yet, so cache it.
                     iCacheNextUri = true;
-                    isAudio = true;
+                    iBandwidth = attribBandwidth;
+                    iIsAudio = true;
                 }
-                else if (attribAudio && attribBandwidth > bandwidth) {
+                else if (attribAudio && attribBandwidth > iBandwidth) {
                     // Found higher-bandwidth audio-only stream, so cache it.
                     iCacheNextUri = true;
-                    bandwidth = attribBandwidth;
+                    iBandwidth = attribBandwidth;
                 }
-                else if (attribBandwidth > bandwidth) {
+                else if (!iIsAudio && attribBandwidth > iBandwidth) {
                     // Not explicitly an audio-only stream, but higher-bandwidth than existing, so cache it.
                     iCacheNextUri = true;
-                    bandwidth = attribBandwidth;
+                    iBandwidth = attribBandwidth;
                 }
             }
             else if (iCacheNextUri && (prefix == Brn("http") || prefix == Brn("HTTP"))) {
