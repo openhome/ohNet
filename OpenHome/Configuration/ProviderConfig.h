@@ -18,7 +18,6 @@ public: // from IKeyWriter
     void WriteKeys(const std::vector<const Brx*>& aKeys);
 private:
     IWriter& iWriter;
-    Av::JsonStringSanitiser iJsonSanitiser;
 };
 
 class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguration1, public Av::IProvider

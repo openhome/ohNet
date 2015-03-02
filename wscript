@@ -605,6 +605,7 @@ def build(bld):
                 'OpenHome/Tests/TestSsl.cpp',
                 'OpenHome/Av/Tests/TestCredentials.cpp',
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
+                'OpenHome/Av/Tests/TestJson.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -853,6 +854,11 @@ def build(bld):
             source='OpenHome/Av/Tidal/TestTidal.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestTidal',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Av/Tests/TestJsonMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestJson',
             install_path=None)
 
 

@@ -46,6 +46,7 @@ tests = '''
     TestPowerManager
     TestWaiter
     TestUriProviderRepeater
+    TestJson
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()

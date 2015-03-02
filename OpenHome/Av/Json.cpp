@@ -6,95 +6,122 @@
 using namespace OpenHome;
 using namespace Av;
 
-// JsonStringSanitiser
 
-JsonStringSanitiser::JsonStringSanitiser(IWriter& aWriter)
-    : iWriter(aWriter)
-{
-}
+// see RFC4627 - http://www.ietf.org/rfc/rfc4627.txt
 
-void JsonStringSanitiser::Write(TByte aValue)
-{
-    WriteSanitised(aValue);
-}
+const Brn Json::kEscapedDoubleQuote("\\\"");
+const Brn Json::kEscapedBackslash("\\\\");
+const Brn Json::kEscapedForwardSlash("\\/");
+const Brn Json::kEscapedBackspace("\\b");
+const Brn Json::kEscapedFormfeed("\\f");
+const Brn Json::kEscapedNewline("\\n");
+const Brn Json::kEscapedLinefeed("\\r");
+const Brn Json::kEscapedTab("\\t");
 
-void JsonStringSanitiser::Write(const Brx& aBuffer)
+void Json::Escape(IWriter& aWriter, const Brx& aValue)
 {
-    iWriter.Write(Brn("\""));
-    for (TUint i=0; i<aBuffer.Bytes(); i++) {
-        WriteSanitised(aBuffer[i]);
+    // FIXME - no support for multi-byte chars
+    const TUint bytes = aValue.Bytes();
+    for (TUint i=0; i<bytes; i++) {
+        TByte ch = aValue[i];
+        switch (ch)
+        {
+        case '\"':
+            aWriter.Write(kEscapedDoubleQuote);
+            break;
+        case '\\':
+            aWriter.Write(kEscapedBackslash);
+            break;
+        case '/':
+            aWriter.Write(kEscapedForwardSlash);
+            break;
+        case '\b':
+            aWriter.Write(kEscapedBackspace);
+            break;
+        case '\f':
+            aWriter.Write(kEscapedFormfeed);
+            break;
+        case '\n':
+            aWriter.Write(kEscapedNewline);
+            break;
+        case '\r':
+            aWriter.Write(kEscapedLinefeed);
+            break;
+        case '\t':
+            aWriter.Write(kEscapedTab);
+            break;
+        default:
+            if (ch > 0x1F) {
+                aWriter.Write(ch);
+            }
+            else {
+                Bws<6> hexBuf("\\u00");
+                Ascii::AppendHex(hexBuf, ch);
+                aWriter.Write(hexBuf);
+            }
+            break;
+        }
     }
-    iWriter.Write(Brn("\""));
 }
 
-
-void JsonStringSanitiser::WriteFlush()
+void Json::Unescape(Bwx& aValue)
 {
-    iWriter.WriteFlush();
-}
-
-void JsonStringSanitiser::WriteSanitised(TByte aByte)
-{
-    // According to RFC4627 (http://www.ietf.org/rfc/rfc4627.txt),
-    // quotation mark ("), reverse solidus (/), or any control character
-    // (U+0000 through U+001F) must be escaped.
-    //
-    // The char ranges that aren't required to be escaped are:
-    // unescaped = %x20-21 / %x23-5B / %x5D-10FFFF.
-    // Therefore, the char ranges that must be escaped are:
-    // escaped = %x00-1F / %x22 / %x5C.
-
-    // JSON allows compact escaping for certain chars.
-    // Try identify such chars first.
-    switch (aByte)
-    {
-    case '"':
-        iWriter.Write(Brn("\\\""));     // %x22
-        return;
-    case '\\':
-        iWriter.Write(Brn("\\\\"));     // %x5C
-        return;
-    case '/':
-        iWriter.Write(Brn("\\/"));
-        return;
-    case '\b':
-        iWriter.Write(Brn("\\b"));
-        return;
-    case '\f':
-        iWriter.Write(Brn("\\f"));
-        return;
-    case '\n':
-        iWriter.Write(Brn("\\n"));
-        return;
-    case '\r':
-        iWriter.Write(Brn("\\r"));
-        return;
-    case '\t':
-        iWriter.Write(Brn("\\t"));
-        return;
-    default:
-        // Break out of switch statement.
-        break;
-    }
-
-    // Haven't identified a char where a compact escape sequence exists.
-    // Remaining chars that must be escaped exist in range %x00-1F.
-    // These must be represented as "\uXXXX", where X is a hex digit.
-    if (aByte >= 0x00 && aByte <= 0x1F) {
-        static const TUint kPrefixBytes = 2; // "\u"
-        static const TUint kHexDigitsReq = 4;
-        Bws<kPrefixBytes+kHexDigitsReq> hexBuf("\\u");
-        if (aByte <= 9) {
-            hexBuf.Append("000");
+    TUint j = 0;
+    const TUint bytes = aValue.Bytes();
+    for (TUint i=0; i<bytes; i++) {
+        TByte ch = aValue[i];
+        if (ch != '\\') {
+            aValue[j++] = ch;
         }
         else {
-            hexBuf.Append("00");
+            if (++i == bytes) {
+                THROW(JsonInvalid);
+            }
+            ch = aValue[i];
+            switch (aValue[i])
+            {
+            case '\"':
+                aValue[j++] = '\"';
+                break;
+            case '\\':
+                aValue[j++] = '\\';
+                break;
+            case '/':
+                aValue[j++] = '/';
+                break;
+            case 'b':
+                aValue[j++] = '\b';
+                break;
+            case 'f':
+                aValue[j++] = '\f';
+                break;
+            case 'n':
+                aValue[j++] = '\n';
+                break;
+            case 'r':
+                aValue[j++] = '\r';
+                break;
+            case 't':
+                aValue[j++] = '\t';
+                break;
+            case 'u':
+            {
+                if (i+4 >= bytes) {
+                    THROW(JsonInvalid);
+                }
+                Brn hexBuf = aValue.Split(i+1, 4);
+                i += 4;
+                const TUint hex = Ascii::UintHex(hexBuf);
+                if (hex > 0xFF) {
+                    THROW(JsonUnsupported);
+                }
+                aValue[j++] = (TByte)hex;
+            }
+                break;
+            default:
+                THROW(JsonInvalid);
+            }
         }
-        Ascii::AppendDec(hexBuf, aByte);
-        iWriter.Write(hexBuf);
-        return;
     }
-
-    // Haven't found a char that must be escaped. Safe to output as-is.
-    iWriter.Write(aByte);
+    aValue.SetBytes(j);
 }
