@@ -107,7 +107,7 @@ class BasePlayTracks( BASE.BaseTest ):
         if self.shuffle.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
 
-        if self.playTime <= kNotPlayedThreshold:
+        if self.playTime is not None and self.playTime <= kNotPlayedThreshold:
             self.log.Abort( '', 'Minimum value for time-to-play is %ds' % (kNotPlayedThreshold+1) )
 
         # start local softplayer(s) as required
