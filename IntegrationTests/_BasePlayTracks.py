@@ -476,11 +476,11 @@ class BasePlayTracks( BASE.BaseTest ):
     def _SenderPlayTime( self ):
         """Return track duration reported by sender (with a retry...)"""
         self.senderDuration.clear()
-        duration = self.sender.time.duration
+        duration = int( self.sender.time.duration )
         if duration == 0:
             self.senderDuration.wait( 3 )
             if self.senderDuration.is_set():
-                duration = self.sender.time.duration
+                duration = int( self.sender.time.duration )
         if duration == 0:
             self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
         return duration
