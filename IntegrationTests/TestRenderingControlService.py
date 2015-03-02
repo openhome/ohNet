@@ -63,8 +63,10 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.VolStepping( targetVol )
         
         # test volume DB control / monitoring
-        targetVol = random.randint( self.rc.volumeDbRange['MinValue'], self.rc.volumeDbRange['MaxValue'] )
-        self.VolDbStepping( targetVol )
+        volRange = self.rc.volumeDbRange
+        if volRange is not None:
+            targetVol = random.randint( volRange['MinValue'], volRange['MaxValue'] )
+            self.VolDbStepping( targetVol )
         
         # test mute control / monitoring
         self.Mute( 15 )

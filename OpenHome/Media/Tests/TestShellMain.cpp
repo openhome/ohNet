@@ -45,6 +45,7 @@ SIMPLE_TEST_DECLARATION(TestTimestampInspector);
 SIMPLE_TEST_DECLARATION(TestUriProviderRepeater);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
 SIMPLE_TEST_DECLARATION(TestWaiter);
+SIMPLE_TEST_DECLARATION(TestJson);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
 ENV_TEST_DECLARATION(TestSsl);
@@ -105,6 +106,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
     shellTests.push_back(ShellTest("TestUdpServer", ShellTestUdpServer));
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
+    shellTests.push_back(ShellTest("TestJson", ShellTestJson));
     shellTests.push_back(ShellTest("TestCredentials", ShellTestCredentials));
 
     OpenHome::Media::ExecuteTestShell(aInitParams, shellTests);

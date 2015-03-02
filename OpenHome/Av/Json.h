@@ -2,26 +2,29 @@
 #define HEADER_JSON
 
 #include <OpenHome/Types.h>
-#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Private/Stream.h>
+#include <OpenHome/Exception.h>
+
+EXCEPTION(JsonInvalid);
+EXCEPTION(JsonUnsupported);
 
 namespace OpenHome {
     class IWriter;
 namespace Av{
 
-class JsonStringSanitiser : public IWriter, public INonCopyable
+class Json
 {
+    static const Brn kEscapedDoubleQuote;
+    static const Brn kEscapedBackslash;
+    static const Brn kEscapedForwardSlash;
+    static const Brn kEscapedBackspace;
+    static const Brn kEscapedFormfeed;
+    static const Brn kEscapedNewline;
+    static const Brn kEscapedLinefeed;
+    static const Brn kEscapedTab;
 public:
-    JsonStringSanitiser(IWriter& aWriter);
-public: // from IWriter
-    void Write(TByte aValue) override;
-    void Write(const Brx& aBuffer) override;
-    void WriteFlush() override;
-private:
-    void WriteSanitised(TByte aByte);
-private:
-    IWriter& iWriter;
+    static void Escape(IWriter& aWriter, const Brx& aValue);
+    static void Unescape(Bwx& aValue); // converts in place
 };
 
 } // namespace Av

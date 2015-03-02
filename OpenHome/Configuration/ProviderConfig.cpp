@@ -20,7 +20,6 @@ IProvider* ProviderFactory::NewConfiguration(Product& aProduct, DvDevice& aDevic
 
 KeyWriterJson::KeyWriterJson(IWriter& aWriter)
     : iWriter(aWriter)
-    , iJsonSanitiser(iWriter)
 {
 }
 
@@ -29,7 +28,9 @@ void KeyWriterJson::WriteKeys(const std::vector<const Brx*>& aKeys)
     iWriter.Write('[');
     auto it = aKeys.cbegin();
     for (;;) {
-        iJsonSanitiser.Write(**it);
+        iWriter.Write(Brn("\""));
+        Json::Escape(iWriter, **it);
+        iWriter.Write(Brn("\""));
         ++it;
 
         if (it != aKeys.cend()) {
