@@ -60,6 +60,11 @@ void SuiteJsonEncode::Test()
         Bws<1> ch(&b, 1);
         Json::Escape(*this, ch);
         TEST(iEncoded.Bytes() > 1);
+        if (iEncoded.Bytes() > 2) {
+            Brn start(iEncoded.Ptr(), 2);
+            TEST(start == Brn("\\u"));
+            TEST(Ascii::UintHex(iEncoded.Split(2)) == i);
+        }
     }
     // with very few exceptions, characters above 0x1F should not be encded
     for (TUint i=32; i<256; i++) {
