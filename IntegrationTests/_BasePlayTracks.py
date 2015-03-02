@@ -253,7 +253,7 @@ class BasePlayTracks( BASE.BaseTest ):
         currIdTime = time.time()
         if currIdTime-self.lastIdTime < kNotPlayedThreshold:
             # less than Ns between ID events - assume previous track skipped
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % self.numTrack )
+            self.log.Fail( self.senderDev, '[1] Track %d did NOT play' % self.numTrack )
         elif self.expectedPlayTime:
             loLim = self.expectedPlayTime-1
             hiLim = self.expectedPlayTime+1
@@ -499,7 +499,7 @@ class BasePlayTracks( BASE.BaseTest ):
                 timeout = True
 
         if timeout:
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+            self.log.Fail( self.senderDev, '[2] Track %d did NOT play' % (self.numTrack-1) )
             self.sender.playlist.Next()
         elif self.idUpdated.is_set():
             pass
