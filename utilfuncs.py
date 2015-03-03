@@ -113,6 +113,8 @@ def configure_toolchain(conf):
         else:
             conf.env.append_value('CXXFLAGS', ['-std=c++0x', '-D__STDC_VERSION__=199901L'])
             conf.env.append_value('LINKFLAGS', '-Wl,--fatal-warnings')
+        # Enable exceptions for all C code
+        conf.env.append_value('CFLAGS', ['-fexceptions'])
         # Don't enable warnings for C code as its typically third party and written to different standards
         conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-Werror'])
