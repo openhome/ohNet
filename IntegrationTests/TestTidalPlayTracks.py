@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""TestTidalPlayTracks - test Playing of Tidal served tracks.
+"""TestTidalPlayTracks - test Playing of TIDAL served tracks.
 
 Parameters:
     arg#1 - Sender DUT ['local' for internal SoftPlayer on loopback]
@@ -12,7 +12,7 @@ Parameters:
     arg#8 - Tidal username
     arg#9 - Tidal password
 
-Test test which plays Tidal served tracks from a playlist sequentially. The tracks
+Test test which plays TIDAL served tracks from a playlist sequentially. The tracks
 may be played for their entirety or any specified length of time. Repeat and shuffle
 modes may be selected
 """
@@ -49,7 +49,7 @@ kTidalTracks = [
 
 
 class TestTidalPlayTracks( BASE.BasePlayTracks ):
-    """Test playing of UPnP Media Server served tracks"""
+    """Test playing of TIDAL served tracks"""
 
     def __init__( self ):
         """Constructor - initialise base class"""
@@ -99,7 +99,7 @@ class TestTidalPlayTracks( BASE.BasePlayTracks ):
         time.sleep( 1 )
         err = self.sender.credentials.Status( kTidalCreds )
         if err:
-            self.log.Abort( 'Tidal', '%s' % err )
+            self.log.Abort( 'Tidal', 'Login error: %s' % err )
         else:
             self.sender.credentials.SetEnabled( kTidalCreds, True )
             self.log.Pass( self.senderDev, 'Logged into TIDAL' )
