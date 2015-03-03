@@ -9,6 +9,11 @@
 
 #include <algorithm>
 
+EXCEPTION(HlsVariantPlaylistError);
+EXCEPTION(HlsEndOfStream);
+EXCEPTION(HlsSegmentError);
+
+
 namespace OpenHome {
 namespace Media {
 
@@ -40,6 +45,7 @@ class ISegmentUriProvider
 {
 public:
     virtual TUint NextSegmentUri(Uri& aUri) = 0;    // returns segment duration (in milliseconds)
+                                                    // THROWS HlsVariantPlaylistError, HlsEndOfStream.
     virtual ~ISegmentUriProvider() {}
 };
 
@@ -86,9 +92,8 @@ private:
 class SegmentStreamer : public IProtocolReader
 {
 public:
-    SegmentStreamer(Environment& aEnv, const Brx& aUserAgent);
+    SegmentStreamer(IHttpSocket& aSocket, IReaderBuffered& aReader);
     void Stream(ISegmentUriProvider& aSegmentUriProvider);
-    void Interrupt();
     void Close();
 public: // from IProtocolReader
     Brn Read(TUint aBytes) override;
@@ -100,12 +105,14 @@ private:
     void GetNextSegment();
     void EnsureSegmentIsReady();
 private:
+    IHttpSocket& iSocket;
+    IReaderBuffered& iReader;
     ISegmentUriProvider* iSegmentUriProvider;
-    HttpReader iReader;
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint64 iOffset;
-    Semaphore iSem;
+    TBool iInterrupted;
+    Mutex iLock;
 };
 
 } // namespace Media

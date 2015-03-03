@@ -73,6 +73,7 @@ private:
     HttpReader iHttpReaderM3u;
     SemaphoreGeneric iSemReaderM3u;
     HlsM3uReader iM3uReader;
+    HttpReader iHttpSegStreamer;
     SegmentStreamer iSegmentStreamer;
     TUint iStreamId;
     TBool iStarted;
@@ -217,9 +218,14 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
         TBool expectUri = false;
         while (segmentUri == Brx::Empty()) {
             Brn uri;
-            if ((iLastSegment == 00 && iTargetDuration == 0) || iOffset >= iTotalBytes && !iEndlist) {
-                if (!ReloadVariantPlaylist()) {
-                    return 0;
+            if ((iLastSegment == 0 && iTargetDuration == 0) || iOffset >= iTotalBytes) {
+                if (!iEndlist) {
+                    if (!ReloadVariantPlaylist()) {
+                        THROW(HlsVariantPlaylistError);
+                    }
+                }
+                else {
+                    THROW(HlsEndOfStream);
                 }
             }
 
@@ -248,7 +254,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                         Brn durationDecimalBuf = durationParser.Next();
                         if (!durationParser.Finished() && durationDecimalBuf.Bytes()>3) {
                             // Error in M3U8 format.
-                            return 0;
+                            THROW(HlsVariantPlaylistError);
                         }
                         TUint durationDecimal = Ascii::Uint(durationDecimalBuf);
                         duration += durationDecimal;
@@ -268,20 +274,20 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
         }
         catch (UriError&) {
             LOG(kMedia, "HlsM3uReader::NextSegmentUri UriError\n");
-            return 0;
+            THROW(HlsVariantPlaylistError);
         }
     }
     catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
-        return 0;
+        THROW(HlsVariantPlaylistError);
     }
     catch (HttpError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
-        return 0;
+        THROW(HlsVariantPlaylistError);
     }
     catch (ReaderError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
-        return 0;
+        THROW(HlsVariantPlaylistError);
     }
 
     return duration;
@@ -486,19 +492,27 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
 
 // SegmentStreamer
 
-SegmentStreamer::SegmentStreamer(Environment& aEnv, const Brx& aUserAgent)
-    : iSegmentUriProvider(NULL)
-    , iReader(aEnv, aUserAgent)
+SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReaderBuffered& aReader)
+    : iSocket(aSocket)
+    , iReader(aReader)
+    , iSegmentUriProvider(NULL)
     , iTotalBytes(0)
     , iOffset(0)
-    , iSem("SEGS", 0)
+    , iInterrupted(true)
+    , iLock("SEGL")
 {
 }
 
 void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 {
-    iSegmentUriProvider = &aSegmentUriProvider;
-    GetNextSegment();
+    {
+        AutoMutex a(iLock);
+        ASSERT(iInterrupted);
+        iInterrupted = false;
+        iSegmentUriProvider = &aSegmentUriProvider;
+        iTotalBytes = 0;
+        iOffset = 0;
+    }
 }
 
 Brn SegmentStreamer::Read(TUint aBytes)
@@ -524,6 +538,8 @@ void SegmentStreamer::ReadFlush()
 
 void SegmentStreamer::ReadInterrupt()
 {
+    AutoMutex a(iLock);
+    iInterrupted = true;
     iReader.ReadInterrupt();
 }
 
@@ -539,34 +555,31 @@ Brn SegmentStreamer::ReadRemaining()
     return buf;
 }
 
-void SegmentStreamer::Interrupt()
-{
-    iReader.ReadInterrupt();
-}
-
 void SegmentStreamer::Close()
 {
     LOG(kMedia, "SegmentStreamer::Close\n");
-    iReader.Close();
+    iSocket.Close();
 }
 
 void SegmentStreamer::GetNextSegment()
 {
     Uri segment;
-    /*TUint duration = */iSegmentUriProvider->NextSegmentUri(segment);
+    (void)iSegmentUriProvider->NextSegmentUri(segment); // pass up HlsVariantPlaylistError, HlsEndOfStream
+
     iUri.Replace(segment.AbsoluteUri());
 
-    iReader.Close();
-    TBool success = iReader.Connect(iUri);
+    iSocket.Close();
+    TBool success = iSocket.Connect(iUri);
+    {
+        AutoMutex a(iLock);
+        if (iInterrupted || !success) {
+            THROW(HlsSegmentError);
+        }
+    }
     if (success) {
         // FIXME - must handle case of iTotalBytes being 0 - is the case for some M3Us. If so, will just have to read until ReaderError is thrown.
-        iTotalBytes = iReader.ContentLength();
+        iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
-    }
-    else {
-        // Failed to connect! Must not continue.
-        // FIXME - throw an exception instead of returning?
-        return;
     }
 }
 
@@ -588,7 +601,8 @@ ProtocolHls::ProtocolHls(Environment& aEnv, const Brx& aUserAgent)
     , iHttpReaderM3u(iEnv, aUserAgent)
     , iSemReaderM3u("HMRS", 0)
     , iM3uReader(iHttpReaderM3u, iHttpReaderM3u, iTimer, iSemReaderM3u)
-    , iSegmentStreamer(iEnv, aUserAgent)
+    , iHttpSegStreamer(iEnv, aUserAgent)
+    , iSegmentStreamer(iHttpSegStreamer, iHttpSegStreamer)
     , iSem("PRTH", 0)
     , iLock("PRHL")
 {
@@ -612,7 +626,7 @@ void ProtocolHls::Interrupt(TBool aInterrupt)
         if (aInterrupt) {
             iStopped = true;
         }
-        iSegmentStreamer.Interrupt();
+        iSegmentStreamer.ReadInterrupt();
         iM3uReader.Interrupt();
     }
     iLock.Signal();
@@ -683,12 +697,31 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         iContentProcessor = iProtocolManager->GetAudioProcessor();  // returns stream state
     }
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
-    while (res == EProtocolStreamErrorRecoverable) {    // FIXME - what is terminating condition?
-        iContentProcessor->Stream(iSegmentStreamer, 0);
-    }
+    while (res == EProtocolStreamErrorRecoverable) {
+        if (iStopped) {
+            res = EProtocolStreamStopped;
+            break;
+        }
+        //res = iContentProcessor->Stream(iSegmentStreamer, 0);
 
-    // FIXME - sort this:
-    res = EProtocolStreamErrorUnrecoverable;
+
+
+        try {
+            res = iContentProcessor->Stream(iSegmentStreamer, 0);
+        }
+        catch (HlsEndOfStream&) {
+            res = EProtocolStreamSuccess;
+            //break;
+        }
+        catch (HlsVariantPlaylistError&) {
+            res = EProtocolStreamErrorUnrecoverable;
+            //break;
+        }
+        catch (HlsSegmentError&) {
+            res = EProtocolStreamErrorUnrecoverable;
+            //break;
+        }
+    }
 
     iSegmentStreamer.Close();
     iM3uReader.Close();
