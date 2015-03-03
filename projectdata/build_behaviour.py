@@ -171,9 +171,9 @@ def bundle(context):
     python("waf", "bundle")
 
 @build_step("test", optional=True)
-@build_condition(OH_PLATFORM!="Linux-armhf")
 def test(context):
-    python("waf", "test")
+    if context.env["OH_PLATFORM"] != 'Linux-armhf':
+        python("waf", "test")
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
