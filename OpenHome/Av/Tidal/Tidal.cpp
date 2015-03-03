@@ -74,7 +74,7 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     AutoMutex _(iLock);
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kMedia, kError, "ProtocolTidal::TryGetStreamUrl - failed to connect\n");
+        LOG2(kMedia, kError, "Tidal::TryGetStreamUrl - failed to connect\n");
         return false;
     }
     AutoSocketSsl __(iSocket);
@@ -103,13 +103,13 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         success = true;
     }
     catch (HttpError&) {
-        LOG2(kMedia, kError, "HttpError in ProtocolTidal::TryGetStreamUrl\n");
+        LOG2(kMedia, kError, "HttpError in Tidal::TryGetStreamUrl\n");
     }
     catch (ReaderError&) {
-        LOG2(kMedia, kError, "ReaderError in ProtocolTidal::TryGetStreamUrl\n");
+        LOG2(kMedia, kError, "ReaderError in Tidal::TryGetStreamUrl\n");
     }
     catch (WriterError&) {
-        LOG2(kMedia, kError, "WriterError in ProtocolTidal::TryGetStreamUrl\n");
+        LOG2(kMedia, kError, "WriterError in Tidal::TryGetStreamUrl\n");
     }
     return success;
 }
@@ -203,7 +203,7 @@ TBool Tidal::TryLoginLocked()
     iSessionId.SetBytes(0);
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
+        LOG2(kMedia, kError, "Tidal::TryLogin - failed to connect\n");
         iCredentialsState.SetState(kId, Brn("Login Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }
@@ -249,15 +249,15 @@ TBool Tidal::TryLoginLocked()
     }
     catch (HttpError&) {
         error.Append("Login Error (Http Failure): Please Try Again.");
-        LOG2(kMedia, kError, "HttpError in ProtocolTidal::TryLogin\n");
+        LOG2(kMedia, kError, "HttpError in Tidal::TryLogin\n");
     }
     catch (ReaderError&) {
         error.Append("Login Error (Read Failure): Please Try Again.");
-        LOG2(kMedia, kError, "ReaderError in ProtocolTidal::TryLogin\n");
+        LOG2(kMedia, kError, "ReaderError in Tidal::TryLogin\n");
     }
     catch (WriterError&) {
         error.Append("Login Error (Write Failure): Please Try Again.");
-        LOG2(kMedia, kError, "WriterError in ProtocolTidal::TryLogin\n");
+        LOG2(kMedia, kError, "WriterError in Tidal::TryLogin\n");
     }
     if (!updatedStatus) {
         iCredentialsState.SetState(kId, error, Brx::Empty());

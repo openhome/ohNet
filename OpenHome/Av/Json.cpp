@@ -77,7 +77,6 @@ void Json::Unescape(Bwx& aValue)
             if (++i == bytes) {
                 THROW(JsonInvalid);
             }
-            ch = aValue[i];
             switch (aValue[i])
             {
             case '\"':

@@ -27,6 +27,7 @@ public:
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
     static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
+    static Protocol* NewQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
 };
 
 } // namespace Media
