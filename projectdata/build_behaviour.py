@@ -171,6 +171,7 @@ def bundle(context):
     python("waf", "bundle")
 
 @build_step("test", optional=True)
+@build_condition(OH_PLATFORM!="Linux-armhf")
 def test(context):
     python("waf", "test")
 
