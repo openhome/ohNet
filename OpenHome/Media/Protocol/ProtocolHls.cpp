@@ -1,5 +1,6 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
+#include <OpenHome/Media/Protocol/ProtocolHls.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Types.h>
@@ -16,21 +17,6 @@
 
 namespace OpenHome {
 namespace Media {
-
-class ITimerHandler
-{
-public:
-    virtual void TimerFired() = 0;
-    virtual ~ITimerHandler() {}
-};
-
-class ITimer
-{
-public:
-    virtual void Start(TUint aDurationMs, ITimerHandler& aHandler) = 0;
-    virtual void Cancel() = 0;
-    virtual ~ITimer() {}
-};
 
 class TimerGeneric : public ITimer
 {
@@ -49,71 +35,15 @@ private:
     Mutex iLock;
 };
 
-class ISegmentUriProvider
+class SemaphoreGeneric : public ISemaphore
 {
 public:
-    virtual TUint NextSegmentUri(Uri& aUri) = 0;    // returns segment duration (in seconds)
-    virtual ~ISegmentUriProvider() {}
-};
-
-class HlsM3uReader : public ITimerHandler, public ISegmentUriProvider
-{
+    SemaphoreGeneric(const TChar* aName, TUint aCount);
+public: // from ISemaphore
+    void Wait() override;
+    TBool Clear() override;
+    void Signal() override;
 private:
-    static const TUint kMaxM3uVersion = 2;
-    static const TUint kMillisecondsPerSecond = 1000;
-public:
-    HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer);
-    void SetUri(const Uri& aUri);
-    TUint Version() const;
-    void Interrupt(TBool aInterrupt);
-    void Close();
-private: // from ITimerHandler
-    void TimerFired() override;
-private: // from ISegmentUriProvider
-    TUint NextSegmentUri(Uri& aUri) override;
-private:
-    void ReadNextLine();
-    void ReloadVariantPlaylist();
-    void PreprocessM3u();
-    void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
-private:
-    // FIXME - could have some intelligent logic to limit retries
-    // e.g. in addition to waiting for, at the minimum, the target duration (or half target duration if playlist has not changed), could instead choose:
-    // max(targetDuration, sum(newSegmentDurations)-targetDuration);
-    ITimer& iTimer;
-    HttpReader iReader;
-    OpenHome::Uri iUri;
-    TUint64 iTotalBytes;
-    TUint64 iOffset;
-    TUint iVersion;
-    TUint64 iLastSegment;
-    TUint iTargetDuration;
-    Brn iNextLine;
-    Semaphore iSem;
-};
-
-class SegmentStreamer : public IProtocolReader
-{
-public:
-    SegmentStreamer(Environment& aEnv, const Brx& aUserAgent);
-    void Stream(ISegmentUriProvider& aSegmentUriProvider);
-    void Interrupt(TBool aInterrupt);
-    void Close();
-public: // from IProtocolReader
-    Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
-    void ReadFlush() override;
-    void ReadInterrupt() override;
-    Brn ReadRemaining() override;
-private:
-    void GetNextSegment();
-    void EnsureSegmentIsReady();
-private:
-    ISegmentUriProvider* iSegmentUriProvider;
-    HttpReader iReader;
-    OpenHome::Uri iUri;
-    TUint64 iTotalBytes;
-    TUint64 iOffset;
     Semaphore iSem;
 };
 
@@ -140,6 +70,8 @@ private:
 private:
     Supply* iSupply;
     TimerGeneric iTimer;
+    HttpReader iHttpReaderM3u;
+    SemaphoreGeneric iSemReaderM3u;
     HlsM3uReader iM3uReader;
     SegmentStreamer iSegmentStreamer;
     TUint iStreamId;
@@ -191,7 +123,7 @@ void TimerGeneric::Start(TUint aDurationMs, ITimerHandler& aHandler)
 void TimerGeneric::Cancel()
 {
     AutoMutex a(iLock);
-    ASSERT(!iPending);
+    //ASSERT(!iPending);
     iPending = false;
     iTimer->Cancel();
 }
@@ -206,26 +138,63 @@ void TimerGeneric::TimerFired()
 }
 
 
+// SemaphoreGeneric
+
+SemaphoreGeneric::SemaphoreGeneric(const TChar* aName, TUint aCount)
+    : iSem(aName, aCount)
+{
+}
+
+void SemaphoreGeneric::Wait()
+{
+    iSem.Wait();
+}
+
+TBool SemaphoreGeneric::Clear()
+{
+    return iSem.Clear();
+}
+
+void SemaphoreGeneric::Signal()
+{
+    return iSem.Signal();
+}
+
+
+
 // HlsM3uReader
 
-HlsM3uReader::HlsM3uReader(Environment& aEnv, const Brx& aUserAgent, ITimer& aTimer)
+HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReaderBuffered& aReader, ITimer& aTimer, ISemaphore& aSemaphore)
     : iTimer(aTimer)
-    , iReader(aEnv, aUserAgent)
+    , iSocket(aSocket)
+    , iReader(aReader)
     , iTotalBytes(0)
-    , iVersion(1)
+    , iVersion(2)
     , iLastSegment(0)
     , iTargetDuration(0)
-    , iSem("HMRS", 0)
+    , iEndlist(false)
+    , iLock("HMRL")
+    , iSem(aSemaphore)
+    , iInterrupted(true)
 {
 }
 
 void HlsM3uReader::SetUri(const Uri& aUri)
 {
-    iTimer.Cancel();
-    iSem.Signal();
-    iUri.Replace(aUri.AbsoluteUri());
-
-    ReloadVariantPlaylist();
+    {
+        AutoMutex a(iLock);
+        // FIXME - re-enable this assertion.
+        //ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
+                                // iInterrupted is set to true at construction, so will be true on first call to SetUri().
+        iUri.Replace(aUri.AbsoluteUri());
+        iLastSegment = 0;
+        iTargetDuration = 0;
+        iEndlist = false;
+        iNextLine.Set(Brx::Empty());
+        iSem.Clear();
+        iSem.Signal();
+        iInterrupted = false;
+    }
 }
 
 TUint HlsM3uReader::Version() const
@@ -235,7 +204,9 @@ TUint HlsM3uReader::Version() const
 
 void HlsM3uReader::Close()
 {
-    iReader.Close();
+    // It is responsibility of client of this class to call Interrupt() prior
+    // to this (if class is active).
+    iSocket.Close();
 }
 
 TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
@@ -246,8 +217,10 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
         TBool expectUri = false;
         while (segmentUri == Brx::Empty()) {
             Brn uri;
-            if (iOffset >= iTotalBytes) {
-                ReloadVariantPlaylist();
+            if ((iLastSegment == 00 && iTargetDuration == 0) || iOffset >= iTotalBytes && !iEndlist) {
+                if (!ReloadVariantPlaylist()) {
+                    return 0;
+                }
             }
 
             if (iNextLine == Brx::Empty()) {
@@ -265,9 +238,26 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                 Parser p(iNextLine);
                 Brn tag = p.Next(':');
                 if (tag == Brn("#EXTINF")) {
-                    duration = Ascii::Uint(p.Next(','));    // Duration is always TUint in version 2 and below.
+                    Brn durationBuf = p.Next(',');
+                    Parser durationParser(durationBuf);
+                    Brn durationWhole = durationParser.Next('.');
+                    duration = Ascii::Uint(durationWhole) * kMillisecondsPerSecond;
+                    if (!durationParser.Finished()) {
+                        // Looks like duration is a float.
+                        // Duration is only guaranteed to be int in version 2 and below
+                        Brn durationDecimalBuf = durationParser.Next();
+                        if (!durationParser.Finished() && durationDecimalBuf.Bytes()>3) {
+                            // Error in M3U8 format.
+                            return 0;
+                        }
+                        TUint durationDecimal = Ascii::Uint(durationDecimalBuf);
+                        duration += durationDecimal;
+                    }
                     Log::Print("duration: %u\n", duration);
                     expectUri = true;
+                }
+                else if (tag == Brn("#EXT-X-ENDLIST")) {
+                    iEndlist = true;
                 }
             }
             iNextLine = Brx::Empty();
@@ -281,7 +271,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             return 0;
         }
     }
-    catch (AsciiError&) {   // FIXME - throw these exceptions up?
+    catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
         return 0;
     }
@@ -302,9 +292,16 @@ void HlsM3uReader::TimerFired()
     iSem.Signal();
 }
 
-void HlsM3uReader::Interrupt(TBool aInterrupt)
+void HlsM3uReader::Interrupt()
 {
-    iReader.Interrupt(aInterrupt);
+    // Must NOT close socket here - undefined behaviour will result.
+    AutoMutex a(iLock);
+    if (!iInterrupted) {
+        iInterrupted = true;
+        iTimer.Cancel();
+        iReader.ReadInterrupt();
+        iSem.Signal();
+    }
 }
 
 void HlsM3uReader::ReadNextLine()
@@ -314,7 +311,7 @@ void HlsM3uReader::ReadNextLine()
     iOffset += iNextLine.Bytes()+1;  // Separator has been trimmed.
 }
 
-void HlsM3uReader::ReloadVariantPlaylist()
+TBool HlsM3uReader::ReloadVariantPlaylist()
 {
     // Timer should be started BEFORE refreshing playlist.
     // However, not very useful if we don't yet have target duration, so just
@@ -323,58 +320,66 @@ void HlsM3uReader::ReloadVariantPlaylist()
     iSem.Wait();
     iSem.Clear();   // Clear in case iSem has been signalled multiple times. E.g., blocking while filling buffers during last playlist reload.
 
-    iReader.Close();
-    TBool success = iReader.Connect(iUri);
+    {
+        AutoMutex a(iLock);
+        if (iInterrupted) {
+            return false;
+        }
+    }
+
+    iSocket.Close();
+    TBool success = iSocket.Connect(iUri);
     if (success) {
         // FIXME - must handle case of iTotalBytes being 0 - is the case for some M3Us. If so, will just have to read until ReaderError is thrown.
-        iTotalBytes = iReader.ContentLength();
+        iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
     }
     else {
-        // Failed to connect! Must not continue.
-        // FIXME - throw an exception instead of returning?
-        return;
+        return false;
     }
 
     try {
-        PreprocessM3u();
+        if (!PreprocessM3u()) {
+            return false;
+        }
     }
     catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
-        //THROW
+        return false;
     }
-    catch (HttpError&) {    // FIXME - throw these exceptions up?
+    catch (HttpError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
-        //THROW
+        return false;
     }
     catch (ReaderError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
-        //THROW
+        return false;
     }
 
     if (iOffset >= iTotalBytes) {
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file\n");
-        // THROW exception here
+        return false;
     }
 
     if (iTargetDuration == 0) { // #EXT-X-TARGETDURATION is a required tag.
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist malformed file\n");
-        // THROW exception here
+        return false;
     }
 
     iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
+    return true;
 }
 
-void HlsM3uReader::PreprocessM3u()
+TBool HlsM3uReader::PreprocessM3u()
 {
     TUint64 skipSegments = 0;
+    TBool mediaSeqFound = false;
     try {
         while (iOffset < iTotalBytes) {
             ReadNextLine();
             Parser p(iNextLine);
             Brn tag = p.Next(':');
 
-            // FIXME - what about #EXT-X-ENDLIST
             if (tag == Brn("#EXT-X-VERSION")) {
                 iVersion = Ascii::Uint(p.Next());
                 if (iVersion > kMaxM3uVersion) {
@@ -383,13 +388,15 @@ void HlsM3uReader::PreprocessM3u()
                 Log::Print("iVersion: %u\n", iVersion);
             }
             if (tag == Brn("#EXT-X-MEDIA-SEQUENCE")) {
+                mediaSeqFound = true;
                 // If this isn't found, it must be assumed that first segment in playlist is 0.
                 TUint64 mediaSeq = Ascii::Uint64(p.Next());
                 if (iLastSegment == 0) {
                     iLastSegment = mediaSeq;
+                    skipSegments = 0;
                 }
-                if (mediaSeq <= iLastSegment) {
-                    skipSegments = (iLastSegment-mediaSeq)+1;
+                else if (mediaSeq <= iLastSegment) {
+                    skipSegments = (iLastSegment-mediaSeq);
                 }
                 Log::Print("mediaSeq: %llu\n", mediaSeq);
             }
@@ -397,7 +404,18 @@ void HlsM3uReader::PreprocessM3u()
                 iTargetDuration = Ascii::Uint(p.Next());
                 Log::Print("iTargetDuration: %u\n", iTargetDuration);
             }
+            else if (tag == Brn("#EXT-X-ENDLIST")) {
+                iEndlist = true;
+                Log::Print("#EXT-X-ENDLIST\n");
+            }
             else if (tag == Brn("#EXTINF")) {
+                if (!mediaSeqFound) {
+                    // EXT-X-MEDIA-SEQUENCE MUST appear before EXTINF, so must
+                    // have seen it by now if present.
+                    skipSegments = iLastSegment;
+                    mediaSeqFound = true;   // Don't want to enter this block again.
+                }
+
                 if (skipSegments > 0) {
                     skipSegments--;
                 }
@@ -405,23 +423,24 @@ void HlsM3uReader::PreprocessM3u()
                     // Found start/continuation of audio.
                     // iNextLine will remain populated with this "#EXTINF" line
                     // for starting parsing of outstanding segments elsewhere.
-                    break;
+                    return true;
                 }
             }
         }
     }
     catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::PreprocessM3u AsciiError\n");
-        throw;
+        return false;
     }
-    catch (HttpError&) {    // FIXME - throw these exceptions up?
+    catch (HttpError&) {
         LOG(kMedia, "HlsM3uReader::PreprocessM3u HttpError\n");
-        throw;
+        return false;
     }
     catch (ReaderError&) {
         LOG(kMedia, "HlsM3uReader::PreprocessM3u ReaderError\n");
-        throw;
+        return false;
     }
+    return false;
 }
 
 void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
@@ -520,9 +539,9 @@ Brn SegmentStreamer::ReadRemaining()
     return buf;
 }
 
-void SegmentStreamer::Interrupt(TBool aInterrupt)
+void SegmentStreamer::Interrupt()
 {
-    iReader.Interrupt(aInterrupt);
+    iReader.ReadInterrupt();
 }
 
 void SegmentStreamer::Close()
@@ -566,7 +585,9 @@ ProtocolHls::ProtocolHls(Environment& aEnv, const Brx& aUserAgent)
     : Protocol(aEnv)
     , iSupply(NULL)
     , iTimer(iEnv, "PHLS")
-    , iM3uReader(iEnv, aUserAgent, iTimer)
+    , iHttpReaderM3u(iEnv, aUserAgent)
+    , iSemReaderM3u("HMRS", 0)
+    , iM3uReader(iHttpReaderM3u, iHttpReaderM3u, iTimer, iSemReaderM3u)
     , iSegmentStreamer(iEnv, aUserAgent)
     , iSem("PRTH", 0)
     , iLock("PRHL")
@@ -591,8 +612,8 @@ void ProtocolHls::Interrupt(TBool aInterrupt)
         if (aInterrupt) {
             iStopped = true;
         }
-        iSegmentStreamer.Interrupt(aInterrupt);
-        iM3uReader.Interrupt(aInterrupt);
+        iSegmentStreamer.Interrupt();
+        iM3uReader.Interrupt();
     }
     iLock.Signal();
 }
@@ -727,7 +748,7 @@ TUint ProtocolHls::TryStop(TUint aStreamId)
             iNextFlushId = iFlushIdProvider->NextFlushId();
         }
         iStopped = true;
-        iM3uReader.Interrupt(true);
+        iM3uReader.Interrupt();
         iSem.Signal();
     }
     iLock.Signal();
