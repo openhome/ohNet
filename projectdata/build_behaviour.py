@@ -91,6 +91,7 @@ def choose_platform(context):
                 "Linux-x86" : "Linux-x86",
                 "Linux-x64" : "Linux-x64",
                 "Linux-ARM" : "Linux-ARM",
+                "Linux-armhf" : "Linux-armhf",
                 "Linux-ppc32" : "Linux-ppc32",
                 "Mac-x86" : "Mac-x86",
                 "Mac-x64" : "Mac-x64",
@@ -139,6 +140,7 @@ def setup_windows(context):
 @build_condition(OH_PLATFORM="Linux-x86")
 @build_condition(OH_PLATFORM="Linux-x64")
 @build_condition(OH_PLATFORM="Linux-ARM")
+@build_condition(OH_PLATFORM="Linux-armhf")
 @build_condition(OH_PLATFORM="Linux-ppc32")
 def setup_linux(context):
     env = context.env
@@ -169,6 +171,7 @@ def bundle(context):
     python("waf", "bundle")
 
 @build_step("test", optional=True)
+@build_condition(OH_PLATFORM!="Linux-armhf")
 def test(context):
     python("waf", "test")
 

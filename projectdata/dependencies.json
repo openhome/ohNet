@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.1.1498",
+        "version": "1.1.1500",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.66",
+        "version": "0.0.68",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {   "name": "TestTones",
@@ -81,13 +81,13 @@
     {   "name": "openssl",
         "type": "openhome",
         "platform-specific": true,
-        "version": "0.2.52",
+        "version": "0.2.54",
         "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
         "type": "internal",
         "platform-specific": true,
-        "version": "1.0.19",
+        "version": "1.0.22",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}"
     },

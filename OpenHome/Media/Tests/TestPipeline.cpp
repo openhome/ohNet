@@ -422,12 +422,12 @@ void SuitePipeline::Test()
     // Pull kTestMsgs and check there is no ramping.
     for (TUint i=0; i<kTestMsgs; i++) {
         PullNextAudio();
-        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
-        TEST(iFirstSubsample == iLastSubsample);
+        //Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
         Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs); // ensure StarvationMonitor doesn't kick in
     }
+    TEST(iFirstSubsample == iLastSubsample);    // only check last message; StarvationMonitor could have kicked in between Pause() and Play() above.
     TEST(iPipelineState == EPipelinePlaying);
-    TEST(iStateChangeCount == initialStateChangeCount+1); // // shouldn't have changed from EPipelinePlaying, but may have received another notification
+    TEST(iStateChangeCount == initialStateChangeCount+1); // shouldn't have changed from EPipelinePlaying, but may have received another notification
 
 
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.

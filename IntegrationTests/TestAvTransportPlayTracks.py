@@ -188,7 +188,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
     # noinspection PyUnusedLocal
     def _AvtEventCb( self, service, svName, svVal, svSeq ):
         """Callback from AVTransport Service UPnP events whilst test is running"""
-        xml        = ET.fromstring( svVal.encode( 'utf-8' ))[0]
+        xml        = ET.fromstring( svVal )[0]
         evAvtState = xml.find( kAvtNs+'TransportState' ).attrib['val']
         toDo       = None
 
