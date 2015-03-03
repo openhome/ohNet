@@ -15,6 +15,7 @@ UnixTimestamp::UnixTimestamp(Environment& aEnv)
     , iLock("UNTS")
     , iNtpClient(aEnv)
     , iTimestampValid(false)
+    , iStartMs(UINT_MAX)
 {
     iTimer = new Timer(aEnv, MakeFunctor(*this, &UnixTimestamp::TimestampExpired), "UnixTimestamp");
 }
