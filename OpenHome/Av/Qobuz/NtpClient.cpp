@@ -21,6 +21,7 @@ NtpClient::NtpClient(Environment& aEnv)
     , iSocket(aEnv)
     , iUdpReader(iSocket)
     , iReadBuffer(iUdpReader)
+    , iNextServerIndex(0)
 {
     iWriteBuffer = new Sws<kFrameBytes>(*this);
     iReadTimeout = new Timer(aEnv, MakeFunctor(*this, &NtpClient::ReadTimeout), "NtpClient");
@@ -38,9 +39,11 @@ TBool NtpClient::TryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetworkDe
     iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[iNextServerIndex]));
     iNextServerIndex = (iNextServerIndex+1) % kNumServers;
     const TUint loopedIndex = iNextServerIndex;
-    while (!success && iNextServerIndex != loopedIndex) {
+    do {
         success = DoTryGetNetworkTime(aNetworkTime, aNetworkDelayMs);
-    }
+        iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[iNextServerIndex]));
+        iNextServerIndex = (iNextServerIndex+1) % kNumServers;
+    } while (!success && iNextServerIndex != loopedIndex);
     return success;
 }
 
