@@ -49,6 +49,14 @@ public:
     virtual ~ISegmentUriProvider() {}
 };
 
+class IHlsReader
+{
+public:
+    virtual IHttpSocket& Socket() = 0;
+    virtual IReaderBuffered& Reader() = 0;
+    virtual ~IHlsReader() {}
+};
+
 class HlsM3uReader : public ITimerHandler, public ISegmentUriProvider
 {
 private:

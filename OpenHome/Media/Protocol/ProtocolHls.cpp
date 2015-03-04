@@ -48,10 +48,21 @@ private:
     Semaphore iSem;
 };
 
+class HlsReader : public IHlsReader
+{
+public:
+    HlsReader(Environment& aEnv, const Brx& aUserAgent);
+private: // from IHlsReader
+    IHttpSocket& Socket() override;
+    IReaderBuffered& Reader() override;
+public:
+    HttpReader iReader;
+};
+
 class ProtocolHls : public Protocol
 {
 public:
-    ProtocolHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuffered& aM3uReader, IHttpSocket& aSegmentSocket, IReaderBuffered& aSegmentReader);
+    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment);
     ~ProtocolHls();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -69,6 +80,8 @@ private:
     void StartStream(const Uri& aUri);
     TBool IsCurrentStream(TUint aStreamId) const;
 private:
+    IHlsReader* iHlsReaderM3u;
+    IHlsReader* iHlsReaderSegment;
     Supply* iSupply;
     TimerGeneric iTimer;
     SemaphoreGeneric iSemReaderM3u;
@@ -90,17 +103,18 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewHls(Environment& /*aEnv*/, const Brx& /*aUserAgent*/)
+Protocol* ProtocolFactory::NewHls(Environment& aEnv, const Brx& aUserAgent)
 { // static
-    return NULL;
-    //return new ProtocolHls(aEnv, aUserAgent);
+    HlsReader* readerM3u = new HlsReader(aEnv, aUserAgent);
+    HlsReader* readerSegment = new HlsReader(aEnv, aUserAgent);
+    return new ProtocolHls(aEnv, readerM3u, readerSegment);
 }
 
 
 // For test purposes.
-Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuffered& aM3uReader, IHttpSocket& aSegmentSocket, IReaderBuffered& aSegmentReader)
+Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment)
 { // static
-    return new ProtocolHls(aEnv, aM3uSocket, aM3uReader, aSegmentSocket, aSegmentReader);
+    return new ProtocolHls(aEnv, aReaderM3u, aReaderSegment);
 };
 
 
@@ -168,6 +182,23 @@ void SemaphoreGeneric::Signal()
     return iSem.Signal();
 }
 
+
+// HlsReader
+
+HlsReader::HlsReader(Environment& aEnv, const Brx& aUserAgent)
+    : iReader(aEnv, aUserAgent)
+{
+}
+
+IHttpSocket& HlsReader::Socket()
+{
+    return iReader;
+}
+
+IReaderBuffered& HlsReader::Reader()
+{
+    return iReader;
+}
 
 
 // HlsM3uReader
@@ -599,13 +630,15 @@ void SegmentStreamer::EnsureSegmentIsReady()
 
 // ProtocolHls
 
-ProtocolHls::ProtocolHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuffered& aM3uReader, IHttpSocket& aSegmentSocket, IReaderBuffered& aSegmentReader)
+ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment)
     : Protocol(aEnv)
+    , iHlsReaderM3u(aReaderM3u)
+    , iHlsReaderSegment(aReaderSegment)
     , iSupply(NULL)
     , iTimer(iEnv, "PHLS")
     , iSemReaderM3u("HMRS", 0)
-    , iM3uReader(aM3uSocket, aM3uReader, iTimer, iSemReaderM3u)
-    , iSegmentStreamer(aSegmentSocket, aSegmentReader)
+    , iM3uReader(iHlsReaderM3u->Socket(), iHlsReaderM3u->Reader(), iTimer, iSemReaderM3u)
+    , iSegmentStreamer(iHlsReaderSegment->Socket(), iHlsReaderSegment->Reader())
     , iSem("PRTH", 0)
     , iLock("PRHL")
 {
@@ -614,6 +647,8 @@ ProtocolHls::ProtocolHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuff
 ProtocolHls::~ProtocolHls()
 {
     delete iSupply;
+    delete iHlsReaderSegment;
+    delete iHlsReaderM3u;
 }
 
 void ProtocolHls::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)

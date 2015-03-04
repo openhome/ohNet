@@ -57,7 +57,7 @@ private:
     TUint iClearCount;
 };
 
-class TestHttpReader : public IHttpSocket, public IReaderBuffered
+class TestHttpReader : public IHlsReader, public IHttpSocket, public IReaderBuffered
 {
 public:
     typedef std::vector<const Uri*> UriList;
@@ -69,6 +69,9 @@ public:
     void ThrowReadErrorAtOffset(TUint64 aOffset);
     void WaitAtOffset(TUint64 aOffset); // waits on aWaitSem being signalled
     TUint ConnectCount() const;
+public: // from IHlsReader
+    IHttpSocket& Socket() override;
+    IReaderBuffered& Reader() override;
 public: // from IHttpSocket
     TBool Connect(const Uri& aUri) override;
     void Close() override;
@@ -429,6 +432,16 @@ void TestHttpReader::WaitAtOffset(TUint64 aOffset)
 TUint TestHttpReader::ConnectCount() const
 {
     return iConnectCount;
+}
+
+IHttpSocket& TestHttpReader::Socket()
+{
+    return *this;
+}
+
+IReaderBuffered& TestHttpReader::Reader()
+{
+    return *this;
 }
 
 TBool TestHttpReader::Connect(const Uri& aUri)
@@ -1858,7 +1871,7 @@ void SuiteProtocolHls::Setup()
     iSegmentSem = new Semaphore("HLSS", 0);
     iSegmentWaitSem = new Semaphore("HSWS", 0);
     iSegmentReader = new TestHttpReader(*iSegmentSem, *iSegmentWaitSem);
-    iProtocolHls = HlsTestFactory::NewTestableHls(iEnv, *iM3uReader, *iM3uReader, *iSegmentReader, *iSegmentReader);
+    iProtocolHls = HlsTestFactory::NewTestableHls(iEnv, iM3uReader, iSegmentReader);    // takes ownership of iM3uReader, iSegmentReader.
 
     iInfoAggregator = new AllocatorInfoLogger();
     iTrackFactory= new TrackFactory(*iInfoAggregator, 1);
@@ -1884,9 +1897,9 @@ void SuiteProtocolHls::TearDown()
     delete iTrackFactory;
     delete iInfoAggregator;
 
-    delete iSegmentReader;
+    //delete iSegmentReader;    // owned by ProtocolHls
     delete iSegmentSem;
-    delete iM3uReader;
+    //delete iM3uReader;        // owned by ProtocolHls
     delete iM3uSem;
     delete iThreadSem;
 }
