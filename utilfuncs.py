@@ -128,7 +128,7 @@ def configure_toolchain(conf):
             conf.env.append_value('CXXFLAGS', ['-m64'])
             conf.env.append_value('CFLAGS', ['-m64'])
             conf.env.append_value('LINKFLAGS', ['-m64'])
-        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM', 'Linux-armhf', 'Linux-ppc32']:
+        if conf.options.dest_platform.startswith('Linux-'):
             conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
         elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
@@ -188,6 +188,8 @@ def configure_toolchain(conf):
                 conf.options.cross = '/usr/local/arm-2010q1/bin/arm-none-linux-gnueabi-'
             if conf.options.dest_platform == 'Linux-armhf':
                 conf.options.cross = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
+            if conf.options.dest_platform == 'Linux-mipsel':
+                conf.options.cross = 'mipsel-cros-linux-gnu-'
 
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
@@ -340,6 +342,7 @@ def get_platform_info(dest_platform):
         'Linux-x64': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-ARM': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-armhf': dict(endian='LITTLE', build_platform='linux2', ohnet_plat_dir='Posix'),
+        'Linux-mipsel': dict(endian='LITTLE',build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-ppc32': dict(endian='BIG',    build_platform='linux2', ohnet_plat_dir='Posix'),
         'Windows-x86': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Windows-x64': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
