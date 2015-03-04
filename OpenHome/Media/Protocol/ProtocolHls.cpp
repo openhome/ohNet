@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/Tests/TestProtocolHls.h>
 
 #include <algorithm>
 
@@ -50,7 +51,7 @@ private:
 class ProtocolHls : public Protocol
 {
 public:
-    ProtocolHls(Environment& aEnv, const Brx& aUserAgent);
+    ProtocolHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuffered& aM3uReader, IHttpSocket& aSegmentSocket, IReaderBuffered& aSegmentReader);
     ~ProtocolHls();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -58,7 +59,7 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri) override;
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
     void Deactivated() override;
-private: // from IStreamHandler
+public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
@@ -70,10 +71,8 @@ private:
 private:
     Supply* iSupply;
     TimerGeneric iTimer;
-    HttpReader iHttpReaderM3u;
     SemaphoreGeneric iSemReaderM3u;
     HlsM3uReader iM3uReader;
-    HttpReader iHttpSegStreamer;
     SegmentStreamer iSegmentStreamer;
     TUint iStreamId;
     TBool iStarted;
@@ -91,10 +90,18 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewHls(Environment& aEnv, const Brx& aUserAgent)
+Protocol* ProtocolFactory::NewHls(Environment& /*aEnv*/, const Brx& /*aUserAgent*/)
 { // static
-    return new ProtocolHls(aEnv, aUserAgent);
+    return NULL;
+    //return new ProtocolHls(aEnv, aUserAgent);
 }
+
+
+// For test purposes.
+Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuffered& aM3uReader, IHttpSocket& aSegmentSocket, IReaderBuffered& aSegmentReader)
+{ // static
+    return new ProtocolHls(aEnv, aM3uSocket, aM3uReader, aSegmentSocket, aSegmentReader);
+};
 
 
 // TimerGeneric
@@ -336,7 +343,6 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     iSocket.Close();
     TBool success = iSocket.Connect(iUri);
     if (success) {
-        // FIXME - must handle case of iTotalBytes being 0 - is the case for some M3Us. If so, will just have to read until ReaderError is thrown.
         iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
     }
@@ -577,7 +583,6 @@ void SegmentStreamer::GetNextSegment()
         }
     }
     if (success) {
-        // FIXME - must handle case of iTotalBytes being 0 - is the case for some M3Us. If so, will just have to read until ReaderError is thrown.
         iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
     }
@@ -594,15 +599,13 @@ void SegmentStreamer::EnsureSegmentIsReady()
 
 // ProtocolHls
 
-ProtocolHls::ProtocolHls(Environment& aEnv, const Brx& aUserAgent)
+ProtocolHls::ProtocolHls(Environment& aEnv, IHttpSocket& aM3uSocket, IReaderBuffered& aM3uReader, IHttpSocket& aSegmentSocket, IReaderBuffered& aSegmentReader)
     : Protocol(aEnv)
     , iSupply(NULL)
     , iTimer(iEnv, "PHLS")
-    , iHttpReaderM3u(iEnv, aUserAgent)
     , iSemReaderM3u("HMRS", 0)
-    , iM3uReader(iHttpReaderM3u, iHttpReaderM3u, iTimer, iSemReaderM3u)
-    , iHttpSegStreamer(iEnv, aUserAgent)
-    , iSegmentStreamer(iHttpSegStreamer, iHttpSegStreamer)
+    , iM3uReader(aM3uSocket, aM3uReader, iTimer, iSemReaderM3u)
+    , iSegmentStreamer(aSegmentSocket, aSegmentReader)
     , iSem("PRTH", 0)
     , iLock("PRHL")
 {
@@ -679,7 +682,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     LOG(kMedia, "ProtocolHls::Stream live stream waiting to be (re-)started\n");
     iSegmentStreamer.Close();
     iM3uReader.Close();
-    iSem.Wait();            // FIXME - is Reinitialise() calling iSem.Clear() and messing with this?
+    iSem.Wait();
     LOG(kMedia, "ProtocolHls::Stream live stream restart\n");
 
     // Convert hls:// scheme to http:// scheme
@@ -694,45 +697,41 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iSegmentStreamer.Stream(iM3uReader);
 
     if (iContentProcessor == NULL) {
-        iContentProcessor = iProtocolManager->GetAudioProcessor();  // returns stream state
+        iContentProcessor = iProtocolManager->GetAudioProcessor();
     }
+
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     while (res == EProtocolStreamErrorRecoverable) {
         if (iStopped) {
             res = EProtocolStreamStopped;
             break;
         }
-        //res = iContentProcessor->Stream(iSegmentStreamer, 0);
-
-
 
         try {
             res = iContentProcessor->Stream(iSegmentStreamer, 0);
         }
         catch (HlsEndOfStream&) {
             res = EProtocolStreamSuccess;
-            //break;
         }
         catch (HlsVariantPlaylistError&) {
             res = EProtocolStreamErrorUnrecoverable;
-            //break;
         }
         catch (HlsSegmentError&) {
             res = EProtocolStreamErrorUnrecoverable;
-            //break;
         }
     }
 
     iSegmentStreamer.Close();
     iM3uReader.Close();
 
-    iLock.Wait();
-    if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
-        iSupply->OutputFlush(iNextFlushId);
+    {
+        AutoMutex a(iLock);
+        if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
+            iSupply->OutputFlush(iNextFlushId);
+        }
+        // Clear iStreamId to prevent TrySeek or TryStop returning a valid flush id.
+        iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     }
-    // clear iStreamId to prevent TrySeek or TryStop returning a valid flush id
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iLock.Signal();
 
     return res;
 }
@@ -781,6 +780,7 @@ TUint ProtocolHls::TryStop(TUint aStreamId)
             iNextFlushId = iFlushIdProvider->NextFlushId();
         }
         iStopped = true;
+        iSegmentStreamer.ReadInterrupt();
         iM3uReader.Interrupt();
         iSem.Signal();
     }
