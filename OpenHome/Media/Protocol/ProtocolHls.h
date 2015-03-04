@@ -85,6 +85,7 @@ private:
     IHttpSocket& iSocket;
     IReaderBuffered& iReader;
     OpenHome::Uri iUri;
+    TBool iConnected;
     TUint64 iTotalBytes;
     TUint64 iOffset;
     TUint iVersion;
@@ -117,6 +118,7 @@ private:
     IReaderBuffered& iReader;
     ISegmentUriProvider* iSegmentUriProvider;
     OpenHome::Uri iUri;
+    TBool iConnected;
     TUint64 iTotalBytes;
     TUint64 iOffset;
     TBool iInterrupted;

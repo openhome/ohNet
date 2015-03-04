@@ -145,7 +145,7 @@ void TimerGeneric::Start(TUint aDurationMs, ITimerHandler& aHandler)
 void TimerGeneric::Cancel()
 {
     AutoMutex a(iLock);
-    //ASSERT(!iPending);
+    //ASSERT(iPending);
     iPending = false;
     iTimer->Cancel();
 }
@@ -207,6 +207,7 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReaderBuffered& aReader, ITime
     : iTimer(aTimer)
     , iSocket(aSocket)
     , iReader(aReader)
+    , iConnected(false)
     , iTotalBytes(0)
     , iVersion(2)
     , iLastSegment(0)
@@ -245,7 +246,11 @@ void HlsM3uReader::Close()
 {
     // It is responsibility of client of this class to call Interrupt() prior
     // to this (if class is active).
-    iSocket.Close();
+    AutoMutex a(iLock);
+    if (iConnected) {
+        iConnected = false;
+        iSocket.Close();
+    }
 }
 
 TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
@@ -343,7 +348,9 @@ void HlsM3uReader::Interrupt()
     if (!iInterrupted) {
         iInterrupted = true;
         iTimer.Cancel();
-        iReader.ReadInterrupt();
+        if (iConnected) {
+            iReader.ReadInterrupt();
+        }
         iSem.Signal();
     }
 }
@@ -371,9 +378,13 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         }
     }
 
-    iSocket.Close();
+    Close();
     TBool success = iSocket.Connect(iUri);
     if (success) {
+        {
+            AutoMutex a(iLock);
+            iConnected = true;
+        }
         iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
     }
@@ -533,6 +544,7 @@ SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReaderBuffered& aReader)
     : iSocket(aSocket)
     , iReader(aReader)
     , iSegmentUriProvider(NULL)
+    , iConnected(false)
     , iTotalBytes(0)
     , iOffset(0)
     , iInterrupted(true)
@@ -576,8 +588,12 @@ void SegmentStreamer::ReadFlush()
 void SegmentStreamer::ReadInterrupt()
 {
     AutoMutex a(iLock);
-    iInterrupted = true;
-    iReader.ReadInterrupt();
+    if (!iInterrupted) {
+        iInterrupted = true;
+        if (iConnected) {
+            iReader.ReadInterrupt();
+        }
+    }
 }
 
 Brn SegmentStreamer::ReadRemaining()
@@ -595,7 +611,11 @@ Brn SegmentStreamer::ReadRemaining()
 void SegmentStreamer::Close()
 {
     LOG(kMedia, "SegmentStreamer::Close\n");
-    iSocket.Close();
+    AutoMutex a(iLock);
+    if (iConnected) {
+        iConnected = false;
+        iSocket.Close();
+    }
 }
 
 void SegmentStreamer::GetNextSegment()
@@ -605,15 +625,23 @@ void SegmentStreamer::GetNextSegment()
 
     iUri.Replace(segment.AbsoluteUri());
 
-    iSocket.Close();
+    Close();
     TBool success = iSocket.Connect(iUri);
     {
         AutoMutex a(iLock);
-        if (iInterrupted || !success) {
+        //if (iInterrupted || !success) {
+        //    THROW(HlsSegmentError);
+        //}
+
+        if (!success) {
             THROW(HlsSegmentError);
         }
     }
     if (success) {
+        {
+            AutoMutex a(iLock);
+            iConnected = true;
+        }
         iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
     }
@@ -728,7 +756,9 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     uriHttpBuf.Append(p.NextToEnd());
     Uri uriHttp(uriHttpBuf);    // may throw UriError
 
-    iM3uReader.SetUri(uriHttp); // rename to Reinitialise()
+    //iSegmentStreamer.ReadInterrupt();
+    //iM3uReader.Interrupt();
+    iM3uReader.SetUri(uriHttp);
     iSegmentStreamer.Stream(iM3uReader);
 
     if (iContentProcessor == NULL) {
@@ -749,9 +779,17 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             res = EProtocolStreamSuccess;
         }
         catch (HlsVariantPlaylistError&) {
+            if (iStopped) { // Calling Interrupt() can cause HlsVariantPlaylistError/HlsSegmentError to be thrown. Check these errors weren't thrown because of Interrupt(), which is detectable by iStopped being true.
+                res = EProtocolStreamStopped;
+                break;
+            }
             res = EProtocolStreamErrorUnrecoverable;
         }
         catch (HlsSegmentError&) {
+            if (iStopped) {
+                res = EProtocolStreamStopped;
+                break;
+            }
             res = EProtocolStreamErrorUnrecoverable;
         }
     }

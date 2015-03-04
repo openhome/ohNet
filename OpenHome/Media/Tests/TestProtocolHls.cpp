@@ -95,6 +95,7 @@ private:
     Semaphore& iWaitSem;
     TUint64 iWaitOffset;
     TUint iConnectCount;
+    TBool iConnected;
 };
 
 class TestSegmentUriProvider : public ISegmentUriProvider
@@ -395,6 +396,7 @@ TestHttpReader::TestHttpReader(Semaphore& aObserverSem, Semaphore& aWaitSem)
     : iBlockSem("THRS", 0)
     , iObserverSem(aObserverSem)
     , iWaitSem(aWaitSem)
+    , iConnected(false)
 {
 }
 
@@ -406,6 +408,8 @@ void TestHttpReader::SetContent(const UriList& aUris, const BufList& aContent)
     iBlockOffset = std::numeric_limits<TUint64>::max();
     iThrowOffset = std::numeric_limits<TUint64>::max();
     iWaitOffset = std::numeric_limits<TUint64>::max();
+
+    //iConnected = false; // FIXME - reset here?
 }
 
 void TestHttpReader::BlockAtOffset(TUint64 aOffset)
@@ -452,6 +456,7 @@ TBool TestHttpReader::Connect(const Uri& aUri)
         iBlockSem.Clear();
         iOffset = 0;
         iIndex++;
+        iConnected = true;
         return true;
     }
     return false;
@@ -459,6 +464,7 @@ TBool TestHttpReader::Connect(const Uri& aUri)
 
 void TestHttpReader::Close()
 {
+    ASSERT(iConnected);
 }
 
 TUint TestHttpReader::ContentLength() const
@@ -522,6 +528,7 @@ void TestHttpReader::ReadFlush()
 
 void TestHttpReader::ReadInterrupt()
 {
+    ASSERT(iConnected);
     iReader.ReadInterrupt();
     iBlockSem.Signal();
 }
