@@ -278,9 +278,9 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             if (expectUri) {
                 segmentUri = Ascii::Trim(iNextLine);
                 expectUri = false;
-                Log::Print("segmentUri: ");
-                Log::Print(segmentUri);
-                Log::Print("\n");
+                LOG(kMedia, "HlsM3uReader::NextSegmentUri segmentUri: ");
+                LOG(kMedia, segmentUri);
+                LOG(kMedia, "\n");
                 iLastSegment++;
             }
             else {
@@ -302,7 +302,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                         TUint durationDecimal = Ascii::Uint(durationDecimalBuf);
                         duration += durationDecimal;
                     }
-                    Log::Print("duration: %u\n", duration);
+                    LOG(kMedia, "HlsM3uReader::NextSegmentUri duration: %u\n", duration);
                     expectUri = true;
                 }
                 else if (tag == Brn("#EXT-X-ENDLIST")) {
@@ -439,7 +439,7 @@ TBool HlsM3uReader::PreprocessM3u()
                 if (iVersion > kMaxM3uVersion) {
                     LOG(kMedia, "Unsupported M3U version. Max supported version: %u, version encountered: %u\n", kMaxM3uVersion, iVersion);
                 }
-                Log::Print("iVersion: %u\n", iVersion);
+                LOG(kMedia, "HlsM3uReader::PreprocessM3u iVersion: %u\n", iVersion);
             }
             if (tag == Brn("#EXT-X-MEDIA-SEQUENCE")) {
                 mediaSeqFound = true;
@@ -452,15 +452,15 @@ TBool HlsM3uReader::PreprocessM3u()
                 else if (mediaSeq <= iLastSegment) {
                     skipSegments = (iLastSegment-mediaSeq);
                 }
-                Log::Print("mediaSeq: %llu\n", mediaSeq);
+                LOG(kMedia, "HlsM3uReader::PreprocessM3u mediaSeq: %llu\n", mediaSeq);
             }
             else if (tag == Brn("#EXT-X-TARGETDURATION")) {
                 iTargetDuration = Ascii::Uint(p.Next());
-                Log::Print("iTargetDuration: %u\n", iTargetDuration);
+                LOG(kMedia, "HlsM3uReader::PreprocessM3u iTargetDuration: %u\n", iTargetDuration);
             }
             else if (tag == Brn("#EXT-X-ENDLIST")) {
                 iEndlist = true;
-                Log::Print("#EXT-X-ENDLIST\n");
+                LOG(kMedia, "HlsM3uReader::PreprocessM3u found #EXT-X-ENDLIST\n");
             }
             else if (tag == Brn("#EXTINF")) {
                 if (!mediaSeqFound) {
@@ -869,7 +869,7 @@ TBool ProtocolHls::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*a
 
 void ProtocolHls::Reinitialise()
 {
-    Log::Print("ProtocolHls::Reinitialise\n");
+    LOG(kMedia, "ProtocolHls::Reinitialise\n");
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStarted = iStopped = false;
     iContentProcessor = NULL;
