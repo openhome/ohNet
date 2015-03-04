@@ -30,6 +30,7 @@ class SoftPlayer( BASE.Component ):
                   aTuneInId      = None,     # defaults to ''
                   aLoopback      = False,    # defaults to False
                   aTidalId       = None,     # defaults to Tidal disabled
+                  aQobuzId       = None,     # defaults to qobuz disabled (format id:secret)
                   aSenderChannel = None ):   # defaults to a random value
         """Start the SoftPlayer - all parameters are optional and will default
         as described above. These 'configuration' options cannot be changed on
@@ -80,6 +81,8 @@ class SoftPlayer( BASE.Component ):
             cmd.extend( ['-c', '%d' % aSenderChannel] )
         if aTidalId:
             cmd.extend( ['--tidal', '%s' % aTidalId] )
+        if aQobuzId:
+            cmd.extend( ['--qobuz', '%s' % aQobuzId] )
         self.log.Info( '', 'SoftPlayer command: %s' % cmd )
             
         self.proc = subprocess.Popen( cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -144,7 +147,8 @@ if __name__ == '__main__':
     # start softplayer, wait for exit
     tuneinId = Config.Config().Get( 'tunein.partnerid' )
     tidalId  = Config.Config().Get( 'tidal.id' )
-    s = SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aTidalId=tidalId )
+    qobuzId  = Config.Config().Get( 'qobuz.id' ) + ':' + Config.Config().Get( 'qobuz.secret' )
+    s = SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aTidalId=tidalId, aQobuzId=qobuzId )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
