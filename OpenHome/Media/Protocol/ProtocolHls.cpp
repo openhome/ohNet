@@ -225,6 +225,7 @@ void HlsM3uReader::SetUri(const Uri& aUri)
         AutoMutex a(iLock);
         ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
                                 // iInterrupted is set to true at construction, so will be true on first call to SetUri().
+        ASSERT(!iConnected);
         iUri.Replace(aUri.AbsoluteUri());
         iLastSegment = 0;
         iTargetDuration = 0;
@@ -553,14 +554,13 @@ SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReaderBuffered& aReader)
 
 void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 {
-    {
-        AutoMutex a(iLock);
-        ASSERT(iInterrupted);
-        iInterrupted = false;
-        iSegmentUriProvider = &aSegmentUriProvider;
-        iTotalBytes = 0;
-        iOffset = 0;
-    }
+    AutoMutex a(iLock);
+    ASSERT(iInterrupted);
+    ASSERT(!iConnected);
+    iInterrupted = false;
+    iSegmentUriProvider = &aSegmentUriProvider;
+    iTotalBytes = 0;
+    iOffset = 0;
 }
 
 Brn SegmentStreamer::Read(TUint aBytes)

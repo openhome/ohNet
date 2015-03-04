@@ -888,6 +888,7 @@ void SuiteHlsM3uReader::TestSetUri()
     );
 
     iM3uReader->Interrupt();
+    iM3uReader->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUri2);
     TestHttpReader::BufList bufList2;
@@ -1325,6 +1326,7 @@ void SuiteHlsM3uReader::TestEndlist()
     );
 
     iM3uReader->Interrupt();
+    iM3uReader->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUriEndlistStart);
     TestHttpReader::BufList bufList2;
@@ -1464,6 +1466,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     );
 
     iM3uReader->Interrupt();
+    iM3uReader->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUriVersion4);
     TestHttpReader::BufList bufList2;
@@ -1514,6 +1517,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     "http://media.example.com/fileSequence53-A.ts\n");
 
     iM3uReader->Interrupt();
+    iM3uReader->Close();
     TestHttpReader::UriList uriList3;
     uriList3.push_back(&kUriVersion3Encrypted);
     TestHttpReader::BufList bufList3;
@@ -1595,7 +1599,7 @@ void SuiteHlsM3uReader::TestInterrupt()
     iSem->Wait(kSemWaitMs);    // iM3uReader->NextSegmentUri() has been called in other thread.
     iM3uReader->Interrupt();
     iThreadSem->Wait(kSemWaitMs);   // Wait on iM3uReader->NextSegmentUri() returning.
-
+    iM3uReader->Close();
 
 
     // Test interrupt while reading from stream.
@@ -1612,6 +1616,7 @@ void SuiteHlsM3uReader::TestInterrupt()
     iSemReader->Wait(kSemWaitMs);   // iReader has blocked at above offset in other thread.
     iM3uReader->Interrupt();
     iThreadSem->Wait(kSemWaitMs);   // Wait on iM3uReader->NextSegmentUri() returning.
+    iM3uReader->Close();
 
 
 
@@ -1763,6 +1768,7 @@ void SuiteSegmentStreamer::TestRead()
     // Current behaviour of each read request is to only read (at most) up to end of each segment.
     // So, attempt to read more than amount buffered. Should throw ReaderError, then ReadRemaining() can be called.
     iStreamer->ReadInterrupt();
+    iStreamer->Close();
     iUriProvider->SetUri(kUri1, 50);
     iHttpReader->SetContent(uriList1, bufList1);
     iStreamer->Stream(*iUriProvider);
@@ -1779,6 +1785,7 @@ void SuiteSegmentStreamer::TestRead()
 
     // Test ReadUntil().
     iStreamer->ReadInterrupt();
+    iStreamer->Close();
     iUriProvider->SetUri(kUri1, 50);
     iHttpReader->SetContent(uriList1, bufList1);
     iStreamer->Stream(*iUriProvider);
@@ -1828,6 +1835,7 @@ void SuiteSegmentStreamer::TestInterrupt()
     iSemReader->Wait(kSemWaitMs);    // iStreamer->Read(iReadBytes) has been called in other thread.
     iStreamer->ReadInterrupt();
     iThreadSem->Wait(kSemWaitMs);   // Wait on iStreamer->Read() returning.
+    iStreamer->Close();
 
 
 
@@ -1844,6 +1852,7 @@ void SuiteSegmentStreamer::TestInterrupt()
     // Test failed connection.
     static const Uri kUriDummy(Brn("http://dummy"));
     iStreamer->ReadInterrupt();
+    iStreamer->Close();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUriDummy);
     TestHttpReader::BufList bufList2;
