@@ -223,8 +223,7 @@ void HlsM3uReader::SetUri(const Uri& aUri)
 {
     {
         AutoMutex a(iLock);
-        // FIXME - re-enable this assertion.
-        //ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
+        ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
                                 // iInterrupted is set to true at construction, so will be true on first call to SetUri().
         iUri.Replace(aUri.AbsoluteUri());
         iLastSegment = 0;

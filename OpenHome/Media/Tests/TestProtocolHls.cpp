@@ -887,6 +887,7 @@ void SuiteHlsM3uReader::TestSetUri()
     "https://priv.example.com/fileSequence3050.ts\n"
     );
 
+    iM3uReader->Interrupt();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUri2);
     TestHttpReader::BufList bufList2;
@@ -1323,6 +1324,7 @@ void SuiteHlsM3uReader::TestEndlist()
     "http://media.example.com/third.ts\n"
     );
 
+    iM3uReader->Interrupt();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUriEndlistStart);
     TestHttpReader::BufList bufList2;
@@ -1343,7 +1345,7 @@ void SuiteHlsM3uReader::TestEndlist()
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/third.ts"));
 
     TEST(iTimer->StartCount() == 2);
-    TEST(iTimer->CancelCount() == 0);
+    TEST(iTimer->CancelCount() == 1);
     TEST(iTimer->LastDurationMs() == 10000);
     TEST(iTimer->LastHandler() == iM3uReader);
 
@@ -1461,6 +1463,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     "https://priv.example.com/fileSequence2682.ts\n"
     );
 
+    iM3uReader->Interrupt();
     TestHttpReader::UriList uriList2;
     uriList2.push_back(&kUriVersion4);
     TestHttpReader::BufList bufList2;
@@ -1481,7 +1484,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/fileSequence2682.ts"));
 
     TEST(iTimer->StartCount() == 2);
-    TEST(iTimer->CancelCount() == 0);
+    TEST(iTimer->CancelCount() == 1);
     TEST(iTimer->LastDurationMs() == 8000);
     TEST(iTimer->LastHandler() == iM3uReader);
 
@@ -1510,6 +1513,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     "#EXTINF:15.0,\n"
     "http://media.example.com/fileSequence53-A.ts\n");
 
+    iM3uReader->Interrupt();
     TestHttpReader::UriList uriList3;
     uriList3.push_back(&kUriVersion3Encrypted);
     TestHttpReader::BufList bufList3;
@@ -1534,7 +1538,7 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     TEST(segmentUri.AbsoluteUri() == Brn("http://media.example.com/fileSequence53-A.ts"));
 
     TEST(iTimer->StartCount() == 3);
-    TEST(iTimer->CancelCount() == 0);
+    TEST(iTimer->CancelCount() == 2);
     TEST(iTimer->LastDurationMs() == 15000);
     TEST(iTimer->LastHandler() == iM3uReader);
 }
