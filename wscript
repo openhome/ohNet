@@ -124,7 +124,7 @@ def configure(conf):
         conf.env.STLIB_OPENSSL = ['libeay32', 'ssleay32']
         conf.env.LIB_OPENSSL = ['advapi32', 'gdi32', 'user32']
     else:
-        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ppc32', 'Linux-armhf']:
+        if conf.options.dest_platform.startswith('Linux-'):
             conf.env.LIB_OPENSSL = ['dl']
         conf.env.STLIB_OPENSSL = ['ssl', 'crypto']
     conf.env.INCLUDES_OPENSSL = [
