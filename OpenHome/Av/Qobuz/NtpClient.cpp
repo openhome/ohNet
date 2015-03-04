@@ -119,8 +119,7 @@ void NtpClient::Write(TByte /*aValue*/)
 
 void NtpClient::Write(const Brx& aBuffer)
 {
-    Endpoint ep(kNtpPort, Brn("0.pool.ntp.org"));
-    iSocket.Send(aBuffer, ep);
+    iSocket.Send(aBuffer, iServerEndpoint);
 }
 
 void NtpClient::WriteFlush()
