@@ -27,6 +27,7 @@ public:
     static const TUint kCodecVorbis   = 5;
     static const TUint kCodecAiff     = 6;
     static const TUint kCodecAifc     = 7;
+    static const TUint kCodecAdts     = 8;
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec);
     const Brx& Filename() const;
@@ -280,6 +281,7 @@ private:
     TUint iBitDepth;
     TUint iChannels;
     TUint iBytesProcessed;
+    TInt iLastSubsample;
     TUint iLastCrossingByte;
     TUint iZeroCrossings;
     TUint iUnacceptableCrossingDeltas;

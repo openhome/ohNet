@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
+#include <OpenHome/Media/Codec/MpegTs.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
@@ -308,6 +309,7 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     // Add containers
     iContainer->AddContainer(new Id3v2());
     iContainer->AddContainer(new Mpeg4Start());
+    iContainer->AddContainer(new MpegTs());
 
     // Add codecs
     // These can be re-ordered to check for problems in the recognise function of each codec.
@@ -316,6 +318,7 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     iController->AddCodec(CodecFactory::NewAifc());
     iController->AddCodec(CodecFactory::NewFlac());
     iController->AddCodec(CodecFactory::NewAac());
+    iController->AddCodec(CodecFactory::NewAdts());
     iController->AddCodec(CodecFactory::NewAlac());
     iController->AddCodec(CodecFactory::NewVorbis());
 }
@@ -718,6 +721,7 @@ SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor
     , iBitDepth(0)
     , iChannels(0)
     , iBytesProcessed(0)
+    , iLastSubsample(0)
     , iLastCrossingByte(0)
     , iZeroCrossings(0)
     , iUnacceptableCrossingDeltas(0)
@@ -736,6 +740,7 @@ void SuiteCodecZeroCrossings::Setup()
 {
     SuiteCodecStream::Setup();
     iBytesProcessed = 0;
+    iLastSubsample = 0;
     iLastCrossingByte = 0;
     iZeroCrossings = 0;
     iUnacceptableCrossingDeltas = 0;
@@ -762,9 +767,7 @@ void SuiteCodecZeroCrossings::TestCrossingDelta()
 
 Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
 {
-    TBool negative = false;
-    TBool positive = false;
-
+    //iLastSubsample = 0;
     MsgPlayable* msg = aMsg->CreatePlayable();
     TUint bytes = msg->Bytes();
     ProcessorPcmBufPacked pcmProcessor;
@@ -793,27 +796,15 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
             }
 
             if (j == 0) { // Only do subsample comparison on a single channel.
-                if (subsample < 0) {
-                    if (positive && !negative) {
-                        TestCrossingDelta();
-                    }
-                    negative = true;
-                    positive = false;
+                if (iLastSubsample >= 0 && subsample < 0) {
+                    //iZeroCrossings++;
+                    TestCrossingDelta();
                 }
-                else if (subsample > 0) {
-                    if (negative && !positive) {
-                        TestCrossingDelta();
-                    }
-                    negative = false;
-                    positive = true;
+                else if (iLastSubsample <= 0 && subsample > 0) {
+                    //iZeroCrossings++;
+                    TestCrossingDelta();
                 }
-                else {
-                    if (negative || positive) {
-                        TestCrossingDelta();
-                    }
-                    negative = false;
-                    positive = false;
-                }
+                iLastSubsample = subsample;
             }
             iBytesProcessed += iBitDepth/8;
         }
@@ -905,7 +896,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     OptionParser parser;
     OptionString optionServer("-s", "--server", Brn("eng"), "address of server to connect to");
     parser.AddOption(&optionServer);
-    OptionUint optionPort("-p", "--port", 80, "server port to connect on");
+    OptionUint optionPort("-p", "--port", 25064, "server port to connect on");
     parser.AddOption(&optionPort);
     OptionString optionPath("", "--path", Brn(""), "path to use on server");
     parser.AddOption(&optionPath);
