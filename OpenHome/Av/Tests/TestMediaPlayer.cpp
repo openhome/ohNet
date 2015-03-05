@@ -44,6 +44,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
+    , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -268,7 +269,8 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     MacAddrFromUdn(aEnv, macAddr);
     const TChar* friendlyName;
     iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), friendlyName, macAddr));
+    iObservableFriendlyName.Replace(Brn(friendlyName));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, NULL, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }

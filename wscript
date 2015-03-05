@@ -289,6 +289,7 @@ def build(bld):
                 'OpenHome/Av/Credentials.cpp',
                 'Generated/DvAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/ProviderCredentials.cpp',
+                'OpenHome/ObservableBrx.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON', 'ohPipeline'],
             target='ohMediaPlayer')
@@ -607,6 +608,7 @@ def build(bld):
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
                 'OpenHome/Tests/TestSsl.cpp',
+                'OpenHome/Tests/TestObservable.cpp',
                 'OpenHome/Av/Tests/TestCredentials.cpp',
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
@@ -848,6 +850,11 @@ def build(bld):
             source='OpenHome/Tests/TestHttps.cpp',
             use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
             target='TestHttps',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Tests/TestObservableMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestObservable',
             install_path=None)
     #bld.program(
     #        source='OpenHome/Tests/TestHttpsBsd.cpp',
