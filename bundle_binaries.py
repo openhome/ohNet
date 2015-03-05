@@ -44,12 +44,14 @@ ALL_TARGETS = {
         BuildTarget("Linux",   "armel", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "armhf", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "ppc32", "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+        BuildTarget("Linux",   "mipsel","Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x86",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "x64",   "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "armel", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "armhf", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Linux",   "ppc32", "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
-        
+        BuildTarget("Linux",   "mipsel","Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
+
         BuildTarget("Qnap",   "x86",    "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Qnap",   "x86",    "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
         BuildTarget("Qnap",   "armel",  "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),

@@ -102,7 +102,9 @@ else
     ifneq (,$(findstring x86_64,$(gcc_machine)))
       detected_openhome_architecture = x64
     endif
-
+    ifneq (,$(findstring mipsel,$(gcc_machine)))
+      detected_openhome_architecture = mipsel
+    endif
 
 endif
 
