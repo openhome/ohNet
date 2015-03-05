@@ -109,6 +109,7 @@
         "platform-ignore": {
             "Linux-x64": true,
             "Linux-ppc32": true,
+            "Linux-armhf": true,
             "*": false },
         "ignore":           "${platform-ignore[$platform]}"
     }
