@@ -1224,12 +1224,6 @@ void HttpReader::Close()
     }
 }
 
-void HttpReader::Interrupt(TBool aInterrupt)
-{
-    LOG(kHttp, "HttpReader::Interrupt(%u)\n", aInterrupt);
-    iTcpClient.Interrupt(aInterrupt);
-}
-
 TUint HttpReader::ContentLength() const
 {
     ASSERT(iConnected);

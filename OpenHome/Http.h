@@ -508,12 +508,27 @@ private:
     TBool iChunked;
 };
 
+class IHttpSocket
+{
+public:
+    virtual TBool Connect(const Uri& aUri) = 0;
+    virtual void Close() = 0;
+    virtual TUint ContentLength() const = 0;
+    virtual ~IHttpSocket() {}
+};
 
-class HttpReader : public IReader
+class IReaderBuffered : public IReader
+{
+public:
+    virtual Brn ReadRemaining() = 0;
+    virtual ~IReaderBuffered() {}
+};
+
+class HttpReader : public IHttpSocket, public IReaderBuffered
 {
 private:
     static const TUint kHttpPort = 80;
-    static const TUint kReadBufferBytes = 4 * 1024;
+    static const TUint kReadBufferBytes = 9 * 1024;
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
     static const TUint kResponseTimeoutMs = 60 * 1000;
@@ -522,11 +537,11 @@ public:
     HttpReader(Environment& aEnv);
     HttpReader(Environment& aEnv, const Brx& aUserAgent);
     ~HttpReader();
-
+public: // from IHttpSocket
     TBool Connect(const Uri& aUri);
     void Close();
-    void Interrupt(TBool aInterrupt);
     TUint ContentLength() const;
+public: // from IReaderBuffered
     Brn ReadRemaining();
 public: // from IReader
     Brn Read(TUint aBytes);
