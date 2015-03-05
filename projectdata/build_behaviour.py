@@ -91,7 +91,9 @@ def choose_platform(context):
                 "Linux-x86" : "Linux-x86",
                 "Linux-x64" : "Linux-x64",
                 "Linux-ARM" : "Linux-ARM",
+                "Linux-armhf" : "Linux-armhf",
                 "Linux-ppc32" : "Linux-ppc32",
+                "Linux-mipsel" : "Linux-mipsel",
                 "Mac-x86" : "Mac-x86",
                 "Mac-x64" : "Mac-x64",
                 "Core-ppc32" : "Core-ppc32",
@@ -139,7 +141,9 @@ def setup_windows(context):
 @build_condition(OH_PLATFORM="Linux-x86")
 @build_condition(OH_PLATFORM="Linux-x64")
 @build_condition(OH_PLATFORM="Linux-ARM")
+@build_condition(OH_PLATFORM="Linux-armhf")
 @build_condition(OH_PLATFORM="Linux-ppc32")
+@build_condition(OH_PLATFORM="Linux-mipsel")
 def setup_linux(context):
     env = context.env
     context.integration_test_log_dir = os.path.join(os.environ['HOME'], context.integration_test_log_dir)
@@ -170,7 +174,8 @@ def bundle(context):
 
 @build_step("test", optional=True)
 def test(context):
-    python("waf", "test")
+    if context.env["OH_PLATFORM"] != 'Linux-armhf' and context.env["OH_PLATFORM"] != 'Linux-mipsel':
+        python("waf", "test")
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):

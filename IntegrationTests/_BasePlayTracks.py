@@ -107,7 +107,7 @@ class BasePlayTracks( BASE.BaseTest ):
         if self.shuffle.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
 
-        if self.playTime <= kNotPlayedThreshold:
+        if self.playTime is not None and self.playTime <= kNotPlayedThreshold:
             self.log.Abort( '', 'Minimum value for time-to-play is %ds' % (kNotPlayedThreshold+1) )
 
         # start local softplayer(s) as required
@@ -253,7 +253,7 @@ class BasePlayTracks( BASE.BaseTest ):
         currIdTime = time.time()
         if currIdTime-self.lastIdTime < kNotPlayedThreshold:
             # less than Ns between ID events - assume previous track skipped
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % self.numTrack )
+            self.log.Fail( self.senderDev, '[1] Track %d did NOT play' % self.numTrack )
         elif self.expectedPlayTime:
             loLim = self.expectedPlayTime-1
             hiLim = self.expectedPlayTime+1
@@ -476,11 +476,11 @@ class BasePlayTracks( BASE.BaseTest ):
     def _SenderPlayTime( self ):
         """Return track duration reported by sender (with a retry...)"""
         self.senderDuration.clear()
-        duration = self.sender.time.duration
+        duration = int( self.sender.time.duration )
         if duration == 0:
             self.senderDuration.wait( 3 )
             if self.senderDuration.is_set():
-                duration = self.sender.time.duration
+                duration = int( self.sender.time.duration )
         if duration == 0:
             self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
         return duration
@@ -499,7 +499,7 @@ class BasePlayTracks( BASE.BaseTest ):
                 timeout = True
 
         if timeout:
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+            self.log.Fail( self.senderDev, '[2] Track %d did NOT play' % (self.numTrack-1) )
             self.sender.playlist.Next()
         elif self.idUpdated.is_set():
             pass

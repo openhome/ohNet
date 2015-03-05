@@ -49,7 +49,7 @@ class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
     static const TUint kTrackCount = 1200;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
-                    const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aUserAgent,
+                    const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
                     Media::IPullableClock* aPullableClock, Media::IPipelineDriver& aPipelineDriver);
     virtual ~TestMediaPlayer();
     void StopPipeline();
@@ -91,6 +91,7 @@ private:
     Net::ShellCommandDebug* iShellDebug;
     const Brx& iTuneInPartnerId;
     const Brx& iTidalId;
+    const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
 };
 
@@ -108,6 +109,7 @@ public:
     TestFramework::OptionBool& Loopback();
     TestFramework::OptionString& TuneIn();
     TestFramework::OptionString& Tidal();
+    TestFramework::OptionString& Qobuz();
     TestFramework::OptionString& UserAgent();
 private:
     TestFramework::OptionParser iParser;
@@ -119,6 +121,7 @@ private:
     TestFramework::OptionBool iOptionLoopback;
     TestFramework::OptionString iOptionTuneIn;
     TestFramework::OptionString iOptionTidal;
+    TestFramework::OptionString iOptionQobuz;
     TestFramework::OptionString iOptionUserAgent;
 };
 

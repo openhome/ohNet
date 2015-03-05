@@ -36,12 +36,13 @@ using namespace OpenHome::TestFramework;
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
-                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aUserAgent,
+                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
                                  IPullableClock* aPullableClock, Media::IPipelineDriver& aPipelineDriver)
     : iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
     , iTuneInPartnerId(aTuneInPartnerId)
     , iTidalId(aTidalId)
+    , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
 {
     Bws<256> friendlyName;
@@ -227,19 +228,29 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
     // Add protocol modules (Radio source can require several stacked Http instances)
-    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
-    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
 
-    // only add Tidal if we have credible login details
+    // only add Tidal if we have a token to use with login
     if (iTidalId.Bytes() > 0) {
         iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
-        iMediaPlayer->AddAttribute("Credentials");
     }
+    // ...likewise, only add Qobuz if we have ids for login
+    if (iQobuzIdSecret.Bytes() > 0) {
+        Parser p(iQobuzIdSecret);
+        Brn appId(p.Next(':'));
+        Brn appSecret(p.Remaining());
+        Log::Print("Qobuz: appId = ");
+        Log::Print(appId);
+        Log::Print(", appSecret = ");
+        Log::Print(appSecret);
+        Log::Print("\n");
+        iMediaPlayer->Add(ProtocolFactory::NewQobuz(aEnv, appId, appSecret, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
+    }
+    iMediaPlayer->AddAttribute("Credentials");
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
@@ -365,6 +376,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
     , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
+    , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
     , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
 {
     iParser.AddOption(&iOptionRoom);
@@ -375,6 +387,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     iParser.AddOption(&iOptionLoopback);
     iParser.AddOption(&iOptionTuneIn);
     iParser.AddOption(&iOptionTidal);
+    iParser.AddOption(&iOptionQobuz);
     iParser.AddOption(&iOptionUserAgent);
 }
 
@@ -426,6 +439,11 @@ OptionString& TestMediaPlayerOptions::TuneIn()
 OptionString& TestMediaPlayerOptions::Tidal()
 {
     return iOptionTidal;
+}
+
+OptionString& TestMediaPlayerOptions::Qobuz()
+{
+    return iOptionQobuz;
 }
 
 OptionString& TestMediaPlayerOptions::UserAgent()
