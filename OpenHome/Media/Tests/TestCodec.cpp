@@ -896,7 +896,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     OptionParser parser;
     OptionString optionServer("-s", "--server", Brn("eng"), "address of server to connect to");
     parser.AddOption(&optionServer);
-    OptionUint optionPort("-p", "--port", 25064, "server port to connect on");
+    OptionUint optionPort("-p", "--port", 80, "server port to connect on");
     parser.AddOption(&optionPort);
     OptionString optionPath("", "--path", Brn(""), "path to use on server");
     parser.AddOption(&optionPath);
