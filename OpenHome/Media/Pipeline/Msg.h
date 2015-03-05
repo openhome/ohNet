@@ -1042,7 +1042,6 @@ public:
 class IPipelineIdProvider
 {
 public:
-    static const TUint kTrackIdInvalid = 0;
     static const TUint kStreamIdInvalid = 0;
 public:
     virtual ~IPipelineIdProvider() {}

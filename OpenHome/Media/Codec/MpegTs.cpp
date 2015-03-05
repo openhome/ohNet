@@ -103,10 +103,10 @@ TBool MpegTs::Recognise(Brx& aBuf)
         if (isPesPacketStart) {
             //TUint streamId = aBuf[offset+3];
             //TUint pesPacketLength = Converter::BeUint16At(aBuf, offset+4);
-            //if ((aBuf[offset+6] & 0x80) == 0x80) { // Optional PES header found
-            //    TUint pesOptionalHeaderLength = aBuf[offset+8];
-            //    pesBytes += kPesHeaderOptionalFixedBytes + pesOptionalHeaderLength;
-            //}
+            if ((aBuf[offset+6] & 0x80) == 0x80) { // Optional PES header found
+                TUint pesOptionalHeaderLength = aBuf[offset+8];
+                pesBytes += kPesHeaderOptionalFixedBytes + pesOptionalHeaderLength;
+            }
         }
 
         iSize = kMpegHeaderBytes+adaptationFieldBytes+pesBytes;
