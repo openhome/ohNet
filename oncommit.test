@@ -26,6 +26,7 @@ tests = '''
     TestPreDriver
     TestContentProcessor
     TestPipeline
+    TestProtocolHls
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t quick
     TestCodecController
