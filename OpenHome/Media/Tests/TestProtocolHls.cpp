@@ -402,14 +402,13 @@ TestHttpReader::TestHttpReader(Semaphore& aObserverSem, Semaphore& aWaitSem)
 
 void TestHttpReader::SetContent(const UriList& aUris, const BufList& aContent)
 {
+    ASSERT(!iConnected);
     iUris = &aUris;
     iContent = &aContent;
     iIndex = 0;
     iBlockOffset = std::numeric_limits<TUint64>::max();
     iThrowOffset = std::numeric_limits<TUint64>::max();
     iWaitOffset = std::numeric_limits<TUint64>::max();
-
-    //iConnected = false; // FIXME - reset here?
 }
 
 void TestHttpReader::BlockAtOffset(TUint64 aOffset)
@@ -465,6 +464,7 @@ TBool TestHttpReader::Connect(const Uri& aUri)
 void TestHttpReader::Close()
 {
     ASSERT(iConnected);
+    iConnected = false;
 }
 
 TUint TestHttpReader::ContentLength() const
