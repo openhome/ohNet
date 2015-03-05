@@ -393,8 +393,8 @@ void TestSemaphore::Signal()
 // TestHttpReader
 
 TestHttpReader::TestHttpReader(Semaphore& aObserverSem, Semaphore& aWaitSem)
-    : iBlockSem("THRS", 0)
-    , iObserverSem(aObserverSem)
+    : iObserverSem(aObserverSem)
+    , iBlockSem("THRS", 0)
     , iWaitSem(aWaitSem)
     , iConnected(false)
 {
