@@ -25,7 +25,7 @@ using namespace OpenHome::Configuration;
 const Brn RadioPresetsTuneIn::kConfigUsernameBase("Radio.TuneInUserName");
 const Brn RadioPresetsTuneIn::kConfigUsernameDefault("linnproducts");
 const Brn RadioPresetsTuneIn::kTuneInPresetsRequest("http://opml.radiotime.com/Browse.ashx?&c=presets&options=recurse:tuneShows");
-//const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg");
+//const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg,hls");
 const Brn RadioPresetsTuneIn::kPartnerId("&partnerId=");
 const Brn RadioPresetsTuneIn::kUsername("&username=");
 
@@ -51,7 +51,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
                                     ,{"audio/aac", "aac"}
                                     ,{"video/x-ms-wmv", "wmvideo"}
                                     ,{"application/ogg", "ogg"}
-                                    //,{"application/vnd.apple.mpegurl", "hls"} // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
+                                    ,{"application/vnd.apple.mpegurl", "hls"} // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
                                     };
     const TUint maxFormats = sizeof(kTypes)/sizeof(kTypes[0]);
     TBool first = true;
