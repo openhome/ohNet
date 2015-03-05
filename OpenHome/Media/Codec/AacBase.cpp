@@ -90,6 +90,7 @@ void CodecAacBase::StreamInitialise()
     iStreamEnded = false;
 
     iTotalSamplesOutput = 0;
+    iTrackLengthJiffies = 0;
 
     iInBuf.SetBytes(0);
     iDecodedBuf.SetBytes(0);
@@ -270,7 +271,9 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
 
     if (sampleRate != iOutputSampleRate) {
         iOutputSampleRate = sampleRate;
-        iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+        if (!aParseOnly) {
+            iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+        }
     }
     numOutSamples = frameSize;
 
