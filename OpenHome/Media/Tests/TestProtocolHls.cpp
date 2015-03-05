@@ -65,9 +65,9 @@ public:
 public:
     TestHttpReader(Semaphore& aObserverSem, Semaphore& aWaitSem);
     void SetContent(const UriList& aUris, const BufList& aContent);
-    void BlockAtOffset(TUint64 aOffset);
-    void ThrowReadErrorAtOffset(TUint64 aOffset);
-    void WaitAtOffset(TUint64 aOffset); // waits on aWaitSem being signalled
+    void BlockAtOffset(TUint aOffset);
+    void ThrowReadErrorAtOffset(TUint aOffset);
+    void WaitAtOffset(TUint aOffset); // waits on aWaitSem being signalled
     TUint ConnectCount() const;
 public: // from IHlsReader
     IHttpSocket& Socket() override;
@@ -85,15 +85,15 @@ public: // from IReaderBuffered
 private:
     const UriList* iUris;
     const BufList* iContent;
-    ReaderBuffer iReader;
+    Brn iCurrent;
     TUint iIndex;
-    TUint64 iOffset;
-    TUint64 iBlockOffset;
+    TUint iOffset;
+    TUint iBlockOffset;
     Semaphore& iObserverSem;
     Semaphore iBlockSem;
-    TUint64 iThrowOffset;
+    TUint iThrowOffset;
     Semaphore& iWaitSem;
-    TUint64 iWaitOffset;
+    TUint iWaitOffset;
     TUint iConnectCount;
     TBool iConnected;
 };
@@ -406,29 +406,29 @@ void TestHttpReader::SetContent(const UriList& aUris, const BufList& aContent)
     iUris = &aUris;
     iContent = &aContent;
     iIndex = 0;
-    iBlockOffset = std::numeric_limits<TUint64>::max();
-    iThrowOffset = std::numeric_limits<TUint64>::max();
-    iWaitOffset = std::numeric_limits<TUint64>::max();
+    iBlockOffset = std::numeric_limits<TUint>::max();
+    iThrowOffset = std::numeric_limits<TUint>::max();
+    iWaitOffset = std::numeric_limits<TUint>::max();
 }
 
-void TestHttpReader::BlockAtOffset(TUint64 aOffset)
+void TestHttpReader::BlockAtOffset(TUint aOffset)
 {
-    ASSERT(iThrowOffset == std::numeric_limits<TUint64>::max());
-    ASSERT(iWaitOffset == std::numeric_limits<TUint64>::max());
+    ASSERT(iThrowOffset == std::numeric_limits<TUint>::max());
+    ASSERT(iWaitOffset == std::numeric_limits<TUint>::max());
     iBlockOffset = aOffset;
 }
 
-void TestHttpReader::ThrowReadErrorAtOffset(TUint64 aOffset)
+void TestHttpReader::ThrowReadErrorAtOffset(TUint aOffset)
 {
-    ASSERT(iBlockOffset == std::numeric_limits<TUint64>::max());
-    ASSERT(iWaitOffset == std::numeric_limits<TUint64>::max());
+    ASSERT(iBlockOffset == std::numeric_limits<TUint>::max());
+    ASSERT(iWaitOffset == std::numeric_limits<TUint>::max());
     iThrowOffset = aOffset;
 }
 
-void TestHttpReader::WaitAtOffset(TUint64 aOffset)
+void TestHttpReader::WaitAtOffset(TUint aOffset)
 {
-    ASSERT(iThrowOffset == std::numeric_limits<TUint64>::max());
-    ASSERT(iBlockOffset == std::numeric_limits<TUint64>::max());
+    ASSERT(iThrowOffset == std::numeric_limits<TUint>::max());
+    ASSERT(iBlockOffset == std::numeric_limits<TUint>::max());
     iWaitOffset = aOffset;
 }
 
@@ -451,7 +451,7 @@ TBool TestHttpReader::Connect(const Uri& aUri)
 {
     iConnectCount++;
     if (iIndex < iUris->size() && aUri.AbsoluteUri() == (*iUris)[iIndex]->AbsoluteUri()) {
-        iReader.Set(*(*iContent)[iIndex]);
+        iCurrent.Set(*(*iContent)[iIndex]);
         iBlockSem.Clear();
         iOffset = 0;
         iIndex++;
@@ -474,84 +474,88 @@ TUint TestHttpReader::ContentLength() const
 
 Brn TestHttpReader::Read(TUint aBytes)
 {
-    // FIXME - don't use an iReader! just parse buffer directly so that behaviour of ReadUntil() matches this!
-
-    TUint64 offsetNew = iOffset + aBytes;
+    TUint offsetNew = iOffset + aBytes;
 
     if (offsetNew >= iBlockOffset) {
         iObserverSem.Signal();
         iBlockSem.Wait();
-        iBlockOffset = std::numeric_limits<TUint64>::max();
+        iBlockOffset = std::numeric_limits<TUint>::max();
         THROW(ReaderError);
     }
     else if (offsetNew >= iWaitOffset) {
         iObserverSem.Signal();
         iWaitSem.Wait();
-        iWaitOffset = std::numeric_limits<TUint64>::max();
+        iWaitOffset = std::numeric_limits<TUint>::max();
     }
     else if (offsetNew >= iThrowOffset) {
-        iThrowOffset = std::numeric_limits<TUint64>::max();
+        iThrowOffset = std::numeric_limits<TUint>::max();
         THROW(ReaderError);
     }
 
-    Brn buf = iReader.Read(aBytes);
-    iOffset += buf.Bytes();
+    if (offsetNew > iCurrent.Bytes()) {
+        THROW(ReaderError);
+    }
+
+    Brn buf = iCurrent.Split(iOffset, aBytes);
+    iOffset = offsetNew;
     return buf;
 }
 
 Brn TestHttpReader::ReadUntil(TByte aSeparator)
 {
-    Brn buf = iReader.ReadUntil(aSeparator);
-    iOffset += buf.Bytes();
-    if (iOffset >= iBlockOffset) {
+    TUint start = iOffset;
+    TUint offset = iOffset;
+
+    TUint bytes = iCurrent.Bytes();
+    TUint offsetNew = iOffset;
+
+    while (offset < bytes && offsetNew == iOffset) {
+        if (iCurrent[offset++] == aSeparator) {
+            offsetNew = offset;
+            break;
+        }
+    }
+
+    if (offsetNew >= iBlockOffset) {
         iObserverSem.Signal();
         iBlockSem.Wait();
-        iBlockOffset = std::numeric_limits<TUint64>::max();
+        iBlockOffset = std::numeric_limits<TUint>::max();
         THROW(ReaderError);
     }
-    else if (iOffset >= iWaitOffset) {
+    else if (offsetNew >= iWaitOffset) {
         iObserverSem.Signal();
         iWaitSem.Wait();
-        iWaitOffset = std::numeric_limits<TUint64>::max();
+        iWaitOffset = std::numeric_limits<TUint>::max();
     }
-    else if (iOffset >= iThrowOffset) {
-        iThrowOffset = std::numeric_limits<TUint64>::max();
+    else if (offsetNew >= iThrowOffset) {
+        iThrowOffset = std::numeric_limits<TUint>::max();
         THROW(ReaderError);
     }
-    return buf;
+
+    if (offsetNew > iOffset && offsetNew <= bytes) {
+        iOffset = offsetNew;
+        return (iCurrent.Split(start, offset - start - 1));
+    }
+    else {
+        THROW(ReaderError);
+    }
 }
 
 void TestHttpReader::ReadFlush()
 {
-    iReader.ReadFlush();
+    //iOffset = 0;
 }
 
 void TestHttpReader::ReadInterrupt()
 {
     ASSERT(iConnected);
-    iReader.ReadInterrupt();
     iBlockSem.Signal();
 }
 
 Brn TestHttpReader::ReadRemaining()
 {
-    Brn buf = iReader.ReadRemaining();
+    Brn buf = iCurrent.Split(iOffset, iCurrent.Bytes()-iOffset);
     iOffset += buf.Bytes();
-    //if (iOffset >= iBlockOffset) {
-    //    iObserverSem.Signal();
-    //    iBlockSem.Wait();
-    //    iBlockOffset = std::numeric_limits<TUint64>::max();
-    //    THROW(ReaderError);
-    //}
-    //else if (iOffset >= iWaitOffset) {
-    //    iObserverSem.Signal();
-    //    iWaitSem.Wait();
-    //    iWaitOffset = std::numeric_limits<TUint64>::max();
-    //}
-    //else if (iOffset >= iThrowOffset) {
-    //    iThrowOffset = std::numeric_limits<TUint64>::max();
-    //    THROW(ReaderError);
-    //}
     return buf;
 }
 
