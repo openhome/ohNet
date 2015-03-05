@@ -18,6 +18,7 @@ import _FunctionalTest
 import BaseTest                   as BASE
 import Upnp.ControlPoints.Volkano as Volkano
 import _SoftPlayer                as SoftPlayer
+import Utils.Common               as Common
 import LogThread
 import os
 import random
@@ -469,9 +470,10 @@ class BasePlayTracks( BASE.BaseTest ):
         if self.repeat=='off' and self.numTrack<=len( self.tracks ):
             if not self.senderStopped.isSet():
                 plIndex = self.sender.playlist.PlaylistIndex( aPlId )
-                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
-                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-
+                (uri,meta) = self.tracks[self.sender.playlist.idArray.index( aPlId )]
+                title = Common.GetTitleFromDidl( meta )
+                self.log.Header1( '', 'Track %d: %s  (Playlist #%d) Rpt->%s Shfl->%s' % \
+                    (self.numTrack, title, plIndex+1, self.repeat, self.shuffle) )
 
     def _SenderPlayTime( self ):
         """Return track duration reported by sender (with a retry...)"""
