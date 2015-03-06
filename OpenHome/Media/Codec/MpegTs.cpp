@@ -247,11 +247,13 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
     return unpacked;
 }
 
-TUint MpegTs::TrySeek(TUint aStreamId, TUint64 aOffset)
+TUint MpegTs::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
-    TUint64 offset = aOffset + iTotalSize;
-    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
-    return iExpectedFlushId;
+    // Seeking currently unsupported.
+    return MsgFlush::kIdInvalid;
+    //TUint64 offset = aOffset + iTotalSize;
+    //iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
+    //return iExpectedFlushId;
 }
 
 TBool MpegTs::RecogniseTableHeader(const Brx& aTableHeader)

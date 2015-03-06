@@ -31,13 +31,14 @@ using namespace OpenHome::Media::Codec;
 
 // AudioFileDescriptor
 
-AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec)
+AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec, TBool aSeekable)
     : iFilename(aFilename)
     , iSampleRate(aSampleRate)
     , iSamples(aSamples)
     , iBitDepth(aBitDepth)
     , iChannels(aChannels)
     , iCodec(aCodec)
+    , iSeekable(aSeekable)
 {
 }
 const Brx& AudioFileDescriptor::Filename() const
@@ -81,6 +82,11 @@ TUint AudioFileDescriptor::Channels() const
 TUint AudioFileDescriptor::Codec() const
 {
     return iCodec;
+}
+
+TBool AudioFileDescriptor::Seekable() const
+{
+    return iSeekable;
 }
 
 
@@ -292,16 +298,12 @@ void TestCodecMinimalPipeline::StartStreaming(const Brx& aUrl)
     iFiller->Start(aUrl);
 }
 
-TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute)
+TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver)
 {
     ISeeker* seeker = static_cast<ISeeker*>(iController);
     TUint handle;
-    seeker->StartSeek(iFiller->StreamId(), aSecondsAbsolute, *this, handle);
+    seeker->StartSeek(iFiller->StreamId(), aSecondsAbsolute, aSeekObserver, handle);
     return (handle != ISeeker::kHandleError);
-}
-
-void TestCodecMinimalPipeline::NotifySeekComplete(TUint /*aHandle*/, TUint /*aFlushId*/)
-{
 }
 
 void TestCodecMinimalPipeline::RegisterPlugins()
@@ -555,10 +557,21 @@ Msg* SuiteCodecSeek::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek && (iJiffies >= SuiteCodecStream::kTotalJiffies/2)) {
-        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos, *this);
         iSeek = false;
     }
     return aMsg;
+}
+
+void SuiteCodecSeek::NotifySeekComplete(TUint /*aHandle*/, TUint aFlushId)
+{
+    if (iSeekSuccess) {
+        // Synchronous part of seek succeeded. Check asynchronous part.
+        if (aFlushId == MsgFlush::kIdInvalid) {
+            // Asynchronous part of seek failed.
+            iSeekSuccess = false;
+        }
+    }
 }
 
 void SuiteCodecSeek::Setup()
@@ -575,22 +588,29 @@ TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint 
     return jiffies;
 }
 
-void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec)
+void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec, TBool aSeekable, TUint64 aJiffies)
 {
     // Try seeking forward to end of file.
     iSeekPos = aSeekPos;
     iSem.Wait();
-    TUint64 expectedJiffies = ExpectedJiffies(aDuration, aDuration/2, iSeekPos);
-    //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
-    //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
-    TEST(iSeekSuccess);
 
-    if (aCodec != AudioFileDescriptor::kCodecVorbis) {
-        // Vorbis seeking is isn't particularly accurate
+    if (aSeekable) {
+        TUint64 expectedJiffies = ExpectedJiffies(aDuration, aDuration/2, iSeekPos);
+        //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
+        //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
+        TEST(iSeekSuccess);
 
-        // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
-        TEST(iJiffies >= expectedJiffies - Jiffies::kPerSecond);   // Lower bound.
-        TEST(iJiffies <= expectedJiffies + Jiffies::kPerSecond);   // Upper bound.
+        if (aCodec != AudioFileDescriptor::kCodecVorbis) {
+            // Vorbis seeking is isn't particularly accurate
+
+            // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
+            TEST(iJiffies >= expectedJiffies - Jiffies::kPerSecond);   // Lower bound.
+            TEST(iJiffies <= expectedJiffies + Jiffies::kPerSecond);   // Upper bound.
+        }
+    }
+    else {
+        TEST(!iSeekSuccess);
+        TEST(iJiffies == aJiffies);
     }
 }
 
@@ -599,10 +619,12 @@ void SuiteCodecSeek::TestSeekingToStart()
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumStart].Filename());
     TUint codec = iFiles[iFileNumStart].Codec();
+    TBool seekable = iFiles[iFileNumStart].Seekable();
+    TUint64 jiffies = iFiles[iFileNumStart].Jiffies();
     iFileNumStart++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to start"), filename);
-    TestSeeking(duration, 0, codec);
+    TestSeeking(duration, 0, codec, seekable, jiffies);
     delete fileLocation;
 }
 
@@ -611,10 +633,12 @@ void SuiteCodecSeek::TestSeekingToEnd()
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
     TUint codec = iFiles[iFileNumEnd].Codec();
+    TBool seekable = iFiles[iFileNumEnd].Seekable();
+    TUint64 jiffies = iFiles[iFileNumEnd].Jiffies();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to end"), filename);
-    TestSeeking(duration, duration, codec);
+    TestSeeking(duration, duration, codec, seekable, jiffies);
     delete fileLocation;
 }
 
@@ -623,10 +647,12 @@ void SuiteCodecSeek::TestSeekingBackwards()
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumBack].Filename());
     TUint codec = iFiles[iFileNumBack].Codec();
+    TBool seekable = iFiles[iFileNumBack].Seekable();
+    TUint64 jiffies = iFiles[iFileNumBack].Jiffies();
     iFileNumBack++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking backwards"), filename);
-    TestSeeking(duration, duration/4, codec);
+    TestSeeking(duration, duration/4, codec, seekable, jiffies);
     delete fileLocation;
 }
 
@@ -635,10 +661,12 @@ void SuiteCodecSeek::TestSeekingForwards()
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumForward].Filename());
     TUint codec = iFiles[iFileNumForward].Codec();
+    TBool seekable = iFiles[iFileNumForward].Seekable();
+    TUint64 jiffies = iFiles[iFileNumForward].Jiffies();
     iFileNumForward++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking forwards"), filename);
-    TestSeeking(duration, duration - duration/4, codec);
+    TestSeeking(duration, duration - duration/4, codec, seekable, jiffies);
     delete fileLocation;
 }
 
@@ -664,27 +692,33 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek) {
-        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos, *this);
         iSeek = false;
     }
     return aMsg;
 }
 
-void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec)
+void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec, TBool aSeekable, TUint64 aJiffies)
 {
     iSeekPos = aSeekPos;
     iSem.Wait();
-    TUint64 expectedJiffies = ExpectedJiffies(aDuration, 0, iSeekPos);
-    //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
-    //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
-    TEST(iSeekSuccess);
+    if (aSeekable) {
+        TUint64 expectedJiffies = ExpectedJiffies(aDuration, 0, iSeekPos);
+        //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
+        //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
+        TEST(iSeekSuccess);
 
-    if (aCodec != AudioFileDescriptor::kCodecVorbis) {
-        // Vorbis seeking is isn't particularly accurate
+        if (aCodec != AudioFileDescriptor::kCodecVorbis) {
+            // Vorbis seeking is isn't particularly accurate
 
-        // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
-        TEST(iJiffies >= 0);   // Lower bound.
-        TEST(iJiffies <= expectedJiffies + Jiffies::kPerSecond);   // Upper bound.
+            // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
+            TEST(iJiffies >= 0);   // Lower bound.
+            TEST(iJiffies <= expectedJiffies + Jiffies::kPerSecond);   // Upper bound.
+        }
+    }
+    else {
+        TEST(!iSeekSuccess);
+        TEST(iJiffies == aJiffies);
     }
 }
 
@@ -693,10 +727,12 @@ void SuiteCodecSeekFromStart::TestSeekingToMiddle()
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumMiddle].Filename());
     TUint codec = iFiles[iFileNumMiddle].Codec();
+    TBool seekable = iFiles[iFileNumMiddle].Seekable();
+    TUint64 jiffies = iFiles[iFileNumMiddle].Jiffies();
     iFileNumMiddle++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to middle"), filename);
-    TestSeekingFromStart(duration, duration/2, codec);
+    TestSeekingFromStart(duration, duration/2, codec, seekable, jiffies);
     delete fileLocation;
 }
 
@@ -705,10 +741,12 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
     TUint codec = iFiles[iFileNumEnd].Codec();
+    TBool seekable = iFiles[iFileNumEnd].Seekable();
+    TUint64 jiffies = iFiles[iFileNumEnd].Jiffies();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
-    TestSeekingFromStart(duration, duration, codec);
+    TestSeekingFromStart(duration, duration, codec, seekable, jiffies);
     delete fileLocation;
 }
 
@@ -726,6 +764,7 @@ SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor
     , iZeroCrossings(0)
     , iUnacceptableCrossingDeltas(0)
     , iCodec(AudioFileDescriptor::kCodecUnknown)
+    , iSeekable(false)
 {
     for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecZeroCrossings::TestZeroCrossings));
@@ -819,6 +858,7 @@ Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgDecodedStream* aMsg)
     TEST(info.BitDepth() == iBitDepth);
     TEST(info.SampleRate() == iSampleRate);
     TEST(info.NumChannels() == iChannels);
+    TEST(info.Seekable() == iSeekable);
     return aMsg;
 }
 
@@ -841,6 +881,7 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     iBitDepth = iFiles[iFileNum].BitDepth();
     iChannels = iFiles[iFileNum].Channels();
     iCodec = iFiles[iFileNum].Codec();
+    iSeekable = iFiles[iFileNum].Seekable();
     iFileNum++;
 
     const TUint jiffiesPerSine = Jiffies::kPerSecond / SuiteCodecStream::kFrequencyHz;
@@ -967,7 +1008,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     }
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, aFunc, uri));
+    //runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, aFunc, uri));
     if (testFull) {
         //runner.Add(new SuiteCodecStream(stdFiles, aEnv, aFunc, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
         runner.Add(new SuiteCodecSeek(stdFiles, aEnv, aFunc, uri));

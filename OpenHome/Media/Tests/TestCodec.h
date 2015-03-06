@@ -29,7 +29,7 @@ public:
     static const TUint kCodecAifc     = 7;
     static const TUint kCodecAdts     = 8;
 public:
-    AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec);
+    AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec, TBool aSeekable);
     const Brx& Filename() const;
     TUint SampleRate() const;
     TUint Samples() const;
@@ -37,6 +37,7 @@ public:
     TUint BitDepth() const;
     TUint Channels() const;
     TUint Codec() const;
+    TBool Seekable() const;
 private:
     Brn iFilename;
     TUint iSampleRate;
@@ -44,6 +45,7 @@ private:
     TUint iBitDepth;
     TUint iChannels;
     TUint iCodec;
+    TBool iSeekable;
 };
 
 class AudioFileCollection
@@ -124,7 +126,7 @@ private:
     IMsgProcessor& iMsgProcessor;
 };
 
-class TestCodecMinimalPipeline : private ISeekObserver
+class TestCodecMinimalPipeline
 {
 private:
     static const TUint kEncodedAudioCount = 100;
@@ -136,11 +138,9 @@ public:
     virtual ~TestCodecMinimalPipeline();
     void StartPipeline();
     void StartStreaming(const Brx& aUrl);
-    TBool SeekCurrentTrack(TUint aSecondsAbsolute);
+    TBool SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver);
 protected:
     virtual void RegisterPlugins();
-private: // ISeekObserver
-    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 protected:
     Container* iContainer;
     CodecController* iController;
@@ -218,7 +218,7 @@ protected:
     static const TUint kFrequencyHz = 1000;
 };
 
-class SuiteCodecSeek : public SuiteCodecStream
+class SuiteCodecSeek : public SuiteCodecStream, public ISeekObserver
 {
 public:
     SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
@@ -230,8 +230,10 @@ private: // from SuiteUnitTest
     void Setup();
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+private: // ISeekObserver
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
-    void TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec);
+    void TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec, TBool aSeekable, TUint64 aJiffies);
     void TestSeekingToStart();
     void TestSeekingToEnd();
     void TestSeekingBackwards();
@@ -253,7 +255,7 @@ public:
     SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
 private:
     ~SuiteCodecSeekFromStart();
-    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec);
+    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec, TBool aSeekable, TUint64 aJiffies);
     void TestSeekingToMiddle();
     void TestSeekingToEnd();
 public: // from MsgProcessor
@@ -287,6 +289,7 @@ private:
     TUint iZeroCrossings;
     TUint iUnacceptableCrossingDeltas;
     TUint iCodec;
+    TBool iSeekable;
 };
 
 class SuiteCodecInvalidType : public SuiteCodecStream
