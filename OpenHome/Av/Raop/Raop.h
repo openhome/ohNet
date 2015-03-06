@@ -118,7 +118,7 @@ public:
     void MacAddressOctets(TByte (&aOctets)[6]) const;
 private:
     Net::IMdnsProvider& iProvider;
-    const TUint iHandleRaop;
+    TUint iHandleRaop;
     Bws<kMaxNameBytes> iName;
     const Endpoint iEndpoint;
     const Bws<kMacAddrBytes> iMacAddress;
