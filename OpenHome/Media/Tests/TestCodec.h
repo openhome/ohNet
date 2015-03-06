@@ -275,6 +275,7 @@ private:
 private: // from SuiteUnitTest
     void Setup();
 public: // from MsgProcessor
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
     TUint iSampleRate;

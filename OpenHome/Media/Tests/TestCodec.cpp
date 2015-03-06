@@ -749,7 +749,7 @@ void SuiteCodecZeroCrossings::Setup()
 void SuiteCodecZeroCrossings::TestCrossingDelta()
 {
     const TUint bytesPerSample = (iBitDepth * iChannels) / 8;
-    const TUint bytesPerSec = bytesPerSample * 44100;
+    const TUint bytesPerSec = bytesPerSample * iSampleRate;
     const TUint bytesPerSine = bytesPerSec/SuiteCodecStream::kFrequencyHz;
     const TUint bytesPerCrossing = bytesPerSine/2;
     TUint byteDelta = iBytesProcessed - iLastCrossingByte;
@@ -811,6 +811,15 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
     }
 
     return msg;
+}
+
+Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    const DecodedStreamInfo& info = aMsg->StreamInfo();
+    TEST(info.BitDepth() == iBitDepth);
+    TEST(info.SampleRate() == iSampleRate);
+    TEST(info.NumChannels() == iChannels);
+    return aMsg;
 }
 
 Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
