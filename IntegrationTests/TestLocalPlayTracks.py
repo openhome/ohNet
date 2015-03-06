@@ -7,7 +7,7 @@ Parameters:
     arg#3 - Time to play before skipping to next (None = play all)
     arg#4 - Repeat mode [on/off]
     arg#5 - Shuffle mode [on/off]
-    arg#6 - [optional] set to 'short' for short track list
+    arg#6 - [optional] set to 'short' for short track list, 'hls' for HLS track list
 
 Test test which plays locally served tracks from a playlist sequentially. The tracks
 may be played for their entirety or any specified length of time. Repeat and shuffle
@@ -22,8 +22,10 @@ import os
 import sys
 
 kAudioRoot      = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
+kAudioRootHls   = os.path.join( _FunctionalTest.audioDir, 'Hls/' )
 kTrackListFull  = os.path.join( kAudioRoot, 'TrackList.xml' )
 kTrackListShort = os.path.join( kAudioRoot, 'TrackListShort.xml' )
+kTrackListHls   = os.path.join( kAudioRootHls, 'TrackList.xml' )
 
 
 class TestLocalPlayTracks( BASE.BasePlayTracks ):
@@ -37,12 +39,16 @@ class TestLocalPlayTracks( BASE.BasePlayTracks ):
 
     def Test( self, args ):
         """Check playback of locally served tracks"""
+        audioRoot = kAudioRoot
         trackList = kTrackListFull
         if len( args ) > 6:
             if args[6].lower() == 'short':
                 trackList = kTrackListShort
+            elif args[6].lower() == 'hls':
+                audioRoot = kAudioRootHls
+                trackList = kTrackListHls
 
-        self.server = HttpServer.HttpServer( kAudioRoot )
+        self.server = HttpServer.HttpServer( audioRoot )
         self.server.Start()
         self.tracks = Common.GetTracks( trackList, self.server )
         BASE.BasePlayTracks.Test( self, args[:6] )

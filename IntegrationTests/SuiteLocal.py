@@ -62,6 +62,7 @@ tests = [
     [ 'TestPlaylistPlayback',        'local', 'all',   0                                                                  ],
     [ 'TestPlaylistAddDelSoak',      'local',  server, plEnc,   100                                                       ],
     [ 'TestLocalPlayTracks',         'local', 'local', 8,       'off',   'on'                                             ],
+###    [ 'TestLocalPlayTracks',         'local', 'local', 'None',  'off',   'on',   'hls'                                    ],
     [ 'TestUpnpMsPlayTracks',        'local', 'local', 8,       'off',   'on',   server,   plEnc                          ],
     [ 'TestLocalDropout',            'local', 'local', 'local', 1800                                                      ],
     [ 'TestUpnpMsDropout',           'local', 'local', 'local', 1800,    server, plEnc                                    ],
