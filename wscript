@@ -577,7 +577,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestPruner.cpp',
                 'OpenHome/Av/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
-                #'OpenHome/Media/Tests/TestProtocol.cpp',
                 'OpenHome/Media/Tests/TestProtocolHls.cpp',
                 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
@@ -720,11 +719,6 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline',
             install_path=None)
-    #bld.program(
-    #        source='OpenHome/Media/Tests/TestProtocolMain.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='TestProtocol',
-    #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
