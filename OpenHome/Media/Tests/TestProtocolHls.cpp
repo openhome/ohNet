@@ -396,6 +396,7 @@ TestHttpReader::TestHttpReader(Semaphore& aObserverSem, Semaphore& aWaitSem)
     : iObserverSem(aObserverSem)
     , iBlockSem("THRS", 0)
     , iWaitSem(aWaitSem)
+    , iConnectCount(0)
     , iConnected(false)
 {
 }
@@ -1922,8 +1923,10 @@ void SuiteProtocolHls::TearDown()
     delete iInfoAggregator;
 
     //delete iSegmentReader;    // owned by ProtocolHls
+    delete iSegmentWaitSem;
     delete iSegmentSem;
     //delete iM3uReader;        // owned by ProtocolHls
+    delete iM3uWaitSem;
     delete iM3uSem;
     delete iThreadSem;
 }

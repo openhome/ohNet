@@ -20,12 +20,14 @@ using namespace OpenHome::Media;
 // RaopDevice
 RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
-    , iHandleRaop(iProvider.MdnsCreateService())
     , iEndpoint(aDiscoveryPort, aIpAddr)
     , iMacAddress(aMacAddr)
     , iRegistered(false)
     , iLock("RADL")
 {
+    ASSERT(&iProvider); // Cannot function without MDNS
+    iHandleRaop = iProvider.MdnsCreateService();
+
     ASSERT(aMacAddr.Bytes() == 12);
     iName.Replace("");
     iName.Append(iMacAddress);
