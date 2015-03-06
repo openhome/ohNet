@@ -89,6 +89,13 @@ contains sensitive data such as streaming services IDs/users/passwords
 		<password>4567</password>
 	</tidal>
 
+	<qobuz>
+		<id>123</id>
+		<secret>456</secret>
+		<user>userX</user>
+		<password>passX</password>
+	</qobuz>
+
 	<playlist>
 		<asset>
 			<encodings>Playlists  ~Encodings-ALLCodecs</encodings>

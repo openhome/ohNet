@@ -47,6 +47,9 @@ server    = config.Get( 'mediaserver.asset' )
 tidalId   = config.Get( 'tidal.id' )
 tidalUser = config.Get( 'tidal.user' )
 tidalPwd  = config.Get( 'tidal.password' )
+qobuzId   = config.Get( 'qobuz.id' ) + ':' + config.Get( 'qobuz.secret' )
+qobuzUser = config.Get( 'qobuz.user' )
+qobuzPwd  = config.Get( 'qobuz.password' )
 
 tests = [
     # Update and build ohMediaPlayer
@@ -70,11 +73,15 @@ tests = [
 
     # Tidal
     [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off',  120,      tidalId,   tidalUser, tidalPwd ],
-    [ 'TestTidalDropout',            'local', 'local', 'local', 3600,    20,     tidalId,  tidalUser, tidalPwd            ],
+    [ 'TestTidalDropout',            'local', 'local', 'local', 1800,    20,     tidalId,  tidalUser, tidalPwd            ],
+
+    # Qobuz
+    [ 'TestQobuzPlayTracks',         'local', 'local', 8,       'off',   'off',  120,      qobuzId,   qobuzUser, qobuzPwd ],
+    [ 'TestQobuzDropout',            'local', 'local', 'local', 1800,    20,     qobuzId,  qobuzUser, qobuzPwd            ],
 
     # Airplay
     [ 'TestAirplayFunctions',        'local'                                                                              ],
-    [ 'TestAirplayDropout',          'local', '3600'                                                                      ],
+    [ 'TestAirplayDropout',          'local', '1800'                                                                      ],
 
     # UPnP AV
     [ 'TestAvTransportService',      'local', 'ALL'                                                                       ],
@@ -94,7 +101,7 @@ tests = [
     # Misc
     [ 'TestAudioConx',               'local', 'all'                                                                       ],
     [ 'TestStandbyCycleSoak',        'local',  100                                                                        ]
-    
+
     # N/A to SoftPlayer(s)
     #    - AutoPlay
     #    - DelayXXX
