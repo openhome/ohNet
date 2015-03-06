@@ -48,6 +48,7 @@ SIMPLE_TEST_DECLARATION(TestWaiter);
 SIMPLE_TEST_DECLARATION(TestJson);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
+ENV_TEST_DECLARATION(TestProtocolHls);
 ENV_TEST_DECLARATION(TestSsl);
 CP_DV_TEST_DECLARATION(TestCredentials);
 CP_DV_TEST_DECLARATION(TestUpnpErrors);
@@ -81,6 +82,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
     shellTests.push_back(ShellTest("TestPowerManager", ShellTestPowerManager));
+    shellTests.push_back(ShellTest("TestProtocolHls", ShellTestProtocolHls));
     shellTests.push_back(ShellTest("TestSsl", ShellTestSsl));
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
     shellTests.push_back(ShellTest("TestProtocolHttp", ShellTestProtocolHttp));
