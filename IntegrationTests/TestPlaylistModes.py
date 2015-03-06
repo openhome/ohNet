@@ -38,8 +38,9 @@ class Config:
     class Precon:
         """Configuration subclass for precondition info and setup"""
         
-        def __init__( self, aSetup, aTrack, aRepeat, aShuffle, aTracks, aLog, aDev ):
+        def __init__( self, aId, aSetup, aTrack, aRepeat, aShuffle, aTracks, aLog, aDev ):
             """Initialise class data"""
+            self.id        = aId
             self.setup     = aSetup
             self.plLen     = random.randint( 8, 30 )
             self.track     = self._SubstMacros( aTrack )
@@ -100,18 +101,19 @@ class Config:
             else:
                 trackId = aDut.playlist.idArray[self.track]     # check selected = requested track
             self.log.FailUnless( self.dev, aDut.playlist.id==trackId,
-                'Selected track %s (got ID %s)' % ( self.track,aDut.playlist.id) )
+                '[%d] Selected track %s (got ID %s)' % ( self.id, self.track,aDut.playlist.id) )
             self.startIdx = aDut.playlist.PlaylistIndex( trackId )
             self.listorder = aDut.playlist.idArray
 
         def _SetupPlaylist( self, aDut ):
             """Setup playlist on DUT"""
-            self.log.Info( self.dev, 'Adding playlist of %d tracks' % self.plLen )
+            measPlLen = 0
+            self.log.Info( self.dev, '[%d] Adding playlist of %d tracks' % (self.id, self.plLen) )
             aDut.playlist.AddPlaylist( self.playlist )
             if self.plLen > 0:
                 measPlLen = len( aDut.playlist.idArray )
             self.log.FailUnless( self.dev, self.plLen==measPlLen,
-                'Added %d tracks (requested %d)' % ( measPlLen, self.plLen) )
+                '[%d] Added %d tracks (requested %d)' % ( self.id, measPlLen, self.plLen) )
 
         def _SetupModes( self, aDut ):
             """Setup shuffle and repeat modes"""
@@ -123,7 +125,7 @@ class Config:
             """Substitute parameter macros with actual values.
                Valid macros are:
                 @m - random track within playlist
-                @N - last reack in playlist
+                @N - last track in playlist
             """
             try:
                 aArg = aArg.replace( '@N', 'self.plLen-1' )
@@ -137,8 +139,9 @@ class Config:
     class Stimulus:
         """Configuration subclass for stimulus info and invokation"""
         
-        def __init__( self, aSeek, aPrecon ):
+        def __init__( self, aId, aSeek, aPrecon ):
             """Initialise class data"""
+            self.id        = aId
             self.timer     = None
             self.seek      = aSeek
             self.precon    = aPrecon
@@ -185,9 +188,9 @@ class Config:
                 # reason why the last track in one shuffling cannot be the first track in the
                 # subsequent shuffling
                 if i==self.precon.plLen-1 and self.precon.shuffle=='on' and self.precon.repeat=='on':
-                    self.precon.log.WarnUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action at start of 2nd loop of playlist' % self.seek )
+                    self.precon.log.WarnUnless( self.precon.dev, orderEvt.is_set(), '[%d] Executed <%s> action at start of 2nd loop of playlist' % (self.id, self.seek) )
                 else:
-                    self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action' % self.seek )
+                    self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), '[%d] Executed <%s> action' % (self.id, self.seek) )
 
             aDut.playlist.RemoveSubscriber( _PlaylistEventCb )
 
@@ -195,8 +198,9 @@ class Config:
     class Outcome:
         """Configuration subclass for outcome checking"""
         
-        def __init__( self, aPrecon, aStim, aLog, aDev ):
+        def __init__( self, aId, aPrecon, aStim, aLog, aDev ):
             """Initialise class data"""
+            self.id      = aId
             self.precon  = aPrecon
             self.stim    = aStim
             self.log     = aLog
@@ -220,9 +224,9 @@ class Config:
                 start = track
                 
             self.log.Info( '' )
-            self.log.Info( self.dev, 'Tracks: %d,  Start: %s,  Repeat: %s,  Shuffle: %s, Seek: %s' \
-                           % (plLen, str( track ), repeat, shuffle, seek) )
-            self.log.Info( '', 'Actual:   %s' % meas )
+            self.log.Info( self.dev, '[%d] Tracks: %d,  Start: %s,  Repeat: %s,  Shuffle: %s, Seek: %s' \
+                           % (self.id, plLen, str( track ), repeat, shuffle, seek) )
+            self.log.Info( '', '[%d] Actual:   %s' % (self.id, meas) )
                 
             if shuffle == 'off':
                 # check against exact expected playlist
@@ -241,7 +245,7 @@ class Config:
                         elif entry >= plLen:
                             entry = entry-plLen
                         exp.append( entry )
-                self.log.FailUnless( self.dev, meas==exp, 'Playback order meas/expected %s/%s' % (meas, exp) )
+                self.log.FailUnless( self.dev, meas==exp, '[%d] Playback order meas/expected %s/%s' % (self.id, meas, exp) )
                 
             else:
                 # check playlist contains expected tracks (any order)
@@ -266,15 +270,15 @@ class Config:
                             invalid.append( entry )
                 
                 self.log.FailIf( self.dev, len( extra ),
-                                'Extra track(s) in list %s' % extra )
+                                '[%d] Extra track(s) in list %s' % (self.id, extra) )
                 self.log.FailIf( self.dev, len( invalid ),
-                                'Invalid track(s) in list %s' % invalid )
+                                '[%d] Invalid track(s) in list %s' % (self.id, invalid) )
                 self.log.FailIf( self.dev, len( missing ),
-                                'Missing track(s) from list %s' % missing )
+                                '[%d] Missing track(s) from list %s' % (self.id, missing) )
 #                if not (track=='-' and shuffle=='on'):
                 if not track!='-' or shuffle!='on':
                     self.log.FailUnless( self.dev, meas[0]==start,
-                        'Actual/Expected 1st track %d/%d' % (meas[0], start ) )
+                        '[%d] Actual/Expected 1st track %d/%d' % (self.id, meas[0], start ) )
             self.log.Info( '' )
                         
 
@@ -284,9 +288,9 @@ class Config:
         self.id   = aConf[0]
         self.dut  = aDut
         self.pre  = self.Precon( 
-                    aConf[1], aConf[2], aConf[3], aConf[4], aTracks, self.log, aDev )
-        self.stim = self.Stimulus( aConf[5], self.pre )
-        self.out  = self.Outcome( self.pre, self.stim, self.log, aDev )
+                    self.id, aConf[1], aConf[2], aConf[3], aConf[4], aTracks, self.log, aDev )
+        self.stim = self.Stimulus( self.id, aConf[5], self.pre )
+        self.out  = self.Outcome( self.id, self.pre, self.stim, self.log, aDev )
         
     def Setup( self ):
         self.pre.Setup( self.dut )
