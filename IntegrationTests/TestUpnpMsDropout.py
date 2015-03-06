@@ -21,9 +21,6 @@ import Upnp.ControlPoints.MediaServer as Server
 import os
 import sys
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
-
 
 class TestUpnpMsDropout( BASE.BaseDropout ):
     """Test dropout on UPnP media server served tracks"""
