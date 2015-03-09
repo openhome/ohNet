@@ -13,7 +13,7 @@ tests = '''
     TestSupplyAggregator
     TestAudioReservoir
     TestVariableDelay
-    TestSeeker
+    #TestSeeker
     TestSkipper
     TestStopper
     TestTrackInspector
