@@ -6,10 +6,11 @@ Parameters:
     arg#2 - Receiver/Repeater DUT (None = not present)
     arg#3 - Receiver/SlaveDUT  (None = not present)
     arg#4 - Test duration (secs) or 'forever'
-    arg#5 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
-    arg#6 - Tidal ID
-    arg#7 - Tidal username
-    arg#8 - Tidal password
+    arg#5 - songcast sender mode (unicast/multicast)
+    arg#6 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
+    arg#7 - Tidal ID
+    arg#8 - Tidal username
+    arg#9 - Tidal password
 local' for internal SoftPlayer on loopback for DUTs
 
 Verifies TIDAL served audio played by the DUT does not suffer from audio dropout.
@@ -63,11 +64,11 @@ class TestTidalDropout( BASE.BaseDropout ):
         """Test dropout on of TIDAL served tracks"""
         numTracks = 0
         try:
-            numTracks    = int( args[5] )
-            self.tidalId   = args[6]
-            self.tidalUser = args[7]
-            self.tidalPwd  = args[8]
-            args[5] = {'aTidalId':args[6]}
+            numTracks    = int( args[6] )
+            self.tidalId   = args[7]
+            self.tidalUser = args[8]
+            self.tidalPwd  = args[9]
+            args[6] = {'aTidalId':args[7]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
