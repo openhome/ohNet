@@ -131,7 +131,7 @@ class TestCodecMinimalPipeline
 private:
     static const TUint kEncodedAudioCount = 100;
     static const TUint kMsgAudioEncodedCount = 100;
-    static const TUint kEncodedReservoirSizeBytes = 12 * 1024; // in practice, this can be ~500kB, but it must be limited for seek testing
+    static const TUint kEncodedReservoirSizeBytes = 9 * 1024; // in practice, this can be ~500kB, but it must be limited for seek testing
     static const TUint kEncodedReservoirMaxStreams = 10;
 public:
     TestCodecMinimalPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor);
