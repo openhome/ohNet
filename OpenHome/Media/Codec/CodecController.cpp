@@ -273,14 +273,17 @@ void CodecController::CodecThread()
                     ISeekObserver* seekObserver = iSeekObserver;
                     iLock.Signal();
                     if (seek) {
+                        iExpectedSeekFlushId = MsgFlush::kIdInvalid;
                         TUint64 sampleNum = iSeekSeconds * iSampleRate;
                         (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
-                        seekObserver->NotifySeekComplete(iSeekHandle, iExpectedFlushId);
+                        seekObserver->NotifySeekComplete(iSeekHandle, iExpectedSeekFlushId);
                     }
                     else {
                         iActiveCodec->Process();
                     }
                 }
+
+
             }
             catch (CodecStreamStart&) {}
             catch (CodecStreamEnded&) {
@@ -444,6 +447,7 @@ TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
     if (flushId != MsgFlush::kIdInvalid) {
         ReleaseAudioEncoded();
         iExpectedFlushId = flushId;
+        iExpectedSeekFlushId = flushId;
         iStreamPos = aBytePos;
         return true;
     }

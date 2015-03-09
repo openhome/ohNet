@@ -298,12 +298,11 @@ void TestCodecMinimalPipeline::StartStreaming(const Brx& aUrl)
     iFiller->Start(aUrl);
 }
 
-TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver)
+TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver, TUint& aHandle)
 {
     ISeeker* seeker = static_cast<ISeeker*>(iController);
-    TUint handle;
-    seeker->StartSeek(iFiller->StreamId(), aSecondsAbsolute, aSeekObserver, handle);
-    return (handle != ISeeker::kHandleError);
+    seeker->StartSeek(iFiller->StreamId(), aSecondsAbsolute, aSeekObserver, aHandle);
+    return (aHandle != ISeeker::kHandleError);
 }
 
 void TestCodecMinimalPipeline::RegisterPlugins()
@@ -557,14 +556,17 @@ Msg* SuiteCodecSeek::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek && (iJiffies >= SuiteCodecStream::kTotalJiffies/2)) {
-        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos, *this);
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos, *this, iHandle);
         iSeek = false;
+        iSemSeek->Signal();
     }
     return aMsg;
 }
 
-void SuiteCodecSeek::NotifySeekComplete(TUint /*aHandle*/, TUint aFlushId)
+void SuiteCodecSeek::NotifySeekComplete(TUint aHandle, TUint aFlushId)
 {
+    iSemSeek->Wait(kSemWaitMs);
+    TEST(iHandle == aHandle);
     if (iSeekSuccess) {
         // Synchronous part of seek succeeded. Check asynchronous part.
         if (aFlushId == MsgFlush::kIdInvalid) {
@@ -579,6 +581,14 @@ void SuiteCodecSeek::Setup()
     SuiteCodecStream::Setup();
     iSeek = true;
     iSeekSuccess = false;
+    iSemSeek = new Semaphore("SCSS", 0);
+    iHandle = ISeeker::kHandleError;
+}
+
+void SuiteCodecSeek::TearDown()
+{
+    delete iSemSeek;
+    SuiteCodecStream::TearDown();
 }
 
 TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos)
@@ -692,7 +702,8 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek) {
-        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos, *this);
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos, *this, iHandle);
+        iSemSeek->Signal();
         iSeek = false;
     }
     return aMsg;

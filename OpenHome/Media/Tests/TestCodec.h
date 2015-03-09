@@ -138,7 +138,7 @@ public:
     virtual ~TestCodecMinimalPipeline();
     void StartPipeline();
     void StartStreaming(const Brx& aUrl);
-    TBool SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver);
+    TBool SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver, TUint& aHandle);
 protected:
     virtual void RegisterPlugins();
 protected:
@@ -187,6 +187,8 @@ public:
     static const Brn kPrefixHttp;
     static const TUint kLenPrefixHttp;
     static const TUint kMaxUriBytes;
+protected:
+    static const TUint kSemWaitMs = 50;
 public:
     SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
 protected:
@@ -227,7 +229,8 @@ protected:
     ~SuiteCodecSeek();
     static TUint64 ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos);
 private: // from SuiteUnitTest
-    void Setup();
+    void Setup() override;
+    void TearDown() override;
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private: // ISeekObserver
@@ -242,6 +245,8 @@ protected:
     TBool iSeek;
     TUint iSeekPos;
     TBool iSeekSuccess;
+    TUint iHandle;
+    Semaphore* iSemSeek;
 private:
     TUint iFileNumStart;
     TUint iFileNumEnd;
