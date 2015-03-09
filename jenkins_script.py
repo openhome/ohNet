@@ -13,6 +13,10 @@ else:
     scrd=cenv['WORKSPACE']
     prefix=[]
 
+pth = os.path.join(cenv['WORKSPACE'], 'ohNet')
+if os.path.isfile(os.path.join(pth, 'hudson_build.py')):
+    scrd=os.path.join(scrd, 'ohNet')
+
 cargs=['-p', cenv['PLATFORM']]
 if 'NIGHTLY' in cenv:
     cargs += ['-n',]
