@@ -2,6 +2,7 @@
 #define HEADER_SOURCE_FACTORY
 
 #include <OpenHome/Types.h>
+#include <OpenHome/ObservableBrx.h>
 
 namespace OpenHome {
 namespace Net {
@@ -20,7 +21,7 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
 };
 

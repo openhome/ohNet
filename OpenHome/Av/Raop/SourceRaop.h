@@ -9,6 +9,7 @@
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/ObservableBrx.h>
 
 namespace OpenHome {
     class Environment;
@@ -31,7 +32,7 @@ class SourceRaop : public Source, public IRaopObserver, private Media::IPipeline
 private:
     static const Brn kRaopPrefix;
 public:
-    SourceRaop(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    SourceRaop(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
     ~SourceRaop();
     IRaopDiscovery& Discovery();
 private: // from ISource
