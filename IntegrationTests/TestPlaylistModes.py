@@ -162,13 +162,16 @@ class Config:
                     else:
                         playing.clear()
                 if aSvName == 'Id':
+                    self.precon.log.Debug( 'Id: %s' % aSvVal )
                     th = LogThread.Thread( target=_UpdatePlayorder, args=[aSvVal] )
                     th.start()
 
             def _UpdatePlayorder( *args ):
                 time.sleep( 2 )     # wait for transport state to 'settle'
+                playing.wait( 3 )
                 if playing.isSet():
                     self.playorder.append( int( args[0] ))
+                    self.precon.log.Debug( 'List: %s' % str( self.playorder ))
                 orderEvt.set()
                     
             aDut.playlist.AddSubscriber( _PlaylistEventCb )
