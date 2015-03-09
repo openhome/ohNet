@@ -360,6 +360,7 @@ private:
     TBool iConsumeExpectedFlush;
     ISeekObserver* iSeekObserver;
     TUint iSeekHandle;
+    TUint iExpectedSeekFlushId;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
 

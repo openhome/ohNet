@@ -131,14 +131,14 @@ class TestCodecMinimalPipeline
 private:
     static const TUint kEncodedAudioCount = 100;
     static const TUint kMsgAudioEncodedCount = 100;
-    static const TUint kEncodedReservoirSizeBytes = 12 * 1024; // in practice, this can be ~500kB, but it must be limited for seek testing
+    static const TUint kEncodedReservoirSizeBytes = 9 * 1024; // in practice, this can be ~500kB, but it must be limited for seek testing
     static const TUint kEncodedReservoirMaxStreams = 10;
 public:
     TestCodecMinimalPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor);
     virtual ~TestCodecMinimalPipeline();
     void StartPipeline();
     void StartStreaming(const Brx& aUrl);
-    TBool SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver);
+    TBool SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver, TUint& aHandle);
 protected:
     virtual void RegisterPlugins();
 protected:
@@ -187,6 +187,8 @@ public:
     static const Brn kPrefixHttp;
     static const TUint kLenPrefixHttp;
     static const TUint kMaxUriBytes;
+protected:
+    static const TUint kSemWaitMs = 50;
 public:
     SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
 protected:
@@ -213,8 +215,6 @@ private:
     CreateTestCodecPipelineFunc iCreatePipeline;
 protected:
     static const TUint kMaxFilenameLen = 100;    // max filename length
-    static const TUint kDuration = 10;          // Test file duration (in seconds).
-    static const TUint kTotalJiffies = kDuration * Jiffies::kPerSecond;
     static const TUint kFrequencyHz = 1000;
 };
 
@@ -225,15 +225,16 @@ public:
 protected:
     SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
     ~SuiteCodecSeek();
-    static TUint64 ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos);
+    static TUint64 ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint64 aSeekPosJiffies);
 private: // from SuiteUnitTest
-    void Setup();
+    void Setup() override;
+    void TearDown() override;
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private: // ISeekObserver
     void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
-    void TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec, TBool aSeekable, TUint64 aJiffies);
+    void TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToStart();
     void TestSeekingToEnd();
     void TestSeekingBackwards();
@@ -242,6 +243,9 @@ protected:
     TBool iSeek;
     TUint iSeekPos;
     TBool iSeekSuccess;
+    TUint iHandle;
+    Semaphore* iSemSeek;
+    TUint64 iTotalJiffies;
 private:
     TUint iFileNumStart;
     TUint iFileNumEnd;
@@ -255,7 +259,7 @@ public:
     SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
 private:
     ~SuiteCodecSeekFromStart();
-    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec, TBool aSeekable, TUint64 aJiffies);
+    void TestSeekingFromStart(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToMiddle();
     void TestSeekingToEnd();
 public: // from MsgProcessor

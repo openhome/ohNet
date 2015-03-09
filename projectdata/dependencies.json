@@ -22,7 +22,7 @@
     },
     {   "name": "TestTones",
         "type": "external",
-        "version": "1.8",
+        "version": "1.9",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
