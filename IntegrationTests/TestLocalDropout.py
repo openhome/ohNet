@@ -6,6 +6,7 @@ Parameters:
     arg#2 - Receiver/Repeater DUT (None = not present)
     arg#3 - Receiver/SlaveDUT  (None = not present)
     arg#4 - Test duration (secs) or 'forever'
+    arg#5 - Songcast sender mode (unicast/multicast)
     Use 'local' for internal SoftPlayer on loopback for DUTs
 
 Verifies locally served audio played by the DUT does not suffer from audio dropout.

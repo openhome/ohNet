@@ -6,10 +6,11 @@ Parameters:
     arg#2 - Receiver/Repeater DUT (None = not present)
     arg#3 - Receiver/SlaveDUT  (None = not present)
     arg#4 - Test duration (secs) or 'forever'
-    arg#5 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
-    arg#6 - Qobuz ID
-    arg#7 - Qobuz username
-    arg#8 - Qobuz password
+    arg#5 - songcast sender mode (unicast/multicast)
+    arg#6 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
+    arg#7 - Qobuz ID
+    arg#8 - Qobuz username
+    arg#9 - Qobuz password
 local' for internal SoftPlayer on loopback for DUTs
 
 Verifies Qobuz served audio played by the DUT does not suffer from audio dropout.
@@ -63,11 +64,11 @@ class TestQobuzDropout( BASE.BaseDropout ):
         """Test dropout on of TIDAL served tracks"""
         numTracks = 0
         try:
-            numTracks    = int( args[5] )
-            self.qobuzId   = args[6]
-            self.qobuzUser = args[7]
-            self.qobuzPwd  = args[8]
-            args[5] = {'aQobuzId':args[6]}
+            numTracks    = int( args[6] )
+            self.qobuzId   = args[7]
+            self.qobuzUser = args[8]
+            self.qobuzPwd  = args[9]
+            args[6] = {'aQobuzId':args[7]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
