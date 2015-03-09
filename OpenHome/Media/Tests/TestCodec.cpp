@@ -1008,7 +1008,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     }
 
     Runner runner("Codec tests\n");
-    //runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, aFunc, uri));
+    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, aFunc, uri));
     if (testFull) {
         //runner.Add(new SuiteCodecStream(stdFiles, aEnv, aFunc, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
         runner.Add(new SuiteCodecSeek(stdFiles, aEnv, aFunc, uri));
