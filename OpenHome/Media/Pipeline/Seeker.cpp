@@ -162,6 +162,11 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
         }
         iTargetTrackId = Track::kIdNone;
     }
+    else if (iState == EFlushing) {
+        iState = ERampingUp;
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kMin;
+    }
     return aMsg;
 }
 
@@ -287,7 +292,7 @@ void Seeker::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
-    if (iTargetTrackId == Track::kIdNone) {
+    if (iTargetTrackId == Track::kIdNone && iState != EFlushing) {
         iState = ERunning;
     }
     else {
