@@ -76,9 +76,6 @@ private:
     SBRBITSTREAM iStreamSBR[2];                 /*!< pointer to sbr bitstream buffer */
     SBRDECODER iSbrDecoderInfo;                 /*!< pointer to sbrdecoder structure */
     HANDLE_SPLINE_RESAMPLER iSplineResampler;   /*!< pointer to spline resampler instance */
-    Word16 iPTimeDataPcm[4*kSamplesPerFrame];   /*!< required only for interfacing with
-                                                audio output library, thus not counted
-                                                for RAM usage */
     Word16 iTimeData[4*kSamplesPerFrame];       /*!< Output buffer */
 };
 
