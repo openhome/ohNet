@@ -6,8 +6,9 @@ Parameters:
     arg#2 - Receiver/Repeater DUT (None = not present)
     arg#3 - Receiver/SlaveDUT  (None = not present)
     arg#4 - Test duration (secs) or 'forever'
-    arg#5 - Media server to source media from
-    arg#6 - Playlist name
+    arg#5 - songcast sender mode (unicast/multicast)
+    arg#6 - Media server to source media from
+    arg#7 - Playlist name
 
     Use 'local' for internal SoftPlayer on loopback for DUTs
 
@@ -38,19 +39,19 @@ class TestUpnpMsDropout( BASE.BaseDropout ):
         serverName   = ''
         playlistName = ''
         try:
-            serverName   = args[5]
-            playlistName = args[6]
+            serverName   = args[6]
+            playlistName = args[7]
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
-        server = Server.MediaServer( serverName )
-        if not server.device:
+        self.server = Server.MediaServer( serverName )
+        if not self.server.device:
             log.Abort( serverName, 'Not available' )
-        self.tracks = server.GetPlaylist( playlistName )
-        server.Shutdown()
+        self.tracks = self.server.GetPlaylist( playlistName )
+        self.server.Shutdown()
 
-        BASE.BaseDropout.Test( self, args[:5] )
+        BASE.BaseDropout.Test( self, args[:6] )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
