@@ -24,22 +24,6 @@ extern "C" {
 #include <overlapadd.h>
 #include <defines.h>
 #include <spline_resampler.h>
-
-#define SAMPLES_PER_FRAME 1024
-
-  // global AAC decoder variables
-  Flag frameOk = 1;                                 /*!< frameOk flag */
-  Flag lastFrameOk = 1;
-  Word8 channelMode = 0;
-  struct BIT_BUF bitBuf, *hBitBuf;
-  AACDECODER aacDecoderInfo = 0;                    /*!< pointer to aacdecoder structure */
-  SBRBITSTREAM streamSBR[2];                        /*!< pointer to sbr bitstream buffer */
-  SBRDECODER sbrDecoderInfo = 0;                    /*!< pointer to sbrdecoder structure */
-  HANDLE_SPLINE_RESAMPLER splineResampler = 0;      /*!< pointer to spline resampler instance */ 
-  Word16 pTimeDataPcm[4*SAMPLES_PER_FRAME];         /*!< required only for interfacing with 
-                                                         audio output library, thus not counted
-                                                         for RAM usage */
-  Word16 timeData[4*SAMPLES_PER_FRAME];                  /*!< Output buffer */
 }
 
 
@@ -77,12 +61,12 @@ void CodecAacBase::StreamInitialise()
     LOG(kCodec, "CodecAacBase::StreamInitialise\n");
 
     // initialise global aac variables
-    frameOk = 1;
-    lastFrameOk = 1;
-    channelMode = 0;
-    aacDecoderInfo = 0;
-    sbrDecoderInfo = 0;
-    splineResampler = 0;
+    iFrameOk = 1;
+    iLastFrameOk = 1;
+    iChannelMode = 0;
+    iAacDecoderInfo = 0;
+    iSbrDecoderInfo = 0;
+    iSplineResampler = 0;
 
     iFrameCounter = 0;
 
@@ -207,23 +191,23 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
     TBool bBitstreamDownMix = false;
 
     /* decode one frame of audio data */
-    streamSBR[0].nrElements = 0;   
-    frameOk = 1;        // assume frame is always ok
+    iStreamSBR[0].nrElements = 0;
+    iFrameOk = 1;        // assume frame is always ok
     frameSize = (TInt16)(iInBuf.Bytes());
     sampleRate = iSampleRate;
     numChannels = iChannels;
 
     // must be reinitialised every time through if the buffer size changes
-    hBitBuf = CreateInitializedBitBuffer(&bitBuf, (unsigned char*)iInBuf.Ptr(), (TInt16)iInBuf.Bytes());
+    iHBitBuf = CreateInitializedBitBuffer(&iBitBuf, (unsigned char*)iInBuf.Ptr(), (TInt16)iInBuf.Bytes());
 
     /* AAC core decoder */
-    error = CAacDecoder_DecodeFrame(aacDecoderInfo,
+    error = CAacDecoder_DecodeFrame(iAacDecoderInfo,
                                           &frameSize,
                                           (Word32*)&sampleRate,
-                                          &channelMode,
+                                          &iChannelMode,
                                           &numChannels,
-                                          timeData,
-                                          frameOk);
+                                          iTimeData,
+                                          iFrameOk);
    
     if (error) {
         //LOG(kCodec, "Aac::DecodeFrame error %d\n", error);
@@ -240,41 +224,41 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
 
 #ifndef DISABLE_SBR
     /* open SBR-handle if SBR-Bitstream has been detected in core decoder */
-    if ((!sbrDecoderInfo) && streamSBR[0].nrElements) {
-      int lpFilter = 0;
+    if ((!iSbrDecoderInfo) && iStreamSBR[0].nrElements) {
+        int lpFilter = 0;
 
-      sbrDecoderInfo = openSBR (sampleRate, frameSize, bDownSample, lpFilter);
+        iSbrDecoderInfo = openSBR (sampleRate, frameSize, bDownSample, lpFilter);
     }
 #endif
 
     {
-      Flag tmp = frameOk;
-      frameOk = lastFrameOk;
-      lastFrameOk = tmp;
+        Flag tmp = iFrameOk;
+        iFrameOk = iLastFrameOk;
+        iLastFrameOk = tmp;
     }
 
-    if (sbrDecoderInfo) {
-      
-      /* apply SBR processing */
-      if (applySBR(sbrDecoderInfo,
-                   &streamSBR[0],
-                   timeData,
-                   &numChannels,
-                   frameOk, 
-                   bDownSample,
-                   bBitstreamDownMix) != SBRDEC_OK){
-        sbrDecoderInfo = 0;
-      }
-      else {
-        if(!bDownSample){
-          frameSize = frameSize*2;
-          sampleRate *= 2;
-        }
-      }
+    if (iSbrDecoderInfo) {
 
-      if(bBitstreamDownMix) {
-        numChannels = 1;
-      }
+        /* apply SBR processing */
+        if (applySBR(iSbrDecoderInfo,
+            &iStreamSBR[0],
+            iTimeData,
+            &numChannels,
+            iFrameOk,
+            bDownSample,
+            bBitstreamDownMix) != SBRDEC_OK){
+                iSbrDecoderInfo = 0;
+        }
+        else {
+            if(!bDownSample){
+                frameSize = frameSize*2;
+                sampleRate *= 2;
+            }
+        }
+
+        if(bBitstreamDownMix) {
+            numChannels = 1;
+        }
     }
     /* end sbr decoder */
 
@@ -292,7 +276,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
 
     if (!aParseOnly && (iFrameCounter > 0)) { // SBR incorrect on AAC+ first frame so skip
         /* interleave time samples */
-        InterleaveSamples(&timeData[0],&timeData[2 * SAMPLES_PER_FRAME], (Word16 *)iDecodedBuf.Ptr(),frameSize,&numChannels);
+        InterleaveSamples(&iTimeData[0],&iTimeData[2 * kSamplesPerFrame], (Word16 *)iDecodedBuf.Ptr(),frameSize,&numChannels);
         iDecodedBuf.SetBytes(numOutSamples * iBytesPerSample);
     }
     iFrameCounter++;
@@ -330,16 +314,16 @@ void CodecAacBase::ProcessHeader()
     //LOG(kCodec, "CodecAac::ProcessHeader()\n");
 
     /* initialize time data buffer */
-    for (int i=0; i < 4*SAMPLES_PER_FRAME; i++) {
-        timeData[i] = 0;
+    for (int i=0; i < 4*kSamplesPerFrame; i++) {
+        iTimeData[i] = 0;
     }
 
     /* initialize bit buffer */
-    hBitBuf = CreateBitBuffer(&bitBuf, (unsigned char *)iInBuf.Ptr(), (TInt16)iInBuf.MaxBytes());
+    iHBitBuf = CreateBitBuffer(&iBitBuf, (unsigned char *)iInBuf.Ptr(), (TInt16)iInBuf.MaxBytes());
 
-    aacDecoderInfo =  CAacDecoderOpen(hBitBuf, streamSBR, iSampleRate);
+    iAacDecoderInfo =  CAacDecoderOpen(iHBitBuf, iStreamSBR, iSampleRate);
 
-    if (!aacDecoderInfo) {
+    if (!iAacDecoderInfo) {
         error = true;
     }
     

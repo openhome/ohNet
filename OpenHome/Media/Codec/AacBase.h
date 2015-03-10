@@ -6,6 +6,11 @@
 
 extern "C" {
 #include <defines.h>
+#include <typedef.h>
+#include <FFR_bitbuffer.h>
+#include <sbrdecoder.h>
+#include <spline_resampler.h>
+#include <aacdecoder.h>
 }
 
 
@@ -15,6 +20,8 @@ namespace Codec {
 
 class CodecAacBase : public CodecBase
 {
+private:
+    static const TUint kSamplesPerFrame = 1024;
 public:
     static const Brn kCodecAac;
 public:
@@ -58,6 +65,21 @@ protected:
 
     TBool iNewStreamStarted;
     TBool iStreamEnded;
+private:
+    // Third-party AAC decoder types.
+    Flag iFrameOk;                              /*!< frameOk flag */
+    Flag iLastFrameOk;
+    Word8 iChannelMode;
+    struct BIT_BUF iBitBuf;
+    struct BIT_BUF* iHBitBuf;
+    AACDECODER iAacDecoderInfo;                 /*!< pointer to aacdecoder structure */
+    SBRBITSTREAM iStreamSBR[2];                 /*!< pointer to sbr bitstream buffer */
+    SBRDECODER iSbrDecoderInfo;                 /*!< pointer to sbrdecoder structure */
+    HANDLE_SPLINE_RESAMPLER iSplineResampler;   /*!< pointer to spline resampler instance */
+    Word16 iPTimeDataPcm[4*kSamplesPerFrame];   /*!< required only for interfacing with
+                                                audio output library, thus not counted
+                                                for RAM usage */
+    Word16 iTimeData[4*kSamplesPerFrame];       /*!< Output buffer */
 };
 
 } //namespace Codec
