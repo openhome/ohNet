@@ -86,11 +86,20 @@ void CodecAacBase::StreamInitialise()
 
     iFrameCounter = 0;
 
-    iNewStreamStarted = false;
-    iStreamEnded = false;
-
+    iSampleRate = 0;
+    iOutputSampleRate = 0;
+    iBitrateMax = 0;
+    iBitrateAverage = 0;
+    iChannels = 0;
+    iBytesPerSample = 0;
+    iBitDepth = 0;
+    iSamplesTotal = 0;
     iTotalSamplesOutput = 0;
     iTrackLengthJiffies = 0;
+    iTrackOffset = 0;
+
+    iNewStreamStarted = false;
+    iStreamEnded = false;
 
     iInBuf.SetBytes(0);
     iDecodedBuf.SetBytes(0);
