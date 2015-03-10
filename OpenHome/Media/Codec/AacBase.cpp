@@ -314,7 +314,7 @@ void CodecAacBase::ProcessHeader()
     //LOG(kCodec, "CodecAac::ProcessHeader()\n");
 
     /* initialize time data buffer */
-    for (int i=0; i < 4*kSamplesPerFrame; i++) {
+    for (TUint i=0; i < 4*kSamplesPerFrame; i++) {
         iTimeData[i] = 0;
     }
 
