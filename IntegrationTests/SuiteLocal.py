@@ -62,11 +62,11 @@ tests = [
     [ 'TestPlaylistPlayback',        'local', 'all',   0                                                                            ],
     [ 'TestPlaylistAddDelSoak',      'local',  server, plEnc,   100                                                                 ],
     [ 'TestLocalPlayTracks',         'local', 'local', 8,       'off',   'on'                                                       ],
-###3041    [ 'TestLocalPlayTracks',         'local', 'local', 'None',  'off',      'on',   'hls'                                         ],
+## 3041    [ 'TestLocalPlayTracks',         'local', 'local', 'None',  'off',      'on',   'hls'                                           ],
     [ 'TestUpnpMsPlayTracks',        'local', 'local', 8,       'off',   'on',        server,      plEnc                            ],
     [ 'TestLocalDropout',            'local', 'local', 'local', 1800,    'multicast'                                                ],
     [ 'TestLocalDropout',            'local', 'local', 'local', 1800,    'unicast'                                                  ],
-    [ 'TestUpnpMsDropout',           'local', 'local', 'local', 1800,    'multicast', server,      plEnc                            ],
+## 3048    [ 'TestUpnpMsDropout',           'local', 'local', 'local', 1800,    'multicast', server,      plEnc                            ],
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                                                 ],
