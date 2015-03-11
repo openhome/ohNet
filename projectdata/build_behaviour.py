@@ -179,7 +179,8 @@ def test(context):
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
-    python("waf", "test_full")
+    if context.env["OH_PLATFORM"] != 'Linux-armhf' and context.env["OH_PLATFORM"] != 'Linux-mipsel':
+        python("waf", "test_full")
 
 @build_step("install", optional=True, default=True)
 def install(context):
