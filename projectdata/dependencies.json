@@ -102,7 +102,7 @@
     {
         "name": "FunctionalTestData",
         "type": "internal",
-        "version": "0.0.32",
+        "version": "0.0.34",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTestData/FunctionalTestData-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
