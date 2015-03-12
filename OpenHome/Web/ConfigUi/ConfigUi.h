@@ -296,15 +296,6 @@ public:
     virtual ~IConfigApp() {}
 };
 
-class IConfigAppFactory
-{
-public:
-    typedef std::vector<OpenHome::Av::ISource*> SourceVector;
-public:
-    virtual IConfigApp& CreateApp(OpenHome::Configuration::IConfigManager& aConfigManager, SourceVector& aSources, const OpenHome::Brx& aResourcePrefix) = 0;
-    virtual ~IConfigAppFactory() {}
-};
-
 class ConfigAppBase : public IConfigApp, public IJsonProvider
 {
 public:
@@ -355,8 +346,8 @@ public:
 
 class ConfigAppSources : public ConfigAppBasic
 {
-protected:
-    typedef IConfigAppFactory::SourceVector SourceVector;
+public:
+    typedef std::vector<OpenHome::Av::ISource*> SourceVector;
 public:
      ConfigAppSources(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, SourceVector& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };

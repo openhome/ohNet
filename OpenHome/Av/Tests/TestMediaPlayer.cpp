@@ -115,7 +115,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, kMaxUiTabs, kUiSendQueueSize);
 
     // FIXME - take resource dir as param or copy res dir to build dir
-    IConfigAppFactory::SourceVector sources;
+    ConfigAppMediaPlayer::SourceVector sources;
     iConfigApp = new ConfigAppMediaPlayer(aDvStack.Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sources, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
     Add(iConfigApp);    // iAppFramework takes ownership
                         // Adding app here is okay as long as MediaPlayer::Start() is called before Start() on the AppFramework and before the UPnP device is enabled (so config page won't attempt to load uninitialised ConfigVals).
