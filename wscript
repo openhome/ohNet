@@ -550,6 +550,38 @@ def build(bld):
             use=['VORBIS', 'OHNET'],
             target='CodecVorbis')
 
+    # WebAppFramework
+    bld.stlib(
+        source=[
+            'OpenHome/Web/WebAppFramework.cpp',
+        ],
+        use=['OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
+        target='WebAppFramework')
+
+    # WebAppFramework tests
+    bld.stlib(
+        source=[
+            'OpenHome/Web/Tests/TestWebAppFramework.cpp',
+        ],
+        use=['WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
+        target='WebAppFrameworkTestUtils')
+
+    # ConfigUi
+    bld.stlib(
+        source=[
+            'OpenHome/Web/ConfigUi/ConfigUi.cpp',
+        ],
+        use=['WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
+        target='ConfigUi')
+
+    # ConfigUi tests
+    bld.stlib(
+        source=[
+            'OpenHome/Web/ConfigUi/Tests/TestConfigUi.cpp'
+        ],
+        use=['dsTestUtils', 'ConfigUi', 'WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
+        target='ConfigUiTestUtils')
+
     # Tests
     bld.stlib(
             source=[
@@ -821,7 +853,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'OPENSSL'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi', 'OPENSSL'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -874,7 +906,26 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestNtpClient',
             install_path=None)
-
+    bld.program(
+            source=['OpenHome/Web/Tests/TestWebAppFrameworkInteractive.cpp'],
+            use=['WebAppFramework', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            target='TestWebAppFrameworkInteractive',
+            install_path=None)
+    bld.program(
+            source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiInteractive.cpp'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            target='TestConfigUiInteractive',
+            install_path=None)
+    bld.program(
+            source=['OpenHome/Web/Tests/TestWebAppFrameworkMain.cpp'],
+            use=['WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            target='TestWebAppFramework',
+            install_path=None)
+    bld.program(
+            source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
+            use=['ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer', 'OHNET', 'SHELL', 'PLATFORM'],
+            target='TestConfigUi',
+            install_path=None)
 
 # Bundles
 def bundle(ctx):

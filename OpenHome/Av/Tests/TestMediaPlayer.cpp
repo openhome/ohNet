@@ -22,6 +22,8 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
+#include <OpenHome/Web/WebAppFramework.h>
+#include <OpenHome/Web/ConfigUi/ConfigUi.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -30,6 +32,7 @@ using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
+using namespace OpenHome::Web;
 
 // TestMediaPlayer
 
@@ -105,10 +108,22 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShell = new Shell(aDvStack.Env(), 0);
     Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
+
+    // Set up config app.
+    static const TUint addr = 0;    // Bind to all addresses.
+    static const TUint port = 0;    // Bind to whatever free port the OS allocates to the framework server.
+    iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, kMaxUiTabs, kUiSendQueueSize);
+
+    // FIXME - take resource dir as param or copy res dir to build dir
+    IConfigAppFactory::SourceVector sources;
+    iConfigApp = new ConfigAppMediaPlayer(aDvStack.Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sources, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
+    Add(iConfigApp);    // iAppFramework takes ownership
+                        // Adding app here is okay as long as MediaPlayer::Start() is called before Start() on the AppFramework and before the UPnP device is enabled (so config page won't attempt to load uninitialised ConfigVals).
 }
 
 TestMediaPlayer::~TestMediaPlayer()
 {
+    delete iAppFramework;
     delete iPowerObserver;
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
@@ -147,6 +162,7 @@ void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+    iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
 
@@ -169,12 +185,13 @@ void TestMediaPlayer::RunWithSemaphore()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+    iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
 
     iConfigRamStore->Print();
 
-    iSemShutdown.Wait();
+    iSemShutdown.Wait();    // FIXME - can Run() and RunWithSemaphore() be refactored out? only difference is how they wait for termination signal
 
     //IPowerManager& powerManager = iMediaPlayer->PowerManager();
     //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
@@ -301,6 +318,16 @@ void TestMediaPlayer::PowerDown()
     PowerDownDisable(*iDeviceUpnpAv);
 }
 
+void TestMediaPlayer::Add(IWebApp* aWebApp)
+{
+    // Last added WebApp will be set as presentation page.
+    iAppFramework->Add(aWebApp);
+    // FIXME - WebAppFramework::Add() should return presentation URL for app which can be set on device.
+    OpenHome::Bwh presentationUrl(Uri::kMaxUriBytes+1); // +1 for '\0'
+    iConfigApp->GetPresentationUrl(presentationUrl);
+    iDevice->SetAttribute("Upnp.PresentationUrl", presentationUrl.PtrZ());
+}
+
 TUint TestMediaPlayer::Hash(const Brx& aBuf)
 {
     TUint hash = 0;
@@ -374,7 +401,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
-    , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
+    , iOptionTuneIn("-t", "--tunein", Brn("ah2rjr68"), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
     , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
     , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
