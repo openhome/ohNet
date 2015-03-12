@@ -837,22 +837,43 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Environment& aEnv, IServer& aServer, 
 {
     JsonKvpVector emptyJsonVector;
 
-    AddNum(Brn("Sender.Channel"), emptyJsonVector);
-    AddNum(Brn("Sender.Preset"), emptyJsonVector);
-    AddNum(Brn("Volume.Balance"), emptyJsonVector);
-    AddNum(Brn("Volume.Limit"), emptyJsonVector);
-    AddNum(Brn("Volume.Startup"), emptyJsonVector);
+    AddNumConditional(Brn("Sender.Channel"), emptyJsonVector);
+    AddNumConditional(Brn("Sender.Preset"), emptyJsonVector);
+    AddNumConditional(Brn("Volume.Balance"), emptyJsonVector);
+    AddNumConditional(Brn("Volume.Limit"), emptyJsonVector);
+    AddNumConditional(Brn("Volume.Startup"), emptyJsonVector);
 
-    AddChoice(Brn("Sender.Enabled"), emptyJsonVector);
-    AddChoice(Brn("Sender.Mode"), emptyJsonVector);
-    AddChoice(Brn("Source.NetAux.Auto"), emptyJsonVector);
-    AddChoice(Brn("Volume.Startup.Enabled"), emptyJsonVector);
-    AddChoice(Brn("qobuz.com.SoundQuality"), emptyJsonVector);
-    AddChoice(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
+    AddChoiceConditional(Brn("Sender.Enabled"), emptyJsonVector);
+    AddChoiceConditional(Brn("Sender.Mode"), emptyJsonVector);
+    AddChoiceConditional(Brn("Source.NetAux.Auto"), emptyJsonVector);
+    AddChoiceConditional(Brn("Volume.Startup.Enabled"), emptyJsonVector);
+    AddChoiceConditional(Brn("qobuz.com.SoundQuality"), emptyJsonVector);
+    AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
 
-    AddText(Brn("Radio.TuneInUserName"), emptyJsonVector);
-    AddText(Brn("qobuz.com.Password"), emptyJsonVector);
-    AddText(Brn("qobuz.com.Username"), emptyJsonVector);
-    AddText(Brn("tidalhifi.com.Password"), emptyJsonVector);
-    AddText(Brn("tidalhifi.com.Username"), emptyJsonVector);
+    AddTextConditional(Brn("Radio.TuneInUserName"), emptyJsonVector);
+    AddTextConditional(Brn("qobuz.com.Password"), emptyJsonVector);
+    AddTextConditional(Brn("qobuz.com.Username"), emptyJsonVector);
+    AddTextConditional(Brn("tidalhifi.com.Password"), emptyJsonVector);
+    AddTextConditional(Brn("tidalhifi.com.Username"), emptyJsonVector);
+}
+
+void ConfigAppMediaPlayer::AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+{
+    if (iConfigManager.HasNum(aKey)) {
+        AddNum(aKey, aAdditionalInfo);
+    }
+}
+
+void ConfigAppMediaPlayer::AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+{
+    if (iConfigManager.HasChoice(aKey)) {
+        AddChoice(aKey, aAdditionalInfo);
+    }
+}
+
+void ConfigAppMediaPlayer::AddTextConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+{
+    if (iConfigManager.HasText(aKey)) {
+        AddText(aKey, aAdditionalInfo);
+    }
 }

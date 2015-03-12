@@ -365,6 +365,10 @@ class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
      ConfigAppMediaPlayer(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, SourceVector& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+private:
+    void AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddTextConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
 };
 
 } // namespace Web
