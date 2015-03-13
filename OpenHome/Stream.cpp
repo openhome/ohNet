@@ -34,24 +34,20 @@ Brn Srx::Read(TUint aBytes)
 {
     TByte* ptr = Ptr();
     aBytes = std::min(aBytes, iMaxBytes - iOffset); // reduce source read to match capacity here
-    if (iBytes > 0) {
-        const TUint bytes = std::min(aBytes, iBytes - iOffset);
-        Brn buf(ptr + iOffset, bytes);
-        iOffset += bytes;
-        if (iOffset == iBytes) {
-            iBytes = 0;
-            iOffset = 0;
-        }
-        return buf;
+    if (iBytes == 0) {
+        Bwn buffer(ptr + iBytes, iMaxBytes - iBytes);
+        iSource.Read(buffer);
+        iBytes += buffer.Bytes();
+        iSource.ReadFlush();
     }
-    Bwn buffer(ptr + iBytes, iMaxBytes - iBytes);
-    iSource.Read(buffer);
-    iBytes += buffer.Bytes();
-    iSource.ReadFlush();
-    TUint offset = iOffset;
     const TUint bytes = std::min(iBytes - iOffset, aBytes);
+    Brn buf(ptr + iOffset, bytes);
     iOffset += bytes;
-    return Brn(ptr + offset, bytes);
+    if (iOffset == iBytes) {
+        iBytes = 0;
+        iOffset = 0;
+    }
+    return buf;
 }
 
 void Srx::ReadFlush()
@@ -77,7 +73,7 @@ Srd::Srd(TUint aMaxBytes, IReaderSource& aSource)
 
 TByte* Srd::Ptr()
 {
-    return (iPtr);
+    return iPtr;
 }
 
 Srd::~Srd()
@@ -100,7 +96,11 @@ Brn ReaderUntil::ReadUntil(TByte aSeparator)
         while (remaining) {
             if (*current++ == aSeparator) {
                 iOffset += count + 1; // skip over the separator
-                return (Brn(start, count));
+                if (iOffset == iBytes) {
+                    iBytes = 0;
+                    iOffset = 0;
+                }
+                return Brn(start, count);
             }
             count++;
             remaining--;
@@ -112,14 +112,14 @@ Brn ReaderUntil::ReadUntil(TByte aSeparator)
             iBytes -= iOffset;
             current -= iOffset;
             if (iBytes) {
-                memmove(ptr, ptr + iOffset, iBytes);
+                (void)memmove(ptr, ptr + iOffset, iBytes);
             }
             iOffset = 0;
         }
-        
         if (iBytes == iMaxBytes) { // buffer full and no separator
             THROW(ReaderError);
         }
+
         Bwn buffer(ptr + iBytes, iMaxBytes - iBytes); // collect more data from the source
         buffer.Append(iReader.Read(iMaxBytes - iBytes));
         TUint additional = buffer.Bytes();
@@ -133,10 +133,21 @@ Brn ReaderUntil::ReadProtocol(TUint aBytes)
     ASSERT(aBytes <= iMaxBytes);
     TByte* start = Ptr() + iOffset;
     TByte* p = start;
+    if (aBytes <= iBytes - iOffset) {
+        iOffset += aBytes;
+        if (iOffset == iBytes) {
+            iBytes = 0;
+            iOffset = 0;
+        }
+        return Brn(start, aBytes);
+    }
     if (iBytes > 0) {
+        iBytes -= iOffset;
+        start = Ptr();
         (void)memmove(start, start + iOffset, iBytes);
-        p += iBytes;
-        iBytes = 0;
+        p = start + iBytes;
+        iOffset = 0;
+        aBytes -= iBytes;
     }
     TUint remaining = aBytes;
     while (remaining > 0) {
@@ -144,6 +155,8 @@ Brn ReaderUntil::ReadProtocol(TUint aBytes)
         (void)memcpy(p, buf.Ptr(), buf.Bytes());
         p += buf.Bytes();
     }
+    iBytes = 0;
+    iOffset = 0;
     return Brn(start, p - start);
 }
 
@@ -297,7 +310,7 @@ Brn ReaderBuffer::ReadUntil(TByte aSeparator)
     while (offset < bytes) {
         if (iBuffer[offset++] == aSeparator) {
             iOffset = offset;
-            return (iBuffer.Split(start, offset - start - 1));
+            return iBuffer.Split(start, offset - start - 1);
         }
     }
     
