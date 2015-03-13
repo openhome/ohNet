@@ -40,6 +40,8 @@ void FileAnsii::Read(Bwx& aBuffer)
 
 void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
 {
+    // IFile implementations must check read length
+    ASSERT(aBytes);
     // Check there's enough space in read buffer
     ASSERT(aBytes <= aBuffer.BytesRemaining());
     // Find read pointer
@@ -49,7 +51,7 @@ void FileAnsii::Read(Bwx& aBuffer, TUint32 aBytes)
     // Register the new content with the buffer
     aBuffer.SetBytes(aBuffer.Bytes() + bytesRead);
     // throw if entire read wasn't performed
-    if ( bytesRead != aBytes )
+    if ( bytesRead == 0 )
         THROW(FileReadError);
 }
 
@@ -60,6 +62,8 @@ void FileAnsii::Write(const Brx& aBuffer)
 
 void FileAnsii::Write(const Brx& aBuffer, TUint32 aBytes)
 {
+    // IFile implementations must check write length
+    ASSERT(aBytes);
     // Check we have enough bytes
     ASSERT(aBuffer.Bytes() >= aBytes);
     // Do the write

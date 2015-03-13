@@ -26,13 +26,17 @@ TUint32 FileBrx::Tell() const
 
 void FileBrx::Read(Bwx& aBuffer)
 {
-    Read(aBuffer, aBuffer.MaxBytes() - aBuffer.Bytes());
+    Read(aBuffer, aBuffer.BytesRemaining());
 }
 
 void FileBrx::Read(Bwx& aBuffer, TUint32 aBytes)
 {
-    ASSERT(aBytes <= aBuffer.MaxBytes() - aBuffer.Bytes());
+    // IFile implementations must check read length
+    ASSERT(aBytes);
+    ASSERT(aBytes <= aBuffer.BytesRemaining());
     TUint32 bytes = (iCursor + aBytes > Bytes() ? Bytes() - iCursor : aBytes);
+    if ( bytes == 0 )
+        THROW(FileReadError);
     aBuffer.Append(iBuffer.Split(iCursor, bytes));
     iCursor += bytes;
 }
@@ -42,8 +46,11 @@ void FileBrx::Write(const Brx& aBuffer)
     Write(aBuffer, aBuffer.Bytes());
 }
 
-void FileBrx::Write(const Brx& /*aBuffer*/, TUint32 /*aBytes*/)
+void FileBrx::Write(const Brx& aBuffer, TUint32 aBytes)
 {
+    // IFile implementations must check write length
+    ASSERT(aBytes);
+    ASSERT(aBytes <= aBuffer.Bytes());
     THROW(FileWriteError);
 }
 

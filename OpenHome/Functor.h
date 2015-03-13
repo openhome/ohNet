@@ -198,6 +198,7 @@ protected:
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
+        memset(iCallbackMember, 0, sizeof(iCallbackMember));
         memcpy(iCallbackMember, aCallback, aBytes);
     }
 
