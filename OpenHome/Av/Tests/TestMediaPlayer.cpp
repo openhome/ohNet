@@ -117,7 +117,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // FIXME - take resource dir as param or copy res dir to build dir
     ConfigAppMediaPlayer::SourceVector sources;
     iConfigApp = new ConfigAppMediaPlayer(aDvStack.Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sources, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
-    Add(iConfigApp);    // iAppFramework takes ownership
+    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
                         // Adding app here is okay as long as MediaPlayer::Start() is called before Start() on the AppFramework and before the UPnP device is enabled (so config page won't attempt to load uninitialised ConfigVals).
 }
 
@@ -318,15 +319,11 @@ void TestMediaPlayer::PowerDown()
     PowerDownDisable(*iDeviceUpnpAv);
 }
 
-void TestMediaPlayer::Add(IWebApp* aWebApp)
-{
-    // Last added WebApp will be set as presentation page.
-    iAppFramework->Add(aWebApp);
-    // FIXME - WebAppFramework::Add() should return presentation URL for app which can be set on device.
-    OpenHome::Bwh presentationUrl(Uri::kMaxUriBytes+1); // +1 for '\0'
-    iConfigApp->GetPresentationUrl(presentationUrl);
-    iDevice->SetAttribute("Upnp.PresentationUrl", presentationUrl.PtrZ());
-}
+//void TestMediaPlayer::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
+//{
+//    // Last added WebApp will be set as presentation page.
+//    iAppFramework->Add(aWebApp, aFunctor);
+//}
 
 TUint TestMediaPlayer::Hash(const Brx& aBuf)
 {
@@ -365,6 +362,12 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
     GenerateMacAddr(aEnv, hash, aMacAddr);
 }
 
+void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
+{
+    Bws<Uri::kMaxUriBytes+1> url(aUrl);   // +1 for '\0'
+    iDevice->SetAttribute("Upnp.PresentationUrl", url.PtrZ());
+}
+
 void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
 {
     if (aDevice.Enabled()) {
@@ -401,7 +404,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
-    , iOptionTuneIn("-t", "--tunein", Brn("ah2rjr68"), "TuneIn partner id")
+    , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
     , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
     , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")

@@ -12,11 +12,37 @@
 
 #include <stdlib.h>
 
+namespace OpenHome {
+namespace Web {
+namespace Test {
+
+class TestPresentationUrlHandler
+{
+public:
+    void PresentationUrlChanged(const Brx& aUrl);
+};
+
+} // namespace Test
+} // namespace Web
+} // namespace OpenHome
+
 using namespace OpenHome;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Web;
+using namespace OpenHome::Web::Test;
+
+
+// TestPresentationUrlHandler
+
+void TestPresentationUrlHandler::PresentationUrlChanged(const Brx& aUrl)
+{
+    Log::Print("Presentation URL changed: ");
+    Log::Print(aUrl);
+    Log::Print("\n");
+}
+
 
 
 int CDECL main(int aArgc, char* aArgv[])
@@ -67,22 +93,14 @@ int CDECL main(int aArgc, char* aArgv[])
     Brn resourcePrefix("SoftPlayerBasic");
     ConfigAppBasic* app = new ConfigAppBasic(env, *server, *confMgr, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize);
 
-    server->Add(app);   // takes ownership
+    TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
+    server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership
     server->Start();
 
     Log::Print("\nTest Http server for Config Web UI\n");
     Log::Print("Root dir for static resources: ");
     Log::Print(optionDir.Value());
     Log::Print("\n");
-
-    Endpoint ep(server->Port(), server->Interface());
-    Endpoint::EndpointBuf epBuf;
-    ep.AppendEndpoint(epBuf);
-    Log::Print("Can be accessed from: ");
-    Log::Print(epBuf);
-    Log::Print(" using URI tail: /");
-    Log::Print(app->ResourcePrefix());
-    Log::Print("/index.html\n\n");
 
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
@@ -92,6 +110,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Shutdown.
     delete server;
+    delete urlHandler;
     delete confMgr;
     delete productRoom;
     delete productName;

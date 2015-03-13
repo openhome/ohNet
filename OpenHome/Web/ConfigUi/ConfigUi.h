@@ -277,21 +277,12 @@ private:
     TBool iStarted;
 };
 
-class IPresentationUrlProvider
-{
-public:
-    virtual void GetPresentationUrl(OpenHome::Bwx& aUrl) const = 0;
-    virtual ~IPresentationUrlProvider() {}
-};
-
-class IConfigApp : public IWebApp, public IPresentationUrlProvider
+class IConfigApp : public IWebApp
 {
 public: // from IWebApp
     virtual ITab& Create(ITabHandler& aHandler) = 0;
     virtual const OpenHome::Brx& ResourcePrefix() const= 0;
     virtual IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) = 0;
-public: // from IPresentationUrlProvider
-    virtual void GetPresentationUrl(OpenHome::Bwx& aUrl) const = 0;
 public:
     virtual ~IConfigApp() {}
 };
@@ -312,7 +303,6 @@ public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler);
     const OpenHome::Brx& ResourcePrefix() const;
     IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource);
-    void GetPresentationUrl(OpenHome::Bwx& aUrl) const;
 public: // from IJsonProvider
     const OpenHome::Brx& GetJson(const OpenHome::Brx& aKey);
 protected:
@@ -321,7 +311,6 @@ protected:
     void AddText(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
 private:
     void AddJson(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    TIpAddress GetCurrentIpAddress() const;
 protected:
     OpenHome::Configuration::IConfigManager& iConfigManager;
 private:

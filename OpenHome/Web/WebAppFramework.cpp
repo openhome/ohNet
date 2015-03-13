@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Uri.h>
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Debug.h>
@@ -542,9 +543,44 @@ TBool WebAppFramework::BrxPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2)
 }
 
 
+// WebAppInternal
+
+WebAppInternal::WebAppInternal(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
+    : iWebApp(aWebApp)
+    , iFunctor(aFunctor)
+{
+}
+
+WebAppInternal::~WebAppInternal()
+{
+    delete iWebApp;
+}
+
+void WebAppInternal::SetPresentationUrl(const Brx& aPresentationUrl)
+{
+    iFunctor(aPresentationUrl);
+}
+
+IResourceHandler& WebAppInternal::CreateResourceHandler(const Brx& aResource)
+{
+    return iWebApp->CreateResourceHandler(aResource);
+}
+
+ITab& WebAppInternal::Create(ITabHandler& aHandler)
+{
+    return iWebApp->Create(aHandler);
+}
+
+const Brx& WebAppInternal::ResourcePrefix() const
+{
+    return iWebApp->ResourcePrefix();
+}
+
+
 // WebAppFramework
 
 const TChar* WebAppFramework::kName("WebUiServer");
+const TChar* WebAppFramework::kAdapterCookie("WebAppFramework");
 const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
 WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
@@ -554,12 +590,15 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint
     , iMaxLpSessions(aMaxSessions)
     , iTabManager(iEnv, iMaxLpSessions, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs)
     , iStarted(false)
+    , iCurrentAdapter(NULL)
 {
     iServer = new SocketTcpServer(iEnv, kName, iPort, aInterface);
 
     Functor functor = MakeFunctor(*this, &WebAppFramework::CurrentAdapterChanged);
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
+
+    CurrentAdapterChanged();    // Force to set iCurrentAdapter, as not called at point of subscription.
 
     AddSessions();
 }
@@ -569,9 +608,13 @@ WebAppFramework::~WebAppFramework()
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     nifList.RemoveCurrentChangeListener(iAdapterListenerId);
 
+    if (iCurrentAdapter != NULL) {
+        iCurrentAdapter->RemoveRef(kAdapterCookie);
+    }
+
     WebAppMap::iterator it;
     for (it=iWebApps.begin(); it!=iWebApps.end(); ++it) {
-        delete it->first;
+        // First elem is pointer to ref.
         delete it->second;
     }
 
@@ -595,7 +638,7 @@ TIpAddress WebAppFramework::Interface() const
     return iServer->Interface();
 }
 
-void WebAppFramework::Add(IWebApp* aWebApp)
+void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
 {
     ASSERT(!iStarted);
 
@@ -604,7 +647,29 @@ void WebAppFramework::Add(IWebApp* aWebApp)
         ASSERTS(); // app with given resource prefix already exists
     }
 
-    iWebApps.insert(WebAppPair(new Brh(aWebApp->ResourcePrefix()), aWebApp));
+    // Dynamic allocation here is acceptible as Start() hasn't been called and
+    // class will persist for lifetime of WebAppFramework.
+    WebAppInternal* webAppInternal = new WebAppInternal(aWebApp, aFunctor);
+    iWebApps.insert(WebAppPair(&webAppInternal->ResourcePrefix(), webAppInternal));
+
+    TIpAddress addr = iServer->Interface();
+    if (addr == 0) {
+        if (iCurrentAdapter != NULL) {
+            addr = iCurrentAdapter->Address();
+        }
+    }
+    Endpoint ep(iServer->Port(), addr);
+
+    Bws<Uri::kMaxUriBytes> uri("http://");
+    ep.AppendEndpoint(uri);
+    uri.Append("/");
+    uri.Append(aWebApp->ResourcePrefix());
+    uri.Append("/");
+    //uri.Append(aWebApp->HomePage());
+    uri.Append("index.html");   // FIXME - hard-coded info about webapp-specific resource!
+                                // webapps are resource handlers (which may know how to redirect '/')
+                                // so should probably be able to provide access to their own homepage
+    webAppInternal->SetPresentationUrl(uri);
 }
 
 IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
@@ -662,10 +727,20 @@ void WebAppFramework::CurrentAdapterChanged()
         }
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
+    if (iCurrentAdapter != current) {
+        if (iCurrentAdapter != NULL) {
+            iCurrentAdapter->RemoveRef(kAdapterCookie);
+        }
+        iCurrentAdapter = current;
+        if (iCurrentAdapter != NULL) {
+            iCurrentAdapter->AddRef(kAdapterCookie);
+        }
+    }
 
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
     //if (current != NULL) {
         delete iServer;
+        // FIXME - bind only to current adapter or all adapters?
         iServer = new SocketTcpServer(iEnv, kName, iPort, current->Address());
         AddSessions();
     //}

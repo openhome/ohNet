@@ -18,6 +18,8 @@ EXCEPTION(InvalidAppPrefix);
 
 
 namespace OpenHome {
+    class NetworkAdapter;
+
 namespace Web {
 
 class IResourceHandler
@@ -355,7 +357,9 @@ private:
 class IWebAppFramework
 {
 public:
-    virtual void Add(IWebApp* aWebApp) = 0; // FIXME - return presentation URL!!!
+    typedef FunctorGeneric<const Brx&> FunctorPresentationUrl;
+public:
+    virtual void Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor) = 0; // aFunctor will be called whenever presentation URL is updated
     virtual ~IWebAppFramework() {}
 };
 
@@ -375,35 +379,53 @@ public:
     virtual ~IServer() {}
 };
 
+class WebAppInternal : public IWebApp, private INonCopyable
+{
+public:
+    typedef IWebAppFramework::FunctorPresentationUrl FunctorPresentationUrl;
+public:
+    WebAppInternal(IWebApp* aWebApp, FunctorPresentationUrl aFunctor);
+    ~WebAppInternal();
+    void SetPresentationUrl(const Brx& aPresentationUrl);
+public: // from IWebApp
+    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
+    ITab& Create(ITabHandler& aHandler) override;
+    const Brx& ResourcePrefix() const override;
+private:
+    IWebApp* iWebApp;
+    FunctorPresentationUrl iFunctor;
+};
+
 // FIXME - handle redirects from "/" to "/index.html"? - job of resource handler
 class WebAppFramework : public IWebAppFramework, public IWebAppManager, public IResourceManager, public IServer
 {
 public:
     static const TChar* kName;
-    static const OpenHome::Brn kSessionPrefix;
+    static const TChar* kAdapterCookie;
+    static const Brn kSessionPrefix;
 private:
     class BrxPtrCmp
     {
     public:
-        TBool operator()(const OpenHome::Brx* aStr1, const OpenHome::Brx* aStr2) const;
+        TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
     };
 private:
     // Spare session(s) for receiving user input and rejecting new long polling
     // connections when iMaxLpSessions in use.
     static const TUint kSpareSessions = 1;
-    typedef std::pair<const OpenHome::Brx*,IWebApp*> WebAppPair;
-    typedef std::map<const OpenHome::Brx*,IWebApp*, BrxPtrCmp> WebAppMap; // FIXME - can we expect ResourcePrefix to be static const?
+    typedef std::pair<const OpenHome::Brx*,WebAppInternal*> WebAppPair;
+    typedef std::map<const OpenHome::Brx*,WebAppInternal*, BrxPtrCmp> WebAppMap;
 public:
     WebAppFramework(OpenHome::Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
     ~WebAppFramework();
     void Start(); // FIXME - implement
     // Can't call Add() after Start()
 public: // from IWebAppFramework
-    void Add(IWebApp* aWebApp);
+    void Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private: // from IWebAppManager
-    IWebApp& GetApp(const OpenHome::Brx& aResourcePrefix);  // THROWS InvalidAppPrefix
+    IWebApp& GetApp(const OpenHome::Brx& aResourcePrefix) override;  // THROWS InvalidAppPrefix
 private: // from IResourceManager
-    IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource);  // THROWS ResourceInvalid
+    IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) override;  // THROWS ResourceInvalid
 public: // from IServer
     TUint Port() const;
     TIpAddress Interface() const;
@@ -420,6 +442,7 @@ private:
     TabManager iTabManager;
     WebAppMap iWebApps; // FIXME - need comparator
     TBool iStarted;
+    NetworkAdapter* iCurrentAdapter;
 };
 
 /**

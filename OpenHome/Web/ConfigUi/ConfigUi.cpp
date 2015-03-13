@@ -651,23 +651,6 @@ ConfigAppBase::~ConfigAppBase()
 //    }
 //}
 
-void ConfigAppBase::GetPresentationUrl(Bwx& aUrl) const
-{
-    TIpAddress addr = iServer.Interface();
-    TUint port = iServer.Port();
-
-    if (addr == 0) {
-        addr = GetCurrentIpAddress();
-    }
-    Endpoint ep(port, addr);
-
-    aUrl.Append("http://");
-    ep.AppendEndpoint(aUrl);
-    aUrl.Append("/");
-    aUrl.Append(iResourcePrefix);
-    aUrl.Append("/index.html");
-}
-
 ITab& ConfigAppBase::Create(ITabHandler& aHandler)
 {
     AutoMutex a(iLock);
@@ -763,29 +746,6 @@ void ConfigAppBase::AddJson(const Brx& aKey, JsonKvpVector& aAdditionalInfo)
     }
 
     iJsonMap.insert(JsonPair(Brn(aKey), json));
-}
-
-TIpAddress ConfigAppBase::GetCurrentIpAddress() const
-{
-    TIpAddress addr = 0;
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    AutoNetworkAdapterRef ref(iEnv, "ConfigApp::GetCurrentIpAddress");
-    NetworkAdapter* current = ref.Adapter();
-
-    // Get current subnet, otherwise choose first from a list
-    if (current == NULL) {
-        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-        if (subnetList->size() > 0) {
-            current = (*subnetList)[0];
-            addr = current->Address();
-        }
-        NetworkAdapterList::DestroySubnetList(subnetList);
-    }
-    else {
-        addr = current->Address();
-    }
-
-    return addr;
 }
 
 

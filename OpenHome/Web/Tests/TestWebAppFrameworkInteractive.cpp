@@ -103,6 +103,12 @@ private:
     OpenHome::Mutex iLock;
 };
 
+class TestPresentationUrlHandler
+{
+public:
+    void PresentationUrlChanged(const Brx& aUrl);
+};
+
 } // namespace Test
 } // namespace Web
 } // namespace OpenHome
@@ -272,6 +278,17 @@ IResourceHandler& TestHttpApp::CreateResourceHandler(const Brx& aResource)
 }
 
 
+// TestPresentationUrlHandler
+
+void TestPresentationUrlHandler::PresentationUrlChanged(const Brx& aUrl)
+{
+    Log::Print("Presentation URL changed: ");
+    Log::Print(aUrl);
+    Log::Print("\n");
+}
+
+
+
 
 int CDECL main(int aArgc, char* aArgv[])
 {
@@ -308,22 +325,15 @@ int CDECL main(int aArgc, char* aArgv[])
     WebAppFramework* server = new WebAppFramework(env, addr, port, maxSessions, bufferBytes);
 
     TestHttpApp* app = new TestHttpApp(maxSessions, optionDir.Value());  // read files from posix-style filesystem
-    server->Add(app);   // takes ownership
+
+    TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
+    server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership
     server->Start();
 
     Log::Print("\nTest Http server for Web UI\n");
     Log::Print("Root dir for static resources: ");
     Log::Print(optionDir.Value());
     Log::Print("\n");
-
-    Endpoint ep(server->Port(), server->Interface());
-    Endpoint::EndpointBuf epBuf;
-    ep.AppendEndpoint(epBuf);
-    Log::Print("Can be accessed from: ");
-    Log::Print(epBuf);
-    Log::Print(" using URI tail: /");
-    Log::Print(app->ResourcePrefix());
-    Log::Print("/test1.html\n\n");
 
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
@@ -334,6 +344,7 @@ int CDECL main(int aArgc, char* aArgv[])
     // Shutdown.
     delete server;
     delete lib;
+    delete urlHandler;
 
     return 0;
 }

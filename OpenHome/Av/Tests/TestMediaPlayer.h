@@ -47,7 +47,7 @@ namespace Av {
     class RamStore;
 namespace Test {
 
-class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler, public Web::IWebAppFramework
+class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, public Web::IWebAppFramework*/
 {
 private:
     static const Brn kSongcastSenderIconFileName;
@@ -74,12 +74,13 @@ private: // from Net::IResourceManager
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;
-private: // from IWebAppFramework
-    void Add(Web::IWebApp* aWebApp) override;
+//private: // from IWebAppFramework
+//    void Add(Web::IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private:
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
     void MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr);
+    void PresentationUrlChanged(const Brx& aUrl);
     void PowerDownUpnp();
     void PowerDownDisable(Net::DvDevice& aDevice);
     void PowerDownUpnpCallback();
