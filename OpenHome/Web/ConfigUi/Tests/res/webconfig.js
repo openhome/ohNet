@@ -5,6 +5,59 @@ function StartLongPolling()
         // Do nothing.
     }
 
+    var CreateNumElement = function(aJsonConfigNumVal)
+    {
+        var elemInput = document.createElement("input");
+        elemInput.type = "text";
+        elemInput.id = aJsonConfigNumVal.key;
+        elemInput.name = aJsonConfigNumVal.key;
+        elemInput.onblur = function () {SendUpdate(elemInput.id, elemInput.value);} // FIXME - pass through an input validation function (check it's a num, then check limits)
+        return elemInput;
+    }
+
+    var CreateChoiceElement = function(aJsonConfigChoiceVal)
+    {
+        var options = aJsonConfigChoiceVal.meta.options;
+        var elemSelect = document.createElement("select");
+        elemSelect.id = aJsonConfigChoiceVal.key;
+        elemSelect.name = aJsonConfigChoiceVal.key;
+        elemSelect.multiple = false;
+        for (var i=0; i<options.length; i++) {
+            var option = document.createElement("option");
+            option.text = options[i];
+            elemSelect.add(option);
+        }
+        elemSelect.onblur = function () {SendUpdate(elemSelect.id, elemSelect.value);}
+        return elemSelect;
+    }
+
+    var CreateTextElement = function(aJsonConfigTextVal)
+    {
+        var elemInput = document.createElement("input");
+        elemInput.type = "text";
+        elemInput.id = aJsonConfigTextVal.key;
+        elemInput.name = aJsonConfigTextVal.key;
+        elemInput.onblur = "SendUpdate(id, value)"; // FIXME - take this as parameter?
+        elemInput.onblur = function () {SendUpdate(elemInput.id, elemInput.value);}
+        return elemInput;
+    }
+
+    var CreateValElement = function(aJsonConfigVal)
+    {
+        if (aJsonConfigVal.type == "numeric") {
+            return CreateNumElement(aJsonConfigVal)
+        }
+        else if (aJsonConfigVal.type == "choice") {
+            return CreateChoiceElement(aJsonConfigVal)
+        }
+        else if (aJsonConfigVal.type == "text") {
+            return CreateTextElement(aJsonConfigVal)
+        }
+        else {
+            // Bad ConfigVal type.
+        }
+    }
+
     var CreateElement= function(aJsonConfigVal)
     {
         var elem = document.getElementById(aJsonConfigVal.key);
@@ -28,14 +81,8 @@ function StartLongPolling()
 
             // Create an input column.
             var colInput = document.createElement("td");
-            var elemInput = document.createElement("input");
-            elemInput.type = "text";
-            elemInput.id = key;
-            elemInput.name = key;
-            elemInput.onblur = "SendUpdate(id, value)"; // FIXME - take this as parameter?
-            elemInput.onblur = function () {SendUpdate(elemInput.id, elemInput.value);}
-            // FIXME - we could set elemInput.value = aJsonConfigVal.value; here.
-            colInput.appendChild(elemInput);
+            var elemVal = CreateValElement(aJsonConfigVal); // value is not set; set outwith this function
+            colInput.appendChild(elemVal);
 
             // Create a row to hold the columns of data.
             var row = document.createElement("row");
@@ -57,7 +104,7 @@ function StartLongPolling()
             var val = aResponse.value;
             var elem = document.getElementById(key);
             if (elem != null) {
-                elem.value = val;
+                elem.value = val;       // FIXME - is this valid for all element types in use?
             }
             else {
                 // Element not found; may be one that has just been discovered.
@@ -65,7 +112,7 @@ function StartLongPolling()
                 // otherwise.
                 elem = CreateElement(aResponse);
                 if (elem != null) {
-                    elem.value = val;
+                    elem.value = val;   // FIXME - is this valid for all element types in use?
                 }
             }
         }
