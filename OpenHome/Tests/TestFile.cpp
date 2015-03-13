@@ -96,8 +96,7 @@ void SuiteFile::TestFunctionality(IFile& aFile, TUint32 aBytes)
 
     aFile.Seek(0, eSeekFromEnd);
     buffer.SetBytes(0);
-    aFile.Read(buffer);
-    TEST(buffer.Bytes() == 0);
+    TEST_THROWS(aFile.Read(buffer), FileReadError);
 
     // Writing
 
@@ -130,8 +129,7 @@ void SuiteFileBrx::Test()
     TEST(buff == b);
 
     buff.SetBytes(0);
-    f.Read(buff);       // Attempt full buffer from end
-    TEST(buff.Bytes() == 0);
+    TEST_THROWS(f.Read(buff), FileReadError); // Attempt full buffer from end
 
     f.Seek(0, eSeekFromStart);
     buff.SetBytes(0);
