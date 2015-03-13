@@ -1,8 +1,79 @@
 function StartLongPolling()
 {
+    var gConfigValNumLimits = [];
+    var gConfigValTextLimits = [];
+
     var LongPollStarted = function()
     {
         // Do nothing.
+    }
+
+    var ConfigNumLimits = function(aKey, aMin, aMax)
+    {
+        this.iKey = aKey;
+        this.iMin = aMin;
+        this.iMax = aMax;
+    }
+
+    ConfigNumLimits.prototype.Key = function()
+    {
+        return this.iKey;
+    }
+
+    ConfigNumLimits.prototype.Min = function()
+    {
+        return this.iMin;
+    }
+
+    ConfigNumLimits.prototype.Max = function()
+    {
+        return this.iMax;
+    }
+
+    var ConfigTextLimits = function(aKey, aMaxLength)
+    {
+        this.iKey = aKey;
+        this.iMaxLength = aMaxLength;
+    }
+
+    ConfigTextLimits.prototype.Key = function()
+    {
+        return this.iKey;
+    }
+
+    ConfigTextLimits.prototype.MaxLength = function()
+    {
+        return this.iMaxLength;
+    }
+
+    var ValidateNumInput = function(aKey, aValue)
+    {
+        for (var i=0; i<gConfigValNumLimits.length; i++) {
+            limits = gConfigValNumLimits[i];
+            if (limits.Key() == aKey) {
+                if (aValue >= limits.Min() && aValue <= limits.Max()) {
+                    SendUpdate(aKey, aValue);
+                }
+                else {
+                    alert(aKey + " value of " + aValue + " is outwith range: " + limits.Min() + ".." + limits.Max());
+                }
+            }
+        }
+    }
+
+    var ValidateTextInput = function(aKey, aValue)
+    {
+        for (var i=0; i<gConfigValTextLimits.length; i++) {
+            limits = gConfigValTextLimits[i];
+            if (limits.Key() == aKey) {
+                if (aValue <= limits.MaxLength()) {
+                    SendUpdate(aKey, aValue);
+                }
+                else {
+                    alert(aKey + " value of " + aValue + " is longer than: " + limits.MaxLength() + " characters");
+                }
+            }
+        }
     }
 
     var CreateNumElement = function(aJsonConfigNumVal)
@@ -11,7 +82,8 @@ function StartLongPolling()
         elemInput.type = "text";
         elemInput.id = aJsonConfigNumVal.key;
         elemInput.name = aJsonConfigNumVal.key;
-        elemInput.onblur = function () {SendUpdate(elemInput.id, elemInput.value);} // FIXME - pass through an input validation function (check it's a num, then check limits)
+        gConfigValNumLimits.push(new ConfigNumLimits(aJsonConfigNumVal.key, aJsonConfigNumVal.meta.min, aJsonConfigNumVal.meta.max));
+        elemInput.onblur = function () {ValidateNumInput(elemInput.id, elemInput.value);}
         return elemInput;
     }
 
@@ -37,8 +109,8 @@ function StartLongPolling()
         elemInput.type = "text";
         elemInput.id = aJsonConfigTextVal.key;
         elemInput.name = aJsonConfigTextVal.key;
-        elemInput.onblur = "SendUpdate(id, value)"; // FIXME - take this as parameter?
-        elemInput.onblur = function () {SendUpdate(elemInput.id, elemInput.value);}
+        gConfigValTextLimits.push(new ConfigTextLimits(aJsonConfigTextVal.key, aJsonConfigTextVal.meta.maxlength));
+        elemInput.onblur = function () {ValidateTextInput(elemInput.id, elemInput.value);}
         return elemInput;
     }
 
