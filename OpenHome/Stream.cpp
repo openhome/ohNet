@@ -1,6 +1,10 @@
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Types.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Ascii.h>
 
 #include <string.h>
+#include <algorithm>
 
 using namespace OpenHome;
 
@@ -8,7 +12,6 @@ using namespace OpenHome;
 
 Sxx::Sxx(TUint aMaxBytes)
     : iMaxBytes(aMaxBytes)
-    , iBytes(0)
 {
 }
 
@@ -16,11 +19,13 @@ Sxx::~Sxx()
 {
 }
 
+
 // Srx
 
 Srx::Srx(TUint aMaxBytes, IReaderSource& aSource)
     : Sxx(aMaxBytes)
     , iSource(aSource)
+    , iBytes(0)
     , iOffset(0)
 {
 }
@@ -28,32 +33,62 @@ Srx::Srx(TUint aMaxBytes, IReaderSource& aSource)
 Brn Srx::Read(TUint aBytes)
 {
     TByte* ptr = Ptr();
-
-    if (iBytes - iOffset < aBytes) {  // read not satisfied from data already in the buffer
-        if (aBytes > iMaxBytes) { // unable to store the requested number of bytes in the buffer
-            THROW(ReaderError);
-        }
-
-        if (iMaxBytes - iOffset < aBytes) {
-            (void)memmove(ptr, ptr + iOffset, iBytes - iOffset); // so make some more room
-            iBytes -= iOffset;
+    aBytes = std::min(aBytes, iMaxBytes - iOffset); // reduce source read to match capacity here
+    if (iBytes > 0) {
+        const TUint bytes = std::min(aBytes, iBytes - iOffset);
+        Brn buf(ptr + iOffset, bytes);
+        iOffset += bytes;
+        if (iOffset == iBytes) {
+            iBytes = 0;
             iOffset = 0;
         }
-
-        while (iBytes - iOffset < aBytes) { // collect more data from the source
-            Bwn buffer(ptr + iBytes, iMaxBytes - iBytes);
-            iSource.Read(buffer);
-            iBytes += buffer.Bytes();
-            iSource.ReadFlush();
-        }
+        return buf;
     }
-
+    Bwn buffer(ptr + iBytes, iMaxBytes - iBytes);
+    iSource.Read(buffer);
+    iBytes += buffer.Bytes();
+    iSource.ReadFlush();
     TUint offset = iOffset;
-    iOffset += aBytes;
-    return (Brn(ptr + offset, aBytes));
+    const TUint bytes = std::min(iBytes - iOffset, aBytes);
+    iOffset += bytes;
+    return Brn(ptr + offset, bytes);
 }
 
-Brn Srx::ReadUntil(TByte aSeparator)
+void Srx::ReadFlush()
+{
+    iBytes = 0;
+    iOffset = 0;
+    iSource.ReadFlush();
+}
+
+void Srx::ReadInterrupt()
+{
+    iSource.ReadInterrupt();
+}
+
+
+// Srd
+
+Srd::Srd(TUint aMaxBytes, IReaderSource& aSource)
+    : Srx(aMaxBytes, aSource)
+    , iPtr(new TByte[aMaxBytes])
+{
+}
+
+TByte* Srd::Ptr()
+{
+    return (iPtr);
+}
+
+Srd::~Srd()
+{
+    delete[] iPtr;
+}
+
+
+// ReaderUntil
+
+Brn ReaderUntil::ReadUntil(TByte aSeparator)
 {
     TByte* ptr = Ptr();
     TByte* start = ptr + iOffset;
@@ -86,76 +121,364 @@ Brn Srx::ReadUntil(TByte aSeparator)
             THROW(ReaderError);
         }
         Bwn buffer(ptr + iBytes, iMaxBytes - iBytes); // collect more data from the source
-        iSource.Read(buffer);
+        buffer.Append(iReader.Read(iMaxBytes - iBytes));
         TUint additional = buffer.Bytes();
         iBytes += additional;
         remaining += additional;
     }
 }
 
-void Srx::ReadFlush()
+Brn ReaderUntil::ReadProtocol(TUint aBytes)
+{
+    ASSERT(aBytes <= iMaxBytes);
+    TByte* start = Ptr() + iOffset;
+    TByte* p = start;
+    if (iBytes > 0) {
+        (void)memmove(start, start + iOffset, iBytes);
+        p += iBytes;
+        iBytes = 0;
+    }
+    TUint remaining = aBytes;
+    while (remaining > 0) {
+        Brn buf = iReader.Read(remaining);
+        (void)memcpy(p, buf.Ptr(), buf.Bytes());
+        p += buf.Bytes();
+    }
+    return Brn(start, p - start);
+}
+
+Brn ReaderUntil::Read(TUint aBytes)
+{
+    if (iBytes > 0) {
+        const TUint bytes = std::min(aBytes, iBytes - iOffset);
+        Brn buf(Ptr() + iOffset, bytes);
+        iOffset += bytes;
+        if (iOffset == iBytes) {
+            iBytes = 0;
+            iOffset = 0;
+        }
+        return buf;
+    }
+    return iReader.Read(aBytes);
+}
+
+void ReaderUntil::ReadFlush()
 {
     iBytes = 0;
     iOffset = 0;
-    iSource.ReadFlush();
+    iReader.ReadFlush();
 }
 
-void Srx::ReadInterrupt()
+void ReaderUntil::ReadInterrupt()
 {
-    iSource.ReadInterrupt();
+    iReader.ReadInterrupt();
 }
 
-Brn Srx::Peek(TUint aBytes)
+ReaderUntil::ReaderUntil(TUint aMaxBytes, IReader& aReader)
+    : iMaxBytes(aMaxBytes)
+    , iBytes(0)
+    , iOffset(0)
+    , iReader(aReader)
 {
-    Brn buf;
+}
+
+
+// ReaderText
+
+Brn ReaderText::ReadLine()
+{
+    Brn line;
     try {
-        buf.Set(Read(aBytes));
-        iOffset -= buf.Bytes(); // rewind to the start of the buffer we've just read
+        line.Set(Ascii::Trim(ReadUntil(Ascii::kLf)));
     }
     catch (ReaderError&) {
-        buf.Set(Ptr() + iOffset, iBytes - iOffset); // Snaffle without manipulation of iBytes or iOffset
+        // treat any content following the last newline as a final line
+        line.Set(Read(iMaxBytes));
+        if (line.Bytes() == 0) {
+            throw;
+        }
     }
-    return buf;
+    return line;
 }
 
-Brn Srx::Snaffle()
+Brn ReaderText::ReadLine(TUint& aBytesConsumed)
 {
-    Brn rem(Ptr() + iOffset, iBytes - iOffset);
+    Brn line;
+    try {
+        Brn buf = ReadUntil(Ascii::kLf);
+        aBytesConsumed = buf.Bytes() + 1; // +1 for Ascii::kLf
+        line.Set(Ascii::Trim(buf));
+    }
+    catch (ReaderError&) {
+        // treat any content following the last newline as a final line
+        Brn buf = Read(iMaxBytes);
+        aBytesConsumed = buf.Bytes() + 1; // +1 for Ascii::kLf
+        line.Set(Ascii::Trim(buf));
+        if (line.Bytes() == 0) {
+            throw;
+        }
+    }
+    return line;
+}
+
+ReaderText::ReaderText(TUint aMaxBytes, IReader& aReader)
+    : ReaderUntil(aMaxBytes, aReader)
+{
+}
+
+
+// ReaderBuffer
+
+ReaderBuffer::ReaderBuffer()
+{
+    Set(Brx::Empty());
+}
+
+ReaderBuffer::ReaderBuffer(const Brx& aBuffer)
+{
+    Set(aBuffer);
+}
+
+void ReaderBuffer::Set(const Brx& aBuffer)
+{
+    iBuffer.Set(aBuffer);
+    ReadFlush();
+}
+
+Brn ReaderBuffer::Read(TUint aBytes)
+{
+    if (iOffset == iBuffer.Bytes()) {
+        THROW(ReaderError);
+    }
+    TUint offset = iOffset + aBytes;
+    if (offset > iBuffer.Bytes()) {
+        offset = iBuffer.Bytes();
+        aBytes = iBuffer.Bytes() - iOffset;
+    }
+    Brn result = iBuffer.Split(iOffset, aBytes);
+    iOffset = offset;
+    
+    return result;
+}
+
+TUint ReaderBuffer::Bytes() const
+{   
+    return (iBuffer.Bytes() - iOffset);
+}
+
+Brn ReaderBuffer::ReadRemaining()
+{
+    Brn result = iBuffer.Split(iOffset);
+    iOffset = iBuffer.Bytes();
+    return result;
+}
+
+Brn ReaderBuffer::ReadPartial(TUint aBytes)
+{
+    TUint remaining = iBuffer.Bytes() - iOffset;
+    if (remaining == 0) {
+        THROW(ReaderError);
+    }
+    TUint bytes = aBytes;
+    if (bytes > remaining) {
+        bytes = remaining;
+    }
+    Brn result = iBuffer.Split(iOffset, bytes);
+    iOffset += bytes;
+    
+    return result;
+}
+
+Brn ReaderBuffer::ReadUntil(TByte aSeparator)
+{
+    TUint start = iOffset;
+    TUint offset = iOffset;
+    TUint bytes = iBuffer.Bytes();
+    while (offset < bytes) {
+        if (iBuffer[offset++] == aSeparator) {
+            iOffset = offset;
+            return (iBuffer.Split(start, offset - start - 1));
+        }
+    }
+    
+    THROW(ReaderError);
+}
+
+void ReaderBuffer::ReadFlush()
+{
     iOffset = 0;
-    iBytes = 0;
-    return rem;
 }
 
-Brn Srx::Buffer()
-{
-    Brn buf(Ptr(), iBytes);
-    return buf;
-}
-
-
-// Srd
-
-Srd::Srd(TUint aMaxBytes, IReaderSource& aSource)
-    : Srx(aMaxBytes, aSource)
-    , iPtr(new TByte[aMaxBytes])
+void ReaderBuffer::ReadInterrupt()
 {
 }
 
-TByte* Srd::Ptr()
+
+// ReaderBinary
+
+ReaderBinary::ReaderBinary(IReader& aReader)
+    : iReader(aReader)
 {
-    return (iPtr);
 }
 
-Srd::~Srd()
+void ReaderBinary::ReadReplace(TUint aBytes, Bwx& aBuffer)
 {
-    delete[] iPtr;
+    ASSERT(aBytes <= aBuffer.MaxBytes());
+    aBuffer.SetBytes(0);
+    while (aBytes > 0) {
+        Brn buf = iReader.Read(aBytes);
+        aBuffer.Append(buf);
+        aBytes -= buf.Bytes();
+    }
 }
+
+TUint ReaderBinary::ReadUintBe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint));
+    TUint val = 0;
+    TUint count = 0;
+    Read(aBytes);
+    TUint index = 0;
+    while(count < aBytes) {
+        TUint byte = iBuf[index++];
+        val += byte << ((aBytes - count - 1)*8);
+        count++;
+    }
+    return val;
+}
+
+TInt ReaderBinary::ReadIntBe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TInt));
+    TInt val = 0;
+    TUint count = 0;
+    Read(aBytes);
+    TUint index = 0;
+
+    TInt sbyte = iBuf[index++];
+    val += sbyte << ((aBytes - count - 1) * 8);
+    count++;
+
+    while(count < aBytes) {
+        TUint byte = iBuf[index++];
+        val += byte << ((aBytes - count - 1) * 8);
+        count++;
+    }
+    return val;
+}
+
+TInt ReaderBinary::ReadIntLe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TInt));
+    TInt val = 0;
+    TUint shift = 0;
+    Read(aBytes);
+    TUint index = 0;
+
+    TInt sbyte = iBuf[index++];
+    val += sbyte << (shift*8);
+    shift++;
+
+    while(shift < aBytes) {
+        TUint byte = iBuf[index++];
+        val += byte << (shift*8);
+        shift++;
+    }
+    return val;
+}
+
+TUint ReaderBinary::ReadUintLe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint));
+    TUint val = 0;
+    TUint shift = 0;
+    Read(aBytes);
+    TUint index = 0;
+    while(shift < aBytes) {
+        TUint byte = iBuf[index++];
+        val += byte << (shift*8);
+        shift++;
+    }
+    return val;
+}
+
+TUint64 ReaderBinary::ReadUint64Be(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint64));
+    TUint64 val = 0;
+    TUint count = 0;
+    Read(aBytes);
+    TUint index = 0;
+    while(count < aBytes) {
+        TUint64 byte = iBuf[index++];
+        val += byte << ((aBytes - count - 1)*8);
+        count++;
+    }
+    return val;
+}
+
+TUint64 ReaderBinary::ReadUint64Le(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint64));
+    TUint64 val = 0;
+    TUint shift = 0;
+    Read(aBytes);
+    TUint index = 0;
+    while(shift < aBytes) {
+        TUint64 byte = iBuf[index++];
+        val += byte << (shift*8);
+        shift++;
+    }
+    return val;
+}
+
+void ReaderBinary::Read(TUint aBytes)
+{
+    ASSERT(aBytes <= iBuf.MaxBytes());
+    iBuf.SetBytes(0);
+    while (aBytes > 0) {
+        Brn buf = iReader.Read(aBytes);
+        iBuf.Append(buf);
+        aBytes -= buf.Bytes();
+    }
+}
+
+
+// ReaderProtocol
+
+Brn ReaderProtocol::Read(TUint aBytes)
+{
+    ASSERT(aBytes <= iMaxBytes);
+    TByte* p = Ptr();
+    TUint remaining = aBytes;
+    Bwn buf;
+    while (remaining > 0) {
+        buf.Set(p + aBytes - remaining, remaining);
+        buf.Append(iReader.Read(remaining));
+        remaining -= buf.Bytes();
+    }
+    return Brn(p, aBytes);
+}
+
+ReaderProtocol::ReaderProtocol(TUint aMaxBytes, IReader& aReader)
+    : ReaderBinary(aReader)
+    , iMaxBytes(aMaxBytes)
+{
+}
+
 
 // Swx
 
 Swx::Swx(TUint aMaxBytes, IWriter& aWriter)
-    : Sxx(aMaxBytes) 
+    : Sxx(aMaxBytes)
     , iWriter(aWriter)
+    , iBytes(0)
 {
 }
 
@@ -168,7 +491,6 @@ void Swx::Error()
 void Swx::Write(TByte aValue)
 {
     TByte* ptr = Ptr();
-    
     if (iBytes >= iMaxBytes) { // would overflow, flush the buffer
         iWriter.Write(Brn(ptr, iBytes));
         iBytes = 0;
@@ -180,15 +502,11 @@ void Swx::Write(TByte aValue)
 void Swx::Write(const Brx& aBuffer)
 {
     TByte* ptr = Ptr();
-    
     TUint bytes = aBuffer.Bytes();
-    
     if (iBytes + bytes > iMaxBytes) { // would overflow, drain the buffer
-    
         WriteDrain();
-        
         if (bytes > iMaxBytes) { // would still overflow
-            try {        
+            try {
                 iWriter.Write(aBuffer); // pass it on
                 return;
             }
@@ -197,9 +515,7 @@ void Swx::Write(const Brx& aBuffer)
             }
         }
     }
-    
     memcpy(ptr + iBytes, aBuffer.Ptr(), bytes);
-    
     iBytes += bytes;
 }
 
@@ -223,139 +539,11 @@ void Swx::WriteFlush()
     iWriter.WriteFlush();
 }
 
-// Swd
-
-Swd::Swd(TUint aMaxBytes, IWriter& aWriter)
-    : Swx(aMaxBytes, aWriter)
-    , iPtr(new TByte[aMaxBytes])
-{
-}
-
-TByte* Swd::Ptr()
-{
-    return (iPtr);
-}
-
-Swd::~Swd()
-{
-    delete (iPtr);
-}
-
-// Swp (Parasite on a host read stream)
-
-Swp::Swp(Srx& aHost, IWriter& aWriter)
-    : Swx(aHost.iMaxBytes, aWriter)
-    , iHost(aHost)
-{
-}
-
-TByte* Swp::Ptr()
-{
-    return (iHost.Ptr());
-}
-
-Swp::~Swp()
-{
-}
-
-// ReaderBuffer
-
-ReaderBuffer::ReaderBuffer()
-{
-    Set(Brx::Empty());
-}
-
-ReaderBuffer::ReaderBuffer(const Brx& aBuffer)
-{
-    Set(aBuffer);
-}
-
-void ReaderBuffer::Set(const Brx& aBuffer)
-{
-    iBuffer.Set(aBuffer);
-    ReadFlush();
-}
-
-Brn ReaderBuffer::Read(TUint aBytes)
-{
-    TUint offset = iOffset + aBytes;
-    
-    if (offset > iBuffer.Bytes()) {
-        THROW(ReaderError);
-    }
-    
-    Brn result = iBuffer.Split(iOffset, aBytes);
-    
-    iOffset = offset;
-    
-    return (result);
-}
-
-TUint ReaderBuffer::Bytes() const
-{   
-    return (iBuffer.Bytes() - iOffset);
-}
-
-Brn ReaderBuffer::ReadRemaining()
-{
-    Brn result = iBuffer.Split(iOffset);
-
-    iOffset = iBuffer.Bytes();
-    
-    return (result);
-}
-
-Brn ReaderBuffer::ReadPartial(TUint aBytes)
-{
-    TUint remaining = iBuffer.Bytes() - iOffset;
-    
-    if (remaining == 0) {
-        THROW(ReaderError);
-    }
-    
-    TUint bytes = aBytes;
-    
-    if (bytes > remaining) {
-        bytes = remaining;
-    }
-
-    Brn result = iBuffer.Split(iOffset, bytes);
-    
-    iOffset += bytes;
-    
-    return (result);
-}
-
-Brn ReaderBuffer::ReadUntil(TByte aSeparator)
-{
-    TUint start = iOffset;
-    TUint offset = iOffset;
-    
-    TUint bytes = iBuffer.Bytes();
-    
-    while (offset < bytes) {
-        if (iBuffer[offset++] == aSeparator) {
-            iOffset = offset;
-            return (iBuffer.Split(start, offset - start - 1));
-        }
-    }
-    
-    THROW(ReaderError);
-}
-
-void ReaderBuffer::ReadFlush()
-{
-    iOffset = 0;
-}
-
-void ReaderBuffer::ReadInterrupt()
-{
-}
-
 
 // WriterBuffer
 
-WriterBuffer::WriterBuffer(Bwx& aBuffer) : iBuffer(aBuffer)
+WriterBuffer::WriterBuffer(Bwx& aBuffer)
+    : iBuffer(aBuffer)
 {
 }
 
@@ -426,111 +614,6 @@ void WriterBwh::WriteFlush()
 {
 }
 
-// ReaderBinary
-
-ReaderBinary::ReaderBinary(IReader& aReader)
-    : iReader(aReader)
-{
-}
-
-const Brn ReaderBinary::Read(TUint aBytes)
-{
-    return (iReader.Read(aBytes));    
-}
-
-TUint ReaderBinary::ReadUintBe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint));
-    TUint val = 0;
-    TUint count = 0;
-    while(count < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << ((aBytes - count - 1)*8);
-        count++;
-    }
-    return val;
-}
-
-TInt ReaderBinary::ReadIntBe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TInt));
-    TInt val = 0;
-    TUint count = 0;
-
-    TInt sbyte = iReader.Read(1).At(0);
-    val += sbyte << ((aBytes - count - 1) * 8);
-    count++;
-
-    while(count < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << ((aBytes - count - 1) * 8);
-        count++;
-    }
-    return val;
-}
-
-TInt ReaderBinary::ReadIntLe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TInt));
-    TInt val = 0;
-    TUint shift = 0;
-
-    TInt sbyte = iReader.Read(1).At(0);
-    val += sbyte << (shift*8);
-    shift++;
-
-    while(shift < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << (shift*8);
-        shift++;
-    }
-    return val;
-}
-
-TUint ReaderBinary::ReadUintLe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint));
-    TUint val = 0;
-    TUint shift = 0;
-    while(shift < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << (shift*8);
-        shift++;
-    }
-    return val;
-}
-
-TUint64 ReaderBinary::ReadUint64Be(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint64));
-    TUint64 val = 0;
-    TUint count = 0;
-    while(count < aBytes) {
-        TUint64 byte = iReader.Read(1).At(0);
-        val += byte << ((aBytes - count - 1)*8);
-        count++;
-    }
-    return val;
-}
-
-TUint64 ReaderBinary::ReadUint64Le(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint64));
-    TUint64 val = 0;
-    TUint shift = 0;
-    while(shift < aBytes) {
-        TUint64 byte = iReader.Read(1).At(0);
-        val += byte << (shift*8);
-        shift++;
-    }
-    return val;
-}
 
 // WriterBinary
 
@@ -685,4 +768,3 @@ void WriterBinary::WriteInt64Le(TInt64 aValue)
     iWriter.Write((TByte)(aValue >> 48));
     iWriter.Write((TByte)(aValue >> 56));
 }
-

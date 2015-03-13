@@ -14,8 +14,7 @@ namespace OpenHome {
 class IReader
 {
 public:
-    virtual Brn Read(TUint aBytes) = 0;
-    virtual Brn ReadUntil(TByte aSeparator) = 0;
+    virtual Brn Read(TUint aBytes) = 0; // Returns [0..aBytes].  0 => stream closed
     virtual void ReadFlush() = 0;
     virtual void ReadInterrupt() = 0;
     virtual ~IReader() {};
@@ -24,7 +23,7 @@ public:
 class IReaderSource
 {
 public:
-    virtual void Read(Bwx& aBuffer) = 0;
+    virtual void Read(Bwx& aBuffer) = 0; // Replace contents of aBuffer with [0..MaxBytes].  0 => stream closed
     virtual void ReadFlush() = 0;
     virtual void ReadInterrupt() = 0;
     virtual ~IReaderSource() {};
@@ -49,24 +48,19 @@ protected:
     virtual TByte* Ptr() = 0;
 protected:
     TUint iMaxBytes;
-    TUint iBytes;
 };
 
 class Srx : public Sxx, public IReader
 {
 public: // from IReader
     Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-public:
-    Brn Peek(TUint aBytes); // may return <aBytes at end of stream
-    Brn Snaffle();
-    Brn Buffer(); // debug support only.  Your production code is broken if it relies on this!
 protected:
     Srx(TUint aMaxBytes, IReaderSource& aSource);
 protected:
     IReaderSource& iSource;
+    TUint iBytes;
     TUint iOffset;
 };
 
@@ -91,6 +85,113 @@ private:
     TByte* iPtr;
 };
 
+class ReaderUntil : public IReader, private INonCopyable
+{
+public:
+    Brn ReadUntil(TByte aSeparator);
+    Brn ReadProtocol(TUint aBytes); // reads exactly aBytes or throws
+public: // from IReader
+    Brn Read(TUint aBytes);
+    void ReadFlush();
+    void ReadInterrupt();
+protected:
+    ReaderUntil(TUint aMaxBytes, IReader& aReader);
+    virtual TByte* Ptr() = 0;
+protected:
+    TUint iMaxBytes;
+    TUint iBytes;
+    TUint iOffset;
+    IReader& iReader;
+};
+
+template <TUint T> class ReaderUntilS : public ReaderUntil
+{
+public:
+    ReaderUntilS(IReader& aReader) : ReaderUntil(T, aReader) {}
+private: // from ReaderUntil
+    TByte* Ptr() { return iBuf; }
+private:
+    TByte iBuf[T];
+};
+
+class ReaderText : public ReaderUntil
+{
+public:
+    Brn ReadLine();
+    Brn ReadLine(TUint& aBytesConsumed);
+protected:
+    ReaderText(TUint aMaxBytes, IReader& aReader);
+};
+
+template <TUint T> class ReaderTextS : public ReaderText
+{
+public:
+    ReaderTextS(IReader& aReader) : ReaderText(T, aReader) {}
+private: // from ReaderUntilBase
+    TByte* Ptr() { return iBuf; }
+private:
+    TByte iBuf[T];
+};
+
+class ReaderBuffer : public IReader
+{
+public:
+    ReaderBuffer();
+    ReaderBuffer(const Brx& aBuffer);
+    void Set(const Brx& aBuffer);
+    TUint Bytes() const;
+    Brn ReadRemaining();
+    Brn ReadPartial(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+public: // from IReader
+    Brn Read(TUint aBytes);
+    void ReadFlush();
+    void ReadInterrupt();
+private:
+    Brn iBuffer;
+    TUint iOffset;
+};
+
+class ReaderBinary : private INonCopyable
+{
+public:
+    ReaderBinary(IReader& aReader);
+    void ReadReplace(TUint aBytes, Bwx& aBuffer); // replaces any existing content of aBuffer
+    TUint ReadUintBe(TUint aBytes);
+    TUint ReadUintLe(TUint aBytes);
+    TUint64 ReadUint64Be(TUint aBytes);
+    TUint64 ReadUint64Le(TUint aBytes);
+    TInt ReadIntBe(TUint aBytes);
+    TInt ReadIntLe(TUint aBytes);
+private:
+    void Read(TUint aBytes);
+protected:
+    IReader& iReader;
+private:
+    Bws<8> iBuf;
+};
+
+class ReaderProtocol : public ReaderBinary
+{
+public:
+    Brn Read(TUint aBytes); // reads exactly aBytes or throws
+protected:
+    ReaderProtocol(TUint aMaxBytes, IReader& aReader);
+    virtual TByte* Ptr() = 0;
+protected:
+    TUint iMaxBytes;
+};
+
+template <TUint T> class ReaderProtocolS : public ReaderProtocol
+{
+public:
+    ReaderProtocolS(IReader& aReader) : ReaderProtocol(T, aReader) {}
+private: // from ReaderUntil
+    TByte* Ptr() { return iBuf; }
+private:
+    TByte iBuf[T];
+};
+
 class Swx : public Sxx, public IWriter
 {
 public: // from IWriter
@@ -106,6 +207,7 @@ private:
     virtual TByte* Ptr() = 0;
 protected:
     IWriter& iWriter;
+    TUint iBytes;
 };
 
 template <TUint S> class Sws : public Swx
@@ -116,47 +218,6 @@ private:
     virtual TByte* Ptr() { return (iBuf); }
 private:
     TByte iBuf[S];
-};
-
-class Swd : public Swx
-{
-public:
-    Swd(TUint aMaxBytes, IWriter& aWriter);
-    virtual ~Swd();
-private:
-    virtual TByte* Ptr();
-private:
-    TByte* iPtr;
-};
-
-class Swp : public Swx
-{
-public:
-    Swp(Srx& aHost, IWriter& aWriter);
-    virtual ~Swp();
-private:
-    virtual TByte* Ptr();
-private:
-    Srx& iHost;
-};
-
-class ReaderBuffer : public IReader
-{
-public:
-    ReaderBuffer();
-    ReaderBuffer(const Brx& aBuffer);
-    void Set(const Brx& aBuffer);
-    TUint Bytes() const;
-    Brn ReadRemaining();
-    Brn ReadPartial(TUint aBytes);
-public: // from IReader
-    Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
-    void ReadFlush();
-    void ReadInterrupt();
-private:
-    Brn iBuffer;
-    TUint iOffset;
 };
 
 class WriterBuffer : public IWriter, public INonCopyable
@@ -186,21 +247,6 @@ public: // from IWriter
 private:
     Bwh iBuf;
     TInt iGranularity;
-};
-
-class ReaderBinary : private INonCopyable
-{
-public:
-    ReaderBinary(IReader& aReader);
-    const Brn Read(TUint aBytes);
-    TUint ReadUintBe(TUint aBytes);
-    TUint ReadUintLe(TUint aBytes);
-    TUint64 ReadUint64Be(TUint aBytes);
-    TUint64 ReadUint64Le(TUint aBytes);
-    TInt ReadIntBe(TUint aBytes);
-    TInt ReadIntLe(TUint aBytes);
-private:
-    IReader& iReader;
 };
 
 class WriterBinary : private INonCopyable

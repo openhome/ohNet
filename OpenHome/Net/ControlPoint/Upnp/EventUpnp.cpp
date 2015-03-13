@@ -25,8 +25,10 @@ EventSessionUpnp::EventSessionUpnp(CpStack& aCpStack)
     : iCpStack(aCpStack)
     , iShutdownSem("EVSD", 1)
 {
-    iReadBuffer = new Srs<kMaxReadBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(aCpStack.Env(), *iReadBuffer);
+    iReadBuffer = new Srs<1024>(*this);
+    iReaderUntil = new ReaderUntilS<1024>(*iReadBuffer);
+    iDechunker = new ReaderHttpChunked(*iReaderUntil);
+    iReaderRequest = new ReaderHttpRequest(aCpStack.Env(), *iReaderUntil);
 
     iReaderRequest->AddMethod(kMethodNotify);
     iReaderRequest->AddHeader(iHeaderNt);
@@ -41,6 +43,8 @@ EventSessionUpnp::~EventSessionUpnp()
 {
     Interrupt(true);
     iShutdownSem.Wait();
+
+    delete iReaderUntil;
     delete iReadBuffer;
     delete iReaderRequest;
 }
@@ -73,6 +77,8 @@ void EventSessionUpnp::Run()
     AutoSemaphore a(iShutdownSem);
     CpiSubscription* subscription = NULL;
     iErrorStatus = &HttpStatus::kOk;
+    iDechunker->SetChunked(false);
+    iDechunker->ReadFlush();
     try {
         iReaderRequest->Flush();
         iReaderRequest->Read(kReadTimeoutMs);
@@ -124,38 +130,38 @@ void EventSessionUpnp::Run()
         // read entity
         if (subscription != NULL) {
             Bwh entity;
+            WriterBwh writer(1024);
             if (iHeaderTransferEncoding.IsChunked()) {
-                ReaderHttpChunkedDynamic dechunker(*iReadBuffer);
-                dechunker.Read();
-                dechunker.TransferTo(entity);
+                iDechunker->SetChunked(true);
+                for (;;) {
+                    Brn buf = iDechunker->Read(kMaxReadBytes);
+                    writer.Write(buf);
+                    if (buf.Bytes() == 0) { // end of stream
+                        break;
+                    }
+                }
             }
             else {
                 TUint length = iHeaderContentLength.ContentLength();
                 if (length == 0) {
-                    // no Content-Length header, so read until remote socket closed
-                    Bwh buffer(kMaxReadBytes);
-                    buffer.Append(iReadBuffer->Snaffle());
-                    for (;;) {
-                        entity.Grow(entity.Bytes() + buffer.Bytes());
-                        entity.Append(buffer);
-                        buffer.SetBytes(0);
-                        try {
-                            Read(buffer);
+                    // no Content-Length header, so read until remote socket closed (so ReaderError is thrown)
+                    try {
+                        for (;;) {
+                            writer.Write(iReaderUntil->Read(kMaxReadBytes));
                         }
-                        catch (ReaderError&) {
-                            // thrown for remote socket closed or network error 
-                            break;
-                        }
+                    }
+                    catch (ReaderError&) {
                     }
                 } else {
-                    entity.Grow(length);
-                    while (length > 0) {
-                        TUint readBytes = (length<kMaxReadBytes? length : kMaxReadBytes);
-                        entity.Append(iReadBuffer->Read(readBytes));
-                        length -= readBytes;
-                    }
+                    TUint remaining = length;
+                    do {
+                        Brn buf = iReaderUntil->Read(kMaxReadBytes);
+                        remaining -= buf.Bytes();
+                        writer.Write(buf);
+                    } while (remaining > 0);
                 }
             }
+            writer.TransferTo(entity);
 
             // process entity
             LOG(kEvent, "EventSessionUpnp::Run, sid - ");

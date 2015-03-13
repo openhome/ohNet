@@ -312,8 +312,9 @@ DviSessionLpec::DviSessionLpec(DvStack& aDvStack, TIpAddress aAdapter, TUint aPo
     , iDeviceLock("DLP5")
     , iActive(false)
 {
-    iReadBuffer = new Srs<kMaxReadBufferBytes>(*this);
-    iWriteBuffer = new Sws<kMaxWriteBufferBytes>(*this);
+    iReadBuffer = new Srs<1024>(*this);
+    iReaderUntil = new ReaderUntilS<kMaxReadBytes>(*iReadBuffer);
+    iWriteBuffer = new Sws<kWriteBufferBytes>(*this);
     iEventWriterAdapter = new EventWriterAdapter(*iWriteBuffer, iWriteLock, iSubscriptions);
     iPropertyWriterFactory = new PropertyWriterFactoryLpec(*iEventWriterAdapter);
 }
@@ -331,6 +332,7 @@ DviSessionLpec::~DviSessionLpec()
        no evented update is currently using iWriteBuffer. */
     iWriteLock.Signal();
     delete iEventWriterAdapter;
+    delete iReaderUntil;
     delete iReadBuffer;
     delete iWriteBuffer;
 }
@@ -397,13 +399,9 @@ void DviSessionLpec::Run()
             it++;
         }
         for (;;) {
-            iRequestBuf.Set(iReadBuffer->ReadUntil('\r'));
+            Brn req = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
+            iRequestBuf.Set(req);
             iResponseStarted = iResponseEnded = false;
-            Brn lf = iReadBuffer->Read(1);
-            if (lf[0] != '\n') {
-                ReportError(LpecError::kInvalidCommandTerminator);
-                continue;
-            }
             iParser.Set(iRequestBuf);
             Brn method = iParser.Next(' ');
             try {

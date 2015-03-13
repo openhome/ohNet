@@ -52,6 +52,7 @@ ShellSession::ShellSession(IShellCommandHandler& aCommandHandler)
     , iShutdownSem("SSHL", 1)
 {
     iReadBuffer = new Srs<kMaxCommandBytes>(*this);
+    iReaderUntil = new ReaderUntilS<kMaxCommandBytes>(*iReadBuffer);
     iWriterResponse = new WriterShellResponse(*this);
 }
 
@@ -60,6 +61,7 @@ ShellSession::~ShellSession()
     iReadBuffer->ReadInterrupt();
     delete iWriterResponse;
     iShutdownSem.Wait();
+    delete iReaderUntil;
     delete iReadBuffer;
 }
 
@@ -76,7 +78,7 @@ void ShellSession::Run()
     iShutdownSem.Wait();
     for (;;) {
         try {
-            Brn buf = iReadBuffer->ReadUntil('\n');
+            Brn buf = iReaderUntil->ReadUntil('\n');
             TUint bytes = buf.Bytes();
             if (bytes > 0 && buf[bytes - 1] == '\r') { // strip any trailing LF
                 buf.Set(buf.Ptr(), bytes-1);

@@ -160,16 +160,16 @@ public:
     virtual void Write(const Brx& aData) = 0;
     virtual void Close() = 0;
 protected:
-    WsProtocol(Srx& aReadBuffer, Swx& aWriteBuffer);
+    WsProtocol(ReaderUntil& aReaderUntil, Swx& aWriteBuffer);
 protected:
-    Srx& iReadBuffer;
+    ReaderUntil& iReaderUntil;
     Swx& iWriteBuffer;
 };
 
 class WsProtocol76 : public WsProtocol
 {
 public:
-    WsProtocol76(Srx& aReadBuffer, Swx& aWriteBuffer);
+    WsProtocol76(ReaderUntil& aReaderUntil, Swx& aWriteBuffer);
 private:
     void Read(Brn& aData, TBool& aClosed);
     void Write(const Brx& aData);
@@ -183,8 +183,9 @@ private:
 
 class WsProtocol80 : public WsProtocol
 {
+    static const TUint kMaxRequestBytes = 4*1024;
 public:
-    WsProtocol80(Srx& aReadBuffer, Swx& aWriteBuffer);
+    WsProtocol80(ReaderUntil& aReaderUntil, Swx& aWriteBuffer);
 private:
     void Read(Brn& aData, TBool& aClosed);
     void Write(const Brx& aData);
@@ -208,6 +209,7 @@ private:
     void Close(TUint16 aCode);
 private:
     Bwh iMessage;
+    ReaderProtocolS<kMaxRequestBytes> iReaderProtocol;
 };
 
 class DviService;
@@ -268,7 +270,8 @@ public:
 private:
     DvStack& iDvStack;
     Endpoint iEndpoint;
-    Srs<kMaxRequestBytes>* iReadBuffer;
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
     ReaderHttpRequest* iReaderRequest;
     Sws<kMaxWriteBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;

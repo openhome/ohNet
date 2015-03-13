@@ -121,19 +121,6 @@ public:
 
 // Stream classes
 
-class ReaderAscii : public IReader, public INonCopyable
-{
-public:
-    ReaderAscii(IReader& aReader);
-    TInt ReadInt(TByte aSeparator);
-    TUint ReadUint(TByte aSeparator);
-    // IReader
-    virtual Brn Read(TUint aBytes);
-    virtual Brn ReadUntil(TByte aSeparator);
-private:
-    IReader& iReader;
-};
-
 class IWriterAscii : public IWriter
 {
 public:    

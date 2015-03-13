@@ -62,26 +62,20 @@ void SuiteHttpReader::Test1()
 
     // can't call any reader methods before Connect("...")
     TEST_THROWS(httpReader.Read(1), AssertionFailed);
-    TEST_THROWS(httpReader.ReadUntil('<'), AssertionFailed);
     TEST_THROWS(httpReader.ReadFlush(), AssertionFailed);
     TEST_THROWS(httpReader.ReadInterrupt(), AssertionFailed);
-
 
     TEST(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))));
 
     // only one connection allowed
     TEST_THROWS(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))), AssertionFailed);
 
-
-    for(;;)
-    {
-        try
-        {
-            Brn data(httpReader.ReadUntil('>'));
+    for(;;) {
+        try {
+            Brn data(httpReader.Read(1024));
             //Log::Print(data);
         }
-        catch(ReaderError)
-        {
+        catch(ReaderError&) {
             break;
         }
     }

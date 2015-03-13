@@ -75,24 +75,25 @@ void XmlFetch::Fetch()
     LOG(kXmlFetch, iUri->AbsoluteUri());
     LOG(kXmlFetch, "\n");
 
-    OpenHome::SocketTcpClient socket;
-    socket.Open(iCpStack.Env());
-    AutoSocket a(socket);
+    iLock.Wait();
+    iSocket.Interrupt(false);
+    iLock.Signal();
+    iSocket.Open(iCpStack.Env());
+    AutoSocket a(iSocket);
     iLock.Wait();
     if (iInterrupted) {
         SetError(Error::eAsync, Error::eCodeInterrupted, Error::kDescriptionAsyncInterrupted);
         iLock.Signal();
         THROW(ReaderError);
     }
-    iSocket = &socket;
     iLock.Signal();
     try {
         const TUint port = (iUri->Port()==Uri::kPortNotSpecified? 80 : iUri->Port());
         Endpoint endpoint(port, iUri->Host());
         TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
-        socket.Connect(endpoint, timeout);
-        WriteRequest(socket);
-        Read(socket);
+        iSocket.Connect(endpoint, timeout);
+        WriteRequest();
+        Read();
     }
     catch (NetworkTimeout&) {
         SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
@@ -106,9 +107,6 @@ void XmlFetch::Fetch()
     catch (ReaderError&) {
         SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
     }
-    iLock.Wait();
-    iSocket = NULL;
-    iLock.Signal();
 
     LOG(kXmlFetch, "< XmlFetch::Fetch for ");
     LOG(kXmlFetch, iUri->AbsoluteUri());
@@ -119,9 +117,7 @@ void XmlFetch::Interrupt()
 {
     iLock.Wait();
     iInterrupted = true;
-    if (iSocket != NULL) {
-        iSocket->Interrupt(true);
-    }
+    iSocket.Interrupt(true);
     iLock.Signal();
 }
 
@@ -162,13 +158,15 @@ XmlFetch::XmlFetch(CpStack& aCpStack)
     , iInterrupted(false)
     , iCheckContactable(false)
     , iContactable(false)
-    , iSocket(NULL)
+    , iReadBuffer(iSocket)
+    , iReaderUntil(iReadBuffer)
+    , iDechunker(iReaderUntil)
 {
 }
 
-void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
+void XmlFetch::WriteRequest()
 {
-    Sws<kRwBufferLength> writeBuffer(aSocket);
+    Sws<kRwBufferLength> writeBuffer(iSocket);
     WriterHttpRequest writerRequest(writeBuffer);
 
     writerRequest.WriteMethod((iCheckContactable? Http::kMethodHead : Http::kMethodGet), iUri->PathAndQuery(), Http::eHttp11);
@@ -179,10 +177,10 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
     writerRequest.WriteFlush();
 }
 
-void XmlFetch::Read(SocketTcpClient& aSocket)
+void XmlFetch::Read()
 {
-    Srd readBuffer(kRwBufferLength, aSocket);
-    ReaderHttpResponse readerResponse(iCpStack.Env(), readBuffer);
+    iDechunker.ReadFlush();
+    ReaderHttpResponse readerResponse(iCpStack.Env(), iReaderUntil);
     HttpHeaderContentLength headerContentLength;
     HttpHeaderTransferEncoding headerTransferEncoding;
 
@@ -202,37 +200,38 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
         return;
     }
 
+    WriterBwh writer(1024);
+    static const TUint kMaxReadBytes = 4 * 1024;
     if (headerTransferEncoding.IsChunked()) {
-        ReaderHttpChunkedDynamic dechunker(readBuffer);
-        dechunker.Read();
-        dechunker.TransferTo(iXml);
+        iDechunker.SetChunked(true);
+        for (;;) {
+            Brn buf = iDechunker.Read(kMaxReadBytes);
+            writer.Write(buf);
+            if (buf.Bytes() == 0) { // end of stream
+                break;
+            }
+        }
     }
     else {
         TUint remaining = headerContentLength.ContentLength();
         if (remaining == 0) { // no content length - read until connection closed by server
             try {
                 for (;;) {
-                    Brn buf = readBuffer.Read(kRwBufferLength);
-                    iXml.Grow(iXml.Bytes() + kRwBufferLength);
-                    iXml.Append(buf);
+                    writer.Write(iReaderUntil.Read(kMaxReadBytes));
                 }
             }
             catch (ReaderError&) {
-                Brn snaffle = readBuffer.Snaffle();
-                iXml.Grow(iXml.Bytes() + snaffle.Bytes());
-                iXml.Append(snaffle);
             }
         }
         else {
-            while (remaining > 0) {
-                TInt readBytes = (remaining > kRwBufferLength ? kRwBufferLength : remaining);
-                Brn buf = readBuffer.Read(readBytes);
-                iXml.Grow(iXml.Bytes() + readBytes);
-                iXml.Append(buf);
-                remaining -= readBytes;
-            }
+            do {
+                Brn buf = iReaderUntil.Read(kMaxReadBytes);
+                remaining -= buf.Bytes();
+                writer.Write(buf);
+            } while (remaining > 0);
         }
     }
+    writer.TransferTo(iXml);
 }
 
 void XmlFetch::Output(IAsyncOutput& aConsole)

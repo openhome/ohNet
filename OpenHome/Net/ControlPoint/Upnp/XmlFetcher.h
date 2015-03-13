@@ -10,7 +10,9 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Private/Http.h>
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Exception.h>
 
@@ -41,8 +43,8 @@ public:
 private:
     XmlFetch(CpStack& aCpStack);
     TBool Error() const;
-    void WriteRequest(SocketTcpClient& aSocket);
-    void Read(SocketTcpClient& aSocket);
+    void WriteRequest();
+    void Read();
     virtual void Output(IAsyncOutput& aConsole);
     virtual TUint Type() const;
 private:
@@ -58,7 +60,10 @@ private:
     TBool iInterrupted;
     TBool iCheckContactable;
     TBool iContactable;
-    OpenHome::SocketTcpClient* iSocket;
+    OpenHome::SocketTcpClient iSocket;
+    Srs<1024> iReadBuffer;
+    ReaderUntilS<1024> iReaderUntil;
+    ReaderHttpChunked iDechunker;
 
     friend class XmlFetchManager;
 };

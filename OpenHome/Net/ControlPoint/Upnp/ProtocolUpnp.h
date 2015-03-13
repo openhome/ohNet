@@ -39,7 +39,8 @@ private:
     CpStack& iCpStack;
     Invocation& iInvocation;
     OpenHome::SocketTcpClient iSocket;
-    Srs<kMaxReadBytes> iReadBuffer;
+    Srs<1024> iReadBuffer;
+    ReaderUntilS<1024> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
 };
 
@@ -93,6 +94,8 @@ private:
     CpStack& iCpStack;
     CpiSubscription& iSubscription;
     OpenHome::SocketTcpClient iSocket;
+    Srs<1024> iReadBuffer;
+    ReaderUntilS<1024> iReaderUntil;
 };
 
 class OutputProcessorUpnp : public IOutputProcessor

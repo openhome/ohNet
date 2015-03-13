@@ -552,34 +552,6 @@ TUint Ascii::UintHex(const Brx& aBuffer)
 
     return val;
 }
-
-// Stream classes (ReaderAscii)
-
-ReaderAscii::ReaderAscii(IReader& aReader)
-    : iReader(aReader)
-{
-}
-
-TInt ReaderAscii::ReadInt(TByte aSeparator)
-{
-    return (Ascii::Int(iReader.ReadUntil(aSeparator)));
-}
-
-TUint ReaderAscii::ReadUint(TByte aSeparator)
-{
-    return (Ascii::Uint(iReader.ReadUntil(aSeparator)));
-}
-
-Brn ReaderAscii::Read(TUint aBytes)
-{
-    return (iReader.Read(aBytes));
-}
-
-Brn ReaderAscii::ReadUntil(TByte aSeparator)
-{
-    return (iReader.ReadUntil(aSeparator));
-}
-
 // Stream classes (WriterAscii)
 
 WriterAscii::WriterAscii(IWriter& aWriter)

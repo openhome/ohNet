@@ -20,13 +20,8 @@ void SuiteReaderBinary::Test()
     ReaderBuffer readerBuffer(buffer);
     ReaderBinary readerBinary(readerBuffer);
 
-    // ReaderBinary::Read()
-
-    TEST(readerBinary.Read(8) == buffer.Split(0, 8));
-
     // ReaderBinary::ReadUintBe
 
-    readerBuffer.Set(buffer);
     TEST(readerBinary.ReadUintBe(1) == 0x12);
     readerBuffer.Set(buffer);
     TEST(readerBinary.ReadUintBe(2) == 0x1234);

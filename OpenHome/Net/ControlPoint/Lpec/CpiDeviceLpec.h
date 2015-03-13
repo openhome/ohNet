@@ -95,7 +95,8 @@ private:
     CpStack& iCpStack;
     Mutex iLock;
     SocketTcpClient iSocket;
-    Srs<kMaxReadBufferBytes>* iReadBuffer;
+    Srx* iReadBuffer;
+    ReaderUntilS<kMaxReadBufferBytes>* iReaderUntil;
     Sws<kMaxWriteBufferBytes>* iWriteBuffer;
     Endpoint iLocation;
     Bws<64> iLpecName;

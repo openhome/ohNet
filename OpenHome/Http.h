@@ -250,7 +250,7 @@ class ReaderHttpRequest : public ReaderHttpHeader
     static const TUint kMaxMethodBytes = 20;
     static const TUint kMaxUriBytes = 200;
 public:
-    ReaderHttpRequest(Environment& aEnv, IReader& aReader);
+    ReaderHttpRequest(Environment& aEnv, ReaderUntil& aReader);
     virtual ~ReaderHttpRequest();
     void Read(TUint aTimeoutMs = 0);
     void Flush();
@@ -266,7 +266,7 @@ protected:
 private:
     void ReadTimeout();
 protected:
-    IReader& iReader;
+    ReaderUntil& iReader;
     Timer* iTimer;
     std::vector<const Brx*> iMethods;
     const Brx* iMethod;
@@ -280,7 +280,7 @@ public:
     static const TUint kMaxDescriptionBytes = 100;
     static const TUint kMaxUriBytes = 200;
 public:
-    ReaderHttpResponse(Environment& aEnv, IReader& aReader);
+    ReaderHttpResponse(Environment& aEnv, ReaderUntil& aReader);
     virtual ~ReaderHttpResponse();
     void Read(TUint aTimeoutMs = 0);
     void Flush();
@@ -299,7 +299,7 @@ protected:
         void Set(TUint aCode, const Brx& aDescription);
     };
 protected:
-    IReader& iReader;
+    ReaderUntil& iReader;
     Timer* iTimer;
     Http::EVersion iVersion;
     StatusWritable iStatus;
@@ -311,25 +311,24 @@ class WriterHttpField : public WriterAscii
     friend class WriterHttpHeader;
 public:
     WriterHttpField(IWriter& aWriter);
-    // IWriter
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 private:
     void Flush();
 };
 
 class WriterHttpHeader : public IWriterHttpHeader
 {
-public:
-    // IWriter
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
-    // IWriterHeader
-    virtual void WriteHeader(const Brx& aField, const Brx& aValue);
-    virtual void WriteHeaderBase64(const Brx& aField, const Brx& aValue);
-    virtual IWriterAscii& WriteHeaderField(const Brx& aField); // returns a stream for writing the value
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
+public: // from IWriterHeader
+    void WriteHeader(const Brx& aField, const Brx& aValue);
+    void WriteHeaderBase64(const Brx& aField, const Brx& aValue);
+    IWriterAscii& WriteHeaderField(const Brx& aField); // returns a stream for writing the value
 protected:
     WriterHttpHeader(IWriter& aWriter);
 protected:
@@ -340,7 +339,8 @@ class WriterHttpRequest : public WriterHttpHeader, public IWriterHttpMethod
 {
 public:
     WriterHttpRequest(IWriter& aWriter);
-    virtual void WriteMethod(const Brx& aMethod, const Brx& aUri, Http::EVersion aVersion);
+public: // from IWriterHttpMethod
+    void WriteMethod(const Brx& aMethod, const Brx& aUri, Http::EVersion aVersion);
 };
 
 class WriterHttpResponse : public WriterHttpHeader, public IWriterHttpStatus
@@ -451,45 +451,19 @@ private:
     Bws<kMaxMethodBytes> iMethod;
 };
 
-class EndpointHttp : public Endpoint
-{
-public:
-    EndpointHttp(const Uri& aUri);
-};
-
-class ReaderHttpChunkedDynamic // deprecated
-{
-public:
-    ReaderHttpChunkedDynamic(IReader& aReader); // IReader must allow reads at least 4k
-    void Read();
-    void TransferTo(Bwh& aBuf);
-private:
-    ReaderHttpChunkedDynamic& operator=(const ReaderHttpChunkedDynamic&);
-private:
-    IReader& iReader;
-    Bwh iEntity;
-};
-
 class ReaderHttpChunked : public IReader
 {
     static const TUint kChunkSizeBufBytes = 10;
-    static const TUint kBufSizeBytes = (10 * 1024) + kChunkSizeBufBytes; // FIXME - allow user-definable size
 public:
-    ReaderHttpChunked(Srx& aReader);
+    ReaderHttpChunked(IReader& aReader);
     void SetChunked(TBool aChunked);
-    Brn ReadRemaining();
 public: // from IReader
     Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
 private:
-    Brn Dechunk(Brn& aBuf);
-    void ReadNextChunkSize(Brn& aBuf);
-private:
-    Srx& iReader;
-    Bws<kBufSizeBytes> iDechunkBuf;
-    Bws<kBufSizeBytes> iOutputBuf;
+    IReader& iReader;
+    ReaderUntilS<kChunkSizeBufBytes> iReaderUntil;
     TUint iChunkBytesRemaining;
     TBool iChunked;
 };
@@ -500,9 +474,10 @@ class WriterHttpChunked : public IWriter
 public:
     WriterHttpChunked(IWriter& aWriter);
     void SetChunked(TBool aValue);
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 private:
     Sws<kMaxBufferBytes> iBuffer;
     TBool iChunked;
@@ -517,14 +492,7 @@ public:
     virtual ~IHttpSocket() {}
 };
 
-class IReaderBuffered : public IReader
-{
-public:
-    virtual Brn ReadRemaining() = 0;
-    virtual ~IReaderBuffered() {}
-};
-
-class HttpReader : public IHttpSocket, public IReaderBuffered
+class HttpReader : public IHttpSocket, public IReader
 {
 private:
     static const TUint kHttpPort = 80;
@@ -541,11 +509,8 @@ public: // from IHttpSocket
     TBool Connect(const Uri& aUri);
     void Close();
     TUint ContentLength() const;
-public: // from IReaderBuffered
-    Brn ReadRemaining();
 public: // from IReader
     Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
 private:
@@ -553,7 +518,6 @@ private:
     TBool ConnectAndProcessHeader(const Uri& aUri);
     TBool Connect(Endpoint aEndpoint);
     void Open();
-
 private:
     Environment& iEnv;
     Bwh iUserAgent;
@@ -561,17 +525,16 @@ private:
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderLocation iHeaderLocation;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
-    Srs<kReadBufferBytes> iReadBuffer;
+    Srs<1024> iReadBuffer;
+    ReaderUntilS<1024> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     Sws<kWriteBufferBytes> iWriteBuffer;
     WriterHttpRequest iWriterRequest;
-    ReaderHttpChunked iReader;
+    ReaderHttpChunked iDechunker;
     TBool iSocketIsOpen;
     TBool iConnected;
     TUint iTotalBytes;
 };
-
-
 
 } // namespace OpenHome
 

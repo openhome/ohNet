@@ -209,8 +209,10 @@ private:
     TIpAddress iInterface;
     TUint iPort;
     IRedirector& iRedirector;
-    Srs<kMaxRequestBytes>* iReadBuffer;
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
     ReaderHttpRequest* iReaderRequest;
+    ReaderHttpChunked* iDechunker;
     WriterHttpChunked* iWriterChunked;
     Sws<kMaxResponseBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;
@@ -228,7 +230,7 @@ private:
     const HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;
-    Brn iSoapRequest;
+    Bws<kMaxRequestBytes> iSoapRequest;
     DviDevice* iInvocationDevice;
     DviService* iInvocationService;
     mutable Bws<128> iResourceUriPrefix;

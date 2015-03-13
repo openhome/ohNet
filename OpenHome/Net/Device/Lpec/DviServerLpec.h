@@ -186,8 +186,8 @@ private: // from IEventWriter
     };
 private:
     static const TUint kMaxSubscriptions = 16; // imposed by public LPEC docs
-    static const TUint kMaxReadBufferBytes = 12000;
-    static const TUint kMaxWriteBufferBytes = 4000;
+    static const TUint kMaxReadBytes = 12000;
+    static const TUint kWriteBufferBytes = 4000;
     static const TUint kMaxSubscriptionCount = 16; // FIXME - limitation copied from volkano.  Is it necessary?
     DvStack& iDvStack;
     TIpAddress iAdapter;
@@ -197,8 +197,9 @@ private:
     Mutex iSubscriptionLock;
     Mutex iByeByeLock;
     Mutex iDeviceLock;
-    Srs<kMaxReadBufferBytes>* iReadBuffer;
-    Sws<kMaxWriteBufferBytes>* iWriteBuffer;
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
+    Sws<kWriteBufferBytes>* iWriteBuffer;
     EventWriterAdapter* iEventWriterAdapter;
     PropertyWriterFactoryLpec* iPropertyWriterFactory;
     std::map<Brn,DviDevice*,BufferCmp> iDeviceMap;

@@ -35,7 +35,8 @@ CpiDeviceLpec::CpiDeviceLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& a
     , iConnected(false)
     , iExiting(false)
 {
-    iReadBuffer = new Srs<kMaxReadBufferBytes>(iSocket);
+    iReadBuffer = new Srs<1024>(iSocket);
+    iReaderUntil = new ReaderUntilS<kMaxReadBufferBytes>(*iReadBuffer);
     iWriteBuffer = new Sws<kMaxWriteBufferBytes>(iSocket);
     iThread = new ThreadFunctor("LpecClient", MakeFunctor(*this, &CpiDeviceLpec::LpecThread));
     iInvocable = new Invocable(*this);
@@ -49,6 +50,7 @@ CpiDeviceLpec::~CpiDeviceLpec()
     delete iThread;
     delete iInvocable;
     delete iWriteBuffer;
+    delete iReaderUntil;
     delete iReadBuffer;
     iSocket.Close();
 }
@@ -78,7 +80,7 @@ void CpiDeviceLpec::LpecThread()
         iSocket.Connect(iLocation, iCpStack.Env().InitParams()->TcpConnectTimeoutMs());
         TBool starting = true;
         for (;;) {
-            Brn line = iReadBuffer->ReadUntil(Ascii::kLf);
+            Brn line = iReaderUntil->ReadUntil(Ascii::kLf);
             if (line.Bytes() > 0 && line[line.Bytes()-1] == Ascii::kCr) {
                 line.Set(line.Ptr(), line.Bytes()-1);
             }

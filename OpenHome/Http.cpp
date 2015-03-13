@@ -294,10 +294,9 @@ void ReaderHttpHeader::ProcessHeader(const Brx& aField, const Brx& aValue)
 }
 
 
-
 // ReaderHttpRequest
 
-ReaderHttpRequest::ReaderHttpRequest(Environment& aEnv, IReader& aReader)
+ReaderHttpRequest::ReaderHttpRequest(Environment& aEnv, ReaderUntil& aReader)
     : ReaderHttpHeader(aEnv)
     , iReader(aReader)
 {
@@ -433,9 +432,10 @@ void ReaderHttpRequest::Interrupt()
     iReader.ReadInterrupt();
 }
 
+
 // ReaderHttpResponse
 
-ReaderHttpResponse::ReaderHttpResponse(Environment& aEnv, IReader& aReader)
+ReaderHttpResponse::ReaderHttpResponse(Environment& aEnv, ReaderUntil& aReader)
     : ReaderHttpHeader(aEnv)
     , iReader(aReader)
 {
@@ -545,6 +545,7 @@ void ReaderHttpResponse::Interrupt()
     iReader.ReadInterrupt();
 }
 
+
 // ReaderHttpResponse::StatusWritable
 
 ReaderHttpResponse::StatusWritable::StatusWritable()
@@ -557,6 +558,7 @@ void ReaderHttpResponse::StatusWritable::Set(TUint aCode, const Brx& aDescriptio
     iCode = aCode;
     const_cast<Brn*>(&iReason)->Set(aDescription);
 }
+
 
 // WriterHttpField
 
@@ -586,6 +588,7 @@ void WriterHttpField::Flush()
 {
     WriterAscii::WriteFlush();
 }
+
 
 // WriterHttpHeader
 
@@ -640,6 +643,7 @@ IWriterAscii& WriterHttpHeader::WriteHeaderField(const Brx& aField)
     return (iWriter);
 }
 
+
 // WriterHttpRequest
 
 WriterHttpRequest::WriterHttpRequest(IWriter& aWriter) : WriterHttpHeader(aWriter)
@@ -681,6 +685,7 @@ void WriterHttpResponse::Write(const Brx& aBuffer)
     iWriter.Write(aBuffer);
 }
 
+
 // HttpHeader
 
 HttpHeader::HttpHeader()
@@ -703,7 +708,8 @@ void HttpHeader::Reset()
     iReceived = false;
 }
 
-// class HttpHeaderHost
+
+// HttpHeaderHost
 
 OpenHome::Endpoint& HttpHeaderHost::Endpoint()
 {
@@ -749,6 +755,7 @@ void HttpHeaderHost::Process(const Brx& aValue)
     }
 }
 
+
 // HttpHeaderLocation
 
 const Brx& HttpHeaderLocation::Location() const
@@ -770,6 +777,7 @@ void HttpHeaderLocation::Process(const Brx& aValue)
     catch (BufferOverflow&) {
     }
 }
+
 
 // HttpHeaderContentType
 
@@ -814,6 +822,7 @@ void HttpHeaderContentType::Process(const Brx& /*aKey*/, const Brx& /*aValue*/)
 {
 }
 
+
 // HttpHeaderContentLength
 
 TUint HttpHeaderContentLength::ContentLength() const
@@ -838,6 +847,7 @@ void HttpHeaderContentLength::Process(const Brx& aValue)
     }
 }
 
+
 // HttpHeaderTransferEncoding
 
 TBool HttpHeaderTransferEncoding::IsChunked() const
@@ -855,6 +865,7 @@ void HttpHeaderTransferEncoding::Process(const Brx& aValue)
     SetReceived();
     iChunked = !Ascii::CaseInsensitiveEquals(aValue, Http::kTransferEncodingIdentity);
 }
+
 
 // HttpHeaderConnection
 
@@ -886,6 +897,7 @@ void HttpHeaderConnection::Process(const Brx& aValue)
         SetReceived();
     }
 }
+
 
 // HttpHeaderExpect
 
@@ -925,58 +937,11 @@ void HttpHeaderAccessControlRequestMethod::Process(const Brx& aValue)
 }
 
 
-// EndpointHttp
-
-EndpointHttp::EndpointHttp(const Uri& aUri)
-{
-    SetAddress(aUri.Host());
-    SetPort(aUri.Port() == -1 ? 80 : aUri.Port());
-}
-
-// ReaderHttpChunkedDynamic
-
-ReaderHttpChunkedDynamic::ReaderHttpChunkedDynamic(IReader& aReader)
-    : iReader(aReader)
-{
-}
-
-void ReaderHttpChunkedDynamic::Read()
-{
-    for (;;) {
-        Brn chunkSizeBuf = iReader.ReadUntil(Ascii::kLf);
-        Parser parser(chunkSizeBuf);
-        Brn trimmed = parser.Next(Ascii::kCr);
-        if (trimmed.Bytes() == 0) {
-            continue;
-        }
-        TUint chunkSize;
-        try {
-            chunkSize = Ascii::UintHex(trimmed);
-        }
-        catch (AsciiError&) {
-            THROW(ReaderError);
-        }
-        if (chunkSize == 0) {
-            break;
-        }
-        iEntity.Grow(iEntity.Bytes() + chunkSize);
-        while (chunkSize > 0) {
-            TUint bytes = (chunkSize<4096? chunkSize : 4096);
-            iEntity.Append(iReader.Read(bytes));
-            chunkSize -= bytes;
-        }
-    }
-}
-
-void ReaderHttpChunkedDynamic::TransferTo(Bwh& aBuf)
-{
-    iEntity.TransferTo(aBuf);
-}
-
 // ReaderHttpChunked
 
-ReaderHttpChunked::ReaderHttpChunked(Srx& aReader)
+ReaderHttpChunked::ReaderHttpChunked(IReader& aReader)
     : iReader(aReader)
+    , iReaderUntil(iReader)
     , iChunkBytesRemaining(0)
     , iChunked(false)
 {
@@ -985,7 +950,6 @@ ReaderHttpChunked::ReaderHttpChunked(Srx& aReader)
 void ReaderHttpChunked::SetChunked(TBool aChunked)
 {
     iChunked = aChunked;
-    iDechunkBuf.SetBytes(0);
     iChunkBytesRemaining = 0;
 }
 
@@ -995,33 +959,31 @@ Brn ReaderHttpChunked::Read(TUint aBytes)
         return iReader.Read(aBytes);
     }
 
-    iOutputBuf.SetBytes(0);
-    TUint remaining = aBytes;
-    while (remaining > 0) {
-        Brn buf = iReader.Read(remaining);
-        Dechunk(buf);
-        remaining -= iDechunkBuf.Bytes();
-        iOutputBuf.Append(iDechunkBuf);
-        while (buf.Bytes() > 0) {
-            Dechunk(buf);
-            remaining -= iDechunkBuf.Bytes();
-            iOutputBuf.Append(iDechunkBuf);
+    while (iChunkBytesRemaining == 0) {
+        Brn sizeBuf = Ascii::Trim(iReaderUntil.ReadUntil(Ascii::kLf));
+        if (sizeBuf.Bytes() > 0) {
+            try {
+                iChunkBytesRemaining = Ascii::UintHex(sizeBuf);
+                if (iChunkBytesRemaining == 0) {
+                    /* A 0-byte chunk marks the end of the stream.
+                       Hint at this to callers by returning a 0-byte buffer. */
+                    return Brx::Empty();
+                }
+            }
+            catch (AsciiError&) {
+                THROW(ReaderError);
+            }
         }
     }
-    return Brn(iOutputBuf);
-}
-
-Brn ReaderHttpChunked::ReadUntil(TByte aSeparator)
-{
-    ASSERT(!isalpha(aSeparator) && !isdigit(aSeparator)); // don't support scanning for characters which may appear in chunk size
-    Brn buf = iReader.ReadUntil(aSeparator);
-    return Dechunk(buf);
+    const TUint bytes = std::min(iChunkBytesRemaining, aBytes);
+    Brn buf = iReaderUntil.Read(bytes);
+    iChunkBytesRemaining -= buf.Bytes();
+    return buf;
 }
 
 void ReaderHttpChunked::ReadFlush()
 {
     iReader.ReadFlush();
-    iDechunkBuf.SetBytes(0);
     iChunkBytesRemaining = 0;
 }
 
@@ -1030,79 +992,6 @@ void ReaderHttpChunked::ReadInterrupt()
     iReader.ReadInterrupt();
 }
 
-Brn ReaderHttpChunked::ReadRemaining()
-{
-    Brn remaining = iReader.Snaffle();
-    return Dechunk(remaining);
-}
-
-Brn ReaderHttpChunked::Dechunk(Brn& aBuf)
-{
-    if (!iChunked) {
-        return Brn(aBuf);
-    }
-    iDechunkBuf.SetBytes(0);
-    while (aBuf.Bytes() > 0) {
-        if (iChunkBytesRemaining == 0) {
-            ReadNextChunkSize(aBuf);
-            if (iChunkBytesRemaining == 0) {
-                return Brn(iDechunkBuf);
-            }
-        }
-
-        TUint bytes = std::min(iDechunkBuf.MaxBytes()-iDechunkBuf.Bytes(), aBuf.Bytes());
-        bytes = std::min(bytes, iChunkBytesRemaining);
-        iChunkBytesRemaining -= bytes;
-        iDechunkBuf.Append(aBuf.Ptr(), bytes);
-        aBuf.Set(aBuf.Split(bytes));
-    }
-    return Brn(iDechunkBuf);
-}
-
-void ReaderHttpChunked::ReadNextChunkSize(Brn& aBuf)
-{
-    for (;;) {
-        Bws<kChunkSizeBufBytes> chunkSizeBuf;
-        TBool haveLine = false;
-        if (aBuf.Bytes() > 0) {
-            const TUint index=Ascii::IndexOf(aBuf, Ascii::kLf);
-            haveLine = (index != aBuf.Bytes());
-            if (haveLine) {
-                if (index+1 > chunkSizeBuf.MaxBytes()) {
-                    THROW(ReaderError);
-                }
-                chunkSizeBuf.Append(aBuf.Ptr(), index+1);
-                aBuf.Set(aBuf.Split(index+1));
-            }
-            else {
-                if (aBuf.Bytes() > chunkSizeBuf.MaxBytes()) {
-                    THROW(ReaderError);
-                }
-                chunkSizeBuf.Append(aBuf);
-                aBuf.Set(aBuf.Ptr(), 0);
-            }
-        }
-        if (!haveLine) {
-            Brn b = iReader.ReadUntil(Ascii::kLf);
-            if (b.Bytes() > chunkSizeBuf.MaxBytes() - chunkSizeBuf.Bytes()) {
-                THROW(ReaderError);
-            }
-            chunkSizeBuf.Append(b);
-        }
-        Parser parser(chunkSizeBuf);
-        Brn trimmed = parser.Next(Ascii::kCr);
-        if (trimmed.Bytes() == 0) {
-            continue;
-        }
-        try {
-            iChunkBytesRemaining = Ascii::UintHex(trimmed);
-            return;
-        }
-        catch (AsciiError&) {
-            THROW(ReaderError);
-        }
-    }
-}
 
 // WriterHttpChunked
 
@@ -1156,13 +1045,16 @@ void WriterHttpChunked::WriteFlush()
 }
 
 
+// HttpReader
+
 HttpReader::HttpReader(Environment& aEnv)
     : iEnv(aEnv)
     , iReadBuffer(iTcpClient)
-    , iReaderResponse(aEnv, iReader)
+    , iReaderUntil(iReadBuffer)
+    , iReaderResponse(aEnv, iReaderUntil)
     , iWriteBuffer(iTcpClient)
     , iWriterRequest(iWriteBuffer)
-    , iReader(iReadBuffer)
+    , iDechunker(iReaderUntil)
     , iSocketIsOpen(false)
     , iConnected(false)
     , iTotalBytes(0)
@@ -1176,10 +1068,11 @@ HttpReader::HttpReader(Environment& aEnv, const Brx& aUserAgent)
     : iEnv(aEnv)
     , iUserAgent(aUserAgent)
     , iReadBuffer(iTcpClient)
-    , iReaderResponse(aEnv, iReader)
+    , iReaderUntil(iReadBuffer)
+    , iReaderResponse(aEnv, iReaderUntil)
     , iWriteBuffer(iTcpClient)
     , iWriterRequest(iWriteBuffer)
-    , iReader(iReadBuffer)
+    , iDechunker(iReaderUntil)
     , iSocketIsOpen(false)
     , iConnected(false)
     , iTotalBytes(0)
@@ -1260,41 +1153,28 @@ void HttpReader::Open()
     iSocketIsOpen = true;
 }
 
-Brn HttpReader::ReadRemaining()
-{
-    ASSERT(iConnected);
-    return iReader.ReadRemaining();
-}
-
 Brn HttpReader::Read(TUint aBytes)
 {
     ASSERT(iConnected);
-    return(iReader.Read(aBytes));
-}
-
-Brn HttpReader::ReadUntil(TByte aSeparator)
-{
-    ASSERT(iConnected);
-    return(iReader.ReadUntil(aSeparator));
+    return iDechunker.Read(aBytes);
 }
 
 void HttpReader::ReadFlush()
 {
     ASSERT(iConnected);
-    iReader.ReadFlush();
+    iDechunker.ReadFlush();
 }
 
 void HttpReader::ReadInterrupt()
 {
     ASSERT(iConnected);
-    iReader.ReadInterrupt();
+    iDechunker.ReadInterrupt();
 }
 
 TUint HttpReader::WriteRequest(const Uri& aUri)
 {
     TInt port = aUri.Port();
-    if (port == Uri::kPortNotSpecified)
-    {
+    if (port == Uri::kPortNotSpecified) {
         port = kHttpPort;
     }
 
@@ -1312,8 +1192,7 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
         return 0;
     }
 
-    try
-    {
+    try {
         LOG(kHttp, "HttpReader::WriteRequest send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, aUri.PathAndQuery(), Http::eHttp11);
         Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), port);
@@ -1323,24 +1202,20 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
     }
-    catch(WriterError&)
-    {
+    catch(WriterError&) {
         LOG(kHttp, "HttpReader::WriteRequest writer error\n");
         return 0;
     }
 
-    try
-    {
+    try {
         LOG(kHttp, "HttpReader::WriteRequest read response - reading...\n");
         iReaderResponse.Read(kResponseTimeoutMs);
     }
-    catch(HttpError&)
-    {
+    catch(HttpError&) {
         LOG(kHttp, "HttpReader::WriteRequest http error\n");
         return 0;
     }
-    catch(ReaderError&)
-    {
+    catch(ReaderError&) {
         LOG(kHttp, "HttpReader::WriteRequest reader error\n");
         return 0;
     }
@@ -1355,21 +1230,16 @@ TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
 {
     Uri uri(aUri);
 
-    iReader.SetChunked(false);
-    for (;;)
-    { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
+    iDechunker.SetChunked(false);
+    for (;;) { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
         TUint code = WriteRequest(uri);
-
-        if (code == 0)
-        {
+        if (code == 0) {
             LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader failed to send HTTP request\n");
             return(false);
         }
         // Check for redirection
-        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes)
-        {
-            if (!iHeaderLocation.Received())
-            {
+        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
+            if (!iHeaderLocation.Received()) {
                 LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader expected redirection but did not receive a location field  %d\n", code);
                 return(false);
             }
@@ -1377,20 +1247,17 @@ TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
             uri.Replace(iHeaderLocation.Location());
             continue;
         }
-        else if (code >= HttpStatus::kClientErrorCodes)
-        {
+        else if (code >= HttpStatus::kClientErrorCodes) {
             LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader received error code: %u\n", code);
             return(false);
         }
-        if (code != 0)
-        {
-            if (iHeaderTransferEncoding.IsChunked())
-            {
-                iReader.SetChunked(true);
+        if (code != 0) {
+            if (iHeaderTransferEncoding.IsChunked()) {
+                iDechunker.SetChunked(true);
             }
             iTotalBytes = iHeaderContentLength.ContentLength();
             break;
         }
     }
-    return(true);
+    return true;
 }

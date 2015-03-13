@@ -138,6 +138,7 @@ private:
     TIpAddress iInterface;
     SsdpSocketReader iSocket;
     Srs<kMaxBufferBytes> iBuffer;
+    ReaderUntilS<kMaxBufferBytes> iReaderUntil;
     ReaderHttpRequest iReaderRequest;
     SsdpHeaderHost iHeaderHost;
     SsdpHeaderMan iHeaderMan;
@@ -175,6 +176,7 @@ private:
     UdpWriter iSocketWriter;
     UdpReader iSocketReader;
     Sws<kMaxBufferBytes> iWriteBuffer;
+    ReaderUntilS<kMaxBufferBytes> iReaderUntil;
     SsdpWriterMsearchRequest iWriter;
     Srs<kMaxBufferBytes> iReadBuffer;
     ReaderHttpResponse iReaderResponse;

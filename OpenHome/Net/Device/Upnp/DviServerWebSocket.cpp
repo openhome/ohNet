@@ -287,8 +287,8 @@ WsProtocol::~WsProtocol()
 {
 }
 
-WsProtocol::WsProtocol(Srx& aReadBuffer, Swx& aWriteBuffer)
-    : iReadBuffer(aReadBuffer)
+WsProtocol::WsProtocol(ReaderUntil& aReaderUntil, Swx& aWriteBuffer)
+    : iReaderUntil(aReaderUntil)
     , iWriteBuffer(aWriteBuffer)
 {
 }
@@ -296,8 +296,8 @@ WsProtocol::WsProtocol(Srx& aReadBuffer, Swx& aWriteBuffer)
 
 // WsProtocol76
 
-WsProtocol76::WsProtocol76(Srx& aReadBuffer, Swx& aWriteBuffer)
-    : WsProtocol(aReadBuffer, aWriteBuffer)
+WsProtocol76::WsProtocol76(ReaderUntil& aReaderUntil, Swx& aWriteBuffer)
+    : WsProtocol(aReaderUntil, aWriteBuffer)
 {
 }
 
@@ -306,9 +306,9 @@ void WsProtocol76::Read(Brn& aData, TBool& aClosed)
     aData.Set(NULL, 0);
     aClosed = false;
 
-    Brn data = iReadBuffer.ReadUntil(kMsgEnd);
+    Brn data = iReaderUntil.ReadUntil(kMsgEnd);
     if (data.Bytes() == 1 && data[0] == kFrameCloseStart) {
-        Brn msg = iReadBuffer.Read(1);
+        Brn msg = iReaderUntil.Read(1);
         if (msg[0] != kMsgCloseEnd) {
             THROW(WebSocketError);
         }
@@ -345,8 +345,9 @@ void WsProtocol76::Close()
 
 // WsProtocol80
 
-WsProtocol80::WsProtocol80(Srx& aReadBuffer, Swx& aWriteBuffer)
-    : WsProtocol(aReadBuffer, aWriteBuffer)
+WsProtocol80::WsProtocol80(ReaderUntil& aReaderUntil, Swx& aWriteBuffer)
+    : WsProtocol(aReaderUntil, aWriteBuffer)
+    , iReaderProtocol(aReaderUntil)
 {
 }
 
@@ -363,7 +364,7 @@ void WsProtocol80::Read(Brn& aData, TBool& aClosed)
 
     // validate framing
     Bws<2> ctrl;
-    ctrl.Append(iReadBuffer.Read(2));
+    ctrl.Append(iReaderProtocol.Read(2));
     const TByte& byte0 = ctrl.At(0);
     const TByte& byte1 = ctrl.At(1);
     const TBool fragment = ((byte0 & kBitMaskFinalFragment) == 0);
@@ -413,16 +414,12 @@ void WsProtocol80::Read(Brn& aData, TBool& aClosed)
     // calculate payload length
     TUint32 payloadLen = byte1 & kBitMaskPayloadLen;
     if (payloadLen == 0x7f) {
-        Brn extendedLen = iReadBuffer.Read(8);
-        TUint64 len;
-        memcpy(&len, extendedLen.Ptr(), 8);
-        payloadLen = (TUint32)Arch::BigEndian8(len);
+        ReaderBinary rb(iReaderUntil);
+        payloadLen = (TUint32)rb.ReadUint64Be(8);
     }
     else if (payloadLen == 0x7e) {
-        Brn extendedLen = iReadBuffer.Read(2);
-        TUint16 len;
-        (void)memcpy(&len, extendedLen.Ptr(), 2);
-        payloadLen = Arch::BigEndian2(len);
+        ReaderBinary rb(iReaderUntil);
+        payloadLen = rb.ReadUintBe(2);
     }
     if (payloadLen > DviSessionWebSocket::kMaxRequestBytes) {
         // larger message than we expect to handle - close the socket
@@ -434,8 +431,8 @@ void WsProtocol80::Read(Brn& aData, TBool& aClosed)
     // read/decode payload
     // decoding is in-place since we'll have no future use for the original data after decoding it
     Bws<4> mask;
-    mask.Append(iReadBuffer.Read(4));
-    Brn maskedData = iReadBuffer.Read(payloadLen);
+    mask.Append(iReaderProtocol.Read(4));
+    Brn maskedData = iReaderProtocol.Read(payloadLen);
     Bwn data(maskedData.Ptr(), maskedData.Bytes());
     for (TUint i=0; i<maskedData.Bytes(); i++) {
         data.Append((TByte)(maskedData[i] ^ mask[i%4]));
@@ -537,8 +534,9 @@ DviSessionWebSocket::DviSessionWebSocket(DvStack& aDvStack, TIpAddress aInterfac
     , iShutdownSem("WSIS", 1)
     , iPropertyUpdates(kMaxPropertyUpdates)
 {
-    iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(iDvStack.Env(), *iReadBuffer);
+    iReadBuffer = new Srs<1024>(*this);
+    iReaderUntil = new ReaderUntilS<kMaxRequestBytes>(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(iDvStack.Env(), *iReaderUntil);
     iWriterBuffer = new Sws<kMaxWriteBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
@@ -564,6 +562,7 @@ DviSessionWebSocket::~DviSessionWebSocket()
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iReaderRequest;
+    delete iReaderUntil;
     delete iReadBuffer;
 }
 
@@ -734,7 +733,7 @@ WsProtocol* DviSessionWebSocket::Handshake76()
     iWriterBuffer->WriteFlush(); /* don't use iWriterResponse as that'll append \r\n which will
                                     be treated as the (invalid) start of the first message we send */
 
-    return new WsProtocol76(*iReadBuffer, *iWriterBuffer);
+    return new WsProtocol76(*iReaderUntil, *iWriterBuffer);
 }
 
 WsProtocol* DviSessionWebSocket::Handshake80()
@@ -792,7 +791,7 @@ WsProtocol* DviSessionWebSocket::Handshake80()
     stream.WriteFlush();
     iWriterResponse->WriteFlush();
 
-    return new WsProtocol80(*iReadBuffer, *iWriterBuffer);
+    return new WsProtocol80(*iReaderUntil, *iWriterBuffer);
 }
 
 void DviSessionWebSocket::DoRead()

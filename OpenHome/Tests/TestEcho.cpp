@@ -17,10 +17,12 @@ public:
         : iSem(aSem)
     {
         iStream = new Srs<200>(*this);
+        iReaderUntil = new ReaderUntilS<200>(*iStream);
     }
     
     ~EchoSession()
     {
+        delete iReaderUntil;
         delete iStream;
     }
 
@@ -31,7 +33,7 @@ public:
         TBool done = false;
         while (!done) {
             try {
-                Brn buf = iStream->ReadUntil('\n');
+                Brn buf = iReaderUntil->ReadUntil('\n');
                 Write(buf);
                 Write('\n');
                 if (buf.Equals(exitUnix) || buf.Equals(exitDos))
@@ -45,7 +47,8 @@ public:
     }
 
 private:
-    Srs<200>* iStream;
+    Srx* iStream;
+    ReaderUntil* iReaderUntil;
     Semaphore& iSem;
 };
 

@@ -51,7 +51,8 @@ private: // from SocketTcpSession
     void Run();
 private:
     IShellCommandHandler& iCommandHandler;
-    Srs<kMaxCommandBytes>* iReadBuffer;
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
     WriterShellResponse* iWriterResponse;
     Semaphore iShutdownSem;
 };
