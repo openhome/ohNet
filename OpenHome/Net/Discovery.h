@@ -176,9 +176,9 @@ private:
     UdpWriter iSocketWriter;
     UdpReader iSocketReader;
     Sws<kMaxBufferBytes> iWriteBuffer;
-    ReaderUntilS<kMaxBufferBytes> iReaderUntil;
     SsdpWriterMsearchRequest iWriter;
     Srs<kMaxBufferBytes> iReadBuffer;
+    ReaderUntilS<kMaxBufferBytes> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     Mutex iWriterLock;
     SsdpHeaderExt iHeaderExt;
