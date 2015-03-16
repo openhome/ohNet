@@ -1092,18 +1092,15 @@ HttpReader::~HttpReader()
 TBool HttpReader::Connect(const Uri& aUri)
 {
     ASSERT(!iConnected);
-    Endpoint endpoint;
 
     TBool headerRcvd = ConnectAndProcessHeader(aUri);
-    if (!headerRcvd)
-    {
+    if (!headerRcvd) {
         Close();
-        return(false);
+        return false;
     }
-
     iConnected = true;
 
-    return(true);
+    return true;
 }
 
 void HttpReader::Close()
@@ -1128,20 +1125,18 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
     LOG(kHttp, ">HttpReader::Connect\n");
 
     Open();
-    try
-    {
+    try {
         LOG(kHttp, "-HttpReader::Connect connecting...\n");
         iTcpClient.Connect(aEndpoint, kConnectTimeoutMs);
     }
-    catch (NetworkTimeout&)
-    {
+    catch (NetworkTimeout&) {
         Close();
         LOG(kHttp, "<HttpReader::Connect connection failed!\n");
-        return(false);
+        return false;
     }
 
     LOG(kHttp, "<HttpReader::Connect\n");
-    return(true);
+    return true;
 }
 
 void HttpReader::Open()
