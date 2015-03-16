@@ -170,6 +170,7 @@ void ProtocolNetwork::Close()
 
 ContentProcessor::ContentProcessor()
     : iProtocolSet(NULL)
+    , iReader(NULL)
     , iActive(false)
 {
 }
@@ -201,60 +202,52 @@ void ContentProcessor::Reset()
     iPartialLine.SetBytes(0);
     iPartialTag.SetBytes(0);
     iInTag = false;
+    iReader = NULL;
 }
 
-Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemaining)
+void ContentProcessor::SetStream(IReader& aStream)
 {
-    TBool done = false;
-    while (!done) {
-        Brn line;
-        try {
-            line.Set(aReader.ReadUntil(Ascii::kLf));
-            if (aBytesRemaining <= line.Bytes()) {
-                aBytesRemaining = 0;
-            }
-            else {
-                aBytesRemaining -= (line.Bytes() + 1); // +1 for Ascii::kLf
-            }
-            if (iPartialLine.Bytes() == 0) {
-                line.Set(Ascii::Trim(line));
-            }
-            else {
-                if (iPartialLine.Bytes() + line.Bytes() <= iPartialLine.MaxBytes()) {
-                    iPartialLine.Append(line);
-                    line.Set(iPartialLine);
-                }
-                else {
-                    // line is too long to store, no point in trying to process a fragment of it
-                    line.Set(Brx::Empty());
-                }
-                iPartialLine.SetBytes(0);
-            }
+    iReader = &aStream;
+}
+
+Brn ContentProcessor::ReadLine(ReaderUntil& aReader, TUint64& aBytesRemaining)
+{
+    Brn line;
+    try {
+        Brn buf = aReader.ReadUntil(Ascii::kLf);
+        if (aBytesRemaining < buf.Bytes() + 1) { // +1 for Ascii::kLf
+            aBytesRemaining = 0;
         }
-        catch (ReaderError&) {
-            line.Set(aReader.ReadRemaining());
-            if (aBytesRemaining <= line.Bytes()) {
-                aBytesRemaining = 0;
-            }
-            else {
-                aBytesRemaining -= line.Bytes();
-            }
-            if (aBytesRemaining != 0 && line.Bytes() < iPartialLine.MaxBytes() - iPartialLine.Bytes()) {
-                iPartialLine.Append(line);
-            }
-            done = true;
+        else {
+            aBytesRemaining -= buf.Bytes() + 1;
         }
-        if (iPartialLine.Bytes() > 0) {
+        iPartialLine.Append(buf);
+        line.Set(Ascii::Trim(iPartialLine));
+        iPartialLine.SetBytes(0);
+    }
+    catch (ReaderError&) {
+        // treat any content following the last newline as a final line
+        Brn buf = aReader.Read(iPartialLine.MaxBytes() - iPartialLine.Bytes());
+        if (aBytesRemaining < buf.Bytes()) {
+            aBytesRemaining = 0;
+        }
+        else {
+            aBytesRemaining -= buf.Bytes();
+        }
+        iPartialLine.Append(buf);
+        if (aBytesRemaining > 0) {
+            throw;
+        }
+        line.Set(Ascii::Trim(iPartialLine));
+        iPartialLine.SetBytes(0);
+        if (line.Bytes() == 0) {
             THROW(ReaderError);
         }
-        if (line.Bytes() > 0) {
-            return line;
-        }
     }
-    THROW(ReaderError);
+    return line;
 }
 
-Brn ContentProcessor::ReadTag(IProtocolReader& aReader, TUint64& aBytesRemaining)
+Brn ContentProcessor::ReadTag(ReaderUntil& aReader, TUint64& aBytesRemaining)
 {
     TBool partialTag = false;
     try {
@@ -274,13 +267,92 @@ Brn ContentProcessor::ReadTag(IProtocolReader& aReader, TUint64& aBytesRemaining
         return tag;
     }
     catch (ReaderError&) {
-        Brn rem = aReader.ReadRemaining();
+        Brn rem = aReader.Read(iPartialTag.MaxBytes());
         aBytesRemaining -= rem.Bytes();
         if (aBytesRemaining != 0 && partialTag) {
             iPartialTag.Replace(rem);
         }
         throw;
     }
+}
+
+Brn ContentProcessor::Read(TUint aBytes)
+{
+    ASSERT(iReader != NULL);
+    return iReader->Read(aBytes);
+}
+
+void ContentProcessor::ReadFlush()
+{
+    if (iReader != NULL) {
+        iReader->ReadFlush();
+    }
+}
+
+void ContentProcessor::ReadInterrupt()
+{
+    if (iReader != NULL) {
+        iReader->ReadInterrupt();
+    }
+}
+
+
+// ContentRecogBuf
+
+ContentRecogBuf::ContentRecogBuf(IReader& aReader)
+    : iReader(aReader)
+    , iBytesRemaining(0)
+{
+}
+
+void ContentRecogBuf::Populate(TUint64 aStreamTotalBytes)
+{
+    iBuf.SetBytes(0);
+    TUint bytes = iBuf.MaxBytes();
+    if (aStreamTotalBytes != 0 && aStreamTotalBytes < bytes) {
+        bytes = (TUint)aStreamTotalBytes;
+    }
+    try {
+        while (bytes != 0) {
+            Brn buf = iReader.Read(bytes);
+            bytes -= buf.Bytes();
+            iBuf.Append(buf);
+        }
+    }
+    catch (ReaderError&) {
+        if (aStreamTotalBytes != 0) {
+            throw;
+        }
+    }
+    iBytesRemaining = iBuf.Bytes();
+}
+
+const Brx& ContentRecogBuf::Buffer() const
+{
+    return iBuf;
+}
+
+Brn ContentRecogBuf::Read(TUint aBytes)
+{
+    if (iBytesRemaining == 0) {
+        return iReader.Read(aBytes);
+    }
+    const TUint bytes = std::min(aBytes, iBytesRemaining);
+    Brn buf(iBuf.Ptr() + iBuf.Bytes() - iBytesRemaining, bytes);
+    iBytesRemaining -= bytes;
+    return buf;
+}
+
+void ContentRecogBuf::ReadFlush()
+{
+    iBuf.SetBytes(0);
+    iBytesRemaining = 0;
+    iReader.ReadFlush();
+}
+
+void ContentRecogBuf::ReadInterrupt()
+{
+    iReader.ReadInterrupt();
 }
 
 

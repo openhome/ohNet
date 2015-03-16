@@ -172,7 +172,9 @@ private:
     void DeactivateCallback();
 private:
     static const TUint kMaxPortNumBytes = 5;
-    Srs<kMaxReadBufferBytes>* iReaderBuffer;
+    Srx* iReaderBuffer;
+    ReaderUntil* iReaderUntil;
+    ReaderProtocol* iReaderProtocol;
     Sws<kMaxWriteBufferBytes>* iWriterBuffer;
     WriterAscii* iWriterAscii;
     ReaderHttpRequest* iReaderRequest;

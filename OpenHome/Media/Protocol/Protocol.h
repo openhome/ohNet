@@ -53,12 +53,6 @@ public:
     virtual TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) = 0;
 };
 
-class IProtocolReader : public IReader
-{
-public:
-    virtual Brn ReadRemaining() = 0;
-};
-
 /**
  * The start of the pipeline.  Runs in a client thread and feeds data into the pipeline.
  *
@@ -151,8 +145,7 @@ private:
 class ProtocolNetwork : public Protocol
 {
 protected:
-    static const TUint kReadBufferBytes = 9 * 1024; // WMA radio streams (in ProtocolRtsp) require at least an 8k buffer
-                                                    // Songcast requires a 9k buffer
+    static const TUint kReadBufferBytes = 1024;
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
 protected:
@@ -171,10 +164,10 @@ protected:
     TBool iSocketIsOpen;
 };
 
-class ContentProcessor
+class ContentProcessor : protected IReader
 {
-    static const TUint kMaxLineBytes = 512;
-    static const TUint kMaxTagBytes = 512;
+    static const TUint kMaxLineBytes = 2048;
+    static const TUint kMaxTagBytes = 2048;
 public:
     virtual ~ContentProcessor();
     void Initialise(IProtocolSet& aProtocolSet);
@@ -185,17 +178,40 @@ protected:
 public:
     virtual TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) = 0;
     virtual void Reset();
-    virtual ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes) = 0;
+    virtual ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) = 0;
 protected:
-    Brn ReadLine(IProtocolReader& aReader, TUint64& aBytesRemaining);
-    Brn ReadTag(IProtocolReader& aReader, TUint64& aBytesRemaining);
+    void SetStream(IReader& aStream);
+    Brn ReadLine(ReaderUntil& aReader, TUint64& aBytesRemaining);
+    Brn ReadTag(ReaderUntil& aReader, TUint64& aBytesRemaining);
+protected: // from IReader
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 protected:
     IProtocolSet* iProtocolSet;
     Bws<kMaxLineBytes> iPartialLine;
     Bws<kMaxTagBytes> iPartialTag;
+    IReader* iReader;
 private:
     TBool iActive;
     TBool iInTag;
+};
+
+class ContentRecogBuf : public IReader, private INonCopyable
+{
+    static const TUint kMaxBytes = 100;
+public:
+    ContentRecogBuf(IReader& aReader);
+    void Populate(TUint64 aStreamTotalBytes);
+    const Brx& Buffer() const;
+public: // from IReader
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+private:
+    IReader& iReader;
+    Bws<kMaxBytes> iBuf;
+    TUint iBytesRemaining;
 };
 
 class ProtocolManager : public IUriStreamer, private IProtocolManager, private INonCopyable

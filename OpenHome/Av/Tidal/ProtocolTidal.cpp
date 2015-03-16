@@ -11,12 +11,12 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Av/Tidal/Tidal.h>
-#include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/SupplyAggregator.h>
         
 namespace OpenHome {
 namespace Av {
 
-class ProtocolTidal : public Media::ProtocolNetwork, private Media::IProtocolReader
+class ProtocolTidal : public Media::ProtocolNetwork, private IReader
 {
 public:
     ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
@@ -32,12 +32,10 @@ private: // from Media::IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
     TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-private: // from IProtocolReader
+private: // from IReader
     Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    Brn ReadRemaining();
 private:
     static TBool TryGetTrackId(const Brx& aQuery, Bwx& aTrackId);
     Media::ProtocolStreamResult DoStream();
@@ -48,12 +46,13 @@ private:
     TBool IsCurrentStream(TUint aStreamId) const;
 private:
     Tidal* iTidal;
-    Media::Supply* iSupply;
+    Media::SupplyAggregator* iSupply;
     Uri iUri;
     Bws<12> iTrackId;
     Bws<1024> iStreamUrl;
     Bws<64> iSessionId;
     WriterHttpRequest iWriterRequest;
+    ReaderUntilS<2048> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     HttpHeaderContentType iHeaderContentType;
     HttpHeaderContentLength iHeaderContentLength;
@@ -90,7 +89,8 @@ ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& 
     : ProtocolNetwork(aEnv)
     , iSupply(NULL)
     , iWriterRequest(iWriterBuf)
-    , iReaderResponse(aEnv, iReaderBuf)
+    , iReaderUntil(iReaderBuf)
+    , iReaderResponse(aEnv, iReaderUntil)
     , iTotalBytes(0)
     , iSeekable(false)
 {
@@ -108,7 +108,7 @@ ProtocolTidal::~ProtocolTidal()
 
 void ProtocolTidal::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
 {
-    iSupply = new Supply(aMsgFactory, aDownstream);
+    iSupply = new SupplyAggregatorBytes(aMsgFactory, aDownstream);
 }
 
 void ProtocolTidal::Interrupt(TBool aInterrupt)
@@ -282,33 +282,19 @@ TBool ProtocolTidal::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, 
 
 Brn ProtocolTidal::Read(TUint aBytes)
 {
-    Brn buf = iReaderBuf.Read(aBytes);
-    iOffset += buf.Bytes();
-    return buf;
-}
-
-Brn ProtocolTidal::ReadUntil(TByte aSeparator)
-{
-    Brn buf = iReaderBuf.ReadUntil(aSeparator);
+    Brn buf = iReaderUntil.Read(aBytes);
     iOffset += buf.Bytes();
     return buf;
 }
 
 void ProtocolTidal::ReadFlush()
 {
-    iReaderBuf.ReadFlush();
+    iReaderUntil.ReadFlush();
 }
 
 void ProtocolTidal::ReadInterrupt()
 {
-    iReaderBuf.ReadInterrupt();
-}
-
-Brn ProtocolTidal::ReadRemaining()
-{
-    Brn buf = iReaderBuf.Snaffle();
-    iOffset += buf.Bytes();
-    return buf;
+    iReaderUntil.ReadInterrupt();
 }
 
 TBool ProtocolTidal::TryGetTrackId(const Brx& aQuery, Bwx& aTrackId)

@@ -9,7 +9,7 @@
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/SupplyAggregator.h>
 
 #include <algorithm>
 
@@ -28,10 +28,11 @@ private:
     TUint iBytes;
 };
 
-class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
+class ProtocolHttp : public ProtocolNetwork, private IReader
 {
     static const TUint kIcyMetadataBytes = 255 * 16;
     static const TUint kMaxUserAgentBytes = 64;
+    static const TUint kMaxContentRecognitionBytes = 100;
 public:
     ProtocolHttp(Environment& aEnv, const Brx& aUserAgent);
     ~ProtocolHttp();
@@ -46,12 +47,10 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
     TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-private: // from IProtocolReader
+private: // from IReader
     Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
-    Brn ReadRemaining() override;
 private:
     void Reinitialise(const Brx& aUri);
     ProtocolStreamResult DoStream();
@@ -65,8 +64,9 @@ private:
     TBool IsCurrentStream(TUint aStreamId) const;
     void ExtractMetadata();
 private:
-    Supply* iSupply;
+    SupplyAggregator* iSupply;
     WriterHttpRequest iWriterRequest;
+    ReaderUntilS<2048> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     ReaderHttpChunked iDechunker;
     HttpHeaderContentType iHeaderContentType;
@@ -75,8 +75,10 @@ private:
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kMaxUserAgentBytes> iUserAgent;
+    ContentRecogBuf iContentRecogBuf;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
+    Bws<kIcyMetadataBytes> iIcyData; // only used in a single function but too large to comfortably declare on the stack
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint iStreamId;
@@ -146,8 +148,10 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
     : ProtocolNetwork(aEnv)
     , iSupply(NULL)
     , iWriterRequest(iWriterBuf)
-    , iReaderResponse(aEnv, iReaderBuf)
-    , iDechunker(iReaderBuf)
+    , iReaderUntil(iReaderBuf)
+    , iReaderResponse(aEnv, iReaderUntil)
+    , iDechunker(iReaderUntil)
+    , iContentRecogBuf(iDechunker)
     , iUserAgent(aUserAgent)
     , iTotalBytes(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
@@ -168,7 +172,7 @@ ProtocolHttp::~ProtocolHttp()
 
 void ProtocolHttp::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
 {
-    iSupply = new Supply(aMsgFactory, aDownstream);
+    iSupply = new SupplyAggregatorBytes(aMsgFactory, aDownstream);
 }
 
 void ProtocolHttp::Interrupt(TBool aInterrupt)
@@ -371,40 +375,24 @@ Brn ProtocolHttp::Read(TUint aBytes)
             ExtractMetadata();
             iDataChunkRemaining = iDataChunkSize;
         }
-        if (iDataChunkRemaining < bytes) {
-            bytes = iDataChunkRemaining;
-        }
-        iDataChunkRemaining -= bytes;
+        bytes = std::min(iDataChunkRemaining, bytes);
     }
-    Brn buf = iDechunker.Read(bytes);
-    iOffset += buf.Bytes();
-    return buf;
-}
-
-Brn ProtocolHttp::ReadUntil(TByte aSeparator)
-{
-    ASSERT(!iStreamIncludesMetaData); /* assume only audio streams contain icy data
-                                         and they just read a number of bytes */
-    Brn buf = iDechunker.ReadUntil(aSeparator);
+    Brn buf = iContentRecogBuf.Read(bytes);
+    if (iStreamIncludesMetaData) {
+        iDataChunkRemaining -= buf.Bytes();
+    }
     iOffset += buf.Bytes();
     return buf;
 }
 
 void ProtocolHttp::ReadFlush()
 {
-    iDechunker.ReadFlush();
+    iContentRecogBuf.ReadFlush();
 }
 
 void ProtocolHttp::ReadInterrupt()
 {
-    iDechunker.ReadInterrupt();
-}
-
-Brn ProtocolHttp::ReadRemaining()
-{
-    Brn buf = iDechunker.ReadRemaining();
-    iOffset += buf.Bytes();
-    return buf;
+    iContentRecogBuf.ReadInterrupt();
 }
 
 void ProtocolHttp::Reinitialise(const Brx& aUri)
@@ -419,6 +407,7 @@ void ProtocolHttp::Reinitialise(const Brx& aUri)
     iUri.Replace(aUri);
     iIcyMetadata.SetBytes(0);
     iNewIcyMetadata.SetBytes(0);
+    iContentRecogBuf.ReadFlush();
 }
 
 ProtocolStreamResult ProtocolHttp::DoStream()
@@ -576,6 +565,7 @@ void ProtocolHttp::StartStream()
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
+    iContentRecogBuf.ReadFlush();
     //iTcpClient.LogVerbose(true);
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
@@ -649,21 +639,10 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 
     if (iContentProcessor == NULL && !iStarted) {
         try {
-            TUint bytes = 100;
-            if (iTotalBytes != 0 && bytes > iTotalBytes) {
-                bytes = (TUint)iTotalBytes;
-            }
-            Brn contentStart;
-            try {
-                contentStart.Set(iReaderBuf.Peek(bytes)); // FIXME - should ideally be reading via iDechunker here
-            }
-            catch (ReaderError&) {
-                if (iTotalBytes != 0) {
-                    throw;
-                }
-                contentStart.Set(iReaderBuf.Snaffle());
-            }
-            iContentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), iHeaderContentType.Received()? iHeaderContentType.Type() : Brx::Empty(), contentStart);
+            iContentRecogBuf.Populate(iTotalBytes);
+            const Brx& contentType = iHeaderContentType.Received()? iHeaderContentType.Type() : Brx::Empty();
+            const Brx& content = iContentRecogBuf.Buffer();
+            iContentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), contentType, content);
         }
         catch (ReaderError&) {
             return EProtocolStreamErrorRecoverable;
@@ -704,21 +683,25 @@ TBool ProtocolHttp::IsCurrentStream(TUint aStreamId) const
 
 void ProtocolHttp::ExtractMetadata()
 {
-    Brn metadata = iReaderBuf.Read(1);
+    Brn metadata = iContentRecogBuf.Read(1);
     iOffset++;
     TUint metadataBytes = metadata[0] * 16;
-    iOffset += metadataBytes;
 
     if (metadataBytes != 0) {
-
-        Brn buf = iReaderBuf.Read(metadataBytes);
+        iIcyData.SetBytes(0);
+        do {
+            Brn buf = iContentRecogBuf.Read(metadataBytes);
+            iOffset += buf.Bytes();
+            metadataBytes -= buf.Bytes();
+            iIcyData.Append(buf);
+        } while (metadataBytes != 0);
 
         iNewIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
         iNewIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
         iNewIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
         iNewIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
 
-        Parser data(buf);
+        Parser data(iIcyData);
         while(!data.Finished()) {
             Brn name = data.Next('=');
             if (name == Brn("StreamTitle")) {

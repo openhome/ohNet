@@ -15,7 +15,6 @@
 
 #include <limits>
 
-
 namespace OpenHome {
 namespace Media {
 namespace Test {
@@ -57,7 +56,7 @@ private:
     TUint iClearCount;
 };
 
-class TestHttpReader : public IHlsReader, public IHttpSocket, public IReaderBuffered
+class TestHttpReader : public IHlsReader, public IHttpSocket, public IReader
 {
 public:
     typedef std::vector<const Uri*> UriList;
@@ -71,17 +70,15 @@ public:
     TUint ConnectCount() const;
 public: // from IHlsReader
     IHttpSocket& Socket() override;
-    IReaderBuffered& Reader() override;
+    IReader& Reader() override;
 public: // from IHttpSocket
     TBool Connect(const Uri& aUri) override;
     void Close() override;
     TUint ContentLength() const override;
-public: // from IReaderBuffered
+public: // from IReader
     Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
-    Brn ReadRemaining() override;
 private:
     const UriList* iUris;
     const BufList* iContent;
@@ -443,7 +440,7 @@ IHttpSocket& TestHttpReader::Socket()
     return *this;
 }
 
-IReaderBuffered& TestHttpReader::Reader()
+IReader& TestHttpReader::Reader()
 {
     return *this;
 }
@@ -475,46 +472,60 @@ TUint TestHttpReader::ContentLength() const
 
 Brn TestHttpReader::Read(TUint aBytes)
 {
+    if (iOffset == iCurrent.Bytes()) {
+        THROW(ReaderError);
+    }
     TUint offsetNew = iOffset + aBytes;
+    if (offsetNew > iCurrent.Bytes()) {
+        aBytes -= (offsetNew - iCurrent.Bytes());
+        offsetNew = iCurrent.Bytes();
+    }
 
     if (offsetNew >= iBlockOffset) {
-        iObserverSem.Signal();
-        iBlockSem.Wait();
-        iBlockOffset = std::numeric_limits<TUint>::max();
-        THROW(ReaderError);
+        if (offsetNew > iBlockOffset && iOffset < iBlockOffset) {
+            aBytes -= offsetNew - iBlockOffset;
+            offsetNew = iBlockOffset;
+        }
+        else {
+            iObserverSem.Signal();
+            iBlockSem.Wait();
+            iBlockOffset = std::numeric_limits<TUint>::max();
+            THROW(ReaderError);
+        }
     }
     else if (offsetNew >= iWaitOffset) {
-        iObserverSem.Signal();
-        iWaitSem.Wait();
-        iWaitOffset = std::numeric_limits<TUint>::max();
+        if (offsetNew > iWaitOffset && iOffset < iWaitOffset) {
+            aBytes -= offsetNew - iWaitOffset;
+            offsetNew = iWaitOffset;
+        }
+        else {
+            iObserverSem.Signal();
+            iWaitSem.Wait();
+            iWaitOffset = std::numeric_limits<TUint>::max();
+        }
     }
     else if (offsetNew >= iThrowOffset) {
-        iThrowOffset = std::numeric_limits<TUint>::max();
-        THROW(ReaderError);
-    }
-
-    if (offsetNew > iCurrent.Bytes()) {
-        THROW(ReaderError);
+        if (offsetNew > iThrowOffset && iOffset < iThrowOffset) {
+            aBytes -= offsetNew - iThrowOffset;
+            offsetNew = iThrowOffset;
+        }
+        else {
+            iThrowOffset = std::numeric_limits<TUint>::max();
+            THROW(ReaderError);
+        }
     }
 
     Brn buf = iCurrent.Split(iOffset, aBytes);
     iOffset = offsetNew;
     return buf;
-}
-
-Brn TestHttpReader::ReadUntil(TByte aSeparator)
-{
-    TUint start = iOffset;
-    TUint offset = iOffset;
-
-    TUint bytes = iCurrent.Bytes();
-    TUint offsetNew = iOffset;
-
-    while (offset < bytes && offsetNew == iOffset) {
-        if (iCurrent[offset++] == aSeparator) {
-            offsetNew = offset;
-            break;
-        }
+/*
+    if (iOffset == iCurrent.Bytes()) {
+        THROW(ReaderError);
+    }
+    TUint offsetNew = iOffset + aBytes;
+    if (offsetNew > iCurrent.Bytes()) {
+        aBytes -= (offsetNew - iCurrent.Bytes());
+        offsetNew = iCurrent.Bytes();
     }
 
     if (offsetNew >= iBlockOffset) {
@@ -533,13 +544,9 @@ Brn TestHttpReader::ReadUntil(TByte aSeparator)
         THROW(ReaderError);
     }
 
-    if (offsetNew > iOffset && offsetNew <= bytes) {
-        iOffset = offsetNew;
-        return (iCurrent.Split(start, offset - start - 1));
-    }
-    else {
-        THROW(ReaderError);
-    }
+    Brn buf = iCurrent.Split(iOffset, aBytes);
+    iOffset = offsetNew;
+    return buf;*/
 }
 
 void TestHttpReader::ReadFlush()
@@ -551,13 +558,6 @@ void TestHttpReader::ReadInterrupt()
 {
     ASSERT(iConnected);
     iBlockSem.Signal();
-}
-
-Brn TestHttpReader::ReadRemaining()
-{
-    Brn buf = iCurrent.Split(iOffset, iCurrent.Bytes()-iOffset);
-    iOffset += buf.Bytes();
-    return buf;
 }
 
 
@@ -1716,7 +1716,9 @@ void SuiteSegmentStreamer::TearDown()
 
 void SuiteSegmentStreamer::ReadThread()
 {
-    TEST_THROWS(iStreamer->Read(iReadBytes), ReaderError);
+    Brn buf = iStreamer->Read(iReadBytes);
+    TEST(buf.Bytes() < iReadBytes);
+    TEST_THROWS(iStreamer->Read(iReadBytes - buf.Bytes()), ReaderError);
     iThreadSem->Signal();
 }
 
@@ -1781,22 +1783,9 @@ void SuiteSegmentStreamer::TestRead()
     // Start streaming some audio.
     buf = iStreamer->Read(20);
     TEST(buf == Brn("abcdefghijklmnopqrst"));
-    // Attempt to read another 20 bytes.
-    TEST_THROWS(iStreamer->Read(20), ReaderError);
-    buf = iStreamer->ReadRemaining();
+    // Attempt to read another 20 bytes.  We should be delivered less this time.
+    buf = iStreamer->Read(20);
     TEST(buf == Brn("uvwxyz"));
-
-
-
-    // Test ReadUntil().
-    iStreamer->ReadInterrupt();
-    iStreamer->Close();
-    iUriProvider->SetUri(kUri1, 50);
-    iHttpReader->SetContent(uriList1, bufList1);
-    iStreamer->Stream(*iUriProvider);
-
-    buf = iStreamer->ReadUntil('z');
-    TEST(buf == Brn("abcdefghijklmnopqrstuvwxy"));
 }
 
 void SuiteSegmentStreamer::TestGetNextSegmentFail()
@@ -1850,9 +1839,9 @@ void SuiteSegmentStreamer::TestInterrupt()
     iHttpReader->ThrowReadErrorAtOffset(20);
     iStreamer->Stream(*iUriProvider);
 
-    TEST_THROWS(iStreamer->Read(26), ReaderError);
-
-
+    Brn buf = iStreamer->Read(26);
+    TEST(buf.Bytes() == 20); // ThrowReadErrorAtOffset above
+    TEST_THROWS(iStreamer->Read(6), ReaderError);
 
     // Test failed connection.
     static const Uri kUriDummy(Brn("http://dummy"));
@@ -2292,7 +2281,7 @@ void SuiteProtocolHls::TestTryStop()
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamStopped);
 
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyz"));  // Only 20 bytes will have been read by time ReadInterrupt() was called, but ContentAudio() will call ReadRemaining() after ReaderError is thrown as a result of the ReadInterrupt().
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrst"));  // Only 20 bytes will have been read by time StreamThread threw ReaderError
     TEST(iElementDownstream->IsLive() == true);
     TEST(iElementDownstream->StreamId() == kExpectedStreamId);
     TEST(iElementDownstream->TrackCount() == 1);
@@ -2425,7 +2414,7 @@ void SuiteProtocolHls::TestInterrupt()
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamStopped);
 
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyz"));
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrst")); // BlockAtOffset call above means we'll only receive 20 bytes
     TEST(iElementDownstream->IsLive() == true);
     TEST(iElementDownstream->StreamId() == 1);
     TEST(iElementDownstream->TrackCount() == 1);

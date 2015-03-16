@@ -137,10 +137,12 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServe
     , iClientControlPort(0)
     , iClientTimingPort(0)
 {
-    iReaderBuffer = new Srs<kMaxReadBufferBytes>(*this);
+    iReaderBuffer = new Srs<1024>(*this);
+    iReaderUntil = new ReaderUntilS<kMaxReadBufferBytes>(*iReaderBuffer);
+    iReaderProtocol = new ReaderProtocolS<kMaxReadBufferBytes>(*iReaderUntil);
     iWriterBuffer = new Sws<kMaxWriteBufferBytes>(*this);
     iWriterAscii = new WriterAscii(*iWriterBuffer);
-    iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderBuffer);
+    iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderUntil);
     iWriterRequest = new WriterRtspRequest(*iWriterBuffer);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
@@ -308,6 +310,8 @@ RaopDiscoverySession::~RaopDiscoverySession()
     delete iReaderRequest;
     delete iWriterAscii;
     delete iWriterBuffer;
+    delete iReaderProtocol;
+    delete iReaderUntil;
     delete iReaderBuffer;
 }
 
@@ -336,7 +340,7 @@ void RaopDiscoverySession::Run()
                 LOG(kMedia, method);
                 LOG(kMedia, ", instance %d\n", iInstance);
                 if(method == RtspMethod::kPost) {
-                    Brn data(iReaderBuffer->Read(iHeaderContentLength.ContentLength()));
+                    Brn data = iReaderProtocol->Read(iHeaderContentLength.ContentLength());
 
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
                     iWriterResponse->WriteHeader(RtspHeader::kContentType, Brn("application/octet-stream"));
@@ -430,7 +434,7 @@ void RaopDiscoverySession::Run()
                 }
                 else if(method == RtspMethod::kSetParameter) {
                     if(iHeaderContentType.Type() == Brn("text/parameters")) {
-                        Brn data(iReaderBuffer->Read(iHeaderContentLength.ContentLength()));
+                        Brn data = iReaderProtocol->Read(iHeaderContentLength.ContentLength());
                         Parser parser(data);
                         Brn entry = parser.Next(':');
                         //if(Trim(entry) == Brn("volume")) {
@@ -462,11 +466,11 @@ void RaopDiscoverySession::Run()
                     }
                     else {
                         // need to purge non text data...  may be bitmap
-                        TUint i;
-                        for(i = iHeaderContentLength.ContentLength(); i > 10000; i -= 10000) {
-                            iReaderBuffer->Read(10000);
+                        TUint bytes = iHeaderContentLength.ContentLength();
+                        while (bytes > 0) {
+                            Brn buf = iReaderUntil->Read(bytes);
+                            bytes -= buf.Bytes();
                         }
-                        iReaderBuffer->Read(i);
                     }
 
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -654,25 +658,19 @@ const Brx &RaopDiscoverySession::Fmtp()
 void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 {
     aSdpHandler.Reset();
-
     Brn line;
-
     TUint remaining = iHeaderContentLength.ContentLength();
-
     while (remaining > 0) {
-        line.Set(iReaderBuffer->ReadUntil(Ascii::kLf));
+        line.Set(iReaderUntil->ReadUntil(Ascii::kLf));
 
         LOG(kHttp, "SDP: ");
         LOG(kHttp, line);
         LOG(kHttp, "\n");
 
         remaining -= line.Bytes() + 1;
-
         Parser parser(line);
-
         Brn type = parser.Next('=');
         Brn value = Ascii::Trim(parser.Remaining());
-
         if (type.Bytes() == 1) {
             aSdpHandler.Decode(type[0], value);
         }

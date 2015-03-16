@@ -132,21 +132,12 @@ public:
     virtual void WriteMethod(const Brx& aMethod, const Brx& aUri);
 };
 
-// ReaderRtspRequest
-
-class ReaderRtspRequest : public ReaderHttpRequest
-{
-public:
-    ReaderRtspRequest(Environment& aEnv, IReader& aReader);
-    void ReadRtsp(TChar aFirstChar);
-};
-
 // ReaderRtspResponse
 
 class ReaderRtspResponse : public ReaderHttpResponse
 {
 public:
-    ReaderRtspResponse(Environment& aEnv, IReader& aReader);
+    ReaderRtspResponse(Environment& aEnv, ReaderUntil& aReader);
     void ReadRtsp(TChar aFirstChar);
     void ReadRtsp();
 protected:
@@ -244,6 +235,29 @@ private:
     Bws<kMaxAesivBytes> iAesiv;
 };
 
+// The same socket receives RTP, RTSP requests, RTSP responses.
+// This class reports which msg type is starting and optionally (for RTP) consumes the first byte
+class ReaderRtp : public IReader, private INonCopyable
+{
+public:
+    enum MsgType
+    {
+        eRtp
+       ,eRtspRequest
+       ,eRtspResponse
+    };
+public:
+    ReaderRtp(IReader& aReader);
+    MsgType ReadType();
+public: // from IReader
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+private:
+    IReader& iReader;
+    Bws<1> iChar;
+};
+
 class RtspClient
 {
 public:
@@ -290,9 +304,10 @@ public:
     void ReadSdp(ISdpHandler& aSdpHandler);
     TUint Timeout() const;
 private:
-    IReader& iReader;
     WriterRtspRequest iWriterRequest;
-    ReaderRtspRequest iReaderRequest;
+    ReaderRtp iReaderRtp;
+    ReaderUntilS<kReadBufferBytes> iReaderUntil;
+    ReaderHttpRequest iReaderRequest;
     ReaderRtspResponse iReaderResponse;
     Bws<kMaxUriBytes> iUri;
     TUint iSeq;

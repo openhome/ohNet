@@ -10,7 +10,7 @@ using namespace OpenHome::Media;
 
 ContentAudio::ContentAudio(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
 {
-    iSupply = new Supply(aMsgFactory, aDownstream);
+    iSupply = new SupplyAggregatorBytes(aMsgFactory, aDownstream);
 }
 
 ContentAudio::~ContentAudio()
@@ -26,44 +26,39 @@ TBool ContentAudio::Recognise(const Brx& /*aUri*/, const Brx& /*aMimeType*/, con
     return true;
 }
 
-ProtocolStreamResult ContentAudio::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
+ProtocolStreamResult ContentAudio::Stream(IReader& aReader, TUint64 aTotalBytes)
 {
     ProtocolStreamResult res = EProtocolStreamSuccess;
-    iBuf.SetBytes(0);
-    TUint remaining = kMaxReadBytes;
-    const TBool finite = (aTotalBytes!=0);
     try {
         for (;;) {
-            if (finite && aTotalBytes < remaining) {
-                remaining = (TUint)aTotalBytes;
-            }
-            while (remaining > 0) {
-                TUint bytes = remaining;
-                if (bytes > kMaxReadBytes) {
-                    bytes = kMaxReadBytes;
+            Brn buf = aReader.Read(kMaxReadBytes);
+            iSupply->OutputData(buf);
+            if (aTotalBytes > 0) {
+                if (buf.Bytes() > aTotalBytes) { // aTotalBytes is inaccurate - ignore it
+                    aTotalBytes = 0;
                 }
-                Brn buf = aReader.Read(bytes);
-                iBuf.Append(buf);
-                remaining -= buf.Bytes();
-            }
-            iSupply->OutputData(iBuf);
-            if (finite) {
-                aTotalBytes -= iBuf.Bytes();
-                if (aTotalBytes == 0) {
-                    break;
+                else {
+                    aTotalBytes -= buf.Bytes();
+                    if (aTotalBytes == 0) {
+                        iSupply->Flush();
+                        break;
+                    }
                 }
             }
-            remaining = kMaxReadBytes;
-            iBuf.SetBytes(0);
         }
     }
     catch (ReaderError&) {
         res = EProtocolStreamErrorRecoverable;
-        iBuf.Append(aReader.ReadRemaining());
-        iSupply->OutputData(iBuf);
-        if (finite) {
-            aTotalBytes -= iBuf.Bytes();
-        }
+        iSupply->Flush();
+    }
+    /* FIXME - following catch()es are temporary, allowing time for ProtocolHls to be updated
+               to stop throwing custom exceptions out of IReader::Read() */
+    catch (AssertionFailed&) {
+        throw;
+    }
+    catch (...) {
+        iSupply->Flush();
+        throw;
     }
     return res;
 }

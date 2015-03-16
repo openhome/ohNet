@@ -54,7 +54,7 @@ public:
     HlsReader(Environment& aEnv, const Brx& aUserAgent);
 private: // from IHlsReader
     IHttpSocket& Socket() override;
-    IReaderBuffered& Reader() override;
+    IReader& Reader() override;
 public:
     HttpReader iReader;
 };
@@ -195,7 +195,7 @@ IHttpSocket& HlsReader::Socket()
     return iReader;
 }
 
-IReaderBuffered& HlsReader::Reader()
+IReader& HlsReader::Reader()
 {
     return iReader;
 }
@@ -203,10 +203,10 @@ IReaderBuffered& HlsReader::Reader()
 
 // HlsM3uReader
 
-HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReaderBuffered& aReader, ITimer& aTimer, ISemaphore& aSemaphore)
+HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore)
     : iTimer(aTimer)
     , iSocket(aSocket)
-    , iReader(aReader)
+    , iReaderUntil(aReader)
     , iConnected(false)
     , iTotalBytes(0)
     , iVersion(2)
@@ -234,6 +234,7 @@ void HlsM3uReader::SetUri(const Uri& aUri)
         iSem.Clear();
         iSem.Signal();
         iInterrupted = false;
+        iReaderUntil.ReadFlush();
     }
 }
 
@@ -349,7 +350,7 @@ void HlsM3uReader::Interrupt()
         iInterrupted = true;
         iTimer.Cancel();
         if (iConnected) {
-            iReader.ReadInterrupt();
+            iReaderUntil.ReadInterrupt();
         }
         iSem.Signal();
     }
@@ -358,7 +359,7 @@ void HlsM3uReader::Interrupt()
 void HlsM3uReader::ReadNextLine()
 {
     // May throw ReaderError.
-    iNextLine = iReader.ReadUntil('\n');
+    iNextLine = iReaderUntil.ReadUntil('\n');
     iOffset += iNextLine.Bytes()+1;  // Separator has been trimmed.
 }
 
@@ -540,7 +541,7 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
 
 // SegmentStreamer
 
-SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReaderBuffered& aReader)
+SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReader& aReader)
     : iSocket(aSocket)
     , iReader(aReader)
     , iSegmentUriProvider(NULL)
@@ -571,14 +572,6 @@ Brn SegmentStreamer::Read(TUint aBytes)
     return buf;
 }
 
-Brn SegmentStreamer::ReadUntil(TByte aSeparator)
-{
-    EnsureSegmentIsReady();
-    Brn buf = iReader.ReadUntil(aSeparator);
-    iOffset += buf.Bytes()+1;   // Separator has been trimmed.
-    return buf;
-}
-
 void SegmentStreamer::ReadFlush()
 {
     iReader.ReadFlush();
@@ -593,18 +586,6 @@ void SegmentStreamer::ReadInterrupt()
             iReader.ReadInterrupt();
         }
     }
-}
-
-Brn SegmentStreamer::ReadRemaining()
-{
-    Brn buf = iReader.ReadRemaining();
-    if (buf.Bytes() == 0) {
-        iOffset = iTotalBytes;
-    }
-    else {
-        iOffset += buf.Bytes();
-    }
-    return buf;
 }
 
 void SegmentStreamer::Close()
@@ -626,24 +607,15 @@ void SegmentStreamer::GetNextSegment()
 
     Close();
     TBool success = iSocket.Connect(iUri);
+    if (!success) {
+        THROW(HlsSegmentError);
+    }
     {
         AutoMutex a(iLock);
-        //if (iInterrupted || !success) {
-        //    THROW(HlsSegmentError);
-        //}
-
-        if (!success) {
-            THROW(HlsSegmentError);
-        }
+        iConnected = true;
     }
-    if (success) {
-        {
-            AutoMutex a(iLock);
-            iConnected = true;
-        }
-        iTotalBytes = iSocket.ContentLength();
-        iOffset = 0;
-    }
+    iTotalBytes = iSocket.ContentLength();
+    iOffset = 0;
 }
 
 void SegmentStreamer::EnsureSegmentIsReady()

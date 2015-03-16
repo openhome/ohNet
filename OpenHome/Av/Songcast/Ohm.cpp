@@ -22,7 +22,8 @@ OhmHeader::OhmHeader(TUint aMsgType, TUint aMsgBytes)
 void OhmHeader::Internalise(IReader& aReader)
 {
     ReaderBinary reader(aReader);
-    Brn ohm = reader.Read(4);
+    Bws<4> ohm;
+    reader.ReadReplace(4, ohm);
     if(ohm != kOhm) {
         THROW(OhmError);
     }
@@ -102,9 +103,7 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
     
     ReaderBinary readerBinary(aReader);
-
     TUint headerBytes = readerBinary.ReadUintBe(1);
-
     if (headerBytes != kHeaderBytes) {
         THROW(OhmError);
     }
@@ -115,19 +114,15 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
     iResent = false;
 
     TUint flags = readerBinary.ReadUintBe(1);
-    
     if (flags & kFlagHalt) {
         iHalt = true;
     }
-
     if (flags & kFlagLossless) {
         iLossless = true;
     }
-
     if (flags & kFlagTimestamped) {
         iTimestamped = true;
     }
-
     if (flags & kFlagResent) {
         iResent = true;
     }
@@ -146,15 +141,13 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
     iChannels = readerBinary.ReadUintBe(1);
     
     TUint reserved = readerBinary.ReadUintBe(1);
-    
     if(reserved != kReserved) {
         THROW(OhmError);
     }
     
     TUint bytes = readerBinary.ReadUintBe(1);
-    
     if(bytes > 0) {
-        iCodecName.Replace(aReader.Read(bytes));
+        readerBinary.ReadReplace(bytes, iCodecName);
     }
     else {
         iCodecName.Replace(Brx::Empty());
@@ -360,26 +353,23 @@ void OhzHeader::Internalise(IReader& aReader)
 {
     ReaderBinary reader(aReader);
 
-    Brn ohz = reader.Read(4);
-
+    Bws<4> ohz;
+    reader.ReadReplace(4, ohz);
     if(ohz != kOhz) {
         THROW(OhzError);
     }
 
     TUint major = reader.ReadUintBe(1);
-
     if(major != kMajor) {
         THROW(OhzError);
     }
 
     iMsgType  = reader.ReadUintBe(1);
-
     if(iMsgType > kMsgTypePresetInfo) {
         THROW(OhzError);
     }
 
     iBytes = reader.ReadUintBe(2);
-    
     if (iBytes < kHeaderBytes) {
         THROW(OhzError);
     }

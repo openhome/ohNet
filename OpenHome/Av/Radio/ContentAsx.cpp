@@ -48,9 +48,13 @@ namespace Av {
 
 class ContentAsx : public Media::ContentProcessor
 {
+    static const TUint kMaxReadBytes = 4 * 1024;
+public:
+    ContentAsx();
+    ~ContentAsx();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
-    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
+    Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
     void Reset();
 private:
     enum FormatVersion
@@ -60,6 +64,7 @@ private:
        ,ePlainText
     };
 private:
+    ReaderUntil* iReaderUntil;
     FormatVersion iFormatVersion;
     TBool iInEntryBlock;
 };
@@ -80,6 +85,16 @@ ContentProcessor* ContentProcessorFactory::NewAsx()
 
 // ContentAsx
 
+ContentAsx::ContentAsx()
+{
+    iReaderUntil = new ReaderUntilS<kMaxReadBytes>(*this);
+}
+
+ContentAsx::~ContentAsx()
+{
+    delete iReaderUntil;
+}
+
 TBool ContentAsx::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx& aData)
 {
     if (Ascii::CaseInsensitiveEquals(aMimeType, Brn("video/x-ms-asf")) ||
@@ -98,13 +113,14 @@ TBool ContentAsx::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     return false;
 }
 
-ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
+ProtocolStreamResult ContentAsx::Stream(IReader& aReader, TUint64 aTotalBytes)
 {
+    SetStream(aReader);
     try {
         /* check for xml or another description format 
            first character for xml is '<', alternative is '[Reference]' at start else unsupported */
         while (iFormatVersion == eUnknown) {
-            Brn format(aReader.Read(1));
+            Brn format(iReaderUntil->Read(1));
             if (format.Bytes() == 0) {
                 continue;
             }
@@ -113,7 +129,7 @@ ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotal
             {
             case '<':
             {
-                Brn tag(aReader.ReadUntil('>'));
+                Brn tag(iReaderUntil->ReadUntil('>'));
                 aTotalBytes -= tag.Bytes();
                 Parser parser(tag);
                 if (!Ascii::CaseInsensitiveEquals(parser.Next('='), Brn("asx version"))) {
@@ -124,7 +140,7 @@ ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotal
                 break;
             case '[':
             {
-                Brn value(aReader.ReadUntil(']'));
+                Brn value(iReaderUntil->ReadUntil(']'));
                 aTotalBytes -= value.Bytes();
                 if (!Ascii::CaseInsensitiveEquals(value, Brn("Reference"))) {
                     return EProtocolStreamErrorUnrecoverable;
@@ -146,13 +162,13 @@ ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotal
             for (;;) {
                 Brn tag;
                 if (!iInEntryBlock) {
-                    tag.Set(ReadTag(aReader, aTotalBytes));
+                    tag.Set(ReadTag(*iReaderUntil, aTotalBytes));
                 }
                 if (iInEntryBlock || Ascii::CaseInsensitiveEquals(tag, Brn("entry"))) {
                     iInEntryBlock = true;
                     TBool tryPlay = true;
                     for (;;) {
-                        tag.Set(ReadTag(aReader, aTotalBytes));
+                        tag.Set(ReadTag(*iReaderUntil, aTotalBytes));
                         if (Ascii::CaseInsensitiveEquals(tag, Brn("entry"))) {
                             // don't expect to find another <entry> tag inside an <entry> block
                             return EProtocolStreamErrorUnrecoverable;
@@ -181,7 +197,7 @@ ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotal
         }
         else if (iFormatVersion == ePlainText) {
             for (;;) {
-                Brn line(ReadLine(aReader, aTotalBytes));
+                Brn line(ReadLine(*iReaderUntil, aTotalBytes));
                 if (line.Bytes() < 3) {
                     continue;
                 }
@@ -225,6 +241,7 @@ ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotal
 
 void ContentAsx::Reset()
 {
+    iReaderUntil->ReadFlush();
     ContentProcessor::Reset();
     iInEntryBlock = false;
     iFormatVersion = eUnknown;
