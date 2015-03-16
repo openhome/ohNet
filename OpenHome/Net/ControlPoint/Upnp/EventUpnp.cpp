@@ -44,6 +44,7 @@ EventSessionUpnp::~EventSessionUpnp()
     Interrupt(true);
     iShutdownSem.Wait();
 
+    delete iDechunker;
     delete iReaderUntil;
     delete iReadBuffer;
     delete iReaderRequest;
