@@ -33,9 +33,8 @@ Srx::Srx(TUint aMaxBytes, IReaderSource& aSource)
 Brn Srx::Read(TUint aBytes)
 {
     TByte* ptr = Ptr();
-    aBytes = std::min(aBytes, iMaxBytes - iOffset); // reduce source read to match capacity here
     if (iBytes == 0) {
-        Bwn buffer(ptr + iBytes, iMaxBytes - iBytes);
+        Bwn buffer(ptr, iMaxBytes);
         iSource.Read(buffer);
         iBytes += buffer.Bytes();
         iSource.ReadFlush();
@@ -163,6 +162,7 @@ Brn ReaderUntil::ReadProtocol(TUint aBytes)
 Brn ReaderUntil::Read(TUint aBytes)
 {
     if (iBytes > 0) {
+        ASSERT(iOffset < iBytes);
         const TUint bytes = std::min(aBytes, iBytes - iOffset);
         Brn buf(Ptr() + iOffset, bytes);
         iOffset += bytes;
