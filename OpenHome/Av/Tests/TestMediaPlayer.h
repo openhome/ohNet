@@ -17,6 +17,7 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
+#include <OpenHome/Av/Raop/Raop.h>
 #include "RamStore.h"
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Tests/VolumeUtils.h>
@@ -93,6 +94,7 @@ private:
     const Brx& iTidalId;
     const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
+    ObservableBrx iObservableFriendlyName;
 };
 
 class TestMediaPlayerOptions

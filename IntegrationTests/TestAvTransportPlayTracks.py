@@ -263,7 +263,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.mutex.acquire()
         avtDuration = self.mr.avt.currentMediaDuration
         avtUri      = self.mr.avt.avTransportURI
-        avtMetadata = self.mr.avt.avTransportURIMetaData
+        avtMetadata = self.mr.avt.avTransportURIMetaData.encode( 'utf8' )
 
         self.log.FailUnless( self.senderDev, avtDuration==self.sender.info.duration,
             'AVT/Sender duration (%s/%s)' % (avtDuration, self.sender.info.duration) )

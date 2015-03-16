@@ -13,6 +13,7 @@ Parameters:
     arg#5 - random number generator seed (0 for 'random')
             by passing this, test scenarious containing random data can be
             replicated - the seed used is logged at the start of execution
+    arg#6 - sender mode [unicast/multicast] - (optional - default unicast)
            
 Tests the sender and receiver services, and operation of zpus routing. Ensures
 status and actions operate as specified
@@ -290,12 +291,13 @@ class TestSongcastPlayback( BASE.BaseTest ):
                 
     def Test( self, aArgs ):
         """Songcast Playback test"""
-        dut1Name = None
-        dut2Name = None
-        dut3Name = None
-        testMode = None
-        seed     = None
-        loopback = False
+        dut1Name   = None
+        dut2Name   = None
+        dut3Name   = None
+        testMode   = None
+        seed       = None
+        loopback   = False
+        senderMode = 'unicast'
 
         try:
             dut1Name   = aArgs[1]
@@ -303,6 +305,8 @@ class TestSongcastPlayback( BASE.BaseTest ):
             dut3Name   = aArgs[3]
             testMode   = aArgs[4]
             seed       = int( aArgs[5] )
+            if len( aArgs ) > 6:
+                senderMode = aArgs[6].lower()
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
@@ -310,6 +314,9 @@ class TestSongcastPlayback( BASE.BaseTest ):
         if dut1Name.lower()=='local' or dut2Name.lower()=='local' or dut3Name.lower()=='local':
             if dut1Name.lower()!='local' or dut2Name.lower()!='local' or dut3Name.lower()!='local':
                 self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+
+        if senderMode not in ('unicast', 'multicast'):
+            self.log.Abort( '', 'Invalid sender mode %s' % senderMode )
 
         # seed the random number generator
         if not seed:
@@ -336,11 +343,15 @@ class TestSongcastPlayback( BASE.BaseTest ):
             dut3Name = self.soft3.name
         self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
         duts = [self.dut1, self.dut2, self.dut3]
-        
-        self.log.Info( '' )
-        self.log.Info( '', '    ------ Configuring Test ------' )
-        self.log.Info( '' )
-    
+
+        self.log.Header2( '', '    ------ Configuring Test ------' )
+
+        mode = '3'      # 3->unicast, 2->multicast (see #3042)
+        if senderMode == 'multicast': mode = '2'
+        for dut in duts:
+            dut.config.SetValue( 'Sender.Enabled', '0' )    # 0 means enabled (see #3042)
+            dut.config.SetValue( 'Sender.Mode', mode )
+
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()

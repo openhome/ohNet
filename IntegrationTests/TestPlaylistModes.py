@@ -162,13 +162,16 @@ class Config:
                     else:
                         playing.clear()
                 if aSvName == 'Id':
+                    self.precon.log.Debug( 'Id: %s' % aSvVal )
                     th = LogThread.Thread( target=_UpdatePlayorder, args=[aSvVal] )
                     th.start()
 
             def _UpdatePlayorder( *args ):
                 time.sleep( 2 )     # wait for transport state to 'settle'
+                playing.wait( 3 )
                 if playing.isSet():
                     self.playorder.append( int( args[0] ))
+                    self.precon.log.Debug( 'List: %s' % str( self.playorder ))
                 orderEvt.set()
                     
             aDut.playlist.AddSubscriber( _PlaylistEventCb )
@@ -178,7 +181,7 @@ class Config:
             for i in range( self.precon.plLen+2 ):
                 orderEvt.clear()
                 eval( stim )
-                orderEvt.wait( 5 )  # must be longer than total delays in  _UpdatePlayorder
+                orderEvt.wait( 8 )  # must be longer than total delays in  _UpdatePlayorder
                 if aDut.playlist.polledTransportState == 'Stopped':
                     self.precon.log.Pass( self.precon.dev, 'Playlist exhausted after <%s> action' % self.seek )
                     break
@@ -188,9 +191,9 @@ class Config:
                 # reason why the last track in one shuffling cannot be the first track in the
                 # subsequent shuffling
                 if i==self.precon.plLen-1 and self.precon.shuffle=='on' and self.precon.repeat=='on':
-                    self.precon.log.WarnUnless( self.precon.dev, orderEvt.is_set(), '[%d] Executed <%s> action at start of 2nd loop of playlist' % (self.id, self.seek) )
+                    self.precon.log.WarnUnless( self.precon.dev, orderEvt.is_set(), '[%d] Invoking <%s> action at start of 2nd loop of playlist' % (self.id, self.seek) )
                 else:
-                    self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), '[%d] Executed <%s> action' % (self.id, self.seek) )
+                    self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), '[%d] Invoking <%s> action' % (self.id, self.seek) )
 
             aDut.playlist.RemoveSubscriber( _PlaylistEventCb )
 

@@ -10,6 +10,7 @@ Derived classes MUST
         - Receiver #1 (repeater) - 'None' if not present
         - Receiver #2 (slave) - 'None' if not present
         - Test duration (secs) or 'forever'
+        - Songcast mode
 
     For all players can use 'local' for internal SoftPlayer on loopback
 """
@@ -64,6 +65,7 @@ class BaseDropout( BASE.BaseTest ):
         duration     = 0
         loopback     = False
         softOptions  = None
+        senderMode   = 'unicast'
 
         # parse command line arguments
         try:
@@ -72,7 +74,9 @@ class BaseDropout( BASE.BaseTest ):
             slaveName    = args[3]
             duration     = int( args[4] )
             if len( args ) > 5:
-                softOptions = args[5]
+                senderMode = args[5].lower()
+            if len( args ) > 6:
+                softOptions = args[6]
         except:
             print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -97,6 +101,9 @@ class BaseDropout( BASE.BaseTest ):
         if str( duration ).lower() != 'forever':
             duration = int( duration )
 
+        if senderMode not in ('unicast', 'multicast'):
+            self.log.Abort( '', 'Invalid sender mode %s' % senderMode )
+
         # create and configure sender
         if senderName.lower() == 'local':
             options = {'aRoom':'TestSender', 'aLoopback':loopback}
@@ -107,6 +114,11 @@ class BaseDropout( BASE.BaseTest ):
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
+
+        mode = '3'      # 3->unicast, 2->multicast (see #3042)
+        if senderMode == 'multicast': mode = '2'
+        self.sender.config.SetValue( 'Sender.Enabled', '0' )    # 0 means enabled (see #3042)
+        self.sender.config.SetValue( 'Sender.Mode', mode )
         self.SenderSetup()
 
         # load sender's playlist and start playback

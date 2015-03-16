@@ -8,7 +8,8 @@ Parameters:
     arg#4 - DUT #4 ['local' for internal SoftPlayer on loopback]
     arg#5 - test scenarios [1,2,3,4,5,all]
     arg#6 - disconnect method [stop,source,sender,standby,all]
-    
+    arg#7 - sender mode [unicast/multicast] - (optional - default unicast)
+
 Terminology:
     Sender   - device which is the original source of the audio stream
     Repeater - device receiving stream directly from sender and re-sending
@@ -42,7 +43,7 @@ Test Scenarios:
             - connect B to A    - no dropout on A
             - connect C to A    - no dropout on A
             - connect D to B    - no dropout on A
-            - disconnect B      - no dropout on A
+            - disconnect B      - no dropout on A, D state -> waiting
             - disconnect C      - no dropout on A
             - disconnect D      - no dropout on A
             - A stopped         - A drops out
@@ -63,7 +64,7 @@ Test Scenarios:
             - connect B to A
             - connect C to A
             - connect D to B    - no dropout on C
-            - disconnect B      - no dropout on C
+            - disconnect B      - no dropout on C, D state -> waiting
             - disconnect D      - no dropout on C
             - disconnect A      - C drops out
 
@@ -86,8 +87,6 @@ Test Scenarios:
 """
 
 # Differences from DS test:
-#    - removed songcast sender mode param - set in softplayer at startup
-#    - removed (unused) test loops param
 #    - removed 'reboot' disconnect method
  
 import _FunctionalTest
@@ -139,6 +138,7 @@ class TestSongcastConnect( BASE.BaseTest ):
         scenario   = None
         disconnect = None
         loopback   = False
+        senderMode = 'unicast'
 
         # parse command line arguments
         try:
@@ -148,6 +148,8 @@ class TestSongcastConnect( BASE.BaseTest ):
             dut4Name   = args[4]
             scenario   = args[5].lower()
             disconnect = args[6].lower()
+            if len( args ) > 7:
+                senderMode = args[7].lower()
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -162,6 +164,9 @@ class TestSongcastConnect( BASE.BaseTest ):
             disconnect = ['stop','source','sender','standby']
         else:
             disconnect = [disconnect]
+
+        if senderMode not in ('unicast', 'multicast'):
+            self.log.Abort( '', 'Invalid sender mode %s' % senderMode )
 
         if dut1Name.lower()=='local' or dut2Name.lower()=='local' or dut3Name.lower()=='local' or dut4Name.lower()=='local':
             if dut1Name.lower()!='local' or dut2Name.lower()!='local' or dut3Name.lower()!='local' or dut4Name.lower()!='local':
@@ -198,6 +203,13 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True, aLoopback=loopback )
         self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
         self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True, aLoopback=loopback )
+
+        mode = '3'      # 3->unicast, 2->multicast (see #3042)
+        if senderMode == 'multicast': mode = '2'
+        for dut in [self.dut1, self.dut2, self.dut3, self.dut4]:
+            dut.config.SetValue( 'Sender.Enabled', '0' )    # 0 means enabled (see #3042)
+            dut.config.SetValue( 'Sender.Mode', mode )
+
         if self.dut1.volume is not None:
             self.dut1.volume.volume = 75
 
@@ -249,7 +261,7 @@ class TestSongcastConnect( BASE.BaseTest ):
             - connect B to A    - no dropout on A
             - connect C to A    - no dropout on A
             - connect D to B    - no dropout on A
-            - disconnect B      - no dropout on A
+            - disconnect B      - no dropout on A, B state-> waiting
             - disconnect C      - no dropout on A
             - disconnect D      - no dropout on A
             - A stopped         - A drops out
@@ -262,6 +274,9 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__Follows( self.dut3, self.dut1 )
         self.__Follows( self.dut4, self.dut2 )
         self.__Disconnect( self.dut2 )
+        self.log.FailUnless( self.dut4Dev, self.dut4.receiver.transportState=='Waiting',
+            '(1) Actual/Expected receiver state (%s/Waiting) on %s' %
+            (self.dut4.receiver.transportState, self.dut4.friendlyName.split( ':' )[0]) )
         self.__Disconnect( self.dut3 )
         self.__Disconnect( self.dut4 )
         self.__StopPlayback( self.dut1 )
@@ -295,7 +310,7 @@ class TestSongcastConnect( BASE.BaseTest ):
             - connect B to A    - no audio on C
             - connect C to A    - C starts with no audio
             - connect D to B    - no dropout on C
-            - disconnect B      - no dropout on C
+            - disconnect B      - no dropout on C, D state -> waiting
             - disconnect D      - no dropout on C
             - A stopped         -  drops out
         """
@@ -307,6 +322,9 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__Follows( self.dut1, self.dut2 )
         self.__Follows( self.dut4, self.dut3 )
         self.__Disconnect( self.dut3 )
+        self.log.FailUnless( self.dut4Dev, self.dut4.receiver.transportState=='Waiting',
+            '(3) Actual/Expected receiver state (%s/Waiting) on %s' %
+            (self.dut4.receiver.transportState, self.dut4.friendlyName.split( ':' )[0]) )
         self.__Disconnect( self.dut4 )
         self.__StopPlayback( self.dut2 )
             

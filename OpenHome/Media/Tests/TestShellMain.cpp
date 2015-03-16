@@ -46,6 +46,7 @@ SIMPLE_TEST_DECLARATION(TestUriProviderRepeater);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
 SIMPLE_TEST_DECLARATION(TestWaiter);
 SIMPLE_TEST_DECLARATION(TestJson);
+SIMPLE_TEST_DECLARATION(TestObservable);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
 ENV_TEST_DECLARATION(TestProtocolHls);
@@ -110,6 +111,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
     shellTests.push_back(ShellTest("TestJson", ShellTestJson));
     shellTests.push_back(ShellTest("TestCredentials", ShellTestCredentials));
+    shellTests.push_back(ShellTest("TestObservable", ShellTestObservable));
 
     OpenHome::Media::ExecuteTestShell(aInitParams, shellTests);
 }

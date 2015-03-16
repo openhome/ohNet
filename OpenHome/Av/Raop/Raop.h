@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/ObservableBrx.h>
 
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
@@ -110,12 +111,17 @@ public:
     static const TUint kMacAddrBytes = 12;
 public:
     // aMacAddr in hex of form 001122334455
-    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, IObservableBrx& aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    ~RaopDevice();
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
     const Brx& MacAddress() const;
     void MacAddressOctets(TByte (&aOctets)[6]) const;
+private:
+    void DoRegister();
+    void DoDeregister();
+    void FriendlyNameUpdate(const Brx& aNewFriendlyName);
 private:
     Net::IMdnsProvider& iProvider;
     TUint iHandleRaop;
@@ -124,6 +130,7 @@ private:
     const Bws<kMacAddrBytes> iMacAddress;
     TBool iRegistered;
     Mutex iLock;
+    IObservableBrx& iFriendlyName;
 };
 
 class IRaopDiscovery
@@ -209,7 +216,7 @@ private:
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
     virtual ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -254,7 +261,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
     virtual ~RaopDiscovery();
     void Enable();
     void Disable();
@@ -286,7 +293,7 @@ private:
     Environment& iEnv;
     Net::DvStack& iDvStack;
     const Bws<RaopDevice::kMaxNameBytes> iHostName;
-    const Bws<RaopDevice::kMaxNameBytes> iFriendlyName;
+    IObservableBrx& iFriendlyName;
     const Bws<RaopDevice::kMacAddrBytes> iMacAddr;
     std::vector<RaopDiscoveryServer*> iServers;
     std::vector<IRaopObserver*> iObservers;

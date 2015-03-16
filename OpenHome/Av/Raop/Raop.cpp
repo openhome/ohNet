@@ -18,40 +18,62 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 // RaopDevice
-RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr)
+RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, IObservableBrx& aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
     , iEndpoint(aDiscoveryPort, aIpAddr)
     , iMacAddress(aMacAddr)
     , iRegistered(false)
     , iLock("RADL")
+    , iFriendlyName(aFriendlyName)
 {
     ASSERT(&iProvider); // Cannot function without MDNS
     iHandleRaop = iProvider.MdnsCreateService();
 
     ASSERT(aMacAddr.Bytes() == 12);
+    aFriendlyName.AddObserver(MakeFunctorGeneric<const Brx&>(*this, &RaopDevice::FriendlyNameUpdate)); // callback called within AddObserver
+    aDvStack.MdnsProvider()->MdnsSetHostName(aHost); // FIXME - required?
+}
+
+RaopDevice::~RaopDevice()
+{
+    iFriendlyName.RemoveObserver(MakeFunctorGeneric<const Brx&>(*this, &RaopDevice::FriendlyNameUpdate));
+}
+
+void RaopDevice::FriendlyNameUpdate(const Brx& aNewFriendlyName)
+{
+    AutoMutex am(iLock);
+
     iName.Replace("");
     iName.Append(iMacAddress);
     iName.Append("@");
-    iName.Append(aFriendlyName);
+    iName.Append(aNewFriendlyName);
 
     Log::Print("RAOP device created: ");
     Log::Print(iName);
     Log::Print("\n");
 
-    aDvStack.MdnsProvider()->MdnsSetHostName(aHost); // FIXME - required?
+    // If registered, deregister/register to update friendlyname
+    if ( iRegistered ) {
+        DoDeregister();
+        DoRegister();
+    }
 }
 
 void RaopDevice::Register()
 {
-    iLock.Wait();
+    AutoMutex am(iLock);
     if(iRegistered) {
-        iLock.Signal();
         return; // already registered
     }
+    DoRegister();
+    iRegistered = true;
+}
 
+// Call with iLock held
+void RaopDevice::DoRegister()
+{
     Bws<200> info;
 
-    info.SetBytes(0);
     iProvider.MdnsAppendTxtRecord(info, "txtvers", "1");
     iProvider.MdnsAppendTxtRecord(info, "ch", "2");
     iProvider.MdnsAppendTxtRecord(info, "cn", "0,1");
@@ -71,21 +93,21 @@ void RaopDevice::Register()
     LOG(kBonjour, " port: %u, address: %u\n", iEndpoint.Port(), iEndpoint.Address());
 
     iProvider.MdnsRegisterService(iHandleRaop, iName.PtrZ(), "_raop._tcp", iEndpoint.Address(), iEndpoint.Port(), info.PtrZ());
-    iRegistered = true;
-    iLock.Signal();
 }
 
 void RaopDevice::Deregister()
 {
-    iLock.Wait();
-    if(!iRegistered) {
-        iLock.Signal();
-        return;     // not registered
+    AutoMutex am(iLock);
+    if(iRegistered) {
+        return; // already registered
     }
-
-    iProvider.MdnsDeregisterService(iHandleRaop);
+    DoDeregister();
     iRegistered = false;
-    iLock.Signal();
+}
+
+void RaopDevice::DoDeregister()
+{
+    iProvider.MdnsDeregisterService(iHandleRaop);
 }
 
 const Endpoint& RaopDevice::GetEndpoint() const
@@ -682,7 +704,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
 
-RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
     : iEnv(aEnv)
     , iAdapter(aNif)
     , iObserversLock("RDOL")
@@ -847,7 +869,7 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 
 
 // RaopDiscovery
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
     : iEnv(aEnv)
     , iDvStack(aDvStack)
     , iHostName(aHostName)
@@ -1161,7 +1183,7 @@ void RaopDiscovery::HandleInterfaceChange()
 
 void RaopDiscovery::AddAdapter(NetworkAdapter& aNif)
 {
-    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName.PtrZ(), iMacAddr);
+    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName, iMacAddr);
     iServers.push_back(server);
     server->Enable();
     server->AddObserver(*this);

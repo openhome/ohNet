@@ -42,7 +42,7 @@ using namespace OpenHome::Net;
 
 
 // SourceFactory
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
@@ -79,7 +79,7 @@ const TUint SourceRaop::kAutoNetAuxOn = 0;              // Always visible via Ai
 const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // Always visible via Airplay; don't auto switch
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airplay when Net Aux source selected
 
-SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
     : Source(kSourceNameStr, kSourceNameStr)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
