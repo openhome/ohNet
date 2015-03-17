@@ -580,7 +580,7 @@ def build(bld):
         source=[
             'OpenHome/Web/ConfigUi/Tests/TestConfigUi.cpp'
         ],
-        use=['dsTestUtils', 'ConfigUi', 'WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
+        use=['dsTestUtils', 'ConfigUi', 'WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM', 'OPENSSL'],
         target='ConfigUiTestUtils')
 
     # Tests

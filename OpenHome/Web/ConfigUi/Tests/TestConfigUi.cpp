@@ -75,6 +75,7 @@ private:
     ConfigAppMediaPlayer* iConfigApp;
 
     OpenHome::Srs<kReadBufferBytes>* iReaderBuf;
+    OpenHome::ReaderUntil* iReaderUntil;
     OpenHome::Sws<kWriteBufferBytes>* iWriterBuf;
     OpenHome::Mutex* iLock;
     OpenHome::SocketTcpClient* iTcpClient;
@@ -195,6 +196,7 @@ void SuiteConfigUi::Setup()
     iLock = new Mutex ("SCOM");
     iTcpClient = new SocketTcpClient();
     iReaderBuf = new Srs<kReadBufferBytes>(*iTcpClient);
+    iReaderUntil = new ReaderUntilS<kReadBufferBytes>(*iReaderBuf);
     iWriterBuf = new Sws<kWriteBufferBytes>(*iTcpClient);
     iSocketIsOpen = false;
 
@@ -202,7 +204,7 @@ void SuiteConfigUi::Setup()
     iHeaderContentLength = new HttpHeaderContentLength();
 
     iWriterRequest = new WriterHttpRequest(*iWriterBuf);
-    iReaderResponse = new ReaderHttpResponse(iDvStack.Env(), *iReaderBuf);
+    iReaderResponse = new ReaderHttpResponse(iDvStack.Env(), *iReaderUntil);
 
     iReaderResponse->AddHeader(*iHeaderContentType);
     iReaderResponse->AddHeader(*iHeaderContentLength);
@@ -217,6 +219,7 @@ void SuiteConfigUi::TearDown()
 
     delete iLock;
     delete iWriterBuf;
+    delete iReaderUntil;
     delete iReaderBuf;
     delete iTcpClient;
 
@@ -274,9 +277,16 @@ TUint SuiteConfigUi::RetrieveUriSocketOpen(const Uri& aUri, const Brx& aMethod, 
         //totalBytes;
 
         if (code == HttpStatus::kOk.Code()) {
-            // Try do a peek here, as Content-Length currently returns 0.
-            aDataResponse.Replace(iReaderBuf->Peek(aDataResponse.MaxBytes()));
-            //Brn buf = iReaderBuf->Read(kReadBufferBytes);
+            // Content-Length currently returns 0 so read until ReaderError
+            aDataResponse.SetBytes(0);
+            try {
+                for (;;) {
+                    Brn buf = iReaderUntil->Read(aDataResponse.MaxBytes() - aDataResponse.Bytes());
+                    aDataResponse.Append(buf);
+                }
+            }
+            catch (ReaderError&) {
+            }
         }
     }
     catch(HttpError&) {
