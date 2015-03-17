@@ -174,6 +174,7 @@ private:
 class ReaderProtocol : public ReaderBinary
 {
 public:
+    virtual ~ReaderProtocol();
     Brn Read(TUint aBytes); // reads exactly aBytes or throws
 protected:
     ReaderProtocol(TUint aMaxBytes, IReader& aReader);
