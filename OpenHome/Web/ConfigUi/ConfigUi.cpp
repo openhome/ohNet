@@ -823,9 +823,9 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
 ConfigAppBase::ConfigAppBase(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : iEnv(aEnv)
+    : iConfigManager(aConfigManager)
+    , iEnv(aEnv)
     , iServer(aServer)
-    , iConfigManager(aConfigManager)
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
 {
