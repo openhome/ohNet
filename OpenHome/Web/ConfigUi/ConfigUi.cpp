@@ -206,7 +206,7 @@ void OptionJsonWriter::WriteChoiceObject(IReader& aReader, IWriter& aWriter, TUi
     Brn line = aReader.ReadUntil('\n');
     Parser p(line);
     Brn idBuf = p.Next();
-    Brn valueBuf = p.Next();
+    Brn valueBuf = p.NextToEnd();
     ASSERT(valueBuf.Bytes() > 0);
     try {
         TUint id = Ascii::Uint(idBuf);
