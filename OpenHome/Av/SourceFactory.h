@@ -2,9 +2,9 @@
 #define HEADER_SOURCE_FACTORY
 
 #include <OpenHome/Types.h>
-#include <OpenHome/ObservableBrx.h>
 
 namespace OpenHome {
+    class IObservableBrx;
 namespace Net {
     class DvDevice;
 }

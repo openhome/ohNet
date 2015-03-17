@@ -65,6 +65,7 @@ class BaseDropout( BASE.BaseTest ):
         duration     = 0
         loopback     = False
         softOptions  = None
+        senderMode   = 'unicast'
 
         # parse command line arguments
         try:

@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.69",
+        "version": "0.0.70",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {   "name": "TestTones",
@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.109",
+        "version": "0.0.117",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -81,13 +81,13 @@
     {   "name": "openssl",
         "type": "openhome",
         "platform-specific": true,
-        "version": "0.2.54",
+        "version": "0.2.55",
         "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
         "type": "internal",
         "platform-specific": true,
-        "version": "1.0.22",
+        "version": "1.0.25",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}"
     },
@@ -102,7 +102,7 @@
     {
         "name": "FunctionalTestData",
         "type": "internal",
-        "version": "0.0.32",
+        "version": "0.0.38",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTestData/FunctionalTestData-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
