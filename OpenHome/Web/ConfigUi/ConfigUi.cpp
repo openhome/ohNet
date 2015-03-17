@@ -615,6 +615,7 @@ TBool ConfigTab::Allocated() const
 
 void ConfigTab::SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
 {
+    LOG(kHttp, "ConfigTab::SetHandler iId: %u\n", iId);
     ASSERT(iHandler == NULL);
     iLanguageList = aLanguageList;
     iHandler = &aHandler;
@@ -670,6 +671,7 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
 
 void ConfigTab::Destroy()
 {
+    LOG(kHttp, "ConfigTab::Destroy iId: %u\n", iId);
     ASSERT(iHandler != NULL);
     iHandler = NULL;
 
@@ -728,10 +730,8 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 
 const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
-ConfigAppBase::ConfigAppBase(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : iEnv(aEnv)
-    , iServer(aServer)
-    , iConfigManager(aConfigManager)
+ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+    : iConfigManager(aConfigManager)
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
 {
@@ -919,8 +919,8 @@ void ConfigAppBase::AddJson(const Brx& aKey, JsonKvpVector& aAdditionalInfo)
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppBase(aEnv, aServer, aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+    : ConfigAppBase(aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     JsonKvpVector emptyJsonVector;
     AddText(Brn("Product.Name"), emptyJsonVector);
@@ -930,8 +930,8 @@ ConfigAppBasic::ConfigAppBasic(Environment& aEnv, IServer& aServer, IConfigManag
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppBasic(aEnv, aServer, aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+    : ConfigAppBasic(aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
@@ -962,8 +962,8 @@ ConfigAppSources::ConfigAppSources(Environment& aEnv, IServer& aServer, IConfigM
 
 // ConfigAppMediaPlayer
 
-ConfigAppMediaPlayer::ConfigAppMediaPlayer(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppSources(aEnv, aServer, aConfigManager, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+    : ConfigAppSources(aConfigManager, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     JsonKvpVector emptyJsonVector;
 

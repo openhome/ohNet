@@ -91,7 +91,7 @@ int CDECL main(int aArgc, char* aArgv[])
      // Web App should only be initialised once ConfigManager is opened (i.e.,
      // once ALL ConfigVals have been registered).
     Brn resourcePrefix("SoftPlayerBasic");
-    ConfigAppBasic* app = new ConfigAppBasic(env, *server, *confMgr, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize);
+    ConfigAppBasic* app = new ConfigAppBasic(*confMgr, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize);
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership

@@ -2,14 +2,11 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Tests/Cdecl.h>
 #include <OpenHome/Media/Tests/GetCh.h>
-
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Net/Private/DviStack.h>
-
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/TestFramework.h>
-
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
@@ -201,6 +198,7 @@ TBool TestTab::Allocated()
 
 void TestTab::Allocate(ITabHandler& aHandler)
 {
+    Log::Print("TestTab::Allocate iId: %u\n", iId);
     AutoMutex a(iLock);
     ASSERT(iHandler == NULL);
     iHandler = &aHandler;
@@ -208,6 +206,7 @@ void TestTab::Allocate(ITabHandler& aHandler)
 
 void TestTab::Receive(const Brx& aMessage)
 {
+    Log::Print("TestTab::Receive iId: %u\n", iId);
     // Echo message back.
     ITabMessage& msg = iMsgAllocator.Allocate(aMessage);
     iHandler->Send(msg);
@@ -215,6 +214,7 @@ void TestTab::Receive(const Brx& aMessage)
 
 void TestTab::Destroy()
 {
+    Log::Print("TestTab::Destroy iId: %u\n", iId);
     AutoMutex a(iLock);
     ASSERT(iHandler != NULL);
     iHandler = NULL;
