@@ -113,13 +113,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     static const TUint addr = 0;    // Bind to all addresses.
     static const TUint port = 0;    // Bind to whatever free port the OS allocates to the framework server.
     iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, kMaxUiTabs, kUiSendQueueSize);
-
-    // FIXME - take resource dir as param or copy res dir to build dir
-    ConfigAppMediaPlayer::SourceVector sources;
-    iConfigApp = new ConfigAppMediaPlayer(aDvStack.Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sources, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
-    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
-    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
-                        // Adding app here is okay as long as MediaPlayer::Start() is called before Start() on the AppFramework and before the UPnP device is enabled (so config page won't attempt to load uninitialised ConfigVals).
 }
 
 TestMediaPlayer::~TestMediaPlayer()
@@ -163,6 +156,13 @@ void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+
+    // FIXME - take resource dir as param or copy res dir to build dir
+    ConfigAppMediaPlayer::SourceVector sources;
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sources, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
+    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
+
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();

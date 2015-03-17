@@ -1,3 +1,21 @@
-Volume.Startup.Enabled:
-0   false
-1   true
+Sender.Enabled
+0   True
+1   False
+
+Sender.Mode
+2   Multicast
+3   Unicast
+
+Source.NetAux.Auto
+0   Enabled
+1   Disabled (selectable externally)
+2   Disabled (not selectable externally)
+
+
+Volume.Startup.Enabled
+0   False
+1   True
+
+qobuz.com.SoundQuality
+
+tidalhifi.com.SoundQuality

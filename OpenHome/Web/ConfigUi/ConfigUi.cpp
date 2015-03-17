@@ -122,6 +122,10 @@ Brn LanguageResourceFileReader::ReadUntil(TByte aSeparator)
         try {
             TUint bytes = iBuf.MaxBytes()-iBuf.Bytes();
             TUint bytesRemaining = iFile->Bytes()-iBytesRead;
+            if (bytesRemaining == 0) {
+                // Exhausted file and separator not found.
+                THROW(ReaderError);
+            }
             if (bytesRemaining < bytes) {
                 bytes = bytesRemaining;
             }

@@ -70,29 +70,25 @@ function StartLongPolling()
             if (limits.Key() == aKey) {
                 if (aValue >= limits.Min() && aValue <= limits.Max()) {
                     SendUpdate(aKey, aValue);
-                }
-                else {
-                    alert(aKey + " value of " + aValue + " is outwith range: " + limits.Min() + ".." + limits.Max());
+                    return;
                 }
             }
         }
+        alert(aKey + " value of " + aValue + " is outwith range: " + limits.Min() + ".." + limits.Max());
     }
 
     var ValidateChoiceInput = function(aKey, aValue)
     {
         for (var i=0; i<gConfigValChoiceOptions.length; i++) {
             var options = gConfigValChoiceOptions[i].Options();
-            var found = false;
             for (var j=0; j<options.length; j++) {
                 if (options[j].value == aValue) {
-                    found = true;
                     SendUpdate(aKey, options[j].id);
+                    return;
                 }
             }
-            if (!found) {
-                alert(aKey + " value of " + aValue + " not found");
-            }
         }
+        alert(aKey + " value of " + aValue + " not found");
     }
 
     var ValidateTextInput = function(aKey, aValue)
@@ -100,14 +96,13 @@ function StartLongPolling()
         for (var i=0; i<gConfigValTextLimits.length; i++) {
             var limits = gConfigValTextLimits[i];
             if (limits.Key() == aKey) {
-                if (aValue <= limits.MaxLength()) {
+                if (aValue.length <= limits.MaxLength()) {
                     SendUpdate(aKey, aValue);
-                }
-                else {
-                    alert(aKey + " value of " + aValue + " is longer than: " + limits.MaxLength() + " characters");
+                    return;
                 }
             }
         }
+        alert(aKey + " value of " + aValue + " is longer than: " + limits.MaxLength() + " characters");
     }
 
     var CreateNumElement = function(aJsonConfigNumVal)
