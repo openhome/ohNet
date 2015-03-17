@@ -347,7 +347,7 @@ private:
     typedef std::pair<OpenHome::Brn, OpenHome::Brx*> JsonPair;
     typedef std::map<OpenHome::Brn, OpenHome::Brx*, OpenHome::BufferCmp> JsonMap;
 protected:
-    ConfigAppBase(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppBase(OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) override;
@@ -366,8 +366,6 @@ private:
 protected:
     OpenHome::Configuration::IConfigManager& iConfigManager;
 private:
-    OpenHome::Environment& iEnv;
-    IServer& iServer;
     ConfigMessageAllocator* iMsgAllocator;
     const OpenHome::Bws<kMaxResourcePrefixBytes> iResourcePrefix;
     std::vector<FileResourceHandler*> iResourceHandlers;
@@ -383,19 +381,19 @@ private:
 class ConfigAppBasic : public ConfigAppBase
 {
 public:
-     ConfigAppBasic(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppBasic(OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppSources : public ConfigAppBasic
 {
 public:
-     ConfigAppSources(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
-     ConfigAppMediaPlayer(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppMediaPlayer(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 private:
     void AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
     void AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
