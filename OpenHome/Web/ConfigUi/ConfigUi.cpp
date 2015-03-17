@@ -1024,16 +1024,18 @@ ConfigAppBasic::ConfigAppBasic(Environment& aEnv, IServer& aServer, IConfigManag
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, SourceVector& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppSources::ConfigAppSources(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppBasic(aEnv, aServer, aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
         Brn prefix("Source.");
         Brn suffix(".Name");
-        Bwh* key = new Bwh(prefix.Bytes()+2+suffix.Bytes()+1); // "Source.<0-99>.Name\0"
+        Bwh* key = new Bwh(prefix.Bytes()+2+suffix.Bytes()+1);  // 0..99 sources
+        //Bwh* key = new Bwh(prefix.Bytes()+aSources[i]->Bytes()+suffix.Bytes()+1);
         key->Replace(prefix);
         Ascii::AppendDec(*key, i);
+        //key->Append(*aSources[i]);
         key->Append(suffix);
 
         JsonKvpVector sourceInfoVector;
@@ -1054,7 +1056,7 @@ ConfigAppSources::ConfigAppSources(Environment& aEnv, IServer& aServer, IConfigM
 
 // ConfigAppMediaPlayer
 
-ConfigAppMediaPlayer::ConfigAppMediaPlayer(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, SourceVector& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppMediaPlayer::ConfigAppMediaPlayer(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppSources(aEnv, aServer, aConfigManager, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     JsonKvpVector emptyJsonVector;

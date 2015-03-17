@@ -389,20 +389,19 @@ public:
 class ConfigAppSources : public ConfigAppBasic
 {
 public:
-    typedef std::vector<OpenHome::Av::ISource*> SourceVector;
-public:
-     ConfigAppSources(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, SourceVector& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppSources(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
-     ConfigAppMediaPlayer(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, SourceVector& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppMediaPlayer(OpenHome::Environment& aEnv, IServer& aServer, OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 private:
     void AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
     void AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
     void AddTextConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
 };
+
 
 } // namespace Web
 } // namespace OpenHome

@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Av/Product.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Private/Printer.h>
@@ -157,11 +158,23 @@ void TestMediaPlayer::Run()
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
 
+    std::vector<const Brx*> sourcesBufs;
+    Product& product = iMediaPlayer->Product();
+    for (TUint i=0; i<product.SourceCount(); i++) {
+        Bws<ISource::kMaxSystemNameBytes> systemName;
+        Bws<ISource::kMaxSourceNameBytes> name;
+        Bws<ISource::kMaxSourceTypeBytes> type;
+        TBool visible;
+        product.GetSourceDetails(i, systemName, type, name, visible);
+        sourcesBufs.push_back(new Brh(systemName));
+    }
     // FIXME - take resource dir as param or copy res dir to build dir
-    ConfigAppMediaPlayer::SourceVector sources;
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sources, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
     iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
     //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
+    for (TUint i=0;i<sourcesBufs.size(); i++) {
+        delete sourcesBufs[i];
+    }
 
     iAppFramework->Start();
     iDevice->SetEnabled();
