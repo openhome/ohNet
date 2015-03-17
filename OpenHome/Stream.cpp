@@ -156,7 +156,7 @@ Brn ReaderUntil::ReadProtocol(TUint aBytes)
     }
     iBytes = 0;
     iOffset = 0;
-    return Brn(start, p - start);
+    return Brn(start, (TUint)(p - start));
 }
 
 Brn ReaderUntil::Read(TUint aBytes)
