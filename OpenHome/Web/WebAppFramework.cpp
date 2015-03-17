@@ -356,6 +356,7 @@ TBool FrameworkTab::Available() const
 
 void FrameworkTab::Set(ITab& aTab, std::vector<const Brx*>& aLanguages)
 {
+    LOG(kHttp, "FrameworkTab::Set iId: %u\n", iId);
     AutoMutex a(iLock);
     ASSERT(iTab == NULL);
     ASSERT(iRefCount == 0);
@@ -400,6 +401,7 @@ void FrameworkTab::Receive(const OpenHome::Brx& aMessage)
 
 void FrameworkTab::Destroy()
 {
+    LOG(kHttp, "FrameworkTab::Destroy iId: %u\n", iId);
     // Removes ref held by caller and passes on call to IDestroyHandler.
     AutoMutex a(iLock);
     ASSERT(iTab != NULL && !iDestructionPending);

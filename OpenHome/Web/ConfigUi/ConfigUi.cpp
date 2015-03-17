@@ -765,6 +765,7 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
 
 void ConfigTab::Destroy()
 {
+    LOG(kHttp, "ConfigTab::Destroy iId: %u\n", iId);
     ASSERT(iHandler != NULL);
     iHandler = NULL;
 
