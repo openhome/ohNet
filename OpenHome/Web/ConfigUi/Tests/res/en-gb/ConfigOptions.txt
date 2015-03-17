@@ -17,5 +17,10 @@ Volume.Startup.Enabled
 1   True
 
 qobuz.com.SoundQuality
+5   320kbps MP3
+6   Lossless
 
 tidalhifi.com.SoundQuality
+0   Low
+1   High
+2   Lossless
