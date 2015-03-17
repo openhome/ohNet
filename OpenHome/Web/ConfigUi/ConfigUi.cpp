@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
+#include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Debug.h>
 
 #include <limits>
@@ -13,6 +14,210 @@
 using namespace OpenHome;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Web;
+
+
+// LanguageResourceFileReader
+
+LanguageResourceFileReader::LanguageResourceFileReader(const Brx& aRootDir)
+    : iRootDir(aRootDir)
+    , iFile(NULL)
+    , iOffset(0)
+    , iBytesRead(0)
+    , iLock("LRRL")
+{
+    ASSERT(iRootDir[iRootDir.Bytes()-1] == '/');    // expect trailing '/'
+}
+
+void LanguageResourceFileReader::SetResource(const Brx& aUriTail)
+{
+    AutoMutex a(iLock);
+    ASSERT(iFile == NULL);
+    Bws<Uri::kMaxUriBytes+1> filename(iRootDir);
+    filename.Append(aUriTail);
+
+    try {
+        // FIXME - dynamic allocation!
+        iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
+    }
+    catch (FileOpenError&) {
+        LOG(kHttp, "LanguageResourceFileReader::SetResource failed to open resource: ");
+        LOG(kHttp, filename);
+        LOG(kHttp, "\n");
+        THROW(LanguageResourceInvalid);
+    }
+}
+
+TBool LanguageResourceFileReader::Allocated() const
+{
+    AutoMutex a(iLock);
+    return (iFile != NULL);
+}
+
+Brn LanguageResourceFileReader::Read(TUint aBytes)
+{
+    AutoMutex a(iLock);
+    if (aBytes > iBuf.MaxBytes()) {
+        THROW(ReaderError);
+    }
+
+    if (aBytes > iBuf.MaxBytes() - iOffset) {
+        // Not enough space left in buffer for aBytes, so shift data in buffer.
+        iBuf.Replace(iBuf.Ptr()+iOffset, iBuf.Bytes()-iOffset); // FIXME - is this safe?
+        //(void)memmove(iBuf.Ptr(), iBuf.Ptr() + iOffset, iBuf.Bytes() - iOffset);
+        iOffset = 0;
+    }
+
+    try {
+        TUint bytes = iBuf.MaxBytes()-iBuf.Bytes();
+        TUint bytesRemaining = iFile->Bytes()-iBytesRead;
+        if (bytesRemaining < bytes) {
+            bytes = bytesRemaining;
+        }
+        iFile->Read(iBuf, bytes);
+        iBytesRead += bytes;
+    }
+    catch (FileReadError&) {
+        THROW(ReaderError);
+    }
+
+    return Brn(iBuf);
+}
+
+Brn LanguageResourceFileReader::ReadUntil(TByte aSeparator)
+{
+    AutoMutex a(iLock);
+    // Parse current data in buffer looking for separator.
+    TUint remaining = iBuf.Bytes() - iOffset;
+    TUint count = 0;
+    const TByte* start = iBuf.Ptr()+iOffset;
+    const TByte* current = start;
+
+    for (;;) {
+        while (remaining > 0) {
+            if (*current++ == aSeparator) {
+                iOffset += count + 1;   // skip over separator;
+                return (Brn(start, count));
+            }
+            count++;
+            remaining--;
+        }
+
+        if (iOffset > 0 && iBuf.Bytes() == iBuf.MaxBytes()) {
+            // Separator not found in current buffer; shift data in buffer to make room.
+            start -= iOffset;
+            iBuf.SetBytes(iBuf.Bytes()-iOffset);
+            current -= iOffset;
+            if (iBuf.Bytes() > 0) {
+                iBuf.Replace(iBuf.Ptr()+iOffset, iBuf.Bytes()); // FIXME - is this safe?
+                //(void)memmove(iBuf.Ptr(), iBuf.Ptr() + iOffset, iBuf.Bytes());
+            }
+            iOffset = 0;
+        }
+
+        if (iBuf.Bytes() == iBuf.MaxBytes()) {
+            // Buffer full and separator not found.
+            THROW(ReaderError);
+        }
+
+        try {
+            TUint bytes = iBuf.MaxBytes()-iBuf.Bytes();
+            TUint bytesRemaining = iFile->Bytes()-iBytesRead;
+            if (bytesRemaining < bytes) {
+                bytes = bytesRemaining;
+            }
+            iFile->Read(iBuf, bytes);
+            iBytesRead += bytes;
+            remaining += bytes;
+        }
+        catch (FileReadError&) {
+            THROW(ReaderError);
+        }
+    }
+}
+
+void LanguageResourceFileReader::ReadFlush()
+{
+    AutoMutex a(iLock);
+    iBuf.SetBytes(0);
+    iOffset = 0;
+}
+
+void LanguageResourceFileReader::ReadInterrupt()
+{
+}
+
+void LanguageResourceFileReader::Destroy()
+{
+    AutoMutex a(iLock);
+    ASSERT(iFile != NULL);
+    delete iFile;
+    iFile = NULL;
+    iBuf.SetBytes(0);
+    iOffset = 0;
+    iBytesRead = 0;
+}
+
+
+// OptionJsonWriter
+
+void OptionJsonWriter::Write(IReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter)
+{
+    TBool found = false;
+    try {
+        aWriter.Write(Brn("\"options\":["));
+        try {
+            while (!found) {
+                Brn line = aReader.ReadUntil('\n'); // FIXME - expects Unix-style line endings
+                if (Ascii::Contains(line, aKey)) {
+                    found = true;
+                }
+            }
+
+            ASSERT(found);
+
+            for (TUint i=0; i<aChoices.size()-1; i++) {
+                OptionJsonWriter::WriteChoiceObject(aReader, aWriter, aChoices[i]);
+                aWriter.Write(Brn(","));
+            }
+            OptionJsonWriter::WriteChoiceObject(aReader, aWriter, aChoices[aChoices.size()-1]);
+            // Last value in array should not be followed by a ",".
+        }
+        catch (ReaderError&) {
+            LOG(kHttp, "OptionJsonWriter::Write ReaderError");
+            // This is reading from file, so shouldn't fail.
+            ASSERTS();
+        }
+
+        aWriter.Write(Brn("]"));
+    }
+    catch (WriterError&) {
+        LOG(kHttp, "OptionJsonWriter::Write WriterError");
+        //ASSERTS();
+    }
+}
+
+void OptionJsonWriter::WriteChoiceObject(IReader& aReader, IWriter& aWriter, TUint aId)
+{
+    aWriter.Write(Brn("{"));
+    Brn line = aReader.ReadUntil('\n');
+    Parser p(line);
+    Brn idBuf = p.Next();
+    Brn valueBuf = p.Next();
+    ASSERT(valueBuf.Bytes() > 0);
+    try {
+        TUint id = Ascii::Uint(idBuf);
+        ASSERT(id == aId);
+    }
+    catch (AsciiError&) {
+        ASSERTS();
+    }
+
+    aWriter.Write(Brn("\"id\": "));
+    Ascii::StreamWriteUint(aWriter, aId);
+    aWriter.Write(Brn(",\"value\": \""));
+    aWriter.Write(valueBuf);    // FIXME - ensure this is escaped JSON
+    aWriter.Write(Brn("\"}"));
+}
 
 
 // ConfigMessage
@@ -32,7 +237,7 @@ void ConfigMessage::Set(ConfigNum& /*aNum*/, TInt /*aValue*/, const Brx& /*aAddi
     ASSERTS();
 }
 
-void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const Brx& /*aAdditionalJson*/)
+void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const Brx& /*aAdditionalJson*/, std::vector<const Brx*>& /*aLanguageList*/)
 {
     ASSERTS();
 }
@@ -147,19 +352,21 @@ void ConfigMessageNum::WriteMeta(IWriter& aWriter)
 
 // ConfigMessageChoice
 
-ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator)
+ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager)
     : ConfigMessage(aDeallocator)
+    , iLanguageResourceManager(aLanguageResourceManager)
     , iChoice(NULL)
     , iValue(std::numeric_limits<TUint>::max())
 {
 }
 
-void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson)
+void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
 {
     ConfigMessage::Set(aAdditionalJson);
     ASSERT(iChoice == NULL);
     iChoice = &aChoice;
     iValue = aValue;
+    iLanguageList = &aLanguageList;
 }
 
 void ConfigMessageChoice::Clear()
@@ -168,6 +375,7 @@ void ConfigMessageChoice::Clear()
     ConfigMessage::Clear();
     iChoice = NULL;
     iValue = std::numeric_limits<TUint>::max();
+    iLanguageList = NULL;
 }
 
 void ConfigMessageChoice::WriteKey(IWriter& aWriter)
@@ -189,15 +397,18 @@ void ConfigMessageChoice::WriteType(IWriter& aWriter)
 
 void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
 {
+    static const Brn kConfigOptionsFile("ConfigOptions.txt");
     const std::vector<TUint>& choices = iChoice->Choices();
-    aWriter.Write(Brn("\"options\":["));
-    for (TUint i=0; i<choices.size()-1; i++) {
-        Ascii::StreamWriteUint(aWriter, choices[i]);
-        aWriter.Write(Brn(","));
+
+    ILanguageResourceReader* resourceHandler = NULL;
+    try {
+        resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
     }
-    Ascii::StreamWriteUint(aWriter, choices[choices.size()-1]);
-    // Last value in array should not be followed by a ",".
-    aWriter.Write(Brn("]"));
+    catch (LanguageResourceInvalid&) {
+        // FIXME - don't think this is thrown
+        ASSERTS();
+    }
+    OptionJsonWriter::Write(*resourceHandler, iChoice->Key(), choices, aWriter);
 }
 
 
@@ -296,18 +507,18 @@ IConfigMessage& ConfigMessageNumAllocator::Allocate(ConfigNum& aNum, TInt aValue
 
 // ConfigMessageChoiceAllocator
 
-ConfigMessageChoiceAllocator::ConfigMessageChoiceAllocator(TUint aMessageCount)
+ConfigMessageChoiceAllocator::ConfigMessageChoiceAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager)
     : ConfigMessageAllocatorBase(aMessageCount)
 {
     for (TUint i=0; i<aMessageCount; i++) {
-        iFifo.Write(new ConfigMessageChoice(*this));
+        iFifo.Write(new ConfigMessageChoice(*this, aLanguageResourceManager));
     }
 }
 
-IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson)
+IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
 {
     IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aChoice, aValue, aAdditionalJson);
+    msg.Set(aChoice, aValue, aAdditionalJson, aLanguageList);
     return msg;
 }
 
@@ -332,9 +543,9 @@ IConfigMessage& ConfigMessageTextAllocator::Allocate(ConfigText& aText, const Br
 
 // ConfigMessageAllocator
 
-ConfigMessageAllocator::ConfigMessageAllocator(TUint aMessageCount)
+ConfigMessageAllocator::ConfigMessageAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager)
     : iAllocatorNum(aMessageCount)
-    , iAllocatorChoice(aMessageCount)
+    , iAllocatorChoice(aMessageCount, aLanguageResourceManager)
     , iAllocatorText(aMessageCount)
 {
 }
@@ -344,9 +555,9 @@ IConfigMessage& ConfigMessageAllocator::Allocate(ConfigNum& aNum, TInt aValue, c
     return iAllocatorNum.Allocate(aNum, aValue, aAdditionalJson);
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson)
+IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
 {
-    return iAllocatorChoice.Allocate(aChoice, aValue, aAdditionalJson);
+    return iAllocatorChoice.Allocate(aChoice, aValue, aAdditionalJson, aLanguageList);
 }
 
 IConfigMessage& ConfigMessageAllocator::Allocate(ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson)
@@ -492,9 +703,10 @@ TBool ConfigTab::Allocated() const
     return allocated;
 }
 
-void ConfigTab::SetHandler(ITabHandler& aHandler)
+void ConfigTab::SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
 {
     ASSERT(iHandler == NULL);
+    iLanguageList = aLanguageList;
     iHandler = &aHandler;
     for (TUint i=0; i<iConfigNums.size(); i++) {
         const Brx& key = iConfigNums[i].first;
@@ -588,7 +800,7 @@ void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
     ASSERT(iHandler != NULL);
     ConfigChoice& choice = iConfigManager.GetChoice(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
-    IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), json);
+    IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), json, iLanguageList);
     iHandler->Send(msg);
 }
 
@@ -604,10 +816,11 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 
 // ConfigAppBase
 
+const Brn ConfigAppBase::kDefaultLanguage("en-gb");
+
 ConfigAppBase::ConfigAppBase(Environment& aEnv, IServer& aServer, IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : iEnv(aEnv)
     , iServer(aServer)
-    , iMsgAllocator(aSendQueueSize)
     , iConfigManager(aConfigManager)
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
@@ -615,14 +828,25 @@ ConfigAppBase::ConfigAppBase(Environment& aEnv, IServer& aServer, IConfigManager
     Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: ");
     Log::Print(iResourcePrefix);
     Log::Print("\n");
+
+    iMsgAllocator = new ConfigMessageAllocator(aSendQueueSize, *this);
+
     for (TUint i=0; i<aMaxTabs; i++) {
         iResourceHandlers.push_back(new FileResourceHandler(aResourceDir));
-        iTabs.push_back(new ConfigTab(i, iMsgAllocator, iConfigManager, *this));
+        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, *this));
+    }
+
+    for (TUint i=0; i<aMaxTabs; i++) {
+        iLanguageResourceHandlers.push_back(new LanguageResourceFileReader(aResourceDir));
     }
 }
 
 ConfigAppBase::~ConfigAppBase()
 {
+    for (TUint i=0; i<iLanguageResourceHandlers.size(); i++) {
+        delete iLanguageResourceHandlers[i];
+    }
+
     for (TUint i=0; i<iTabs.size(); i++) {
         delete iTabs[i];
         delete iResourceHandlers[i];
@@ -641,6 +865,8 @@ ConfigAppBase::~ConfigAppBase()
     for (it = iJsonMap.begin(); it != iJsonMap.end(); ++it) {
         delete it->second;
     }
+
+    delete iMsgAllocator;
 }
 
 // FIXME - is this really required? If so, app framework should call it when it is started
@@ -651,7 +877,7 @@ ConfigAppBase::~ConfigAppBase()
 //    }
 //}
 
-ITab& ConfigAppBase::Create(ITabHandler& aHandler)
+ITab& ConfigAppBase::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
@@ -659,7 +885,7 @@ ITab& ConfigAppBase::Create(ITabHandler& aHandler)
             // FIXME - won't be cleared until a new handler is set.
             // Shouldn't matter as only thing that can call tab handler is the
             // tab, which gets destroyed when it is no longer in use.
-            iTabs[i]->SetHandler(aHandler);
+            iTabs[i]->SetHandler(aHandler, aLanguageList);
             return *iTabs[i];
         }
     }
@@ -690,6 +916,38 @@ const Brx& ConfigAppBase::GetJson(const OpenHome::Brx& aKey)
     JsonMap::iterator it = iJsonMap.find(Brn(aKey));
     ASSERT(it != iJsonMap.end());
     return *it->second;
+}
+
+ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<const Brx*>& aLanguageList)
+{
+    // If no desired language can be found, should default to English.
+    // Developer error if English mappings don't exist.
+    std::vector<const Brx*> languages(aLanguageList);
+    languages.push_back(&kDefaultLanguage);
+
+    AutoMutex a(iLock);
+    for (TUint i=0; i<iLanguageResourceHandlers.size(); i++) {
+        if (!iLanguageResourceHandlers[i]->Allocated()) {
+            for (TUint j=0; j<languages.size(); j++) {
+                Bws<Uri::kMaxUriBytes> resource(*languages[j]);
+                resource.Append("/");
+                resource.Append(aResourceUriTail);
+                try {
+                    LanguageResourceFileReader& handler = *iLanguageResourceHandlers[i];
+                    handler.SetResource(resource);
+                    return handler;
+                }
+                catch (LanguageResourceInvalid&) {
+                    LOG(kHttp, "ConfigAppBase::CreateLanguageResourceHandler no mapping found for: ");
+                    LOG(kHttp, resource);
+                    LOG(kHttp, "\n");
+                }
+            }
+            ASSERTS();  // No mapping found; should have been able to find kDefaultLanguage
+        }
+    }
+    ASSERTS();  // No free handler available. // FIXME - throw exception instead?
+    return *iLanguageResourceHandlers[0];   // unreachable
 }
 
 void ConfigAppBase::AddNum(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)

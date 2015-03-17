@@ -1,6 +1,7 @@
 function StartLongPolling()
 {
     var gConfigValNumLimits = [];
+    var gConfigValChoiceOptions = [];
     var gConfigValTextLimits = [];
 
     var LongPollStarted = function()
@@ -30,6 +31,22 @@ function StartLongPolling()
         return this.iMax;
     }
 
+    var ConfigChoiceOptions = function(aKey, aOptions)
+    {
+        this.iKey = aKey;
+        this.iOptions = aOptions;
+    }
+
+    ConfigChoiceOptions.prototype.Key = function()
+    {
+        return this.iKey;
+    }
+
+    ConfigChoiceOptions.prototype.Options = function()
+    {
+        return this.iOptions;
+    }
+
     var ConfigTextLimits = function(aKey, aMaxLength)
     {
         this.iKey = aKey;
@@ -49,7 +66,7 @@ function StartLongPolling()
     var ValidateNumInput = function(aKey, aValue)
     {
         for (var i=0; i<gConfigValNumLimits.length; i++) {
-            limits = gConfigValNumLimits[i];
+            var limits = gConfigValNumLimits[i];
             if (limits.Key() == aKey) {
                 if (aValue >= limits.Min() && aValue <= limits.Max()) {
                     SendUpdate(aKey, aValue);
@@ -61,10 +78,27 @@ function StartLongPolling()
         }
     }
 
+    var ValidateChoiceInput = function(aKey, aValue)
+    {
+        for (var i=0; i<gConfigValChoiceOptions.length; i++) {
+            var options = gConfigValChoiceOptions[i].Options();
+            var found = false;
+            for (var j=0; j<options.length; j++) {
+                if (options[j].value == aValue) {
+                    found = true;
+                    SendUpdate(aKey, options[j].id);
+                }
+            }
+            if (!found) {
+                alert(aKey + " value of " + aValue + " not found");
+            }
+        }
+    }
+
     var ValidateTextInput = function(aKey, aValue)
     {
         for (var i=0; i<gConfigValTextLimits.length; i++) {
-            limits = gConfigValTextLimits[i];
+            var limits = gConfigValTextLimits[i];
             if (limits.Key() == aKey) {
                 if (aValue <= limits.MaxLength()) {
                     SendUpdate(aKey, aValue);
@@ -96,10 +130,11 @@ function StartLongPolling()
         elemSelect.multiple = false;
         for (var i=0; i<options.length; i++) {
             var option = document.createElement("option");
-            option.text = options[i];
+            option.text = options[i].value;
             elemSelect.add(option);
         }
-        elemSelect.onblur = function () {SendUpdate(elemSelect.id, elemSelect.value);}
+        gConfigValChoiceOptions.push(new ConfigChoiceOptions(aJsonConfigChoiceVal.key, aJsonConfigChoiceVal.meta.options));
+        elemSelect.onblur = function () {ValidateChoiceInput(elemSelect.id, elemSelect.value);}
         return elemSelect;
     }
 
@@ -130,7 +165,7 @@ function StartLongPolling()
         }
     }
 
-    var CreateElement= function(aJsonConfigVal)
+    var CreateElement = function(aJsonConfigVal)
     {
         var elem = document.getElementById(aJsonConfigVal.key);
         if (elem != null) {
@@ -168,15 +203,35 @@ function StartLongPolling()
         }
     }
 
+    var SetElementValue = function(aElement, aJsonResponse)
+    {
+        // Element should NOT be null.
+        if (aJsonResponse.type == "numeric") {
+            aElement.value = aJsonResponse.value;
+        }
+        else if (aJsonResponse.type == "choice") {
+            var id = aJsonResponse.value;
+            var options = aJsonResponse.meta.options;
+            for (var i=0; i<options.length; i++) {
+                if (id == options[i].id) {
+                    aElement.value = options[i].value;
+                }
+            }
+        }
+        else if (aJsonResponse.type == "text") {
+            aElement.value = aJsonResponse.value;
+        }
+    }
+
     // FIXME - move this to config.js
     var UpdateCallback = function(aResponse)
     {
         if (aResponse != null && aResponse != "") {
             var key = aResponse.key;
-            var val = aResponse.value;
+            //var val = aResponse.value;
             var elem = document.getElementById(key);
             if (elem != null) {
-                elem.value = val;       // FIXME - is this valid for all element types in use?
+                SetElementValue(elem, aResponse);
             }
             else {
                 // Element not found; may be one that has just been discovered.
@@ -184,7 +239,7 @@ function StartLongPolling()
                 // otherwise.
                 elem = CreateElement(aResponse);
                 if (elem != null) {
-                    elem.value = val;   // FIXME - is this valid for all element types in use?
+                    SetElementValue(elem, aResponse);
                 }
             }
         }

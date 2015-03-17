@@ -93,7 +93,7 @@ void FileResourceHandler::Write(IWriter& aWriter, TUint aOffset, TUint aBytes)
             buf.SetBytes(0);
         }
     }
-    catch (FileReadError) {
+    catch (FileReadError&) {
         // FIXME - this behaviour seems undesirable
         // iFile->Read() should EITHER do what we ask, OR throw an exception
         // It shouldn't do both (either partially or fully)!
@@ -354,12 +354,14 @@ TBool FrameworkTab::Available() const
     return available;
 }
 
-void FrameworkTab::Set(ITab& aTab)
+void FrameworkTab::Set(ITab& aTab, std::vector<const Brx*>& aLanguages)
 {
     AutoMutex a(iLock);
     ASSERT(iTab == NULL);
     ASSERT(iRefCount == 0);
     ASSERT(!iDestructionPending);
+    ASSERT(iLanguages.size() == 0);
+    iLanguages = aLanguages;    // takes ownership of pointers
     iTab = &aTab;
     iRefCount++;    // reference now held by caller of this
 }
@@ -405,6 +407,10 @@ void FrameworkTab::Destroy()
     iDestructionPending = true;
     RemoveRefUnlocked();
     iDestroyHandler.Destroy(*this);
+    for (TUint i=0; i<iLanguages.size(); i++) {
+        delete iLanguages[i];
+    }
+    iLanguages.clear();
 }
 
 void FrameworkTab::Send(ITabMessage& aMessage)
@@ -482,7 +488,7 @@ TabManager::~TabManager()
     }
 }
 
-TUint TabManager::CreateTab(IWebApp& aApp)
+TUint TabManager::CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
@@ -490,8 +496,8 @@ TUint TabManager::CreateTab(IWebApp& aApp)
             LOG(kHttp, "TabManager::CreateTab creating tab with ID: %u for WebApp: ", i);
             LOG(kHttp, aApp.ResourcePrefix());
             LOG(kHttp, "\n");
-            ITab& tab = aApp.Create(*iTabs[i]);
-            iTabs[i]->Set(tab);
+            ITab& tab = aApp.Create(*iTabs[i], aLanguageList);
+            iTabs[i]->Set(tab, aLanguageList);  // Takes ownership of (buffers in) language list.
             TUint clientId = TabManagerIdToClientId(i);
             return clientId;
         }
@@ -566,9 +572,9 @@ IResourceHandler& WebAppInternal::CreateResourceHandler(const Brx& aResource)
     return iWebApp->CreateResourceHandler(aResource);
 }
 
-ITab& WebAppInternal::Create(ITabHandler& aHandler)
+ITab& WebAppInternal::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
 {
-    return iWebApp->Create(aHandler);
+    return iWebApp->Create(aHandler, aLanguageList);
 }
 
 const Brx& WebAppInternal::ResourcePrefix() const
@@ -772,11 +778,7 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     iReaderRequest->AddHeader(iHeaderContentLength);
     iReaderRequest->AddHeader(iHeaderTransferEncoding);
     iReaderRequest->AddHeader(iHeaderConnection);
-
-    // FIXME - remove if not required.
-    //iReaderRequest->AddHeader(iHeaderExpect);
-    //iReaderRequest->AddHeader(iHeaderSoapAction);
-    //iReaderRequest->AddHeader(iHeaderAcceptLanguage);
+    iReaderRequest->AddHeader(iHeaderAcceptLanguage);
 }
 
 HttpSession::~HttpSession()
@@ -923,8 +925,12 @@ void HttpSession::Post()
     if (uriTail == Brn("lpcreate")) {
         try {
             IWebApp& app = iAppManager.GetApp(uriPrefix); // FIXME - pass full uri to this instead of prefix?
-            TUint id = iTabManager.CreateTab(app);
-
+            std::vector<char*>& languageList = iHeaderAcceptLanguage.LanguageList();
+            std::vector<const Brx*> languageListHeapBufs;
+            for (TUint i=0; i<languageList.size(); i++) {
+                languageListHeapBufs.push_back(new Brh(languageList[i]));
+            }
+            TUint id = iTabManager.CreateTab(app, languageListHeapBufs);
             IFrameworkTab& tab = iTabManager.GetTab(id);
             iResponseStarted = true;
             WriteLongPollHeaders();

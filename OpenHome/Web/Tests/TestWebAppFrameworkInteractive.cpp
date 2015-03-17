@@ -93,7 +93,7 @@ public:
     TestHttpApp(TUint aMaxSessions, const OpenHome::Brx& aResourceDir);
     ~TestHttpApp();
 public: // from IWebApp
-    ITab& Create(ITabHandler& aHandler);
+    ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList);
     const OpenHome::Brx& ResourcePrefix() const;
     IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource);
 private:
@@ -244,7 +244,7 @@ TestHttpApp::~TestHttpApp()
     }
 }
 
-ITab& TestHttpApp::Create(ITabHandler& aHandler)
+ITab& TestHttpApp::Create(ITabHandler& aHandler, std::vector<const Brx*>& /*aLanguageList*/)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {

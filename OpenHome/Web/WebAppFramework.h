@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Net/Private/DviServerUpnp.h> // FIXME - move HeaderAcceptLanguage out of this
 
 EXCEPTION(ResourceInvalid);
 EXCEPTION(TabCreationFailed);
@@ -119,7 +120,7 @@ class IFrameworkTimer;
 class IWebApp : public IResourceManager
 {
 public:
-    virtual ITab& Create(ITabHandler& aHandler) = 0;    // throws TabCreationFailed
+    virtual ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) = 0;    // throws TabCreationFailed
     //virtual IFrameworkTimer& CreateTimer() = 0;         // throws TimerCreationFailed
     virtual const OpenHome::Brx& ResourcePrefix() const = 0; // FIXME - rename to UriPrefix?
     virtual ~IWebApp() {}
@@ -294,7 +295,7 @@ public:
     ~FrameworkTab();
     TBool Allocated() const;    // calls between this and SetTab() not thread-safe; must lock entire object
     TBool Available() const;    // calls between this and AddRef() not thread-safe; Destroy() may be called by another thread. Appropriate locking must be in place to ensure thread-safety among these calls and the ITabDestroyHandler.
-    void Set(ITab& aTab);
+    void Set(ITab& aTab, std::vector<const Brx*>& aLanguages);
     void StartPollWait();
     void CancelPollWait();
 public: // from IFrameworkTab
@@ -318,6 +319,7 @@ private:
     FrameworkTabHandler iHandler;
     PollTimer iPollTimer;
     ITab* iTab;
+    std::vector<const Brx*> iLanguages; // takes ownership of pointers
     TUint iRefCount;
     TBool iDestructionPending;
     mutable OpenHome::Mutex iLock;
@@ -329,7 +331,7 @@ private:
 class ITabManager
 {
 public:
-    virtual TUint CreateTab(IWebApp& aApp) = 0;                      // returns tab ID; THROWS TabManagerFull
+    virtual TUint CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageList) = 0;    // returns tab ID; THROWS TabManagerFull
     virtual IFrameworkTab& GetTab(TUint aTabId) = 0;    // THROWS InvalidTabId
     virtual ~ITabManager() {}
 };
@@ -340,7 +342,7 @@ public:
     TabManager(OpenHome::Environment& aEnv, TUint aMaxTabs, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
     ~TabManager();
 public: // from ITabManager
-    TUint CreateTab(IWebApp& aApp);                      // THROWS TabManagerFull
+    TUint CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageList);    // THROWS TabManagerFull
     IFrameworkTab& GetTab(TUint aTabId);    // THROWS InvalidTabId
 private: // from ITabDestroyHandler
     void Destroy(IRefCountableUnlocked& aRefCountable);
@@ -389,7 +391,7 @@ public:
     void SetPresentationUrl(const Brx& aPresentationUrl);
 public: // from IWebApp
     IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
-    ITab& Create(ITabHandler& aHandler) override;
+    ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
 private:
     IWebApp* iWebApp;
@@ -482,6 +484,7 @@ private:
     OpenHome::HttpHeaderContentLength iHeaderContentLength;
     OpenHome::HttpHeaderTransferEncoding iHeaderTransferEncoding;
     OpenHome::HttpHeaderConnection iHeaderConnection;
+    Net::HeaderAcceptLanguage iHeaderAcceptLanguage;
     const OpenHome::HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;
