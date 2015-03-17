@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<script src="lp.js"></script>
+<script src="test1.js"></script>
+<title>
+WebApp Test Page
+</title>
+</head>
+<body>
+<h2>WebApp Test Page</h2>
+<p>This is a basic WebApp page to interactively test the WebAppFramework.</p>
+</br>
+</br>
+
+<button onclick="StartLongPolling()">Start long polling</button>
+<button onclick="EndLongPolling()">End long polling</button>
+</br>
+</br>
+
+<form name="formLongPollTest", onsubmit="SubmitLongPollForm()" action="javascript:void(0);">
+No. values to echo: <input type="text" name="echocount" value="1000">
+Update interval: <input type="text" name="echointerval" value="100">
+<input type="submit" value="Long polling test">
+</form>
+
+</br>
+</br>
+<p>Total time for all updates: <span id="echoduration"></span></p>
+<p>Average echo rate: <span id="echorate"></span></p>
+<p>Average time per echo: <span id="echosingle"></span></p>
+<p>Responses:</p>
+<p><span id="echoresponse"></span></p>
+</body>
+</html>

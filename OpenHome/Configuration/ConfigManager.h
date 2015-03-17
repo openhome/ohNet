@@ -476,9 +476,8 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
     Brn key(aKey);
     AutoMutex a(iLock);
     typename Map::const_iterator it = iMap.find(&key);
-    //ASSERT(it != iMap.end()); // assert value with ID of aKey exists
     if (it == iMap.end()) {
-        ASSERTS();
+        ASSERTS();  // value with ID of aKey does not exist
     }
 
     return *(it->second);

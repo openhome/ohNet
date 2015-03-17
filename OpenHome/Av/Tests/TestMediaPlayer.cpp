@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Av/Product.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Private/Printer.h>
@@ -22,6 +23,8 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
+#include <OpenHome/Web/WebAppFramework.h>
+#include <OpenHome/Web/ConfigUi/ConfigUi.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -30,6 +33,7 @@ using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
+using namespace OpenHome::Web;
 
 // TestMediaPlayer
 
@@ -106,10 +110,16 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShell = new Shell(aDvStack.Env(), 0);
     Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
+
+    // Set up config app.
+    static const TUint addr = 0;    // Bind to all addresses.
+    static const TUint port = 0;    // Bind to whatever free port the OS allocates to the framework server.
+    iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, kMaxUiTabs, kUiSendQueueSize);
 }
 
 TestMediaPlayer::~TestMediaPlayer()
 {
+    delete iAppFramework;
     delete iPowerObserver;
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
@@ -148,6 +158,26 @@ void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+
+    std::vector<const Brx*> sourcesBufs;
+    Product& product = iMediaPlayer->Product();
+    for (TUint i=0; i<product.SourceCount(); i++) {
+        Bws<ISource::kMaxSystemNameBytes> systemName;
+        Bws<ISource::kMaxSourceNameBytes> name;
+        Bws<ISource::kMaxSourceTypeBytes> type;
+        TBool visible;
+        product.GetSourceDetails(i, systemName, type, name, visible);
+        sourcesBufs.push_back(new Brh(systemName));
+    }
+    // FIXME - take resource dir as param or copy res dir to build dir
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->Env(), *iAppFramework, iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
+    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
+    for (TUint i=0;i<sourcesBufs.size(); i++) {
+        delete sourcesBufs[i];
+    }
+
+    iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
 
@@ -170,12 +200,13 @@ void TestMediaPlayer::RunWithSemaphore()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+    iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
 
     iConfigRamStore->Print();
 
-    iSemShutdown.Wait();
+    iSemShutdown.Wait();    // FIXME - can Run() and RunWithSemaphore() be refactored out? only difference is how they wait for termination signal
 
     //IPowerManager& powerManager = iMediaPlayer->PowerManager();
     //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
@@ -303,6 +334,12 @@ void TestMediaPlayer::PowerDown()
     PowerDownDisable(*iDeviceUpnpAv);
 }
 
+//void TestMediaPlayer::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
+//{
+//    // Last added WebApp will be set as presentation page.
+//    iAppFramework->Add(aWebApp, aFunctor);
+//}
+
 TUint TestMediaPlayer::Hash(const Brx& aBuf)
 {
     TUint hash = 0;
@@ -338,6 +375,12 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
 {
     TUint hash = Hash(iDevice->Udn());
     GenerateMacAddr(aEnv, hash, aMacAddr);
+}
+
+void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
+{
+    Bws<Uri::kMaxUriBytes+1> url(aUrl);   // +1 for '\0'
+    iDevice->SetAttribute("Upnp.PresentationUrl", url.PtrZ());
 }
 
 void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
