@@ -9,6 +9,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Stream.h>
 
 #include <openssl/evp.h>
 
