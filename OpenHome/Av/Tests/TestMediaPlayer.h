@@ -96,6 +96,7 @@ protected:
     Configuration::ConfigRamStore* iConfigRamStore;
     Semaphore iSemShutdown;
     Net::Shell* iShell;
+    Web::WebAppFramework* iAppFramework;
 private:
     Semaphore iDisabled;
     Media::VolumePrinter iVolume;
@@ -106,7 +107,6 @@ private:
     const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
     ObservableBrx iObservableFriendlyName;
-    Web::WebAppFramework* iAppFramework;
     Web::ConfigAppMediaPlayer* iConfigApp;
 };
 
