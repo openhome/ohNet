@@ -69,13 +69,13 @@ private:
     ReaderUntilS<2048> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     ReaderHttpChunked iDechunker;
+    ContentRecogBuf iContentRecogBuf;
     HttpHeaderContentType iHeaderContentType;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderLocation iHeaderLocation;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kMaxUserAgentBytes> iUserAgent;
-    ContentRecogBuf iContentRecogBuf;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
     Bws<kIcyMetadataBytes> iIcyData; // only used in a single function but too large to comfortably declare on the stack
