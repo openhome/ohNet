@@ -22,7 +22,7 @@ namespace Web {
 class ILanguageResourceReader
 {
 public:
-    virtual Brn ReadUntil(TByte aSeparator) = 0;
+    virtual Brn ReadLine() = 0;
     virtual void Destroy() = 0;
     virtual ~ILanguageResourceReader() {}
 };
@@ -43,13 +43,13 @@ public:
     void SetResource(const Brx& aUriTail);
     TBool Allocated() const;
 public: // from ILanguageResourceReader
-    Brn ReadUntil(TByte aSeparator) override;
+    Brn ReadLine() override;
     void Destroy() override;
 private:
     Brn iRootDir;
     FileStream iFileStream;
     Srs<512> iReadBuffer;
-    ReaderUntilS<kMaxBufBytes> iReaderUntil;
+    ReaderTextS<kMaxBufBytes> iReaderText;
     TBool iAllocated;
     mutable Mutex iLock;
 };

@@ -21,7 +21,7 @@ using namespace OpenHome::Web;
 LanguageResourceFileReader::LanguageResourceFileReader(const Brx& aRootDir)
     : iRootDir(aRootDir)
     , iReadBuffer(iFileStream)
-    , iReaderUntil(iReadBuffer)
+    , iReaderText(iReadBuffer)
     , iAllocated(false)
     , iLock("LRRL")
 {
@@ -53,16 +53,16 @@ TBool LanguageResourceFileReader::Allocated() const
     AutoMutex a(iLock);
     return iAllocated;
 }
-Brn LanguageResourceFileReader::ReadUntil(TByte aSeparator)
+Brn LanguageResourceFileReader::ReadLine()
 {
     AutoMutex a(iLock);
-    return iReaderUntil.ReadUntil(aSeparator);
+    return iReaderText.ReadLine();
 }
 
 void LanguageResourceFileReader::Destroy()
 {
     AutoMutex a(iLock);
-    iReaderUntil.ReadFlush();
+    iReaderText.ReadFlush();
     iFileStream.CloseFile();
     iAllocated = false;
 }
@@ -77,7 +77,7 @@ void OptionJsonWriter::Write(ILanguageResourceReader& aReader, const Brx& aKey, 
         aWriter.Write(Brn("\"options\":["));
         try {
             while (!found) {
-                Brn line = aReader.ReadUntil('\n');
+                Brn line = aReader.ReadLine();
                 if (Ascii::Contains(line, aKey)) {
                     found = true;
                 }
@@ -109,7 +109,7 @@ void OptionJsonWriter::Write(ILanguageResourceReader& aReader, const Brx& aKey, 
 void OptionJsonWriter::WriteChoiceObject(ILanguageResourceReader& aReader, IWriter& aWriter, TUint aId)
 {
     aWriter.Write(Brn("{"));
-    Brn line = aReader.ReadUntil('\n');
+    Brn line = aReader.ReadLine();
     Parser p(line);
     Brn idBuf = p.Next();
     Brn valueBuf = p.NextToEnd();
