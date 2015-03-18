@@ -129,12 +129,6 @@ Brn CodecOhm::Read(TUint aBytes)
     return buf;
 }
 
-Brn CodecOhm::ReadUntil(TByte /*aSeparator*/)
-{
-    ASSERTS(); // not implemented
-    return Brn(NULL, 0);
-}
-
 void CodecOhm::ReadFlush()
 {
     ASSERTS(); // not implemented

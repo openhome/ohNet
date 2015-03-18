@@ -16,7 +16,7 @@
 namespace OpenHome {
 namespace Media {
 
-class ProtocolFile : public Protocol, private IProtocolReader
+class ProtocolFile : public Protocol, private IReader
 {
 public:
     ProtocolFile(Environment& aEnv);
@@ -30,12 +30,10 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aStreamId);
     TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-private: // from IProtocolReader
+private: // from IReader
     Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    Brn ReadRemaining();
 private:
     TBool IsCurrentStream(TUint aStreamId) const;
 private:
@@ -45,6 +43,7 @@ private:
     OpenHome::Uri iUri;
     FileStream iFileStream;
     Srs<kReadBufBytes> iReaderBuf;
+    ContentRecogBuf iContentRecogBuf;
     TUint iStreamId;
     TBool iStop;
     TBool iSeek;
@@ -73,6 +72,7 @@ ProtocolFile::ProtocolFile(Environment& aEnv)
     , iLock("PRTF")
     , iSupply(NULL)
     , iReaderBuf(iFileStream)
+    , iContentRecogBuf(iReaderBuf)
 {
 }
 
@@ -110,6 +110,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         LOG(kMedia, "ProtocolFile::Stream Scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
+    iContentRecogBuf.ReadFlush();
     
     Brhz pathBuf(iUri.Path());
     TChar* path = pathBuf.Transfer();
@@ -128,9 +129,8 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
 
     ContentProcessor* contentProcessor = NULL;
     try {
-        TUint bytes = (fileSize<100? fileSize : 100);
-        Brn contentStart = iReaderBuf.Peek(bytes);
-        contentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), Brx::Empty(), contentStart);
+        iContentRecogBuf.Populate(fileSize);
+        contentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), Brx::Empty(), iContentRecogBuf.Buffer());
     }
     catch (ReaderError&) {
         return EProtocolStreamErrorRecoverable;
@@ -222,27 +222,17 @@ TBool ProtocolFile::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*
 
 Brn ProtocolFile::Read(TUint aBytes)
 {
-    return iReaderBuf.Read(aBytes);
-}
-
-Brn ProtocolFile::ReadUntil(TByte aSeparator)
-{
-    return iReaderBuf.ReadUntil(aSeparator);
+    return iContentRecogBuf.Read(aBytes);
 }
 
 void ProtocolFile::ReadFlush()
 {
-    iReaderBuf.ReadFlush();
+    iContentRecogBuf.ReadFlush();
 }
 
 void ProtocolFile::ReadInterrupt()
 {
-    iReaderBuf.ReadInterrupt();
-}
-
-Brn ProtocolFile::ReadRemaining()
-{
-    return iReaderBuf.Snaffle();
+    iContentRecogBuf.ReadInterrupt();
 }
 
 TBool ProtocolFile::IsCurrentStream(TUint aStreamId) const

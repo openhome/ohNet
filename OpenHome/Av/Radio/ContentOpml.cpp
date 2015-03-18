@@ -28,11 +28,17 @@ namespace Av {
 
 class ContentOpml : public Media::ContentProcessor
 {
+    static const TUint kMaxLineBytes = 2 * 1024;
+public:
+    ContentOpml();
+    ~ContentOpml();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
-    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
+    Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
+    void Reset() override;
 private:
     Bws<1024> iUri;
+    ReaderUntil* iReaderUntil;
 };
 
 } // namespace Av
@@ -51,6 +57,16 @@ ContentProcessor* ContentProcessorFactory::NewOpml()
 
 // ContentOpml
 
+ContentOpml::ContentOpml()
+{
+    iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+}
+
+ContentOpml::~ContentOpml()
+{
+    delete iReaderUntil;
+}
+
 TBool ContentOpml::Recognise(const Brx& /*aUri*/, const Brx& /*aMimeType*/, const Brx& aData)
 {
     /* Ignore
@@ -62,15 +78,16 @@ TBool ContentOpml::Recognise(const Brx& /*aUri*/, const Brx& /*aMimeType*/, cons
     return false;
 }
 
-ProtocolStreamResult ContentOpml::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
+ProtocolStreamResult ContentOpml::Stream(IReader& aReader, TUint64 aTotalBytes)
 {
     LOG(kMedia, "ContentOpml::Stream\n");
 
+    SetStream(aReader);
     TUint64 bytesRemaining = aTotalBytes;
     
     try {
         for (;;) {
-            Brn line(ReadLine(aReader, bytesRemaining));
+            Brn line(ReadLine(*iReaderUntil, bytesRemaining));
             ReaderBuffer rb(line);
             rb.ReadUntil('<');
             Parser parser(rb.ReadUntil('>'));
@@ -117,4 +134,10 @@ ProtocolStreamResult ContentOpml::Stream(IProtocolReader& aReader, TUint64 aTota
         return EProtocolStreamErrorRecoverable;
     }
     return EProtocolStreamErrorUnrecoverable;
+}
+
+void ContentOpml::Reset()
+{
+    iReaderUntil->ReadFlush();
+    ContentProcessor::Reset();
 }

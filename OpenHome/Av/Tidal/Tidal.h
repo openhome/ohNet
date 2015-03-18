@@ -50,14 +50,15 @@ private:
     TBool TryLoginLocked(Bwx& aSessionId);
     TBool TryLogoutLocked(const Brx& aSessionId);
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
-    static Brn ReadValue(IReader& aReader, const Brx& aTag);
+    static Brn ReadValue(ReaderUntil& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
     static void FormUrlEncode(IWriter& aWriter, const Brx& aSrc);
 private:
     Mutex iLock;
     ICredentialsState& iCredentialsState;
     SocketSsl iSocket;
-    Srs<kReadBufferBytes> iReaderBuf;
+    Srs<1024> iReaderBuf;
+    ReaderUntilS<kReadBufferBytes> iReaderUntil;
     Sws<kWriteBufferBytes> iWriterBuf;
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;

@@ -23,9 +23,16 @@ namespace Av {
 
 class ContentM3u : public Media::ContentProcessor
 {
+    static const TUint kMaxLineBytes = 2 * 1024;
+public:
+    ContentM3u();
+    ~ContentM3u();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
-    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
+    Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
+    void Reset() override;
+private:
+    ReaderUntil* iReaderUntil;
 };
 
 } // namespace Av
@@ -44,6 +51,16 @@ ContentProcessor* ContentProcessorFactory::NewM3u()
 
 // ContentM3u
 
+ContentM3u::ContentM3u()
+{
+    iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+}
+
+ContentM3u::~ContentM3u()
+{
+    delete iReaderUntil;
+}
+
 TBool ContentM3u::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx& aData)
 {
     if (Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/x-mpegurl")) ||
@@ -56,16 +73,17 @@ TBool ContentM3u::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     return false;
 }
 
-ProtocolStreamResult ContentM3u::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
+ProtocolStreamResult ContentM3u::Stream(IReader& aReader, TUint64 aTotalBytes)
 {
     LOG(kMedia, "ContentM3u::Stream\n");
 
+    SetStream(aReader);
     TUint64 bytesRemaining = aTotalBytes;
     TBool stopped = false;
     TBool streamSucceeded = false;
     try {
         while (!stopped) {
-            Brn line = ReadLine(aReader, bytesRemaining);
+            Brn line = ReadLine(*iReaderUntil, bytesRemaining);
             if (line.Bytes() == 0 || line.BeginsWith(Brn("#"))) {
                 continue; // empty/comment line
             }
@@ -92,4 +110,10 @@ ProtocolStreamResult ContentM3u::Stream(IProtocolReader& aReader, TUint64 aTotal
         return EProtocolStreamSuccess;
     }
     return EProtocolStreamErrorUnrecoverable;
+}
+
+void ContentM3u::Reset()
+{
+    iReaderUntil->ReadFlush();
+    ContentProcessor::Reset();
 }

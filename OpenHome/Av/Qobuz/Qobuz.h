@@ -57,11 +57,13 @@ private:
     Mutex iLock;
     ICredentialsState& iCredentialsState;
     SocketTcpClient iSocket;
-    Srs<kReadBufferBytes> iReaderBuf;
+    Srs<1024> iReaderBuf;
+    ReaderUntilS<1024> iReaderUntil1;
     Sws<kWriteBufferBytes> iWriterBuf;
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
     ReaderHttpChunked iDechunker;
+    ReaderUntilS<kReadBufferBytes> iReaderUntil2;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     UnixTimestamp iUnixTimestamp;

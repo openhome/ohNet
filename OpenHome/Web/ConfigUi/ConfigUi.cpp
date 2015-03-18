@@ -20,9 +20,9 @@ using namespace OpenHome::Web;
 
 LanguageResourceFileReader::LanguageResourceFileReader(const Brx& aRootDir)
     : iRootDir(aRootDir)
-    , iFile(NULL)
-    , iOffset(0)
-    , iBytesRead(0)
+    , iReadBuffer(iFileStream)
+    , iReaderText(iReadBuffer)
+    , iAllocated(false)
     , iLock("LRRL")
 {
     ASSERT(iRootDir[iRootDir.Bytes()-1] == '/');    // expect trailing '/'
@@ -31,13 +31,14 @@ LanguageResourceFileReader::LanguageResourceFileReader(const Brx& aRootDir)
 void LanguageResourceFileReader::SetResource(const Brx& aUriTail)
 {
     AutoMutex a(iLock);
-    ASSERT(iFile == NULL);
     Bws<Uri::kMaxUriBytes+1> filename(iRootDir);
     filename.Append(aUriTail);
 
     try {
         // FIXME - dynamic allocation!
-        iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
+        IFile* file = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
+        iFileStream.SetFile(file);
+        iAllocated = true;
     }
     catch (FileOpenError&) {
         LOG(kHttp, "LanguageResourceFileReader::SetResource failed to open resource: ");
@@ -50,128 +51,33 @@ void LanguageResourceFileReader::SetResource(const Brx& aUriTail)
 TBool LanguageResourceFileReader::Allocated() const
 {
     AutoMutex a(iLock);
-    return (iFile != NULL);
+    return iAllocated;
 }
-
-Brn LanguageResourceFileReader::Read(TUint aBytes)
+Brn LanguageResourceFileReader::ReadLine()
 {
     AutoMutex a(iLock);
-    if (aBytes > iBuf.MaxBytes()) {
-        THROW(ReaderError);
-    }
-
-    if (aBytes > iBuf.MaxBytes() - iOffset) {
-        // Not enough space left in buffer for aBytes, so shift data in buffer.
-        iBuf.Replace(iBuf.Ptr()+iOffset, iBuf.Bytes()-iOffset); // FIXME - is this safe?
-        //(void)memmove(iBuf.Ptr(), iBuf.Ptr() + iOffset, iBuf.Bytes() - iOffset);
-        iOffset = 0;
-    }
-
-    try {
-        TUint bytes = iBuf.MaxBytes()-iBuf.Bytes();
-        TUint bytesRemaining = iFile->Bytes()-iBytesRead;
-        if (bytesRemaining < bytes) {
-            bytes = bytesRemaining;
-        }
-        iFile->Read(iBuf, bytes);
-        iBytesRead += bytes;
-    }
-    catch (FileReadError&) {
-        THROW(ReaderError);
-    }
-
-    return Brn(iBuf);
-}
-
-Brn LanguageResourceFileReader::ReadUntil(TByte aSeparator)
-{
-    AutoMutex a(iLock);
-    // Parse current data in buffer looking for separator.
-    TUint remaining = iBuf.Bytes() - iOffset;
-    TUint count = 0;
-    const TByte* start = iBuf.Ptr()+iOffset;
-    const TByte* current = start;
-
-    for (;;) {
-        while (remaining > 0) {
-            if (*current++ == aSeparator) {
-                iOffset += count + 1;   // skip over separator;
-                return (Brn(start, count));
-            }
-            count++;
-            remaining--;
-        }
-
-        if (iOffset > 0 && iBuf.Bytes() == iBuf.MaxBytes()) {
-            // Separator not found in current buffer; shift data in buffer to make room.
-            start -= iOffset;
-            iBuf.SetBytes(iBuf.Bytes()-iOffset);
-            current -= iOffset;
-            if (iBuf.Bytes() > 0) {
-                iBuf.Replace(iBuf.Ptr()+iOffset, iBuf.Bytes()); // FIXME - is this safe?
-                //(void)memmove(iBuf.Ptr(), iBuf.Ptr() + iOffset, iBuf.Bytes());
-            }
-            iOffset = 0;
-        }
-
-        if (iBuf.Bytes() == iBuf.MaxBytes()) {
-            // Buffer full and separator not found.
-            THROW(ReaderError);
-        }
-
-        try {
-            TUint bytes = iBuf.MaxBytes()-iBuf.Bytes();
-            TUint bytesRemaining = iFile->Bytes()-iBytesRead;
-            if (bytesRemaining == 0) {
-                // Exhausted file and separator not found.
-                THROW(ReaderError);
-            }
-            if (bytesRemaining < bytes) {
-                bytes = bytesRemaining;
-            }
-            iFile->Read(iBuf, bytes);
-            iBytesRead += bytes;
-            remaining += bytes;
-        }
-        catch (FileReadError&) {
-            THROW(ReaderError);
-        }
-    }
-}
-
-void LanguageResourceFileReader::ReadFlush()
-{
-    AutoMutex a(iLock);
-    iBuf.SetBytes(0);
-    iOffset = 0;
-}
-
-void LanguageResourceFileReader::ReadInterrupt()
-{
+    return iReaderText.ReadLine();
 }
 
 void LanguageResourceFileReader::Destroy()
 {
     AutoMutex a(iLock);
-    ASSERT(iFile != NULL);
-    delete iFile;
-    iFile = NULL;
-    iBuf.SetBytes(0);
-    iOffset = 0;
-    iBytesRead = 0;
+    iReaderText.ReadFlush();
+    iFileStream.CloseFile();
+    iAllocated = false;
 }
 
 
 // OptionJsonWriter
 
-void OptionJsonWriter::Write(IReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter)
+void OptionJsonWriter::Write(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter)
 {
     TBool found = false;
     try {
         aWriter.Write(Brn("\"options\":["));
         try {
             while (!found) {
-                Brn line = aReader.ReadUntil('\n'); // FIXME - expects Unix-style line endings
+                Brn line = aReader.ReadLine();
                 if (Ascii::Contains(line, aKey)) {
                     found = true;
                 }
@@ -200,10 +106,10 @@ void OptionJsonWriter::Write(IReader& aReader, const Brx& aKey, const std::vecto
     }
 }
 
-void OptionJsonWriter::WriteChoiceObject(IReader& aReader, IWriter& aWriter, TUint aId)
+void OptionJsonWriter::WriteChoiceObject(ILanguageResourceReader& aReader, IWriter& aWriter, TUint aId)
 {
     aWriter.Write(Brn("{"));
-    Brn line = aReader.ReadUntil('\n');
+    Brn line = aReader.ReadLine();
     Parser p(line);
     Brn idBuf = p.Next();
     Brn valueBuf = p.NextToEnd();

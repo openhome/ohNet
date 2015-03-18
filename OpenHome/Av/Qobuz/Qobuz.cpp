@@ -33,10 +33,12 @@ Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICrede
     , iLock("TDL1")
     , iCredentialsState(aCredentialsState)
     , iReaderBuf(iSocket)
+    , iReaderUntil1(iReaderBuf)
     , iWriterBuf(iSocket)
     , iWriterRequest(iWriterBuf)
-    , iReaderResponse(aEnv, iReaderBuf)
-    , iDechunker(iReaderBuf)
+    , iReaderResponse(aEnv, iReaderUntil1)
+    , iDechunker(iReaderUntil1)
+    , iReaderUntil2(iDechunker)
     , iUnixTimestamp(aEnv)
     , iAppId(aAppId)
     , iAppSecret(aAppSecret)
@@ -108,7 +110,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         const TUint code = WriteRequestReadResponse(Http::kMethodGet, iPathAndQuery);
         if (code != 200) {
             LOG(kError, "Http error - %d - in response to Qobuz::TryGetStreamUrl.  Some/all of response is:\n", code);
-            LOG(kError, iDechunker.ReadRemaining());
+            LOG(kError, iDechunker.Read(kReadBufferBytes));
             LOG(kError, "\n");
             THROW(ReaderError);
         }
@@ -222,12 +224,12 @@ TBool Qobuz::TryLoginLocked()
             Bws<ICredentials::kMaxStatusBytes> status;
             TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
             if (len > 0) {
-                status.Replace(iReaderBuf.Read(len));
+                status.Replace(iDechunker.Read(len));
                 iCredentialsState.SetState(kId, status, Brx::Empty());
             }
             else {
                 status.AppendPrintf("Login Error (Response Code %d): ", code);
-                Brn buf = iDechunker.ReadRemaining();
+                Brn buf = iDechunker.Read(kReadBufferBytes);
                 len = std::min(status.MaxBytes() - status.Bytes(), buf.Bytes());
                 buf.Set(buf.Ptr(), len);
                 status.Append(buf);
@@ -283,8 +285,8 @@ TUint Qobuz::WriteRequestReadResponse(const Brx& aMethod, const Brx& aPathAndQue
 
 Brn Qobuz::ReadString()
 {
-    (void)iDechunker.ReadUntil('\"');
-    return iDechunker.ReadUntil('\"');
+    (void)iReaderUntil2.ReadUntil('\"');
+    return iReaderUntil2.ReadUntil('\"');
 }
 
 void Qobuz::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)

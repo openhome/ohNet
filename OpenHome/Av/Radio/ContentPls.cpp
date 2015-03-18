@@ -32,11 +32,16 @@ namespace Av {
 
 class ContentPls : public Media::ContentProcessor
 {
+    static const TUint kMaxLineBytes = 2 * 1024;
+public:
+    ContentPls();
+    ~ContentPls();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
-    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
+    Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
     void Reset();
 private:
+    ReaderUntil* iReaderUntil;
     TBool iIsPlaylist;
 };
 
@@ -56,6 +61,16 @@ ContentProcessor* ContentProcessorFactory::NewPls()
 
 // ContentPls
 
+ContentPls::ContentPls()
+{
+    iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+}
+
+ContentPls::~ContentPls()
+{
+    delete iReaderUntil;
+}
+
 TBool ContentPls::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx& aData)
 {
     if (Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/x-scpls"))) {
@@ -71,24 +86,25 @@ TBool ContentPls::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     return false;
 }
 
-ProtocolStreamResult ContentPls::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
+ProtocolStreamResult ContentPls::Stream(IReader& aReader, TUint64 aTotalBytes)
 {
     LOG(kMedia, "ContentPls::Stream\n");
 
+    SetStream(aReader);
     TUint64 bytesRemaining = aTotalBytes;
     TBool stopped = false;
     TBool streamSucceeded = false;
     try {
         // Find [playlist]
         while (!iIsPlaylist) {
-            Brn line = ReadLine(aReader, bytesRemaining);
+            Brn line = ReadLine(*iReaderUntil, bytesRemaining);
             if (Ascii::CaseInsensitiveEquals(line, Brn("[playlist]"))) {
                 iIsPlaylist = true;
             }
         }
 
         while (!stopped) {
-            Brn line = ReadLine(aReader, bytesRemaining);
+            Brn line = ReadLine(*iReaderUntil, bytesRemaining);
             Parser parser(line);
             Brn key = parser.Next('=');
             if (key.BeginsWith(Brn("File"))) {
@@ -121,6 +137,7 @@ ProtocolStreamResult ContentPls::Stream(IProtocolReader& aReader, TUint64 aTotal
 
 void ContentPls::Reset()
 {
+    iReaderUntil->ReadFlush();
     ContentProcessor::Reset();
     iIsPlaylist = false;
 }

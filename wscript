@@ -645,7 +645,7 @@ def build(bld):
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -938,7 +938,30 @@ def build(bld):
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohPipeline', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecVorbis', 'CodecWav', 'CodecPcm', 'libOgg']
+    lib_names = ['ohPipeline',
+                 'ohMediaPlayer',
+                 'ohMediaPlayerTestUtils',
+                 'SourcePlaylist',
+                 'SourceRadio',
+                 'SourceSongcast',
+                 'SourceRaop',
+                 'SourceUpnpAv',
+                 'CodecAac',
+                 'CodecAacBase',
+                 'CodecAdts',
+                 'CodecAifc',
+                 'CodecAiff',
+                 'CodecAiffBase',
+                 'CodecAlac',
+                 'CodecAlacBase',
+                 'CodecFlac',
+                 'CodecVorbis',
+                 'CodecWav',
+                 'CodecPcm',
+                 'libOgg',
+                 'WebAppFramework',
+                 'ConfigUi'
+                ]
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,

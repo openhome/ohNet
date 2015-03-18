@@ -53,7 +53,7 @@ class IHlsReader
 {
 public:
     virtual IHttpSocket& Socket() = 0;
-    virtual IReaderBuffered& Reader() = 0;
+    virtual IReader& Reader() = 0;
     virtual ~IHlsReader() {}
 };
 
@@ -62,8 +62,9 @@ class HlsM3uReader : public ITimerHandler, public ISegmentUriProvider
 private:
     static const TUint kMaxM3uVersion = 2;
     static const TUint kMillisecondsPerSecond = 1000;
+    static const TUint kMaxLineBytes = 2048;
 public:
-    HlsM3uReader(IHttpSocket& aSocket, IReaderBuffered& aReader, ITimer& aTimer, ISemaphore& aSemaphore);
+    HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore);
     void SetUri(const Uri& aUri);
     TUint Version() const;
     void Interrupt();
@@ -83,7 +84,7 @@ private:
     // max(targetDuration, sum(newSegmentDurations)-targetDuration);
     ITimer& iTimer;
     IHttpSocket& iSocket;
-    IReaderBuffered& iReader;
+    ReaderUntilS<kMaxLineBytes> iReaderUntil;
     OpenHome::Uri iUri;
     TBool iConnected;
     TUint64 iTotalBytes;
@@ -98,24 +99,22 @@ private:
     TBool iInterrupted;
 };
 
-class SegmentStreamer : public IProtocolReader
+class SegmentStreamer : public IReader
 {
 public:
-    SegmentStreamer(IHttpSocket& aSocket, IReaderBuffered& aReader);
+    SegmentStreamer(IHttpSocket& aSocket, IReader& aReader);
     void Stream(ISegmentUriProvider& aSegmentUriProvider);
     void Close();
-public: // from IProtocolReader
+public: // from IReader
     Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
-    Brn ReadRemaining() override;
 private:
     void GetNextSegment();
     void EnsureSegmentIsReady();
 private:
     IHttpSocket& iSocket;
-    IReaderBuffered& iReader;
+    IReader& iReader;
     ISegmentUriProvider* iSegmentUriProvider;
     OpenHome::Uri iUri;
     TBool iConnected;

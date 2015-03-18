@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Network.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/ObservableBrx.h>
 
@@ -179,7 +180,9 @@ private:
     void DeactivateCallback();
 private:
     static const TUint kMaxPortNumBytes = 5;
-    Srs<kMaxReadBufferBytes>* iReaderBuffer;
+    Srx* iReaderBuffer;
+    ReaderUntil* iReaderUntil;
+    ReaderProtocol* iReaderProtocol;
     Sws<kMaxWriteBufferBytes>* iWriterBuffer;
     WriterAscii* iWriterAscii;
     ReaderHttpRequest* iReaderRequest;

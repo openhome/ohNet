@@ -30,9 +30,10 @@ Tidal::Tidal(Environment& aEnv, const Brx& aToken, ICredentialsState& aCredentia
     , iCredentialsState(aCredentialsState)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
+    , iReaderUntil(iReaderBuf)
     , iWriterBuf(iSocket)
     , iWriterRequest(iSocket)
-    , iReaderResponse(aEnv, iReaderBuf)
+    , iReaderResponse(aEnv, iReaderUntil)
     , iToken(aToken)
 {
     iReaderResponse.AddHeader(iHeaderContentLength);
@@ -94,12 +95,12 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
             LOG(kError, "Http error - %d - in response to Tidal GetStreamUrl.  Some/all of response is:\n", code);
-            LOG(kError, iReaderBuf.Snaffle());
+            LOG(kError, iReaderUntil.Read(kReadBufferBytes));
             LOG(kError, "\n");
             THROW(ReaderError);
         }
 
-        aStreamUrl.Replace(ReadValue(iReaderBuf, Brn("url")));
+        aStreamUrl.Replace(ReadValue(iReaderUntil, Brn("url")));
         success = true;
     }
     catch (HttpError&) {
@@ -241,8 +242,8 @@ TBool Tidal::TryLoginLocked()
             THROW(ReaderError);
         }
 
-        iSessionId.Replace(ReadValue(iReaderBuf, Brn("sessionId")));
-        iCountryCode.Replace(ReadValue(iReaderBuf, Brn("countryCode")));
+        iSessionId.Replace(ReadValue(iReaderUntil, Brn("sessionId")));
+        iCountryCode.Replace(ReadValue(iReaderUntil, Brn("countryCode")));
         iCredentialsState.SetState(kId, Brx::Empty(), iCountryCode);
         updatedStatus = true;
         success = true;
@@ -285,7 +286,7 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
         const TUint code = iReaderResponse.Status().Code();
         if (code < 200 || code >= 300) {
             LOG(kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
-            LOG(kError, iReaderBuf.Snaffle());
+            LOG(kError, iReaderUntil.Read(kReadBufferBytes));
             LOG(kError, "\n");
             THROW(ReaderError);
         }
@@ -316,7 +317,7 @@ void Tidal::WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TU
     iWriterRequest.WriteFlush();
 }
 
-Brn Tidal::ReadValue(IReader& aReader, const Brx& aTag)
+Brn Tidal::ReadValue(ReaderUntil& aReader, const Brx& aTag)
 { // static
     (void)aReader.ReadUntil('\"');
     for (;;) {

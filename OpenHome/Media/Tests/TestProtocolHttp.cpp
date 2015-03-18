@@ -77,7 +77,8 @@ private:
     static const TUint kMaxWriteBufBytes = 1400;
     HttpHeaderConnection iHeaderConnection;
     // Reader and buffer.
-    Srs<kMaxReadBytes>* iReadBuffer;
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
     ReaderHttpRequest* iReaderRequest;
     // Writer and buffer.
     Bwh iBuf;
@@ -490,7 +491,8 @@ TestHttpSession::TestHttpSession()
     : iBuf(kMaxWriteBufBytes)
 {
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(*gEnv, *iReadBuffer);
+    iReaderUntil = new ReaderUntilS<kMaxReadBytes>(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(*gEnv, *iReaderUntil);
     iReaderRequest->AddMethod(Http::kMethodGet);
     iReaderRequest->AddHeader(iHeaderConnection);
     iReaderRequest->AddHeader(iHeaderRange);
@@ -503,7 +505,8 @@ TestHttpSession::TestHttpSession()
 TestHttpSession::~TestHttpSession()
 {
     delete iReaderRequest;
-    iReadBuffer->ReadInterrupt();
+    iReaderUntil->ReadInterrupt();
+    delete iReaderUntil;
     delete iReadBuffer;
     delete iWriterResponse;
     delete iWriterBuffer;

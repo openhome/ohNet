@@ -18,8 +18,9 @@ static void TestHttps(Environment& aEnv, const Brx& aHost, const Brx& aPath)
     static const TUint kWriteBufBytes = 2 * 1024;
     static const TUint kReadBufBytes = 4 * 1024;
     SocketSsl* socket = new SocketSsl(aEnv, kReadBufBytes);
-    Srs<kReadBufBytes>* readBuffer = new Srs<kReadBufBytes>(*socket);
-    ReaderHttpResponse* readerResponse = new ReaderHttpResponse(aEnv, *readBuffer);
+    Srx* readBuffer = new Srs<1024>(*socket);
+    ReaderUntil* readerUntil = new ReaderUntilS<kReadBufBytes>(*readBuffer);
+    ReaderHttpResponse* readerResponse = new ReaderHttpResponse(aEnv, *readerUntil);
     Sws<kWriteBufBytes>* writeBuffer = new Sws<kWriteBufBytes>(*socket);
     WriterHttpRequest* writerRequest = new WriterHttpRequest(*writeBuffer);
 
@@ -45,26 +46,22 @@ static void TestHttps(Environment& aEnv, const Brx& aHost, const Brx& aPath)
         Print("\n");
     }
     else if (headerTransferEncoding.IsChunked()) {
-        ReaderHttpChunked dechunker(*readBuffer);
+        ReaderHttpChunked dechunker(*readerUntil);
         dechunker.SetChunked(true);
         Brn buf;
-        try {
-            for (;;) {
-                buf.Set(dechunker.Read(1024));
-                Print(buf);
+        for (;;) {
+            buf.Set(dechunker.Read(1024));
+            if (buf.Bytes() == 0) {
+                break;
             }
+            Print(buf);
         }
-        catch (ReaderError&) {
-            Print("ReaderError\n");
-        }
-        buf.Set(dechunker.ReadRemaining());
-        Print(buf);
     }
     else {
         TUint length = headerContentLength.ContentLength();
         while (length > 0) {
             const TUint bytes = std::min(length, (TUint)1024);
-            Brn buf = readBuffer->Read(bytes);
+            Brn buf = readerUntil->Read(bytes);
             Print(buf);
             length -= buf.Bytes();
         }
@@ -74,6 +71,7 @@ static void TestHttps(Environment& aEnv, const Brx& aHost, const Brx& aPath)
     delete writerRequest;
     delete writeBuffer;
     delete readerResponse;
+    delete readerUntil;
     delete readBuffer;
     delete socket;
 }

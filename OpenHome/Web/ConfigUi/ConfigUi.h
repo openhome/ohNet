@@ -19,9 +19,10 @@ namespace Av {
 namespace OpenHome {
 namespace Web {
 
-class ILanguageResourceReader : public IReader
+class ILanguageResourceReader
 {
 public:
+    virtual Brn ReadLine() = 0;
     virtual void Destroy() = 0;
     virtual ~ILanguageResourceReader() {}
 };
@@ -42,25 +43,22 @@ public:
     void SetResource(const Brx& aUriTail);
     TBool Allocated() const;
 public: // from ILanguageResourceReader
-    Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
-    void ReadFlush() override;
-    void ReadInterrupt() override;
+    Brn ReadLine() override;
     void Destroy() override;
 private:
     Brn iRootDir;
-    IFile* iFile;
-    Bws<kMaxBufBytes> iBuf;
-    TUint iOffset;
-    TUint iBytesRead;
+    FileStream iFileStream;
+    Srs<512> iReadBuffer;
+    ReaderTextS<kMaxBufBytes> iReaderText;
+    TBool iAllocated;
     mutable Mutex iLock;
 };
 
 class OptionJsonWriter
 {
 public:
-    static void Write(IReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter);   // validates input from aReader against aChoices
-    static void WriteChoiceObject(IReader& aReader, IWriter& aWriter, TUint aId);
+    static void Write(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter);   // validates input from aReader against aChoices
+    static void WriteChoiceObject(ILanguageResourceReader& aReader, IWriter& aWriter, TUint aId);
 };
 
 class IConfigMessage : public ITabMessage

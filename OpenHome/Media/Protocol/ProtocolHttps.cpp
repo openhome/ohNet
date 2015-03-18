@@ -15,7 +15,7 @@
 namespace OpenHome {
 namespace Media {
 
-class ProtocolHttps : public Protocol, private IProtocolReader
+class ProtocolHttps : public Protocol, private IReader
 {
     static const TUint kReadBufferBytes = 8 * 1024;
     static const TUint kWriteBufferBytes = 1024;
@@ -34,12 +34,10 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
     TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-private: // from IProtocolReader
+private: // from IReader
     Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
-    Brn ReadRemaining() override;
 private:
     void Reinitialise(const Brx& aUri);
     TBool Connect();
@@ -50,7 +48,8 @@ private:
     Mutex iLock;
     Supply* iSupply;
     SocketSsl iSocket;
-    Srs<kReadBufferBytes> iReaderBuf;
+    Srs<1024> iReaderBuf;
+    ReaderUntilS<kReadBufferBytes> iReaderUntil;
     Sws<kWriteBufferBytes> iWriterBuf;
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
@@ -84,10 +83,11 @@ ProtocolHttps::ProtocolHttps(Environment& aEnv)
     , iSupply(NULL)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
+    , iReaderUntil(iReaderBuf)
     , iWriterBuf(iSocket)
     , iWriterRequest(iWriterBuf)
-    , iReaderResponse(aEnv, iReaderBuf)
-    , iDechunker(iReaderBuf)
+    , iReaderResponse(aEnv, iReaderUntil)
+    , iDechunker(iReaderUntil)
 {
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
@@ -204,11 +204,6 @@ Brn ProtocolHttps::Read(TUint aBytes)
     return iDechunker.Read(aBytes);
 }
 
-Brn ProtocolHttps::ReadUntil(TByte aSeparator)
-{
-    return iDechunker.ReadUntil(aSeparator);
-}
-
 void ProtocolHttps::ReadFlush()
 {
     iDechunker.ReadFlush();
@@ -217,11 +212,6 @@ void ProtocolHttps::ReadFlush()
 void ProtocolHttps::ReadInterrupt()
 {
     iDechunker.ReadInterrupt();
-}
-
-Brn ProtocolHttps::ReadRemaining()
-{
-    return iDechunker.ReadRemaining();
 }
 
 void ProtocolHttps::Reinitialise(const Brx& aUri)

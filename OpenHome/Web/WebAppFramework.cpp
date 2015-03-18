@@ -767,7 +767,8 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     , iUpdateCount(0)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderRequest = new ReaderHttpRequest(aEnv, *iReadBuffer);
+    iReaderUntil = new ReaderUntilS<kMaxRequestBytes>(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderUntil);
     iWriterChunked = new WriterHttpChunked(*this);
     iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
@@ -958,7 +959,7 @@ void HttpSession::Post()
     else if (uriTail == Brn("lp")) {
         // parse session-id and retrieve tab
         if (iHeaderContentLength.ContentLength() != 0) {
-            Brn buf = iReadBuffer->Read(iHeaderContentLength.ContentLength());
+            Brn buf = iReaderUntil->ReadProtocol(iHeaderContentLength.ContentLength());
             Parser p(buf);
             Brn sessionBuf = p.Next();
             if (sessionBuf == Brn("session-id:")) {
@@ -1013,7 +1014,7 @@ void HttpSession::Post()
     else if (uriTail == Brn("lpterminate")) {
         // parse session-id and retrieve tab
         if (iHeaderContentLength.ContentLength() != 0) {
-            Brn buf = iReadBuffer->Read(iHeaderContentLength.ContentLength());
+            Brn buf = iReaderUntil->ReadProtocol(iHeaderContentLength.ContentLength());
             Parser p(buf);
             Brn sessionBuf = p.Next();
             if (sessionBuf == Brn("session-id:")) { // if this isn't found, respond with badrequest?
@@ -1045,7 +1046,7 @@ void HttpSession::Post()
         Log::Print("\nupdate request\n");
         // parse session-id and retrieve tab
         if (iHeaderContentLength.ContentLength() != 0) {
-            Brn buf = iReadBuffer->Read(iHeaderContentLength.ContentLength());
+            Brn buf = iReaderUntil->ReadProtocol(iHeaderContentLength.ContentLength());
             Parser p(buf);
             Brn sessionLine = p.NextLine();
             Parser sessionParser(sessionLine);
