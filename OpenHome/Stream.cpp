@@ -465,6 +465,10 @@ void ReaderBinary::Read(TUint aBytes)
 
 // ReaderProtocol
 
+ReaderProtocol::~ReaderProtocol()
+{
+}
+
 Brn ReaderProtocol::Read(TUint aBytes)
 {
     ASSERT(aBytes <= iMaxBytes);

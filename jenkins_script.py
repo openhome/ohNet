@@ -18,9 +18,9 @@ if os.path.isfile(os.path.join(pth, 'hudson_build.py')):
     scrd=os.path.join(scrd, 'ohNet')
 
 cargs=['-p', cenv['PLATFORM']]
-if 'NIGHTLY' in cenv:
+if cenv.get('NIGHTLY') == 'true':
     cargs += ['-n',]
-if 'PUBLISH' in cenv:
+if cenv.get('PUBLISH') == 'true':
     cargs += ['-r', '-v', cenv['PUBLISH_VERSION']]
 
 subprocess.check_call(args=prefix + ['python', os.path.join(scrd, 'hudson_build.py')] + cargs, cwd=cdir)
