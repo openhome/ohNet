@@ -50,14 +50,14 @@ TBool NtpClient::TryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetworkDe
 void NtpClient::TestAllServers()
 {
     for (TUint i=0; i<kNumServers; i++) {
-        NtpTimestamp ignore;
+        NtpTimestamp ts;
         TUint networkDelayMs;
         iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[i]));
         Endpoint::AddressBuf buf;
         iServerEndpoint.AppendAddress(buf);
         Log::Print("%s: ", buf.PtrZ());
-        if (DoTryGetNetworkTime(ignore, networkDelayMs)) {
-            Log::Print("networkDelayMs = %u\n", networkDelayMs);
+        if (DoTryGetNetworkTime(ts, networkDelayMs)) {
+            Log::Print("seconds = %u, networkDelayMs = %u\n", ts.Seconds(), networkDelayMs);
         }
         else {
             Log::Print("FAILED\n");
@@ -201,10 +201,9 @@ NtpTimestamp::NtpTimestamp()
 void NtpTimestamp::Read(IReader& aReader)
 {
     ReaderBinary reader(aReader);
-    const TUint64 ts = reader.ReadUint64Be(8);
+    iSeconds = reader.ReadUintBe(4);
+    iFraction = reader.ReadUintBe(4);
     iInitialised = true;
-    iSeconds = (ts >> 32);
-    iFraction = (TUint)ts;
 }
 
 void NtpTimestamp::Reset()
