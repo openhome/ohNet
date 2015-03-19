@@ -93,14 +93,22 @@ class SoftPlayer( BASE.Component ):
     def Shutdown( self ):
         self.log.Info( self.dev, 'Shutting down......')
         self.shutdown = True
+        t = threading.Timer( 15, self.__KillSoftPlayer )
+        t.start()
         try:
             self.proc.stdin.write( 'q\n' )
             self.proc.stdin.close()
             self.proc.wait()
+            t.cancel()
         except:
             self.log.Info( self.dev, 'Problem shutting down' )
         self.logThread.join()
         time.sleep( 1 )             # Let it shut down
+
+    def __KillSoftPlayer( self ):
+        """Timer CB - kills SoftPlayer process (unblocks Shutdown)"""
+        self.log.Fail( self.dev, 'Did NOT shut down -> killing process' )
+        self.proc.kill()
         
     def __Log( self ):
         """Log data received from stdout on SoftPlayer"""
