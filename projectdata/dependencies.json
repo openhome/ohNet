@@ -85,9 +85,9 @@
         "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
-        "type": "internal",
+        "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.26",
+        "version": "1.0.28",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}"
     },
