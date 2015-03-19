@@ -42,7 +42,8 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     , iWriteBuffer(iSocket)
     , iWriterRequest(iWriteBuffer)
     , iReadBuffer(iSocket)
-    , iReaderResponse(aEnv, iReadBuffer)
+    , iReaderUntil(iReadBuffer)
+    , iReaderResponse(aEnv, iReaderUntil)
     , iSupportedFormats("&formats=")
     , iPartnerId(aPartnerId)
 {
@@ -157,23 +158,22 @@ void RadioPresetsTuneIn::DoRefresh()
             THROW(HttpError);
         }
 
-#if 1
         Brn buf;
         for (;;) {
-            iReadBuffer.ReadUntil('<');
-            buf.Set(iReadBuffer.ReadUntil('>'));
+            iReaderUntil.ReadUntil('<');
+            buf.Set(iReaderUntil.ReadUntil('>'));
             if (buf.BeginsWith(Brn("opml version="))) {
                 break;
             }
         }
         for (;;) {
-            iReadBuffer.ReadUntil('<');
-            buf.Set(iReadBuffer.ReadUntil('>'));
+            iReaderUntil.ReadUntil('<');
+            buf.Set(iReaderUntil.ReadUntil('>'));
             if (buf == Brn("status")) {
                 break;
             }
         }
-        buf.Set(iReadBuffer.ReadUntil('<'));
+        buf.Set(iReaderUntil.ReadUntil('<'));
         const TUint statusCode = Ascii::Uint(buf);
         if (statusCode != 200) {
             LOG2(kError, kProducts, "Error in TuneIn xml - statusCode=%u\n", statusCode);
@@ -194,8 +194,8 @@ void RadioPresetsTuneIn::DoRefresh()
         }
         try {
             for (;;) {
-                iReadBuffer.ReadUntil('<');
-                buf.Set(iReadBuffer.ReadUntil('>'));
+                iReaderUntil.ReadUntil('<');
+                buf.Set(iReaderUntil.ReadUntil('>'));
                 const TBool isAudio = buf.BeginsWith(Brn("outline type=\"audio\""));
                 const TBool isLink = buf.BeginsWith(Brn("outline type=\"link\""));
                 if (!(isAudio || isLink)) {
@@ -308,22 +308,6 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDbWriter.ClearPreset(i);
             }
         }
-
-#else // OLD_DEBUGGING_CODE
-        TUint length = iHeaderContentLength.ContentLength();
-        ASSERT(length != 0); // we assume that TuneIn doesn't chunk its responses
-        Bwh buf(length); // FIXME - avoid dynamic allocation like this at all costs
-        while (length > 0) {
-            TUint readBytes = (length<kReadBufBytes? length : kReadBufBytes);
-            buf.Append(iReadBuffer.Read(readBytes));
-            length -= readBytes;
-        }
-# if 1
-        Log::Print("Response from TuneIn is...\n\n");
-        Log::Print(buf);
-        Log::Print("\n\n");
-# endif
-#endif // OLD_DEBUGGING_CODE
     }
     catch (NetworkError&) {
     }

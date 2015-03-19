@@ -130,14 +130,14 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 
     const TUint codec = reader.ReadUintBe(1);
     if(codec > 0) {
-        iCodec.Replace(reader.Read(codec));
+        reader.ReadReplace(codec, iCodec);
     }
     else {
         iCodec.Replace(Brx::Empty());
     }
     
     const TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
-    iAudio.Replace(reader.Read(audio));
+    reader.ReadReplace(audio, iAudio);
 }
 
 void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
@@ -347,7 +347,8 @@ void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
     OhmMsgTimestamped::Create();
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
 
-    iBlob.Replace(aReader.Read(aHeader.MsgBytes()));
+    ReaderBinary reader(aReader);
+    reader.ReadReplace(aHeader.MsgBytes(), iBlob);
     iFrame = Converter::BeUint32At(iBlob, 4);
     iSampleStart = Converter::BeUint64At(iBlob, 20);
 }
@@ -378,8 +379,8 @@ void OhmMsgTrack::Create(IReader& aReader, const OhmHeader& aHeader)
     iSequence = reader.ReadUintBe(4);
     TUint uri = reader.ReadUintBe(4);
     TUint metadata = reader.ReadUintBe(4);
-    iUri.Replace(reader.Read(uri));
-    iMetadata.Replace(reader.Read(metadata));
+    reader.ReadReplace(uri, iUri);
+    reader.ReadReplace(metadata, iMetadata);
 }
 
 void OhmMsgTrack::Create(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
@@ -444,7 +445,7 @@ void OhmMsgMetatext::Create(IReader& aReader, const OhmHeader& aHeader)
     ReaderBinary reader(aReader);
     iSequence = reader.ReadUintBe(4);
     TUint metatext = reader.ReadUintBe(4);
-    iMetatext.Replace(reader.Read(metatext));
+    reader.ReadReplace(metatext, iMetatext);
 }
 
 void OhmMsgMetatext::Create(TUint aSequence, const Brx& aMetatext)

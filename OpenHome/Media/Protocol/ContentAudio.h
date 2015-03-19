@@ -5,7 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Stream.h>
-#include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/SupplyAggregator.h>
 
 namespace OpenHome {
 namespace Media {
@@ -22,10 +22,9 @@ public:
     ~ContentAudio();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+    ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes);
 private:
-    Supply* iSupply;
-    Bws<kMaxReadBytes> iBuf;
+    SupplyAggregator* iSupply;
 };
 
 } // namespace Media

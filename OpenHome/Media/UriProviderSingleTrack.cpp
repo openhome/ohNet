@@ -28,6 +28,7 @@ UriProviderSingleTrack::~UriProviderSingleTrack()
 
 Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
+    AutoMutex a(iLock);
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
@@ -43,6 +44,7 @@ Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 
 void UriProviderSingleTrack::SetTrack(Track* aTrack)
 {
+    AutoMutex a(iLock);
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }

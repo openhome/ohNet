@@ -21,6 +21,7 @@
 #include "RamStore.h"
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Tests/VolumeUtils.h>
+#include <OpenHome/Web/WebAppFramework.h>
 
 namespace OpenHome {
     class PowerManager;
@@ -40,14 +41,21 @@ namespace Configuration {
     class ConfigRamStore;
     class ConfigManager;
 }
+namespace Web {
+    class ConfigAppMediaPlayer;
+}
 namespace Av {
     class RamStore;
 namespace Test {
 
-class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
+class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, public Web::IWebAppFramework*/
 {
+private:
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
+    // FIXME - make at least kMaxUiTabs a parameter?
+    static const TUint kMaxUiTabs = 4;
+    static const TUint kUiSendQueueSize = 32;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
@@ -67,10 +75,13 @@ private: // from Net::IResourceManager
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;
+//private: // from IWebAppFramework
+//    void Add(Web::IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private:
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
     void MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr);
+    void PresentationUrlChanged(const Brx& aUrl);
     void PowerDownUpnp();
     void PowerDownDisable(Net::DvDevice& aDevice);
     void PowerDownUpnpCallback();
@@ -84,7 +95,8 @@ protected:
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
     Semaphore iSemShutdown;
-		Net::Shell* iShell; 
+    Net::Shell* iShell;
+    Web::WebAppFramework* iAppFramework;
 private:
     Semaphore iDisabled;
     Media::VolumePrinter iVolume;
@@ -95,6 +107,7 @@ private:
     const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
     ObservableBrx iObservableFriendlyName;
+    Web::ConfigAppMediaPlayer* iConfigApp;
 };
 
 class TestMediaPlayerOptions

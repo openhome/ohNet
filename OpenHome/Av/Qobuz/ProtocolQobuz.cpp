@@ -16,7 +16,7 @@
 namespace OpenHome {
 namespace Av {
 
-class ProtocolQobuz : public Media::ProtocolNetwork, private Media::IProtocolReader
+class ProtocolQobuz : public Media::ProtocolNetwork, private IReader
 {
 public:
     ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
@@ -34,10 +34,8 @@ private: // from Media::IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolReader
     Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
     void ReadFlush();
     void ReadInterrupt();
-    Brn ReadRemaining();
 private:
     static TBool TryGetTrackId(const Brx& aQuery, Bwx& aTrackId);
     Media::ProtocolStreamResult DoStream();
@@ -54,6 +52,7 @@ private:
     Bws<1024> iStreamUrl;
     Bws<64> iSessionId;
     WriterHttpRequest iWriterRequest;
+    ReaderUntilS<2048> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     ReaderHttpChunked iDechunker;
     HttpHeaderContentType iHeaderContentType;
@@ -92,8 +91,9 @@ ProtocolQobuz::ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aA
     : ProtocolNetwork(aEnv)
     , iSupply(NULL)
     , iWriterRequest(iWriterBuf)
-    , iReaderResponse(aEnv, iReaderBuf)
-    , iDechunker(iReaderBuf)
+    , iReaderUntil(iReaderBuf)
+    , iReaderResponse(aEnv, iReaderUntil)
+    , iDechunker(iReaderUntil)
     , iTotalBytes(0)
     , iSeekable(false)
 {
@@ -287,13 +287,6 @@ Brn ProtocolQobuz::Read(TUint aBytes)
     return buf;
 }
 
-Brn ProtocolQobuz::ReadUntil(TByte aSeparator)
-{
-    Brn buf = iDechunker.ReadUntil(aSeparator);
-    iOffset += buf.Bytes();
-    return buf;
-}
-
 void ProtocolQobuz::ReadFlush()
 {
     iDechunker.ReadFlush();
@@ -302,13 +295,6 @@ void ProtocolQobuz::ReadFlush()
 void ProtocolQobuz::ReadInterrupt()
 {
     iDechunker.ReadInterrupt();
-}
-
-Brn ProtocolQobuz::ReadRemaining()
-{
-    Brn buf = iDechunker.ReadRemaining();
-    iOffset += buf.Bytes();
-    return buf;
 }
 
 TBool ProtocolQobuz::TryGetTrackId(const Brx& aQuery, Bwx& aTrackId)

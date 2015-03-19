@@ -551,6 +551,38 @@ def build(bld):
             use=['VORBIS', 'OHNET'],
             target='CodecVorbis')
 
+    # WebAppFramework
+    bld.stlib(
+        source=[
+            'OpenHome/Web/WebAppFramework.cpp',
+        ],
+        use=['OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
+        target='WebAppFramework')
+
+    # WebAppFramework tests
+    bld.stlib(
+        source=[
+            'OpenHome/Web/Tests/TestWebAppFramework.cpp',
+        ],
+        use=['WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
+        target='WebAppFrameworkTestUtils')
+
+    # ConfigUi
+    bld.stlib(
+        source=[
+            'OpenHome/Web/ConfigUi/ConfigUi.cpp',
+        ],
+        use=['WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
+        target='ConfigUi')
+
+    # ConfigUi tests
+    bld.stlib(
+        source=[
+            'OpenHome/Web/ConfigUi/Tests/TestConfigUi.cpp'
+        ],
+        use=['ConfigUi', 'WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM', 'OPENSSL'],
+        target='ConfigUiTestUtils')
+
     # Tests
     bld.stlib(
             source=[
@@ -613,7 +645,7 @@ def build(bld):
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -823,7 +855,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'OPENSSL'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi', 'OPENSSL'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -881,13 +913,55 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestNtpClient',
             install_path=None)
-
+    bld.program(
+            source=['OpenHome/Web/Tests/TestWebAppFrameworkInteractive.cpp'],
+            use=['WebAppFramework', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            target='TestWebAppFrameworkInteractive',
+            install_path=None)
+    bld.program(
+            source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiInteractive.cpp'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            target='TestConfigUiInteractive',
+            install_path=None)
+    bld.program(
+            source=['OpenHome/Web/Tests/TestWebAppFrameworkMain.cpp'],
+            use=['WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            target='TestWebAppFramework',
+            install_path=None)
+    bld.program(
+            source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
+            use=['ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer', 'OHNET', 'SHELL', 'PLATFORM'],
+            target='TestConfigUi',
+            install_path=None)
 
 # Bundles
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohPipeline', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecVorbis', 'CodecWav', 'CodecPcm', 'libOgg']
+    lib_names = ['ohPipeline',
+                 'ohMediaPlayer',
+                 'ohMediaPlayerTestUtils',
+                 'SourcePlaylist',
+                 'SourceRadio',
+                 'SourceSongcast',
+                 'SourceRaop',
+                 'SourceUpnpAv',
+                 'CodecAac',
+                 'CodecAacBase',
+                 'CodecAdts',
+                 'CodecAifc',
+                 'CodecAiff',
+                 'CodecAiffBase',
+                 'CodecAlac',
+                 'CodecAlacBase',
+                 'CodecFlac',
+                 'CodecVorbis',
+                 'CodecWav',
+                 'CodecPcm',
+                 'libOgg',
+                 'WebAppFramework',
+                 'ConfigUi'
+                ]
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,

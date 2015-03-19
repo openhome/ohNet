@@ -29,7 +29,8 @@ private:
     static const TUint kWriteBufBytes = 2 * 1024;
     static const TUint kReadBufBytes = 4 * 1024;
     SocketSsl* iSocket;
-    Srs<kReadBufBytes>* iReadBuffer;
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
     ReaderHttpResponse* iReaderResponse;
     Sws<kWriteBufBytes>* iWriteBuffer;
     WriterHttpRequest* iWriterRequest;
@@ -54,8 +55,9 @@ SuiteSsl::SuiteSsl(Environment& aEnv)
     : Suite("HTTPS tests")
 {
     iSocket = new SocketSsl(aEnv, kReadBufBytes);
-    iReadBuffer = new Srs<kReadBufBytes>(*iSocket);
-    iReaderResponse = new ReaderHttpResponse(aEnv, *iReadBuffer);
+    iReadBuffer = new Srs<1024>(*iSocket);
+    iReaderUntil = new ReaderUntilS<kReadBufBytes>(*iReadBuffer);
+    iReaderResponse = new ReaderHttpResponse(aEnv, *iReaderUntil);
     iWriteBuffer = new Sws<kWriteBufBytes>(*iSocket);
     iWriterRequest = new WriterHttpRequest(*iWriteBuffer);
 }
@@ -65,6 +67,7 @@ SuiteSsl::~SuiteSsl()
     delete iWriterRequest;
     delete iWriteBuffer;
     delete iReaderResponse;
+    delete iReaderUntil;
     delete iReadBuffer;
     delete iSocket;
 }

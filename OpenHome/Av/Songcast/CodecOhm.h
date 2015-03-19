@@ -23,7 +23,6 @@ private: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
 private: // from IReader
     Brn Read(TUint aBytes) override;
-    Brn ReadUntil(TByte aSeparator) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
 private:

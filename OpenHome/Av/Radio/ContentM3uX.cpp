@@ -41,15 +41,20 @@ namespace Av {
 
 class ContentM3uX : public Media::ContentProcessor
 {
+    static const TUint kMaxLineBytes = 2 * 1024;
+public:
+    ContentM3uX();
+    ~ContentM3uX();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
     void Reset() override;
-    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
+    Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
 private:
     TUint iBandwidth;
     TBool iIsAudio;
     TBool iCacheNextUri;
     Bws<Uri::kMaxUriBytes> iUriHls;
+    ReaderUntil* iReaderUntil;
 };
 
 } // namespace Av
@@ -67,6 +72,16 @@ ContentProcessor* ContentProcessorFactory::NewM3uX()
 
 
 // ContentM3uX
+
+ContentM3uX::ContentM3uX()
+{
+    iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+}
+
+ContentM3uX::~ContentM3uX()
+{
+    delete iReaderUntil;
+}
 
 TBool ContentM3uX::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx& aData)
 {
@@ -87,6 +102,7 @@ TBool ContentM3uX::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Br
 
 void ContentM3uX::Reset()
 {
+    iReaderUntil->ReadFlush();
     ContentProcessor::Reset();
     iBandwidth = 0;
     iIsAudio = false;
@@ -97,14 +113,15 @@ void ContentM3uX::Reset()
 // FIXME - need to iterate over to find highest quality stream first
 // Currently, TuneIn only provides one master playlist per stream quality (and we
 // receive streams ordered by quality).
-ProtocolStreamResult ContentM3uX::Stream(IProtocolReader& aReader, TUint64 aTotalBytes)
+ProtocolStreamResult ContentM3uX::Stream(IReader& aReader, TUint64 aTotalBytes)
 {
     LOG(kMedia, "ContentM3uX::Stream\n");
 
+    SetStream(aReader);
     TUint64 bytesRemaining = aTotalBytes;
     try {
         for (;;) {
-            Brn line = ReadLine(aReader, bytesRemaining);
+            Brn line = ReadLine(*iReaderUntil, bytesRemaining);
             if (line.Bytes() == 0) {// || line.BeginsWith(Brn("#"))) {
                 continue; // empty/comment line
             }

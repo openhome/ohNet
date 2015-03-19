@@ -56,9 +56,7 @@ ZoneHandler::~ZoneHandler()
     if (iRxSocket != NULL) {
         iReader.ReadInterrupt();
     }
-    else {
-        iSem.Signal();
-    }
+    iSem.Signal();
     Join();
     delete iTimerZoneUri;
     delete iTimerPresetInfo;
@@ -252,9 +250,6 @@ void ZoneHandler::Run()
                     }
                 }
                 catch (OhzError&) {
-                    // FIXME - no code to sync onto next msg (the "ohz " header) in the (unlikely) case we receive an invalid/incomplete msg
-                    LOG2(kSongcast, kError, "WARNING: OhzError caught in ZoneHandler::Run. "
-                                            "We should have written code to resync to the next valid msg...\n");
                 }
             }
         }

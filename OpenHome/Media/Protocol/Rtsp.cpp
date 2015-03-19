@@ -138,66 +138,9 @@ void WriterRtspRequest::WriteMethod(const Brx& aMethod, const Brx& aUri)
 }
 
 
-// ReaderRtspRequest
-
-ReaderRtspRequest::ReaderRtspRequest(Environment& aEnv, IReader& aReader)
-    : ReaderHttpRequest(aEnv, aReader)
-{
-}
-
-void ReaderRtspRequest::ReadRtsp(TChar aFirstChar)
-{
-    TUint count = 0;
-    ResetHeaders();
-
-    Bws<500> firstLine;
-    if(aFirstChar != '\0') {
-        firstLine.Append(aFirstChar);
-    }
-    firstLine.Append(iReader.ReadUntil(Ascii::kLf));
-    Brn line(firstLine);
-
-    for (;;) {
-        LOG(kHttp, "Read Request   ");
-        LOG(kHttp, line);
-        LOG(kHttp, "\n");
-        TUint bytes = line.Bytes();
-        if (!bytes && count) {
-            if (iMethod == 0) {
-                THROW(HttpError);
-            }
-            return;     // terminate on blank line, unless before first header(RFC 2616 section 4.1)
-        }
-
-        if (!bytes || !Ascii::IsWhitespace(line[0])) { // a line starting with spaces is a continuation line
-            Parser parser(line);
-            if (count == 0) { // method
-                Brn method = parser.Next();
-                LOG(kHttp, "Method   ");
-                LOG(kHttp, method);
-                LOG(kHttp, "\n");
-                Brn uri = parser.Next();
-                Brn version = Ascii::Trim(parser.Remaining());
-                ProcessMethod(method, uri, version);
-            }
-            else { // header
-                Brn field = parser.Next(':');
-                LOG(kHttp, "Header   ");
-                LOG(kHttp, field);
-                LOG(kHttp, "\n");
-                Brn value = Ascii::Trim(parser.Remaining());
-                ProcessHeader(field, value);
-            }
-            count++;
-        }
-        line.Set(iReader.ReadUntil(Ascii::kLf));
-    }
-}
-
-
 // ReaderRtspResponse
 
-ReaderRtspResponse::ReaderRtspResponse(Environment& aEnv, IReader& aReader)
+ReaderRtspResponse::ReaderRtspResponse(Environment& aEnv, ReaderUntil& aReader)
     : ReaderHttpResponse(aEnv, aReader)
 {
     iVersion = Http::eRtsp10;
@@ -316,13 +259,57 @@ void HeaderRtspSession::Process(const Brx& aValue)
 }
 
 
+// ReaderRtp
+
+ReaderRtp::ReaderRtp(IReader& aReader)
+    : iReader(aReader)
+{
+}
+
+ReaderRtp::MsgType ReaderRtp::ReadType()
+{
+    MsgType type = eRtspRequest;
+    iChar.Replace(iReader.Read(1));
+    if (iChar[0] == '$') {
+        type = eRtp;
+        iChar.SetBytes(0);
+    }
+    else if (iChar[0] == 'R') {
+        type = eRtspResponse;
+    }
+    return type;
+}
+
+Brn ReaderRtp::Read(TUint aBytes)
+{
+    if (iChar.Bytes() > 0) {
+        Brn buf(iChar);
+        iChar.SetBytes(0);
+        return buf;
+    }
+    return iReader.Read(aBytes);
+}
+
+void ReaderRtp::ReadFlush()
+{
+    iChar.SetBytes(0);
+    iReader.ReadFlush();
+}
+
+void ReaderRtp::ReadInterrupt()
+{
+    iReader.ReadInterrupt();
+}
+
+
 // RtspClient
 
 RtspClient::RtspClient(Environment& aEnv, IReader& aReader, IWriter& aWriter, const Brx& aGuid)
-    : iReader(aReader)
-    , iWriterRequest(aWriter)
-    , iReaderRequest(aEnv, aReader)
-    , iReaderResponse(aEnv, aReader)
+    : iWriterRequest(aWriter)
+    , iReaderRtp(aReader)
+    , iReaderUntil(iReaderRtp)
+    , iReaderRequest(aEnv, iReaderUntil)
+    , iReaderResponse(aEnv, iReaderUntil)
     , iSeq(1)
     , iGuid(aGuid)
 {
@@ -467,7 +454,7 @@ void RtspClient::WriteFlush()
 
 TUint RtspClient::Read()
 {
-    iReaderResponse.ReadRtsp();
+    iReaderResponse.Read();
     return iReaderResponse.Status().Code();
 }
 
@@ -484,19 +471,17 @@ void RtspClient::Interrupt()
 Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
 {
     for (;;) {
-        Brn magic = iReader.Read(1);
-        LOG(kHttp, "ReadRtsp (%c)\n", magic[0]);
-        if (magic[0] == '$') {
-            return(ReadRtp());
+        const ReaderRtp::MsgType type = iReaderRtp.ReadType();
+        if (type == ReaderRtp::eRtp) {
+            return ReadRtp();
         }
-        LOG(kHttp, "ReadRtsp - not Rtp (%c)\n", magic[0]);
 
-        if (magic[0] == 'R') {
-            iReaderResponse.ReadRtsp(magic[0]); // ignore responses during normal streaming, wait for Teardown response in teardown 'mode' - ToDo
+        if (type == ReaderRtp::eRtspResponse) {
+            iReaderResponse.Read(); // ignore responses during normal streaming, wait for Teardown response in teardown 'mode' - ToDo
         }
         else {
             try {
-                iReaderRequest.ReadRtsp(magic[0]);  // check for SET_PARAMETER & ANNOUNCE
+                iReaderRequest.Read();  // check for SET_PARAMETER & ANNOUNCE
 
                 //if Content-Length found - read and decode this amount of data (in context)
                 LOG(kHttp, "iReaderRequest.Method()");
@@ -512,17 +497,17 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
                     else {
                         LOG(kHttp, "probably set_parameter!\n");
                         //iReaderRequest.Read...(); //read/process extra info
-                        return(Brn::Empty());   // assume that we are at the end of playlist or file, so terminate
+                        return Brx::Empty();   // assume that we are at the end of playlist or file, so terminate
                     }
                 }
             }
             catch(HttpError) {
                 LOG(kHttp, "unexpected data\n");
-                return(Brn::Empty());   //terminate on unexpected data
+                return Brx::Empty();   //terminate on unexpected data
             }
             catch(BufferOverflow) {
                 LOG(kHttp, "data overflow\n");
-                return(Brn::Empty());   //terminate on unexpected data
+                return Brx::Empty();   //terminate on unexpected data
             }
         }
     }
@@ -545,12 +530,11 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
 
 Brn RtspClient::ReadRtp()
 {
-    Brn channel = iReader.Read(1);
-    Brn length = iReader.Read(2);
-    TUint16 bytes = Converter::BeUint16At(length, 0);
-    Brn header = iReader.Read(16);
-    Brn frame = iReader.Read(bytes - 16);
-    return frame;
+    (void)iReaderUntil.Read(1); // channel
+    ReaderBinary rb(iReaderUntil);
+    TUint bytes = rb.ReadUintBe(2);
+    (void)iReaderUntil.ReadProtocol(16);
+    return iReaderUntil.ReadProtocol(bytes - 16);
 }
 
 void RtspClient::ReadSdp(ISdpHandler& aSdpHandler)
@@ -559,7 +543,7 @@ void RtspClient::ReadSdp(ISdpHandler& aSdpHandler)
     Brn line;
     TUint remaining = iHeaderContentLength.ContentLength();
     while (remaining > 0) {
-        line.Set(iReader.ReadUntil(Ascii::kLf));
+        line.Set(iReaderUntil.ReadUntil(Ascii::kLf));
         LOG(kHttp, "SDP: ");
         LOG(kHttp, line);
         LOG(kHttp, "\n");

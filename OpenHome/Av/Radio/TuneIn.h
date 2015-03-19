@@ -65,7 +65,8 @@ private:
     Uri iRequestUri;
     Sws<kWriteBufBytes> iWriteBuffer;
     WriterHttpRequest iWriterRequest;
-    Srs<kReadBufBytes> iReadBuffer;
+    Srs<1024> iReadBuffer;
+    ReaderUntilS<kReadBufBytes> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     HttpHeaderContentLength iHeaderContentLength;
     Timer* iRefreshTimer;
