@@ -108,13 +108,15 @@ void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
 {
     iLock.Wait();
     if (iNewLocation != NULL) {
-        const TBool sameLocation = (iNewLocation->Location() == aNewLocation->Location());
-        iLock.Signal();
-        iNewLocation->iDevice->RemoveRef();
-        if (sameLocation) {
+        if (iNewLocation->Location() == aNewLocation->Location()) {
+            iLock.Signal();
+            aNewLocation->iDevice->RemoveRef();
             return;
         }
+        CpiDevice* d = iNewLocation->iDevice;
         iNewLocation = aNewLocation;
+        iLock.Signal();
+        d->RemoveRef();
         return;
     }
     iNewLocation = aNewLocation;
