@@ -102,7 +102,7 @@ class TestQobuzPlayTracks( BASE.BasePlayTracks ):
             self.log.Abort( 'Qobuz', 'Login error: %s' % err )
         else:
             self.sender.credentials.SetEnabled( kQobuzCreds, True )
-            self.log.Pass( self.senderDev, 'Logged into Qobuz' )
+            self.log.Pass( self.senderDev, 'Logged into Qobuz as %s' % self.sender.credentials.User( kQobuzCreds ))
         self.sender.credentials.RemoveSubscriber( self._CredentialsCb )
 
     # noinspection PyUnusedLocal
