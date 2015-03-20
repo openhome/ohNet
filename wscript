@@ -177,7 +177,7 @@ def build(bld):
     bld.add_group()
 
     # Copy ConfigUi resources to 'build' and 'install/bin'.
-    confui_node = find_dir_or_fail(bld, bld.root, os.path.join('OpenHome', 'Web', 'ConfigUi', 'res'))
+    confui_node = find_dir_or_fail(bld, bld.path, os.path.join('OpenHome', 'Web', 'ConfigUi', 'res'))
     confui_files = confui_node.ant_glob('**/*')
     cwd = confui_node.path_from(bld.path)
     create_copy_task(bld, confui_files, Node, 'res', cwd, True, None)
