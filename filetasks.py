@@ -24,6 +24,11 @@ def copy_task(task):
     for source, target in zip(task.inputs, task.outputs):
         shutil.copy2(source.abspath(), target.abspath())
 
+def get_node(bld, node_or_filename):
+    if isinstance(node_or_filename, Node):
+        return node_or_filename
+    return bld.path.find_node(node_or_filename)
+
 def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relative_paths=False, name=None):
     source_file_nodes = [get_node(build_context, f) for f in files]
     if keep_relative_paths:
