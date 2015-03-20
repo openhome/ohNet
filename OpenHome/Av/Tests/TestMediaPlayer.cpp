@@ -97,10 +97,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
     // create MediaPlayer
-    const TBool credentialsDisable = (aTidalId.Bytes() == 0 && aQobuzIdSecret.Bytes() == 0);
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   aPipelineDriver, aPullableClock, iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"),
-                                   credentialsDisable);
+                                   aPipelineDriver, aPullableClock, iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

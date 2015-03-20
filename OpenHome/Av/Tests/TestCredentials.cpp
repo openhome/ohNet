@@ -201,6 +201,7 @@ SuiteCredentials::SuiteCredentials(CpStack& aCpStack, DvStack& aDvStack)
     iCredentials = new Credentials(aDvStack.Env(), *iDvDevice, iConfigManager->Store(), udn, *iConfigManager, kKeyBits);
     iDummy = new DummyCredential(*iCredentials, iCredChanged, iStatusChanged);
     iCredentials->Add(iDummy);
+    iCredentials->Start();
     iDvDevice->SetEnabled();
     iProxy = new CpProxyAvOpenhomeOrgCredentials1(*iCpDevice);
     Functor f = MakeFunctor(*this, &SuiteCredentials::SeqChanged);
