@@ -12,11 +12,35 @@ def find_resource_or_fail(bld, root, path):
         bld.fatal("Could not find resource '%s' starting from root '%s'." % (path, root))
     return node
 
+def find_dir_or_fail(bld, root, path):
+        node = root.find_dir(path)
+        if node is None:
+            bld.fatal("Could not find dir '%s' starting from root '%s'." % (path, root))
+        return node
+
 def copy_task(task):
     if not (len(task.inputs) == len(task.outputs)):
         raise Exception("copy_task requires the same number of inputs and outputs.")
     for source, target in zip(task.inputs, task.outputs):
         shutil.copy2(source.abspath(), target.abspath())
+
+def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relative_paths=False, name=None):
+    source_file_nodes = [get_node(build_context, f) for f in files]
+    if keep_relative_paths:
+        cwd_node = build_context.path.find_dir(cwd)
+        target_filenames = [
+                os.path.join(target_dir, source_node.path_from(cwd_node))
+                for source_node in source_file_nodes]
+    else:
+        target_filenames = [
+                os.path.join(target_dir, source_node.name)
+                for source_node in source_file_nodes]
+        target_filenames = map(build_context.bldnode.make_node, target_filenames)
+    return build_context(
+            rule=copy_task,
+            source=source_file_nodes,
+            target=target_filenames,
+            name=name)
 
 def simpleziprule(task):
     zf = zipfile.ZipFile(task.outputs[0].abspath(),'w',zipfile.ZIP_DEFLATED)
