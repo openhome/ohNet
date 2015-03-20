@@ -199,6 +199,20 @@ def build(bld):
                 )
     bld.add_group()
 
+    def find_dir_or_fail(bld, root, path):
+        node = root.find_dir(path)
+        if node is None:
+            bld.fatal("Could not find dir '%s' starting from root '%s'." % (path, root))
+        return node
+
+    confui_node = find_dir_or_fail(bld, bld.root, os.path.join('OpenHome', 'Web', 'ConfigUi', 'res'))
+    confui_files = confui_node.ant_glob('**/*')
+    cwd = confui_node.path_from(bld.path)
+    create_copy_task(bld, confui_files, 'res', cwd, True, None)
+    # Also copy to install/bin/
+    install_path = os.path.join('..', 'install', 'bin', 'res')
+    create_copy_task(bld, confui_files, install_path, cwd, True, None)
+
     # Library
     bld.stlib(
             source=[

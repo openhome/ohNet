@@ -728,16 +728,25 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 
 // ConfigAppBase
 
+const Brn ConfigAppBase::kLangRoot("lang");
 const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
 ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : iConfigManager(aConfigManager)
+    , iLangResourceDir(aResourceDir.Bytes()+1+kLangRoot.Bytes()+1)  // "<aResourceDir>/<kLangRoot>/"
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
 {
     Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: ");
     Log::Print(iResourcePrefix);
     Log::Print("\n");
+
+    iLangResourceDir.Replace(aResourceDir);
+    if (iLangResourceDir[iLangResourceDir.Bytes()-1] != '/') {
+        iLangResourceDir.Append('/');
+    }
+    iLangResourceDir.Append(kLangRoot);
+    iLangResourceDir.Append('/');
 
     iMsgAllocator = new ConfigMessageAllocator(aSendQueueSize, *this);
 
@@ -747,7 +756,7 @@ ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager, const Brx& aResourc
     }
 
     for (TUint i=0; i<aMaxTabs; i++) {
-        iLanguageResourceHandlers.push_back(new LanguageResourceFileReader(aResourceDir));
+        iLanguageResourceHandlers.push_back(new LanguageResourceFileReader(iLangResourceDir));
     }
 }
 
