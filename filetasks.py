@@ -24,8 +24,8 @@ def copy_task(task):
     for source, target in zip(task.inputs, task.outputs):
         shutil.copy2(source.abspath(), target.abspath())
 
-def get_node(bld, node_or_filename):
-    if isinstance(node_or_filename, Node):
+def get_node(bld, node_or_filename, node_type):
+    if isinstance(node_or_filename, node_type):
         return node_or_filename
     return bld.path.find_node(node_or_filename)
 
