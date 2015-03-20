@@ -29,8 +29,8 @@ def get_node(bld, node_or_filename, node_type):
         return node_or_filename
     return bld.path.find_node(node_or_filename)
 
-def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relative_paths=False, name=None):
-    source_file_nodes = [get_node(build_context, f) for f in files]
+def create_copy_task(build_context, files, node_type, target_dir='', cwd=None, keep_relative_paths=False, name=None):
+    source_file_nodes = [get_node(build_context, f, node_type) for f in files]
     if keep_relative_paths:
         cwd_node = build_context.path.find_dir(cwd)
         target_filenames = [
