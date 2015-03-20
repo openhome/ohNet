@@ -19,27 +19,6 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-class AutoMutexLock : private INonCopyable // opposite functionality to AutoMutex - unlocks on construction, (re-)locks on destruction
-{
-public:
-    AutoMutexLock(Mutex& aMutex);
-    ~AutoMutexLock();
-private:
-    Mutex& iMutex;
-};
-
-AutoMutexLock::AutoMutexLock(Mutex& aMutex)
-    : iMutex(aMutex)
-{
-    iMutex.Signal();
-}
-
-AutoMutexLock::~AutoMutexLock()
-{
-    iMutex.Wait();
-}
-
-
 ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
     : Protocol(aEnv)
     , iEnv(aEnv)
@@ -405,7 +384,6 @@ void ProtocolOhBase::TimerRepairExpired()
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
-    AutoMutexLock _(iMutexTransport);
     TBool startOfStream = false;
     if (aMsg.SampleStart() < iLastSampleStart) {
         startOfStream = true;
