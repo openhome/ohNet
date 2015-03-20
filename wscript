@@ -12,7 +12,7 @@ from wafmodules.filetasks import (
 import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
-from filetasks import gather_files, build_tree, copy_task
+from filetasks import gather_files, build_tree, copy_task, find_dir_or_fail, create_copy_task
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_location, guess_libplatform_location, guess_libosa_location, is_core_platform
 
 def options(opt):
@@ -131,29 +131,6 @@ def configure(conf):
         os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'include'),
     ]
 
-def get_node(bld, node_or_filename):
-    if isinstance(node_or_filename, Node):
-        return node_or_filename
-    return bld.path.find_node(node_or_filename)
-
-def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relative_paths=False, name=None):
-    source_file_nodes = [get_node(build_context, f) for f in files]
-    if keep_relative_paths:
-        cwd_node = build_context.path.find_dir(cwd)
-        target_filenames = [
-                os.path.join(target_dir, source_node.path_from(cwd_node))
-                for source_node in source_file_nodes]
-    else:
-        target_filenames = [
-                os.path.join(target_dir, source_node.name)
-                for source_node in source_file_nodes]
-        target_filenames = map(build_context.bldnode.make_node, target_filenames)
-    return build_context(
-            rule=copy_task,
-            source=source_file_nodes,
-            target=target_filenames,
-            name=name)
-
 class GeneratedFile(object):
     def __init__(self, xml, domain, type, version, target):
         self.xml = xml
@@ -199,19 +176,14 @@ def build(bld):
                 )
     bld.add_group()
 
-    def find_dir_or_fail(bld, root, path):
-        node = root.find_dir(path)
-        if node is None:
-            bld.fatal("Could not find dir '%s' starting from root '%s'." % (path, root))
-        return node
-
+    # Copy ConfigUi resources to 'build' and 'install/bin'.
     confui_node = find_dir_or_fail(bld, bld.root, os.path.join('OpenHome', 'Web', 'ConfigUi', 'res'))
     confui_files = confui_node.ant_glob('**/*')
     cwd = confui_node.path_from(bld.path)
-    create_copy_task(bld, confui_files, 'res', cwd, True, None)
+    create_copy_task(bld, confui_files, Node, 'res', cwd, True, None)
     # Also copy to install/bin/
     install_path = os.path.join('..', 'install', 'bin', 'res')
-    create_copy_task(bld, confui_files, install_path, cwd, True, None)
+    create_copy_task(bld, confui_files, Node, install_path, cwd, True, None)
 
     # Library
     bld.stlib(
