@@ -944,14 +944,10 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<c
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
-        Brn prefix("Source.");
         Brn suffix(".Name");
-        Bwh* key = new Bwh(prefix.Bytes()+2+suffix.Bytes()+1);  // 0..99 sources
-        //Bwh* key = new Bwh(prefix.Bytes()+aSources[i]->Bytes()+suffix.Bytes()+1);
-        key->Replace(prefix);
-        Ascii::AppendDec(*key, i);
-        //key->Append(*aSources[i]);
-        key->Append(suffix);
+        Bws<64> key("Source.");
+        Ascii::AppendDec(key, i);
+        key.Append(suffix);
 
         JsonKvpVector sourceInfoVector;
         // FIXME - enable this
@@ -965,7 +961,7 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<c
         //sourceInfoVector.push_back(new JsonKvpString(Brn("type"), type));
         //sourceInfoVector.push_back(new JsonKvpString(Brn("name"), systemName));
 
-        AddText(*key, sourceInfoVector);
+        AddText(key, sourceInfoVector);
     }
 }
 

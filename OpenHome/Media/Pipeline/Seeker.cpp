@@ -197,7 +197,6 @@ void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
     if (aHandle != iSeekHandle) {
         return;
     }
-    ASSERT(iState == EFlushing);
     if (aFlushId == MsgFlush::kIdInvalid) {
         iTargetFlushId = aFlushId;
         HandleSeekFail();

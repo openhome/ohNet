@@ -714,8 +714,7 @@ void WebAppFramework::AddSessions()
     // iMaxLpSessions are in use to allow processing of user input and
     // rejection of new connections.
     for (TUint i=0; i<iMaxLpSessions+kSpareSessions; i++) {
-        Bwh name(kSessionPrefix.Bytes()+2); // space for numerical suffix + '\0'
-        name.Replace(kSessionPrefix);
+        Bws<32> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
         iServer->Add(name.PtrZ(), new HttpSession(iEnv, *this, iTabManager, *this));
     }
@@ -786,7 +785,12 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
 
 HttpSession::~HttpSession()
 {
-    // Run() has exited before this is called.
+    delete iWriterResponse;
+    delete iWriterBuffer;
+    delete iWriterChunked;
+    delete iReaderRequest;
+    delete iReaderUntil;
+    delete iReadBuffer;
 }
 
 void HttpSession::Run()
