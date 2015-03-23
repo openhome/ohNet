@@ -346,10 +346,10 @@ class TestSongcastPlayback( BASE.BaseTest ):
 
         self.log.Header2( '', '    ------ Configuring Test ------' )
 
-        mode = '3'      # 3->unicast, 2->multicast (see #3042)
-        if senderMode == 'multicast': mode = '2'
+        mode = '1'      # 1->unicast, 0->multicast
+        if senderMode == 'multicast': mode = '0'
         for dut in duts:
-            dut.config.SetValue( 'Sender.Enabled', '0' )    # 0 means enabled (see #3042)
+            dut.config.SetValue( 'Sender.Enabled', '1' )
             dut.config.SetValue( 'Sender.Mode', mode )
 
         # start audio server

@@ -115,9 +115,9 @@ class BaseDropout( BASE.BaseTest ):
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
 
-        mode = '3'      # 3->unicast, 2->multicast (see #3042)
-        if senderMode == 'multicast': mode = '2'
-        self.sender.config.SetValue( 'Sender.Enabled', '0' )    # 0 means enabled (see #3042)
+        mode = '1'      # 1->unicast, 0->multicast
+        if senderMode == 'multicast': mode = '0'
+        self.sender.config.SetValue( 'Sender.Enabled', '1' )
         self.sender.config.SetValue( 'Sender.Mode', mode )
         self.SenderSetup()
 

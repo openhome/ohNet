@@ -361,7 +361,7 @@ class BasePlayTracks( BASE.BaseTest ):
         # be cancelled before expiry if an Id event (new track) is received
         # from the Playlist service
         if not self.nextTimer:
-            self.nextTimer = LogThread.Timer( 1, self._NextTimerCb )
+            self.nextTimer = LogThread.Timer( 2, self._NextTimerCb )
             self.nextTimer.start()
         self.sender.playlist.Next()
 

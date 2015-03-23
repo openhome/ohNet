@@ -204,10 +204,10 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
         self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True, aLoopback=loopback )
 
-        mode = '3'      # 3->unicast, 2->multicast (see #3042)
-        if senderMode == 'multicast': mode = '2'
+        mode = '1'      # 1->unicast, 0->multicast
+        if senderMode == 'multicast': mode = '0'
         for dut in [self.dut1, self.dut2, self.dut3, self.dut4]:
-            dut.config.SetValue( 'Sender.Enabled', '0' )    # 0 means enabled (see #3042)
+            dut.config.SetValue( 'Sender.Enabled', '1' )
             dut.config.SetValue( 'Sender.Mode', mode )
 
         if self.dut1.volume is not None:
