@@ -55,6 +55,7 @@ private:
     static void FormUrlEncode(IWriter& aWriter, const Brx& aSrc);
 private:
     Mutex iLock;
+    Mutex iLockConfig;
     ICredentialsState& iCredentialsState;
     SocketSsl iSocket;
     Srs<1024> iReaderBuf;

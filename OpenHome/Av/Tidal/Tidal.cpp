@@ -27,6 +27,7 @@ const Brn Tidal::kConfigKeySoundQuality("tidalhifi.com.SoundQuality");
 
 Tidal::Tidal(Environment& aEnv, const Brx& aToken, ICredentialsState& aCredentialsState, Configuration::IConfigInitialiser& aConfigInitialiser)
     : iLock("TDL1")
+    , iLockConfig("TDL2")
     , iCredentialsState(aCredentialsState)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
@@ -86,7 +87,9 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     pathAndQuery.Append("&countryCode=");
     pathAndQuery.Append(iCountryCode);
     pathAndQuery.Append("&soundQuality=");
+    iLockConfig.Wait();
     pathAndQuery.Append(Brn(kSoundQualities[iSoundQuality]));
+    iLockConfig.Signal();
     Brn url;
     try {
         WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPort);
@@ -133,7 +136,7 @@ const Brx& Tidal::Id() const
 
 void Tidal::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
-    AutoMutex _(iLock);
+    AutoMutex _(iLockConfig);
     iUsername.Replace(aUsername);
     iPassword.Replace(aPassword);
 }
@@ -142,7 +145,9 @@ void Tidal::UpdateStatus()
 {
     AutoMutex _(iLock);
     (void)TryLogoutLocked(iSessionId);
+    iLockConfig.Wait();
     const TBool noCredentials = (iUsername.Bytes() == 0 && iPassword.Bytes() == 0);
+    iLockConfig.Signal();
     if (noCredentials) {
         iCredentialsState.SetState(kId, Brx::Empty(), Brx::Empty());
     }
@@ -211,9 +216,11 @@ TBool Tidal::TryLoginLocked()
     AutoSocketSsl _(iSocket);
     Bws<280> reqBody(Brn("username="));
     WriterBuffer writer(reqBody);
+    iLockConfig.Wait();
     FormUrlEncode(writer, iUsername);
     reqBody.Append(Brn("&password="));
     FormUrlEncode(writer, iPassword);
+    iLockConfig.Signal();
 
     Bws<128> pathAndQuery("/v1/login/username?token=");
     pathAndQuery.Append(iToken);
@@ -333,9 +340,9 @@ Brn Tidal::ReadValue(ReaderUntil& aReader, const Brx& aTag)
 
 void Tidal::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
 {
-    iLock.Wait();
+    iLockConfig.Wait();
     iSoundQuality = aKvp.Value();
-    iLock.Signal();
+    iLockConfig.Signal();
 }
 
 void Tidal::FormUrlEncode(IWriter& aWriter, const Brx& aSrc)

@@ -30,7 +30,8 @@ const Brn Qobuz::kConfigKeySoundQuality("qobuz.com.SoundQuality");
 
 Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICredentialsState& aCredentialsState, IConfigInitialiser& aConfigInitialiser)
     : iEnv(aEnv)
-    , iLock("TDL1")
+    , iLock("QBZ1")
+    , iLockConfig("QBZ2")
     , iCredentialsState(aCredentialsState)
     , iReaderBuf(iSocket)
     , iReaderUntil1(iReaderBuf)
@@ -83,7 +84,9 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         return false;
     }
     Bws<Ascii::kMaxUintStringBytes> audioFormatBuf;
+    iLockConfig.Wait();
     Ascii::AppendDec(audioFormatBuf, iSoundQuality);
+    iLockConfig.Signal();
     Bws<128> sig("trackgetFileUrlformat_id");
     sig.Append(audioFormatBuf);
     sig.Append("intentstreamtrack_id");
@@ -148,7 +151,7 @@ const Brx& Qobuz::Id() const
 
 void Qobuz::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
-    AutoMutex _(iLock);
+    AutoMutex _(iLockConfig);
     iUsername.Replace(aUsername);
     iPassword.Replace(aPassword);
 }
@@ -156,7 +159,15 @@ void Qobuz::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 void Qobuz::UpdateStatus()
 {
     AutoMutex _(iLock);
-    (void)TryLoginLocked();
+    iLockConfig.Wait();
+    const TBool noCredentials = (iUsername.Bytes() == 0 && iPassword.Bytes() == 0);
+    iLockConfig.Signal();
+    if (noCredentials) {
+        iCredentialsState.SetState(kId, Brx::Empty(), Brx::Empty());
+    }
+    else {
+        (void)TryLoginLocked();
+    }
 }
 
 void Qobuz::Login(Bwx& aToken)
@@ -214,9 +225,11 @@ TBool Qobuz::TryLoginLocked()
     iPathAndQuery.Append("user/login?app_id=");
     iPathAndQuery.Append(iAppId);
     iPathAndQuery.Append("&username=");
+    iLockConfig.Wait();
     iPathAndQuery.Append(iUsername);
     iPathAndQuery.Append("&password=");
     AppendMd5(iPathAndQuery, iPassword);
+    iLockConfig.Signal();
 
     try {
         const TUint code = WriteRequestReadResponse(Http::kMethodGet, iPathAndQuery);
@@ -291,9 +304,9 @@ Brn Qobuz::ReadString()
 
 void Qobuz::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
 {
-    iLock.Wait();
+    iLockConfig.Wait();
     iSoundQuality = aKvp.Value();
-    iLock.Signal();
+    iLockConfig.Signal();
 }
 
 void Qobuz::AppendMd5(Bwx& aBuffer, const Brx& aToHash)

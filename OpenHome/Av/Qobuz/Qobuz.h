@@ -55,6 +55,7 @@ private:
 private:
     Environment& iEnv;
     Mutex iLock;
+    Mutex iLockConfig;
     ICredentialsState& iCredentialsState;
     SocketTcpClient iSocket;
     Srs<1024> iReaderBuf;
