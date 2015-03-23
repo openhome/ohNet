@@ -57,6 +57,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     iStopped = false;
     iEndpoint.Replace(aEndpoint);
     iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
+    TBool firstJoin = true;
     do {
         try {
             OhmHeader header;
@@ -103,6 +104,13 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
             }
             
             iTimerJoin->Cancel();
+            if (firstJoin) {
+                /* Put pipeline into Waiting state initially in case sender is currently paused.
+                   Subsequent loops will likely be prompted by network starvation.  We don't want
+                   to output a Wait in this case; its correct that the pipeline goes Buffering */
+                iSupply->OutputWait();
+                firstJoin = false;
+            }
 
             // Phase 2, periodically send listen if required
             iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
@@ -151,6 +159,14 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         iSupply->OutputFlush(iNextFlushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
+}
+
+void ProtocolOhm::Interrupt(TBool aInterrupt)
+{
+    if (aInterrupt) {
+        iStopped = aInterrupt;
+    }
+    ProtocolOhBase::Interrupt(aInterrupt);
 }
 
 TUint ProtocolOhm::TryStop(TUint aStreamId)

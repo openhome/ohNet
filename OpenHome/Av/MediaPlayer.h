@@ -93,8 +93,7 @@ public:
                 Media::IVolume& aVolumeRight,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
-                const Brx& aDefaultName,
-                TBool aCredentialsDisable = false); // Credentials uses openssl. Its invalid uses of memory swamp valgrind so it's handy to disable in dev builds
+                const Brx& aDefaultName);
     ~MediaPlayer();
     void Quit();
     void Add(Media::Codec::CodecBase* aCodec);

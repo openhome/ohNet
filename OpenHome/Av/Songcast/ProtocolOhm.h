@@ -21,6 +21,8 @@ public:
     ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const Brx& aMode);
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
+private: // from Media::Protocol
+    void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
 private:

@@ -79,6 +79,7 @@ public:
     Credentials(Environment& aEnv, Net::DvDevice& aDevice, Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits = 2048);
     virtual ~Credentials();
     void Add(ICredentialConsumer* aConsumer);
+    void Start();
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
     void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted

@@ -19,27 +19,6 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-class AutoMutexLock : private INonCopyable // opposite functionality to AutoMutex - unlocks on construction, (re-)locks on destruction
-{
-public:
-    AutoMutexLock(Mutex& aMutex);
-    ~AutoMutexLock();
-private:
-    Mutex& iMutex;
-};
-
-AutoMutexLock::AutoMutexLock(Mutex& aMutex)
-    : iMutex(aMutex)
-{
-    iMutex.Signal();
-}
-
-AutoMutexLock::~AutoMutexLock()
-{
-    iMutex.Wait();
-}
-
-
 ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
     : Protocol(aEnv)
     , iEnv(aEnv)
@@ -204,9 +183,13 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolOhBase::OkToPlay(TUint /*aStreamId*/)
+EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    return ePlayYes; //iIdProvider->OkToPlay(aStreamId);
+    EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
+    if (canPlay != ePlayYes) {
+        Log::Print("WARNING: ProtocolOhBase::OkToPlay(aStreamId) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    }
+    return ePlayYes;
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()
@@ -247,6 +230,7 @@ void ProtocolOhBase::RepairReset()
     iRepairFrames.clear();
     iRunning = false;
     iRepairing = false; // FIXME - not absolutely required as test for iRunning takes precedence in Process(OhmMsgAudioBlob&
+    iStreamMsgDue = true; // a failed repair implies a discontinuity in audio.  This should be noted as a new stream.
 }
 
 TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
@@ -405,7 +389,6 @@ void ProtocolOhBase::TimerRepairExpired()
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
-    AutoMutexLock _(iMutexTransport);
     TBool startOfStream = false;
     if (aMsg.SampleStart() < iLastSampleStart) {
         startOfStream = true;

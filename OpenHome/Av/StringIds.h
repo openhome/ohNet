@@ -1,12 +1,10 @@
 #ifndef HEADER_STRING_IDS
 #define HEADER_STRING_IDS
 
-enum StringIds
+enum StringIdsYesNo
 {
-    eStringIdYes
-   ,eStringIdNo
-   ,eStringIdSongcastModeMulticast
-   ,eStringIdSongcastModeUnicast
+    eStringIdNo
+   ,eStringIdYes
 };
 
 #endif // HEADER_STRING_IDS

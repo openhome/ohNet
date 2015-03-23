@@ -252,13 +252,12 @@ Credentials::Credentials(Environment& aEnv, Net::DvDevice& aDevice, IStoreReadWr
     , iKey(NULL)
     , iModerationTimerStarted(false)
     , iKeyParams(aStore, aEntropy, aKeyBits)
+    , iThread(NULL)
     , iFifo(kNumFifoElements)
     , iStarted(false)
 {
     iProvider = new ProviderCredentials(aDevice, *this);
     iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &Credentials::ModerationTimerCallback), "Credentials");
-    iThread = new ThreadFunctor("Credentials", MakeFunctor(*this, &Credentials::CredentialsThread), kPriorityLow);
-    iThread->Start();
 }
 
 Credentials::~Credentials()
@@ -282,6 +281,14 @@ void Credentials::Add(ICredentialConsumer* aConsumer)
         credential->SetKey((RSA*)iKey);
     }
     iProvider->AddId(credential->Id());
+}
+
+void Credentials::Start()
+{
+    if (iCredentials.size() > 0) {
+        iThread = new ThreadFunctor("Credentials", MakeFunctor(*this, &Credentials::CredentialsThread), kPriorityLow);
+        iThread->Start();
+    }
 }
 
 void Credentials::SetState(const Brx& aId, const Brx& aStatus, const Brx& aData)

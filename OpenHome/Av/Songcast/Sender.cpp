@@ -15,6 +15,13 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
+
+enum StringIdsSongcastMode
+{
+    eStringIdSongcastModeMulticast
+   ,eStringIdSongcastModeUnicast
+};
+
 // Sender
 
 const Brn Sender::kConfigIdEnabled("Sender.Enabled");

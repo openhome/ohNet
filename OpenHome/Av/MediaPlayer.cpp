@@ -42,8 +42,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IVolume& aVolumeRight,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
-                         const Brx& aDefaultName,
-                         TBool aCredentialsDisable)
+                         const Brx& aDefaultName)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
@@ -62,13 +61,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, aDefaultName);
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
-    if (aCredentialsDisable) {
-        iCredentials = NULL;
-    }
-    else {
-        iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
-        iProduct->AddAttribute("Credentials");
-    }
+    iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
+    iProduct->AddAttribute("Credentials");
     iProviderTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
@@ -133,6 +127,7 @@ void MediaPlayer::Start()
     iConfigManager->Print();
     iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
+    iCredentials->Start();
     iProduct->Start();
 }
 

@@ -252,6 +252,7 @@ void SourceReceiver::Play()
     AutoMutex a(iLock);
     iPlaying = true;
     if (iTrackUri.Bytes() > 0) {
+        iZoneHandler->SetCurrentSenderUri(iTrackUri);
         iPipeline.Begin(iUriProvider->Mode(), iTrackId);
         iPipeline.Play();
     }
@@ -263,6 +264,7 @@ void SourceReceiver::Stop()
     iLock.Wait();
     iPlaying = false;
     iPipeline.Stop();
+    iZoneHandler->ClearCurrentSenderUri();
     iLock.Signal();
 }
 

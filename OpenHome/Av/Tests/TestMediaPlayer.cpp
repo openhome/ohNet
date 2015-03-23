@@ -97,10 +97,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
     // create MediaPlayer
-    const TBool credentialsDisable = (aTidalId.Bytes() == 0 && aQobuzIdSecret.Bytes() == 0);
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   aPipelineDriver, aPullableClock, iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"),
-                                   credentialsDisable);
+                                   aPipelineDriver, aPullableClock, iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -172,7 +170,7 @@ void TestMediaPlayer::Run()
         sourcesBufs.push_back(new Brh(systemName));
     }
     // FIXME - take resource dir as param or copy res dir to build dir
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("../OpenHome/Web/ConfigUi/Tests/res/"), kMaxUiTabs, kUiSendQueueSize);
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("res/"), kMaxUiTabs, kUiSendQueueSize);
     iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
     //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
     for (TUint i=0;i<sourcesBufs.size(); i++) {

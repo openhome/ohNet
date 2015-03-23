@@ -340,6 +340,7 @@ public:
      typedef std::vector<JsonKvp*> JsonKvpVector;
 private:
     static const TUint kMaxResourcePrefixBytes = 25;
+    static const Brn kLangRoot;
     static const Brn kDefaultLanguage;
     typedef std::vector<const OpenHome::Brx*> KeyVector;
     typedef std::pair<OpenHome::Brn, OpenHome::Brx*> JsonPair;
@@ -365,6 +366,7 @@ protected:
     OpenHome::Configuration::IConfigManager& iConfigManager;
 private:
     ConfigMessageAllocator* iMsgAllocator;
+    Bwh iLangResourceDir;
     const OpenHome::Bws<kMaxResourcePrefixBytes> iResourcePrefix;
     std::vector<FileResourceHandler*> iResourceHandlers;
     std::vector<LanguageResourceFileReader*> iLanguageResourceHandlers;
