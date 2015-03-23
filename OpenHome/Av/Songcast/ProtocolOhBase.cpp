@@ -226,6 +226,7 @@ void ProtocolOhBase::RepairReset()
     iRepairFrames.clear();
     iRunning = false;
     iRepairing = false; // FIXME - not absolutely required as test for iRunning takes precedence in Process(OhmMsgAudioBlob&
+    iStreamMsgDue = true; // a failed repair implies a discontinuity in audio.  This should be noted as a new stream.
 }
 
 TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
