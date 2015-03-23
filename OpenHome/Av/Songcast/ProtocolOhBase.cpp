@@ -183,9 +183,13 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolOhBase::OkToPlay(TUint /*aStreamId*/)
+EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    return ePlayYes; //iIdProvider->OkToPlay(aStreamId);
+    EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
+    if (canPlay != ePlayYes) {
+        Log::Print("WARNING: ProtocolOhBase::OkToPlay(aStreamId) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    }
+    return ePlayYes;
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()
