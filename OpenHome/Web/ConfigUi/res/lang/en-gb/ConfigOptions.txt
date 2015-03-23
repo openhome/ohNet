@@ -1,10 +1,10 @@
 Sender.Enabled
-0   True
-1   False
+0   False
+1   True
 
 Sender.Mode
-2   Multicast
-3   Unicast
+0   Multicast
+1   Unicast
 
 Source.NetAux.Auto
 0   Enabled
