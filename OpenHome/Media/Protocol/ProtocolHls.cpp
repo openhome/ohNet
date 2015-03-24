@@ -74,7 +74,7 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private:
     void Reinitialise();
     void StartStream(const Uri& aUri);
@@ -832,7 +832,7 @@ TUint ProtocolHls::TryStop(TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolHls::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool ProtocolHls::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     LOG(kMedia, "ProtocolHls::TryGet\n");
     return false;;
