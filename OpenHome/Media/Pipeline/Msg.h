@@ -1120,13 +1120,13 @@ public:
      * during format recognition for a new stream; more frequent use would be questionable.)
      *
      * @param[in] aWriter          Interface used to return the requested data.
-     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     * @param[in] aUrl             Uri to read from.
      * @param[in] aOffset          Byte offset to start reading from
      * @param[in] aBytes           Number of bytes to read
      *
      * @return  true if exactly aBytes were read; false otherwise
      */
-    virtual TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
+    virtual TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
     /**
      * Inform interested parties of an unexpected break in audio.
      *

@@ -42,7 +42,7 @@ public: // from IStreamHandler
     virtual EStreamPlay OkToPlay(TUint aStreamId) = 0;
     virtual TUint TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     virtual TUint TryStop(TUint aStreamId) = 0;
-    virtual TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0;
+    virtual TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) = 0;
     virtual void NotifyStarving(const Brx& aMode, TUint aStreamId) = 0;
 };
 
@@ -88,7 +88,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 protected:
     MsgAudioEncoded* iAudioEncoded;
@@ -143,7 +143,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
@@ -189,7 +189,7 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     MsgFactory& iMsgFactory;
