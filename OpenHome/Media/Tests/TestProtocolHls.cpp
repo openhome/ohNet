@@ -2342,7 +2342,7 @@ void SuiteProtocolHls::TestTryGet()
     WriterBuffer writerBuf(buf);
     IStreamHandler* streamHandler = iElementDownstream->StreamHandler();
     TEST(streamHandler != NULL);
-    TBool resultGet = streamHandler->TryGet(writerBuf, kExpectedStreamId, 0, 20);
+    TBool resultGet = streamHandler->TryGet(writerBuf, kUriHlsEndList, 0, 20);
     TEST(resultGet == false);
 
     iSegmentWaitSem->Signal();//kSemWaitMs);

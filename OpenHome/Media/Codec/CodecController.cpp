@@ -192,7 +192,8 @@ void CodecController::CodecThread()
             iLock.Wait();
             iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
             iActiveCodec = NULL;
-            iStreamId = iSampleRate = iSeekSeconds = 0;
+            iSampleRate = iSeekSeconds = 0;
+            iStreamId = IPipelineIdProvider::kStreamIdInvalid;
             iStreamLength = iStreamPos = 0LL;
             ReleaseAudioEncoded();
             iLock.Signal();
@@ -436,7 +437,7 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
 TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 {
     if (!iStreamEnded && !iQuit) {
-        return iStreamHandler->TryGet(aWriter, iStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, iTrackUri, aOffset, aBytes);
     }
     return false;
 }
@@ -583,6 +584,7 @@ Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamEnded = true;
+    iTrackUri.Replace(aMsg->Uri());
     if (iRecognising) {
         aMsg->RemoveRef();
         return NULL;
@@ -735,7 +737,7 @@ TUint CodecController::TryStop(TUint aStreamId)
     return flushId;
 }
 
-TBool CodecController::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool CodecController::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();  // expect Get requests to come to this class' public API, not from downstream
                 // i.e., nothing downstream of the codec should be requesting arbitrary data

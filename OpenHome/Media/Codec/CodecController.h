@@ -334,7 +334,7 @@ private: // IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
@@ -370,6 +370,7 @@ private:
     PcmStreamInfo iPcmStream;
     IStreamHandler* iStreamHandler;
     TUint iStreamId;
+    BwsTrackUri iTrackUri;
     TUint iSampleRate;
     TUint64 iStreamLength;
     TUint64 iStreamPos;

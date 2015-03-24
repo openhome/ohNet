@@ -394,10 +394,10 @@ TUint VariableDelay::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-TBool VariableDelay::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool VariableDelay::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, aUrl, aOffset, aBytes);
     }
     return false;
 }

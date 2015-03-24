@@ -183,7 +183,7 @@ TUint Gorger::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-TBool Gorger::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool Gorger::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     // Not expected to be called.  Content at this stage of the pipeline is guaranteed to be played.
     ASSERTS();

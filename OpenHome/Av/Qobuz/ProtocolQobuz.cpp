@@ -31,7 +31,7 @@ private: // from Media::IStreamHandler
     Media::EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolReader
     Brn Read(TUint aBytes);
     void ReadFlush();
@@ -267,15 +267,10 @@ TUint ProtocolQobuz::TryStop(TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolQobuz::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool ProtocolQobuz::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
 {
     LOG(kMedia, "> ProtocolQobuz::TryGet\n");
-    iLock.Wait();
-    TBool success = false;
-    if (IsCurrentStream(aStreamId)) {
-        success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
-    }
-    iLock.Signal();
+    TBool success = iProtocolManager->Get(aWriter, aUrl, aOffset, aBytes);
     LOG(kMedia, "< ProtocolQobuz::TryGet\n");
     return success;
 }

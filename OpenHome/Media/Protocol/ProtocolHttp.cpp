@@ -46,7 +46,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IReader
     Brn Read(TUint aBytes) override;
     void ReadFlush() override;
@@ -354,15 +354,10 @@ TUint ProtocolHttp::TryStop(TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool ProtocolHttp::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
 {
     LOG(kMedia, "> ProtocolHttp::TryGet\n");
-    iLock.Wait();
-    TBool success = false;
-    if (IsCurrentStream(aStreamId)) {
-        success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
-    }
-    iLock.Signal();
+    TBool success = iProtocolManager->Get(aWriter, aUrl, aOffset, aBytes);
     LOG(kMedia, "< ProtocolHttp::TryGet\n");
     return success;
 }
