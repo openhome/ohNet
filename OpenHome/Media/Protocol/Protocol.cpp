@@ -408,6 +408,7 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)
 {
     iDownstream.Push(iMsgFactory.CreateMsgTrack(aTrack));
+    iDownstream.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
     ProtocolStreamResult res = Stream(aTrack.Uri());
     return res;
 }

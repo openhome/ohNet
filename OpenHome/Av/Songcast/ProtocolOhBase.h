@@ -90,10 +90,9 @@ private:
     TBool iStreamMsgDue;
     TBool iMetatextMsgDue;
     TBool iSeqTrackValid;
-    TBool iSeqMetatextValid;
+    Bws<Media::MsgMetaText::kMaxBytes> iMetatext;
     Bws<Media::MsgMetaText::kMaxBytes> iPendingMetatext;
     TUint iSeqTrack;
-    TUint iSeqMetatext;
     TUint64 iLastSampleStart;
     OhmMsgAudioBlob* iRepairFirst;
     std::vector<OhmMsgAudioBlob*> iRepairFrames;

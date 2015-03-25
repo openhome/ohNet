@@ -184,10 +184,13 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTim
     IConfigManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(env, device, *iZoneHandler, configInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     iLoggerSender = new Logger("Sender", *iSender);
-    iLoggerSender->SetEnabled(false);
+    //iLoggerSender->SetEnabled(true);
+    //iLoggerSender->SetFilter(Logger::EMsgAll);
     iSplitter = new Splitter(*iLoggerSender, iUriProvider->Mode());
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iSplitter->SetUpstream(iPipeline.InsertElements(*iLoggerSplitter));
+    //iLoggerSplitter->SetEnabled(true);
+    //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManager.GetText(Product::kConfigIdRoomBase);
     iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorConfigText(*this, &SourceReceiver::ConfigRoomChanged));

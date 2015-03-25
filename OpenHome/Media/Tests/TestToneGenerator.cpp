@@ -83,6 +83,7 @@ enum EToneMsgType
 {
     eMsgTrack,
     eMsgEncodedStream,
+    eMsgMetatext,
     eMsgDecodedStream,
     eMsgAudioPcm,
     eMsgQuit,
@@ -580,7 +581,7 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgDelay* aMsg)
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    TEST(eMsgEncodedStream== iExpectedMsgType);
+    TEST(eMsgEncodedStream == iExpectedMsgType);
     iExpectedMsgType = eMsgDecodedStream;
     return aMsg;
 }
@@ -594,7 +595,6 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
 {
-    ASSERTS();
     return aMsg;
 }
 

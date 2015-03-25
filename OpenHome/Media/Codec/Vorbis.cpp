@@ -253,6 +253,7 @@ void CodecVorbis::StreamInitialise()
     iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
     iTrackLengthJiffies = 0;
     iTrackOffset = 0;
+    iIcyMetadata.Replace(Brx::Empty());
 
     if (iController->StreamLength() > 0) {
         // Try do an out-of-band read and parse the final Ogg page ourselves to
