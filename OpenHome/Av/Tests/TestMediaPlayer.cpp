@@ -265,6 +265,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHls(aEnv, iUserAgent));
 
     // only add Tidal if we have a token to use with login
     if (iTidalId.Bytes() > 0) {
