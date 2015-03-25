@@ -4,13 +4,12 @@ import os
 import platform
 import sys
 
-# Find MediaPlayer root
-head, tail = os.path.split( os.path.dirname( __file__ ))
-while tail != 'ohMediaPlayer' and tail != '':
-    head, tail = os.path.split( head )
+# Find MediaPlayer root from anywhere INSIDE MediaPlayer tree
+root = os.path.dirname( __file__ )
+while not os.path.isdir( os.path.join( root, 'IntegrationTests' )):
+    root = os.path.dirname( root )
 
 # Get pathing for for FunctionalTest
-root  = os.path.abspath( os.path.join( head, tail ))
 deps  = os.path.join( root, 'dependencies' )
 test  = os.path.abspath( os.path.join( deps, 'AnyPlatform/FunctionalTest' ))
 

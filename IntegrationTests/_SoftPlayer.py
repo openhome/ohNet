@@ -99,9 +99,9 @@ class SoftPlayer( BASE.Component ):
             self.proc.stdin.write( 'q\n' )
             self.proc.stdin.close()
             self.proc.wait()
-            t.cancel()
         except:
             self.log.Info( self.dev, 'Problem shutting down' )
+        t.cancel()
         self.logThread.join()
         time.sleep( 1 )             # Let it shut down
 
