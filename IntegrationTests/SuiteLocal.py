@@ -53,8 +53,7 @@ qobuzPwd  = config.Get( 'qobuz.password' )
 
 tests = [
     # Update and build ohMediaPlayer
-#    [ 'BuildOhmp',                   'debug'                                                                                        ],
-    [ 'BuildOhmp'                                                                                                                   ],
+    [ 'BuildOhmp',                   'debug'                                                                                        ],
 
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',   0                                                                            ],
