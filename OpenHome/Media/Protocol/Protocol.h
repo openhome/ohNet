@@ -66,7 +66,7 @@ public:
     ProtocolGetResult DoGet(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
     ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream, IFlushIdProvider& aFlushIdProvider);
-    TBool Active() const;
+    TBool TrySetActive();
     /**
      * Interrupt any stream that is currently in-progress, or cancel a previous interruption.
      *
@@ -131,6 +131,8 @@ protected:
     IPipelineIdProvider* iIdProvider;
     IFlushIdProvider* iFlushIdProvider;
     TBool iActive;
+private:
+    Mutex iLockActive;
 private:
     class AutoStream : private INonCopyable
     {
