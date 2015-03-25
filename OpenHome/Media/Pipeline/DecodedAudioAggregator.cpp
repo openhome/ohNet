@@ -61,14 +61,6 @@ TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-TBool DecodedAudioAggregator::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
-{
-    if (iStreamHandler != NULL) {
-        return iStreamHandler->TryGet(aWriter, aUrl, aOffset, aBytes);
-    }
-    return false;
-}
-
 void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iStreamHandler != NULL) {

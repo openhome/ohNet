@@ -65,11 +65,6 @@ TUint Protocol::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
-TBool Protocol::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    return false;
-}
-
 void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
@@ -410,6 +405,11 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
     for (auto it=iProtocols.begin(); it!=iProtocols.end(); ++it) {
         (*it)->Interrupt(aInterrupt);
     }
+}
+
+TBool ProtocolManager::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
+{
+    return Get(aWriter, aUrl, aOffset, aBytes);
 }
 
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)

@@ -165,7 +165,8 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 // Pipeline
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
-                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IPipelineDriver& /*aPipelineDriver*/)
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
+                   IUrlBlockWriter& aUrlBlockWriter, IPipelineDriver& /*aPipelineDriver*/)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -217,7 +218,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     // construct push logger slightly out of sequence
     iLoggerCodecController = new Logger("Codec Controller", *iTimestampInspector);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, threadPriority);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
     threadPriority++;
 
     iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());

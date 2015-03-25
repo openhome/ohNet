@@ -126,7 +126,7 @@ private:
     IMsgProcessor& iMsgProcessor;
 };
 
-class TestCodecMinimalPipeline
+class TestCodecMinimalPipeline : private IUrlBlockWriter
 {
 private:
     static const TUint kEncodedAudioCount = 100;
@@ -141,6 +141,8 @@ public:
     TBool SeekCurrentTrack(TUint aSecondsAbsolute, ISeekObserver& aSeekObserver, TUint& aHandle);
 protected:
     virtual void RegisterPlugins();
+private: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 protected:
     Container* iContainer;
     CodecController* iController;

@@ -34,7 +34,6 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     MsgFactory& iMsgFactory;
@@ -48,7 +47,7 @@ private:
     TUint iHaltId;
 };
 
-class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer, private IPipelineDriver
+class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer, private IUrlBlockWriter, private IPipelineDriver
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -104,6 +103,8 @@ private: // from IStreamPlayObserver
     void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus) override;
 private: // from ISeekRestreamer
     TUint SeekRestream(const Brx& aMode, TUint aTrackId) override;
+private: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IPipelineDriver
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
@@ -246,12 +247,6 @@ TUint Supplier::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-TBool Supplier::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();
-    return false;
-}
-
 void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
@@ -275,7 +270,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
@@ -778,6 +773,11 @@ TUint SuitePipeline::SeekRestream(const Brx& /*aMode*/, TUint /*aTrackId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
+}
+
+TBool SuitePipeline::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
 }
 
 TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)

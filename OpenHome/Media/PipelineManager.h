@@ -30,7 +30,7 @@ class UriProvider;
 /**
  * External interface to the pipeline.
  */
-class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer
+class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer, private IUrlBlockWriter
 {
 public:
     PipelineManager(PipelineInitParams* aInitParams, IPipelineDriver& aPipelineDriver, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
@@ -232,6 +232,8 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private: // from ISeekRestreamer
     TUint SeekRestream(const Brx& aMode, TUint aTrackId) override;
+private: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private:
     class PrefetchObserver : public IStreamPlayObserver
     {

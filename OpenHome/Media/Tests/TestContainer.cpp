@@ -93,7 +93,6 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 public:
     TUint OkToPlayCount();
@@ -472,12 +471,6 @@ TUint TestContainerProvider::TryStop(TUint /*aStreamId*/)
 {
     iStopCount++;
     return iCurrentFlushId++;
-}
-
-TBool TestContainerProvider::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();
-    return false;
 }
 
 void TestContainerProvider::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)

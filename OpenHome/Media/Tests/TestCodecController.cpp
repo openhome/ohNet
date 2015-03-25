@@ -46,6 +46,7 @@ class SuiteCodecControllerBase : public SuiteUnitTest
                                , private IPipelineElementUpstream
                                , private IPipelineElementDownstream
                                , private IStreamHandler
+                               , private IUrlBlockWriter
                                , private IMsgProcessor
 {
 public:
@@ -61,8 +62,9 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+private: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -256,7 +258,7 @@ void SuiteCodecControllerBase::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
     iMsgFactory = new MsgFactory(iInfoAggregator, 400, 400, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
-    iController = new CodecController(*iMsgFactory, *this, *this, kPriorityNormal);
+    iController = new CodecController(*iMsgFactory, *this, *this, *this, kPriorityNormal);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
@@ -338,14 +340,13 @@ TUint SuiteCodecControllerBase::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();
-    return false;
-}
-
 void SuiteCodecControllerBase::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
+}
+
+TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
 }
 
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgMode* aMsg)

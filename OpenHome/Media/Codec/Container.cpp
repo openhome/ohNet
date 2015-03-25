@@ -210,12 +210,6 @@ TUint ContainerBase::TryStop(TUint aStreamId)
     return iExpectedFlushId;
 }
 
-TBool ContainerBase::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
-{
-    LOG(kMedia, "ContainerBase::TryGet\n");
-    return iStreamHandler->TryGet(aWriter, aUrl, aOffset, aBytes);
-}
-
 void ContainerBase::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
@@ -563,15 +557,6 @@ TUint ContainerFront::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-TBool ContainerFront::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
-{
-    LOG(kMedia, "ContainerFront::TryGet\n");
-    if (!iQuit) {
-        return iStreamHandler->TryGet(aWriter, aUrl, aOffset, aBytes);
-    }
-    return false;
-}
-
 void ContainerFront::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
@@ -730,12 +715,6 @@ TUint Container::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "Container::TryStop\n");
     return iContainerFront->iActiveContainer->TryStop(aStreamId);
-}
-
-TBool Container::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
-{
-    LOG(kMedia, "Container::TryGet\n");
-    return iContainerFront->iActiveContainer->TryGet(aWriter, aUrl, aOffset, aBytes);
 }
 
 void Container::NotifyStarving(const Brx& aMode, TUint aStreamId)

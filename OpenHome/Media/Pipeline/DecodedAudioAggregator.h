@@ -26,7 +26,6 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override; // return false if we failed to get aBytes
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;

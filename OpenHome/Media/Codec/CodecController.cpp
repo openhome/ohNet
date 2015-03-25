@@ -100,10 +100,12 @@ void CodecBase::Construct(ICodecController& aController)
 
 // CodecController
 
-CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, TUint aThreadPriority)
+CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
+                                 IUrlBlockWriter& aUrlBlockWriter, TUint aThreadPriority)
     : iMsgFactory(aMsgFactory)
     , iRewinder(aMsgFactory, aUpstreamElement)
     , iDownstreamElement(aDownstreamElement)
+    , iUrlBlockWriter(aUrlBlockWriter)
     , iLock("CDCC")
     , iActiveCodec(NULL)
     , iPendingMsg(NULL)
@@ -437,7 +439,7 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
 TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 {
     if (!iStreamEnded && !iQuit) {
-        return iStreamHandler->TryGet(aWriter, iTrackUri, aOffset, aBytes);
+        return iUrlBlockWriter.TryGet(aWriter, iTrackUri, aOffset, aBytes);
     }
     return false;
 }
@@ -735,13 +737,6 @@ TUint CodecController::TryStop(TUint aStreamId)
                 aStreamId, flushId, iStreamId, iStreamStopped);
 
     return flushId;
-}
-
-TBool CodecController::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();  // expect Get requests to come to this class' public API, not from downstream
-                // i.e., nothing downstream of the codec should be requesting arbitrary data
-    return false;
 }
 
 void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId)

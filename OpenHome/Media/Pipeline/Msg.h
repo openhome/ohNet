@@ -1113,6 +1113,22 @@ public:
      */
     virtual TUint TryStop(TUint aStreamId) = 0;
     /**
+     * Inform interested parties of an unexpected break in audio.
+     *
+     * Sources which are sensitive to latency may need to restart.
+     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
+     *
+     * @param[in] aMode            Reported by the MsgMode which preceded the stream which dropped out.
+     *                             i.e. identifier for the UriProvider associated with this stream
+     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     */
+    virtual void NotifyStarving(const Brx& aMode, TUint aStreamId) = 0;
+};
+
+class IUrlBlockWriter
+{
+public:
+    /**
      * Read a block of data out of band, without affecting the state of the current stream.
      *
      * This may be called from a different thread.  The implementor is responsible for any synchronisation.
@@ -1127,17 +1143,7 @@ public:
      * @return  true if exactly aBytes were read; false otherwise
      */
     virtual TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
-    /**
-     * Inform interested parties of an unexpected break in audio.
-     *
-     * Sources which are sensitive to latency may need to restart.
-     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
-     *
-     * @param[in] aMode            Reported by the MsgMode which preceded the stream which dropped out.
-     *                             i.e. identifier for the UriProvider associated with this stream
-     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
-     */
-    virtual void NotifyStarving(const Brx& aMode, TUint aStreamId) = 0;
+    virtual ~IUrlBlockWriter() {}
 };
 
 class ISeekObserver

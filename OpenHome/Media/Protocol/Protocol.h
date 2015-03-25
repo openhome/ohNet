@@ -81,7 +81,6 @@ protected:
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     virtual void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) = 0;
@@ -216,7 +215,7 @@ private:
     TUint iBytesRemaining;
 };
 
-class ProtocolManager : public IUriStreamer, private IProtocolManager, private INonCopyable
+class ProtocolManager : public IUriStreamer, public IUrlBlockWriter, private IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
@@ -227,6 +226,8 @@ public:
 public: // from IUriStreamer
     ProtocolStreamResult DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
+public: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri) override;
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const override;

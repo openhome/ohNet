@@ -284,7 +284,8 @@ protected:
 class CodecController : public ISeeker, private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
-    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, TUint aThreadPriority);
+    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
+                    IUrlBlockWriter& aUrlBlockWriter, TUint aThreadPriority);
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
@@ -334,7 +335,6 @@ private: // IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
@@ -342,6 +342,7 @@ private:
     Rewinder iRewinder;
     Logger* iLoggerRewinder;
     IPipelineElementDownstream& iDownstreamElement;
+    IUrlBlockWriter& iUrlBlockWriter;
     Mutex iLock;
     std::vector<CodecBase*> iCodecs;
     ThreadFunctor* iDecoderThread;

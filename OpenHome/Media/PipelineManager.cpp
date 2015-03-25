@@ -20,7 +20,7 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IPipelineDrive
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, aPipelineDriver);
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this, aPipelineDriver);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
@@ -328,6 +328,11 @@ TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
     const TUint flushId = iFiller->Flush();
     iFiller->Play(aMode, aTrackId);
     return flushId;
+}
+
+TBool PipelineManager::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
+{
+    return iProtocolManager->TryGet(aWriter, aUrl, aOffset, aBytes);
 }
 
 

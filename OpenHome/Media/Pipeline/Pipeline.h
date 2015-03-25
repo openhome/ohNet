@@ -127,7 +127,9 @@ class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstr
     static const TUint kMsgCountQuit            = 1;
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
-    Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IPipelineDriver& aPipelineDriver);
+    Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
+             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
+             IUrlBlockWriter& aUrlBlockWriter, IPipelineDriver& aPipelineDriver);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
