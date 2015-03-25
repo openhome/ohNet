@@ -260,6 +260,7 @@ void Filler::Run()
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
+                iPipeline.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                 iSendHalt = false;
                 iStopped = true;
@@ -307,8 +308,10 @@ void Filler::Run()
 
 void Filler::Push(Msg* aMsg)
 {
-    (void)aMsg->Process(*this);
-    iPipeline.Push(aMsg);
+    aMsg = aMsg->Process(*this);
+    if (aMsg != NULL) {
+        iPipeline.Push(aMsg);
+    }
 }
 
 Msg* Filler::ProcessMsg(MsgMode* aMsg)

@@ -38,9 +38,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iStreamMsgDue(true)
     , iMetatextMsgDue(false)
     , iSeqTrackValid(false)
-    , iSeqMetatextValid(false)
     , iSeqTrack(UINT_MAX)
-    , iSeqMetatext(UINT_MAX)
     , iLastSampleStart(0)
     , iRepairFirst(NULL)
 {
@@ -168,9 +166,8 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iStreamMsgDue = true;
     iMetatextMsgDue = false;
     iSeqTrackValid = false;
-    iSeqMetatextValid = false;
+    iMetatext.Replace(Brx::Empty());
     iSeqTrack = UINT_MAX;
-    iSeqMetatext = UINT_MAX;
     iLastSampleStart = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
@@ -415,13 +412,12 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId);
         audio->RemoveRef();
         iStreamMsgDue = false;
-        if (iMetatextMsgDue) {
-            iSupply->OutputMetadata(iPendingMetatext);
-            iPendingMetatext.Replace(Brx::Empty());
-            iMetatextMsgDue = false;
-        }
     }
-    ASSERT(!iMetatextMsgDue);
+    if (iMetatextMsgDue) {
+        iSupply->OutputMetadata(iPendingMetatext);
+        iPendingMetatext.Replace(Brx::Empty());
+        iMetatextMsgDue = false;
+    }
     ASSERT(bytesBefore == iFrameBuf.Bytes());
     iSupply->OutputData(iFrameBuf);
     aMsg.RemoveRef();
@@ -477,13 +473,14 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 
 void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
 {
-    if (!iSeqMetatextValid || iSeqMetatext != aMsg.Sequence()) {
-        iSeqMetatextValid = true;
-        iSeqMetatext = aMsg.Sequence();
+    if (iMetatext != aMsg.Metatext()) {
+        iMetatext.Replace(aMsg.Metatext());
         if (iTrackMsgDue) {
             // Pipeline expects a stream before any metatext.  Buffer metatext until we can output a stream.
+            iMutexTransport.Wait();
             iMetatextMsgDue = true;
             iPendingMetatext.Replace(aMsg.Metatext());
+            iMutexTransport.Signal();
         }
         else {
             iSupply->OutputMetadata(aMsg.Metatext());
