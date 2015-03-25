@@ -161,6 +161,15 @@ void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
     }
 }
 
+/*
+ * Some control points do not chain calls to SetChannel()/Play() on the provider,
+ * which can result in those actions coming in out of order.
+ *
+ * This causes problems, particularly when no radio station has been pre-fetched,
+ * as Play() does nothing due to encountering a NULL track, followed by a valid
+ * track being queued up in the pipeline via Fetch(), which never gets played
+ * as the call to Play() has already been issued on a NULL track.
+ */
 void SourceRadio::Play()
 {
     AutoMutex _(iLock);
@@ -170,6 +179,19 @@ void SourceRadio::Play()
     if (iTrack == NULL) {
         return;
     }
+
+    /*
+     * Fetch() is always called each time a new URI is set. That causes some
+     * data to be buffered in the pipeline, which may be stale by the time
+     * Play() is called.
+     *
+     * Therefore, always call RemoveAll(), even if the pipeline has already
+     * been initialised with the desired track URI.
+     *
+     * Pre-fetching and then clearing pipeline may cause the pipeline to report:
+     * "Failure to recognise audio format, flushing stream..."
+     * which is just a false-positive in this scenario.
+     */
     iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     iPipeline.Play();
