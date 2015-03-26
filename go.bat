@@ -32,6 +32,7 @@ if defined PYTHONPATH (
 
 :run
 python -u -m go %*
+if errorlevel 1 exit /b 1
 goto :eof
 
 :fallback_devtools
