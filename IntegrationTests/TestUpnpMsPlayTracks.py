@@ -50,6 +50,7 @@ class TestUpnpMsPlayTracks( BASE.BasePlayTracks ):
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
+        self.trackChangeMutex.acquire()     # prevent races during shutdown
         BASE.BasePlayTracks.Cleanup( self )
 
             
