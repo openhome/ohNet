@@ -101,6 +101,7 @@ private:
     void TestPlayLaterStops();
     void TestPlayPausePlayWithRamp();
     void TestPlayPausePlayNoRamp();
+    void TestQuitMultipleTracksPending();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -153,6 +154,7 @@ SuiteStopper::SuiteStopper()
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayLaterStops), "TestPlayLaterStops");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayPausePlayWithRamp), "TestPlayPausePlayWithRamp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayPausePlayNoRamp), "TestPlayPausePlayNoRamp");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestQuitMultipleTracksPending), "TestQuitMultipleTracksPending");
 }
 
 SuiteStopper::~SuiteStopper()
@@ -826,6 +828,39 @@ void SuiteStopper::TestPlayPausePlayNoRamp()
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 3);
     TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
+}
+
+void SuiteStopper::TestQuitMultipleTracksPending()
+{
+    // Queue up some tracks, then call Stopper::Quit().
+    // Attempt to pull tracks through. All msgs, apart from:
+    // - MsgTrack
+    // - MsgQuit
+    // should be discarded.
+    static const TUint kMsgPullCount = 3;
+    iStopper->Play();
+
+    // Track 1.
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+
+    // Track 2.
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+
+    // Quit msg.
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+
+    iStopper->Quit();
+
+    PullNext(EMsgTrack);
+    PullNext(EMsgTrack);
+    PullNext(EMsgQuit);
+    TEST(iPendingMsgs.size() == 0);
 }
 
 
