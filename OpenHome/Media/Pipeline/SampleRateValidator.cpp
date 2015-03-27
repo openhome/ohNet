@@ -9,6 +9,7 @@ using namespace OpenHome::Media;
 SampleRateValidator::SampleRateValidator(IPipelineElementDownstream& aDownstreamElement)
     : iDownstream(aDownstreamElement)
     , iAnimator(NULL)
+    , iTargetFlushId(MsgFlush::kIdInvalid)
     , iFlushing(false)
 {
 }
