@@ -830,7 +830,6 @@ void SuiteStopper::TestQuitMultipleTracksPending()
     // - MsgTrack
     // - MsgQuit
     // should be discarded.
-    static const TUint kMsgPullCount = 3;
     iStopper->Play();
 
     // Track 1.
