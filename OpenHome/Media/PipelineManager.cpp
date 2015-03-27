@@ -46,9 +46,9 @@ void PipelineManager::Quit()
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
     const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
     iPipeline->RemoveCurrentStream();
     iLock.Signal();
-    iIdManager->InvalidatePending();
     if (waitStop) {
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
