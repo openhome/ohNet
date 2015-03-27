@@ -1118,7 +1118,7 @@ void OhmSender::SendTrack()
     writer.Write(iTrackUri);
     writer.Write(iTrackMetadata);
 
-    Send();    
+    Send();
 }
 
 void OhmSender::SendMetatext()
@@ -1132,7 +1132,7 @@ void OhmSender::SendMetatext()
     headerMetatext.Externalise(writer);
     writer.Write(iTrackMetatext);
     
-    Send();    
+    Send();
 }
 
 void OhmSender::SendSlaveList()
@@ -1149,7 +1149,7 @@ void OhmSender::SendSlaveList()
         binary.WriteUint32Be(Arch::BigEndian4(iSlaveList[i].Address()));
         binary.WriteUint16Be(iSlaveList[i].Port());
     }
-    Send();    
+    Send();
 }
 
 void OhmSender::SendListen(const Endpoint& aEndpoint)

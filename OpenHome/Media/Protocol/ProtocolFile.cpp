@@ -29,7 +29,6 @@ private: // from Protocol
 private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes);
 private: // from IReader
     Brn Read(TUint aBytes);
     void ReadFlush();
@@ -213,11 +212,6 @@ TUint ProtocolFile::TryStop(TUint aStreamId)
         return MsgFlush::kIdInvalid;
     }
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
-}
-
-TBool ProtocolFile::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    return false;
 }
 
 Brn ProtocolFile::Read(TUint aBytes)

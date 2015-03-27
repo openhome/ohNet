@@ -29,6 +29,7 @@ ProviderInfo::ProviderInfo(DvDevice& aDevice, PipelineManager& aPipelineManager)
 
     SetPropertyTrackCount(0);
     ClearStreamInfo(Brx::Empty(), Brx::Empty());
+    SetPropertyMetatext(iMetaText);
 
     EnableActionCounters();
     EnableActionTrack();
@@ -62,8 +63,6 @@ void ProviderInfo::ClearStreamInfo(const Brx& aTrackUri, const Brx& aMetaData)
     iCodecName.Replace(Brx::Empty());
     SetPropertyCodecName(iCodecName);
     SetPropertyMetatextCount(0);
-    iMetaText.Replace(Brx::Empty());
-    SetPropertyMetatext(iMetaText);
 }
 
 void ProviderInfo::Counters(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount)

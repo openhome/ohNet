@@ -181,7 +181,6 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     MsgFactory* iMsgFactory;
@@ -1814,12 +1813,6 @@ TUint SuiteDecodedStream::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
-}
-
-TBool SuiteDecodedStream::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();
-    return false;
 }
 
 void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)

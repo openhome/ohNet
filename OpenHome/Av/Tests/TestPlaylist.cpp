@@ -46,12 +46,11 @@ private:
     void Output(const TChar* aKey, const TChar* aValue);
 };
 
-class DummyDriver : public Thread, public IPipelineDriver, private IMsgProcessor
+class DummyDriver : public Thread, public IPipelineAnimator, private IMsgProcessor
 {
 public:
-    DummyDriver();
+    DummyDriver(IPipeline& aPipeline);
     ~DummyDriver();
-    void SetPipeline(IPipelineElementUpstream& aPipeline);
     void PullTrack(Functor aTrackCompleted);
     void PullUntilNewTrack(Functor aTrackChanged, TInt aSampleVal);
     void Mark();
@@ -60,7 +59,7 @@ private: // from Thread
     void Run() override;
 private:
     void TrackCompleted();
-private: // from IPipelineDriver
+private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
@@ -80,7 +79,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     Mutex iLock;
-    IPipelineElementUpstream* iPipeline;
+    IPipeline& iPipeline;
     Functor iTrackCompleted;
     Functor iTrackChanged;
     TUint iJiffiesPerSample;
@@ -183,10 +182,10 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 
 // DummyDriver
 
-DummyDriver::DummyDriver()
+DummyDriver::DummyDriver(IPipeline& aPipeline)
     : Thread("DummyDriver")
     , iLock("DMYD")
-    , iPipeline(NULL)
+    , iPipeline(aPipeline)
     , iJiffiesPerSample(0)
     , iBitDepth(0)
     , iNumChannels(0)
@@ -194,6 +193,7 @@ DummyDriver::DummyDriver()
     , iCountJiffies(false)
     , iQuit(false)
 {
+    iPipeline.SetAnimator(*this);
     Start();
 }
 
@@ -201,11 +201,6 @@ DummyDriver::~DummyDriver()
 {
     Kill();
     Join();
-}
-
-void DummyDriver::SetPipeline(IPipelineElementUpstream& aPipeline)
-{
-    iPipeline = &aPipeline;
 }
 
 void DummyDriver::PullTrack(Functor aTrackCompleted)
@@ -249,7 +244,7 @@ void DummyDriver::Run()
                under valgrind and Playing/Buffering counts increase, breaking tests */
     //TUint count = 0;
     do {
-        Msg* msg = iPipeline->Pull();
+        Msg* msg = iPipeline.Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
         //if (++count % 4 == 0) {
@@ -426,17 +421,15 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    iDriver = new DummyDriver();
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   *iDriver, NULL, iVolume, iVolume, udn, Brn("Main Room"), Brn("Softplayer"));
+                                   iVolume, iVolume, udn, Brn("Main Room"), Brn("Softplayer"));
+    iDriver = new DummyDriver(iMediaPlayer->Pipeline());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, Brn("*")));
     iMediaPlayer->Pipeline().AddObserver(*this);
     iMediaPlayer->Start();
-
-    iDriver->SetPipeline(iMediaPlayer->Pipeline());
 
     iDevice->SetEnabled();
     CpDeviceDv* cpDevice = CpDeviceDv::New(iCpStack, *iDevice);

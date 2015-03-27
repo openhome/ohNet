@@ -10,8 +10,10 @@ import threading
 
 # NOTE - this requires GIT to operate without requirement for password entry.
 #        the necessary SSH key must be configured on the GIT server machine
+#        Use Git-bash on windows to generate key (ssh-keygen), and paste key
+#        into ~/.ssh/authorized_keys on server
 
-kWatchdogTime = 30  # secs
+kWatchdogTime = 60  # secs
 kExcludes     = ['TestUpnpErrors',
                  'Test 10: TestSeekForwardFailStillSeeks',
                  'Test 2: TestRecognitionFail',

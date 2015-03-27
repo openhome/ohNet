@@ -394,14 +394,6 @@ TUint VariableDelay::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-TBool VariableDelay::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
-{
-    if (iStreamHandler != NULL) {
-        return iStreamHandler->TryGet(aWriter, aUrl, aOffset, aBytes);
-    }
-    return false;
-}
-
 void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     HandleStarving(aMode);

@@ -167,7 +167,6 @@ class BasePlayTracks( BASE.BaseTest ):
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
-        self.trackChangeMutex.acquire()     # prevent races during shutdown
         if self.checkInfoTimer:
             self.checkInfoTimer.cancel()
         if self.playTimer:
@@ -252,7 +251,7 @@ class BasePlayTracks( BASE.BaseTest ):
     def _CheckPrevPlay( self ):
         """Check playback/time of track just completed"""
         currIdTime = time.time()
-        if currIdTime-self.lastIdTime < kNotPlayedThreshold:
+        if not self.senderStopped.is_set() and  currIdTime-self.lastIdTime < kNotPlayedThreshold:
             # less than Ns between ID events - assume previous track skipped
             self.log.Fail( self.senderDev, '[1] Track %d did NOT play' % self.numTrack )
         elif self.expectedPlayTime:

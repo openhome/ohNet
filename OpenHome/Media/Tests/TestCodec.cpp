@@ -271,7 +271,7 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     const TUint maxReservoirEncodedAudio = (kEncodedReservoirSizeBytes + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes;
     iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iContainer = new Container(*iMsgFactory, *iReservoir);
-    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream, kPriorityNormal);
+    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream, *this, kPriorityNormal);
     iFiller = new TestCodecFiller(aEnv, *iReservoir, *iMsgFactory, *iFlushIdProvider, *iInfoAggregator);
 }
 
@@ -322,6 +322,11 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     iController->AddCodec(CodecFactory::NewAdts());
     iController->AddCodec(CodecFactory::NewAlac());
     iController->AddCodec(CodecFactory::NewVorbis());
+}
+
+TBool TestCodecMinimalPipeline::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
 }
 
 

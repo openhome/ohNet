@@ -167,9 +167,8 @@ void SuiteConfigUi::Setup()
     Brn qobuzIdSecret("dummyQobuz");
     Brn userAgent("dummyUA");
 
-    iDriver = new Media::DriverBasic(iDvStack.Env());
-    iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent, NULL/*iDriver*/, *iDriver);
-    iDriver->SetPipeline(iMediaPlayer->Pipeline());
+    iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
+    iDriver = new Media::DriverBasic(iDvStack.Env(), iMediaPlayer->Pipeline());
 
     iMediaPlayerThread = new ThreadFunctor("TestConfigUi", MakeFunctor(*this, &SuiteConfigUi::Run));
     iMediaPlayerThread->Start();

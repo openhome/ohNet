@@ -16,6 +16,7 @@ Protocol::Protocol(Environment& aEnv)
     , iIdProvider(NULL)
     , iFlushIdProvider(NULL)
     , iActive(false)
+    , iLockActive("PROT")
 {
 }
 
@@ -43,9 +44,14 @@ ProtocolStreamResult Protocol::TryStream(const Brx& aUri)
     return Stream(aUri);
 }
 
-TBool Protocol::Active() const
+TBool Protocol::TrySetActive()
 {
-    return iActive;
+    AutoMutex _(iLockActive);
+    if (iActive) {
+        return false;
+    }
+    iActive = true;
+    return true;
 }
 
 EStreamPlay Protocol::OkToPlay(TUint aStreamId)
@@ -57,11 +63,6 @@ TUint Protocol::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
-}
-
-TBool Protocol::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    return false;
 }
 
 void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
@@ -78,11 +79,12 @@ void Protocol::Deactivated()
 Protocol::AutoStream::AutoStream(Protocol& aProtocol)
     : iProtocol(aProtocol)
 {
-    iProtocol.iActive = true;
+    ASSERT(iProtocol.iActive);
 }
 
 Protocol::AutoStream::~AutoStream()
 {
+    AutoMutex _(iProtocol.iLockActive);
     iProtocol.iActive = false;
     iProtocol.Deactivated();
 }
@@ -405,9 +407,15 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
     }
 }
 
+TBool ProtocolManager::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
+{
+    return Get(aWriter, aUrl, aOffset, aBytes);
+}
+
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)
 {
     iDownstream.Push(iMsgFactory.CreateMsgTrack(aTrack));
+    iDownstream.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
     ProtocolStreamResult res = Stream(aTrack.Uri());
     return res;
 }
@@ -418,7 +426,7 @@ ProtocolStreamResult ProtocolManager::Stream(const Brx& aUri)
     const TUint count = iProtocols.size();
     for (TUint i=0; i<count && res==EProtocolErrorNotSupported; i++) {
         Protocol* protocol = iProtocols[i];
-        if (!protocol->Active()) {
+        if (protocol->TrySetActive()) {
             try {
                 res = protocol->TryStream(aUri);
             }
@@ -454,7 +462,7 @@ TBool ProtocolManager::Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, T
     const TUint count = iProtocols.size();
     for (TUint i=0; i<count && res==EProtocolGetErrorNotSupported; i++) {
         Protocol* protocol = iProtocols[i];
-        if (!protocol->Active()) {
+        if (protocol->TrySetActive()) {
             try {
                 res = protocol->DoGet(aWriter, aUri, aOffset, aBytes);
             }

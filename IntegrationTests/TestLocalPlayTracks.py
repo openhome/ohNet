@@ -55,6 +55,7 @@ class TestLocalPlayTracks( BASE.BasePlayTracks ):
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
+        self.trackChangeMutex.acquire()     # prevent races during shutdown
         if self.server:
             self.server.Shutdown()
         BASE.BasePlayTracks.Cleanup( self )

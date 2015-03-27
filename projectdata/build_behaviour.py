@@ -56,6 +56,7 @@
 #  
 
 import os
+import shutil
 from ci import (
         build_step, require_version, add_option, specify_optional_steps,
         build_condition, default_platform, get_dependency_args,
@@ -162,6 +163,7 @@ def configure(context):
 
 @build_step("clean", optional=True)
 def clean(context):
+    shutil.rmtree( 'install', True )
     python("waf", "clean")
 
 @build_step("build", optional=True)

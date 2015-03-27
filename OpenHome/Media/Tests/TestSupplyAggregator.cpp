@@ -20,7 +20,6 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 };
 
@@ -117,12 +116,6 @@ TUint DummyStreamHandler::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
-}
-
-TBool DummyStreamHandler::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();
-    return false;
 }
 
 void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)

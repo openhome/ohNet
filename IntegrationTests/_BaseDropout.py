@@ -49,6 +49,9 @@ class BaseDropout( BASE.BaseTest ):
         self.soft3           = None
         self.monitor         = False
         self.exitTimer       = None
+        self.senderDropout   = None
+        self.receiverDropout = None
+        self.slaveDropout    = None
         self.senderPlaying   = threading.Event()
         self.receiverPlaying = threading.Event()
         self.slavePlaying    = threading.Event()
@@ -164,6 +167,7 @@ class BaseDropout( BASE.BaseTest ):
                     self.log.Abort( self.slaveDev, 'Slave failed to start playback' )
 
         # Monitor events until timer expired / forever
+        self.log.Header2( '', 'Monitoring for dropout' )
         self.monitor = True
         self.durationDone.clear()
         if duration != 'forever':
@@ -199,8 +203,12 @@ class BaseDropout( BASE.BaseTest ):
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.senderPlaying.set()
+                if self.senderDropout:
+                    self.log.Fail( self.senderDev, 'Sender dropped out for %.2fs' % (time.time()-self.senderDropout) )
+                    self.senderDropout = None
             else:
                 if self.monitor:
+                    self.senderDropout = time.time()
                     self.log.Fail( self.senderDev, "Sender dropout detected -> state is %s" % svVal )
                 
     # noinspection PyUnusedLocal
@@ -209,8 +217,12 @@ class BaseDropout( BASE.BaseTest ):
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.receiverPlaying.set()
+                if self.receiverDropout:
+                    self.log.Fail( self.receiverDev, 'Receiver dropped out for %.2fs' % (time.time()-self.receiverDropout) )
+                    self.senderDropout = None
             else:
                 if self.monitor:
+                    self.receiverDropout = time.time()
                     self.log.Fail( self.receiverDev, "Receiver dropout detected -> state is %s" % svVal )
         elif svName == 'Uri':
             self.receiverUri.set()
@@ -221,8 +233,12 @@ class BaseDropout( BASE.BaseTest ):
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.slavePlaying.set()
+                if self.slaveDropout:
+                    self.log.Fail( self.slaveDev, 'Slave dropped out for %.2fs' % (time.time()-self.slaveDropout) )
+                    self.slaveDropout = None
             else:
                 if self.monitor:
+                    self.slaveDropout = time.time()
                     self.log.Fail( self.slaveDev, "Slave dropout detected -> state is %s" % svVal )
         elif svName == 'Uri':
             self.slaveUri.set()

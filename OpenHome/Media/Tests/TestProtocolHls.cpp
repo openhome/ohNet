@@ -257,7 +257,6 @@ private:
     void TestGet();
     void TestTrySeek();
     void TestTryStop();
-    void TestTryGet();
     void TestInterrupt();
 private:
     Environment& iEnv;
@@ -1871,7 +1870,6 @@ SuiteProtocolHls::SuiteProtocolHls(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestGet), "TestGet");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestTrySeek), "TestTrySeek");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestTryStop), "TestTryStop");
-    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestTryGet), "TestTryGet");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestInterrupt), "TestInterrupt");
 }
 
@@ -2287,75 +2285,6 @@ void SuiteProtocolHls::TestTryStop()
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 1);
     TEST(iElementDownstream->FlushCount() == 1);
-}
-
-void SuiteProtocolHls::TestTryGet()
-{
-    // ProtocolHls needs to take a URI starting with hls://; not http:// !
-    static const Brn kUriHlsEndList("hls://example.com/hls_endlist_end.m3u8");
-    static const Uri kUriEndlistEnd(Brn("http://example.com/hls_endlist_end.m3u8"));
-    static const Brn kFileEndlistEnd(
-    "#EXTM3U\n"
-    "#EXT-X-TARGETDURATION:10\n"
-    "#EXTINF:9.009,\n"
-    "http://media.example.com/first.ts\n"
-    "#EXTINF:9.009,\n"
-    "http://media.example.com/second.ts\n"
-    "#EXTINF:3.003,\n"
-    "http://media.example.com/third.ts\n"
-    "#EXT-X-ENDLIST\n");
-
-    TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
-    TestHttpReader::BufList bufListM3u1;
-    bufListM3u1.push_back(&kFileEndlistEnd);
-    iM3uReader->SetContent(uriListM3u1, bufListM3u1);
-
-
-    static const Uri kSegUri1(Brn("http://media.example.com/first.ts"));
-    static const Brn kSegFile1(Brn("abcdefghijklmnopqrstuvwxyz"));
-    static const Uri kSegUri2(Brn("http://media.example.com/second.ts"));
-    static const Brn kSegFile2(Brn("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-    static const Uri kSegUri3(Brn("http://media.example.com/third.ts"));
-    static const Brn kSegFile3(Brn("1234567890"));
-
-    TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
-    TestHttpReader::BufList bufListSeg1;
-    bufListSeg1.push_back(&kSegFile1);
-    bufListSeg1.push_back(&kSegFile2);
-    bufListSeg1.push_back(&kSegFile3);
-    iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
-
-    iSegmentReader->WaitAtOffset(20);
-
-    iTrack = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
-    ThreadFunctor thread("SuiteProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
-    thread.Start();
-
-    iSegmentSem->Wait();//kSemWaitMs);
-
-    static const TUint kExpectedStreamId = 1;
-    Bws<1> buf;
-    WriterBuffer writerBuf(buf);
-    IStreamHandler* streamHandler = iElementDownstream->StreamHandler();
-    TEST(streamHandler != NULL);
-    TBool resultGet = streamHandler->TryGet(writerBuf, kUriHlsEndList, 0, 20);
-    TEST(resultGet == false);
-
-    iSegmentWaitSem->Signal();//kSemWaitMs);
-    iThreadSem->Wait();//kSemWaitMs);
-
-    iTrack->RemoveRef();
-    TEST(iResult == EProtocolStreamSuccess);
-
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
-    TEST(iElementDownstream->IsLive() == true);
-    TEST(iElementDownstream->StreamId() == kExpectedStreamId);
-    TEST(iElementDownstream->TrackCount() == 1);
-    TEST(iElementDownstream->StreamCount() == 1);
 }
 
 void SuiteProtocolHls::TestInterrupt()

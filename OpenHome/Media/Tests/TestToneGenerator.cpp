@@ -83,6 +83,7 @@ enum EToneMsgType
 {
     eMsgTrack,
     eMsgEncodedStream,
+    eMsgMetatext,
     eMsgDecodedStream,
     eMsgAudioPcm,
     eMsgQuit,
@@ -90,7 +91,7 @@ enum EToneMsgType
 };
 
 class SuiteGeneratorAny : public SuiteUnitTest,
-     private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor
+     private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter
 {
 public:
     SuiteGeneratorAny(const TChar* aName);
@@ -132,6 +133,9 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
+
+private: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 
 private:
     // as per Pipeline.h
@@ -500,7 +504,7 @@ void SuiteGeneratorAny::Setup()
                              kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
     iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, kPriorityNormal);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
     iCodecController->AddCodec(Codec::CodecFactory::NewWav());
     iCodecController->Start();
 
@@ -580,7 +584,7 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgDelay* aMsg)
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    TEST(eMsgEncodedStream== iExpectedMsgType);
+    TEST(eMsgEncodedStream == iExpectedMsgType);
     iExpectedMsgType = eMsgDecodedStream;
     return aMsg;
 }
@@ -594,7 +598,6 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
 {
-    ASSERTS();
     return aMsg;
 }
 
@@ -639,6 +642,11 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioPcm* aMsg)
     iExpectedMsgType = eMsgAudioPcm;  // usually more to follow, but MsgQuit also acceptable
     iAccumulatedJiffies += aMsg->Jiffies();
     return aMsg;
+}
+
+TBool SuiteGeneratorAny::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
 }
 
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)

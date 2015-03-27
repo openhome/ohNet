@@ -13,14 +13,13 @@ namespace OpenHome {
     class Environment;
 namespace Media {
 
-class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineDriver
+class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineAnimator
 {
     static const TUint kTimerFrequencyMs = 5;
     static const TInt64 kClockPullDefault = (1 << 29) * 100LL;
 public:
-    DriverBasic(Environment& aEnv);
+    DriverBasic(Environment& aEnv, IPipeline& aPipeline);
     ~DriverBasic();
-    void SetPipeline(IPipelineElementUpstream& aPipeline);
 private: // from Thread
     void Run();
 private:
@@ -43,10 +42,10 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPullableClock
     void PullClock(TInt32 aValue);
-private: // from IPipelineDriver
+private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
-    IPipelineElementUpstream* iPipeline;
+    IPipeline& iPipeline;
     Semaphore iSem;
     OsContext* iOsCtx;
     TUint iSampleRate;
