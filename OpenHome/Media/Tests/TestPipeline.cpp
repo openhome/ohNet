@@ -47,7 +47,7 @@ private:
     TUint iHaltId;
 };
 
-class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer, private IUrlBlockWriter, private IPipelineDriver
+class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer, private IUrlBlockWriter, private IPipelineAnimator
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -105,7 +105,7 @@ private: // from ISeekRestreamer
     TUint SeekRestream(const Brx& aMode, TUint aTrackId) override;
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
-private: // from IPipelineDriver
+private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
     AllocatorInfoLogger iInfoAggregator;

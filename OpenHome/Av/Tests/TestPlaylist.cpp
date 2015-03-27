@@ -46,7 +46,7 @@ private:
     void Output(const TChar* aKey, const TChar* aValue);
 };
 
-class DummyDriver : public Thread, public IPipelineDriver, private IMsgProcessor
+class DummyDriver : public Thread, public IPipelineAnimator, private IMsgProcessor
 {
 public:
     DummyDriver();
@@ -60,7 +60,7 @@ private: // from Thread
     void Run() override;
 private:
     void TrackCompleted();
-private: // from IPipelineDriver
+private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;

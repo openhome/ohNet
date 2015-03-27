@@ -7,6 +7,8 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Codec/MpegTs.h>
+#include <OpenHome/Media/Pipeline/SampleRateValidator.h>
+#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
 #include <OpenHome/Media/Pipeline/VariableDelay.h>
@@ -166,7 +168,7 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, IPipelineDriver& /*aPipelineDriver*/)
+                   IUrlBlockWriter& aUrlBlockWriter, IPipelineAnimator& aPipelineAnimator)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -210,6 +212,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerTimestampInspector = new Logger("Timestamp Inspector", *iDecodedAudioAggregator);
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *iLoggerTimestampInspector);
 
+    iLoggerSampleRateValidator = new Logger("Sample Rate Validator", *iTimestampInspector);
+    iSampleRateValidator = new SampleRateValidator(*iLoggerSampleRateValidator, aPipelineAnimator);
+
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
     iContainer->AddContainer(new Codec::Mpeg4Start());
@@ -217,7 +222,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
-    iLoggerCodecController = new Logger("Codec Controller", *iTimestampInspector);
+    iLoggerCodecController = new Logger("Codec Controller", *iSampleRateValidator);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
     threadPriority++;
 
@@ -265,6 +270,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
+    //iLoggerSampleRateValidator->SetEnabled(true);
     //iLoggerTimestampInspector->SetEnabled(true);
     //iLoggerDecodedAudioAggregator->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
@@ -287,6 +293,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
+    //iLoggerSampleRateValidator->SetFilter(Logger::EMsgAll);
     //iLoggerTimestampInspector->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioAggregator->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
@@ -350,6 +357,8 @@ Pipeline::~Pipeline()
     delete iDecodedAudioAggregator;
     delete iLoggerTimestampInspector;
     delete iTimestampInspector;
+    delete iLoggerSampleRateValidator;
+    delete iSampleRateValidator;
     delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;

@@ -15,7 +15,7 @@ namespace Av {
 namespace Media {
 class Pipeline;
 class PipelineInitParams;
-class IPipelineDriver;
+class IPipelineAnimator;
 class ProtocolManager;
 class ITrackObserver;
 class Filler;
@@ -33,7 +33,7 @@ class UriProvider;
 class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer, private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IPipelineDriver& aPipelineDriver, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
+    PipelineManager(PipelineInitParams* aInitParams, IPipelineAnimator& aPipelineAnimator, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.

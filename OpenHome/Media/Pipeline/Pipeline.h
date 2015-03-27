@@ -8,6 +8,7 @@
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
@@ -88,25 +89,6 @@ private:
     TUint iMaxLatencyJiffies;
 };
 
-/**
- * Should be implemented by the object that animates (calls Pull() on) Pipeline.
- */
-class IPipelineDriver
-{
-public:
-    virtual ~IPipelineDriver() {}
-    /**
-     * Report any post-pipeline delay.
-     *
-     * @param[in] aSampleRateFrom   Previous sample rate (in Hz).  0 implies pipeline startup.
-     * @param[in] aSampleRateTo     New sample rate (in Hz).
-     *
-     * @return     Delay applied beyond the pipeline in Jiffies.
-     *             See Jiffies class for time conversion utilities.
-     */
-    virtual TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) = 0;
-};
-
 class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
@@ -129,7 +111,7 @@ class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstr
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, IPipelineDriver& aPipelineDriver);
+             IUrlBlockWriter& aUrlBlockWriter, IPipelineAnimator& aPipelineAnimator);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
@@ -191,6 +173,8 @@ private:
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
+    SampleRateValidator* iSampleRateValidator;
+    Logger* iLoggerSampleRateValidator;
     TimestampInspector* iTimestampInspector;
     Logger* iLoggerTimestampInspector;
     DecodedAudioAggregator* iDecodedAudioAggregator;

@@ -203,6 +203,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/SpotifyReporter.cpp',
                 'OpenHome/Media/Pipeline/Rewinder.cpp',
                 'OpenHome/Media/Pipeline/Router.cpp',
+                'OpenHome/Media/Pipeline/SampleRateValidator.cpp',
                 'OpenHome/Media/Pipeline/Seeker.cpp',
                 'OpenHome/Media/Pipeline/Skipper.cpp',
                 'OpenHome/Media/Pipeline/StarvationMonitor.cpp',
@@ -578,6 +579,7 @@ def build(bld):
                 #'OpenHome/Media/Tests/PipelineUtils.cpp',  #FIXME - to be deleted if no longer used
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
+                'OpenHome/Media/Tests/TestSampleRateValidator.cpp',
                 'OpenHome/Media/Tests/TestSeeker.cpp',
                 'OpenHome/Media/Tests/TestSkipper.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
@@ -648,6 +650,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStarvationMonitor',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestSampleRateValidatorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSampleRateValidator',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestSeekerMain.cpp',

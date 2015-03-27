@@ -17,7 +17,7 @@ namespace Net {
 namespace Media {
     class PipelineManager;
     class PipelineInitParams;
-    class IPipelineDriver;
+    class IPipelineAnimator;
     class IMuteManager;
     class IVolume;  // XXX dummy volume hardware
     class IVolumeManagerLimits;
@@ -87,7 +87,7 @@ public:
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
-                Media::IPipelineDriver& aPipelineDriver,
+                Media::IPipelineAnimator& aPipelineAnimator,
                 Media::IPullableClock* aPullableClock,
                 Media::IVolume& aVolumeLeft,
                 Media::IVolume& aVolumeRight,
