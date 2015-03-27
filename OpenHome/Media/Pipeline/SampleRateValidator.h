@@ -11,7 +11,8 @@ class SampleRateValidator : public IPipelineElementDownstream, private IMsgProce
 {
     friend class SuiteSampleRateValidator;
 public:
-    SampleRateValidator(IPipelineElementDownstream& aDownstreamElement, IPipelineAnimator& aPipelineAnimator);
+    SampleRateValidator(IPipelineElementDownstream& aDownstreamElement);
+    void SetAnimator(IPipelineAnimator& aPipelineAnimator);
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
@@ -34,7 +35,7 @@ private:
     Msg* ProcessFlushable(Msg* aMsg);
 private:
     IPipelineElementDownstream& iDownstream;
-    IPipelineAnimator& iAnimator;
+    IPipelineAnimator* iAnimator;
     TUint iTargetFlushId;
     TBool iFlushing;
 };

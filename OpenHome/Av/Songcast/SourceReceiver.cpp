@@ -34,7 +34,7 @@ namespace Av {
 class UriProviderSongcast : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderSongcast(IMediaPlayer& aMediaPlayer);
+    UriProviderSongcast(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
     ~UriProviderSongcast();
 private: // from UriProvider
     Media::IClockPuller* ClockPuller() override;
@@ -46,7 +46,7 @@ class SourceReceiver : public Source, private ISourceReceiver, private IZoneList
 {
     static const TChar* kProtocolInfo;
 public:
-    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
+    SourceReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
     void Activate() override;
@@ -115,23 +115,22 @@ using namespace OpenHome::Configuration;
 
 // SourceFactory
 
-ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
+ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
 { // static
-    return new SourceReceiver(aMediaPlayer, aTimestamper, aSenderIconFileName);
+    return new SourceReceiver(aMediaPlayer, aPullableClock, aTimestamper, aSenderIconFileName);
 }
 
 
 // UriProviderSongcast
 
-UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
+UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock)
     : UriProviderSingleTrack("Receiver", true, true, aMediaPlayer.TrackFactory())
 {
-    IPullableClock* pullable = aMediaPlayer.PullableClock();
-    if (pullable == NULL) {
+    if (aPullableClock == NULL) {
         iClockPuller = NULL;
     }
     else {
-        iClockPuller = new ClockPullerSongcast(aMediaPlayer.Env(), *pullable);
+        iClockPuller = new ClockPullerSongcast(aMediaPlayer.Env(), *aPullableClock);
     }
 }
 
@@ -150,7 +149,7 @@ IClockPuller* UriProviderSongcast::ClockPuller()
 
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
-SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
+SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
     : Source("Songcast", "Receiver")
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -169,7 +168,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTim
 
     // Receiver
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
-    iUriProvider = new UriProviderSongcast(aMediaPlayer);
+    iUriProvider = new UriProviderSongcast(aMediaPlayer, aPullableClock);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory));

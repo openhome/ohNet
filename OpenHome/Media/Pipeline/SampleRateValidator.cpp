@@ -6,11 +6,16 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-SampleRateValidator::SampleRateValidator(IPipelineElementDownstream& aDownstreamElement, IPipelineAnimator& aPipelineAnimator)
+SampleRateValidator::SampleRateValidator(IPipelineElementDownstream& aDownstreamElement)
     : iDownstream(aDownstreamElement)
-    , iAnimator(aPipelineAnimator)
+    , iAnimator(NULL)
     , iFlushing(false)
 {
+}
+
+void SampleRateValidator::SetAnimator(IPipelineAnimator& aPipelineAnimator)
+{
+    iAnimator = &aPipelineAnimator;
 }
 
 void SampleRateValidator::Push(Msg* aMsg)
@@ -84,7 +89,8 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     try {
-        (void)iAnimator.PipelineDriverDelayJiffies(0, streamInfo.SampleRate());
+        ASSERT(iAnimator != NULL);
+        (void)iAnimator->PipelineDriverDelayJiffies(0, streamInfo.SampleRate());
         iFlushing = false;
     }
     catch (SampleRateUnsupported&) {

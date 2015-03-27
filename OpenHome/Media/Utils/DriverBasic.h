@@ -18,9 +18,8 @@ class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock,
     static const TUint kTimerFrequencyMs = 5;
     static const TInt64 kClockPullDefault = (1 << 29) * 100LL;
 public:
-    DriverBasic(Environment& aEnv);
+    DriverBasic(Environment& aEnv, IPipeline& aPipeline);
     ~DriverBasic();
-    void SetPipeline(IPipelineElementUpstream& aPipeline);
 private: // from Thread
     void Run();
 private:
@@ -46,7 +45,7 @@ private: // from IPullableClock
 private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
-    IPipelineElementUpstream* iPipeline;
+    IPipeline& iPipeline;
     Semaphore iSem;
     OsContext* iOsCtx;
     TUint iSampleRate;

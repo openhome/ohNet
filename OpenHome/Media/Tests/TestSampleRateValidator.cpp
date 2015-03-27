@@ -120,7 +120,8 @@ void SuiteSampleRateValidator::Setup()
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iSampleRateValidator = new SampleRateValidator(*this, *this);
+    iSampleRateValidator = new SampleRateValidator(*this);
+    iSampleRateValidator->SetAnimator(*this);
     iLastMsg = EMsgNone;
     iNextStreamId = 1;
     (void)memset(iAudioData, 0x7f, sizeof(iAudioData));

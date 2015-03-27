@@ -8,6 +8,9 @@ namespace OpenHome {
 namespace Net {
     class DvDevice;
 }
+namespace Media {
+    class IPullableClock;
+}
 namespace Av {
 
 class ISource;
@@ -18,11 +21,11 @@ class SourceFactory
 {
 public:
     static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols);
     static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
-    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
+    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
 };
 
 } // namespace Av

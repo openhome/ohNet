@@ -40,14 +40,14 @@ using namespace OpenHome::Web;
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
-                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
-                                 IPullableClock* aPullableClock, Media::IPipelineAnimator& aPipelineAnimator)
+                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent)
     : iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
     , iTuneInPartnerId(aTuneInPartnerId)
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
+    , iPullableClock(NULL)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
 {
     Bws<256> friendlyName;
@@ -98,7 +98,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   aPipelineAnimator, aPullableClock, iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -130,6 +130,11 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDeviceUpnpAv;
     delete iRamStore;
     delete iConfigRamStore;
+}
+
+void TestMediaPlayer::SetPullableClock(IPullableClock& aPullableClock)
+{
+    iPullableClock = &aPullableClock;
 }
 
 void TestMediaPlayer::StopPipeline()
@@ -286,10 +291,10 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
     if (iTuneInPartnerId.Bytes() == 0) {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock, aSupportedProtocols));
     }
     else {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols, iTuneInPartnerId));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock, aSupportedProtocols, iTuneInPartnerId));
     }
     iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols));
 
@@ -302,7 +307,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iObservableFriendlyName.Replace(Brn(friendlyName));
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, NULL, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, NULL, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }
 
 

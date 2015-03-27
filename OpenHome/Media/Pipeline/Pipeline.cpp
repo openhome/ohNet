@@ -167,8 +167,7 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 // Pipeline
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
-                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, IPipelineAnimator& aPipelineAnimator)
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -213,7 +212,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *iLoggerTimestampInspector);
 
     iLoggerSampleRateValidator = new Logger("Sample Rate Validator", *iTimestampInspector);
-    iSampleRateValidator = new SampleRateValidator(*iLoggerSampleRateValidator, aPipelineAnimator);
+    iSampleRateValidator = new SampleRateValidator(*iLoggerSampleRateValidator);
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
@@ -529,6 +528,11 @@ void Pipeline::Push(Msg* aMsg)
 Msg* Pipeline::Pull()
 {
     return iPipelineEnd->Pull();
+}
+
+void Pipeline::SetAnimator(IPipelineAnimator& aAnimator)
+{
+    iSampleRateValidator->SetAnimator(aAnimator);
 }
 
 void Pipeline::PipelinePaused()

@@ -58,9 +58,9 @@ private:
     static const TUint kUiSendQueueSize = 32;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
-                    const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
-                    Media::IPullableClock* aPullableClock, Media::IPipelineAnimator& aPipelineAnimator);
+                    const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent);
     virtual ~TestMediaPlayer();
+    void SetPullableClock(Media::IPullableClock& aPullableClock);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -106,6 +106,7 @@ private:
     const Brx& iTidalId;
     const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
+    Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
 };

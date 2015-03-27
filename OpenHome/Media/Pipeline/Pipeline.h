@@ -89,7 +89,7 @@ private:
     TUint iMaxLatencyJiffies;
 };
 
-class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class Pipeline : public IPipelineElementDownstream, public IPipeline, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
 
@@ -110,8 +110,7 @@ class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstr
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
-             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, IPipelineAnimator& aPipelineAnimator);
+             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
@@ -132,8 +131,9 @@ public:
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
-public: // from IPipelineElementUpstream
+public: // from IPipeline
     Msg* Pull() override;
+    void SetAnimator(IPipelineAnimator& aAnimator) override;
 private: // from IFlushIdProvider
     TUint NextFlushId() override;
 private: // from IWaiterObserver

@@ -1211,6 +1211,13 @@ public:
     virtual TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) = 0;
 };
 
+class IPipeline : public IPipelineElementUpstream
+{
+public:
+    virtual ~IPipeline() {}
+    virtual void SetAnimator(IPipelineAnimator& aAnimator) = 0;
+};
+
 class TrackFactory
 {
 public:

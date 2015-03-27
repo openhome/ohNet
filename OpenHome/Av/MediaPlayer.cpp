@@ -36,8 +36,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
-                         IPipelineAnimator& aPipelineAnimator,
-                         IPullableClock* aPullableClock,
                          IVolume& aVolumeLeft,
                          IVolume& aVolumeRight,
                          const Brx& aEntropy,
@@ -46,7 +44,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
-    , iPullableClock(aPullableClock)
     , iVolumeBalanceStereo(aVolumeLeft, aVolumeRight)
     , iVolumeProfile(100, 80, 100, 1024, 15)
     , iConfigProductRoom(NULL)
@@ -55,7 +52,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(aPipelineInitParams, aPipelineAnimator, *iInfoLogger, *iTrackFactory);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
@@ -164,11 +161,6 @@ IReadStore& MediaPlayer::ReadStore()
 IStoreReadWrite& MediaPlayer::ReadWriteStore()
 {
     return iReadWriteStore;
-}
-
-IPullableClock* MediaPlayer::PullableClock()
-{
-    return iPullableClock;
 }
 
 IConfigManager& MediaPlayer::ConfigManager()

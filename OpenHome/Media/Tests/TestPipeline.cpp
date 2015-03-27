@@ -270,7 +270,8 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this);
+    iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
