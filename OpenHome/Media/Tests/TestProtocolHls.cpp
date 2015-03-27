@@ -1630,7 +1630,9 @@ void SuiteHlsM3uReader::TestInterrupt()
     iM3uReader->SetUri(kUri);
 
     segmentUri.Clear();
+    TEST(iM3uReader->Error() == false);
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
+    TEST(iM3uReader->Error() == true);
     TEST(segmentUri.AbsoluteUri().Bytes() == 0);
 }
 
@@ -1647,7 +1649,9 @@ void SuiteHlsM3uReader::TestFailedConnection()
     iHttpReader->SetContent(uriList1, bufList1);    // Ensure the requested URI won't be recognised, so Connect() will fail.
     iM3uReader->SetUri(kPlaylistUri);
     Uri segmentUri;
+    TEST(iM3uReader->Error() == false);
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
+    TEST(iM3uReader->Error() == true);
 }
 
 void SuiteHlsM3uReader::TestInvalidAttributes()
@@ -1676,7 +1680,9 @@ void SuiteHlsM3uReader::TestInvalidAttributes()
     iHttpReader->SetContent(uriList1, bufList1);
     iM3uReader->SetUri(kUri);
     Uri segmentUri;
+    TEST(iM3uReader->Error() == false);
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
+    TEST(iM3uReader->Error() == true);
 }
 
 
@@ -1717,7 +1723,10 @@ void SuiteSegmentStreamer::ReadThread()
 {
     Brn buf = iStreamer->Read(iReadBytes);
     TEST(buf.Bytes() < iReadBytes);
+    TEST(iStreamer->Error() == false);
     TEST_THROWS(iStreamer->Read(iReadBytes - buf.Bytes()), ReaderError);
+    // iStreamer is being interrupted, so it hasn't actually encountered an error.
+    TEST(iStreamer->Error() == false);
     iThreadSem->Signal();
 }
 
@@ -1794,6 +1803,7 @@ void SuiteSegmentStreamer::TestGetNextSegmentFail()
     iUriProvider->SetPlaylistError();
     iStreamer->Stream(*iUriProvider);
 
+    TEST(iStreamer->Error() == false);
     TEST_THROWS(iStreamer->Read(10), ReaderError);
     TEST(iStreamer->Error() == true);
 
@@ -1805,6 +1815,7 @@ void SuiteSegmentStreamer::TestGetNextSegmentFail()
     iStreamer->ReadInterrupt();
     iStreamer->Stream(*iUriProvider);
 
+    TEST(iStreamer->Error() == false);
     TEST_THROWS(iStreamer->Read(10), ReaderError);
     TEST(iStreamer->Error() == false);
 }
@@ -1844,7 +1855,9 @@ void SuiteSegmentStreamer::TestInterrupt()
 
     Brn buf = iStreamer->Read(26);
     TEST(buf.Bytes() == 20); // ThrowReadErrorAtOffset above
+    TEST(iStreamer->Error() == false);
     TEST_THROWS(iStreamer->Read(6), ReaderError);
+    TEST(iStreamer->Error() == false);
 
     // Test failed connection.
     static const Uri kUriDummy(Brn("http://dummy"));
@@ -1857,6 +1870,7 @@ void SuiteSegmentStreamer::TestInterrupt()
     iHttpReader->SetContent(uriList2, bufList2);    // Can force a failed connection by ensuring iHttpReader does not recognise the URI iStreamer will ask for.
     iUriProvider->SetUri(kUri1, 50);
     iStreamer->Stream(*iUriProvider);
+    TEST(iStreamer->Error() == false);
     TEST_THROWS(iStreamer->Read(26), ReaderError);
     TEST(iStreamer->Error() == true);
 }
