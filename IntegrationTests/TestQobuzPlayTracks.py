@@ -45,7 +45,8 @@ kQobuzTracks = [
     ('qobuz://track?version=2&trackId=14990559', '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Concerto pour violoncelle en La Mineur; Wq 170 : II. Andante</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Carl Philipp Emanuel Bach</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Oph\xc3\xa9lie Gaillard</upnp:artist><res>qobuz://track?version=2&amp;trackId=14990559</res></item></DIDL-Lite>'),
     ('qobuz://track?version=2&trackId=4283691',  '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Wait</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Hurry Up; We\'re Dreaming.</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">M83</upnp:artist><res>qobuz://track?version=2&amp;trackId=4283691</res></item></DIDL-Lite>'),
     ('qobuz://track?version=2&trackId=14823763', '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">The Bells; Op. 35: I. Allegro ma non tanto (\'The Silver Sleigh Bells\')</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Rachmaninov: Symphonic Dances; The Bells (\xc3\x89dition StudioMasters)</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Sir Simon Rattle</upnp:artist><res>qobuz://track?version=2&amp;trackId=14823763</res></item></DIDL-Lite>'),
-    ('qobuz://track?version=2&trackId=8148950',  '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Kiko (Live)</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">In Concert</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Dead Can Dance</upnp:artist><res>qobuz://track?version=2&amp;trackId=8148950</res></item></DIDL-Lite>')]
+    ('qobuz://track?version=2&trackId=8148950',  '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Kiko (Live)</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">In Concert</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Dead Can Dance</upnp:artist><res>qobuz://track?version=2&amp;trackId=8148950</res></item></DIDL-Lite>')
+]
 
 
 class TestQobuzPlayTracks( BASE.BasePlayTracks ):
@@ -86,6 +87,7 @@ class TestQobuzPlayTracks( BASE.BasePlayTracks ):
 
     def Cleanup( self ):
         """Perform post-test cleanup, logout of TIDAL"""
+        self.trackChangeMutex.acquire()     # prevent races during shutdown
         if self.sender:
             self.sender.credentials.Clear( kQobuzCreds )
         BASE.BasePlayTracks.Cleanup( self )
