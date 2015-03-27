@@ -1772,7 +1772,7 @@ void SuiteSegmentStreamer::TestRead()
 
 
     // Current behaviour of each read request is to only read (at most) up to end of each segment.
-    // So, attempt to read more than amount buffered. Should throw ReaderError, then ReadRemaining() can be called.
+    // So, attempt to read more than amount buffered. Should return remainder of buffer.
     iStreamer->ReadInterrupt();
     iStreamer->Close();
     iUriProvider->SetUri(kUri1, 50);
@@ -1789,20 +1789,24 @@ void SuiteSegmentStreamer::TestRead()
 
 void SuiteSegmentStreamer::TestGetNextSegmentFail()
 {
-    // Check HlsVariantPlaylistErrors are passed up.
+    // Check ReaderError is thrown by SegmentStreamer when M3uReader notifies
+    // about a playlist error.
     iUriProvider->SetPlaylistError();
     iStreamer->Stream(*iUriProvider);
 
-    TEST_THROWS(iStreamer->Read(10), HlsVariantPlaylistError);
+    TEST_THROWS(iStreamer->Read(10), ReaderError);
+    TEST(iStreamer->Error() == true);
 
 
-    // Check HlsEndOfStream errors are passed up.
+    // Check ReaderError is thrown if end of stream is reached, but that
+    // SegmentStreamer does not report it as an error.
     iUriProvider->Clear();
     iUriProvider->SetEndOfStream();
     iStreamer->ReadInterrupt();
     iStreamer->Stream(*iUriProvider);
 
-    TEST_THROWS(iStreamer->Read(10), HlsEndOfStream);
+    TEST_THROWS(iStreamer->Read(10), ReaderError);
+    TEST(iStreamer->Error() == false);
 }
 
 void SuiteSegmentStreamer::TestInterrupt()
@@ -1853,7 +1857,8 @@ void SuiteSegmentStreamer::TestInterrupt()
     iHttpReader->SetContent(uriList2, bufList2);    // Can force a failed connection by ensuring iHttpReader does not recognise the URI iStreamer will ask for.
     iUriProvider->SetUri(kUri1, 50);
     iStreamer->Stream(*iUriProvider);
-    TEST_THROWS(iStreamer->Read(26), HlsSegmentError);
+    TEST_THROWS(iStreamer->Read(26), ReaderError);
+    TEST(iStreamer->Error() == true);
 }
 
 
