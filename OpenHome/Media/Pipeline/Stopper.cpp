@@ -145,6 +145,9 @@ void Stopper::StopNow()
 void Stopper::Quit()
 {
     iQuit = true;
+    if (iState == EStopped || iState == EPaused) {
+        iFlushStream = true;
+    }
     Play();
 }
 
