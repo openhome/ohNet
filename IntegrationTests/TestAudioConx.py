@@ -49,7 +49,7 @@ kInvokes   = ['Pause',
               'SeekIndex',
               'Stop']
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
+kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
@@ -277,8 +277,9 @@ class TestAudioConx( BASE.BaseTest ):
             loops = 3
         self._LogHeader( 'Testing with Server responding/not responding' )
         self.playing.clear()
-        self.dut.playlist.SeekIndex( 0 )
+        self.dut.playlist.SeekIndex( 8 )    # hi-res track to reduce time to wait for buffering
         self.playing.wait( 3 )
+        time.sleep( 1 )
         
         for loop in range( loops ):
             self.buffering.clear()
@@ -306,8 +307,9 @@ class TestAudioConx( BASE.BaseTest ):
         for invoke in invokeList:
             self._LogHeader( 'Testing %s invoke whilst DS buffering' % invoke )            
             self.playing.clear()
-            self.dut.playlist.SeekIndex( 0 )
+            self.dut.playlist.SeekIndex( 8 )    # hi-res track to reduce time to wait for buffering
             self.playing.wait( 3 )
+            time.sleep( 1 )
             self.buffering.clear()
             self.audioSrv.StopResponding()
             self.buffering.wait( 60 )
@@ -351,9 +353,9 @@ class TestAudioConx( BASE.BaseTest ):
         # buffer and then go buffering. 
         self._LogHeader( 'Testing with Server forcing TCP close' )
         self.playing.clear()
-        self.dut.playlist.SeekIndex( 0 )
+        self.dut.playlist.SeekIndex( 8 )    # hi-res to reduce time to wait for buffering
         self.playing.wait( 3 )
-        time.sleep( 5 )
+        time.sleep( 1 )
         self.buffering.clear()
         self.audioSrv.CloseConnection()
         self.buffering.wait( 60 )
