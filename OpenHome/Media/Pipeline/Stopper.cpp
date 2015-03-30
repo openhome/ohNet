@@ -20,6 +20,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iTrackId(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
+    , iCheckedStreamPlayable(true)
     , iQuit(false)
 {
     iState = EStopped;
@@ -185,6 +186,23 @@ Msg* Stopper::ProcessMsg(MsgSession* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
+    /* IdManager expects OkToPlay to be called for every stream that is added to it.
+       This isn't the case if CodecController fails to recognise the format of a stream.
+       Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
+       play a stream. */
+    if (aMsg->StartOfStream()) {
+        if (!iCheckedStreamPlayable) {
+            if (iStreamHandler != NULL) {
+                OkToPlay();
+            }
+            else if (iStreamPlayObserver != NULL) {
+                iStreamPlayObserver->NotifyTrackFailed(iTrackId);
+                iCheckedStreamPlayable = true;
+            }
+        }
+        NewStream();
+    }
+
     iTrackId = aMsg->Track().Id();
     return aMsg;
 }
@@ -303,13 +321,14 @@ void Stopper::OkToPlay()
         iFlushStream = true;
     }
     else {
+        LOG(kPipeline, "Stopper - OkToPlay returned %s.  trackId=%u, streamId=%u.\n", kStreamPlayNames[canPlay], iTrackId, iStreamId);
+
         switch (canPlay)
         {
         case ePlayYes:
             iObserver.PipelinePlaying();
             break;
         case ePlayNo:
-            LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, streamId=%u.\n", iTrackId, iStreamId);
             /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
             SetState(EFlushing);
             iFlushStream = true;
@@ -377,6 +396,7 @@ void Stopper::NewStream()
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
     SetState(ERunning);
+    iStreamHandler = NULL;
     iCheckedStreamPlayable = false;
     iHaltPending = false;
     iFlushStream = false;
