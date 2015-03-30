@@ -46,7 +46,7 @@ int CDECL main(int aArgc, char* aArgv[])
                                                options.TuneIn().Value(), options.Tidal().Value(), options.Qobuz().Value(),
                                                options.UserAgent().Value());
     Media::DriverBasic* driver = new Media::DriverBasic(dvStack->Env(), tmp->Pipeline());
-    tmp->SetPullableClock(*driver);
+    //tmp->SetPullableClock(*driver);
     tmp->Run();
     tmp->StopPipeline();
     delete driver;
