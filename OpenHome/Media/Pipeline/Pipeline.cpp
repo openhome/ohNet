@@ -187,12 +187,13 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationMonitorMaxJiffies();
     const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
     const TUint msgAudioPcmCount = decodedAudioCount + 100; // +100 allows for Split()ing in various elements
+    const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  encodedAudioCount, msgEncodedAudioCount,
                                  decodedAudioCount, msgAudioPcmCount, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, perStreamMsgCount,
-                                 perStreamMsgCount, perStreamMsgCount, kMsgCountMetaText,
-                                 kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
+                                 perStreamMsgCount, perStreamMsgCount, perStreamMsgCount,
+                                 msgHaltCount, kMsgCountFlush, kMsgCountWait,
                                  kMsgCountMode, perStreamMsgCount, perStreamMsgCount, kMsgCountQuit);
     const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
     TUint threadPriority = threadPriorityBase;
