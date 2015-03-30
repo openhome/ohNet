@@ -17,7 +17,7 @@ namespace Net {
 namespace Media {
     class PipelineManager;
     class PipelineInitParams;
-    class IPipelineDriver;
+    class IPipelineAnimator;
     class IMuteManager;
     class IVolume;  // XXX dummy volume hardware
     class IVolumeManagerLimits;
@@ -29,7 +29,6 @@ namespace Media {
     class AllocatorInfoLogger;
     class LoggingPipelineObserver;
     class TrackFactory;
-    class IPullableClock;
 }
 namespace Configuration {
     class ConfigManager;
@@ -69,7 +68,6 @@ public:
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::IStoreReadWrite& ReadWriteStore() = 0;
-    virtual Media::IPullableClock* PullableClock() = 0;
     virtual Configuration::IConfigManager& ConfigManager() = 0;
     virtual Configuration::IConfigInitialiser& ConfigInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
@@ -87,8 +85,6 @@ public:
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
-                Media::IPipelineDriver& aPipelineDriver,
-                Media::IPullableClock* aPullableClock,
                 Media::IVolume& aVolumeLeft,
                 Media::IVolume& aVolumeRight,
                 const Brx& aEntropy,
@@ -108,7 +104,6 @@ public: // from IMediaPlayer
     Media::TrackFactory& TrackFactory() override;
     IReadStore& ReadStore() override;
     Configuration::IStoreReadWrite& ReadWriteStore() override;
-    Media::IPullableClock* PullableClock() override;
     Configuration::IConfigManager& ConfigManager() override;
     Configuration::IConfigInitialiser& ConfigInitialiser() override;
     IPowerManager& PowerManager() override;
@@ -124,7 +119,6 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
-    Media::IPullableClock* iPullableClock;
     Media::VolumeLimitNull iVolumeLimit;
     Media::VolumeBalanceStereo iVolumeBalanceStereo;
     Media::VolumeProfile iVolumeProfile;

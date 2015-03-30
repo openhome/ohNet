@@ -67,6 +67,8 @@ public:
     HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore);
     void SetUri(const Uri& aUri);
     TUint Version() const;
+    TBool StreamEnded() const;
+    TBool Error() const;
     void Interrupt();
     void Close();
 public: // from ITimerHandler
@@ -93,10 +95,12 @@ private:
     TUint64 iLastSegment;
     TUint iTargetDuration;
     TBool iEndlist;
+    TBool iStreamEnded;
     Brn iNextLine;
     Mutex iLock;
     ISemaphore& iSem;
     TBool iInterrupted;
+    TBool iError;
 };
 
 class SegmentStreamer : public IReader
@@ -104,6 +108,7 @@ class SegmentStreamer : public IReader
 public:
     SegmentStreamer(IHttpSocket& aSocket, IReader& aReader);
     void Stream(ISegmentUriProvider& aSegmentUriProvider);
+    TBool Error() const;
     void Close();
 public: // from IReader
     Brn Read(TUint aBytes) override;
@@ -121,6 +126,7 @@ private:
     TUint64 iTotalBytes;
     TUint64 iOffset;
     TBool iInterrupted;
+    TBool iError;
     Mutex iLock;
 };
 

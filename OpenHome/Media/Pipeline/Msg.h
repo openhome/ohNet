@@ -13,6 +13,7 @@
 #include <limits.h>
 
 EXCEPTION(SampleRateInvalid);
+EXCEPTION(SampleRateUnsupported);
 
 namespace OpenHome {
 namespace Media {
@@ -1186,6 +1187,35 @@ class IPipelineElementDownstream
 public:
     virtual ~IPipelineElementDownstream() {}
     virtual void Push(Msg* aMsg) = 0;
+};
+
+
+/**
+ * Should be implemented by the object that animates (calls Pull() on) Pipeline.
+ */
+class IPipelineAnimator
+{
+public:
+    virtual ~IPipelineAnimator() {}
+    /**
+     * Report any post-pipeline delay.
+     *
+     * Throws SampleRateUnsupported is aSampleRateTo is not supported.
+     *
+     * @param[in] aSampleRateFrom   Previous sample rate (in Hz).  0 implies pipeline startup.
+     * @param[in] aSampleRateTo     New sample rate (in Hz).
+     *
+     * @return     Delay applied beyond the pipeline in Jiffies.
+     *             See Jiffies class for time conversion utilities.
+     */
+    virtual TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) = 0;
+};
+
+class IPipeline : public IPipelineElementUpstream
+{
+public:
+    virtual ~IPipeline() {}
+    virtual void SetAnimator(IPipelineAnimator& aAnimator) = 0;
 };
 
 class TrackFactory

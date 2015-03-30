@@ -42,11 +42,11 @@ int CDECL main(int aArgc, char* aArgv[])
     TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), options.Udn().Value(), Brn("TestMediaPlayer"), udn);
 
     // Create TestMediaPlayer.
-    Media::DriverBasic* driver = new Media::DriverBasic(dvStack->Env());
     TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, options.Room().CString(), options.Name().CString(),
                                                options.TuneIn().Value(), options.Tidal().Value(), options.Qobuz().Value(),
-                                               options.UserAgent().Value(), NULL/*driver*/, *driver);
-    driver->SetPipeline(tmp->Pipeline());
+                                               options.UserAgent().Value());
+    Media::DriverBasic* driver = new Media::DriverBasic(dvStack->Env(), tmp->Pipeline());
+    //tmp->SetPullableClock(*driver);
     tmp->Run();
     tmp->StopPipeline();
     delete driver;

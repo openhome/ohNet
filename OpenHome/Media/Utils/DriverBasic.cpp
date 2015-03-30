@@ -9,9 +9,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-DriverBasic::DriverBasic(Environment& aEnv)
+DriverBasic::DriverBasic(Environment& aEnv, IPipeline& aPipeline)
     : Thread("PipelineAnimator", kPrioritySystemHighest)
-    , iPipeline(NULL)
+    , iPipeline(aPipeline)
     , iSem("DRVB", 0)
     , iOsCtx(aEnv.OsCtx())
     , iPlayable(NULL)
@@ -19,6 +19,8 @@ DriverBasic::DriverBasic(Environment& aEnv)
     , iPullValue(kClockPullDefault)
     , iQuit(false)
 {
+    iPipeline.SetAnimator(*this);
+    Start();
 }
 
 DriverBasic::~DriverBasic()
@@ -26,16 +28,10 @@ DriverBasic::~DriverBasic()
     Join();
 }
 
-void DriverBasic::SetPipeline(IPipelineElementUpstream& aPipeline)
-{
-    iPipeline = &aPipeline;
-    Start();
-}
-
 void DriverBasic::Run()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
-    Msg* msg = iPipeline->Pull();
+    Msg* msg = iPipeline.Pull();
     ASSERT(msg != NULL);
     (void)msg->Process(*this);
 
@@ -50,7 +46,7 @@ void DriverBasic::Run()
                     ProcessAudio(iPlayable);
                 }
                 else {
-                    Msg* msg = iPipeline->Pull();
+                    Msg* msg = iPipeline.Pull();
                     msg = msg->Process(*this);
                     ASSERT(msg == NULL);
                 }
@@ -90,7 +86,7 @@ void DriverBasic::Run()
 
     // pull until the pipeline is emptied
     while (!iQuit) {
-        Msg* msg = iPipeline->Pull();
+        Msg* msg = iPipeline.Pull();
         msg = msg->Process(*this);
         ASSERT(msg == NULL);
         if (iPlayable != NULL) {

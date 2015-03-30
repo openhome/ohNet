@@ -212,34 +212,49 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTime
     , iLastSegment(0)
     , iTargetDuration(0)
     , iEndlist(false)
+    , iStreamEnded(false)
     , iLock("HMRL")
     , iSem(aSemaphore)
     , iInterrupted(true)
+    , iError(false)
 {
 }
 
 void HlsM3uReader::SetUri(const Uri& aUri)
 {
-    {
-        AutoMutex a(iLock);
-        ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
-                                // iInterrupted is set to true at construction, so will be true on first call to SetUri().
-        ASSERT(!iConnected);
-        iUri.Replace(aUri.AbsoluteUri());
-        iLastSegment = 0;
-        iTargetDuration = 0;
-        iEndlist = false;
-        iNextLine.Set(Brx::Empty());
-        iSem.Clear();
-        iSem.Signal();
-        iInterrupted = false;
-        iReaderUntil.ReadFlush();
-    }
+    LOG(kMedia, ">HlsM3uReader::SetUri ");
+    LOG(kMedia, aUri.AbsoluteUri());
+    LOG(kMedia, "\n");
+    AutoMutex a(iLock);
+    ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
+    // iInterrupted is set to true at construction, so will be true on first call to SetUri().
+    ASSERT(!iConnected);
+    iUri.Replace(aUri.AbsoluteUri());
+    iLastSegment = 0;
+    iTargetDuration = 0;
+    iEndlist = false;
+    iStreamEnded = false;
+    iNextLine.Set(Brx::Empty());
+    iSem.Clear();
+    iSem.Signal();
+    iInterrupted = false;
+    iError = false;
+    //iReaderUntil.ReadFlush();
 }
 
 TUint HlsM3uReader::Version() const
 {
     return iVersion;
+}
+
+TBool HlsM3uReader::StreamEnded() const
+{
+    return iStreamEnded;
+}
+
+TBool HlsM3uReader::Error() const
+{
+    return iError;
 }
 
 void HlsM3uReader::Close()
@@ -248,6 +263,7 @@ void HlsM3uReader::Close()
     // to this (if class is active).
     AutoMutex a(iLock);
     if (iConnected) {
+        iReaderUntil.ReadFlush();
         iConnected = false;
         iSocket.Close();
     }
@@ -255,6 +271,7 @@ void HlsM3uReader::Close()
 
 TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
 {
+    LOG(kMedia, ">HlsM3uReader::NextSegmentUri\n");
     TUint duration = 0;
     Brn segmentUri = Brx::Empty();
     try {
@@ -264,10 +281,12 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             if ((iLastSegment == 0 && iTargetDuration == 0) || iOffset >= iTotalBytes) {
                 if (!iEndlist) {
                     if (!ReloadVariantPlaylist()) {
+                        iError = true;
                         THROW(HlsVariantPlaylistError);
                     }
                 }
                 else {
+                    iStreamEnded = true;
                     THROW(HlsEndOfStream);
                 }
             }
@@ -297,6 +316,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                         Brn durationDecimalBuf = durationParser.Next();
                         if (!durationParser.Finished() && durationDecimalBuf.Bytes()>3) {
                             // Error in M3U8 format.
+                            iError = true;
                             THROW(HlsVariantPlaylistError);
                         }
                         TUint durationDecimal = Ascii::Uint(durationDecimalBuf);
@@ -317,19 +337,23 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
         }
         catch (UriError&) {
             LOG(kMedia, "HlsM3uReader::NextSegmentUri UriError\n");
+            iError = true;
             THROW(HlsVariantPlaylistError);
         }
     }
     catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
+        iError = true;
         THROW(HlsVariantPlaylistError);
     }
     catch (HttpError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
+        iError = true;
         THROW(HlsVariantPlaylistError);
     }
     catch (ReaderError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
+        iError = true;
         THROW(HlsVariantPlaylistError);
     }
 
@@ -338,11 +362,13 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
 
 void HlsM3uReader::TimerFired()
 {
+    LOG(kMedia, "HlsM3uReader::TimerFired\n");
     iSem.Signal();
 }
 
 void HlsM3uReader::Interrupt()
 {
+    LOG(kMedia, "HlsM3uReader::Interrupt\n");
     // Must NOT close socket here - undefined behaviour will result.
     AutoMutex a(iLock);
     if (!iInterrupted) {
@@ -364,6 +390,7 @@ void HlsM3uReader::ReadNextLine()
 
 TBool HlsM3uReader::ReloadVariantPlaylist()
 {
+    LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist\n");
     // Timer should be started BEFORE refreshing playlist.
     // However, not very useful if we don't yet have target duration, so just
     // start timer after processing part of playlist.
@@ -420,7 +447,13 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         return false;
     }
 
+    // Hold lock to ensure timer can't be set if Interrupt() is called during this method.
+    AutoMutex a(iLock);
+    if (iInterrupted) {
+        return false;
+    }
     iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
+    LOG(kMedia, "<HlsM3uReader::ReloadVariantPlaylist\n");
     return true;
 }
 
@@ -548,24 +581,42 @@ SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReader& aReader)
     , iTotalBytes(0)
     , iOffset(0)
     , iInterrupted(true)
+    , iError(false)
     , iLock("SEGL")
 {
 }
 
 void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 {
+    LOG(kMedia, "SegmentStreamer::Stream\n");
     AutoMutex a(iLock);
     ASSERT(iInterrupted);
     ASSERT(!iConnected);
     iInterrupted = false;
+    iError = false;
     iSegmentUriProvider = &aSegmentUriProvider;
     iTotalBytes = 0;
     iOffset = 0;
 }
 
+TBool SegmentStreamer::Error() const
+{
+    return iError;
+}
+
 Brn SegmentStreamer::Read(TUint aBytes)
 {
-    EnsureSegmentIsReady();
+    try {
+        EnsureSegmentIsReady();
+    }
+    catch (HlsSegmentError&) {
+        LOG(kMedia, "SegmentStreamer::Read HlsSegmentError\n");
+        THROW(ReaderError);
+    }
+    catch (HlsEndOfStream&) {
+        LOG(kMedia, "SegmentStreamer::Read HlsEndOfStream\n");
+        THROW(ReaderError);
+    }
     Brn buf = iReader.Read(aBytes);
     iOffset += buf.Bytes();
     return buf;
@@ -578,6 +629,7 @@ void SegmentStreamer::ReadFlush()
 
 void SegmentStreamer::ReadInterrupt()
 {
+    LOG(kMedia, "SegmentStreamer::ReadInterrupt\n");
     AutoMutex a(iLock);
     if (!iInterrupted) {
         iInterrupted = true;
@@ -599,14 +651,27 @@ void SegmentStreamer::Close()
 
 void SegmentStreamer::GetNextSegment()
 {
+    LOG(kMedia, ">SegmentStreamer::GetNextSegment\n");
     Uri segment;
-    (void)iSegmentUriProvider->NextSegmentUri(segment); // pass up HlsVariantPlaylistError, HlsEndOfStream
+    try {
+        (void)iSegmentUriProvider->NextSegmentUri(segment);
+    }
+    catch (HlsVariantPlaylistError&) {
+        LOG(kMedia, "SegmentStreamer::GetNextSegment HlsVariantPlaylistError\n");
+        iError = true;
+        THROW(HlsSegmentError);
+    }
+    catch (HlsEndOfStream&) {
+        LOG(kMedia, "SegmentStreamer::GetNextSegment HlsEndOfStream\n");
+        throw;
+    }
 
     iUri.Replace(segment.AbsoluteUri());
 
     Close();
     TBool success = iSocket.Connect(iUri);
     if (!success) {
+        iError = true;
         THROW(HlsSegmentError);
     }
     {
@@ -742,25 +807,27 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             break;
         }
 
-        try {
-            res = iContentProcessor->Stream(iSegmentStreamer, 0);
+        // This will only return EProtocolStreamErrorRecoverable for live streams!
+        res = iContentProcessor->Stream(iSegmentStreamer, 0);
+
+        // Check for context of above method returning.
+        // i.e., identify whether it was actually caused by:
+        //  - TryStop() being called                    (EProtocolStreamStopped)
+        //  - end of stream indicated in M3U8           (EProtocolStreamSuccess)
+        //  - unrecoverable error (e.g. malformed M3U8) (EProtocolStreamErrorUnrecoverable)
+        //  - recoverable interruption in stream        (EProtocolStreamErrorRecoverable)
+
+        if (iStopped) {
+            res = EProtocolStreamStopped;
+            break;
         }
-        catch (HlsEndOfStream&) {
+        else if (iM3uReader.StreamEnded()) {
             res = EProtocolStreamSuccess;
+            break;
         }
-        catch (HlsVariantPlaylistError&) {
-            if (iStopped) { // Calling Interrupt() can cause HlsVariantPlaylistError/HlsSegmentError to be thrown. Check these errors weren't thrown because of Interrupt(), which is detectable by iStopped being true.
-                res = EProtocolStreamStopped;
-                break;
-            }
+        else if (iM3uReader.Error() || iSegmentStreamer.Error()) {
             res = EProtocolStreamErrorUnrecoverable;
-        }
-        catch (HlsSegmentError&) {
-            if (iStopped) {
-                res = EProtocolStreamStopped;
-                break;
-            }
-            res = EProtocolStreamErrorUnrecoverable;
+            break;
         }
     }
 
@@ -776,6 +843,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     }
 
+    LOG(kMedia, "<ProtocolHls::Stream res: %d\n", res);
     return res;
 }
 

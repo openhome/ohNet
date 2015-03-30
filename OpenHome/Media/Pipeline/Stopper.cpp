@@ -145,6 +145,9 @@ void Stopper::StopNow()
 void Stopper::Quit()
 {
     iQuit = true;
+    if (iState == EStopped || iState == EPaused) {
+        iFlushStream = true;
+    }
     Play();
 }
 
@@ -295,7 +298,11 @@ Msg* Stopper::ProcessFlushable(Msg* aMsg)
 void Stopper::OkToPlay()
 {
     EStreamPlay canPlay = iStreamHandler->OkToPlay(iStreamId);
-    if (!iQuit) {
+    if (iQuit) {
+        SetState(EFlushing);
+        iFlushStream = true;
+    }
+    else {
         switch (canPlay)
         {
         case ePlayYes:

@@ -15,7 +15,7 @@ namespace Av {
 namespace Media {
 class Pipeline;
 class PipelineInitParams;
-class IPipelineDriver;
+class IPipelineAnimator;
 class ProtocolManager;
 class ITrackObserver;
 class Filler;
@@ -30,10 +30,10 @@ class UriProvider;
 /**
  * External interface to the pipeline.
  */
-class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer, private IUrlBlockWriter
+class PipelineManager : public IPipeline, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer, private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IPipelineDriver& aPipelineDriver, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.
@@ -217,8 +217,9 @@ public:
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
-private: // from IPipelineElementUpstream
+private: // from IPipeline
     Msg* Pull() override;
+    void SetAnimator(IPipelineAnimator& aAnimator) override;
 private: // from IPipelineIdManager
     void InvalidateAt(TUint aId) override;
     void InvalidateAfter(TUint aId) override;

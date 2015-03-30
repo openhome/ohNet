@@ -14,13 +14,13 @@ using namespace OpenHome::Media;
 
 // PipelineManager
 
-PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IPipelineDriver& aPipelineDriver, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this, aPipelineDriver);
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
@@ -46,9 +46,9 @@ void PipelineManager::Quit()
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
     const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
     iPipeline->RemoveCurrentStream();
     iLock.Signal();
-    iIdManager->InvalidatePending();
     if (waitStop) {
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
@@ -252,6 +252,11 @@ TUint PipelineManager::SenderMinLatencyMs() const
 Msg* PipelineManager::Pull()
 {
     return iPipeline->Pull();
+}
+
+void PipelineManager::SetAnimator(IPipelineAnimator& aAnimator)
+{
+    iPipeline->SetAnimator(aAnimator);
 }
 
 void PipelineManager::InvalidateAt(TUint aId)

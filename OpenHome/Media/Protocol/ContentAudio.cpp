@@ -51,14 +51,5 @@ ProtocolStreamResult ContentAudio::Stream(IReader& aReader, TUint64 aTotalBytes)
         res = EProtocolStreamErrorRecoverable;
         iSupply->Flush();
     }
-    /* FIXME - following catch()es are temporary, allowing time for ProtocolHls to be updated
-               to stop throwing custom exceptions out of IReader::Read() */
-    catch (AssertionFailed&) {
-        throw;
-    }
-    catch (...) {
-        iSupply->Flush();
-        throw;
-    }
     return res;
 }
