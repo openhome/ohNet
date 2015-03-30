@@ -26,8 +26,8 @@ import urllib
 import xml.etree.ElementTree as ET
 
 kTuneInUrl        = 'http://opml.radiotime.com/'
-kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg'
-kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg'
+kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg,hls'
+kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg,hls'
 kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
                     'http-get:*:audio/wav:*,'            +\
                     'http-get:*:audio/wave:*,'           +\
