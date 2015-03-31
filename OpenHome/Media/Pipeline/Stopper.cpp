@@ -20,6 +20,8 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iTrackId(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
+    , iCheckedStreamPlayable(true)
+    , iBuffering(false)
     , iQuit(false)
 {
     iState = EStopped;
@@ -74,6 +76,12 @@ void Stopper::BeginPause()
     if (iQuit) {
         return;
     }
+
+    if (iBuffering) {
+        HandlePaused();
+        return;
+    }
+
     switch (iState)
     {
     case ERunning:
@@ -106,6 +114,12 @@ void Stopper::BeginStop(TUint aHaltId)
         return;
     }
 
+    iTargetHaltId = aHaltId;
+    if (iBuffering) {
+        HandleStopped();
+        return;
+    }
+
     switch (iState)
     {
     case ERunning:
@@ -131,8 +145,6 @@ void Stopper::BeginStop(TUint aHaltId)
         HandleStopped();
         break;
     }
-
-    iTargetHaltId = aHaltId;
 }
 
 void Stopper::StopNow()
@@ -170,6 +182,9 @@ Msg* Stopper::Pull()
             iLock.Signal();
         }
     } while (msg == NULL);
+    iLock.Wait();
+    iBuffering = false;
+    iLock.Signal();
     return msg;
 }
 
@@ -185,6 +200,23 @@ Msg* Stopper::ProcessMsg(MsgSession* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
+    /* IdManager expects OkToPlay to be called for every stream that is added to it.
+       This isn't the case if CodecController fails to recognise the format of a stream.
+       Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
+       play a stream. */
+    if (aMsg->StartOfStream()) {
+        if (!iCheckedStreamPlayable) {
+            if (iStreamHandler != NULL) {
+                OkToPlay();
+            }
+            else if (iStreamPlayObserver != NULL) {
+                iStreamPlayObserver->NotifyTrackFailed(iTrackId);
+                iCheckedStreamPlayable = true;
+            }
+        }
+        NewStream();
+    }
+
     iTrackId = aMsg->Track().Id();
     return aMsg;
 }
@@ -259,7 +291,16 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
     if (!aMsg->StreamInfo().Live() && !iCheckedStreamPlayable) {
         OkToPlay();
     }
-    return ProcessFlushable(aMsg);
+    Msg* msg = ProcessFlushable(aMsg);
+    if (msg != NULL) {
+        const DecodedStreamInfo& stream = aMsg->StreamInfo();
+        msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
+                                                 stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
+                                                 stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
+                                                 stream.Seekable(), stream.Live(), this);
+        aMsg->RemoveRef();
+    }
+    return msg;
 }
 
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
@@ -286,6 +327,44 @@ Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
+EStreamPlay Stopper::OkToPlay(TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return ePlayNo;
+}
+
+TUint Stopper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint Stopper::TryStop(TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId)
+{
+    iLock.Wait();
+    if (iState != ERampingDown) {
+        iBuffering = true;
+    }
+    else {
+        if (iTargetHaltId == MsgHalt::kIdInvalid) {
+            HandlePaused();
+        }
+        else {
+            HandleStopped();
+        }
+    }
+    if (iStreamHandler != NULL) {
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
+    }
+    iLock.Signal();
+}
+
 Msg* Stopper::ProcessFlushable(Msg* aMsg)
 {
     if (iFlushStream) {
@@ -303,13 +382,14 @@ void Stopper::OkToPlay()
         iFlushStream = true;
     }
     else {
+        LOG(kPipeline, "Stopper - OkToPlay returned %s.  trackId=%u, streamId=%u.\n", kStreamPlayNames[canPlay], iTrackId, iStreamId);
+
         switch (canPlay)
         {
         case ePlayYes:
             iObserver.PipelinePlaying();
             break;
         case ePlayNo:
-            LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, streamId=%u.\n", iTrackId, iStreamId);
             /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
             SetState(EFlushing);
             iFlushStream = true;
@@ -327,7 +407,6 @@ void Stopper::OkToPlay()
         iStreamPlayObserver->NotifyStreamPlayStatus(iTrackId, iStreamId, canPlay);
     }
     iCheckedStreamPlayable = true;
-
 }
 
 Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
@@ -351,9 +430,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
                 if (iTargetHaltId == MsgHalt::kIdInvalid) {
-                    SetState(EPaused);
-                    (void)iSem.Clear();
-                    iObserver.PipelinePaused();
+                    HandlePaused();
                 }
                 else {
                     (void)iStreamHandler->TryStop(iStreamId);
@@ -377,9 +454,17 @@ void Stopper::NewStream()
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
     SetState(ERunning);
+    iStreamHandler = NULL;
     iCheckedStreamPlayable = false;
     iHaltPending = false;
     iFlushStream = false;
+}
+
+void Stopper::HandlePaused()
+{
+    SetState(EPaused);
+    (void)iSem.Clear();
+    iObserver.PipelinePaused();
 }
 
 void Stopper::HandleStopped()
