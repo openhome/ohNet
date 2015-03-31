@@ -63,10 +63,9 @@ class Config:
         """Configure the DUTs. Order of configuration is randomly generated"""
         self.duts = aDuts
         order = [1, 2, 3]
-        order.sort( lambda x,y: random.choice( [-1,1] ))
+        self.__SetupDut( order.pop( random.randint( 0, 2 )))
+        self.__SetupDut( order.pop( random.randint( 0, 1 )))
         self.__SetupDut( order[0] )
-        self.__SetupDut( order[1] )
-        self.__SetupDut( order[2] )
             
     def __SetupDut( self, aNum ):
         """Setup specifed DUT as determined by configuration parameters"""
