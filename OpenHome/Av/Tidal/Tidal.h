@@ -49,7 +49,7 @@ private:
     TBool TryLoginLocked();
     TBool TryLoginLocked(Bwx& aSessionId);
     TBool TryLogoutLocked(const Brx& aSessionId);
-    TBool Tidal::TryGetSubscriptionLocked();
+    TBool TryGetSubscriptionLocked();
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
     static Brn ReadInt(ReaderUntil& aReader, const Brx& aTag);
     static Brn ReadString(ReaderUntil& aReader, const Brx& aTag);
