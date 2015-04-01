@@ -20,6 +20,7 @@ using namespace OpenHome::Configuration;
 
 
 static const TChar* kSoundQualities[3] = {"LOW", "HIGH", "LOSSLESS"};
+static const TUint kNumSoundQualities = sizeof(kSoundQualities) / sizeof(kSoundQualities[0]);
 
 const Brn Tidal::kHost("api.tidalhifi.com");
 const Brn Tidal::kId("tidalhifi.com");
@@ -41,6 +42,7 @@ Tidal::Tidal(Environment& aEnv, const Brx& aToken, ICredentialsState& aCredentia
     const int arr[] = {0, 1, 2};
     std::vector<TUint> qualities(arr, arr + sizeof(arr)/sizeof(arr[0]));
     iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 2);
+    iMaxSoundQuality = kNumSoundQualities - 1;
     iSubscriberIdQuality = iConfigQuality->Subscribe(MakeFunctorConfigChoice(*this, &Tidal::QualityChanged));
 }
 
@@ -103,7 +105,7 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
             THROW(ReaderError);
         }
 
-        aStreamUrl.Replace(ReadValue(iReaderUntil, Brn("url")));
+        aStreamUrl.Replace(ReadString(iReaderUntil, Brn("url")));
         success = true;
     }
     catch (HttpError&) {
@@ -213,61 +215,68 @@ TBool Tidal::TryLoginLocked()
         iCredentialsState.SetState(kId, Brn("Login Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }
-    AutoSocketSsl _(iSocket);
-    Bws<280> reqBody(Brn("username="));
-    WriterBuffer writer(reqBody);
-    iLockConfig.Wait();
-    FormUrlEncode(writer, iUsername);
-    reqBody.Append(Brn("&password="));
-    FormUrlEncode(writer, iPassword);
-    iLockConfig.Signal();
+    {
+        AutoSocketSsl _(iSocket);
+        Bws<280> reqBody(Brn("username="));
+        WriterBuffer writer(reqBody);
+        iLockConfig.Wait();
+        FormUrlEncode(writer, iUsername);
+        reqBody.Append(Brn("&password="));
+        FormUrlEncode(writer, iPassword);
+        iLockConfig.Signal();
 
-    Bws<128> pathAndQuery("/v1/login/username?token=");
-    pathAndQuery.Append(iToken);
-    try {
-        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort, reqBody.Bytes());
-        iWriterBuf.Write(reqBody);
-        iWriterBuf.WriteFlush();
+        Bws<128> pathAndQuery("/v1/login/username?token=");
+        pathAndQuery.Append(iToken);
+        try {
+            WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort, reqBody.Bytes());
+            iWriterBuf.Write(reqBody);
+            iWriterBuf.WriteFlush();
 
-        iReaderResponse.Read();
-        const TUint code = iReaderResponse.Status().Code();
-        if (code != 200) {
-            Bws<ICredentials::kMaxStatusBytes> status;
-            const TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
-            if (len > 0) {
-                status.Replace(iReaderBuf.Read(len));
-                iCredentialsState.SetState(kId, status, Brx::Empty());
+            iReaderResponse.Read();
+            const TUint code = iReaderResponse.Status().Code();
+            if (code != 200) {
+                Bws<ICredentials::kMaxStatusBytes> status;
+                const TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
+                if (len > 0) {
+                    status.Replace(iReaderUntil.Read(len));
+                    iCredentialsState.SetState(kId, status, Brx::Empty());
+                }
+                else {
+                    error.AppendPrintf("Login Error (Response Code %d): Please Try Again.", code);
+                    iCredentialsState.SetState(kId, error, Brx::Empty());
+                }
+                updatedStatus = true;
+                LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
+                LOG(kError, status);
+                LOG(kError, "\n");
+                THROW(ReaderError);
             }
-            else {
-                error.AppendPrintf("Login Error (Response Code %d): Please Try Again.", code);
-                iCredentialsState.SetState(kId, error, Brx::Empty());
-            }
+
+            iUserId.Replace(ReadInt(iReaderUntil, Brn("userId")));
+            iSessionId.Replace(ReadString(iReaderUntil, Brn("sessionId")));
+            iCountryCode.Replace(ReadString(iReaderUntil, Brn("countryCode")));
+            iCredentialsState.SetState(kId, Brx::Empty(), iCountryCode);
             updatedStatus = true;
-            LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
-            LOG(kError, status);
-            LOG(kError, "\n");
-            THROW(ReaderError);
+            success = true;
         }
+        catch (HttpError&) {
+            error.Append("Login Error (Http Failure): Please Try Again.");
+            LOG2(kMedia, kError, "HttpError in Tidal::TryLogin\n");
+        }
+        catch (ReaderError&) {
+            error.Append("Login Error (Read Failure): Please Try Again.");
+            LOG2(kMedia, kError, "ReaderError in Tidal::TryLogin\n");
+        }
+        catch (WriterError&) {
+            error.Append("Login Error (Write Failure): Please Try Again.");
+            LOG2(kMedia, kError, "WriterError in Tidal::TryLogin\n");
+        }
+    }
 
-        iSessionId.Replace(ReadValue(iReaderUntil, Brn("sessionId")));
-        iCountryCode.Replace(ReadValue(iReaderUntil, Brn("countryCode")));
-        iCredentialsState.SetState(kId, Brx::Empty(), iCountryCode);
-        updatedStatus = true;
-        success = true;
+    if (success) {
+        success = TryGetSubscriptionLocked();
     }
-    catch (HttpError&) {
-        error.Append("Login Error (Http Failure): Please Try Again.");
-        LOG2(kMedia, kError, "HttpError in Tidal::TryLogin\n");
-    }
-    catch (ReaderError&) {
-        error.Append("Login Error (Read Failure): Please Try Again.");
-        LOG2(kMedia, kError, "ReaderError in Tidal::TryLogin\n");
-    }
-    catch (WriterError&) {
-        error.Append("Login Error (Write Failure): Please Try Again.");
-        LOG2(kMedia, kError, "WriterError in Tidal::TryLogin\n");
-    }
-    if (!updatedStatus) {
+    else if (!updatedStatus) {
         iCredentialsState.SetState(kId, error, Brx::Empty());
     }
     return success;
@@ -312,6 +321,72 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
     return success;
 }
 
+TBool Tidal::TryGetSubscriptionLocked()
+{
+    TBool updateStatus = false;
+    Bws<ICredentials::kMaxStatusBytes> error;
+    TBool success = false;
+    if (!TryConnect(kPort)) {
+        LOG2(kMedia, kError, "Tidal::TryGetSubscriptionLocked - failed to connect\n");
+        iCredentialsState.SetState(kId, Brn("Subscription Error (Connection Failed): Please Try Again."), Brx::Empty());
+        return false;
+    }
+    AutoSocketSsl _(iSocket);
+
+    Bws<128> pathAndQuery("/v1/users/");
+    pathAndQuery.Append(iUserId);
+    pathAndQuery.Append("/subscription?sessionId=");
+    pathAndQuery.Append(iSessionId);
+
+    try {
+        WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPort, 0);
+
+        iReaderResponse.Read();
+        const TUint code = iReaderResponse.Status().Code();
+        if (code != 200) {
+            Bws<ICredentials::kMaxStatusBytes> status;
+            const TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
+            if (len > 0) {
+                error.Replace(iReaderUntil.Read(len));
+            }
+            else {
+                error.AppendPrintf("Subscription Error (Response Code %d): Please Try Again.", code);
+            }
+            updateStatus = true;
+            LOG(kError, "Http error - %d - in response to Tidal subscription.  Some/all of response is:\n", code);
+            LOG(kError, status);
+            LOG(kError, "\n");
+            THROW(ReaderError);
+        }
+        Brn quality = ReadString(iReaderUntil, Brn("highestSoundQuality"));
+        for (TUint i=0; i<kNumSoundQualities; i++) {
+            if (Brn(kSoundQualities[i]) == quality) {
+                iMaxSoundQuality = i;
+                break;
+            }
+        }
+        iSoundQuality = std::min(iSoundQuality, iMaxSoundQuality);
+        updateStatus = false;
+        success = true;
+    }
+    catch (HttpError&) {
+        error.Append("Subscription Error (Http Failure): Please Try Again.");
+        LOG2(kMedia, kError, "HttpError in Tidal::TryGetSubscriptionLocked\n");
+    }
+    catch (ReaderError&) {
+        error.Append("Subscription Error (Read Failure): Please Try Again.");
+        LOG2(kMedia, kError, "ReaderError in Tidal::TryGetSubscriptionLocked\n");
+    }
+    catch (WriterError&) {
+        error.Append("Subscription Error (Write Failure): Please Try Again.");
+        LOG2(kMedia, kError, "WriterError in Tidal::TryGetSubscriptionLocked\n");
+    }
+    if (updateStatus) {
+        iCredentialsState.SetState(kId, error, Brx::Empty());
+    }
+    return success;
+}
+
 void Tidal::WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength)
 {
     iWriterRequest.WriteMethod(aMethod, aPathAndQuery, Http::eHttp11);
@@ -324,7 +399,23 @@ void Tidal::WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TU
     iWriterRequest.WriteFlush();
 }
 
-Brn Tidal::ReadValue(ReaderUntil& aReader, const Brx& aTag)
+
+Brn Tidal::ReadInt(ReaderUntil& aReader, const Brx& aTag)
+{ // static
+    (void)aReader.ReadUntil('\"');
+    for (;;) {
+        Brn buf = aReader.ReadUntil('\"');
+        if (buf == aTag) {
+            break;
+        }
+    }
+
+    (void)aReader.ReadUntil(':');
+    Brn buf = aReader.ReadUntil(','); // FIXME - assumes aTag isn't the last element in this container
+    return buf;
+}
+
+Brn Tidal::ReadString(ReaderUntil& aReader, const Brx& aTag)
 { // static
     (void)aReader.ReadUntil('\"');
     for (;;) {
@@ -341,7 +432,7 @@ Brn Tidal::ReadValue(ReaderUntil& aReader, const Brx& aTag)
 void Tidal::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
 {
     iLockConfig.Wait();
-    iSoundQuality = aKvp.Value();
+    iSoundQuality = std::min(aKvp.Value(), iMaxSoundQuality);
     iLockConfig.Signal();
 }
 
