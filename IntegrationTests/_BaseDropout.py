@@ -16,9 +16,9 @@ Derived classes MUST
 """
 
 import _FunctionalTest
-import BaseTest                       as BASE
-import Upnp.ControlPoints.Volkano     as Volkano
-import _SoftPlayer                    as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import _SoftPlayer                      as SoftPlayer
 import LogThread
 import os
 import sys
@@ -115,7 +115,7 @@ class BaseDropout( BASE.BaseTest ):
             self.soft1 = SoftPlayer.SoftPlayer( **options )
             senderName = self.soft1.name
         self.senderDev = senderName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
+        self.sender = OHMP.OhMediaPlayerDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
 
         mode = '1'      # 1->unicast, 0->multicast
@@ -140,7 +140,7 @@ class BaseDropout( BASE.BaseTest ):
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
                 receiverName = self.soft2.name
             self.receiverDev = receiverName.split( ':' )[0]
-            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True, aLoopback=loopback )
+            self.receiver = OHMP.OhMediaPlayerDevice( receiverName, aIsDut=True, aLoopback=loopback )
             self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
             self.receiverUri.wait( 5 )
@@ -156,7 +156,7 @@ class BaseDropout( BASE.BaseTest ):
                 self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestSlave', aLoopback=loopback )
                 slaveName = self.soft3.name
             self.slaveDev = slaveName.split( ':' )[0]
-            self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True, aLoopback=loopback )
+            self.slave = OHMP.OhMediaPlayerDevice( slaveName, aIsDut=True, aLoopback=loopback )
             self.slave.receiver.AddSubscriber( self._SlaveReceiverCb )
             self.slave.receiver.SetSender( self.receiver.sender.uri, self.receiver.sender.metadata )
             self.slaveUri.wait( 5 )

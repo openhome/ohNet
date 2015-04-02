@@ -21,11 +21,11 @@ This is a collection of discrete tests using a 'test' audio server which can
 simulate normal and error conditions from the server
 """ 
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Network.HttpServer   as HttpServer
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Network.HttpServer         as HttpServer
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import os
 import random
 import sys
@@ -103,7 +103,7 @@ class TestAudioConx( BASE.BaseTest ):
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.AddSubscriber( self._PlaylistEventCb )
         
         # start audio server and load playlist into DS

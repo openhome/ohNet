@@ -10,10 +10,10 @@ Parameters:
     arg#6 - Test loops (optional - default 1)
 """
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import LogThread
 import copy
 import os
@@ -184,7 +184,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             aName = self.soft1.name
 
         self.senderDev = aName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( aName, aIsDut=True, aLoopback=aLoopback )
+        self.sender = OHMP.OhMediaPlayerDevice( aName, aIsDut=True, aLoopback=aLoopback )
         self.sender.config.SetValue( 'Radio.TuneInUserName', aTuneInUser )
         self.sender.product.sourceIndexByName = 'Radio'
 
@@ -200,7 +200,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=aLoopback )
             aName = self.soft2.name
         self.rcvrDev = aName.split( ':' )[0]
-        self.receiver = Volkano.VolkanoDevice( aName, aIsDut=True, aLoopback=aLoopback )
+        self.receiver = OHMP.OhMediaPlayerDevice( aName, aIsDut=True, aLoopback=aLoopback )
         self.receiver.receiver.AddSubscriber( self._ReceiverEventCb )
         time.sleep( 3 )
         self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )

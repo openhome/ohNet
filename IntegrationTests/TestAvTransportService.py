@@ -16,7 +16,6 @@ NOTE/ all data used in this test should be valid for the scenario being tested.
 """
 import _FunctionalTest
 import BaseTest                         as BASE
-import Upnp.ControlPoints.Volkano       as Volkano
 import Upnp.ControlPoints.MediaRenderer as MR
 import Utils.Network.HttpServer         as HttpServer
 import _SoftPlayer                      as SoftPlayer

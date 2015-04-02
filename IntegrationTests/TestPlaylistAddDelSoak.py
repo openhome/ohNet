@@ -10,10 +10,10 @@ Parameters:
 This is a stress test for the pipeline    
 """
 import _FunctionalTest
-import BaseTest                       as BASE
-import Upnp.ControlPoints.Volkano     as Volkano
-import Upnp.ControlPoints.MediaServer as Server
-import _SoftPlayer                    as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Upnp.ControlPoints.MediaServer   as Server
+import _SoftPlayer                      as SoftPlayer
 import sys
 import threading
 import time
@@ -61,7 +61,7 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
             dutName = self.soft.name
         
         # create renderer add subscribe to events
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.info.AddSubscriber( self._InfoEventCb )
 
         # Repeatedly Add / Remove playlist

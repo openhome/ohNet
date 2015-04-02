@@ -32,11 +32,11 @@ status and actions operate as specified
 # Order of DUT setup is random 
 
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Network.HttpServer   as HttpServer
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Network.HttpServer         as HttpServer
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import os
 import random
 import sys
@@ -330,17 +330,17 @@ class TestSongcastPlayback( BASE.BaseTest ):
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1', aLoopback=loopback )
             dut1Name = self.soft1.name
         self.dut1Dev = dut1Name.split( ':' )[0]
-        self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True, aLoopback=loopback )
+        self.dut1 = OHMP.OhMediaPlayerDevice( dut1Name, aIsDut=True, aLoopback=loopback )
         self.log.Header2( '', '    ------ Creating DUT #2 (%s) ------' % dut2Name )
         if dut2Name.lower() == 'local':
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2', aLoopback=loopback )
             dut2Name = self.soft2.name
-        self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True, aLoopback=loopback )
+        self.dut2 = OHMP.OhMediaPlayerDevice( dut2Name, aIsDut=True, aLoopback=loopback )
         self.log.Header2( '', '    ------ Creating DUT #3 (%s) ------' % dut3Name )
         if dut3Name.lower() == 'local':
             self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3', aLoopback=loopback )
             dut3Name = self.soft3.name
-        self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
+        self.dut3 = OHMP.OhMediaPlayerDevice( dut3Name, aIsDut=True, aLoopback=loopback )
         duts = [self.dut1, self.dut2, self.dut3]
 
         self.log.Header2( '', '    ------ Configuring Test ------' )
