@@ -184,7 +184,7 @@ EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
     EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
     if (canPlay != ePlayYes) {
-        Log::Print("WARNING: ProtocolOhBase::OkToPlay(aStreamId) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+        Log::Print("WARNING: ProtocolOhBase::OkToPlay(%u) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     }
     return ePlayYes;
 }
