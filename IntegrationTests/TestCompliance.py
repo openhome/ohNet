@@ -13,6 +13,7 @@ import BaseTest                         as BASE
 import Upnp.ControlPoints.OhMediaPlayer as OHMP
 import xml.etree.ElementTree            as ET
 import base64
+import os
 import sys
 import time
 import types
@@ -186,6 +187,10 @@ class TestCompliance( BASE.BaseTest ):
 
     def Test( self, aArgs ):
         """Test compliance with ohMediaPlayer 'standard'"""
+        if os.environ.has_key( 'PYTHON_STACK' ):
+            if os.environ['PYTHON_STACK'] != '':
+                self.log.Abort( '', 'Compliance test MUST be executed using PyOhNet UPnP stack' )
+
         dutName = ''
         try:
             dutName = aArgs[1]
