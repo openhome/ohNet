@@ -10,9 +10,9 @@ Check operations of Volume control functions
 # Only checks operation of volume service at commands level  
 
 import _FunctionalTest
-import BaseTest                        as BASE
-import Upnp.ControlPoints.Volkano      as Volkano
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import _SoftPlayer                      as SoftPlayer
 import os
 import sys
 import threading
@@ -45,7 +45,7 @@ class TestVolumeControl( BASE.BaseTest ):
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.volume.AddSubscriber( self._VolEventCb )
 
         # Execute the actual tests

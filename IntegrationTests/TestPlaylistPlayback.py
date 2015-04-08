@@ -20,11 +20,11 @@ Tests state-transition operation of DS service. Each transition is tested as a
 standalone operation - no aggregation of actions due to async operation tested.
 """ 
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Network.HttpServer   as HttpServer
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Network.HttpServer         as HttpServer
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import LogThread
 import os
 import random
@@ -551,7 +551,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.shuffle = False
         self.dut.product.sourceIndex = 0
 

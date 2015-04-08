@@ -19,7 +19,7 @@ import _FunctionalTest
 import BaseTest                         as BASE
 import Upnp.ControlPoints.MediaRenderer as Renderer
 import Upnp.ControlPoints.MediaServer   as Server
-import Upnp.ControlPoints.Volkano       as Volkano
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
 import Utils.Common                     as Common
 import Utils.Network.HttpServer         as HttpServer
 import _SoftPlayer                      as SoftPlayer
@@ -134,7 +134,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.numTracks = len( self.playlist )
 
         # create sender
-        self.sender = Volkano.VolkanoDevice( mpName, aIsDut=True, aLoopback=loopback )
+        self.sender = OHMP.OhMediaPlayerDevice( mpName, aIsDut=True, aLoopback=loopback )
         self.senderDev = mpName.split( ':' )[0]
 
         # create receiver and connect to renderer
@@ -143,7 +143,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
                 rcvrName = self.soft2.name
             self.rcvrDev = rcvrName.split( ':' )[0]
-            self.rcvr = Volkano.VolkanoDevice( rcvrName, aIsDut=True, aLoopback=loopback )
+            self.rcvr = OHMP.OhMediaPlayerDevice( rcvrName, aIsDut=True, aLoopback=loopback )
             self.rcvr.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
             self.rcvr.receiver.Play()
 
