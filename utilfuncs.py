@@ -336,6 +336,31 @@ def guess_libosa_location(conf):
         message='Specify --libosa')
     )
 
+def guess_openssl_location(conf):
+    set_env_verbose(conf, 'INCLUDES_OPENSSL', match_path(
+        conf,
+        [
+            '{options.openssl}/build/{options.dest_platform}/include',
+            'dependencies/{options.dest_platform}/openssl/include',
+        ],
+        message='Specify --openssl')
+    )
+    set_env_verbose(conf, 'STLIBPATH_OPENSSL', match_path(
+        conf,
+        [
+            '{options.openssl}/build/{options.dest_platform}/lib',
+            'dependencies/{options.dest_platform}/openssl/lib',
+        ],
+        message='Specify --openssl')
+    )
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.STLIB_OPENSSL = ['libeay32', 'ssleay32']
+        conf.env.LIB_OPENSSL = ['advapi32', 'gdi32', 'user32']
+    else:
+        if conf.options.dest_platform.startswith('Linux-'):
+            conf.env.LIB_OPENSSL = ['dl']
+        conf.env.STLIB_OPENSSL = ['ssl', 'crypto']
+
 def get_platform_info(dest_platform):
     platforms = {
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
