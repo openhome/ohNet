@@ -13,7 +13,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task, find_dir_or_fail, create_copy_task
-from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_location, guess_libplatform_location, guess_libosa_location, is_core_platform
+from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_location, guess_openssl_location, guess_libplatform_location, guess_libosa_location, is_core_platform
 
 def options(opt):
     opt.load('msvc')
@@ -26,6 +26,7 @@ def options(opt):
     opt.add_option('--testharness-dir', action='store', default=os.path.join('dependencies', 'AnyPlatform', 'testharness'))
     opt.add_option('--ohnet', action='store', default=None)
     opt.add_option('--ohnetmon', action='store', default=None)
+    opt.add_option('--openssl', action='store', default=None)
     opt.add_option('--libplatform', action='store', default=None)
     opt.add_option('--libosa', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
@@ -58,6 +59,7 @@ def configure(conf):
     configure_toolchain(conf)
     guess_ohnet_location(conf)
     guess_location(conf, 'ohNetmon')
+    guess_openssl_location(conf)
 
     conf.env.dest_platform = conf.options.dest_platform
     conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
@@ -114,22 +116,6 @@ def configure(conf):
     conf.env.INCLUDES_VORBIS = [
         'Tremor',
         ]
-
-    # OpenSSL
-    conf.env.STLIBPATH_OPENSSL = [
-        os.path.join(conf.path.find_node('.').abspath(),
-        os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib')),
-    ]
-    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
-        conf.env.STLIB_OPENSSL = ['libeay32', 'ssleay32']
-        conf.env.LIB_OPENSSL = ['advapi32', 'gdi32', 'user32']
-    else:
-        if conf.options.dest_platform.startswith('Linux-'):
-            conf.env.LIB_OPENSSL = ['dl']
-        conf.env.STLIB_OPENSSL = ['ssl', 'crypto']
-    conf.env.INCLUDES_OPENSSL = [
-        os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'include'),
-    ]
 
 class GeneratedFile(object):
     def __init__(self, xml, domain, type, version, target):
