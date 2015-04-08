@@ -376,6 +376,7 @@ Msg* Stopper::ProcessFlushable(Msg* aMsg)
 
 void Stopper::OkToPlay()
 {
+    ASSERT(iStreamHandler != NULL);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(iStreamId);
     if (iQuit) {
         SetState(EFlushing);
@@ -433,6 +434,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
                     HandlePaused();
                 }
                 else {
+                    ASSERT(iStreamHandler != NULL);
                     (void)iStreamHandler->TryStop(iStreamId);
                     SetState(ERunning);
                     iFlushStream = true;
