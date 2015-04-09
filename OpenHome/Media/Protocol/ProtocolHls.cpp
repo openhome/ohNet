@@ -235,7 +235,7 @@ void HlsM3uReader::SetUri(const Uri& aUri)
     iEndlist = false;
     iStreamEnded = false;
     iNextLine.Set(Brx::Empty());
-    iSem.Clear();
+    iSem.Clear();   // Clear any pending signals from last run.
     iSem.Signal();
     iInterrupted = false;
     iError = false;
@@ -396,7 +396,6 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     // start timer after processing part of playlist.
 
     iSem.Wait();
-    iSem.Clear();   // Clear in case iSem has been signalled multiple times. E.g., blocking while filling buffers during last playlist reload.
 
     {
         AutoMutex a(iLock);
