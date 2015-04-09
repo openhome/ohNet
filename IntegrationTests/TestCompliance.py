@@ -17,6 +17,7 @@ import base64
 import os
 import re
 import sys
+import threading
 import time
 import types
 import urlparse
@@ -229,7 +230,7 @@ kServices = {
                             ('Play',                    None,                                       None),
                             ('ProtocolInfo',            'string',                                   None),
                             ('Sender',                  {'Uri':'url','Metadata':'xml'},             None),
-                            ('SetSender',               None,                                       ['proto://uri','<meta></meta>']),
+                            # ('SetSender',               None,                                       ['proto://uri','<meta></meta>']),
                             ('Stop',                    None,                                       None),
                             ('TransportState',          'string',                                   None)]},
     'Sender':          {'ObjName':
@@ -306,9 +307,10 @@ class TestCompliance( BASE.BaseTest ):
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
-        self.dut            = None
-        self.dutDev         = ''
-        self.attr           = None
+        self.dut      = None
+        self.dutDev   = ''
+        self.attr     = None
+        self.watchdog = None
 
     def Test( self, aArgs ):
         """Test compliance with ohMediaPlayer 'standard'"""
@@ -387,7 +389,7 @@ class TestCompliance( BASE.BaseTest ):
         aService.initEvent.clear()
         aService.AddSubscriber( _EventCb )
         aService.proxy.Subscribe()
-        aService.initEvent.wait( 10 )
+        aService.initEvent.wait( 5 )
         if not aService.initEvent.is_set():
             self.log.Fail( self.dutDev, '%s: NO Initial subscription event' % aSname )
 
@@ -421,7 +423,10 @@ class TestCompliance( BASE.BaseTest ):
         if aInArgs is not None:
             invocation += str( aInArgs )[1:-1] + ','
         invocation += 'aReturnErr=True)'
+
+        self._StartWatchdog( 5 )
         result = eval( invocation )
+        self._CancelWatchdog()
 
         err = None
         if type( result ) == types.StringType:
@@ -494,6 +499,26 @@ class TestCompliance( BASE.BaseTest ):
             if aMeas is None:
                 ok = True
         self.log.FailUnless( self.dutDev, ok, '%s type - expected <%s>' % (aMsg, aExp) )
+
+    def _StartWatchdog( self, aInterval ):
+        """Start watchdog timer with specified timeout"""
+        if self.watchdog:
+            self.watchdog.cancel()
+        self.watchdog = threading.Timer( aInterval, self._WatchdogCb )
+        self.watchdog.start()
+
+    def _CancelWatchdog( self ):
+        """Cancel watchdog timer"""
+        if self.watchdog:
+            self.watchdog.cancel()
+            self.watchdog = None
+
+    def _WatchdogCb( self ):
+        """Called on watchdog timer expiry - abort test"""
+        self.log.Fail( self.dutDev, 'Device failed to respond - exiting' )
+        time.sleep( 1 )
+        # noinspection PyProtectedMember
+        os._exit( -1 )
 
 
 if __name__ == '__main__':
