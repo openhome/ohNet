@@ -24,7 +24,9 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
-    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory, iPrefetchObserver, min-1, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
+    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory,
+                         iPrefetchObserver, *iIdManager, min-1,
+                         iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
