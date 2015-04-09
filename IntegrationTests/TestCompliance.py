@@ -230,7 +230,7 @@ kServices = {
                             ('Play',                    None,                                       None),
                             ('ProtocolInfo',            'string',                                   None),
                             ('Sender',                  {'Uri':'url','Metadata':'xml'},             None),
-                            # ('SetSender',               None,                                       ['proto://uri','<meta></meta>']),
+                            ('SetSender',               None,                                       ['proto://uri','<meta></meta>']),
                             ('Stop',                    None,                                       None),
                             ('TransportState',          'string',                                   None)]},
     'Sender':          {'ObjName':
