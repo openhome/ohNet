@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -36,8 +38,10 @@ Seeker::~Seeker()
 
 TBool Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
 {
+    LOG(kPipeline, "> Seeker::Seek(%u, %u, %u)\n", aStreamId, aSecondsAbsolute, aRampDown);
     AutoMutex a(iLock);
     if (iState != ERunning || iStreamId != aStreamId || !iStreamIsSeekable) {
+        LOG(kPipeline, "Seek request failed\n");
         return false;
     }
 
@@ -53,6 +57,7 @@ TBool Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
         DoSeek();
     }
     else {
+        LOG(kPipeline, "Seeker state -> RampingDown\n");
         iState = ERampingDown;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMax;
@@ -147,20 +152,25 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate());
     iStreamPosJiffies *= streamInfo.SampleStart();
-    if (iTargetFlushId == MsgFlush::kIdInvalid && iTargetTrackId != Track::kIdNone) {
-        if (iTargetTrackId == iTrackId && iSeekSeconds > 0) {
-            DoSeek();
+    if (iTargetTrackId != Track::kIdNone) {
+        if (iTargetTrackId != iTrackId) {
+            (void)streamInfo.StreamHandler()->TryStop(streamInfo.StreamId());
         }
-        else {
-            /* If tracks match and iSeekSeconds==0, we're at the seek target point now.
-               If iTargetTrackId is non-null and tracks don't match, we're likely never going
-               to receive the target track.  This could happen after a seek request immediately
-               followed by a change in uri provider. */
-            iState = ERunning;
-            iRemainingRampSize = 0;
-            iCurrentRampValue = Ramp::kMax;
+        else if (iTargetFlushId == MsgFlush::kIdInvalid) {
+            if (iTargetTrackId == iTrackId && iSeekSeconds > 0) {
+                iTargetTrackId = Track::kIdNone;
+                DoSeek();
+            }
+            else {
+                /* If tracks match and iSeekSeconds==0, we're at the seek target point now.
+                   If iTargetTrackId is non-null and tracks don't match, we're likely never going
+                   to receive the target track.  This could happen after a seek request immediately
+                   followed by a change in uri provider. */
+                iState = ERunning;
+                iRemainingRampSize = 0;
+                iCurrentRampValue = Ramp::kMax;
+            }
         }
-        iTargetTrackId = Track::kIdNone;
     }
     else if (iState == EFlushing) {
         iState = ERampingUp;
@@ -193,8 +203,10 @@ Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
 
 void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
 {
+    LOG(kPipeline, "> Seeker::NotifySeekComplete(%u, %u))\n", aHandle, aFlushId);
     AutoMutex a(iLock);
     if (aHandle != iSeekHandle) {
+        LOG(kPipeline, "> Seeker::NotifySeekComplete - ignoring (wrong handle)\n");
         return;
     }
     if (aFlushId == MsgFlush::kIdInvalid) {
@@ -208,6 +220,7 @@ void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
 
 void Seeker::DoSeek()
 {
+    LOG(kPipeline, "> Seeker::DoSeek()\n");
     iState = EFlushing; /* set this before calling StartSeek as its possible NotifySeekComplete
                            could be called from another thread before StartSeek returns. */
     iSeeker.StartSeek(iStreamId, iSeekSeconds, *this, iSeekHandle);
@@ -244,7 +257,7 @@ Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
         }
         iStreamPosJiffies = iFlushEndJiffies;
     }
-    if (iFlushEndJiffies == iStreamPosJiffies) {
+    if (iTargetFlushId == MsgFlush::kIdInvalid && iFlushEndJiffies == iStreamPosJiffies) {
         ASSERT(iState == EFlushing);
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
@@ -305,13 +318,16 @@ void Seeker::NewStream()
 
 void Seeker::HandleSeekFail()
 {
+    LOG(kPipeline, "> Seeker::HandleSeekFail()... ");
     TUint64 seekJiffies = ((TUint64)iSeekSeconds) * Jiffies::kPerSecond;
     if (seekJiffies > iStreamPosJiffies) {
+        LOG(kPipeline, "flush until seek point\n");
         iFlushEndJiffies = seekJiffies;
         iState = EFlushing;
         iSeekConsecutiveFailureCount = 0;
     }
     else if (seekJiffies == iStreamPosJiffies) {
+        LOG(kPipeline, "(implausible but) already at seek point\n");
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
@@ -321,8 +337,10 @@ void Seeker::HandleSeekFail()
         if (++iSeekConsecutiveFailureCount < 2) {
             iTargetTrackId = iTrackId;
             iTargetFlushId = iRestreamer.SeekRestream(iMode, iTargetTrackId);
+            LOG(kPipeline, "SeekRestream returned %u\n", iTargetFlushId);
         }
         else {
+            LOG(kPipeline, "give up, already failed to seek twice\n");
             iTargetTrackId = Track::kIdNone;
             iTargetFlushId = MsgFlush::kIdInvalid;
             iSeekConsecutiveFailureCount = 0;
