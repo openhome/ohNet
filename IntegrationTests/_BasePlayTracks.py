@@ -15,10 +15,10 @@ Derived classes MUST
 """
 
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import _SoftPlayer                as SoftPlayer
-import Utils.Common               as Common
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import _SoftPlayer                      as SoftPlayer
+import Utils.Common                     as Common
 import LogThread
 import os
 import random
@@ -124,7 +124,7 @@ class BasePlayTracks( BASE.BaseTest ):
 
         # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
         self.senderDev = senderName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
+        self.sender = OHMP.OhMediaPlayerDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.product.sourceIndex = random.randint( 1, self.sender.product.sourceCount-1 )
         self.SenderSetup()
         time.sleep( 3 )
@@ -132,7 +132,7 @@ class BasePlayTracks( BASE.BaseTest ):
         # create Receiver Device, put onto random source and connect to sender
         if receiverName:
             self.receiverDev = receiverName.split( ':' )[0]
-            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True, aLoopback=loopback )
+            self.receiver = OHMP.OhMediaPlayerDevice( receiverName, aIsDut=True, aLoopback=loopback )
             self.receiver.product.sourceIndex = random.randint( 0, self.receiver.product.sourceCount-1 )
             time.sleep( 3 )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )

@@ -49,8 +49,10 @@ private:
     TBool TryLoginLocked();
     TBool TryLoginLocked(Bwx& aSessionId);
     TBool TryLogoutLocked(const Brx& aSessionId);
+    TBool TryGetSubscriptionLocked();
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
-    static Brn ReadValue(ReaderUntil& aReader, const Brx& aTag);
+    static Brn ReadInt(ReaderUntil& aReader, const Brx& aTag);
+    static Brn ReadString(ReaderUntil& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
     static void FormUrlEncode(IWriter& aWriter, const Brx& aSrc);
 private:
@@ -68,6 +70,8 @@ private:
     Bws<kMaxUsernameBytes> iUsername;
     Bws<kMaxPasswordBytes> iPassword;
     TUint iSoundQuality;
+    TUint iMaxSoundQuality;
+    Bws<16> iUserId;
     Bws<64> iSessionId;
     Bws<8> iCountryCode;
     Bws<1024> iStreamUrl;

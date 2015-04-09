@@ -31,7 +31,7 @@ public:
     virtual void PipelinePlaying() = 0;
 };
 
-class Stopper : public IPipelineElementUpstream, private IMsgProcessor
+class Stopper : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler
 {
     friend class SuiteStopper;
 public:
@@ -61,6 +61,11 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     enum EState
     {
@@ -76,6 +81,7 @@ private:
     void OkToPlay();
     Msg* ProcessAudio(MsgAudio* aMsg);
     void NewStream();
+    void HandlePaused();
     void HandleStopped();
     void SetState(EState aState);
     const TChar* State() const;
@@ -99,6 +105,7 @@ private:
     TBool iCheckedStreamPlayable;
     TBool iHaltPending;
     TBool iFlushStream;
+    TBool iBuffering;
     TBool iQuit;
 };
 

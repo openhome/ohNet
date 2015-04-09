@@ -15,10 +15,10 @@ of this service EXCEPT actual playback of the radio channels (which is tested
 in the TestRadioPlayback test script)
 """
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import sys
 import time
 import threading
@@ -111,7 +111,7 @@ class TestRadioService( BASE.BaseTest ):
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aLoopback=loopback )
             radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( radioName, aIsDut=True, aLoopback=loopback )
         time.sleep( 3 )
 
         if mode in ['all','fixed']:

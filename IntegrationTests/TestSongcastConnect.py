@@ -90,11 +90,11 @@ Test Scenarios:
 #    - removed 'reboot' disconnect method
  
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Network.HttpServer   as HttpServer
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Network.HttpServer         as HttpServer
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import os
 import random
 import re
@@ -199,10 +199,10 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.dut2Dev = dut2Name.split( ':' )[0]
         self.dut3Dev = dut3Name.split( ':' )[0]
         self.dut4Dev = dut4Name.split( ':' )[0]
-        self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True, aLoopback=loopback )
-        self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True, aLoopback=loopback )
-        self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
-        self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True, aLoopback=loopback )
+        self.dut1 = OHMP.OhMediaPlayerDevice( dut1Name, aIsDut=True, aLoopback=loopback )
+        self.dut2 = OHMP.OhMediaPlayerDevice( dut2Name, aIsDut=True, aLoopback=loopback )
+        self.dut3 = OHMP.OhMediaPlayerDevice( dut3Name, aIsDut=True, aLoopback=loopback )
+        self.dut4 = OHMP.OhMediaPlayerDevice( dut4Name, aIsDut=True, aLoopback=loopback )
 
         mode = '1'      # 1->unicast, 0->multicast
         if senderMode == 'multicast': mode = '0'

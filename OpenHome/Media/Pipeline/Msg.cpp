@@ -26,7 +26,7 @@ const Brn AllocatorBase::kQueryMemory = Brn("memory");
 
 AllocatorBase::~AllocatorBase()
 {
-    LOG(kPipeline, "> ~AllocatorBase for %s\n", iName);
+    LOG(kPipeline, "> ~AllocatorBase for %s. (Peak %u/%u)\n", iName, iCellsUsedMax, iFree.Slots());
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);

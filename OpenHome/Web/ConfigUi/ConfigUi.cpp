@@ -742,7 +742,7 @@ ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager, const Brx& aResourc
     Log::Print("\n");
 
     iLangResourceDir.Replace(aResourceDir);
-    if (iLangResourceDir[iLangResourceDir.Bytes()-1] != '/') {
+    if (iLangResourceDir.Bytes() == 0 || iLangResourceDir[iLangResourceDir.Bytes()-1] != '/') {
         iLangResourceDir.Append('/');
     }
     iLangResourceDir.Append(kLangRoot);

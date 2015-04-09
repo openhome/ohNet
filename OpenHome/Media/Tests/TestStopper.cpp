@@ -101,6 +101,8 @@ private:
     void TestPlayPausePlayWithRamp();
     void TestPlayPausePlayNoRamp();
     void TestQuitMultipleTracksPending();
+    void TestPauseWhileStarving();
+    void TestStopWhileStarving();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -154,6 +156,8 @@ SuiteStopper::SuiteStopper()
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayPausePlayWithRamp), "TestPlayPausePlayWithRamp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayPausePlayNoRamp), "TestPlayPausePlayNoRamp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestQuitMultipleTracksPending), "TestQuitMultipleTracksPending");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestPauseWhileStarving), "TestPauseWhileStarving");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestStopWhileStarving), "TestStopWhileStarving");
 }
 
 SuiteStopper::~SuiteStopper()
@@ -853,6 +857,46 @@ void SuiteStopper::TestQuitMultipleTracksPending()
     PullNext(EMsgTrack);
     PullNext(EMsgQuit);
     TEST(iPendingMsgs.size() == 0);
+}
+
+void SuiteStopper::TestPauseWhileStarving()
+{
+    iStopper->Play();
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+
+    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId);
+    TEST(iPausedCount == 0);
+    const TUint playingCount = iPlayingCount;
+    iStopper->BeginPause();
+    TEST(iPausedCount == 1);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == playingCount);
+}
+
+void SuiteStopper::TestStopWhileStarving()
+{
+    iStopper->Play();
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+
+    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId);
+    TEST(iPausedCount == 0);
+    const TUint playingCount = iPlayingCount;
+    iStopper->BeginStop(5);
+    TEST(iPausedCount == 0);
+    TEST(iStoppedCount == 1);
+    TEST(iPlayingCount == playingCount);
 }
 
 

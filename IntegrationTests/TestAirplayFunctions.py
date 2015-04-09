@@ -16,10 +16,10 @@ source handling operates correctly.
 #    - removed auto-select mode checking (mode N/A)
 
 import _FunctionalTest
-import BaseTest                       as BASE
-import Upnp.ControlPoints.Volkano     as Volkano
-import Instruments.Network.DacpClient as DacpClient
-import _SoftPlayer                    as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Instruments.Network.DacpClient   as DacpClient
+import _SoftPlayer                      as SoftPlayer
 import LogThread
 import math
 import sys
@@ -73,7 +73,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
                     
         # setup DUT
         self.dutDev = self.dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( self.dutName, aIsDut=False )
+        self.dut = OHMP.OhMediaPlayerDevice( self.dutName, aIsDut=False )
         self.dut.product.AddSubscriber( self.__ProductEvtCb )
                         
         # get list of available tracks from iTunes

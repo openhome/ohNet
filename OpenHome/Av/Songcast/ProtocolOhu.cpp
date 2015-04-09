@@ -268,9 +268,10 @@ TUint ProtocolOhu::TryStop(TUint aStreamId)
     return iNextFlushId;
 }
 
-void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint /*aStreamId*/)
+void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (aMode == iMode) {
+        LOG(kSongcast, "OHU: NotifyStarving for stream %u\n", aStreamId);
         iStarving = true;
         iSocket.Interrupt(true);
     }

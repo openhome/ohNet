@@ -21,11 +21,11 @@ This is a collection of discrete tests using a 'test' audio server which can
 simulate normal and error conditions from the server
 """ 
 import _FunctionalTest
-import BaseTest                   as BASE
-import Upnp.ControlPoints.Volkano as Volkano
-import Utils.Network.HttpServer   as HttpServer
-import Utils.Common               as Common
-import _SoftPlayer                as SoftPlayer
+import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import Utils.Network.HttpServer         as HttpServer
+import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import os
 import random
 import sys
@@ -103,7 +103,7 @@ class TestAudioConx( BASE.BaseTest ):
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.AddSubscriber( self._PlaylistEventCb )
         
         # start audio server and load playlist into DS
@@ -324,16 +324,15 @@ class TestAudioConx( BASE.BaseTest ):
                     self.log.FailUnless( self.dutDev, self.paused.isSet(),
                         '%s/Paused actual/expect state after %s whilst buffering'
                          % (self.state, invoke) )
-                elif invoke == 'Stop':
-                    self.stopped.clear()
-                    self.dut.playlist.Stop()
-                    self.stopped.wait( 5 )
-                    self.log.FailUnless( self.dutDev, self.stopped.isSet(),
-                        '%s/Stopped actual/expect state after %s whilst buffering'
-                         % (self.state, invoke) )
                 else:
                     if invoke == 'Play':
                         self.dut.playlist.Play()
+                    elif invoke == 'Stop':
+                        # Stop implies 'stop' current playback, and setup to play
+                        # first track in playlist. Hence it will attempt to pre-fetch
+                        # the first track in list, which fails due to disabled server
+                        # so we remain buffering. Not ideal behaviour - see #3088
+                        self.dut.playlist.Stop()
                     elif invoke == 'SeekSecondAbsolute':
                         self.dut.playlist.SeekSecondAbsolute( 30 )
                     elif invoke == 'SeekSecondRelative':

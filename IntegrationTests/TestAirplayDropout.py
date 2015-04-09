@@ -9,7 +9,7 @@ Verifies AirPlay audio output by the DUT does not suffer from audio dropout
 """ 
 import _FunctionalTest
 import BaseTest                         as BASE
-import Upnp.ControlPoints.Volkano       as Volkano
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
 import Instruments.Network.DacpClient   as DacpClient
 import _SoftPlayer                      as SoftPlayer
 import LogThread 
@@ -63,7 +63,7 @@ class TestAirplayDropout( BASE.BaseTest ):
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         if self.dut.volume is not None:
             self.dut.volume.volume = 65
 
