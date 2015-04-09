@@ -39,7 +39,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iMetatextMsgDue(false)
     , iSeqTrackValid(false)
     , iSeqTrack(UINT_MAX)
-    , iLastSampleStart(0)
+    , iLastSampleStart(UINT_MAX)
     , iRepairFirst(NULL)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
@@ -168,7 +168,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iSeqTrackValid = false;
     iMetatext.Replace(Brx::Empty());
     iSeqTrack = UINT_MAX;
-    iLastSampleStart = 0;
+    iLastSampleStart = UINT_MAX;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
 
