@@ -372,10 +372,10 @@ Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)
 
 EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 {
-    if (iStreamHandler != NULL) {
-        iStreamHandler->OkToPlay(aStreamId);
-    }
-    return ePlayNo;
+    ASSERT(iStreamHandler != NULL);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    //Log::Print("VariableDelay::OkToPlay(%u) returned", aStreamId, canPlay);
+    return canPlay;
 }
 
 TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)

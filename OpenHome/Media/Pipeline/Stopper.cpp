@@ -20,12 +20,12 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iTrackId(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
-    , iCheckedStreamPlayable(true)
     , iBuffering(false)
     , iQuit(false)
 {
     iState = EStopped;
     NewStream();
+    iCheckedStreamPlayable = true; // override setting from NewStream() - we don't want to call OkToPlay() when we see a first MsgTrack
 }
 
 Stopper::~Stopper()
@@ -232,13 +232,8 @@ Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
        This isn't the case if CodecController fails to recognise the format of a stream.
        Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
        play a stream. */
-    if (!iCheckedStreamPlayable) {
-        if (iStreamHandler != NULL) {
-            OkToPlay();
-        }
-        else if (iStreamPlayObserver != NULL) {
-            iStreamPlayObserver->NotifyTrackFailed(iTrackId);
-        }
+    if (!iCheckedStreamPlayable && iStreamHandler != NULL) {
+        OkToPlay();
     }
 
     NewStream();
@@ -376,6 +371,7 @@ Msg* Stopper::ProcessFlushable(Msg* aMsg)
 
 void Stopper::OkToPlay()
 {
+    ASSERT(iStreamHandler != NULL);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(iStreamId);
     if (iQuit) {
         SetState(EFlushing);
@@ -433,6 +429,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
                     HandlePaused();
                 }
                 else {
+                    ASSERT(iStreamHandler != NULL);
                     (void)iStreamHandler->TryStop(iStreamId);
                     SetState(ERunning);
                     iFlushStream = true;

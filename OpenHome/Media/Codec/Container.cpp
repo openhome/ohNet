@@ -192,7 +192,10 @@ Msg* ContainerBase::Pull()
 EStreamPlay ContainerBase::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "ContainerBase::OkToPlay\n");
-    return iStreamHandler->OkToPlay(aStreamId);
+    ASSERT(iStreamHandler != NULL);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    //Log::Print("ContainerBase::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    return canPlay;
 }
 
 TUint ContainerBase::TrySeek(TUint aStreamId, TUint64 aOffset)
@@ -527,12 +530,13 @@ Msg* ContainerFront::ProcessMsg(MsgQuit* aMsg)
 EStreamPlay ContainerFront::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "ContainerFront::OkToPlay\n");
-    if (!iQuit) {
-        return iStreamHandler->OkToPlay(aStreamId);
-    }
-    else {
+    if (iQuit) {
         return ePlayNo;
     }
+    ASSERT(iStreamHandler != NULL);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    //Log::Print("ContainerFront::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    return canPlay;
 }
 
 TUint ContainerFront::TrySeek(TUint aStreamId, TUint64 aOffset)
@@ -702,7 +706,11 @@ Msg* Container::ProcessMsg(MsgQuit* aMsg)
 EStreamPlay Container::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "Container::OkToPlay\n");
-    return iContainerFront->iActiveContainer->OkToPlay(aStreamId);
+    ASSERT(iContainerFront != NULL);
+    ASSERT(iContainerFront->iActiveContainer != NULL);
+    EStreamPlay canPlay = iContainerFront->iActiveContainer->OkToPlay(aStreamId);
+    //Log::Print("Container::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    return canPlay;
 }
 
 TUint Container::TrySeek(TUint aStreamId, TUint64 aOffset)

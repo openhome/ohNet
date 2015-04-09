@@ -46,7 +46,7 @@ class Filler : private Thread, public IPipelineElementDownstream, private IMsgPr
 public:
     Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider,
            MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
-           TUint aThreadPriority, TUint aDefaultDelay);
+           IPipelineIdProvider& aIdProvider, TUint aThreadPriority, TUint aDefaultDelay);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -83,15 +83,19 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
-    class NullTrackStreamHandler : public IStreamHandler
+    class NullTrackStreamHandler : public IStreamHandler, private INonCopyable
     {
     public:
         static const TUint kNullTrackStreamId = 0;
+    public:
+        NullTrackStreamHandler(IPipelineIdProvider& aIdProvider);
     private: // from IStreamHandler
         EStreamPlay OkToPlay(TUint aStreamId) override;
         TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
         TUint TryStop(TUint aStreamId) override;
         void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    private:
+        IPipelineIdProvider& iIdProvider;
     };
 private:
     mutable Mutex iLock;

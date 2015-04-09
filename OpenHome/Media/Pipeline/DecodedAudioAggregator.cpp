@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -33,12 +34,10 @@ void DecodedAudioAggregator::Push(Msg* aMsg)
 
 EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aStreamId)
 {
-    if (iStreamHandler != NULL) {
-        return iStreamHandler->OkToPlay(aStreamId);
-    }
-    else {
-        return ePlayNo;
-    }
+    ASSERT(iStreamHandler != NULL);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    //Log::Print("DecodedAudioAggregator::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    return canPlay;
 }
 
 TUint DecodedAudioAggregator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
