@@ -55,6 +55,9 @@ tests = [
     # Update and build ohMediaPlayer
     [ 'BuildOhmp',                   'debug'                                                                                        ],
 
+    # UPnP compliance
+    [ 'TestCompliance',              'local'                                                                                        ],
+
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',   0                                                                            ],
     [ 'TestPlaylistModes',           'local', 'all',   0                                                                            ],
