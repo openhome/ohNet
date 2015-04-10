@@ -405,7 +405,7 @@ ProtocolStreamResult ProtocolHttp::DoStream()
             return EProtocolStreamErrorUnrecoverable;
         }
         // Check for redirection
-        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
+        if (code >= HttpStatus::kRedirectionCodes && code < HttpStatus::kClientErrorCodes) {
             if (!iHeaderLocation.Received()) {
                 return EProtocolStreamErrorUnrecoverable;
             }

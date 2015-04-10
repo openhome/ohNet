@@ -84,16 +84,16 @@ def configure(conf):
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG']
     conf.env.INCLUDES_FLAC = [
-        'flac-1.2.1/src/libFLAC/include',
-        'flac-1.2.1/include',
-        'libogg-1.1.3/include',
+        'thirdparty/flac-1.2.1/src/libFLAC/include',
+        'thirdparty/flac-1.2.1/include',
+        'thirdparty/libogg-1.1.3/include',
         ]
 
     conf.env.STLIB_SHELL = ['Shell']
     
     # Setup ALAC lib options
     conf.env.INCLUDES_ALAC = [
-        'alac_decoder',
+        'thirdparty/alac_decoder',
         ]
 
     # Setup AAC lib options
@@ -102,19 +102,19 @@ def configure(conf):
     else:
         conf.env.DEFINES_AAC = ['linux', 'i386', 'MONO_ONLY', 'LP_SBR_ONLY']
     conf.env.INCLUDES_AAC = [
-        'ETSI_aacPlusdec/src',
-        'ETSI_aacPlusdec/etsiop_aacdec',
-        'ETSI_aacPlusdec/etsiop_aacdec/src',
-        'ETSI_aacPlusdec/etsiop_bitbuf',
-        'ETSI_aacPlusdec/etsiop_ffrlib',
-        'ETSI_aacPlusdec/etsiop_sbrdec',
-        'ETSI_aacPlusdec/etsiop_sbrdec/src',
-        'ETSI_aacPlusdec/etsioplib',
+        'thirdparty/ETSI_aacPlusdec/src',
+        'thirdparty/ETSI_aacPlusdec/etsiop_aacdec',
+        'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src',
+        'thirdparty/ETSI_aacPlusdec/etsiop_bitbuf',
+        'thirdparty/ETSI_aacPlusdec/etsiop_ffrlib',
+        'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec',
+        'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src',
+        'thirdparty/ETSI_aacPlusdec/etsioplib',
         ]
 
     # Setup Vorbis lib options
     conf.env.INCLUDES_VORBIS = [
-        'Tremor',
+        'thirdparty/Tremor',
         ]
 
 class GeneratedFile(object):
@@ -387,28 +387,28 @@ def build(bld):
     # Ogg
     bld.stlib(
             source=[
-                'libogg-1.1.3/src/bitwise.c',
-                'libogg-1.1.3/src/framing.c'
+                'thirdparty/libogg-1.1.3/src/bitwise.c',
+                'thirdparty/libogg-1.1.3/src/framing.c'
             ],
-            includes = ['libogg-1.1.3/include'],
+            includes = ['thirdparty/libogg-1.1.3/include'],
             target='libOgg')
 
     # Flac
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/Flac.cpp',
-                'flac-1.2.1/src/libFLAC/bitreader.c',
-                'flac-1.2.1/src/libFLAC/bitmath.c',
-                'flac-1.2.1/src/libFLAC/cpu.c',
-                'flac-1.2.1/src/libFLAC/crc.c',
-                'flac-1.2.1/src/libFLAC/fixed.c',
-                'flac-1.2.1/src/libFLAC/format.c',
-                'flac-1.2.1/src/libFLAC/lpc.c',
-                'flac-1.2.1/src/libFLAC/md5.c',
-                'flac-1.2.1/src/libFLAC/memory.c',
-                'flac-1.2.1/src/libFLAC/stream_decoder.c',
-                'flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
-                'flac-1.2.1/src/libFLAC/ogg_mapping.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/bitreader.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/bitmath.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/cpu.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/crc.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/fixed.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/format.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/lpc.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/md5.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/memory.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/stream_decoder.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
+                'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
             use=['FLAC', 'OHNET', 'libOgg'],
             target='CodecFlac')
@@ -417,7 +417,7 @@ def build(bld):
     bld.stlib(
             source=[
                  'OpenHome/Media/Codec/AlacBase.cpp',
-                 'alac_decoder/alac.c',
+                 'thirdparty/alac_decoder/alac.c',
             ],
             use=['ALAC', 'OHNET', 'ohMediaPlayer'],
             target='CodecAlacBase')
@@ -433,54 +433,48 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/AacBase.cpp',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/aacdecoder.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/shortblock.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/longblock.c',
-
-                'ETSI_aacPlusdec/etsiop_aacdec/src/aac_ram.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/aac_rom.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/bitstream.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/block.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/channel.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/channelinfo.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/conceal.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/datastream.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/imdct.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/pns.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/pulsedata.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/stereo.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/streaminfo.c',
-                'ETSI_aacPlusdec/etsiop_aacdec/src/tns.c',
-
-                'ETSI_aacPlusdec/etsiop_bitbuf/src/bitbuffer.c',
-
-                'ETSI_aacPlusdec/etsiop_ffrlib/src/dsp_fft32x32s.c',
-                'ETSI_aacPlusdec/etsiop_ffrlib/src/intrinsics-native.c',
-                'ETSI_aacPlusdec/etsiop_ffrlib/src/transcendent.c',
-                'ETSI_aacPlusdec/etsiop_ffrlib/src/transcendent_enc.c',
-                'ETSI_aacPlusdec/etsiop_ffrlib/src/vector.c',
-
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/aacpluscheck.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/env_calc.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/env_dec.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/env_extr.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/freq_sca.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/hybrid.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/lpp_tran.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/ps_bitdec.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/ps_dec.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/qmf_dec.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_crc.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_dec.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_ram.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_rom.c',
-                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbrdecoder.c',
-
-                'ETSI_aacPlusdec/etsioplib/basicop2.c',
-                'ETSI_aacPlusdec/etsioplib/count.c',
-                'ETSI_aacPlusdec/etsioplib/oper_32b.c',
-
-                'ETSI_aacPlusdec/src/spline_resampler.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/aacdecoder.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/shortblock.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/longblock.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/aac_ram.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/aac_rom.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/bitstream.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/block.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/channel.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/channelinfo.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/conceal.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/datastream.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/imdct.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/pns.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/pulsedata.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/stereo.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/streaminfo.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_aacdec/src/tns.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_bitbuf/src/bitbuffer.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_ffrlib/src/dsp_fft32x32s.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_ffrlib/src/intrinsics-native.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_ffrlib/src/transcendent.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_ffrlib/src/transcendent_enc.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_ffrlib/src/vector.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/aacpluscheck.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/env_calc.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/env_dec.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/env_extr.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/freq_sca.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/hybrid.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/lpp_tran.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/ps_bitdec.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/ps_dec.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/qmf_dec.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_crc.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_dec.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_ram.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_rom.c',
+                'thirdparty/ETSI_aacPlusdec/etsiop_sbrdec/src/sbrdecoder.c',
+                'thirdparty/ETSI_aacPlusdec/etsioplib/basicop2.c',
+                'thirdparty/ETSI_aacPlusdec/etsioplib/count.c',
+                'thirdparty/ETSI_aacPlusdec/etsioplib/oper_32b.c',
+                'thirdparty/ETSI_aacPlusdec/src/spline_resampler.c',
             ],
             use=['AAC', 'OHNET', 'ohMediaPlayer'],
             target='CodecAacBase')
@@ -505,21 +499,21 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/Vorbis.cpp',
-                'Tremor/mdct.c',
-                'Tremor/block.c',
-                'Tremor/window.c',
-                'Tremor/synthesis.c',
-                'Tremor/info.c',
-                'Tremor/floor1.c',
-                'Tremor/floor0.c',
-                'Tremor/vorbisfile.c',
-                'Tremor/res012.c',
-                'Tremor/mapping0.c',
-                'Tremor/registry.c',
-                'Tremor/codebook.c',
-                'Tremor/sharedbook.c',
-                'Tremor/framing.c',
-                'Tremor/bitwise.c',
+                'thirdparty/Tremor/mdct.c',
+                'thirdparty/Tremor/block.c',
+                'thirdparty/Tremor/window.c',
+                'thirdparty/Tremor/synthesis.c',
+                'thirdparty/Tremor/info.c',
+                'thirdparty/Tremor/floor1.c',
+                'thirdparty/Tremor/floor0.c',
+                'thirdparty/Tremor/vorbisfile.c',
+                'thirdparty/Tremor/res012.c',
+                'thirdparty/Tremor/mapping0.c',
+                'thirdparty/Tremor/registry.c',
+                'thirdparty/Tremor/codebook.c',
+                'thirdparty/Tremor/sharedbook.c',
+                'thirdparty/Tremor/framing.c',
+                'thirdparty/Tremor/bitwise.c',
             ],
             use=['VORBIS', 'OHNET'],
             target='CodecVorbis')
