@@ -14,6 +14,7 @@ import BaseTest                         as BASE
 import Upnp.ControlPoints.OhMediaPlayer as OHMP
 import _SoftPlayer                      as SoftPlayer
 import xml.etree.ElementTree            as ET
+import LogThread
 import base64
 import os
 import re
@@ -513,7 +514,7 @@ class TestCompliance( BASE.BaseTest ):
         """Start watchdog timer with specified timeout"""
         if self.watchdog:
             self.watchdog.cancel()
-        self.watchdog = threading.Timer( aInterval, self._WatchdogCb )
+        self.watchdog = LogThread.Timer( aInterval, self._WatchdogCb )
         self.watchdog.start()
 
     def _CancelWatchdog( self ):

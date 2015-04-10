@@ -19,6 +19,7 @@ import BaseTest                         as BASE
 import Upnp.ControlPoints.MediaRenderer as MR
 import Utils.Network.HttpServer         as HttpServer
 import _SoftPlayer                      as SoftPlayer
+import LogThread
 import os
 import random
 import sys
@@ -141,7 +142,7 @@ class Clock():
         self.mutex.acquire()
         if self.timer:
             self.timer.cancel()
-        self.timer = threading.Timer( 1, self.__TimerCb )
+        self.timer = LogThread.Timer( 1, self.__TimerCb )
         self.timer.start()
         self.mutex.release()
 
@@ -178,7 +179,7 @@ class Clock():
         """Increment tick count, restart 1s timer"""
         self.mutex.acquire()
         self.ticks += 1
-        self.timer = threading.Timer( 1, self.__TimerCb )
+        self.timer = LogThread.Timer( 1, self.__TimerCb )
         self.timer.start()
         self.mutex.release()
 

@@ -3,6 +3,7 @@
 
 import _FunctionalTest
 import BaseTest as BASE
+import LogThread
 import os
 import subprocess
 import sys
@@ -55,12 +56,12 @@ class BuildOhmp( BASE.BaseTest ):
     def __Execute( self, aCmd, aCwd, aMsg ):
         """Execute the command in defined CWD, logging to FunctionalTest logger"""
         self.log.Header2( '', aMsg )
-        self.watchdog = threading.Timer( kWatchdogTime, self.__Watchdog )
+        self.watchdog = LogThread.Timer( kWatchdogTime, self.__Watchdog )
         self.watchdog.start()
         self.jobDone = False
         self.log.Info( '', '%s' % aCmd )
         self.proc = subprocess.Popen( aCmd, cwd=aCwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-        logThread = threading.Thread( target=self.__Log )
+        logThread = LogThread.Thread( target=self.__Log )
         logThread.start()
         self.proc.wait()
         self.jobDone = True
@@ -93,7 +94,7 @@ class BuildOhmp( BASE.BaseTest ):
     def __ResetWatchdog( self ):
         """Reset the watchdog timer"""
         self.watchdog.cancel()
-        self.watchdog = threading.Timer( kWatchdogTime, self.__Watchdog )
+        self.watchdog = LogThread.Timer( kWatchdogTime, self.__Watchdog )
         self.watchdog.start()
 
     def __Watchdog( self ):

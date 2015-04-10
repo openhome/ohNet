@@ -7,6 +7,7 @@ from integration tests, and to capture SoftPlayer output to test logs
 import _FunctionalTest
 import Component as BASE
 import Config
+import LogThread
 import os
 import platform
 import random
@@ -86,14 +87,14 @@ class SoftPlayer( BASE.Component ):
         self.log.Info( '', 'SoftPlayer command: %s' % cmd )
             
         self.proc = subprocess.Popen( cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-        self.logThread = threading.Thread( target=self.__Log ) 
+        self.logThread = LogThread.Thread( target=self.__Log )
         self.logThread.start()
         time.sleep( 1 )             # Let it start up 
         
     def Shutdown( self ):
         self.log.Info( self.dev, 'Shutting down......')
         self.shutdown = True
-        t = threading.Timer( 15, self.__KillSoftPlayer )
+        t = LogThread.Timer( 15, self.__KillSoftPlayer )
         t.start()
         try:
             self.proc.stdin.write( 'q\n' )
