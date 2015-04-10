@@ -2,7 +2,7 @@
 """TestCompliance - ohMediaServer compliance test
 
 Parameters:
-    arg#1 - DUT - UPnP frindly name of device-under-test
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
 
 Test to ensure device complies with ohMediaServer standard. Basically attempts to ensure
 that all services, actions and attributes are present and respond as defined by the
@@ -12,6 +12,7 @@ ohMediaPlayer 'standard'. Does NOT verify actual functionality (eg. doesn't chec
 import _FunctionalTest
 import BaseTest                         as BASE
 import Upnp.ControlPoints.OhMediaPlayer as OHMP
+import _SoftPlayer                      as SoftPlayer
 import xml.etree.ElementTree            as ET
 import base64
 import os
@@ -309,6 +310,7 @@ class TestCompliance( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
         self.dut      = None
         self.dutDev   = ''
+        self.soft     = None
         self.attr     = None
         self.watchdog = None
 
@@ -325,8 +327,13 @@ class TestCompliance( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
+        loopback = False
+        if dutName.lower() == 'local':
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
+            dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = OHMP.OhMediaPlayerDevice( dutName )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aLoopback=loopback )
         self.attr = self.dut.product.attributes
 
         for sName in kMandatory:
@@ -340,6 +347,8 @@ class TestCompliance( BASE.BaseTest ):
         """Perform cleanup on test exit"""
         if self.dut:
             self.dut.Shutdown()
+        if self.soft:
+            self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     def _Check( self, aSname, aType ):
