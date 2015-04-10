@@ -338,12 +338,17 @@ class TestRadioService( BASE.BaseTest ):
     # TuneIn comms / OPML decoding
     #
 
-    @staticmethod
-    def _UrlQuery( aUrl ):
+    def _UrlQuery( self, aUrl ):
         """Perform query on specified URL, return response"""
-        handle = urllib.urlopen( aUrl )
-        resp = handle.read( 65535 )
-        handle.close()
+        resp = '<xml/>'
+        self.log.Comms( '', 'tunein', 'GET -->> %s' % aUrl )
+        try:
+            handle = urllib.urlopen( aUrl )
+            resp = handle.read( 65535 )
+            handle.close()
+        except IOError, err:
+            self.log.Fail( self.dutDev, 'TuneIn: %s' % err )
+        self.log.Comms( self.dutDev, 'tunein', '<<-- %s' % str( resp ))
         return resp
 
     @staticmethod
