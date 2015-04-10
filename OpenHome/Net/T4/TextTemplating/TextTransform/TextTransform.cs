@@ -70,7 +70,7 @@ namespace Mono.TextTemplating
 			inputFile = remainingArgs [0];
 			
 			if (!File.Exists (inputFile)) {
-				Console.WriteLine ("Input file '{0}' does not exist.");
+				Console.WriteLine ("Input file '{0}' does not exist.", inputFile);
 				return -1;
 			}
 			
