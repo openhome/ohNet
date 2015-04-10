@@ -1233,7 +1233,7 @@ TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
             return(false);
         }
         // Check for redirection
-        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes) {
+        if (code >= HttpStatus::kRedirectionCodes && code < HttpStatus::kClientErrorCodes) {
             if (!iHeaderLocation.Received()) {
                 LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader expected redirection but did not receive a location field  %d\n", code);
                 return(false);
