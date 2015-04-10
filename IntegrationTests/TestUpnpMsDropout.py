@@ -32,7 +32,6 @@ class TestUpnpMsDropout( BASE.BaseDropout ):
         """Constructor - initialise base class"""
         BASE.BaseDropout.__init__( self )
         self.doc = __doc__
-        self.server = None
 
     def Test( self, args ):
         """Test dropout on UPnP media server served tracks"""
@@ -45,19 +44,17 @@ class TestUpnpMsDropout( BASE.BaseDropout ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
-        self.server = Server.MediaServer( serverName )
-        if not self.server.device:
+        server = Server.MediaServer( serverName )
+        if not server.device:
             log.Abort( serverName, 'Not available' )
-        self.tracks = self.server.GetPlaylist( playlistName )
-        self.server.Shutdown()
+        self.tracks = server.GetPlaylist( playlistName )
+        server.Shutdown()
 
         BASE.BaseDropout.Test( self, args[:6] )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
         BASE.BaseDropout.Cleanup( self )
-        if self.server:
-            self.server.Shutdown()
 
             
 if __name__ == '__main__':
