@@ -468,7 +468,10 @@ void Rewinder::Stop()
 
 EStreamPlay Rewinder::OkToPlay(TUint aStreamId)
 {
-    return iStreamHandler->OkToPlay(aStreamId);
+    ASSERT(iStreamHandler != NULL);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    //Log::Print("Rewinder::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    return canPlay;
 }
 
 TUint Rewinder::TrySeek(TUint aStreamId, TUint64 aOffset)

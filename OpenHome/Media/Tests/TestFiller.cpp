@@ -105,7 +105,7 @@ private:
     TUint iSessionCount;
 };
 
-class SuiteFiller : public Suite, private IPipelineIdTracker, private IFlushIdProvider, private IStreamPlayObserver
+class SuiteFiller : public Suite, private IPipelineIdTracker, private IFlushIdProvider, private IStreamPlayObserver, private IPipelineIdProvider
 {
     static const TUint kDefaultLatency = Jiffies::kPerMs * 150;
 public:
@@ -120,6 +120,9 @@ private: // from IFlushIdProvider
 private: // from IStreamPlayObserver
     void NotifyTrackFailed(TUint aTrackId);
     void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
+private: // from IPipelineIdProvider
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
     Semaphore iTrackAddedSem;
     Semaphore iTrackCompleteSem;
@@ -454,7 +457,7 @@ SuiteFiller::SuiteFiller()
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, kPriorityNormal, kDefaultLatency);
+    iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, *this, kPriorityNormal, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iMsgFactory, *iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
@@ -585,6 +588,17 @@ void SuiteFiller::NotifyTrackFailed(TUint /*aTrackId*/)
 
 void SuiteFiller::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
 {
+}
+
+TUint SuiteFiller::NextStreamId()
+{
+    ASSERTS();
+    return kStreamIdInvalid;
+}
+
+EStreamPlay SuiteFiller::OkToPlay(TUint /*aStreamId*/)
+{
+    return ePlayNo;
 }
 
 

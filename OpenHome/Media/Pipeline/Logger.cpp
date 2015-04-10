@@ -95,7 +95,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 #else
         iBuf.Append("(omitted)");
 #endif
-        iBuf.AppendPrintf(", id: %u}\n", aMsg->Track().Id());
+        iBuf.AppendPrintf(", id: %u, startOfStream: %u}\n", aMsg->Track().Id(), aMsg->StartOfStream());
         Log::Print(iBuf);
     }
     return aMsg;
@@ -114,7 +114,7 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
 {
     if (IsEnabled(EMsgEncodedStream)) {
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): encoded stream {", iId);
+        iBuf.AppendPrintf("Pipeline (%s): encodedStream {", iId);
         iBuf.Append(aMsg->Uri());
         iBuf.Append(", metaText: ");
 #ifdef LOG_METADATA
@@ -134,7 +134,7 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Logger::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     if (IsEnabled(EMsgAudioEncoded)) {
-        Log::Print("Pipeline (%s): encoded {bytes: %u}\n", iId, aMsg->Bytes());
+        Log::Print("Pipeline (%s): audioEncoded {bytes: %u}\n", iId, aMsg->Bytes());
     }
     return aMsg;
 }
@@ -180,7 +180,7 @@ Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
     if (IsEnabled(EMsgDecodedStream)) {
         const DecodedStreamInfo& stream = aMsg->StreamInfo();
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): audio format {streamId: %u, bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ",
+        iBuf.AppendPrintf("Pipeline (%s): decodedStream {streamId: %u, bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ",
                            iId, stream.StreamId(), stream.BitRate(), stream.BitDepth(), stream.SampleRate());
         iBuf.Append(stream.CodecName());
         iBuf.AppendPrintf(", trackLength: %llu, sampleStart: %u, lossless: %s}\n", stream.TrackLength(), stream.SampleStart(), (stream.Lossless()? "true" : "false"));

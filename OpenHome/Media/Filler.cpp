@@ -49,7 +49,7 @@ UriProvider::~UriProvider()
 
 Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider,
                MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
-               TUint aThreadPriority, TUint aDefaultDelay)
+               IPipelineIdProvider& aIdProvider, TUint aThreadPriority, TUint aDefaultDelay)
     : Thread("Filler", aThreadPriority)
     , iLock("FILL")
     , iPipeline(aPipeline)
@@ -65,6 +65,7 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
     , iChangedMode(true)
     , iNextHaltId(MsgHalt::kIdNone + 1)
     , iNextFlushId(MsgFlush::kIdInvalid)
+    , iNullTrackStreamHandler(aIdProvider)
     , iStreamPlayObserver(aStreamPlayObserver)
     , iDefaultDelay(aDefaultDelay)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
@@ -400,8 +401,14 @@ Msg* Filler::ProcessMsg(MsgQuit* aMsg)
 
 // Filler::NullTrackStreamHandler
 
-EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint /*aStreamId*/)
+Filler::NullTrackStreamHandler::NullTrackStreamHandler(IPipelineIdProvider& aIdProvider)
+    : iIdProvider(aIdProvider)
 {
+}
+
+EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint aStreamId)
+{
+    (void)iIdProvider.OkToPlay(aStreamId);
     return ePlayLater;
 }
 
