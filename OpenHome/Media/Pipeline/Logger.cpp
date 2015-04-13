@@ -122,10 +122,8 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
 #else
         iBuf.Append("(omitted)");
 #endif
-        iBuf.AppendPrintf(" , totalBytes: %llu, streamId: %u, seekable: %s, live: %s}\n",
-                          aMsg->TotalBytes(), aMsg->StreamId(),
-                          (aMsg->Seekable()? "true" : "false"),
-                          (aMsg->Live()? "true" : "false"));
+        iBuf.AppendPrintf(" , totalBytes: %llu, streamId: %u, seekable: %u, live: %u}\n",
+                          aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live());
         Log::Print(iBuf);
     }
     return aMsg;
@@ -183,7 +181,8 @@ Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
         iBuf.AppendPrintf("Pipeline (%s): decodedStream {streamId: %u, bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ",
                            iId, stream.StreamId(), stream.BitRate(), stream.BitDepth(), stream.SampleRate());
         iBuf.Append(stream.CodecName());
-        iBuf.AppendPrintf(", trackLength: %llu, sampleStart: %u, lossless: %s}\n", stream.TrackLength(), stream.SampleStart(), (stream.Lossless()? "true" : "false"));
+        iBuf.AppendPrintf(", trackLength: %llu, sampleStart: %llu, lossless: %u, seekable: %u, live: %u}\n",
+                          stream.TrackLength(), stream.SampleStart(), stream.Lossless(), stream.Seekable(), stream.Live());
         Log::Print(iBuf);
     }
     return aMsg;
