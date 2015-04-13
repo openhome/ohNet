@@ -10,12 +10,13 @@
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/Ramper.h>
+#include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
 #include <OpenHome/Media/Pipeline/VariableDelay.h>
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
-#include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
@@ -226,22 +227,28 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
     threadPriority++;
 
-    iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
+    iRamper = new Ramper(*iLoggerDecodedAudioReservoir, aInitParams->RampLongJiffies());
+    iLoggerRamper = new Logger(*iRamper, "Ramper");
+    iRampValidatorRamper = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerRamper));
+    iSeeker = new Seeker(*iMsgFactory, *iRampValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
-    iVariableDelay1 = new VariableDelay(*iMsgFactory, *iLoggerSeeker, kSenderMinLatency, aInitParams->RampEmergencyJiffies());
+    iRampValidatorSeeker = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerSeeker));
+    iVariableDelay1 = new VariableDelay(*iMsgFactory, *iRampValidatorSeeker, kSenderMinLatency, aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay1 = new Logger(*iVariableDelay1, "VariableDelay1");
-    iTrackInspector = new TrackInspector(*iLoggerVariableDelay1);
+    iRampValidatorDelay1 = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerVariableDelay1));
+    iTrackInspector = new TrackInspector(*iRampValidatorDelay1);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
     iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampLongJiffies());
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
-    iWaiter = new Waiter(*iMsgFactory, *iLoggerSkipper, *this, aInitParams->RampShortJiffies());
+    iRampValidatorSkipper = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerSkipper));
+    iWaiter = new Waiter(*iMsgFactory, *iRampValidatorSkipper, *this, aInitParams->RampShortJiffies());
     iLoggerWaiter = new Logger(*iWaiter, "Waiter");
-    iStopper = new Stopper(*iMsgFactory, *iLoggerWaiter, *this, aInitParams->RampLongJiffies());
+    iRampValidatorWaiter = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerWaiter));
+    iStopper = new Stopper(*iMsgFactory, *iRampValidatorWaiter, *this, aInitParams->RampLongJiffies());
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iRamper = new Ramper(*iLoggerStopper, aInitParams->RampLongJiffies());
-    iLoggerRamper = new Logger(*iRamper, "Ramper");
-    iGorger = new Gorger(*iMsgFactory, *iLoggerRamper, threadPriority, aInitParams->GorgeDurationJiffies());
+    iRampValidatorStopper = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerStopper));
+    iGorger = new Gorger(*iMsgFactory, *iRampValidatorStopper, threadPriority, aInitParams->GorgeDurationJiffies());
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iSpotifyReporter = new Media::SpotifyReporter(*iLoggerGorger, *this);
@@ -252,13 +259,15 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerRouter = new Logger(*iRouter, "Router");
     iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerRouter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
-    iPruner = new Pruner(*iLoggerVariableDelay2);
+    iRampValidatorDelay2 = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerVariableDelay2));
+    iPruner = new Pruner(*iRampValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this, threadPriority,
                                                aInitParams->StarvationMonitorMaxJiffies(), aInitParams->StarvationMonitorMinJiffies(),
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iPreDriver = new PreDriver(*iLoggerStarvationMonitor);
+    iRampValidatorStarvationMonitor = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerStarvationMonitor));
+    iPreDriver = new PreDriver(*iRampValidatorStarvationMonitor);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
@@ -323,8 +332,10 @@ Pipeline::~Pipeline()
     // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
     delete iLoggerPreDriver;
     delete iPreDriver;
+    delete iRampValidatorStarvationMonitor;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
+    delete iRampValidatorDelay2;
     delete iLoggerVariableDelay2;
     delete iVariableDelay2;
     delete iLoggerPruner;
@@ -337,20 +348,26 @@ Pipeline::~Pipeline()
     delete iSpotifyReporter;
     delete iLoggerGorger;
     delete iGorger;
-    delete iLoggerRamper;
-    delete iRamper;
+    delete iRampValidatorStopper;
     delete iLoggerStopper;
     delete iStopper;
+    delete iRampValidatorWaiter;
     delete iLoggerWaiter;
     delete iWaiter;
+    delete iRampValidatorSkipper;
     delete iLoggerSkipper;
     delete iSkipper;
     delete iLoggerTrackInspector;
     delete iTrackInspector;
+    delete iRampValidatorDelay1;
     delete iLoggerVariableDelay1;
     delete iVariableDelay1;
+    delete iRampValidatorSeeker;
     delete iLoggerSeeker;
     delete iSeeker;
+    delete iRampValidatorRamper;
+    delete iLoggerRamper;
+    delete iRamper;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;

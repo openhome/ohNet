@@ -12,13 +12,14 @@
 #include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/Ramper.h>
+#include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
 #include <OpenHome/Media/Pipeline/VariableDelay.h>
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Waiter.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
-#include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
@@ -179,20 +180,26 @@ private:
     Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
+    Ramper* iRamper;
+    Logger* iLoggerRamper;
+    RampValidator* iRampValidatorRamper;
     Seeker* iSeeker;
     Logger* iLoggerSeeker;
+    RampValidator* iRampValidatorSeeker;
     VariableDelay* iVariableDelay1;
     Logger* iLoggerVariableDelay1;
+    RampValidator* iRampValidatorDelay1;
     TrackInspector* iTrackInspector;
     Logger* iLoggerTrackInspector;
     Skipper* iSkipper;
     Logger* iLoggerSkipper;
+    RampValidator* iRampValidatorSkipper;
     Waiter* iWaiter;
     Logger* iLoggerWaiter;
+    RampValidator* iRampValidatorWaiter;
     Stopper* iStopper;
     Logger* iLoggerStopper;
-    Ramper* iRamper;
-    Logger* iLoggerRamper;
+    RampValidator* iRampValidatorStopper;
     Gorger* iGorger;
     Logger* iLoggerGorger;
     Reporter* iReporter;
@@ -203,10 +210,12 @@ private:
     Logger* iLoggerRouter;
     VariableDelay* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
+    RampValidator* iRampValidatorDelay2;
     Pruner* iPruner;
     Logger* iLoggerPruner;
     StarvationMonitor* iStarvationMonitor;
     Logger* iLoggerStarvationMonitor;
+    RampValidator* iRampValidatorStarvationMonitor;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
