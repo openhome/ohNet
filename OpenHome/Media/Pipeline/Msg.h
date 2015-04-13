@@ -699,6 +699,9 @@ private:
 private: // from MsgPlayable
     void Read(IPcmProcessor& aProcessor);
     MsgPlayable* Allocate();
+    void SplitCompleted(MsgPlayable& aRemaining);
+private: // from Msg
+    void Clear();
 private:
     TUint iBitDepth;
     TUint iNumChannels;

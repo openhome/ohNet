@@ -1972,6 +1972,19 @@ MsgPlayable* MsgPlayableSilence::Allocate()
     return static_cast<Allocator<MsgPlayableSilence>&>(iAllocator).Allocate();
 }
 
+void MsgPlayableSilence::SplitCompleted(MsgPlayable& aRemaining)
+{
+    MsgPlayableSilence& remaining = static_cast<MsgPlayableSilence&>(aRemaining);
+    remaining.iBitDepth = iBitDepth;
+    remaining.iNumChannels = iNumChannels;
+}
+
+void MsgPlayableSilence::Clear()
+{
+    iBitDepth = 0;
+    iNumChannels = 0;
+}
+
 
 // MsgQuit
 
