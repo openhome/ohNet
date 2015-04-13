@@ -40,8 +40,16 @@ TBool Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
 {
     LOG(kPipeline, "> Seeker::Seek(%u, %u, %u)\n", aStreamId, aSecondsAbsolute, aRampDown);
     AutoMutex a(iLock);
-    if (iState != ERunning || iStreamId != aStreamId || !iStreamIsSeekable) {
-        LOG(kPipeline, "Seek request failed\n");
+    if (iState != ERunning) {
+        LOG(kPipeline, "Seek request rejected - iState = %u\n", iState);
+        return false;
+    }
+    if (iStreamId != aStreamId) {
+        LOG(kPipeline, "Seek request rejected - iStreamId=%u\n", iStreamId);
+        return false;
+    }
+    if (!iStreamIsSeekable) {
+        LOG(kPipeline, "Seek request rejected - stream is not seekable\n");
         return false;
     }
 
