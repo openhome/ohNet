@@ -2,7 +2,7 @@
                 individual tests)  SoftPlayer(s) as DUT(s)
 
 Parameters:
-    arg#1 - 'clean' to pull source from git and rebuild; 'incremental' to use local source + build
+    arg#1 - mode: 'clean' to pull source from git and rebuild; 'incremental' to use local source + build
     arg#2 - [Optional] log directory
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s).
@@ -23,15 +23,24 @@ import sys
  
 config = None
 logDir = None
+mode   = None
 
 try:
+    mode = sys.argv[1].lower()
     if len( sys.argv ) > 2:
         logDir = sys.argv[2]
 except:
     print '\n', __doc__, '\n'
-    print '\n\nInvalid arguments %s' % (str( sys.argv ))
+    print 'Invalid arguments %s' % (str( sys.argv ))
     # noinspection PyProtectedMember
     os._exit( -1 )
+
+if mode not in ['incremental', 'clean']:
+    print '\n', __doc__, '\n'
+    print 'Invalid mode: %s' % mode
+    # noinspection PyProtectedMember
+    os._exit( -1 )
+
 
 try:
     config = Config.Config()
@@ -121,14 +130,8 @@ tests = [
     #    - VolumeXXX   (apart from volume/balance)
 ]
 
-if len( sys.argv ) < 2:
-    print 'ERROR: must specify \'clean\' (fetch code from git and rebuild) or \'incremental\' (use existing code + build)'
-    sys.exit(-1)
-if sys.argv[1] == 'clean':
+if mode == 'clean':
     # Update and build ohMediaPlayer before other tests
     tests.insert(0, [ 'BuildOhmp', 'debug' ])
-elif sys.argv[1] != 'incremental':
-    print 'ERROR: must specify \'clean\' (fetch code from git and rebuild) or \'incremental\' (use existing code + build)'
-    sys.exit(-1)
 
 Suite.Suite( tests, logDir )
