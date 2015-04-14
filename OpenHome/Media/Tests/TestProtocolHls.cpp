@@ -189,13 +189,15 @@ public: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
 private:
-    void NextSegmentThread();
+    void NextSegmentErrorThread();
+    void NextSegmentSuccessThread();
     void TestSetUri();
     void TestPlaylistNoMediaSequence();
     void TestPlaylistMediaSequenceStartZero();
     void TestPlaylistMediaSequenceStartNonZero();
     void TestPlaylistRelativeUris();
     void TestReloadNonContinuous();
+    void TestReloadNoChange();
     void TestEndlist();
     void TestPlaylistCrLf();
     void TestUnsupportedVersion();
@@ -212,6 +214,8 @@ private:
     Semaphore* iThreadSem;
     TestSemaphore* iTestSem;
     HlsM3uReader* iM3uReader;
+    Uri iSegmentUri;
+    TUint iDuration;
 };
 
 class SuiteSegmentStreamer : public OpenHome::TestFramework::SuiteUnitTest
@@ -817,6 +821,7 @@ SuiteHlsM3uReader::SuiteHlsM3uReader()
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestPlaylistMediaSequenceStartNonZero), "TestPlaylistMediaSequenceStartNonZero");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestPlaylistRelativeUris), "TestPlaylistRelativeUris");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestReloadNonContinuous), "TestReloadNonContinuous");
+    AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestReloadNoChange), "TestReloadNoChange");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestEndlist), "TestEndlist");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestPlaylistCrLf), "TestPlaylistCrLf");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestUnsupportedVersion), "TestUnsupportedVersion");
@@ -835,6 +840,8 @@ void SuiteHlsM3uReader::Setup()
     iThreadSem = new Semaphore("SHTS", 0);
     iTestSem = new TestSemaphore(*iSem);
     iM3uReader = new HlsM3uReader(*iHttpReader, *iHttpReader, *iTimer, *iTestSem);
+    iSegmentUri.Clear();
+    iDuration = 0;
 }
 
 void SuiteHlsM3uReader::TearDown()
@@ -850,11 +857,17 @@ void SuiteHlsM3uReader::TearDown()
     delete iSemReader;
 }
 
-void SuiteHlsM3uReader::NextSegmentThread()
+void SuiteHlsM3uReader::NextSegmentErrorThread()
 {
     Uri segmentUri;
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
     TEST(segmentUri.AbsoluteUri().Bytes() == 0);
+    iThreadSem->Signal();
+}
+
+void SuiteHlsM3uReader::NextSegmentSuccessThread()
+{
+    iDuration = iM3uReader->NextSegmentUri(iSegmentUri);
     iThreadSem->Signal();
 }
 
@@ -1263,6 +1276,103 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
     TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/h.ts"));
 }
 
+void SuiteHlsM3uReader::TestReloadNoChange()
+{
+    // Test a variant playlist where a new segment is not yet available
+    // (i.e., client has been too quick in reloading).
+    // Valid condition, with reload time half the normal time. When new
+    // new segments encountered, should return to normal reload time.
+    const Uri kUriMediaSeq(Brn("http://example.com/hls_media_seq.m3u8"));
+    const Brn kFileMediaSeq1(
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:2\n"
+        "#EXT-X-TARGETDURATION:6\n"
+        "#EXT-X-MEDIA-SEQUENCE:1234\n"
+        "\n"
+        "#EXTINF:6,\n"
+        "https://priv.example.com/a.ts\n"
+        "#EXTINF:5,\n"
+        "https://priv.example.com/b.ts\n"
+        "#EXTINF:4,\n"
+        "https://priv.example.com/c.ts\n"
+        );
+
+    const Brn kFileMediaSeq2(
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:2\n"
+        "#EXT-X-TARGETDURATION:6\n"
+        "#EXT-X-MEDIA-SEQUENCE:1236\n"
+        "\n"
+        "#EXTINF:4,\n"
+        "https://priv.example.com/c.ts\n"
+        "#EXTINF:3,\n"
+        "https://priv.example.com/d.ts\n"
+        "#EXTINF:2,\n"
+        "https://priv.example.com/e.ts\n"
+        );
+
+    TestHttpReader::UriList uriList1;
+    uriList1.push_back(&kUriMediaSeq);
+    uriList1.push_back(&kUriMediaSeq);
+    uriList1.push_back(&kUriMediaSeq);
+    TestHttpReader::BufList bufList1;
+    bufList1.push_back(&kFileMediaSeq1);
+    bufList1.push_back(&kFileMediaSeq1);
+    bufList1.push_back(&kFileMediaSeq2);
+    iHttpReader->SetContent(uriList1, bufList1);
+    iM3uReader->SetUri(kUriMediaSeq);
+
+    Uri segmentUri;
+    TUint duration = 0;
+
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 6000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/a.ts"));
+
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 5000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/b.ts"));
+
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 4000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/c.ts"));
+
+    TEST(iTimer->StartCount() == 1);
+    TEST(iTimer->CancelCount() == 0);
+    TEST(iTimer->LastDurationMs() == 6000);
+    TEST(iTimer->LastHandler() == iM3uReader);
+
+    // Now, call NextSegmentUri() in another thread.
+    // iM3uReader will block while waiting for timer to fire.
+    // From this thread, call TimerFired() twice; once to reload unchanged playlist,
+    // and again to load updated playlist; then make sure NextSegmentUri() returns.
+    ThreadFunctor functor("ThreadHlsM3uReader", MakeFunctor(*this, &SuiteHlsM3uReader::NextSegmentSuccessThread));
+    iSem->Clear();
+    functor.Start();
+    iSem->Wait(kSemWaitMs);                 // iM3uReader->NextSegmentUri() has been called in other thread.
+    iM3uReader->TimerFired();               // Should still be blocking after this.
+    iSem->Wait(kSemWaitMs);                 // Attempt from iM3uReader to reload playlist again.
+    TEST(iTimer->LastDurationMs() == 3000); // Check timer was set with half-duration.
+    TEST(iDuration == 0);                   // No change should be detected in playlist.
+    TEST(iSegmentUri.AbsoluteUri().Bytes() == 0);
+    iM3uReader->TimerFired();               // Playlist with updates should now be retrieved.
+    iThreadSem->Wait(kSemWaitMs);           // Wait on iM3uReader->NextSegmentUri() returning.
+    TEST(iTimer->LastDurationMs() == 6000); // Check timer duration returned to normal.
+
+    // Check URI that was set in other thread.
+    TEST(iDuration == 3000);
+    TEST(iSegmentUri.AbsoluteUri() == Brn("https://priv.example.com/d.ts"));
+    // Retrieve last remaining URI.
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 2000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/e.ts"));
+
+    TEST(iTimer->StartCount() == 3);
+    TEST(iTimer->CancelCount() == 0);
+
+    iM3uReader->Close();
+}
+
 void SuiteHlsM3uReader::TestEndlist()
 {
     // Test a file with the EXT-X-ENDLIST tag, which indicates that no more
@@ -1598,9 +1708,9 @@ void SuiteHlsM3uReader::TestInterrupt()
     // Now, call NextSegmentUri() in another thread.
     // iM3uReader will block while waiting for timer to fire.
     // From this thread, call Interrupt(), and make sure NextSegmentUri() returns.
-    ThreadFunctor functor("ThreadHlsM3uReader", MakeFunctor(*this, &SuiteHlsM3uReader::NextSegmentThread));
-    functor.Start();
+    ThreadFunctor functor("ThreadHlsM3uReader", MakeFunctor(*this, &SuiteHlsM3uReader::NextSegmentErrorThread));
     iSem->Clear();
+    functor.Start();
     iSem->Wait(kSemWaitMs);    // iM3uReader->NextSegmentUri() has been called in other thread.
     iM3uReader->Interrupt();
     iThreadSem->Wait(kSemWaitMs);   // Wait on iM3uReader->NextSegmentUri() returning.
@@ -1615,9 +1725,9 @@ void SuiteHlsM3uReader::TestInterrupt()
     // Now, call NextSegmentUri() in another thread.
     // iReader will block at above offset.
     // From this thread, call Interrupt(), and make sure NextSegmentUri() returns.
-    ThreadFunctor functor2("ThreadHlsM3uReader", MakeFunctor(*this, &SuiteHlsM3uReader::NextSegmentThread));
-    functor2.Start();
+    ThreadFunctor functor2("ThreadHlsM3uReader", MakeFunctor(*this, &SuiteHlsM3uReader::NextSegmentErrorThread));
     iSemReader->Clear();
+    functor2.Start();
     iSemReader->Wait(kSemWaitMs);   // iReader has blocked at above offset in other thread.
     iM3uReader->Interrupt();
     iThreadSem->Wait(kSemWaitMs);   // Wait on iM3uReader->NextSegmentUri() returning.
