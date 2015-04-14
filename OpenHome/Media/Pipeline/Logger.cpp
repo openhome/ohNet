@@ -190,11 +190,12 @@ Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    if (IsEnabled(EMsgAudioPcm)) {
+    if (IsEnabled(EMsgAudioPcm) ||
+        (IsEnabled(EMsgAudioRamped) && aMsg->Ramp().IsEnabled())) {
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): audioPcm {jiffies: %u}", iId, aMsg->Jiffies());
+        iBuf.AppendPrintf("Pipeline (%s): audioPcm {jiffies: %u", iId, aMsg->Jiffies());
         LogRamp(aMsg->Ramp());
-        iBuf.Append("\n");
+        iBuf.Append("}\n");
         Log::Print(iBuf);
     }
     return aMsg;
@@ -202,11 +203,12 @@ Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* Logger::ProcessMsg(MsgSilence* aMsg)
 {
-    if (IsEnabled(EMsgSilence)) {
+    if (IsEnabled(EMsgSilence) ||
+        (IsEnabled(EMsgAudioRamped) && aMsg->Ramp().IsEnabled())) {
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): silence {jiffies: %u}", iId, aMsg->Jiffies());
+        iBuf.AppendPrintf("Pipeline (%s): silence {jiffies: %u", iId, aMsg->Jiffies());
         LogRamp(aMsg->Ramp());
-        iBuf.Append("\n");
+        iBuf.Append("}\n");
         Log::Print(iBuf);
     }
     return aMsg;
@@ -214,11 +216,12 @@ Msg* Logger::ProcessMsg(MsgSilence* aMsg)
 
 Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
 {
-    if (IsEnabled(EMsgPlayable)) {
+    if (IsEnabled(EMsgPlayable) ||
+        (IsEnabled(EMsgAudioRamped) && aMsg->Ramp().IsEnabled())) {
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): playable {bytes: %u}", iId, aMsg->Bytes());
+        iBuf.AppendPrintf("Pipeline (%s): playable {bytes: %u", iId, aMsg->Bytes());
         LogRamp(aMsg->Ramp());
-        iBuf.Append("\n");
+        iBuf.Append("}\n");
         Log::Print(iBuf);
     }
     return aMsg;
@@ -236,7 +239,7 @@ Msg* Logger::ProcessMsg(MsgQuit* aMsg)
 void Logger::LogRamp(const Media::Ramp& aRamp)
 {
     if (aRamp.IsEnabled()) {
-        iBuf.AppendPrintf(", {ramp: [%08x..%08x]}", aRamp.Start(), aRamp.End());
+        iBuf.AppendPrintf(", ramp: [%08x..%08x]", aRamp.Start(), aRamp.End());
     }
 }
 

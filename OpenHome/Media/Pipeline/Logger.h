@@ -24,17 +24,18 @@ public:
        ,EMsgAudioPcm      = 1<<2
        ,EMsgSilence       = 1<<3
        ,EMsgPlayable      = 1<<4
-       ,EMsgDecodedStream = 1<<5
-       ,EMsgTrack         = 1<<6
-       ,EMsgEncodedStream = 1<<7
-       ,EMsgMetaText      = 1<<8
-       ,EMsgHalt          = 1<<9
-       ,EMsgFlush         = 1<<10
-       ,EMsgQuit          = 1<<11
-       ,EMsgWait          = 1<<12
-       ,EMsgMode          = 1<<13
-       ,EMsgDelay         = 1<<14
-       ,EMsgSession       = 1<<15
+       ,EMsgAudioRamped   = 1<<5
+       ,EMsgDecodedStream = 1<<6
+       ,EMsgTrack         = 1<<7
+       ,EMsgEncodedStream = 1<<8
+       ,EMsgMetaText      = 1<<9
+       ,EMsgHalt          = 1<<10
+       ,EMsgFlush         = 1<<11
+       ,EMsgQuit          = 1<<12
+       ,EMsgWait          = 1<<13
+       ,EMsgMode          = 1<<14
+       ,EMsgDelay         = 1<<15
+       ,EMsgSession       = 1<<16
        ,EMsgAll           = 0x7fffffff
     };
 public:
