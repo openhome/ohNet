@@ -840,6 +840,9 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         }
     }
 
+    // Streaming helpers MUST be interrupted before being Close()d/restarted.
+    iSegmentStreamer.ReadInterrupt();
+    iM3uReader.Interrupt();
     iSegmentStreamer.Close();
     iM3uReader.Close();
 
