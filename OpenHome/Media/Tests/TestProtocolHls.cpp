@@ -253,6 +253,7 @@ private:
     void TestStreamSuccessful();
     void TestStreamErrorRecoverable();
     void TestStreamM3uError();
+    void TestRestreamAfterM3uError();
     void TestStreamSegmentError();
     void TestGet();
     void TestTrySeek();
@@ -1885,6 +1886,7 @@ SuiteProtocolHls::SuiteProtocolHls(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamSuccessful), "TestStreamSuccessful");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamErrorRecoverable), "TestStreamErrorRecoverable");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamM3uError), "TestStreamM3uError");
+    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestRestreamAfterM3uError), "TestRestreamAfterM3uError");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamSegmentError), "TestStreamSegmentError");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestGet), "TestGet");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestTrySeek), "TestTrySeek");
@@ -2104,6 +2106,93 @@ void SuiteProtocolHls::TestStreamM3uError()
     TEST(iElementDownstream->StreamId() == 1);
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 1);
+}
+
+void SuiteProtocolHls::TestRestreamAfterM3uError()
+{
+    static const Brn kUriHlsEndList("hls://example.com/hls_endlist_end.m3u8");
+    static const Uri kUriEndlistEnd(Brn("http://example.com/hls_endlist_end.m3u8"));
+    static const Brn kFileEndlistEnd(   // corrupt M3U with invalid EXT-X-TARGETDURATION
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:abc\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/first.ts\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/second.ts\n"
+    "#EXTINF:3.003,\n"
+    "http://media.example.com/third.ts\n"
+    "#EXT-X-ENDLIST\n");
+
+    TestHttpReader::UriList uriListM3u1;
+    uriListM3u1.push_back(&kUriEndlistEnd);
+    TestHttpReader::BufList bufListM3u1;
+    bufListM3u1.push_back(&kFileEndlistEnd);
+    iM3uReader->SetContent(uriListM3u1, bufListM3u1);
+
+
+    static const Uri kSegUri1(Brn("http://media.example.com/first.ts"));
+    static const Brn kSegFile1(Brn("abcdefghijklmnopqrstuvwxyz"));
+    static const Uri kSegUri2(Brn("http://media.example.com/second.ts"));
+    static const Brn kSegFile2(Brn("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+    static const Uri kSegUri3(Brn("http://media.example.com/third.ts"));
+    static const Brn kSegFile3(Brn("1234567890"));
+
+    TestHttpReader::UriList uriListSeg1;
+    uriListSeg1.push_back(&kSegUri1);
+    uriListSeg1.push_back(&kSegUri2);
+    uriListSeg1.push_back(&kSegUri3);
+    TestHttpReader::BufList bufListSeg1;
+    bufListSeg1.push_back(&kSegFile1);
+    bufListSeg1.push_back(&kSegFile2);
+    bufListSeg1.push_back(&kSegFile3);
+    iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
+
+    // ProtocolHls needs to take a URI starting with hls://; not http:// !
+    Track* track = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
+    TEST(res == EProtocolStreamErrorUnrecoverable);
+
+    TEST(iElementDownstream->Data().Bytes() == 0);
+    TEST(iElementDownstream->IsLive() == true);
+    TEST(iElementDownstream->StreamId() == 1);
+    TEST(iElementDownstream->TrackCount() == 1);
+    TEST(iElementDownstream->StreamCount() == 1);
+
+
+
+    // Now, attempt to restream.
+
+    static const Brn kFileEndlistEndValid(   // valid EXT-X-TARGETDURATION this time
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:3\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/first.ts\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/second.ts\n"
+    "#EXTINF:3.003,\n"
+    "http://media.example.com/third.ts\n"
+    "#EXT-X-ENDLIST\n");
+
+    TestHttpReader::UriList uriListM3u2;
+    uriListM3u2.push_back(&kUriEndlistEnd);
+    TestHttpReader::BufList bufListM3u2;
+    bufListM3u2.push_back(&kFileEndlistEndValid);
+    iM3uReader->SetContent(uriListM3u2, bufListM3u2);
+
+    // Reuse prev segments.
+    iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
+
+    Track* track2 = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
+    res = iProtocolManager->DoStream(*track2);
+    track2->RemoveRef();
+    TEST(res == EProtocolStreamSuccess);
+
+    TEST(iElementDownstream->Data().Bytes() == 62);
+    TEST(iElementDownstream->IsLive() == true);
+    TEST(iElementDownstream->StreamId() == 2);
+    TEST(iElementDownstream->TrackCount() == 2);
+    TEST(iElementDownstream->StreamCount() == 2);
 }
 
 void SuiteProtocolHls::TestStreamSegmentError()
