@@ -9,6 +9,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+#define RAMP_VALIDATOR_ENABLED 0
+
 RampValidator::RampValidator(IPipelineElementUpstream& aUpstream)
     : iUpstream(&aUpstream)
     , iDownstream(NULL)
@@ -47,39 +49,53 @@ void RampValidator::Push(Msg* aMsg)
 void RampValidator::Reset()
 {
     iRamping = false;
-    iRampDirection = Ramp::ENone;
     iLastRamp = UINT_MAX;
 }
 
 void RampValidator::ProcessAudio(const Ramp& aRamp)
 {
-    if (iRampedDown) {
+    /*if (iRampedDown) {
         ASSERT(aRamp.IsEnabled());
         ASSERT(aRamp.Start() == Ramp::kMin);
         ASSERT(aRamp.Direction() == Ramp::EUp);
         iRampedDown = false;
-    }
+    }*/
     if (iRamping) {
+#if RAMP_VALIDATOR_ENABLED
         ASSERT(aRamp.IsEnabled());
-        ASSERT(aRamp.Start() == iLastRamp);
+#endif
+        if (aRamp.Start() != iLastRamp) {
+            Log::Print("WARNING: discontinuity in ramp: expected %08x, got %08x\n", iLastRamp, aRamp.Start());
+#if RAMP_VALIDATOR_ENABLED
+            ASSERTS();
+#endif
+        }
         iLastRamp = aRamp.End();
-        iRampDirection = aRamp.Direction();
-        if (iRampDirection == Ramp::EUp   && iLastRamp == Ramp::kMax) {
+        if (aRamp.Direction() == Ramp::EUp && iLastRamp == Ramp::kMax) {
             Reset();
         }
-        else if (iRampDirection == Ramp::EDown && iLastRamp == Ramp::kMin) {
+        else if (aRamp.Direction() == Ramp::EDown && iLastRamp == Ramp::kMin) {
             Reset();
             iRampedDown = true;
         }
     }
     else if (aRamp.IsEnabled()) {
         iRamping = true;
-        iRampDirection = aRamp.Direction();
-        if (iRampDirection == Ramp::EUp) {
-            ASSERT(aRamp.Start() == Ramp::kMin);
+        if (aRamp.Direction() == Ramp::EUp) {
+            if (aRamp.Start() != Ramp::kMin) {
+                Log::Print("WARNING: ramp up started at %08x\n", aRamp.Start());
+#if RAMP_VALIDATOR_ENABLED
+                ASSERTS();
+#endif
+            }
         }
-        else { // iRampDirection == Ramp::EDown
-            ASSERT(aRamp.Start() == Ramp::kMax);
+        else { // aRamp.Direction() == Ramp::EDown
+            if (aRamp.Start() != Ramp::kMax) {
+                Log::Print("WARNING: ramp down started at %08x\n", aRamp.Start());
+#if RAMP_VALIDATOR_ENABLED
+                ASSERTS();
+#endif
+            }
         }
         iLastRamp = aRamp.End();
     }
@@ -89,7 +105,7 @@ Msg* RampValidator::ProcessMsg(MsgMode* aMsg)
 {
     Reset();
     iRampedDown = false;
-    iWaitingForAudio = false;
+    iWaitingForAudio = true;
     return aMsg;
 }
 
@@ -130,7 +146,9 @@ Msg* RampValidator::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* RampValidator::ProcessMsg(MsgHalt* aMsg)
 {
-    iRampedDown = true;
+    if (!iWaitingForAudio) {
+        iRampedDown = true;
+    }
     return aMsg;
 }
 
@@ -155,7 +173,7 @@ Msg* RampValidator::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* RampValidator::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    //ProcessAudio(aMsg->Ramp());
+    ProcessAudio(aMsg->Ramp());
     iWaitingForAudio = false;
     return aMsg;
 }
@@ -163,7 +181,7 @@ Msg* RampValidator::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* RampValidator::ProcessMsg(MsgSilence* aMsg)
 {
     if (!iWaitingForAudio) {
-        //ProcessAudio(aMsg->Ramp());
+        ProcessAudio(aMsg->Ramp());
     }
     return aMsg;
 }
