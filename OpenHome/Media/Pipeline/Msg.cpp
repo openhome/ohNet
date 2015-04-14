@@ -1433,38 +1433,47 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     const TUint remainingDuration = aRemainingDuration;
     Media::Ramp split;
     TUint splitPos;
-    TUint rampEnd;
     aRemainingDuration -= iSize;
     aSplit = NULL;
+    /*TBool logAppliedRamp = false;
+    if (iRamp.IsEnabled()) {
+        Log::Print("++ MsgAudio::SetRamp(%08x, %u, %u): Existing ramp is [%08x...%08x]\n", aStart, aRemainingDuration, aDirection, iRamp.Start(), iRamp.End());
+        logAppliedRamp = true;
+    }*/
     if (iRamp.Set(aStart, iSize, remainingDuration, aDirection, split, splitPos)) {
         if (splitPos == 0) {
             iRamp = split;
-            rampEnd = iRamp.End();
+            if (aDirection == Ramp::EUp && split.Direction() == Ramp::EDown) {
+                aRemainingDuration += iSize * 2; // roughly compensate for split running in opposite direction to requested ramp
+            }
         }
-        else if (splitPos == iSize) {
-            rampEnd = iRamp.End();
-        }
-        else {
+        else if (splitPos != iSize) {
             Media::Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
             aSplit = DoSplit(splitPos);
+            if (split.Direction() != aDirection && aDirection == Ramp::EUp) {
+                aRemainingDuration += aSplit->iSize * 2; // roughly compensate for split running in opposite direction to requested ramp
+            }
             iRamp = ramp;
             aSplit->iRamp = split;
-            rampEnd = split.End();
             ASSERT_DEBUG(iRamp.End() == split.Start());
             //Log::Print("\nSplit msg at %u jiffies.  First ramp=[%08x...%08x], second ramp=[%08x...%08x]\n",
             //            splitPos, iRamp.Start(), iRamp.End(), split.Start(), split.End());
         }
     }
-    else {
-        rampEnd = iRamp.End();
-    }
+    /*if (logAppliedRamp) {
+        Log::Print("++ final ramp: [%08x...%08x]", iRamp.Start(), iRamp.End());
+        if (aSplit != NULL) {
+            Log::Print("   split: [%08x...%08x]", aSplit->iRamp.Start(), aSplit->iRamp.End());
+        }
+        Log::Print("\n");
+    }*/
 
     // It may be possible to terminate ramps down early if the msg had previously been ramped
-    if (aDirection == Ramp::EDown && rampEnd == Ramp::kMin) {
+    if (aDirection == Ramp::EDown && iRamp.End() == Ramp::kMin) {
         aRemainingDuration = 0;
     }
 
-    return rampEnd;
+    return iRamp.End();
 }
 
 const Media::Ramp& MsgAudio::Ramp() const

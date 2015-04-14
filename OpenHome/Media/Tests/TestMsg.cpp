@@ -1371,8 +1371,10 @@ void SuiteRamp::Test()
     TUint remainingDuration = jiffies;
     TEST(Ramp::kMin == audioPcm->SetRamp(Ramp::kMax / 2, remainingDuration, Ramp::EDown, remaining));
     remainingDuration = jiffies * 2;
-    TEST(Ramp::kMin == audioPcm->SetRamp(Ramp::kMin, remainingDuration, Ramp::EUp, remaining));
+    TEST(Ramp::kMin != audioPcm->SetRamp(Ramp::kMin, remainingDuration, Ramp::EUp, remaining));
     TEST(remaining != NULL);
+    TEST(remaining->Ramp().IsEnabled());
+    TEST(remaining->Ramp().End() == Ramp::kMin);
     TEST(audioPcm->Jiffies() == jiffies / 2);
     TEST(audioPcm->Jiffies() == remaining->Jiffies());
     playable = audioPcm->CreatePlayable();
