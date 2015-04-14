@@ -180,6 +180,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 
 void StarvationMonitor::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 {
+    ASSERT(iRemainingRampSize > 0);
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
         EnqueueAtHead(remaining);
