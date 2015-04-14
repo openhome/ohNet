@@ -48,7 +48,6 @@ private:
     TBool iRamping;
     TBool iRampedDown;
     TBool iWaitingForAudio;
-    Ramp::EDirection iRampDirection;
     TUint iLastRamp;
 };
 
