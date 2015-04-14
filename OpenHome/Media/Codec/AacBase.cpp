@@ -210,7 +210,8 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
                                           iFrameOk);
    
     if (error) {
-        //LOG(kCodec, "Aac::DecodeFrame error %d\n", error);
+        LOG(kCodec, "CodecAacBase::DecodeFrame error: %d\n", error);
+        LOG(kCodec, "CodecAacBase::DecodeFrame throwing CodecStreamCorrupt\n");
         THROW(CodecStreamCorrupt);
     }
 
@@ -328,7 +329,8 @@ void CodecAacBase::ProcessHeader()
     }
     
     if (error) {
-        //LOG(kCodec, "Error initializing AAC decoder (%d)\n", error);
+        LOG(kCodec, "CodecAacBase::ProcessHeader error initializing AAC decoder: %d\n", error);
+        LOG(kCodec, "CodecAacBase::ProcessHeader throwing CodecStreamCorrupt\n");
         THROW(CodecStreamCorrupt);
     }
 
