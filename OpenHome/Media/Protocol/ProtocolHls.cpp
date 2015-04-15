@@ -420,6 +420,7 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         iOffset = 0;
     }
     else {
+
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect\n");
         return false;
     }
@@ -443,14 +444,27 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         return false;
     }
 
-    if (iOffset >= iTotalBytes) {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file\n");
-        return false;
-    }
-
     if (iTargetDuration == 0) { // #EXT-X-TARGETDURATION is a required tag.
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist malformed file\n");
         return false;
+    }
+
+
+    // Standard reload time.
+    TUint targetDuration = iTargetDuration*kMillisecondsPerSecond;
+
+    if (iOffset >= iTotalBytes) {
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file. iTargetDuration: %u\n", iTargetDuration);
+        // Valid condition; reloaded playlist but no new segments were ready,
+        // so halve standard retry time:
+        //
+        // From: https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-6.3.2
+        //
+        // If the client reloads a Playlist file and finds that it has not
+        // changed then it MUST wait for a period of one-half the target
+        // duration before retrying.
+
+        targetDuration /= 2;
     }
 
     // Hold lock to ensure timer can't be set if Interrupt() is called during this method.
@@ -459,7 +473,7 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist interrupted while reloading playlist. Not setting timer.\n");
         return false;
     }
-    iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
+    iTimer.Start(targetDuration, *this);
     LOG(kMedia, "<HlsM3uReader::ReloadVariantPlaylist\n");
     return true;
 }
@@ -536,7 +550,7 @@ TBool HlsM3uReader::PreprocessM3u()
         return false;
     }
     LOG(kMedia, "HlsM3uReader::PreprocessM3u exhausted file without finding new segments. iEndlist: %u\n", iEndlist);
-    return false;
+    return true;
 }
 
 void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
