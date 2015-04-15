@@ -107,7 +107,6 @@
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTestData/FunctionalTestData-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
         "platform-ignore": {
-            "Linux-x64": true,
             "Linux-ppc32": true,
             "Linux-armhf": true,
             "*": false },
