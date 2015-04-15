@@ -187,6 +187,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Ramper.cpp',
                 'OpenHome/Media/Pipeline/Reporter.cpp',
                 'OpenHome/Media/Pipeline/SpotifyReporter.cpp',
+                'OpenHome/Media/Pipeline/RampValidator.cpp',
                 'OpenHome/Media/Pipeline/Rewinder.cpp',
                 'OpenHome/Media/Pipeline/Router.cpp',
                 'OpenHome/Media/Pipeline/SampleRateValidator.cpp',

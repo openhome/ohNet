@@ -146,11 +146,11 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     }
     if (iStatus == ERampingDown) {
         Ramp(aMsg, Ramp::EDown);
-        if (iCurrentRampValue == Ramp::kMin) {
+        if (iRemainingRampSize == 0) {
             UpdateStatus(EBuffering);
             enteredBuffering = true;
         }
-        if (remainingSize == 0) {
+        if (Jiffies() == 0) { // Ramp() can cause a msg to be split, meaning that remainingSize is inaccurate
             ASSERT(iCurrentRampValue == Ramp::kMin);
         }
     }
@@ -180,6 +180,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 
 void StarvationMonitor::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 {
+    ASSERT(iRemainingRampSize > 0);
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
         EnqueueAtHead(remaining);

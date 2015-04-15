@@ -344,7 +344,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         if self.metatextUpdated:
             self.log.Pass( self.senderDev, 'Metatext present:- %s' % self.sender.info.metatext )
         else:
-            self.log.Warn( self.senderDev, 'No metatext' )
+            self.log.Warn( self.senderDev, 'No metatext (evented for this channel)' )
             
         if self.sender.radio.transportState == 'Playing':
             self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
@@ -353,6 +353,11 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             self.log.FailIf( self.senderDev, self.sender.sender.audio, 
                 'Sender audio flag %s whilst not playing' % self.sender.sender.audio )
         
+        if self.sender.info.metatextCount==0 and self.sender.info.metatext!='':
+            self.log.Fail( self.senderDev, 'Metatext present when MetatextCount is 0')
+        elif self.sender.info.metatextCount!=0 and self.sender.info.metatext=='':
+            self.log.Fail( self.senderDev, 'Metatext NOT present when MetatextCount non-zero' )
+
         if self.receiver:
             self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
                 'Sender status %s' % self.sender.sender.status )

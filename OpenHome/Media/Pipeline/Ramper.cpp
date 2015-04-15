@@ -78,7 +78,6 @@ Msg* Ramper::ProcessMsg(MsgDelay* aMsg)
 
 Msg* Ramper::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    ASSERTS();
     return aMsg;
 }
 

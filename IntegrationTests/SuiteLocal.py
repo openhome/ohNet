@@ -2,7 +2,8 @@
                 individual tests)  SoftPlayer(s) as DUT(s)
 
 Parameters:
-    arg#1 - [Optional] log directory
+    arg#1 - mode: 'clean' to pull source from git and rebuild; 'incremental' to use local source + build
+    arg#2 - [Optional] log directory
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s).
 Loopback adapter is used where practical (so all cases except for Airplay and
@@ -22,15 +23,24 @@ import sys
  
 config = None
 logDir = None
+mode   = None
 
 try:
-    if len( sys.argv ) > 1:
-        logDir = sys.argv[1]
+    mode = sys.argv[1].lower()
+    if len( sys.argv ) > 2:
+        logDir = sys.argv[2]
 except:
     print '\n', __doc__, '\n'
-    print '\n\nInvalid arguments %s' % (str( sys.argv ))
+    print 'Invalid arguments %s' % (str( sys.argv ))
     # noinspection PyProtectedMember
     os._exit( -1 )
+
+if mode not in ['incremental', 'clean']:
+    print '\n', __doc__, '\n'
+    print 'Invalid mode: %s' % mode
+    # noinspection PyProtectedMember
+    os._exit( -1 )
+
 
 try:
     config = Config.Config()
@@ -52,9 +62,6 @@ qobuzUser = config.Get( 'qobuz.user' )
 qobuzPwd  = config.Get( 'qobuz.password' )
 
 tests = [
-    # Update and build ohMediaPlayer
-    [ 'BuildOhmp',                   'debug'                                                                                        ],
-
     # UPnP compliance
     [ 'TestCompliance',              'local'                                                                                        ],
 
@@ -122,5 +129,9 @@ tests = [
     #    - SourceXXX
     #    - VolumeXXX   (apart from volume/balance)
 ]
+
+if mode == 'clean':
+    # Update and build ohMediaPlayer before other tests
+    tests.insert(0, [ 'BuildOhmp', 'debug' ])
 
 Suite.Suite( tests, logDir )
