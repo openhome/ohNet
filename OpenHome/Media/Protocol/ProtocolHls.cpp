@@ -281,6 +281,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             if ((iLastSegment == 0 && iTargetDuration == 0) || iOffset >= iTotalBytes) {
                 if (!iEndlist) {
                     if (!ReloadVariantPlaylist()) {
+                        LOG(kMedia, "HlsM3uReader::NextSegmentUri unable to reload variant playlist\n");
                         iError = true;
                         THROW(HlsVariantPlaylistError);
                     }
@@ -316,6 +317,9 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                         Brn durationDecimalBuf = durationParser.Next();
                         if (!durationParser.Finished() && durationDecimalBuf.Bytes()>3) {
                             // Error in M3U8 format.
+                            LOG(kMedia, "HlsM3uReader::NextSegmentUri error while parsing duration of next segment. durationDecimalBuf: ");
+                            LOG(kMedia, durationDecimalBuf);
+                            LOG(kMedia, "\n");
                             iError = true;
                             THROW(HlsVariantPlaylistError);
                         }
@@ -400,6 +404,7 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     {
         AutoMutex a(iLock);
         if (iInterrupted) {
+            LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist interrupted while waiting to poll playlist\n");
             return false;
         }
     }
@@ -415,11 +420,14 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         iOffset = 0;
     }
     else {
+
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect\n");
         return false;
     }
 
     try {
         if (!PreprocessM3u()) {
+            LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist failed to pre-process M3U8\n");
             return false;
         }
     }
@@ -436,22 +444,36 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         return false;
     }
 
-    if (iOffset >= iTotalBytes) {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file\n");
-        return false;
-    }
-
     if (iTargetDuration == 0) { // #EXT-X-TARGETDURATION is a required tag.
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist malformed file\n");
         return false;
     }
 
+
+    // Standard reload time.
+    TUint targetDuration = iTargetDuration*kMillisecondsPerSecond;
+
+    if (iOffset >= iTotalBytes) {
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file. iTargetDuration: %u\n", iTargetDuration);
+        // Valid condition; reloaded playlist but no new segments were ready,
+        // so halve standard retry time:
+        //
+        // From: https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-6.3.2
+        //
+        // If the client reloads a Playlist file and finds that it has not
+        // changed then it MUST wait for a period of one-half the target
+        // duration before retrying.
+
+        targetDuration /= 2;
+    }
+
     // Hold lock to ensure timer can't be set if Interrupt() is called during this method.
     AutoMutex a(iLock);
     if (iInterrupted) {
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist interrupted while reloading playlist. Not setting timer.\n");
         return false;
     }
-    iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
+    iTimer.Start(targetDuration, *this);
     LOG(kMedia, "<HlsM3uReader::ReloadVariantPlaylist\n");
     return true;
 }
@@ -509,6 +531,7 @@ TBool HlsM3uReader::PreprocessM3u()
                     // Found start/continuation of audio.
                     // iNextLine will remain populated with this "#EXTINF" line
                     // for starting parsing of outstanding segments elsewhere.
+                    LOG(kMedia, "HlsM3uReader::PreprocessM3u found start/continuation of audio segments\n");
                     return true;
                 }
             }
@@ -526,7 +549,8 @@ TBool HlsM3uReader::PreprocessM3u()
         LOG(kMedia, "HlsM3uReader::PreprocessM3u ReaderError\n");
         return false;
     }
-    return false;
+    LOG(kMedia, "HlsM3uReader::PreprocessM3u exhausted file without finding new segments. iEndlist: %u\n", iEndlist);
+    return true;
 }
 
 void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
@@ -830,6 +854,9 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         }
     }
 
+    // Streaming helpers MUST be interrupted before being Close()d/restarted.
+    iSegmentStreamer.ReadInterrupt();
+    iM3uReader.Interrupt();
     iSegmentStreamer.Close();
     iM3uReader.Close();
 
