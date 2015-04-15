@@ -11,15 +11,17 @@ using namespace OpenHome::Media;
 
 #define RAMP_VALIDATOR_ENABLED 0
 
-RampValidator::RampValidator(IPipelineElementUpstream& aUpstream)
-    : iUpstream(&aUpstream)
+RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* aId)
+    : iId(aId)
+    , iUpstream(&aUpstream)
     , iDownstream(NULL)
     , iRampedDown(false)
 {
 }
 
-RampValidator::RampValidator(IPipelineElementDownstream& aDownstream)
-    : iUpstream(NULL)
+RampValidator::RampValidator(const TChar* aId, IPipelineElementDownstream& aDownstream)
+    : iId(aId)
+    , iUpstream(NULL)
     , iDownstream(&aDownstream)
     , iRampedDown(false)
 {
@@ -46,8 +48,9 @@ void RampValidator::Push(Msg* aMsg)
     iDownstream->Push(msg);
 }
 
-void RampValidator::Reset()
+void RampValidator::Reset(const TChar* /*aCallerId*/)
 {
+    //Log::Print("RampValidator::Reset() - %s %s\n", iId, aCallerId);
     iRamping = false;
     iLastRamp = UINT_MAX;
 }
@@ -72,10 +75,10 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         }
         iLastRamp = aRamp.End();
         if (aRamp.Direction() == Ramp::EUp && iLastRamp == Ramp::kMax) {
-            Reset();
+            Reset("completed ramp up");
         }
         else if (aRamp.Direction() == Ramp::EDown && iLastRamp == Ramp::kMin) {
-            Reset();
+            Reset("completed ramp down");
             iRampedDown = true;
         }
     }
@@ -103,7 +106,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
 
 Msg* RampValidator::ProcessMsg(MsgMode* aMsg)
 {
-    Reset();
+    Reset("Mode");
     iRampedDown = false;
     iWaitingForAudio = true;
     return aMsg;
@@ -117,7 +120,7 @@ Msg* RampValidator::ProcessMsg(MsgSession* aMsg)
 Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
 {
     if (aMsg->StartOfStream()) {
-        Reset();
+        Reset("Track");
         iRampedDown = false;
     }
     return aMsg;
@@ -164,7 +167,7 @@ Msg* RampValidator::ProcessMsg(MsgWait* aMsg)
 
 Msg* RampValidator::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    Reset();
+    Reset("DecodedStream");
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iRampedDown = stream.Live() || (stream.SampleStart() > 0);
     iWaitingForAudio = true;
