@@ -116,7 +116,7 @@ Msg* StarvationMonitor::Pull()
     return msg;
 }
 
-MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
+MsgAudio* StarvationMonitor::ProcessAudioOut(MsgAudio* aMsg)
 {
     if (aMsg->Jiffies() > kMaxAudioPullSize) {
         MsgAudio* remaining = aMsg->Split(kMaxAudioPullSize);
@@ -133,47 +133,6 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
             iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
         }
     }
-
-    iLock.Wait();
-    ASSERT(iExit || iStatus != EBuffering);
-    TUint remainingSize = Jiffies();
-    TBool enteredBuffering = false;
-    if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
-        UpdateStatus(ERampingDown);
-        iRampDownDuration = remainingSize + aMsg->Jiffies();
-        iCurrentRampValue = Ramp::kMax;
-        iRemainingRampSize = iRampDownDuration;
-    }
-    if (iStatus == ERampingDown) {
-        Ramp(aMsg, Ramp::EDown);
-        if (iRemainingRampSize == 0) {
-            UpdateStatus(EBuffering);
-            enteredBuffering = true;
-        }
-        if (Jiffies() == 0) { // Ramp() can cause a msg to be split, meaning that remainingSize is inaccurate
-            ASSERT(iCurrentRampValue == Ramp::kMin);
-        }
-    }
-    else if (iStatus == ERampingUp) {
-        Ramp(aMsg, Ramp::EUp);
-        /* don't check iCurrentRampValue here.  If our ramp up intersects with a ramp down
-           from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
-        if (iRemainingRampSize == 0) {
-            iCurrentRampValue = Ramp::kMax;
-            UpdateStatus(ERunning);
-        }
-    }
-
-    remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
-    if (remainingSize == 0 && iStatus != EBuffering) {
-        UpdateStatus(EBuffering);
-        enteredBuffering = true;
-    }
-    if (((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) ||
-        (enteredBuffering && (remainingSize >= iNormalMax))) {
-        iSemIn.Signal();
-    }
-    iLock.Signal();
 
     return aMsg;
 }
@@ -285,12 +244,78 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
-    return DoProcessMsgOut(aMsg);
+    MsgAudio* msg = ProcessAudioOut(aMsg);
+
+    iLock.Wait();
+    ASSERT(iExit || iStatus != EBuffering);
+    TUint remainingSize = Jiffies();
+    TBool enteredBuffering = false;
+    if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
+        UpdateStatus(ERampingDown);
+        iRampDownDuration = remainingSize + msg->Jiffies();
+        iCurrentRampValue = Ramp::kMax;
+        iRemainingRampSize = iRampDownDuration;
+    }
+    if (iStatus == ERampingDown) {
+        Ramp(msg, Ramp::EDown);
+        if (iRemainingRampSize == 0) {
+            UpdateStatus(EBuffering);
+            enteredBuffering = true;
+        }
+        if (Jiffies() == 0) { // Ramp() can cause a msg to be split, meaning that remainingSize is inaccurate
+            ASSERT(iCurrentRampValue == Ramp::kMin);
+        }
+    }
+    else if (iStatus == ERampingUp) {
+        Ramp(msg, Ramp::EUp);
+        /* don't check iCurrentRampValue here.  If our ramp up intersects with a ramp down
+           from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
+        if (iRemainingRampSize == 0) {
+            iCurrentRampValue = Ramp::kMax;
+            UpdateStatus(ERunning);
+        }
+    }
+
+    remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
+    if (remainingSize == 0 && iStatus != EBuffering) {
+        UpdateStatus(EBuffering);
+        enteredBuffering = true;
+    }
+    if (((remainingSize < iNormalMax) && (remainingSize + msg->Jiffies() >= iNormalMax)) ||
+        (enteredBuffering && (remainingSize >= iNormalMax))) {
+        iSemIn.Signal();
+    }
+    iLock.Signal();
+
+    return msg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
 {
-    return DoProcessMsgOut(aMsg);
+    MsgAudio* msg = ProcessAudioOut(aMsg);
+
+    iLock.Wait();
+    TBool enteredBuffering = false;
+    if (iStatus == ERampingDown) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMin;
+        UpdateStatus(EBuffering);
+        enteredBuffering = true;
+    }
+    else if (iStatus == ERampingUp) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMin;
+        UpdateStatus(ERunning);
+    }
+
+    const TUint remainingSize = Jiffies();
+    if (((remainingSize < iNormalMax) && (remainingSize + msg->Jiffies() >= iNormalMax)) ||
+        (enteredBuffering && (remainingSize >= iNormalMax))) {
+        iSemIn.Signal();
+    }
+    iLock.Signal();
+
+    return msg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgHalt* aMsg)
