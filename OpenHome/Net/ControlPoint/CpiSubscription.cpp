@@ -135,6 +135,9 @@ void CpiSubscription::RunInSubscriber()
         try {
             DoSubscribe();
         }
+        catch (AssertionFailed&) {
+            throw;
+        }
         catch(...) {
             lock.Wait();
             LOG2(kError, kTrace, "Subscribe (%p) for device ", this);
@@ -335,7 +338,19 @@ void CpiSubscription::DoUnsubscribe()
     iEnv.Mutex().Wait();
     iSid.TransferTo(sid);
     iEnv.Mutex().Signal();
-    iDevice.Unsubscribe(*this, sid);
+    try {
+        iDevice.Unsubscribe(*this, sid);
+    }
+    catch (NetworkTimeout&) {
+    }
+    catch (NetworkError&) {
+    }
+    catch (HttpError&) {
+    }
+    catch (WriterError&) {
+    }
+    catch (ReaderError&) {
+    }
     iEnv.Mutex().Wait();
     const TUint diffTime = Os::TimeInMs(iEnv.OsCtx()) - startTime; // ignore possibility of time wrapping
     LOG(kEvent, "Unsubscribed (%p) sid ", this);

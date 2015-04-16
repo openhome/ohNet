@@ -98,6 +98,9 @@ void XmlFetch::Fetch()
     catch (NetworkTimeout&) {
         SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
     }
+    catch (NetworkError&) {
+        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+    }
     catch (HttpError&) {
         SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown);
     }

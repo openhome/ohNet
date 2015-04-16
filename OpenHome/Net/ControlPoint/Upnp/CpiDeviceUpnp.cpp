@@ -175,7 +175,7 @@ TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
                 return (true);
             }
         }
-        catch (XmlError) {
+        catch (XmlError&) {
         }
     }
 

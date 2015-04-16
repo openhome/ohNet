@@ -94,6 +94,7 @@ void OpenHome::Os::NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TU
             THROW(NetworkTimeout);
         if (err == -2)  // Connection refused
             THROW(NetworkError);
+        ASSERTS(); // invalid error
     }
 }
 
