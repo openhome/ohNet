@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <limits.h>
 
@@ -48,9 +49,10 @@ void RampValidator::Push(Msg* aMsg)
     iDownstream->Push(msg);
 }
 
-void RampValidator::Reset(const TChar* /*aCallerId*/)
+void RampValidator::Reset(const TChar* aCallerId)
 {
     //Log::Print("RampValidator::Reset() - %s %s\n", iId, aCallerId);
+    LOG(kMedia, "RampValidator::Reset() - %s %s\n", iId, aCallerId);
     iRamping = false;
     iLastRamp = UINT_MAX;
 }
