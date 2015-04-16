@@ -89,15 +89,9 @@ Msg* Pruner::ProcessMsg(MsgDelay* aMsg)
     return NULL;
 }
 
-Msg* Pruner::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* Pruner::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
-    if (iWaitingForAudio) {
-        /* The last track contains no audio data.  Discard any queued msgs rather than risk
-           them adding to an ever-growing queue in a downstream component which buffers audio (StarvationMonitor) */
-        iQueue.Clear();
-    }
-    iWaitingForAudio = true;
-    aMsg->RemoveRef();
+    ASSERTS();
     return NULL;
 }
 
@@ -132,6 +126,12 @@ Msg* Pruner::ProcessMsg(MsgWait* aMsg)
 
 Msg* Pruner::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    if (iWaitingForAudio) {
+        /* The last track contains no audio data.  Discard any queued msgs rather than risk
+           them adding to an ever-growing queue in a downstream component which buffers audio (StarvationMonitor) */
+        iQueue.Clear();
+    }
+    iWaitingForAudio = true;
     return TryQueue(aMsg);
 }
 
