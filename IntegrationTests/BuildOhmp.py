@@ -15,8 +15,14 @@ import threading
 #        into ~/.ssh/authorized_keys on server
 
 kWatchdogTime = 60  # secs
-kExcludes     = ['TestUpnpErrors',
+kExcludes     = ['/thirdparty/',
+                 'warning generated',
+                 'warnings generated',
+                 'TestUpnpErrors',
                  'FLAC__STREAM_DECODER_OGG_ERROR',
+                 'Test 12: TestFailedConnection',
+                 'Test 4: TestRestreamAfterM3uError',
+                 'Test 5: TestStreamSegmentError',
                  'Test 10: TestSeekForwardFailStillSeeks',
                  'Test 2: TestRecognitionFail',
                  'Test 2: InsertFailsWhenIdAfterInvalid',
@@ -91,7 +97,15 @@ class BuildOhmp( BASE.BaseTest ):
                 else:
                     self.log.Info( '', '%s' % msg )
             elif 'warn' in lower:
-                self.log.Warn( '', '%s' % msg )
+                warn = True
+                for exclude in kExcludes:
+                    if exclude in msg:
+                        warn = False
+                        break
+                if warn:
+                    self.log.Warn( '', '%s' % msg )
+                else:
+                    self.log.Info( '', '%s' % msg )
             elif 'pass' in lower:
                 self.log.Pass( '', '%s' % msg )
             else:
