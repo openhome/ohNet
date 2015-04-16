@@ -114,6 +114,8 @@ void CodecAac::StreamInitialise()
         THROW(CodecStreamEnded);
     }
     catch (MediaMpeg4FileInvalid&) {
+        LOG(kCodec, "CodecAac::StreamInitialise invalid MPEG4 container\n");
+        LOG(kCodec, "CodecAac::StreamInitialise throwing CodecStreamCorrupt\n");
         THROW(CodecStreamCorrupt);
     }
 

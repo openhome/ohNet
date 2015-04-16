@@ -320,6 +320,8 @@ void CodecAdts::ProcessAdts(TBool aParseOnly)
                 THROW(CodecStreamEnded);
             }
             if(!adts.ReadHeader(Brn(iInBuf))) {        // read and process header
+                LOG(kCodec, "CodecAdts::ProcessAdts failed to read/process header\n");
+                LOG(kCodec, "CodecAdts::ProcessAdts throwing CodecStreamCorrupt\n");
                 THROW(CodecStreamCorrupt);
             }
             if(adts.HeaderBytes() > 7) {
