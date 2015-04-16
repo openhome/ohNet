@@ -87,8 +87,8 @@ TBool MpegTs::Recognise(Brx& aBuf)
             if (!RecognisePat(table)) {
                 return false;
             }
-            iSize = kRecogniseBytes;
-            LOG(kCodec, "MpegTs::Recognise recognised Program Association Table (PAT)\n");
+            iSize = kRecogniseBytes;    // Discard entire packet; padding will follow table.
+            LOG(kCodec, "MpegTs::Recognise recognised Program Association Table (PAT) iSectionLength: %u, iSize: %u\n", iSectionLength, iSize);
         }
 
         else if (iProgramMapPid != 0 && pid == iProgramMapPid) {
@@ -96,8 +96,8 @@ TBool MpegTs::Recognise(Brx& aBuf)
             if (!RecognisePmt(table)) {
                 return false;
             }
-            iSize = kRecogniseBytes;
-            LOG(kCodec, "MpegTs::Recognise recognised Program Map Table (PMT)\n");
+            iSize = kRecogniseBytes;    // Discard entire packet; padding will follow table.
+            LOG(kCodec, "MpegTs::Recognise recognised Program Map Table (PMT) iSectionLength: %u, iSize: %u\n", iSectionLength, iSize);
         }
 
         else if (iStreamPid != 0 && pid == iStreamPid) {
@@ -127,8 +127,8 @@ TBool MpegTs::Recognise(Brx& aBuf)
                 }
             }
 
-            iSize = kMpegHeaderBytes+adaptationFieldBytes+pesBytes;
-            LOG(kCodec, "MpegTs::Recognise iSize: %u\n", iSize);
+            iSize += pesBytes;
+            LOG(kCodec, "MpegTs::Recognise pesBytes: %u, iSize: %u\n", pesBytes, iSize);
         }
         else {
             LOG(kCodec, "MpegTs::Recognise expected PAT, PMT or PES, but didn't find any\n");
