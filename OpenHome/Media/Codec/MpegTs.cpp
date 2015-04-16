@@ -87,20 +87,20 @@ TBool MpegTs::Recognise(Brx& aBuf)
             if (!RecognisePat(table)) {
                 return false;
             }
-            //iSize = kRecogniseBytes;
+            iSize = kRecogniseBytes;
             LOG(kCodec, "MpegTs::Recognise recognised Program Association Table (PAT)\n");
         }
 
-        if (iProgramMapPid != 0 && pid == iProgramMapPid) {
+        else if (iProgramMapPid != 0 && pid == iProgramMapPid) {
             Brn table(aBuf.Ptr()+offset, aBuf.Bytes()-offset);
             if (!RecognisePmt(table)) {
                 return false;
             }
-            //iSize = kRecogniseBytes;
+            iSize = kRecogniseBytes;
             LOG(kCodec, "MpegTs::Recognise recognised Program Map Table (PMT)\n");
         }
 
-        if (iStreamPid != 0 && pid == iStreamPid) {
+        else if (iStreamPid != 0 && pid == iStreamPid) {
             TUint pesBytes = 0;
             TBool isPesPacketStart = false;
             if (offset < aBuf.Bytes() && aBuf.Bytes()-(offset+1) > kPesHeaderStartCodePrefixBytes) {
@@ -129,6 +129,10 @@ TBool MpegTs::Recognise(Brx& aBuf)
 
             iSize = kMpegHeaderBytes+adaptationFieldBytes+pesBytes;
             LOG(kCodec, "MpegTs::Recognise iSize: %u\n", iSize);
+        }
+        else {
+            LOG(kCodec, "MpegTs::Recognise expected PAT, PMT or PES, but didn't find any\n");
+            return false;
         }
 
     }
