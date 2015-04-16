@@ -197,8 +197,8 @@ uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation, uint32_t* aErrorCo
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
     Error::ELevel ignore;
-	TUint code;
-	const TChar* desc;
+    TUint code;
+    const TChar* desc;
     if (invocation->Error(ignore, code, desc)) {
         *aErrorCode = code;
         *aErrorDesc = desc;

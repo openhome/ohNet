@@ -79,7 +79,7 @@ void DeviceList::TestActions()
     if (size != 1)
     {
         Print("TestDvDeviceC - Assertion failed. Expected to find 1 device, but got %d.\n", size);
-    }	    
+    }    
     ASSERT(size == 1);
     TestBasicCpC::TestActions(iList[0]);
 }
@@ -90,7 +90,7 @@ void DeviceList::TestSubscriptions()
     if (size != 1)
     {
         Print("TestDvDeviceC - Assertion failed. Expected to find 1 device, but got %d.\n", size);
-    }	    
+    }    
     ASSERT(size == 1);
     TestBasicCpC::TestSubscriptions(iList[0]);
 }
