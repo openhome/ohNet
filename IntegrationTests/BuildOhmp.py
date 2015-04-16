@@ -16,6 +16,7 @@ import threading
 
 kWatchdogTime = 60  # secs
 kExcludes     = ['TestUpnpErrors',
+                 'FLAC__STREAM_DECODER_OGG_ERROR',
                  'Test 10: TestSeekForwardFailStillSeeks',
                  'Test 2: TestRecognitionFail',
                  'Test 2: InsertFailsWhenIdAfterInvalid',
