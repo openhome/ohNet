@@ -134,6 +134,11 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
         LOG(kMedia, "<ProtocolNetwork::Connect error connecting\n");
         return false;
     }
+    catch (NetworkError&) {
+        Close();
+        LOG(kMedia, "<ProtocolNetwork::Connect error connecting\n");
+        return false;
+    }
 
     LOG(kMedia, "<Protocol::Connect\n");
     return true;
