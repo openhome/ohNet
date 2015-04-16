@@ -134,10 +134,10 @@ void SuiteRsa::Test()
     // create public/private key pair
     static const char buf[] = "moderate sized string, created to give the illusion of entropy";
     RAND_seed(buf, sizeof(buf));
-	BIGNUM *bn = BN_new();
-	TEST(BN_set_word(bn, RSA_F4));
+    BIGNUM *bn = BN_new();
+    TEST(BN_set_word(bn, RSA_F4));
     RSA* rsa = RSA_new();
-	TEST(RSA_generate_key_ex(rsa, 2048, bn, NULL) != 0);
+    TEST(RSA_generate_key_ex(rsa, 2048, bn, NULL) != 0);
     BN_free(bn);
 
     // check they could be written to file
