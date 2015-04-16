@@ -50,6 +50,7 @@ private:
     void TrackWithoutAudioAllMsgsDiscarded();
     void SilenceUnblocksStreamMsgs();
     void ModeWithoutAudioAllMsgsDiscarded();
+    void StreamWithoutAudioAllMsgsDiscarded();
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
@@ -93,11 +94,12 @@ SuitePruner::SuitePruner()
     AddTest(MakeFunctor(*this, &SuitePruner::TrackWithoutAudioAllMsgsDiscarded), "TrackWithoutAudioAllMsgsDiscarded");
     AddTest(MakeFunctor(*this, &SuitePruner::SilenceUnblocksStreamMsgs), "SilenceUnblocksStreamMsgs");
     AddTest(MakeFunctor(*this, &SuitePruner::ModeWithoutAudioAllMsgsDiscarded), "ModeWithoutAudioAllMsgsDiscarded");
+    AddTest(MakeFunctor(*this, &SuitePruner::StreamWithoutAudioAllMsgsDiscarded), "StreamWithoutAudioAllMsgsDiscarded");
 }
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iPulledTrackId = UINT_MAX/2;
@@ -124,16 +126,17 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
+    TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgAudioPcm);
     TEST(iPendingMsgs.size() == 0);
 }
 
 void SuitePruner::QuitDoesntWaitForAudio()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgEncodedStream, EMsgQuit };
+    EMsgType msgs[] = { EMsgTrack, EMsgQuit };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgQuit);
     TEST(iPendingMsgs.size() == 0);
@@ -141,8 +144,9 @@ void SuitePruner::QuitDoesntWaitForAudio()
 
 void SuitePruner::HaltPassedOn()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgEncodedStream, EMsgHalt, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgHalt);
     TEST(iPendingMsgs.size() == 0);
     TEST(DoPull() == EMsgAudioPcm);
@@ -150,7 +154,7 @@ void SuitePruner::HaltPassedOn()
 
 void SuitePruner::DecodedStreamPassedOn()
 {
-    EMsgType msgs[] = { EMsgEncodedStream, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgDecodedStream);
     TEST(iPendingMsgs.size() == 0);
@@ -159,7 +163,7 @@ void SuitePruner::DecodedStreamPassedOn()
 
 void SuitePruner::TrackWithoutAudioAllMsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -169,7 +173,7 @@ void SuitePruner::TrackWithoutAudioAllMsgsDiscarded()
 
 void SuitePruner::SilenceUnblocksStreamMsgs()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgSilence };
+    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgSilence };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgSilence);
@@ -178,8 +182,18 @@ void SuitePruner::SilenceUnblocksStreamMsgs()
 
 void SuitePruner::ModeWithoutAudioAllMsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream,
-                        EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgDecodedStream, EMsgAudioPcm };
+    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgMode);
+    TEST(DoPull() == EMsgDecodedStream);
+    TEST(DoPull() == EMsgAudioPcm);
+    TEST(iPendingMsgs.size() == 0);
+}
+
+void SuitePruner::StreamWithoutAudioAllMsgsDiscarded()
+{
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgDecodedStream,
+                        EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
