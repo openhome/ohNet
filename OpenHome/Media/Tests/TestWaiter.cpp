@@ -96,6 +96,8 @@ private:
     void TestMsgDecodedStreamCancelsWaiting();
 
     void TestWaitingStateOnMsgWait();
+
+    void TestSilenceEndsRamp();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -136,6 +138,7 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamDuringRampingDownAsserts), "TestMsgDecodedStreamDuringRampingDownAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgDecodedStreamCancelsWaiting");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitingStateOnMsgWait), "TestWaitingStateOnMsgWait");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestSilenceEndsRamp), "TestSilenceEndsRamp");
 }
 
 void SuiteWaiter::Setup()
@@ -968,6 +971,50 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
     PullNext(EMsgDecodedStream);
     TEST(iWaitingCount == 4);
     TEST(iWaitingFalseCount == 2);
+}
+
+
+void SuiteWaiter::TestSilenceEndsRamp()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+
+    static const TUint kWaitFlushId = 2;
+    static const TBool kRampDown = true;
+    TEST(iWaitingCount == 0);
+    TEST(iWaitingTrueCount == 0);
+    iWaiter->Wait(kWaitFlushId, kRampDown);
+
+    iJiffies = 0;
+    iRampingDown = true;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    TEST(iRampingDown);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    iRampingDown = false;
+    // MsgHalt and MsgWait are created and passed on after ramping down.
+    PullNext(EMsgHalt);
+    TEST(iWaitingCount == 1);
+    TEST(iWaitingTrueCount == 1);
+    TEST(iWaitingFalseCount == 0);
+    PullNext(EMsgWait);
+    // Expected MsgFlush should be consumed
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+
+    iRampingUp = false;
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    PullNext(EMsgSilence);
+    TEST(iWaitingCount == 2);
+    TEST(iWaitingTrueCount == 1);
+    TEST(iWaitingFalseCount == 1);
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
 }
 
 

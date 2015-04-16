@@ -86,6 +86,7 @@ private:
     void TestTryRemoveInvalidStream();
     void TestTryRemoveRampValidStream();
     void TestTryRemoveNoRampValidStream();
+    void TestSilenceEndsRamp();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -118,6 +119,7 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveInvalidStream), "TestTryRemoveInvalidStream");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveRampValidStream), "TestTryRemoveRampValidStream");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveNoRampValidStream), "TestTryRemoveNoRampValidStream");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestSilenceEndsRamp), "TestSilenceEndsRamp");
 }
 
 SuiteSkipper::~SuiteSkipper()
@@ -430,8 +432,6 @@ void SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp()
     iRamping = true;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
-    PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
@@ -567,8 +567,6 @@ void SuiteSkipper::TestTryRemoveRampValidStream()
     
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
-    PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
@@ -631,6 +629,31 @@ void SuiteSkipper::TestTryRemoveNoRampValidStream()
     PullNext(EMsgQuit);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
+}
+
+void SuiteSkipper::TestSilenceEndsRamp()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
+    iRamping = true;
+    iJiffies = 0;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    PullNext(EMsgSilence);
+    iRamping = false;
+    TEST(iJiffies < kRampDuration);
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
 }
 
 

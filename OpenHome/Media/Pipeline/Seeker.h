@@ -49,7 +49,6 @@ private: // from ISeekObserver
 private:
     void DoSeek();
     Msg* ProcessFlushable(Msg* aMsg);
-    Msg* ProcessAudio(MsgAudio* aMsg);
     void NewStream();
     void HandleSeekFail();
 private:
