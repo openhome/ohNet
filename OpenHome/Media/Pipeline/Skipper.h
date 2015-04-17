@@ -23,8 +23,11 @@ class Skipper : public IPipelineElementUpstream, private IMsgProcessor
 public:
     Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration);
     virtual ~Skipper();
+    void Block();
+    void Unblock();
     void RemoveCurrentStream(TBool aRampDown);
     TBool TryRemoveStream(TUint aStreamId, TBool aRampDown);
+    void RemoveAll(TUint aHaltId, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
@@ -47,7 +50,9 @@ private:
     TBool TryRemoveCurrentStream(TBool aRampDown);
     void StartFlushing(TBool aSendHalt);
     Msg* ProcessFlushable(Msg* aMsg);
+    Msg* ProcessFlushableRemoveAll(Msg* aMsg);
     void NewStream();
+    inline TBool FlushUntilHalt() const;
 private:
     enum EState
     {
@@ -60,14 +65,17 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     Mutex iLock;
+    Mutex iBlocker;
     EState iState;
     const TUint iRampDuration;
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetFlushId;
+    TUint iTargetHaltId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
+    TBool iPassGeneratedHalt;
 };
 
 } // namespace Media
