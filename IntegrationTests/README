@@ -9,7 +9,9 @@ Required Dependencies
 
     PyCrypto (for tests using Credentials service)
         https://www.dlitz.net/software/pycrypto/
-        Pre-built windows installers: http://www.voidspace.org.uk/python/modules.shtml#pycrypto
+            - windows   - installers: http://www.voidspace.org.uk/python/modules.shtml#pycrypto
+            - mac       - sudo easy_install pip
+                        - sudo ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install pycrypto
 
     Python for Windows Extensions (if running on Windows)
         http://sourceforge.net/projects/pywin32/files/pywin32/
