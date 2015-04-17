@@ -11,6 +11,9 @@ Required Dependencies
         https://www.dlitz.net/software/pycrypto/
         Pre-built windows installers: http://www.voidspace.org.uk/python/modules.shtml#pycrypto
 
+    Python for Windows Extensions (if running on Windows)
+        http://sourceforge.net/projects/pywin32/files/pywin32/
+
     iTunes (for Airplay tests) - running on local machine, session key setup in Config.xml
 
     Access to UPnP media server with necessary files/playlists (for tests using
