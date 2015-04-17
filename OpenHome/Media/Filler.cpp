@@ -60,10 +60,10 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
     , iUriStreamer(NULL)
     , iTrack(NULL)
     , iStopped(true)
-    , iSendHalt(false)
     , iQuit(false)
     , iChangedMode(true)
     , iNextHaltId(MsgHalt::kIdNone + 1)
+    , iPendingHaltId(MsgHalt::kIdInvalid)
     , iNextFlushId(MsgFlush::kIdInvalid)
     , iNullTrackStreamHandler(aIdProvider)
     , iStreamPlayObserver(aStreamPlayObserver)
@@ -196,15 +196,14 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
 
 TUint Filler::StopLocked()
 {
-    TUint haltId = MsgHalt::kIdNone;
     LOG(kMedia, "Filler::StopLocked iStopped=%u\n", iStopped);
-    if (!iStopped) {
-        haltId = ++iNextHaltId;
+    if (iPendingHaltId == MsgHalt::kIdInvalid) {
+        iPendingHaltId = ++iNextHaltId;
         iStopped = true;
-        iSendHalt = true;
+        iChangedMode = true; // Skipperr::RemoveAll() relies on MsgMode being sent following a MsgHalt
     }
     iUriStreamer->Interrupt(true);
-    return haltId;
+    return iPendingHaltId;
 }
 
 void Filler::Run()
@@ -215,18 +214,17 @@ void Filler::Run()
             for (;;) {
                 iLock.Wait();
                 const TBool wait = iStopped;
-                const TBool sendHalt = iSendHalt;
-                iSendHalt = false;
                 if (iNextFlushId != MsgFlush::kIdInvalid) {
                     iPipeline.Push(iMsgFactory.CreateMsgFlush(iNextFlushId));
                     iNextFlushId = MsgFlush::kIdInvalid;
                 }
+                if (iPendingHaltId != MsgHalt::kIdInvalid) {
+                    iPipeline.Push(iMsgFactory.CreateMsgHalt(iPendingHaltId));
+                    iPendingHaltId = MsgHalt::kIdInvalid;
+                }
                 iLock.Signal();
                 if (!wait) {
                     break;
-                }
-                if (sendHalt) {
-                    iPipeline.Push(iMsgFactory.CreateMsgHalt(iNextHaltId));
                 }
                 Wait();
             }
@@ -263,7 +261,6 @@ void Filler::Run()
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
-                iSendHalt = false;
                 iStopped = true;
                 iLock.Signal();
             }

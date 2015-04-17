@@ -47,9 +47,11 @@ void PipelineManager::Quit()
     AutoMutex _(iPublicLock);
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
+    iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
-    iPipeline->RemoveCurrentStream();
+    iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
     iLock.Signal();
     if (waitStop) {
         iPipeline->Stop(haltId);
@@ -171,9 +173,11 @@ void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
     LOG(kPipeline, "PipelineManager::StopPrefetch(");
     LOG(kPipeline, aMode);
     LOG(kPipeline, ", %u)\n", aTrackId);
-    /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
-    iPipeline->RemoveCurrentStream();
+    iPipeline->Block();
+    const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
     iPrefetchObserver.SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
     iFiller->PlayLater(aMode, aTrackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
@@ -194,11 +198,11 @@ void PipelineManager::RemoveAll()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::RemoveAll()\n");
-    /*TUint haltId = */iFiller->Stop();
-    iLock.Wait();
-    iPipeline->RemoveCurrentStream();
-    iLock.Signal();
-    iIdManager->InvalidateAll();
+    iPipeline->Block();
+    const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
 }
 
 TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)

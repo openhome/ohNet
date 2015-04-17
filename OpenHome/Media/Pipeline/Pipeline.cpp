@@ -496,6 +496,22 @@ void Pipeline::RemoveCurrentStream()
     iSkipper->RemoveCurrentStream(rampDown);
 }
 
+void Pipeline::RemoveAll(TUint aHaltId)
+{
+    const TBool rampDown = (iState == EPlaying);
+    iSkipper->RemoveAll(aHaltId, rampDown);
+}
+
+void Pipeline::Block()
+{
+    iSkipper->Block();
+}
+
+void Pipeline::Unblock()
+{
+    iSkipper->Unblock();
+}
+
 TBool Pipeline::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     const TBool rampDown = (iState == EPlaying);

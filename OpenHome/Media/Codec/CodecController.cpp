@@ -220,6 +220,7 @@ void CodecController::CodecThread()
             }
 
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);
+            TBool streamEnded = false;
 
             for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
@@ -236,6 +237,9 @@ void CodecController::CodecThread()
                 catch (CodecStreamCorrupt&) {}
                 catch (CodecStreamFeatureUnsupported&) {}
                 iLock.Wait();
+                if (iStreamStarted || iStreamEnded) {
+                    streamEnded = true;
+                }
                 iStreamStarted = iStreamEnded = false; // Rewind() will result in us receiving any additional Track or EncodedStream msgs again
                 Rewind();
                 iLock.Signal();
@@ -251,7 +255,9 @@ void CodecController::CodecThread()
             }
             LOG(kMedia, "CodecThread: recognition complete\n");
             if (iActiveCodec == NULL) {
-                if (iStreamId != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
+                if (iStreamId != 0  && // FIXME - hard-coded assumption about Filler's NullTrack
+                    !iStreamStopped && // we wouldn't necessarily expect to recognise a track if we're told to stop
+                    !streamEnded) {    // ...or reach the track end during recognition
                     Log::Print("Failed to recognise audio format (iStreamStopped=%u, iExpectedFlushId=%u), flushing stream...\n", iStreamStopped, iExpectedFlushId);
                 }
                 iLock.Wait();
@@ -637,11 +643,8 @@ Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
     iStreamEnded = true;
-    if (iRecognising) {
-        aMsg->RemoveRef();
-        return NULL;
-    }
-    return aMsg;
+    Queue(aMsg);
+    return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
