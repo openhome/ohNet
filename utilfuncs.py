@@ -328,7 +328,7 @@ def guess_libosa_location(conf):
     set_env_verbose(conf, 'INCLUDES_OSA', match_path(
         conf,
         [
-            '{options.libosa}/install/{options.dest_platform}-{debugmode_tc}/libosa/include/',
+            '{options.libosa}/install/libosa/include/',
             'dependencies/{options.dest_platform}/libosa/include'
         ],
         message='Specify --libosa')
@@ -336,7 +336,7 @@ def guess_libosa_location(conf):
     set_env_verbose(conf, 'STLIBPATH_OSA', match_path(
         conf,
         [
-            '{options.libosa}/install/{options.dest_platform}-{debugmode_tc}/libosa/lib/',
+            '{options.libosa}/install/libosa/lib/',
             'dependencies/{options.dest_platform}/libosa/lib'
         ],
         message='Specify --libosa')
