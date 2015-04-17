@@ -126,7 +126,26 @@ Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
     if (iState == eStarting) {
         iState = eRunning;
     }
-    return ProcessAudio(aMsg);
+    else if (iState == eRamping) {
+        MsgAudio* split;
+        if (aMsg->Jiffies() > iRemainingRampSize) {
+            split = aMsg->Split(iRemainingRampSize);
+            if (split != NULL) {
+                split->RemoveRef(); // we're going to flush the rest of the stream so no need to add split to iQueue
+            }
+        }
+        split = NULL;
+        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
+        if (split != NULL) {
+            iQueue.EnqueueAtHead(split);
+        }
+        if (iRemainingRampSize == 0) {
+            StartFlushing(true);
+        }
+        return aMsg;
+    }
+
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
@@ -134,7 +153,12 @@ Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
     if (iState == eStarting) {
         iState = eRunning;
     }
-    return ProcessAudio(aMsg);
+    if (iState == eRamping) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMax;
+        iState = eRunning;
+    }
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Skipper::ProcessMsg(MsgPlayable* /*aMsg*/)
@@ -180,30 +204,6 @@ Msg* Skipper::ProcessFlushable(Msg* aMsg)
         return NULL;
     }
     return aMsg;
-}
-
-Msg* Skipper::ProcessAudio(MsgAudio* aMsg)
-{
-    if (iState == eRamping) {
-        MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize) {
-            split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
-                split->RemoveRef(); // we're going to flush the rest of the stream so no need to add split to iQueue
-            }
-        }
-        split = NULL;
-        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
-        if (split != NULL) {
-            iQueue.EnqueueAtHead(split);
-        }
-        if (iRemainingRampSize == 0) {
-            StartFlushing(true);
-        }
-        return aMsg;
-    }
-
-    return ProcessFlushable(aMsg);
 }
 
 void Skipper::NewStream()

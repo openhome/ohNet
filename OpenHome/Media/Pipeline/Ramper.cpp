@@ -34,28 +34,6 @@ Msg* Ramper::Pull()
     return msg;
 }
 
-Msg* Ramper::ProcessAudio(MsgAudio* aMsg)
-{
-    if (iRamping) {
-        MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize) {
-            split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
-                iQueue.Enqueue(split);
-            }
-        }
-        split = NULL;
-        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EUp, split);
-        if (split != NULL) {
-            iQueue.EnqueueAtHead(split);
-        }
-        if (iRemainingRampSize == 0) {
-            iRamping = false;
-        }
-    }
-    return aMsg;
-}
-
 Msg* Ramper::ProcessMsg(MsgMode* aMsg)
 {
     return aMsg;
@@ -128,12 +106,32 @@ Msg* Ramper::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Ramper::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    return ProcessAudio(aMsg);
+    if (iRamping) {
+        MsgAudio* split;
+        if (aMsg->Jiffies() > iRemainingRampSize) {
+            split = aMsg->Split(iRemainingRampSize);
+            if (split != NULL) {
+                iQueue.Enqueue(split);
+            }
+        }
+        split = NULL;
+        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EUp, split);
+        if (split != NULL) {
+            iQueue.EnqueueAtHead(split);
+        }
+        if (iRemainingRampSize == 0) {
+            iRamping = false;
+        }
+    }
+    return aMsg;
 }
 
 Msg* Ramper::ProcessMsg(MsgSilence* aMsg)
 {
-    return ProcessAudio(aMsg);
+    iRamping = false;
+    iCurrentRampValue = Ramp::kMax;
+    iRemainingRampSize = 0;
+    return aMsg;
 }
 
 Msg* Ramper::ProcessMsg(MsgPlayable* aMsg)

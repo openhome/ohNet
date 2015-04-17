@@ -104,6 +104,10 @@ def choose_platform(context):
     else:
         context.env["OH_PLATFORM"] = default_platform()
 
+    # force Mac build to use 64-bit libs (wrongly defaults to 32-bit)
+    if 'Mac' in context.env['OH_PLATFORM']:
+        context.env['OH_PLATFORM']='Mac-x64'
+
 # Universal build configuration.
 @build_step()
 def setup_universal(context):

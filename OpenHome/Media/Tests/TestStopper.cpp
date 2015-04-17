@@ -91,6 +91,7 @@ private:
     void TestPlayFromStoppedNoRampUp();
     void TestPauseRamps();
     void TestInterruptRamps();
+    void TestSilenceEndsRamp();
     void TestPauseFromStoppedIgnored();
     void TestOkToPlayCalledOnceForLiveStream();
     void TestOkToPlayCalledOnceForNonLiveStream();
@@ -146,6 +147,7 @@ SuiteStopper::SuiteStopper()
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayFromStoppedNoRampUp), "TestPlayFromStoppedNoRampUp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPauseRamps), "TestPauseRamps");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestInterruptRamps), "TestInterruptRamps");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestSilenceEndsRamp), "TestSilenceEndsRamp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPauseFromStoppedIgnored), "TestPauseFromStoppedIgnored");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestOkToPlayCalledOnceForLiveStream), "TestOkToPlayCalledOnceForLiveStream");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestOkToPlayCalledOnceForNonLiveStream), "TestOkToPlayCalledOnceForNonLiveStream");
@@ -576,6 +578,46 @@ void SuiteStopper::TestInterruptRamps()
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgDecodedStream);
     iRampingDown = false;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+}
+
+void SuiteStopper::TestSilenceEndsRamp()
+{
+    iStopper->Play();
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    iStopper->BeginPause();
+    iRampingDown = true;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    TEST(iPausedCount == 0);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    PullNext(EMsgSilence);
+    PullNext(EMsgHalt);
+    TEST(iPausedCount == 1);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
+
+    iStopper->Play();
+    iRampingDown = false;
+    iRampingUp = true;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    TEST(iPausedCount == 1);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 3);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    PullNext(EMsgSilence);
+    iRampingUp = false;
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 }

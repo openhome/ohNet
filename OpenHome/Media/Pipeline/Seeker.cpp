@@ -190,69 +190,6 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    return ProcessAudio(aMsg);
-}
-
-Msg* Seeker::ProcessMsg(MsgSilence* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Seeker::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
-{
-    return aMsg;
-}
-
-void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
-{
-    LOG(kPipeline, "> Seeker::NotifySeekComplete(%u, %u))\n", aHandle, aFlushId);
-    AutoMutex a(iLock);
-    if (aHandle != iSeekHandle) {
-        LOG(kPipeline, "> Seeker::NotifySeekComplete - ignoring (wrong handle)\n");
-        return;
-    }
-    if (aFlushId == MsgFlush::kIdInvalid) {
-        iTargetFlushId = aFlushId;
-        HandleSeekFail();
-    }
-    else {
-        iSeekConsecutiveFailureCount = 0;
-    }
-}
-
-void Seeker::DoSeek()
-{
-    LOG(kPipeline, "> Seeker::DoSeek()\n");
-    iState = EFlushing; /* set this before calling StartSeek as its possible NotifySeekComplete
-                           could be called from another thread before StartSeek returns. */
-    iSeeker.StartSeek(iStreamId, iSeekSeconds, *this, iSeekHandle);
-    if (iSeekHandle == ISeeker::kHandleError) {
-        HandleSeekFail();
-    }
-    else {
-        iQueue.Clear();
-        iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
-                                                        that any subsequent break in audio is expected */
-    }
-}
-
-Msg* Seeker::ProcessFlushable(Msg* aMsg)
-{
-    if (iState == EFlushing) {
-        aMsg->RemoveRef();
-        return NULL;
-    }
-    return aMsg;
-}
-
-Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
-{
     iStreamPosJiffies += aMsg->Jiffies();
     if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
         ASSERT(iState == EFlushing);
@@ -306,6 +243,66 @@ Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
     }
 
     return ProcessFlushable(aMsg);
+}
+
+Msg* Seeker::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS(); // don't expect to see MsgSilence this far up the pipeline
+               // ...and wouldn't immediately know how to handle it, e.g. if iFlushEndJiffies was set
+    return NULL;
+}
+
+Msg* Seeker::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
+{
+    return aMsg;
+}
+
+void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
+{
+    LOG(kPipeline, "> Seeker::NotifySeekComplete(%u, %u))\n", aHandle, aFlushId);
+    AutoMutex a(iLock);
+    if (aHandle != iSeekHandle) {
+        LOG(kPipeline, "> Seeker::NotifySeekComplete - ignoring (wrong handle)\n");
+        return;
+    }
+    if (aFlushId == MsgFlush::kIdInvalid) {
+        iTargetFlushId = aFlushId;
+        HandleSeekFail();
+    }
+    else {
+        iSeekConsecutiveFailureCount = 0;
+    }
+}
+
+void Seeker::DoSeek()
+{
+    LOG(kPipeline, "> Seeker::DoSeek()\n");
+    iState = EFlushing; /* set this before calling StartSeek as its possible NotifySeekComplete
+                           could be called from another thread before StartSeek returns. */
+    iSeeker.StartSeek(iStreamId, iSeekSeconds, *this, iSeekHandle);
+    if (iSeekHandle == ISeeker::kHandleError) {
+        HandleSeekFail();
+    }
+    else {
+        iQueue.Clear();
+        iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
+                                                        that any subsequent break in audio is expected */
+    }
+}
+
+Msg* Seeker::ProcessFlushable(Msg* aMsg)
+{
+    if (iState == EFlushing) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
+    return aMsg;
 }
 
 void Seeker::NewStream()

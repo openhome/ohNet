@@ -300,12 +300,37 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    return ProcessAudio(aMsg);
+    if (iState == ERampingDown || iState == ERampingUp) {
+        MsgAudio* split;
+        if (aMsg->Jiffies() > iRemainingRampSize && iRemainingRampSize > 0) {
+            split = aMsg->Split(iRemainingRampSize);
+            if (split != NULL) {
+                iQueue.EnqueueAtHead(split);
+            }
+        }
+        split = NULL;
+        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
+        if (iRemainingRampSize > 0) {
+            iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        }
+        if (split != NULL) {
+            iQueue.EnqueueAtHead(split);
+        }
+        if (iRemainingRampSize == 0) {
+            RampCompleted();
+        }
+        return aMsg;
+    }
+
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
 {
-    return ProcessAudio(aMsg);
+    if (iState == ERampingDown || iState == ERampingUp) {
+        RampCompleted();
+    }
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
@@ -405,45 +430,23 @@ void Stopper::OkToPlay()
     iCheckedStreamPlayable = true;
 }
 
-Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
+void Stopper::RampCompleted()
 {
-    if (iState == ERampingDown || iState == ERampingUp) {
-        MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize && iRemainingRampSize > 0) {
-            split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
-                iQueue.EnqueueAtHead(split);
-            }
+    if (iState == ERampingDown) {
+        if (iTargetHaltId == MsgHalt::kIdInvalid) {
+            HandlePaused();
         }
-        split = NULL;
-        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        if (iRemainingRampSize > 0) {
-            iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        else {
+            ASSERT(iStreamHandler != NULL);
+            (void)iStreamHandler->TryStop(iStreamId);
+            SetState(ERunning);
+            iFlushStream = true;
         }
-        if (split != NULL) {
-            iQueue.EnqueueAtHead(split);
-        }
-        if (iRemainingRampSize == 0) {
-            if (iState == ERampingDown) {
-                if (iTargetHaltId == MsgHalt::kIdInvalid) {
-                    HandlePaused();
-                }
-                else {
-                    ASSERT(iStreamHandler != NULL);
-                    (void)iStreamHandler->TryStop(iStreamId);
-                    SetState(ERunning);
-                    iFlushStream = true;
-                }
-                iHaltPending = true;
-            }
-            else { // iState == ERampingUp
-                SetState(ERunning);
-            }
-        }
-        return aMsg;
+        iHaltPending = true;
     }
-
-    return ProcessFlushable(aMsg);
+    else { // iState == ERampingUp
+        SetState(ERunning);
+    }
 }
 
 void Stopper::NewStream()

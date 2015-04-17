@@ -79,7 +79,7 @@ private:
 private:
     Msg* ProcessFlushable(Msg* aMsg);
     void OkToPlay();
-    Msg* ProcessAudio(MsgAudio* aMsg);
+    void RampCompleted();
     void NewStream();
     void HandlePaused();
     void HandleStopped();

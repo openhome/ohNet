@@ -55,7 +55,7 @@ private: // from IMsgProcessor
 private:
     void DoWait();
     Msg* ProcessFlushable(Msg* aMsg);
-    Msg* ProcessAudio(MsgAudio* aMsg);
+    void HandleAudio();
     void NewStream();
 private:
     enum EState

@@ -229,25 +229,25 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     iRamper = new Ramper(*iLoggerDecodedAudioReservoir, aInitParams->RampLongJiffies());
     iLoggerRamper = new Logger(*iRamper, "Ramper");
-    iRampValidatorRamper = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerRamper));
+    iRampValidatorRamper = new RampValidator(*iLoggerRamper, "Ramper");
     iSeeker = new Seeker(*iMsgFactory, *iRampValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
-    iRampValidatorSeeker = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerSeeker));
+    iRampValidatorSeeker = new RampValidator(*iLoggerSeeker, "Seeker");
     iVariableDelay1 = new VariableDelay(*iMsgFactory, *iRampValidatorSeeker, kSenderMinLatency, aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay1 = new Logger(*iVariableDelay1, "VariableDelay1");
-    iRampValidatorDelay1 = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerVariableDelay1));
+    iRampValidatorDelay1 = new RampValidator(*iLoggerVariableDelay1, "VariableDelay1");
     iTrackInspector = new TrackInspector(*iRampValidatorDelay1);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
     iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampLongJiffies());
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
-    iRampValidatorSkipper = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerSkipper));
+    iRampValidatorSkipper = new RampValidator(*iLoggerSkipper, "Skipper");
     iWaiter = new Waiter(*iMsgFactory, *iRampValidatorSkipper, *this, aInitParams->RampShortJiffies());
     iLoggerWaiter = new Logger(*iWaiter, "Waiter");
-    iRampValidatorWaiter = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerWaiter));
+    iRampValidatorWaiter = new RampValidator(*iLoggerWaiter, "Waiter");
     iStopper = new Stopper(*iMsgFactory, *iRampValidatorWaiter, *this, aInitParams->RampLongJiffies());
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iRampValidatorStopper = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerStopper));
+    iRampValidatorStopper = new RampValidator(*iLoggerStopper, "Stopper");
     iGorger = new Gorger(*iMsgFactory, *iRampValidatorStopper, threadPriority, aInitParams->GorgeDurationJiffies());
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
@@ -259,14 +259,14 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerRouter = new Logger(*iRouter, "Router");
     iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerRouter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
-    iRampValidatorDelay2 = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerVariableDelay2));
+    iRampValidatorDelay2 = new RampValidator(*iLoggerVariableDelay2, "VariableDelay2");
     iPruner = new Pruner(*iRampValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this, threadPriority,
                                                aInitParams->StarvationMonitorMaxJiffies(), aInitParams->StarvationMonitorMinJiffies(),
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iRampValidatorStarvationMonitor = new RampValidator(static_cast<IPipelineElementUpstream&>(*iLoggerStarvationMonitor));
+    iRampValidatorStarvationMonitor = new RampValidator(*iLoggerStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iRampValidatorStarvationMonitor);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());

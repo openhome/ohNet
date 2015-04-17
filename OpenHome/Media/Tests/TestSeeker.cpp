@@ -68,7 +68,6 @@ private:
        ,EMsgMetaText
        ,EMsgDecodedStream
        ,EMsgAudioPcm
-       ,EMsgSilence
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -339,10 +338,10 @@ Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
     return playable;
 }
 
-Msg* SuiteSeeker::ProcessMsg(MsgSilence* aMsg)
+Msg* SuiteSeeker::ProcessMsg(MsgSilence* /*aMsg*/)
 {
-    iLastPulledMsg = EMsgSilence;
-    return aMsg;
+    ASSERTS();
+    return NULL;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgPlayable* /*aMsg*/)
@@ -419,7 +418,6 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(CreateAudio());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
@@ -434,7 +432,6 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     PullNext(EMsgMetaText);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
-    PullNext(EMsgSilence);
     PullNext(EMsgHalt);
     PullNext(EMsgFlush);
     PullNext(EMsgWait);
@@ -502,7 +499,6 @@ void SuiteSeeker::TestRampSeekerAccepts()
     // very few msg types get through while we're flushing
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
@@ -565,7 +561,6 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     // very few msg types get through while we're flushing
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));

@@ -168,9 +168,9 @@ void PipelineManager::Stop()
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
-    LOG(kMedia, "PipelineManager::StopPrefetch(");
-    LOG(kMedia, aMode);
-    LOG(kMedia, ", %u)\n", aTrackId);
+    LOG(kPipeline, "PipelineManager::StopPrefetch(");
+    LOG(kPipeline, aMode);
+    LOG(kPipeline, ", %u)\n", aTrackId);
     /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
     iPipeline->RemoveCurrentStream();
     iIdManager->InvalidatePending();
@@ -390,7 +390,7 @@ void PipelineManager::PrefetchObserver::CheckTrack(TUint aTrackId)
 {
     iLock.Wait();
     if (iTrackId != UINT_MAX) {
-        LOG(kMedia, "PipelineManager::PrefetchObserver::CheckTrack expected %u, got %u\n", iTrackId, aTrackId);
+        LOG(kPipeline, "PipelineManager::PrefetchObserver::CheckTrack expected %u, got %u\n", iTrackId, aTrackId);
     }
     if (aTrackId == iTrackId) {
         iSem.Signal();

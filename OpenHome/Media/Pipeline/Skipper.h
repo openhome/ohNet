@@ -47,7 +47,6 @@ private:
     TBool TryRemoveCurrentStream(TBool aRampDown);
     void StartFlushing(TBool aSendHalt);
     Msg* ProcessFlushable(Msg* aMsg);
-    Msg* ProcessAudio(MsgAudio* aMsg);
     void NewStream();
 private:
     enum EState
