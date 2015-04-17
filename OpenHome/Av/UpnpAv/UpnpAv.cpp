@@ -99,7 +99,6 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     EnsureActive();
     if (iTrack == NULL || iTrack->Uri() != aUri) {
-        iPipeline.RemoveAll();
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }

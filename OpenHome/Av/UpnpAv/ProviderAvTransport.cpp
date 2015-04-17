@@ -194,11 +194,6 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
         iSourceUpnpAv.SetTrack(aCurrentURI, metaData);  // do outside lock; would cause attempted recursive
                                                         // lock on mutex when IPipelineObserver calls came
                                                         // back in.
-
-        // Resume playing if already playing before new URI came in.
-        if (playing) {
-            iSourceUpnpAv.Play();
-        }
     }
     aInvocation.EndResponse();
 }
