@@ -2,6 +2,7 @@
 """
 import sys
 sys.path.append( '../..' )
+sys.path.append( '../../../../../../Build/Obj/Mac-x64/Release' )
 import PyOhNet as ohNet
 
 
@@ -43,7 +44,7 @@ class TestDeviceList:
     
     @staticmethod
     def _Added1( aDev ):
-       print "    (1) ADDED ->", aDev.friendlyName
+       print "    (1) ADDED ->", aDev.friendlyName, '  ', aDev.handle
     
     @staticmethod
     def _Removed1( aDev ):

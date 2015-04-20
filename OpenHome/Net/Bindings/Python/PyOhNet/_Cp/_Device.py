@@ -135,8 +135,8 @@ class Device():
                 self._AddProxy( service )
     
     def Shutdown( self ):
-        PyOhNet.devices.remove( self )
         if self.handle:
+            PyOhNet.devices.remove( self )
             self.lib.CpDeviceCRemoveRef( self.handle )
 
     friendlyName = property( _GetFriendlyName, None, None, '' )        

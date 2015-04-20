@@ -49,6 +49,7 @@ class DeviceList():
                 for cb in self.removedCbs:
                     cb( dev )
                 self.devices.remove( dev )
+                dev.Shutdown()
                 
     def _GetDevs( self ):
         return self.devices  
