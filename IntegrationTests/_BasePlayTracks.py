@@ -483,7 +483,10 @@ class BasePlayTracks( BASE.BaseTest ):
             if self.senderDuration.is_set():
                 duration = int( self.sender.time.duration )
         if duration == 0:
-            self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
+            # Exclude HLS tracks (.ts extension) as they have no reported duration
+            uri = self.sender.playlist.playlist.Read( self.sender.playlist.id )['Uri']
+            if not '.ts' in uri:
+                self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
         return duration
 
     def _WaitForSenderPlay( self ):
