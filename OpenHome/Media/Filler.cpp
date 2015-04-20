@@ -95,7 +95,10 @@ void Filler::Start(IUriStreamer& aUriStreamer)
 
 void Filler::Quit()
 {
+    LOG(kPipeline, "> Filler::Quit()\n");
+    (void)Stop();
     Kill();
+    iUriStreamer->Interrupt(true);
     Join();
 }
 
@@ -283,6 +286,7 @@ void Filler::Run()
                 ASSERT(iTrack != NULL);
                 iPipeline.Push(iMsgFactory.CreateMsgSession());
                 LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
+                CheckForKill();
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
                 if (res == EProtocolErrorNotSupported) {
                     LOG(kMedia, "Filler::Run Track %u not supported. URI: ", iTrack->Id());
