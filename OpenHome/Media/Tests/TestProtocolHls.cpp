@@ -1270,9 +1270,11 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
 
     TestHttpReader::UriList uriList1;
     uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));
-    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));   // Exception signifying discontinuity will be thrown.
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));   // Attempt to reload playlist and skip discontinuity.
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileMediaSeqNonContinuous);
+    bufList1.push_back(&kFileMediaSeqStartNonContinuousExtended);
     bufList1.push_back(&kFileMediaSeqStartNonContinuousExtended);
     iHttpReader->SetContent(uriList1, bufList1);
     iM3uReader->SetUri(kUriMediaSeqNonContinuous, false);
@@ -1299,26 +1301,22 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
 
     iM3uReader->TimerFired();
 
-
-
-
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsDiscontinuityError);
+    iM3uReader->Interrupt();
+    iM3uReader->Close();
+    iM3uReader->SetUri(kUriMediaSeqNonContinuous, true);    // Skip over discontinuity.
 
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 4000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/f.ts"));
 
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 3000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/g.ts"));
 
-
-
-    //duration = iM3uReader->NextSegmentUri(segmentUri);
-    //TEST(duration == 4000);
-    //TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/f.ts"));
-
-    //duration = iM3uReader->NextSegmentUri(segmentUri);
-    //TEST(duration == 3000);
-    //TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/g.ts"));
-
-    //duration = iM3uReader->NextSegmentUri(segmentUri);
-    //TEST(duration == 2000);
-    //TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/h.ts"));
+    duration = iM3uReader->NextSegmentUri(segmentUri);
+    TEST(duration == 2000);
+    TEST(segmentUri.AbsoluteUri() == Brn("https://priv.example.com/h.ts"));
 }
 
 void SuiteHlsM3uReader::TestReloadNoChange()
