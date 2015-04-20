@@ -2631,14 +2631,13 @@ void SuiteProtocolHls::TestStreamSegmentConnectionError()
 
 void SuiteProtocolHls::TestGet()
 {
-    Bws<1> buf;
-    WriterBuffer writerBuf(buf);
+    // FIXME - unable to access private member Get() of IProtocolManager.
 
-    //IProtocolManager* protocolManager = (IProtocolManager*)iProtocolManager;
-    //TBool result = protocolManager->Get(writerBuf, Brn("http://example.com/dummy.ts"), 0, 20);
-    //TEST(result == false);
+    //Bws<1> buf;
+    //WriterBuffer writerBuf(buf);
 
-    // FIXME - reinstate
+    //IProtocolManager* protoManager = dynamic_cast<IProtocolManager*>(iProtocolManager);
+    //TBool result = protoManager->Get(writerBuf, Brn("http://example.com/dummy.ts"), 0, 20);
 }
 
 void SuiteProtocolHls::TestTrySeek()
