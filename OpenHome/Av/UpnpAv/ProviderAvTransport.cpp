@@ -151,7 +151,6 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
     }
     aInvocation.StartResponse();
     {
-        TBool playing = false;
         iLock.Wait();
         Brn metaData(aCurrentURIMetaData);
         if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
@@ -168,10 +167,7 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
             iTargetTransportState.Set(Brx::Empty());
         }
         else {
-            if (iTransportState == kTransportStatePlaying) {
-                playing = true;
-            }
-            else {
+            if (iTransportState != kTransportStatePlaying) {
                 // Only pick up iTransportState is there isn't a pending iTransportStateOverride
                 if (iTransportStateOverride.Bytes() == 0) {
                     iTransportStateOverride.Set(iTransportState);
@@ -194,11 +190,6 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
         iSourceUpnpAv.SetTrack(aCurrentURI, metaData);  // do outside lock; would cause attempted recursive
                                                         // lock on mutex when IPipelineObserver calls came
                                                         // back in.
-
-        // Resume playing if already playing before new URI came in.
-        if (playing) {
-            iSourceUpnpAv.Play();
-        }
     }
     aInvocation.EndResponse();
 }

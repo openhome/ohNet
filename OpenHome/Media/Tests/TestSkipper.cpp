@@ -86,6 +86,8 @@ private:
     void TestTryRemoveInvalidStream();
     void TestTryRemoveRampValidStream();
     void TestTryRemoveNoRampValidStream();
+    void TestSilenceEndsRamp();
+    void TestRemoveAllFlushesAllMsgs();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -99,6 +101,7 @@ private:
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
     TUint iNextStreamId;
+    TUint iLastHaltId;
 };
 
 } // namespace Media
@@ -118,6 +121,8 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveInvalidStream), "TestTryRemoveInvalidStream");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveRampValidStream), "TestTryRemoveRampValidStream");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveNoRampValidStream), "TestTryRemoveNoRampValidStream");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestSilenceEndsRamp), "TestSilenceEndsRamp");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveAllFlushesAllMsgs), "TestRemoveAllFlushesAllMsgs");
 }
 
 SuiteSkipper::~SuiteSkipper()
@@ -127,7 +132,7 @@ SuiteSkipper::~SuiteSkipper()
 void SuiteSkipper::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1);
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
@@ -135,6 +140,7 @@ void SuiteSkipper::Setup()
     iRamping = false;
     iLastSubsample = 0xffffff;
     iNextStreamId = 1;
+    iLastHaltId = MsgHalt::kIdInvalid;
 }
 
 void SuiteSkipper::TearDown()
@@ -226,6 +232,7 @@ Msg* SuiteSkipper::ProcessMsg(MsgMetaText* aMsg)
 Msg* SuiteSkipper::ProcessMsg(MsgHalt* aMsg)
 {
     iLastPulledMsg = EMsgHalt;
+    iLastHaltId = aMsg->Id();
     return aMsg;
 }
 
@@ -430,8 +437,6 @@ void SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp()
     iRamping = true;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
-    PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
@@ -567,8 +572,6 @@ void SuiteSkipper::TestTryRemoveRampValidStream()
     
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
-    PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
@@ -633,6 +636,81 @@ void SuiteSkipper::TestTryRemoveNoRampValidStream()
     PullNext(EMsgTrack);
 }
 
+void SuiteSkipper::TestSilenceEndsRamp()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
+    iRamping = true;
+    iJiffies = 0;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    PullNext(EMsgHalt);
+    iRamping = false;
+    TEST(iJiffies < kRampDuration);
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+}
+
+void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+
+    const TUint kHaltId = 42;
+    iSkipper->RemoveAll(kHaltId, true);
+    iRamping = true;
+    iJiffies = 0;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgHalt);
+    TEST(iLastHaltId == MsgHalt::kIdNone);
+
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt(kHaltId));
+
+    PullNext(EMsgHalt);
+    TEST(iLastHaltId == kHaltId);
+    TEST(iPendingMsgs.size() == 0);
+}
 
 
 void TestSkipper()

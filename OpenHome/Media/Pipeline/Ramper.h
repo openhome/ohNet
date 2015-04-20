@@ -21,8 +21,6 @@ public:
     virtual ~Ramper();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
-private:
-    Msg* ProcessAudio(MsgAudio* aMsg);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;

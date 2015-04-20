@@ -16,15 +16,15 @@ May be used to validate ramps output by the overall pipeline or individual eleme
 class RampValidator : public IPipelineElementUpstream, public IPipelineElementDownstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    RampValidator(IPipelineElementUpstream& aUpstream);
-    RampValidator(IPipelineElementDownstream& aDownstream);
+    RampValidator(IPipelineElementUpstream& aUpstream, const TChar* aId);
+    RampValidator(const TChar* aId, IPipelineElementDownstream& aDownstream);
     virtual ~RampValidator();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private:
-    void Reset();
+    void Reset(const TChar* aCallerId);
     void ProcessAudio(const Ramp& aRamp);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
@@ -43,6 +43,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
+    const TChar* iId;
     IPipelineElementUpstream* iUpstream;
     IPipelineElementDownstream* iDownstream;
     TBool iRamping;

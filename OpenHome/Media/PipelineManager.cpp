@@ -44,14 +44,18 @@ PipelineManager::~PipelineManager()
 
 void PipelineManager::Quit()
 {
+    LOG(kPipeline, "> PipelineManager::Quit()\n");
     AutoMutex _(iPublicLock);
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
+    iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
-    iPipeline->RemoveCurrentStream();
+    iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
     iLock.Signal();
     if (waitStop) {
+        LOG(kPipeline, "...waiting for pipeline to stop (why?)\n");
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
     }
@@ -168,12 +172,14 @@ void PipelineManager::Stop()
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
-    LOG(kMedia, "PipelineManager::StopPrefetch(");
-    LOG(kMedia, aMode);
-    LOG(kMedia, ", %u)\n", aTrackId);
-    /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
-    iPipeline->RemoveCurrentStream();
+    LOG(kPipeline, "PipelineManager::StopPrefetch(");
+    LOG(kPipeline, aMode);
+    LOG(kPipeline, ", %u)\n", aTrackId);
+    iPipeline->Block();
+    const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
     iPrefetchObserver.SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
     iFiller->PlayLater(aMode, aTrackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
@@ -194,11 +200,11 @@ void PipelineManager::RemoveAll()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::RemoveAll()\n");
-    /*TUint haltId = */iFiller->Stop();
-    iLock.Wait();
-    iPipeline->RemoveCurrentStream();
-    iLock.Signal();
-    iIdManager->InvalidateAll();
+    iPipeline->Block();
+    const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
+    iPipeline->Unblock();
 }
 
 TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
@@ -390,7 +396,7 @@ void PipelineManager::PrefetchObserver::CheckTrack(TUint aTrackId)
 {
     iLock.Wait();
     if (iTrackId != UINT_MAX) {
-        LOG(kMedia, "PipelineManager::PrefetchObserver::CheckTrack expected %u, got %u\n", iTrackId, aTrackId);
+        LOG(kPipeline, "PipelineManager::PrefetchObserver::CheckTrack expected %u, got %u\n", iTrackId, aTrackId);
     }
     if (aTrackId == iTrackId) {
         iSem.Signal();

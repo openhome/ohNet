@@ -355,6 +355,24 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
 {
+    if (iStatus == ERampingUp) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMax;
+        iStatus = ERunning;
+    }
+    else if (iStatus == ERampingDown) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMin;
+        if (iDelayAdjustment != 0) {
+            iStatus = ERampedDown;
+        }
+        else {
+            iStatus = ERampingUp;
+            iRampDirection = Ramp::EUp;
+            iRemainingRampSize = iRampDuration;
+        }
+    }
+
     return DoProcessAudioMsg(aMsg);
 }
 

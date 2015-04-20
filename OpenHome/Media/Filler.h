@@ -108,11 +108,11 @@ private:
     IUriStreamer* iUriStreamer;
     Track* iTrack;
     TBool iStopped;
-    TBool iSendHalt;
     TBool iQuit;
     TBool iChangedMode;
     EStreamPlay iTrackPlayStatus;
     TUint iNextHaltId;
+    TUint iPendingHaltId;
     TUint iNextFlushId;
     Track* iNullTrack; // delivered when uri provider cannot return a Track
     NullTrackStreamHandler iNullTrackStreamHandler;

@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <limits.h>
 
@@ -11,15 +12,17 @@ using namespace OpenHome::Media;
 
 #define RAMP_VALIDATOR_ENABLED 0
 
-RampValidator::RampValidator(IPipelineElementUpstream& aUpstream)
-    : iUpstream(&aUpstream)
+RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* aId)
+    : iId(aId)
+    , iUpstream(&aUpstream)
     , iDownstream(NULL)
     , iRampedDown(false)
 {
 }
 
-RampValidator::RampValidator(IPipelineElementDownstream& aDownstream)
-    : iUpstream(NULL)
+RampValidator::RampValidator(const TChar* aId, IPipelineElementDownstream& aDownstream)
+    : iId(aId)
+    , iUpstream(NULL)
     , iDownstream(&aDownstream)
     , iRampedDown(false)
 {
@@ -46,8 +49,10 @@ void RampValidator::Push(Msg* aMsg)
     iDownstream->Push(msg);
 }
 
-void RampValidator::Reset()
+void RampValidator::Reset(const TChar* aCallerId)
 {
+    //Log::Print("RampValidator::Reset() - %s %s\n", iId, aCallerId);
+    LOG(kMedia, "RampValidator::Reset() - %s %s\n", iId, aCallerId);
     iRamping = false;
     iLastRamp = UINT_MAX;
 }
@@ -65,17 +70,17 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         ASSERT(aRamp.IsEnabled());
 #endif
         if (aRamp.Start() != iLastRamp) {
-            Log::Print("WARNING: discontinuity in ramp: expected %08x, got %08x\n", iLastRamp, aRamp.Start());
+            Log::Print("WARNING: discontinuity in ramp (%s): expected %08x, got %08x\n", iId, iLastRamp, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
             ASSERTS();
 #endif
         }
         iLastRamp = aRamp.End();
         if (aRamp.Direction() == Ramp::EUp && iLastRamp == Ramp::kMax) {
-            Reset();
+            Reset("completed ramp up");
         }
         else if (aRamp.Direction() == Ramp::EDown && iLastRamp == Ramp::kMin) {
-            Reset();
+            Reset("completed ramp down");
             iRampedDown = true;
         }
     }
@@ -83,7 +88,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         iRamping = true;
         if (aRamp.Direction() == Ramp::EUp) {
             if (aRamp.Start() != Ramp::kMin) {
-                Log::Print("WARNING: ramp up started at %08x\n", aRamp.Start());
+                Log::Print("WARNING: ramp up (%s) started at %08x\n", iId, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
                 ASSERTS();
 #endif
@@ -91,7 +96,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         }
         else { // aRamp.Direction() == Ramp::EDown
             if (aRamp.Start() != Ramp::kMax) {
-                Log::Print("WARNING: ramp down started at %08x\n", aRamp.Start());
+                Log::Print("WARNING: ramp down (%s) started at %08x\n", iId, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
                 ASSERTS();
 #endif
@@ -103,7 +108,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
 
 Msg* RampValidator::ProcessMsg(MsgMode* aMsg)
 {
-    Reset();
+    Reset("Mode");
     iRampedDown = false;
     iWaitingForAudio = true;
     return aMsg;
@@ -117,7 +122,7 @@ Msg* RampValidator::ProcessMsg(MsgSession* aMsg)
 Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
 {
     if (aMsg->StartOfStream()) {
-        Reset();
+        Reset("Track");
         iRampedDown = false;
     }
     return aMsg;
@@ -164,7 +169,7 @@ Msg* RampValidator::ProcessMsg(MsgWait* aMsg)
 
 Msg* RampValidator::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    Reset();
+    Reset("DecodedStream");
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iRampedDown = stream.Live() || (stream.SampleStart() > 0);
     iWaitingForAudio = true;

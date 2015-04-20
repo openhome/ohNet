@@ -47,7 +47,7 @@ private:
 private:
     void PullerThread();
     void Enqueue(Msg* aMsg);
-    MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
+    MsgAudio* ProcessAudioOut(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
 private: // from MsgReservoir

@@ -152,12 +152,50 @@ Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    return ProcessAudio(aMsg);
+    HandleAudio();
+    if (iState == ERampingDown || iState == ERampingUp) {
+        MsgAudio* split;
+        if (aMsg->Jiffies() > iRemainingRampSize) {
+            split = aMsg->Split(iRemainingRampSize);
+            if (split != NULL) {
+                iQueue.EnqueueAtHead(split);
+            }
+        }
+        split = NULL;
+        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
+        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        if (split != NULL) {
+            iQueue.EnqueueAtHead(split);
+        }
+        if (iRemainingRampSize == 0) {
+            if (iState == ERampingDown) {
+                DoWait();
+            }
+            else { // iState == ERampingUp
+                iState = ERunning;
+            }
+        }
+        return aMsg;
+    }
+
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
 {
-    return ProcessAudio(aMsg);
+    HandleAudio();
+    if (iState == ERampingDown) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMin;
+        DoWait();
+    }
+    else if (iState == ERampingUp) {
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMax;
+        iState = ERunning;
+    }
+
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Waiter::ProcessMsg(MsgPlayable* /*aMsg*/)
@@ -191,43 +229,16 @@ Msg* Waiter::ProcessFlushable(Msg* aMsg)
     return aMsg;
 }
 
-Msg* Waiter::ProcessAudio(MsgAudio* aMsg)
+void Waiter::HandleAudio()
 {
-    if (iState == ERampingDown || iState == ERampingUp) {
-        if (iState == ERampingUp && iCurrentRampValue == Ramp::kMin) {
-            // Start of ramping up.
-            iObserver.PipelineWaiting(false);
-        }
-
-        MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize) {
-            split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
-                iQueue.EnqueueAtHead(split);
-            }
-        }
-        split = NULL;
-        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
-        if (split != NULL) {
-            iQueue.EnqueueAtHead(split);
-        }
-        if (iRemainingRampSize == 0) {
-            if (iState == ERampingDown) {
-                DoWait();
-            }
-            else { // iState == ERampingUp
-                iState = ERunning;
-            }
-        }
-        return aMsg;
+    if (iState == ERampingUp && iCurrentRampValue == Ramp::kMin) {
+        // Start of ramping up.
+        iObserver.PipelineWaiting(false);
     }
     else if (iState == EWaiting) {
         iState = ERunning;
         iObserver.PipelineWaiting(false);
     }
-
-    return ProcessFlushable(aMsg);
 }
 
 void Waiter::NewStream()

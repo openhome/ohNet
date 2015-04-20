@@ -253,6 +253,9 @@ TUint SuiteConfigUi::RetrieveUriSocketOpen(const Uri& aUri, const Brx& aMethod, 
     catch (NetworkTimeout&) {
         return code;
     }
+    catch (NetworkError&) {
+        return code;
+    }
 
     try {
         iWriterRequest->WriteMethod(aMethod, aUri.PathAndQuery(), Http::eHttp11);
