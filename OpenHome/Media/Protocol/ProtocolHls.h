@@ -12,6 +12,8 @@
 EXCEPTION(HlsVariantPlaylistError);
 EXCEPTION(HlsEndOfStream);
 EXCEPTION(HlsSegmentError);
+EXCEPTION(HlsReaderError);
+EXCEPTION(HlsDiscontinuityError);
 
 
 namespace OpenHome {
@@ -65,10 +67,11 @@ private:
     static const TUint kMaxLineBytes = 2048;
 public:
     HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore);
-    void SetUri(const Uri& aUri);
+    void SetUri(const Uri& aUri, TBool aIgnoreDiscontinuity);
     TUint Version() const;
     TBool StreamEnded() const;
     TBool Error() const;
+    TBool Discontinuity() const;
     void Interrupt();
     void Close();
 public: // from ITimerHandler
@@ -81,9 +84,6 @@ private:
     TBool PreprocessM3u();
     void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
 private:
-    // FIXME - could have some intelligent logic to limit retries
-    // e.g. in addition to waiting for, at the minimum, the target duration (or half target duration if playlist has not changed), could instead choose:
-    // max(targetDuration, sum(newSegmentDurations)-targetDuration);
     ITimer& iTimer;
     IHttpSocket& iSocket;
     ReaderUntilS<kMaxLineBytes> iReaderUntil;
@@ -101,6 +101,8 @@ private:
     ISemaphore& iSem;
     TBool iInterrupted;
     TBool iError;
+    TBool iIgnoreDiscontinuity;
+    TBool iDiscontinuity;
 };
 
 class SegmentStreamer : public IReader
