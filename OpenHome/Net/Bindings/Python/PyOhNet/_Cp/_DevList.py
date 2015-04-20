@@ -40,9 +40,10 @@ class DeviceList():
             cb( dev )
         
     def _Removed( self, aDummy, aDev ):
+        handle = ctypes.c_void_p( aDev )
         udn = ctypes.c_char_p()
         length = ctypes.c_int()
-        self.lib.CpDeviceCGetUdn( aDev, ctypes.byref( udn ), ctypes.byref( length ))
+        self.lib.CpDeviceCGetUdn( handle, ctypes.byref( udn ), ctypes.byref( length ))
         for dev in self.devices:
             if dev.udn == udn.value:
                 for cb in self.removedCbs:
