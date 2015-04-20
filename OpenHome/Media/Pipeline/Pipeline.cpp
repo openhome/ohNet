@@ -24,6 +24,7 @@
 #include <OpenHome/Media/Pipeline/PreDriver.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -398,6 +399,7 @@ void Pipeline::Start()
 
 void Pipeline::Quit()
 {
+    LOG(kPipeline, "> Pipeline::Quit()\n");
     if (iQuitting) {
         return;
     }

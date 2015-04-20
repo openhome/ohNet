@@ -63,6 +63,7 @@ TBool Skipper::TryRemoveStream(TUint aStreamId, TBool aRampDown)
 void Skipper::RemoveAll(TUint aHaltId, TBool aRampDown)
 {
     AutoMutex a(iLock);
+    LOG(kPipeline, "Skipper::RemoveAll() - flush until haltId %u\n", aHaltId);
     iTargetHaltId = aHaltId;
     iPassGeneratedHalt = false;
     (void)TryRemoveCurrentStream(aRampDown);
@@ -134,6 +135,7 @@ Msg* Skipper::ProcessMsg(MsgMetaText* aMsg)
 Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
 {
     if (FlushUntilHalt() && aMsg->Id() == iTargetHaltId) {
+        LOG(kPipeline, "Skipper - completed flush (pulled haltId %u)\n", iTargetHaltId);
         iTargetHaltId = MsgHalt::kIdInvalid;
         iState = eRunning;
         // don't consume this - downstream elements may also be waiting on it

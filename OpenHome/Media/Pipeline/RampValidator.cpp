@@ -70,7 +70,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         ASSERT(aRamp.IsEnabled());
 #endif
         if (aRamp.Start() != iLastRamp) {
-            Log::Print("WARNING: discontinuity in ramp: expected %08x, got %08x\n", iLastRamp, aRamp.Start());
+            Log::Print("WARNING: discontinuity in ramp (%s): expected %08x, got %08x\n", iId, iLastRamp, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
             ASSERTS();
 #endif
@@ -88,7 +88,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         iRamping = true;
         if (aRamp.Direction() == Ramp::EUp) {
             if (aRamp.Start() != Ramp::kMin) {
-                Log::Print("WARNING: ramp up started at %08x\n", aRamp.Start());
+                Log::Print("WARNING: ramp up (%s) started at %08x\n", iId, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
                 ASSERTS();
 #endif
@@ -96,7 +96,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         }
         else { // aRamp.Direction() == Ramp::EDown
             if (aRamp.Start() != Ramp::kMax) {
-                Log::Print("WARNING: ramp down started at %08x\n", aRamp.Start());
+                Log::Print("WARNING: ramp down (%s) started at %08x\n", iId, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
                 ASSERTS();
 #endif

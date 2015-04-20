@@ -44,6 +44,7 @@ PipelineManager::~PipelineManager()
 
 void PipelineManager::Quit()
 {
+    LOG(kPipeline, "> PipelineManager::Quit()\n");
     AutoMutex _(iPublicLock);
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
@@ -54,6 +55,7 @@ void PipelineManager::Quit()
     iPipeline->Unblock();
     iLock.Signal();
     if (waitStop) {
+        LOG(kPipeline, "...waiting for pipeline to stop (why?)\n");
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
     }
