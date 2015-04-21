@@ -251,8 +251,8 @@ void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aM
 #else
     /* There doesn't seem to be any reliable way to determine version info on Windows 8.1 and beyond
        The recommended route appears to be to add ever more IsWindowsXxx tests as new OS versions are released... */
-	/* The recommended route doesn't appear to always work.
-	   Reporting host OS version has questionable benefit anyway so just hard-code something credible. */
+    /* The recommended route doesn't appear to always work.
+       Reporting host OS version has questionable benefit anyway so just hard-code something credible. */
     UNUSED(aContext);
     *aName = "Windows";
     *aMajor = 6;
@@ -606,7 +606,13 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     handles[1] = handle->iEvent;
     ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, aTimeoutMs, FALSE);
     if (WAIT_OBJECT_0 == ret) {
-        err = 0;
+        // Need to check socket status using getsockopt. See msdn page for select:
+        //  https://msdn.microsoft.com/en-us/library/windows/desktop/ms740141%28v=vs.85%29.aspx
+        int sock_error;
+        int opt_len = sizeof(sock_error);
+        if (getsockopt(handle->iSocket, SOL_SOCKET, SO_ERROR, (char*) &sock_error, &opt_len) == 0) {
+            err = ((opt_len == sizeof(sock_error)) && (sock_error == 0)) ? 0 : -2;
+        }
     }
 
     SetSocketBlocking(handle->iSocket);

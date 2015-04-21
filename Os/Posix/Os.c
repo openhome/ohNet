@@ -732,7 +732,12 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
 
     int32_t selectErr = TEMP_FAILURE_RETRY_2(select(nfds(handle), &read, &write, &error, &tv), handle);
     if (selectErr > 0 && FD_ISSET(handle->iSocket, &write)) {
-        err = 0;
+        // Need to check socket status using getsockopt. See man page for connect, EINPROGRESS
+        int sock_error;
+        socklen_t err_len = sizeof(sock_error);
+        if (getsockopt(handle->iSocket, SOL_SOCKET, SO_ERROR, &sock_error, &err_len) == 0) {
+            err = ((err_len == sizeof(sock_error)) && (sock_error == 0)) ? 0 : -2;
+        }
     }
     SetFdBlocking(handle->iSocket);
     return err;

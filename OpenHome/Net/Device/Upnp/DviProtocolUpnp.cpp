@@ -257,7 +257,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
         iLock.Wait();
         const TInt index = FindListenerForInterface(aAdapter);
         if (index == -1) {
-	        iLock.Signal();
+            iLock.Signal();
             return;
         }
         if (iDevice.IsRoot()) {

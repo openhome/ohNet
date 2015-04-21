@@ -416,7 +416,9 @@ int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort);
  * @param[in] aTimeoutMs   Number of milliseconds to wait.  An error will be returned
  *                         if the connection did not complete or fail before this.
  *
- * @return  0 on success; -1 on failure
+ * @return  0 on success
+ *          -1 on timeout
+ *          -2 on connection refused
  */
 int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, uint32_t aTimeoutMs);
 

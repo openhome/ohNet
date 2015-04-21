@@ -1131,7 +1131,12 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
     }
     catch (NetworkTimeout&) {
         Close();
-        LOG(kHttp, "<HttpReader::Connect connection failed!\n");
+        LOG(kHttp, "<HttpReader::Connect connection timeout\n");
+        return false;
+    }
+    catch (NetworkError&) {
+        Close();
+        LOG(kHttp, "<HttpReader::Connect connection error\n");
         return false;
     }
 

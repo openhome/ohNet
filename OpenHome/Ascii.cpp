@@ -353,7 +353,7 @@ TBool Ascii::Contains(const Brx& aBuffer, TChar aValue)
 
 TBool Ascii::Contains(const Brx& aBuffer, const Brx& aValue)
 {
-	TInt bytes = aBuffer.Bytes() - aValue.Bytes();
+    TInt bytes = aBuffer.Bytes() - aValue.Bytes();
     for (TInt i=0; i<=bytes; i++) {
         if (strncmp((char*)&aBuffer[i], (char*)&aValue[0], aValue.Bytes()) == 0) {
             return true;

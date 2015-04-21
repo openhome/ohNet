@@ -42,7 +42,7 @@ static void STDCALL removed(void* aPtr, CpDeviceC aDevice)
 {
     Mutex* lock = (Mutex*)aPtr;
     lock->Wait();
-    printDeviceInfo("Added", aDevice);
+    printDeviceInfo("Removed", aDevice);
     lock->Signal();
 }
 

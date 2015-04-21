@@ -66,6 +66,10 @@ void InvocationUpnp::WriteRequest(const Uri& aUri)
         iInvocation.SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
         throw;
     }
+    catch (NetworkError&) {
+        iInvocation.SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+        throw;
+    }
 
     try {
         InvocationBodyWriter::Write(iInvocation, body);
