@@ -486,7 +486,7 @@ private:
 class IHttpSocket
 {
 public:
-    virtual TBool Connect(const Uri& aUri) = 0;
+    virtual TUint Connect(const Uri& aUri) = 0; // returns Http status code; 0 if connection error.
     virtual void Close() = 0;
     virtual TUint ContentLength() const = 0;
     virtual ~IHttpSocket() {}
@@ -506,7 +506,7 @@ public:
     HttpReader(Environment& aEnv, const Brx& aUserAgent);
     ~HttpReader();
 public: // from IHttpSocket
-    TBool Connect(const Uri& aUri);
+    TUint Connect(const Uri& aUri);
     void Close();
     TUint ContentLength() const;
 public: // from IReader
@@ -515,7 +515,7 @@ public: // from IReader
     void ReadInterrupt();
 private:
     TUint WriteRequest(const Uri& aUri);
-    TBool ConnectAndProcessHeader(const Uri& aUri);
+    TUint ConnectAndProcessHeader(const Uri& aUri);
     TBool Connect(Endpoint aEndpoint);
     void Open();
 private:

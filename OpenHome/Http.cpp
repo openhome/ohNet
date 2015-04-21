@@ -1089,18 +1089,18 @@ HttpReader::~HttpReader()
     }
 }
 
-TBool HttpReader::Connect(const Uri& aUri)
+TUint HttpReader::Connect(const Uri& aUri)
 {
     ASSERT(!iConnected);
 
-    TBool headerRcvd = ConnectAndProcessHeader(aUri);
-    if (!headerRcvd) {
+    TUint code = ConnectAndProcessHeader(aUri);
+    if (code == 0) {
         Close();
-        return false;
+        return code;
     }
     iConnected = true;
 
-    return true;
+    return code;
 }
 
 void HttpReader::Close()
@@ -1221,22 +1221,23 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
     return code;
 }
 
-TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
+TUint HttpReader::ConnectAndProcessHeader(const Uri& aUri)
 {
     Uri uri(aUri);
+    TUint code = 0;
 
     iDechunker.SetChunked(false);
     for (;;) { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
-        TUint code = WriteRequest(uri);
+        code = WriteRequest(uri);
         if (code == 0) {
             LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader failed to send HTTP request\n");
-            return(false);
+            return code;
         }
         // Check for redirection
         if (code >= HttpStatus::kRedirectionCodes && code < HttpStatus::kClientErrorCodes) {
             if (!iHeaderLocation.Received()) {
                 LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader expected redirection but did not receive a location field  %d\n", code);
-                return(false);
+                return code;
             }
 
             uri.Replace(iHeaderLocation.Location());
@@ -1244,7 +1245,7 @@ TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
         }
         else if (code >= HttpStatus::kClientErrorCodes) {
             LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader received error code: %u\n", code);
-            return(false);
+            return code;
         }
         if (code != 0) {
             if (iHeaderTransferEncoding.IsChunked()) {
@@ -1254,5 +1255,5 @@ TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
             break;
         }
     }
-    return true;
+    return code;
 }
