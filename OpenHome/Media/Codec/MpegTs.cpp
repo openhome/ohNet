@@ -38,7 +38,8 @@ MpegTs::MpegTs()
 
 TBool MpegTs::Recognise(Brx& aBuf)
 {
-    iSize = 0;
+    LOG(kCodec, ">MpegTs::Recognise\n");
+    iSize = kMpegHeaderBytes;
 
     if (aBuf.Bytes() < kRecogniseBytes) {
         return false; // not enough data to recognise
@@ -47,6 +48,9 @@ TBool MpegTs::Recognise(Brx& aBuf)
     if (aBuf[0] != 0x47) {  // expect sync word - should seek if can't find it.
         return false;
     }
+
+    const TBool payloadStart = ((aBuf[1] & 0x40) == 0x40);
+    LOG(kCodec, "MpegTs::Recognise payloadStart: %u\n", payloadStart);
 
     TUint pid = (aBuf[1] & 0x1f) << 8 | aBuf[2];
 
@@ -57,6 +61,7 @@ TBool MpegTs::Recognise(Brx& aBuf)
     TBool adaptationField = false;
     TUint adaptationFieldBytes = 0;
     if ((aBuf[3] & 0x20) != 0x00) {// && iStreamPid != 0 && pid == iStreamPid) {
+        LOG(kCodec, "MpegTs::Recognise adaptation field present\n");
         adaptationField = true;
     }
 
@@ -68,50 +73,71 @@ TBool MpegTs::Recognise(Brx& aBuf)
         adaptationFieldBytes += 1;  // +1 because adaptation field length doesn't account for the adaptation field length byte!
         iSize += adaptationFieldBytes;
         //TBool startsSeq = ((aBuf[adaptationOffset+1] & 0x40) == 0x40);
+        LOG(kCodec, "MpegTs::Recognise adaptationFieldBytes: %u, iSize: %u\n", adaptationFieldBytes, iSize);
     }
 
     // Not concerned with remainder of fields from header.
 
-    TUint offset = kMpegHeaderBytes+adaptationFieldBytes; 
-    iSize = kPacketBytes;
-    if (pid == 0) {
-        Brn table(aBuf.Ptr()+offset, aBuf.Bytes()-offset);
-        if (!RecognisePat(table)) {
+    TUint offset = kMpegHeaderBytes+adaptationFieldBytes;
+
+    if (payloadStart) {
+
+        if (pid == 0) {
+            Brn table(aBuf.Ptr()+offset, aBuf.Bytes()-offset);
+            if (!RecognisePat(table)) {
+                return false;
+            }
+            iSize = kRecogniseBytes;    // Discard entire packet; padding will follow table.
+            LOG(kCodec, "MpegTs::Recognise recognised Program Association Table (PAT) iSectionLength: %u, iSize: %u\n", iSectionLength, iSize);
+        }
+
+        else if (iProgramMapPid != 0 && pid == iProgramMapPid) {
+            Brn table(aBuf.Ptr()+offset, aBuf.Bytes()-offset);
+            if (!RecognisePmt(table)) {
+                return false;
+            }
+            iSize = kRecogniseBytes;    // Discard entire packet; padding will follow table.
+            LOG(kCodec, "MpegTs::Recognise recognised Program Map Table (PMT) iSectionLength: %u, iSize: %u\n", iSectionLength, iSize);
+        }
+
+        else if (iStreamPid != 0 && pid == iStreamPid) {
+            TUint pesBytes = 0;
+            TBool isPesPacketStart = false;
+            if (offset < aBuf.Bytes() && aBuf.Bytes()-(offset+1) > kPesHeaderStartCodePrefixBytes) {
+                if ((aBuf[offset] == 0x00) && (aBuf[offset+1] == 0x00) && (aBuf[offset+2] == 0x01)) {
+                    isPesPacketStart = true;
+                    pesBytes = kPesHeaderFixedBytes;
+                    LOG(kCodec, "MpegTs::Recognise recognised Packetized Elementary Stream (PES) header\n");
+
+                    //TUint streamId = aBuf[offset+3];
+                    //if (streamId != 0xc0) {   // Expect only audio.
+                    //    ASSERTS();
+                    //}
+                }
+            }
+
+            if (isPesPacketStart) {
+                //TUint streamId = aBuf[offset+3];
+                //TUint pesPacketLength = Converter::BeUint16At(aBuf, offset+4);
+                if ((aBuf[offset+6] & 0x80) == 0x80) { // Optional PES header found
+                    TUint pesOptionalHeaderLength = aBuf[offset+8];
+                    pesBytes += kPesHeaderOptionalFixedBytes + pesOptionalHeaderLength;
+                    LOG(kCodec, "MpegTs::Recognise kPesHeaderOptionalFixedBytes: %u, pesOptionalHeaderLength: %u\n", kPesHeaderOptionalFixedBytes, pesOptionalHeaderLength);
+                    LOG(kCodec, "MpegTs::Recognise pesBytes: %u\n", pesBytes);
+                }
+            }
+
+            iSize += pesBytes;
+            LOG(kCodec, "MpegTs::Recognise pesBytes: %u, iSize: %u\n", pesBytes, iSize);
+        }
+        else {
+            LOG(kCodec, "MpegTs::Recognise expected PAT, PMT or PES, but didn't find any\n");
             return false;
         }
-        //iSize = kRecogniseBytes;
+
     }
 
-    if (iProgramMapPid != 0 && pid == iProgramMapPid) {
-        Brn table(aBuf.Ptr()+offset, aBuf.Bytes()-offset);
-        if (!RecognisePmt(table)) {
-            return false;
-        }
-        //iSize = kRecogniseBytes;
-    }
-
-    if (iStreamPid != 0 && pid == iStreamPid) {
-        TBool isPesPacketStart = false;
-        TUint pesBytes = 0;
-        if (offset < aBuf.Bytes() && aBuf.Bytes()-(offset+1) > kPesHeaderStartCodePrefixBytes) {
-            if ((aBuf[offset] == 0x00) && (aBuf[offset+1] == 0x00) && (aBuf[offset+2] == 0x01)) {
-                isPesPacketStart = true;
-                pesBytes = kPesHeaderFixedBytes;
-            }
-        }
-
-        if (isPesPacketStart) {
-            //TUint streamId = aBuf[offset+3];
-            //TUint pesPacketLength = Converter::BeUint16At(aBuf, offset+4);
-            if ((aBuf[offset+6] & 0x80) == 0x80) { // Optional PES header found
-                TUint pesOptionalHeaderLength = aBuf[offset+8];
-                pesBytes += kPesHeaderOptionalFixedBytes + pesOptionalHeaderLength;
-            }
-        }
-
-        iSize = kMpegHeaderBytes+adaptationFieldBytes+pesBytes;
-    }
-
+    LOG(kCodec, "<MpegTs::Recognise true\n");
     return true;
 }
 
@@ -191,7 +217,9 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                         iPacketBytes += iSize;
 
                         //const TUint payloadBytes = kPacketBytes-kRecogniseBytes;
+                        ASSERT(iSize <= kPacketBytes);
                         const TUint payloadBytes = kPacketBytes - iSize;
+
                         MsgAudioEncoded* payload = NULL;
                         if (payloadBytes == 0) {
                             iPacketBytes = 0;

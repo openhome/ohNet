@@ -62,7 +62,7 @@ public:
 class ProtocolHls : public Protocol
 {
 public:
-    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment);
+    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aM3uReaderSem);
     ~ProtocolHls();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -82,8 +82,8 @@ private:
     IHlsReader* iHlsReaderM3u;
     IHlsReader* iHlsReaderSegment;
     Supply* iSupply;
-    TimerGeneric iTimer;
-    SemaphoreGeneric iSemReaderM3u;
+    ITimer* iTimer;
+    ISemaphore* iSemReaderM3u;
     HlsM3uReader iM3uReader;
     SegmentStreamer iSegmentStreamer;
     TUint iStreamId;
@@ -106,14 +106,16 @@ Protocol* ProtocolFactory::NewHls(Environment& aEnv, const Brx& aUserAgent)
 { // static
     HlsReader* readerM3u = new HlsReader(aEnv, aUserAgent);
     HlsReader* readerSegment = new HlsReader(aEnv, aUserAgent);
-    return new ProtocolHls(aEnv, readerM3u, readerSegment);
+    TimerGeneric* timer = new TimerGeneric(aEnv, "PHLS");
+    SemaphoreGeneric* semM3u = new SemaphoreGeneric("HMRS", 0);
+    return new ProtocolHls(aEnv, readerM3u, readerSegment, timer, semM3u);
 }
 
 
 // For test purposes.
-Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment)
+Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aSem)
 { // static
-    return new ProtocolHls(aEnv, aReaderM3u, aReaderSegment);
+    return new ProtocolHls(aEnv, aReaderM3u, aReaderSegment, aTimer, aSem);
 };
 
 
@@ -208,6 +210,7 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTime
     , iReaderUntil(aReader)
     , iConnected(false)
     , iTotalBytes(0)
+    , iOffset(0)
     , iVersion(2)
     , iLastSegment(0)
     , iTargetDuration(0)
@@ -217,10 +220,12 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTime
     , iSem(aSemaphore)
     , iInterrupted(true)
     , iError(false)
+    , iIgnoreDiscontinuity(false)
+    , iDiscontinuity(false)
 {
 }
 
-void HlsM3uReader::SetUri(const Uri& aUri)
+void HlsM3uReader::SetUri(const Uri& aUri, TBool aIgnoreDiscontinuity)
 {
     LOG(kMedia, ">HlsM3uReader::SetUri ");
     LOG(kMedia, aUri.AbsoluteUri());
@@ -230,15 +235,24 @@ void HlsM3uReader::SetUri(const Uri& aUri)
     // iInterrupted is set to true at construction, so will be true on first call to SetUri().
     ASSERT(!iConnected);
     iUri.Replace(aUri.AbsoluteUri());
-    iLastSegment = 0;
+    if (aIgnoreDiscontinuity) {
+        iIgnoreDiscontinuity = true;
+    }
+    else {
+        iLastSegment = 0;
+        iIgnoreDiscontinuity = false;
+    }
     iTargetDuration = 0;
     iEndlist = false;
     iStreamEnded = false;
+    iTotalBytes = 0;
+    iOffset = 0;
     iNextLine.Set(Brx::Empty());
     iSem.Clear();   // Clear any pending signals from last run.
     iSem.Signal();
     iInterrupted = false;
     iError = false;
+    iDiscontinuity = false;
     //iReaderUntil.ReadFlush();
 }
 
@@ -255,6 +269,11 @@ TBool HlsM3uReader::StreamEnded() const
 TBool HlsM3uReader::Error() const
 {
     return iError;
+}
+
+TBool HlsM3uReader::Discontinuity() const
+{
+    return iDiscontinuity;
 }
 
 void HlsM3uReader::Close()
@@ -280,10 +299,16 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             Brn uri;
             if ((iLastSegment == 0 && iTargetDuration == 0) || iOffset >= iTotalBytes) {
                 if (!iEndlist) {
-                    if (!ReloadVariantPlaylist()) {
-                        LOG(kMedia, "HlsM3uReader::NextSegmentUri unable to reload variant playlist\n");
+                    try {
+                        if (!ReloadVariantPlaylist()) {
+                            LOG(kMedia, "HlsM3uReader::NextSegmentUri unable to reload variant playlist\n");
+                            // Failure to reload playlist may be temporary, so potentially recoverable.
+                            THROW(HlsReaderError);
+                        }
+                    }
+                    catch (HlsVariantPlaylistError&) {
                         iError = true;
-                        THROW(HlsVariantPlaylistError);
+                        throw;
                     }
                 }
                 else {
@@ -342,23 +367,21 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
         catch (UriError&) {
             LOG(kMedia, "HlsM3uReader::NextSegmentUri UriError\n");
             iError = true;
-            THROW(HlsVariantPlaylistError);
+            THROW(HlsVariantPlaylistError); // Malformed URI.
         }
     }
     catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
         iError = true;
-        THROW(HlsVariantPlaylistError);
+        THROW(HlsVariantPlaylistError);     // Malformed playlist.
     }
     catch (HttpError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
-        iError = true;
-        THROW(HlsVariantPlaylistError);
+        THROW(HlsReaderError);
     }
     catch (ReaderError&) {
         LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
-        iError = true;
-        THROW(HlsVariantPlaylistError);
+        THROW(HlsReaderError);
     }
 
     return duration;
@@ -410,8 +433,11 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     }
 
     Close();
-    TBool success = iSocket.Connect(iUri);
-    if (success) {
+    TUint code = iSocket.Connect(iUri);
+    if (code >= HttpStatus::kSuccessCodes && code < HttpStatus::kRedirectionCodes) {
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist successfully connected to ");
+        LOG(kMedia, iUri.AbsoluteUri());
+        LOG(kMedia, "\n");
         {
             AutoMutex a(iLock);
             iConnected = true;
@@ -419,34 +445,29 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
         iTotalBytes = iSocket.ContentLength();
         iOffset = 0;
     }
+    else if (code == 0) {
+        // Connection error. Should be temporary and recoverable.
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect to ");
+        LOG(kMedia, iUri.AbsoluteUri());
+        LOG(kMedia, "\n");
+        return false;
+    }
     else {
-
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect\n");
-        return false;
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist encountered code %u while trying to connect to ", code);
+        LOG(kMedia, iUri.AbsoluteUri());
+        LOG(kMedia, "\n");
+        THROW(HlsVariantPlaylistError);
     }
 
-    try {
-        if (!PreprocessM3u()) {
-            LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist failed to pre-process M3U8\n");
-            return false;
-        }
-    }
-    catch (AsciiError&) {
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
-        return false;
-    }
-    catch (HttpError&) {
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
-        return false;
-    }
-    catch (ReaderError&) {
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
+    // If HlsVariantPlaylistError or HlsDiscontinuityError are thrown, just let them be thrown up; everything else should be encapsulated in true/false return state.
+    if (!PreprocessM3u()) {
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist failed to pre-process M3U8\n");
         return false;
     }
 
     if (iTargetDuration == 0) { // #EXT-X-TARGETDURATION is a required tag.
         LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist malformed file\n");
-        return false;
+        THROW(HlsVariantPlaylistError); // Malformed playlist.
     }
 
 
@@ -506,6 +527,16 @@ TBool HlsM3uReader::PreprocessM3u()
                 else if (mediaSeq <= iLastSegment) {
                     skipSegments = (iLastSegment-mediaSeq);
                 }
+                else {  // Discontinuity in audio segment sequence.
+                    if (iIgnoreDiscontinuity) {
+                        iLastSegment = mediaSeq;
+                        iIgnoreDiscontinuity = false;
+                    }
+                    else {
+                        iDiscontinuity = true;
+                        THROW(HlsDiscontinuityError);
+                    }
+                }
                 LOG(kMedia, "HlsM3uReader::PreprocessM3u mediaSeq: %llu\n", mediaSeq);
             }
             else if (tag == Brn("#EXT-X-TARGETDURATION")) {
@@ -539,7 +570,7 @@ TBool HlsM3uReader::PreprocessM3u()
     }
     catch (AsciiError&) {
         LOG(kMedia, "HlsM3uReader::PreprocessM3u AsciiError\n");
-        return false;
+        THROW(HlsVariantPlaylistError); // Malformed playlist.
     }
     catch (HttpError&) {
         LOG(kMedia, "HlsM3uReader::PreprocessM3u HttpError\n");
@@ -636,8 +667,16 @@ Brn SegmentStreamer::Read(TUint aBytes)
         LOG(kMedia, "SegmentStreamer::Read HlsSegmentError\n");
         THROW(ReaderError);
     }
+    catch (HlsReaderError&) {
+        LOG(kMedia, "SegmentStreamer::Read HlsReaderError\n");
+        THROW(ReaderError);
+    }
     catch (HlsEndOfStream&) {
         LOG(kMedia, "SegmentStreamer::Read HlsEndOfStream\n");
+        THROW(ReaderError);
+    }
+    catch (HlsDiscontinuityError&) {
+        LOG(kMedia, "SegmentStreamer::Read HlsDiscontinuityError\n");
         THROW(ReaderError);
     }
     Brn buf = iReader.Read(aBytes);
@@ -684,6 +723,10 @@ void SegmentStreamer::GetNextSegment()
         iError = true;
         THROW(HlsSegmentError);
     }
+    catch (HlsReaderError&) {
+        LOG(kMedia, "SegmentStreamer::GetNextSegment HlsReaderError\n");
+        throw;
+    }
     catch (HlsEndOfStream&) {
         LOG(kMedia, "SegmentStreamer::GetNextSegment HlsEndOfStream\n");
         throw;
@@ -692,23 +735,39 @@ void SegmentStreamer::GetNextSegment()
     iUri.Replace(segment.AbsoluteUri());
 
     Close();
-    TBool success = iSocket.Connect(iUri);
-    if (!success) {
+    TUint code = iSocket.Connect(iUri);
+    if (code >= HttpStatus::kSuccessCodes && code < HttpStatus::kRedirectionCodes) {
+        LOG(kMedia, "SegmentStreamer::GetNextSegment successfully connected to ");
+        LOG(kMedia, iUri.AbsoluteUri());
+        LOG(kMedia, "\n");
+        {
+            AutoMutex a(iLock);
+            iConnected = true;
+        }
+        iTotalBytes = iSocket.ContentLength();
+        //iOffset = 0;
+    }
+    else if (code == 0) {
+        LOG(kMedia, "SegmentStreamer::GetNextSegment unable to (re-)connect to ");
+        LOG(kMedia, iUri.AbsoluteUri());
+        LOG(kMedia, "\n");
+        THROW(HlsReaderError);  // Potentially recoverable, but don't want any reconnect logic in here.
+    }
+    else {
+        LOG(kMedia, "SegmentStreamer::GetNextSegment encountered code %u while trying to connect to ", code);
+        LOG(kMedia, iUri.AbsoluteUri());
+        LOG(kMedia, "\n");
         iError = true;
         THROW(HlsSegmentError);
     }
-    {
-        AutoMutex a(iLock);
-        iConnected = true;
-    }
-    iTotalBytes = iSocket.ContentLength();
-    iOffset = 0;
 }
 
 void SegmentStreamer::EnsureSegmentIsReady()
 {
     // FIXME - what if iTotalBytes == 0?
     if (iOffset == iTotalBytes) {
+        iOffset = 0;
+        //Close();
         GetNextSegment();
     }
 }
@@ -716,14 +775,14 @@ void SegmentStreamer::EnsureSegmentIsReady()
 
 // ProtocolHls
 
-ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment)
+ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aM3uReaderSem)
     : Protocol(aEnv)
     , iHlsReaderM3u(aReaderM3u)
     , iHlsReaderSegment(aReaderSegment)
     , iSupply(NULL)
-    , iTimer(iEnv, "PHLS")
-    , iSemReaderM3u("HMRS", 0)
-    , iM3uReader(iHlsReaderM3u->Socket(), iHlsReaderM3u->Reader(), iTimer, iSemReaderM3u)
+    , iTimer(aTimer)
+    , iSemReaderM3u(aM3uReaderSem)
+    , iM3uReader(iHlsReaderM3u->Socket(), iHlsReaderM3u->Reader(), *iTimer, *iSemReaderM3u)
     , iSegmentStreamer(iHlsReaderSegment->Socket(), iHlsReaderSegment->Reader())
     , iSem("PRTH", 0)
     , iLock("PRHL")
@@ -732,6 +791,8 @@ ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* 
 
 ProtocolHls::~ProtocolHls()
 {
+    delete iSemReaderM3u;
+    delete iTimer;
     delete iSupply;
     delete iHlsReaderSegment;
     delete iHlsReaderM3u;
@@ -816,13 +877,14 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     //iSegmentStreamer.ReadInterrupt();
     //iM3uReader.Interrupt();
-    iM3uReader.SetUri(uriHttp);
+    iM3uReader.SetUri(uriHttp, false);
     iSegmentStreamer.Stream(iM3uReader);
 
     if (iContentProcessor == NULL) {
         iContentProcessor = iProtocolManager->GetAudioProcessor();
     }
 
+    // FIXME - can we output some initial audio here and check if it fails immediately (i.e., before any audio is output)? If so, return with EProtocolStreamErrorUnrecoverable
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     while (res == EProtocolStreamErrorRecoverable) {
         if (iStopped) {
@@ -844,13 +906,41 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             res = EProtocolStreamStopped;
             break;
         }
-        else if (iM3uReader.StreamEnded()) {
+        else if (iM3uReader.StreamEnded()) { // FIXME - what if we've processed end of playlist, but encountered problem while trying to play one segment?
             res = EProtocolStreamSuccess;
             break;
         }
         else if (iM3uReader.Error() || iSegmentStreamer.Error()) {
             res = EProtocolStreamErrorUnrecoverable;
             break;
+        }
+        else {
+            ASSERT(res == EProtocolStreamErrorRecoverable);
+            // Only retry at level of variant playlist, indefinitely.
+            // If error at segment level, or a stream discontinuity, just move
+            // onto next segment, if possible.
+
+            // FIXME - could result in pops clicks as unlikely to ramp down at discontinuity (either between two segments, or failure while reading a segment).
+            // - could wait for NotifyStarving to be called, but must also
+            // handle case where already starving. Must also know when audio
+            // has ramped up.
+
+
+            // Allow iM3uReader to continue on from current pos, but reset SegmentStreamer.
+            // It is safe to reset iSegmentStreamer here, as failures can occur
+            // while retrieving segments or reloading playlist.
+            // Reloading/parsing of playlist only occurs on segment boundaries,
+            // so nothing cached in iSegmentStreamer.
+
+            iSegmentStreamer.ReadInterrupt();
+            iSegmentStreamer.Close();
+            if (iM3uReader.Discontinuity()) {
+                iM3uReader.Interrupt();
+                iM3uReader.Close();
+                iM3uReader.SetUri(uriHttp, true);   // Jump over discontinuity.
+            }
+            iSegmentStreamer.Stream(iM3uReader);
+            StartStream(uriHls);    // Output new MsgEncodedStream to signify possible discontinuity.
         }
     }
 

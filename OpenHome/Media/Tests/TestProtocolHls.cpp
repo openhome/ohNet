@@ -24,6 +24,7 @@ class TestTimer : public ITimer
 public:
     TestTimer();
     void Clear();
+    void Fire();
     ITimerHandler* LastHandler() const; // NOT passing ownership; may return NULL
     TUint LastDurationMs() const;
     TUint StartCount() const;
@@ -59,7 +60,15 @@ private:
 class TestHttpReader : public IHlsReader, public IHttpSocket, public IReader
 {
 public:
-    typedef std::vector<const Uri*> UriList;
+    enum EConnectionBehaviour
+    {
+        eSuccess,
+        eNotFound,
+        eUnspecifiedError,
+    };
+public:
+    typedef std::pair<const Uri*, EConnectionBehaviour> UriConnectPair;
+    typedef std::vector<UriConnectPair> UriList;
     typedef std::vector<const Brx*> BufList;
 public:
     TestHttpReader(Semaphore& aObserverSem, Semaphore& aWaitSem);
@@ -72,7 +81,7 @@ public: // from IHlsReader
     IHttpSocket& Socket() override;
     IReader& Reader() override;
 public: // from IHttpSocket
-    TBool Connect(const Uri& aUri) override;
+    TUint Connect(const Uri& aUri) override;
     void Close() override;
     TUint ContentLength() const override;
 public: // from IReader
@@ -203,6 +212,7 @@ private:
     void TestUnsupportedVersion();
     void TestInterrupt();
     void TestFailedConnection();
+    void TestUriNotFound();
     void TestInvalidAttributes();
 private:
     const Uri iUriDefault;
@@ -258,7 +268,10 @@ private:
     void TestStreamErrorRecoverable();
     void TestStreamM3uError();
     void TestRestreamAfterM3uError();
-    void TestStreamSegmentError();
+    void TestStreamSegmentNotFound();
+    void TestStreamM3uConnectionError();
+    void TestSegmentDiscontinuity();
+    void TestStreamSegmentConnectionError();
     void TestGet();
     void TestTrySeek();
     void TestTryStop();
@@ -280,6 +293,9 @@ private:
     Semaphore* iSegmentSem;
     Semaphore* iSegmentWaitSem;
     TestHttpReader* iSegmentReader;
+    TestTimer* iTimer;
+    Semaphore* iM3uReloadSem;
+    TestSemaphore* iTestSem;
     Protocol* iProtocolHls;
 
     Track* iTrack;
@@ -314,6 +330,13 @@ void TestTimer::Clear()
     iDurationMs = 0;
     iStartCount = 0;
     iCancelCount = 0;
+}
+
+void TestTimer::Fire()
+{
+    AutoMutex a(iLock);
+    ASSERT(iHandler != NULL);
+    iHandler->TimerFired();
 }
 
 ITimerHandler* TestTimer::LastHandler() const
@@ -449,18 +472,30 @@ IReader& TestHttpReader::Reader()
     return *this;
 }
 
-TBool TestHttpReader::Connect(const Uri& aUri)
+TUint TestHttpReader::Connect(const Uri& aUri)
 {
     iConnectCount++;
-    if (iIndex < iUris->size() && aUri.AbsoluteUri() == (*iUris)[iIndex]->AbsoluteUri()) {
-        iCurrent.Set(*(*iContent)[iIndex]);
-        iBlockSem.Clear();
-        iOffset = 0;
-        iIndex++;
-        iConnected = true;
-        return true;
+    const TUint idx = iIndex++;
+    if (idx < iUris->size() && aUri.AbsoluteUri() == (*iUris)[idx].first->AbsoluteUri()) {
+        if ((*iUris)[idx].second == eSuccess) {
+            iCurrent.Set(*(*iContent)[idx]);
+            iBlockSem.Clear();
+            iOffset = 0;
+            iConnected = true;
+            return HttpStatus::kOk.Code();
+        }
+        else if ((*iUris)[idx].second == eNotFound) {
+            return HttpStatus::kNotFound.Code();
+        }
+        else if ((*iUris)[idx].second == eUnspecifiedError) {
+            return 0;
+        }
+        else {
+            ASSERTS();
+        }
     }
-    return false;
+    ASSERTS();
+    return 0;   // unreachable
 }
 
 void TestHttpReader::Close()
@@ -827,6 +862,7 @@ SuiteHlsM3uReader::SuiteHlsM3uReader()
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestUnsupportedVersion), "TestUnsupportedVersion");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestInterrupt), "TestInterrupt");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestFailedConnection), "TestFailedConnection");
+    AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestUriNotFound), "TestUriNotFound");
     AddTest(MakeFunctor(*this, &SuiteHlsM3uReader::TestInvalidAttributes), "TestInvalidAttributes");
 }
 
@@ -860,7 +896,7 @@ void SuiteHlsM3uReader::TearDown()
 void SuiteHlsM3uReader::NextSegmentErrorThread()
 {
     Uri segmentUri;
-    TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
+    TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsReaderError);
     TEST(segmentUri.AbsoluteUri().Bytes() == 0);
     iThreadSem->Signal();
 }
@@ -874,11 +910,11 @@ void SuiteHlsM3uReader::NextSegmentSuccessThread()
 void SuiteHlsM3uReader::TestSetUri()
 {
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&iUriDefault);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&iUriDefault, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileDefault);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(iUriDefault);
+    iM3uReader->SetUri(iUriDefault, false);
 
     static const TUint kExpectedDuration = 8000;
     static const Brn kExpectedUri("https://priv.example.com/fileSequence2680.ts");
@@ -908,11 +944,11 @@ void SuiteHlsM3uReader::TestSetUri()
     iM3uReader->Interrupt();
     iM3uReader->Close();
     TestHttpReader::UriList uriList2;
-    uriList2.push_back(&kUri2);
+    uriList2.push_back(TestHttpReader::UriConnectPair(&kUri2, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList2;
     bufList2.push_back(&kFile2);
     iHttpReader->SetContent(uriList2, bufList2);
-    iM3uReader->SetUri(kUri2);
+    iM3uReader->SetUri(kUri2, false);
 
     static const TUint kExpectedDuration2 = 6000;
     static const Brn kExpectedUri2("https://priv.example.com/fileSequence3048.ts");
@@ -963,13 +999,13 @@ void SuiteHlsM3uReader::TestPlaylistNoMediaSequence()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriNoMediaSeq);
-    uriList1.push_back(&kUriNoMediaSeq);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriNoMediaSeq, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriNoMediaSeq, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileNoMediaSeq);
     bufList1.push_back(&kFileNoMediaSeqExtended);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriNoMediaSeq);
+    iM3uReader->SetUri(kUriNoMediaSeq, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1039,13 +1075,13 @@ void SuiteHlsM3uReader::TestPlaylistMediaSequenceStartZero()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriMediaSeqStartZero);
-    uriList1.push_back(&kUriMediaSeqStartZero);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqStartZero, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqStartZero, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileMediaSeqStartZero);
     bufList1.push_back(&kFileMediaSeqStartZeroExtended);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriMediaSeqStartZero);
+    iM3uReader->SetUri(kUriMediaSeqStartZero, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1112,13 +1148,13 @@ void SuiteHlsM3uReader::TestPlaylistMediaSequenceStartNonZero()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriMediaSeqStartNonZero);
-    uriList1.push_back(&kUriMediaSeqStartNonZero);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqStartNonZero, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqStartNonZero, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileMediaSeqStartNonZero);
     bufList1.push_back(&kFileMediaSeqStartNonZeroExtended);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriMediaSeqStartNonZero);
+    iM3uReader->SetUri(kUriMediaSeqStartNonZero, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1172,11 +1208,11 @@ void SuiteHlsM3uReader::TestPlaylistRelativeUris()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriRelative);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriRelative, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileRelative);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriRelative);
+    iM3uReader->SetUri(kUriRelative, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1233,13 +1269,15 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriMediaSeqNonContinuous);
-    uriList1.push_back(&kUriMediaSeqNonContinuous);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));   // Exception signifying discontinuity will be thrown.
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeqNonContinuous, TestHttpReader::eSuccess));   // Attempt to reload playlist and skip discontinuity.
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileMediaSeqNonContinuous);
     bufList1.push_back(&kFileMediaSeqStartNonContinuousExtended);
+    bufList1.push_back(&kFileMediaSeqStartNonContinuousExtended);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriMediaSeqNonContinuous);
+    iM3uReader->SetUri(kUriMediaSeqNonContinuous, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1262,6 +1300,11 @@ void SuiteHlsM3uReader::TestReloadNonContinuous()
     TEST(iTimer->LastHandler() == iM3uReader);
 
     iM3uReader->TimerFired();
+
+    TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsDiscontinuityError);
+    iM3uReader->Interrupt();
+    iM3uReader->Close();
+    iM3uReader->SetUri(kUriMediaSeqNonContinuous, true);    // Skip over discontinuity.
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 4000);
@@ -1312,15 +1355,15 @@ void SuiteHlsM3uReader::TestReloadNoChange()
         );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriMediaSeq);
-    uriList1.push_back(&kUriMediaSeq);
-    uriList1.push_back(&kUriMediaSeq);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeq, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeq, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaSeq, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileMediaSeq1);
     bufList1.push_back(&kFileMediaSeq1);
     bufList1.push_back(&kFileMediaSeq2);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriMediaSeq);
+    iM3uReader->SetUri(kUriMediaSeq, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1393,11 +1436,11 @@ void SuiteHlsM3uReader::TestEndlist()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriEndlistEnd);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileEndlistEnd);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriEndlistEnd);
+    iM3uReader->SetUri(kUriEndlistEnd, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1443,11 +1486,11 @@ void SuiteHlsM3uReader::TestEndlist()
     iM3uReader->Interrupt();
     iM3uReader->Close();
     TestHttpReader::UriList uriList2;
-    uriList2.push_back(&kUriEndlistStart);
+    uriList2.push_back(TestHttpReader::UriConnectPair(&kUriEndlistStart, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList2;
     bufList2.push_back(&kFileEndlistStart);
     iHttpReader->SetContent(uriList2, bufList2);
-    iM3uReader->SetUri(kUriEndlistStart);
+    iM3uReader->SetUri(kUriEndlistStart, false);
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 9009);
@@ -1492,11 +1535,11 @@ void SuiteHlsM3uReader::TestPlaylistCrLf()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriMediaCrLf);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriMediaCrLf, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileMediaCrLf);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriMediaCrLf);
+    iM3uReader->SetUri(kUriMediaCrLf, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1538,11 +1581,11 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUriVersion3);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUriVersion3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileVersion3);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUriVersion3);
+    iM3uReader->SetUri(kUriVersion3, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1583,11 +1626,11 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     iM3uReader->Interrupt();
     iM3uReader->Close();
     TestHttpReader::UriList uriList2;
-    uriList2.push_back(&kUriVersion4);
+    uriList2.push_back(TestHttpReader::UriConnectPair(&kUriVersion4, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList2;
     bufList2.push_back(&kFileVersion4);
     iHttpReader->SetContent(uriList2, bufList2);
-    iM3uReader->SetUri(kUriVersion4);
+    iM3uReader->SetUri(kUriVersion4, false);
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 7975);
@@ -1634,11 +1677,11 @@ void SuiteHlsM3uReader::TestUnsupportedVersion()
     iM3uReader->Interrupt();
     iM3uReader->Close();
     TestHttpReader::UriList uriList3;
-    uriList3.push_back(&kUriVersion3Encrypted);
+    uriList3.push_back(TestHttpReader::UriConnectPair(&kUriVersion3Encrypted, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList3;
     bufList3.push_back(&kFileVersion3Encrypted);
     iHttpReader->SetContent(uriList3, bufList3);
-    iM3uReader->SetUri(kUriVersion3Encrypted);
+    iM3uReader->SetUri(kUriVersion3Encrypted, false);
 
     duration = iM3uReader->NextSegmentUri(segmentUri);
     TEST(duration == 2833);
@@ -1684,11 +1727,11 @@ void SuiteHlsM3uReader::TestInterrupt()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUri);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUri, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFile);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUri);
+    iM3uReader->SetUri(kUri, false);
 
     Uri segmentUri;
     TUint duration = 0;
@@ -1720,7 +1763,7 @@ void SuiteHlsM3uReader::TestInterrupt()
     // Test interrupt while reading from stream.
     iHttpReader->SetContent(uriList1, bufList1);
     iHttpReader->BlockAtOffset(34);
-    iM3uReader->SetUri(kUri);
+    iM3uReader->SetUri(kUri, false);
 
     // Now, call NextSegmentUri() in another thread.
     // iReader will block at above offset.
@@ -1738,27 +1781,42 @@ void SuiteHlsM3uReader::TestInterrupt()
     // Test error thrown up from underlying stream reader.
     iHttpReader->SetContent(uriList1, bufList1);
     iHttpReader->ThrowReadErrorAtOffset(34);
-    iM3uReader->SetUri(kUri);
+    iM3uReader->SetUri(kUri, false);
 
     segmentUri.Clear();
     TEST(iM3uReader->Error() == false);
-    TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
-    TEST(iM3uReader->Error() == true);
+    TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsReaderError);
+    TEST(iM3uReader->Error() == false);
     TEST(segmentUri.AbsoluteUri().Bytes() == 0);
 }
 
 void SuiteHlsM3uReader::TestFailedConnection()
 {
-    static const Uri kServingUri(Brn("http://dummy"));
     static const Uri kPlaylistUri(Brn("http://example.com/playlist.m3u8"));
 
     // Test error thrown up from underlying stream reader.
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kServingUri);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kPlaylistUri, TestHttpReader::eUnspecifiedError));   // Ensure connecting results in socket error.
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&Brx::Empty());
-    iHttpReader->SetContent(uriList1, bufList1);    // Ensure the requested URI won't be recognised, so Connect() will fail.
-    iM3uReader->SetUri(kPlaylistUri);
+    iHttpReader->SetContent(uriList1, bufList1);
+    iM3uReader->SetUri(kPlaylistUri, false);
+    Uri segmentUri;
+    TEST(iM3uReader->Error() == false);
+    TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsReaderError);
+    TEST(iM3uReader->Error() == false);
+}
+
+void SuiteHlsM3uReader::TestUriNotFound()
+{
+    static const Uri kPlaylistUri(Brn("http://example.com/playlist.m3u8"));
+
+    TestHttpReader::UriList uriList1;
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kPlaylistUri, TestHttpReader::eNotFound));   // Ensure connecting results in socket error.
+    TestHttpReader::BufList bufList1;
+    bufList1.push_back(&Brx::Empty());
+    iHttpReader->SetContent(uriList1, bufList1);
+    iM3uReader->SetUri(kPlaylistUri, false);
     Uri segmentUri;
     TEST(iM3uReader->Error() == false);
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
@@ -1785,11 +1843,11 @@ void SuiteHlsM3uReader::TestInvalidAttributes()
     );
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUri);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUri, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kFileInvalidTargetDuration);
     iHttpReader->SetContent(uriList1, bufList1);
-    iM3uReader->SetUri(kUri);
+    iM3uReader->SetUri(kUri, false);
     Uri segmentUri;
     TEST(iM3uReader->Error() == false);
     TEST_THROWS(iM3uReader->NextSegmentUri(segmentUri), HlsVariantPlaylistError);
@@ -1868,8 +1926,8 @@ void SuiteSegmentStreamer::TestRead()
     // Test reading up to segment boundaries.
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUri1);
-    uriList1.push_back(&kUri2);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUri1, TestHttpReader::eSuccess));
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUri2, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kBuf1);
     bufList1.push_back(&kBuf2);
@@ -1938,7 +1996,7 @@ void SuiteSegmentStreamer::TestInterrupt()
     const Brn kBuf1("abcdefghijklmnopqrstuvwxyz");
 
     TestHttpReader::UriList uriList1;
-    uriList1.push_back(&kUri1);
+    uriList1.push_back(TestHttpReader::UriConnectPair(&kUri1, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufList1;
     bufList1.push_back(&kBuf1);
     iHttpReader->SetContent(uriList1, bufList1);
@@ -1970,20 +2028,20 @@ void SuiteSegmentStreamer::TestInterrupt()
     TEST_THROWS(iStreamer->Read(6), ReaderError);
     TEST(iStreamer->Error() == false);
 
-    // Test failed connection.
+    // Test failed connection - error on socket.
     static const Uri kUriDummy(Brn("http://dummy"));
     iStreamer->ReadInterrupt();
     iStreamer->Close();
     TestHttpReader::UriList uriList2;
-    uriList2.push_back(&kUriDummy);
+    uriList2.push_back(TestHttpReader::UriConnectPair(&kUriDummy, TestHttpReader::eUnspecifiedError));      // Will report code indicating connection error when attempt is made to connect.
     TestHttpReader::BufList bufList2;
     bufList2.push_back(&Brx::Empty());
-    iHttpReader->SetContent(uriList2, bufList2);    // Can force a failed connection by ensuring iHttpReader does not recognise the URI iStreamer will ask for.
-    iUriProvider->SetUri(kUri1, 50);
+    iHttpReader->SetContent(uriList2, bufList2);
+    iUriProvider->SetUri(kUriDummy, 50);
     iStreamer->Stream(*iUriProvider);
     TEST(iStreamer->Error() == false);
     TEST_THROWS(iStreamer->Read(26), ReaderError);
-    TEST(iStreamer->Error() == true);
+    TEST(iStreamer->Error() == false);
 }
 
 
@@ -1997,7 +2055,10 @@ SuiteProtocolHls::SuiteProtocolHls(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamErrorRecoverable), "TestStreamErrorRecoverable");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamM3uError), "TestStreamM3uError");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestRestreamAfterM3uError), "TestRestreamAfterM3uError");
-    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamSegmentError), "TestStreamSegmentError");
+    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamSegmentNotFound), "TestStreamSegmentNotFound");
+    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamM3uConnectionError), "TestStreamM3uConnectionError");
+    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestSegmentDiscontinuity), "TestSegmentDiscontinuity");
+    AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestStreamSegmentConnectionError), "TestStreamSegmentConnectionError");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestGet), "TestGet");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestTrySeek), "TestTrySeek");
     AddTest(MakeFunctor(*this, &SuiteProtocolHls::TestTryStop), "TestTryStop");
@@ -2014,7 +2075,10 @@ void SuiteProtocolHls::Setup()
     iSegmentSem = new Semaphore("HLSS", 0);
     iSegmentWaitSem = new Semaphore("HSWS", 0);
     iSegmentReader = new TestHttpReader(*iSegmentSem, *iSegmentWaitSem);
-    iProtocolHls = HlsTestFactory::NewTestableHls(iEnv, iM3uReader, iSegmentReader);    // takes ownership of iM3uReader, iSegmentReader.
+    iTimer = new TestTimer();
+    iM3uReloadSem = new Semaphore("M3RS", 0);
+    iTestSem = new TestSemaphore(*iM3uReloadSem);
+    iProtocolHls = HlsTestFactory::NewTestableHls(iEnv, iM3uReader, iSegmentReader, iTimer, iTestSem);    // takes ownership of iM3uReader, iSegmentReader, iTimer, iTestSem.
 
     iInfoAggregator = new AllocatorInfoLogger();
     iTrackFactory= new TrackFactory(*iInfoAggregator, 1);
@@ -2039,6 +2103,8 @@ void SuiteProtocolHls::TearDown()
     delete iMsgFactory;
     delete iTrackFactory;
     delete iInfoAggregator;
+
+    delete iM3uReloadSem;
 
     //delete iSegmentReader;    // owned by ProtocolHls
     delete iSegmentWaitSem;
@@ -2071,7 +2137,7 @@ void SuiteProtocolHls::TestStreamSuccessful()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2085,9 +2151,9 @@ void SuiteProtocolHls::TestStreamSuccessful()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
@@ -2124,7 +2190,7 @@ void SuiteProtocolHls::TestStreamErrorRecoverable()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2138,31 +2204,33 @@ void SuiteProtocolHls::TestStreamErrorRecoverable()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
     bufListSeg1.push_back(&kSegFile3);
     iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
 
-    iSegmentReader->ThrowReadErrorAtOffset(20); // Will cause a ReaderError to be thrown up by underlying reader, but ProtocolHls should retry and successfully read whole stream.
+    iSegmentReader->ThrowReadErrorAtOffset(20); // Will cause a ReaderError to be thrown up by underlying reader, but ProtocolHls should retry and successfully read remainder of stream.
 
     iTrack = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
     ThreadFunctor thread("SuiteProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
     thread.Start();
 
-    iThreadSem->Wait();//kSemWaitMs);
+    iThreadSem->Wait(kSemWaitMs);
 
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamSuccess);
 
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));  // ProtocolHls should have successfully read all data.
+    //TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));  // ProtocolHls should have successfully read all data.
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));  // Lost end of first segment; interrupted after 20 bytes.
+
     TEST(iElementDownstream->IsLive() == true);
-    TEST(iElementDownstream->StreamId() == 1);
+    TEST(iElementDownstream->StreamId() == 2);
     TEST(iElementDownstream->TrackCount() == 1);
-    TEST(iElementDownstream->StreamCount() == 1);
+    TEST(iElementDownstream->StreamCount() == 2);
     TEST(iElementDownstream->FlushCount() == 0);
 }
 
@@ -2182,7 +2250,7 @@ void SuiteProtocolHls::TestStreamM3uError()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2196,9 +2264,9 @@ void SuiteProtocolHls::TestStreamM3uError()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
@@ -2234,7 +2302,7 @@ void SuiteProtocolHls::TestRestreamAfterM3uError()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2248,9 +2316,9 @@ void SuiteProtocolHls::TestRestreamAfterM3uError()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
@@ -2285,7 +2353,7 @@ void SuiteProtocolHls::TestRestreamAfterM3uError()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u2;
-    uriListM3u2.push_back(&kUriEndlistEnd);
+    uriListM3u2.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u2;
     bufListM3u2.push_back(&kFileEndlistEndValid);
     iM3uReader->SetContent(uriListM3u2, bufListM3u2);
@@ -2305,7 +2373,7 @@ void SuiteProtocolHls::TestRestreamAfterM3uError()
     TEST(iElementDownstream->StreamCount() == 2);
 }
 
-void SuiteProtocolHls::TestStreamSegmentError()
+void SuiteProtocolHls::TestStreamSegmentNotFound()
 {
     // ProtocolHls needs to take a URI starting with hls://; not http:// !
     static const Brn kUriHlsEndList("hls://example.com/hls_endlist_end.m3u8");
@@ -2322,7 +2390,7 @@ void SuiteProtocolHls::TestStreamSegmentError()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2332,19 +2400,18 @@ void SuiteProtocolHls::TestStreamSegmentError()
     static const Brn kSegFile1(Brn("abcdefghijklmnopqrstuvwxyz"));
     static const Uri kSegUri2(Brn("http://media.example.com/second.ts"));
     static const Brn kSegFile2(Brn("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-    static const Uri kSegUri3(Brn("http://media.example.com/dummy.ts"));    // Doesn't match third URI in playlist, so should cause an error.
+    static const Uri kSegUri3(Brn("http://media.example.com/third.ts"));    // Will set this to not be found.
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eNotFound));    // Can't find file on server; unrecoverable.
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
     bufListSeg1.push_back(&kSegFile3);
     iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
-
 
     Track* track = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
     ProtocolStreamResult res = iProtocolManager->DoStream(*track);
@@ -2358,16 +2425,219 @@ void SuiteProtocolHls::TestStreamSegmentError()
     TEST(iElementDownstream->StreamCount() == 1);
 }
 
+void SuiteProtocolHls::TestStreamM3uConnectionError()
+{
+    // ProtocolHls needs to take a URI starting with hls://; not http:// !
+    static const Brn kUriHlsEndList("hls://example.com/hls_endlist_end.m3u8");
+    static const Uri kUriM3u(Brn("http://example.com/hls_endlist_end.m3u8"));
+    static const Brn kFile1(
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:10\n"
+    "#EXT-X-MEDIA-SEQUENCE:2680\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/first.ts\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/second.ts\n");
+    static const Brn kFile2(
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:10\n"
+    "#EXT-X-MEDIA-SEQUENCE:2681\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/second.ts\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/third.ts\n"
+    "#EXT-X-ENDLIST\n");
+
+
+    TestHttpReader::UriList uriListM3u1;
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriM3u, TestHttpReader::eSuccess));
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriM3u, TestHttpReader::eUnspecifiedError)); // Fail to reconnect.
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriM3u, TestHttpReader::eSuccess));          // Successful reconnect.
+    TestHttpReader::BufList bufListM3u1;
+    bufListM3u1.push_back(&kFile1);
+    bufListM3u1.push_back(&kFile2); // Fail to connect.
+    bufListM3u1.push_back(&kFile2); // Successful reconnect.
+    iM3uReader->SetContent(uriListM3u1, bufListM3u1);
+
+
+    static const Uri kSegUri1(Brn("http://media.example.com/first.ts"));
+    static const Brn kSegFile1(Brn("abcdefghijklmnopqrstuvwxyz"));
+    static const Uri kSegUri2(Brn("http://media.example.com/second.ts"));
+    static const Brn kSegFile2(Brn("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+    static const Uri kSegUri3(Brn("http://media.example.com/third.ts"));
+    static const Brn kSegFile3(Brn("1234567890"));
+
+    TestHttpReader::UriList uriListSeg1;
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
+    TestHttpReader::BufList bufListSeg1;
+    bufListSeg1.push_back(&kSegFile1);
+    bufListSeg1.push_back(&kSegFile2);
+    bufListSeg1.push_back(&kSegFile3);
+    iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
+
+
+    iTrack = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
+
+    ThreadFunctor functor("ProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
+    iM3uReloadSem->Clear();
+    functor.Start();
+    iM3uReloadSem->Wait();                  // Ignore first; signalled upon initialisation.
+    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
+    iTimer->Fire();               // Should still be blocking after this.
+    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
+    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
+    iTimer->Fire();               // Playlist with updates should now be retrieved.
+    iThreadSem->Wait(kSemWaitMs);           // Wait on iM3uReader->NextSegmentUri() returning.
+    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
+
+    iTrack->RemoveRef();
+    TEST(iResult == EProtocolStreamSuccess);
+
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
+    TEST(iElementDownstream->IsLive() == true);
+    TEST(iElementDownstream->StreamId() == 2);  // FIXME - shouldn't need new stream for this recoverable error (unless there was a discontinuity, which is handled elsewhere).
+    TEST(iElementDownstream->TrackCount() == 1);
+    TEST(iElementDownstream->StreamCount() == 2);
+}
+
+void SuiteProtocolHls::TestSegmentDiscontinuity()
+{
+    // ProtocolHls needs to take a URI starting with hls://; not http:// !
+    static const Brn kUriHlsEndList("hls://example.com/hls_endlist_end.m3u8");
+    static const Uri kUriM3u(Brn("http://example.com/hls_endlist_end.m3u8"));
+    static const Brn kFile1(
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:10\n"
+    "#EXT-X-MEDIA-SEQUENCE:2680\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/first.ts\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/second.ts\n");
+    static const Brn kFile2(
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:10\n"
+    "#EXT-X-MEDIA-SEQUENCE:2683\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/fourth.ts\n"
+    "#EXT-X-ENDLIST\n");
+
+
+    TestHttpReader::UriList uriListM3u1;
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriM3u, TestHttpReader::eSuccess));
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriM3u, TestHttpReader::eSuccess));  // Will cause M3uReader to throw exception due to discontinuity.
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriM3u, TestHttpReader::eSuccess));  // Reloading after exception thrown.
+    TestHttpReader::BufList bufListM3u1;
+    bufListM3u1.push_back(&kFile1);
+    bufListM3u1.push_back(&kFile2);
+    bufListM3u1.push_back(&kFile2);
+    iM3uReader->SetContent(uriListM3u1, bufListM3u1);
+
+
+    static const Uri kSegUri1(Brn("http://media.example.com/first.ts"));
+    static const Brn kSegFile1(Brn("abcdefghijklmnopqrstuvwxyz"));
+    static const Uri kSegUri2(Brn("http://media.example.com/second.ts"));
+    static const Brn kSegFile2(Brn("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+    static const Uri kSegUri4(Brn("http://media.example.com/fourth.ts"));
+    static const Brn kSegFile4(Brn("1234567890"));
+
+    TestHttpReader::UriList uriListSeg1;
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri4, TestHttpReader::eSuccess));
+    TestHttpReader::BufList bufListSeg1;
+    bufListSeg1.push_back(&kSegFile1);
+    bufListSeg1.push_back(&kSegFile2);
+    bufListSeg1.push_back(&kSegFile4);
+    iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
+
+    iTrack = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
+
+    ThreadFunctor functor("ProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
+    iM3uReloadSem->Clear();
+    functor.Start();
+    iM3uReloadSem->Wait();                  // Ignore first; signalled upon initialisation.
+    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
+    iTimer->Fire();               // Should still be blocking after this.
+    iM3uReloadSem->Wait();                 // iM3uReader is waiting on timer.
+    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
+    iTimer->Fire();               // Playlist with updates should now be retrieved.
+    iThreadSem->Wait(kSemWaitMs);           // Wait on iM3uReader->NextSegmentUri() returning.
+    TEST(iTimer->LastDurationMs() == 10000); // Check timer was set.
+
+    iTrack->RemoveRef();
+    TEST(iResult == EProtocolStreamSuccess);
+
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
+    TEST(iElementDownstream->IsLive() == true);
+    TEST(iElementDownstream->StreamId() == 2);  // Outputting new stream is valid in case of discontinuity.
+    TEST(iElementDownstream->TrackCount() == 1);
+    TEST(iElementDownstream->StreamCount() == 2);
+}
+
+void SuiteProtocolHls::TestStreamSegmentConnectionError()
+{
+    // ProtocolHls needs to take a URI starting with hls://; not http:// !
+    static const Brn kUriHlsEndList("hls://example.com/hls_endlist_end.m3u8");
+    static const Uri kUriEndlistEnd(Brn("http://example.com/hls_endlist_end.m3u8"));
+    static const Brn kFileEndlistEnd(
+    "#EXTM3U\n"
+    "#EXT-X-TARGETDURATION:10\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/first.ts\n"
+    "#EXTINF:9.009,\n"
+    "http://media.example.com/second.ts\n"
+    "#EXTINF:3.003,\n"
+    "http://media.example.com/third.ts\n"
+    "#EXT-X-ENDLIST\n");
+
+    TestHttpReader::UriList uriListM3u1;
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
+    TestHttpReader::BufList bufListM3u1;
+    bufListM3u1.push_back(&kFileEndlistEnd);
+    iM3uReader->SetContent(uriListM3u1, bufListM3u1);
+
+
+    static const Uri kSegUri1(Brn("http://media.example.com/first.ts"));
+    static const Brn kSegFile1(Brn("abcdefghijklmnopqrstuvwxyz"));
+    static const Uri kSegUri2(Brn("http://media.example.com/second.ts"));
+    static const Brn kSegFile2(Brn("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+    static const Uri kSegUri3(Brn("http://media.example.com/third.ts"));
+    static const Brn kSegFile3(Brn("1234567890"));
+
+    TestHttpReader::UriList uriListSeg1;
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eUnspecifiedError));    // Connection error, recoverable.
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
+    TestHttpReader::BufList bufListSeg1;
+    bufListSeg1.push_back(&kSegFile1);
+    bufListSeg1.push_back(&kSegFile2);
+    bufListSeg1.push_back(&kSegFile3);
+    iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
+
+
+    Track* track = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
+    TEST(res == EProtocolStreamSuccess);
+
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyz1234567890"));
+    TEST(iElementDownstream->IsLive() == true);
+    TEST(iElementDownstream->StreamId() == 2);  // FIXME - could, potentially, have recovered from this discontinuity by retrying to load segment.
+    TEST(iElementDownstream->TrackCount() == 1);
+    TEST(iElementDownstream->StreamCount() == 2);
+}
+
 void SuiteProtocolHls::TestGet()
 {
-    Bws<1> buf;
-    WriterBuffer writerBuf(buf);
+    // FIXME - unable to access private member Get() of IProtocolManager.
 
-    //IProtocolManager* protocolManager = (IProtocolManager*)iProtocolManager;
-    //TBool result = protocolManager->Get(writerBuf, Brn("http://example.com/dummy.ts"), 0, 20);
-    //TEST(result == false);
+    //Bws<1> buf;
+    //WriterBuffer writerBuf(buf);
 
-    // FIXME - reinstate
+    //IProtocolManager* protoManager = dynamic_cast<IProtocolManager*>(iProtocolManager);
+    //TBool result = protoManager->Get(writerBuf, Brn("http://example.com/dummy.ts"), 0, 20);
 }
 
 void SuiteProtocolHls::TestTrySeek()
@@ -2387,7 +2657,7 @@ void SuiteProtocolHls::TestTrySeek()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2401,9 +2671,9 @@ void SuiteProtocolHls::TestTrySeek()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
@@ -2454,7 +2724,7 @@ void SuiteProtocolHls::TestTryStop()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2468,9 +2738,9 @@ void SuiteProtocolHls::TestTryStop()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
@@ -2522,7 +2792,7 @@ void SuiteProtocolHls::TestInterrupt()
     "#EXT-X-ENDLIST\n");
 
     TestHttpReader::UriList uriListM3u1;
-    uriListM3u1.push_back(&kUriEndlistEnd);
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListM3u1;
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
@@ -2536,9 +2806,9 @@ void SuiteProtocolHls::TestInterrupt()
     static const Brn kSegFile3(Brn("1234567890"));
 
     TestHttpReader::UriList uriListSeg1;
-    uriListSeg1.push_back(&kSegUri1);
-    uriListSeg1.push_back(&kSegUri2);
-    uriListSeg1.push_back(&kSegUri3);
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);

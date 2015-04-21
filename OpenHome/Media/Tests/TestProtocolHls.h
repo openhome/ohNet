@@ -12,7 +12,7 @@ class Protocol;
 class HlsTestFactory
 {
 public:
-    static Protocol* NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment);
+    static Protocol* NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aM3uReaderSem);
 };
 
 } // namespace Media
