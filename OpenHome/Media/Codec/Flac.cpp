@@ -51,7 +51,7 @@ private:
     TUint64 iTrackOffset;
     TUint iSampleRate;
     TUint64 iTrackLengthJiffies;
-    TBool iMsgFormatRequired;
+    TBool iStreamMsgDue;
     TBool iOgg;
     TUint iStreamId;
 };
@@ -131,7 +131,7 @@ void CallbackError(const FLAC__StreamDecoder *aDecoder,
 
 CodecFlac::CodecFlac() 
     : iName("FLAC")
-    , iMsgFormatRequired(false)
+    , iStreamMsgDue(true)
 {
     iDecoder = FLAC__stream_decoder_new();
     ASSERT(iDecoder != NULL);
@@ -178,7 +178,7 @@ TBool CodecFlac::Recognise(const EncodedStreamInfo& aStreamInfo)
 
 void CodecFlac::StreamInitialise()
 {
-    iMsgFormatRequired = false;
+    iStreamMsgDue = true;
     iSampleStart = 0;
     iTrackOffset = 0;
     iSampleRate = 0;
@@ -227,16 +227,6 @@ void CodecFlac::StreamInitialise()
         LOG(kError, "Flac::Initialise stream decoder init failed with: %d, state: %d\n", initState, state);
         // All flac reported errors here are unrecoverable.
         ASSERTS();
-    }
-
-    while(!iMsgFormatRequired) {
-        // Decode until the streaminfo metadata block or an audio frame are found, both of which put out the Soa.
-        // There may be other metadata types decoded first, eg picture metadata, which will be ignored.
-        if(!FLAC__stream_decoder_process_single(iDecoder)) {
-            state = FLAC__stream_decoder_get_state(iDecoder);
-            LOG(kError, "Flac::Initialise failed to get metadata or decode anything, decoder state: %d\n", state);
-            ASSERTS();
-        }
     }
 }
 
@@ -295,7 +285,7 @@ TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
         // this can occur if we try to seek beyond the end, so abort this track
         THROW(CodecStreamCorrupt);
     }
-    iMsgFormatRequired = false;
+    iStreamMsgDue = true;
     return true;
 }
 
@@ -367,13 +357,13 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
     const TUint bitDepth = aFrame->header.bits_per_sample;
     const TUint sampleRate = aFrame->header.sample_rate;
 
-    if (!iMsgFormatRequired) {
+    if (iStreamMsgDue) {
         /* If we get a Audio Frame prior to a metadata frame (and therefore
-           iMsgFormatRequired is still false) we must have picked up a file mid-stream.
+           iStreamMsgDue is still true) we must have picked up a file mid-stream.
            Therefore, put out a MsgDecodedStream on the basis of what we know mid-stream. */
         const TUint bitRate = sampleRate * bitDepth * channels;
         iController->OutputDecodedStream(bitRate, bitDepth, sampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true);
-        iMsgFormatRequired = true;
+        iStreamMsgDue = false;
     }
     
     const TUint maxSamples = sizeof(iBuf) / ((bitDepth/8) * channels);
@@ -426,7 +416,7 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
                                  const FLAC__StreamMetadata* aMetadata)
 {
     ASSERT(aMetadata->type == FLAC__METADATA_TYPE_STREAMINFO);
-    ASSERT(!iMsgFormatRequired);
+    ASSERT(iStreamMsgDue);
     const FLAC__StreamMetadata_StreamInfo* streamInfo = &aMetadata->data.stream_info;
 
     iSampleRate = streamInfo->sample_rate;
@@ -434,5 +424,5 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
     iTrackLengthJiffies = (streamInfo->total_samples * Jiffies::kPerSecond) / iSampleRate;
 
     iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, streamInfo->channels, iName, iTrackLengthJiffies, iSampleStart, true);
-    iMsgFormatRequired = true;
+    iStreamMsgDue = false;
 }
