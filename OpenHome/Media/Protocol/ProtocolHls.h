@@ -67,7 +67,7 @@ private:
     static const TUint kMaxLineBytes = 2048;
 public:
     HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore);
-    void SetUri(const Uri& aUri, TBool aIgnoreDiscontinuity);
+    void SetUri(const Uri& aUri);
     TUint Version() const;
     TBool StreamEnded() const;
     TBool Error() const;
@@ -101,8 +101,6 @@ private:
     ISemaphore& iSem;
     TBool iInterrupted;
     TBool iError;
-    TBool iIgnoreDiscontinuity;
-    TBool iDiscontinuity;
 };
 
 class SegmentStreamer : public IReader
