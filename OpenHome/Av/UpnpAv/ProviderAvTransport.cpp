@@ -533,12 +533,8 @@ void ProviderAvTransport::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TBool
     iLock.Signal();
 }
 
-void ProviderAvTransport::NotifyMetaText(const Brx& aText)
+void ProviderAvTransport::NotifyMetaText(const Brx& /*aText*/)
 {
-    iLock.Wait();
-    iCurrentTrackMetaData.Replace(aText);
-    QueueStateUpdate();
-    iLock.Signal();
 }
 
 void ProviderAvTransport::NotifyTime(TUint aSeconds, TUint /*aTrackDurationSeconds*/)
