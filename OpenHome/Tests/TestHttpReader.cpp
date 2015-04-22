@@ -60,15 +60,16 @@ void SuiteHttpReader::Test1()
 {
     HttpReader httpReader(iEnv);
 
-    // can't call any reader methods before Connect("...")
+    // can't call Read() before Connect("...")
     TEST_THROWS(httpReader.Read(1), AssertionFailed);
-    TEST_THROWS(httpReader.ReadFlush(), AssertionFailed);
-    TEST_THROWS(httpReader.ReadInterrupt(), AssertionFailed);
+    // other IReader methods should have no effect before Connect("...")
+    (void)httpReader.ReadFlush();
+    (void)httpReader.ReadInterrupt();
 
     TEST(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))));
 
-    // only one connection allowed
-    TEST_THROWS(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))), AssertionFailed);
+    // if trying to reuse an open socket, should automatically close and connect to new URL.
+    TEST(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))));
 
     for(;;) {
         try {
