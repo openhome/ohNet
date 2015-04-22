@@ -53,6 +53,7 @@ TBool MpegTs::Recognise(Brx& aBuf)
     LOG(kCodec, "MpegTs::Recognise payloadStart: %u\n", payloadStart);
 
     TUint pid = (aBuf[1] & 0x1f) << 8 | aBuf[2];
+    LOG(kCodec, "MpegTs::Recognise pid: %u\n", pid);
 
     if ((aBuf[3] & 0x10) != 0x10) {   // ensure there is a payload.
         return false; // FIXME - should this really be a failure?
@@ -131,12 +132,15 @@ TBool MpegTs::Recognise(Brx& aBuf)
             LOG(kCodec, "MpegTs::Recognise pesBytes: %u, iSize: %u\n", pesBytes, iSize);
         }
         else {
-            LOG(kCodec, "MpegTs::Recognise expected PAT, PMT or PES, but didn't find any\n");
-            return false;
+            // Unrecognised packet while trying to find payload start.
+            // Skip it.
+            iSize = kRecogniseBytes;
+            LOG(kCodec, "MpegTs::Recognise expected PAT, PMT or PES, but didn't find any. pid: %u\n", pid);
         }
 
     }
 
+    ASSERT(iSize <= kPacketBytes);
     LOG(kCodec, "<MpegTs::Recognise true\n");
     return true;
 }
