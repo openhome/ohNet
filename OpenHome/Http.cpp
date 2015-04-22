@@ -1091,7 +1091,9 @@ HttpReader::~HttpReader()
 
 TUint HttpReader::Connect(const Uri& aUri)
 {
-    ASSERT(!iConnected);
+    if (iConnected) {
+        Close();
+    }
 
     TUint code = ConnectAndProcessHeader(aUri);
     if (code == 0) {
@@ -1161,14 +1163,16 @@ Brn HttpReader::Read(TUint aBytes)
 
 void HttpReader::ReadFlush()
 {
-    ASSERT(iConnected);
-    iDechunker.ReadFlush();
+    if (iConnected) {
+        iDechunker.ReadFlush();
+    }
 }
 
 void HttpReader::ReadInterrupt()
 {
-    ASSERT(iConnected);
-    iDechunker.ReadInterrupt();
+    if (iConnected) {
+        iDechunker.ReadInterrupt();
+    }
 }
 
 TUint HttpReader::WriteRequest(const Uri& aUri)
