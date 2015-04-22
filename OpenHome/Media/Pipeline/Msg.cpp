@@ -546,11 +546,6 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
         // New ramp runs in the same direction as existing one.  Choose the lower start/end points
         SelectLowerRampPoints(aStart, rampEnd);
     }
-    else if ((iDirection == EUp && iStart > aStart) ||
-             (iDirection == EDown && iStart < aStart)) {
-        // ramps run in opposite directions and clearly won't intersect.  Choose the lower start/end points
-        SelectLowerRampPoints(aStart, rampEnd);
-    }
     else {
         // Previous and new ramps run in opposite directions.
         // Calculate the point at which they intersect.
@@ -575,7 +570,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             x=(aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3))
             y=((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1
         */
-        TUint y1, y2, y3, y4;
+        TInt64 y1, y2, y3, y4;
         if (iStart < aStart) {
             y1 = iStart;
             y2 = iEnd;
@@ -593,8 +588,8 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             SelectLowerRampPoints(aStart, rampEnd);
         }
         else {
-            TInt64 intersectX = ((TInt64)aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
-            TUint64 intersectY = (((TUint64)y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
+            TInt64 intersectX = (aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
+            TInt64 intersectY = (((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3))) + y1;
             // calculation of intersectY may overflow a TUint.
             // intersectX will tell us we have no useful intersection in these cases and we'll ignore the Y value.
             if (intersectX <= 0 || (TUint)intersectX >= aFragmentSize) {
