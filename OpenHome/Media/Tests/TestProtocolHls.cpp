@@ -2191,7 +2191,9 @@ void SuiteProtocolHls::TestStreamErrorRecoverable()
 
     TestHttpReader::UriList uriListM3u1;
     uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));   // For stream restart after ReaderError in first segment.
     TestHttpReader::BufList bufListM3u1;
+    bufListM3u1.push_back(&kFileEndlistEnd);
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
 
@@ -2205,15 +2207,17 @@ void SuiteProtocolHls::TestStreamErrorRecoverable()
 
     TestHttpReader::UriList uriListSeg1;
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));     // For stream restart after ReaderError in first segment.
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
+    bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
     bufListSeg1.push_back(&kSegFile3);
     iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
 
-    iSegmentReader->ThrowReadErrorAtOffset(20); // Will cause a ReaderError to be thrown up by underlying reader, but ProtocolHls should retry and successfully read remainder of stream.
+    iSegmentReader->ThrowReadErrorAtOffset(20); // Will cause a ReaderError to be thrown up by underlying reader during first segment, but ProtocolHls should just restart stream.
 
     iTrack = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
     ThreadFunctor thread("SuiteProtocolHls", MakeFunctor(*this, &SuiteProtocolHls::StreamThread));
@@ -2224,8 +2228,9 @@ void SuiteProtocolHls::TestStreamErrorRecoverable()
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamSuccess);
 
-    //TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));  // ProtocolHls should have successfully read all data.
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));  // Lost end of first segment; interrupted after 20 bytes.
+    // Lost end of first segment - interrupted after 20 bytes.
+    // But, restarted stream, and first segment was still available, so streamed it again.
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
 
     TEST(iElementDownstream->IsLive() == true);
     TEST(iElementDownstream->StreamId() == 2);
@@ -2470,9 +2475,11 @@ void SuiteProtocolHls::TestStreamM3uConnectionError()
     TestHttpReader::UriList uriListSeg1;
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));     // Will restream this after initial failure to reload playlist, as M3U processor will have been reset and this segment still avail in updated playlist.
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
+    bufListSeg1.push_back(&kSegFile2);
     bufListSeg1.push_back(&kSegFile2);
     bufListSeg1.push_back(&kSegFile3);
     iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
@@ -2495,9 +2502,11 @@ void SuiteProtocolHls::TestStreamM3uConnectionError()
     iTrack->RemoveRef();
     TEST(iResult == EProtocolStreamSuccess);
 
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
+    // Second segment streamed twice as stream restarted after initial failure
+    // to reload playlist, and second segment was still available.
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
     TEST(iElementDownstream->IsLive() == true);
-    TEST(iElementDownstream->StreamId() == 2);  // FIXME - shouldn't need new stream for this recoverable error (unless there was a discontinuity, which is handled elsewhere).
+    TEST(iElementDownstream->StreamId() == 2);  // This is potentially recoverable without a discontinuity by trying to reload playlist from last known segment, but restarting stream is significantly more straightforward and less prone to errors caused by special-case handling.
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 2);
 }
@@ -2594,7 +2603,9 @@ void SuiteProtocolHls::TestStreamSegmentConnectionError()
 
     TestHttpReader::UriList uriListM3u1;
     uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));
+    uriListM3u1.push_back(TestHttpReader::UriConnectPair(&kUriEndlistEnd, TestHttpReader::eSuccess));           // Stream restart after segment load failure.
     TestHttpReader::BufList bufListM3u1;
+    bufListM3u1.push_back(&kFileEndlistEnd);
     bufListM3u1.push_back(&kFileEndlistEnd);
     iM3uReader->SetContent(uriListM3u1, bufListM3u1);
 
@@ -2609,22 +2620,30 @@ void SuiteProtocolHls::TestStreamSegmentConnectionError()
     TestHttpReader::UriList uriListSeg1;
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eUnspecifiedError));    // Connection error, recoverable.
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri1, TestHttpReader::eSuccess));             // Segment 1 still available after restart.
+    uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri2, TestHttpReader::eSuccess));
     uriListSeg1.push_back(TestHttpReader::UriConnectPair(&kSegUri3, TestHttpReader::eSuccess));
     TestHttpReader::BufList bufListSeg1;
     bufListSeg1.push_back(&kSegFile1);
     bufListSeg1.push_back(&kSegFile2);
+    bufListSeg1.push_back(&kSegFile1);
+    bufListSeg1.push_back(&kSegFile2);
     bufListSeg1.push_back(&kSegFile3);
     iSegmentReader->SetContent(uriListSeg1, bufListSeg1);
-
 
     Track* track = iTrackFactory->CreateTrack(kUriHlsEndList, Brx::Empty());
     ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
     TEST(res == EProtocolStreamSuccess);
 
-    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyz1234567890"));
+    // First segment is streamed successfully, then second segment fails to connect.
+    // That causes stream to restart, and first segment is still available at
+    // playlist reload, so first segment is repeated.
+    // i.e., get:
+    // seg1->seg2(fail with no data output, so restart)->seg1->seg2->seg3
+    TEST(iElementDownstream->Data() == Brn("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"));
     TEST(iElementDownstream->IsLive() == true);
-    TEST(iElementDownstream->StreamId() == 2);  // FIXME - could, potentially, have recovered from this discontinuity by retrying to load segment.
+    TEST(iElementDownstream->StreamId() == 2);  // Could potentially have recovered without discontinuity by trying to reload segment, but more straightforward to handle problems at a higher level than individual segments and just restart stream.
     TEST(iElementDownstream->TrackCount() == 1);
     TEST(iElementDownstream->StreamCount() == 2);
 }
