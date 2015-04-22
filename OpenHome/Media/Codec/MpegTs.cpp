@@ -140,6 +140,7 @@ TBool MpegTs::Recognise(Brx& aBuf)
 
     }
 
+    ASSERT(iSize <= kPacketBytes);
     LOG(kCodec, "<MpegTs::Recognise true\n");
     return true;
 }
