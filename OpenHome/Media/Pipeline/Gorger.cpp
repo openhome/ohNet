@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Debug.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -76,6 +78,7 @@ void Gorger::SetGorging(TBool aGorging)
 {
     const TBool unblockRight = (iGorging && !aGorging);
     const TBool unblockLeft = (!iGorging && aGorging);
+    LOG(kPipeline, "Gorger::SetGorging(%u).  unblockRight=%u, unblockLeft=%u\n", aGorging, unblockRight, unblockLeft);
     iGorging = aGorging;
     if (unblockRight) {
         iSemOut.Signal();
