@@ -22,6 +22,7 @@ NtpClient::NtpClient(Environment& aEnv)
     , iUdpReader(iSocket)
     , iReadBuffer(iUdpReader)
     , iNextServerIndex(0)
+    , iLogEnable(false)
 {
     iWriteBuffer = new Sws<kFrameBytes>(*this);
     iReadTimeout = new Timer(aEnv, MakeFunctor(*this, &NtpClient::ReadTimeout), "NtpClient");
@@ -49,19 +50,24 @@ TBool NtpClient::TryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetworkDe
 
 void NtpClient::TestAllServers()
 {
-    for (TUint i=0; i<kNumServers; i++) {
-        NtpTimestamp ts;
-        TUint networkDelayMs;
-        iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[i]));
-        Endpoint::AddressBuf buf;
-        iServerEndpoint.AppendAddress(buf);
-        Log::Print("%s: ", buf.PtrZ());
-        if (DoTryGetNetworkTime(ts, networkDelayMs)) {
-            Log::Print("seconds = %u, networkDelayMs = %u\n", ts.Seconds(), networkDelayMs);
+    iLogEnable = true;
+    for (;;) {
+        for (TUint i=0; i<kNumServers; i++) {
+            NtpTimestamp ts;
+            TUint networkDelayMs;
+            iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[i]));
+            Endpoint::AddressBuf buf;
+            iServerEndpoint.AppendAddress(buf);
+            Log::Print("\n%s:\n", buf.PtrZ());
+            if (DoTryGetNetworkTime(ts, networkDelayMs)) {
+                Log::Print("seconds = %u, networkDelayMs = %u\n", ts.Seconds(), networkDelayMs);
+                ASSERT(ts.Seconds() != 0);
+            }
+            else {
+                Log::Print("FAILED\n");
+            }
         }
-        else {
-            Log::Print("FAILED\n");
-        }
+        Thread::Sleep(1000);
     }
 }
 
@@ -86,17 +92,20 @@ TBool NtpClient::DoTryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetwork
         ReaderBinary reader(iReadBuffer);
         NtpHeader header;
         header.Read(iReadBuffer);
-        (void)reader.ReadUintBe(4);     // root delay
-        (void)reader.ReadUintBe(4);     // root dispersion
-        (void)reader.ReadUintBe(4);     // reference id
-        (void)reader.ReadUint64Be(8);   // reference timestamp
-        (void)reader.ReadUint64Be(8);   // origin timestamp
+        Log("header", header.Value());
+        Log("root delay", reader.ReadUintBe(4));
+        Log("root dispersion", reader.ReadUintBe(4));
+        Log("reference id", reader.ReadUintBe(4));
+        Log("reference timestamp", reader.ReadUint64Be(8));
+        Log("origin timestamp", reader.ReadUint64Be(8));
         aNetworkTime.Read(iReadBuffer); // receive timestamp
-        (void)reader.ReadUint64Be(8);   // transmit timestamp
+        Log("Seconds", aNetworkTime.Seconds());
+        Log("Fraction", aNetworkTime.Fraction());
+        Log("transmit timestamp", reader.ReadUint64Be(8));
         iUdpReader.ReadFlush();
         iReadTimeout->Cancel();
 
-        success = true;
+        success = (aNetworkTime.Seconds() > 0); // rfc958 s4 states that zero rx or tx timestamp is invalid
         aNetworkDelayMs = (Time::Now(iEnv) - txTime) / 2; // assume delay is spliy evenly over tx/rx 
     }
     catch (WriterError&) {
@@ -125,6 +134,21 @@ void NtpClient::Write(const Brx& aBuffer)
 void NtpClient::WriteFlush()
 {
     // nothing to do, data is flushed inside Write(const Brx&)
+}
+
+void NtpClient::Log(const TChar* aId, TUint64 aVal, TUint aBytes) const
+{
+    if (!iLogEnable) {
+        return;
+    }
+    Bws<64> buf;
+    buf.AppendPrintf("%24s:", aId);
+    for (TInt i=aBytes-1; i>=0; i--) {
+        TByte b = (aVal >> i) & 0xff;
+        buf.AppendPrintf(" %02x", b);
+    }
+    buf.Append('\n');
+    Log::Print(buf);
 }
 
 
@@ -188,6 +212,12 @@ TUint NtpHeader::Precision() const
 {
     ASSERT(iInitialised);
     return iHeader & 0xFF;
+}
+
+TUint NtpHeader::Value() const
+{
+    ASSERT(iInitialised);
+    return iHeader;
 }
 
 

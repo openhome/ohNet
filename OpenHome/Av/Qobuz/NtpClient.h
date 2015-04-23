@@ -25,6 +25,9 @@ public:
 private:
     TBool DoTryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetworkDelayMs);
     void ReadTimeout();
+    inline void Log(const TChar* aId, TUint aVal) const { Log(aId, aVal, sizeof(aVal)); }
+    inline void Log(const TChar* aId, TUint64 aVal) const { Log(aId, aVal, sizeof(aVal)); }
+    void Log(const TChar* aId, TUint64 aVal, TUint aBytes) const;
 private: // from IWriter
     void Write(TByte aValue) override;
     void Write(const Brx& aBuffer) override;
@@ -38,6 +41,7 @@ private:
     Timer* iReadTimeout;
     TUint iNextServerIndex;
     Endpoint iServerEndpoint;
+    TBool iLogEnable;
 };
 
 class NtpHeader
@@ -58,6 +62,7 @@ public:
     TUint Stratum() const;
     TUint Poll() const;
     TUint Precision() const;
+    TUint Value() const;
 private:
     TBool iInitialised;
     TUint iHeader;

@@ -211,6 +211,7 @@ private:
 
 class Ramp
 {
+    friend class SuiteRamp;
 public:
     static const TUint kMax = 1<<30;
     static const TUint kMin = 0;

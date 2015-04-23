@@ -220,12 +220,10 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTime
     , iSem(aSemaphore)
     , iInterrupted(true)
     , iError(false)
-    , iIgnoreDiscontinuity(false)
-    , iDiscontinuity(false)
 {
 }
 
-void HlsM3uReader::SetUri(const Uri& aUri, TBool aIgnoreDiscontinuity)
+void HlsM3uReader::SetUri(const Uri& aUri)
 {
     LOG(kMedia, ">HlsM3uReader::SetUri ");
     LOG(kMedia, aUri.AbsoluteUri());
@@ -235,13 +233,7 @@ void HlsM3uReader::SetUri(const Uri& aUri, TBool aIgnoreDiscontinuity)
     // iInterrupted is set to true at construction, so will be true on first call to SetUri().
     ASSERT(!iConnected);
     iUri.Replace(aUri.AbsoluteUri());
-    if (aIgnoreDiscontinuity) {
-        iIgnoreDiscontinuity = true;
-    }
-    else {
-        iLastSegment = 0;
-        iIgnoreDiscontinuity = false;
-    }
+    iLastSegment = 0;
     iTargetDuration = 0;
     iEndlist = false;
     iStreamEnded = false;
@@ -252,7 +244,6 @@ void HlsM3uReader::SetUri(const Uri& aUri, TBool aIgnoreDiscontinuity)
     iSem.Signal();
     iInterrupted = false;
     iError = false;
-    iDiscontinuity = false;
     //iReaderUntil.ReadFlush();
 }
 
@@ -269,11 +260,6 @@ TBool HlsM3uReader::StreamEnded() const
 TBool HlsM3uReader::Error() const
 {
     return iError;
-}
-
-TBool HlsM3uReader::Discontinuity() const
-{
-    return iDiscontinuity;
 }
 
 void HlsM3uReader::Close()
@@ -528,14 +514,7 @@ TBool HlsM3uReader::PreprocessM3u()
                     skipSegments = (iLastSegment-mediaSeq);
                 }
                 else {  // Discontinuity in audio segment sequence.
-                    if (iIgnoreDiscontinuity) {
-                        iLastSegment = mediaSeq;
-                        iIgnoreDiscontinuity = false;
-                    }
-                    else {
-                        iDiscontinuity = true;
-                        THROW(HlsDiscontinuityError);
-                    }
+                    THROW(HlsDiscontinuityError);
                 }
                 LOG(kMedia, "HlsM3uReader::PreprocessM3u mediaSeq: %llu\n", mediaSeq);
             }
@@ -706,6 +685,7 @@ void SegmentStreamer::Close()
     LOG(kMedia, "SegmentStreamer::Close\n");
     AutoMutex a(iLock);
     if (iConnected) {
+        iReader.ReadFlush();
         iConnected = false;
         iSocket.Close();
     }
@@ -877,14 +857,13 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     //iSegmentStreamer.ReadInterrupt();
     //iM3uReader.Interrupt();
-    iM3uReader.SetUri(uriHttp, false);
+    iM3uReader.SetUri(uriHttp);
     iSegmentStreamer.Stream(iM3uReader);
 
     if (iContentProcessor == NULL) {
         iContentProcessor = iProtocolManager->GetAudioProcessor();
     }
 
-    // FIXME - can we output some initial audio here and check if it fails immediately (i.e., before any audio is output)? If so, return with EProtocolStreamErrorUnrecoverable
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     while (res == EProtocolStreamErrorRecoverable) {
         if (iStopped) {
@@ -906,41 +885,37 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             res = EProtocolStreamStopped;
             break;
         }
-        else if (iM3uReader.StreamEnded()) { // FIXME - what if we've processed end of playlist, but encountered problem while trying to play one segment?
+        else if (iM3uReader.StreamEnded()) { // FIXME - what if we've processed end of playlist, but encountered problem while trying to play one segment? Report recoverable error?
             res = EProtocolStreamSuccess;
             break;
         }
         else if (iM3uReader.Error() || iSegmentStreamer.Error()) {
+            // Will reach here if:
+            // - malformed playlist
+            // - malformed segment URI (i.e., specific case of malformed playlist)
+            // - bad server response (e.g., file not found, internal server error, etc.)
             res = EProtocolStreamErrorUnrecoverable;
             break;
         }
         else {
             ASSERT(res == EProtocolStreamErrorRecoverable);
-            // Only retry at level of variant playlist, indefinitely.
-            // If error at segment level, or a stream discontinuity, just move
-            // onto next segment, if possible.
-
-            // FIXME - could result in pops clicks as unlikely to ramp down at discontinuity (either between two segments, or failure while reading a segment).
-            // - could wait for NotifyStarving to be called, but must also
-            // handle case where already starving. Must also know when audio
-            // has ramped up.
-
-
-            // Allow iM3uReader to continue on from current pos, but reset SegmentStreamer.
-            // It is safe to reset iSegmentStreamer here, as failures can occur
-            // while retrieving segments or reloading playlist.
-            // Reloading/parsing of playlist only occurs on segment boundaries,
-            // so nothing cached in iSegmentStreamer.
+            // Retry entire stream indefinitely.
+            // Arrive here for intermittent problems, such as:
+            // - connection/socket errors (for playlist/segments)
+            // - stream discontinuity exceptions
 
             iSegmentStreamer.ReadInterrupt();
+            iM3uReader.Interrupt();
+            // Close() flushes underlying readers in M3U/segment helpers.
             iSegmentStreamer.Close();
-            if (iM3uReader.Discontinuity()) {
-                iM3uReader.Interrupt();
-                iM3uReader.Close();
-                iM3uReader.SetUri(uriHttp, true);   // Jump over discontinuity.
-            }
+            iM3uReader.Close();
+
+            //iSupply->OutputEndOfStream(); // FIXME - to be implemented
+            Reinitialise();
+            iM3uReader.SetUri(uriHttp);
             iSegmentStreamer.Stream(iM3uReader);
-            StartStream(uriHls);    // Output new MsgEncodedStream to signify possible discontinuity.
+            iContentProcessor = iProtocolManager->GetAudioProcessor();
+            StartStream(uriHls);    // Output new MsgEncodedStream to signify discontinuity.
         }
     }
 
@@ -949,6 +924,8 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iM3uReader.Interrupt();
     iSegmentStreamer.Close();
     iM3uReader.Close();
+
+    //iSupply->OutputEndOfStream(); // FIXME - to be implemented
 
     {
         AutoMutex a(iLock);
