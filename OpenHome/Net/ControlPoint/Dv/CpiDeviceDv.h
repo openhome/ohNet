@@ -39,11 +39,21 @@ private: // IPropertyWriterFactory
     void NotifySubscriptionDeleted(const Brx& aSid);
     void NotifySubscriptionExpired(const Brx& aSid);
 private:
+    class Subscription
+    {
+    public:
+        Subscription(CpiSubscription& aCp, DviSubscription* aDv)
+            : iCp(&aCp)
+            , iDv(aDv)
+        {}
+    public:
+        CpiSubscription* iCp;
+        DviSubscription* iDv;
+    };
+private:
     CpiDevice* iDeviceCp;
     DviDevice& iDeviceDv;
-    DviSubscription* iSubscriptionDv;
-    CpiSubscription* iSubscriptionCp;
-    typedef std::map<Brn,Brn,BufferCmp> SubscriptionMap;
+    typedef std::map<Brn,Subscription*,BufferCmp> SubscriptionMap;
     SubscriptionMap iSubscriptions;
     Mutex iLock;
     Semaphore iShutdownSem;

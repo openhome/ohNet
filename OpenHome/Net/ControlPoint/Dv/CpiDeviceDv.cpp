@@ -19,8 +19,6 @@ using namespace OpenHome::Net;
 
 CpiDeviceDv::CpiDeviceDv(CpStack& aCpStack, DviDevice& aDevice)
     : iDeviceDv(aDevice)
-    , iSubscriptionDv(NULL)
-    , iSubscriptionCp(NULL)
     , iLock("CpDv")
     , iShutdownSem("CpDv", 1)
 {
@@ -67,45 +65,66 @@ TBool CpiDeviceDv::GetAttribute(const char* aKey, Brh& aValue) const
 
 TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& /*aSubscriber*/)
 {
-    iSubscriptionCp = &aSubscription;
     Brh sid;
     iDeviceDv.CreateSid(sid);
     Brn tmp(sid);
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
     TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
-    iSubscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid);
-    iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
-    iDeviceDv.GetDvStack().SubscriptionManager().AddSubscription(*iSubscriptionDv);
-    iSubscriptionDv->SetDuration(durationSecs);
+    DviSubscription* subscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid);
+    subscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
+    iDeviceDv.GetDvStack().SubscriptionManager().AddSubscription(*subscriptionDv);
+    subscriptionDv->SetDuration(durationSecs);
+
+    iLock.Wait();
+    if (iSubscriptions.size() == 0) {
+        iShutdownSem.Wait(); // consume shutdown signal now the map is non-empty
+    }
+    Brn sid2(subscriptionDv->Sid());
+    Subscription* subscription = new Subscription(aSubscription, subscriptionDv);
+    iSubscriptions.insert(std::pair<Brn,Subscription*>(sid2, subscription));
+    iDeviceCp->AddRef();
+    iLock.Signal();
+
     DviService* service = iDeviceDv.ServiceReference(aSubscription.ServiceType());
     ASSERT(service != NULL);
-    service->AddSubscription(iSubscriptionDv);
+    service->AddSubscription(subscriptionDv);
     service->RemoveRef();
+
     return durationSecs;
 }
 
-TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
+TUint CpiDeviceDv::Renew(CpiSubscription& aSubscription)
 {
+    Brn sid(aSubscription.Sid());
     TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
-    iSubscriptionDv->Renew(durationSecs);
+    AutoMutex _(iLock);
+    SubscriptionMap::iterator it = iSubscriptions.find(sid);
+    if (it != iSubscriptions.end()) {
+        it->second->iDv->Renew(durationSecs);
+    }
     return durationSecs;
 }
 
 void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
-    if (NULL == iSubscriptionDv)
-    {
+    iLock.Wait();
+    Brn sid(aSid);
+    SubscriptionMap::iterator it = iSubscriptions.find(sid);
+    if (it == iSubscriptions.end()) {
+        iLock.Signal();
         return;
     }
+    Subscription* subscription = it->second;
+    iLock.Signal();
     DviService* service = iDeviceDv.ServiceReference(aSubscription.ServiceType());
     if (service != NULL) {
         service->RemoveSubscription(aSid);
         service->RemoveRef();
     }
-    iSubscriptionDv->RemoveRef();
-    iSubscriptionDv = NULL;
-    iSubscriptionCp = NULL;
+    subscription->iCp = NULL;
+    subscription->iDv->RemoveRef();
+    // can't safely access subscription now - RemoveRef() above may have resulted in it being deleted
 }
 
 void CpiDeviceDv::NotifyRemovedBeforeReady()
@@ -127,44 +146,40 @@ void CpiDeviceDv::Release()
 }
 
 IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/,
-                                           const Brx& /*aSid*/, TUint aSequenceNumber)
-{
-    if (!iSubscriptionCp->UpdateSequenceNumber(aSequenceNumber)) {
-        iSubscriptionCp->SetNotificationError();
-        return NULL;
-    }
-    iSubscriptionCp->Unlock();
-    ASSERT(iSubscriptionCp != NULL);
-    return new PropertyWriterDv(*iSubscriptionCp);
-}
-
-void CpiDeviceDv::NotifySubscriptionCreated(const Brx& aSid)
+                                           const Brx& aSid, TUint aSequenceNumber)
 {
     Brn sid(aSid);
-    iLock.Wait();
     SubscriptionMap::iterator it = iSubscriptions.find(sid);
     if (it == iSubscriptions.end()) {
-        if (iSubscriptions.size() == 0) {
-            iShutdownSem.Wait(); // consume shutdown signal now the map is non-empty
-        }
-        iSubscriptions.insert(std::pair<Brn,Brn>(sid, sid));
-        iDeviceCp->AddRef();
+        Log::Print("!!! CpiDeviceDv::CreateWriter failed to find subscription\n");
+        return NULL;
     }
-    iLock.Signal();
+    Subscription* subscription = it->second;
+    if (!subscription->iCp->UpdateSequenceNumber(aSequenceNumber)) {
+        subscription->iCp->SetNotificationError();
+        return NULL;
+    }
+    subscription->iCp->Unlock();
+    ASSERT(subscription->iCp != NULL);
+    return new PropertyWriterDv(*(subscription->iCp));
+}
+
+void CpiDeviceDv::NotifySubscriptionCreated(const Brx& /*aSid*/)
+{
 }
 
 void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& aSid)
 {
+    AutoMutex _(iLock);
     Brn sid(aSid);
-    iLock.Wait();
     SubscriptionMap::iterator it = iSubscriptions.find(sid);
     ASSERT(it != iSubscriptions.end());
+    delete it->second;
     iSubscriptions.erase(it);
     if (iSubscriptions.size() == 0) {
         iShutdownSem.Signal(); // unblock shutdown now we have no subscriptions that may be trying to event out updates
     }
     iDeviceCp->RemoveRef();
-    iLock.Signal();
 }
 
 void CpiDeviceDv::NotifySubscriptionExpired(const Brx& /*aSid*/)
