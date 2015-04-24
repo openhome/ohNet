@@ -55,7 +55,8 @@ kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
                     'http-get:*:audio/ogg:*,'            +\
                     'http-get:*:audio/x-ogg:*,'          +\
                     'http-get:*:application/ogg:*,'      +\
-                    'tidalhifi.com:*:*:*'
+                    'tidalhifi.com:*:*:*,'               +\
+                    'qobuz.com:*:*:*'
 kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/wav:*,'          +\
                     'http-get:*:audio/wave:*,'         +\
@@ -71,7 +72,8 @@ kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/ogg:*,'          +\
                     'http-get:*:audio/x-ogg:*,'        +\
                     'http-get:*:application/ogg:*,'    +\
-                    'tidalhifi.com:*:*:*,'
+                    'tidalhifi.com:*:*:*,'               +\
+                    'qobuz.com:*:*:*'
 kChannelsMax      = 100
 kManualChannels   = [ # For the purposes of this test it doesn't matter if these work or not
                      {'uri' : 'http://192.168.10.201:8000/mp3-128k-stereo',
