@@ -50,6 +50,7 @@ private:
     MsgQueue iQueue;
     MsgMode* iPendingMode;
     TBool iWaitingForAudio;
+    TBool iConsumeHalts;
 };
 
 } // namespace Media

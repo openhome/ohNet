@@ -13,6 +13,7 @@ Pruner::Pruner(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
     , iPendingMode(NULL)
     , iWaitingForAudio(false)
+    , iConsumeHalts(false)
 {
 }
 
@@ -109,6 +110,12 @@ Msg* Pruner::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* Pruner::ProcessMsg(MsgHalt* aMsg)
 {
+    // if we've passed on a Halt more recently than any audio, there's no need to pass on another Halt
+    if (iConsumeHalts) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
+    iConsumeHalts = true;
     return TryQueue(aMsg);
 }
 
@@ -137,6 +144,7 @@ Msg* Pruner::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Pruner::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    iConsumeHalts = false;
     return TryQueueCancelWaiting(aMsg);
 }
 
