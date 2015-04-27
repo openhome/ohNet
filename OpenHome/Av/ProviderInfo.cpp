@@ -146,6 +146,7 @@ void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool
     GetPropertyTrackCount(n);
     SetPropertyTrackCount(n + 1);
     if (aStartOfStream) {
+        iMetaText.Replace(Brx::Empty());
         ClearStreamInfo(aTrack.Uri(), aTrack.MetaData());
     }
     else {
@@ -157,15 +158,15 @@ void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool
 
 void ProviderInfo::NotifyMetaText(const Brx& aText)
 {
-    TUint n = 0;
-
     AutoMutex mutex(iLock);
 
     PropertiesLock();
-    GetPropertyMetatextCount(n);
-    SetPropertyMetatextCount(n + 1);
-    iMetaText.Replace(aText);
-    SetPropertyMetatext(iMetaText);
+    if (SetPropertyMetatext(aText)) {
+        iMetaText.Replace(aText);
+        TUint count = 0;
+        GetPropertyMetatextCount(count);
+        SetPropertyMetatextCount(count+1);
+    }
     PropertiesUnlock();
 }
 

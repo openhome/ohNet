@@ -69,6 +69,17 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     iMsgTrack = aMsg;
     iMsgTrack->AddRef();
     iModeTrack.Replace(iMode);
+    if (aMsg->StartOfStream()) {
+        if (iMsgDecodedStreamInfo != NULL) {
+            iMsgDecodedStreamInfo->RemoveRef();
+            iMsgDecodedStreamInfo = NULL;
+        }
+        if (iMsgMetaText != NULL) {
+            iMsgMetaText->RemoveRef();
+            iMsgMetaText = NULL;
+        }
+        iNotifyTime = false;
+    }
     iThread->Signal();
     return aMsg;
 }
@@ -133,6 +144,7 @@ Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
     iMsgDecodedStreamInfo->AddRef();
     iNotifyTime = true;
     iThread->Signal();
+    iThread->Signal(); // second Signal() needed because we want to run both stream & time callbacks
     return aMsg;
 }
 
@@ -182,7 +194,7 @@ void Reporter::ObserverThread()
             msg->RemoveRef();
             iLock.Wait();
         }
-        if (iMsgDecodedStreamInfo != NULL) {
+        else if (iMsgDecodedStreamInfo != NULL) {
             MsgDecodedStream* msg = iMsgDecodedStreamInfo;
             iMsgDecodedStreamInfo = NULL;
             iLock.Signal();
@@ -190,7 +202,7 @@ void Reporter::ObserverThread()
             msg->RemoveRef();
             iLock.Wait();
         }
-        if (iMsgMetaText != NULL) {
+        else if (iMsgMetaText != NULL) {
             MsgMetaText* msg = iMsgMetaText;
             iMsgMetaText = NULL;
             iLock.Signal();
@@ -198,7 +210,7 @@ void Reporter::ObserverThread()
             msg->RemoveRef();
             iLock.Wait();
         }
-        if (iNotifyTime) {
+        else if (iNotifyTime) {
             const TUint seconds = iSeconds;
             const TUint trackDurationSeconds = iTrackDurationSeconds;
             iNotifyTime = false;
