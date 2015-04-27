@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 #if IOS
-using MonoTouch;
+using ObjCRuntime;
 #endif
 
 namespace OpenHome.Net.Core

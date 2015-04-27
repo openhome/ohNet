@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using OpenHome.Net.Core;
 #if IOS
-using MonoTouch;
+using ObjCRuntime;
 #endif
 
 namespace OpenHome.Net.ControlPoint

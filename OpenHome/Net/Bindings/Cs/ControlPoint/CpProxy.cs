@@ -4,7 +4,7 @@ using System.Text;
 using OpenHome.Net.Core;
 using System.Threading;
 #if IOS
-using MonoTouch;
+using ObjCRuntime;
 #endif
 
 namespace OpenHome.Net.ControlPoint

@@ -4,7 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 #if IOS
-using MonoTouch;
+using ObjCRuntime;
 #endif
 
 namespace OpenHome.Net.Core

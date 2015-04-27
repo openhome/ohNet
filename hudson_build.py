@@ -77,7 +77,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-x86, Qnap-x86, Qnap-armel")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-armhf, Linux-mipsel, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-arm64, iOs-x86, Qnap-x86, Qnap-armel")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -125,6 +125,7 @@ class JenkinsBuild():
                 'iOs-ARM': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'}, # Old Jenkins label
                 'iOs-x86': { 'os': 'iOs', 'arch':'x86', 'publish':True, 'system':'iOs'},
                 'iOs-armv7': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'},
+                'iOs-arm64': { 'os': 'iOs', 'arch':'arm64', 'publish':True, 'system':'iOs'},
                 'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':True, 'system':'Core'},
                 'Core-armv5': { 'os': 'Core', 'arch':'armv5', 'publish':True, 'system':'Core'},
                 'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':True, 'system':'Core'},
@@ -172,7 +173,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'armv5', 'armv6', 'mipsel']) or (arch == 'ppc32' and os_platform == 'Core') or (os_platform == 'Android'):
+        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel']) or (arch == 'ppc32' and os_platform == 'Core') or (os_platform == 'Android'):
             args.append('--buildonly')
         elif arch == 'x64' and not os_platform in ['windows', 'linux']:
             args.append('--native')
@@ -192,6 +193,9 @@ class JenkinsBuild():
             elif arch == 'armv7':
                 args.append('--iOs-armv7')
                 self.platform_make_args.append('iOs-armv7=1')
+            elif arch == 'arm64':
+                args.append('--iOs-arm64')
+                self.platform_make_args.append('iOs-arm64=1')
             # 32 and 64-bit builds run in parallel on the same slave.
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
