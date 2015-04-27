@@ -180,12 +180,12 @@ def bundle(context):
 
 @build_step("test", optional=True)
 def test(context):
-    if context.env["OH_PLATFORM"] != 'Linux-armhf' and context.env["OH_PLATFORM"] != 'Linux-mipsel':
+    if context.env["OH_PLATFORM"] != 'Linux-mipsel':
         python("waf", "test")
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
-    if context.env["OH_PLATFORM"] != 'Linux-armhf' and context.env["OH_PLATFORM"] != 'Linux-mipsel':
+    if context.env["OH_PLATFORM"] != 'Linux-mipsel':
         python("waf", "test_full")
 
 @build_step("install", optional=True, default=True)
