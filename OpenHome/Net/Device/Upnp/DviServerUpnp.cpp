@@ -589,6 +589,8 @@ void DviSessionUpnp::Run()
     iSoapRequest.SetBytes(0);
     iDechunker->SetChunked(false);
     iDechunker->ReadFlush();
+    iResponseStarted = false;
+    iResponseEnded = false;
     // check headers
     try {
         try {
@@ -612,8 +614,6 @@ void DviSessionUpnp::Run()
         LOG(kDvDevice, "\n");
         lock.Signal();
 
-        iResponseStarted = false;
-        iResponseEnded = false;
         if (method == Http::kMethodGet) {
             Get();
         }
