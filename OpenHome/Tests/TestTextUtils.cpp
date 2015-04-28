@@ -807,7 +807,7 @@ void SuiteAscii::Test()
     TEST(test == Brn("TEST:-1234567890123456789"));
 
     test.Replace(Brn("TEST:"));
-    TEST(Ascii::AppendDec(test, std::numeric_limits<long long>::min()) == 20);
+    TEST(Ascii::AppendDec(test, (TInt64)std::numeric_limits<long long>::min()) == 20);
     TEST(test == Brn("TEST:-9223372036854775808"));
 
     // Unsigned
