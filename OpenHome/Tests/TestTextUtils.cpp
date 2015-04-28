@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Os.h>
 
+#include <limits>
+
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
@@ -803,6 +805,10 @@ void SuiteAscii::Test()
     test.Replace(Brn("TEST:"));
     TEST(Ascii::AppendDec(test, TInt64(-1234567890123456789ll)) == 20);
     TEST(test == Brn("TEST:-1234567890123456789"));
+
+    test.Replace(Brn("TEST:"));
+    TEST(Ascii::AppendDec(test, std::numeric_limits<long long>::min()) == 20);
+    TEST(test == Brn("TEST:-9223372036854775808"));
 
     // Unsigned
     

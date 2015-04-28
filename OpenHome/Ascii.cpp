@@ -244,7 +244,7 @@ TUint Ascii::AppendDec(Bwx& aBuffer, TInt64 aValue)
     }
 
     while(aValue != 0) {
-        reversed.Append((TChar)('0' + labs(aValue % 10)));
+        reversed.Append((TChar)('0' + abs((TInt)(aValue % 10))));
         aValue = aValue / 10;
     }
 
