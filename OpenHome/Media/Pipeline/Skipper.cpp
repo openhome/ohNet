@@ -110,8 +110,8 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler = aMsg->StreamHandler();
     if (FlushUntilHalt()) {
         const TBool sendHalt = (iState != eFlushing); // only create a MsgHalt the first time we call StartFlushing()
+        (void)iStreamHandler->OkToPlay(iStreamId);
         StartFlushing(sendHalt);
-        // a bit dodgy not calling aMsg->StreamHandler()->OkToPlay()
         // ...but safe if we assume that RemoveAll() is only called when IdManager contents have also been invalidated
         aMsg->RemoveRef();
         return NULL;
