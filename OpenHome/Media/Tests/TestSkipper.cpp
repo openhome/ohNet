@@ -164,7 +164,6 @@ Msg* SuiteSkipper::Pull()
 
 EStreamPlay SuiteSkipper::OkToPlay(TUint /*aStreamId*/)
 {
-    ASSERTS();
     return ePlayNo;
 }
 
