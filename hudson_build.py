@@ -36,14 +36,24 @@ class PostActions():
             sys.exit(10)
 
     def armel_tests(self,type,release):
+        self.__remote_tests('sheeva010.linn.co.uk', 'root', type, release)
+
+    def armhf_tests(self,type,release):
+        self.__remote_tests('test-rpi.linn.co.uk', 'test', type, release)
+
+    # TODO
+    def mipsel_tests(self,type,release):
+        pass
+
+    def __remote_tests(self, host, user, type,release):
         # type will be either 'nightly' or 'commit'
         # release will be either '0' or '1'
         rem = remote()
-        ret = rem.rsync('root','sheeva010.linn.co.uk','Build','~/', excludes=['*.o', '*.a', 'Bundles'])
+        ret = rem.rsync(user, host,'Build','~/', excludes=['*.o', '*.a', 'Bundles'])
         if ret != 0:
             print ret
             sys.exit(10)
-        ret = rem.rsync('root','sheeva010.linn.co.uk','AllTests.py','~/')
+        ret = rem.rsync(user, host,'AllTests.py','~/')
         if ret != 0:
             print ret
             sys.exit(10)
@@ -55,18 +65,10 @@ class PostActions():
         if release == '0':
             alltests_cmd += ' --debug'   # Run binaries residing in Build/Debug instead of Build/Release
 
-        ret = rem.rssh('root','sheeva010.linn.co.uk', alltests_cmd)
+        ret = rem.rssh(user, host, alltests_cmd)
         if ret != 0:
             print ret
             sys.exit(10)
-
-    # TODO
-    def armhf_tests(self,type,release):
-        pass
-
-    # TODO
-    def mipsel_tests(self,type,release):
-        pass
     
 class JenkinsBuild():
     def get_options(self):
