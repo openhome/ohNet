@@ -288,6 +288,7 @@ TBool Bwx::TryAppend(const TChar* aStr)
     Append(aStr);
     return(true);
 }
+
 void Bwx::Append(const TChar* aStr)
 {
     Append((TByte*)aStr, OhNetStrlen(aStr));
@@ -318,6 +319,7 @@ TBool Bwx::TryAppend(const TByte* aPtr, TUint aBytes)
     Append(aPtr, aBytes);
     return(true);
 }
+
 void Bwx::Append(const TByte* aPtr, TUint aBytes)
 {
     ASSERT(Bytes() + aBytes <= MaxBytes());
@@ -326,7 +328,6 @@ void Bwx::Append(const TByte* aPtr, TUint aBytes)
     memcpy(const_cast<TByte*>(ptr+Bytes()), aPtr, aBytes);
     iBytes = Bytes() + aBytes;
 }
-
 
 void Bwx::AppendPrintf(const TChar* aFormatString, ...)
 {
@@ -346,12 +347,12 @@ void Bwx::AppendPrintf(const TChar* aFormatString, va_list aArgs)
         aFormatString,
         aArgs );
 
-    if((Bytes() + n) >= MaxBytes()) {
+    if((Bytes() + n) > MaxBytes()) {
         SetBytes(MaxBytes());
         THROW(BufferFull);
     }
     else {
-        SetBytes( Bytes() + n );
+        SetBytes(Bytes() + n);
     }
 }
 
