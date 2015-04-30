@@ -197,7 +197,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
     functor = MakeFunctor(*this, &<#=className#>C::<#=s.name#>PropertyChanged);
-    i<#=s.name#> = new <#=propType[s.type]#>(reinterpret_cast<CpiDevice*>(aDevice)->GetCpStack().Env(), "<#=s.name#>", functor);
+    i<#=s.name#> = new <#=propType[s.type]#>("<#=s.name#>", functor);
     AddProperty(i<#=s.name#>);
 <#  } #>
 }

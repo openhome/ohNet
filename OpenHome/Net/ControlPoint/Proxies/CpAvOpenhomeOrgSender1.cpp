@@ -161,19 +161,19 @@ CpProxyAvOpenhomeOrgSender1::CpProxyAvOpenhomeOrgSender1(CpDevice& aDevice)
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1::PresentationUrlPropertyChanged);
-    iPresentationUrl = new PropertyString(aDevice.Device().GetCpStack().Env(), "PresentationUrl", functor);
+    iPresentationUrl = new PropertyString("PresentationUrl", functor);
     AddProperty(iPresentationUrl);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1::MetadataPropertyChanged);
-    iMetadata = new PropertyString(aDevice.Device().GetCpStack().Env(), "Metadata", functor);
+    iMetadata = new PropertyString("Metadata", functor);
     AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1::AudioPropertyChanged);
-    iAudio = new PropertyBool(aDevice.Device().GetCpStack().Env(), "Audio", functor);
+    iAudio = new PropertyBool("Audio", functor);
     AddProperty(iAudio);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1::StatusPropertyChanged);
-    iStatus = new PropertyString(aDevice.Device().GetCpStack().Env(), "Status", functor);
+    iStatus = new PropertyString("Status", functor);
     AddProperty(iStatus);
     functor = MakeFunctor(*this, &CpProxyAvOpenhomeOrgSender1::AttributesPropertyChanged);
-    iAttributes = new PropertyString(aDevice.Device().GetCpStack().Env(), "Attributes", functor);
+    iAttributes = new PropertyString("Attributes", functor);
     AddProperty(iAttributes);
 }
 

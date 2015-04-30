@@ -149,7 +149,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
     functor = MakeFunctor(*this, &<#=className#>::<#=s.name#>PropertyChanged);
-    i<#=s.name#> = new <#=proptype[s.type]#>(aDevice.Device().GetCpStack().Env(), "<#=s.name#>", functor);
+    i<#=s.name#> = new <#=proptype[s.type]#>("<#=s.name#>", functor);
     AddProperty(i<#=s.name#>);
 <#  } #>
 }

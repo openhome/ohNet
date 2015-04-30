@@ -137,7 +137,7 @@ void <#=className#>C::EnableProperty<#=s.name#>()
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#          } #>
 <#      } #>
-    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(iDvStack.Env(), new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
+    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
 <#      if (s.values.Count > 0) #>
 <#      { #>
     delete[] allowedValues;

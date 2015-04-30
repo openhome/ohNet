@@ -89,19 +89,19 @@ DvProviderAvOpenhomeOrgSender1Cpp::DvProviderAvOpenhomeOrgSender1Cpp(DvDeviceStd
 
 void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyPresentationUrl()
 {
-    iPropertyPresentationUrl = new PropertyString(iDvStack.Env(), new ParameterString("PresentationUrl"));
+    iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl"));
     iService->AddProperty(iPropertyPresentationUrl); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyMetadata()
 {
-    iPropertyMetadata = new PropertyString(iDvStack.Env(), new ParameterString("Metadata"));
+    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyAudio()
 {
-    iPropertyAudio = new PropertyBool(iDvStack.Env(), new ParameterBool("Audio"));
+    iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
     iService->AddProperty(iPropertyAudio); // passes ownership
 }
 
@@ -113,14 +113,14 @@ void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyStatus()
     allowedValues[index++] = (TChar*)"Enabled";
     allowedValues[index++] = (TChar*)"Disabled";
     allowedValues[index++] = (TChar*)"Blocked";
-    iPropertyStatus = new PropertyString(iDvStack.Env(), new ParameterString("Status", allowedValues, 3));
+    iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 3));
     delete[] allowedValues;
     iService->AddProperty(iPropertyStatus); // passes ownership
 }
 
 void DvProviderAvOpenhomeOrgSender1Cpp::EnablePropertyAttributes()
 {
-    iPropertyAttributes = new PropertyString(iDvStack.Env(), new ParameterString("Attributes"));
+    iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 

@@ -258,8 +258,8 @@ TBool Property::ReportChanged()
     return false;
 }
 
-Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
-    : iEnv(aEnv)
+Property::Property(OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
+    : iLock("PROP")
     , iParameter(aParameter)
     , iFunctor(aFunctor)
     , iChanged(false)
@@ -269,8 +269,8 @@ Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter, Func
     ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
 }
 
-Property::Property(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
-    : iEnv(aEnv)
+Property::Property(OpenHome::Net::Parameter* aParameter)
+    : iLock("PROP")
     , iParameter(aParameter)
     , iChanged(false)
     , iSequenceNumber(0)
@@ -296,13 +296,13 @@ Property::~Property()
 
 // PropertyString
 
-PropertyString::PropertyString(Environment& aEnv, const TChar* aName, Functor& aFunctor)
-    : Property(aEnv, new ParameterString(aName), aFunctor)
+PropertyString::PropertyString(const TChar* aName, Functor& aFunctor)
+    : Property(new ParameterString(aName), aFunctor)
 {
 }
 
-PropertyString::PropertyString(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
-    : Property(aEnv, aParameter)
+PropertyString::PropertyString(OpenHome::Net::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -312,7 +312,7 @@ PropertyString::~PropertyString()
 
 const Brx& PropertyString::Value() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0) {
         THROW(PropertyError);
     }
@@ -321,7 +321,7 @@ const Brx& PropertyString::Value() const
 
 void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     Brhz old;
     iValue.TransferTo(old);
     aProcessor.ProcessString(aBuffer, iValue);
@@ -333,7 +333,7 @@ void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyString::SetValue(const Brx& aValue)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue.Set(aValue);
         iSequenceNumber++;
@@ -344,19 +344,20 @@ TBool PropertyString::SetValue(const Brx& aValue)
 
 void PropertyString::Write(IPropertyWriter& aWriter)
 {
+    AutoMutex _(iLock);
     aWriter.PropertyWriteString(iParameter->Name(), iValue);
 }
 
 
 // PropertyInt
 
-PropertyInt::PropertyInt(Environment& aEnv, const TChar* aName, Functor& aFunctor)
-    : Property(aEnv, new ParameterInt(aName), aFunctor)
+PropertyInt::PropertyInt(const TChar* aName, Functor& aFunctor)
+    : Property(new ParameterInt(aName), aFunctor)
 {
 }
 
-PropertyInt::PropertyInt(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
-    : Property(aEnv, aParameter)
+PropertyInt::PropertyInt(OpenHome::Net::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -366,7 +367,7 @@ PropertyInt::~PropertyInt()
 
 TInt PropertyInt::Value() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0) {
         THROW(PropertyError);
     }
@@ -375,7 +376,7 @@ TInt PropertyInt::Value() const
 
 void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     TInt old = iValue;
     aProcessor.ProcessInt(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -386,7 +387,7 @@ void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyInt::SetValue(TInt aValue)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue = aValue;
         iSequenceNumber++;
@@ -397,19 +398,20 @@ TBool PropertyInt::SetValue(TInt aValue)
 
 void PropertyInt::Write(IPropertyWriter& aWriter)
 {
+    AutoMutex _(iLock);
     aWriter.PropertyWriteInt(iParameter->Name(), iValue);
 }
 
 
 // PropertyUint
 
-PropertyUint::PropertyUint(Environment& aEnv, const TChar* aName, Functor& aFunctor)
-    : Property(aEnv, new ParameterUint(aName), aFunctor)
+PropertyUint::PropertyUint(const TChar* aName, Functor& aFunctor)
+    : Property(new ParameterUint(aName), aFunctor)
 {
 }
 
-PropertyUint::PropertyUint(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
-    : Property(aEnv, aParameter)
+PropertyUint::PropertyUint(OpenHome::Net::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -419,7 +421,7 @@ PropertyUint::~PropertyUint()
 
 TUint PropertyUint::Value() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0) {
         THROW(PropertyError);
     }
@@ -428,7 +430,7 @@ TUint PropertyUint::Value() const
 
 void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     TUint old = iValue;
     aProcessor.ProcessUint(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -439,7 +441,7 @@ void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyUint::SetValue(TUint aValue)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue = aValue;
         iSequenceNumber++;
@@ -450,19 +452,20 @@ TBool PropertyUint::SetValue(TUint aValue)
 
 void PropertyUint::Write(IPropertyWriter& aWriter)
 {
+    AutoMutex _(iLock);
     aWriter.PropertyWriteUint(iParameter->Name(), iValue);
 }
 
 
 // PropertyBool
 
-PropertyBool::PropertyBool(Environment& aEnv, const TChar* aName, Functor& aFunctor)
-    : Property(aEnv, new ParameterBool(aName), aFunctor)
+PropertyBool::PropertyBool(const TChar* aName, Functor& aFunctor)
+    : Property(new ParameterBool(aName), aFunctor)
 {
 }
 
-PropertyBool::PropertyBool(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
-    : Property(aEnv, aParameter)
+PropertyBool::PropertyBool(OpenHome::Net::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -472,7 +475,7 @@ PropertyBool::~PropertyBool()
 
 TBool PropertyBool::Value() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0) {
         THROW(PropertyError);
     }
@@ -481,7 +484,7 @@ TBool PropertyBool::Value() const
 
 void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     TBool old = iValue;
     aProcessor.ProcessBool(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -492,7 +495,7 @@ void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyBool::SetValue(TBool aValue)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue = aValue;
         iSequenceNumber++;
@@ -503,19 +506,20 @@ TBool PropertyBool::SetValue(TBool aValue)
 
 void PropertyBool::Write(IPropertyWriter& aWriter)
 {
+    AutoMutex _(iLock);
     aWriter.PropertyWriteBool(iParameter->Name(), iValue);
 }
 
 
 // PropertyBinary
 
-PropertyBinary::PropertyBinary(Environment& aEnv, const TChar* aName, Functor& aFunctor)
-    : Property(aEnv, new ParameterBinary(aName), aFunctor)
+PropertyBinary::PropertyBinary(const TChar* aName, Functor& aFunctor)
+    : Property(new ParameterBinary(aName), aFunctor)
 {
 }
 
-PropertyBinary::PropertyBinary(Environment& aEnv, OpenHome::Net::Parameter* aParameter)
-    : Property(aEnv, aParameter)
+PropertyBinary::PropertyBinary(OpenHome::Net::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -525,7 +529,7 @@ PropertyBinary::~PropertyBinary()
 
 const Brx& PropertyBinary::Value() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0) {
         THROW(PropertyError);
     }
@@ -534,7 +538,7 @@ const Brx& PropertyBinary::Value() const
 
 void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     Bwh old(iValue.Ptr(), iValue.Bytes());
     aProcessor.ProcessBinary(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
@@ -545,7 +549,7 @@ void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 
 TBool PropertyBinary::SetValue(const Brx& aValue)
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex _(iLock);
     if (iSequenceNumber == 0 || aValue != iValue) {
         iValue.Set(aValue);
         iSequenceNumber++;
@@ -556,6 +560,7 @@ TBool PropertyBinary::SetValue(const Brx& aValue)
 
 void PropertyBinary::Write(IPropertyWriter& aWriter)
 {
+    AutoMutex _(iLock);
     aWriter.PropertyWriteBinary(iParameter->Name(), iValue);
 }
 
