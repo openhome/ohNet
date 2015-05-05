@@ -330,6 +330,106 @@ void Mpeg4Box::ReadInterrupt()
 }
 
 
+// Mpeg4BoxStack
+
+Mpeg4BoxStack::Mpeg4BoxStack(TUint aNestCount)
+    : iReader(NULL)
+    , iIndex(0)
+{
+    iBoxes.reserve(aNestCount);
+    for (TUint i=0; i<aNestCount; i++) {
+        iBoxes.push_back(new Mpeg4Box());
+    }
+}
+
+Mpeg4BoxStack::~Mpeg4BoxStack()
+{
+    for (TUint i=0; i<iBoxes.size(); i++) {
+        delete iBoxes[i];
+    }
+}
+
+void Mpeg4BoxStack::Set(IReader& aReader)
+{
+    //ASSERT(iReader == NULL);
+    iReader = &aReader;
+}
+
+void Mpeg4BoxStack::Push()
+{
+    ASSERT(iReader != NULL);
+    ASSERT(iIndex < iBoxes.size());
+
+    IReader* reader = iReader;
+    if (iIndex > 0) {
+        reader = iBoxes[iIndex-1];
+    }
+
+    iIndex++;
+    iBoxes[iIndex-1]->Set(*reader);
+}
+
+void Mpeg4BoxStack::Pop()
+{
+    ASSERT(iIndex > 0);
+    iIndex--;
+}
+
+void Mpeg4BoxStack::Clear()
+{
+    ASSERT(iIndex > 0);
+    iBoxes[iIndex-1]->Clear();
+}
+
+void Mpeg4BoxStack::ReadHeader()
+{
+    ASSERT(iIndex > 0);
+    iBoxes[iIndex-1]->ReadHeader();
+}
+
+TUint Mpeg4BoxStack::Size() const
+{
+    ASSERT(iIndex > 0);
+    return iBoxes[iIndex-1]->Size();
+}
+
+const Brx& Mpeg4BoxStack::Id() const
+{
+    ASSERT(iIndex > 0);
+    return iBoxes[iIndex-1]->Id();
+}
+
+void Mpeg4BoxStack::SkipRemaining()
+{
+    ASSERT(iIndex > 0);
+    return iBoxes[iIndex-1]->SkipRemaining();
+}
+
+void Mpeg4BoxStack::Skip(TUint aBytes)
+{
+    ASSERT(iIndex > 0);
+    iBoxes[iIndex-1]->Skip(aBytes);
+}
+
+Brn Mpeg4BoxStack::Read(TUint aBytes)
+{
+    ASSERT(iIndex > 0);
+    return iBoxes[iIndex-1]->Read(aBytes);
+}
+
+void Mpeg4BoxStack::ReadFlush()
+{
+    ASSERT(iIndex > 0);
+    iBoxes[iIndex-1]->ReadFlush();
+}
+
+void Mpeg4BoxStack::ReadInterrupt()
+{
+    ASSERT(iIndex > 0);
+    iBoxes[iIndex-1]->ReadInterrupt();
+}
+
+
 // SampleSizeTable
 
 SampleSizeTable::SampleSizeTable()
@@ -551,8 +651,9 @@ TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
 // Mpeg4Start
 
 Mpeg4Container::Mpeg4Container()
+    : iBoxStack(kMetadataBoxDepth)
 {
-    LOG(kMedia, "Mpeg4Start::Mpeg4Start\n");
+    LOG(kMedia, "Mpeg4Container::Mpeg4Container\n");
 }
 
 TBool Mpeg4Container::Recognise(Brx& aBuf)
@@ -852,86 +953,97 @@ Msg* Mpeg4Container::Process()
 
 TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
 {
+    // Need to move through stack to get data from the following boxes:
+    // -- moov.trak.mdia.mdhd
+    // -- moov.trak.mdia.minf
+    // ---- moov.trak.minf.stbl.stsd
+    // ------ moov.trak.minf.stbl.stsd.mp4a
+    // -------- moov.trak.minf.stbl.stsd.mp4a.esds
+    // ---- moov.trak.minf.stbl.stts
+    // ---- moov.trak.minf.stbl.stsc
+    // ---- moov.trak.minf.stbl.stco
+    // ---- moov.trak.minf.stbl.co64
+    // ---- moov.trak.minf.stbl.stsz
+
+    iBoxStack.Set(aReader);
     try {
-        Mpeg4Box box1;
-        box1.Set(aReader);
+        iBoxStack.Push();
         for (;;) {
-            box1.ReadHeader();
-            if (box1.Id() == Brn("trak")) {
-                Mpeg4Box box2;
-                box2.Set(box1);
+            iBoxStack.ReadHeader();
+            if (iBoxStack.Id() == Brn("trak")) {
+                iBoxStack.Push();
                 for (;;) {
-                    box2.ReadHeader();
-                    if (box2.Id() == Brn("mdia")) {
-                        Mpeg4Box box3;
-                        box3.Set(box2);
+                    iBoxStack.ReadHeader();
+                    if (iBoxStack.Id() == Brn("mdia")) {
+                        iBoxStack.Push();
                         for (;;) {
-                            box3.ReadHeader();
-                            if (box3.Id() == Brn("mdhd")) {
-                                ParseBoxMdhd(box3, box3.Size());
+                            iBoxStack.ReadHeader();
+                            if (iBoxStack.Id() == Brn("mdhd")) {
+                                ParseBoxMdhd(iBoxStack, iBoxStack.Size());
                             }
-                            else if (box3.Id() == Brn("minf")) {
-                                Mpeg4Box box4;
-                                box4.Set(box3);
+                            else if (iBoxStack.Id() == Brn("minf")) {
+                                iBoxStack.Push();
                                 for (;;) {
-                                    box4.ReadHeader();
-                                    if (box4.Id() == Brn("stbl")) {
-                                        Mpeg4Box box5;
-                                        box5.Set(box4);
+                                    iBoxStack.ReadHeader();
+                                    if (iBoxStack.Id() == Brn("stbl")) {
+                                        iBoxStack.Push();
                                         for (;;) {
-                                            box5.ReadHeader();
-                                            if (box5.Id() == Brn("stsd")) {
-                                                ReaderBinary readerBin(box5);
-                                                box5.Skip(4);   // Skip version info.
+                                            iBoxStack.ReadHeader();
+                                            if (iBoxStack.Id() == Brn("stsd")) {
+                                                ReaderBinary readerBin(iBoxStack);
+                                                iBoxStack.Skip(4);   // Skip version info.
                                                 const TUint sampleEntries = readerBin.ReadUintBe(4);
-                                                Mpeg4Box sampleEntry;
-                                                sampleEntry.Set(box5);
+                                                iBoxStack.Push();
                                                 for (TUint i=0; i<sampleEntries; i++) {
-                                                    sampleEntry.ReadHeader();
-                                                    if (sampleEntry.Id() == Brn("mp4a")) {  // Only care about audio.
-                                                        ParseBoxMp4a(box5, box5.Size());
-                                                        Mpeg4Box streamDescriptorBox;
-                                                        streamDescriptorBox.Set(sampleEntry);
+                                                    iBoxStack.ReadHeader();
+                                                    if (iBoxStack.Id() == Brn("mp4a")) {  // Only care about audio.
+                                                        ParseBoxMp4a(iBoxStack, iBoxStack.Size());
+                                                        iBoxStack.Push();
                                                         for (;;) {
-                                                            streamDescriptorBox.ReadHeader();
-                                                            if (streamDescriptorBox.Id() == Brn("esds") || streamDescriptorBox.Id() == Brn("alac")) {
+                                                            iBoxStack.ReadHeader();
+                                                            if (iBoxStack.Id() == Brn("esds") || iBoxStack.Id() == Brn("alac")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
                                                                 Log::Print("found stream descriptor box\n");
 
-                                                                ParseBoxStreamDescriptor(streamDescriptorBox, streamDescriptorBox.Size());
+                                                                ParseBoxStreamDescriptor(iBoxStack, iBoxStack.Size());
                                                                 break;
                                                             }
+                                                            iBoxStack.SkipRemaining();
+                                                            iBoxStack.Clear();
                                                         }
-
-                                                        streamDescriptorBox.SkipRemaining();
-                                                        streamDescriptorBox.Clear();
+                                                        iBoxStack.SkipRemaining();
+                                                        iBoxStack.Clear();
+                                                        iBoxStack.Pop();
                                                         break;  // FIXME - correct thing to do?
 
                                                     }
-                                                    sampleEntry.SkipRemaining();
-                                                    sampleEntry.Clear();
+                                                    iBoxStack.SkipRemaining();
+                                                    iBoxStack.Clear();
                                                 }
+                                                iBoxStack.SkipRemaining();
+                                                iBoxStack.Clear();
+                                                iBoxStack.Pop();
                                             }
-                                            else if (box5.Id() == Brn("stts")) {
-                                                ParseBoxStts(box5, box5.Size());
+                                            else if (iBoxStack.Id() == Brn("stts")) {
+                                                ParseBoxStts(iBoxStack, iBoxStack.Size());
                                             }
-                                            else if (box5.Id() == Brn("stsc")) {
-                                                ParseBoxStsc(box5, box5.Size());
+                                            else if (iBoxStack.Id() == Brn("stsc")) {
+                                                ParseBoxStsc(iBoxStack, iBoxStack.Size());
                                             }
-                                            else if (box5.Id() == Brn("stco")) {
+                                            else if (iBoxStack.Id() == Brn("stco")) {
                                                 // FIXME - check co64 (or stco) hasn't been processed
-                                                ParseBoxStco(box5, box5.Size());
+                                                ParseBoxStco(iBoxStack, iBoxStack.Size());
                                             }
-                                            else if (box5.Id() == Brn("co64")) {
+                                            else if (iBoxStack.Id() == Brn("co64")) {
                                                 // FIXME - check stco (or co64) hasn't been processed
-                                                ParseBoxCo64(box5, box5.Size());
+                                                ParseBoxCo64(iBoxStack, iBoxStack.Size());
                                             }
-                                            else if (box5.Id() == Brn("stsz")) {
-                                                ParseBoxStsz(box5, box5.Size());
+                                            else if (iBoxStack.Id() == Brn("stsz")) {
+                                                ParseBoxStsz(iBoxStack, iBoxStack.Size());
                                             }
-                                            box5.SkipRemaining();
-                                            box5.Clear();
+                                            iBoxStack.SkipRemaining();
+                                            iBoxStack.Clear();
                                             //if (iSampleSizeTable.Count() > 0 // may not be valid if SampleSizeTable is changed to support a fixed sample size.
                                             //    && (iSeekTable.SamplesPerChunkCount() > 0
                                             //    && iSeekTable.AudioSamplesPerSampleCount() > 0
@@ -947,40 +1059,45 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                 && (iChannels != 0
                                                 && iBitDepth != 0
                                                 && iSampleRate != 0)) {
+                                                    iBoxStack.Pop();
                                                     iProcessingMetadataComplete = true;
                                                     break;
                                             }
                                         }
                                     }
-                                    box4.SkipRemaining();
-                                    box4.Clear();
+                                    iBoxStack.SkipRemaining();
+                                    iBoxStack.Clear();
                                     if (iProcessingMetadataComplete) {
+                                        iBoxStack.Pop();
                                         break;
                                     }
                                 }
                             }
-                            box3.SkipRemaining();
-                            box3.Clear();
+                            iBoxStack.SkipRemaining();
+                            iBoxStack.Clear();
                             //if ((iTimescale != 0 && iDuration != 0)                         // from mdhd box.
                             //    && (iChannels != 0 && iBitDepth != 0 && iSampleRate != 0))  // from minf.stbl.stsd.mp4a box.
                             //        {
                             //        break;
                             //}
                             if (iProcessingMetadataComplete) {
+                                iBoxStack.Pop();
                                 break;
                             }
                         }
                     }
-                    box2.SkipRemaining();
-                    box2.Clear();
+                    iBoxStack.SkipRemaining();
+                    iBoxStack.Clear();
                     if (iProcessingMetadataComplete) {
+                        iBoxStack.Pop();
                         break;
                     }
                 }
             }
-            box1.SkipRemaining();
-            box1.Clear();
+            iBoxStack.SkipRemaining();
+            iBoxStack.Clear();
             if (iProcessingMetadataComplete) {
+                iBoxStack.Pop();
                 break;
             }
         }
@@ -994,7 +1111,7 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
     return iProcessingMetadataComplete; // FIXME - if doing this, use a local var instead.
 }
 
-void Mpeg4Container::ParseBoxMdhd(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxMdhd(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     // May throw ReaderError or MediaMpeg4FileInvalid.
     ReaderBinary readerBin(aBox);
@@ -1023,7 +1140,7 @@ void Mpeg4Container::ParseBoxMdhd(Mpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxMp4a(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxMp4a(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     iCodec.Replace("mp4a");
     ReaderBinary readerBin(aBox);
@@ -1038,7 +1155,7 @@ void Mpeg4Container::ParseBoxMp4a(Mpeg4Box& aBox, TUint /*aBytes*/)
     aBox.Skip(2);    // Don't care about 2 LSBs of sample rate (unused).
 }
 
-void Mpeg4Container::ParseBoxStts(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxStts(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     // Table of audio samples per sample - used to convert audio samples to codec samples.
     ReaderBinary readerBin(aBox);
@@ -1055,7 +1172,7 @@ void Mpeg4Container::ParseBoxStts(Mpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxStsc(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxStsc(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     // Table of samples per chunk - used to seek to specific sample.
     ReaderBinary readerBin(aBox);
@@ -1074,7 +1191,7 @@ void Mpeg4Container::ParseBoxStsc(Mpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxStco(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxStco(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     // Table of file offsets for each chunk (32-bit offsets).
     ReaderBinary readerBin(aBox);
@@ -1091,7 +1208,7 @@ void Mpeg4Container::ParseBoxStco(Mpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxCo64(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxCo64(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     // Table of file offsets for each chunk (64-bit offsets).
     ReaderBinary readerBin(aBox);
@@ -1108,7 +1225,7 @@ void Mpeg4Container::ParseBoxCo64(Mpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxStsz(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxStsz(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     ReaderBinary readerBin(aBox);
     const TUint version = readerBin.ReadUintBe(4);
@@ -1127,7 +1244,7 @@ void Mpeg4Container::ParseBoxStsz(Mpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxStreamDescriptor(Mpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxStreamDescriptor(IMpeg4Box& aBox, TUint /*aBytes*/)
 {
     ReaderBinary readerBin(aBox);
     const TUint version = readerBin.ReadUintBe(1);  // Only 1 byte!

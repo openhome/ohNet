@@ -101,37 +101,24 @@ private:
     const IMpeg4InfoReadable& iInfo;
 };
 
-//class ReaderPassThrough : public IReader, private INonCopyable
-//{
-//public:
-//    ReaderPassThrough(IReader& aReader);
-//private: // from IReader
-//    Brn Read(TUint aBytes) override;    // Returns [0..aBytes].  0 => stream closed
-//    void ReadFlush() override;
-//    void ReadInterrupt() override;
-//private:
-//    IReader& iReader;
-//};
-//
-//class IMpeg4Box
-//{
-//
-//};
-//
-//
-//class Mpeg4BoxStack : IMpeg4Box
-//{
-//public:
-//    Mpeg4BoxStack(IReader& aReader, TUint aNestCount);
-//    ~Mpeg4BoxStack();
-//    void Push();    // Push a box onto the stack; i.e. start processing a new box and index+1. ASSERTs if box count reached.
-//    void Pop();     // Pop a box off the stack.
-//private:
-//    std::vector<Mpeg4Box> iBoxes;   // FIXME - push aNestCount boxes into here.
-//    TUint iIndex;
-//};
+class IMpeg4Box : public IReader
+{
+public:
+    virtual void Clear() = 0;   // FIXME - replace with ReadFlush()?
+    virtual void ReadHeader() = 0;
+    virtual TUint Size() const = 0;
+    virtual const Brx& Id() const = 0;
+    virtual void SkipRemaining() = 0;
+    virtual void Skip(TUint aBytes) = 0;
+public: // from IReader
+    virtual Brn Read(TUint aBytes) = 0;    // Returns [0..aBytes].  0 => stream closed
+    virtual void ReadFlush() = 0;          // Unsupported; will ASSERT.
+    virtual void ReadInterrupt() = 0;      // Unsupported; will ASSERT.
+public:
+    virtual ~IMpeg4Box() {}
+};
 
-class Mpeg4Box : public IReader, private INonCopyable
+class Mpeg4Box : public IMpeg4Box, private INonCopyable
 {
 public:
     static const TUint kBoxSizeBytes = 4;
@@ -144,15 +131,13 @@ private:
 public:
     ~Mpeg4Box();
     void Set(IReader& aReader); // Two-stage construction. If attempting to pass an Mpeg4Box into its constructor as an IReader, compiler will try to use copy constructor instead.
-    void Clear();   // FIXME - replace with ReadFlush()? - can actually just remove and reset with Set(), or Set() could call this; would make this private, then.
-    void ReadHeader();
-    TUint Size() const;
-    const Brx& Id() const;
-    //TUint Offset() const;
-    //void Read(Bwx& aBuf, TUint aBytes);
-    void SkipRemaining();       // FIXME - req'd? Yes.
-    void Skip(TUint aBytes);    // FIXME - req'd? Probably?
-public: // from IReader
+public: // from IMpeg4Box
+    void Clear() override;
+    void ReadHeader() override;
+    TUint Size() const override;
+    const Brx& Id() const override;
+    void SkipRemaining() override;
+    void Skip(TUint aBytes) override;
     Brn Read(TUint aBytes) override;    // Returns [0..aBytes].  0 => stream closed
     void ReadFlush() override;          // Unsupported; will ASSERT.
     void ReadInterrupt() override;      // Unsupported; will ASSERT.
@@ -163,10 +148,31 @@ private:
     TUint iOffset;
 };
 
-//class Mpeg4BoxMdhd
-//{
-//
-//};
+class Mpeg4BoxStack : public IMpeg4Box
+{
+public:
+    //Mpeg4BoxStack(IReader& aReader, TUint aNestCount);
+    Mpeg4BoxStack(TUint aNestCount);
+    ~Mpeg4BoxStack();
+    void Set(IReader& aReader);
+    void Push();    // Push a box onto the stack; i.e., start processing a new box at index+1. ASSERTs if box count reached.
+    // When pushed, reader for box that has just been pushed should be the previous box (or iReader if iIndex == 0)
+    void Pop();     // Pop a box off the stack.
+public: // from IMpeg4Box
+    void Clear() override;  // FIXME - ever called?
+    void ReadHeader() override;
+    TUint Size() const override;
+    const Brx& Id() const override;
+    void SkipRemaining() override;
+    void Skip(TUint aBytes) override;
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+private:
+    std::vector<Mpeg4Box*> iBoxes;
+    IReader* iReader;
+    TUint iIndex;   // 0 == invalid
+};
 
 class SampleSizeTable
 {
@@ -222,6 +228,7 @@ private:
 class Mpeg4Container : public ContainerBase, public IReader
 {
 private:
+    static const TUint kMetadataBoxDepth = 7;
     static const TUint kMaxBufBytes = 4096; // arbitrary
     static const TUint kMaxStreamDescriptorBytes = 50;
 public:
@@ -236,15 +243,16 @@ public: // from IReader
 private:
     Msg* Process(); // FIXME - should this do the work of splitting audio and return pointer to it? - Confusing.
     TBool ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
-    void ParseBoxMdhd(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxMp4a(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxStts(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxStsc(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxStco(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxCo64(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxStsz(Mpeg4Box& aBox, TUint aBytes);
-    void ParseBoxStreamDescriptor(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxMp4a(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStts(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStsc(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStco(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxCo64(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStsz(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStreamDescriptor(IMpeg4Box& aBox, TUint aBytes);
 private:
+    Mpeg4BoxStack iBoxStack;
     //TUint iSize;
     TUint64 iPos;
     Bws<kMaxBufBytes> iBuf;
