@@ -227,7 +227,7 @@ void Mpeg4Box::Clear()
 void Mpeg4Box::ReadHeader()
 {
     ASSERT(iReader != NULL);
-    // FIXME - can just call Read() here!
+    // FIXME - can just call Read() here! - but would need to call it until all bytes read.
     TUint remaining = kBoxHeaderBytes;
     Bws<kBoxHeaderBytes> header;
     while (remaining > 0) {
@@ -258,27 +258,6 @@ const Brx& Mpeg4Box::Id() const
     ASSERT(iReader != NULL);
     return iId;
 }
-//
-//TUint Mpeg4Box::Offset() const
-//{
-//    return iOffset;
-//}
-//
-//void Mpeg4Box::Read(Bwx& aBuf, TUint aBytes)
-//{
-//    ASSERT(iSize >= iOffset);
-//    ASSERT(iOffset+aBytes <= iSize);
-//    TUint remaining = aBytes;
-//    while (remaining > 0) {
-//        Brn buf = iReader.Read(remaining);
-//        if (buf.Bytes() == 0) {
-//            THROW(MediaMpeg4EndOfData); // FIXME - throw invalid instead?
-//        }
-//        aBuf.Append(buf);
-//        remaining -= buf.Bytes();
-//        iOffset += buf.Bytes();
-//    }
-//}
 
 void Mpeg4Box::SkipRemaining()
 {
@@ -660,7 +639,6 @@ TBool Mpeg4Container::Recognise(Brx& aBuf)
 {
     iPos = 0;
     iMetadataRetrieved = false;
-    iProcessingMetadataComplete = false;
     iChunkIndex = 0;
     iChunkBytesRemaining = 0;
     iCodec.SetBytes(0);
@@ -742,8 +720,7 @@ Msg* Mpeg4Container::Process()
 
     MsgAudioEncoded* msgOut = NULL;
 
-    if (!iProcessingMetadataComplete) {
-        TBool metadataProcessed = false;
+    if (!iMetadataRetrieved) {
         try {
             // Start reading boxes. First should be ftyp.
             Mpeg4Box boxFtyp;
@@ -761,30 +738,21 @@ Msg* Mpeg4Container::Process()
                 box.ReadHeader();
                 if (box.Id() == Brn("moov")) {
                     // Found metadata box. Parse it.
-                    metadataProcessed = ParseMetadataBox(box, box.Size());    // Exception thrown if invalid/EoS.
-
-                    Mpeg4Box subBox;
-                    subBox.Set(box);
-                    Log::Print("Mpeg4Container::Process found metadata\n");
+                    ParseMetadataBox(box, box.Size());    // Exception thrown if invalid/EoS.
+                    iMetadataRetrieved = true;
                 }
                 else if (box.Id() == Brn("mdat")) {
-                    if (!metadataProcessed) {
+                    if (!iMetadataRetrieved) {
                         // Not yet encountered metadata (moov) box.
                         // Do out-of-band read to get moov box.
                         Bws<1024> buf;
                         ReaderBuffer reader(buf);
                         //const TUint metadataSize = box.Size();
-                        metadataProcessed = ParseMetadataBox(reader, box.Size());
-
-                        if (!metadataProcessed) {
-                            // Failed to parse container. Flush the remainder of stream until MsgEncodedStream seen.
-                            ASSERTS();  // FIXME - set an iFlushing member and call iAudioEncoded->RemoveRef() until new MsgEncodedStream seen?
-                            // Also throw stream corrupt exception?
-                        }
-                        else {
-                            break;  // Just break out; definitely don't want to SkipRemaining() stream data here!
-                        }
+                        ParseMetadataBox(reader, box.Size()); // Exception thrown if invalid/EoS.
+                        iMetadataRetrieved = true;
                     }
+
+                    break;
 
                     // FIXME - not quite good enough - would need to skip over mdat in out-of-band read and then potentially have to skip over some more boxes to get to the moov box.
                     // So, pass off to a function that will do out-of-band reads until we get to moov box.
@@ -796,15 +764,10 @@ Msg* Mpeg4Container::Process()
                 }
                 box.SkipRemaining();
                 box.Clear();
-
-                if (metadataProcessed) {
-                    break;
-                }
-
-                // FIXME - what if we exhaust stream - catch one of the exceptions below?
             }
-
         }
+        // Exhausted/invalid stream while processing container.
+        // Should just silently drop all remaining audio until new stream seen.
         catch (MediaMpeg4EndOfData&) {
 
         }
@@ -812,7 +775,7 @@ Msg* Mpeg4Container::Process()
 
         }
 
-        ASSERT(metadataProcessed);
+        ASSERT(iMetadataRetrieved);
         // FIXME - can probably do this in metadata helper method.
         Mpeg4Info info(iCodec, iSampleRate, iTimescale, iChannels, iBitDepth, iDuration, iStreamDescriptor);
         Mpeg4InfoWriter writer(info);
@@ -951,19 +914,44 @@ Msg* Mpeg4Container::Process()
     return NULL;
 }
 
-TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
+void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
 {
     // Need to move through stack to get data from the following boxes:
     // -- moov.trak.mdia.mdhd
     // -- moov.trak.mdia.minf
-    // ---- moov.trak.minf.stbl.stsd
-    // ------ moov.trak.minf.stbl.stsd.mp4a
-    // -------- moov.trak.minf.stbl.stsd.mp4a.esds
-    // ---- moov.trak.minf.stbl.stts
-    // ---- moov.trak.minf.stbl.stsc
-    // ---- moov.trak.minf.stbl.stco
-    // ---- moov.trak.minf.stbl.co64
-    // ---- moov.trak.minf.stbl.stsz
+    // ---- moov.trak.mdia.minf.stbl.stsd
+    // ------ moov.trak.mdia.minf.stbl.stsd.mp4a
+    // -------- moov.trak.mdia.minf.stbl.stsd.mp4a.esds
+    // ---- moov.trak.mdia.minf.stbl.stts
+    // ---- moov.trak.mdia.minf.stbl.stsc
+    // ---- moov.trak.mdia.minf.stbl.stco
+    // ---- moov.trak.mdia.minf.stbl.co64
+    // ---- moov.trak.mdia.minf.stbl.stsz
+
+    //iBoxStack.Set(aReader);
+    //try {
+    //    iBoxStack.Push();
+    //    for (;;) {
+    //        iBoxStack.ReadHeader();
+    //        if (iBoxStack.Id() == Brn("trak")) {
+    //            ParseBoxTrak();
+    //            break;
+    //        }
+    //        iBoxStack.SkipRemaining();
+    //        iBoxStack.Clear();
+    //    }
+    //    iBoxStack.SkipRemaining();
+    //    iBoxStack.Clear();
+    //    iBoxStack.Pop();
+    //}
+    //catch (ReaderError&) {
+    //    THROW(Mpeg4FileInvalid);
+    //}
+    //catch (Mpeg4FileInvalid&) {
+    //    throw;
+    //}
+
+    TBool complete = false;
 
     iBoxStack.Set(aReader);
     try {
@@ -1060,14 +1048,14 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                 && iBitDepth != 0
                                                 && iSampleRate != 0)) {
                                                     iBoxStack.Pop();
-                                                    iProcessingMetadataComplete = true;
+                                                    complete = true;
                                                     break;
                                             }
                                         }
                                     }
                                     iBoxStack.SkipRemaining();
                                     iBoxStack.Clear();
-                                    if (iProcessingMetadataComplete) {
+                                    if (complete) {
                                         iBoxStack.Pop();
                                         break;
                                     }
@@ -1080,7 +1068,7 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                             //        {
                             //        break;
                             //}
-                            if (iProcessingMetadataComplete) {
+                            if (complete) {
                                 iBoxStack.Pop();
                                 break;
                             }
@@ -1088,7 +1076,7 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                     }
                     iBoxStack.SkipRemaining();
                     iBoxStack.Clear();
-                    if (iProcessingMetadataComplete) {
+                    if (complete) {
                         iBoxStack.Pop();
                         break;
                     }
@@ -1096,7 +1084,7 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
             }
             iBoxStack.SkipRemaining();
             iBoxStack.Clear();
-            if (iProcessingMetadataComplete) {
+            if (complete) {
                 iBoxStack.Pop();
                 break;
             }
@@ -1105,10 +1093,11 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
     catch (ReaderError&) {
         THROW(MediaMpeg4FileInvalid);
     }
+    catch (MediaMpeg4FileInvalid&) {
+        throw;
+    }
 
     LOG(kCodec, "<Mpeg4Container::ParseMetadataBox\n");
-
-    return iProcessingMetadataComplete; // FIXME - if doing this, use a local var instead.
 }
 
 void Mpeg4Container::ParseBoxMdhd(IMpeg4Box& aBox, TUint /*aBytes*/)

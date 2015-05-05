@@ -242,7 +242,7 @@ public: // from IReader
     void ReadInterrupt() override;
 private:
     Msg* Process(); // FIXME - should this do the work of splitting audio and return pointer to it? - Confusing.
-    TBool ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
+    void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxMp4a(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxStts(IMpeg4Box& aBox, TUint aBytes);
@@ -257,7 +257,6 @@ private:
     TUint64 iPos;
     Bws<kMaxBufBytes> iBuf;
     TBool iMetadataRetrieved;
-    TBool iProcessingMetadataComplete;  // FIXME - is this the same as iMetadataRetrieved?
     TUint iChunkIndex;
     TUint iChunkBytesRemaining;
     TUint iBytesToDiscard;
