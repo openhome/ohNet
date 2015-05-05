@@ -852,9 +852,6 @@ Msg* Mpeg4Container::Process()
 
 TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
 {
-    // FIXME - must catch ReaderError somewhere!
-    // - then rethrow as a file/stream invalid/corrupt or EoS exception
-
     try {
         Mpeg4Box box1;
         box1.Set(aReader);
@@ -871,27 +868,7 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                         for (;;) {
                             box3.ReadHeader();
                             if (box3.Id() == Brn("mdhd")) {
-                                ReaderBinary readerBin(box3);
-                                const TUint version = readerBin.ReadUintBe(4);
-                                if (version == 0) {
-                                    // All values are 32-bits in version 0.
-                                    box3.Skip(4);   // Skip creation_time.
-                                    box3.Skip(4);   // Skip modification_time.
-                                    // FIXME - why not read and discard? - Would have to loop, but Skip() helper does that for us. However, would probably need to catch a custom exception (or just throw reader error).
-                                    // Also, potentially need to catch ReaderError from ReaderBinary (if change goes in to throw such an exception).
-                                    iTimescale = readerBin.ReadUintBe(4);
-                                    iDuration = readerBin.ReadUintBe(4);
-                                }
-                                else if (version == 1) {
-                                    // Timescale is 32-bits and duration is 64-bits in version 1.
-                                    box3.Skip(8);   // Skip creation_time.
-                                    box3.Skip(8);   // Skip modification_time.
-                                    iTimescale = readerBin.ReadUintBe(4);
-                                    iDuration = readerBin.ReadUint64Be(8);
-                                }
-                                else {
-                                    THROW(MediaMpeg4FileInvalid);
-                                }
+                                ParseBoxMdhd(box3, box3.Size());
                             }
                             else if (box3.Id() == Brn("minf")) {
                                 Mpeg4Box box4;
@@ -912,17 +889,7 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                 for (TUint i=0; i<sampleEntries; i++) {
                                                     sampleEntry.ReadHeader();
                                                     if (sampleEntry.Id() == Brn("mp4a")) {  // Only care about audio.
-                                                        iCodec.Replace("mp4a");
-                                                        ReaderBinary readerBin(sampleEntry);
-                                                        sampleEntry.Skip(6);    // Skip 6-byte reserved block.
-                                                        sampleEntry.Skip(2);    // Skip 2 byte data ref index.
-                                                        sampleEntry.Skip(4*2);    // Skip 4-byte*2 reserved block.
-                                                        iChannels = readerBin.ReadUintBe(2);    // Only 2 bytes!
-                                                        iBitDepth = readerBin.ReadUintBe(2);    // Only 2 bytes!
-                                                        sampleEntry.Skip(2);    // Skip pre-defined block.
-                                                        sampleEntry.Skip(2);    // Skip reserved block.
-                                                        iSampleRate = readerBin.ReadUintBe(2);  // Only read upper 2 MSBs of sample rate.
-                                                        sampleEntry.Skip(2);    // Don't care about 2 LSBs of sample rate (unused).
+                                                        ParseBoxMp4a(box5, box5.Size());
                                                         Mpeg4Box streamDescriptorBox;
                                                         streamDescriptorBox.Set(sampleEntry);
                                                         for (;;) {
@@ -931,25 +898,8 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
                                                                 Log::Print("found stream descriptor box\n");
-                                                                ReaderBinary readerBin(streamDescriptorBox);
-                                                                const TUint version = readerBin.ReadUintBe(1);  // Only 1 byte!
-                                                                if (version != 0) {
-                                                                    THROW(MediaMpeg4FileInvalid);
-                                                                }
-                                                                streamDescriptorBox.Skip(3);    // Skip 24-bit field reserved for flags.
 
-                                                                // FIXME - instead of doing this, just pass this bit of stream directly on to codec. Means no local storage req'd.
-                                                                TUint remaining = streamDescriptorBox.Size() - 12;
-                                                                iStreamDescriptor.SetBytes(0);
-                                                                while (remaining > 0) {
-                                                                    Brn buf = streamDescriptorBox.Read(remaining);
-                                                                    if (buf.Bytes() == 0) {
-
-                                                                        THROW(MediaMpeg4FileInvalid);
-                                                                    }
-                                                                    iStreamDescriptor.Append(buf);
-                                                                    remaining -= buf.Bytes();
-                                                                }
+                                                                ParseBoxStreamDescriptor(streamDescriptorBox, streamDescriptorBox.Size());
                                                                 break;
                                                             }
                                                         }
@@ -964,86 +914,21 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                 }
                                             }
                                             else if (box5.Id() == Brn("stts")) {
-                                                // Table of audio samples per sample - used to convert audio samples to codec samples.
-                                                ReaderBinary readerBin(box5);
-                                                const TUint version = readerBin.ReadUintBe(4);
-                                                if (version != 0) {
-                                                    THROW(MediaMpeg4FileInvalid);
-                                                }
-                                                const TUint entries = readerBin.ReadUintBe(4);
-                                                iSeekTable.InitialiseAudioSamplesPerSample(entries);
-                                                for (TUint i=0; i<entries; i++) {
-                                                    const TUint sampleCount = readerBin.ReadUintBe(4);
-                                                    const TUint sampleDelta = readerBin.ReadUintBe(4);
-                                                    iSeekTable.SetAudioSamplesPerSample(sampleCount, sampleDelta);
-                                                }
-
+                                                ParseBoxStts(box5, box5.Size());
                                             }
                                             else if (box5.Id() == Brn("stsc")) {
-                                                // Table of samples per chunk - used to seek to specific sample.
-                                                ReaderBinary readerBin(box5);
-                                                const TUint version = readerBin.ReadUintBe(4);
-                                                if (version != 0) {
-                                                    THROW(MediaMpeg4FileInvalid);
-                                                }
-                                                const TUint entries = readerBin.ReadUintBe(4);
-                                                iSeekTable.InitialiseSamplesPerChunk(entries);
-                                                for (TUint i=0; i<entries; i++) {
-                                                    const TUint firstChunk = readerBin.ReadUintBe(4);
-                                                    const TUint samplesPerChunk = readerBin.ReadUintBe(4);
-                                                    const TUint sampleDescriptionIndex = readerBin.ReadUintBe(4);
-
-                                                    iSeekTable.SetSamplesPerChunk(firstChunk, samplesPerChunk, sampleDescriptionIndex);
-                                                }
+                                                ParseBoxStsc(box5, box5.Size());
                                             }
                                             else if (box5.Id() == Brn("stco")) {
                                                 // FIXME - check co64 (or stco) hasn't been processed
-                                                // Table of file offsets for each chunk (32-bit offsets).
-                                                ReaderBinary readerBin(box5);
-                                                const TUint version = readerBin.ReadUintBe(4);
-                                                if (version != 0) {
-                                                    THROW(MediaMpeg4FileInvalid);
-                                                }
-                                                const TUint entries = readerBin.ReadUintBe(4);
-                                                iSeekTable.InitialiseOffsets(entries);
-
-                                                for (TUint i=0; i<entries; i++) {
-                                                    const TUint chunkOffset = readerBin.ReadUintBe(4);
-                                                    iSeekTable.SetOffset(chunkOffset);
-                                                }
+                                                ParseBoxStco(box5, box5.Size());
                                             }
                                             else if (box5.Id() == Brn("co64")) {
                                                 // FIXME - check stco (or co64) hasn't been processed
-                                                // Table of file offsets for each chunk (64-bit offsets).
-                                                ReaderBinary readerBin(box5);
-                                                const TUint version = readerBin.ReadUintBe(4);
-                                                if (version != 0) {
-                                                    THROW(MediaMpeg4FileInvalid);
-                                                }
-                                                const TUint entries = readerBin.ReadUintBe(4);
-                                                iSeekTable.InitialiseOffsets(entries);
-
-                                                for (TUint i=0; i<entries; i++) {
-                                                    const TUint64 chunkOffset = readerBin.ReadUint64Be(8);
-                                                    iSeekTable.SetOffset(chunkOffset);
-                                                }
+                                                ParseBoxCo64(box5, box5.Size());
                                             }
                                             else if (box5.Id() == Brn("stsz")) {
-                                                ReaderBinary readerBin(box5);
-                                                const TUint version = readerBin.ReadUintBe(4);
-                                                if (version != 0) {
-                                                    THROW(MediaMpeg4FileInvalid);
-                                                }
-                                                const TUint sampleSize = readerBin.ReadUintBe(4);
-                                                ASSERT(sampleSize == 0); // FIXME - Don't currently support a constant sample size. Would require alterations to SampleSizeTable to allow it to be used with a fixed sample size with 0 entries.
-                                                const TUint sampleCount = readerBin.ReadUintBe(4);
-                                                if (sampleSize == 0) {
-                                                    iSampleSizeTable.Init(sampleCount);
-                                                    for (TUint i=0; i<sampleCount; i++) {
-                                                        const TUint entrySize = readerBin.ReadUintBe(4);
-                                                        iSampleSizeTable.AddSampleSize(entrySize);
-                                                    }
-                                                }
+                                                ParseBoxStsz(box5, box5.Size());
                                             }
                                             box5.SkipRemaining();
                                             box5.Clear();
@@ -1107,6 +992,162 @@ TBool Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
     LOG(kCodec, "<Mpeg4Container::ParseMetadataBox\n");
 
     return iProcessingMetadataComplete; // FIXME - if doing this, use a local var instead.
+}
+
+void Mpeg4Container::ParseBoxMdhd(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    // May throw ReaderError or MediaMpeg4FileInvalid.
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(4);
+    if (version == 0) {
+        // All values are 32-bits in version 0.
+
+        // FIXME - only reason to pass Mpeg4Box in is to call Skip().
+        // Could instead write a helper method that calls Read() on an IReader until all bytes skipped (or throw error).
+        // FIXME - also don't need to pass in aBytes if passing in an Mpeg4Box.
+
+        aBox.Skip(4);   // Skip creation_time.
+        aBox.Skip(4);   // Skip modification_time.
+        iTimescale = readerBin.ReadUintBe(4);
+        iDuration = readerBin.ReadUintBe(4);
+    }
+    else if (version == 1) {
+        // Timescale is 32-bits and duration is 64-bits in version 1.
+        aBox.Skip(8);   // Skip creation_time.
+        aBox.Skip(8);   // Skip modification_time.
+        iTimescale = readerBin.ReadUintBe(4);
+        iDuration = readerBin.ReadUint64Be(8);
+    }
+    else {
+        THROW(MediaMpeg4FileInvalid);
+    }
+}
+
+void Mpeg4Container::ParseBoxMp4a(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    iCodec.Replace("mp4a");
+    ReaderBinary readerBin(aBox);
+    aBox.Skip(6);    // Skip 6-byte reserved block.
+    aBox.Skip(2);    // Skip 2 byte data ref index.
+    aBox.Skip(4*2);    // Skip 4-byte*2 reserved block.
+    iChannels = readerBin.ReadUintBe(2);    // Only 2 bytes!
+    iBitDepth = readerBin.ReadUintBe(2);    // Only 2 bytes!
+    aBox.Skip(2);    // Skip pre-defined block.
+    aBox.Skip(2);    // Skip reserved block.
+    iSampleRate = readerBin.ReadUintBe(2);  // Only read upper 2 MSBs of sample rate.
+    aBox.Skip(2);    // Don't care about 2 LSBs of sample rate (unused).
+}
+
+void Mpeg4Container::ParseBoxStts(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    // Table of audio samples per sample - used to convert audio samples to codec samples.
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(4);
+    if (version != 0) {
+        THROW(MediaMpeg4FileInvalid);
+    }
+    const TUint entries = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseAudioSamplesPerSample(entries);
+    for (TUint i=0; i<entries; i++) {
+        const TUint sampleCount = readerBin.ReadUintBe(4);
+        const TUint sampleDelta = readerBin.ReadUintBe(4);
+        iSeekTable.SetAudioSamplesPerSample(sampleCount, sampleDelta);
+    }
+}
+
+void Mpeg4Container::ParseBoxStsc(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    // Table of samples per chunk - used to seek to specific sample.
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(4);
+    if (version != 0) {
+        THROW(MediaMpeg4FileInvalid);
+    }
+    const TUint entries = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseSamplesPerChunk(entries);
+    for (TUint i=0; i<entries; i++) {
+        const TUint firstChunk = readerBin.ReadUintBe(4);
+        const TUint samplesPerChunk = readerBin.ReadUintBe(4);
+        const TUint sampleDescriptionIndex = readerBin.ReadUintBe(4);
+
+        iSeekTable.SetSamplesPerChunk(firstChunk, samplesPerChunk, sampleDescriptionIndex);
+    }
+}
+
+void Mpeg4Container::ParseBoxStco(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    // Table of file offsets for each chunk (32-bit offsets).
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(4);
+    if (version != 0) {
+        THROW(MediaMpeg4FileInvalid);
+    }
+    const TUint entries = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseOffsets(entries);
+
+    for (TUint i=0; i<entries; i++) {
+        const TUint chunkOffset = readerBin.ReadUintBe(4);
+        iSeekTable.SetOffset(chunkOffset);
+    }
+}
+
+void Mpeg4Container::ParseBoxCo64(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    // Table of file offsets for each chunk (64-bit offsets).
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(4);
+    if (version != 0) {
+        THROW(MediaMpeg4FileInvalid);
+    }
+    const TUint entries = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseOffsets(entries);
+
+    for (TUint i=0; i<entries; i++) {
+        const TUint64 chunkOffset = readerBin.ReadUint64Be(8);
+        iSeekTable.SetOffset(chunkOffset);
+    }
+}
+
+void Mpeg4Container::ParseBoxStsz(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(4);
+    if (version != 0) {
+        THROW(MediaMpeg4FileInvalid);
+    }
+    const TUint sampleSize = readerBin.ReadUintBe(4);
+    ASSERT(sampleSize == 0); // FIXME - Don't currently support a constant sample size. Would require alterations to SampleSizeTable to allow it to be used with a fixed sample size with 0 entries.
+    const TUint sampleCount = readerBin.ReadUintBe(4);
+    if (sampleSize == 0) {
+        iSampleSizeTable.Init(sampleCount);
+        for (TUint i=0; i<sampleCount; i++) {
+            const TUint entrySize = readerBin.ReadUintBe(4);
+            iSampleSizeTable.AddSampleSize(entrySize);
+        }
+    }
+}
+
+void Mpeg4Container::ParseBoxStreamDescriptor(Mpeg4Box& aBox, TUint /*aBytes*/)
+{
+    ReaderBinary readerBin(aBox);
+    const TUint version = readerBin.ReadUintBe(1);  // Only 1 byte!
+    if (version != 0) {
+        THROW(MediaMpeg4FileInvalid);
+    }
+    aBox.Skip(3);    // Skip 24-bit field reserved for flags.
+
+    // FIXME - instead of doing this, just pass this bit of stream directly on to codec. Means no local storage req'd.
+    TUint remaining = aBox.Size() - 12;
+    iStreamDescriptor.SetBytes(0);
+    while (remaining > 0) {
+        Brn buf = aBox.Read(remaining);
+        if (buf.Bytes() == 0) {
+
+            THROW(MediaMpeg4FileInvalid);
+        }
+        iStreamDescriptor.Append(buf);
+        remaining -= buf.Bytes();
+    }
 }
 
 

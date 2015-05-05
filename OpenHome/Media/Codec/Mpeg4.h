@@ -163,6 +163,11 @@ private:
     TUint iOffset;
 };
 
+//class Mpeg4BoxMdhd
+//{
+//
+//};
+
 class SampleSizeTable
 {
 public:
@@ -231,6 +236,14 @@ public: // from IReader
 private:
     Msg* Process(); // FIXME - should this do the work of splitting audio and return pointer to it? - Confusing.
     TBool ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
+    void ParseBoxMdhd(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxMp4a(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStts(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStsc(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStco(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxCo64(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStsz(Mpeg4Box& aBox, TUint aBytes);
+    void ParseBoxStreamDescriptor(Mpeg4Box& aBox, TUint aBytes);
 private:
     //TUint iSize;
     TUint64 iPos;
