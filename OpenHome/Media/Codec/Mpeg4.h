@@ -182,8 +182,8 @@ public:
     void Init(TUint aMaxEntries);
     void Clear();
     void AddSampleSize(TUint aSampleSize);
-    TUint SampleSize(TUint aIndex);
-    TUint Count();
+    TUint SampleSize(TUint aIndex) const;
+    TUint Count() const;
 private:
     std::vector<TUint> iTable;
 };
@@ -231,6 +231,7 @@ private:
     static const TUint kMetadataBoxDepth = 7;
     static const TUint kMaxBufBytes = 4096; // arbitrary
     static const TUint kMaxStreamDescriptorBytes = 50;
+    static const TUint kMaxEncodedAudioBytes = EncodedAudio::kMaxBytes;
 public:
     Mpeg4Container();
 public: // from ContainerBase
@@ -241,7 +242,8 @@ public: // from IReader
     void ReadFlush() override;
     void ReadInterrupt() override;
 private:
-    Msg* Process(); // FIXME - should this do the work of splitting audio and return pointer to it? - Confusing.
+    MsgAudioEncoded* Process(); // FIXME - should this do the work of splitting audio and return pointer to it? - Confusing.
+    MsgAudioEncoded* WriteSampleSizeTable() const;
     void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxMp4a(IMpeg4Box& aBox, TUint aBytes);

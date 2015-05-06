@@ -438,7 +438,7 @@ void SampleSizeTable::AddSampleSize(TUint aSize)
     iTable.push_back(aSize);
 }
 
-TUint32 SampleSizeTable::SampleSize(TUint aIndex)
+TUint32 SampleSizeTable::SampleSize(TUint aIndex) const
 {
     if(aIndex > iTable.size()-1) {
         THROW(MediaMpeg4FileInvalid);
@@ -446,7 +446,7 @@ TUint32 SampleSizeTable::SampleSize(TUint aIndex)
     return iTable[aIndex];
 }
 
-TUint32 SampleSizeTable::Count()
+TUint32 SampleSizeTable::Count() const
 {
     return iTable.capacity();
 }
@@ -713,7 +713,7 @@ void Mpeg4Container::ReadInterrupt()
     ASSERTS();
 }
 
-Msg* Mpeg4Container::Process()
+MsgAudioEncoded* Mpeg4Container::Process()
 {
 
     // FIXME - If we did handle files with mdat before moov, would have to ensure we didn't attempt to process moov after end of mdat, i.e., somehow terminate when we reach end of mdat, which is detectable by various means.
@@ -790,33 +790,9 @@ Msg* Mpeg4Container::Process()
         msgOut = msgInfo;
 
         // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
-        // FIXME - use a buffer of size EncodedAudio::kMaxBytes and iteratively populate it and create a new MsgAudioEncoded until table exhausted.
-        Bwh sampleSizeBuf(sizeof(TUint32)+sizeof(TUint32)*iSampleSizeTable.Count()); // FIXME - can this be done without dynamic allocation right here?
-        WriterBuffer writerBufSampleSize(sampleSizeBuf);
-        WriterBinary writerBin(writerBufSampleSize);
-        writerBin.WriteUint32Be(iSampleSizeTable.Count());
-        for (TUint i=0; i<iSampleSizeTable.Count(); i++) {
-            writerBin.WriteUint32Be(iSampleSizeTable.SampleSize(i));
-        }
-
-
-        static const TUint kMaxEncodedAudioBytes = EncodedAudio::kMaxBytes; // FIXME - move to class declaration.
-        TUint samplesTableRemainingBytes = sampleSizeBuf.Bytes();
-        TUint offset = 0;
-        while (samplesTableRemainingBytes > 0) {
-            if (samplesTableRemainingBytes > kMaxEncodedAudioBytes) {
-                MsgAudioEncoded* msgSampleTable = iMsgFactory->CreateMsgAudioEncoded(Brn(sampleSizeBuf.Ptr()+offset, kMaxEncodedAudioBytes));
-                msgOut->Add(msgSampleTable);
-                samplesTableRemainingBytes -= kMaxEncodedAudioBytes;
-                offset += kMaxEncodedAudioBytes;
-            }
-            else {
-                MsgAudioEncoded* msgSampleTable = iMsgFactory->CreateMsgAudioEncoded(Brn(sampleSizeBuf.Ptr()+offset, samplesTableRemainingBytes));
-                msgOut->Add(msgSampleTable);
-                offset += samplesTableRemainingBytes;
-                samplesTableRemainingBytes = 0;
-            }
-        }
+        MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
+        ASSERT(msgSampleSizeTable != NULL);
+        msgOut->Add(msgSampleSizeTable);
     }
 
 
@@ -912,6 +888,44 @@ Msg* Mpeg4Container::Process()
 
     //return msgOut;  // FIXME - if manipulating iAudioEncoded here, don't need to do this.
     return NULL;
+}
+
+MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
+{
+    MsgAudioEncoded* msgSampleSizeTable = NULL;
+    Bws<kMaxEncodedAudioBytes> tableBuf;
+    WriterBuffer writerBuf(tableBuf);
+    WriterBinary writerBin(writerBuf);
+    TBool tableCountWritten = false;
+    TUint tableIdx = 0;
+
+    while (tableIdx < iSampleSizeTable.Count()) {
+        // All values written are 32-bits.
+        if (tableBuf.MaxBytes()-tableBuf.Bytes() >= sizeof(TUint32)) {
+            if (!tableCountWritten) {
+                writerBin.WriteUint32Be(iSampleSizeTable.Count());
+                tableCountWritten = true;
+            }
+            else {
+                writerBin.WriteUint32Be(iSampleSizeTable.SampleSize(tableIdx));
+                tableIdx++;
+            }
+        }
+
+        if (tableBuf.MaxBytes()-tableBuf.Bytes() < sizeof(TUint32) || tableIdx == iSampleSizeTable.Count()) {
+            // Create new msg if buffer is exhausted, or if sample size table has been exhausted.
+            MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(Brn(tableBuf.Ptr(), tableBuf.Bytes()));
+            if (msgSampleSizeTable == NULL) {
+                msgSampleSizeTable = msg;
+            }
+            else {
+                msgSampleSizeTable->Add(msg);
+            }
+            tableBuf.SetBytes(0);
+        }
+    }
+
+    return msgSampleSizeTable;
 }
 
 void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
