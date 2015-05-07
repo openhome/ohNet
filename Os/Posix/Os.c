@@ -655,7 +655,10 @@ static OsNetworkHandle* CreateHandle(OsContext* aContext, int32_t aSocket)
 
 THandle OsNetworkCreate(OsContext* aContext, OsNetworkSocketType aSocketType)
 {
-    int32_t socketH = socket(2, aSocketType, 0);
+    int32_t socketH;
+    int32_t type = (aSocketType == eOsNetworkSocketStream) ? SOCK_STREAM : SOCK_DGRAM;
+
+    socketH = socket(2, type, 0);
     OsNetworkHandle* handle = CreateHandle(aContext, socketH);
     if (handle == kHandleNull) {
         /* close is the one networking call that is exempt from being wrapped by TEMP_FAILURE_RETRY.  See
