@@ -120,6 +120,10 @@ def configure_toolchain(conf):
         conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-Werror'])
 
+        if conf.options.dest_platform == 'Linux-mipsel':
+            conf.env.append_value('LINKFLAGS', '--sysroot=/build/urara')
+            conf.env.append_value('CXXFLAGS', '--sysroot=/build/urara')
+            conf.env.append_value('CFLAGS', '--sysroot=/build/urara')
         if conf.options.dest_platform in ['Linux-x86']:
             conf.env.append_value('VALGRIND_ENABLE', ['1'])
             conf.env.append_value('CXXFLAGS', ['-m32'])
