@@ -187,12 +187,14 @@ Msg* ElementFileReader::Pull()
         iMode = eAudioEncoded;
     }
     else if (iMode == eAudioEncoded) {
+        Log::Print("ElementFileReader::Pull iFile->Tell(): %u, iFile->Bytes(): %u\n", iFile->Tell(), iFile->Bytes());
         try {
             iFile->Read(iInBuf);
             msg = iMsgFactory.CreateMsgAudioEncoded(iInBuf);
             iInBuf.SetBytes(0);
         }
         catch (FileReadError&) {
+            Log::Print("ElementFileReader::Pull reached end of input file\n");
             // Reached end of file.
             // Must output something here to avoid sending a NULL msg down pipeline.
             // Next msg should be MsgHalt, so output that.
