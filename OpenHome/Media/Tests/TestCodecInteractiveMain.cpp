@@ -472,7 +472,7 @@ int CDECL main(int aArgc, char* aArgv[])
     Net::UpnpLibrary::InitialiseMinimal(initParams);
 
     AllocatorInfoLogger* infoAggregator = new AllocatorInfoLogger();
-    TrackFactory* trackFactory = new TrackFactory(*infoAggregator, 1);
+    TrackFactory* trackFactory = new TrackFactory(*infoAggregator, kTrackCount);
     MsgFactory* msgFactory = new MsgFactory(*infoAggregator,
                                            kEncodedAudioCount,
                                            kMsgEncodedAudioCount,
