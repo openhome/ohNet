@@ -81,12 +81,15 @@ def configure(conf):
 
     mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
 
+    conf.env.INCLUDES_OGG = [
+        'thirdparty/libogg-1.1.3/include',
+        ]
+
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG']
     conf.env.INCLUDES_FLAC = [
         'thirdparty/flac-1.2.1/src/libFLAC/include',
         'thirdparty/flac-1.2.1/include',
-        'thirdparty/libogg-1.1.3/include',
         ]
 
     conf.env.STLIB_SHELL = ['Shell']
@@ -391,7 +394,7 @@ def build(bld):
                 'thirdparty/libogg-1.1.3/src/bitwise.c',
                 'thirdparty/libogg-1.1.3/src/framing.c'
             ],
-            includes = ['thirdparty/libogg-1.1.3/include'],
+            use=['OGG'],
             target='libOgg')
 
     # Flac
@@ -411,7 +414,7 @@ def build(bld):
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
-            use=['FLAC', 'OHNET', 'libOgg'],
+            use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
             target='CodecFlac')
 
     # AlacBase
