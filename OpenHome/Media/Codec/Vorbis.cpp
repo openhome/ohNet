@@ -113,11 +113,13 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
             // Have already read some data (during Recognise()) which is now
             // being replayed by Rewinder. Skip it.
             LOG(kCodec, "CodecVorbis::ReadCallback iReadOffset: %llu, iController->StreamPos(): %llu\n", iReadOffset, iController->StreamPos());
-            TUint remaining = iReadOffset-iController->StreamPos();
+            TUint64 remaining = iReadOffset-iController->StreamPos();
             while (remaining > 0) {
-                TUint bytes = remaining;
-                if (bytes > buf.MaxBytes()) {
-                    bytes = buf.MaxBytes();
+                TUint bytes = buf.MaxBytes();
+                if (remaining < bytes) {
+                    // Safe cast.
+                    // Only enter here if remaining < buf.MaxBytes() (which is a TUint).
+                    bytes = static_cast<TUint>(remaining);
                 }
                 iController->Read(buf, bytes);
                 ASSERT(buf.Bytes() != 0); // Managed to read to this pos previously during Recognise().
