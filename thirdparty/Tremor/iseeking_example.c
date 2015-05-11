@@ -12,14 +12,14 @@
  ********************************************************************
 
  function: illustrate seeking, and test it too
- last mod: $Id: iseeking_example.c 16037 2009-05-26 21:10:58Z xiphmont $
+ last mod: $Id$
 
  ********************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <vorbis/ivorbiscodec.h>
-#include <vorbis/ivorbisfile.h>
+#include "ivorbiscodec.h"
+#include "ivorbisfile.h"
 
 #ifdef _WIN32 /* We need the following two to set stdin/stdout to binary */
 # include <io.h>
@@ -60,20 +60,22 @@ void _verify(OggVorbis_File *ov,
     exit(1);
   }
   bread=ov_read(ov,buffer,4096,&dummy);
-  for(j=0;j<bread;j++){
-    if(buffer[j]!=bigassbuffer[j+pos*4]){
-      fprintf(stderr,"data position after seek doesn't match pcm position\n");
-
-      {
-        FILE *f=fopen("a.m","w");
-        for(j=0;j<bread;j++)fprintf(f,"%d\n",(int)buffer[j]);
-        fclose(f);
-        f=fopen("b.m","w");
-        for(j=0;j<bread;j++)fprintf(f,"%d\n",(int)bigassbuffer[j+pos*2]);
-        fclose(f);
+  if(bigassbuffer){
+    for(j=0;j<bread;j++){
+      if(buffer[j]!=bigassbuffer[j+pos*4]){
+	fprintf(stderr,"data position after seek doesn't match pcm position\n");
+	
+	{
+	  FILE *f=fopen("a.m","w");
+	  for(j=0;j<bread;j++)fprintf(f,"%d\n",(int)buffer[j]);
+	  fclose(f);
+	  f=fopen("b.m","w");
+	  for(j=0;j<bread;j++)fprintf(f,"%d\n",(int)bigassbuffer[j+pos*2]);
+	  fclose(f);
+	}
+	
+	exit(1);
       }
-
-      exit(1);
     }
   }
 }
@@ -116,17 +118,21 @@ int main(){
     pcmlength=ov_pcm_total(&ov,-1);
     timelength=ov_time_total(&ov,-1);
     bigassbuffer=malloc(pcmlength*4); /* w00t */
-    i=0;
-    while(i<pcmlength*4){
-      int ret=ov_read(&ov,bigassbuffer+i,pcmlength*4-i,&dummy);
-      if(ret<0)continue;
-      if(ret){
-        i+=ret;
-      }else{
-        pcmlength=i/4;
+    if(bigassbuffer){
+      i=0;
+      while(i<pcmlength*4){
+	int ret=ov_read(&ov,bigassbuffer+i,pcmlength*4-i,&dummy);
+	if(ret<0)continue;
+	if(ret){
+	  i+=ret;
+	}else{
+	  pcmlength=i/4;
+	}
+	fprintf(stderr,"\rloading.... [%ld left]              ",
+		(long)(pcmlength*4-i));
       }
-      fprintf(stderr,"\rloading.... [%ld left]              ",
-              (long)(pcmlength*4-i));
+    }else{
+      fprintf(stderr,"\rfile too large to load into memory for read tests;\n\tonly verifying seek positioning...\n");
     }
     
     {
@@ -154,7 +160,7 @@ int main(){
              (long)pcmlength);
     
       for(i=0;i<1000;i++){
-        ogg_int64_t val=rand()*pcmlength/RAND_MAX;
+        ogg_int64_t val=i==0?0:(double)rand()*pcmlength/RAND_MAX;
         fprintf(stderr,"\r\t%d [pcm position %ld]...     ",i,(long)val);
         ret=ov_pcm_seek_page(&ov,val);
         if(ret<0){
@@ -173,7 +179,7 @@ int main(){
              (long)pcmlength);
     
       for(i=0;i<1000;i++){
-        ogg_int64_t val=rand()*pcmlength/RAND_MAX;
+        ogg_int64_t val=i==0?0:(double)rand()*pcmlength/RAND_MAX;
         fprintf(stderr,"\r\t%d [pcm position %ld]...     ",i,(long)val);
         ret=ov_pcm_seek(&ov,val);
         if(ret<0){
@@ -193,11 +199,11 @@ int main(){
 
     fprintf(stderr,"\r");
     {
-      fprintf(stderr,"testing time page seeking to random places in %ld seconds....\n",
+      fprintf(stderr,"testing time page seeking to random places in %ld milliseconds....\n",
               (long)timelength);
     
       for(i=0;i<1000;i++){
-        ogg_int64_t val=rand()*timelength/RAND_MAX;
+        ogg_int64_t val=(double)rand()*timelength/RAND_MAX;
         fprintf(stderr,"\r\t%d [time position %ld]...     ",i,(long)val);
         ret=ov_time_seek_page(&ov,val);
         if(ret<0){
@@ -212,11 +218,11 @@ int main(){
 
     fprintf(stderr,"\r");
     {
-      fprintf(stderr,"testing time exact seeking to random places in %ld seconds....\n",
+      fprintf(stderr,"testing time exact seeking to random places in %ld milliseconds....\n",
               (long)timelength);
     
       for(i=0;i<1000;i++){
-        ogg_int64_t val=rand()*timelength/RAND_MAX;
+        ogg_int64_t val=(double)rand()*timelength/RAND_MAX;
         fprintf(stderr,"\r\t%d [time position %ld]...     ",i,(long)val);
         ret=ov_time_seek(&ov,val);
         if(ret<0){

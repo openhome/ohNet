@@ -116,6 +116,9 @@ def configure(conf):
         ]
 
     # Setup Vorbis lib options
+    # Using https://git.xiph.org/?p=tremor.git
+    # b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
+    # (Sun, 4 Jan 2015 20:11:49 +0100 (19:11 +0000))
     conf.env.INCLUDES_VORBIS = [
         'thirdparty/Tremor',
         ]
@@ -503,23 +506,21 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/Vorbis.cpp',
-                'thirdparty/Tremor/mdct.c',
                 'thirdparty/Tremor/block.c',
-                'thirdparty/Tremor/window.c',
-                'thirdparty/Tremor/synthesis.c',
-                'thirdparty/Tremor/info.c',
-                'thirdparty/Tremor/floor1.c',
-                'thirdparty/Tremor/floor0.c',
-                'thirdparty/Tremor/vorbisfile.c',
-                'thirdparty/Tremor/res012.c',
-                'thirdparty/Tremor/mapping0.c',
-                'thirdparty/Tremor/registry.c',
                 'thirdparty/Tremor/codebook.c',
+                'thirdparty/Tremor/floor0.c',
+                'thirdparty/Tremor/floor1.c',
+                'thirdparty/Tremor/info.c',
+                'thirdparty/Tremor/mapping0.c',
+                'thirdparty/Tremor/mdct.c',
+                'thirdparty/Tremor/registry.c',
+                'thirdparty/Tremor/res012.c',
                 'thirdparty/Tremor/sharedbook.c',
-                'thirdparty/Tremor/framing.c',
-                'thirdparty/Tremor/bitwise.c',
+                'thirdparty/Tremor/synthesis.c',
+                'thirdparty/Tremor/vorbisfile.c',
+                'thirdparty/Tremor/window.c',
             ],
-            use=['VORBIS', 'OHNET'],
+            use=['VORBIS', 'OGG', 'libOgg', 'OHNET'],
             target='CodecVorbis')
 
     # WebAppFramework

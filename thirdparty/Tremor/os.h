@@ -18,8 +18,7 @@
  ********************************************************************/
 
 #include <math.h>
-#include <stdlib.h>   // include this to avoid min/max redefinition warnings
-#include "os_types.h"
+#include <ogg/os_types.h>
 
 #ifndef _V_IFDEFJAIL_H_
 #  define _V_IFDEFJAIL_H_

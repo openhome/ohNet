@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "ogg.h"
+#include <ogg/ogg.h>
 #include "misc.h"
 #include "ivorbiscodec.h"
 #include "codebook.h"
@@ -121,7 +121,20 @@ ogg_uint32_t *_make_words(long *l,long n,long sparsecount){
     }else
       if(sparsecount==0)count++;
   }
-    
+
+  /* sanity check the huffman tree; an underpopulated tree must be
+     rejected. The only exception is the one-node pseudo-nil tree,
+     which appears to be underpopulated because the tree doesn't
+     really exist; there's only one possible 'codeword' or zero bits,
+     but the above tree-gen code doesn't mark that. */
+  if(sparsecount != 1){
+    for(i=1;i<33;i++)
+      if(marker[i] & (0xffffffffUL>>(32-i))){
+       _ogg_free(r);
+       return(NULL);
+      }
+  }
+
   /* bitreverse the words because our bitwise packer/unpacker is LSb
      endian */
   for(i=0,count=0;i<n;i++){
@@ -281,15 +294,10 @@ ogg_int32_t *_book_unquantize(const static_codebook *b,int n,int *sparsemap,
   return(NULL);
 }
 
-void vorbis_staticbook_clear(static_codebook *b){
+void vorbis_staticbook_destroy(static_codebook *b){
   if(b->quantlist)_ogg_free(b->quantlist);
   if(b->lengthlist)_ogg_free(b->lengthlist);
   memset(b,0,sizeof(*b));
-
-}
-
-void vorbis_staticbook_destroy(static_codebook *b){
-  vorbis_staticbook_clear(b);
   _ogg_free(b);
 }
 

@@ -9,13 +9,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
 
-#undef X        //defined in os_types.h!
-
 extern "C" {
-
-#include <ogg.h>
-#include <os_types.h>
-#include <config_types.h>
 #include <ivorbisfile.h>
 #include <ivorbiscodec.h>
 }
@@ -49,7 +43,6 @@ public:
     int SeekCallback(ogg_int64_t offset, int whence);
     int CloseCallback();
     long TellCallback();
-    void PrintCallback(char *message);
 private:
     TBool FindSync();
     TUint64 GetTotalSamples();
@@ -108,7 +101,6 @@ size_t ReadCallback(void *ptr, size_t size, size_t nmemb, void *datasource);
 int SeekCallback(void *datasource, ogg_int64_t offset, int whence);
 int CloseCallback(void *datasource);
 long TellCallback(void *datasource);
-void PrintCallback (void *datasource, char *message);
 
 size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
 {
@@ -158,12 +150,6 @@ long CodecVorbis::TellCallback()
     return (long)tell;
 }
 
-void CodecVorbis::PrintCallback (char *message)
-{
-    LOG(kCodec,"%s", message);
-}
-
-
 size_t ReadCallback(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
   LOG(kCodec,"CallbackRead\n");
@@ -186,11 +172,6 @@ long TellCallback(void *datasource)
     return ((CodecVorbis *)datasource)->TellCallback();
 }
 
-void PrintCallback(void *datasource, char *message)
-{
-    ((CodecVorbis *)datasource)->PrintCallback(message);
-}
-
 
 CodecVorbis::CodecVorbis()
 {
@@ -199,7 +180,6 @@ CodecVorbis::CodecVorbis()
     iCallbacks.seek_func = ::SeekCallback;
     iCallbacks.close_func = ::CloseCallback;
     iCallbacks.tell_func = ::TellCallback;
-    iCallbacks.print_func = ::PrintCallback;
 }
 
 CodecVorbis::~CodecVorbis()

@@ -18,7 +18,7 @@
 #ifndef _V_LOOKUP_DATA_H_
 #define _V_LOOKUP_DATA_H_
 
-#include "os_types.h"
+#include <ogg/os_types.h>
 
 #define FROMdB_LOOKUP_SZ 35
 #define FROMdB2_LOOKUP_SZ 32

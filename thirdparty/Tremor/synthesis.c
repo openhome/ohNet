@@ -17,24 +17,28 @@
  ********************************************************************/
 
 #include <stdio.h>
-#include "ogg.h"
+#include <ogg/ogg.h>
 #include "ivorbiscodec.h"
 #include "codec_internal.h"
 #include "registry.h"
 #include "misc.h"
 #include "block.h"
 
-int vorbis_synthesis(vorbis_block *vb,ogg_packet *op,int decodep){
-  vorbis_dsp_state     *vd=vb->vd;
-  private_state        *b=(private_state *)vd->backend_state;
-  vorbis_info          *vi=vd->vi;
-  codec_setup_info     *ci=(codec_setup_info *)vi->codec_setup;
-  oggpack_buffer       *opb=&vb->opb;
+static int _vorbis_synthesis1(vorbis_block *vb,ogg_packet *op,int decodep){
+  vorbis_dsp_state     *vd= vb ? vb->vd : 0;
+  private_state        *b= vd ? (private_state *)vd->backend_state: 0;
+  vorbis_info          *vi= vd ? vd->vi : 0;
+  codec_setup_info     *ci= vi ? (codec_setup_info *)vi->codec_setup : 0;
+  oggpack_buffer       *opb=vb ? &vb->opb : 0;
   int                   type,mode,i;
  
+  if (!vd || !b || !vi || !ci || !opb) {
+    return OV_EBADPACKET;
+  }
+
   /* first things first.  Make sure decode is ready */
   _vorbis_block_ripcord(vb);
-  oggpack_readinit(opb,op->packet);
+  oggpack_readinit(opb,op->packet,op->bytes);
 
   /* Check the packet type */
   if(oggpack_read(opb,1)!=0){
@@ -47,6 +51,10 @@ int vorbis_synthesis(vorbis_block *vb,ogg_packet *op,int decodep){
   if(mode==-1)return(OV_EBADPACKET);
   
   vb->mode=mode;
+  if(!ci->mode_param[mode]){
+    return(OV_EBADPACKET);
+  }
+
   vb->W=ci->mode_param[mode]->blockflag;
   if(vb->W){
     vb->lW=oggpack_read(opb,1);
@@ -59,7 +67,7 @@ int vorbis_synthesis(vorbis_block *vb,ogg_packet *op,int decodep){
   
   /* more setup */
   vb->granulepos=op->granulepos;
-  vb->sequence=op->packetno-3; /* first block is third packet */
+  vb->sequence=op->packetno; /* first block is third packet */
   vb->eofflag=op->e_o_s;
 
   if(decodep){
@@ -82,12 +90,22 @@ int vorbis_synthesis(vorbis_block *vb,ogg_packet *op,int decodep){
   }
 }
 
+int vorbis_synthesis(vorbis_block *vb,ogg_packet *op){
+  return _vorbis_synthesis1(vb,op,1);
+}
+
+/* used to track pcm position without actually performing decode.
+   Useful for sequential 'fast forward' */
+int vorbis_synthesis_trackonly(vorbis_block *vb,ogg_packet *op){
+  return _vorbis_synthesis1(vb,op,0);
+}
+
 long vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op){
   codec_setup_info     *ci=(codec_setup_info *)vi->codec_setup;
   oggpack_buffer       opb;
   int                  mode;
  
-  oggpack_readinit(&opb,op->packet);
+  oggpack_readinit(&opb,op->packet,op->bytes);
 
   /* Check the packet type */
   if(oggpack_read(&opb,1)!=0){
@@ -106,7 +124,7 @@ long vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op){
     /* read our mode and pre/post windowsize */
     mode=oggpack_read(&opb,modebits);
   }
-  if(mode==-1)return(OV_EBADPACKET);
+  if(mode==-1 || !ci->mode_param[mode])return(OV_EBADPACKET);
   return(ci->blocksizes[ci->mode_param[mode]->blockflag]);
 }
 
