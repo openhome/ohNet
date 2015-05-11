@@ -81,8 +81,12 @@ def configure(conf):
 
     mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
 
+    # Setup Ogg lib options
+    # Using https://git.xiph.org/?p=ogg.git
+    # 1344d4ed60e26f6426c782b705ec0c9c5fddfe43
+    # (Fri, 8 May 2015 21:30:14 +0100 (13:30 -0700))
     conf.env.INCLUDES_OGG = [
-        'thirdparty/libogg-1.1.3/include',
+        'thirdparty/libogg/include',
         ]
 
     # Setup FLAC lib options 
@@ -394,8 +398,8 @@ def build(bld):
     # Ogg
     bld.stlib(
             source=[
-                'thirdparty/libogg-1.1.3/src/bitwise.c',
-                'thirdparty/libogg-1.1.3/src/framing.c'
+                'thirdparty/libogg/src/bitwise.c',
+                'thirdparty/libogg/src/framing.c'
             ],
             use=['OGG'],
             target='libOgg')
