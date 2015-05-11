@@ -748,6 +748,11 @@ def build(bld):
             target='TestCodec',
             install_path=None)
     bld.program(
+            source='OpenHome/Media/Tests/TestCodecInteractiveMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestCodecInteractive',
+            install_path=None)
+    bld.program(
             source='OpenHome/Media/Tests/TestCodecControllerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestCodecController',
