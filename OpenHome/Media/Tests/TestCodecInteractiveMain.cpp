@@ -20,11 +20,13 @@
 
 #include <stdlib.h>
 
+#include <limits>
+
 namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-class ElementFileReader : public IPipelineElementUpstream, private INonCopyable
+class ElementFileReader : public IPipelineElementUpstream, public IUrlBlockWriter, private INonCopyable
 {
 private:
     static const TUint kInBufBytes = 4096;
@@ -34,6 +36,8 @@ public:
     void Open(const Brx& aFilename); // throws FileOpenError
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
+public: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private:
     enum EMode {
         eMode,
@@ -83,18 +87,16 @@ private:
     Semaphore& iSem;
 };
 
-class Decoder : private IUrlBlockWriter, private INonCopyable
+class Decoder : private INonCopyable
 {
 private:
     static const TUint kThreadPriorityMax = kPriorityHighest - 1;
 public:
-    Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
+    Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter);
     ~Decoder();
     void AddContainer(ContainerBase* aContainer);
     void AddCodec(CodecBase* aCodec);
     void Start();
-private: // from IUrlBlockWriter
-    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private:
     Container* iContainer;
     Logger* iLoggerContainer;
@@ -209,6 +211,57 @@ Msg* ElementFileReader::Pull()
     }
     ASSERT(msg != NULL);
     return msg;
+}
+
+TBool ElementFileReader::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
+{
+    ASSERT(iFile != NULL);
+    Log::Print("ElementFileReader::TryGet aUrl: ");
+    Log::Print(aUrl);
+    Log::Print(", aOffset: %llu, iFile->Bytes(): %u, aBytes: %u, iFile bytes remaining: %u\n", aOffset, iFile->Bytes(), aBytes, iFile->Bytes()-iFile->Tell());
+
+    const TUint current = iFile->Tell();
+
+    //ASSERT(aOffset <= iFile->Bytes());
+    //ASSERT(aBytes <= iFile->Bytes()-iFile->Tell());
+    if (aOffset > iFile->Bytes() || aBytes > iFile->Bytes()-iFile->Tell()) {
+        Log::Print("ElementFileReader::TryGet seek parameters out of bounds\n");
+        return false;
+    }
+
+    try {
+        iFile->Seek(aBytes);
+        ASSERT(iInBuf.Bytes() == 0);
+        TUint remaining = aBytes;
+        while (remaining > 0) {
+            try {
+                iFile->Read(iInBuf, remaining);
+                aWriter.Write(iInBuf);
+                remaining -= iInBuf.Bytes();
+                iInBuf.SetBytes(0);
+            }
+            catch (FileReadError&) {
+                // Reached end of file.
+                Log::Print("ElementFileReader::TryGet reached end of file unexpectedly\n");
+                ASSERTS();
+            }
+        }
+    }
+    catch (FileSeekError&) {
+        Log::Print("ElementFileReader::TryGet failed to seek to pos %u\n", aBytes);
+        ASSERTS();
+    }
+
+    try {
+        iFile->Seek(current);
+    }
+    catch (FileSeekError&) {
+        Log::Print("ElementFileReader::TryGet failed to seek back to pos %u\n", current);
+        ASSERTS();
+    }
+
+    Log::Print("ElementFileReader::TryGet successfully retrieved all bytes\n");
+    return true;
 }
 
 
@@ -359,14 +412,14 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
 
 // Decoder
 
-Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement)
+Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter)
 {
     iContainer = new Container(aMsgFactory, aUpstreamElement);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // Construct push logger slightly out of sequence.
     iLoggerCodecController = new Logger("Codec Controller", aDownstreamElement);
-    iCodecController = new Codec::CodecController(aMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, kThreadPriorityMax);
+    iCodecController = new Codec::CodecController(aMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, kThreadPriorityMax);
 
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
@@ -396,12 +449,6 @@ void Decoder::AddCodec(CodecBase* aCodec)
 void Decoder::Start()
 {
     iCodecController->Start();
-}
-
-TBool Decoder::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
-{
-    ASSERTS();
-    return false;
 }
 
 
@@ -496,7 +543,7 @@ int CDECL main(int aArgc, char* aArgv[])
     FileSystemAnsii fileSystem;
     ElementFileReader fileReader(fileSystem, *trackFactory, *msgFactory);
     ElementFileWriter fileWriter(fileSystem, *sem);
-    Decoder* decoder = new Decoder(*msgFactory, fileReader, fileWriter);
+    Decoder* decoder = new Decoder(*msgFactory, fileReader, fileWriter, fileReader);
 
     decoder->AddContainer(new Id3v2());
     //decoder->AddContainer(new Mpeg4Container());
