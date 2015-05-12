@@ -17,6 +17,7 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Codec/MpegTs.h>
 #include <OpenHome/Private/File.h>
+#include <OpenHome/Private/Stream.h>
 
 #include <stdlib.h>
 
@@ -60,7 +61,7 @@ private:
 class ElementFileWriter : public IPipelineElementDownstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    ElementFileWriter(IFileSystem& aFileSystem, Semaphore& aSem);
+    ElementFileWriter(IFileSystem& aFileSystem, Semaphore& aSem, TBool aOutputWavHeader);
     ~ElementFileWriter();
     void Open(const Brx& aFilename); // throws FileOpenError
 public: // from IPipelineElementDownstream
@@ -85,6 +86,7 @@ private:
     IFileSystem& iFileSystem;
     IFile* iFile;
     Semaphore& iSem;
+    TBool iOutputWavHeader;
 };
 
 class ProcessorPcmSwpEndianPacked : public ProcessorPcmBuf
@@ -285,10 +287,11 @@ TBool ElementFileReader::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffs
 
 // ElementFileWriter
 
-ElementFileWriter::ElementFileWriter(IFileSystem& aFileSystem, Semaphore& aSem)
+ElementFileWriter::ElementFileWriter(IFileSystem& aFileSystem, Semaphore& aSem, TBool aOutputWavHeader)
     : iFileSystem(aFileSystem)
     , iFile(NULL)
     , iSem(aSem)
+    , iOutputWavHeader(aOutputWavHeader)
 {
 }
 
@@ -382,6 +385,87 @@ Msg* ElementFileWriter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     // FIXME - output (an optional) WAV header here?
     Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream\n");
+    if (iOutputWavHeader) {
+        const DecodedStreamInfo& info = aMsg->StreamInfo();
+
+        const TUint bitDepth = info.BitDepth();
+        const TUint sampleRate = info.SampleRate();
+        const TUint channels = info.NumChannels();
+        const TUint64 trackLength = info.TrackLength();
+        const TUint64 trackStart = info.SampleStart();
+
+        const TUint64 trackDuration = trackLength-trackStart;
+        const TUint bytesPerSubsample = bitDepth/8;
+        const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(sampleRate);
+
+        TUint64 jiffiesRemaining = trackDuration;
+
+        const TUint maxSamplesUint = std::numeric_limits<TUint>::max()/jiffiesPerSample;
+        const TUint maxJiffiesUint = jiffiesPerSample*maxSamplesUint;
+
+        TUint bytesTotal = 0;
+        while (jiffiesRemaining > 0) {
+            TUint jiffies = 0;
+            if (jiffiesRemaining >= maxJiffiesUint) {
+                jiffies = maxJiffiesUint;
+            }
+            else {
+                jiffies = static_cast<TUint>(jiffiesRemaining);
+            }
+            jiffiesRemaining -= jiffies;
+
+            Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream input jiffies: %u\n", jiffies);
+            const TUint bytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, channels, bytesPerSubsample);
+            Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream rounded jiffies: %u\n", jiffies);
+            ASSERT(std::numeric_limits<TUint>::max()-bytesTotal >= bytes);
+            bytesTotal += bytes;
+        }
+
+        Log::Print("bytesTotal: %u\n", bytesTotal);
+
+
+        static const TUint kWavHeaderBytes = 44;
+        static const TUint kFmtChunkBytes = 16;  // 16 bytes for PCM.
+        Bws<kWavHeaderBytes> wavHeader;
+        WriterBuffer writerBuf(wavHeader);
+        WriterBinary writerBin(writerBuf);
+
+        // Each chunk has form:
+        // 4-byte chunk ID
+        // 4-byte chunk size (does not include ID or size fields)
+        // (chunk size)-bytes data
+
+        // Write RIFF chunk.
+        writerBuf.Write(Brn("RIFF"));
+        writerBin.WriteUint32Le(4+8+kFmtChunkBytes+8+bytesTotal);    // 4 + (8 + FmtChunkBytes) + (8 + DataChunkBytes)
+        writerBuf.Write(Brn("WAVE"));                               // Format
+
+        // Write fmt chunk.
+        writerBuf.Write(Brn("fmt "));
+        writerBin.WriteUint32Le(kFmtChunkBytes);
+        writerBin.WriteUint16Le(1);                                 // AudioFormat (always 1 for PCM)
+        writerBin.WriteUint16Le(channels);                          // NumChannels
+        writerBin.WriteUint32Le(sampleRate);                        // SampleRate
+        writerBin.WriteUint32Le(sampleRate*channels*bitDepth/8);    // ByteRate
+        writerBin.WriteUint16Le(channels*bitDepth/8);               // BlockAlign
+        writerBin.WriteUint16Le(bitDepth);                          // BitsPerSample
+
+        // Write data chunk.
+        writerBuf.Write(Brn("data"));
+        writerBin.WriteUint32Le(bytesTotal);
+        // Sound data to follow.
+
+        try {
+            iFile->Write(wavHeader);
+        }
+        catch (FileWriteError&) {
+            Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream Error while writing output WAV header");
+            ASSERTS();
+        }
+
+        iOutputWavHeader = false;
+    }
+
     aMsg->RemoveRef();
     return NULL;
 }
@@ -553,6 +637,7 @@ int CDECL main(int aArgc, char* aArgv[])
     OptionParser options;
     OptionString optionFileIn("-i", "--in", Brn("C:\\work\\ohMediaPlayerTmp\\in.txt"), "Input file");
     OptionString optionFileOut("-o", "--out", Brn("C:\\work\\ohMediaPlayerTmp\\out.txt"), "Output file");
+    OptionBool optionWav("-w", "--wav", "Output wav header");
     //OptionBool optionSeek("-s", "--seek", "Perform a seek during decoding");
     //OptionUint optionSeekFrom("-sf", "--seekfrom", 0, "Seek start pos (in seconds)");
     //OptionUint optionSeekTo("-st", "--seekto", 0, "Seek end pos (in seconds)");
@@ -560,6 +645,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     options.AddOption(&optionFileIn);
     options.AddOption(&optionFileOut);
+    options.AddOption(&optionWav);
     //options.AddOption(&optionSeek);
     //options.AddOption(&optionSeekFrom);
     //options.AddOption(&optionSeekTo);
@@ -628,7 +714,7 @@ int CDECL main(int aArgc, char* aArgv[])
     Semaphore* sem = new Semaphore("TCIS", 0);
     FileSystemAnsii fileSystem;
     ElementFileReader fileReader(fileSystem, *trackFactory, *msgFactory);
-    ElementFileWriter fileWriter(fileSystem, *sem);
+    ElementFileWriter fileWriter(fileSystem, *sem, optionWav.Value());
     Decoder* decoder = new Decoder(*msgFactory, fileReader, fileWriter, fileReader);
 
     decoder->AddContainer(new Id3v2());
