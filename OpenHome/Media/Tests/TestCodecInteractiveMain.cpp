@@ -475,11 +475,11 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
 
 TUint ElementFileWriter::PcmBytes(TUint64 aDurationJiffies, TUint aSampleRate, TUint aNumChannels, TUint aBitDepth)
 {
-    const TUint bytesPerSample = aNumChannels * aBitDepth/8;
     const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
     ASSERT(aDurationJiffies % jiffiesPerSample == 0);       // Ensure whole samples.
     const TUint64 samples = aDurationJiffies/jiffiesPerSample;
-    const TUint64 bytes64 = samples * bytesPerSample;
+
+    const TUint64 bytes64 = samples * aNumChannels * aBitDepth/8;
     ASSERT(bytes64 <= std::numeric_limits<TUint32>::max()); // WAV can only support a 32-bit data size.
     const TUint bytes = static_cast<TUint>(bytes64);
     return bytes;
