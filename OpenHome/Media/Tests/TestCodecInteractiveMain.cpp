@@ -87,6 +87,22 @@ private:
     Semaphore& iSem;
 };
 
+class ProcessorPcmSwpEndianPacked : public ProcessorPcmBuf
+{
+public:
+    ProcessorPcmSwpEndianPacked();
+private: // from IPcmProcessor
+    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
+    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
+    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+private:
+    void SwapEndianness16(const Brx& aData);
+    void SwapEndianness24(const Brx& aData);
+};
+
 class Decoder : private INonCopyable
 {
 private:
@@ -374,7 +390,7 @@ Msg* ElementFileWriter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     // Write audio out to file.
     const TUint64 trackOffset = aMsg->TrackOffset();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmSwpEndianPacked pcmProcessor;   // CodecController outputs samples in big endian. This swaps them to little endian for WAV output.
     MsgPlayable* playable = aMsg->CreatePlayable();
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
@@ -409,6 +425,74 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
     aMsg->RemoveRef();
     iSem.Signal();
     return NULL;
+}
+
+
+// ProcessorPcmSwpEndianPacked
+
+ProcessorPcmSwpEndianPacked::ProcessorPcmSwpEndianPacked()
+{
+}
+
+TBool ProcessorPcmSwpEndianPacked::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
+{
+    ProcessFragment(aData);
+    return true;
+}
+
+TBool ProcessorPcmSwpEndianPacked::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
+{
+    CheckSize(aData.Bytes());
+    SwapEndianness16(aData);
+    return true;
+}
+
+TBool ProcessorPcmSwpEndianPacked::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
+{
+    CheckSize(aData.Bytes());
+    SwapEndianness24(aData);
+    return true;
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessSample8(const TByte* aSample, TUint aNumChannels)
+{
+    Brn sample(aSample, aNumChannels);
+    ProcessFragment(sample);
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessSample16(const TByte* aSample, TUint aNumChannels)
+{
+    Brn sample(aSample, 2*aNumChannels);
+    CheckSize(sample.Bytes());
+    SwapEndianness16(sample);
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessSample24(const TByte* aSample, TUint aNumChannels)
+{
+    Brn sample(aSample, 3*aNumChannels);
+    CheckSize(sample.Bytes());
+    SwapEndianness24(sample);
+}
+
+void ProcessorPcmSwpEndianPacked::SwapEndianness16(const Brx& aData)
+{
+    iBuf.SetBytes(aData.Bytes());
+    const TByte* src = aData.Ptr();
+    for (TUint i=0; i<aData.Bytes(); i+=2) {
+        iBuf[i]   = src[i+1];
+        iBuf[i+1] = src[i];
+    }
+}
+
+void ProcessorPcmSwpEndianPacked::SwapEndianness24(const Brx& aData)
+{
+    iBuf.SetBytes(aData.Bytes());
+    const TByte* src = aData.Ptr();
+    for (TUint i=0; i<aData.Bytes(); i+=3) {
+        iBuf[i]   = src[i+2];
+        iBuf[i+1] = src[i+1];
+        iBuf[i+2] = src[i];
+    }
 }
 
 
