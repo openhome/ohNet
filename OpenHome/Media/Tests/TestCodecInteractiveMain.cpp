@@ -475,34 +475,14 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
 
 TUint ElementFileWriter::PcmBytes(TUint64 aDurationJiffies, TUint aSampleRate, TUint aNumChannels, TUint aBitDepth)
 {
-    const TUint bytesPerSubsample = aBitDepth/8;
+    const TUint bytesPerSample = aNumChannels * aBitDepth/8;
     const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
-
-    TUint64 jiffiesRemaining = aDurationJiffies;
-
-    const TUint maxSamplesUint = std::numeric_limits<TUint>::max()/jiffiesPerSample;
-    const TUint maxJiffiesUint = jiffiesPerSample*maxSamplesUint;
-
-    TUint bytesTotal = 0;
-    while (jiffiesRemaining > 0) {
-        TUint jiffies = 0;
-        if (jiffiesRemaining >= maxJiffiesUint) {
-            jiffies = maxJiffiesUint;
-        }
-        else {
-            jiffies = static_cast<TUint>(jiffiesRemaining);
-        }
-        jiffiesRemaining -= jiffies;
-
-        Log::Print("ElementFileWriter::PcmBytes input jiffies: %u\n", jiffies);
-        const TUint bytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, aNumChannels, bytesPerSubsample);
-        Log::Print("ElementFileWriter::PcmBytes rounded jiffies: %u\n", jiffies);
-        ASSERT(std::numeric_limits<TUint>::max()-bytesTotal >= bytes);  // WAV can only support a 32-bit data size.
-        bytesTotal += bytes;
-    }
-
-    Log::Print("ElementFileWriter::PcmBytes bytesTotal: %u\n", bytesTotal);
-    return bytesTotal;
+    ASSERT(aDurationJiffies % jiffiesPerSample == 0);       // Ensure whole samples.
+    const TUint64 samples = aDurationJiffies/jiffiesPerSample;
+    const TUint64 bytes64 = samples * bytesPerSample;
+    ASSERT(bytes64 <= std::numeric_limits<TUint>::max());   // WAV can only support a 32-bit data size.
+    const TUint bytes = static_cast<TUint>(bytes64);
+    return bytes;
 }
 
 
