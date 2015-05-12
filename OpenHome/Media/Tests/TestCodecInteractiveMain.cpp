@@ -83,10 +83,29 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
+    static TUint PcmBytes(TUint64 aDurationJiffies, TUint aSampleRate, TUint aNumChannels, TUint aBitDepth);
+private:
     IFileSystem& iFileSystem;
     IFile* iFile;
     Semaphore& iSem;
     TBool iOutputWavHeader;
+};
+
+class WavHeaderWriter : private INonCopyable
+{
+public:
+    static const TUint kWavHeaderBytes = 44;
+private:
+    static const TUint kFmtChunkBytes = 16;  // 16 bytes for PCM.
+    static const TUint kAudioFormat = 1;     // 1 for uncompressed PCM.
+public:
+    WavHeaderWriter(TUint aSampleRate, TUint aNumChannels, TUint aBitDepth, TUint aBytesTotal);
+    void Write(IWriter& aWriter);
+private:
+    const TUint iSampleRate;
+    const TUint iNumChannels;
+    const TUint iBitDepth;
+    const TUint iBytesTotal;
 };
 
 class ProcessorPcmSwpEndianPacked : public ProcessorPcmBuf
@@ -388,72 +407,15 @@ Msg* ElementFileWriter::ProcessMsg(MsgDecodedStream* aMsg)
     if (iOutputWavHeader) {
         const DecodedStreamInfo& info = aMsg->StreamInfo();
 
-        const TUint bitDepth = info.BitDepth();
-        const TUint sampleRate = info.SampleRate();
-        const TUint channels = info.NumChannels();
         const TUint64 trackLength = info.TrackLength();
         const TUint64 trackStart = info.SampleStart();
-
         const TUint64 trackDuration = trackLength-trackStart;
-        const TUint bytesPerSubsample = bitDepth/8;
-        const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(sampleRate);
+        const TUint audioBytes = PcmBytes(trackDuration, info.SampleRate(), info.NumChannels(), info.BitDepth());
 
-        TUint64 jiffiesRemaining = trackDuration;
-
-        const TUint maxSamplesUint = std::numeric_limits<TUint>::max()/jiffiesPerSample;
-        const TUint maxJiffiesUint = jiffiesPerSample*maxSamplesUint;
-
-        TUint bytesTotal = 0;
-        while (jiffiesRemaining > 0) {
-            TUint jiffies = 0;
-            if (jiffiesRemaining >= maxJiffiesUint) {
-                jiffies = maxJiffiesUint;
-            }
-            else {
-                jiffies = static_cast<TUint>(jiffiesRemaining);
-            }
-            jiffiesRemaining -= jiffies;
-
-            Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream input jiffies: %u\n", jiffies);
-            const TUint bytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, channels, bytesPerSubsample);
-            Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream rounded jiffies: %u\n", jiffies);
-            ASSERT(std::numeric_limits<TUint>::max()-bytesTotal >= bytes);
-            bytesTotal += bytes;
-        }
-
-        Log::Print("bytesTotal: %u\n", bytesTotal);
-
-
-        static const TUint kWavHeaderBytes = 44;
-        static const TUint kFmtChunkBytes = 16;  // 16 bytes for PCM.
-        Bws<kWavHeaderBytes> wavHeader;
+        Bws<WavHeaderWriter::kWavHeaderBytes> wavHeader;
         WriterBuffer writerBuf(wavHeader);
-        WriterBinary writerBin(writerBuf);
-
-        // Each chunk has form:
-        // 4-byte chunk ID
-        // 4-byte chunk size (does not include ID or size fields)
-        // (chunk size)-bytes data
-
-        // Write RIFF chunk.
-        writerBuf.Write(Brn("RIFF"));
-        writerBin.WriteUint32Le(4+8+kFmtChunkBytes+8+bytesTotal);    // 4 + (8 + FmtChunkBytes) + (8 + DataChunkBytes)
-        writerBuf.Write(Brn("WAVE"));                               // Format
-
-        // Write fmt chunk.
-        writerBuf.Write(Brn("fmt "));
-        writerBin.WriteUint32Le(kFmtChunkBytes);
-        writerBin.WriteUint16Le(1);                                 // AudioFormat (always 1 for PCM)
-        writerBin.WriteUint16Le(channels);                          // NumChannels
-        writerBin.WriteUint32Le(sampleRate);                        // SampleRate
-        writerBin.WriteUint32Le(sampleRate*channels*bitDepth/8);    // ByteRate
-        writerBin.WriteUint16Le(channels*bitDepth/8);               // BlockAlign
-        writerBin.WriteUint16Le(bitDepth);                          // BitsPerSample
-
-        // Write data chunk.
-        writerBuf.Write(Brn("data"));
-        writerBin.WriteUint32Le(bytesTotal);
-        // Sound data to follow.
+        WavHeaderWriter wavHeaderWriter(info.SampleRate(), info.NumChannels(), info.BitDepth(), audioBytes);
+        wavHeaderWriter.Write(writerBuf);
 
         try {
             iFile->Write(wavHeader);
@@ -509,6 +471,80 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
     aMsg->RemoveRef();
     iSem.Signal();
     return NULL;
+}
+
+TUint ElementFileWriter::PcmBytes(TUint64 aDurationJiffies, TUint aSampleRate, TUint aNumChannels, TUint aBitDepth)
+{
+    const TUint bytesPerSubsample = aBitDepth/8;
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
+
+    TUint64 jiffiesRemaining = aDurationJiffies;
+
+    const TUint maxSamplesUint = std::numeric_limits<TUint>::max()/jiffiesPerSample;
+    const TUint maxJiffiesUint = jiffiesPerSample*maxSamplesUint;
+
+    TUint bytesTotal = 0;
+    while (jiffiesRemaining > 0) {
+        TUint jiffies = 0;
+        if (jiffiesRemaining >= maxJiffiesUint) {
+            jiffies = maxJiffiesUint;
+        }
+        else {
+            jiffies = static_cast<TUint>(jiffiesRemaining);
+        }
+        jiffiesRemaining -= jiffies;
+
+        Log::Print("ElementFileWriter::PcmBytes input jiffies: %u\n", jiffies);
+        const TUint bytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, aNumChannels, bytesPerSubsample);
+        Log::Print("ElementFileWriter::PcmBytes rounded jiffies: %u\n", jiffies);
+        ASSERT(std::numeric_limits<TUint>::max()-bytesTotal >= bytes);  // WAV can only support a 32-bit data size.
+        bytesTotal += bytes;
+    }
+
+    Log::Print("ElementFileWriter::PcmBytes bytesTotal: %u\n", bytesTotal);
+    return bytesTotal;
+}
+
+
+// WavHeaderWriter
+
+WavHeaderWriter::WavHeaderWriter(TUint aSampleRate, TUint aNumChannels, TUint aBitDepth, TUint aBytesTotal)
+    : iSampleRate(aSampleRate)
+    , iNumChannels(aNumChannels)
+    , iBitDepth(aBitDepth)
+    , iBytesTotal(aBytesTotal)
+{
+}
+
+void WavHeaderWriter::Write(IWriter& aWriter)
+{
+    WriterBinary writerBin(aWriter);
+
+    // Each chunk has form:
+    // 4-byte chunk ID
+    // 4-byte chunk size (does not include ID or size fields)
+    // (chunk size)-bytes data
+
+    // Write RIFF chunk.
+    aWriter.Write(Brn("RIFF"));
+    writerBin.WriteUint32Le(4+8+kFmtChunkBytes+8+iBytesTotal);      // 4 + (8 + FmtChunkBytes) + (8 + DataChunkBytes)
+    aWriter.Write(Brn("WAVE"));                                     // Format
+
+    // Write fmt chunk.
+    aWriter.Write(Brn("fmt "));
+    writerBin.WriteUint32Le(kFmtChunkBytes);
+    writerBin.WriteUint16Le(kAudioFormat);                          // AudioFormat (always 1 for PCM)
+    writerBin.WriteUint16Le(iNumChannels);                          // NumChannels
+    writerBin.WriteUint32Le(iSampleRate);                           // SampleRate
+    writerBin.WriteUint32Le(iSampleRate*iNumChannels*iBitDepth/8);  // ByteRate
+    writerBin.WriteUint16Le(iNumChannels*iBitDepth/8);              // BlockAlign
+    writerBin.WriteUint16Le(iBitDepth);                             // BitsPerSample
+
+    // Write data chunk.
+    aWriter.Write(Brn("data"));
+    writerBin.WriteUint32Le(iBytesTotal);
+
+    // Sound data should follow.
 }
 
 
