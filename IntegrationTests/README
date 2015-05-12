@@ -4,22 +4,23 @@
 Required Dependencies
 ---------------------
 
-    Python V2.x - recommend 2.7
-        https://www.python.org
+    - python 2.7 (NOT python 3.x)
+        - https://www.python.org/downloads/
 
-    PyCrypto (for tests using Credentials service)
-        https://www.dlitz.net/software/pycrypto/
-            - windows   - installers: http://www.voidspace.org.uk/python/modules.shtml#pycrypto
-            - mac       - sudo easy_install pip
-                        - sudo ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install pycrypto
+    - pycrypto (for credentials service encryption handling)
+        - https://www.dlitz.net/software/pycrypto/
+            - windows installers - http://www.voidspace.org.uk/python/modules.shtml#pycrypto
+            - mac   - sudo easy_install pip
+                    - sudo ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future pip install pycrypto
 
-    Python for Windows Extensions (if running on Windows)
+    - python for Windows Extensions (if running on Windows)
         http://sourceforge.net/projects/pywin32/files/pywin32/
 
-    iTunes (for Airplay tests) - running on local machine, session key setup in Config.xml
+    - iTunes (for Airplay tests) - running on local machine, session key setup in Config.xml
 
-    Access to UPnP media server with necessary files/playlists (for tests using
+    - access to UPnP media server with necessary files/playlists (for tests using
         UPnP media server to serve the test data [audio] files)
+
 
     Configuration file
     ------------------
