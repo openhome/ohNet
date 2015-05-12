@@ -9,13 +9,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
 
-#undef X        //defined in os_types.h!
-
 extern "C" {
-
-#include <ogg.h>
-#include <os_types.h>
-#include <config_types.h>
 #include <ivorbisfile.h>
 #include <ivorbiscodec.h>
 }
@@ -49,7 +43,6 @@ public:
     int SeekCallback(ogg_int64_t offset, int whence);
     int CloseCallback();
     long TellCallback();
-    void PrintCallback(char *message);
 private:
     TBool FindSync();
     TUint64 GetTotalSamples();
@@ -79,6 +72,7 @@ private:
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
+    TUint64 iReadOffset;
     TInt iBitstream;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     Bws<kIcyMetadataBytes> iNewIcyMetadata;
@@ -108,7 +102,6 @@ size_t ReadCallback(void *ptr, size_t size, size_t nmemb, void *datasource);
 int SeekCallback(void *datasource, ogg_int64_t offset, int whence);
 int CloseCallback(void *datasource);
 long TellCallback(void *datasource);
-void PrintCallback (void *datasource, char *message);
 
 size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
 {
@@ -116,6 +109,24 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
     //LOG(kCodec,"CodecVorbis::CallbackRead: attempt to read %u bytes\n", bytes);
     Bwn buf((TByte *)ptr, bytes);
     try{
+        if (iReadOffset > iController->StreamPos()) {
+            // Have already read some data (during Recognise()) which is now
+            // being replayed by Rewinder. Skip it.
+            LOG(kCodec, "CodecVorbis::ReadCallback iReadOffset: %llu, iController->StreamPos(): %llu\n", iReadOffset, iController->StreamPos());
+            TUint64 remaining = iReadOffset-iController->StreamPos();
+            while (remaining > 0) {
+                TUint bytes = buf.MaxBytes();
+                if (remaining < bytes) {
+                    // Safe cast.
+                    // Only enter here if remaining < buf.MaxBytes() (which is a TUint).
+                    bytes = static_cast<TUint>(remaining);
+                }
+                iController->Read(buf, bytes);
+                ASSERT(buf.Bytes() != 0); // Managed to read to this pos previously during Recognise().
+                remaining -= buf.Bytes();
+                buf.SetBytes(0);
+            }
+        }
         if (!iController->StreamLength() || (iController->StreamPos() < iController->StreamLength())) {
             // Tremor pulls more data after stream exhaustion, as it is looking
             // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
@@ -125,6 +136,7 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
             // if not, we'll do another read; otherwise we won't do anything and Tremor
             // will get its EOF identifier.
             iController->Read(buf, bytes);
+            iReadOffset = iController->StreamPos();
         }
     }
     catch(CodecStreamEnded) {
@@ -158,12 +170,6 @@ long CodecVorbis::TellCallback()
     return (long)tell;
 }
 
-void CodecVorbis::PrintCallback (char *message)
-{
-    LOG(kCodec,"%s", message);
-}
-
-
 size_t ReadCallback(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
   LOG(kCodec,"CallbackRead\n");
@@ -186,11 +192,6 @@ long TellCallback(void *datasource)
     return ((CodecVorbis *)datasource)->TellCallback();
 }
 
-void PrintCallback(void *datasource, char *message)
-{
-    ((CodecVorbis *)datasource)->PrintCallback(message);
-}
-
 
 CodecVorbis::CodecVorbis()
 {
@@ -199,7 +200,6 @@ CodecVorbis::CodecVorbis()
     iCallbacks.seek_func = ::SeekCallback;
     iCallbacks.close_func = ::CloseCallback;
     iCallbacks.tell_func = ::TellCallback;
-    iCallbacks.print_func = ::PrintCallback;
 }
 
 CodecVorbis::~CodecVorbis()
@@ -225,6 +225,7 @@ TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)
     if (aStreamInfo.RawPcm()) {
         return false;
     }
+    iReadOffset = 0;
     iSamplesTotal = 0;
     TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
 

@@ -81,12 +81,19 @@ def configure(conf):
 
     mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
 
+    # Setup Ogg lib options
+    # Using https://git.xiph.org/?p=ogg.git
+    # 1344d4ed60e26f6426c782b705ec0c9c5fddfe43
+    # (Fri, 8 May 2015 21:30:14 +0100 (13:30 -0700))
+    conf.env.INCLUDES_OGG = [
+        'thirdparty/libogg/include',
+        ]
+
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG']
     conf.env.INCLUDES_FLAC = [
         'thirdparty/flac-1.2.1/src/libFLAC/include',
         'thirdparty/flac-1.2.1/include',
-        'thirdparty/libogg-1.1.3/include',
         ]
 
     conf.env.STLIB_SHELL = ['Shell']
@@ -113,6 +120,11 @@ def configure(conf):
         ]
 
     # Setup Vorbis lib options
+    # Using https://git.xiph.org/?p=tremor.git
+    # b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
+    # (Sun, 4 Jan 2015 20:11:49 +0100 (19:11 +0000))
+    if conf.options.dest_platform in ['Core-ppc32']:
+        conf.env.DEFINES_VORBIS = ['BIG_ENDIAN', 'BYTE_ORDER=BIG_ENDIAN']
     conf.env.INCLUDES_VORBIS = [
         'thirdparty/Tremor',
         ]
@@ -388,10 +400,10 @@ def build(bld):
     # Ogg
     bld.stlib(
             source=[
-                'thirdparty/libogg-1.1.3/src/bitwise.c',
-                'thirdparty/libogg-1.1.3/src/framing.c'
+                'thirdparty/libogg/src/bitwise.c',
+                'thirdparty/libogg/src/framing.c'
             ],
-            includes = ['thirdparty/libogg-1.1.3/include'],
+            use=['OGG'],
             target='libOgg')
 
     # Flac
@@ -411,7 +423,7 @@ def build(bld):
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
-            use=['FLAC', 'OHNET', 'libOgg'],
+            use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
             target='CodecFlac')
 
     # AlacBase
@@ -500,23 +512,21 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/Vorbis.cpp',
-                'thirdparty/Tremor/mdct.c',
                 'thirdparty/Tremor/block.c',
-                'thirdparty/Tremor/window.c',
-                'thirdparty/Tremor/synthesis.c',
-                'thirdparty/Tremor/info.c',
-                'thirdparty/Tremor/floor1.c',
-                'thirdparty/Tremor/floor0.c',
-                'thirdparty/Tremor/vorbisfile.c',
-                'thirdparty/Tremor/res012.c',
-                'thirdparty/Tremor/mapping0.c',
-                'thirdparty/Tremor/registry.c',
                 'thirdparty/Tremor/codebook.c',
+                'thirdparty/Tremor/floor0.c',
+                'thirdparty/Tremor/floor1.c',
+                'thirdparty/Tremor/info.c',
+                'thirdparty/Tremor/mapping0.c',
+                'thirdparty/Tremor/mdct.c',
+                'thirdparty/Tremor/registry.c',
+                'thirdparty/Tremor/res012.c',
                 'thirdparty/Tremor/sharedbook.c',
-                'thirdparty/Tremor/framing.c',
-                'thirdparty/Tremor/bitwise.c',
+                'thirdparty/Tremor/synthesis.c',
+                'thirdparty/Tremor/vorbisfile.c',
+                'thirdparty/Tremor/window.c',
             ],
-            use=['VORBIS', 'OHNET'],
+            use=['VORBIS', 'OGG', 'libOgg', 'OHNET'],
             target='CodecVorbis')
 
     # WebAppFramework
@@ -746,6 +756,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestCodecMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestCodec',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestCodecInteractiveMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestCodecInteractive',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestCodecControllerMain.cpp',

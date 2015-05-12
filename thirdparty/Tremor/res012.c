@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "ogg.h"
+#include <ogg/ogg.h>
 #include "ivorbiscodec.h"
 #include "codec_internal.h"
 #include "registry.h"
@@ -98,20 +98,52 @@ vorbis_info_residue *res0_unpack(vorbis_info *vi,oggpack_buffer *opb){
   info->partitions=oggpack_read(opb,6)+1;
   info->groupbook=oggpack_read(opb,8);
 
+  /* check for premature EOP */
+  if(info->groupbook<0)goto errout;
+
   for(j=0;j<info->partitions;j++){
     int cascade=oggpack_read(opb,3);
-    if(oggpack_read(opb,1))
-      cascade|=(oggpack_read(opb,5)<<3);
+    int cflag=oggpack_read(opb,1);
+    if(cflag<0) goto errout;
+    if(cflag){
+      int c=oggpack_read(opb,5);
+      if(c<0) goto errout;
+      cascade|=(c<<3);
+    }
     info->secondstages[j]=cascade;
 
     acc+=icount(cascade);
   }
-  for(j=0;j<acc;j++)
-    info->booklist[j]=oggpack_read(opb,8);
+  for(j=0;j<acc;j++){
+    int book=oggpack_read(opb,8);
+    if(book<0) goto errout;
+    info->booklist[j]=book;
+  }
 
   if(info->groupbook>=ci->books)goto errout;
-  for(j=0;j<acc;j++)
+  for(j=0;j<acc;j++){
     if(info->booklist[j]>=ci->books)goto errout;
+    if(ci->book_param[info->booklist[j]]->maptype==0)goto errout;
+  }
+
+  /* verify the phrasebook is not specifying an impossible or
+     inconsistent partitioning scheme. */
+  /* modify the phrasebook ranging check from r16327; an early beta
+     encoder had a bug where it used an oversized phrasebook by
+     accident.  These files should continue to be playable, but don't
+     allow an exploit */
+  {
+    int entries = ci->book_param[info->groupbook]->entries;
+    int dim = ci->book_param[info->groupbook]->dim;
+    int partvals = 1;
+    if (dim<1) goto errout;
+    while(dim>0){
+      partvals *= info->partitions;
+      if(partvals > entries) goto errout;
+      dim--;
+    }
+    info->partvals = partvals;
+  }
 
   return(info);
  errout:
@@ -208,7 +240,7 @@ static int _01inverse(vorbis_block *vb,vorbis_look_residue *vl,
 	  /* fetch the partition word for each channel */
 	  for(j=0;j<ch;j++){
 	    int temp=vorbis_book_decode(look->phrasebook,&vb->opb);
-	    if(temp==-1)goto eopbreak;
+	    if(temp==-1 || temp>=info->partvals)goto eopbreak;
 	    partword[j][l]=look->decodemap[temp];
 	    if(partword[j][l]==NULL)goto errout;
 	  }
@@ -290,7 +322,7 @@ int res2_inverse(vorbis_block *vb,vorbis_look_residue *vl,
 	if(s==0){
 	  /* fetch the partition word */
 	  int temp=vorbis_book_decode(look->phrasebook,&vb->opb);
-	  if(temp==-1)goto eopbreak;
+	  if(temp==-1 || temp>=info->partvals)goto eopbreak;
 	  partword[l]=look->decodemap[temp];
 	  if(partword[l]==NULL)goto errout;
 	}

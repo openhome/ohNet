@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ogg.h"
+#include <ogg/ogg.h>
 #include "ivorbiscodec.h"
 #include "codec_internal.h"
 
@@ -148,6 +148,8 @@ static int _vds_init(vorbis_dsp_state *v,vorbis_info *vi){
   codec_setup_info *ci=(codec_setup_info *)vi->codec_setup;
   private_state *b=NULL;
 
+  if(ci==NULL) return 1;
+
   memset(v,0,sizeof(*v));
   b=(private_state *)(v->backend_state=_ogg_calloc(1,sizeof(*b)));
 
@@ -162,7 +164,10 @@ static int _vds_init(vorbis_dsp_state *v,vorbis_info *vi){
   if(!ci->fullbooks){
     ci->fullbooks=(codebook *)_ogg_calloc(ci->books,sizeof(*ci->fullbooks));
     for(i=0;i<ci->books;i++){
-      vorbis_book_init_decode(ci->fullbooks+i,ci->book_param[i]);
+      if(ci->book_param[i]==NULL)
+        goto abort_books;
+      if(vorbis_book_init_decode(ci->fullbooks+i,ci->book_param[i]))
+        goto abort_books;
       /* decode codebooks are now standalone after init */
       vorbis_staticbook_destroy(ci->book_param[i]);
       ci->book_param[i]=NULL;
@@ -188,7 +193,16 @@ static int _vds_init(vorbis_dsp_state *v,vorbis_info *vi){
     b->mode[i]=_mapping_P[maptype]->look(v,ci->mode_param[i],
 					 ci->map_param[mapnum]);
   }
-  return(0);
+  return 0;
+abort_books:
+  for(i=0;i<ci->books;i++){
+    if(ci->book_param[i]!=NULL){
+      vorbis_staticbook_destroy(ci->book_param[i]);
+      ci->book_param[i]=NULL;
+    }
+  }
+  vorbis_dsp_clear(v);
+  return -1;
 }
 
 int vorbis_synthesis_restart(vorbis_dsp_state *v){
@@ -212,10 +226,10 @@ int vorbis_synthesis_restart(vorbis_dsp_state *v){
 }
 
 int vorbis_synthesis_init(vorbis_dsp_state *v,vorbis_info *vi){
-  _vds_init(v,vi);
+  if(_vds_init(v,vi))return 1;
   vorbis_synthesis_restart(v);
 
-  return(0);
+  return 0;
 }
 
 void vorbis_dsp_clear(vorbis_dsp_state *v){
@@ -387,17 +401,32 @@ int vorbis_synthesis_blockin(vorbis_dsp_state *v,vorbis_block *vb){
       if(b->sample_count>v->granulepos){
 	/* corner case; if this is both the first and last audio page,
 	   then spec says the end is cut, not beginning */
+	long extra=b->sample_count-vb->granulepos;
+
+        /* we use ogg_int64_t for granule positions because a
+           uint64 isn't universally available.  Unfortunately,
+           that means granposes can be 'negative' and result in
+           extra being negative */
+        if(extra<0)
+          extra=0;
+
 	if(vb->eofflag){
 	  /* trim the end */
 	  /* no preceeding granulepos; assume we started at zero (we'd
 	     have to in a short single-page stream) */
 	  /* granulepos could be -1 due to a seek, but that would result
 	     in a long coun`t, not short count */
-	  
-	  v->pcm_current-=(b->sample_count-v->granulepos);
+
+          /* Guard against corrupt/malicious frames that set EOP and
+             a backdated granpos; don't rewind more samples than we
+             actually have */
+          if(extra > v->pcm_current - v->pcm_returned)
+            extra = v->pcm_current - v->pcm_returned;
+
+	  v->pcm_current-=extra;
 	}else{
 	  /* trim the beginning */
-	  v->pcm_returned+=(b->sample_count-v->granulepos);
+	  v->pcm_returned+=extra;
 	  if(v->pcm_returned>v->pcm_current)
 	    v->pcm_returned=v->pcm_current;
 	}
@@ -415,7 +444,22 @@ int vorbis_synthesis_blockin(vorbis_dsp_state *v,vorbis_block *vb){
 	if(extra)
 	  if(vb->eofflag){
 	    /* partial last frame.  Strip the extra samples off */
-	    v->pcm_current-=extra;
+
+            /* Guard against corrupt/malicious frames that set EOP and
+               a backdated granpos; don't rewind more samples than we
+               actually have */
+            if(extra > v->pcm_current - v->pcm_returned)
+              extra = v->pcm_current - v->pcm_returned;
+
+            /* we use ogg_int64_t for granule positions because a
+               uint64 isn't universally available.  Unfortunately,
+               that means granposes can be 'negative' and result in
+               extra being negative */
+            if(extra<0)
+              extra=0;
+
+            v->pcm_current-=extra;
+
 	  } /* else {Shouldn't happen *unless* the bitstream is out of
 	       spec.  Either way, believe the bitstream } */
       } /* else {Shouldn't happen *unless* the bitstream is out of
