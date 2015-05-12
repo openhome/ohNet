@@ -267,10 +267,9 @@ TBool ElementFileReader::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffs
         Log::Print("ElementFileReader::TryGet seek parameters out of bounds\n");
         return false;
     }
+    const TUint offset = static_cast<TUint>(aOffset);   // IFile only supports 32-bit file sizes.
 
     try {
-        ASSERT(aOffset <= std::numeric_limits<TUint32>::max()); // IFile only supports 32-bit file sizes.
-        TUint offset = static_cast<TUint>(aOffset);
         iFile->Seek(offset);
         ASSERT(iInBuf.Bytes() == 0);
         TUint remaining = aBytes;
