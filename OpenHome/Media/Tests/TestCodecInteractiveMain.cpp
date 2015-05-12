@@ -402,7 +402,6 @@ Msg* ElementFileWriter::ProcessMsg(MsgWait* /*aMsg*/)
 
 Msg* ElementFileWriter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    // FIXME - output (an optional) WAV header here?
     Log::Print("ElementFileWriter::ProcessMsg MsgDecodedStream\n");
     if (iOutputWavHeader) {
         const DecodedStreamInfo& info = aMsg->StreamInfo();
