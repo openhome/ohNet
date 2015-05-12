@@ -123,8 +123,8 @@ def configure(conf):
     # Using https://git.xiph.org/?p=tremor.git
     # b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
     # (Sun, 4 Jan 2015 20:11:49 +0100 (19:11 +0000))
-    if conf.options.dest_platform in ['Core-ppc32', 'Linux-ppc32']:
-        conf.env.DEFINES_VORBIS = ['BYTE_ORDER=BIG_ENDIAN']
+    if conf.options.dest_platform in ['Core-ppc32']:
+        conf.env.DEFINES_VORBIS = ['BIG_ENDIAN', 'BYTE_ORDER=BIG_ENDIAN']
     conf.env.INCLUDES_VORBIS = [
         'thirdparty/Tremor',
         ]
