@@ -667,16 +667,10 @@ Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
     AddToAudioEncoded(aMsg);
 
     if (!iPulling) {
-        Process();
-
-        MsgAudioEncoded* msg = iAudioEncoded;
-        iAudioEncoded = NULL;
-
-        return msg;   // FIXME - return this, or msg returned by Process()?
-        // Probably better to have Process() manipulate iAudioEncoded, then return the Msg from Process() here?
+        MsgAudioEncoded* msg = Process();
+        ASSERT(iAudioEncoded == NULL);  // iAudioEncoded should have been exhausted.
+        return msg;
     }
-
-    //return msg;
     return NULL;
 }
 
@@ -796,98 +790,18 @@ MsgAudioEncoded* Mpeg4Container::Process()
     }
 
 
-    // Output audio chunk-by-chunk.
-    while (iChunkIndex < iSeekTable.ChunkCount() && iAudioEncoded != NULL) {
-
-        // Are we at the start of the next chunk?
-        if (iChunkBytesRemaining == 0) {
-            const TUint64 chunkOffset = iSeekTable.GetOffset(iChunkIndex);
-            if (chunkOffset < iPos) {
-                THROW(MediaMpeg4FileInvalid);
-            }
-            const TUint64 toDiscard = chunkOffset-iPos;
-            ASSERT(toDiscard <= std::numeric_limits<TUint>::max());
-            iBytesToDiscard = static_cast<TUint>(toDiscard);
-
-            // FIXME - make TUint ChunkBytes(TUint aChunkIndex) a member of seek table.
-            const TUint chunkSamples = iSeekTable.SamplesPerChunk(iChunkIndex);
-            const TUint startSample = iSeekTable.StartSample(iChunkIndex);  // NOTE: this assumes first sample == 0 (which is valid with how our tables are setup), but in MPEG4 spec, first sample == 1.
-            TUint chunkBytes = 0;
-            // Samples start from 1. However, tables here are indexed from 0.
-            for (TUint i=startSample; i<startSample+chunkSamples; i++) {
-                const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
-                ASSERT(chunkBytes+sampleBytes <= std::numeric_limits<TUint>::max());    // Ensure no overflow.
-                chunkBytes += sampleBytes;
-            }
-            iChunkBytesRemaining = chunkBytes;
-        }
-
-
-        if (iBytesToDiscard > 0) {
-            if (iBytesToDiscard >= iAudioEncoded->Bytes()) {
-                iBytesToDiscard -= iAudioEncoded->Bytes();
-                iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-                iAudioEncoded->RemoveRef();
-                //iAudioEncoded = NULL;
-                iAudioEncoded = msgOut;
-                return msgOut;
-            }
-            else {
-                DiscardAudio(iBytesToDiscard);
-                iPos += iBytesToDiscard;            // FIXME - provide wrapper for incrementing iPos?
-                iBytesToDiscard = 0;
-            }
-        }
-
-        ASSERT(iAudioEncoded != NULL);
-        ASSERT(iBytesToDiscard == 0);
-        if (iAudioEncoded->Bytes() > iChunkBytesRemaining) {
-            MsgAudioEncoded* remainder = iAudioEncoded->Split(iChunkBytesRemaining);
-            iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-            if (msgOut == NULL) {
-                msgOut = iAudioEncoded;
-            }
-            else {
-                msgOut->Add(iAudioEncoded);
-            }
-            iAudioEncoded = remainder;
-            iChunkBytesRemaining = 0;
-
-            iChunkIndex++;
-        }
-        else {  // iAudioEncoded->Bytes() <= iChunkBytesRemaining
-            iChunkBytesRemaining -= iAudioEncoded->Bytes();
-            iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-            if (msgOut == NULL) {
-                msgOut = iAudioEncoded;
-            }
-            else {
-                msgOut->Add(iAudioEncoded);
-            }
-            iAudioEncoded = NULL;
-        }
-    }
-
-    // FIXME - do this here or in ProcessMsg?
-    if (iAudioEncoded == NULL) {
-        iAudioEncoded = msgOut;
+    MsgAudioEncoded* msgAudio = ProcessNextAudioBlock();
+    ASSERT(iAudioEncoded == NULL);
+    if (msgOut == NULL) {
+        msgOut = msgAudio;
     }
     else {
-        // Some iAudioEncoded left, but should have exhausted all chunks.
-        // So remaining iAudioEncoded must be other data.
-        // FIXME - discard until start of next stream?
-        ASSERT(iChunkIndex == iSeekTable.ChunkCount());
-
-        // FIXME - update iPos?
-
-        //msgOut->Add(iAudioEncoded);
-        //iAudioEncoded = msgOut;
-        iAudioEncoded->RemoveRef();
-        iAudioEncoded = NULL;
+        if (msgAudio != NULL) {
+            msgOut->Add(msgAudio);
+        }
     }
 
-    //return msgOut;  // FIXME - if manipulating iAudioEncoded here, don't need to do this.
-    return NULL;
+    return msgOut;
 }
 
 MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
@@ -926,6 +840,94 @@ MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
     }
 
     return msgSampleSizeTable;
+}
+
+MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
+{
+    MsgAudioEncoded* msg = NULL;
+    // Output audio chunk-by-chunk.
+    while (iChunkIndex < iSeekTable.ChunkCount() && iAudioEncoded != NULL) {
+
+        // Are we at the start of the next chunk?
+        if (iChunkBytesRemaining == 0) {
+            const TUint64 chunkOffset = iSeekTable.GetOffset(iChunkIndex);
+            if (chunkOffset < iPos) {
+                THROW(MediaMpeg4FileInvalid);
+            }
+            const TUint64 toDiscard = chunkOffset-iPos;
+            ASSERT(toDiscard <= std::numeric_limits<TUint>::max());
+            iBytesToDiscard = static_cast<TUint>(toDiscard);
+
+            // FIXME - make TUint ChunkBytes(TUint aChunkIndex) a member of seek table.
+            const TUint chunkSamples = iSeekTable.SamplesPerChunk(iChunkIndex);
+            const TUint startSample = iSeekTable.StartSample(iChunkIndex);  // NOTE: this assumes first sample == 0 (which is valid with how our tables are setup), but in MPEG4 spec, first sample == 1.
+            TUint chunkBytes = 0;
+            // Samples start from 1. However, tables here are indexed from 0.
+            for (TUint i=startSample; i<startSample+chunkSamples; i++) {
+                const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
+                ASSERT(chunkBytes+sampleBytes <= std::numeric_limits<TUint>::max());    // Ensure no overflow.
+                chunkBytes += sampleBytes;
+            }
+            iChunkBytesRemaining = chunkBytes;
+        }
+
+
+        if (iBytesToDiscard > 0) {
+            if (iBytesToDiscard >= iAudioEncoded->Bytes()) {
+                iBytesToDiscard -= iAudioEncoded->Bytes();
+                iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = NULL;
+                return msg;
+            }
+            else {
+                DiscardAudio(iBytesToDiscard);
+                iPos += iBytesToDiscard;            // FIXME - provide wrapper for incrementing iPos?
+                iBytesToDiscard = 0;
+            }
+        }
+
+        ASSERT(iAudioEncoded != NULL);
+        ASSERT(iBytesToDiscard == 0);
+        if (iAudioEncoded->Bytes() > iChunkBytesRemaining) {
+            MsgAudioEncoded* remainder = iAudioEncoded->Split(iChunkBytesRemaining);
+            iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
+            if (msg == NULL) {
+                msg = iAudioEncoded;
+            }
+            else {
+                msg->Add(iAudioEncoded);
+            }
+            iAudioEncoded = remainder;
+            iChunkBytesRemaining = 0;
+
+            iChunkIndex++;
+        }
+        else {  // iAudioEncoded->Bytes() <= iChunkBytesRemaining
+            iChunkBytesRemaining -= iAudioEncoded->Bytes();
+            iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
+            if (msg == NULL) {
+                msg = iAudioEncoded;
+            }
+            else {
+                msg->Add(iAudioEncoded);
+            }
+            iAudioEncoded = NULL;
+        }
+    }
+
+    if (iAudioEncoded != NULL) {
+        // Some iAudioEncoded left, but should have exhausted all chunks.
+        // So remaining iAudioEncoded must be other data.
+        // FIXME - discard until start of next stream?
+        ASSERT(iChunkIndex == iSeekTable.ChunkCount());
+
+        // FIXME - update iPos?
+        iAudioEncoded->RemoveRef();
+        iAudioEncoded = NULL;
+    }
+
+    return msg;
 }
 
 void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)

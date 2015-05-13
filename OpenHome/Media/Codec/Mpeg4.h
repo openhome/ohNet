@@ -156,7 +156,6 @@ public:
     ~Mpeg4BoxStack();
     void Set(IReader& aReader);
     void Push();    // Push a box onto the stack; i.e., start processing a new box at index+1. ASSERTs if box count reached.
-    // When pushed, reader for box that has just been pushed should be the previous box (or iReader if iIndex == 0)
     void Pop();     // Pop a box off the stack.
 public: // from IMpeg4Box
     void Clear() override;  // FIXME - ever called?
@@ -242,8 +241,9 @@ public: // from IReader
     void ReadFlush() override;
     void ReadInterrupt() override;
 private:
-    MsgAudioEncoded* Process(); // FIXME - should this do the work of splitting audio and return pointer to it? - Confusing.
+    MsgAudioEncoded* Process();                 // May return NULL.
     MsgAudioEncoded* WriteSampleSizeTable() const;
+    MsgAudioEncoded* ProcessNextAudioBlock();   // May return NULL.
     void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxMp4a(IMpeg4Box& aBox, TUint aBytes);
