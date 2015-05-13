@@ -21,7 +21,8 @@ namespace Codec {
 class CodecAacBase : public CodecBase
 {
 private:
-    static const TUint kSamplesPerFrame = 1024;
+    static const TUint kSamplesPerFrame = 1024; // FIXME - could also be 960.
+    static const TUint kInputBufBytes = 4096;   // Input buf size used by third-party decoder examples.
 public:
     static const Brn kCodecAac;
 public:
@@ -48,7 +49,7 @@ private:
     Bws<16*10240> iDecodedBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
 protected:
-    Bws<4*1024> iInBuf;          // how big can these go and need to go ?
+    Bws<kInputBufBytes> iInBuf;
     TUint iFrameCounter;
 
     TUint32 iSampleRate;
@@ -56,8 +57,8 @@ protected:
     TUint32 iBitrateMax;    
     TUint32 iBitrateAverage;
     TUint16 iChannels;
-    TUint16 iBytesPerSample;
-    TUint16 iBitDepth;
+    TUint iBytesPerSample;
+    TUint iBitDepth;
     TUint64 iSamplesTotal;
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;

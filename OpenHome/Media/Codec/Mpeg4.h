@@ -274,31 +274,6 @@ private:
     SeekTable iSeekTable;
 };
 
-//class Mpeg4StreamInfo
-//{
-//public:
-//    static const TUint kMaxCodecDataSize = 100;
-//public:
-//    //Mpeg4StreamInfo(ICodecController& aController);
-//    ~Mpeg4StreamInfo();
-//    void Process();
-//public:
-//    const Brx& CodecSpecificData() const;
-//    TUint32 SampleRate() const;
-//    TUint32 Timescale() const;
-//    TUint16 Channels() const;
-//    TUint16 BitDepth() const;
-//    TUint64 Duration() const;
-//protected:
-//    ICodecController& iController;
-//    Bws<kMaxCodecDataSize> iCodecSpecificData;
-//    TUint32 iSampleRate;
-//    TUint32 iTimescale;
-//    TUint16 iChannels;
-//    TUint16 iBitDepth;
-//    TUint64 iSamplesTotal;
-//};
-
 } // namespace Codec
 } // namespace Media
 } // namespace OpenHome
