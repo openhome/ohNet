@@ -378,6 +378,27 @@ private:
     TUint iTrackId;
 };
 
+class CodecBufferedReader : public IReader, private INonCopyable
+{
+private:
+    enum EState
+    {
+        eReading,
+        eEos,
+        eBeyondEos,
+    };
+public:
+    CodecBufferedReader(ICodecController& aCodecController, Bwx& aBuf);
+public: // from IReader
+    Brn Read(TUint aBytes) override; // Returns [0..aBytes].  0 => stream closed, followed by ReaderError on subsequent reads beyond end of stream.
+    void ReadFlush() override;
+    void ReadInterrupt() override;  // ASSERTS
+private:
+    ICodecController& iCodecController;
+    Bwx& iBuf;
+    EState iState;
+};
+
 } // namespace Codec
 } // namespace Media
 } // namespace OpenHome

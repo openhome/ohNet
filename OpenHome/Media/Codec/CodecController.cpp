@@ -752,3 +752,52 @@ void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId)
         iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }
+
+
+// CodecBufferedReader
+
+CodecBufferedReader::CodecBufferedReader(ICodecController& aCodecController, Bwx& aBuf)
+    : iCodecController(aCodecController)
+    , iBuf(aBuf)
+    , iState(eReading)
+{
+}
+
+Brn CodecBufferedReader::Read(TUint aBytes)
+{
+    if (iState == eEos) {
+        iState = eBeyondEos;
+        return Brx::Empty();
+    }
+    else if (iState == eBeyondEos) {
+        THROW(ReaderError); // Reading beyond EoS is an error.
+    }
+    else if (iState == eReading) {
+        iBuf.SetBytes(0);
+        // Valid to return up to aBytes, so if aBytes > iBuf.Bytes(), only return iBuf.Bytes().
+        TUint bytes = aBytes;
+        if (bytes > iBuf.MaxBytes()) {
+            bytes = iBuf.MaxBytes();
+        }
+
+        iCodecController.Read(iBuf, bytes);
+        if (iBuf.Bytes() < bytes) {
+            // Reached end of stream.
+            iState = eEos;
+        }
+        return Brn(iBuf.Ptr(), iBuf.Bytes());
+    }
+
+    ASSERTS();              // Uknown state.
+    return Brx::Empty();    // Unreachable code.
+}
+
+void CodecBufferedReader::ReadFlush()
+{
+    iBuf.SetBytes(0);
+}
+
+void CodecBufferedReader::ReadInterrupt()
+{
+    ASSERTS();
+}
