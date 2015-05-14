@@ -21,7 +21,7 @@ namespace Av {
 class ConfigInitialiserVolume
 {
 public:
-    static const TUint kVolumeStartupDefault = 0;
+    static const TUint kVolumeStartupDefault = 50;
     static const TBool kMuteStartupDefault = false;
 public:
     static const Brn kBalance;
