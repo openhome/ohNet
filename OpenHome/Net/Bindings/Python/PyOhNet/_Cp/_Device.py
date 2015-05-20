@@ -136,8 +136,12 @@ class Device():
     
     def Shutdown( self ):
         if self.handle:
-            PyOhNet.devices.remove( self )
+            try:
+                PyOhNet.devices.remove( self )
+            except:
+                pass
             self.lib.CpDeviceCRemoveRef( self.handle )
+            self.handle = None
 
     friendlyName = property( _GetFriendlyName, None, None, '' )        
     udn          = property( _GetUdn, None, None, '' )
