@@ -230,6 +230,7 @@ void MdnsPlatform::SubnetListChanged()
     if (current != NULL) {
         if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
             AddInterface(current);
+            iClient.SetMulticastIf(current->Address());
         }
         current->RemoveRef(kNifCookie);
     }
@@ -257,6 +258,7 @@ void MdnsPlatform::CurrentAdapterChanged()
         }
         if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
             AddInterface(current);
+            iClient.SetMulticastIf(current->Address());
         }
         current->RemoveRef(kNifCookie);
     }
@@ -597,6 +599,7 @@ MdnsPlatform::Status MdnsPlatform::Init()
     }
     else { // Using a single adapter.
         status = AddInterface(current);
+        iClient.SetMulticastIf(current->Address());
         current->RemoveRef(kNifCookie);
     }
 
