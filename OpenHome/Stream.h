@@ -14,7 +14,7 @@ namespace OpenHome {
 class IReader
 {
 public:
-    virtual Brn Read(TUint aBytes) = 0; // Returns [0..aBytes].  0 => stream closed
+    virtual Brn Read(TUint aBytes) = 0; // Returns [0..aBytes].  0 => stream closed. Throws ReaderError if reading beyond end of stream.
     virtual void ReadFlush() = 0;
     virtual void ReadInterrupt() = 0;
     virtual ~IReader() {};
