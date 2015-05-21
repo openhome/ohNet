@@ -63,7 +63,7 @@ qobuzPwd  = config.Get( 'qobuz.password' )
 
 tests = [
     # UPnP compliance
-    [ 'TestCompliance',              'local'                                                                                        ],
+    [ 'TestComplianceDevice',        'local'                                                                                        ],
 
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',   0                                                                            ],

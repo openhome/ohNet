@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-"""TestCompliance - ohMediaServer compliance test
+"""TestComplianceDevice - ohMediaServer device compliance test
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
+    arg#1 - Player to test (UPnP friendly name)
 
 Test to ensure device complies with ohMediaPlayer standard. Basically attempts to ensure
 that all services, actions and attributes are present and respond as defined by the
-ohMediaPlayer 'standard'. Does NOT verify actual functionality (eg. doesn't check Play
-causes player to actually Play)
+ohMediaPlayer 'standard'. Does NOT verify actual functionality - this is checked (in a
+basic form) in the service compliance tests.
 """
 import _FunctionalTest
 import BaseTest                         as BASE
@@ -340,7 +340,7 @@ kRequested = ['Credentials', 'Exakt', 'Info', 'Sender', 'Time', 'Volume']
 kOptional  = ['Configuration', 'NetworkMonitor', 'Playlist', 'Radio', 'Receiver']
 
 
-class TestCompliance( BASE.BaseTest ):
+class TestComplianceDevice( BASE.BaseTest ):
     
     def __init__( self ):
         """Constructor - initalise base class"""
