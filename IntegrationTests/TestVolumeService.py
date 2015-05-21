@@ -14,11 +14,17 @@ import sys
 import threading
 
 
+def Run( aArgs ):
+    """Pass the Run() call up to the base class"""
+    BASE.Run( aArgs )
+
+
 class TestVolumeService( BASE.BaseTest ):
 
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
+        self.doc    = __doc__
         self.dut    = None
         self.dutDev = None
         self.soft   = None
@@ -32,7 +38,7 @@ class TestVolumeService( BASE.BaseTest ):
         try:
             dutName   = args[1]
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         # Create and initialise DUT
