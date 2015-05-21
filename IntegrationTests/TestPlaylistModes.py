@@ -32,6 +32,11 @@ kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
+def Run( aArgs ):
+    """Pass the Run() call up to the base class"""
+    BASE.Run( aArgs )
+
+
 class Config:
     """Test configuration for Playlist service testing"""
     
@@ -311,6 +316,7 @@ class TestPlaylistModes( BASE.BaseTest ):
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
+        self.doc    = __doc__
         self.dut    = None
         self.dutDev = None
         self.server = None
@@ -329,7 +335,7 @@ class TestPlaylistModes( BASE.BaseTest ):
             mode    = aArgs[2]
             seed    = int( aArgs[3] )
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
                             
         # create DUT
@@ -382,7 +388,7 @@ class TestPlaylistModes( BASE.BaseTest ):
         """Create and return list of test configurations (as filtered by aMode)"""
         tracks  = Common.GetTracks( kTrackList, self.server )
         configs = []
-        for entry in configTable:
+        for entry in self.configTable:
             selected = False
             if aMode in ('all', 'ALL', 'All'):
                 selected = True
@@ -411,89 +417,88 @@ class TestPlaylistModes( BASE.BaseTest ):
             
         return configs
 
-
-configTable = \
+    configTable = \
     [
-    # 'Setup' is the setup order -> Playlist BEFORE/AFTER modes 
-    # 'Track' is the start track for the test
-    # 'Seek'  is the seek direction for navgating playback
-    #
-    # Macros:    @N: last track in list
-    #            @m: 1 <= track < last track
-    #            -:  don't seek specific track, just Play()
-    #  
-    # Id    Setup  Track    Rpt   Shfl   Seek 
-    ( 10, 'before',  '0', 'off', 'off', 'next' ),
-    ( 11, 'before',  '0', 'off', 'off', 'previous' ),
-    ( 12, 'before',  '0', 'off',  'on', 'next' ), 
-    ( 13, 'before',  '0', 'off',  'on', 'previous' ), 
-    ( 14, 'before',  '0',  'on', 'off', 'next' ),
-    ( 15, 'before',  '0',  'on', 'off', 'previous' ),
-    ( 16, 'before',  '0',  'on',  'on', 'next' ), 
-    ( 17, 'before',  '0',  'on',  'on', 'previous' ), 
-    
-    ( 20, 'before', '@m', 'off', 'off', 'next' ),
-    ( 21, 'before', '@m', 'off', 'off', 'previous' ),
-    ( 22, 'before', '@m', 'off',  'on', 'next' ), 
-    ( 23, 'before', '@m', 'off',  'on', 'previous' ), 
-    ( 24, 'before', '@m',  'on', 'off', 'next' ),
-    ( 25, 'before', '@m',  'on', 'off', 'previous' ),
-    ( 26, 'before', '@m',  'on',  'on', 'next' ), 
-    ( 27, 'before', '@m',  'on',  'on', 'previous' ), 
-    
-    ( 30, 'before', '@N', 'off', 'off', 'next' ),
-    ( 31, 'before', '@N', 'off', 'off', 'previous' ),
-    ( 32, 'before', '@N', 'off',  'on', 'next' ), 
-    ( 33, 'before', '@N', 'off',  'on', 'previous' ), 
-    ( 34, 'before', '@N',  'on', 'off', 'next' ),
-    ( 35, 'before', '@N',  'on', 'off', 'previous' ),
-    ( 36, 'before', '@N',  'on',  'on', 'next' ), 
-    ( 37, 'before', '@N',  'on',  'on', 'previous' ),
-    
-    ( 40, 'before', '-',  'off', 'off', 'next' ),
-    ( 41, 'before', '-',  'off', 'off', 'previous' ),
-    ( 42, 'before', '-',  'off',  'on', 'next' ), 
-    ( 43, 'before', '-',  'off',  'on', 'previous' ), 
-    ( 44, 'before', '-',   'on', 'off', 'next' ),
-    ( 45, 'before', '-',   'on', 'off', 'previous' ),
-    ( 46, 'before', '-',   'on',  'on', 'next' ), 
-    ( 47, 'before', '-',   'on',  'on', 'previous' ), 
-    
-    ( 50,  'after',  '0', 'off', 'off', 'next' ),
-    ( 51,  'after',  '0', 'off', 'off', 'previous' ),
-    ( 52,  'after',  '0', 'off',  'on', 'next' ),
-    ( 53,  'after',  '0', 'off',  'on', 'previous' ),
-    ( 54,  'after',  '0',  'on', 'off', 'next' ),
-    ( 55,  'after',  '0',  'on', 'off', 'previous' ),
-    ( 56,  'after',  '0',  'on',  'on', 'next' ),
-    ( 57,  'after',  '0',  'on',  'on', 'previous' ),
+        # 'Setup' is the setup order -> Playlist BEFORE/AFTER modes
+        # 'Track' is the start track for the test
+        # 'Seek'  is the seek direction for navgating playback
+        #
+        # Macros:    @N: last track in list
+        #            @m: 1 <= track < last track
+        #            -:  don't seek specific track, just Play()
+        #
+        # Id    Setup  Track    Rpt   Shfl   Seek
+        ( 10, 'before',  '0', 'off', 'off', 'next' ),
+        ( 11, 'before',  '0', 'off', 'off', 'previous' ),
+        ( 12, 'before',  '0', 'off',  'on', 'next' ),
+        ( 13, 'before',  '0', 'off',  'on', 'previous' ),
+        ( 14, 'before',  '0',  'on', 'off', 'next' ),
+        ( 15, 'before',  '0',  'on', 'off', 'previous' ),
+        ( 16, 'before',  '0',  'on',  'on', 'next' ),
+        ( 17, 'before',  '0',  'on',  'on', 'previous' ),
 
-    ( 60,  'after', '@m', 'off', 'off', 'next' ),
-    ( 61,  'after', '@m', 'off', 'off', 'previous' ),
-    ( 62,  'after', '@m', 'off',  'on', 'next' ),
-    ( 63,  'after', '@m', 'off',  'on', 'previous' ),
-    ( 64,  'after', '@m',  'on', 'off', 'next' ),
-    ( 65,  'after', '@m',  'on', 'off', 'previous' ),
-    ( 66,  'after', '@m',  'on',  'on', 'next' ),
-    ( 67,  'after', '@m',  'on',  'on', 'previous' ),
+        ( 20, 'before', '@m', 'off', 'off', 'next' ),
+        ( 21, 'before', '@m', 'off', 'off', 'previous' ),
+        ( 22, 'before', '@m', 'off',  'on', 'next' ),
+        ( 23, 'before', '@m', 'off',  'on', 'previous' ),
+        ( 24, 'before', '@m',  'on', 'off', 'next' ),
+        ( 25, 'before', '@m',  'on', 'off', 'previous' ),
+        ( 26, 'before', '@m',  'on',  'on', 'next' ),
+        ( 27, 'before', '@m',  'on',  'on', 'previous' ),
 
-    ( 70,  'after', '@N', 'off', 'off', 'next' ),
-    ( 71,  'after', '@N', 'off', 'off', 'previous' ),
-    ( 72,  'after', '@N', 'off',  'on', 'next' ),
-    ( 73,  'after', '@N', 'off',  'on', 'previous' ),
-    ( 74,  'after', '@N',  'on', 'off', 'next' ),
-    ( 75,  'after', '@N',  'on', 'off', 'previous' ),
-    ( 76,  'after', '@N',  'on',  'on', 'next' ),
-    ( 77,  'after', '@N',  'on',  'on', 'previous' ),
+        ( 30, 'before', '@N', 'off', 'off', 'next' ),
+        ( 31, 'before', '@N', 'off', 'off', 'previous' ),
+        ( 32, 'before', '@N', 'off',  'on', 'next' ),
+        ( 33, 'before', '@N', 'off',  'on', 'previous' ),
+        ( 34, 'before', '@N',  'on', 'off', 'next' ),
+        ( 35, 'before', '@N',  'on', 'off', 'previous' ),
+        ( 36, 'before', '@N',  'on',  'on', 'next' ),
+        ( 37, 'before', '@N',  'on',  'on', 'previous' ),
 
-    ( 80, 'after',  '-',  'off', 'off', 'next' ),
-    ( 81, 'after',  '-',  'off', 'off', 'previous' ),
-    ( 82, 'after',  '-',  'off',  'on', 'next' ),
-    ( 83, 'after',  '-',  'off',  'on', 'previous' ),
-    ( 84, 'after',  '-',   'on', 'off', 'next' ),
-    ( 85, 'after',  '-',   'on', 'off', 'previous' ),
-    ( 86, 'after',  '-',   'on',  'on', 'next' ),
-    ( 87, 'after',  '-',   'on',  'on', 'previous' )
+        ( 40, 'before', '-',  'off', 'off', 'next' ),
+        ( 41, 'before', '-',  'off', 'off', 'previous' ),
+        ( 42, 'before', '-',  'off',  'on', 'next' ),
+        ( 43, 'before', '-',  'off',  'on', 'previous' ),
+        ( 44, 'before', '-',   'on', 'off', 'next' ),
+        ( 45, 'before', '-',   'on', 'off', 'previous' ),
+        ( 46, 'before', '-',   'on',  'on', 'next' ),
+        ( 47, 'before', '-',   'on',  'on', 'previous' ),
+
+        ( 50,  'after',  '0', 'off', 'off', 'next' ),
+        ( 51,  'after',  '0', 'off', 'off', 'previous' ),
+        ( 52,  'after',  '0', 'off',  'on', 'next' ),
+        ( 53,  'after',  '0', 'off',  'on', 'previous' ),
+        ( 54,  'after',  '0',  'on', 'off', 'next' ),
+        ( 55,  'after',  '0',  'on', 'off', 'previous' ),
+        ( 56,  'after',  '0',  'on',  'on', 'next' ),
+        ( 57,  'after',  '0',  'on',  'on', 'previous' ),
+
+        ( 60,  'after', '@m', 'off', 'off', 'next' ),
+        ( 61,  'after', '@m', 'off', 'off', 'previous' ),
+        ( 62,  'after', '@m', 'off',  'on', 'next' ),
+        ( 63,  'after', '@m', 'off',  'on', 'previous' ),
+        ( 64,  'after', '@m',  'on', 'off', 'next' ),
+        ( 65,  'after', '@m',  'on', 'off', 'previous' ),
+        ( 66,  'after', '@m',  'on',  'on', 'next' ),
+        ( 67,  'after', '@m',  'on',  'on', 'previous' ),
+
+        ( 70,  'after', '@N', 'off', 'off', 'next' ),
+        ( 71,  'after', '@N', 'off', 'off', 'previous' ),
+        ( 72,  'after', '@N', 'off',  'on', 'next' ),
+        ( 73,  'after', '@N', 'off',  'on', 'previous' ),
+        ( 74,  'after', '@N',  'on', 'off', 'next' ),
+        ( 75,  'after', '@N',  'on', 'off', 'previous' ),
+        ( 76,  'after', '@N',  'on',  'on', 'next' ),
+        ( 77,  'after', '@N',  'on',  'on', 'previous' ),
+
+        ( 80, 'after',  '-',  'off', 'off', 'next' ),
+        ( 81, 'after',  '-',  'off', 'off', 'previous' ),
+        ( 82, 'after',  '-',  'off',  'on', 'next' ),
+        ( 83, 'after',  '-',  'off',  'on', 'previous' ),
+        ( 84, 'after',  '-',   'on', 'off', 'next' ),
+        ( 85, 'after',  '-',   'on', 'off', 'previous' ),
+        ( 86, 'after',  '-',   'on',  'on', 'next' ),
+        ( 87, 'after',  '-',   'on',  'on', 'previous' )
     ]
 
 
