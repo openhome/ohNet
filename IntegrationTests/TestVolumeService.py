@@ -1,14 +1,10 @@
-"""TestVolumeControl - test volume control functionality
+"""TestVolumeService - test volume service functionality
 
 Parameters:
     arg#1 - DUT ['local' for internal SoftPlayer on loopback]
 
-Check operations of Volume control functions
+Check operations of Volume service functionality
 """
-
-# Severely cut-down variant of DS test.
-# Only checks operation of volume service at commands level  
-
 import _FunctionalTest
 import BaseTest                         as BASE
 import Upnp.ControlPoints.OhMediaPlayer as OHMP
@@ -18,7 +14,7 @@ import sys
 import threading
 
 
-class TestVolumeControl( BASE.BaseTest ):
+class TestVolumeService( BASE.BaseTest ):
 
     def __init__( self ):
         """Constructor - initalise base class"""

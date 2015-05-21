@@ -112,7 +112,7 @@ tests = [
     [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all',       'standby',   'multicast'                      ],
 
     # Volume
-    [ 'TestVolumeControl',           'local'                                                                                        ],
+    [ 'TestVolumeService',           'local'                                                                                        ],
 
     # Misc
     [ 'TestAudioConx',               'local', 'all'                                                                                 ],
