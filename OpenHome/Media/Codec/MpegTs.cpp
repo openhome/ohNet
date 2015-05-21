@@ -407,11 +407,11 @@ TBool MpegTs::RecognisePmt(const Brx& aPmt)
     if ((aPmt[offset+2] & 0x0c) != 0x00) {    // prog info length unused bits
         return false;
     }
-    //TUint progInfoLength = (aPmt[offset+2] & 0x03) << 8 | aPmt[offset+3];
+    TUint progInfoLength = (aPmt[offset+2] & 0x03) << 8 | aPmt[offset+3];
 
 
     // Get elementary-stream specific data.
-    offset += kPmtSpecificFixedBytes;
+    offset += kPmtSpecificFixedBytes+progInfoLength;
     if (iSectionLength-offset < kStreamSpecificFixedBytes) {
         return false;
     }
