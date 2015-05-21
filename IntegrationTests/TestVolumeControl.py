@@ -53,7 +53,9 @@ class TestVolumeControl( BASE.BaseTest ):
         self._TestVolIncDec()
         self._TestBalSet()
         self._TestBalIncDec()
-        
+        self._TestFadeSet()
+        self._TestFadeIncDec()
+
     def Cleanup( self ):
         """Perform cleanup on test exit"""
         if self.dut:
@@ -68,7 +70,8 @@ class TestVolumeControl( BASE.BaseTest ):
     
     def _TestSetAndMute( self ):
         """Check setting of spot volumes and mute functionality"""
-        for vol in range( 10, 101, 10 ):
+        vMax = self.dut.volume.volMax
+        for vol in range( vMax/10, vMax+1, vMax/10 ):
             self.log.Info( '' )
             self.log.Info( self.dutDev, 'Checking volume setting -> %d' % vol )
             self.log.Info( '' )
@@ -92,7 +95,7 @@ class TestVolumeControl( BASE.BaseTest ):
             
     def _TestVolIncDec( self ):
         """Check volume increment/decrement functionality"""
-        vol = 60
+        vol = int( self.dut.volume.volMax*0.65 )
         self.volEvt.clear()
         self.dut.volume.volume = vol
         self.volEvt.wait( 5 )
@@ -111,46 +114,97 @@ class TestVolumeControl( BASE.BaseTest ):
                 self._CheckVolume( vol, 'after %s' % action )
                 
     def _TestBalSet( self ):        
-        """Check balance. Balance range is -15(L) -> +15(R)"""
-        for bal in range( -15, 16 ):
-            self.log.Info( '' )
-            self.log.Info( self.dutDev, 'Checking balance set to %d' % bal )
-            self.log.Info( '' )
+        """Check balance"""
+        bMax = self.dut.volume.balMax
+        if bMax:
+            for bal in range( -1*bMax, bMax+1 ):
+                self.log.Info( '' )
+                self.log.Info( self.dutDev, 'Checking balance set to %d' % bal )
+                self.log.Info( '' )
+                self.volEvt.clear()
+                self.dut.volume.balance = bal
+                self.volEvt.wait( 5 )
+                self._CheckBalance( bal, 'set to %d' % bal )
             self.volEvt.clear()
-            self.dut.volume.balance = bal
+            self.dut.volume.balance = 0
             self.volEvt.wait( 5 )
-            self._CheckBalance( bal, 'set to %d' % bal )
-        self.volEvt.clear()
-        self.dut.volume.balance = 0
-        self.volEvt.wait( 5 )
         
     def _TestBalIncDec( self ):
         """Check balance increment/decrement functionality"""
-        self.log.Info( '' )
-        self.log.Info( self.dutDev, 'Checking balance incremant/decrement actions' )
-        self.log.Info( '' )
-        bal = -15
-        self.volEvt.clear()
-        self.dut.volume.balance = bal
-        self.volEvt.wait( 5 )
-        for action in ['BalInc','BalDec']:
-            for i in range( 30 ):
+        bMax = self.dut.volume.balMax
+        if bMax:
+            self.log.Info( '' )
+            self.log.Info( self.dutDev, 'Checking balance increment/decrement actions' )
+            self.log.Info( '' )
+            bMax = self.dut.volume.balMax
+            bal = -1 * bMax
+            self.volEvt.clear()
+            self.dut.volume.balance = bal
+            self.volEvt.wait( 5 )
+            for action in ['BalInc','BalDec']:
+                for i in range( bMax*2 ):
+                    self.volEvt.clear()
+                    getattr( self.dut.volume, action )()
+                    self.volEvt.wait( 5 )
+                    if action == 'BalInc':
+                        bal += 1
+                    else:
+                        bal -= 1
+                    if bal < -1*bMax:
+                        bal = -1*bMax
+                    elif bal > bMax:
+                        bal = bMax
+                    self._CheckBalance( bal, 'after %s' % action )
+            self.volEvt.clear()
+            self.dut.volume.balance = 0
+            self.volEvt.wait( 5 )
+
+    def _TestFadeSet( self ):
+        """Check fader"""
+        fMax = self.dut.volume.fadeMax
+        if fMax:
+            for fade in range( -1*fMax, fMax+1 ):
+                self.log.Info( '' )
+                self.log.Info( self.dutDev, 'Checking fader set to %d' % fade )
+                self.log.Info( '' )
                 self.volEvt.clear()
-                getattr( self.dut.volume, action )()
+                self.dut.volume.fade = fade
                 self.volEvt.wait( 5 )
-                if action == 'BalInc':
-                    bal += 1
-                else:
-                    bal -= 1
-                if bal < -15:
-                    bal = -15
-                elif bal > 15:
-                    bal = 15
-                self._CheckBalance( bal, 'after %s' % action )
-        self.volEvt.clear()
-        self.dut.volume.balance = 0
-        self.volEvt.wait( 5 )
-            
+                self._CheckFade( fade, 'set to %d' % fade )
+            self.volEvt.clear()
+            self.dut.volume.fade = 0
+            self.volEvt.wait( 5 )
+
+    def _TestFadeIncDec( self ):
+        """Check fader increment/decrement functionality"""
+        fMax = self.dut.volume.fadeMax
+        if fMax:
+            self.log.Info( '' )
+            self.log.Info( self.dutDev, 'Checking fader increment/decrement actions' )
+            self.log.Info( '' )
+            fMax = self.dut.volume.fadeMax
+            fade = -1 + fMax
+            self.volEvt.clear()
+            self.dut.volume.fade = fade
+            self.volEvt.wait( 5 )
+            for action in ['BalInc','BalDec']:
+                for i in range( fMax*2 ):
+                    self.volEvt.clear()
+                    getattr( self.dut.volume, action )()
+                    self.volEvt.wait( 5 )
+                    if action == 'FadeInc':
+                        fade += 1
+                    else:
+                        fade -= 1
+                    if fade < -1*fMax:
+                        fade = -1*fMax
+                    elif fade > fMax:
+                        fade = fMax
+                    self._CheckFader( fade, 'after %s' % action )
+            self.volEvt.clear()
+            self.dut.volume.fade = 0
+            self.volEvt.wait( 5 )
+
     #
     # Test utilities
     #
@@ -181,6 +235,15 @@ class TestVolumeControl( BASE.BaseTest ):
             '%d/%d  Actual/Expected EVENTED balance %s' % (eventedBal, aBal, aMsg) ) 
         self.log.FailUnless( self.dutDev, polledBal==aBal,
             '%d/%d  Actual/Expected POLLED balance %s' % (polledBal, aBal, aMsg) )
+
+    def _CheckFade( self, aFade, aMsg='' ):
+        """Check fade (evented and polled) as expected"""
+        eventedFade = self.dut.volume.fade
+        polledFade  = self.dut.volume.polledFade
+        self.log.FailUnless( self.dutDev, eventedFade==aFade,
+            '%d/%d  Actual/Expected EVENTED fade %s' % (eventedFade, aFade, aMsg) )
+        self.log.FailUnless( self.dutDev, polledFade==aFade,
+            '%d/%d  Actual/Expected POLLED balance %s' % (polledFade, aFade, aMsg) )
 
     # noinspection PyUnusedLocal
     def _VolEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
