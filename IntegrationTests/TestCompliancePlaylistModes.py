@@ -18,12 +18,14 @@ class TestCompliancePlaylistModes( BASE.TestPlaylistModes ):
         self.doc = __doc__
 
     def Test( self, args ):
-        """Check volume service functionality compliance"""
-        if len( args )>1 and args[1].lower() == 'local':
-            self.log.Abort( '', 'Require non-local player to test' )
-        else:
-            argList = [args[0], args[1], 'all', 12345]
-            BASE.TestPlaylistModes.Test( self, argList )
+        """Check playlist repeat/shuffle/next/prev compliance"""
+        argList = []
+        if len( args )>1:
+            if args[1].lower() == 'local':
+                self.log.Abort( '', 'Require non-local player to test' )
+            else:
+                argList = [args[0], args[1], 'all', 12345]
+        BASE.TestPlaylistHandling.Test( self, argList )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
