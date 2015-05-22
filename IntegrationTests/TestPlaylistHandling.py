@@ -34,6 +34,11 @@ kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
+def Run( aArgs ):
+    """Pass the Run() call from derived tests up to the base class"""
+    BASE.Run( aArgs )
+
+
 class Config:
     """Test configuration for Playlist service testing"""
     
@@ -448,6 +453,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
+        self.doc    = __doc__
         self.dut    = None
         self.dutDev = None
         self.server = None
@@ -466,7 +472,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
             mode    = aArgs[2]
             seed    = int( aArgs[3] )
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
         # create DUT
@@ -519,7 +525,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
         """Create and return list of test configurations (as filtered by aMode)"""
         tracks  = Common.GetTracks( kTrackList, self.server )
         configs = []
-        for entry in configTable:
+        for entry in self.configTable:
             selected = False
             if aMode in ('all', 'ALL', 'All'):
                 selected = True
@@ -557,113 +563,113 @@ class TestPlaylistHandling( BASE.BaseTest ):
         return configs
 
 
-configTable = \
+    configTable = \
     [
-    #   | Preconditions                                  | Stimulus                         | Outcome
-    # Id| State     PlLen  Track   Secs     Rpt   Shfl   | Action             Param1 Param2 | State      PlLen     Rpt     Shfl    Track  Secs
-    (200, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    (201, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    (202, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    
-    (210, 'Stopped', '@N',    '0',  '0',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (211, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Delete'         ,    '1', '@N-2', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (212, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (213, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R', '@m-1',  '0'),
-    (214, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         ,    '1', '@m-1', 'Stopped', '@N-1',    '@R',    '@R', '@m-1',  '0'),
-    (215, 'Stopped', '@N',   '@m',  '0',    '@R', 'false', 'Delete'         ,   '@m',   '@m', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
-    (216, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         , '@m+1', '@N-2', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
-    (217, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
-    (218, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R', '@N-2',  '0'),
-    (219, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Delete'         ,    '1', '@N-2', 'Stopped', '@N-1',    '@R',    '@R', '@N-2',  '0'),
-    (220, 'Stopped', '@N', '@N-1',  '0',  'true', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',  'true',    '@R',    '0',  '0'),
-    (221, 'Stopped', '@N', '@N-1',  '0', 'false', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1', 'false',    '@R',    '0',  '0'),
+        #   | Preconditions                                  | Stimulus                         | Outcome
+        # Id| State     PlLen  Track   Secs     Rpt   Shfl   | Action             Param1 Param2 | State      PlLen     Rpt     Shfl    Track  Secs
+        (200, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+        (201, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+        (202, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
 
-    (230, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Insert'         ,   '-1',   '-1', 'Stopped', '@N+1',    '@R',    '@R',    '1',  '0'),
-    (231, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Insert'         ,    '0', '@N-2', 'Stopped', '@N+1',    '@R',    '@R',    '0',  '0'),
-    (232, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Insert'         , '@N-1', '@N-1', 'Stopped', '@N+1',    '@R',    '@R',    '0',  '0'),
-    (233, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         ,   '-1',   '-1', 'Stopped', '@N+1',    '@R',    '@R', '@m+1',  '0'),
-    (234, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         ,    '0', '@m-1', 'Stopped', '@N+1',    '@R',    '@R', '@m+1',  '0'),
-    (235, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         ,   '@m', '@N-2', 'Stopped', '@N+1',    '@R',    '@R',   '@m',  '0'),
-    (236, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         , '@N-1', '@N-1', 'Stopped', '@N+1',    '@R',    '@R',   '@m',  '0'),
-    (237, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Insert'         ,   '-1',   '-1', 'Stopped', '@N+1',    '@R',    '@R',   '@N',  '0'),
-    (238, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Insert'         ,    '0', '@N-2', 'Stopped', '@N+1',    '@R',    '@R',   '@N',  '0'),
-    (239, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Insert'         , '@N-1', '@N-1', 'Stopped', '@N+1',    '@R',    '@R', '@N-1',  '0'),
-    
-    (250, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'repeat'         ,   'on',     '', 'Stopped',   '@N',  'true',    '@R',   '@m',  '0'),
-    (251, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'repeat'         ,  'off',     '', 'Stopped',   '@N', 'false',    '@R',   '@m',  '0'),
-    (252, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'shuffle'        ,   'on',     '', 'Stopped',   '@N',    '@R',  'true',   '@m',  '0'),
-    (253, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'shuffle'        ,  'off',     '', 'Stopped',   '@N',    '@R', 'false',   '@m',  '0'),
+        (210, 'Stopped', '@N',    '0',  '0',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (211, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Delete'         ,    '1', '@N-2', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (212, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (213, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R', '@m-1',  '0'),
+        (214, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         ,    '1', '@m-1', 'Stopped', '@N-1',    '@R',    '@R', '@m-1',  '0'),
+        (215, 'Stopped', '@N',   '@m',  '0',    '@R', 'false', 'Delete'         ,   '@m',   '@m', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
+        (216, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         , '@m+1', '@N-2', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
+        (217, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
+        (218, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R', '@N-2',  '0'),
+        (219, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Delete'         ,    '1', '@N-2', 'Stopped', '@N-1',    '@R',    '@R', '@N-2',  '0'),
+        (220, 'Stopped', '@N', '@N-1',  '0',  'true', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',  'true',    '@R',    '0',  '0'),
+        (221, 'Stopped', '@N', '@N-1',  '0', 'false', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1', 'false',    '@R',    '0',  '0'),
 
-    
-    #   | Preconditions                                  | Stimulus                         | Outcome
-    # Id| State     PlLen  Track   Secs     Rpt   Shfl   | Action             Param1 Param2 | State      PlLen     Rpt     Shfl    Track   Secs
-    (300, 'Playing', '@N',    '0', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    (301, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    (302, 'Playing', '@N', '@N-1', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    
-    (310, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Playing', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (311, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Playing', '@N-1',    '@R',    '@R',    '0', '@T'),
-    (312, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Playing', '@N-1',    '@R',    '@R',    '0', '@T'),
-    (313, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Playing', '@N-1',    '@R',    '@R', '@m-1', '@T'),
-    (314, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '1', '@m-1', 'Playing', '@N-1',    '@R',    '@R', '@m-1', '@T'),
-    (315, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,   '@m',   '@m', 'Playing', '@N-1',    '@R',    '@R',   '@m',  '0'),
-    (316, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@m+1', '@N-2', 'Playing', '@N-1',    '@R',    '@R',   '@m', '@T'),
-    (317, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Playing', '@N-1',    '@R',    '@R',   '@m', '@T'),
-    (318, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Playing', '@N-1',    '@R',    '@R', '@N-2', '@T'),
-    (319, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Playing', '@N-1',    '@R',    '@R', '@N-2', '@T'),
-    (320, 'Playing', '@N', '@N-1', '@T',  'true', 'false', 'Delete'         , '@N-1', '@N-1', 'Playing', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (321, 'Playing', '@N', '@N-1', '@T', 'false', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    
-    (330, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Playing', '@N+1',    '@R',    '@R',    '1', '@T'),
-    (331, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Playing', '@N+1',    '@R',    '@R',    '0', '@T'),
-    (332, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Playing', '@N+1',    '@R',    '@R',    '0', '@T'),
-    (333, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Playing', '@N+1',    '@R',    '@R', '@m+1', '@T'),
-    (334, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,    '0', '@m-1', 'Playing', '@N+1',    '@R',    '@R', '@m+1', '@T'),
-    (335, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '@m', '@N-2', 'Playing', '@N+1',    '@R',    '@R',   '@m', '@T'),
-    (336, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Playing', '@N+1',    '@R',    '@R',   '@m', '@T'),
-    (337, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Playing', '@N+1',    '@R',    '@R',   '@N', '@T'),
-    (338, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Playing', '@N+1',    '@R',    '@R',   '@N', '@T'),
-    (339, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Playing', '@N+1',    '@R',    '@R', '@N-1', '@T'),
-    
-    (350, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,   'on',   '-1', 'Playing',   '@N',  'true',    '@R',   '@m', '@T'),
-    (351, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,  'off',   '-1', 'Playing',   '@N', 'false',    '@R',   '@m', '@T'),
-    (352, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,   'on',   '-1', 'Playing',   '@N',    '@R',  'true',   '@m', '@T'),
-    (353, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,  'off',   '-1', 'Playing',   '@N',    '@R', 'false',   '@m', '@T'),
+        (230, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Insert'         ,   '-1',   '-1', 'Stopped', '@N+1',    '@R',    '@R',    '1',  '0'),
+        (231, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Insert'         ,    '0', '@N-2', 'Stopped', '@N+1',    '@R',    '@R',    '0',  '0'),
+        (232, 'Stopped', '@N',    '0',  '0',    '@R',    '@R', 'Insert'         , '@N-1', '@N-1', 'Stopped', '@N+1',    '@R',    '@R',    '0',  '0'),
+        (233, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         ,   '-1',   '-1', 'Stopped', '@N+1',    '@R',    '@R', '@m+1',  '0'),
+        (234, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         ,    '0', '@m-1', 'Stopped', '@N+1',    '@R',    '@R', '@m+1',  '0'),
+        (235, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         ,   '@m', '@N-2', 'Stopped', '@N+1',    '@R',    '@R',   '@m',  '0'),
+        (236, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'Insert'         , '@N-1', '@N-1', 'Stopped', '@N+1',    '@R',    '@R',   '@m',  '0'),
+        (237, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Insert'         ,   '-1',   '-1', 'Stopped', '@N+1',    '@R',    '@R',   '@N',  '0'),
+        (238, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Insert'         ,    '0', '@N-2', 'Stopped', '@N+1',    '@R',    '@R',   '@N',  '0'),
+        (239, 'Stopped', '@N', '@N-1',  '0',    '@R',    '@R', 'Insert'         , '@N-1', '@N-1', 'Stopped', '@N+1',    '@R',    '@R', '@N-1',  '0'),
 
-    
-    # Id| State     PlLen  Track   Secs     Rpt   Shfl   | Action             Param1 Param2 | State      PlLen     Rpt     Shfl    Track   Secs
-    (400, 'Paused' , '@N',    '0', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    (401, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    (402, 'Paused' , '@N', '@N-1', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
-    
-    (410, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (411, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Paused' , '@N-1',    '@R',    '@R',    '0', '@T'),
-    (412, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Paused' , '@N-1',    '@R',    '@R',    '0', '@T'),
-    (413, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Paused' , '@N-1',    '@R',    '@R', '@m-1', '@T'),
-    (414, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '1', '@m-1', 'Paused' , '@N-1',    '@R',    '@R', '@m-1', '@T'),
-    (415, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,   '@m',   '@m', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
-    (416, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@m+1', '@N-2', 'Paused' , '@N-1',    '@R',    '@R',   '@m', '@T'),
-    (417, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Paused' , '@N-1',    '@R',    '@R',   '@m', '@T'),
-    (418, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Paused' , '@N-1',    '@R',    '@R', '@N-2', '@T'),
-    (419, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Paused' , '@N-1',    '@R',    '@R', '@N-2', '@T'),
-    (420, 'Paused' , '@N', '@N-1', '@T',  'true', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    (421, 'Paused' , '@N', '@N-1', '@T', 'false', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
-    
-    (430, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Paused' , '@N+1',    '@R',    '@R',    '1', '@T'),
-    (431, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Paused' , '@N+1',    '@R',    '@R',    '0', '@T'),
-    (432, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Paused' , '@N+1',    '@R',    '@R',    '0', '@T'),
-    (433, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Paused' , '@N+1',    '@R',    '@R', '@m+1', '@T'),
-    (434, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,    '0', '@m-1', 'Paused' , '@N+1',    '@R',    '@R', '@m+1', '@T'),
-    (435, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '@m', '@N-2', 'Paused' , '@N+1',    '@R',    '@R',   '@m', '@T'),
-    (436, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Paused' , '@N+1',    '@R',    '@R',   '@m', '@T'),
-    (437, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Paused' , '@N+1',    '@R',    '@R',   '@N', '@T'),
-    (438, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Paused' , '@N+1',    '@R',    '@R',   '@N', '@T'),
-    (439, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Paused' , '@N+1',    '@R',    '@R', '@N-1', '@T'),
-    
-    (450, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,   'on',   '-1', 'Paused' ,   '@N',  'true',    '@R',   '@m', '@T'),
-    (451, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,  'off',   '-1', 'Paused' ,   '@N', 'false',    '@R',   '@m', '@T'),
-    (452, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,   'on',   '-1', 'Paused' ,   '@N',    '@R',  'true',   '@m', '@T'),
-    (453, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,  'off',   '-1', 'Paused' ,   '@N',    '@R', 'false',   '@m', '@T')
+        (250, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'repeat'         ,   'on',     '', 'Stopped',   '@N',  'true',    '@R',   '@m',  '0'),
+        (251, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'repeat'         ,  'off',     '', 'Stopped',   '@N', 'false',    '@R',   '@m',  '0'),
+        (252, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'shuffle'        ,   'on',     '', 'Stopped',   '@N',    '@R',  'true',   '@m',  '0'),
+        (253, 'Stopped', '@N',   '@m',  '0',    '@R',    '@R', 'shuffle'        ,  'off',     '', 'Stopped',   '@N',    '@R', 'false',   '@m',  '0'),
+
+
+        #   | Preconditions                                  | Stimulus                         | Outcome
+        # Id| State     PlLen  Track   Secs     Rpt   Shfl   | Action             Param1 Param2 | State      PlLen     Rpt     Shfl    Track   Secs
+        (300, 'Playing', '@N',    '0', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+        (301, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+        (302, 'Playing', '@N', '@N-1', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+
+        (310, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Playing', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (311, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Playing', '@N-1',    '@R',    '@R',    '0', '@T'),
+        (312, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Playing', '@N-1',    '@R',    '@R',    '0', '@T'),
+        (313, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Playing', '@N-1',    '@R',    '@R', '@m-1', '@T'),
+        (314, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '1', '@m-1', 'Playing', '@N-1',    '@R',    '@R', '@m-1', '@T'),
+        (315, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,   '@m',   '@m', 'Playing', '@N-1',    '@R',    '@R',   '@m',  '0'),
+        (316, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@m+1', '@N-2', 'Playing', '@N-1',    '@R',    '@R',   '@m', '@T'),
+        (317, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Playing', '@N-1',    '@R',    '@R',   '@m', '@T'),
+        (318, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Playing', '@N-1',    '@R',    '@R', '@N-2', '@T'),
+        (319, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Playing', '@N-1',    '@R',    '@R', '@N-2', '@T'),
+        (320, 'Playing', '@N', '@N-1', '@T',  'true', 'false', 'Delete'         , '@N-1', '@N-1', 'Playing', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (321, 'Playing', '@N', '@N-1', '@T', 'false', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+
+        (330, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Playing', '@N+1',    '@R',    '@R',    '1', '@T'),
+        (331, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Playing', '@N+1',    '@R',    '@R',    '0', '@T'),
+        (332, 'Playing', '@N',    '0', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Playing', '@N+1',    '@R',    '@R',    '0', '@T'),
+        (333, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Playing', '@N+1',    '@R',    '@R', '@m+1', '@T'),
+        (334, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,    '0', '@m-1', 'Playing', '@N+1',    '@R',    '@R', '@m+1', '@T'),
+        (335, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '@m', '@N-2', 'Playing', '@N+1',    '@R',    '@R',   '@m', '@T'),
+        (336, 'Playing', '@N',   '@m', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Playing', '@N+1',    '@R',    '@R',   '@m', '@T'),
+        (337, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Playing', '@N+1',    '@R',    '@R',   '@N', '@T'),
+        (338, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Playing', '@N+1',    '@R',    '@R',   '@N', '@T'),
+        (339, 'Playing', '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Playing', '@N+1',    '@R',    '@R', '@N-1', '@T'),
+
+        (350, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,   'on',   '-1', 'Playing',   '@N',  'true',    '@R',   '@m', '@T'),
+        (351, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,  'off',   '-1', 'Playing',   '@N', 'false',    '@R',   '@m', '@T'),
+        (352, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,   'on',   '-1', 'Playing',   '@N',    '@R',  'true',   '@m', '@T'),
+        (353, 'Playing', '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,  'off',   '-1', 'Playing',   '@N',    '@R', 'false',   '@m', '@T'),
+
+
+        # Id| State     PlLen  Track   Secs     Rpt   Shfl   | Action             Param1 Param2 | State      PlLen     Rpt     Shfl    Track   Secs
+        (400, 'Paused' , '@N',    '0', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+        (401, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+        (402, 'Paused' , '@N', '@N-1', '@T',    '@R',    '@R', 'DeleteAllTracks',     '',     '', 'Stopped',    '0',    '@R',    '@R',    '0',  '0'),
+
+        (410, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (411, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Paused' , '@N-1',    '@R',    '@R',    '0', '@T'),
+        (412, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Paused' , '@N-1',    '@R',    '@R',    '0', '@T'),
+        (413, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Paused' , '@N-1',    '@R',    '@R', '@m-1', '@T'),
+        (414, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,    '1', '@m-1', 'Paused' , '@N-1',    '@R',    '@R', '@m-1', '@T'),
+        (415, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         ,   '@m',   '@m', 'Stopped', '@N-1',    '@R',    '@R',   '@m',  '0'),
+        (416, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@m+1', '@N-2', 'Paused' , '@N-1',    '@R',    '@R',   '@m', '@T'),
+        (417, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Delete'         , '@N-1', '@N-1', 'Paused' , '@N-1',    '@R',    '@R',   '@m', '@T'),
+        (418, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '0',    '0', 'Paused' , '@N-1',    '@R',    '@R', '@N-2', '@T'),
+        (419, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Delete'         ,    '1', '@N-2', 'Paused' , '@N-1',    '@R',    '@R', '@N-2', '@T'),
+        (420, 'Paused' , '@N', '@N-1', '@T',  'true', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+        (421, 'Paused' , '@N', '@N-1', '@T', 'false', 'false', 'Delete'         , '@N-1', '@N-1', 'Stopped', '@N-1',    '@R',    '@R',    '0',  '0'),
+
+        (430, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Paused' , '@N+1',    '@R',    '@R',    '1', '@T'),
+        (431, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Paused' , '@N+1',    '@R',    '@R',    '0', '@T'),
+        (432, 'Paused' , '@N',    '0', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Paused' , '@N+1',    '@R',    '@R',    '0', '@T'),
+        (433, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Paused' , '@N+1',    '@R',    '@R', '@m+1', '@T'),
+        (434, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,    '0', '@m-1', 'Paused' , '@N+1',    '@R',    '@R', '@m+1', '@T'),
+        (435, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         ,   '@m', '@N-2', 'Paused' , '@N+1',    '@R',    '@R',   '@m', '@T'),
+        (436, 'Paused' , '@N',   '@m', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Paused' , '@N+1',    '@R',    '@R',   '@m', '@T'),
+        (437, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,   '-1',   '-1', 'Paused' , '@N+1',    '@R',    '@R',   '@N', '@T'),
+        (438, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         ,    '0', '@N-2', 'Paused' , '@N+1',    '@R',    '@R',   '@N', '@T'),
+        (439, 'Paused' , '@N', '@N-1', '@T',    '@R', 'false', 'Insert'         , '@N-1', '@N-1', 'Paused' , '@N+1',    '@R',    '@R', '@N-1', '@T'),
+
+        (450, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,   'on',   '-1', 'Paused' ,   '@N',  'true',    '@R',   '@m', '@T'),
+        (451, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'repeat'         ,  'off',   '-1', 'Paused' ,   '@N', 'false',    '@R',   '@m', '@T'),
+        (452, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,   'on',   '-1', 'Paused' ,   '@N',    '@R',  'true',   '@m', '@T'),
+        (453, 'Paused' , '@N',   '@m', '@T',    '@R',    '@R', 'shuffle'        ,  'off',   '-1', 'Paused' ,   '@N',    '@R', 'false',   '@m', '@T')
     ]
 
 
