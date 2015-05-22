@@ -221,9 +221,7 @@ void Ssdp::WriteMaxAge(Environment& aEnv, IWriterHttpHeader& aWriter)
 {
     IWriterAscii& stream = aWriter.WriteHeaderField(Ssdp::kHeaderCacheControl);
     stream.Write(kSsdpMaxAge);
-    stream.Write(Ascii::kSp);
     stream.Write(kSsdpMaxAgeSeparator);
-    stream.Write(Ascii::kSp);
     stream.WriteUint(aEnv.InitParams()->DvMaxUpdateTimeSecs());
     stream.WriteFlush();
 }
