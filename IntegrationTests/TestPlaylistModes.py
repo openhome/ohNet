@@ -33,7 +33,7 @@ kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
 def Run( aArgs ):
-    """Pass the Run() call up to the base class"""
+    """Pass the Run() call from derived tests up to the base class"""
     BASE.Run( aArgs )
 
 
