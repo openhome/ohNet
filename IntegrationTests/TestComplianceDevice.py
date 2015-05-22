@@ -30,17 +30,6 @@ import urlparse
 # from the invocation it will be handled, but type-checking of the expected return(s) cannot occur.
 
 kServices = {
-    'Configuration':   {'ObjName': #====================================================================================
-                            'config',
-                        'Attributes': [
-                            # Attribute --------------- Value ------------------------- Allowed Values -----------------
-                            ],
-                        'Actions': [
-                            # Action ------------------ OutArg(s) --------------------- InArg(s) -----------------------
-                            ('GetKeys',                 'string',                       None),
-                            ('GetValue',                'string',                       'key'),
-                            ('SetValue',                None,                           ['key', 'value'])]},
-
     'Credentials':     {'ObjName': #====================================================================================
                             'credentials',
                         'Attributes': [
@@ -63,23 +52,6 @@ kServices = {
                             ('ReLogin',                 'string',                       ['id','token']),
                             ('Set',                     None,                           ['id','user','pwd']),
                             ('SetEnabled',              None,                           ['id',True])]},
-
-    'Exakt':           {'ObjName': #====================================================================================
-                            'exakt',
-                        'Attributes': [
-                            # Attribute --------------- Value ------------------------- Allowed Values -----------------
-                            ('ConnectionStatus',        'string'),
-                            ('DeviceList',              'xml'),
-                            ('Version',                 'uint')],
-                        'Actions': [
-                            # Action ------------------ OutArg(s) --------------------- InArg(s) -----------------------
-                            ('ConnectionStatus',        'string',                       None),
-                            ('DeviceList',              'xml',                          None),
-                            ('DeviceSettings',          'string',                       'id'),
-                            ('Reprogram',               None,                           ['id','proto://uri']),
-                            ('ReprogramFallback',       None,                           ['id','proto://uri']),
-                            ('Set',                     None,                           ['id',0,'proto://uri',True,True]),
-                            ('Version',                 'string',                       None)]},
 
     'Info':            {'ObjName': #====================================================================================
                             'info',
@@ -111,21 +83,6 @@ kServices = {
                             ('Metatext',                'string',                       None),
                             ('Track',                   {'Uri':          'url',
                                                          'Metadata':     'string'},     None)]},
-
-    'NetworkMonitor':  {'ObjName': #====================================================================================
-                            'netmon',
-                        'Attributes': [
-                            # Attribute --------------- Value ------------------------- Allowed Values -----------------
-                            ('Name',                    'string'),
-                            ('Receiver',                'uint'),
-                            ('Results',                 'uint'),
-                            ('Sender',                  'uint')],
-                        'Actions': [
-                            # Action ------------------ OutArg(s) --------------------- InArg(s) -----------------------
-                            ('Name',                    'string',                       None),
-                            ('Ports',                   {'Sender':  'uint',
-                                                         'Receiver':'uint',
-                                                         'Results': 'uint'},            None)]},
 
     'Playlist':        {'ObjName': #====================================================================================
                             'playlist',
@@ -336,8 +293,8 @@ kServices = {
                             ('VolumeLimit',             'uint',                          None)]}
 }
 kMandatory = ['Product']
-kRequested = ['Credentials', 'Exakt', 'Info', 'Sender', 'Time', 'Volume']
-kOptional  = ['Configuration', 'NetworkMonitor', 'Playlist', 'Radio', 'Receiver']
+kRequested = ['Credentials', 'Info', 'Sender', 'Time', 'Volume']
+kOptional  = ['Playlist', 'Radio', 'Receiver']
 
 
 class TestComplianceDevice( BASE.BaseTest ):
@@ -363,6 +320,7 @@ class TestComplianceDevice( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
+
 
         loopback = False
         if dutName.lower() == 'local':
