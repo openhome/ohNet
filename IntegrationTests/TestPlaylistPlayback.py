@@ -32,10 +32,11 @@ import sys
 import time
 import threading
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
-kDelay1    = 3
-kDelay2    = 8
+kAudioRoot  = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
+kTrackList  = os.path.join( kAudioRoot, 'TrackList.xml' )
+kDelay1     = 3
+kDelay2     = 8
+kSetupDelay = 2
 
 
 def Run( aArgs ):
@@ -76,6 +77,7 @@ class Config:
             self._SelectTrack( index )
             self._SelectSecs( state, secs )
             self._SetState( state )
+            time.sleep( kSetupDelay )
 
             msg = '[%d] Preconditions: %d tracks, index %d, state %s, secs %d, duration %d' \
                 % (self.testId, self.plLen, self.index, self.state, self.secs, self.duration )
@@ -112,23 +114,28 @@ class Config:
 
         def _SelectTrack( self, aIndex ):
             """Seek the specified track in the playlist"""
-            playlistEvent = threading.Event()
-            infoEvent = threading.Event()
+            idEvent      = threading.Event()
+            playingEvent = threading.Event()
+            infoEvent    = threading.Event()
 
             # noinspection PyUnusedLocal
             def PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'Id':
-                    playlistEvent.set()
+                    idEvent.set()
+                if aSvName == 'TransportState' and aSvVal == 'Playing':
+                    playingEvent.set()
 
             aIndex = aIndex.replace( '@N', 'self.plLen' )
             aIndex = aIndex.replace( '@m', 'random.randint( 2, self.plLen-3 )' )
             self.index = eval( aIndex )
             self.dut.playlist.AddSubscriber( PlaylistEventCb )
-            playlistEvent.clear()
+            idEvent.clear()
+            playingEvent.clear()
             infoEvent.clear()
             self.dut.playlist.SeekIndex( self.index )
             if self.dut.playlist.PlaylistIndex( self.dut.playlist.id ) != self.index:
-                playlistEvent.wait( 5 )
+                idEvent.wait( 5 )
+                playingEvent.wait( 5 )
             self.dut.playlist.RemoveSubscriber( PlaylistEventCb )
 
         def _SelectSecs( self, aState, aSecs ):
@@ -345,6 +352,9 @@ class Config:
             expTrack = int( self._SubstMacros( self.conf[11] ))
             if self.conf[6] == 'SeekId' and self.conf[11] == '@x':
                 expTrack = self.dut.playlist.PlaylistIndex( expTrack )
+
+            if self.conf[1]=='Playing' and self.conf[6] in ['SeekSecondRelative', 'Pause']:
+                expSecs += kSetupDelay
 
             # wait a few secs (from time event/timeout) and check values
             delay1.wait()
