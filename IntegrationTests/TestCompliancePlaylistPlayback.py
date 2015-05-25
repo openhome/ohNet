@@ -57,7 +57,7 @@ class TestCompliancePlaylistPlayback( BASE.TestPlaylistPlayback ):
         (736, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
         (778, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
         (835, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-        (875, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',          '@m',    '@T'),
+        (876, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
     ]
 
 
