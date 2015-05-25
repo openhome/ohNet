@@ -41,6 +41,9 @@ class PostActions():
     def armhf_tests(self,type,release):
         self.__remote_tests('test-rpi.linn.co.uk', 'test', type, release)
 
+    def ppc32_tests(self,type,release):
+        self.__remote_tests('slave-linux-ppc.linn.co.uk', 'test', type, release)
+
     # TODO
     def mipsel_tests(self,type,release):
         pass
@@ -58,7 +61,7 @@ class PostActions():
             print ret
             sys.exit(10)
 
-        alltests_cmd = 'python AllTests.py -t' # Setup AllTests cmd line to run tests only.
+        alltests_cmd = 'python AllTests.py -t --native' # Setup AllTests cmd line to run tests only.
 
         if type == 'nightly':
             alltests_cmd += ' -f'        # Add 'full test' flag if in nightly-mode
@@ -152,9 +155,11 @@ class JenkinsBuild():
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'linux' and arch == 'armhf':
-	        os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
+            os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
             os.environ['CROSS_COMPILE'] = 'mipsel-cros-linux-gnu-'
+        if os_platform == 'linux' and arch == 'ppc32':
+            os.environ['CROSS_COMPILE'] = 'powerpc-linux-gnu-'
         if os_platform == 'Core' and arch == 'ppc32':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
         if os_platform == 'Core' and (arch == 'armv5' or arch == 'armv6'):
@@ -175,9 +180,9 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel']) or (arch == 'ppc32' and os_platform == 'Core') or (os_platform == 'Android'):
+        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32']) or (os_platform == 'Android'):
             args.append('--buildonly')
-        elif (arch == 'x64' and not os_platform in ['windows', 'linux']) or arch == 'ppc32':
+        elif (arch == 'x64' and not os_platform in ['windows', 'linux']):
             args.append('--native')
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
@@ -337,6 +342,8 @@ class JenkinsBuild():
                     postAction.armhf_tests('nightly', release)
                 if arch == 'mipsel':
                     postAction.mipsel_tests('nightly', release)
+                if arch == 'ppc32':
+                    postAction.ppc32_tests('nightly', release)
         else:
             if os_platform == 'linux':
                 if arch == 'armel':
@@ -345,6 +352,8 @@ class JenkinsBuild():
                     postAction.armhf_tests('commit', release)
                 if arch == 'mipsel':
                     postAction.mipsel_tests('commit', release)
+                if arch == 'ppc32':
+                    postAction.ppc32_tests('commit', release)
         if self.platform['publish'] and release == '1':
             self.do_release()
 
