@@ -461,7 +461,6 @@ int32_t OsMutexUnlock(THandle aMutex)
 
 void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
 {
-    UNUSED(aContext);
     // FIXME - 50/150 copied from previous expectations of threadEntrypoint
 #if defined(ATTEMPT_THREAD_PRIORITIES)
     *aHostMin = 50;
