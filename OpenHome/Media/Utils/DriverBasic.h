@@ -13,6 +13,19 @@ namespace OpenHome {
     class Environment;
 namespace Media {
 
+class PriorityArbitratorDriver : public IPriorityArbitrator, private INonCopyable
+{
+public:
+    PriorityArbitratorDriver(TUint aOpenHomeMax);
+private: // from IPriorityArbitrator
+    TUint Priority(const TChar* aId, TUint aRequested, TUint aHostMax) override;
+    TUint OpenHomeMin() const override;
+    TUint OpenHomeMax() const override;
+    TUint HostRange() const override;
+private:
+    const TUint iOpenHomeMax;
+};
+
 class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineAnimator
 {
     static const TUint kTimerFrequencyMs = 5;

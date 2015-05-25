@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Tests/GetCh.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Media/Utils/DriverBasic.h>
+#include <OpenHome/Media/PipelineManager.h>
 
 #include <stdlib.h>
 
@@ -29,6 +30,13 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Create lib.
     Library* lib = TestMediaPlayerInit::CreateLibrary(options.Loopback().Value(), options.Adapter().Value());
+
+    Media::PriorityArbitratorDriver arbDriver(kPrioritySystemHighest);
+    ThreadPriorityArbitrator& priorityArbitrator = lib->Env().PriorityArbitrator();
+    priorityArbitrator.Add(arbDriver);
+    Media::PriorityArbitratorPipeline arbPipeline(kPrioritySystemHighest-1);
+    priorityArbitrator.Add(arbPipeline);
+
     const TChar* cookie ="TestMediaPlayerMain";
     NetworkAdapter* adapter = lib->CurrentSubnetAdapter(cookie);
     Net::DvStack* dvStack = lib->StartDv();
