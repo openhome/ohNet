@@ -29,6 +29,14 @@ Brn Os::GetPlatformNameAndVersion(OsContext* aContext, TUint& aMajor, TUint& aMi
     return nameBuf;
 }
 
+void Os::ThreadGetPriorityRange(OsContext* aContext, TUint& aHostMin, TUint& aHostMax)
+{
+    uint32_t hostMin, hostMax;
+    OsThreadGetPriorityRange(aContext, &hostMin, &hostMax);
+    aHostMin = (TUint)hostMin;
+    aHostMax = (TUint)hostMax;
+}
+
 THandle Os::NetworkCreate(OsContext* aContext, ESocketType aSocketType)
 {
     THandle handle = OsNetworkCreate(aContext, (OsNetworkSocketType)aSocketType);

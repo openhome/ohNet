@@ -106,13 +106,13 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iTerminated(aName, 1)
     , iKill(false)
     , iStackBytes(aStackBytes)
-    , iPriority(aPriority)
     , iKillMutex("KMTX")
 {
     ASSERT(aName != NULL);
     const TUint bytes = std::min(iName.MaxBytes(), (TUint)strlen(aName));
     iName.Replace((TByte*)aName, bytes);
     iName.PtrZ();
+    iPriority = OpenHome::gEnv->PriorityArbitrator().CalculatePriority(aName, aPriority);
 }
 
 void Thread::Run()
@@ -290,6 +290,82 @@ ThreadFunctor::~ThreadFunctor()
 void ThreadFunctor::Run()
 {
     iFunctor();
+}
+
+
+// ThreadPriorityArbitrator
+
+ThreadPriorityArbitrator::ThreadPriorityArbitrator(TUint aHostMin, TUint aHostMax)
+    : iHostMin(aHostMin)
+    , iHostMax(aHostMax)
+{
+}
+
+void ThreadPriorityArbitrator::Add(IPriorityArbitrator& aArbitrator)
+{
+    std::vector<IPriorityArbitrator*>::iterator it=iArbitrators.begin();
+    for (; it!=iArbitrators.end(); ++it) {
+        const TUint itMin = (*it)->OpenHomeMin();
+        const TUint itMax = (*it)->OpenHomeMax();
+        const TUint arbMin = aArbitrator.OpenHomeMin();
+        const TUint arbMax = aArbitrator.OpenHomeMax();
+        if (itMin <= arbMax && arbMin <= itMax) {
+            LOG2(kThread, kError, "ERROR: ThreadPriorityArbitrator ranges overlap: [%u..%u], [%u..%u]\n",
+                                  itMin, itMax, arbMax, arbMin);
+            ASSERTS();
+        }
+        if (arbMax > itMax) {
+            break;
+        }
+    }
+
+    (void)iArbitrators.insert(it, &aArbitrator);
+}
+
+void ThreadPriorityArbitrator::Validate()
+{
+    TUint max = kPrioritySystemHighest + 1;
+    for (std::vector<IPriorityArbitrator*>::const_iterator it=iArbitrators.begin(); it!=iArbitrators.end(); ++it) {
+        if ((*it)->OpenHomeMax() != max-1) {
+            LOG2(kThread, kError, "ERROR: gaps between thread priority arbitrators are not supported\n");
+            ASSERTS();
+        }
+        max = (*it)->OpenHomeMin();
+    }
+}
+
+TUint ThreadPriorityArbitrator::CalculatePriority(const char* aId, TUint aRequested) const
+{
+    /* look for arbitrator that handles aRequested, ask it for priority
+       ...or if aRequested is below all arbitrators, use linear division of remaining range */
+    TUint hostMin = iHostMin;
+    TUint hostMax = iHostMax;
+    TUint min = kPrioritySystemLowest;
+    TUint max = kPrioritySystemHighest;
+    for (std::vector<IPriorityArbitrator*>::const_iterator it=iArbitrators.begin(); it!=iArbitrators.end(); ++it) {
+        if ((*it)->OpenHomeMax() < aRequested) {
+            ASSERTS();
+        }
+        else if ((*it)->OpenHomeMin() <= aRequested) {
+            return (*it)->Priority(aId, aRequested, hostMax);
+        }
+        max = (*it)->OpenHomeMin() - 1;
+        hostMax -= (*it)->HostRange();
+    }
+    return DoCalculatePriority(aRequested, min, max, hostMin, hostMax);
+}
+
+TUint ThreadPriorityArbitrator::DoCalculatePriority(TUint aRequested, TUint aOpenHomeMin, TUint aOpenHomeMax, TUint aHostMin, TUint aHostMax)
+{ // static
+    ASSERT(aRequested >= aOpenHomeMin);
+    ASSERT(aRequested <= aOpenHomeMax);
+    ASSERT(aOpenHomeMin <= aOpenHomeMax);
+    ASSERT(aHostMin <= aHostMax);
+
+    const TUint openhomeRange = aOpenHomeMax - aOpenHomeMin;
+    const TUint hostRange = aHostMax - aHostMin;
+    const TUint priority = aHostMin + ((((aRequested - aOpenHomeMin) * hostRange) + (openhomeRange/2)) / openhomeRange);
+    return priority;
 }
 
 

@@ -848,6 +848,138 @@ void SuiteThreadFunctorStartDelete::Test()
 }
 
 
+class PriorityArbitratorDummy : public IPriorityArbitrator
+{
+public:
+    PriorityArbitratorDummy(TUint aMin, TUint aMax, TUint aRange)
+        : iMin(aMin)
+        , iMax(aMax)
+        , iRange(aRange)
+    {}
+private: // from IPriorityArbitrator
+    TUint Priority(const TChar* /*aId*/, TUint /*aRequested*/, TUint /*aHostMax*/) { ASSERTS(); return 0; }
+    TUint OpenHomeMin() const { return iMin; }
+    TUint OpenHomeMax() const { return iMax; }
+    TUint HostRange() const { return iRange; }
+private:
+    TUint iMin;
+    TUint iMax;
+    TUint iRange;
+};
+
+class SuitePriorityArbitrator : public Suite, private IPriorityArbitrator
+{
+public:
+    SuitePriorityArbitrator();
+private: // from Suite
+    void Test();
+private: // from IPriorityArbitrator
+    TUint Priority(const TChar* aId, TUint aRequested, TUint aHostMax);
+    TUint OpenHomeMin() const;
+    TUint OpenHomeMax() const;
+    TUint HostRange() const;
+private:
+    TUint iOpenHomeMin;
+    TUint iOpenHomeMax;
+    TUint iHostRange;
+    TUint iHostMax;
+};
+
+SuitePriorityArbitrator::SuitePriorityArbitrator()
+    : Suite("ThreadPriorityArbitrator")
+    , iOpenHomeMin(1000)
+    , iOpenHomeMax(0)
+    , iHostRange(0)
+    , iHostMax(0)
+{
+}
+
+void SuitePriorityArbitrator::Test()
+{
+    // no arbitrators => requested priority delivered
+    {
+        ThreadPriorityArbitrator arb(1, 100);
+        const TUint kPriority = 50;
+        const TUint p = arb.CalculatePriority("foo", kPriority);
+        TEST(p == kPriority);
+    }
+
+    // overlapping ranges asserts
+    {
+        ThreadPriorityArbitrator arb(1, 100);
+        PriorityArbitratorDummy a1(90, 95, 5);
+        arb.Add(a1);
+        PriorityArbitratorDummy a2(90, 95, 5);
+        TEST_THROWS(arb.Add(a2), AssertionFailed);
+        PriorityArbitratorDummy a3(95, 100, 5);
+        TEST_THROWS(arb.Add(a3), AssertionFailed);
+        PriorityArbitratorDummy a4(80, 90, 5);
+        TEST_THROWS(arb.Add(a4), AssertionFailed);
+    }
+
+    // gap between ranges asserts on Validate()
+    {
+        ThreadPriorityArbitrator arb(1, 50);
+        PriorityArbitratorDummy a1(90, 95, 5);
+        arb.Add(a1);
+        TEST_THROWS(arb.Validate(), AssertionFailed);
+        PriorityArbitratorDummy a2(96, 100, 1);
+        arb.Add(a2);
+        PriorityArbitratorDummy a3(1, 30, 10);
+        arb.Add(a3);
+        TEST_THROWS(arb.Validate(), AssertionFailed);
+        PriorityArbitratorDummy a4(31, 89, 10);
+        arb.Add(a4);
+        arb.Validate();
+    }
+
+    // arbitrator or default called when appropriate
+    {
+        ThreadPriorityArbitrator arb(1, 30);
+        PriorityArbitratorDummy a1(100, 100, 1);
+        arb.Add(a1);
+        iOpenHomeMin = 96;
+        iOpenHomeMax = 99;
+        iHostRange = 4;
+        iHostMax = 29;
+        arb.Add(*this); // covers next 4 OpenHome / Host priorities
+        PriorityArbitratorDummy a3(85, 95, 5);
+        arb.Add(a3);
+        TEST_THROWS(arb.CalculatePriority("foo", 100), AssertionFailed);
+        TUint i;
+        for (i=85; i<=95; i++) {
+            TEST_THROWS(arb.CalculatePriority("foo", i), AssertionFailed);
+        }
+        for (i=iOpenHomeMin; i<=iOpenHomeMax; i++) {
+            TUint p = arb.CalculatePriority("foo", i);
+            TEST(p == iHostMax - (iOpenHomeMax - i));
+        }
+        TEST(arb.CalculatePriority("foo", 1) == 1);
+        TEST(arb.CalculatePriority("foo", 20) == 5);
+    }
+}
+
+TUint SuitePriorityArbitrator::Priority(const TChar* /*aId*/, TUint aRequested, TUint aHostMax)
+{
+    return aHostMax - (iOpenHomeMax - aRequested);
+}
+
+TUint SuitePriorityArbitrator::OpenHomeMin() const
+{
+    return iOpenHomeMin;
+}
+
+TUint SuitePriorityArbitrator::OpenHomeMax() const
+{
+    return iOpenHomeMax;
+}
+
+TUint SuitePriorityArbitrator::HostRange() const
+{
+    return iHostRange;
+}
+
+
 class MainTestThread : public Thread
 {
 public:
@@ -872,6 +1004,7 @@ void MainTestThread::Run()
     runner.Add(new SuiteThreadFunctor());
     runner.Add(new SuiteThreadFunctorNotStarted());
     runner.Add(new SuiteThreadFunctorStartDelete());
+    runner.Add(new SuitePriorityArbitrator());
     if (OpenHome::Thread::SupportsPriorities())
     {
         runner.Add(new SuitePriority());

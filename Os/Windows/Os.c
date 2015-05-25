@@ -13,8 +13,8 @@
 
 static const uint32_t kMinStackBytes = 1024 * 16;
 static const uint32_t kStackPaddingBytes = 1024 * 16;
-static const uint32_t kPriorityMin = 50;
-static const uint32_t kPriorityMax = 150;
+static const uint32_t kPriorityMin = 0;
+static const uint32_t kPriorityMax = (uint32_t)(THREAD_PRIORITY_TIME_CRITICAL - THREAD_PRIORITY_IDLE);
 
 #define UNUSED(a) (a) = (a)
 
@@ -366,6 +366,13 @@ typedef struct
     OsContext*       iCtx;
 } ThreadData;
 
+void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
+{
+    UNUSED(aContext);
+    *aHostMin = kPriorityMin;
+    *aHostMax = kPriorityMax;
+}
+
 #pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO
 {
@@ -395,27 +402,8 @@ static void SetCurrentThreadName(const char* threadName)
 DWORD threadEntrypoint(LPVOID aArg)
 {
     ThreadData* data = (ThreadData*)aArg;
-    int priority = THREAD_PRIORITY_NORMAL;
-    static const int kHostPriorities[] = { THREAD_PRIORITY_IDLE
-                                          ,THREAD_PRIORITY_LOWEST
-                                          ,THREAD_PRIORITY_BELOW_NORMAL
-                                          ,THREAD_PRIORITY_NORMAL
-                                          ,THREAD_PRIORITY_ABOVE_NORMAL
-                                          ,THREAD_PRIORITY_HIGHEST
-                                          ,THREAD_PRIORITY_TIME_CRITICAL };
-    static const int kNumHostPriorities = sizeof(kHostPriorities) / sizeof(kHostPriorities[0]);
-    int step = (kPriorityMax - kPriorityMin) / kNumHostPriorities;
-    int i;
-
-    assert(data != NULL);
-    //fprintf(stderr, "++ new thread: %s(%d)\n", data->iName, GetCurrentThreadId());
-
-    for (i=kNumHostPriorities-1; i>=0; i--) {
-        if (kPriorityMin + (i*step) < data->iPriority) {
-            priority = kHostPriorities[i];
-            break;
-        }
-    }
+    int priority = data->iPriority;
+    priority += THREAD_PRIORITY_IDLE;
     if (!SetThreadPriority(data->iThread, priority)) {
         //fprintf(stderr, "SetPriority failed (err=%d)\n", GetLastError());
         //fflush(stderr);

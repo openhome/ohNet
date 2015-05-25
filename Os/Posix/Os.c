@@ -459,6 +459,22 @@ int32_t OsMutexUnlock(THandle aMutex)
     return (status==0? 0 : -1);
 }
 
+void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
+{
+    UNUSED(aContext);
+    // FIXME - 50/150 copied from previous expectations of threadEntrypoint
+#if defined(ATTEMPT_THREAD_PRIORITIES)
+    *aHostMin = 50;
+    *aHostMax = 150;
+#elif defined(ATTEMPT_THREAD_NICENESS)
+    *aHostMin = 50;
+    *aHostMax = 150;
+#else
+    *aHostMin = 1;
+    *aHostMax = 100;
+#endif
+}
+
 typedef struct
 {
     pthread_t        iThread;

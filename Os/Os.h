@@ -291,15 +291,18 @@ int32_t OsMutexUnlock(THandle aMutex);
 typedef void(*ThreadEntryPoint)(void*);
 
 /**
+ * Read the range of thread priorities supported by teh host platform
+ */
+void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax);
+
+/**
  * Create a thread.
  *
  * @param[in] aContext    Returned from OsCreate().
  * @param[in] aName        Name for this thread.  May not be unique.
  *                         Maximum length is 4 characters.
  * @param[in] aPriority    Priority the thread should run at.  Will be in the range
- *                         (50 - 150) which may need to be mapped onto a suitable native
- *                         range.  If thread priorities are not supported, this value
- *                         should be stored and returned by calls to ThreadPriority()
+ *                         reported by OsThreadGetPriorityRange.
  * @param[in] aStackBytes  Size of the thread stack in bytes.  If this is 0 a sensible
  *                         default value should be used.
  * @param[in] aEntryPoint  Pointer to a function which must be called from the native

@@ -125,6 +125,9 @@ void Environment::Construct(FunctorMsg& aLogOutput)
         throw std::bad_alloc();
     }
     iLogger = new Log(aLogOutput);
+    TUint hostMin, hostMax;
+    Os::ThreadGetPriorityRange(iOsContext, hostMin, hostMax);
+    iThreadPriorityArbitrator = new ThreadPriorityArbitrator(hostMin, hostMax);
     iPublicLock = new OpenHome::Mutex("GMUT");
     iPrivateLock = new OpenHome::Mutex("ENVP");
     iSuspendResumeObserverLock = new OpenHome::Mutex("ENVR");
@@ -150,6 +153,7 @@ Environment::~Environment()
     ASSERT(iSuspendObservers.size() == 0);
     ASSERT(iResumeObservers.size() == 0);
     delete iSuspendResumeObserverLock;
+    delete iThreadPriorityArbitrator;
     delete iLogger;
     Os::Destroy(iOsContext);
 }
@@ -183,6 +187,11 @@ Log& Environment::Logger()
 NetworkAdapterList& Environment::NetworkAdapterList()
 {
     return *iNetworkAdapterList;
+}
+
+ThreadPriorityArbitrator& Environment::PriorityArbitrator()
+{
+    return *iThreadPriorityArbitrator;
 }
 
 Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInterface)

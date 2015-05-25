@@ -17,6 +17,7 @@ class FunctorMsg;
 class TimerManager;
 class Mutex;
 class NetworkAdapterList;
+class ThreadPriorityArbitrator;
 class Log;
 class MListener;
 class IStackObject;
@@ -65,6 +66,7 @@ public:
     OsContext* OsCtx();
     Log& Logger();
     OpenHome::NetworkAdapterList& NetworkAdapterList();
+    ThreadPriorityArbitrator& PriorityArbitrator();
     Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
     void AddSuspendObserver(ISuspendObserver& aObserver);
@@ -97,6 +99,7 @@ private:
     OpenHome::TimerManager* iTimerManager;
     OpenHome::Mutex* iPublicLock;
     OpenHome::NetworkAdapterList* iNetworkAdapterList;
+    ThreadPriorityArbitrator* iThreadPriorityArbitrator;
     std::vector<MListener*> iMulticastListeners;
     std::vector<ISuspendObserver*> iSuspendObservers;
     std::vector<IResumeObserver*> iResumeObservers;
