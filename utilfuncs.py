@@ -188,13 +188,14 @@ def configure_toolchain(conf):
             conf.env.append_value('CFLAGS',     mcpu)
             conf.env.append_value('DEFINES',   ['BYTE_ORDER=' + platform_info['endian'] + '_ENDIAN'])
 
+        cross_toolchains = {
+            'Linux-ARM'    : '/usr/local/arm-2010q1/bin/arm-none-linux-gnueabi-',
+            'Linux-armhf'  : '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-',
+            'Linux-mipsel' : 'mipsel-cros-linux-gnu-',
+            'Linux-ppc32'  : 'powerpc-linux-gnu-'
+        }
         if conf.options.cross == None:
-            if conf.options.dest_platform == 'Linux-ARM':
-                conf.options.cross = '/usr/local/arm-2010q1/bin/arm-none-linux-gnueabi-'
-            if conf.options.dest_platform == 'Linux-armhf':
-                conf.options.cross = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
-            if conf.options.dest_platform == 'Linux-mipsel':
-                conf.options.cross = 'mipsel-cros-linux-gnu-'
+            conf.options.cross = cross_toolchains.get(conf.options.dest_platform, None)
 
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
