@@ -8,7 +8,7 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
-
+#if 0
 PriorityArbitratorDriver::PriorityArbitratorDriver(TUint aOpenHomeMax)
     : iOpenHomeMax(aOpenHomeMax)
 {
@@ -34,7 +34,7 @@ TUint PriorityArbitratorDriver::HostRange() const
 {
     return 1;
 }
-
+#endif
 
 DriverBasic::DriverBasic(Environment& aEnv, IPipeline& aPipeline)
     : Thread("PipelineAnimator", kPrioritySystemHighest)

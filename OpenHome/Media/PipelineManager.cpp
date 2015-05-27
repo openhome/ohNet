@@ -11,7 +11,7 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
-
+#if 0
 // PriorityArbitratorPipeline
 
 PriorityArbitratorPipeline::PriorityArbitratorPipeline(TUint aOpenHomeMax)
@@ -38,7 +38,7 @@ TUint PriorityArbitratorPipeline::HostRange() const
 {
     return kNumThreads;
 }
-
+#endif
 
 // PipelineManager
 
