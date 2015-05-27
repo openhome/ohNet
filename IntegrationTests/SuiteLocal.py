@@ -112,6 +112,9 @@ tests = [
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'standby',   'unicast'                        ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'standby',   'multicast'                      ],
 
+    # Sources
+    [ 'TestSourceSelect',             'local'                                                                                        ],
+
     # Volume
     [ 'TestVolumeService',            'local'                                                                                        ],
 
