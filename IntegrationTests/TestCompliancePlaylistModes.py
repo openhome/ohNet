@@ -25,7 +25,7 @@ class TestCompliancePlaylistModes( BASE.TestPlaylistModes ):
                 self.log.Abort( '', 'Require non-local player to test' )
             else:
                 argList = [args[0], args[1], 'all', 12345]
-        BASE.TestPlaylistHandling.Test( self, argList )
+        BASE.TestPlaylistModes.Test( self, argList )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
