@@ -82,14 +82,20 @@ kManualChannels   = [ # For the purposes of this test it doesn't matter if these
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
 
 
+def Run( aArgs ):
+    """Pass the Run() call from derived tests up to the base class"""
+    BASE.Run( aArgs )
+
+
 class TestRadioService( BASE.BaseTest ):
     
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
-        self.dut            = None
-        self.soft           = None
-        self.dutDev         = ''
+        self.doc    = __doc__
+        self.dut    = None
+        self.soft   = None
+        self.dutDev = ''
 
     def Test( self, aArgs ):
         """Test functionality of Radio service"""
@@ -101,7 +107,7 @@ class TestRadioService( BASE.BaseTest ):
             radioName = aArgs[1]
             mode      = aArgs[2].lower() 
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
         if mode not in ['all', 'fixed', 'presets', 'manual', 'updated']:
