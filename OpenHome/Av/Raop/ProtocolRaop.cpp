@@ -102,21 +102,23 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     // Output audio stream
     for (;;) {
-        iLockRaop.Wait();
-        if (iWaiting) {
-            iSupply->OutputFlush(iNextFlushId);
-            iWaiting = false;
-            iResumePending = true;
-            // Resume normal operation.
+        {
+            AutoMutex a(iLock);
+            if (iWaiting) {
+                iSupply->OutputFlush(iNextFlushId);
+                iNextFlushId = MsgFlush::kIdInvalid;
+                iWaiting = false;
+                iResumePending = true;
+                // Resume normal operation.
+            }
+            else if (iStopped) {
+                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+                iSupply->OutputFlush(iNextFlushId);
+                iNextFlushId = MsgFlush::kIdInvalid;
+                iActive = false;
+                return EProtocolStreamStopped;
+            }
         }
-        else if (iStopped) {
-            iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-            iSupply->OutputFlush(iNextFlushId);
-            iActive = false;
-            iLockRaop.Signal();
-            return EProtocolStreamStopped;
-        }
-        iLockRaop.Signal();
 
         try {
             TUint16 count = iRaopAudio.ReadPacket();
@@ -275,7 +277,7 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ProtocolRaop::TryStop\n");
     TBool stop = false;
-    iLockRaop.Wait();
+    AutoMutex a(iLock);
     if (!iStopped && iActive) {
         stop = (iStreamId == aStreamId && aStreamId != IPipelineIdProvider::kStreamIdInvalid);
         if (stop) {
@@ -285,7 +287,6 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
             iSem.Signal();
         }
     }
-    iLockRaop.Signal();
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
@@ -309,14 +310,12 @@ void ProtocolRaop::Deactivate()
 TUint ProtocolRaop::SendFlush()
 {
     LOG(kMedia, "ProtocolRaop::NotifySessionWait\n");
-    iLockRaop.Wait();
+    AutoMutex a(iLockRaop);
     ASSERT(iActive);
-    TUint flushId = iFlushIdProvider->NextFlushId();
-    iNextFlushId = flushId;
+    iNextFlushId = iFlushIdProvider->NextFlushId();
     iWaiting = true;
     DoInterrupt();
-    iLockRaop.Signal();
-    return flushId;
+    return iNextFlushId;
 }
 
 

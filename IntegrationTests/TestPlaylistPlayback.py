@@ -32,10 +32,16 @@ import sys
 import time
 import threading
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
-kDelay1    = 3
-kDelay2    = 8
+kAudioRoot  = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
+kTrackList  = os.path.join( kAudioRoot, 'TrackList.xml' )
+kDelay1     = 3
+kDelay2     = 8
+kSetupDelay = 2
+
+
+def Run( aArgs ):
+    """Pass the Run() call from derived tests up to the base class"""
+    BASE.Run( aArgs )
 
 
 class Config:
@@ -71,6 +77,7 @@ class Config:
             self._SelectTrack( index )
             self._SelectSecs( state, secs )
             self._SetState( state )
+            time.sleep( kSetupDelay )
 
             msg = '[%d] Preconditions: %d tracks, index %d, state %s, secs %d, duration %d' \
                 % (self.testId, self.plLen, self.index, self.state, self.secs, self.duration )
@@ -107,23 +114,28 @@ class Config:
 
         def _SelectTrack( self, aIndex ):
             """Seek the specified track in the playlist"""
-            playlistEvent = threading.Event()
-            infoEvent = threading.Event()
+            idEvent      = threading.Event()
+            playingEvent = threading.Event()
+            infoEvent    = threading.Event()
 
             # noinspection PyUnusedLocal
             def PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'Id':
-                    playlistEvent.set()
+                    idEvent.set()
+                if aSvName == 'TransportState' and aSvVal == 'Playing':
+                    playingEvent.set()
 
             aIndex = aIndex.replace( '@N', 'self.plLen' )
             aIndex = aIndex.replace( '@m', 'random.randint( 2, self.plLen-3 )' )
             self.index = eval( aIndex )
             self.dut.playlist.AddSubscriber( PlaylistEventCb )
-            playlistEvent.clear()
+            idEvent.clear()
+            playingEvent.clear()
             infoEvent.clear()
             self.dut.playlist.SeekIndex( self.index )
             if self.dut.playlist.PlaylistIndex( self.dut.playlist.id ) != self.index:
-                playlistEvent.wait( 5 )
+                idEvent.wait( 5 )
+                playingEvent.wait( 5 )
             self.dut.playlist.RemoveSubscriber( PlaylistEventCb )
 
         def _SelectSecs( self, aState, aSecs ):
@@ -341,6 +353,9 @@ class Config:
             if self.conf[6] == 'SeekId' and self.conf[11] == '@x':
                 expTrack = self.dut.playlist.PlaylistIndex( expTrack )
 
+            if self.conf[1]=='Playing' and self.conf[6] in ['SeekSecondRelative', 'Pause']:
+                expSecs += kSetupDelay
+
             # wait a few secs (from time event/timeout) and check values
             delay1.wait()
             if expState == 'Playing':
@@ -524,6 +539,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
+        self.doc    = __doc__
         self.dut    = None
         self.dutDev = None
         self.server = None
@@ -542,7 +558,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
             mode    = aArgs[2]
             seed    = int( aArgs[3] )
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
         # create renderer CP and subscribe for DS events
@@ -599,7 +615,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         """Create and return list of test configurations (as filtered by aMode)"""
         tracks  = Common.GetTracks( kTrackList, self.server )
         configs = []
-        for entry in configTable:
+        for entry in self.configTable:
             selected = False
             if aMode in ('all', 'ALL', 'All'):
                 selected = True
@@ -642,447 +658,447 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         return configs
 
 
-# Macros for config table:
-#   @m - valid random track index (excluding first and last 2 tracks) 1<@m<@N-2
-#   @N - playlist length
-#   @p - first track's ID
-#   @q - valid random track ID (excluding first and last 2 tracks) @p+1<@q<@r-1
-#   @r - last track's ID
-#   @D - current track duration
-#   @T - valid random track secs (excluding first and last 5s) 5<@T<@D-5
-#   @x - current track index
-#   @y - current track secs
+    # Macros for config table:
+    #   @m - valid random track index (excluding first and last 2 tracks) 1<@m<@N-2
+    #   @N - playlist length
+    #   @p - first track's ID
+    #   @q - valid random track ID (excluding first and last 2 tracks) @p+1<@q<@r-1
+    #   @r - last track's ID
+    #   @D - current track duration
+    #   @T - valid random track secs (excluding first and last 5s) 5<@T<@D-5
+    #   @x - current track index
+    #   @y - current track secs
 
-configTable = \
+    configTable = \
     [
-    #   | Preconditions                       | Stimulus                                       | Outcome
-    # Id| State     PlLen  Track   Secs   Rpt | Action                MinVal     MaxVal     Err| State      Track         Secs
-    (200, 'Stopped', '@N',    '0',  '0', 'off', 'Play'              ,        '',        '',   0, 'Playing',          '0',     '0'),
-    (201, 'Stopped', '@N',   '@m',  '0', 'off', 'Play'              ,        '',        '',   0, 'Playing',         '@m',     '0'),
-    (202, 'Stopped', '@N', '@N-1',  '0', 'off', 'Play'              ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
+        #   | Preconditions                       | Stimulus                                       | Outcome
+        # Id| State     PlLen  Track   Secs   Rpt | Action                MinVal     MaxVal     Err| State      Track         Secs
+        (200, 'Stopped', '@N',    '0',  '0', 'off', 'Play'              ,        '',        '',   0, 'Playing',          '0',     '0'),
+        (201, 'Stopped', '@N',   '@m',  '0', 'off', 'Play'              ,        '',        '',   0, 'Playing',         '@m',     '0'),
+        (202, 'Stopped', '@N', '@N-1',  '0', 'off', 'Play'              ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
 
-    (210, 'Stopped', '@N',    '0',  '0', 'off', 'Pause'             ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (211, 'Stopped', '@N',   '@m',  '0', 'off', 'Pause'             ,        '',        '',   0, 'Stopped',         '@m',     '0'),
-    (212, 'Stopped', '@N', '@N-1',  '0', 'off', 'Pause'             ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
+        (210, 'Stopped', '@N',    '0',  '0', 'off', 'Pause'             ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (211, 'Stopped', '@N',   '@m',  '0', 'off', 'Pause'             ,        '',        '',   0, 'Stopped',         '@m',     '0'),
+        (212, 'Stopped', '@N', '@N-1',  '0', 'off', 'Pause'             ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
 
-    (220, 'Stopped', '@N',    '0',  '0', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (221, 'Stopped', '@N',   '@m',  '0', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',         '@m',     '0'),
-    (222, 'Stopped', '@N', '@N-1',  '0', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
+        (220, 'Stopped', '@N',    '0',  '0', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (221, 'Stopped', '@N',   '@m',  '0', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',         '@m',     '0'),
+        (222, 'Stopped', '@N', '@N-1',  '0', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
 
-    (230, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (231, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondAbsolute',       '1',        '',   0, 'Playing',          '0',    '@y'),
-    (232, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
-    (233, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondAbsolute',       '1',        '',   0, 'Playing',         '@m',    '@y'),
-    (234, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
-    (235, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondAbsolute',       '1',        '',   0, 'Playing',       '@N-1',    '@y'),
+        (230, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (231, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondAbsolute',       '1',        '',   0, 'Playing',          '0',    '@y'),
+        (232, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
+        (233, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondAbsolute',       '1',        '',   0, 'Playing',         '@m',    '@y'),
+        (234, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
+        (235, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondAbsolute',       '1',        '',   0, 'Playing',       '@N-1',    '@y'),
 
-    (240, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (241, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',          '0',    '@y'),
-    (242, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',          '0',     '0'),
-    (243, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',     '0'),
-    (244, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',         '@m',    '@y'),
-    (245, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',         '@m',     '0'),
-    (246, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
-    (247, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',       '@N-1',    '@y'),
-    (248, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',       '@N-1',     '0'),
+        (240, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (241, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',          '0',    '@y'),
+        (242, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',          '0',     '0'),
+        (243, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',     '0'),
+        (244, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',         '@m',    '@y'),
+        (245, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',         '@m',     '0'),
+        (246, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
+        (247, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',       '@N-1',    '@y'),
+        (248, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',       '@N-1',     '0'),
 
-    (250, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (251, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (252, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (253, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',          '0',     '0'),
-    (254, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (255, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (256, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (257, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',         '@m',     '0'),
-    (258, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (259, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (260, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (261, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',       '@N-1',     '0'),
+        (250, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (251, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (252, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (253, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',          '0',     '0'),
+        (254, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (255, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (256, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (257, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',         '@m',     '0'),
+        (258, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (259, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (260, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (261, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',       '@N-1',     '0'),
 
-    (270, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (271, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (272, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (273, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',          '0',     '0'),
-    (274, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (275, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (276, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (277, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',         '@m',     '0'),
-    (278, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (279, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (280, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (281, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',       '@N-1',     '0'),
+        (270, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (271, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (272, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (273, 'Stopped', '@N',    '0',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',          '0',     '0'),
+        (274, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (275, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (276, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (277, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',         '@m',     '0'),
+        (278, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (279, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (280, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (281, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',       '@N-1',     '0'),
 
-    (290, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',          '0',     '0'),
-    (291, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (292, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (293, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (294, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',          '0',     '0'),
-    (295, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',         '@m',     '0'),
-    (296, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (297, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (298, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (299, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',         '@m',     '0'),
-    (300, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',       '@N-1',     '0'),
-    (301, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (302, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (303, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (304, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',       '@N-1',     '0'),
+        (290, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',          '0',     '0'),
+        (291, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (292, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (293, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (294, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',          '0',     '0'),
+        (295, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',         '@m',     '0'),
+        (296, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (297, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (298, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (299, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',         '@m',     '0'),
+        (300, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',       '@N-1',     '0'),
+        (301, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (302, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (303, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (304, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',       '@N-1',     '0'),
 
-    (310, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',          '0',     '0'),
-    (311, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (312, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (313, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (314, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',          '0',     '0'),
-    (315, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',         '@m',     '0'),
-    (316, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (317, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (318, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (319, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',         '@m',     '0'),
-    (320, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',       '@N-1',     '0'),
-    (321, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (322, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (323, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (324, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',       '@N-1',     '0'),
+        (310, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',          '0',     '0'),
+        (311, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (312, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (313, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (314, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',          '0',     '0'),
+        (315, 'Stopped', '@N',   '@m',  '0',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',         '@m',     '0'),
+        (316, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (317, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (318, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (319, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',         '@m',     '0'),
+        (320, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Stopped',       '@N-1',     '0'),
+        (321, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (322, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (323, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (324, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Stopped',       '@N-1',     '0'),
 
-    (330, 'Stopped', '@N',    '0',  '0', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
-    (331, 'Stopped', '@N',    '0',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (332, 'Stopped', '@N',   '@m',  '0', 'off', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
-    (333, 'Stopped', '@N',   '@m',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
-    (334, 'Stopped', '@N', '@N-1',  '0', 'off', 'Next'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (335, 'Stopped', '@N', '@N-1',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
+        (330, 'Stopped', '@N',    '0',  '0', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
+        (331, 'Stopped', '@N',    '0',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (332, 'Stopped', '@N',   '@m',  '0', 'off', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
+        (333, 'Stopped', '@N',   '@m',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
+        (334, 'Stopped', '@N', '@N-1',  '0', 'off', 'Next'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (335, 'Stopped', '@N', '@N-1',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
 
-    (340, 'Stopped', '@N',    '0',  '0',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
-    (341, 'Stopped', '@N',    '0',  '0',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
-    (342, 'Stopped', '@N',   '@m',  '0',  'on', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
-    (343, 'Stopped', '@N',   '@m',  '0',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
-    (344, 'Stopped', '@N', '@N-1',  '0',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '0',     '0'),
-    (345, 'Stopped', '@N', '@N-1',  '0',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
-
-
-    #   | Preconditions                       | Stimulus                                       | Outcome
-    # Id| State     PlLen  Track   Secs   Rpt | Action                MinVal     MaxVal     Err| State      Track         Secs
-    (400, 'Playing', '@N',    '0', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',          '0',     '0'),
-    (401, 'Playing', '@N',   '@m', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',         '@m',     '0'),
-    (402, 'Playing', '@N', '@N-1', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
-
-    (410, 'Playing', '@N',    '0', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,          '0',    '@T'),
-    (411, 'Playing', '@N',   '@m', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,         '@m',    '@T'),
-    (412, 'Playing', '@N', '@N-1', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,       '@N-1',    '@T'),
-
-    (420, 'Playing', '@N',    '0', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (421, 'Playing', '@N',   '@m', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',         '@m',     '0'),
-    (422, 'Playing', '@N', '@N-1', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
-
-    (430, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
-    (431, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
-    (432, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
-    (433, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (434, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
-    (435, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
-    (436, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
-    (437, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
-    (438, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
-    (439, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (440, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
-    (441, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
-    (442, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Stopped',          '0',     '0'),
-    (443, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
-    (444, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Stopped',          '0',     '0'),
-
-    (450, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
-    (451, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
-    (452, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
-    (453, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (454, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
-    (455, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
-    (456, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
-    (457, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
-    (458, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
-    (459, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (460, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
-    (461, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
-    (462, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '0',     '0'),
-    (463, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
-    (464, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '0',     '0'),
-
-    (470, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
-    (471, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
-    (472, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
-    (473, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
-    (474, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
-    (475, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
-    (476, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
-    (477, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
-    (478, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
-    (479, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
-    (480, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
-    (481, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
-    (482, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (483, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
-    (484, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
-    (485, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
-    (486, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
-    (487, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Stopped',          '0',     '0'),
-    (488, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
-    (489, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Stopped',          '0',     '0'),
-    (490, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
-
-    (500, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
-    (501, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
-    (502, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
-    (503, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
-    (504, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
-    (505, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
-    (506, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
-    (507, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
-    (508, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
-    (509, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
-    (510, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
-    (511, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
-    (512, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (513, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
-    (514, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
-    (515, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
-    (516, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
-    (517, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '0',     '0'),
-    (518, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
-    (519, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '0',     '0'),
-    (520, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
-
-    (530, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (531, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (532, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (533, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',          '0',    '@T'),
-    (534, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (535, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (536, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (537, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',         '@m',    '@T'),
-    (538, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (539, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (540, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (541, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',       '@N-1',    '@T'),
-
-    (550, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (551, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (552, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (553, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',          '0',    '@T'),
-    (554, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (555, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (556, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (557, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',         '@m',    '@T'),
-    (558, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (559, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (560, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (561, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',       '@N-1',    '@T'),
-
-    (570, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',          '0',    '@T'),
-    (571, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (572, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (573, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (574, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',          '0',    '@T'),
-    (575, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',         '@m',    '@T'),
-    (576, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (577, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (578, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (579, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',         '@m',    '@T'),
-    (580, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',       '@N-1',    '@T'),
-    (581, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (582, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (583, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (584, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',       '@N-1',    '@T'),
-
-    (590, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',          '0',    '@T'),
-    (591, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (592, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (593, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (594, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',          '0',    '@T'),
-    (595, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',         '@m',    '@T'),
-    (596, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (597, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (598, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (599, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',         '@m',    '@T'),
-    (600, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',       '@N-1',    '@T'),
-    (601, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (602, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (603, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (604, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',       '@N-1',    '@T'),
-
-    (610, 'Playing', '@N',    '0', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
-    (611, 'Playing', '@N',    '0', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',         '0',      '0'),
-    (612, 'Playing', '@N',   '@m', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
-    (613, 'Playing', '@N',   '@m', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
-    (614, 'Playing', '@N', '@N-1', '@T', 'off', 'Next'              ,        '',        '',   0, 'Stopped',         '0',      '0'),
-    (615, 'Playing', '@N', '@N-1', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
-
-    (620, 'Playing', '@N',    '0', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
-    (621, 'Playing', '@N',    '0', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
-    (622, 'Playing', '@N',   '@m', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
-    (623, 'Playing', '@N',   '@m', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
-    (624, 'Playing', '@N', '@N-1', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '0',     '0'),
-    (625, 'Playing', '@N', '@N-1', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
+        (340, 'Stopped', '@N',    '0',  '0',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
+        (341, 'Stopped', '@N',    '0',  '0',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
+        (342, 'Stopped', '@N',   '@m',  '0',  'on', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
+        (343, 'Stopped', '@N',   '@m',  '0',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
+        (344, 'Stopped', '@N', '@N-1',  '0',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '0',     '0'),
+        (345, 'Stopped', '@N', '@N-1',  '0',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
 
 
-    #   | Preconditions                       | Stimulus                                       | Outcome
-    # Id| State     PlLen  Track   Secs   Rpt | Action                MinVal     MaxVal    Err | State      Track         Secs
-    (700, 'Paused' , '@N',    '0', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',          '0',    '@T'),
-    (701, 'Paused' , '@N',   '@m', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',         '@m',    '@T'),
-    (702, 'Paused' , '@N', '@N-1', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',       '@N-1',    '@T'),
+        #   | Preconditions                       | Stimulus                                       | Outcome
+        # Id| State     PlLen  Track   Secs   Rpt | Action                MinVal     MaxVal     Err| State      Track         Secs
+        (400, 'Playing', '@N',    '0', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',          '0',     '0'),
+        (401, 'Playing', '@N',   '@m', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',         '@m',     '0'),
+        (402, 'Playing', '@N', '@N-1', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
 
-    (710, 'Paused' , '@N',    '0', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,          '0',    '@T'),
-    (711, 'Paused' , '@N',   '@m', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,         '@m',    '@T'),
-    (712, 'Paused' , '@N', '@N-1', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,       '@N-1',    '@T'),
+        (410, 'Playing', '@N',    '0', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,          '0',    '@T'),
+        (411, 'Playing', '@N',   '@m', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,         '@m',    '@T'),
+        (412, 'Playing', '@N', '@N-1', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,       '@N-1',    '@T'),
 
-    (720, 'Paused' , '@N',    '0', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (721, 'Paused' , '@N',   '@m', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',         '@m',     '0'),
-    (722, 'Paused' , '@N', '@N-1', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
+        (420, 'Playing', '@N',    '0', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (421, 'Playing', '@N',   '@m', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',         '@m',     '0'),
+        (422, 'Playing', '@N', '@N-1', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
 
-    (730, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
-    (731, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
-    (732, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
-    (733, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (734, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
-    (735, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
-    (736, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
-    (737, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
-    (738, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
-    (739, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (740, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
-    (741, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
-    (742, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Stopped',          '0',     '0'),
-    (743, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
-    (744, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Stopped',          '0',     '0'),
+        (430, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
+        (431, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
+        (432, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
+        (433, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (434, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
+        (435, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
+        (436, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
+        (437, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
+        (438, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
+        (439, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (440, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
+        (441, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
+        (442, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Stopped',          '0',     '0'),
+        (443, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
+        (444, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Stopped',          '0',     '0'),
 
-    (750, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
-    (751, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
-    (752, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
-    (753, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (754, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
-    (755, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
-    (756, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
-    (757, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
-    (758, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
-    (759, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (760, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
-    (761, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
-    (762, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '0',     '0'),
-    (763, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
-    (764, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '0',     '0'),
+        (450, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
+        (451, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
+        (452, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
+        (453, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (454, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
+        (455, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
+        (456, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
+        (457, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
+        (458, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
+        (459, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (460, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
+        (461, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
+        (462, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '0',     '0'),
+        (463, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
+        (464, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '0',     '0'),
 
-    (770, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
-    (771, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
-    (772, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
-    (773, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
-    (774, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
-    (775, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
-    (776, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
-    (777, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
-    (778, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
-    (779, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
-    (780, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
-    (781, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
-    (782, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (783, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
-    (784, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
-    (785, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
-    (786, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
-    (787, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Stopped',          '0',     '0'),
-    (788, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
-    (789, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Stopped',          '0',     '0'),
-    (790, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
+        (470, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
+        (471, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
+        (472, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
+        (473, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
+        (474, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
+        (475, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
+        (476, 'Playing', '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
+        (477, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
+        (478, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
+        (479, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
+        (480, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
+        (481, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
+        (482, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (483, 'Playing', '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
+        (484, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
+        (485, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
+        (486, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
+        (487, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Stopped',          '0',     '0'),
+        (488, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
+        (489, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Stopped',          '0',     '0'),
+        (490, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
 
-    (800, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
-    (801, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
-    (802, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
-    (803, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
-    (804, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
-    (805, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
-    (806, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
-    (807, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
-    (808, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
-    (809, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
-    (810, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
-    (811, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
-    (812, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
-    (813, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
-    (814, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
-    (815, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
-    (816, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
-    (817, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '0',     '0'),
-    (818, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
-    (819, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '0',     '0'),
-    (820, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
+        (500, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
+        (501, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
+        (502, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
+        (503, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
+        (504, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
+        (505, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
+        (506, 'Playing', '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
+        (507, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
+        (508, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
+        (509, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
+        (510, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
+        (511, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
+        (512, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (513, 'Playing', '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
+        (514, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
+        (515, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
+        (516, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
+        (517, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '0',     '0'),
+        (518, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
+        (519, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '0',     '0'),
+        (520, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
 
-    (830, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (831, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (832, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (833, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',           '0',    '@T'),
-    (834, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (835, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (836, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (837, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',          '@m',    '@T'),
-    (838, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (839, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (840, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (841, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',        '@N-1',    '@T'),
+        (530, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (531, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (532, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (533, 'Playing', '@N',    '0', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',          '0',    '@T'),
+        (534, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (535, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (536, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (537, 'Playing', '@N',   '@m', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',         '@m',    '@T'),
+        (538, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (539, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (540, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (541, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',       '@N-1',    '@T'),
 
-    (850, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (851, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (852, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (853, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',           '0',    '@T'),
-    (854, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (855, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (856, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (857, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',          '@m',    '@T'),
-    (858, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
-    (859, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
-    (860, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
-    (861, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',        '@N-1',    '@T'),
+        (550, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (551, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (552, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (553, 'Playing', '@N',    '0', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',          '0',    '@T'),
+        (554, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (555, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (556, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (557, 'Playing', '@N',   '@m', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',         '@m',    '@T'),
+        (558, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (559, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (560, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (561, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',       '@N-1',    '@T'),
 
-    (870, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',           '0',    '@T'),
-    (871, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (872, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (873, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (874, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',           '0',    '@T'),
-    (875, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',          '@m',    '@T'),
-    (876, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (877, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (878, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (879, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',          '@m',    '@T'),
-    (880, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',        '@N-1',    '@T'),
-    (881, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (882, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (883, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (884, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',        '@N-1',    '@T'),
+        (570, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',          '0',    '@T'),
+        (571, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (572, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (573, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (574, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',          '0',    '@T'),
+        (575, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',         '@m',    '@T'),
+        (576, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (577, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (578, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (579, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',         '@m',    '@T'),
+        (580, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',       '@N-1',    '@T'),
+        (581, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (582, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (583, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (584, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',       '@N-1',    '@T'),
 
-    (890, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',           '0',    '@T'),
-    (891, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (892, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (893, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (894, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',           '0',    '@T'),
-    (895, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',          '@m',    '@T'),
-    (896, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (897, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (898, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (899, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',          '@m',    '@T'),
-    (900, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',        '@N-1',    '@T'),
-    (901, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    (902, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    (903, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    (904, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',        '@N-1',    '@T'),
+        (590, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',          '0',    '@T'),
+        (591, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (592, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (593, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (594, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',          '0',    '@T'),
+        (595, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',         '@m',    '@T'),
+        (596, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (597, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (598, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (599, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',         '@m',    '@T'),
+        (600, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Playing',       '@N-1',    '@T'),
+        (601, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (602, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (603, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (604, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Playing',       '@N-1',    '@T'),
 
-    (910, 'Paused' , '@N',    '0', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
-    (911, 'Paused' , '@N',    '0', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (912, 'Paused' , '@N',   '@m', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
-    (913, 'Paused' , '@N',   '@m', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
-    (914, 'Paused' , '@N', '@N-1', '@T', 'off', 'Next'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
-    (915, 'Paused' , '@N', '@N-1', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
+        (610, 'Playing', '@N',    '0', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
+        (611, 'Playing', '@N',    '0', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',         '0',      '0'),
+        (612, 'Playing', '@N',   '@m', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
+        (613, 'Playing', '@N',   '@m', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
+        (614, 'Playing', '@N', '@N-1', '@T', 'off', 'Next'              ,        '',        '',   0, 'Stopped',         '0',      '0'),
+        (615, 'Playing', '@N', '@N-1', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
 
-    (920, 'Paused' , '@N',    '0', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
-    (921, 'Paused' , '@N',    '0', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
-    (922, 'Paused' , '@N',   '@m', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
-    (923, 'Paused' , '@N',   '@m', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
-    (924, 'Paused' , '@N', '@N-1', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '0',     '0'),
-    (925, 'Paused' , '@N', '@N-1', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0')
+        (620, 'Playing', '@N',    '0', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
+        (621, 'Playing', '@N',    '0', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
+        (622, 'Playing', '@N',   '@m', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
+        (623, 'Playing', '@N',   '@m', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
+        (624, 'Playing', '@N', '@N-1', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '0',     '0'),
+        (625, 'Playing', '@N', '@N-1', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
+
+
+        #   | Preconditions                       | Stimulus                                       | Outcome
+        # Id| State     PlLen  Track   Secs   Rpt | Action                MinVal     MaxVal    Err | State      Track         Secs
+        (700, 'Paused' , '@N',    '0', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',          '0',    '@T'),
+        (701, 'Paused' , '@N',   '@m', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',         '@m',    '@T'),
+        (702, 'Paused' , '@N', '@N-1', '@T', 'off', 'Play'              ,        '',        '',   0, 'Playing',       '@N-1',    '@T'),
+
+        (710, 'Paused' , '@N',    '0', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,          '0',    '@T'),
+        (711, 'Paused' , '@N',   '@m', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,         '@m',    '@T'),
+        (712, 'Paused' , '@N', '@N-1', '@T', 'off', 'Pause'             ,        '',        '',   0, 'Paused' ,       '@N-1',    '@T'),
+
+        (720, 'Paused' , '@N',    '0', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (721, 'Paused' , '@N',   '@m', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',         '@m',     '0'),
+        (722, 'Paused' , '@N', '@N-1', '@T', 'off', 'Stop'              ,        '',        '',   0, 'Stopped',       '@N-1',     '0'),
+
+        (730, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
+        (731, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
+        (732, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
+        (733, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (734, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
+        (735, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
+        (736, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
+        (737, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
+        (738, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
+        (739, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (740, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
+        (741, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
+        (742, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Stopped',          '0',     '0'),
+        (743, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
+        (744, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Stopped',          '0',     '0'),
+
+        (750, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',          '0',    '@y'),
+        (751, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',          '0',    '@y'),
+        (752, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '1',     '0'),
+        (753, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (754, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '1',     '0'),
+        (755, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',         '@m',    '@y'),
+        (756, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',         '@m',    '@y'),
+        (757, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',       '@m+1',     '0'),
+        (758, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',         '@m',     '0'),
+        (759, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (760, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@T',   '@D-10',   0, 'Playing',       '@N-1',    '@y'),
+        (761, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',      '@T',   0, 'Playing',       '@N-1',    '@y'),
+        (762, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',      '@D',      '@D',   0, 'Playing',          '0',     '0'),
+        (763, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
+        (764, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondAbsolute',    '@D+1',        '',   0, 'Playing',          '0',     '0'),
+
+        (770, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
+        (771, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
+        (772, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
+        (773, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
+        (774, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
+        (775, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
+        (776, 'Paused' , '@N',    '0', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
+        (777, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
+        (778, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
+        (779, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
+        (780, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
+        (781, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
+        (782, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (783, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
+        (784, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
+        (785, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
+        (786, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
+        (787, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Stopped',          '0',     '0'),
+        (788, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
+        (789, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Stopped',          '0',     '0'),
+        (790, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
+
+        (800, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',    '@T'),
+        (801, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',          '0', '@T+@y'),
+        (802, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',          '0', '@T+@y'),
+        (803, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '1',     '0'),
+        (804, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',          '0',     '0'),
+        (805, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '1',     '0'),
+        (806, 'Paused' , '@N',    '0', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',          '0',     '0'),
+        (807, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',    '@T'),
+        (808, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',         '@m', '@T+@y'),
+        (809, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',         '@m', '@T+@y'),
+        (810, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',       '@m+1',     '0'),
+        (811, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',         '@m',     '0'),
+        (812, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',       '@m+1',     '0'),
+        (813, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',         '@m',     '0'),
+        (814, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',    '@T'),
+        (815, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '','@D-@T-10',   0, 'Playing',       '@N-1', '@T+@y'),
+        (816, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '-@T+1',      '-1',   0, 'Playing',       '@N-1', '@T+@y'),
+        (817, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',   '@D-@T',   '@D-@T',   0, 'Playing',          '0',     '0'),
+        (818, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',     '-@T',     '-@T',   0, 'Playing',       '@N-1',     '0'),
+        (819, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative', '@D-@T+1',        '',   0, 'Playing',          '0',     '0'),
+        (820, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekSecondRelative',        '',   '-@T-1',   0, 'Playing',       '@N-1',     '0'),
+
+        (830, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (831, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (832, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (833, 'Paused' , '@N',    '0', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',           '0',    '@T'),
+        (834, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (835, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (836, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (837, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',          '@m',    '@T'),
+        (838, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (839, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (840, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (841, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',        '@N-1',    '@T'),
+
+        (850, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (851, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (852, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (853, 'Paused' , '@N',    '0', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',           '0',    '@T'),
+        (854, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (855, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (856, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (857, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',          '@m',    '@T'),
+        (858, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
+        (859, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
+        (860, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
+        (861, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',        '@N-1',    '@T'),
+
+        (870, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',           '0',    '@T'),
+        (871, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (872, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (873, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (874, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',           '0',    '@T'),
+        (875, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',          '@m',    '@T'),
+        (876, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (877, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (878, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (879, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',          '@m',    '@T'),
+        (880, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',        '@N-1',    '@T'),
+        (881, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (882, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (883, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (884, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',        '@N-1',    '@T'),
+
+        (890, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',           '0',    '@T'),
+        (891, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (892, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (893, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (894, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',           '0',    '@T'),
+        (895, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',          '@m',    '@T'),
+        (896, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (897, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (898, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (899, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',          '@m',    '@T'),
+        (900, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,       '1',    '@p-1', 800, 'Paused',        '@N-1',    '@T'),
+        (901, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+        (902, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+        (903, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+        (904, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 800, 'Paused',        '@N-1',    '@T'),
+
+        (910, 'Paused' , '@N',    '0', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
+        (911, 'Paused' , '@N',    '0', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (912, 'Paused' , '@N',   '@m', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
+        (913, 'Paused' , '@N',   '@m', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
+        (914, 'Paused' , '@N', '@N-1', '@T', 'off', 'Next'              ,        '',        '',   0, 'Stopped',          '0',     '0'),
+        (915, 'Paused' , '@N', '@N-1', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0'),
+
+        (920, 'Paused' , '@N',    '0', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
+        (921, 'Paused' , '@N',    '0', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-1',     '0'),
+        (922, 'Paused' , '@N',   '@m', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',       '@m+1',     '0'),
+        (923, 'Paused' , '@N',   '@m', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@m-1',     '0'),
+        (924, 'Paused' , '@N', '@N-1', '@T',  'on', 'Next'              ,        '',        '',   0, 'Playing',          '0',     '0'),
+        (925, 'Paused' , '@N', '@N-1', '@T',  'on', 'Previous'          ,        '',        '',   0, 'Playing',       '@N-2',     '0')
     ]
 
 
