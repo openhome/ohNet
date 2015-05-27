@@ -46,6 +46,7 @@ class TestConnectionManagerService( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
         self.mrName = None
         self.mrDev  = None
+        self.soft   = None
         self.upnpMr = None
         self.cm     = None
 
