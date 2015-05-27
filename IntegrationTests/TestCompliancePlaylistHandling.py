@@ -31,6 +31,10 @@ class TestCompliancePlaylistHandling( BASE.TestPlaylistHandling ):
         """Perform post-test cleanup"""
         BASE.TestPlaylistHandling.Cleanup( self )
 
+    def _CheckStaticData( self ):
+        """Check playlist 'static' info - N/A for compliance testing"""
+        pass
+
     configTable = \
     [
         #   | Preconditions                                  | Stimulus                         | Outcome
