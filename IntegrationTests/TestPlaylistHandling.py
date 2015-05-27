@@ -30,8 +30,26 @@ import sys
 import time
 import threading
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
+kAudioRoot    = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
+kTrackList    = os.path.join( kAudioRoot, 'TrackList.xml' )
+kTracksMax    = 1000
+kProtocolInfo = 'http-get:*:audio/x-flac:*,'    +\
+                'http-get:*:audio/wav:*,'       +\
+                'http-get:*:audio/wave:*,'      +\
+                'http-get:*:audio/x-wav:*,'     +\
+                'http-get:*:audio/aiff:*,'      +\
+                'http-get:*:audio/x-aiff:*,'    +\
+                'http-get:*:audio/x-m4a:*,'     +\
+                'http-get:*:audio/x-scpls:*,'   +\
+                'http-get:*:text/xml:*,'        +\
+                'http-get:*:audio/aac:*,'       +\
+                'http-get:*:audio/aacp:*,'      +\
+                'http-get:*:audio/mp4:*,'       +\
+                'http-get:*:audio/ogg:*,'       +\
+                'http-get:*:audio/x-ogg:*,'     +\
+                'http-get:*:application/ogg:*,' +\
+                'tidalhifi.com:*:*:*,'          +\
+                'qobuz.com:*:*:*'
 
 
 def Run( aArgs ):
@@ -484,6 +502,9 @@ class TestPlaylistHandling( BASE.BaseTest ):
         self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.product.sourceIndex = 0
 
+        # check 'static'data
+        self._CheckStaticData()
+
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
@@ -519,7 +540,16 @@ class TestPlaylistHandling( BASE.BaseTest ):
             self.server.Shutdown()
         if self.soft:
             self.soft.Shutdown()     
-        BASE.BaseTest.Cleanup( self )               
+        BASE.BaseTest.Cleanup( self )
+
+    def _CheckStaticData( self ):
+        """Check playlist 'static' info"""
+        tracksMax = self.dut.playlist.tracksMax
+        protoInfo = self.dut.playlist.protocolInfo
+        self.log.FailUnless( self.dutDev, tracksMax==kTracksMax,
+            'Playlist TracksMax Actual|Expected %d|%d' % (tracksMax, kTracksMax) )
+        self.log.FailUnless( self.dutDev, protoInfo==kProtocolInfo,
+            'Playlist ProtocolInfo Actual|Expected %s|%s' % (protoInfo, kProtocolInfo) )
 
     def _GetConfigs( self, aMode ):
         """Create and return list of test configurations (as filtered by aMode)"""
