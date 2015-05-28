@@ -1,4 +1,4 @@
-"""TestCompliancePlaylistHandling - test compliance of playlist controls
+"""TestCompliancePlaylist1 - test compliance of playlist controls
 
 Parameters:
     arg#1 - Player to test (UPnP friendly name)
@@ -9,7 +9,7 @@ import TestPlaylistHandling  as BASE
 import sys
 
 
-class TestCompliancePlaylistHandling( BASE.TestPlaylistHandling ):
+class TestCompliancePlaylist1( BASE.TestPlaylistHandling ):
     """Test Playlist service handling (insert/delete/seek) compliance"""
 
     def __init__( self ):

@@ -1,4 +1,4 @@
-"""TestCompliancePlaylistModes - test compliance of playlist service modes
+"""TestCompliancePlaylist2 - test compliance of playlist modes
 
 Parameters:
     arg#1 - Player to test (UPnP friendly name)
@@ -9,7 +9,7 @@ import TestPlaylistModes  as BASE
 import sys
 
 
-class TestCompliancePlaylistModes( BASE.TestPlaylistModes ):
+class TestCompliancePlaylist2( BASE.TestPlaylistModes ):
     """Test Playlist service modes (repeat/shuffle) compliance"""
 
     def __init__( self ):
@@ -41,11 +41,15 @@ class TestCompliancePlaylistModes( BASE.TestPlaylistModes ):
         #            @m: 1 <= track < last track
         #            -:  don't seek specific track, just Play()
         #
-        # Id    Setup  Track    Rpt   Shfl   Seek
-        ( 20, 'before', '@m', 'off', 'off', 'next' ),
-        ( 23, 'before', '@m', 'off',  'on', 'previous' ),
-        ( 24, 'before', '@m',  'on', 'off', 'next' ),
-        ( 27, 'before', '@m',  'on',  'on', 'previous' ),
+        # Where Shuffle is enabled, and seek is Previous, the outcome is
+        # implementation specific hence for compliance testing there are
+        # no testpoints with shuffle/previous
+        #
+        # Id   Setup  Track    Rpt   Shfl   Seek
+        ( 1, 'before', '@m', 'off', 'off', 'next' ),
+        ( 2, 'before', '@m', 'off', 'off', 'previous' ),
+        ( 3, 'before', '@m',  'on', 'off', 'next' ),
+        ( 4, 'before', '@m',  'on', 'off', 'previous' ),
     ]
 
 

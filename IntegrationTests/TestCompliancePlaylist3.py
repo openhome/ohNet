@@ -1,4 +1,4 @@
-"""TestCompliancePlaylistPlayback - test compliance of playlist playback
+"""TestCompliancePlaylist3 - test compliance of playlist playback
 
 Parameters:
     arg#1 - Player to test (UPnP friendly name)
@@ -9,7 +9,7 @@ import TestPlaylistPlayback as BASE
 import sys
 
 
-class TestCompliancePlaylistPlayback( BASE.TestPlaylistPlayback ):
+class TestCompliancePlaylist3( BASE.TestPlaylistPlayback ):
     """Test Playlist service stete-transitions"""
 
     def __init__( self ):
