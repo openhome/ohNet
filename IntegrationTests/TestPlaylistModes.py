@@ -147,10 +147,10 @@ class Config:
         def __init__( self, aId, aSeek, aPrecon ):
             """Initialise class data"""
             self.id        = aId
-            self.timer     = None
             self.seek      = aSeek
             self.precon    = aPrecon
             self.playorder = []
+            self.timer     = None
             
         def Invoke( self, aDut ):
             """Skip thru all tracks recording order until Stopped or listlen+2"""
@@ -168,14 +168,17 @@ class Config:
                         playing.clear()
                 if aSvName == 'Id':
                     self.precon.log.Debug( 'Id: %s' % aSvVal )
-                    th = LogThread.Thread( target=_UpdatePlayorder, args=[aSvVal] )
-                    th.start()
+                    # Add 'hysteresis' to track ID update (as can glitch at track
+                    # change, especially when using 'Previous' invokation)
+                    if self.timer:
+                        self.timer.cancel()
+                    self.timer = LogThread.Timer( 2, _UpdatePlayorder )
+                    self.timer.start()
 
-            def _UpdatePlayorder( *args ):
-                time.sleep( 2 )     # wait for transport state to 'settle'
+            def _UpdatePlayorder():
                 playing.wait( 3 )
                 if playing.isSet():
-                    self.playorder.append( int( args[0] ))
+                    self.playorder.append( aDut.playlist.id )
                     self.precon.log.Debug( 'List: %s' % str( self.playorder ))
                 orderEvt.set()
                     
