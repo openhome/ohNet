@@ -77,9 +77,9 @@ protected:
     Media::BwsMode iMode;
     TUint iStreamId;
     Mutex iMutexTransport;
+    IOhmTimestamper* iTimestamper;
 private:
     Media::TrackFactory& iTrackFactory;
-    IOhmTimestamper* iTimestamper;
     Brn iSupportedScheme;
     TUint iNacnId;
     Uri iUri; // only used inside Stream() but too large to put on the stack

@@ -8,6 +8,33 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+#if 0
+PriorityArbitratorDriver::PriorityArbitratorDriver(TUint aOpenHomeMax)
+    : iOpenHomeMax(aOpenHomeMax)
+{
+}
+
+TUint PriorityArbitratorDriver::Priority(const TChar* /*aId*/, TUint aRequested, TUint aHostMax)
+{
+    ASSERT(aRequested == iOpenHomeMax);
+    return aHostMax;
+}
+
+TUint PriorityArbitratorDriver::OpenHomeMin() const
+{
+    return iOpenHomeMax;
+}
+
+TUint PriorityArbitratorDriver::OpenHomeMax() const
+{
+    return iOpenHomeMax;
+}
+
+TUint PriorityArbitratorDriver::HostRange() const
+{
+    return 1;
+}
+#endif
 
 DriverBasic::DriverBasic(Environment& aEnv, IPipeline& aPipeline)
     : Thread("PipelineAnimator", kPrioritySystemHighest)

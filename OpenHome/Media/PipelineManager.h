@@ -26,7 +26,21 @@ namespace Codec {
 class Protocol;
 class ContentProcessor;
 class UriProvider;
-
+#if 0
+class PriorityArbitratorPipeline : public IPriorityArbitrator, private INonCopyable
+{
+    static const TUint kNumThreads = 4; // Filler, CodecController, Gorger, StarvationMonitor
+public:
+    PriorityArbitratorPipeline(TUint aOpenHomeMax);
+private: // from IPriorityArbitrator
+    TUint Priority(const TChar* aId, TUint aRequested, TUint aHostMax) override;
+    TUint OpenHomeMin() const override;
+    TUint OpenHomeMax() const override;
+    TUint HostRange() const override;
+private:
+    const TUint iOpenHomeMax;
+};
+#endif
 /**
  * External interface to the pipeline.
  */

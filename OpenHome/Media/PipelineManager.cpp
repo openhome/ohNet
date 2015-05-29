@@ -11,6 +11,34 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+#if 0
+// PriorityArbitratorPipeline
+
+PriorityArbitratorPipeline::PriorityArbitratorPipeline(TUint aOpenHomeMax)
+    : iOpenHomeMax(aOpenHomeMax)
+{
+}
+
+TUint PriorityArbitratorPipeline::Priority(const TChar* /*aId*/, TUint aRequested, TUint aHostMax)
+{
+    return aHostMax - (iOpenHomeMax - aRequested);
+}
+
+TUint PriorityArbitratorPipeline::OpenHomeMin() const
+{
+    return iOpenHomeMax - kNumThreads + 1;
+}
+
+TUint PriorityArbitratorPipeline::OpenHomeMax() const
+{
+    return iOpenHomeMax;
+}
+
+TUint PriorityArbitratorPipeline::HostRange() const
+{
+    return kNumThreads;
+}
+#endif
 
 // PipelineManager
 
