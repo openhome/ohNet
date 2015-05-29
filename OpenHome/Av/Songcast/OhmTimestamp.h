@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Network.h>
 
+EXCEPTION(OhmTimestampNotFound);
+
 namespace OpenHome {
     class Environment;
 namespace Av {
