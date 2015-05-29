@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
 """Test PlaylistModes - test different playback mades (repeat/shuffle) combos
                        on playlists, checking playback order etc.
 Parameters:
@@ -89,10 +88,6 @@ class Config:
             aDut.playlist.AddSubscriber( _EventCb )
             idEvent.clear()
             playingEvent.clear()
-            # if self.track != '-':
-            #     aDut.playlist.SeekIndex( self.track )
-            # else:
-            #     aDut.playlist.Play()
             if self.track=='-' or self.shuffle=='on': #####comment this #2587
                 aDut.playlist.Play()
             else:
@@ -172,11 +167,11 @@ class Config:
                     # change, especially when using 'Previous' invokation)
                     if self.timer:
                         self.timer.cancel()
-                    self.timer = LogThread.Timer( 2, _UpdatePlayorder )
-                    self.timer.start()
+                    if aSvVal != 0:     # 0 => DeleteAll
+                        self.timer = LogThread.Timer( 2, _UpdatePlayorder )
+                        self.timer.start()
 
             def _UpdatePlayorder():
-                playing.wait( 3 )
                 if playing.isSet():
                     self.playorder.append( aDut.playlist.id )
                     self.precon.log.Debug( 'List: %s' % str( self.playorder ))
@@ -189,7 +184,7 @@ class Config:
             for i in range( self.precon.plLen+2 ):
                 orderEvt.clear()
                 eval( stim )
-                orderEvt.wait( 8 )  # must be longer than total delays in  _UpdatePlayorder
+                orderEvt.wait( 5 )
                 if aDut.playlist.polledTransportState == 'Stopped':
                     self.precon.log.Pass( self.precon.dev, 'Playlist exhausted after <%s> action' % self.seek )
                     break
