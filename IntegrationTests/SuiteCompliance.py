@@ -6,6 +6,11 @@ Parameters:
 ohMediaPlayer compliant devices should pass the tests applicable to their
 supported services cleanly
 """
+
+# Missing:
+#   - Credentials - requires account with credentials provider
+#   - Radio       - requires non-device-specific way to setup TuneIn account
+
 import _FunctionalTest
 import BaseSuite as Suite
 import os
