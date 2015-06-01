@@ -18,6 +18,7 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/Raop/Raop.h>
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include "RamStore.h"
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Tests/VolumeUtils.h>
@@ -61,6 +62,7 @@ public:
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent);
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
+    void SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -109,6 +111,7 @@ private:
     Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
+    Av::IOhmTimestamper* iRxTimestamper;
 };
 
 class TestMediaPlayerOptions

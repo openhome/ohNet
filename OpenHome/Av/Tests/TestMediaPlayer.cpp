@@ -49,6 +49,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iUserAgent(aUserAgent)
     , iPullableClock(NULL)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
+    , iRxTimestamper(NULL)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -135,6 +136,11 @@ TestMediaPlayer::~TestMediaPlayer()
 void TestMediaPlayer::SetPullableClock(IPullableClock& aPullableClock)
 {
     iPullableClock = &aPullableClock;
+}
+
+void TestMediaPlayer::SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper)
+{
+    iRxTimestamper = &aTimestamper;
 }
 
 void TestMediaPlayer::StopPipeline()
@@ -309,7 +315,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iObservableFriendlyName.Replace(Brn(friendlyName));
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, NULL, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iRxTimestamper, kSongcastSenderIconFileName));
 }
 
 

@@ -78,11 +78,9 @@ class Config:
         state  = self.conf[10-2*aNum]
         dut    = self.duts[aNum-1]
         dutDev = dut.product.productRoom
-        self.log.Info( '' )
-        self.log.Info( dutDev, '[%d] Setting Up DUT #%d: Source %s, State %s' % \
+        self.log.Header2( dutDev, '[%d] Setting Up DUT #%d: Source %s, State %s' % \
                        (self.id, aNum, source, state) )
-        self.log.Info( '' )
-        
+
         if source=='' and state=='':
             self.log.Info( dutDev, 'Nothing to setup - ensure stopped' )
             dut.playlist.Stop()     # switche to playlist source and stops
@@ -120,8 +118,9 @@ class Config:
                 aDut.product.AddSubscriber( _ProductCb )
                 standbyFalse.clear() 
                 aDut.product.standby = False
-                standbyFalse.wait( 5 )
+                standbyFalse.wait( 20 )
                 aDut.product.RemoveSubscriber( _ProductCb )
+#                time.sleep( 1 )
 
     @staticmethod
     def __SetupPlaylist( aDut, aState ):
@@ -139,7 +138,7 @@ class Config:
                     transportPaused.set()
                 elif aSvVal == 'Stopped':
                     transportStopped.set()
-        
+
         aDut.playlist.AddSubscriber( _PlaylistCb )
         transportPlaying.clear()
         aDut.playlist.SeekId( random.choice( aDut.playlist.idArray ))
@@ -207,9 +206,7 @@ class Config:
         
     def CheckSenders( self, aDuts ):
         """Verify status of senders"""
-        self.log.Info( '' )
-        self.log.Info( '', '[%d] Checking senders status' % self.id )
-        self.log.Info( '' )
+        self.log.Header2( '', '[%d] Checking senders status' % self.id )
         if self.conf[11]:
             dut = aDuts[1]
             expStatus = self.conf[11]
@@ -239,9 +236,7 @@ class Config:
     
     def CheckReceivers( self, aDuts ):
         """Verify status of receivers"""
-        self.log.Info( '' )
-        self.log.Info( '', '[%d] Checking receivers status' % self.id )
-        self.log.Info( '' )
+        self.log.Header2( '', '[%d] Checking receivers status' % self.id )
         expUri  = ''
         expMeta = ''
 

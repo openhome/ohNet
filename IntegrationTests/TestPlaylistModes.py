@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
 """Test PlaylistModes - test different playback mades (repeat/shuffle) combos
                        on playlists, checking playback order etc.
 Parameters:
@@ -89,10 +88,6 @@ class Config:
             aDut.playlist.AddSubscriber( _EventCb )
             idEvent.clear()
             playingEvent.clear()
-            # if self.track != '-':
-            #     aDut.playlist.SeekIndex( self.track )
-            # else:
-            #     aDut.playlist.Play()
             if self.track=='-' or self.shuffle=='on': #####comment this #2587
                 aDut.playlist.Play()
             else:
@@ -147,10 +142,10 @@ class Config:
         def __init__( self, aId, aSeek, aPrecon ):
             """Initialise class data"""
             self.id        = aId
-            self.timer     = None
             self.seek      = aSeek
             self.precon    = aPrecon
             self.playorder = []
+            self.timer     = None
             
         def Invoke( self, aDut ):
             """Skip thru all tracks recording order until Stopped or listlen+2"""
@@ -168,14 +163,17 @@ class Config:
                         playing.clear()
                 if aSvName == 'Id':
                     self.precon.log.Debug( 'Id: %s' % aSvVal )
-                    th = LogThread.Thread( target=_UpdatePlayorder, args=[aSvVal] )
-                    th.start()
+                    # Add 'hysteresis' to track ID update (as can glitch at track
+                    # change, especially when using 'Previous' invokation)
+                    if self.timer:
+                        self.timer.cancel()
+                    if aSvVal != 0:     # 0 => DeleteAll
+                        self.timer = LogThread.Timer( 2, _UpdatePlayorder )
+                        self.timer.start()
 
-            def _UpdatePlayorder( *args ):
-                time.sleep( 2 )     # wait for transport state to 'settle'
-                playing.wait( 3 )
+            def _UpdatePlayorder():
                 if playing.isSet():
-                    self.playorder.append( int( args[0] ))
+                    self.playorder.append( aDut.playlist.id )
                     self.precon.log.Debug( 'List: %s' % str( self.playorder ))
                 orderEvt.set()
                     
@@ -186,7 +184,7 @@ class Config:
             for i in range( self.precon.plLen+2 ):
                 orderEvt.clear()
                 eval( stim )
-                orderEvt.wait( 8 )  # must be longer than total delays in  _UpdatePlayorder
+                orderEvt.wait( 5 )
                 if aDut.playlist.polledTransportState == 'Stopped':
                     self.precon.log.Pass( self.precon.dev, 'Playlist exhausted after <%s> action' % self.seek )
                     break
