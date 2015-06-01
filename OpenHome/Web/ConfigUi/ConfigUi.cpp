@@ -898,7 +898,7 @@ void ConfigAppBase::AddText(const OpenHome::Brx& aKey, JsonKvpVector& aAdditiona
     AddJson(*key, aAdditionalInfo);
 
     for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyText(aKey);
+        iTabs[i]->AddKeyText(*key);
     }
 }
 
