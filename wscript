@@ -238,7 +238,6 @@ def build(bld):
                 'OpenHome/Media/ClockPuller.cpp',
                 'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
-                'OpenHome/Media/VolumeManager.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
@@ -264,7 +263,6 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgInfo1.cpp',
                 'OpenHome/Av/ProviderInfo.cpp',
                 'Generated/DvAvOpenhomeOrgVolume1.cpp',
-                'OpenHome/Av/ConfigInitialiserVolume.cpp',
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
@@ -276,6 +274,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/ProviderCredentials.cpp',
                 'OpenHome/ObservableBrx.cpp',
+                'OpenHome/Av/VolumeManager.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON', 'ohPipeline'],
             target='ohMediaPlayer')
@@ -566,7 +565,6 @@ def build(bld):
             source=[
                 'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
-                'OpenHome/Media/Tests/VolumeUtils.cpp',
                 #'OpenHome/Media/Tests/PipelineUtils.cpp',  #FIXME - to be deleted if no longer used
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
@@ -602,7 +600,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestFiller.cpp',
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
-                'OpenHome/Media/Tests/TestVolumeManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Av/Tests/TestUdpServer.cpp',
@@ -807,11 +804,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMuteManager',
             install_path=None)
-    bld.program(
-            source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestVolumeManager',
-            install_path=None)
+    #bld.program(
+    #        source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+    #        target='TestVolumeManager',
+    #        install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

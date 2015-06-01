@@ -21,7 +21,6 @@ SIMPLE_TEST_DECLARATION(TestIdProvider);
 SIMPLE_TEST_DECLARATION(TestFiller);
 SIMPLE_TEST_DECLARATION(TestToneGenerator);
 SIMPLE_TEST_DECLARATION(TestMuteManager);
-SIMPLE_TEST_DECLARATION(TestVolumeManager);
 SIMPLE_TEST_DECLARATION(TestMsg);
 SIMPLE_TEST_DECLARATION(TestPipeline);
 SIMPLE_TEST_DECLARATION(TestPreDriver);
@@ -80,7 +79,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestFiller", ShellTestFiller));
     shellTests.push_back(ShellTest("TestToneGenerator", ShellTestToneGenerator));
     shellTests.push_back(ShellTest("TestMuteManager", ShellTestMuteManager));
-    shellTests.push_back(ShellTest("TestVolumeManager", ShellTestVolumeManager));
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
     shellTests.push_back(ShellTest("TestPowerManager", ShellTestPowerManager));

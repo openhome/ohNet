@@ -4,7 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MuteManager.h>
-#include <OpenHome/Media/VolumeManager.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 namespace OpenHome {
     class Environment;
@@ -43,7 +43,6 @@ namespace Net {
 }
 namespace Av {
 
-class ConfigInitialiserVolume;
 class IReadStore;
 class ISource;
 class IStaticDataSource;
@@ -85,8 +84,7 @@ public:
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
-                Media::IVolume& aVolumeLeft,
-                Media::IVolume& aVolumeRight,
+                const VolumeInitParams& aVolumeInitParams,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -119,20 +117,16 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
-    Media::VolumeLimitNull iVolumeLimit;
-    Media::VolumeBalanceStereo iVolumeBalanceStereo;
-    Media::VolumeProfile iVolumeProfile;
     Media::MuteNull iMute;
     Configuration::ConfigManager* iConfigManager;
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Av::Product* iProduct;
+    VolumeManager* iVolumeManager;
     Credentials* iCredentials;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
-    ConfigInitialiserVolume* iConfigInitVolume;
-    IProvider* iProviderVolume;
     Configuration::ProviderConfig* iProviderConfig;
     NetworkMonitor* iNetworkMonitor;
 };

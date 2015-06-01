@@ -41,7 +41,6 @@ tests = '''
     TestTrackDatabase
     TestToneGenerator
     TestMuteManager
-    TestVolumeManager
     TestRewinder
     TestContainer
     TestUdpServer

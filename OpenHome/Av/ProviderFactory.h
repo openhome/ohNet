@@ -10,10 +10,6 @@ namespace Configuration {
     class IConfigManager;
 }
 namespace Media {
-    class IVolumeProfile;
-    class IVolume;
-    class IVolumeLimit;
-    class IBalance;
     class IMute;
 }
 namespace Net {
@@ -22,6 +18,10 @@ namespace Net {
 }
 namespace Av {
     class Product;
+    class IVolumeManager;
+    class IVolume;
+    class IBalance;
+    class IFade;
 
 /**
  * DvProvider (the base class of all providers) does not have a publicly
@@ -44,14 +44,11 @@ public:
     static IProvider* NewConfiguration(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader);
     static IProvider* NewVolume(Product& aProduct,
                                 Net::DvDevice& aDevice,
-                                Configuration::IConfigInitialiser& aConfigInit,
                                 Configuration::IConfigManager& aConfigReader,
-                                IPowerManager& aPowerManager,
-                                const Media::IVolumeProfile& aVolumeProfile,
-                                Media::IVolume& aVolume,
-                                Media::IVolumeLimit& aVolumeLimit,
-                                Media::IBalance& aBalance,
-                                Media::IMute& aMute);
+                                IVolumeManager& aVolumeManager ,IVolume& aVolume,
+                                TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeStep, TUint aVolumeMilliDbPerStep,
+                                IBalance* aBalance, TUint aBalanceMax,
+                                IFade* aFade, TUint aFadeMax);
 };
 
 } // namespace Av

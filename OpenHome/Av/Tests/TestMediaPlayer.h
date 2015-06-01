@@ -21,7 +21,7 @@
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include "RamStore.h"
 #include <OpenHome/PowerManager.h>
-#include <OpenHome/Media/Tests/VolumeUtils.h>
+#include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Web/WebAppFramework.h>
 
 namespace OpenHome {
@@ -48,6 +48,16 @@ namespace Web {
 namespace Av {
     class RamStore;
 namespace Test {
+
+class VolumeSinkLogger : public IVolume, public IBalance, public IFade
+{
+private: // from IVolume
+    void SetVolume(TUint aVolume) override;
+private: // from IBalance
+    void SetBalance(TInt aBalance) override;
+private: // from IFade
+    void SetFade(TInt aFade) override;
+};
 
 class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, public Web::IWebAppFramework*/
 {
@@ -101,7 +111,7 @@ protected:
     Web::WebAppFramework* iAppFramework;
 private:
     Semaphore iDisabled;
-    Media::VolumePrinter iVolume;
+    VolumeInitParams iVolumeInitParams;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
     const Brx& iTuneInPartnerId;
@@ -112,6 +122,7 @@ private:
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
     Av::IOhmTimestamper* iRxTimestamper;
+    VolumeSinkLogger iVolumeLogger;
 };
 
 class TestMediaPlayerOptions

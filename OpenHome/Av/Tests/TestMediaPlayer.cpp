@@ -35,6 +35,24 @@ using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Web;
 
+// VolumeSinkLogger
+
+void VolumeSinkLogger::SetVolume(TUint aVolume)
+{
+    Log::Print("SetVolume: %u\n", aVolume);
+}
+
+void VolumeSinkLogger::SetBalance(TInt aBalance)
+{
+    Log::Print("SetBalance: %d\n", aBalance);
+}
+
+void VolumeSinkLogger::SetFade(TInt aFade)
+{
+    Log::Print("SetFade: %d\n", aFade);
+}
+
+
 // TestMediaPlayer
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
@@ -97,9 +115,13 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
+    iVolumeInitParams.SetVolume(iVolumeLogger, 100, 45, 80, 85, 1, 1024);
+    iVolumeInitParams.SetBalance(iVolumeLogger, 12);
+    iVolumeInitParams.SetFade(iVolumeLogger, 10);
+
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   iVolumeInitParams, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

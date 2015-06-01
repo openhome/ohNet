@@ -3,7 +3,7 @@
 
 #include <Generated/DvAvOpenhomeOrgVolume1.h>
 #include <OpenHome/Av/ProviderFactory.h>
-
+#include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Private/Thread.h>
@@ -13,10 +13,6 @@ EXCEPTION(InvalidVolumeLimit);
 namespace OpenHome {
 
 namespace Media {
-    class IVolumeProfile;
-    class IVolume;
-    class IVolumeLimit;
-    class IBalance;
     class IMute;
 }
 namespace Net {
@@ -25,30 +21,27 @@ namespace Net {
 
 namespace Av {
 
-class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider
+class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider, private IVolumeObserver
 {
 private:
     static const Brn kPowerDownVolume;
     static const Brn kPowerDownMute;
 public:
     ProviderVolume(Net::DvDevice& aDevice,
-                   Configuration::IConfigInitialiser& aConfigInit, // FIXME - remove this and pass in an IStoreReadWrite instead?
                    Configuration::IConfigManager& aConfigReader,
-                   IPowerManager& aPowerManager,
-                   const Media::IVolumeProfile& aVolumeProfile,
-                   Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit,
-                   Media::IBalance& aBalance, Media::IMute& aMute);
+                   IVolumeManager& aVolumeManager, IVolume& aVolume,
+                   TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeStep, TUint aVolumeMilliDbPerStep,
+                   IBalance* aBalance, TUint aBalanceMax,
+                   IFade* aFade, TUint aFadeMax);
     ~ProviderVolume();
-    void SetVolumeLimit(TUint aVolumeLimit);  // alternative method of setting volume limit, instead of directly via ConfigVal
 private: // from DvProviderAvOpenhomeOrgVolume1
     void Characteristics(Net::IDvInvocation& aInvocation
-                       , Net::IDvInvocationResponseUint& aVolumeMax
-                       , Net::IDvInvocationResponseUint& aVolumeUnity
-                       , Net::IDvInvocationResponseUint& aVolumeSteps
-                       , Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep
-                       , Net::IDvInvocationResponseUint& aBalanceMax
-                       , Net::IDvInvocationResponseUint& aFadeMax
-    ) override;
+                        ,Net::IDvInvocationResponseUint& aVolumeMax
+                        ,Net::IDvInvocationResponseUint& aVolumeUnity
+                        ,Net::IDvInvocationResponseUint& aVolumeSteps
+                        ,Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep
+                        ,Net::IDvInvocationResponseUint& aBalanceMax
+                        ,Net::IDvInvocationResponseUint& aFadeMax) override;
 
     void SetVolume(Net::IDvInvocation& aInvocation, TUint aValue) override;
     void VolumeInc(Net::IDvInvocation& aInvocation) override;
@@ -69,33 +62,27 @@ private: // from DvProviderAvOpenhomeOrgVolume1
     void Mute(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
 
     void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+private: // from IVolumeObserver
+    void VolumeChanged(TUint aVolume) override;
 private:
-    void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolumeCurrent, TUint aVolumeNew);
+    void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolume);
     void HelperSetBalance(Net::IDvInvocation& aInvocation, TInt aBalance);
-    void ConfigBalanceChanged(Configuration::ConfigNum::KvpNum& aKvp);
-    void ConfigVolumeLimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
-    void ConfigVolumeStartupChanged(Configuration::ConfigNum::KvpNum& aKvp);
-    void ConfigVolumeStartupEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
+    void HelperSetFade(Net::IDvInvocation& aInvocation, TInt aFade);
+    void VolumeLimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
+    void BalanceChanged(Configuration::ConfigNum::KvpNum& aKvp);
+    void FadeChanged(Configuration::ConfigNum::KvpNum& aKvp);
 private:
-    const Media::IVolumeProfile& iVolumeProfile;
-    Media::IVolume& iVolumeSetter;
-    Media::IVolumeLimit& iVolumeLimitSetter;
-    Media::IBalance& iBalanceSetter; // balance set via volume and configuration services
-    Media::IMute& iMuteSetter;
-
-    Configuration::ConfigNum* iConfigBalance;
-    Configuration::ConfigNum* iConfigVolumeLimit;
-
-    TUint iListenerIdBalance;
-    TUint iListenerIdVolumeLimit;
-
-    TUint iVolumeStartup;
-    TUint iVolumeStartupEnabled;
-
-    StoreInt iPowerDownVolume;
-    StoreInt iPowerDownMute;    // 0 = false; 1 = true
-
     Mutex iLock;
+    IVolume& iVolume;
+    IBalance* iBalance;
+    IFade* iFade;
+    //Media::IMute& iMuteSetter;
+    Configuration::ConfigNum* iConfigVolumeLimit;
+    Configuration::ConfigNum* iConfigBalance;
+    Configuration::ConfigNum* iConfigFade;
+    TUint iSubscriberIdVolumeLimit;
+    TUint iSubscriberIdBalance;
+    TUint iSubscriberIdFade;
 };
 
 } // namespace Av
