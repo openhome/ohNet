@@ -3,7 +3,7 @@
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
-#include <OpenHome/exception.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Configuration/ConfigManager.h>
