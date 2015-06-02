@@ -55,6 +55,46 @@ void VolumeInitParams::SetFade(IFade& aFade, TUint aFadeMax)
     iFadeMax = aFadeMax;
 }
 
+TUint VolumeInitParams::VolumeMax()
+{
+    return iVolumeMax;
+}
+
+TUint VolumeInitParams::VolumeDefault()
+{
+    return iVolumeDefault;
+}
+
+TUint VolumeInitParams::VolumeUnity()
+{
+    return iVolumeUnity;
+}
+
+TUint VolumeInitParams::VolumeDefaultLimit()
+{
+    return iVolumeDefaultLimit;
+}
+
+TUint VolumeInitParams::VolumeStep()
+{
+    return iVolumeStep;
+}
+
+TUint VolumeInitParams::VolumeMilliDbPerStep()
+{
+    return iVolumeMilliDbPerStep;
+}
+
+TUint VolumeInitParams::BalanceMax()
+{
+    return iBalanceMax;
+}
+
+TUint VolumeInitParams::FadeMax()
+{
+    return iFadeMax;
+}
+
 
 // VolumeUser
 
@@ -337,6 +377,7 @@ void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit,
                              IPowerManager& aPowerManager, Net::DvDevice& aDevice, Product& aProduct,
                              Configuration::IConfigManager& aConfigReader)
+    : iInitParams(aInitParams)
 {
     if (aInitParams.iBalance == NULL) {
         iBalanceUser = NULL;
@@ -367,11 +408,7 @@ VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrit
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, aConfigInit, aInitParams.iVolumeDefaultLimit, aInitParams.iVolumeMax);
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aStore, aConfigInit, aPowerManager, aInitParams.iVolumeMax, aInitParams.iVolumeDefault);
         // FIXME - missing a store item saying whether we were muted on last power down (used to be in ProviderVolume)
-        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, *this,
-                                             aInitParams.iVolumeMax, aInitParams.iVolumeUnity,
-                                             aInitParams.iVolumeStep, aInitParams.iVolumeMilliDbPerStep,
-                                             this, aInitParams.iBalanceMax,
-                                             this, aInitParams.iFadeMax);
+        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
         aProduct.AddAttribute("Volume");
     }
 }
@@ -411,6 +448,46 @@ void VolumeManager::SetUnityGain(TBool aEnable)
     if (iVolumeSourceUnityGain != NULL) {
         iVolumeSourceUnityGain->SetUnityGain(aEnable);
     }
+}
+
+TUint VolumeManager::VolumeMax()
+{
+    return iInitParams.iVolumeMax;
+}
+
+TUint VolumeManager::VolumeDefault()
+{
+    return iInitParams.iVolumeDefault;
+}
+
+TUint VolumeManager::VolumeUnity()
+{
+    return iInitParams.iVolumeUnity;
+}
+
+TUint VolumeManager::VolumeDefaultLimit()
+{
+    return iInitParams.iVolumeDefaultLimit;
+}
+
+TUint VolumeManager::VolumeStep()
+{
+    return iInitParams.iVolumeStep;
+}
+
+TUint VolumeManager::VolumeMilliDbPerStep()
+{
+    return iInitParams.iVolumeMilliDbPerStep;
+}
+
+TUint VolumeManager::BalanceMax()
+{
+    return iInitParams.iBalanceMax;
+}
+
+TUint VolumeManager::FadeMax()
+{
+    return iInitParams.iFadeMax;
 }
 
 void VolumeManager::SetVolume(TUint aValue)

@@ -13,20 +13,11 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-IProvider* ProviderFactory::NewVolume(Product& aProduct,
-                                      Net::DvDevice& aDevice,
-                                      Configuration::IConfigManager& aConfigReader,
-                                      IVolumeManager& aVolumeManager ,IVolume& aVolume,
-                                      TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeStep, TUint aVolumeMilliDbPerStep,
-                                      IBalance* aBalance, TUint aBalanceMax,
-                                      IFade* aFade, TUint aFadeMax)
+IProvider* ProviderFactory::NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader,
+                                      IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade)
 { // static
     aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigReader,
-                              aVolumeManager, aVolume,
-                              aVolumeMax, aVolumeUnity, aVolumeStep, aVolumeMilliDbPerStep,
-                              aBalance, aBalanceMax,
-                              aFade, aFadeMax);
+    return new ProviderVolume(aDevice, aConfigReader, aVolumeManager, aBalance, aFade);
 }
 
 
@@ -44,15 +35,11 @@ const TInt kInvalidFadeCode = 813;
 const Brn  kInvalidFadeMsg("Fade invalid");
 
 
-ProviderVolume::ProviderVolume(DvDevice& aDevice,
-                               IConfigManager& aConfigReader,
-                               IVolumeManager& aVolumeManager ,IVolume& aVolume,
-                               TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeStep, TUint aVolumeMilliDbPerStep,
-                               IBalance* aBalance, TUint aBalanceMax,
-                               IFade* aFade, TUint aFadeMax)
+ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
+                               IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
     , iLock("PVOL")
-    , iVolume(aVolume)
+    , iVolume(aVolumeManager)
     , iBalance(aBalance)
     , iFade(aFade)
 {
@@ -107,12 +94,12 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
     }
 
     SetPropertyMute(false); // FIXME
-    SetPropertyVolumeMax(aVolumeMax);
-    SetPropertyVolumeUnity(aVolumeUnity);
-    SetPropertyVolumeSteps(aVolumeStep);
-    SetPropertyVolumeMilliDbPerStep(aVolumeMilliDbPerStep);
-    SetPropertyBalanceMax(aBalanceMax);
-    SetPropertyFadeMax(aFadeMax);
+    SetPropertyVolumeMax(aVolumeManager.VolumeMax());
+    SetPropertyVolumeUnity(aVolumeManager.VolumeUnity());
+    SetPropertyVolumeSteps(aVolumeManager.VolumeStep());
+    SetPropertyVolumeMilliDbPerStep(aVolumeManager.VolumeMilliDbPerStep());
+    SetPropertyBalanceMax(aVolumeManager.BalanceMax());
+    SetPropertyFadeMax(aVolumeManager.FadeMax());
 }
 
 ProviderVolume::~ProviderVolume()

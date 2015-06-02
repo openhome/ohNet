@@ -27,12 +27,8 @@ private:
     static const Brn kPowerDownVolume;
     static const Brn kPowerDownMute;
 public:
-    ProviderVolume(Net::DvDevice& aDevice,
-                   Configuration::IConfigManager& aConfigReader,
-                   IVolumeManager& aVolumeManager, IVolume& aVolume,
-                   TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeStep, TUint aVolumeMilliDbPerStep,
-                   IBalance* aBalance, TUint aBalanceMax,
-                   IFade* aFade, TUint aFadeMax);
+    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader,
+                   IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade);
     ~ProviderVolume();
 private: // from DvProviderAvOpenhomeOrgVolume1
     void Characteristics(Net::IDvInvocation& aInvocation

@@ -4,7 +4,6 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MuteManager.h>
-#include <OpenHome/Av/VolumeManager.h>
 
 namespace OpenHome {
     class Environment;
@@ -19,8 +18,6 @@ namespace Media {
     class PipelineInitParams;
     class IPipelineAnimator;
     class IMuteManager;
-    class IVolume;  // XXX dummy volume hardware
-    class IVolumeManagerLimits;
     class UriProvider;
     class Protocol;
     namespace Codec {
@@ -55,6 +52,9 @@ class ProviderVolume;
 class KvpStore;
 class NetworkMonitor;
 class Credentials;
+class VolumeManager;
+class IVolumeManager;
+class VolumeInitParams;
 
 class IMediaPlayer
 {
@@ -71,6 +71,7 @@ public:
     virtual Configuration::IConfigInitialiser& ConfigInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual Av::Product& Product() = 0;
+    virtual IVolumeManager& VolumeManager() = 0;
     virtual Credentials& CredentialsManager() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
@@ -106,6 +107,7 @@ public: // from IMediaPlayer
     Configuration::IConfigInitialiser& ConfigInitialiser() override;
     IPowerManager& PowerManager() override;
     Av::Product& Product() override;
+    OpenHome::Av::IVolumeManager& VolumeManager() override;
     Credentials& CredentialsManager() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
@@ -123,7 +125,7 @@ private:
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Av::Product* iProduct;
-    VolumeManager* iVolumeManager;
+    Av::VolumeManager* iVolumeManager;
     Credentials* iCredentials;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;

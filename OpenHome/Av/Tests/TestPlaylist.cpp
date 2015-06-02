@@ -20,6 +20,7 @@
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 #include <array>
 #include <limits.h>

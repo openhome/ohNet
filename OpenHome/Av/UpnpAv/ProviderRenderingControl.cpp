@@ -3,7 +3,10 @@
 #include <OpenHome/Buffer.h>
 #include <Generated/DvUpnpOrgRenderingControl1.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/FaultCode.h>
+#include <OpenHome/Net/Core/DvInvocationResponse.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -19,13 +22,23 @@ static const TInt kInvalidChannelCode = 402;
 static const Brn kInvalidChannelMsg("Argument[Channel] contains a value that is not in the AllowedValueList");
 static const TUint kInvalidPresetNameCode = 701;
 static const Brn KInvalidPresetNameMsg("Argument[PresetName] is invalid");
+static const TInt kInvalidVolumeCode = 811;
+static const Brn  kInvalidVolumeMsg("Volume invalid");
 
 const Brn ProviderRenderingControl::kChannelMaster("Master");
 const Brn ProviderRenderingControl::kPresetNameFactoryDefaults("FactoryDefaults");
 
-ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice)
+ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice, Environment& aEnv, IVolumeManager& aVolumeManager)
     : DvProviderUpnpOrgRenderingControl1(aDevice)
+    , iLock("PVRC")
+    , iModerationTimerStarted(false)
+    , iVolume(aVolumeManager)
+    , iVolumeCurrent(0)
+    , iVolumeMax(aVolumeManager.VolumeMax())
+    , iVolumeUnity(aVolumeManager.VolumeUnity())
 {
+    iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderRenderingControl::ModerationTimerExpired), "ProviderRenderingControl");
+
     EnablePropertyLastChange();
 
     EnableActionListPresets();
@@ -38,11 +51,15 @@ ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice)
     EnableActionSetVolumeDB();
     EnableActionGetVolumeDBRange();
 
-    UpdateLastChange();
+    UpdateVolumeDb();
+    UpdateLastChange(); // ensure iLastChange is set before aDevice could be enabled
+
+    aVolumeManager.AddObserver(*this);
 }
 
 ProviderRenderingControl::~ProviderRenderingControl()
 {
+    delete iModerationTimer;
 }
 
 void ProviderRenderingControl::ListPresets(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentPresetNameList)
@@ -94,7 +111,7 @@ void ProviderRenderingControl::SetMute(IDvInvocation& aInvocation, TUint aInstan
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::GetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseUint& /*aCurrentVolume*/)
+void ProviderRenderingControl::GetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseUint& aCurrentVolume)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -103,11 +120,14 @@ void ProviderRenderingControl::GetVolume(IDvInvocation& aInvocation, TUint aInst
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
+    {
+        AutoMutex _(iLock);
+        aCurrentVolume.Write(iVolumeCurrent);
+    }
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TUint /*aDesiredVolume*/)
+void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TUint aDesiredVolume)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -116,11 +136,11 @@ void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInst
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
+    iVolume.SetVolume(aDesiredVolume);
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::GetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& /*aCurrentVolume*/)
+void ProviderRenderingControl::GetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aCurrentVolume)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -129,11 +149,14 @@ void ProviderRenderingControl::GetVolumeDB(IDvInvocation& aInvocation, TUint aIn
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
+    {
+        AutoMutex _(iLock);
+        aCurrentVolume.Write(iVolumeDb);
+    }
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::SetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt /*aDesiredVolume*/)
+void ProviderRenderingControl::SetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -141,12 +164,19 @@ void ProviderRenderingControl::SetVolumeDB(IDvInvocation& aInvocation, TUint aIn
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    // aDesiredVolume gives deviation from unity in units of 1/256 db
+    const TUint vol = iVolumeUnity + (aDesiredVolume / 256);
+    try {
+        iVolume.SetVolume(vol);
+    }
+    catch (VolumeOutOfRange&) {
+        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+    }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& /*aMinValue*/, IDvInvocationResponseInt& /*aMaxValue*/)
+void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aMinValue, IDvInvocationResponseInt& aMaxValue)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -155,8 +185,37 @@ void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUin
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
+    TInt min = -1 * (TInt)iVolumeUnity;
+    min *= 256;
+    const TInt max = (iVolumeMax - iVolumeUnity) * 256;
+    aMinValue.Write(min);
+    aMaxValue.Write(max);
     aInvocation.EndResponse();
+}
+
+void ProviderRenderingControl::VolumeChanged(TUint aVolume)
+{
+    AutoMutex _(iLock);
+    iVolumeCurrent = aVolume;
+    UpdateVolumeDb();
+    if (!iModerationTimerStarted) {
+        iModerationTimer->FireIn(kEventModerationMs);
+        iModerationTimerStarted = true;
+    }
+}
+
+void ProviderRenderingControl::UpdateVolumeDb()
+{
+    iVolumeDb = iVolumeCurrent - iVolumeUnity;
+    iVolumeDb *= 256;
+}
+
+void ProviderRenderingControl::ModerationTimerExpired()
+{
+    iLock.Wait();
+    iModerationTimerStarted = false;
+    UpdateLastChange();
+    iLock.Signal();
 }
 
 void ProviderRenderingControl::UpdateLastChange()
@@ -183,16 +242,23 @@ void ProviderRenderingControl::UpdateLastChange()
     iLastChange.Append("        <Volume channel= \"");
     iLastChange.Append(kChannelMaster);
     iLastChange.Append("\" val=\"");
-    iLastChange.Append("50"); // FIXME - Volume not implemented
+    AppendUint(iVolumeCurrent);
     iLastChange.Append("\"/>\n");
 
     // VolumeDB
     iLastChange.Append("        <VolumeDB val=\"");
-    iLastChange.Append("0"); // FIXME - VolumeDB not implemented
+    AppendUint(iVolumeDb);
     iLastChange.Append("\"/>\n");
 
     // End
     iLastChange.Append("    </InstanceID>\n</Event>\n");
 
     (void)SetPropertyLastChange(iLastChange);
+}
+
+void ProviderRenderingControl::AppendUint(TUint aValue)
+{
+    Bws<Ascii::kMaxUintStringBytes> uintBuf;
+    (void)Ascii::AppendDec(uintBuf, aValue);
+    iLastChange.Append(uintBuf);
 }

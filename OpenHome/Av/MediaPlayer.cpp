@@ -176,6 +176,12 @@ Product& MediaPlayer::Product()
     return *iProduct;
 }
 
+IVolumeManager& MediaPlayer::VolumeManager()
+{
+    ASSERT(iVolumeManager != NULL);
+    return *iVolumeManager;
+}
+
 Credentials& MediaPlayer::CredentialsManager()
 {
     ASSERT(iCredentials != NULL);

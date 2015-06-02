@@ -6,18 +6,20 @@
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvUpnpOrgRenderingControl1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 namespace OpenHome {
 using namespace Net;
 namespace Av {
 
-class ProviderRenderingControl : public DvProviderUpnpOrgRenderingControl1
+class ProviderRenderingControl : public DvProviderUpnpOrgRenderingControl1, private IVolumeObserver
 {
 public:
     static const Brn kChannelMaster;
     static const Brn kPresetNameFactoryDefaults;
+    static const TUint kEventModerationMs = 200;
 public:
-    ProviderRenderingControl(Net::DvDevice& aDevice);
+    ProviderRenderingControl(Net::DvDevice& aDevice, Environment& aEnv, IVolumeManager& aVolumeManager);
     ~ProviderRenderingControl();
 private: // from DvProviderUpnpOrgRenderingControl1
     void ListPresets(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentPresetNameList) override;
@@ -29,10 +31,23 @@ private: // from DvProviderUpnpOrgRenderingControl1
     void GetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aCurrentVolume) override;
     void SetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume) override;
     void GetVolumeDBRange(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aMinValue, IDvInvocationResponseInt& aMaxValue) override;
+private: // from IVolumeObserver
+    void VolumeChanged(TUint aVolume) override;
 private:
+    void UpdateVolumeDb();
+    void ModerationTimerExpired();
     void UpdateLastChange();
+    void AppendUint(TUint aValue);
 private:
+    Mutex iLock;
+    Timer* iModerationTimer;
+    TBool iModerationTimerStarted;
     Bws<1024> iLastChange;
+    IVolume& iVolume;
+    TUint iVolumeCurrent;
+    TInt iVolumeDb; // deviation from iVolumeUnity.  256 units per 1 volume unit.
+    const TUint iVolumeMax;
+    const TUint iVolumeUnity;
 };
 
 } // namespace Av

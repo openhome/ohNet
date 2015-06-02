@@ -24,19 +24,19 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
     UriProviderRepeater* uriProvider = new UriProviderRepeater("UpnpAv", aMediaPlayer.TrackFactory());
     aMediaPlayer.Pipeline().AddObserver(*uriProvider);
     aMediaPlayer.Add(uriProvider);
-    return new SourceUpnpAv(aMediaPlayer.Env(), aDevice, aMediaPlayer.Pipeline(), *uriProvider, aSupportedProtocols);
+    return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, aSupportedProtocols);
 }
 
 // UpnpAv
 
 const TChar* SourceUpnpAv::kSourceName("UPnP AV");
 
-SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols)
+SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols)
     : Source(kSourceName, "UpnpAv")
     , iLock("UPA1")
     , iActivationLock("UPA2")
     , iDevice(aDevice)
-    , iPipeline(aPipeline)
+    , iPipeline(aMediaPlayer.Pipeline())
     , iUriProvider(aUriProvider)
     , iTrack(NULL)
     , iStreamId(UINT_MAX)
@@ -44,10 +44,10 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iPipelineTransportState(Media::EPipelineStopped)
     , iNoPipelinePrefetchOnActivation(false)
 {
-    iProviderAvTransport = new ProviderAvTransport(iDevice, aEnv, *this);
+    iProviderAvTransport = new ProviderAvTransport(iDevice, aMediaPlayer.Env(), *this);
     iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
-    iProviderRenderingControl = new ProviderRenderingControl(iDevice);
-    aPipeline.AddObserver(*this);
+    iProviderRenderingControl = new ProviderRenderingControl(iDevice, aMediaPlayer.Env(), aMediaPlayer.VolumeManager());
+    iPipeline.AddObserver(*this);
     iDownstreamObserver = iProviderAvTransport;
 }
 

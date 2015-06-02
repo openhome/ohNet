@@ -17,6 +17,7 @@
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,6 +60,23 @@ private:
     void Output(const TChar* aKey, const TChar* aValue);
 };
 
+
+class DummyVolumeManager : public IVolumeManager
+{
+private: // from IVolumeManager
+    void AddObserver(IVolumeObserver& aObserver) override;
+private: // from IVolumeProfile
+    TUint VolumeMax() override;
+    TUint VolumeDefault() override;
+    TUint VolumeUnity() override;
+    TUint VolumeDefaultLimit() override;
+    TUint VolumeStep() override;
+    TUint VolumeMilliDbPerStep() override;
+    TUint BalanceMax() override;
+    TUint FadeMax() override;
+private: // from IVolume
+    void SetVolume(TUint aValue) override;
+};
     
 class DummySourceUpnpAv : public ISourceUpnpAv
 {
@@ -78,6 +96,7 @@ private:
     ProviderAvTransport* iProviderAvTransport;
     ProviderConnectionManager* iProviderConnectionManager;
     ProviderRenderingControl* iProviderRenderingControl;
+    DummyVolumeManager iVolumeManager;
 };
 
 class CpDevices : private INonCopyable
@@ -164,6 +183,20 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 }
 
 
+// DummyVolumeManager
+
+void DummyVolumeManager::AddObserver(IVolumeObserver& /*aObserver*/) {}
+TUint DummyVolumeManager::VolumeMax()                                { return 10; }
+TUint DummyVolumeManager::VolumeDefault()                            { return 4; }
+TUint DummyVolumeManager::VolumeUnity()                              { return 8; }
+TUint DummyVolumeManager::VolumeDefaultLimit()                       { return 9; }
+TUint DummyVolumeManager::VolumeStep()                               { return 1; }
+TUint DummyVolumeManager::VolumeMilliDbPerStep()                     { return 1024; }
+TUint DummyVolumeManager::BalanceMax()                               { return 5; }
+TUint DummyVolumeManager::FadeMax()                                  { return 4; }
+void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
+
+
 // DummySourceUpnpAv
 
 DummySourceUpnpAv::DummySourceUpnpAv(DvStack& aDvStack, const Brx& aUdn)
@@ -180,7 +213,7 @@ DummySourceUpnpAv::DummySourceUpnpAv(DvStack& aDvStack, const Brx& aUdn)
 
     iProviderAvTransport = new ProviderAvTransport(*iDevice, aDvStack.Env(), *this);
     iProviderConnectionManager = new ProviderConnectionManager(*iDevice, Brn("*"));
-    iProviderRenderingControl = new ProviderRenderingControl(*iDevice);
+    iProviderRenderingControl = new ProviderRenderingControl(*iDevice, aDvStack.Env(), iVolumeManager);
 
     iDevice->SetEnabled();
 }

@@ -75,7 +75,21 @@ public:
     virtual ~IFade() {}
 };
 
-class VolumeInitParams
+class IVolumeProfile
+{
+public:
+    virtual TUint VolumeMax() = 0;
+    virtual TUint VolumeDefault() = 0;
+    virtual TUint VolumeUnity() = 0;
+    virtual TUint VolumeDefaultLimit() = 0;
+    virtual TUint VolumeStep() = 0;
+    virtual TUint VolumeMilliDbPerStep() = 0;
+    virtual TUint BalanceMax() = 0;
+    virtual TUint FadeMax() = 0;
+    virtual ~IVolumeProfile() {}
+};
+
+class VolumeInitParams : public IVolumeProfile
 {
     friend class VolumeManager;
 public:
@@ -83,6 +97,15 @@ public:
     void SetVolume(IVolume& aVolume, TUint aVolumeMax, TUint aVolumeDefault, TUint aVolumeUnity, TUint aDefaultLimit, TUint aVolumeStep, TUint aVolumeMilliDbPerStep);
     void SetBalance(IBalance& aBalance, TUint aBalanceMax);
     void SetFade(IFade& aFade, TUint aFadeMax);
+public: // from IVolumeProfile
+    TUint VolumeMax() override;
+    TUint VolumeDefault() override;
+    TUint VolumeUnity() override;
+    TUint VolumeDefaultLimit() override;
+    TUint VolumeStep() override;
+    TUint VolumeMilliDbPerStep() override;
+    TUint BalanceMax() override;
+    TUint FadeMax() override;
 private:
     IVolume* iVolume;
     TUint iVolumeMax;
@@ -270,7 +293,7 @@ private:
     TUint iSubscriberIdFade;
 };
 
-class IVolumeManager
+class IVolumeManager : public IVolume, public IVolumeProfile
 {
 public:
     virtual void AddObserver(IVolumeObserver& aObserver) = 0;
@@ -280,9 +303,9 @@ public:
 class VolumeManager : public IVolumeManager
                     , public IVolumeSourceOffset
                     , public IVolumeSourceUnityGain
-                    , private IVolume
                     , private IBalance
                     , private IFade
+                    , private INonCopyable
 {
 public:
     VolumeManager(const VolumeInitParams& aInitParams,
@@ -299,6 +322,15 @@ public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
+private: // from IVolumeProfile
+    TUint VolumeMax() override;
+    TUint VolumeDefault() override;
+    TUint VolumeUnity() override;
+    TUint VolumeDefaultLimit() override;
+    TUint VolumeStep() override;
+    TUint VolumeMilliDbPerStep() override;
+    TUint BalanceMax() override;
+    TUint FadeMax() override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
 private: // from IBalance
@@ -306,6 +338,7 @@ private: // from IBalance
 private: // from IFade
     void SetFade(TInt aFade) override;
 private:
+    const VolumeInitParams iInitParams;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;
     VolumeUnityGain* iVolumeUnityGain;
     VolumeSourceOffset* iVolumeSourceOffset;

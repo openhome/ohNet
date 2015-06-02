@@ -42,13 +42,8 @@ class ProviderFactory
 {
 public:
     static IProvider* NewConfiguration(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader);
-    static IProvider* NewVolume(Product& aProduct,
-                                Net::DvDevice& aDevice,
-                                Configuration::IConfigManager& aConfigReader,
-                                IVolumeManager& aVolumeManager ,IVolume& aVolume,
-                                TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeStep, TUint aVolumeMilliDbPerStep,
-                                IBalance* aBalance, TUint aBalanceMax,
-                                IFade* aFade, TUint aFadeMax);
+    static IProvider* NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader,
+                                IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade);
 };
 
 } // namespace Av
