@@ -242,12 +242,12 @@ void ProviderRenderingControl::UpdateLastChange()
     iLastChange.Append("        <Volume channel= \"");
     iLastChange.Append(kChannelMaster);
     iLastChange.Append("\" val=\"");
-    AppendUint(iVolumeCurrent);
+    AppendInt(iVolumeCurrent);
     iLastChange.Append("\"/>\n");
 
     // VolumeDB
     iLastChange.Append("        <VolumeDB val=\"");
-    AppendUint(iVolumeDb);
+    AppendInt(iVolumeDb);
     iLastChange.Append("\"/>\n");
 
     // End
@@ -256,9 +256,9 @@ void ProviderRenderingControl::UpdateLastChange()
     (void)SetPropertyLastChange(iLastChange);
 }
 
-void ProviderRenderingControl::AppendUint(TUint aValue)
+void ProviderRenderingControl::AppendInt(TInt aValue)
 {
-    Bws<Ascii::kMaxUintStringBytes> uintBuf;
-    (void)Ascii::AppendDec(uintBuf, aValue);
-    iLastChange.Append(uintBuf);
+    Bws<Ascii::kMaxIntStringBytes> intBuf;
+    (void)Ascii::AppendDec(intBuf, aValue);
+    iLastChange.Append(intBuf);
 }

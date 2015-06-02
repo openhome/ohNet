@@ -37,7 +37,7 @@ private:
     void UpdateVolumeDb();
     void ModerationTimerExpired();
     void UpdateLastChange();
-    void AppendUint(TUint aValue);
+    void AppendInt(TInt aValue);
 private:
     Mutex iLock;
     Timer* iModerationTimer;
