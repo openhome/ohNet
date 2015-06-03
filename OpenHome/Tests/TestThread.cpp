@@ -173,7 +173,7 @@ public:
 const TUint kThreadCounterMaxCount      = 20000000;
 const TUint kThreadDisruptorPeriodMs    = 100;
 const TUint kThreadMonitorPeriodMs      = 1000;
-const TUint kSuitePriority              = 150;
+const TUint kSuitePriority              = kPrioritySystemHighest;
 
 // <ThreadCounter>
 class ThreadCounter : public Thread
