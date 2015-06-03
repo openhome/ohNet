@@ -8,6 +8,7 @@ Check UPnP AV RenderingControl (Volume) service
 """ 
 import _FunctionalTest
 import BaseTest                         as BASE
+import Upnp.ControlPoints.OhMediaPlayer as OHMP
 import Upnp.ControlPoints.MediaRenderer as MR
 import _SoftPlayer                      as SoftPlayer
 import random
@@ -17,7 +18,11 @@ import time
 import xml.etree.ElementTree as ET
 
 kMaxVol = 100
+kSteps  = 100
 kRcsNs  = '{urn:schemas-upnp-org:metadata-1-0/RCS/}'
+
+### can we read maxvol and steps from device ???
+### add tests with a set volume limit
 
 
 class TestRenderingControlService( BASE.BaseTest ):
@@ -39,7 +44,7 @@ class TestRenderingControlService( BASE.BaseTest ):
         loopback = False
 
         try:
-            dutName    = args[1]
+            dutName = args[1]
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -47,10 +52,20 @@ class TestRenderingControlService( BASE.BaseTest ):
         if dutName.lower() == 'local':
             loopback = True
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
-            dutName = self.soft.name.split( ':' )[0] + ':UPnP AV'
-            
+            dutName = self.soft.name
+
         self.mrDev = dutName.split( ':' )[0]
-        self.mr = MR.MediaRendererDevice( dutName, aLoopback=loopback )
+        mrName = self.mrDev + ':UPnP AV'
+
+        # Its not actually possible to disable volume on SoftPlayer devices, as
+        # this requires a reboot (to remove the volume service)
+        # mpName = self.mrDev + ':SoftPlayer'
+        # dut = OHMP.OhMediaPlayerDevice( mpName, aIsDut=True, aLoopback=loopback )
+        # if 'Volume' not in dut.product.attributes:
+        #     self.log.Skip( self.mrDev, 'Volume control disabled' )
+        # dut.Shutdown()
+
+        self.mr = MR.MediaRendererDevice( mrName, aLoopback=loopback )
         self.rc = self.mr.rc        
         self.rc.AddSubscriber( self._RcEventCb )
         self.currVolume = self.rc.volume
@@ -81,7 +96,7 @@ class TestRenderingControlService( BASE.BaseTest ):
                     
     def VolStepping( self, aTarget ):
         """Step volume to aTarget (or range limit)"""
-        self.log.Info( self.mrDev, 'Stepping volume to %d' % aTarget )
+        self.log.Header1( self.mrDev, 'Stepping volume to %d' % aTarget )
         polledVolume = -1
         done = False        
         while not done:
@@ -118,7 +133,7 @@ class TestRenderingControlService( BASE.BaseTest ):
                     
     def VolDbStepping( self, aTarget ):
         """Step volume to aTarget (or range limit)"""
-        self.log.Info( self.mrDev, 'Stepping volume DB to %d' % aTarget )
+        self.log.Header1( self.mrDev, 'Stepping volume DB to %d' % aTarget )
         step = (self.rc.volumeDbRange['MaxValue']-self.rc.volumeDbRange['MinValue']) / 100
         done = False        
         while not done:
@@ -141,6 +156,7 @@ class TestRenderingControlService( BASE.BaseTest ):
 
     def Mute( self, aLoops ):        
         """Check mute operates correctly"""
+        self.log.Header1( self.mrDev, 'Checking %d loops of Mute enable/disable' % aLoops )
         if aLoops/2.0 == aLoops/2:
             expMute = self.currMute
         else:
