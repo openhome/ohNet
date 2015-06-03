@@ -138,6 +138,7 @@ void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInst
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     try {
+        aDesiredVolume = (aDesiredVolume * iVolumeMax) / kVolumeReportedSteps;
         iVolume.SetVolume(aDesiredVolume);
     }
     catch (VolumeOutOfRange&) {
@@ -203,7 +204,7 @@ void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUin
 void ProviderRenderingControl::VolumeChanged(TUint aVolume)
 {
     AutoMutex _(iLock);
-    iVolumeCurrent = aVolume;
+    iVolumeCurrent = (aVolume * kVolumeReportedSteps) / iVolumeMax;
     UpdateVolumeDb();
     if (!iModerationTimerStarted) {
         iModerationTimer->FireIn(kEventModerationMs);

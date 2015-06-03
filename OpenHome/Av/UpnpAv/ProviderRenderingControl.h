@@ -18,6 +18,7 @@ public:
     static const Brn kChannelMaster;
     static const Brn kPresetNameFactoryDefaults;
     static const TUint kEventModerationMs = 200;
+    static const TUint kVolumeReportedSteps = 100;
 public:
     ProviderRenderingControl(Net::DvDevice& aDevice, Environment& aEnv, IVolumeManager& aVolumeManager);
     ~ProviderRenderingControl();
