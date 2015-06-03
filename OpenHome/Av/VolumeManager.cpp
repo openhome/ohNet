@@ -166,6 +166,9 @@ VolumeLimiter::~VolumeLimiter()
 void VolumeLimiter::SetVolume(TUint aValue)
 {
     AutoMutex _(iLock);
+    if (aValue > iLimit && iUpstreamVolume >= iLimit) {
+        THROW(VolumeOutOfRange);
+    }
     iUpstreamVolume = aValue;
     SetVolume();
 }

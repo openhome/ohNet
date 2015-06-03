@@ -48,6 +48,7 @@ private:
     TInt iVolumeDb; // deviation from iVolumeUnity.  256 units per 1 volume unit.
     const TUint iVolumeMax;
     const TUint iVolumeUnity;
+    const TUint iVolumeMilliDbPerStep;
 };
 
 } // namespace Av

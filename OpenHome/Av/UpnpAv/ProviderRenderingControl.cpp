@@ -36,7 +36,9 @@ ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice, Envir
     , iVolumeCurrent(0)
     , iVolumeMax(aVolumeManager.VolumeMax())
     , iVolumeUnity(aVolumeManager.VolumeUnity())
+    , iVolumeMilliDbPerStep(aVolumeManager.VolumeMilliDbPerStep())
 {
+    ASSERT(aVolumeManager.VolumeStep() == 1); // RenderingControl service mandates a step of 1
     iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderRenderingControl::ModerationTimerExpired), "ProviderRenderingControl");
 
     EnablePropertyLastChange();
@@ -135,8 +137,13 @@ void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInst
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    try {
+        iVolume.SetVolume(aDesiredVolume);
+    }
+    catch (VolumeOutOfRange&) {
+        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+    }
     aInvocation.StartResponse();
-    iVolume.SetVolume(aDesiredVolume);
     aInvocation.EndResponse();
 }
 
@@ -186,8 +193,8 @@ void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUin
     }
     aInvocation.StartResponse();
     TInt min = -1 * (TInt)iVolumeUnity;
-    min *= 256;
-    const TInt max = (iVolumeMax - iVolumeUnity) * 256;
+    min *= (256 * iVolumeMilliDbPerStep) / 1024;
+    const TInt max = ((iVolumeMax - iVolumeUnity) * 256 * iVolumeMilliDbPerStep) / 1024;
     aMinValue.Write(min);
     aMaxValue.Write(max);
     aInvocation.EndResponse();
@@ -207,7 +214,7 @@ void ProviderRenderingControl::VolumeChanged(TUint aVolume)
 void ProviderRenderingControl::UpdateVolumeDb()
 {
     iVolumeDb = iVolumeCurrent - iVolumeUnity;
-    iVolumeDb *= 256;
+    iVolumeDb *= (256 * iVolumeMilliDbPerStep) / 1024;
 }
 
 void ProviderRenderingControl::ModerationTimerExpired()
