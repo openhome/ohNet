@@ -25,12 +25,16 @@ const Brn& Brx::Empty()
 
 TBool Brx::Equals(const Brx& aBrx) const
 {
-    if(Bytes() == aBrx.Bytes()) {
+    if (Bytes() == aBrx.Bytes()) {
         const TByte* dest = Ptr();
-        ASSERT(dest != NULL);
+        if (dest == NULL) {
+            return (aBrx.Bytes() == 0);
+        }
         const TByte* src = aBrx.Ptr();
-        ASSERT(src != NULL);
-        return(memcmp(dest, src, Bytes()) == 0);
+        if (src == NULL) {
+            return false;
+        }
+        return (memcmp(dest, src, Bytes()) == 0);
     }
     return false;
 }
@@ -472,7 +476,6 @@ Bwh::~Bwh()
 
 const TByte* Bwh::Ptr() const
 {
-    ASSERT(iPtr);
     return iPtr;
 }
 

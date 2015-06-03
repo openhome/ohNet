@@ -358,11 +358,11 @@ void SuiteHeap::Test()
     TEST(src.Bytes() == 5);
     TEST(trg.Bytes() == 0);
     TEST(src.Ptr() != NULL);
-    TEST_THROWS(trg.Ptr(), AssertionFailed);
+    TEST(trg.Ptr() == NULL);
     src.TransferTo(trg);
     TEST(src.Bytes() == 0);
     TEST(trg.Bytes() == 5);
-    TEST_THROWS(src.Ptr(), AssertionFailed);
+    TEST(src.Ptr() == NULL);
     TEST(trg.Ptr() != NULL);
     }
 }
@@ -481,7 +481,7 @@ void SuiteGrow::Test()
     Bws<10> e((TUint)0);
     TEST(e.Bytes() == 0);
     TEST(e.MaxBytes() == 10);
-    TEST_THROWS((void)(d == e), AssertionFailed);
+    TEST(d == e);
 
     d.Grow(3);
     TEST(d.Bytes() == 0);
@@ -518,12 +518,12 @@ void SuiteZeroBytes::Test()
     TEST(brn1 != Brx::Empty());
 
     Brn brn2;
-    TEST_THROWS((void)(brn2 == Brx::Empty()), AssertionFailed);
+    TEST(brn2 == Brx::Empty());
     brn2.Set(z);
     TEST(brn2 != Brx::Empty());
 
     Bwh d;
-    TEST_THROWS((void)(d == Brx::Empty()), AssertionFailed);
+    TEST(d == Brx::Empty());
     d.Grow(10);
     TEST(d.Bytes() == 0);
     TEST(d == Brx::Empty());
