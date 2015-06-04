@@ -300,8 +300,8 @@ private:
 class MuteUser : public Media::IMute, private INonCopyable
 {
     static const Brn kStoreKey;
-    static const TUint kMuted   = 1;
-    static const TUint kUnmuted = 0;
+    static const TInt kMuted   = 1;
+    static const TInt kUnmuted = 0;
 public:
     MuteUser(Media::IMute& aMute, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
 public: // from Media::IMute
