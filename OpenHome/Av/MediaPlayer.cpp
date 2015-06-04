@@ -53,7 +53,9 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, aDefaultName);
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
-    iVolumeManager = new OpenHome::Av::VolumeManager(aVolumeInitParams, aReadWriteStore, *iConfigManager, *iPowerManager, aDevice, *iProduct, *iConfigManager);
+    VolumeInitParams volumeInit = aVolumeInitParams;
+    volumeInit.SetUserMute(*iPipeline);
+    iVolumeManager = new OpenHome::Av::VolumeManager(volumeInit, aReadWriteStore, *iConfigManager, *iPowerManager, aDevice, *iProduct, *iConfigManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
     iProduct->AddAttribute("Credentials");
     iProviderTime = new ProviderTime(aDevice, *iPipeline);

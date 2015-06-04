@@ -11,16 +11,6 @@ using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
-// ProviderFactory
-
-IProvider* ProviderFactory::NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader,
-                                      IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade)
-{ // static
-    aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigReader, aVolumeManager, aBalance, aFade);
-}
-
-
 // from older .../Preamp/ServiceVolume.cpp
 const TInt kActionNotSupportedCode = 801;
 const Brn  kActionNotSupportedMsg("Action not supported");
@@ -42,6 +32,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     , iVolume(aVolumeManager)
     , iBalance(aBalance)
     , iFade(aFade)
+    , iUserMute(aVolumeManager)
+    , iVolumeMax(aVolumeManager.VolumeMax())
 {
     EnablePropertyVolume();
     EnablePropertyMute();
@@ -72,7 +64,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnableActionMute();
     EnableActionVolumeLimit();
 
-    aVolumeManager.AddObserver(*this);
+    aVolumeManager.AddObserver(static_cast<IVolumeObserver&>(*this));
+    aVolumeManager.AddObserver(static_cast<Media::IMuteObserver&>(*this));
 
     iConfigVolumeLimit = &aConfigReader.GetNum(VolumeLimiter::kConfigKey);
     iSubscriberIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::VolumeLimitChanged));
@@ -93,7 +86,6 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
         iSubscriberIdFade = iConfigFade->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::FadeChanged));
     }
 
-    SetPropertyMute(false); // FIXME
     SetPropertyVolumeMax(aVolumeManager.VolumeMax());
     SetPropertyVolumeUnity(aVolumeManager.VolumeUnity());
     SetPropertyVolumeSteps(aVolumeManager.VolumeStep());
@@ -223,9 +215,19 @@ void ProviderVolume::Fade(IDvInvocation& aInvocation, IDvInvocationResponseInt& 
     aInvocation.EndResponse();
 }
 
-void ProviderVolume::SetMute(IDvInvocation& aInvocation, TBool /*aValue*/)
+void ProviderVolume::SetMute(IDvInvocation& aInvocation, TBool aValue)
 {
-    aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg); // FIXME
+    try {
+        if (aValue) {
+            iUserMute.Mute();
+        }
+        else {
+            iUserMute.Unmute();
+        }
+    }
+    catch (MuteNotSupported&) {
+        aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -253,13 +255,20 @@ void ProviderVolume::VolumeChanged(TUint aVolume)
     SetPropertyVolume(aVolume);
 }
 
+void ProviderVolume::MuteChanged(TBool aValue)
+{
+    SetPropertyMute(aValue);
+}
+
 void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume)
 {
     try {
         iVolume.SetVolume(aVolume);
     }
     catch (VolumeOutOfRange&) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        if (aVolume > iVolumeMax) {
+            aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        }
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();

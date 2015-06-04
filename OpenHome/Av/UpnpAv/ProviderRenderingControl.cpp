@@ -22,6 +22,8 @@ static const TInt kInvalidChannelCode = 402;
 static const Brn kInvalidChannelMsg("Argument[Channel] contains a value that is not in the AllowedValueList");
 static const TUint kInvalidPresetNameCode = 701;
 static const Brn KInvalidPresetNameMsg("Argument[PresetName] is invalid");
+static const TInt kActionNotSupportedCode = 801;
+static const Brn  kActionNotSupportedMsg("Action not supported");
 static const TInt kInvalidVolumeCode = 811;
 static const Brn  kInvalidVolumeMsg("Volume invalid");
 
@@ -31,12 +33,14 @@ const Brn ProviderRenderingControl::kPresetNameFactoryDefaults("FactoryDefaults"
 ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice, Environment& aEnv, IVolumeManager& aVolumeManager)
     : DvProviderUpnpOrgRenderingControl1(aDevice)
     , iLock("PVRC")
-    , iModerationTimerStarted(false)
     , iVolume(aVolumeManager)
     , iVolumeCurrent(0)
     , iVolumeMax(aVolumeManager.VolumeMax())
     , iVolumeUnity(aVolumeManager.VolumeUnity())
     , iVolumeMilliDbPerStep(aVolumeManager.VolumeMilliDbPerStep())
+    , iUserMute(aVolumeManager)
+    , iMuted(true)
+    , iModerationTimerStarted(false)
 {
     ASSERT(aVolumeManager.VolumeStep() == 1); // RenderingControl service mandates a step of 1
     iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderRenderingControl::ModerationTimerExpired), "ProviderRenderingControl");
@@ -56,7 +60,8 @@ ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice, Envir
     UpdateVolumeDb();
     UpdateLastChange(); // ensure iLastChange is set before aDevice could be enabled
 
-    aVolumeManager.AddObserver(*this);
+    aVolumeManager.AddObserver(static_cast<IVolumeObserver&>(*this));
+    aVolumeManager.AddObserver(static_cast<Media::IMuteObserver&>(*this));
 }
 
 ProviderRenderingControl::~ProviderRenderingControl()
@@ -87,7 +92,7 @@ void ProviderRenderingControl::SelectPreset(IDvInvocation& aInvocation, TUint aI
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::GetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseBool& /*aCurrentMute*/)
+void ProviderRenderingControl::GetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseBool& aCurrentMute)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -96,11 +101,14 @@ void ProviderRenderingControl::GetMute(IDvInvocation& aInvocation, TUint aInstan
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
+    {
+        AutoMutex _(iLock);
+        aCurrentMute.Write(iMuted);
+    }
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::SetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TBool /*aDesiredMute*/)
+void ProviderRenderingControl::SetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TBool aDesiredMute)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
@@ -108,8 +116,18 @@ void ProviderRenderingControl::SetMute(IDvInvocation& aInvocation, TUint aInstan
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    try {
+        if (aDesiredMute) {
+            iUserMute.Mute();
+        }
+        else {
+            iUserMute.Unmute();
+        }
+    }
+    catch (MuteNotSupported&) {
+        aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg);
+    }
     aInvocation.StartResponse();
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
@@ -206,16 +224,29 @@ void ProviderRenderingControl::VolumeChanged(TUint aVolume)
     AutoMutex _(iLock);
     iVolumeCurrent = (aVolume * kVolumeReportedSteps) / iVolumeMax;
     UpdateVolumeDb();
-    if (!iModerationTimerStarted) {
-        iModerationTimer->FireIn(kEventModerationMs);
-        iModerationTimerStarted = true;
-    }
+    ScheduleUpdate();
+}
+
+void ProviderRenderingControl::MuteChanged(TBool aValue)
+{
+    AutoMutex _(iLock);
+    iMuted = aValue;
+    ScheduleUpdate();
 }
 
 void ProviderRenderingControl::UpdateVolumeDb()
 {
     iVolumeDb = iVolumeCurrent - iVolumeUnity;
     iVolumeDb *= (256 * iVolumeMilliDbPerStep) / 1024;
+}
+
+void ProviderRenderingControl::ScheduleUpdate()
+{
+    // must be called with iLock held
+    if (!iModerationTimerStarted) {
+        iModerationTimer->FireIn(kEventModerationMs);
+        iModerationTimerStarted = true;
+    }
 }
 
 void ProviderRenderingControl::ModerationTimerExpired()
@@ -243,7 +274,7 @@ void ProviderRenderingControl::UpdateLastChange()
     iLastChange.Append("        <Mute channel= \"");
     iLastChange.Append(kChannelMaster);
     iLastChange.Append("\" val=\"");
-    iLastChange.Append("0"); // FIXME - Mute not implemented
+    AppendInt(iMuted? 1 : 0);
     iLastChange.Append("\"/>\n");
 
     // Volume

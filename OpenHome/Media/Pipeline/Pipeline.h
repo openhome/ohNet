@@ -27,9 +27,11 @@
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
+#include <OpenHome/Media/Pipeline/Muter.h>
 #include <OpenHome/Media/Pipeline/PreDriver.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Media/MuteManager.h>
 
 namespace OpenHome {
 namespace Media {
@@ -90,7 +92,15 @@ private:
     TUint iMaxLatencyJiffies;
 };
 
-class Pipeline : public IPipelineElementDownstream, public IPipeline, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class Pipeline : public IPipelineElementDownstream
+               , public IPipeline
+               , public IFlushIdProvider
+               , public IWaiterObserver
+               , public IStopper
+               , public IMute
+               , private IStopperObserver
+               , private IPipelinePropertyObserver
+               , private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
 
@@ -142,6 +152,9 @@ private: // from IWaiterObserver
     void PipelineWaiting(TBool aWaiting) override;
 private: // from IStopper
     void RemoveStream(TUint aStreamId) override;
+private: // from IMute
+    void Mute() override;
+    void Unmute() override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();
@@ -219,6 +232,8 @@ private:
     StarvationMonitor* iStarvationMonitor;
     Logger* iLoggerStarvationMonitor;
     RampValidator* iRampValidatorStarvationMonitor;
+    Muter* iMuter;
+    Logger* iLoggerMuter;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;

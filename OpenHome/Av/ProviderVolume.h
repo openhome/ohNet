@@ -21,7 +21,7 @@ namespace Net {
 
 namespace Av {
 
-class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider, private IVolumeObserver
+class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider, private IVolumeObserver, private Media::IMuteObserver
 {
 private:
     static const Brn kPowerDownVolume;
@@ -60,6 +60,8 @@ private: // from DvProviderAvOpenhomeOrgVolume1
     void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 private: // from IVolumeObserver
     void VolumeChanged(TUint aVolume) override;
+private: // from Media::IMuteObserver
+    void MuteChanged(TBool aValue) override;
 private:
     void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolume);
     void HelperSetBalance(Net::IDvInvocation& aInvocation, TInt aBalance);
@@ -72,7 +74,8 @@ private:
     IVolume& iVolume;
     IBalance* iBalance;
     IFade* iFade;
-    //Media::IMute& iMuteSetter;
+    Media::IMute& iUserMute;
+    const TUint iVolumeMax;
     Configuration::ConfigNum* iConfigVolumeLimit;
     Configuration::ConfigNum* iConfigBalance;
     Configuration::ConfigNum* iConfigFade;

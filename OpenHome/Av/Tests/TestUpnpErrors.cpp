@@ -65,6 +65,7 @@ class DummyVolumeManager : public IVolumeManager
 {
 private: // from IVolumeManager
     void AddObserver(IVolumeObserver& aObserver) override;
+    void AddObserver(Media::IMuteObserver& aObserver) override;
 private: // from IVolumeProfile
     TUint VolumeMax() override;
     TUint VolumeDefault() override;
@@ -76,6 +77,9 @@ private: // from IVolumeProfile
     TUint FadeMax() override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
+private: // from Media::IMute
+    void Mute() override;
+    void Unmute() override;
 };
     
 class DummySourceUpnpAv : public ISourceUpnpAv
@@ -186,6 +190,7 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 // DummyVolumeManager
 
 void DummyVolumeManager::AddObserver(IVolumeObserver& /*aObserver*/) {}
+void DummyVolumeManager::AddObserver(Media::IMuteObserver& /*aObserver*/) {}
 TUint DummyVolumeManager::VolumeMax()                                { return 10; }
 TUint DummyVolumeManager::VolumeDefault()                            { return 4; }
 TUint DummyVolumeManager::VolumeUnity()                              { return 8; }
@@ -195,6 +200,8 @@ TUint DummyVolumeManager::VolumeMilliDbPerStep()                     { return 10
 TUint DummyVolumeManager::BalanceMax()                               { return 5; }
 TUint DummyVolumeManager::FadeMax()                                  { return 4; }
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
+void DummyVolumeManager::Mute()                                      {}
+void DummyVolumeManager::Unmute()                                    {}
 
 
 // DummySourceUpnpAv

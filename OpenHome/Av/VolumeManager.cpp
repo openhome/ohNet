@@ -7,6 +7,7 @@
 #include <OpenHome/Av/StringIds.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/ProviderVolume.h>
+#include <OpenHome/Media/MuteManager.h>
 
 #include <vector>
 #include <algorithm>
@@ -29,6 +30,7 @@ VolumeInitParams::VolumeInitParams()
     , iBalanceMax(0)
     , iFade(NULL)
     , iFadeMax(0)
+    , iMute(NULL)
 {
 }
 
@@ -53,6 +55,11 @@ void VolumeInitParams::SetFade(IFade& aFade, TUint aFadeMax)
 {
     iFade    = &aFade;
     iFadeMax = aFadeMax;
+}
+
+void VolumeInitParams::SetUserMute(Media::IMute& aMute)
+{
+    iMute = &aMute;
 }
 
 TUint VolumeInitParams::VolumeMax()
@@ -375,6 +382,76 @@ void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 }
 
 
+// MuteUser
+
+const Brn MuteUser::kStoreKey("Startup.Mute");
+
+MuteUser::MuteUser(Media::IMute& aMute, IStoreReadWrite& aStore, IPowerManager& aPowerManager)
+    : iMute(aMute)
+    , iStoreUserMute(aStore, aPowerManager, kPowerPriorityHighest, kStoreKey, kUnmuted)
+{
+    if (iStoreUserMute.Get() == kMuted) {
+        iMute.Mute();
+    }
+    else {
+        iMute.Unmute();
+    }
+}
+
+void MuteUser::Mute()
+{
+    iStoreUserMute.Set(kMuted);
+    iMute.Mute();
+}
+
+void MuteUser::Unmute()
+{
+    iStoreUserMute.Set(kUnmuted);
+    iMute.Unmute();
+}
+
+
+// MuteReporter
+
+MuteReporter::MuteReporter(Media::IMute& aMute)
+    : iMute(aMute)
+    , iMuted(false)
+{
+}
+
+void MuteReporter::AddObserver(Media::IMuteObserver& aObserver)
+{
+    aObserver.MuteChanged(iMuted);
+    iObservers.push_back(&aObserver);
+}
+
+void MuteReporter::Mute()
+{
+    if (Report(true)) {
+        iMute.Mute();
+    }
+}
+
+void MuteReporter::Unmute()
+{
+    if (Report(false)) {
+        iMute.Unmute();
+    }
+}
+
+TBool MuteReporter::Report(TBool aMuted)
+{
+    if (aMuted == iMuted) {
+        return false;
+    }
+    iMuted = aMuted;
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->MuteChanged(iMuted);
+    }
+    return true;
+}
+
+
 // VolumeManager
 
 VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit,
@@ -393,6 +470,14 @@ VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrit
     }
     else {
         iFadeUser = new FadeUser(*aInitParams.iFade, aConfigInit, 0, aInitParams.iFadeMax);
+    }
+    if (aInitParams.iMute == NULL) {
+        iMuteReporter = NULL;
+        iMuteUser = NULL;
+    }
+    else {
+        iMuteReporter = new MuteReporter(*aInitParams.iMute);
+        iMuteUser = new MuteUser(*iMuteReporter, aStore, aPowerManager);
     }
     if (aInitParams.iVolume == NULL) {
         iVolumeSourceUnityGain = NULL;
@@ -419,6 +504,8 @@ VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrit
 VolumeManager::~VolumeManager()
 {
     delete iProviderVolume;
+    delete iMuteReporter;
+    delete iMuteUser;
     delete iFadeUser;
     delete iBalanceUser;
     delete iVolumeUser;
@@ -436,6 +523,16 @@ void VolumeManager::AddObserver(IVolumeObserver& aObserver)
     }
     else {
         iVolumeReporter->AddObserver(aObserver);
+    }
+}
+
+void VolumeManager::AddObserver(Media::IMuteObserver& aObserver)
+{
+    if (iMuteReporter == NULL) {
+        aObserver.MuteChanged(false);
+    }
+    else {
+        iMuteReporter->AddObserver(aObserver);
     }
 }
 
@@ -515,4 +612,20 @@ void VolumeManager::SetFade(TInt aFade)
         THROW(FadeNotSupported);
     }
     iFadeUser->SetFade(aFade);
+}
+
+void VolumeManager::Mute()
+{
+    if (iMuteUser == NULL) {
+        THROW(MuteNotSupported);
+    }
+    iMuteUser->Mute();
+}
+
+void VolumeManager::Unmute()
+{
+    if (iMuteUser == NULL) {
+        THROW(MuteNotSupported);
+    }
+    iMuteUser->Unmute();
 }

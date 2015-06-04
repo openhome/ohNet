@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/MuteManager.h>
 
 #include <vector>
 
@@ -35,6 +36,7 @@
 EXCEPTION(VolumeNotSupported);
 EXCEPTION(BalanceNotSupported);
 EXCEPTION(FadeNotSupported);
+EXCEPTION(MuteNotSupported);
 EXCEPTION(VolumeOutOfRange);
 EXCEPTION(BalanceOutOfRange);
 EXCEPTION(FadeOutOfRange);
@@ -97,6 +99,7 @@ public:
     void SetVolume(IVolume& aVolume, TUint aVolumeMax, TUint aVolumeDefault, TUint aVolumeUnity, TUint aDefaultLimit, TUint aVolumeStep, TUint aVolumeMilliDbPerStep);
     void SetBalance(IBalance& aBalance, TUint aBalanceMax);
     void SetFade(IFade& aFade, TUint aFadeMax);
+    void SetUserMute(Media::IMute& aMute);
 public: // from IVolumeProfile
     TUint VolumeMax() override;
     TUint VolumeDefault() override;
@@ -118,6 +121,7 @@ private:
     TUint iBalanceMax;
     IFade* iFade;
     TUint iFadeMax;
+    Media::IMute* iMute;
 };
 
 class VolumeUser : public IVolume, private INonCopyable
@@ -293,10 +297,42 @@ private:
     TUint iSubscriberIdFade;
 };
 
-class IVolumeManager : public IVolume, public IVolumeProfile
+class MuteUser : public Media::IMute, private INonCopyable
+{
+    static const Brn kStoreKey;
+    static const TUint kMuted   = 1;
+    static const TUint kUnmuted = 0;
+public:
+    MuteUser(Media::IMute& aMute, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
+public: // from Media::IMute
+    void Mute() override;
+    void Unmute() override;
+private:
+    Media::IMute& iMute;
+    StoreInt iStoreUserMute;
+};
+
+class MuteReporter : public Media::IMute, private INonCopyable
+{
+public:
+    MuteReporter(Media::IMute& aMute);
+    void AddObserver(Media::IMuteObserver& aObserver);
+private: // from Media::IMute
+    void Mute() override;
+    void Unmute() override;
+private:
+    TBool Report(TBool aMuted);
+private:
+    Media::IMute& iMute;
+    std::vector<Media::IMuteObserver*> iObservers;
+    TBool iMuted;
+};
+
+class IVolumeManager : public IVolume, public IVolumeProfile, public Media::IMute
 {
 public:
     virtual void AddObserver(IVolumeObserver& aObserver) = 0;
+    virtual void AddObserver(Media::IMuteObserver& aObserver) = 0;
     virtual ~IVolumeManager() {}
 };
 
@@ -318,6 +354,7 @@ public:
     ~VolumeManager();
 public: // from IVolumeManager
     void AddObserver(IVolumeObserver& aObserver) override;
+    void AddObserver(Media::IMuteObserver& aObserver) override;
 public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 public: // from IVolumeSourceUnityGain
@@ -337,6 +374,9 @@ private: // from IBalance
     void SetBalance(TInt aBalance) override;
 private: // from IFade
     void SetFade(TInt aFade) override;
+private: // from Media::IMute
+    void Mute() override;
+    void Unmute() override;
 private:
     const VolumeInitParams iInitParams;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;
@@ -347,6 +387,8 @@ private:
     VolumeUser* iVolumeUser;
     BalanceUser* iBalanceUser;
     FadeUser* iFadeUser;
+    MuteReporter* iMuteReporter;
+    MuteUser* iMuteUser;
     ProviderVolume* iProviderVolume;
 };
 
