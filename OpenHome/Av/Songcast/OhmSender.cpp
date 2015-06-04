@@ -169,7 +169,7 @@ void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 
 // OhmSenderDriver
 
-OhmSenderDriver::OhmSenderDriver(Environment& aEnv)
+OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper)
     : iMutex("OHMD")
     , iEnabled(false)
     , iActive(false)
@@ -185,6 +185,8 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv)
     , iLatency(100)
     , iSocket(aEnv)
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
+    , iTimestamper(NULL)
+    , iFirstFrame(true)
 {
 }
 
@@ -228,14 +230,27 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         iFifoHistory.Read()->RemoveRef();
     }
 
+    TBool isTimeStamped = false;
+    TUint timeStamp = 0;
+    if (iFirstFrame) {
+        iFirstFrame = false;
+    }
+    else if (iTimestamper != NULL) {
+        try {
+            timeStamp = iTimestamper->Timestamp(iFrame - 1);
+            isTimeStamped = true;
+        }
+        catch (OhmTimestampNotFound&) {}
+    }
+
     OhmMsgAudio* msg = iFactory.CreateAudio(
         aHalt,
         iLossless,
-        false,
+        isTimeStamped,
         false,
         samples,
         iFrame,
-        0, // network timestamp
+        timeStamp, // network timestamp
         latency,
         0,
         iSampleStart,
@@ -248,7 +263,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         iCodecName,
         Brn(aData, aBytes)
     );
-    
+
     WriterBuffer writer(iBuffer);
     writer.Flush();
     msg->Externalise(writer);
@@ -259,7 +274,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     }
     catch (NetworkError&) {
     }
-        
+
     iSampleStart += samples;
     iFrame++;
 }
@@ -284,7 +299,7 @@ void OhmSenderDriver::SetEnabled(TBool aValue)
 void OhmSenderDriver::SetActive(TBool aValue)
 {
     AutoMutex mutex(iMutex);
-    
+
     iActive = aValue;
     if (iSend) {
         if (!aValue) { // turning off
@@ -294,6 +309,9 @@ void OhmSenderDriver::SetActive(TBool aValue)
     else {
         if (aValue && iEnabled) { // turning on
             iSend = true;
+            if (iTimestamper != NULL) {
+                iTimestamper->Start(iEndpoint);
+            }
         }
     }
 }
@@ -301,6 +319,10 @@ void OhmSenderDriver::SetActive(TBool aValue)
 void OhmSenderDriver::SetEndpoint(const Endpoint& aEndpoint, TIpAddress aAdapter)
 {
     AutoMutex mutex(iMutex);
+    if ((iTimestamper != NULL) && iActive && !iEndpoint.Equals(aEndpoint)) {
+        iTimestamper->Stop();
+        iTimestamper->Start(aEndpoint);
+    }
     iEndpoint.Replace(aEndpoint);
     iAdapter = aAdapter;
 }
@@ -395,6 +417,10 @@ void OhmSenderDriver::ResetLocked()
 {
     iSend = false;
     iFrame = 0;
+    iFirstFrame = true;
+    if (iTimestamper != NULL) {
+        iTimestamper->Stop();
+    }
     const TUint count = iFifoHistory.SlotsUsed();
     for (TUint i = 0; i < count; i++) {
         iFifoHistory.Read()->RemoveRef();
