@@ -8,6 +8,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/ProviderVolume.h>
 #include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <vector>
 #include <algorithm>
@@ -129,7 +130,9 @@ VolumeUser::VolumeUser(IVolume& aVolume, IStoreReadWrite& aStore, IConfigInitial
 VolumeUser::~VolumeUser()
 {
     iConfigStartupVolume->Unsubscribe(iSubscriberIdStartupVolume);
+    delete iConfigStartupVolume;
     iConfigStartupVolumeEnabled->Unsubscribe(iSubscriberIdStartupVolumeEnabled);
+    delete iConfigStartupVolumeEnabled;
 }
 
 void VolumeUser::SetVolume(TUint aVolume)
@@ -168,6 +171,7 @@ VolumeLimiter::VolumeLimiter(IVolume& aVolume, IConfigInitialiser& aConfigInit, 
 VolumeLimiter::~VolumeLimiter()
 {
     iConfigLimit->Unsubscribe(iSubscriberIdLimit);
+    delete iConfigLimit;
 }
 
 void VolumeLimiter::SetVolume(TUint aValue)
@@ -255,6 +259,7 @@ VolumeUnityGainBase::VolumeUnityGainBase(IVolume& aVolume, TUint aUnityGainValue
     : iLock("VUGN")
     , iVolume(aVolume)
     , iUnityGain(aUnityGainValue)
+    , iUpstreamVolume(0)
 {
 }
 
@@ -296,6 +301,7 @@ VolumeUnityGain::VolumeUnityGain(IVolume& aVolume, IConfigInitialiser& aConfigIn
 VolumeUnityGain::~VolumeUnityGain()
 {
     iConfigVolumeControlEnabled->Unsubscribe(iSubscriberId);
+    delete iConfigVolumeControlEnabled;
 }
 
 void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
@@ -310,6 +316,7 @@ void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
 VolumeSourceUnityGain::VolumeSourceUnityGain(IVolume& aVolume, TUint aUnityGainValue)
     : VolumeUnityGainBase(aVolume, aUnityGainValue)
 {
+    SetEnabled(true);
 }
 
 void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
@@ -332,6 +339,7 @@ BalanceUser::BalanceUser(IBalance& aBalance, IConfigInitialiser& aConfigInit, TI
 BalanceUser::~BalanceUser()
 {
     iConfigBalance->Unsubscribe(iSubscriberIdBalance);
+    delete iConfigBalance;
 }
 
 void BalanceUser::SetBalance(TInt aBalance)
@@ -364,6 +372,7 @@ FadeUser::FadeUser(IFade& aFade, IConfigInitialiser& aConfigInit, TInt aDefault,
 FadeUser::~FadeUser()
 {
     iConfigFade->Unsubscribe(iSubscriberIdFade);
+    delete iConfigFade;
 }
 
 void FadeUser::SetFade(TInt aFade)
