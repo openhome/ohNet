@@ -16,7 +16,6 @@ Muter::Muter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, TUint
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kMax)
-    , iMuted(false)
     , iHalted(true)
 {
 }

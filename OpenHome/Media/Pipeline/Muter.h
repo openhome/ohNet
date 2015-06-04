@@ -52,7 +52,6 @@ private:
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
-    TBool iMuted;
     TBool iHalted;
 };
 
