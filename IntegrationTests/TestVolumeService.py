@@ -83,17 +83,17 @@ class TestVolumeService( BASE.BaseTest ):
             self.volEvt.wait( 5 )
             self._CheckVolume( vol, 'before mute' )
             
-            # self.volEvt.clear()
-            # self.dut.volume.mute = True
-            # self.volEvt.wait( 5 )
-            # self._CheckMute( True )
-            # self._CheckVolume( vol, 'whilst muted' )
-            #
-            # self.volEvt.clear()
-            # self.dut.volume.mute = False
-            # self.volEvt.wait( 5 )
-            # self._CheckMute( False )
-            # self._CheckVolume( vol, 'after unmute' )
+            self.volEvt.clear()
+            self.dut.volume.mute = True
+            self.volEvt.wait( 5 )
+            self._CheckMute( True )
+            self._CheckVolume( vol, 'whilst muted' )
+
+            self.volEvt.clear()
+            self.dut.volume.mute = False
+            self.volEvt.wait( 5 )
+            self._CheckMute( False )
+            self._CheckVolume( vol, 'after unmute' )
             
     def _TestVolIncDec( self ):
         """Check volume increment/decrement functionality"""
@@ -185,7 +185,7 @@ class TestVolumeService( BASE.BaseTest ):
             self.log.Info( self.dutDev, 'Checking fader increment/decrement actions' )
             self.log.Info( '' )
             fMax = self.dut.volume.fadeMax
-            fade = -1 + fMax
+            fade = -1 * fMax
             self.volEvt.clear()
             self.dut.volume.fade = fade
             self.volEvt.wait( 5 )
