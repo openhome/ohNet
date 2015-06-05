@@ -72,7 +72,7 @@ class TestVolumeService( BASE.BaseTest ):
     
     def _TestSetAndMute( self ):
         """Check setting of spot volumes and mute functionality"""
-        vMax = self.dut.volume.volMax
+        vMax = self.dut.volume.volLimit       # max permitted volume -> volume limit
         for vol in range( vMax/10, vMax+1, vMax/10 ):
             self.log.Info( '' )
             self.log.Info( self.dutDev, 'Checking volume setting -> %d' % vol )
@@ -83,21 +83,21 @@ class TestVolumeService( BASE.BaseTest ):
             self.volEvt.wait( 5 )
             self._CheckVolume( vol, 'before mute' )
             
-            self.volEvt.clear()
-            self.dut.volume.mute = True
-            self.volEvt.wait( 5 )
-            self._CheckMute( True )
-            self._CheckVolume( vol, 'whilst muted' )
-            
-            self.volEvt.clear()
-            self.dut.volume.mute = False
-            self.volEvt.wait( 5 )
-            self._CheckMute( False )
-            self._CheckVolume( vol, 'after unmute' )
+            # self.volEvt.clear()
+            # self.dut.volume.mute = True
+            # self.volEvt.wait( 5 )
+            # self._CheckMute( True )
+            # self._CheckVolume( vol, 'whilst muted' )
+            #
+            # self.volEvt.clear()
+            # self.dut.volume.mute = False
+            # self.volEvt.wait( 5 )
+            # self._CheckMute( False )
+            # self._CheckVolume( vol, 'after unmute' )
             
     def _TestVolIncDec( self ):
         """Check volume increment/decrement functionality"""
-        vol = int( self.dut.volume.volMax*0.65 )
+        vol = int( self.dut.volume.volLimit*0.65 )
         self.volEvt.clear()
         self.dut.volume.volume = vol
         self.volEvt.wait( 5 )
@@ -114,7 +114,7 @@ class TestVolumeService( BASE.BaseTest ):
                 else:
                     vol -= 1
                 self._CheckVolume( vol, 'after %s' % action )
-                
+
     def _TestBalSet( self ):        
         """Check balance"""
         bMax = self.dut.volume.balMax
@@ -189,7 +189,7 @@ class TestVolumeService( BASE.BaseTest ):
             self.volEvt.clear()
             self.dut.volume.fade = fade
             self.volEvt.wait( 5 )
-            for action in ['BalInc','BalDec']:
+            for action in ['FadeInc','FadeDec']:
                 for i in range( fMax*2 ):
                     self.volEvt.clear()
                     getattr( self.dut.volume, action )()
@@ -202,7 +202,7 @@ class TestVolumeService( BASE.BaseTest ):
                         fade = -1*fMax
                     elif fade > fMax:
                         fade = fMax
-                    self._CheckFader( fade, 'after %s' % action )
+                    self._CheckFade( fade, 'after %s' % action )
             self.volEvt.clear()
             self.dut.volume.fade = 0
             self.volEvt.wait( 5 )
@@ -245,7 +245,7 @@ class TestVolumeService( BASE.BaseTest ):
         self.log.FailUnless( self.dutDev, eventedFade==aFade,
             '%d/%d  Actual/Expected EVENTED fade %s' % (eventedFade, aFade, aMsg) )
         self.log.FailUnless( self.dutDev, polledFade==aFade,
-            '%d/%d  Actual/Expected POLLED balance %s' % (polledFade, aFade, aMsg) )
+            '%d/%d  Actual/Expected POLLED fade %s' % (polledFade, aFade, aMsg) )
 
     # noinspection PyUnusedLocal
     def _VolEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
