@@ -176,7 +176,7 @@ def bundle(context):
 
 @build_step("test", optional=True)
 def test(context):
-    if context.env["OH_PLATFORM"] != 'Linux-mipsel':
+    if context.env["OH_PLATFORM"] not in ['Linux-mipsel', 'Core-ppc32']:
         python("waf", "test")
 
 @build_step("test_full", optional=True, default=False)
