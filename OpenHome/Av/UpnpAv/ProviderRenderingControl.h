@@ -12,12 +12,13 @@ namespace OpenHome {
 using namespace Net;
 namespace Av {
 
-class ProviderRenderingControl : public DvProviderUpnpOrgRenderingControl1, private IVolumeObserver
+class ProviderRenderingControl : public DvProviderUpnpOrgRenderingControl1, private IVolumeObserver, private Media::IMuteObserver
 {
 public:
     static const Brn kChannelMaster;
     static const Brn kPresetNameFactoryDefaults;
     static const TUint kEventModerationMs = 200;
+    static const TUint kVolumeReportedSteps = 100;
 public:
     ProviderRenderingControl(Net::DvDevice& aDevice, Environment& aEnv, IVolumeManager& aVolumeManager);
     ~ProviderRenderingControl();
@@ -33,15 +34,17 @@ private: // from DvProviderUpnpOrgRenderingControl1
     void GetVolumeDBRange(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aMinValue, IDvInvocationResponseInt& aMaxValue) override;
 private: // from IVolumeObserver
     void VolumeChanged(TUint aVolume) override;
+private: // from Media::IMuteObserver
+    void MuteChanged(TBool aValue) override;
 private:
     void UpdateVolumeDb();
+    void ScheduleUpdate();
     void ModerationTimerExpired();
     void UpdateLastChange();
     void AppendInt(TInt aValue);
 private:
     Mutex iLock;
     Timer* iModerationTimer;
-    TBool iModerationTimerStarted;
     Bws<1024> iLastChange;
     IVolume& iVolume;
     TUint iVolumeCurrent;
@@ -49,6 +52,9 @@ private:
     const TUint iVolumeMax;
     const TUint iVolumeUnity;
     const TUint iVolumeMilliDbPerStep;
+    Media::IMute& iUserMute;
+    TBool iMuted;
+    TBool iModerationTimerStarted;
 };
 
 } // namespace Av

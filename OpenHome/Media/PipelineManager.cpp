@@ -315,6 +315,16 @@ void PipelineManager::InvalidateAll()
     iIdManager->InvalidateAll();
 }
 
+void PipelineManager::Mute()
+{
+    static_cast<IMute*>(iPipeline)->Mute();
+}
+
+void PipelineManager::Unmute()
+{
+    static_cast<IMute*>(iPipeline)->Unmute();
+}
+
 void PipelineManager::NotifyPipelineState(EPipelineState aState)
 {
     for (TUint i=0; i<iObservers.size(); i++) {

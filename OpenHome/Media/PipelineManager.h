@@ -5,6 +5,7 @@
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Media/MuteManager.h>
 
 #include <vector>
 
@@ -44,7 +45,12 @@ private:
 /**
  * External interface to the pipeline.
  */
-class PipelineManager : public IPipeline, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer, private IUrlBlockWriter
+class PipelineManager : public IPipeline
+                      , public IPipelineIdManager
+                      , public IMute
+                      , private IPipelineObserver
+                      , private ISeekRestreamer
+                      , private IUrlBlockWriter
 {
 public:
     PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
@@ -239,6 +245,9 @@ private: // from IPipelineIdManager
     void InvalidateAfter(TUint aId) override;
     void InvalidatePending() override;
     void InvalidateAll() override;
+private: // from IMute
+    void Mute() override;
+    void Unmute() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;

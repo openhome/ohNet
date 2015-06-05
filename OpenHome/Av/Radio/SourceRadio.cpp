@@ -46,14 +46,18 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClo
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, Brx::Empty(), aMediaPlayer.ConfigInitialiser());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
+                           *radioUriProvider, aSupportedProtocols, Brx::Empty(),
+                           aMediaPlayer.ConfigInitialiser(), aMediaPlayer.CredentialsManager());
 }
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId)
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
+                           *radioUriProvider, aSupportedProtocols, aTuneInPartnerId,
+                           aMediaPlayer.ConfigInitialiser(), aMediaPlayer.CredentialsManager());
 }
 
 
@@ -83,7 +87,9 @@ IClockPuller* UriProviderRadio::ClockPuller()
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, const Brx& aTuneInPartnerId, IConfigInitialiser& aConfigInit)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline,
+                         UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, const Brx& aTuneInPartnerId,
+                         IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -99,7 +105,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
         iTuneIn = NULL;
     }
     else {
-        iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, aTuneInPartnerId, *iPresetDatabase, aConfigInit);
+        iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, aTuneInPartnerId, *iPresetDatabase, aConfigInit, aCredentialsManager);
     }
     iPipeline.Add(ContentProcessorFactory::NewM3u());
     iPipeline.Add(ContentProcessorFactory::NewM3u());

@@ -22,7 +22,7 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
-const Brn RadioPresetsTuneIn::kConfigUsernameBase("Radio.TuneInUserName");
+const Brn RadioPresetsTuneIn::kConfigKeyUsername("Radio.TuneInUserName");
 const Brn RadioPresetsTuneIn::kConfigUsernameDefault("linnproducts");
 const Brn RadioPresetsTuneIn::kTuneInPresetsRequest("http://opml.radiotime.com/Browse.ashx?&c=presets&options=recurse:tuneShows");
 //const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg,hls");
@@ -35,7 +35,9 @@ typedef struct MimeTuneInPair
     const TChar* iTuneInFormat;
 } MimeTuneInPair;
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter, IConfigInitialiser& aConfigInit)
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline,
+                                       const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter,
+                                       IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)
@@ -78,8 +80,10 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     iRefreshTimer = new Timer(aEnv, MakeFunctor(*this, &RadioPresetsTuneIn::TimerCallback), "RadioPresetsTuneIn");
 
     // Get username from store.
-    iConfigUsername = new ConfigText(aConfigInit, kConfigUsernameBase, kMaxUserNameBytes, kConfigUsernameDefault);
+    iConfigUsername = new ConfigText(aConfigInit, kConfigKeyUsername, kMaxUserNameBytes, kConfigUsernameDefault);
     iListenerId = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &RadioPresetsTuneIn::UsernameChanged));
+
+    new CredentialsTuneIn(*iConfigUsername, aCredentialsManager); // ownership transferred to aCredentialsManager
 }
 
 RadioPresetsTuneIn::~RadioPresetsTuneIn()
@@ -359,4 +363,51 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
     aValue.Replace(value);
 //    Converter::FromXmlEscaped(aValue);
     return true;
+}
+
+
+// CredentialsTuneIn
+
+const Brn CredentialsTuneIn::kId("tunein.com");
+
+CredentialsTuneIn::CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager)
+    : iConfigUsername(aConfigUsername)
+    , iCredentialsManager(aCredentialsManager)
+{
+    aCredentialsManager.Add(this);
+    iSubscriberId = iConfigUsername.Subscribe(MakeFunctorConfigText(*this, &CredentialsTuneIn::UsernameChanged));
+}
+
+CredentialsTuneIn::~CredentialsTuneIn()
+{
+    iConfigUsername.Unsubscribe(iSubscriberId);
+}
+
+const Brx& CredentialsTuneIn::Id() const
+{
+    return kId;
+}
+
+void CredentialsTuneIn::CredentialsChanged(const Brx& aUsername, const Brx& /*aPassword*/)
+{
+    iConfigUsername.Set(aUsername);
+}
+
+void CredentialsTuneIn::UpdateStatus()
+{
+}
+
+void CredentialsTuneIn::Login(Bwx& aToken)
+{
+    aToken.Replace(Brx::Empty());
+}
+
+void CredentialsTuneIn::ReLogin(const Brx& /*aCurrentToken*/, Bwx& aNewToken)
+{
+    aNewToken.Replace(Brx::Empty());
+}
+
+void CredentialsTuneIn::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
+{
+    iCredentialsManager.Set(kId, aKvp.Value(), Brx::Empty());
 }
