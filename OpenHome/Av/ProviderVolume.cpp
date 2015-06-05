@@ -189,21 +189,21 @@ void ProviderVolume::Balance(IDvInvocation& aInvocation, IDvInvocationResponseIn
 
 void ProviderVolume::SetFade(IDvInvocation& aInvocation, TInt aValue)
 {
-    HelperSetBalance(aInvocation, aValue);
+    HelperSetFade(aInvocation, aValue);
 }
 
 void ProviderVolume::FadeInc(IDvInvocation& aInvocation)
 {
     TInt fade = 0;
     GetPropertyFade(fade);
-    HelperSetBalance(aInvocation, fade+1);
+    HelperSetFade(aInvocation, fade+1);
 }
 
 void ProviderVolume::FadeDec(IDvInvocation& aInvocation)
 {
     TInt fade = 0;
     GetPropertyFade(fade);
-    HelperSetBalance(aInvocation, fade+1);
+    HelperSetFade(aInvocation, fade+1);
 }
 
 void ProviderVolume::Fade(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
