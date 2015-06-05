@@ -203,7 +203,7 @@ void ProviderVolume::FadeDec(IDvInvocation& aInvocation)
 {
     TInt fade = 0;
     GetPropertyFade(fade);
-    HelperSetFade(aInvocation, fade+1);
+    HelperSetFade(aInvocation, fade-1);
 }
 
 void ProviderVolume::Fade(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
