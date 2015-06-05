@@ -182,6 +182,7 @@ def test(context):
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
     if context.env["OH_PLATFORM"] != 'Linux-mipsel':
+    if context.env["OH_PLATFORM"] not in ['Linux-mipsel', 'Core-ppc32']:
         python("waf", "test_full")
 
 @build_step("install", optional=True, default=True)
