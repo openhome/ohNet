@@ -27,37 +27,37 @@ import xml.etree.ElementTree as ET
 
 kTuneInCreds      = 'tunein.com'
 kTuneInUrl        = 'http://opml.radiotime.com/'
-kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg,hls'
+# kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg,hls'
 kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg,hls'
-kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
-                    'http-get:*:audio/wav:*,'            +\
-                    'http-get:*:audio/wave:*,'           +\
-                    'http-get:*:audio/x-wav:*,'          +\
-                    'http-get:*:audio/mpeg:*,'           +\
-                    'http-get:*:audio/x-mpeg:*,'         +\
-                    'http-get:*:audio/mp1:*,'            +\
-                    'http-get:*:audio/aiff:*,'           +\
-                    'http-get:*:audio/x-aiff:*,'         +\
-                    'http-get:*:audio/x-m4a:*,'          +\
-                    'http-get:*:audio/x-ms-wma:*,'       +\
-                    'rtsp-rtp-udp:*:audio/x-ms-wma:*,'   +\
-                    'http-get:*:audio/x-scpls:*,'        +\
-                    'http-get:*:audio/x-mpegurl:*,'      +\
-                    'http-get:*:audio/x-ms-asf:*,'       +\
-                    'http-get:*:audio/x-ms-wax:*,'       +\
-                    'http-get:*:audio/x-ms-wvx:*,'       +\
-                    'http-get:*:video/x-ms-asf:*,'       +\
-                    'http-get:*:video/x-ms-wax:*,'       +\
-                    'http-get:*:video/x-ms-wvx:*,'       +\
-                    'http-get:*:text/xml:*,'             +\
-                    'http-get:*:audio/aac:*,'            +\
-                    'http-get:*:audio/aacp:*,'           +\
-                    'http-get:*:audio/mp4:*,'            +\
-                    'http-get:*:audio/ogg:*,'            +\
-                    'http-get:*:audio/x-ogg:*,'          +\
-                    'http-get:*:application/ogg:*,'      +\
-                    'tidalhifi.com:*:*:*,'               +\
-                    'qobuz.com:*:*:*'
+# kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
+#                     'http-get:*:audio/wav:*,'            +\
+#                     'http-get:*:audio/wave:*,'           +\
+#                     'http-get:*:audio/x-wav:*,'          +\
+#                     'http-get:*:audio/mpeg:*,'           +\
+#                     'http-get:*:audio/x-mpeg:*,'         +\
+#                     'http-get:*:audio/mp1:*,'            +\
+#                     'http-get:*:audio/aiff:*,'           +\
+#                     'http-get:*:audio/x-aiff:*,'         +\
+#                     'http-get:*:audio/x-m4a:*,'          +\
+#                     'http-get:*:audio/x-ms-wma:*,'       +\
+#                     'rtsp-rtp-udp:*:audio/x-ms-wma:*,'   +\
+#                     'http-get:*:audio/x-scpls:*,'        +\
+#                     'http-get:*:audio/x-mpegurl:*,'      +\
+#                     'http-get:*:audio/x-ms-asf:*,'       +\
+#                     'http-get:*:audio/x-ms-wax:*,'       +\
+#                     'http-get:*:audio/x-ms-wvx:*,'       +\
+#                     'http-get:*:video/x-ms-asf:*,'       +\
+#                     'http-get:*:video/x-ms-wax:*,'       +\
+#                     'http-get:*:video/x-ms-wvx:*,'       +\
+#                     'http-get:*:text/xml:*,'             +\
+#                     'http-get:*:audio/aac:*,'            +\
+#                     'http-get:*:audio/aacp:*,'           +\
+#                     'http-get:*:audio/mp4:*,'            +\
+#                     'http-get:*:audio/ogg:*,'            +\
+#                     'http-get:*:audio/x-ogg:*,'          +\
+#                     'http-get:*:application/ogg:*,'      +\
+#                     'tidalhifi.com:*:*:*,'               +\
+#                     'qobuz.com:*:*:*'
 kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/wav:*,'          +\
                     'http-get:*:audio/wave:*,'         +\
@@ -117,7 +117,7 @@ class TestRadioService( BASE.BaseTest ):
         if radioName.lower() == 'local':
             loopback = True
             tuneinId = self.config.Get( 'tunein.partnerid' )
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aLoopback=loopback )
             radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
         self.dut = OHMP.OhMediaPlayerDevice( radioName, aIsDut=True, aLoopback=loopback )
@@ -147,11 +147,7 @@ class TestRadioService( BASE.BaseTest ):
         
     def TestFixedParams( self ):
         """Verify the 'fixed' parameter values are returned correctly"""
-        if self.soft:
-            expProtocolInfo = kProtocolInfoFree
-        else:
-            expProtocolInfo = kProtocolInfoAll
-            
+        expProtocolInfo = kProtocolInfoFree
         self.log.Header2( self.dutDev, 'Testing fixed parameters' )
         self.log.FailUnless( self.dutDev, self.dut.radio.polledProtocolInfo==expProtocolInfo,
             'Actual/Expected POLLED ProtocolInfo %s/%s' %
@@ -243,11 +239,7 @@ class TestRadioService( BASE.BaseTest ):
 
     def _GetTuneInPresets( self, aUser ):
         """Read preset channel info directly from TuneIn"""
-        if self.soft:
-            browse = kTuneInBrowseFree
-        else:
-            browse = kTuneInBrowseAll
-
+        browse = kTuneInBrowseFree
         partner = self.config.Get( 'tunein.partnerid' )
         tiId = '&username=%s&partnerId=%s' % (aUser, partner)
         resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + tiId )
