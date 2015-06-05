@@ -25,6 +25,7 @@ import threading
 import urllib
 import xml.etree.ElementTree as ET
 
+kTuneInCreds      = 'tunein.com'
 kTuneInUrl        = 'http://opml.radiotime.com/'
 kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg,hls'
 kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg,hls'
@@ -116,7 +117,7 @@ class TestRadioService( BASE.BaseTest ):
         if radioName.lower() == 'local':
             loopback = True
             tuneinId = self.config.Get( 'tunein.partnerid' )
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aLoopback=loopback )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
         self.dut = OHMP.OhMediaPlayerDevice( radioName, aIsDut=True, aLoopback=loopback )
@@ -179,7 +180,7 @@ class TestRadioService( BASE.BaseTest ):
                 presetsUpdate.set()
 
         self.log.Header2( self.dutDev, 'Testing setup and reporting of TuneIn presets' )
-        self.dut.config.SetValue( 'Radio.TuneInUserName', 'no-one' )
+        self._SetTuneInUser( 'no-one' )
         time.sleep( 2 )
         self.dut.radio.AddSubscriber( _PresetsEvtCb )
         for user in (self.config.Get( 'tunein.user.l1' ),       # 0 < channels < 100
@@ -187,7 +188,7 @@ class TestRadioService( BASE.BaseTest ):
                      self.config.Get( 'tunein.user.l3' )):      # > 100 channels
             self.log.Header2( self.dutDev, 'Testing with %s' % user )
             presetsUpdate.clear()
-            self._SetCheckUser( user )
+            self._SetTuneInUser( user )
             presetsUpdate.wait( 45 )
             self.log.FailUnless( self.dutDev, presetsUpdate.isSet(),
                 'Presets updated after switching user to %s' % user )
@@ -218,13 +219,27 @@ class TestRadioService( BASE.BaseTest ):
                         '[%d] TuneIn Title for empty entry: %s' % (i,rtPresets[i][1]) )
         self.dut.radio.RemoveSubscriber( _PresetsEvtCb )
 
-    def _SetCheckUser( self, aUser ):
-        """Set TuneIn user and check set"""
-        self.dut.config.SetValue( 'Radio.TuneInUserName', aUser )
-        time.sleep( 3 )
-        newUser = self.dut.config.GetValue( 'Radio.TuneInUserName' )
-        self.log.FailUnless( self.dutDev, newUser==aUser,
-            '(%s/%s) Actual/Expected EVENTED user' % (newUser, aUser) )
+    def _SetTuneInUser( self, aUser ):
+        """Set TuneIn user"""
+        seqNum = threading.Event()
+
+        # noinspection PyUnusedLocal
+        def CredentialsEventCb( service, svName, svVal, svSeq ):
+            """Callback on events from credentials service"""
+            if svName == 'SequenceNumber':
+                seqNum.set()
+
+        if kTuneInCreds in self.dut.credentials.idList:
+            self.dut.credentials.AddSubscriber( CredentialsEventCb )
+            seqNum.clear()
+            self.dut.credentials.Set( kTuneInCreds, aUser )
+            seqNum.wait( 10 )
+            self.dut.credentials.RemoveSubscriber( CredentialsEventCb )
+            time.sleep( 1 )
+            err = self.dut.credentials.Status( kTuneInCreds )
+            self.log.FailIf( self.dutDev, err, 'Setting TuneIn user to <%s> %s' % (aUser, err ))
+        else:
+            self.log.Abort( self.dutDev, 'Unable to set TuneIn account' )
 
     def _GetTuneInPresets( self, aUser ):
         """Read preset channel info directly from TuneIn"""
