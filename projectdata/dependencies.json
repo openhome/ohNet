@@ -55,7 +55,7 @@
         "ignore":           "${platform-ignore[$platform]}"
     },
     {   "name":             "transmute",
-        "version":          "0.0.11",
+        "version":          "0.0.14",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
@@ -67,7 +67,7 @@
         "dest":             "dependencies/AnyPlatform/"
     },
     {   "name":             "volkano-tools",
-        "version":          "0.0.4",
+        "version":          "0.0.5",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
