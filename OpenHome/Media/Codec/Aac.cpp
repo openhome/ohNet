@@ -10,27 +10,6 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-class CodecBufferedReader : public IReader, private INonCopyable
-{
-private:
-    enum EState
-    {
-        eReading,
-        eEos,
-        eBeyondEos,
-    };
-public:
-    CodecBufferedReader(ICodecController& aCodecController, Bwx& aBuf);
-public: // from IReader
-    Brn Read(TUint aBytes) override; // Returns [0..aBytes].  0 => stream closed, followed by ReaderError on subsequent reads beyond end of stream.
-    void ReadFlush() override;
-    void ReadInterrupt() override;
-private:
-    ICodecController& iCodecController;
-    Bwx& iBuf;
-    EState iState;
-};
-
 class CodecAac : public CodecAacBase
 {
 public:
@@ -67,54 +46,6 @@ CodecBase* CodecFactory::NewAac()
 }
 
 
-// CodecBufferedReader
-
-CodecBufferedReader::CodecBufferedReader(ICodecController& aCodecController, Bwx& aBuf)
-    : iCodecController(aCodecController)
-    , iBuf(aBuf)
-    , iState(eReading)
-{
-}
-
-Brn CodecBufferedReader::Read(TUint aBytes)
-{
-    if (iState == eEos) {
-        iState = eBeyondEos;
-        return Brx::Empty();
-    }
-    else if (iState == eBeyondEos) {
-        THROW(ReaderError); // Reading beyond EoS is an error.
-    }
-    else if (iState == eReading) {
-        iBuf.SetBytes(0);
-        // Valid to return up to aBytes, so if aBytes > iBuf.Bytes(), only return iBuf.Bytes().
-        TUint bytes = aBytes;
-        if (bytes > iBuf.MaxBytes()) {
-            bytes = iBuf.MaxBytes();
-        }
-
-        iCodecController.Read(iBuf, bytes);
-        if (iBuf.Bytes() < bytes) {
-            // Reached end of stream.
-            iState = eEos;
-        }
-        return Brn(iBuf.Ptr(), iBuf.Bytes());
-    }
-
-    ASSERTS();              // Uknown state.
-    return Brx::Empty();    // Unreachable code.
-}
-
-void CodecBufferedReader::ReadFlush()
-{
-    iBuf.SetBytes(0);
-}
-
-void CodecBufferedReader::ReadInterrupt()
-{
-    ASSERTS();
-}
-
 
 // CodecAac
 
@@ -137,14 +68,13 @@ TBool CodecAac::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     iRecogBuf.SetBytes(0);
     iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
-    if(iRecogBuf.Bytes() >= 4) {
+    if (iRecogBuf.Bytes() >= 4) {
         if (Brn(iRecogBuf.Ptr(), 4) == Brn("mp4a")) {
             // FIXME - should also check codec type that is passed within esds to determine that it is definitely AAC and not another codec (e.g., MP3)
             LOG(kCodec, "CodecAac::Recognise aac mp4a\n");
             return true;
         }
     }
-
     return false;
 }
 
@@ -355,7 +285,7 @@ void CodecAac::ProcessMpeg4()
         iInBuf.SetBytes(0);
 
         try {
-            LOG(kCodec, "CodecAac::Process  iCurrentSample = %u, size = %u, inBuf.MaxBytes() %u\n", iCurrentSample, iSampleSizeTable.SampleSize(iCurrentSample), iInBuf.MaxBytes());
+            LOG(kCodec, "CodecAac::Process  iCurrentSample: %u, size: %u, inBuf.MaxBytes(): %u\n", iCurrentSample, iSampleSizeTable.SampleSize(iCurrentSample), iInBuf.MaxBytes());
             TUint sampleSize = iSampleSizeTable.SampleSize(iCurrentSample);
             iController->Read(iInBuf, sampleSize);
             LOG(kCodec, "CodecAac::Process  read iInBuf.Bytes() = %u\n", iInBuf.Bytes());
