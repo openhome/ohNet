@@ -24,8 +24,7 @@ using namespace OpenHome::Media::Codec;
 const Brn CodecAlacBase::kCodecAlac("ALAC");
 
 CodecAlacBase::CodecAlacBase()
-    : iContainer(NULL)
-    , alac(NULL)
+    : alac(NULL)
 {
     LOG(kCodec, "CodecAlacBase::CodecAlacBase\n");
 }
@@ -35,10 +34,6 @@ CodecAlacBase::~CodecAlacBase()
     LOG(kCodec, "CodecAlacBase::~CodecAlacBase\n");
     alac_free_buffers(alac);
     alac = NULL;
-    if (iContainer) {   // clean up in case not terminating under normal conditions
-        delete iContainer;
-        iContainer = NULL;
-    }
 }
 
 void CodecAlacBase::Initialise()
@@ -50,32 +45,10 @@ void CodecAlacBase::Initialise()
 #endif
     LOG(kCodec, "CodecAlacBase::Initialise\n");
 
-    // iContainer must have been initialised in a derived class
-    ASSERT(iContainer);
-
     iStreamStarted = iStreamEnded = false;
     iInBuf.SetBytes(0);
     iDecodedBuf.SetBytes(0);
     iOutBuf.SetBytes(0);
-
-    alac = create_alac(iContainer->BitDepth(), iContainer->Channels());
-
-    // We initialised codec-specific data in the recognise function.
-    Bws<64> info;
-    info.SetBytes(20);                          // first 20 bytes are ignored by decoder
-    info.Append(iContainer->CodecSpecificData());            // add data extracted from MPEG-4 header
-    alac_set_info(alac, (char*)info.Ptr());     // configure decoder
-
-    iBitDepth = iContainer->BitDepth();
-    iBytesPerSample = iContainer->Channels()*iContainer->BitDepth()/8;
-    iCurrentSample = 0;
-    iSamplesWrittenTotal = 0;
-
-    iTrackLengthJiffies = (iContainer->Duration() * Jiffies::kPerSecond) / iContainer->Timescale();
-    iTrackOffset = 0;
-
-    LOG(kCodec, "CodecAlacBase::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, iContainer->BitDepth(), iContainer->Timescale(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecAlacBase::SupportsMimeType(const Brx& aMimeType)
@@ -95,14 +68,9 @@ TBool CodecAlacBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 void CodecAlacBase::StreamCompleted()
 {
     LOG(kCodec, "CodecAlacBase::StreamCompleted\n");
-
-    // free all malloc'ed buffers
+    // Free all malloc'ed buffers.
     alac_free_buffers(alac);
     alac = NULL;
-    if (iContainer) {
-        delete iContainer;
-        iContainer = NULL;
-    }
 }
 
 void CodecAlacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
@@ -113,7 +81,7 @@ void CodecAlacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
 
     TUint i=0;
 
-    for (i=0 ; i<aToWrite*iContainer->Channels(); i++) {
+    for (i=0 ; i<aToWrite*iChannels; i++) {
         switch (iBitDepth) {
         case 8:
             *dst++ = *src++;
@@ -139,31 +107,30 @@ void CodecAlacBase::Decode()
 {
     //LOG(kCodec, "CodecAlacBase::Process\n");
 
-    // decode sample
-    int outputBytes;
-    outputBytes = iDecodedBuf.MaxBytes();
-    // use alac decoder to decode a frame at a time
+    // Decode sample.
+    TInt outputBytes = iDecodedBuf.MaxBytes();
+    // Use alac decoder to decode a frame at a time.
     if (decode_frame(alac, (unsigned char*)iInBuf.Ptr(), (void*)iDecodedBuf.Ptr(), &outputBytes) == 0) {
-        THROW(CodecStreamCorrupt); // decode error
+        THROW(CodecStreamCorrupt); // Decode error.
     }
     iDecodedBuf.SetBytes(outputBytes);
     //LOG(kCodec, "CodecAlacBase::Process  decoded output %d\n", outputBytes);
 
-    // output samples
+    // Output samples.
     TUint samplesToWrite = iDecodedBuf.Bytes()/iBytesPerSample;
     TUint samplesWritten = 0;
     while (samplesToWrite > 0) {
-        TUint bytes = samplesToWrite * (iBitDepth/8) * iContainer->Channels();
+        TUint bytes = samplesToWrite * (iBitDepth/8) * iChannels;
         TUint samples = samplesToWrite;
         TUint outputSpace = iOutBuf.MaxBytes() - iOutBuf.Bytes();
         if (bytes > outputSpace) {
-            samples = outputSpace / (iContainer->Channels() * (iBitDepth/8));
-            bytes = samples * (iBitDepth/8) * iContainer->Channels();
+            samples = outputSpace / (iChannels * (iBitDepth/8));
+            bytes = samples * (iBitDepth/8) * iChannels;
         }
         BigEndianData(samples, samplesWritten);
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
-        if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iContainer->Channels()) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->Timescale(),
+        if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iChannels) {
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iTimescale,
                 iBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
@@ -177,9 +144,9 @@ void CodecAlacBase::Decode()
 void CodecAlacBase::OutputFinal()
 {
     if (iStreamStarted || iStreamEnded) {
-        // flush remaining samples
+        // Flush remaining samples.
         if (iOutBuf.Bytes() > 0) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->Timescale(),
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iTimescale,
                 iBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutBuf.SetBytes(0);
         }

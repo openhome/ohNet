@@ -246,13 +246,14 @@ private:
     MsgAudioEncoded* ProcessNextAudioBlock();   // May return NULL.
     void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
-    void ParseBoxMp4a(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxCodec(IMpeg4Box& aBox, TUint aBytes, const Brx& aCodec);
     void ParseBoxStts(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxStsc(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxStco(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxCo64(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxStsz(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxStreamDescriptor(IMpeg4Box& aBox, TUint aBytes);
+    void ParseBoxAlac(IMpeg4Box& aBox, TUint aBytes);
 private:
     Mpeg4BoxStack iBoxStack;
     //TUint iSize;

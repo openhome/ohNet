@@ -1001,11 +1001,11 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                 for (TUint i=0; i<sampleEntries; i++) {
                                                     iBoxStack.ReadHeader();
                                                     if (iBoxStack.Id() == Brn("mp4a")) {  // Only care about audio.
-                                                        ParseBoxMp4a(iBoxStack, iBoxStack.Size());
+                                                        ParseBoxCodec(iBoxStack, iBoxStack.Size(), Brn("mp4a"));
                                                         iBoxStack.Push();
                                                         for (;;) {
                                                             iBoxStack.ReadHeader();
-                                                            if (iBoxStack.Id() == Brn("esds") || iBoxStack.Id() == Brn("alac")) {
+                                                            if (iBoxStack.Id() == Brn("esds")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
                                                                 Log::Print("found stream descriptor box\n");
@@ -1022,8 +1022,29 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                         break;  // FIXME - correct thing to do?
 
                                                     }
+                                                    else if (iBoxStack.Id() == Brn("alac")) {
+                                                        ParseBoxCodec(iBoxStack, iBoxStack.Size(), Brn("alac"));
+                                                        iBoxStack.Push();
+                                                        for (;;) {
+                                                            iBoxStack.ReadHeader();
+                                                            if (iBoxStack.Id() == Brn("alac")) {
+                                                                // FIXME - valid to filter this box by known content type?
+                                                                // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
+                                                                Log::Print("found stream descriptor box\n");
+                                                                ParseBoxAlac(iBoxStack, iBoxStack.Size());
+                                                                break;
+                                                            }
+                                                            iBoxStack.SkipRemaining();
+                                                            iBoxStack.Clear();
+                                                        }
+                                                        iBoxStack.SkipRemaining();
+                                                        iBoxStack.Clear();
+                                                        iBoxStack.Pop();
+                                                        break;  // FIXME - correct thing to do?
+                                                    }
                                                     iBoxStack.SkipRemaining();
                                                     iBoxStack.Clear();
+                                                    // FIXME - what if we exhaust file (e.g., by not recognising one of the boxes above)? Should not assert (due to attempting to read more data), but should instead cause pipeline to report that stream failed to be recognised.
                                                 }
                                                 iBoxStack.SkipRemaining();
                                                 iBoxStack.Clear();
@@ -1145,9 +1166,9 @@ void Mpeg4Container::ParseBoxMdhd(IMpeg4Box& aBox, TUint /*aBytes*/)
     }
 }
 
-void Mpeg4Container::ParseBoxMp4a(IMpeg4Box& aBox, TUint /*aBytes*/)
+void Mpeg4Container::ParseBoxCodec(IMpeg4Box& aBox, TUint /*aBytes*/, const Brx& aCodec)
 {
-    iCodec.Replace("mp4a");
+    iCodec.Replace(aCodec);
     ReaderBinary readerBin(aBox);
     aBox.Skip(6);    // Skip 6-byte reserved block.
     aBox.Skip(2);    // Skip 2 byte data ref index.
@@ -1265,6 +1286,21 @@ void Mpeg4Container::ParseBoxStreamDescriptor(IMpeg4Box& aBox, TUint /*aBytes*/)
         Brn buf = aBox.Read(remaining);
         if (buf.Bytes() == 0) {
 
+            THROW(MediaMpeg4FileInvalid);
+        }
+        iStreamDescriptor.Append(buf);
+        remaining -= buf.Bytes();
+    }
+}
+
+void Mpeg4Container::ParseBoxAlac(IMpeg4Box& aBox, TUint /*aBytes*/)
+{
+    // FIXME - instead of doing this, just pass this bit of stream directly on to codec. Means no local storage req'd.
+    TUint remaining = aBox.Size() - Mpeg4Box::kBoxHeaderBytes;
+    iStreamDescriptor.SetBytes(0);
+    while (remaining > 0) {
+        Brn buf = aBox.Read(remaining);
+        if (buf.Bytes() == 0) {
             THROW(MediaMpeg4FileInvalid);
         }
         iStreamDescriptor.Append(buf);
