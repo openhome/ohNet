@@ -14,11 +14,11 @@ using namespace OpenHome::Media::Codec;
 // ContainerBase
 
 ContainerBase::ContainerBase()
-    : iAudioEncoded(NULL)
+    : iMsgFactory(NULL)
+    , iAudioEncoded(NULL)
     , iStreamHandler(NULL)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iPulling(false)
-    , iMsgFactory(NULL)
     , iUpstreamElement(NULL)
     , iPendingMsg(NULL)
 {
@@ -126,7 +126,35 @@ void ContainerBase::Read(Bwx& aBuf, TUint aBytes)
     }
     PullAudio(aBytes);
     ReadFromCachedAudio(aBuf, aBytes);
+    ASSERT(aBuf.Bytes() == aBytes);
 }
+
+//void ContainerBase::Read(Bwx& aBuf, TUint aBytes, TUint aOffset)
+//{
+//    if (iPendingMsg != NULL) {
+//        if (ReadFromCachedAudio(aBuf, aBytes, aOffset)) {
+//            return;
+//        }
+//        return;
+//    }
+//    TUint toPull = aBytes;
+//    if (iAudioEncoded == NULL) {
+//        toPull += aOffset;
+//    }
+//    else if (iAudioEncoded->Bytes() < aOffset) {
+//        toPull += aOffset-iAudioEncoded->Bytes();
+//    }
+//    //const TUint audioEncodedBytesBeforePull = iAudioEncoded->Bytes();
+//    //audioEncodedBytesBeforePull;
+//    PullAudio(toPull);
+//    PullAudio(aOffset+aBytes);  // PullAudio pulls until we have aBytes in iAudioEncoded.
+//                                // It does NOT pull aBytes -in addition to- what iAudioEncoded already contains.
+//    ASSERT(iAudioEncoded->Bytes() >= aOffset+aBytes);
+//    //const TUint audioEncodedBytesAfterPull = iAudioEncoded->Bytes();
+//    //audioEncodedBytesAfterPull;
+//    ReadFromCachedAudio(aBuf, aBytes, aOffset);
+//    ASSERT(aBuf.Bytes() == aBytes);
+//}
 
 /*
   try read (up to) aBytes from data currently held in iAudioEncoded
@@ -151,8 +179,53 @@ TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes)
     if (remaining != NULL) {
         iAudioEncoded->Add(remaining);
     }
+    ASSERT(aBuf.Bytes() == aBytes);
     return true;
 }
+
+//TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes, TUint aOffset)
+//{
+//    if (aBytes == 0) {
+//        return true;
+//    }
+//    if (iAudioEncoded == NULL) {
+//        return false;
+//    }
+//    if (aOffset >= iAudioEncoded->Bytes()) {
+//        return false;
+//    }
+//    //const TUint audioEncodedBytes = iAudioEncoded->Bytes();
+//    //audioEncodedBytes;
+//    MsgAudioEncoded* desired = NULL;
+//    MsgAudioEncoded* remaining = NULL;
+//    if (aOffset > 0) {
+//        desired = iAudioEncoded->Split(aOffset);
+//    }
+//    else {
+//        desired = iAudioEncoded;
+//        iAudioEncoded = NULL;
+//    }
+//
+//    if (desired->Bytes() > aBytes) {
+//        remaining = desired->Split(aBytes);
+//    }
+//    const TUint bytes = desired->Bytes();
+//    ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
+//    TByte* ptr = const_cast<TByte*>(aBuf.Ptr()) + aBuf.Bytes();
+//    desired->CopyTo(ptr);
+//    aBuf.SetBytes(aBuf.Bytes() + bytes);
+//    if (iAudioEncoded == NULL) {
+//        iAudioEncoded = desired;
+//    }
+//    else {
+//        iAudioEncoded->Add(desired);
+//    }
+//    if (remaining != NULL) {
+//        iAudioEncoded->Add(remaining);
+//    }
+//    ASSERT(aBuf.Bytes() == aBytes);
+//    return true;
+//}
 
 void ContainerBase::Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler)
 {
