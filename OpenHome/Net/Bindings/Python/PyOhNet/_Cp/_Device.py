@@ -83,12 +83,17 @@ class Device():
         proxy = GenProxy.GenProxy( aService['type'], serviceXml )
 
         # 'import' the generated proxies
+        # we always rebuild the module with the most recently read service
+        # definition, as service implementation details can vary between
+        # different implementations of the same same services. More efficient
+        # to only build module on first request and re-use it, but this DOES
+        # give issues in case described above
         if proxyName in sys.modules.keys():
             proxyModule = sys.modules[proxyName]
         else:
             proxyModule = types.ModuleType( proxyName )
-            exec proxy.text in proxyModule.__dict__
             sys.modules[proxyName] = proxyModule
+        exec proxy.text in proxyModule.__dict__
 
         # # FOR DEBUG - write generated proxies to, and import from file
         # #             NOTE - no mutex protection on file access, so do NOT use this
