@@ -50,9 +50,14 @@ void Muter::Unmute()
     LOG(kPipeline, "Muter::Unmute\n");
     AutoMutex _(iLock);
     if (iState == eMuted) {
-        iState = eRampingUp;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kMin;
+        if (iHalted) {
+            iState = eRunning;
+        }
+        else {
+            iState = eRampingUp;
+            iRemainingRampSize = iRampDuration;
+            iCurrentRampValue = Ramp::kMin;
+        }
     }
     else if (iState == eRampingDown) {
         if (iRemainingRampSize == iRampDuration) {
@@ -165,6 +170,9 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
         const Ramp::EDirection direction = (iState == eRampingDown? Ramp::EDown : Ramp::EUp);
         if (iRemainingRampSize > 0) {
             iCurrentRampValue = msg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        }
+        if (iRemainingRampSize == 0) {
+            iState = (iState == eRampingDown? eMuted : eRunning);
         }
         if (split != NULL) {
             iQueue.EnqueueAtHead(split);

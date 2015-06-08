@@ -46,6 +46,7 @@ public:
     static const TUint kMaxDataBytes = 128;
     static const TUint kMaxTokenBytes = 128;
 public:
+    virtual void Set(const Brx& aId, const Brx& aUsername) = 0;
     virtual void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) = 0;
     virtual void Clear(const Brx& aId) = 0;
     virtual void Enable(const Brx& aId, TBool aEnable) = 0;
@@ -82,6 +83,7 @@ public:
     void Start();
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
+    void Set(const Brx& aId, const Brx& aUsername) override;
     void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted
     void Clear(const Brx& aId) override;
     void Enable(const Brx& aId, TBool aEnable) override;

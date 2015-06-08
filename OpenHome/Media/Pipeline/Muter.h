@@ -12,6 +12,7 @@ namespace Media {
 
 class Muter : public IPipelineElementUpstream, public IMute, private IMsgProcessor, private INonCopyable
 {
+    friend class SuiteMuter;
 public:
     Muter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, TUint aRampDuration);
 public: // from IMute

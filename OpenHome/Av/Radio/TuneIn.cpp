@@ -409,5 +409,5 @@ void CredentialsTuneIn::ReLogin(const Brx& /*aCurrentToken*/, Bwx& aNewToken)
 
 void CredentialsTuneIn::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
 {
-    iCredentialsManager.Set(kId, aKvp.Value(), Brx::Empty());
+    iCredentialsManager.Set(kId, aKvp.Value());
 }

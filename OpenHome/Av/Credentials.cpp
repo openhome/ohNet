@@ -28,6 +28,7 @@ public:
     ~Credential();
     void SetKey(RSA* aKey);
     const Brx& Id() const;
+    void Set(const Brx& aUsername);
     void Set(const Brx& aUsername, const Brx& aPassword);
     void Clear();
     void Enable(TBool aEnable);
@@ -116,6 +117,13 @@ void Credential::SetKey(RSA* aKey)
 const Brx& Credential::Id() const
 {
     return iConsumer->Id();
+}
+
+void Credential::Set(const Brx& aUsername)
+{
+    iEnabled = true;
+    iStatus.Replace(Brx::Empty());
+    iConfigUsername->Set(aUsername);
 }
 
 void Credential::Set(const Brx& aUsername, const Brx& aPassword)
@@ -300,6 +308,12 @@ void Credentials::SetState(const Brx& aId, const Brx& aStatus, const Brx& aData)
 void Credentials::GetPublicKey(Bwx& aKey)
 {
     aKey.Replace(iKeyBuf);
+}
+
+void Credentials::Set(const Brx& aId, const Brx& aUsername)
+{
+    Credential* credential = Find(aId);
+    credential->Set(aUsername);
 }
 
 void Credentials::Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword)
