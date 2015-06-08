@@ -119,7 +119,6 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
-    Media::MuteNull iMute;
     Configuration::ConfigManager* iConfigManager;
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
