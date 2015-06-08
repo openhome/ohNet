@@ -714,7 +714,7 @@ void WebAppFramework::AddSessions()
     // iMaxLpSessions are in use to allow processing of user input and
     // rejection of new connections.
     for (TUint i=0; i<iMaxLpSessions+kSpareSessions; i++) {
-        Bws<32> name(kSessionPrefix);
+        Bws<kMaxSessionNameBytes> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
         iServer->Add(name.PtrZ(), new HttpSession(iEnv, *this, iTabManager, *this));
     }

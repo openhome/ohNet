@@ -945,7 +945,7 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<c
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
         Brn suffix(".Name");
-        Bws<64> key("Source.");
+        Bws<kMaxSourceNameBytes> key("Source.");
         Ascii::AppendDec(key, i);
         key.Append(suffix);
 
