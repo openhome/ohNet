@@ -97,6 +97,9 @@ class TestRadioService( BASE.BaseTest ):
         self.dut    = None
         self.soft   = None
         self.dutDev = ''
+        self.users  = [self.config.Get( 'tunein.user.l1' ),  # 0 < channels < 100
+                       self.config.Get( 'tunein.user.l2' ),  # 0 channels
+                       self.config.Get( 'tunein.user.l3' )]  # > 100 channels
 
     def Test( self, aArgs ):
         """Test functionality of Radio service"""
@@ -179,9 +182,7 @@ class TestRadioService( BASE.BaseTest ):
         self._SetTuneInUser( 'no-one' )
         time.sleep( 2 )
         self.dut.radio.AddSubscriber( _PresetsEvtCb )
-        for user in (self.config.Get( 'tunein.user.l1' ),       # 0 < channels < 100
-                     self.config.Get( 'tunein.user.l2' ),       # 0 channels
-                     self.config.Get( 'tunein.user.l3' )):      # > 100 channels
+        for user in self.users:
             self.log.Header2( self.dutDev, 'Testing with %s' % user )
             presetsUpdate.clear()
             self._SetTuneInUser( user )
