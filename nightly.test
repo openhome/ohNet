@@ -25,6 +25,7 @@ tests = '''
     TestPruner
     TestGorger
     TestStarvationMonitor
+    TestMuter
     TestPreDriver
     TestContentProcessor
     TestPipeline
@@ -49,6 +50,7 @@ tests = '''
     TestWaiter
     TestUriProviderRepeater
     TestJson
+    TestObservable
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()
