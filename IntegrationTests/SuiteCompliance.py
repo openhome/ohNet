@@ -29,6 +29,7 @@ tests = [
     [ 'TestCompliancePlaylist1',        dut ],
     [ 'TestCompliancePlaylist2',        dut ],
     [ 'TestCompliancePlaylist3',        dut ],
+    [ 'TestComplianceradio',            dut ],
     [ 'TestComplianceProduct',          dut ],
     [ 'TestComplianceVolume',           dut ],
     [ 'TestComplianceReceiver',         dut ],
