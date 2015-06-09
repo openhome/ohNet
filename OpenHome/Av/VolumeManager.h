@@ -80,58 +80,57 @@ public:
 class IVolumeProfile
 {
 public:
-    virtual TUint VolumeMax() = 0;
-    virtual TUint VolumeDefault() = 0;
-    virtual TUint VolumeUnity() = 0;
-    virtual TUint VolumeDefaultLimit() = 0;
-    virtual TUint VolumeStep() = 0;
-    virtual TUint VolumeMilliDbPerStep() = 0;
-    virtual TUint BalanceMax() = 0;
-    virtual TUint FadeMax() = 0;
+    virtual TUint VolumeMax() const = 0;
+    virtual TUint VolumeDefault() const = 0;
+    virtual TUint VolumeUnity() const = 0;
+    virtual TUint VolumeDefaultLimit() const = 0;
+    virtual TUint VolumeStep() const = 0;
+    virtual TUint VolumeMilliDbPerStep() const = 0;
+    virtual TUint BalanceMax() const = 0;
+    virtual TUint FadeMax() const = 0;
     virtual ~IVolumeProfile() {}
 };
 
-class VolumeInitParams : public IVolumeProfile
+class VolumeConsumer : private INonCopyable
 {
-    friend class VolumeManager;
 public:
-    VolumeInitParams();
-    void SetVolume(IVolume& aVolume, TUint aVolumeMax, TUint aVolumeDefault, TUint aVolumeUnity, TUint aDefaultLimit, TUint aVolumeStep, TUint aVolumeMilliDbPerStep);
-    void SetBalance(IBalance& aBalance, TUint aBalanceMax);
-    void SetFade(IFade& aFade, TUint aFadeMax);
-    void SetUserMute(Media::IMute& aMute);
-public: // from IVolumeProfile
-    TUint VolumeMax() override;
-    TUint VolumeDefault() override;
-    TUint VolumeUnity() override;
-    TUint VolumeDefaultLimit() override;
-    TUint VolumeStep() override;
-    TUint VolumeMilliDbPerStep() override;
-    TUint BalanceMax() override;
-    TUint FadeMax() override;
+    VolumeConsumer(IVolume& aVolume);
+    void SetBalance(IBalance& aBalance);
+    void SetFade(IFade& aFade);
+    IVolume& Volume();
+    IBalance* Balance();
+    IFade* Fade();
 private:
-    IVolume* iVolume;
-    TUint iVolumeMax;
-    TUint iVolumeDefault;
-    TUint iVolumeUnity;
-    TUint iVolumeDefaultLimit;
-    TUint iVolumeStep;
-    TUint iVolumeMilliDbPerStep;
+    IVolume& iVolume;
     IBalance* iBalance;
-    TUint iBalanceMax;
     IFade* iFade;
-    TUint iFadeMax;
-    Media::IMute* iMute;
+};
+
+class VolumeNull : public IVolume
+{
+private: // from IVolume
+    void SetVolume(TUint aVolume) override;
+};
+
+class VolumeProfileNull : public IVolumeProfile
+{
+private: // from IVolumeProfile
+    TUint VolumeMax() const override            { return 0; }
+    TUint VolumeDefault() const override        { return 0; }
+    TUint VolumeUnity() const override          { return 0; }
+    TUint VolumeDefaultLimit() const override   { return 0; }
+    TUint VolumeStep() const override           { return 0; }
+    TUint VolumeMilliDbPerStep() const override { return 0; }
+    TUint BalanceMax() const override           { return 0; }
+    TUint FadeMax() const override              { return 0; }
 };
 
 class VolumeUser : public IVolume, private INonCopyable
 {
 public:
     static const Brn kStartupVolumeKey;
-    static const Brn kConfigKeyStartup;
-    static const Brn kConfigKeyStartupEnabled;
 public:
-    VolumeUser(IVolume& aVolume, Configuration::IStoreReadWrite& aStore, Configuration::IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, TUint aMaxVolume, TUint aDefaultVolume);
+    VolumeUser(IVolume& aVolume, Configuration::IConfigManager& aConfigReader, StoreInt& aStoreUserVolume, TUint aMaxVolume);
     ~VolumeUser();
 public: // from IVolume
     void SetVolume(TUint aVolume) override;
@@ -140,23 +139,20 @@ private:
     void StartupVolumeEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
     IVolume& iVolume;
-    Configuration::ConfigNum* iConfigStartupVolume;
-    Configuration::ConfigChoice* iConfigStartupVolumeEnabled;
+    Configuration::ConfigNum& iConfigStartupVolume;
+    Configuration::ConfigChoice& iConfigStartupVolumeEnabled;
     TUint iSubscriberIdStartupVolume;
     TUint iSubscriberIdStartupVolumeEnabled;
-    StoreInt iStoreUserVolume;
+    StoreInt& iStoreUserVolume;
     TBool iStartupVolumeEnabled;
     TUint iStartupVolume;
     TUint iMaxVolume;
 };
 
-// limiter: clip any excess volume
 class VolumeLimiter : public IVolume, private INonCopyable
 {
 public:
-    static const Brn kConfigKey;
-public:
-    VolumeLimiter(IVolume& aVolume, Configuration::IConfigInitialiser& aConfigInit, TUint aDefaultLimit, TUint aMaxVolume);
+    VolumeLimiter(IVolume& aVolume, Configuration::IConfigManager& aConfigReader);
     ~VolumeLimiter();
 public: // from IVolume
     void SetVolume(TUint aValue) override;
@@ -166,7 +162,7 @@ private:
 private:
     Mutex iLock;
     IVolume& iVolume;
-    Configuration::ConfigNum* iConfigLimit;
+    Configuration::ConfigNum& iConfigLimit;
     TUint iSubscriberIdLimit;
     TUint iUpstreamVolume;
     TUint iLimit;
@@ -236,14 +232,12 @@ private:
 class VolumeUnityGain : public VolumeUnityGainBase
 {
 public:
-    static const Brn kConfigKey;
-public:
-    VolumeUnityGain(IVolume& aVolume, Configuration::IConfigInitialiser& aConfigInit, TUint aUnityGainValue);
+    VolumeUnityGain(IVolume& aVolume, Configuration::IConfigManager& aConfigReader, TUint aUnityGainValue);
     ~VolumeUnityGain();
 private:
     void EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
-    Configuration::ConfigChoice* iConfigVolumeControlEnabled;
+    Configuration::ConfigChoice& iConfigVolumeControlEnabled;
     TUint iSubscriberId;
 };
 
@@ -266,9 +260,7 @@ public: // from IVolumeSourceUnityGain
 class BalanceUser : public IBalance, private INonCopyable
 {
 public:
-    static const Brn kConfigKey;
-public:
-    BalanceUser(IBalance& aBalance, Configuration::IConfigInitialiser& aConfigInit, TInt aDefault, TUint aMax);
+    BalanceUser(IBalance& aBalance, Configuration::IConfigManager& aConfigReader);
     ~BalanceUser();
 public: // from IBalance
     void SetBalance(TInt aBalance) override;
@@ -276,16 +268,14 @@ private:
     void BalanceChanged(Configuration::ConfigNum::KvpNum& aKvp);
 private:
     IBalance& iBalance;
-    Configuration::ConfigNum* iConfigBalance;
+    Configuration::ConfigNum& iConfigBalance;
     TUint iSubscriberIdBalance;
 };
 
 class FadeUser : public IFade, private INonCopyable
 {
 public:
-    static const Brn kConfigKey;
-public:
-    FadeUser(IFade& aFade, Configuration::IConfigInitialiser& aConfigInit, TInt aDefault, TUint aMax);
+    FadeUser(IFade& aFade, Configuration::IConfigManager& aConfigReader);
     ~FadeUser();
 public: // from IFade
     void SetFade(TInt aFade) override;
@@ -293,23 +283,20 @@ private:
     void FadeChanged(Configuration::ConfigNum::KvpNum& aKvp);
 private:
     IFade& iFade;
-    Configuration::ConfigNum* iConfigFade;
+    Configuration::ConfigNum& iConfigFade;
     TUint iSubscriberIdFade;
 };
 
 class MuteUser : public Media::IMute, private INonCopyable
 {
-    static const Brn kStoreKey;
-    static const TInt kMuted   = 1;
-    static const TInt kUnmuted = 0;
 public:
-    MuteUser(Media::IMute& aMute, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
+    MuteUser(Media::IMute& aMute, StoreInt& aStoreUserMute);
 public: // from Media::IMute
     void Mute() override;
     void Unmute() override;
 private:
     Media::IMute& iMute;
-    StoreInt iStoreUserMute;
+    StoreInt& iStoreUserMute;
 };
 
 class MuteReporter : public Media::IMute, private INonCopyable
@@ -328,6 +315,56 @@ private:
     TBool iMuted;
 };
 
+class VolumeConfig : public IVolumeProfile
+{
+public:
+    static const Brn kKeyStartupVolume;
+    static const Brn kKeyStartupMute;
+    static const Brn kKeyStartupValue;
+    static const Brn kKeyStartupEnabled;
+    static const Brn kKeyLimit;
+    static const Brn kKeyEnabled;
+    static const Brn kKeyBalance;
+    static const Brn kKeyFade;
+    static const TInt kValueMuted   = 1;
+    static const TInt kValueUnmuted = 0;
+public:
+    VolumeConfig(Configuration::IStoreReadWrite& aStore, Configuration::IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, const IVolumeProfile& aProfile);
+    ~VolumeConfig();
+    StoreInt& StoreUserVolume();
+    StoreInt& StoreUserMute();
+    TBool VolumeControlEnabled() const;
+public: // from IVolumeProfile
+    TUint VolumeMax() const override;
+    TUint VolumeDefault() const override;
+    TUint VolumeUnity() const override;
+    TUint VolumeDefaultLimit() const override;
+    TUint VolumeStep() const override;
+    TUint VolumeMilliDbPerStep() const override;
+    TUint BalanceMax() const override;
+    TUint FadeMax() const override;
+private:
+    void EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
+private:
+    StoreInt iStoreUserVolume;
+    StoreInt iStoreUserMute;
+    Configuration::ConfigNum* iVolumeStartup;
+    Configuration::ConfigChoice* iVolumeStartupEnabled;
+    Configuration::ConfigNum* iVolumeLimit;
+    Configuration::ConfigChoice* iVolumeEnabled;
+    Configuration::ConfigNum* iBalance;
+    Configuration::ConfigNum* iFade;
+    TUint iVolumeMax;
+    TUint iVolumeDefault;
+    TUint iVolumeUnity;
+    TUint iVolumeDefaultLimit;
+    TUint iVolumeStep;
+    TUint iVolumeMilliDbPerStep;
+    TUint iBalanceMax;
+    TUint iFadeMax;
+    TBool iVolumeControlEnabled;
+};
+
 class IVolumeManager : public IVolume, public IVolumeProfile, public Media::IMute
 {
 public:
@@ -344,13 +381,8 @@ class VolumeManager : public IVolumeManager
                     , private INonCopyable
 {
 public:
-    VolumeManager(const VolumeInitParams& aInitParams,
-                  Configuration::IStoreReadWrite& aStore,
-                  Configuration::IConfigInitialiser& aConfigInit,
-                  IPowerManager& aPowerManager,
-                  Net::DvDevice& aDevice,
-                  Product& aProduct,
-                  Configuration::IConfigManager& aConfigReader);
+    VolumeManager(VolumeConsumer& aVolumeConsumer, Media::IMute* aMute, VolumeConfig& aVolumeConfig,
+                  Net::DvDevice& aDevice, Product& aProduct, Configuration::IConfigManager& aConfigReader);
     ~VolumeManager();
 public: // from IVolumeManager
     void AddObserver(IVolumeObserver& aObserver) override;
@@ -360,14 +392,14 @@ public: // from IVolumeSourceOffset
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
 private: // from IVolumeProfile
-    TUint VolumeMax() override;
-    TUint VolumeDefault() override;
-    TUint VolumeUnity() override;
-    TUint VolumeDefaultLimit() override;
-    TUint VolumeStep() override;
-    TUint VolumeMilliDbPerStep() override;
-    TUint BalanceMax() override;
-    TUint FadeMax() override;
+    TUint VolumeMax() const override;
+    TUint VolumeDefault() const override;
+    TUint VolumeUnity() const override;
+    TUint VolumeDefaultLimit() const override;
+    TUint VolumeStep() const override;
+    TUint VolumeMilliDbPerStep() const override;
+    TUint BalanceMax() const override;
+    TUint FadeMax() const override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
 private: // from IBalance
@@ -378,7 +410,7 @@ private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
 private:
-    const VolumeInitParams iInitParams;
+    VolumeConfig& iVolumeConfig;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;
     VolumeUnityGain* iVolumeUnityGain;
     VolumeSourceOffset* iVolumeSourceOffset;

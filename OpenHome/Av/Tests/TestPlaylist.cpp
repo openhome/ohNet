@@ -134,6 +134,7 @@ private:
     ConfigRamStore* iConfigRamStore;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
+    VolumeNull iDummyVolume;
     CpProxyAvOpenhomeOrgPlaylist1* iProxy;
     std::array<TUint, kNumTracks> iTrackIds;
     TUint iCurrentTrackId;
@@ -420,9 +421,10 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    VolumeInitParams volumeInitParams;
+    VolumeConsumer volumeInit(iDummyVolume);
+    VolumeProfileNull volProfile;
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   volumeInitParams, udn, Brn("Main Room"), Brn("Softplayer"));
+                                   volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));
     iDriver = new DummyDriver(iMediaPlayer->Pipeline());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));

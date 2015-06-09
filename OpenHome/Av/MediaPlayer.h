@@ -53,8 +53,10 @@ class KvpStore;
 class NetworkMonitor;
 class Credentials;
 class VolumeManager;
+class VolumeConfig;
+class VolumeConsumer;
 class IVolumeManager;
-class VolumeInitParams;
+class IVolumeProfile;
 
 class IMediaPlayer
 {
@@ -85,7 +87,7 @@ public:
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
-                const VolumeInitParams& aVolumeInitParams,
+                VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -124,6 +126,7 @@ private:
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Av::Product* iProduct;
+    VolumeConfig* iVolumeConfig;
     Av::VolumeManager* iVolumeManager;
     Credentials* iCredentials;
     ProviderTime* iProviderTime;

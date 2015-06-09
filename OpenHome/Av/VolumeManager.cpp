@@ -17,111 +17,61 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
-// VolumeInitParams
+// VolumeConsumer
 
-VolumeInitParams::VolumeInitParams()
-    : iVolume(NULL) 
-    , iVolumeMax(0)
-    , iVolumeDefault(0)
-    , iVolumeUnity(0)
-    , iVolumeDefaultLimit(0)
-    , iVolumeStep(0)
-    , iVolumeMilliDbPerStep(0)
+VolumeConsumer::VolumeConsumer(IVolume& aVolume)
+    : iVolume(aVolume)
     , iBalance(NULL)
-    , iBalanceMax(0)
     , iFade(NULL)
-    , iFadeMax(0)
-    , iMute(NULL)
 {
 }
 
-void VolumeInitParams::SetVolume(IVolume& aVolume, TUint aVolumeMax, TUint aVolumeDefault, TUint aVolumeUnity, TUint aDefaultLimit, TUint aVolumeStep, TUint aVolumeMilliDbPerStep)
+void VolumeConsumer::SetBalance(IBalance& aBalance)
 {
-    iVolume               = &aVolume; 
-    iVolumeMax            = aVolumeMax;
-    iVolumeDefault        = aVolumeDefault;
-    iVolumeUnity          = aVolumeUnity;
-    iVolumeDefaultLimit   = aDefaultLimit;
-    iVolumeStep           = aVolumeStep;
-    iVolumeMilliDbPerStep = aVolumeMilliDbPerStep;
+    iBalance = &aBalance;
 }
 
-void VolumeInitParams::SetBalance(IBalance& aBalance, TUint aBalanceMax)
+void VolumeConsumer::SetFade(IFade& aFade)
 {
-    iBalance    = &aBalance;
-    iBalanceMax = aBalanceMax;
+    iFade = &aFade;
 }
 
-void VolumeInitParams::SetFade(IFade& aFade, TUint aFadeMax)
+IVolume& VolumeConsumer::Volume()
 {
-    iFade    = &aFade;
-    iFadeMax = aFadeMax;
+    return iVolume;
 }
 
-void VolumeInitParams::SetUserMute(Media::IMute& aMute)
+IBalance* VolumeConsumer::Balance()
 {
-    iMute = &aMute;
+    return iBalance;
 }
 
-TUint VolumeInitParams::VolumeMax()
+IFade* VolumeConsumer::Fade()
 {
-    return iVolumeMax;
+    return iFade;
 }
 
-TUint VolumeInitParams::VolumeDefault()
-{
-    return iVolumeDefault;
-}
 
-TUint VolumeInitParams::VolumeUnity()
-{
-    return iVolumeUnity;
-}
+// VolumeNull
 
-TUint VolumeInitParams::VolumeDefaultLimit()
+void VolumeNull::SetVolume(TUint /*aVolume*/)
 {
-    return iVolumeDefaultLimit;
-}
-
-TUint VolumeInitParams::VolumeStep()
-{
-    return iVolumeStep;
-}
-
-TUint VolumeInitParams::VolumeMilliDbPerStep()
-{
-    return iVolumeMilliDbPerStep;
-}
-
-TUint VolumeInitParams::BalanceMax()
-{
-    return iBalanceMax;
-}
-
-TUint VolumeInitParams::FadeMax()
-{
-    return iFadeMax;
 }
 
 
 // VolumeUser
 
 const Brn VolumeUser::kStartupVolumeKey("Startup.Volume");
-const Brn VolumeUser::kConfigKeyStartup("Volume.StartupValue");
-const Brn VolumeUser::kConfigKeyStartupEnabled("Volume.StartupEnabled");
 
-VolumeUser::VolumeUser(IVolume& aVolume, IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, TUint aMaxVolume, TUint aDefaultVolume)
+VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, StoreInt& aStoreUserVolume, TUint aMaxVolume)
     : iVolume(aVolume)
-    , iStoreUserVolume(aStore, aPowerManager, kPowerPriorityHighest, kStartupVolumeKey, aDefaultVolume)
+    , iConfigStartupVolume(aConfigReader.GetNum(VolumeConfig::kKeyStartupValue))
+    , iConfigStartupVolumeEnabled(aConfigReader.GetChoice(VolumeConfig::kKeyStartupEnabled))
+    , iStoreUserVolume(aStoreUserVolume)
     , iMaxVolume(aMaxVolume)
 {
-    iConfigStartupVolume = new ConfigNum(aConfigInit, kConfigKeyStartup, 0, aMaxVolume, aDefaultVolume);
-    iSubscriberIdStartupVolume = iConfigStartupVolume->Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
-    std::vector<TUint> choices;
-    choices.push_back(eStringIdYes);
-    choices.push_back(eStringIdNo);
-    iConfigStartupVolumeEnabled = new ConfigChoice(aConfigInit, kConfigKeyStartupEnabled, choices, eStringIdNo);
-    iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled->Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
+    iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
+    iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
 
     const TUint startupVolume = (iStartupVolumeEnabled? iStartupVolume : iStoreUserVolume.Get());
     iVolume.SetVolume(startupVolume);
@@ -129,10 +79,8 @@ VolumeUser::VolumeUser(IVolume& aVolume, IStoreReadWrite& aStore, IConfigInitial
 
 VolumeUser::~VolumeUser()
 {
-    iConfigStartupVolume->Unsubscribe(iSubscriberIdStartupVolume);
-    delete iConfigStartupVolume;
-    iConfigStartupVolumeEnabled->Unsubscribe(iSubscriberIdStartupVolumeEnabled);
-    delete iConfigStartupVolumeEnabled;
+    iConfigStartupVolume.Unsubscribe(iSubscriberIdStartupVolume);
+    iConfigStartupVolumeEnabled.Unsubscribe(iSubscriberIdStartupVolumeEnabled);
 }
 
 void VolumeUser::SetVolume(TUint aVolume)
@@ -157,21 +105,18 @@ void VolumeUser::StartupVolumeEnabledChanged(ConfigChoice::KvpChoice& aKvp)
 
 // VolumeLimiter
 
-const Brn VolumeLimiter::kConfigKey("Volume.Limit");
-
-VolumeLimiter::VolumeLimiter(IVolume& aVolume, IConfigInitialiser& aConfigInit, TUint aDefaultLimit, TUint aMaxVolume)
+VolumeLimiter::VolumeLimiter(IVolume& aVolume, IConfigManager& aConfigReader)
     : iLock("VLMT")
     , iVolume(aVolume)
+    , iConfigLimit(aConfigReader.GetNum(VolumeConfig::kKeyLimit))
     , iUpstreamVolume(0)
 {
-    iConfigLimit = new ConfigNum(aConfigInit, kConfigKey, 0, aMaxVolume, aDefaultLimit);
-    iSubscriberIdLimit = iConfigLimit->Subscribe(MakeFunctorConfigNum(*this, &VolumeLimiter::LimitChanged));
+    iSubscriberIdLimit = iConfigLimit.Subscribe(MakeFunctorConfigNum(*this, &VolumeLimiter::LimitChanged));
 }
 
 VolumeLimiter::~VolumeLimiter()
 {
-    iConfigLimit->Unsubscribe(iSubscriberIdLimit);
-    delete iConfigLimit;
+    iConfigLimit.Unsubscribe(iSubscriberIdLimit);
 }
 
 void VolumeLimiter::SetVolume(TUint aValue)
@@ -284,24 +229,19 @@ void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
     }
 }
 
+
 // VolumeUnityGain
 
-const Brn VolumeUnityGain::kConfigKey("Volume.Enabled");
-
-VolumeUnityGain::VolumeUnityGain(IVolume& aVolume, IConfigInitialiser& aConfigInit, TUint aUnityGainValue)
+VolumeUnityGain::VolumeUnityGain(IVolume& aVolume, IConfigManager& aConfigReader, TUint aUnityGainValue)
     : VolumeUnityGainBase(aVolume, aUnityGainValue)
+    , iConfigVolumeControlEnabled(aConfigReader.GetChoice(VolumeConfig::kKeyEnabled))
 {
-    std::vector<TUint> choices;
-    choices.push_back(eStringIdYes);
-    choices.push_back(eStringIdNo);
-    iConfigVolumeControlEnabled = new ConfigChoice(aConfigInit, kConfigKey, choices, eStringIdYes);
-    iSubscriberId = iConfigVolumeControlEnabled->Subscribe(MakeFunctorConfigChoice(*this, &VolumeUnityGain::EnabledChanged));
+    iSubscriberId = iConfigVolumeControlEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUnityGain::EnabledChanged));
 }
 
 VolumeUnityGain::~VolumeUnityGain()
 {
-    iConfigVolumeControlEnabled->Unsubscribe(iSubscriberId);
-    delete iConfigVolumeControlEnabled;
+    iConfigVolumeControlEnabled.Unsubscribe(iSubscriberId);
 }
 
 void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
@@ -327,25 +267,22 @@ void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
 
 // BalanceUser
 
-const Brn BalanceUser::kConfigKey("Volume.Balance");
-
-BalanceUser::BalanceUser(IBalance& aBalance, IConfigInitialiser& aConfigInit, TInt aDefault, TUint aMax)
+BalanceUser::BalanceUser(IBalance& aBalance, IConfigManager& aConfigReader)
     : iBalance(aBalance)
+    , iConfigBalance(aConfigReader.GetNum(VolumeConfig::kKeyBalance))
 {
-    iConfigBalance = new ConfigNum(aConfigInit, kConfigKey, -(TInt)aMax, aMax, aDefault);
-    iSubscriberIdBalance = iConfigBalance->Subscribe(MakeFunctorConfigNum(*this, &BalanceUser::BalanceChanged));
+    iSubscriberIdBalance = iConfigBalance.Subscribe(MakeFunctorConfigNum(*this, &BalanceUser::BalanceChanged));
 }
 
 BalanceUser::~BalanceUser()
 {
-    iConfigBalance->Unsubscribe(iSubscriberIdBalance);
-    delete iConfigBalance;
+    iConfigBalance.Unsubscribe(iSubscriberIdBalance);
 }
 
 void BalanceUser::SetBalance(TInt aBalance)
 {
     try {
-        iConfigBalance->Set(aBalance);
+        iConfigBalance.Set(aBalance);
     }
     catch (ConfigValueOutOfRange&) {
         THROW(BalanceOutOfRange);
@@ -360,25 +297,22 @@ void BalanceUser::BalanceChanged(ConfigNum::KvpNum& aKvp)
 
 // FadeUser
 
-const Brn FadeUser::kConfigKey("Volume.Fade");
-
-FadeUser::FadeUser(IFade& aFade, IConfigInitialiser& aConfigInit, TInt aDefault, TUint aMax)
+FadeUser::FadeUser(IFade& aFade, IConfigManager& aConfigReader)
     : iFade(aFade)
+    , iConfigFade(aConfigReader.GetNum(VolumeConfig::kKeyFade))
 {
-    iConfigFade = new ConfigNum(aConfigInit, kConfigKey, -(TInt)aMax, aMax, aDefault);
-    iSubscriberIdFade = iConfigFade->Subscribe(MakeFunctorConfigNum(*this, &FadeUser::FadeChanged));
+    iSubscriberIdFade = iConfigFade.Subscribe(MakeFunctorConfigNum(*this, &FadeUser::FadeChanged));
 }
 
 FadeUser::~FadeUser()
 {
-    iConfigFade->Unsubscribe(iSubscriberIdFade);
-    delete iConfigFade;
+    iConfigFade.Unsubscribe(iSubscriberIdFade);
 }
 
 void FadeUser::SetFade(TInt aFade)
 {
     try {
-        iConfigFade->Set(aFade);
+        iConfigFade.Set(aFade);
     }
     catch (ConfigValueOutOfRange&) {
         THROW(FadeOutOfRange);
@@ -393,13 +327,11 @@ void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 
 // MuteUser
 
-const Brn MuteUser::kStoreKey("Startup.Mute");
-
-MuteUser::MuteUser(Media::IMute& aMute, IStoreReadWrite& aStore, IPowerManager& aPowerManager)
+MuteUser::MuteUser(Media::IMute& aMute, StoreInt& aStoreUserMute)
     : iMute(aMute)
-    , iStoreUserMute(aStore, aPowerManager, kPowerPriorityHighest, kStoreKey, kUnmuted)
+    , iStoreUserMute(aStoreUserMute)
 {
-    if (iStoreUserMute.Get() == kMuted) {
+    if (iStoreUserMute.Get() == VolumeConfig::kValueMuted) {
         iMute.Mute();
     }
     else {
@@ -409,13 +341,13 @@ MuteUser::MuteUser(Media::IMute& aMute, IStoreReadWrite& aStore, IPowerManager& 
 
 void MuteUser::Mute()
 {
-    iStoreUserMute.Set(kMuted);
+    iStoreUserMute.Set(VolumeConfig::kValueMuted);
     iMute.Mute();
 }
 
 void MuteUser::Unmute()
 {
-    iStoreUserMute.Set(kUnmuted);
+    iStoreUserMute.Set(VolumeConfig::kValueUnmuted);
     iMute.Unmute();
 }
 
@@ -461,34 +393,169 @@ TBool MuteReporter::Report(TBool aMuted)
 }
 
 
+// VolumeConfig
+
+const Brn VolumeConfig::kKeyStartupVolume("Startup.Volume");
+const Brn VolumeConfig::kKeyStartupMute("Startup.Mute");
+const Brn VolumeConfig::kKeyStartupValue("Volume.StartupValue");
+const Brn VolumeConfig::kKeyStartupEnabled("Volume.StartupEnabled");
+const Brn VolumeConfig::kKeyLimit("Volume.Limit");
+const Brn VolumeConfig::kKeyEnabled("Volume.Enabled");
+const Brn VolumeConfig::kKeyBalance("Volume.Balance");
+const Brn VolumeConfig::kKeyFade("Volume.Fade");
+
+VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, const IVolumeProfile& aProfile)
+    : iStoreUserVolume(aStore, aPowerManager, kPowerPriorityHighest, kKeyStartupVolume, aProfile.VolumeDefault())
+    , iStoreUserMute(aStore, aPowerManager, kPowerPriorityHighest, kKeyStartupMute, kValueUnmuted)
+{
+    iVolumeMax            = aProfile.VolumeMax();
+    iVolumeDefault        = aProfile.VolumeDefault();
+    iVolumeUnity          = aProfile.VolumeUnity();
+    iVolumeDefaultLimit   = aProfile.VolumeDefaultLimit();
+    iVolumeStep           = aProfile.VolumeStep();
+    iVolumeMilliDbPerStep = aProfile.VolumeMilliDbPerStep();
+    iBalanceMax           = aProfile.BalanceMax();
+    iFadeMax              = aProfile.FadeMax();
+
+    iVolumeStartup = new ConfigNum(aConfigInit, kKeyStartupValue, 0, iVolumeMax, iVolumeDefault);
+    std::vector<TUint> choices;
+    choices.push_back(eStringIdYes);
+    choices.push_back(eStringIdNo);
+    iVolumeStartupEnabled = new ConfigChoice(aConfigInit, kKeyStartupEnabled, choices, eStringIdYes);
+    iVolumeLimit = new ConfigNum(aConfigInit, kKeyLimit, 0, iVolumeMax, iVolumeDefaultLimit);
+    iVolumeEnabled = new ConfigChoice(aConfigInit, kKeyEnabled, choices, eStringIdYes);
+
+    const TUint id = iVolumeEnabled->Subscribe(MakeFunctorConfigChoice(*this, &VolumeConfig::EnabledChanged));
+    // EnabledChanged runs inside the call to Subscribe().
+    // We don't support runtime change of this value so can immediately unsubscribe.
+    iVolumeEnabled->Unsubscribe(id);
+
+    const TInt maxBalance = iBalanceMax;
+    if (maxBalance == 0) {
+        iBalance = NULL;
+    }
+    else {
+        iBalance = new ConfigNum(aConfigInit, kKeyBalance, -maxBalance, maxBalance, 0);
+    }
+    const TInt maxFade = iFadeMax;
+    if (maxFade == 0) {
+        iFade = NULL;
+    }
+    else {
+        iFade = new ConfigNum(aConfigInit, kKeyFade, -maxFade, maxFade, 0);
+    }
+}
+
+VolumeConfig::~VolumeConfig()
+{
+    delete iVolumeStartup;
+    delete iVolumeStartupEnabled;
+    delete iVolumeLimit;
+    delete iVolumeEnabled;
+    delete iBalance;
+    delete iFade;
+}
+
+StoreInt& VolumeConfig::StoreUserVolume()
+{
+    return iStoreUserVolume;
+}
+
+StoreInt& VolumeConfig::StoreUserMute()
+{
+    return iStoreUserMute;
+}
+
+TBool VolumeConfig::VolumeControlEnabled() const
+{
+    return iVolumeControlEnabled;
+}
+
+TUint VolumeConfig::VolumeMax() const
+{
+    return iVolumeMax;
+}
+
+TUint VolumeConfig::VolumeDefault() const
+{
+    return iVolumeDefault;
+}
+
+TUint VolumeConfig::VolumeUnity() const
+{
+    return iVolumeUnity;
+}
+
+TUint VolumeConfig::VolumeDefaultLimit() const
+{
+    return iVolumeDefaultLimit;
+}
+
+TUint VolumeConfig::VolumeStep() const
+{
+    return iVolumeStep;
+}
+
+TUint VolumeConfig::VolumeMilliDbPerStep() const
+{
+    return iVolumeMilliDbPerStep;
+}
+
+TUint VolumeConfig::BalanceMax() const
+{
+    return iBalanceMax;
+}
+
+TUint VolumeConfig::FadeMax() const
+{
+    return iFadeMax;
+}
+
+void VolumeConfig::EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp)
+{
+    iVolumeControlEnabled = (aKvp.Value() == eStringIdYes);
+}
+
+
 // VolumeManager
 
-VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit,
-                             IPowerManager& aPowerManager, Net::DvDevice& aDevice, Product& aProduct,
-                             Configuration::IConfigManager& aConfigReader)
-    : iInitParams(aInitParams)
+VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, VolumeConfig& aVolumeConfig,
+                             Net::DvDevice& aDevice, Product& aProduct, IConfigManager& aConfigReader)
+    : iVolumeConfig(aVolumeConfig)
 {
-    if (aInitParams.iBalance == NULL) {
+    IBalance* balance = aVolumeConsumer.Balance();
+    if (balance == NULL) {
         iBalanceUser = NULL;
     }
     else {
-        iBalanceUser = new BalanceUser(*aInitParams.iBalance, aConfigInit, 0, aInitParams.iBalanceMax);
+        iBalanceUser = new BalanceUser(*balance, aConfigReader);
     }
-    if (aInitParams.iFade == NULL) {
+    IFade* fade = aVolumeConsumer.Fade();
+    if (fade == NULL) {
         iFadeUser = NULL;
     }
     else {
-        iFadeUser = new FadeUser(*aInitParams.iFade, aConfigInit, 0, aInitParams.iFadeMax);
+        iFadeUser = new FadeUser(*fade, aConfigReader);
     }
-    if (aInitParams.iMute == NULL) {
+    if (aMute == NULL) {
         iMuteReporter = NULL;
         iMuteUser = NULL;
     }
     else {
-        iMuteReporter = new MuteReporter(*aInitParams.iMute);
-        iMuteUser = new MuteUser(*iMuteReporter, aStore, aPowerManager);
+        iMuteReporter = new MuteReporter(*aMute);
+        iMuteUser = new MuteUser(*iMuteReporter, aVolumeConfig.StoreUserMute());
     }
-    if (aInitParams.iVolume == NULL) {
+    if (aVolumeConfig.VolumeControlEnabled()) {
+        iVolumeSourceUnityGain = new VolumeSourceUnityGain(aVolumeConsumer.Volume(), iVolumeConfig.VolumeUnity());
+        iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, iVolumeConfig.VolumeUnity());
+        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
+        iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset);
+        iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, aConfigReader);
+        iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aVolumeConfig.StoreUserVolume(), iVolumeConfig.VolumeMax());
+        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
+        aProduct.AddAttribute("Volume");
+    }
+    else {
         iVolumeSourceUnityGain = NULL;
         iVolumeUnityGain = NULL;
         iVolumeSourceOffset = NULL;
@@ -496,17 +563,6 @@ VolumeManager::VolumeManager(const VolumeInitParams& aInitParams, IStoreReadWrit
         iVolumeLimiter = NULL;
         iVolumeUser = NULL;
         iProviderVolume = NULL;
-    }
-    else {
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*aInitParams.iVolume, aInitParams.iVolumeUnity);
-        iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigInit, aInitParams.iVolumeUnity);
-        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
-        iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset);
-        iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, aConfigInit, aInitParams.iVolumeDefaultLimit, aInitParams.iVolumeMax);
-        iVolumeUser = new VolumeUser(*iVolumeLimiter, aStore, aConfigInit, aPowerManager, aInitParams.iVolumeMax, aInitParams.iVolumeDefault);
-        // FIXME - missing a store item saying whether we were muted on last power down (used to be in ProviderVolume)
-        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
-        aProduct.AddAttribute("Volume");
     }
 }
 
@@ -559,44 +615,44 @@ void VolumeManager::SetUnityGain(TBool aEnable)
     }
 }
 
-TUint VolumeManager::VolumeMax()
+TUint VolumeManager::VolumeMax() const
 {
-    return iInitParams.iVolumeMax;
+    return iVolumeConfig.VolumeMax();
 }
 
-TUint VolumeManager::VolumeDefault()
+TUint VolumeManager::VolumeDefault() const
 {
-    return iInitParams.iVolumeDefault;
+    return iVolumeConfig.VolumeDefault();
 }
 
-TUint VolumeManager::VolumeUnity()
+TUint VolumeManager::VolumeUnity() const
 {
-    return iInitParams.iVolumeUnity;
+    return iVolumeConfig.VolumeUnity();
 }
 
-TUint VolumeManager::VolumeDefaultLimit()
+TUint VolumeManager::VolumeDefaultLimit() const
 {
-    return iInitParams.iVolumeDefaultLimit;
+    return iVolumeConfig.VolumeDefaultLimit();
 }
 
-TUint VolumeManager::VolumeStep()
+TUint VolumeManager::VolumeStep() const
 {
-    return iInitParams.iVolumeStep;
+    return iVolumeConfig.VolumeStep();
 }
 
-TUint VolumeManager::VolumeMilliDbPerStep()
+TUint VolumeManager::VolumeMilliDbPerStep() const
 {
-    return iInitParams.iVolumeMilliDbPerStep;
+    return iVolumeConfig.VolumeMilliDbPerStep();
 }
 
-TUint VolumeManager::BalanceMax()
+TUint VolumeManager::BalanceMax() const
 {
-    return iInitParams.iBalanceMax;
+    return iVolumeConfig.BalanceMax();
 }
 
-TUint VolumeManager::FadeMax()
+TUint VolumeManager::FadeMax() const
 {
-    return iInitParams.iFadeMax;
+    return iVolumeConfig.FadeMax();
 }
 
 void VolumeManager::SetVolume(TUint aValue)
