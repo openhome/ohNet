@@ -90,6 +90,7 @@ private: // from IPowerHandler
 //private: // from IWebAppFramework
 //    void Add(Web::IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private:
+    void AddConfigApp();
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
     void MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr);
