@@ -53,7 +53,6 @@ private:
     Srs<kReadBufferBytes> iReaderBuf;
     ReaderUntilS<kReadBufferBytes> iReaderUntil;
     Sws<kWriteBufferBytes> iWriterBuf;
-    TBool iSocketIsOpen;
 
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
@@ -111,9 +110,6 @@ private:
     OpenHome::Av::Test::TestMediaPlayer* iMediaPlayer;
     OpenHome::ThreadFunctor* iMediaPlayerThread;
     HelperDeviceListHandler* iDeviceListHandler;
-
-    WebAppFramework* iAppFramework;
-    ConfigAppMediaPlayer* iConfigApp;
 };
 
 } // namespace Test
@@ -175,7 +171,6 @@ UriRetriever::UriRetriever(Environment& aEnv, const Uri& aBaseUri)
     , iReaderBuf(iTcpClient)
     , iReaderUntil(iReaderBuf)
     , iWriterBuf(iTcpClient)
-    , iSocketIsOpen(false)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(iEnv, iReaderUntil)
 {
