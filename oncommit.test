@@ -51,6 +51,7 @@ tests = '''
     TestUriProviderRepeater
     TestJson
     TestObservable
+    #TestConfigUi   # fails on non-desktop platforms
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()
