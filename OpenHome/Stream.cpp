@@ -153,6 +153,7 @@ Brn ReaderUntil::ReadProtocol(TUint aBytes)
         Brn buf = iReader.Read(remaining);
         (void)memcpy(p, buf.Ptr(), buf.Bytes());
         p += buf.Bytes();
+        remaining -= buf.Bytes();
     }
     iBytes = 0;
     iOffset = 0;
