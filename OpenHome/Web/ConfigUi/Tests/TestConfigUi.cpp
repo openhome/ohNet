@@ -40,6 +40,11 @@ private:
 // loading the web page and initiating long-polling. If the ConfigManager
 // doesn't assert, the ConfigVals in the ConfigApp are all valid.
 
+// As a side-effect, this test also checks that the (default) language mapping
+// for ConfigOptions is valid (i.e., the mapping file is correctly formed, and
+// mapping entries for each ConfigOption are listed in the same order that they
+// are programmatically added to the ConfigOption).
+
 class SuiteConfigUi : public OpenHome::TestFramework::SuiteUnitTest, public OpenHome::INonCopyable
 {
 private:
@@ -63,6 +68,7 @@ private:
     void ConstructUri(const OpenHome::Brx& aBase, const OpenHome::Brx& aTail, OpenHome::Uri& aUriOut);
     void TestGetStaticResource();
     void TestLongPollCreate();
+    void TestLongPoll();
 private:
     OpenHome::Net::CpStack& iCpStack;
     OpenHome::Net::DvStack& iDvStack;
@@ -150,6 +156,7 @@ SuiteConfigUi::SuiteConfigUi(CpStack& aCpStack, DvStack& aDvStack)
 {
     AddTest(MakeFunctor(*this, &SuiteConfigUi::TestGetStaticResource), "TestGetStaticResource");
     AddTest(MakeFunctor(*this, &SuiteConfigUi::TestLongPollCreate), "TestLongPollCreate");
+    AddTest(MakeFunctor(*this, &SuiteConfigUi::TestLongPoll), "TestLongPoll");
 }
 
 void SuiteConfigUi::Setup()
@@ -211,6 +218,12 @@ void SuiteConfigUi::Setup()
 
 void SuiteConfigUi::TearDown()
 {
+    // FIXME - currently an issue in Credentials service.
+    // Key can take a while to be generated, which can then cause
+    // CredentialsThread to be run after Credentials destructor has already
+    // been called.
+    Thread::Sleep(1000);
+
     delete iReaderResponse;
     delete iWriterRequest;
     delete iHeaderContentLength;
@@ -275,15 +288,16 @@ TUint SuiteConfigUi::RetrieveUriSocketOpen(const Uri& aUri, const Brx& aMethod, 
         iReaderResponse->Read();
 
         code = iReaderResponse->Status().Code();
-        //const TUint totalBytes = iHeaderContentLength->ContentLength();
-        //totalBytes;
-
         if (code == HttpStatus::kOk.Code()) {
             // Content-Length currently returns 0 so read until ReaderError
             aDataResponse.SetBytes(0);
             try {
                 for (;;) {
                     Brn buf = iReaderUntil->Read(aDataResponse.MaxBytes() - aDataResponse.Bytes());
+                    if (buf.Bytes() == 0) {
+                        // Reached end of data.
+                        return code;
+                    }
                     aDataResponse.Append(buf);
                 }
             }
@@ -385,10 +399,8 @@ void SuiteConfigUi::TestLongPollCreate()
     Log::Print(data);
     Log::Print("\n");
 
-    const TUint kExpectedSessionId = 1;
-    Bws<20> expectedSessionBuf("session-id: ");
-    Ascii::AppendDec(expectedSessionBuf, kExpectedSessionId);
-    TEST(data == expectedSessionBuf);
+    static const Brn kExpectedSessionId("session-id: 1");
+    TEST(data == kExpectedSessionId);
 
 
     // FIXME - if test ends without requesting /lpterminate, TestMediaPlayer crashes during
@@ -401,8 +413,55 @@ void SuiteConfigUi::TestLongPollCreate()
     Log::Print(uriLpTerminate.AbsoluteUri());
     Log::Print("\n");
 
-    Brn kSessionId("session-id: 1");
-    code = RetrieveUri(uriLpTerminate, Http::kMethodPost, kSessionId, data);
+    code = RetrieveUri(uriLpTerminate, Http::kMethodPost, kExpectedSessionId, data);
+    TEST (code == HttpStatus::kOk.Code());
+}
+
+void SuiteConfigUi::TestLongPoll()
+{
+    const Brx& url = iDeviceListHandler->GetPresentationUrl();
+    TEST(url.Bytes() > 0);
+    const Uri uri(url);
+
+    Bws<Uri::kMaxUriBytes> uriBase;
+    GetUriBase(uri, uriBase);
+    Uri uriLpCreate;
+    ConstructUri(uriBase, Brn("lpcreate"), uriLpCreate);
+    Log::Print("SuiteConfigUi::TestLongPoll uriLpCreate: ");
+    Log::Print(uriLpCreate.AbsoluteUri());
+    Log::Print("\n");
+
+    Bws<kReadBufferBytes> data;
+    TUint code = RetrieveUri(uriLpCreate, Http::kMethodPost, Brx::Empty(), data);
+    TEST (code == HttpStatus::kOk.Code());
+
+    Log::Print("data: ");
+    Log::Print(data);
+    Log::Print("\n");
+
+    static const Brn kExpectedSessionId("session-id: 1");
+    TEST(data == kExpectedSessionId);
+
+    Uri uriLp;
+    ConstructUri(uriBase, Brn("lp"), uriLp);
+    Log::Print("SuiteConfigUi::TestLongPoll uriLp: ");
+    Log::Print(uriLp.AbsoluteUri());
+    Log::Print("\n");
+    code = RetrieveUri(uriLp, Http::kMethodPost, kExpectedSessionId, data);
+    TEST(code == HttpStatus::kOk.Code());
+    TEST(data.Bytes() > 0);
+    Log::Print("SuiteConfigUi::TestLongPoll lp partial data response. Displaying %u bytes:\n", data.Bytes());
+    Log::Print(data);
+    Log::Print("\n");
+
+
+    Uri uriLpTerminate;
+    ConstructUri(uriBase, Brn("lpterminate"), uriLpTerminate);
+    Log::Print("SuiteConfigUi::TestLongPoll uriLpTerminate: ");
+    Log::Print(uriLpTerminate.AbsoluteUri());
+    Log::Print("\n");
+
+    code = RetrieveUri(uriLpTerminate, Http::kMethodPost, kExpectedSessionId, data);
     TEST (code == HttpStatus::kOk.Code());
 }
 

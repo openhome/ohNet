@@ -53,8 +53,8 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& a
     iListenerIdConfigPreset = iConfigPreset->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigPresetChanged));
 
     choices.clear();
-    choices.push_back(eStringIdYes);
     choices.push_back(eStringIdNo);
+    choices.push_back(eStringIdYes);
     iConfigEnabled = new ConfigChoice(aConfigInit, kConfigIdEnabled, choices, eStringIdYes);
     iListenerIdConfigEnabled = iConfigEnabled->Subscribe(MakeFunctorConfigChoice(*this, &Sender::ConfigEnabledChanged));
 
