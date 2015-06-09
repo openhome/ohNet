@@ -480,7 +480,7 @@ TabManager::~TabManager()
     // point. So, any tabs still allocated can have RemoveRef() called, as this
     // should be only object holding a reference.
     AutoMutex a(iLock);
-    for (TUint i=0; i<iMaxTabs; i++) {
+    for (TUint i=0; i<iTabs.size(); i++) {
         FrameworkTab* tab = iTabs[i];
         if (tab->Allocated()) {
             tab->RemoveRefUnlocked();

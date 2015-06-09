@@ -236,24 +236,7 @@ void TestMediaPlayer::Run()
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
 
-    std::vector<const Brx*> sourcesBufs;
-    Product& product = iMediaPlayer->Product();
-    for (TUint i=0; i<product.SourceCount(); i++) {
-        Bws<ISource::kMaxSystemNameBytes> systemName;
-        Bws<ISource::kMaxSourceNameBytes> name;
-        Bws<ISource::kMaxSourceTypeBytes> type;
-        TBool visible;
-        product.GetSourceDetails(i, systemName, type, name, visible);
-        sourcesBufs.push_back(new Brh(systemName));
-    }
-    // FIXME - take resource dir as param or copy res dir to build dir
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("res/"), kMaxUiTabs, kUiSendQueueSize);
-    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
-    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
-    for (TUint i=0;i<sourcesBufs.size(); i++) {
-        delete sourcesBufs[i];
-    }
-
+    AddConfigApp();
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -277,6 +260,8 @@ void TestMediaPlayer::RunWithSemaphore()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+
+    AddConfigApp();
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -417,6 +402,27 @@ void TestMediaPlayer::PowerDown()
 //    // Last added WebApp will be set as presentation page.
 //    iAppFramework->Add(aWebApp, aFunctor);
 //}
+
+void TestMediaPlayer::AddConfigApp()
+{
+    std::vector<const Brx*> sourcesBufs;
+    Product& product = iMediaPlayer->Product();
+    for (TUint i=0; i<product.SourceCount(); i++) {
+        Bws<ISource::kMaxSystemNameBytes> systemName;
+        Bws<ISource::kMaxSourceNameBytes> name;
+        Bws<ISource::kMaxSourceTypeBytes> type;
+        TBool visible;
+        product.GetSourceDetails(i, systemName, type, name, visible);
+        sourcesBufs.push_back(new Brh(systemName));
+    }
+    // FIXME - take resource dir as param or copy res dir to build dir
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("res/"), kMaxUiTabs, kUiSendQueueSize);
+    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
+    for (TUint i=0;i<sourcesBufs.size(); i++) {
+        delete sourcesBufs[i];
+    }
+}
 
 TUint TestMediaPlayer::Hash(const Brx& aBuf)
 {

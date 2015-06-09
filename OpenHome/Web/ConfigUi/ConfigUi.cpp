@@ -315,10 +315,11 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
         resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
     }
     catch (LanguageResourceInvalid&) {
-        // FIXME - don't think this is thrown
+        // FIXME - is this thrown?
         ASSERTS();
     }
     OptionJsonWriter::Write(*resourceHandler, iChoice->Key(), choices, aWriter);
+    resourceHandler->Destroy();
 }
 
 
