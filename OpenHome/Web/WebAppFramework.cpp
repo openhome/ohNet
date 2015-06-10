@@ -777,6 +777,7 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     iReaderRequest->AddMethod(Http::kMethodHead);
 
     iReaderRequest->AddHeader(iHeaderHost);
+    iReaderRequest->AddHeader(iHeaderContentLength);
     iReaderRequest->AddHeader(iHeaderTransferEncoding);
     iReaderRequest->AddHeader(iHeaderConnection);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
@@ -961,12 +962,18 @@ void HttpSession::Post()
         }
     }
     else if (uriTail == Brn("lp")) {
-        // parse session-id and retrieve tab
+        // Parse session-id and retrieve tab.
         Brn buf;
-        try {
-            buf = iReaderUntil->ReadUntil('\n');
+        if (iHeaderContentLength.ContentLength() != 0) {
+            try {
+                buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
+            }
+            catch (ReaderError&) {
+                Error(HttpStatus::kBadRequest);
+            }
         }
-        catch (ReaderError&) {
+        else {
+            // No content.
             Error(HttpStatus::kBadRequest);
         }
         Parser p(buf);
@@ -1024,12 +1031,18 @@ void HttpSession::Post()
         }
     }
     else if (uriTail == Brn("lpterminate")) {
-        // parse session-id and retrieve tab
+        // Parse session-id and retrieve tab.
         Brn buf;
-        try {
-            buf = iReaderUntil->ReadUntil('\n');
+        if (iHeaderContentLength.ContentLength() != 0) {
+            try {
+                buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
+            }
+            catch (ReaderError&) {
+                Error(HttpStatus::kBadRequest);
+            }
         }
-        catch (ReaderError&) {
+        else {
+            // No content.
             Error(HttpStatus::kBadRequest);
         }
         Parser p(buf);
@@ -1063,13 +1076,18 @@ void HttpSession::Post()
         }
     }
     else if (uriTail == Brn("update")) {
-        Log::Print("\nupdate request\n");
-        // parse session-id and retrieve tab
+        // Parse session-id and retrieve tab.
         Brn buf;
-        try {
-            buf = iReaderUntil->ReadUntil('\n');
+        if (iHeaderContentLength.ContentLength() != 0) {
+            try {
+                buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
+            }
+            catch (ReaderError&) {
+                Error(HttpStatus::kBadRequest);
+            }
         }
-        catch (ReaderError&) {
+        else {
+            // No content.
             Error(HttpStatus::kBadRequest);
         }
         Parser p(buf);
