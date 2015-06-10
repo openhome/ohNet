@@ -151,8 +151,13 @@ Brn ReaderUntil::ReadProtocol(TUint aBytes)
     TUint remaining = aBytes;
     while (remaining > 0) {
         Brn buf = iReader.Read(remaining);
+        if (buf.Bytes() == 0) {
+            // Broken stream or invalid aBytes parameter.
+            THROW(ReaderError);
+        }
         (void)memcpy(p, buf.Ptr(), buf.Bytes());
         p += buf.Bytes();
+        remaining -= buf.Bytes();
     }
     iBytes = 0;
     iOffset = 0;
