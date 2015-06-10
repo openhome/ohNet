@@ -1078,9 +1078,12 @@ void HttpSession::Post()
     else if (uriTail == Brn("update")) {
         // Parse session-id and retrieve tab.
         Brn buf;
+        TUint remaining = iHeaderContentLength.ContentLength();
         if (iHeaderContentLength.ContentLength() != 0) {
             try {
-                buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
+                buf = iReaderUntil->ReadUntil(Ascii::kLf);
+                remaining -= buf.Bytes()+1; // Include kLf.
+                buf = Ascii::Trim(buf);
             }
             catch (ReaderError&) {
                 Error(HttpStatus::kBadRequest);
@@ -1103,13 +1106,23 @@ void HttpSession::Post()
             catch (AsciiError&) {
                 Error(HttpStatus::kNotFound);
             }
-            Log::Print("update session-id: %u\n", sessionId);
+
+            Brn update;
+            // Read in rest of update request. Should be a single ConfigVal per request (so should fit in read buffer).
             try {
-                Brn input = p.NextToEnd();
+                update = Ascii::Trim(iReaderUntil->ReadProtocol(remaining));
+                remaining = 0;
+            }
+            catch (ReaderError&) {
+                Error(HttpStatus::kBadRequest);
+            }
+
+            //
+            try {
                 // FIXME - what if session-id = 0?
                 // i.e., update has been sent before long polling has been set up
                 IFrameworkTab& tab = iTabManager.GetTab(sessionId);
-                tab.Receive(input);
+                tab.Receive(update);
                 tab.RemoveRef();
                 iResponseStarted = true;
                 iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
