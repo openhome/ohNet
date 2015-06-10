@@ -93,18 +93,31 @@
     },
     {
         "name": "FunctionalTest",
-        "type": "internal",
-        "version": "0.0.581",
+        "type": "openhome",
+        "version": "0.0.583",
         "platform-specific": false,
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
+        "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
     },
     {
-        "name": "FunctionalTestData",
-        "type": "internal",
-        "version": "0.0.38",
+        "name": "FTDataPublic",
+        "type": "openhome",
+        "version": "0.0.7",
         "platform-specific": false,
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTestData/FunctionalTestData-${version}.zip",
+        "archive-filename": "FTDataPublic-${version}.zip",
+        "dest": "dependencies/AnyPlatform/FunctionalTestData",
+        "platform-ignore": {
+            "Linux-ppc32": true,
+            "Linux-armhf": true,
+            "*": false },
+        "ignore":           "${platform-ignore[$platform]}"
+    },
+    {
+        "name": "FTDataPrivate",
+        "type": "internal",
+        "version": "0.0.5",
+        "platform-specific": false,
+        "archive-filename": "FTDataPrivate-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
         "platform-ignore": {
             "Linux-ppc32": true,
