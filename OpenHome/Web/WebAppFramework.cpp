@@ -766,8 +766,10 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     , iUpdateCount(0)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
-    iReaderUntil = new ReaderUntilS<kMaxRequestBytes>(*iReadBuffer);
-    iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderUntil);
+    iReaderUntilPreChunker = new ReaderUntilS<kMaxRequestBytes>(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderUntilPreChunker);
+    iReaderChunked = new ReaderHttpChunked(*iReaderUntilPreChunker);
+    iReaderUntil = new ReaderUntilS<kMaxRequestBytes>(*iReaderChunked);
     iWriterChunked = new WriterHttpChunked(*this);
     iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
@@ -777,7 +779,6 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     iReaderRequest->AddMethod(Http::kMethodHead);
 
     iReaderRequest->AddHeader(iHeaderHost);
-    iReaderRequest->AddHeader(iHeaderContentLength);
     iReaderRequest->AddHeader(iHeaderTransferEncoding);
     iReaderRequest->AddHeader(iHeaderConnection);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
@@ -788,8 +789,10 @@ HttpSession::~HttpSession()
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iWriterChunked;
-    delete iReaderRequest;
     delete iReaderUntil;
+    delete iReaderChunked;
+    delete iReaderRequest;
+    delete iReaderUntilPreChunker;
     delete iReadBuffer;
 }
 
@@ -821,6 +824,9 @@ void HttpSession::Run()
 
         iResponseStarted = false;
         iResponseEnded = false;
+
+        iReaderChunked->SetChunked(iHeaderTransferEncoding.IsChunked());
+
         if (method == Http::kMethodGet) {
             Get();
         }
@@ -964,16 +970,11 @@ void HttpSession::Post()
     else if (uriTail == Brn("lp")) {
         // Parse session-id and retrieve tab.
         Brn buf;
-        if (iHeaderContentLength.ContentLength() != 0) {
-            try {
-                buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
-            }
-            catch (ReaderError&) {
-                Error(HttpStatus::kBadRequest);
-            }
+        // Don't rely on a content-length header (may be chunked encoding, or may be poor client implementation missing the header), as we know format of expected data.
+        try {
+            buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
         }
-        else {
-            // No content.
+        catch (ReaderError&) {
             Error(HttpStatus::kBadRequest);
         }
         Parser p(buf);
@@ -1033,16 +1034,10 @@ void HttpSession::Post()
     else if (uriTail == Brn("lpterminate")) {
         // Parse session-id and retrieve tab.
         Brn buf;
-        if (iHeaderContentLength.ContentLength() != 0) {
-            try {
-                buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
-            }
-            catch (ReaderError&) {
-                Error(HttpStatus::kBadRequest);
-            }
+        try {
+            buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
         }
-        else {
-            // No content.
+        catch (ReaderError&) {
             Error(HttpStatus::kBadRequest);
         }
         Parser p(buf);
@@ -1078,19 +1073,10 @@ void HttpSession::Post()
     else if (uriTail == Brn("update")) {
         // Parse session-id and retrieve tab.
         Brn buf;
-        TUint remaining = iHeaderContentLength.ContentLength();
-        if (iHeaderContentLength.ContentLength() != 0) {
-            try {
-                buf = iReaderUntil->ReadUntil(Ascii::kLf);
-                remaining -= buf.Bytes()+1; // Include kLf.
-                buf = Ascii::Trim(buf);
-            }
-            catch (ReaderError&) {
-                Error(HttpStatus::kBadRequest);
-            }
+        try {
+            buf = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
         }
-        else {
-            // No content.
+        catch (ReaderError&) {
             Error(HttpStatus::kBadRequest);
         }
         Parser p(buf);
@@ -1110,14 +1096,12 @@ void HttpSession::Post()
             Brn update;
             // Read in rest of update request. Should be a single ConfigVal per request (so should fit in read buffer).
             try {
-                update = Ascii::Trim(iReaderUntil->ReadProtocol(remaining));
-                remaining = 0;
+                update = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
             }
             catch (ReaderError&) {
                 Error(HttpStatus::kBadRequest);
             }
 
-            //
             try {
                 // FIXME - what if session-id = 0?
                 // i.e., update has been sent before long polling has been set up
