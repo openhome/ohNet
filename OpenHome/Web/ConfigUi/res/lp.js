@@ -134,7 +134,7 @@ WebUi = function() {
         var sessionId = this.ConstructSessionId();
         aRequest.SetRequestHeader("Content-type", "text/plain");
         //aRequest.SetRequestHeader("Connection", "close");
-        aRequest.Send(sessionId);
+        aRequest.Send(sessionId+"\r\n");
     }
 
     LongPoll.prototype.SendCreate = function()

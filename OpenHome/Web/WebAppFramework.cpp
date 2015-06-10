@@ -777,7 +777,6 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     iReaderRequest->AddMethod(Http::kMethodHead);
 
     iReaderRequest->AddHeader(iHeaderHost);
-    iReaderRequest->AddHeader(iHeaderContentLength);
     iReaderRequest->AddHeader(iHeaderTransferEncoding);
     iReaderRequest->AddHeader(iHeaderConnection);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
@@ -945,6 +944,7 @@ void HttpSession::Post()
             Ascii::AppendDec(idBuf, id);
             iWriterBuffer->Write(Brn("session-id: "));
             iWriterBuffer->Write(idBuf);
+            iWriterBuffer->Write(Brn("\r\n"));
             iWriterBuffer->WriteFlush();
             iResponseEnded = true;
             tab.StartPollWait();
@@ -962,133 +962,154 @@ void HttpSession::Post()
     }
     else if (uriTail == Brn("lp")) {
         // parse session-id and retrieve tab
-        if (iHeaderContentLength.ContentLength() != 0) {
-            Brn buf = iReaderUntil->ReadProtocol(iHeaderContentLength.ContentLength());
-            Parser p(buf);
-            Brn sessionBuf = p.Next();
-            if (sessionBuf == Brn("session-id:")) {
-                sessionBuf = p.Next();
-                TUint sessionId = 0;
-                try {
-                    sessionId = Ascii::Uint(sessionBuf);
-                }
-                catch (AsciiError&) {
-                    // respond with bad request?
-                    Error(HttpStatus::kNotFound);
-                }
-                Log::Print("lp session-id: %u\n", sessionId);
-                IFrameworkTab* tab = NULL;
-                try {
-                    tab = &iTabManager.GetTab(sessionId);
-                    tab->CancelPollWait(); // what if polling timer has fired
-                    // between GetTab() and CancelPollWait()?
-                    // - reference to tab is still valid
-                    // - CancelPollWait() should do nothing.
-
-                    // If we have data, write it immediately.
-                    // If we have no data, wait on semaphore, and if some arrives, write it immediately.
-                    // If we have no data and still none after semaphore, write headers and no data.
-                    // BlockingSend() covers all the above requirements for us.
-
-                    iResponseStarted = true;
-                    WriteLongPollHeaders();
-                    // FIXME - bother throwing Timeout if there is nothing useful to do with it?
-                    try {
-                        tab->BlockingSend(*iWriterBuffer);  // may write no data
-                    }
-                    catch (Timeout&)
-                    {
-                        // No data was sent. Do nothing.
-                    }
-                    iWriterBuffer->WriteFlush();
-                    iResponseEnded = true;
-                    tab->StartPollWait();
-                    tab->RemoveRef();
-                }
-                catch (InvalidTabId&) {
-                    Error(HttpStatus::kNotFound);
-                }
-                catch(WriterError&) {
-                    tab->Destroy();
-                    THROW(WriterError);
-                }
+        Brn buf;
+        try {
+            buf = iReaderUntil->ReadUntil('\n');
+        }
+        catch (ReaderError&) {
+            Error(HttpStatus::kBadRequest);
+        }
+        Parser p(buf);
+        Brn sessionBuf = p.Next();
+        if (sessionBuf == Brn("session-id:")) {
+            sessionBuf = p.Next();
+            TUint sessionId = 0;
+            try {
+                sessionId = Ascii::Uint(sessionBuf);
             }
+            catch (AsciiError&) {
+                // respond with bad request?
+                Error(HttpStatus::kNotFound);
+            }
+            Log::Print("lp session-id: %u\n", sessionId);
+            IFrameworkTab* tab = NULL;
+            try {
+                tab = &iTabManager.GetTab(sessionId);
+                tab->CancelPollWait(); // what if polling timer has fired
+                // between GetTab() and CancelPollWait()?
+                // - reference to tab is still valid
+                // - CancelPollWait() should do nothing.
+
+                // If we have data, write it immediately.
+                // If we have no data, wait on semaphore, and if some arrives, write it immediately.
+                // If we have no data and still none after semaphore, write headers and no data.
+                // BlockingSend() covers all the above requirements for us.
+
+                iResponseStarted = true;
+                WriteLongPollHeaders();
+                // FIXME - bother throwing Timeout if there is nothing useful to do with it?
+                try {
+                    tab->BlockingSend(*iWriterBuffer);  // may write no data
+                }
+                catch (Timeout&)
+                {
+                    // No data was sent. Do nothing.
+                }
+                iWriterBuffer->WriteFlush();
+                iResponseEnded = true;
+                tab->StartPollWait();
+                tab->RemoveRef();
+            }
+            catch (InvalidTabId&) {
+                Error(HttpStatus::kNotFound);
+            }
+            catch(WriterError&) {
+                tab->Destroy();
+                THROW(WriterError);
+            }
+        }
+        else {
+            // No session request made.
+            Error(HttpStatus::kBadRequest);
         }
     }
     else if (uriTail == Brn("lpterminate")) {
         // parse session-id and retrieve tab
-        if (iHeaderContentLength.ContentLength() != 0) {
-            Brn buf = iReaderUntil->ReadProtocol(iHeaderContentLength.ContentLength());
-            Parser p(buf);
-            Brn sessionBuf = p.Next();
-            if (sessionBuf == Brn("session-id:")) { // if this isn't found, respond with badrequest?
-                sessionBuf = p.Next();
-                TUint sessionId = 0;
-                try {
-                    sessionId = Ascii::Uint(sessionBuf);
-                }
-                catch (AsciiError&) {
-                    Error(HttpStatus::kNotFound);
-                }
-                Log::Print("lpterminate session-id: %u\n", sessionId);
-                try {
-                    IFrameworkTab& tab = iTabManager.GetTab(sessionId);
-                    tab.CancelPollWait();
-                    tab.Destroy();
-                    iResponseStarted = true;
-                    WriteLongPollHeaders();
-                    iWriterBuffer->WriteFlush();
-                    iResponseEnded = true;
-                }
-                catch (InvalidTabId&) {
-                    Error(HttpStatus::kNotFound);
-                }
+        Brn buf;
+        try {
+            buf = iReaderUntil->ReadUntil('\n');
+        }
+        catch (ReaderError&) {
+            Error(HttpStatus::kBadRequest);
+        }
+        Parser p(buf);
+        Brn sessionBuf = p.Next();
+        if (sessionBuf == Brn("session-id:")) {
+            sessionBuf = p.Next();
+            TUint sessionId = 0;
+            try {
+                sessionId = Ascii::Uint(sessionBuf);
             }
+            catch (AsciiError&) {
+                Error(HttpStatus::kNotFound);
+            }
+            Log::Print("lpterminate session-id: %u\n", sessionId);
+            try {
+                IFrameworkTab& tab = iTabManager.GetTab(sessionId);
+                tab.CancelPollWait();
+                tab.Destroy();
+                iResponseStarted = true;
+                WriteLongPollHeaders();
+                iWriterBuffer->WriteFlush();
+                iResponseEnded = true;
+            }
+            catch (InvalidTabId&) {
+                Error(HttpStatus::kNotFound);
+            }
+        }
+        else {
+            // No session request made.
+            Error(HttpStatus::kBadRequest);
         }
     }
     else if (uriTail == Brn("update")) {
         Log::Print("\nupdate request\n");
         // parse session-id and retrieve tab
-        if (iHeaderContentLength.ContentLength() != 0) {
-            Brn buf = iReaderUntil->ReadProtocol(iHeaderContentLength.ContentLength());
-            Parser p(buf);
-            Brn sessionLine = p.NextLine();
-            Parser sessionParser(sessionLine);
-            Brn sessionTag = sessionParser.Next();
-            if (sessionTag == Brn("session-id:")) {
-                Brn sessionIdBuf = sessionParser.Next();
-                TUint sessionId = 0;
-                try {
-                    sessionId = Ascii::Uint(sessionIdBuf);
-                }
-                catch (AsciiError&) {
-                    Error(HttpStatus::kNotFound);
-                }
-                Log::Print("update session-id: %u\n", sessionId);
-                try {
-                    Brn input = p.NextToEnd();
-                    // FIXME - what if session-id = 0?
-                    // i.e., update has been sent before long polling has been set up
-                    IFrameworkTab& tab = iTabManager.GetTab(sessionId);
-                    tab.Receive(input);
-                    tab.RemoveRef();
-                    iResponseStarted = true;
-                    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
-                    //IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
-                    // FIXME - need to provide content-type if adding this header
-                    //writer.WriteFlush();
-                    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-                    iWriterResponse->WriteFlush();
-                    iWriterBuffer->WriteFlush();
-                    iResponseEnded = true;
-                }
-                catch (InvalidTabId&) {
-                    Error(HttpStatus::kNotFound);
-                }
+        Brn buf;
+        try {
+            buf = iReaderUntil->ReadUntil('\n');
+        }
+        catch (ReaderError&) {
+            Error(HttpStatus::kBadRequest);
+        }
+        Parser p(buf);
+        Brn sessionLine = p.NextLine();
+        Parser sessionParser(sessionLine);
+        Brn sessionTag = sessionParser.Next();
+        if (sessionTag == Brn("session-id:")) {
+            Brn sessionIdBuf = sessionParser.Next();
+            TUint sessionId = 0;
+            try {
+                sessionId = Ascii::Uint(sessionIdBuf);
             }
-            else {
-                // Could not parse sessionBuf - bad request
+            catch (AsciiError&) {
+                Error(HttpStatus::kNotFound);
             }
+            Log::Print("update session-id: %u\n", sessionId);
+            try {
+                Brn input = p.NextToEnd();
+                // FIXME - what if session-id = 0?
+                // i.e., update has been sent before long polling has been set up
+                IFrameworkTab& tab = iTabManager.GetTab(sessionId);
+                tab.Receive(input);
+                tab.RemoveRef();
+                iResponseStarted = true;
+                iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
+                //IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
+                // FIXME - need to provide content-type if adding this header
+                //writer.WriteFlush();
+                iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
+                iWriterResponse->WriteFlush();
+                iWriterBuffer->WriteFlush();
+                iResponseEnded = true;
+            }
+            catch (InvalidTabId&) {
+                Error(HttpStatus::kNotFound);
+            }
+        }
+        else {
+            // No session request made.
+            Error(HttpStatus::kBadRequest);
         }
     }
     else if (uriTail == Brn("probe")) {

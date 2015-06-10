@@ -484,7 +484,6 @@ private:
     OpenHome::Sws<kMaxResponseBytes>* iWriterBuffer;
     OpenHome::WriterHttpResponse* iWriterResponse;
     OpenHome::HttpHeaderHost iHeaderHost;
-    OpenHome::HttpHeaderContentLength iHeaderContentLength;
     OpenHome::HttpHeaderTransferEncoding iHeaderTransferEncoding;
     OpenHome::HttpHeaderConnection iHeaderConnection;
     Net::HeaderAcceptLanguage iHeaderAcceptLanguage;
