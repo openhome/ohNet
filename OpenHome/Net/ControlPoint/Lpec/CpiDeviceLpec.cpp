@@ -411,6 +411,9 @@ TBool CpiDeviceLpec::Invocable::HandleLpecResponse(const Brx& aMethod, const Brx
             outArgs[i]->ProcessOutput(outputProcessor, valBuf);
         }
     }
+    catch (AssertionFailed&) {
+        throw;
+    }
     catch (Exception&) {
         iSem.Signal();
         THROW(ReaderError);

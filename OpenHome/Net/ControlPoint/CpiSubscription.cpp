@@ -314,6 +314,9 @@ void CpiSubscription::DoRenew()
     catch (ReaderError&) {
         Schedule(eResubscribe);
     }
+    catch (AssertionFailed&) {
+        throw;
+    }
     catch (Exception& e) {
         Log::Print("ERROR - unexpected exception renewing subscription: %s from %s:%u\n", e.Message(), e.File(), e.Line());
         ASSERTS();

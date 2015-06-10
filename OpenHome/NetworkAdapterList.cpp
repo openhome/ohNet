@@ -250,6 +250,9 @@ void NetworkAdapterList::InterfaceListChanged(void* aPtr)
     {
         reinterpret_cast<NetworkAdapterList*>(aPtr)->HandleInterfaceListChanged();
     }
+    catch (AssertionFailed&) {
+        throw;
+    }
     catch(Exception& e) {
         UnhandledExceptionHandler(e);
     }

@@ -190,6 +190,9 @@ void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
                     // avoid calls to aInvocation.InvocationReportError in other catch blocks
                     throw;
                 }
+                catch (AssertionFailed&) {
+                    throw;
+                }
                 catch (Exception& e) {
                     Brn msg(e.Message());
                     aInvocation.InvocationReportError(801, msg);
