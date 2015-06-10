@@ -34,7 +34,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
-                         const VolumeInitParams& aVolumeInitParams,
+                         VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
                          const Brx& aDefaultName)
@@ -53,9 +53,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, aDefaultName);
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
-    VolumeInitParams volumeInit = aVolumeInitParams;
-    volumeInit.SetUserMute(*iPipeline);
-    iVolumeManager = new OpenHome::Av::VolumeManager(volumeInit, aReadWriteStore, *iConfigManager, *iPowerManager, aDevice, *iProduct, *iConfigManager);
+    iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
+    iVolumeManager = new OpenHome::Av::VolumeManager(aVolumeConsumer, iPipeline, *iVolumeConfig, aDevice, *iProduct, *iConfigManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
     iProduct->AddAttribute("Credentials");
     iProviderTime = new ProviderTime(aDevice, *iPipeline);
@@ -74,6 +73,7 @@ MediaPlayer::~MediaPlayer()
     delete iCredentials;
     delete iProduct;
     delete iVolumeManager;
+    delete iVolumeConfig;
     delete iNetworkMonitor;
     delete iProviderConfig;
     delete iProviderTime;

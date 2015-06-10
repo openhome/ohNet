@@ -35,6 +35,49 @@ using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Web;
 
+// VolumeProfile
+
+TUint VolumeProfile::VolumeMax() const
+{
+    return kVolumeMax;
+}
+
+TUint VolumeProfile::VolumeDefault() const
+{
+    return kVolumeDefault;
+}
+
+TUint VolumeProfile::VolumeUnity() const
+{
+    return kVolumeUnity;
+}
+
+TUint VolumeProfile::VolumeDefaultLimit() const
+{
+    return kVolumeDefaultLimit;
+}
+
+TUint VolumeProfile::VolumeStep() const
+{
+    return kVolumeStep;
+}
+
+TUint VolumeProfile::VolumeMilliDbPerStep() const
+{
+    return kVolumeMilliDbPerStep;
+}
+
+TUint VolumeProfile::BalanceMax() const
+{
+    return kBalanceMax;
+}
+
+TUint VolumeProfile::FadeMax() const
+{
+    return kFadeMax;
+}
+
+
 // VolumeSinkLogger
 
 void VolumeSinkLogger::SetVolume(TUint aVolume)
@@ -115,13 +158,14 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
-    iVolumeInitParams.SetVolume(iVolumeLogger, 100, 45, 80, 85, 1, 1024);
-    iVolumeInitParams.SetBalance(iVolumeLogger, 12);
-    iVolumeInitParams.SetFade(iVolumeLogger, 10);
+    VolumeProfile volumeProfile;
+    VolumeConsumer volumeInit(iVolumeLogger);
+    volumeInit.SetBalance(iVolumeLogger);
+    volumeInit.SetFade(iVolumeLogger);
 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   iVolumeInitParams, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

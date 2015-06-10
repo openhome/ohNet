@@ -67,14 +67,14 @@ private: // from IVolumeManager
     void AddObserver(IVolumeObserver& aObserver) override;
     void AddObserver(Media::IMuteObserver& aObserver) override;
 private: // from IVolumeProfile
-    TUint VolumeMax() override;
-    TUint VolumeDefault() override;
-    TUint VolumeUnity() override;
-    TUint VolumeDefaultLimit() override;
-    TUint VolumeStep() override;
-    TUint VolumeMilliDbPerStep() override;
-    TUint BalanceMax() override;
-    TUint FadeMax() override;
+    TUint VolumeMax() const override;
+    TUint VolumeDefault() const override;
+    TUint VolumeUnity() const override;
+    TUint VolumeDefaultLimit() const override;
+    TUint VolumeStep() const override;
+    TUint VolumeMilliDbPerStep() const override;
+    TUint BalanceMax() const override;
+    TUint FadeMax() const override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
 private: // from Media::IMute
@@ -191,14 +191,14 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 
 void DummyVolumeManager::AddObserver(IVolumeObserver& /*aObserver*/) {}
 void DummyVolumeManager::AddObserver(Media::IMuteObserver& /*aObserver*/) {}
-TUint DummyVolumeManager::VolumeMax()                                { return 10; }
-TUint DummyVolumeManager::VolumeDefault()                            { return 4; }
-TUint DummyVolumeManager::VolumeUnity()                              { return 8; }
-TUint DummyVolumeManager::VolumeDefaultLimit()                       { return 9; }
-TUint DummyVolumeManager::VolumeStep()                               { return 1; }
-TUint DummyVolumeManager::VolumeMilliDbPerStep()                     { return 1024; }
-TUint DummyVolumeManager::BalanceMax()                               { return 5; }
-TUint DummyVolumeManager::FadeMax()                                  { return 4; }
+TUint DummyVolumeManager::VolumeMax() const                          { return 10; }
+TUint DummyVolumeManager::VolumeDefault() const                      { return 4; }
+TUint DummyVolumeManager::VolumeUnity() const                        { return 8; }
+TUint DummyVolumeManager::VolumeDefaultLimit() const                 { return 9; }
+TUint DummyVolumeManager::VolumeStep() const                         { return 1; }
+TUint DummyVolumeManager::VolumeMilliDbPerStep() const               { return 1024; }
+TUint DummyVolumeManager::BalanceMax() const                         { return 5; }
+TUint DummyVolumeManager::FadeMax() const                            { return 4; }
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
 void DummyVolumeManager::Mute()                                      {}
 void DummyVolumeManager::Unmute()                                    {}

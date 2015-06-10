@@ -67,14 +67,14 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     aVolumeManager.AddObserver(static_cast<IVolumeObserver&>(*this));
     aVolumeManager.AddObserver(static_cast<Media::IMuteObserver&>(*this));
 
-    iConfigVolumeLimit = &aConfigReader.GetNum(VolumeLimiter::kConfigKey);
+    iConfigVolumeLimit = &aConfigReader.GetNum(VolumeConfig::kKeyLimit);
     iSubscriberIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::VolumeLimitChanged));
     if (iBalance == NULL) {
         iConfigBalance = NULL;
         SetPropertyBalance(0);
     }
     else {
-        iConfigBalance = &aConfigReader.GetNum(BalanceUser::kConfigKey);
+        iConfigBalance = &aConfigReader.GetNum(VolumeConfig::kKeyBalance);
         iSubscriberIdBalance = iConfigBalance->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::BalanceChanged));
     }
     if (iFade == NULL) {
@@ -82,7 +82,7 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
         SetPropertyFade(0);
     }
     else {
-        iConfigFade = &aConfigReader.GetNum(FadeUser::kConfigKey);
+        iConfigFade = &aConfigReader.GetNum(VolumeConfig::kKeyFade);
         iSubscriberIdFade = iConfigFade->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::FadeChanged));
     }
 
