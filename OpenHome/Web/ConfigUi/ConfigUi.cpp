@@ -486,6 +486,7 @@ ConfigTabReceiver::ConfigTabReceiver()
 void ConfigTabReceiver::Receive(const Brx& aMessage)
 {
     // FIXME - what if aMessage is malformed? - call some form of error handler?
+    // This will break if keys/values with spaces are allowed. Will need to use a non-whitespace delimiter in that case (or, wrap updates in JSON object).
     Parser p(aMessage);
     Brn line = p.NextLine();
     Parser lineParser(line);

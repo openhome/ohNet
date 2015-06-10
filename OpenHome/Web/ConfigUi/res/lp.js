@@ -194,7 +194,7 @@ WebUi = function() {
         request.Open("POST", "update", true);
         request.SetRequestHeader("Content-type", "text/plain");
         //request.setRequestHeader("Connection", "close");
-        request.Send(sessionId+"\r\n"+aString);
+        request.Send(sessionId+"\r\n"+aString+"\r\n");
     }
 
     LongPoll.prototype.Start = function()
@@ -256,7 +256,7 @@ WebUi = function() {
                     if (session.length == 2) {
                         sessionVal = session[1].split(" ");
                         if (session[0] == "session-id" && sessionVal.length == 2) {
-                            this.iSessionId = sessionVal[1];
+                            this.iSessionId = parseInt(sessionVal[1].trim());
                             this.iState = this.EStates.eLongPoll;
                             this.iCallbackStarted();
                             this.SendPoll();
