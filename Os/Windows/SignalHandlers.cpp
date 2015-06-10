@@ -7,7 +7,6 @@
 
 static void SEHTranslator(unsigned int u, EXCEPTION_POINTERS* /*pExp*/)
 {
-    _asm int 3;
     switch (u)
     {
     case EXCEPTION_ACCESS_VIOLATION:
