@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Debug.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
