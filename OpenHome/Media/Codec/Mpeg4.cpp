@@ -433,6 +433,7 @@ void SampleSizeTable::Clear()
 void SampleSizeTable::AddSampleSize(TUint aSize)
 {
     if (iTable.size() == iTable.capacity()) {
+        // File contains more sample sizes than it reported (and than we reserved capacity for).
         THROW(MediaMpeg4FileInvalid);
     }
     iTable.push_back(aSize);
@@ -441,14 +442,14 @@ void SampleSizeTable::AddSampleSize(TUint aSize)
 TUint32 SampleSizeTable::SampleSize(TUint aIndex) const
 {
     if(aIndex > iTable.size()-1) {
-        THROW(MediaMpeg4FileInvalid);
+        THROW(MediaMpeg4FileInvalid);   // FIXME - sign of corrupt file or programmer error (i.e., should ASSERT)?
     }
     return iTable[aIndex];
 }
 
 TUint32 SampleSizeTable::Count() const
 {
-    return iTable.capacity();
+    return iTable.size();
 }
 
 
@@ -615,7 +616,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 
     //stco:
     if(seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
-        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead?
+        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead? - would still assert later on; need to catch and convert it to something that allows codec to send appropriate signal.
     }
     return iOffsets[seekchunk]; // entry found - return offset to required chunk
 }
@@ -1008,7 +1009,7 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                             if (iBoxStack.Id() == Brn("esds")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                Log::Print("found stream descriptor box\n");
+                                                                Log::Print("found esds stream descriptor box\n");
 
                                                                 ParseBoxStreamDescriptor(iBoxStack, iBoxStack.Size());
                                                                 break;
@@ -1030,7 +1031,7 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                             if (iBoxStack.Id() == Brn("alac")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                Log::Print("found stream descriptor box\n");
+                                                                Log::Print("found alac stream descriptor box\n");
                                                                 ParseBoxAlac(iBoxStack, iBoxStack.Size());
                                                                 break;
                                                             }
