@@ -16,6 +16,7 @@ from filetasks import gather_files, build_tree, copy_task, find_dir_or_fail, cre
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_location, guess_openssl_location, guess_libplatform_location, guess_libosa_location, is_core_platform
 
 def options(opt):
+    opt.load('msvs')
     opt.load('msvc')
     opt.load('compiler_cxx')
     opt.load('compiler_c')
