@@ -277,6 +277,7 @@ void SuiteCredentials::Test()
     iCredChanged.Wait();
     iStatusChanged.Wait();
     TUint oldSeq = seq;
+    iSeqChanged.Wait();
     iProxy->SyncGetSequenceNumber(seq);
     TEST(seq > oldSeq);
     iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
