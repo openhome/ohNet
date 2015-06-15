@@ -364,6 +364,9 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
                 remaining -= buf.Bytes();
             }
         }
+        catch (AssertionFailed&) {
+            throw;
+        }
         catch (ReaderError&) {
         }
         catch (...) {
@@ -385,6 +388,9 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
         }
         catch (WriterError&) {
             retvalue = -1;
+        }
+        catch (AssertionFailed&) {
+            throw;
         }
         catch (...) {
             ASSERTS();
