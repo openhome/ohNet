@@ -85,6 +85,8 @@ void CodecAlac::StreamInitialise()
 
     CodecAlacBase::Initialise();
 
+    iCurrentSample = 0;
+
     // Use iInBuf for gathering initialisation data, as it doesn't need to be used for audio until Process() starts being called.
     Mpeg4Info info;
     CodecBufferedReader codecBufReader(*iController, iInBuf);
