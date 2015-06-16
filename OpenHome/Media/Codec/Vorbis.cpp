@@ -194,6 +194,7 @@ long TellCallback(void *datasource)
 
 
 CodecVorbis::CodecVorbis()
+    : CodecBase("Vorbis")
 {
     iDataSource = this;
     iCallbacks.read_func = ::ReadCallback;

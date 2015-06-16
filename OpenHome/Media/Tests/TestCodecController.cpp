@@ -192,7 +192,8 @@ private:
 // HelperCodecPassThrough
 
 HelperCodecPassThrough::HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness)
-    : iReadBytes(aReadBytes)
+    : CodecBase("PassThru")
+    , iReadBytes(aReadBytes)
     , iChannels(aChannels)
     , iSampleRate(aSampleRate)
     , iBitDepth(aBitDepth)

@@ -56,6 +56,7 @@ CodecBase* CodecFactory::NewPcm()
 const Brn CodecPcm::kCodecName("PCM");
 
 CodecPcm::CodecPcm()
+    : CodecBase("PCM")
 {
 }
 

@@ -61,6 +61,7 @@ CodecBase* CodecFactory::NewWav()
 
 
 CodecWav::CodecWav()
+    : CodecBase("WAV")
 {
 }
 

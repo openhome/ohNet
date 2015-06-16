@@ -79,6 +79,18 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 };
 
+class RewinderReservoir : public MsgReservoir
+{
+public:
+    RewinderReservoir(TUint aMaxEncodedAudio);
+    void Enqueue(Msg* aMsg);
+    Msg* Dequeue();
+    TBool IsEmpty() const;
+    TBool IsFull() const;
+private:
+    const TUint iMaxEncodedAudio;
+};
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -288,6 +300,37 @@ Msg* RewinderBufferProcessor::ProcessMsg(MsgQuit* /*aMsg*/)
 }
 
 
+// RewinderReservoir
+
+RewinderReservoir::RewinderReservoir(TUint aMaxEncodedAudio)
+    : iMaxEncodedAudio(aMaxEncodedAudio)
+{
+}
+
+void RewinderReservoir::Enqueue(Msg* aMsg)
+{
+    DoEnqueue(aMsg);
+}
+
+Msg* RewinderReservoir::Dequeue()
+{
+    return DoDequeue();
+}
+
+TBool RewinderReservoir::IsEmpty() const
+{
+    return MsgReservoir::IsEmpty();
+}
+
+TBool RewinderReservoir::IsFull() const
+{
+    if (EncodedAudioCount() < iMaxEncodedAudio) {
+        return false;
+    }
+    return true;
+}
+
+
 // Rewinder
 
 Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
@@ -297,8 +340,8 @@ Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iBuffering(false)
     , iLock("REWI")
 {
-    iQueueCurrent = new MsgQueue();
-    iQueueNext = new MsgQueue();
+    iQueueCurrent = new RewinderReservoir(kMaxEncodedAudioMsgs);
+    iQueueNext = new RewinderReservoir(kMaxEncodedAudioMsgs);
 }
 
 Rewinder::~Rewinder()
@@ -319,22 +362,26 @@ Msg* Rewinder::Pull()
 {
     Msg* msg = NULL;
     do {
-        iLock.Wait();
-        if (!iQueueCurrent->IsEmpty()) {
-            msg = iQueueCurrent->Dequeue();
-            if (iBuffering) {
-                TryBuffer(msg);
+        {
+            AutoMutex _(iLock);
+            if (iBuffering && iQueueNext->IsFull()) {
+                return NULL;
             }
-            else if (RewinderBufferProcessor::ShouldStartBuffering(msg)) {
-                // Don't want to re-buffer msgs until after a MsgEncodedStream
-                // is retrieved after Stop() (i.e., iBuffering = false) has been
-                // called.
-                // Otherwise, the previously buffered MsgEncodedStream will be
-                // re-buffered and pulled after each Rewind().
-                iBuffering = true;
+            if (!iQueueCurrent->IsEmpty()) {
+                msg = iQueueCurrent->Dequeue();
+                if (iBuffering) {
+                    TryBuffer(msg);
+                }
+                else if (RewinderBufferProcessor::ShouldStartBuffering(msg)) {
+                    // Don't want to re-buffer msgs until after a MsgEncodedStream
+                    // is retrieved after Stop() (i.e., iBuffering = false) has been
+                    // called.
+                    // Otherwise, the previously buffered MsgEncodedStream will be
+                    // re-buffered and pulled after each Rewind().
+                    iBuffering = true;
+                }
             }
         }
-        iLock.Signal();
         if (msg == NULL) {
             msg = iUpstreamElement.Pull();
             if (msg != NULL) {
@@ -450,7 +497,7 @@ void Rewinder::Rewind()
     while (!iQueueCurrent->IsEmpty()) {
         iQueueNext->Enqueue(iQueueCurrent->Dequeue());
     }
-    MsgQueue* tmpQueue = iQueueCurrent;
+    auto tmpQueue = iQueueCurrent;
     iQueueCurrent = iQueueNext;
     iQueueNext = tmpQueue;
 }
