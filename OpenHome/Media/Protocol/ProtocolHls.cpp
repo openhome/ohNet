@@ -19,19 +19,19 @@
 namespace OpenHome {
 namespace Media {
 
-class TimerGeneric : public ITimer
+class TimerGeneric : public IHlsTimer
 {
 public:
     TimerGeneric(Environment& aEnv, const TChar* aId);
     ~TimerGeneric();
-private: // from ITimer
-    void Start(TUint aDurationMs, ITimerHandler& aHandler) override;
+private: // from IHlsTimer
+    void Start(TUint aDurationMs, IHlsTimerHandler& aHandler) override;
     void Cancel() override;
 private:
     void TimerFired();
 private:
     Timer* iTimer;
-    ITimerHandler* iHandler;
+    IHlsTimerHandler* iHandler;
     TBool iPending;
     Mutex iLock;
 };
@@ -62,7 +62,7 @@ public:
 class ProtocolHls : public Protocol
 {
 public:
-    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aM3uReaderSem);
+    ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aM3uReaderSem);
     ~ProtocolHls();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -82,7 +82,7 @@ private:
     IHlsReader* iHlsReaderM3u;
     IHlsReader* iHlsReaderSegment;
     Supply* iSupply;
-    ITimer* iTimer;
+    IHlsTimer* iTimer;
     ISemaphore* iSemReaderM3u;
     HlsM3uReader iM3uReader;
     SegmentStreamer iSegmentStreamer;
@@ -113,7 +113,7 @@ Protocol* ProtocolFactory::NewHls(Environment& aEnv, const Brx& aUserAgent)
 
 
 // For test purposes.
-Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aSem)
+Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aSem)
 { // static
     return new ProtocolHls(aEnv, aReaderM3u, aReaderSegment, aTimer, aSem);
 };
@@ -134,7 +134,7 @@ TimerGeneric::~TimerGeneric()
     delete iTimer;
 }
 
-void TimerGeneric::Start(TUint aDurationMs, ITimerHandler& aHandler)
+void TimerGeneric::Start(TUint aDurationMs, IHlsTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
     ASSERT(!iPending);  // Can't set timer when it's already pending.
@@ -204,7 +204,7 @@ IReader& HlsReader::Reader()
 
 // HlsM3uReader
 
-HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore)
+HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aTimer, ISemaphore& aSemaphore)
     : iTimer(aTimer)
     , iSocket(aSocket)
     , iReaderUntil(aReader)
@@ -755,7 +755,7 @@ void SegmentStreamer::EnsureSegmentIsReady()
 
 // ProtocolHls
 
-ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, ITimer* aTimer, ISemaphore* aM3uReaderSem)
+ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* aReaderSegment, IHlsTimer* aTimer, ISemaphore* aM3uReaderSem)
     : Protocol(aEnv)
     , iHlsReaderM3u(aReaderM3u)
     , iHlsReaderSegment(aReaderSegment)

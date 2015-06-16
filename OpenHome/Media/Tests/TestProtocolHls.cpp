@@ -19,21 +19,21 @@ namespace OpenHome {
 namespace Media {
 namespace Test {
 
-class TestTimer : public ITimer
+class TestTimer : public IHlsTimer
 {
 public:
     TestTimer();
     void Clear();
     void Fire();
-    ITimerHandler* LastHandler() const; // NOT passing ownership; may return NULL
+    IHlsTimerHandler* LastHandler() const; // NOT passing ownership; may return NULL
     TUint LastDurationMs() const;
     TUint StartCount() const;
     TUint CancelCount() const;
-public: // from ITimer
-    void Start(TUint aDurationMs, ITimerHandler& aHandler) override;
+public: // from IHlsTimer
+    void Start(TUint aDurationMs, IHlsTimerHandler& aHandler) override;
     void Cancel() override;
 private:
-    ITimerHandler* iHandler;
+    IHlsTimerHandler* iHandler;
     TUint iDurationMs;
     TUint iStartCount;
     TUint iCancelCount;
@@ -339,7 +339,7 @@ void TestTimer::Fire()
     iHandler->TimerFired();
 }
 
-ITimerHandler* TestTimer::LastHandler() const
+IHlsTimerHandler* TestTimer::LastHandler() const
 {
     AutoMutex a(iLock);
     return iHandler;
@@ -363,7 +363,7 @@ TUint TestTimer::CancelCount() const
     return iCancelCount;
 }
 
-void TestTimer::Start(TUint aDurationMs, ITimerHandler& aHandler)
+void TestTimer::Start(TUint aDurationMs, IHlsTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
     iStartCount++;
