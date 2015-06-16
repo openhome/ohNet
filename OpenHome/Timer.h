@@ -31,7 +31,15 @@ protected:
 
 class TimerManager;
 
-class Timer : public QueueSortedEntryTimer
+class ITimer
+{
+public:
+    virtual ~ITimer() {}
+    virtual void FireIn(TUint aMs) = 0;
+    virtual void Cancel() = 0;
+};
+
+class Timer : public QueueSortedEntryTimer, public ITimer
 {
     friend class TimerManager;
 public:
