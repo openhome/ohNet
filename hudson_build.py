@@ -182,7 +182,7 @@ class JenkinsBuild():
 
         if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32']) or (os_platform == 'Android'):
             args.append('--buildonly')
-        elif (arch == 'x64' and not os_platform in ['windows', 'linux', 'macos']):
+        elif (arch == 'x64' and not os_platform in ['windows', 'linux']):
             args.append('--native')
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
