@@ -672,19 +672,25 @@ void MsgAudioEncodedWriter::Write(TByte aValue)
 
 void MsgAudioEncodedWriter::Write(const Brx& aBuffer)
 {
-    // FIXME - could write aBuffer of arbitrary size; just keep packing iBuf and allocating new msgs until aBuffer exhausted.
-    ASSERT(aBuffer.Bytes() <= iBuf.MaxBytes());
-    const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
-    if (bufCapacity >= aBuffer.Bytes()) {
-        iBuf.Append(aBuffer);
-    }
-    else {
+    TUint remaining = aBuffer.Bytes();
+    TUint offset = 0;
+
+    while (remaining > 0) {
+        const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
+
         // Do a partial append of aBuffer if space in iBuf;
         if (bufCapacity > 0) {
-            iBuf.Append(iBuf.Ptr(), bufCapacity);
+            TUint bytes = bufCapacity;
+            if (remaining < bufCapacity) {
+                bytes = remaining;
+            }
+            iBuf.Append(iBuf.Ptr() + offset, bytes);
+            offset += bytes;
+            remaining -= bytes;
         }
-        AllocateMsg();
-        iBuf.Append(iBuf.Ptr() + bufCapacity, aBuffer.Bytes() - bufCapacity);  // Buffer remainder of aBuffer.
+        else {
+            AllocateMsg();
+        }
     }
 }
 
