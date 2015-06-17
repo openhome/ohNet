@@ -188,6 +188,9 @@ private:
     std::vector<TUint> iTable;
 };
 
+// FIXME - should probably also include stss here.
+// If stss box is present, it means that not all samples are sync samples, and the stss box is consulted to find the first sync sample prior to specified time.
+// If stss not present, all samples are sync samples.
 class SeekTable
 {
 public:
@@ -223,6 +226,24 @@ private:
     std::vector<TSamplesPerChunkEntry> iSamplesPerChunk;
     std::vector<TAudioSamplesPerSampleEntry> iAudioSamplesPerSample;
     std::vector<TUint64> iOffsets;
+};
+
+class MsgAudioEncodedWriter : public IWriter
+{
+public:
+    MsgAudioEncodedWriter(MsgFactory& aMsgFactory);
+    ~MsgAudioEncodedWriter();
+    MsgAudioEncoded* Msg();
+public: // from IWriter
+    void Write(TByte aValue) override;
+    void Write(const Brx& aBuffer) override;
+    void WriteFlush() override; // Flush any buffered data to a MsgAudioEncoded.
+private:
+    void AllocateMsg();
+private:
+    MsgFactory& iMsgFactory;
+    MsgAudioEncoded* iMsg;
+    Bws<EncodedAudio::kMaxBytes> iBuf;
 };
 
 class Mpeg4Container : public ContainerBase, public IReader

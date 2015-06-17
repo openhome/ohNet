@@ -636,6 +636,79 @@ TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
 }
 
 
+// MsgAudioEncodedWriter
+
+MsgAudioEncodedWriter::MsgAudioEncodedWriter(MsgFactory& aMsgFactory)
+    : iMsgFactory(aMsgFactory)
+    , iMsg(NULL)
+{
+}
+
+MsgAudioEncodedWriter::~MsgAudioEncodedWriter()
+{
+    ASSERT(iMsg == NULL);
+    ASSERT(iBuf.Bytes() == 0);
+}
+
+MsgAudioEncoded* MsgAudioEncodedWriter::Msg()
+{
+    ASSERT(iBuf.Bytes() == 0);  // Ensure no audio still buffered.
+    MsgAudioEncoded* msg = iMsg;
+    iMsg = NULL;
+    return msg;
+}
+
+void MsgAudioEncodedWriter::Write(TByte aValue)
+{
+    const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
+    if (bufCapacity >= sizeof(TByte)) {
+        iBuf.Append(aValue);
+    }
+    else {
+        AllocateMsg();
+        iBuf.Append(aValue);
+    }
+}
+
+void MsgAudioEncodedWriter::Write(const Brx& aBuffer)
+{
+    // FIXME - could write aBuffer of arbitrary size; just keep packing iBuf and allocating new msgs until aBuffer exhausted.
+    ASSERT(aBuffer.Bytes() <= iBuf.MaxBytes());
+    const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
+    if (bufCapacity >= aBuffer.Bytes()) {
+        iBuf.Append(aBuffer);
+    }
+    else {
+        // Do a partial append of aBuffer if space in iBuf;
+        if (bufCapacity > 0) {
+            iBuf.Append(iBuf.Ptr(), bufCapacity);
+        }
+        AllocateMsg();
+        iBuf.Append(iBuf.Ptr() + bufCapacity, aBuffer.Bytes() - bufCapacity);  // Buffer remainder of aBuffer.
+    }
+}
+
+void MsgAudioEncodedWriter::WriteFlush()
+{
+    if (iBuf.Bytes() > 0) {
+        AllocateMsg();
+    }
+}
+
+void MsgAudioEncodedWriter::AllocateMsg()
+{
+    ASSERT(iBuf.Bytes() > 0);
+    MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(Brn(iBuf.Ptr(), iBuf.Bytes()));
+    if (iMsg == NULL) {
+        iMsg = msg;
+    }
+    else {
+        iMsg->Add(msg);
+    }
+    iBuf.SetBytes(0);
+}
+
+
 // Mpeg4Container
 
 Mpeg4Container::Mpeg4Container()
@@ -829,40 +902,25 @@ MsgAudioEncoded* Mpeg4Container::Process()
 
 MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
 {
-    MsgAudioEncoded* msgSampleSizeTable = NULL;
-    Bws<kMaxEncodedAudioBytes> tableBuf;
-    WriterBuffer writerBuf(tableBuf);
-    WriterBinary writerBin(writerBuf);
-    TBool tableCountWritten = false;
-    TUint tableIdx = 0;
+    MsgAudioEncodedWriter writerMsg(*iMsgFactory);
+    WriterBinary writerBin(writerMsg);
 
-    while (tableIdx < iSampleSizeTable.Count()) {
-        // All values written are 32-bits.
-        if (tableBuf.MaxBytes()-tableBuf.Bytes() >= sizeof(TUint32)) {
-            if (!tableCountWritten) {
-                writerBin.WriteUint32Be(iSampleSizeTable.Count());
-                tableCountWritten = true;
-            }
-            else {
-                writerBin.WriteUint32Be(iSampleSizeTable.SampleSize(tableIdx));
-                tableIdx++;
-            }
-        }
-
-        if (tableBuf.MaxBytes()-tableBuf.Bytes() < sizeof(TUint32) || tableIdx == iSampleSizeTable.Count()) {
-            // Create new msg if buffer is exhausted, or if sample size table has been exhausted.
-            MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(Brn(tableBuf.Ptr(), tableBuf.Bytes()));
-            if (msgSampleSizeTable == NULL) {
-                msgSampleSizeTable = msg;
-            }
-            else {
-                msgSampleSizeTable->Add(msg);
-            }
-            tableBuf.SetBytes(0);
-        }
+    const TUint count = iSampleSizeTable.Count();
+    writerBin.WriteUint32Be(count);
+    for (TUint i=0; i<count; i++) {
+        writerBin.WriteUint32Be(iSampleSizeTable.SampleSize(i));
     }
+    writerMsg.WriteFlush();
 
-    return msgSampleSizeTable;
+    MsgAudioEncoded* msg = writerMsg.Msg();
+    return msg;
+}
+
+MsgAudioEncoded* Mpeg4Container::WriteSeekTable() const
+{
+    //MsgAudioEncodedWriter writerMsg(*iMsgFactory);
+    //WriterBinary writerBin(writerMsg);
+    return NULL;
 }
 
 MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
