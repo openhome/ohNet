@@ -54,8 +54,14 @@ void ClockPullerSongcast::ResetTimestampHistory()
 void ClockPullerSongcast::SmoothTimestamps(TInt& aDrift, TInt aIndexToSkip)
 {
     iTimestampTotalDrift += aDrift;
+
+    if (iTimestampHistory.size() == 0) {
+        return;
+    }
+
     const TUint absDeviation = (TUint)std::abs(aDrift);
     TInt i;
+
     if (absDeviation >= iTimestampHistory.size()) {
         TInt sharePerElement = aDrift / (TInt)iTimestampHistory.size();
         for (i=0; i<(TInt)iTimestampHistory.size(); i++) {
