@@ -354,6 +354,14 @@ void Mpeg4BoxStack::Pop()
     iIndex--;
 }
 
+void Mpeg4BoxStack::Reset()
+{
+    for (TUint i=0; i<iBoxes.size(); i++) {
+        iBoxes[i]->Clear();
+    }
+    iIndex = 0;
+}
+
 void Mpeg4BoxStack::Clear()
 {
     ASSERT(iIndex > 0);
@@ -628,32 +636,18 @@ TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
 }
 
 
-// Mpeg4Start
+// Mpeg4Container
 
 Mpeg4Container::Mpeg4Container()
     : iBoxStack(kMetadataBoxDepth)
 {
     LOG(kMedia, "Mpeg4Container::Mpeg4Container\n");
+    Clear();
 }
 
 TBool Mpeg4Container::Recognise(Brx& aBuf)
 {
-    iPos = 0;
-    iMetadataRetrieved = false;
-    iChunkIndex = 0;
-    iChunkBytesRemaining = 0;
-    iCodec.SetBytes(0);
-    iSampleRate = 0;
-    iTimescale = 0;
-    iChannels = 0;
-    iBitDepth = 0;
-    iDuration = 0;
-    //iSamplesTotal = 0;
-    iStreamDescriptor.SetBytes(0);
-    iSampleSizeTable.Clear();
-    iSeekTable.Deinitialise();
-
-    LOG(kMedia, "Mpeg4Start::Recognise\n");
+    LOG(kMedia, "Mpeg4Container::Recognise\n");
     if (aBuf.Bytes() >= Mpeg4Box::kBoxHeaderBytes) {
         if (Brn(aBuf.Ptr()+Mpeg4Box::kBoxSizeBytes, Mpeg4Box::kBoxNameBytes) == Brn("ftyp")) {
             return true;
@@ -661,6 +655,13 @@ TBool Mpeg4Container::Recognise(Brx& aBuf)
     }
 
     return false;
+}
+
+Msg* Mpeg4Container::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    Msg* msg = ContainerBase::ProcessMsg(aMsg);
+    Clear();
+    return msg;
 }
 
 Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -706,6 +707,27 @@ void Mpeg4Container::ReadFlush()
 void Mpeg4Container::ReadInterrupt()
 {
     ASSERTS();
+}
+
+void Mpeg4Container::Clear()
+{
+    iBoxStack.Reset();
+    iPos = 0;
+    iBuf.SetBytes(0);
+    iMetadataRetrieved = false;
+    iChunkIndex = 0;
+    iChunkBytesRemaining = 0;
+    iBytesToDiscard = 0;
+    iCodec.SetBytes(0);
+    iSampleRate = 0;
+    iTimescale = 0;
+    iChannels = 0;
+    iBitDepth = 0;
+    iDuration = 0;
+    //iSamplesTotal = 0;
+    iStreamDescriptor.SetBytes(0);
+    iSampleSizeTable.Clear();
+    iSeekTable.Deinitialise();
 }
 
 MsgAudioEncoded* Mpeg4Container::Process()

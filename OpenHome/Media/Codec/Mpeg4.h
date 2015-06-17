@@ -157,6 +157,7 @@ public:
     void Set(IReader& aReader);
     void Push();    // Push a box onto the stack; i.e., start processing a new box at index+1. ASSERTs if box count reached.
     void Pop();     // Pop a box off the stack.
+    void Reset();
 public: // from IMpeg4Box
     void Clear() override;  // FIXME - ever called?
     void ReadHeader() override;
@@ -234,15 +235,18 @@ private:
 public:
     Mpeg4Container();
 public: // from ContainerBase
-    TBool Recognise(Brx& aBuf);
+    TBool Recognise(Brx& aBuf) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
 public: // from IReader
     Brn Read(TUint aBytes) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
 private:
+    void Clear();
     MsgAudioEncoded* Process();                 // May return NULL.
     MsgAudioEncoded* WriteSampleSizeTable() const;
+    MsgAudioEncoded* WriteSeekTable() const;    // FIXME - codec shouldn't require this, it should be able to pass a seek request to a sample up and container can handle it. However, CodecController and IStreamHandler require seek pos in bytes, so codec must query SeekTable itself.
     MsgAudioEncoded* ProcessNextAudioBlock();   // May return NULL.
     void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
