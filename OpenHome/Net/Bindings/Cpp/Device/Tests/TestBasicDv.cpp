@@ -107,8 +107,12 @@ void ProviderTestBasic::GetUint(IDvInvocationStd& /*aInvocation*/, uint32_t& aVa
     GetPropertyVarUint(aValueUint);
 }
 
-void ProviderTestBasic::SetInt(IDvInvocationStd& /*aInvocation*/, int32_t aValueInt)
+void ProviderTestBasic::SetInt(IDvInvocationStd& aInvocation, int32_t aValueInt)
 {
+    if (aValueInt == 12345) {
+        std::string str("custom error");
+        aInvocation.ReportError(801, str);
+    }
     SetPropertyVarInt(aValueInt);
 }
 
