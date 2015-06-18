@@ -185,7 +185,7 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
     , iLatency(100)
     , iSocket(aEnv)
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
-    , iTimestamper(NULL)
+    , iTimestamper(aTimestamper)
     , iFirstFrame(true)
 {
 }
