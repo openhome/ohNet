@@ -169,7 +169,7 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
                 iMsgsTillLock = kLockingMsgCount - 1;
                 iCalculateTimestampDelta = false;
             }
-            else if (std::abs(iTimestampDelta - delta) > kLockingMaxDeviation) {
+            else if (std::abs(iTimestampDelta - delta) > iLockingMaxDeviation) {
                 iMsgsTillLock = kLockingMsgCount;
                 iCalculateTimestampDelta = true;
                 iTimestampDelta = 0;
