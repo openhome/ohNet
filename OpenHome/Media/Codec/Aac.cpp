@@ -28,6 +28,7 @@ private:
     static const TUint kMaxRecogBytes = 6 * 1024; // copied from previous CodecController behaviour
     Bws<kMaxRecogBytes> iRecogBuf;
     SampleSizeTable iSampleSizeTable;
+    SeekTable iSeekTable;
     TUint iCurrentSample;       // Sample count is 32 bits in stsz box.
 };
 
@@ -104,7 +105,7 @@ void CodecAac::StreamInitialise()
     Mpeg4InfoReader mp4Reader(codecBufReader);
     mp4Reader.Read(info);
 
-    // Now, read sample size table.
+    // Read sample size table.
     ReaderBinary readerBin(codecBufReader);
     iSampleSizeTable.Clear();
     const TUint sampleCount = readerBin.ReadUintBe(4);
@@ -113,6 +114,11 @@ void CodecAac::StreamInitialise()
         const TUint sampleSize = readerBin.ReadUintBe(4);
         iSampleSizeTable.AddSampleSize(sampleSize);
     }
+
+    // Read seek table.
+    iSeekTable.Deinitialise();
+    SeekTableInitialiser seekTableInitialiser(iSeekTable, codecBufReader);
+    seekTableInitialiser.Init();
 
     iInBuf.SetBytes(0);
 
@@ -239,29 +245,28 @@ void CodecAac::StreamCompleted()
     LOG(kCodec, "CodecAac::StreamCompleted\n");
 }
 
-TBool CodecAac::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
+TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    //LOG(kCodec, "CodecAac::TrySeek(%u, %llu)\n", aStreamId, aSample);
-    //TUint64 startSample;
+    LOG(kCodec, "CodecAac::TrySeek(%u, %llu)\n", aStreamId, aSample);
+    TUint64 startSample;
 
-    //TUint64 sampleInSeekTable = aSample;
-    //if (iOutputSampleRate != iSampleRate) {
-    //    TUint divisor = iOutputSampleRate / iSampleRate;
-    //    sampleInSeekTable /= divisor;
-    //}
+    TUint64 sampleInSeekTable = aSample;
+    if (iOutputSampleRate != iSampleRate) {
+        TUint divisor = iOutputSampleRate / iSampleRate;
+        sampleInSeekTable /= divisor;
+    }
 
-    //TUint64 bytes = iMp4->GetSeekTable().Offset(sampleInSeekTable, startSample);     // find file offset relating to given audio sample
-    //LOG(kCodec, "CodecAac::Seek to sample: %llu, byte: %llu\n", startSample, bytes);
-    //TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
-    //if (canSeek) {
-    //    iTotalSamplesOutput = aSample;
-    //    iCurrentSample = startSample;
-    //    iTrackOffset = (Jiffies::kPerSecond/iOutputSampleRate)*aSample;
+    TUint64 bytes = iSeekTable.Offset(sampleInSeekTable, startSample);     // find file offset relating to given audio sample
+    LOG(kCodec, "CodecAac::Seek to sample: %llu, byte: %llu\n", startSample, bytes);
+    TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
+    if (canSeek) {
+        iTotalSamplesOutput = aSample;
+        iCurrentSample = static_cast<TUint>(startSample);
+        iTrackOffset = (Jiffies::kPerSecond/iOutputSampleRate)*aSample;
 
-    //    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
-    //}
-    //return canSeek;
-    return false;
+        iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
+    }
+    return canSeek;
 }
 
 void CodecAac::Process()

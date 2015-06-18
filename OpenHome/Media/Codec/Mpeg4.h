@@ -208,10 +208,11 @@ public:
     TUint ChunkCount() const;
     TUint SamplesPerChunk(TUint aChunkIndex) const;
     TUint StartSample(TUint aChunkIndex) const;
-    TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);
-    // FIXME - have a TBool Initialised() method that tells us if all 3 parts of seek table have been initialised.
-    // FIXME - also see if it's possible to split this class into its 3 separate components, to simplify it.
+    TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);    // FIXME - aSample should be TUint.
+    // FIXME - See if it's possible to split this class into its 3 separate components, to simplify it.
     TUint64 GetOffset(TUint aChunkIndex) const;
+
+    void Write(IWriter& aWriter) const;   // Serialise.
 private:
     typedef struct {
         TUint   iFirstChunk;
@@ -226,6 +227,17 @@ private:
     std::vector<TSamplesPerChunkEntry> iSamplesPerChunk;
     std::vector<TAudioSamplesPerSampleEntry> iAudioSamplesPerSample;
     std::vector<TUint64> iOffsets;
+};
+
+class SeekTableInitialiser : public INonCopyable
+{
+public:
+    SeekTableInitialiser(SeekTable& aSeekTable, IReader& aReader);
+    void Init();
+private:
+    SeekTable& iSeekTable;
+    IReader& iReader;
+    TBool iInitialised;
 };
 
 class MsgAudioEncodedWriter : public IWriter
@@ -259,6 +271,7 @@ public: // from ContainerBase
     TBool Recognise(Brx& aBuf) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
 public: // from IReader
     Brn Read(TUint aBytes) override;
     void ReadFlush() override;

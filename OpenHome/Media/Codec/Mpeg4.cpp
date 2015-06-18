@@ -430,6 +430,7 @@ SampleSizeTable::~SampleSizeTable()
 
 void SampleSizeTable::Init(TUint aMaxEntries)
 {
+    ASSERT(iTable.size() == 0);
     iTable.reserve(aMaxEntries);
 }
 
@@ -568,7 +569,7 @@ TUint SeekTable::StartSample(TUint aChunkIndex) const
 
 TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 {
-    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size()==0) {
+    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size() == 0) {
         THROW(CodecStreamCorrupt); // seek table empty - cannot do seek // FIXME - throw a MpegMediaFileInvalid exception, which is actually expected/caught?
     }
     aSample = 0;
@@ -581,7 +582,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     TUint64 totalsamples = 0;
     TUint32 samplecount = 0;
     TUint32 audiosamples = 0;
-    for(TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
+    for (TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
         samplecount = iAudioSamplesPerSample[entry].iSampleCount;
         audiosamples = iAudioSamplesPerSample[entry].iAudioSamples;
         if (aAudioSample <= (totalaudiosamples + samplecount * audiosamples)) {
@@ -589,14 +590,15 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
         }
         totalaudiosamples += samplecount * audiosamples;
         totalsamples = samplecount;
+
     }
-    if (totalaudiosamples!=0 && aAudioSample>totalaudiosamples) {
-        aAudioSample = totalaudiosamples-1; // keep within range
+    if (totalaudiosamples != 0 && aAudioSample>totalaudiosamples) {
+        aAudioSample = totalaudiosamples - 1; // keep within range
     }
-    if(audiosamples == 0)
+    if (audiosamples == 0)
         THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
 
-    aSample = totalsamples + (aAudioSample - totalaudiosamples)/audiosamples; // convert audio sample count to codec samples
+    aSample = totalsamples + (aAudioSample - totalaudiosamples) / audiosamples; // convert audio sample count to codec samples
 
     // stsc:
     // chunk is found by searching to the entry in the table before samples > first chunk
@@ -604,11 +606,11 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     totalsamples = 0;
     TUint32 nextspc = 0, spc = 0, chunks = 0;
     TUint32 seekchunk = 0, firstchunk = 1, nextchunk = 1;
-    for(TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
+    for (TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
         nextchunk = iSamplesPerChunk[entry].iFirstChunk;
         nextspc = iSamplesPerChunk[entry].iSamples;
         chunks = nextchunk - firstchunk;
-        if(aSample < (totalsamples + chunks * spc)) {
+        if (aSample < (totalsamples + chunks * spc)) {
             break; // sample is within previous range
         }
 
@@ -616,23 +618,186 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
         firstchunk = nextchunk;
         spc = nextspc;
     }
-    seekchunk = (TUint32) (firstchunk + ((aSample-totalsamples) / spc)); // calculate chunk that this sample is in
+
+    seekchunk = (TUint32)(firstchunk + ((aSample - totalsamples) / spc)); // calculate chunk that this sample is in
     TUint64 adjsample = ((seekchunk - firstchunk) * spc) + totalsamples; // calculate index to first sample in chunk
     aAudioSample -= (aSample - adjsample) * audiosamples;                // adjust audio sample count to index first sample in chunk
     aSample = adjsample;                                                 // adjust codec sample count to index first sample in chunk
     seekchunk -= 1;                                                      // adjust for array index (i.e. -1)
 
     //stco:
-    if(seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
+    if (seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
         THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead? - would still assert later on; need to catch and convert it to something that allows codec to send appropriate signal.
     }
     return iOffsets[seekchunk]; // entry found - return offset to required chunk
 }
 
+
+//TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint& aSample)
+//{
+//    Log::Print("aAudioSample: %llu, aSample: %u\n", aAudioSample, aSample);
+//    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size()==0) {
+//        THROW(CodecStreamCorrupt); // seek table empty - cannot do seek // FIXME - throw a MpegMediaFileInvalid exception, which is actually expected/caught?
+//    }
+//    aSample = 0;
+//    // fistly determine the required sample from the audio sample using the stts data,
+//    // then work through samples per chunk table (stsc data) to get the chunk number for
+//    // this particular sample, then get the chunk offset from the offset table (stco data)
+//
+//    // stts:
+//    TUint64 totSamplesAudio = 0;
+//    TUint totSamplesCodec = 0;
+//
+//    for (TUint i=0; i<iAudioSamplesPerSample.size(); i++) {
+//        const TUint sampleCount = iAudioSamplesPerSample[i].iSampleCount;
+//        const TUint audioSamples = iAudioSamplesPerSample[i].iAudioSamples;
+//
+//        TBool codecSampleFound = false;
+//        for (TUint sample = 0; sample < sampleCount; sample++) {
+//            if (totSamplesAudio + audioSamples >= aAudioSample) {
+//                codecSampleFound = true;  // Audio samples are within this range.
+//                break;
+//            }
+//
+//            totSamplesAudio += audioSamples;
+//            totSamplesCodec++;
+//        }
+//
+//        if (codecSampleFound) {
+//            break;
+//        }
+//    }
+//
+//    // FIXME - if stss box was present, must use it here to find appropriate sync sample.
+//    // If stss box not present all codec samples are sync samples.
+//
+//    // stsc:
+//    // chunk is found by searching to the entry in the table before samples > first chunk
+//    // and interpolating to get exact chunk
+//    TUint chunk = 0;
+//    TUint samplesTotalStsc = 0;
+//    for (TUint i = 0; i < iSamplesPerChunk.size(); i++) {
+//        const TUint samples = iSamplesPerChunk[i].iSamples;
+//        const TUint nextChunk = iSamplesPerChunk[i].iFirstChunk;
+//        const TUint chunkDiff = nextChunk - chunk;
+//
+//        TBool chunkFound = false;
+//        const TUint endChunk = chunk + chunkDiff;
+//        for (TUint chunkEntry = chunk; chunkEntry < endChunk; chunkEntry++) {
+//            if (samplesTotalStsc + samples >= totSamplesCodec) {
+//                chunkFound = true;
+//                break;
+//            }
+//            samplesTotalStsc += samples;
+//            chunk++;
+//        }
+//
+//        if (chunkFound) {
+//            break;
+//        }
+//    }
+//
+//    // Update output params to match chunk.
+//    aSample = samplesTotalStsc;
+//
+//    TUint chunkStartSampleAudio = 0;
+//    TUint chunkStartSampleCodec = 0;
+//    for (TUint i = 0; i < iAudioSamplesPerSample.size(); i++) {
+//        const TUint sampleCount = iAudioSamplesPerSample[i].iSampleCount;
+//        const TUint audioSamples = iAudioSamplesPerSample[i].iAudioSamples;
+//
+//        TBool startSampleFound = false;
+//        for (TUint sample = 0; sample < sampleCount; sample++) {
+//            if (chunkStartSampleCodec + 1 >= samplesTotalStsc) {
+//                startSampleFound = true;  // Audio samples are within this range.
+//                break;
+//            }
+//
+//            chunkStartSampleAudio += audioSamples;
+//            chunkStartSampleCodec++;
+//        }
+//    }
+//
+//    aAudioSample = chunkStartSampleAudio;
+//
+//
+//    //stco:
+//    if (chunk >= iOffsets.size()) { // error - required chunk doesn't exist
+//        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead? - would still assert later on; need to catch and convert it to something that allows codec to send appropriate signal.
+//    }
+//    return iOffsets[chunk]; // entry found - return offset to required chunk
+//}
+
 TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
 {
     ASSERT(aChunkIndex < iOffsets.size());
     return iOffsets[aChunkIndex];
+}
+
+void SeekTable::Write(IWriter& aWriter) const
+{
+    WriterBinary writerBin(aWriter);
+
+    const TUint samplesPerChunkCount = iSamplesPerChunk.size();
+    writerBin.WriteUint32Be(samplesPerChunkCount);
+    for (TUint i=0; i<samplesPerChunkCount; i++) {
+        writerBin.WriteUint32Be(iSamplesPerChunk[i].iFirstChunk);
+        writerBin.WriteUint32Be(iSamplesPerChunk[i].iSamples);
+        writerBin.WriteUint32Be(iSamplesPerChunk[i].iSampleDescriptionIndex);
+    }
+
+    const TUint audioSamplesPerSampleCount = iAudioSamplesPerSample.size();
+    writerBin.WriteUint32Be(audioSamplesPerSampleCount);
+    for (TUint i=0; i<audioSamplesPerSampleCount; i++) {
+        writerBin.WriteUint32Be(iAudioSamplesPerSample[i].iSampleCount);
+        writerBin.WriteUint32Be(iAudioSamplesPerSample[i].iAudioSamples);
+    }
+
+    const TUint chunkCount = iOffsets.size();
+    writerBin.WriteUint32Be(chunkCount);
+    for (TUint i=0; i<chunkCount; i++) {
+        writerBin.WriteUint64Be(iOffsets[i]);
+    }
+}
+
+
+// SeekTableInitialiser
+
+SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable, IReader& aReader)
+    : iSeekTable(aSeekTable)
+    , iReader(aReader)
+    , iInitialised(false)
+{
+}
+
+void SeekTableInitialiser::Init()
+{
+    ASSERT(!iInitialised);
+    ReaderBinary readerBin(iReader);
+    const TUint samplesPerChunkCount = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseSamplesPerChunk(samplesPerChunkCount);
+    for (TUint i = 0; i<samplesPerChunkCount; i++) {
+        const TUint firstChunk = readerBin.ReadUintBe(4);
+        const TUint samples = readerBin.ReadUintBe(4);
+        const TUint sampleDescriptionIndex = readerBin.ReadUintBe(4);
+        iSeekTable.SetSamplesPerChunk(firstChunk, samples, sampleDescriptionIndex);
+    }
+
+    const TUint audioSamplesPerSampleCount = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseAudioSamplesPerSample(audioSamplesPerSampleCount);
+    for (TUint i = 0; i<audioSamplesPerSampleCount; i++) {
+        const TUint sampleCount = readerBin.ReadUintBe(4);
+        const TUint audioSamples = readerBin.ReadUintBe(4);
+        iSeekTable.SetAudioSamplesPerSample(sampleCount, audioSamples);
+    }
+
+    const TUint chunkCount = readerBin.ReadUintBe(4);
+    iSeekTable.InitialiseOffsets(chunkCount);
+    for (TUint i = 0; i<chunkCount; i++) {
+        const TUint64 offset = readerBin.ReadUint64Be(8);
+        iSeekTable.SetOffset(offset);
+    }
+    iInitialised = true;
 }
 
 
@@ -753,6 +918,30 @@ Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
         return msg;
     }
     return NULL;
+}
+
+TUint Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
+{
+    // As TrySeek requires a byte offset, any codec that uses an Mpeg4 stream MUST find the appropriate seek offset (in bytes) and pass that via TrySeek().
+    // i.e., aOffset MUST match a chunk offset.
+    const TUint chunkCount = iSeekTable.ChunkCount();
+
+    // FIXME - need lock
+    for (TUint i = 0; i < chunkCount; i++) {
+        if (iSeekTable.GetOffset(i) == aOffset) {
+            iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, aOffset);
+            if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                iPos = aOffset;
+                iBuf.SetBytes(0);
+                iChunkIndex = i;
+                iChunkBytesRemaining = 0;
+                iBytesToDiscard = 0;
+            }
+            return iExpectedFlushId;
+        }
+    }
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 Brn Mpeg4Container::Read(TUint aBytes)
@@ -889,6 +1078,12 @@ MsgAudioEncoded* Mpeg4Container::Process()
         MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
         ASSERT(msgSampleSizeTable != NULL);
         msgOut->Add(msgSampleSizeTable);
+
+        // Write seek table so that codec can determine correct byte position that it should request to seek to.
+        // FIXME - there should be no need for a codec to know this, but IStreamHandler requires seek position in bytes, for which SeekTable is required.
+        MsgAudioEncoded* msgSeekTable = WriteSeekTable();
+        ASSERT(msgSeekTable != NULL);
+        msgOut->Add(msgSeekTable);
     }
 
 
@@ -924,9 +1119,12 @@ MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
 
 MsgAudioEncoded* Mpeg4Container::WriteSeekTable() const
 {
-    //MsgAudioEncodedWriter writerMsg(*iMsgFactory);
-    //WriterBinary writerBin(writerMsg);
-    return NULL;
+    MsgAudioEncodedWriter writerMsg(*iMsgFactory);
+    iSeekTable.Write(writerMsg);
+    writerMsg.WriteFlush();
+
+    MsgAudioEncoded* msg = writerMsg.Msg();
+    return msg;
 }
 
 MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
