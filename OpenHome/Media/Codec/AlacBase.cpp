@@ -111,7 +111,7 @@ void CodecAlacBase::Decode()
     // Decode sample.
     TInt outputBytes = iDecodedBuf.MaxBytes();
     // Use alac decoder to decode a frame at a time.
-    if (decode_frame(alac, (unsigned char*)iInBuf.Ptr(), (void*)iDecodedBuf.Ptr(), &outputBytes) == 0) {
+    if (decode_frame(alac, (unsigned char*)iInBuf.Ptr(), (void*)iDecodedBuf.Ptr(), (int*)&outputBytes) == 0) {
         THROW(CodecStreamCorrupt); // Decode error.
     }
     iDecodedBuf.SetBytes(outputBytes);
