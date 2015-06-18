@@ -916,7 +916,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             iSegmentStreamer.Stream(iM3uReader);
             iContentProcessor = iProtocolManager->GetAudioProcessor();
 
-            Thread::Sleep(1000);    // Wait 1s before retrying. Avoid hammering server.
+            //Thread::Sleep(1000);    // Wait 1s before retrying. Avoid hammering server.
 
             StartStream(uriHls);    // Output new MsgEncodedStream to signify discontinuity.
         }
