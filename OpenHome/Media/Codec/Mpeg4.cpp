@@ -532,14 +532,16 @@ TUint SeekTable::SamplesPerChunk(TUint aChunkIndex) const
     //ASSERT(aChunkIndex < iSamplesPerChunk.size());
     //return iSamplesPerChunk[aChunkIndex];
 
-    for (TUint i=iSamplesPerChunk.size()-1; i>=0; i--) {
+    // FIXME - don't move through loop backwards.
+    TUint current = iSamplesPerChunk.size() - 1;
+    for (;;) {
         // Note: aChunkIndex = 0 => iFirstChunk = 1
-        if (iSamplesPerChunk[i].iFirstChunk <= aChunkIndex+1) {
-            return iSamplesPerChunk[i].iSamples;
+        if (iSamplesPerChunk[current].iFirstChunk <= aChunkIndex + 1) {
+            return iSamplesPerChunk[current].iSamples;
         }
+        ASSERT(current != 0);
+        current--;
     }
-    ASSERTS();
-    return 0;
 }
 
 TUint SeekTable::StartSample(TUint aChunkIndex) const
