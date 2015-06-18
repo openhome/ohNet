@@ -843,7 +843,7 @@ void MsgAudioEncodedWriter::Write(const Brx& aBuffer)
     while (remaining > 0) {
         const TUint bufCapacity = iBuf.MaxBytes() - iBuf.Bytes();
 
-        // Do a partial append of aBuffer if space in iBuf;
+        // Do a partial append of aBuffer if space in iBuf.
         if (bufCapacity > 0) {
             TUint bytes = bufCapacity;
             if (remaining < bufCapacity) {
