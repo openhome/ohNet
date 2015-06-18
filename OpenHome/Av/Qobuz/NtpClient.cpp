@@ -128,7 +128,12 @@ void NtpClient::Write(TByte /*aValue*/)
 
 void NtpClient::Write(const Brx& aBuffer)
 {
-    iSocket.Send(aBuffer, iServerEndpoint);
+    try {
+        iSocket.Send(aBuffer, iServerEndpoint);
+    }
+    catch (NetworkError&) {
+        THROW(WriterError);
+    }
 }
 
 void NtpClient::WriteFlush()

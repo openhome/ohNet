@@ -87,8 +87,14 @@ void CodecBase::StreamCompleted()
 {
 }
 
-CodecBase::CodecBase()
+const TChar* CodecBase::Id() const
+{
+    return iId;
+}
+
+CodecBase::CodecBase(const TChar* aId)
     : iController(NULL)
+    , iId(aId)
 {
 }
 
@@ -236,6 +242,9 @@ void CodecController::CodecThread()
                 }
                 catch (CodecStreamCorrupt&) {}
                 catch (CodecStreamFeatureUnsupported&) {}
+                catch (CodecRecognitionOutOfData&) {
+                    Log::Print("WARNING: codec %s filled Rewinder during recognition\n", codec->Id());
+                }
                 iLock.Wait();
                 if (iStreamStarted || iStreamEnded) {
                     streamEnded = true;
@@ -345,6 +354,10 @@ Msg* CodecController::PullMsg()
     }
     iLock.Signal();
     Msg* msg = iLoggerRewinder->Pull();
+    if (msg == NULL) {
+        ASSERT(iRecognising);
+        THROW(CodecRecognitionOutOfData);
+    }
     msg = msg->Process(*this);
     return msg;
 }

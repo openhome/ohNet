@@ -2,9 +2,9 @@
 """SongcastPlayback - test Songcast functionality (Sender/Receiver/Zpus)
 
 Parameters:
-    arg#1 - DUT #1 ['local' for internal SoftPlayer on loopback]
-    arg#2 - DUT #2 ['local' for internal SoftPlayer on loopback]
-    arg#3 - DUT #3 ['local' for internal SoftPlayer on loopback]
+    arg#1 - DUT #1 ['local' for internal SoftPlayer)
+    arg#2 - DUT #2 ['local' for internal SoftPlayer)
+    arg#3 - DUT #3 ['local' for internal SoftPlayer)
     arg#4 - test mode 
               - all          for all configs sequentially
               - random       for all configs randomly
@@ -13,11 +13,13 @@ Parameters:
     arg#5 - random number generator seed (0 for 'random')
             by passing this, test scenarious containing random data can be
             replicated - the seed used is logged at the start of execution
-    arg#6 - sender mode [unicast/multicast] - (optional - default unicast)
+    arg#6 - sender mode [unicast/multicast/none] - (optional - default unicast)
+            'none' means no change to current DUT(s) sender mode(s)
            
+Loopback is used only when ALL DUTs are 'local'
 Tests the sender and receiver services, and operation of zpus routing. Ensures
 status and actions operate as specified
-""" 
+"""
 
 # Differences from DS test:
 #    - removed songcast sender mode param - set in softplayer at startup
@@ -28,8 +30,6 @@ status and actions operate as specified
 #    - removed .NET XML handling
 #
 # Audio track for playback in a test is selected randomly from the playlist
-#
-# Order of DUT setup is random 
 
 import _FunctionalTest
 import BaseTest                         as BASE
@@ -48,6 +48,11 @@ kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackListSpdif.xml' )
 
 
+def Run( aArgs ):
+    """Pass the Run() call from derived tests up to the base class"""
+    BASE.Run( aArgs )
+
+
 class Config:
     """Test configuration for Songcast testing"""
 
@@ -62,10 +67,10 @@ class Config:
     def Setup( self, aDuts ):
         """Configure the DUTs. Order of configuration is randomly generated"""
         self.duts = aDuts
-        order = [1, 2, 3]
-        self.__SetupDut( order.pop( random.randint( 0, 2 )))
-        self.__SetupDut( order.pop( random.randint( 0, 1 )))
-        self.__SetupDut( order[0] )
+        if len( aDuts ) > 2:
+            self.__SetupDut( 3 )
+        self.__SetupDut( 2 )
+        self.__SetupDut( 1 )
             
     def __SetupDut( self, aNum ):
         """Setup specifed DUT as determined by configuration parameters"""
@@ -73,11 +78,9 @@ class Config:
         state  = self.conf[10-2*aNum]
         dut    = self.duts[aNum-1]
         dutDev = dut.product.productRoom
-        self.log.Info( '' )
-        self.log.Info( dutDev, '[%d] Setting Up DUT #%d: Source %s, State %s' % \
+        self.log.Header2( dutDev, '[%d] Setting Up DUT #%d: Source %s, State %s' % \
                        (self.id, aNum, source, state) )
-        self.log.Info( '' )
-        
+
         if source=='' and state=='':
             self.log.Info( dutDev, 'Nothing to setup - ensure stopped' )
             dut.playlist.Stop()     # switche to playlist source and stops
@@ -115,8 +118,9 @@ class Config:
                 aDut.product.AddSubscriber( _ProductCb )
                 standbyFalse.clear() 
                 aDut.product.standby = False
-                standbyFalse.wait( 5 )
+                standbyFalse.wait( 20 )
                 aDut.product.RemoveSubscriber( _ProductCb )
+#                time.sleep( 1 )
 
     @staticmethod
     def __SetupPlaylist( aDut, aState ):
@@ -134,7 +138,7 @@ class Config:
                     transportPaused.set()
                 elif aSvVal == 'Stopped':
                     transportStopped.set()
-        
+
         aDut.playlist.AddSubscriber( _PlaylistCb )
         transportPlaying.clear()
         aDut.playlist.SeekId( random.choice( aDut.playlist.idArray ))
@@ -202,9 +206,7 @@ class Config:
         
     def CheckSenders( self, aDuts ):
         """Verify status of senders"""
-        self.log.Info( '' )
-        self.log.Info( '', '[%d] Checking senders status' % self.id )
-        self.log.Info( '' )
+        self.log.Header2( '', '[%d] Checking senders status' % self.id )
         if self.conf[11]:
             dut = aDuts[1]
             expStatus = self.conf[11]
@@ -234,9 +236,7 @@ class Config:
     
     def CheckReceivers( self, aDuts ):
         """Verify status of receivers"""
-        self.log.Info( '' )
-        self.log.Info( '', '[%d] Checking receivers status' % self.id )
-        self.log.Info( '' )
+        self.log.Header2( '', '[%d] Checking receivers status' % self.id )
         expUri  = ''
         expMeta = ''
 
@@ -279,6 +279,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
+        self.doc     = __doc__
         self.dut1    = None
         self.dut2    = None
         self.dut3    = None
@@ -307,14 +308,10 @@ class TestSongcastPlayback( BASE.BaseTest ):
             if len( aArgs ) > 6:
                 senderMode = aArgs[6].lower()
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
-        if dut1Name.lower()=='local' or dut2Name.lower()=='local' or dut3Name.lower()=='local':
-            if dut1Name.lower()!='local' or dut2Name.lower()!='local' or dut3Name.lower()!='local':
-                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
-
-        if senderMode not in ('unicast', 'multicast'):
+        if senderMode not in ('unicast', 'multicast', 'none'):
             self.log.Abort( '', 'Invalid sender mode %s' % senderMode )
 
         # seed the random number generator
@@ -325,31 +322,39 @@ class TestSongcastPlayback( BASE.BaseTest ):
                 
         # create DUTs
         self.log.Header2( '', '    ------ Creating DUT #1 (%s) ------' % dut1Name )
-        if dut1Name.lower() == 'local':
+        if dut1Name.lower()=='local' and \
+           dut2Name.lower() in ['local', 'none'] and \
+           dut3Name.lower() in ['local', 'none']:
             loopback = True
+
+        duts = []
+        if dut1Name.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1', aLoopback=loopback )
             dut1Name = self.soft1.name
         self.dut1Dev = dut1Name.split( ':' )[0]
         self.dut1 = OHMP.OhMediaPlayerDevice( dut1Name, aIsDut=True, aLoopback=loopback )
+        duts.append( self.dut1 )
         self.log.Header2( '', '    ------ Creating DUT #2 (%s) ------' % dut2Name )
         if dut2Name.lower() == 'local':
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2', aLoopback=loopback )
             dut2Name = self.soft2.name
         self.dut2 = OHMP.OhMediaPlayerDevice( dut2Name, aIsDut=True, aLoopback=loopback )
+        duts.append( self.dut2 )
         self.log.Header2( '', '    ------ Creating DUT #3 (%s) ------' % dut3Name )
         if dut3Name.lower() == 'local':
             self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3', aLoopback=loopback )
             dut3Name = self.soft3.name
-        self.dut3 = OHMP.OhMediaPlayerDevice( dut3Name, aIsDut=True, aLoopback=loopback )
-        duts = [self.dut1, self.dut2, self.dut3]
+        if dut3Name.lower() != 'none':
+            self.dut3 = OHMP.OhMediaPlayerDevice( dut3Name, aIsDut=True, aLoopback=loopback )
+            duts.append( self.dut3 )
 
         self.log.Header2( '', '    ------ Configuring Test ------' )
-
-        mode = '1'      # 1->unicast, 0->multicast
-        if senderMode == 'multicast': mode = '0'
-        for dut in duts:
-            dut.config.SetValue( 'Sender.Enabled', '1' )
-            dut.config.SetValue( 'Sender.Mode', mode )
+        if senderMode != 'none':
+            mode = '1'      # 1->unicast, 0->multicast
+            if senderMode == 'multicast': mode = '0'
+            for dut in duts:
+                dut.config.SetValue( 'Sender.Enabled', '1' )
+                dut.config.SetValue( 'Sender.Mode', mode )
 
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
@@ -361,9 +366,10 @@ class TestSongcastPlayback( BASE.BaseTest ):
         # setup playlists in DUTs 
         self.dut1.playlist.DeleteAllTracks()
         self.dut2.playlist.DeleteAllTracks()
-        self.dut3.playlist.DeleteAllTracks()
         self.dut2.playlist.AddPlaylist( tracks )
-        self.dut3.playlist.AddPlaylist( tracks )
+        if self.dut3:
+            self.dut3.playlist.DeleteAllTracks()
+            self.dut3.playlist.AddPlaylist( tracks )
                 
         # create test confgurations as specified by mode
         testConfigs = self._GetConfigs( testMode )
@@ -384,8 +390,9 @@ class TestSongcastPlayback( BASE.BaseTest ):
             config.CheckSenders( duts )
             config.CheckReceivers( duts )
 
-        # stop playback            
-        self.dut3.playlist.Stop()
+        # stop playback
+        if self.dut3:
+            self.dut3.playlist.Stop()
         self.dut2.playlist.Stop()
         self.dut1.playlist.Stop()
 
@@ -414,7 +421,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
     def _GetConfigs( self, aMode ):
         """Create and return list of test configurations (as filtered by aMode)"""
         configs = []
-        for entry in configTable:
+        for entry in self.configTable:
             selected = False
             if aMode.lower() in ('all', 'random'):
                 selected = True
@@ -445,90 +452,90 @@ class TestSongcastPlayback( BASE.BaseTest ):
         return configs
 
 
-configTable = \
+    configTable = \
     [
-    # Id || Setup                                                                                     || Checks 
-    #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender          | DS2 Receiver           | DS1 Receiver          
-    #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
-    ( 100,  ''        , ''       , ''        , ''       , ''        , 'Standby', 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
-    ( 101,  ''        , ''       , ''        , ''       , ''        , 'Standby', 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Waiting', 'DS2', 'DS2' ),
-    
-    ( 102,  ''        , ''       , ''        , ''       , 'Playlist', 'Stopped', 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
-    ( 103,  ''        , ''       , ''        , ''       , 'Playlist', 'Playing', 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'True' , ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
-    ( 104,  ''        , ''       , ''        , ''       , 'Playlist', 'Paused' , 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
-    ( 105,  ''        , ''       , ''        , ''       , 'Playlist', 'Stopped', 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Waiting', 'DS2', 'DS2' ),
-    ( 106,  ''        , ''       , ''        , ''       , 'Playlist', 'Playing', 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'True' , ''       , ''   , ''   , 'Playing', 'DS2', 'DS2' ),
-    ( 107,  ''        , ''       , ''        , ''       , 'Playlist', 'Paused' , 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Waiting', 'DS2', 'DS2' ),
-    
-    # Id || Setup                                                                                     || Checks 
-    #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender         | DS2 Receiver           | DS1 Receiver          
-    #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
-    ( 200,  ''        , ''       , ''        , 'Standby', ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'False', ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-    ( 201,  ''        , ''       , ''        , 'Standby', ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'False', ''        , ''     , ''       , ''   , ''   , 'Waiting', 'DS3', 'DS3' ),
-    
-#    ( 202,  'Playlist', 'Stopped', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-#    ( 203,  'Playlist', 'Playing', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-#    ( 204,  'Playlist', 'Stopped', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
-#    ( 205,  'Playlist', 'Playing', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
-#    ( 206,  'Playlist', 'Stopped', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-#    ( 207,  'Playlist', 'Playing', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-#    ( 208,  'Playlist', 'Stopped', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
-#    ( 209,  'Playlist', 'Playing', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
-#    ( 210,  'Playlist', 'Stopped', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-#    ( 211,  'Playlist', 'Playing', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
-#    ( 212,  'Playlist', 'Stopped', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
-#    ( 213,  'Playlist', 'Playing', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
-    
-    # Id || Setup                                                                                     || Checks 
-    #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender         | DS2 Receiver           | DS1 Receiver          
-    #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
-    ( 300,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 301,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 302,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    ( 303,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    
-    ( 304,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 305,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 306,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 307,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 308,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 309,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-    ( 310,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    ( 311,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    ( 312,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    ( 313,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    ( 314,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
-    ( 315,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-    
-    # Id || Setup                                                                                     || Checks 
-    #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender         | DS2 Receiver           | DS1 Receiver          
-    #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
-#    ( 400,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 401,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 402,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 403,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 404,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-#    ( 405,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
-#    ( 406,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-#    ( 407,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
-#    
-#    ( 500,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 501,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 502,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 503,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 504,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-#    ( 505,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
-#    ( 506,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-#    ( 507,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
-#    
-#    ( 600,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 601,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 602,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 603,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
-#    ( 604,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-#    ( 605,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
-#    ( 606,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
-#    ( 607,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' )
+        # Id || Setup                                                                                     || Checks
+        #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender          | DS2 Receiver           | DS1 Receiver
+        #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
+        ( 100,  ''        , ''       , ''        , ''       , ''        , 'Standby', 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
+        ( 101,  ''        , ''       , ''        , ''       , ''        , 'Standby', 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Waiting', 'DS2', 'DS2' ),
+
+        ( 102,  ''        , ''       , ''        , ''       , 'Playlist', 'Stopped', 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
+        ( 103,  ''        , ''       , ''        , ''       , 'Playlist', 'Playing', 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'True' , ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
+        ( 104,  ''        , ''       , ''        , ''       , 'Playlist', 'Paused' , 'DS2'     , 'Stopped',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Stopped', 'DS2', 'DS2' ),
+        ( 105,  ''        , ''       , ''        , ''       , 'Playlist', 'Stopped', 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Waiting', 'DS2', 'DS2' ),
+        ( 106,  ''        , ''       , ''        , ''       , 'Playlist', 'Playing', 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'True' , ''       , ''   , ''   , 'Playing', 'DS2', 'DS2' ),
+        ( 107,  ''        , ''       , ''        , ''       , 'Playlist', 'Paused' , 'DS2'     , 'Playing',  ''        , ''     , 'Enabled' , 'False', ''       , ''   , ''   , 'Waiting', 'DS2', 'DS2' ),
+
+        # Id || Setup                                                                                     || Checks
+        #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender         | DS2 Receiver           | DS1 Receiver
+        #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
+        ( 200,  ''        , ''       , ''        , 'Standby', ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'False', ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+        ( 201,  ''        , ''       , ''        , 'Standby', ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'False', ''        , ''     , ''       , ''   , ''   , 'Waiting', 'DS3', 'DS3' ),
+
+    #    ( 202,  'Playlist', 'Stopped', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+    #    ( 203,  'Playlist', 'Playing', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+    #    ( 204,  'Playlist', 'Stopped', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
+    #    ( 205,  'Playlist', 'Playing', 'Pure'    , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
+    #    ( 206,  'Playlist', 'Stopped', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+    #    ( 207,  'Playlist', 'Playing', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+    #    ( 208,  'Playlist', 'Stopped', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
+    #    ( 209,  'Playlist', 'Playing', 'Analog'  , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
+    #    ( 210,  'Playlist', 'Stopped', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+    #    ( 211,  'Playlist', 'Playing', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Stopped',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Stopped', 'DS3', 'DS3' ),
+    #    ( 212,  'Playlist', 'Stopped', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
+    #    ( 213,  'Playlist', 'Playing', 'SPDIF'   , ''       , ''        , ''       , 'DS3'     , 'Playing',  'Enabled' , 'True' , ''        , ''     , ''       , ''   , ''   , 'Playing', 'DS3', 'DS3' ),
+
+        # Id || Setup                                                                                     || Checks
+        #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender         | DS2 Receiver           | DS1 Receiver
+        #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
+        ( 300,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 301,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 302,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+        ( 303,  ''        , ''       , ''        , 'Standby', 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+
+        ( 304,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 305,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 306,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 307,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 308,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 309,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+        ( 310,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+        ( 311,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+        ( 312,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+        ( 313,  ''        , ''       , 'Playlist', 'Stopped', 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+        ( 314,  ''        , ''       , 'Playlist', 'Playing', 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
+        ( 315,  ''        , ''       , 'Playlist', 'Paused' , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'False', 'Enabled' , 'False', 'Waiting', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+
+        # Id || Setup                                                                                     || Checks
+        #    || DS4                  | DS3                  | DS2                  | DS1                  || DS3 Sender         | DS2 Sender         | DS2 Receiver           | DS1 Receiver
+        #    || Source    | State    | Source    | State    | Source    | State    | Source    | State    || Status    | Audio  | Status    | Audio  | State    | Uri  | Meta | State    | Uri  | Meta
+    #    ( 400,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 401,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 402,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 403,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 404,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+    #    ( 405,  'Playlist', 'Stopped', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
+    #    ( 406,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+    #    ( 407,  'Playlist', 'Playing', 'Pure'    , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
+    #
+    #    ( 500,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 501,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 502,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 503,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 504,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+    #    ( 505,  'Playlist', 'Stopped', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
+    #    ( 506,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+    #    ( 507,  'Playlist', 'Playing', 'Analog'  , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
+    #
+    #    ( 600,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 601,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 602,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 603,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Stopped',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Stopped', 'DS2', 'DS2' ),
+    #    ( 604,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+    #    ( 605,  'Playlist', 'Stopped', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' ),
+    #    ( 606,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Stopped', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'False', 'Stopped', 'DS3', 'DS3', 'Waiting', 'DS2', 'DS2' ),
+    #    ( 607,  'Playlist', 'Playing', 'SPDIF'   , ''       , 'DS3'     , 'Playing', 'DS2'     , 'Playing',  'Enabled' , 'True' , 'Enabled' , 'True' , 'Playing', 'DS3', 'DS3', 'Playing', 'DS2', 'DS2' )
     ]
 
 

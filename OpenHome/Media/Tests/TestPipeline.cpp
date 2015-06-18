@@ -790,7 +790,8 @@ TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint
 // DummyCodec
 
 DummyCodec::DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
-    : iChannels(aChannels)
+    : CodecBase("Dummy")
+    , iChannels(aChannels)
     , iSampleRate(aSampleRate)
     , iBitDepth(aBitDepth)
     , iEndian(aEndian)

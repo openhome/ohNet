@@ -51,7 +51,8 @@ CodecBase* CodecFactory::NewAlac()
 
 // CodecAlac
 
-CodecAlac::CodecAlac()
+CodecAlac::CodecAlac() 
+    : CodecAlacBase("ALAC")
 {
     LOG(kCodec, "CodecAlac::CodecAlac\n");
 }

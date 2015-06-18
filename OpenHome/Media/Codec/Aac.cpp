@@ -51,6 +51,7 @@ CodecBase* CodecFactory::NewAac()
 // CodecAac
 
 CodecAac::CodecAac()
+    : CodecAacBase("AAC")
 {
     LOG(kCodec, "CodecAac::CodecAac\n");
 }

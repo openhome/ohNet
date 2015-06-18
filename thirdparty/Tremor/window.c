@@ -50,7 +50,6 @@ const void *_vorbis_window(int type, int left){
   default:
     return(0);
   }
-  return(0); //to avoid compiler warning
 }
 
 void _vorbis_apply_window(ogg_int32_t *d,const void *window_p[2],

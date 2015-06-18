@@ -11,6 +11,7 @@
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Av/Credentials.h>
 
 #include <vector>
 #include <algorithm>
@@ -37,14 +38,16 @@ private:
     static const TUint kReadResponseTimeoutMs = 30 * 1000; // 30 seconds
     static const TUint kRefreshRateMs = 5 * 60 * 1000; // 5 minutes
     static const TUint kMaxPresetTitleBytes = 256;
-    static const Brn kConfigUsernameBase;
+    static const Brn kConfigKeyUsername;
     static const Brn kConfigUsernameDefault;
     static const Brn kTuneInPresetsRequest;
     static const Brn kFormats;
     static const Brn kPartnerId;
     static const Brn kUsername;
 public:
-    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter, Configuration::IConfigInitialiser& aConfigInit);
+    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline,
+                       const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter,
+                       Configuration::IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager);
     ~RadioPresetsTuneIn();
 private:
     void UpdateUsername(const Brx& aUsername);
@@ -83,6 +86,26 @@ private:
     Media::BwsTrackUri iDbUri; // only required in a single function but too large for the stack
     Bws<2*1024> iDbMetaData;
     const Bws<kMaxPartnerIdBytes> iPartnerId;
+};
+
+class CredentialsTuneIn : public ICredentialConsumer, private INonCopyable
+{
+    static const Brn kId;
+public:
+    CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager);
+    ~CredentialsTuneIn();
+private: // from ICredentialConsumer
+    const Brx& Id() const override;
+    void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
+    void UpdateStatus() override;
+    void Login(Bwx& aToken) override;
+    void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) override;
+private:
+    void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+private:
+    Configuration::ConfigText& iConfigUsername;
+    ICredentials& iCredentialsManager;
+    TUint iSubscriberId;
 };
 
 } // namespace Av

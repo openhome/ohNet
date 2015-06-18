@@ -19,19 +19,19 @@ EXCEPTION(HlsDiscontinuityError);
 namespace OpenHome {
 namespace Media {
 
-class ITimerHandler
+class IHlsTimerHandler
 {
 public:
     virtual void TimerFired() = 0;
-    virtual ~ITimerHandler() {}
+    virtual ~IHlsTimerHandler() {}
 };
 
-class ITimer
+class IHlsTimer
 {
 public:
-    virtual void Start(TUint aDurationMs, ITimerHandler& aHandler) = 0;
+    virtual void Start(TUint aDurationMs, IHlsTimerHandler& aHandler) = 0;
     virtual void Cancel() = 0;
-    virtual ~ITimer() {}
+    virtual ~IHlsTimer() {}
 };
 
 class ISemaphore
@@ -59,14 +59,14 @@ public:
     virtual ~IHlsReader() {}
 };
 
-class HlsM3uReader : public ITimerHandler, public ISegmentUriProvider
+class HlsM3uReader : public IHlsTimerHandler, public ISegmentUriProvider
 {
 private:
     static const TUint kMaxM3uVersion = 2;
     static const TUint kMillisecondsPerSecond = 1000;
     static const TUint kMaxLineBytes = 2048;
 public:
-    HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, ITimer& aTimer, ISemaphore& aSemaphore);
+    HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aTimer, ISemaphore& aSemaphore);
     void SetUri(const Uri& aUri);
     TUint Version() const;
     TBool StreamEnded() const;
@@ -74,7 +74,7 @@ public:
     TBool Discontinuity() const;
     void Interrupt();
     void Close();
-public: // from ITimerHandler
+public: // from IHlsTimerHandler
     void TimerFired() override;
 public: // from ISegmentUriProvider
     TUint NextSegmentUri(Uri& aUri) override;
@@ -84,7 +84,7 @@ private:
     TBool PreprocessM3u();
     void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
 private:
-    ITimer& iTimer;
+    IHlsTimer& iTimer;
     IHttpSocket& iSocket;
     ReaderUntilS<kMaxLineBytes> iReaderUntil;
     OpenHome::Uri iUri;

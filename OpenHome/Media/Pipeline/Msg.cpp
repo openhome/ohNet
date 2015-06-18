@@ -502,9 +502,11 @@ void Ramp::Reset()
 
 TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
 {
-    /*Log::Print("Ramp::Set (");
-    Log::Print(Thread::CurrentThreadName());
-    Log::Print("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x\n", aDirection, aStart, aFragmentSize, aRemainingDuration);*/
+    /*Bws<256> buf("Ramp::Set (");
+    buf.Append(Thread::CurrentThreadName());
+    buf.AppendPrintf("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x, current=[%08x..%08x]\n", 
+                     aDirection, aStart, aFragmentSize, aRemainingDuration, iStart, iEnd);
+    Log::Print(buf);*/
     ASSERT(aRemainingDuration >=  aFragmentSize);
     ASSERT(aDirection != ENone);
     iEnabled = true;
@@ -568,7 +570,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             x=(aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3))
             y=((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1
         */
-        TUint y1, y2, y3, y4;
+        TInt64 y1, y2, y3, y4;
         if (iStart < aStart) {
             y1 = iStart;
             y2 = iEnd;
@@ -586,8 +588,8 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             SelectLowerRampPoints(aStart, rampEnd);
         }
         else {
-            TInt intersectX = ((TInt64)aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
-            TUint intersectY = (((TUint64)y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
+            TInt64 intersectX = (aFragmentSize*(y3-y1))/((y2-y1)-(y4-y3));
+            TInt64 intersectY = (((y2-y1)*(y3-y1))/((y2-y1)-(y4-y3))) + y1;
             // calculation of intersectY may overflow a TUint.
             // intersectX will tell us we have no useful intersection in these cases and we'll ignore the Y value.
             if (intersectX <= 0 || (TUint)intersectX >= aFragmentSize) {
@@ -596,14 +598,18 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             }
             else {
                 // split this Ramp; the first portion rises to the intersection of the two ramps, the second drops to the lower final value
-                aSplitPos = intersectX;
-                aSplit.iStart = intersectY;
+                aSplitPos = (TUint)intersectX;
+                aSplit.iStart = (TUint)intersectY;
                 aSplit.iEnd = std::min(iEnd, rampEnd);
                 aSplit.iDirection = (aSplit.iStart == aSplit.iEnd? ENone : EDown);
                 aSplit.iEnabled = true;
-                iStart = std::min(iStart, aStart);
-                iEnd = intersectY;
-                iDirection = (iStart == iEnd? ENone : EUp);
+                const TUint start = std::min(iStart, aStart);
+                const TUint end = (TUint)intersectY;
+                iDirection = (start == end? ENone : EUp);
+                /*Log::Print("Split [%08x : %08x] ramp into [%08x : %08x] and [%08x : %08x]\n",
+                           iStart, iEnd, start, end, aSplit.iStart, aSplit.iEnd);*/
+                iStart = start;
+                iEnd = end;
             }
         }
     }

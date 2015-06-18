@@ -130,7 +130,8 @@ void CallbackError(const FLAC__StreamDecoder *aDecoder,
 // CodecFlac
 
 CodecFlac::CodecFlac() 
-    : iName("FLAC")
+    : CodecBase("FLAC")
+    , iName("FLAC")
     , iStreamMsgDue(true)
 {
     iDecoder = FLAC__stream_decoder_new();

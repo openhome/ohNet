@@ -315,10 +315,11 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
         resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
     }
     catch (LanguageResourceInvalid&) {
-        // FIXME - don't think this is thrown
+        // FIXME - is this thrown?
         ASSERTS();
     }
     OptionJsonWriter::Write(*resourceHandler, iChoice->Key(), choices, aWriter);
+    resourceHandler->Destroy();
 }
 
 
@@ -485,6 +486,7 @@ ConfigTabReceiver::ConfigTabReceiver()
 void ConfigTabReceiver::Receive(const Brx& aMessage)
 {
     // FIXME - what if aMessage is malformed? - call some form of error handler?
+    // This will break if keys/values with spaces are allowed. Will need to use a non-whitespace delimiter in that case (or, wrap updates in JSON object).
     Parser p(aMessage);
     Brn line = p.NextLine();
     Parser lineParser(line);
@@ -898,7 +900,7 @@ void ConfigAppBase::AddText(const OpenHome::Brx& aKey, JsonKvpVector& aAdditiona
     AddJson(*key, aAdditionalInfo);
 
     for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyText(aKey);
+        iTabs[i]->AddKeyText(*key);
     }
 }
 
@@ -945,7 +947,7 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<c
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
         Brn suffix(".Name");
-        Bws<64> key("Source.");
+        Bws<kMaxSourceNameBytes> key("Source.");
         Ascii::AppendDec(key, i);
         key.Append(suffix);
 

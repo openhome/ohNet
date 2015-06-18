@@ -207,7 +207,7 @@ TBool Tidal::TryLoginLocked(Bwx& aSessionId)
 TBool Tidal::TryLoginLocked()
 {
     TBool updatedStatus = false;
-    Bws<50> error;
+    Bws<80> error;
     iSessionId.SetBytes(0);
     TBool success = false;
     if (!TryConnect(kPort)) {

@@ -26,7 +26,8 @@ extern "C"
 #include <stdio.h>
 #include "ivorbiscodec.h"
 
-#define CHUNKSIZE 1024
+#define CHUNKSIZE 65535
+#define READSIZE  1024
 /* The function prototypes for the callbacks are basically the same as for
  * the stdio functions fread, fseek, fclose, ftell. 
  * The one difference is that the FILE * arguments have been replaced with
@@ -42,7 +43,6 @@ typedef struct {
   int    (*seek_func)  (void *datasource, ogg_int64_t offset, int whence);
   int    (*close_func) (void *datasource);
   long   (*tell_func)  (void *datasource);
-  void	 (*print_func) (void *datasource, char *message);
 } ov_callbacks;
 
 #define  NOTOPEN   0
@@ -56,7 +56,7 @@ typedef struct OggVorbis_File {
   int              seekable;
   ogg_int64_t      offset;
   ogg_int64_t      end;
-  ogg_sync_state   *oy; 
+  ogg_sync_state   oy;
 
   /* If the FILE handle isn't seekable (eg, a pipe), only the current
      stream appears */
@@ -77,7 +77,7 @@ typedef struct OggVorbis_File {
   ogg_int64_t      bittrack;
   ogg_int64_t      samptrack;
 
-  ogg_stream_state *os; /* take physical pages, weld into a logical
+  ogg_stream_state os; /* take physical pages, weld into a logical
                           stream of packets */
   vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
   vorbis_block     vb; /* local working space for packet->PCM decode */
@@ -87,13 +87,13 @@ typedef struct OggVorbis_File {
 } OggVorbis_File;
 
 extern int ov_clear(OggVorbis_File *vf);
-extern int ov_open(FILE *f,OggVorbis_File *vf,char *initial,long ibytes);
+extern int ov_open(FILE *f,OggVorbis_File *vf,const char *initial,long ibytes);
 extern int ov_open_callbacks(void *datasource, OggVorbis_File *vf,
-		char *initial, long ibytes, ov_callbacks callbacks);
+		const char *initial, long ibytes, ov_callbacks callbacks);
 
-extern int ov_test(FILE *f,OggVorbis_File *vf,char *initial,long ibytes);
+extern int ov_test(FILE *f,OggVorbis_File *vf,const char *initial,long ibytes);
 extern int ov_test_callbacks(void *datasource, OggVorbis_File *vf,
-		char *initial, long ibytes, ov_callbacks callbacks);
+		const char *initial, long ibytes, ov_callbacks callbacks);
 extern int ov_test_open(OggVorbis_File *vf);
 
 extern long ov_bitrate(OggVorbis_File *vf,int i);

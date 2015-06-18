@@ -7,6 +7,8 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Av/FaultCode.h>
+#include <OpenHome/Private/Printer.h>
+
 #include <climits>
 
 using namespace OpenHome;
@@ -481,6 +483,7 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
     // while playing, it can be known that it will resume playing. Otherwise,
     // transitioning to a non-playing state.
     iLock.Wait();
+    Log::Print("-- ProviderAvTransport::NotifyPipelineState(%u)\n", aState);
     switch (aState)
     {
     case EPipelinePlaying:
@@ -580,6 +583,10 @@ void ProviderAvTransport::UpdateEventedState()
     iEventedState.Append("\">\n");
 
     if (iTransportStateOverride.Bytes() != 0) {
+        Bws<128> buf("-- UpdateEventedState: iTransportStateOverride = ");
+        buf.Append(iTransportStateOverride);
+        buf.Append('\n');
+        Log::Print(buf);
         AddStateVariable(Brn("TransportState"), iTransportStateOverride);
     }
     else {

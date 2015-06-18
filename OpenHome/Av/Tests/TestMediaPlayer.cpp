@@ -35,6 +35,67 @@ using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Web;
 
+// VolumeProfile
+
+TUint VolumeProfile::VolumeMax() const
+{
+    return kVolumeMax;
+}
+
+TUint VolumeProfile::VolumeDefault() const
+{
+    return kVolumeDefault;
+}
+
+TUint VolumeProfile::VolumeUnity() const
+{
+    return kVolumeUnity;
+}
+
+TUint VolumeProfile::VolumeDefaultLimit() const
+{
+    return kVolumeDefaultLimit;
+}
+
+TUint VolumeProfile::VolumeStep() const
+{
+    return kVolumeStep;
+}
+
+TUint VolumeProfile::VolumeMilliDbPerStep() const
+{
+    return kVolumeMilliDbPerStep;
+}
+
+TUint VolumeProfile::BalanceMax() const
+{
+    return kBalanceMax;
+}
+
+TUint VolumeProfile::FadeMax() const
+{
+    return kFadeMax;
+}
+
+
+// VolumeSinkLogger
+
+void VolumeSinkLogger::SetVolume(TUint aVolume)
+{
+    Log::Print("SetVolume: %u\n", aVolume);
+}
+
+void VolumeSinkLogger::SetBalance(TInt aBalance)
+{
+    Log::Print("SetBalance: %d\n", aBalance);
+}
+
+void VolumeSinkLogger::SetFade(TInt aFade)
+{
+    Log::Print("SetFade: %d\n", aFade);
+}
+
+
 // TestMediaPlayer
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
@@ -49,6 +110,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iUserAgent(aUserAgent)
     , iPullableClock(NULL)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
+    , iTxTimestamper(NULL)
+    , iRxTimestamper(NULL)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -96,9 +159,14 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
+    VolumeProfile volumeProfile;
+    VolumeConsumer volumeInit(iVolumeLogger);
+    volumeInit.SetBalance(iVolumeLogger);
+    volumeInit.SetFade(iVolumeLogger);
+
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -137,6 +205,16 @@ void TestMediaPlayer::SetPullableClock(IPullableClock& aPullableClock)
     iPullableClock = &aPullableClock;
 }
 
+void TestMediaPlayer::SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper)
+{
+    iTxTimestamper = &aTimestamper;
+}
+
+void TestMediaPlayer::SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper)
+{
+    iRxTimestamper = &aTimestamper;
+}
+
 void TestMediaPlayer::StopPipeline()
 {
     TUint waitCount = 0;
@@ -164,24 +242,7 @@ void TestMediaPlayer::Run()
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
 
-    std::vector<const Brx*> sourcesBufs;
-    Product& product = iMediaPlayer->Product();
-    for (TUint i=0; i<product.SourceCount(); i++) {
-        Bws<ISource::kMaxSystemNameBytes> systemName;
-        Bws<ISource::kMaxSourceNameBytes> name;
-        Bws<ISource::kMaxSourceTypeBytes> type;
-        TBool visible;
-        product.GetSourceDetails(i, systemName, type, name, visible);
-        sourcesBufs.push_back(new Brh(systemName));
-    }
-    // FIXME - take resource dir as param or copy res dir to build dir
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("res/"), kMaxUiTabs, kUiSendQueueSize);
-    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
-    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
-    for (TUint i=0;i<sourcesBufs.size(); i++) {
-        delete sourcesBufs[i];
-    }
-
+    AddConfigApp();
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -205,6 +266,8 @@ void TestMediaPlayer::RunWithSemaphore()
 {
     RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
+
+    AddConfigApp();
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -247,6 +310,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
         "http-get:*:audio/x-ogg:*,"     // Vorbis
         "http-get:*:application/ogg:*," // Vorbis
         "tidalhifi.com:*:*:*,"          // Tidal
+        "qobuz.com:*:*:*"               // Qobuz
         );
     DoRegisterPlugins(aEnv, kSupportedProtocols);
 }
@@ -308,7 +372,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iObservableFriendlyName.Replace(Brn(friendlyName));
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, NULL, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iRxTimestamper, kSongcastSenderIconFileName));
 }
 
 
@@ -344,6 +408,27 @@ void TestMediaPlayer::PowerDown()
 //    // Last added WebApp will be set as presentation page.
 //    iAppFramework->Add(aWebApp, aFunctor);
 //}
+
+void TestMediaPlayer::AddConfigApp()
+{
+    std::vector<const Brx*> sourcesBufs;
+    Product& product = iMediaPlayer->Product();
+    for (TUint i=0; i<product.SourceCount(); i++) {
+        Bws<ISource::kMaxSystemNameBytes> systemName;
+        Bws<ISource::kMaxSourceNameBytes> name;
+        Bws<ISource::kMaxSourceTypeBytes> type;
+        TBool visible;
+        product.GetSourceDetails(i, systemName, type, name, visible);
+        sourcesBufs.push_back(new Brh(systemName));
+    }
+    // FIXME - take resource dir as param or copy res dir to build dir
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("res/"), kMaxUiTabs, kUiSendQueueSize);
+    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
+    for (TUint i=0;i<sourcesBufs.size(); i++) {
+        delete sourcesBufs[i];
+    }
+}
 
 TUint TestMediaPlayer::Hash(const Brx& aBuf)
 {

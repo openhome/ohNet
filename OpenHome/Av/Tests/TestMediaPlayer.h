@@ -18,9 +18,10 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/Raop/Raop.h>
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include "RamStore.h"
 #include <OpenHome/PowerManager.h>
-#include <OpenHome/Media/Tests/VolumeUtils.h>
+#include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Web/WebAppFramework.h>
 
 namespace OpenHome {
@@ -48,6 +49,37 @@ namespace Av {
     class RamStore;
 namespace Test {
 
+class VolumeProfile : public IVolumeProfile
+{
+    static const TUint kVolumeMax = 100;
+    static const TUint kVolumeDefault = 45;
+    static const TUint kVolumeUnity = 80;
+    static const TUint kVolumeDefaultLimit = 85;
+    static const TUint kVolumeStep = 1;
+    static const TUint kVolumeMilliDbPerStep = 1024;
+    static const TUint kBalanceMax = 12;
+    static const TUint kFadeMax = 10;
+private: // from IVolumeProfile
+    TUint VolumeMax() const override;
+    TUint VolumeDefault() const override;
+    TUint VolumeUnity() const override;
+    TUint VolumeDefaultLimit() const override;
+    TUint VolumeStep() const override;
+    TUint VolumeMilliDbPerStep() const override;
+    TUint BalanceMax() const override;
+    TUint FadeMax() const override;
+};
+    
+class VolumeSinkLogger : public IVolume, public IBalance, public IFade
+{
+private: // from IVolume
+    void SetVolume(TUint aVolume) override;
+private: // from IBalance
+    void SetBalance(TInt aBalance) override;
+private: // from IFade
+    void SetFade(TInt aFade) override;
+};
+
 class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, public Web::IWebAppFramework*/
 {
 private:
@@ -61,6 +93,8 @@ public:
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent);
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
+    void SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper);
+    void SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -78,6 +112,7 @@ private: // from IPowerHandler
 //private: // from IWebAppFramework
 //    void Add(Web::IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private:
+    void AddConfigApp();
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
     void MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr);
@@ -99,7 +134,6 @@ protected:
     Web::WebAppFramework* iAppFramework;
 private:
     Semaphore iDisabled;
-    Media::VolumePrinter iVolume;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
     const Brx& iTuneInPartnerId;
@@ -109,6 +143,9 @@ private:
     Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
+    Av::IOhmTimestamper* iTxTimestamper;
+    Av::IOhmTimestamper* iRxTimestamper;
+    VolumeSinkLogger iVolumeLogger;
 };
 
 class TestMediaPlayerOptions

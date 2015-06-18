@@ -25,8 +25,8 @@ private:
     static const TUint kInputBufBytes = 4096;   // Input buf size used by third-party decoder examples.
 public:
     static const Brn kCodecAac;
-public:
-    CodecAacBase();
+protected:
+    CodecAacBase(const TChar* aId);
     ~CodecAacBase();
 protected: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);

@@ -58,6 +58,11 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     iEndpoint.Replace(aEndpoint);
     iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
+
+    if (iTimestamper != NULL) {
+        iTimestamper->Start(iEndpoint);
+    }
+
     do {
         try {
             OhmHeader header;
@@ -150,7 +155,11 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         catch (ReaderError&) {
         }
     } while (!iStopped);
-    
+
+    if (iTimestamper != NULL) {
+        iTimestamper->Stop();
+    }
+
     iReadBuffer.ReadFlush();
     iTimerJoin->Cancel();
     iTimerListen->Cancel();

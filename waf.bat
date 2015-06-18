@@ -1,1 +1,2 @@
-@python -x %~dp0waf %* & exit /b
+@python -x "%~dp0waf" %*
+@exit /b %ERRORLEVEL%

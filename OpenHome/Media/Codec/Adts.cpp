@@ -169,6 +169,7 @@ TBool Adts::ReadHeader(Brn aHeader)
 // CodecAdts
 
 CodecAdts::CodecAdts()
+    : CodecAacBase("ADTS")
 {
     LOG(kCodec, "CodecAdts::CodecAdts\n");
 }

@@ -21,6 +21,7 @@ using namespace OpenHome::Av;
 // CodecRaop
 
 CodecRaop::CodecRaop() 
+    : CodecAlacBase("RAOP")
 {
     LOG(kCodec, "CodecRaop::CodecRaop\n");
 }

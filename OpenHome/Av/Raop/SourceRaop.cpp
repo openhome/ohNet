@@ -139,6 +139,7 @@ SourceRaop::~SourceRaop()
     }
     if (iSessionActive) {
         CloseServers();
+        iSessionActive = false;
     }
     iLock.Signal();
 
@@ -189,6 +190,7 @@ void SourceRaop::Deactivate()
     }
     if (iSessionActive) {
         CloseServers();
+        iSessionActive = false;
     }
     iLock.Signal();
     Source::Deactivate();

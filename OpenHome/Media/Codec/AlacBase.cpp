@@ -23,8 +23,9 @@ using namespace OpenHome::Media::Codec;
 
 const Brn CodecAlacBase::kCodecAlac("ALAC");
 
-CodecAlacBase::CodecAlacBase()
-    : alac(NULL)
+CodecAlacBase::CodecAlacBase(const TChar* aId)
+    : CodecBase(aId)
+    , alac(NULL)
 {
     LOG(kCodec, "CodecAlacBase::CodecAlacBase\n");
 }

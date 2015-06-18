@@ -118,7 +118,7 @@ SuiteGorger::~SuiteGorger()
 void SuiteGorger::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 1, 0, 0, 2, 2, 2, 2, 2, 2, 1, 3, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 1, 0, 0, 3, 2, 2, 2, 2, 2, 1, 3, 1, 1, 1);
     iGorger = new Gorger(*iMsgFactory, *this, kPriorityNormal, kGorgeSize);
     iLastPulledMsg = ENone;
     iTrackOffset = 0;
@@ -329,20 +329,26 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
-    // iCanGorge changes immediately; iGorging only changes when a DecodedStream passes through
     TEST(iGorger->iCanGorge);
+    TEST(iGorger->iGorgeOnStreamOut);
     TEST(!iGorger->iGorging);
-    PullNext(EMsgTrack);
-    PullNext(EMsgDecodedStream);
-    TEST(iGorger->iCanGorge);
-    TEST(iGorger->iGorging);
 
     realTime = true;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, realTime, NULL));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
+
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iGorger->iCanGorge);
+    TEST(!iGorger->iGorgeOnStreamOut);
+    while (iGorger->iGorging) {
+        Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
+    }
+    TEST(!iGorger->iGorging);
     PullNext(EMsgMode);
     TEST(!iGorger->iCanGorge);
+    TEST(!iGorger->iGorgeOnStreamOut);
     TEST(!iGorger->iGorging);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
@@ -395,7 +401,10 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL));
     PullNext(EMsgAudioPcm);
-    TEST(!iGorger->iCanGorge);
+    while (iGorger->iGorging) {
+        Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
+    }
+    TEST(!iGorger->iGorging);
     TEST(!iGorger->iGorging);
     PullNext(EMsgMode);
 

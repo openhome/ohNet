@@ -25,37 +25,39 @@ import threading
 import urllib
 import xml.etree.ElementTree as ET
 
+kTuneInCreds      = 'tunein.com'
 kTuneInUrl        = 'http://opml.radiotime.com/'
-kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg,hls'
+# kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg,hls'
 kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg,hls'
-kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
-                    'http-get:*:audio/wav:*,'            +\
-                    'http-get:*:audio/wave:*,'           +\
-                    'http-get:*:audio/x-wav:*,'          +\
-                    'http-get:*:audio/mpeg:*,'           +\
-                    'http-get:*:audio/x-mpeg:*,'         +\
-                    'http-get:*:audio/mp1:*,'            +\
-                    'http-get:*:audio/aiff:*,'           +\
-                    'http-get:*:audio/x-aiff:*,'         +\
-                    'http-get:*:audio/x-m4a:*,'          +\
-                    'http-get:*:audio/x-ms-wma:*,'       +\
-                    'rtsp-rtp-udp:*:audio/x-ms-wma:*,'   +\
-                    'http-get:*:audio/x-scpls:*,'        +\
-                    'http-get:*:audio/x-mpegurl:*,'      +\
-                    'http-get:*:audio/x-ms-asf:*,'       +\
-                    'http-get:*:audio/x-ms-wax:*,'       +\
-                    'http-get:*:audio/x-ms-wvx:*,'       +\
-                    'http-get:*:video/x-ms-asf:*,'       +\
-                    'http-get:*:video/x-ms-wax:*,'       +\
-                    'http-get:*:video/x-ms-wvx:*,'       +\
-                    'http-get:*:text/xml:*,'             +\
-                    'http-get:*:audio/aac:*,'            +\
-                    'http-get:*:audio/aacp:*,'           +\
-                    'http-get:*:audio/mp4:*,'            +\
-                    'http-get:*:audio/ogg:*,'            +\
-                    'http-get:*:audio/x-ogg:*,'          +\
-                    'http-get:*:application/ogg:*,'      +\
-                    'tidalhifi.com:*:*:*'
+# kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
+#                     'http-get:*:audio/wav:*,'            +\
+#                     'http-get:*:audio/wave:*,'           +\
+#                     'http-get:*:audio/x-wav:*,'          +\
+#                     'http-get:*:audio/mpeg:*,'           +\
+#                     'http-get:*:audio/x-mpeg:*,'         +\
+#                     'http-get:*:audio/mp1:*,'            +\
+#                     'http-get:*:audio/aiff:*,'           +\
+#                     'http-get:*:audio/x-aiff:*,'         +\
+#                     'http-get:*:audio/x-m4a:*,'          +\
+#                     'http-get:*:audio/x-ms-wma:*,'       +\
+#                     'rtsp-rtp-udp:*:audio/x-ms-wma:*,'   +\
+#                     'http-get:*:audio/x-scpls:*,'        +\
+#                     'http-get:*:audio/x-mpegurl:*,'      +\
+#                     'http-get:*:audio/x-ms-asf:*,'       +\
+#                     'http-get:*:audio/x-ms-wax:*,'       +\
+#                     'http-get:*:audio/x-ms-wvx:*,'       +\
+#                     'http-get:*:video/x-ms-asf:*,'       +\
+#                     'http-get:*:video/x-ms-wax:*,'       +\
+#                     'http-get:*:video/x-ms-wvx:*,'       +\
+#                     'http-get:*:text/xml:*,'             +\
+#                     'http-get:*:audio/aac:*,'            +\
+#                     'http-get:*:audio/aacp:*,'           +\
+#                     'http-get:*:audio/mp4:*,'            +\
+#                     'http-get:*:audio/ogg:*,'            +\
+#                     'http-get:*:audio/x-ogg:*,'          +\
+#                     'http-get:*:application/ogg:*,'      +\
+#                     'tidalhifi.com:*:*:*,'               +\
+#                     'qobuz.com:*:*:*'
 kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/wav:*,'          +\
                     'http-get:*:audio/wave:*,'         +\
@@ -71,7 +73,8 @@ kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/ogg:*,'          +\
                     'http-get:*:audio/x-ogg:*,'        +\
                     'http-get:*:application/ogg:*,'    +\
-                    'tidalhifi.com:*:*:*,'
+                    'tidalhifi.com:*:*:*,'               +\
+                    'qobuz.com:*:*:*'
 kChannelsMax      = 100
 kManualChannels   = [ # For the purposes of this test it doesn't matter if these work or not
                      {'uri' : 'http://192.168.10.201:8000/mp3-128k-stereo',
@@ -80,14 +83,23 @@ kManualChannels   = [ # For the purposes of this test it doesn't matter if these
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
 
 
+def Run( aArgs ):
+    """Pass the Run() call from derived tests up to the base class"""
+    BASE.Run( aArgs )
+
+
 class TestRadioService( BASE.BaseTest ):
     
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
-        self.dut            = None
-        self.soft           = None
-        self.dutDev         = ''
+        self.doc    = __doc__
+        self.dut    = None
+        self.soft   = None
+        self.dutDev = ''
+        self.users  = [self.config.Get( 'tunein.user.l1' ),  # 0 < channels < 100
+                       self.config.Get( 'tunein.user.l2' ),  # 0 channels
+                       self.config.Get( 'tunein.user.l3' )]  # > 100 channels
 
     def Test( self, aArgs ):
         """Test functionality of Radio service"""
@@ -99,7 +111,7 @@ class TestRadioService( BASE.BaseTest ):
             radioName = aArgs[1]
             mode      = aArgs[2].lower() 
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
         if mode not in ['all', 'fixed', 'presets', 'manual', 'updated']:
@@ -138,11 +150,7 @@ class TestRadioService( BASE.BaseTest ):
         
     def TestFixedParams( self ):
         """Verify the 'fixed' parameter values are returned correctly"""
-        if self.soft:
-            expProtocolInfo = kProtocolInfoFree
-        else:
-            expProtocolInfo = kProtocolInfoAll
-            
+        expProtocolInfo = kProtocolInfoFree
         self.log.Header2( self.dutDev, 'Testing fixed parameters' )
         self.log.FailUnless( self.dutDev, self.dut.radio.polledProtocolInfo==expProtocolInfo,
             'Actual/Expected POLLED ProtocolInfo %s/%s' %
@@ -171,15 +179,13 @@ class TestRadioService( BASE.BaseTest ):
                 presetsUpdate.set()
 
         self.log.Header2( self.dutDev, 'Testing setup and reporting of TuneIn presets' )
-        self.dut.config.SetValue( 'Radio.TuneInUserName', 'no-one' )
+        self._SetTuneInUser( 'no-one' )
         time.sleep( 2 )
         self.dut.radio.AddSubscriber( _PresetsEvtCb )
-        for user in (self.config.Get( 'tunein.user.l1' ),       # 0 < channels < 100
-                     self.config.Get( 'tunein.user.l2' ),       # 0 channels
-                     self.config.Get( 'tunein.user.l3' )):      # > 100 channels
+        for user in self.users:
             self.log.Header2( self.dutDev, 'Testing with %s' % user )
             presetsUpdate.clear()
-            self._SetCheckUser( user )
+            self._SetTuneInUser( user )
             presetsUpdate.wait( 45 )
             self.log.FailUnless( self.dutDev, presetsUpdate.isSet(),
                 'Presets updated after switching user to %s' % user )
@@ -210,21 +216,31 @@ class TestRadioService( BASE.BaseTest ):
                         '[%d] TuneIn Title for empty entry: %s' % (i,rtPresets[i][1]) )
         self.dut.radio.RemoveSubscriber( _PresetsEvtCb )
 
-    def _SetCheckUser( self, aUser ):
-        """Set TuneIn user and check set"""
-        self.dut.config.SetValue( 'Radio.TuneInUserName', aUser )
-        time.sleep( 3 )
-        newUser = self.dut.config.GetValue( 'Radio.TuneInUserName' )
-        self.log.FailUnless( self.dutDev, newUser==aUser,
-            '(%s/%s) Actual/Expected EVENTED user' % (newUser, aUser) )
+    def _SetTuneInUser( self, aUser ):
+        """Set TuneIn user"""
+        seqNum = threading.Event()
+
+        # noinspection PyUnusedLocal
+        def CredentialsEventCb( service, svName, svVal, svSeq ):
+            """Callback on events from credentials service"""
+            if svName == 'SequenceNumber':
+                seqNum.set()
+
+        if kTuneInCreds in self.dut.credentials.idList:
+            self.dut.credentials.AddSubscriber( CredentialsEventCb )
+            seqNum.clear()
+            self.dut.credentials.Set( kTuneInCreds, aUser )
+            seqNum.wait( 10 )
+            self.dut.credentials.RemoveSubscriber( CredentialsEventCb )
+            time.sleep( 1 )
+            err = self.dut.credentials.Status( kTuneInCreds )
+            self.log.FailIf( self.dutDev, err, 'Setting TuneIn user to <%s> %s' % (aUser, err ))
+        else:
+            self.log.Abort( self.dutDev, 'Unable to set TuneIn account' )
 
     def _GetTuneInPresets( self, aUser ):
         """Read preset channel info directly from TuneIn"""
-        if self.soft:
-            browse = kTuneInBrowseFree
-        else:
-            browse = kTuneInBrowseAll
-
+        browse = kTuneInBrowseFree
         partner = self.config.Get( 'tunein.partnerid' )
         tiId = '&username=%s&partnerId=%s' % (aUser, partner)
         resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + tiId )

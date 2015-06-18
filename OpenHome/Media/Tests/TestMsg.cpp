@@ -1419,6 +1419,14 @@ void SuiteRamp::Test()
     TEST(currentRamp == Ramp::kMin);
     silence->RemoveRef();
     silence2->RemoveRef();
+
+    // see #3118
+    ramp.Reset();
+    ramp.iStart = 0x3529a489;
+    ramp.iEnd = 0x35cd7b93;
+    ramp.iDirection = Ramp::EUp;
+    ramp.iEnabled = true;
+    ramp.Set(0x33cf3a6c, 0x00044e80, 0x0009c300, Ramp::EDown, split, splitPos); // asserts
 }
 
 

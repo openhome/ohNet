@@ -30,6 +30,7 @@ public:
     virtual void Seek(TUint aSecondsAbsolute) = 0;
 };
 
+class IMediaPlayer;
 class ProviderAvTransport;
 class ProviderConnectionManager;
 class ProviderRenderingControl;
@@ -39,7 +40,7 @@ class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipel
 public:
     static const TChar* kSourceName;
 public:
-    SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols);
+    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols);
     ~SourceUpnpAv();
 private:
     void EnsureActive();

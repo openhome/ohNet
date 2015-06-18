@@ -4,7 +4,6 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MuteManager.h>
-#include <OpenHome/Media/VolumeManager.h>
 
 namespace OpenHome {
     class Environment;
@@ -19,8 +18,6 @@ namespace Media {
     class PipelineInitParams;
     class IPipelineAnimator;
     class IMuteManager;
-    class IVolume;  // XXX dummy volume hardware
-    class IVolumeManagerLimits;
     class UriProvider;
     class Protocol;
     namespace Codec {
@@ -43,7 +40,6 @@ namespace Net {
 }
 namespace Av {
 
-class ConfigInitialiserVolume;
 class IReadStore;
 class ISource;
 class IStaticDataSource;
@@ -56,6 +52,11 @@ class ProviderVolume;
 class KvpStore;
 class NetworkMonitor;
 class Credentials;
+class VolumeManager;
+class VolumeConfig;
+class VolumeConsumer;
+class IVolumeManager;
+class IVolumeProfile;
 
 class IMediaPlayer
 {
@@ -72,6 +73,7 @@ public:
     virtual Configuration::IConfigInitialiser& ConfigInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual Av::Product& Product() = 0;
+    virtual IVolumeManager& VolumeManager() = 0;
     virtual Credentials& CredentialsManager() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
@@ -85,8 +87,7 @@ public:
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
-                Media::IVolume& aVolumeLeft,
-                Media::IVolume& aVolumeRight,
+                VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -108,6 +109,7 @@ public: // from IMediaPlayer
     Configuration::IConfigInitialiser& ConfigInitialiser() override;
     IPowerManager& PowerManager() override;
     Av::Product& Product() override;
+    OpenHome::Av::IVolumeManager& VolumeManager() override;
     Credentials& CredentialsManager() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
@@ -119,20 +121,16 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
-    Media::VolumeLimitNull iVolumeLimit;
-    Media::VolumeBalanceStereo iVolumeBalanceStereo;
-    Media::VolumeProfile iVolumeProfile;
-    Media::MuteNull iMute;
     Configuration::ConfigManager* iConfigManager;
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Av::Product* iProduct;
+    VolumeConfig* iVolumeConfig;
+    Av::VolumeManager* iVolumeManager;
     Credentials* iCredentials;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
-    ConfigInitialiserVolume* iConfigInitVolume;
-    IProvider* iProviderVolume;
     Configuration::ProviderConfig* iProviderConfig;
     NetworkMonitor* iNetworkMonitor;
 };

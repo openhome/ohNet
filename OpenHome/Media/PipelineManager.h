@@ -5,6 +5,7 @@
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Media/MuteManager.h>
 
 #include <vector>
 
@@ -26,11 +27,30 @@ namespace Codec {
 class Protocol;
 class ContentProcessor;
 class UriProvider;
-
+#if 0
+class PriorityArbitratorPipeline : public IPriorityArbitrator, private INonCopyable
+{
+    static const TUint kNumThreads = 4; // Filler, CodecController, Gorger, StarvationMonitor
+public:
+    PriorityArbitratorPipeline(TUint aOpenHomeMax);
+private: // from IPriorityArbitrator
+    TUint Priority(const TChar* aId, TUint aRequested, TUint aHostMax) override;
+    TUint OpenHomeMin() const override;
+    TUint OpenHomeMax() const override;
+    TUint HostRange() const override;
+private:
+    const TUint iOpenHomeMax;
+};
+#endif
 /**
  * External interface to the pipeline.
  */
-class PipelineManager : public IPipeline, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer, private IUrlBlockWriter
+class PipelineManager : public IPipeline
+                      , public IPipelineIdManager
+                      , public IMute
+                      , private IPipelineObserver
+                      , private ISeekRestreamer
+                      , private IUrlBlockWriter
 {
 public:
     PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
@@ -225,6 +245,9 @@ private: // from IPipelineIdManager
     void InvalidateAfter(TUint aId) override;
     void InvalidatePending() override;
     void InvalidateAll() override;
+private: // from IMute
+    void Mute() override;
+    void Unmute() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;

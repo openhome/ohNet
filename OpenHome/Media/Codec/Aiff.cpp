@@ -36,7 +36,7 @@ CodecBase* CodecFactory::NewAiff()
 
 
 CodecAiff::CodecAiff()
-    : CodecAiffBase(Brn("AIFF"))
+    : CodecAiffBase("AIFF")
 {
 }
 

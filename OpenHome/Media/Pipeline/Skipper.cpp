@@ -110,6 +110,7 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler = aMsg->StreamHandler();
     if (FlushUntilHalt()) {
         const TBool sendHalt = (iState != eFlushing); // only create a MsgHalt the first time we call StartFlushing()
+        (void)iStreamHandler->OkToPlay(iStreamId);
         StartFlushing(sendHalt);
         // A stream could be added to IdManager after flushing/halt has begun,
         // but before Filler has output flush/halt msg.

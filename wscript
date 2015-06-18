@@ -16,6 +16,7 @@ from filetasks import gather_files, build_tree, copy_task, find_dir_or_fail, cre
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_location, guess_openssl_location, guess_libplatform_location, guess_libosa_location, is_core_platform
 
 def options(opt):
+    opt.load('msvs')
     opt.load('msvc')
     opt.load('compiler_cxx')
     opt.load('compiler_c')
@@ -81,12 +82,19 @@ def configure(conf):
 
     mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
 
+    # Setup Ogg lib options
+    # Using https://git.xiph.org/?p=ogg.git
+    # 1344d4ed60e26f6426c782b705ec0c9c5fddfe43
+    # (Fri, 8 May 2015 21:30:14 +0100 (13:30 -0700))
+    conf.env.INCLUDES_OGG = [
+        'thirdparty/libogg/include',
+        ]
+
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG']
     conf.env.INCLUDES_FLAC = [
         'thirdparty/flac-1.2.1/src/libFLAC/include',
         'thirdparty/flac-1.2.1/include',
-        'thirdparty/libogg-1.1.3/include',
         ]
 
     conf.env.STLIB_SHELL = ['Shell']
@@ -113,6 +121,11 @@ def configure(conf):
         ]
 
     # Setup Vorbis lib options
+    # Using https://git.xiph.org/?p=tremor.git
+    # b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
+    # (Sun, 4 Jan 2015 20:11:49 +0100 (19:11 +0000))
+    if conf.options.dest_platform in ['Core-ppc32']:
+        conf.env.DEFINES_VORBIS = ['BIG_ENDIAN', 'BYTE_ORDER=BIG_ENDIAN']
     conf.env.INCLUDES_VORBIS = [
         'thirdparty/Tremor',
         ]
@@ -182,6 +195,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Gorger.cpp',
                 'OpenHome/Media/Pipeline/Logger.cpp',
                 'OpenHome/Media/Pipeline/Msg.cpp',
+                'OpenHome/Media/Pipeline/Muter.cpp',
                 'OpenHome/Media/Pipeline/PreDriver.cpp',
                 'OpenHome/Media/Pipeline/Pruner.cpp',
                 'OpenHome/Media/Pipeline/Ramper.cpp',
@@ -226,7 +240,6 @@ def build(bld):
                 'OpenHome/Media/ClockPuller.cpp',
                 'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
-                'OpenHome/Media/VolumeManager.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
@@ -252,7 +265,6 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgInfo1.cpp',
                 'OpenHome/Av/ProviderInfo.cpp',
                 'Generated/DvAvOpenhomeOrgVolume1.cpp',
-                'OpenHome/Av/ConfigInitialiserVolume.cpp',
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
@@ -264,6 +276,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/ProviderCredentials.cpp',
                 'OpenHome/ObservableBrx.cpp',
+                'OpenHome/Av/VolumeManager.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON', 'ohPipeline'],
             target='ohMediaPlayer')
@@ -388,10 +401,10 @@ def build(bld):
     # Ogg
     bld.stlib(
             source=[
-                'thirdparty/libogg-1.1.3/src/bitwise.c',
-                'thirdparty/libogg-1.1.3/src/framing.c'
+                'thirdparty/libogg/src/bitwise.c',
+                'thirdparty/libogg/src/framing.c'
             ],
-            includes = ['thirdparty/libogg-1.1.3/include'],
+            use=['OGG'],
             target='libOgg')
 
     # Flac
@@ -411,7 +424,7 @@ def build(bld):
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
-            use=['FLAC', 'OHNET', 'libOgg'],
+            use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
             target='CodecFlac')
 
     # AlacBase
@@ -500,23 +513,21 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/Vorbis.cpp',
-                'thirdparty/Tremor/mdct.c',
                 'thirdparty/Tremor/block.c',
-                'thirdparty/Tremor/window.c',
-                'thirdparty/Tremor/synthesis.c',
-                'thirdparty/Tremor/info.c',
-                'thirdparty/Tremor/floor1.c',
-                'thirdparty/Tremor/floor0.c',
-                'thirdparty/Tremor/vorbisfile.c',
-                'thirdparty/Tremor/res012.c',
-                'thirdparty/Tremor/mapping0.c',
-                'thirdparty/Tremor/registry.c',
                 'thirdparty/Tremor/codebook.c',
+                'thirdparty/Tremor/floor0.c',
+                'thirdparty/Tremor/floor1.c',
+                'thirdparty/Tremor/info.c',
+                'thirdparty/Tremor/mapping0.c',
+                'thirdparty/Tremor/mdct.c',
+                'thirdparty/Tremor/registry.c',
+                'thirdparty/Tremor/res012.c',
                 'thirdparty/Tremor/sharedbook.c',
-                'thirdparty/Tremor/framing.c',
-                'thirdparty/Tremor/bitwise.c',
+                'thirdparty/Tremor/synthesis.c',
+                'thirdparty/Tremor/vorbisfile.c',
+                'thirdparty/Tremor/window.c',
             ],
-            use=['VORBIS', 'OHNET'],
+            use=['VORBIS', 'OGG', 'libOgg', 'OHNET'],
             target='CodecVorbis')
 
     # WebAppFramework
@@ -556,7 +567,6 @@ def build(bld):
             source=[
                 'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
-                'OpenHome/Media/Tests/VolumeUtils.cpp',
                 #'OpenHome/Media/Tests/PipelineUtils.cpp',  #FIXME - to be deleted if no longer used
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
@@ -577,6 +587,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestGorger.cpp',
                 'OpenHome/Media/Tests/TestPruner.cpp',
+                'OpenHome/Media/Tests/TestMuter.cpp',
                 'OpenHome/Av/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 'OpenHome/Media/Tests/TestProtocolHls.cpp',
@@ -592,7 +603,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestFiller.cpp',
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
-                'OpenHome/Media/Tests/TestVolumeManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Av/Tests/TestUdpServer.cpp',
@@ -614,12 +624,12 @@ def build(bld):
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
             source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
+            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
             target='TestShell',
             install_path=None)
     bld.program(
@@ -718,6 +728,11 @@ def build(bld):
             target='TestPruner',
             install_path=None)
     bld.program(
+            source='OpenHome/Media/Tests/TestMuterMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestMuter',
+            install_path=None)
+    bld.program(
             source='OpenHome/Av/Tests/TestContentProcessorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRadio'],
             target='TestContentProcessor',
@@ -746,6 +761,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestCodecMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestCodec',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestCodecInteractiveMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestCodecInteractive',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestCodecControllerMain.cpp',
@@ -792,11 +812,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMuteManager',
             install_path=None)
-    bld.program(
-            source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestVolumeManager',
-            install_path=None)
+    #bld.program(
+    #        source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+    #        target='TestVolumeManager',
+    #        install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -819,7 +839,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+            use=['OHNET', 'OHNETMON', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestPlaylist',
             install_path=None)
     bld.program(
@@ -829,7 +849,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi', 'OPENSSL'],
+            use=['OHNET', 'OHNETMON', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -869,7 +889,7 @@ def build(bld):
     #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tidal/TestTidal.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestTidal',
             install_path=None)
     bld.program(
@@ -889,22 +909,22 @@ def build(bld):
             install_path=None)
     bld.program(
             source=['OpenHome/Web/Tests/TestWebAppFrameworkInteractive.cpp'],
-            use=['WebAppFramework', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            use=['OHNET', 'PLATFORM', 'WebAppFramework', 'ohMediaPlayer'],
             target='TestWebAppFrameworkInteractive',
             install_path=None)
     bld.program(
             source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiInteractive.cpp'],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            use=['OHNET', 'PLATFORM', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'ohMediaPlayer'],
             target='TestConfigUiInteractive',
             install_path=None)
     bld.program(
             source=['OpenHome/Web/Tests/TestWebAppFrameworkMain.cpp'],
-            use=['WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayer', 'OHNET', 'PLATFORM'],
+            use=['OHNET', 'PLATFORM', 'WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayer'],
             target='TestWebAppFramework',
             install_path=None)
     bld.program(
             source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
-            use=['ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer', 'OHNET', 'SHELL', 'PLATFORM'],
+            use=['OHNET', 'OHNETMON', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
             target='TestConfigUi',
             install_path=None)
 

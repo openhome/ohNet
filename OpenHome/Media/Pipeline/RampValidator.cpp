@@ -17,6 +17,7 @@ RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* a
     , iUpstream(&aUpstream)
     , iDownstream(NULL)
     , iRampedDown(false)
+    , iWaitingForAudio(true)
 {
 }
 
@@ -25,6 +26,7 @@ RampValidator::RampValidator(const TChar* aId, IPipelineElementDownstream& aDown
     , iUpstream(NULL)
     , iDownstream(&aDownstream)
     , iRampedDown(false)
+    , iWaitingForAudio(true)
 {
 }
 

@@ -4,21 +4,11 @@
 #include <OpenHome/Types.h>
 
 namespace OpenHome {
-    class IPowerManager;
 namespace Configuration {
-    class IConfigInitialiser;
     class IConfigManager;
-}
-namespace Media {
-    class IVolumeProfile;
-    class IVolume;
-    class IVolumeLimit;
-    class IBalance;
-    class IMute;
 }
 namespace Net {
     class DvDevice;
-    class DvProvider;
 }
 namespace Av {
     class Product;
@@ -42,16 +32,6 @@ class ProviderFactory
 {
 public:
     static IProvider* NewConfiguration(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader);
-    static IProvider* NewVolume(Product& aProduct,
-                                Net::DvDevice& aDevice,
-                                Configuration::IConfigInitialiser& aConfigInit,
-                                Configuration::IConfigManager& aConfigReader,
-                                IPowerManager& aPowerManager,
-                                const Media::IVolumeProfile& aVolumeProfile,
-                                Media::IVolume& aVolume,
-                                Media::IVolumeLimit& aVolumeLimit,
-                                Media::IBalance& aBalance,
-                                Media::IMute& aMute);
 };
 
 } // namespace Av

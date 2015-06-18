@@ -34,10 +34,10 @@ private:
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg) override;
     void ProcessMsgIn(MsgSession* aMsg) override;
-    void ProcessMsgIn(MsgEncodedStream* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsgOut(MsgMode* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
 private: // from IStreamHandler
@@ -56,6 +56,7 @@ private:
     TBool iCanGorge;
     TBool iGorging;
     TBool iGorgeOnHaltOut;
+    TBool iGorgeOnStreamOut;
     TBool iQuit;
     BwsMode iMode;
 };

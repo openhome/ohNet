@@ -104,16 +104,12 @@ def choose_platform(context):
     else:
         context.env["OH_PLATFORM"] = default_platform()
 
-    # force Mac build to use 64-bit libs (wrongly defaults to 32-bit)
-    if 'Mac' in context.env['OH_PLATFORM']:
-        context.env['OH_PLATFORM']='Mac-x64'
-
 # Universal build configuration.
 @build_step()
 def setup_universal(context):
     env = context.env
     env.update(
-        OH_PUBLISHDIR="artifacts@core.linn.co.uk:/home/artifacts/public_html/artifacts/",
+        OH_PUBLISHDIR="releases@www.openhome.org:~/www/artifacts",
         OH_PROJECT="ohMediaPlayer",
         OH_DEBUG=context.options.debugmode,
         BUILDDIR='buildhudson',
@@ -180,12 +176,12 @@ def bundle(context):
 
 @build_step("test", optional=True)
 def test(context):
-    if context.env["OH_PLATFORM"] != 'Linux-armhf' and context.env["OH_PLATFORM"] != 'Linux-mipsel':
+    if context.env["OH_PLATFORM"] not in ['Linux-mipsel']:
         python("waf", "test")
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
-    if context.env["OH_PLATFORM"] != 'Linux-armhf' and context.env["OH_PLATFORM"] != 'Linux-mipsel':
+    if context.env["OH_PLATFORM"] not in ['Linux-mipsel']:
         python("waf", "test_full")
 
 @build_step("install", optional=True, default=True)

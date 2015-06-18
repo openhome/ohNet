@@ -1,6 +1,7 @@
 from testharness.testsuite import MakeSuiteRunner
 from testharness.servers   import StaticWebServer
 import os.path
+import time
 
 # 'context' is predefined globally. until this is fixed, sorry :)
 suiteRunner = MakeSuiteRunner(context)
@@ -24,6 +25,7 @@ tests = '''
     TestPruner
     TestGorger
     TestStarvationMonitor
+    TestMuter
     TestPreDriver
     TestContentProcessor
     TestPipeline
@@ -40,7 +42,6 @@ tests = '''
     TestTrackDatabase
     TestToneGenerator
     TestMuteManager
-    TestVolumeManager
     TestRewinder
     TestContainer
     TestUdpServer
@@ -49,6 +50,8 @@ tests = '''
     TestWaiter
     TestUriProviderRepeater
     TestJson
+    TestObservable
+    #TestConfigUi   # fails on non-desktop platforms
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()
@@ -61,6 +64,7 @@ try:
 finally:
     w.stop()
 
+time.sleep(1)
 
 # Suppress valgrind's checks for referencing uninitialised data
 # Following tests use openssl which (deliberately!) makes heavy use of this

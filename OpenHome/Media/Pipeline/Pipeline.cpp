@@ -270,7 +270,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iRampValidatorStarvationMonitor = new RampValidator(*iLoggerStarvationMonitor, "Starvation Monitor");
-    iPreDriver = new PreDriver(*iRampValidatorStarvationMonitor);
+    iMuter = new Muter(*iMsgFactory, *iRampValidatorStarvationMonitor, aInitParams->RampLongJiffies());
+    iLoggerMuter = new Logger(*iMuter, "Muter");
+    iPreDriver = new PreDriver(*iLoggerMuter);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
@@ -300,6 +302,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
+    //iLoggerMuter->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
@@ -323,6 +326,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
+    //iLoggerMuter->SetFilter(Logger::EMsgAll);
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
 }
 
@@ -335,6 +339,8 @@ Pipeline::~Pipeline()
     // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
     delete iLoggerPreDriver;
     delete iPreDriver;
+    delete iLoggerMuter;
+    delete iMuter;
     delete iRampValidatorStarvationMonitor;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
@@ -617,6 +623,16 @@ void Pipeline::PipelineWaiting(TBool aWaiting)
 void Pipeline::RemoveStream(TUint aStreamId)
 {
     (void)iSkipper->TryRemoveStream(aStreamId, !iBuffering);
+}
+
+void Pipeline::Mute()
+{
+    iMuter->Mute();
+}
+
+void Pipeline::Unmute()
+{
+    iMuter->Unmute();
 }
 
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)

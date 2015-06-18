@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "ogg.h"
+#include <ogg/ogg.h>
 #include "ivorbiscodec.h"
 #include "codec_internal.h"
 #include "registry.h"
@@ -197,16 +197,19 @@ void vorbis_lsp_to_curve(ogg_int32_t *curve,int *map,int n,int ln,
 
 #else
 
-    qi*=labs(ilsp[0]-wi);
-    pi*=labs(ilsp[1]-wi);
+    j=1;
+    if(m>1){
+      qi*=labs(ilsp[0]-wi);
+      pi*=labs(ilsp[1]-wi);
 
-    for(j=3;j<m;j+=2){
-      if(!(shift=MLOOP_1[(pi|qi)>>25]))
-	if(!(shift=MLOOP_2[(pi|qi)>>19]))
-	  shift=MLOOP_3[(pi|qi)>>16];
-      qi=(qi>>shift)*labs(ilsp[j-1]-wi);
-      pi=(pi>>shift)*labs(ilsp[j]-wi);
-      qexp+=shift;
+      for(j+=2;j<m;j+=2){
+        if(!(shift=MLOOP_1[(pi|qi)>>25]))
+          if(!(shift=MLOOP_2[(pi|qi)>>19]))
+            shift=MLOOP_3[(pi|qi)>>16];
+        qi=(qi>>shift)*labs(ilsp[j-1]-wi);
+        pi=(pi>>shift)*labs(ilsp[j]-wi);
+        qexp+=shift;
+      }
     }
     if(!(shift=MLOOP_1[(pi|qi)>>25]))
       if(!(shift=MLOOP_2[(pi|qi)>>19]))
@@ -324,6 +327,8 @@ static vorbis_info_floor *floor0_unpack (vorbis_info *vi,oggpack_buffer *opb){
   for(j=0;j<info->numbooks;j++){
     info->books[j]=oggpack_read(opb,8);
     if(info->books[j]<0 || info->books[j]>=ci->books)goto err_out;
+    if(ci->book_param[info->books[j]]->maptype==0)goto err_out;
+    if(ci->book_param[info->books[j]]->dim<1)goto err_out;
   }
   return(info);
 
@@ -393,10 +398,9 @@ static void *floor0_inverse1(vorbis_block *vb,vorbis_look_floor *i){
       ogg_int32_t last=0;
       ogg_int32_t *lsp=(ogg_int32_t *)_vorbis_block_alloc(vb,sizeof(*lsp)*(look->m+1));
             
-      for(j=0;j<look->m;j+=b->dim)
-	if(vorbis_book_decodev_set(b,lsp+j,&vb->opb,b->dim,-24)==-1)goto eop;
+      if(vorbis_book_decodev_set(b,lsp,&vb->opb,look->m,-24)==-1)goto eop;
       for(j=0;j<look->m;){
-	for(k=0;k<b->dim;k++,j++)lsp[j]+=last;
+	for(k=0;j<look->m && k<b->dim;k++,j++)lsp[j]+=last;
 	last=lsp[j-1];
       }
       

@@ -406,6 +406,8 @@ public:
     static const TChar* kAdapterCookie;
     static const Brn kSessionPrefix;
 private:
+    static const TUint kMaxSessionNameBytes = 32;  // Should be capable of storing string of form kSessionPrefix + ID (0-99) + '\0', e.g., "WebUiSession01\0".
+private:
     class BrxPtrCmp
     {
     public:
@@ -475,14 +477,14 @@ private:
     ITabManager& iTabManager;
     IResourceManager& iResourceManager;
     OpenHome::Srx* iReadBuffer;
-    ReaderUntil* iReaderUntil;
+    ReaderUntil* iReaderUntilPreChunker;
     OpenHome::ReaderHttpRequest* iReaderRequest;
-    //ReaderHttpChunked* iReaderChunked;
+    ReaderHttpChunked* iReaderChunked;
+    ReaderUntil* iReaderUntil;
     OpenHome::WriterHttpChunked* iWriterChunked;
     OpenHome::Sws<kMaxResponseBytes>* iWriterBuffer;
     OpenHome::WriterHttpResponse* iWriterResponse;
     OpenHome::HttpHeaderHost iHeaderHost;
-    OpenHome::HttpHeaderContentLength iHeaderContentLength;
     OpenHome::HttpHeaderTransferEncoding iHeaderTransferEncoding;
     OpenHome::HttpHeaderConnection iHeaderConnection;
     Net::HeaderAcceptLanguage iHeaderAcceptLanguage;

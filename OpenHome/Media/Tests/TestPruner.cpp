@@ -51,6 +51,7 @@ private:
     void SilenceUnblocksStreamMsgs();
     void ModeWithoutAudioAllMsgsDiscarded();
     void StreamWithoutAudioAllMsgsDiscarded();
+    void HaltWithoutAudioDiscarded();
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
@@ -95,11 +96,12 @@ SuitePruner::SuitePruner()
     AddTest(MakeFunctor(*this, &SuitePruner::SilenceUnblocksStreamMsgs), "SilenceUnblocksStreamMsgs");
     AddTest(MakeFunctor(*this, &SuitePruner::ModeWithoutAudioAllMsgsDiscarded), "ModeWithoutAudioAllMsgsDiscarded");
     AddTest(MakeFunctor(*this, &SuitePruner::StreamWithoutAudioAllMsgsDiscarded), "StreamWithoutAudioAllMsgsDiscarded");
+    AddTest(MakeFunctor(*this, &SuitePruner::HaltWithoutAudioDiscarded), "HaltWithoutAudioDiscarded");
 }
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 4, 1, 1, 2, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iPulledTrackId = UINT_MAX/2;
@@ -199,6 +201,25 @@ void SuitePruner::StreamWithoutAudioAllMsgsDiscarded()
     TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgAudioPcm);
     TEST(iPendingMsgs.size() == 0);
+}
+
+void SuitePruner::HaltWithoutAudioDiscarded()
+{
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm, EMsgHalt,
+                        EMsgTrack, EMsgHalt,
+                        EMsgTrack, EMsgDecodedStream, EMsgHalt,
+                        EMsgDecodedStream, EMsgAudioPcm, EMsgHalt, EMsgAudioPcm, EMsgHalt };
+    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+
+    TEST(DoPull() == EMsgMode);
+    TEST(DoPull() == EMsgDecodedStream);
+    TEST(DoPull() == EMsgAudioPcm);
+    TEST(DoPull() == EMsgHalt);
+    TEST(DoPull() == EMsgDecodedStream);
+    TEST(DoPull() == EMsgAudioPcm);
+    TEST(DoPull() == EMsgHalt);
+    TEST(DoPull() == EMsgAudioPcm);
+    TEST(DoPull() == EMsgHalt);
 }
 
 Msg* SuitePruner::ProcessMsg(MsgMode* aMsg)

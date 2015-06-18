@@ -6,12 +6,12 @@
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Av/Source.h>
 
 EXCEPTION(LanguageResourceInvalid);
 
 namespace OpenHome {
 namespace Av {
-    class ISource;
     class Product;
 }
 }
@@ -386,6 +386,8 @@ public:
 
 class ConfigAppSources : public ConfigAppBasic
 {
+private:
+    static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
      ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };

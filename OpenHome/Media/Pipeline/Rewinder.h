@@ -16,6 +16,8 @@ public:
     virtual void Stop() = 0;
 };
 
+class RewinderReservoir;
+
 /* Class which buffers data for recognition (in case seeking back to the start
    of the data is required due to a failed recognition that pulls on the
    stream).
@@ -28,6 +30,9 @@ public:
 
 class Rewinder : public IPipelineElementUpstream, private IMsgProcessor, public IRewinder, private IStreamHandler, private INonCopyable
 {
+public:
+    static const TUint kMaxEncodedAudioMsgs = 50; // allows ~400k of data for content recognition
+                                                  // hard-coded on assumption that only buggy codecs would demand more
 public:
     Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     ~Rewinder();
@@ -65,8 +70,8 @@ private:
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
     Mutex iLock;
-    MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
-    MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind
+    RewinderReservoir* iQueueCurrent;    // new Msgs still to be passed on
+    RewinderReservoir* iQueueNext;       // Msgs passed on but buffered in case of rewind
 };
 
 } // namespace Media
