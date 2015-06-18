@@ -421,7 +421,7 @@ void SuiteConfigUi::TestGetStaticResource()
 
 void SuiteConfigUi::TestLongPollCreate()
 {
-    static const Brn kExpectedSessionId("session-id: 1");
+    static const Brn kExpectedSessionId("session-id: 1\r\n");
     const Brx& url = iDeviceListHandler->GetPresentationUrl();
     TEST(url.Bytes() > 0);
     const Uri uri(url);
@@ -444,7 +444,7 @@ void SuiteConfigUi::TestLongPollCreate()
 
 void SuiteConfigUi::TestLongPoll()
 {
-    static const Brn kExpectedSessionId("session-id: 1");
+    static const Brn kExpectedSessionId("session-id: 1\r\n");
     const Brx& url = iDeviceListHandler->GetPresentationUrl();
     TEST(url.Bytes() > 0);
     const Uri uri(url);

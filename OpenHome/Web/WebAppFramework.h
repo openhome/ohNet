@@ -477,14 +477,14 @@ private:
     ITabManager& iTabManager;
     IResourceManager& iResourceManager;
     OpenHome::Srx* iReadBuffer;
-    ReaderUntil* iReaderUntil;
+    ReaderUntil* iReaderUntilPreChunker;
     OpenHome::ReaderHttpRequest* iReaderRequest;
-    //ReaderHttpChunked* iReaderChunked;
+    ReaderHttpChunked* iReaderChunked;
+    ReaderUntil* iReaderUntil;
     OpenHome::WriterHttpChunked* iWriterChunked;
     OpenHome::Sws<kMaxResponseBytes>* iWriterBuffer;
     OpenHome::WriterHttpResponse* iWriterResponse;
     OpenHome::HttpHeaderHost iHeaderHost;
-    OpenHome::HttpHeaderContentLength iHeaderContentLength;
     OpenHome::HttpHeaderTransferEncoding iHeaderTransferEncoding;
     OpenHome::HttpHeaderConnection iHeaderConnection;
     Net::HeaderAcceptLanguage iHeaderAcceptLanguage;

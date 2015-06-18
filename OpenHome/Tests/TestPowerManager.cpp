@@ -262,6 +262,7 @@ void SuitePowerManager::TestPriorityLowest()
 {
     // Test that a functor with the lowest priority can be registered and called.
     IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityLowest);
+    TEST(iHandler1->PowerUpCount() == 1);
     iPowerManager->PowerDown();
     TEST(iHandler1->Time() != 0);
     delete observer;

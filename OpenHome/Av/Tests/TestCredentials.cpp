@@ -251,6 +251,7 @@ void SuiteCredentials::Test()
     TEST(key.BeginsWith(Brn("-----BEGIN RSA PUBLIC KEY")));
     TUint seq = UINT_MAX;
     iProxy->SyncGetSequenceNumber(seq);
+    iSeqChanged.Wait();
 
     // check that Set/Clear/SetEnabled are passed through
     iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
@@ -277,6 +278,7 @@ void SuiteCredentials::Test()
     iCredChanged.Wait();
     iStatusChanged.Wait();
     TUint oldSeq = seq;
+    iSeqChanged.Wait();
     iProxy->SyncGetSequenceNumber(seq);
     TEST(seq > oldSeq);
     iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);

@@ -24,8 +24,8 @@ private:
     static const TUint kSamplesPerFrame = 1024;
 public:
     static const Brn kCodecAac;
-public:
-    CodecAacBase();
+protected:
+    CodecAacBase(const TChar* aId);
     ~CodecAacBase();
 protected: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);

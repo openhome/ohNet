@@ -18,8 +18,8 @@ class CodecAlacBase : public CodecBase
 {
 public:
     static const Brn kCodecAlac;
-public:
-    CodecAlacBase();
+protected:
+    CodecAlacBase(const TChar* aId);
     ~CodecAlacBase();
 protected: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);

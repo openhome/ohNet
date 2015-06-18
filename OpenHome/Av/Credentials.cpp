@@ -270,6 +270,7 @@ Credentials::Credentials(Environment& aEnv, Net::DvDevice& aDevice, IStoreReadWr
 
 Credentials::~Credentials()
 {
+    iModerationTimerStarted = true; // prevent further callbacks being queued
     delete iModerationTimer;
     iFifo.ReadInterrupt();
     delete iThread;

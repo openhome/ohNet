@@ -15,6 +15,7 @@ EXCEPTION(CodecStreamEnded);
 EXCEPTION(CodecStreamStopped);
 EXCEPTION(CodecStreamFlush);
 EXCEPTION(CodecStreamFeatureUnsupported);
+EXCEPTION(CodecRecognitionOutOfData);
 
 namespace OpenHome {
 namespace Media {
@@ -210,7 +211,7 @@ private:
  * A codec accepts encoded data and outputs PCM.
  * Each instance can choose to decode one or more audio formats.
  */
-class CodecBase
+class CodecBase : private INonCopyable
 {
     friend class CodecController;
 public:
@@ -273,12 +274,20 @@ public:
      * May be used to destroy any state that is specific to the current stream.
      */
     virtual void StreamCompleted();
+    /**
+     * Read the identifier (name) for this codec
+     *
+     * @return     Codec identifier
+     */
+    const TChar* Id() const;
 protected:
-    CodecBase();
+    CodecBase(const TChar* aId);
 private:
     void Construct(ICodecController& aController);
 protected:
     ICodecController* iController;
+private:
+    const TChar* iId;
 };
 
 class CodecController : public ISeeker, private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable

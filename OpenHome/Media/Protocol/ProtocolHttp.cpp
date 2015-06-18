@@ -652,7 +652,6 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 
 TBool ProtocolHttp::ContinueStreaming(ProtocolStreamResult aResult)
 {
-    AutoMutex a(iLock);
     if (aResult == EProtocolStreamErrorRecoverable) {
         return true;
     }

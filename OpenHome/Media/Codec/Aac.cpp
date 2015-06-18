@@ -49,7 +49,8 @@ CodecBase* CodecFactory::NewAac()
 // CodecAac
 
 CodecAac::CodecAac()
-    : iMp4(NULL)
+    : CodecAacBase("AAC")
+    , iMp4(NULL)
 {
     LOG(kCodec, "CodecAac::CodecAac\n");
 }

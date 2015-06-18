@@ -50,7 +50,8 @@ CodecBase* CodecFactory::NewAlac()
 // CodecAlac
 
 CodecAlac::CodecAlac() 
-    : iMp4(NULL)
+    : CodecAlacBase("ALAC")
+    , iMp4(NULL)
 {
     LOG(kCodec, "CodecAlac::CodecAlac\n");
 }

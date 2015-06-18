@@ -36,7 +36,8 @@ using namespace OpenHome::Media::Codec;
 
 const Brn CodecAacBase::kCodecAac("AAC");
 
-CodecAacBase::CodecAacBase()
+CodecAacBase::CodecAacBase(const TChar* aId)
+    : CodecBase(aId)
 {
     LOG(kCodec, "CodecAacBase::CodecAacBase\n");
 }

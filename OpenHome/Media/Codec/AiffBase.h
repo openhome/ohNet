@@ -11,8 +11,8 @@ namespace Codec {
 
 class CodecAiffBase : public CodecBase
 {
-public:
-    CodecAiffBase(const Brx& aName);
+protected:
+    CodecAiffBase(const TChar* aName);
     ~CodecAiffBase();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);

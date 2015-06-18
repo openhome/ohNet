@@ -9,8 +9,9 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 
-CodecAiffBase::CodecAiffBase(const Brx& aName)
-    : iName(aName)
+CodecAiffBase::CodecAiffBase(const TChar* aName)
+    : CodecBase(aName)
+    , iName(aName)
 {
 }
 
