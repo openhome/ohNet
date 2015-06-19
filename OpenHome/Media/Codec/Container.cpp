@@ -14,11 +14,11 @@ using namespace OpenHome::Media::Codec;
 // ContainerBase
 
 ContainerBase::ContainerBase()
-    : iAudioEncoded(NULL)
+    : iMsgFactory(NULL)
+    , iAudioEncoded(NULL)
     , iStreamHandler(NULL)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iPulling(false)
-    , iMsgFactory(NULL)
     , iUpstreamElement(NULL)
     , iPendingMsg(NULL)
 {
@@ -126,6 +126,7 @@ void ContainerBase::Read(Bwx& aBuf, TUint aBytes)
     }
     PullAudio(aBytes);
     ReadFromCachedAudio(aBuf, aBytes);
+    ASSERT(aBuf.Bytes() == aBytes);
 }
 
 /*
@@ -151,6 +152,7 @@ TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes)
     if (remaining != NULL) {
         iAudioEncoded->Add(remaining);
     }
+    ASSERT(aBuf.Bytes() == aBytes);
     return true;
 }
 

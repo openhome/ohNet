@@ -221,7 +221,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
-    iContainer->AddContainer(new Codec::Mpeg4Start());
+    iContainer->AddContainer(new Codec::Mpeg4Container());
     iContainer->AddContainer(new Codec::MpegTs());
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 

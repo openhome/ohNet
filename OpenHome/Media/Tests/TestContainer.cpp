@@ -1127,7 +1127,7 @@ void SuiteContainerNull::Setup()
 {
     SuiteContainerBase::Setup();
     iContainer->AddContainer(new Id3v2());
-    iContainer->AddContainer(new Mpeg4Start());
+    iContainer->AddContainer(new Mpeg4Container());
 }
 
 void SuiteContainerNull::TestNullContainer()

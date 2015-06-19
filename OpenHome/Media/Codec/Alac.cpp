@@ -29,7 +29,9 @@ private: // from CodecBase
 private:
     static const TUint kMaxRecogBytes = 6 * 1024; // copied from previous CodecController behaviour
     Bws<kMaxRecogBytes> iRecogBuf;
-    Mpeg4MediaInfo* iMp4;
+    SampleSizeTable iSampleSizeTable;
+    SeekTable iSeekTable;
+    TUint iCurrentSample;       // Sample count is 32 bits in stsz box.
 };
 
 } // namespace Codec
@@ -51,7 +53,6 @@ CodecBase* CodecFactory::NewAlac()
 
 CodecAlac::CodecAlac() 
     : CodecAlacBase("ALAC")
-    , iMp4(NULL)
 {
     LOG(kCodec, "CodecAlac::CodecAlac\n");
 }
@@ -59,11 +60,6 @@ CodecAlac::CodecAlac()
 CodecAlac::~CodecAlac()
 {
     LOG(kCodec, "CodecAlac::~CodecAlac\n");
-    if (iMp4) {     // clean up in case not terminating under normal conditions
-        delete iMp4;
-        iMp4 = NULL;
-        iContainer = NULL;
-    }
 }
 
 TBool CodecAlac::Recognise(const EncodedStreamInfo& aStreamInfo)
@@ -75,17 +71,12 @@ TBool CodecAlac::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     iRecogBuf.SetBytes(0);
     iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
-    Bws<4> codec;
-    try {
-        Mpeg4MediaInfo::GetCodec(iRecogBuf, codec);
-    }
-    catch (MediaMpeg4FileInvalid) {
-        // We couldn't recognise this as an MPEG4/ALAC file.
-        return false;
-    }
-    if (codec == Brn("alac")) {
-        LOG(kCodec, "CodecAlac::Recognise alac\n");
-        return true;
+    if (iRecogBuf.Bytes() >= 4) {
+        if (Brn(iRecogBuf.Ptr(), 4) == Brn("alac")) {
+            // FIXME - also check codec type that is passed within alac to determine that it is definitely alac?
+            LOG(kCodec, "CodecAlac::Recognise recognised alac\n");
+            return true;
+        }
     }
     return false;
 }
@@ -94,19 +85,52 @@ void CodecAlac::StreamInitialise()
 {
     LOG(kCodec, "CodecAlac::StreamInitialise\n");
 
-    iMp4 = new Mpeg4MediaInfo(*iController);
-    try {
-        iMp4->Process();
-    }
-    catch (MediaMpeg4EndOfData&) {
-        THROW(CodecStreamEnded);
-    }
-    catch (MediaMpeg4FileInvalid&) {
-        THROW(CodecStreamCorrupt);
-    }
-    iContainer = iMp4;
-
     CodecAlacBase::Initialise();
+
+    iCurrentSample = 0;
+
+    // Use iInBuf for gathering initialisation data, as it doesn't need to be used for audio until Process() starts being called.
+    Mpeg4Info info;
+    CodecBufferedReader codecBufReader(*iController, iInBuf);
+    Mpeg4InfoReader mp4Reader(codecBufReader);
+    mp4Reader.Read(info);
+
+    // Read sample size table.
+    ReaderBinary readerBin(codecBufReader);
+    iSampleSizeTable.Clear();
+    const TUint sampleCount = readerBin.ReadUintBe(4);
+    iSampleSizeTable.Init(sampleCount);
+    for (TUint i=0; i<sampleCount; i++) {
+        const TUint sampleSize = readerBin.ReadUintBe(4);
+        iSampleSizeTable.AddSampleSize(sampleSize);
+    }
+
+    // Read seek table.
+    iSeekTable.Deinitialise();
+    SeekTableInitialiser seekTableInitialiser(iSeekTable, codecBufReader);
+    seekTableInitialiser.Init();
+
+    iInBuf.SetBytes(0);
+    alac = create_alac(info.BitDepth(), info.Channels());
+
+    // FIXME - use iInBuf here instead of local stack buffer?
+    Bws<IMpeg4InfoWritable::kMaxStreamDescriptorBytes> streamDescriptor;
+    static const TUint kStreamDescriptorIgnoreBytes = 20; // First 20 bytes are ignored by decoder.
+    streamDescriptor.SetBytes(kStreamDescriptorIgnoreBytes);
+    streamDescriptor.Append(info.StreamDescriptor());
+
+    alac_set_info(alac, (char*)streamDescriptor.Ptr()); // Configure decoder.
+
+    iChannels = info.Channels();
+    iBitDepth = info.BitDepth();
+    iBytesPerSample = info.Channels()*iBitDepth/8;
+    iTimescale = info.Timescale();
+    iSamplesWrittenTotal = 0;
+    iTrackLengthJiffies = (info.Duration() * Jiffies::kPerSecond) / info.Timescale();
+
+
+    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    iController->OutputDecodedStream(0, info.BitDepth(), info.Timescale(), info.Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -114,14 +138,14 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
     LOG(kCodec, "CodecAlac::TrySeek(%u, %llu)\n", aStreamId, aSample);
 
     TUint64 startSample = 0;
-    TUint64 bytes = iMp4->GetSeekTable().Offset(aSample, startSample);     // find file offset relating to given audio sample
+    TUint64 bytes = iSeekTable.Offset(aSample, startSample);     // find file offset relating to given audio sample
     LOG(kCodec, "CodecAlac::TrySeek to sample: %llu, byte: %lld\n", startSample, bytes);
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iSamplesWrittenTotal = aSample;
-        iCurrentSample = startSample;
-        iTrackOffset = (aSample * Jiffies::kPerSecond) / iMp4->Timescale();
-        iController->OutputDecodedStream(0, iMp4->BitDepth(), iMp4->Timescale(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, aSample, true);
+        iCurrentSample = static_cast<TUint>(startSample);
+        iTrackOffset = (aSample * Jiffies::kPerSecond) / iTimescale;
+        iController->OutputDecodedStream(0, iBitDepth, iTimescale, iChannels, kCodecAlac, iTrackLengthJiffies, aSample, true);
     }
     return canSeek;
 }
@@ -129,11 +153,6 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
 void CodecAlac::StreamCompleted()
 {
     LOG(kCodec, "CodecAlac::StreamCompleted\n");
-    if (iMp4) {
-        delete iMp4;
-        iMp4 = NULL;
-        iContainer = NULL;
-    }
     CodecAlacBase::StreamCompleted();
 }
 
@@ -141,13 +160,13 @@ void CodecAlac::Process()
 {
     //LOG(kCodec, "CodecAlac::Process\n");
 
-    if (iCurrentSample < iMp4->GetSampleSizeTable().Count()) {
-        // read in a single alac sample
+    if (iCurrentSample < iSampleSizeTable.Count()) {
+        // Read in a single alac sample.
         iInBuf.SetBytes(0);
 
         try {
-            //LOG(kCodec, "CodecAlac::Process  sample = %u, size = %u, inBuf max size %u\n", iCurrentSample, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample), iInBuf.MaxBytes());
-            TUint sampleSize = iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample);
+            LOG(kCodec, "CodecAlac::Process  iCurrentSample: %u, size: %u, inBuf.MaxBytes(): %u\n", iCurrentSample, iSampleSizeTable.SampleSize(iCurrentSample), iInBuf.MaxBytes());
+            TUint sampleSize = iSampleSizeTable.SampleSize(iCurrentSample);
             iController->Read(iInBuf, sampleSize);
             if (iInBuf.Bytes() < sampleSize) {
                 THROW(CodecStreamEnded);

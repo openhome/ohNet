@@ -6,6 +6,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 #include <vector>
 
@@ -34,7 +35,7 @@ class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProc
     static const TUint kSongcastPacketJiffies = Media::Jiffies::kPerMs * kSongcastPacketMs;
     static const TUint kSongcastPacketMaxBytes = 3 * Media::DecodedAudio::kMaxNumChannels * 192 * kSongcastPacketMs;
 public:
-    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, Configuration::IConfigInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName);
+    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, IOhmTimestamper* aTimestamper, Configuration::IConfigInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName);
     ~Sender();
     void SetName(const Brx& aName);
     void NotifyPipelineState(Media::EPipelineState aState);

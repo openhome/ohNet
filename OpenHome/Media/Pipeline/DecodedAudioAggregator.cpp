@@ -34,8 +34,13 @@ void DecodedAudioAggregator::Push(Msg* aMsg)
 
 EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aStreamId)
 {
-    ASSERT(iStreamHandler != NULL);
-    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    IStreamHandler* streamHandler = NULL;
+    {
+        AutoMutex a(iLock);
+        streamHandler = iStreamHandler;
+    }
+    ASSERT(streamHandler != NULL);
+    EStreamPlay canPlay = streamHandler->OkToPlay(aStreamId);
     //Log::Print("DecodedAudioAggregator::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
 }
@@ -48,22 +53,37 @@ TUint DecodedAudioAggregator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 
 TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
 {
-    AutoMutex a(iLock);
-    if (aStreamId == iStreamId) {
-        ReleaseAggregatedAudio();
+    IStreamHandler* streamHandler = NULL;
+    TUint flushId = MsgFlush::kIdInvalid;
+    {
+        AutoMutex a(iLock);
+        streamHandler = iStreamHandler;
     }
-    if (iStreamHandler != NULL) {
-        TUint flushId = iStreamHandler->TryStop(aStreamId);
+
+    // Don't hold iLock while calling into streamHandler to avoid deadlock
+    // (i.e., streamHandler may be Push()ing to this and ::Process() methods
+    // could be awaiting iLock to process Msg).
+    if (streamHandler != NULL) {
+        flushId = streamHandler->TryStop(aStreamId);
+    }
+
+    {
+        AutoMutex a(iLock);
         iExpectedFlushId = flushId;
-        return flushId;
     }
-    return MsgFlush::kIdInvalid;
+
+    return flushId;
 }
 
 void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
-    if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+    IStreamHandler* streamHandler = NULL;
+    {
+        AutoMutex a(iLock);
+        streamHandler = iStreamHandler;
+    }
+    if (streamHandler != NULL) {
+        streamHandler->NotifyStarving(aMode, aStreamId);
     }
 }
 
