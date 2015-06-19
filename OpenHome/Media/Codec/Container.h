@@ -23,6 +23,7 @@ class IContainer
 {
 public:
     virtual void Read(Bwx& aBuf, TUint aOffset, TUint aBytes) = 0;
+    virtual ~IContainer() {}
 };
 
 
@@ -30,6 +31,7 @@ class IRecogniser
 {
 public:
     virtual TBool Recognise(Brx& aBuf) = 0;
+    virtual ~IRecogniser() {}
 };
 
 class IContainerBase : public IRecogniser, public IPipelineElementUpstream, public IStreamHandler
@@ -49,7 +51,7 @@ class ContainerBase : public IContainerBase, private IMsgProcessor, private INon
 {
     friend class ContainerFront;
 public:
-    ContainerBase();
+    ContainerBase(/*IUrlBlockWriter& aUrlBlockWriter*/);
     ~ContainerBase();
 protected:
     Msg* PullMsg();
@@ -89,12 +91,13 @@ private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 protected:
+    MsgFactory* iMsgFactory;
     MsgAudioEncoded* iAudioEncoded;
     IStreamHandler* iStreamHandler;
     TUint iExpectedFlushId;
     TBool iPulling;
+    /*IUrlBlockWriter& iUrlBlockWriter;*/
 private:
-    MsgFactory* iMsgFactory;
     IPipelineElementUpstream* iUpstreamElement;
     Msg* iPendingMsg;
 

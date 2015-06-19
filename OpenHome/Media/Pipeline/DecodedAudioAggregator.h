@@ -44,7 +44,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
-    TBool AggregatorFull(TUint aBytes, TUint aJiffies);
+    static TBool AggregatorFull(TUint aBytes, TUint aJiffies);
     MsgAudioPcm* TryAggregate(MsgAudioPcm* aMsg);
     void Queue(Msg* aMsg);
     void OutputAggregatedAudio();

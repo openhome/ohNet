@@ -27,8 +27,9 @@ private:
 private:
     static const TUint kMaxRecogBytes = 6 * 1024; // copied from previous CodecController behaviour
     Bws<kMaxRecogBytes> iRecogBuf;
-    TUint64 iCurrentSample;
-    Mpeg4MediaInfo* iMp4;
+    SampleSizeTable iSampleSizeTable;
+    SeekTable iSeekTable;
+    TUint iCurrentSample;       // Sample count is 32 bits in stsz box.
 };
 
 } //namespace Codec
@@ -46,11 +47,11 @@ CodecBase* CodecFactory::NewAac()
 }
 
 
+
 // CodecAac
 
 CodecAac::CodecAac()
     : CodecAacBase("AAC")
-    , iMp4(NULL)
 {
     LOG(kCodec, "CodecAac::CodecAac\n");
 }
@@ -69,18 +70,13 @@ TBool CodecAac::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     iRecogBuf.SetBytes(0);
     iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
-    Bws<4> codec;
-    try {
-        Mpeg4MediaInfo::GetCodec(iRecogBuf, codec);
+    if (iRecogBuf.Bytes() >= 4) {
+        if (Brn(iRecogBuf.Ptr(), 4) == Brn("mp4a")) {
+            // FIXME - should also check codec type that is passed within esds to determine that it is definitely AAC and not another codec (e.g., MP3)
+            LOG(kCodec, "CodecAac::Recognise aac mp4a\n");
+            return true;
+        }
     }
-    catch (MediaMpeg4FileInvalid) {
-        // couldn't recognise this as an MPEG4 file.
-    }
-    if (codec == Brn("mp4a")) {
-        LOG(kCodec, "CodecAac::Recognise aac mp4a\n");
-        return true;
-    }
-
     return false;
 }
 
@@ -100,27 +96,33 @@ void CodecAac::StreamInitialise()
 {
     LOG(kCodec, "CodecAac::StreamInitialise\n");
 
-    Bws<64> info;
-    info.SetBytes(0);
-
     CodecAacBase::StreamInitialise();
 
     iCurrentSample = 0;
 
-    iMp4 = new Mpeg4MediaInfo(*iController);
-    try {
-        iMp4->Process();
-    }
-    catch (MediaMpeg4EndOfData&) {
-        THROW(CodecStreamEnded);
-    }
-    catch (MediaMpeg4FileInvalid&) {
-        LOG(kCodec, "CodecAac::StreamInitialise invalid MPEG4 container\n");
-        LOG(kCodec, "CodecAac::StreamInitialise throwing CodecStreamCorrupt\n");
-        THROW(CodecStreamCorrupt);
+    // Use iInBuf for gathering initialisation data, as it doesn't need to be used for audio until Process() starts being called.
+    Mpeg4Info info;
+    CodecBufferedReader codecBufReader(*iController, iInBuf);
+    Mpeg4InfoReader mp4Reader(codecBufReader);
+    mp4Reader.Read(info);
+
+    // Read sample size table.
+    ReaderBinary readerBin(codecBufReader);
+    iSampleSizeTable.Clear();
+    const TUint sampleCount = readerBin.ReadUintBe(4);
+    iSampleSizeTable.Init(sampleCount);
+    for (TUint i=0; i<sampleCount; i++) {
+        const TUint sampleSize = readerBin.ReadUintBe(4);
+        iSampleSizeTable.AddSampleSize(sampleSize);
     }
 
-    info.Append(iMp4->CodecSpecificData());   // get data extracted from MPEG-4 header
+    // Read seek table.
+    iSeekTable.Deinitialise();
+    SeekTableInitialiser seekTableInitialiser(iSeekTable, codecBufReader);
+    seekTableInitialiser.Init();
+
+    iInBuf.SetBytes(0);
+
     // see http://wiki.multimedia.cx/index.php?title=Understanding_AAC for details
     // or http://xhelmboyx.tripod.com/formats/mp4-layout.txt - search for 'esds'
 
@@ -189,8 +191,8 @@ void CodecAac::StreamInitialise()
     Valid Type ID seen for aac is "MPEG-4 audio" - not sure if any others are used so no checking for this is done
     */
     iChannels = 0;
-    const TByte *ptr = info.Ptr();
-    ptr += 4;
+    const TByte *ptr = info.StreamDescriptor().Ptr();
+    //ptr += 4;   // Container should already have skipped over 32-bit version field.
 
     if(*ptr == 3) {     // section 3
         ptr++;
@@ -214,7 +216,7 @@ void CodecAac::StreamInitialise()
                         ptr += SkipEsdsTag(*ptr);
                         if(*ptr != 0) {
                             ptr += 2;
-                            iChannels = (*ptr >> 3) & 0xf;
+                            iChannels = (*ptr >> 3) & 0xf;  // FIXME - compare against iInfo.Channels() - or is that not valid?
                         }
                     }
 
@@ -223,11 +225,11 @@ void CodecAac::StreamInitialise()
         }
     }
 
-    iSampleRate = iMp4->Timescale();
+    iSampleRate = info.Timescale();
     iOutputSampleRate = iSampleRate;
-    iBitDepth = iMp4->BitDepth();
+    iBitDepth = info.BitDepth();
     //iChannels = iMp4->Channels();     // not valid !!!
-    iSamplesTotal = iMp4->Duration();
+    iSamplesTotal = info.Duration();
 
     iBytesPerSample = iChannels*iBitDepth/8;
     ProcessHeader();
@@ -242,7 +244,6 @@ void CodecAac::StreamInitialise()
 void CodecAac::StreamCompleted()
 {
     LOG(kCodec, "CodecAac::StreamCompleted\n");
-    delete iMp4;
 }
 
 TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -256,12 +257,12 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
         sampleInSeekTable /= divisor;
     }
 
-    TUint64 bytes = iMp4->GetSeekTable().Offset(sampleInSeekTable, startSample);     // find file offset relating to given audio sample
+    TUint64 bytes = iSeekTable.Offset(sampleInSeekTable, startSample);     // find file offset relating to given audio sample
     LOG(kCodec, "CodecAac::Seek to sample: %llu, byte: %llu\n", startSample, bytes);
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iTotalSamplesOutput = aSample;
-        iCurrentSample = startSample;
+        iCurrentSample = static_cast<TUint>(startSample);
         iTrackOffset = (Jiffies::kPerSecond/iOutputSampleRate)*aSample;
 
         iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
@@ -283,32 +284,32 @@ void CodecAac::Process()
 
 void CodecAac::ProcessMpeg4() 
 {
-    //LOG(kCodec, "CodecAac::Process\n");
-    if (iCurrentSample < iMp4->GetSampleSizeTable().Count()) {
+    LOG(kCodec, "CodecAac::Process\n");
+    if (iCurrentSample < iSampleSizeTable.Count()) {
 
-        // read in a single aac sample
+        // Read in a single aac sample.
         iInBuf.SetBytes(0);
 
         try {
-            //LOG(kCodec, "CodecAac::Process  sample = %u, size = %u, inBuf max size %u\n", iCurrentSample, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample), iInBuf.MaxBytes());
-            TUint sampleSize = iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample);
+            LOG(kCodec, "CodecAac::Process  iCurrentSample: %u, size: %u, inBuf.MaxBytes(): %u\n", iCurrentSample, iSampleSizeTable.SampleSize(iCurrentSample), iInBuf.MaxBytes());
+            TUint sampleSize = iSampleSizeTable.SampleSize(iCurrentSample);
             iController->Read(iInBuf, sampleSize);
-            //LOG(kCodec, "CodecAac::Process  read iInBuf.Bytes() = %u\n", iInBuf.Bytes());
+            LOG(kCodec, "CodecAac::Process  read iInBuf.Bytes() = %u\n", iInBuf.Bytes());
             if (iInBuf.Bytes() < sampleSize) {
                 THROW(CodecStreamEnded);
             }
             iCurrentSample++;
 
-            // now decode and output
+            // Now decode and output
             DecodeFrame(false);
         }
         catch (CodecStreamStart&) {
             iNewStreamStarted = true;
-            //LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamStart\n");
+            LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamStart\n");
         }
         catch (CodecStreamEnded&) {
             iStreamEnded = true;
-            //LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamEnded\n");
+            LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamEnded\n");
         }
     }
     else {

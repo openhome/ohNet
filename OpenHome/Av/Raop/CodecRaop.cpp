@@ -52,18 +52,28 @@ void CodecRaop::StreamInitialise()
 {
     LOG(kCodec, "CodecRaop::StreamInitialise\n");
 
-    iContainer = new Mpeg4MediaInfoBase(*iController);
-    try {
-        iContainer->Process();
-    }
-    catch (MediaMpeg4EndOfData&) {
-        THROW(CodecStreamEnded);
-    }
-    catch (MediaMpeg4FileInvalid&) {
-        THROW(CodecStreamCorrupt);
-    }
-
     CodecAlacBase::Initialise();
+
+    ProcessHeader();
+
+    iInBuf.SetBytes(0);
+    alac = create_alac(iBitDepth, iChannels);
+
+    // FIXME - use iInBuf here instead of local stack buffer?
+    Bws<IMpeg4InfoWritable::kMaxStreamDescriptorBytes> streamDescriptor;
+    static const TUint kStreamDescriptorIgnoreBytes = 20; // First 20 bytes are ignored by decoder.
+    streamDescriptor.SetBytes(kStreamDescriptorIgnoreBytes);
+    streamDescriptor.Append(iCodecSpecificData);
+
+    alac_set_info(alac, (char*)streamDescriptor.Ptr()); // Configure decoder.
+
+    iBytesPerSample = iChannels*iBitDepth / 8;
+    iSamplesWrittenTotal = 0;
+    iTrackLengthJiffies = 0;// (iDuration * Jiffies::kPerSecond) / iTimescale;
+
+
+    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    iController->OutputDecodedStream(0, iBitDepth, iTimescale, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecRaop::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -108,4 +118,77 @@ void CodecRaop::Process()
     }
 
     OutputFinal();
+}
+
+void CodecRaop::ProcessHeader()
+{
+    LOG(kMedia, "Checking for Raop container\n");
+
+    try {
+        Bws<60> data;
+        iController->Read(data, 4);
+
+        LOG(kMedia, "data %x {", data[0]);
+        LOG(kMedia, data);
+        LOG(kMedia, "}\n");
+
+        if (data != Brn("Raop")) {
+            THROW(MediaCodecRaopNotFound);  // FIXME - CodecStreamCorrupt
+        }
+
+        // If RAOP is only used by alac, why bother going to extra lengths and creating a pseudo-identifier?
+        //aSelector.iCodecContainer->SetName(Brn("alas"));  // this is used for codec recognition - streamed alac
+
+        // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
+        // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
+        // first read the number of bytes in for the fmtp
+        data.SetBytes(0);
+        iController->Read(data, 4);
+        TUint bytes = Ascii::Uint(data);    // size of fmtp string
+        data.SetBytes(0);
+        iController->Read(data, bytes);
+        Parser fmtp(data);
+
+        LOG(kMedia, "fmtp [");
+        LOG(kMedia, fmtp.NextLine());
+        LOG(kMedia, "]\n");
+
+        fmtp.Set(data);
+        iCodecSpecificData.SetBytes(0);
+
+        try {
+            WriterBuffer writerBuf(iCodecSpecificData);
+            WriterBinary writerBin(writerBuf);
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // ?
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // max_samples_per_frame
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // 7a
+
+            iBitDepth = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // bit depth
+            writerBin.WriteUint8(static_cast<TUint8>(iBitDepth));
+
+            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_historymult
+            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_initialhistory
+            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_kmodifier
+
+            iChannels = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // 7f - I think that this is channels
+            writerBin.WriteUint8(static_cast<TUint8>(iChannels));
+
+            writerBin.WriteUint16Be(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));       // 80
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // 82
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // 86
+
+            TUint rate = Ascii::Uint(fmtp.NextLine());
+            iTimescale = rate;
+            writerBin.WriteUint32Be(rate); // parsed fmtp data to be passed to alac decoder
+        }
+        catch (AsciiError&) {
+            THROW(MediaCodecRaopNotFound);
+        }
+        data.SetBytes(bytes);
+
+        LOG(kMedia, "Mpeg4MediaInfoBase RAOP header found %d bytes\n", bytes);
+    }
+    catch (CodecStreamCorrupt&) {   // FIXME - can this actually be thrown from operations in here?
+        THROW(MediaCodecRaopNotFound); // not enough data found to be Raop container
+    }
 }
