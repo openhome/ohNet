@@ -6,7 +6,6 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/Av/FaultCode.h>
 #include <OpenHome/Private/Printer.h>
 
 #include <climits>

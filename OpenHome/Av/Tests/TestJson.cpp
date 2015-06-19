@@ -1,5 +1,5 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Av/Json.h>
+#include <OpenHome/Av/Utils/Json.h>
 #include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;

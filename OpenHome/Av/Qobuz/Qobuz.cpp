@@ -13,7 +13,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/md5.h>
-#include <OpenHome/Av/Json.h>
+#include <OpenHome/Av/Utils/Json.h>
 
 #include <algorithm>
 #include <vector>

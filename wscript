@@ -254,7 +254,7 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
-                'OpenHome/Av/FaultCode.cpp',
+                'OpenHome/Av/Utils/FaultCode.cpp',
                 'OpenHome/Av/KvpStore.cpp',
                 'OpenHome/Av/ProviderUtils.cpp',
                 'OpenHome/Av/Product.cpp',
@@ -269,7 +269,8 @@ def build(bld):
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
-                'OpenHome/Av/Json.cpp',
+                'OpenHome/Av/Utils/Json.cpp',
+                'OpenHome/Av/Utils/FormUrl.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
                 'OpenHome/PowerManager.cpp',
                 'OpenHome/Av/Credentials.cpp',

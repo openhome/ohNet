@@ -4,7 +4,7 @@
 #include <OpenHome/Av/ProviderProduct.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
-#include <OpenHome/Av/FaultCode.h>
+#include <OpenHome/Av/Utils/FaultCode.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;

@@ -4,7 +4,6 @@
 #include <Generated/DvAvOpenhomeOrgPlaylist1.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Av/FaultCode.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
