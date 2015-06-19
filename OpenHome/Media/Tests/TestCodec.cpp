@@ -270,20 +270,34 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
     const TUint maxReservoirEncodedAudio = (kEncodedReservoirSizeBytes + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes;
     iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
-    iContainer = new Container(*iMsgFactory, *iReservoir);
-    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream, *this, kPriorityNormal);
+    iLoggerEncodedAudioReservoir = new Logger(*iReservoir, "Encoded Audio Reservoir");
+    iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
+    iLoggerContainer = new Logger(*iContainer, "Codec Container");
+    iLoggerCodecController = new Logger("Codec Controller", *iElementDownstream);
+    iController = new CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, kPriorityNormal);
     iFiller = new TestCodecFiller(aEnv, *iReservoir, *iMsgFactory, *iFlushIdProvider, *iInfoAggregator);
+
+    //iLoggerEncodedAudioReservoir->SetEnabled(true);
+    //iLoggerContainer->SetEnabled(true);
+    //iLoggerCodecController->SetEnabled(true);
+
+    //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
+    //iLoggerContainer->SetFilter(Logger::EMsgAll);
+    //iLoggerCodecController->SetFilter(Logger::EMsgAll);
 }
 
 TestCodecMinimalPipeline::~TestCodecMinimalPipeline()
 {
     delete iFiller;
-    delete iFlushIdProvider;
     delete iController;
+    delete iLoggerCodecController;
+    delete iLoggerContainer;
     delete iContainer;
-    delete iMsgFactory;
+    delete iLoggerEncodedAudioReservoir;
     delete iReservoir;
     delete iElementDownstream;
+    delete iFlushIdProvider;
+    delete iMsgFactory;
     delete iInfoAggregator;
 }
 

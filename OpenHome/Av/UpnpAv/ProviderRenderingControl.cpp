@@ -4,7 +4,6 @@
 #include <Generated/DvUpnpOrgRenderingControl1.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Av/FaultCode.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Av/VolumeManager.h>
 

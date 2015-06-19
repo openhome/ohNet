@@ -151,6 +151,9 @@ private:
     MsgFactory* iMsgFactory;
     TestCodecPipelineElementDownstream* iElementDownstream;
     EncodedAudioReservoir* iReservoir;
+    Logger* iLoggerEncodedAudioReservoir;
+    Logger* iLoggerContainer;
+    Logger* iLoggerCodecController;
     TestCodecFlushIdProvider* iFlushIdProvider;
     TestCodecFiller* iFiller;
 };

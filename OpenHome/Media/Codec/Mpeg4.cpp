@@ -546,27 +546,29 @@ TUint SeekTable::SamplesPerChunk(TUint aChunkIndex) const
 
 TUint SeekTable::StartSample(TUint aChunkIndex) const
 {
+    // NOTE: chunk indexes passed in start from 0, but chunks referenced within seek table start from 1.
     TUint startSample = 0;
+    const TUint desiredChunk = aChunkIndex+1;
+    TUint prevFirstChunk = 1;
+    TUint prevSamples = 0;
     for (TUint i=0; i<iSamplesPerChunk.size(); i++) {
-        if ((i<iSamplesPerChunk.size()-1 && iSamplesPerChunk[i+1].iFirstChunk > aChunkIndex+1) || (i == iSamplesPerChunk.size()-1 && iSamplesPerChunk[i].iFirstChunk < aChunkIndex+1)) {
-            // Did a check of next entry, and chunk appears somewhere in current entry.
-            // OR
-            // At last entry, and chunk appears somewhere within current entry.
-            const TUint offset = aChunkIndex+1 - iSamplesPerChunk[i].iFirstChunk;
-            startSample += iSamplesPerChunk[i].iSamples*offset;
-            return startSample;
+        const TUint nextFirstChunk = iSamplesPerChunk[i].iFirstChunk;
+        const TUint nextSamples = iSamplesPerChunk[i].iSamples;
+
+        // Desired chunk was within last chunk range.
+        if (nextFirstChunk >= desiredChunk) {
+            const TUint chunkDiff = desiredChunk - prevFirstChunk;
+            startSample += chunkDiff*prevSamples;
+            break;
         }
-        else if (iSamplesPerChunk[i].iFirstChunk == aChunkIndex+1) {
-            // Chunk start at this entry.
-            return startSample;
-        }
-        else {
-            // Chunk is not within this entry; increment startSample and continue.
-            startSample += iSamplesPerChunk[i].iSamples;
-        }
+
+        const TUint chunkDiff = nextFirstChunk - prevFirstChunk;
+        startSample += chunkDiff*prevSamples;
+        prevFirstChunk = nextFirstChunk;
+        prevSamples = nextSamples;
     }
-    ASSERTS();
-    return 0;
+
+    return startSample;
 }
 
 TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
@@ -984,6 +986,7 @@ void Mpeg4Container::Clear()
     iBoxStack.Reset();
     iPos = 0;
     iBuf.SetBytes(0);
+    iPreProcessingComplete = false;
     iMetadataRetrieved = false;
     iChunkIndex = 0;
     iChunkBytesRemaining = 0;
@@ -1007,7 +1010,7 @@ MsgAudioEncoded* Mpeg4Container::Process()
 
     MsgAudioEncoded* msgOut = NULL;
 
-    if (!iMetadataRetrieved) {
+    if (!iPreProcessingComplete) {
         try {
             // Start reading boxes. First should be ftyp.
             Mpeg4Box boxFtyp;
@@ -1030,13 +1033,15 @@ MsgAudioEncoded* Mpeg4Container::Process()
                 }
                 else if (box.Id() == Brn("mdat")) {
                     if (!iMetadataRetrieved) {
-                        // Not yet encountered metadata (moov) box.
-                        // Do out-of-band read to get moov box.
-                        Bws<1024> buf;
-                        ReaderBuffer reader(buf);
-                        //const TUint metadataSize = box.Size();
-                        ParseMetadataBox(reader, box.Size()); // Exception thrown if invalid/EoS.
-                        iMetadataRetrieved = true;
+                        break;
+
+                        //// Not yet encountered metadata (moov) box.
+                        //// Do out-of-band read to get moov box.
+                        //Bws<1024> buf;
+                        //ReaderBuffer reader(buf);
+                        ////const TUint metadataSize = box.Size();
+                        //ParseMetadataBox(reader, box.Size()); // Exception thrown if invalid/EoS.
+                        //iMetadataRetrieved = true;
                     }
 
                     break;
@@ -1062,30 +1067,35 @@ MsgAudioEncoded* Mpeg4Container::Process()
 
         }
 
-        ASSERT(iMetadataRetrieved);
-        // FIXME - can probably do this in metadata helper method.
-        Mpeg4Info info(iCodec, iSampleRate, iTimescale, iChannels, iBitDepth, iDuration, iStreamDescriptor);
-        Mpeg4InfoWriter writer(info);
-        Bws<Mpeg4InfoWriter::kMaxBytes> infoBuf;
-        WriterBuffer writerBuf(infoBuf);
-        writer.Write(writerBuf);
+        // If metadata has been retrieved, construct (one or more) MsgAudioEncoded
+        // containing a custom header for codec recognition/initialisation.
+        if (iMetadataRetrieved) {
+            // FIXME - can probably do this in metadata helper method.
+            Mpeg4Info info(iCodec, iSampleRate, iTimescale, iChannels, iBitDepth, iDuration, iStreamDescriptor);
+            Mpeg4InfoWriter writer(info);
+            Bws<Mpeg4InfoWriter::kMaxBytes> infoBuf;
+            WriterBuffer writerBuf(infoBuf);
+            writer.Write(writerBuf);
 
-        // Need to create MsgAudioEncoded w/ data for codec.
-        MsgAudioEncoded* msgInfo = iMsgFactory->CreateMsgAudioEncoded(infoBuf);
-        // Then, need to return this msg from Process(MsgAudioEncoded*) so that it is output,
-        // and doesn't interfere with audio cached in iAudioEncoded.
-        msgOut = msgInfo;
+            // Need to create MsgAudioEncoded w/ data for codec.
+            MsgAudioEncoded* msgInfo = iMsgFactory->CreateMsgAudioEncoded(infoBuf);
+            // Then, need to return this msg from Process(MsgAudioEncoded*) so that it is output,
+            // and doesn't interfere with audio cached in iAudioEncoded.
+            msgOut = msgInfo;
 
-        // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
-        MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
-        ASSERT(msgSampleSizeTable != NULL);
-        msgOut->Add(msgSampleSizeTable);
+            // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
+            MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
+            ASSERT(msgSampleSizeTable != NULL);
+            msgOut->Add(msgSampleSizeTable);
 
-        // Write seek table so that codec can determine correct byte position that it should request to seek to.
-        // FIXME - there should be no need for a codec to know this, but IStreamHandler requires seek position in bytes, for which SeekTable is required.
-        MsgAudioEncoded* msgSeekTable = WriteSeekTable();
-        ASSERT(msgSeekTable != NULL);
-        msgOut->Add(msgSeekTable);
+            // Write seek table so that codec can determine correct byte position that it should request to seek to.
+            // FIXME - there should be no need for a codec to know this, but IStreamHandler requires seek position in bytes, for which SeekTable is required.
+            MsgAudioEncoded* msgSeekTable = WriteSeekTable();
+            ASSERT(msgSeekTable != NULL);
+            msgOut->Add(msgSeekTable);
+        }
+
+        iPreProcessingComplete = true;
     }
 
 
@@ -1133,6 +1143,9 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
 {
     MsgAudioEncoded* msg = NULL;
     // Output audio chunk-by-chunk.
+
+    // Will not output anything if metadata has been processed.
+    // (SeekTable::ChunkCount() will be 0, so all audio should be discarded).
     while (iChunkIndex < iSeekTable.ChunkCount() && iAudioEncoded != NULL) {
 
         // Are we at the start of the next chunk?
