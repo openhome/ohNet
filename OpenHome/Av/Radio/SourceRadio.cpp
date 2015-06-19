@@ -162,7 +162,9 @@ void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
             iTrack->RemoveRef();
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData);
-        iPipeline.StopPrefetch(iUriProvider.Mode(), iTrack->Id());
+        if (iTrack != NULL) {
+            iPipeline.StopPrefetch(iUriProvider.Mode(), iTrack->Id());
+        }
     }
 }
 
