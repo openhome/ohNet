@@ -546,27 +546,29 @@ TUint SeekTable::SamplesPerChunk(TUint aChunkIndex) const
 
 TUint SeekTable::StartSample(TUint aChunkIndex) const
 {
+    // NOTE: chunk indexes passed in start from 0, but chunks referenced within seek table start from 1.
     TUint startSample = 0;
+    const TUint desiredChunk = aChunkIndex+1;
+    TUint prevFirstChunk = 1;
+    TUint prevSamples = 0;
     for (TUint i=0; i<iSamplesPerChunk.size(); i++) {
-        if ((i<iSamplesPerChunk.size()-1 && iSamplesPerChunk[i+1].iFirstChunk > aChunkIndex+1) || (i == iSamplesPerChunk.size()-1 && iSamplesPerChunk[i].iFirstChunk < aChunkIndex+1)) {
-            // Did a check of next entry, and chunk appears somewhere in current entry.
-            // OR
-            // At last entry, and chunk appears somewhere within current entry.
-            const TUint offset = aChunkIndex+1 - iSamplesPerChunk[i].iFirstChunk;
-            startSample += iSamplesPerChunk[i].iSamples*offset;
-            return startSample;
+        const TUint nextFirstChunk = iSamplesPerChunk[i].iFirstChunk;
+        const TUint nextSamples = iSamplesPerChunk[i].iSamples;
+
+        // Desired chunk was within last chunk range.
+        if (nextFirstChunk >= desiredChunk) {
+            const TUint chunkDiff = desiredChunk - prevFirstChunk;
+            startSample += chunkDiff*prevSamples;
+            break;
         }
-        else if (iSamplesPerChunk[i].iFirstChunk == aChunkIndex+1) {
-            // Chunk start at this entry.
-            return startSample;
-        }
-        else {
-            // Chunk is not within this entry; increment startSample and continue.
-            startSample += iSamplesPerChunk[i].iSamples;
-        }
+
+        const TUint chunkDiff = nextFirstChunk - prevFirstChunk;
+        startSample += chunkDiff*prevSamples;
+        prevFirstChunk = nextFirstChunk;
+        prevSamples = nextSamples;
     }
-    ASSERTS();
-    return 0;
+
+    return startSample;
 }
 
 TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
