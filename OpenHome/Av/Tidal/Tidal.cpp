@@ -9,8 +9,8 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Av/Utils/FormUrl.h>
 
 #include <algorithm>
 
@@ -220,9 +220,9 @@ TBool Tidal::TryLoginLocked()
         Bws<280> reqBody(Brn("username="));
         WriterBuffer writer(reqBody);
         iLockConfig.Wait();
-        FormUrlEncode(writer, iUsername);
+        FormUrl::Encode(writer, iUsername);
         reqBody.Append(Brn("&password="));
-        FormUrlEncode(writer, iPassword);
+        FormUrl::Encode(writer, iPassword);
         iLockConfig.Signal();
 
         Bws<128> pathAndQuery("/v1/login/username?token=");
@@ -434,23 +434,4 @@ void Tidal::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
     iLockConfig.Wait();
     iSoundQuality = std::min(aKvp.Value(), iMaxSoundQuality);
     iLockConfig.Signal();
-}
-
-void Tidal::FormUrlEncode(IWriter& aWriter, const Brx& aSrc)
-{ // static
-    const TUint bytes = aSrc.Bytes();
-    for (TUint i=0; i<bytes; i++) {
-        TChar ch = aSrc[i];
-        if (Ascii::IsAlphabetic(ch) || Ascii::IsDigit(ch)) {
-            aWriter.Write(ch);
-        }
-        else if (ch == ' ') {
-            aWriter.Write('+');
-        }
-        else {
-            aWriter.Write('%');
-            WriterAscii writerAscii(aWriter);
-            writerAscii.WriteHex(static_cast<TByte>(ch));
-        }
-    }
 }

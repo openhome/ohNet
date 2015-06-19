@@ -4,7 +4,7 @@
 #include <Generated/DvAvOpenhomeOrgConfiguration1.h>
 #include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Configuration/ConfigManager.h>
-#include <OpenHome/Av/Json.h>
+#include <OpenHome/Av/Utils/Json.h>
 
 namespace OpenHome {
 namespace Configuration {

@@ -16,6 +16,6 @@ tags
 # PyCharm project files
 /.idea
 
-# Visual Studio project files
-.depproj
-project.sln
+# waf auto-generated Visual Studio solution
+project.*
+.depproj/

@@ -13,7 +13,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/md5.h>
-#include <OpenHome/Av/Json.h>
+#include <OpenHome/Av/Utils/Json.h>
 
 #include <algorithm>
 #include <vector>
@@ -47,9 +47,15 @@ Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICrede
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 
-    const int arr[] = {5, 6};
+    const int arr[] = {5, 6, 7, 27};
+    /* 'arr' above describes the highest possible quality of a Qobuz stream
+         5:  320kbps AAC
+         6:  FLAC 16-bit, 44.1kHz
+         7:  FLAC 24-bit, up to 96kHz
+        27:  FLAC 24-bit, up to 192kHz
+    */
     std::vector<TUint> qualities(arr, arr + sizeof(arr)/sizeof(arr[0]));
-    iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 6);
+    iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 27);
     iSubscriberIdQuality = iConfigQuality->Subscribe(MakeFunctorConfigChoice(*this, &Qobuz::QualityChanged));
 }
 

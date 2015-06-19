@@ -54,7 +54,6 @@ private:
     static Brn ReadInt(ReaderUntil& aReader, const Brx& aTag);
     static Brn ReadString(ReaderUntil& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
-    static void FormUrlEncode(IWriter& aWriter, const Brx& aSrc);
 private:
     Mutex iLock;
     Mutex iLockConfig;
