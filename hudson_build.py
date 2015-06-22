@@ -42,7 +42,8 @@ class PostActions():
         self.__remote_tests('test-rpi.linn.co.uk', 'test', type, release)
 
     def ppc32_tests(self,type,release):
-        self.__remote_tests('slave-linux-ppc.linn.co.uk', 'test', type, release)
+        #self.__remote_tests('slave-linux-ppc.linn.co.uk', 'test', type, release)
+        pass
 
     # TODO
     def mipsel_tests(self,type,release):
