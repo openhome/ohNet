@@ -773,7 +773,7 @@ void DviSessionUpnp::Subscribe()
         return;
     }
 
-    if (!iHeaderCallback.Received() || !iHeaderNt.Received() || !iHeaderTimeout.Received()) {
+    if (!iHeaderCallback.Received() || !iHeaderNt.Received()) {
         Error(HttpStatus::kPreconditionFailed);
     }
     DviDevice* device;
@@ -782,7 +782,7 @@ void DviSessionUpnp::Subscribe()
     if (device == NULL || service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
-    TUint duration = iHeaderTimeout.Timeout();
+    TUint duration = (iHeaderTimeout.Received()? iHeaderTimeout.Timeout() : iDvStack.Env().InitParams()->DvMaxUpdateTimeSecs());
     Brh sid;
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri(), iReaderRequest->Version());
