@@ -899,8 +899,6 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
         iWriter.Write(xmlExtension);
     }
 
-    WritePresentationUrlTag(aAdapter);
-
     WriteTag("friendlyName", "FriendlyName", eTagMandatory);
     WriteTag("manufacturer", "Manufacturer", eTagMandatory);
     WriteTag("manufacturerURL", "ManufacturerUrl", eTagOptional);
@@ -975,6 +973,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
         }
         iWriter.Write("</deviceList>");
     }
+    WritePresentationUrlTag(aAdapter);
     iWriter.Write("</device>");
     if (iDeviceUpnp.iDevice.IsRoot()) {
         iWriter.Write("</root>");
