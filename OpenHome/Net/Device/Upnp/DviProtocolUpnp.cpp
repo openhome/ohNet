@@ -1097,10 +1097,12 @@ void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const 
         aWriter.Write("<name>");
         aWriter.Write(action->Name());
         aWriter.Write("</name>");
-        aWriter.Write("<argumentList>");
-        WriteServiceActionParams(aWriter, *action, true);
-        WriteServiceActionParams(aWriter, *action, false);
-        aWriter.Write("</argumentList>");
+        if (action->InputParameters().size() > 0 || action->OutputParameters().size() > 0) {
+            aWriter.Write("<argumentList>");
+            WriteServiceActionParams(aWriter, *action, true);
+            WriteServiceActionParams(aWriter, *action, false);
+            aWriter.Write("</argumentList>");
+        }
         aWriter.Write("</action>");
     }
     aWriter.Write("</actionList>");
