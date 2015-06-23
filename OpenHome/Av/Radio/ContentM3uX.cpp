@@ -51,6 +51,10 @@ private: // from ContentProcessor
     void Reset() override;
     Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
 private:
+    void CacheUri(const Brx& aResource);
+    void StoreHlsUriAbsolute(const Uri& aUri);
+    void StoreHlsUriRelative(const Uri& aUri, const Brx& aResource);
+private:
     ReaderUntil* iReaderUntil;
     Uri iUriPlaylist;
     Uri iUriHls;
@@ -179,50 +183,7 @@ ProtocolStreamResult ContentM3uX::Stream(IReader& aReader, TUint64 aTotalBytes)
                 }
             }
             else if (iCacheNextUri) {
-                // Check to see if URL is absolute.
-                Uri absoluteUri;
-                try {
-                    absoluteUri.Replace(line);
-                }
-                catch (UriError&) {
-                    // Not an absolute URL.
-                }
-
-                // Currently only support HTTP (not HTTPS).
-                // Fail here if non-HTTP stream discovered as, due to custom
-                // URI that is sent, it would be impossible to easily detect in
-                // other components that the fault was an unsupported URI.
-                try {
-                    Bws<Uri::kMaxUriBytes> uri("hls");
-                    if (absoluteUri.AbsoluteUri().Bytes() > 0) {
-                        if (Ascii::CaseInsensitiveEquals(absoluteUri.Scheme(), kSchemeHttp)) { // Only support HTTP.
-                            const TUint offset = absoluteUri.Scheme().Bytes();
-                            uri.Append(absoluteUri.AbsoluteUri().Ptr()+offset, absoluteUri.AbsoluteUri().Bytes()-offset);
-                            iUriHls.Replace(uri);
-                        }
-                    }
-                    else {
-                        if (Ascii::CaseInsensitiveEquals(iUriPlaylist.Scheme(), kSchemeHttp)) { // Playlist URI should have "http" prefix.
-                            // Uri::Replace(aBaseUri, aRelativeUri) expects aBaseUri to have been stripped, so do that here.
-                            const TUint offset = iUriPlaylist.Scheme().Bytes();
-                            const Brn tail(iUriPlaylist.AbsoluteUri().Ptr()+offset, iUriPlaylist.AbsoluteUri().Bytes()-offset);
-                            //uri.Append("://");
-                            Parser p(tail);
-                            while (!p.Finished()) {
-                                const Brn next = p.Next('/');
-                                if (!p.Finished()) {
-                                    uri.Append(next);
-                                    uri.Append('/');
-                                }
-                            }
-                            iUriHls.Replace(uri, line);
-                        }
-                    }
-                }
-                catch (UriError&) {
-                    iUriHls.Clear();
-                }
-                iCacheNextUri = false;
+                CacheUri(line);
             }
         }
     }
@@ -261,4 +222,63 @@ ProtocolStreamResult ContentM3uX::Stream(IReader& aReader, TUint64 aTotalBytes)
         return EProtocolStreamSuccess;
     }
     return EProtocolStreamErrorUnrecoverable;
+}
+
+void ContentM3uX::CacheUri(const Brx& aResource)
+{
+    // Check to see if URL is absolute.
+    Uri absoluteUri;
+    try {
+        absoluteUri.Replace(aResource);
+    }
+    catch (UriError&) {
+        // Not an absolute URL.
+    }
+
+    // Currently only support HTTP (not HTTPS).
+    // Fail here if non-HTTP stream discovered as, due to custom
+    // URI that is sent, it would be impossible to easily detect in
+    // other components that the fault was an unsupported URI.
+    try {
+        if (absoluteUri.AbsoluteUri().Bytes() > 0) {
+            if (Ascii::CaseInsensitiveEquals(absoluteUri.Scheme(), kSchemeHttp)) {
+                StoreHlsUriAbsolute(absoluteUri);
+            }
+        }
+        else {
+            if (Ascii::CaseInsensitiveEquals(iUriPlaylist.Scheme(), kSchemeHttp)) {
+                StoreHlsUriRelative(iUriPlaylist, aResource);
+            }
+        }
+    }
+    catch (UriError&) {
+        iUriHls.Clear();
+    }
+    iCacheNextUri = false;
+}
+
+void ContentM3uX::StoreHlsUriAbsolute(const Uri& aUri)
+{
+    Bws<Uri::kMaxUriBytes> uri("hls");
+    const TUint offset = aUri.Scheme().Bytes();
+    uri.Append(aUri.AbsoluteUri().Ptr()+offset, aUri.AbsoluteUri().Bytes()-offset);
+    iUriHls.Replace(uri);
+}
+
+void ContentM3uX::StoreHlsUriRelative(const Uri& aUri, const Brx& aResource)
+{
+    Bws<Uri::kMaxUriBytes> uri("hls");
+    // Uri::Replace(aBaseUri, aRelativeUri) expects aBaseUri to have been stripped, so do that here.
+    const TUint offset = aUri.Scheme().Bytes();
+    const Brn tail(aUri.AbsoluteUri().Ptr()+offset, aUri.AbsoluteUri().Bytes()-offset);
+    //uri.Append("://");
+    Parser p(tail);
+    while (!p.Finished()) {
+        const Brn next = p.Next('/');
+        if (!p.Finished()) {
+            uri.Append(next);
+            uri.Append('/');
+        }
+    }
+    iUriHls.Replace(uri, aResource);
 }
