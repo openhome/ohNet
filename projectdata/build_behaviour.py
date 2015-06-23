@@ -63,7 +63,7 @@ from ci import (
         get_vsvars_environment, fetch_dependencies, python, scp)
 import platform
 
-require_version(36)
+require_version(51)
 
 
 # Command-line options. See documentation for Python's optparse module.

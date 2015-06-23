@@ -297,6 +297,7 @@ private:
     //TUint iSize;
     TUint64 iPos;
     Bws<kMaxBufBytes> iBuf;
+    TBool iPreProcessingComplete;
     TBool iMetadataRetrieved;
     TUint iChunkIndex;
     TUint iChunkBytesRemaining;
