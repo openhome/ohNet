@@ -524,14 +524,19 @@ void SuiteM3uX::TestRecognise()
     // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
     // https://developer.apple.com/library/ios/technotes/tn2288/_index.html#//apple_ref/doc/uid/DTS40012238-CH1-BASIC_VARIANT_PLAYLIST
 
+    static const Brn kPlaylistUri("http://example.com/playlist");
+
+    // invalid URI
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/x-mpegurl"), Brx::Empty()) == false);
+
     // recognition by MIME type
-    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/x-mpegurl"), Brx::Empty()));
-    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/vnd.apple.mpegurl"), Brx::Empty()));
+    TEST(iProcessor->Recognise(kPlaylistUri, Brn("application/x-mpegurl"), Brx::Empty()));
+    TEST(iProcessor->Recognise(kPlaylistUri, Brn("application/vnd.apple.mpegurl"), Brx::Empty()));
 
     // recognition fails for bad MIME
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/x-mpegurl"), Brx::Empty()));
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/mpegurl"), Brx::Empty()));
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(kPlaylistUri, Brn("audio/x-mpegurl"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(kPlaylistUri, Brn("audio/mpegurl"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(kPlaylistUri, Brn("audio/foobar"), Brx::Empty()));
 
     static const TChar* kFile1 =
         "#EXTM3U\n"
@@ -546,16 +551,16 @@ void SuiteM3uX::TestRecognise()
 
     // recognition by MIME type + content
     Brn content(kFile1);
-    TEST(iProcessor->Recognise(Brx::Empty(), Brn("application/x-mpegurl"), content));
+    TEST(iProcessor->Recognise(kPlaylistUri, Brn("application/x-mpegurl"), content));
 
     // recognition by content, no MIME
-    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+    TEST(iProcessor->Recognise(kPlaylistUri, Brx::Empty(), content));
 
     // good content, bad MIME
-    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
+    TEST(iProcessor->Recognise(kPlaylistUri, Brn("audio/foobar"), content));
 
     // bad content, bad MIME
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("playlist")));
+    TEST(!iProcessor->Recognise(kPlaylistUri, Brn("audio/foobar"), Brn("playlist")));
 
     static const TChar* kFile2 =
         "#EXTM3U\r\n"
@@ -569,7 +574,7 @@ void SuiteM3uX::TestRecognise()
         "http://example.com/audio-only.m3u8\r\n";
     // content with dos line endings
     content.Set(kFile2);
-    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+    TEST(iProcessor->Recognise(kPlaylistUri, Brx::Empty(), content));
 
 
     // Should fail to recognise standard M3U file.
@@ -582,12 +587,14 @@ void SuiteM3uX::TestRecognise()
         "#EXTINF:321,Example title\n"
         "C:\\Documents and Settings\\I\\My Music\\Greatest Hits\\Example.ogg";
     content.Set(kFile3);
-    TEST(!iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+    TEST(!iProcessor->Recognise(kPlaylistUri, Brx::Empty(), content));
 }
 
 void SuiteM3uX::TestParse()
 {
     iInterruptBytes = 0;
+    static const Brn kPlaylistUri("http://example.com/playlist");
+    static const Brn kMimeType("application/x-mpegurl");
 
     // standard file with unix line endings and desired stream first
     static const TChar* kFile1 =
@@ -606,6 +613,7 @@ void SuiteM3uX::TestParse()
     iExpectedStreams = expected1;
     iIndex = 0;
     iNextResult = EProtocolStreamSuccess;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 1);
 
@@ -628,6 +636,7 @@ void SuiteM3uX::TestParse()
     iExpectedStreams = expected2;
     iReadBuffer->ReadFlush();
     iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 1);
 
@@ -648,6 +657,7 @@ void SuiteM3uX::TestParse()
     iExpectedStreams = expected3;
     iReadBuffer->ReadFlush();
     iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 1);
 
@@ -669,6 +679,7 @@ void SuiteM3uX::TestParse()
     iExpectedStreams = expected1;
     iReadBuffer->ReadFlush();
     iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 1);
 
@@ -689,25 +700,121 @@ void SuiteM3uX::TestParse()
     iFileStream.SetFile(&file5);
     iReadBuffer->ReadFlush();
     iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorUnrecoverable);
+
+    // standard file with unix line endings and desired stream first using https
+    // Don't currently support HTTPS, so should report unsupported.
+    static const TChar* kFile6 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
+        "https://example.com/audio-only.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "https://example.com/low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "https://example.com/mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "https://example.com/hi.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file6(kFile6);
+    iFileStream.SetFile(&file6);
+    const char* expected6[] ={ "hls://example.com/audio-only.m3u8" };
+    iExpectedStreams = expected6;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorUnrecoverable);
+    TEST(iIndex == 0);
+
+    // standard file with unix line endings and desired stream first using relative URIs
+    static const TChar* kFile7 =
+        "#EXTM3U\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=65000,CODECS=\"mp4a.40.5\"\n"
+        "audio-only.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=1280000,AVERAGE-BANDWIDTH=1000000\n"
+        "low.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=2560000,AVERAGE-BANDWIDTH=2000000\n"
+        "mid.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=7680000,AVERAGE-BANDWIDTH=6000000\n"
+        "hi.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file7(kFile7);
+    iFileStream.SetFile(&file7);
+    const char* expected7[] ={ "hls://example.com/audio-only.m3u8" };
+    iExpectedStreams = expected7;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // standard file with unix line endings, multiple viable codecs and desired stream first
+    static const TChar* kFile8 =
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:2\n"
+        "## Arbitrary comment\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=339200, CODECS=\"mp4a.40.2\"\n"
+        "audio=320000.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=135680, CODECS=\"mp4a.40.2\"\n"
+        "audio=128000.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file8(kFile8);
+    iFileStream.SetFile(&file8);
+    const char* expected8[] ={ "hls://example.com/audio=320000.m3u8" };
+    iExpectedStreams = expected8;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+
+    // standard file with unix line endings, multiple viable codecs and desired stream last
+    static const TChar* kFile9 =
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:2\n"
+        "## Arbitrary comment\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=135680, CODECS=\"mp4a.40.2\"\n"
+        "audio=128000.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=339200, CODECS=\"mp4a.40.2\"\n"
+        "audio=320000.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file9(kFile9);
+    iFileStream.SetFile(&file9);
+    const char* expected9[] ={ "hls://example.com/audio=320000.m3u8" };
+    iExpectedStreams = expected9;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
 
     // processor passes on EProtocolStreamStopped errors
     iProcessor->Reset();
     file1.Seek(0);
     iFileStream.SetFile(&file1);
+    iExpectedStreams = expected1;
     iReadBuffer->ReadFlush();
     iIndex = 0;
     iNextResult = EProtocolStreamStopped;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
 
     // interrupt mid-way through then resume
     iProcessor->Reset();
     iReadBuffer->ReadFlush();
+    iExpectedStreams = expected1;
     iFileStream.Seek(0);
     iIndex = 0;
     iNextResult = EProtocolStreamSuccess;
     static const TUint kInterruptBytes = 80; // part way through a [url] line
     iInterruptBytes = kInterruptBytes;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
     iInterrupt = false;
     TEST(iProcessor->Stream(*this, iFileStream.Bytes() - kInterruptBytes) == EProtocolStreamSuccess);
