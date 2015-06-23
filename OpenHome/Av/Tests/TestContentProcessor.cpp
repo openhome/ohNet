@@ -750,24 +750,71 @@ void SuiteM3uX::TestParse()
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
     TEST(iIndex == 1);
 
+    // standard file with unix line endings, multiple viable codecs and desired stream first
+    static const TChar* kFile8 =
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:2\n"
+        "## Arbitrary comment\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=339200, CODECS=\"mp4a.40.2\"\n"
+        "audio=320000.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=135680, CODECS=\"mp4a.40.2\"\n"
+        "audio=128000.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file8(kFile8);
+    iFileStream.SetFile(&file8);
+    const char* expected8[] ={ "hls://example.com/audio=320000.m3u8" };
+    iExpectedStreams = expected8;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+
+    // standard file with unix line endings, multiple viable codecs and desired stream last
+    static const TChar* kFile9 =
+        "#EXTM3U\n"
+        "#EXT-X-VERSION:2\n"
+        "## Arbitrary comment\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=135680, CODECS=\"mp4a.40.2\"\n"
+        "audio=128000.m3u8\n"
+        "#EXT-X-STREAM-INF:BANDWIDTH=339200, CODECS=\"mp4a.40.2\"\n"
+        "audio=320000.m3u8\n";
+
+    iProcessor->Reset();
+    FileBrx file9(kFile9);
+    iFileStream.SetFile(&file9);
+    const char* expected9[] ={ "hls://example.com/audio=320000.m3u8" };
+    iExpectedStreams = expected9;
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
 
     // processor passes on EProtocolStreamStopped errors
     iProcessor->Reset();
     file1.Seek(0);
     iFileStream.SetFile(&file1);
+    iExpectedStreams = expected1;
     iReadBuffer->ReadFlush();
     iIndex = 0;
     iNextResult = EProtocolStreamStopped;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
 
     // interrupt mid-way through then resume
     iProcessor->Reset();
     iReadBuffer->ReadFlush();
+    iExpectedStreams = expected1;
     iFileStream.Seek(0);
     iIndex = 0;
     iNextResult = EProtocolStreamSuccess;
     static const TUint kInterruptBytes = 80; // part way through a [url] line
     iInterruptBytes = kInterruptBytes;
+    iProcessor->Recognise(kPlaylistUri, kMimeType, Brx::Empty());
     TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
     iInterrupt = false;
     TEST(iProcessor->Stream(*this, iFileStream.Bytes() - kInterruptBytes) == EProtocolStreamSuccess);
