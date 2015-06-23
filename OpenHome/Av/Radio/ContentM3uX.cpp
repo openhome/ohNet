@@ -180,53 +180,47 @@ ProtocolStreamResult ContentM3uX::Stream(IReader& aReader, TUint64 aTotalBytes)
             }
             else if (iCacheNextUri) {
                 // Check to see if URL is absolute.
-                TBool absolute = false;
-                TBool supportedScheme = true;
+                Uri absoluteUri;
                 try {
-                    Uri uri;
-                    uri.Replace(line);
-                    absolute = true;
-                    if (!Ascii::CaseInsensitiveEquals(uri.Scheme(), kSchemeHttp)) { // Only support HTTP.
-                        supportedScheme = false;
-                    }
+                    absoluteUri.Replace(line);
                 }
                 catch (UriError&) {
                     // Not an absolute URL.
                 }
 
-                if (supportedScheme) {
-                    // Currently only support HTTP (not HTTPS).
-                    // Fail here if non-HTTP stream discovered as, due to custom
-                    // URI that is sent, it would be impossible to easily detect in
-                    // other components that the fault was an unsupported URI.
-                    try {
-                        Bws<Uri::kMaxUriBytes> uri("hls");
-                        if (absolute) {
-                            const TUint offset = kSchemeHttp.Bytes();
-                            uri.Append(line.Ptr()+offset, line.Bytes()-offset);
+                // Currently only support HTTP (not HTTPS).
+                // Fail here if non-HTTP stream discovered as, due to custom
+                // URI that is sent, it would be impossible to easily detect in
+                // other components that the fault was an unsupported URI.
+                try {
+                    Bws<Uri::kMaxUriBytes> uri("hls");
+                    if (absoluteUri.AbsoluteUri().Bytes() > 0) {
+                        if (Ascii::CaseInsensitiveEquals(absoluteUri.Scheme(), kSchemeHttp)) { // Only support HTTP.
+                            const TUint offset = absoluteUri.Scheme().Bytes();
+                            uri.Append(absoluteUri.AbsoluteUri().Ptr()+offset, absoluteUri.AbsoluteUri().Bytes()-offset);
                             iUriHls.Replace(uri);
                         }
-                        else {
-                            if (Ascii::CaseInsensitiveEquals(iUriPlaylist.Scheme(), kSchemeHttp)) { // Playlist URI should have "http" prefix.
-                                // Uri::Replace(aBaseUri, aRelativeUri) expects aBaseUri to have been stripped, so do that here.
-                                const TUint offset = iUriPlaylist.Scheme().Bytes();
-                                const Brn tail(iUriPlaylist.AbsoluteUri().Ptr()+offset, iUriPlaylist.AbsoluteUri().Bytes()-offset);
-                                //uri.Append("://");
-                                Parser p(tail);
-                                while (!p.Finished()) {
-                                    const Brn next = p.Next('/');
-                                    if (!p.Finished()) {
-                                        uri.Append(next);
-                                        uri.Append('/');
-                                    }
+                    }
+                    else {
+                        if (Ascii::CaseInsensitiveEquals(iUriPlaylist.Scheme(), kSchemeHttp)) { // Playlist URI should have "http" prefix.
+                            // Uri::Replace(aBaseUri, aRelativeUri) expects aBaseUri to have been stripped, so do that here.
+                            const TUint offset = iUriPlaylist.Scheme().Bytes();
+                            const Brn tail(iUriPlaylist.AbsoluteUri().Ptr()+offset, iUriPlaylist.AbsoluteUri().Bytes()-offset);
+                            //uri.Append("://");
+                            Parser p(tail);
+                            while (!p.Finished()) {
+                                const Brn next = p.Next('/');
+                                if (!p.Finished()) {
+                                    uri.Append(next);
+                                    uri.Append('/');
                                 }
-                                iUriHls.Replace(uri, line);
                             }
+                            iUriHls.Replace(uri, line);
                         }
                     }
-                    catch (UriError&) {
-                        iUriHls.Clear();
-                    }
+                }
+                catch (UriError&) {
+                    iUriHls.Clear();
                 }
                 iCacheNextUri = false;
             }
