@@ -84,6 +84,11 @@ Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
     return NULL;
 }
 
+Msg* Pruner::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Pruner::ProcessMsg(MsgDelay* aMsg)
 {
     aMsg->RemoveRef();
@@ -106,6 +111,11 @@ Msg* Pruner::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->RemoveRef();
     return NULL;
+}
+
+Msg* Pruner::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    return aMsg;
 }
 
 Msg* Pruner::ProcessMsg(MsgHalt* aMsg)

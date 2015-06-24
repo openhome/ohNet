@@ -80,6 +80,11 @@ Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Waiter::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Waiter::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -97,6 +102,11 @@ Msg* Waiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
+{
+    return ProcessFlushable(aMsg);
+}
+
+Msg* Waiter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return ProcessFlushable(aMsg);
 }

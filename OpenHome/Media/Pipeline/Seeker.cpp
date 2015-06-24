@@ -102,6 +102,11 @@ Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Seeker::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Seeker::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -124,6 +129,11 @@ Msg* Seeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* Seeker::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
+}
+
+Msg* Seeker::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    return aMsg;
 }
 
 Msg* Seeker::ProcessMsg(MsgHalt* aMsg)

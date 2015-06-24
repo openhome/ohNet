@@ -196,8 +196,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                                  encodedAudioCount, msgEncodedAudioCount,
                                  decodedAudioCount, msgAudioPcmCount, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, perStreamMsgCount,
-                                 perStreamMsgCount, perStreamMsgCount, perStreamMsgCount,
-                                 msgHaltCount, kMsgCountFlush, kMsgCountWait,
+                                 perStreamMsgCount, kMsgCountChangeInput, perStreamMsgCount, perStreamMsgCount,
+                                 perStreamMsgCount, msgHaltCount, kMsgCountFlush, kMsgCountWait,
                                  kMsgCountMode, perStreamMsgCount, perStreamMsgCount, kMsgCountQuit);
     const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
     TUint threadPriority = threadPriorityBase;

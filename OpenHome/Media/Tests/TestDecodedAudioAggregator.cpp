@@ -37,10 +37,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -56,9 +58,11 @@ protected:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgDecodedStream
        ,EMsgAudioPcm
        ,EMsgSilence
@@ -132,7 +136,7 @@ void SuiteDecodedAudioAggregator::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
-    iMsgFactory = new MsgFactory(iInfoAggregator, 400, 400, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 400, 400, 100, 100, 10, 50, 0, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1);
     iDecodedAudioAggregator = new DecodedAudioAggregator(*this, *iMsgFactory);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
@@ -217,6 +221,12 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastReceivedMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgDelay* aMsg)
 {
     iLastReceivedMsg = EMsgDelay;
@@ -239,6 +249,12 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastReceivedMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastReceivedMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

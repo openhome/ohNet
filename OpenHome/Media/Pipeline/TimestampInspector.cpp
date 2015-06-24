@@ -86,6 +86,11 @@ Msg* TimestampInspector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* TimestampInspector::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TimestampInspector::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -103,6 +108,11 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* TimestampInspector::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* TimestampInspector::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

@@ -39,10 +39,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -113,7 +115,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iTrackOffset(0)
     , iBuffering(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kPriorityNormal, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 
@@ -350,6 +352,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* /*aMsg*/)
+{
+    ASSERTS(); // MsgChangeInput not used in this test
+    return NULL;
+}
+
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS(); // MsgDelay not used in this test
@@ -371,6 +379,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // MsgMetaText not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
+{
+    ASSERTS(); // FIXME - missing test cases
     return NULL;
 }
 

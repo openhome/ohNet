@@ -592,6 +592,12 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* CodecController::ProcessMsg(MsgChangeInput* aMsg)
+{
+    Queue(aMsg);
+    return NULL;
+}
+
 Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 {
     if (iRecognising) { // FIXME - why discard during recognition?
@@ -649,6 +655,13 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
+    Queue(aMsg);
+    return NULL;
+}
+
+Msg* CodecController::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iStreamEnded = true;
     Queue(aMsg);
     return NULL;
 }

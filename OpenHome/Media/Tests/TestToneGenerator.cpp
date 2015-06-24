@@ -123,10 +123,12 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -499,7 +501,7 @@ void SuiteGeneratorAny::Setup()
                              kMsgCountEncodedAudio, kMsgCountAudioEncoded,
                              kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                              kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
-                             kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
+                             kMsgCountTrack, 1, kMsgCountDecodedStream, kMsgCountMetaText, 1,
                              kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
                              kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
     iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
@@ -577,6 +579,11 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteGeneratorAny::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* SuiteGeneratorAny::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -597,6 +604,11 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

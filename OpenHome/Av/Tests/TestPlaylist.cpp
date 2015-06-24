@@ -65,10 +65,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -283,6 +285,11 @@ Msg* DummyDriver::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* DummyDriver::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* DummyDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
@@ -302,6 +309,12 @@ Msg* DummyDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* DummyDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
     return NULL;

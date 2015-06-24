@@ -40,10 +40,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -117,7 +119,7 @@ void SuiteAggregator::Setup()
     iTrackOffset = 0;
     iAudioMsgSizeJiffies = kAggregatorJiffies + Jiffies::kPerMs; /* choose a size that doesn't match kAggregatorJiffies
                                                                     to force the Aggregator to do some work */
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iAggregator = new Aggregator(*this, kAggregatorJiffies);
     iLastPulledBytes = iLastPulledJiffies = 0;
     iGeneratedMsgCount = 0;
@@ -344,6 +346,12 @@ Msg* SuiteAggregator::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* SuiteAggregator::ProcessMsg(MsgChangeInput* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* SuiteAggregator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -363,6 +371,12 @@ Msg* SuiteAggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuiteAggregator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

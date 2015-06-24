@@ -84,6 +84,11 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Reporter::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Reporter::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -110,6 +115,11 @@ Msg* Reporter::ProcessMsg(MsgMetaText* aMsg)
     iMsgMetaText = aMsg;
     iMsgMetaText->AddRef();
     iThread->Signal();
+    return aMsg;
+}
+
+Msg* Reporter::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
     return aMsg;
 }
 

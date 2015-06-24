@@ -74,6 +74,11 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* TrackInspector::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TrackInspector::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -98,6 +103,11 @@ Msg* TrackInspector::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* TrackInspector::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

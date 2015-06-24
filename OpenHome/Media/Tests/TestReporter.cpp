@@ -100,7 +100,7 @@ SuiteReporter::SuiteReporter()
     , iSemMetatext("SRS3", 0)
     , iSemTime("SRS4", 0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iReporter = new Reporter(*this, *this, kThreadPriorityReporter-1); // aim for a priority just below thread that runs Reporter
 }

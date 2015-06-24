@@ -48,10 +48,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -66,9 +68,11 @@ private:
         EMsgAudioEncoded
        ,EMsgSession
        ,EMsgTrack
+       //,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       //,EMsgStreamInterrupted
        ,EMsgFlush
        ,EMsgWait
        ,EMsgNone
@@ -130,7 +134,7 @@ SuiteSupplyAggregator::SuiteSupplyAggregator()
     , iLastMsg(EMsgNone)
     , iMsgPushCount(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new SupplyAggregatorBytes(*iMsgFactory, *this);
 }
@@ -252,6 +256,12 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    //iLastMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteSupplyAggregator::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
@@ -313,6 +323,12 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
     TEST(aMsg->MetaText() == Brn(kMetaData));
+    return aMsg;
+}
+
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    //iLastMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

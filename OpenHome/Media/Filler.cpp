@@ -331,6 +331,11 @@ Msg* Filler::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Filler::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Filler::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -350,6 +355,11 @@ Msg* Filler::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* Filler::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Filler::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
