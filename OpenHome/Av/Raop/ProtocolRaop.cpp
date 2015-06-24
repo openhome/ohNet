@@ -722,17 +722,15 @@ void RaopAudio::DecodePacket(TUint /*aSenderSkew*/, TUint /*aLatency*/, Brx& aDa
 
     unsigned char* inBuf = const_cast<unsigned char*>(audio.Ptr());
     unsigned char* outBuf = const_cast<unsigned char*>(iAudio.Ptr()+iAudio.Bytes());
-    unsigned char iv[16];
+    unsigned char initVector[16];
+    memcpy(initVector, iAesiv.Ptr(), sizeof(initVector));   // Use same initVector at start of each decryption block.
 
-    memcpy(iv, iAesiv.Ptr(), sizeof(iv));   //use same iv at start of each decryption block
-
-    TUint i;
-    for (i = 0; i+16 <= audio.Bytes(); i += 16) {
-        AES_cbc_encrypt(inBuf+i, outBuf+i, 0x10, (AES_KEY*)iAeskey.Ptr(), iv, AES_DECRYPT);
-    }
-    if ((audio.Bytes() & 0xf) > 0) {
+    AES_cbc_encrypt(inBuf, outBuf, audio.Bytes(), (AES_KEY*)iAeskey.Ptr(), initVector, AES_DECRYPT);
+    const TUint audioRemaining = audio.Bytes() % 16;
+    const TUint audioWritten = audio.Bytes()-audioRemaining;
+    if (audioRemaining > 0) {
         // Copy remaining audio to outBuf if <16 bytes.
-        memcpy(outBuf+i, inBuf+i, audio.Bytes() & 0xf);
+        memcpy(outBuf+audioWritten, inBuf+audioWritten, audioRemaining);
     }
     iAudio.SetBytes(kSizeBytes+audio.Bytes());
 }
