@@ -10,7 +10,7 @@ using namespace OpenHome::Media;
 
 void ClockPullerUtils::PullClock(IPullableClock& aPullableClock, TInt aDriftJiffies, TUint64 aPeriodJiffies)
 { // static
-    Log::Print("NotifyClockDrift: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aPeriodJiffies/Jiffies::kPerMs);
+    Log::Print("PullClock: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aPeriodJiffies/Jiffies::kPerMs);
     TInt64 drift = (TInt64)(aDriftJiffies * 100) << 29LL;
     const TInt64 pull = (drift) / ((TInt64)aPeriodJiffies);
     if (pull > INT_MAX || pull < INT_MIN) {

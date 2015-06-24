@@ -16,8 +16,7 @@ class TestComplianceRadio( BASE.TestRadioService ):
         """Constructor - initialise base class"""
         BASE.TestRadioService.__init__( self )
         self.doc   = __doc__
-        #self.users = ['linn-test-presets-1', 'linn-test-presets-2', 'linn-test-presets-3']
-        self.users = ['linn-test-presets-1', 'klueso', 'linn-test-presets-3']
+        self.users = ['linn-test-presets-1', 'linn-test-presets-2', 'linn-test-presets-3']
 
     def Test( self, args ):
         """Check radio service functionality compliance"""
@@ -34,11 +33,11 @@ class TestComplianceRadio( BASE.TestRadioService ):
         BASE.TestRadioService.Cleanup( self )
 
     def TestFixedParams( self ):
-        # impementation dependant -> disabled for compliance testing
+        # implementation dependant -> disabled for compliance testing
         pass
 
     def TestUpdated( self ):
-        # impementation dependant -> disabled for compliance testing
+        # implementation dependant -> disabled for compliance testing
         pass
 
 

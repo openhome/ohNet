@@ -48,6 +48,8 @@ class TestVolumeService( BASE.BaseTest ):
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
+        if self.dut.volume is None:
+            self.log.Skip( self.dutDev, 'No volume service' )
         self.dut.volume.AddSubscriber( self._VolEventCb )
 
         # Execute the actual tests
