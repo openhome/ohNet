@@ -124,67 +124,67 @@ void CodecRaop::ProcessHeader()
 {
     LOG(kMedia, "Checking for Raop container\n");
 
-    try {
-        Bws<60> data;
-        iController->Read(data, 4);
+    Bws<60> data;
+    iController->Read(data, 4);
 
-        LOG(kMedia, "data %x {", data[0]);
-        LOG(kMedia, data);
-        LOG(kMedia, "}\n");
+    LOG(kMedia, "data %x {", data[0]);
+    LOG(kMedia, data);
+    LOG(kMedia, "}\n");
 
-        if (data != Brn("Raop")) {
-            THROW(MediaCodecRaopNotFound);  // FIXME - CodecStreamCorrupt
-        }
-
-        // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
-        // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
-        // first read the number of bytes in for the fmtp
-        data.SetBytes(0);
-        iController->Read(data, 4);
-        TUint bytes = Ascii::Uint(data);    // size of fmtp string
-        data.SetBytes(0);
-        iController->Read(data, bytes);
-        Parser fmtp(data);
-
-        LOG(kMedia, "fmtp [");
-        LOG(kMedia, fmtp.NextLine());
-        LOG(kMedia, "]\n");
-
-        fmtp.Set(data);
-        iCodecSpecificData.SetBytes(0);
-
-        try {
-            WriterBuffer writerBuf(iCodecSpecificData);
-            WriterBinary writerBin(writerBuf);
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));  // ?
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));  // max_samples_per_frame
-            writerBin.WriteUint8(Ascii::Uint(fmtp.Next()));     // 7a
-
-            iBitDepth = Ascii::Uint(fmtp.Next());               // bit depth
-            writerBin.WriteUint8(iBitDepth);
-
-            writerBin.WriteUint8(Ascii::Uint(fmtp.Next()));     // rice_historymult
-            writerBin.WriteUint8(Ascii::Uint(fmtp.Next()));     // rice_initialhistory
-            writerBin.WriteUint8(Ascii::Uint(fmtp.Next()));     // rice_kmodifier
-
-            iChannels = Ascii::Uint(fmtp.Next());               // 7f
-            writerBin.WriteUint8(iChannels);
-
-            writerBin.WriteUint16Be(Ascii::Uint(fmtp.Next()));  // 80
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));  // 82
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));  // 86
-
-            iTimescale = Ascii::Uint(fmtp.NextLine());
-            writerBin.WriteUint32Be(iTimescale);    // parsed fmtp data to be passed to alac decoder
-        }
-        catch (AsciiError&) {
-            THROW(MediaCodecRaopNotFound);
-        }
-
-        LOG(kMedia, "Mpeg4MediaInfoBase RAOP header found %d bytes\n", bytes);
+    if (data != Brn("Raop")) {
+        THROW(MediaCodecRaopNotFound);  // FIXME - CodecStreamCorrupt
     }
-    catch (CodecStreamCorrupt&) {   // FIXME - can this actually be thrown from operations in here?
-        THROW(MediaCodecRaopNotFound); // not enough data found to be Raop container
+
+    // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
+    // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
+    // first read the number of bytes in for the fmtp
+    data.SetBytes(0);
+    iController->Read(data, 4);
+    TUint bytes = Ascii::Uint(data);    // size of fmtp string
+    data.SetBytes(0);
+    iController->Read(data, bytes);
+
+    ParseFmtp(data);
+}
+
+void CodecRaop::ParseFmtp(const Brx& aFmtp)
+{
+    // SDP FMTP (format parameters) data is received as a string of form:
+    // a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
+    // Third party ALAC decoder expects the data present in this string to be
+    // in a packed binary format, so parse the FMTP and pack it here.
+
+    LOG(kMedia, "CodecRaop::ParseFmtp [");
+    LOG(kMedia, aFmtp);
+    LOG(kMedia, "]\n");
+
+    Parser p(aFmtp);
+
+    iCodecSpecificData.SetBytes(0);
+
+    try {
+        WriterBuffer writerBuf(iCodecSpecificData);
+        WriterBinary writerBin(writerBuf);
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // ?
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // max_samples_per_frame
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // 7a
+
+        iBitDepth = Ascii::Uint(p.Next());               // bit depth
+        writerBin.WriteUint8(iBitDepth);
+
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_historymult
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_initialhistory
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_kmodifier
+
+        iChannels = Ascii::Uint(p.Next());               // 7f
+        writerBin.WriteUint8(iChannels);
+
+        writerBin.WriteUint16Be(Ascii::Uint(p.Next()));  // 80
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 82
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 86
+
+        iTimescale = Ascii::Uint(p.Next());     // FIXME - Next() or NextLine()?
+        writerBin.WriteUint32Be(iTimescale);
     }
     catch (AsciiError&) {
         THROW(CodecStreamCorrupt);

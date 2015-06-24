@@ -21,6 +21,7 @@ private: // from CodecBase
     void StreamCompleted() override;
 private:
     void ProcessHeader();
+    void ParseFmtp(const Brx& aFmtp);
 private:
     Bws<100> iCodecSpecificData;
 };
