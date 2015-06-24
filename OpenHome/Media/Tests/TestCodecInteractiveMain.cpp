@@ -70,10 +70,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -357,6 +359,12 @@ Msg* ElementFileWriter::ProcessMsg(MsgTrack* aMsg)
     return NULL;
 }
 
+Msg* ElementFileWriter::ProcessMsg(MsgChangeInput* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* ElementFileWriter::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -377,6 +385,12 @@ Msg* ElementFileWriter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgMetaText* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
+Msg* ElementFileWriter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     aMsg->RemoveRef();
     return NULL;
@@ -693,8 +707,10 @@ int CDECL main(int aArgc, char* aArgv[])
     static const TUint kMsgPlayableSilenceCount = 0;
     static const TUint kMsgDecodedStreamCount = 2;
     static const TUint kMsgTrackCount = 1;
+    static const TUint kNsgChangeInputCount = 1;
     static const TUint kMsgEncodedStreamCount = 2;
     static const TUint kMsgMetaTextCount = 1;
+    static const TUint kMsgStreamInterruptedCount = 1;
     static const TUint kMsgHaltCount = 1;
     static const TUint kMsgFlushCount = 1;
     static const TUint kMsgWaitCount = 0;
@@ -718,8 +734,10 @@ int CDECL main(int aArgc, char* aArgv[])
                                            kMsgPlayableSilenceCount,
                                            kMsgDecodedStreamCount,
                                            kMsgTrackCount,
+                                           kNsgChangeInputCount,
                                            kMsgEncodedStreamCount,
                                            kMsgMetaTextCount,
+                                           kMsgStreamInterruptedCount,
                                            kMsgHaltCount,
                                            kMsgFlushCount,
                                            kMsgWaitCount,

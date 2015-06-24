@@ -128,6 +128,11 @@ Msg* Aggregator::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* Aggregator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Aggregator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -147,6 +152,12 @@ Msg* Aggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Aggregator::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Aggregator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

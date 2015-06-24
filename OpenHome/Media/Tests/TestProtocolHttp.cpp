@@ -217,10 +217,12 @@ protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -823,6 +825,11 @@ Msg* TestHttpSupplier::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* TestHttpSupplier::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TestHttpSupplier::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -850,6 +857,11 @@ Msg* TestHttpSupplier::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* TestHttpSupplier::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* TestHttpSupplier::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -991,7 +1003,7 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
-    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 1, 10, 10, 1, 1, 10, 1, 1, 10, 1, 1);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
     iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv, Brx::Empty()));
@@ -1182,7 +1194,7 @@ SuiteHttpChunked::SuiteHttpChunked()
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
-    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 1, 10, 10, 1, 1, 10, 1, 1, 10, 1, 1);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
     iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv, Brx::Empty()));

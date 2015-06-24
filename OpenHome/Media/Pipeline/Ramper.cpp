@@ -49,6 +49,11 @@ Msg* Ramper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Ramper::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Ramper::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -66,6 +71,11 @@ Msg* Ramper::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* Ramper::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Ramper::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

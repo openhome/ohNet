@@ -28,10 +28,12 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -46,6 +48,8 @@ private:
     void MsgsDiscarded();
     void QuitDoesntWaitForAudio();
     void HaltPassedOn();
+    void ChangeInputPassedOn();
+    void StreamInterruptedPassedOn();
     void DecodedStreamPassedOn();
     void TrackWithoutAudioAllMsgsDiscarded();
     void SilenceUnblocksStreamMsgs();
@@ -58,10 +62,12 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -91,6 +97,8 @@ SuitePruner::SuitePruner()
     AddTest(MakeFunctor(*this, &SuitePruner::MsgsDiscarded), "MsgsDiscarded");
     AddTest(MakeFunctor(*this, &SuitePruner::QuitDoesntWaitForAudio), "QuitDoesntWaitForAudio");
     AddTest(MakeFunctor(*this, &SuitePruner::HaltPassedOn), "HaltPassedOn");
+    AddTest(MakeFunctor(*this, &SuitePruner::ChangeInputPassedOn), "ChangeInputPassedOn");
+    AddTest(MakeFunctor(*this, &SuitePruner::StreamInterruptedPassedOn), "StreamInterruptedPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::DecodedStreamPassedOn), "DecodedStreamPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::TrackWithoutAudioAllMsgsDiscarded), "TrackWithoutAudioAllMsgsDiscarded");
     AddTest(MakeFunctor(*this, &SuitePruner::SilenceUnblocksStreamMsgs), "SilenceUnblocksStreamMsgs");
@@ -101,7 +109,7 @@ SuitePruner::SuitePruner()
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 4, 1, 1, 2, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 4, 1, 1, 2, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iPulledTrackId = UINT_MAX/2;
@@ -152,6 +160,23 @@ void SuitePruner::HaltPassedOn()
     TEST(DoPull() == EMsgHalt);
     TEST(iPendingMsgs.size() == 0);
     TEST(DoPull() == EMsgAudioPcm);
+}
+
+void SuitePruner::ChangeInputPassedOn()
+{
+    EMsgType msgs[] ={ EMsgTrack, EMsgChangeInput };
+    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgChangeInput);
+    TEST(iPendingMsgs.size() == 0);
+}
+
+void SuitePruner::StreamInterruptedPassedOn()
+{
+    EMsgType msgs[] ={ EMsgTrack, EMsgDecodedStream, EMsgAudioPcm, EMsgStreamInterrupted };
+    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgDecodedStream);
+    TEST(DoPull() == EMsgAudioPcm);
+    TEST(DoPull() == EMsgStreamInterrupted);
 }
 
 void SuitePruner::DecodedStreamPassedOn()
@@ -241,6 +266,12 @@ Msg* SuitePruner::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuitePruner::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastPulledMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuitePruner::ProcessMsg(MsgDelay* aMsg)
 {
     iLastPulledMsg = EMsgDelay;
@@ -262,6 +293,12 @@ Msg* SuitePruner::ProcessMsg(MsgAudioEncoded* aMsg)
 Msg* SuitePruner::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuitePruner::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastPulledMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -341,6 +378,8 @@ Msg* SuitePruner::Pull()
         track->RemoveRef();
         return msg;
     }
+    case EMsgChangeInput:
+        return iMsgFactory->CreateMsgChangeInput(Functor());
     case EMsgDelay:
         return iMsgFactory->CreateMsgDelay(0);
     case EMsgEncodedStream:
@@ -351,6 +390,8 @@ Msg* SuitePruner::Pull()
     {
         return iMsgFactory->CreateMsgMetaText(Brn("dummy metatext"));
     }
+    case EMsgStreamInterrupted:
+        return iMsgFactory->CreateMsgStreamInterrupted();
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgWait:

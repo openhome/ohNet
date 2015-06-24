@@ -89,7 +89,7 @@ SuiteTrackInspector::SuiteTrackInspector()
 
 void SuiteTrackInspector::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTrackInspector = new TrackInspector(*this);
     iTrackInspector->AddObserver(*this);

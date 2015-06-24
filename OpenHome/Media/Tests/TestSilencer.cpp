@@ -39,6 +39,7 @@ private:
        ,EMsgDecodedStream
        ,EMsgMode
        ,EMsgHalt
+       ,EMsgChangeInput
        ,EMsgQuit
     };
 private:
@@ -52,10 +53,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -112,7 +115,7 @@ void SuiteSilencer::Setup()
     iBitDepth = 16;
     iNumChannels = 2;
     iTrackOffset = 0;
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iSilencer = new Silencer(*iMsgFactory, *this, kPriorityNormal, kSilenceJiffies, 2);
     iLastPulledBytes = iLastPulledJiffies = 0;
     iLastPlayableWasSilence = false;
@@ -135,11 +138,13 @@ void SuiteSilencer::TearDown()
 void SuiteSilencer::TestMsgsPassedOn()
 {
     QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL));
+    QueuePendingMsg(iMsgFactory->CreateMsgChangeInput(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
     QueuePendingMsg(iMsgFactory->CreateMsgQuit());
 
     PullNext(EMsgMode);
+    PullNext(EMsgChangeInput);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgPlayable);
     TEST(!iLastPlayableWasSilence);
@@ -198,10 +203,12 @@ void SuiteSilencer::TestPassesMsgsAfterSilenceGeneration()
     PullNextNoWait(EMsgPlayable);
 
     QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL));
+    QueuePendingMsg(iMsgFactory->CreateMsgChangeInput(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
 
     PullNext(EMsgMode);
+    PullNext(EMsgChangeInput);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgPlayable);
     TEST(!iLastPlayableWasSilence);
@@ -291,6 +298,12 @@ Msg* SuiteSilencer::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* SuiteSilencer::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteSilencer::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -310,6 +323,12 @@ Msg* SuiteSilencer::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuiteSilencer::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

@@ -221,6 +221,11 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Stopper::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -257,6 +262,11 @@ Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
+{
+    return ProcessFlushable(aMsg);
+}
+
+Msg* Stopper::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return ProcessFlushable(aMsg);
 }

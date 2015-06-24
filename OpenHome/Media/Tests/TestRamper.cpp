@@ -34,10 +34,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -53,9 +55,11 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgDecodedStream
        ,EMsgAudioPcm
        ,EMsgSilence
@@ -112,7 +116,7 @@ SuiteRamper::~SuiteRamper()
 void SuiteRamper::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1);
     iRamper = new Ramper(*this, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
@@ -161,6 +165,12 @@ Msg* SuiteRamper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteRamper::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastPulledMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteRamper::ProcessMsg(MsgDelay* aMsg)
 {
     iLastPulledMsg = EMsgDelay;
@@ -183,6 +193,12 @@ Msg* SuiteRamper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteRamper::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteRamper::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastPulledMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -303,8 +319,10 @@ void SuiteRamper::TestNonAudioMsgsPass()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, false, NULL));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 100));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brn("MetaText")));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(MsgFlush::kIdInvalid));
@@ -314,8 +332,10 @@ void SuiteRamper::TestNonAudioMsgsPass()
     PullNext(EMsgMode);
     PullNext(EMsgSession);
     PullNext(EMsgTrack);
+    PullNext(EMsgChangeInput);
     PullNext(EMsgDelay);
     PullNext(EMsgMetaText);
+    PullNext(EMsgStreamInterrupted);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgHalt);
     PullNext(EMsgFlush);

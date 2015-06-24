@@ -34,9 +34,11 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgEncodedStream
        ,EMsgDelay
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -65,10 +67,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -122,7 +126,7 @@ SuiteTimestampInspector::SuiteTimestampInspector()
 
 void SuiteTimestampInspector::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *this);
     iLastMsg = EMsgNone;
@@ -164,6 +168,9 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         track->RemoveRef();
     }
         break;
+    case EMsgChangeInput:
+        msg = iMsgFactory->CreateMsgChangeInput(Functor());
+        break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, NULL);
         break;
@@ -172,6 +179,9 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("dummy metatext"));
+        break;
+    case EMsgStreamInterrupted:
+        msg = iMsgFactory->CreateMsgStreamInterrupted();
         break;
     case EMsgHalt:
         msg = iMsgFactory->CreateMsgHalt();
@@ -224,8 +234,8 @@ void SuiteTimestampInspector::StartStream()
 
 void SuiteTimestampInspector::NonAudioMsgsPassThrough()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgEncodedStream, EMsgDelay,
-                         EMsgMetaText, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
+    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgChangeInput, EMsgEncodedStream, EMsgDelay,
+                         EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
                          EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     TUint prevTxCount = iMsgTxCount;
@@ -423,6 +433,12 @@ Msg* SuiteTimestampInspector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteTimestampInspector::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteTimestampInspector::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
@@ -444,6 +460,12 @@ Msg* SuiteTimestampInspector::ProcessMsg(MsgAudioEncoded* aMsg)
 Msg* SuiteTimestampInspector::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteTimestampInspector::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

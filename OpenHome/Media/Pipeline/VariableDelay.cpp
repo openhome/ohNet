@@ -242,6 +242,11 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* VariableDelay::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
@@ -315,6 +320,11 @@ Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* VariableDelay::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

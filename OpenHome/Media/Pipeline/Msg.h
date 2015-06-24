@@ -338,6 +338,14 @@ private:
     TBool iStartOfStream;
 };
 
+class MsgChangeInput : public Msg
+{
+public:
+    MsgChangeInput(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
+};
+
 class MsgDelay : public Msg
 {
     friend class MsgFactory;
@@ -448,6 +456,14 @@ private:
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
     EncodedAudio* iAudioData;
+};
+
+class MsgStreamInterrupted : public Msg
+{
+public:
+    MsgStreamInterrupted(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
 };
 
 /**
@@ -734,10 +750,12 @@ public:
     virtual Msg* ProcessMsg(MsgMode* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSession* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgChangeInput* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDelay* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgEncodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgStreamInterrupted* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgWait* aMsg) = 0;
@@ -839,10 +857,12 @@ private:
     virtual void ProcessMsgIn(MsgMode* aMsg);
     virtual void ProcessMsgIn(MsgSession* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
+    virtual void ProcessMsgIn(MsgChangeInput* aMsg);
     virtual void ProcessMsgIn(MsgDelay* aMsg);
     virtual void ProcessMsgIn(MsgEncodedStream* aMsg);
     virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
+    virtual void ProcessMsgIn(MsgStreamInterrupted* aMsg);
     virtual void ProcessMsgIn(MsgHalt* aMsg);
     virtual void ProcessMsgIn(MsgFlush* aMsg);
     virtual void ProcessMsgIn(MsgWait* aMsg);
@@ -853,10 +873,12 @@ private:
     virtual Msg* ProcessMsgOut(MsgMode* aMsg);
     virtual Msg* ProcessMsgOut(MsgSession* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
+    virtual Msg* ProcessMsgOut(MsgChangeInput* aMsg);
     virtual Msg* ProcessMsgOut(MsgDelay* aMsg);
     virtual Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
+    virtual Msg* ProcessMsgOut(MsgStreamInterrupted* aMsg);
     virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
     virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
     virtual Msg* ProcessMsgOut(MsgWait* aMsg);
@@ -873,10 +895,12 @@ private:
         Msg* ProcessMsg(MsgMode* aMsg) override;
         Msg* ProcessMsg(MsgSession* aMsg) override;
         Msg* ProcessMsg(MsgTrack* aMsg) override;
+        Msg* ProcessMsg(MsgChangeInput* aMsg) override;
         Msg* ProcessMsg(MsgDelay* aMsg) override;
         Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
         Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
         Msg* ProcessMsg(MsgMetaText* aMsg) override;
+        Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
         Msg* ProcessMsg(MsgHalt* aMsg) override;
         Msg* ProcessMsg(MsgFlush* aMsg) override;
         Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -896,10 +920,12 @@ private:
         Msg* ProcessMsg(MsgMode* aMsg) override;
         Msg* ProcessMsg(MsgSession* aMsg) override;
         Msg* ProcessMsg(MsgTrack* aMsg) override;
+        Msg* ProcessMsg(MsgChangeInput* aMsg) override;
         Msg* ProcessMsg(MsgDelay* aMsg) override;
         Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
         Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
         Msg* ProcessMsg(MsgMetaText* aMsg) override;
+        Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
         Msg* ProcessMsg(MsgHalt* aMsg) override;
         Msg* ProcessMsg(MsgFlush* aMsg) override;
         Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -1240,18 +1266,21 @@ public:
                TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
-               TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
+               TUint aMsgTrackCount, TUint aMsgChangeInputCount, TUint aMsgEncodedStreamCount,
+               TUint aMsgMetaTextCount, TUint aMsgStreamInterruptedCount,
                TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
                TUint aMsgModeCount, TUint aMsgSessionCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgSession* CreateMsgSession();
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
+    MsgChangeInput* CreateMsgChangeInput(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
+    MsgStreamInterrupted* CreateMsgStreamInterrupted();
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);
     MsgFlush* CreateMsgFlush(TUint aId);
     MsgWait* CreateMsgWait();
@@ -1273,8 +1302,10 @@ private:
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
     Allocator<MsgDecodedStream> iAllocatorMsgDecodedStream;
     Allocator<MsgTrack> iAllocatorMsgTrack;
+    Allocator<MsgChangeInput> iAllocatorMsgChangeInput;
     Allocator<MsgEncodedStream> iAllocatorMsgEncodedStream;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
+    Allocator<MsgStreamInterrupted> iAllocatorMsgStreamInterrupted;
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgWait> iAllocatorMsgWait;

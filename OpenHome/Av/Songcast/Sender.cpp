@@ -113,6 +113,12 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Sender::ProcessMsg(MsgChangeInput* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Sender::ProcessMsg(MsgDelay* aMsg)
 {
     SendPendingAudio();
@@ -143,6 +149,14 @@ Msg* Sender::ProcessMsg(MsgMetaText* aMsg)
     // when metadata is received/processed relative to text.)
     iOhmSender->SetMetatext(aMsg->MetaText());
     return aMsg;
+}
+
+Msg* Sender::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    // FIXME - no way to tell a songcast receiver about a discontinuity that requires a ramp down
+    SendPendingAudio(true);
+    aMsg->RemoveRef();
+    return NULL;
 }
 
 Msg* Sender::ProcessMsg(MsgHalt* aMsg)
@@ -345,6 +359,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* Sender::PlayableCreator::ProcessMsg(MsgChangeInput* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* Sender::PlayableCreator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -364,6 +384,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

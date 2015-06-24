@@ -863,6 +863,19 @@ Msg* MsgSession::Process(IMsgProcessor& aProcessor)
 }
 
 
+// MsgChangeInput
+
+MsgChangeInput::MsgChangeInput(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Msg* MsgChangeInput::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgTrack
 
 MsgTrack::MsgTrack(AllocatorBase& aAllocator)
@@ -1224,6 +1237,19 @@ void MsgMetaText::Clear()
 }
 
 Msg* MsgMetaText::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgStreamInterrupted
+
+MsgStreamInterrupted::MsgStreamInterrupted(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Msg* MsgStreamInterrupted::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
 }
@@ -2241,6 +2267,10 @@ void MsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
+void MsgReservoir::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+{
+}
+
 void MsgReservoir::ProcessMsgIn(MsgDelay* /*aMsg*/)
 {
 }
@@ -2254,6 +2284,10 @@ void MsgReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
 }
 
 void MsgReservoir::ProcessMsgIn(MsgMetaText* /*aMsg*/)
+{
+}
+
+void MsgReservoir::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
 {
 }
 
@@ -2300,6 +2334,11 @@ Msg* MsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* MsgReservoir::ProcessMsgOut(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessMsgOut(MsgDelay* aMsg)
 {
     return aMsg;
@@ -2316,6 +2355,11 @@ Msg* MsgReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
 }
 
 Msg* MsgReservoir::ProcessMsgOut(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -2384,6 +2428,12 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDelay* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
@@ -2410,6 +2460,12 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -2494,6 +2550,11 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDelay* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
@@ -2517,6 +2578,11 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
@@ -2607,7 +2673,8 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator,
                        TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
-                       TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
+                       TUint aMsgTrackCount, TUint aMsgChangeInputCount, TUint aMsgEncodedStreamCount,
+                       TUint aMsgMetaTextCount, TUint aMsgStreamInterruptedCount,
                        TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
                        TUint aMsgModeCount, TUint aMsgSessionCount, TUint aMsgDelayCount, TUint aMsgQuitCount)
     : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
@@ -2619,8 +2686,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
     , iAllocatorMsgDecodedStream("MsgDecodedStream", aMsgDecodedStreamCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
+    , iAllocatorMsgChangeInput("MsgChangeInput", aMsgChangeInputCount, aInfoAggregator)
     , iAllocatorMsgEncodedStream("MsgEncodedStream", aMsgEncodedStreamCount, aInfoAggregator)
     , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
+    , iAllocatorMsgStreamInterrupted("MsgStreamInterrupted", aMsgStreamInterruptedCount, aInfoAggregator)
     , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
     , iAllocatorMsgWait("MsgWait", aMsgWaitCount, aInfoAggregator)
@@ -2648,6 +2717,12 @@ MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
     msg->Initialise(aTrack, aStartOfStream);
+    return msg;
+}
+
+MsgChangeInput* MsgFactory::CreateMsgChangeInput(Functor /*aCallback*/)
+{
+    MsgChangeInput* msg = iAllocatorMsgChangeInput.Allocate();
     return msg;
 }
 
@@ -2685,6 +2760,11 @@ MsgMetaText* MsgFactory::CreateMsgMetaText(const Brx& aMetaText)
     MsgMetaText* msg = iAllocatorMsgMetaText.Allocate();
     msg->Initialise(aMetaText);
     return msg;
+}
+
+MsgStreamInterrupted* MsgFactory::CreateMsgStreamInterrupted()
+{
+    return iAllocatorMsgStreamInterrupted.Allocate();
 }
 
 MsgHalt* MsgFactory::CreateMsgHalt(TUint aId)

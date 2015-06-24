@@ -145,7 +145,7 @@ void SuiteSpotifyReporter::Setup()
     iSampleRate = 44100;
     iNumChannels = 2;
     iBitRate = kBitDepth * iSampleRate;
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iPropertyObserver = new HelperPipelinePropertyObserver();
     iReporter = new SpotifyReporter(*this, *iPropertyObserver);

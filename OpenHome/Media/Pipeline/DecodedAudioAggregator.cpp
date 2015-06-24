@@ -105,6 +105,12 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* DecodedAudioAggregator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    OutputAggregatedAudio();
+    return aMsg;
+}
+
 Msg* DecodedAudioAggregator::ProcessMsg(MsgDelay* aMsg)
 {
     OutputAggregatedAudio();
@@ -137,6 +143,12 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgMetaText* aMsg)
         return NULL;
     }
     iLock.Signal();
+    return aMsg;
+}
+
+Msg* DecodedAudioAggregator::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    OutputAggregatedAudio();
     return aMsg;
 }
 

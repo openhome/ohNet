@@ -162,6 +162,12 @@ Msg* DriverBasic::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* DriverBasic::ProcessMsg(MsgChangeInput* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverBasic::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -181,6 +187,12 @@ Msg* DriverBasic::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* DriverBasic::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverBasic::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
