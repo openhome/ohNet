@@ -708,7 +708,7 @@ void RaopAudio::DecodePacket(TUint /*aSenderSkew*/, TUint /*aLatency*/, Brx& aDa
     //LOG(kMedia, "RaopAudio::DecodePacket() bytes %d\n", aData.Bytes());
 
     static const TUint kSizeBytes = sizeof(TUint);
-    RtpPacket packet(aData);    // May throw invalid header.
+    RtpPacket packet(aData);    // May throw InvalidHeader.
     const Brx& audio = packet.Payload();
     iAudio.SetBytes(0);
 
