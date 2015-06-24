@@ -346,7 +346,6 @@ def build(bld):
             source=[
                 'OpenHome/Av/Raop/Raop.cpp',
                 'OpenHome/Av/Raop/SourceRaop.cpp',
-                'OpenHome/Av/Raop/RaopHeader.cpp',
                 'OpenHome/Av/Raop/ProtocolRaop.cpp',
                 'OpenHome/Av/Raop/UdpServer.cpp',
                 'OpenHome/Av/Raop/CodecRaop.cpp'

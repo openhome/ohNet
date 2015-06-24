@@ -139,6 +139,30 @@ private:
     Semaphore iSem;
 };
 
+class RtpPacket
+{
+private:
+    static const TUint kMinHeaderBytes = 12;
+public:
+    RtpPacket(const Brx& aRtpPacket);
+public:
+    const Brx& Payload() const;
+private:
+    TUint iVersion;
+    TBool iPadding;
+    TBool iExtension;
+    TUint iCsrcCount;
+    TBool iMarker;
+    TUint iPayloadType;
+    TUint iSequenceNumber;
+    TUint iTimestamp;
+    TUint iSsrc;
+    std::vector<TUint> iCsrc;
+    TUint iHeaderExtensionProfile;
+    Brn iHeaderExtension;
+    Brn iPayload;
+};
+
 };  // namespace Av
 };  // namespace OpenHome
 

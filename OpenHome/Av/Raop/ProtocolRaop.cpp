@@ -1,9 +1,9 @@
-#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/Av/Raop/ProtocolRaop.h>
 #include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Media/SupplyAggregator.h>
@@ -703,32 +703,38 @@ void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency)
     DecodePacket(aSenderSkew, aLatency, iDataBuffer);
 }
 
-void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brx& aData)
+void RaopAudio::DecodePacket(TUint /*aSenderSkew*/, TUint /*aLatency*/, Brx& aData)
 {
     //LOG(kMedia, "RaopAudio::DecodePacket() bytes %d\n", aData.Bytes());
 
-    RaopDataHeader header(aData, aSenderSkew, aLatency);
+    static const TUint kSizeBytes = sizeof(TUint);
+    RtpPacket packet(aData);    // May throw invalid header.
+    const Brx& audio = packet.Payload();
+    iAudio.SetBytes(0);
 
-    unsigned char *inbuf = (unsigned char *)aData.Ptr()+12;
-    unsigned char *outbuf = (unsigned char *)iAudio.Ptr()+sizeof(header);
-    unsigned char iv[16];
-
-    if( (header.Bytes() + sizeof(header)) > iAudio.MaxBytes())
-    {
-        THROW(InvalidHeader);   // invalid data received, should really add different exception
+    if (kSizeBytes+audio.Bytes() > iAudio.MaxBytes()) {
+        THROW(InvalidHeader);   // Invalid data received. FIXME - should really add different exception
     }
+
+    WriterBuffer writerBuffer(iAudio);
+    WriterBinary writerBinary(writerBuffer);
+    writerBinary.WriteUint32Be(audio.Bytes());
+
+    unsigned char* inBuf = const_cast<unsigned char*>(audio.Ptr());
+    unsigned char* outBuf = const_cast<unsigned char*>(iAudio.Ptr()+iAudio.Bytes());
+    unsigned char iv[16];
 
     memcpy(iv, iAesiv.Ptr(), sizeof(iv));   //use same iv at start of each decryption block
 
     TUint i;
-    for (i = 0; i+16 <= header.Bytes(); i += 16)
-        AES_cbc_encrypt(inbuf+i, outbuf+i, 0x10, (AES_KEY*)iAeskey.Ptr(), iv, AES_DECRYPT);
-    if (header.Bytes() & 0xf)
-        memcpy(outbuf+i, inbuf+i, header.Bytes() & 0xf);
-
-    // create new header:
-    iAudio.SetBytes(header.Bytes() + sizeof(header));
-    memcpy((unsigned char *)iAudio.Ptr(), (unsigned char *)&header, sizeof(header));
+    for (i = 0; i+16 <= audio.Bytes(); i += 16) {
+        AES_cbc_encrypt(inBuf+i, outBuf+i, 0x10, (AES_KEY*)iAeskey.Ptr(), iv, AES_DECRYPT);
+    }
+    if ((audio.Bytes() & 0xf) > 0) {
+        // Copy remaining audio to outBuf if <16 bytes.
+        memcpy(outBuf+i, inBuf+i, audio.Bytes() & 0xf);
+    }
+    iAudio.SetBytes(kSizeBytes+audio.Bytes());
 }
 
 Brn RaopAudio::Audio()
@@ -743,5 +749,77 @@ TBool RaopAudio::First() const
 
 void RaopAudio::SetMute()
 {
-    ((RaopDataHeader*)iAudio.Ptr())->SetMute();
+    //((RaopDataHeader*)iAudio.Ptr())->SetMute();
+}
+
+
+// RtpPacket
+
+RtpPacket::RtpPacket(const Brx& aRtpPacket)
+{
+    if (aRtpPacket.Bytes() < kMinHeaderBytes) {
+        THROW(InvalidHeader);
+    }
+
+    iVersion = (aRtpPacket[0] & 0xc0) >> 6;
+    iPadding = (aRtpPacket[0] & 0x20) == 0x20;
+    iExtension = (aRtpPacket[0] & 0x10) == 0x10;
+    iCsrcCount = aRtpPacket[0] & 0x0f;
+    iMarker = (aRtpPacket[1] & 0x80) == 0x80;
+    iPayloadType = aRtpPacket[1] & 0x7f;
+
+    static const TUint offset = 2;  // Processed first 2 bytes above.
+    Brn packetRemaining(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
+    ReaderBuffer readerBuffer(packetRemaining);
+    ReaderBinary readerBinary(readerBuffer);
+
+    try {
+        iSequenceNumber = readerBinary.ReadUintBe(2);
+        iTimestamp = readerBinary.ReadUintBe(4);
+        iSsrc = readerBinary.ReadUintBe(4);
+
+        const TUint kHeaderSizeIncCsrc = kMinHeaderBytes+iCsrcCount*4;
+        if (aRtpPacket.Bytes() < kHeaderSizeIncCsrc) {
+            // Not enough bytes in packet to satisfy reported CRSC count.
+            THROW(InvalidHeader);
+        }
+        for (TUint i=0; i<iCsrcCount; i++) {
+            iCsrc.push_back(readerBinary.ReadUintBe(4));
+        }
+
+        TUint headerSizeFull = kHeaderSizeIncCsrc;
+        if (iExtension) {
+            const TUint kHeaderSizeInclHeaderExtension = kHeaderSizeIncCsrc+4;
+            if (aRtpPacket.Bytes() < kHeaderSizeInclHeaderExtension) {
+                THROW(InvalidHeader);
+            }
+            iHeaderExtensionProfile = readerBinary.ReadUintBe(2);
+            const TUint headerExtensionBytes = readerBinary.ReadUintBe(2)*4;
+
+            headerSizeFull = kHeaderSizeInclHeaderExtension+headerExtensionBytes;
+            if (aRtpPacket.Bytes() < headerSizeFull) {
+                THROW(InvalidHeader);
+            }
+            iHeaderExtension.Set(aRtpPacket.Ptr()+kHeaderSizeInclHeaderExtension, headerExtensionBytes);
+        }
+
+        TUint paddingBytes = 0;
+        if (iPadding) {
+            paddingBytes = aRtpPacket[aRtpPacket.Bytes()-1];
+        }
+
+        const TUint kPayloadBytes = aRtpPacket.Bytes()-headerSizeFull-paddingBytes;
+        if (kPayloadBytes == 0 || aRtpPacket.Bytes() != headerSizeFull+kPayloadBytes+paddingBytes) {
+            THROW(InvalidHeader);
+        }
+        iPayload.Set(aRtpPacket.Ptr()+headerSizeFull, kPayloadBytes);
+    }
+    catch (ReaderError&) {
+        THROW(InvalidHeader);
+    }
+}
+
+const Brx& RtpPacket::Payload() const
+{
+    return iPayload;
 }

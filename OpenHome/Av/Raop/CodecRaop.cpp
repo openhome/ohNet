@@ -4,12 +4,12 @@
 #include <OpenHome/Media/Codec/AlacBase.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
@@ -109,18 +109,28 @@ void CodecRaop::Process()
     iInBuf.SetBytes(0);
 
     try {
-        // read in a packet worth of raop data
-        Bws<sizeof(RaopDataHeader)> binheader;
-        iController->Read(binheader, sizeof(RaopDataHeader));   // extract header
-        if (sizeof(RaopDataHeader) > binheader.Bytes()) {
+        // Get size of next packet.
+        static const TUint kSizeBytes = 4;
+        iController->Read(iInBuf, kSizeBytes);
+        if (iInBuf.Bytes() < kSizeBytes) {
             THROW(CodecStreamEnded);
         }
-        Brn audio(binheader);
-        RaopDataHeader header(audio);
-        iController->Read(iInBuf, header.Bytes());
-        if (iInBuf.Bytes() < header.Bytes()) {
-            THROW(CodecStreamEnded);
+
+        // Read in next packet.
+        try {
+            ReaderBuffer readerBuffer(iInBuf);
+            ReaderBinary readerBinary(readerBuffer);
+            const TUint bytes = readerBinary.ReadUintBe(4);
+            iInBuf.SetBytes(0);
+            iController->Read(iInBuf, bytes);
+            if (iInBuf.Bytes() < bytes) {
+                THROW(CodecStreamEnded);
+            }
         }
+        catch (ReaderError&) {
+            THROW(CodecStreamCorrupt);
+        }
+
         Decode();
     }
     catch (CodecStreamStart&) {
