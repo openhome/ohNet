@@ -54,7 +54,22 @@ void CodecRaop::StreamInitialise()
 
     CodecAlacBase::Initialise();
 
-    ProcessHeader();
+    iInBuf.SetBytes(0);
+    iController->Read(iInBuf, 4);
+    ASSERT(iInBuf == Brn("Raop")); // Already saw this during Recognise().
+
+    // Read and parse fmtp string.
+    iInBuf.SetBytes(0);
+    iController->Read(iInBuf, 4);
+    try {
+        const TUint fmtpBytes = Ascii::Uint(iInBuf);    // size of fmtp string
+        iInBuf.SetBytes(0);
+        iController->Read(iInBuf, fmtpBytes);
+        ParseFmtp(iInBuf);
+    }
+    catch (AsciiError&) {
+        THROW(CodecStreamCorrupt);
+    }
 
     iInBuf.SetBytes(0);
     alac = create_alac(iBitDepth, iChannels);
@@ -72,7 +87,7 @@ void CodecRaop::StreamInitialise()
     iTrackLengthJiffies = 0;// (iDuration * Jiffies::kPerSecond) / iTimescale;
 
 
-    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    //LOG(kCodec, "CodecRaop::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
     iController->OutputDecodedStream(0, iBitDepth, iTimescale, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
@@ -120,33 +135,6 @@ void CodecRaop::Process()
     OutputFinal();
 }
 
-void CodecRaop::ProcessHeader()
-{
-    LOG(kMedia, "Checking for Raop container\n");
-
-    Bws<60> data;
-    iController->Read(data, 4);
-
-    LOG(kMedia, "data %x {", data[0]);
-    LOG(kMedia, data);
-    LOG(kMedia, "}\n");
-
-    if (data != Brn("Raop")) {
-        THROW(CodecStreamCorrupt);
-    }
-
-    // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
-    // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
-    // first read the number of bytes in for the fmtp
-    data.SetBytes(0);
-    iController->Read(data, 4);
-    TUint bytes = Ascii::Uint(data);    // size of fmtp string
-    data.SetBytes(0);
-    iController->Read(data, bytes);
-
-    ParseFmtp(data);
-}
-
 void CodecRaop::ParseFmtp(const Brx& aFmtp)
 {
     // SDP FMTP (format parameters) data is received as a string of form:
@@ -183,7 +171,7 @@ void CodecRaop::ParseFmtp(const Brx& aFmtp)
         writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 82
         writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 86
 
-        iTimescale = Ascii::Uint(p.Next());     // FIXME - Next() or NextLine()?
+        iTimescale = Ascii::Uint(p.Next());
         writerBin.WriteUint32Be(iTimescale);
     }
     catch (AsciiError&) {

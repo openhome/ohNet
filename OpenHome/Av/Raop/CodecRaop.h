@@ -20,7 +20,6 @@ private: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
     void StreamCompleted() override;
 private:
-    void ProcessHeader();
     void ParseFmtp(const Brx& aFmtp);
 private:
     Bws<100> iCodecSpecificData;
