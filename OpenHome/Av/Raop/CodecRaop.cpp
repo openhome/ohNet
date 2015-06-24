@@ -132,7 +132,7 @@ void CodecRaop::ProcessHeader()
     LOG(kMedia, "}\n");
 
     if (data != Brn("Raop")) {
-        THROW(MediaCodecRaopNotFound);  // FIXME - CodecStreamCorrupt
+        THROW(CodecStreamCorrupt);
     }
 
     // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
