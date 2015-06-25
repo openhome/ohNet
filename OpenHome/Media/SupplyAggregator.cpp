@@ -42,6 +42,12 @@ void SupplyAggregator::OutputTrack(Track& aTrack, TBool aStartOfStream)
     Output(msg);
 }
 
+void SupplyAggregator::OutputChangeInput(Functor aCallback)
+{
+    auto msg = iMsgFactory.CreateMsgChangeInput(aCallback);
+    Output(msg);
+}
+
 void SupplyAggregator::OutputDelay(TUint aJiffies)
 {
     MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
@@ -51,6 +57,12 @@ void SupplyAggregator::OutputDelay(TUint aJiffies)
 void SupplyAggregator::OutputMetadata(const Brx& aMetadata)
 {
     MsgMetaText* msg = iMsgFactory.CreateMsgMetaText(aMetadata);
+    Output(msg);
+}
+
+void SupplyAggregator::OutputStreamInterrupted()
+{
+    auto msg = iMsgFactory.CreateMsgStreamInterrupted();
     Output(msg);
 }
 

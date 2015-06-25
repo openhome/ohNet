@@ -68,11 +68,11 @@ private:
         EMsgAudioEncoded
        ,EMsgSession
        ,EMsgTrack
-       //,EMsgChangeInput
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
-       //,EMsgStreamInterrupted
+       ,EMsgStreamInterrupted
        ,EMsgFlush
        ,EMsgWait
        ,EMsgNone
@@ -211,6 +211,9 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         track->RemoveRef();
     }
         break;
+    case EMsgChangeInput:
+        iSupply->OutputChangeInput(Functor());
+        break;
     case EMsgDelay:
         iSupply->OutputDelay(kDelayJiffies);
         break;
@@ -219,6 +222,9 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         break;
     case EMsgMetaText:
         iSupply->OutputMetadata(Brn(kMetaData));
+        break;
+    case EMsgStreamInterrupted:
+        iSupply->OutputStreamInterrupted();
         break;
     case EMsgFlush:
         iSupply->OutputFlush(1);
@@ -259,7 +265,7 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgTrack* aMsg)
 
 Msg* SuiteSupplyAggregator::ProcessMsg(MsgChangeInput* aMsg)
 {
-    //iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgChangeInput;
     return aMsg;
 }
 
@@ -329,7 +335,7 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* SuiteSupplyAggregator::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
-    //iLastMsg = EMsgStreamInterrupted;
+    iLastMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

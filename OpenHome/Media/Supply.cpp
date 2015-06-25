@@ -32,6 +32,12 @@ void Supply::OutputTrack(Track& aTrack, TBool aStartOfStream)
     iDownStreamElement.Push(msg);
 }
 
+void Supply::OutputChangeInput(Functor aCallback)
+{
+    auto msg = iMsgFactory.CreateMsgChangeInput(aCallback);
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputDelay(TUint aJiffies)
 {
     MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
@@ -64,6 +70,12 @@ void Supply::OutputData(const Brx& aData)
 void Supply::OutputMetadata(const Brx& aMetadata)
 {
     MsgMetaText* msg = iMsgFactory.CreateMsgMetaText(aMetadata);
+    iDownStreamElement.Push(msg);
+}
+
+void Supply::OutputStreamInterrupted()
+{
+    auto msg = iMsgFactory.CreateMsgStreamInterrupted();
     iDownStreamElement.Push(msg);
 }
 

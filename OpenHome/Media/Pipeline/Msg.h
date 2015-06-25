@@ -977,6 +977,12 @@ public:
      */
     virtual void OutputTrack(Track& aTrack, TBool aStartOfStream = true) = 0;
     /**
+    * Inform the pipeline that the next stream cannot begin until all pending audio has been played.
+    *
+    * @param[in] aCallabck        Callback to run when all audio has been processed.
+    */
+    virtual void OutputChangeInput(Functor aCallback) = 0;
+    /**
      * Apply a delay to subsequent audio in this stream.
      *
      * Any delay is calculated relative to previous delays for this session.
@@ -1028,6 +1034,13 @@ public:
      * @param[in] aMetadata        Metadata.  Must be <= MsgMetaText::kMaxBytes
      */
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
+    /**
+    * Inform the pipeline of a break in content.
+    *
+    * This should only be called for 'live' streams which are unable to
+    * restart from the point where a connection was dropped.
+    */
+    virtual void OutputStreamInterrupted() = 0;
     /**
      * Push a Flush command into the pipeline.
      *

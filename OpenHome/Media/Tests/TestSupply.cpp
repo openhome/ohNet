@@ -147,22 +147,36 @@ void SuiteSupply::Test()
     TUint expectedMsgCount = 0;
     iSupply->OutputSession();
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgSession);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
     iSupply->OutputTrack(*track);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgTrack);
+    iSupply->OutputChangeInput(Functor());
+    TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgChangeInput);
     iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgDelay);
     iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgEncodedStream);
     iSupply->OutputData(Brn(kTestData));
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgAudioEncoded);
     iSupply->OutputMetadata(Brn(kMetaData));
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgMetaText);
+    iSupply->OutputStreamInterrupted();
+    TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgStreamInterrupted);
     iSupply->OutputFlush(1);
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgFlush);
     iSupply->OutputWait();
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgWait);
 }
 
 void SuiteSupply::Push(Msg* aMsg)
