@@ -8,7 +8,7 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Net/Private/Ssdp.h>
-#include <OpenHome/Media/Utils/DriverBasic.h>
+#include <OpenHome/Media/Utils/AnimatorBasic.h>
 
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Web/ConfigUi/ConfigUi.h>
@@ -106,7 +106,7 @@ private:
 private:
     OpenHome::Net::CpStack& iCpStack;
     OpenHome::Net::DvStack& iDvStack;
-    OpenHome::Media::DriverBasic* iDriver;
+    OpenHome::Media::AnimatorBasic* iAnimator;
     OpenHome::Av::Test::TestMediaPlayer* iMediaPlayer;
     OpenHome::ThreadFunctor* iMediaPlayerThread;
     HelperDeviceListHandler* iDeviceListHandler;
@@ -334,7 +334,7 @@ void SuiteConfigUi::Setup()
     Brn userAgent("dummyUA");
 
     iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
-    iDriver = new Media::DriverBasic(iDvStack.Env(), iMediaPlayer->Pipeline());
+    iAnimator = new Media::AnimatorBasic(iDvStack.Env(), iMediaPlayer->Pipeline());
 
     iMediaPlayerThread = new ThreadFunctor("TestConfigUi", MakeFunctor(*this, &SuiteConfigUi::Run));
     iMediaPlayerThread->Start();
@@ -370,7 +370,7 @@ void SuiteConfigUi::TearDown()
     delete iDeviceListHandler;
     delete iMediaPlayerThread;
     delete iMediaPlayer;
-    delete iDriver;
+    delete iAnimator;
 }
 
 void SuiteConfigUi::Run()

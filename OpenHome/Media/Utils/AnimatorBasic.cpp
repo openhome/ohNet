@@ -1,4 +1,4 @@
-#include <OpenHome/Media/Utils/DriverBasic.h>
+#include <OpenHome/Media/Utils/AnimatorBasic.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
@@ -36,7 +36,7 @@ TUint PriorityArbitratorDriver::HostRange() const
 }
 #endif
 
-DriverBasic::DriverBasic(Environment& aEnv, IPipeline& aPipeline)
+AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline)
     : Thread("PipelineAnimator", kPrioritySystemHighest)
     , iPipeline(aPipeline)
     , iSem("DRVB", 0)
@@ -50,12 +50,12 @@ DriverBasic::DriverBasic(Environment& aEnv, IPipeline& aPipeline)
     Start();
 }
 
-DriverBasic::~DriverBasic()
+AnimatorBasic::~AnimatorBasic()
 {
     Join();
 }
 
-void DriverBasic::Run()
+void AnimatorBasic::Run()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
     Msg* msg = iPipeline.Pull();
@@ -122,7 +122,7 @@ void DriverBasic::Run()
     }
 }
 
-void DriverBasic::ProcessAudio(MsgPlayable* aMsg)
+void AnimatorBasic::ProcessAudio(MsgPlayable* aMsg)
 {
     iPlayable = NULL;
     const TUint numSamples = aMsg->Bytes() / ((iBitDepth/8) * iNumChannels);
@@ -141,7 +141,7 @@ void DriverBasic::ProcessAudio(MsgPlayable* aMsg)
     aMsg->RemoveRef();
 }
 
-Msg* DriverBasic::ProcessMsg(MsgMode* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
 {
     iPullLock.Wait();
     iPullValue = kClockPullDefault;
@@ -150,55 +150,55 @@ Msg* DriverBasic::ProcessMsg(MsgMode* aMsg)
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgSession* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgTrack* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgChangeInput* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgDelay* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgMetaText* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgHalt* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgHalt* aMsg)
 {
     iPendingJiffies = 0;
     iNextTimerDuration = 0;
@@ -206,19 +206,19 @@ Msg* DriverBasic::ProcessMsg(MsgHalt* aMsg)
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgFlush* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgWait* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iSampleRate = stream.SampleRate();
@@ -229,25 +229,25 @@ Msg* DriverBasic::ProcessMsg(MsgDecodedStream* aMsg)
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgSilence* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgPlayable* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgPlayable* aMsg)
 {
     ProcessAudio(aMsg);
     return NULL;
 }
 
-Msg* DriverBasic::ProcessMsg(MsgQuit* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
     iPendingJiffies = 0;
@@ -256,14 +256,14 @@ Msg* DriverBasic::ProcessMsg(MsgQuit* aMsg)
     return NULL;
 }
 
-void DriverBasic::PullClock(TInt32 aValue)
+void AnimatorBasic::PullClock(TInt32 aValue)
 {
     AutoMutex _(iPullLock);
     iPullValue += aValue;
-    Log::Print("DriverBasic::PullClock now at %u%%\n", iPullValue / (1<<29));
+    Log::Print("AnimatorBasic::PullClock now at %u%%\n", iPullValue / (1<<29));
 }
 
-TUint DriverBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
+TUint AnimatorBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
 {
     return 0;
 }

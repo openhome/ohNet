@@ -3,7 +3,7 @@
 #include <OpenHome/Media/Tests/Cdecl.h>
 #include <OpenHome/Media/Tests/GetCh.h>
 #include <OpenHome/Net/Private/DviStack.h>
-#include <OpenHome/Media/Utils/DriverBasic.h>
+#include <OpenHome/Media/Utils/AnimatorBasic.h>
 #include <OpenHome/Media/PipelineManager.h>
 
 #include <stdlib.h>
@@ -53,11 +53,11 @@ int CDECL main(int aArgc, char* aArgv[])
     TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, options.Room().CString(), options.Name().CString(),
                                                options.TuneIn().Value(), options.Tidal().Value(), options.Qobuz().Value(),
                                                options.UserAgent().Value());
-    Media::DriverBasic* driver = new Media::DriverBasic(dvStack->Env(), tmp->Pipeline());
-    tmp->SetPullableClock(*driver);
+    Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline());
+    tmp->SetPullableClock(*animator);
     tmp->Run();
     tmp->StopPipeline();
-    delete driver;
+    delete animator;
     delete tmp;
 
     delete lib;
