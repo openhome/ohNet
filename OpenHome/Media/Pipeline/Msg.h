@@ -1386,7 +1386,6 @@ private:
     Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;
     Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
     Allocator<MsgQuit> iAllocatorMsgQuit;
-    TUint iNextFlushId;
 };
 
 } // namespace Media
