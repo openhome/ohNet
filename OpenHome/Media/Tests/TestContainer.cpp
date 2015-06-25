@@ -614,7 +614,10 @@ SuiteContainerBase::~SuiteContainerBase()
 void SuiteContainerBase::Setup()
 {
     iProvider = new TestContainerProvider();
-    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(kEncodedAudioCount, kEncodedAudioCount);
+    init.SetMsgEncodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);

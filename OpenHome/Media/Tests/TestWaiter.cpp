@@ -148,7 +148,16 @@ SuiteWaiter::SuiteWaiter()
 void SuiteWaiter::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(5, 5);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgDecodedStreamCount(2);
+    init.SetMsgTrackCount(3);
+    init.SetMsgEncodedStreamCount(3);
+    init.SetMsgMetaTextCount(3);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iWaiter = new Waiter(*iMsgFactory, *this, *this, kRampDuration);
     iRampingDown = iRampingUp = false;
     iLiveStream = false;

@@ -1003,7 +1003,14 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
-    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 1, 10, 10, 1, 1, 10, 1, 1, 10, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(100, 100);
+    init.SetMsgTrackCount(10);
+    init.SetMsgEncodedStreamCount(10);
+    init.SetMsgMetaTextCount(10);
+    init.SetMsgFlushCount(10);
+    init.SetMsgSessionCount(10);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
     iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv, Brx::Empty()));
@@ -1194,7 +1201,14 @@ SuiteHttpChunked::SuiteHttpChunked()
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
-    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 1, 10, 10, 1, 1, 10, 1, 1, 10, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(100, 100);
+    init.SetMsgTrackCount(10);
+    init.SetMsgEncodedStreamCount(10);
+    init.SetMsgMetaTextCount(10);
+    init.SetMsgFlushCount(10);
+    init.SetMsgSessionCount(10);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
     iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv, Brx::Empty()));

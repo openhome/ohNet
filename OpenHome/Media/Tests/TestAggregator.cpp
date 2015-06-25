@@ -119,7 +119,12 @@ void SuiteAggregator::Setup()
     iTrackOffset = 0;
     iAudioMsgSizeJiffies = kAggregatorJiffies + Jiffies::kPerMs; /* choose a size that doesn't match kAggregatorJiffies
                                                                     to force the Aggregator to do some work */
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(10, 10);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgPlayableCount(10, 10);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iAggregator = new Aggregator(*this, kAggregatorJiffies);
     iLastPulledBytes = iLastPulledJiffies = 0;
     iGeneratedMsgCount = 0;

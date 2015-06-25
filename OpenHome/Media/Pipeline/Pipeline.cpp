@@ -192,13 +192,25 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
     const TUint msgAudioPcmCount = decodedAudioCount + 100; // +100 allows for Split()ing in various elements
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
-    iMsgFactory = new MsgFactory(aInfoAggregator,
-                                 encodedAudioCount, msgEncodedAudioCount,
-                                 decodedAudioCount, msgAudioPcmCount, kMsgCountSilence,
-                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, perStreamMsgCount,
-                                 perStreamMsgCount, kMsgCountChangeInput, perStreamMsgCount, perStreamMsgCount,
-                                 perStreamMsgCount, msgHaltCount, kMsgCountFlush, kMsgCountWait,
-                                 kMsgCountMode, perStreamMsgCount, perStreamMsgCount, kMsgCountQuit);
+    MsgFactoryInitParams msgInit;
+    msgInit.SetMsgModeCount(kMsgCountMode);
+    msgInit.SetMsgSessionCount(perStreamMsgCount);
+    msgInit.SetMsgTrackCount(perStreamMsgCount);
+    msgInit.SetMsgChangeInputCount(kMsgCountChangeInput);
+    msgInit.SetMsgDelayCount(perStreamMsgCount);
+    msgInit.SetMsgEncodedStreamCount(perStreamMsgCount);
+    msgInit.SetMsgAudioEncodedCount(msgEncodedAudioCount, encodedAudioCount);
+    msgInit.SetMsgMetaTextCount(perStreamMsgCount);
+    msgInit.SetMsgStreamInterruptedCount(perStreamMsgCount);
+    msgInit.SetMsgHaltCount(msgHaltCount);
+    msgInit.SetMsgFlushCount(kMsgCountFlush);
+    msgInit.SetMsgWaitCount(kMsgCountWait);
+    msgInit.SetMsgDecodedStreamCount(perStreamMsgCount);
+    msgInit.SetMsgAudioPcmCount(msgAudioPcmCount, decodedAudioCount);
+    msgInit.SetMsgSilenceCount(kMsgCountSilence);
+    msgInit.SetMsgPlayableCount(kMsgCountPlayablePcm, kMsgCountPlayableSilence);
+    msgInit.SetMsgQuitCount(kMsgCountQuit);
+    iMsgFactory = new MsgFactory(aInfoAggregator, msgInit);
     const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
     TUint threadPriority = threadPriorityBase;
     

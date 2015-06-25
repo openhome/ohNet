@@ -122,7 +122,16 @@ SuiteGorger::~SuiteGorger()
 void SuiteGorger::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 1, 0, 0, 3, 2, 1, 2, 2, 1, 2, 2, 1, 3, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(52, 50);
+    init.SetMsgDecodedStreamCount(3);
+    init.SetMsgTrackCount(2);
+    init.SetMsgEncodedStreamCount(2);
+    init.SetMsgMetaTextCount(2);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    init.SetMsgModeCount(3);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iGorger = new Gorger(*iMsgFactory, *this, kPriorityNormal, kGorgeSize);
     iLastPulledMsg = ENone;
     iTrackOffset = 0;

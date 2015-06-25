@@ -469,7 +469,8 @@ SuiteFiller::SuiteFiller()
     , iNextFlushId(1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDummySupply = new DummySupply();
     iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, *this, kPriorityNormal, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);

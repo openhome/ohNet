@@ -122,7 +122,20 @@ SuiteMuter::~SuiteMuter()
 void SuiteMuter::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 1, 3, 3, 1, 3, 3, 1, 2, 2, 2, 2, 2, 2, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(52, 50);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgDecodedStreamCount(3);
+    init.SetMsgTrackCount(3);
+    init.SetMsgEncodedStreamCount(3);
+    init.SetMsgMetaTextCount(3);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    init.SetMsgModeCount(2);
+    init.SetMsgWaitCount(2);
+    init.SetMsgSessionCount(2);
+    init.SetMsgDelayCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iMuter = new Muter(*iMsgFactory, *this, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;

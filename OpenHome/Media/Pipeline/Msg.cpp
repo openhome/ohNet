@@ -2669,36 +2669,29 @@ Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData)
 
 // MsgFactory
 
-MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator,
-                       TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
-                       TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
-                       TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
-                       TUint aMsgTrackCount, TUint aMsgChangeInputCount, TUint aMsgEncodedStreamCount,
-                       TUint aMsgMetaTextCount, TUint aMsgStreamInterruptedCount,
-                       TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
-                       TUint aMsgModeCount, TUint aMsgSessionCount, TUint aMsgDelayCount, TUint aMsgQuitCount)
-    : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
-    , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aMsgAudioEncodedCount, aInfoAggregator)
-    , iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
-    , iAllocatorMsgAudioPcm("MsgAudioPcm", aMsgAudioPcmCount, aInfoAggregator)
-    , iAllocatorMsgSilence("MsgSilence", aMsgSilenceCount, aInfoAggregator)
-    , iAllocatorMsgPlayablePcm("MsgPlayablePcm", aMsgPlayablePcmCount, aInfoAggregator)
-    , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aMsgPlayableSilenceCount, aInfoAggregator)
-    , iAllocatorMsgDecodedStream("MsgDecodedStream", aMsgDecodedStreamCount, aInfoAggregator)
-    , iAllocatorMsgTrack("MsgTrack", aMsgTrackCount, aInfoAggregator)
-    , iAllocatorMsgChangeInput("MsgChangeInput", aMsgChangeInputCount, aInfoAggregator)
-    , iAllocatorMsgEncodedStream("MsgEncodedStream", aMsgEncodedStreamCount, aInfoAggregator)
-    , iAllocatorMsgMetaText("MsgMetaText", aMsgMetaTextCount, aInfoAggregator)
-    , iAllocatorMsgStreamInterrupted("MsgStreamInterrupted", aMsgStreamInterruptedCount, aInfoAggregator)
-    , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
-    , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
-    , iAllocatorMsgWait("MsgWait", aMsgWaitCount, aInfoAggregator)
-    , iAllocatorMsgMode("MsgMode", aMsgModeCount, aInfoAggregator)
-    , iAllocatorMsgSession("MsgSession", aMsgSessionCount, aInfoAggregator)
-    , iAllocatorMsgDelay("MsgDelay", aMsgDelayCount, aInfoAggregator)
-    , iAllocatorMsgQuit("MsgQuit", aMsgQuitCount, aInfoAggregator)
+MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams)
+    : iAllocatorMsgMode("MsgMode", aInitParams.iMsgModeCount, aInfoAggregator)
+    , iAllocatorMsgSession("MsgSession", aInitParams.iMsgSessionCount, aInfoAggregator)
+    , iAllocatorMsgTrack("MsgTrack", aInitParams.iMsgTrackCount, aInfoAggregator)
+    , iAllocatorMsgChangeInput("MsgChangeInput", aInitParams.iMsgChangeInputCount, aInfoAggregator)
+    , iAllocatorMsgDelay("MsgDelay", aInitParams.iMsgDelayCount, aInfoAggregator)
+    , iAllocatorMsgEncodedStream("MsgEncodedStream", aInitParams.iMsgEncodedStreamCount, aInfoAggregator)
+    , iAllocatorEncodedAudio("EncodedAudio", aInitParams.iEncodedAudioCount, aInfoAggregator)
+    , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aInitParams.iMsgAudioEncodedCount, aInfoAggregator)
+    , iAllocatorMsgMetaText("MsgMetaText", aInitParams.iMsgMetaTextCount, aInfoAggregator)
+    , iAllocatorMsgStreamInterrupted("MsgStreamInterrupted", aInitParams.iMsgStreamInterruptedCount, aInfoAggregator)
+    , iAllocatorMsgHalt("MsgHalt", aInitParams.iMsgHaltCount, aInfoAggregator)
+    , iAllocatorMsgFlush("MsgFlush", aInitParams.iMsgFlushCount, aInfoAggregator)
+    , iAllocatorMsgWait("MsgWait", aInitParams.iMsgWaitCount, aInfoAggregator)
+    , iAllocatorMsgDecodedStream("MsgDecodedStream", aInitParams.iMsgDecodedStreamCount, aInfoAggregator)
+    , iAllocatorDecodedAudio("DecodedAudio", aInitParams.iDecodedAudioCount, aInfoAggregator)
+    , iAllocatorMsgAudioPcm("MsgAudioPcm", aInitParams.iMsgAudioPcmCount, aInfoAggregator)
+    , iAllocatorMsgSilence("MsgSilence", aInitParams.iMsgSilenceCount, aInfoAggregator)
+    , iAllocatorMsgPlayablePcm("MsgPlayablePcm", aInitParams.iMsgPlayablePcmCount, aInfoAggregator)
+    , iAllocatorMsgPlayableSilence("MsgPlayableSilence", aInitParams.iMsgPlayableSilenceCount, aInfoAggregator)
+    , iAllocatorMsgQuit("MsgQuit", aInitParams.iMsgQuitCount, aInfoAggregator)
+    , iNextFlushId(MsgFlush::kIdInvalid + 1)
 {
-    iNextFlushId = MsgFlush::kIdInvalid + 1;
 }
 
 MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)

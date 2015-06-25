@@ -1259,17 +1259,77 @@ private:
     TUint iNextId;
 };
 
+class MsgFactory;
+class MsgFactoryInitParams
+{
+    friend class MsgFactory;
+public:
+    MsgFactoryInitParams()
+        : iMsgModeCount(1)
+        , iMsgSessionCount(1)
+        , iMsgTrackCount(1)
+        , iMsgChangeInputCount(1)
+        , iMsgDelayCount(1)
+        , iMsgEncodedStreamCount(1)
+        , iEncodedAudioCount(1)
+        , iMsgAudioEncodedCount(1)
+        , iMsgMetaTextCount(1)
+        , iMsgStreamInterruptedCount(1)
+        , iMsgHaltCount(1)
+        , iMsgFlushCount(1)
+        , iMsgWaitCount(1)
+        , iMsgDecodedStreamCount(1)
+        , iDecodedAudioCount(1)
+        , iMsgAudioPcmCount(1)
+        , iMsgSilenceCount(1)
+        , iMsgPlayablePcmCount(1)
+        , iMsgPlayableSilenceCount(1)
+        , iMsgQuitCount(1)
+    {}
+    void SetMsgModeCount(TUint aCount)                                      { iMsgModeCount = aCount; }
+    void SetMsgSessionCount(TUint aCount)                                   { iMsgSessionCount = aCount; }
+    void SetMsgTrackCount(TUint aCount)                                     { iMsgTrackCount = aCount; }
+    void SetMsgChangeInputCount(TUint aCount)                               { iMsgChangeInputCount = aCount; }
+    void SetMsgDelayCount(TUint aCount)                                     { iMsgDelayCount = aCount; }
+    void SetMsgEncodedStreamCount(TUint aCount)                             { iMsgEncodedStreamCount = aCount; }
+    void SetMsgAudioEncodedCount(TUint aCount, TUint aEncodedAudioCount)    { iMsgAudioEncodedCount = aCount; iEncodedAudioCount = aEncodedAudioCount; }
+    void SetMsgMetaTextCount(TUint aCount)                                  { iMsgMetaTextCount = aCount; }
+    void SetMsgStreamInterruptedCount(TUint aCount)                         { iMsgStreamInterruptedCount = aCount; }
+    void SetMsgHaltCount(TUint aCount)                                      { iMsgHaltCount = aCount; }
+    void SetMsgFlushCount(TUint aCount)                                     { iMsgFlushCount = aCount; }
+    void SetMsgWaitCount(TUint aCount)                                      { iMsgWaitCount = aCount; }
+    void SetMsgDecodedStreamCount(TUint aCount)                             { iMsgDecodedStreamCount = aCount; }
+    void SetMsgAudioPcmCount(TUint aCount, TUint aDecodedAudioCount)        { iMsgAudioPcmCount = aCount; iDecodedAudioCount = aDecodedAudioCount; }
+    void SetMsgSilenceCount(TUint aCount)                                   { iMsgSilenceCount = aCount; }
+    void SetMsgPlayableCount(TUint aPcmCount, TUint aSilenceCount)          { iMsgPlayablePcmCount = aPcmCount; iMsgPlayableSilenceCount = aSilenceCount; }
+    void SetMsgQuitCount(TUint aCount)                                      { iMsgQuitCount = aCount; }
+private:
+    TUint iMsgModeCount;
+    TUint iMsgSessionCount;
+    TUint iMsgTrackCount;
+    TUint iMsgChangeInputCount;
+    TUint iMsgDelayCount;
+    TUint iMsgEncodedStreamCount;
+    TUint iEncodedAudioCount;
+    TUint iMsgAudioEncodedCount;
+    TUint iMsgMetaTextCount;
+    TUint iMsgStreamInterruptedCount;
+    TUint iMsgHaltCount;
+    TUint iMsgFlushCount;
+    TUint iMsgWaitCount;
+    TUint iMsgDecodedStreamCount;
+    TUint iDecodedAudioCount;
+    TUint iMsgAudioPcmCount;
+    TUint iMsgSilenceCount;
+    TUint iMsgPlayablePcmCount;
+    TUint iMsgPlayableSilenceCount;
+    TUint iMsgQuitCount;
+};
+
 class MsgFactory
 {
 public:
-    MsgFactory(IInfoAggregator& aInfoAggregator,
-               TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
-               TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
-               TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
-               TUint aMsgTrackCount, TUint aMsgChangeInputCount, TUint aMsgEncodedStreamCount,
-               TUint aMsgMetaTextCount, TUint aMsgStreamInterruptedCount,
-               TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
-               TUint aMsgModeCount, TUint aMsgSessionCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
+    MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams);
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgSession* CreateMsgSession();
@@ -1293,25 +1353,25 @@ private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
-    Allocator<EncodedAudio> iAllocatorEncodedAudio;
-    Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
-    Allocator<DecodedAudio> iAllocatorDecodedAudio;
-    Allocator<MsgAudioPcm> iAllocatorMsgAudioPcm;
-    Allocator<MsgSilence> iAllocatorMsgSilence;
-    Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;
-    Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
-    Allocator<MsgDecodedStream> iAllocatorMsgDecodedStream;
+    Allocator<MsgMode> iAllocatorMsgMode;
+    Allocator<MsgSession> iAllocatorMsgSession;
     Allocator<MsgTrack> iAllocatorMsgTrack;
     Allocator<MsgChangeInput> iAllocatorMsgChangeInput;
+    Allocator<MsgDelay> iAllocatorMsgDelay;
     Allocator<MsgEncodedStream> iAllocatorMsgEncodedStream;
+    Allocator<EncodedAudio> iAllocatorEncodedAudio;
+    Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
     Allocator<MsgStreamInterrupted> iAllocatorMsgStreamInterrupted;
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgWait> iAllocatorMsgWait;
-    Allocator<MsgMode> iAllocatorMsgMode;
-    Allocator<MsgSession> iAllocatorMsgSession;
-    Allocator<MsgDelay> iAllocatorMsgDelay;
+    Allocator<MsgDecodedStream> iAllocatorMsgDecodedStream;
+    Allocator<DecodedAudio> iAllocatorDecodedAudio;
+    Allocator<MsgAudioPcm> iAllocatorMsgAudioPcm;
+    Allocator<MsgSilence> iAllocatorMsgSilence;
+    Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;
+    Allocator<MsgPlayableSilence> iAllocatorMsgPlayableSilence;
     Allocator<MsgQuit> iAllocatorMsgQuit;
     TUint iNextFlushId;
 };

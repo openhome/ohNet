@@ -191,7 +191,11 @@ void SuiteRewinder::InitMsgOrder()
 
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(aMsgAudioEncodedCount, aEncodedAudioCount);
+    init.SetMsgAudioPcmCount(100, 100);
+    init.SetMsgEncodedStreamCount(3);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;

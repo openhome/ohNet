@@ -496,14 +496,28 @@ void SuiteGeneratorAny::Setup()
     iExpectedToneParams.Set(0, 0, 0 ,0 ,0);
     iExpectedMsgType = eMsgTrack;
     iExpectedJiffies = iAccumulatedJiffies = 0;
+
     iAllocatorInfoLogger = new AllocatorInfoLogger();
-    iMsgFactory = new MsgFactory(*iAllocatorInfoLogger,
-                             kMsgCountEncodedAudio, kMsgCountAudioEncoded,
-                             kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
-                             kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
-                             kMsgCountTrack, 1, kMsgCountDecodedStream, kMsgCountMetaText, 1,
-                             kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
-                             kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
+    MsgFactoryInitParams init;
+    init.SetMsgModeCount(kMsgCountMode);
+    init.SetMsgSessionCount(kMsgCountSession);
+    init.SetMsgTrackCount(kMsgCountTrack);
+    init.SetMsgChangeInputCount(1);
+    init.SetMsgDelayCount(kMsgCountDelay);
+    init.SetMsgEncodedStreamCount(kMsgCountEncodedStream);
+    init.SetMsgAudioEncodedCount(kMsgCountAudioEncoded, kMsgCountEncodedAudio);
+    init.SetMsgMetaTextCount(kMsgCountMetaText);
+    init.SetMsgStreamInterruptedCount(1);
+    init.SetMsgHaltCount(kMsgCountHalt);
+    init.SetMsgFlushCount(kMsgCountFlush);
+    init.SetMsgWaitCount(kMsgCountWait);
+    init.SetMsgDecodedStreamCount(kMsgCountDecodedStream);
+    init.SetMsgAudioPcmCount(kMsgCountAudioPcm, kMsgCountDecodedAudio);
+    init.SetMsgSilenceCount(kMsgCountSilence);
+    init.SetMsgPlayableCount(kMsgCountPlayablePcm, kMsgCountPlayableSilence);
+    init.SetMsgQuitCount(kMsgCountQuit);
+    iMsgFactory = new MsgFactory(*iAllocatorInfoLogger, init);
+
     iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);

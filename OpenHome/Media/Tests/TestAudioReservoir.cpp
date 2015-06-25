@@ -175,7 +175,11 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iSemUpstreamComplete("TRSV", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, kMaxStreams+2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
+    init.SetMsgSilenceCount(kMsgSilenceCount);
+    init.SetMsgDecodedStreamCount(kMaxStreams+2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams, kMaxStreams);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
@@ -514,7 +518,11 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iStopAudioGeneration(false)
     , iStreamId(UINT_MAX)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(200, 200);
+    init.SetMsgSilenceCount(20);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams, kMaxStreams);
     memset(iBuf, 0xff, sizeof(iBuf));

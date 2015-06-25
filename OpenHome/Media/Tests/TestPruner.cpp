@@ -109,7 +109,12 @@ SuitePruner::SuitePruner()
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 4, 1, 1, 2, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgDecodedStreamCount(3);
+    init.SetMsgTrackCount(3);
+    init.SetMsgHaltCount(4);
+    init.SetMsgModeCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iPulledTrackId = UINT_MAX/2;

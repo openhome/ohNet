@@ -91,7 +91,12 @@ SuitePreDriver::SuitePreDriver()
     , iTrackOffset(0)
     , iNumChannels(2)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(10, 10);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgPlayableCount(10, 10);
+    init.SetMsgDecodedStreamCount(kMsgFormatCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     MsgAudioPcm* audio = CreateAudio();
     iAudioMsgSizeJiffies = audio->Jiffies();

@@ -136,7 +136,18 @@ void SuiteDecodedAudioAggregator::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
-    iMsgFactory = new MsgFactory(iInfoAggregator, 400, 400, 100, 100, 10, 50, 0, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(400, 400);
+    init.SetMsgAudioPcmCount(100, 100);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgPlayableCount(50, 0);
+    init.SetMsgDecodedStreamCount(2);
+    init.SetMsgTrackCount(2);
+    init.SetMsgEncodedStreamCount(2);
+    init.SetMsgMetaTextCount(2);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDecodedAudioAggregator = new DecodedAudioAggregator(*this, *iMsgFactory);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);

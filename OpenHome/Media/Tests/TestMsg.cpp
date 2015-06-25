@@ -441,7 +441,9 @@ void SuiteAllocator::Test()
 SuiteMsgAudioEncoded::SuiteMsgAudioEncoded()
     : Suite("MsgAudioEncoded tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(kMsgCount, kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMsgAudioEncoded::~SuiteMsgAudioEncoded()
@@ -669,7 +671,10 @@ void SuiteMsgAudioEncoded::Test()
 SuiteMsgAudio::SuiteMsgAudio()
     : Suite("Basic MsgAudio tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgCount, kMsgCount);
+    init.SetMsgSilenceCount(kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMsgAudio::~SuiteMsgAudio()
@@ -898,7 +903,11 @@ void SuiteMsgAudio::Test()
 SuiteMsgPlayable::SuiteMsgPlayable()
     : Suite("Basic MsgPlayable tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgCount, kMsgCount);
+    init.SetMsgSilenceCount(kMsgCount);
+    init.SetMsgPlayableCount(kMsgCount, kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMsgPlayable::~SuiteMsgPlayable()
@@ -1144,7 +1153,11 @@ void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 SuiteRamp::SuiteRamp()
     : Suite("Ramp tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgCount, kMsgCount);
+    init.SetMsgSilenceCount(kMsgCount);
+    init.SetMsgPlayableCount(kMsgCount, kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteRamp::~SuiteRamp()
@@ -1445,7 +1458,9 @@ void SuiteRamp::Test()
 SuiteAudioStream::SuiteAudioStream()
     : Suite("MsgEncodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgEncodedStreamCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgEncodedStreamCount(kMsgEncodedStreamCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteAudioStream::~SuiteAudioStream()
@@ -1509,7 +1524,9 @@ void SuiteAudioStream::Test()
 SuiteMetaText::SuiteMetaText()
     : Suite("MsgMetaText tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgMetaTextCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgMetaTextCount(kMsgMetaTextCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMetaText::~SuiteMetaText()
@@ -1545,7 +1562,9 @@ void SuiteMetaText::Test()
 SuiteTrack::SuiteTrack()
     : Suite("MsgTrack tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgTrackCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgTrackCount(kMsgTrackCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1605,7 +1624,9 @@ void SuiteTrack::Test()
 SuiteFlush::SuiteFlush()
     : Suite("MsgFlush tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgFlushCount, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgFlushCount(kMsgFlushCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteFlush::~SuiteFlush()
@@ -1636,7 +1657,9 @@ void SuiteFlush::Test()
 SuiteHalt::SuiteHalt()
     : Suite("MsgHalt tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgHaltCount, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgHaltCount(kMsgHaltCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteHalt::~SuiteHalt()
@@ -1673,7 +1696,9 @@ void SuiteHalt::Test()
 SuiteMode::SuiteMode()
     : Suite("MsgMode tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgModeCount, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgModeCount(kMsgModeCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMode::~SuiteMode()
@@ -1706,7 +1731,9 @@ void SuiteMode::Test()
 SuiteDelay::SuiteDelay()
     : Suite("MsgDelay tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDelayCount, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgDelayCount(kMsgDelayCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteDelay::~SuiteDelay()
@@ -1734,7 +1761,9 @@ void SuiteDelay::Test()
 SuiteDecodedStream::SuiteDecodedStream()
     : Suite("MsgDecodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDecodedStreamCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgDecodedStreamCount(kMsgDecodedStreamCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteDecodedStream::~SuiteDecodedStream()
@@ -1846,7 +1875,8 @@ void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*
 SuiteMsgProcessor::SuiteMsgProcessor()
     : Suite("IMsgProcessor tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -2076,7 +2106,8 @@ Msg* ProcessorMsgType::ProcessMsg(MsgQuit* aMsg)
 SuiteMsgQueue::SuiteMsgQueue()
     : Suite("MsgQueue tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -2275,9 +2306,12 @@ void SuiteMsgQueue::Test()
 // SuiteMsgReservoir
 
 SuiteMsgReservoir::SuiteMsgReservoir()
-    : Suite("MsgReservoirtests")
+    : Suite("MsgReservoir tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(2, 1);
+    init.SetMsgSilenceCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 

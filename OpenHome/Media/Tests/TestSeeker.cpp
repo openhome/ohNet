@@ -151,7 +151,16 @@ SuiteSeeker::~SuiteSeeker()
 void SuiteSeeker::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(5, 5);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgDecodedStreamCount(2);
+    init.SetMsgTrackCount(2);
+    init.SetMsgEncodedStreamCount(2);
+    init.SetMsgMetaTextCount(2);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iSeeker = new Seeker(*iMsgFactory, *this, *this, *this, kRampDuration);
     iSeekResponseThread = new ThreadFunctor("SeekResponse", MakeFunctor(*this, &SuiteSeeker::SeekResponseThread));
     iSeekResponseThread->Start();

@@ -115,7 +115,12 @@ void SuiteSilencer::Setup()
     iBitDepth = 16;
     iNumChannels = 2;
     iTrackOffset = 0;
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(10, 10);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgPlayableCount(10, 10);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iSilencer = new Silencer(*iMsgFactory, *this, kPriorityNormal, kSilenceJiffies, 2);
     iLastPulledBytes = iLastPulledJiffies = 0;
     iLastPlayableWasSilence = false;

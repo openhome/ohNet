@@ -126,7 +126,10 @@ SuiteTimestampInspector::SuiteTimestampInspector()
 
 void SuiteTimestampInspector::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(6, 5);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *this);
     iLastMsg = EMsgNone;

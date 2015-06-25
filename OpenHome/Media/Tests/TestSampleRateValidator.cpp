@@ -122,7 +122,10 @@ SuiteSampleRateValidator::SuiteSampleRateValidator()
 
 void SuiteSampleRateValidator::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(6, 5);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iSampleRateValidator = new SampleRateValidator(*this);
     iSampleRateValidator->SetAnimator(*this);

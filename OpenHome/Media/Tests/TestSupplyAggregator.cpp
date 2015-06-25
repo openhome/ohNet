@@ -134,7 +134,8 @@ SuiteSupplyAggregator::SuiteSupplyAggregator()
     , iLastMsg(EMsgNone)
     , iMsgPushCount(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new SupplyAggregatorBytes(*iMsgFactory, *this);
 }

@@ -115,7 +115,10 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iTrackOffset(0)
     , iBuffering(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
+    init.SetMsgSilenceCount(kMsgSilenceCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kPriorityNormal, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 

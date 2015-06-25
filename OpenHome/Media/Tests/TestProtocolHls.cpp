@@ -2094,7 +2094,14 @@ void SuiteProtocolHls::Setup()
 
     iInfoAggregator = new AllocatorInfoLogger();
     iTrackFactory= new TrackFactory(*iInfoAggregator, 1);
-    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 1, 10, 10, 1, 1, 10, 1, 1, 10, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(100, 100);
+    init.SetMsgTrackCount(10);
+    init.SetMsgEncodedStreamCount(10);
+    init.SetMsgMetaTextCount(10);
+    init.SetMsgFlushCount(10);
+    init.SetMsgSessionCount(10);
+    iMsgFactory = new MsgFactory(*iInfoAggregator, init);
     iIdProvider = new TestPipelineIdProvider();
     iFlushIdProvider = new TestFlushIdProvider();
     iElementDownstream = new TestElementDownstream();
