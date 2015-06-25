@@ -870,6 +870,21 @@ MsgChangeInput::MsgChangeInput(AllocatorBase& aAllocator)
 {
 }
 
+void MsgChangeInput::ReadyToChange()
+{
+    iCallback();
+}
+
+void MsgChangeInput::Initialise(Functor aCallback)
+{
+    iCallback = aCallback;
+}
+
+void MsgChangeInput::Clear()
+{
+    iCallback = Functor();
+}
+
 Msg* MsgChangeInput::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
@@ -2712,9 +2727,10 @@ MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)
     return msg;
 }
 
-MsgChangeInput* MsgFactory::CreateMsgChangeInput(Functor /*aCallback*/)
+MsgChangeInput* MsgFactory::CreateMsgChangeInput(Functor aCallback)
 {
     MsgChangeInput* msg = iAllocatorMsgChangeInput.Allocate();
+    msg->Initialise(aCallback);
     return msg;
 }
 

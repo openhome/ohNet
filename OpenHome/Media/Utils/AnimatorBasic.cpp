@@ -162,9 +162,9 @@ Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* AnimatorBasic::ProcessMsg(MsgChangeInput* aMsg)
 {
-    ASSERTS();
+    aMsg->ReadyToChange();
     return NULL;
 }
 

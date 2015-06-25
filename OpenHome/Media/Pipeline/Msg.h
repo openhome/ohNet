@@ -340,10 +340,17 @@ private:
 
 class MsgChangeInput : public Msg
 {
+    friend class MsgFactory;
 public:
     MsgChangeInput(AllocatorBase& aAllocator);
+    void ReadyToChange();
+private:
+    void Initialise(Functor aCallback);
 private: // from Msg
+    void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Functor iCallback;
 };
 
 class MsgDelay : public Msg
