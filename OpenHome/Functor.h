@@ -184,9 +184,9 @@ public:
         return !(*this == aOther);
     }
 
-    FunctorGeneric() : iObject(0)
+    FunctorGeneric() : iObject(NULL)
     {
-        memset(iCallbackMember, 0 , sizeof(iCallbackMember));
+        memset(iCallbackMember, NULL , sizeof(iCallbackMember));
     }
 
     TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];

@@ -19,6 +19,8 @@ private:
     void TestIntByValue();
     void TestIntByRef();
     void TestIntByPtr();
+    void TestUninitialised();
+    void TestInitialised();
 private:
     TInt iInt;
 };
@@ -37,6 +39,8 @@ private:
     void TestBufByValue();
     void TestBufByRef();
     void TestBufByPtr();
+    void TestUninitialised();
+    void TestInitialised();
 private:
     static const TUint kMaxBufSize = 26;
     static const Brn kBuf;
@@ -47,9 +51,11 @@ private:
 SuiteFunctorGenericInt::SuiteFunctorGenericInt()
     : SuiteUnitTest("SuiteFunctorGenericInt")
 {
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByValue));
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByRef));
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByPtr));
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByValue), "TestIntByValue");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByRef), "TestIntByRef");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByPtr), "TestIntByPtr");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestUninitialised), "TestUninitialised");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestInitialised), "TestInitialised");
 }
 
 void SuiteFunctorGenericInt::Setup()
@@ -103,6 +109,20 @@ void SuiteFunctorGenericInt::TestIntByPtr()
     TEST(iInt == val);
 }
 
+void SuiteFunctorGenericInt::TestUninitialised()
+{
+    // Test boolean operator.
+    FunctorGeneric<TInt*> funcInt;
+    TEST(funcInt == false);
+}
+
+void SuiteFunctorGenericInt::TestInitialised()
+{
+    // Test boolean operator.
+    FunctorGeneric<TInt> funcInt = MakeFunctorGeneric(*this, &SuiteFunctorGenericInt::CallbackIntByValue);
+    TEST(funcInt == true);
+}
+
 
 // SuiteFunctorGenericBuf
 const Brn SuiteFunctorGenericBuf::kBuf("abcdefghijklmnopqrstuvwxyz");
@@ -110,9 +130,12 @@ const Brn SuiteFunctorGenericBuf::kBuf("abcdefghijklmnopqrstuvwxyz");
 SuiteFunctorGenericBuf::SuiteFunctorGenericBuf()
     : SuiteUnitTest("SuiteFunctorGenericBuf")
 {
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByValue));
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByRef));
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByPtr));
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByValue), "TestIntByPtr");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByRef), "TestBufByRef");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByPtr), "TestBufByPtr");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestUninitialised), "TestUninitialised");
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestInitialised), "TestInitialised");
+
 }
 
 void SuiteFunctorGenericBuf::Setup()
@@ -162,6 +185,22 @@ void SuiteFunctorGenericBuf::TestBufByPtr()
     funcBuf(&kBuf);
     TEST(iBuf == kBuf);
 }
+
+void SuiteFunctorGenericBuf::TestUninitialised()
+{
+    // Test boolean operator.
+    FunctorGeneric<const Brx&> funcBuf;
+    TEST(funcBuf == false);
+}
+
+void SuiteFunctorGenericBuf::TestInitialised()
+{
+    // Test boolean operator.
+    FunctorGeneric<const Brx&> funcBuf = MakeFunctorGeneric(*this, &SuiteFunctorGenericBuf::CallbackBufByRef);
+    TEST(funcBuf == true);
+}
+
+
 
 void TestFunctorGeneric()
 {
