@@ -186,7 +186,7 @@ public:
 
     FunctorGeneric() : iObject(NULL)
     {
-        memset(iCallbackMember, NULL , sizeof(iCallbackMember));
+        memset(iCallbackMember, 0 , sizeof(iCallbackMember));
     }
 
     TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
