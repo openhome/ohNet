@@ -20,7 +20,7 @@ typedef void (STDCALL *OhNetFunctorMsg)(void* aPtr, const char* aMsg);
 class FunctorMsg
 {
 public:
-    void operator()(const char* aMsg) const { iThunk(*this, aMsg); }
+    void operator()(const char* aMsg) const { if (*this) { iThunk(*this, aMsg); } }
     operator TBool() const { return (iObject!=NULL || iCallback!=NULL); }
     typedef TAny (FunctorMsg::*MemberFunction)();
     typedef TAny (*Callback)();
