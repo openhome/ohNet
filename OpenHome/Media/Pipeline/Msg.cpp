@@ -872,7 +872,9 @@ MsgChangeInput::MsgChangeInput(AllocatorBase& aAllocator)
 
 void MsgChangeInput::ReadyToChange()
 {
-    iCallback();
+    if (iCallback) {
+        iCallback();
+    }
 }
 
 void MsgChangeInput::Initialise(Functor aCallback)
