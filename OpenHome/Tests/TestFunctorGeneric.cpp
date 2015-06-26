@@ -112,8 +112,12 @@ void SuiteFunctorGenericInt::TestIntByPtr()
 void SuiteFunctorGenericInt::TestUninitialised()
 {
     // Test boolean operator.
-    FunctorGeneric<TInt*> funcInt;
+    FunctorGeneric<TInt> funcInt;
     TEST(funcInt == false);
+
+    // Calling an uninitialised functor should do nothing.
+    funcInt(1234);
+    TEST(iInt == 0);
 }
 
 void SuiteFunctorGenericInt::TestInitialised()
@@ -191,6 +195,10 @@ void SuiteFunctorGenericBuf::TestUninitialised()
     // Test boolean operator.
     FunctorGeneric<const Brx&> funcBuf;
     TEST(funcBuf == false);
+
+    // Calling an uninitialised functor should do nothing.
+    funcBuf(kBuf);
+    TEST(iBuf.Bytes() == 0);
 }
 
 void SuiteFunctorGenericBuf::TestInitialised()

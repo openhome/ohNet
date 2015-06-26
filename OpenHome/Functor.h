@@ -31,7 +31,7 @@ typedef void (STDCALL *OhNetFunctor)(void* aPtr);
 class Functor
 {
 public:
-    void operator()() const { iThunk(*this); }
+    void operator()() const { if (*this) { iThunk(*this); } }
     operator TBool() const { return (iCallback || iObject); }
     typedef TAny (Functor::*MemberFunction)();
     typedef TAny (*Callback)();
@@ -168,7 +168,7 @@ template<class Type>
 class FunctorGeneric
 {
 public:
-    void operator()(Type aType) const { iThunk(*this, aType); }
+    void operator()(Type aType) const { if (*this) { iThunk(*this, aType); } }
     operator TBool() const { return (iObject!=NULL); }
     typedef TAny (FunctorGeneric::*MemberFunction)();
     static const TUint kFudgeFactor = 2;

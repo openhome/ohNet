@@ -35,7 +35,7 @@ typedef void (STDCALL *OhNetFunctorAsync)(void* aPtr, IAsync* aAsync);
 class FunctorAsync
 {
 public:
-    void operator()(IAsync& aAsync) const { iThunk(*this, aAsync); }
+    void operator()(IAsync& aAsync) const { if (*this) { iThunk(*this, aAsync); } }
     operator TBool() const { return (iObject!=NULL || iCallback!=NULL); }
     typedef TAny (FunctorAsync::*MemberFunction)();
     typedef TAny (*Callback)();
