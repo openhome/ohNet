@@ -51,6 +51,7 @@ private:
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgStreamInterrupted* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgFlush* aMsg) override;
     void ProcessMsgIn(MsgWait* aMsg) override;
@@ -90,6 +91,7 @@ private:
     IStreamHandler* iStreamHandler;
     BwsMode iMode;
     TUint iStreamId;
+    TUint iRampUntilStreamOutCount;
 };
 
 } // namespace Media
