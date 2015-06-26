@@ -23,7 +23,8 @@ public:
     CpDevices(const std::string& aTargetUdn, Semaphore& aAddedSem);
     ~CpDevices();
     void TestActions();
-    void TestThrows();
+    void TestThrowsWhenDisabled();
+    void TestThrowsCustomError();
     void TestSubscriptions();
     void Added(CpDeviceCpp& aDevice);
     void Removed(CpDeviceCpp& aDevice);
@@ -57,11 +58,18 @@ void CpDevices::TestActions()
     TestBasicCp::TestActions(*device);
 }
 
-void CpDevices::TestThrows()
+void CpDevices::TestThrowsWhenDisabled()
 {
     ASSERT(iList.size() != 0);
     CpDeviceCpp* device = iList[0];
-    TestBasicCp::TestThrows(*device);
+    TestBasicCp::TestThrowsWhenDisabled(*device);
+}
+
+void CpDevices::TestThrowsCustomError()
+{
+    ASSERT(iList.size() != 0);
+    CpDeviceCpp* device = iList[0];
+    TestBasicCp::TestThrowsCustomError(*device);
 }
 
 void CpDevices::TestSubscriptions()
@@ -130,8 +138,9 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         Functor cb = MakeFunctor(sem, &DeviceDisabled);
         device->Device().SetDisabled(cb);
         sem->Wait();
-        deviceList->TestThrows();
+        deviceList->TestThrowsWhenDisabled();
         device->Device().SetEnabled();
+        deviceList->TestThrowsCustomError();
         deviceList->TestSubscriptions();
     }
     catch (Exception& e) {

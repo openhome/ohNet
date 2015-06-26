@@ -68,7 +68,7 @@ void TestBasicCp::TestActions(CpDeviceCpp& aDevice)
     delete proxy;
 }
 
-void TestBasicCp::TestThrows(CpDeviceCpp& aDevice)
+void TestBasicCp::TestThrowsWhenDisabled(CpDeviceCpp& aDevice)
 {
     CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(aDevice);
     Print("  Actions throw when device disabled\n");
@@ -78,6 +78,20 @@ void TestBasicCp::TestThrows(CpDeviceCpp& aDevice)
         ASSERTS();
     }
     catch(ProxyError&) { }
+    delete proxy;
+}
+
+void TestBasicCp::TestThrowsCustomError(CpDeviceCpp& aDevice)
+{
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(aDevice);
+    Print("  Custom errors are reported\n");
+    try {
+        proxy->SyncSetInt(12345);
+        ASSERTS();
+    }
+    catch (ProxyError& pe) {
+        ASSERT(pe.Code() == 801);
+    }
     delete proxy;
 }
 

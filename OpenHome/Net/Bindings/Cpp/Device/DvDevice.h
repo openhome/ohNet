@@ -101,6 +101,12 @@ public:
      * @param[in] aValue  attribute will be set to a copy of this string
      */
     void SetAttribute(const char* aKey, const char* aValue);
+    /**
+     * Embed another device in this device
+     *
+     * @param[in] aDevice Device to embed.  Ownership passes to this (parent) device.
+     */
+    void AddDevice(DvDeviceStd* aDevice);
 protected:
     DvDeviceStd();
     void SetUdn(const std::string& aUdn);

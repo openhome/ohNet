@@ -773,7 +773,7 @@ void DviSessionUpnp::Subscribe()
         return;
     }
 
-    if (!iHeaderCallback.Received() || !iHeaderNt.Received() || !iHeaderTimeout.Received()) {
+    if (!iHeaderCallback.Received() || !iHeaderNt.Received()) {
         Error(HttpStatus::kPreconditionFailed);
     }
     DviDevice* device;
@@ -782,7 +782,7 @@ void DviSessionUpnp::Subscribe()
     if (device == NULL || service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
-    TUint duration = iHeaderTimeout.Timeout();
+    TUint duration = (iHeaderTimeout.Received()? iHeaderTimeout.Timeout() : iDvStack.Env().InitParams()->DvMaxUpdateTimeSecs());
     Brh sid;
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri(), iReaderRequest->Version());
@@ -1085,7 +1085,7 @@ TBool DviSessionUpnp::InvocationReadBool(const TChar* aName)
         }
     }
     catch (XmlError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
     return false;
 }
@@ -1103,7 +1103,7 @@ void DviSessionUpnp::InvocationReadString(const TChar* aName, Brhz& aString)
         writable.TransferTo(aString);
     }
     catch (XmlError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
 }
 
@@ -1115,10 +1115,10 @@ TInt DviSessionUpnp::InvocationReadInt(const TChar* aName)
         return num;
     }
     catch (XmlError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
     catch (AsciiError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
     return 0;
 }
@@ -1131,10 +1131,10 @@ TUint DviSessionUpnp::InvocationReadUint(const TChar* aName)
         return num;
     }
     catch (XmlError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
     catch (AsciiError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
     return 0;
 }
@@ -1151,7 +1151,7 @@ void DviSessionUpnp::InvocationReadBinary(const TChar* aName, Brh& aData)
         }
     }
     catch (XmlError&) {
-        InvocationReportError(501, Brn("Invalid XML"));
+        InvocationReportError(402, Brn("Invalid Args"));
     }
 }
 

@@ -86,7 +86,13 @@ void DvDeviceStd::SetAttribute(const char* aKey, const char* aValue)
     iDevice->SetAttribute(aKey, aValue);
 }
 
+void DvDeviceStd::AddDevice(DvDeviceStd* aDevice)
+{
+    iDevice->AddDevice(aDevice->iDevice);
+}
 
+
+// DvResourceManagerStd
 
 DvResourceManagerStd::DvResourceManagerStd(IResourceManagerStd& aResourceManager)
     : iResourceManager(aResourceManager)
