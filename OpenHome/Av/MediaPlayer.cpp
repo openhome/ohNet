@@ -15,7 +15,6 @@
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
 #include <OpenHome/Av/ProviderFactory.h>
-#include <OpenHome/NetworkMonitor.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -63,7 +62,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
-    iNetworkMonitor = new NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
 }
 
 MediaPlayer::~MediaPlayer()
@@ -74,7 +72,6 @@ MediaPlayer::~MediaPlayer()
     delete iProduct;
     delete iVolumeManager;
     delete iVolumeConfig;
-    delete iNetworkMonitor;
     delete iProviderConfig;
     delete iProviderTime;
     delete iProviderInfo;

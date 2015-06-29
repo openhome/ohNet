@@ -230,6 +230,8 @@ void SuiteStarvationMonitor::Test()
     }
     TEST(!iBuffering);
 
+    // FIXME - no test for StreamInterrupted
+
     // Add Halt.  Check queue can be drained without ramping down
     Print("\nDrain without ramping down\n");
     TEST(!iSm->iPlannedHalt);

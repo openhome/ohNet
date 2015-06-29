@@ -32,6 +32,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
     , iStreamHandler(NULL)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
+    , iRampUntilStreamOutCount(0)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
     UpdateStatus(EBuffering);
@@ -193,6 +194,20 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
     iStatus = aStatus;
 }
 
+void StarvationMonitor::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
+{
+    iRampUntilStreamOutCount = DecodedStreamCount() + 1;
+    if (iStatus == EBuffering || iStatus == ERampingDown) {
+        return;
+    }
+    if (iStatus == ERunning) {
+        iCurrentRampValue = Ramp::kMax;
+    }
+    iRampDownDuration = Jiffies();
+    iRemainingRampSize = iRampDownDuration;
+    UpdateStatus(ERampingDown);
+}
+
 void StarvationMonitor::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
     iLock.Wait();
@@ -239,6 +254,9 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
         iClockPuller->NewStreamStarvationMonitor(iStreamId);
     }
     iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    if (iRampUntilStreamOutCount > 0) {
+        iRampUntilStreamOutCount--;
+    }
     return aMsg;
 }
 
@@ -296,7 +314,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
 
     iLock.Wait();
     TBool enteredBuffering = false;
-    if (iStatus == ERampingDown) {
+    if (iStatus == ERampingDown && iRampUntilStreamOutCount > 0) {
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
         UpdateStatus(EBuffering);
