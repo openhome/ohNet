@@ -19,6 +19,7 @@ class OhmSenderDriver;
 class OhmSender;
 class ZoneHandler;
 class IOhmTimestamper;
+class IOhmTimestampMapper;
 
 class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor
 {

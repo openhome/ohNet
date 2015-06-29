@@ -21,6 +21,7 @@ namespace Av {
 
 class ProviderSender;
 class IOhmTimestamper;
+class IOhmTimestampMapper;
 
 class OhmSenderDriver : public IOhmSenderDriver
 {

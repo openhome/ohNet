@@ -211,10 +211,10 @@ void TestMediaPlayer::SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, I
     iRxTimestamper = &aRxTimestamper;
 }
 
-void SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper)
+void TestMediaPlayer::SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper)
 {
-    iTxTsMapper = &aTsMapper;
-    iRxTsMapper = &aTsMapper;
+    iTxTsMapper = &aTxTsMapper;
+    iRxTsMapper = &aRxTsMapper;
 }
 
 void TestMediaPlayer::StopPipeline()
