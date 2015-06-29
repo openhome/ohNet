@@ -63,9 +63,10 @@ private:
 
 class DummyVolumeManager : public IVolumeManager
 {
-private: // from IVolumeManager
-    void AddObserver(IVolumeObserver& aObserver) override;
-    void AddObserver(Media::IMuteObserver& aObserver) override;
+private: // from IVolumeReporter
+    void AddVolumeObserver(IVolumeObserver& aObserver) override;
+private: // from IMuteReporter
+    void AddMuteObserver(Media::IMuteObserver& aObserver) override;
 private: // from IVolumeProfile
     TUint VolumeMax() const override;
     TUint VolumeDefault() const override;
@@ -77,6 +78,8 @@ private: // from IVolumeProfile
     TUint FadeMax() const override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
+private: // from IVolumeSourceOffset
+    void SetVolumeOffset(TInt aValue) override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
@@ -189,8 +192,8 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 
 // DummyVolumeManager
 
-void DummyVolumeManager::AddObserver(IVolumeObserver& /*aObserver*/) {}
-void DummyVolumeManager::AddObserver(Media::IMuteObserver& /*aObserver*/) {}
+void DummyVolumeManager::AddVolumeObserver(IVolumeObserver& /*aObserver*/) {}
+void DummyVolumeManager::AddMuteObserver(Media::IMuteObserver& /*aObserver*/) {}
 TUint DummyVolumeManager::VolumeMax() const                          { return 10; }
 TUint DummyVolumeManager::VolumeDefault() const                      { return 4; }
 TUint DummyVolumeManager::VolumeUnity() const                        { return 8; }
@@ -200,6 +203,7 @@ TUint DummyVolumeManager::VolumeMilliDbPerStep() const               { return 10
 TUint DummyVolumeManager::BalanceMax() const                         { return 5; }
 TUint DummyVolumeManager::FadeMax() const                            { return 4; }
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
+void DummyVolumeManager::SetVolumeOffset(TInt /*aValue*/)            {}
 void DummyVolumeManager::Mute()                                      {}
 void DummyVolumeManager::Unmute()                                    {}
 
