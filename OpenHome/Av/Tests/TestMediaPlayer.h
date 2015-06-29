@@ -93,10 +93,8 @@ public:
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent);
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
-    void SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper);
-    void SetTxTimestampMapper(IOhmTimestampMapper& aTsMapper);
-    void SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper);
-    void SetRxTimestampMapper(IOhmTimestampMapper& aTsMapper);
+    void SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper);
+    void SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();

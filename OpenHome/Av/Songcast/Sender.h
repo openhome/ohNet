@@ -6,7 +6,6 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Configuration/ConfigManager.h>
-#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 #include <vector>
 
@@ -19,6 +18,7 @@ namespace Av {
 class OhmSenderDriver;
 class OhmSender;
 class ZoneHandler;
+class IOhmTimestamper;
 
 class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor
 {

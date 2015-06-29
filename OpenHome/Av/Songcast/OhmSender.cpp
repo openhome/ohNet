@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
 

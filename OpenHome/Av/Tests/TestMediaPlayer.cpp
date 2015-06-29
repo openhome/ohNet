@@ -205,23 +205,15 @@ void TestMediaPlayer::SetPullableClock(IPullableClock& aPullableClock)
     iPullableClock = &aPullableClock;
 }
 
-void TestMediaPlayer::SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper)
+void TestMediaPlayer::SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper)
 {
-    iTxTimestamper = &aTimestamper;
+    iTxTimestamper = &aTxTimestamper;
+    iRxTimestamper = &aRxTimestamper;
 }
 
-void TestMediaPlayer::SetTxTimestampMapper(IOhmTimestampMapper& aTsMapper)
+void SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper)
 {
     iTxTsMapper = &aTsMapper;
-}
-
-void TestMediaPlayer::SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper)
-{
-    iRxTimestamper = &aTimestamper;
-}
-
-void TestMediaPlayer::SetRxTimestampMapper(IOhmTimestampMapper& aTsMapper)
-{
     iRxTsMapper = &aTsMapper;
 }
 

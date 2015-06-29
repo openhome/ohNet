@@ -9,7 +9,6 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
-#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 #include "Ohm.h"
 #include "OhmMsg.h"
@@ -21,6 +20,7 @@ class Environment;
 namespace Av {
 
 class ProviderSender;
+class IOhmTimestamper;
 
 class OhmSenderDriver : public IOhmSenderDriver
 {
