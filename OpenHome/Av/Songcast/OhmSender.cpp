@@ -240,7 +240,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         try {
             timeStamp = iTimestamper->Timestamp(iFrame - 1);
             if (iTsMapper != NULL) {
-                timeStamp = iTsMapper->Map(timeStamp, iSampleRate);
+                timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
             }
             isTimeStamped = true;
         }

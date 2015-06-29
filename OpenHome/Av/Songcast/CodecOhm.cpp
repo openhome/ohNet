@@ -90,7 +90,7 @@ void CodecOhm::Process()
             }
             const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
             if (msg->RxTimestamped() && msg->Timestamped()) {
-                TUint rxTstamp = (iTsMapper != NULL) ? iTsMapper->Map(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
+                TUint rxTstamp = (iTsMapper != NULL) ? iTsMapper->ToOhmTimestamp(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
                 iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart, rxTstamp, msg->NetworkTimestamp());
             }
             else {

@@ -25,7 +25,7 @@ class IOhmTimestampMapper
 {
 public:
     virtual ~IOhmTimestampMapper() {}
-    virtual TUint Map(TUint aTimestamp, TUint aSampleRate) = 0;
+    virtual TUint ToOhmTimestamp(TUint aTimestamp, TUint aSampleRate) = 0;
 };
 
 
