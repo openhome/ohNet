@@ -210,9 +210,19 @@ void TestMediaPlayer::SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper)
     iTxTimestamper = &aTimestamper;
 }
 
+void TestMediaPlayer::SetTxTimestampMapper(IOhmTimestampMapper& aTsMapper)
+{
+    iTxTsMapper = &aTsMapper;
+}
+
 void TestMediaPlayer::SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper)
 {
     iRxTimestamper = &aTimestamper;
+}
+
+void TestMediaPlayer::SetRxTimestampMapper(IOhmTimestampMapper& aTsMapper)
+{
+    iRxTsMapper = &aTsMapper;
 }
 
 void TestMediaPlayer::StopPipeline()
@@ -372,7 +382,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iObservableFriendlyName.Replace(Brn(friendlyName));
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iRxTimestamper, kSongcastSenderIconFileName));
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
 }
 
 

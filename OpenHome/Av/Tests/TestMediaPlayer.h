@@ -94,7 +94,9 @@ public:
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
     void SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper);
+    void SetTxTimestampMapper(IOhmTimestampMapper& aTsMapper);
     void SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper);
+    void SetRxTimestampMapper(IOhmTimestampMapper& aTsMapper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -143,9 +145,11 @@ private:
     Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
-    Av::IOhmTimestamper* iTxTimestamper;
-    Av::IOhmTimestamper* iRxTimestamper;
+    IOhmTimestamper* iTxTimestamper;
+    IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;
+    IOhmTimestampMapper* iTxTsMapper;
+    IOhmTimestampMapper* iRxTsMapper;
 };
 
 class TestMediaPlayerOptions

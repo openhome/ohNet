@@ -121,7 +121,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
-    iOhmSenderDriver = new OhmSenderDriver(iEnv, NULL);
+    iOhmSenderDriver = new OhmSenderDriver(iEnv, NULL, NULL);
 
     Bws<64> udn("Driver-");
     udn.Append(aName);

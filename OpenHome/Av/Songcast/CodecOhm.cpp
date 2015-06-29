@@ -17,10 +17,11 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 using namespace OpenHome::Av;
 
-CodecOhm::CodecOhm(OhmMsgFactory& aMsgFactory)
+CodecOhm::CodecOhm(OhmMsgFactory& aMsgFactory, IOhmTimestampMapper* aTsMapper)
     : CodecBase("Songcast", kCostVeryLow)
     , iMsgFactory(aMsgFactory)
     , iOffset(0)
+    , iTsMapper(aTsMapper)
 {
 }
 
@@ -89,7 +90,8 @@ void CodecOhm::Process()
             }
             const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
             if (msg->RxTimestamped() && msg->Timestamped()) {
-                iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart, msg->RxTimestamp(), msg->NetworkTimestamp());
+                TUint rxTstamp = (iTsMapper != NULL) ? iTsMapper->Map(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
+                iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart, rxTstamp, msg->NetworkTimestamp());
             }
             else {
                 iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart);

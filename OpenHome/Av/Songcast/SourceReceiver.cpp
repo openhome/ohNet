@@ -46,7 +46,13 @@ class SourceReceiver : public Source, private ISourceReceiver, private IZoneList
 {
     static const TChar* kProtocolInfo;
 public:
-    SourceReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTxTimestamper, IOhmTimestamper* aRxTimestamper, const Brx& aSenderIconFileName);
+    SourceReceiver(IMediaPlayer& aMediaPlayer,
+                   Media::IPullableClock* aPullableClock,
+                   IOhmTimestamper* aTxTimestamper,
+                   IOhmTimestampMapper* aTxTsMapper,
+                   IOhmTimestamper* aRxTimestamper,
+                   IOhmTimestampMapper* aRxTsMapper,
+                   const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
     void Activate() override;
@@ -115,9 +121,15 @@ using namespace OpenHome::Configuration;
 
 // SourceFactory
 
-ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTxTimestamper, IOhmTimestamper* aRxTimestamper, const Brx& aSenderIconFileName)
+ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
+                                    Media::IPullableClock* aPullableClock,
+                                    IOhmTimestamper* aTxTimestamper,
+                                    IOhmTimestampMapper* aTxTsMapper,
+                                    IOhmTimestamper* aRxTimestamper,
+                                    IOhmTimestampMapper* aRxTsMapper,
+                                    const Brx& aSenderIconFileName)
 { // static
-    return new SourceReceiver(aMediaPlayer, aPullableClock, aTxTimestamper, aRxTimestamper, aSenderIconFileName);
+    return new SourceReceiver(aMediaPlayer, aPullableClock, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper, aSenderIconFileName);
 }
 
 
@@ -149,7 +161,13 @@ IClockPuller* UriProviderSongcast::ClockPuller()
 
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
-SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTxTimestamper, IOhmTimestamper* aRxTimestamper, const Brx& aSenderIconFileName)
+SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
+                               Media::IPullableClock* aPullableClock,
+                               IOhmTimestamper* aTxTimestamper,
+                               IOhmTimestampMapper* aTxTsMapper,
+                               IOhmTimestamper* aRxTimestamper,
+                               IOhmTimestampMapper* aRxTsMapper,
+                               const Brx& aSenderIconFileName)
     : Source("Songcast", "Receiver")
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -171,7 +189,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock
     iUriProvider = new UriProviderSongcast(aMediaPlayer, aPullableClock);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
-    iPipeline.Add(new CodecOhm(*iOhmMsgFactory));
+    iPipeline.Add(new CodecOhm(*iOhmMsgFactory, aRxTsMapper));
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode()));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
@@ -181,7 +199,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock
     // Sender
     IConfigInitialiser& configInit = aMediaPlayer.ConfigInitialiser();
     IConfigManager& configManager = aMediaPlayer.ConfigManager();
-    iSender = new Sender(env, device, *iZoneHandler, aTxTimestamper, configInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
+    iSender = new Sender(env, device, *iZoneHandler, aTxTimestamper, aTxTsMapper, configInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);

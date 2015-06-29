@@ -27,7 +27,7 @@ class OhmSenderDriver : public IOhmSenderDriver
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kMaxHistoryFrames = 100;
 public:
-    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper);
+    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
     void SendAudio(const TByte* aData, TUint aBytes, TBool aHalt = false);
 private: // from IOhmSenderDriver
@@ -64,6 +64,7 @@ private:
     FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
     IOhmTimestamper* iTimestamper;
     TBool iFirstFrame;
+    IOhmTimestampMapper* iTsMapper;
 };
 
 class OhmSender
