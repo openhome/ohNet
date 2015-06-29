@@ -11,6 +11,7 @@
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaop.h>
 #include <OpenHome/Media/Utils/ClockPullerLogging.h>
 
@@ -96,7 +97,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 {
     GenerateMetadata();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr);
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr, aMediaPlayer.VolumeManager(), aMediaPlayer.VolumeManager());
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();

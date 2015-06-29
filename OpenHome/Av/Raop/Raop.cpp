@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 #include <openssl/evp.h>
 
@@ -143,13 +144,87 @@ void RaopDevice::MacAddressOctets(TByte (&aOctets)[6]) const
     LOG(kBonjour, "\n");
 }
 
+// RaopVolumeHandler
+RaopVolumeHandler::RaopVolumeHandler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
+    : iVolumeOffset(aVolumeOffset)
+    , iEnabled(false)
+    , iVolUser(0)
+    , iVolRaop(-30)
+    , iLock("RVHL")
+{
+    aVolumeReporter.AddVolumeObserver(*this);
+}
 
-RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance)
+void RaopVolumeHandler::SetEnabled(TBool aEnabled)
+{
+    AutoMutex a(iLock);
+    if (aEnabled) {
+        if (iEnabled != aEnabled) {
+            iEnabled = aEnabled;
+            UpdateOffsetLocked();
+        }
+    }
+    else {
+        if (iEnabled != aEnabled) {
+            iEnabled = aEnabled;
+            iVolumeOffset.SetVolumeOffset(0);
+        }
+    }
+}
+
+void RaopVolumeHandler::SetRaopVolume(TInt aVolume)
+{
+    TInt vol = aVolume;
+    if (aVolume == kMute) {
+        vol = kVolMin;  // Rescale mute val to kVolMin.
+    }
+    if (vol < kVolMin || vol > kVolMax) {
+        THROW(RaopVolumeInvalid);
+    }
+
+    // Scale RAOP volume to within range of system volume.
+    AutoMutex a(iLock);
+    iVolRaop = vol;
+    if (iEnabled) {
+        UpdateOffsetLocked();
+    }
+}
+
+void RaopVolumeHandler::VolumeChanged(TUint aVolume)
+{
+    AutoMutex a(iLock);
+    iVolUser = aVolume;
+    if (iEnabled) {
+        UpdateOffsetLocked();
+    }
+}
+
+void RaopVolumeHandler::UpdateOffsetLocked()
+{
+    const TUint raopShifted = iVolRaop + kVolSteps; // Move range from -30..0 to 0..30.
+
+    const TUint volMultiplied = raopShifted*iVolUser;
+    // Ensure multiplication didn't wrap TUint.
+    if (iVolUser > 0 && raopShifted > 0) {
+        ASSERT(volMultiplied >= iVolUser);
+    }
+    else {
+        ASSERT(volMultiplied == 0);
+    }
+
+    const TUint vol = volMultiplied / kVolSteps;
+    ASSERT(iVolUser >= vol);    // RAOP vol must be within user vol.
+    const TInt offset = (iVolUser - vol) * -1;
+
+    iVolumeOffset.SetVolumeOffset(offset);
+}
+
+
+RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
     : iAeskeyPresent(false)
     , iAesSid(0)
     //, iRaopObserver(aObserver)
     , iDiscovery(aDiscovery)
-    //, iVolume(aVolume)
     , iRaopDevice(aRaopDevice)
     , iInstance(aInstance)
     , iActive(false)
@@ -159,6 +234,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServe
     , iTimingPort(0)
     , iClientControlPort(0)
     , iClientTimingPort(0)
+    , iVolumeHandler(aVolumeReporter, aVolumeOffset)
 {
     iReaderBuffer = new Srs<1024>(*this);
     iReaderUntil = new ReaderUntilS<kMaxReadBufferBytes>(*iReaderBuffer);
@@ -460,31 +536,30 @@ void RaopDiscoverySession::Run()
                         Brn data = iReaderProtocol->Read(iHeaderContentLength.ContentLength());
                         Parser parser(data);
                         Brn entry = parser.Next(':');
-                        //if(Trim(entry) == Brn("volume")) {
                         if(entry == Brn("volume")) {
-                            //try {
-                            //    // volume range is -30 to 0, < -30 == mute
-                            //    // get int part plus first digit after dp
-                            //    Bws<10> vStr(parser.Next('.'));
-                            //    vStr.Append(parser.At(0));
+                            Brn volIntBuf = parser.Next('.');
+                            Brn volFractBuf = parser.Next();
+                            TInt volInt = 0;
+                            try {
+                                volInt = Ascii::Int(volIntBuf);
+                                TInt volFract = Ascii::Int(volFractBuf);
+                                volFract;
+                                // FIXME - do something sensible with volFract - such as pass both into SetRaopVolume() and let it handle them.
 
-                            //    TInt vol = Int(vStr);
-                            //    vol = 300 + vol; // range 0-300
-                            //    if(vol < 0) {
-                            //        vol = 0;  // muted
-                            //    }
-                            //    vol *= vol;       // convert from linear scale
-                            //    vol /= 90; // range 0-1000
-
-                            //    vol *= Linn::Media::Volume::kUnityGain;
-                            //    vol /= 1000; // convert so that 100% = 256 for efficient scaling
-
-                            //    LOG(kMedia, "raop volume ["); LOG(kMedia, vStr); LOG(kMedia, "] %d%\n", vol);
-                            //    iVolume.Set(vol);
-                            //}
-                            //catch(AsciiError) {
-                            //    // ignore entry if it can't be decoded
-                            //}
+                                iVolumeHandler.SetRaopVolume(volInt);
+                            }
+                            catch (AsciiError&) {
+                                // Couldn't parse volume. Ignore it.
+                                LOG(kMedia, "RaopDiscoverySession::Run AsciiError while parsing volume. volIntBuf: ");
+                                LOG(kMedia, volIntBuf);
+                                LOG(kMedia, " volFractBuf: ");
+                                LOG(kMedia, volFractBuf);
+                                LOG(kMedia, "\n");
+                            }
+                            catch (RaopVolumeInvalid&) {
+                                // Invalid volume passed in.
+                                LOG(kMedia, "RaopDiscoverySession::Run RaopVolumeInvalid %d\n", volInt);
+                            }
                         }
                     }
                     else {
@@ -705,7 +780,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
 
-RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
     : iEnv(aEnv)
     , iAdapter(aNif)
     , iObserversLock("RDOL")
@@ -717,10 +792,11 @@ RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvSta
     iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aFriendlyName, iAdapter.Address(), aMacAddr);
 
     // Require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging.
-    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 1);
+    TUint nextSessionId = 1;
+    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolumeReporter, aVolumeOffset);
     iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
 
-    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 2);
+    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolumeReporter, aVolumeOffset);
     iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
 
     TIpAddress ipAddr = iAdapter.Address();
@@ -870,7 +946,7 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 
 
 // RaopDiscovery
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
     : iEnv(aEnv)
     , iDvStack(aDvStack)
     , iHostName(aHostName)
@@ -879,6 +955,8 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iCurrent(NULL)
     , iServersLock("RDSL")
     , iObserversLock("RDOL")
+    , iVolumeReporter(aVolumeReporter)
+    , iVolumeOffset(aVolumeOffset)
 {
     // NOTE: iRaopDevice is not registered by default
     iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest);
@@ -1184,7 +1262,7 @@ void RaopDiscovery::HandleInterfaceChange()
 
 void RaopDiscovery::AddAdapter(NetworkAdapter& aNif)
 {
-    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName, iMacAddr);
+    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName, iMacAddr, iVolumeReporter, iVolumeOffset);
     iServers.push_back(server);
     server->Enable();
     server->AddObserver(*this);

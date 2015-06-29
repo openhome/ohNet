@@ -9,11 +9,13 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/ObservableBrx.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
 
 EXCEPTION(RaopNoActiveSession);
+EXCEPTION(RaopVolumeInvalid);
 
 namespace OpenHome {
     class IPowerManager;
@@ -148,15 +150,37 @@ public:
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
 };
 
+class RaopVolumeHandler : public IVolumeObserver
+{
+public:
+    static const TInt kVolMin = -30;
+    static const TInt kVolMax = 0;
+    static const TUint kVolSteps = 30;
+    static const TInt kMute = -144;
+public:
+    RaopVolumeHandler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
+    void SetEnabled(TBool aEnabled);
+    void SetRaopVolume(TInt aVolume);
+public: // from IVolumeObserver
+    void VolumeChanged(TUint aVolume) override;
+private:
+    void UpdateOffsetLocked();
+private:
+    IVolumeSourceOffset& iVolumeOffset;
+    TBool iEnabled;
+    TUint iVolUser;
+    TInt iVolRaop;
+    Mutex iLock;
+};
+
 class RaopDiscoveryServer;
 
 class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
 {
     static const TUint kMaxReadBufferBytes = 12000;
     static const TUint kMaxWriteBufferBytes = 4000;
-
 public:
-    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance);
+    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
     ~RaopDiscoverySession();
 private: // from SocketTcpSession
     void Run() override;
@@ -201,7 +225,6 @@ private:
     RSA *iRsa;
     Bws<1024> iResponse;
     RaopDiscoveryServer& iDiscovery;
-    //Volume& iVolume;
     RaopDevice& iRaopDevice;
     TUint iInstance;
     TBool iActive;
@@ -212,12 +235,13 @@ private:
     TUint iTimingPort;
     TUint iClientControlPort;
     TUint iClientTimingPort;
+    RaopVolumeHandler iVolumeHandler;
 };
 
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
     virtual ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -262,7 +286,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
     virtual ~RaopDiscovery();
     void Enable();
     void Disable();
@@ -304,6 +328,8 @@ private:
     IPowerManagerObserver* iPowerObserver;
     Mutex iServersLock;
     Mutex iObserversLock;
+    IVolumeReporter& iVolumeReporter;
+    IVolumeSourceOffset& iVolumeOffset;
 };
 
 

@@ -623,6 +623,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestCredentials.cpp',
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
+                'OpenHome/Av/Tests/TestRaop.cpp',
             ],
             use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
@@ -926,6 +927,11 @@ def build(bld):
             source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
             use=['OHNET', 'OHNETMON', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
             target='TestConfigUi',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Av/Tests/TestRaopMain.cpp',
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop'],
+            target='TestRaop',
             install_path=None)
 
 # Bundles
