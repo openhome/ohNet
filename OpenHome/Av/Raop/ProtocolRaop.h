@@ -83,6 +83,8 @@ private:
     TBool iExit;
 };
 
+class IRaopVolumeEnabler;
+
 // NOTE: there are three channels to monitor:
 // - Audio
 // - Control
@@ -92,7 +94,7 @@ private:
 class ProtocolRaop : public Media::ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
+    ProtocolRaop(Environment& aEnv, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
     TBool Active();
     void Deactivate();
@@ -113,12 +115,15 @@ private:
     void OutputAudio(const Brn &aPacket, TBool aFirst);
     void OutputContainer(const Brn &aFmtp);
     void DoInterrupt();
+    void WaitForChangeInput();
+    void InputChanged();
 private:
     static const TUint kMaxReadBufferBytes = 1500;
     // FIXME - start latency can be retrieved from rtptime field of RTSP RECORD
     // packet (although it is always 2 seconds for Airplay streams)
     static const TUint kDelayJiffies = Media::Jiffies::kPerSecond*2; // expect 2s of buffering
-
+    TBool iVolumeEnabled;
+    IRaopVolumeEnabler& iVolume;
     IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;
     RaopAudio iRaopAudio;
@@ -137,6 +142,7 @@ private:
     TBool iStopped;
     Mutex iLockRaop;
     Semaphore iSem;
+    Semaphore iSemInputChanged;
 };
 
 class RtpPacket

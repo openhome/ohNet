@@ -20,8 +20,10 @@ using namespace OpenHome::Media;
 
 // ProtocolRaop
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
     : ProtocolNetwork(aEnv)
+    , iVolumeEnabled(false)
+    , iVolume(aVolume)
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
     , iRaopAudio(iServerManager.Find(aAudioId))
@@ -29,6 +31,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpSer
     , iSupply(NULL)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
+    , iSemInputChanged("PRIC", 0)
 {
 }
 
@@ -89,6 +92,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     TUint16 expected = 0;
     iSem.Clear();
 
+    WaitForChangeInput();
+
     // Output the delay before MsgEncodedStream - otherwise, the MsgDelay may
     // be pulled while the CodecController is attempting to Read(), causing a
     // CodecStreamEnded.
@@ -116,6 +121,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iSupply->OutputFlush(iNextFlushId);
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iActive = false;
+                WaitForChangeInput();
                 return EProtocolStreamStopped;
             }
         }
@@ -129,6 +135,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iActive = false;
                 iStopped = true;
                 iLockRaop.Signal();
+                WaitForChangeInput();
                 return EProtocolStreamStopped;
             }
 
@@ -271,6 +278,21 @@ void ProtocolRaop::OutputAudio(const Brn &aPacket, TBool aFirst)
     if (sendAudio) {
         iSupply->OutputData(aPacket);
     }
+}
+
+void ProtocolRaop::WaitForChangeInput()
+{
+    iSemInputChanged.Clear();
+    iSupply->OutputChangeInput(MakeFunctor(*this, &ProtocolRaop::InputChanged));
+    iSemInputChanged.Wait();
+}
+
+void ProtocolRaop::InputChanged()
+{
+    AutoMutex a(iLock);
+    iVolumeEnabled = !iVolumeEnabled;   // Toggle volume.
+    iVolume.SetVolumeEnabled(iVolumeEnabled);
+    iSemInputChanged.Signal();
 }
 
 TUint ProtocolRaop::TryStop(TUint aStreamId)

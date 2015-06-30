@@ -150,7 +150,21 @@ public:
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
 };
 
-class RaopVolumeHandler : public IVolumeObserver
+class IRaopVolumeEnabler
+{
+public:
+    virtual void SetVolumeEnabled(TBool aEnabled) = 0;
+    virtual ~IRaopVolumeEnabler() {}
+};
+
+class IRaopVolume
+{
+public:
+    virtual void SetRaopVolume(TInt aVolume) = 0;
+    virtual ~IRaopVolume() {}
+};
+
+class RaopVolumeHandler : public IRaopVolume, public IRaopVolumeEnabler, public IVolumeObserver
 {
 public:
     static const TInt kVolMin = -30;
@@ -159,8 +173,10 @@ public:
     static const TInt kMute = -144;
 public:
     RaopVolumeHandler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
-    void SetEnabled(TBool aEnabled);
-    void SetRaopVolume(TInt aVolume);
+public: // from IRaopVolume
+    void SetRaopVolume(TInt aVolume) override;
+public: // from IRaopVolumeEnabler
+    void SetVolumeEnabled(TBool aEnabled) override;
 public: // from IVolumeObserver
     void VolumeChanged(TUint aVolume) override;
 private:
@@ -180,7 +196,7 @@ class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
     static const TUint kMaxReadBufferBytes = 12000;
     static const TUint kMaxWriteBufferBytes = 4000;
 public:
-    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
+    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IRaopVolume& aVolume);
     ~RaopDiscoverySession();
 private: // from SocketTcpSession
     void Run() override;
@@ -235,13 +251,13 @@ private:
     TUint iTimingPort;
     TUint iClientControlPort;
     TUint iClientTimingPort;
-    RaopVolumeHandler iVolumeHandler;
+    IRaopVolume& iVolume;
 };
 
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IRaopVolume& aVolume);
     virtual ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -286,7 +302,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IRaopVolume& aVolume);
     virtual ~RaopDiscovery();
     void Enable();
     void Disable();
@@ -328,8 +344,7 @@ private:
     IPowerManagerObserver* iPowerObserver;
     Mutex iServersLock;
     Mutex iObserversLock;
-    IVolumeReporter& iVolumeReporter;
-    IVolumeSourceOffset& iVolumeOffset;
+    IRaopVolume& iVolume;
 };
 
 

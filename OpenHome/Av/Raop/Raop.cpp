@@ -155,7 +155,7 @@ RaopVolumeHandler::RaopVolumeHandler(IVolumeReporter& aVolumeReporter, IVolumeSo
     aVolumeReporter.AddVolumeObserver(*this);
 }
 
-void RaopVolumeHandler::SetEnabled(TBool aEnabled)
+void RaopVolumeHandler::SetVolumeEnabled(TBool aEnabled)
 {
     AutoMutex a(iLock);
     if (aEnabled) {
@@ -220,7 +220,7 @@ void RaopVolumeHandler::UpdateOffsetLocked()
 }
 
 
-RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
+RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IRaopVolume& aVolume)
     : iAeskeyPresent(false)
     , iAesSid(0)
     //, iRaopObserver(aObserver)
@@ -234,7 +234,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServe
     , iTimingPort(0)
     , iClientControlPort(0)
     , iClientTimingPort(0)
-    , iVolumeHandler(aVolumeReporter, aVolumeOffset)
+    , iVolume(aVolume)
 {
     iReaderBuffer = new Srs<1024>(*this);
     iReaderUntil = new ReaderUntilS<kMaxReadBufferBytes>(*iReaderBuffer);
@@ -546,7 +546,7 @@ void RaopDiscoverySession::Run()
                                 volFract;
                                 // FIXME - do something sensible with volFract - such as pass both into SetRaopVolume() and let it handle them.
 
-                                iVolumeHandler.SetRaopVolume(volInt);
+                                iVolume.SetRaopVolume(volInt);
                             }
                             catch (AsciiError&) {
                                 // Couldn't parse volume. Ignore it.
@@ -780,7 +780,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
 
-RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
+RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IRaopVolume& aVolume)
     : iEnv(aEnv)
     , iAdapter(aNif)
     , iObserversLock("RDOL")
@@ -793,10 +793,10 @@ RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvSta
 
     // Require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging.
     TUint nextSessionId = 1;
-    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolumeReporter, aVolumeOffset);
+    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolume);
     iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
 
-    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolumeReporter, aVolumeOffset);
+    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolume);
     iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
 
     TIpAddress ipAddr = iAdapter.Address();
@@ -946,7 +946,7 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 
 
 // RaopDiscovery
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IRaopVolume& aVolume)
     : iEnv(aEnv)
     , iDvStack(aDvStack)
     , iHostName(aHostName)
@@ -955,8 +955,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iCurrent(NULL)
     , iServersLock("RDSL")
     , iObserversLock("RDOL")
-    , iVolumeReporter(aVolumeReporter)
-    , iVolumeOffset(aVolumeOffset)
+    , iVolume(aVolume)
 {
     // NOTE: iRaopDevice is not registered by default
     iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest);
@@ -1262,7 +1261,7 @@ void RaopDiscovery::HandleInterfaceChange()
 
 void RaopDiscovery::AddAdapter(NetworkAdapter& aNif)
 {
-    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName, iMacAddr, iVolumeReporter, iVolumeOffset);
+    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName, iMacAddr, iVolume);
     iServers.push_back(server);
     server->Enable();
     server->AddObserver(*this);

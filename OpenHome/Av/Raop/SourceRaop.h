@@ -73,6 +73,7 @@ private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
+    RaopVolumeHandler iVolume;
     RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;
