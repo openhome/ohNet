@@ -158,7 +158,9 @@ TBool TestPipeDynamic::Expect(const Brx& aMessage)
     AutoMutex a(iLock);
     if (iFifo.SlotsUsed() > 0) {
         Bwh* buf = iFifo.Read();
-        return (*buf == aMessage);
+        const TBool match = (*buf == aMessage);
+        delete buf;
+        return match;
     }
     return false;
 }
