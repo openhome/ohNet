@@ -18,7 +18,7 @@ using namespace OpenHome::Media::Codec;
 using namespace OpenHome::Av;
 
 CodecOhm::CodecOhm(OhmMsgFactory& aMsgFactory)
-    : CodecBase("Songcast")
+    : CodecBase("Songcast", kCostVeryLow)
     , iMsgFactory(aMsgFactory)
     , iOffset(0)
 {

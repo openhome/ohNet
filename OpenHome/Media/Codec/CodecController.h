@@ -215,6 +215,14 @@ class CodecBase : private INonCopyable
 {
     friend class CodecController;
 public:
+    enum RecognitionComplexity
+    {
+        kCostVeryLow
+       ,kCostLow
+       ,kCostMedium
+       ,kCostHigh
+    };
+public:
     virtual ~CodecBase();
 public:
     /**
@@ -281,13 +289,14 @@ public:
      */
     const TChar* Id() const;
 protected:
-    CodecBase(const TChar* aId);
+    CodecBase(const TChar* aId, RecognitionComplexity aRecognitionCost=kCostMedium);
 private:
     void Construct(ICodecController& aController);
 protected:
     ICodecController* iController;
 private:
     const TChar* iId;
+    RecognitionComplexity iRecognitionCost;
 };
 
 class CodecController : public ISeeker, private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable

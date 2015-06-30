@@ -10,7 +10,7 @@ using namespace OpenHome::Media::Codec;
 
 
 CodecAiffBase::CodecAiffBase(const TChar* aName)
-    : CodecBase(aName)
+    : CodecBase(aName, kCostLow)
     , iName(aName)
 {
 }
