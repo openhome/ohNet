@@ -542,8 +542,8 @@ void RaopDiscoverySession::Run()
                             TInt volInt = 0;
                             try {
                                 volInt = Ascii::Int(volIntBuf);
-                                TInt volFract = Ascii::Int(volFractBuf);
-                                volFract;
+                                //TInt volFract = Ascii::Int(volFractBuf);
+                                //volFract;
                                 // FIXME - do something sensible with volFract - such as pass both into SetRaopVolume() and let it handle them.
 
                                 iVolume.SetRaopVolume(volInt);
