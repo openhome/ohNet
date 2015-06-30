@@ -193,7 +193,13 @@ void VolumeSourceOffset::SetVolumeOffset(TInt aOffset)
 
 void VolumeSourceOffset::SetVolume()
 {
-    const TUint volume = iUpstreamVolume + iSourceOffset;
+    TUint volume = iUpstreamVolume + iSourceOffset;
+    if (volume > iUpstreamVolume && iSourceOffset < 0) {
+        volume = 0;
+    }
+    else if (volume < iUpstreamVolume && iSourceOffset > 0) {
+        volume= iUpstreamVolume;
+    }
     iVolume.SetVolume(volume);
 }
 
