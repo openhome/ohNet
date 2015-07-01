@@ -13,7 +13,7 @@ typedef void (STDCALL *OhNetFunctorNetworkAdapter)(void* aPtr, NetworkAdapter* a
 class FunctorNetworkAdapter
 {
 public:
-    void operator()(NetworkAdapter& aAdapter) const { iThunk(*this, aAdapter); }
+    void operator()(NetworkAdapter& aAdapter) const { if (*this) { iThunk(*this, aAdapter); } }
     operator TBool() const { return (iObject!=NULL || iCallback!=NULL); }
     typedef TAny (FunctorNetworkAdapter::*MemberFunction)();
     typedef TAny (*Callback)();
