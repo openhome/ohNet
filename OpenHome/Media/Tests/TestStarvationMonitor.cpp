@@ -67,6 +67,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -80,6 +81,7 @@ enum EMsgGenerationState
    ,EStateAudioFillInitial
    ,EStateAudioFillPostStarvation
    ,EStateHalt
+   ,EStateChangeInput
    ,EStateQuit
    ,EStateCompleted
 };
@@ -195,6 +197,15 @@ void SuiteStarvationMonitor::Test()
     msg = iSm->Pull();
     (void)msg->Process(*this);
     TEST(iLastMsg == EMsgHalt);
+    msg->RemoveRef();
+    TEST(iSm->PullWouldBlock());
+
+    // Send MsgChangeInput.  Check it can be pulled immediately.  Check pull would then block
+    Print("\nCheck ChangeInput is passed on immediately then pull would block\n");
+    GenerateUpstreamMsgs(EStateChangeInput);
+    msg = iSm->Pull();
+    (void)msg->Process(*this);
+    TEST(iLastMsg == EMsgChangeInput);
     msg->RemoveRef();
     TEST(iSm->PullWouldBlock());
 
@@ -316,6 +327,10 @@ Msg* SuiteStarvationMonitor::Pull()
         iMsgGenerationState = EStateQuit;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgHalt();
+    case EStateChangeInput:
+        iMsgGenerationState = EStateWait;
+        iSemUpstreamCompleted.Signal();
+        return iMsgFactory->CreateMsgChangeInput(Functor());
     case EStateQuit:
         iSemUpstream.Wait();
         iMsgGenerationState = EStateCompleted;
@@ -357,10 +372,10 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* aMsg)
 {
-    ASSERTS(); // MsgChangeInput not used in this test
-    return NULL;
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDelay* /*aMsg*/)

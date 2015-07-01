@@ -28,6 +28,8 @@ public:
     void Unblock();
     void SendFlush(TUint aFlushId);
     void Exit(TUint aHaltId);
+private:
+    void ChangeInput();
 private: // from Thread
     void Run() override;
 private: // from IStreamHandler
@@ -41,6 +43,7 @@ private:
     TrackFactory& iTrackFactory;
     Mutex iLock;
     Semaphore iBlocker;
+    Semaphore iChangeInput;
     TBool iBlock;
     TBool iQuit;
     TUint iFlushId;
@@ -123,6 +126,7 @@ private:
     TUint iJiffies;
     TUint iLastMsgJiffies;
     TBool iLastMsgWasAudio;
+    TBool iLastMsgWasChangeInput;
     TUint iFirstSubsample;
     TUint iLastSubsample;
     EPipelineState iPipelineState;
@@ -168,6 +172,7 @@ Supplier::Supplier(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstr
     , iTrackFactory(aTrackFactory)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
+    , iChangeInput("TSP2", 0)
     , iBlock(false)
     , iQuit(false)
     , iFlushId(MsgFlush::kIdInvalid)
@@ -205,12 +210,19 @@ void Supplier::Exit(TUint aHaltId)
     iQuit = true;
 }
 
+void Supplier::ChangeInput()
+{
+    iChangeInput.Signal();
+}
+
 void Supplier::Run()
 {
     TByte encodedAudioData[EncodedAudio::kMaxBytes];
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
+    iDownstream.Push(iMsgFactory.CreateMsgChangeInput(MakeFunctor(*this, &Supplier::ChangeInput)));
+    iChangeInput.Wait();
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
     iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
     track->RemoveRef();
@@ -326,6 +338,10 @@ void SuitePipeline::Test()
     // There should not be any ramp        Duration of ramp should have been Pipeline::kStopperRampDuration.
     Print("Run until ramped up\n");
     iPipeline->Play();
+    iLastMsgWasChangeInput = false;
+    iPipelineEnd->Pull()->Process(*this);
+    TEST(iLastMsgWasChangeInput);
+    iLastMsgWasChangeInput = false;
     do {
         iPipelineEnd->Pull()->Process(*this);
     } while (!iLastMsgWasAudio);
@@ -657,9 +673,11 @@ Msg* SuitePipeline::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuitePipeline::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* SuitePipeline::ProcessMsg(MsgChangeInput* aMsg)
 {
-    ASSERTS();
+    aMsg->ReadyToChange();
+    aMsg->RemoveRef();
+    iLastMsgWasChangeInput = true;
     return NULL;
 }
 
