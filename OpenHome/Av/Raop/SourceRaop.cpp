@@ -105,7 +105,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     iControlId = iServerManager.CreateServer();
     iTimingId = iServerManager.CreateServer();
 
-    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), iVolume, *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
+    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), iVolume, *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
     iPipeline.Add(new CodecRaop());
     iPipeline.AddObserver(*this);
