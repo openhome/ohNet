@@ -324,7 +324,7 @@ Msg* SuiteStarvationMonitor::Pull()
         return msg;
     }
     case EStateHalt:
-        iMsgGenerationState = EStateQuit;
+        iMsgGenerationState = EStateWait;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgHalt();
     case EStateChangeInput:
@@ -332,7 +332,6 @@ Msg* SuiteStarvationMonitor::Pull()
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgChangeInput(Functor());
     case EStateQuit:
-        iSemUpstream.Wait();
         iMsgGenerationState = EStateCompleted;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgQuit();

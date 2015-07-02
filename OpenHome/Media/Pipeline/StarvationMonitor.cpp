@@ -63,9 +63,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
     // we don't deadlock if a single message larger than iNormalMax is queued.
     iLock.Wait();
     const TUint oldPriorityMsgCount = iPriorityMsgCount;
-    iLock.Signal();
     DoEnqueue(aMsg);
-    iLock.Wait();
     TBool isFull = (DecodedStreamCount() > iMaxStreamCount || (iStatus != EBuffering && Jiffies() >= iNormalMax));
     if (iStatus == EBuffering && Jiffies() >= iNormalMax) {
         iHaltDelivered = false;
@@ -200,9 +198,7 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
 
 void StarvationMonitor::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
 {
-    iLock.Wait();
     iPriorityMsgCount++;
-    iLock.Signal();
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
@@ -221,9 +217,7 @@ void StarvationMonitor::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
 
 void StarvationMonitor::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
-    iLock.Wait();
     iPlannedHalt = true;
-    iLock.Signal();
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
@@ -238,10 +232,8 @@ void StarvationMonitor::ProcessMsgIn(MsgWait* /*aMsg*/)
 
 void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
-    iLock.Wait();
     iExit = true;
     iPriorityMsgCount++;
-    iLock.Signal();
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
