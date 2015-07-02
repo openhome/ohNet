@@ -26,7 +26,7 @@ class IRaopServerObserver
 public:
     virtual void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort) = 0;
     virtual void NotifySessionEnd(const NetworkAdapter& aNif) = 0;
-    virtual void NotifySessionWait(const NetworkAdapter& aNif) = 0;
+    virtual void NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime) = 0;
     virtual ~IRaopServerObserver() {}
 };
 
@@ -35,7 +35,7 @@ class IRaopObserver
 public:
     virtual void NotifySessionStart(TUint aControlPort, TUint aTimingPort) = 0;
     virtual void NotifySessionEnd() = 0;
-    virtual void NotifySessionWait() = 0;
+    virtual void NotifySessionWait(TUint aSeq, TUint aTime) = 0;
     virtual ~IRaopObserver() {}
 };
 
@@ -278,7 +278,7 @@ public: // from IRaopDiscovery
 public: // from IRaopObserver
     void NotifySessionStart(TUint aControlPort, TUint aTimingPort) override;
     void NotifySessionEnd() override;
-    void NotifySessionWait() override;
+    void NotifySessionWait(TUint aSeq, TUint aTime) override;
 private:
     RaopDiscoverySession& ActiveSession();
     void HandleInterfaceChange();
@@ -320,7 +320,7 @@ public: // from IRaopDiscovery
 public: // from IRaopObserver
     void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort) override;
     void NotifySessionEnd(const NetworkAdapter& aNif) override;
-    void NotifySessionWait(const NetworkAdapter& aNif) override;
+    void NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime) override;
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;

@@ -33,23 +33,20 @@ public:
     RaopAudio(SocketUdpServer& aServer);
     ~RaopAudio();
     void Initialise(const Brx& aAeskey, const Brx& aAesiv);
-    TUint16 ReadPacket();   // FIXME - return TUint?
-    void DecodePacket(TUint aSenderSkew, TUint aLatency);   // FIXME - remove completely - do we ever need senderskew/latency?
-    void DecodePacket(TUint aSenderSkew, TUint aLatency, const Brx& aPacket);
+    TUint ReadPacket();
+    void DecodePacket();
+    void DecodePacket(const Brx& aPacket);  // FIXME - remove one of these DecodePacket() calls - or, even better, move out to an AudioPacket object.
     void DoInterrupt();
     void Reset();
-    Brn Audio();
-    TBool First() const;
-    void SetMute(); // FIXME
+    const Brx& Audio() const;   // FIXME - remove this?
 private:
     SocketUdpServer& iServer;
     Bws<kMaxReadBufferBytes> iDataBuffer;
     Bws<kMaxReadBufferBytes> iAudio;
-    TBool iFirst;
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
     TBool iInitId;
-    TUint32 iId;
+    TUint iId;
     TBool iInterrupted;
 };
 
@@ -73,7 +70,7 @@ public:
     void Reset(TUint aClientPort);
     void Time(TUint& aSenderSkew, TUint& aLatency); // FIXME - do this without output params?
     void RequestResend(TUint aPacketId, TUint aPackets);
-    void GetResentData(Bwx& aData, TUint16 aCount); // FIXME - TUint instead of TUint16?
+    void GetResentData(Bwx& aData, TUint aCount);
     void LockRx();
     void UnlockRx();
 private:
@@ -111,7 +108,7 @@ class ProtocolRaop : public Media::ProtocolNetwork, public IRaopAudioResumer
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
-    TUint SendFlush();
+    TUint SendFlush(TUint aSeq, TUint aTime);
 private: // from Protocol
     void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream);
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
@@ -122,7 +119,7 @@ private: // from IRaopAudioResumer
     void AudioResuming() override;
 private:
     void StartStream();
-    void OutputAudio(const Brx& aPacket, TBool aFirst);
+    void OutputAudio(const Brx& aPacket);
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
     void WaitForChangeInput();
@@ -147,6 +144,8 @@ private:
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
     TUint iStreamId;
+    TUint iFlushSeq;
+    TUint iFlushTime;
     TUint iNextFlushId;
     TBool iActive;
     TBool iWaiting;
@@ -170,6 +169,7 @@ public:
     TUint CsrcCount() const;
     TBool Marker() const;
     TUint Type() const;
+    TUint Seq() const;
     TUint Timestamp() const;
     TUint Ssrc() const;
 private:
