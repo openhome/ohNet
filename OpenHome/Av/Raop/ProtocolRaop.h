@@ -207,8 +207,6 @@ private:
     Endpoint iEndpoint;
     TUint iClientPort;
     SocketUdpServer& iServer;
-    //Srs<kMaxReadBufferBytes> iReceive;
-    //Bws<kMaxReadBufferBytes> iResentData;
     Bws<kMaxReadBufferBytes> iPacket;
     IRaopAudioResumer& iAudioResumer;   // FIXME - remove
     ThreadFunctor* iThread;
@@ -216,10 +214,6 @@ private:
     TUint iSenderSkew;
     TUint iLatency;
     Mutex iLock;
-    //Mutex iMutexRx;
-    //Semaphore iSemaResend;
-    //TUint iResend;
-    //Timer* iTimerExpiry;
     TBool iExit;
 };
 
