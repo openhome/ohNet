@@ -275,10 +275,6 @@ private:
     Media::SupplyAggregatorBytes* iSupply;
     Uri iUri;
 
-    Bws<kMaxReadBufferBytes> iResentData;
-
-    Bws<sizeof(AES_KEY)> iAeskey;
-    Bws<16> iAesiv;
     TUint iStreamId;
     TUint iFlushSeq;
     TUint iFlushTime;
