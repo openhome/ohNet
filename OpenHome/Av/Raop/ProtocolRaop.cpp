@@ -127,13 +127,13 @@ void RtpPacketRaop::Replace(const Brx& aRtpPacket)
 {
     iHeader.Replace(Brn(aRtpPacket.Ptr(), RtpHeaderFixed::kHeaderBytes));
     const TUint offset = RtpHeaderFixed::kHeaderBytes;
-    iPayload.Set(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
+    iPayload.Replace(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
 }
 
 void RtpPacketRaop::Clear()
 {
     iHeader.Clear();
-    iPayload.Set(Brx::Empty());
+    iPayload.Replace(Brx::Empty());
 }
 
 const RtpHeaderFixed& RtpPacketRaop::Header() const
@@ -158,7 +158,7 @@ RtpPacket::RtpPacket(const Brx& aRtpPacket)
     ReaderBinary readerBinary(readerBuffer);
 
     try {
-        const TUint kHeaderSizeIncCsrc = kMinHeaderBytes+iHeader.CsrcCount()*4;
+        const TUint kHeaderSizeIncCsrc = RtpHeaderFixed::kHeaderBytes+iHeader.CsrcCount()*4;
         if (aRtpPacket.Bytes() < kHeaderSizeIncCsrc) {
             // Not enough bytes in packet to satisfy reported CRSC count.
             THROW(InvalidRtpHeader);
@@ -174,13 +174,13 @@ RtpPacket::RtpPacket(const Brx& aRtpPacket)
                 THROW(InvalidRtpHeader);
             }
             iHeaderExtensionProfile = readerBinary.ReadUintBe(2);
-            const TUint headerExtensionBytes = readerBinary.ReadUintBe(2)*4;
+            iHeaderExtensionBytes = readerBinary.ReadUintBe(2)*4;
 
-            headerSizeFull = kHeaderSizeInclHeaderExtension+headerExtensionBytes;
+            headerSizeFull = kHeaderSizeInclHeaderExtension+iHeaderExtensionBytes;
             if (aRtpPacket.Bytes() < headerSizeFull) {
                 THROW(InvalidRtpHeader);
             }
-            iHeaderExtension.Set(aRtpPacket.Ptr()+kHeaderSizeInclHeaderExtension, headerExtensionBytes);
+            iData.Replace(aRtpPacket.Ptr()+kHeaderSizeInclHeaderExtension, iHeaderExtensionBytes);
         }
 
         TUint paddingBytes = 0;
@@ -192,7 +192,8 @@ RtpPacket::RtpPacket(const Brx& aRtpPacket)
         if (kPayloadBytes == 0 || aRtpPacket.Bytes() != headerSizeFull+kPayloadBytes+paddingBytes) {
             THROW(InvalidRtpHeader);
         }
-        iPayload.Set(aRtpPacket.Ptr()+headerSizeFull, kPayloadBytes);
+        iData.Append(aRtpPacket.Ptr()+headerSizeFull, kPayloadBytes);
+        iPayload.Set(iData.Ptr()+iHeaderExtensionBytes, iData.Bytes()-iHeaderExtensionBytes);
     }
     catch (ReaderError&) {
         THROW(InvalidRtpHeader);
@@ -219,12 +220,15 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iVolume(aVolume)
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
-    , iRaopAudio(iServerManager.Find(aAudioId))
-    , iRaopControl(aEnv, iServerManager.Find(aControlId), *this)
+    , iAudioServer(iServerManager.Find(aAudioId))
+    , iControlServer(iServerManager.Find(aControlId), *this, *this)
     , iSupply(NULL)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
     , iSemInputChanged("PRIC", 0)
+    , iResendSeqNext(0)
+    , iResendCount(0)
+    , iSemResend("PRRS", 0)
 {
 }
 
@@ -237,8 +241,8 @@ void ProtocolRaop::DoInterrupt()
 {
     LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
 
-    iRaopAudio.DoInterrupt();
-    iRaopControl.DoInterrupt();
+    iAudioServer.DoInterrupt();
+    iControlServer.DoInterrupt();
 }
 
 void ProtocolRaop::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
@@ -287,10 +291,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     TBool start = true;
     TUint aesSid = 0;
-    iRaopAudio.Reset();
-    iRaopControl.Reset(ctrlPort);
+    iAudioServer.Reset();
+    iControlServer.Reset(ctrlPort);
     Brn audio;
-    TUint expected = 0;
+    TUint seqExpected = 0;
     iSem.Clear();
 
     WaitForChangeInput();
@@ -329,7 +333,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         }
 
         try {
-            TUint count = iRaopAudio.ReadPacket();
+            iAudioServer.ReadPacket(iAudioPacket);
+            const TUint seqLast = iAudioPacket.Header().Seq();
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -342,69 +347,62 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 return EProtocolStreamStopped;
             }
 
-            iDiscovery.KeepAlive();
+            // FIXME - this key setup is only done once per connection.
+            // Probably need to keep it between ProtocolRaop::Stream() runs in case NetAux source is switched away from and moved back to.
+            iDiscovery.KeepAlive(); // FIXME - why is this called here and not by discovery thread?
 
             if(aesSid != iDiscovery.AesSid()) {
                 aesSid = iDiscovery.AesSid();       // aes key has been updated
 
                 LOG(kMedia, "ProtocolRaop::Stream() new sid\n");
 
-                iRaopAudio.Initialise(iDiscovery.Aeskey(), iDiscovery.Aesiv());
+                iAudioDecryptor.Init(iDiscovery.Aeskey(), iDiscovery.Aesiv());
             }
             if(start) {
                 LOG(kMedia, "ProtocolRaop::Stream() new container\n");
                 start = false;        // create dummy container for codec recognition and initialisation
                 OutputContainer(Brn(iDiscovery.Fmtp()));
-                expected = count;   // init expected count
+                seqExpected = seqLast;   // Init seqExpected.
             }
-            TInt padding = count;
-            padding -= expected;
 
-            if(padding >= 0) { //ignore if packet is out of order
-                TUint SenderSkew, latency;
-                iRaopControl.Time(SenderSkew, latency);
 
-                // if there are missing packets request re-send and wait for response
-                if(padding > 0) {
-                    iRaopControl.RequestResend(expected, padding);
-                    while(padding > 0) {
-                        LOG(kMedia, "ProtocolRaop get resent data, padding %d\n", padding);
-                        try {
-                            iRaopControl.GetResentData(iResentData, expected);  //this will block until data received or timed out
-                            iRaopControl.LockRx();  // don't allow any more data to be received while processing
-                            LOG(kMedia, "ProtocolRaop received resent data, %d bytes\n", iResentData.Bytes());
-                            Brn data(iResentData);
-                            iRaopAudio.DecodePacket(data);
-                            OutputAudio(iRaopAudio.Audio());
-                            padding--;
-                            expected++;
-                            iRaopControl.UnlockRx();
-                        }
-                        catch(ResendTimeout&) {
-                            LOG(kMedia, "ProtocolRaop NOT received resent data, padding %d\n", padding);
-                            // FIXME - output a stream interrupted/discontinuity msg here to ensure ramp down/ramp up?
-
-                            while(padding--) {
-                                OutputAudio(iRaopAudio.Audio());
-                            }
-                        }
-                        catch(ResendInvalid&) {
-                            // may be corrupted or a redundant frame left from a previous timeout
-                            LOG(kMedia, "ProtocolRaop unexpected data - ignore, padding %d\n", padding);
-                        }
-                    }
+            TBool shouldFlush = false;
+            {
+                AutoMutex a(iLock);
+                if (iResumePending) {
+                    const TBool seqInFlushRange = (iAudioPacket.Header().Seq() <= iFlushSeq);
+                    const TBool timeInFlushRange = (iAudioPacket.Header().Timestamp() <= iFlushTime);
+                    shouldFlush = (seqInFlushRange && timeInFlushRange);
                 }
+            }
+
+
+            if (seqLast == seqExpected) {
+                // The packet that was expected.
                 try {
-                    // FIXME - need to get RtpPacket here
-                    // then check if iResumePending is set, then check
-                    // if this packet's seq and time are both > than last seq and time for last packet to be flushed.
-                    iRaopAudio.DecodePacket(); // send original
-                    OutputAudio(iRaopAudio.Audio());
-                    expected = count+1;
+                    iAudioDecryptor.Decrypt(iAudioPacket, iAudioDecrypted);
+                    OutputAudio(iAudioDecrypted);
+                    seqExpected++;
                 }
                 catch (InvalidRtpHeader&) { // FIXME - redundant? Can be caught by outer exception handling below
-                    LOG(kMedia, "ProtocolRaop::Stream caught InvalidHeader exception\n");
+                    LOG(kMedia, "ProtocolRaop::Stream caught InvalidHeader exception during decryption\n");
                 }
+            }
+            else if (seqLast > seqExpected) {
+                // Missed some packets.
+                const TUint missed = seqLast-seqExpected;
+                {
+                    AutoMutex a(iLockRaop);
+                    iResendSeqNext = seqExpected;
+                    iResendCount = missed;
+                    iTimerResend->FireIn(kResendTimeoutMs);
+                    iControlServer.RequestResend(seqExpected, missed);
+                    // Callbacks will come via ::ReceiveResend().
+                }
+                iSemResend.Wait();
+            }
+            else {
+                // Packet is one that's already been seen. Ignore.
             }
         }
         catch (InvalidRtpHeader&) { 
@@ -506,6 +504,24 @@ void ProtocolRaop::InputChanged()
     iSemInputChanged.Signal();
 }
 
+void ProtocolRaop::TimerFired()
+{
+    // FIXME - should probably notify pipeline of discontinuity if timer fires.
+    AutoMutex a(iLock);
+    if (iResendCount > 0) {
+        iResendCount--;
+    }
+
+    if (iResendCount > 0) {
+        iResendSeqNext++;
+        iTimerResend->FireIn(kResendTimeoutMs);
+    }
+    else {
+        iResendSeqNext = 0;
+        iSemResend.Signal();
+    }
+}
+
 TUint ProtocolRaop::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ProtocolRaop::TryStop\n");
@@ -529,6 +545,60 @@ void ProtocolRaop::AudioResuming()
     iStreamStart = true;
 }
 
+void ProtocolRaop::ReceiveResend(const RtpPacketRaop& aPacket)
+{
+    AutoMutex a(iLockRaop);
+    if (iResendCount > 0) {
+        if (aPacket.Header().Seq() == iResendSeqNext) {
+            // Expected resend packet.
+
+            iTimerResend->Cancel();
+
+            try {
+                iAudioDecryptor.Decrypt(iAudioPacket, iAudioDecrypted);
+                OutputAudio(iAudioDecrypted);   // FIXME - probably don't lock around this.
+            }
+            catch (InvalidRtpHeader&) { // FIXME - redundant? Can be caught by outer exception handling below
+                LOG(kMedia, "ProtocolRaop::Stream caught InvalidHeader exception during decryption\n");
+            }   // FIXME - should probably notify pipeline of discontinuity if this is caught.
+
+            iResendSeqNext++;
+            iResendCount--;
+            if (iResendCount == 0) {
+                iResendSeqNext = 0;
+                iSemResend.Signal();
+            }
+        }
+        else if (aPacket.Header().Seq() >= iResendSeqNext) {
+            // Missed a resend packet.
+            const TUint missCount = aPacket.Header().Seq()-iResendSeqNext;
+
+            if (missCount > iResendCount) {
+                // Something went very wrong or missed end of resend sequence. Abort resend.
+                iTimerResend->Cancel();
+                iResendSeqNext = 0;
+                iResendCount = 0;
+                // FIXME - notify pipeline of discontinuity.
+
+                iSemResend.Signal();
+            }
+            else {
+                // FIXME - notify pipeline of discontinuity.
+
+                // Advance over missed packet.
+                iResendSeqNext += missCount;
+                iResendCount -= missCount;
+            }
+        }
+        else { // aPacket.Header().Seq() >= iResendSeqNext
+            // Bad sequence number. Ignore.
+
+            // FIXME - notify pipeline of discontinuity.
+        }
+
+    }
+}
+
 TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 {
     LOG(kMedia, "ProtocolRaop::NotifySessionWait\n");
@@ -543,78 +613,88 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 }
 
 
+//// RaopResendHandler
+//
+//RaopResendHandler::RaopResendHandler(IRaopResendRequester& aResendRequester, IRaopResendReceiver& aResendReceiver)
+//{
+//
+//}
+//
+//void RaopResendHandler::RequestResend(TUint aSeqStart, TUint aCount)
+//{
+//
+//}
+//
+//void RaopResendHandler::ReceiveResend(const RtpPacketRaop& aPacket)
+//{
+//
+//}
+//
+//void RaopResendHandler::TimerFired()
+//{
+//    // Didn't receive an expected resend.
+//}
+//
+//private:
+//    IRaopResendRequester& iRequester;
+//    IRaopResendReceiver& iReceiver;
+//    TUint iSeqNext;
+//    TUint iCount;
+//    Timer* iTimer;
+//    Mutex iLock;
+//};
+
+
 // RaopControl
 
-RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer)
+RaopControl::RaopControl(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver)
     : iClientPort(kInvalidServerPort)
     , iServer(aServer)
-    , iReceive(iServer)
     , iAudioResumer(aAudioResumer)
-    , iMutex("RAOC")
-    , iMutexRx("RAOR")
-    , iSemaResend("RAOC", 0) // FIXME - nothing else has a reference to this!
-    , iResend(0)
+    , iResendReceiver(aResendReceiver)
+    , iLock("RACL")
     , iExit(false)
 {
-    iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired), "RaopControl");
-    iThreadControl = new ThreadFunctor("RaopControl", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
-    iThreadControl->Start();
+    iThread = new ThreadFunctor("RaopControl", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
+    iThread->Start();
 }
 
 RaopControl::~RaopControl()
 {
-    iMutex.Wait();
-    iExit = true;
-    iMutex.Signal();
+    {
+        AutoMutex a(iLock);
+        iExit = true;
+    }
     iServer.ReadInterrupt();
     iServer.ClearWaitForOpen();
-    delete iThreadControl;
-    delete iTimerExpiry;
-}
-
-void RaopControl::LockRx()
-{
-    iMutexRx.Wait();
-}
-
-void RaopControl::UnlockRx()
-{
-    iMutexRx.Signal();
+    delete iThread;
 }
 
 void RaopControl::DoInterrupt()
 {
-    LOG(kMedia, "RaopControl::DoInterrupt()\n");
-    iMutex.Wait();
+    LOG(kMedia, "RaopControl::DoInterrupt\n");
+    AutoMutex a(iLock);
     iClientPort = kInvalidServerPort;
-    if(iResend) {
-        iResend = 0;
-        iSemaResend.Signal();
-    }
-
-    iMutex.Signal();
 }
 
 void RaopControl::Reset(TUint aClientPort)
 {
-    iMutex.Wait();
+    AutoMutex a(iLock);
     iClientPort = aClientPort;
-    iMutex.Signal();
 }
 
 void RaopControl::Run()
 {
     LOG(kMedia, "RaopControl::Run\n");
-    iResend = 0;
 
     for (;;) {
 
-        iMutex.Wait();
-        if (iExit) {
-            iMutex.Signal();
-            return;
+        {
+            AutoMutex a(iLock);
+            if (iExit) {
+                return;
+            }
         }
-        iMutex.Signal();
 
         try {
             iServer.Read(iPacket);
@@ -637,53 +717,32 @@ void RaopControl::Run()
                     // FIXME - require this?
                     //TUint mclk = iI2sDriver.MclkCount();  // record current mclk count at dac - use this to calculate the drift
                     //mclk /= 256;  // convert to samples
-                    iMutex.Wait();
+                    iLock.Wait();
                     iLatency = rtpTimestampNextPacket-rtpTimestamp;
                     //iSenderSkew = rtpTimestamp - mclk;   // calculate count when this should play relative to current mclk count
-                    iMutex.Signal();
+                    iLock.Signal();
                     LOG(kMedia, "RaopControl::Run rtpTimestamp: %u, ntpTimeSecs: %u, ntpTimeSecsFract: %u, rtpTimestampNextPacket: %u, iLatency: %u, iSenderSkew: %u\n", rtpTimestamp, ntpTimeSecs, ntpTimeSecsFract, rtpTimestampNextPacket, iLatency, iSenderSkew);
 
                     payload;
                 }
                 else if (packet.Header().Type() == EResendResponse) {
-                    iMutexRx.Wait();    // wait for processing of previous resend message
-                    iMutex.Wait();
-                    LOG(kMedia, "RaopControl::Run EResendResponse iResend: %u\n", iResend);
-
-                    if (iResend) {            // ignore if unexpected (may have been delayed and timed out) // FIXME - is there a sequence number that can be waited on?
-                        if (iResentData.Bytes() != 0) { // previous data hasn't been processed yet so fail
-                            iResentData.SetBytes(0);
-                        }
-                        else {
-                            iResentData.Replace(packet.Payload()); // FIXME - is full payload correct, or should SSRC be included?
-                        }
-                    }
-
-                    const TBool resend = (iResend != 0);
-
-                    iMutex.Signal();
-                    iMutexRx.Signal();
-
-                    // Inform audio thread that there is a resent packet waiting.
-                    if (resend) {
-                        iSemaResend.Signal();   // FIXME - can we do this without exposing a semaphore? - Have a call into this to request a resend, and a call into audio processing thread to receive resent packet?
-                    }
+                    iResendReceiver.ReceiveResend(packet);
                 }
                 else {
                     LOG(kMedia, "RaopControl::Run unexpected packet type: %u\n", packet.Header().Type());
                 }
 
-                iReceive.ReadFlush();
+                iServer.ReadFlush();
             }
             catch (InvalidRtpHeader& aInvalidHeader) {
                 aInvalidHeader;
                 LOG(kMedia, "RaopControl::Run caught InvalidRtpHeader\n");
-                iReceive.ReadFlush();   // Unexpected, so ignore.
+                iServer.ReadFlush();   // Unexpected, so ignore.
             }
         }
         catch (ReaderError&) {
             LOG(kMedia, "RaopControl::Run caught ReaderError\n");
-            iReceive.ReadFlush();
+            iServer.ReadFlush();
             if (!iServer.IsOpen()) {
                 iServer.WaitForOpen();
             }
@@ -693,246 +752,159 @@ void RaopControl::Run()
 
 void RaopControl::Time(TUint& aSenderSkew, TUint& aLatency)
 {
-    iMutex.Wait();
+    AutoMutex a(iLock);
     aSenderSkew = iSenderSkew;
     aLatency = iLatency;
-    iMutex.Signal();
 }
 
-void RaopControl::RequestResend(TUint aPacketId, TUint aPackets)
+void RaopControl::RequestResend(TUint aSeqStart, TUint aCount)
 {
-    LOG(kMedia, "RequestResend aPackets %d\n", aPackets);
+    LOG(kMedia, "RaopControl::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
 
-    iMutex.Wait();
-    TUint resend = iResend;
-    if(resend == 0) {   // ignore if already requested data
-        iResend = aPackets;
-        iResentData.SetBytes(0);
-        //while(iSemaResend.TryWait() != 0) {
-        //    // this should never occur, but if it does it is recoverable
-        //    LOG(kMedia, "******************* purge stale semaphore ****************\n");
-        //}
+    // FIXME - construct an RtpPacket object, and have it write itself out to buffer.
+    Bws<16> request(Brn(""));
+    request.Append((TByte)0x80);
+    request.Append((TByte)0xD5);
+    request.Append((TByte)0x00);
+    request.Append((TByte)0x01);
+    request.Append((TByte)((aSeqStart >> 8) & 0xff));
+    request.Append((TByte)((aSeqStart)& 0xff));
+    request.Append((TByte)((aCount >> 8) & 0xff));
+    request.Append((TByte)((aCount)& 0xff));
+
+    try {
+        iLock.Wait();
+        iEndpoint.SetPort(iClientPort); // Send to client listening port.
+        iLock.Signal();
+        iServer.Send(request, iEndpoint);
     }
-    else {
-        LOG(kMedia, "RequestResend already active, resend %d\n", resend);
-    }
-
-    iMutex.Signal();
-
-    if(resend == 0) {
-        Bws<16> request(Brn(""));
-        request.Append((TByte)0x80);
-        request.Append((TByte)0xD5);
-        request.Append((TByte)0x00);
-        request.Append((TByte)0x01);
-        request.Append((TByte)((aPacketId >> 8) & 0xff));
-        request.Append((TByte)((aPacketId) & 0xff));
-        request.Append((TByte)((aPackets >> 8) & 0xff));
-        request.Append((TByte)((aPackets) & 0xff));
-
-        try {
-            iMutex.Wait();
-            iEndpoint.SetPort(iClientPort); // send to client listening port
-            iMutex.Signal();
-            iServer.Send(request, iEndpoint);
-        }
-        catch(NetworkError) {
-            // will handle this by timing out on receive
-        }
+    catch (NetworkError) {
+        // Will handle this by timing out on receive.
     }
 }
 
 
-void RaopControl::GetResentData(Bwx& aData, TUint aCount)
-{
-    static const TUint kTimerExpiryTimeoutMs = 80; // set this to avoid loss of data in main stream buffer
+// RaopAudioServer
 
-    // must wait until resent data is received, or timed out
-
-    iTimerExpiry->FireIn(kTimerExpiryTimeoutMs);
-
-    LOG(kMedia, "RaopControl::GetResentData wait for data\n");
-    iSemaResend.Wait(); // wait for resent data to be received or timeout
-    iMutex.Wait();
-    //if timed out, resent data will be empty
-    aData.SetBytes(0);
-    TBool valid = false;
-    TBool timeout = false;
-    if(iResentData.Bytes() >= 8) { // ensure valid
-        TUint type = Converter::BeUint16At(iResentData, 0) & 0xffff;
-        if(type == 0x8060) {
-            TUint16 count = Converter::BeUint16At(iResentData, 2) & 0xffff;
-            if(count == aCount) {
-                aData.Replace(iResentData);
-                iResend--;
-                valid = true;
-            }
-            else{
-                LOG(kMedia, "RaopControl::GetResentData invalid resent data count, is %d, should be %d\n", count, aCount);
-            }
-        }
-        else {
-            LOG(kMedia, "RaopControl::GetResentData Converter::BeUint16At(iResentData,0) %x\n", type);
-        }
-    }
-    else {
-        LOG(kMedia, "RaopControl::GetResentData iResentData.Bytes() %d\n", iResentData.Bytes());
-        if(iResentData.Bytes() == 0) {
-            timeout = true; // no data, so must have timed out
-        }
-    }
-    iResentData.SetBytes(0);
-    iMutex.Signal();
-    if(timeout) {
-        THROW(ResendTimeout);
-    }
-    if(!valid) {
-        THROW(ResendInvalid);
-    }
-}
-
-
-void RaopControl::TimerExpired()
-{
-
-    iMutex.Wait();
-    LOG(kMedia, "RaopControl TimerExpired, iResend %d\n", iResend);
-    if(iResend) {
-        iResend = 0;        // not received sent frames
-        iMutex.Signal();
-        iSemaResend.Signal();
-    }
-    else {
-        iMutex.Signal();
-    }
-
-}
-
-
-// RaopAudio
-
-RaopAudio::RaopAudio(SocketUdpServer& aServer)
+RaopAudioServer::RaopAudioServer(SocketUdpServer& aServer)
     : iServer(aServer)
 {
 }
 
-RaopAudio::~RaopAudio()
+RaopAudioServer::~RaopAudioServer()
 {
 }
 
-void RaopAudio::Reset()
+void RaopAudioServer::Reset()
 {
     iDataBuffer.SetBytes(0);
-    iAudio.SetBytes(0);
-    iAeskey.SetBytes(0);
-    iAesiv.SetBytes(0);
     iSessionId = 0;
     iInterrupted = false;
-    iServer.ReadFlush();  // set to read next udp packet
+    iServer.ReadFlush();    // Set to read next udp packet.
 }
 
-void RaopAudio::Initialise(const Brx& aAeskey, const Brx& aAesiv)
+void RaopAudioServer::DoInterrupt()
 {
-    iAeskey.Replace(aAeskey);
-    iAesiv.Replace(aAesiv);
-}
-
-void RaopAudio::DoInterrupt()
-{
-    LOG(kMedia, "RaopAudio::DoInterrupt()\n");
+    LOG(kMedia, "RaopAudioServer::DoInterrupt()\n");
     iInterrupted = true;
     iServer.ReadInterrupt();
 }
 
-TUint RaopAudio::ReadPacket()
+void RaopAudioServer::ReadPacket(RtpPacketRaop& aPacket)
 {
-    LOG(kMedia, ">RaopAudio::ReadPacket\n");
+    LOG(kMedia, ">RaopAudioServer::ReadPacket\n");
     TUint seq = 0;
 
     for (;;) {
         try {
-            iPacket.Clear();
+            aPacket.Clear();
             iServer.Read(iDataBuffer);
-            iPacket.Replace(iDataBuffer);
+            aPacket.Replace(iDataBuffer);
         }
         catch (InvalidRtpHeader&) {
-            LOG(kMedia, "RaopAudio::ReadPacket InvalidRtpHeader\n");
+            LOG(kMedia, "RaopAudioServer::ReadPacket InvalidRtpHeader\n");
         }
         catch (ReaderError&) {
             // Either no data, user abort or invalid header
             if (!iServer.IsOpen()) {
-                LOG(kMedia, "RaopAudio::ReadPacket ReaderError RaopAudioServerClosed\n");
+                LOG(kMedia, "RaopAudioServer::ReadPacket ReaderError RaopAudioServerServerClosed\n");
                 iServer.ReadFlush();
                 THROW(RaopAudioServerClosed);
             }
             if (iInterrupted) {
-                LOG(kMedia, "RaopAudio::ReadPacket ReaderError iInterrupted %d\n", iInterrupted);
+                LOG(kMedia, "RaopAudioServer::ReadPacket ReaderError iInterrupted %d\n", iInterrupted);
                 iServer.ReadFlush();
                 THROW(ReaderError);
             }
         }
         iServer.ReadFlush();  // Set to read next UDP packet.
 
-        // Process ID
-        TUint sessionId = iPacket.Header().Ssrc();
+        // Only process audio type packets.
+        // Encountering other type on this channel indicates corrupt packet; ignore.
+        if (aPacket.Header().Type() == kTypeAudio) {
+            // Process ID
+            TUint sessionId = aPacket.Header().Ssrc();
 
-        if (iSessionId == 0) {
-            // Initialise session ID.
-            iSessionId = sessionId;
-            LOG(kMedia, "RaopAudio::ReadPacket new iSessionId: %u\n", iSessionId);
+            if (iSessionId == 0) {
+                // Initialise session ID.
+                iSessionId = sessionId;
+                LOG(kMedia, "RaopAudioServer::ReadPacket new iSessionId: %u\n", iSessionId);
+            }
+
+            if (sessionId == iSessionId) {
+                seq = aPacket.Header().Seq();
+                LOG(kMedia, "RaopAudioServer::ReadPacket iSessionId: %u, seq: %u\n", iSessionId, seq);
+                return;
+            }
+
+            // Rogue ID; ignore.
+            LOG(kMedia, "RaopAudioServer::ReadPacket unexpected packet iSessionId: %u, seq: %u\n", iSessionId, seq);
         }
-
-        if (sessionId == iSessionId) {
-            seq = iPacket.Header().Seq();
-            LOG(kMedia, "RaopAudio::ReadPacket iSessionId: %u, seq: %u\n", iSessionId, seq);
-            return seq;
-        }
-
-        // Rogue ID; ignore.
-        LOG(kMedia, "RaopAudio::ReadPacket unexpected packet iSessionId: %u, seq: %u\n", iSessionId, seq);
     }
 }
 
-void RaopAudio::DecodePacket()
+
+// RaopAudioDecryptor
+
+void RaopAudioDecryptor::Init(const Brx& aAesKey, const Brx& aAesInitVector)
 {
-    DecodePacket(iDataBuffer);
+    iKey.Replace(aAesKey);
+    iInitVector.Replace(aAesInitVector);
 }
 
-void RaopAudio::DecodePacket(const Brx& aPacket)
+void RaopAudioDecryptor::Decrypt(const RtpPacketRaop& aPacket, Bwx& aAudioOut) const
 {
-    //LOG(kMedia, "RaopAudio::DecodePacket() bytes %d\n", aData.Bytes());
+    LOG(kMedia, ">RaopAudioDecryptor::Decrypt seq: %u, timestamp: %u, bytes: %u\n", aPacket.Header().Seq(), aPacket.Header().Timestamp(), aPacket.Payload().Bytes());
+    ASSERT(iKey.Bytes() > 0);
+    ASSERT(iInitVector.Bytes() > 0);
 
-    static const TUint kSizeBytes = sizeof(TUint);
-    RtpPacketRaop packet(aPacket);    // May throw InvalidRtpHeader.
-    const Brx& audio = packet.Payload();
-    iAudio.SetBytes(0);
+    const Brx& audioIn = aPacket.Payload();
 
-    Log::Print("Audio packet seq: %u, timestamp: %u\n", packet.Header().Seq(), packet.Header().Timestamp());
-
-    if (kSizeBytes+audio.Bytes() > iAudio.MaxBytes()) {
-        THROW(InvalidHeader);   // Invalid data received. FIXME - should really add different exception
+    if (aPacket.Header().Type() != RaopAudioServer::kTypeAudio) {
+        LOG(kMedia, "RaopAudioDecryptor::Decrypt type: %u, expected: %u. Throwing InvalidRtpHeader\n", aPacket.Header().Type(), RaopAudioServer::kTypeAudio);
+        THROW(InvalidRtpHeader);
+    }
+    if (aAudioOut.MaxBytes() < kPacketSizeBytes+audioIn.Bytes()) {
+        LOG(kMedia, "RaopAudioDecryptor::Decrypt aAudioOut.MaxBytes(): %u, kPacketSizeBytes+audioIn.Bytes(): %u. Throwing InvalidRtpHeader\n", aAudioOut.MaxBytes(), kPacketSizeBytes+audioIn.Bytes());
+        THROW(InvalidRtpHeader);    // Invalid data received.
     }
 
-    WriterBuffer writerBuffer(iAudio);
+    aAudioOut.SetBytes(0);
+    WriterBuffer writerBuffer(aAudioOut);
     WriterBinary writerBinary(writerBuffer);
-    writerBinary.WriteUint32Be(audio.Bytes());
+    writerBinary.WriteUint32Be(audioIn.Bytes());    // Write out payload size.
 
-    unsigned char* inBuf = const_cast<unsigned char*>(audio.Ptr());
-    unsigned char* outBuf = const_cast<unsigned char*>(iAudio.Ptr()+iAudio.Bytes());
+    unsigned char* inBuf = const_cast<unsigned char*>(audioIn.Ptr());
+    unsigned char* outBuf = const_cast<unsigned char*>(aAudioOut.Ptr()+aAudioOut.Bytes());
     unsigned char initVector[16];
-    memcpy(initVector, iAesiv.Ptr(), sizeof(initVector));   // Use same initVector at start of each decryption block.
+    memcpy(initVector, iInitVector.Ptr(), sizeof(initVector));  // Use same initVector at start of each decryption block.
 
-    AES_cbc_encrypt(inBuf, outBuf, audio.Bytes(), (AES_KEY*)iAeskey.Ptr(), initVector, AES_DECRYPT);
-    const TUint audioRemaining = audio.Bytes() % 16;
-    const TUint audioWritten = audio.Bytes()-audioRemaining;
+    AES_cbc_encrypt(inBuf, outBuf, audioIn.Bytes(), (AES_KEY*)iKey.Ptr(), initVector, AES_DECRYPT);
+    const TUint audioRemaining = audioIn.Bytes() % 16;
+    const TUint audioWritten = audioIn.Bytes()-audioRemaining;
     if (audioRemaining > 0) {
         // Copy remaining audio to outBuf if <16 bytes.
         memcpy(outBuf+audioWritten, inBuf+audioWritten, audioRemaining);
     }
-    iAudio.SetBytes(kSizeBytes+audio.Bytes());
-}
-
-const Brx& RaopAudio::Audio() const
-{
-    return iAudio;
+    aAudioOut.SetBytes(kPacketSizeBytes+audioIn.Bytes());
 }

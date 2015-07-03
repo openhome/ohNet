@@ -64,6 +64,14 @@ private:
 */
 class RtpPacketRaop
 {
+private:
+    // Assume the following:
+    // Max Ethernet frame size: 1500 bytes.
+    // IPv4 header:             20 bytes.
+    // UDP header:              8 bytes.
+    // RTP fixed header:        12 bytes.
+    // So, 1500-20-8-12 = 1460 RTP payload bytes max.
+    static const TUint kMaxPayloadBytes = 1460;
 public:
     RtpPacketRaop();
     RtpPacketRaop(const Brx& aRtpPacket);
@@ -73,13 +81,13 @@ public:
     const Brx& Payload() const;
 private:
     RtpHeaderFixed iHeader;
-    Brn iPayload;
+    Bws<kMaxPayloadBytes> iPayload;
 };
 
 class RtpPacket
 {
 private:
-    static const TUint kMinHeaderBytes = 12;
+    static const TUint kMaxPayloadBytes = 1460;
 public:
     RtpPacket(const Brx& aRtpPacket);
     const RtpHeaderFixed& Header() const;
@@ -88,36 +96,115 @@ private:
     RtpHeaderFixed iHeader;
     std::vector<TUint> iCsrc;
     TUint iHeaderExtensionProfile;
-    Brn iHeaderExtension;
+    TUint iHeaderExtensionBytes;
+    Bws<kMaxPayloadBytes> iData;
     Brn iPayload;
 };
 
-class RaopAudio
+//class RaopAudioPacket
+//{
+//public:
+//    RaopAudioPacket();
+//    void Replace(const Brx& aAudioPacket);
+//};
+
+class RaopAudioServer
 {
-private:
-    static const TUint kMaxReadBufferBytes = 1500;
 public:
-    RaopAudio(SocketUdpServer& aServer);
-    ~RaopAudio();
-    void Initialise(const Brx& aAeskey, const Brx& aAesiv);
-    TUint ReadPacket(); // Returns seq number of read packet.
-    void DecodePacket();
-    void DecodePacket(const Brx& aPacket);  // FIXME - remove one of these DecodePacket() calls - or, even better, move out to an AudioPacket object.
+    static const TUint kTypeAudio = 0x60;
+    static const TUint kMaxPacketBytes = 1500;
+public:
+    RaopAudioServer(SocketUdpServer& aServer);
+    ~RaopAudioServer();
+    void ReadPacket(RtpPacketRaop& aPacket);
     void DoInterrupt();
     void Reset();
-    const Brx& Audio() const;   // FIXME - remove this?
 private:
     SocketUdpServer& iServer;
-    Bws<kMaxReadBufferBytes> iDataBuffer;
-    RtpPacketRaop iPacket;
-    Bws<kMaxReadBufferBytes> iAudio;
-    Bws<sizeof(AES_KEY)> iAeskey;
-    Bws<16> iAesiv;
+    Bws<kMaxPacketBytes> iDataBuffer;
     TUint iSessionId;
     TBool iInterrupted;
 };
 
-class RaopControl
+// FIXME - this class currently writes out the packet length at the start of decoded audio.
+// That shouldn't be a responsibility of a generic decoder.
+// Maybe have a chain of elements that write into the same buffer (i.e., one element to write the packet length at the start, then pass onto decoder to decode the audio into the buffer).
+class RaopAudioDecryptor
+{
+private:
+    static const TUint kAesKeyBytes = sizeof(AES_KEY);
+    static const TUint kAesInitVectorBytes = 16;
+    static const TUint kPacketSizeBytes = sizeof(TUint);
+public:
+    void Init(const Brx& aAesKey, const Brx& aAesInitVector);
+    void Decrypt(const RtpPacketRaop& aPacket, Bwx& aAudioOut) const;  // FIXME - define an RaopAudioPacket type so that this is only ever passed an audio packet? Or could just pass in a buffer filled with audio to decode, as don't require any header data.
+private:
+    Bws<kAesKeyBytes> iKey;
+    Bws<kAesInitVectorBytes> iInitVector;
+};
+
+//class RaopAudio
+//{
+//private:
+//    static const TUint kMaxReadBufferBytes = 1500;
+//public:
+//    RaopAudio(SocketUdpServer& aServer);
+//    ~RaopAudio();
+//    void Initialise(const Brx& aAeskey, const Brx& aAesiv);
+//    TUint ReadPacket(); // Returns seq number of read packet.
+//    void DecodePacket();
+//    /// FIXME - rename Decrypt() ?
+//    void DecodePacket(const Brx& aPacket);
+//    void DoInterrupt();
+//    void Reset();
+//    const Brx& Audio() const;   // FIXME - remove this?
+//private:
+//    SocketUdpServer& iServer;
+//    Bws<kMaxReadBufferBytes> iDataBuffer;
+//    RtpPacketRaop iPacket;
+//    Bws<kMaxReadBufferBytes> iAudio;
+//    Bws<sizeof(AES_KEY)> iAeskey;
+//    Bws<16> iAesiv;
+//    TUint iSessionId;
+//    TBool iInterrupted;
+//};
+
+//class IRaopResendRequester
+//{
+//public:
+//    virtual void RequestResend(TUint aSeqStart, TUint aCount) = 0;
+//    virtual ~IRaopResendRequester() {}
+//};
+
+class IRaopResendReceiver
+{
+public:
+    virtual void ReceiveResend(const RtpPacketRaop& aPacket) = 0;
+    virtual ~IRaopResendReceiver() {}
+};
+
+//class RaopResendHandler : public IRaopResendRequester, public IRaopResendReceiver
+//{
+//private:
+//    static const TUint kTimerExpiryTimeoutMs = 80;  // Taken from previous codebase.
+//public:
+//    RaopResendHandler(IRaopResendRequester& aResendRequester, IRaopResendReceiver& aResendReceiver);
+//public: // from IRaopResendRequester
+//    void RequestResend(TUint aSeqStart, TUint aCount) override;
+//public: // from IRaopResendReceiver
+//    void ReceiveResend(const RtpPacketRaop& aPacket) override;
+//private:
+//    void TimerFired();  // Called when a resend times out.
+//private:
+//    IRaopResendRequester& iRequester;
+//    IRaopResendReceiver& iReceiver;
+//    TUint iSeqNext;
+//    TUint iCount;
+//    Timer* iTimer;
+//    Mutex iLock;
+//};
+
+class RaopControl// : public IRaopResendRequester
 {
 private:
     static const TUint kMaxReadBufferBytes = 1500;
@@ -131,34 +218,34 @@ private:
         EResendResponse = 0x56,
     };
 public:
-    RaopControl(Environment& aEnv, SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer);
+    RaopControl(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver);
     ~RaopControl();
+    //void SetResendReceiver(IRaopResendReceiver& aResendReceiver);
     void DoInterrupt();
     void Reset(TUint aClientPort);
     void Time(TUint& aSenderSkew, TUint& aLatency); // FIXME - do this without output params?
-    void RequestResend(TUint aPacketId, TUint aPackets);
-    void GetResentData(Bwx& aData, TUint aCount);
-    void LockRx();
-    void UnlockRx();
+    void RequestResend(TUint aSeqStart, TUint aCount);
+//public: // from IRaopResendRequester
+//    void RequestResend(TUint aSeqStart, TUint aCount) override;
 private:
     void Run();
-    void TimerExpired();
 private:
     Endpoint iEndpoint;
     TUint iClientPort;
     SocketUdpServer& iServer;
-    Srs<kMaxReadBufferBytes> iReceive;
-    Bws<kMaxReadBufferBytes> iResentData;
+    //Srs<kMaxReadBufferBytes> iReceive;
+    //Bws<kMaxReadBufferBytes> iResentData;
     Bws<kMaxReadBufferBytes> iPacket;
-    IRaopAudioResumer& iAudioResumer;
-    ThreadFunctor* iThreadControl;
+    IRaopAudioResumer& iAudioResumer;   // FIXME - remove
+    ThreadFunctor* iThread;
+    IRaopResendReceiver& iResendReceiver;
     TUint iSenderSkew;
     TUint iLatency;
-    Mutex iMutex;
-    Mutex iMutexRx;
-    Semaphore iSemaResend;
-    TUint iResend;
-    Timer* iTimerExpiry;
+    Mutex iLock;
+    //Mutex iMutexRx;
+    //Semaphore iSemaResend;
+    //TUint iResend;
+    //Timer* iTimerExpiry;
     TBool iExit;
 };
 
@@ -170,8 +257,10 @@ class IRaopVolumeEnabler;
 // - Timing
 // However, the timing channel was never monitored in the previous codebase,
 // so no RaopTiming class exists here.
-class ProtocolRaop : public Media::ProtocolNetwork, public IRaopAudioResumer
+class ProtocolRaop : public Media::ProtocolNetwork, public IRaopAudioResumer, public IRaopResendReceiver
 {
+private:
+    static const TUint kResendTimeoutMs = 80;   // Taken from previous codebase.
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
@@ -184,6 +273,8 @@ private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
 private: // from IRaopAudioResumer
     void AudioResuming() override;
+private: // from IRaopResendReceiver
+    void ReceiveResend(const RtpPacketRaop& aPacket) override;
 private:
     void StartStream();
     void OutputAudio(const Brx& aPacket);
@@ -191,6 +282,7 @@ private:
     void DoInterrupt();
     void WaitForChangeInput();
     void InputChanged();
+    void TimerFired();
 private:
     static const TUint kMaxReadBufferBytes = 1500;
     // FIXME - start latency can be retrieved from rtptime field of RTSP RECORD
@@ -201,8 +293,11 @@ private:
     IRaopVolumeEnabler& iVolume;
     IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;
-    RaopAudio iRaopAudio;
-    RaopControl iRaopControl;
+    RtpPacketRaop iAudioPacket;
+    Bws<RaopAudioServer::kMaxPacketBytes> iAudioDecrypted;
+    RaopAudioDecryptor iAudioDecryptor;
+    RaopAudioServer iAudioServer;
+    RaopControl iControlServer;
     Media::SupplyAggregatorBytes* iSupply;
     Uri iUri;
 
@@ -222,6 +317,10 @@ private:
     Mutex iLockRaop;
     Semaphore iSem;
     Semaphore iSemInputChanged;
+    Timer* iTimerResend;
+    TUint iResendSeqNext;
+    TUint iResendCount;
+    Semaphore iSemResend;
 };
 
 };  // namespace Av
