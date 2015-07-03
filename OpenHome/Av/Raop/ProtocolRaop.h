@@ -18,11 +18,78 @@ class SocketUdpServer;
 class UdpServerManager;
 class IRaopDiscovery;
 
+// FIXME - remove this
 class IRaopAudioResumer
 {
 public:
     virtual void AudioResuming() = 0;
     virtual ~IRaopAudioResumer() {}
+};
+
+class RtpHeaderFixed
+{
+public:
+    static const TUint kHeaderBytes = 12;
+public:
+    RtpHeaderFixed();
+    RtpHeaderFixed(const Brx& aRtpHeader);
+    void Replace(const Brx& aRtpHeader);
+    void Clear();
+    TBool Padding() const;
+    TBool Extension() const;
+    TUint CsrcCount() const;
+    TBool Marker() const;
+    TUint Type() const;
+    TUint Seq() const;
+    TUint Timestamp() const;
+    TUint Ssrc() const;
+private:
+    TUint iVersion;
+    TBool iPadding;
+    TBool iExtension;
+    TUint iCsrcCount;
+    TBool iMarker;
+    TUint iPayloadType;
+    TUint iSequenceNumber;
+    TUint iTimestamp;
+    TUint iSsrc;
+};
+
+/**
+* RAOP appears to use a version of the RTP header that does not conform to
+* RFC 3350: https://www.ietf.org/rfc/rfc3550.txt.
+*
+* It uses the standardised fixed-size header, but can set the Extension bit
+* without providing an extension header, and repurposes the SSRC field.
+*/
+class RtpPacketRaop
+{
+public:
+    RtpPacketRaop();
+    RtpPacketRaop(const Brx& aRtpPacket);
+    void Replace(const Brx& aRtpPacket);
+    void Clear();
+    const RtpHeaderFixed& Header() const;
+    const Brx& Payload() const;
+private:
+    RtpHeaderFixed iHeader;
+    Brn iPayload;
+};
+
+class RtpPacket
+{
+private:
+    static const TUint kMinHeaderBytes = 12;
+public:
+    RtpPacket(const Brx& aRtpPacket);
+    const RtpHeaderFixed& Header() const;
+    const Brx& Payload() const;
+private:
+    RtpHeaderFixed iHeader;
+    std::vector<TUint> iCsrc;
+    TUint iHeaderExtensionProfile;
+    Brn iHeaderExtension;
+    Brn iPayload;
 };
 
 class RaopAudio
@@ -33,7 +100,7 @@ public:
     RaopAudio(SocketUdpServer& aServer);
     ~RaopAudio();
     void Initialise(const Brx& aAeskey, const Brx& aAesiv);
-    TUint ReadPacket();
+    TUint ReadPacket(); // Returns seq number of read packet.
     void DecodePacket();
     void DecodePacket(const Brx& aPacket);  // FIXME - remove one of these DecodePacket() calls - or, even better, move out to an AudioPacket object.
     void DoInterrupt();
@@ -42,11 +109,11 @@ public:
 private:
     SocketUdpServer& iServer;
     Bws<kMaxReadBufferBytes> iDataBuffer;
+    RtpPacketRaop iPacket;
     Bws<kMaxReadBufferBytes> iAudio;
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
-    TBool iInitId;
-    TUint iId;
+    TUint iSessionId;
     TBool iInterrupted;
 };
 
@@ -155,67 +222,6 @@ private:
     Mutex iLockRaop;
     Semaphore iSem;
     Semaphore iSemInputChanged;
-};
-
-class RtpHeaderFixed
-{
-public:
-    static const TUint kHeaderBytes = 12;
-public:
-    RtpHeaderFixed(const Brx& aRtpHeader);
-public:
-    TBool Padding() const;
-    TBool Extension() const;
-    TUint CsrcCount() const;
-    TBool Marker() const;
-    TUint Type() const;
-    TUint Seq() const;
-    TUint Timestamp() const;
-    TUint Ssrc() const;
-private:
-    TUint iVersion;
-    TBool iPadding;
-    TBool iExtension;
-    TUint iCsrcCount;
-    TBool iMarker;
-    TUint iPayloadType;
-    TUint iSequenceNumber;
-    TUint iTimestamp;
-    TUint iSsrc;
-};
-
-/**
- * RAOP appears to use a version of the RTP header that does not conform to
- * RFC 3350: https://www.ietf.org/rfc/rfc3550.txt.
- *
- * It uses the standardised fixed-size header, but can set the Extension bit
- * without providing an extension header, and repurposes the SSRC field.
- */
-class RtpPacketRaop
-{
-public:
-    RtpPacketRaop(const Brx& aRtpPacket);
-    const RtpHeaderFixed& Header() const;
-    const Brx& Payload() const;
-private:
-    RtpHeaderFixed iHeader;
-    Brn iPayload;
-};
-
-class RtpPacket
-{
-private:
-    static const TUint kMinHeaderBytes = 12;
-public:
-    RtpPacket(const Brx& aRtpPacket);
-    const RtpHeaderFixed& Header() const;
-    const Brx& Payload() const;
-private:
-    RtpHeaderFixed iHeader;
-    std::vector<TUint> iCsrc;
-    TUint iHeaderExtensionProfile;
-    Brn iHeaderExtension;
-    Brn iPayload;
 };
 
 };  // namespace Av

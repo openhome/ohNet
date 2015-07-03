@@ -19,6 +19,197 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 
+// RtpHeaderFixed
+
+RtpHeaderFixed::RtpHeaderFixed()
+{
+}
+
+RtpHeaderFixed::RtpHeaderFixed(const Brx& aRtpHeader)
+{
+    Replace(aRtpHeader);
+}
+
+void RtpHeaderFixed::Replace(const Brx& aRtpHeader)
+{
+    if (aRtpHeader.Bytes() != kHeaderBytes) {
+        THROW(InvalidRtpHeader);
+    }
+
+    iVersion = (aRtpHeader[0] & 0xc0) >> 6;
+    iPadding = (aRtpHeader[0] & 0x20) == 0x20;
+    iExtension = (aRtpHeader[0] & 0x10) == 0x10;
+    iCsrcCount = aRtpHeader[0] & 0x0f;
+    iMarker = (aRtpHeader[1] & 0x80) == 0x80;
+    iPayloadType = aRtpHeader[1] & 0x7f;
+
+    static const TUint offset = 2;  // Processed first 2 bytes above.
+    Brn packetRemaining(aRtpHeader.Ptr()+offset, aRtpHeader.Bytes()-offset);
+    ReaderBuffer readerBuffer(packetRemaining);
+    ReaderBinary readerBinary(readerBuffer);
+
+    try {
+        iSequenceNumber = readerBinary.ReadUintBe(2);
+        iTimestamp = readerBinary.ReadUintBe(4);
+        iSsrc = readerBinary.ReadUintBe(4);
+    }
+    catch (ReaderError&) {
+        THROW(InvalidRtpHeader);
+    }
+}
+
+void RtpHeaderFixed::Clear()
+{
+    iVersion = 0;
+    iPadding = 0;
+    iExtension = 0;
+    iCsrcCount = 0;
+    iMarker = 0;
+    iPayloadType = 0;
+    iSequenceNumber = 0;
+    iTimestamp = 0;
+    iSsrc = 0;
+}
+
+TBool RtpHeaderFixed::Padding() const
+{
+    return iPadding;
+}
+
+TBool RtpHeaderFixed::Extension() const
+{
+    return iExtension;
+}
+
+TUint RtpHeaderFixed::CsrcCount() const
+{
+    return iCsrcCount;
+}
+
+TBool RtpHeaderFixed::Marker() const
+{
+    return iMarker;
+}
+
+TUint RtpHeaderFixed::Type() const
+{
+    return iPayloadType;
+}
+
+TUint RtpHeaderFixed::Seq() const
+{
+    return iSequenceNumber;
+}
+
+TUint RtpHeaderFixed::Timestamp() const
+{
+    return iTimestamp;
+}
+
+TUint RtpHeaderFixed::Ssrc() const
+{
+    return iSsrc;
+}
+
+
+// RtpPacketRaop
+
+RtpPacketRaop::RtpPacketRaop()
+{
+}
+
+RtpPacketRaop::RtpPacketRaop(const Brx& aRtpPacket)
+{
+    Replace(aRtpPacket);
+}
+
+void RtpPacketRaop::Replace(const Brx& aRtpPacket)
+{
+    iHeader.Replace(Brn(aRtpPacket.Ptr(), RtpHeaderFixed::kHeaderBytes));
+    const TUint offset = RtpHeaderFixed::kHeaderBytes;
+    iPayload.Set(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
+}
+
+void RtpPacketRaop::Clear()
+{
+    iHeader.Clear();
+    iPayload.Set(Brx::Empty());
+}
+
+const RtpHeaderFixed& RtpPacketRaop::Header() const
+{
+    return iHeader;
+}
+
+const Brx& RtpPacketRaop::Payload() const
+{
+    return iPayload;
+}
+
+
+// RtpPacket
+
+RtpPacket::RtpPacket(const Brx& aRtpPacket)
+    : iHeader(Brn(aRtpPacket.Ptr(), RtpHeaderFixed::kHeaderBytes))
+{
+    static const TUint offset = RtpHeaderFixed::kHeaderBytes;
+    Brn packetRemaining(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
+    ReaderBuffer readerBuffer(packetRemaining);
+    ReaderBinary readerBinary(readerBuffer);
+
+    try {
+        const TUint kHeaderSizeIncCsrc = kMinHeaderBytes+iHeader.CsrcCount()*4;
+        if (aRtpPacket.Bytes() < kHeaderSizeIncCsrc) {
+            // Not enough bytes in packet to satisfy reported CRSC count.
+            THROW(InvalidRtpHeader);
+        }
+        for (TUint i=0; i<iHeader.CsrcCount(); i++) {
+            iCsrc.push_back(readerBinary.ReadUintBe(4));
+        }
+
+        TUint headerSizeFull = kHeaderSizeIncCsrc;
+        if (iHeader.Extension()) {
+            const TUint kHeaderSizeInclHeaderExtension = kHeaderSizeIncCsrc+4;
+            if (aRtpPacket.Bytes() < kHeaderSizeInclHeaderExtension) {
+                THROW(InvalidRtpHeader);
+            }
+            iHeaderExtensionProfile = readerBinary.ReadUintBe(2);
+            const TUint headerExtensionBytes = readerBinary.ReadUintBe(2)*4;
+
+            headerSizeFull = kHeaderSizeInclHeaderExtension+headerExtensionBytes;
+            if (aRtpPacket.Bytes() < headerSizeFull) {
+                THROW(InvalidRtpHeader);
+            }
+            iHeaderExtension.Set(aRtpPacket.Ptr()+kHeaderSizeInclHeaderExtension, headerExtensionBytes);
+        }
+
+        TUint paddingBytes = 0;
+        if (iHeader.Padding()) {
+            paddingBytes = aRtpPacket[aRtpPacket.Bytes()-1];
+        }
+
+        const TUint kPayloadBytes = aRtpPacket.Bytes()-headerSizeFull-paddingBytes;
+        if (kPayloadBytes == 0 || aRtpPacket.Bytes() != headerSizeFull+kPayloadBytes+paddingBytes) {
+            THROW(InvalidRtpHeader);
+        }
+        iPayload.Set(aRtpPacket.Ptr()+headerSizeFull, kPayloadBytes);
+    }
+    catch (ReaderError&) {
+        THROW(InvalidRtpHeader);
+    }
+}
+
+const RtpHeaderFixed& RtpPacket::Header() const
+{
+    return iHeader;
+}
+
+const Brx& RtpPacket::Payload() const
+{
+    return iPayload;
+}
+
+
 // ProtocolRaop
 
 ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
@@ -635,7 +826,7 @@ void RaopAudio::Reset()
     iAudio.SetBytes(0);
     iAeskey.SetBytes(0);
     iAesiv.SetBytes(0);
-    iInitId = true;
+    iSessionId = 0;
     iInterrupted = false;
     iServer.ReadFlush();  // set to read next udp packet
 }
@@ -655,65 +846,51 @@ void RaopAudio::DoInterrupt()
 
 TUint RaopAudio::ReadPacket()
 {
-    // Read a packet at a time and process it.
-    //LOG(kMedia, ">RaopAudio::ReadPacket()\n");
-    TUint16 count = 0;
+    LOG(kMedia, ">RaopAudio::ReadPacket\n");
+    TUint seq = 0;
 
     for (;;) {
         try {
+            iPacket.Clear();
             iServer.Read(iDataBuffer);
+            iPacket.Replace(iDataBuffer);
+        }
+        catch (InvalidRtpHeader&) {
+            LOG(kMedia, "RaopAudio::ReadPacket InvalidRtpHeader\n");
         }
         catch (ReaderError&) {
-            iServer.ReadFlush();
-
             // Either no data, user abort or invalid header
             if (!iServer.IsOpen()) {
-                LOG(kMedia, "RaopAudio::ReadPacket() RaopAudioServerClosed\n");
+                LOG(kMedia, "RaopAudio::ReadPacket ReaderError RaopAudioServerClosed\n");
+                iServer.ReadFlush();
                 THROW(RaopAudioServerClosed);
             }
             if (iInterrupted) {
-                LOG(kMedia, "RaopAudio::ReadPacket() Exception, iInterrupted %d\n", iInterrupted);
+                LOG(kMedia, "RaopAudio::ReadPacket ReaderError iInterrupted %d\n", iInterrupted);
+                iServer.ReadFlush();
                 THROW(ReaderError);
             }
-            if(iDataBuffer.Bytes() < 12) {  // may get here if kMaxReadBufferBytes not read
-                continue;   // keep trying if not interrupted
-            }
-            return count;
         }
-        iServer.ReadFlush();  // set to read next udp packet
-
-        if(iDataBuffer.Bytes() < 12) {  // may get here if kMaxReadBufferBytes not read
-            continue;
-        }
-
-        // Check header
-        if((iDataBuffer[0] != 0x80)
-                || !((iDataBuffer[1] == 0x60)
-                || (iDataBuffer[1] == 0xe0))) {
-            LOG(kMedia, "RaopAudio::ReadPacket() invalid header %x\n", iDataBuffer[0]);
-            THROW(InvalidHeader); // invalid header
-        }
+        iServer.ReadFlush();  // Set to read next UDP packet.
 
         // Process ID
-        TUint32 id = Converter::BeUint32At(iDataBuffer, 8);
-        //LOG(kMedia, "RaopAudio::ReadPacket() %d, id %d\n", iDataBuffer.Bytes(), id);
+        TUint sessionId = iPacket.Header().Ssrc();
 
-        if(iInitId) {
-            iInitId = false;
-            iId = id;   // appears to be random id generated by iTunes for each session
-            LOG(kMedia, "RaopAudio::ReadPacket() New iId = %d\n", iId);
+        if (iSessionId == 0) {
+            // Initialise session ID.
+            iSessionId = sessionId;
+            LOG(kMedia, "RaopAudio::ReadPacket new iSessionId: %u\n", iSessionId);
         }
 
-        if(iId == id) {
-            count = Converter::BeUint16At(iDataBuffer, 2);
-            //LOG(kMedia, "RaopAudio::ReadPacket() iId = %d, count = %d\n", iId, count);
-            break;  // packet with same id found
+        if (sessionId == iSessionId) {
+            seq = iPacket.Header().Seq();
+            LOG(kMedia, "RaopAudio::ReadPacket iSessionId: %u, seq: %u\n", iSessionId, seq);
+            return seq;
         }
-        LOG(kMedia, "RaopAudio::ReadPacket() no data so retry\n");
-        // rogue id so ignore
+
+        // Rogue ID; ignore.
+        LOG(kMedia, "RaopAudio::ReadPacket unexpected packet iSessionId: %u, seq: %u\n", iSessionId, seq);
     }
-
-    return count;
 }
 
 void RaopAudio::DecodePacket()
@@ -758,158 +935,4 @@ void RaopAudio::DecodePacket(const Brx& aPacket)
 const Brx& RaopAudio::Audio() const
 {
     return iAudio;
-}
-
-
-// RtpHeaderFixed
-
-RtpHeaderFixed::RtpHeaderFixed(const Brx& aRtpHeader)
-{
-    if (aRtpHeader.Bytes() != kHeaderBytes) {
-        THROW(InvalidRtpHeader);
-    }
-
-    iVersion = (aRtpHeader[0] & 0xc0) >> 6;
-    iPadding = (aRtpHeader[0] & 0x20) == 0x20;
-    iExtension = (aRtpHeader[0] & 0x10) == 0x10;
-    iCsrcCount = aRtpHeader[0] & 0x0f;
-    iMarker = (aRtpHeader[1] & 0x80) == 0x80;
-    iPayloadType = aRtpHeader[1] & 0x7f;
-
-    static const TUint offset = 2;  // Processed first 2 bytes above.
-    Brn packetRemaining(aRtpHeader.Ptr()+offset, aRtpHeader.Bytes()-offset);
-    ReaderBuffer readerBuffer(packetRemaining);
-    ReaderBinary readerBinary(readerBuffer);
-
-    try {
-        iSequenceNumber = readerBinary.ReadUintBe(2);
-        iTimestamp = readerBinary.ReadUintBe(4);
-        iSsrc = readerBinary.ReadUintBe(4);
-    }
-    catch (ReaderError&) {
-        THROW(InvalidRtpHeader);
-    }
-}
-
-TBool RtpHeaderFixed::Padding() const
-{
-    return iPadding;
-}
-
-TBool RtpHeaderFixed::Extension() const
-{
-    return iExtension;
-}
-
-TUint RtpHeaderFixed::CsrcCount() const
-{
-    return iCsrcCount;
-}
-
-TBool RtpHeaderFixed::Marker() const
-{
-    return iMarker;
-}
-
-TUint RtpHeaderFixed::Type() const
-{
-    return iPayloadType;
-}
-
-TUint RtpHeaderFixed::Seq() const
-{
-    return iSequenceNumber;
-}
-
-TUint RtpHeaderFixed::Timestamp() const
-{
-    return iTimestamp;
-}
-
-TUint RtpHeaderFixed::Ssrc() const
-{
-    return iSsrc;
-}
-
-
-// RtpPacketRaop
-
-RtpPacketRaop::RtpPacketRaop(const Brx& aRtpPacket)
-    : iHeader(Brn(aRtpPacket.Ptr(), RtpHeaderFixed::kHeaderBytes))
-{
-    const TUint offset = RtpHeaderFixed::kHeaderBytes;
-    iPayload.Set(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
-}
-
-const RtpHeaderFixed& RtpPacketRaop::Header() const
-{
-    return iHeader;
-}
-
-const Brx& RtpPacketRaop::Payload() const
-{
-    return iPayload;
-}
-
-
-// RtpPacket
-
-RtpPacket::RtpPacket(const Brx& aRtpPacket)
-    : iHeader(Brn(aRtpPacket.Ptr(), RtpHeaderFixed::kHeaderBytes))
-{
-    static const TUint offset = RtpHeaderFixed::kHeaderBytes;
-    Brn packetRemaining(aRtpPacket.Ptr()+offset, aRtpPacket.Bytes()-offset);
-    ReaderBuffer readerBuffer(packetRemaining);
-    ReaderBinary readerBinary(readerBuffer);
-
-    try {
-        const TUint kHeaderSizeIncCsrc = kMinHeaderBytes+iHeader.CsrcCount()*4;
-        if (aRtpPacket.Bytes() < kHeaderSizeIncCsrc) {
-            // Not enough bytes in packet to satisfy reported CRSC count.
-            THROW(InvalidRtpHeader);
-        }
-        for (TUint i=0; i<iHeader.CsrcCount(); i++) {
-            iCsrc.push_back(readerBinary.ReadUintBe(4));
-        }
-
-        TUint headerSizeFull = kHeaderSizeIncCsrc;
-        if (iHeader.Extension()) {
-            const TUint kHeaderSizeInclHeaderExtension = kHeaderSizeIncCsrc+4;
-            if (aRtpPacket.Bytes() < kHeaderSizeInclHeaderExtension) {
-                THROW(InvalidRtpHeader);
-            }
-            iHeaderExtensionProfile = readerBinary.ReadUintBe(2);
-            const TUint headerExtensionBytes = readerBinary.ReadUintBe(2)*4;
-
-            headerSizeFull = kHeaderSizeInclHeaderExtension+headerExtensionBytes;
-            if (aRtpPacket.Bytes() < headerSizeFull) {
-                THROW(InvalidRtpHeader);
-            }
-            iHeaderExtension.Set(aRtpPacket.Ptr()+kHeaderSizeInclHeaderExtension, headerExtensionBytes);
-        }
-
-        TUint paddingBytes = 0;
-        if (iHeader.Padding()) {
-            paddingBytes = aRtpPacket[aRtpPacket.Bytes()-1];
-        }
-
-        const TUint kPayloadBytes = aRtpPacket.Bytes()-headerSizeFull-paddingBytes;
-        if (kPayloadBytes == 0 || aRtpPacket.Bytes() != headerSizeFull+kPayloadBytes+paddingBytes) {
-            THROW(InvalidRtpHeader);
-        }
-        iPayload.Set(aRtpPacket.Ptr()+headerSizeFull, kPayloadBytes);
-    }
-    catch (ReaderError&) {
-        THROW(InvalidRtpHeader);
-    }
-}
-
-const RtpHeaderFixed& RtpPacket::Header() const
-{
-    return iHeader;
-}
-
-const Brx& RtpPacket::Payload() const
-{
-    return iPayload;
 }
