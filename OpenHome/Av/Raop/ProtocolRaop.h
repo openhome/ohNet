@@ -143,32 +143,6 @@ private:
     Bws<kAesInitVectorBytes> iInitVector;
 };
 
-//class RaopAudio
-//{
-//private:
-//    static const TUint kMaxReadBufferBytes = 1500;
-//public:
-//    RaopAudio(SocketUdpServer& aServer);
-//    ~RaopAudio();
-//    void Initialise(const Brx& aAeskey, const Brx& aAesiv);
-//    TUint ReadPacket(); // Returns seq number of read packet.
-//    void DecodePacket();
-//    /// FIXME - rename Decrypt() ?
-//    void DecodePacket(const Brx& aPacket);
-//    void DoInterrupt();
-//    void Reset();
-//    const Brx& Audio() const;   // FIXME - remove this?
-//private:
-//    SocketUdpServer& iServer;
-//    Bws<kMaxReadBufferBytes> iDataBuffer;
-//    RtpPacketRaop iPacket;
-//    Bws<kMaxReadBufferBytes> iAudio;
-//    Bws<sizeof(AES_KEY)> iAeskey;
-//    Bws<16> iAesiv;
-//    TUint iSessionId;
-//    TBool iInterrupted;
-//};
-
 //class IRaopResendRequester
 //{
 //public:
