@@ -635,9 +635,9 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 //};
 
 
-// RaopControl
+// RaopControlServer
 
-RaopControl::RaopControl(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver)
+RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver)
     : iClientPort(kInvalidServerPort)
     , iServer(aServer)
     , iAudioResumer(aAudioResumer)
@@ -645,11 +645,11 @@ RaopControl::RaopControl(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResu
     , iLock("RACL")
     , iExit(false)
 {
-    iThread = new ThreadFunctor("RaopControl", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
+    iThread = new ThreadFunctor("RaopControlServer", MakeFunctor(*this, &RaopControlServer::Run), kPriority-1, kSessionStackBytes);
     iThread->Start();
 }
 
-RaopControl::~RaopControl()
+RaopControlServer::~RaopControlServer()
 {
     {
         AutoMutex a(iLock);
@@ -660,22 +660,22 @@ RaopControl::~RaopControl()
     delete iThread;
 }
 
-void RaopControl::DoInterrupt()
+void RaopControlServer::DoInterrupt()
 {
-    LOG(kMedia, "RaopControl::DoInterrupt\n");
+    LOG(kMedia, "RaopControlServer::DoInterrupt\n");
     AutoMutex a(iLock);
     iClientPort = kInvalidServerPort;
 }
 
-void RaopControl::Reset(TUint aClientPort)
+void RaopControlServer::Reset(TUint aClientPort)
 {
     AutoMutex a(iLock);
     iClientPort = aClientPort;
 }
 
-void RaopControl::Run()
+void RaopControlServer::Run()
 {
-    LOG(kMedia, "RaopControl::Run\n");
+    LOG(kMedia, "RaopControlServer::Run\n");
 
     for (;;) {
 
@@ -692,7 +692,7 @@ void RaopControl::Run()
             try {
                 RtpPacketRaop packet(iPacket);
                 if (packet.Header().Type() == ESync) {
-                    Log::Print("RaopControl::Run packet.Extension(): %u\n", packet.Header().Extension());
+                    Log::Print("RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
                     if (packet.Header().Extension()) {
                         // (Re-)start of stream.
                         iAudioResumer.AudioResuming();
@@ -711,7 +711,7 @@ void RaopControl::Run()
                     iLatency = rtpTimestampNextPacket-rtpTimestamp;
                     //iSenderSkew = rtpTimestamp - mclk;   // calculate count when this should play relative to current mclk count
                     iLock.Signal();
-                    LOG(kMedia, "RaopControl::Run rtpTimestamp: %u, ntpTimeSecs: %u, ntpTimeSecsFract: %u, rtpTimestampNextPacket: %u, iLatency: %u, iSenderSkew: %u\n", rtpTimestamp, ntpTimeSecs, ntpTimeSecsFract, rtpTimestampNextPacket, iLatency, iSenderSkew);
+                    LOG(kMedia, "RaopControlServer::Run rtpTimestamp: %u, ntpTimeSecs: %u, ntpTimeSecsFract: %u, rtpTimestampNextPacket: %u, iLatency: %u, iSenderSkew: %u\n", rtpTimestamp, ntpTimeSecs, ntpTimeSecsFract, rtpTimestampNextPacket, iLatency, iSenderSkew);
 
                     payload;
                 }
@@ -719,19 +719,19 @@ void RaopControl::Run()
                     iResendReceiver.ReceiveResend(packet);
                 }
                 else {
-                    LOG(kMedia, "RaopControl::Run unexpected packet type: %u\n", packet.Header().Type());
+                    LOG(kMedia, "RaopControlServer::Run unexpected packet type: %u\n", packet.Header().Type());
                 }
 
                 iServer.ReadFlush();
             }
             catch (InvalidRtpHeader& aInvalidHeader) {
                 aInvalidHeader;
-                LOG(kMedia, "RaopControl::Run caught InvalidRtpHeader\n");
+                LOG(kMedia, "RaopControlServer::Run caught InvalidRtpHeader\n");
                 iServer.ReadFlush();   // Unexpected, so ignore.
             }
         }
         catch (ReaderError&) {
-            LOG(kMedia, "RaopControl::Run caught ReaderError\n");
+            LOG(kMedia, "RaopControlServer::Run caught ReaderError\n");
             iServer.ReadFlush();
             if (!iServer.IsOpen()) {
                 iServer.WaitForOpen();
@@ -740,16 +740,16 @@ void RaopControl::Run()
     }
 }
 
-void RaopControl::Time(TUint& aSenderSkew, TUint& aLatency)
+void RaopControlServer::Time(TUint& aSenderSkew, TUint& aLatency)
 {
     AutoMutex a(iLock);
     aSenderSkew = iSenderSkew;
     aLatency = iLatency;
 }
 
-void RaopControl::RequestResend(TUint aSeqStart, TUint aCount)
+void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
 {
-    LOG(kMedia, "RaopControl::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
+    LOG(kMedia, "RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
 
     // FIXME - construct an RtpPacket object, and have it write itself out to buffer.
     Bws<16> request(Brn(""));

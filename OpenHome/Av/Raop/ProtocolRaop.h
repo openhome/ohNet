@@ -178,7 +178,7 @@ public:
 //    Mutex iLock;
 //};
 
-class RaopControl// : public IRaopResendRequester
+class RaopControlServer// : public IRaopResendRequester
 {
 private:
     static const TUint kMaxReadBufferBytes = 1500;
@@ -192,8 +192,8 @@ private:
         EResendResponse = 0x56,
     };
 public:
-    RaopControl(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver);
-    ~RaopControl();
+    RaopControlServer(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver);
+    ~RaopControlServer();
     //void SetResendReceiver(IRaopResendReceiver& aResendReceiver);
     void DoInterrupt();
     void Reset(TUint aClientPort);
@@ -265,7 +265,7 @@ private:
     Bws<RaopAudioServer::kMaxPacketBytes> iAudioDecrypted;
     RaopAudioDecryptor iAudioDecryptor;
     RaopAudioServer iAudioServer;
-    RaopControl iControlServer;
+    RaopControlServer iControlServer;
     Media::SupplyAggregatorBytes* iSupply;
     Uri iUri;
 
