@@ -137,7 +137,7 @@ private:
     static const TUint kPacketSizeBytes = sizeof(TUint);
 public:
     void Init(const Brx& aAesKey, const Brx& aAesInitVector);
-    void Decrypt(const RtpPacketRaop& aPacket, Bwx& aAudioOut) const;  // FIXME - define an RaopAudioPacket type so that this is only ever passed an audio packet? Or could just pass in a buffer filled with audio to decode, as don't require any header data.
+    void Decrypt(const Brx& aEncryptedIn, Bwx& aAudioOut) const;
 private:
     Bws<kAesKeyBytes> iKey;
     Bws<kAesInitVectorBytes> iInitVector;

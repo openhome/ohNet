@@ -379,14 +379,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
             if (seqLast == seqExpected) {
                 // The packet that was expected.
-                try {
-                    iAudioDecryptor.Decrypt(iAudioPacket, iAudioDecrypted);
-                    OutputAudio(iAudioDecrypted);
-                    seqExpected++;
-                }
-                catch (InvalidRtpHeader&) { // FIXME - redundant? Can be caught by outer exception handling below
-                    LOG(kMedia, "ProtocolRaop::Stream caught InvalidHeader exception during decryption\n");
-                }
+                iAudioDecryptor.Decrypt(iAudioPacket.Payload(), iAudioDecrypted);
+                OutputAudio(iAudioDecrypted);
+                seqExpected++;
             }
             else if (seqLast > seqExpected) {
                 // Missed some packets.
@@ -554,13 +549,8 @@ void ProtocolRaop::ReceiveResend(const RtpPacketRaop& aPacket)
 
             iTimerResend->Cancel();
 
-            try {
-                iAudioDecryptor.Decrypt(iAudioPacket, iAudioDecrypted);
-                OutputAudio(iAudioDecrypted);   // FIXME - probably don't lock around this.
-            }
-            catch (InvalidRtpHeader&) { // FIXME - redundant? Can be caught by outer exception handling below
-                LOG(kMedia, "ProtocolRaop::Stream caught InvalidHeader exception during decryption\n");
-            }   // FIXME - should probably notify pipeline of discontinuity if this is caught.
+            iAudioDecryptor.Decrypt(aPacket.Payload(), iAudioDecrypted);
+            OutputAudio(iAudioDecrypted);   // FIXME - probably don't lock around this.
 
             iResendSeqNext++;
             iResendCount--;
@@ -872,39 +862,29 @@ void RaopAudioDecryptor::Init(const Brx& aAesKey, const Brx& aAesInitVector)
     iInitVector.Replace(aAesInitVector);
 }
 
-void RaopAudioDecryptor::Decrypt(const RtpPacketRaop& aPacket, Bwx& aAudioOut) const
+void RaopAudioDecryptor::Decrypt(const Brx& aEncryptedIn, Bwx& aAudioOut) const
 {
-    LOG(kMedia, ">RaopAudioDecryptor::Decrypt seq: %u, timestamp: %u, bytes: %u\n", aPacket.Header().Seq(), aPacket.Header().Timestamp(), aPacket.Payload().Bytes());
+    LOG(kMedia, ">RaopAudioDecryptor::Decrypt aEncryptedIn.Bytes(): %u\n", aEncryptedIn.Bytes());
     ASSERT(iKey.Bytes() > 0);
     ASSERT(iInitVector.Bytes() > 0);
-
-    const Brx& audioIn = aPacket.Payload();
-
-    if (aPacket.Header().Type() != RaopAudioServer::kTypeAudio) {
-        LOG(kMedia, "RaopAudioDecryptor::Decrypt type: %u, expected: %u. Throwing InvalidRtpHeader\n", aPacket.Header().Type(), RaopAudioServer::kTypeAudio);
-        THROW(InvalidRtpHeader);
-    }
-    if (aAudioOut.MaxBytes() < kPacketSizeBytes+audioIn.Bytes()) {
-        LOG(kMedia, "RaopAudioDecryptor::Decrypt aAudioOut.MaxBytes(): %u, kPacketSizeBytes+audioIn.Bytes(): %u. Throwing InvalidRtpHeader\n", aAudioOut.MaxBytes(), kPacketSizeBytes+audioIn.Bytes());
-        THROW(InvalidRtpHeader);    // Invalid data received.
-    }
+    ASSERT(aAudioOut.MaxBytes() <= kPacketSizeBytes+aEncryptedIn.Bytes());
 
     aAudioOut.SetBytes(0);
     WriterBuffer writerBuffer(aAudioOut);
     WriterBinary writerBinary(writerBuffer);
-    writerBinary.WriteUint32Be(audioIn.Bytes());    // Write out payload size.
+    writerBinary.WriteUint32Be(aEncryptedIn.Bytes());    // Write out payload size.
 
-    unsigned char* inBuf = const_cast<unsigned char*>(audioIn.Ptr());
+    unsigned char* inBuf = const_cast<unsigned char*>(aEncryptedIn.Ptr());
     unsigned char* outBuf = const_cast<unsigned char*>(aAudioOut.Ptr()+aAudioOut.Bytes());
     unsigned char initVector[16];
     memcpy(initVector, iInitVector.Ptr(), sizeof(initVector));  // Use same initVector at start of each decryption block.
 
-    AES_cbc_encrypt(inBuf, outBuf, audioIn.Bytes(), (AES_KEY*)iKey.Ptr(), initVector, AES_DECRYPT);
-    const TUint audioRemaining = audioIn.Bytes() % 16;
-    const TUint audioWritten = audioIn.Bytes()-audioRemaining;
+    AES_cbc_encrypt(inBuf, outBuf, aEncryptedIn.Bytes(), (AES_KEY*)iKey.Ptr(), initVector, AES_DECRYPT);
+    const TUint audioRemaining = aEncryptedIn.Bytes() % 16;
+    const TUint audioWritten = aEncryptedIn.Bytes()-audioRemaining;
     if (audioRemaining > 0) {
         // Copy remaining audio to outBuf if <16 bytes.
         memcpy(outBuf+audioWritten, inBuf+audioWritten, audioRemaining);
     }
-    aAudioOut.SetBytes(kPacketSizeBytes+audioIn.Bytes());
+    aAudioOut.SetBytes(kPacketSizeBytes+aEncryptedIn.Bytes());
 }
