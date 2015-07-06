@@ -75,7 +75,7 @@ public: // from IFile
     void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
     TUint32 Tell() const;
     TUint32 Bytes() const;
-    void Flush() override;
+    void Flush();
 private:
     FILE* iFilePtr;
 };
@@ -93,7 +93,7 @@ public: // from IFile
     void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
     TUint32 Tell() const;
     TUint32 Bytes() const;
-    void Flush() override;
+    void Flush();
 private:
     Brn     iBuffer;
     TUint32 iCursor;
