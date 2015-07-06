@@ -355,7 +355,18 @@ void CpListenerMsearch::Reset()
 
 TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 {
-    Uri uri(aLocation);
+    Uri uri;
+    try {
+        uri.Replace(aLocation);
+    }
+    catch (UriError&) {
+        Log::Print("CpListenerMsearch: nonsense response - ");
+        Log::Print(aLocation);
+        Log::Print(" from ");
+        Log::Print(aUuid);
+        Log::Print("\n");
+        return false;
+    }
     Endpoint endpt(0, uri.Host());
     NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter(kAdapterCookie);
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
@@ -735,7 +746,7 @@ void TestDviDiscovery(DvStack& aDvStack)
     TUint oldMsearchTime = initParams->MsearchTimeSecs();
     initParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
 
-    //Debug::SetLevel(Debug::kNetwork);
+    //Debug::SetLevel(Debug::kSsdpUnicast);
     Runner runner("SSDP discovery\n");
     runner.Add(new SuiteAlive(aDvStack));
     runner.Add(new SuiteMsearch(aDvStack));
