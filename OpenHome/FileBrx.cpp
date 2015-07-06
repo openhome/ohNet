@@ -77,3 +77,7 @@ void FileBrx::Seek(TInt32 aBytes, SeekWhence aWhence)
 
     iCursor = proposedCursor;
 }
+
+void FileBrx::Flush()
+{
+}

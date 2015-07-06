@@ -45,6 +45,7 @@ public:
     virtual void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart) = 0; // Seeks, or throws FileSeekError
     virtual TUint32 Tell() const = 0;                           // Current position in file
     virtual TUint32 Bytes() const = 0;                          // Size of file
+    virtual void Flush() = 0;
 };
 
 // IFileSystem
@@ -74,6 +75,7 @@ public: // from IFile
     void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
     TUint32 Tell() const;
     TUint32 Bytes() const;
+    void Flush() override;
 private:
     FILE* iFilePtr;
 };
@@ -91,6 +93,7 @@ public: // from IFile
     void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart);
     TUint32 Tell() const;
     TUint32 Bytes() const;
+    void Flush() override;
 private:
     Brn     iBuffer;
     TUint32 iCursor;

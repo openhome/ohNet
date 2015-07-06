@@ -1,6 +1,5 @@
 #include <OpenHome/Private/File.h>
 #include <cstdio>
-
 using namespace OpenHome;
 
 IFile* FileSystemAnsii::Open(const TChar* aFilename, FileMode aFileMode)
@@ -116,4 +115,10 @@ TUint32 FileAnsii::Bytes() const
         ASSERTS();
     }
     return bytes;
+}
+
+void FileAnsii::Flush()
+{
+    ASSERT(iFilePtr);
+    std::fflush(iFilePtr);
 }
