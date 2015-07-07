@@ -335,9 +335,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     iSessionId = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iLatency = 0;
     iFlushSeq = iFlushTime = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
-    iWaiting = iResumePending = iStreamStart = iStopped = false;
+    iWaiting = iResumePending = iStopped = false;   // FIXME - just set iResumePending to true and have this always be the (re-)start condition to check?
     iActive = true;
     iLockRaop.Signal();
 
@@ -365,7 +366,19 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     // FIXME - what about when a stream is paused and resumed, or skipped (as a
     // new MsgTrack is not currently sent out, so the new MsgDelay appears in
     // the middle of a stream, causing the condition above.)
-    iSupply->OutputDelay(kDelayJiffies);
+    //iSupply->OutputDelay(kDelayJiffies);
+
+
+
+
+    // FIXME - not currently outputting delay at start of stream (i.e., before first audio packet arrives).
+
+
+
+
+
+
+
 
     StartStream();
 
@@ -379,6 +392,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iWaiting = false;
                 iResumePending = true;
                 // Resume normal operation.
+
+                //start = true;   // FIXME - next to gather (re-start) conditional code together.
             }
             else if (iStopped) {
                 iStreamId = IPipelineIdProvider::kStreamIdInvalid;
@@ -542,14 +557,13 @@ void ProtocolRaop::OutputContainer(const Brx& aFmtp)
 
 void ProtocolRaop::OutputAudio(const Brx& aPacket)
 {
-    // FIXME - remove iResumePending
-
     // FIXME - could not wait for streamStart notification and just assume any new audio is start of new stream (because might miss control packet with FIRST flag set).
     // However, FLUSH request contains a last seqnum and last RTP time. Pass these in and refuse to output audio until passed last seqnum.
 
+
     iLockRaop.Wait();
-    const TUint streamStart = iStreamStart;
-    iStreamStart = false;
+    const TUint streamStart = iResumePending;
+    iResumePending = false;
     iLockRaop.Signal();
 
     if (streamStart) {
@@ -558,17 +572,34 @@ void ProtocolRaop::OutputAudio(const Brx& aPacket)
         iLockRaop.Wait();
         Track* track = iTrackFactory.CreateTrack(iUri.AbsoluteUri(), Brx::Empty());
         iStreamId = iIdProvider->NextStreamId();
+        iLatency = iControlServer.Latency();
+        const TUint latency = iLatency; // FIXME - must convert to jiffies.
         const TUint streamId = iStreamId;
         Uri uri(iUri);
         iLockRaop.Signal();
 
         iSupply->OutputSession();
+        iSupply->OutputDelay(Delay(latency));
         iSupply->OutputTrack(*track, startOfStream);
         iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
         OutputContainer(iDiscovery.Fmtp());
 
         track->RemoveRef();
     }
+
+    TBool outputDelay = false;
+    TUint latency = iControlServer.Latency();
+    {
+        AutoMutex a(iLock);
+        if (latency != iLatency) {
+            iLatency = latency;
+            outputDelay = true;
+        }
+    }
+    if (outputDelay) {
+        iSupply->OutputDelay(Delay(latency));
+    }
+
     iSupply->OutputData(aPacket);
 }
 
@@ -605,6 +636,12 @@ void ProtocolRaop::ResendTimerFired()
     }
 }
 
+TUint ProtocolRaop::Delay(TUint aSamples)
+{
+    static const TUint kJiffiesPerSample = Jiffies::JiffiesPerSample(kSampleRate);
+    return kJiffiesPerSample*aSamples;
+}
+
 TUint ProtocolRaop::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ProtocolRaop::TryStop\n");
@@ -624,22 +661,32 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::ReceiveResend(const RaopPacketAudio& aPacket)
 {
-    AutoMutex a(iLockRaop);
+    iLockRaop.Wait();
     if (iResendCount > 0) {
         if (aPacket.Header().Seq() == iResendSeqNext) {
             // Expected resend packet.
 
             iTimerResend.Cancel();
 
+            iResendSeqNext++;
+            iResendCount--;
+
+            TBool shouldSignal = false;
+            if (iResendCount == 0) {
+                iResendSeqNext = 0;
+                shouldSignal = true;
+            }
+
+            iLockRaop.Signal();
+
             iAudioDecryptor.Decrypt(aPacket.Payload(), iAudioDecrypted);
             OutputAudio(iAudioDecrypted);   // FIXME - probably don't lock around this.
 
-            iResendSeqNext++;
-            iResendCount--;
-            if (iResendCount == 0) {
-                iResendSeqNext = 0;
+            if (shouldSignal) {
                 iSemResend.Signal();
             }
+
+            return;
         }
         else if (aPacket.Header().Seq() >= iResendSeqNext) {
             // Missed a resend packet.
@@ -667,8 +714,8 @@ void ProtocolRaop::ReceiveResend(const RaopPacketAudio& aPacket)
 
             // FIXME - notify pipeline of discontinuity.
         }
-
     }
+    iLockRaop.Signal();
 }
 
 TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
@@ -680,6 +727,9 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
     iFlushTime = aTime;
     iNextFlushId = iFlushIdProvider->NextFlushId();
     iWaiting = true;
+
+    // FIXME - clear any resend-related members here?
+
     DoInterrupt();
     return iNextFlushId;
 }
@@ -752,7 +802,7 @@ void RaopControlServer::Run()
                     AutoMutex a(iLock);
                     iLatency = syncPacket.RtpTimestamp()-syncPacket.RtpTimestampMinusLatency();
 
-                    LOG(kMedia, "RaopControlServer::Run rtpTimestamp: %u, ntpTimeSecs: %u, ntpTimeSecsFract: %u, rtpTimestampNextPacket: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
+                    LOG(kMedia, "RaopControlServer::Run RtpTimestampMinusLatency: %u, NtpTimestampSecs: %u, NtpTimestampFract: %u, RtpTimestamp: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
                 }
                 else if (packet.Header().Type() == EResendResponse) {
                     // Resend response packet contains a full audio packet as payload.

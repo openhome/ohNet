@@ -224,7 +224,7 @@ public:
     //void SetResendReceiver(IRaopResendReceiver& aResendReceiver);
     void DoInterrupt();
     void Reset(TUint aClientPort);
-    TUint Latency() const;
+    TUint Latency() const;  // Returns latency in samples.
     void RequestResend(TUint aSeqStart, TUint aCount);
 //public: // from IRaopResendRequester
 //    void RequestResend(TUint aSeqStart, TUint aCount) override;
@@ -254,6 +254,7 @@ class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendReceiver
 {
 private:
     static const TUint kResendTimeoutMs = 80;   // Taken from previous codebase.
+    static const TUint kSampleRate = 44100;     // Always 44.1KHz. Can get this from fmtp field.
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
@@ -275,11 +276,8 @@ private:
     void WaitForChangeInput();
     void InputChanged();
     void ResendTimerFired();
+    static TUint Delay(TUint aSamples);
 private:
-    static const TUint kMaxReadBufferBytes = 1500;
-    // FIXME - start latency can be retrieved from rtptime field of RTSP RECORD
-    // packet (although it is always 2 seconds for Airplay streams)
-    static const TUint kDelayJiffies = Media::Jiffies::kPerSecond*2; // expect 2s of buffering
     Media::TrackFactory& iTrackFactory;
     TBool iVolumeEnabled;
     IRaopVolumeEnabler& iVolume;
@@ -295,13 +293,13 @@ private:
 
     TUint iSessionId;
     TUint iStreamId;
+    TUint iLatency;
     TUint iFlushSeq;
     TUint iFlushTime;
     TUint iNextFlushId;
     TBool iActive;
     TBool iWaiting;
     TBool iResumePending;
-    TBool iStreamStart;
     TBool iStopped;
     Mutex iLockRaop;
     Semaphore iSem;
