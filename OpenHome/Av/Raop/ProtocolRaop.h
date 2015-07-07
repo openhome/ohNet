@@ -268,6 +268,8 @@ private: // from IStreamHandler
 private: // from IRaopResendReceiver
     void ReceiveResend(const RaopPacketAudio& aPacket) override;
 private:
+    void Reset();
+    void Start();
     void StartStream();
     void UpdateSessionId(TUint aSessionId);
     TBool IsValidSession(TUint aSessionId) const;

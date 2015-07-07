@@ -314,52 +314,28 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     LOG(kMedia, aUri);
     LOG(kMedia, "\n");
 
-    iLockRaop.Wait();
-
-    try {
-        iUri.Replace(aUri);
-    }
-    catch (UriError&) {
-        LOG(kMedia, "ProtocolRaop::Stream unable to parse URI\n");
-        return EProtocolErrorNotSupported;
+    {
+        AutoMutex a(iLockRaop);
+        try {
+            iUri.Replace(aUri);
+        }
+        catch (UriError&) {
+            LOG(kMedia, "ProtocolRaop::Stream unable to parse URI\n");
+            return EProtocolErrorNotSupported;
+        }
     }
 
     // RAOP doesn't actually stream from a URI, so just expect a dummy URI.
     if (iUri.Scheme() != Brn("raop")) {
         LOG(kMedia, "ProtocolRaop::Stream Scheme not recognised\n");
-        AutoMutex a(iLockRaop);
-        iActive = false;
-        iStopped = true;
         return EProtocolErrorNotSupported;
     }
 
-    iSessionId = 0;
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iLatency = 0;
-    iFlushSeq = iFlushTime = 0;
-    iNextFlushId = MsgFlush::kIdInvalid;
-    iWaiting = iResumePending = iStopped = false;   // FIXME - just set iResumePending to true and have this always be the (re-)start condition to check?
-    iActive = true;
-    iLockRaop.Signal();
-
-    // Parse URI to get client control/timing ports.
-    // (Timing channel isn't monitored, so don't bother parsing port.)
-    Parser p(aUri);
-    p.Forward(7);   // skip raop://
-    Brn ctrlPortBuf = p.Next('.');
-    TUint ctrlPort = Ascii::Uint(ctrlPortBuf);
-
-    TBool start = true;
-    TUint aesSid = 0;
-    iAudioServer.Reset();
-    iControlServer.Reset(ctrlPort);
-    Brn audio;
-    TUint seqExpected = 0;
-    iSem.Clear();
-
+    Reset();
     WaitForChangeInput();
 
-    StartStream();
+    TBool start = true;
+    TUint seqExpected = 0;
 
     // Output audio stream
     for (;;) {
@@ -371,8 +347,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iWaiting = false;
                 iResumePending = true;
                 // Resume normal operation.
-
-                //start = true;   // FIXME - next to gather (re-start) conditional code together.
             }
             else if (iStopped) {
                 iStreamId = IPipelineIdProvider::kStreamIdInvalid;
@@ -388,42 +362,66 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         try {
             iPacketBuf.SetBytes(0);
             iAudioServer.ReadPacket(iPacketBuf);
-
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
-            UpdateSessionId(audioPacket.Ssrc());    // FIXME - should only need to do this at stream start
-            // FIXME - have a CheckSessionId that throws InvalidSessionId instead of having lots of if clauses?
-
             const TUint seqLast = audioPacket.Header().Seq();
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
-                iLockRaop.Wait();
-                iActive = false;
-                iStopped = true;
-                iLockRaop.Signal();
+                {
+                    AutoMutex a(iLock);
+                    iActive = false;
+                    iStopped = true;
+                }
                 WaitForChangeInput();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 return EProtocolStreamStopped;
             }
 
-            // FIXME - this key setup is only done once per connection.
-            // Probably need to keep it between ProtocolRaop::Stream() runs in case NetAux source is switched away from and moved back to.
-            iDiscovery.KeepAlive(); // FIXME - why is this called here and not by discovery thread?
+            if (ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp())) {
+                continue;   // Flush this packet.
+            }
 
-            if(aesSid != iDiscovery.AesSid()) {
-                aesSid = iDiscovery.AesSid();       // aes key has been updated
-
-                LOG(kMedia, "ProtocolRaop::Stream() new sid\n");
-
+            iLockRaop.Wait();
+            const TBool resumePending = iResumePending;
+            iLockRaop.Signal();
+            if (start || resumePending) {
+                LOG(kMedia, "ProtocolRaop::Stream starting new stream\n");
+                UpdateSessionId(audioPacket.Ssrc());
                 iAudioDecryptor.Init(iDiscovery.Aeskey(), iDiscovery.Aesiv());
-            }
-            if(start) {
-                LOG(kMedia, "ProtocolRaop::Stream() new container\n");
-                start = false;        // create dummy container for codec recognition and initialisation
-                OutputContainer(Brn(iDiscovery.Fmtp()));
                 seqExpected = seqLast;   // Init seqExpected.
+                start = false;
+
+                //StartStream();
+                //OutputContainer(iDiscovery.Fmtp()); // Dummy container for codec init.
+
+                Track* track = NULL;
+                TUint latency = 0;
+                TUint streamId = 0;
+                Uri uri;
+                {
+                    AutoMutex a(iLock);
+                    iResumePending = false;
+                    iFlushSeq = 0;
+                    iFlushTime = 0;
+
+                    // FIXME - is this correct uri for track/stream?
+                    track = iTrackFactory.CreateTrack(iUri.AbsoluteUri(), Brx::Empty());
+                    streamId = iStreamId = iIdProvider->NextStreamId();
+                    latency = iLatency = iControlServer.Latency();
+                    uri.Replace(iUri.AbsoluteUri());
+                }
+
+                iSupply->OutputSession();
+                iSupply->OutputDelay(Delay(latency));
+                iSupply->OutputTrack(*track, !resumePending);
+                iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
+                OutputContainer(iDiscovery.Fmtp());
+
+                track->RemoveRef();
             }
+            iDiscovery.KeepAlive();
+
 
             const TBool validSession = IsValidSession(audioPacket.Ssrc());
             const TBool shouldFlush = ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp());
@@ -488,6 +486,35 @@ ProtocolGetResult ProtocolRaop::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, T
     return EProtocolGetErrorNotSupported;
 }
 
+void ProtocolRaop::Reset()
+{
+    AutoMutex a(iLockRaop);
+
+    // Parse URI to get client control/timing ports.
+    // (Timing channel isn't monitored, so don't bother parsing port.)
+    Parser p(iUri.AbsoluteUri());
+    p.Forward(7);   // skip raop://
+    const Brn ctrlPortBuf = p.Next('.');
+    const TUint ctrlPort = Ascii::Uint(ctrlPortBuf);
+    iAudioServer.Reset();
+    iControlServer.Reset(ctrlPort);
+
+    iSessionId = 0;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iLatency = 0;
+    iFlushSeq = 0;
+    iFlushTime = 0;
+    iNextFlushId = MsgFlush::kIdInvalid;
+    iActive = true;
+    iWaiting = false;
+    iResumePending = false;
+    iStopped = false;
+    iResendSeqNext = 0;
+    iResendCount = 0;
+
+    iSem.Clear();
+}
+
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
@@ -541,36 +568,6 @@ void ProtocolRaop::OutputContainer(const Brx& aFmtp)
 
 void ProtocolRaop::OutputAudio(const Brx& aAudio)
 {
-    // FIXME - could not wait for streamStart notification and just assume any new audio is start of new stream (because might miss control packet with FIRST flag set).
-    // However, FLUSH request contains a last seqnum and last RTP time. Pass these in and refuse to output audio until passed last seqnum.
-
-
-    iLockRaop.Wait();
-    const TUint streamStart = iResumePending;
-    iResumePending = false;
-    iLockRaop.Signal();
-
-    if (streamStart) {
-        const TBool startOfStream = false;  // FIXME - will this be output before first audio packet? If so, must be able to set startOfStream = true.
-
-        iLockRaop.Wait();
-        Track* track = iTrackFactory.CreateTrack(iUri.AbsoluteUri(), Brx::Empty());
-        iStreamId = iIdProvider->NextStreamId();
-        iLatency = iControlServer.Latency();
-        const TUint latency = iLatency; // FIXME - must convert to jiffies.
-        const TUint streamId = iStreamId;
-        Uri uri(iUri);
-        iLockRaop.Signal();
-
-        iSupply->OutputSession();
-        iSupply->OutputDelay(Delay(latency));
-        iSupply->OutputTrack(*track, startOfStream);
-        iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
-        OutputContainer(iDiscovery.Fmtp());
-
-        track->RemoveRef();
-    }
-
     TBool outputDelay = false;
     TUint latency = iControlServer.Latency();
     {
