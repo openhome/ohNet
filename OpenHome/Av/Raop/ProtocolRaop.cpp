@@ -283,7 +283,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
     , iSemInputChanged("PRIC", 0)
-    , iTimerResend(aEnv, MakeFunctor(*this, &ProtocolRaop::TimerFired), "ProtocolRaopResendTimer")
+    , iTimerResend(aEnv, MakeFunctor(*this, &ProtocolRaop::ResendTimerFired), "ProtocolRaopResendTimer")
     , iResendSeqNext(0)
     , iResendCount(0)
     , iSemResend("PRRS", 0)
@@ -587,7 +587,7 @@ void ProtocolRaop::InputChanged()
     iSemInputChanged.Signal();
 }
 
-void ProtocolRaop::TimerFired()
+void ProtocolRaop::ResendTimerFired()
 {
     // FIXME - should probably notify pipeline of discontinuity if timer fires.
     AutoMutex a(iLock);
@@ -691,6 +691,7 @@ RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiv
     : iClientPort(kInvalidServerPort)
     , iServer(aServer)
     , iResendReceiver(aResendReceiver)
+    , iLatency(0)
     , iLock("RACL")
     , iExit(false)
 {
@@ -720,6 +721,7 @@ void RaopControlServer::Reset(TUint aClientPort)
 {
     AutoMutex a(iLock);
     iClientPort = aClientPort;
+    iLatency = 0;
 }
 
 void RaopControlServer::Run()
@@ -744,17 +746,13 @@ void RaopControlServer::Run()
                     RaopPacketSync syncPacket(packet);
 
                     // Extension bit set on sync packet signifies stream (re-)starting.
-                    // However, by it's nature, UDP is unreliable, so can't rely on acting on this for detecting (re-)start.
+                    // However, by it's nature, UDP is unreliable, so can't rely on this for detecting (re-)start.
                     LOG(kMedia, "RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
 
-                    // FIXME - require this?
-                    //TUint mclk = iI2sDriver.MclkCount();  // record current mclk count at dac - use this to calculate the drift
-                    //mclk /= 256;  // convert to samples
-                    iLock.Wait();
+                    AutoMutex a(iLock);
                     iLatency = syncPacket.RtpTimestamp()-syncPacket.RtpTimestampMinusLatency();
-                    //iSenderSkew = rtpTimestamp - mclk;   // calculate count when this should play relative to current mclk count
-                    iLock.Signal();
-                    LOG(kMedia, "RaopControlServer::Run rtpTimestamp: %u, ntpTimeSecs: %u, ntpTimeSecsFract: %u, rtpTimestampNextPacket: %u, iLatency: %u, iSenderSkew: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency, iSenderSkew);
+
+                    LOG(kMedia, "RaopControlServer::Run rtpTimestamp: %u, ntpTimeSecs: %u, ntpTimeSecsFract: %u, rtpTimestampNextPacket: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
                 }
                 else if (packet.Header().Type() == EResendResponse) {
                     // Resend response packet contains a full audio packet as payload.
@@ -770,7 +768,7 @@ void RaopControlServer::Run()
             }
             catch (InvalidRaopPacket&) {
                 LOG(kMedia, "RaopControlServer::Run caught InvalidRtpHeader\n");
-                iServer.ReadFlush();   // Unexpected, so ignore.
+                iServer.ReadFlush();    // Unexpected, so ignore.
             }
         }
         catch (ReaderError&) {
@@ -783,11 +781,10 @@ void RaopControlServer::Run()
     }
 }
 
-void RaopControlServer::Time(TUint& aSenderSkew, TUint& aLatency)
+TUint RaopControlServer::Latency() const
 {
     AutoMutex a(iLock);
-    aSenderSkew = iSenderSkew;
-    aLatency = iLatency;
+    return iLatency;
 }
 
 void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)

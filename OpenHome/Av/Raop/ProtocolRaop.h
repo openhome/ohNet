@@ -224,7 +224,7 @@ public:
     //void SetResendReceiver(IRaopResendReceiver& aResendReceiver);
     void DoInterrupt();
     void Reset(TUint aClientPort);
-    void Time(TUint& aSenderSkew, TUint& aLatency); // FIXME - do this without output params?
+    TUint Latency() const;
     void RequestResend(TUint aSeqStart, TUint aCount);
 //public: // from IRaopResendRequester
 //    void RequestResend(TUint aSeqStart, TUint aCount) override;
@@ -237,9 +237,8 @@ private:
     Bws<kMaxReadBufferBytes> iPacket;
     ThreadFunctor* iThread;
     IRaopResendReceiver& iResendReceiver;
-    TUint iSenderSkew;
     TUint iLatency;
-    Mutex iLock;
+    mutable Mutex iLock;
     TBool iExit;
 };
 
@@ -275,7 +274,7 @@ private:
     void DoInterrupt();
     void WaitForChangeInput();
     void InputChanged();
-    void TimerFired();
+    void ResendTimerFired();
 private:
     static const TUint kMaxReadBufferBytes = 1500;
     // FIXME - start latency can be retrieved from rtptime field of RTSP RECORD

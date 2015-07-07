@@ -370,7 +370,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     const TChar* friendlyName;
     iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
     iObservableFriendlyName.Replace(Brn(friendlyName));
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iPullableClock, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iRxTimestamper, kSongcastSenderIconFileName));
 }
@@ -509,7 +509,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
-    , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
+    , iOptionTuneIn("-t", "--tunein", Brn("ah2rjr68"), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
     , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
     , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
@@ -597,7 +597,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-    Debug::SetLevel(Debug::kSongcast | Debug::kPipeline);
+    Debug::SetLevel(Debug::kMedia | Debug::kSongcast | Debug::kPipeline);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
