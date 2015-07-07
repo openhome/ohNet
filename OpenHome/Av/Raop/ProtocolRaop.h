@@ -269,7 +269,7 @@ private: // from IRaopResendReceiver
     void ReceiveResend(const RaopPacketAudio& aPacket) override;
 private:
     void StartStream();
-    void UpdateSessionId(const RaopPacketAudio& aPacket);
+    void UpdateSessionId(TUint aSessionId);
     void OutputAudio(const Brx& aAudio);
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();

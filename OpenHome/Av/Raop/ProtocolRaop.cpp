@@ -412,7 +412,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
-            UpdateSessionId(audioPacket);
+            UpdateSessionId(audioPacket.Ssrc());
             // FIXME - have a CheckSessionId that throws InvalidSessionId instead of having lots of if clauses?
 
             const TUint seqLast = audioPacket.Header().Seq();
@@ -531,13 +531,12 @@ void ProtocolRaop::StartStream()
     iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, false, *this, iStreamId);
 }
 
-void ProtocolRaop::UpdateSessionId(const RaopPacketAudio& aPacket)
+void ProtocolRaop::UpdateSessionId(TUint aSessionId)
 {
-    const TUint sessionId = aPacket.Ssrc();
     AutoMutex a(iLock);
     if (iSessionId == 0) {
         // Initialise session ID.
-        iSessionId = sessionId;
+        iSessionId = aSessionId;
         LOG(kMedia, "ProtocolRaop::UpdateSessionId new iSessionId: %u\n", iSessionId);
     }
 }
