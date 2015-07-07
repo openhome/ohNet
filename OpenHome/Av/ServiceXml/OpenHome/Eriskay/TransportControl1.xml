@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <actionList>
+    <action>
+      <name>Characteristics </name>
+      <argumentList>
+        <argument>
+          <name>PlaySupported</name>
+          <direction>out</direction>
+          <relatedStateVariable>PlaySupported</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>PauseSupported</name>
+          <direction>out</direction>
+          <relatedStateVariable>PauseSupported</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>StopSupported</name>
+          <direction>out</direction>
+          <relatedStateVariable>StopSupported</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>NextSupported</name>
+          <direction>out</direction>
+          <relatedStateVariable>NextSupported</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>PrevSupported</name>
+          <direction>out</direction>
+          <relatedStateVariable>PrevSupported</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>SeekSupported</name>
+          <direction>out</direction>
+          <relatedStateVariable>SeekSupported</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Play</name>
+    </action>
+    <action>
+      <name>Pause</name>
+      <argumentList>
+        <argument>
+          <name>StreamId</name>
+          <direction>in</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Stop</name>
+      <argumentList>
+        <argument>
+          <name>StreamId</name>
+          <direction>in</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Next</name>
+      <argumentList>
+        <argument>
+          <name>StreamId</name>
+          <direction>in</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>Prev</name>
+      <argumentList>
+        <argument>
+          <name>StreamId</name>
+          <direction>in</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>SeekSecondsAbsolute</name>
+      <argumentList>
+        <argument>
+          <name>StreamId</name>
+          <direction>in</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>SecondsAbsolute</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_uint</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>SeekSecondsRelative</name>
+      <argumentList>
+        <argument>
+          <name>StreamId</name>
+          <direction>in</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>SecondsRelative</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_int</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>StreamId</name>
+      <argumentList>
+        <argument>
+          <name>Value</name>
+          <direction>out</direction>
+          <relatedStateVariable>StreamId</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>TransportState</name>
+      <argumentList>
+        <argument>
+          <name>Value</name>
+          <direction>out</direction>
+          <relatedStateVariable>TransportState</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+  </actionList>
+  <serviceStateTable>
+    <stateVariable sendEvents="yes">
+      <name>PlaySupported </name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>PauseSupported </name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>StopSupported </name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>NextSupported </name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>PrevSupported </name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>SeekSupported</name>
+      <dataType>boolean</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>StreamId</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>TransportState</name>
+      <dataType>string</dataType>
+      <allowedValueList>
+        <allowedValue>Playing</allowedValue>
+        <allowedValue>Paused</allowedValue>
+        <allowedValue>Stopped</allowedValue>
+        <allowedValue>Buffering</allowedValue>
+        <allowedValue>Waiting</allowedValue>
+      </allowedValueList>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_uint</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_int</name>
+      <dataType>i4</dataType>
+    </stateVariable>
+  </serviceStateTable>
+</scpd>
