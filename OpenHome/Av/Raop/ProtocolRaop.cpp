@@ -27,26 +27,26 @@ RtpHeaderRaop::RtpHeaderRaop(TBool aPadding, TBool aExtension, TUint aCsrcCount,
     , iSequenceNumber(aSeqNumber)
 {
     if (iCsrcCount > 0xf) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
     if (iPayloadType > 0x7f) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
     if (iSequenceNumber > 0xffff)
     {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 }
 
 RtpHeaderRaop::RtpHeaderRaop(const Brx& aRtpHeader)
 {
     if (aRtpHeader.Bytes() != kBytes) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 
     const TUint version = (aRtpHeader[0] & 0xc0) >> 6;
     if (version != kVersion) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
     iPadding = (aRtpHeader[0] & 0x20) == 0x20;
     iExtension = (aRtpHeader[0] & 0x10) == 0x10;
@@ -63,7 +63,7 @@ RtpHeaderRaop::RtpHeaderRaop(const Brx& aRtpHeader)
         iSequenceNumber = readerBinary.ReadUintBe(2);
     }
     catch (ReaderError&) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 }
 
@@ -134,7 +134,7 @@ RaopPacketSync::RaopPacketSync(const RtpPacketRaop& aRtpPacket)
     , iPayload(iPacket.Payload().Ptr()+kSyncSpecificHeaderBytes, iPacket.Payload().Bytes()-kSyncSpecificHeaderBytes)
 {
     if (iPacket.Header().Type() != kType) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 
     const Brx& payload = iPacket.Payload();
@@ -148,7 +148,7 @@ RaopPacketSync::RaopPacketSync(const RtpPacketRaop& aRtpPacket)
         iRtpTimestamp = readerBinary.ReadUintBe(4);
     }
     catch (ReaderError&) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 }
 
@@ -191,7 +191,7 @@ RaopPacketResendResponse::RaopPacketResendResponse(const RtpPacketRaop& aRtpPack
     , iAudioPacket(iPacketInner)
 {
     if (iPacketOuter.Header().Type() != kType) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 }
 
@@ -231,7 +231,7 @@ RaopPacketAudio::RaopPacketAudio(const RtpPacketRaop& aRtpPacket)
     , iPayload(iPacket.Payload().Ptr()+kAudioSpecificHeaderBytes, iPacket.Payload().Bytes()-kAudioSpecificHeaderBytes)
 {
     if (iPacket.Header().Type() != kType) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 
     const Brx& payload = iPacket.Payload();
@@ -243,7 +243,7 @@ RaopPacketAudio::RaopPacketAudio(const RtpPacketRaop& aRtpPacket)
         iSsrc = readerBinary.ReadUintBe(4);
     }
     catch (ReaderError&) {
-        THROW(InvalidRaopHeader);
+        THROW(InvalidRaopPacket);
     }
 }
 
@@ -477,7 +477,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 }
             }
         }
-        catch (InvalidRaopHeader&) {
+        catch (InvalidRaopPacket&) {
             LOG(kMedia, "<ProtocolRaop::Stream Invalid Header\n");
             //break;
         }
@@ -800,8 +800,7 @@ void RaopControlServer::Run()
 
                 iServer.ReadFlush();
             }
-            catch (InvalidRaopHeader& aInvalidHeader) {
-                aInvalidHeader;
+            catch (InvalidRaopPacket&) {
                 LOG(kMedia, "RaopControlServer::Run caught InvalidRtpHeader\n");
                 iServer.ReadFlush();   // Unexpected, so ignore.
             }

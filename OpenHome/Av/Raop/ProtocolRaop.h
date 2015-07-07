@@ -11,7 +11,7 @@
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
 
-EXCEPTION(InvalidRaopHeader)    // FIXME - rename to the more general InvalidRaopPacket?
+EXCEPTION(InvalidRaopPacket)
 
 namespace OpenHome {
     class Timer;
