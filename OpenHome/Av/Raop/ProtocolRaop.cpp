@@ -468,8 +468,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 if (!shouldFlush) {
                     if (seqLast == seqExpected) {
                         // The packet that was expected.
-                        iAudioDecryptor.Decrypt(audioPacket.Payload(), iAudioDecrypted);
-                        OutputAudio(iAudioDecrypted);
+                        OutputAudio(audioPacket.Payload());
                         seqExpected++;
                     }
                     else if (seqLast > seqExpected) {
@@ -555,7 +554,7 @@ void ProtocolRaop::OutputContainer(const Brx& aFmtp)
     iSupply->OutputData(container);
 }
 
-void ProtocolRaop::OutputAudio(const Brx& aPacket)
+void ProtocolRaop::OutputAudio(const Brx& aAudio)
 {
     // FIXME - could not wait for streamStart notification and just assume any new audio is start of new stream (because might miss control packet with FIRST flag set).
     // However, FLUSH request contains a last seqnum and last RTP time. Pass these in and refuse to output audio until passed last seqnum.
@@ -600,7 +599,8 @@ void ProtocolRaop::OutputAudio(const Brx& aPacket)
         iSupply->OutputDelay(Delay(latency));
     }
 
-    iSupply->OutputData(aPacket);
+    iAudioDecryptor.Decrypt(aAudio, iAudioDecrypted);
+    iSupply->OutputData(iAudioDecrypted);
 }
 
 void ProtocolRaop::WaitForChangeInput()
@@ -679,8 +679,7 @@ void ProtocolRaop::ReceiveResend(const RaopPacketAudio& aPacket)
 
             iLockRaop.Signal();
 
-            iAudioDecryptor.Decrypt(aPacket.Payload(), iAudioDecrypted);
-            OutputAudio(iAudioDecrypted);   // FIXME - probably don't lock around this.
+            OutputAudio(aPacket.Payload());
 
             if (shouldSignal) {
                 iSemResend.Signal();

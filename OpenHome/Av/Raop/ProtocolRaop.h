@@ -270,7 +270,7 @@ private: // from IRaopResendReceiver
 private:
     void StartStream();
     void UpdateSessionId(const RaopPacketAudio& aPacket);
-    void OutputAudio(const Brx& aPacket);
+    void OutputAudio(const Brx& aAudio);
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
     void WaitForChangeInput();
