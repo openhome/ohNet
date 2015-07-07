@@ -685,38 +685,6 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 }
 
 
-//// RaopResendHandler
-//
-//RaopResendHandler::RaopResendHandler(IRaopResendRequester& aResendRequester, IRaopResendReceiver& aResendReceiver)
-//{
-//
-//}
-//
-//void RaopResendHandler::RequestResend(TUint aSeqStart, TUint aCount)
-//{
-//
-//}
-//
-//void RaopResendHandler::ReceiveResend(const RtpPacketRaop& aPacket)
-//{
-//
-//}
-//
-//void RaopResendHandler::TimerFired()
-//{
-//    // Didn't receive an expected resend.
-//}
-//
-//private:
-//    IRaopResendRequester& iRequester;
-//    IRaopResendReceiver& iReceiver;
-//    TUint iSeqNext;
-//    TUint iCount;
-//    Timer* iTimer;
-//    Mutex iLock;
-//};
-
-
 // RaopControlServer
 
 RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver)
