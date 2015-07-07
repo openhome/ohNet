@@ -5,10 +5,13 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Timer.h>
 #include <OpenHome/Media/SupplyAggregator.h>
 
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
+
+EXCEPTION(InvalidRaopHeader)    // FIXME - rename to the more general InvalidRaopPacket?
 
 namespace OpenHome {
     class Timer;
@@ -26,109 +29,141 @@ public:
     virtual ~IRaopAudioResumer() {}
 };
 
-class RtpHeaderFixed
+/**
+ * RAOP appears to use a version of the RTP header that does not conform to
+ * RFC 3350: https://www.ietf.org/rfc/rfc3550.txt.
+ *
+ * It uses only the first 4 bytes of the fixed-size header and the extension
+ * bit can be set without providing an extension header.
+ */
+class RtpHeaderRaop : private INonCopyable
 {
 public:
-    static const TUint kHeaderBytes = 12;
+    static const TUint kBytes = 4;
+    static const TUint kVersion = 2;
 public:
-    RtpHeaderFixed();
-    RtpHeaderFixed(const Brx& aRtpHeader);
-    void Replace(const Brx& aRtpHeader);
-    void Clear();
+    RtpHeaderRaop(TBool aPadding, TBool aExtension, TUint aCsrcCount, TBool aMarker, TUint aPayloadType, TUint aSeqNumber);
+    RtpHeaderRaop(const Brx& aRtpHeader);
+    void Write(IWriter& aWriter) const;
     TBool Padding() const;
     TBool Extension() const;
     TUint CsrcCount() const;
     TBool Marker() const;
     TUint Type() const;
     TUint Seq() const;
-    TUint Timestamp() const;
-    TUint Ssrc() const;
 private:
-    TUint iVersion;
     TBool iPadding;
     TBool iExtension;
     TUint iCsrcCount;
     TBool iMarker;
     TUint iPayloadType;
     TUint iSequenceNumber;
-    TUint iTimestamp;
-    TUint iSsrc;
 };
 
-/**
-* RAOP appears to use a version of the RTP header that does not conform to
-* RFC 3350: https://www.ietf.org/rfc/rfc3550.txt.
-*
-* It uses the standardised fixed-size header, but can set the Extension bit
-* without providing an extension header, and repurposes the SSRC field.
-*/
 class RtpPacketRaop
 {
-private:
+public:
     // Assume the following:
     // Max Ethernet frame size: 1500 bytes.
     // IPv4 header:             20 bytes.
     // UDP header:              8 bytes.
-    // RTP fixed header:        12 bytes.
-    // So, 1500-20-8-12 = 1460 RTP payload bytes max.
-    static const TUint kMaxPayloadBytes = 1460;
+    // So, 1500-20-8 = 1472 RTP bytes max.
+    static const TUint kMaxPacketBytes = 1472;
 public:
-    RtpPacketRaop();
     RtpPacketRaop(const Brx& aRtpPacket);
-    void Replace(const Brx& aRtpPacket);
-    void Clear();
-    const RtpHeaderFixed& Header() const;
+    const RtpHeaderRaop& Header() const;
     const Brx& Payload() const;
 private:
-    RtpHeaderFixed iHeader;
-    Bws<kMaxPayloadBytes> iPayload;
+    const RtpHeaderRaop iHeader;
+    const Brn iPayload;
 };
 
-class RtpPacket
+class RaopPacketAudio : private INonCopyable
 {
-private:
-    static const TUint kMaxPayloadBytes = 1460;
 public:
-    RtpPacket(const Brx& aRtpPacket);
-    const RtpHeaderFixed& Header() const;
+    static const TUint kType = 0x60;
+private:
+    static const TUint kAudioSpecificHeaderBytes = 8;
+public:
+    RaopPacketAudio(const RtpPacketRaop& aRtpPacket);
+    const RtpHeaderRaop& Header() const;
     const Brx& Payload() const;
+    TUint Timestamp() const;
+    TUint Ssrc() const;
 private:
-    RtpHeaderFixed iHeader;
-    std::vector<TUint> iCsrc;
-    TUint iHeaderExtensionProfile;
-    TUint iHeaderExtensionBytes;
-    Bws<kMaxPayloadBytes> iData;
-    Brn iPayload;
+    const RtpPacketRaop& iPacket;
+    const Brn iPayload;
+    TUint iTimestamp;
+    TUint iSsrc;
 };
 
-//class RaopAudioPacket
-//{
-//public:
-//    RaopAudioPacket();
-//    void Replace(const Brx& aAudioPacket);
-//};
-
-class RaopAudioServer
+class RaopPacketSync : private INonCopyable
 {
 public:
-    static const TUint kTypeAudio = 0x60;
-    static const TUint kMaxPacketBytes = 1500;
+    static const TUint kType = 0x54;
+private:
+    static const TUint kSyncSpecificHeaderBytes = 16;
+public:
+    RaopPacketSync(const RtpPacketRaop& aRtpPacket);
+    const RtpHeaderRaop& Header() const;
+    const Brx& Payload() const;
+    TUint RtpTimestampMinusLatency() const;
+    TUint NtpTimestampSecs() const;
+    TUint NtpTimestampFract() const;
+    TUint RtpTimestamp() const;
+private:
+    const RtpPacketRaop& iPacket;
+    const Brn iPayload;
+    TUint iRtpTimestampMinusLatency;
+    TUint iNtpTimestampSecs;
+    TUint iNtpTimestampFract;
+    TUint iRtpTimestamp;
+};
+
+class RaopPacketResendResponse
+{
+public:
+    static const TUint kType = 0x56;
+public:
+    RaopPacketResendResponse(const RtpPacketRaop& aRtpPacket);
+    const RtpHeaderRaop& Header() const;
+    const RaopPacketAudio& AudioPacket() const;
+private:
+    const RtpPacketRaop& iPacketOuter;
+    const RtpPacketRaop iPacketInner;
+    const RaopPacketAudio iAudioPacket;
+};
+
+class RaopPacketResendRequest
+{
+public:
+    static const TUint kType = 0x55;
+    static const TUint kBytes = 8;
+public:
+    RaopPacketResendRequest(TUint aSeqStart, TUint aCount);
+    void Write(IWriter& aWriter) const;
+private:
+    const RtpHeaderRaop iHeader;
+    const TUint iSeqStart;
+    const TUint iCount;
+};
+
+class RaopAudioServer : private INonCopyable
+{
 public:
     RaopAudioServer(SocketUdpServer& aServer);
     ~RaopAudioServer();
-    void ReadPacket(RtpPacketRaop& aPacket);
+    void ReadPacket(Bwx& aBuf);
     void DoInterrupt();
     void Reset();
 private:
     SocketUdpServer& iServer;
-    Bws<kMaxPacketBytes> iDataBuffer;
-    TUint iSessionId;
     TBool iInterrupted;
 };
 
 // FIXME - this class currently writes out the packet length at the start of decoded audio.
-// That shouldn't be a responsibility of a generic decoder.
-// Maybe have a chain of elements that write into the same buffer (i.e., one element to write the packet length at the start, then pass onto decoder to decode the audio into the buffer).
+// That shouldn't be a responsibility of a generic decryptor.
+// Maybe have a chain of elements that write into the same buffer (i.e., one element to write the packet length at the start, then pass onto decryptor to decrypt the audio into the buffer).
 class RaopAudioDecryptor
 {
 private:
@@ -153,7 +188,7 @@ private:
 class IRaopResendReceiver
 {
 public:
-    virtual void ReceiveResend(const RtpPacketRaop& aPacket) = 0;
+    virtual void ReceiveResend(const RaopPacketAudio& aPacket) = 0;
     virtual ~IRaopResendReceiver() {}
 };
 
@@ -242,9 +277,10 @@ private: // from IStreamHandler
 private: // from IRaopAudioResumer
     void AudioResuming() override;
 private: // from IRaopResendReceiver
-    void ReceiveResend(const RtpPacketRaop& aPacket) override;
+    void ReceiveResend(const RaopPacketAudio& aPacket) override;
 private:
     void StartStream();
+    void UpdateSessionId(const RaopPacketAudio& aPacket);
     void OutputAudio(const Brx& aPacket);
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
@@ -261,14 +297,15 @@ private:
     IRaopVolumeEnabler& iVolume;
     IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;
-    RtpPacketRaop iAudioPacket;
-    Bws<RaopAudioServer::kMaxPacketBytes> iAudioDecrypted;
+    Bws<RtpPacketRaop::kMaxPacketBytes> iPacketBuf;
+    Bws<RtpPacketRaop::kMaxPacketBytes> iAudioDecrypted;
     RaopAudioDecryptor iAudioDecryptor;
     RaopAudioServer iAudioServer;
     RaopControlServer iControlServer;
     Media::SupplyAggregatorBytes* iSupply;
     Uri iUri;
 
+    TUint iSessionId;
     TUint iStreamId;
     TUint iFlushSeq;
     TUint iFlushTime;
@@ -281,7 +318,7 @@ private:
     Mutex iLockRaop;
     Semaphore iSem;
     Semaphore iSemInputChanged;
-    Timer* iTimerResend;
+    Timer iTimerResend;
     TUint iResendSeqNext;
     TUint iResendCount;
     Semaphore iSemResend;
