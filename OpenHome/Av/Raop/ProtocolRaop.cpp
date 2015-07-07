@@ -278,7 +278,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
     , iAudioServer(iServerManager.Find(aAudioId))
-    , iControlServer(iServerManager.Find(aControlId), *this, *this)
+    , iControlServer(iServerManager.Find(aControlId), *this)
     , iSupply(NULL)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
@@ -622,12 +622,6 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-void ProtocolRaop::AudioResuming()
-{
-    AutoMutex a(iLockRaop);
-    iStreamStart = true;
-}
-
 void ProtocolRaop::ReceiveResend(const RaopPacketAudio& aPacket)
 {
     AutoMutex a(iLockRaop);
@@ -725,10 +719,9 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 
 // RaopControlServer
 
-RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver)
+RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver)
     : iClientPort(kInvalidServerPort)
     , iServer(aServer)
-    , iAudioResumer(aAudioResumer)
     , iResendReceiver(aResendReceiver)
     , iLock("RACL")
     , iExit(false)
@@ -781,11 +774,10 @@ void RaopControlServer::Run()
                 RtpPacketRaop packet(iPacket);
                 if (packet.Header().Type() == ESync) {
                     RaopPacketSync syncPacket(packet);
-                    Log::Print("RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
-                    if (packet.Header().Extension()) {
-                        // (Re-)start of stream.
-                        iAudioResumer.AudioResuming();
-                    }
+
+                    // Extension bit set on sync packet signifies stream (re-)starting.
+                    // However, by it's nature, UDP is unreliable, so can't rely on acting on this for detecting (re-)start.
+                    LOG(kMedia, "RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
 
                     // FIXME - require this?
                     //TUint mclk = iI2sDriver.MclkCount();  // record current mclk count at dac - use this to calculate the drift

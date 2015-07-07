@@ -21,14 +21,6 @@ class SocketUdpServer;
 class UdpServerManager;
 class IRaopDiscovery;
 
-// FIXME - remove this
-class IRaopAudioResumer
-{
-public:
-    virtual void AudioResuming() = 0;
-    virtual ~IRaopAudioResumer() {}
-};
-
 /**
  * RAOP appears to use a version of the RTP header that does not conform to
  * RFC 3350: https://www.ietf.org/rfc/rfc3550.txt.
@@ -227,7 +219,7 @@ private:
         EResendResponse = 0x56,
     };
 public:
-    RaopControlServer(SocketUdpServer& aServer, IRaopAudioResumer& aAudioResumer, IRaopResendReceiver& aResendReceiver);
+    RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver);
     ~RaopControlServer();
     //void SetResendReceiver(IRaopResendReceiver& aResendReceiver);
     void DoInterrupt();
@@ -243,7 +235,6 @@ private:
     TUint iClientPort;
     SocketUdpServer& iServer;
     Bws<kMaxReadBufferBytes> iPacket;
-    IRaopAudioResumer& iAudioResumer;   // FIXME - remove
     ThreadFunctor* iThread;
     IRaopResendReceiver& iResendReceiver;
     TUint iSenderSkew;
@@ -260,7 +251,7 @@ class IRaopVolumeEnabler;
 // - Timing
 // However, the timing channel was never monitored in the previous codebase,
 // so no RaopTiming class exists here.
-class ProtocolRaop : public Media::ProtocolNetwork, public IRaopAudioResumer, public IRaopResendReceiver
+class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendReceiver
 {
 private:
     static const TUint kResendTimeoutMs = 80;   // Taken from previous codebase.
@@ -274,8 +265,6 @@ private: // from Protocol
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
-private: // from IRaopAudioResumer
-    void AudioResuming() override;
 private: // from IRaopResendReceiver
     void ReceiveResend(const RaopPacketAudio& aPacket) override;
 private:
