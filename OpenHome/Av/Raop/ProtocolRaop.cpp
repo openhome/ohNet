@@ -359,33 +359,12 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     WaitForChangeInput();
 
-    // Output the delay before MsgEncodedStream - otherwise, the MsgDelay may
-    // be pulled while the CodecController is attempting to Read(), causing a
-    // CodecStreamEnded.
-    //
-    // FIXME - what about when a stream is paused and resumed, or skipped (as a
-    // new MsgTrack is not currently sent out, so the new MsgDelay appears in
-    // the middle of a stream, causing the condition above.)
-    //iSupply->OutputDelay(kDelayJiffies);
-
-
-
-
-    // FIXME - not currently outputting delay at start of stream (i.e., before first audio packet arrives).
-
-
-
-
-
-
-
-
     StartStream();
 
     // Output audio stream
     for (;;) {
         {
-            AutoMutex a(iLock);
+            AutoMutex a(iLockRaop);
             if (iWaiting) {
                 iSupply->OutputFlush(iNextFlushId);
                 iNextFlushId = MsgFlush::kIdInvalid;
@@ -412,7 +391,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
-            UpdateSessionId(audioPacket.Ssrc());
+            UpdateSessionId(audioPacket.Ssrc());    // FIXME - should only need to do this at stream start
             // FIXME - have a CheckSessionId that throws InvalidSessionId instead of having lots of if clauses?
 
             const TUint seqLast = audioPacket.Header().Seq();
@@ -446,48 +425,34 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 seqExpected = seqLast;   // Init seqExpected.
             }
 
-            TBool sessionValid = false;
-            {
-                AutoMutex a(iLock);
-                if (iSessionId == audioPacket.Ssrc()) {
-                    sessionValid = true;
-                }
-            }
+            const TBool validSession = IsValidSession(audioPacket.Ssrc());
+            const TBool shouldFlush = ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp());
 
-            if (sessionValid) {
-                TBool shouldFlush = false;
-                {
-                    AutoMutex a(iLock);
-                    if (iResumePending) {
-                        const TBool seqInFlushRange = (audioPacket.Header().Seq() <= iFlushSeq);
-                        const TBool timeInFlushRange = (audioPacket.Timestamp() <= iFlushTime);
-                        shouldFlush = (seqInFlushRange && timeInFlushRange);
-                    }
+            if (validSession && !shouldFlush) {
+                if (seqLast == seqExpected) {
+                    // The packet that was expected.
+                    OutputAudio(audioPacket.Payload());
+                    seqExpected++;
                 }
-
-                if (!shouldFlush) {
-                    if (seqLast == seqExpected) {
-                        // The packet that was expected.
-                        OutputAudio(audioPacket.Payload());
-                        seqExpected++;
+                else if (seqLast > seqExpected) {
+                    // Missed some packets.
+                    const TUint missed = seqLast-seqExpected;
+                    LOG(kMedia, "ProtocolRaop::Stream missed %u audio packets\n", missed);
+                    {
+                        AutoMutex a(iLockRaop);
+                        iResendSeqNext = seqExpected;
+                        iResendCount = missed;
+                        iTimerResend.FireIn(kResendTimeoutMs);
+                        iControlServer.RequestResend(seqExpected, missed);
+                        // Callbacks will come via ::ReceiveResend().
                     }
-                    else if (seqLast > seqExpected) {
-                        // Missed some packets.
-                        const TUint missed = seqLast-seqExpected;
-                        Log::Print("missed: %u\n", missed);
-                        {
-                            AutoMutex a(iLockRaop);
-                            iResendSeqNext = seqExpected;
-                            iResendCount = missed;
-                            iTimerResend.FireIn(kResendTimeoutMs);
-                            iControlServer.RequestResend(seqExpected, missed);
-                            // Callbacks will come via ::ReceiveResend().
-                        }
-                        iSemResend.Wait();
-                    }
-                    else {
-                        // Packet is one that's already been seen. Ignore.
-                    }
+                    iSemResend.Wait();  // FIXME - ensure this is only cleared once ALL packets have been resent.
+                    // FIXME - what if waiting on a resend during a flush?
+                    // Still need to check if the resent audio should be flushed.
+                    // FIXME - need to then output current audioPacket?
+                }
+                else {
+                    // Packet is one that's already been seen. Ignore.
                 }
             }
         }
@@ -533,12 +498,33 @@ void ProtocolRaop::StartStream()
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
 {
-    AutoMutex a(iLock);
+    AutoMutex a(iLockRaop);
     if (iSessionId == 0) {
         // Initialise session ID.
         iSessionId = aSessionId;
         LOG(kMedia, "ProtocolRaop::UpdateSessionId new iSessionId: %u\n", iSessionId);
     }
+}
+
+TBool ProtocolRaop::IsValidSession(TUint aSessionId) const
+{
+    AutoMutex a(iLockRaop);
+    if (iSessionId == aSessionId) {
+        return true;
+    }
+    return false;
+}
+
+TBool ProtocolRaop::ShouldFlush(TUint aSeq, TUint aTimestamp) const
+{
+    AutoMutex a(iLockRaop);
+    if (iResumePending) {
+        const TBool seqInFlushRange = (aSeq <= iFlushSeq);
+        const TBool timeInFlushRange = (aTimestamp <= iFlushTime);
+        const TBool shouldFlush = (seqInFlushRange && timeInFlushRange);
+        return shouldFlush;
+    }
+    return false;
 }
 
 void ProtocolRaop::OutputContainer(const Brx& aFmtp)
@@ -588,7 +574,7 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
     TBool outputDelay = false;
     TUint latency = iControlServer.Latency();
     {
-        AutoMutex a(iLock);
+        AutoMutex a(iLockRaop);
         if (latency != iLatency) {
             iLatency = latency;
             outputDelay = true;
@@ -611,7 +597,7 @@ void ProtocolRaop::WaitForChangeInput()
 
 void ProtocolRaop::InputChanged()
 {
-    AutoMutex a(iLock);
+    AutoMutex a(iLockRaop);
     iVolumeEnabled = !iVolumeEnabled;   // Toggle volume.
     iVolume.SetVolumeEnabled(iVolumeEnabled);
     iSemInputChanged.Signal();
@@ -620,7 +606,7 @@ void ProtocolRaop::InputChanged()
 void ProtocolRaop::ResendTimerFired()
 {
     // FIXME - should probably notify pipeline of discontinuity if timer fires.
-    AutoMutex a(iLock);
+    AutoMutex a(iLockRaop);
     if (iResendCount > 0) {
         iResendCount--;
     }
@@ -645,7 +631,7 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ProtocolRaop::TryStop\n");
     TBool stop = false;
-    AutoMutex a(iLock);
+    AutoMutex a(iLockRaop);
     if (!iStopped && iActive) {
         stop = (iStreamId == aStreamId && aStreamId != IPipelineIdProvider::kStreamIdInvalid);
         if (stop) {

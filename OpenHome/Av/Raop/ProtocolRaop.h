@@ -270,6 +270,8 @@ private: // from IRaopResendReceiver
 private:
     void StartStream();
     void UpdateSessionId(TUint aSessionId);
+    TBool IsValidSession(TUint aSessionId) const;
+    TBool ShouldFlush(TUint aSeq, TUint aTimestamp) const;
     void OutputAudio(const Brx& aAudio);
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
@@ -301,7 +303,7 @@ private:
     TBool iWaiting;
     TBool iResumePending;
     TBool iStopped;
-    Mutex iLockRaop;
+    mutable Mutex iLockRaop;
     Semaphore iSem;
     Semaphore iSemInputChanged;
     Timer iTimerResend;
