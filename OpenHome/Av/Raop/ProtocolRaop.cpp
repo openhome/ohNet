@@ -392,8 +392,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 seqExpected = seqLast;   // Init seqExpected.
                 start = false;
 
-                //StartStream();
-                //OutputContainer(iDiscovery.Fmtp()); // Dummy container for codec init.
 
                 Track* track = NULL;
                 TUint latency = 0;
@@ -411,6 +409,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     latency = iLatency = iControlServer.Latency();
                     uri.Replace(iUri.AbsoluteUri());
                 }
+
+                // FIXME - outputting MsgSession here followed by MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
+                // Not necessarily desirable when pausing or seeking.
 
                 iSupply->OutputSession();
                 iSupply->OutputDelay(Delay(latency));
