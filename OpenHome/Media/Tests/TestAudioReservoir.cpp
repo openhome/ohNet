@@ -336,7 +336,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
         break;
     case EMsgSession:
         msg = iMsgFactory->CreateMsgSession();
@@ -541,7 +541,7 @@ void SuiteReservoirHistory::Test()
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
     iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
-    iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this));
+    iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this, false, false));
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();

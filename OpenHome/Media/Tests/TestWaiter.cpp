@@ -512,7 +512,7 @@ void SuiteWaiter::TestPlayingFromWaitRampsUp()
 
 void SuiteWaiter::TestMsgsPassWhilePlaying()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, NULL, false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     PullNext(EMsgSession);

@@ -341,6 +341,16 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
     }
 }
 
+void PipelineManager::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+    iLock.Wait();
+    iMode.Replace(aMode);
+    iLock.Signal();
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->NotifyMode(aMode, aInfo);
+    }
+}
+
 void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iLock.Wait();

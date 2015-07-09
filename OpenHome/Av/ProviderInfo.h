@@ -32,6 +32,7 @@ private: // from DvProviderAvOpenhomeOrgInfo1
     void Metatext(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;

@@ -20,7 +20,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Av/Credentials.h>
-#include <OpenHome/Av/TransportControl.h>
+//#include <OpenHome/Av/TransportControl.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -63,8 +63,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
-    iTransportControl = new TransportControl(aDevice, *iPipeline);
-    iProduct->AddAttribute("TransportControl");
+    //iTransportControl = new TransportControl(aDevice, *iPipeline);
+    //iProduct->AddAttribute("TransportControl");
 }
 
 MediaPlayer::~MediaPlayer()
@@ -75,7 +75,7 @@ MediaPlayer::~MediaPlayer()
     delete iProduct;
     delete iVolumeManager;
     delete iVolumeConfig;
-    delete iTransportControl;
+    //delete iTransportControl;
     delete iProviderConfig;
     delete iProviderTime;
     delete iProviderInfo;

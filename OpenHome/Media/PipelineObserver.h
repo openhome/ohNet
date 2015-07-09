@@ -43,6 +43,14 @@ public:
      */
     virtual void NotifyPipelineState(EPipelineState aState) = 0;
     /**
+     * A new UriProvider is active (the pipeline is running in a new mode).
+     *
+     * @param[in] aMode            Identifier for the UriProvider.
+     *                             Subsequent tracks will be owned by this.
+     * @param[in] aInfo            Description of the mode.
+     */
+    virtual void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) = 0;
+    /**
      * A new track is starting to play.
      *
      * @param[in] aTrack           Uri and metadata for the track.
@@ -88,6 +96,7 @@ class NullPipelineObserver : public IPipelineObserver
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
@@ -101,6 +110,7 @@ public:
     void Enable(TBool aEnable);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);

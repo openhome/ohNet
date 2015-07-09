@@ -10,7 +10,10 @@ using namespace OpenHome::Media;
 // UriProviderSingleTrack
 
 UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime, TrackFactory& aTrackFactory)
-    : UriProvider(aMode, aSupportsLatency, aRealTime)
+    : UriProvider(aMode,
+                  aSupportsLatency? LatencySupported : LatencyNotSupported,
+                  aRealTime? RealTimeSupported : RealTimeNotSupported,
+                  NextNotSupported, PrevNotSupported)
     , iLock("UPST")
     , iTrackFactory(aTrackFactory)
     , iTrack(NULL)

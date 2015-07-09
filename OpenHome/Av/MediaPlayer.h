@@ -56,7 +56,7 @@ class VolumeConfig;
 class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
-class TransportControl;
+//class TransportControl;
 
 class IMediaPlayer
 {
@@ -132,7 +132,7 @@ private:
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
-    TransportControl* iTransportControl;
+    //TransportControl* iTransportControl;
 };
 
 } // namespace Av

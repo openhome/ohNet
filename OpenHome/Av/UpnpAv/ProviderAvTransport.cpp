@@ -515,6 +515,10 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
     iLock.Signal();
 }
 
+void ProviderAvTransport::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
+}
+
 void ProviderAvTransport::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
     iLock.Wait();

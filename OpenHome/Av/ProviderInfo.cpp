@@ -138,6 +138,10 @@ void ProviderInfo::NotifyPipelineState(EPipelineState /*aState*/)
     // NOP -- playing, paused, stopped, buffering
 }
 
+void ProviderInfo::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
+}
+
 void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool aStartOfStream)
 {
     TUint n = 0;

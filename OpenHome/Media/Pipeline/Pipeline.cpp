@@ -647,6 +647,11 @@ void Pipeline::Unmute()
     iMuter->Unmute();
 }
 
+void Pipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+    iObserver.NotifyMode(aMode, aInfo);
+}
+
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iObserver.NotifyTrack(aTrack, aMode, aStartOfStream);

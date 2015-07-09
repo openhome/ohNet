@@ -221,7 +221,7 @@ void VariableDelay::ResetStatusAndRamp()
 
 Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 {
-    iEnabled = aMsg->SupportsLatency();
+    iEnabled = aMsg->Info().SupportsLatency();
     iMode.Replace(aMsg->Mode());
     iDelayJiffies = 0;
     iDelayAdjustment = 0;

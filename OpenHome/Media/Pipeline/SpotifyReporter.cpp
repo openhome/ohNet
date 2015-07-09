@@ -64,6 +64,11 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvi
     track->RemoveRef();
 }
 
+void SpotifyReporter::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+    iPropertyObserver.NotifyMode(aMode, aInfo);
+}
+
 void SpotifyReporter::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iPropertyObserver.NotifyTrack(aTrack, aMode, aStartOfStream);

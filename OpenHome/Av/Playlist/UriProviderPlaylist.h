@@ -38,6 +38,7 @@ private: // from ITrackDatabaseObserver
     void NotifyAllDeleted() override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;

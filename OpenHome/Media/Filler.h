@@ -25,6 +25,8 @@ public:
     const Brx& Mode() const;
     TBool SupportsLatency() const;
     TBool IsRealTime() const;
+    TBool SupportsNext() const;
+    TBool SupportsPrev() const;
     virtual IClockPuller* ClockPuller();
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
@@ -33,11 +35,19 @@ public:
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
-    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime);
+    enum LatencySupport  { LatencySupported, LatencyNotSupported };
+    enum RealTimeSupport { RealTimeSupported, RealTimeNotSupported };
+    enum NextSupport     { NextSupported, NextNotSupported };
+    enum PrevSupport     { PrevSupported, PrevNotSupported };
+protected:
+    UriProvider(const TChar* aMode, LatencySupport aLatency, RealTimeSupport aRealTime,
+                NextSupport aNextSupported, PrevSupport aPrevSupported);
 private:
     BwsMode iMode;
     TBool iSupportsLatency;
     TBool iRealTime;
+    TBool iSupportsNext;
+    TBool iSupportsPrev;
 };
 
 class Filler : private Thread, public IPipelineElementDownstream, private IMsgProcessor

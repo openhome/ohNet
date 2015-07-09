@@ -1709,18 +1709,23 @@ SuiteMode::~SuiteMode()
 void SuiteMode::Test()
 {
     Brn mode("First");
-    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true, NULL);
+    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true, NULL, true, true);
     TEST(msg->Mode() == mode);
-    TEST(msg->SupportsLatency());
-    TEST(msg->IsRealTime());
+    const ModeInfo& info = msg->Info();
+    TEST(info.SupportsLatency());
+    TEST(info.IsRealTime());
+    TEST(info.SupportsNext());
+    TEST(info.SupportsPrev());
     msg->RemoveRef();
     TEST(msg->Mode() != mode);
 
     Brn mode2("Second");
-    msg = iMsgFactory->CreateMsgMode(mode2, false, false, NULL);
+    msg = iMsgFactory->CreateMsgMode(mode2, false, false, NULL, false, false);
     TEST(msg->Mode() == mode2);
-    TEST(!msg->SupportsLatency());
-    TEST(!msg->IsRealTime());
+    TEST(!info.SupportsLatency());
+    TEST(!info.IsRealTime());
+    TEST(!info.SupportsNext());
+    TEST(!info.SupportsPrev());
     msg->RemoveRef();
     TEST(msg->Mode() != mode2);
 }
@@ -1922,7 +1927,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
+    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
@@ -2332,7 +2337,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::ENone);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
+    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);

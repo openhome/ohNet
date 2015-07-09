@@ -51,6 +51,7 @@ public:
     TUint GetMaxDriverJiffies() const;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(const Brx& aUri, const Brx& aMode, TBool aStartOfStream);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);

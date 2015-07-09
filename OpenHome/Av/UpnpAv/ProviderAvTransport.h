@@ -66,6 +66,7 @@ private: // from DvProviderUpnpOrgAvTransport1
     void Previous(IDvInvocation& aInvocation, TUint aInstanceID) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
