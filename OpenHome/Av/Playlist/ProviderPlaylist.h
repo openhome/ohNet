@@ -13,7 +13,6 @@
 #include <array>
 
 namespace OpenHome {
-using namespace Net;
     class Environment;
     class Timer;
 namespace Av {
@@ -35,7 +34,7 @@ public:
 };
 
 
-class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1, private ITrackDatabaseObserver
+class ProviderPlaylist : public Net::DvProviderAvOpenhomeOrgPlaylist1, private ITrackDatabaseObserver
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
@@ -47,31 +46,31 @@ private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
     void NotifyAllDeleted() override;
-private: // from DvProviderAvOpenhomeOrgPlaylist1
-    void Play(IDvInvocation& aInvocation) override;
-    void Pause(IDvInvocation& aInvocation) override;
-    void Stop(IDvInvocation& aInvocation) override;
-    void Next(IDvInvocation& aInvocation) override;
-    void Previous(IDvInvocation& aInvocation) override;
-    void SetRepeat(IDvInvocation& aInvocation, TBool aValue) override;
-    void Repeat(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue) override;
-    void SetShuffle(IDvInvocation& aInvocation, TBool aValue) override;
-    void Shuffle(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue) override;
-    void SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue) override;
-    void SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue) override;
-    void SeekId(IDvInvocation& aInvocation, TUint aValue) override;
-    void SeekIndex(IDvInvocation& aInvocation, TUint aValue) override;
-    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
-    void Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue) override;
-    void Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata) override;
-    void ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aTrackList) override;
-    void Insert(IDvInvocation& aInvocation, TUint aAfterId, const Brx& aUri, const Brx& aMetadata, IDvInvocationResponseUint& aNewId) override;
-    void DeleteId(IDvInvocation& aInvocation, TUint aValue) override;
-    void DeleteAll(IDvInvocation& aInvocation) override;
-    void TracksMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue) override;
-    void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray) override;
-    void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue) override;
-    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
+private: // from Net::DvProviderAvOpenhomeOrgPlaylist1
+    void Play(Net::IDvInvocation& aInvocation) override;
+    void Pause(Net::IDvInvocation& aInvocation) override;
+    void Stop(Net::IDvInvocation& aInvocation) override;
+    void Next(Net::IDvInvocation& aInvocation) override;
+    void Previous(Net::IDvInvocation& aInvocation) override;
+    void SetRepeat(Net::IDvInvocation& aInvocation, TBool aValue) override;
+    void Repeat(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
+    void SetShuffle(Net::IDvInvocation& aInvocation, TBool aValue) override;
+    void Shuffle(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
+    void SeekSecondAbsolute(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void SeekSecondRelative(Net::IDvInvocation& aInvocation, TInt aValue) override;
+    void SeekId(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void SeekIndex(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void TransportState(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void Id(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+    void Read(Net::IDvInvocation& aInvocation, TUint aId, Net::IDvInvocationResponseString& aUri, Net::IDvInvocationResponseString& aMetadata) override;
+    void ReadList(Net::IDvInvocation& aInvocation, const Brx& aIdList, Net::IDvInvocationResponseString& aTrackList) override;
+    void Insert(Net::IDvInvocation& aInvocation, TUint aAfterId, const Brx& aUri, const Brx& aMetadata, Net::IDvInvocationResponseUint& aNewId) override;
+    void DeleteId(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void DeleteAll(Net::IDvInvocation& aInvocation) override;
+    void TracksMax(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+    void IdArray(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aToken, Net::IDvInvocationResponseBinary& aArray) override;
+    void IdArrayChanged(Net::IDvInvocation& aInvocation, TUint aToken, Net::IDvInvocationResponseBool& aValue) override;
+    void ProtocolInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
 private:
     void TrackDatabaseChanged();
     void SetRepeat(TBool aRepeat);
