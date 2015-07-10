@@ -38,7 +38,7 @@ public:
     TUint GenerationJiffies() const;
     TUint RampMs() const;
 
-    static TUint64 Bytes(TUint iSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample);
+    static TUint Bytes(TUint iSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample);
     static void LogBuf(const Brx& aBuf);
 
 
@@ -69,9 +69,9 @@ private:
 // End block must be called once when complete audio block has been passed
 //
 // Prior to feeding entire audio block to FlywheelRamper...
-// 8 bit audio samples are converted to 32bit (by padding upper 24bits with 0 or 0xffffff)
-// 16 bit audio samples are converted to 32bit (by padding upper 16bits with 0 or 0xffff)
-// 24 bit audio samples are converted to 32bit (by padding upper 8bits with 0 or 0xff)
+// 8 bit audio samples are converted to 32bit (by padding lower 24bits with 0 or 0xffffff)
+// 16 bit audio samples are converted to 32bit (by padding lower 16bits with 0 or 0xffff)
+// 24 bit audio samples are converted to 32bit (by padding lower 8bits with 0 or 0xff)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 class PcmProcessorFwr : public IPcmProcessor
@@ -114,7 +114,7 @@ private:
 //
 // for n=1 to x (where x= num samples in + num coeffs -1):
 
-class ConvolutionModel
+class ConvolutionModel : public INonCopyable
 {
 public:
     ConvolutionModel(const std::vector<TInt32>& aCoeffs);
@@ -128,7 +128,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FeedbackModel
+class FeedbackModel : public INonCopyable
 {
 public:
     FeedbackModel(const std::vector<TInt32>& aCoeffs);

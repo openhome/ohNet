@@ -38,10 +38,10 @@ private:
 
 
 private:
-    FlywheelRamper* iFlywheelRamper;
 };
 
 //////////////////////////////////////////////////////////////
+
 /*
 class FormatConverter : public IWriter
 {

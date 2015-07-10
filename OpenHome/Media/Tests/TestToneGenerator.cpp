@@ -519,7 +519,7 @@ void SuiteGeneratorAny::Setup()
     iMsgFactory = new MsgFactory(*iAllocatorInfoLogger, init);
 
     iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
-    iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
+    iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir, *this);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
     iCodecController->AddCodec(Codec::CodecFactory::NewWav());
     iCodecController->Start();

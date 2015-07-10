@@ -42,7 +42,7 @@ private: // from ISource
 private: // from IRaopObserver
     void NotifySessionStart(TUint aControlPort, TUint aTimingPort) override;
     void NotifySessionEnd() override;
-    void NotifySessionWait() override;
+    void NotifySessionWait(TUint aSeq, TUint aTime) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;

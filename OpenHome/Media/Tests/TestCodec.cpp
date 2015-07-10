@@ -275,7 +275,7 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     const TUint maxReservoirEncodedAudio = (kEncodedReservoirSizeBytes + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes;
     iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iLoggerEncodedAudioReservoir = new Logger(*iReservoir, "Encoded Audio Reservoir");
-    iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
+    iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir, *this);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     iLoggerCodecController = new Logger("Codec Controller", *iElementDownstream);
     iController = new CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, kPriorityNormal);

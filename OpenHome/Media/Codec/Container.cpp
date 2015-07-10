@@ -19,6 +19,7 @@ ContainerBase::ContainerBase()
     , iStreamHandler(NULL)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iPulling(false)
+    , iUrlBlockWriter(NULL)
     , iUpstreamElement(NULL)
     , iPendingMsg(NULL)
 {
@@ -156,11 +157,12 @@ TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes)
     return true;
 }
 
-void ContainerBase::Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler)
+void ContainerBase::Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler, IContainerUrlBlockWriter& aUrlBlockWriter)
 {
     iMsgFactory = &aMsgFactory;
     iUpstreamElement = &aUpstreamElement;
     iStreamHandler = &aStreamHandler;
+    iUrlBlockWriter = &aUrlBlockWriter;
 }
 
 //TBool ContainerBase::Recognise(Brx& /*aBuf*/)
@@ -334,9 +336,10 @@ TBool ContainerNull::Recognise(Brx& /*aBuf*/)
 
 // ContainerFront
 
-ContainerFront::ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+ContainerFront::ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iUrlBlockWriter(aUrlBlockWriter)
     , iActiveContainer(NULL)
     , iStreamHandler(NULL)
     , iAudioEncoded(NULL)
@@ -351,7 +354,7 @@ ContainerFront::ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream
 
 void ContainerFront::AddContainer(ContainerBase* aContainer)
 {
-    aContainer->Construct(iMsgFactory, *this, *this);
+    aContainer->Construct(iMsgFactory, *this, *this, *this);
 
     IContainerBase* container = aContainer;
     if (iContainers.size() >= 1) {
@@ -430,6 +433,7 @@ Msg* ContainerFront::ProcessMsg(MsgEncodedStream* aMsg)
     // - Inner containers are constructed with this passed as an IStreamHandler
     // and outer Container makes calls directly to active innner container
     // (which calls its IStreamHandler, i.e., this).
+    iUrl.Replace(aMsg->Uri());
     return aMsg;
 }
 
@@ -590,14 +594,19 @@ void ContainerFront::NotifyStarving(const Brx& aMode, TUint aStreamId)
     }
 }
 
+TBool ContainerFront::TryGetUrl(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
+{
+    return iUrlBlockWriter.TryGet(aWriter, iUrl, aOffset, aBytes);
+}
+
 
 // Container
 
-Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter)
     : iMsgFactory(aMsgFactory)
     , iNewStream(false)
 {
-    iContainerFront = new ContainerFront(aMsgFactory, aUpstreamElement);
+    iContainerFront = new ContainerFront(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
 }
 
 Container::~Container()

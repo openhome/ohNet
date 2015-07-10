@@ -15,7 +15,6 @@ public:
 public: // from IRecogniser
     TBool Recognise(Brx& aBuf);
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
 private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
