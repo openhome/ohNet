@@ -69,9 +69,9 @@ private:
 // End block must be called once when complete audio block has been passed
 //
 // Prior to feeding entire audio block to FlywheelRamper...
-// 8 bit audio samples are converted to 32bit (by padding upper 24bits with 0 or 0xffffff)
-// 16 bit audio samples are converted to 32bit (by padding upper 16bits with 0 or 0xffff)
-// 24 bit audio samples are converted to 32bit (by padding upper 8bits with 0 or 0xff)
+// 8 bit audio samples are converted to 32bit (by padding lower 24bits with 0 or 0xffffff)
+// 16 bit audio samples are converted to 32bit (by padding lower 16bits with 0 or 0xffff)
+// 24 bit audio samples are converted to 32bit (by padding lower 8bits with 0 or 0xff)
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 class PcmProcessorFwr : public IPcmProcessor

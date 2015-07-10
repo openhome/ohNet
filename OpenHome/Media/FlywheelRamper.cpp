@@ -179,12 +179,6 @@ TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels
         iSamples.Append(aSamples[i+1]);
         iSamples.Append((TByte)0); // pad lower 16 bits
         iSamples.Append((TByte)0); // pad lower 16 bits
-
-        if (i==0)
-        {
-            FlywheelRamper::LogBuf(aSamples.Split(i, 2));
-            FlywheelRamper::LogBuf(aSamples.Split(i, 4));
-        }
         i += 2;
     }
 
