@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 EXCEPTION(CodecStreamCorrupt);
@@ -47,11 +48,18 @@ public: // from IStreamHandler
     virtual void NotifyStarving(const Brx& aMode, TUint aStreamId) = 0;
 };
 
+class IContainerUrlBlockWriter
+{
+public:
+    virtual TBool TryGetUrl(IWriter& aWriter, TUint64 aOffset, TUint aBytes) = 0;
+    virtual ~IContainerUrlBlockWriter() {}
+};
+
 class ContainerBase : public IContainerBase, private IMsgProcessor, private INonCopyable
 {
     friend class ContainerFront;
 public:
-    ContainerBase(/*IUrlBlockWriter& aUrlBlockWriter*/);
+    ContainerBase();
     ~ContainerBase();
 protected:
     Msg* PullMsg();
@@ -61,7 +69,7 @@ protected:
     void DiscardAudio(TUint aBytes);
     void Read(Bwx& aBuf, TUint aBytes);
 private:
-    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler); // FIXME - don't pass istreamhandler here
+    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler, IContainerUrlBlockWriter& aUrlBlockWriter); // FIXME - don't pass istreamhandler here
     TBool ReadFromCachedAudio(Bwx& aBuf, TUint aBytes);
 public: // from IRecogniser
     TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
@@ -69,14 +77,18 @@ public: // from IRecogniser
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 protected: // from IMsgProcessor
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    // Only method that it makes sense to allow deriving classes to override.
+    // Msgs such as MsgEncodedStream will be received before the desired Container
+    // is Recognise()d, so are not guaranteed to be received by any specific
+    // Container.
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
     Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
@@ -98,7 +110,7 @@ protected:
     IStreamHandler* iStreamHandler;
     TUint iExpectedFlushId;
     TBool iPulling;
-    /*IUrlBlockWriter& iUrlBlockWriter;*/
+    IContainerUrlBlockWriter* iUrlBlockWriter;
 private:
     IPipelineElementUpstream* iUpstreamElement;
     Msg* iPendingMsg;
@@ -117,11 +129,11 @@ public: // from IRecogniser
 
 class Container;
 
-class ContainerFront : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, private INonCopyable
+class ContainerFront : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, public IContainerUrlBlockWriter, private INonCopyable
 {
     friend class Container;
 public:
-    ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
+    ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter);
     ~ContainerFront();
     void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream
@@ -149,15 +161,18 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+private: // from IContainerUrlBlockWriter
+    TBool TryGetUrl(IWriter& aWriter, TUint64 aOffset, TUint aBytes) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    IUrlBlockWriter& iUrlBlockWriter;
     std::vector<IContainerBase*> iContainers;
     IContainerBase* iActiveContainer;
     ContainerNull* iContainerNull;
     IStreamHandler* iStreamHandler;
-
+    Bws<Uri::kMaxUriBytes> iUrl;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[EncodedAudio::kMaxBytes];
     TBool iRecognising;
@@ -168,7 +183,8 @@ private:
 class Container : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, private INonCopyable
 {
 public:
-    Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
+    Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter);
+    Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement); // FIXME - remove
     virtual ~Container();
     void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream

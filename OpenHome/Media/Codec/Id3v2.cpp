@@ -22,15 +22,8 @@ Id3v2::Id3v2()
 
 TBool Id3v2::Recognise(Brx& aBuf)
 {
-    // get rid of any existing buffered audio to avoid mem leaks
-    // should this have been released as default behaviour if any of the following are recvd (i.e., shouldn't need handled here)?:
-    // MsgTrack
-    // MsgEncodedStream
-    // MsgFlush
-    // MsgHalt
-    // MsgQuit
-    //ReleaseAudioEncoded();
     iSize = 0;
+    iTotalSize = 0;
 
     if (aBuf.Bytes() < kRecogniseBytes) {
         return false; // not enough data to recognise
@@ -60,13 +53,6 @@ TBool Id3v2::Recognise(Brx& aBuf)
     }
     LOG(kMedia, "Id3v2 header found: %d bytes\n", iSize);
     return true;
-}
-
-Msg* Id3v2::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    Msg* msg = ContainerBase::ProcessMsg(aMsg);
-    iTotalSize = 0;
-    return msg;
 }
 
 Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
