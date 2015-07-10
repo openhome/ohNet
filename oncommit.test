@@ -53,7 +53,7 @@ tests = '''
     TestObservable
     TestRaop
     #TestConfigUi   # fails on non-desktop platforms
-    TestFlyWheelRamper
+    TestFlywheelRamper
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()
