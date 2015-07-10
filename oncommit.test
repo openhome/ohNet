@@ -52,6 +52,7 @@ tests = '''
     TestJson
     TestObservable
     #TestConfigUi   # fails on non-desktop platforms
+    TestFlyWheelRamper
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()
