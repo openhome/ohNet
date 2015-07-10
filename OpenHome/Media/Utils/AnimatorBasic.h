@@ -26,13 +26,13 @@ private:
     const TUint iOpenHomeMax;
 };
 #endif
-class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineAnimator
+class AnimatorBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineAnimator
 {
     static const TUint kTimerFrequencyMs = 5;
     static const TInt64 kClockPullDefault = (1 << 29) * 100LL;
 public:
-    DriverBasic(Environment& aEnv, IPipeline& aPipeline);
-    ~DriverBasic();
+    AnimatorBasic(Environment& aEnv, IPipeline& aPipeline);
+    ~AnimatorBasic();
 private: // from Thread
     void Run();
 private:
@@ -41,10 +41,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;

@@ -64,8 +64,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnableActionMute();
     EnableActionVolumeLimit();
 
-    aVolumeManager.AddObserver(static_cast<IVolumeObserver&>(*this));
-    aVolumeManager.AddObserver(static_cast<Media::IMuteObserver&>(*this));
+    aVolumeManager.AddVolumeObserver(*this);
+    aVolumeManager.AddMuteObserver(*this);
 
     iConfigVolumeLimit = &aConfigReader.GetNum(VolumeConfig::kKeyLimit);
     iSubscriberIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::VolumeLimitChanged));

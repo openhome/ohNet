@@ -39,10 +39,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -58,9 +60,11 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgDecodedStream
        ,EMsgAudioPcm
        ,EMsgSilence
@@ -132,7 +136,20 @@ SuiteSkipper::~SuiteSkipper()
 void SuiteSkipper::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 1, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(52, 50);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgDecodedStreamCount(3);
+    init.SetMsgTrackCount(3);
+    init.SetMsgEncodedStreamCount(3);
+    init.SetMsgMetaTextCount(3);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    init.SetMsgWaitCount(2);
+    init.SetMsgModeCount(2);
+    init.SetMsgSessionCount(2);
+    init.SetMsgDelayCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
@@ -203,6 +220,12 @@ Msg* SuiteSkipper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteSkipper::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastPulledMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteSkipper::ProcessMsg(MsgDelay* aMsg)
 {
     iLastPulledMsg = EMsgDelay;
@@ -225,6 +248,12 @@ Msg* SuiteSkipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteSkipper::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastPulledMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -351,9 +380,11 @@ void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
@@ -366,9 +397,11 @@ void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
     PullNext(EMsgMode);
     PullNext(EMsgSession);
     PullNext(EMsgTrack);
+    PullNext(EMsgChangeInput);
     PullNext(EMsgDelay);
     PullNext(EMsgEncodedStream);
     PullNext(EMsgMetaText);
+    PullNext(EMsgStreamInterrupted);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
     PullNext(EMsgSilence);

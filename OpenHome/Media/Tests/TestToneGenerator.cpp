@@ -123,10 +123,12 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -494,14 +496,28 @@ void SuiteGeneratorAny::Setup()
     iExpectedToneParams.Set(0, 0, 0 ,0 ,0);
     iExpectedMsgType = eMsgTrack;
     iExpectedJiffies = iAccumulatedJiffies = 0;
+
     iAllocatorInfoLogger = new AllocatorInfoLogger();
-    iMsgFactory = new MsgFactory(*iAllocatorInfoLogger,
-                             kMsgCountEncodedAudio, kMsgCountAudioEncoded,
-                             kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
-                             kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
-                             kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
-                             kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
-                             kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
+    MsgFactoryInitParams init;
+    init.SetMsgModeCount(kMsgCountMode);
+    init.SetMsgSessionCount(kMsgCountSession);
+    init.SetMsgTrackCount(kMsgCountTrack);
+    init.SetMsgChangeInputCount(1);
+    init.SetMsgDelayCount(kMsgCountDelay);
+    init.SetMsgEncodedStreamCount(kMsgCountEncodedStream);
+    init.SetMsgAudioEncodedCount(kMsgCountAudioEncoded, kMsgCountEncodedAudio);
+    init.SetMsgMetaTextCount(kMsgCountMetaText);
+    init.SetMsgStreamInterruptedCount(1);
+    init.SetMsgHaltCount(kMsgCountHalt);
+    init.SetMsgFlushCount(kMsgCountFlush);
+    init.SetMsgWaitCount(kMsgCountWait);
+    init.SetMsgDecodedStreamCount(kMsgCountDecodedStream);
+    init.SetMsgAudioPcmCount(kMsgCountAudioPcm, kMsgCountDecodedAudio);
+    init.SetMsgSilenceCount(kMsgCountSilence);
+    init.SetMsgPlayableCount(kMsgCountPlayablePcm, kMsgCountPlayableSilence);
+    init.SetMsgQuitCount(kMsgCountQuit);
+    iMsgFactory = new MsgFactory(*iAllocatorInfoLogger, init);
+
     iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
@@ -577,6 +593,11 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteGeneratorAny::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* SuiteGeneratorAny::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -597,6 +618,11 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

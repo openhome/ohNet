@@ -29,14 +29,22 @@ const Brn Sender::kConfigIdChannel("Sender.Channel");
 const Brn Sender::kConfigIdMode("Sender.Mode");
 const Brn Sender::kConfigIdPreset("Sender.Preset");
 
-Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, IOhmTimestamper* aTimestamper, IConfigInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
+Sender::Sender(Environment& aEnv,
+               Net::DvDeviceStandard& aDevice,
+               ZoneHandler& aZoneHandler,
+               IOhmTimestamper* aTimestamper,
+               IOhmTimestampMapper* aTsMapper,
+               Configuration::IConfigInitialiser& aConfigInit,
+               const Brx& aName,
+               TUint aMinLatencyMs,
+               const Brx& aIconFileName)
     : iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
-    iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper);
+    iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper, aTsMapper);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
 
@@ -113,6 +121,12 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Sender::ProcessMsg(MsgChangeInput* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Sender::ProcessMsg(MsgDelay* aMsg)
 {
     SendPendingAudio();
@@ -143,6 +157,14 @@ Msg* Sender::ProcessMsg(MsgMetaText* aMsg)
     // when metadata is received/processed relative to text.)
     iOhmSender->SetMetatext(aMsg->MetaText());
     return aMsg;
+}
+
+Msg* Sender::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    // FIXME - no way to tell a songcast receiver about a discontinuity that requires a ramp down
+    SendPendingAudio(true);
+    aMsg->RemoveRef();
+    return NULL;
 }
 
 Msg* Sender::ProcessMsg(MsgHalt* aMsg)
@@ -345,6 +367,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* Sender::PlayableCreator::ProcessMsg(MsgChangeInput* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* Sender::PlayableCreator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -364,6 +392,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

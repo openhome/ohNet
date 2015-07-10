@@ -41,10 +41,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -60,9 +62,11 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgDecodedStream
        ,EMsgAudioPcm
        ,EMsgSilence
@@ -144,7 +148,16 @@ SuiteWaiter::SuiteWaiter()
 void SuiteWaiter::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(5, 5);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgDecodedStreamCount(2);
+    init.SetMsgTrackCount(3);
+    init.SetMsgEncodedStreamCount(3);
+    init.SetMsgMetaTextCount(3);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iWaiter = new Waiter(*iMsgFactory, *this, *this, kRampDuration);
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
@@ -225,6 +238,12 @@ Msg* SuiteWaiter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteWaiter::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastPulledMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteWaiter::ProcessMsg(MsgDelay* aMsg)
 {
     iLastPulledMsg = EMsgDelay;
@@ -246,6 +265,12 @@ Msg* SuiteWaiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteWaiter::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteWaiter::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastPulledMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -493,6 +518,8 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
     PullNext(EMsgSession);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
+    PullNext(EMsgChangeInput);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     PullNext(EMsgDelay);
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -503,6 +530,8 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
     PullNext(EMsgAudioPcm);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
+    PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
@@ -539,6 +568,8 @@ void SuiteWaiter::TestMsgsPassWhileWaitPending()
     // MsgFlush.
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
+    PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
@@ -607,6 +638,8 @@ void SuiteWaiter::TestMsgsPassWhileWaiting()
     // as they cancel the waiting, MsgAudioPcm and MsgSilence as they are
     // ramped down, and MsgWait as it shouldn't occur here) before the expected
     // MsgFlush.
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    PullNext(EMsgMetaText);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -931,6 +964,8 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
     TEST(iWaitingTrueCount == 1);
 
     // Some msgs should pass through while in a Songcast waiting state.
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    PullNext(EMsgMetaText);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
     iPendingMsgs.push_back(CreateEncodedStream());

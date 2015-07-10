@@ -50,7 +50,6 @@ class ProviderTime;
 class ProviderInfo;
 class ProviderVolume;
 class KvpStore;
-class NetworkMonitor;
 class Credentials;
 class VolumeManager;
 class VolumeConfig;
@@ -132,7 +131,6 @@ private:
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
-    NetworkMonitor* iNetworkMonitor;
 };
 
 } // namespace Av

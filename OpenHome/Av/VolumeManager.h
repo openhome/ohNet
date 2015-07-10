@@ -175,11 +175,19 @@ public:
     virtual ~IVolumeObserver() {}
 };
 
-class VolumeReporter : public IVolume, private INonCopyable
+class IVolumeReporter
+{
+public:
+    virtual void AddVolumeObserver(IVolumeObserver& aObserver) = 0;
+    virtual ~IVolumeReporter() {}
+};
+
+class VolumeReporter : public IVolumeReporter, public IVolume, private INonCopyable
 {
 public:
     VolumeReporter(IVolume& aVolume);
-    void AddObserver(IVolumeObserver& aObserver);
+public: // from IVolumeReporter
+    void AddVolumeObserver(IVolumeObserver& aObserver) override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
 private:
@@ -299,11 +307,19 @@ private:
     StoreInt& iStoreUserMute;
 };
 
-class MuteReporter : public Media::IMute, private INonCopyable
+class IMuteReporter
+{
+public:
+    virtual void AddMuteObserver(Media::IMuteObserver& aObserver) = 0;
+    virtual ~IMuteReporter() {}
+};
+
+class MuteReporter : public IMuteReporter, public Media::IMute, private INonCopyable
 {
 public:
     MuteReporter(Media::IMute& aMute);
-    void AddObserver(Media::IMuteObserver& aObserver);
+public: // from IMuteReporter
+    void AddMuteObserver(Media::IMuteObserver& aObserver) override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
@@ -365,16 +381,13 @@ private:
     TBool iVolumeControlEnabled;
 };
 
-class IVolumeManager : public IVolume, public IVolumeProfile, public Media::IMute
+class IVolumeManager : public IVolumeReporter, public IMuteReporter, public IVolume, public IVolumeProfile, public IVolumeSourceOffset, public Media::IMute
 {
 public:
-    virtual void AddObserver(IVolumeObserver& aObserver) = 0;
-    virtual void AddObserver(Media::IMuteObserver& aObserver) = 0;
     virtual ~IVolumeManager() {}
 };
 
 class VolumeManager : public IVolumeManager
-                    , public IVolumeSourceOffset
                     , public IVolumeSourceUnityGain
                     , private IBalance
                     , private IFade
@@ -384,9 +397,10 @@ public:
     VolumeManager(VolumeConsumer& aVolumeConsumer, Media::IMute* aMute, VolumeConfig& aVolumeConfig,
                   Net::DvDevice& aDevice, Product& aProduct, Configuration::IConfigManager& aConfigReader);
     ~VolumeManager();
-public: // from IVolumeManager
-    void AddObserver(IVolumeObserver& aObserver) override;
-    void AddObserver(Media::IMuteObserver& aObserver) override;
+public: // from IVolumeReporter
+    void AddVolumeObserver(IVolumeObserver& aObserver) override;
+public: // from IMuteReporter
+    void AddMuteObserver(Media::IMuteObserver& aObserver) override;
 public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 public: // from IVolumeSourceUnityGain

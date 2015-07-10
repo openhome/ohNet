@@ -51,6 +51,11 @@ Msg* PreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* PreDriver::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* PreDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -70,6 +75,12 @@ Msg* PreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* PreDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* PreDriver::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

@@ -59,8 +59,8 @@ ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice, Envir
     UpdateVolumeDb();
     UpdateLastChange(); // ensure iLastChange is set before aDevice could be enabled
 
-    aVolumeManager.AddObserver(static_cast<IVolumeObserver&>(*this));
-    aVolumeManager.AddObserver(static_cast<Media::IMuteObserver&>(*this));
+    aVolumeManager.AddVolumeObserver(*this);
+    aVolumeManager.AddMuteObserver(*this);
 }
 
 ProviderRenderingControl::~ProviderRenderingControl()

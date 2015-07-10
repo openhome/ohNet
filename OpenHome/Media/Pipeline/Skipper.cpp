@@ -99,6 +99,11 @@ Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
     return ProcessFlushableRemoveAll(aMsg);
 }
 
+Msg* Skipper::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Skipper::ProcessMsg(MsgDelay* aMsg)
 {
     return ProcessFlushableRemoveAll(aMsg);
@@ -133,6 +138,11 @@ Msg* Skipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Skipper::ProcessMsg(MsgMetaText* aMsg)
+{
+    return ProcessFlushable(aMsg);
+}
+
+Msg* Skipper::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return ProcessFlushable(aMsg);
 }

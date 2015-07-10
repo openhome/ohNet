@@ -49,6 +49,11 @@ Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Splitter::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Splitter::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -66,6 +71,11 @@ Msg* Splitter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Splitter::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Splitter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -144,6 +154,12 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Splitter::MsgCloner::ProcessMsg(MsgChangeInput* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
 Msg* Splitter::MsgCloner::ProcessMsg(MsgDelay* aMsg)
 {
     aMsg->AddRef();
@@ -163,6 +179,12 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Splitter::MsgCloner::ProcessMsg(MsgMetaText* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
+Msg* Splitter::MsgCloner::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     aMsg->AddRef();
     return aMsg;

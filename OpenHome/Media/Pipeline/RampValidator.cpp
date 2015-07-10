@@ -130,6 +130,11 @@ Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* RampValidator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* RampValidator::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -147,6 +152,11 @@ Msg* RampValidator::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* RampValidator::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* RampValidator::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

@@ -215,6 +215,14 @@ class CodecBase : private INonCopyable
 {
     friend class CodecController;
 public:
+    enum RecognitionComplexity
+    {
+        kCostVeryLow
+       ,kCostLow
+       ,kCostMedium
+       ,kCostHigh
+    };
+public:
     virtual ~CodecBase();
 public:
     /**
@@ -281,13 +289,14 @@ public:
      */
     const TChar* Id() const;
 protected:
-    CodecBase(const TChar* aId);
+    CodecBase(const TChar* aId, RecognitionComplexity aRecognitionCost=kCostMedium);
 private:
     void Construct(ICodecController& aController);
 protected:
     ICodecController* iController;
 private:
     const TChar* iId;
+    RecognitionComplexity iRecognitionCost;
 };
 
 class CodecController : public ISeeker, private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable
@@ -328,10 +337,12 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;

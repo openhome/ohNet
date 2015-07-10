@@ -51,15 +51,19 @@ private:
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgChangeInput* aMsg) override;
+    void ProcessMsgIn(MsgStreamInterrupted* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgFlush* aMsg) override;
     void ProcessMsgIn(MsgWait* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgChangeInput* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
+    Msg* ProcessMsgOut(MsgQuit* aMsg) override;
 private: // test helpers
     TBool EnqueueWouldBlock() const;
     TBool PullWouldBlock() const;
@@ -86,10 +90,12 @@ private:
     TBool iHaltDelivered;
     TBool iExit;
     TBool iTrackIsPullable;
+    TUint iPriorityMsgCount; // number of queued msgs that must be delivered asap
     TUint64 iJiffiesUntilNextHistoryPoint;
     IStreamHandler* iStreamHandler;
     BwsMode iMode;
     TUint iStreamId;
+    TUint iRampUntilStreamOutCount;
 };
 
 } // namespace Media

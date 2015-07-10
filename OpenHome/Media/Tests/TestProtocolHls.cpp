@@ -164,10 +164,12 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -754,6 +756,11 @@ Msg* TestElementDownstream::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* TestElementDownstream::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TestElementDownstream::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -778,6 +785,11 @@ Msg* TestElementDownstream::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* TestElementDownstream::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* TestElementDownstream::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -2082,7 +2094,14 @@ void SuiteProtocolHls::Setup()
 
     iInfoAggregator = new AllocatorInfoLogger();
     iTrackFactory= new TrackFactory(*iInfoAggregator, 1);
-    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(100, 100);
+    init.SetMsgTrackCount(10);
+    init.SetMsgEncodedStreamCount(10);
+    init.SetMsgMetaTextCount(10);
+    init.SetMsgFlushCount(10);
+    init.SetMsgSessionCount(10);
+    iMsgFactory = new MsgFactory(*iInfoAggregator, init);
     iIdProvider = new TestPipelineIdProvider();
     iFlushIdProvider = new TestFlushIdProvider();
     iElementDownstream = new TestElementDownstream();

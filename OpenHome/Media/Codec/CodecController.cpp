@@ -92,9 +92,10 @@ const TChar* CodecBase::Id() const
     return iId;
 }
 
-CodecBase::CodecBase(const TChar* aId)
+CodecBase::CodecBase(const TChar* aId, RecognitionComplexity aRecognitionCost)
     : iController(NULL)
     , iId(aId)
+    , iRecognitionCost(aRecognitionCost)
 {
 }
 
@@ -152,7 +153,22 @@ CodecController::~CodecController()
 void CodecController::AddCodec(CodecBase* aCodec)
 {
     aCodec->Construct(*this);
-    iCodecs.push_back(aCodec);
+    const CodecBase::RecognitionComplexity cost = aCodec->iRecognitionCost;
+    auto it = iCodecs.begin();
+    for (; it!=iCodecs.end(); ++it) {
+        if ((*it)->iRecognitionCost > cost) {
+            break;
+        }
+    }
+    iCodecs.insert(it, aCodec);
+#if 0
+    Log::Print("Sorted codecs are: ");
+    it = iCodecs.begin();
+    for (; it!=iCodecs.end(); ++it) {
+        Log::Print("%s, ", (*it)->iId);
+    }
+    Log::Print("\n");
+#endif
 }
 
 void CodecController::Start()
@@ -592,6 +608,12 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* CodecController::ProcessMsg(MsgChangeInput* aMsg)
+{
+    Queue(aMsg);
+    return NULL;
+}
+
 Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 {
     if (iRecognising) { // FIXME - why discard during recognition?
@@ -649,6 +671,13 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
+    Queue(aMsg);
+    return NULL;
+}
+
+Msg* CodecController::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iStreamEnded = true;
     Queue(aMsg);
     return NULL;
 }

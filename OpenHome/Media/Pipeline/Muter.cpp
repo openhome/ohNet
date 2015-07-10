@@ -101,6 +101,11 @@ Msg* Muter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Muter::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Muter::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -118,6 +123,11 @@ Msg* Muter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* Muter::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Muter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

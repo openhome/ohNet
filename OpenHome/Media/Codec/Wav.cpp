@@ -61,7 +61,7 @@ CodecBase* CodecFactory::NewWav()
 
 
 CodecWav::CodecWav()
-    : CodecBase("WAV")
+    : CodecBase("WAV", kCostLow)
 {
 }
 

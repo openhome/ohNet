@@ -9,7 +9,6 @@
 
 #include <vector>
 
-EXCEPTION(MediaCodecRaopNotFound);
 EXCEPTION(MediaMpeg4FileInvalid);
 EXCEPTION(MediaMpeg4EndOfData);
 

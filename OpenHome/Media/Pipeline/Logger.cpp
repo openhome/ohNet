@@ -105,6 +105,14 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgChangeInput* aMsg)
+{
+    if (IsEnabled(EMsgChangeInput)) {
+        Log::Print("Pipeline (%s): changeInput\n", iId);
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgDelay* aMsg)
 {
     if (IsEnabled(EMsgDelay)) {
@@ -149,6 +157,14 @@ Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
         iBuf.Append(aMsg->MetaText());
         iBuf.AppendPrintf("}\n");
         Log::Print(iBuf);
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    if (IsEnabled(EMsgStreamInterrupted)) {
+        Log::Print("Pipeline (%s): changeInput\n", iId);
     }
     return aMsg;
 }

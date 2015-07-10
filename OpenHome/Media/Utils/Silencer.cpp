@@ -16,10 +16,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -88,6 +90,16 @@ Msg* Silencer::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* Silencer::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Silencer::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Silencer::ProcessMsg(MsgHalt* aMsg)
 {
     // swallow halt messages - the driver presumably can't do anything with them if its using this class
@@ -143,20 +155,22 @@ SilencerMsgInProcessor::SilencerMsgInProcessor()
 {
 }
 
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgMode* aMsg)          { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgSession* aMsg)       { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgTrack* aMsg)         { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgDelay* aMsg)         { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgEncodedStream* aMsg) { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgAudioEncoded* aMsg)  { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgMetaText* aMsg)      { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgHalt* aMsg)          { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgFlush* aMsg)         { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgWait* aMsg)          { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgDecodedStream* aMsg) { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgAudioPcm* aMsg)      { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgSilence* aMsg)       { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgPlayable* aMsg)      { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgMode* aMsg)                  { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgSession* aMsg)               { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgTrack* aMsg)                 { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgChangeInput* aMsg)           { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgDelay* aMsg)                 { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgEncodedStream* aMsg)         { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgAudioEncoded* aMsg)          { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgMetaText* aMsg)              { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgStreamInterrupted* aMsg)     { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgHalt* aMsg)                  { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgFlush* aMsg)                 { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgWait* aMsg)                  { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgDecodedStream* aMsg)         { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgAudioPcm* aMsg)              { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgSilence* aMsg)               { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgPlayable* aMsg)              { return aMsg; }
 
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgQuit* aMsg)
 {

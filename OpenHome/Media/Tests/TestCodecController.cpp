@@ -69,10 +69,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -88,9 +90,11 @@ protected:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgDecodedStream
        ,EMsgAudioPcm
        ,EMsgSilence
@@ -258,7 +262,18 @@ void SuiteCodecControllerBase::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
-    iMsgFactory = new MsgFactory(iInfoAggregator, 400, 400, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(400, 400);
+    init.SetMsgAudioPcmCount(100, 100);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgPlayableCount(50, 0);
+    init.SetMsgTrackCount(2);
+    init.SetMsgEncodedStreamCount(2);
+    init.SetMsgMetaTextCount(2);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iController = new CodecController(*iMsgFactory, *this, *this, *this, kPriorityNormal);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
@@ -368,6 +383,12 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastReceivedMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgDelay* aMsg)
 {
     iLastReceivedMsg = EMsgDelay;
@@ -390,6 +411,12 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastReceivedMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastReceivedMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

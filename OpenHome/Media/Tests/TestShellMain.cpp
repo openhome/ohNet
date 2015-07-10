@@ -49,7 +49,7 @@ SIMPLE_TEST_DECLARATION(TestWaiter);
 SIMPLE_TEST_DECLARATION(TestJson);
 SIMPLE_TEST_DECLARATION(TestObservable);
 SIMPLE_TEST_DECLARATION(TestFlywheelRamper);
-
+SIMPLE_TEST_DECLARATION(TestRaop);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
 ENV_TEST_DECLARATION(TestProtocolHls);
@@ -117,6 +117,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestCredentials", ShellTestCredentials));
     shellTests.push_back(ShellTest("TestObservable", ShellTestObservable));
     shellTests.push_back(ShellTest("TestFlywheelRamper", ShellTestFlywheelRamper));
+    shellTests.push_back(ShellTest("TestRaop", ShellTestRaop));
 
     OpenHome::Media::ExecuteTestShell(aInitParams, shellTests);
 }

@@ -45,6 +45,11 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SampleRateValidator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -64,6 +69,11 @@ Msg* SampleRateValidator::ProcessMsg(MsgAudioEncoded* aMsg)
 Msg* SampleRateValidator::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
+}
+
+Msg* SampleRateValidator::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    return aMsg;
 }
 
 Msg* SampleRateValidator::ProcessMsg(MsgHalt* aMsg)

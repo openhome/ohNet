@@ -22,11 +22,8 @@ def options(opt):
     opt.load('compiler_c')
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
-    opt.add_option('--ohnetmon-include-dir', action='store', default=None)
-    opt.add_option('--ohnetmon-lib-dir', action='store', default=None)
     opt.add_option('--testharness-dir', action='store', default=os.path.join('dependencies', 'AnyPlatform', 'testharness'))
     opt.add_option('--ohnet', action='store', default=None)
-    opt.add_option('--ohnetmon', action='store', default=None)
     opt.add_option('--openssl', action='store', default=None)
     opt.add_option('--libplatform', action='store', default=None)
     opt.add_option('--libosa', action='store', default=None)
@@ -59,7 +56,6 @@ def configure(conf):
 
     configure_toolchain(conf)
     guess_ohnet_location(conf)
-    guess_location(conf, 'ohNetmon')
     guess_openssl_location(conf)
 
     conf.env.dest_platform = conf.options.dest_platform
@@ -72,8 +68,6 @@ def configure(conf):
     if is_core_platform(conf):
         conf.env.prepend_value('STLIB_OHNET', ['target', 'platform'])
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
-
-    conf.env.STLIB_OHNETMON = ['ohNetmon']
 
     conf.env.INCLUDES = [
         '.',
@@ -218,7 +212,7 @@ def build(bld):
                 'OpenHome/Media/Filler.cpp',
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/SupplyAggregator.cpp',
-                'OpenHome/Media/Utils/DriverBasic.cpp',
+                'OpenHome/Media/Utils/AnimatorBasic.cpp',
                 'OpenHome/Media/Utils/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Mpeg4.cpp',
                 'OpenHome/Media/Codec/Container.cpp',
@@ -249,7 +243,7 @@ def build(bld):
                 'OpenHome/Media/Utils/ClockPullerLogging.cpp',
                 'OpenHome/SocketSsl.cpp',
             ],
-            use=['OHNET', 'OPENSSL', 'OHNETMON'],
+            use=['OHNET', 'OPENSSL'],
             target='ohPipeline')
 
     # Library
@@ -280,7 +274,7 @@ def build(bld):
                 'OpenHome/ObservableBrx.cpp',
                 'OpenHome/Av/VolumeManager.cpp',
             ],
-            use=['OHNET', 'OPENSSL', 'OHNETMON', 'ohPipeline'],
+            use=['OHNET', 'OPENSSL', 'ohPipeline'],
             target='ohMediaPlayer')
 
     # Library
@@ -347,7 +341,6 @@ def build(bld):
             source=[
                 'OpenHome/Av/Raop/Raop.cpp',
                 'OpenHome/Av/Raop/SourceRaop.cpp',
-                'OpenHome/Av/Raop/RaopHeader.cpp',
                 'OpenHome/Av/Raop/ProtocolRaop.cpp',
                 'OpenHome/Av/Raop/UdpServer.cpp',
                 'OpenHome/Av/Raop/CodecRaop.cpp'
@@ -627,6 +620,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestCredentials.cpp',
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
+                'OpenHome/Av/Tests/TestRaop.cpp',
             ],
             use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
@@ -853,7 +847,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'OHNETMON', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestPlaylist',
             install_path=None)
     bld.program(
@@ -863,7 +857,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'OHNETMON', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
+            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -938,8 +932,13 @@ def build(bld):
             install_path=None)
     bld.program(
             source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
-            use=['OHNET', 'OHNETMON', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
+            use=['OHNET', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
             target='TestConfigUi',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Av/Tests/TestRaopMain.cpp',
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop'],
+            target='TestRaop',
             install_path=None)
 
 # Bundles

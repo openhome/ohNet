@@ -46,11 +46,13 @@ private: // from IStreamHandler
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -70,9 +72,11 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -150,7 +154,11 @@ SuiteVariableDelay::~SuiteVariableDelay()
 
 void SuiteVariableDelay::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
+    init.SetMsgSilenceCount(kMsgSilenceCount);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kDownstreamDelay, kRampDuration);
     iLastMsg = ENone;
@@ -193,12 +201,16 @@ Msg* SuiteVariableDelay::Pull()
         track->RemoveRef();
         return msg;
     }
+    case EMsgChangeInput:
+        return iMsgFactory->CreateMsgChangeInput(Functor());
     case EMsgDelay:
         return iMsgFactory->CreateMsgDelay(iNextDelayAbsoluteJiffies);
     case EMsgEncodedStream:
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
+    case EMsgStreamInterrupted:
+        return iMsgFactory->CreateMsgStreamInterrupted();
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
@@ -265,6 +277,12 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteVariableDelay::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteVariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
@@ -286,6 +304,12 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteVariableDelay::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -391,8 +415,9 @@ void SuiteVariableDelay::TestAllMsgsPass()
 {
     /* 'AllMsgs' excludes encoded & playable audio - VariableDelay is assumed only
        useful to the portion of the pipeline that deals in decoded audio */
-    static const EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgEncodedStream,
-                                     EMsgMetaText, EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt,
+    static const EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgChangeInput, EMsgDelay,
+                                     EMsgEncodedStream, EMsgMetaText, EMsgStreamInterrupted,
+                                     EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt,
                                      EMsgFlush, EMsgWait, EMsgQuit };
     for (TUint i=0; i<sizeof(msgs)/sizeof(msgs[0]); i++) {
         PullNext(msgs[i]);

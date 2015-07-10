@@ -208,10 +208,12 @@ public:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -228,10 +230,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -280,10 +284,12 @@ public:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgDecodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -308,10 +314,12 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgMode* aMsg) override;
     void ProcessMsgIn(MsgSession* aMsg) override;
     void ProcessMsgIn(MsgTrack* aMsg) override;
+    void ProcessMsgIn(MsgChangeInput* aMsg) override;
     void ProcessMsgIn(MsgDelay* aMsg) override;
     void ProcessMsgIn(MsgEncodedStream* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
     void ProcessMsgIn(MsgMetaText* aMsg) override;
+    void ProcessMsgIn(MsgStreamInterrupted* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgFlush* aMsg) override;
     void ProcessMsgIn(MsgWait* aMsg) override;
@@ -321,10 +329,12 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
     Msg* ProcessMsgOut(MsgSession* aMsg) override;
     Msg* ProcessMsgOut(MsgTrack* aMsg) override;
+    Msg* ProcessMsgOut(MsgChangeInput* aMsg) override;
     Msg* ProcessMsgOut(MsgDelay* aMsg) override;
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgMetaText* aMsg) override;
+    Msg* ProcessMsgOut(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
     Msg* ProcessMsgOut(MsgFlush* aMsg) override;
     Msg* ProcessMsgOut(MsgWait* aMsg) override;
@@ -431,7 +441,9 @@ void SuiteAllocator::Test()
 SuiteMsgAudioEncoded::SuiteMsgAudioEncoded()
     : Suite("MsgAudioEncoded tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(kMsgCount, kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMsgAudioEncoded::~SuiteMsgAudioEncoded()
@@ -659,7 +671,10 @@ void SuiteMsgAudioEncoded::Test()
 SuiteMsgAudio::SuiteMsgAudio()
     : Suite("Basic MsgAudio tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgCount, kMsgCount);
+    init.SetMsgSilenceCount(kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMsgAudio::~SuiteMsgAudio()
@@ -888,7 +903,11 @@ void SuiteMsgAudio::Test()
 SuiteMsgPlayable::SuiteMsgPlayable()
     : Suite("Basic MsgPlayable tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgCount, kMsgCount);
+    init.SetMsgSilenceCount(kMsgCount);
+    init.SetMsgPlayableCount(kMsgCount, kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMsgPlayable::~SuiteMsgPlayable()
@@ -1134,7 +1153,11 @@ void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 SuiteRamp::SuiteRamp()
     : Suite("Ramp tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgCount, kMsgCount);
+    init.SetMsgSilenceCount(kMsgCount);
+    init.SetMsgPlayableCount(kMsgCount, kMsgCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteRamp::~SuiteRamp()
@@ -1435,7 +1458,9 @@ void SuiteRamp::Test()
 SuiteAudioStream::SuiteAudioStream()
     : Suite("MsgEncodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgEncodedStreamCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgEncodedStreamCount(kMsgEncodedStreamCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteAudioStream::~SuiteAudioStream()
@@ -1499,7 +1524,9 @@ void SuiteAudioStream::Test()
 SuiteMetaText::SuiteMetaText()
     : Suite("MsgMetaText tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgMetaTextCount, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgMetaTextCount(kMsgMetaTextCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMetaText::~SuiteMetaText()
@@ -1535,7 +1562,9 @@ void SuiteMetaText::Test()
 SuiteTrack::SuiteTrack()
     : Suite("MsgTrack tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgTrackCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgTrackCount(kMsgTrackCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1595,7 +1624,9 @@ void SuiteTrack::Test()
 SuiteFlush::SuiteFlush()
     : Suite("MsgFlush tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgFlushCount, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgFlushCount(kMsgFlushCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteFlush::~SuiteFlush()
@@ -1626,7 +1657,9 @@ void SuiteFlush::Test()
 SuiteHalt::SuiteHalt()
     : Suite("MsgHalt tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgHaltCount, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgHaltCount(kMsgHaltCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteHalt::~SuiteHalt()
@@ -1663,7 +1696,9 @@ void SuiteHalt::Test()
 SuiteMode::SuiteMode()
     : Suite("MsgMode tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgModeCount, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgModeCount(kMsgModeCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteMode::~SuiteMode()
@@ -1696,7 +1731,9 @@ void SuiteMode::Test()
 SuiteDelay::SuiteDelay()
     : Suite("MsgDelay tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDelayCount, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgDelayCount(kMsgDelayCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteDelay::~SuiteDelay()
@@ -1724,7 +1761,9 @@ void SuiteDelay::Test()
 SuiteDecodedStream::SuiteDecodedStream()
     : Suite("MsgDecodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDecodedStreamCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgDecodedStreamCount(kMsgDecodedStreamCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
 }
 
 SuiteDecodedStream::~SuiteDecodedStream()
@@ -1836,7 +1875,8 @@ void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*
 SuiteMsgProcessor::SuiteMsgProcessor()
     : Suite("IMsgProcessor tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1899,6 +1939,11 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
 
+    msg = iMsgFactory->CreateMsgChangeInput(Functor());
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgChangeInput);
+    msg->RemoveRef();
+
     msg = iMsgFactory->CreateMsgDelay(0);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDelay);
@@ -1912,6 +1957,11 @@ void SuiteMsgProcessor::Test()
     msg = iMsgFactory->CreateMsgMetaText(Brn("Test metatext"));
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    msg->RemoveRef();
+
+    msg = iMsgFactory->CreateMsgStreamInterrupted();
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgStreamInterrupted);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgHalt();
@@ -1966,6 +2016,12 @@ Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* ProcessorMsgType::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* ProcessorMsgType::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgDelay;
@@ -1987,6 +2043,12 @@ Msg* ProcessorMsgType::ProcessMsg(MsgAudioEncoded* aMsg)
 Msg* ProcessorMsgType::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgMetaText;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -2044,7 +2106,8 @@ Msg* ProcessorMsgType::ProcessMsg(MsgQuit* aMsg)
 SuiteMsgQueue::SuiteMsgQueue()
     : Suite("MsgQueue tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -2243,9 +2306,12 @@ void SuiteMsgQueue::Test()
 // SuiteMsgReservoir
 
 SuiteMsgReservoir::SuiteMsgReservoir()
-    : Suite("MsgReservoirtests")
+    : Suite("MsgReservoir tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(2, 1);
+    init.SetMsgSilenceCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -2499,6 +2565,11 @@ void TestMsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
     iLastMsgIn = EMsgTrack;
 }
 
+void TestMsgReservoir::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+{
+    iLastMsgIn = EMsgChangeInput;
+}
+
 void TestMsgReservoir::ProcessMsgIn(MsgDelay* /*aMsg*/)
 {
     iLastMsgIn = EMsgDelay;
@@ -2517,6 +2588,11 @@ void TestMsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
 void TestMsgReservoir::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
     iLastMsgIn = EMsgMetaText;
+}
+
+void TestMsgReservoir::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
+{
+    iLastMsgIn = EMsgStreamInterrupted;
 }
 
 void TestMsgReservoir::ProcessMsgIn(MsgHalt* /*aMsg*/)
@@ -2569,6 +2645,12 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* TestMsgReservoir::ProcessMsgOut(MsgChangeInput* aMsg)
+{
+    iLastMsgOut = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* TestMsgReservoir::ProcessMsgOut(MsgDelay* aMsg)
 {
     iLastMsgOut = EMsgDelay;
@@ -2590,6 +2672,12 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 Msg* TestMsgReservoir::ProcessMsgOut(MsgMetaText* aMsg)
 {
     iLastMsgOut = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* TestMsgReservoir::ProcessMsgOut(MsgStreamInterrupted* aMsg)
+{
+    iLastMsgOut = EMsgStreamInterrupted;
     return aMsg;
 }
 

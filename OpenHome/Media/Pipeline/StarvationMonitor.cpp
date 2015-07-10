@@ -29,9 +29,11 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
+    , iPriorityMsgCount(0)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
     , iStreamHandler(NULL)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
+    , iRampUntilStreamOutCount(0)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
     UpdateStatus(EBuffering);
@@ -59,8 +61,9 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
     // Queue the next msg before checking how much data we already have in the buffer
     // This risks us going over the nominal max size for the buffer but guarantees that
     // we don't deadlock if a single message larger than iNormalMax is queued.
-    DoEnqueue(aMsg);
     iLock.Wait();
+    const TUint oldPriorityMsgCount = iPriorityMsgCount;
+    DoEnqueue(aMsg);
     TBool isFull = (DecodedStreamCount() > iMaxStreamCount || (iStatus != EBuffering && Jiffies() >= iNormalMax));
     if (iStatus == EBuffering && Jiffies() >= iNormalMax) {
         iHaltDelivered = false;
@@ -76,7 +79,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         iSemOut.Signal();
         isFull = true;
     }
-    if (iExit) {
+    if (iPriorityMsgCount > oldPriorityMsgCount) {
         iSemOut.Signal();
     }
     iLock.Signal();
@@ -96,7 +99,7 @@ Msg* StarvationMonitor::Pull()
         return iMsgFactory.CreateMsgHalt(); // signal that we won't be providing any more audio for a while
     }
     TBool wait = false;
-    if (iStatus == EBuffering && !iExit) {
+    if (iStatus == EBuffering && iPriorityMsgCount == 0) {
         if (jiffies == 0 && iPlannedHalt && !iHaltDelivered) {
             wait = IsEmpty(); // allow reading of the halt msg which should be the last item in the queue
         }
@@ -193,11 +196,28 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
     iStatus = aStatus;
 }
 
+void StarvationMonitor::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+{
+    iPriorityMsgCount++;
+}
+
+void StarvationMonitor::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
+{
+    iRampUntilStreamOutCount = DecodedStreamCount() + 1;
+    if (iStatus == EBuffering || iStatus == ERampingDown) {
+        return;
+    }
+    if (iStatus == ERunning) {
+        iCurrentRampValue = Ramp::kMax;
+    }
+    iRampDownDuration = Jiffies();
+    iRemainingRampSize = iRampDownDuration;
+    UpdateStatus(ERampingDown);
+}
+
 void StarvationMonitor::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
-    iLock.Wait();
     iPlannedHalt = true;
-    iLock.Signal();
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
@@ -212,9 +232,8 @@ void StarvationMonitor::ProcessMsgIn(MsgWait* /*aMsg*/)
 
 void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
-    iLock.Wait();
     iExit = true;
-    iLock.Signal();
+    iPriorityMsgCount++;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
@@ -231,6 +250,14 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* StarvationMonitor::ProcessMsgOut(MsgChangeInput* aMsg)
+{
+    iLock.Wait();
+    iPriorityMsgCount--;
+    iLock.Signal();
+    return aMsg;
+}
+
 Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamInfo().StreamHandler();
@@ -239,6 +266,9 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
         iClockPuller->NewStreamStarvationMonitor(iStreamId);
     }
     iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    if (iRampUntilStreamOutCount > 0) {
+        iRampUntilStreamOutCount--;
+    }
     return aMsg;
 }
 
@@ -247,7 +277,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
     MsgAudio* msg = ProcessAudioOut(aMsg);
 
     iLock.Wait();
-    ASSERT(iExit || iStatus != EBuffering);
+    ASSERT(iPriorityMsgCount > 0 || iStatus != EBuffering);
     TUint remainingSize = Jiffies();
     TBool enteredBuffering = false;
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
@@ -296,7 +326,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
 
     iLock.Wait();
     TBool enteredBuffering = false;
-    if (iStatus == ERampingDown) {
+    if (iStatus == ERampingDown && iRampUntilStreamOutCount > 0) {
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
         UpdateStatus(EBuffering);
@@ -326,6 +356,14 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgHalt* aMsg)
     return aMsg;
 }
 
+Msg* StarvationMonitor::ProcessMsgOut(MsgQuit* aMsg)
+{
+    iLock.Wait();
+    iPriorityMsgCount--;
+    iLock.Signal();
+    return aMsg;
+}
+
 TBool StarvationMonitor::EnqueueWouldBlock() const
 {
     AutoMutex a(iLock);
@@ -335,7 +373,7 @@ TBool StarvationMonitor::EnqueueWouldBlock() const
 TBool StarvationMonitor::PullWouldBlock() const
 {
     AutoMutex a(iLock);
-    if (IsEmpty() || (iStatus == EBuffering && Jiffies() < iNormalMax)) {
+    if (IsEmpty() || (iStatus == EBuffering && Jiffies() < iNormalMax && iPriorityMsgCount == 0)) {
         return true;
     }
     return false;

@@ -121,7 +121,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
-    iOhmSenderDriver = new OhmSenderDriver(iEnv, NULL);
+    iOhmSenderDriver = new OhmSenderDriver(iEnv, NULL, NULL);
 
     Bws<64> udn("Driver-");
     udn.Append(aName);
@@ -294,6 +294,11 @@ Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* DriverSongcastSender::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -313,6 +318,12 @@ Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

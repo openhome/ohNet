@@ -127,6 +127,11 @@ Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SpotifyReporter::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* SpotifyReporter::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -145,6 +150,11 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* SpotifyReporter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

@@ -46,9 +46,11 @@ public:
         ,EMsgMode
         ,EMsgSession
         ,EMsgTrack
+        ,EMsgChangeInput
         ,EMsgDelay
         ,EMsgEncodedStream
         ,EMsgMetaText
+        ,EMsgStreamInterrupted
         ,EMsgHalt
         ,EMsgFlush
         ,EMsgWait
@@ -118,10 +120,12 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -145,9 +149,11 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -310,6 +316,9 @@ Msg* TestContainerMsgGenerator::NextMsg()
     case EMsgTrack:
         msg = GenerateMsg(EMsgTrack);
         break;
+    case EMsgChangeInput:
+        msg = GenerateMsg(EMsgChangeInput);
+        break;
     case EMsgDelay:
         msg = GenerateMsg(EMsgDelay);
         break;
@@ -321,6 +330,9 @@ Msg* TestContainerMsgGenerator::NextMsg()
         break;
     case EMsgMetaText:
         msg = GenerateMsg(EMsgMetaText);
+        break;
+    case EMsgStreamInterrupted:
+        msg = GenerateMsg(EMsgStreamInterrupted);
         break;
     case EMsgHalt:
         msg = GenerateMsg(EMsgHalt);
@@ -393,6 +405,10 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         }
         iLastMsgType = EMsgTrack;
         break;
+    case EMsgChangeInput:
+        msg = iMsgFactory.CreateMsgChangeInput(Functor());
+        iLastMsgType = EMsgChangeInput;
+        break;
     case EMsgDelay:
         msg = iMsgFactory.CreateMsgDelay(Jiffies::kPerMs * 20);
         iLastMsgType = EMsgDelay;
@@ -408,6 +424,10 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case EMsgMetaText:
         msg = iMsgFactory.CreateMsgMetaText(Brn("metatext"));
         iLastMsgType = EMsgMetaText;
+        break;
+    case EMsgStreamInterrupted:
+        msg = iMsgFactory.CreateMsgStreamInterrupted();
+        iLastMsgType = EMsgStreamInterrupted;
         break;
     case EMsgHalt:
         msg = iMsgFactory.CreateMsgHalt();
@@ -541,6 +561,10 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
+Msg* TestContainerMsgProcessor::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -550,6 +574,10 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgEncodedStream* aMsg)
     return aMsg;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+Msg* TestContainerMsgProcessor::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -586,7 +614,10 @@ SuiteContainerBase::~SuiteContainerBase()
 void SuiteContainerBase::Setup()
 {
     iProvider = new TestContainerProvider();
-    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(kEncodedAudioCount, kEncodedAudioCount);
+    init.SetMsgEncodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
@@ -680,6 +711,12 @@ Msg* SuiteContainerBase::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteContainerBase::ProcessMsg(MsgChangeInput* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgChangeInput);
+    return aMsg;
+}
+
 Msg* SuiteContainerBase::ProcessMsg(MsgDelay* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgDelay);
@@ -697,6 +734,12 @@ Msg* SuiteContainerBase::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteContainerBase::ProcessMsg(MsgMetaText* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgMetaText);
+    return aMsg;
+}
+
+Msg* SuiteContainerBase::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgStreamInterrupted);
     return aMsg;
 }
 
@@ -731,11 +774,13 @@ void SuiteContainerBase::TestNormalOperation()
     msgOrder.push_back(TestContainerMsgGenerator::EMsgMode);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgSession);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgChangeInput);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgDelay);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgStreamInterrupted);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
 
     iGenerator->SetMsgOrder(msgOrder);

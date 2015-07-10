@@ -30,10 +30,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -52,6 +54,7 @@ private:
        ,EMsgDecodedStream
        ,EMsgMode
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -88,7 +91,12 @@ SuitePreDriver::SuitePreDriver()
     , iTrackOffset(0)
     , iNumChannels(2)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(10, 10);
+    init.SetMsgSilenceCount(10);
+    init.SetMsgPlayableCount(10, 10);
+    init.SetMsgDecodedStreamCount(kMsgFormatCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     MsgAudioPcm* audio = CreateAudio();
     iAudioMsgSizeJiffies = audio->Jiffies();
@@ -136,6 +144,11 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgMode);
 
+    // Send ChangeInput; check it is passed on
+    iNextGeneratedMsg = EMsgChangeInput;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgChangeInput);
+
     // Send Format with same sample rate + bit depth + no. channels.  Check it isn't passed on (we move on to Silence instead).
     iNextGeneratedMsg = EMsgDecodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
@@ -174,6 +187,8 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL);
+    case EMsgChangeInput:
+        return iMsgFactory->CreateMsgChangeInput(Functor());
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
@@ -220,6 +235,12 @@ Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* SuitePreDriver::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuitePreDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
@@ -239,6 +260,12 @@ Msg* SuitePreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

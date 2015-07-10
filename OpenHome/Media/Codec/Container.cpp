@@ -238,6 +238,11 @@ Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
     return NULL;
 }
 
+Msg* ContainerBase::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* ContainerBase::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -255,6 +260,11 @@ Msg* ContainerBase::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* ContainerBase::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -401,6 +411,11 @@ Msg* ContainerFront::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* ContainerFront::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* ContainerFront::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -473,6 +488,11 @@ Msg* ContainerFront::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* ContainerFront::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }
@@ -625,6 +645,11 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* Container::ProcessMsg(MsgChangeInput* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Container::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
@@ -657,6 +682,11 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* Container::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Container::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return aMsg;
 }

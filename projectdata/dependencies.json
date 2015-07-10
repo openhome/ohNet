@@ -9,16 +9,14 @@
             "--ohnet-lib-dir", "${main-dir}/lib",
             "--ohnet-include-dir", "${main-dir}/include/ohnet"
         ],
-        "_comment": [
-            "See ohos for more examples, and ohdevtools/dependencies.py for details",
-            "of the predefined values and expansion rules."
-        ]
+        "source-git": "https://github.com/openhome/ohNet.git"
     },
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
         "version": "0.0.80",
-        "archive-filename": "${name}-${version}.tar.gz"
+        "archive-filename": "${name}-${version}.tar.gz",
+        "source-git": "https://github.com/openhome/ohWafHelpers.git"
     },
     {   "name": "TestTones",
         "type": "external",
@@ -84,17 +82,10 @@
         "version": "0.2.60",
         "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
-    {   "name": "ohNetmon",
-        "type": "openhome",
-        "platform-specific": true,
-        "version": "1.0.32",
-        "archive-suffix": "-${debugmode}",
-        "main-dir": "${dest}${name}-${platform}-${debugmode}"
-    },
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.583",
+        "version": "0.0.587",
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

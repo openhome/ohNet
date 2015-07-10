@@ -201,14 +201,16 @@ class TestRadioService( BASE.BaseTest ):
 
                     if 'notcompatible' not in rtPresets[i][0]:
                         # check URI only, not CGI params
-                        self.log.FailUnless( self.dutDev, dsUri.split('&')[0]==rtPresets[i][0].split('&')[0],
-                            '[%d] DS/TuneIn URI: %s %s' % (i,dsUri,rtPresets[i][0]) )
+                        ds = dsUri.split('&')[0]
+                        rt = rtPresets[i][0].split('&')[0]
+                        self.log.FailUnless( self.dutDev, ds==rt, '[%d] DS/TuneIn URI: %s %s' % (i,ds,rt) )
                         # titles can vary in genre, as stations with multiple genres seem to
-                        # return one of the available genres, randomly selected, so subsequent
-                        # identical queries MAY contain different genres in the station title.
-                        # Hence ignore title string after '(' to ignore genre
-                        self.log.FailUnless( self.dutDev, dsTitle.split('(')[0]==rtTitle.split('(')[0],
-                            '[%d] DS/TuneIn Title: %s/%s' % (i,dsTitle,rtTitle) )
+                        # return one of the available genres, randomly selected. Additionally
+                        # availability messages may appear after the title. Hence ignore any
+                        # # data after '(' in the title
+                        ds = dsTitle.split('(')[0].strip()
+                        rt = rtTitle.split('(')[0].strip()
+                        self.log.FailUnless( self.dutDev, ds==rt, '[%d] DS/TuneIn Title: %s/%s' % (i,ds,rt) )
                 else:
                     self.log.FailUnless( self.dutDev, rtPresets[i][0]=='',
                         '[%d] TuneIn URI for empty entry: %s' % (i,rtPresets[i][0]) )

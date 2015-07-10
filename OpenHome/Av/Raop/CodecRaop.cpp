@@ -4,12 +4,12 @@
 #include <OpenHome/Media/Codec/AlacBase.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
@@ -54,7 +54,22 @@ void CodecRaop::StreamInitialise()
 
     CodecAlacBase::Initialise();
 
-    ProcessHeader();
+    iInBuf.SetBytes(0);
+    iController->Read(iInBuf, 4);
+    ASSERT(iInBuf == Brn("Raop")); // Already saw this during Recognise().
+
+    // Read and parse fmtp string.
+    iInBuf.SetBytes(0);
+    iController->Read(iInBuf, 4);
+    try {
+        const TUint fmtpBytes = Ascii::Uint(iInBuf);    // size of fmtp string
+        iInBuf.SetBytes(0);
+        iController->Read(iInBuf, fmtpBytes);
+        ParseFmtp(iInBuf);
+    }
+    catch (AsciiError&) {
+        THROW(CodecStreamCorrupt);
+    }
 
     iInBuf.SetBytes(0);
     alac = create_alac(iBitDepth, iChannels);
@@ -72,7 +87,7 @@ void CodecRaop::StreamInitialise()
     iTrackLengthJiffies = 0;// (iDuration * Jiffies::kPerSecond) / iTimescale;
 
 
-    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    //LOG(kCodec, "CodecRaop::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
     iController->OutputDecodedStream(0, iBitDepth, iTimescale, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
@@ -94,18 +109,28 @@ void CodecRaop::Process()
     iInBuf.SetBytes(0);
 
     try {
-        // read in a packet worth of raop data
-        Bws<sizeof(RaopDataHeader)> binheader;
-        iController->Read(binheader, sizeof(RaopDataHeader));   // extract header
-        if (sizeof(RaopDataHeader) > binheader.Bytes()) {
+        // Get size of next packet.
+        static const TUint kSizeBytes = 4;
+        iController->Read(iInBuf, kSizeBytes);
+        if (iInBuf.Bytes() < kSizeBytes) {
             THROW(CodecStreamEnded);
         }
-        Brn audio(binheader);
-        RaopDataHeader header(audio);
-        iController->Read(iInBuf, header.Bytes());
-        if (iInBuf.Bytes() < header.Bytes()) {
-            THROW(CodecStreamEnded);
+
+        // Read in next packet.
+        try {
+            ReaderBuffer readerBuffer(iInBuf);
+            ReaderBinary readerBinary(readerBuffer);
+            const TUint bytes = readerBinary.ReadUintBe(4);
+            iInBuf.SetBytes(0);
+            iController->Read(iInBuf, bytes);
+            if (iInBuf.Bytes() < bytes) {
+                THROW(CodecStreamEnded);
+            }
         }
+        catch (ReaderError&) {
+            THROW(CodecStreamCorrupt);
+        }
+
         Decode();
     }
     catch (CodecStreamStart&) {
@@ -120,75 +145,46 @@ void CodecRaop::Process()
     OutputFinal();
 }
 
-void CodecRaop::ProcessHeader()
+void CodecRaop::ParseFmtp(const Brx& aFmtp)
 {
-    LOG(kMedia, "Checking for Raop container\n");
+    // SDP FMTP (format parameters) data is received as a string of form:
+    // a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
+    // Third party ALAC decoder expects the data present in this string to be
+    // in a packed binary format, so parse the FMTP and pack it here.
+
+    LOG(kMedia, "CodecRaop::ParseFmtp [");
+    LOG(kMedia, aFmtp);
+    LOG(kMedia, "]\n");
+
+    Parser p(aFmtp);
+
+    iCodecSpecificData.SetBytes(0);
 
     try {
-        Bws<60> data;
-        iController->Read(data, 4);
+        WriterBuffer writerBuf(iCodecSpecificData);
+        WriterBinary writerBin(writerBuf);
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // ?
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // max_samples_per_frame
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // 7a
 
-        LOG(kMedia, "data %x {", data[0]);
-        LOG(kMedia, data);
-        LOG(kMedia, "}\n");
+        iBitDepth = Ascii::Uint(p.Next());               // bit depth
+        writerBin.WriteUint8(iBitDepth);
 
-        if (data != Brn("Raop")) {
-            THROW(MediaCodecRaopNotFound);  // FIXME - CodecStreamCorrupt
-        }
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_historymult
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_initialhistory
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_kmodifier
 
-        // If RAOP is only used by alac, why bother going to extra lengths and creating a pseudo-identifier?
-        //aSelector.iCodecContainer->SetName(Brn("alas"));  // this is used for codec recognition - streamed alac
+        iChannels = Ascii::Uint(p.Next());               // 7f
+        writerBin.WriteUint8(iChannels);
 
-        // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
-        // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
-        // first read the number of bytes in for the fmtp
-        data.SetBytes(0);
-        iController->Read(data, 4);
-        TUint bytes = Ascii::Uint(data);    // size of fmtp string
-        data.SetBytes(0);
-        iController->Read(data, bytes);
-        Parser fmtp(data);
+        writerBin.WriteUint16Be(Ascii::Uint(p.Next()));  // 80
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 82
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 86
 
-        LOG(kMedia, "fmtp [");
-        LOG(kMedia, fmtp.NextLine());
-        LOG(kMedia, "]\n");
-
-        fmtp.Set(data);
-        iCodecSpecificData.SetBytes(0);
-
-        try {
-            WriterBuffer writerBuf(iCodecSpecificData);
-            WriterBinary writerBin(writerBuf);
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // ?
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // max_samples_per_frame
-            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // 7a
-
-            iBitDepth = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // bit depth
-            writerBin.WriteUint8(static_cast<TUint8>(iBitDepth));
-
-            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_historymult
-            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_initialhistory
-            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_kmodifier
-
-            iChannels = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // 7f - I think that this is channels
-            writerBin.WriteUint8(static_cast<TUint8>(iChannels));
-
-            writerBin.WriteUint16Be(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));       // 80
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // 82
-            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // 86
-
-            TUint rate = Ascii::Uint(fmtp.NextLine());
-            iTimescale = rate;
-            writerBin.WriteUint32Be(rate); // parsed fmtp data to be passed to alac decoder
-        }
-        catch (AsciiError&) {
-            THROW(MediaCodecRaopNotFound);
-        }
-        data.SetBytes(bytes);
-
-        LOG(kMedia, "Mpeg4MediaInfoBase RAOP header found %d bytes\n", bytes);
+        iTimescale = Ascii::Uint(p.Next());
+        writerBin.WriteUint32Be(iTimescale);
     }
-    catch (CodecStreamCorrupt&) {   // FIXME - can this actually be thrown from operations in here?
-        THROW(MediaCodecRaopNotFound); // not enough data found to be Raop container
+    catch (AsciiError&) {
+        THROW(CodecStreamCorrupt);
     }
 }

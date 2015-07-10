@@ -82,10 +82,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -375,6 +377,12 @@ Msg* DummySupply::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* DummySupply::ProcessMsg(MsgChangeInput* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
 Msg* DummySupply::ProcessMsg(MsgDelay* aMsg)
 {
     iLastDelayJiffies = aMsg->DelayJiffies();
@@ -394,6 +402,12 @@ Msg* DummySupply::ProcessMsg(MsgAudioEncoded* aMsg)
 }
 
 Msg* DummySupply::ProcessMsg(MsgMetaText* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     ASSERTS();
     return aMsg;
@@ -455,7 +469,8 @@ SuiteFiller::SuiteFiller()
     , iNextFlushId(1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDummySupply = new DummySupply();
     iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, *this, kPriorityNormal, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);

@@ -6,7 +6,6 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Configuration/ConfigManager.h>
-#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 #include <vector>
 
@@ -19,6 +18,8 @@ namespace Av {
 class OhmSenderDriver;
 class OhmSender;
 class ZoneHandler;
+class IOhmTimestamper;
+class IOhmTimestampMapper;
 
 class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor
 {
@@ -35,7 +36,15 @@ class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProc
     static const TUint kSongcastPacketJiffies = Media::Jiffies::kPerMs * kSongcastPacketMs;
     static const TUint kSongcastPacketMaxBytes = 3 * Media::DecodedAudio::kMaxNumChannels * 192 * kSongcastPacketMs;
 public:
-    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, IOhmTimestamper* aTimestamper, Configuration::IConfigInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName);
+    Sender(Environment& aEnv,
+           Net::DvDeviceStandard& aDevice,
+           ZoneHandler& aZoneHandler,
+           IOhmTimestamper* aTimestamper,
+           IOhmTimestampMapper* aTsMapper,
+           Configuration::IConfigInitialiser& aConfigInit,
+           const Brx& aName,
+           TUint aMinLatencyMs,
+           const Brx& aIconFileName);
     ~Sender();
     void SetName(const Brx& aName);
     void NotifyPipelineState(Media::EPipelineState aState);
@@ -45,10 +54,12 @@ private: // from Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgChangeInput* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgMetaText* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgStreamInterrupted* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgHalt* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
@@ -83,10 +94,12 @@ private:
         Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
+        Media::Msg* ProcessMsg(Media::MsgChangeInput* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgMetaText* aMsg) override;
+        Media::Msg* ProcessMsg(Media::MsgStreamInterrupted* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgHalt* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;

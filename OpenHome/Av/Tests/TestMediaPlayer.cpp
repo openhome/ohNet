@@ -205,14 +205,16 @@ void TestMediaPlayer::SetPullableClock(IPullableClock& aPullableClock)
     iPullableClock = &aPullableClock;
 }
 
-void TestMediaPlayer::SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper)
+void TestMediaPlayer::SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper)
 {
-    iTxTimestamper = &aTimestamper;
+    iTxTimestamper = &aTxTimestamper;
+    iRxTimestamper = &aRxTimestamper;
 }
 
-void TestMediaPlayer::SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper)
+void TestMediaPlayer::SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper)
 {
-    iRxTimestamper = &aTimestamper;
+    iTxTsMapper = &aTxTsMapper;
+    iRxTsMapper = &aRxTsMapper;
 }
 
 void TestMediaPlayer::StopPipeline()
@@ -372,7 +374,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iObservableFriendlyName.Replace(Brn(friendlyName));
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iRxTimestamper, kSongcastSenderIconFileName));
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
 }
 
 

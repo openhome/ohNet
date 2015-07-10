@@ -39,10 +39,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -65,6 +67,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -78,6 +81,7 @@ enum EMsgGenerationState
    ,EStateAudioFillInitial
    ,EStateAudioFillPostStarvation
    ,EStateHalt
+   ,EStateChangeInput
    ,EStateQuit
    ,EStateCompleted
 };
@@ -113,7 +117,10 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iTrackOffset(0)
     , iBuffering(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
+    init.SetMsgSilenceCount(kMsgSilenceCount);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kPriorityNormal, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 
@@ -193,6 +200,15 @@ void SuiteStarvationMonitor::Test()
     msg->RemoveRef();
     TEST(iSm->PullWouldBlock());
 
+    // Send MsgChangeInput.  Check it can be pulled immediately.  Check pull would then block
+    Print("\nCheck ChangeInput is passed on immediately then pull would block\n");
+    GenerateUpstreamMsgs(EStateChangeInput);
+    msg = iSm->Pull();
+    (void)msg->Process(*this);
+    TEST(iLastMsg == EMsgChangeInput);
+    msg->RemoveRef();
+    TEST(iSm->PullWouldBlock());
+
     // Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
     // Continue adding audio until we reach gorge size.  Check enqueue would now block.
     Print("\nRe-fill until normal size\n");
@@ -224,6 +240,8 @@ void SuiteStarvationMonitor::Test()
         TEST(iLastMsg == EMsgAudioPcm);
     }
     TEST(!iBuffering);
+
+    // FIXME - no test for StreamInterrupted
 
     // Add Halt.  Check queue can be drained without ramping down
     Print("\nDrain without ramping down\n");
@@ -306,11 +324,14 @@ Msg* SuiteStarvationMonitor::Pull()
         return msg;
     }
     case EStateHalt:
-        iMsgGenerationState = EStateQuit;
+        iMsgGenerationState = EStateWait;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgHalt();
+    case EStateChangeInput:
+        iMsgGenerationState = EStateWait;
+        iSemUpstreamCompleted.Signal();
+        return iMsgFactory->CreateMsgChangeInput(Functor());
     case EStateQuit:
-        iSemUpstream.Wait();
         iMsgGenerationState = EStateCompleted;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgQuit();
@@ -350,6 +371,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS(); // MsgDelay not used in this test
@@ -371,6 +398,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // MsgMetaText not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
+{
+    ASSERTS(); // FIXME - missing test cases
     return NULL;
 }
 

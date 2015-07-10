@@ -45,10 +45,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -69,9 +71,11 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -125,7 +129,8 @@ SuiteSupply::SuiteSupply()
     , iLastMsg(ENone)
     , iMsgPushCount(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new Supply(*iMsgFactory, *this);
 }
@@ -142,22 +147,36 @@ void SuiteSupply::Test()
     TUint expectedMsgCount = 0;
     iSupply->OutputSession();
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgSession);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
     iSupply->OutputTrack(*track);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgTrack);
+    iSupply->OutputChangeInput(Functor());
+    TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgChangeInput);
     iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgDelay);
     iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgEncodedStream);
     iSupply->OutputData(Brn(kTestData));
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgAudioEncoded);
     iSupply->OutputMetadata(Brn(kMetaData));
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgMetaText);
+    iSupply->OutputStreamInterrupted();
+    TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgStreamInterrupted);
     iSupply->OutputFlush(1);
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgFlush);
     iSupply->OutputWait();
     TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iLastMsg == EMsgWait);
 }
 
 void SuiteSupply::Push(Msg* aMsg)
@@ -183,6 +202,12 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     TEST(aMsg->Track().Uri() == Brn(kUri));
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
     return aMsg;
 }
 
@@ -221,6 +246,12 @@ Msg* SuiteSupply::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
     TEST(aMsg->MetaText() == Brn(kMetaData));
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

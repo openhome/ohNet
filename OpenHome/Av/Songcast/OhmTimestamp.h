@@ -20,6 +20,15 @@ public:
     virtual TUint Timestamp(TUint aFrame) = 0;
 };
 
+
+class IOhmTimestampMapper
+{
+public:
+    virtual ~IOhmTimestampMapper() {}
+    virtual TUint ToOhmTimestamp(TUint aTimestamp, TUint aSampleRate) = 0;
+};
+
+
 } // namespace Av
 } // namespace OpenHome
 

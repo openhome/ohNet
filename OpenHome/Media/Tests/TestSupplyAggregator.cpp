@@ -48,10 +48,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -66,9 +68,11 @@ private:
         EMsgAudioEncoded
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgFlush
        ,EMsgWait
        ,EMsgNone
@@ -130,7 +134,8 @@ SuiteSupplyAggregator::SuiteSupplyAggregator()
     , iLastMsg(EMsgNone)
     , iMsgPushCount(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new SupplyAggregatorBytes(*iMsgFactory, *this);
 }
@@ -206,6 +211,9 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         track->RemoveRef();
     }
         break;
+    case EMsgChangeInput:
+        iSupply->OutputChangeInput(Functor());
+        break;
     case EMsgDelay:
         iSupply->OutputDelay(kDelayJiffies);
         break;
@@ -214,6 +222,9 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         break;
     case EMsgMetaText:
         iSupply->OutputMetadata(Brn(kMetaData));
+        break;
+    case EMsgStreamInterrupted:
+        iSupply->OutputStreamInterrupted();
         break;
     case EMsgFlush:
         iSupply->OutputFlush(1);
@@ -249,6 +260,12 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     TEST(aMsg->Track().Uri() == Brn(kUri));
+    return aMsg;
+}
+
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgChangeInput* aMsg)
+{
+    iLastMsg = EMsgChangeInput;
     return aMsg;
 }
 
@@ -313,6 +330,12 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
     TEST(aMsg->MetaText() == Brn(kMetaData));
+    return aMsg;
+}
+
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastMsg = EMsgStreamInterrupted;
     return aMsg;
 }
 

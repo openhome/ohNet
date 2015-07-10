@@ -32,9 +32,11 @@ enum EMsgType
         ,EMsgMode
         ,EMsgSession
         ,EMsgTrack
+        ,EMsgChangeInput
         ,EMsgDelay
         ,EMsgEncodedStream
         ,EMsgMetaText
+        ,EMsgStreamInterrupted
         ,EMsgHalt
         ,EMsgFlush
         ,EMsgWait
@@ -72,10 +74,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
@@ -187,7 +191,11 @@ void SuiteRewinder::InitMsgOrder()
 
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(aMsgAudioEncodedCount, aEncodedAudioCount);
+    init.SetMsgAudioPcmCount(100, 100);
+    init.SetMsgEncodedStreamCount(3);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;
@@ -269,6 +277,13 @@ Msg* SuiteRewinder::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SuiteRewinder::ProcessMsg(MsgChangeInput* aMsg)
+{
+    TEST(iLastMsgType == EMsgChangeInput);
+    iRcvdMsgType = EMsgChangeInput;
+    return aMsg;
+}
+
 Msg* SuiteRewinder::ProcessMsg(MsgDelay* aMsg)
 {
     TEST(iLastMsgType == EMsgDelay);
@@ -298,6 +313,13 @@ Msg* SuiteRewinder::ProcessMsg(MsgMetaText* aMsg)
 {
     TEST(iLastMsgType == EMsgMetaText);
     iRcvdMsgType = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    TEST(iLastMsgType == EMsgStreamInterrupted);
+    iRcvdMsgType = EMsgStreamInterrupted;
     return aMsg;
 }
 
@@ -404,6 +426,10 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         }
         iLastMsgType = EMsgTrack;
         break;
+    case EMsgChangeInput:
+        msg = iMsgFactory->CreateMsgChangeInput(Functor());
+        iLastMsgType = EMsgChangeInput;
+        break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iNextStreamId++, false, false, this);
         iLastMsgType = EMsgEncodedStream;
@@ -415,6 +441,10 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
         iLastMsgType = EMsgMetaText;
+        break;
+    case EMsgStreamInterrupted:
+        msg = iMsgFactory->CreateMsgStreamInterrupted();
+        iLastMsgType = EMsgStreamInterrupted;
         break;
     case EMsgHalt:
         msg = iMsgFactory->CreateMsgHalt();
@@ -753,11 +783,13 @@ void SuiteRewinderMsgOrdering::InitMsgOrder()
 {
     iMsgOrder.push_back(EMsgFlush);
     iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(EMsgChangeInput);
     iMsgOrder.push_back(EMsgEncodedStream);
     for (TUint i = 0; i < 10; i++) {
         iMsgOrder.push_back(EMsgAudioEncoded);
     }
     iMsgOrder.push_back(EMsgMetaText);
+    iMsgOrder.push_back(EMsgStreamInterrupted);
     iMsgOrder.push_back(EMsgAudioEncoded);
     iMsgOrder.push_back(EMsgFlush);
     iMsgOrder.push_back(EMsgAudioEncoded);

@@ -151,7 +151,7 @@ VolumeReporter::VolumeReporter(IVolume& aVolume)
 {
 }
 
-void VolumeReporter::AddObserver(IVolumeObserver& aObserver)
+void VolumeReporter::AddVolumeObserver(IVolumeObserver& aObserver)
 {
     aObserver.VolumeChanged(iUpstreamVolume);
     iObservers.push_back(&aObserver);
@@ -193,7 +193,13 @@ void VolumeSourceOffset::SetVolumeOffset(TInt aOffset)
 
 void VolumeSourceOffset::SetVolume()
 {
-    const TUint volume = iUpstreamVolume + iSourceOffset;
+    TUint volume = iUpstreamVolume + iSourceOffset;
+    if (volume > iUpstreamVolume && iSourceOffset < 0) {
+        volume = 0;
+    }
+    else if (volume < iUpstreamVolume && iSourceOffset > 0) {
+        volume= iUpstreamVolume;
+    }
     iVolume.SetVolume(volume);
 }
 
@@ -360,7 +366,7 @@ MuteReporter::MuteReporter(Media::IMute& aMute)
 {
 }
 
-void MuteReporter::AddObserver(Media::IMuteObserver& aObserver)
+void MuteReporter::AddMuteObserver(Media::IMuteObserver& aObserver)
 {
     aObserver.MuteChanged(iMuted);
     iObservers.push_back(&aObserver);
@@ -581,23 +587,23 @@ VolumeManager::~VolumeManager()
     delete iVolumeSourceUnityGain;
 }
 
-void VolumeManager::AddObserver(IVolumeObserver& aObserver)
+void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
 {
     if (iVolumeReporter == NULL) {
         aObserver.VolumeChanged(0);
     }
     else {
-        iVolumeReporter->AddObserver(aObserver);
+        iVolumeReporter->AddVolumeObserver(aObserver);
     }
 }
 
-void VolumeManager::AddObserver(Media::IMuteObserver& aObserver)
+void VolumeManager::AddMuteObserver(Media::IMuteObserver& aObserver)
 {
     if (iMuteReporter == NULL) {
         aObserver.MuteChanged(false);
     }
     else {
-        iMuteReporter->AddObserver(aObserver);
+        iMuteReporter->AddMuteObserver(aObserver);
     }
 }
 
