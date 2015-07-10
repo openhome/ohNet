@@ -614,7 +614,7 @@ void ProcessorPcmSwpEndianPacked::SwapEndianness24(const Brx& aData)
 
 Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter)
 {
-    iContainer = new Container(aMsgFactory, aUpstreamElement);
+    iContainer = new Container(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // Construct push logger slightly out of sequence.
