@@ -213,7 +213,7 @@ void SuiteFlywheelRamper::Test1()
     TUint genSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, genJiffies, iBytesPerSample);
 
     // calculate bytes required to accommodate ramp audio samples
-    TUint rampJiffies = (TUint64)kRampMs* (TUint64)Jiffies::kPerSecond/1000);
+    TUint rampJiffies = kRampMs * Jiffies::kPerSecond / 1000;
     TUint rampSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, rampJiffies, iBytesPerSample);
 
     WriteOutHeader();

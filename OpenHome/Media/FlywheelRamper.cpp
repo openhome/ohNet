@@ -108,7 +108,7 @@ TInt32 FlywheelRamper::Sample(Bwx& aSample)
 
 TUint FlywheelRamper::Bytes(TUint aSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample)
 {
-    TUint64 bytes = (TUint64)(((TUint64)aChannelCount*aSampleRate*aBytesPerSample*aJiffies)/Jiffies::kPerSecond);
+    TUint64 bytes = (((TUint64)aChannelCount*aSampleRate*aBytesPerSample*aJiffies)/Jiffies::kPerSecond);
     //Log::Print("aChannelCount=%d  aSampleRate=%d  kBytesPerSample=%d  aJiffies=%d  Jiffies::kPerSecond=%d   bytes=%lld\n", aChannelCount, aSampleRate, kBytesPerSample, aJiffies, Jiffies::kPerSecond, bytes);
     return((TUint)bytes);
 }
