@@ -213,7 +213,7 @@ void SuiteFlywheelRamper::Test1()
     TUint genSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, genJiffies, iBytesPerSample);
 
     // calculate bytes required to accommodate ramp audio samples
-    TUint rampJiffies = kRampMs * Jiffies::kPerSecond / 1000;
+    TUint rampJiffies = (TUint)( (TUint64)kRampMs * (TUint64)Jiffies::kPerSecond / 1000);
     TUint rampSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, rampJiffies, iBytesPerSample);
 
     WriteOutHeader();
@@ -371,7 +371,7 @@ FormatConverter::FormatConverter(IWriter& aWriterLe, TUint aBitDepth)
 }
 
 
-void FormatConverter::Write(TByte aValue)
+void FormatConverter::Write(TByte /*aValue*/)
 {
     ASSERTS();
 }
@@ -417,7 +417,7 @@ void FormatConverter::WriteFlush()
 /////////////////////////////////////////////////////////////////
 
 
-void TestFlywheelRamperManual(Net::Library& aLib, TChar* aArgv[])
+void TestFlywheelRamperManual(Net::Library& /*aLib*/, TChar* aArgv[])
 {
     Runner runner("Testing FlywheelRamper");
     runner.Add(new SuiteFlywheelRamper(aArgv[1], aArgv[2]));
