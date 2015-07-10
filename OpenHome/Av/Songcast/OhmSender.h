@@ -9,7 +9,6 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
-#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 #include "Ohm.h"
 #include "OhmMsg.h"
@@ -21,13 +20,15 @@ class Environment;
 namespace Av {
 
 class ProviderSender;
+class IOhmTimestamper;
+class IOhmTimestampMapper;
 
 class OhmSenderDriver : public IOhmSenderDriver
 {
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kMaxHistoryFrames = 100;
 public:
-    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper);
+    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
     void SendAudio(const TByte* aData, TUint aBytes, TBool aHalt = false);
 private: // from IOhmSenderDriver
@@ -64,6 +65,7 @@ private:
     FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
     IOhmTimestamper* iTimestamper;
     TBool iFirstFrame;
+    IOhmTimestampMapper* iTsMapper;
 };
 
 class OhmSender

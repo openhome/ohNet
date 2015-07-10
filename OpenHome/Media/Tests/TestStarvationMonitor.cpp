@@ -67,6 +67,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgTrack
+       ,EMsgChangeInput
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -80,6 +81,7 @@ enum EMsgGenerationState
    ,EStateAudioFillInitial
    ,EStateAudioFillPostStarvation
    ,EStateHalt
+   ,EStateChangeInput
    ,EStateQuit
    ,EStateCompleted
 };
@@ -198,6 +200,15 @@ void SuiteStarvationMonitor::Test()
     msg->RemoveRef();
     TEST(iSm->PullWouldBlock());
 
+    // Send MsgChangeInput.  Check it can be pulled immediately.  Check pull would then block
+    Print("\nCheck ChangeInput is passed on immediately then pull would block\n");
+    GenerateUpstreamMsgs(EStateChangeInput);
+    msg = iSm->Pull();
+    (void)msg->Process(*this);
+    TEST(iLastMsg == EMsgChangeInput);
+    msg->RemoveRef();
+    TEST(iSm->PullWouldBlock());
+
     // Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
     // Continue adding audio until we reach gorge size.  Check enqueue would now block.
     Print("\nRe-fill until normal size\n");
@@ -313,11 +324,14 @@ Msg* SuiteStarvationMonitor::Pull()
         return msg;
     }
     case EStateHalt:
-        iMsgGenerationState = EStateQuit;
+        iMsgGenerationState = EStateWait;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgHalt();
+    case EStateChangeInput:
+        iMsgGenerationState = EStateWait;
+        iSemUpstreamCompleted.Signal();
+        return iMsgFactory->CreateMsgChangeInput(Functor());
     case EStateQuit:
-        iSemUpstream.Wait();
         iMsgGenerationState = EStateCompleted;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgQuit();
@@ -357,10 +371,10 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* aMsg)
 {
-    ASSERTS(); // MsgChangeInput not used in this test
-    return NULL;
+    iLastMsg = EMsgChangeInput;
+    return aMsg;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDelay* /*aMsg*/)

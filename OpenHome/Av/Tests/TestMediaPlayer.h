@@ -93,8 +93,8 @@ public:
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent);
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
-    void SetSongcastTxTimestamper(IOhmTimestamper& aTimestamper);
-    void SetSongcastRxTimestamper(IOhmTimestamper& aTimestamper);
+    void SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper);
+    void SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -143,9 +143,11 @@ private:
     Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
-    Av::IOhmTimestamper* iTxTimestamper;
-    Av::IOhmTimestamper* iRxTimestamper;
+    IOhmTimestamper* iTxTimestamper;
+    IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;
+    IOhmTimestampMapper* iTxTsMapper;
+    IOhmTimestampMapper* iRxTsMapper;
 };
 
 class TestMediaPlayerOptions

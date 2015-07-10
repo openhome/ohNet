@@ -16,6 +16,7 @@ namespace Av {
 class ISource;
 class IMediaPlayer;
 class IOhmTimestamper;
+class IOhmTimestampMapper;
 
 class SourceFactory
 {
@@ -25,7 +26,13 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols);
     static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
-    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, IOhmTimestamper* aTxTimestamper, IOhmTimestamper* aRxTimestamper, const Brx& aSenderIconFileName);
+    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
+                                Media::IPullableClock* aPullableClock,
+                                IOhmTimestamper* aTxTimestamper,
+                                IOhmTimestampMapper* aTxTsMapper,
+                                IOhmTimestamper* aRxTimestamper,
+                                IOhmTimestampMapper* aRxTsMapper,
+                                const Brx& aSenderIconFileName);
 };
 
 } // namespace Av

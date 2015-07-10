@@ -6,6 +6,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/Ohm.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 namespace OpenHome {
 namespace Av {
@@ -13,7 +14,7 @@ namespace Av {
 class CodecOhm : public Media::Codec::CodecBase, private IReader
 {
 public:
-    CodecOhm(OhmMsgFactory& aMsgFactory);
+    CodecOhm(OhmMsgFactory& aMsgFactory, IOhmTimestampMapper* aTsMapper);
     ~CodecOhm();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType) override;
@@ -35,6 +36,7 @@ private:
     TBool iSendSession;
     TUint iSampleRate;
     TUint iLatency;
+    IOhmTimestampMapper* iTsMapper;
 };
 
 } // namespace Av

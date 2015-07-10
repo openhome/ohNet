@@ -29,14 +29,22 @@ const Brn Sender::kConfigIdChannel("Sender.Channel");
 const Brn Sender::kConfigIdMode("Sender.Mode");
 const Brn Sender::kConfigIdPreset("Sender.Preset");
 
-Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, IOhmTimestamper* aTimestamper, IConfigInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
+Sender::Sender(Environment& aEnv,
+               Net::DvDeviceStandard& aDevice,
+               ZoneHandler& aZoneHandler,
+               IOhmTimestamper* aTimestamper,
+               IOhmTimestampMapper* aTsMapper,
+               Configuration::IConfigInitialiser& aConfigInit,
+               const Brx& aName,
+               TUint aMinLatencyMs,
+               const Brx& aIconFileName)
     : iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
-    iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper);
+    iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper, aTsMapper);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
 
