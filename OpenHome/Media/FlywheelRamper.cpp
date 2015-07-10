@@ -106,11 +106,11 @@ TInt32 FlywheelRamper::Sample(Bwx& aSample)
     return(sample);
 }
 
-TUint64 FlywheelRamper::Bytes(TUint aSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample)
+TUint FlywheelRamper::Bytes(TUint aSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample)
 {
     TUint64 bytes = (TUint64)(((TUint64)aChannelCount*aSampleRate*aBytesPerSample*aJiffies)/Jiffies::kPerSecond);
     //Log::Print("aChannelCount=%d  aSampleRate=%d  kBytesPerSample=%d  aJiffies=%d  Jiffies::kPerSecond=%d   bytes=%lld\n", aChannelCount, aSampleRate, kBytesPerSample, aJiffies, Jiffies::kPerSecond, bytes);
-    return(bytes);
+    return((TUint)bytes);
 }
 
 
@@ -318,7 +318,7 @@ FeedbackModel::FeedbackModel(const std::vector<TInt32>& aCoeffs)
 }
 
 
-void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount)
+void FeedbackModel::Process(const Brx& /*aSamplesIn*/, Bwx& /*aSamplesOut*/, TUint /*aCount*/)
 {
 
 }

@@ -38,7 +38,7 @@ public:
     TUint GenerationJiffies() const;
     TUint RampMs() const;
 
-    static TUint64 Bytes(TUint iSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample);
+    static TUint Bytes(TUint iSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample);
     static void LogBuf(const Brx& aBuf);
 
 
@@ -114,7 +114,7 @@ private:
 //
 // for n=1 to x (where x= num samples in + num coeffs -1):
 
-class ConvolutionModel
+class ConvolutionModel : public INonCopyable
 {
 public:
     ConvolutionModel(const std::vector<TInt32>& aCoeffs);
@@ -128,7 +128,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FeedbackModel
+class FeedbackModel : public INonCopyable
 {
 public:
     FeedbackModel(const std::vector<TInt32>& aCoeffs);
