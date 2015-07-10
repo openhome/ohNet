@@ -203,18 +203,18 @@ void SuiteFlywheelRamper::Test1()
 {
     Log::Print("\n");
 
-    const TUint kRampMs = 1000; // 100ms
-    const TUint kGenJiffies = Jiffies::kPerSecond/1; // 100ms
+    const TUint kRampMs = 100; // 100ms
+    const TUint kGenJiffies = Jiffies::kPerSecond/10; // 100ms
 
     auto ramper = new FlywheelRamper(kGenJiffies, kRampMs);
 
     // calculate bytes of audio samples required to generate a ramp
     TUint genJiffies = ramper->GenerationJiffies(); // should = kGenJiffies
-    TUint64 genSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, genJiffies, iBytesPerSample);
+    TUint genSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, genJiffies, iBytesPerSample);
 
     // calculate bytes required to accommodate ramp audio samples
-    TUint64 rampJiffies = (TUint64)(kRampMs*Jiffies::kPerSecond/1000);
-    TUint64 rampSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, rampJiffies, iBytesPerSample);
+    TUint rampJiffies = (TUint64)kRampMs* (TUint64)Jiffies::kPerSecond/1000);
+    TUint rampSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, rampJiffies, iBytesPerSample);
 
     WriteOutHeader();
 
