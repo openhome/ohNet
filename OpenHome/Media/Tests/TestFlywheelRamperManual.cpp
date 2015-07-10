@@ -56,7 +56,7 @@ private:
 
 //////////////////////////////////////////////////////////////
 
-class FormatConverter : public IWriter
+class FormatConverter : public IWriter, public INonCopyable
 {
 public:
     FormatConverter(IWriter& aWriterLe, TUint aOutputBytesPerSample);
