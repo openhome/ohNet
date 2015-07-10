@@ -236,6 +236,7 @@ def build(bld):
                 'OpenHome/Media/ClockPuller.cpp',
                 'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
+                'OpenHome/Media/FlywheelRamper.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
@@ -581,6 +582,8 @@ def build(bld):
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
                 'OpenHome/Media/Tests/TestTimestampInspector.cpp',
                 'OpenHome/Media/Tests/TestRamper.cpp',
+                'OpenHome/Media/Tests/TestFlywheelRamper.cpp',
+                'OpenHome/Media/Tests/TestFlywheelRamperManual.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestSpotifyReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
@@ -701,6 +704,16 @@ def build(bld):
             source='OpenHome/Media/Tests/TestRamperMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRamper',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestFlywheelRamperManualMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestFlywheelRamperManual',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestFlywheelRamperMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestFlywheelRamper',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestReporterMain.cpp',
