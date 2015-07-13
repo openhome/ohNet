@@ -1373,7 +1373,7 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                             if (iBoxStack.Id() == Brn("esds")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                Log::Print("found esds stream descriptor box\n");
+                                                                //Log::Print("found esds stream descriptor box\n");
 
                                                                 ParseBoxStreamDescriptor(iBoxStack, iBoxStack.Size());
                                                                 break;
@@ -1395,7 +1395,7 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                             if (iBoxStack.Id() == Brn("alac")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                Log::Print("found alac stream descriptor box\n");
+                                                                //Log::Print("found alac stream descriptor box\n");
                                                                 ParseBoxAlac(iBoxStack, iBoxStack.Size());
                                                                 break;
                                                             }
