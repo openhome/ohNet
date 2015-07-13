@@ -339,6 +339,7 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     iController->AddCodec(CodecFactory::NewAac());
     iController->AddCodec(CodecFactory::NewAdts());
     iController->AddCodec(CodecFactory::NewAlac());
+    iController->AddCodec(CodecFactory::NewMp3());
     iController->AddCodec(CodecFactory::NewVorbis());
 }
 
