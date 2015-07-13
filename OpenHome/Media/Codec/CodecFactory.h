@@ -19,6 +19,7 @@ public:
     static CodecBase* NewAlac();
     static CodecBase* NewAdts();
     static CodecBase* NewFlac();
+    static CodecBase* NewMp3();
     static CodecBase* NewPcm();
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
