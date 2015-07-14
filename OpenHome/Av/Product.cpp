@@ -71,8 +71,8 @@ void Product::Start()
     }
     iStarted = true;
     iSourceXmlChangeCount++;
-    for (TUint i=0; i<iObservers.size(); i++) {
-        iObservers[i]->Started();
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->Started();
     }
 }
 
@@ -149,8 +149,8 @@ void Product::SetStandby(TBool aStandby)
     }
     iLock.Signal();
     if (changed) {
-        for (TUint i=0; i<iObservers.size(); i++) {
-            iObservers[i]->StandbyChanged();
+        for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+            (*it)->StandbyChanged();
             // FIXME - other observers to notify. (e.g. to disable any hardware)
         }
     }
@@ -195,14 +195,32 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
 
 void Product::ProductRoomChanged(KeyValuePair<const Brx&>& aKvp)
 {
-    AutoMutex a(iLockDetails);
-    iProductRoom.Replace(aKvp.Value());
+    {
+        AutoMutex a(iLockDetails);
+        const TBool changed = (iProductRoom != aKvp.Value());
+        if (!changed) {
+            return;
+        }
+        iProductRoom.Replace(aKvp.Value());
+    }
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->RoomChanged();
+    }
 }
 
 void Product::ProductNameChanged(KeyValuePair<const Brx&>& aKvp)
 {
-    AutoMutex a(iLockDetails);
-    iProductName.Replace(aKvp.Value());
+    {
+        AutoMutex a(iLockDetails);
+        const TBool changed = (iProductName != aKvp.Value());
+        if (!changed) {
+            return;
+        }
+        iProductName.Replace(aKvp.Value());
+    }
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->NameChanged();
+    }
 }
 
 void Product::SetCurrentSource(TUint aIndex)
@@ -221,8 +239,8 @@ void Product::SetCurrentSource(TUint aIndex)
     iStartupSource->Set(iSources[iCurrentSource]->SystemName());
     iSources[iCurrentSource]->Activate();
 
-    for (TUint i=0; i<iObservers.size(); i++) {
-        iObservers[i]->SourceIndexChanged();
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->SourceIndexChanged();
     }
 }
 
@@ -238,8 +256,8 @@ void Product::SetCurrentSource(const Brx& aName)
             iCurrentSource = i;
             iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             iSources[iCurrentSource]->Activate();
-            for (TUint i=0; i<iObservers.size(); i++) {
-                iObservers[i]->SourceIndexChanged();
+            for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+                (*it)->SourceIndexChanged();
             }
             return;
         }
@@ -289,8 +307,8 @@ void Product::Activate(ISource& aSource)
             iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
             srcNew->Activate();
-            for (TUint i=0; i<iObservers.size(); i++) {
-                iObservers[i]->SourceIndexChanged();
+            for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+                (*it)->SourceIndexChanged();
             }
             return;
         }
@@ -303,8 +321,8 @@ void Product::NotifySourceNameChanged(ISource& /*aSource*/)
     iLock.Wait();
     iSourceXmlChangeCount++;
     iLock.Signal();
-    for (TUint i=0; i<iObservers.size(); i++) {
-        iObservers[i]->SourceXmlChanged();
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->SourceXmlChanged();
     }
 }
 
