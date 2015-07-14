@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <FLAC/format.h>
 #include <FLAC/stream_decoder.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -136,6 +137,8 @@ CodecFlac::CodecFlac()
 {
     iDecoder = FLAC__stream_decoder_new();
     ASSERT(iDecoder != NULL);
+    // By default, only the STREAMINFO metadata block is returned, but let's just explicitly tell the decoder that's all we want.
+    ASSERT(FLAC__stream_decoder_set_metadata_respond(iDecoder, FLAC__METADATA_TYPE_STREAMINFO));
 }
 
 CodecFlac::~CodecFlac()

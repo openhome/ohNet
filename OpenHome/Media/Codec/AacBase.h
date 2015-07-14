@@ -35,7 +35,7 @@ protected: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 protected:
-    void ProcessHeader();
+    void InitialiseDecoder();
     void DecodeFrame(TBool aParseOnly);
     void FlushOutput();
 private:

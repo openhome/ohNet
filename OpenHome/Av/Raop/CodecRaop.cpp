@@ -88,7 +88,7 @@ void CodecRaop::StreamInitialise()
 
 
     //LOG(kCodec, "CodecRaop::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, iBitDepth, iTimescale, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
+    iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecRaop::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -181,8 +181,8 @@ void CodecRaop::ParseFmtp(const Brx& aFmtp)
         writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 82
         writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 86
 
-        iTimescale = Ascii::Uint(p.Next());
-        writerBin.WriteUint32Be(iTimescale);
+        iSampleRate = Ascii::Uint(p.Next());
+        writerBin.WriteUint32Be(iSampleRate);
     }
     catch (AsciiError&) {
         THROW(CodecStreamCorrupt);

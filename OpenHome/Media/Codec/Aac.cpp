@@ -232,7 +232,7 @@ void CodecAac::StreamInitialise()
     iSamplesTotal = info.Duration();
 
     iBytesPerSample = iChannels*iBitDepth/8;
-    ProcessHeader();
+    InitialiseDecoder();
 
     iTrackLengthJiffies = (iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
     iTrackOffset = 0;

@@ -326,6 +326,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewMp3());
     iMediaPlayer->Add(Codec::CodecFactory::NewPcm());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
@@ -599,7 +600,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-    Debug::SetLevel(Debug::kMedia | Debug::kSongcast | Debug::kPipeline);
+    Debug::SetLevel(Debug::kPipeline);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
