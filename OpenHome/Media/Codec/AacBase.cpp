@@ -312,7 +312,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
     }
 }
 
-void CodecAacBase::ProcessHeader()
+void CodecAacBase::InitialiseDecoder()
 {
     TUint error = false;
     //LOG(kCodec, "CodecAac::ProcessHeader()\n");
