@@ -30,13 +30,11 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Create lib.
     Library* lib = TestMediaPlayerInit::CreateLibrary(options.Loopback().Value(), options.Adapter().Value());
-#if 0
-    Media::PriorityArbitratorDriver arbDriver(kPrioritySystemHighest);
+    Media::PriorityArbitratorAnimator arbAnimator(kPrioritySystemHighest);
     ThreadPriorityArbitrator& priorityArbitrator = lib->Env().PriorityArbitrator();
-    priorityArbitrator.Add(arbDriver);
+    priorityArbitrator.Add(arbAnimator);
     Media::PriorityArbitratorPipeline arbPipeline(kPrioritySystemHighest-1);
     priorityArbitrator.Add(arbPipeline);
-#endif
     const TChar* cookie ="TestMediaPlayerMain";
     NetworkAdapter* adapter = lib->CurrentSubnetAdapter(cookie);
     Net::DvStack* dvStack = lib->StartDv();

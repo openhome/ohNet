@@ -12,11 +12,11 @@
 namespace OpenHome {
     class Environment;
 namespace Media {
-#if 0
-class PriorityArbitratorDriver : public IPriorityArbitrator, private INonCopyable
+
+class PriorityArbitratorAnimator : public IPriorityArbitrator, private INonCopyable
 {
 public:
-    PriorityArbitratorDriver(TUint aOpenHomeMax);
+    PriorityArbitratorAnimator(TUint aOpenHomeMax);
 private: // from IPriorityArbitrator
     TUint Priority(const TChar* aId, TUint aRequested, TUint aHostMax) override;
     TUint OpenHomeMin() const override;
@@ -25,7 +25,7 @@ private: // from IPriorityArbitrator
 private:
     const TUint iOpenHomeMax;
 };
-#endif
+
 class AnimatorBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineAnimator
 {
     static const TUint kTimerFrequencyMs = 5;
