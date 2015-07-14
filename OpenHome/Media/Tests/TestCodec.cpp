@@ -534,17 +534,17 @@ Brx* SuiteCodecStream::StartStreaming(const Brx& aTestName, const Brx& aFilename
 
 void SuiteCodecStream::TestJiffies()
 {
-        Brn filename(iFiles[iFileNum].Filename());
-        TUint64 jiffies = iFiles[iFileNum].Jiffies();
-        iFileNum++;
+    Brn filename(iFiles[iFileNum].Filename());
+    TUint64 jiffies = iFiles[iFileNum].Jiffies();
+    iFileNum++;
 
-        Brx* fileLocation = StartStreaming(Brn("SuiteCodecStream"), filename);
-        iSem.Wait();
-        delete fileLocation;
+    Brx* fileLocation = StartStreaming(Brn("SuiteCodecStream"), filename);
+    iSem.Wait();
+    delete fileLocation;
 
-        //LOG(kMedia, "iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
-        Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
-        TEST(iJiffies == jiffies);
+    //LOG(kMedia, "iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+    Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+    TEST(iJiffies == jiffies);
 }
 
 
