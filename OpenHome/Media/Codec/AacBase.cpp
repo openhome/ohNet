@@ -276,7 +276,9 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
 
     /* end spline resampler */
 
-    if (!aParseOnly && (iFrameCounter > 0)) { // SBR incorrect on AAC+ first frame so skip
+    // SBR incorrect on AAC+ first frame so skip.
+    // Reference decoder also skips first frame.
+    if (!aParseOnly && (iFrameCounter > 0)) {
         /* interleave time samples */
         InterleaveSamples(&iTimeData[0],&iTimeData[2 * kSamplesPerFrame], (Word16 *)iDecodedBuf.Ptr(),frameSize,&numChannels);
         iDecodedBuf.SetBytes(numOutSamples * iBytesPerSample);
@@ -334,7 +336,6 @@ void CodecAacBase::ProcessHeader()
         LOG(kCodec, "CodecAacBase::ProcessHeader throwing CodecStreamCorrupt\n");
         THROW(CodecStreamCorrupt);
     }
-
 }
 
 #include <stdio.h>
