@@ -91,10 +91,11 @@ AudioFileCollection* TestCodecFiles()
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::kCodecMp3, true));
 #endif
     // File with embedded cover art
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::kCodecVorbis, false));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecVorbis, false));
-    // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
-    //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::kCodecVorbis));
+    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::kCodecVorbis, true));
+    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecVorbis, true));
+    // 3s-stereo-44k-q5-coverart.ogg currently used to fail to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
+    // However, the combination of out-of-band seeking and Rewinder element should now avoid that problem for small files.
+    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::kCodecVorbis, true));
 
     return new AudioFileCollection(minFiles, extraFiles, invalidFiles, streamOnlyFiles);
 }
