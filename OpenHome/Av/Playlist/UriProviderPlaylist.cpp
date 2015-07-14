@@ -15,7 +15,7 @@ using namespace OpenHome::Media;
 // UriProviderPlaylist
 
 UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver)
-    : UriProvider("Playlist", false, false)
+    : UriProvider("Playlist", LatencyNotSupported, RealTimeNotSupported, NextSupported, PrevSupported)
     , iLock("UPPL")
     , iDatabase(aDatabase)
     , iIdManager(aPipeline)
@@ -219,6 +219,10 @@ void UriProviderPlaylist::NotifyAllDeleted()
 }
 
 void UriProviderPlaylist::NotifyPipelineState(EPipelineState /*aState*/)
+{
+}
+
+void UriProviderPlaylist::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
 {
 }
 

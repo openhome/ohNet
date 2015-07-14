@@ -44,6 +44,10 @@ void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
+void NullPipelineObserver::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
+}
+
 void NullPipelineObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
 }
@@ -101,6 +105,17 @@ void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
         ASSERTS();
     }
     Log::Print("Pipeline state change: %s\n", state);
+}
+
+void LoggingPipelineObserver::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+    if (!iEnable) {
+        return;
+    }
+    Log::Print("Pipeline report property: MODE {mode=");
+    Log::Print(aMode);
+    Log::Print("; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
+        aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
 }
 
 void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)

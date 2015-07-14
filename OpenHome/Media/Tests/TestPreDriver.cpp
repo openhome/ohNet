@@ -186,7 +186,7 @@ Msg* SuitePreDriver::Pull()
         iNextGeneratedMsg = EMsgSilence;
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL);
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL, false, false);
     case EMsgChangeInput:
         return iMsgFactory->CreateMsgChangeInput(Functor());
     case EMsgEncodedStream:

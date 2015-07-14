@@ -202,6 +202,16 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
+void TestProtocol::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+#ifdef LOG_PIPELINE_OBSERVER
+    Log::Print("Pipeline report property: MODE {mode=");
+    Log::Print(aMode);
+    Log::Print("; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
+        aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
+#endif
+}
+
 void TestProtocol::NotifyTrack(const Brx& aUri, const Brx& aMode, TBool /*aStartOfStream*/)
 {
 #ifdef LOG_PIPELINE_OBSERVER

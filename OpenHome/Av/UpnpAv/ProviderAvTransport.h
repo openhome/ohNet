@@ -10,11 +10,9 @@
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
 
 namespace OpenHome {
-using namespace Net;
-using namespace Media;
 namespace Av {
 
-class ProviderAvTransport : public DvProviderUpnpOrgAVTransport1, public IPipelineObserver
+class ProviderAvTransport : public Net::DvProviderUpnpOrgAVTransport1, public Media::IPipelineObserver
 {
     typedef Bws<7> BwsTime; // H:MM:SS format
 public:
@@ -42,34 +40,35 @@ public:
 public:
     ProviderAvTransport(Net::DvDevice& aDevice, Environment& aEnv, ISourceUpnpAv& aSourceUpnpAv);
     ~ProviderAvTransport();
-private: // from DvProviderUpnpOrgAvTransport1
-    void SetAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData) override;
-    void GetMediaInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aNrTracks,
-                      IDvInvocationResponseString& aMediaDuration, IDvInvocationResponseString& aCurrentURI,
-                      IDvInvocationResponseString& aCurrentURIMetaData, IDvInvocationResponseString& aNextURI,
-                      IDvInvocationResponseString& aNextURIMetaData, IDvInvocationResponseString& aPlayMedium,
-                      IDvInvocationResponseString& aRecordMedium, IDvInvocationResponseString& aWriteStatus) override;
-    void GetTransportInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentTransportState,
-                          IDvInvocationResponseString& aCurrentTransportStatus, IDvInvocationResponseString& aCurrentSpeed) override;
-    void GetPositionInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aTrack,
-                         IDvInvocationResponseString& aTrackDuration, IDvInvocationResponseString& aTrackMetaData,
-                         IDvInvocationResponseString& aTrackURI, IDvInvocationResponseString& aRelTime, IDvInvocationResponseString& aAbsTime,
-                         IDvInvocationResponseInt& aRelCount, IDvInvocationResponseInt& aAbsCount) override;
-    void GetDeviceCapabilities(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMedia, 
-                               IDvInvocationResponseString& aRecMedia, IDvInvocationResponseString& aRecQualityModes) override;
-    void GetTransportSettings(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMode, IDvInvocationResponseString& aRecQualityMode) override;
-    void Stop(IDvInvocation& aInvocation, TUint aInstanceID) override;
-    void Play(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed) override;
-    void Pause(IDvInvocation& aInvocation, TUint aInstanceID) override;
-    void Seek(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget) override;
-    void Next(IDvInvocation& aInvocation, TUint aInstanceID) override;
-    void Previous(IDvInvocation& aInvocation, TUint aInstanceID) override;
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
+private: // from Net::DvProviderUpnpOrgAvTransport1
+    void SetAVTransportURI(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData) override;
+    void GetMediaInfo(Net::IDvInvocation& aInvocation, TUint aInstanceID, Net::IDvInvocationResponseUint& aNrTracks,
+                      Net::IDvInvocationResponseString& aMediaDuration, Net::IDvInvocationResponseString& aCurrentURI,
+                      Net::IDvInvocationResponseString& aCurrentURIMetaData, Net::IDvInvocationResponseString& aNextURI,
+                      Net::IDvInvocationResponseString& aNextURIMetaData, Net::IDvInvocationResponseString& aPlayMedium,
+                      Net::IDvInvocationResponseString& aRecordMedium, Net::IDvInvocationResponseString& aWriteStatus) override;
+    void GetTransportInfo(Net::IDvInvocation& aInvocation, TUint aInstanceID, Net::IDvInvocationResponseString& aCurrentTransportState,
+                          Net::IDvInvocationResponseString& aCurrentTransportStatus, Net::IDvInvocationResponseString& aCurrentSpeed) override;
+    void GetPositionInfo(Net::IDvInvocation& aInvocation, TUint aInstanceID, Net::IDvInvocationResponseUint& aTrack,
+                         Net::IDvInvocationResponseString& aTrackDuration, Net::IDvInvocationResponseString& aTrackMetaData,
+                         Net::IDvInvocationResponseString& aTrackURI, Net::IDvInvocationResponseString& aRelTime, Net::IDvInvocationResponseString& aAbsTime,
+                         Net::IDvInvocationResponseInt& aRelCount, Net::IDvInvocationResponseInt& aAbsCount) override;
+    void GetDeviceCapabilities(Net::IDvInvocation& aInvocation, TUint aInstanceID, Net::IDvInvocationResponseString& aPlayMedia,
+                               Net::IDvInvocationResponseString& aRecMedia, Net::IDvInvocationResponseString& aRecQualityModes) override;
+    void GetTransportSettings(Net::IDvInvocation& aInvocation, TUint aInstanceID, Net::IDvInvocationResponseString& aPlayMode, Net::IDvInvocationResponseString& aRecQualityMode) override;
+    void Stop(Net::IDvInvocation& aInvocation, TUint aInstanceID) override;
+    void Play(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed) override;
+    void Pause(Net::IDvInvocation& aInvocation, TUint aInstanceID) override;
+    void Seek(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget) override;
+    void Next(Net::IDvInvocation& aInvocation, TUint aInstanceID) override;
+    void Previous(Net::IDvInvocation& aInvocation, TUint aInstanceID) override;
+private: // from Media::IPipelineObserver
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     void QueueStateUpdate();
     void ModerationTimerExpired();
@@ -96,10 +95,10 @@ private:
     TUint32 iNumberOfTracks;
     TUint32 iCurrentTrack;
     BwsTime iTrackDuration;
-    BwsTrackUri iCurrentTrackUri;
-    BwsTrackUri iAvTransportUri;
-    BwsTrackMetaData iCurrentTrackMetaData;
-    BwsTrackMetaData iAvTransportUriMetaData;
+    Media::BwsTrackUri iCurrentTrackUri;
+    Media::BwsTrackUri iAvTransportUri;
+    Media::BwsTrackMetaData iCurrentTrackMetaData;
+    Media::BwsTrackMetaData iAvTransportUriMetaData;
 
     // These state variables are currently implemented but their values do not change
     const Brn iPossiblePlaybackStorageMedia;

@@ -8,22 +8,21 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 
 namespace OpenHome {
-using namespace Net;
 namespace Av {
 
-class ProviderConnectionManager : public DvProviderUpnpOrgConnectionManager1
+class ProviderConnectionManager : public Net::DvProviderUpnpOrgConnectionManager1
 {
     static const TUint kConnectionId = 0; // we don't implement the PrepareForConnection action - only connectionID 0 is valid
 public:
     ProviderConnectionManager(Net::DvDevice& aDevice, const Brx& aSinkProtocolInfo);
     ~ProviderConnectionManager();
-private: // from DvProviderUpnpOrgConnectionManager1
-    void GetProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aSource, IDvInvocationResponseString& aSink) override;
-    void GetCurrentConnectionIDs(IDvInvocation& aInvocation, IDvInvocationResponseString& aConnectionIDs) override;
-    void GetCurrentConnectionInfo(IDvInvocation& aInvocation, TInt aConnectionID, IDvInvocationResponseInt& aRcsID,
-                                  IDvInvocationResponseInt& aAVTransportID, IDvInvocationResponseString& aProtocolInfo,
-                                  IDvInvocationResponseString& aPeerConnectionManager, IDvInvocationResponseInt& aPeerConnectionID,
-                                  IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus) override;
+private: // from Net::DvProviderUpnpOrgConnectionManager1
+    void GetProtocolInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aSource, Net::IDvInvocationResponseString& aSink) override;
+    void GetCurrentConnectionIDs(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aConnectionIDs) override;
+    void GetCurrentConnectionInfo(Net::IDvInvocation& aInvocation, TInt aConnectionID, Net::IDvInvocationResponseInt& aRcsID,
+                                  Net::IDvInvocationResponseInt& aAVTransportID, Net::IDvInvocationResponseString& aProtocolInfo,
+                                  Net::IDvInvocationResponseString& aPeerConnectionManager, Net::IDvInvocationResponseInt& aPeerConnectionID,
+                                  Net::IDvInvocationResponseString& aDirection, Net::IDvInvocationResponseString& aStatus) override;
 private:
     Brn iSinkProtocolInfo;
 };

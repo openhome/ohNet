@@ -19,6 +19,7 @@ namespace Media {
 class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
 {
 public: // from IPipelinePropertyObserver
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -100,6 +101,10 @@ private:
 
 // HelperPipelinePropertyObserver
 
+void HelperPipelinePropertyObserver::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
+}
+
 void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
 
@@ -165,7 +170,7 @@ Msg* SuiteSpotifyReporter::Pull()
     switch (iNextGeneratedMsg)
     {
     case EMsgMode:
-        iLastMsg = iMsgFactory->CreateMsgMode(Brn("null"), false, true, NULL);
+        iLastMsg = iMsgFactory->CreateMsgMode(Brn("null"), false, true, NULL, false, false);
         return iLastMsg;
     case EMsgSession:
         iLastMsg = iMsgFactory->CreateMsgSession();

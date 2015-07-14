@@ -11,7 +11,6 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
-using namespace Net;
 namespace Av {
 
 class ISourceReceiver
@@ -23,18 +22,18 @@ public:
     virtual void SetSender(const Brx& aUri, const Brx& aMetadata) = 0;
 };
 
-class ProviderReceiver : public DvProviderAvOpenhomeOrgReceiver1
+class ProviderReceiver : public Net::DvProviderAvOpenhomeOrgReceiver1
 {
 public:
     ProviderReceiver(Net::DvDevice& aDevice, ISourceReceiver& aSource, const TChar* aProtocolInfo);
     void NotifyPipelineState(Media::EPipelineState aState);
 private: // from DvProviderAvOpenhomeOrgReceiver1
-    void Play(IDvInvocation& aInvocation) override;
-    void Stop(IDvInvocation& aInvocation) override;
-    void SetSender(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata) override;
-    void Sender(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata) override;
-    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
-    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
+    void Play(Net::IDvInvocation& aInvocation) override;
+    void Stop(Net::IDvInvocation& aInvocation) override;
+    void SetSender(Net::IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata) override;
+    void Sender(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aUri, Net::IDvInvocationResponseString& aMetadata) override;
+    void ProtocolInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void TransportState(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
 private:
     Mutex iLock;
     ISourceReceiver& iSource;

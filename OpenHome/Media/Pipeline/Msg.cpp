@@ -801,7 +801,31 @@ void Track::Clear()
 #endif // DEFINE_DEBUG
 }
 
-    
+
+// ModeInfo
+
+ModeInfo::ModeInfo()
+{
+    Clear();
+}
+
+void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext, TBool aSupportsPrev)
+{
+    iSupportsLatency = aSupportsLatency;
+    iRealTime        = aRealTime;
+    iSupportsNext    = aSupportsNext;
+    iSupportsPrev    = aSupportsPrev;
+}
+
+void ModeInfo::Clear()
+{
+    iSupportsLatency = false;
+    iRealTime        = false;
+    iSupportsNext    = false;
+    iSupportsPrev    = false;
+}
+
+
 // MsgMode
 
 MsgMode::MsgMode(AllocatorBase& aAllocator)
@@ -814,14 +838,9 @@ const Brx& MsgMode::Mode() const
     return iMode;
 }
 
-TBool MsgMode::SupportsLatency() const
+const ModeInfo& MsgMode::Info() const
 {
-    return iSupportsLatency;
-}
-
-TBool MsgMode::IsRealTime() const
-{
-    return iIsRealTime;
+    return iInfo;
 }
 
 IClockPuller* MsgMode::ClockPuller() const
@@ -829,18 +848,17 @@ IClockPuller* MsgMode::ClockPuller() const
     return iClockPuller;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller)
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iMode.Replace(aMode);
-    iSupportsLatency = aSupportsLatency;
-    iIsRealTime = aIsRealTime;
+    iInfo.Set(aSupportsLatency, aIsRealTime, aSupportsNext, aSupportsPrev);
     iClockPuller = aClockPuller;
 }
 
 void MsgMode::Clear()
 {
     iMode.Replace(Brx::Empty());
-    iSupportsLatency = iIsRealTime = false;
+    iInfo.Clear();
     iClockPuller = NULL;
 }
 
@@ -2710,10 +2728,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPuller);
+    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPuller, aSupportsNext, aSupportsPrev);
     return msg;
 }
 

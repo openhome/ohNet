@@ -158,7 +158,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
     case EMsgMode:
     {
         IClockPuller* clockPuller = (iUseClockPuller? &iClockPuller : NULL);
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPuller);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPuller, false, false);
     }
         break;
     case EMsgSession:

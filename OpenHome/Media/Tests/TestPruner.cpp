@@ -373,7 +373,7 @@ Msg* SuitePruner::Pull()
     switch (msgType)
     {
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
     case EMsgSession:
         return iMsgFactory->CreateMsgSession();
     case EMsgTrack:

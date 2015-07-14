@@ -11,7 +11,7 @@ using namespace OpenHome::Media;
 // UriProviderRepeater
 
 UriProviderRepeater::UriProviderRepeater(const TChar* aMode, TrackFactory& aTrackFactory)
-    : UriProvider(aMode, false, false)
+    : UriProvider(aMode, LatencyNotSupported, RealTimeNotSupported, NextNotSupported, PrevNotSupported)
     , iLock("UPRP")
     , iTrackFactory(aTrackFactory)
     , iTrack(NULL)

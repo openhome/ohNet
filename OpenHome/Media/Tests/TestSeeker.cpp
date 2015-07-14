@@ -435,7 +435,7 @@ void SuiteSeeker::SeekResponseThread()
 
 void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));

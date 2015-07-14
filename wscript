@@ -162,6 +162,8 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Volume1.xml', 'av.openhome.org', 'Volume', '1', 'AvOpenhomeOrgVolume1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Configuration1.xml', 'av.openhome.org', 'Configuration', '1', 'AvOpenhomeOrgConfiguration1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Credentials1.xml', 'av.openhome.org', 'Credentials', '1', 'AvOpenhomeOrgCredentials1'),
+        #GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Eriskay/TransportControl1.xml', 'openhome.org.eriskay', 'TransportControl', '1', 'OpenhomeOrgEriskayTransportControl1'),
+        #GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Eriskay/Transport1.xml', 'openhome.org.eriskay', 'Transport', '1', 'OpenhomeOrgEriskayTransport1'),
     ]
 
 def build(bld):
@@ -289,6 +291,9 @@ def build(bld):
                 'OpenHome/Av/ProviderCredentials.cpp',
                 'OpenHome/ObservableBrx.cpp',
                 'OpenHome/Av/VolumeManager.cpp',
+                #'OpenHome/Av/TransportControl.cpp',
+                #'Generated/DvOpenhomeOrgEriskayTransportControl1.cpp',
+                #'OpenHome/Av/ProviderTransportControlEriskay.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'ohPipeline'],
             target='ohMediaPlayer')

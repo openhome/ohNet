@@ -198,7 +198,7 @@ Msg* ElementFileReader::Pull()
         const TBool supportsLatency = false;
         const TBool realTime = false;
         IClockPuller* clockPuller = NULL;
-        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller);
+        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller, false, false);
         iMode = eSession;
     }
     else if (iMode == eSession) {

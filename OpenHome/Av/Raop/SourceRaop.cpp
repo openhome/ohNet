@@ -324,6 +324,10 @@ void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)
     iLock.Signal();
 }
 
+void SourceRaop::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
+}
+
 void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
     iLock.Wait();

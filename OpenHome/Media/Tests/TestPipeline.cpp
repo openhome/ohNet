@@ -81,6 +81,7 @@ private:
     void TestRampsUp(TUint aMaxMsgs);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
@@ -614,6 +615,16 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
+void SuitePipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+#ifdef LOG_PIPELINE_OBSERVER
+    Log::Print("Pipeline report property: MODE {mode=");
+    Log::Print(aMode);
+    Log::Print("; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
+        aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
+#endif
+}
+
 void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool /*aStartOfStream*/)
 {
 #ifdef LOG_PIPELINE_OBSERVER

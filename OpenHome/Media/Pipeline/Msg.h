@@ -288,6 +288,26 @@ private:
     TUint iId;
 };
 
+class MsgMode;
+class ModeInfo
+{
+    friend class MsgMode;
+public:
+    TBool SupportsLatency() const { return iSupportsLatency; }
+    TBool IsRealTime() const      { return iRealTime; }
+    TBool SupportsNext() const    { return iSupportsNext; }
+    TBool SupportsPrev() const    { return iSupportsPrev; }
+private:
+    ModeInfo();
+    void Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext, TBool aSupportsPrev);
+    void Clear();
+private:
+    TBool iSupportsLatency;
+    TBool iRealTime;
+    TBool iSupportsNext;
+    TBool iSupportsPrev;
+};
+
 class IClockPuller;
 
 class MsgMode : public Msg
@@ -296,18 +316,16 @@ class MsgMode : public Msg
 public:
     MsgMode(AllocatorBase& aAllocator);
     const Brx& Mode() const;
-    TBool SupportsLatency() const;
-    TBool IsRealTime() const;
+    const ModeInfo& Info() const;
     IClockPuller* ClockPuller() const;
 private:
-    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller);
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     BwsMode iMode;
-    TBool iSupportsLatency;
-    TBool iIsRealTime;
+    ModeInfo iInfo;
     IClockPuller* iClockPuller;
 };
 
@@ -1351,7 +1369,7 @@ class MsgFactory
 public:
     MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams);
     //
-    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev);
     MsgSession* CreateMsgSession();
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgChangeInput* CreateMsgChangeInput(Functor aCallback);

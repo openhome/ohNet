@@ -464,7 +464,7 @@ void SuiteStopper::TestHalted()
 void SuiteStopper::TestMsgsPassWhilePlaying()
 {
     iStopper->Play();
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     PullNext(EMsgSession);

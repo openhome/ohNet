@@ -377,7 +377,7 @@ Msg* SuiteSkipper::CreateAudio()
 
 void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
@@ -725,7 +725,7 @@ void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
