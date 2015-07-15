@@ -552,12 +552,14 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     , iSeekSuccess(false)
     , iFileNumStart(0)
     , iFileNumEnd(0)
+    , iFileNumBeyondEnd(0)
     , iFileNumBack(0)
     , iFileNumForward(0)
 {
     for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToStart));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToEnd));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBeyondEnd));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBackwards));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingForwards));
     }
@@ -570,6 +572,7 @@ SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDes
     , iSeekSuccess(false)
     , iFileNumStart(0)
     , iFileNumEnd(0)
+    , iFileNumBeyondEnd(0)
     , iFileNumBack(0)
     , iFileNumForward(0)
 {
@@ -679,6 +682,19 @@ void SuiteCodecSeek::TestSeekingToEnd()
     delete fileLocation;
 }
 
+void SuiteCodecSeek::TestSeekingBeyondEnd()
+{
+    Brn filename(iFiles[iFileNumBeyondEnd].Filename());
+    TUint codec = iFiles[iFileNumBeyondEnd].Codec();
+    iTotalJiffies = iFiles[iFileNumBeyondEnd].Jiffies();
+    iFileNumBeyondEnd++;
+
+    Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking beyond end"), filename);
+    // Seek to 1s beyond end of file.
+    TestSeeking(iTotalJiffies, iTotalJiffies+Jiffies::kPerSecond, codec, false);
+    delete fileLocation;
+}
+
 void SuiteCodecSeek::TestSeekingBackwards()
 {
     Brn filename(iFiles[iFileNumBack].Filename());
@@ -712,10 +728,12 @@ SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor
     : SuiteCodecSeek("Codec seek from start tests", aFiles, aEnv, aFunc, aUri)
     , iFileNumMiddle(0)
     , iFileNumEnd(0)
+    , iFileNumBeyondEnd(0)
 {
     for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingToMiddle));
         AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingToEnd));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingBeyondEnd));
     }
 }
 
@@ -783,6 +801,19 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
     // Seek to last playable second.
     TestSeekingFromStart(iTotalJiffies, iTotalJiffies-Jiffies::kPerSecond, codec, seekable);
+    delete fileLocation;
+}
+
+void SuiteCodecSeekFromStart::TestSeekingBeyondEnd()
+{
+    Brn filename(iFiles[iFileNumBeyondEnd].Filename());
+    TUint codec = iFiles[iFileNumBeyondEnd].Codec();
+    iTotalJiffies = iFiles[iFileNumBeyondEnd].Jiffies();
+    iFileNumBeyondEnd++;
+
+    Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking beyond end"), filename);
+    // Seek to 1s beyond end of file.
+    TestSeekingFromStart(iTotalJiffies, iTotalJiffies+Jiffies::kPerSecond, codec, false);
     delete fileLocation;
 }
 

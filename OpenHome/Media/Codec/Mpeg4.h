@@ -12,6 +12,7 @@
 
 EXCEPTION(MediaMpeg4FileInvalid);
 EXCEPTION(MediaMpeg4EndOfData);
+EXCEPTION(MediaMpeg4InvalidSample);
 
 namespace OpenHome {
 namespace Media {

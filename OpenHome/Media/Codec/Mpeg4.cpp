@@ -640,7 +640,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 
     //stco:
     if (seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
-        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead? - would still assert later on; need to catch and convert it to something that allows codec to send appropriate signal.
+        THROW(MediaMpeg4InvalidSample);
     }
     return iOffsets[seekchunk]; // entry found - return offset to required chunk
 }

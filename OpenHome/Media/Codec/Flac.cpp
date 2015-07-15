@@ -252,10 +252,8 @@ void CodecFlac::Process()
             THROW(CodecStreamCorrupt);
             break;
         case FLAC__STREAM_DECODER_SEEK_ERROR:
-            /* Is this recoverable?  throw here?  How is this different to
-                seek_absolute returning false? -- see comments above
-                (Flac::Seek())about throwing in the middle of seeks */
-            THROW(CodecStreamCorrupt);
+            FLAC__stream_decoder_flush(iDecoder);
+            //THROW(CodecStreamCorrupt);
             break;
         case FLAC__STREAM_DECODER_ABORTED:
             THROW(CodecStreamCorrupt);
@@ -285,9 +283,9 @@ TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
     }
     FLAC__bool ret = FLAC__stream_decoder_seek_absolute(iDecoder, aSample);
     if (ret == 0) {
-        //FLAC__StreamDecoderState state = FLAC__stream_decoder_get_state(iDecoder);
-        // this can occur if we try to seek beyond the end, so abort this track
-        THROW(CodecStreamCorrupt);
+        // Seeking failed.
+        // Must check if decoder state is FLAC__STREAM_DECODER_SEEK_ERROR and call FLAC__stream_decoder_flush() before continuing.
+        return false;
     }
     iStreamMsgDue = true;
     return true;
@@ -321,6 +319,7 @@ FLAC__StreamDecoderReadStatus CodecFlac::CallbackRead(const FLAC__StreamDecoder*
 FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder* /*aDecoder*/, TUint64 aOffsetBytes)
 {
     if (!iController->TrySeekTo(iStreamId, aOffsetBytes)) {
+        //return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
         return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
     }
     return FLAC__STREAM_DECODER_SEEK_STATUS_OK;

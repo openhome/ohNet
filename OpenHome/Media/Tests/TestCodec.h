@@ -245,6 +245,7 @@ private:
     void TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToStart();
     void TestSeekingToEnd();
+    void TestSeekingBeyondEnd();
     void TestSeekingBackwards();
     void TestSeekingForwards();
 protected:
@@ -257,6 +258,7 @@ protected:
 private:
     TUint iFileNumStart;
     TUint iFileNumEnd;
+    TUint iFileNumBeyondEnd;
     TUint iFileNumBack;
     TUint iFileNumForward;
 };
@@ -270,11 +272,13 @@ private:
     void TestSeekingFromStart(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToMiddle();
     void TestSeekingToEnd();
+    void TestSeekingBeyondEnd();
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
     TUint iFileNumMiddle;
     TUint iFileNumEnd;
+    TUint iFileNumBeyondEnd;
 };
 
 class SuiteCodecZeroCrossings : public SuiteCodecStream
