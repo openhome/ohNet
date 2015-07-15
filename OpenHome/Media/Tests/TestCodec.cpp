@@ -219,12 +219,7 @@ void TestCodecFiller::Run()
     // send a msgquit here in case of trying to stream an invalid url during tests
     // could cause race conditions if it isn't sent here
     iPipeline.Push(iMsgFactory.CreateMsgQuit());
-    if (res == EProtocolStreamSuccess) {
-        Log::Print("TestCodecFiller::Run SUCCESS: Full file streamed.\n");
-    }
-    else {
-        Log::Print("TestCodecFiller::Run FAILURE: Failed to stream entire file.\n");
-    }
+    TEST(res == EProtocolStreamSuccess);
 }
 
 TUint TestCodecFiller::NextStreamId()
@@ -679,7 +674,8 @@ void SuiteCodecSeek::TestSeekingToEnd()
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to end"), filename);
-    TestSeeking(iTotalJiffies, iTotalJiffies, codec, seekable);
+    // Seek to last playable second.
+    TestSeeking(iTotalJiffies, iTotalJiffies-Jiffies::kPerSecond, codec, seekable);
     delete fileLocation;
 }
 
@@ -740,7 +736,7 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
 
 void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable)
 {
-    TUint seekPosSeconds = static_cast<TUint>(aDurationJiffies/Jiffies::kPerSecond);
+    TUint seekPosSeconds = static_cast<TUint>(aSeekPosJiffies/Jiffies::kPerSecond);
     iSeekPos = seekPosSeconds;
     iSem.Wait();
     if (aSeekable) {
@@ -785,7 +781,8 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
-    TestSeekingFromStart(iTotalJiffies, iTotalJiffies, codec, seekable);
+    // Seek to last playable second.
+    TestSeekingFromStart(iTotalJiffies, iTotalJiffies-Jiffies::kPerSecond, codec, seekable);
     delete fileLocation;
 }
 
