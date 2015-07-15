@@ -191,6 +191,7 @@ TestCodecFiller::TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& 
 {
     iProtocolManager = new ProtocolManager(aDownstream, aMsgFactory, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));    // Second ProtocolHttp to allow out-of-band reads.
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
@@ -209,6 +210,11 @@ void TestCodecFiller::Start(const Brx& aUrl)
 TUint TestCodecFiller::StreamId()
 {
     return iNextStreamId-1;
+}
+
+TBool TestCodecFiller::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
+{
+    return iProtocolManager->TryGet(aWriter, aUrl, aOffset, aBytes);
 }
 
 void TestCodecFiller::Run()
@@ -338,9 +344,12 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     iController->AddCodec(CodecFactory::NewVorbis());
 }
 
-TBool TestCodecMinimalPipeline::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool TestCodecMinimalPipeline::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
 {
-    return false;
+    Log::Print("Codec requesting out-of-band read. aUrl: ");
+    Log::Print(aUrl);
+    Log::Print(", aOffset: %llu, aBytes: %u\n", aOffset, aBytes);
+    return iFiller->TryGet(aWriter, aUrl, aOffset, aBytes);
 }
 
 

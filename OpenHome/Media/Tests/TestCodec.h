@@ -93,7 +93,7 @@ private:
     TUint iFlushId;
 };
 
-class TestCodecFiller : public Thread, private IPipelineIdProvider
+class TestCodecFiller : public IUrlBlockWriter, public Thread, private IPipelineIdProvider
 {
 private:
     static const TUint kInvalidPipelineId = 0;
@@ -102,6 +102,8 @@ public:
     ~TestCodecFiller();
     void Start(const Brx& aUrl);
     TUint StreamId();
+public: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
