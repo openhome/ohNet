@@ -10,9 +10,6 @@
 #include <pthread.h>
 #include <errno.h>
 #include <assert.h>
-#ifdef ATTEMPT_THREAD_PRIORITIES
-# include <sys/capability.h>
-#endif
 #ifdef ATTEMPT_THREAD_NICENESS
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -77,6 +74,7 @@ struct OsContext {
     THandle iMutex;
     pthread_key_t iThreadArgKey;
     struct InterfaceChangedObserver* iInterfaceChangedObserver;
+    int32_t iThreadPriorityMin;
 };
 
 static void DestroyInterfaceChangedObserver(OsContext* aContext);
@@ -99,6 +97,7 @@ OsContext* OsCreate()
         return NULL;
     }
     ctx->iInterfaceChangedObserver = NULL;
+    ctx->iThreadPriorityMin = 0;
     return ctx;
 }
 
@@ -463,8 +462,11 @@ void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t*
 {
     // FIXME - 50/150 copied from previous expectations of threadEntrypoint
 #if defined(ATTEMPT_THREAD_PRIORITIES)
-    *aHostMin = 50;
-    *aHostMax = 150;
+    const int32_t platMin = sched_get_priority_min(kThreadSchedPolicy);
+    const int32_t platMax = sched_get_priority_max(kThreadSchedPolicy);
+    aContext->iThreadPriorityMin = platMin;
+    *aHostMin = 0;
+    *aHostMax = platMax - platMin;
 #elif defined(ATTEMPT_THREAD_NICENESS)
     *aHostMin = 50;
     *aHostMax = 150;
@@ -496,18 +498,15 @@ static void* threadEntrypoint(void* aArg)
 
 #if defined(ATTEMPT_THREAD_PRIORITIES)
     {
-        TInt platMin = sched_get_priority_min(kThreadSchedPolicy);
-        TInt platMax = sched_get_priority_max(kThreadSchedPolicy);
-        // convert the UPnP library's 50 - 150 priority range into
-        // an equivalent posix priority
-        // ...calculate priority as percentage of library range
-        int32_t percent = (((int32_t )data->iPriority - 50) * 100) / (150 - 50);
-        // ...calculate native priority as 'percent' through the dest range
-        int32_t priority = platMin + ((percent * (platMax - platMin))/100);
-        sched_param param;
+        int32_t priority = ((int32_t)data->iPriority) + data->iCtx->iThreadPriorityMin;
+        struct sched_param param;
+        memset(&param, 0, sizeof(param));
+        //printf("thread priority %u mapped to %d\n", data->iPriority, priority);
         param.sched_priority = priority;
         int status = pthread_setschedparam(data->iThread, kThreadSchedPolicy, &param);
-        assert(status == 0);
+        if (status != 0) {
+            printf("Attempt to set thread priority to %d failed with %d(%d)\n", priority, status, errno);
+        }
     }
 #elif defined(ATTEMPT_THREAD_NICENESS) // ATTEMPT_THREAD_PRIORITIES
     {
