@@ -13,7 +13,7 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaop.h>
-#include <OpenHome/Media/Utils/ClockPullerLogging.h>
+#include <OpenHome/Media//ClockPullerUtilisation.h>
 
 #include <limits.h>
 
@@ -23,12 +23,12 @@ namespace Av {
 class UriProviderRaop : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory);
+    UriProviderRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
     ~UriProviderRaop();
 private: // from UriProvider
     Media::IClockPuller* ClockPuller() override;
 private:
-    Media::ClockPullerLogging* iClockPuller;
+    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
 };
 
 } // namespace Av
@@ -43,9 +43,10 @@ using namespace OpenHome::Net;
 
 
 // SourceFactory
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory());
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
 }
@@ -53,10 +54,15 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostNa
 
 // UriProviderRaop
 
-UriProviderRaop::UriProviderRaop(Environment& aEnv, TrackFactory& aTrackFactory)
-    : UriProviderSingleTrack("RAOP", true, true, aTrackFactory)
+UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, IPullableClock* aPullableClock)
+    : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
 {
-    iClockPuller = new ClockPullerLogging(aEnv);
+    if (aPullableClock == NULL) {
+        iClockPuller = NULL;
+    }
+    else {
+        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
+    }
 }
 
 UriProviderRaop::~UriProviderRaop()
@@ -66,8 +72,7 @@ UriProviderRaop::~UriProviderRaop()
 
 IClockPuller* UriProviderRaop::ClockPuller()
 {
-    return NULL; // a logging puller is useful during development but too noisy to commit
-    //return iClockPuller;
+    return iClockPuller;
 }
 
 
@@ -105,7 +110,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     iControlId = iServerManager.CreateServer();
     iTimingId = iServerManager.CreateServer();
 
-    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), iVolume, *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
+    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), iVolume, *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
     iPipeline.Add(new CodecRaop());
     iPipeline.AddObserver(*this);
@@ -296,13 +301,13 @@ void SourceRaop::NotifySessionEnd()
     }
 }
 
-void SourceRaop::NotifySessionWait()
+void SourceRaop::NotifySessionWait(TUint aSeq, TUint aTime)
 {
     iLock.Wait();
     if (IsActive() && iSessionActive) {
         // Possible race condition here - MsgFlush could pass Waiter before
         // iPipeline::Wait is called.
-        TUint flushId = iProtocol->SendFlush();
+        TUint flushId = iProtocol->SendFlush(aSeq, aTime);
         iTransportState = Media::EPipelineWaiting;
         iLock.Signal();
         iPipeline.Wait(flushId);
@@ -317,6 +322,10 @@ void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)
     iLock.Wait();
     iTransportState = aState;
     iLock.Signal();
+}
+
+void SourceRaop::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
 }
 
 void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)

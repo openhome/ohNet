@@ -131,7 +131,7 @@ void CodecAlacBase::Decode()
         BigEndianData(samples, samplesWritten);
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
         if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iChannels) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iTimescale,
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
                 iBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
@@ -147,7 +147,7 @@ void CodecAlacBase::OutputFinal()
     if (iStreamStarted || iStreamEnded) {
         // Flush remaining samples.
         if (iOutBuf.Bytes() > 0) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iTimescale,
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
                 iBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutBuf.SetBytes(0);
         }

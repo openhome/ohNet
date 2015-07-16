@@ -114,6 +114,22 @@ def configure(conf):
         'thirdparty/ETSI_aacPlusdec/etsioplib',
         ]
 
+    # Setup Mad (mp3) lib options
+    fixed_point_model = 'FPM_INTEL'
+    if conf.options.dest_platform in ['Linux-ARM', 'Linux-armhf', 'Core-armv5', 'Core-armv6']:
+        fixed_point_model = 'FPM_ARM'
+    elif conf.options.dest_platform in ['Linux-ppc32', 'Core-ppc32']:
+        fixed_point_model = 'FPM_PPC'
+    elif conf.options.dest_platform in ['Linux-x64', 'Windows-x64', 'Mac-x64']:
+        fixed_point_model = 'FPM_64BIT'
+    elif conf.options.dest_platform == 'Linux-mipsel':
+        fixed_point_model = 'FPM_MIPS'
+    conf.env.DEFINES_MAD = [fixed_point_model, 'OPT_ACCURACY']
+    conf.env.INCLUDES_MAD = ['thirdparty/libmad-0.15.1b']
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.DEFINES_MAD.append('HAVE_CONFIG_H')
+        conf.env.INCLUDES_MAD.append('thirdparty/libmad-0.15.1b/msvc++')
+
     # Setup Vorbis lib options
     # Using https://git.xiph.org/?p=tremor.git
     # b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
@@ -146,6 +162,8 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Volume1.xml', 'av.openhome.org', 'Volume', '1', 'AvOpenhomeOrgVolume1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Configuration1.xml', 'av.openhome.org', 'Configuration', '1', 'AvOpenhomeOrgConfiguration1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Credentials1.xml', 'av.openhome.org', 'Credentials', '1', 'AvOpenhomeOrgCredentials1'),
+        #GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Eriskay/TransportControl1.xml', 'openhome.org.eriskay', 'TransportControl', '1', 'OpenhomeOrgEriskayTransportControl1'),
+        #GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Eriskay/Transport1.xml', 'openhome.org.eriskay', 'Transport', '1', 'OpenhomeOrgEriskayTransport1'),
     ]
 
 def build(bld):
@@ -273,6 +291,9 @@ def build(bld):
                 'OpenHome/Av/ProviderCredentials.cpp',
                 'OpenHome/ObservableBrx.cpp',
                 'OpenHome/Av/VolumeManager.cpp',
+                #'OpenHome/Av/TransportControl.cpp',
+                #'Generated/DvOpenhomeOrgEriskayTransportControl1.cpp',
+                #'OpenHome/Av/ProviderTransportControlEriskay.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'ohPipeline'],
             target='ohMediaPlayer')
@@ -504,6 +525,25 @@ def build(bld):
             use=['CodecAacBase', 'OHNET'],
             target='CodecAdts')
 
+    # MP3
+    bld.stlib(
+            source=[
+                'OpenHome/Media/Codec/Mp3.cpp',
+                'thirdparty/libmad-0.15.1b/version.c',
+                'thirdparty/libmad-0.15.1b/fixed.c',
+                'thirdparty/libmad-0.15.1b/bit.c',
+                'thirdparty/libmad-0.15.1b/timer.c',
+                'thirdparty/libmad-0.15.1b/stream.c',
+                'thirdparty/libmad-0.15.1b/frame.c',
+                'thirdparty/libmad-0.15.1b/synth.c',
+                'thirdparty/libmad-0.15.1b/decoder.c',
+                'thirdparty/libmad-0.15.1b/layer12.c',
+                'thirdparty/libmad-0.15.1b/layer3.c',
+                'thirdparty/libmad-0.15.1b/huffman.c',
+            ],
+            use=['MAD', 'OHMEDIAPLAYER', 'OHNET'],
+            target='CodecMp3')
+
     # Vorbis
     bld.stlib(
             source=[
@@ -622,7 +662,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestJson.cpp',
                 'OpenHome/Av/Tests/TestRaop.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis', 'OHNET', 'OPENSSL'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -962,6 +1002,7 @@ def bundle(ctx):
                  'CodecAlac',
                  'CodecAlacBase',
                  'CodecFlac',
+                 'CodecMp3',
                  'CodecVorbis',
                  'CodecWav',
                  'CodecPcm',

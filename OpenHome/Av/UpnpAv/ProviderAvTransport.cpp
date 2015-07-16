@@ -475,7 +475,7 @@ void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID
     aInvocation.EndResponse();
 }
 
-void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
+void ProviderAvTransport::NotifyPipelineState(Media::EPipelineState aState)
 {
     // Set iTargetTransportState each time a long-term state is encountered
     // (i.e., not TRANSITIONING). Ensures that if state goes TRANSITIONING
@@ -485,16 +485,16 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
     Log::Print("-- ProviderAvTransport::NotifyPipelineState(%u)\n", aState);
     switch (aState)
     {
-    case EPipelinePlaying:
+    case Media::EPipelinePlaying:
         iTransportState.Set(kTransportStatePlaying);
         iTargetTransportState.Set(kTransportStatePlaying);
         break;
-    case EPipelinePaused:
-    case EPipelineWaiting:
+    case Media::EPipelinePaused:
+    case Media::EPipelineWaiting:
         iTransportState.Set(kTransportStatePausedPlayback);
         iTargetTransportState.Set(kTransportStatePausedPlayback);
         break;
-    case EPipelineStopped:
+    case Media::EPipelineStopped:
         if (iCurrentTrackUri != Brx::Empty()) {
             iTransportState.Set(kTransportStateStopped);
             iTargetTransportState.Set(kTransportStateStopped);
@@ -504,7 +504,7 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
             iTargetTransportState.Set(Brx::Empty());
         }
         break;
-    case EPipelineBuffering:
+    case Media::EPipelineBuffering:
         iTransportState.Set(kTransportStateTransitioning);
         break;
     default:
@@ -515,7 +515,11 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
     iLock.Signal();
 }
 
-void ProviderAvTransport::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
+void ProviderAvTransport::NotifyMode(const Brx& /*aMode*/, const Media::ModeInfo& /*aInfo*/)
+{
+}
+
+void ProviderAvTransport::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
     iLock.Wait();
     iCurrentTrackUri.Replace(aTrack.Uri());
@@ -547,9 +551,9 @@ void ProviderAvTransport::NotifyTime(TUint aSeconds, TUint /*aTrackDurationSecon
     // no call to UpdateEventedState here.  We don't want to include a constantly changing variable in iEventedState
 }
 
-void ProviderAvTransport::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+void ProviderAvTransport::NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo)
 {
-    const TUint trackDurationSeconds = (TUint)(aStreamInfo.TrackLength() / Jiffies::kPerSecond);
+    const TUint trackDurationSeconds = (TUint)(aStreamInfo.TrackLength() / Media::Jiffies::kPerSecond);
     iLock.Wait();
     SecondsToTimeString(trackDurationSeconds, iTrackDuration);
     QueueStateUpdate();

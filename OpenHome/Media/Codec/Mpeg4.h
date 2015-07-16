@@ -6,6 +6,7 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Private/Uri.h>
 
 #include <vector>
 
@@ -257,6 +258,40 @@ private:
     Bws<EncodedAudio::kMaxBytes> iBuf;
 };
 
+class OutOfBandReaderSource : public IReaderSource, private INonCopyable
+{
+public:
+    OutOfBandReaderSource(IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset);
+public: // from IReaderSource
+    void Read(Bwx& aBuffer) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+private:
+    IContainerUrlBlockWriter& iBlockWriter;
+    const TUint64 iStartOffset;
+    TUint64 iOffset;
+    TBool iLastReadSuccessful;
+};
+
+/**
+ * IReader that uses an Srs to perform efficient reads from an underlying
+ * out-of-band reader.
+ */
+class OutOfBandReader : public IReader
+{
+private:
+    static const TUint kBufBytes = 1024;
+public:
+    OutOfBandReader(IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset);
+public: // from IReader
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+private:
+    OutOfBandReaderSource iReaderSource;
+    Srs<kBufBytes> iSrs;
+};
+
 class Mpeg4Container : public ContainerBase, public IReader
 {
 private:
@@ -268,7 +303,6 @@ public:
     Mpeg4Container();
 public: // from ContainerBase
     TBool Recognise(Brx& aBuf) override;
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
 public: // from IReader

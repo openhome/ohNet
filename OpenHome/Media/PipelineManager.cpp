@@ -11,7 +11,7 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
-#if 0
+
 // PriorityArbitratorPipeline
 
 PriorityArbitratorPipeline::PriorityArbitratorPipeline(TUint aOpenHomeMax)
@@ -38,7 +38,7 @@ TUint PriorityArbitratorPipeline::HostRange() const
 {
     return kNumThreads;
 }
-#endif
+
 
 // PipelineManager
 
@@ -338,6 +338,16 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
     }
     else {
         (void)iPipelineStoppedSem.Clear();
+    }
+}
+
+void PipelineManager::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
+{
+    iLock.Wait();
+    iMode.Replace(aMode);
+    iLock.Signal();
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->NotifyMode(aMode, aInfo);
     }
 }
 

@@ -18,6 +18,12 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
+class TestUrlBlockWriter : public IUrlBlockWriter
+{
+public:
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
+};
+
 class ContainerNullBuffered : public ContainerNull
 {
 public:
@@ -176,6 +182,7 @@ private:
 protected:
     TestContainerMsgGenerator* iGenerator;
     TestContainerProvider* iProvider;
+    TestUrlBlockWriter* iUrlBlockWriter;
     Container* iContainer;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
@@ -222,6 +229,14 @@ private: // Tests
 } // Codec
 } // Media
 } // OpenHome
+
+
+// TestUrlBlockWriter
+
+TBool TestUrlBlockWriter::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
+}
 
 
 // ContainerNullBuffered
@@ -390,7 +405,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case ENull:
         return NULL;
     case EMsgMode:
-        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, NULL);
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
         iLastMsgType = EMsgMode;
         break;
     case EMsgSession:
@@ -621,7 +636,8 @@ void SuiteContainerBase::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
-    iContainer = new Container(*iMsgFactory, *iGenerator);
+    iUrlBlockWriter = new TestUrlBlockWriter();
+    iContainer = new Container(*iMsgFactory, *iGenerator, *iUrlBlockWriter);
     iStreamId = 0;
     iStreamHandler = NULL;
     iMsgRcvdCount = 0;
@@ -631,6 +647,7 @@ void SuiteContainerBase::Setup()
 void SuiteContainerBase::TearDown()
 {
     delete iContainer;
+    delete iUrlBlockWriter;
     delete iGenerator;
     delete iMsgFactory;
     delete iProvider;

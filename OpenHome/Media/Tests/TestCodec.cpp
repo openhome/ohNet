@@ -275,7 +275,7 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     const TUint maxReservoirEncodedAudio = (kEncodedReservoirSizeBytes + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes;
     iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iLoggerEncodedAudioReservoir = new Logger(*iReservoir, "Encoded Audio Reservoir");
-    iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
+    iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir, *this);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     iLoggerCodecController = new Logger("Codec Controller", *iElementDownstream);
     iController = new CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, kPriorityNormal);
@@ -339,6 +339,7 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     iController->AddCodec(CodecFactory::NewAac());
     iController->AddCodec(CodecFactory::NewAdts());
     iController->AddCodec(CodecFactory::NewAlac());
+    iController->AddCodec(CodecFactory::NewMp3());
     iController->AddCodec(CodecFactory::NewVorbis());
 }
 
@@ -533,17 +534,17 @@ Brx* SuiteCodecStream::StartStreaming(const Brx& aTestName, const Brx& aFilename
 
 void SuiteCodecStream::TestJiffies()
 {
-        Brn filename(iFiles[iFileNum].Filename());
-        TUint64 jiffies = iFiles[iFileNum].Jiffies();
-        iFileNum++;
+    Brn filename(iFiles[iFileNum].Filename());
+    TUint64 jiffies = iFiles[iFileNum].Jiffies();
+    iFileNum++;
 
-        Brx* fileLocation = StartStreaming(Brn("SuiteCodecStream"), filename);
-        iSem.Wait();
-        delete fileLocation;
+    Brx* fileLocation = StartStreaming(Brn("SuiteCodecStream"), filename);
+    iSem.Wait();
+    delete fileLocation;
 
-        //LOG(kMedia, "iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
-        Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
-        TEST(iJiffies == jiffies);
+    //LOG(kMedia, "iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+    Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+    TEST(iJiffies == jiffies);
 }
 
 

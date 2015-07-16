@@ -28,15 +28,29 @@ TBool UriProvider::IsRealTime() const
     return iRealTime;
 }
 
+TBool UriProvider::SupportsNext() const
+{
+    return iSupportsNext;
+}
+
+TBool UriProvider::SupportsPrev() const
+{
+    return iSupportsPrev;
+}
+
 IClockPuller* UriProvider::ClockPuller()
 {
     return NULL;
 }
 
-UriProvider::UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime)
+UriProvider::UriProvider(const TChar* aMode,
+    LatencySupport aLatency, RealTimeSupport aRealTime,
+    NextSupport aNextSupported, PrevSupport aPrevSupported)
     : iMode(aMode)
-    , iSupportsLatency(aSupportsLatency)
-    , iRealTime(aRealTime)
+    , iSupportsLatency(aLatency == LatencySupported)
+    , iRealTime(aRealTime == RealTimeSupported)
+    , iSupportsNext(aNextSupported == NextSupported)
+    , iSupportsPrev(aPrevSupported == PrevSupported)
 {
 }
 
@@ -256,7 +270,7 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, NULL));
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, NULL, false, false));
                 iPipeline.Push(iMsgFactory.CreateMsgSession());
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
@@ -276,7 +290,8 @@ void Filler::Run()
                     ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
                                                              hard/impossible if the Gorger was allowed to buffer
                                                              content between the two VariableDelays */
-                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller()));
+                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller(),
+                                                             iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev()));
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }

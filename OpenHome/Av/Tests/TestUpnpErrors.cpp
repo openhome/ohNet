@@ -51,10 +51,10 @@
 namespace OpenHome {
 namespace Av {
 
-class DummyAsyncOutput : private IAsyncOutput
+class DummyAsyncOutput : private Net::IAsyncOutput
 {
 public:
-    void LogError(IAsync& aAsync);
+    void LogError(Net::IAsync& aAsync);
     virtual ~DummyAsyncOutput() {}
 private:
     void Output(const TChar* aKey, const TChar* aValue);
@@ -111,48 +111,48 @@ class CpDevices : private INonCopyable
 public:
     CpDevices(Semaphore& aAddedSem);
     ~CpDevices();
-    void Start(CpStack& aCpStack, const Brx& aTargetUdn);
-    CpDevice& Device();
+    void Start(Net::CpStack& aCpStack, const Brx& aTargetUdn);
+    Net::CpDevice& Device();
 private:
-    void Added(CpDevice& aDevice);
-    void Removed(CpDevice& aDevice);
+    void Added(Net::CpDevice& aDevice);
+    void Removed(Net::CpDevice& aDevice);
 private:
     Semaphore& iAddedSem;
-    CpDevice* iDevice;
-    CpDeviceList* iDeviceList;
+    Net::CpDevice* iDevice;
+    Net::CpDeviceList* iDeviceList;
 };
 
 class SuiteAvTransport : public TestFramework::Suite
 {
 public:
-    SuiteAvTransport(CpDevice& aDevice);
+    SuiteAvTransport(Net::CpDevice& aDevice);
 private: // from Suite
     ~SuiteAvTransport();
     void Test() override;
 private:
-    CpProxyUpnpOrgAVTransport1* iProxy;
+    Net::CpProxyUpnpOrgAVTransport1* iProxy;
 };
 
 class SuiteConnectionManager : public TestFramework::Suite
 {
 public:
-    SuiteConnectionManager(CpDevice& aDevice);
+    SuiteConnectionManager(Net::CpDevice& aDevice);
 private: // from Suite
     ~SuiteConnectionManager();
     void Test() override;
 private:
-    CpProxyUpnpOrgConnectionManager1* iProxy;
+    Net::CpProxyUpnpOrgConnectionManager1* iProxy;
 };
 
 class SuiteRenderingControl : public TestFramework::Suite
 {
 public:
-    SuiteRenderingControl(CpDevice& aDevice);
+    SuiteRenderingControl(Net::CpDevice& aDevice);
 private: // from Suite
     ~SuiteRenderingControl();
     void Test() override;
 private:
-    CpProxyUpnpOrgRenderingControl1* iProxy;
+    Net::CpProxyUpnpOrgRenderingControl1* iProxy;
 };
 
 } // namespace Av

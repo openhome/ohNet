@@ -588,8 +588,7 @@ Msg* CodecController::ProcessMsg(MsgSession* aMsg)
         aMsg->RemoveRef();
         return NULL;
     }
-    Queue(aMsg);
-    return NULL;
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)

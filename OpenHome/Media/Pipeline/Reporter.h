@@ -13,6 +13,7 @@ namespace Media {
 class IPipelinePropertyObserver
 {
 public:
+    virtual void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) = 0;
     virtual void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) = 0;
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
@@ -59,6 +60,7 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     IPipelinePropertyObserver& iObserver;
     ThreadFunctor* iThread;
+    MsgMode* iMsgMode;
     MsgTrack* iMsgTrack;
     MsgDecodedStream* iMsgDecodedStreamInfo;
     MsgMetaText* iMsgMetaText;

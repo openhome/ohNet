@@ -13,12 +13,11 @@
 #include <OpenHome/Av/Radio/SourceRadio.h>
 
 namespace OpenHome {
-using namespace Net;
 namespace Av {
 
 class IPresetDatabaseReader;
 
-class ProviderRadio : public DvProviderAvOpenhomeOrgRadio1, private IPresetDatabaseObserver
+class ProviderRadio : public Net::DvProviderAvOpenhomeOrgRadio1, private IPresetDatabaseObserver
 {
 public:
     ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo);
@@ -26,23 +25,23 @@ public:
     void SetTransportState(Media::EPipelineState aState);
 private: // from IPresetDatabaseObserver
     void PresetDatabaseChanged() override;
-private: // from DvProviderAvOpenhomeOrgRadio1
-    void Play(IDvInvocation& aInvocation) override;
-    void Pause(IDvInvocation& aInvocation) override;
-    void Stop(IDvInvocation& aInvocation) override;
-    void SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue) override;
-    void SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue) override;
-    void Channel(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata) override;
-    void SetChannel(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata) override;
-    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
-    void Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue) override;
-    void SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri) override;
-    void Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata) override;
-    void ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aChannelList) override;
-    void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray) override;
-    void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue) override;
-    void ChannelsMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue) override;
-    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
+private: // from Net::DvProviderAvOpenhomeOrgRadio1
+    void Play(Net::IDvInvocation& aInvocation) override;
+    void Pause(Net::IDvInvocation& aInvocation) override;
+    void Stop(Net::IDvInvocation& aInvocation) override;
+    void SeekSecondAbsolute(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void SeekSecondRelative(Net::IDvInvocation& aInvocation, TInt aValue) override;
+    void Channel(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aUri, Net::IDvInvocationResponseString& aMetadata) override;
+    void SetChannel(Net::IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata) override;
+    void TransportState(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void Id(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+    void SetId(Net::IDvInvocation& aInvocation, TUint aValue, const Brx& aUri) override;
+    void Read(Net::IDvInvocation& aInvocation, TUint aId, Net::IDvInvocationResponseString& aMetadata) override;
+    void ReadList(Net::IDvInvocation& aInvocation, const Brx& aIdList, Net::IDvInvocationResponseString& aChannelList) override;
+    void IdArray(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aToken, Net::IDvInvocationResponseBinary& aArray) override;
+    void IdArrayChanged(Net::IDvInvocation& aInvocation, TUint aToken, Net::IDvInvocationResponseBool& aValue) override;
+    void ChannelsMax(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+    void ProtocolInfo(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
 private:
     void SetChannel(TUint aPresetId, const Brx& aUri, const Brx& aMetadata);
     void UpdateIdArray();

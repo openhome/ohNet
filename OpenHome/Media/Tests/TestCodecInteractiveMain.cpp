@@ -198,7 +198,7 @@ Msg* ElementFileReader::Pull()
         const TBool supportsLatency = false;
         const TBool realTime = false;
         IClockPuller* clockPuller = NULL;
-        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller);
+        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller, false, false);
         iMode = eSession;
     }
     else if (iMode == eSession) {
@@ -614,7 +614,7 @@ void ProcessorPcmSwpEndianPacked::SwapEndianness24(const Brx& aData)
 
 Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter)
 {
-    iContainer = new Container(aMsgFactory, aUpstreamElement);
+    iContainer = new Container(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // Construct push logger slightly out of sequence.

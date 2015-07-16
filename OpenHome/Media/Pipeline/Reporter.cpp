@@ -16,6 +16,7 @@ Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelineProperty
     : iLock("RPTR")
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iMsgMode(NULL)
     , iMsgTrack(NULL)
     , iMsgDecodedStreamInfo(NULL)
     , iMsgMetaText(NULL)
@@ -31,6 +32,9 @@ Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelineProperty
 Reporter::~Reporter()
 {
     delete iThread;
+    if (iMsgMode != NULL) {
+        iMsgMode->RemoveRef();
+    }
     if (iMsgTrack != NULL) {
         iMsgTrack->RemoveRef();
     }
@@ -51,7 +55,27 @@ Msg* Reporter::Pull()
 
 Msg* Reporter::ProcessMsg(MsgMode* aMsg)
 {
+    AutoMutex _(iLock);
     iMode.Replace(aMsg->Mode());
+    if (iMsgMode != NULL) {
+        iMsgMode->RemoveRef();
+    }
+    iMsgMode = aMsg;
+    iMsgMode->AddRef();
+    if (iMsgTrack != NULL) {
+        iMsgTrack->RemoveRef();
+        iMsgTrack = NULL;
+    }
+    if (iMsgDecodedStreamInfo != NULL) {
+        iMsgDecodedStreamInfo->RemoveRef();
+        iMsgDecodedStreamInfo = NULL;
+    }
+    if (iMsgMetaText != NULL) {
+        iMsgMetaText->RemoveRef();
+        iMsgMetaText = NULL;
+    }
+    iNotifyTime = false;
+    iThread->Signal();
     return aMsg;
 }
 
@@ -196,6 +220,14 @@ void Reporter::ObserverThread()
     for (;;) {
         iThread->Wait();
         iLock.Wait();
+        if (iMsgMode != NULL) {
+            MsgMode* msg = iMsgMode;
+            iMsgMode = NULL;
+            iLock.Signal();
+            iObserver.NotifyMode(msg->Mode(), msg->Info());
+            msg->RemoveRef();
+            iLock.Wait();
+        }
         if (iMsgTrack != NULL) {
             MsgTrack* msg = iMsgTrack;
             iMsgTrack = NULL;

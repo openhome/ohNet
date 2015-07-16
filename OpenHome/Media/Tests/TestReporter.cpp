@@ -17,7 +17,8 @@ namespace Media {
 
 class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPipelinePropertyObserver
 {
-#define KTrackUri "http://host:port/path/file.ext"
+#define kMode "DummyMode"
+#define kTrackUri "http://host:port/path/file.ext"
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
     static const TUint kBitRate       = kBitDepth * kSampleRate;
@@ -35,6 +36,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IPipelinePropertyObserver
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
@@ -47,6 +49,7 @@ private:
        ,EMsgSilence
        ,EMsgPlayable
        ,EMsgDecodedStream
+       ,EMsgMode
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -65,14 +68,17 @@ private:
     Reporter* iReporter;
     EMsgType iNextGeneratedMsg;
     TUint64 iTrackOffset;
+    TUint iModeUpdates;
     TUint iTrackUpdates;
     TUint iMetaTextUpdates;
     TUint iTimeUpdates;
     TUint iAudioFormatUpdates;
+    BwsMode iMode;
     Bws<1024> iTrackUri;
     Bws<1024> iMetaText;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
+    Semaphore iSemMode;
     Semaphore iSemTrack;
     Semaphore iSemStream;
     Semaphore iSemMetatext;
@@ -89,16 +95,18 @@ SuiteReporter::SuiteReporter()
     : Suite("Reporter tests")
     , iNextGeneratedMsg(ENone)
     , iTrackOffset(0)
+    , iModeUpdates(0)
     , iTrackUpdates(0)
     , iMetaTextUpdates(0)
     , iTimeUpdates(0)
     , iAudioFormatUpdates(0)
     , iSeconds(0)
     , iTrackDurationSeconds(0)
-    , iSemTrack("SRS1", 0)
-    , iSemStream("SRS2", 0)
-    , iSemMetatext("SRS3", 0)
-    , iSemTime("SRS4", 0)
+    , iSemMode("SRS1", 0)
+    , iSemTrack("SRS2", 0)
+    , iSemStream("SRS3", 0)
+    , iSemMetatext("SRS4", 0)
+    , iSemTime("SRS5", 0)
 {
     MsgFactoryInitParams init;
     init.SetMsgDecodedStreamCount(3);
@@ -125,20 +133,34 @@ void SuiteReporter::Test()
 
 void SuiteReporter::RunTests()
 {
+    TUint expectedModeUpdates = 0;
     TUint expectedTrackUpdates = 0;
     TUint expectedMetaTextUpdates = 0;
     TUint expectedTimeUpdates = 0;
     TUint expectedAudioFormatUpdates = 0;
     TUint expectedTimeSeconds = 0;
 
+    // deliver MsgMode.  Check it is notified
+    iNextGeneratedMsg = EMsgMode;
+    Msg* msg = iReporter->Pull();
+    msg->RemoveRef();
+    iSemMode.Wait(kTimeoutMs);
+    expectedModeUpdates++;
+    TEST(iModeUpdates == expectedModeUpdates);
+    TEST(iTrackUpdates == expectedTrackUpdates);
+    TEST(iMetaTextUpdates == expectedMetaTextUpdates);
+    TEST(iTimeUpdates == expectedTimeUpdates);
+    TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
+
     // deliver MsgTrack then MsgDecodedStream.  Check these are notified.
     iNextGeneratedMsg = EMsgTrack;
-    Msg* msg = iReporter->Pull();
+    msg = iReporter->Pull();
     msg->RemoveRef();
     iSemTrack.Wait(kTimeoutMs);
     expectedTrackUpdates++;
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
-    TEST(iTrackUri == Brn(KTrackUri));
+    TEST(iTrackUri == Brn(kTrackUri));
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
@@ -149,6 +171,7 @@ void SuiteReporter::RunTests()
     expectedTimeUpdates++;
     iSemStream.Wait(kTimeoutMs);
     iSemTime.Wait(kTimeoutMs);
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
@@ -160,11 +183,13 @@ void SuiteReporter::RunTests()
         iNextGeneratedMsg = types[i];
         msg = iReporter->Pull();
         msg->RemoveRef();
+        TEST(iModeUpdates == expectedModeUpdates);
         TEST(iTrackUpdates == expectedTrackUpdates);
         TEST(iMetaTextUpdates == expectedMetaTextUpdates);
         TEST(iTimeUpdates == expectedTimeUpdates);
         TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
     }
+    TEST(!iSemMode.Clear());
     TEST(!iSemTrack.Clear());
     TEST(!iSemStream.Clear());
     TEST(!iSemMetatext.Clear());
@@ -176,6 +201,7 @@ void SuiteReporter::RunTests()
     msg->RemoveRef();
     expectedMetaTextUpdates++;
     iSemMetatext.Wait(kTimeoutMs);
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
@@ -187,10 +213,12 @@ void SuiteReporter::RunTests()
     msg = iReporter->Pull();
     msg->RemoveRef();
     Thread::Sleep(1); // tiny delay, leaving room for Reporter's observer thread to be scheduled
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
+    TEST(!iSemMode.Clear());
     TEST(!iSemTrack.Clear());
     TEST(!iSemStream.Clear());
     TEST(!iSemMetatext.Clear());
@@ -199,6 +227,7 @@ void SuiteReporter::RunTests()
     // deliver 1s of audio.  Check NotifyTime is called again.
     iNextGeneratedMsg = EMsgAudioPcm;
     while (iTrackOffset < Jiffies::kPerSecond) {
+        TEST(iModeUpdates == expectedModeUpdates);
         TEST(iTrackUpdates == expectedTrackUpdates);
         TEST(iMetaTextUpdates == expectedMetaTextUpdates);
         TEST(iTimeUpdates == expectedTimeUpdates);
@@ -209,12 +238,14 @@ void SuiteReporter::RunTests()
         Thread::Sleep(1); // tiny delay, leaving room for Reporter's observer thread to be scheduled
     }
     iSemTime.Wait(kTimeoutMs);
+    TEST(!iSemMode.Clear());
     TEST(!iSemTrack.Clear());
     TEST(!iSemStream.Clear());
     TEST(!iSemMetatext.Clear());
     TEST(!iSemTime.Clear());
     expectedTimeUpdates++;
     expectedTimeSeconds = 1;
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
@@ -231,6 +262,7 @@ void SuiteReporter::RunTests()
     expectedTimeSeconds = 3;
     iSemStream.Wait(kTimeoutMs);
     iSemTime.Wait(kTimeoutMs);
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
@@ -252,10 +284,12 @@ void SuiteReporter::RunTests()
     expectedTimeSeconds++;
     expectedTimeUpdates++;
     iSemTime.Wait(kTimeoutMs);
+    TEST(!iSemMode.Clear());
     TEST(!iSemTrack.Clear());
     TEST(!iSemStream.Clear());
     TEST(!iSemMetatext.Clear());
     TEST(!iSemTime.Clear());
+    TEST(iModeUpdates == expectedModeUpdates);
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
@@ -300,9 +334,11 @@ Msg* SuiteReporter::Pull()
         const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, NULL);
     }
+    case EMsgMode:
+        return iMsgFactory->CreateMsgMode(Brn(kMode), true, false, NULL, true, false);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
+        Track* track = iTrackFactory->CreateTrack(Brn(kTrackUri), Brx::Empty());
         Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         return msg;
@@ -332,6 +368,13 @@ MsgAudio* SuiteReporter::CreateAudio()
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
+}
+
+void SuiteReporter::NotifyMode(const Brx& aMode, const ModeInfo& /*aInfo*/)
+{
+    iModeUpdates++;
+    iMode.Replace(aMode);
+    iSemMode.Signal();
 }
 
 void SuiteReporter::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)

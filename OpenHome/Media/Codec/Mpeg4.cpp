@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Debug.h>
 
 #include <limits>
@@ -559,6 +560,8 @@ TUint SeekTable::StartSample(TUint aChunkIndex) const
         if (nextFirstChunk >= desiredChunk) {
             const TUint chunkDiff = desiredChunk - prevFirstChunk;
             startSample += chunkDiff*prevSamples;
+            prevFirstChunk = nextFirstChunk;
+            prevSamples = nextSamples;
             break;
         }
 
@@ -566,6 +569,12 @@ TUint SeekTable::StartSample(TUint aChunkIndex) const
         startSample += chunkDiff*prevSamples;
         prevFirstChunk = nextFirstChunk;
         prevSamples = nextSamples;
+    }
+
+    // See if exhausted samples per chunk table without encountering desired chunk.
+    if (prevFirstChunk < desiredChunk) {
+        const TUint chunkDiff = desiredChunk - prevFirstChunk;
+        startSample += chunkDiff*prevSamples;
     }
 
     return startSample;
@@ -884,6 +893,63 @@ void MsgAudioEncodedWriter::AllocateMsg()
 }
 
 
+// OutOfBandReaderSource
+
+OutOfBandReaderSource::OutOfBandReaderSource(IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset)
+    : iBlockWriter(aBlockWriter)
+    , iStartOffset(aStartOffset)
+    , iOffset(iStartOffset)
+    , iLastReadSuccessful(true)
+{
+}
+
+void OutOfBandReaderSource::Read(Bwx& aBuffer)
+{
+    WriterBuffer writerBuffer(aBuffer);
+    aBuffer.SetBytes(0);
+
+    if (!iLastReadSuccessful) {
+        THROW(ReaderError); // Reading beyond end of stream.
+    }
+    iLastReadSuccessful = iBlockWriter.TryGetUrl(writerBuffer, iOffset, aBuffer.MaxBytes());
+    iOffset += aBuffer.Bytes();
+}
+
+void OutOfBandReaderSource::ReadFlush()
+{
+    // Nothing to flush (and resetting member vars here would cause block to be re-read from start offset).
+}
+
+void OutOfBandReaderSource::ReadInterrupt()
+{
+    // FIXME - could hang until network timeout
+}
+
+
+// OutOfBandReader
+
+OutOfBandReader::OutOfBandReader(IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset)
+    : iReaderSource(aBlockWriter, aStartOffset)
+    , iSrs(iReaderSource)
+{
+}
+
+Brn OutOfBandReader::Read(TUint aBytes)
+{
+    return iSrs.Read(aBytes);
+}
+
+void OutOfBandReader::ReadFlush()
+{
+    iSrs.ReadFlush();
+}
+
+void OutOfBandReader::ReadInterrupt()
+{
+    iSrs.ReadInterrupt();
+}
+
+
 // Mpeg4Container
 
 Mpeg4Container::Mpeg4Container()
@@ -895,6 +961,7 @@ Mpeg4Container::Mpeg4Container()
 
 TBool Mpeg4Container::Recognise(Brx& aBuf)
 {
+    Clear();
     LOG(kMedia, "Mpeg4Container::Recognise\n");
     if (aBuf.Bytes() >= Mpeg4Box::kBoxHeaderBytes) {
         if (Brn(aBuf.Ptr()+Mpeg4Box::kBoxSizeBytes, Mpeg4Box::kBoxNameBytes) == Brn("ftyp")) {
@@ -903,13 +970,6 @@ TBool Mpeg4Container::Recognise(Brx& aBuf)
     }
 
     return false;
-}
-
-Msg* Mpeg4Container::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    Msg* msg = ContainerBase::ProcessMsg(aMsg);
-    Clear();
-    return msg;
 }
 
 Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -1033,26 +1093,26 @@ MsgAudioEncoded* Mpeg4Container::Process()
                 }
                 else if (box.Id() == Brn("mdat")) {
                     if (!iMetadataRetrieved) {
-                        break;
+                        // Not yet encountered metadata (moov) box.
+                        // Do out-of-band read to get moov box.
+                        const TUint boxBytes = box.Size()-Mpeg4Box::kBoxHeaderBytes;    // Already read header of mdat box.
+                        OutOfBandReader reader(*iUrlBlockWriter, iPos+boxBytes);
 
-                        //// Not yet encountered metadata (moov) box.
-                        //// Do out-of-band read to get moov box.
-                        //Bws<1024> buf;
-                        //ReaderBuffer reader(buf);
-                        ////const TUint metadataSize = box.Size();
-                        //ParseMetadataBox(reader, box.Size()); // Exception thrown if invalid/EoS.
-                        //iMetadataRetrieved = true;
+                        Mpeg4Box box;
+                        box.Set(reader);
+                        for (;;) {
+                            box.ReadHeader();
+                            if (box.Id() == Brn("moov")) {
+
+                                ParseMetadataBox(reader, box.Size()); // Exception thrown if invalid/EoS.
+                                iMetadataRetrieved = true;
+                                break;
+                            }
+                            box.SkipRemaining();
+                            box.Clear();
+                        }
                     }
-
                     break;
-
-                    // FIXME - not quite good enough - would need to skip over mdat in out-of-band read and then potentially have to skip over some more boxes to get to the moov box.
-                    // So, pass off to a function that will do out-of-band reads until we get to moov box.
-                    // And then, implement a special out-of-band IReader that will read from a small, fixed-size buffer (i.e., 1k) and will go do more out-of-band reads when we attempt to read beyond end of buffer
-                    // - will need to ensure read/discard behaviour is decided by then, as only real option for that is to discard audio as we go beyond end of buffer
-                    // - that probably means that's the behaviour we should take with normal parsing circumstance - just discard data as it's read (or, discard prev read data on next read so it at least remains in memory while it may be used), as we don't ever backtrace during normal parsing.
-
-                    // In the interim, just flush all remaining data.
                 }
                 box.SkipRemaining();
                 box.Clear();
@@ -1060,6 +1120,9 @@ MsgAudioEncoded* Mpeg4Container::Process()
         }
         // Exhausted/invalid stream while processing container.
         // Should just silently drop all remaining audio until new stream seen.
+        catch (ReaderError&) {
+
+        }
         catch (MediaMpeg4EndOfData&) {
 
         }
@@ -1230,6 +1293,8 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
     return msg;
 }
 
+// FIXME - implement AutoBoxPusher and AutoBoxSkipper skipper classes to perform auto-cleanup and save remembering having to do Push()/Pop() and SkipRemaining()/Clear() in processing loops.
+
 void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
 {
     // Need to move through stack to get data from the following boxes:
@@ -1308,7 +1373,7 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                             if (iBoxStack.Id() == Brn("esds")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                Log::Print("found esds stream descriptor box\n");
+                                                                //Log::Print("found esds stream descriptor box\n");
 
                                                                 ParseBoxStreamDescriptor(iBoxStack, iBoxStack.Size());
                                                                 break;
@@ -1330,7 +1395,7 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
                                                             if (iBoxStack.Id() == Brn("alac")) {
                                                                 // FIXME - valid to filter this box by known content type?
                                                                 // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                Log::Print("found alac stream descriptor box\n");
+                                                                //Log::Print("found alac stream descriptor box\n");
                                                                 ParseBoxAlac(iBoxStack, iBoxStack.Size());
                                                                 break;
                                                             }

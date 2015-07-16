@@ -9,10 +9,9 @@
 #include <OpenHome/Av/VolumeManager.h>
 
 namespace OpenHome {
-using namespace Net;
 namespace Av {
 
-class ProviderRenderingControl : public DvProviderUpnpOrgRenderingControl1, private IVolumeObserver, private Media::IMuteObserver
+class ProviderRenderingControl : public Net::DvProviderUpnpOrgRenderingControl1, private IVolumeObserver, private Media::IMuteObserver
 {
 public:
     static const Brn kChannelMaster;
@@ -22,16 +21,16 @@ public:
 public:
     ProviderRenderingControl(Net::DvDevice& aDevice, Environment& aEnv, IVolumeManager& aVolumeManager);
     ~ProviderRenderingControl();
-private: // from DvProviderUpnpOrgRenderingControl1
-    void ListPresets(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentPresetNameList) override;
-    void SelectPreset(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aPresetName) override;
-    void GetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseBool& aCurrentMute) override;
-    void SetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TBool aDesiredMute) override;
-    void GetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseUint& aCurrentVolume) override;
-    void SetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TUint aDesiredVolume) override;
-    void GetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aCurrentVolume) override;
-    void SetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume) override;
-    void GetVolumeDBRange(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& aMinValue, IDvInvocationResponseInt& aMaxValue) override;
+private: // from Net::DvProviderUpnpOrgRenderingControl1
+    void ListPresets(Net::IDvInvocation& aInvocation, TUint aInstanceID, Net::IDvInvocationResponseString& aCurrentPresetNameList) override;
+    void SelectPreset(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aPresetName) override;
+    void GetMute(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, Net::IDvInvocationResponseBool& aCurrentMute) override;
+    void SetMute(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TBool aDesiredMute) override;
+    void GetVolume(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, Net::IDvInvocationResponseUint& aCurrentVolume) override;
+    void SetVolume(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TUint aDesiredVolume) override;
+    void GetVolumeDB(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, Net::IDvInvocationResponseInt& aCurrentVolume) override;
+    void SetVolumeDB(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume) override;
+    void GetVolumeDBRange(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, Net::IDvInvocationResponseInt& aMinValue, Net::IDvInvocationResponseInt& aMaxValue) override;
 private: // from IVolumeObserver
     void VolumeChanged(TUint aVolume) override;
 private: // from Media::IMuteObserver

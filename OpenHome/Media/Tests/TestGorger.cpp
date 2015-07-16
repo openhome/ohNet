@@ -319,7 +319,7 @@ Msg* SuiteGorger::CreateAudio()
 
 void SuiteGorger::TestAllMsgsPassWhileNotGorging()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
@@ -354,7 +354,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     TEST(!iGorger->iGorging);
 
     TBool realTime = false;
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, realTime, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, realTime, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -363,7 +363,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     TEST(!iGorger->iGorging);
 
     realTime = true;
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, realTime, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, realTime, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
 
@@ -387,7 +387,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
 
 void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -415,7 +415,7 @@ void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 
 void SuiteGorger::TestGorgingEndsWithNewMode()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -428,7 +428,7 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
 
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL, false, false));
     PullNext(EMsgAudioPcm);
     while (iGorger->iGorging) {
         Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
@@ -443,7 +443,7 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
 
 void SuiteGorger::TestHaltEnablesGorging()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -471,7 +471,7 @@ void SuiteGorger::TestHaltEnablesGorging()
 
 void SuiteGorger::TestStarvationEnablesGorging()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -484,7 +484,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     TEST(!iGorger->iGorging);
     TEST(iStarvationNotifications == 1);
 
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, NULL, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);

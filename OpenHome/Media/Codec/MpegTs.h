@@ -11,25 +11,8 @@ namespace Codec {
 
 class MpegTs : public ContainerBase
 {
-public:
-    MpegTs();
-public: // from IRecogniser
-    TBool Recognise(Brx& aBuf);
-private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
-private: // from IStreamHandler
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
-private:
-    TBool RecogniseTableHeader(const Brx& aTableHeader);
-    TBool RecogniseTableSyntax(const Brx& aTableSyntax);
-    TBool RecogniseTableHeaderAndSyntax(const Brx& aTable, TUint aTableType);
-    TBool RecognisePat(const Brx& aPat);
-    TBool RecognisePmt(const Brx& aPmt);
-private:
 private:
     //static const TUint kRecogniseBytes = 4;
-    static const TUint kRecogniseBytes = 188;
     static const TUint kPacketBytes = 188;
     static const TUint kMpegHeaderBytes = 4;
     static const TUint kTableHeaderBytes = 4;
@@ -44,15 +27,31 @@ private:
     static const TUint kPesHeaderStartCodePrefixBytes = 3;
     static const TUint kPesHeaderFixedBytes = 6;
     static const TUint kPesHeaderOptionalFixedBytes = 3;
-
-    TUint iSize;
+public:
+    MpegTs();
+public: // from IRecogniser
+    TBool Recognise(Brx& aBuf);
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+private: // from IStreamHandler
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
+private:
+    void Clear();
+    TBool ProcessPacket(const Brx& aPacket);
+    TBool RecogniseTableHeader(const Brx& aTableHeader);
+    TBool RecogniseTableSyntax(const Brx& aTableSyntax);
+    TBool RecogniseTableHeaderAndSyntax(const Brx& aTable, TUint aTableType);
+    TBool RecognisePat(const Brx& aPat);
+    TBool RecognisePmt(const Brx& aPmt);
+private:
+    TUint iSize;    // Size of data to be discard for current packet being processed.
     TUint iTotalSize;   // FIXME - this is important for seeking - ensure this is being incremented correctly
     TUint iPacketBytes;
     TUint iTableType;
     TUint iSectionLength;
     TUint iProgramMapPid;
     TUint iStreamPid;
-    Bws<kRecogniseBytes> iBuf;
+    Bws<kPacketBytes> iBuf;
 };
 
 } // namespace Codec

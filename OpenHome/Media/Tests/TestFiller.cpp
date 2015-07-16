@@ -150,7 +150,7 @@ using namespace OpenHome::Media::TestFiller;
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
-    : UriProvider("Dummy", false, false)
+    : UriProvider("Dummy", LatencyNotSupported, RealTimeNotSupported, NextNotSupported, PrevNotSupported)
     , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
@@ -359,8 +359,9 @@ void DummySupply::Push(Msg* aMsg)
 Msg* DummySupply::ProcessMsg(MsgMode* aMsg)
 {
     iLastMode.Replace(aMsg->Mode());
-    iLastSupportsLatency = aMsg->SupportsLatency();
-    iLastRealTime = aMsg->IsRealTime();
+    const ModeInfo& info = aMsg->Info();
+    iLastSupportsLatency = info.SupportsLatency();
+    iLastRealTime = info.IsRealTime();
     return aMsg;
 }
 

@@ -27,7 +27,7 @@ namespace Codec {
 class Protocol;
 class ContentProcessor;
 class UriProvider;
-#if 0
+
 class PriorityArbitratorPipeline : public IPriorityArbitrator, private INonCopyable
 {
     static const TUint kNumThreads = 4; // Filler, CodecController, Gorger, StarvationMonitor
@@ -41,7 +41,7 @@ private: // from IPriorityArbitrator
 private:
     const TUint iOpenHomeMax;
 };
-#endif
+
 /**
  * External interface to the pipeline.
  */
@@ -250,6 +250,7 @@ private: // from IMute
     void Unmute() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;

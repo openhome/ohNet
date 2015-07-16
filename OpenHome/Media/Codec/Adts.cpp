@@ -268,7 +268,7 @@ void CodecAdts::StreamInitialise()
 
     iBytesPerSample = iChannels*iBitDepth/8;
 
-    ProcessHeader();
+    InitialiseDecoder();
 
     iInBuf.SetBytes(0);
     iController->Read(iInBuf, iAdts.StartOffset());  // skip to first frame header

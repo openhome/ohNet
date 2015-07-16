@@ -189,6 +189,10 @@ void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
     }
 }
 
+void SourceUpnpAv::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+{
+}
+
 void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iLock.Wait();

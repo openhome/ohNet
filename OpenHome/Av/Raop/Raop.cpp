@@ -577,11 +577,13 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
                 }
                 else if(method == RtspMethod::kFlush) {
+                    const TUint seq = iHeaderRtpInfo.Seq();
+                    const TUint rtpTime = iHeaderRtpInfo.RtpTime();
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
-                    iDiscovery.NotifySessionWait();
+                    iDiscovery.NotifySessionWait(seq, rtpTime);
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -853,12 +855,12 @@ void RaopDiscoveryServer::NotifySessionEnd()
     }
 }
 
-void RaopDiscoveryServer::NotifySessionWait()
+void RaopDiscoveryServer::NotifySessionWait(TUint aSeq, TUint aTime)
 {
     AutoMutex a(iObserversLock);
     std::vector<IRaopServerObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
-        (*it)->NotifySessionWait(iAdapter);
+        (*it)->NotifySessionWait(iAdapter, aSeq, aTime);
         ++it;
     }
 }
@@ -1120,14 +1122,14 @@ void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
     }
 }
 
-void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif)
+void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
     ASSERT((iCurrent == NULL) || NifsMatch(aNif, iCurrent->Adapter()));
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
-        (*it)->NotifySessionWait();
+        (*it)->NotifySessionWait(aSeq, aTime);
         ++it;
     }
 }

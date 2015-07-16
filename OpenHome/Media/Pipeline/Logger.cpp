@@ -73,7 +73,9 @@ Msg* Logger::ProcessMsg(MsgMode* aMsg)
         iBuf.SetBytes(0);
         iBuf.AppendPrintf("Pipeline (%s): mode {mode:", iId);
         iBuf.Append(aMsg->Mode());
-        iBuf.AppendPrintf(", supportsLatency: %u, realTime: %u}\n", aMsg->SupportsLatency(), aMsg->IsRealTime());
+        const ModeInfo& info = aMsg->Info();
+        iBuf.AppendPrintf(", supportsLatency: %u, realTime: %u, supportsNext: %u, supportsPrev: %u}\n",
+                          info.SupportsLatency(), info.IsRealTime(), info.SupportsNext(), info.SupportsPrev());
         Log::Print(iBuf);
     }
     return aMsg;

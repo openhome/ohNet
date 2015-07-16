@@ -124,7 +124,7 @@ void CodecAlac::StreamInitialise()
     iChannels = info.Channels();
     iBitDepth = info.BitDepth();
     iBytesPerSample = info.Channels()*iBitDepth/8;
-    iTimescale = info.Timescale();
+    iSampleRate = info.Timescale();
     iSamplesWrittenTotal = 0;
     iTrackLengthJiffies = (info.Duration() * Jiffies::kPerSecond) / info.Timescale();
 
@@ -144,8 +144,8 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
     if (canSeek) {
         iSamplesWrittenTotal = aSample;
         iCurrentSample = static_cast<TUint>(startSample);
-        iTrackOffset = (aSample * Jiffies::kPerSecond) / iTimescale;
-        iController->OutputDecodedStream(0, iBitDepth, iTimescale, iChannels, kCodecAlac, iTrackLengthJiffies, aSample, true);
+        iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
+        iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, aSample, true);
     }
     return canSeek;
 }

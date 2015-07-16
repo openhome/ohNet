@@ -40,7 +40,7 @@ protected:
     TUint iChannels;
     TUint iBitDepth;          // alac decoder may redefine the bit depth
     TUint iBytesPerSample;
-    TUint iTimescale;
+    TUint iSampleRate;
     TUint64 iSamplesWrittenTotal;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
