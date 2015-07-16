@@ -82,7 +82,7 @@ void FlywheelRamper::ApplyRamp(Bwx& aSamples)
 void FlywheelRamper::ScaleSample(Bwx& aSample, TUint aScaleFactorPerCent)
 {
     //Log::Print("scale = %d \n", aScaleFactorPerCent);
-    TInt32 sample = Sample(aSample);
+    TInt32 sample = Int32(aSample);
     TInt32 scaledSample = (TInt)(sample*aScaleFactorPerCent)/100;
 
     //Log::Print("scaledSample=%lx  sample=%lx  aScaleFactorPerCent=%d \n", scaledSample, sample, aScaleFactorPerCent);
@@ -94,15 +94,15 @@ void FlywheelRamper::ScaleSample(Bwx& aSample, TUint aScaleFactorPerCent)
     aSample[3] = sample&0xff;
 }
 
-TInt32 FlywheelRamper::Sample(Bwx& aSample)
+TInt32 FlywheelRamper::Int32(Bwx& aSample, TUint aIndex)
 {
-    TInt32 sample = (TInt32)aSample[0];
+    TInt32 sample = (TInt32)aSample[aIndex];
     sample <<= 8;
-    sample |= (TInt32)aSample[1];
+    sample |= (TInt32)aSample[aIndex+1];
     sample <<= 8;
-    sample |= (TInt32)aSample[2];
+    sample |= (TInt32)aSample[aIndex+2];
     sample <<= 8;
-    sample |= (TInt32)aSample[3];
+    sample |= (TInt32)aSample[aIndex+3];
     return(sample);
 }
 
@@ -240,25 +240,34 @@ void PcmProcessorFwr::EndBlock()
 
 ////////////////////////////////////////////////////////////
 
-ConvolutionModel::ConvolutionModel(const vector<TInt32>& aCoeffs)
+ConvolutionModel::ConvolutionModel(const vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling)
     :iCoeffs(aCoeffs)
     ,iSamples(iCoeffs.size(), 0)
+    ,iCoeffScaling(aCoeffScaling)
+    ,iDataInScaling(aDataInScaling)
+    ,iDataOutScaling(aDataOutScaling)
+    ,iScaleShift(24+(iDataOutScaling-(iCoeffScaling+iDataInScaling)))
 {
     //Log::Print("iCoeffs.size()=%d ", iCoeffs.size());
     //Log::Print("iSamples.size()=%d \n", iSamples.size());
-    Log::Print("\n");
 }
 
 
-void ConvolutionModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCycleCount)
+void ConvolutionModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut)
+{
+    Process(aSamplesIn, aSamplesOut, aSamplesOut.Bytes()/4);
+}
+
+
+void ConvolutionModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount)
 {
 //    Log::Print("aCycleCount=%d  aSamplesIn.Bytes()=%d  iCoeffs.size()=%d \n", aCycleCount, aSamplesIn.Bytes(), iCoeffs.size());
     TUint sampleCount = aSamplesIn.Bytes()/4;
-    ASSERT(aCycleCount<=(sampleCount+iCoeffs.size()-1));
+    ASSERT(aCount<=(sampleCount+iCoeffs.size()-1));
     TUint index = 0;
     TUint smpByteIdx = 0;
 
-    for(TUint i=0; i<aCycleCount; i++)
+    for(TUint i=0; i<aCount; i++)
     {
         // insert the sample in the next slot in the circular buffer
         if (smpByteIdx>=aSamplesIn.Bytes())
@@ -268,15 +277,18 @@ void ConvolutionModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aC
         else
         {
             iSamples[index] = (aSamplesIn[smpByteIdx]<<24) | (aSamplesIn[smpByteIdx+1]<<16) | (aSamplesIn[smpByteIdx+2]<<8) | aSamplesIn[smpByteIdx+3];
-            iSamples[index] >>= 8;
             smpByteIdx += 4;
         }
+
+        //Log::Print("cycle %d\nsampleIn=0x%.8lx  (0x%.8lx)\n", i, iSamples[index], iSamples[index]>>8);
+
+        iSamples[index] >>= 8; // 1.31 > 9.23 (FPFN)
 
         // iterate through the circular buff and apply the coeffs
         TInt64 outSample = 0;
         for (TUint j=0; j<iCoeffs.size(); )
         {
-            outSample +=  ((TInt64)iSamples[index]) *((TInt64)iCoeffs[j]) ;
+            outSample +=  ((TInt64)iSamples[index])*((TInt64)iCoeffs[j]);  // 9.23*1.31 > 10.54 (fixed point fractional)
             //Log::Print("(iSamples[%d]) 0x%.8lx * 0x%.8lx (iCoeffs[%d]) outSample=0x%.16llx   j=%d\n", index, iSamples[index], iCoeffs[j], j, outSample, j);
 
             if ( (++j) >= iCoeffs.size() )
@@ -292,28 +304,113 @@ void ConvolutionModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aC
             }
         }
 
-        //Log::Print("outSample=0x%.16llx  cycle=%d\n", outSample, i);
 
-        // write the upper 32 bits of the 64 bit processed sample into the output buffer
-        aSamplesOut.Append( (TByte)(outSample>>56) );
-        aSamplesOut.Append( (TByte)(outSample>>48) );
-        aSamplesOut.Append( (TByte)(outSample>>40) );
-        aSamplesOut.Append( (TByte)(outSample>>32) );
+        // need to convert 10.54 > 1.31
+        //
+        // 10.54 > 1.63 (<<9)
+        // convert from 64bit to 32bit (>>32)
+        // total = >>(32-9) = >>23
+
+
+        aSamplesOut.Append( (TByte)(outSample>>(iScaleShift+24)) );
+        aSamplesOut.Append( (TByte)(outSample>>(iScaleShift+16)) );
+        aSamplesOut.Append( (TByte)(outSample>>(iScaleShift+8)) );
+        aSamplesOut.Append( (TByte)(outSample>>iScaleShift) );
+
+
+
+        // descale (<<8) - because we scaled (>>8) earlier
+        // convert 2.62 format to 1.63 format (<<1)
+        // that's (<<9)
+        // but we only want the upper 32 bits (>>32)
+        // that's >>23 in total
+
+        //Log::Print("outSample=0x%.16llx  sampleOut=0x%.8lx  cycle=%d\n\n\n", outSample, FlywheelRamper::Int32(aSamplesOut, aSamplesOut.Bytes()-4),  i);
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 
-FeedbackModel::FeedbackModel(const std::vector<TInt32>& aCoeffs)
+FeedbackModel::FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling)
     :iCoeffs(aCoeffs)
+    ,iSamples(iCoeffs.size(), 0)
+    ,iCoeffScaling(aCoeffScaling)
+    ,iDataInScaling(aDataInScaling)
+    ,iDataOutScaling(aDataOutScaling)
+    ,iScaleShift(24+(iDataOutScaling-(iCoeffScaling+iDataInScaling)))
 {
 
 }
 
-
-void FeedbackModel::Process(const Brx& /*aSamplesIn*/, Bwx& /*aSamplesOut*/, TUint /*aCount*/)
+void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut)
 {
+    Process(aSamplesIn, aSamplesOut, aSamplesOut.Bytes()/4);
+}
+
+
+void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount)
+{
+//    Log::Print("aCycleCount=%d  aSamplesIn.Bytes()=%d  iCoeffs.size()=%d \n", aCycleCount, aSamplesIn.Bytes(), iCoeffs.size());
+    TUint sampleCount = aSamplesIn.Bytes()/4;
+    ASSERT(aCount<=(sampleCount+iCoeffs.size()));
+    TUint index = 0;
+    TUint smpByteIdx = 0;
+
+    for(TUint i=0; i<aCount; i++)
+    {
+        TInt32 sampleIn = 0;
+
+        if (smpByteIdx<aSamplesIn.Bytes())
+        {
+            sampleIn = (aSamplesIn[smpByteIdx]<<24) | (aSamplesIn[smpByteIdx+1]<<16) | (aSamplesIn[smpByteIdx+2]<<8) | aSamplesIn[smpByteIdx+3];
+            smpByteIdx += 4;
+        }
+
+        //Log::Print("cycle %d\nsampleIn=0x%.8lx  (0x%.8lx)\n", i, sampleIn, sampleIn>>8);
+        sampleIn >>= 8;
+
+
+        // iterate through the circular buff and apply the coeffs
+        TInt64 outSample = (TInt64)sampleIn;
+        //Log::Print("outSample=0x%.16llx \n", outSample);
+        for (TUint j=0; j<iCoeffs.size(); )
+        {
+            outSample += ((TInt64)iSamples[index]) * ((TInt64)iCoeffs[j]) ;
+            //Log::Print("(iSamples[%d]) 0x%.8lx * 0x%.8lx (iCoeffs[%d]) outSample=0x%.16llx   j=%d\n", index, iSamples[index], iCoeffs[j], j, outSample, j);
+
+            if ( (++j) >= iCoeffs.size() )
+            {
+                break;
+                // this will leave index 1 less than it was when we entered this loop
+                // (we're populating circular buffer in reverse)
+            }
+
+            if ((++index)>=iCoeffs.size())
+            {
+                index = 0;
+            }
+        }
+
+
+
+        // insert the output sample in the next slot in the circular buffer
+        // truncate the output sample to 32bits before feeding back in
+        iSamples[index] = (TInt32)(outSample>>iScaleShift); // output back into input (feedback)
+
+
+        // write the upper 32 bits of the 64 bit processed sample into the output buffer
+
+        aSamplesOut.Append( (TByte)(outSample>>(iScaleShift+24)) );
+        aSamplesOut.Append( (TByte)(outSample>>(iScaleShift+16)) );
+        aSamplesOut.Append( (TByte)(outSample>>(iScaleShift+8)) );
+        aSamplesOut.Append( (TByte)(outSample>>iScaleShift) );
+
+
+        //Log::Print("outSample=0x%.16llx  sampleOut=0x%.8lx  \n\n", outSample, FlywheelRamper::Int32(aSamplesOut, aSamplesOut.Bytes()-4));
+    }
+
+
 
 }
 
