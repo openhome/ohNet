@@ -617,19 +617,41 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     // chunk is found by searching to the entry in the table before samples > first chunk
     // and interpolating to get exact chunk
     totalsamples = 0;
-    TUint32 nextspc = 0, spc = 0, chunks = 0;
-    TUint32 seekchunk = 0, firstchunk = 1, nextchunk = 1;
+    TUint32 spc = 0, chunks = 0;
+    TUint32 seekchunk = 0, firstchunk = 0;
+    TBool sampleFound = false;
     for (TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
-        nextchunk = iSamplesPerChunk[entry].iFirstChunk;
-        nextspc = iSamplesPerChunk[entry].iSamples;
+        TUint nextchunk = iSamplesPerChunk[entry].iFirstChunk;
+        spc = iSamplesPerChunk[entry].iSamples;
         chunks = nextchunk - firstchunk;
         if (aSample < (totalsamples + chunks * spc)) {
+            firstchunk = nextchunk;
+            sampleFound = true;
             break; // sample is within previous range
         }
 
         totalsamples += chunks * spc;
         firstchunk = nextchunk;
-        spc = nextspc;
+    }
+
+    if (!sampleFound) {
+        // Didn't find sample within range above so, if all chunks haven't been exhausted, look through those.
+        ASSERT(firstchunk > 0);
+        while (firstchunk-1 < iOffsets.size()) {
+            if (aSample < (totalsamples + spc)) {
+                firstchunk++;
+                sampleFound = true;
+                break; // sample is within previous range
+            }
+
+            totalsamples += spc;
+            firstchunk++;
+        }
+    }
+
+    // Requested sample might be out-of-bounds.
+    if (!sampleFound) {
+        THROW(MediaMpeg4InvalidSample);
     }
 
     seekchunk = (TUint32)(firstchunk + ((aSample - totalsamples) / spc)); // calculate chunk that this sample is in
