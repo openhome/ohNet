@@ -270,7 +270,7 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
         }
         return canSeek;
     }
-    catch (MediaMpeg4InvalidSample&) {
+    catch (MediaMpeg4OutOfRange&) {
         LOG(kCodec, "CodecAac::TrySeek invalid sample aStreamId: %u, aSample: %lld\n", aStreamId, aSample);
         return false;
     }

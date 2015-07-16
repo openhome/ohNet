@@ -12,7 +12,7 @@
 
 EXCEPTION(MediaMpeg4FileInvalid);
 EXCEPTION(MediaMpeg4EndOfData);
-EXCEPTION(MediaMpeg4InvalidSample);
+EXCEPTION(MediaMpeg4OutOfRange);
 
 namespace OpenHome {
 namespace Media {
@@ -212,8 +212,14 @@ public:
     TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);    // FIXME - aSample should be TUint.
     // FIXME - See if it's possible to split this class into its 3 separate components, to simplify it.
     TUint64 GetOffset(TUint aChunkIndex) const;
-
     void Write(IWriter& aWriter) const;   // Serialise.
+private:
+    // Find the codec sample that contains the given audio sample.
+    TUint64 CodecSample(TUint64 aAudioSample) const;
+    // Find the chunk that contains the desired codec sample.
+    TUint Chunk(TUint64 aCodecSample) const;
+    TUint CodecSampleFromChunk(TUint aChunk) const;
+    TUint AudioSampleFromCodecSample(TUint aCodecSample) const;
 private:
     typedef struct {
         TUint   iFirstChunk;
