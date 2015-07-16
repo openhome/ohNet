@@ -631,9 +631,9 @@ void SuiteCodecSeek::TearDown()
     SuiteCodecStream::TearDown();
 }
 
-TUint64 SuiteCodecSeek::ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint64 aSeekPosJiffies)
+TUint64 SuiteCodecSeek::ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint aSeekPosSeconds)
 {
-    TUint64 jiffies = aSeekStartJiffies + (aJiffiesTotal-aSeekPosJiffies);
+    TUint64 jiffies = aSeekStartJiffies + (aJiffiesTotal-aSeekPosSeconds*Jiffies::kPerSecond);
     return jiffies;
 }
 
@@ -645,7 +645,7 @@ void SuiteCodecSeek::TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffi
     iSem.Wait();
 
     if (aSeekable) {
-        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, aDurationJiffies/2, aSeekPosJiffies);
+        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, aDurationJiffies/2, seekPosSeconds);
         //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         TEST(iSeekSuccess);
@@ -767,7 +767,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint64 aDurationJiffies, TUi
     iSeekPos = seekPosSeconds;
     iSem.Wait();
     if (aSeekable) {
-        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, 0, aSeekPosJiffies);
+        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, 0, seekPosSeconds);
         //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         TEST(iSeekSuccess);

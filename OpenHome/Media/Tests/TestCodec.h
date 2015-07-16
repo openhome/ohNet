@@ -235,7 +235,7 @@ public:
 protected:
     SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
     ~SuiteCodecSeek();
-    static TUint64 ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint64 aSeekPosJiffies);
+    static TUint64 ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint aSeekPosSeconds);
 private: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
