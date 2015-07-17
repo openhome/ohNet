@@ -45,7 +45,8 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Set/construct UDN.
     Bwh udn;
-    TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), options.Udn().Value(), Brn("TestMediaPlayer"), udn);
+    // FIXME - 4c494e4e- prefix to udn is temporary measure to allow Linn Konfig to recognise our devices
+    TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), options.Udn().Value(), Brn("4c494e4e-TestMediaPlayer"), udn);
 
     // Create TestMediaPlayer.
     TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, options.Room().CString(), options.Name().CString(),

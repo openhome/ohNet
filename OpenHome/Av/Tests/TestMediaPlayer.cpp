@@ -242,9 +242,8 @@ void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
 void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
-    iMediaPlayer->Start();
-
     AddConfigApp();
+    iMediaPlayer->Start();
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -472,8 +471,18 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
 
 void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
 {
+    if (!iDevice->Enabled()) {
+        // FIXME - can only set Product attribute once (meaning no updates on subnet change)
+        const TBool firstChange = (iPresentationUrl.Bytes() == 0);
+        iPresentationUrl.Replace(aUrl);
+        iDevice->SetAttribute("Upnp.PresentationUrl", iPresentationUrl.PtrZ());
+        if (firstChange) {
+            Bws<128> configAtt("App:Config=");
+            configAtt.Append(iPresentationUrl);
+            iMediaPlayer->Product().AddAttribute(configAtt);
+        }
+    }
     Bws<Uri::kMaxUriBytes+1> url(aUrl);   // +1 for '\0'
-    iDevice->SetAttribute("Upnp.PresentationUrl", url.PtrZ());
 }
 
 void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
@@ -512,7 +521,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
-    , iOptionTuneIn("-t", "--tunein", Brn("ah2rjr68"), "TuneIn partner id")
+    , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
     , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
     , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
