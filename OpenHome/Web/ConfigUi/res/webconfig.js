@@ -187,7 +187,7 @@ function StartLongPolling()
             colInput.appendChild(elemVal);
 
             // Create a row to hold the columns of data.
-            var row = document.createElement("row");
+            var row = document.createElement("tr");
             row.appendChild(colName);
             row.appendChild(colInput);
 
