@@ -897,6 +897,10 @@ void HttpSession::Get()
     LOG(kHttp, "\n");
 
     // Write response headers.
+
+    // FIXME - what if resource unavailable/doesn't exist?
+    // Should certainly NOT return a 200 OK!
+    // Also, should it be possible to send long poll requests via GETs?
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
     IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
@@ -949,6 +953,7 @@ void HttpSession::Post()
             WriteLongPollHeaders();
             Bws<sizeof(id)> idBuf;
             Ascii::AppendDec(idBuf, id);
+            iWriterBuffer->Write(Brn("lpcreate\r\n"));
             iWriterBuffer->Write(Brn("session-id: "));
             iWriterBuffer->Write(idBuf);
             iWriterBuffer->Write(Brn("\r\n"));
@@ -958,6 +963,8 @@ void HttpSession::Post()
             tab.RemoveRef();
         }
         catch (InvalidAppPrefix&) {
+            // FIXME - what if someone just inputs a bad prefix by accident?
+            // Return a 404 if that is the case?
             ASSERTS(); // programmer error/misuse by client
         }
         catch (TabManagerFull&) {
@@ -1005,6 +1012,7 @@ void HttpSession::Post()
 
                 iResponseStarted = true;
                 WriteLongPollHeaders();
+                iWriterBuffer->Write(Brn("lp\r\n"));
                 // FIXME - bother throwing Timeout if there is nothing useful to do with it?
                 try {
                     tab->BlockingSend(*iWriterBuffer);  // may write no data

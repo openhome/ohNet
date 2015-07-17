@@ -237,11 +237,14 @@ WebUi = function() {
             // this.SendCreate();
         // }
 
+        if (aRequest == null) {
+            return;
+        }
 
-        var urlSplit = aRequest.ResponseUrl().split("/");
-        var urlTail = urlSplit[urlSplit.length-1];
+        var lines = aRequest.ResponseText().split("\r\n");
+        var request = lines[0]
 
-        if (this.iState == this.EStates.eTerminate && urlTail == "lpcreate") {
+        if (this.iState == this.EStates.eTerminate && request == "lpcreate") {
             if (aRequest.ReadyState()==4 && aRequest.Status()==200) {
                 this.iState = this.EStates.eTerminate;
                 location.reload();  // re-established connection; reload page
@@ -249,10 +252,10 @@ WebUi = function() {
             }
         }
 
-        if (urlTail == "lpcreate" || urlTail == 'lp') {
+        if (request == "lpcreate" || request == 'lp') {
             if (aRequest.ReadyState()==4 && aRequest.Status()==200) {
-                if (urlTail == 'lpcreate') {
-                    session = aRequest.ResponseText().split(":");
+                if (request == 'lpcreate') {
+                    session = lines[1].split(":");
                     if (session.length == 2) {
                         sessionVal = session[1].split(" ");
                         if (session[0] == "session-id" && sessionVal.length == 2) {
@@ -265,9 +268,11 @@ WebUi = function() {
                     }
                     this.SendCreate();
                 }
-                else { // urlTail == lp
+                else { // request == lp
                     // FIXME - check session ID?
-                    this.ParseResponse(aRequest.ResponseText());
+                    // Split string after request line, as the response (i.e., any JSON) may contain newlines.
+                    var json = aRequest.ResponseText().substring(lines[0].length+2);    // +2 to account for stripped \r\n
+                    this.ParseResponse(json);
                     // FIXME - should delay for 5s
                     this.SendPoll();
                 }
