@@ -40,7 +40,7 @@ AudioFileCollection* TestCodecFiles()
     minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecVorbis, true));
 
 
-    // additional valid testing files
+    // Additional valid testing files
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecWav, true));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-24bit.wav"), 44100, 441000, 24, 1, AudioFileDescriptor::kCodecWav, true));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit.wav"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecWav, true));
@@ -58,11 +58,14 @@ AudioFileCollection* TestCodecFiles()
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecAlac, true));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecAlac, true));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::kCodecAac, true));
+    // MP4 with moov atom after mdat atom.
+    extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 44100, 438272-1024, 16, 2, AudioFileDescriptor::kCodecAac, true));    // Duration from mdhd MPEG4 box.
 #ifdef MP3_ENABLE
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-128k.mp3"), 44100, 442368, 24, 1, AudioFileDescriptor::kCodecMp3, true));
 #endif
     //extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecVorbis, true)); // Too short for seek tests; gets pulled through pipeline before a seek can happen.
-    extraFiles.push_back(AudioFileDescriptor(Brn("20s-mono-44k-q5.ogg"), 44100, 882000, 16, 1, AudioFileDescriptor::kCodecVorbis, true));   // Longer mono vorbis file that seek tests can work with.
+    // FIXME - this mono Vorbis file appears to be too short to be seekable within the pipeline.
+    extraFiles.push_back(AudioFileDescriptor(Brn("20s-mono-44k-q5.ogg"), 44100, 882000, 16, 1, AudioFileDescriptor::kCodecVorbis, true));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-adts-mpegts.ts"), 44100, 441000-680, 16, 1, AudioFileDescriptor::kCodecAdts, false));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-48k-adts-mpegts.ts"), 48000, 480000-768, 16, 1, AudioFileDescriptor::kCodecAdts, false));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-48k-adts-mpegts.ts"), 48000, 480000-768, 16, 2, AudioFileDescriptor::kCodecAdts, false));
@@ -71,9 +74,6 @@ AudioFileCollection* TestCodecFiles()
     // Some files that shouldn't play with any codec.
     invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_long_file"), 0, 0, 16, 1, AudioFileDescriptor::kCodecUnknown, false));     // Large invalid file.
     invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_short_file"), 0, 0, 16, 1, AudioFileDescriptor::kCodecUnknown, false));    // Small invalid file.
-    // MP4 with moov atom after mdat atom.
-    // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
-    invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::kCodecUnknown, false));
 
 
     // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.

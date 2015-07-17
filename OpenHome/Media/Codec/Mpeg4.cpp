@@ -585,161 +585,26 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size() == 0) {
         THROW(CodecStreamCorrupt); // seek table empty - cannot do seek // FIXME - throw a MpegMediaFileInvalid exception, which is actually expected/caught?
     }
-    aSample = 0;
-    // fistly determine the required sample from the audio sample using the stts data,
-    // then work through samples per chunk table (stsc data) to get the chunk number for
-    // this particular sample, then get the chunk offset from the offset table (stco data)
 
-    // stts:
-    TUint64 totalaudiosamples = 0;
-    TUint64 totalsamples = 0;
-    TUint32 samplecount = 0;
-    TUint32 audiosamples = 0;
-    for (TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
-        samplecount = iAudioSamplesPerSample[entry].iSampleCount;
-        audiosamples = iAudioSamplesPerSample[entry].iAudioSamples;
-        if (aAudioSample <= (totalaudiosamples + samplecount * audiosamples)) {
-            break; // audio samples are within this range
-        }
-        totalaudiosamples += samplecount * audiosamples;
-        totalsamples = samplecount;
+    const TUint64 codecSampleFromAudioSample = CodecSample(aAudioSample);
 
-    }
-    if (totalaudiosamples != 0 && aAudioSample>totalaudiosamples) {
-        aAudioSample = totalaudiosamples - 1; // keep within range
-    }
-    if (audiosamples == 0)
-        THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+    // FIXME - if stss box was present, must use it here to find appropriate sync sample.
+    // If stss box not present all codec samples are sync samples.
 
-    aSample = totalsamples + (aAudioSample - totalaudiosamples) / audiosamples; // convert audio sample count to codec samples
+    const TUint chunk = Chunk(codecSampleFromAudioSample);
+    // FIXME - could go one step further and use chunk-to-sample table to find offset of desired sample within desired chunk.
+    const TUint codecSampleFromChunk = CodecSampleFromChunk(chunk);
+    const TUint audioSampleFromCodecSample = AudioSampleFromCodecSample(codecSampleFromChunk);
 
-    // stsc:
-    // chunk is found by searching to the entry in the table before samples > first chunk
-    // and interpolating to get exact chunk
-    totalsamples = 0;
-    TUint32 nextspc = 0, spc = 0, chunks = 0;
-    TUint32 seekchunk = 0, firstchunk = 1, nextchunk = 1;
-    for (TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
-        nextchunk = iSamplesPerChunk[entry].iFirstChunk;
-        nextspc = iSamplesPerChunk[entry].iSamples;
-        chunks = nextchunk - firstchunk;
-        if (aSample < (totalsamples + chunks * spc)) {
-            break; // sample is within previous range
-        }
-
-        totalsamples += chunks * spc;
-        firstchunk = nextchunk;
-        spc = nextspc;
-    }
-
-    seekchunk = (TUint32)(firstchunk + ((aSample - totalsamples) / spc)); // calculate chunk that this sample is in
-    TUint64 adjsample = ((seekchunk - firstchunk) * spc) + totalsamples; // calculate index to first sample in chunk
-    aAudioSample -= (aSample - adjsample) * audiosamples;                // adjust audio sample count to index first sample in chunk
-    aSample = adjsample;                                                 // adjust codec sample count to index first sample in chunk
-    seekchunk -= 1;                                                      // adjust for array index (i.e. -1)
+    aAudioSample = audioSampleFromCodecSample;
+    aSample = codecSampleFromChunk;
 
     //stco:
-    if (seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
-        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead? - would still assert later on; need to catch and convert it to something that allows codec to send appropriate signal.
+    if (chunk >= iOffsets.size()) { // error - required chunk doesn't exist
+        THROW(MediaMpeg4OutOfRange);
     }
-    return iOffsets[seekchunk]; // entry found - return offset to required chunk
+    return iOffsets[chunk-1]; // entry found - return offset to required chunk
 }
-
-
-//TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint& aSample)
-//{
-//    Log::Print("aAudioSample: %llu, aSample: %u\n", aAudioSample, aSample);
-//    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size()==0) {
-//        THROW(CodecStreamCorrupt); // seek table empty - cannot do seek // FIXME - throw a MpegMediaFileInvalid exception, which is actually expected/caught?
-//    }
-//    aSample = 0;
-//    // fistly determine the required sample from the audio sample using the stts data,
-//    // then work through samples per chunk table (stsc data) to get the chunk number for
-//    // this particular sample, then get the chunk offset from the offset table (stco data)
-//
-//    // stts:
-//    TUint64 totSamplesAudio = 0;
-//    TUint totSamplesCodec = 0;
-//
-//    for (TUint i=0; i<iAudioSamplesPerSample.size(); i++) {
-//        const TUint sampleCount = iAudioSamplesPerSample[i].iSampleCount;
-//        const TUint audioSamples = iAudioSamplesPerSample[i].iAudioSamples;
-//
-//        TBool codecSampleFound = false;
-//        for (TUint sample = 0; sample < sampleCount; sample++) {
-//            if (totSamplesAudio + audioSamples >= aAudioSample) {
-//                codecSampleFound = true;  // Audio samples are within this range.
-//                break;
-//            }
-//
-//            totSamplesAudio += audioSamples;
-//            totSamplesCodec++;
-//        }
-//
-//        if (codecSampleFound) {
-//            break;
-//        }
-//    }
-//
-//    // FIXME - if stss box was present, must use it here to find appropriate sync sample.
-//    // If stss box not present all codec samples are sync samples.
-//
-//    // stsc:
-//    // chunk is found by searching to the entry in the table before samples > first chunk
-//    // and interpolating to get exact chunk
-//    TUint chunk = 0;
-//    TUint samplesTotalStsc = 0;
-//    for (TUint i = 0; i < iSamplesPerChunk.size(); i++) {
-//        const TUint samples = iSamplesPerChunk[i].iSamples;
-//        const TUint nextChunk = iSamplesPerChunk[i].iFirstChunk;
-//        const TUint chunkDiff = nextChunk - chunk;
-//
-//        TBool chunkFound = false;
-//        const TUint endChunk = chunk + chunkDiff;
-//        for (TUint chunkEntry = chunk; chunkEntry < endChunk; chunkEntry++) {
-//            if (samplesTotalStsc + samples >= totSamplesCodec) {
-//                chunkFound = true;
-//                break;
-//            }
-//            samplesTotalStsc += samples;
-//            chunk++;
-//        }
-//
-//        if (chunkFound) {
-//            break;
-//        }
-//    }
-//
-//    // Update output params to match chunk.
-//    aSample = samplesTotalStsc;
-//
-//    TUint chunkStartSampleAudio = 0;
-//    TUint chunkStartSampleCodec = 0;
-//    for (TUint i = 0; i < iAudioSamplesPerSample.size(); i++) {
-//        const TUint sampleCount = iAudioSamplesPerSample[i].iSampleCount;
-//        const TUint audioSamples = iAudioSamplesPerSample[i].iAudioSamples;
-//
-//        TBool startSampleFound = false;
-//        for (TUint sample = 0; sample < sampleCount; sample++) {
-//            if (chunkStartSampleCodec + 1 >= samplesTotalStsc) {
-//                startSampleFound = true;  // Audio samples are within this range.
-//                break;
-//            }
-//
-//            chunkStartSampleAudio += audioSamples;
-//            chunkStartSampleCodec++;
-//        }
-//    }
-//
-//    aAudioSample = chunkStartSampleAudio;
-//
-//
-//    //stco:
-//    if (chunk >= iOffsets.size()) { // error - required chunk doesn't exist
-//        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo // FIXME - THROW Mpeg4MediaFileInvalid instead? - would still assert later on; need to catch and convert it to something that allows codec to send appropriate signal.
-//    }
-//    return iOffsets[chunk]; // entry found - return offset to required chunk
-//}
 
 TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
 {
@@ -771,6 +636,162 @@ void SeekTable::Write(IWriter& aWriter) const
     for (TUint i=0; i<chunkCount; i++) {
         writerBin.WriteUint64Be(iOffsets[i]);
     }
+}
+
+TUint64 SeekTable::CodecSample(TUint64 aAudioSample) const
+{
+    // Use entries from stts box to find codec sample that contains the desired
+    // audio sample.
+    TUint64 totalCodecSamples = 0;
+    TUint64 totalAudioSamples = 0;
+    for (TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
+        const TUint sampleCount = iAudioSamplesPerSample[entry].iSampleCount;
+        const TUint audioSamples = iAudioSamplesPerSample[entry].iAudioSamples;
+        const TUint audioSamplesInrange = sampleCount*audioSamples;
+        if (aAudioSample <= totalCodecSamples+audioSamplesInrange) {
+            // Audio samples are within this range.
+
+            // Find codec sample in this range that contains given audio sample.
+            ASSERT(aAudioSample >= totalAudioSamples);
+            const TUint64 audioSampleOffset = aAudioSample-totalAudioSamples;
+            const TUint64 codecSampleOffset = audioSampleOffset/audioSamples;
+            ASSERT(codecSampleOffset <= sampleCount);
+
+            totalCodecSamples += codecSampleOffset;
+            return totalCodecSamples;
+        }
+        totalCodecSamples += sampleCount;
+        totalAudioSamples += audioSamplesInrange;
+    }
+
+    if (aAudioSample > totalAudioSamples) {
+        THROW(MediaMpeg4OutOfRange);
+    }
+
+    // Something went wrong. Could corrupt table or programmer error!
+    LOG(kCodec, "SeekTable::CodecSample could not find aAudioSample: %u\n", aAudioSample);
+    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+}
+
+TUint SeekTable::Chunk(TUint64 aCodecSample) const
+{
+    // Use data from stsc box to find chunk containing the desired codec sample.
+    TUint64 totalSamples = 0;
+    TUint chunk = 1;
+    for (TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
+        const TUint startChunk = iSamplesPerChunk[entry].iFirstChunk;
+        const TUint spc = iSamplesPerChunk[entry].iSamples;
+        TUint endChunk = 0;
+
+        // Find last chunk in current run.
+        if (entry+1 < iSamplesPerChunk.size()) {
+            endChunk = iSamplesPerChunk[entry+1].iFirstChunk;
+        }
+        else {
+            // No next entry, so end chunk must be last chunk in file.
+            endChunk = iOffsets.size();
+        }
+
+        const TUint chunkDiff = endChunk - startChunk;
+        const TUint samplesInRange = chunkDiff*spc;
+
+        if (aCodecSample < totalSamples+samplesInRange) {
+            // Desired sample is in this range.
+
+            // Find chunk in this range that contains the desired sample.
+            ASSERT(aCodecSample >= totalSamples);
+            const TUint64 sampleOffset = aCodecSample-totalSamples;
+            const TUint chunkOffset = static_cast<TUint>(sampleOffset/spc);
+
+            chunk += chunkOffset;
+            return chunk;
+        }
+
+        totalSamples += samplesInRange;
+        chunk = startChunk;
+    }
+
+    if (aCodecSample > totalSamples) {
+        THROW(MediaMpeg4OutOfRange);
+    }
+
+    LOG(kCodec, "SeekTable::Chunk could not find aCodecSample: %u\n", aCodecSample);
+    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+}
+
+TUint SeekTable::CodecSampleFromChunk(TUint aChunk) const
+{
+    // Use data from stsc box to find chunk containing the desired codec sample.
+    TUint totalSamples = 0;
+    TUint chunk = 1;
+    for (TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
+        const TUint startChunk = iSamplesPerChunk[entry].iFirstChunk;
+        const TUint spc = iSamplesPerChunk[entry].iSamples;
+        TUint endChunk = 0;
+
+        // Find last chunk in current run.
+        if (entry+1 < iSamplesPerChunk.size()) {
+            endChunk = iSamplesPerChunk[entry+1].iFirstChunk;
+        }
+        else {
+            // No next entry, so end chunk must be last chunk in file.
+            endChunk = iOffsets.size();
+        }
+
+        const TUint chunkDiff = endChunk - startChunk;
+        const TUint samplesInRange = chunkDiff*spc;
+
+        if (aChunk <= endChunk) {
+            // Desired chunk is in this range.
+
+            const TUint chunkOffset = aChunk-startChunk;
+            const TUint sampleOffset = chunkOffset*spc;
+            totalSamples += sampleOffset;
+            return totalSamples;
+        }
+
+        totalSamples += samplesInRange;
+        chunk = startChunk;
+    }
+
+    if (aChunk > chunk) {
+        THROW(MediaMpeg4OutOfRange);
+    }
+
+    LOG(kCodec, "SeekTable::CodecSampleFromChunk could not find aCodecSample: %u\n", aChunk);
+    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+}
+
+TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
+{
+    // Use entries from stts box to find audio sample that start at given codec sample;
+    TUint totalCodecSamples = 0;
+    TUint totalAudioSamples = 0;
+    for (TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
+        const TUint sampleCount = iAudioSamplesPerSample[entry].iSampleCount;
+        const TUint audioSamples = iAudioSamplesPerSample[entry].iAudioSamples;
+        if (aCodecSample <= totalCodecSamples+sampleCount) {
+            // Codec sample is within this range.
+
+            // Find the number of audio samples at the start of the given codec sample.
+            ASSERT(totalCodecSamples <= aCodecSample);
+            const TUint codecSampleOffset = aCodecSample-totalCodecSamples;
+            const TUint audioSampleOffset = codecSampleOffset*audioSamples;
+
+            totalAudioSamples += audioSampleOffset;
+            return audioSampleOffset;
+        }
+        totalCodecSamples += sampleCount;
+        totalAudioSamples += sampleCount*audioSamples;
+    }
+
+    if (aCodecSample > totalCodecSamples) {
+        THROW(MediaMpeg4OutOfRange);
+    }
+
+    // Something went wrong. Could be corrupt table or programmer error!
+    LOG(kCodec, "SeekTable::AudioSampleFromCodecSample could not find aCodecSample: %u\n", aCodecSample);
+    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
 }
 
 

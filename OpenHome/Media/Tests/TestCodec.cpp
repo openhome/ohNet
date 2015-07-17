@@ -191,6 +191,7 @@ TestCodecFiller::TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& 
 {
     iProtocolManager = new ProtocolManager(aDownstream, aMsgFactory, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));    // Second ProtocolHttp to allow out-of-band reads.
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
@@ -211,6 +212,11 @@ TUint TestCodecFiller::StreamId()
     return iNextStreamId-1;
 }
 
+TBool TestCodecFiller::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
+{
+    return iProtocolManager->TryGet(aWriter, aUrl, aOffset, aBytes);
+}
+
 void TestCodecFiller::Run()
 {
     Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty());
@@ -219,12 +225,7 @@ void TestCodecFiller::Run()
     // send a msgquit here in case of trying to stream an invalid url during tests
     // could cause race conditions if it isn't sent here
     iPipeline.Push(iMsgFactory.CreateMsgQuit());
-    if (res == EProtocolStreamSuccess) {
-        Log::Print("TestCodecFiller::Run SUCCESS: Full file streamed.\n");
-    }
-    else {
-        Log::Print("TestCodecFiller::Run FAILURE: Failed to stream entire file.\n");
-    }
+    TEST(res == EProtocolStreamSuccess);
 }
 
 TUint TestCodecFiller::NextStreamId()
@@ -343,9 +344,12 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     iController->AddCodec(CodecFactory::NewVorbis());
 }
 
-TBool TestCodecMinimalPipeline::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool TestCodecMinimalPipeline::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
 {
-    return false;
+    Log::Print("Codec requesting out-of-band read. aUrl: ");
+    Log::Print(aUrl);
+    Log::Print(", aOffset: %llu, aBytes: %u\n", aOffset, aBytes);
+    return iFiller->TryGet(aWriter, aUrl, aOffset, aBytes);
 }
 
 
@@ -557,12 +561,14 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     , iSeekSuccess(false)
     , iFileNumStart(0)
     , iFileNumEnd(0)
+    , iFileNumBeyondEnd(0)
     , iFileNumBack(0)
     , iFileNumForward(0)
 {
     for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToStart));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToEnd));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBeyondEnd));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBackwards));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingForwards));
     }
@@ -575,6 +581,7 @@ SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDes
     , iSeekSuccess(false)
     , iFileNumStart(0)
     , iFileNumEnd(0)
+    , iFileNumBeyondEnd(0)
     , iFileNumBack(0)
     , iFileNumForward(0)
 {
@@ -624,9 +631,9 @@ void SuiteCodecSeek::TearDown()
     SuiteCodecStream::TearDown();
 }
 
-TUint64 SuiteCodecSeek::ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint64 aSeekPosJiffies)
+TUint64 SuiteCodecSeek::ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint aSeekPosSeconds)
 {
-    TUint64 jiffies = aSeekStartJiffies + (aJiffiesTotal-aSeekPosJiffies);
+    TUint64 jiffies = aSeekStartJiffies + (aJiffiesTotal-aSeekPosSeconds*Jiffies::kPerSecond);
     return jiffies;
 }
 
@@ -638,7 +645,7 @@ void SuiteCodecSeek::TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffi
     iSem.Wait();
 
     if (aSeekable) {
-        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, aDurationJiffies/2, aSeekPosJiffies);
+        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, aDurationJiffies/2, seekPosSeconds);
         //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         TEST(iSeekSuccess);
@@ -652,8 +659,11 @@ void SuiteCodecSeek::TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffi
         }
     }
     else {
-        TEST(!iSeekSuccess);
-        TEST(iJiffies == aDurationJiffies);
+        // Ignore poor Vorbis seek implementation.
+        if (aCodec != AudioFileDescriptor::kCodecVorbis) {
+            TEST(!iSeekSuccess);
+            TEST(iJiffies == aDurationJiffies);
+        }
     }
 }
 
@@ -679,7 +689,21 @@ void SuiteCodecSeek::TestSeekingToEnd()
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to end"), filename);
-    TestSeeking(iTotalJiffies, iTotalJiffies, codec, seekable);
+    // Seek to last playable second.
+    TestSeeking(iTotalJiffies, iTotalJiffies-Jiffies::kPerSecond, codec, seekable);
+    delete fileLocation;
+}
+
+void SuiteCodecSeek::TestSeekingBeyondEnd()
+{
+    Brn filename(iFiles[iFileNumBeyondEnd].Filename());
+    TUint codec = iFiles[iFileNumBeyondEnd].Codec();
+    iTotalJiffies = iFiles[iFileNumBeyondEnd].Jiffies();
+    iFileNumBeyondEnd++;
+
+    Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking beyond end"), filename);
+    // Seek to 1s beyond end of file.
+    TestSeeking(iTotalJiffies, iTotalJiffies+Jiffies::kPerSecond, codec, false);
     delete fileLocation;
 }
 
@@ -716,10 +740,12 @@ SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor
     : SuiteCodecSeek("Codec seek from start tests", aFiles, aEnv, aFunc, aUri)
     , iFileNumMiddle(0)
     , iFileNumEnd(0)
+    , iFileNumBeyondEnd(0)
 {
     for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingToMiddle));
         AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingToEnd));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingBeyondEnd));
     }
 }
 
@@ -740,11 +766,11 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
 
 void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable)
 {
-    TUint seekPosSeconds = static_cast<TUint>(aDurationJiffies/Jiffies::kPerSecond);
+    TUint seekPosSeconds = static_cast<TUint>(aSeekPosJiffies/Jiffies::kPerSecond);
     iSeekPos = seekPosSeconds;
     iSem.Wait();
     if (aSeekable) {
-        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, 0, aSeekPosJiffies);
+        TUint64 expectedJiffies = ExpectedJiffies(aDurationJiffies, 0, seekPosSeconds);
         //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
         TEST(iSeekSuccess);
@@ -758,8 +784,11 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint64 aDurationJiffies, TUi
         }
     }
     else {
-        TEST(!iSeekSuccess);
-        TEST(iJiffies == aDurationJiffies);
+        // Ignore poor Vorbis seek implementation.
+        if (aCodec != AudioFileDescriptor::kCodecVorbis) {
+            TEST(!iSeekSuccess);
+            TEST(iJiffies == aDurationJiffies);
+        }
     }
 }
 
@@ -785,7 +814,21 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
-    TestSeekingFromStart(iTotalJiffies, iTotalJiffies, codec, seekable);
+    // Seek to last playable second.
+    TestSeekingFromStart(iTotalJiffies, iTotalJiffies-Jiffies::kPerSecond, codec, seekable);
+    delete fileLocation;
+}
+
+void SuiteCodecSeekFromStart::TestSeekingBeyondEnd()
+{
+    Brn filename(iFiles[iFileNumBeyondEnd].Filename());
+    TUint codec = iFiles[iFileNumBeyondEnd].Codec();
+    iTotalJiffies = iFiles[iFileNumBeyondEnd].Jiffies();
+    iFileNumBeyondEnd++;
+
+    Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking beyond end"), filename);
+    // Seek to 1s beyond end of file.
+    TestSeekingFromStart(iTotalJiffies, iTotalJiffies+Jiffies::kPerSecond, codec, false);
     delete fileLocation;
 }
 
