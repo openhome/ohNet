@@ -40,13 +40,13 @@ public:
 
     static TUint Bytes(TUint iSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample);
     static void LogBuf(const Brx& aBuf);
+    static TInt32 Int32(Bwx& aSample, TUint aIndex=0);
 
 
 private:
     void CreateRamp(const Brx& aGenerationSamples);
     void ApplyRamp(Bwx& aSamples);
     void ScaleSample(Bwx& aSample, TUint aScaleFactor);
-    TInt32 Sample(Bwx& aSample);
 
 private:
     TUint iGenerationJiffies;
@@ -102,11 +102,11 @@ private:
 //
 // Constructed with a list of 32 bit coefficients
 //
-// Process method takes in a block of 32 bit samples, and a count, and outputs
-// a new block of 32 bit samples. Count determines the number of samples in
-// output block.
+// Process method takes in a block of 32 bit samples, and a count
+// Outputs a new block of 32 bit samples.
+// Count determines the number of samples in output block.
 //
-// Max count = no. of samples in input block + no. of coeffs in coeff list - 1
+// Max count = no. of samples in input block + no. of coeffs - 1
 //
 // The value of each sample in output block is calculated by:
 //
@@ -117,27 +117,55 @@ private:
 class ConvolutionModel : public INonCopyable
 {
 public:
-    ConvolutionModel(const std::vector<TInt32>& aCoeffs);
+    ConvolutionModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling);
 
-    void Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount);
+    void Process(const Brx& aSamplesIn,  Bwx& aSamplesOut, TUint aCount);
+    void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
 
 private:
     const std::vector<TInt32> iCoeffs;
     std::vector<TInt32> iSamples;
+    TUint iCoeffScaling;
+    TUint iDataInScaling;
+    TUint iDataOutScaling;
+    TUint iScaleShift;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////
+//
+// FeedbackModel:
+//
+// Constructed with a list of 32 bit coefficients
+//
+// Process method takes in a block of 32 bit samples, and a count
+// Outputs a new block of 32 bit samples.
+// Count determines the number of samples in output block.
+//
+// Max count = no. of samples in input block + no. of coeffs
+//
+// The value of each sample in output block is calculated by:
+//
+// sampleOut n = sampleIn(n) + coeff(1)*sampleIn(n-1) + coeff(2)*sampleIn(n-2)...
+//
+// for n=1 to x (where x= num samples in + num coeffs):
+
 class FeedbackModel : public INonCopyable
 {
 public:
-    FeedbackModel(const std::vector<TInt32>& aCoeffs);
+    FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling);
 
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount);
+    void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
 
 private:
     const std::vector<TInt32> iCoeffs;
     std::vector<TInt32> iSamples;
+    TUint iCoeffScaling;
+    TUint iDataInScaling;
+    TUint iDataOutScaling;
+    TUint iScaleShift;
 };
 
 
