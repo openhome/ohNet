@@ -651,6 +651,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestPlaylist.cpp',
                 'Generated/CpAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
+                'OpenHome/Av/Tests/TestMediaPlayerOptions.cpp',
                 'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
