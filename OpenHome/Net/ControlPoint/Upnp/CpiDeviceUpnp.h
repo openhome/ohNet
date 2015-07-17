@@ -180,6 +180,13 @@ public:
     ~CpiDeviceListUpnpAll();
     void Start();
     void SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
+    void SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
+    void SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,
+                                   const Brx& aLocation, TUint aMaxAge);
+    void SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,
+                                    const Brx& aLocation, TUint aMaxAge);
+private:
+    void SsdpNotification(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
 };
 
 /**

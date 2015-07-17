@@ -853,6 +853,28 @@ void CpiDeviceListUpnpAll::Start()
 
 void CpiDeviceListUpnpAll::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
 {
+    SsdpNotification(aUuid, aLocation, aMaxAge);
+}
+
+void CpiDeviceListUpnpAll::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
+{
+    SsdpNotification(aUuid, aLocation, aMaxAge);
+}
+
+void CpiDeviceListUpnpAll::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/,
+                                                     TUint /*aVersion*/, const Brx& aLocation, TUint aMaxAge)
+{
+    SsdpNotification(aUuid, aLocation, aMaxAge);
+}
+
+void CpiDeviceListUpnpAll::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/,
+                                                      TUint /*aVersion*/, const Brx& aLocation, TUint aMaxAge)
+{
+    SsdpNotification(aUuid, aLocation, aMaxAge);
+}
+
+void CpiDeviceListUpnpAll::SsdpNotification(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
+{
     if (Update(aUuid, aLocation, aMaxAge)) {
         return;
     }
