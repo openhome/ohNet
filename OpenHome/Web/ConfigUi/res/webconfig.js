@@ -126,6 +126,7 @@ function StartLongPolling()
         for (var i=0; i<options.length; i++) {
             var option = document.createElement("option");
             option.text = options[i].value;
+            option.value = option.text;
             elemSelect.add(option);
         }
         gConfigValChoiceOptions.push(new ConfigChoiceOptions(aJsonConfigChoiceVal.key, aJsonConfigChoiceVal.meta.options));
