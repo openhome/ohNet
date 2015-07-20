@@ -486,9 +486,11 @@ void Stopper::HandleStopped()
 
 void Stopper::SetState(EState aState)
 {
-    LOG(kPipeline, "Stopper changing state from %s to %s\n", State(), State(aState));
-    LOG(kPipeline, "  iRemainingRampSize=%u, iCurrentRampValue=%08x\n", iRemainingRampSize, iCurrentRampValue);
-    iState = aState;
+    if (iState != aState) {
+        LOG(kPipeline, "Stopper changing state from %s to %s\n", State(), State(aState));
+        LOG(kPipeline, "  iRemainingRampSize=%u, iCurrentRampValue=%08x\n", iRemainingRampSize, iCurrentRampValue);
+        iState = aState;
+    }
 }
 
 const TChar* Stopper::State() const
