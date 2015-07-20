@@ -443,7 +443,7 @@ private:
     const TUint iMaxLpSessions;
     TUint iAdapterListenerId;
     OpenHome::SocketTcpServer* iServer;
-    TabManager iTabManager;
+    TabManager* iTabManager;
     WebAppMap iWebApps; // FIXME - need comparator
     TBool iStarted;
     NetworkAdapter* iCurrentAdapter;
