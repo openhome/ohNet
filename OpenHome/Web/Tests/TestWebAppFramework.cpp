@@ -260,6 +260,8 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
+    void TestTabDestroyed();
+    void TestAllocatedTabDestroyed();   // Test Destroy() is called on underlying tab when FrameworkTab deleted.
     void TestDeleteWhileTabAllocated();
 private:
     TestPipeDynamic* iTestPipe;
@@ -644,9 +646,12 @@ TestHelperWebApp::~TestHelperWebApp()
 
 IResourceHandler& TestHelperWebApp::CreateResourceHandler(const Brx& /*aResource*/)
 {
-    IResourceHandler* handler = new TestHelperResourceHandler();
-    iResourceHandlers.push_back(handler);
-    return *handler;
+    // Currently no tests that retrieve valid static resources.
+    THROW(ResourceInvalid);
+
+    //IResourceHandler* handler = new TestHelperResourceHandler();
+    //iResourceHandlers.push_back(handler);
+    //return *handler;
 }
 
 ITab& TestHelperWebApp::Create(ITabHandler& /*aHandler*/, std::vector<const Brx*>& /*aLanguageList*/)
