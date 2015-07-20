@@ -210,14 +210,17 @@ WebUi = function() {
         else {
             try {
                 var json = JSON.parse(aResponse);
+                if (!json) {
+                    throw "Unable to parse JSON";
+                }
+                for (var i=0; i<json.length; i++) {
+                    this.iCallbackSuccess(json[i]);
+                }
             }
-            catch (err)
-            {
+            catch (err) {
                 alert("Error: LongPoll.ParseResponse could not parse JSON response");
             }
-            for (var i=0; i<json.length; i++) {
-                this.iCallbackSuccess(json[i]);
-            }
+
         }
     }
 

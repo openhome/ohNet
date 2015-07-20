@@ -295,7 +295,7 @@ public:
     ~FrameworkTab();
     TBool Allocated() const;    // calls between this and SetTab() not thread-safe; must lock entire object
     TBool Available() const;    // calls between this and AddRef() not thread-safe; Destroy() may be called by another thread. Appropriate locking must be in place to ensure thread-safety among these calls and the ITabDestroyHandler.
-    void Set(ITab& aTab, std::vector<const Brx*>& aLanguages);
+    void Set(ITab& aTab, const std::vector<const Brx*>& aLanguages);
     void StartPollWait();
     void CancelPollWait();
 public: // from IFrameworkTab
@@ -443,7 +443,7 @@ private:
     const TUint iMaxLpSessions;
     TUint iAdapterListenerId;
     OpenHome::SocketTcpServer* iServer;
-    TabManager iTabManager;
+    TabManager* iTabManager;
     WebAppMap iWebApps; // FIXME - need comparator
     TBool iStarted;
     NetworkAdapter* iCurrentAdapter;

@@ -334,9 +334,15 @@ FrameworkTab::FrameworkTab(TUint aId, ITabDestroyHandler& aDestroyHandler, IFram
 
 FrameworkTab::~FrameworkTab()
 {
+    // Must handle situation where a tab has been allocated and is in use, but
+    // the app framework is being destroyed.
+    // In that situation, must clear all references until Destroy() is called
+    // on underlying tab, notifying owner of underlying tab that it can now be
+    // deallocated.
     AutoMutex a(iLock);
-    // All clients must have called RemoveRef() before this object is destructed.
-    ASSERT(iRefCount == 0);
+    while (iRefCount > 0) {
+        RemoveRefUnlocked();
+    }
     //iPollTimer.CancelPollWait(); - called by Destroy()
 }
 
@@ -354,7 +360,7 @@ TBool FrameworkTab::Available() const
     return available;
 }
 
-void FrameworkTab::Set(ITab& aTab, std::vector<const Brx*>& aLanguages)
+void FrameworkTab::Set(ITab& aTab, const std::vector<const Brx*>& aLanguages)
 {
     LOG(kHttp, "FrameworkTab::Set iId: %u\n", iId);
     AutoMutex a(iLock);
@@ -476,16 +482,10 @@ TabManager::TabManager(Environment& aEnv, TUint aMaxTabs, TUint aSendQueueSize, 
 
 TabManager::~TabManager()
 {
-    // Expect all clients to have released their references to tabs by this
-    // point. So, any tabs still allocated can have RemoveRef() called, as this
-    // should be only object holding a reference.
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
         FrameworkTab* tab = iTabs[i];
-        if (tab->Allocated()) {
-            tab->RemoveRefUnlocked();
-        }
-        delete tab;
+        delete tab; // Will remove any references still held (i.e., when client holds a browser tab open).
         delete iTimers[i];
     }
 }
@@ -596,10 +596,10 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint
     , iPollTimer(iEnv)
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
-    , iTabManager(iEnv, iMaxLpSessions, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs)
     , iStarted(false)
     , iCurrentAdapter(NULL)
 {
+    iTabManager = new TabManager(iEnv, iMaxLpSessions, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs);
     iServer = new SocketTcpServer(iEnv, kName, iPort, aInterface);
 
     Functor functor = MakeFunctor(*this, &WebAppFramework::CurrentAdapterChanged);
@@ -620,13 +620,18 @@ WebAppFramework::~WebAppFramework()
         iCurrentAdapter->RemoveRef(kAdapterCookie);
     }
 
+    // Don't allow any more web requests.
+    delete iServer;
+
+    // Delete TabManager. If a client has any browser tabs open (i.e., holds references to any tabs), deleting the TabManager will cause its FrameworkTabs to clear all references and call Destroy() on the underlying tab, allowing its owner to deallocate it.
+    // If WebApps are deleted before the TabManager, it could result in tabs being deleted from out under the TabManager/FrameworkTabs.
+    delete iTabManager;
+
     WebAppMap::iterator it;
     for (it=iWebApps.begin(); it!=iWebApps.end(); ++it) {
         // First elem is pointer to ref.
         delete it->second;
     }
-
-    delete iServer;
 }
 
 void WebAppFramework::Start()
@@ -716,7 +721,7 @@ void WebAppFramework::AddSessions()
     for (TUint i=0; i<iMaxLpSessions+kSpareSessions; i++) {
         Bws<kMaxSessionNameBytes> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
-        iServer->Add(name.PtrZ(), new HttpSession(iEnv, *this, iTabManager, *this));
+        iServer->Add(name.PtrZ(), new HttpSession(iEnv, *this, *iTabManager, *this));
     }
 }
 
@@ -1015,7 +1020,7 @@ void HttpSession::Post()
                 iWriterBuffer->Write(Brn("lp\r\n"));
                 // FIXME - bother throwing Timeout if there is nothing useful to do with it?
                 try {
-                    tab->BlockingSend(*iWriterBuffer);  // may write no data
+                    tab->BlockingSend(*iWriterBuffer);  // May write no data.
                 }
                 catch (Timeout&)
                 {
