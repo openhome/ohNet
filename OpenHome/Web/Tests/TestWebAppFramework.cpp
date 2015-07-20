@@ -267,6 +267,8 @@ private:
     TestPipeDynamic* iTestPipe;
     TestHelperDestroyHandler* iDestroyHandler;
     TestHelperFrameworkTimer* iFrameworkTimer;
+    TestHelperTab* iAppTab;
+    const std::vector<const Brx*> iLanguages;
     FrameworkTab* iFrameworkTab;
 };
 
@@ -973,12 +975,16 @@ void SuiteFrameworkTab::Setup()
     iTestPipe = new TestPipeDynamic();
     iDestroyHandler = new TestHelperDestroyHandler(*iTestPipe);
     iFrameworkTimer = new TestHelperFrameworkTimer(*iTestPipe);
+
+    iAppTab = new TestHelperTab();
+
     iFrameworkTab = new FrameworkTab(0, *iDestroyHandler, *iFrameworkTimer, 32, 50, 5000);
 }
 
 void SuiteFrameworkTab::TearDown()
 {
     delete iFrameworkTab;
+    delete iAppTab;
     delete iFrameworkTimer;
     delete iDestroyHandler;
     delete iTestPipe;
@@ -988,9 +994,7 @@ void SuiteFrameworkTab::TestDeleteWhileTabAllocated()
 {
     // Set a tab, then don't bother calling RemoveRef() or Destroy().
     // i.e., let TearDown() call delete on the FrameworkTab while a tab is still allocated.
-    TestHelperTab* tab = new TestHelperTab();
-    std::vector<const Brx*> languages;
-    iFrameworkTab->Set(*tab, languages);
+    iFrameworkTab->Set(*iAppTab, iLanguages);
 }
 
 

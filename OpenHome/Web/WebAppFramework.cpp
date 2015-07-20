@@ -360,7 +360,7 @@ TBool FrameworkTab::Available() const
     return available;
 }
 
-void FrameworkTab::Set(ITab& aTab, std::vector<const Brx*>& aLanguages)
+void FrameworkTab::Set(ITab& aTab, const std::vector<const Brx*>& aLanguages)
 {
     LOG(kHttp, "FrameworkTab::Set iId: %u\n", iId);
     AutoMutex a(iLock);
