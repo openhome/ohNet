@@ -160,7 +160,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
     VolumeProfile volumeProfile;
-    VolumeConsumer volumeInit(iVolumeLogger);
+    VolumeConsumer volumeInit;
+    volumeInit.SetVolume(iVolumeLogger);
     volumeInit.SetBalance(iVolumeLogger);
     volumeInit.SetFade(iVolumeLogger);
 
