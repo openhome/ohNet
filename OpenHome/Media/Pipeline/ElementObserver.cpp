@@ -25,6 +25,13 @@ PipelineElementObserverThread::~PipelineElementObserverThread()
     }
 }
 
+void PipelineElementObserverThread::Stop()
+{
+    AutoMutex _(iLock);
+    delete iThread;
+    iThread = NULL;
+}
+
 void PipelineElementObserverThread::PipelineEventThread()
 {
     try {
@@ -52,8 +59,11 @@ void PipelineElementObserverThread::Schedule(TUint aId)
 {
     for (auto it=iCallbacks.begin(); it!=iCallbacks.end(); ++it) {
         if ((*it)->Id() == aId) {
-            (*it)->SetPending();
-            iThread->Signal();
+            AutoMutex _(iLock);
+            if (iThread != NULL) {
+                (*it)->SetPending();
+                iThread->Signal();
+            }
             return;
         }
     }

@@ -122,7 +122,9 @@ SuiteReporter::SuiteReporter()
 
 SuiteReporter::~SuiteReporter()
 {
+    iEventThread->Stop();
     delete iReporter;
+    delete iEventThread;
     delete iMsgFactory;
     delete iTrackFactory;
 }

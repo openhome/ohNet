@@ -350,6 +350,7 @@ Pipeline::~Pipeline()
     // FIXME - should we wait for the pipeline to be halted before issuing a Quit?
     //         ...otherwise, MsgQuit goes down the pipeline ahead of final audio
     Quit();
+    iEventThread->Stop();
 
     // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
     delete iLoggerPreDriver;

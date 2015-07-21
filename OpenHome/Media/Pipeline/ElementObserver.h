@@ -39,6 +39,7 @@ class PipelineElementObserverThread : public IPipelineElementObserverThread, pri
 public:
     PipelineElementObserverThread(TUint aPriority);
     ~PipelineElementObserverThread();
+    void Stop();
 private:
     void PipelineEventThread();
 private: // from IPipelineElementObserverThread
