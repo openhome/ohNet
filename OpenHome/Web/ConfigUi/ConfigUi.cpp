@@ -6,12 +6,14 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
+#include <OpenHome/Av/Utils/Json.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Debug.h>
 
 #include <limits>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Web;
 
@@ -125,7 +127,7 @@ void OptionJsonWriter::WriteChoiceObject(ILanguageResourceReader& aReader, IWrit
     aWriter.Write(Brn("\"id\": "));
     Ascii::StreamWriteUint(aWriter, aId);
     aWriter.Write(Brn(",\"value\": \""));
-    aWriter.Write(valueBuf);    // FIXME - ensure this is escaped JSON
+    Json::Escape(aWriter, valueBuf);
     aWriter.Write(Brn("\"}"));
 }
 
@@ -236,7 +238,7 @@ void ConfigMessageNum::Clear()
 void ConfigMessageNum::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iNum->Key());
+    Json::Escape(aWriter, iNum->Key());
     aWriter.Write(Brn("\""));
 }
 
@@ -291,7 +293,7 @@ void ConfigMessageChoice::Clear()
 void ConfigMessageChoice::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iChoice->Key());
+    Json::Escape(aWriter, iChoice->Key());
     aWriter.Write(Brn("\""));
 }
 
@@ -351,14 +353,14 @@ void ConfigMessageText::Clear()
 void ConfigMessageText::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iText->Key());
+    Json::Escape(aWriter, iText->Key());
     aWriter.Write(Brn("\""));
 }
 
 void ConfigMessageText::WriteValue(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iValue);
+    Json::Escape(aWriter, iValue);
     aWriter.Write(Brn("\""));
 }
 
@@ -829,6 +831,8 @@ IResourceHandler& ConfigAppBase::CreateResourceHandler(const OpenHome::Brx& aRes
         }
     }
     ASSERTS();  // FIXME - throw exception instead?
+    // Could throw a ResourceHandlerFull if temporarily unavailable, and send an appropriate error response to browser.
+    // However, in most cases, this should never happen. If it does (repeatedly) it likely means resource handlers aren't being returned/Destroy()ed.
     return *iResourceHandlers[0];   // unreachable
 }
 
@@ -988,9 +992,9 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, std::
     AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
 
     AddTextConditional(Brn("Radio.TuneInUserName"), emptyJsonVector);
-    //AddTextConditional(Brn("qobuz.com.Password"), emptyJsonVector);
+    AddTextConditional(Brn("qobuz.com.Password"), emptyJsonVector);
     AddTextConditional(Brn("qobuz.com.Username"), emptyJsonVector);
-    //AddTextConditional(Brn("tidalhifi.com.Password"), emptyJsonVector);
+    AddTextConditional(Brn("tidalhifi.com.Password"), emptyJsonVector);
     AddTextConditional(Brn("tidalhifi.com.Username"), emptyJsonVector);
 }
 

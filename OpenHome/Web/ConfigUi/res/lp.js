@@ -177,7 +177,7 @@ WebUi = function() {
         Response = function() {
             if (request.ReadyState() == 4) {
                 if (request.Status() == 200) {
-                    aCallbackResponse(aString, request.responseText);
+                    aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
                     aCallbackError(aString);
@@ -240,7 +240,7 @@ WebUi = function() {
             // this.SendCreate();
         // }
 
-        if (aRequest == null) {
+        if (aRequest == null || aRequest.ReadyState() != 4) {
             return;
         }
 

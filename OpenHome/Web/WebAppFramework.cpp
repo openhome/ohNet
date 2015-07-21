@@ -230,7 +230,7 @@ void FrameworkTimer::Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
     iStartCount++;
-    ASSERT(iHandler == NULL);
+    //ASSERT(iHandler == NULL);
     iHandler = &aHandler;
     iTimer->FireIn(aDurationMs);
 }
@@ -266,7 +266,7 @@ PollTimer::PollTimer(IFrameworkTimer& aTimer) // FIXME - each PollTimer should g
 void PollTimer::StartPollWait(TUint aTimeoutMs, IPollTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
-    ASSERT(iHandler == NULL);
+    //ASSERT(iHandler == NULL);
     iHandler = &aHandler;
     iTimer.Start(aTimeoutMs, *this);
 }
@@ -274,8 +274,15 @@ void PollTimer::StartPollWait(TUint aTimeoutMs, IPollTimerHandler& aHandler)
 void PollTimer::CancelPollWait()
 {
     AutoMutex a(iLock);
-    ASSERT(iHandler != NULL);
-    iTimer.Cancel();
+    // Another thread (i.e., another web request) may have come in while a tab was NOT waiting on a poll (i.e., while some other work was going on, such as the framework doing a blocking send) and requested termination of the session.
+    // It is valid for iHandler to be NULL in that situation.
+    //ASSERT(iHandler != NULL);
+    //iTimer.Cancel();
+
+    if (iHandler != NULL) {
+        iTimer.Cancel();
+    }
+
     iHandler = NULL;
 }
 
@@ -428,6 +435,14 @@ void FrameworkTab::Send(ITabMessage& aMessage)
 
 void FrameworkTab::PollWaitComplete()
 {
+    // FIXME - bodge to ensure no attempt to AddRef() to a Destroy()ed tab and then Destroy() it again.
+    {
+        AutoMutex a(iLock);
+        if (iTab == NULL) {
+            // Already Destroy()ed.
+            return;
+        }
+    }
     // Timer callback method.
     AddRef();   // all calls to Destroy() must be made by caller with ref held
     Destroy();
@@ -964,6 +979,7 @@ void HttpSession::Post()
             iWriterBuffer->Write(Brn("\r\n"));
             iWriterBuffer->WriteFlush();
             iResponseEnded = true;
+            //Log::Print("lpcreate StartPollWait()\n");
             tab.StartPollWait();
             tab.RemoveRef();
         }
@@ -1001,10 +1017,11 @@ void HttpSession::Post()
                 // respond with bad request?
                 Error(HttpStatus::kNotFound);
             }
-            Log::Print("lp session-id: %u\n", sessionId);
+            //Log::Print("lp session-id: %u\n", sessionId);
             IFrameworkTab* tab = NULL;
             try {
                 tab = &iTabManager.GetTab(sessionId);
+                //Log::Print("lp CancelPollWait()\n");
                 tab->CancelPollWait(); // what if polling timer has fired
                 // between GetTab() and CancelPollWait()?
                 // - reference to tab is still valid
@@ -1028,6 +1045,7 @@ void HttpSession::Post()
                 }
                 iWriterBuffer->WriteFlush();
                 iResponseEnded = true;
+                //Log::Print("lp StartPollWait()\n");
                 tab->StartPollWait();
                 tab->RemoveRef();
             }
@@ -1064,9 +1082,10 @@ void HttpSession::Post()
             catch (AsciiError&) {
                 Error(HttpStatus::kNotFound);
             }
-            Log::Print("lpterminate session-id: %u\n", sessionId);
+            //Log::Print("lpterminate session-id: %u\n", sessionId);
             try {
                 IFrameworkTab& tab = iTabManager.GetTab(sessionId);
+                //Log::Print("lpterminate CancelPollWait()\n");
                 tab.CancelPollWait();
                 tab.Destroy();
                 iResponseStarted = true;

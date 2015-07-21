@@ -253,7 +253,7 @@ private:
 //    void TearDown();
 //};
 
-class SuiteFrameworkTab : public OpenHome::TestFramework::SuiteUnitTest, private OpenHome::INonCopyable
+class SuiteFrameworkTab : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteFrameworkTab();
@@ -273,7 +273,7 @@ private:
     FrameworkTab* iFrameworkTab;
 };
 
-class SuiteTabManager : public OpenHome::TestFramework::SuiteUnitTest, private INonCopyable
+class SuiteTabManager : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteTabManager(Environment& aEnv);
@@ -293,7 +293,7 @@ private:
     TestHelperWebApp* iWebApp;
 };
 
-class SuiteWebAppFramework : public OpenHome::TestFramework::SuiteUnitTest, private INonCopyable
+class SuiteWebAppFramework : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteWebAppFramework(Environment& aEnv);
@@ -1006,9 +1006,9 @@ SuiteTabManager::SuiteTabManager(Environment& aEnv)
     , iEnv(aEnv)
 {
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestCreateAndGetTab), "TestCreateAndGetTab");
-    //AddTest(MakeFunctor(*this, &SuiteTabManager::TestTabIdsIncrement), "TestTabIdsIncrement");
+    AddTest(MakeFunctor(*this, &SuiteTabManager::TestTabIdsIncrement), "TestTabIdsIncrement");
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestCreateTabManagerFull), "TestCreateTabManagerFull");
-    //AddTest(MakeFunctor(*this, &SuiteTabManager::TestGetTabInvalidId), "TestGetTabInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteTabManager::TestGetTabInvalidId), "TestGetTabInvalidId");
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestDeleteWhileTabsAllocated), "TestDeleteWhileTabsAllocated");
 }
 
@@ -1046,14 +1046,14 @@ void SuiteTabManager::TestTabIdsIncrement()
     TEST(id3 == 3);
 
     // Destroy last tab and check numbering resumes from that point.
-    IFrameworkTab& tab = iTabManager->GetTab(id3);
-    tab.Destroy();
+    IFrameworkTab& tab1 = iTabManager->GetTab(id3);
+    tab1.Destroy();
     id3 = iTabManager->CreateTab(*iWebApp, languages);
     TEST(id3 == 3);
 
     // Destroy tab from middle and check numbering resumes from that point, and skips over next allocated tab.
-    tab = iTabManager->GetTab(id2);
-    tab.Destroy();
+    IFrameworkTab& tab2 = iTabManager->GetTab(id2);
+    tab2.Destroy();
     id2 = iTabManager->CreateTab(*iWebApp, languages);
     TEST(id2 == 2);
 
@@ -1061,14 +1061,14 @@ void SuiteTabManager::TestTabIdsIncrement()
     TEST(id4 == 4);
 
     // Destroy all tabs to clean up.
-    tab = iTabManager->GetTab(id1);
-    tab.Destroy();
-    tab = iTabManager->GetTab(id2);
-    tab.Destroy();
-    tab = iTabManager->GetTab(id3);
-    tab.Destroy();
-    tab = iTabManager->GetTab(id4);
-    tab.Destroy();
+    IFrameworkTab& tab3 = iTabManager->GetTab(id1);
+    tab3.Destroy();
+    IFrameworkTab& tab4 = iTabManager->GetTab(id2);
+    tab4.Destroy();
+    IFrameworkTab& tab5 = iTabManager->GetTab(id3);
+    tab5.Destroy();
+    IFrameworkTab& tab6 = iTabManager->GetTab(id4);
+    tab6.Destroy();
 }
 
 void SuiteTabManager::TestCreateTabManagerFull()
@@ -1107,13 +1107,13 @@ void SuiteTabManager::TestGetTabInvalidId()
     TEST_THROWS(iTabManager->GetTab(3), InvalidTabId);
 
     // Test that tab can't be retrieved after Destroy() has been called.
-    IFrameworkTab& tab = iTabManager->GetTab(id2);
-    tab.Destroy();
+    IFrameworkTab& tab1 = iTabManager->GetTab(id2);
+    tab1.Destroy();
     TEST_THROWS(iTabManager->GetTab(id2), InvalidTabId);
 
     // Cleanup.
-    tab = iTabManager->GetTab(id1);
-    tab.Destroy();
+    IFrameworkTab& tab2 = iTabManager->GetTab(id1);
+    tab2.Destroy();
 }
 
 void SuiteTabManager::TestDeleteWhileTabsAllocated()
