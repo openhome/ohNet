@@ -111,8 +111,8 @@ protected:
     virtual void WriteValue(OpenHome::IWriter& aWriter) = 0;
     virtual void WriteType(OpenHome::IWriter& aWriter) = 0;
     virtual void WriteMeta(OpenHome::IWriter& aWriter) = 0;
-protected: // from IConfigMessage
-    void Clear();
+protected:
+    virtual void Clear();
 private: // from IConfigMessage
     void Set(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
     void Set(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
