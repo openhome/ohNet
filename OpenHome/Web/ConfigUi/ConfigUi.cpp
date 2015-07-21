@@ -992,9 +992,9 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, std::
     AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
 
     AddTextConditional(Brn("Radio.TuneInUserName"), emptyJsonVector);
-    //AddTextConditional(Brn("qobuz.com.Password"), emptyJsonVector);
+    AddTextConditional(Brn("qobuz.com.Password"), emptyJsonVector);
     AddTextConditional(Brn("qobuz.com.Username"), emptyJsonVector);
-    //AddTextConditional(Brn("tidalhifi.com.Password"), emptyJsonVector);
+    AddTextConditional(Brn("tidalhifi.com.Password"), emptyJsonVector);
     AddTextConditional(Brn("tidalhifi.com.Username"), emptyJsonVector);
 }
 
