@@ -20,6 +20,9 @@ PipelineElementObserverThread::PipelineElementObserverThread(TUint aPriority)
 PipelineElementObserverThread::~PipelineElementObserverThread()
 {
     delete iThread;
+    for (auto it=iCallbacks.begin(); it!=iCallbacks.end(); ++it) {
+        delete *it;
+    }
 }
 
 void PipelineElementObserverThread::PipelineEventThread()
