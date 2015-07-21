@@ -4,6 +4,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <string.h>
 #include <vector>
@@ -93,6 +94,7 @@ private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
     StarvationMonitor* iSm;
+    ElementObserverSync* iEventCallback;
     EMsgType iLastMsg;
     EMsgGenerationState iMsgGenerationState;
     Semaphore iSemUpstream;
@@ -121,12 +123,15 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
     init.SetMsgSilenceCount(kMsgSilenceCount);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kPriorityNormal, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
+    iEventCallback = new ElementObserverSync();
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, *iEventCallback, kPriorityNormal,
+                                kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()
 {
     delete iSm;
+    delete iEventCallback;
     delete iMsgFactory;
 }
 

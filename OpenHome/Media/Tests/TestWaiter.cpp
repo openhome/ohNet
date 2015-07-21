@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <list>
 
@@ -107,6 +108,7 @@ private:
     TrackFactory* iTrackFactory;
     MsgFactory* iMsgFactory;
     Waiter* iWaiter;
+    ElementObserverSync* iEventCallback;
     EMsgType iLastPulledMsg;
     TBool iRampingDown;
     TBool iRampingUp;
@@ -158,7 +160,8 @@ void SuiteWaiter::Setup()
     init.SetMsgHaltCount(2);
     init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iWaiter = new Waiter(*iMsgFactory, *this, *this, kRampDuration);
+    iEventCallback = new ElementObserverSync();
+    iWaiter = new Waiter(*iMsgFactory, *this, *this, *iEventCallback, kRampDuration);
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
     iTrackOffset = 0;
@@ -175,6 +178,7 @@ void SuiteWaiter::TearDown()
         iPendingMsgs.pop_front();
     }
     delete iWaiter;
+    delete iEventCallback;
     delete iMsgFactory;
     delete iTrackFactory;
 }

@@ -424,7 +424,7 @@ void SuitePipeline::Test()
     // Check ramping up from partial ramp down completes.
     TestRampsUp(kMaxMsgs);
     TEST(iPipelineState == EPipelinePlaying);
-    TEST(iStateChangeCount == initialStateChangeCount+1); // shouldn't have changed from EPipelinePlaying, but may have received another notification
+    TEST(iStateChangeCount == initialStateChangeCount);
 
 
     // Test pause followed by play with no audio pulled in between.
@@ -442,7 +442,7 @@ void SuitePipeline::Test()
     }
     TEST(iFirstSubsample == iLastSubsample);    // only check last message; StarvationMonitor could have kicked in between Pause() and Play() above.
     TEST(iPipelineState == EPipelinePlaying);
-    TEST(iStateChangeCount == initialStateChangeCount+1); // shouldn't have changed from EPipelinePlaying, but may have received another notification
+    TEST(iStateChangeCount == initialStateChangeCount);
 
 
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.

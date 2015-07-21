@@ -3,14 +3,19 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
+
+#include <atomic>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver, TUint aRampDuration)
+Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
+               IPipelineElementObserverThread& aObserverThread, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iObserverThread(aObserverThread)
     , iLock("WAIT")
     , iState(ERunning)
     , iRampDuration(aRampDuration)
@@ -18,6 +23,9 @@ Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iCurrentRampValue(Ramp::kMax)
     , iTargetFlushId(MsgFlush::kIdInvalid)
 {
+    iEventWaiting.store(false);
+    ASSERT(iEventWaiting.is_lock_free());
+    iEventId = iObserverThread.Register(MakeFunctor(*this, &Waiter::ReportEvent));
 }
 
 Waiter::~Waiter()
@@ -141,7 +149,7 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
     if (iState != EFlushing) {
         // Received a MsgWait through the pipeline, via Songcast protocol.
         iState = EWaiting;
-        iObserver.PipelineWaiting(true);
+        ScheduleEvent(true);
     }
     return aMsg;
 }
@@ -154,7 +162,7 @@ Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
     }
     // iState may be ERampingUp if a MsgFlush was pulled
     if (iState == EWaiting || iState == ERampingUp) {
-        iObserver.PipelineWaiting(false);
+        ScheduleEvent(false);
     }
     NewStream();
     return aMsg;
@@ -227,7 +235,7 @@ void Waiter::DoWait()
                                                     that any subsequent break in audio is expected */
     iQueue.Enqueue(iMsgFactory.CreateMsgWait()); /* inform downstream elements (Songcast Sender)
                                                     of waiting state */
-    iObserver.PipelineWaiting(true);
+    ScheduleEvent(true);
 }
 
 Msg* Waiter::ProcessFlushable(Msg* aMsg)
@@ -243,11 +251,11 @@ void Waiter::HandleAudio()
 {
     if (iState == ERampingUp && iCurrentRampValue == Ramp::kMin) {
         // Start of ramping up.
-        iObserver.PipelineWaiting(false);
+        ScheduleEvent(false);
     }
     else if (iState == EWaiting) {
         iState = ERunning;
-        iObserver.PipelineWaiting(false);
+        ScheduleEvent(false);
     }
 }
 
@@ -256,4 +264,16 @@ void Waiter::NewStream()
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
     iState = ERunning;
+}
+
+void Waiter::ScheduleEvent(TBool aWaiting)
+{
+    iEventWaiting.store(aWaiting);
+    iObserverThread.Schedule(iEventId);
+}
+
+void Waiter::ReportEvent()
+{
+    TBool waiting = iEventWaiting.load();
+    iObserver.PipelineWaiting(waiting);
 }

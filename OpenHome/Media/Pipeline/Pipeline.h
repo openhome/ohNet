@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -184,6 +185,7 @@ private:
     IPipelineObserver& iObserver;
     Mutex iLock;
     MsgFactory* iMsgFactory;
+    PipelineElementObserverThread* iEventThread;
     EncodedAudioReservoir* iEncodedAudioReservoir;
     Logger* iLoggerEncodedAudioReservoir;
     Codec::Container* iContainer;

@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -12,10 +13,11 @@ using namespace OpenHome::Media;
 
 const Brn Reporter::kNullMetaText("");
 
-Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, TUint aObserverThreadPriority)
+Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, IPipelineElementObserverThread& aObserverThread)
     : iLock("RPTR")
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iObserverThread(aObserverThread)
     , iMsgMode(NULL)
     , iMsgTrack(NULL)
     , iMsgDecodedStreamInfo(NULL)
@@ -25,13 +27,11 @@ Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelineProperty
     , iTrackDurationSeconds(0)
     , iNotifyTime(false)
 {
-    iThread = new ThreadFunctor("ReporterObserver", MakeFunctor(*this, &Reporter::ObserverThread), aObserverThreadPriority);
-    iThread->Start();
+    iEventId = iObserverThread.Register(MakeFunctor(*this, &Reporter::EventCallback));
 }
 
 Reporter::~Reporter()
 {
-    delete iThread;
     if (iMsgMode != NULL) {
         iMsgMode->RemoveRef();
     }
@@ -75,7 +75,7 @@ Msg* Reporter::ProcessMsg(MsgMode* aMsg)
         iMsgMetaText = NULL;
     }
     iNotifyTime = false;
-    iThread->Signal();
+    iObserverThread.Schedule(iEventId);
     return aMsg;
 }
 
@@ -104,7 +104,7 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
         }
         iNotifyTime = false;
     }
-    iThread->Signal();
+    iObserverThread.Schedule(iEventId);
     return aMsg;
 }
 
@@ -138,7 +138,7 @@ Msg* Reporter::ProcessMsg(MsgMetaText* aMsg)
     }
     iMsgMetaText = aMsg;
     iMsgMetaText->AddRef();
-    iThread->Signal();
+    iObserverThread.Schedule(iEventId);
     return aMsg;
 }
 
@@ -177,8 +177,7 @@ Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
     iMsgDecodedStreamInfo = aMsg;
     iMsgDecodedStreamInfo->AddRef();
     iNotifyTime = true;
-    iThread->Signal();
-    iThread->Signal(); // second Signal() needed because we want to run both stream & time callbacks
+    iObserverThread.Schedule(iEventId);
     return aMsg;
 }
 
@@ -194,7 +193,7 @@ Msg* Reporter::ProcessMsg(MsgAudioPcm* aMsg)
     }
     if (reportChange) {
         iNotifyTime= true;
-        iThread->Signal();
+        iObserverThread.Schedule(iEventId);
     }
     return aMsg;
 }
@@ -215,51 +214,41 @@ Msg* Reporter::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-void Reporter::ObserverThread()
+void Reporter::EventCallback()
 {
-    for (;;) {
-        iThread->Wait();
-        iLock.Wait();
-        if (iMsgMode != NULL) {
-            MsgMode* msg = iMsgMode;
-            iMsgMode = NULL;
-            iLock.Signal();
-            iObserver.NotifyMode(msg->Mode(), msg->Info());
-            msg->RemoveRef();
-            iLock.Wait();
-        }
-        if (iMsgTrack != NULL) {
-            MsgTrack* msg = iMsgTrack;
-            iMsgTrack = NULL;
-            iLock.Signal();
-            iObserver.NotifyTrack(msg->Track(), iModeTrack, msg->StartOfStream());
-            msg->RemoveRef();
-            iLock.Wait();
-        }
-        else if (iMsgDecodedStreamInfo != NULL) {
-            MsgDecodedStream* msg = iMsgDecodedStreamInfo;
-            iMsgDecodedStreamInfo = NULL;
-            iLock.Signal();
-            iObserver.NotifyStreamInfo(msg->StreamInfo());
-            msg->RemoveRef();
-            iLock.Wait();
-        }
-        else if (iMsgMetaText != NULL) {
-            MsgMetaText* msg = iMsgMetaText;
-            iMsgMetaText = NULL;
-            iLock.Signal();
-            iObserver.NotifyMetaText(msg->MetaText());
-            msg->RemoveRef();
-            iLock.Wait();
-        }
-        else if (iNotifyTime) {
-            const TUint seconds = iSeconds;
-            const TUint trackDurationSeconds = iTrackDurationSeconds;
-            iNotifyTime = false;
-            iLock.Signal();
-            iObserver.NotifyTime(seconds, trackDurationSeconds);
-            iLock.Wait();
-        }
-        iLock.Signal();
+    iLock.Wait();
+    MsgMode* msgMode = iMsgMode;
+    iMsgMode = NULL;
+    MsgTrack* msgTrack = iMsgTrack;
+    BwsMode modeTrack(iModeTrack);
+    iMsgTrack = NULL;
+    MsgDecodedStream* msgStream = iMsgDecodedStreamInfo;
+    iMsgDecodedStreamInfo = NULL;
+    MsgMetaText* msgMetatext = iMsgMetaText;
+    iMsgMetaText = NULL;
+    const TUint seconds = iSeconds;
+    const TUint trackDurationSeconds = iTrackDurationSeconds;
+    const TBool notifyTime = iNotifyTime;
+    iNotifyTime = false;
+    iLock.Signal();
+
+    if (msgMode != NULL) {
+        iObserver.NotifyMode(msgMode->Mode(), msgMode->Info());
+        msgMode->RemoveRef();
+    }
+    if (msgTrack != NULL) {
+        iObserver.NotifyTrack(msgTrack->Track(), modeTrack, msgTrack->StartOfStream());
+        msgTrack->RemoveRef();
+    }
+    if (msgStream != NULL) {
+        iObserver.NotifyStreamInfo(msgStream->StreamInfo());
+        msgStream->RemoveRef();
+    }
+    if (msgMetatext != NULL) {
+        iObserver.NotifyMetaText(msgMetatext->MetaText());
+        msgMetatext->RemoveRef();
+    }
+    if (notifyTime) {
+        iObserver.NotifyTime(seconds, trackDurationSeconds);
     }
 }

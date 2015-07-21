@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -213,6 +214,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iMsgFactory = new MsgFactory(aInfoAggregator, msgInit);
     const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
     TUint threadPriority = threadPriorityBase;
+
+    iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
@@ -256,10 +259,10 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampLongJiffies());
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
     iRampValidatorSkipper = new RampValidator(*iLoggerSkipper, "Skipper");
-    iWaiter = new Waiter(*iMsgFactory, *iRampValidatorSkipper, *this, aInitParams->RampShortJiffies());
+    iWaiter = new Waiter(*iMsgFactory, *iRampValidatorSkipper, *this, *iEventThread, aInitParams->RampShortJiffies());
     iLoggerWaiter = new Logger(*iWaiter, "Waiter");
     iRampValidatorWaiter = new RampValidator(*iLoggerWaiter, "Waiter");
-    iStopper = new Stopper(*iMsgFactory, *iRampValidatorWaiter, *this, aInitParams->RampLongJiffies());
+    iStopper = new Stopper(*iMsgFactory, *iRampValidatorWaiter, *this, *iEventThread, aInitParams->RampLongJiffies());
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iRampValidatorStopper = new RampValidator(*iLoggerStopper, "Stopper");
@@ -268,7 +271,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iSpotifyReporter = new Media::SpotifyReporter(*iLoggerGorger, *this);
     iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
-    iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter, threadPriorityBase-1);
+    iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter, *iEventThread);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iRouter = new Router(*iLoggerReporter);
     iLoggerRouter = new Logger(*iRouter, "Router");
@@ -277,7 +280,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iRampValidatorDelay2 = new RampValidator(*iLoggerVariableDelay2, "VariableDelay2");
     iPruner = new Pruner(*iRampValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this, threadPriority,
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this, *iEventThread, threadPriority,
                                                aInitParams->StarvationMonitorMaxJiffies(), aInitParams->StarvationMonitorMinJiffies(),
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
@@ -403,6 +406,7 @@ Pipeline::~Pipeline()
     delete iContainer;
     delete iLoggerEncodedAudioReservoir;
     delete iEncodedAudioReservoir;
+    delete iEventThread;
     delete iMsgFactory;
     delete iInitParams;
 }
