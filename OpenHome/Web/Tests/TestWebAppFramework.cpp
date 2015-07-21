@@ -252,7 +252,7 @@ private:
 //    void TearDown();
 //};
 
-class SuiteFrameworkTab : public OpenHome::TestFramework::SuiteUnitTest
+class SuiteFrameworkTab : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteFrameworkTab();
@@ -272,7 +272,7 @@ private:
     FrameworkTab* iFrameworkTab;
 };
 
-class SuiteTabManager : public OpenHome::TestFramework::SuiteUnitTest, private INonCopyable
+class SuiteTabManager : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteTabManager(Environment& aEnv);
@@ -292,7 +292,7 @@ private:
     TestHelperWebApp* iWebApp;
 };
 
-class SuiteWebAppFramework : public OpenHome::TestFramework::SuiteUnitTest, private INonCopyable
+class SuiteWebAppFramework : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteWebAppFramework(Environment& aEnv);
