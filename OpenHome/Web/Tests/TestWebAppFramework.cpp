@@ -2,6 +2,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
+#include <OpenHome/Private/Standard.h>
 
 #include <OpenHome/Web/WebAppFramework.h>
 

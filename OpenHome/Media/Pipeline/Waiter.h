@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -28,10 +30,14 @@ public:
  * should always reach this element, i.e., no upstream element should consume
  * the MsgFlush expected by this element.
  */
+
+class IPipelineElementObserverThread;
+
 class Waiter : public IPipelineElementUpstream, private IMsgProcessor
 {
 public:
-    Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver, TUint aRampDuration);
+    Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
+           IPipelineElementObserverThread& aObserverThread, TUint aRampDuration);
     virtual ~Waiter();
     void Wait(TUint aFlushId, TBool aRampDown);
 public: // from IPipelineElementUpstream
@@ -59,6 +65,8 @@ private:
     Msg* ProcessFlushable(Msg* aMsg);
     void HandleAudio();
     void NewStream();
+    void ScheduleEvent(TBool aWaiting);
+    void ReportEvent();
 private:
     enum EState
     {
@@ -72,6 +80,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IWaiterObserver& iObserver;
+    IPipelineElementObserverThread& iObserverThread;
     Mutex iLock;
     EState iState;
     const TUint iRampDuration;
@@ -79,6 +88,8 @@ private:
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetFlushId;
+    TUint iEventId;
+    std::atomic<TBool> iEventWaiting;
 };
 
 } // namespace Media

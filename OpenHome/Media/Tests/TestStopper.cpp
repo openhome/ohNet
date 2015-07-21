@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <list>
 #include <limits.h>
@@ -113,6 +114,7 @@ private:
     TrackFactory* iTrackFactory;
     MsgFactory* iMsgFactory;
     Stopper* iStopper;
+    ElementObserverSync* iEventCallback;
     EMsgType iLastPulledMsg;
     TBool iRampingDown;
     TBool iRampingUp;
@@ -184,7 +186,8 @@ SuiteStopper::~SuiteStopper()
 
 void SuiteStopper::Setup()
 {
-    iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
+    iEventCallback = new ElementObserverSync();
+    iStopper = new Stopper(*iMsgFactory, *this, *this, *iEventCallback, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iRampingDown = iRampingUp = false;
@@ -204,6 +207,7 @@ void SuiteStopper::TearDown()
         iPendingMsgs.pop_front();
     }
     delete iStopper;
+    delete iEventCallback;
 }
 
 Msg* SuiteStopper::Pull()
@@ -509,7 +513,7 @@ void SuiteStopper::TestPlayFromStoppedNoRampUp()
     }
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
 }
 
 void SuiteStopper::TestPauseRamps()
@@ -532,7 +536,7 @@ void SuiteStopper::TestPauseRamps()
     }
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
     TEST(iJiffies == kRampDuration);
     iJiffies = 0;
     iRampingUp = true;
@@ -547,7 +551,7 @@ void SuiteStopper::TestPauseRamps()
     }
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 4);
+    TEST(iPlayingCount == 2);
     TEST(iJiffies == kRampDuration);
 }
 
@@ -568,7 +572,7 @@ void SuiteStopper::TestInterruptRamps()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
 
     iStopper->Play();
     iRampingDown = false;
@@ -578,7 +582,7 @@ void SuiteStopper::TestInterruptRamps()
     TEST(!iRampingUp);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 3);
+    TEST(iPlayingCount == 1);
 
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
@@ -628,13 +632,13 @@ void SuiteStopper::TestSilenceEndsRamp()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
 
     iStopper->Play();
     iRampingDown = false;
@@ -643,7 +647,7 @@ void SuiteStopper::TestSilenceEndsRamp()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 3);
+    TEST(iPlayingCount == 2);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
     PullNext(EMsgSilence);
     iRampingUp = false;
@@ -711,7 +715,7 @@ void SuiteStopper::TestStopFromPlay()
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
     TEST(iJiffies == kRampDuration);
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -726,12 +730,12 @@ void SuiteStopper::TestStopFromPlay()
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt(5));
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 1);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
     TEST(iStopper->iQueue.IsEmpty());
     iPendingMsgs.push_back(CreateTrack());
     TestHalted();
@@ -755,7 +759,7 @@ void SuiteStopper::TestPlayStopPlayInterruptsRampDown()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
 
     iStopper->Play();
     iRampingDown = false;
@@ -767,7 +771,7 @@ void SuiteStopper::TestPlayStopPlayInterruptsRampDown()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 3);
+    TEST(iPlayingCount == 1);
 }
 
 void SuiteStopper::TestPlayNoFlushes()
@@ -810,7 +814,7 @@ void SuiteStopper::TestPlayNoFlushes()
 
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
 }
 
 void SuiteStopper::TestPlayLaterStops()
@@ -854,7 +858,7 @@ void SuiteStopper::TestPlayPausePlayWithRamp()
     TEST(iRampingDown); // should still be ramping down
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 2);
+    TEST(iPlayingCount == 1);
     TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
 
     // Call Play(). Should immediately ramp up without completing ramp down.
@@ -869,7 +873,7 @@ void SuiteStopper::TestPlayPausePlayWithRamp()
     TEST(!iRampingUp);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 3);
+    TEST(iPlayingCount == 1);
     TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
 }
 
@@ -901,7 +905,7 @@ void SuiteStopper::TestPlayPausePlayNoRamp()
     TEST(!iRampingUp);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
-    TEST(iPlayingCount == 3);
+    TEST(iPlayingCount == 1);
     TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
 }
 

@@ -4,14 +4,19 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
+
+#include <atomic>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration)
+Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver,
+                 IPipelineElementObserverThread& aObserverThread, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iObserverThread(aObserverThread)
     , iLock("STP1")
     , iSem("STP2", 0)
     , iStreamPlayObserver(NULL)
@@ -22,8 +27,12 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iStreamHandler(NULL)
     , iBuffering(false)
     , iQuit(false)
+    , iLastEventedState(EEventNone)
 {
     iState = EStopped;
+    iEventState.store(EEventNone);
+    ASSERT(iEventState.is_lock_free());
+    iEventId = iObserverThread.Register(MakeFunctor(*this, &Stopper::ReportEvent));
     NewStream();
     iCheckedStreamPlayable = true; // override setting from NewStream() - we don't want to call OkToPlay() when we see a first MsgTrack
 }
@@ -66,7 +75,7 @@ void Stopper::Play()
         break;
     }
     iTargetHaltId = MsgHalt::kIdInvalid;
-    iObserver.PipelinePlaying();
+    ScheduleEvent(EEventPlaying);
 }
 
 void Stopper::BeginPause()
@@ -418,7 +427,7 @@ void Stopper::OkToPlay()
         switch (canPlay)
         {
         case ePlayYes:
-            iObserver.PipelinePlaying();
+            ScheduleEvent(EEventPlaying);
             break;
         case ePlayNo:
             /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
@@ -474,21 +483,51 @@ void Stopper::HandlePaused()
 {
     SetState(EPaused);
     (void)iSem.Clear();
-    iObserver.PipelinePaused();
+    ScheduleEvent(EEventPaused);
 }
 
 void Stopper::HandleStopped()
 {
     SetState(EStopped);
     (void)iSem.Clear();
-    iObserver.PipelineStopped();
+    ScheduleEvent(EEventStopped);
 }
 
 void Stopper::SetState(EState aState)
 {
-    LOG(kPipeline, "Stopper changing state from %s to %s\n", State(), State(aState));
-    LOG(kPipeline, "  iRemainingRampSize=%u, iCurrentRampValue=%08x\n", iRemainingRampSize, iCurrentRampValue);
-    iState = aState;
+    if (iState != aState) {
+        LOG(kPipeline, "Stopper changing state from %s to %s\n", State(), State(aState));
+        LOG(kPipeline, "  iRemainingRampSize=%u, iCurrentRampValue=%08x\n", iRemainingRampSize, iCurrentRampValue);
+        iState = aState;
+    }
+}
+
+void Stopper::ScheduleEvent(EEventedState aState)
+{
+    iEventState.store(aState);
+    iObserverThread.Schedule(iEventId);
+}
+
+void Stopper::ReportEvent()
+{
+    EEventedState state = iEventState.exchange(EEventNone);
+    if (state != iLastEventedState) {
+        iLastEventedState = state;
+        switch (state)
+        {
+        case EEventPlaying:
+            iObserver.PipelinePlaying();
+            break;
+        case EEventPaused:
+            iObserver.PipelinePaused();
+            break;
+        case EEventStopped:
+            iObserver.PipelineStopped();
+            break;
+        case EEventNone:
+            break;
+        }
+    }
 }
 
 const TChar* Stopper::State() const

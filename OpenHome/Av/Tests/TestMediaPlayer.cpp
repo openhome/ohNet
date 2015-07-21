@@ -482,7 +482,6 @@ void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
             iMediaPlayer->Product().AddAttribute(configAtt);
         }
     }
-    Bws<Uri::kMaxUriBytes+1> url(aUrl);   // +1 for '\0'
 }
 
 void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)

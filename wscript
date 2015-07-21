@@ -226,6 +226,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline/Waiter.cpp',
                 'OpenHome/Media/Pipeline/Pipeline.cpp',
+                'OpenHome/Media/Pipeline/ElementObserver.cpp',
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
                 'OpenHome/Media/Supply.cpp',

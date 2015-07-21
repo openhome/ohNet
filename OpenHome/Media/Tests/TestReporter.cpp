@@ -4,6 +4,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <string.h>
 #include <vector>
@@ -65,6 +66,7 @@ private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
+    PipelineElementObserverThread* iEventThread;
     Reporter* iReporter;
     EMsgType iNextGeneratedMsg;
     TUint64 iTrackOffset;
@@ -114,12 +116,15 @@ SuiteReporter::SuiteReporter()
     init.SetMsgMetaTextCount(3);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iReporter = new Reporter(*this, *this, kThreadPriorityReporter-1); // aim for a priority just below thread that runs Reporter
+    iEventThread = new PipelineElementObserverThread(kThreadPriorityReporter-1);
+    iReporter = new Reporter(*this, *this, *iEventThread); // aim for a priority just below thread that runs Reporter
 }
 
 SuiteReporter::~SuiteReporter()
 {
+    iEventThread->Stop();
     delete iReporter;
+    delete iEventThread;
     delete iMsgFactory;
     delete iTrackFactory;
 }

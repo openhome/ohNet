@@ -4,7 +4,9 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
+#include <atomic>
 #include <limits.h>
 
 using namespace OpenHome;
@@ -12,11 +14,13 @@ using namespace OpenHome::Media;
 
 // StarvationMonitor
 
-StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
+StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
+                                     IStarvationMonitorObserver& aObserver, IPipelineElementObserverThread& aObserverThread,
                                      TUint aThreadPriority, TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, TUint aMaxStreamCount)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iObserverThread(aObserverThread)
     , iClockPuller(NULL)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
@@ -34,8 +38,11 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iStreamHandler(NULL)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iRampUntilStreamOutCount(0)
+    , iLastEventBuffering(false)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
+    ASSERT(iEventBuffering.is_lock_free());
+    iEventId = iObserverThread.Register(MakeFunctor(*this, &StarvationMonitor::EventCallback));
     UpdateStatus(EBuffering);
     iThread = new ThreadFunctor("StarvationMonitor", MakeFunctor(*this, &StarvationMonitor::PullerThread), aThreadPriority);
     iThread->Start();
@@ -182,18 +189,29 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
         if (iStreamHandler != NULL) {
             iStreamHandler->NotifyStarving(iMode, iStreamId);
         }
-        iObserver.NotifyStarvationMonitorBuffering(true);
+        iEventBuffering.store(true);
+        iObserverThread.Schedule(iEventId);
         if (iClockPuller != NULL) {
             iClockPuller->StopStarvationMonitor();
         }
     }
     else if (iStatus == EBuffering) {
-        iObserver.NotifyStarvationMonitorBuffering(false);
+        iEventBuffering.store(false);
+        iObserverThread.Schedule(iEventId);
         if (iClockPuller != NULL) {
             iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
         }
     }
     iStatus = aStatus;
+}
+
+void StarvationMonitor::EventCallback()
+{
+    const TBool buffering = iEventBuffering.load();
+    if (buffering != iLastEventBuffering) {
+        iObserver.NotifyStarvationMonitorBuffering(buffering);
+        iLastEventBuffering = buffering;
+    }
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
