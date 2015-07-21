@@ -74,9 +74,17 @@ public:
     virtual ~IConfigMessage() {}
 };
 
+// FIXME - should all Allocate() methods return a pointer to indicate taking ownership?
 class IConfigMessageAllocator
 {
 public:
+    // FIXME - by returning an IConfigMessage here, are exposing all the Set() methods above!
+    // Only want to expose the Send()/Destroy() methods.
+    // Fixing the above would also make it clearer how ConfigMessages should be created/used (i.e., allocated via the allocators, and Set() not called directly).
+    // Should surely return an ITabMessage from each of these.
+    // And maybe IConfigMessage shouldn't even be an interface!
+
+    // FIXME - also, would it be smarter just to subscribe directly to the ConfigVal, rather than taking a value? Means that most up-to-date val will always be sent.
     virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson) = 0;
     virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
     virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson) = 0;
@@ -86,6 +94,7 @@ public:
 class IConfigMessageDeallocator
 {
 public:
+    // FIXME - if anything, this should take a pointer to show passing of ownership.
     virtual void Deallocate(IConfigMessage& aMessage) = 0;
     virtual ~IConfigMessageDeallocator() {}
 };
@@ -156,7 +165,7 @@ class ConfigMessageText : public ConfigMessage
 {
     friend class ConfigMessageTextAllocator;
 private:
-    static const TUint kMaxBytes = 512; //FIXME - use instead: OpenHome::Configuration::ConfigText::kMaxBytes;
+    static const TUint kMaxBytes = OpenHome::Configuration::ConfigText::kMaxBytes;
 private:
     ConfigMessageText(IConfigMessageDeallocator& aDeallocator);
 private: // from ConfigMessage
