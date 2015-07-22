@@ -72,23 +72,32 @@ function StartLongPolling()
                     SendUpdate(aKey, aValue);
                     return;
                 }
+                else {
+                    alert(aKey + " value of " + aValue + " is outwith range: " + limits.Min() + ".." + limits.Max());
+                    return;
+                }
             }
         }
-        alert(aKey + " value of " + aValue + " is outwith range: " + limits.Min() + ".." + limits.Max());
+        alert("No such key: " + aKey);
     }
 
     var ValidateChoiceInput = function(aKey, aValue)
     {
         for (var i=0; i<gConfigValChoiceOptions.length; i++) {
+            var key = gConfigValChoiceOptions[i].Key();
             var options = gConfigValChoiceOptions[i].Options();
-            for (var j=0; j<options.length; j++) {
-                if (options[j].value == aValue) {
-                    SendUpdate(aKey, options[j].id);
-                    return;
+            if (key == aKey) {
+                for (var j=0; j<options.length; j++) {
+                    if (options[j].value == aValue) {
+                        SendUpdate(aKey, options[j].id.toString());
+                        return;
+                    }
                 }
+                alert(aKey + " value of " + aValue + " not found");
+                return;
             }
         }
-        alert(aKey + " value of " + aValue + " not found");
+        alert("No such key: " + aKey);
     }
 
     var ValidateTextInput = function(aKey, aValue)
@@ -100,9 +109,13 @@ function StartLongPolling()
                     SendUpdate(aKey, aValue);
                     return;
                 }
+                else {
+                    alert(aKey + " value of " + aValue + " is longer than: " + limits.MaxLength() + " characters");
+                    return;
+                }
             }
         }
-        alert(aKey + " value of " + aValue + " is longer than: " + limits.MaxLength() + " characters");
+        alert("No such key: " + aKey);
     }
 
     var CreateNumElement = function(aJsonConfigNumVal)
