@@ -540,12 +540,9 @@ void ConfigTabReceiver::Receive(const Brx& aMessage)
     Bws<1024> value;
     Brn remaining(aMessage);
 
-
-    Log::Print("\nConfigTabReceiver::Receive\n");
-    Log::Print(aMessage);
-    Log::Print("\n");
-
-
+    LOG(kHttp, "ConfigTabReceiver::Receive\n");
+    LOG(kHttp, aMessage);
+    LOG(kHttp, "\n");
 
     try {
         Parser p(aMessage);
