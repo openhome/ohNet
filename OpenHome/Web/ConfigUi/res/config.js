@@ -30,7 +30,8 @@ Config = function() {
          */
         SendUpdateToServer: function(aKey, aValue, aCallbackResponse, aCallbackError)
         {
-            WebUi.SendUpdateToServer(aKey+" "+aValue, aCallbackResponse, aCallbackError);
+            var kvp = "{\"key\":" + JSON.stringify(aKey) +",\"value\":" + JSON.stringify(aValue) +"}";
+            WebUi.SendUpdateToServer(kvp, aCallbackResponse, aCallbackError);
         }
     };
 

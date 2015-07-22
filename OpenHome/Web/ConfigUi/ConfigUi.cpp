@@ -479,6 +479,52 @@ IConfigMessage& ConfigMessageAllocator::Allocate(ConfigText& aText, const Brx& a
 }
 
 
+// JsonStringParser
+
+Brn JsonStringParser::ParseString(const Brx& aBuffer, Brn& aRemaining)
+{
+    TUint offset = 0;
+
+    // Skip any whitespace.
+    for (TUint i=0; i<aBuffer.Bytes(); i++) {
+        if (!Ascii::IsWhitespace(aBuffer[i])) {
+            offset = i;
+            break;
+        }
+    }
+
+    if (aBuffer[offset] != '"') {
+        THROW(JsonStringError);
+    }
+    offset++;   // Move past opening '"'.
+
+    for (TUint i=offset; i<aBuffer.Bytes(); i++) {
+        if (aBuffer[i] == '"') {
+            if (aBuffer[i-1] != '\\') {
+                const TUint bytes = i-offset;
+                i++;
+                ASSERT(aBuffer.Bytes() > i);
+                if (aBuffer.Bytes()-i == 0) {
+                    aRemaining.Set(Brn::Empty());
+                }
+                else {
+                    aRemaining.Set(aBuffer.Ptr()+i, aBuffer.Bytes()-i);
+                }
+
+                if (bytes == 0) {
+                    return Brn::Empty();
+                }
+                else {
+                    return Brn(aBuffer.Ptr()+offset, bytes);
+                }
+            }
+        }
+    }
+
+    THROW(JsonStringError);
+}
+
+
 // ConfigTabReceiver
 
 ConfigTabReceiver::ConfigTabReceiver()
@@ -488,13 +534,36 @@ ConfigTabReceiver::ConfigTabReceiver()
 void ConfigTabReceiver::Receive(const Brx& aMessage)
 {
     // FIXME - what if aMessage is malformed? - call some form of error handler?
-    // This will break if keys/values with spaces are allowed. Will need to use a non-whitespace delimiter in that case (or, wrap updates in JSON object).
-    Parser p(aMessage);
-    Brn line = p.NextLine();
-    Parser lineParser(line);
-    Brn key = lineParser.Next();
-    Brn value = lineParser.NextToEnd();
-    Receive(key, value);
+
+    // Parse JSON response.
+    Bws<128> key;
+    Bws<1024> value;
+    Brn remaining(aMessage);
+
+
+    Log::Print("\nConfigTabReceiver::Receive\n");
+    Log::Print(aMessage);
+    Log::Print("\n");
+
+
+
+    try {
+        Parser p(aMessage);
+        (void)p.Next(':');  // {"key:
+        key.Replace(JsonStringParser::ParseString(Brn(remaining.Ptr()+p.Index(), remaining.Bytes()-p.Index()+1), remaining));
+        Json::Unescape(key);
+
+        p.Set(remaining);
+        (void)p.Next(':');  // ", value":
+        value.Replace(JsonStringParser::ParseString(Brn(remaining.Ptr()+p.Index(), remaining.Bytes()-p.Index()+1), remaining));
+        Json::Unescape(value);
+        Receive(key, value);
+    }
+    catch (JsonStringError&) {
+        LOG(kHttp, "ConfigTabReceiver::Receive caught JsonStringError: ");
+        LOG(kHttp, aMessage);
+        LOG(kHttp, "\n");
+    }
 }
 
 

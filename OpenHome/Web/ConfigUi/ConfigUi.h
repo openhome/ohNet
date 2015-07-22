@@ -9,6 +9,7 @@
 #include <OpenHome/Av/Source.h>
 
 EXCEPTION(LanguageResourceInvalid);
+EXCEPTION(JsonStringError);
 
 namespace OpenHome {
 namespace Av {
@@ -112,6 +113,9 @@ protected:
     virtual void WriteType(OpenHome::IWriter& aWriter) = 0;
     virtual void WriteMeta(OpenHome::IWriter& aWriter) = 0;
 protected:
+    // FIXME - instead of providing a default implementation here and expecting subclasses to override it but then still call it, instead have the following:
+    //public: void Clear(); // Does work to clear shared members of msg. Also calls into ClearDerived();
+    //protected: virtual void ClearDerived() = 0;   // Derived members MUST implement this to clear their own members (and there is no need for them to remember to call Clear()).
     virtual void Clear();
 private: // from IConfigMessage
     void Set(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
@@ -227,6 +231,12 @@ private:
     ConfigMessageTextAllocator iAllocatorText;
 };
 
+class JsonStringParser
+{
+public:
+    static Brn ParseString(const Brx& aBuffer, Brn& aRemaining);
+};
+
 /**
  * Abstract class that will receive a string message and attempt to parse it
  * into one or more key-value pair messages.
@@ -248,6 +258,9 @@ public: // from ITab
  *
  * JSON strings (for keys/values) must not contain " or \
  */
+
+// FIXME - MUST ensure all strings are JSON escaped correctly when written out (into additional json blob/string).
+
 class JsonKvp : public OpenHome::INonCopyable
 {
 public:
