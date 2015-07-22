@@ -435,7 +435,8 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    VolumeConsumer volumeInit(iDummyVolume);
+    VolumeConsumer volumeInit;
+    volumeInit.SetVolume(iDummyVolume);
     VolumeProfileNull volProfile;
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));

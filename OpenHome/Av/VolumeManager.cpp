@@ -19,11 +19,16 @@ using namespace OpenHome::Configuration;
 
 // VolumeConsumer
 
-VolumeConsumer::VolumeConsumer(IVolume& aVolume)
-    : iVolume(aVolume)
+VolumeConsumer::VolumeConsumer()
+    : iVolume(NULL)
     , iBalance(NULL)
     , iFade(NULL)
 {
+}
+
+void VolumeConsumer::SetVolume(IVolume& aVolume)
+{
+    iVolume = &aVolume;
 }
 
 void VolumeConsumer::SetBalance(IBalance& aBalance)
@@ -36,7 +41,7 @@ void VolumeConsumer::SetFade(IFade& aFade)
     iFade = &aFade;
 }
 
-IVolume& VolumeConsumer::Volume()
+IVolume* VolumeConsumer::Volume()
 {
     return iVolume;
 }
@@ -551,8 +556,8 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iMuteReporter = new MuteReporter(*aMute);
         iMuteUser = new MuteUser(*iMuteReporter, aVolumeConfig.StoreUserMute());
     }
-    if (aVolumeConfig.VolumeControlEnabled()) {
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(aVolumeConsumer.Volume(), iVolumeConfig.VolumeUnity());
+    if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != NULL) {
+        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*aVolumeConsumer.Volume(), iVolumeConfig.VolumeUnity());
         iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, iVolumeConfig.VolumeUnity());
         iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset);

@@ -94,14 +94,15 @@ public:
 class VolumeConsumer : private INonCopyable
 {
 public:
-    VolumeConsumer(IVolume& aVolume);
+    VolumeConsumer();
+    void SetVolume(IVolume& aVolume);
     void SetBalance(IBalance& aBalance);
     void SetFade(IFade& aFade);
-    IVolume& Volume();
+    IVolume* Volume();
     IBalance* Balance();
     IFade* Fade();
 private:
-    IVolume& iVolume;
+    IVolume* iVolume;
     IBalance* iBalance;
     IFade* iFade;
 };
