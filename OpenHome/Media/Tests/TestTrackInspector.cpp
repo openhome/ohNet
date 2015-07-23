@@ -96,14 +96,14 @@ void SuiteTrackInspector::Setup()
     iTrackInspector->AddObserver(*this);
     iPlayCount = 0;
     iFailCount = 0;
-    iLastNotifiedTrack = NULL;
+    iLastNotifiedTrack = nullptr;
     iLiveStream = false;
     iTrackIds.clear();
 }
 
 void SuiteTrackInspector::TearDown()
 {
-    if (iLastNotifiedTrack != NULL) {
+    if (iLastNotifiedTrack != nullptr) {
         iLastNotifiedTrack->RemoveRef();
     }
     delete iTrackInspector;
@@ -312,7 +312,7 @@ void SuiteTrackInspector::TwoObserversNotified()
 void SuiteTrackInspector::NotifyTrackPlay(Track& aTrack)
 {
     iPlayCount++;
-    if (iLastNotifiedTrack != NULL) {
+    if (iLastNotifiedTrack != nullptr) {
         iLastNotifiedTrack->RemoveRef();
     }
     iLastNotifiedTrack = &aTrack;
@@ -322,7 +322,7 @@ void SuiteTrackInspector::NotifyTrackPlay(Track& aTrack)
 void SuiteTrackInspector::NotifyTrackFail(Track& aTrack)
 {
     iFailCount++;
-    if (iLastNotifiedTrack != NULL) {
+    if (iLastNotifiedTrack != nullptr) {
         iLastNotifiedTrack->RemoveRef();
     }
     iLastNotifiedTrack = &aTrack;
@@ -355,7 +355,7 @@ Msg* SuiteTrackInspector::Pull()
     }
     case EMsgDecodedStream:
     {
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, nullptr);
     }
     case EMsgTrack:
     {
@@ -373,7 +373,7 @@ Msg* SuiteTrackInspector::Pull()
         return iMsgFactory->CreateMsgWait();
     default:
         ASSERTS();
-        return NULL;
+        return nullptr;
     }
 }
 

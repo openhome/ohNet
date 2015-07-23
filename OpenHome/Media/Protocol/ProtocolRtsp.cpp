@@ -18,7 +18,7 @@ Protocol* ProtocolFactory::NewRtsp(Environment& aEnv, const Brx& aGuid)
 ProtocolRtsp::ProtocolRtsp(Environment& aEnv, const Brx& aGuid)
     : ProtocolNetwork(aEnv)
     , iEnv(aEnv)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iRtspClient(iEnv, iReaderBuf, iWriterBuf, aGuid)
 {
 }

@@ -27,18 +27,18 @@ using namespace OpenHome::Web;
 
 FileResourceHandler::FileResourceHandler(const OpenHome::Brx& aRootDir)
     : iRootDir(aRootDir)
-    , iFile(NULL)
+    , iFile(nullptr)
 {
 }
 
 TBool FileResourceHandler::Allocated()
 {
-    return (iFile != NULL);
+    return (iFile != nullptr);
 }
 
 void FileResourceHandler::SetResource(const Brx& aUri)
 {
-    ASSERT(iFile == NULL);
+    ASSERT(iFile == nullptr);
     Bwh filename(iRootDir.Bytes()+aUri.Bytes()+1);
     filename.Replace(iRootDir);
     filename.Append(aUri);
@@ -59,14 +59,14 @@ void FileResourceHandler::SetResource(const Brx& aUri)
 
 const Brx& FileResourceHandler::MimeType()
 {
-    ASSERT(iFile != NULL);
+    ASSERT(iFile != nullptr);
     ASSERT(iMimeType.Bytes() != 0);
     return iMimeType;
 }
 
 void FileResourceHandler::Write(IWriter& aWriter, TUint aOffset, TUint aBytes)
 {
-    ASSERT(iFile != NULL);
+    ASSERT(iFile != nullptr);
     if (aOffset != 0) {
         // Seek to desired pos.
         try {
@@ -106,9 +106,9 @@ void FileResourceHandler::Write(IWriter& aWriter, TUint aOffset, TUint aBytes)
 
 void FileResourceHandler::Destroy()
 {
-    ASSERT(iFile != NULL);
+    ASSERT(iFile != nullptr);
     delete iFile;
-    iFile = NULL;
+    iFile = nullptr;
     iMimeType.SetBytes(0);
 }
 
@@ -210,7 +210,7 @@ void FrameworkTabHandler::Send(ITabMessage& aMessage)
 // FrameworkTimer
 
 FrameworkTimer::FrameworkTimer(Environment& aEnv)
-    : iHandler(NULL)
+    : iHandler(nullptr)
     , iLock("FRTL")
     , iStartCount(0)
     , iCancelCount(0)
@@ -230,7 +230,7 @@ void FrameworkTimer::Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
     iStartCount++;
-    //ASSERT(iHandler == NULL);
+    //ASSERT(iHandler == nullptr);
     iHandler = &aHandler;
     iTimer->FireIn(aDurationMs);
 }
@@ -239,18 +239,18 @@ void FrameworkTimer::Cancel()
 {
     AutoMutex a(iLock);
     iCancelCount++;
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     iTimer->Cancel();
-    iHandler = NULL;
+    iHandler = nullptr;
 }
 
 void FrameworkTimer::Complete()
 {
     AutoMutex a(iLock);
     iCompleteCount++;
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     iHandler->Complete();
-    iHandler = NULL;
+    iHandler = nullptr;
 }
 
 
@@ -258,7 +258,7 @@ void FrameworkTimer::Complete()
 
 PollTimer::PollTimer(IFrameworkTimer& aTimer) // FIXME - each PollTimer should get a unique IFrameworkTimer - is this what's happening?
     : iTimer(aTimer)
-    , iHandler(NULL)
+    , iHandler(nullptr)
     , iLock("TTDL")
 {
 }
@@ -266,7 +266,7 @@ PollTimer::PollTimer(IFrameworkTimer& aTimer) // FIXME - each PollTimer should g
 void PollTimer::StartPollWait(TUint aTimeoutMs, IPollTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
-    //ASSERT(iHandler == NULL);
+    //ASSERT(iHandler == nullptr);
     iHandler = &aHandler;
     iTimer.Start(aTimeoutMs, *this);
 }
@@ -275,23 +275,23 @@ void PollTimer::CancelPollWait()
 {
     AutoMutex a(iLock);
     // Another thread (i.e., another web request) may have come in while a tab was NOT waiting on a poll (i.e., while some other work was going on, such as the framework doing a blocking send) and requested termination of the session.
-    // It is valid for iHandler to be NULL in that situation.
-    //ASSERT(iHandler != NULL);
+    // It is valid for iHandler to be nullptr in that situation.
+    //ASSERT(iHandler != nullptr);
     //iTimer.Cancel();
 
-    if (iHandler != NULL) {
+    if (iHandler != nullptr) {
         iTimer.Cancel();
     }
 
-    iHandler = NULL;
+    iHandler = nullptr;
 }
 
 void PollTimer::Complete()
 {
     AutoMutex a(iLock);
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     iHandler->PollWaitComplete();
-    iHandler = NULL;
+    iHandler = nullptr;
 }
 
 
@@ -332,7 +332,7 @@ FrameworkTab::FrameworkTab(TUint aId, ITabDestroyHandler& aDestroyHandler, IFram
     , iTabSem("FRTS", 0)
     , iHandler(iTabSem, aSendQueueSize, aSendTimeoutMs)
     , iPollTimer(aTimer)
-    , iTab(NULL)
+    , iTab(nullptr)
     , iRefCount(0)
     , iDestructionPending(false)
     , iLock("FRTL")
@@ -356,14 +356,14 @@ FrameworkTab::~FrameworkTab()
 TBool FrameworkTab::Allocated() const
 {
     AutoMutex a(iLock);
-    TBool allocated = (iTab != NULL);
+    TBool allocated = (iTab != nullptr);
     return allocated;
 }
 
 TBool FrameworkTab::Available() const
 {
     AutoMutex a(iLock);
-    TBool available = (!iDestructionPending && iTab != NULL);
+    TBool available = (!iDestructionPending && iTab != nullptr);
     return available;
 }
 
@@ -371,7 +371,7 @@ void FrameworkTab::Set(ITab& aTab, const std::vector<const Brx*>& aLanguages)
 {
     LOG(kHttp, "FrameworkTab::Set iId: %u\n", iId);
     AutoMutex a(iLock);
-    ASSERT(iTab == NULL);
+    ASSERT(iTab == nullptr);
     ASSERT(iRefCount == 0);
     ASSERT(!iDestructionPending);
     ASSERT(iLanguages.size() == 0);
@@ -384,7 +384,7 @@ void FrameworkTab::BlockingSend(IWriter& aWriter)
 {
     {
         AutoMutex a(iLock);
-        ASSERT(iTab != NULL);
+        ASSERT(iTab != nullptr);
         ASSERT(!iDestructionPending);
     }
     iHandler.BlockingSend(aWriter);
@@ -393,21 +393,21 @@ void FrameworkTab::BlockingSend(IWriter& aWriter)
 void FrameworkTab::StartPollWait()
 {
     AutoMutex a(iLock);
-    ASSERT(iTab != NULL);
+    ASSERT(iTab != nullptr);
     iPollTimer.StartPollWait(iPollTimeoutMs, *this);
 }
 
 void FrameworkTab::CancelPollWait()
 {
     AutoMutex a(iLock);
-    ASSERT(iTab != NULL);
+    ASSERT(iTab != nullptr);
     iPollTimer.CancelPollWait();
 }
 
 void FrameworkTab::Receive(const OpenHome::Brx& aMessage)
 {
     AutoMutex a(iLock);
-    ASSERT(iTab != NULL);
+    ASSERT(iTab != nullptr);
     ASSERT(!iDestructionPending);
     iTab->Receive(aMessage);
 }
@@ -417,7 +417,7 @@ void FrameworkTab::Destroy()
     LOG(kHttp, "FrameworkTab::Destroy iId: %u\n", iId);
     // Removes ref held by caller and passes on call to IDestroyHandler.
     AutoMutex a(iLock);
-    ASSERT(iTab != NULL && !iDestructionPending);
+    ASSERT(iTab != nullptr && !iDestructionPending);
     //iPollTimer.CancelPollWait(); // FIXME - attempted recursive lock on mutex
     iDestructionPending = true;
     RemoveRefUnlocked();
@@ -438,7 +438,7 @@ void FrameworkTab::PollWaitComplete()
     // FIXME - bodge to ensure no attempt to AddRef() to a Destroy()ed tab and then Destroy() it again.
     {
         AutoMutex a(iLock);
-        if (iTab == NULL) {
+        if (iTab == nullptr) {
             // Already Destroy()ed.
             return;
         }
@@ -462,7 +462,7 @@ void FrameworkTab::RemoveRef()
 
 void FrameworkTab::AddRefUnlocked()
 {
-    ASSERT(iTab != NULL);
+    ASSERT(iTab != nullptr);
     ASSERT(!iDestructionPending);
     ASSERT(iRefCount < std::numeric_limits<TUint>::max());
     iRefCount++;
@@ -470,13 +470,13 @@ void FrameworkTab::AddRefUnlocked()
 
 void FrameworkTab::RemoveRefUnlocked()
 {
-    ASSERT(iTab != NULL);
+    ASSERT(iTab != nullptr);
     ASSERT(iRefCount > 0);
     iRefCount--;
 
     if (iRefCount == 0) {
         iTab->Destroy();
-        iTab = NULL;
+        iTab = nullptr;
         iHandler.Clear();
         iDestructionPending = false;
     }
@@ -612,7 +612,7 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
     , iStarted(false)
-    , iCurrentAdapter(NULL)
+    , iCurrentAdapter(nullptr)
 {
     iTabManager = new TabManager(iEnv, iMaxLpSessions, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs);
     iServer = new SocketTcpServer(iEnv, kName, iPort, aInterface);
@@ -631,7 +631,7 @@ WebAppFramework::~WebAppFramework()
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     nifList.RemoveCurrentChangeListener(iAdapterListenerId);
 
-    if (iCurrentAdapter != NULL) {
+    if (iCurrentAdapter != nullptr) {
         iCurrentAdapter->RemoveRef(kAdapterCookie);
     }
 
@@ -682,7 +682,7 @@ void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
 
     TIpAddress addr = iServer->Interface();
     if (addr == 0) {
-        if (iCurrentAdapter != NULL) {
+        if (iCurrentAdapter != nullptr) {
             addr = iCurrentAdapter->Address();
         }
     }
@@ -747,7 +747,7 @@ void WebAppFramework::CurrentAdapterChanged()
     NetworkAdapter* current = ref.Adapter();
 
     // Get current subnet, otherwise choose first from a list
-    if (current == NULL) {
+    if (current == nullptr) {
         std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
         if (subnetList->size() > 0) {
             current = (*subnetList)[0];
@@ -755,17 +755,17 @@ void WebAppFramework::CurrentAdapterChanged()
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
     if (iCurrentAdapter != current) {
-        if (iCurrentAdapter != NULL) {
+        if (iCurrentAdapter != nullptr) {
             iCurrentAdapter->RemoveRef(kAdapterCookie);
         }
         iCurrentAdapter = current;
-        if (iCurrentAdapter != NULL) {
+        if (iCurrentAdapter != nullptr) {
             iCurrentAdapter->AddRef(kAdapterCookie);
         }
     }
 
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
-    //if (current != NULL) {
+    //if (current != nullptr) {
         delete iServer;
         // FIXME - bind only to current adapter or all adapters?
         iServer = new SocketTcpServer(iEnv, kName, iPort, current->Address());
@@ -1018,7 +1018,7 @@ void HttpSession::Post()
                 Error(HttpStatus::kNotFound);
             }
             //Log::Print("lp session-id: %u\n", sessionId);
-            IFrameworkTab* tab = NULL;
+            IFrameworkTab* tab = nullptr;
             try {
                 tab = &iTabManager.GetTab(sessionId);
                 //Log::Print("lp CancelPollWait()\n");

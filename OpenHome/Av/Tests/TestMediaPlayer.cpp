@@ -108,10 +108,10 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iPullableClock(NULL)
+    , iPullableClock(nullptr)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
-    , iTxTimestamper(NULL)
-    , iRxTimestamper(NULL)
+    , iTxTimestamper(nullptr)
+    , iRxTimestamper(nullptr)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);

@@ -23,7 +23,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
     , iMode(aMode)
@@ -40,7 +40,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSeqTrackValid(false)
     , iSeqTrack(UINT_MAX)
     , iLastSampleStart(UINT_MAX)
-    , iRepairFirst(NULL)
+    , iRepairFirst(nullptr)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
@@ -52,7 +52,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
 
     static const TChar* kOhmCookie = "Songcast";
     NetworkAdapter* current = aEnv.NetworkAdapterList().CurrentAdapter(kOhmCookie);
-    ASSERT(current != NULL); // FIXME
+    ASSERT(current != nullptr); // FIXME
     iAddr = current->Address();
     current->RemoveRef(kOhmCookie);
 }
@@ -193,7 +193,7 @@ void ProtocolOhBase::CurrentSubnetChanged()
 {
     static const TChar* kNifCookie = "ProtocolOhBase";
     NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
-    ASSERT(current != NULL); // assumes we switch to loopback if not external interface is available
+    ASSERT(current != nullptr); // assumes we switch to loopback if not external interface is available
     iMutexTransport.Wait();
     iAddr = current->Address();
     iMutexTransport.Signal();
@@ -217,9 +217,9 @@ void ProtocolOhBase::RepairReset()
     iMutexTransport.Signal();
     iTimerRepair->Cancel();
     iMutexTransport.Wait();
-    if (iRepairFirst != NULL) {
+    if (iRepairFirst != nullptr) {
         iRepairFirst->RemoveRef();
-        iRepairFirst = NULL;
+        iRepairFirst = nullptr;
     }
     for (TUint i=0; i<iRepairFrames.size(); i++) {
         iRepairFrames[i]->RemoveRef();
@@ -256,7 +256,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
             // ... and see if there are further messages waiting
             if (iRepairFrames.size() == 0) {
                 // ... no, so we have completed the repair
-                iRepairFirst = NULL;
+                iRepairFirst = nullptr;
                 LOG(kSongcast, "END\n");
                 return false;
             }
@@ -430,7 +430,7 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
-    if (iTimestamper != NULL) {
+    if (iTimestamper != nullptr) {
         try {
             aMsg.SetRxTimestamp(iTimestamper->Timestamp(aMsg.Frame()));
         }

@@ -13,21 +13,21 @@ Aggregator::Aggregator(IPipelineElementUpstream& aUpstreamElement, TUint aMaxPla
     : iUpstreamElement(aUpstreamElement)
     , iMaxPlayableJiffies(aMaxPlayableJiffies)
     , iMaxPlayableBytes(0)
-    , iPlayable(NULL)
+    , iPlayable(nullptr)
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
-    , iPending(NULL)
+    , iPending(nullptr)
     , iRecalculateMaxPlayable(false)
 {
 }
 
 Aggregator::~Aggregator()
 {
-    if (iPlayable != NULL) {
+    if (iPlayable != nullptr) {
         iPlayable->RemoveRef();
     }
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPending->RemoveRef();
     }
 }
@@ -36,21 +36,21 @@ Msg* Aggregator::Pull()
 {
     Msg* msg;
     do {
-        const TBool requireFullPlayable = (iPending != NULL);
+        const TBool requireFullPlayable = (iPending != nullptr);
         msg = NextStoredMsg(requireFullPlayable);
-        if (msg == NULL) {
+        if (msg == nullptr) {
             msg = iUpstreamElement.Pull();
-            ASSERT(msg != NULL);
+            ASSERT(msg != nullptr);
             msg = msg->Process(*this);
         }
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
 Msg* Aggregator::NextStoredMsg(TBool aDeliverShortPlayable)
 {
-    Msg* msg = NULL;
-    if (iPlayable != NULL) {
+    Msg* msg = nullptr;
+    if (iPlayable != nullptr) {
         const TUint bytes = iPlayable->Bytes();
         if (bytes > iMaxPlayableBytes) {
             msg = iPlayable;
@@ -58,12 +58,12 @@ Msg* Aggregator::NextStoredMsg(TBool aDeliverShortPlayable)
         }
         else if (bytes == iMaxPlayableBytes || aDeliverShortPlayable) {
             msg = iPlayable;
-            iPlayable = NULL;
+            iPlayable = nullptr;
         }
     }
-    if (msg == NULL && iPending != NULL) {
+    if (msg == nullptr && iPending != nullptr) {
         msg = iPending;
-        iPending = NULL;
+        iPending = nullptr;
         if (iRecalculateMaxPlayable) {
             CalculateMaxPlayable();
             iRecalculateMaxPlayable = false;
@@ -74,8 +74,8 @@ Msg* Aggregator::NextStoredMsg(TBool aDeliverShortPlayable)
 
 Msg* Aggregator::AddPlayable(MsgPlayable* aPlayable)
 {
-    Msg* ret = NULL;
-    if (iPlayable == NULL) {
+    Msg* ret = nullptr;
+    if (iPlayable == nullptr) {
         if (aPlayable->Bytes() < iMaxPlayableBytes) {
             iPlayable = aPlayable;
         }
@@ -92,7 +92,7 @@ Msg* Aggregator::AddPlayable(MsgPlayable* aPlayable)
         const TUint bytes = iPlayable->Bytes();
         if (bytes == iMaxPlayableBytes) {
             ret = iPlayable;
-            iPlayable = NULL;
+            iPlayable = nullptr;
         }
         else if (bytes > iMaxPlayableBytes) {
             ret = iPlayable;
@@ -111,7 +111,7 @@ void Aggregator::CalculateMaxPlayable()
 
 Msg* Aggregator::ProcessMsg(MsgMode* aMsg)
 {
-    ASSERT(iPending == NULL);
+    ASSERT(iPending == nullptr);
     iPending = aMsg;
     return NextStoredMsg(true);
 }
@@ -119,13 +119,13 @@ Msg* Aggregator::ProcessMsg(MsgMode* aMsg)
 Msg* Aggregator::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgChangeInput* aMsg)
@@ -136,36 +136,36 @@ Msg* Aggregator::ProcessMsg(MsgChangeInput* aMsg)
 Msg* Aggregator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgHalt* aMsg)
 {
-    ASSERT(iPending == NULL);
+    ASSERT(iPending == nullptr);
     iPending = aMsg;
     return NextStoredMsg(true);
 }
@@ -173,13 +173,13 @@ Msg* Aggregator::ProcessMsg(MsgHalt* aMsg)
 Msg* Aggregator::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // don't expect to encounter MsgFlush this far down the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // don't expect to encounter MsgWait this far down the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgDecodedStream* aMsg)
@@ -190,14 +190,14 @@ Msg* Aggregator::ProcessMsg(MsgDecodedStream* aMsg)
         stream.NumChannels() == iNumChannels) {
         // no change in format.  Discard this msg
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     iSampleRate = stream.SampleRate();
     iBitDepth = stream.BitDepth();
     iNumChannels = stream.NumChannels();
     iRecalculateMaxPlayable = true;
 
-    ASSERT(iPending == NULL);
+    ASSERT(iPending == nullptr);
     iPending = aMsg;
     return NextStoredMsg(true);
 }
@@ -205,13 +205,13 @@ Msg* Aggregator::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* Aggregator::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgPlayable* aMsg)

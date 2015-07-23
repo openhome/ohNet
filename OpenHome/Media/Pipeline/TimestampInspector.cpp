@@ -14,8 +14,8 @@ using namespace OpenHome::Media;
 TimestampInspector::TimestampInspector(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
     : iMsgFactory(aMsgFactory)
     , iDownstreamElement(aDownstreamElement)
-    , iClockPuller(NULL)
-    , iDecodedStream(NULL)
+    , iClockPuller(nullptr)
+    , iDecodedStream(nullptr)
     , iCheckForTimestamp(false)
     , iStreamIsTimestamped(false)
     , iLockedToStream(false)
@@ -28,17 +28,17 @@ TimestampInspector::TimestampInspector(MsgFactory& aMsgFactory, IPipelineElement
 
 TimestampInspector::~TimestampInspector()
 {
-    if (iDecodedStream != NULL) {
+    if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
     }
 }
 
 void TimestampInspector::NewSession()
 {
-    if (iClockPuller != NULL && iStreamIsTimestamped) {
+    if (iClockPuller != nullptr && iStreamIsTimestamped) {
         iClockPuller->StopTimestamp();
     }
-    iCheckForTimestamp = (iClockPuller != NULL);
+    iCheckForTimestamp = (iClockPuller != nullptr);
     iStreamIsTimestamped = false;
     iLockedToStream = false;
     iCalculateTimestampDelta = true;
@@ -60,14 +60,14 @@ void TimestampInspector::StreamInterrupted()
 void TimestampInspector::Push(Msg* aMsg)
 {
     Msg* msg = aMsg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         iDownstreamElement.Push(msg);
     }
 }
 
 Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
 {
-    if (iClockPuller != NULL && iStreamIsTimestamped) {
+    if (iClockPuller != nullptr && iStreamIsTimestamped) {
         iClockPuller->StopTimestamp();
     }
     iClockPuller = aMsg->ClockPuller();
@@ -137,14 +137,14 @@ Msg* TimestampInspector::ProcessMsg(MsgWait* aMsg)
 
 Msg* TimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (iDecodedStream != NULL) {
+    if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
     }
     iDecodedStream = aMsg;
     iDecodedStream->AddRef();
     const TUint sampleRate = iDecodedStream->StreamInfo().SampleRate();
     iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
-    if (iStreamIsTimestamped && iClockPuller != NULL) {
+    if (iStreamIsTimestamped && iClockPuller != nullptr) {
         iClockPuller->NotifyTimestampSampleRate(sampleRate);
     }
     return aMsg;
@@ -155,7 +155,7 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
     if (iCheckForTimestamp) {
         TUint ignore;
         iStreamIsTimestamped = aMsg->TryGetTimestamps(ignore, ignore);
-        if (iStreamIsTimestamped && iClockPuller != NULL) {
+        if (iStreamIsTimestamped && iClockPuller != nullptr) {
             iClockPuller->StartTimestamp();
             iClockPuller->NotifyTimestampSampleRate(iDecodedStream->StreamInfo().SampleRate());
         }
@@ -171,7 +171,7 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
             iDiscardedJiffies += aMsg->Jiffies();
             aMsg->RemoveRef();
             if (!timestamped) {
-                return NULL;
+                return nullptr;
             }
             const TInt delta = static_cast<TInt>(rxTimestamp - networkTimestamp);
             if (iCalculateTimestampDelta) {
@@ -186,7 +186,7 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
             }
             else if (--iMsgsTillLock == 0) {
                 iLockedToStream = true;
-                ASSERT(iDecodedStream != NULL);
+                ASSERT(iDecodedStream != nullptr);
                 const DecodedStreamInfo& s = iDecodedStream->StreamInfo();
                 const TUint64 discardedSamples = iDiscardedJiffies / Jiffies::JiffiesPerSample(s.SampleRate());
                 const TUint64 sampleStart = s.SampleStart() + discardedSamples;
@@ -195,12 +195,12 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
                                                               s.Lossless(), s.Seekable(), s.Live(), s.StreamHandler());
                 iDiscardedJiffies = 0;
                 iDecodedStream->RemoveRef();
-                iDecodedStream = NULL;
+                iDecodedStream = nullptr;
                 return msg;
             }
-            return NULL;
+            return nullptr;
         }
-        if (timestamped && iClockPuller != NULL) {
+        if (timestamped && iClockPuller != nullptr) {
             const TInt drift = iTimestampDelta - static_cast<TInt>(rxTimestamp - networkTimestamp);
             iClockPuller->NotifyTimestamp(drift, networkTimestamp);
         }

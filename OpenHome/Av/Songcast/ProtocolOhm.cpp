@@ -59,7 +59,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
 
-    if (iTimestamper != NULL) {
+    if (iTimestamper != nullptr) {
         iTimestamper->Start(iEndpoint);
     }
 
@@ -156,7 +156,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         }
     } while (!iStopped);
 
-    if (iTimestamper != NULL) {
+    if (iTimestamper != nullptr) {
         iTimestamper->Stop();
     }
 

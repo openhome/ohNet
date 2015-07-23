@@ -96,7 +96,7 @@ void Sender::NotifyPipelineState(EPipelineState aState)
 void Sender::Push(Msg* aMsg)
 {
     Msg* msg = aMsg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         msg->RemoveRef();
     }
 }
@@ -104,13 +104,13 @@ void Sender::Push(Msg* aMsg)
 Msg* Sender::ProcessMsg(MsgMode* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgSession* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgTrack* aMsg)
@@ -124,7 +124,7 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 Msg* Sender::ProcessMsg(MsgChangeInput* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgDelay* aMsg)
@@ -135,7 +135,7 @@ Msg* Sender::ProcessMsg(MsgDelay* aMsg)
         iOhmSender->SetLatency(latencyMs);
     }
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgEncodedStream* aMsg)
@@ -164,7 +164,7 @@ Msg* Sender::ProcessMsg(MsgStreamInterrupted* aMsg)
     // FIXME - no way to tell a songcast receiver about a discontinuity that requires a ramp down
     SendPendingAudio(true);
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgHalt* aMsg)
@@ -205,14 +205,14 @@ Msg* Sender::ProcessMsg(MsgAudioPcm* aMsg)
 {
     ASSERT(iSampleRate != 0);
     ProcessAudio(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgSilence* aMsg)
 {
     ASSERT(iSampleRate != 0);
     ProcessAudio(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::ProcessMsg(MsgPlayable* aMsg)
@@ -241,14 +241,14 @@ void Sender::ProcessAudio(MsgAudio* aMsg)
     MsgAudio* msg = aMsg;
     MsgAudio* remaining;
     do {
-        remaining = (newJiffies == kSongcastPacketJiffies? NULL : msg->Split(kSongcastPacketJiffies - jiffies));
+        remaining = (newJiffies == kSongcastPacketJiffies? nullptr : msg->Split(kSongcastPacketJiffies - jiffies));
         iPendingAudio.push_back(msg);
         SendPendingAudio();
         msg = remaining;
         jiffies = 0;
-        newJiffies = (remaining==NULL? 0 : remaining->Jiffies());
-    } while (remaining != NULL && newJiffies >= kSongcastPacketJiffies);
-    if (remaining != NULL) {
+        newJiffies = (remaining==nullptr? 0 : remaining->Jiffies());
+    } while (remaining != nullptr && newJiffies >= kSongcastPacketJiffies);
+    if (remaining != nullptr) {
         iPendingAudio.push_back(remaining);
     }
 }
@@ -344,7 +344,7 @@ Sender::PlayableCreator::PlayableCreator(TUint aSampleRate, TUint aBitDepth, TUi
 
 MsgPlayable* Sender::PlayableCreator::Process(MsgAudio* aMsg)
 {
-    iPlayable = NULL;
+    iPlayable = nullptr;
     (void)aMsg->Process(*this);
     return iPlayable;
 }
@@ -352,101 +352,101 @@ MsgPlayable* Sender::PlayableCreator::Process(MsgAudio* aMsg)
 Msg* Sender::PlayableCreator::ProcessMsg(MsgMode* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgChangeInput* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgHalt* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iPlayable = aMsg->CreatePlayable();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgSilence* aMsg)
 {
     iPlayable = aMsg->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgQuit* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }

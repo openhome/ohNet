@@ -122,7 +122,7 @@ Protocol* HlsTestFactory::NewTestableHls(Environment& aEnv, IHlsReader* aReaderM
 // TimerGeneric
 
 TimerGeneric::TimerGeneric(Environment& aEnv, const TChar* aId)
-    : iHandler(NULL)
+    : iHandler(nullptr)
     , iPending(false)
     , iLock("TIGL")
 {
@@ -609,7 +609,7 @@ void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
 SegmentStreamer::SegmentStreamer(IHttpSocket& aSocket, IReader& aReader)
     : iSocket(aSocket)
     , iReader(aReader)
-    , iSegmentUriProvider(NULL)
+    , iSegmentUriProvider(nullptr)
     , iConnected(false)
     , iTotalBytes(0)
     , iOffset(0)
@@ -759,7 +759,7 @@ ProtocolHls::ProtocolHls(Environment& aEnv, IHlsReader* aReaderM3u, IHlsReader* 
     : Protocol(aEnv)
     , iHlsReaderM3u(aReaderM3u)
     , iHlsReaderSegment(aReaderSegment)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iTimer(aTimer)
     , iSemReaderM3u(aM3uReaderSem)
     , iM3uReader(iHlsReaderM3u->Socket(), iHlsReaderM3u->Reader(), *iTimer, *iSemReaderM3u)
@@ -860,7 +860,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iM3uReader.SetUri(uriHttp);
     iSegmentStreamer.Stream(iM3uReader);
 
-    if (iContentProcessor == NULL) {
+    if (iContentProcessor == nullptr) {
         iContentProcessor = iProtocolManager->GetAudioProcessor();
     }
 
@@ -950,9 +950,9 @@ ProtocolGetResult ProtocolHls::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TU
 
 void ProtocolHls::Deactivated()
 {
-    if (iContentProcessor != NULL) {
+    if (iContentProcessor != nullptr) {
         iContentProcessor->Reset();
-        iContentProcessor = NULL;
+        iContentProcessor = nullptr;
     }
     iSegmentStreamer.Close();
     iM3uReader.Close();
@@ -1000,7 +1000,7 @@ void ProtocolHls::Reinitialise()
     LOG(kMedia, "ProtocolHls::Reinitialise\n");
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStarted = iStopped = false;
-    iContentProcessor = NULL;
+    iContentProcessor = nullptr;
     iNextFlushId = MsgFlush::kIdInvalid;
     (void)iSem.Clear();
 }

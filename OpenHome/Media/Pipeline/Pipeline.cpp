@@ -292,7 +292,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
     iPipelineEnd = iLoggerPreDriver;
-    if (iPipelineEnd == NULL) {
+    if (iPipelineEnd == nullptr) {
         iPipelineEnd = iPreDriver;
     }
 

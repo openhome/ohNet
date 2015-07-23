@@ -145,7 +145,7 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
 
 ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
     : ProtocolNetwork(aEnv)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iWriterRequest(iWriterBuf)
     , iReaderUntil(iReaderBuf)
     , iReaderResponse(aEnv, iReaderUntil)
@@ -203,7 +203,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
-        if (iContentProcessor != NULL) {
+        if (iContentProcessor != nullptr) {
             iContentProcessor->Reset();
         }
         return res;
@@ -290,9 +290,9 @@ ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 a
 
 void ProtocolHttp::Deactivated()
 {
-    if (iContentProcessor != NULL) {
+    if (iContentProcessor != nullptr) {
         iContentProcessor->Reset();
-        iContentProcessor = NULL;
+        iContentProcessor = nullptr;
     }
     Close();
 }
@@ -387,7 +387,7 @@ void ProtocolHttp::Reinitialise(const Brx& aUri)
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
     iDataChunkSize = iDataChunkRemaining = 0;
-    iContentProcessor = NULL;
+    iContentProcessor = nullptr;
     iNextFlushId = MsgFlush::kIdInvalid;
     (void)iSem.Clear();
     iUri.Replace(aUri);
@@ -623,7 +623,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 {
     LOG(kMedia, "ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
 
-    if (iContentProcessor == NULL && !iStarted) {
+    if (iContentProcessor == nullptr && !iStarted) {
         try {
             iContentRecogBuf.Populate(iTotalBytes);
             const Brx& contentType = iHeaderContentType.Received()? iHeaderContentType.Type() : Brx::Empty();
@@ -634,7 +634,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
             return EProtocolStreamErrorRecoverable;
         }
     }
-    if (iContentProcessor != NULL) {
+    if (iContentProcessor != nullptr) {
         iLive = false; /* Only audio streams will result in pipeline msgs and calls to OkToPlay().
                           Clear 'live' flag for other cases to avoid Stream() waiting on iSem. */
         return iContentProcessor->Stream(*this, iTotalBytes);

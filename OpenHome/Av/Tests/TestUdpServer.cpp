@@ -640,7 +640,7 @@ void TestUdpServer(Environment& aEnv)
     NetworkAdapter* current = ref.Adapter();
 
     // get current subnet, otherwise choose first from a list
-    if (current == NULL) {
+    if (current == nullptr) {
         std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
         if (subnetList->size() > 0) {
             current = (*subnetList)[0];
@@ -648,7 +648,7 @@ void TestUdpServer(Environment& aEnv)
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
 
-    ASSERT(current != NULL); // should probably never be the case, but tests would fail if it was
+    ASSERT(current != nullptr); // should probably never be the case, but tests would fail if it was
 
     Runner runner("UdpServer tests");
     runner.Add(new SuiteMsgUdp(aEnv, current->Address()));

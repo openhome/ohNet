@@ -161,7 +161,7 @@ ElementFileReader::ElementFileReader(IFileSystem& aFileSystem, TrackFactory& aTr
     : iFileSystem(aFileSystem)
     , iTrackFactory(aTrackFactory)
     , iMsgFactory(aMsgFactory)
-    , iFile(NULL)
+    , iFile(nullptr)
     , iMode(eMode)
 {
 }
@@ -191,13 +191,13 @@ Msg* ElementFileReader::Pull()
     // MsgHalt
     // MsgQuit
 
-    ASSERT(iFile != NULL);
-    Msg* msg = NULL;
+    ASSERT(iFile != nullptr);
+    Msg* msg = nullptr;
     if (iMode == eMode) {
         const Brn mode("Playlist");
         const TBool supportsLatency = false;
         const TBool realTime = false;
-        IClockPuller* clockPuller = NULL;
+        IClockPuller* clockPuller = nullptr;
         msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller, false, false);
         iMode = eSession;
     }
@@ -221,7 +221,7 @@ Msg* ElementFileReader::Pull()
         const TUint streamId = IPipelineIdProvider::kStreamIdInvalid+1;
         const TBool seekable = true;    // Streams such as those within MPEG TS containers are currently non-seekable.
         const TBool live = false;
-        IStreamHandler* streamHandler = NULL;
+        IStreamHandler* streamHandler = nullptr;
         msg = iMsgFactory.CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, streamHandler);
         iMode = eAudioEncoded;
     }
@@ -235,7 +235,7 @@ Msg* ElementFileReader::Pull()
         catch (FileReadError&) {
             Log::Print("ElementFileReader::Pull reached end of input file\n");
             // Reached end of file.
-            // Must output something here to avoid sending a NULL msg down pipeline.
+            // Must output something here to avoid sending a nullptr msg down pipeline.
             // Next msg should be MsgHalt, so output that.
 
             //const TUint id = MsgHalt::kIdNone+1;
@@ -250,13 +250,13 @@ Msg* ElementFileReader::Pull()
     else {
         ASSERTS();
     }
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     return msg;
 }
 
 TBool ElementFileReader::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
 {
-    ASSERT(iFile != NULL);
+    ASSERT(iFile != nullptr);
     Log::Print("ElementFileReader::TryGet aUrl: ");
     Log::Print(aUrl);
     Log::Print(", aOffset: %llu, iFile->Bytes(): %u, aBytes: %u, iFile bytes remaining: %u\n", aOffset, iFile->Bytes(), aBytes, iFile->Bytes()-iFile->Tell());
@@ -311,7 +311,7 @@ TBool ElementFileReader::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffs
 
 ElementFileWriter::ElementFileWriter(IFileSystem& aFileSystem, Semaphore& aSem, TBool aOutputWavHeader)
     : iFileSystem(aFileSystem)
-    , iFile(NULL)
+    , iFile(nullptr)
     , iSem(aSem)
     , iOutputWavHeader(aOutputWavHeader)
 {
@@ -332,87 +332,87 @@ void ElementFileWriter::Open(const Brx& aFilename)
 
 void ElementFileWriter::Push(Msg* aMsg)
 {
-    ASSERT(iFile != NULL);
-    ASSERT(aMsg != NULL);
+    ASSERT(iFile != nullptr);
+    ASSERT(aMsg != nullptr);
     Msg* msg = aMsg->Process(*this);
-    ASSERT(msg == NULL);
+    ASSERT(msg == nullptr);
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgMode* aMsg)
 {
     Log::Print("ElementFileWriter::ProcessMsg MsgMode\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgSession* aMsg)
 {
     Log::Print("ElementFileWriter::ProcessMsg MsgSession\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgTrack* aMsg)
 {
     Log::Print("ElementFileWriter::ProcessMsg MsgTrack\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgChangeInput* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgEncodedStream* aMsg)
 {
     Log::Print("ElementFileWriter::ProcessMsg MsgEncodedStream\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgHalt* aMsg)
 {
     Log::Print("ElementFileWriter::ProcessMsg MsgHalt\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgDecodedStream* aMsg)
@@ -443,7 +443,7 @@ Msg* ElementFileWriter::ProcessMsg(MsgDecodedStream* aMsg)
     }
 
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgAudioPcm* aMsg)
@@ -464,19 +464,19 @@ Msg* ElementFileWriter::ProcessMsg(MsgAudioPcm* aMsg)
     }
 
     playable->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
@@ -484,7 +484,7 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
     Log::Print("ElementFileWriter::ProcessMsg MsgQuit\n");
     aMsg->RemoveRef();
     iSem.Signal();
-    return NULL;
+    return nullptr;
 }
 
 TUint ElementFileWriter::PcmBytes(TUint64 aDurationJiffies, TUint aSampleRate, TUint aNumChannels, TUint aBitDepth)
@@ -657,7 +657,7 @@ int CDECL main(int aArgc, char* aArgv[])
 {
 #ifdef _WIN32
     char* noErrDlgs = getenv("NO_ERROR_DIALOGS");
-    if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
+    if (noErrDlgs != nullptr && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
 #endif // _WIN32

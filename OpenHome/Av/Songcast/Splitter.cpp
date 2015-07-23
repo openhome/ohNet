@@ -10,7 +10,7 @@ using namespace OpenHome::Media;
 // Splitter
 
 Splitter::Splitter(IPipelineElementDownstream& aBranch, const Brx& aSongcastMode)
-    : iUpstream(NULL)
+    : iUpstream(nullptr)
     , iBranch(aBranch)
     , iSongcastMode(aSongcastMode)
     , iBranchEnabled(true)
@@ -67,7 +67,7 @@ Msg* Splitter::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Splitter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::ProcessMsg(MsgMetaText* aMsg)
@@ -88,7 +88,7 @@ Msg* Splitter::ProcessMsg(MsgHalt* aMsg)
 Msg* Splitter::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // don't expect to see MsgFlush at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::ProcessMsg(MsgWait* aMsg)
@@ -114,7 +114,7 @@ Msg* Splitter::ProcessMsg(MsgSilence* aMsg)
 Msg* Splitter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::ProcessMsg(MsgQuit* aMsg)
@@ -169,13 +169,13 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgDelay* aMsg)
 Msg* Splitter::MsgCloner::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::MsgCloner::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::MsgCloner::ProcessMsg(MsgMetaText* aMsg)
@@ -199,7 +199,7 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgHalt* aMsg)
 Msg* Splitter::MsgCloner::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::MsgCloner::ProcessMsg(MsgWait* aMsg)
@@ -227,7 +227,7 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgSilence* aMsg)
 Msg* Splitter::MsgCloner::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Splitter::MsgCloner::ProcessMsg(MsgQuit* aMsg)

@@ -20,7 +20,7 @@ UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Pipeli
     , iDatabase(aDatabase)
     , iIdManager(aPipeline)
     , iObserver(aObserver)
-    , iPending(NULL)
+    , iPending(nullptr)
     , iLastTrackId(ITrackDatabase::kTrackIdNone)
     , iPlayingTrackId(ITrackDatabase::kTrackIdNone)
     , iFirstFailedTrackId(ITrackDatabase::kTrackIdNone)
@@ -32,7 +32,7 @@ UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Pipeli
 
 UriProviderPlaylist::~UriProviderPlaylist()
 {
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPending->RemoveRef();
     }
 }
@@ -52,27 +52,27 @@ EStreamPlay UriProviderPlaylist::GetNext(Media::Track*& aTrack)
     EStreamPlay canPlay = ePlayYes;
     AutoMutex a(iLock);
     const TUint prevLastTrackId = iLastTrackId;
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         aTrack = iPending;
         iLastTrackId = iPending->Id();
-        iPending = NULL;
+        iPending = nullptr;
         canPlay = iPendingCanPlay;
     }
     else {
         aTrack = iDatabase.NextTrackRef(iLastTrackId);
-        if (aTrack == NULL) {
+        if (aTrack == nullptr) {
             aTrack = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
-            canPlay = (aTrack==NULL? ePlayNo : ePlayLater);
+            canPlay = (aTrack==nullptr? ePlayNo : ePlayLater);
         }
-        iLastTrackId = (aTrack != NULL? aTrack->Id() : ITrackDatabase::kTrackIdNone);
+        iLastTrackId = (aTrack != nullptr? aTrack->Id() : ITrackDatabase::kTrackIdNone);
     }
-    if (aTrack != NULL && aTrack->Id() == iFirstFailedTrackId) {
+    if (aTrack != nullptr && aTrack->Id() == iFirstFailedTrackId) {
         // every single track in a playlist has failed to generate any audio
-        // set aTrack to NULL to halt the Filler until the user takes action
+        // set aTrack to nullptr to halt the Filler until the user takes action
         iLastTrackId = prevLastTrackId;
-        if (aTrack != NULL) {
+        if (aTrack != nullptr) {
             aTrack->RemoveRef();
-            aTrack = NULL;
+            aTrack = nullptr;
         }
         canPlay = ePlayNo;
     }
@@ -90,18 +90,18 @@ TUint UriProviderPlaylist::CurrentTrackId() const
 TBool UriProviderPlaylist::MoveNext()
 {
     AutoMutex a(iLock);
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPending->RemoveRef();
-        iPending = NULL;
+        iPending = nullptr;
     }
     const TUint trackId = CurrentTrackIdLocked();
     iPending = iDatabase.NextTrackRef(trackId);
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPendingCanPlay = ePlayYes;
     }
     else {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
-        iPendingCanPlay = (iPending == NULL? ePlayNo : ePlayLater);
+        iPendingCanPlay = (iPending == nullptr? ePlayNo : ePlayLater);
     }
     iPendingDirection = eForwards;
     return (iPendingCanPlay == ePlayYes);
@@ -110,18 +110,18 @@ TBool UriProviderPlaylist::MoveNext()
 TBool UriProviderPlaylist::MovePrevious()
 {
     AutoMutex a(iLock);
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPending->RemoveRef();
-        iPending = NULL;
+        iPending = nullptr;
     }
     const TUint trackId = CurrentTrackIdLocked();
     iPending = iDatabase.PrevTrackRef(trackId);
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPendingCanPlay = ePlayYes;
     }
     else {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
-        iPendingCanPlay = (iPending == NULL? ePlayNo : ePlayLater);
+        iPendingCanPlay = (iPending == nullptr? ePlayNo : ePlayLater);
     }
     iPendingDirection = eBackwards;
     return (iPendingCanPlay == ePlayYes);
@@ -130,12 +130,12 @@ TBool UriProviderPlaylist::MovePrevious()
 void UriProviderPlaylist::DoBegin(TUint aTrackId, EStreamPlay aPendingCanPlay)
 {
     AutoMutex a(iLock);
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         iPending->RemoveRef();
-        iPending = NULL;
+        iPending = nullptr;
     }
     iPending = iDatabase.TrackRef(aTrackId);
-    if (iPending == NULL) {
+    if (iPending == nullptr) {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
     }
     iPendingCanPlay = aPendingCanPlay;
@@ -145,7 +145,7 @@ void UriProviderPlaylist::DoBegin(TUint aTrackId, EStreamPlay aPendingCanPlay)
 TUint UriProviderPlaylist::CurrentTrackIdLocked() const
 {
     TUint id = iPlayingTrackId;
-    if (iPending != NULL) {
+    if (iPending != nullptr) {
         id = iPending->Id();
     }
     return id;
@@ -155,7 +155,7 @@ void UriProviderPlaylist::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TU
 {
     {
         AutoMutex a(iLock);
-        if (iPending != NULL) {
+        if (iPending != nullptr) {
             if ((iPendingDirection == eForwards && iPending->Id() == aIdAfter) ||
                 (iPendingDirection == eBackwards && iPending->Id() == aIdBefore)) {
                 iPending->RemoveRef();
@@ -179,15 +179,15 @@ void UriProviderPlaylist::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* a
 {
     {
         AutoMutex a(iLock);
-        if (iPending != NULL && iPending->Id() == aId) {
+        if (iPending != nullptr && iPending->Id() == aId) {
             iPending->RemoveRef();
-            iPending = NULL;
+            iPending = nullptr;
             if (iPendingDirection == eForwards) {
-                iLastTrackId = (aBefore==NULL? ITrackDatabase::kTrackIdNone : aBefore->Id());
+                iLastTrackId = (aBefore==nullptr? ITrackDatabase::kTrackIdNone : aBefore->Id());
             }
             else { // eBackwards || eJumpTo
-                iPending = (aBefore!=NULL? aAfter : aBefore);
-                if (iPending == NULL) {
+                iPending = (aBefore!=nullptr? aAfter : aBefore);
+                if (iPending == nullptr) {
                     iLastTrackId = ITrackDatabase::kTrackIdNone;
                 }
                 else {
@@ -196,7 +196,7 @@ void UriProviderPlaylist::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* a
             }
         }
         else if (iLastTrackId == aId) {
-            iLastTrackId = (aBefore==NULL? ITrackDatabase::kTrackIdNone : aBefore->Id());
+            iLastTrackId = (aBefore==nullptr? ITrackDatabase::kTrackIdNone : aBefore->Id());
         }
         iIdManager.InvalidateAt(aId);
     }
@@ -208,9 +208,9 @@ void UriProviderPlaylist::NotifyAllDeleted()
 {
     {
         AutoMutex a(iLock);
-        if (iPending != NULL) {
+        if (iPending != nullptr) {
             iPending->RemoveRef();
-            iPending = NULL;
+            iPending = nullptr;
         }
         iIdManager.InvalidateAll();
     }

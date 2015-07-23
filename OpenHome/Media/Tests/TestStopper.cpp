@@ -297,7 +297,7 @@ Msg* SuiteStopper::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStopper::ProcessMsg(MsgMetaText* aMsg)
@@ -387,7 +387,7 @@ Msg* SuiteStopper::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStopper::ProcessMsg(MsgQuit* aMsg)
@@ -426,7 +426,7 @@ Msg* SuiteStopper::CreateEncodedStream()
 
 Msg* SuiteStopper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, NULL);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, nullptr);
 }
 
 Msg* SuiteStopper::CreateAudio()
@@ -468,7 +468,7 @@ void SuiteStopper::TestHalted()
 void SuiteStopper::TestMsgsPassWhilePlaying()
 {
     iStopper->Play();
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     PullNext(EMsgSession);

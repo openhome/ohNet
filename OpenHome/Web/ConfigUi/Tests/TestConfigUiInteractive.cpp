@@ -49,7 +49,7 @@ int CDECL main(int aArgc, char* aArgv[])
 {
 #ifdef _WIN32
     char* noErrDlgs = getenv("NO_ERROR_DIALOGS");
-    if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
+    if (noErrDlgs != nullptr && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
 #endif // _WIN32

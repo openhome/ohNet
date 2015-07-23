@@ -21,7 +21,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
-    , iClockPuller(NULL)
+    , iClockPuller(nullptr)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iRampUpSize(aRampUpSize)
@@ -35,7 +35,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iExit(false)
     , iPriorityMsgCount(0)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iRampUntilStreamOutCount(0)
     , iLastEventBuffering(false)
@@ -64,7 +64,7 @@ void StarvationMonitor::PullerThread()
 
 void StarvationMonitor::Enqueue(Msg* aMsg)
 {
-    ASSERT(aMsg != NULL);
+    ASSERT(aMsg != nullptr);
     // Queue the next msg before checking how much data we already have in the buffer
     // This risks us going over the nominal max size for the buffer but guarantees that
     // we don't deadlock if a single message larger than iNormalMax is queued.
@@ -132,7 +132,7 @@ MsgAudio* StarvationMonitor::ProcessAudioOut(MsgAudio* aMsg)
         MsgAudio* remaining = aMsg->Split(kMaxAudioPullSize);
         EnqueueAtHead(remaining);
     }
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
             MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
             EnqueueAtHead(remaining);
@@ -156,7 +156,7 @@ void StarvationMonitor::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
     }
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, aDirection, split);
-    if (split != NULL) {
+    if (split != nullptr) {
         EnqueueAtHead(split);
     }
 }
@@ -186,19 +186,19 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
     Log::Print("StarvationMonitor, updating status to %s\n", status);
 #endif
     if (aStatus == EBuffering) {
-        if (iStreamHandler != NULL) {
+        if (iStreamHandler != nullptr) {
             iStreamHandler->NotifyStarving(iMode, iStreamId);
         }
         iEventBuffering.store(true);
         iObserverThread.Schedule(iEventId);
-        if (iClockPuller != NULL) {
+        if (iClockPuller != nullptr) {
             iClockPuller->StopStarvationMonitor();
         }
     }
     else if (iStatus == EBuffering) {
         iEventBuffering.store(false);
         iObserverThread.Schedule(iEventId);
-        if (iClockPuller != NULL) {
+        if (iClockPuller != nullptr) {
             iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
         }
     }
@@ -258,11 +258,11 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
 {
     iMode.Replace(aMsg->Mode());
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         iClockPuller->StopStarvationMonitor();
     }
     iClockPuller = aMsg->ClockPuller();
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
     }
     return aMsg;
@@ -280,7 +280,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamInfo().StreamHandler();
     iStreamId = aMsg->StreamInfo().StreamId();
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         iClockPuller->NewStreamStarvationMonitor(iStreamId);
     }
     iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;

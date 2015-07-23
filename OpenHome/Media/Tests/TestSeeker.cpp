@@ -174,7 +174,7 @@ void SuiteSeeker::Setup()
     iLastSubsample = 0xffffff;
     iNextStreamId = 1;
     iJiffies = 0;
-    iSeekObserver = NULL;
+    iSeekObserver = nullptr;
     iSeekHandle = 0;
     iSeekerResponse.Clear();
     iNextSeekResponse = MsgFlush::kIdInvalid;
@@ -281,7 +281,7 @@ Msg* SuiteSeeker::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgMetaText* aMsg)
@@ -366,13 +366,13 @@ Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgQuit* aMsg)
@@ -411,7 +411,7 @@ Msg* SuiteSeeker::CreateEncodedStream()
 
 Msg* SuiteSeeker::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, iSeekable, false, NULL);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, iSeekable, false, nullptr);
 }
 
 Msg* SuiteSeeker::CreateAudio()
@@ -435,7 +435,7 @@ void SuiteSeeker::SeekResponseThread()
 
 void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));

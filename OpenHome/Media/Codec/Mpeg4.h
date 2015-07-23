@@ -318,10 +318,10 @@ public: // from IReader
     void ReadInterrupt() override;
 private:
     void Clear();
-    MsgAudioEncoded* Process();                 // May return NULL.
+    MsgAudioEncoded* Process();                 // May return nullptr.
     MsgAudioEncoded* WriteSampleSizeTable() const;
     MsgAudioEncoded* WriteSeekTable() const;    // FIXME - codec shouldn't require this, it should be able to pass a seek request to a sample up and container can handle it. However, CodecController and IStreamHandler require seek pos in bytes, so codec must query SeekTable itself.
-    MsgAudioEncoded* ProcessNextAudioBlock();   // May return NULL.
+    MsgAudioEncoded* ProcessNextAudioBlock();   // May return nullptr.
     void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxCodec(IMpeg4Box& aBox, TUint aBytes, const Brx& aCodec);

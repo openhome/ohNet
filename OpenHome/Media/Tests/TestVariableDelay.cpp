@@ -189,9 +189,9 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, NULL, false, false);
+        return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, nullptr, false, false);
     case EMsgSession:
         return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
@@ -206,7 +206,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgDelay:
         return iMsgFactory->CreateMsgDelay(iNextDelayAbsoluteJiffies);
     case EMsgEncodedStream:
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, nullptr);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgStreamInterrupted:
@@ -221,7 +221,7 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgQuit();
     default:
         ASSERTS();
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -298,7 +298,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteVariableDelay::ProcessMsg(MsgMetaText* aMsg)
@@ -373,7 +373,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
         break;
     }
     iJiffies += jiffies;
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteVariableDelay::ProcessMsg(MsgSilence* aMsg)
@@ -386,7 +386,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not expected at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)
@@ -399,7 +399,7 @@ void SuiteVariableDelay::PullNext()
 {
     Msg* msg = iVariableDelay->Pull();
     msg = msg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         msg->RemoveRef();
     }
 }

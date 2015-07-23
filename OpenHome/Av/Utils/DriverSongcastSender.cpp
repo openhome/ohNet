@@ -116,12 +116,12 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iTimerFrequencyMs(aMaxMsgSizeJiffies / Jiffies::kPerMs)
     , iLastTimeUs(0)
     , iTimeOffsetUs(0)
-    , iPlayable(NULL)
+    , iPlayable(nullptr)
     , iAudioSent(false)
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
-    iOhmSenderDriver = new OhmSenderDriver(iEnv, NULL, NULL);
+    iOhmSenderDriver = new OhmSenderDriver(iEnv, nullptr, nullptr);
 
     Bws<64> udn("Driver-");
     udn.Append(aName);
@@ -219,7 +219,7 @@ void DriverSongcastSender::Run()
                 iAudioSent = false;
                 iJiffiesToSend = iMaxMsgSizeJiffies;
             }
-            if (iPlayable != NULL) {
+            if (iPlayable != nullptr) {
                 SendAudio(iPlayable);
             }
             else {
@@ -234,7 +234,7 @@ void DriverSongcastSender::Run()
     while (!iQuit) {
         Msg* msg = iPipeline.Pull();
         (void)msg->Process(*this);
-        if (iPlayable != NULL) {
+        if (iPlayable != nullptr) {
             iPlayable->RemoveRef();
         }
     }
@@ -247,7 +247,7 @@ void DriverSongcastSender::TimerCallback()
 
 void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
 {
-    iPlayable = NULL;
+    iPlayable = nullptr;
     const TUint numSamples = aMsg->Bytes() / ((iBitDepth/8) * iNumChannels);
     TUint jiffies = numSamples * iJiffiesPerSample;
     if (jiffies >= iJiffiesToSend) {
@@ -279,19 +279,19 @@ void DriverSongcastSender::DeviceDisabled()
 Msg* DriverSongcastSender::ProcessMsg(MsgMode* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgChangeInput* aMsg)
@@ -302,49 +302,49 @@ Msg* DriverSongcastSender::ProcessMsg(MsgChangeInput* aMsg)
 Msg* DriverSongcastSender::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgHalt* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
@@ -360,32 +360,32 @@ Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
     iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels, iBitDepth, stream.Lossless(), stream.CodecName());
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgPlayable* aMsg)
 {
     SendAudio(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 void DriverSongcastSender::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, Net::IResourceWriter& aResourceWriter)

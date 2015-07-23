@@ -228,7 +228,7 @@ TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     iReadOffset = 0;
     iSamplesTotal = 0;
-    TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
+    TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, nullptr, 0, iCallbacks) == 0);
 
     return isVorbis;
 }

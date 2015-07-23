@@ -214,7 +214,7 @@ void ConfigMessage::Destroy()
 
 ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
     : ConfigMessage(aDeallocator)
-    , iNum(NULL)
+    , iNum(nullptr)
     , iValue(std::numeric_limits<TInt>::max())
 {
 }
@@ -222,16 +222,16 @@ ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
 void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson)
 {
     ConfigMessage::Set(aAdditionalJson);
-    ASSERT(iNum == NULL);
+    ASSERT(iNum == nullptr);
     iNum = &aNum;
     iValue = aValue;
 }
 
 void ConfigMessageNum::Clear()
 {
-    ASSERT(iNum != NULL);
+    ASSERT(iNum != nullptr);
     ConfigMessage::Clear();
-    iNum = NULL;
+    iNum = nullptr;
     iValue = std::numeric_limits<TInt>::max();
 }
 
@@ -267,7 +267,7 @@ void ConfigMessageNum::WriteMeta(IWriter& aWriter)
 ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager)
     : ConfigMessage(aDeallocator)
     , iLanguageResourceManager(aLanguageResourceManager)
-    , iChoice(NULL)
+    , iChoice(nullptr)
     , iValue(std::numeric_limits<TUint>::max())
 {
 }
@@ -275,7 +275,7 @@ ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator
 void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
 {
     ConfigMessage::Set(aAdditionalJson);
-    ASSERT(iChoice == NULL);
+    ASSERT(iChoice == nullptr);
     iChoice = &aChoice;
     iValue = aValue;
     iLanguageList = &aLanguageList;
@@ -283,11 +283,11 @@ void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aA
 
 void ConfigMessageChoice::Clear()
 {
-    ASSERT(iChoice != NULL);
+    ASSERT(iChoice != nullptr);
     ConfigMessage::Clear();
-    iChoice = NULL;
+    iChoice = nullptr;
     iValue = std::numeric_limits<TUint>::max();
-    iLanguageList = NULL;
+    iLanguageList = nullptr;
 }
 
 void ConfigMessageChoice::WriteKey(IWriter& aWriter)
@@ -312,7 +312,7 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
     static const Brn kConfigOptionsFile("ConfigOptions.txt");
     const std::vector<TUint>& choices = iChoice->Choices();
 
-    ILanguageResourceReader* resourceHandler = NULL;
+    ILanguageResourceReader* resourceHandler = nullptr;
     try {
         resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
     }
@@ -329,7 +329,7 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
 
 ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
     : ConfigMessage(aDeallocator)
-    , iText(NULL)
+    , iText(nullptr)
     , iValue(kMaxBytes)
 {
 }
@@ -337,16 +337,16 @@ ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
 void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, const Brx& aAdditionalJson)
 {
     ConfigMessage::Set(aAdditionalJson);
-    ASSERT(iText == NULL);
+    ASSERT(iText == nullptr);
     iText = &aText;
     iValue.Replace(aValue);
 }
 
 void ConfigMessageText::Clear()
 {
-    ASSERT(iText != NULL);
+    ASSERT(iText != nullptr);
     ConfigMessage::Clear();
-    iText = NULL;
+    iText = nullptr;
     iValue.SetBytes(0);
 }
 
@@ -639,14 +639,14 @@ ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, ICon
     , iMsgAllocator(aMessageAllocator)
     , iConfigManager(aConfigManager)
     , iJsonProvider(aJsonProvider)
-    , iHandler(NULL)
+    , iHandler(nullptr)
     , iStarted(false)
 {
 }
 
 ConfigTab::~ConfigTab()
 {
-    if (iHandler != NULL) {
+    if (iHandler != nullptr) {
         Destroy();
     }
 }
@@ -679,14 +679,14 @@ void ConfigTab::Start()
 
 TBool ConfigTab::Allocated() const
 {
-    TBool allocated = iHandler != NULL;
+    TBool allocated = iHandler != nullptr;
     return allocated;
 }
 
 void ConfigTab::SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
 {
     LOG(kHttp, "ConfigTab::SetHandler iId: %u\n", iId);
-    ASSERT(iHandler == NULL);
+    ASSERT(iHandler == nullptr);
     iLanguageList = aLanguageList;
     iHandler = &aHandler;
     for (TUint i=0; i<iConfigNums.size(); i++) {
@@ -742,8 +742,8 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
 void ConfigTab::Destroy()
 {
     LOG(kHttp, "ConfigTab::Destroy iId: %u\n", iId);
-    ASSERT(iHandler != NULL);
-    iHandler = NULL;
+    ASSERT(iHandler != nullptr);
+    iHandler = nullptr;
 
     for (TUint i=0; i<iConfigNums.size(); i++) {
         const Brx& key = iConfigNums[i].first;
@@ -767,7 +767,7 @@ void ConfigTab::Destroy()
 
 void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
 {
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     ConfigNum& num = iConfigManager.GetNum(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
     // FIXME - because JSON is static and now stored in ConfigApp, it means
@@ -779,7 +779,7 @@ void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
 
 void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
 {
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     ConfigChoice& choice = iConfigManager.GetChoice(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
     IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), json, iLanguageList);
@@ -788,7 +788,7 @@ void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
 
 void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 {
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     ConfigText& text = iConfigManager.GetText(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
     IConfigMessage& msg = iMsgAllocator.Allocate(text, aKvp.Value(), json);

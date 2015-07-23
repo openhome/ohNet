@@ -263,7 +263,7 @@ Msg* SuiteWaiter::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteWaiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteWaiter::ProcessMsg(MsgMetaText* aMsg)
@@ -353,7 +353,7 @@ Msg* SuiteWaiter::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteWaiter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteWaiter::ProcessMsg(MsgQuit* aMsg)
@@ -386,7 +386,7 @@ Msg* SuiteWaiter::CreateEncodedStream()
 
 Msg* SuiteWaiter::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, NULL);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, nullptr);
 }
 
 Msg* SuiteWaiter::CreateAudio()
@@ -516,7 +516,7 @@ void SuiteWaiter::TestPlayingFromWaitRampsUp()
 
 void SuiteWaiter::TestMsgsPassWhilePlaying()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, NULL, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, nullptr, false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     PullNext(EMsgSession);

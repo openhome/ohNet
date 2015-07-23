@@ -41,8 +41,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
-    , iConfigProductRoom(NULL)
-    , iConfigProductName(NULL)
+    , iConfigProductRoom(nullptr)
+    , iConfigProductName(nullptr)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
@@ -181,13 +181,13 @@ Product& MediaPlayer::Product()
 
 IVolumeManager& MediaPlayer::VolumeManager()
 {
-    ASSERT(iVolumeManager != NULL);
+    ASSERT(iVolumeManager != nullptr);
     return *iVolumeManager;
 }
 
 Credentials& MediaPlayer::CredentialsManager()
 {
-    ASSERT(iCredentials != NULL);
+    ASSERT(iCredentials != nullptr);
     return *iCredentials;
 }
 

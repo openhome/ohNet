@@ -131,7 +131,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 {
     Msg* msg = iPruner->Pull();
     msg = msg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         msg->RemoveRef();
     }
     return iLastPulledMsg;
@@ -373,7 +373,7 @@ Msg* SuitePruner::Pull()
     switch (msgType)
     {
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
     case EMsgSession:
         return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
@@ -389,7 +389,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgDelay(0);
     case EMsgEncodedStream:
     {
-        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, kStreamId, kSeekable, kLive, NULL);
+        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, kStreamId, kSeekable, kLive, nullptr);
     }
     case EMsgMetaText:
     {
@@ -403,7 +403,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
     {
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, nullptr);
     }
     case EMsgAudioPcm:
     {
@@ -426,7 +426,7 @@ Msg* SuitePruner::Pull()
     case EMsgPlayable:
     default:
         ASSERTS();
-        return NULL;
+        return nullptr;
     }
 }
 

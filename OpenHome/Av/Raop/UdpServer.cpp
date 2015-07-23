@@ -361,7 +361,7 @@ void SocketUdpServer::CurrentAdapterChanged()
     NetworkAdapter* current = ref.Adapter();
 
     // Get current subnet, otherwise choose first from a list
-    if (current == NULL) {
+    if (current == nullptr) {
         std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
         if (subnetList->size() > 0) {
             current = (*subnetList)[0];
@@ -370,7 +370,7 @@ void SocketUdpServer::CurrentAdapterChanged()
     }
 
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
-    if (current != NULL) {
+    if (current != nullptr) {
         iSocket.ReBind(iSocket.Port(), current->Address());
     }
 }

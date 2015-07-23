@@ -88,7 +88,7 @@ Protocol* ProtocolFactory::NewQobuz(Environment& aEnv, const Brx& aAppId, const 
 
 ProtocolQobuz::ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser)
     : ProtocolNetwork(aEnv)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iWriterRequest(iWriterBuf)
     , iReaderUntil(iReaderBuf)
     , iReaderResponse(aEnv, iReaderUntil)
@@ -133,7 +133,7 @@ ProtocolStreamResult ProtocolQobuz::Stream(const Brx& aUri)
     iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iSeekable = iSeek = iStarted = iStopped = false;
-    iContentProcessor = NULL;
+    iContentProcessor = nullptr;
     iNextFlushId = MsgFlush::kIdInvalid;
     iQobuz->Interrupt(false);
     iUri.Replace(aUri);
@@ -211,9 +211,9 @@ ProtocolGetResult ProtocolQobuz::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, 
 
 void ProtocolQobuz::Deactivated()
 {
-    if (iContentProcessor != NULL) {
+    if (iContentProcessor != nullptr) {
         iContentProcessor->Reset();
-        iContentProcessor = NULL;
+        iContentProcessor = nullptr;
     }
     Close();
 }

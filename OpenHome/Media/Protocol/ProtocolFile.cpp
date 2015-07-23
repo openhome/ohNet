@@ -69,7 +69,7 @@ Protocol* ProtocolFactory::NewFile(Environment& aEnv)
 ProtocolFile::ProtocolFile(Environment& aEnv)
     : Protocol(aEnv)
     , iLock("PRTF")
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iReaderBuf(iFileStream)
     , iContentRecogBuf(iReaderBuf)
 {
@@ -126,7 +126,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     iFileStream.Interrupt(false);
     const TUint fileSize = iFileStream.Bytes();
 
-    ContentProcessor* contentProcessor = NULL;
+    ContentProcessor* contentProcessor = nullptr;
     try {
         iContentRecogBuf.Populate(fileSize);
         contentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), Brx::Empty(), iContentRecogBuf.Buffer());
@@ -134,7 +134,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     catch (ReaderError&) {
         return EProtocolStreamErrorRecoverable;
     }
-    if (contentProcessor != NULL) {
+    if (contentProcessor != nullptr) {
         return contentProcessor->Stream(*this, fileSize);
     }
     
@@ -170,7 +170,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     iFileOpen = false;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
-    if (contentProcessor != NULL) {
+    if (contentProcessor != nullptr) {
         contentProcessor->Reset();
     }
     return res;

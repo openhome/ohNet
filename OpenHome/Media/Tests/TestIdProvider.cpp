@@ -199,8 +199,8 @@ void SuiteSingleStream::Setup()
 void SuiteSingleStream::TearDown()
 {
     delete iIdManager;
-    iIdManager = NULL;
-    iIdProvider = NULL;
+    iIdManager = nullptr;
+    iIdProvider = nullptr;
 }
 
 void SuiteSingleStream::OkToPlayOnceForValidId()
@@ -354,8 +354,8 @@ void SuiteMultiStreams::Setup()
 void SuiteMultiStreams::TearDown()
 {
     delete iIdManager;
-    iIdManager = NULL;
-    iIdProvider = NULL;
+    iIdManager = nullptr;
+    iIdProvider = nullptr;
 }
 
 void SuiteMultiStreams::AllCanBePlayed()

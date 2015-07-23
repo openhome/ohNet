@@ -8,7 +8,7 @@ using namespace OpenHome::Media;
 
 SampleRateValidator::SampleRateValidator(IPipelineElementDownstream& aDownstreamElement)
     : iDownstream(aDownstreamElement)
-    , iAnimator(NULL)
+    , iAnimator(nullptr)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iFlushing(false)
 {
@@ -22,7 +22,7 @@ void SampleRateValidator::SetAnimator(IPipelineAnimator& aPipelineAnimator)
 void SampleRateValidator::Push(Msg* aMsg)
 {
     Msg* msg = aMsg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         iDownstream.Push(msg);
     }
 }
@@ -86,7 +86,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgFlush* aMsg)
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
         iTargetFlushId = MsgFlush::kIdInvalid;
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -100,7 +100,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     try {
-        ASSERT(iAnimator != NULL);
+        ASSERT(iAnimator != nullptr);
         (void)iAnimator->PipelineDriverDelayJiffies(0, streamInfo.SampleRate());
         iFlushing = false;
     }
@@ -136,7 +136,7 @@ Msg* SampleRateValidator::ProcessFlushable(Msg* aMsg)
 {
     if (iFlushing) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }

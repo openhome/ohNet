@@ -11,7 +11,7 @@ using namespace OpenHome::Media;
 
 Pruner::Pruner(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
-    , iPendingMode(NULL)
+    , iPendingMode(nullptr)
     , iWaitingForAudio(false)
     , iConsumeHalts(false)
 {
@@ -19,27 +19,27 @@ Pruner::Pruner(IPipelineElementUpstream& aUpstreamElement)
 
 Pruner::~Pruner()
 {
-    if (iPendingMode != NULL) {
+    if (iPendingMode != nullptr) {
         iPendingMode->RemoveRef();
     }
 }
 
 Msg* Pruner::Pull()
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     do {
         if (iWaitingForAudio || iQueue.IsEmpty()) {
             msg = iUpstreamElement.Pull();
             msg = msg->Process(*this);
         }
-        else if (iPendingMode != NULL) {
+        else if (iPendingMode != nullptr) {
             msg = iPendingMode;
-            iPendingMode = NULL;
+            iPendingMode = nullptr;
         }
         else {
             msg = iQueue.Dequeue();
         }
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -47,7 +47,7 @@ Msg* Pruner::TryQueue(Msg* aMsg)
 {
     if (iWaitingForAudio) {
         iQueue.Enqueue(aMsg);
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -65,23 +65,23 @@ Msg* Pruner::ProcessMsg(MsgMode* aMsg)
         iQueue.Clear();
     }
     iWaitingForAudio = true;
-    if (iPendingMode != NULL) {
+    if (iPendingMode != nullptr) {
         iPendingMode->RemoveRef();
     }
     iPendingMode = aMsg;
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgSession* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgChangeInput* aMsg)
@@ -92,25 +92,25 @@ Msg* Pruner::ProcessMsg(MsgChangeInput* aMsg)
 Msg* Pruner::ProcessMsg(MsgDelay* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgStreamInterrupted* aMsg)
@@ -123,7 +123,7 @@ Msg* Pruner::ProcessMsg(MsgHalt* aMsg)
     // if we've passed on a Halt more recently than any audio, there's no need to pass on another Halt
     if (iConsumeHalts) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     iConsumeHalts = true;
     return TryQueue(aMsg);
@@ -132,13 +132,13 @@ Msg* Pruner::ProcessMsg(MsgHalt* aMsg)
 Msg* Pruner::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgWait* aMsg)
 {
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgDecodedStream* aMsg)
@@ -166,7 +166,7 @@ Msg* Pruner::ProcessMsg(MsgSilence* aMsg)
 Msg* Pruner::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgQuit* aMsg)

@@ -15,7 +15,7 @@ using namespace OpenHome::Media;
 RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* aId)
     : iId(aId)
     , iUpstream(&aUpstream)
-    , iDownstream(NULL)
+    , iDownstream(nullptr)
     , iRampedDown(false)
     , iWaitingForAudio(true)
 {
@@ -23,7 +23,7 @@ RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* a
 
 RampValidator::RampValidator(const TChar* aId, IPipelineElementDownstream& aDownstream)
     : iId(aId)
-    , iUpstream(NULL)
+    , iUpstream(nullptr)
     , iDownstream(&aDownstream)
     , iRampedDown(false)
     , iWaitingForAudio(true)
@@ -36,18 +36,18 @@ RampValidator::~RampValidator()
 
 Msg* RampValidator::Pull()
 {
-    ASSERT(iUpstream != NULL);
+    ASSERT(iUpstream != nullptr);
     Msg* msg = iUpstream->Pull();
     msg = msg->Process(*this);
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     return msg;
 }
 
 void RampValidator::Push(Msg* aMsg)
 {
-    ASSERT(iDownstream != NULL);
+    ASSERT(iDownstream != nullptr);
     Msg* msg = aMsg->Process(*this);
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     iDownstream->Push(msg);
 }
 

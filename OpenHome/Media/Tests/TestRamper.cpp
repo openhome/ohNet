@@ -196,7 +196,7 @@ Msg* SuiteRamper::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteRamper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteRamper::ProcessMsg(MsgMetaText* aMsg)
@@ -275,7 +275,7 @@ Msg* SuiteRamper::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteRamper::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteRamper::ProcessMsg(MsgQuit* aMsg)
@@ -309,7 +309,7 @@ Msg* SuiteRamper::CreateTrack()
 
 Msg* SuiteRamper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, iSampleStart, true, true, iLive, NULL);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, iSampleStart, true, true, iLive, nullptr);
 }
 
 Msg* SuiteRamper::CreateAudio()
@@ -325,7 +325,7 @@ Msg* SuiteRamper::CreateAudio()
 
 void SuiteRamper::TestNonAudioMsgsPass()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, false, NULL, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, false, nullptr, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));

@@ -15,14 +15,14 @@ using namespace OpenHome::Media;
 
 static inline void AddRefIfNonNull(Track* aTrack)
 {
-    if (aTrack != NULL) {
+    if (aTrack != nullptr) {
         aTrack->AddRef();
     }
 }
 
 static inline void RemoveRefIfNonNull(Track* aTrack)
 {
-    if (aTrack != NULL) {
+    if (aTrack != nullptr) {
         aTrack->RemoveRef();
     }
 }
@@ -77,7 +77,7 @@ void TrackDatabase::GetTrackByIdLocked(TUint aId, Track*& aTrack) const
 void TrackDatabase::GetTrackById(TUint aId, TUint aSeq, Track*& aTrack, TUint& aIndex) const
 {
     AutoMutex a(iLock);
-    aTrack = NULL;
+    aTrack = nullptr;
     if (iSeq != aSeq) {
         GetTrackByIdLocked(aId, aTrack);
         return;
@@ -118,8 +118,8 @@ void TrackDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData
 
 void TrackDatabase::DeleteId(TUint aId)
 {
-    Track* before = NULL;
-    Track* after = NULL;
+    Track* before = nullptr;
+    Track* after = nullptr;
     AutoMutex _(iObserverLock);
     {
         AutoMutex a(iLock);
@@ -177,7 +177,7 @@ void TrackDatabase::SetObserver(ITrackDatabaseObserver& aObserver)
 
 Track* TrackDatabase::TrackRef(TUint aId)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     try {
         const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
@@ -190,7 +190,7 @@ Track* TrackDatabase::TrackRef(TUint aId)
 
 Track* TrackDatabase::NextTrackRef(TUint aId)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     if (aId == kTrackIdNone) {
         if (iTrackList.size() > 0) {
@@ -213,7 +213,7 @@ Track* TrackDatabase::NextTrackRef(TUint aId)
 
 Track* TrackDatabase::PrevTrackRef(TUint aId)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     try {
         const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
@@ -228,7 +228,7 @@ Track* TrackDatabase::PrevTrackRef(TUint aId)
 
 Track* TrackDatabase::TrackRefByIndex(TUint aIndex)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     iLock.Wait();
     if (aIndex < iTrackList.size()) {
         track = iTrackList[aIndex];
@@ -241,7 +241,7 @@ Track* TrackDatabase::TrackRefByIndex(TUint aIndex)
 Track* TrackDatabase::TrackRefByIndexSorted(TUint /*aIndex*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 TBool TrackDatabase::TryGetTrackById(TUint aId, Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const
@@ -264,7 +264,7 @@ Shuffler::Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader)
     : iLock("TSHF")
     , iEnv(aEnv)
     , iReader(aReader)
-    , iObserver(NULL)
+    , iObserver(nullptr)
     , iPrevTrackId(ITrackDatabase::kTrackIdNone)
     , iShuffle(false)
 {
@@ -324,7 +324,7 @@ void Shuffler::SetObserver(ITrackDatabaseObserver& aObserver)
 
 Track* Shuffler::TrackRef(TUint aId)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     if (iShuffle) {
         try {
@@ -346,7 +346,7 @@ Track* Shuffler::TrackRef(TUint aId)
 
 Track* Shuffler::NextTrackRef(TUint aId)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     if (!iShuffle) {
         track = iReader.NextTrackRef(aId);
@@ -374,14 +374,14 @@ Track* Shuffler::NextTrackRef(TUint aId)
             }
             catch (TrackDbIdNotFound&) { }
         }
-        iPrevTrackId = (track == NULL? ITrackDatabase::kTrackIdNone : track->Id());
+        iPrevTrackId = (track == nullptr? ITrackDatabase::kTrackIdNone : track->Id());
     }
     return track;
 }
 
 Track* Shuffler::PrevTrackRef(TUint aId)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     if (!iShuffle) {
         track = iReader.PrevTrackRef(aId);
@@ -397,7 +397,7 @@ Track* Shuffler::PrevTrackRef(TUint aId)
         catch (TrackDbIdNotFound&) { }
     }
     if (iShuffle) {
-        if (track == NULL) {
+        if (track == nullptr) {
             iPrevTrackId = ITrackDatabase::kTrackIdNone;
         }
         else {
@@ -409,10 +409,10 @@ Track* Shuffler::PrevTrackRef(TUint aId)
 
 Track* Shuffler::TrackRefByIndex(TUint aIndex)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     track = iReader.TrackRefByIndex(aIndex);
-    if (iShuffle && track != NULL) {
+    if (iShuffle && track != nullptr) {
         MoveToStartOfUnplayed(track, "TrackRefByIndex");
     }
         
@@ -421,7 +421,7 @@ Track* Shuffler::TrackRefByIndex(TUint aIndex)
 
 Track* Shuffler::TrackRefByIndexSorted(TUint aIndex)
 {
-    Track* track = NULL;
+    Track* track = nullptr;
     AutoMutex a(iLock);
     if (!iShuffle) {
         track = iReader.TrackRefByIndex(aIndex);
@@ -474,8 +474,8 @@ void Shuffler::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aAfter)
         AutoMutex a(iLock);
         const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
         if (iShuffle) {
-            before = (index==0? NULL : iShuffleList[index-1]);
-            after = (index==iShuffleList.size()-1? NULL : iShuffleList[index+1]);
+            before = (index==0? nullptr : iShuffleList[index-1]);
+            after = (index==iShuffleList.size()-1? nullptr : iShuffleList[index+1]);
             if (iShuffleList[index]->Id() == iPrevTrackId) {
                 if (index == 0) {
                     iPrevTrackId = ITrackDatabase::kTrackIdNone;
@@ -557,7 +557,7 @@ void Shuffler::LogIds(
 Repeater::Repeater(ITrackDatabaseReader& aReader)
     : iLock("TRPT")
     , iReader(aReader)
-    , iObserver(NULL)
+    , iObserver(nullptr)
     , iRepeat(false)
     , iTrackCount(0)
 {
@@ -578,7 +578,7 @@ Track* Repeater::TrackRef(TUint aId)
 {
     AutoMutex a(iLock);
     Track* track = iReader.TrackRef(aId);
-    if (track == NULL && iRepeat) {
+    if (track == nullptr && iRepeat) {
         track = iReader.TrackRef(ITrackDatabase::kTrackIdNone);
     }
     return track;
@@ -588,7 +588,7 @@ Track* Repeater::NextTrackRef(TUint aId)
 {
     AutoMutex a(iLock);
     Track* track = iReader.NextTrackRef(aId);
-    if (track == NULL && iRepeat) {
+    if (track == nullptr && iRepeat) {
         track = iReader.NextTrackRef(ITrackDatabase::kTrackIdNone);
     }
     return track;
@@ -602,14 +602,14 @@ Track* Repeater::TrackRefByIndex(TUint aIndex)
 Track* Repeater::TrackRefByIndexSorted(TUint /*aIndex*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Track* Repeater::PrevTrackRef(TUint aId)
 {
     AutoMutex a(iLock);
     Track* track = iReader.PrevTrackRef(aId);
-    if (track == NULL && iRepeat) {
+    if (track == nullptr && iRepeat) {
         track = iReader.TrackRefByIndexSorted(iTrackCount-1);
     }
     return track;

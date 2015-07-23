@@ -14,7 +14,7 @@ using namespace OpenHome::Media;
 
 Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     : iUpstreamElement(&aUpstreamElement)
-    , iDownstreamElement(NULL)
+    , iDownstreamElement(nullptr)
     , iId(aId)
     , iEnabled(false)
     , iFilter(EMsgAll)
@@ -23,7 +23,7 @@ Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
 }
 
 Logger::Logger(const TChar* aId, IPipelineElementDownstream& aDownstreamElement)
-    : iUpstreamElement(NULL)
+    : iUpstreamElement(nullptr)
     , iDownstreamElement(&aDownstreamElement)
     , iId(aId)
     , iEnabled(false)
@@ -50,8 +50,8 @@ void Logger::SetFilter(TUint aMsgTypes)
 Msg* Logger::Pull()
 {
     Msg* msg = iUpstreamElement->Pull();
-    if (msg == NULL) {
-        Log::Print("Pipeline (%s): NULL\n", iId);
+    if (msg == nullptr) {
+        Log::Print("Pipeline (%s): nullptr\n", iId);
     }
     else {
         ASSERT_DEBUG(msg->iRefCount > 0);
@@ -62,7 +62,7 @@ Msg* Logger::Pull()
 
 void Logger::Push(Msg* aMsg)
 {
-    ASSERT(aMsg != NULL);
+    ASSERT(aMsg != nullptr);
     (void)aMsg->Process(*this);
     iDownstreamElement->Push(aMsg);
 }

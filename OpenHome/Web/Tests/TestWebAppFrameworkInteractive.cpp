@@ -185,7 +185,7 @@ void TestTabMessage::Destroy()
 TestTab::TestTab(TUint aId, ITestTabMessageAllocator& aAllocator)
     : iId(aId)
     , iMsgAllocator(aAllocator)
-    , iHandler(NULL)
+    , iHandler(nullptr)
     , iLock("TTBL")
 {
 }
@@ -193,14 +193,14 @@ TestTab::TestTab(TUint aId, ITestTabMessageAllocator& aAllocator)
 TBool TestTab::Allocated()
 {
     AutoMutex a(iLock);
-    return (iHandler != NULL);
+    return (iHandler != nullptr);
 }
 
 void TestTab::Allocate(ITabHandler& aHandler)
 {
     Log::Print("TestTab::Allocate iId: %u\n", iId);
     AutoMutex a(iLock);
-    ASSERT(iHandler == NULL);
+    ASSERT(iHandler == nullptr);
     iHandler = &aHandler;
 }
 
@@ -216,8 +216,8 @@ void TestTab::Destroy()
 {
     Log::Print("TestTab::Destroy iId: %u\n", iId);
     AutoMutex a(iLock);
-    ASSERT(iHandler != NULL);
-    iHandler = NULL;
+    ASSERT(iHandler != nullptr);
+    iHandler = nullptr;
 }
 
 
@@ -294,7 +294,7 @@ int CDECL main(int aArgc, char* aArgv[])
 {
 #ifdef _WIN32
     char* noErrDlgs = getenv("NO_ERROR_DIALOGS");
-    if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
+    if (noErrDlgs != nullptr && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
 #endif // _WIN32

@@ -318,7 +318,7 @@ void SuiteCVSubscriptions::TestNoSubscriptions()
     // test that a ConfigVal can be successfully destructed without ever having a
     // subscription on it.
     delete iConfigVal;
-    iConfigVal = NULL;
+    iConfigVal = nullptr;
 }
 
 void SuiteCVSubscriptions::TestAddRemoveSubscription()
@@ -329,7 +329,7 @@ void SuiteCVSubscriptions::TestAddRemoveSubscription()
     TEST(id != 0);
     iConfigVal->Unsubscribe(id);
     delete iConfigVal;
-    iConfigVal = NULL;
+    iConfigVal = nullptr;
 }
 
 void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
@@ -346,7 +346,7 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
     iConfigVal->Unsubscribe(id1);
     iConfigVal->Unsubscribe(id2);
     delete iConfigVal;
-    iConfigVal = NULL;
+    iConfigVal = nullptr;
 }
 
 void SuiteCVSubscriptions::TestUnsubscribeInvalidId()
@@ -1285,7 +1285,7 @@ void SuiteConfigText::TestDeserialiseValueTooLong()
 // SuiteSerialisedMap
 SuiteSerialisedMap::SuiteSerialisedMap()
     : SuiteUnitTest("SuiteSerialisedMap")
-    , iMapUint(NULL)
+    , iMapUint(nullptr)
 {
     AddTest(MakeFunctor(*this, &SuiteSerialisedMap::TestMapKeyPersists), "TestMapKeyPersists");
 }

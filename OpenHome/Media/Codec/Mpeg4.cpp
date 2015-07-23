@@ -195,7 +195,7 @@ void Mpeg4InfoWriter::Write(IWriter& aWriter) const
 // Mpeg4Box
 
 Mpeg4Box::Mpeg4Box()
-    : iReader(NULL)
+    : iReader(nullptr)
     , iSize(0)
     , iOffset(0)
 {
@@ -209,7 +209,7 @@ void Mpeg4Box::Set(IReader& aReader)
 {
     //Clear();
 
-    //iReader = NULL;
+    //iReader = nullptr;
     iSize = 0;
     iId.SetBytes(0);
     iOffset = 0;
@@ -219,7 +219,7 @@ void Mpeg4Box::Set(IReader& aReader)
 
 void Mpeg4Box::Clear()
 {
-    //iReader = NULL;   // Clear() should definitely do this, but then Set() must be called afterwards. Otherwise, ReadFlush() could do the following.
+    //iReader = nullptr;   // Clear() should definitely do this, but then Set() must be called afterwards. Otherwise, ReadFlush() could do the following.
     iSize = 0;
     iId.SetBytes(0);
     iOffset = 0;
@@ -227,7 +227,7 @@ void Mpeg4Box::Clear()
 
 void Mpeg4Box::ReadHeader()
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     // FIXME - can just call Read() here! - but would need to call it until all bytes read.
     TUint remaining = kBoxHeaderBytes;
     Bws<kBoxHeaderBytes> header;
@@ -250,19 +250,19 @@ void Mpeg4Box::ReadHeader()
 
 TUint Mpeg4Box::Size() const
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     return iSize;
 }
 
 const Brx& Mpeg4Box::Id() const
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     return iId;
 }
 
 void Mpeg4Box::SkipRemaining()
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     ASSERT(iSize >= iOffset);
     const TUint remaining = iSize - iOffset;
     Skip(remaining);
@@ -270,7 +270,7 @@ void Mpeg4Box::SkipRemaining()
 
 void Mpeg4Box::Skip(TUint aBytes)
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     ASSERT(iSize >= iOffset);
     TUint remaining = iSize - iOffset;
     ASSERT(aBytes <= remaining);
@@ -291,7 +291,7 @@ void Mpeg4Box::Skip(TUint aBytes)
 
 Brn Mpeg4Box::Read(TUint aBytes)
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     ASSERT(iOffset <= iSize);
     ASSERT(iOffset+aBytes <= iSize);
     Brn buf = iReader->Read(aBytes);
@@ -313,7 +313,7 @@ void Mpeg4Box::ReadInterrupt()
 // Mpeg4BoxStack
 
 Mpeg4BoxStack::Mpeg4BoxStack(TUint aNestCount)
-    : iReader(NULL)
+    : iReader(nullptr)
     , iIndex(0)
 {
     iBoxes.reserve(aNestCount);
@@ -331,13 +331,13 @@ Mpeg4BoxStack::~Mpeg4BoxStack()
 
 void Mpeg4BoxStack::Set(IReader& aReader)
 {
-    //ASSERT(iReader == NULL);
+    //ASSERT(iReader == nullptr);
     iReader = &aReader;
 }
 
 void Mpeg4BoxStack::Push()
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     ASSERT(iIndex < iBoxes.size());
 
     IReader* reader = iReader;
@@ -839,13 +839,13 @@ void SeekTableInitialiser::Init()
 
 MsgAudioEncodedWriter::MsgAudioEncodedWriter(MsgFactory& aMsgFactory)
     : iMsgFactory(aMsgFactory)
-    , iMsg(NULL)
+    , iMsg(nullptr)
 {
 }
 
 MsgAudioEncodedWriter::~MsgAudioEncodedWriter()
 {
-    ASSERT(iMsg == NULL);
+    ASSERT(iMsg == nullptr);
     ASSERT(iBuf.Bytes() == 0);
 }
 
@@ -853,7 +853,7 @@ MsgAudioEncoded* MsgAudioEncodedWriter::Msg()
 {
     ASSERT(iBuf.Bytes() == 0);  // Ensure no audio still buffered.
     MsgAudioEncoded* msg = iMsg;
-    iMsg = NULL;
+    iMsg = nullptr;
     return msg;
 }
 
@@ -904,7 +904,7 @@ void MsgAudioEncodedWriter::AllocateMsg()
 {
     ASSERT(iBuf.Bytes() > 0);
     MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(Brn(iBuf.Ptr(), iBuf.Bytes()));
-    if (iMsg == NULL) {
+    if (iMsg == nullptr) {
         iMsg = msg;
     }
     else {
@@ -999,10 +999,10 @@ Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
 
     if (!iPulling) {
         MsgAudioEncoded* msg = Process();
-        ASSERT(iAudioEncoded == NULL);  // iAudioEncoded should have been exhausted.
+        ASSERT(iAudioEncoded == nullptr);  // iAudioEncoded should have been exhausted.
         return msg;
     }
-    return NULL;
+    return nullptr;
 }
 
 TUint Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
@@ -1089,7 +1089,7 @@ MsgAudioEncoded* Mpeg4Container::Process()
 
     // FIXME - If we did handle files with mdat before moov, would have to ensure we didn't attempt to process moov after end of mdat, i.e., somehow terminate when we reach end of mdat, which is detectable by various means.
 
-    MsgAudioEncoded* msgOut = NULL;
+    MsgAudioEncoded* msgOut = nullptr;
 
     if (!iPreProcessingComplete) {
         try {
@@ -1169,13 +1169,13 @@ MsgAudioEncoded* Mpeg4Container::Process()
 
             // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
             MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
-            ASSERT(msgSampleSizeTable != NULL);
+            ASSERT(msgSampleSizeTable != nullptr);
             msgOut->Add(msgSampleSizeTable);
 
             // Write seek table so that codec can determine correct byte position that it should request to seek to.
             // FIXME - there should be no need for a codec to know this, but IStreamHandler requires seek position in bytes, for which SeekTable is required.
             MsgAudioEncoded* msgSeekTable = WriteSeekTable();
-            ASSERT(msgSeekTable != NULL);
+            ASSERT(msgSeekTable != nullptr);
             msgOut->Add(msgSeekTable);
         }
 
@@ -1184,12 +1184,12 @@ MsgAudioEncoded* Mpeg4Container::Process()
 
 
     MsgAudioEncoded* msgAudio = ProcessNextAudioBlock();
-    ASSERT(iAudioEncoded == NULL);
-    if (msgOut == NULL) {
+    ASSERT(iAudioEncoded == nullptr);
+    if (msgOut == nullptr) {
         msgOut = msgAudio;
     }
     else {
-        if (msgAudio != NULL) {
+        if (msgAudio != nullptr) {
             msgOut->Add(msgAudio);
         }
     }
@@ -1225,12 +1225,12 @@ MsgAudioEncoded* Mpeg4Container::WriteSeekTable() const
 
 MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
 {
-    MsgAudioEncoded* msg = NULL;
+    MsgAudioEncoded* msg = nullptr;
     // Output audio chunk-by-chunk.
 
     // Will not output anything if metadata has been processed.
     // (SeekTable::ChunkCount() will be 0, so all audio should be discarded).
-    while (iChunkIndex < iSeekTable.ChunkCount() && iAudioEncoded != NULL) {
+    while (iChunkIndex < iSeekTable.ChunkCount() && iAudioEncoded != nullptr) {
 
         // Are we at the start of the next chunk?
         if (iChunkBytesRemaining == 0) {
@@ -1261,7 +1261,7 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
                 iBytesToDiscard -= iAudioEncoded->Bytes();
                 iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
                 iAudioEncoded->RemoveRef();
-                iAudioEncoded = NULL;
+                iAudioEncoded = nullptr;
                 return msg;
             }
             else {
@@ -1271,12 +1271,12 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
             }
         }
 
-        ASSERT(iAudioEncoded != NULL);
+        ASSERT(iAudioEncoded != nullptr);
         ASSERT(iBytesToDiscard == 0);
         if (iAudioEncoded->Bytes() > iChunkBytesRemaining) {
             MsgAudioEncoded* remainder = iAudioEncoded->Split(iChunkBytesRemaining);
             iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-            if (msg == NULL) {
+            if (msg == nullptr) {
                 msg = iAudioEncoded;
             }
             else {
@@ -1290,17 +1290,17 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
         else {  // iAudioEncoded->Bytes() <= iChunkBytesRemaining
             iChunkBytesRemaining -= iAudioEncoded->Bytes();
             iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-            if (msg == NULL) {
+            if (msg == nullptr) {
                 msg = iAudioEncoded;
             }
             else {
                 msg->Add(iAudioEncoded);
             }
-            iAudioEncoded = NULL;
+            iAudioEncoded = nullptr;
         }
     }
 
-    if (iAudioEncoded != NULL) {
+    if (iAudioEncoded != nullptr) {
         // Some iAudioEncoded left, but should have exhausted all chunks.
         // So remaining iAudioEncoded must be other data.
         // FIXME - discard until start of next stream?
@@ -1308,7 +1308,7 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
 
         // FIXME - update iPos?
         iAudioEncoded->RemoveRef();
-        iAudioEncoded = NULL;
+        iAudioEncoded = nullptr;
     }
 
     return msg;

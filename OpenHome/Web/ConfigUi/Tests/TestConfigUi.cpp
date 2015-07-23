@@ -571,7 +571,7 @@ void SuiteConfigMessageNumAllocator::TestDeleteWhileAllocated()
     // Should assert, as all msgs must be returned to allocator before it can be deleted.
     (void)iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
     TEST_THROWS(delete iAllocator, AssertionFailed);
-    iAllocator = NULL;
+    iAllocator = nullptr;
 }
 
 
@@ -646,7 +646,7 @@ void SuiteConfigMessageChoiceAllocator::TestDeleteWhileAllocated()
     // Should assert, as all msgs must be returned to allocator before it can be deleted.
     (void)iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
     TEST_THROWS(delete iAllocator, AssertionFailed);
-    iAllocator = NULL;
+    iAllocator = nullptr;
 }
 
 
@@ -716,7 +716,7 @@ void SuiteConfigMessageTextAllocator::TestDeleteWhileAllocated()
     // Should assert, as all msgs must be returned to allocator before it can be deleted.
     (void)iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
     TEST_THROWS(delete iAllocator, AssertionFailed);
-    iAllocator = NULL;
+    iAllocator = nullptr;
 }
 
 

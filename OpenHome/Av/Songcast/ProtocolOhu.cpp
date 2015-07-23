@@ -21,7 +21,7 @@ using namespace OpenHome::Media;
 // ProtocolOhu
 
 ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode, IPowerManager& aPowerManager)
-    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, NULL /* no timestamper required */, "ohu", aMode)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, nullptr /* no timestamper required */, "ohu", aMode)
     , iLeaveLock("POHU")
 {
     iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest+1);

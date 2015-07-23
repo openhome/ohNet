@@ -756,7 +756,7 @@ TestHttpSession* SessionFactory::Create(ESession aSession)
         return new TestHttpSessionChunked();
     default:
         ASSERTS();
-        return NULL;    // Will never reach here.
+        return nullptr;    // Will never reach here.
     }
 }
 
@@ -770,7 +770,7 @@ TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
     , iTrackCount(0)
     , iStreamCount(0)
     , iDataTotal(0)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
 {
 }
 

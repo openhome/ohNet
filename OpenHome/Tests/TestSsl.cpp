@@ -137,12 +137,12 @@ void SuiteRsa::Test()
     BIGNUM *bn = BN_new();
     TEST(BN_set_word(bn, RSA_F4));
     RSA* rsa = RSA_new();
-    TEST(RSA_generate_key_ex(rsa, 2048, bn, NULL) != 0);
+    TEST(RSA_generate_key_ex(rsa, 2048, bn, nullptr) != 0);
     BN_free(bn);
 
     // check they could be written to file
     BIO* bio = BIO_new(BIO_s_mem());
-    TEST(1 == PEM_write_bio_RSAPrivateKey(bio, rsa, NULL, NULL, 0, NULL, NULL));
+    TEST(1 == PEM_write_bio_RSAPrivateKey(bio, rsa, nullptr, nullptr, 0, nullptr, nullptr));
     printPemKey(bio);
     TEST(1 == PEM_write_bio_RSAPublicKey(bio, rsa));
     printPemKey(bio);
