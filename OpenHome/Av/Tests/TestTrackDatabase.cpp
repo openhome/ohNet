@@ -219,8 +219,8 @@ void SuiteTrackDatabase::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aA
 {
     iDeletedCount++;
     iIdLastDeleted = aId;
-    iIdLastDeletedBefore = (aBefore==NULL? ITrackDatabase::kTrackIdNone : aBefore->Id());
-    iIdLastDeletedAfter = (aAfter==NULL? ITrackDatabase::kTrackIdNone : aAfter->Id());
+    iIdLastDeletedBefore = (aBefore==nullptr? ITrackDatabase::kTrackIdNone : aBefore->Id());
+    iIdLastDeletedAfter = (aAfter==nullptr? ITrackDatabase::kTrackIdNone : aAfter->Id());
 }
 
 void SuiteTrackDatabase::NotifyAllDeleted()
@@ -447,7 +447,7 @@ void SuiteTrackDatabase::GetTrackByValidId()
     iTrackDatabase->Insert(ITrackDatabase::kTrackIdNone, Brx::Empty(), Brx::Empty(), id);
     Track* track;
     iTrackDatabase->GetTrackById(id, track);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == id);
     track->RemoveRef();
 }
@@ -474,23 +474,23 @@ void SuiteTrackDatabase::GetTrackByIdValidSeq()
     Track* track;
     for (TUint i=0; i<sizeof(ids)/sizeof(ids[0]); i++) {
         iTrackDatabase->GetTrackById(ids[i], seq, track, index);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == ids[i]);
         track->RemoveRef();
     }
 
     index = 0;
-    track = NULL;
+    track = nullptr;
     iTrackDatabase->GetTrackById(ids[2], seq, track, index);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == ids[2]);
     track->RemoveRef();
     iTrackDatabase->GetTrackById(ids[1], seq, track, index);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == ids[1]);
     track->RemoveRef();
     iTrackDatabase->GetTrackById(ids[0], seq, track, index);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == ids[0]);
     track->RemoveRef();
 }
@@ -509,23 +509,23 @@ void SuiteTrackDatabase::GetTrackByIdInvalidSeq()
     Track* track;
     for (TUint i=0; i<sizeof(ids)/sizeof(ids[0]); i++) {
         iTrackDatabase->GetTrackById(ids[i], seq, track, index);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == ids[i]);
         track->RemoveRef();
     }
 
     index = 0;
-    track = NULL;
+    track = nullptr;
     iTrackDatabase->GetTrackById(ids[2], seq, track, index);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == ids[2]);
     track->RemoveRef();
     iTrackDatabase->GetTrackById(ids[1], seq, track, index);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == ids[1]);
     track->RemoveRef();
     iTrackDatabase->GetTrackById(ids[0], seq, track, index);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == ids[0]);
     track->RemoveRef();
 }
@@ -600,7 +600,7 @@ void SuiteTrackReader::TrackRefValidId()
 {
     for (TUint i=0; i<kNumTracks; i++) {
         Track* track = iReader->TrackRef(iIds[i]);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
@@ -609,9 +609,9 @@ void SuiteTrackReader::TrackRefValidId()
 void SuiteTrackReader::TrackRefInvalidId()
 {
     Track* track = iReader->TrackRef(ITrackDatabase::kTrackIdNone);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->TrackRef(iIds[kNumTracks-1]+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteTrackReader::NextTrackRefValidId()
@@ -620,21 +620,21 @@ void SuiteTrackReader::NextTrackRefValidId()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->NextTrackRef(prev);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         prev = track->Id();
         track->RemoveRef();
     }
     track = iReader->NextTrackRef(iIds[2]);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteTrackReader::NextTrackRefInvalidId()
 {
     Track* track = iReader->NextTrackRef(iIds[kNumTracks-1]+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->NextTrackRef(UINT_MAX);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteTrackReader::PrevTrackRefValidId()
@@ -643,28 +643,28 @@ void SuiteTrackReader::PrevTrackRefValidId()
     Track* track;
     for (TUint i=kNumTracks-1; i>0; i--) {
         track = iReader->PrevTrackRef(next);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i-1]);
         next = track->Id();
         track->RemoveRef();
     }
     track = iReader->PrevTrackRef(iIds[0]);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteTrackReader::PrevTrackRefInvalidId()
 {
     Track* track = iReader->PrevTrackRef(ITrackDatabase::kTrackIdNone);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->PrevTrackRef(iIds[kNumTracks-1] + 1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteTrackReader::TrackRefByIndexValidId()
 {
     for (TUint i=0; i<kNumTracks; i++) {
         Track* track = iReader->TrackRefByIndex(i);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
@@ -673,7 +673,7 @@ void SuiteTrackReader::TrackRefByIndexValidId()
 void SuiteTrackReader::TrackRefByIndexInvalidId()
 {
     Track* track = iReader->TrackRefByIndex(kNumTracks);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteTrackReader::TrackRefByIndexSortedValidId()
@@ -746,14 +746,14 @@ void SuiteShuffler::TrackRefShuffleOff()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRef(iIds[i]);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
     track = iReader->TrackRef(ITrackDatabase::kTrackIdNone);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->TrackRef(iIds[kNumTracks-1]+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteShuffler::TrackRefShuffleOn()
@@ -768,7 +768,7 @@ void SuiteShuffler::NextTrackRefShuffleOff()
     TUint prev = ITrackDatabase::kTrackIdNone;
     for (TUint i=0; i<kNumTracks; i++) {
         Track* track = iReader->NextTrackRef(prev);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         prev = track->Id();
         track->RemoveRef();
@@ -787,7 +787,7 @@ void SuiteShuffler::NextTrackRefShuffleOn()
     TUint id = ITrackDatabase::kTrackIdNone;
     for (TUint i=0; i<kNumTracks; i++) {
         Track* track = iReader->NextTrackRef(id);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         id = track->Id();
         if (id != iIds[i]) {
             shuffled = true;
@@ -808,15 +808,15 @@ void SuiteShuffler::PrevTrackRefShuffleOff()
     TUint id = iIds[kNumTracks-1];
     for (TUint i=kNumTracks-1; i>0; i--) {
         track = iReader->PrevTrackRef(id);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i-1]);
         id = track->Id();
         track->RemoveRef();
     }
     track = iReader->PrevTrackRef(iIds[0]);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->PrevTrackRef(iIds[kNumTracks-1]+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteShuffler::PrevTrackRefShuffleOn()
@@ -836,7 +836,7 @@ void SuiteShuffler::PrevTrackRefShuffleOn()
         TEST(it != availableIds.end()); // i.e. check we haven't been given this track before
         *it = ITrackDatabase::kTrackIdNone;
         Track* track = iReader->PrevTrackRef(id);
-        if (track == NULL) {
+        if (track == nullptr) {
             break;
         }
         id = track->Id();
@@ -855,14 +855,14 @@ void SuiteShuffler::TrackRefByIndexShuffleOff()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRefByIndex(i);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
     track = iReader->TrackRefByIndex(kNumTracks+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->TrackRefByIndex(UINT_MAX);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteShuffler::TrackRefByIndexShuffleOn()
@@ -876,7 +876,7 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
 
     for (TUint i=0; i<kNumTracks; i++) {
         Track* track = iReader->TrackRefByIndex(i);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         if (track->Id() != iIds[i]) {
             shuffled = true;
         }
@@ -895,14 +895,14 @@ void SuiteShuffler::TrackRefByIndexSortedShuffleOff()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRefByIndexSorted(i);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
     track = iReader->TrackRefByIndexSorted(kNumTracks+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->TrackRefByIndexSorted(UINT_MAX);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteShuffler::TrackRefByIndexSortedShuffleOn()
@@ -911,14 +911,14 @@ void SuiteShuffler::TrackRefByIndexSortedShuffleOn()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRefByIndexSorted(i);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iShuffler->iShuffleList[i]->Id());
         track->RemoveRef();
     }
     track = iReader->TrackRefByIndexSorted(kNumTracks+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->TrackRefByIndexSorted(UINT_MAX);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteShuffler::ModeToggleReshuffles()
@@ -958,7 +958,7 @@ void SuiteShuffler::NextTrackBeyondEndReshuffles()
         initialShuffle[i] = id;
         track->RemoveRef();
     }
-    TEST(iReader->NextTrackRef(id) == NULL);
+    TEST(iReader->NextTrackRef(id) == nullptr);
 
     id = ITrackDatabase::kTrackIdNone;
     TBool reshuffled = false;
@@ -1032,14 +1032,14 @@ void SuiteRepeater::TrackRefRepeatOff()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRef(iIds[i]);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
     track = iReader->TrackRef(ITrackDatabase::kTrackIdNone);
-    TEST(track == NULL);
+    TEST(track == nullptr);
     track = iReader->TrackRef(iIds[kNumTracks-1]+1);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteRepeater::TrackRefRepeatOn()
@@ -1052,14 +1052,14 @@ void SuiteRepeater::TrackRefRepeatOn()
 void SuiteRepeater::NextFromLastTrackRepeatOff()
 {
     Track* track = iReader->NextTrackRef(iIds[kNumTracks-1]);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteRepeater::NextFromLastTrackRepeatOn()
 {
     static_cast<IRepeater*>(iRepeater)->SetRepeat(true);
     Track* track = iReader->NextTrackRef(iIds[kNumTracks-1]);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == iIds[0]);
     track->RemoveRef();
 }
@@ -1067,14 +1067,14 @@ void SuiteRepeater::NextFromLastTrackRepeatOn()
 void SuiteRepeater::PrevFromFirstTrackRepeatOff()
 {
     Track* track = iReader->PrevTrackRef(iIds[0]);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteRepeater::PrevFromFirstTrackRepeatOn()
 {
     static_cast<IRepeater*>(iRepeater)->SetRepeat(true);
     Track* track = iReader->PrevTrackRef(iIds[0]);
-    TEST(track != NULL);
+    TEST(track != nullptr);
     TEST(track->Id() == iIds[kNumTracks-1]);
     track->RemoveRef();
 }
@@ -1084,12 +1084,12 @@ void SuiteRepeater::TrackRefByIndexRepeatOff()
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRefByIndex(i);
-        TEST(track != NULL);
+        TEST(track != nullptr);
         TEST(track->Id() == iIds[i]);
         track->RemoveRef();
     }
     track = iReader->TrackRefByIndex(kNumTracks);
-    TEST(track == NULL);
+    TEST(track == nullptr);
 }
 
 void SuiteRepeater::TrackRefByIndexRepeatOn()

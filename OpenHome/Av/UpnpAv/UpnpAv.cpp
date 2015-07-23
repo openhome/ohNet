@@ -38,7 +38,7 @@ SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, U
     , iDevice(aDevice)
     , iPipeline(aMediaPlayer.Pipeline())
     , iUriProvider(aUriProvider)
-    , iTrack(NULL)
+    , iTrack(nullptr)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
@@ -57,7 +57,7 @@ SourceUpnpAv::~SourceUpnpAv()
     delete iProviderAvTransport;
     delete iProviderConnectionManager;
     delete iProviderRenderingControl;
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
 }
@@ -76,7 +76,7 @@ void SourceUpnpAv::Activate()
 {
     iActive = true;
     if (!iNoPipelinePrefetchOnActivation) {
-        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+        const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     }
 }
@@ -92,20 +92,20 @@ void SourceUpnpAv::Deactivate()
 
 void SourceUpnpAv::PipelineStopped()
 {
-    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+    // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)
 }
 
 void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     EnsureActive();
-    if (iTrack == NULL || iTrack->Uri() != aUri) {
-        if (iTrack != NULL) {
+    if (iTrack == nullptr || iTrack->Uri() != aUri) {
+        if (iTrack != nullptr) {
             iTrack->RemoveRef();
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData);
 
-        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
-        if (iTrack == NULL) {
+        const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
+        if (iTrack == nullptr) {
             iTransportState = Media::EPipelineStopped;
         }
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
@@ -121,10 +121,10 @@ void SourceUpnpAv::Play()
     EnsureActive();
     TBool notifyUriProvider = false;
     iLock.Wait();
-    if (iTrack != NULL && iTransportState == Media::EPipelinePlaying) {
+    if (iTrack != nullptr && iTransportState == Media::EPipelinePlaying) {
         notifyUriProvider = true;
     }
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTransportState = Media::EPipelinePlaying;
         iLock.Signal();
         if (notifyUriProvider) {
@@ -153,7 +153,7 @@ void SourceUpnpAv::Stop()
     if (IsActive()) {
         iLock.Wait();
         iTransportState = Media::EPipelineStopped;
-        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+        const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
         iLock.Signal();
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     }

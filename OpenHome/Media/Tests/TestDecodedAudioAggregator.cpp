@@ -254,7 +254,7 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgMetaText* aMsg)
@@ -323,7 +323,7 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgQuit* aMsg)
@@ -376,7 +376,7 @@ Msg* SuiteDecodedAudioAggregator::CreateEncodedStream()
 MsgDecodedStream* SuiteDecodedAudioAggregator::CreateDecodedStream()
 {
     static const TUint kBitrate = 256;
-    return iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("NULL"), 0, 0, true, true, false, this);
+    return iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, this);
 }
 
 MsgFlush* SuiteDecodedAudioAggregator::CreateFlush()

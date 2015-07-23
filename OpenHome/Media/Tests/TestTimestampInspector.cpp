@@ -152,12 +152,12 @@ void SuiteTimestampInspector::TearDown()
 
 void SuiteTimestampInspector::PushMsg(EMsgType aType)
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     switch (aType)
     {
     case EMsgMode:
     {
-        IClockPuller* clockPuller = (iUseClockPuller? &iClockPuller : NULL);
+        IClockPuller* clockPuller = (iUseClockPuller? &iClockPuller : nullptr);
         msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPuller, false, false);
     }
         break;
@@ -175,7 +175,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgChangeInput(Functor());
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, NULL);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, nullptr);
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerSecond);
@@ -196,7 +196,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("NULL"), 0, 0, true, true, false, NULL);
+        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, nullptr);
         break;
     case EMsgAudioPcm:
     {

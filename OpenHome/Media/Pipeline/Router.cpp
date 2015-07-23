@@ -10,7 +10,7 @@ using namespace OpenHome::Media;
 
 Router::Router(IPipelineElementUpstream& aUpstream)
     : iUpstream(aUpstream)
-    , iBranch(NULL)
+    , iBranch(nullptr)
 {
 }
 
@@ -22,7 +22,7 @@ IPipelineElementUpstream& Router::InsertElements(IPipelineElementUpstream& aTail
 
 Msg* Router::Pull()
 {
-    if (iBranch != NULL) {
+    if (iBranch != nullptr) {
         return iBranch->Pull();
     }
     return iUpstream.Pull();

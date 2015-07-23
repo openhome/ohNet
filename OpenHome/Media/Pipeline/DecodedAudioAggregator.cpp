@@ -12,8 +12,8 @@ using namespace OpenHome::Media;
 DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement, MsgFactory& aMsgFactory)
     : iDownstreamElement(aDownstreamElement)
     , iMsgFactory(aMsgFactory)
-    , iStreamHandler(NULL)
-    , iDecodedAudio(NULL)
+    , iStreamHandler(nullptr)
+    , iDecodedAudio(nullptr)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iChannels(0)
     , iSampleRate(0)
@@ -25,21 +25,21 @@ DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDown
 
 void DecodedAudioAggregator::Push(Msg* aMsg)
 {
-    ASSERT(aMsg != NULL);
+    ASSERT(aMsg != nullptr);
     Msg* msg = aMsg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         Queue(msg);
     }
 }
 
 EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aStreamId)
 {
-    IStreamHandler* streamHandler = NULL;
+    IStreamHandler* streamHandler = nullptr;
     {
         AutoMutex a(iLock);
         streamHandler = iStreamHandler;
     }
-    ASSERT(streamHandler != NULL);
+    ASSERT(streamHandler != nullptr);
     EStreamPlay canPlay = streamHandler->OkToPlay(aStreamId);
     //Log::Print("DecodedAudioAggregator::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
@@ -53,7 +53,7 @@ TUint DecodedAudioAggregator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 
 TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
 {
-    IStreamHandler* streamHandler = NULL;
+    IStreamHandler* streamHandler = nullptr;
     TUint flushId = MsgFlush::kIdInvalid;
     {
         AutoMutex a(iLock);
@@ -63,7 +63,7 @@ TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
     // Don't hold iLock while calling into streamHandler to avoid deadlock
     // (i.e., streamHandler may be Push()ing to this and ::Process() methods
     // could be awaiting iLock to process Msg).
-    if (streamHandler != NULL) {
+    if (streamHandler != nullptr) {
         flushId = streamHandler->TryStop(aStreamId);
     }
 
@@ -77,12 +77,12 @@ TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
 
 void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
-    IStreamHandler* streamHandler = NULL;
+    IStreamHandler* streamHandler = nullptr;
     {
         AutoMutex a(iLock);
         streamHandler = iStreamHandler;
     }
-    if (streamHandler != NULL) {
+    if (streamHandler != nullptr) {
         streamHandler->NotifyStarving(aMode, aStreamId);
     }
 }
@@ -131,7 +131,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgMetaText* aMsg)
@@ -140,7 +140,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgMetaText* aMsg)
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
         iLock.Signal();
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     iLock.Signal();
     return aMsg;
@@ -180,7 +180,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
     ReleaseAggregatedAudio();   // If there was any buffered audio prior to this
                                 // then there was probably a Seek, which this element
                                 // is not involved in. So, just discard buffered audio.
-    ASSERT(iDecodedAudio == NULL);
+    ASSERT(iDecodedAudio == nullptr);
     const DecodedStreamInfo& info = aMsg->StreamInfo();
     iChannels = info.NumChannels();
     iSampleRate = info.SampleRate();
@@ -193,7 +193,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
     AutoMutex a(iLock);
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return TryAggregate(aMsg);
 }
@@ -201,13 +201,13 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgQuit* aMsg)
@@ -234,13 +234,13 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
     const TUint msgBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iChannels, iBitDepth/8);
     ASSERT(jiffies == aMsg->Jiffies()); // refuse to handle msgs not terminating on sample boundaries
 
-    if (iDecodedAudio == NULL) {
+    if (iDecodedAudio == nullptr) {
         if (AggregatorFull(msgBytes, aMsg->Jiffies())) {
             return aMsg;
         }
         else {
             iDecodedAudio = aMsg;
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -254,7 +254,7 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
         aggregatedBytes = Jiffies::BytesFromJiffies(aggregatedJiffies, jiffiesPerSample, iChannels, iBitDepth/8);
         if (AggregatorFull(aggregatedBytes, iDecodedAudio->Jiffies())) {
             MsgAudioPcm* msg = iDecodedAudio;
-            iDecodedAudio = NULL;
+            iDecodedAudio = nullptr;
             return msg;
         }
     }
@@ -268,7 +268,7 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
         return msg;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void DecodedAudioAggregator::Queue(Msg* aMsg)
@@ -279,9 +279,9 @@ void DecodedAudioAggregator::Queue(Msg* aMsg)
 void DecodedAudioAggregator::OutputAggregatedAudio()
 {
     iLock.Wait();
-    if (iDecodedAudio != NULL) {
+    if (iDecodedAudio != nullptr) {
         MsgAudioPcm* msg = iDecodedAudio;
-        iDecodedAudio = NULL;
+        iDecodedAudio = nullptr;
         iLock.Signal();
         Queue(msg);
         return;
@@ -292,8 +292,8 @@ void DecodedAudioAggregator::OutputAggregatedAudio()
 void DecodedAudioAggregator::ReleaseAggregatedAudio()
 {
     // NOTE: iLock must be held by caller.
-    if (iDecodedAudio != NULL) {
+    if (iDecodedAudio != nullptr) {
         iDecodedAudio->RemoveRef();
-        iDecodedAudio = NULL;
+        iDecodedAudio = nullptr;
     }
 }

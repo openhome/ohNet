@@ -152,7 +152,7 @@ TBool SourcePlaylist::StartedShuffled()
 
 void SourcePlaylist::DoSeekToTrackId(Track* aTrack)
 {
-    ASSERT(aTrack != NULL);
+    ASSERT(aTrack != nullptr);
     AutoAllocatedRef r(aTrack);
     iLock.Wait();
     if (iShuffler->TryMoveToStart(aTrack->Id())) {
@@ -190,7 +190,7 @@ void SourcePlaylist::Deactivate()
 
 void SourcePlaylist::PipelineStopped()
 {
-    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+    // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)
 }
 
 void SourcePlaylist::Play()
@@ -286,7 +286,7 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
 {
     EnsureActive();
 
-    Track* track = NULL;
+    Track* track = nullptr;
     static_cast<ITrackDatabase*>(iDatabase)->GetTrackById(aId, track);
     DoSeekToTrackId(track);
 }
@@ -296,10 +296,10 @@ TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
     EnsureActive();
 
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
-    if (track != NULL) {
+    if (track != nullptr) {
         DoSeekToTrackId(track);
     }
-    return (track!=NULL);
+    return (track!=nullptr);
 }
 
 void SourcePlaylist::SetShuffle(TBool aShuffle)
@@ -328,7 +328,7 @@ void SourcePlaylist::NotifyTrackDeleted(TUint aId, Media::Track* /*aBefore*/, Me
 {
     if (IsActive() && iTransportState != Media::EPipelinePlaying) {
         if (iUriProvider->CurrentTrackId() == aId) {
-            const TUint id = (aAfter==NULL? ITrackDatabase::kTrackIdNone : aAfter->Id());
+            const TUint id = (aAfter==nullptr? ITrackDatabase::kTrackIdNone : aAfter->Id());
             iPipeline.StopPrefetch(iUriProvider->Mode(), id);
         }
     }

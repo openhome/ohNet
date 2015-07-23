@@ -168,7 +168,7 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)time(nullptr));
     std::vector<NetworkAdapter*>* subnetList = aDvStack.Env().NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
     aDvStack.Env().NetworkAdapterList().DestroySubnetList(subnetList);
@@ -270,15 +270,15 @@ void DummySourceUpnpAv::Seek(TUint /*aSecondsAbsolute*/)
 
 CpDevices::CpDevices(Semaphore& aAddedSem)
     : iAddedSem(aAddedSem)
-    , iDevice(NULL)
-    , iDeviceList(NULL)
+    , iDevice(nullptr)
+    , iDeviceList(nullptr)
 {
 }
 
 CpDevices::~CpDevices()
 {
     delete iDeviceList;
-    if (iDevice != NULL) {
+    if (iDevice != nullptr) {
         iDevice->RemoveRef();
     }
 }
@@ -292,13 +292,13 @@ void CpDevices::Start(CpStack& aCpStack, const Brx& aTargetUdn)
 
 CpDevice& CpDevices::Device()
 {
-    ASSERT(iDevice != NULL);
+    ASSERT(iDevice != nullptr);
     return *iDevice;
 }
 
 void CpDevices::Added(CpDevice& aDevice)
 {
-    if (iDevice == NULL) {
+    if (iDevice == nullptr) {
         iDevice = &aDevice;
         iDevice->AddRef();
         iAddedSem.Signal();

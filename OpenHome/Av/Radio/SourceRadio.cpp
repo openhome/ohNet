@@ -66,8 +66,8 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClo
 UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock)
     : UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory())
 {
-    if (aPullableClock == NULL) {
-        iClockPuller = NULL;
+    if (aPullableClock == nullptr) {
+        iClockPuller = nullptr;
     }
     else {
         iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
@@ -94,7 +94,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iLock("SRAD")
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
-    , iTrack(NULL)
+    , iTrack(nullptr)
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
     , iLive(false)
@@ -102,7 +102,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
     if (aTuneInPartnerId.Bytes() == 0) {
-        iTuneIn = NULL;
+        iTuneIn = nullptr;
     }
     else {
         iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, aTuneInPartnerId, *iPresetDatabase, aConfigInit, aCredentialsManager);
@@ -125,7 +125,7 @@ SourceRadio::~SourceRadio()
     delete iTuneIn;
     delete iPresetDatabase;
     delete iProviderRadio;
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
 }
@@ -134,7 +134,7 @@ void SourceRadio::Activate()
 {
     iTrackPosSeconds = 0;
     iActive = true;
-    const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+    const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
     iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
 }
 
@@ -148,7 +148,7 @@ void SourceRadio::Deactivate()
 
 void SourceRadio::PipelineStopped()
 {
-    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+    // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)
 }
 
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
@@ -157,12 +157,12 @@ void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
     if (!IsActive()) {
         DoActivate();
     }
-    if (iTrack == NULL || iTrack->Uri() != aUri) {
-        if (iTrack != NULL) {
+    if (iTrack == nullptr || iTrack->Uri() != aUri) {
+        if (iTrack != nullptr) {
             iTrack->RemoveRef();
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData);
-        if (iTrack != NULL) {
+        if (iTrack != nullptr) {
             iPipeline.StopPrefetch(iUriProvider.Mode(), iTrack->Id());
         }
     }
@@ -173,9 +173,9 @@ void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
  * which can result in those actions coming in out of order.
  *
  * This causes problems, particularly when no radio station has been pre-fetched,
- * as Play() does nothing due to encountering a NULL track, followed by a valid
+ * as Play() does nothing due to encountering a nullptr track, followed by a valid
  * track being queued up in the pipeline via Fetch(), which never gets played
- * as the call to Play() has already been issued on a NULL track.
+ * as the call to Play() has already been issued on a nullptr track.
  */
 void SourceRadio::Play()
 {
@@ -183,7 +183,7 @@ void SourceRadio::Play()
     if (!IsActive()) {
         DoActivate();
     }
-    if (iTrack == NULL) {
+    if (iTrack == nullptr) {
         return;
     }
 

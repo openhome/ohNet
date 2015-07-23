@@ -117,7 +117,7 @@ Allocated* AllocatorBase::DoAllocate()
 
 Allocated* AllocatorBase::Read()
 {
-    Allocated* p = NULL;
+    Allocated* p = nullptr;
     try {
         p = iFree.Read();
     }
@@ -472,7 +472,7 @@ void DecodedAudio::Clear()
 
 Msg::Msg(AllocatorBase& aAllocator)
     : Allocated(aAllocator)
-    , iNextMsg(NULL)
+    , iNextMsg(nullptr)
 {
 }
 
@@ -682,7 +682,7 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
 
 RampApplicator::RampApplicator(const Media::Ramp& aRamp)
     : iRamp(aRamp)
-    , iPtr(NULL)
+    , iPtr(nullptr)
 {
 }
 
@@ -701,7 +701,7 @@ TUint RampApplicator::Start(const Brx& aData, TUint aBitDepth, TUint aNumChannel
 
 void RampApplicator::GetNextSample(TByte* aDest)
 {
-    ASSERT_DEBUG(iPtr != NULL);
+    ASSERT_DEBUG(iPtr != nullptr);
     const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
     //Log::Print(" %08x ", ramp);
     const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
@@ -859,7 +859,7 @@ void MsgMode::Clear()
 {
     iMode.Replace(Brx::Empty());
     iInfo.Clear();
-    iClockPuller = NULL;
+    iClockPuller = nullptr;
 }
 
 Msg* MsgMode::Process(IMsgProcessor& aProcessor)
@@ -920,7 +920,7 @@ MsgTrack::MsgTrack(AllocatorBase& aAllocator)
 
 Media::Track& MsgTrack::Track() const
 {
-    ASSERT(iTrack != NULL);
+    ASSERT(iTrack != nullptr);
     return *iTrack;
 }
 
@@ -939,7 +939,7 @@ void MsgTrack::Initialise(Media::Track& aTrack, TBool aStartOfStream)
 void MsgTrack::Clear()
 {
     iTrack->RemoveRef();
-    iTrack = NULL;
+    iTrack = nullptr;
     iStartOfStream = false;
 }
 
@@ -1114,7 +1114,7 @@ void MsgEncodedStream::Clear()
     iSeekable = false;
     iLive = false;
     iRawPcm = false;
-    iStreamHandler = NULL;
+    iStreamHandler = nullptr;
     iPcmStreamInfo.Clear();
 #endif
 }
@@ -1135,13 +1135,13 @@ MsgAudioEncoded::MsgAudioEncoded(AllocatorBase& aAllocator)
 MsgAudioEncoded* MsgAudioEncoded::Split(TUint aBytes)
 {
     if (aBytes > iSize) {
-        ASSERT(iNextAudio != NULL);
+        ASSERT(iNextAudio != nullptr);
         return iNextAudio->Split(aBytes - iSize);
     }
     if (aBytes == iSize) {
-        ASSERT(iNextAudio != NULL);
+        ASSERT(iNextAudio != nullptr);
         MsgAudioEncoded* next = iNextAudio;
-        iNextAudio = NULL;
+        iNextAudio = nullptr;
         return next;
     }
     ASSERT(aBytes > 0);
@@ -1153,7 +1153,7 @@ MsgAudioEncoded* MsgAudioEncoded::Split(TUint aBytes)
     remaining->iAudioData = iAudioData;
     remaining->iAudioData->AddRef();
     iSize = aBytes;
-    iNextAudio = NULL;
+    iNextAudio = nullptr;
     return remaining;
 }
 
@@ -1161,7 +1161,7 @@ void MsgAudioEncoded::Add(MsgAudioEncoded* aMsg)
 {
     MsgAudioEncoded* end = this;
     MsgAudioEncoded* next = iNextAudio;
-    while (next != NULL) {
+    while (next != nullptr) {
         end = next;
         next = next->iNextAudio;
     }
@@ -1170,7 +1170,7 @@ void MsgAudioEncoded::Add(MsgAudioEncoded* aMsg)
 
 TUint MsgAudioEncoded::Append(const Brx& aData)
 {
-    ASSERT(iNextAudio == NULL);
+    ASSERT(iNextAudio == nullptr);
     const TUint consumed = iAudioData->Append(aData);
     iSize += consumed;
     return consumed;
@@ -1180,7 +1180,7 @@ TUint MsgAudioEncoded::Bytes() const
 {
     TUint bytes = iSize;
     MsgAudioEncoded* next = iNextAudio;
-    while (next != NULL) {
+    while (next != nullptr) {
         bytes += next->iSize;
         next = next->iNextAudio;
     }
@@ -1191,7 +1191,7 @@ void MsgAudioEncoded::CopyTo(TByte* aPtr)
 {
     const TByte* src = iAudioData->Ptr(iOffset);
     (void)memcpy(aPtr, src, iSize);
-    if (iNextAudio != NULL) {
+    if (iNextAudio != nullptr) {
         iNextAudio->CopyTo(aPtr + iSize);
     }
 }
@@ -1200,7 +1200,7 @@ MsgAudioEncoded* MsgAudioEncoded::Clone()
 {
     MsgAudioEncoded* clone = static_cast<Allocator<MsgAudioEncoded>&>(iAllocator).Allocate();
     AutoMutex a(iLock);
-    clone->iNextAudio = NULL;
+    clone->iNextAudio = nullptr;
     if (iNextAudio) {
         clone->iNextAudio = iNextAudio->Clone();
     }
@@ -1216,7 +1216,7 @@ void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
     iAudioData = aEncodedAudio;
     iSize = iAudioData->Bytes();
     iOffset = 0;
-    iNextAudio = NULL;
+    iNextAudio = nullptr;
 }
 
 void MsgAudioEncoded::RefAdded()
@@ -1224,14 +1224,14 @@ void MsgAudioEncoded::RefAdded()
     /* FIXME - not clear that its correct to Add/Remove refs down a chain like this
        it might be better to modify the head msg only then RemoveRef down the chain when
        the head is Clear()ed */
-    if (iNextAudio != NULL) {
+    if (iNextAudio != nullptr) {
         iNextAudio->AddRef();
     }
 }
 
 void MsgAudioEncoded::RefRemoved()
 {
-    if (iNextAudio != NULL) {
+    if (iNextAudio != nullptr) {
         iNextAudio->RemoveRef();
     }
 }
@@ -1369,7 +1369,7 @@ DecodedStreamInfo::DecodedStreamInfo()
     , iCodecName("")
     , iTrackLength(0)
     , iLossless(false)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
 {
 }
 
@@ -1410,7 +1410,7 @@ void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDep
 void MsgDecodedStream::Clear()
 {
 #ifdef DEFINE_DEBUG
-    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, NULL);
+    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, nullptr);
 #endif
 }
 
@@ -1425,12 +1425,12 @@ Msg* MsgDecodedStream::Process(IMsgProcessor& aProcessor)
 MsgAudio* MsgAudio::Split(TUint aJiffies)
 {
     AutoMutex a(iLock);
-    if (aJiffies > iSize && iNextAudio != NULL) {
+    if (aJiffies > iSize && iNextAudio != nullptr) {
         return iNextAudio->Split(aJiffies - iSize);
     }
-    else if (aJiffies == iSize && iNextAudio != NULL) {
+    else if (aJiffies == iSize && iNextAudio != nullptr) {
         MsgAudio* split = iNextAudio;
-        iNextAudio = NULL;
+        iNextAudio = nullptr;
         return split;
     }
     return DoSplit(aJiffies);
@@ -1451,7 +1451,7 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
         remaining->iRamp.Reset();
     }
     iSize = aJiffies;
-    iNextAudio = NULL;
+    iNextAudio = nullptr;
     SplitCompleted(*remaining);
     return remaining;
 }
@@ -1461,7 +1461,7 @@ void MsgAudio::Add(MsgAudio* aMsg)
     iLock.Wait();
     MsgAudio* end = this;
     MsgAudio* next = iNextAudio;
-    while (next != NULL) {
+    while (next != nullptr) {
         end = next;
         next = next->iNextAudio;
     }
@@ -1476,7 +1476,7 @@ MsgAudio* MsgAudio::Clone()
     clone->iSize = iSize;
     clone->iOffset = iOffset;
     clone->iRamp = iRamp;
-    clone->iNextAudio = (iNextAudio == NULL? NULL : iNextAudio->Clone());
+    clone->iNextAudio = (iNextAudio == nullptr? nullptr : iNextAudio->Clone());
     return clone;
 }
 
@@ -1485,7 +1485,7 @@ TUint MsgAudio::Jiffies() const
     iLock.Wait();
     TUint jiffies = iSize; 
     MsgAudio* next = iNextAudio; 
-    while (next != NULL) { 
+    while (next != nullptr) { 
         jiffies += next->iSize; 
         next = next->iNextAudio; 
     }
@@ -1496,11 +1496,11 @@ TUint MsgAudio::Jiffies() const
 TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)  // FIXME
 {
     AutoMutex a(iLock);
-    ASSERT(iNextAudio == NULL);
+    ASSERT(iNextAudio == nullptr);
     const TUint remainingDuration = aRemainingDuration;
     Media::Ramp split;
     TUint splitPos;
-    aSplit = NULL;
+    aSplit = nullptr;
     /*TBool logAppliedRamp = false;
     if (iRamp.IsEnabled()) {
         Log::Print("++ MsgAudio::SetRamp(%08x, %u, %u): Existing ramp is [%08x...%08x]\n", aStart, aRemainingDuration, aDirection, iRamp.Start(), iRamp.End());
@@ -1522,14 +1522,14 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     }
     /*if (logAppliedRamp) {
         Log::Print("++ final ramp: [%08x...%08x]", iRamp.Start(), iRamp.End());
-        if (aSplit != NULL) {
+        if (aSplit != nullptr) {
             Log::Print("   split: [%08x...%08x]", aSplit->iRamp.Start(), aSplit->iRamp.End());
         }
         Log::Print("\n");
     }*/
 
     aRemainingDuration -= iSize;
-    if (aSplit != NULL && aSplit->Ramp().Direction() != aDirection && aDirection == Ramp::EUp) {
+    if (aSplit != nullptr && aSplit->Ramp().Direction() != aDirection && aDirection == Ramp::EUp) {
         aRemainingDuration += aSplit->iSize; // roughly compensate for split running in opposite direction to requested ramp
     }
 
@@ -1553,16 +1553,16 @@ MsgAudio::MsgAudio(AllocatorBase& aAllocator)
 
 void MsgAudio::Initialise()
 {
-    iNextAudio = NULL;
+    iNextAudio = nullptr;
     iRamp.Reset();
 }
 
 void MsgAudio::Clear() 
 {
     iSize = 0;
-    if (iNextAudio != NULL) { 
+    if (iNextAudio != nullptr) { 
         iNextAudio->RemoveRef(); 
-        iNextAudio = NULL;
+        iNextAudio = nullptr;
     } 
 } 
 
@@ -1595,10 +1595,10 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
 
     MsgPlayablePcm* playable = iAllocatorPlayable->Allocate();
     playable->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp);
-    if (iNextAudio != NULL) { 
+    if (iNextAudio != nullptr) { 
         MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
         playable->Add(child); 
-        iNextAudio = NULL;
+        iNextAudio = nullptr;
     }
     RemoveRef();
     return playable;
@@ -1608,7 +1608,7 @@ void MsgAudioPcm::Aggregate(MsgAudioPcm& aMsg)
 {
     ASSERT(aMsg.iTrackOffset == iTrackOffset+Jiffies());   // aMsg must logically follow this one
     ASSERT(!iRamp.IsEnabled() && !aMsg.iRamp.IsEnabled()); // no ramps allowed
-    ASSERT(iNextAudio == NULL && aMsg.iNextAudio == NULL); // no chained msgs allowed
+    ASSERT(iNextAudio == nullptr && aMsg.iNextAudio == nullptr); // no chained msgs allowed
 
     iAudioData->Aggregate(*aMsg.iAudioData);
     iSize += aMsg.Jiffies();
@@ -1697,7 +1697,7 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
     playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp);
-    if (iNextAudio != NULL) { 
+    if (iNextAudio != nullptr) { 
         MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aBitDepth, aNumChannels); 
         playable->Add(child); 
     } 
@@ -1741,13 +1741,13 @@ void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllo
 MsgPlayable* MsgPlayable::Split(TUint aBytes)
 {
     if (aBytes > iSize) {
-        ASSERT(iNextPlayable != NULL);
+        ASSERT(iNextPlayable != nullptr);
         return iNextPlayable->Split(aBytes - iSize);
     }
     ASSERT(aBytes != 0);
     if (aBytes == iSize) {
         MsgPlayable* remaining = iNextPlayable;
-        iNextPlayable = NULL;
+        iNextPlayable = nullptr;
         return remaining;
     }
     MsgPlayable* remaining = Allocate();
@@ -1761,7 +1761,7 @@ MsgPlayable* MsgPlayable::Split(TUint aBytes)
         remaining->iRamp.Reset();
     }
     iSize = aBytes;
-    iNextPlayable = NULL;
+    iNextPlayable = nullptr;
     SplitCompleted(*remaining);
     return remaining;
 }
@@ -1770,7 +1770,7 @@ void MsgPlayable::Add(MsgPlayable* aMsg)
 {
     MsgPlayable* end = this;
     MsgPlayable* next = iNextPlayable;
-    while (next != NULL) {
+    while (next != nullptr) {
         end = next;
         next = next->iNextPlayable;
     }
@@ -1783,7 +1783,7 @@ MsgPlayable* MsgPlayable::Clone()
     clone->iSize = iSize;
     clone->iOffset = iOffset;
     clone->iRamp = iRamp;
-    clone->iNextPlayable = (iNextPlayable == NULL? NULL : iNextPlayable->Clone());
+    clone->iNextPlayable = (iNextPlayable == nullptr? nullptr : iNextPlayable->Clone());
     return clone;
 }
 
@@ -1791,7 +1791,7 @@ TUint MsgPlayable::Bytes() const
 {
     TUint bytes = iSize;
     MsgPlayable* next = iNextPlayable;
-    while (next != NULL) {
+    while (next != nullptr) {
         bytes += next->iSize;
         next = next->iNextPlayable;
     }
@@ -1810,7 +1810,7 @@ MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
 
 void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
-    iNextPlayable = NULL;
+    iNextPlayable = nullptr;
     iSize = aSizeBytes;
     iOffset = aOffsetBytes;
     iRamp = aRamp;
@@ -1818,14 +1818,14 @@ void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::
 
 void MsgPlayable::RefAdded()
 {
-    if (iNextPlayable != NULL) {
+    if (iNextPlayable != nullptr) {
         iNextPlayable->AddRef();
     }
 }
 
 void MsgPlayable::RefRemoved()
 {
-    if (iNextPlayable != NULL) {
+    if (iNextPlayable != nullptr) {
         iNextPlayable->RemoveRef();
     }
 }
@@ -1867,7 +1867,7 @@ void MsgPlayablePcm::Read(IPcmProcessor& aProcessor)
 {
     aProcessor.BeginBlock();
     MsgPlayablePcm* playable = this;
-    while (playable != NULL) {
+    while (playable != nullptr) {
         Brn audioBuf(playable->iAudioData->PtrOffsetBytes(playable->iOffset), playable->iSize);
         /*{
             const TUint testBytes = audioBuf.Bytes();
@@ -1989,7 +1989,7 @@ void MsgPlayableSilence::Read(IPcmProcessor& aProcessor)
     static const TByte silence[DecodedAudio::kMaxBytes] = { 0 };
     aProcessor.BeginBlock();
     MsgPlayableSilence* playable = this;
-    while (playable != NULL) {
+    while (playable != nullptr) {
         TBool fragmentProcessed = false;
         TUint remainingBytes = playable->iSize;
         do {
@@ -2078,8 +2078,8 @@ Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 MsgQueue::MsgQueue()
     : iLock("MSGQ")
     , iSem("MSGQ", 0)
-    , iHead(NULL)
-    , iTail(NULL)
+    , iHead(nullptr)
+    , iTail(nullptr)
     , iNumMsgs(0)
 {
 }
@@ -2088,7 +2088,7 @@ MsgQueue::~MsgQueue()
 {
     iLock.Wait();
     Msg* head = iHead;
-    while (head != NULL) {
+    while (head != nullptr) {
         iHead = head->iNextMsg;
         head->RemoveRef();
         head = iHead;
@@ -2098,17 +2098,17 @@ MsgQueue::~MsgQueue()
 
 void MsgQueue::Enqueue(Msg* aMsg)
 {
-    ASSERT(aMsg != NULL);
+    ASSERT(aMsg != nullptr);
     AutoMutex a(iLock);
     CheckMsgNotQueued(aMsg); // duplicate checking
-    if (iHead == NULL) {
+    if (iHead == nullptr) {
         iHead = aMsg;
     }
     else {
         iTail->iNextMsg = aMsg;
     }
     iTail = aMsg;
-    aMsg->iNextMsg = NULL;
+    aMsg->iNextMsg = nullptr;
     iNumMsgs++;
     iSem.Signal();
 }
@@ -2124,12 +2124,12 @@ Msg* MsgQueue::Dequeue()
 
 Msg* MsgQueue::DequeueLocked()
 {
-    ASSERT(iHead != NULL);
+    ASSERT(iHead != nullptr);
     Msg* head = iHead;
     iHead = iHead->iNextMsg;
-    head->iNextMsg = NULL; // not strictly necessary but might make debugging simpler
-    if (iHead == NULL) {
-        iTail = NULL;
+    head->iNextMsg = nullptr; // not strictly necessary but might make debugging simpler
+    if (iHead == nullptr) {
+        iTail = nullptr;
     }
     iNumMsgs--;
     return head;
@@ -2137,12 +2137,12 @@ Msg* MsgQueue::DequeueLocked()
 
 void MsgQueue::EnqueueAtHead(Msg* aMsg)
 {
-    ASSERT(aMsg != NULL);
+    ASSERT(aMsg != nullptr);
     AutoMutex a(iLock);
     CheckMsgNotQueued(aMsg); // duplicate checking
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
-    if (iTail == NULL) {
+    if (iTail == nullptr) {
         iTail = aMsg;
     }
     iNumMsgs++;
@@ -2152,7 +2152,7 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
 TBool MsgQueue::IsEmpty() const
 {
     iLock.Wait();
-    const TBool empty = (iHead == NULL);
+    const TBool empty = (iHead == nullptr);
     iLock.Signal();
     return empty;
 }
@@ -2160,7 +2160,7 @@ TBool MsgQueue::IsEmpty() const
 void MsgQueue::Clear()
 {
     iLock.Wait();
-    while (iHead != NULL) {
+    while (iHead != nullptr) {
         Msg* msg = DequeueLocked();
         msg->RemoveRef();
     }
@@ -2180,7 +2180,7 @@ void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
     ASSERT(aMsg != iHead);
 #ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
     TUint count = 0;
-    for (Msg* msg = iHead; msg != NULL; msg = msg->iNextMsg) {
+    for (Msg* msg = iHead; msg != nullptr; msg = msg->iNextMsg) {
         ASSERT(aMsg != msg);
         count++;
     }
@@ -2211,7 +2211,7 @@ MsgReservoir::~MsgReservoir()
 
 void MsgReservoir::DoEnqueue(Msg* aMsg)
 {
-    ASSERT(aMsg != NULL);
+    ASSERT(aMsg != nullptr);
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.Enqueue(msg);
@@ -2224,7 +2224,7 @@ Msg* MsgReservoir::DoDequeue()
         msg = iQueue.Dequeue();
         ProcessorQueueOut procOut(*this);
         msg = msg->Process(procOut);
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -2550,7 +2550,7 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
@@ -2660,7 +2660,7 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)

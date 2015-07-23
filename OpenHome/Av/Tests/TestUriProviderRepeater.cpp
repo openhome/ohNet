@@ -81,7 +81,7 @@ void SuiteUriProviderRepeater::TearDown()
 
 void SuiteUriProviderRepeater::TestPlayNow()
 {
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
     EStreamPlay play = iUriProvider->GetNext(trackOut);
@@ -94,7 +94,7 @@ void SuiteUriProviderRepeater::TestPlayNow()
 
 void SuiteUriProviderRepeater::TestPlayLater()
 {
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->BeginLater(track->Id());
     EStreamPlay play = iUriProvider->GetNext(trackOut);
@@ -107,7 +107,7 @@ void SuiteUriProviderRepeater::TestPlayLater()
 
 void SuiteUriProviderRepeater::TestGetNextTwiceAfterBegin()
 {
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
 
@@ -130,7 +130,7 @@ void SuiteUriProviderRepeater::TestGetNextTwiceAfterBegin()
 
 void SuiteUriProviderRepeater::TestGetNextTwiceAfterBeginLater()
 {
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->BeginLater(track->Id());
 
@@ -154,7 +154,7 @@ void SuiteUriProviderRepeater::TestGetNextTwiceAfterBeginLater()
 void SuiteUriProviderRepeater::TestGetNextThenBegin()
 {
     // This should reset the state returned by GetNext()
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
 
@@ -195,28 +195,28 @@ void SuiteUriProviderRepeater::TestCurrentTrackId()
 
 void SuiteUriProviderRepeater::TestNullTrack()
 {
-    Track* track = NULL;
-    Track* trackOut = NULL;
+    Track* track = nullptr;
+    Track* trackOut = nullptr;
     iUriProviderRepeater->SetTrack(track);
     iUriProvider->Begin(Track::kIdNone);
     EStreamPlay play = iUriProvider->GetNext(trackOut);
-    TEST(trackOut == NULL);
+    TEST(trackOut == nullptr);
     TEST(play == ePlayNo);
 }
 
 void SuiteUriProviderRepeater::TestPlayLaterAfterNotifyPlayed()
 {
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
     EStreamPlay play = iUriProvider->GetNext(trackOut);
-    TEST(trackOut != NULL);
+    TEST(trackOut != nullptr);
     TEST(play == ePlayYes);
     trackOut->RemoveRef();
 
     static_cast<ITrackObserver*>(iUriProviderRepeater)->NotifyTrackPlay(*track);
     play = iUriProvider->GetNext(trackOut);
-    TEST(trackOut != NULL);
+    TEST(trackOut != nullptr);
     TEST(play == ePlayLater);
     trackOut->RemoveRef();
 
@@ -225,17 +225,17 @@ void SuiteUriProviderRepeater::TestPlayLaterAfterNotifyPlayed()
 
 void SuiteUriProviderRepeater::TestPlayNoAfterNotifyFailed()
 {
-    Track* trackOut = NULL;
+    Track* trackOut = nullptr;
     Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
     EStreamPlay play = iUriProvider->GetNext(trackOut);
-    TEST(trackOut != NULL);
+    TEST(trackOut != nullptr);
     TEST(play == ePlayYes);
     trackOut->RemoveRef();
 
     static_cast<ITrackObserver*>(iUriProviderRepeater)->NotifyTrackFail(*track);
     play = iUriProvider->GetNext(trackOut);
-    TEST(trackOut == NULL);
+    TEST(trackOut == nullptr);
     TEST(play == ePlayNo);
 
     track->RemoveRef();

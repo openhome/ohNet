@@ -146,11 +146,11 @@ void SuiteSampleRateValidator::TearDown()
 
 void SuiteSampleRateValidator::PushMsg(EMsgType aType)
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     switch (aType)
     {
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL, false, false);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
         break;
     case EMsgSession:
         msg = iMsgFactory->CreateMsgSession();
@@ -166,7 +166,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgChangeInput(Functor());
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, NULL);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, nullptr);
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerSecond);
@@ -187,7 +187,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("NULL"), 0, 0, true, true, false, this);
+        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, this);
         break;
     case EMsgAudioPcm:
     {

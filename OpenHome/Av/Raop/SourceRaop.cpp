@@ -57,8 +57,8 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableCloc
 UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, IPullableClock* aPullableClock)
     : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
 {
-    if (aPullableClock == NULL) {
-        iClockPuller = NULL;
+    if (aPullableClock == nullptr) {
+        iClockPuller = nullptr;
     }
     else {
         iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
@@ -96,7 +96,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iAutoNetAux(kAutoNetAuxOn)
     , iAutoSwitch(true)
     , iSessionActive(false)
-    , iTrack(NULL)
+    , iTrack(nullptr)
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
@@ -141,7 +141,7 @@ SourceRaop::~SourceRaop()
     delete iRaopDiscovery;
 
     iLock.Wait();
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
     if (iSessionActive) {
@@ -175,12 +175,12 @@ void SourceRaop::Activate()
         iPipeline.Play();
     }
     else {
-        if (iTrack != NULL) {
+        if (iTrack != nullptr) {
             iTrack->RemoveRef();
-            iTrack = NULL;
+            iTrack = nullptr;
         }
         iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
-        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+        const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
         iLock.Signal();
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     }
@@ -205,7 +205,7 @@ void SourceRaop::Deactivate()
 
 void SourceRaop::PipelineStopped()
 {
-    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+    // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)
 }
 
 void SourceRaop::GenerateMetadata()
@@ -238,13 +238,13 @@ void SourceRaop::CloseServers()
 void SourceRaop::StartNewTrack()
 {
     iPipeline.RemoveAll();
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
-        iTrack = NULL;
+        iTrack = nullptr;
     }
 
     iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
-    const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+    const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
     iPipeline.Begin(iUriProvider.Mode(), trackId);
 
     iTransportState = Media::EPipelinePlaying;
@@ -285,9 +285,9 @@ void SourceRaop::NotifySessionEnd()
     TBool shouldStop = (IsActive() && iSessionActive) ? true : false;
     if (shouldStop) {
         iPipeline.RemoveAll();
-        if (iTrack != NULL) {
+        if (iTrack != nullptr) {
             iTrack->RemoveRef();
-            iTrack = NULL;
+            iTrack = nullptr;
         }
         CloseServers();
     }
@@ -331,7 +331,7 @@ void SourceRaop::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
 void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
     iLock.Wait();
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
     iTrack = &aTrack;

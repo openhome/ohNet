@@ -401,8 +401,8 @@ HelperSemaphore::HelperSemaphore()
     , iWaitCount(0)
     , iClearCount(0)
     , iSignalCount(0)
-    , iHandler(NULL)
-    , iPendingMsg(NULL)
+    , iHandler(nullptr)
+    , iPendingMsg(nullptr)
 {
 }
 
@@ -429,8 +429,8 @@ void HelperSemaphore::ClearState()
     iWaitCount = 0;
     iClearCount = 0;
     iSignalCount = 0;
-    iHandler = NULL;
-    iPendingMsg = NULL;
+    iHandler = nullptr;
+    iPendingMsg = nullptr;
 }
 
 TUint HelperSemaphore::ClearCount()

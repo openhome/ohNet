@@ -25,7 +25,7 @@ public:
     TestTimer();
     void Clear();
     void Fire();
-    IHlsTimerHandler* LastHandler() const; // NOT passing ownership; may return NULL
+    IHlsTimerHandler* LastHandler() const; // NOT passing ownership; may return nullptr
     TUint LastDurationMs() const;
     TUint StartCount() const;
     TUint CancelCount() const;
@@ -157,7 +157,7 @@ public:
     TUint TrackCount() const;
     TUint StreamCount() const;
     TUint FlushCount() const;
-    IStreamHandler* StreamHandler() const;  // NOT passing ownership; may return NULL
+    IStreamHandler* StreamHandler() const;  // NOT passing ownership; may return nullptr
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 public: // from IMsgProcessor
@@ -318,7 +318,7 @@ using namespace OpenHome::TestFramework;
 // TestTimer
 
 TestTimer::TestTimer()
-    : iHandler(NULL)
+    : iHandler(nullptr)
     , iDurationMs(0)
     , iStartCount(0)
     , iCancelCount(0)
@@ -328,7 +328,7 @@ TestTimer::TestTimer()
 
 void TestTimer::Clear()
 {
-    iHandler = NULL;
+    iHandler = nullptr;
     iDurationMs = 0;
     iStartCount = 0;
     iCancelCount = 0;
@@ -337,7 +337,7 @@ void TestTimer::Clear()
 void TestTimer::Fire()
 {
     AutoMutex a(iLock);
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     iHandler->TimerFired();
 }
 
@@ -695,7 +695,7 @@ TestElementDownstream::TestElementDownstream()
     , iStreamCount(0)
     , iFlushCount(0)
     , iDataTotal(0)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
 {
 }
 
@@ -2109,7 +2109,7 @@ void SuiteProtocolHls::Setup()
 
     iProtocolManager->Add(iProtocolHls);    // takes ownership
 
-    iTrack = NULL;
+    iTrack = nullptr;
     iResult = EProtocolStreamSuccess;
 }
 
@@ -2728,7 +2728,7 @@ void SuiteProtocolHls::TestTrySeek()
 
     static const TUint kExpectedStreamId = 1;
     IStreamHandler* streamHandler = iElementDownstream->StreamHandler();
-    TEST(streamHandler != NULL);
+    TEST(streamHandler != nullptr);
     TUint resultSeek = streamHandler->TrySeek(kExpectedStreamId, 0);
     TEST(resultSeek == MsgFlush::kIdInvalid);
 
@@ -2795,7 +2795,7 @@ void SuiteProtocolHls::TestTryStop()
 
     static const TUint kExpectedStreamId = 1;
     IStreamHandler* streamHandler = iElementDownstream->StreamHandler();
-    TEST(streamHandler != NULL);
+    TEST(streamHandler != nullptr);
     TUint resultStop = streamHandler->TryStop(kExpectedStreamId);
     TEST(resultStop == 1);
 

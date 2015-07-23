@@ -69,7 +69,7 @@ Msg* Waiter::Pull()
         iLock.Wait();
         msg = msg->Process(*this);
         iLock.Signal();
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -106,7 +106,7 @@ Msg* Waiter::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Waiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
@@ -136,7 +136,7 @@ Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -175,14 +175,14 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
+            if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
         }
-        split = NULL;
+        split = nullptr;
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
-        if (split != NULL) {
+        if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
         if (iRemainingRampSize == 0) {
@@ -219,7 +219,7 @@ Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
 Msg* Waiter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Waiter::ProcessMsg(MsgQuit* aMsg)
@@ -242,7 +242,7 @@ Msg* Waiter::ProcessFlushable(Msg* aMsg)
 {
     if (iState == EFlushing) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }

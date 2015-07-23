@@ -108,10 +108,12 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iPullableClock(NULL)
+    , iPullableClock(nullptr)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
-    , iTxTimestamper(NULL)
-    , iRxTimestamper(NULL)
+    , iTxTimestamper(nullptr)
+    , iRxTimestamper(nullptr)
+    , iTxTsMapper(nullptr)
+    , iRxTsMapper(nullptr)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -252,7 +254,7 @@ void TestMediaPlayer::Run()
     iConfigRamStore->Print();
 
     Log::Print("\nFull (software) media player\n");
-    Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
+    Log::Print("Intended to be controlled via a separate, standard CP (Kazoo etc.)\n");
 
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");

@@ -151,7 +151,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SpotifyReporter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMetaText* aMsg)
@@ -172,7 +172,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgHalt* aMsg)
 Msg* SpotifyReporter::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // don't expect to see MsgFlush at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgWait* aMsg)
@@ -214,7 +214,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgSilence* aMsg)
 Msg* SpotifyReporter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // don't expect to see MsgPlayable in the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgQuit* aMsg)

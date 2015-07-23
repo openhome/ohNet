@@ -629,7 +629,7 @@ void SuiteStoreInt::TestNormalShutdown()
     // delete StoreInt, which should write out new value, and check store has
     // been updated
     delete storeInt;
-    storeInt = NULL;
+    storeInt = nullptr;
     TEST(IntFromStore(*iStore, key) == newVal);
 }
 
@@ -769,7 +769,7 @@ void SuiteStoreText::TestNormalShutdown()
     // delete StoreText, which should write out new value, and check store has
     // been updated
     delete storeText;
-    storeText = NULL;
+    storeText = nullptr;
     Bws<kMaxLength> buf;
     iStore->Read(key, buf);
     TEST(buf == newVal);

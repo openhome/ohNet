@@ -69,7 +69,7 @@ using namespace OpenHome;
 // SslContext
 
 TUint SslContext::iRefCount = 0;
-SSL_CTX* SslContext::iCtx = NULL;
+SSL_CTX* SslContext::iCtx = nullptr;
 
 SSL_CTX* SslContext::Get(Environment& aEnv)
 { // static
@@ -80,7 +80,7 @@ SSL_CTX* SslContext::Get(Environment& aEnv)
         ERR_load_BIO_strings();
         OpenSSL_add_all_algorithms();
         iCtx = SSL_CTX_new(SSLv23_client_method());
-        SSL_CTX_set_verify(iCtx, SSL_VERIFY_NONE, NULL);
+        SSL_CTX_set_verify(iCtx, SSL_VERIFY_NONE, nullptr);
     }
     return iCtx;
 }
@@ -90,7 +90,7 @@ void SslContext::RemoveRef(Environment& aEnv)
     AutoMutex a(aEnv.Mutex());
     if (--iRefCount == 0) {
         SSL_CTX_free(iCtx);
-        iCtx = NULL;
+        iCtx = nullptr;
         CRYPTO_cleanup_all_ex_data();
         ERR_free_strings();
         ERR_remove_state(0);
@@ -189,7 +189,7 @@ static void SslInfoCallback(const SSL* ssl, int flag, int ret)
 
 SocketSslImpl::SocketSslImpl(Environment& aEnv, TUint aReadBytes)
     : iEnv(aEnv)
-    , iSsl(NULL)
+    , iSsl(nullptr)
     , iSecure(true)
     , iConnected(false)
     , iVerbose(false)
@@ -229,7 +229,7 @@ void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
         throw;
     }
     if (iSecure) {
-        ASSERT(iSsl == NULL);
+        ASSERT(iSsl == nullptr);
         iSsl = SSL_new(SslContext::Get(iEnv));
         SSL_set_info_callback(iSsl, SslInfoCallback);
         BIO* rbio = BIO_new_mem_buf(iBioReadBuf, iMemBufSize);
@@ -245,7 +245,7 @@ void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 
         if (1 != SSL_connect(iSsl)) {
             SSL_free(iSsl);
-            iSsl = NULL;
+            iSsl = nullptr;
             iSocketTcp.Close();
             THROW(NetworkError);
         }
@@ -256,13 +256,13 @@ void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 void SocketSslImpl::Close()
 {
     if (!iConnected) {
-        ASSERT(iSsl == NULL);
+        ASSERT(iSsl == nullptr);
     }
     else {
-        if (iSsl != NULL) {
+        if (iSsl != nullptr) {
             (void)SSL_shutdown(iSsl);
             SSL_free(iSsl);
-            iSsl = NULL;
+            iSsl = nullptr;
         }
         iConnected = false; // following line can throw if socket isn't open
         iSocketTcp.Close();

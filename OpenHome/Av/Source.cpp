@@ -50,8 +50,8 @@ Source::Source(const TChar* aSystemName, const TChar* aType)
     , iType(aType)
     , iName(aSystemName)
     , iVisible(true)
-    , iProduct(NULL)
-    , iConfigName(NULL)
+    , iProduct(nullptr)
+    , iConfigName(nullptr)
     , iConfigNameSubscriptionId(IConfigManager::kSubscriptionIdInvalid)
     , iConfigNameCreated(false)
 {
@@ -59,7 +59,7 @@ Source::Source(const TChar* aSystemName, const TChar* aType)
 
 Source::~Source()
 {
-    if (iConfigName != NULL) {
+    if (iConfigName != nullptr) {
         iConfigName->Unsubscribe(iConfigNameSubscriptionId);
     }
     if (iConfigNameCreated) {

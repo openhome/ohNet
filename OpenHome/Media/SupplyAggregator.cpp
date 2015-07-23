@@ -11,21 +11,21 @@ using namespace OpenHome::Media;
 
 SupplyAggregator::SupplyAggregator(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement)
     : iMsgFactory(aMsgFactory)
-    , iAudioEncoded(NULL)
+    , iAudioEncoded(nullptr)
     , iDownStreamElement(aDownStreamElement)
 {
 }
 
 SupplyAggregator::~SupplyAggregator()
 {
-    if (iAudioEncoded != NULL) {
+    if (iAudioEncoded != nullptr) {
         iAudioEncoded->RemoveRef();
     }
 }
 
 void SupplyAggregator::Flush()
 {
-    if (iAudioEncoded != NULL) {
+    if (iAudioEncoded != nullptr) {
         OutputEncodedAudio();
     }
 }
@@ -80,7 +80,7 @@ void SupplyAggregator::OutputWait()
 
 void SupplyAggregator::Output(Msg* aMsg)
 {
-    if (iAudioEncoded != NULL) {
+    if (iAudioEncoded != nullptr) {
         OutputEncodedAudio();
     }
     iDownStreamElement.Push(aMsg);
@@ -89,7 +89,7 @@ void SupplyAggregator::Output(Msg* aMsg)
 void SupplyAggregator::OutputEncodedAudio()
 {
     iDownStreamElement.Push(iAudioEncoded);
-    iAudioEncoded = NULL;
+    iAudioEncoded = nullptr;
 }
 
 
@@ -118,7 +118,7 @@ void SupplyAggregatorBytes::OutputData(const Brx& aData)
     if (aData.Bytes() == 0) {
         return;
     }
-    if (iAudioEncoded == NULL) {
+    if (iAudioEncoded == nullptr) {
         iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(aData);
     }
     else {
@@ -164,7 +164,7 @@ void SupplyAggregatorJiffies::OutputData(const Brx& aData)
     /* Don't try to split data precisely at kMaxPcmDataJiffies boundaries
        If we're passed in data that takes us over this threshold, accept as much as we can,
        passing it on immediately */
-    if (iAudioEncoded == NULL) {
+    if (iAudioEncoded == nullptr) {
         iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(aData);
     }
     else {

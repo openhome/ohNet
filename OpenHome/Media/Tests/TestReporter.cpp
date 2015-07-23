@@ -308,7 +308,7 @@ void SuiteReporter::RunTests()
         iNextGeneratedMsg = msgs[i];
         for (TUint j=0; j<1000; j++) {
             msg = iReporter->Pull();
-            TEST(msg != NULL); // don't ever expect this to fail - just a nasty way of showing progress
+            TEST(msg != nullptr); // don't ever expect this to fail - just a nasty way of showing progress
             msg->RemoveRef();
             if (j%64 == 0) {
                 Thread::Sleep(1);
@@ -318,7 +318,7 @@ void SuiteReporter::RunTests()
     for (TUint k=0; k<1000; k++) {
         iNextGeneratedMsg = msgs[k%numElems];
         msg = iReporter->Pull();
-        TEST(msg != NULL); // don't ever expect this to fail - just a nasty way of showing progress
+        TEST(msg != nullptr); // don't ever expect this to fail - just a nasty way of showing progress
         msg->RemoveRef();
         if (k%64 == 0) {
             Thread::Sleep(1);
@@ -337,10 +337,10 @@ Msg* SuiteReporter::Pull()
     case EMsgDecodedStream:
     {
         const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);
-        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, nullptr);
     }
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn(kMode), true, false, NULL, true, false);
+        return iMsgFactory->CreateMsgMode(Brn(kMode), true, false, nullptr, true, false);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(kTrackUri), Brx::Empty());
@@ -360,7 +360,7 @@ Msg* SuiteReporter::Pull()
         return iMsgFactory->CreateMsgQuit();
     default:
         ASSERTS();
-        return NULL;
+        return nullptr;
     }
 }
 

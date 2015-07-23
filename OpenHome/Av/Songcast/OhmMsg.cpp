@@ -545,7 +545,7 @@ OhmMsg* OhmMsgFactory::Create(IReader& aReader, const OhmHeader& aHeader)
         ASSERTS();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 OhmMsgAudio* OhmMsgFactory::CreateAudio(IReader& aReader, const OhmHeader& aHeader)

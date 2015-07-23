@@ -40,6 +40,7 @@ protected:
     void SendListen();
     void Send(TUint aType);
     TBool IsCurrentStream(TUint aStreamId) const;
+    void WaitForPipelineToEmpty();
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
 protected: // from Media::Protocol
@@ -50,6 +51,7 @@ private: // from Media::Protocol
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
     Media::EStreamPlay OkToPlay(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     void CurrentSubnetChanged();
     void RepairReset();
@@ -57,6 +59,7 @@ private:
     TBool RepairBegin(OhmMsgAudioBlob& aMsg);
     TBool Repair(OhmMsgAudioBlob& aMsg);
     void OutputAudio(OhmMsgAudioBlob& aMsg);
+    void PipelineEmpty();
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
     void Process(OhmMsgAudioBlob& aMsg) override;
@@ -78,6 +81,7 @@ protected:
     TUint iStreamId;
     Mutex iMutexTransport;
     IOhmTimestamper* iTimestamper;
+    TBool iStarving;
 private:
     Media::TrackFactory& iTrackFactory;
     Brn iSupportedScheme;
@@ -101,6 +105,7 @@ private:
     TUint iAddr; // FIXME - should listen for subnet changes and update this value
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;
+    Semaphore iPipelineEmpty;
 };
 
 } // namespace Av

@@ -198,7 +198,7 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
-    iStreamHandler = NULL;
+    iStreamHandler = nullptr;
     iMsgOrder.clear();
     iMsgCount = 0;
     iLastMsgType = ENone;
@@ -347,25 +347,25 @@ Msg* SuiteRewinder::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteRewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgQuit* aMsg)
@@ -405,7 +405,7 @@ MsgAudioEncoded* SuiteRewinder::CreateAudio()
 
 Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     switch (aType)
     {
     default:
@@ -417,7 +417,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         ASSERTS();
         break;
     case ENull:
-        return NULL;
+        return nullptr;
     case EMsgTrack:
         {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -544,7 +544,7 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TUint stopRes = 0;
     TUint expectedStopCount = 1;
 
-    TEST(iStreamHandler == NULL);
+    TEST(iStreamHandler == nullptr);
     for (TUint i = 0; i < kPreAudioMsgCount+kAudioCount; i++)
     {
         PullAndProcess();
@@ -681,18 +681,18 @@ void SuiteRewinderNullMsgs::Setup()
 
 void SuiteRewinderNullMsgs::TestNoNulls()
 {
-    // test that, under normal conditions, if a NULL msg is passed down the
-    // pipeline, the Rewinder only ever returns non-NULL msgs
+    // test that, under normal conditions, if a nullptr msg is passed down the
+    // pipeline, the Rewinder only ever returns non-nullptr msgs
     for (TByte i = 0; i < kPreAudioMsgCount+iAudioEncodedCount-1; i++)
     {
         Msg* msg = iRewinder->Pull();
-        TEST(msg != NULL);
+        TEST(msg != nullptr);
         msg = msg->Process(*this);
         msg->RemoveRef();
     }
     // test that last msg pulled is final msg we queued
     Msg* msg = iRewinder->Pull();
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TBool isFinalMsgSent = TestMsgAudioEncodedValue(*dynamic_cast<MsgAudioEncoded*>(msg), iAudioEncodedCount-1);
     TEST(isFinalMsgSent == true);
     msg = msg->Process(*this);

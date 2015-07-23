@@ -20,7 +20,7 @@ Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
     , iPassGeneratedHalt(false)
 {
 }
@@ -79,7 +79,7 @@ Msg* Skipper::Pull()
         iLock.Wait();
         msg = msg->Process(*this);
         iLock.Signal();
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -124,7 +124,7 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
         // called on that stream, otherwise it will reject all future streams.
         (void)iStreamHandler->OkToPlay(iStreamId);
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
 
     NewStream();
@@ -134,7 +134,7 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Skipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Skipper::ProcessMsg(MsgMetaText* aMsg)
@@ -169,7 +169,7 @@ Msg* Skipper::ProcessMsg(MsgFlush* aMsg)
         ASSERT(iState == eFlushing);
         aMsg->RemoveRef();
         iTargetFlushId = MsgFlush::kIdInvalid;
-        return NULL;
+        return nullptr;
     }
     return ProcessFlushableRemoveAll(aMsg);
 }
@@ -197,13 +197,13 @@ Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
+            if (split != nullptr) {
                 split->RemoveRef(); // we're going to flush the rest of the stream so no need to add split to iQueue
             }
         }
-        split = NULL;
+        split = nullptr;
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
-        if (split != NULL) {
+        if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
         if (iRemainingRampSize == 0) {
@@ -231,7 +231,7 @@ Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
 Msg* Skipper::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Skipper::ProcessMsg(MsgQuit* aMsg)
@@ -262,14 +262,14 @@ void Skipper::StartFlushing(TBool aSendHalt)
         iPassGeneratedHalt = true;
     }
     iState = eFlushing;
-    iTargetFlushId = (iStreamHandler==NULL? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
+    iTargetFlushId = (iStreamHandler==nullptr? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
 }
 
 Msg* Skipper::ProcessFlushable(Msg* aMsg)
 {
     if (iState == eFlushing) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -278,7 +278,7 @@ Msg* Skipper::ProcessFlushableRemoveAll(Msg* aMsg)
 {
     if (FlushUntilHalt()) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }

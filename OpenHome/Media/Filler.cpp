@@ -40,7 +40,7 @@ TBool UriProvider::SupportsPrev() const
 
 IClockPuller* UriProvider::ClockPuller()
 {
-    return NULL;
+    return nullptr;
 }
 
 UriProvider::UriProvider(const TChar* aMode,
@@ -70,9 +70,9 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
     , iPipelineIdTracker(aIdTracker)
     , iFlushIdProvider(aFlushIdProvider)
     , iMsgFactory(aMsgFactory)
-    , iActiveUriProvider(NULL)
-    , iUriStreamer(NULL)
-    , iTrack(NULL)
+    , iActiveUriProvider(nullptr)
+    , iUriStreamer(nullptr)
+    , iTrack(nullptr)
     , iStopped(true)
     , iQuit(false)
     , iChangedMode(true)
@@ -90,7 +90,7 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
 Filler::~Filler()
 {
     ASSERT(iQuit);
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
     iNullTrack->RemoveRef();
@@ -158,7 +158,7 @@ TBool Filler::Next(const Brx& aMode)
 {
     TBool ret = false;
     iLock.Wait();
-    if (iActiveUriProvider != NULL && iActiveUriProvider->Mode() == aMode) {
+    if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
         ret = iActiveUriProvider->MoveNext();
         iStopped = false;
         Signal();
@@ -171,7 +171,7 @@ TBool Filler::Prev(const Brx& aMode)
 {
     TBool ret = false;
     iLock.Wait();
-    if (iActiveUriProvider != NULL && iActiveUriProvider->Mode() == aMode) {
+    if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
         ret = iActiveUriProvider->MovePrevious();
         iStopped = false;
         Signal();
@@ -196,7 +196,7 @@ TUint Filler::NullTrackId() const
 void Filler::UpdateActiveUriProvider(const Brx& aMode)
 {
     UriProvider* prevUriProvider = iActiveUriProvider;
-    iActiveUriProvider = NULL;
+    iActiveUriProvider = nullptr;
     for (TUint i=0; i<iUriProviders.size(); i++) {
         UriProvider* uriProvider = iUriProviders[i];
         if (uriProvider->Mode() == aMode) {
@@ -205,7 +205,7 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
         }
     }
     iChangedMode = iChangedMode || (prevUriProvider != iActiveUriProvider);
-    if (iActiveUriProvider == NULL) {
+    if (iActiveUriProvider == nullptr) {
         iStopped = true;
         THROW(FillerInvalidMode);
     }
@@ -246,22 +246,22 @@ void Filler::Run()
                 Wait();
             }
             iLock.Wait();
-            if (iActiveUriProvider == NULL) {
+            if (iActiveUriProvider == nullptr) {
                 iLock.Signal();
                 continue;
             }
-            if (iTrack != NULL) {
+            if (iTrack != nullptr) {
                 iTrack->RemoveRef();
-                iTrack = NULL;
+                iTrack = nullptr;
             }
             iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
             LOG(kMedia, "FILLER: iActiveUriProvider->GetNext() returned trackId=%u, status=%d\n", iTrack? iTrack->Id() : 0, iTrackPlayStatus);
             TBool failed = false;
             if (iPrefetchTrackId == Track::kIdNone) {
-                failed = (iTrack != NULL);
+                failed = (iTrack != nullptr);
             }
             else if (iPrefetchTrackId != kPrefetchTrackIdInvalid) {
-                failed = (iTrack == NULL || iTrack->Id() != iPrefetchTrackId);
+                failed = (iTrack == nullptr || iTrack->Id() != iPrefetchTrackId);
             }
             if (failed) {
                 iStreamPlayObserver.NotifyTrackFailed(iPrefetchTrackId);
@@ -270,7 +270,7 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, NULL, false, false));
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, nullptr, false, false));
                 iPipeline.Push(iMsgFactory.CreateMsgSession());
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
@@ -298,7 +298,7 @@ void Filler::Run()
                     iChangedMode = false;
                 }
                 iLock.Signal();
-                ASSERT(iTrack != NULL);
+                ASSERT(iTrack != nullptr);
                 iPipeline.Push(iMsgFactory.CreateMsgSession());
                 LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
                 CheckForKill();
@@ -326,7 +326,7 @@ void Filler::Run()
 void Filler::Push(Msg* aMsg)
 {
     aMsg = aMsg->Process(*this);
-    if (aMsg != NULL) {
+    if (aMsg != nullptr) {
         iPipeline.Push(aMsg);
     }
 }

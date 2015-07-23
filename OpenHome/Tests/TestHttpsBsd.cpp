@@ -108,10 +108,10 @@ int main(int argc, char* argv[])
     }
 #endif
 
-    struct addrinfo *results = NULL;
+    struct addrinfo *results = nullptr;
     int ret = 0;
-    ret = getaddrinfo(hoststr, "", NULL, &results);
-    if (results == NULL) {
+    ret = getaddrinfo(hoststr, "", nullptr, &results);
+    if (results == nullptr) {
         ret = -3;
     }
     uint32_t host = ((struct sockaddr_in*)results[0].ai_addr)->sin_addr.s_addr;
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
     OpenSSL_add_all_algorithms();
 
     SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
-    SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
+    SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, nullptr);
     SSL* ssl = SSL_new(ctx);
     SSL_set_info_callback(ssl, SslInfoCallback);
     static unsigned char memBuf[16 * 1024] = {0};

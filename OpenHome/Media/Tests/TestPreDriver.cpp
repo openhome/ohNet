@@ -177,21 +177,21 @@ Msg* SuitePreDriver::Pull()
     case ENone:
     case EMsgPlayable:
         ASSERTS();
-        return NULL;
+        return nullptr;
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(iNextMsgSilenceSize);
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL, false, false);
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
     case EMsgChangeInput:
         return iMsgFactory->CreateMsgChangeInput(Functor());
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, nullptr);
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -226,13 +226,13 @@ Msg* SuitePreDriver::ProcessMsg(MsgMode* aMsg)
 Msg* SuitePreDriver::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgChangeInput* aMsg)
@@ -244,31 +244,31 @@ Msg* SuitePreDriver::ProcessMsg(MsgChangeInput* aMsg)
 Msg* SuitePreDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgHalt* aMsg)
@@ -280,13 +280,13 @@ Msg* SuitePreDriver::ProcessMsg(MsgHalt* aMsg)
 Msg* SuitePreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
@@ -301,13 +301,13 @@ Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* SuitePreDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgPlayable* aMsg)

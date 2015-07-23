@@ -82,7 +82,7 @@ Msg* Muter::Pull()
     iLock.Wait();
     msg = msg->Process(*this);
     iLock.Signal();
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     return msg;
 }
 
@@ -119,7 +119,7 @@ Msg* Muter::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Muter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Muter::ProcessMsg(MsgMetaText* aMsg)
@@ -172,11 +172,11 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
         MsgAudio* split;
         if (msg->Jiffies() > iRemainingRampSize && iRemainingRampSize > 0) {
             split = msg->Split(iRemainingRampSize);
-            if (split != NULL) {
+            if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
         }
-        split = NULL;
+        split = nullptr;
         const Ramp::EDirection direction = (iState == eRampingDown? Ramp::EDown : Ramp::EUp);
         if (iRemainingRampSize > 0) {
             iCurrentRampValue = msg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
@@ -184,7 +184,7 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
         if (iRemainingRampSize == 0) {
             iState = (iState == eRampingDown? eMuted : eRunning);
         }
-        if (split != NULL) {
+        if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
     }
@@ -221,7 +221,7 @@ Msg* Muter::ProcessMsg(MsgSilence* aMsg)
 Msg* Muter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Muter::ProcessMsg(MsgQuit* aMsg)

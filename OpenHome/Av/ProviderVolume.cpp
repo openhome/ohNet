@@ -69,16 +69,16 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
 
     iConfigVolumeLimit = &aConfigReader.GetNum(VolumeConfig::kKeyLimit);
     iSubscriberIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::VolumeLimitChanged));
-    if (iBalance == NULL) {
-        iConfigBalance = NULL;
+    if (iBalance == nullptr) {
+        iConfigBalance = nullptr;
         SetPropertyBalance(0);
     }
     else {
         iConfigBalance = &aConfigReader.GetNum(VolumeConfig::kKeyBalance);
         iSubscriberIdBalance = iConfigBalance->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::BalanceChanged));
     }
-    if (iFade == NULL) {
-        iConfigFade = NULL;
+    if (iFade == nullptr) {
+        iConfigFade = nullptr;
         SetPropertyFade(0);
     }
     else {
@@ -97,10 +97,10 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
 ProviderVolume::~ProviderVolume()
 {
     iConfigVolumeLimit->Unsubscribe(iSubscriberIdVolumeLimit);
-    if (iConfigBalance != NULL) {
+    if (iConfigBalance != nullptr) {
         iConfigBalance->Unsubscribe(iSubscriberIdBalance);
     }
-    if (iConfigFade != NULL) {
+    if (iConfigFade != nullptr) {
         iConfigFade->Unsubscribe(iSubscriberIdFade);
     }
 }
@@ -276,7 +276,7 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume)
 
 void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance)
 {
-    if (iBalance == NULL) {
+    if (iBalance == nullptr) {
         aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg);
     }
     try {
@@ -291,7 +291,7 @@ void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance)
 
 void ProviderVolume::HelperSetFade(IDvInvocation& aInvocation, TInt aFade)
 {
-    if (iFade == NULL) {
+    if (iFade == nullptr) {
         aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg);
     }
     try {

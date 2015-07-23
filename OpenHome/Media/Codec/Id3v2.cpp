@@ -57,7 +57,7 @@ TBool Id3v2::Recognise(Brx& aBuf)
 
 Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    MsgAudioEncoded* msg = NULL;
+    MsgAudioEncoded* msg = nullptr;
     AddToAudioEncoded(aMsg);
 
     if (!iPulling) {
@@ -75,13 +75,13 @@ Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
             }
             else {
                 msg = iAudioEncoded;
-                iAudioEncoded = NULL;
+                iAudioEncoded = nullptr;
             }
         }
         else {
             // Didn't read a full buffer, so must be at end of stream.
             msg = iAudioEncoded;
-            iAudioEncoded = NULL;
+            iAudioEncoded = nullptr;
         }
     }
 

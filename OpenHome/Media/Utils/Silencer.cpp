@@ -71,8 +71,8 @@ void Silencer::Run()
 
 Msg* Silencer::Pull()
 {
-    Msg* msg = NULL;
-    while (msg == NULL) {
+    Msg* msg = nullptr;
+    while (msg == nullptr) {
         if (iSampleRate == 0 || iFifo.SlotsUsed() != 0) { // process and return next msg
             msg = iFifo.Read()->Process(*this);
         }
@@ -105,7 +105,7 @@ Msg* Silencer::ProcessMsg(MsgHalt* aMsg)
     // swallow halt messages - the driver presumably can't do anything with them if its using this class
     iHalted = true;
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Silencer::ProcessMsg(MsgDecodedStream* aMsg)

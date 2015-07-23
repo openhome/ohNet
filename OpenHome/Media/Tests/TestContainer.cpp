@@ -248,12 +248,12 @@ ContainerNullBuffered::ContainerNullBuffered()
 
 Msg* ContainerNullBuffered::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    MsgAudioEncoded* msg = NULL;
+    MsgAudioEncoded* msg = nullptr;
 
     // throw away msg if awaiting a MsgFlush
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
 
     AddToAudioEncoded(aMsg);
@@ -261,7 +261,7 @@ Msg* ContainerNullBuffered::ProcessMsg(MsgAudioEncoded* aMsg)
     // buffer msgs until we have at least kBufferedAudioBytes
     // so that there is almost always audio in iAudioEncoded during streaming
     if (!iPulling) {
-        if ((iAudioEncoded != NULL) && (iAudioEncoded->Bytes() > kBufferedAudioBytes)) {
+        if ((iAudioEncoded != nullptr) && (iAudioEncoded->Bytes() > kBufferedAudioBytes)) {
             MsgAudioEncoded* remaining = iAudioEncoded->Split(kBufferedAudioBytes/2);
             msg = iAudioEncoded;
             iAudioEncoded = remaining;
@@ -307,7 +307,7 @@ void TestContainerMsgGenerator::SetMsgOrder(std::vector<EMsgType>& aMsgOrder)
 
 Msg* TestContainerMsgGenerator::NextMsg()
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     ASSERT(iMsgCount < iMsgOrder.size());
     switch (iMsgOrder[iMsgCount++])
     {
@@ -320,7 +320,7 @@ Msg* TestContainerMsgGenerator::NextMsg()
         ASSERTS();
         break;
     case ENull:
-        msg = NULL;
+        msg = nullptr;
         break;
     case EMsgMode:
         msg = GenerateMsg(EMsgMode);
@@ -390,7 +390,7 @@ MsgAudioEncoded* TestContainerMsgGenerator::GenerateAudioMsg()
 
 Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     //Log::Print("TestContainerMsgGenerator::GenerateMsg: %u\n", aType);
     switch (aType)
     {
@@ -403,9 +403,9 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         ASSERTS();
         break;
     case ENull:
-        return NULL;
+        return nullptr;
     case EMsgMode:
-        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
         iLastMsgType = EMsgMode;
         break;
     case EMsgSession:
@@ -547,22 +547,22 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgAudioEncoded* aMsg)
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgMode* aMsg)
 {
@@ -639,7 +639,7 @@ void SuiteContainerBase::Setup()
     iUrlBlockWriter = new TestUrlBlockWriter();
     iContainer = new Container(*iMsgFactory, *iGenerator, *iUrlBlockWriter);
     iStreamId = 0;
-    iStreamHandler = NULL;
+    iStreamHandler = nullptr;
     iMsgRcvdCount = 0;
     iAudioRcvdCount = 0;
 }
@@ -1050,7 +1050,7 @@ void SuiteContainerBase::TestFlushPendingStreamHandler()
 
     // Call TrySeek()/TryStop() on the IStreamHandler that's been passed down,
     // instead of directly on iContainer.
-    ASSERT(iStreamHandler != NULL);
+    ASSERT(iStreamHandler != nullptr);
     TUint seekRes = iStreamHandler->TrySeek(iStreamId, 0);
     TEST(iProvider->SeekCount() == 1);
     TEST(seekRes != MsgFlush::kIdInvalid);

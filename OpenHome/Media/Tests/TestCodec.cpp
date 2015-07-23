@@ -254,7 +254,7 @@ void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
 {
     //LOG(kMedia, ">TestCodecPipelineElementDownstream::Push\n");
     aMsg = aMsg->Process(iMsgProcessor);
-    if (aMsg != NULL) {
+    if (aMsg != nullptr) {
         aMsg->RemoveRef();
     }
 }
@@ -394,13 +394,13 @@ Msg* MsgProcessor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioEncoded\n");
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgMetaText* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgMetaText\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
@@ -410,19 +410,19 @@ Msg* MsgProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgHalt\n");
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgFlush* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgFlush\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgWait* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgWait\n");
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* aMsg)
 {
@@ -433,26 +433,26 @@ Msg* MsgProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioPcm\n");
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgSilence\n");
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgPlayable\n");
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 Msg* MsgProcessor::ProcessMsg(MsgQuit* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgQuit\n");
     aMsg->RemoveRef();
     iSem.Signal();
-    return NULL;
+    return nullptr;
 }
 
 
@@ -470,7 +470,7 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     , iUri(aUri)
     , iFileLocation(iUri.AbsoluteUri().Bytes()+kMaxFilenameLen)
     , iSem("TCO1", 0)
-    , iPipeline(NULL)
+    , iPipeline(nullptr)
     , iFiles(aFiles)
     , iFileNum(0)
     , iCreatePipeline(aFunc)
@@ -488,7 +488,7 @@ SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFil
     , iUri(aUri)
     , iFileLocation(iUri.AbsoluteUri().Bytes()+kMaxFilenameLen)
     , iSem("TCO1", 0)
-    , iPipeline(NULL)
+    , iPipeline(nullptr)
     , iFiles(aFiles)
     , iFileNum(0)
     , iCreatePipeline(aFunc)
@@ -949,7 +949,7 @@ Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     Msg* msgOut = TestSimilarity(aMsg);
     msgOut->RemoveRef();
-    msgOut = NULL;
+    msgOut = nullptr;
     return msgOut;
 }
 

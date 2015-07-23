@@ -79,7 +79,7 @@ Protocol* ProtocolFactory::NewHttps(Environment& aEnv)
 ProtocolHttps::ProtocolHttps(Environment& aEnv)
     : Protocol(aEnv)
     , iLock("PHTS")
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
     , iReaderUntil(iReaderBuf)
@@ -245,7 +245,7 @@ ProtocolStreamResult ProtocolHttps::DoStream()
         return EProtocolStreamErrorUnrecoverable;
     }
 
-    ContentProcessor* cp = NULL;
+    ContentProcessor* cp = nullptr;
     ProtocolStreamResult res = EProtocolStreamErrorUnrecoverable;
     try {
         LOG(kMedia, "ProtocolHttps read response\n");
@@ -265,7 +265,7 @@ ProtocolStreamResult ProtocolHttps::DoStream()
     }
     catch (ReaderError&) {
     }
-    if (cp != NULL) {
+    if (cp != nullptr) {
         cp->Reset();
     }
     return res;

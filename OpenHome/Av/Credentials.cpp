@@ -75,7 +75,7 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
     : iLock("CRED")
     , iConsumer(aConsumer)
     , iObserver(aObserver)
-    , iRsa(NULL)
+    , iRsa(nullptr)
     , iFifoCredentialsChanged(aFifoCredentialsChanged)
     , iSubscriberIdUsername(IConfigManager::kSubscriptionIdInvalid)
     , iSubscriberIdPassword(IConfigManager::kSubscriptionIdInvalid)
@@ -96,11 +96,11 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
 Credential::~Credential()
 {
     delete iModerationTimer;
-    if (iConfigUsername != NULL) {
+    if (iConfigUsername != nullptr) {
         iConfigUsername->Unsubscribe(iSubscriberIdUsername);
         delete iConfigUsername;
     }
-    if (iConfigPassword != NULL) {
+    if (iConfigPassword != nullptr) {
         iConfigPassword->Unsubscribe(iSubscriberIdPassword);
         delete iConfigPassword;
     }
@@ -203,7 +203,7 @@ void Credential::PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
         iPassword.SetBytes(0);
     }
     else {
-        ASSERT(iRsa != NULL);
+        ASSERT(iRsa != nullptr);
         const int decryptedLen = RSA_private_decrypt(iPasswordEncrypted.Bytes(), iPasswordEncrypted.Ptr(), const_cast<TByte*>(iPassword.Ptr()), iRsa, RSA_PKCS1_OAEP_PADDING);
         if (decryptedLen < 0) {
             LOG(kError, "Failed to decrypt password for ");
@@ -257,10 +257,10 @@ Credentials::Credentials(Environment& aEnv, Net::DvDevice& aDevice, IStoreReadWr
     : iLock("CRED")
     , iEnv(aEnv)
     , iConfigInitialiser(aConfigInitialiser)
-    , iKey(NULL)
+    , iKey(nullptr)
     , iModerationTimerStarted(false)
     , iKeyParams(aStore, aEntropy, aKeyBits)
-    , iThread(NULL)
+    , iThread(nullptr)
     , iFifo(kNumFifoElements)
     , iStarted(false)
 {
@@ -375,7 +375,7 @@ static void WriteToStore(IStoreReadWrite& aStore, const Brx& aKey, BIO* aBio)
 {
     const int len = BIO_pending(aBio);
     char* val = (char*)calloc(len+1, 1); // +1 for nul terminator
-    ASSERT(val != NULL);
+    ASSERT(val != nullptr);
     BIO_read(aBio, val, len);
     Brn valBuf(val);
     aStore.Write(aKey, valBuf);
@@ -387,7 +387,7 @@ void Credentials::CreateKey(IStoreReadWrite& aStore, const Brx& aEntropy, TUint 
     try {
         aStore.Read(kKeyRsaPrivate, iKeyBuf);
         BIO *bio = BIO_new_mem_buf((void*)iKeyBuf.Ptr(), iKeyBuf.Bytes());
-        iKey = (void*)PEM_read_bio_RSAPrivateKey(bio, NULL, 0, NULL);
+        iKey = (void*)PEM_read_bio_RSAPrivateKey(bio, nullptr, 0, nullptr);
         BIO_free(bio);
         return;
     }
@@ -398,13 +398,13 @@ void Credentials::CreateKey(IStoreReadWrite& aStore, const Brx& aEntropy, TUint 
     BIGNUM *bn = BN_new();
     ASSERT(BN_set_word(bn, RSA_F4));
     RSA* rsa = RSA_new();
-    ASSERT(rsa != NULL);
-    ASSERT(RSA_generate_key_ex(rsa, aKeyBits, bn, NULL));
+    ASSERT(rsa != nullptr);
+    ASSERT(RSA_generate_key_ex(rsa, aKeyBits, bn, nullptr));
     BN_free(bn);
 
     BIO* bio = BIO_new(BIO_s_mem());
-    ASSERT(bio != NULL);
-    ASSERT(1 == PEM_write_bio_RSAPrivateKey(bio, rsa, NULL, NULL, 0, NULL, NULL));
+    ASSERT(bio != nullptr);
+    ASSERT(1 == PEM_write_bio_RSAPrivateKey(bio, rsa, nullptr, nullptr, 0, nullptr, nullptr));
     WriteToStore(aStore, kKeyRsaPrivate, bio);
     ASSERT(1 == PEM_write_bio_RSAPublicKey(bio, rsa));
     WriteToStore(aStore, kKeyRsaPublic, bio);

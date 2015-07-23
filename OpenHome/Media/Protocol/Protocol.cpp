@@ -14,9 +14,9 @@ using namespace OpenHome::Media;
 
 Protocol::Protocol(Environment& aEnv)
     : iEnv(aEnv)
-    , iProtocolManager(NULL)
-    , iIdProvider(NULL)
-    , iFlushIdProvider(NULL)
+    , iProtocolManager(nullptr)
+    , iIdProvider(nullptr)
+    , iFlushIdProvider(nullptr)
     , iActive(false)
     , iLockActive("PROT")
 {
@@ -178,8 +178,8 @@ void ProtocolNetwork::Close()
 // ContentProcessor
 
 ContentProcessor::ContentProcessor()
-    : iProtocolSet(NULL)
-    , iReader(NULL)
+    : iProtocolSet(nullptr)
+    , iReader(nullptr)
     , iActive(false)
 {
 }
@@ -211,7 +211,7 @@ void ContentProcessor::Reset()
     iPartialLine.SetBytes(0);
     iPartialTag.SetBytes(0);
     iInTag = false;
-    iReader = NULL;
+    iReader = nullptr;
 }
 
 void ContentProcessor::SetStream(IReader& aStream)
@@ -287,20 +287,20 @@ Brn ContentProcessor::ReadTag(ReaderUntil& aReader, TUint64& aBytesRemaining)
 
 Brn ContentProcessor::Read(TUint aBytes)
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     return iReader->Read(aBytes);
 }
 
 void ContentProcessor::ReadFlush()
 {
-    if (iReader != NULL) {
+    if (iReader != nullptr) {
         iReader->ReadFlush();
     }
 }
 
 void ContentProcessor::ReadInterrupt()
 {
-    if (iReader != NULL) {
+    if (iReader != nullptr) {
         iReader->ReadInterrupt();
     }
 }
@@ -455,7 +455,7 @@ ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Br
         }
     }
     // unrecognised content (may well be audio)
-    return NULL;
+    return nullptr;
 }
 
 ContentProcessor* ProtocolManager::GetAudioProcessor() const

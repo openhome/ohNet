@@ -25,13 +25,13 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iTrackId(Track::kIdNone)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekConsecutiveFailureCount(0)
-    , iMsgStream(NULL)
+    , iMsgStream(nullptr)
 {
 }
 
 Seeker::~Seeker()
 {
-    if (iMsgStream != NULL) {
+    if (iMsgStream != nullptr) {
         iMsgStream->RemoveRef();
     }
 }
@@ -81,7 +81,7 @@ Msg* Seeker::Pull()
         iLock.Wait();
         msg = msg->Process(*this);
         iLock.Signal();
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -123,7 +123,7 @@ Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Seeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Seeker::ProcessMsg(MsgMetaText* aMsg)
@@ -150,7 +150,7 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -162,7 +162,7 @@ Msg* Seeker::ProcessMsg(MsgWait* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (iMsgStream != NULL) {
+    if (iMsgStream != nullptr) {
         iMsgStream->RemoveRef();
     }
     iMsgStream = aMsg;
@@ -206,7 +206,7 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
         if (splitJiffies < aMsg->Jiffies()) {
             MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
-            if (split != NULL) {
+            if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
         }
@@ -231,14 +231,14 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
+            if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
         }
-        split = NULL;
+        split = nullptr;
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
-        if (split != NULL) {
+        if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
         if (iRemainingRampSize == 0) {
@@ -259,13 +259,13 @@ Msg* Seeker::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); // don't expect to see MsgSilence this far up the pipeline
                // ...and wouldn't immediately know how to handle it, e.g. if iFlushEndJiffies was set
-    return NULL;
+    return nullptr;
 }
 
 Msg* Seeker::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
@@ -310,7 +310,7 @@ Msg* Seeker::ProcessFlushable(Msg* aMsg)
 {
     if (iState == EFlushing) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }

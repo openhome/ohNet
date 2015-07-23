@@ -279,7 +279,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iServerManager(aServerManager)
     , iAudioServer(iServerManager.Find(aAudioId))
     , iControlServer(iServerManager.Find(aControlId), *this)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
     , iSemInputChanged("PRIC", 0)
@@ -393,7 +393,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 start = false;
 
 
-                Track* track = NULL;
+                Track* track = nullptr;
                 TUint latency = 0;
                 TUint streamId = 0;
                 Uri uri;

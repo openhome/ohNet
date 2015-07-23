@@ -21,7 +21,7 @@ using namespace OpenHome::Media;
 // ProtocolOhu
 
 ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode, IPowerManager& aPowerManager)
-    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, NULL /* no timestamper required */, "ohu", aMode)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, nullptr /* no timestamper required */, "ohu", aMode)
     , iLeaveLock("POHU")
 {
     iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest+1);
@@ -100,7 +100,7 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         return EProtocolStreamStopped;
     }
     iLeaveLock.Wait();
-    iLeaving = iStopped = iActive = iStarving = false;
+    iLeaving = iStopped = iActive = false;
     iSlaveCount = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
     iLeaveLock.Signal();
@@ -108,6 +108,7 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     iSocket.OpenUnicast(aInterface, aTtl);
     TBool firstJoin = true;
     do {
+        WaitForPipelineToEmpty();
         iLeaveLock.Wait();
         if (iStarving && !iStopped) {
             iStarving = false;
@@ -266,15 +267,6 @@ TUint ProtocolOhu::TryStop(TUint aStreamId)
         iLeaveLock.Signal();
     }
     return iNextFlushId;
-}
-
-void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint aStreamId)
-{
-    if (aMode == iMode) {
-        LOG(kSongcast, "OHU: NotifyStarving for stream %u\n", aStreamId);
-        iStarving = true;
-        iSocket.Interrupt(true);
-    }
 }
 
 void ProtocolOhu::PowerUp()

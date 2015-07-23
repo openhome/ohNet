@@ -16,7 +16,7 @@ UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TBool aSuppor
                   NextNotSupported, PrevNotSupported)
     , iLock("UPST")
     , iTrackFactory(aTrackFactory)
-    , iTrack(NULL)
+    , iTrack(nullptr)
     , iIgnoreNext(true)
     , iPlayLater(false)
 {
@@ -24,7 +24,7 @@ UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TBool aSuppor
 
 UriProviderSingleTrack::~UriProviderSingleTrack()
 {
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
 }
@@ -32,11 +32,11 @@ UriProviderSingleTrack::~UriProviderSingleTrack()
 Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     AutoMutex a(iLock);
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
     if (aUri == Brx::Empty()) {
-        iTrack = NULL;
+        iTrack = nullptr;
     }
     else {
         iTrack = iTrackFactory.CreateTrack(aUri, aMetaData);
@@ -48,7 +48,7 @@ Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 void UriProviderSingleTrack::SetTrack(Track* aTrack)
 {
     AutoMutex a(iLock);
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
     iTrack = aTrack;
@@ -67,8 +67,8 @@ void UriProviderSingleTrack::BeginLater(TUint aTrackId)
 EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
 {
     AutoMutex a(iLock);
-    if (iIgnoreNext || iTrack == NULL) {
-        aTrack = NULL;
+    if (iIgnoreNext || iTrack == nullptr) {
+        aTrack = nullptr;
         return ePlayNo;
     }
     aTrack = iTrack;
@@ -81,7 +81,7 @@ TUint UriProviderSingleTrack::CurrentTrackId() const
 {
     TUint id = Track::kIdNone;
     iLock.Wait();
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         id = iTrack->Id();
     }
     iLock.Signal();
@@ -101,7 +101,7 @@ TBool UriProviderSingleTrack::MovePrevious()
 void UriProviderSingleTrack::DoBegin(TUint aTrackId, TBool aLater)
 {
     iLock.Wait();
-    iIgnoreNext = (iTrack == NULL || iTrack->Id() != aTrackId);
+    iIgnoreNext = (iTrack == nullptr || iTrack->Id() != aTrackId);
     iPlayLater = aLater;
     iLock.Signal();
 }
@@ -109,7 +109,7 @@ void UriProviderSingleTrack::DoBegin(TUint aTrackId, TBool aLater)
 TBool UriProviderSingleTrack::MoveCursor()
 {
     AutoMutex a(iLock);
-    if (iTrack == NULL || iIgnoreNext) {
+    if (iTrack == nullptr || iIgnoreNext) {
         return false;
     }
     iIgnoreNext = true;
