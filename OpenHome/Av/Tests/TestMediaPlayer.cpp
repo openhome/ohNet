@@ -112,6 +112,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
+    , iTxTsMapper(nullptr)
+    , iRxTsMapper(nullptr)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
