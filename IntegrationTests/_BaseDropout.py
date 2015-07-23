@@ -75,7 +75,7 @@ class BaseDropout( BASE.BaseTest ):
             senderName   = args[1]
             receiverName = args[2]
             slaveName    = args[3]
-            duration     = int( args[4] )
+            duration     = args[4]
             if len( args ) > 5:
                 senderMode = args[5].lower()
             if len( args ) > 6:
