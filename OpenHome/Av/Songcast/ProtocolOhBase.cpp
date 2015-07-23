@@ -30,6 +30,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iMutexTransport("POHB")
     , iTimestamper(aTimestamper)
+    , iStarving(false)
     , iTrackFactory(aTrackFactory)
     , iSupportedScheme(aSupportedScheme)
     , iRunning(false)
@@ -41,6 +42,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSeqTrack(UINT_MAX)
     , iLastSampleStart(UINT_MAX)
     , iRepairFirst(nullptr)
+    , iPipelineEmpty("OHBS", 0)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
@@ -134,6 +136,12 @@ TBool ProtocolOhBase::IsCurrentStream(TUint aStreamId) const
     return true;
 }
 
+void ProtocolOhBase::WaitForPipelineToEmpty()
+{
+    iSupply->OutputChangeInput(MakeFunctor(*this, &ProtocolOhBase::PipelineEmpty));
+    iPipelineEmpty.Wait();
+}
+
 void ProtocolOhBase::Interrupt(TBool aInterrupt)
 {
     iSocket.Interrupt(aInterrupt);
@@ -150,6 +158,8 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     if (iUri.Scheme() != iSupportedScheme) {
         return EProtocolErrorNotSupported;
     }
+    iStarving = false;
+    iSocket.Interrupt(false);
     Endpoint ep(iUri.Port(), iUri.Host());
     ProtocolStreamResult res;
     do {
@@ -187,6 +197,15 @@ EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
         Log::Print("WARNING: ProtocolOhBase::OkToPlay(%u) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     }
     return ePlayYes;
+}
+
+void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId)
+{
+    if (aMode == iMode) {
+        LOG(kSongcast, "OHU: NotifyStarving for stream %u\n", aStreamId);
+        iStarving = true;
+        iSocket.Interrupt(true);
+    }
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()
@@ -490,4 +509,9 @@ void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
         }
     }
     aMsg.RemoveRef();
+}
+
+void ProtocolOhBase::PipelineEmpty()
+{
+    iPipelineEmpty.Signal();
 }

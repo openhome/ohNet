@@ -64,6 +64,11 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     }
 
     do {
+        WaitForPipelineToEmpty();
+        if (iStarving && !iStopped) {
+            iStarving = false;
+            iSocket.Interrupt(false);
+        }
         try {
             OhmHeader header;
             SendJoin();
