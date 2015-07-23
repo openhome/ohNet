@@ -252,7 +252,7 @@ void TestMediaPlayer::Run()
     iConfigRamStore->Print();
 
     Log::Print("\nFull (software) media player\n");
-    Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
+    Log::Print("Intended to be controlled via a separate, standard CP (Kazoo etc.)\n");
 
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
