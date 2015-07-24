@@ -14,15 +14,15 @@ using namespace OpenHome::Media;
 
 namespace OpenHome {
 namespace Media {
-namespace TestFlywheelRamper {
+namespace TestFlywheelRamperManual {
 
 
 /////////////////////////////////////////////
 
-class SuiteFlywheelRamper : public SuiteUnitTest, public INonCopyable
+class SuiteFlywheelRamperManual: public SuiteUnitTest, public INonCopyable
 {
 public:
-    SuiteFlywheelRamper(TChar* aInputWavFilename, TChar* aOutputWavFilename);
+    SuiteFlywheelRamperManual(TChar* aInputWavFilename, TChar* aOutputWavFilename);
 
 private:
     // from SuiteUnitTest
@@ -79,14 +79,14 @@ private:
 
 //////////////////////////////////////////////////////////////
 
-using namespace OpenHome::Media::TestFlywheelRamper;
+using namespace OpenHome::Media::TestFlywheelRamperManual;
 
 
-SuiteFlywheelRamper::SuiteFlywheelRamper(TChar* aInputWavFilename, TChar* aOutputWavFilename)
-    :SuiteUnitTest("SuiteFlywheelRamper")
+SuiteFlywheelRamperManual::SuiteFlywheelRamperManual(TChar* aInputWavFilename, TChar* aOutputWavFilename)
+    :SuiteUnitTest("SuiteFlywheelRamperManual")
     ,iOutputFile(new FileStream())
 {
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamperManual::Test1));
 
     try
     {
@@ -187,19 +187,19 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(TChar* aInputWavFilename, TChar* aOutpu
 }
 
 
-void SuiteFlywheelRamper::Setup()
+void SuiteFlywheelRamperManual::Setup()
 {
 }
 
 
-void SuiteFlywheelRamper::TearDown()
+void SuiteFlywheelRamperManual::TearDown()
 {
     delete iInputFile;
     delete iOutputFile;
 }
 
 
-void SuiteFlywheelRamper::Test1()
+void SuiteFlywheelRamperManual::Test1()
 {
     Log::Print("\n");
 
@@ -287,7 +287,7 @@ void SuiteFlywheelRamper::Test1()
 }
 
 
-void SuiteFlywheelRamper::ConvertToBe24(const Brx& aBuf, Bwx& aBufBe)
+void SuiteFlywheelRamperManual::ConvertToBe24(const Brx& aBuf, Bwx& aBufBe)
 {
     for (TUint i=0; i<aBuf.Bytes();)
     {
@@ -299,7 +299,7 @@ void SuiteFlywheelRamper::ConvertToBe24(const Brx& aBuf, Bwx& aBufBe)
 }
 
 
-void SuiteFlywheelRamper::ConvertToBe16(const Brx& aBuf, Bwx& aBufBe)
+void SuiteFlywheelRamperManual::ConvertToBe16(const Brx& aBuf, Bwx& aBufBe)
 {
     for (TUint i=0; i<aBuf.Bytes();)
     {
@@ -310,7 +310,7 @@ void SuiteFlywheelRamper::ConvertToBe16(const Brx& aBuf, Bwx& aBufBe)
 }
 
 
-void SuiteFlywheelRamper::UpdateDataSize(TUint32 aDataSizeBytes)
+void SuiteFlywheelRamperManual::UpdateDataSize(TUint32 aDataSizeBytes)
 {
     iSubChunk2Size = aDataSizeBytes;
     iChunkSize = iSubChunk2Size+36;
@@ -328,14 +328,14 @@ void SuiteFlywheelRamper::UpdateDataSize(TUint32 aDataSizeBytes)
 }
 
 
-void SuiteFlywheelRamper::WriteOutHeader()
+void SuiteFlywheelRamperManual::WriteOutHeader()
 {
     iOutputFile->Seek(0);
     iOutputFile->Write(iHeader);
 }
 
 
-void SuiteFlywheelRamper::LogBuf(const Brx& aBuf)
+void SuiteFlywheelRamperManual::LogBuf(const Brx& aBuf)
 {
     for(TUint x=0; x<aBuf.Bytes(); x++)
     {
@@ -345,7 +345,7 @@ void SuiteFlywheelRamper::LogBuf(const Brx& aBuf)
 }
 
 
-void SuiteFlywheelRamper::Append32(Bwx& aBuf, TInt32 aSample)
+void SuiteFlywheelRamperManual::Append32(Bwx& aBuf, TInt32 aSample)
 {
     aBuf.Append((TByte)(aSample>>24));
     aBuf.Append((TByte)(aSample>>16));
@@ -353,7 +353,7 @@ void SuiteFlywheelRamper::Append32(Bwx& aBuf, TInt32 aSample)
     aBuf.Append((TByte)(aSample));
 }
 
-TInt32 SuiteFlywheelRamper::Int32(const Brx& aBuf, TUint aIndex)
+TInt32 SuiteFlywheelRamperManual::Int32(const Brx& aBuf, TUint aIndex)
 {
     TUint i = aIndex*4;
     return( (TInt32) ((aBuf[i]<<24) + (aBuf[i+1]<<16) + (aBuf[i+2]<<8) + (aBuf[i+3])) );
@@ -420,7 +420,7 @@ void FormatConverter::WriteFlush()
 void TestFlywheelRamperManual(Net::Library& /*aLib*/, TChar* aArgv[])
 {
     Runner runner("Testing FlywheelRamper");
-    runner.Add(new SuiteFlywheelRamper(aArgv[1], aArgv[2]));
+    runner.Add(new SuiteFlywheelRamperManual(aArgv[1], aArgv[2]));
     runner.Run();
 
 }
