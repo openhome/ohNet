@@ -176,13 +176,11 @@ def bundle(context):
 
 @build_step("test", optional=True)
 def test(context):
-    if context.env["OH_PLATFORM"] not in ['Linux-mipsel', 'Core-ppc32', 'Linux-ppc32', 'Linux-armhf']:
-        python("waf", "test")
+    python("waf", "test")
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
-    if context.env["OH_PLATFORM"] not in ['Linux-mipsel', 'Core-ppc32', 'Linux-ppc32', 'Linux-armhf']:
-        python("waf", "test_full")
+    python("waf", "test_full")
 
 @build_step("install", optional=True, default=True)
 def install(context):
