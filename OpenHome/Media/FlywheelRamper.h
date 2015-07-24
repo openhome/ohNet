@@ -130,7 +130,7 @@ private:
     std::vector<TInt32> iSamples;
     TUint iCoeffScaling;
     TUint iDataInScaling;
-    TUint iDataOutScaling;
+    //TUint iDataOutScaling;
     TUint iScaleShift;
 };
 
