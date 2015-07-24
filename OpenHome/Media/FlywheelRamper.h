@@ -100,11 +100,15 @@ private:
 //
 // ConvolutionModel:
 //
-// Constructed with a list of 32 bit coefficients
+// Constructed with a list of 32 bit coefficients, and format specifiers
+// for coefficients, input data and output data.
+// Format specifiers indicate the bit width of the integer portion of the
+// associated fractional fixed point notation data enties
+// (a value of 1 indicates a format of 1.31, 2 indicates a format of 2.30)
 //
-// Process method takes in a block of 32 bit samples, and a count
-// Outputs a new block of 32 bit samples.
-// Count determines the number of samples in output block.
+// Process method takes in a block of 32 bit samples, and a count and
+// returns a new block of 32 bit samples.
+// Count determines the number of samples in the returned output data block.
 //
 // Max count = no. of samples in input block + no. of coeffs - 1
 //
@@ -116,11 +120,8 @@ private:
 
 class ConvolutionModel : public INonCopyable
 {
-private:
-    static const TUint kScaleShiftBase = 23;
-
 public:
-    ConvolutionModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling);
+    ConvolutionModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
 
     void Process(const Brx& aSamplesIn,  Bwx& aSamplesOut, TUint aCount);
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
@@ -128,10 +129,10 @@ public:
 private:
     const std::vector<TInt32> iCoeffs;
     std::vector<TInt32> iSamples;
-    TUint iCoeffScaling;
-    TUint iDataInScaling;
-    //TUint iDataOutScaling;
-    TUint iScaleShift;
+    TUint iCoeffFormat;
+    TUint iDataFormat;
+    TUint iOutputFormat;
+    TUint iDataScaleBitCount;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -140,11 +141,15 @@ private:
 //
 // FeedbackModel:
 //
-// Constructed with a list of 32 bit coefficients
+// Constructed with a list of 32 bit coefficients, and format specifiers
+// for coefficients, input data and output data.
+// Format specifiers indicate the bit width of the integer portion of the
+// associated fractional fixed point notation data enties
+// (a value of 1 indicates a format of 1.31, 2 indicates a format of 2.30)
 //
-// Process method takes in a block of 32 bit samples, and a count
-// Outputs a new block of 32 bit samples.
-// Count determines the number of samples in output block.
+// Process method takes in a block of 32 bit samples, and a count and
+// returns a new block of 32 bit samples.
+// Count determines the number of samples in the returned output data block.
 //
 // Max count = no. of samples in input block + no. of coeffs
 //
@@ -157,7 +162,7 @@ private:
 class FeedbackModel : public INonCopyable
 {
 public:
-    FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling);
+    FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
 
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount);
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
@@ -165,10 +170,10 @@ public:
 private:
     const std::vector<TInt32> iCoeffs;
     std::vector<TInt32> iSamples;
-    TUint iCoeffScaling;
-    TUint iDataInScaling;
-    TUint iDataOutScaling;
-    //TUint iScaleShift;
+    TUint iCoeffFormat;
+    TUint iDataFormat;
+    TUint iOutputFormat;
+    TUint iDataScaleBitCount;
 };
 
 
