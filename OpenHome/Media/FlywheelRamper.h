@@ -116,6 +116,9 @@ private:
 
 class ConvolutionModel : public INonCopyable
 {
+private:
+    static const TUint kScaleShiftBase = 23;
+
 public:
     ConvolutionModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffScaling, TUint aDataInScaling, TUint aDataOutScaling);
 
@@ -165,7 +168,7 @@ private:
     TUint iCoeffScaling;
     TUint iDataInScaling;
     TUint iDataOutScaling;
-    TUint iScaleShift;
+    //TUint iScaleShift;
 };
 
 
