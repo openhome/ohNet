@@ -320,7 +320,11 @@ void OhmMsgAudioBlob::ExternaliseAsBlob(IWriter& aWriter)
     aWriter.Write(iBlob);
 
     WriterBinary wb(aWriter);
-    wb.WriteUint32Be(RxTimestamp());
+    const TUint8 rxTimeStamped = RxTimestamped()? 1 : 0;
+    wb.WriteUint8(rxTimeStamped);
+    if (rxTimeStamped) {
+        wb.WriteUint32Be(RxTimestamp());
+    }
 }
 
 void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
@@ -355,10 +359,13 @@ void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
 
 void OhmMsgAudioBlob::Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader)
 { // static
-    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
+    ASSERT(aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
     aMsg.Create(aReader, aHeader);
     ReaderBinary reader(aReader);
-    aMsg.SetRxTimestamp(reader.ReadUintBe(4));
+    const TBool timestamped = (aReader.Read(1)[0] != 0);
+    if (timestamped) {
+        aMsg.SetRxTimestamp(reader.ReadUintBe(4));
+    }
 }
 
 
