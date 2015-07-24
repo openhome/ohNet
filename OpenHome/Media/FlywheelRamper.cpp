@@ -245,7 +245,7 @@ ConvolutionModel::ConvolutionModel(const vector<TInt32>& aCoeffs, TUint aCoeffSc
     ,iSamples(iCoeffs.size(), 0)
     ,iCoeffScaling(aCoeffScaling)
     ,iDataInScaling(aDataInScaling)
-    ,iDataOutScaling(aDataOutScaling)
+    //,iDataOutScaling(aDataOutScaling)
     ,iScaleShift((iCoeffScaling/2)+(iDataInScaling/2)-(aDataOutScaling/2) )
 {
     //Log::Print("iCoeffs.size()=%d ", iCoeffs.size());
