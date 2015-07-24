@@ -1026,7 +1026,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     Log::Print("TestCodec\n");
 
     OptionParser parser;
-    OptionString optionServer("-s", "--server", Brn("eng"), "address of server to connect to");
+    OptionString optionServer("-s", "--server", Brn("localhost"), "address of server to connect to");
     parser.AddOption(&optionServer);
     OptionUint optionPort("-p", "--port", 80, "server port to connect on");
     parser.AddOption(&optionPort);
