@@ -348,7 +348,7 @@ void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCoun
 
     TUint scaleShiftForSum = 32-iCoeffFormat-iDataScaleBitCount;
     TUint scaleShiftForProduct = 32-iCoeffFormat;
-    TInt scaleShiftForOutput = -iDataScaleBitCount-iDataFormat+iOutputFormat;
+    TInt scaleShiftForOutput = iOutputFormat-iDataScaleBitCount-iDataFormat;
 
     TUint index = 0;
     TUint smpByteIdx = 0;
