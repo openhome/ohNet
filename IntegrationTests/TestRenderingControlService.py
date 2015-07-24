@@ -17,8 +17,6 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 
-kMaxVol = 100
-kSteps  = 100
 kRcsNs  = '{urn:schemas-upnp-org:metadata-1-0/RCS/}'
 
 ### can we read maxvol and steps from device ???
@@ -37,6 +35,7 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.currVolume   = None
         self.currVolumeDb = None
         self.currMute     = None
+        self.maxVol       = 100
         self.rcEvent      = threading.Event()
         
     def Test( self, args ):
@@ -57,13 +56,13 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.mrDev = dutName.split( ':' )[0]
         mrName = self.mrDev + ':UPnP AV'
 
-        # Its not actually possible to disable volume on SoftPlayer devices, as
-        # this requires a reboot (to remove the volume service)
-        # mpName = self.mrDev + ':SoftPlayer'
-        # dut = OHMP.OhMediaPlayerDevice( mpName, aIsDut=True, aLoopback=loopback )
-        # if 'Volume' not in dut.product.attributes:
-        #     self.log.Skip( self.mrDev, 'Volume control disabled' )
-        # dut.Shutdown()
+        mpName = self.mrDev + ':SoftPlayer'
+        dut = OHMP.OhMediaPlayerDevice( mpName, aIsDut=True, aLoopback=loopback )
+        if 'Volume' not in dut.product.attributes:
+            dut.Shutdown()
+            self.log.Skip( self.mrDev, 'Volume control disabled' )
+        self.maxVol = dut.volume.volLimit
+        dut.Shutdown()
 
         self.mr = MR.MediaRendererDevice( mrName, aLoopback=loopback )
         self.rc = self.mr.rc        
@@ -72,8 +71,8 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.currVolumeDb = self.rc.volumeDb
 
         # test volume control / monitoring
-        targetVol = random.randint( 1, kMaxVol-1 )
-        self.VolStepping( kMaxVol )
+        targetVol = random.randint( 1, self.maxVol-1 )
+        self.VolStepping( self.maxVol )
         self.VolStepping( 0 )
         self.VolStepping( targetVol )
         
@@ -92,7 +91,7 @@ class TestRenderingControlService( BASE.BaseTest ):
             self.mr.Shutdown()
         if self.soft:
             self.soft.Shutdown()
-        BASE.BaseTest.Cleanup( self )                
+        BASE.BaseTest.Cleanup( self )
                     
     def VolStepping( self, aTarget ):
         """Step volume to aTarget (or range limit)"""
@@ -108,7 +107,7 @@ class TestRenderingControlService( BASE.BaseTest ):
             self.rc.volume = newVol
             self.rcEvent.wait( 5 )
             if not self.rcEvent.isSet():
-                if self.currVolume==kMaxVol and aTarget>=self.currVolume \
+                if self.currVolume==self.maxVol and aTarget>=self.currVolume \
                 or self.currVolume==0       and aTarget<self.currVolume:
                     self.log.Info( self.mrDev, 'Volume range end-point reached' )
                     aTarget = self.currVolume
