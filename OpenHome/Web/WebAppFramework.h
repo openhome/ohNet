@@ -110,6 +110,7 @@ public:
     virtual ~ITabHandler() {}
 };
 
+// FIXME - rename to IWebAppTimer
 class IFrameworkTimer;
 
 /**
@@ -175,21 +176,6 @@ public:
     virtual ~IFrameworkTimer() {}
 };
 
-class IPollTimerHandler
-{
-public:
-    virtual void PollWaitComplete() = 0;
-    virtual ~IPollTimerHandler() {}
-};
-
-class IPollTimer
-{
-public:
-    virtual void StartPollWait(TUint aTimeoutMs, IPollTimerHandler& aHandler) = 0;
-    virtual void CancelPollWait() = 0;
-    virtual ~IPollTimer() {}
-};
-
 class FrameworkTimer : public IFrameworkTimer
 {
 public:
@@ -210,21 +196,6 @@ private:
     TUint iCompleteCount;
 };
 
-class PollTimer : public IPollTimer, public IFrameworkTimerHandler, public OpenHome::INonCopyable
-{
-public:
-    PollTimer(IFrameworkTimer& aTimer);
-public: // from IPollTimer
-    void StartPollWait(TUint aTimeoutMs, IPollTimerHandler& aHandler);
-    void CancelPollWait();
-private: // from IFrameworkTimerHandler
-    void Complete();
-private:
-    IFrameworkTimer& iTimer;
-    IPollTimerHandler* iHandler;
-    OpenHome::Mutex iLock;
-};
-
 class IRefCountable
 {
 public:
@@ -233,6 +204,8 @@ public:
     virtual ~IRefCountable() {}
 };
 
+
+// FIXME - remove
 class IRefCountableUnlocked
 {
 public:
@@ -288,7 +261,7 @@ private:
 /**
  * Internal tab for framework.
  */
-class FrameworkTab : public IFrameworkTab, public ITabHandler, public IPollTimerHandler, public IRefCountableUnlocked
+class FrameworkTab : public IFrameworkTab, public ITabHandler, public IFrameworkTimerHandler, public IRefCountableUnlocked
 {
 public:
     FrameworkTab(TUint aId, ITabDestroyHandler& aDestroyHandler, IFrameworkTimer& aTimer, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
@@ -306,8 +279,8 @@ public: // from IFrameworkTab
     void RemoveRef();
 public: // from ITabHandler
     void Send(ITabMessage& aMessage);
-private: // from IPollTimerHandler
-    void PollWaitComplete();
+private: // from ITimerHandler
+    void Complete();
 public: // from IRefCountableUnlocked - for clients using an external lock
     void AddRefUnlocked();
     void RemoveRefUnlocked();
@@ -317,7 +290,7 @@ private:
     ITabDestroyHandler& iDestroyHandler;
     FrameworkSemaphore iTabSem; // FIXME - pass this in as parameter for testing purposes?
     FrameworkTabHandler iHandler;
-    PollTimer iPollTimer;
+    IFrameworkTimer& iTimer;
     ITab* iTab;
     std::vector<const Brx*> iLanguages; // takes ownership of pointers
     TUint iRefCount;
@@ -350,7 +323,7 @@ private:
     static TUint TabManagerIdToClientId(TUint aId);
     static TUint ClientIdToTabManagerId(TUint aId);
 private:
-    std::vector<FrameworkTimer*> iTimers;
+    std::vector<FrameworkTimer*> iTimers;   // Required as FrameworkTab takes reference to an IFrameworkTimer.
     std::vector<FrameworkTab*> iTabs;
     const TUint iMaxTabs;
     OpenHome::Mutex iLock;

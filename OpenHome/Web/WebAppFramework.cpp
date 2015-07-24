@@ -239,8 +239,9 @@ void FrameworkTimer::Cancel()
 {
     AutoMutex a(iLock);
     iCancelCount++;
-    ASSERT(iHandler != nullptr);
-    iTimer->Cancel();
+    if (iHandler != nullptr) {
+        iTimer->Cancel();
+    }
     iHandler = nullptr;
 }
 
@@ -250,47 +251,6 @@ void FrameworkTimer::Complete()
     iCompleteCount++;
     ASSERT(iHandler != nullptr);
     iHandler->Complete();
-    iHandler = nullptr;
-}
-
-
-// PollTimer
-
-PollTimer::PollTimer(IFrameworkTimer& aTimer) // FIXME - each PollTimer should get a unique IFrameworkTimer - is this what's happening?
-    : iTimer(aTimer)
-    , iHandler(nullptr)
-    , iLock("TTDL")
-{
-}
-
-void PollTimer::StartPollWait(TUint aTimeoutMs, IPollTimerHandler& aHandler)
-{
-    AutoMutex a(iLock);
-    //ASSERT(iHandler == nullptr);
-    iHandler = &aHandler;
-    iTimer.Start(aTimeoutMs, *this);
-}
-
-void PollTimer::CancelPollWait()
-{
-    AutoMutex a(iLock);
-    // Another thread (i.e., another web request) may have come in while a tab was NOT waiting on a poll (i.e., while some other work was going on, such as the framework doing a blocking send) and requested termination of the session.
-    // It is valid for iHandler to be nullptr in that situation.
-    //ASSERT(iHandler != nullptr);
-    //iTimer.Cancel();
-
-    if (iHandler != nullptr) {
-        iTimer.Cancel();
-    }
-
-    iHandler = nullptr;
-}
-
-void PollTimer::Complete()
-{
-    AutoMutex a(iLock);
-    ASSERT(iHandler != nullptr);
-    iHandler->PollWaitComplete();
     iHandler = nullptr;
 }
 
@@ -331,7 +291,7 @@ FrameworkTab::FrameworkTab(TUint aId, ITabDestroyHandler& aDestroyHandler, IFram
     , iDestroyHandler(aDestroyHandler)
     , iTabSem("FRTS", 0)
     , iHandler(iTabSem, aSendQueueSize, aSendTimeoutMs)
-    , iPollTimer(aTimer)
+    , iTimer(aTimer)
     , iTab(nullptr)
     , iRefCount(0)
     , iDestructionPending(false)
@@ -394,14 +354,15 @@ void FrameworkTab::StartPollWait()
 {
     AutoMutex a(iLock);
     ASSERT(iTab != nullptr);
-    iPollTimer.StartPollWait(iPollTimeoutMs, *this);
+    iTimer.Start(iPollTimeoutMs, *this);
 }
 
 void FrameworkTab::CancelPollWait()
 {
     AutoMutex a(iLock);
-    ASSERT(iTab != nullptr);
-    iPollTimer.CancelPollWait();
+    if (iTab != nullptr) {
+        iTimer.Cancel();
+    }
 }
 
 void FrameworkTab::Receive(const OpenHome::Brx& aMessage)
@@ -433,7 +394,7 @@ void FrameworkTab::Send(ITabMessage& aMessage)
     iHandler.Send(aMessage);
 }
 
-void FrameworkTab::PollWaitComplete()
+void FrameworkTab::Complete()
 {
     // FIXME - bodge to ensure no attempt to AddRef() to a Destroy()ed tab and then Destroy() it again.
     {
@@ -967,7 +928,7 @@ void HttpSession::Post()
             for (TUint i=0; i<languageList.size(); i++) {
                 languageListHeapBufs.push_back(new Brh(languageList[i]));
             }
-            TUint id = iTabManager.CreateTab(app, languageListHeapBufs);
+            TUint id = iTabManager.CreateTab(app, languageListHeapBufs);    // FIXME - this should maybe cause framework tab to call StartPollWait() on itself.
             IFrameworkTab& tab = iTabManager.GetTab(id);
             iResponseStarted = true;
             WriteLongPollHeaders();
