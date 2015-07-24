@@ -173,7 +173,7 @@ int TestProtocol::Run()
 
 PipelineSongcast::PipelineSongcast(TestProtocol* aTestProtocol, Environment& aEnv, Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iTestProtocol(aTestProtocol)
-    , iDriver(NULL)
+    , iDriver(nullptr)
 {
     iDriver = new DriverSongcastSender(iTestProtocol->GetPipeline(), iTestProtocol->GetMaxDriverJiffies(), aDvStack, aSenderUdn, aSenderChannel);
 }

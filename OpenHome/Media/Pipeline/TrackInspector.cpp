@@ -11,13 +11,13 @@ using namespace OpenHome::Media;
 
 TrackInspector::TrackInspector(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
-    , iTrack(NULL)
+    , iTrack(nullptr)
 {
 }
 
 TrackInspector::~TrackInspector()
 {
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
 }
@@ -36,22 +36,22 @@ Msg* TrackInspector::Pull()
 
 void TrackInspector::NotifyTrackPlaying()
 {
-    ASSERT(iTrack!=NULL);
+    ASSERT(iTrack!=nullptr);
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrackPlay(*iTrack);
     }
     iTrack->RemoveRef();
-    iTrack = NULL;
+    iTrack = nullptr;
 }
 
 void TrackInspector::NotifyTrackFailed()
 {
-    ASSERT(iTrack!=NULL);
+    ASSERT(iTrack!=nullptr);
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrackFail(*iTrack);
     }
     iTrack->RemoveRef();
-    iTrack = NULL;
+    iTrack = nullptr;
 }
 
 Msg* TrackInspector::ProcessMsg(MsgMode* aMsg)
@@ -66,7 +66,7 @@ Msg* TrackInspector::ProcessMsg(MsgSession* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         NotifyTrackFailed();
     }
     iTrack = &aMsg->Track();
@@ -86,7 +86,7 @@ Msg* TrackInspector::ProcessMsg(MsgDelay* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    if (iTrack != NULL && aMsg->Live()) {
+    if (iTrack != nullptr && aMsg->Live()) {
         /* Live streams wait for the stopper to tell them to start generating audio.
            Its possible we'll see this msg but no audio for a perfectly good stream
            ...so assume that generation of MsgEncodedStream implies the track is good
@@ -129,7 +129,7 @@ Msg* TrackInspector::ProcessMsg(MsgWait* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (iTrack != NULL) {
+    if (iTrack != nullptr) {
         NotifyTrackPlaying();
     }
     return aMsg;

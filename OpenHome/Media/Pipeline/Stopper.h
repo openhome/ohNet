@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -31,11 +33,14 @@ public:
     virtual void PipelinePlaying() = 0;
 };
 
+class IPipelineElementObserverThread;
+
 class Stopper : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler
 {
     friend class SuiteStopper;
 public:
-    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
+    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver,
+            IPipelineElementObserverThread& aObserverThread, TUint aRampDuration);
     virtual ~Stopper();
     void SetStreamPlayObserver(IStreamPlayObserver& aObserver);
     void Play();
@@ -78,6 +83,13 @@ private:
        ,EStopped
        ,EFlushing
     };
+    enum EEventedState
+    {
+        EEventNone
+       ,EEventPlaying
+       ,EEventPaused
+       ,EEventStopped
+    };
 private:
     Msg* ProcessFlushable(Msg* aMsg);
     void OkToPlay();
@@ -86,12 +98,15 @@ private:
     void HandlePaused();
     void HandleStopped();
     void SetState(EState aState);
+    void ScheduleEvent(EEventedState aState);
+    void ReportEvent();
     const TChar* State() const;
     static const TChar* State(EState aState);
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStopperObserver& iObserver;
+    IPipelineElementObserverThread& iObserverThread;
     Mutex iLock;
     Semaphore iSem;
     IStreamPlayObserver* iStreamPlayObserver;
@@ -109,6 +124,9 @@ private:
     TBool iFlushStream;
     TBool iBuffering;
     TBool iQuit;
+    TUint iEventId;
+    std::atomic<EEventedState> iEventState;
+    EEventedState iLastEventedState;
 };
 
 } // namespace Media

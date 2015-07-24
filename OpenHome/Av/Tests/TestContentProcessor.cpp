@@ -109,7 +109,7 @@ private:
 
 SuiteContent::SuiteContent(const TChar* aName)
     : Suite(aName)
-    , iProcessor(NULL)
+    , iProcessor(nullptr)
     , iInterruptBytes(0)
     , iInterrupt(false)
 {

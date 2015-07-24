@@ -264,7 +264,7 @@ void SuiteCredentials::Test()
     const Brn kUsername("username");
     const Brn kPasswordDec("password");
     BIO *bio = BIO_new_mem_buf((void*)key.Ptr(), key.Bytes());
-    RSA* rsa = PEM_read_bio_RSAPublicKey (bio, NULL, NULL, NULL);
+    RSA* rsa = PEM_read_bio_RSAPublicKey (bio, nullptr, nullptr, nullptr);
     BIO_free(bio);
     Bws<19> src(kPasswordDec);
     src.PtrZ();

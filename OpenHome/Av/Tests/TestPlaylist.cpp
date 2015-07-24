@@ -271,19 +271,19 @@ TUint DummyDriver::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /
 Msg* DummyDriver::ProcessMsg(MsgMode* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgChangeInput* aMsg)
@@ -294,31 +294,31 @@ Msg* DummyDriver::ProcessMsg(MsgChangeInput* aMsg)
 Msg* DummyDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgHalt* aMsg)
@@ -330,13 +330,13 @@ Msg* DummyDriver::ProcessMsg(MsgHalt* aMsg)
 Msg* DummyDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
@@ -351,13 +351,13 @@ Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* DummyDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgPlayable* aMsg)
@@ -435,7 +435,8 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    VolumeConsumer volumeInit(iDummyVolume);
+    VolumeConsumer volumeInit;
+    volumeInit.SetVolume(iDummyVolume);
     VolumeProfileNull volProfile;
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));

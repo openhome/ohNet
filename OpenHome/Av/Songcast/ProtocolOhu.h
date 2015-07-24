@@ -31,7 +31,6 @@ private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;
@@ -50,7 +49,6 @@ private:
     TBool iLeaving;
     TBool iStopped;
     TBool iActive;
-    TBool iStarving;
     TUint iSlaveCount;
     Endpoint iSlaveList[kMaxSlaveCount];
     Bws<kMaxFrameBytes> iMessageBuffer;

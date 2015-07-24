@@ -17,7 +17,7 @@ Gorger::Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iGorgeSize(aGorgeSize)
     , iLock("GORG")
     , iSemOut("SGRG", 0)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
     , iCanGorge(false)
     , iGorging(false)
     , iGorgeOnHaltOut(false)
@@ -192,7 +192,7 @@ void Gorger::NotifyStarving(const Brx& aMode, TUint aStreamId)
         SetGorging(true);
     }
     iLock.Signal();
-    if (iStreamHandler != NULL) {
+    if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

@@ -32,7 +32,7 @@ ZoneHandler::ZoneHandler(Environment& aEnv, const Brx& aSenderZone)
     , iLockListener("ZON4")
     , iLockTxSocket("ZON5")
     , iLockTxData("ZON6")
-    , iRxSocket(NULL)
+    , iRxSocket(nullptr)
     , iReadBuffer(iReader)
     , iTxSocket(aEnv)
     , iWriter(iTxSocket, iEndpoint)
@@ -53,7 +53,7 @@ ZoneHandler::~ZoneHandler()
     ASSERT(iListeners.size() == 0);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
     iQuit = true;
-    if (iRxSocket != NULL) {
+    if (iRxSocket != nullptr) {
         iReader.ReadInterrupt();
     }
     iSem.Signal();
@@ -169,7 +169,7 @@ void ZoneHandler::Run()
                 try {
                     OhzHeader header;
                     AutoMutex a(iLockRxSocket);
-                    if (iRxSocket == NULL) {
+                    if (iRxSocket == nullptr) {
                         THROW(ReaderError);
                     }
                     iReadBuffer.ReadFlush();
@@ -260,7 +260,7 @@ void ZoneHandler::Run()
 
 void ZoneHandler::CurrentSubnetChanged()
 {
-    if (iRxSocket != NULL) {
+    if (iRxSocket != nullptr) {
         iReader.ReadInterrupt();
     }
     AutoMutex a(iLockRxSocket);
@@ -268,7 +268,7 @@ void ZoneHandler::CurrentSubnetChanged()
     DestroySockets();
     static const TChar* kNifCookie = "ZoneHandler";
     NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
-    if (current != NULL) {
+    if (current != nullptr) {
         TIpAddress addr = current->Address();
         current->RemoveRef(kNifCookie);
         InitialiseSockets(addr);
@@ -287,7 +287,7 @@ void ZoneHandler::DestroySockets()
 {
     iReader.ClearSocket();
     delete iRxSocket;
-    iRxSocket = NULL;
+    iRxSocket = nullptr;
 }
 
 void ZoneHandler::SendZoneUri(TUint aCount)

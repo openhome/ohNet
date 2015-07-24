@@ -17,8 +17,8 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     Library::DestroySubnetList(subnetList);
-    CpStack* cpStack = NULL;
-    DvStack* dvStack = NULL;
+    CpStack* cpStack = nullptr;
+    DvStack* dvStack = nullptr;
     lib->StartCombined(subnet, cpStack, dvStack);
 
     TestPlaylist(*cpStack, *dvStack);

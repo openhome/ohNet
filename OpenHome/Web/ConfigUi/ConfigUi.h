@@ -9,6 +9,7 @@
 #include <OpenHome/Av/Source.h>
 
 EXCEPTION(LanguageResourceInvalid);
+EXCEPTION(JsonStringError);
 
 namespace OpenHome {
 namespace Av {
@@ -74,9 +75,17 @@ public:
     virtual ~IConfigMessage() {}
 };
 
+// FIXME - should all Allocate() methods return a pointer to indicate taking ownership?
 class IConfigMessageAllocator
 {
 public:
+    // FIXME - by returning an IConfigMessage here, are exposing all the Set() methods above!
+    // Only want to expose the Send()/Destroy() methods.
+    // Fixing the above would also make it clearer how ConfigMessages should be created/used (i.e., allocated via the allocators, and Set() not called directly).
+    // Should surely return an ITabMessage from each of these.
+    // And maybe IConfigMessage shouldn't even be an interface!
+
+    // FIXME - also, would it be smarter just to subscribe directly to the ConfigVal, rather than taking a value? Means that most up-to-date val will always be sent.
     virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson) = 0;
     virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
     virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson) = 0;
@@ -86,6 +95,7 @@ public:
 class IConfigMessageDeallocator
 {
 public:
+    // FIXME - if anything, this should take a pointer to show passing of ownership.
     virtual void Deallocate(IConfigMessage& aMessage) = 0;
     virtual ~IConfigMessageDeallocator() {}
 };
@@ -102,8 +112,11 @@ protected:
     virtual void WriteValue(OpenHome::IWriter& aWriter) = 0;
     virtual void WriteType(OpenHome::IWriter& aWriter) = 0;
     virtual void WriteMeta(OpenHome::IWriter& aWriter) = 0;
-protected: // from IConfigMessage
-    void Clear();
+protected:
+    // FIXME - instead of providing a default implementation here and expecting subclasses to override it but then still call it, instead have the following:
+    //public: void Clear(); // Does work to clear shared members of msg. Also calls into ClearDerived();
+    //protected: virtual void ClearDerived() = 0;   // Derived members MUST implement this to clear their own members (and there is no need for them to remember to call Clear()).
+    virtual void Clear();
 private: // from IConfigMessage
     void Set(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
     void Set(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
@@ -156,7 +169,7 @@ class ConfigMessageText : public ConfigMessage
 {
     friend class ConfigMessageTextAllocator;
 private:
-    static const TUint kMaxBytes = 512; //FIXME - use instead: OpenHome::Configuration::ConfigText::kMaxBytes;
+    static const TUint kMaxBytes = OpenHome::Configuration::ConfigText::kMaxBytes;
 private:
     ConfigMessageText(IConfigMessageDeallocator& aDeallocator);
 private: // from ConfigMessage
@@ -218,6 +231,12 @@ private:
     ConfigMessageTextAllocator iAllocatorText;
 };
 
+class JsonStringParser
+{
+public:
+    static Brn ParseString(const Brx& aBuffer, Brn& aRemaining);
+};
+
 /**
  * Abstract class that will receive a string message and attempt to parse it
  * into one or more key-value pair messages.
@@ -239,6 +258,9 @@ public: // from ITab
  *
  * JSON strings (for keys/values) must not contain " or \
  */
+
+// FIXME - MUST ensure all strings are JSON escaped correctly when written out (into additional json blob/string).
+
 class JsonKvp : public OpenHome::INonCopyable
 {
 public:

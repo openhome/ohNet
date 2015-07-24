@@ -160,7 +160,7 @@ void SuiteAggregator::TestPlayablesAreSplit()
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
     TEST(iGeneratedMsgCount == 2);
-    TEST(iAggregator->iPlayable != NULL);
+    TEST(iAggregator->iPlayable != nullptr);
     TEST(TimesEqual(iLastPulledJiffies, kAggregatorJiffies));
 }
 
@@ -172,12 +172,12 @@ void SuiteAggregator::TestModeCausesShortPlayableToBePulled()
     iNextGeneratedMsg = EMsgPlayable;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable != NULL);
+    TEST(iAggregator->iPlayable != nullptr);
 
     iNextGeneratedMsg = EMsgMode;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable == NULL);
+    TEST(iAggregator->iPlayable == nullptr);
     PullMsg();
     TEST(iLastMsg == EMsgMode);
 }
@@ -190,12 +190,12 @@ void SuiteAggregator::TestHaltCausesShortPlayableToBePulled()
     iNextGeneratedMsg = EMsgPlayable;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable != NULL);
+    TEST(iAggregator->iPlayable != nullptr);
 
     iNextGeneratedMsg = EMsgHalt;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable == NULL);
+    TEST(iAggregator->iPlayable == nullptr);
     PullMsg();
     TEST(iLastMsg == EMsgHalt);
 }
@@ -208,14 +208,14 @@ void SuiteAggregator::TestChangeSampleRate()
     iNextGeneratedMsg = EMsgPlayable;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable != NULL);
+    TEST(iAggregator->iPlayable != nullptr);
     const TUint prevBytes = iLastPulledBytes;
 
     iSampleRate /= 2;
     iNextGeneratedMsg = EMsgDecodedStream;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable == NULL);
+    TEST(iAggregator->iPlayable == nullptr);
 
     PullMsg();
     TEST(iLastMsg == EMsgDecodedStream);
@@ -234,14 +234,14 @@ void SuiteAggregator::TestChangeBitDepth()
     iNextGeneratedMsg = EMsgPlayable;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable != NULL);
+    TEST(iAggregator->iPlayable != nullptr);
     const TUint prevBytes = iLastPulledBytes;
 
     iBitDepth = 8;
     iNextGeneratedMsg = EMsgDecodedStream;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable == NULL);
+    TEST(iAggregator->iPlayable == nullptr);
 
     PullMsg();
     TEST(iLastMsg == EMsgDecodedStream);
@@ -260,14 +260,14 @@ void SuiteAggregator::TestChangeNumChannels()
     iNextGeneratedMsg = EMsgPlayable;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable != NULL);
+    TEST(iAggregator->iPlayable != nullptr);
     const TUint prevBytes = iLastPulledBytes;
 
     iNumChannels = 1;
     iNextGeneratedMsg = EMsgDecodedStream;
     PullMsg();
     TEST(iLastMsg == EMsgPlayable);
-    TEST(iAggregator->iPlayable == NULL);
+    TEST(iAggregator->iPlayable == nullptr);
 
     PullMsg();
     TEST(iLastMsg == EMsgDecodedStream);
@@ -286,16 +286,16 @@ Msg* SuiteAggregator::Pull()
     case EMsgPlayable:
         return CreateAudio();
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL, false, false);
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:
         ASSERTS();
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -314,9 +314,9 @@ MsgPlayable* SuiteAggregator::CreateAudio()
 void SuiteAggregator::PullMsg()
 {
     Msg* msg = iAggregator->Pull();
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     msg = msg->Process(*this);
-    if (msg != NULL) {
+    if (msg != nullptr) {
         msg->RemoveRef();
     }
 }
@@ -342,49 +342,49 @@ Msg* SuiteAggregator::ProcessMsg(MsgMode* aMsg)
 Msg* SuiteAggregator::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgChangeInput* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgHalt* aMsg)
@@ -396,13 +396,13 @@ Msg* SuiteAggregator::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteAggregator::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgDecodedStream* aMsg)
@@ -417,13 +417,13 @@ Msg* SuiteAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* SuiteAggregator::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgPlayable* aMsg)

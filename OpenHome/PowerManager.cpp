@@ -136,7 +136,7 @@ TUint PowerManagerObserver::Priority() const
 // StoreVal
 
 StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey)
-    : iObserver(NULL)
+    : iObserver(nullptr)
     , iStore(aStore)
     , iKey(aKey)
     , iLock("STVM")

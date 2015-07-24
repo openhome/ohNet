@@ -30,7 +30,7 @@ Msg* Ramper::Pull()
         msg = iUpstreamElement.Pull();
     }
     msg = msg->Process(*this);
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     return msg;
 }
 
@@ -120,13 +120,13 @@ Msg* Ramper::ProcessMsg(MsgAudioPcm* aMsg)
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
-            if (split != NULL) {
+            if (split != nullptr) {
                 iQueue.Enqueue(split);
             }
         }
-        split = NULL;
+        split = nullptr;
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EUp, split);
-        if (split != NULL) {
+        if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
         if (iRemainingRampSize == 0) {

@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <list>
 
@@ -107,6 +108,7 @@ private:
     TrackFactory* iTrackFactory;
     MsgFactory* iMsgFactory;
     Waiter* iWaiter;
+    ElementObserverSync* iEventCallback;
     EMsgType iLastPulledMsg;
     TBool iRampingDown;
     TBool iRampingUp;
@@ -158,7 +160,8 @@ void SuiteWaiter::Setup()
     init.SetMsgHaltCount(2);
     init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iWaiter = new Waiter(*iMsgFactory, *this, *this, kRampDuration);
+    iEventCallback = new ElementObserverSync();
+    iWaiter = new Waiter(*iMsgFactory, *this, *this, *iEventCallback, kRampDuration);
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
     iTrackOffset = 0;
@@ -175,6 +178,7 @@ void SuiteWaiter::TearDown()
         iPendingMsgs.pop_front();
     }
     delete iWaiter;
+    delete iEventCallback;
     delete iMsgFactory;
     delete iTrackFactory;
 }
@@ -259,7 +263,7 @@ Msg* SuiteWaiter::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteWaiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteWaiter::ProcessMsg(MsgMetaText* aMsg)
@@ -349,7 +353,7 @@ Msg* SuiteWaiter::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteWaiter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteWaiter::ProcessMsg(MsgQuit* aMsg)
@@ -382,7 +386,7 @@ Msg* SuiteWaiter::CreateEncodedStream()
 
 Msg* SuiteWaiter::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, NULL);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, nullptr);
 }
 
 Msg* SuiteWaiter::CreateAudio()
@@ -512,7 +516,7 @@ void SuiteWaiter::TestPlayingFromWaitRampsUp()
 
 void SuiteWaiter::TestMsgsPassWhilePlaying()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, NULL, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, nullptr, false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     PullNext(EMsgSession);

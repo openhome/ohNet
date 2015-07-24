@@ -25,7 +25,7 @@ const Brn CodecAlacBase::kCodecAlac("ALAC");
 
 CodecAlacBase::CodecAlacBase(const TChar* aId)
     : CodecBase(aId)
-    , alac(NULL)
+    , alac(nullptr)
 {
     LOG(kCodec, "CodecAlacBase::CodecAlacBase\n");
 }
@@ -34,7 +34,7 @@ CodecAlacBase::~CodecAlacBase()
 {
     LOG(kCodec, "CodecAlacBase::~CodecAlacBase\n");
     alac_free_buffers(alac);
-    alac = NULL;
+    alac = nullptr;
 }
 
 void CodecAlacBase::Initialise()
@@ -71,7 +71,7 @@ void CodecAlacBase::StreamCompleted()
     LOG(kCodec, "CodecAlacBase::StreamCompleted\n");
     // Free all malloc'ed buffers.
     alac_free_buffers(alac);
-    alac = NULL;
+    alac = nullptr;
 }
 
 void CodecAlacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)

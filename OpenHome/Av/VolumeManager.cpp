@@ -19,11 +19,16 @@ using namespace OpenHome::Configuration;
 
 // VolumeConsumer
 
-VolumeConsumer::VolumeConsumer(IVolume& aVolume)
-    : iVolume(aVolume)
-    , iBalance(NULL)
-    , iFade(NULL)
+VolumeConsumer::VolumeConsumer()
+    : iVolume(nullptr)
+    , iBalance(nullptr)
+    , iFade(nullptr)
 {
+}
+
+void VolumeConsumer::SetVolume(IVolume& aVolume)
+{
+    iVolume = &aVolume;
 }
 
 void VolumeConsumer::SetBalance(IBalance& aBalance)
@@ -36,7 +41,7 @@ void VolumeConsumer::SetFade(IFade& aFade)
     iFade = &aFade;
 }
 
-IVolume& VolumeConsumer::Volume()
+IVolume* VolumeConsumer::Volume()
 {
     return iVolume;
 }
@@ -438,14 +443,14 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
 
     const TInt maxBalance = iBalanceMax;
     if (maxBalance == 0) {
-        iBalance = NULL;
+        iBalance = nullptr;
     }
     else {
         iBalance = new ConfigNum(aConfigInit, kKeyBalance, -maxBalance, maxBalance, 0);
     }
     const TInt maxFade = iFadeMax;
     if (maxFade == 0) {
-        iFade = NULL;
+        iFade = nullptr;
     }
     else {
         iFade = new ConfigNum(aConfigInit, kKeyFade, -maxFade, maxFade, 0);
@@ -530,29 +535,29 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     : iVolumeConfig(aVolumeConfig)
 {
     IBalance* balance = aVolumeConsumer.Balance();
-    if (balance == NULL) {
-        iBalanceUser = NULL;
+    if (balance == nullptr) {
+        iBalanceUser = nullptr;
     }
     else {
         iBalanceUser = new BalanceUser(*balance, aConfigReader);
     }
     IFade* fade = aVolumeConsumer.Fade();
-    if (fade == NULL) {
-        iFadeUser = NULL;
+    if (fade == nullptr) {
+        iFadeUser = nullptr;
     }
     else {
         iFadeUser = new FadeUser(*fade, aConfigReader);
     }
-    if (aMute == NULL) {
-        iMuteReporter = NULL;
-        iMuteUser = NULL;
+    if (aMute == nullptr) {
+        iMuteReporter = nullptr;
+        iMuteUser = nullptr;
     }
     else {
         iMuteReporter = new MuteReporter(*aMute);
         iMuteUser = new MuteUser(*iMuteReporter, aVolumeConfig.StoreUserMute());
     }
-    if (aVolumeConfig.VolumeControlEnabled()) {
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(aVolumeConsumer.Volume(), iVolumeConfig.VolumeUnity());
+    if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
+        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*aVolumeConsumer.Volume(), iVolumeConfig.VolumeUnity());
         iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, iVolumeConfig.VolumeUnity());
         iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset);
@@ -562,13 +567,13 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         aProduct.AddAttribute("Volume");
     }
     else {
-        iVolumeSourceUnityGain = NULL;
-        iVolumeUnityGain = NULL;
-        iVolumeSourceOffset = NULL;
-        iVolumeReporter = NULL;
-        iVolumeLimiter = NULL;
-        iVolumeUser = NULL;
-        iProviderVolume = NULL;
+        iVolumeSourceUnityGain = nullptr;
+        iVolumeUnityGain = nullptr;
+        iVolumeSourceOffset = nullptr;
+        iVolumeReporter = nullptr;
+        iVolumeLimiter = nullptr;
+        iVolumeUser = nullptr;
+        iProviderVolume = nullptr;
     }
 }
 
@@ -589,7 +594,7 @@ VolumeManager::~VolumeManager()
 
 void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
 {
-    if (iVolumeReporter == NULL) {
+    if (iVolumeReporter == nullptr) {
         aObserver.VolumeChanged(0);
     }
     else {
@@ -599,7 +604,7 @@ void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
 
 void VolumeManager::AddMuteObserver(Media::IMuteObserver& aObserver)
 {
-    if (iMuteReporter == NULL) {
+    if (iMuteReporter == nullptr) {
         aObserver.MuteChanged(false);
     }
     else {
@@ -609,14 +614,14 @@ void VolumeManager::AddMuteObserver(Media::IMuteObserver& aObserver)
 
 void VolumeManager::SetVolumeOffset(TInt aValue)
 {
-    if (iVolumeSourceOffset != NULL) {
+    if (iVolumeSourceOffset != nullptr) {
         iVolumeSourceOffset->SetVolumeOffset(aValue);
     }
 }
 
 void VolumeManager::SetUnityGain(TBool aEnable)
 {
-    if (iVolumeSourceUnityGain != NULL) {
+    if (iVolumeSourceUnityGain != nullptr) {
         iVolumeSourceUnityGain->SetUnityGain(aEnable);
     }
 }
@@ -663,7 +668,7 @@ TUint VolumeManager::FadeMax() const
 
 void VolumeManager::SetVolume(TUint aValue)
 {
-    if (iVolumeUser == NULL) {
+    if (iVolumeUser == nullptr) {
         THROW(VolumeNotSupported);
     }
     iVolumeUser->SetVolume(aValue);
@@ -671,7 +676,7 @@ void VolumeManager::SetVolume(TUint aValue)
 
 void VolumeManager::SetBalance(TInt aBalance)
 {
-    if (iBalanceUser == NULL) {
+    if (iBalanceUser == nullptr) {
         THROW(BalanceNotSupported);
     }
     iBalanceUser->SetBalance(aBalance);
@@ -679,7 +684,7 @@ void VolumeManager::SetBalance(TInt aBalance)
 
 void VolumeManager::SetFade(TInt aFade)
 {
-    if (iFadeUser == NULL) {
+    if (iFadeUser == nullptr) {
         THROW(FadeNotSupported);
     }
     iFadeUser->SetFade(aFade);
@@ -687,7 +692,7 @@ void VolumeManager::SetFade(TInt aFade)
 
 void VolumeManager::Mute()
 {
-    if (iMuteUser == NULL) {
+    if (iMuteUser == nullptr) {
         THROW(MuteNotSupported);
     }
     iMuteUser->Mute();
@@ -695,7 +700,7 @@ void VolumeManager::Mute()
 
 void VolumeManager::Unmute()
 {
-    if (iMuteUser == NULL) {
+    if (iMuteUser == nullptr) {
         THROW(MuteNotSupported);
     }
     iMuteUser->Unmute();

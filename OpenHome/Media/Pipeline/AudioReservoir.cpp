@@ -30,7 +30,7 @@ Msg* AudioReservoir::Pull()
             iSem.Signal();
         }
         iLock.Signal();
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 

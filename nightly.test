@@ -52,6 +52,7 @@ tests = '''
     TestJson
     TestObservable
     TestRaop
+    TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

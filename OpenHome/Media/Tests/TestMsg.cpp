@@ -384,7 +384,7 @@ void SuiteAllocator::Test()
     TestCell* cells[kNumTestCells];
     for (TUint i=0; i<kNumTestCells; i++) {
         cells[i] = allocator->Allocate();
-        TEST(cells[i] != NULL);
+        TEST(cells[i] != nullptr);
     }
     
     //Print("\nalloc 11th TestCell.  Check this throws\n");
@@ -415,7 +415,7 @@ void SuiteAllocator::Test()
     //Print("\nreallocate all TestCells, confirming that freed TestCells can be reused\n");
     for (TUint i=0; i<kNumTestCells; i++) {
         cells[i] = allocator->Allocate();
-        TEST(cells[i] != NULL);
+        TEST(cells[i] != nullptr);
     }
     TEST(allocator->CellsUsed() == kNumTestCells);
     
@@ -722,7 +722,7 @@ void SuiteMsgAudio::Test()
     static const TUint kSplitPos = 800;
     jiffies = msg->Jiffies();
     MsgAudio* remaining = msg->Split(kSplitPos);
-    TEST(remaining != NULL);
+    TEST(remaining != nullptr);
     TUint newJiffies = msg->Jiffies();
     TUint remainingJiffies = remaining->Jiffies();
     remaining->RemoveRef();
@@ -835,7 +835,7 @@ void SuiteMsgAudio::Test()
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     TUint rampRemaining = Ramp::kMax;
-    MsgAudio* msgRemaining = NULL;
+    MsgAudio* msgRemaining = nullptr;
     msgAggregate2->SetRamp(0, rampRemaining, Ramp::EUp, msgRemaining);
     TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
@@ -872,7 +872,7 @@ void SuiteMsgAudio::Test()
 
     // Split silence msg.  Check lengths of both parts are as expected.
     remaining = msg->Split(jiffies/4);
-    TEST(remaining != NULL);
+    TEST(remaining != nullptr);
     TEST(msg->Jiffies() == jiffies/4);
     TEST(remaining->Jiffies() == (3*jiffies)/4);
     remaining->RemoveRef();
@@ -1071,10 +1071,10 @@ void SuiteMsgPlayable::Test()
     buf.Set(pcmProcessor.Buf());
     TEST(buf.Bytes() == data.Bytes());
 
-    // Test splitting at the end of a message returns NULL
+    // Test splitting at the end of a message returns nullptr
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataEndianLittle, 0);
     playable = audioPcm->CreatePlayable();
-    TEST(NULL == playable->Split(playable->Bytes()));
+    TEST(nullptr == playable->Split(playable->Bytes()));
     playable->RemoveRef();
 
     // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
@@ -1369,11 +1369,11 @@ void SuiteRamp::Test()
 
     // Create MsgSilence.  Set [Max...Min] ramp.  Convert to playable and check output is all zeros
     MsgSilence* silence = iMsgFactory->CreateMsgSilence(jiffies);
-    MsgAudio* remaining = NULL;
+    MsgAudio* remaining = nullptr;
     TEST(Ramp::kMin == silence->SetRamp(Ramp::kMax, jiffies, Ramp::EDown, remaining));
-    TEST(remaining == NULL);
+    TEST(remaining == nullptr);
     MsgPlayable* playable = silence->CreatePlayable(44100, 8, 2);
-    TEST(playable != NULL);
+    TEST(playable != nullptr);
     ProcessorPcmBufPacked pcmProcessor;
     playable->Read(pcmProcessor);
     const TByte* ptr = pcmProcessor.Ptr();
@@ -1395,7 +1395,7 @@ void SuiteRamp::Test()
     TEST(Ramp::kMin == audioPcm->SetRamp(Ramp::kMax / 2, remainingDuration, Ramp::EDown, remaining));
     remainingDuration = jiffies * 2;
     TEST(Ramp::kMin != audioPcm->SetRamp(Ramp::kMin, remainingDuration, Ramp::EUp, remaining));
-    TEST(remaining != NULL);
+    TEST(remaining != nullptr);
     TEST(remaining->Ramp().IsEnabled());
     TEST(remaining->Ramp().End() == Ramp::kMin);
     TEST(audioPcm->Jiffies() == jiffies / 2);
@@ -1477,15 +1477,15 @@ void SuiteAudioStream::Test()
     TUint streamId = 8;
     TBool seekable = true;
     TBool live = true;
-    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, NULL);
-    TEST(msg != NULL);
+    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, nullptr);
+    TEST(msg != nullptr);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
     TEST(msg->TotalBytes() == totalBytes);
     TEST(msg->StreamId() == streamId);
     TEST(msg->Seekable() == seekable);
     TEST(msg->Live() == live);
-    TEST(msg->StreamHandler() == NULL);
+    TEST(msg->StreamHandler() == nullptr);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1496,7 +1496,7 @@ void SuiteAudioStream::Test()
     TEST(msg->StreamId() != streamId);
     TEST(msg->Seekable() != seekable);
     TEST(msg->Live() != live);
-    TEST(msg->StreamHandler() == NULL);
+    TEST(msg->StreamHandler() == nullptr);
 #endif
 
     // create second MetaText msg, check its data can be retrieved
@@ -1506,15 +1506,15 @@ void SuiteAudioStream::Test()
     streamId = 99;
     seekable = false;
     live = false;
-    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, NULL);
-    TEST(msg != NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, nullptr);
+    TEST(msg != nullptr);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
     TEST(msg->TotalBytes() == totalBytes);
     TEST(msg->StreamId() == streamId);
     TEST(msg->Seekable() == seekable);
     TEST(msg->Live() == live);
-    TEST(msg->StreamHandler() == NULL);
+    TEST(msg->StreamHandler() == nullptr);
     msg->RemoveRef();
 }
 
@@ -1539,7 +1539,7 @@ void SuiteMetaText::Test()
     // create MetaText msg, check its text can be retrieved
     Brn metaText("metaText");
     MsgMetaText* msg = iMsgFactory->CreateMsgMetaText(metaText);
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TEST(msg->MetaText() == metaText);
     msg->RemoveRef();
 
@@ -1551,7 +1551,7 @@ void SuiteMetaText::Test()
     // create second MetaText msg, check its text can be retrieved
     metaText.Set("updated");
     msg = iMsgFactory->CreateMsgMetaText(metaText);
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TEST(msg->MetaText() == metaText);
     msg->RemoveRef();
 }
@@ -1583,7 +1583,7 @@ void SuiteTrack::Test()
     TBool startOfStream = true;
     MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, startOfStream);
     track->RemoveRef();
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TEST(msg->StartOfStream() == startOfStream);
@@ -1605,7 +1605,7 @@ void SuiteTrack::Test()
     startOfStream = false;
     track = iTrackFactory->CreateTrack(uri, metadata);
     msg = iMsgFactory->CreateMsgTrack(*track, startOfStream);
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TEST(msg->Track().Id() != trackId);
@@ -1709,7 +1709,7 @@ SuiteMode::~SuiteMode()
 void SuiteMode::Test()
 {
     Brn mode("First");
-    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true, NULL, true, true);
+    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true, nullptr, true, true);
     TEST(msg->Mode() == mode);
     const ModeInfo& info = msg->Info();
     TEST(info.SupportsLatency());
@@ -1720,7 +1720,7 @@ void SuiteMode::Test()
     TEST(msg->Mode() != mode);
 
     Brn mode2("Second");
-    msg = iMsgFactory->CreateMsgMode(mode2, false, false, NULL, false, false);
+    msg = iMsgFactory->CreateMsgMode(mode2, false, false, nullptr, false, false);
     TEST(msg->Mode() == mode2);
     TEST(!info.SupportsLatency());
     TEST(!info.IsRealTime());
@@ -1792,7 +1792,7 @@ void SuiteDecodedStream::Test()
     TBool live = true;
     IStreamHandler* handler = this;
     MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, handler);
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
     TEST(msg->StreamInfo().BitDepth() == bitDepth);
@@ -1835,7 +1835,7 @@ void SuiteDecodedStream::Test()
     seekable = false;
     live = false;
     msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, handler);
-    TEST(msg != NULL);
+    TEST(msg != nullptr);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
     TEST(msg->StreamInfo().BitDepth() == bitDepth);
@@ -1922,12 +1922,12 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
+    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
+    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
@@ -1954,7 +1954,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDelay);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, false, false, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, false, false, nullptr);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgEncodedStream);
     msg->RemoveRef();
@@ -2337,7 +2337,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::ENone);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
+    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
@@ -2367,7 +2367,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgDelay);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, nullptr);
     TEST(queue->EncodedStreamCount() == 0);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);
@@ -2375,7 +2375,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->EncodedStreamCount() == 1);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    msg = iMsgFactory->CreateMsgDecodedStream(3, 128, 16, 44100, 2, Brn("test codec"), 1<<16, 0, true, true, false, NULL);
+    msg = iMsgFactory->CreateMsgDecodedStream(3, 128, 16, 44100, 2, Brn("test codec"), 1<<16, 0, true, true, false, nullptr);
     TEST(queue->DecodedStreamCount() == 0);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);

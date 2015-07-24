@@ -390,7 +390,7 @@ void RaopDiscoverySession::GetRsa()
     const unsigned char *keypp = key_private;
     EVP_PKEY *key = d2i_AutoPrivateKey(0, &keypp, sizeof(key_private));
 
-    if (key != NULL)
+    if (key != nullptr)
         iRsa = EVP_PKEY_get1_RSA(key);
     else
     {
@@ -954,7 +954,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iHostName(aHostName)
     , iFriendlyName(aFriendlyName)
     , iMacAddr(aMacAddr)
-    , iCurrent(NULL)
+    , iCurrent(nullptr)
     , iServersLock("RDSL")
     , iObserversLock("RDOL")
     , iVolume(aVolume)
@@ -1009,11 +1009,11 @@ TBool RaopDiscovery::Active()
 {
     // FIXME - this assertion is true if we switch adapters while playing a
     // track. So need to either:
-    // - allow iCurrent to be NULL when ProtocolRaop calls these functions, OR
+    // - allow iCurrent to be nullptr when ProtocolRaop calls these functions, OR
     // - ensure ProtocolRaop is stopped before it can call any of these
     // functions
-    ASSERT(iCurrent != NULL);
-    //if (iCurrent != NULL) {
+    ASSERT(iCurrent != nullptr);
+    //if (iCurrent != nullptr) {
         return iCurrent->Active();
     //}
 }
@@ -1031,31 +1031,31 @@ void RaopDiscovery::Deactivate()
 
 TUint RaopDiscovery::AesSid()
 {
-    ASSERT(iCurrent != NULL);
+    ASSERT(iCurrent != nullptr);
     return iCurrent->AesSid();
 }
 
 const Brx& RaopDiscovery::Aeskey()
 {
-    ASSERT(iCurrent != NULL);
+    ASSERT(iCurrent != nullptr);
     return iCurrent->Aeskey();
 }
 
 const Brx& RaopDiscovery::Aesiv()
 {
-    ASSERT(iCurrent != NULL);
+    ASSERT(iCurrent != nullptr);
     return iCurrent->Aesiv();
 }
 
 const Brx& RaopDiscovery::Fmtp()
 {
-    ASSERT(iCurrent != NULL);
+    ASSERT(iCurrent != nullptr);
     return iCurrent->Fmtp();
 }
 
 void RaopDiscovery::KeepAlive()
 {
-    ASSERT(iCurrent != NULL);
+    ASSERT(iCurrent != nullptr);
     return iCurrent->KeepAlive();
 }
 
@@ -1084,7 +1084,7 @@ void RaopDiscovery::NotifySessionStart(const NetworkAdapter& aNif, TUint aContro
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    if (iCurrent == NULL || !NifsMatch(aNif, iCurrent->Adapter())) {
+    if (iCurrent == nullptr || !NifsMatch(aNif, iCurrent->Adapter())) {
         // No server previously selected, or previously connected on different interface.
         // Find selected server and set it as iCurrent.
         std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
@@ -1113,8 +1113,8 @@ void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    ASSERT((iCurrent == NULL) || NifsMatch(aNif, iCurrent->Adapter()));
-    iCurrent = NULL;
+    ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
+    iCurrent = nullptr;
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionEnd();
@@ -1126,7 +1126,7 @@ void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TU
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    ASSERT((iCurrent == NULL) || NifsMatch(aNif, iCurrent->Adapter()));
+    ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionWait(aSeq, aTime);
@@ -1146,7 +1146,7 @@ void RaopDiscovery::PowerUp()
     NetworkAdapter* current = ref.Adapter();
 
     iServersLock.Wait();
-    if (current != NULL) {
+    if (current != nullptr) {
         // Single interface selected. Register only on this interface.
         AddAdapter(*current);
     }
@@ -1189,7 +1189,7 @@ void RaopDiscovery::HandleInterfaceChange()
     // -- add new subnets
 
     iServersLock.Wait();
-    if (current != NULL) {
+    if (current != nullptr) {
         // Single interface selected. Register only on this interface.
 
         // First, remove any other interfaces.
@@ -1197,10 +1197,10 @@ void RaopDiscovery::HandleInterfaceChange()
         while (i<iServers.size()) {
             const NetworkAdapter& adapter = iServers[i]->Adapter();
             if (!NifsMatch(adapter, *current)) {
-                if ((iCurrent != NULL) && NifsMatch(adapter, iCurrent->Adapter())) {
+                if ((iCurrent != nullptr) && NifsMatch(adapter, iCurrent->Adapter())) {
                     // Clear current server if its interface has been removed.
                     currentRemoved = true;
-                    iCurrent = NULL;
+                    iCurrent = nullptr;
                 }
                 iServers[i]->Disable();
                 delete iServers[i];
@@ -1224,10 +1224,10 @@ void RaopDiscovery::HandleInterfaceChange()
         while (i<iServers.size()) {
             const NetworkAdapter& adapter = iServers[i]->Adapter();
             if (InterfaceIndex(adapter, *subnetList) == -1) {
-                if ((iCurrent != NULL) && NifsMatch(adapter, iCurrent->Adapter())) {
+                if ((iCurrent != nullptr) && NifsMatch(adapter, iCurrent->Adapter())) {
                     // Clear current server if its interface has been removed.
                     currentRemoved = true;
-                    iCurrent = NULL;
+                    iCurrent = nullptr;
                 }
                 iServers[i]->Disable();
                 delete iServers[i];

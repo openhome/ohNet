@@ -148,6 +148,7 @@ private:
     VolumeSinkLogger iVolumeLogger;
     IOhmTimestampMapper* iTxTsMapper;
     IOhmTimestampMapper* iRxTsMapper;
+    Bws<Uri::kMaxUriBytes+1> iPresentationUrl;
 };
 
 class TestMediaPlayerOptions

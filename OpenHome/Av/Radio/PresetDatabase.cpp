@@ -11,7 +11,7 @@ using namespace OpenHome::Av;
 
 PresetDatabase::PresetDatabase()
     : iLock("RADB")
-    , iObserver(NULL)
+    , iObserver(nullptr)
     , iNextId(kPresetIdNone + 1)
     , iSeq(0)
     , iUpdated(false)
@@ -161,7 +161,7 @@ void PresetDatabase::EndSetPresets()
     const TBool updated = iUpdated;
     iUpdated = false;
     iLock.Signal();
-    if (updated && iObserver != NULL) {
+    if (updated && iObserver != nullptr) {
         iObserver->PresetDatabaseChanged();
     }
 }

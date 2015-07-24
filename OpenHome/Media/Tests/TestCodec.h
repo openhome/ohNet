@@ -93,7 +93,7 @@ private:
     TUint iFlushId;
 };
 
-class TestCodecFiller : public Thread, private IPipelineIdProvider
+class TestCodecFiller : public IUrlBlockWriter, public Thread, private IPipelineIdProvider
 {
 private:
     static const TUint kInvalidPipelineId = 0;
@@ -102,6 +102,8 @@ public:
     ~TestCodecFiller();
     void Start(const Brx& aUrl);
     TUint StreamId();
+public: // from IUrlBlockWriter
+    TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
@@ -233,7 +235,7 @@ public:
 protected:
     SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
     ~SuiteCodecSeek();
-    static TUint64 ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint64 aSeekPosJiffies);
+    static TUint64 ExpectedJiffies(TUint64 aJiffiesTotal, TUint64 aSeekStartJiffies, TUint aSeekPosSeconds);
 private: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
@@ -245,6 +247,7 @@ private:
     void TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToStart();
     void TestSeekingToEnd();
+    void TestSeekingBeyondEnd();
     void TestSeekingBackwards();
     void TestSeekingForwards();
 protected:
@@ -257,6 +260,7 @@ protected:
 private:
     TUint iFileNumStart;
     TUint iFileNumEnd;
+    TUint iFileNumBeyondEnd;
     TUint iFileNumBack;
     TUint iFileNumForward;
 };
@@ -270,11 +274,13 @@ private:
     void TestSeekingFromStart(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToMiddle();
     void TestSeekingToEnd();
+    void TestSeekingBeyondEnd();
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
     TUint iFileNumMiddle;
     TUint iFileNumEnd;
+    TUint iFileNumBeyondEnd;
 };
 
 class SuiteCodecZeroCrossings : public SuiteCodecStream

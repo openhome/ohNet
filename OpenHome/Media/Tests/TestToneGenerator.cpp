@@ -561,7 +561,7 @@ EStreamPlay SuiteGeneratorAny::OkToPlay(TUint)
 void SuiteGeneratorAny::Push(Msg* aMsg)
 {
     Msg* origMsg = aMsg->Process(/*IMsgProcessor*/ *this);
-    if (NULL != origMsg) {
+    if (nullptr != origMsg) {
         ASSERT(origMsg == aMsg);
         // only if callback has not already taken care of ref counting / memory management
         origMsg->RemoveRef();
@@ -694,7 +694,7 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
     TEST(allZero);
     // callback-specific objects resource-managed locally
     playable->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
@@ -758,7 +758,7 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
         }
     }
     playable->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgSilence* aMsg)
@@ -1056,7 +1056,7 @@ Msg* SuiteGeneratorConstant::ProcessMsg(MsgAudioPcm* aMsg)
     TEST(buf[0] == iExpectedSubsample);
     TEST(buf[buf.Bytes()-1] == iExpectedSubsample);
     playable->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 

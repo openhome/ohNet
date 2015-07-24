@@ -86,7 +86,7 @@ Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Av::Cr
 
 ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser)
     : ProtocolNetwork(aEnv)
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iWriterRequest(iWriterBuf)
     , iReaderUntil(iReaderBuf)
     , iReaderResponse(aEnv, iReaderUntil)
@@ -129,7 +129,7 @@ ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
     iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iSeekable = iSeek = iStarted = iStopped = false;
-    iContentProcessor = NULL;
+    iContentProcessor = nullptr;
     iNextFlushId = MsgFlush::kIdInvalid;
     iTidal->Interrupt(false);
     iUri.Replace(aUri);
@@ -211,9 +211,9 @@ ProtocolGetResult ProtocolTidal::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, 
 
 void ProtocolTidal::Deactivated()
 {
-    if (iContentProcessor != NULL) {
+    if (iContentProcessor != nullptr) {
         iContentProcessor->Reset();
-        iContentProcessor = NULL;
+        iContentProcessor = nullptr;
     }
     Close();
 }

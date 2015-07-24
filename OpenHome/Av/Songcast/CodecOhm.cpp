@@ -51,12 +51,7 @@ TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
 
 void CodecOhm::StreamInitialise()
 {
-    iBuf.SetBytes(0);
-    iOffset = 0;
-    iStreamOutput = false;
-    iSendSession = false;
-    iSampleRate = 0;
-    iLatency = 0;
+    Reset();
 }
 
 void CodecOhm::Process()
@@ -90,7 +85,7 @@ void CodecOhm::Process()
             }
             const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
             if (msg->RxTimestamped() && msg->Timestamped()) {
-                TUint rxTstamp = (iTsMapper != NULL) ? iTsMapper->ToOhmTimestamp(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
+                TUint rxTstamp = (iTsMapper != nullptr) ? iTsMapper->ToOhmTimestamp(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
                 iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart, rxTstamp, msg->NetworkTimestamp());
             }
             else {
@@ -111,6 +106,11 @@ void CodecOhm::Process()
 TBool CodecOhm::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 {
     return false;
+}
+
+void CodecOhm::StreamCompleted()
+{
+    Reset();
 }
 
 Brn CodecOhm::Read(TUint aBytes)
@@ -149,4 +149,14 @@ void CodecOhm::OutputDelay()
     //Log::Print("-- CodecOhm - delayMs=%u\n", delayMs);
     const TUint delayJiffies = delayMs * Jiffies::kPerMs;
     iController->OutputDelay(delayJiffies);
+}
+
+void CodecOhm::Reset()
+{
+    iBuf.SetBytes(0);
+    iOffset = 0;
+    iStreamOutput = false;
+    iSendSession = false;
+    iSampleRate = 0;
+    iLatency = 0;
 }

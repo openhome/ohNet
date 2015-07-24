@@ -187,25 +187,25 @@ Msg* MsgCloner::ProcessMsg(MsgWait* aMsg)
 Msg* MsgCloner::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* MsgCloner::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* MsgCloner::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* MsgCloner::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* MsgCloner::ProcessMsg(MsgQuit* aMsg)
@@ -221,7 +221,7 @@ TBool RewinderBufferProcessor::ShouldStartBuffering(Msg* aMsg)
 {
     RewinderBufferProcessor self;
     Msg* msg = aMsg->Process(self);    // this won't modify aMsg
-    if (msg != NULL) {
+    if (msg != nullptr) {
         return true;
     }
     return false;
@@ -233,27 +233,27 @@ RewinderBufferProcessor::RewinderBufferProcessor()
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgMode* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgSession* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgTrack* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgChangeInput* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgDelay* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgEncodedStream* aMsg)
@@ -263,66 +263,66 @@ Msg* RewinderBufferProcessor::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // shouldn't have been buffered
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
 {
     ASSERTS(); // shouldn't have been buffered
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // shouldn't have been buffered
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // shouldn't have been buffered
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgQuit* /*aMsg*/)
 {
     ASSERTS(); // shouldn't have been buffered
-    return NULL;
+    return nullptr;
 }
 
 
@@ -362,7 +362,7 @@ TBool RewinderReservoir::IsFull() const
 Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
     , iBuffering(false)
     , iLock("REWI")
 {
@@ -386,12 +386,12 @@ void Rewinder::TryBuffer(Msg* aMsg)
 
 Msg* Rewinder::Pull()
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     do {
         {
             AutoMutex _(iLock);
             if (iBuffering && iQueueNext->IsFull()) {
-                return NULL;
+                return nullptr;
             }
             if (!iQueueCurrent->IsEmpty()) {
                 msg = iQueueCurrent->Dequeue();
@@ -408,15 +408,15 @@ Msg* Rewinder::Pull()
                 }
             }
         }
-        if (msg == NULL) {
+        if (msg == nullptr) {
             msg = iUpstreamElement.Pull();
-            if (msg != NULL) {
+            if (msg != nullptr) {
                 iLock.Wait();
                 msg = msg->Process(*this);
                 iLock.Signal();
             }
         }
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -453,7 +453,7 @@ Msg* Rewinder::ProcessMsg(MsgDelay* aMsg)
 Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamHandler();
-    MsgEncodedStream* msg = NULL;
+    MsgEncodedStream* msg = nullptr;
     if (aMsg->RawPcm()) {
         msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this, aMsg->PcmStream());
     }
@@ -500,25 +500,25 @@ Msg* Rewinder::ProcessMsg(MsgWait* aMsg)
 Msg* Rewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); // expect this Msg to be generated by a downstream decoder element
-    return NULL;
+    return nullptr;
 }
 
 Msg* Rewinder::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* Rewinder::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* Rewinder::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* Rewinder::ProcessMsg(MsgQuit* aMsg)
@@ -552,7 +552,7 @@ void Rewinder::Stop()
 
 EStreamPlay Rewinder::OkToPlay(TUint aStreamId)
 {
-    ASSERT(iStreamHandler != NULL);
+    ASSERT(iStreamHandler != nullptr);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
     //Log::Print("Rewinder::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
@@ -573,7 +573,7 @@ TUint Rewinder::TryStop(TUint aStreamId)
 void Rewinder::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    if (iStreamHandler != NULL) {
+    if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

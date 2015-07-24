@@ -152,6 +152,13 @@ TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     const TUint byteDepth = iBitDepth/8;
     const TUint64 bytePos = aSample * iNumChannels * byteDepth;
+
+    // Some bounds checking.
+    const TUint64 seekPosJiffies = Jiffies::JiffiesPerSample(iSampleRate)*aSample;
+    if (seekPosJiffies > iTrackLengthJiffies) {
+        return false;
+    }
+
     if (!iController->TrySeekTo(aStreamId, iTrackStart + bytePos)) {
         return false;
     }

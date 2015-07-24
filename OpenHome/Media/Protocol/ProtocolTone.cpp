@@ -31,7 +31,7 @@ Protocol* ProtocolFactory::NewTone(Environment& aEnv)
 ProtocolTone::ProtocolTone(Environment& aEnv)
     : Protocol(aEnv)
     , iLock("PRTN")
-    , iSupply(NULL)
+    , iSupply(nullptr)
     , iToneGenerators()
 {
     iToneGenerators.push_back(new ToneGeneratorSilence());
@@ -524,14 +524,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     }
 
     // dynamically select waveform generator
-    ToneGenerator *generator = NULL;
+    ToneGenerator *generator = nullptr;
     for (TUint i = 0; i < iToneGenerators.size(); ++i) {
         if (iToneGenerators[i]->Recognise(uriParser.Name())) {
             generator = iToneGenerators[i];
             break;
         }
     }
-    if (NULL == generator) {
+    if (nullptr == generator) {
         return EProtocolStreamErrorUnrecoverable;
     }
 

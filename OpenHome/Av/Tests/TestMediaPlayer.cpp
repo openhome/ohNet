@@ -108,10 +108,12 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iPullableClock(NULL)
+    , iPullableClock(nullptr)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
-    , iTxTimestamper(NULL)
-    , iRxTimestamper(NULL)
+    , iTxTimestamper(nullptr)
+    , iRxTimestamper(nullptr)
+    , iTxTsMapper(nullptr)
+    , iRxTsMapper(nullptr)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -160,7 +162,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
 
     VolumeProfile volumeProfile;
-    VolumeConsumer volumeInit(iVolumeLogger);
+    VolumeConsumer volumeInit;
+    volumeInit.SetVolume(iVolumeLogger);
     volumeInit.SetBalance(iVolumeLogger);
     volumeInit.SetFade(iVolumeLogger);
 
@@ -242,9 +245,8 @@ void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
 void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
-    iMediaPlayer->Start();
-
     AddConfigApp();
+    iMediaPlayer->Start();
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -252,7 +254,7 @@ void TestMediaPlayer::Run()
     iConfigRamStore->Print();
 
     Log::Print("\nFull (software) media player\n");
-    Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
+    Log::Print("Intended to be controlled via a separate, standard CP (Kazoo etc.)\n");
 
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
@@ -472,8 +474,17 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
 
 void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
 {
-    Bws<Uri::kMaxUriBytes+1> url(aUrl);   // +1 for '\0'
-    iDevice->SetAttribute("Upnp.PresentationUrl", url.PtrZ());
+    if (!iDevice->Enabled()) {
+        // FIXME - can only set Product attribute once (meaning no updates on subnet change)
+        const TBool firstChange = (iPresentationUrl.Bytes() == 0);
+        iPresentationUrl.Replace(aUrl);
+        iDevice->SetAttribute("Upnp.PresentationUrl", iPresentationUrl.PtrZ());
+        if (firstChange) {
+            Bws<128> configAtt("App:Config=");
+            configAtt.Append(iPresentationUrl);
+            iMediaPlayer->Product().AddAttribute(configAtt);
+        }
+    }
 }
 
 void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
@@ -500,93 +511,6 @@ TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
 void TestMediaPlayer::Disabled()
 {
     iDisabled.Signal();
-}
-
-
-// TestMediaPlayerOptions
-
-TestMediaPlayerOptions::TestMediaPlayerOptions()
-    : iOptionRoom("-r", "--room", Brn(""), "room the Product service will report")
-    , iOptionName("-n", "--name", Brn("SoftPlayer"), "Product name")
-    , iOptionUdn("-u", "--udn", Brn(""), "Udn (optional - one will be generated if this is left blank)")
-    , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
-    , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
-    , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
-    , iOptionTuneIn("-t", "--tunein", Brn("ah2rjr68"), "TuneIn partner id")
-    , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
-    , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
-    , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
-{
-    iParser.AddOption(&iOptionRoom);
-    iParser.AddOption(&iOptionName);
-    iParser.AddOption(&iOptionUdn);
-    iParser.AddOption(&iOptionChannel);
-    iParser.AddOption(&iOptionAdapter);
-    iParser.AddOption(&iOptionLoopback);
-    iParser.AddOption(&iOptionTuneIn);
-    iParser.AddOption(&iOptionTidal);
-    iParser.AddOption(&iOptionQobuz);
-    iParser.AddOption(&iOptionUserAgent);
-}
-
-void TestMediaPlayerOptions::AddOption(Option* aOption)
-{
-    iParser.AddOption(aOption);
-}
-
-TBool TestMediaPlayerOptions::Parse(int aArgc, char* aArgv[])
-{
-    return iParser.Parse(aArgc, aArgv);
-}
-
-OptionString& TestMediaPlayerOptions::Room()
-{
-    return iOptionRoom;
-}
-
-OptionString& TestMediaPlayerOptions::Name()
-{
-    return iOptionName;
-}
-
-OptionString& TestMediaPlayerOptions::Udn()
-{
-    return iOptionUdn;
-}
-
-OptionUint& TestMediaPlayerOptions::Channel()
-{
-    return iOptionChannel;
-}
-
-OptionUint& TestMediaPlayerOptions::Adapter()
-{
-    return iOptionAdapter;
-}
-
-OptionBool& TestMediaPlayerOptions::Loopback()
-{
-    return iOptionLoopback;
-}
-
-OptionString& TestMediaPlayerOptions::TuneIn()
-{
-    return iOptionTuneIn;
-}
-
-OptionString& TestMediaPlayerOptions::Tidal()
-{
-    return iOptionTidal;
-}
-
-OptionString& TestMediaPlayerOptions::Qobuz()
-{
-    return iOptionQobuz;
-}
-
-OptionString& TestMediaPlayerOptions::UserAgent()
-{
-    return iOptionUserAgent;
 }
 
 

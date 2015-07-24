@@ -41,7 +41,7 @@ AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline)
     , iPipeline(aPipeline)
     , iSem("DRVB", 0)
     , iOsCtx(aEnv.OsCtx())
-    , iPlayable(NULL)
+    , iPlayable(nullptr)
     , iPullLock("DBPL")
     , iPullValue(kClockPullDefault)
     , iQuit(false)
@@ -59,7 +59,7 @@ void AnimatorBasic::Run()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
     Msg* msg = iPipeline.Pull();
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     (void)msg->Process(*this);
 
     TUint64 now = OsTimeInUs(iOsCtx);
@@ -69,13 +69,13 @@ void AnimatorBasic::Run()
     try {
         for (;;) {
             while (iPendingJiffies > 0) {
-                if (iPlayable != NULL) {
+                if (iPlayable != nullptr) {
                     ProcessAudio(iPlayable);
                 }
                 else {
                     Msg* msg = iPipeline.Pull();
                     msg = msg->Process(*this);
-                    ASSERT(msg == NULL);
+                    ASSERT(msg == nullptr);
                 }
             }
             if (iQuit) {
@@ -115,8 +115,8 @@ void AnimatorBasic::Run()
     while (!iQuit) {
         Msg* msg = iPipeline.Pull();
         msg = msg->Process(*this);
-        ASSERT(msg == NULL);
-        if (iPlayable != NULL) {
+        ASSERT(msg == nullptr);
+        if (iPlayable != nullptr) {
             iPlayable->RemoveRef();
         }
     }
@@ -124,7 +124,7 @@ void AnimatorBasic::Run()
 
 void AnimatorBasic::ProcessAudio(MsgPlayable* aMsg)
 {
-    iPlayable = NULL;
+    iPlayable = nullptr;
     const TUint numSamples = aMsg->Bytes() / ((iBitDepth/8) * iNumChannels);
     TUint jiffies = numSamples * iJiffiesPerSample;
     if (jiffies > iPendingJiffies) {
@@ -147,55 +147,56 @@ Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
     iPullValue = kClockPullDefault;
     iPullLock.Signal();
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgChangeInput* aMsg)
 {
     aMsg->ReadyToChange();
-    return NULL;
+    aMsg->RemoveRef();
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgHalt* aMsg)
@@ -203,19 +204,19 @@ Msg* AnimatorBasic::ProcessMsg(MsgHalt* aMsg)
     iPendingJiffies = 0;
     iNextTimerDuration = 0;
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
@@ -226,25 +227,25 @@ Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
     iBitDepth = stream.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgPlayable* aMsg)
 {
     ProcessAudio(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgQuit* aMsg)
@@ -253,7 +254,7 @@ Msg* AnimatorBasic::ProcessMsg(MsgQuit* aMsg)
     iPendingJiffies = 0;
     iNextTimerDuration = 0;
     aMsg->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 void AnimatorBasic::PullClock(TInt32 aValue)

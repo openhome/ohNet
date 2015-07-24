@@ -214,7 +214,7 @@ void SuiteAudioReservoir::Test()
     Msg* msg = iReservoir->Pull();
     msg = msg->Process(*this);
     TEST(iLastMsg == EMsgAudioPcm);
-    ASSERT(msg == NULL);
+    ASSERT(msg == nullptr);
 
     // Check that uninteresting msgs are passed through.
     EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode, EMsgSession,
@@ -245,7 +245,7 @@ void SuiteAudioReservoir::Test()
     // Pull single msg to unblock iThread
     msg = iReservoir->Pull();
     msg = msg->Process(*this);
-    ASSERT(msg == NULL);
+    ASSERT(msg == nullptr);
     jiffies = iReservoir->Jiffies();
 
     // Keep adding DecodedStream until Enqueue blocks
@@ -310,7 +310,7 @@ void SuiteAudioReservoir::MsgEnqueueThread()
 TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
 {
     TBool shouldBlock = false;
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     switch (aType)
     {
     default:
@@ -333,10 +333,10 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     }
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL, false, false);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
         break;
     case EMsgSession:
         msg = iMsgFactory->CreateMsgSession();
@@ -355,7 +355,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, NULL);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, nullptr);
         break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -430,7 +430,7 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgMetaText* aMsg)
@@ -487,7 +487,7 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
         Print("firstSubsample=%08x, lastSubsample=%08x\n", firstSubsample, lastSubsample);
     }
     playable->RemoveRef();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgSilence* aMsg)
@@ -499,7 +499,7 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
@@ -546,7 +546,7 @@ void SuiteReservoirHistory::Test()
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     iReservoir->Push(msgTrack);
-    MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, NULL);
+    MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, nullptr);
     iStreamId = msgStream->StreamInfo().StreamId();
     iReservoir->Push(msgStream);
     TUint pcmMsgs = kPcmMsgCount;
@@ -592,7 +592,7 @@ void SuiteReservoirHistory::PullerThread()
 Msg* SuiteReservoirHistory::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgAudioPcm* aMsg)
@@ -610,7 +610,7 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteReservoirHistory::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* aMsg)
@@ -646,43 +646,43 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgDelay* aMsg)
 Msg* SuiteReservoirHistory::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgHalt* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return nullptr;
 }
 
 void SuiteReservoirHistory::StartTimestamp()

@@ -145,7 +145,7 @@ SuiteSpotifyReporter::SuiteSpotifyReporter()
 void SuiteSpotifyReporter::Setup()
 {
     iNextGeneratedMsg = ENone;
-    iLastMsg = NULL;
+    iLastMsg = nullptr;
     iTrackOffset = 0;
     iSampleRate = 44100;
     iNumChannels = 2;
@@ -170,7 +170,7 @@ Msg* SuiteSpotifyReporter::Pull()
     switch (iNextGeneratedMsg)
     {
     case EMsgMode:
-        iLastMsg = iMsgFactory->CreateMsgMode(Brn("null"), false, true, NULL, false, false);
+        iLastMsg = iMsgFactory->CreateMsgMode(Brn("null"), false, true, nullptr, false, false);
         return iLastMsg;
     case EMsgSession:
         iLastMsg = iMsgFactory->CreateMsgSession();
@@ -187,7 +187,7 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = iMsgFactory->CreateMsgDelay(0);
         return iLastMsg;
     case EMsgEncodedStream:
-        iLastMsg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, false /* not seekable */, true /* live */, NULL);
+        iLastMsg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, false /* not seekable */, true /* live */, nullptr);
         return iLastMsg;
     case EMsgMetaText:
         iLastMsg = iMsgFactory->CreateMsgMetaText(Brn(kMetaText));
@@ -202,7 +202,7 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = iMsgFactory->CreateMsgWait();
         return iLastMsg;
     case EMsgDecodedStream:
-        iLastMsg = iMsgFactory->CreateMsgDecodedStream(0, iBitRate, kBitDepth, iSampleRate, iNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false, NULL);
+        iLastMsg = iMsgFactory->CreateMsgDecodedStream(0, iBitRate, kBitDepth, iSampleRate, iNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false, nullptr);
         return iLastMsg;
     case EMsgAudioPcm:
         iLastMsg = CreateAudio();
@@ -215,7 +215,7 @@ Msg* SuiteSpotifyReporter::Pull()
         return iLastMsg;
     default:
         ASSERTS();
-        return NULL;
+        return nullptr;
     }
 }
 

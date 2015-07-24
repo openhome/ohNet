@@ -142,7 +142,7 @@ void SuiteSilencer::TearDown()
 
 void SuiteSilencer::TestMsgsPassedOn()
 {
-    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL, false, false));
+    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false));
     QueuePendingMsg(iMsgFactory->CreateMsgChangeInput(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
@@ -207,7 +207,7 @@ void SuiteSilencer::TestPassesMsgsAfterSilenceGeneration()
     PullNext(EMsgDecodedStream);
     PullNextNoWait(EMsgPlayable);
 
-    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL, false, false));
+    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false));
     QueuePendingMsg(iMsgFactory->CreateMsgChangeInput(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
@@ -252,7 +252,7 @@ MsgPlayable* SuiteSilencer::CreateAudio()
 
 Msg* SuiteSilencer::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
+    return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, nullptr);
 }
 
 void SuiteSilencer::PullNext(EMsgType aExpectedMsg)
@@ -267,7 +267,7 @@ void SuiteSilencer::PullNext(EMsgType aExpectedMsg)
 void SuiteSilencer::PullNextNoWait(EMsgType aExpectedMsg)
 {
     Msg* msg = iSilencer->Pull();
-    ASSERT(msg != NULL);
+    ASSERT(msg != nullptr);
     msg = msg->Process(*this);
     msg->RemoveRef();
     TEST(iLastMsg == aExpectedMsg);
@@ -294,13 +294,13 @@ Msg* SuiteSilencer::ProcessMsg(MsgMode* aMsg)
 Msg* SuiteSilencer::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgChangeInput* aMsg)
@@ -312,31 +312,31 @@ Msg* SuiteSilencer::ProcessMsg(MsgChangeInput* aMsg)
 Msg* SuiteSilencer::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgHalt* aMsg)
@@ -348,13 +348,13 @@ Msg* SuiteSilencer::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteSilencer::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgDecodedStream* aMsg)
@@ -369,13 +369,13 @@ Msg* SuiteSilencer::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* SuiteSilencer::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteSilencer::ProcessMsg(MsgPlayable* aMsg)

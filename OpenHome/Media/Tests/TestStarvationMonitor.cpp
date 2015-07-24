@@ -4,6 +4,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <string.h>
 #include <vector>
@@ -93,6 +94,7 @@ private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
     StarvationMonitor* iSm;
+    ElementObserverSync* iEventCallback;
     EMsgType iLastMsg;
     EMsgGenerationState iMsgGenerationState;
     Semaphore iSemUpstream;
@@ -121,12 +123,15 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
     init.SetMsgSilenceCount(kMsgSilenceCount);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kPriorityNormal, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
+    iEventCallback = new ElementObserverSync();
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, *iEventCallback, kPriorityNormal,
+                                kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()
 {
     delete iSm;
+    delete iEventCallback;
     delete iMsgFactory;
 }
 
@@ -339,7 +344,7 @@ Msg* SuiteStarvationMonitor::Pull()
         ASSERTS(); // we'll only reach here if downstream element ignores quit msg
         break;
     }
-    return NULL;
+    return nullptr;
 }
 
 MsgAudio* SuiteStarvationMonitor::CreateAudio()
@@ -356,19 +361,19 @@ MsgAudio* SuiteStarvationMonitor::CreateAudio()
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgMode* /*aMsg*/)
 {
     ASSERTS(); // MsgMode not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS(); // MsgMode not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS(); // MsgTrack not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* aMsg)
@@ -380,31 +385,31 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* aMsg)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS(); // MsgDelay not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS(); // MsgEncodedStream not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS(); // MsgMetaText not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS(); // FIXME - missing test cases
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgHalt* aMsg)
@@ -416,19 +421,19 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // MsgFlush not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // MsgWait not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); // MsgDecodedStream not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioPcm* aMsg)
@@ -457,19 +462,19 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioPcm* aMsg)
         // don't test subsample values here as we may be in state ERunning because aMsg was the last one to be ramped up
         break;
     }
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); // MsgSilence not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not used in this test
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgQuit* aMsg)

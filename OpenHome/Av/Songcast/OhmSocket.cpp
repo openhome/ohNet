@@ -51,10 +51,10 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
 
 void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    if (iTxSocket != NULL) {
+    if (iTxSocket != nullptr) {
         iTxSocket->Send(aBuffer, aEndpoint);
     }
-    else if (iRxSocket != NULL) {
+    else if (iRxSocket != nullptr) {
         iRxSocket->Send(aBuffer, aEndpoint);
     }
 }
@@ -72,25 +72,25 @@ Endpoint OhmSocket::Sender() const
 
 void OhmSocket::Close()
 {
-    ASSERT(iReader != NULL);
+    ASSERT(iReader != nullptr);
     delete iReader;
-    iReader = NULL;
-    ASSERT(iRxSocket != NULL);
+    iReader = nullptr;
+    ASSERT(iRxSocket != nullptr);
     delete iRxSocket;
-    iRxSocket = NULL;
-    if (iTxSocket != NULL) {
+    iRxSocket = nullptr;
+    if (iTxSocket != nullptr) {
         delete iTxSocket;
-        iTxSocket = NULL;
+        iTxSocket = nullptr;
     }
 }
 
 void OhmSocket::Interrupt(TBool aInterrupt)
 {
     // FIXME - thread-safety
-    if (iRxSocket != NULL) {
+    if (iRxSocket != nullptr) {
         iRxSocket->Interrupt(aInterrupt);
     }
-    if (iTxSocket != NULL) {
+    if (iTxSocket != nullptr) {
         iTxSocket->Interrupt(aInterrupt);
     }
 }
@@ -103,14 +103,14 @@ void OhmSocket::Read(Bwx& aBuffer)
 
 void OhmSocket::ReadFlush()
 {
-    if (iReader != NULL) {
+    if (iReader != nullptr) {
         iReader->ReadFlush();
     }
 }
 
 void OhmSocket::ReadInterrupt()
 {
-    if (iReader != NULL) {
+    if (iReader != nullptr) {
         iReader->ReadInterrupt();
     }
 }

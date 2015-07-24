@@ -93,7 +93,7 @@ const TChar* CodecBase::Id() const
 }
 
 CodecBase::CodecBase(const TChar* aId, RecognitionComplexity aRecognitionCost)
-    : iController(NULL)
+    : iController(nullptr)
     , iId(aId)
     , iRecognitionCost(aRecognitionCost)
 {
@@ -114,16 +114,16 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iDownstreamElement(aDownstreamElement)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iLock("CDCC")
-    , iActiveCodec(NULL)
-    , iPendingMsg(NULL)
-    , iSeekObserver(NULL)
+    , iActiveCodec(nullptr)
+    , iPendingMsg(nullptr)
+    , iSeekObserver(nullptr)
     , iSeekHandle(0)
-    , iPostSeekStreamInfo(NULL)
-    , iAudioEncoded(NULL)
+    , iPostSeekStreamInfo(nullptr)
+    , iAudioEncoded(nullptr)
     , iSeekable(false)
     , iLive(false)
     , iRawPcm(false)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
     , iStreamId(0)
     , iSampleRate(0)
     , iStreamLength(0)
@@ -139,12 +139,12 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
 CodecController::~CodecController()
 {
     delete iDecoderThread;
-    ASSERT(iPendingMsg == NULL);
+    ASSERT(iPendingMsg == nullptr);
     for (size_t i=0; i<iCodecs.size(); i++) {
         delete iCodecs[i];
     }
     ReleaseAudioEncoded();
-    if (iPostSeekStreamInfo != NULL) {
+    if (iPostSeekStreamInfo != nullptr) {
         iPostSeekStreamInfo->RemoveRef();
     }
     delete iLoggerRewinder;
@@ -179,7 +179,7 @@ void CodecController::Start()
 void CodecController::StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
+    if (aStreamId != iStreamId || iActiveCodec == nullptr || !iSeekable) {
         aHandle = ISeeker::kHandleError;
         return;
     }
@@ -208,14 +208,14 @@ void CodecController::CodecThread()
     iConsumeExpectedFlush = false;
     while (!iQuit) {
         // push out any pending msg (from previous run of loop)
-        if (iPendingMsg != NULL) {
+        if (iPendingMsg != nullptr) {
             Queue(iPendingMsg);
-            iPendingMsg = NULL;
+            iPendingMsg = nullptr;
         }
         try {
             iLock.Wait();
             iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
-            iActiveCodec = NULL;
+            iActiveCodec = nullptr;
             iSampleRate = iSeekSeconds = 0;
             iStreamId = IPipelineIdProvider::kStreamIdInvalid;
             iStreamLength = iStreamPos = 0LL;
@@ -226,7 +226,7 @@ void CodecController::CodecThread()
             // Find next start of stream marker, ignoring any audio or meta data we encounter
             while (!iStreamStarted && !iQuit) {
                 Msg* msg = PullMsg();
-                if (msg != NULL) {
+                if (msg != nullptr) {
                     Queue(msg);
                 }
             }
@@ -279,7 +279,7 @@ void CodecController::CodecThread()
                 break;
             }
             LOG(kMedia, "CodecThread: recognition complete\n");
-            if (iActiveCodec == NULL) {
+            if (iActiveCodec == nullptr) {
                 if (iStreamId != 0  && // FIXME - hard-coded assumption about Filler's NullTrack
                     !iStreamStopped && // we wouldn't necessarily expect to recognise a track if we're told to stop
                     !streamEnded) {    // ...or reach the track end during recognition
@@ -328,7 +328,7 @@ void CodecController::CodecThread()
         }
         catch (CodecStreamStopped&) {}
         catch (CodecStreamFlush&) {}
-        if (iActiveCodec != NULL) {
+        if (iActiveCodec != nullptr) {
             iActiveCodec->StreamCompleted();
         }
         if (!iStreamStarted && !iStreamEnded) {
@@ -342,9 +342,9 @@ void CodecController::CodecThread()
             iLock.Signal();
         }
     }
-    if (iPendingMsg != NULL) {
+    if (iPendingMsg != nullptr) {
         Queue(iPendingMsg);
-        iPendingMsg = NULL;
+        iPendingMsg = nullptr;
     }
 }
 
@@ -370,7 +370,7 @@ Msg* CodecController::PullMsg()
     }
     iLock.Signal();
     Msg* msg = iLoggerRewinder->Pull();
-    if (msg == NULL) {
+    if (msg == nullptr) {
         ASSERT(iRecognising);
         THROW(CodecRecognitionOutOfData);
     }
@@ -390,15 +390,15 @@ TBool CodecController::QueueTrackData() const
 
 void CodecController::ReleaseAudioEncoded()
 {
-    if (iAudioEncoded != NULL) {
+    if (iAudioEncoded != nullptr) {
         iAudioEncoded->RemoveRef();
-        iAudioEncoded = NULL;
+        iAudioEncoded = nullptr;
     }
 }
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
-    if (iPendingMsg != NULL) {
+    if (iPendingMsg != nullptr) {
         if (DoRead(aBuf, aBytes)) {
             return;
         }
@@ -416,10 +416,10 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
         }
         THROW(CodecStreamEnded);
     }
-    while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) {
+    while (!iStreamEnded && (iAudioEncoded == nullptr || iAudioEncoded->Bytes() < aBytes)) {
         Msg* msg = PullMsg();
-        if (msg != NULL) {
-            ASSERT(iPendingMsg == NULL);
+        if (msg != nullptr) {
+            ASSERT(iPendingMsg == nullptr);
             iPendingMsg = msg;
             break;
         }
@@ -437,10 +437,10 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
     if (aBytes == 0) {
         return true;
     }
-    if (iAudioEncoded == NULL) {
+    if (iAudioEncoded == nullptr) {
         return false;
     }
-    MsgAudioEncoded* remaining = NULL;
+    MsgAudioEncoded* remaining = nullptr;
     const TUint bufSpace = aBuf.MaxBytes() - aBuf.Bytes();
     const TUint toRead = std::min(bufSpace, aBytes);
     if (toRead < iAudioEncoded->Bytes()) {
@@ -459,9 +459,9 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
 
 void CodecController::ReadNextMsg(Bwx& aBuf)
 {
-    while (iAudioEncoded == NULL) {
+    while (iAudioEncoded == nullptr) {
         Msg* msg = PullMsg();
-        if (msg != NULL) {
+        if (msg != nullptr) {
             Queue(msg);
         }
         if (iStreamEnded || iQuit) {
@@ -514,7 +514,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
         Queue(msg);
     }
     else {
-        if (iPostSeekStreamInfo != NULL) {
+        if (iPostSeekStreamInfo != nullptr) {
             iPostSeekStreamInfo->RemoveRef();
         }
         iPostSeekStreamInfo = msg;
@@ -576,7 +576,7 @@ Msg* CodecController::ProcessMsg(MsgMode* aMsg)
     if (iRecognising) {
         iStreamEnded = true;
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -586,7 +586,7 @@ Msg* CodecController::ProcessMsg(MsgSession* aMsg)
     if (iRecognising) {
         iStreamEnded = true;
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     return aMsg;
 }
@@ -598,7 +598,7 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
             iStreamEnded = true;
         }
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
 
     iLock.Wait();
@@ -610,17 +610,17 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 Msg* CodecController::ProcessMsg(MsgChangeInput* aMsg)
 {
     Queue(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 {
     if (iRecognising) { // FIXME - why discard during recognition?
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     Queue(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
@@ -629,7 +629,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iTrackUri.Replace(aMsg->Uri());
     if (iRecognising) {
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
 
     iLock.Wait();
@@ -659,33 +659,33 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
     if (!QueueTrackData()) {
         aMsg->RemoveRef();
     }
-    else if (iAudioEncoded == NULL) {
+    else if (iAudioEncoded == nullptr) {
         iAudioEncoded = aMsg;
     }
     else {
         iAudioEncoded->Add(aMsg);
     }
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
     Queue(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     iStreamEnded = true;
     Queue(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
     iStreamEnded = true;
     Queue(aMsg);
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
@@ -705,13 +705,13 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
         }
         else {
             Queue(aMsg);
-            if (iPostSeekStreamInfo != NULL) {
+            if (iPostSeekStreamInfo != nullptr) {
                 Queue(iPostSeekStreamInfo);
-                iPostSeekStreamInfo = NULL;
+                iPostSeekStreamInfo = nullptr;
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgWait* aMsg)
@@ -723,25 +723,25 @@ Msg* CodecController::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); // expect this to be generated by a codec
     // FIXME - volkano has containers which also generate this
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); // not expected at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgSilence* /*aMsg*/)
 {
     ASSERTS(); // not expected at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // not expected at this stage of the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
@@ -753,7 +753,7 @@ Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 
 EStreamPlay CodecController::OkToPlay(TUint aStreamId)
 {
-    ASSERT(iStreamHandler != NULL);
+    ASSERT(iStreamHandler != nullptr);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
     //Log::Print("CodecController::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
@@ -771,7 +771,7 @@ TUint CodecController::TryStop(TUint aStreamId)
     if (iStreamId == aStreamId) {
         iStreamStopped = true;
     }
-    if (iStreamHandler == NULL) {
+    if (iStreamHandler == nullptr) {
         LOG(kMedia, "CodecController::TryStop returning MsgFlush::kIdInvalid (no stream handler)\n");
         return MsgFlush::kIdInvalid;
     }
@@ -789,7 +789,7 @@ TUint CodecController::TryStop(TUint aStreamId)
 void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    if (iStreamHandler != NULL) {
+    if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

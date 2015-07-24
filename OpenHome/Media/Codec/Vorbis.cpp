@@ -14,6 +14,8 @@ extern "C" {
 #include <ivorbiscodec.h>
 }
 
+#include <limits>
+
 namespace OpenHome {
 namespace Media {
 namespace Codec {
@@ -21,6 +23,9 @@ namespace Codec {
 class CodecVorbis : public CodecBase, public IWriter
 {
 private:
+    static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
+    static const TUint kSearchChunkSize = 1024;
+    static const TInt kInvalidBitstream;
     static const TUint kIcyMetadataBytes = 255 * 16;
 public:
     static const Brn kCodecVorbis;
@@ -50,9 +55,6 @@ private:
     void FlushOutput();
     void OutputMetaData();
 private:
-    static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
-    static const TUint kSearchChunkSize = 1024;
-
     ov_callbacks iCallbacks;
 
     void *iDataSource; // dummy stream identifier
@@ -95,7 +97,7 @@ CodecBase* CodecFactory::NewVorbis()
 }
 
 
-
+const TInt CodecVorbis::kInvalidBitstream = std::numeric_limits<TInt>::max();
 const Brn CodecVorbis::kCodecVorbis("VORBIS");
 
 size_t ReadCallback(void *ptr, size_t size, size_t nmemb, void *datasource);
@@ -112,8 +114,8 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
         if (iReadOffset > iController->StreamPos()) {
             // Have already read some data (during Recognise()) which is now
             // being replayed by Rewinder. Skip it.
-            LOG(kCodec, "CodecVorbis::ReadCallback iReadOffset: %llu, iController->StreamPos(): %llu\n", iReadOffset, iController->StreamPos());
             TUint64 remaining = iReadOffset-iController->StreamPos();
+            LOG(kCodec, "CodecVorbis::ReadCallback iReadOffset: %llu, iController->StreamPos(): %llu, remaining: %llu\n", iReadOffset, iController->StreamPos(), remaining);
             while (remaining > 0) {
                 TUint bytes = buf.MaxBytes();
                 if (remaining < bytes) {
@@ -144,7 +146,6 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
     }
 
     //LOG(kCodec,"CodecVorbis::CallbackRead: read %u bytes\n", buf.Bytes());
-
     return buf.Bytes();
 }
 
@@ -228,7 +229,7 @@ TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     iReadOffset = 0;
     iSamplesTotal = 0;
-    TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
+    TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, nullptr, 0, iCallbacks) == 0);
 
     return isVorbis;
 }
@@ -236,11 +237,14 @@ TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)
 void CodecVorbis::StreamInitialise()
 {
     LOG(kCodec, "CodecVorbis::StreamInitialise\n");
-    iBitstream = 0;
+    iBitstream = kInvalidBitstream;
     iStreamEnded = false;
     iNewStreamStarted = false;
 
-    ov_test_open(&iVf);
+    const TInt opened = ov_test_open(&iVf);
+    if (opened < 0) {
+        THROW(CodecStreamCorrupt);
+    }
 
     vorbis_info* info = ov_info(&iVf, -1);
     iChannels = static_cast<TUint16>(info->channels);
@@ -250,6 +254,7 @@ void CodecVorbis::StreamInitialise()
     iBitDepth = 16;                 //always 16bit
     iTotalSamplesOutput = 0;
     iInBuf.SetBytes(0);
+    iOutBuf.SetBytes(0);
 
     iBytesPerSample = iChannels*iBitDepth/8;
     iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
@@ -311,7 +316,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     LOG(kCodec, "CodecVorbis::TrySeek(%u, %llu)\n", aStreamId, aSample);
 
-    // convert to approximate byte position in file
+    // Convert to approximate byte position in file.
     TUint64 bytes = aSample * iController->StreamLength()/iSamplesTotal;
     if (bytes > iController->StreamLength()) {
         bytes = iController->StreamLength() - 1;
@@ -444,11 +449,17 @@ void CodecVorbis::Process()
             TInt bytes = 0;
             bytes = ov_read(&iVf, pcm, request, (int*)&bitstream);
 
-            if(bytes == 0) {
+            if (bytes == 0) {
                 THROW(CodecStreamEnded);
             }
-            if(bytes < 0) {
-                LOG(kCodec, "CodecVorbis::Process ov_read error %d, requested %d\n", bytes, request);
+
+            if (bytes == OV_HOLE) {
+                LOG(kCodec, "CodecVorbis::Process ov_read error OV_HOLE, requested %u bytes. Attempting to continue decoding.\n", request);
+                return;
+            }
+
+            if (bytes < 0) {
+                LOG(kCodec, "CodecVorbis::Process ov_read error %d, requested %d bytes\n", bytes, request);
                 THROW(CodecStreamCorrupt);
             }
 

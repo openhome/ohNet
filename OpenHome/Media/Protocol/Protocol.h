@@ -46,7 +46,7 @@ class ContentProcessor;
 class IProtocolManager : public IProtocolSet
 {
 public:
-    // GetContentProcessor()/GetAudioProcessor() may return NULL.
+    // GetContentProcessor()/GetAudioProcessor() may return nullptr.
     // In the case of these methods, returning a pointer DOES NOT imply ownership.
     virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const = 0;
     virtual ContentProcessor* GetAudioProcessor() const = 0;

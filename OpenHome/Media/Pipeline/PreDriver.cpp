@@ -28,9 +28,9 @@ Msg* PreDriver::Pull()
     Msg* msg;
     do {
         msg = iUpstreamElement.Pull();
-        ASSERT(msg != NULL);
+        ASSERT(msg != nullptr);
         msg = msg->Process(*this);
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -42,13 +42,13 @@ Msg* PreDriver::ProcessMsg(MsgMode* aMsg)
 Msg* PreDriver::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgChangeInput* aMsg)
@@ -59,31 +59,31 @@ Msg* PreDriver::ProcessMsg(MsgChangeInput* aMsg)
 Msg* PreDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
@@ -94,13 +94,13 @@ Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
 Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // don't expect to encounter MsgFlush this far down the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // don't expect to encounter MsgWait this far down the pipeline
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
@@ -111,7 +111,7 @@ Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
         stream.NumChannels() == iNumChannels) {
         // no change in format.  Discard this msg
         aMsg->RemoveRef();
-        return NULL;
+        return nullptr;
     }
     iSampleRate = stream.SampleRate();
     iBitDepth = stream.BitDepth();
@@ -133,7 +133,7 @@ Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 Msg* PreDriver::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // we're the only generator of MsgPlayable so don't expect them to appear from upstream
-    return NULL;
+    return nullptr;
 }
 
 Msg* PreDriver::ProcessMsg(MsgQuit* aMsg)

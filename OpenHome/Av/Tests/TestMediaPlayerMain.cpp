@@ -17,7 +17,7 @@ int CDECL main(int aArgc, char* aArgv[])
 {
 #ifdef _WIN32
     char* noErrDlgs = getenv("NO_ERROR_DIALOGS");
-    if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
+    if (noErrDlgs != nullptr && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
 #endif // _WIN32
@@ -45,6 +45,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Set/construct UDN.
     Bwh udn;
+    // Note: prefix udn with 4c494e4e- to get older versions of Linn Konfig to recognise our devices
     TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), options.Udn().Value(), Brn("TestMediaPlayer"), udn);
 
     // Create TestMediaPlayer.

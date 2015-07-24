@@ -22,12 +22,14 @@ private: // from CodecBase
     void StreamInitialise() override;
     void Process() override;
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
+    void StreamCompleted() override;
 private: // from IReader
     Brn Read(TUint aBytes) override;
     void ReadFlush() override;
     void ReadInterrupt() override;
 private:
     void OutputDelay();
+    void Reset();
 private:
     OhmMsgFactory& iMsgFactory;
     Bws<OhmMsgAudioBlob::kMaxBytes> iBuf;

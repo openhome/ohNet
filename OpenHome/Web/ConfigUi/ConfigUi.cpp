@@ -6,12 +6,14 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
+#include <OpenHome/Av/Utils/Json.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Debug.h>
 
 #include <limits>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Web;
 
@@ -125,7 +127,7 @@ void OptionJsonWriter::WriteChoiceObject(ILanguageResourceReader& aReader, IWrit
     aWriter.Write(Brn("\"id\": "));
     Ascii::StreamWriteUint(aWriter, aId);
     aWriter.Write(Brn(",\"value\": \""));
-    aWriter.Write(valueBuf);    // FIXME - ensure this is escaped JSON
+    Json::Escape(aWriter, valueBuf);
     aWriter.Write(Brn("\"}"));
 }
 
@@ -212,7 +214,7 @@ void ConfigMessage::Destroy()
 
 ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
     : ConfigMessage(aDeallocator)
-    , iNum(NULL)
+    , iNum(nullptr)
     , iValue(std::numeric_limits<TInt>::max())
 {
 }
@@ -220,23 +222,23 @@ ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
 void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson)
 {
     ConfigMessage::Set(aAdditionalJson);
-    ASSERT(iNum == NULL);
+    ASSERT(iNum == nullptr);
     iNum = &aNum;
     iValue = aValue;
 }
 
 void ConfigMessageNum::Clear()
 {
-    ASSERT(iNum != NULL);
+    ASSERT(iNum != nullptr);
     ConfigMessage::Clear();
-    iNum = NULL;
+    iNum = nullptr;
     iValue = std::numeric_limits<TInt>::max();
 }
 
 void ConfigMessageNum::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iNum->Key());
+    Json::Escape(aWriter, iNum->Key());
     aWriter.Write(Brn("\""));
 }
 
@@ -265,7 +267,7 @@ void ConfigMessageNum::WriteMeta(IWriter& aWriter)
 ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager)
     : ConfigMessage(aDeallocator)
     , iLanguageResourceManager(aLanguageResourceManager)
-    , iChoice(NULL)
+    , iChoice(nullptr)
     , iValue(std::numeric_limits<TUint>::max())
 {
 }
@@ -273,7 +275,7 @@ ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator
 void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
 {
     ConfigMessage::Set(aAdditionalJson);
-    ASSERT(iChoice == NULL);
+    ASSERT(iChoice == nullptr);
     iChoice = &aChoice;
     iValue = aValue;
     iLanguageList = &aLanguageList;
@@ -281,17 +283,17 @@ void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aA
 
 void ConfigMessageChoice::Clear()
 {
-    ASSERT(iChoice != NULL);
+    ASSERT(iChoice != nullptr);
     ConfigMessage::Clear();
-    iChoice = NULL;
+    iChoice = nullptr;
     iValue = std::numeric_limits<TUint>::max();
-    iLanguageList = NULL;
+    iLanguageList = nullptr;
 }
 
 void ConfigMessageChoice::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iChoice->Key());
+    Json::Escape(aWriter, iChoice->Key());
     aWriter.Write(Brn("\""));
 }
 
@@ -310,7 +312,7 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
     static const Brn kConfigOptionsFile("ConfigOptions.txt");
     const std::vector<TUint>& choices = iChoice->Choices();
 
-    ILanguageResourceReader* resourceHandler = NULL;
+    ILanguageResourceReader* resourceHandler = nullptr;
     try {
         resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
     }
@@ -327,7 +329,7 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
 
 ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
     : ConfigMessage(aDeallocator)
-    , iText(NULL)
+    , iText(nullptr)
     , iValue(kMaxBytes)
 {
 }
@@ -335,30 +337,30 @@ ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
 void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, const Brx& aAdditionalJson)
 {
     ConfigMessage::Set(aAdditionalJson);
-    ASSERT(iText == NULL);
+    ASSERT(iText == nullptr);
     iText = &aText;
     iValue.Replace(aValue);
 }
 
 void ConfigMessageText::Clear()
 {
-    ASSERT(iText != NULL);
+    ASSERT(iText != nullptr);
     ConfigMessage::Clear();
-    iText = NULL;
+    iText = nullptr;
     iValue.SetBytes(0);
 }
 
 void ConfigMessageText::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iText->Key());
+    Json::Escape(aWriter, iText->Key());
     aWriter.Write(Brn("\""));
 }
 
 void ConfigMessageText::WriteValue(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
-    aWriter.Write(iValue);
+    Json::Escape(aWriter, iValue);
     aWriter.Write(Brn("\""));
 }
 
@@ -477,6 +479,52 @@ IConfigMessage& ConfigMessageAllocator::Allocate(ConfigText& aText, const Brx& a
 }
 
 
+// JsonStringParser
+
+Brn JsonStringParser::ParseString(const Brx& aBuffer, Brn& aRemaining)
+{
+    TUint offset = 0;
+
+    // Skip any whitespace.
+    for (TUint i=0; i<aBuffer.Bytes(); i++) {
+        if (!Ascii::IsWhitespace(aBuffer[i])) {
+            offset = i;
+            break;
+        }
+    }
+
+    if (aBuffer[offset] != '"') {
+        THROW(JsonStringError);
+    }
+    offset++;   // Move past opening '"'.
+
+    for (TUint i=offset; i<aBuffer.Bytes(); i++) {
+        if (aBuffer[i] == '"') {
+            if (aBuffer[i-1] != '\\') {
+                const TUint bytes = i-offset;
+                i++;
+                ASSERT(aBuffer.Bytes() > i);
+                if (aBuffer.Bytes()-i == 0) {
+                    aRemaining.Set(Brn::Empty());
+                }
+                else {
+                    aRemaining.Set(aBuffer.Ptr()+i, aBuffer.Bytes()-i);
+                }
+
+                if (bytes == 0) {
+                    return Brn::Empty();
+                }
+                else {
+                    return Brn(aBuffer.Ptr()+offset, bytes);
+                }
+            }
+        }
+    }
+
+    THROW(JsonStringError);
+}
+
+
 // ConfigTabReceiver
 
 ConfigTabReceiver::ConfigTabReceiver()
@@ -486,13 +534,33 @@ ConfigTabReceiver::ConfigTabReceiver()
 void ConfigTabReceiver::Receive(const Brx& aMessage)
 {
     // FIXME - what if aMessage is malformed? - call some form of error handler?
-    // This will break if keys/values with spaces are allowed. Will need to use a non-whitespace delimiter in that case (or, wrap updates in JSON object).
-    Parser p(aMessage);
-    Brn line = p.NextLine();
-    Parser lineParser(line);
-    Brn key = lineParser.Next();
-    Brn value = lineParser.NextToEnd();
-    Receive(key, value);
+
+    // Parse JSON response.
+    Bws<128> key;
+    Bws<1024> value;
+    Brn remaining(aMessage);
+
+    LOG(kHttp, "ConfigTabReceiver::Receive\n");
+    LOG(kHttp, aMessage);
+    LOG(kHttp, "\n");
+
+    try {
+        Parser p(aMessage);
+        (void)p.Next(':');  // {"key:
+        key.Replace(JsonStringParser::ParseString(Brn(remaining.Ptr()+p.Index(), remaining.Bytes()-p.Index()+1), remaining));
+        Json::Unescape(key);
+
+        p.Set(remaining);
+        (void)p.Next(':');  // ", value":
+        value.Replace(JsonStringParser::ParseString(Brn(remaining.Ptr()+p.Index(), remaining.Bytes()-p.Index()+1), remaining));
+        Json::Unescape(value);
+        Receive(key, value);
+    }
+    catch (JsonStringError&) {
+        LOG(kHttp, "ConfigTabReceiver::Receive caught JsonStringError: ");
+        LOG(kHttp, aMessage);
+        LOG(kHttp, "\n");
+    }
 }
 
 
@@ -571,14 +639,14 @@ ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, ICon
     , iMsgAllocator(aMessageAllocator)
     , iConfigManager(aConfigManager)
     , iJsonProvider(aJsonProvider)
-    , iHandler(NULL)
+    , iHandler(nullptr)
     , iStarted(false)
 {
 }
 
 ConfigTab::~ConfigTab()
 {
-    if (iHandler != NULL) {
+    if (iHandler != nullptr) {
         Destroy();
     }
 }
@@ -611,14 +679,14 @@ void ConfigTab::Start()
 
 TBool ConfigTab::Allocated() const
 {
-    TBool allocated = iHandler != NULL;
+    TBool allocated = iHandler != nullptr;
     return allocated;
 }
 
 void ConfigTab::SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
 {
     LOG(kHttp, "ConfigTab::SetHandler iId: %u\n", iId);
-    ASSERT(iHandler == NULL);
+    ASSERT(iHandler == nullptr);
     iLanguageList = aLanguageList;
     iHandler = &aHandler;
     for (TUint i=0; i<iConfigNums.size(); i++) {
@@ -674,8 +742,8 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
 void ConfigTab::Destroy()
 {
     LOG(kHttp, "ConfigTab::Destroy iId: %u\n", iId);
-    ASSERT(iHandler != NULL);
-    iHandler = NULL;
+    ASSERT(iHandler != nullptr);
+    iHandler = nullptr;
 
     for (TUint i=0; i<iConfigNums.size(); i++) {
         const Brx& key = iConfigNums[i].first;
@@ -699,7 +767,7 @@ void ConfigTab::Destroy()
 
 void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
 {
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     ConfigNum& num = iConfigManager.GetNum(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
     // FIXME - because JSON is static and now stored in ConfigApp, it means
@@ -711,7 +779,7 @@ void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
 
 void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
 {
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     ConfigChoice& choice = iConfigManager.GetChoice(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
     IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), json, iLanguageList);
@@ -720,7 +788,7 @@ void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
 
 void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 {
-    ASSERT(iHandler != NULL);
+    ASSERT(iHandler != nullptr);
     ConfigText& text = iConfigManager.GetText(aKvp.Key());
     const Brx& json = iJsonProvider.GetJson(aKvp.Key());
     IConfigMessage& msg = iMsgAllocator.Allocate(text, aKvp.Value(), json);
@@ -829,6 +897,8 @@ IResourceHandler& ConfigAppBase::CreateResourceHandler(const OpenHome::Brx& aRes
         }
     }
     ASSERTS();  // FIXME - throw exception instead?
+    // Could throw a ResourceHandlerFull if temporarily unavailable, and send an appropriate error response to browser.
+    // However, in most cases, this should never happen. If it does (repeatedly) it likely means resource handlers aren't being returned/Destroy()ed.
     return *iResourceHandlers[0];   // unreachable
 }
 

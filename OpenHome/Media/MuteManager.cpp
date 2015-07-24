@@ -81,7 +81,7 @@ void MuteCollection::Unmute()
 //
 
 MuteNull::MuteNull()
-    : iObserver(NULL)
+    : iObserver(nullptr)
     , iMuted(false)
 {
     // NOP
@@ -92,7 +92,7 @@ void MuteNull::Mute()
 {
     TBool changed = (iMuted != true);
     iMuted = true;
-    if (changed && (iObserver != NULL)) {
+    if (changed && (iObserver != nullptr)) {
         iObserver->MuteChanged(iMuted);
     }
 }
@@ -102,7 +102,7 @@ void MuteNull::Unmute()
 {
     TBool changed = (iMuted != false);
     iMuted = false;
-    if (changed && (iObserver != NULL)) {
+    if (changed && (iObserver != nullptr)) {
         iObserver->MuteChanged(iMuted);
     }
 }
@@ -191,7 +191,7 @@ IMute& MuteManager::Find(const TChar* aName) const
 {
     AutoMutex mutex(iMutex);
 
-    IMute* mute = NULL;
+    IMute* mute = nullptr;
 
     for (TUint i = 0; i < iMuteCollection.size(); ++i) {
         if (iMuteCollection[i]->Name() == Brn(aName)) {
@@ -201,7 +201,7 @@ IMute& MuteManager::Find(const TChar* aName) const
         }
     }
 
-    ASSERT(mute != NULL);
+    ASSERT(mute != nullptr);
 
     return (*mute);
 }

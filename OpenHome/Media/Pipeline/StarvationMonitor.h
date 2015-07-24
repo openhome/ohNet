@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -25,13 +27,15 @@ Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast s
 - On exit from buffering mode, ramps up iff ramped down before buffering and still playing the same stream.
 */
     
+class IPipelineElementObserverThread;
 class IClockPuller;
 
 class StarvationMonitor : private MsgReservoir, public IPipelineElementUpstream
 {
     friend class SuiteStarvationMonitor;
 public:
-    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
+    StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
+                      IStarvationMonitorObserver& aObserver, IPipelineElementObserverThread& aObserverThread,
                       TUint aThreadPriority, TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
@@ -50,6 +54,7 @@ private:
     MsgAudio* ProcessAudioOut(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
+    void EventCallback();
 private: // from MsgReservoir
     void ProcessMsgIn(MsgChangeInput* aMsg) override;
     void ProcessMsgIn(MsgStreamInterrupted* aMsg) override;
@@ -73,6 +78,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
+    IPipelineElementObserverThread& iObserverThread;
     IClockPuller* iClockPuller;
     ThreadFunctor* iThread;
     const TUint iNormalMax;
@@ -96,6 +102,9 @@ private:
     BwsMode iMode;
     TUint iStreamId;
     TUint iRampUntilStreamOutCount;
+    TUint iEventId;
+    std::atomic<bool> iEventBuffering;
+    TBool iLastEventBuffering;
 };
 
 } // namespace Media

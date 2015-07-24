@@ -567,7 +567,7 @@ static TUint32 fixedToPcm(mad_fixed_t aFixed)
 
 CodecMp3::CodecMp3() 
     : CodecBase("MP3")
-    , iHeader(NULL)
+    , iHeader(nullptr)
     , iHeaderBytes(0)
 {
     iMadStream = (struct mad_stream*)malloc(sizeof(*iMadStream));;
@@ -619,7 +619,7 @@ void CodecMp3::StreamInitialise()
     //LOG(kCodec, "CodecMp3::StreamInitialise, syncFrameOffsetBytes: %d\n", iHeaderBytes);
 
     iSamplesWrittenTotal = 0;
-    iHeader = NULL;
+    iHeader = nullptr;
     iTrackOffset = 0;
     iStreamEnded = false;
 
@@ -637,7 +637,7 @@ void CodecMp3::StreamInitialise()
     if (iInput.Bytes() < kReadReqBytes) {
         THROW(CodecStreamEnded);
     }
-    ASSERT_DEBUG(iHeader == NULL);
+    ASSERT_DEBUG(iHeader == nullptr);
     iHeader = new Mp3Header(iInput, iHeaderBytes, iController->StreamLength());
 
     iTrackLengthJiffies = (iHeader->SamplesTotal() * Jiffies::kPerSecond) / iHeader->SampleRate();
@@ -653,7 +653,7 @@ void CodecMp3::StreamCompleted()
     //LOG(kCodec, "CodecMp3::Deinitialise\n");
 
     delete iHeader;
-    iHeader = NULL;
+    iHeader = nullptr;
     iInput.SetBytes(0);
     iHeaderBytes = 0;
 
@@ -698,7 +698,7 @@ void CodecMp3::Process()
         // frame's start is pointed to by mad_stream::next_frame.  This can
         // happen when mad_frame_decode returns an error and leaves
         // next_frame pointing to the frame after the bad frame
-        if (iMadStream->next_frame != NULL) {
+        if (iMadStream->next_frame != nullptr) {
             //LOG(kCodec, "CodecMp3::Process next_frame != 0\n");
             TUint prevBytes = iMadStream->bufend - iMadStream->next_frame;
             (void)memmove((void*)iInput.Ptr(), iMadStream->next_frame, prevBytes);

@@ -237,10 +237,10 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     if (iFirstFrame) {
         iFirstFrame = false;
     }
-    else if (iTimestamper != NULL) {
+    else if (iTimestamper != nullptr) {
         try {
             timeStamp = iTimestamper->Timestamp(iFrame - 1);
-            if (iTsMapper != NULL) {
+            if (iTsMapper != nullptr) {
                 timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
             }
             isTimeStamped = true;
@@ -314,7 +314,7 @@ void OhmSenderDriver::SetActive(TBool aValue)
     else {
         if (aValue && iEnabled) { // turning on
             iSend = true;
-            if (iTimestamper != NULL) {
+            if (iTimestamper != nullptr) {
                 iTimestamper->Start(iEndpoint);
             }
         }
@@ -324,7 +324,7 @@ void OhmSenderDriver::SetActive(TBool aValue)
 void OhmSenderDriver::SetEndpoint(const Endpoint& aEndpoint, TIpAddress aAdapter)
 {
     AutoMutex mutex(iMutex);
-    if ((iTimestamper != NULL) && iActive && !iEndpoint.Equals(aEndpoint)) {
+    if ((iTimestamper != nullptr) && iActive && !iEndpoint.Equals(aEndpoint)) {
         iTimestamper->Stop();
         iTimestamper->Start(aEndpoint);
     }
@@ -423,7 +423,7 @@ void OhmSenderDriver::ResetLocked()
     iSend = false;
     iFrame = 0;
     iFirstFrame = true;
-    if (iTimestamper != NULL) {
+    if (iTimestamper != nullptr) {
         iTimestamper->Stop();
     }
     const TUint count = iFifoHistory.SlotsUsed();
@@ -1098,7 +1098,7 @@ void OhmSender::UpdateMetadata()
     {
         AutoNetworkAdapterRef nifRef(iEnv, "OhmSender");
         NetworkAdapter* nif = nifRef.Adapter();
-        if (nif != NULL) {
+        if (nif != nullptr) {
             Brh imageUriPrefix;
             iDevice.GetResourceManagerUri(*nif, imageUriPrefix);
             if (imageUriPrefix.Bytes() > 0) {

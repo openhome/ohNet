@@ -26,12 +26,14 @@ Element which reports state changes in pipeline.
 Is passive - it reports on Msgs but doesn't create/destroy/edit them.
 */
 
+class IPipelineElementObserverThread;
+
 class Reporter : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
     static const Brn kNullMetaText;
     static const TUint kTrackNotifyDelayMs = 10;
 public:
-    Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, TUint aObserverThreadPriority);
+    Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, IPipelineElementObserverThread& aObserverThread);
     virtual ~Reporter();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
@@ -54,12 +56,13 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
-    void ObserverThread();
+    void EventCallback();
 private:
     Mutex iLock;
     IPipelineElementUpstream& iUpstreamElement;
     IPipelinePropertyObserver& iObserver;
-    ThreadFunctor* iThread;
+    IPipelineElementObserverThread& iObserverThread;
+    TUint iEventId;
     MsgMode* iMsgMode;
     MsgTrack* iMsgTrack;
     MsgDecodedStream* iMsgDecodedStreamInfo;

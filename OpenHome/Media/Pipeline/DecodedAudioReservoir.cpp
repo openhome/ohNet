@@ -11,13 +11,13 @@ using namespace OpenHome::Media;
 // DecodedAudioReservoir
 
 DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCount, TUint aMaxStreamCount)
-    : iClockPuller(NULL)
+    : iClockPuller(nullptr)
     , iLock("DCAR")
     , iMaxJiffies(aMaxSize)
     , iMaxSessionCount(aMaxSessionCount)
     , iMaxStreamCount(aMaxStreamCount)
     , iJiffiesUntilNextUsageReport(kUtilisationSamplePeriodJiffies)
-    , iThreadExcludeBlock(NULL)
+    , iThreadExcludeBlock(nullptr)
 {
 }
 
@@ -54,7 +54,7 @@ void DecodedAudioReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
 void DecodedAudioReservoir::DoProcessMsgIn()
 {
     iLock.Wait();
-    const TBool blockIfFull =  (iThreadExcludeBlock == NULL || Thread::Current() != iThreadExcludeBlock);
+    const TBool blockIfFull =  (iThreadExcludeBlock == nullptr || Thread::Current() != iThreadExcludeBlock);
     iLock.Signal();
     if (blockIfFull) {
         BlockIfFull();
@@ -63,11 +63,11 @@ void DecodedAudioReservoir::DoProcessMsgIn()
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 {
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         iClockPuller->StopDecodedReservoir();
     }
     iClockPuller = aMsg->ClockPuller();
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         iClockPuller->StartDecodedReservoir(iMaxJiffies, kUtilisationSamplePeriodJiffies);
     }
     return aMsg;
@@ -75,7 +75,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    if (iClockPuller != NULL) {
+    if (iClockPuller != nullptr) {
         iClockPuller->NewStreamDecodedReservoir(aMsg->StreamInfo().StreamId());
     }
     iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
@@ -94,7 +94,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgSilence* aMsg)
 
 Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
 {
-    if (iClockPuller == NULL) {
+    if (iClockPuller == nullptr) {
         return aMsg;
     }
     if (iJiffiesUntilNextUsageReport < aMsg->Jiffies()) {
@@ -107,7 +107,7 @@ Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
         iLock.Signal();
         EnqueueAtHead(remaining);
         iLock.Wait();
-        iThreadExcludeBlock = NULL;
+        iThreadExcludeBlock = nullptr;
         iLock.Signal();
     }
     iJiffiesUntilNextUsageReport -= aMsg->Jiffies();

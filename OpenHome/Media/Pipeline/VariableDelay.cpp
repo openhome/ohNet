@@ -27,7 +27,7 @@ VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& 
     , iRampDuration(aRampDuration)
     , iEnabled(false)
     , iWaitForAudioBeforeGeneratingSilence(false)
-    , iStreamHandler(NULL)
+    , iStreamHandler(nullptr)
 {
     ResetStatusAndRamp();
 }
@@ -38,13 +38,13 @@ VariableDelay::~VariableDelay()
 
 Msg* VariableDelay::Pull()
 {
-    Msg* msg = NULL;
+    Msg* msg = nullptr;
     iLock.Wait();
     if (iStatus != ERampingDown && iDelayAdjustment > 0) {
         if (iWaitForAudioBeforeGeneratingSilence) {
             do {
                 msg = NextMsgLocked();
-                if (msg != NULL) {
+                if (msg != nullptr) {
                     if (iWaitForAudioBeforeGeneratingSilence) {
                         iLock.Signal();
                         return msg;
@@ -53,8 +53,8 @@ Msg* VariableDelay::Pull()
                         DoEnqueue(msg);
                     }
                 }
-            } while (msg == NULL && iWaitForAudioBeforeGeneratingSilence);
-            msg = NULL; // DoEnqueue() above passed ownership of msg back to reservoir
+            } while (msg == nullptr && iWaitForAudioBeforeGeneratingSilence);
+            msg = nullptr; // DoEnqueue() above passed ownership of msg back to reservoir
         }
         // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
         if (iDelayAdjustment > 0) {
@@ -69,10 +69,10 @@ Msg* VariableDelay::Pull()
             }
         }
     }
-    if (msg == NULL) {
+    if (msg == nullptr) {
         do {
             msg = NextMsgLocked();
-        } while (msg == NULL);
+        } while (msg == nullptr);
     }
     iLock.Signal();
     return msg;
@@ -124,7 +124,7 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
         if (iDelayAdjustment > 0) {
             // NotifyStarving() has been called since we last checked iDelayAdjustment in Pull()
             EnqueueAtHead(msg);
-            return NULL;
+            return nullptr;
         }
         ASSERT(iDelayAdjustment < 0)
         TUint jiffies = msg->Jiffies();
@@ -135,7 +135,7 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
         }
         iDelayAdjustment += jiffies;
         msg->RemoveRef();
-        msg = NULL;
+        msg = nullptr;
         if (iDelayAdjustment == 0) {
             iStatus = ERampingUp;
             iRampDirection = Ramp::EUp;
@@ -166,7 +166,7 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     }
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
-    if (split != NULL) {
+    if (split != nullptr) {
         DoEnqueue(split);
     }
 }
@@ -316,7 +316,7 @@ Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
+    return nullptr;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgMetaText* aMsg)
@@ -390,7 +390,7 @@ Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     // MsgPlayable not supported at this stage of the pipeline (as we don't know how to ramp it)
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)
@@ -400,7 +400,7 @@ Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)
 
 EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 {
-    ASSERT(iStreamHandler != NULL);
+    ASSERT(iStreamHandler != nullptr);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
     //Log::Print("VariableDelay::OkToPlay(%u) returned", aStreamId, canPlay);
     return canPlay;
@@ -408,7 +408,7 @@ EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 
 TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
-    if (iStreamHandler != NULL) {
+    if (iStreamHandler != nullptr) {
         return iStreamHandler->TrySeek(aStreamId, aOffset);
     }
     return MsgFlush::kIdInvalid;
@@ -416,7 +416,7 @@ TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)
 
 TUint VariableDelay::TryStop(TUint aStreamId)
 {
-    if (iStreamHandler != NULL) {
+    if (iStreamHandler != nullptr) {
         iStreamHandler->TryStop(aStreamId);
     }
     return MsgFlush::kIdInvalid;
@@ -425,7 +425,7 @@ TUint VariableDelay::TryStop(TUint aStreamId)
 void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     HandleStarving(aMode);
-    if (iStreamHandler != NULL) {
+    if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

@@ -482,7 +482,6 @@ void ProviderAvTransport::NotifyPipelineState(Media::EPipelineState aState)
     // while playing, it can be known that it will resume playing. Otherwise,
     // transitioning to a non-playing state.
     iLock.Wait();
-    Log::Print("-- ProviderAvTransport::NotifyPipelineState(%u)\n", aState);
     switch (aState)
     {
     case Media::EPipelinePlaying:

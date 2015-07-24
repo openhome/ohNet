@@ -79,7 +79,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct)
     }
     const TChar* presentationUrl;
     aDevice.GetAttribute("Upnp.PresentationUrl", &presentationUrl);
-    if (presentationUrl == NULL) {
+    if (presentationUrl == nullptr) {
         presentationUrl = "";
     }
     SetPropertyProductUrl(Brn(presentationUrl));
@@ -139,7 +139,7 @@ void ProviderProduct::Product(IDvInvocation& aInvocation, IDvInvocationResponseS
     Brn imageUri;
     iProduct.GetProductDetails(room, name, info, imageUri);
     const TChar* p = aInvocation.ResourceUriPrefix();
-    const Brx& presentationUrl = (p != NULL) ? Brn(p) : Brx::Empty();
+    const Brx& presentationUrl = (p != nullptr) ? Brn(p) : Brx::Empty();
 
     aInvocation.StartResponse();
     aRoom.Write(room);

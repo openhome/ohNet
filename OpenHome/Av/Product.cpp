@@ -290,8 +290,8 @@ TUint Product::SourceXmlChangeCount()
 
 void Product::Activate(ISource& aSource)
 {
-    ISource* srcNew = NULL;
-    ISource* srcOld = NULL;
+    ISource* srcNew = nullptr;
+    ISource* srcOld = nullptr;
 
     AutoMutex a(iLock);
     // deactivate current (old) source, if one exists

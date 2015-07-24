@@ -405,7 +405,7 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgMetaText* aMsg)
@@ -474,7 +474,7 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgSilence* aMsg)
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgQuit* aMsg)
