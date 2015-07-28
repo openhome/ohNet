@@ -2,7 +2,7 @@
 """TestAirplayDropout - test for audio dropout on Net Aux source using AirPlay
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
+    arg#1 - DUT ['local' for internal SoftPlayer]
     arg#2 - Test duration (secs) or 'forever'
     
 Verifies AirPlay audio output by the DUT does not suffer from audio dropout
@@ -60,10 +60,11 @@ class TestAirplayDropout( BASE.BaseTest ):
         # setup DUT
         if dutName.lower() == 'local':
             loopback = True
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
             dutName = self.soft.name
+            time.sleep( 10 )     # allow time for iTunes to discover device
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True, aLoopback=loopback )
+        self.dut = OHMP.OhMediaPlayerDevice( dutName, aIsDut=True )
         if self.dut.volume is not None:
             self.dut.volume.volume = 65
 

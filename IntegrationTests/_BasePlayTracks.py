@@ -58,6 +58,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.numTrack         = 0
         self.startTime        = 0
         self.playTime         = None
+        self.sendNextTime     = 0
         self.senderPlayTime   = 0
         self.receiverPlayTime = 0
         self.expectedPlayTime = 0
@@ -262,8 +263,9 @@ class BasePlayTracks( BASE.BaseTest ):
             if self.receiver:
                 self.log.CheckLimits( self.receiverDev, 'GELE', self.receiverPlayTime, loLim, hiLim,
                     'reported (by Receiver) play time')
-            self.log.CheckLimits( '', 'GELE', int( round( time.time()-self.startTime, 0 )),
-                loLim, hiLim, 'measured (by test) play time')
+            delay = time.time()-self.sendNextTime
+            if delay > 2:
+                self.log.Warn( self.senderDev, 'Slow track transition (%.2fs)' % delay )
         self.lastIdTime = currIdTime
 
     def _CheckSenderInfo( self, aId ):
@@ -360,9 +362,10 @@ class BasePlayTracks( BASE.BaseTest ):
         # be cancelled before expiry if an Id event (new track) is received
         # from the Playlist service
         if not self.nextTimer:
-            self.nextTimer = LogThread.Timer( 2, self._NextTimerCb )
+            self.nextTimer = LogThread.Timer( 5, self._NextTimerCb )
             self.nextTimer.start()
         self.sender.playlist.Next()
+        self.sendNextTime = time.time()
 
     def _NextTimerCb( self ):
         """Next Timer CB - called on expiry of the 'NextTimer'"""
@@ -406,6 +409,7 @@ class BasePlayTracks( BASE.BaseTest ):
             elif svVal == 'Playing':
                 if self.playTimer:
                     self.log.Info( self.senderDev, 'Re-start Play Timer' )
+                    self.log.Debug( 'RE-setting START time ........................' )
                     self.startTime = time.time()
                     self._StartPlayTimer()
                     self._StartCheckInfoTimer()

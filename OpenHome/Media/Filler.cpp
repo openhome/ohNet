@@ -295,11 +295,11 @@ void Filler::Run()
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }
+                    iPipeline.Push(iMsgFactory.CreateMsgSession());
                     iChangedMode = false;
                 }
                 iLock.Signal();
                 ASSERT(iTrack != nullptr);
-                iPipeline.Push(iMsgFactory.CreateMsgSession());
                 LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
                 CheckForKill();
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
