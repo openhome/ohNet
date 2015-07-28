@@ -619,7 +619,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestTimestampInspector.cpp',
                 'OpenHome/Media/Tests/TestRamper.cpp',
                 'OpenHome/Media/Tests/TestFlywheelRamper.cpp',
-                'OpenHome/Media/Tests/TestFlywheelRamperManual.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestSpotifyReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
