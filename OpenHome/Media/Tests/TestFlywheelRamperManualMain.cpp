@@ -402,7 +402,7 @@ void FormatConverter::WriteFlush()
 /////////////////////////////////////////////////////////////////
 
 
-int CDECL main(TInt /*aArgc*/, TChar* aArgv[])
+int CDECL main(int /*aArgc*/, TChar* aArgv[])
 {
     if (aArgv[1]==NULL)
     {
@@ -421,8 +421,8 @@ int CDECL main(TInt /*aArgc*/, TChar* aArgv[])
     Net::Library* lib = new Net::Library(initParams);
 
     auto test = new TestFWRManual(aArgv[1], aArgv[2]);
-
     test->Run();
+
     delete test;
     delete lib;
 

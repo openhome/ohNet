@@ -30,7 +30,7 @@ private:
     void Test2(); // ConvolutionModel zero coeffs
     void Test3(); // ConvolutionModel positive coeff impulse
     void Test4(); // ConvolutionModel negative coeff impulse
-    void Test5(); // ConvolutionModel positive sample half impulse
+    void Test5(); // ConvolutionModel positive sample impulse
     void Test6(); // ConvolutionModel negative sample impulse
 
     void Test7(); // FeedbackModel scaling
