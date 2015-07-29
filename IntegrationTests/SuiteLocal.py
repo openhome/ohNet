@@ -70,25 +70,25 @@ tests = [
     [ 'TestPlaylistModes',            'local', 'all',   0                                                                            ],
     [ 'TestPlaylistPlayback',         'local', 'all',   0                                                                            ],
     [ 'TestPlaylistAddDelSoak',       'local',  server, plEnc,   100                                                                 ],
-    [ 'TestLocalPlayTracks',          'local', 'local', 8,       'off',   'on'                                                       ],
-    [ 'TestLocalPlayTracks',          'local', 'local', 'None',  'off',   'on',        'hls'                                         ],
-    [ 'TestUpnpMsPlayTracks',         'local', 'local', 8,       'off',   'on',        server,      plEnc                            ],
+    [ 'TestLocalPlayTracks',          'local', 'none',  8,       'off',   'on'                                                       ],
+    [ 'TestLocalPlayTracks',          'local', 'none',  'none',  'off',   'on',        'hls'                                         ],
+    [ 'TestUpnpMsPlayTracks',         'local', 'none',  8,       'off',   'on',        server,      plEnc                            ],
     [ 'TestLocalDropout',             'local', 'local', 'local', 1800,    'multicast'                                                ],
     [ 'TestLocalDropout',             'local', 'local', 'local', 1800,    'unicast'                                                  ],
-    [ 'TestUpnpMsDropout',            'local', 'local', 'local', 1800,    'multicast', server,      plEnc                            ],
+    [ 'TestUpnpMsDropout',            'local', 'none',  'none',  1800,    'multicast', server,      plEnc                            ],
 
     # OH Radio Service
     [ 'TestRadioService',             'local', 'all'                                                                                 ],
-    [ 'TestRadioPlayChannels',        'local', 'local', radio2,  10,      'on',        1                                             ],
-    [ 'TestRadioPlayChannels',        'local', 'local', radio4,  10,      'on',        1                                             ],
+    [ 'TestRadioPlayChannels',        'local', 'none',  radio2,  10,      'on',        1                                             ],
+    [ 'TestRadioPlayChannels',        'local', 'none',  radio4,  10,      'on',        1                                             ],
 
     # Tidal
-    [ 'TestTidalPlayTracks',          'local', 'local', 8,       'off',   'off',       120,         tidalId,     tidalUser, tidalPwd ],
-    [ 'TestTidalDropout',             'local', 'local', 'local', 1800,    'unicast',   20,          tidalId,     tidalUser, tidalPwd ],
+    [ 'TestTidalPlayTracks',          'local', 'none',  8,       'off',   'off',       120,         tidalId,     tidalUser, tidalPwd ],
+    [ 'TestTidalDropout',             'local', 'none',  'none',  1800,    'unicast',   20,          tidalId,     tidalUser, tidalPwd ],
 
     # Qobuz
-    [ 'TestQobuzPlayTracks',          'local', 'local', 8,       'off',   'off',       120,         qobuzId,     qobuzUser, qobuzPwd ],
-    [ 'TestQobuzDropout',             'local', 'local', 'local', 1800,    'unicast',   20,          qobuzId,     qobuzUser, qobuzPwd ],
+    [ 'TestQobuzPlayTracks',          'local', 'none',  8,       'off',   'off',       120,         qobuzId,     qobuzUser, qobuzPwd ],
+    [ 'TestQobuzDropout',             'local', 'none',  'none',  1800,    'unicast',   20,          qobuzId,     qobuzUser, qobuzPwd ],
 
     # Airplay
     [ 'TestAirplayFunctions',         'local'                                                                                        ],
@@ -98,7 +98,7 @@ tests = [
     [ 'TestAvTransportService',       'local', 'ALL'                                                                                 ],
     [ 'TestRenderingControlService',  'local'                                                                                        ],
     [ 'TestConnectionManagerService', 'local'                                                                                        ],
-    [ 'TestAvTransportPlayTracks',    'local', 'local', server,  plMix,   8,           1,           'false'                          ],
+    [ 'TestAvTransportPlayTracks',    'local', 'none',  server,  plMix,   8,           1,           'false'                          ],
 
     # Songcast
     [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',   12345,       'unicast'                                     ],
