@@ -232,7 +232,7 @@ Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgSession* aMsg)
 {
-    iDelayAdjustment = iDelayJiffies; // FIXME - should be (iDelayJiffies - downstreamAudio)
+    iDelayAdjustment = iDelayJiffies;
     iWaitForAudioBeforeGeneratingSilence = true;
     return aMsg;
 }

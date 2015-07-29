@@ -872,6 +872,7 @@ protected:
     TUint EncodedBytes() const;
     TBool IsEmpty() const;
     TUint SessionCount() const;
+    TUint TrackCount() const;
     TUint EncodedStreamCount() const;
     TUint DecodedStreamCount() const;
     TUint EncodedAudioCount() const;
@@ -968,6 +969,7 @@ private:
     TUint iEncodedBytes;
     TUint iJiffies;
     TUint iSessionCount;
+    TUint iTrackCount;
     TUint iEncodedStreamCount;
     TUint iDecodedStreamCount;
     TUint iEncodedAudioCount;

@@ -7,7 +7,7 @@ extern void TestFlywheelRamper();
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    TestFlywheelRamper();
     Net::Library* lib = new Net::Library(aInitParams);
+    TestFlywheelRamper();
     delete lib;
 }
