@@ -114,9 +114,6 @@ protected:
 private:
     IPipelineElementUpstream* iUpstreamElement;
     Msg* iPendingMsg;
-
-protected:
-    IContainer* iContainer;
 };
 
 class ContainerNull : public ContainerBase
