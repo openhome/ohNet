@@ -14,6 +14,7 @@ public class Library
     private static native void OhNetLibraryClose();
     private static native void OhNetSetCurrentSubnet(long aSubnet);
     private static native long OhNetCurrentSubnetAdapter();
+    private static native void OhNetRefreshNetworkAdapterList();
     private static native void OhNetLibraryNotifySuspended();
     private static native void OhNetLibraryNotifyResumed();
     private static native void OhNetDebugSetLevel(int aLevel);
@@ -174,6 +175,17 @@ public class Library
     }
 
     /**
+     * Force a refresh of the library's list of available network adapters
+     *
+     * This should only be required on platforms that are not capable of
+     * automatically detecting adapter changes.
+     */
+    public void refreshNetworkAdapterList()
+    {
+        OhNetRefreshNetworkAdapterList();
+    }
+
+    /**
      * Inform the library that the application has been suspended.
      *
      * This is necessary if the application may be paused while other processes on
@@ -210,7 +222,7 @@ public class Library
     {
         OhNetDebugSetLevel(aLevel);
     }
-    
+
     /**
      * Terminate the ohNet process after a fatal error. On some platforms, this call
      * may invoke a debugger or produce a crash dump.

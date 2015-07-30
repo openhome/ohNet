@@ -72,6 +72,14 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAda
   (JNIEnv *, jclass);
 
 /*
+* Class:     org_openhome_net_core_Library
+* Method:    OhNetAbortProcess
+* Signature: ()V
+*/
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetRefreshNetworkAdapterList
+(JNIEnv *, jclass);
+
+/*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryNotifySuspended
  * Signature: ()V

@@ -41,6 +41,7 @@ public:
     std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;
     static void DestroyNetworkAdapterList(std::vector<NetworkAdapter*>* aList);
     void SetCurrentSubnet(TIpAddress aSubnet);
+    void Refresh();
     TUint AddCurrentChangeListener(Functor aFunctor, TBool aInternalClient = true); // internal clients are notified first
     void RemoveCurrentChangeListener(TUint aId);
     TUint AddSubnetListChangeListener(Functor aFunctor, TBool aInternalClient = true); // internal clients are notified first

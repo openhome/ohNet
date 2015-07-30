@@ -109,6 +109,11 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     }
 }
 
+void NetworkAdapterList::Refresh()
+{
+    HandleInterfaceListChanged();
+}
+
 TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor, TBool aInternalClient)
 {
     if (aInternalClient) {

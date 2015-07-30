@@ -494,6 +494,11 @@ OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie)
     return (OhNetHandleNetworkAdapter)UpnpLibrary::CurrentSubnetAdapter(aCookie);
 }
 
+void STDCALL OhNetRefreshNetworkAdapterList()
+{
+    UpnpLibrary::RefreshNetworkAdapterList();
+}
+
 void STDCALL OhNetFreeExternal(void* aPtr)
 {
     OhNetCallbackFreeExternal cb = gEnv->InitParams()->FreeExternal();

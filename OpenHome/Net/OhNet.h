@@ -524,6 +524,14 @@ public:
     NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
 
     /**
+     * Force a refresh of the library's list of available network adapters
+     *
+     * This should only be required on platforms that are not capable of
+     * automatically detecting adapter changes.
+     */
+    void RefreshNetworkAdapterList();
+
+    /**
      * Inform the library that the application has been suspended.
      *
      * This is necessary if the application may be paused while other processes on
@@ -659,6 +667,14 @@ public:
      *          Or NULL if there is no currently selected adapter.
      */
     static NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
+
+    /**
+     * Force a refresh of the library's list of available network adapters
+     *
+     * This should only be required on platforms that are not capable of
+     * automatically detecting adapter changes.
+     */
+    static void RefreshNetworkAdapterList();
 
     /**
      * Inform the library that the application has been suspended.

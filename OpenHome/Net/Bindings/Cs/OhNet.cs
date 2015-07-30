@@ -1070,6 +1070,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetRefreshNetworkAdapterList();
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetDebugSetLevel(uint aLevel);
 #if IOS
         [DllImport("__Internal")]
@@ -1209,6 +1215,16 @@ namespace OpenHome.Net.Core
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
             OhNetSetCurrentSubnet(aSubnet.Subnet());
+        }
+
+        /// <summary>
+        /// Force a refresh of the library's list of available network adapters
+        /// </summary>
+        /// <remarks>This should only be required on platforms that are not capable of
+        /// automatically detecting adapter changes.</remarks>
+        public void RefreshNetworkAdapterList()
+        {
+            OhNetRefreshNetworkAdapterList();
         }
 
         /// <summary>

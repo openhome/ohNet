@@ -810,6 +810,14 @@ DllExport void STDCALL OhNetSetCurrentSubnet(uint32_t aSubnet);
  */
 DllExport OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie);
 
+/**
+* Force a refresh of the library's list of available network adapters
+*
+* This should only be required on platforms that are not capable of
+* automatically detecting adapter changes.
+*/
+DllExport void STDCALL OhNetRefreshNetworkAdapterList();
+
 /* @} */
 
 /**
