@@ -28,7 +28,8 @@ using namespace OpenHome::Media::Codec;
 
 
 MpegTs::MpegTs()
-    : iSize(0)
+    : iDiscarding(false)
+    , iSize(0)
     , iTotalSize(0)
     , iPacketBytes(0)
     , iProgramMapPid(0)
@@ -57,6 +58,14 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
     AddToAudioEncoded(aMsg);
 
     if (!iPulling) {
+        if (iDiscarding) {
+            if (iAudioEncoded != nullptr) {
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = nullptr;
+                return nullptr;
+            }
+        }
+
         TBool packetsRemaining = true;
 
         while (packetsRemaining) {
@@ -128,8 +137,13 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                         }
                     }
                     else {
-                        // Couldn't process one of the MPEG-TS 188-byte packets.
-                        THROW(CodecStreamCorrupt); // FIXME - don't throw this! It isn't caught anywhere! Instead, quietly discard remainder of stream (or resync on next frame).
+                        // Could attempt to resync on next frame instead of just discarding.
+                        iDiscarding = true;
+                        if (iAudioEncoded != nullptr) {
+                            iAudioEncoded->RemoveRef();
+                            iAudioEncoded = nullptr;
+                            return unpacked;
+                        }
                     }
                 }
                 else {
@@ -164,6 +178,7 @@ TUint MpegTs::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 
 void MpegTs::Clear()
 {
+    iDiscarding = false;
     iTotalSize = 0;
     iPacketBytes = 0;
     iProgramMapPid = 0;

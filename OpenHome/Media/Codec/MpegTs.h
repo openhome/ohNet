@@ -45,6 +45,7 @@ private:
     TBool RecognisePat(const Brx& aPat);
     TBool RecognisePmt(const Brx& aPmt);
 private:
+    TBool iDiscarding;
     TUint iSize;    // Size of data to be discard for current packet being processed.
     TUint iTotalSize;   // FIXME - this is important for seeking - ensure this is being incremented correctly
     TUint iPacketBytes;
