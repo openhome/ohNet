@@ -53,7 +53,6 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     // FIXME - does not currently attempt to find sync word.
     // Current use does not extend beyond file-based streams with a predictable sync-start.
-
     MsgAudioEncoded* unpacked = nullptr;
     AddToAudioEncoded(aMsg);
 
@@ -63,12 +62,14 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
         while (packetsRemaining) {
             TBool unpack = false;
 
+
+            // FIXME - check if iAudioEncoded == nullptr here?
+
             if (unpacked != nullptr && iAudioEncoded->Bytes() < kPacketBytes) {
                 // Don't pull through more encoded audio if not required.
                 return unpacked;
             }
 
-            //if (iPacketBytes != 0 && iPacketBytes+iAudioEncoded->Bytes() > kPacketBytes+kPacketBytes) {
             if (iPacketBytes != 0 && iPacketBytes+iAudioEncoded->Bytes() > kPacketBytes) {
                 // Packet boundary within this message.
                 // Must have iAudioEncoded point at start of next msg.
@@ -78,14 +79,7 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                 // Consuming remainder of packet.
                 // Next time round will be start of new packet.
                 iPacketBytes = 0;
-                // FIXME - move this if-else block to a helper function
-                if (unpacked == nullptr) {
-                    unpacked = iAudioEncoded;
-                }
-                else {
-                    unpacked->Add(iAudioEncoded);
-                }
-                iAudioEncoded = nullptr;
+                unpacked = AppendAudioEncoded(unpacked);
             }
             else if (iPacketBytes == 0) {
                 // At start of next packet.
@@ -94,18 +88,12 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
             else {
                 // Remaining audio belongs to current packet (but does not complete current packet)
                 iPacketBytes += iAudioEncoded->Bytes();
-                if (unpacked == nullptr) {
-                    unpacked = iAudioEncoded;
-                }
-                else {
-                    unpacked->Add(iAudioEncoded);
-                }
-                iAudioEncoded = nullptr;
+                unpacked = AppendAudioEncoded(unpacked);
             }
 
             if (unpack) {
                 iBuf.SetBytes(0);
-                Read(iBuf, kPacketBytes);
+                Read(iBuf, kPacketBytes);   // FIXME - what if this reads fewer bytes than requested?
 
                 if (iBuf.Bytes() == kPacketBytes) {
                     TBool recognised = ProcessPacket(iBuf);
@@ -117,13 +105,16 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                         ASSERT(iSize <= kPacketBytes);
                         const TUint payloadBytes = kPacketBytes - iSize;
 
-                        MsgAudioEncoded* payload = nullptr;
                         if (payloadBytes == 0) {
                             iPacketBytes = 0;
+
+                            if (iAudioEncoded == nullptr) {
+                                packetsRemaining = false;
+                            }
                         }
                         else if (iAudioEncoded->Bytes() > payloadBytes) {
                             MsgAudioEncoded* remainder = iAudioEncoded->Split(payloadBytes);
-                            payload = iAudioEncoded;
+                            unpacked = AppendAudioEncoded(unpacked);
                             iAudioEncoded = remainder;
                             iPacketBytes = 0;
                         }
@@ -133,16 +124,8 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
                                 // iAudioEncoded->Bytes() == payloadBytes
                                 iPacketBytes = 0;
                             }
-                            payload = iAudioEncoded;
-                            iAudioEncoded = nullptr;
+                            unpacked = AppendAudioEncoded(unpacked);
                             packetsRemaining = false;
-                        }
-
-                        if (unpacked == nullptr) {
-                            unpacked = payload;
-                        }
-                        else {
-                            unpacked->Add(payload);
                         }
                     }
                     else {
@@ -168,7 +151,6 @@ Msg* MpegTs::ProcessMsg(MsgAudioEncoded* aMsg)
         return unpacked;
 
     }
-
     return unpacked;
 }
 
@@ -187,6 +169,19 @@ void MpegTs::Clear()
     iPacketBytes = 0;
     iProgramMapPid = 0;
     iStreamPid = 0;
+}
+
+MsgAudioEncoded* MpegTs::AppendAudioEncoded(MsgAudioEncoded* aMsg)
+{
+    ASSERT(iAudioEncoded != nullptr);
+    if (aMsg == nullptr) {
+        aMsg = iAudioEncoded;
+    }
+    else {
+        aMsg->Add(iAudioEncoded);
+    }
+    iAudioEncoded = nullptr;
+    return aMsg;
 }
 
 TBool MpegTs::ProcessPacket(const Brx& aPacket)

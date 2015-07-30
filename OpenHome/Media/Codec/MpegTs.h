@@ -37,6 +37,7 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset);
 private:
     void Clear();
+    MsgAudioEncoded* AppendAudioEncoded(MsgAudioEncoded* aMsg);
     TBool ProcessPacket(const Brx& aPacket);
     TBool RecogniseTableHeader(const Brx& aTableHeader);
     TBool RecogniseTableSyntax(const Brx& aTableSyntax);
