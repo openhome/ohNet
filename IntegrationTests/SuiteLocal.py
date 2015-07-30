@@ -15,7 +15,7 @@ loopback and standard adapter devices within single process space)
  - iTunes server must be available (for Airplay testing)
  - UPnP media server with reqd. playlists must be available (for playlist soaks) 
 """
-import _FunctionalTest
+import _Paths
 import BaseSuite as Suite
 import Config
 import os

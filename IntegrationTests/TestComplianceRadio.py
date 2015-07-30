@@ -5,42 +5,18 @@ Parameters:
 
 Check compliance of Volume service functionality
 """
-import TestRadioService  as BASE
+import _Paths
+import CommonComplianceRadio as BASE
 import sys
 
 
-class TestComplianceRadio( BASE.TestRadioService ):
-    """Test Radio service functionality compliance"""
+class TestComplianceRadio( BASE.CommonComplianceRadio ):
 
     def __init__( self ):
-        """Constructor - initialise base class"""
-        BASE.TestRadioService.__init__( self )
-        self.doc   = __doc__
-        self.users = ['linn-test-presets-1', 'linn-test-presets-2', 'linn-test-presets-3']
-
-    def Test( self, args ):
-        """Check radio service functionality compliance"""
-        argList = []
-        if len( args )>1:
-            if args[1].lower() == 'local':
-                self.log.Abort( '', 'Require non-local player to test' )
-            else:
-                argList = [args[0], args[1], 'all']
-        BASE.TestRadioService.Test( self, argList )
-
-    def Cleanup( self ):
-        """Perform post-test cleanup"""
-        BASE.TestRadioService.Cleanup( self )
-
-    def TestFixedParams( self ):
-        # implementation dependant -> disabled for compliance testing
-        pass
-
-    def TestUpdated( self ):
-        # implementation dependant -> disabled for compliance testing
-        pass
+        BASE.CommonComplianceRadio.__init__( self )
+        self.doc = __doc__
 
 
 if __name__ == '__main__':
-    
+
     BASE.Run( sys.argv )
