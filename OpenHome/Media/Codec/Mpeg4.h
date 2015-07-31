@@ -11,7 +11,6 @@
 #include <vector>
 
 EXCEPTION(MediaMpeg4FileInvalid);
-EXCEPTION(MediaMpeg4EndOfData);
 EXCEPTION(MediaMpeg4OutOfRange);
 
 namespace OpenHome {
@@ -322,6 +321,7 @@ private:
     MsgAudioEncoded* WriteSampleSizeTable() const;
     MsgAudioEncoded* WriteSeekTable() const;    // FIXME - codec shouldn't require this, it should be able to pass a seek request to a sample up and container can handle it. However, CodecController and IStreamHandler require seek pos in bytes, so codec must query SeekTable itself.
     MsgAudioEncoded* ProcessNextAudioBlock();   // May return nullptr.
+    // Following may all throw MediaMpeg4FileInvalid.
     void ParseMetadataBox(IReader& aReader, TUint aBytes);  // aBytes is size of moov box.
     void ParseBoxMdhd(IMpeg4Box& aBox, TUint aBytes);
     void ParseBoxCodec(IMpeg4Box& aBox, TUint aBytes, const Brx& aCodec);

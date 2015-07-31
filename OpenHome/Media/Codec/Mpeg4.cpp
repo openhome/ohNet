@@ -234,7 +234,7 @@ void Mpeg4Box::ReadHeader()
     while (remaining > 0) {
         Brn buf = iReader->Read(remaining);
         if (buf.Bytes() == 0) {
-            THROW(MediaMpeg4EndOfData); // FIXME - throw invalid instead?
+            THROW(MediaMpeg4FileInvalid);
         }
         header.Append(buf);
         remaining -= buf.Bytes();
@@ -280,9 +280,9 @@ void Mpeg4Box::Skip(TUint aBytes)
     }
 
     while (remaining > 0) {
-        Brn buf = iReader->Read(remaining);  // FIXME - catch ReaderError and rethrow as Mpeg4 exception?
+        Brn buf = iReader->Read(remaining);
         if (buf.Bytes() == 0) {
-            THROW(MediaMpeg4EndOfData); // FIXME - throw invalid instead?
+            THROW(MediaMpeg4FileInvalid);
         }
         remaining -= buf.Bytes();
         iOffset += buf.Bytes();
@@ -670,7 +670,7 @@ TUint64 SeekTable::CodecSample(TUint64 aAudioSample) const
 
     // Something went wrong. Could corrupt table or programmer error!
     LOG(kCodec, "SeekTable::CodecSample could not find aAudioSample: %u\n", aAudioSample);
-    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+    THROW(MediaMpeg4FileInvalid);
 }
 
 TUint SeekTable::Chunk(TUint64 aCodecSample) const
@@ -716,7 +716,7 @@ TUint SeekTable::Chunk(TUint64 aCodecSample) const
     }
 
     LOG(kCodec, "SeekTable::Chunk could not find aCodecSample: %u\n", aCodecSample);
-    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+    THROW(MediaMpeg4FileInvalid);
 }
 
 TUint SeekTable::CodecSampleFromChunk(TUint aChunk) const
@@ -759,7 +759,7 @@ TUint SeekTable::CodecSampleFromChunk(TUint aChunk) const
     }
 
     LOG(kCodec, "SeekTable::CodecSampleFromChunk could not find aCodecSample: %u\n", aChunk);
-    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+    THROW(MediaMpeg4FileInvalid);
 }
 
 TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
@@ -791,7 +791,7 @@ TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
 
     // Something went wrong. Could be corrupt table or programmer error!
     LOG(kCodec, "SeekTable::AudioSampleFromCodecSample could not find aCodecSample: %u\n", aCodecSample);
-    THROW(CodecStreamCorrupt); // invalid table // FIXME - THROW Mpeg4MediaFileInvalid instead?
+    THROW(MediaMpeg4FileInvalid);
 }
 
 
@@ -1147,13 +1147,20 @@ MsgAudioEncoded* Mpeg4Container::Process()
         // Exhausted/invalid stream while processing container.
         // Should just silently drop all remaining audio until new stream seen.
         catch (ReaderError&) {
-
-        }
-        catch (MediaMpeg4EndOfData&) {
-
+            iDiscarding = true;
+            if (iAudioEncoded != nullptr) {
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = nullptr;
+                return nullptr;
+            }
         }
         catch (MediaMpeg4FileInvalid&) {
-
+            iDiscarding = true;
+            if (iAudioEncoded != nullptr) {
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = nullptr;
+                return nullptr;
+            }
         }
 
         // If metadata has been retrieved, construct (one or more) MsgAudioEncoded
@@ -1525,9 +1532,6 @@ void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
     }
     catch (ReaderError&) {
         THROW(MediaMpeg4FileInvalid);
-    }
-    catch (MediaMpeg4FileInvalid&) {
-        throw;
     }
 
     LOG(kCodec, "<Mpeg4Container::ParseMetadataBox\n");

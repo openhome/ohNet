@@ -91,24 +91,32 @@ void CodecAlac::StreamInitialise()
 
     // Use iInBuf for gathering initialisation data, as it doesn't need to be used for audio until Process() starts being called.
     Mpeg4Info info;
-    CodecBufferedReader codecBufReader(*iController, iInBuf);
-    Mpeg4InfoReader mp4Reader(codecBufReader);
-    mp4Reader.Read(info);
+    try {
+        CodecBufferedReader codecBufReader(*iController, iInBuf);
+        Mpeg4InfoReader mp4Reader(codecBufReader);
+        mp4Reader.Read(info);
 
-    // Read sample size table.
-    ReaderBinary readerBin(codecBufReader);
-    iSampleSizeTable.Clear();
-    const TUint sampleCount = readerBin.ReadUintBe(4);
-    iSampleSizeTable.Init(sampleCount);
-    for (TUint i=0; i<sampleCount; i++) {
-        const TUint sampleSize = readerBin.ReadUintBe(4);
-        iSampleSizeTable.AddSampleSize(sampleSize);
+        // Read sample size table.
+        ReaderBinary readerBin(codecBufReader);
+        iSampleSizeTable.Clear();
+        const TUint sampleCount = readerBin.ReadUintBe(4);
+        iSampleSizeTable.Init(sampleCount);
+        for (TUint i=0; i<sampleCount; i++) {
+            const TUint sampleSize = readerBin.ReadUintBe(4);
+            iSampleSizeTable.AddSampleSize(sampleSize);
+        }
+
+        // Read seek table.
+        iSeekTable.Deinitialise();
+        SeekTableInitialiser seekTableInitialiser(iSeekTable, codecBufReader);
+        seekTableInitialiser.Init();
     }
-
-    // Read seek table.
-    iSeekTable.Deinitialise();
-    SeekTableInitialiser seekTableInitialiser(iSeekTable, codecBufReader);
-    seekTableInitialiser.Init();
+    catch (MediaMpeg4FileInvalid&) {
+        THROW(CodecStreamCorrupt);
+    }
+    catch (ReaderError&) {
+        THROW(CodecStreamCorrupt);
+    }
 
     iInBuf.SetBytes(0);
     alac = create_alac(info.BitDepth(), info.Channels());
@@ -151,7 +159,11 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
         return canSeek;
     }
     catch (MediaMpeg4OutOfRange&) {
-        LOG(kCodec, "CodecAlac::TrySeek invalid sample aStreamId: %u, aSample: %lld\n", aStreamId, aSample);
+        LOG(kCodec, "CodecAlac::TrySeek caught MediaMpeg4OutOfRange sample aStreamId: %u, aSample: %lld\n", aStreamId, aSample);
+        return false;
+    }
+    catch (MediaMpeg4FileInvalid&) {
+        LOG(kCodec, "CodecAlac::TrySeek caught MediaMpeg4FileInvalid sample aStreamId: %u, aSample: %lld\n", aStreamId, aSample);
         return false;
     }
 }
