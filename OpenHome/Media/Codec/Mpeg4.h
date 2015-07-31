@@ -334,9 +334,9 @@ private:
     void ParseBoxAlac(IMpeg4Box& aBox, TUint aBytes);
 private:
     Mpeg4BoxStack iBoxStack;
-    //TUint iSize;
     TUint64 iPos;
     Bws<kMaxBufBytes> iBuf;
+    TBool iDiscarding;
     TBool iPreProcessingComplete;
     TBool iMetadataRetrieved;
     TUint iChunkIndex;

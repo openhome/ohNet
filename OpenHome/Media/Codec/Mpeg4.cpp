@@ -998,6 +998,13 @@ Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
     AddToAudioEncoded(aMsg);
 
     if (!iPulling) {
+        if (iDiscarding) {
+            if (iAudioEncoded != nullptr) {
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = nullptr;
+                return nullptr;
+            }
+        }
         MsgAudioEncoded* msg = Process();
         ASSERT(iAudioEncoded == nullptr);  // iAudioEncoded should have been exhausted.
         return msg;
@@ -1067,6 +1074,7 @@ void Mpeg4Container::Clear()
     iBoxStack.Reset();
     iPos = 0;
     iBuf.SetBytes(0);
+    iDiscarding = false;
     iPreProcessingComplete = false;
     iMetadataRetrieved = false;
     iChunkIndex = 0;
@@ -1086,9 +1094,6 @@ void Mpeg4Container::Clear()
 
 MsgAudioEncoded* Mpeg4Container::Process()
 {
-
-    // FIXME - If we did handle files with mdat before moov, would have to ensure we didn't attempt to process moov after end of mdat, i.e., somehow terminate when we reach end of mdat, which is detectable by various means.
-
     MsgAudioEncoded* msgOut = nullptr;
 
     if (!iPreProcessingComplete) {
@@ -1236,7 +1241,12 @@ MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
         if (iChunkBytesRemaining == 0) {
             const TUint64 chunkOffset = iSeekTable.GetOffset(iChunkIndex);
             if (chunkOffset < iPos) {
-                THROW(MediaMpeg4FileInvalid);
+                iDiscarding = true;
+                if (iAudioEncoded != nullptr) {
+                    iAudioEncoded->RemoveRef();
+                    iAudioEncoded = nullptr;
+                    return nullptr;
+                }
             }
             const TUint64 toDiscard = chunkOffset-iPos;
             ASSERT(toDiscard <= std::numeric_limits<TUint>::max());
