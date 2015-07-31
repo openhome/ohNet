@@ -126,7 +126,7 @@ void CodecAac::StreamInitialise()
         THROW(CodecStreamCorrupt);
     }
     catch (ReaderError&) {
-        THROW(CodecStreamCorrupt);
+        THROW(CodecStreamEnded);
     }
 
     iInBuf.SetBytes(0);
