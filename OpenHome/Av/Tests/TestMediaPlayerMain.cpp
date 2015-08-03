@@ -5,6 +5,8 @@
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Media/Utils/AnimatorBasic.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Functor.h>
 
 #include <stdlib.h>
 
@@ -12,6 +14,73 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
 using namespace OpenHome::Net;
+
+class TestMediaPlayerThread
+{
+public:
+    TestMediaPlayerThread(const TestMediaPlayerOptions& aOptions);
+    ~TestMediaPlayerThread();
+    void Run();
+private:
+    void RunInThread();
+private:
+    const TestMediaPlayerOptions& iOptions;
+    Library* iLib;
+    Media::PriorityArbitratorAnimator iArbAnimator;
+    Media::PriorityArbitratorPipeline iArbPipeline;
+};
+
+TestMediaPlayerThread::TestMediaPlayerThread(const TestMediaPlayerOptions& aOptions)
+    : iOptions(aOptions)
+    , iArbAnimator(kPrioritySystemHighest)
+    , iArbPipeline(kPrioritySystemHighest-1)
+{
+    iLib = TestMediaPlayerInit::CreateLibrary(iOptions.Loopback().Value(), iOptions.Adapter().Value());
+    ThreadPriorityArbitrator& priorityArbitrator = iLib->Env().PriorityArbitrator();
+    priorityArbitrator.Add(iArbAnimator);
+    priorityArbitrator.Add(iArbPipeline);
+}
+
+TestMediaPlayerThread::~TestMediaPlayerThread()
+{
+    delete iLib;
+}
+
+void TestMediaPlayerThread::Run()
+{
+    ThreadFunctor* th = new ThreadFunctor("TestMediaPlayer", MakeFunctor(*this, &TestMediaPlayerThread::RunInThread));
+    th->Start();
+    delete th;
+}
+
+void TestMediaPlayerThread::RunInThread()
+{
+    const TChar* cookie ="TestMediaPlayerMain";
+    NetworkAdapter* adapter = iLib->CurrentSubnetAdapter(cookie);
+    Net::DvStack* dvStack = iLib->StartDv();
+
+    // Seed random number generator.
+    TestMediaPlayerInit::SeedRandomNumberGenerator(dvStack->Env(), iOptions.Room().Value(), adapter->Address(), dvStack->ServerUpnp());
+    adapter->RemoveRef(cookie);
+
+    // Set/construct UDN.
+    Bwh udn;
+    // Note: prefix udn with 4c494e4e- to get older versions of Linn Konfig to recognise our devices
+    TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), iOptions.Udn().Value(), Brn("TestMediaPlayer"), udn);
+
+    // Create TestMediaPlayer.
+    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, iOptions.Room().CString(), iOptions.Name().CString(),
+        iOptions.TuneIn().Value(), iOptions.Tidal().Value(), iOptions.Qobuz().Value(),
+        iOptions.UserAgent().Value());
+    Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline());
+    if (iOptions.ClockPull().Value()) {
+        tmp->SetPullableClock(*animator);
+    }
+    tmp->Run();
+    tmp->StopPipeline();
+    delete animator;
+    delete tmp;
+}
 
 int CDECL main(int aArgc, char* aArgv[])
 {
@@ -28,40 +97,9 @@ int CDECL main(int aArgc, char* aArgv[])
         return 1;
     }
 
-    // Create lib.
-    Library* lib = TestMediaPlayerInit::CreateLibrary(options.Loopback().Value(), options.Adapter().Value());
-    Media::PriorityArbitratorAnimator arbAnimator(kPrioritySystemHighest);
-    ThreadPriorityArbitrator& priorityArbitrator = lib->Env().PriorityArbitrator();
-    priorityArbitrator.Add(arbAnimator);
-    Media::PriorityArbitratorPipeline arbPipeline(kPrioritySystemHighest-1);
-    priorityArbitrator.Add(arbPipeline);
-    const TChar* cookie ="TestMediaPlayerMain";
-    NetworkAdapter* adapter = lib->CurrentSubnetAdapter(cookie);
-    Net::DvStack* dvStack = lib->StartDv();
-
-    // Seed random number generator.
-    TestMediaPlayerInit::SeedRandomNumberGenerator(dvStack->Env(), options.Room().Value(), adapter->Address(), dvStack->ServerUpnp());
-    adapter->RemoveRef(cookie);
-
-    // Set/construct UDN.
-    Bwh udn;
-    // Note: prefix udn with 4c494e4e- to get older versions of Linn Konfig to recognise our devices
-    TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), options.Udn().Value(), Brn("TestMediaPlayer"), udn);
-
-    // Create TestMediaPlayer.
-    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, options.Room().CString(), options.Name().CString(),
-                                               options.TuneIn().Value(), options.Tidal().Value(), options.Qobuz().Value(),
-                                               options.UserAgent().Value());
-    Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline());
-    if (options.ClockPull().Value()) {
-        tmp->SetPullableClock(*animator);
-    }
-    tmp->Run();
-    tmp->StopPipeline();
-    delete animator;
-    delete tmp;
-
-    delete lib;
+    TestMediaPlayerThread* th = new TestMediaPlayerThread(options);
+    th->Run();
+    delete th;
 
     return 0;
 }
