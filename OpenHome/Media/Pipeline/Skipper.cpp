@@ -44,13 +44,6 @@ void Skipper::Unblock()
     iBlocker.Signal();
 }
 
-void Skipper::RemoveCurrentStream(TBool aRampDown)
-{
-    iLock.Wait();
-    (void)TryRemoveCurrentStream(aRampDown);
-    iLock.Signal();
-}
-
 TBool Skipper::TryRemoveStream(TUint aStreamId, TBool aRampDown)
 {
     AutoMutex a(iLock);
