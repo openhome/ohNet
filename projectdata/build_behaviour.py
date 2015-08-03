@@ -178,7 +178,7 @@ def bundle(context):
 def test(context):
     if context.env["OH_PLATFORM"] not in ['Linux-mipsel']:
         if context.env["OH_PLATFORM"]=='Windows-x86':
-            python("dependencies/AnyPlatform/testharness/Test", "-p", context.env["OH_PLATFORM"], "-m", "oncommit.test")
+            python("dependencies/AnyPlatform/testharness/Test", "-p", context.env["OH_PLATFORM"], "-b", context.env["BUILDDIR"], "-m", "oncommit.test")
         else:
             python('waf', 'test')
 
