@@ -122,6 +122,8 @@ private:
     TBool iStopped;
     TBool iQuit;
     TBool iChangedMode;
+    TBool iWaitingForAudio;
+    TBool iNoAudioBeforeNextTrack;
     EStreamPlay iTrackPlayStatus;
     TUint iNextHaltId;
     TUint iPendingHaltId;
