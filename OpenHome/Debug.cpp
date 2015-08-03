@@ -38,16 +38,6 @@ TBool Debug::TestLevel(TUint aLevel)
     return false;   
 }
 
-TBool Debug::BreakBeforeThrow()
-{
-    return iBreak;
-}
-
-void Debug::SetBreakBeforeThrow(TBool aBreak)
-{
-    iBreak = aBreak;
-}
-
 AutoLog::AutoLog(TUint aLevel, const TChar* aString)
     : iLevel(aLevel)
     , iString(aString)

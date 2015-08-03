@@ -134,9 +134,6 @@ public:
     static void SetLevel(TUint aLevel);
     static void AddLevel(TUint aLevel);
     static void RemoveLevel(TUint aLevel);
-    static TBool BreakBeforeThrow();
-    static void SetBreakBeforeThrow(TBool aBreak);
-
 private:
     static TUint iLevel;
     static TBool iBreak;
