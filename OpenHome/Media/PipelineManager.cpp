@@ -75,20 +75,14 @@ void PipelineManager::Quit()
     LOG(kPipeline, "> PipelineManager::Quit()\n");
     AutoMutex _(iPublicLock);
     iLock.Wait();
-    const TBool waitStop = (iPipelineState != EPipelineStopped);
     iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
     iPipeline->Unblock();
     iLock.Signal();
-    if (waitStop) {
-        LOG(kPipeline, "...waiting for pipeline to stop (why?)\n");
-        iPipeline->Stop(haltId);
-        iPipelineStoppedSem.Wait();
-    }
-    iPipeline->Quit();
     iFiller->Quit();
+    iPipeline->Quit();
 }
 
 void PipelineManager::Add(Codec::CodecBase* aCodec)
