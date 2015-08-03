@@ -44,13 +44,6 @@ void Skipper::Unblock()
     iBlocker.Signal();
 }
 
-void Skipper::RemoveCurrentStream(TBool aRampDown)
-{
-    iLock.Wait();
-    (void)TryRemoveCurrentStream(aRampDown);
-    iLock.Signal();
-}
-
 TBool Skipper::TryRemoveStream(TUint aStreamId, TBool aRampDown)
 {
     AutoMutex a(iLock);
@@ -116,13 +109,8 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
     if (FlushUntilHalt()) {
         const TBool sendHalt = (iState != eFlushing); // only create a MsgHalt the first time we call StartFlushing()
         (void)iStreamHandler->OkToPlay(iStreamId);
+        (void)iStreamHandler->TryStop(iStreamId);
         StartFlushing(sendHalt);
-        // A stream could be added to IdManager after flushing/halt has begun,
-        // but before Filler has output flush/halt msg.
-        // Such a stream would be discarded here (as it would arrive before the
-        // expected flush/halt) but IdManager still expects OkToPlay() to be
-        // called on that stream, otherwise it will reject all future streams.
-        (void)iStreamHandler->OkToPlay(iStreamId);
         aMsg->RemoveRef();
         return nullptr;
     }

@@ -53,7 +53,9 @@ int CDECL main(int aArgc, char* aArgv[])
                                                options.TuneIn().Value(), options.Tidal().Value(), options.Qobuz().Value(),
                                                options.UserAgent().Value());
     Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline());
-    tmp->SetPullableClock(*animator);
+    if (options.ClockPull().Value()) {
+        tmp->SetPullableClock(*animator);
+    }
     tmp->Run();
     tmp->StopPipeline();
     delete animator;

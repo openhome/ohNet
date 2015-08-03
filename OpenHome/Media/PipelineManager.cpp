@@ -81,8 +81,8 @@ void PipelineManager::Quit()
     iPipeline->RemoveAll(haltId);
     iPipeline->Unblock();
     iLock.Signal();
-    iFiller->Quit();
     iPipeline->Quit();
+    iFiller->Quit();
 }
 
 void PipelineManager::Add(Codec::CodecBase* aCodec)

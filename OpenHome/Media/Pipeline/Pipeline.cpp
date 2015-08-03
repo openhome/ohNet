@@ -507,20 +507,13 @@ void Pipeline::Stop(TUint aHaltId)
     /* FIXME - is there any race where iBuffering is true but the pipeline is also
                running, meaning that we want to allow Stopper to ramp down? */
     if (iBuffering) {
-        // FIXME - should maybe tell StarvationMonitor to skip to next track also
-        iSkipper->RemoveCurrentStream(false);
+        iSkipper->RemoveAll(aHaltId, false);
         iLock.Signal();
         iStopper->StopNow();
         return;
     }
     iStopper->BeginStop(aHaltId);
     iLock.Signal();
-}
-
-void Pipeline::RemoveCurrentStream()
-{
-    const TBool rampDown = (iState == EPlaying);
-    iSkipper->RemoveCurrentStream(rampDown);
 }
 
 void Pipeline::RemoveAll(TUint aHaltId)

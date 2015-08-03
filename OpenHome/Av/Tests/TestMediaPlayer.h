@@ -157,16 +157,17 @@ public:
     TestMediaPlayerOptions();
     void AddOption(TestFramework::Option* aOption);
     TBool Parse(int aArgc, char* aArgv[]);
-    TestFramework::OptionString& Room();
-    TestFramework::OptionString& Name();
-    TestFramework::OptionString& Udn();
-    TestFramework::OptionUint& Channel();
-    TestFramework::OptionUint& Adapter();
-    TestFramework::OptionBool& Loopback();
-    TestFramework::OptionString& TuneIn();
-    TestFramework::OptionString& Tidal();
-    TestFramework::OptionString& Qobuz();
-    TestFramework::OptionString& UserAgent();
+    const TestFramework::OptionString& Room() const;
+    const TestFramework::OptionString& Name() const;
+    const TestFramework::OptionString& Udn() const;
+    const TestFramework::OptionUint& Channel() const;
+    const TestFramework::OptionUint& Adapter() const;
+    const TestFramework::OptionBool& Loopback() const;
+    const TestFramework::OptionString& TuneIn() const;
+    const TestFramework::OptionString& Tidal() const;
+    const TestFramework::OptionString& Qobuz() const;
+    const TestFramework::OptionString& UserAgent() const;
+    const TestFramework::OptionBool& ClockPull() const;
 private:
     TestFramework::OptionParser iParser;
     TestFramework::OptionString iOptionRoom;
@@ -179,6 +180,7 @@ private:
     TestFramework::OptionString iOptionTidal;
     TestFramework::OptionString iOptionQobuz;
     TestFramework::OptionString iOptionUserAgent;
+    TestFramework::OptionBool iOptionClockPull;
 };
 
 // Not very nice, but only to allow reusable test functions.

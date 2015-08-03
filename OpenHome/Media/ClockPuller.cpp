@@ -2,6 +2,8 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -10,14 +12,16 @@ using namespace OpenHome::Media;
 
 void ClockPullerUtils::PullClock(IPullableClock& aPullableClock, TInt aDriftJiffies, TUint64 aPeriodJiffies)
 { // static
-    Log::Print("PullClock: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aPeriodJiffies/Jiffies::kPerMs);
-    TInt64 drift = (TInt64)(aDriftJiffies * 100) << 29LL;
-    const TInt64 pull = (drift) / ((TInt64)aPeriodJiffies);
+    static const TInt fracOne = 1<<29;
+    LOG(kPipeline, "PullClock: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, (TUint)aPeriodJiffies/Jiffies::kPerMs);
+    TInt64 driftJiffies = aDriftJiffies;
+    TInt64 driftFrac = driftJiffies * fracOne;
+    const TInt64 pull = (-driftFrac) / (TInt64)aPeriodJiffies;
     if (pull > INT_MAX || pull < INT_MIN) {
-        Log::Print("Rejected pull of %llx (%d%%)\n", pull, pull/(1<<29));
+        LOG(kPipeline, "Rejected pull of %llx (%d%%)\n", pull, static_cast<TInt>((100*pull)/fracOne));
     }
     else {
-        aPullableClock.PullClock((TInt32)pull);
+        aPullableClock.PullClock((TInt)pull);
     }
 }
 
