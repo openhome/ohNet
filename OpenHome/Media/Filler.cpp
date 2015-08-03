@@ -326,6 +326,12 @@ void Filler::Run()
     catch (ThreadKill&) {
     }
     iQuit = true;
+    if (iNextFlushId != MsgFlush::kIdInvalid) {
+        iPipeline.Push(iMsgFactory.CreateMsgFlush(iNextFlushId));
+    }
+    if (iPendingHaltId != MsgHalt::kIdInvalid) {
+        iPipeline.Push(iMsgFactory.CreateMsgHalt(iPendingHaltId));
+    }
     iPipeline.Push(iMsgFactory.CreateMsgQuit());
 }
 
