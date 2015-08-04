@@ -26,18 +26,17 @@ public:
 
 private:
     // from SuiteUnitTest
-    void Test1(); // ConvolutionModel random values
-    void Test2(); // ConvolutionModel scaling
-    void Test3(); // ConvolutionModel zero coeffs
-    void Test4(); // ConvolutionModel positive coeff impulse
-    void Test5(); // ConvolutionModel negative coeff impulse
-    void Test6(); // ConvolutionModel positive sample half impulse
-    void Test7(); // ConvolutionModel negative sample impulse
+    void Test1(); // ConvolutionModel scaling
+    void Test2(); // ConvolutionModel zero coeffs
+    void Test3(); // ConvolutionModel positive coeff impulse
+    void Test4(); // ConvolutionModel negative coeff impulse
+    void Test5(); // ConvolutionModel positive sample impulse
+    void Test6(); // ConvolutionModel negative sample impulse
 
-    void Test8(); // FeedbackModel scaling
-    void Test9(); // FeedbackModel step response output
-    void Test10(); // FeedbackModel periodic impulse output
-    void Test11(); // FeedbackModel oscillator (periodic alternating polarity impulse output)
+    void Test7(); // FeedbackModel scaling
+    void Test8(); // FeedbackModel step response output
+    void Test9(); // FeedbackModel periodic impulse output
+    void Test10(); // FeedbackModel oscillator (periodic alternating polarity impulse output)
 
     void Setup();
     void TearDown();
@@ -61,7 +60,6 @@ using namespace OpenHome::Media::TestFlywheelRamper;
 SuiteFlywheelRamper::SuiteFlywheelRamper()
     :SuiteUnitTest("SuiteFlywheelRamper")
 {
-
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test2));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test3));
@@ -72,204 +70,138 @@ SuiteFlywheelRamper::SuiteFlywheelRamper()
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test9));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test10));
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test11));
 }
 
 
 
-
-void SuiteFlywheelRamper::Test1()  // ConvolutionModel
+void SuiteFlywheelRamper::Test1()  // ConvolutionModel scaling
 {
-    const TUint kCoeffScaling = 1;
-    const TUint kDataInScaling = 1;
-    const TUint kDataOutScaling = 1;
-
-    const TUint kCoeffsCount = 6;
-    const TUint kSamplesInCount = 6;
-    const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount-1;
-    const TUint kSamplesOutBytes = kSamplesOutCount*4;
-
-    std::vector<TInt32> coeffs;
-    coeffs.push_back(0x1efb1a5e);
-    coeffs.push_back(0xf13617f8);
-    coeffs.push_back(0x17f8f136);
-    coeffs.push_back(0xf1361efb);
-    coeffs.push_back(0x1efb17f8);
-    coeffs.push_back(0x1a5ef136);
-
-    Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x00001fff);
-    Append32(samplesIn, 0x00007f85);
-    Append32(samplesIn, 0x0000505e);
-    Append32(samplesIn, 0x0456f05e);
-    Append32(samplesIn, 0xfefefefe);
-    Append32(samplesIn, 0x000df35a);
-
-    Bws<kSamplesOutBytes> samplesOut;
-
-    auto conv = new ConvolutionModel(coeffs, kCoeffScaling, kDataInScaling, kDataOutScaling);
-    conv->Process(samplesIn, samplesOut, kSamplesOutCount);
-
-    //
-    // sampleOut n = coeff(1)*sampleIn(n) + coeff(2)*sampleIn(n-1) + coeff(3)*sampleIn(n-2)...
-    //
-    // for n=1 to x (where x= num samples in + num coeffs -1):
-
-    for(TUint j=0; j<kSamplesOutCount; j++)
-    {
-        //Log::Print("Test cycle %d\n", j);
-        TInt64 sample = 0;
-
-        for(TUint i=0; i<kCoeffsCount; i++)
-        {
-            TInt32 sampleInScaled = 0;
-            TInt sampleInIndex = j-i;
-
-            if ( (sampleInIndex>=0) && ((TUint)sampleInIndex<kSamplesInCount) )
-            {
-                TInt32 sampleIn = FlywheelRamper::Int32(samplesIn, (TUint)sampleInIndex*4);
-                sampleInScaled = (sampleIn>>8); // scale
-            }
-
-            sample += (TInt64)sampleInScaled * (TInt64)coeffs[i];
-            //Log::Print("sampleIn=0x%.8lx * coeffs[%d]=0x%.8lx  =  sample=0x%.16llx  \n", sampleInScaled, i, coeffs[i], sample);
-        }
-
-        sample >>= 23; // descale
-
-        //Log::Print("samplesOut[%d]= 0x%.8lx , sample=0x%.8lx \n\n", j, FlywheelRamper::Int32(samplesOut, j*4), (TInt32)sample);
-
-        TEST( FlywheelRamper::Int32(samplesOut, j*4) == (TInt32)sample );
-
-    }
-    delete conv;
-    //Log::Print("\n");
-}
-
-
-void SuiteFlywheelRamper::Test2()  // ConvolutionModel scaling
-{
-/*
-    const TUint kCoeffScaling = 1;
-    const TUint kDataInScaling = 1;
-    const TUint kDataOutScaling = 1;
-*/
-
     const TUint kCoeffsCount = 2;
     const TUint kSamplesInCount = 2;
     const TUint kSamplesInBytes = kSamplesInCount*4;
     const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount-1;
     const TUint kSamplesOutBytes = kSamplesOutCount*4;
 
+
     std::vector<TInt32> coeffs;
-    coeffs.push_back(0x00010000);
-    coeffs.push_back(0);
+    coeffs.push_back(0x01000000);
+    coeffs.push_back(0x02000000);
 
     Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x00010000);
+    Append32(samplesIn, 0x01000000);
     Append32(samplesIn, 0);
 
     Bws<kSamplesOutBytes> samplesOut;
 
-    TInt64 sampleOutExpected;
 
-    // 1*
-    auto conv = new ConvolutionModel(coeffs, 1, 1, 1);
+    ConvolutionModel* conv;
+    TInt32 sampleOut0;
+    TInt32 sampleOut1;
 
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
+
+    conv = new ConvolutionModel(coeffs, 1, 1, 1);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000);
+    TEST( sampleOut1 == 0x40000);
     delete conv;
 
-    // 2*
+
     conv = new ConvolutionModel(coeffs, 2, 1, 1);
-
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    sampleOutExpected <<= 1; // 2* coeff scaling
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<1); // << (2-1)
+    TEST( sampleOut1 == 0x40000<<1);
     delete conv;
 
+    conv = new ConvolutionModel(coeffs, 3, 1, 1);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<2); // << (3-1)
+    TEST( sampleOut1 == 0x40000<<2);
+    delete conv;
 
-    // 4*
     conv = new ConvolutionModel(coeffs, 4, 1, 1);
-
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    sampleOutExpected <<= 2; // 4* coeff scaling
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<3); // << (4-1)
+    TEST( sampleOut1 == 0x40000<<3);
     delete conv;
 
 
-    // 4*
+    conv = new ConvolutionModel(coeffs, 1, 2, 1);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<1); // <<  (2-1)
+    TEST( sampleOut1 == 0x40000<<1);
+    delete conv;
+
+    conv = new ConvolutionModel(coeffs, 1, 3, 1);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<2); // << (3-1)
+    TEST( sampleOut1 == 0x40000<<2);
+    delete conv;
+
     conv = new ConvolutionModel(coeffs, 1, 4, 1);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<3); // << (4-1)
+    TEST( sampleOut1 == 0x40000<<3);
+    delete conv;
 
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    sampleOutExpected <<= 2; // 4* dataIn scaling
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
+    conv = new ConvolutionModel(coeffs, 1, 1, 2);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000>>1); // >> (2-1)
+    TEST( sampleOut1 == 0x40000>>1);
+    delete conv;
+
+    conv = new ConvolutionModel(coeffs, 1, 1, 3);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000>>2); // >> (3-1)
+    TEST( sampleOut1 == 0x40000>>2);
+    delete conv;
+
+    conv = new ConvolutionModel(coeffs, 1, 1, 4);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000>>3); // >> (4-1)
+    TEST( sampleOut1 == 0x40000>>3);
     delete conv;
 
 
-
-    // 4x (2*2)
-    conv = new ConvolutionModel(coeffs, 2, 2, 1);
-
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    sampleOutExpected <<= 2; // 2* coeff + 2* DataIn scaling
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
+    conv = new ConvolutionModel(coeffs, 2, 4, 2);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<3); // << (2-1)+(4-1)-(2-1)
+    TEST( sampleOut1 == 0x40000<<3);
     delete conv;
 
-    // 8x (4*2)
-    conv = new ConvolutionModel(coeffs, 4, 2, 1);
-
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    sampleOutExpected <<= 3; // 4* coeff + 2* DataIn scaling
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
-    delete conv;
-
-
-    // 4* (4*2/2)
-    conv = new ConvolutionModel(coeffs, 4, 2, 2);
-
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    sampleOutExpected <<= 2; // (4*) 4* coeff + 2* DataIn - 2* DataOut scaling
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
-    delete conv;
-
-
-    // 1* (2*2/4)
-    conv = new ConvolutionModel(coeffs, 2, 2, 4);
-
-    conv->Process(samplesIn, samplesOut, 1);
-    sampleOutExpected = ((TInt64)coeffs[0])*((TInt64)FlywheelRamper::Int32(samplesIn, 0));
-    //upper 32 bits
-    sampleOutExpected >>= 31; // (32-1) for multiplication
-    TEST( FlywheelRamper::Int32(samplesOut, 0) == (TInt32)sampleOutExpected );
+    conv = new ConvolutionModel(coeffs, 8, 4, 3);
+    conv->Process(samplesIn, samplesOut, 2);
+    sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
+    sampleOut1 = FlywheelRamper::Int32(samplesOut, 4);
+    TEST( sampleOut0 == 0x20000<<8); // << (8-1)+(4-1)-(3-1)
+    TEST( sampleOut1 == 0x40000<<8);
     delete conv;
 
 }
 
 
-void SuiteFlywheelRamper::Test3()  // ConvolutionModel zero coeffs
+void SuiteFlywheelRamper::Test2()  // ConvolutionModel zero coeffs
 {
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 1;
@@ -311,7 +243,7 @@ void SuiteFlywheelRamper::Test3()  // ConvolutionModel zero coeffs
 }
 
 
-void SuiteFlywheelRamper::Test4()  // ConvolutionModel positive coeff impulse
+void SuiteFlywheelRamper::Test3()  // ConvolutionModel positive coeff impulse
 {
     const TUint kCoeffScaling = 2;
     const TUint kDataInScaling = 1;
@@ -366,7 +298,7 @@ void SuiteFlywheelRamper::Test4()  // ConvolutionModel positive coeff impulse
 }
 
 
-void SuiteFlywheelRamper::Test5()  // ConvolutionModel negative coeff impulse
+void SuiteFlywheelRamper::Test4()  // ConvolutionModel negative coeff impulse
 {
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 1;
@@ -421,7 +353,7 @@ void SuiteFlywheelRamper::Test5()  // ConvolutionModel negative coeff impulse
 }
 
 
-void SuiteFlywheelRamper::Test6()  // ConvolutionModel positive sample impulse
+void SuiteFlywheelRamper::Test5()  // ConvolutionModel positive sample impulse
 {
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 2;
@@ -478,7 +410,7 @@ void SuiteFlywheelRamper::Test6()  // ConvolutionModel positive sample impulse
 }
 
 
-void SuiteFlywheelRamper::Test7()  // ConvolutionModel negative sample impulse
+void SuiteFlywheelRamper::Test6()  // ConvolutionModel negative sample impulse
 {
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 1;
@@ -535,14 +467,8 @@ void SuiteFlywheelRamper::Test7()  // ConvolutionModel negative sample impulse
 }
 
 
-void SuiteFlywheelRamper::Test8()  // FeedbackModel scaling
+void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
 {
-/*
-    const TUint kCoeffScaling = 1;
-    const TUint kDataInScaling = 1;
-    const TUint kDataOutScaling = 1;
-*/
-
     const TUint kCoeffsCount = 2;
     const TUint kSamplesInCount = 2;
     const TUint kSamplesInBytes = kSamplesInCount*4;
@@ -673,7 +599,7 @@ void SuiteFlywheelRamper::Test8()  // FeedbackModel scaling
 }
 
 
-void SuiteFlywheelRamper::Test9()  // FeedbackModel step response output
+void SuiteFlywheelRamper::Test8()  // FeedbackModel step response output
 {
     const TUint kCoeffScaling = 2;
     const TUint kDataInScaling = 2;
@@ -727,7 +653,7 @@ void SuiteFlywheelRamper::Test9()  // FeedbackModel step response output
 }
 
 
-void SuiteFlywheelRamper::Test10()  // FeedbackModel periodic impulse output
+void SuiteFlywheelRamper::Test9()  // FeedbackModel periodic impulse output
 {
     const TUint kCoeffScaling = 2;
     const TUint kDataInScaling = 2;
@@ -796,17 +722,9 @@ void SuiteFlywheelRamper::Test10()  // FeedbackModel periodic impulse output
     coeffs2.push_back(0x00000000);
     coeffs2.push_back(0x00000000);
 
-
-
-
     feedback = new FeedbackModel(coeffs2, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
-    //Log::Print("\n\nUnit Test\n\n");
-    //
-    // sampleOut n = sampleIn(n) + coeff(1)*sampleOut(n-1) + coeff(2)*sampleOut(n-2)...
-    //
-    // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
     for(TUint i=0; i<kSamplesOutCount;)
@@ -834,7 +752,7 @@ void SuiteFlywheelRamper::Test10()  // FeedbackModel periodic impulse output
 }
 
 
-void SuiteFlywheelRamper::Test11()  // FeedbackModel periodic alternating polarity impulse output (oscillator)
+void SuiteFlywheelRamper::Test10()  // FeedbackModel alternating polarity periodic impulse output (oscillator)
 {
     // Period of oscillation is determined by position of coeff in list
 
@@ -906,15 +824,8 @@ void SuiteFlywheelRamper::Test11()  // FeedbackModel periodic alternating polari
 
 
 
-
     feedback = new FeedbackModel(coeffs2, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
-
-    //Log::Print("\n\nUnit Test\n\n");
-    //
-    // sampleOut n = sampleIn(n) + coeff(1)*sampleOut(n-1) + coeff(2)*sampleOut(n-2)...
-    //
-    // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
     for(TUint i=0; i<kSamplesOutCount;)
@@ -954,17 +865,8 @@ void SuiteFlywheelRamper::Test11()  // FeedbackModel periodic alternating polari
     coeffs3.push_back(0x00000000);
     coeffs3.push_back(0x00000000);
 
-
-
-
     feedback = new FeedbackModel(coeffs3, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
-
-    //Log::Print("\n\nUnit Test\n\n");
-    //
-    // sampleOut n = sampleIn(n) + coeff(1)*sampleOut(n-1) + coeff(2)*sampleOut(n-2)...
-    //
-    // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
     for(TUint i=0; i<kSamplesOutCount;)

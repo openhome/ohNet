@@ -18,6 +18,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
     , iOptionQobuz("", "--qobuz", Brn(""), "app_id:app_secret")
     , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
+    , iOptionClockPull("", "--clockpull", "Enable clock pulling")
 {
     iParser.AddOption(&iOptionRoom);
     iParser.AddOption(&iOptionName);
@@ -29,6 +30,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     iParser.AddOption(&iOptionTidal);
     iParser.AddOption(&iOptionQobuz);
     iParser.AddOption(&iOptionUserAgent);
+    iParser.AddOption(&iOptionClockPull);
 }
 
 void TestMediaPlayerOptions::AddOption(Option* aOption)
@@ -41,52 +43,57 @@ TBool TestMediaPlayerOptions::Parse(int aArgc, char* aArgv[])
     return iParser.Parse(aArgc, aArgv);
 }
 
-OptionString& TestMediaPlayerOptions::Room()
+const OptionString& TestMediaPlayerOptions::Room() const
 {
     return iOptionRoom;
 }
 
-OptionString& TestMediaPlayerOptions::Name()
+const OptionString& TestMediaPlayerOptions::Name() const
 {
     return iOptionName;
 }
 
-OptionString& TestMediaPlayerOptions::Udn()
+const OptionString& TestMediaPlayerOptions::Udn() const
 {
     return iOptionUdn;
 }
 
-OptionUint& TestMediaPlayerOptions::Channel()
+const OptionUint& TestMediaPlayerOptions::Channel() const
 {
     return iOptionChannel;
 }
 
-OptionUint& TestMediaPlayerOptions::Adapter()
+const OptionUint& TestMediaPlayerOptions::Adapter() const
 {
     return iOptionAdapter;
 }
 
-OptionBool& TestMediaPlayerOptions::Loopback()
+const OptionBool& TestMediaPlayerOptions::Loopback() const
 {
     return iOptionLoopback;
 }
 
-OptionString& TestMediaPlayerOptions::TuneIn()
+const OptionString& TestMediaPlayerOptions::TuneIn() const
 {
     return iOptionTuneIn;
 }
 
-OptionString& TestMediaPlayerOptions::Tidal()
+const OptionString& TestMediaPlayerOptions::Tidal() const
 {
     return iOptionTidal;
 }
 
-OptionString& TestMediaPlayerOptions::Qobuz()
+const OptionString& TestMediaPlayerOptions::Qobuz() const
 {
     return iOptionQobuz;
 }
 
-OptionString& TestMediaPlayerOptions::UserAgent()
+const OptionString& TestMediaPlayerOptions::UserAgent() const
 {
     return iOptionUserAgent;
+}
+
+const OptionBool& TestMediaPlayerOptions::ClockPull() const
+{
+    return iOptionClockPull;
 }

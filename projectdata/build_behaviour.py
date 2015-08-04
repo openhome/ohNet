@@ -177,12 +177,15 @@ def bundle(context):
 @build_step("test", optional=True)
 def test(context):
     if context.env["OH_PLATFORM"] not in ['Linux-mipsel']:
-        python("waf", "test")
+        if context.env["OH_PLATFORM"]=='Windows-x86':
+            python("dependencies/AnyPlatform/testharness/Test", "-p", context.env["OH_PLATFORM"], "-b", context.env["BUILDDIR"], "-m", "oncommit.test")
+        else:
+            python('waf', 'test')
 
 @build_step("test_full", optional=True, default=False)
 def test_full(context):
     if context.env["OH_PLATFORM"] not in ['Linux-mipsel']:
-        python("waf", "test_full")
+        python("dependencies/AnyPlatform/testharness/Test", "-p", context.env["OH_PLATFORM"], "-m", "nightly.test")
 
 @build_step("install", optional=True, default=True)
 def install(context):

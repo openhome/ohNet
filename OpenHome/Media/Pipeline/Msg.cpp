@@ -2199,6 +2199,7 @@ MsgReservoir::MsgReservoir()
     , iEncodedBytes(0)
     , iJiffies(0)
     , iSessionCount(0)
+    , iTrackCount(0)
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
     , iEncodedAudioCount(0)
@@ -2255,6 +2256,12 @@ TUint MsgReservoir::SessionCount() const
 {
     AutoMutex a(iLock);
     return iSessionCount;
+}
+
+TUint MsgReservoir::TrackCount() const
+{
+    AutoMutex a(iLock);
+    return iTrackCount;
 }
 
 TUint MsgReservoir::EncodedStreamCount() const
@@ -2459,6 +2466,9 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgSession* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iTrackCount++;
+    iQueue.iLock.Signal();
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
@@ -2582,6 +2592,9 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSession* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iTrackCount--;
+    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 

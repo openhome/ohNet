@@ -41,7 +41,15 @@ TUint Gorger::SizeInJiffies() const
 Msg* Gorger::Pull()
 {
     iLock.Wait();
-    const TBool wait = (iGorging && Jiffies() < iGorgeSize && !iQuit);
+    TBool wait = (iGorging && Jiffies() < iGorgeSize);
+    if (wait) {
+        if (iQuit || SessionCount() > 0 || TrackCount() > 0 || DecodedStreamCount() > 0) {
+            wait = false;
+        }
+        else {
+            (void)iSemOut.Clear();
+        }
+    }
     iLock.Signal();
     if (wait) {
         iSemOut.Wait();
@@ -68,9 +76,14 @@ void Gorger::Enqueue(Msg* aMsg)
 {
     DoEnqueue(aMsg);
     iLock.Wait();
-    if (iGorging && Jiffies() >= iGorgeSize) {
-        iGorging = false;
-        iSemOut.Signal();
+    if (iGorging) {
+        if (Jiffies() >= iGorgeSize) {
+            iGorging = false;
+            iSemOut.Signal();
+        }
+        else if (SessionCount() > 0 || TrackCount() > 0 || DecodedStreamCount() > 0) {
+            iSemOut.Signal();
+        }
     }
     iLock.Signal();
 }
@@ -147,10 +160,12 @@ Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
                                                                stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
                                                                stream.Seekable(), stream.Live(), this);
     aMsg->RemoveRef();
+    iLock.Wait();
     if (iGorgeOnStreamOut) {
         SetGorging(true);
         iGorgeOnStreamOut = false;
     }
+    iLock.Signal();
     return msg;
 }
 

@@ -10,7 +10,7 @@ This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s)
  - Network interface to use for testing defined in test configuration XML
  - SoftPlayer instance(s) created/destroyed as required
 """
-import _FunctionalTest
+import _Paths
 import BaseSuite as Suite
 import Config
 import os

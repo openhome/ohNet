@@ -46,6 +46,7 @@ void UtilisationHistory::Add(TUint aJiffies)
             if (!valuesSteady) {
                 /* Too much fluctuation to calculate reliable average.
                    Give up on this data set and try again. */
+                //Log::Print("UtilisationHistory::Add() values are unsteady - Reset\n");
                 Reset();
             }
             else {

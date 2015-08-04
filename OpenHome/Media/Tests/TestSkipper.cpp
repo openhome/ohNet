@@ -424,7 +424,7 @@ void SuiteSkipper::TestRemoveStreamRampAudioRampsDown()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    iSkipper->RemoveCurrentStream(true);
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
     iRamping = true;
     iJiffies = 0;
     while (iRamping) {
@@ -444,7 +444,7 @@ void SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown()
         PullNext();
     }
 
-    iSkipper->RemoveCurrentStream(true);
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
     iRamping = true;
     while (iRamping) {
         iPendingMsgs.push_back(CreateAudio());
@@ -465,7 +465,7 @@ void SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    iSkipper->RemoveCurrentStream(true);
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
     iRamping = true;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
@@ -493,7 +493,7 @@ void SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    iSkipper->RemoveCurrentStream(true);
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
     iRamping = true;
     while (iRamping) {
         iPendingMsgs.push_back(CreateAudio());
@@ -531,7 +531,7 @@ void SuiteSkipper::TestRemoveStreamRampNewStreamResets()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    iSkipper->RemoveCurrentStream(true);
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
     iRamping = true;
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
@@ -554,7 +554,7 @@ void SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    iSkipper->RemoveCurrentStream(false);
+    TEST(iSkipper->TryRemoveStream(iStreamId, false));
     // don't expect a Halt - not ramping implies that the pipeline is already halted (or buffering)
     TEST(iSkipper->iQueue.IsEmpty());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));

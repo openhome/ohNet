@@ -529,7 +529,7 @@ void SuiteFiller::Test()
     TEST(iTrackId != trackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
-    TEST(iDummySupply->SessionCount() == ++sessionCount);
+    TEST(iDummySupply->SessionCount() == sessionCount);
     trackId = iTrackId;
 
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track

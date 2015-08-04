@@ -348,7 +348,6 @@ void ProviderPlaylist::DeleteId(IDvInvocation& aInvocation, TUint aValue)
 
 void ProviderPlaylist::DeleteAll(IDvInvocation& aInvocation)
 {
-    iSource.Stop(); // we want TransportState == Stopped after this
     iDatabase.DeleteAll();
     aInvocation.StartResponse();
     aInvocation.EndResponse();

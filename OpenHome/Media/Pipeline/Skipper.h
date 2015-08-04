@@ -25,7 +25,6 @@ public:
     virtual ~Skipper();
     void Block();
     void Unblock();
-    void RemoveCurrentStream(TBool aRampDown);
     TBool TryRemoveStream(TUint aStreamId, TBool aRampDown);
     void RemoveAll(TUint aHaltId, TBool aRampDown);
 public: // from IPipelineElementUpstream

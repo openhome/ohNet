@@ -76,6 +76,8 @@ Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTra
     , iStopped(true)
     , iQuit(false)
     , iChangedMode(true)
+    , iWaitingForAudio(false)
+    , iNoAudioBeforeNextTrack(false)
     , iNextHaltId(MsgHalt::kIdNone + 1)
     , iPendingHaltId(MsgHalt::kIdInvalid)
     , iNextFlushId(MsgFlush::kIdInvalid)
@@ -219,7 +221,10 @@ TUint Filler::StopLocked()
         iStopped = true;
         iChangedMode = true; // Skipperr::RemoveAll() relies on MsgMode being sent following a MsgHalt
     }
-    iUriStreamer->Interrupt(true);
+    if (iWaitingForAudio) {
+        iUriStreamer->Interrupt(true);
+        iNoAudioBeforeNextTrack = true;
+    }
     return iPendingHaltId;
 }
 
@@ -282,8 +287,7 @@ void Filler::Run()
                 iLock.Signal();
             }
             else {
-                iUriStreamer->Interrupt(false); // FIXME - this could incorrectly over-ride a call to Interrupt() that was scheduled between Wait() and iLock being acquired
-                ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
+                iUriStreamer->Interrupt(false);
                 if (iChangedMode) {
                     const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
                     const TBool realTime = iActiveUriProvider->IsRealTime();
@@ -295,11 +299,13 @@ void Filler::Run()
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }
+                    iPipeline.Push(iMsgFactory.CreateMsgSession());
                     iChangedMode = false;
                 }
+                iWaitingForAudio = true;
+                iNoAudioBeforeNextTrack = false;
                 iLock.Signal();
                 ASSERT(iTrack != nullptr);
-                iPipeline.Push(iMsgFactory.CreateMsgSession());
                 LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
                 CheckForKill();
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
@@ -320,12 +326,20 @@ void Filler::Run()
     catch (ThreadKill&) {
     }
     iQuit = true;
+    if (iNextFlushId != MsgFlush::kIdInvalid) {
+        iPipeline.Push(iMsgFactory.CreateMsgFlush(iNextFlushId));
+    }
+    if (iPendingHaltId != MsgHalt::kIdInvalid) {
+        iPipeline.Push(iMsgFactory.CreateMsgHalt(iPendingHaltId));
+    }
     iPipeline.Push(iMsgFactory.CreateMsgQuit());
 }
 
 void Filler::Push(Msg* aMsg)
 {
+    iLock.Wait();
     aMsg = aMsg->Process(*this);
+    iLock.Signal();
     if (aMsg != nullptr) {
         iPipeline.Push(aMsg);
     }
@@ -343,6 +357,7 @@ Msg* Filler::ProcessMsg(MsgSession* aMsg)
 
 Msg* Filler::ProcessMsg(MsgTrack* aMsg)
 {
+    iWaitingForAudio = true;
     return aMsg;
 }
 
@@ -358,6 +373,7 @@ Msg* Filler::ProcessMsg(MsgDelay* aMsg)
 
 Msg* Filler::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    iWaitingForAudio = true;
     iPipelineIdTracker.AddStream(iTrack->Id(), aMsg->StreamId(), (iTrackPlayStatus==ePlayYes));
     iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
                                     subsequent streams should be played immediately */
@@ -366,6 +382,11 @@ Msg* Filler::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* Filler::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    if (iNoAudioBeforeNextTrack) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
+    iWaitingForAudio = false;
     return aMsg;
 }
 
