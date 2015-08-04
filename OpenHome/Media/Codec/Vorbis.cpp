@@ -27,6 +27,7 @@ private:
     static const TUint kSearchChunkSize = 1024;
     static const TInt kInvalidBitstream;
     static const TUint kIcyMetadataBytes = 255 * 16;
+    static const TUint kBitDepth = 16;  // Bit depth always 16 for Vorbis.
 public:
     static const Brn kCodecVorbis;
 public:
@@ -70,7 +71,6 @@ private:
     TUint iBitrateAverage;
     TUint iChannels;
     TUint iBytesPerSample;
-    TUint iBitDepth;
     TUint64 iSamplesTotal;
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
@@ -252,12 +252,11 @@ void CodecVorbis::StreamInitialise()
     iBitrateAverage = info->bitrate_nominal;
     iSampleRate = info->rate;
 
-    iBitDepth = 16;                 //always 16bit
     iTotalSamplesOutput = 0;
     iInBuf.SetBytes(0);
     iOutBuf.SetBytes(0);
 
-    iBytesPerSample = iChannels*iBitDepth/8;
+    iBytesPerSample = iChannels*kBitDepth/8;
     iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
     iTrackLengthJiffies = 0;
     iTrackOffset = 0;
@@ -289,8 +288,8 @@ void CodecVorbis::StreamInitialise()
         iTrackLengthJiffies = (iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
     }
 
-    LOG(kCodec, "CodecVorbis::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
-    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+    LOG(kCodec, "CodecVorbis::StreamInitialise iBitrateAverage %u, kBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, kBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
+    iController->OutputDecodedStream(iBitrateAverage, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
 }
 
 void CodecVorbis::StreamCompleted()
@@ -328,7 +327,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
     if (canSeek) {
         iTotalSamplesOutput = aSample;
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
-        iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
+        iController->OutputDecodedStream(0, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
 }
@@ -472,7 +471,7 @@ void CodecVorbis::Process()
                 // buffered PCM from previous stream.
                 if (iOutBuf.Bytes() > 0) {
                     iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                        iBitDepth, EMediaDataEndianBig, iTrackOffset);
+                        kBitDepth, EMediaDataEndianBig, iTrackOffset);
                     iOutBuf.SetBytes(0);
                     LOG(kCodec, "CodecVorbis::Process output (new bitstream detected) - total samples = %llu\n", iTotalSamplesOutput);
                 }
@@ -488,19 +487,19 @@ void CodecVorbis::Process()
                 iBitrateAverage = info->bitrate_nominal;
                 iSampleRate = info->rate;
 
-                iBytesPerSample = iChannels*iBitDepth/8;
+                iBytesPerSample = iChannels*kBitDepth/8;
                 iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
 
                 // FIXME - reusing iTrackLengthJiffies is incorrect, but it was
                 // almost definitely wrong when we started this chained stream anyway.
 
-                LOG(kCodec, "CodecVorbis::Process new bitstream: iBitrateAverage %u, iBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
+                LOG(kCodec, "CodecVorbis::Process new bitstream: iBitrateAverage %u, kBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, kBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
 
 
                 // FIXME - output MsgBitrate here if iBitrateAverage has changed.
 
                 if (infoChanged) {
-                    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+                    iController->OutputDecodedStream(iBitrateAverage, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
                 }
 
                 OutputMetaData();
@@ -514,9 +513,9 @@ void CodecVorbis::Process()
             iTotalSamplesOutput += samples;
 
             LOG(kCodec, "CodecVorbis::Process read - bytes %d, iPrevBytes %d\n", bytes, iPrevBytes);
-            if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)((iBitDepth/8) * iChannels)) {
+            if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)((kBitDepth/8) * iChannels)) {
                 iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                    iBitDepth, EMediaDataEndianBig, iTrackOffset);
+                    kBitDepth, EMediaDataEndianBig, iTrackOffset);
                 iOutBuf.SetBytes(0);
                 LOG(kCodec, "CodecVorbis::Process output - total samples = %llu\n", iTotalSamplesOutput);
             }
@@ -540,7 +539,7 @@ void CodecVorbis::FlushOutput()
     if (iStreamEnded || iNewStreamStarted) {
         if (iOutBuf.Bytes() > 0) {
             iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                iBitDepth, EMediaDataEndianBig, iTrackOffset);
+                kBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
         if (iNewStreamStarted) {
