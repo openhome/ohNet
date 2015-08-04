@@ -53,6 +53,7 @@ private:
     TUint64 GetTotalSamples();
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
+    TBool StreamInfoChanged(TUint aChannels, TUint aSampleRate) const;
     void OutputMetaData();
 private:
     ov_callbacks iCallbacks;
@@ -64,12 +65,12 @@ private:
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
     Bws<2*kSearchChunkSize> iSeekBuf;   // can store 2 read chunks, to check for sync word across read boundaries
  
-    TUint32 iSampleRate;
-    TUint32 iBytesPerSec;
-    TUint32 iBitrateAverage;
-    TUint16 iChannels;
-    TUint16 iBytesPerSample;
-    TUint16 iBitDepth;
+    TUint iSampleRate;
+    TUint iBytesPerSec;
+    TUint iBitrateAverage;
+    TUint iChannels;
+    TUint iBytesPerSample;
+    TUint iBitDepth;
     TUint64 iSamplesTotal;
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
@@ -247,7 +248,7 @@ void CodecVorbis::StreamInitialise()
     }
 
     vorbis_info* info = ov_info(&iVf, -1);
-    iChannels = static_cast<TUint16>(info->channels);
+    iChannels = info->channels;
     iBitrateAverage = info->bitrate_nominal;
     iSampleRate = info->rate;
 
@@ -476,10 +477,14 @@ void CodecVorbis::Process()
                     LOG(kCodec, "CodecVorbis::Process output (new bitstream detected) - total samples = %llu\n", iTotalSamplesOutput);
                 }
 
-                // Now, call ov_info() and send a MsgDecodedStream, send a new
-                // MsgMetaText, then continue decoding as normal.
+                // From ov_read() docs:
+                // "However, when reading audio back, the application must be aware that multiple bitstream sections do not necessarily use the same number of channels or sampling rate."
+
+                // Call ov_info() and send a MsgDecodedStream to notify of channel count and/or sample rate changes, send a new MsgMetaText, then continue decoding as normal.
                 vorbis_info* info = ov_info(&iVf, -1);
-                iChannels = static_cast<TUint16>(info->channels);
+                const TBool infoChanged = StreamInfoChanged(info->channels, info->rate);
+
+                iChannels = info->channels;
                 iBitrateAverage = info->bitrate_nominal;
                 iSampleRate = info->rate;
 
@@ -490,7 +495,13 @@ void CodecVorbis::Process()
                 // almost definitely wrong when we started this chained stream anyway.
 
                 LOG(kCodec, "CodecVorbis::Process new bitstream: iBitrateAverage %u, iBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
-                iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+
+
+                // FIXME - output MsgBitrate here if iBitrateAverage has changed.
+
+                if (infoChanged) {
+                    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+                }
 
                 OutputMetaData();
             }
@@ -537,6 +548,11 @@ void CodecVorbis::FlushOutput()
         }
         THROW(CodecStreamEnded);
     }
+}
+
+TBool CodecVorbis::StreamInfoChanged(TUint aChannels, TUint aSampleRate) const
+{
+    return (aChannels != iChannels || aSampleRate != iSampleRate);
 }
 
 void CodecVorbis::OutputMetaData()
