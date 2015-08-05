@@ -36,7 +36,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -61,7 +61,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -119,7 +119,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -218,7 +218,7 @@ void SuiteAudioReservoir::Test()
 
     // Check that uninteresting msgs are passed through.
     EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode, EMsgSession,
-                         EMsgTrack, EMsgChangeInput, EMsgDelay, EMsgEncodedStream,
+                         EMsgTrack, EMsgDrain, EMsgDelay, EMsgEncodedStream,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgFlush, EMsgWait,
                          EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
@@ -348,8 +348,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         track->RemoveRef();
     }
         break;
-    case EMsgChangeInput:
-        msg = iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
@@ -409,9 +409,9 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteAudioReservoir::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -633,7 +633,7 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteReservoirHistory::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

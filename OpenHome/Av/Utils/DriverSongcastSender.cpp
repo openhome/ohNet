@@ -294,7 +294,7 @@ Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgChangeInput* aMsg)
+Msg* DriverSongcastSender::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

@@ -46,7 +46,7 @@ private: // from IStreamHandler
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
@@ -72,7 +72,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -201,8 +201,8 @@ Msg* SuiteVariableDelay::Pull()
         track->RemoveRef();
         return msg;
     }
-    case EMsgChangeInput:
-        return iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgDelay:
         return iMsgFactory->CreateMsgDelay(iNextDelayAbsoluteJiffies);
     case EMsgEncodedStream:
@@ -277,9 +277,9 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteVariableDelay::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteVariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -415,7 +415,7 @@ void SuiteVariableDelay::TestAllMsgsPass()
 {
     /* 'AllMsgs' excludes encoded & playable audio - VariableDelay is assumed only
        useful to the portion of the pipeline that deals in decoded audio */
-    static const EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgChangeInput, EMsgDelay,
+    static const EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDrain, EMsgDelay,
                                      EMsgEncodedStream, EMsgMetaText, EMsgStreamInterrupted,
                                      EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt,
                                      EMsgFlush, EMsgWait, EMsgQuit };

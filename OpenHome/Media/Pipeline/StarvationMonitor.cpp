@@ -214,7 +214,7 @@ void StarvationMonitor::EventCallback()
     }
 }
 
-void StarvationMonitor::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+void StarvationMonitor::ProcessMsgIn(MsgDrain* /*aMsg*/)
 {
     iPriorityMsgCount++;
 }
@@ -268,7 +268,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* StarvationMonitor::ProcessMsgOut(MsgChangeInput* aMsg)
+Msg* StarvationMonitor::ProcessMsgOut(MsgDrain* aMsg)
 {
     iLock.Wait();
     iPriorityMsgCount--;

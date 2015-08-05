@@ -377,7 +377,7 @@ Msg* MsgProcessor::ProcessMsg(MsgTrack* aMsg)
     //LOG(kMedia, ">MsgProcessor::ProcessMsgTrack\n");
     return aMsg;
 }
-Msg* MsgProcessor::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgProcessor::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

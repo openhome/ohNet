@@ -130,7 +130,7 @@ Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* RampValidator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* RampValidator::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

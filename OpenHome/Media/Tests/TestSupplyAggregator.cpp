@@ -48,7 +48,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -68,7 +68,7 @@ private:
         EMsgAudioEncoded
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -211,8 +211,8 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         track->RemoveRef();
     }
         break;
-    case EMsgChangeInput:
-        iSupply->OutputChangeInput(Functor());
+    case EMsgDrain:
+        iSupply->OutputDrain(Functor());
         break;
     case EMsgDelay:
         iSupply->OutputDelay(kDelayJiffies);
@@ -263,9 +263,9 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSupplyAggregator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 

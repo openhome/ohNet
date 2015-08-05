@@ -123,7 +123,7 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -502,7 +502,7 @@ void SuiteGeneratorAny::Setup()
     init.SetMsgModeCount(kMsgCountMode);
     init.SetMsgSessionCount(kMsgCountSession);
     init.SetMsgTrackCount(kMsgCountTrack);
-    init.SetMsgChangeInputCount(1);
+    init.SetMsgDrainCount(1);
     init.SetMsgDelayCount(kMsgCountDelay);
     init.SetMsgEncodedStreamCount(kMsgCountEncodedStream);
     init.SetMsgAudioEncodedCount(kMsgCountAudioEncoded, kMsgCountEncodedAudio);
@@ -593,7 +593,7 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteGeneratorAny::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

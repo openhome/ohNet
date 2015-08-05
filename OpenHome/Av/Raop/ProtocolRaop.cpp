@@ -332,7 +332,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     }
 
     Reset();
-    WaitForChangeInput();
+    WaitForDrain();
 
     TBool start = true;
     TUint seqExpected = 0;
@@ -353,7 +353,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iSupply->OutputFlush(iNextFlushId);
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iActive = false;
-                WaitForChangeInput();
+                WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                 return EProtocolStreamStopped;
             }
@@ -373,7 +373,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iActive = false;
                     iStopped = true;
                 }
-                WaitForChangeInput();
+                WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 return EProtocolStreamStopped;
             }
@@ -586,10 +586,10 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
     iSupply->OutputData(iAudioDecrypted);
 }
 
-void ProtocolRaop::WaitForChangeInput()
+void ProtocolRaop::WaitForDrain()
 {
     //iSemInputChanged.Clear();
-    //iSupply->OutputChangeInput(MakeFunctor(*this, &ProtocolRaop::InputChanged));
+    //iSupply->OutputDrain(MakeFunctor(*this, &ProtocolRaop::InputChanged));
     //iSemInputChanged.Wait();
 }
 

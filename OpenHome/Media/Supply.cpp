@@ -32,9 +32,9 @@ void Supply::OutputTrack(Track& aTrack, TBool aStartOfStream)
     iDownStreamElement.Push(msg);
 }
 
-void Supply::OutputChangeInput(Functor aCallback)
+void Supply::OutputDrain(Functor aCallback)
 {
-    auto msg = iMsgFactory.CreateMsgChangeInput(aCallback);
+    auto msg = iMsgFactory.CreateMsgDrain(aCallback);
     iDownStreamElement.Push(msg);
 }
 

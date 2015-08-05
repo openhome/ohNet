@@ -138,7 +138,7 @@ TBool ProtocolOhBase::IsCurrentStream(TUint aStreamId) const
 
 void ProtocolOhBase::WaitForPipelineToEmpty()
 {
-    iSupply->OutputChangeInput(MakeFunctor(*this, &ProtocolOhBase::PipelineEmpty));
+    iSupply->OutputDrain(MakeFunctor(*this, &ProtocolOhBase::PipelineEmpty));
     iPipelineEmpty.Wait();
 }
 

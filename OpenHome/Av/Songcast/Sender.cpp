@@ -121,7 +121,7 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Sender::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Sender::ProcessMsg(MsgDrain* aMsg)
 {
     aMsg->RemoveRef();
     return nullptr;
@@ -367,7 +367,7 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* Sender::PlayableCreator::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* Sender::PlayableCreator::ProcessMsg(MsgDrain* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;

@@ -240,7 +240,7 @@ Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
     return nullptr;
 }
 
-Msg* ContainerBase::ProcessMsg(MsgChangeInput* aMsg)
+Msg* ContainerBase::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -414,7 +414,7 @@ Msg* ContainerFront::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* ContainerFront::ProcessMsg(MsgChangeInput* aMsg)
+Msg* ContainerFront::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -654,7 +654,7 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Container::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Container::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

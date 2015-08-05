@@ -45,7 +45,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SampleRateValidator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SampleRateValidator::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

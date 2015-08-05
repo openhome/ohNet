@@ -34,7 +34,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -55,7 +55,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -174,9 +174,9 @@ Msg* SuiteRamper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteRamper::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteRamper::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastPulledMsg = EMsgChangeInput;
+    iLastPulledMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -328,7 +328,7 @@ void SuiteRamper::TestNonAudioMsgsPass()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, false, nullptr, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 100));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brn("MetaText")));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
@@ -341,7 +341,7 @@ void SuiteRamper::TestNonAudioMsgsPass()
     PullNext(EMsgMode);
     PullNext(EMsgSession);
     PullNext(EMsgTrack);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
     PullNext(EMsgDelay);
     PullNext(EMsgMetaText);
     PullNext(EMsgStreamInterrupted);

@@ -108,7 +108,7 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Reporter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Reporter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

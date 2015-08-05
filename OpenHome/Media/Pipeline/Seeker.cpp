@@ -102,7 +102,7 @@ Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Seeker::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

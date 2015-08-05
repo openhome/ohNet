@@ -37,7 +37,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgEncodedStream
        ,EMsgDelay
        ,EMsgMetaText
@@ -67,7 +67,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -162,8 +162,8 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         track->RemoveRef();
     }
         break;
-    case EMsgChangeInput:
-        msg = iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, nullptr);
@@ -222,7 +222,7 @@ void SuiteSampleRateValidator::StartStream()
 
 void SuiteSampleRateValidator::MsgsPassThrough()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgChangeInput, EMsgEncodedStream, EMsgDelay,
+    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
                          EMsgAudioPcm, EMsgSilence, EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
@@ -340,9 +340,9 @@ Msg* SuiteSampleRateValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSampleRateValidator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteSampleRateValidator::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 

@@ -11,7 +11,7 @@ using namespace OpenHome::Media;
 const TUint Drainer::kSupportedMsgTypes =   eMode
                                           | eSession
                                           | eTrack
-                                          | eChangeInput
+                                          | eDrain
                                           | eDelay
                                           | eEncodedStream
                                           | eAudioEncoded
@@ -49,7 +49,7 @@ Msg* Drainer::Pull()
             iIgnoreNextStarving = true;
             iGenerateDrainMsg = false;
             iWaitForDrained = true;
-            return iMsgFactory.CreateMsgChangeInput(MakeFunctor(*this, &Drainer::PipelineDrained));
+            return iMsgFactory.CreateMsgDrain(MakeFunctor(*this, &Drainer::PipelineDrained));
         }
     }
     Msg* msg = iUpstream.Pull();

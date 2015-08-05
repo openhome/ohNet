@@ -70,7 +70,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -359,7 +359,7 @@ Msg* ElementFileWriter::ProcessMsg(MsgTrack* aMsg)
     return nullptr;
 }
 
-Msg* ElementFileWriter::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* ElementFileWriter::ProcessMsg(MsgDrain* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
@@ -707,7 +707,7 @@ int CDECL main(int aArgc, char* aArgv[])
     static const TUint kMsgPlayableSilenceCount = 0;
     static const TUint kMsgDecodedStreamCount = 2;
     static const TUint kMsgTrackCount = 1;
-    static const TUint kMsgChangeInputCount = 1;
+    static const TUint kMsgDrainCount = 1;
     static const TUint kMsgEncodedStreamCount = 2;
     static const TUint kMsgMetaTextCount = 1;
     static const TUint kMsgStreamInterruptedCount = 1;
@@ -729,7 +729,7 @@ int CDECL main(int aArgc, char* aArgv[])
     init.SetMsgModeCount(kMsgModeCount);
     init.SetMsgSessionCount(kMsgSessionCount);
     init.SetMsgTrackCount(kMsgTrackCount);
-    init.SetMsgChangeInputCount(kMsgChangeInputCount);
+    init.SetMsgDrainCount(kMsgDrainCount);
     init.SetMsgDelayCount(kMsgDelayCount);
     init.SetMsgEncodedStreamCount(kMsgEncodedStreamCount);
     init.SetMsgAudioEncodedCount(kMsgEncodedAudioCount, kEncodedAudioCount);

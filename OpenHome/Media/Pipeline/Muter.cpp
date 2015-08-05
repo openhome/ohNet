@@ -101,7 +101,7 @@ Msg* Muter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Muter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Muter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

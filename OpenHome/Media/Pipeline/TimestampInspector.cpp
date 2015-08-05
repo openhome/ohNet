@@ -86,7 +86,7 @@ Msg* TimestampInspector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* TimestampInspector::ProcessMsg(MsgChangeInput* aMsg)
+Msg* TimestampInspector::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

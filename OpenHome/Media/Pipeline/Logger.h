@@ -22,7 +22,7 @@ public:
         EMsgMode                = 1<<0
        ,EMsgSession             = 1<<1
        ,EMsgTrack               = 1<<2
-       ,EMsgChangeInput         = 1<<3
+       ,EMsgDrain               = 1<<3
        ,EMsgDelay               = 1<<4
        ,EMsgEncodedStream       = 1<<5
        ,EMsgAudioEncoded        = 1<<6
@@ -54,7 +54,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;

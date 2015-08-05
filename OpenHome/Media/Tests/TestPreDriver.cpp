@@ -30,7 +30,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -54,7 +54,7 @@ private:
        ,EMsgDecodedStream
        ,EMsgMode
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -144,10 +144,10 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgMode);
 
-    // Send ChangeInput; check it is passed on
-    iNextGeneratedMsg = EMsgChangeInput;
+    // Send Drain; check it is passed on
+    iNextGeneratedMsg = EMsgDrain;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgChangeInput);
+    TEST(iLastMsg == EMsgDrain);
 
     // Send Format with same sample rate + bit depth + no. channels.  Check it isn't passed on (we move on to Silence instead).
     iNextGeneratedMsg = EMsgDecodedStream;
@@ -187,8 +187,8 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, nullptr);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
-    case EMsgChangeInput:
-        return iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, nullptr);
@@ -235,9 +235,9 @@ Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* SuitePreDriver::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuitePreDriver::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 

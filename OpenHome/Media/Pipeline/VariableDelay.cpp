@@ -242,7 +242,7 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgChangeInput* aMsg)
+Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

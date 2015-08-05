@@ -361,7 +361,7 @@ Msg* Filler::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Filler::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Filler::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

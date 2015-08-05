@@ -107,9 +107,9 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Logger::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Logger::ProcessMsg(MsgDrain* aMsg)
 {
-    if (IsEnabled(EMsgChangeInput)) {
+    if (IsEnabled(EMsgDrain)) {
         Log::Print("Pipeline (%s): changeInput\n", iId);
     }
     return aMsg;

@@ -105,7 +105,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* DecodedAudioAggregator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* DecodedAudioAggregator::ProcessMsg(MsgDrain* aMsg)
 {
     OutputAggregatedAudio();
     return aMsg;

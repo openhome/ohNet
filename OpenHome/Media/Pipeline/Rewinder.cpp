@@ -20,7 +20,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -67,7 +67,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -131,7 +131,7 @@ Msg* MsgCloner::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* MsgCloner::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgCloner::ProcessMsg(MsgDrain* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
@@ -246,7 +246,7 @@ Msg* RewinderBufferProcessor::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* RewinderBufferProcessor::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* RewinderBufferProcessor::ProcessMsg(MsgDrain* /*aMsg*/)
 {
     return nullptr;
 }
@@ -438,7 +438,7 @@ Msg* Rewinder::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Rewinder::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Rewinder::ProcessMsg(MsgDrain* aMsg)
 {
     TryBuffer(aMsg);
     return aMsg;

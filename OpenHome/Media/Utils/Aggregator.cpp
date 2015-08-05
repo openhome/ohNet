@@ -128,7 +128,7 @@ Msg* Aggregator::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* Aggregator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Aggregator::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

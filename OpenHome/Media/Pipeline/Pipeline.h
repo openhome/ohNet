@@ -117,7 +117,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountMode            = 20;
     static const TUint kMsgCountQuit            = 1;
-    static const TUint kMsgCountChangeInput     = 1;
+    static const TUint kMsgCountDrain           = 5;
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,

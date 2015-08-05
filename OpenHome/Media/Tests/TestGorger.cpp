@@ -41,7 +41,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
@@ -60,7 +60,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -201,9 +201,9 @@ Msg* SuiteGorger::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteGorger::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteGorger::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastPulledMsg = EMsgChangeInput;
+    iLastPulledMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -322,7 +322,7 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, nullptr, false, false));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -336,7 +336,7 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     PullNext(EMsgMode);
     PullNext(EMsgSession);
     PullNext(EMsgTrack);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
     PullNext(EMsgDelay);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgMetaText);

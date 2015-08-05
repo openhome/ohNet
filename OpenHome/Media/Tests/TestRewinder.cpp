@@ -32,7 +32,7 @@ enum EMsgType
         ,EMsgMode
         ,EMsgSession
         ,EMsgTrack
-        ,EMsgChangeInput
+        ,EMsgDrain
         ,EMsgDelay
         ,EMsgEncodedStream
         ,EMsgMetaText
@@ -74,7 +74,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -277,10 +277,10 @@ Msg* SuiteRewinder::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteRewinder::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteRewinder::ProcessMsg(MsgDrain* aMsg)
 {
-    TEST(iLastMsgType == EMsgChangeInput);
-    iRcvdMsgType = EMsgChangeInput;
+    TEST(iLastMsgType == EMsgDrain);
+    iRcvdMsgType = EMsgDrain;
     return aMsg;
 }
 
@@ -426,9 +426,9 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         }
         iLastMsgType = EMsgTrack;
         break;
-    case EMsgChangeInput:
-        msg = iMsgFactory->CreateMsgChangeInput(Functor());
-        iLastMsgType = EMsgChangeInput;
+    case EMsgDrain:
+        msg = iMsgFactory->CreateMsgDrain(Functor());
+        iLastMsgType = EMsgDrain;
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iNextStreamId++, false, false, this);
@@ -783,7 +783,7 @@ void SuiteRewinderMsgOrdering::InitMsgOrder()
 {
     iMsgOrder.push_back(EMsgFlush);
     iMsgOrder.push_back(EMsgTrack);
-    iMsgOrder.push_back(EMsgChangeInput);
+    iMsgOrder.push_back(EMsgDrain);
     iMsgOrder.push_back(EMsgEncodedStream);
     for (TUint i = 0; i < 10; i++) {
         iMsgOrder.push_back(EMsgAudioEncoded);

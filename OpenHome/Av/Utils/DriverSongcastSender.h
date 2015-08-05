@@ -49,7 +49,7 @@ private: // from Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgChangeInput* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgDrain* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg) override;

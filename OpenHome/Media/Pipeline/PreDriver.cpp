@@ -51,7 +51,7 @@ Msg* PreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* PreDriver::ProcessMsg(MsgChangeInput* aMsg)
+Msg* PreDriver::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

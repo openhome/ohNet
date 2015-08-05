@@ -132,7 +132,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SpotifyReporter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SpotifyReporter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

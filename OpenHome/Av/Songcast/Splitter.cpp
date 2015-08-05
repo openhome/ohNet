@@ -49,7 +49,7 @@ Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Splitter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Splitter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -154,7 +154,7 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Splitter::MsgCloner::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Splitter::MsgCloner::ProcessMsg(MsgDrain* aMsg)
 {
     aMsg->AddRef();
     return aMsg;

@@ -162,9 +162,9 @@ Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgChangeInput* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgDrain* aMsg)
 {
-    aMsg->ReadyToChange();
+    aMsg->ReportDrained();
     aMsg->RemoveRef();
     return nullptr;
 }

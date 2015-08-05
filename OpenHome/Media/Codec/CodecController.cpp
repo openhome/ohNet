@@ -607,7 +607,7 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* CodecController::ProcessMsg(MsgChangeInput* aMsg)
+Msg* CodecController::ProcessMsg(MsgDrain* aMsg)
 {
     Queue(aMsg);
     return nullptr;

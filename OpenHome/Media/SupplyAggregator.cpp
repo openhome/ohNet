@@ -42,9 +42,9 @@ void SupplyAggregator::OutputTrack(Track& aTrack, TBool aStartOfStream)
     Output(msg);
 }
 
-void SupplyAggregator::OutputChangeInput(Functor aCallback)
+void SupplyAggregator::OutputDrain(Functor aCallback)
 {
-    auto msg = iMsgFactory.CreateMsgChangeInput(aCallback);
+    auto msg = iMsgFactory.CreateMsgDrain(aCallback);
     Output(msg);
 }
 

@@ -230,7 +230,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Stopper::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

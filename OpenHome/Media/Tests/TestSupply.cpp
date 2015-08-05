@@ -45,7 +45,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -71,7 +71,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -153,9 +153,9 @@ void SuiteSupply::Test()
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgTrack);
-    iSupply->OutputChangeInput(Functor());
+    iSupply->OutputDrain(Functor());
     TEST(++expectedMsgCount == iMsgPushCount);
-    TEST(iLastMsg == EMsgChangeInput);
+    TEST(iLastMsg == EMsgDrain);
     iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgDelay);
@@ -205,9 +205,9 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteSupply::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 

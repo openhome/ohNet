@@ -16,7 +16,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -90,7 +90,7 @@ Msg* Silencer::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Silencer::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Silencer::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -158,7 +158,7 @@ SilencerMsgInProcessor::SilencerMsgInProcessor()
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgMode* aMsg)                  { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgSession* aMsg)               { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgTrack* aMsg)                 { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgChangeInput* aMsg)           { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgDrain* aMsg)                 { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgDelay* aMsg)                 { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgEncodedStream* aMsg)         { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgAudioEncoded* aMsg)          { return aMsg; }

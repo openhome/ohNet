@@ -32,7 +32,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -53,7 +53,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -80,7 +80,7 @@ private:
     TrackFactory* iTrackFactory;
     MsgFactory* iMsgFactory;
     Drainer* iDrainer;
-    MsgChangeInput* iMsgChangeInput;
+    MsgDrain* iMsgDrain;
     EMsgType iLastPulledMsg;
     std::list<Msg*> iPendingMsgs;
     Timer* iTimer;
@@ -110,7 +110,7 @@ void SuiteDrainer::Setup()
     MsgFactoryInitParams init;
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDrainer = new Drainer(*iMsgFactory, *this);
-    iMsgChangeInput = NULL;
+    iMsgDrain = NULL;
     iTimer = new Timer(iEnv, MakeFunctor(*this, &SuiteDrainer::TimerCallback), "SuiteDrainer");
 }
 
@@ -122,8 +122,8 @@ void SuiteDrainer::TearDown()
     }
     delete iTimer;
     delete iDrainer;
-    if (iMsgChangeInput != nullptr) {
-        iMsgChangeInput->RemoveRef();
+    if (iMsgDrain != nullptr) {
+        iMsgDrain->RemoveRef();
     }
     delete iMsgFactory;
     delete iTrackFactory;
@@ -155,11 +155,11 @@ Msg* SuiteDrainer::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteDrainer::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteDrainer::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastPulledMsg = EMsgChangeInput;
-    iMsgChangeInput = aMsg;
-    iMsgChangeInput->AddRef();
+    iLastPulledMsg = EMsgDrain;
+    iMsgDrain = aMsg;
+    iMsgDrain->AddRef();
     return aMsg;
 }
 
@@ -251,8 +251,8 @@ void SuiteDrainer::PullNext(EMsgType aExpectedMsg)
 
 void SuiteDrainer::TimerCallback()
 {
-    ASSERT(iMsgChangeInput != NULL);
-    iMsgChangeInput->ReadyToChange();
+    ASSERT(iMsgDrain != NULL);
+    iMsgDrain->ReportDrained();
 }
 
 void SuiteDrainer::TestMsgDrainFollowsHalt()
@@ -262,7 +262,7 @@ void SuiteDrainer::TestMsgDrainFollowsHalt()
 
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
 }
 
 void SuiteDrainer::TestBlocksWaitingForDrainResponse()
@@ -273,7 +273,7 @@ void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
     const TUint start = Os::TimeInMs(iEnv.OsCtx());
     const TUint kTimerDuration = 50;
     iTimer->FireIn(kTimerDuration);
@@ -286,7 +286,7 @@ void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 void SuiteDrainer::TestDrainAfterStarvation()
 {
     iDrainer->NotifyStarving(Brx::Empty(), 0);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
 }
 
 void SuiteDrainer::TestOneDrainAfterHaltAndStarvation()
@@ -297,8 +297,8 @@ void SuiteDrainer::TestOneDrainAfterHaltAndStarvation()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgHalt);
     iDrainer->NotifyStarving(Brx::Empty(), 0);
-    PullNext(EMsgChangeInput);
-    iMsgChangeInput->ReadyToChange();
+    PullNext(EMsgDrain);
+    iMsgDrain->ReportDrained();
     PullNext(EMsgSilence);
 }
 

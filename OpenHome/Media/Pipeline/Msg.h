@@ -356,12 +356,12 @@ private:
     TBool iStartOfStream;
 };
 
-class MsgChangeInput : public Msg
+class MsgDrain : public Msg
 {
     friend class MsgFactory;
 public:
-    MsgChangeInput(AllocatorBase& aAllocator);
-    void ReadyToChange();
+    MsgDrain(AllocatorBase& aAllocator);
+    void ReportDrained();
 private:
     void Initialise(Functor aCallback);
 private: // from Msg
@@ -775,7 +775,7 @@ public:
     virtual Msg* ProcessMsg(MsgMode* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSession* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgChangeInput* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgDrain* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDelay* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgEncodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
@@ -883,7 +883,7 @@ private:
     virtual void ProcessMsgIn(MsgMode* aMsg);
     virtual void ProcessMsgIn(MsgSession* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
-    virtual void ProcessMsgIn(MsgChangeInput* aMsg);
+    virtual void ProcessMsgIn(MsgDrain* aMsg);
     virtual void ProcessMsgIn(MsgDelay* aMsg);
     virtual void ProcessMsgIn(MsgEncodedStream* aMsg);
     virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
@@ -899,7 +899,7 @@ private:
     virtual Msg* ProcessMsgOut(MsgMode* aMsg);
     virtual Msg* ProcessMsgOut(MsgSession* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
-    virtual Msg* ProcessMsgOut(MsgChangeInput* aMsg);
+    virtual Msg* ProcessMsgOut(MsgDrain* aMsg);
     virtual Msg* ProcessMsgOut(MsgDelay* aMsg);
     virtual Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
@@ -921,7 +921,7 @@ private:
         Msg* ProcessMsg(MsgMode* aMsg) override;
         Msg* ProcessMsg(MsgSession* aMsg) override;
         Msg* ProcessMsg(MsgTrack* aMsg) override;
-        Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+        Msg* ProcessMsg(MsgDrain* aMsg) override;
         Msg* ProcessMsg(MsgDelay* aMsg) override;
         Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
         Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -946,7 +946,7 @@ private:
         Msg* ProcessMsg(MsgMode* aMsg) override;
         Msg* ProcessMsg(MsgSession* aMsg) override;
         Msg* ProcessMsg(MsgTrack* aMsg) override;
-        Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+        Msg* ProcessMsg(MsgDrain* aMsg) override;
         Msg* ProcessMsg(MsgDelay* aMsg) override;
         Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
         Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -983,7 +983,7 @@ protected:
         eMode               = 1
        ,eSession            = 1 <<  1
        ,eTrack              = 1 <<  2
-       ,eChangeInput        = 1 <<  3
+       ,eDrain              = 1 <<  3
        ,eDelay              = 1 <<  4
        ,eEncodedStream      = 1 <<  5
        ,eAudioEncoded       = 1 <<  6
@@ -1005,7 +1005,7 @@ protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -1058,7 +1058,7 @@ public:
     *
     * @param[in] aCallabck        Callback to run when all audio has been processed.
     */
-    virtual void OutputChangeInput(Functor aCallback) = 0;
+    virtual void OutputDrain(Functor aCallback) = 0;
     /**
      * Apply a delay to subsequent audio in this stream.
      *
@@ -1358,7 +1358,7 @@ public:
         : iMsgModeCount(1)
         , iMsgSessionCount(1)
         , iMsgTrackCount(1)
-        , iMsgChangeInputCount(1)
+        , iMsgDrainCount(1)
         , iMsgDelayCount(1)
         , iMsgEncodedStreamCount(1)
         , iEncodedAudioCount(1)
@@ -1379,7 +1379,7 @@ public:
     void SetMsgModeCount(TUint aCount)                                      { iMsgModeCount = aCount; }
     void SetMsgSessionCount(TUint aCount)                                   { iMsgSessionCount = aCount; }
     void SetMsgTrackCount(TUint aCount)                                     { iMsgTrackCount = aCount; }
-    void SetMsgChangeInputCount(TUint aCount)                               { iMsgChangeInputCount = aCount; }
+    void SetMsgDrainCount(TUint aCount)                                     { iMsgDrainCount = aCount; }
     void SetMsgDelayCount(TUint aCount)                                     { iMsgDelayCount = aCount; }
     void SetMsgEncodedStreamCount(TUint aCount)                             { iMsgEncodedStreamCount = aCount; }
     void SetMsgAudioEncodedCount(TUint aCount, TUint aEncodedAudioCount)    { iMsgAudioEncodedCount = aCount; iEncodedAudioCount = aEncodedAudioCount; }
@@ -1397,7 +1397,7 @@ private:
     TUint iMsgModeCount;
     TUint iMsgSessionCount;
     TUint iMsgTrackCount;
-    TUint iMsgChangeInputCount;
+    TUint iMsgDrainCount;
     TUint iMsgDelayCount;
     TUint iMsgEncodedStreamCount;
     TUint iEncodedAudioCount;
@@ -1424,7 +1424,7 @@ public:
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev);
     MsgSession* CreateMsgSession();
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
-    MsgChangeInput* CreateMsgChangeInput(Functor aCallback);
+    MsgDrain* CreateMsgDrain(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
@@ -1447,7 +1447,7 @@ private:
     Allocator<MsgMode> iAllocatorMsgMode;
     Allocator<MsgSession> iAllocatorMsgSession;
     Allocator<MsgTrack> iAllocatorMsgTrack;
-    Allocator<MsgChangeInput> iAllocatorMsgChangeInput;
+    Allocator<MsgDrain> iAllocatorMsgDrain;
     Allocator<MsgDelay> iAllocatorMsgDelay;
     Allocator<MsgEncodedStream> iAllocatorMsgEncodedStream;
     Allocator<EncodedAudio> iAllocatorEncodedAudio;
