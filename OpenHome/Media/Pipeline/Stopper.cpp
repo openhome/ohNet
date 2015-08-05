@@ -307,11 +307,7 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
     }
     Msg* msg = ProcessFlushable(aMsg);
     if (msg != nullptr) {
-        const DecodedStreamInfo& stream = aMsg->StreamInfo();
-        msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
-                                                 stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
-                                                 stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
-                                                 stream.Seekable(), stream.Live(), this);
+        msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
         aMsg->RemoveRef();
     }
     return msg;

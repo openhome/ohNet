@@ -155,10 +155,7 @@ Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
     iLock.Wait();
     iStreamHandler = stream.StreamHandler();
     iLock.Signal();
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
-                                                               stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
-                                                               stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
-                                                               stream.Seekable(), stream.Live(), this);
+    auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
     aMsg->RemoveRef();
     iLock.Wait();
     if (iGorgeOnStreamOut) {

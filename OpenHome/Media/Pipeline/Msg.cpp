@@ -2953,6 +2953,16 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBit
     return msg;
 }
 
+MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(MsgDecodedStream* aMsg, IStreamHandler* aStreamHandler)
+{
+    auto stream = aMsg->StreamInfo();
+    auto msg = CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
+        stream.SampleRate(), stream.NumChannels(), stream.CodecName(),
+        stream.TrackLength(), stream.SampleStart(), stream.Lossless(),
+        stream.Seekable(), stream.Live(), aStreamHandler);
+    return msg;
+}
+
 MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
