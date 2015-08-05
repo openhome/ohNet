@@ -203,6 +203,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/Drainer.cpp',
                 'OpenHome/Media/Pipeline/EncodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/Gorger.cpp',
                 'OpenHome/Media/Pipeline/Logger.cpp',
@@ -625,6 +626,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestGorger.cpp',
                 'OpenHome/Media/Tests/TestPruner.cpp',
                 'OpenHome/Media/Tests/TestMuter.cpp',
+                'OpenHome/Media/Tests/TestDrainer.cpp',
                 'OpenHome/Av/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 'OpenHome/Media/Tests/TestProtocolHls.cpp',
@@ -780,6 +782,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestMuterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMuter',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestDrainerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestDrainer',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestContentProcessorMain.cpp',

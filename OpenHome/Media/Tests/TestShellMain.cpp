@@ -36,6 +36,7 @@ SIMPLE_TEST_DECLARATION(TestGorger);
 SIMPLE_TEST_DECLARATION(TestPruner);
 SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestMuter);
+ENV_TEST_DECLARATION(TestDrainer);
 SIMPLE_TEST_DECLARATION(TestStopper);
 SIMPLE_TEST_DECLARATION(TestStore);
 SIMPLE_TEST_DECLARATION(TestSupply);
@@ -100,6 +101,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestGorger", ShellTestGorger));
     shellTests.push_back(ShellTest("TestStarvationMonitor", ShellTestStarvationMonitor));
     shellTests.push_back(ShellTest("TestMuter", ShellTestMuter));
+    shellTests.push_back(ShellTest("TestDrainer", ShellTestDrainer));
     shellTests.push_back(ShellTest("TestStopper", ShellTestStopper));
     shellTests.push_back(ShellTest("TestStore", ShellTestStore));
     shellTests.push_back(ShellTest("TestSupply", ShellTestSupply));
