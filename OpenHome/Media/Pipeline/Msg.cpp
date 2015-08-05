@@ -2682,6 +2682,125 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
 }
 
 
+// PipelineElement
+
+PipelineElement::PipelineElement(TUint aSupportedTypes)
+    : iSupportedTypes(aSupportedTypes)
+{
+}
+
+PipelineElement::~PipelineElement()
+{
+}
+
+inline void PipelineElement::CheckSupported(MsgType aType) const
+{
+    ASSERT((iSupportedTypes & aType) == (TUint)aType);
+}
+
+Msg* PipelineElement::ProcessMsg(MsgMode* aMsg)
+{
+    CheckSupported(eMode);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgSession* aMsg)
+{
+    CheckSupported(eSession);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgTrack* aMsg)
+{
+    CheckSupported(eTrack);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgChangeInput* aMsg)
+{
+    CheckSupported(eChangeInput);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgDelay* aMsg)
+{
+    CheckSupported(eDelay);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    CheckSupported(eEncodedStream);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    CheckSupported(eAudioEncoded);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgMetaText* aMsg)
+{
+    CheckSupported(eMetatext);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    CheckSupported(eStreamInterrupted);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgHalt* aMsg)
+{
+    CheckSupported(eHalt);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgFlush* aMsg)
+{
+    CheckSupported(eFlush);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgWait* aMsg)
+{
+    CheckSupported(eWait);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    CheckSupported(eDecodedStream);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    CheckSupported(eAudioPcm);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgSilence* aMsg)
+{
+    CheckSupported(eSilence);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgPlayable* aMsg)
+{
+    CheckSupported(ePlayable);
+    return aMsg;
+}
+
+Msg* PipelineElement::ProcessMsg(MsgQuit* aMsg)
+{
+    CheckSupported(eQuit);
+    return aMsg;
+}
+
+
 // AutoAllocatedRef
 
 AutoAllocatedRef::AutoAllocatedRef(Allocated* aAllocated)

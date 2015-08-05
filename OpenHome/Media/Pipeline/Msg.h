@@ -975,6 +975,56 @@ private:
     TUint iEncodedAudioCount;
 };
 
+class PipelineElement : protected IMsgProcessor
+{
+protected:
+    enum MsgType
+    {
+        eMode               = 1
+       ,eSession            = 1 <<  1
+       ,eTrack              = 1 <<  2
+       ,eChangeInput        = 1 <<  3
+       ,eDelay              = 1 <<  4
+       ,eEncodedStream      = 1 <<  5
+       ,eAudioEncoded       = 1 <<  6
+       ,eMetatext           = 1 <<  7
+       ,eStreamInterrupted  = 1 <<  8
+       ,eHalt               = 1 <<  9
+       ,eFlush              = 1 << 10
+       ,eWait               = 1 << 11
+       ,eDecodedStream      = 1 << 12
+       ,eAudioPcm           = 1 << 13
+       ,eSilence            = 1 << 14
+       ,ePlayable           = 1 << 15
+       ,eQuit               = 1 << 16
+    };
+protected:
+    PipelineElement(TUint aSupportedTypes);
+    ~PipelineElement();
+protected: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
+private:
+    inline void CheckSupported(MsgType aType) const;
+private:
+    TUint iSupportedTypes;
+};
+
 // removes ref on destruction.  Does NOT claim ref on construction.
 class AutoAllocatedRef : private INonCopyable
 {
