@@ -30,7 +30,6 @@ private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -51,7 +50,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -140,12 +138,6 @@ Msg* SuiteDrainer::Pull()
 Msg* SuiteDrainer::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteDrainer::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 

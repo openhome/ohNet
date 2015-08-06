@@ -63,7 +63,6 @@ private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -269,12 +268,6 @@ TUint DummyDriver::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /
 }
 
 Msg* DummyDriver::ProcessMsg(MsgMode* /*aMsg*/)
-{
-    ASSERTS(); // msg type not expected at the far right of the pipeline
-    return nullptr;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
     return nullptr;

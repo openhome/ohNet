@@ -206,7 +206,6 @@ public:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -228,7 +227,6 @@ public:
     EMsgType LastMsgType() const;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -282,7 +280,6 @@ public:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -312,7 +309,6 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgAudioPcm* aMsg) override;
     void ProcessMsgIn(MsgSilence* aMsg) override;
     void ProcessMsgIn(MsgMode* aMsg) override;
-    void ProcessMsgIn(MsgSession* aMsg) override;
     void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgDrain* aMsg) override;
     void ProcessMsgIn(MsgDelay* aMsg) override;
@@ -327,7 +323,6 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
-    Msg* ProcessMsgOut(MsgSession* aMsg) override;
     Msg* ProcessMsgOut(MsgTrack* aMsg) override;
     Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgDelay* aMsg) override;
@@ -1953,11 +1948,6 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgSession();
-    TEST(msg == msg->Process(processor));
-    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgSession);
-    msg->RemoveRef();
-
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
@@ -2027,12 +2017,6 @@ ProcessorMsgType::EMsgType ProcessorMsgType::LastMsgType() const
 Msg* ProcessorMsgType::ProcessMsg(MsgMode* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgMode;
-    return aMsg;
-}
-
-Msg* ProcessorMsgType::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgSession;
     return aMsg;
 }
 
@@ -2365,13 +2349,6 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgMode);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    msg = iMsgFactory->CreateMsgSession();
-    queue->Enqueue(msg);
-    jiffies = queue->Jiffies();
-    TEST(jiffies == 0);
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgSession);
-    TEST(queue->LastOut() == TestMsgReservoir::ENone);
-
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
@@ -2456,12 +2433,6 @@ void SuiteMsgReservoir::Test()
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgMode);
-    TEST(queue->Jiffies() == jiffies);
-    msg->RemoveRef();
-
-    msg = queue->Dequeue();
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
-    TEST(queue->LastOut() == TestMsgReservoir::EMsgSession);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -2581,11 +2552,6 @@ void TestMsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)
     iLastMsgIn = EMsgMode;
 }
 
-void TestMsgReservoir::ProcessMsgIn(MsgSession* /*aMsg*/)
-{
-    iLastMsgIn = EMsgSession;
-}
-
 void TestMsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
     iLastMsgIn = EMsgTrack;
@@ -2656,12 +2622,6 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgSilence* aMsg)
 Msg* TestMsgReservoir::ProcessMsgOut(MsgMode* aMsg)
 {
     iLastMsgOut = EMsgMode;
-    return aMsg;
-}
-
-Msg* TestMsgReservoir::ProcessMsgOut(MsgSession* aMsg)
-{
-    iLastMsgOut = EMsgSession;
     return aMsg;
 }
 
@@ -2798,8 +2758,6 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
         break;
     case ProcessorMsgType::EMsgMode:
         return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
-    case ProcessorMsgType::EMsgSession:
-        return iMsgFactory->CreateMsgSession();
     case ProcessorMsgType::EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());

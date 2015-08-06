@@ -46,7 +46,6 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -66,7 +65,6 @@ private:
     enum EMsgType
     {
         EMsgAudioEncoded
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -151,7 +149,7 @@ void SuiteSupplyAggregator::Test()
 {
     // test msgs passed through
     TUint expectedMsgCount = 0;
-    iGenMsgType = EMsgSession;
+    iGenMsgType = EMsgTrack;
     do {
         OutputNextNonAudioMsg();
         TEST(++expectedMsgCount == iMsgPushCount);
@@ -176,7 +174,7 @@ void SuiteSupplyAggregator::Test()
     // all other msgs flush buffered data
     iExpectAudioStream = false;
     iTestAudioData = false;
-    iGenMsgType = EMsgSession;
+    iGenMsgType = EMsgTrack;
     do {
         iSupply->OutputData(Brn(kTestData));
         OutputNextNonAudioMsg();
@@ -201,9 +199,6 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
 {
     switch (iGenMsgType)
     {
-    case EMsgSession:
-        iSupply->OutputSession();
-        break;
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
@@ -247,12 +242,6 @@ void SuiteSupplyAggregator::Push(Msg* aMsg)
 Msg* SuiteSupplyAggregator::ProcessMsg(MsgMode* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    return aMsg;
-}
-
-Msg* SuiteSupplyAggregator::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
     return aMsg;
 }
 

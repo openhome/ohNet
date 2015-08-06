@@ -20,12 +20,6 @@ Supply::~Supply()
 {
 }
 
-void Supply::OutputSession()
-{
-    MsgSession* msg = iMsgFactory.CreateMsgSession();
-    iDownStreamElement.Push(msg);
-}
-
 void Supply::OutputTrack(Track& aTrack, TBool aStartOfStream)
 {
     MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aStartOfStream);

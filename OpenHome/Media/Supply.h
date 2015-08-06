@@ -20,7 +20,6 @@ public:
     Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement);
     virtual ~Supply();
 public: // from ISupply
-    void OutputSession() override;
     void OutputTrack(Track& aTrack, TBool aStartOfStream = true) override;
     void OutputDrain(Functor aCallback) override;
     void OutputDelay(TUint aJiffies) override;

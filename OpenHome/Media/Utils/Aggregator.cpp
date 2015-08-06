@@ -116,12 +116,6 @@ Msg* Aggregator::ProcessMsg(MsgMode* aMsg)
     return NextStoredMsg(true);
 }
 
-Msg* Aggregator::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* Aggregator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();

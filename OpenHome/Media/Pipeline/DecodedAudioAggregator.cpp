@@ -93,12 +93,6 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* DecodedAudioAggregator::ProcessMsg(MsgSession* aMsg)
-{
-    OutputAggregatedAudio();
-    return aMsg;
-}
-
 Msg* DecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
 {
     OutputAggregatedAudio();

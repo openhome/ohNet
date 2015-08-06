@@ -33,7 +33,6 @@ private:
     void SetGorging(TBool aGorging);
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg) override;
-    void ProcessMsgIn(MsgSession* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;

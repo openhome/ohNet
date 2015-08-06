@@ -35,7 +35,6 @@ private:
     {
         EMsgNone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgEncodedStream
@@ -65,7 +64,6 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -152,9 +150,6 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
     case EMsgMode:
         msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
         break;
-    case EMsgSession:
-        msg = iMsgFactory->CreateMsgSession();
-        break;
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -213,7 +208,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
 
 void SuiteSampleRateValidator::StartStream()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream };
+    EMsgType types[] = { EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     for (size_t i=0; i<numElems; i++) {
         PushMsg(types[i]);
@@ -222,7 +217,7 @@ void SuiteSampleRateValidator::StartStream()
 
 void SuiteSampleRateValidator::MsgsPassThrough()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
+    EMsgType types[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
                          EMsgAudioPcm, EMsgSilence, EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
@@ -279,7 +274,7 @@ void SuiteSampleRateValidator::MsgsPassWhileFlushing()
 void SuiteSampleRateValidator::MsgsEndFlush()
 {
     iRateSupported = false;
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack };
+    EMsgType types[] = { EMsgMode, EMsgTrack };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     for (size_t i=0; i<numElems; i++) {
         PushMsg(EMsgDecodedStream);
@@ -325,12 +320,6 @@ void SuiteSampleRateValidator::Push(Msg* aMsg)
 Msg* SuiteSampleRateValidator::ProcessMsg(MsgMode* aMsg)
 {
     iLastMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteSampleRateValidator::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
     return aMsg;
 }
 

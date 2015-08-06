@@ -48,7 +48,6 @@ private: // from IPipelinePropertyObserver
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;

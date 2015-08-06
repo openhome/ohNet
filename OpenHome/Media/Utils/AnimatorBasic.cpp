@@ -150,12 +150,6 @@ Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();

@@ -559,12 +559,6 @@ void CodecController::OutputHalt()
     Queue(halt);
 }
 
-void CodecController::OutputSession()
-{
-    MsgSession* session = iMsgFactory.CreateMsgSession();
-    Queue(session);
-}
-
 void CodecController::OutputMetaText(const Brx& aMetaText)
 {
     MsgMetaText* text = iMsgFactory.CreateMsgMetaText(aMetaText);
@@ -572,16 +566,6 @@ void CodecController::OutputMetaText(const Brx& aMetaText)
 }
 
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
-{
-    if (iRecognising) {
-        iStreamEnded = true;
-        aMsg->RemoveRef();
-        return nullptr;
-    }
-    return aMsg;
-}
-
-Msg* CodecController::ProcessMsg(MsgSession* aMsg)
 {
     if (iRecognising) {
         iStreamEnded = true;

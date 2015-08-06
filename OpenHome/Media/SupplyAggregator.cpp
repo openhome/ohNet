@@ -30,12 +30,6 @@ void SupplyAggregator::Flush()
     }
 }
 
-void SupplyAggregator::OutputSession()
-{
-    MsgSession* msg = iMsgFactory.CreateMsgSession();
-    Output(msg);
-}
-
 void SupplyAggregator::OutputTrack(Track& aTrack, TBool aStartOfStream)
 {
     MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aStartOfStream);

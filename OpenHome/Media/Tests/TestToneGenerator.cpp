@@ -121,7 +121,6 @@ protected:  // from IMsgProcessor
 
 private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -156,7 +155,6 @@ private:
     static const TUint kMsgCountFlush           = 1;
     static const TUint kMsgCountWait            = 1;
     static const TUint kMsgCountMode            = 1;
-    static const TUint kMsgCountSession         = 1;
     static const TUint kMsgCountDelay           = 1;
     static const TUint kMsgCountQuit            = 1;
     static const TUint kEncodedReservoirMaxStreams = 10;
@@ -500,7 +498,6 @@ void SuiteGeneratorAny::Setup()
     iAllocatorInfoLogger = new AllocatorInfoLogger();
     MsgFactoryInitParams init;
     init.SetMsgModeCount(kMsgCountMode);
-    init.SetMsgSessionCount(kMsgCountSession);
     init.SetMsgTrackCount(kMsgCountTrack);
     init.SetMsgDrainCount(1);
     init.SetMsgDelayCount(kMsgCountDelay);
@@ -518,7 +515,7 @@ void SuiteGeneratorAny::Setup()
     init.SetMsgQuitCount(kMsgCountQuit);
     iMsgFactory = new MsgFactory(*iAllocatorInfoLogger, init);
 
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir, *this);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
     iCodecController->AddCodec(Codec::CodecFactory::NewWav());
@@ -575,11 +572,6 @@ void SuiteGeneratorAny::Push(Msg* aMsg)
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgSession* aMsg)
 {
     return aMsg;
 }

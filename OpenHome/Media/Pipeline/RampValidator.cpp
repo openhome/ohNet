@@ -116,11 +116,6 @@ Msg* RampValidator::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* RampValidator::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
 {
     if (aMsg->StartOfStream()) {

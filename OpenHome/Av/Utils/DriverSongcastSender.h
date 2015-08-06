@@ -47,7 +47,6 @@ private:
     void DeviceDisabled();
 private: // from Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDrain* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;

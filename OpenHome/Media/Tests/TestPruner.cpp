@@ -26,7 +26,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -60,7 +59,6 @@ private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -141,7 +139,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -258,12 +256,6 @@ Msg* SuitePruner::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuitePruner::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuitePruner::ProcessMsg(MsgTrack* aMsg)
 {
     iPulledTrackId = aMsg->Track().Id();
@@ -374,8 +366,6 @@ Msg* SuitePruner::Pull()
     {
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
-    case EMsgSession:
-        return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());

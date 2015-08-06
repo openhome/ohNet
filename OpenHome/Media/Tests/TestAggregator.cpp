@@ -38,7 +38,6 @@ private:
     TBool TimesEqual(TUint aJiffy1, TUint aJiffy2);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -337,12 +336,6 @@ Msg* SuiteAggregator::ProcessMsg(MsgMode* aMsg)
 {
     iLastMsg = EMsgMode;
     return aMsg;
-}
-
-Msg* SuiteAggregator::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgTrack* /*aMsg*/)

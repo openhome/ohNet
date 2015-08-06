@@ -202,11 +202,6 @@ Msg* Stopper::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     /* IdManager expects OkToPlay to be called for every stream that is added to it.

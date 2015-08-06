@@ -167,13 +167,6 @@ public:
      */
     virtual void OutputHalt() = 0;
     /**
-     * Output a Session command to the pipeline.
-     *
-     * This informs the pipeline about a discontinuity in audio, allowing it to apply
-     * ramps or delays as appropriate.
-     */
-    virtual void OutputSession() = 0;
-    /**
      * Notify the pipeline of an update in meta text.
      *
      * This allows the pipeline to output additional information about a stream.
@@ -331,11 +324,9 @@ private: // ICodecController
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     void OutputWait();
     void OutputHalt();
-    void OutputSession();
     void OutputMetaText(const Brx& aMetaText);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;

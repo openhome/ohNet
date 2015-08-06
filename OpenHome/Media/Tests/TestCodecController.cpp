@@ -67,7 +67,6 @@ private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -88,7 +87,6 @@ protected:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -368,12 +366,6 @@ TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgMode* aMsg)
 {
     iLastReceivedMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteCodecControllerBase::ProcessMsg(MsgSession* aMsg)
-{
-    iLastReceivedMsg = EMsgSession;
     return aMsg;
 }
 

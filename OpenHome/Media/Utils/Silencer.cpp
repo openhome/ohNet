@@ -14,7 +14,6 @@ private:
     SilencerMsgInProcessor();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -129,7 +128,6 @@ Msg* Silencer::ProcessMsg(MsgQuit* aMsg)
 }
 
 // not expected beyond the generic pipeline
-Msg* Silencer::ProcessMsg(MsgSession* aMsg)       { ASSERTS(); return aMsg; }
 Msg* Silencer::ProcessMsg(MsgTrack* aMsg)         { ASSERTS(); return aMsg; }
 Msg* Silencer::ProcessMsg(MsgDelay* aMsg)         { ASSERTS(); return aMsg; }
 Msg* Silencer::ProcessMsg(MsgEncodedStream* aMsg) { ASSERTS(); return aMsg; }
@@ -156,7 +154,6 @@ SilencerMsgInProcessor::SilencerMsgInProcessor()
 }
 
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgMode* aMsg)                  { return aMsg; }
-Msg* SilencerMsgInProcessor::ProcessMsg(MsgSession* aMsg)               { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgTrack* aMsg)                 { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgDrain* aMsg)                 { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgDelay* aMsg)                 { return aMsg; }

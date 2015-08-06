@@ -32,7 +32,6 @@ private:
     {
         EMsgNone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgEncodedStream
@@ -58,14 +57,12 @@ private:
     void TimestampVariationRestartsLocking();
     void NonTimestampedMsgAtStartOfLocking();
     void NewDecodedStreamIfAudioDiscarded();
-    void NewSessionWhileLocking();
     void NewStreamWhileLocking();
     void InterruptedStreamRestartsLocking();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -119,7 +116,6 @@ SuiteTimestampInspector::SuiteTimestampInspector()
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::TimestampVariationRestartsLocking), "TimestampVariationRestartsLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NonTimestampedMsgAtStartOfLocking), "NonTimestampedMsgAtStartOfLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewDecodedStreamIfAudioDiscarded), "NewDecodedStreamIfAudioDiscarded");
-    AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewSessionWhileLocking), "NewSessionWhileLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewStreamWhileLocking), "NewStreamWhileLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::InterruptedStreamRestartsLocking), "InterruptedStreamRestartsLocking");
 }
@@ -160,9 +156,6 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         IClockPuller* clockPuller = (iUseClockPuller? &iClockPuller : nullptr);
         msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPuller, false, false);
     }
-        break;
-    case EMsgSession:
-        msg = iMsgFactory->CreateMsgSession();
         break;
     case EMsgTrack:
     {
@@ -228,7 +221,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
 
 void SuiteTimestampInspector::StartStream()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream };
+    EMsgType types[] = { EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     for (size_t i=0; i<numElems; i++) {
         PushMsg(types[i]);
@@ -237,7 +230,7 @@ void SuiteTimestampInspector::StartStream()
 
 void SuiteTimestampInspector::NonAudioMsgsPassThrough()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
+    EMsgType types[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
                          EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
@@ -358,23 +351,6 @@ void SuiteTimestampInspector::NewDecodedStreamIfAudioDiscarded()
     TEST(iTrackOffsetTx == iTrackOffsetRx);
 }
 
-void SuiteTimestampInspector::NewSessionWhileLocking()
-{
-    iTimestampNextAudioMsg = true;
-    EMsgType types[] = { EMsgMode, EMsgSession };
-    const size_t numElems = sizeof(types) / sizeof(types[0]);
-    for (size_t i=0; i<numElems; i++) {
-        StartStream();
-        PushMsg(EMsgAudioPcm);
-        TEST(!iTimestampInspector->iCheckForTimestamp);
-        TEST(iTimestampInspector->iStreamIsTimestamped);
-        TEST(!iTimestampInspector->iLockedToStream);
-        PushMsg(types[i]);
-        TEST(iTimestampInspector->iCheckForTimestamp);
-        TEST(!iTimestampInspector->iStreamIsTimestamped);
-    }
-}
-
 void SuiteTimestampInspector::NewStreamWhileLocking()
 {
     iTimestampNextAudioMsg = true;
@@ -421,12 +397,6 @@ void SuiteTimestampInspector::Push(Msg* aMsg)
 Msg* SuiteTimestampInspector::ProcessMsg(MsgMode* aMsg)
 {
     iLastMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteTimestampInspector::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
     return aMsg;
 }
 

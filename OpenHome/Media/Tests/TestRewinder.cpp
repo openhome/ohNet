@@ -30,7 +30,6 @@ enum EMsgType
         ,EMsgPlayable
         ,EMsgDecodedStream
         ,EMsgMode
-        ,EMsgSession
         ,EMsgTrack
         ,EMsgDrain
         ,EMsgDelay
@@ -72,7 +71,6 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -260,13 +258,6 @@ Msg* SuiteRewinder::ProcessMsg(MsgMode* aMsg)
 {
     TEST(iLastMsgType == EMsgMode);
     iRcvdMsgType = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteRewinder::ProcessMsg(MsgSession* aMsg)
-{
-    TEST(iLastMsgType == EMsgSession);
-    iRcvdMsgType = EMsgSession;
     return aMsg;
 }
 

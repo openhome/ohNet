@@ -40,7 +40,6 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -61,7 +60,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -227,12 +225,6 @@ void SuiteWaiter::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 Msg* SuiteWaiter::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteWaiter::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -518,8 +510,6 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, nullptr, false, false));
     PullNext(EMsgMode);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
-    PullNext(EMsgSession);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));

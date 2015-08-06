@@ -43,7 +43,6 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -69,7 +68,6 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -145,9 +143,6 @@ SuiteSupply::~SuiteSupply()
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
-    iSupply->OutputSession();
-    TEST(++expectedMsgCount == iMsgPushCount);
-    TEST(iLastMsg == EMsgSession);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
     iSupply->OutputTrack(*track);
     track->RemoveRef();
@@ -189,12 +184,6 @@ Msg* SuiteSupply::ProcessMsg(MsgMode* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
     iLastMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteSupply::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
     return aMsg;
 }
 

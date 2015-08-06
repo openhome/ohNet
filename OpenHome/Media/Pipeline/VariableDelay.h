@@ -31,11 +31,10 @@ private:
     Msg* NextMsgLocked();
     MsgAudio* DoProcessAudioMsg(MsgAudio* aMsg);
     void RampMsg(MsgAudio* aMsg);
-    void HandleStarving(const Brx& aMode);
+    void HandleStarving();
     void ResetStatusAndRamp();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -75,7 +74,6 @@ private:
     Ramp::EDirection iRampDirection;
     const TUint iDownstreamDelay;
     const TUint iRampDuration;
-    TBool iEnabled;
     TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;

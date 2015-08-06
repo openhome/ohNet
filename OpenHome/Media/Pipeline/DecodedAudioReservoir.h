@@ -15,10 +15,9 @@ class DecodedAudioReservoir : public AudioReservoir
 {
     friend class SuiteReservoirHistory;
 public:
-    DecodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCount, TUint aMaxStreamCount);
+    DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgSession* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
     void ProcessMsgIn(MsgAudioPcm* aMsg) override;
     void ProcessMsgIn(MsgSilence* aMsg) override;
@@ -36,7 +35,6 @@ private:
     IClockPuller* iClockPuller;
     Mutex iLock;
     const TUint iMaxJiffies;
-    const TUint iMaxSessionCount;
     const TUint iMaxStreamCount;
     TUint64 iJiffiesUntilNextUsageReport;
     Thread* iThreadExcludeBlock;

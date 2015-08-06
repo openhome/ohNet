@@ -75,12 +75,10 @@ public:
     TBool LastSupportsLatency() const;
     TBool LastIsRealTime() const;
     TUint LastDelayJiffies() const;
-    TUint SessionCount() const;
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -104,7 +102,6 @@ private:
     TUint iLastTrackId;
     TUint iLastStreamId;
     TUint iLastDelayJiffies;
-    TUint iSessionCount;
 };
 
 class SuiteFiller : public Suite, private IPipelineIdTracker, private IFlushIdProvider, private IStreamPlayObserver, private IPipelineIdProvider
@@ -302,7 +299,6 @@ void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 // DummySupply
 
 DummySupply::DummySupply()
-    : iSessionCount(0)
 {
 }
 
@@ -345,11 +341,6 @@ TUint DummySupply::LastDelayJiffies() const
     return iLastDelayJiffies;
 }
 
-TUint DummySupply::SessionCount() const
-{
-    return iSessionCount;
-}
-
 void DummySupply::Push(Msg* aMsg)
 {
     (void)aMsg->Process(*this);
@@ -362,12 +353,6 @@ Msg* DummySupply::ProcessMsg(MsgMode* aMsg)
     const ModeInfo& info = aMsg->Info();
     iLastSupportsLatency = info.SupportsLatency();
     iLastRealTime = info.IsRealTime();
-    return aMsg;
-}
-
-Msg* DummySupply::ProcessMsg(MsgSession* aMsg)
-{
-    iSessionCount++;
     return aMsg;
 }
 
@@ -495,12 +480,9 @@ void SuiteFiller::Test()
 {
     // Play for invalid mode should throw
     TEST_THROWS(iFiller->Play(Brn("NotARealMode"), 1), FillerInvalidMode);
-    TUint sessionCount = 0;
-    TEST(iDummySupply->SessionCount() == sessionCount);
 
     // Play for valid mode but invalid trackId should throw
     TEST_THROWS(iFiller->Play(iUriProvider->Mode(), UINT_MAX), UriProviderInvalidId);
-    TEST(iDummySupply->SessionCount() == sessionCount);
 
     // Play for valid mode/trackId should succeed and Begin should be called
     // IUriStreamer should be passed uri for first track
@@ -513,7 +495,6 @@ void SuiteFiller::Test()
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
     TEST(iDummySupply->LastDelayJiffies() == kDefaultLatency);
-    TEST(iDummySupply->SessionCount() == ++sessionCount);
     TEST(iTrackId == iUriProvider->IdByIndex(0));
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
@@ -529,7 +510,6 @@ void SuiteFiller::Test()
     TEST(iTrackId != trackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
-    TEST(iDummySupply->SessionCount() == sessionCount);
     trackId = iTrackId;
 
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track

@@ -329,14 +329,6 @@ private:
     IClockPuller* iClockPuller;
 };
 
-class MsgSession : public Msg
-{
-public:
-    MsgSession(AllocatorBase& aAllocator);
-private: // from Msg
-    Msg* Process(IMsgProcessor& aProcessor);
-};
-
 class MsgTrack : public Msg
 {
     friend class MsgFactory;
@@ -773,7 +765,6 @@ class IMsgProcessor
 public:
     virtual ~IMsgProcessor() {}
     virtual Msg* ProcessMsg(MsgMode* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgSession* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDrain* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDelay* aMsg) = 0;
@@ -871,7 +862,6 @@ protected:
     TUint Jiffies() const;
     TUint EncodedBytes() const;
     TBool IsEmpty() const;
-    TUint SessionCount() const;
     TUint TrackCount() const;
     TUint EncodedStreamCount() const;
     TUint DecodedStreamCount() const;
@@ -881,7 +871,6 @@ private:
     void Remove(TUint& aValue, TUint aRemoved);
 private:
     virtual void ProcessMsgIn(MsgMode* aMsg);
-    virtual void ProcessMsgIn(MsgSession* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgDrain* aMsg);
     virtual void ProcessMsgIn(MsgDelay* aMsg);
@@ -897,7 +886,6 @@ private:
     virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgQuit* aMsg);
     virtual Msg* ProcessMsgOut(MsgMode* aMsg);
-    virtual Msg* ProcessMsgOut(MsgSession* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgDrain* aMsg);
     virtual Msg* ProcessMsgOut(MsgDelay* aMsg);
@@ -919,7 +907,6 @@ private:
         ProcessorQueueIn(MsgReservoir& aQueue);
     private:
         Msg* ProcessMsg(MsgMode* aMsg) override;
-        Msg* ProcessMsg(MsgSession* aMsg) override;
         Msg* ProcessMsg(MsgTrack* aMsg) override;
         Msg* ProcessMsg(MsgDrain* aMsg) override;
         Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -944,7 +931,6 @@ private:
         ProcessorQueueOut(MsgReservoir& aQueue);
     private:
         Msg* ProcessMsg(MsgMode* aMsg) override;
-        Msg* ProcessMsg(MsgSession* aMsg) override;
         Msg* ProcessMsg(MsgTrack* aMsg) override;
         Msg* ProcessMsg(MsgDrain* aMsg) override;
         Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -968,7 +954,6 @@ private:
     MsgQueue iQueue;
     TUint iEncodedBytes;
     TUint iJiffies;
-    TUint iSessionCount;
     TUint iTrackCount;
     TUint iEncodedStreamCount;
     TUint iDecodedStreamCount;
@@ -981,29 +966,27 @@ protected:
     enum MsgType
     {
         eMode               = 1
-       ,eSession            = 1 <<  1
-       ,eTrack              = 1 <<  2
-       ,eDrain              = 1 <<  3
-       ,eDelay              = 1 <<  4
-       ,eEncodedStream      = 1 <<  5
-       ,eAudioEncoded       = 1 <<  6
-       ,eMetatext           = 1 <<  7
-       ,eStreamInterrupted  = 1 <<  8
-       ,eHalt               = 1 <<  9
-       ,eFlush              = 1 << 10
-       ,eWait               = 1 << 11
-       ,eDecodedStream      = 1 << 12
-       ,eAudioPcm           = 1 << 13
-       ,eSilence            = 1 << 14
-       ,ePlayable           = 1 << 15
-       ,eQuit               = 1 << 16
+       ,eTrack              = 1 <<  1
+       ,eDrain              = 1 <<  2
+       ,eDelay              = 1 <<  3
+       ,eEncodedStream      = 1 <<  4
+       ,eAudioEncoded       = 1 <<  5
+       ,eMetatext           = 1 <<  6
+       ,eStreamInterrupted  = 1 <<  7
+       ,eHalt               = 1 <<  8
+       ,eFlush              = 1 <<  9
+       ,eWait               = 1 << 10
+       ,eDecodedStream      = 1 << 11
+       ,eAudioPcm           = 1 << 12
+       ,eSilence            = 1 << 13
+       ,ePlayable           = 1 << 14
+       ,eQuit               = 1 << 15
     };
 protected:
     PipelineElement(TUint aSupportedTypes);
     ~PipelineElement();
 protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -1042,10 +1025,6 @@ class ISupply
 {
 public:
     virtual ~ISupply() {}
-    /**
-     * Inform the pipeline about a discontinuity in audio.
-     */
-    virtual void OutputSession() = 0;
     /**
      * Inform the pipeline that a new track is starting.
      *
@@ -1356,7 +1335,6 @@ class MsgFactoryInitParams
 public:
     MsgFactoryInitParams()
         : iMsgModeCount(1)
-        , iMsgSessionCount(1)
         , iMsgTrackCount(1)
         , iMsgDrainCount(1)
         , iMsgDelayCount(1)
@@ -1377,7 +1355,6 @@ public:
         , iMsgQuitCount(1)
     {}
     void SetMsgModeCount(TUint aCount)                                      { iMsgModeCount = aCount; }
-    void SetMsgSessionCount(TUint aCount)                                   { iMsgSessionCount = aCount; }
     void SetMsgTrackCount(TUint aCount)                                     { iMsgTrackCount = aCount; }
     void SetMsgDrainCount(TUint aCount)                                     { iMsgDrainCount = aCount; }
     void SetMsgDelayCount(TUint aCount)                                     { iMsgDelayCount = aCount; }
@@ -1395,7 +1372,6 @@ public:
     void SetMsgQuitCount(TUint aCount)                                      { iMsgQuitCount = aCount; }
 private:
     TUint iMsgModeCount;
-    TUint iMsgSessionCount;
     TUint iMsgTrackCount;
     TUint iMsgDrainCount;
     TUint iMsgDelayCount;
@@ -1422,7 +1398,6 @@ public:
     MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams);
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev);
-    MsgSession* CreateMsgSession();
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
@@ -1445,7 +1420,6 @@ private:
     DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private:
     Allocator<MsgMode> iAllocatorMsgMode;
-    Allocator<MsgSession> iAllocatorMsgSession;
     Allocator<MsgTrack> iAllocatorMsgTrack;
     Allocator<MsgDrain> iAllocatorMsgDrain;
     Allocator<MsgDelay> iAllocatorMsgDelay;

@@ -50,7 +50,6 @@ public:
         ,EMsgPlayable
         ,EMsgDecodedStream
         ,EMsgMode
-        ,EMsgSession
         ,EMsgTrack
         ,EMsgDrain
         ,EMsgDelay
@@ -124,7 +123,6 @@ class TestContainerMsgProcessor : public IMsgProcessor
 {
 public: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -153,7 +151,6 @@ protected: // from SuiteUnitTest
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -325,9 +322,6 @@ Msg* TestContainerMsgGenerator::NextMsg()
     case EMsgMode:
         msg = GenerateMsg(EMsgMode);
         break;
-    case EMsgSession:
-        msg = GenerateMsg(EMsgSession);
-        break;
     case EMsgTrack:
         msg = GenerateMsg(EMsgTrack);
         break;
@@ -407,10 +401,6 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case EMsgMode:
         msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
         iLastMsgType = EMsgMode;
-        break;
-    case EMsgSession:
-        msg = iMsgFactory.CreateMsgSession();
-        iLastMsgType = EMsgSession;
         break;
     case EMsgTrack:
         {
@@ -568,10 +558,6 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgMode* aMsg)
 {
     return aMsg;
 }
-Msg* TestContainerMsgProcessor::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
@@ -716,12 +702,6 @@ Msg* SuiteContainerBase::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteContainerBase::ProcessMsg(MsgSession* aMsg)
-{
-    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgSession);
-    return aMsg;
-}
-
 Msg* SuiteContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgTrack);
@@ -789,7 +769,6 @@ void SuiteContainerBase::TestNormalOperation()
     // Populate vector with normal type/order of stream msgs
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     msgOrder.push_back(TestContainerMsgGenerator::EMsgMode);
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgSession);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgDrain);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgDelay);

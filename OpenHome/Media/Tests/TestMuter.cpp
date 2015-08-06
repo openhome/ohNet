@@ -32,7 +32,6 @@ private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -53,7 +52,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -133,7 +131,6 @@ void SuiteMuter::Setup()
     init.SetMsgFlushCount(2);
     init.SetMsgModeCount(2);
     init.SetMsgWaitCount(2);
-    init.SetMsgSessionCount(2);
     init.SetMsgDelayCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iMuter = new Muter(*iMsgFactory, *this, kRampDuration);
@@ -168,12 +165,6 @@ Msg* SuiteMuter::Pull()
 Msg* SuiteMuter::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteMuter::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -347,7 +338,6 @@ Msg* SuiteMuter::CreateAudio()
 void SuiteMuter::TestMsgsPassWhenRunning()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
@@ -359,7 +349,6 @@ void SuiteMuter::TestMsgsPassWhenRunning()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
 
     PullNext(EMsgMode);
-    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     PullNext(EMsgDrain);
     PullNext(EMsgDelay);

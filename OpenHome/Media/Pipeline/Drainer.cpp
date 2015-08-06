@@ -11,7 +11,6 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 const TUint Drainer::kSupportedMsgTypes =   eMode
-                                          | eSession
                                           | eTrack
                                           | eDrain
                                           | eDelay

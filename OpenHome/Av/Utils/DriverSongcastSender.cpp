@@ -282,12 +282,6 @@ Msg* DriverSongcastSender::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();

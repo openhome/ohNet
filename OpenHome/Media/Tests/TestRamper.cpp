@@ -32,7 +32,6 @@ private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -53,7 +52,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -159,12 +157,6 @@ Msg* SuiteRamper::Pull()
 Msg* SuiteRamper::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteRamper::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -326,7 +318,6 @@ Msg* SuiteRamper::CreateAudio()
 void SuiteRamper::TestNonAudioMsgsPass()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, false, nullptr, false, false));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 100));
@@ -339,7 +330,6 @@ void SuiteRamper::TestNonAudioMsgsPass()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
 
     PullNext(EMsgMode);
-    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     PullNext(EMsgDrain);
     PullNext(EMsgDelay);

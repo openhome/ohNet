@@ -17,7 +17,6 @@ public: // from Media::IPipelineElementUpstream
     Media::Msg* Pull() override;
 private: // Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDrain* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;
@@ -42,7 +41,6 @@ private:
         MsgCloner();
     private: // from IMsgProcessor
         Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
-        Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgDrain* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;

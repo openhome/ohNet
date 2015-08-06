@@ -43,7 +43,7 @@ Msg* Gorger::Pull()
     iLock.Wait();
     TBool wait = (iGorging && Jiffies() < iGorgeSize);
     if (wait) {
-        if (iQuit || SessionCount() > 0 || TrackCount() > 0 || DecodedStreamCount() > 0) {
+        if (iQuit || TrackCount() > 0 || DecodedStreamCount() > 0) {
             wait = false;
         }
         else {
@@ -81,7 +81,7 @@ void Gorger::Enqueue(Msg* aMsg)
             iGorging = false;
             iSemOut.Signal();
         }
-        else if (SessionCount() > 0 || TrackCount() > 0 || DecodedStreamCount() > 0) {
+        else if (TrackCount() > 0 || DecodedStreamCount() > 0) {
             iSemOut.Signal();
         }
     }
@@ -106,13 +106,6 @@ void Gorger::ProcessMsgIn(MsgMode* /*aMsg*/)
 {
     iLock.Wait();
     SetGorging(false);
-    iLock.Signal();
-}
-
-void Gorger::ProcessMsgIn(MsgSession* /*aMsg*/)
-{
-    iLock.Wait();
-    iGorgeOnHaltOut = false;
     iLock.Signal();
 }
 

@@ -37,7 +37,6 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
@@ -58,7 +57,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDrain
        ,EMsgDelay
@@ -147,7 +145,6 @@ void SuiteSkipper::Setup()
     init.SetMsgFlushCount(2);
     init.SetMsgWaitCount(2);
     init.SetMsgModeCount(2);
-    init.SetMsgSessionCount(2);
     init.SetMsgDelayCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
@@ -205,12 +202,6 @@ void SuiteSkipper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 Msg* SuiteSkipper::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
-    return aMsg;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -378,7 +369,6 @@ Msg* SuiteSkipper::CreateAudio()
 void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
@@ -395,7 +385,6 @@ void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
     iPendingMsgs.push_back(CreateTrack());
 
     PullNext(EMsgMode);
-    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     PullNext(EMsgDrain);
     PullNext(EMsgDelay);
@@ -726,7 +715,6 @@ void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateEncodedStream());

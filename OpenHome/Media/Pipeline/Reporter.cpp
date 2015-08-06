@@ -79,11 +79,6 @@ Msg* Reporter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Reporter::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 {
     AutoMutex _(iLock);

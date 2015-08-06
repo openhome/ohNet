@@ -82,11 +82,6 @@ Msg* Skipper::ProcessMsg(MsgMode* aMsg)
     return ProcessFlushableRemoveAll(aMsg);
 }
 
-Msg* Skipper::ProcessMsg(MsgSession* aMsg)
-{
-    return ProcessFlushableRemoveAll(aMsg);
-}
-
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
     return ProcessFlushableRemoveAll(aMsg);

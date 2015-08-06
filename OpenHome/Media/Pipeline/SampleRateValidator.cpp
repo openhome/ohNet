@@ -33,12 +33,6 @@ Msg* SampleRateValidator::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SampleRateValidator::ProcessMsg(MsgSession* aMsg)
-{
-    iFlushing = false;
-    return aMsg;
-}
-
 Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
 {
     iFlushing = false;
