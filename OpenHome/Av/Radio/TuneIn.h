@@ -49,10 +49,10 @@ public:
                        const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter,
                        Configuration::IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager);
     ~RadioPresetsTuneIn();
+    void Refresh();
 private:
     void UpdateUsername(const Brx& aUsername);
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void Refresh();
     void TimerCallback();
     void RefreshThread();
     void DoRefresh();
@@ -92,7 +92,7 @@ class CredentialsTuneIn : public ICredentialConsumer, private INonCopyable
 {
     static const Brn kId;
 public:
-    CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager);
+    CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager, const Brx& aPartnerId);
     ~CredentialsTuneIn();
 private: // from ICredentialConsumer
     const Brx& Id() const override;
