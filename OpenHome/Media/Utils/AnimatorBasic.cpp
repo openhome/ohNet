@@ -150,21 +150,15 @@ Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgChangeInput* aMsg)
+Msg* AnimatorBasic::ProcessMsg(MsgDrain* aMsg)
 {
-    aMsg->ReadyToChange();
+    aMsg->ReportDrained();
     aMsg->RemoveRef();
     return nullptr;
 }

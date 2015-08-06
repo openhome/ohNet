@@ -35,7 +35,6 @@ private:
     Bws<OhmMsgAudioBlob::kMaxBytes> iBuf;
     TUint iOffset;
     TBool iStreamOutput;
-    TBool iSendSession;
     TUint iSampleRate;
     TUint iLatency;
     IOhmTimestampMapper* iTsMapper;

@@ -332,7 +332,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     }
 
     Reset();
-    WaitForChangeInput();
+    WaitForDrain();
 
     TBool start = true;
     TUint seqExpected = 0;
@@ -353,7 +353,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iSupply->OutputFlush(iNextFlushId);
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iActive = false;
-                WaitForChangeInput();
+                WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                 return EProtocolStreamStopped;
             }
@@ -373,7 +373,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iActive = false;
                     iStopped = true;
                 }
-                WaitForChangeInput();
+                WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 return EProtocolStreamStopped;
             }
@@ -410,10 +410,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     uri.Replace(iUri.AbsoluteUri());
                 }
 
-                // FIXME - outputting MsgSession here followed by MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
+                // FIXME - outputting MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
                 // Not necessarily desirable when pausing or seeking.
 
-                iSupply->OutputSession();
                 iSupply->OutputDelay(Delay(latency));
                 iSupply->OutputTrack(*track, !resumePending);
                 iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
@@ -586,10 +585,10 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
     iSupply->OutputData(iAudioDecrypted);
 }
 
-void ProtocolRaop::WaitForChangeInput()
+void ProtocolRaop::WaitForDrain()
 {
     //iSemInputChanged.Clear();
-    //iSupply->OutputChangeInput(MakeFunctor(*this, &ProtocolRaop::InputChanged));
+    //iSupply->OutputDrain(MakeFunctor(*this, &ProtocolRaop::InputChanged));
     //iSemInputChanged.Wait();
 }
 

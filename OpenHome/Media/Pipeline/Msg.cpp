@@ -868,44 +868,31 @@ Msg* MsgMode::Process(IMsgProcessor& aProcessor)
 }
 
 
-// MsgSession
+// MsgDrain
 
-MsgSession::MsgSession(AllocatorBase& aAllocator)
+MsgDrain::MsgDrain(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
 }
 
-Msg* MsgSession::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
-
-// MsgChangeInput
-
-MsgChangeInput::MsgChangeInput(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-void MsgChangeInput::ReadyToChange()
+void MsgDrain::ReportDrained()
 {
     if (iCallback) {
         iCallback();
     }
 }
 
-void MsgChangeInput::Initialise(Functor aCallback)
+void MsgDrain::Initialise(Functor aCallback)
 {
     iCallback = aCallback;
 }
 
-void MsgChangeInput::Clear()
+void MsgDrain::Clear()
 {
     iCallback = Functor();
 }
 
-Msg* MsgChangeInput::Process(IMsgProcessor& aProcessor)
+Msg* MsgDrain::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
 }
@@ -2198,7 +2185,6 @@ MsgReservoir::MsgReservoir()
     : iLock("MQJF")
     , iEncodedBytes(0)
     , iJiffies(0)
-    , iSessionCount(0)
     , iTrackCount(0)
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
@@ -2252,12 +2238,6 @@ TBool MsgReservoir::IsEmpty() const
     return iQueue.IsEmpty();
 }
 
-TUint MsgReservoir::SessionCount() const
-{
-    AutoMutex a(iLock);
-    return iSessionCount;
-}
-
 TUint MsgReservoir::TrackCount() const
 {
     AutoMutex a(iLock);
@@ -2301,15 +2281,11 @@ void MsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)
 {
 }
 
-void MsgReservoir::ProcessMsgIn(MsgSession* /*aMsg*/)
-{
-}
-
 void MsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
-void MsgReservoir::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgDrain* /*aMsg*/)
 {
 }
 
@@ -2366,17 +2342,12 @@ Msg* MsgReservoir::ProcessMsgOut(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* MsgReservoir::ProcessMsgOut(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* MsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgReservoir::ProcessMsgOut(MsgChangeInput* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -2455,15 +2426,6 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgSession* aMsg)
-{
-    iQueue.iLock.Wait();
-    iQueue.iSessionCount++;
-    iQueue.iLock.Signal();
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
 {
     iQueue.iLock.Wait();
@@ -2473,7 +2435,7 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDrain* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -2582,14 +2544,6 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMode* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSession* aMsg)
-{
-    iQueue.iLock.Wait();
-    iQueue.iSessionCount--;
-    iQueue.iLock.Signal();
-    return iQueue.ProcessMsgOut(aMsg);
-}
-
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
     iQueue.iLock.Wait();
@@ -2598,7 +2552,7 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDrain* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
@@ -2704,21 +2658,15 @@ Msg* PipelineElement::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* PipelineElement::ProcessMsg(MsgSession* aMsg)
-{
-    CheckSupported(eSession);
-    return aMsg;
-}
-
 Msg* PipelineElement::ProcessMsg(MsgTrack* aMsg)
 {
     CheckSupported(eTrack);
     return aMsg;
 }
 
-Msg* PipelineElement::ProcessMsg(MsgChangeInput* aMsg)
+Msg* PipelineElement::ProcessMsg(MsgDrain* aMsg)
 {
-    CheckSupported(eChangeInput);
+    CheckSupported(eDrain);
     return aMsg;
 }
 
@@ -2838,9 +2786,8 @@ Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData)
 
 MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams)
     : iAllocatorMsgMode("MsgMode", aInitParams.iMsgModeCount, aInfoAggregator)
-    , iAllocatorMsgSession("MsgSession", aInitParams.iMsgSessionCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aInitParams.iMsgTrackCount, aInfoAggregator)
-    , iAllocatorMsgChangeInput("MsgChangeInput", aInitParams.iMsgChangeInputCount, aInfoAggregator)
+    , iAllocatorMsgDrain("MsgDrain", aInitParams.iMsgDrainCount, aInfoAggregator)
     , iAllocatorMsgDelay("MsgDelay", aInitParams.iMsgDelayCount, aInfoAggregator)
     , iAllocatorMsgEncodedStream("MsgEncodedStream", aInitParams.iMsgEncodedStreamCount, aInfoAggregator)
     , iAllocatorEncodedAudio("EncodedAudio", aInitParams.iEncodedAudioCount, aInfoAggregator)
@@ -2867,11 +2814,6 @@ MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBo
     return msg;
 }
 
-MsgSession* MsgFactory::CreateMsgSession()
-{
-    return iAllocatorMsgSession.Allocate();
-}
-
 MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
@@ -2879,9 +2821,9 @@ MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)
     return msg;
 }
 
-MsgChangeInput* MsgFactory::CreateMsgChangeInput(Functor aCallback)
+MsgDrain* MsgFactory::CreateMsgDrain(Functor aCallback)
 {
-    MsgChangeInput* msg = iAllocatorMsgChangeInput.Allocate();
+    MsgDrain* msg = iAllocatorMsgDrain.Allocate();
     msg->Initialise(aCallback);
     return msg;
 }

@@ -40,9 +40,8 @@ private:
     void NotifyTrackFailed();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;

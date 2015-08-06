@@ -276,7 +276,6 @@ void Filler::Run()
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
                 iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, nullptr, false, false));
-                iPipeline.Push(iMsgFactory.CreateMsgSession());
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
@@ -299,7 +298,6 @@ void Filler::Run()
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }
-                    iPipeline.Push(iMsgFactory.CreateMsgSession());
                     iChangedMode = false;
                 }
                 iWaitingForAudio = true;
@@ -350,18 +348,13 @@ Msg* Filler::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Filler::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Filler::ProcessMsg(MsgTrack* aMsg)
 {
     iWaitingForAudio = true;
     return aMsg;
 }
 
-Msg* Filler::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Filler::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

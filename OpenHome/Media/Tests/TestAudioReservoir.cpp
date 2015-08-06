@@ -34,9 +34,8 @@ public:
     void Test();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -59,9 +58,8 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -117,9 +115,8 @@ private:
     void PullerThread();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -181,7 +178,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     init.SetMsgDecodedStreamCount(kMaxStreams+2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams, kMaxStreams);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
@@ -217,8 +214,8 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == nullptr);
 
     // Check that uninteresting msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode, EMsgSession,
-                         EMsgTrack, EMsgChangeInput, EMsgDelay, EMsgEncodedStream,
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode,
+                         EMsgTrack, EMsgDrain, EMsgDelay, EMsgEncodedStream,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgFlush, EMsgWait,
                          EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
@@ -338,9 +335,6 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgMode:
         msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
         break;
-    case EMsgSession:
-        msg = iMsgFactory->CreateMsgSession();
-        break;
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -348,8 +342,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         track->RemoveRef();
     }
         break;
-    case EMsgChangeInput:
-        msg = iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
@@ -397,21 +391,15 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteAudioReservoir::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     return aMsg;
 }
 
-Msg* SuiteAudioReservoir::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteAudioReservoir::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -524,7 +512,7 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams, kMaxStreams);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams);
     memset(iBuf, 0xff, sizeof(iBuf));
 }
 
@@ -623,17 +611,12 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* SuiteReservoirHistory::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteReservoirHistory::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

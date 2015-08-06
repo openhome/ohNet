@@ -42,9 +42,8 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -63,9 +62,8 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -247,21 +245,15 @@ Msg* SuiteSeeker::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSeeker::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
     return aMsg;
 }
 
-Msg* SuiteSeeker::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteSeeker::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastPulledMsg = EMsgChangeInput;
+    iLastPulledMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -436,9 +428,8 @@ void SuiteSeeker::SeekResponseThread()
 void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -452,9 +443,8 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     iPendingMsgs.push_back(CreateTrack());
 
     PullNext(EMsgMode);
-    PullNext(EMsgSession);
     PullNext(EMsgTrack);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
     PullNext(EMsgDelay);
     PullNext(EMsgEncodedStream);
     PullNext(EMsgMetaText);
@@ -534,8 +524,8 @@ void SuiteSeeker::TestRampSeekerAccepts()
     PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
-    PullNext(EMsgChangeInput);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
@@ -600,8 +590,8 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
-    PullNext(EMsgChangeInput);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());

@@ -39,7 +39,7 @@ private:
        ,EMsgDecodedStream
        ,EMsgMode
        ,EMsgHalt
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgQuit
     };
 private:
@@ -51,9 +51,8 @@ private:
     TBool TimesEqual(TUint aJiffy1, TUint aJiffy2);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -143,13 +142,13 @@ void SuiteSilencer::TearDown()
 void SuiteSilencer::TestMsgsPassedOn()
 {
     QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false));
-    QueuePendingMsg(iMsgFactory->CreateMsgChangeInput(Functor()));
+    QueuePendingMsg(iMsgFactory->CreateMsgDrain(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
     QueuePendingMsg(iMsgFactory->CreateMsgQuit());
 
     PullNext(EMsgMode);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgPlayable);
     TEST(!iLastPlayableWasSilence);
@@ -208,12 +207,12 @@ void SuiteSilencer::TestPassesMsgsAfterSilenceGeneration()
     PullNextNoWait(EMsgPlayable);
 
     QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false));
-    QueuePendingMsg(iMsgFactory->CreateMsgChangeInput(Functor()));
+    QueuePendingMsg(iMsgFactory->CreateMsgDrain(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
 
     PullNext(EMsgMode);
-    PullNext(EMsgChangeInput);
+    PullNext(EMsgDrain);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgPlayable);
     TEST(!iLastPlayableWasSilence);
@@ -291,21 +290,15 @@ Msg* SuiteSilencer::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSilencer::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* SuiteSilencer::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
 }
 
-Msg* SuiteSilencer::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteSilencer::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 

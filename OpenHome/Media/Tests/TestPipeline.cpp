@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Utils/Aggregator.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <string.h>
 #include <vector>
@@ -29,7 +30,7 @@ public:
     void SendFlush(TUint aFlushId);
     void Exit(TUint aHaltId);
 private:
-    void ChangeInput();
+    void Drain();
 private: // from Thread
     void Run() override;
 private: // from IStreamHandler
@@ -43,7 +44,7 @@ private:
     TrackFactory& iTrackFactory;
     Mutex iLock;
     Semaphore iBlocker;
-    Semaphore iChangeInput;
+    Semaphore iDrain;
     TBool iBlock;
     TBool iQuit;
     TUint iFlushId;
@@ -89,9 +90,8 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -128,7 +128,7 @@ private:
     TUint iJiffies;
     TUint iLastMsgJiffies;
     TBool iLastMsgWasAudio;
-    TBool iLastMsgWasChangeInput;
+    TBool iLastMsgWasDrain;
     TUint iFirstSubsample;
     TUint iLastSubsample;
     EPipelineState iPipelineState;
@@ -174,7 +174,7 @@ Supplier::Supplier(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstr
     , iTrackFactory(aTrackFactory)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
-    , iChangeInput("TSP2", 0)
+    , iDrain("TSP2", 0)
     , iBlock(false)
     , iQuit(false)
     , iFlushId(MsgFlush::kIdInvalid)
@@ -212,9 +212,9 @@ void Supplier::Exit(TUint aHaltId)
     iQuit = true;
 }
 
-void Supplier::ChangeInput()
+void Supplier::Drain()
 {
-    iChangeInput.Signal();
+    iDrain.Signal();
 }
 
 void Supplier::Run()
@@ -223,8 +223,8 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    iDownstream.Push(iMsgFactory.CreateMsgChangeInput(MakeFunctor(*this, &Supplier::ChangeInput)));
-    iChangeInput.Wait();
+    iDownstream.Push(iMsgFactory.CreateMsgDrain(MakeFunctor(*this, &Supplier::Drain)));
+    iDrain.Wait();
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
     iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
     track->RemoveRef();
@@ -340,10 +340,10 @@ void SuitePipeline::Test()
     // There should not be any ramp        Duration of ramp should have been Pipeline::kStopperRampDuration.
     Print("Run until ramped up\n");
     iPipeline->Play();
-    iLastMsgWasChangeInput = false;
+    iLastMsgWasDrain = false;
     iPipelineEnd->Pull()->Process(*this);
-    TEST(iLastMsgWasChangeInput);
-    iLastMsgWasChangeInput = false;
+    TEST(iLastMsgWasDrain);
+    iLastMsgWasDrain = false;
     do {
         iPipelineEnd->Pull()->Process(*this);
     } while (!iLastMsgWasAudio);
@@ -458,10 +458,14 @@ void SuitePipeline::Test()
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
     iJiffies = 0;
+    iLastMsgWasDrain = false;
     static const TUint kHaltId = 10; // randomly chosen value
     iPipeline->Stop(kHaltId);
     PullUntilEnd(ERampDownDeferred);
     iSupplier->Exit(kHaltId);
+    while (!iLastMsgWasDrain) {
+        iPipelineEnd->Pull()->Process(*this);
+    }
     iSemFlushed.Wait();
     WaitForStateChange(EPipelineStopped);
     TEST(iPipelineState == EPipelineStopped);
@@ -692,23 +696,17 @@ Msg* SuitePipeline::ProcessMsg(MsgMode* /*aMsg*/)
     return nullptr;
 }
 
-Msg* SuitePipeline::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* SuitePipeline::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
 }
 
-Msg* SuitePipeline::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuitePipeline::ProcessMsg(MsgDrain* aMsg)
 {
-    aMsg->ReadyToChange();
+    aMsg->ReportDrained();
     aMsg->RemoveRef();
-    iLastMsgWasChangeInput = true;
+    iLastMsgWasDrain = true;
     return nullptr;
 }
 
@@ -900,6 +898,7 @@ TBool DummyCodec::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 
 void TestPipeline()
 {
+    //Debug::SetLevel(Debug::kPipeline);
     Runner runner("Pipeline integration tests\n");
     runner.Add(new SuitePipeline());
     runner.Run();

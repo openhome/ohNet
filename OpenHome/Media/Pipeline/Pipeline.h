@@ -25,6 +25,7 @@
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Router.h>
+#include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
@@ -117,7 +118,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountMode            = 20;
     static const TUint kMsgCountQuit            = 1;
-    static const TUint kMsgCountChangeInput     = 1;
+    static const TUint kMsgCountDrain           = 5;
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
@@ -227,6 +228,8 @@ private:
     Logger* iLoggerSpotifyReporter;
     Router* iRouter;
     Logger* iLoggerRouter;
+    Drainer* iDrainer;
+    Logger* iLoggerDrainer;
     VariableDelay* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
     RampValidator* iRampValidatorDelay2;

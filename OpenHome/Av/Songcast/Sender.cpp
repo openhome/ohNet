@@ -107,12 +107,6 @@ Msg* Sender::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* Sender::ProcessMsg(MsgSession* aMsg)
-{
-    aMsg->RemoveRef();
-    return nullptr;
-}
-
 Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 {
     SendPendingAudio();
@@ -121,7 +115,7 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Sender::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Sender::ProcessMsg(MsgDrain* aMsg)
 {
     aMsg->RemoveRef();
     return nullptr;
@@ -355,19 +349,13 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgMode* /*aMsg*/)
     return nullptr;
 }
 
-Msg* Sender::PlayableCreator::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
 }
 
-Msg* Sender::PlayableCreator::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* Sender::PlayableCreator::ProcessMsg(MsgDrain* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;

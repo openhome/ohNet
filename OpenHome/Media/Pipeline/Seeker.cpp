@@ -91,18 +91,13 @@ Msg* Seeker::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
     iTrackId = aMsg->Track().Id();
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Seeker::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

@@ -19,6 +19,9 @@
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
+#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
+#include <OpenHome/Media/Pipeline/Router.h>
+#include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
@@ -195,9 +198,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
     MsgFactoryInitParams msgInit;
     msgInit.SetMsgModeCount(kMsgCountMode);
-    msgInit.SetMsgSessionCount(perStreamMsgCount);
     msgInit.SetMsgTrackCount(perStreamMsgCount);
-    msgInit.SetMsgChangeInputCount(kMsgCountChangeInput);
+    msgInit.SetMsgDrainCount(kMsgCountDrain);
     msgInit.SetMsgDelayCount(perStreamMsgCount);
     msgInit.SetMsgEncodedStreamCount(perStreamMsgCount);
     msgInit.SetMsgAudioEncodedCount(msgEncodedAudioCount, encodedAudioCount);
@@ -218,11 +220,11 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iEncodedAudioReservoir = new EncodedAudioReservoir(maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
+    iEncodedAudioReservoir = new EncodedAudioReservoir(maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir());
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
+    iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
@@ -275,7 +277,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iRouter = new Router(*iLoggerReporter);
     iLoggerRouter = new Logger(*iRouter, "Router");
-    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerRouter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
+    iDrainer = new Drainer(*iMsgFactory, *iLoggerRouter);
+    iLoggerDrainer = new Logger(*iDrainer, "Drainer");
+    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerDrainer, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
     iRampValidatorDelay2 = new RampValidator(*iLoggerVariableDelay2, "VariableDelay2");
     iPruner = new Pruner(*iRampValidatorDelay2);
@@ -314,6 +318,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerSpotifyReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerRouter->SetEnabled(true);
+    //iLoggerDrainer->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
@@ -338,6 +343,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerSpotifyReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerRouter->SetFilter(Logger::EMsgAll);
+    //iLoggerDrainer->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
@@ -365,6 +371,8 @@ Pipeline::~Pipeline()
     delete iVariableDelay2;
     delete iLoggerPruner;
     delete iPruner;
+    delete iLoggerDrainer;
+    delete iDrainer;
     delete iLoggerRouter;
     delete iRouter;
     delete iLoggerReporter;

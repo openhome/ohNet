@@ -48,7 +48,6 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -172,9 +171,6 @@ Msg* SuiteSpotifyReporter::Pull()
     case EMsgMode:
         iLastMsg = iMsgFactory->CreateMsgMode(Brn("null"), false, true, nullptr, false, false);
         return iLastMsg;
-    case EMsgSession:
-        iLastMsg = iMsgFactory->CreateMsgSession();
-        return iLastMsg;
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
@@ -253,7 +249,6 @@ void SuiteSpotifyReporter::TestMsgsPassedThroughNoSamplesInPipeline()
     // SpotifyReporter, so test the others.
 
     EMsgType types[] = {
-        EMsgSession,
         EMsgTrack,
         EMsgDelay,
         EMsgMetaText,
@@ -291,7 +286,6 @@ void SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline()
 
     // Now, test msg types that should have no effect on state of SpotifyReporter.
     EMsgType passThroughTypes[] = {
-        EMsgSession,
         EMsgTrack,
         EMsgDelay,
         EMsgMetaText,

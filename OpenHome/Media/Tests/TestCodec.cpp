@@ -274,7 +274,7 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     iFlushIdProvider = new TestCodecFlushIdProvider();
     iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
     const TUint maxReservoirEncodedAudio = (kEncodedReservoirSizeBytes + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes;
-    iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
+    iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams);
     iLoggerEncodedAudioReservoir = new Logger(*iReservoir, "Encoded Audio Reservoir");
     iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir, *this);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
@@ -368,16 +368,12 @@ Msg* MsgProcessor::ProcessMsg(MsgMode* aMsg)
 {
     return aMsg;
 }
-Msg* MsgProcessor::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
 Msg* MsgProcessor::ProcessMsg(MsgTrack* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgTrack\n");
     return aMsg;
 }
-Msg* MsgProcessor::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgProcessor::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

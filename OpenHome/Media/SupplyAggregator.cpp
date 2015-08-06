@@ -30,21 +30,15 @@ void SupplyAggregator::Flush()
     }
 }
 
-void SupplyAggregator::OutputSession()
-{
-    MsgSession* msg = iMsgFactory.CreateMsgSession();
-    Output(msg);
-}
-
 void SupplyAggregator::OutputTrack(Track& aTrack, TBool aStartOfStream)
 {
     MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aStartOfStream);
     Output(msg);
 }
 
-void SupplyAggregator::OutputChangeInput(Functor aCallback)
+void SupplyAggregator::OutputDrain(Functor aCallback)
 {
-    auto msg = iMsgFactory.CreateMsgChangeInput(aCallback);
+    auto msg = iMsgFactory.CreateMsgDrain(aCallback);
     Output(msg);
 }
 

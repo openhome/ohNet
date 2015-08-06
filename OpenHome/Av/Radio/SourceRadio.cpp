@@ -132,6 +132,7 @@ SourceRadio::~SourceRadio()
 
 void SourceRadio::Activate()
 {
+    iTuneIn->Refresh();
     iTrackPosSeconds = 0;
     iActive = true;
     const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());

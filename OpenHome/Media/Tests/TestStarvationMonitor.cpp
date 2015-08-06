@@ -38,9 +38,8 @@ private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -68,7 +67,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -82,7 +81,7 @@ enum EMsgGenerationState
    ,EStateAudioFillInitial
    ,EStateAudioFillPostStarvation
    ,EStateHalt
-   ,EStateChangeInput
+   ,EStateDrain
    ,EStateQuit
    ,EStateCompleted
 };
@@ -205,12 +204,12 @@ void SuiteStarvationMonitor::Test()
     msg->RemoveRef();
     TEST(iSm->PullWouldBlock());
 
-    // Send MsgChangeInput.  Check it can be pulled immediately.  Check pull would then block
-    Print("\nCheck ChangeInput is passed on immediately then pull would block\n");
-    GenerateUpstreamMsgs(EStateChangeInput);
+    // Send MsgDrain.  Check it can be pulled immediately.  Check pull would then block
+    Print("\nCheck Drain is passed on immediately then pull would block\n");
+    GenerateUpstreamMsgs(EStateDrain);
     msg = iSm->Pull();
     (void)msg->Process(*this);
-    TEST(iLastMsg == EMsgChangeInput);
+    TEST(iLastMsg == EMsgDrain);
     msg->RemoveRef();
     TEST(iSm->PullWouldBlock());
 
@@ -332,10 +331,10 @@ Msg* SuiteStarvationMonitor::Pull()
         iMsgGenerationState = EStateWait;
         iSemUpstreamCompleted.Signal();
         return iMsgFactory->CreateMsgHalt();
-    case EStateChangeInput:
+    case EStateDrain:
         iMsgGenerationState = EStateWait;
         iSemUpstreamCompleted.Signal();
-        return iMsgFactory->CreateMsgChangeInput(Functor());
+        return iMsgFactory->CreateMsgDrain(Functor());
     case EStateQuit:
         iMsgGenerationState = EStateCompleted;
         iSemUpstreamCompleted.Signal();
@@ -364,21 +363,15 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgMode* /*aMsg*/)
     return nullptr;
 }
 
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS(); // MsgMode not used in this test
-    return nullptr;
-}
-
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS(); // MsgTrack not used in this test
     return nullptr;
 }
 
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 

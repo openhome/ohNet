@@ -20,9 +20,8 @@ public:
     Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement);
     virtual ~Supply();
 public: // from ISupply
-    void OutputSession() override;
     void OutputTrack(Track& aTrack, TBool aStartOfStream = true) override;
-    void OutputChangeInput(Functor aCallback) override;
+    void OutputDrain(Functor aCallback) override;
     void OutputDelay(TUint aJiffies) override;
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
     void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;

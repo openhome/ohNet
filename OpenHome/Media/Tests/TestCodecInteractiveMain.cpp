@@ -42,7 +42,6 @@ public: // from IUrlBlockWriter
 private:
     enum EMode {
         eMode,
-        eSession,
         eTrack,
         eEncodedStream,
         eAudioEncoded,
@@ -68,9 +67,8 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -183,7 +181,6 @@ Msg* ElementFileReader::Pull()
     // Container/CodecController expect msgs in a particular sequence, so adhere to that.
 
     // MsgMode (mode: Playlist, supportsLatency: 0, realTime: 0)
-    // MsgSession
     // MsgTrack
     // MsgEncodedStream
     // MsgAudioEncoded - repeated while audio should still be output
@@ -199,10 +196,6 @@ Msg* ElementFileReader::Pull()
         const TBool realTime = false;
         IClockPuller* clockPuller = nullptr;
         msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller, false, false);
-        iMode = eSession;
-    }
-    else if (iMode == eSession) {
-        msg = iMsgFactory.CreateMsgSession();
         iMode = eTrack;
     }
     else if (iMode == eTrack) {
@@ -345,13 +338,6 @@ Msg* ElementFileWriter::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* ElementFileWriter::ProcessMsg(MsgSession* aMsg)
-{
-    Log::Print("ElementFileWriter::ProcessMsg MsgSession\n");
-    aMsg->RemoveRef();
-    return nullptr;
-}
-
 Msg* ElementFileWriter::ProcessMsg(MsgTrack* aMsg)
 {
     Log::Print("ElementFileWriter::ProcessMsg MsgTrack\n");
@@ -359,7 +345,7 @@ Msg* ElementFileWriter::ProcessMsg(MsgTrack* aMsg)
     return nullptr;
 }
 
-Msg* ElementFileWriter::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* ElementFileWriter::ProcessMsg(MsgDrain* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
@@ -707,7 +693,7 @@ int CDECL main(int aArgc, char* aArgv[])
     static const TUint kMsgPlayableSilenceCount = 0;
     static const TUint kMsgDecodedStreamCount = 2;
     static const TUint kMsgTrackCount = 1;
-    static const TUint kMsgChangeInputCount = 1;
+    static const TUint kMsgDrainCount = 1;
     static const TUint kMsgEncodedStreamCount = 2;
     static const TUint kMsgMetaTextCount = 1;
     static const TUint kMsgStreamInterruptedCount = 1;
@@ -715,7 +701,6 @@ int CDECL main(int aArgc, char* aArgv[])
     static const TUint kMsgFlushCount = 1;
     static const TUint kMsgWaitCount = 0;
     static const TUint kMsgModeCount = 1;
-    static const TUint kMsgSessionCount = 1;
     static const TUint kMsgDelayCount = 0;
     static const TUint kMsgQuitCount = 1;
 
@@ -727,9 +712,8 @@ int CDECL main(int aArgc, char* aArgv[])
 
     MsgFactoryInitParams init;
     init.SetMsgModeCount(kMsgModeCount);
-    init.SetMsgSessionCount(kMsgSessionCount);
     init.SetMsgTrackCount(kMsgTrackCount);
-    init.SetMsgChangeInputCount(kMsgChangeInputCount);
+    init.SetMsgDrainCount(kMsgDrainCount);
     init.SetMsgDelayCount(kMsgDelayCount);
     init.SetMsgEncodedStreamCount(kMsgEncodedStreamCount);
     init.SetMsgAudioEncodedCount(kMsgEncodedAudioCount, kEncodedAudioCount);

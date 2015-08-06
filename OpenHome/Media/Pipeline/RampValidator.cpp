@@ -116,11 +116,6 @@ Msg* RampValidator::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* RampValidator::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
 {
     if (aMsg->StartOfStream()) {
@@ -130,7 +125,7 @@ Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* RampValidator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* RampValidator::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

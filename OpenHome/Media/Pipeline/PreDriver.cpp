@@ -39,19 +39,13 @@ Msg* PreDriver::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* PreDriver::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* PreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
 }
 
-Msg* PreDriver::ProcessMsg(MsgChangeInput* aMsg)
+Msg* PreDriver::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

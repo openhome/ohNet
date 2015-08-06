@@ -39,17 +39,12 @@ Msg* Ramper::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Ramper::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Ramper::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* Ramper::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Ramper::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

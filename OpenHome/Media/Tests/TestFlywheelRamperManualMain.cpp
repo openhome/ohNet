@@ -402,20 +402,18 @@ void FormatConverter::WriteFlush()
 /////////////////////////////////////////////////////////////////
 
 
-int CDECL main(int /*aArgc*/, TChar* aArgv[])
+int CDECL main(int aArgc, TChar* aArgv[])
 {
-    if (aArgv[1]==NULL)
+    if (aArgc<2)
     {
-        Log::Print("No input file specified\n");
+        Log::Print("No input/output files specified\n");
         ASSERTS();
     }
-
-    if (aArgv[2]==NULL)
+    else if (aArgc<3)
     {
         Log::Print("No output file specified\n");
         ASSERTS();
     }
-
 
     InitialisationParams* initParams = Net::InitialisationParams::Create();
     Net::Library* lib = new Net::Library(initParams);

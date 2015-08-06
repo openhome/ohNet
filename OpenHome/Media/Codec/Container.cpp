@@ -229,18 +229,13 @@ Msg* ContainerBase::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* ContainerBase::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iPendingMsg = aMsg;
     return nullptr;
 }
 
-Msg* ContainerBase::ProcessMsg(MsgChangeInput* aMsg)
+Msg* ContainerBase::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -404,17 +399,12 @@ Msg* ContainerFront::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* ContainerFront::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* ContainerFront::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* ContainerFront::ProcessMsg(MsgChangeInput* aMsg)
+Msg* ContainerFront::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -644,17 +634,12 @@ Msg* Container::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Container::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Container::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* Container::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Container::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

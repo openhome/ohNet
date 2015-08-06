@@ -26,6 +26,7 @@ tests = '''
     TestGorger
     TestStarvationMonitor
     TestMuter
+    TestDrainer
     TestPreDriver
     TestContentProcessor
     TestPipeline

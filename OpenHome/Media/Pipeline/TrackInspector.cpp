@@ -59,11 +59,6 @@ Msg* TrackInspector::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* TrackInspector::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != nullptr) {
@@ -74,7 +69,7 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* TrackInspector::ProcessMsg(MsgChangeInput* aMsg)
+Msg* TrackInspector::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

@@ -38,9 +38,8 @@ private:
     TBool TimesEqual(TUint aJiffy1, TUint aJiffy2);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -339,19 +338,13 @@ Msg* SuiteAggregator::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteAggregator::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* SuiteAggregator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;
 }
 
-Msg* SuiteAggregator::ProcessMsg(MsgChangeInput* /*aMsg*/)
+Msg* SuiteAggregator::ProcessMsg(MsgDrain* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;

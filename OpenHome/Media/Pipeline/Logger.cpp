@@ -81,14 +81,6 @@ Msg* Logger::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Logger::ProcessMsg(MsgSession* aMsg)
-{
-    if (IsEnabled(EMsgSession)) {
-        Log::Print("Pipeline (%s): session\n", iId);
-    }
-    return aMsg;
-}
-
 Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 {
     if (IsEnabled(EMsgTrack)) {
@@ -107,9 +99,9 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Logger::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Logger::ProcessMsg(MsgDrain* aMsg)
 {
-    if (IsEnabled(EMsgChangeInput)) {
+    if (IsEnabled(EMsgDrain)) {
         Log::Print("Pipeline (%s): changeInput\n", iId);
     }
     return aMsg;

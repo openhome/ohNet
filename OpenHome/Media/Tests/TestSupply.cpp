@@ -43,9 +43,8 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -69,9 +68,8 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -145,17 +143,14 @@ SuiteSupply::~SuiteSupply()
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
-    iSupply->OutputSession();
-    TEST(++expectedMsgCount == iMsgPushCount);
-    TEST(iLastMsg == EMsgSession);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
     iSupply->OutputTrack(*track);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgTrack);
-    iSupply->OutputChangeInput(Functor());
+    iSupply->OutputDrain(Functor());
     TEST(++expectedMsgCount == iMsgPushCount);
-    TEST(iLastMsg == EMsgChangeInput);
+    TEST(iLastMsg == EMsgDrain);
     iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgDelay);
@@ -192,12 +187,6 @@ Msg* SuiteSupply::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
@@ -205,9 +194,9 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteSupply::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 
