@@ -83,7 +83,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     iConfigUsername = new ConfigText(aConfigInit, kConfigKeyUsername, kMaxUserNameBytes, kConfigUsernameDefault);
     iListenerId = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &RadioPresetsTuneIn::UsernameChanged));
 
-    new CredentialsTuneIn(*iConfigUsername, aCredentialsManager); // ownership transferred to aCredentialsManager
+    new CredentialsTuneIn(*iConfigUsername, aCredentialsManager, aPartnerId); // ownership transferred to aCredentialsManager
 }
 
 RadioPresetsTuneIn::~RadioPresetsTuneIn()
@@ -370,11 +370,15 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
 
 const Brn CredentialsTuneIn::kId("tunein.com");
 
-CredentialsTuneIn::CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager)
+CredentialsTuneIn::CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager, const Brx& aPartnerId)
     : iConfigUsername(aConfigUsername)
     , iCredentialsManager(aCredentialsManager)
 {
     aCredentialsManager.Add(this);
+    Bws<128> data("{\"partnerId\": \"");
+    data.Append(aPartnerId);
+    data.Append("\"}");
+    aCredentialsManager.SetState(kId, Brx::Empty(), data);
     iSubscriberId = iConfigUsername.Subscribe(MakeFunctorConfigText(*this, &CredentialsTuneIn::UsernameChanged));
 }
 
