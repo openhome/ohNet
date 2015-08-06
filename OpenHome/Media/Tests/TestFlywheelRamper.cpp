@@ -491,7 +491,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TInt32 sampleOut1;
 
 
-    feedback = new FeedbackModel(coeffs, 1, 1, 1);
+    feedback = new FeedbackModel(coeffs, 8, 1, 1, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -500,7 +500,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TEST( sampleOut1 == 0x20000);
     delete feedback;
 
-    feedback = new FeedbackModel(coeffs, 2, 1, 1);
+    feedback = new FeedbackModel(coeffs, 8, 2, 1, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -509,7 +509,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TEST( sampleOut1 == 0x20000<<1); // (2/x/x)
     delete feedback;
 
-    feedback = new FeedbackModel(coeffs, 3, 1, 1);
+    feedback = new FeedbackModel(coeffs, 8, 3, 1, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -518,7 +518,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TEST( sampleOut1 == 0x20000<<2); // (3/x/x)
     delete feedback;
 
-    feedback = new FeedbackModel(coeffs, 4, 1, 1);
+    feedback = new FeedbackModel(coeffs, 8, 4, 1, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -529,7 +529,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
 
 
 
-    feedback = new FeedbackModel(coeffs, 1, 2, 1);
+    feedback = new FeedbackModel(coeffs, 8, 1, 2, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -538,7 +538,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TEST( sampleOut1 == 0x20000<<1);  //  (x/2/x)
     delete feedback;
 
-    feedback = new FeedbackModel(coeffs, 1, 3, 1);
+    feedback = new FeedbackModel(coeffs, 8, 1, 3, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -547,7 +547,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TEST( sampleOut1 == 0x20000<<2);  //  (x/3/x)
     delete feedback;
 
-    feedback = new FeedbackModel(coeffs, 1, 4, 1);
+    feedback = new FeedbackModel(coeffs, 8, 1, 4, 1);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -557,7 +557,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     delete feedback;
 
 
-    feedback = new FeedbackModel(coeffs, 1, 1, 2);
+    feedback = new FeedbackModel(coeffs, 8, 1, 1, 2);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -566,7 +566,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     TEST( sampleOut1 == 0x20000>>1); //  (x/x/2)
     delete feedback;
 
-    feedback = new FeedbackModel(coeffs, 1, 1, 3);
+    feedback = new FeedbackModel(coeffs, 8, 1, 1, 3);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -576,7 +576,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     delete feedback;
 
 
-    feedback = new FeedbackModel(coeffs, 1, 1, 4);
+    feedback = new FeedbackModel(coeffs, 8, 1, 1, 4);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -586,7 +586,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     delete feedback;
 
 
-    feedback = new FeedbackModel(coeffs, 2, 2, 2);
+    feedback = new FeedbackModel(coeffs, 8, 2, 2, 2);
 
     feedback->Process(samplesIn, samplesOut, 2);
     sampleOut0 = FlywheelRamper::Int32(samplesOut, 0);
@@ -631,7 +631,7 @@ void SuiteFlywheelRamper::Test8()  // FeedbackModel step response output
 
     Bws<kSamplesOutBytes> samplesOut;
 
-    auto feedback = new FeedbackModel(coeffs, kCoeffScaling, kDataInScaling, kDataOutScaling);
+    auto feedback = new FeedbackModel(coeffs, 8, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
     //Log::Print("\n\nUnit Test\n\n");
@@ -685,7 +685,7 @@ void SuiteFlywheelRamper::Test9()  // FeedbackModel periodic impulse output
 
     Bws<kSamplesOutBytes> samplesOut;
 
-    auto feedback = new FeedbackModel(coeffs, kCoeffScaling, kDataInScaling, kDataOutScaling);
+    auto feedback = new FeedbackModel(coeffs, 8, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
     //Log::Print("\n\nUnit Test\n\n");
@@ -722,7 +722,7 @@ void SuiteFlywheelRamper::Test9()  // FeedbackModel periodic impulse output
     coeffs2.push_back(0x00000000);
     coeffs2.push_back(0x00000000);
 
-    feedback = new FeedbackModel(coeffs2, kCoeffScaling, kDataInScaling, kDataOutScaling);
+    feedback = new FeedbackModel(coeffs2, 8, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
 
@@ -786,7 +786,7 @@ void SuiteFlywheelRamper::Test10()  // FeedbackModel alternating polarity period
 
     Bws<kSamplesOutBytes> samplesOut;
 
-    auto feedback = new FeedbackModel(coeffs, kCoeffScaling, kDataInScaling, kDataOutScaling);
+    auto feedback = new FeedbackModel(coeffs, 8, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
     //Log::Print("\n\nUnit Test\n\n");
@@ -824,7 +824,7 @@ void SuiteFlywheelRamper::Test10()  // FeedbackModel alternating polarity period
 
 
 
-    feedback = new FeedbackModel(coeffs2, kCoeffScaling, kDataInScaling, kDataOutScaling);
+    feedback = new FeedbackModel(coeffs2, 8, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
 
@@ -865,7 +865,7 @@ void SuiteFlywheelRamper::Test10()  // FeedbackModel alternating polarity period
     coeffs3.push_back(0x00000000);
     coeffs3.push_back(0x00000000);
 
-    feedback = new FeedbackModel(coeffs3, kCoeffScaling, kDataInScaling, kDataOutScaling);
+    feedback = new FeedbackModel(coeffs3, 8, kCoeffScaling, kDataInScaling, kDataOutScaling);
     feedback->Process(samplesIn, samplesOut, kSamplesOutCount);
 
 
