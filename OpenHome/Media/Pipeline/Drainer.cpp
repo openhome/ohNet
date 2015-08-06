@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -30,11 +32,19 @@ Drainer::Drainer(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream)
     , iUpstream(aUpstream)
     , iLock("DRAI")
     , iSem("DRAI", 0)
-    , iStreamHandler(NULL)
+    , iPending(nullptr)
+    , iStreamHandler(nullptr)
     , iGenerateDrainMsg(false)
     , iWaitForDrained(false)
     , iIgnoreNextStarving(false)
 {
+}
+
+Drainer::~Drainer()
+{
+    if (iPending != nullptr) {
+        iPending->RemoveRef();
+    }
 }
 
 Msg* Drainer::Pull()
@@ -52,15 +62,34 @@ Msg* Drainer::Pull()
             return iMsgFactory.CreateMsgDrain(MakeFunctor(*this, &Drainer::PipelineDrained));
         }
     }
-    Msg* msg = iUpstream.Pull();
-    iLock.Wait();
-    msg = msg->Process(*this);
-    iLock.Signal();
+    Msg* msg;
+    if (iPending == nullptr) {
+        msg = iUpstream.Pull();
+    }
+    else {
+        msg = iPending;
+        iPending = nullptr;
+    }
+    {
+        /* iUpstream.Pull() has unbounded duration.  If NotifyStarving() was
+           called during this time, we should drain the pipeline before passing
+           on the next msg. */
+        AutoMutex _(iLock);
+        if (iGenerateDrainMsg) {
+            iIgnoreNextStarving = true;
+            iGenerateDrainMsg = false;
+            iWaitForDrained = true;
+            iPending = msg;
+            return iMsgFactory.CreateMsgDrain(MakeFunctor(*this, &Drainer::PipelineDrained));
+        }
+        msg = msg->Process(*this);
+    }
     return msg;
 }
 
 Msg* Drainer::ProcessMsg(MsgHalt* aMsg)
 {
+    LOG(kPipeline, "Drainer enabled (MsgHalt)\n");
     iGenerateDrainMsg = true;
     return aMsg;
 }
@@ -93,20 +122,17 @@ TUint Drainer::TryStop(TUint /*aStreamId*/)
 
 void Drainer::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
-    iLock.Wait();
-    auto streamHandler = iStreamHandler;
-    iLock.Signal();
-    if (streamHandler != nullptr) {
-        streamHandler->NotifyStarving(aMode, aStreamId);
-    }
-    iLock.Wait();
+    AutoMutex _(iLock);
     if (iIgnoreNextStarving) {
         iIgnoreNextStarving = false;
     }
     else {
+        LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
         iGenerateDrainMsg = true;
     }
-    iLock.Signal();
+    if (iStreamHandler != nullptr) {
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
+    }
 }
 
 void Drainer::PipelineDrained()

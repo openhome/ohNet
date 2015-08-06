@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Utils/Aggregator.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <string.h>
 #include <vector>
@@ -458,10 +459,14 @@ void SuitePipeline::Test()
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
     iJiffies = 0;
+    iLastMsgWasDrain = false;
     static const TUint kHaltId = 10; // randomly chosen value
     iPipeline->Stop(kHaltId);
     PullUntilEnd(ERampDownDeferred);
     iSupplier->Exit(kHaltId);
+    while (!iLastMsgWasDrain) {
+        iPipelineEnd->Pull()->Process(*this);
+    }
     iSemFlushed.Wait();
     WaitForStateChange(EPipelineStopped);
     TEST(iPipelineState == EPipelineStopped);
@@ -900,6 +905,7 @@ TBool DummyCodec::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 
 void TestPipeline()
 {
+    //Debug::SetLevel(Debug::kPipeline);
     Runner runner("Pipeline integration tests\n");
     runner.Add(new SuitePipeline());
     runner.Run();

@@ -25,6 +25,7 @@
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Router.h>
+#include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
@@ -227,6 +228,8 @@ private:
     Logger* iLoggerSpotifyReporter;
     Router* iRouter;
     Logger* iLoggerRouter;
+    Drainer* iDrainer;
+    Logger* iLoggerDrainer;
     VariableDelay* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
     RampValidator* iRampValidatorDelay2;

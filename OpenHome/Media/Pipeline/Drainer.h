@@ -16,6 +16,7 @@ class Drainer : public PipelineElement, public IPipelineElementUpstream, private
     static const TUint kSupportedMsgTypes;
 public:
     Drainer(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream);
+    ~Drainer();
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from PipelineElement
@@ -33,6 +34,7 @@ private:
     IPipelineElementUpstream& iUpstream;
     Mutex iLock;
     Semaphore iSem;
+    Msg* iPending;
     IStreamHandler* iStreamHandler;
     TBool iGenerateDrainMsg;
     TBool iWaitForDrained;
