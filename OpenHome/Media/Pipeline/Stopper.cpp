@@ -100,17 +100,17 @@ void Stopper::BeginPause()
         break;
     case ERampingDown:
         // We're already pausing.  No Benefit in allowing another Pause request to interrupt this.
-        return;
+        break;
     case ERampingUp:
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
         SetState(ERampingDown);
         break;
     case EPaused:
+        break;
     case EStopped:
-        return;
     case EFlushing:
-        HandleStopped();
+        HandlePaused();
         break;
     }
 }
