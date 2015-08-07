@@ -19,7 +19,8 @@ TUint EncodedAudioReservoir::SizeInBytes() const
 
 TBool EncodedAudioReservoir::IsFull() const
 {
-    return (EncodedAudioCount() > iMsgCount         ||
+    return (EncodedAudioCount() > iMsgCount ||
+            TrackCount() >= iMaxStreamCount ||
             EncodedStreamCount() >= iMaxStreamCount);
 }
 
