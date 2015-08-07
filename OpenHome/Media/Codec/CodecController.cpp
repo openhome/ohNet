@@ -287,6 +287,7 @@ void CodecController::CodecThread()
                 }
                 iLock.Wait();
                 if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+                    (void)iStreamHandler->OkToPlay(iStreamId);
                     iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
                     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                         iConsumeExpectedFlush = true;

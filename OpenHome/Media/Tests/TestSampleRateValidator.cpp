@@ -424,7 +424,6 @@ TUint SuiteSampleRateValidator::PipelineDriverDelayJiffies(TUint aSampleRateFrom
 
 EStreamPlay SuiteSampleRateValidator::OkToPlay(TUint /*aStreamId*/)
 {
-    ASSERTS();
     return ePlayNo;
 }
 
