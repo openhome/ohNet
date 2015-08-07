@@ -166,7 +166,7 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
     if (split != nullptr) {
-        DoEnqueue(split);
+        EnqueueAtHead(split);
     }
 }
 
