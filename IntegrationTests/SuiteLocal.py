@@ -123,7 +123,7 @@ tests = [
     [ 'TestStandbyCycleSoak',         'local',  100                                                                                  ],
 
     ### moved due to instability
-    [ 'TestAvTransportPlayTracks',    'local', 'none',  server,  plMix,   8,           1,           'false'                          ],
+    [ 'TestAvTransportPlayTracks',    'local', 'none',  server,  plMix,   8,           1,           'false'                          ]
 
     # N/A to SoftPlayer(s)
     #    - AutoPlay
