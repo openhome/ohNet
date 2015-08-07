@@ -1,7 +1,7 @@
 """Utility to update code to latest and build ohMediaPlayer
 """
 
-import _FunctionalTest
+import _Paths
 import BaseTest as BASE
 import LogThread
 import os
