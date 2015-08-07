@@ -76,6 +76,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         iHaltDelivered = false;
         if (iPlannedHalt) {
             UpdateStatus(ERunning);
+            iCurrentRampValue = Ramp::kMax;
             iPlannedHalt = false;
         }
         else {
@@ -352,7 +353,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
     }
     else if (iStatus == ERampingUp) {
         iRemainingRampSize = 0;
-        iCurrentRampValue = Ramp::kMin;
+        iCurrentRampValue = Ramp::kMax;
         UpdateStatus(ERunning);
     }
 
