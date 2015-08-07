@@ -27,7 +27,9 @@ TUint DecodedAudioReservoir::SizeInJiffies() const
 
 TBool DecodedAudioReservoir::IsFull() const
 {
-    return (Jiffies() > iMaxJiffies || DecodedStreamCount() >= iMaxStreamCount);
+    return (Jiffies() > iMaxJiffies         ||
+            TrackCount() >= iMaxStreamCount ||
+            DecodedStreamCount() >= iMaxStreamCount);
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)

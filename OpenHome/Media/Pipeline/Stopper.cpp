@@ -351,9 +351,6 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->TryStop(iStreamId);
-    }
     return aMsg;
 }
 

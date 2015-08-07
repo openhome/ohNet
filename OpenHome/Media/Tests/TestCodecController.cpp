@@ -333,7 +333,6 @@ void SuiteCodecControllerBase::Push(Msg* aMsg)
 
 EStreamPlay SuiteCodecControllerBase::OkToPlay(TUint /*aStreamId*/)
 {
-    ASSERTS();
     return ePlayNo;
 }
 
