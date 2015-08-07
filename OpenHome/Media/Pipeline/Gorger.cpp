@@ -88,11 +88,12 @@ void Gorger::Enqueue(Msg* aMsg)
     iLock.Signal();
 }
 
-void Gorger::SetGorging(TBool aGorging)
+void Gorger::SetGorging(TBool aGorging, const TChar* aId)
 {
     const TBool unblockRight = (iGorging && !aGorging);
     const TBool unblockLeft = (!iGorging && aGorging);
-    LOG(kPipeline, "Gorger::SetGorging(%u).  unblockRight=%u, unblockLeft=%u\n", aGorging, unblockRight, unblockLeft);
+    LOG(kPipeline, "Gorger::SetGorging(%u) from %s.  unblockRight=%u, unblockLeft=%u\n",
+        aGorging, aId, unblockRight, unblockLeft);
     iGorging = aGorging;
     if (unblockRight) {
         iSemOut.Signal();
@@ -105,7 +106,7 @@ void Gorger::SetGorging(TBool aGorging)
 void Gorger::ProcessMsgIn(MsgMode* /*aMsg*/)
 {
     iLock.Wait();
-    SetGorging(false);
+    SetGorging(false, "ModeIn");
     iLock.Signal();
 }
 
@@ -152,7 +153,7 @@ Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
     aMsg->RemoveRef();
     iLock.Wait();
     if (iGorgeOnStreamOut) {
-        SetGorging(true);
+        SetGorging(true, "StreamOut");
         iGorgeOnStreamOut = false;
     }
     iLock.Signal();
@@ -163,7 +164,7 @@ Msg* Gorger::ProcessMsgOut(MsgHalt* aMsg)
 {
     iLock.Wait();
     if (iGorgeOnHaltOut && iCanGorge) {
-        SetGorging(true);
+        SetGorging(true, "HaltOut");
     }
     iLock.Signal();
     return aMsg;
@@ -194,7 +195,7 @@ void Gorger::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     iLock.Wait();
     if (aMode == iMode && iCanGorge) {
-        SetGorging(true);
+        SetGorging(true, "NotifyStarving");
     }
     iLock.Signal();
     if (iStreamHandler != nullptr) {
