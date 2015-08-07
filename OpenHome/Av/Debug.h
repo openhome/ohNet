@@ -5,7 +5,7 @@
 
 namespace OpenHome {
 
-#define kProducts    kApplication3
+#define kSources     kApplication3
 #define kSongcast    kApplication4
 
 } // namespace OpenHome

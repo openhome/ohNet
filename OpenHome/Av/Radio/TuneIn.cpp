@@ -158,7 +158,7 @@ void RadioPresetsTuneIn::DoRefresh()
         iReaderResponse.Read(kReadResponseTimeoutMs);
         const HttpStatus& status = iReaderResponse.Status();
         if (status != HttpStatus::kOk) {
-            LOG2(kError, kProducts, "Error fetching TuneIn xml - status=%u\n", status.Code());
+            LOG2(kError, kSources, "Error fetching TuneIn xml - status=%u\n", status.Code());
             THROW(HttpError);
         }
 
@@ -180,7 +180,7 @@ void RadioPresetsTuneIn::DoRefresh()
         buf.Set(iReaderUntil.ReadUntil('<'));
         const TUint statusCode = Ascii::Uint(buf);
         if (statusCode != 200) {
-            LOG2(kError, kProducts, "Error in TuneIn xml - statusCode=%u\n", statusCode);
+            LOG2(kError, kSources, "Error in TuneIn xml - statusCode=%u\n", statusCode);
             return;
         }
 
@@ -257,13 +257,13 @@ void RadioPresetsTuneIn::DoRefresh()
                     key.Set(parser.Next('='));
                 }
                 if (!foundPresetNumber) {
-                    LOG2(kProducts, kError, "No preset_id for TuneIn preset ");
-                    LOG2(kProducts, kError, iPresetTitle);
-                    LOG2(kProducts, kError, "\n");
+                    LOG2(kSources, kError, "No preset_id for TuneIn preset ");
+                    LOG2(kSources, kError, iPresetTitle);
+                    LOG2(kSources, kError, "\n");
                     continue;
                 }
                 if (presetNumber > maxPresets) {
-                    LOG2(kProducts, kError, "Ignoring preset number %u (index too high)\n", presetNumber);
+                    LOG2(kSources, kError, "Ignoring preset number %u (index too high)\n", presetNumber);
                     continue;
                 }
                 const TUint presetIndex = presetNumber-1;
@@ -341,9 +341,9 @@ TBool RadioPresetsTuneIn::ValidateKey(Parser& aParser, const TChar* aKey, TBool 
     Brn key = aParser.Next('=');
     if (key != Brn(aKey)) {
         if (aLogErrors) {
-            LOG2(kError, kProducts, "Unexpected order of OPML elements.  Expected \"%s\", got ", aKey);
-            LOG2(kError, kProducts, key);
-            LOG2(kError, kProducts, "\n");
+            LOG2(kError, kSources, "Unexpected order of OPML elements.  Expected \"%s\", got ", aKey);
+            LOG2(kError, kSources, key);
+            LOG2(kError, kSources, "\n");
         }
         return false;
     }
@@ -355,9 +355,9 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
     (void)aParser.Next('\"');
     Brn value = aParser.Next('\"');
     if (value.Bytes() > aValue.MaxBytes()) {
-        LOG2(kError, kProducts, "Unexpectedly long %s for preset - ", aKey);
-        LOG2(kError, kProducts, value);
-        LOG2(kError, kProducts, "\n");
+        LOG2(kError, kSources, "Unexpectedly long %s for preset - ", aKey);
+        LOG2(kError, kSources, value);
+        LOG2(kError, kSources, "\n");
         return false;
     }
     aValue.Replace(value);

@@ -4,6 +4,8 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <algorithm>
 #include <array>
@@ -530,25 +532,16 @@ void Shuffler::MoveToStartOfUnplayed(Track* aTrack, const TChar* aLogPrefix)
     LogIds(aLogPrefix);
 }
 
-#undef LOG_SHUFFLE
-void Shuffler::LogIds(
-#ifdef LOG_SHUFFLE
-                      const TChar* aPrefix
-#else
-                      const TChar* /*aPrefix*/
-#endif
-                      )
+void Shuffler::LogIds(const TChar* aPrefix)
 {
-#ifdef LOG_SHUFFLE
-    Log::Print("%s.  New track order is:\n\t{ ", aPrefix);
+    LOG(kSources, "%s.  New track order is: { ", aPrefix);
     if (iShuffleList.size() > 0) {
-        Log::Print("%u", iShuffleList[0]->Id());
+        LOG(kSources, "%u", iShuffleList[0]->Id());
         for (TUint i=1; i<iShuffleList.size(); i++) {
-            Log::Print(", %u", iShuffleList[i]->Id());
+            LOG(kSources, ", %u", iShuffleList[i]->Id());
         }
     }
-    Log::Print("}\n");
-#endif // LOG_SHUFFLE
+    LOG(kSources, "}\n");
 }
 
 
