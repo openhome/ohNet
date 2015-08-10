@@ -5,33 +5,33 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <OpenHome/Media/Pipeline/ElementObserver.h>
-#include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
-#include <OpenHome/Media/Codec/Container.h>
-#include <OpenHome/Media/Codec/CodecController.h>
-#include <OpenHome/Media/Pipeline/SampleRateValidator.h>
-#include <OpenHome/Media/Pipeline/TimestampInspector.h>
-#include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
-#include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
-#include <OpenHome/Media/Pipeline/Ramper.h>
-#include <OpenHome/Media/Pipeline/RampValidator.h>
-#include <OpenHome/Media/Pipeline/Seeker.h>
-#include <OpenHome/Media/Pipeline/VariableDelay.h>
-#include <OpenHome/Media/Pipeline/TrackInspector.h>
-#include <OpenHome/Media/Pipeline/Skipper.h>
+//#include <OpenHome/Media/Pipeline/ElementObserver.h>
+//#include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
+//#include <OpenHome/Media/Codec/Container.h>
+//#include <OpenHome/Media/Codec/CodecController.h>
+//#include <OpenHome/Media/Pipeline/SampleRateValidator.h>
+//#include <OpenHome/Media/Pipeline/TimestampInspector.h>
+//#include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
+//#include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+//#include <OpenHome/Media/Pipeline/Ramper.h>
+//#include <OpenHome/Media/Pipeline/RampValidator.h>
+//#include <OpenHome/Media/Pipeline/Seeker.h>
+//#include <OpenHome/Media/Pipeline/VariableDelay.h>
+//#include <OpenHome/Media/Pipeline/TrackInspector.h>
+//#include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Waiter.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
-#include <OpenHome/Media/Pipeline/Gorger.h>
+//#include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
-#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
-#include <OpenHome/Media/Pipeline/Router.h>
-#include <OpenHome/Media/Pipeline/Drainer.h>
-#include <OpenHome/Media/Pipeline/Pruner.h>
-#include <OpenHome/Media/Pipeline/Logger.h>
+//#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
+//#include <OpenHome/Media/Pipeline/Router.h>
+//#include <OpenHome/Media/Pipeline/Drainer.h>
+//#include <OpenHome/Media/Pipeline/Pruner.h>
+//#include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
-#include <OpenHome/Media/Pipeline/Muter.h>
-#include <OpenHome/Media/Pipeline/PreDriver.h>
-#include <OpenHome/Media/InfoProvider.h>
+//#include <OpenHome/Media/Pipeline/Muter.h>
+//#include <OpenHome/Media/Pipeline/PreDriver.h>
+//#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/MuteManager.h>
 
@@ -93,6 +93,40 @@ private:
     TUint iThreadPriorityMax;
     TUint iMaxLatencyJiffies;
 };
+
+namespace Codec {
+    class Container;
+    class CodecController;
+    class CodecBase;
+}
+class PipelineElementObserverThread;
+class EncodedAudioReservoir;
+class Logger;
+class SampleRateValidator;
+class TimestampInspector;
+class DecodedAudioAggregator;
+class DecodedAudioReservoir;
+class Ramper;
+class RampValidator;
+class Seeker;
+class VariableDelay;
+class TrackInspector;
+class Skipper;
+class Waiter;
+class Stopper;
+class Gorger;
+class Reporter;
+class SpotifyReporter;
+class Router;
+class Drainer;
+class VariableDelay;
+class Pruner;
+class StarvationMonitor;
+class Muter;
+class PreDriver;
+class ITrackObserver;
+class ISpotifyReporter;
+class ITrackChangeObserver;
 
 class Pipeline : public IPipelineElementDownstream
                , public IPipeline

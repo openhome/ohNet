@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Utils/Aggregator.h>
+#include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
 
 #include <string.h>

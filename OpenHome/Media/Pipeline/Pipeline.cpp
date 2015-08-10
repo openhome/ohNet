@@ -8,9 +8,10 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Codec/MpegTs.h>
+#include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
-#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
@@ -18,6 +19,7 @@
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
+#include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Router.h>
@@ -25,6 +27,7 @@
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
+#include <OpenHome/Media/Pipeline/Muter.h>
 #include <OpenHome/Media/Pipeline/PreDriver.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
