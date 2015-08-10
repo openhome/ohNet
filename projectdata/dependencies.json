@@ -85,7 +85,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.602",
+        "version": "0.0.603",
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
