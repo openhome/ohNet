@@ -98,6 +98,7 @@ tests = [
     [ 'TestAvTransportService',       'local', 'ALL'                                                                                 ],
     [ 'TestRenderingControlService',  'local'                                                                                        ],
     [ 'TestConnectionManagerService', 'local'                                                                                        ],
+    [ 'TestAvTransportPlayTracks',    'local', 'none',  'none',  'full',  10,          1,           'true'                           ],
     ###[ 'TestAvTransportPlayTracks',    'local', 'none',  server,  plMix,   8,           1,           'false'                          ],
 
     # Songcast
