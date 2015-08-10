@@ -203,6 +203,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/DecodedAudioValidator.cpp',
                 'OpenHome/Media/Pipeline/Drainer.cpp',
                 'OpenHome/Media/Pipeline/EncodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/Gorger.cpp',

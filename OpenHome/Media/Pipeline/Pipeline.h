@@ -5,33 +5,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-//#include <OpenHome/Media/Pipeline/ElementObserver.h>
-//#include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
-//#include <OpenHome/Media/Codec/Container.h>
-//#include <OpenHome/Media/Codec/CodecController.h>
-//#include <OpenHome/Media/Pipeline/SampleRateValidator.h>
-//#include <OpenHome/Media/Pipeline/TimestampInspector.h>
-//#include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
-//#include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
-//#include <OpenHome/Media/Pipeline/Ramper.h>
-//#include <OpenHome/Media/Pipeline/RampValidator.h>
-//#include <OpenHome/Media/Pipeline/Seeker.h>
-//#include <OpenHome/Media/Pipeline/VariableDelay.h>
-//#include <OpenHome/Media/Pipeline/TrackInspector.h>
-//#include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Waiter.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
-//#include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
-//#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
-//#include <OpenHome/Media/Pipeline/Router.h>
-//#include <OpenHome/Media/Pipeline/Drainer.h>
-//#include <OpenHome/Media/Pipeline/Pruner.h>
-//#include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
-//#include <OpenHome/Media/Pipeline/Muter.h>
-//#include <OpenHome/Media/Pipeline/PreDriver.h>
-//#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/MuteManager.h>
 
@@ -102,6 +79,7 @@ namespace Codec {
 class PipelineElementObserverThread;
 class EncodedAudioReservoir;
 class Logger;
+class DecodedAudioValidator;
 class SampleRateValidator;
 class TimestampInspector;
 class DecodedAudioAggregator;
@@ -226,6 +204,7 @@ private:
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
+    DecodedAudioValidator* iDecodedAudioValidatorCodec;
     SampleRateValidator* iSampleRateValidator;
     Logger* iLoggerSampleRateValidator;
     TimestampInspector* iTimestampInspector;
@@ -236,44 +215,56 @@ private:
     Logger* iLoggerDecodedAudioReservoir;
     Ramper* iRamper;
     Logger* iLoggerRamper;
+    DecodedAudioValidator* iDecodedAudioValidatorRamper;
     RampValidator* iRampValidatorRamper;
     Seeker* iSeeker;
     Logger* iLoggerSeeker;
     RampValidator* iRampValidatorSeeker;
+    DecodedAudioValidator* iDecodedAudioValidatorSeeker;
     VariableDelay* iVariableDelay1;
     Logger* iLoggerVariableDelay1;
     RampValidator* iRampValidatorDelay1;
+    DecodedAudioValidator* iDecodedAudioValidatorDelay1;
     TrackInspector* iTrackInspector;
     Logger* iLoggerTrackInspector;
     Skipper* iSkipper;
     Logger* iLoggerSkipper;
     RampValidator* iRampValidatorSkipper;
+    DecodedAudioValidator* iDecodedAudioValidatorSkipper;
     Waiter* iWaiter;
     Logger* iLoggerWaiter;
     RampValidator* iRampValidatorWaiter;
+    DecodedAudioValidator* iDecodedAudioValidatorWaiter;
     Stopper* iStopper;
     Logger* iLoggerStopper;
     RampValidator* iRampValidatorStopper;
+    DecodedAudioValidator* iDecodedAudioValidatorStopper;
     Gorger* iGorger;
     Logger* iLoggerGorger;
+    DecodedAudioValidator* iDecodedAudioValidatorGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
     Media::SpotifyReporter* iSpotifyReporter;
     Logger* iLoggerSpotifyReporter;
     Router* iRouter;
     Logger* iLoggerRouter;
+    DecodedAudioValidator* iDecodedAudioValidatorRouter;
     Drainer* iDrainer;
     Logger* iLoggerDrainer;
     VariableDelay* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
     RampValidator* iRampValidatorDelay2;
+    DecodedAudioValidator* iDecodedAudioValidatorDelay2;
     Pruner* iPruner;
     Logger* iLoggerPruner;
+    DecodedAudioValidator* iDecodedAudioValidatorPruner;
     StarvationMonitor* iStarvationMonitor;
     Logger* iLoggerStarvationMonitor;
     RampValidator* iRampValidatorStarvationMonitor;
+    DecodedAudioValidator* iDecodedAudioValidatorStarvationMonitor;
     Muter* iMuter;
     Logger* iLoggerMuter;
+    DecodedAudioValidator* iDecodedAudioValidatorMuter;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
