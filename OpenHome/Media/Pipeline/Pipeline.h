@@ -204,7 +204,6 @@ private:
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
-    DecodedAudioValidator* iDecodedAudioValidatorCodec;
     SampleRateValidator* iSampleRateValidator;
     Logger* iLoggerSampleRateValidator;
     TimestampInspector* iTimestampInspector;
@@ -215,7 +214,6 @@ private:
     Logger* iLoggerDecodedAudioReservoir;
     Ramper* iRamper;
     Logger* iLoggerRamper;
-    DecodedAudioValidator* iDecodedAudioValidatorRamper;
     RampValidator* iRampValidatorRamper;
     Seeker* iSeeker;
     Logger* iLoggerSeeker;

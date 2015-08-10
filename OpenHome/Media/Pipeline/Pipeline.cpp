@@ -247,16 +247,14 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
-    iDecodedAudioValidatorCodec = new DecodedAudioValidator("CodecController", *iSampleRateValidator);
-    iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioValidatorCodec);
+    iLoggerCodecController = new Logger("Codec Controller", *iSampleRateValidator);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
     threadPriority++;
 
     iRamper = new Ramper(*iLoggerDecodedAudioReservoir, aInitParams->RampLongJiffies());
     iLoggerRamper = new Logger(*iRamper, "Ramper");
     iRampValidatorRamper = new RampValidator(*iLoggerRamper, "Ramper");
-    iDecodedAudioValidatorRamper = new DecodedAudioValidator(*iRampValidatorRamper, "Ramper");
-    iSeeker = new Seeker(*iMsgFactory, *iDecodedAudioValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
+    iSeeker = new Seeker(*iMsgFactory, *iRampValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
     iRampValidatorSeeker = new RampValidator(*iLoggerSeeker, "Seeker");
     iDecodedAudioValidatorSeeker = new DecodedAudioValidator(*iRampValidatorSeeker, "Seeker");
@@ -426,7 +424,6 @@ Pipeline::~Pipeline()
     delete iRampValidatorSeeker;
     delete iLoggerSeeker;
     delete iSeeker;
-    delete iDecodedAudioValidatorRamper;
     delete iRampValidatorRamper;
     delete iLoggerRamper;
     delete iRamper;
@@ -438,7 +435,6 @@ Pipeline::~Pipeline()
     delete iTimestampInspector;
     delete iLoggerSampleRateValidator;
     delete iSampleRateValidator;
-    delete iDecodedAudioValidatorCodec;
     delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;
