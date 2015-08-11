@@ -278,9 +278,6 @@ TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     iStreamId = aStreamId;
     iSampleStart = aSample;
-    if (iSampleRate > 0) {
-        iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
-    }
     FLAC__bool ret = FLAC__stream_decoder_seek_absolute(iDecoder, aSample);
     if (ret == 0) {
         // Seeking failed.
@@ -322,6 +319,7 @@ FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder*
         //return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
         return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
     }
+    iTrackOffset = iSampleStart * Jiffies::JiffiesPerSample(iSampleRate);
     return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }
 
