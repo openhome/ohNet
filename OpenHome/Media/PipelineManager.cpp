@@ -379,6 +379,15 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
 {
+    {
+        if (Debug::TestLevel(Debug::kPipeline)) {
+            Bws<128> buf("PipelineManager::SeekRestream(");
+            buf.Append(aMode);
+            buf.AppendPrintf(", %u)\n", aTrackId);
+            Log::Print(buf);
+        }
+    }
+    (void)iFiller->Stop();
     iIdManager->InvalidateAll();
     const TUint flushId = iFiller->Flush();
     iFiller->Play(aMode, aTrackId);
