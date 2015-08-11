@@ -76,8 +76,10 @@ Msg* DecodedAudioValidator::ProcessMsg(MsgMode* aMsg)
 
 Msg* DecodedAudioValidator::ProcessMsg(MsgTrack* aMsg)
 {
-    //Log::Print("MsgTrack (%s)\n", iId);
-    iExpectDecodedStreamBeforeAudio = true;
+    if (aMsg->StartOfStream()) {
+        //Log::Print("MsgTrack (%s)\n", iId);
+        iExpectDecodedStreamBeforeAudio = true;
+    }
     return aMsg;
 }
 
@@ -112,7 +114,7 @@ Msg* DecodedAudioValidator::ProcessMsg(MsgAudioPcm* aMsg)
     }
     else if (iStreamPos != streamPos) {
         Log::Print("WARNING: discontinuity in audio (%s): missing [%llu..%llu) (%dms)\n",
-            iId, iStreamPos, streamPos, ((streamPos-iStreamPos) / Jiffies::kPerMs));
+            iId, iStreamPos, streamPos, (static_cast<TInt>(streamPos-iStreamPos) / Jiffies::kPerMs));
     }
     iStreamPos = streamPos + aMsg->Jiffies();
     return aMsg;
