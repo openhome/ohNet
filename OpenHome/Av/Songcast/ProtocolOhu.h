@@ -48,7 +48,6 @@ private:
     Timer* iTimerLeave;
     TBool iLeaving;
     TBool iStopped;
-    TBool iActive;
     TUint iSlaveCount;
     Endpoint iSlaveList[kMaxSlaveCount];
     Bws<kMaxFrameBytes> iMessageBuffer;

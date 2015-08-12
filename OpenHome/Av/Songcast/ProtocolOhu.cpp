@@ -100,7 +100,7 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         return EProtocolStreamStopped;
     }
     iLeaveLock.Wait();
-    iLeaving = iStopped = iActive = false;
+    iLeaving = iStopped = false;
     iSlaveCount = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
     iLeaveLock.Signal();
@@ -224,7 +224,6 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     Interrupt(false); // cancel any interrupt to allow SendLeave to succeed
     iReadBuffer.ReadFlush();
     iLeaveLock.Wait();
-    iActive = false;
     if (iLeaving) {
         iLeaving = false;
         SendLeave();
