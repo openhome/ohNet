@@ -12,8 +12,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-#define LogVerbose(prefix)
-//#define LogVerbose(prefix) Log(prefix)
+//#define LogVerbose(prefix)
+#define LogVerbose(prefix) Log(prefix)
 
 // IdManager
 
@@ -33,7 +33,7 @@ void IdManager::AddStream(TUint aId, TUint aStreamId, TBool aPlayNow)
     UpdateIndex(iIndexTail);
     ASSERT(iIndexHead != iIndexTail); // OkToPlay can't tell the difference between a full and empty list
                                       // ...so we assume the list contains at most kMaxActiveStreams-1 elements
-    LOG(kMedia, "IdManager::AddStream(%u, %u, %u)\n", aId, aStreamId, aPlayNow)
+    LOG(kPipeline, "IdManager::AddStream(%u, %u, %u)\n", aId, aStreamId, aPlayNow)
     iLock.Signal();
 }
 
@@ -79,12 +79,12 @@ EStreamPlay IdManager::OkToPlay(TUint aStreamId)
 {
     AutoMutex a(iLock);
     if (iIndexHead == iIndexTail) {
-        LOG(kMedia, "IdManager::OkToPlay(%u) returning %s - no streams pending\n", aStreamId, kStreamPlayNames[ePlayNo]);
+        LOG(kPipeline, "IdManager::OkToPlay(%u) returning %s - no streams pending\n", aStreamId, kStreamPlayNames[ePlayNo]);
         return ePlayNo;
     }
     const ActiveStream& as = iActiveStreams[iIndexHead];
     if (as.StreamId() != aStreamId) {
-        if (Debug::TestLevel(Debug::kMedia)) {
+        if (Debug::TestLevel(Debug::kPipeline)) {
             Log::Print("OkToPlay(%u) returning %s - wrong stream\n", aStreamId, kStreamPlayNames[ePlayNo]);
             Log("OkToPlay");
         }
@@ -93,7 +93,7 @@ EStreamPlay IdManager::OkToPlay(TUint aStreamId)
     iPlaying.Set(as);
     UpdateIndex(iIndexHead);
     EStreamPlay canPlay = (iPlaying.PlayNow()? ePlayYes : ePlayLater);
-    LOG(kMedia, "IdManager::OkToPlay(%u) returning %s\n", aStreamId, kStreamPlayNames[canPlay]);
+    LOG(kPipeline, "IdManager::OkToPlay(%u) returning %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
 }
 
@@ -146,7 +146,12 @@ void IdManager::InvalidateAt(TUint aId)
             iIndexTail = prevIndex;
         }
     }
-    LogVerbose("InvalidateAt");
+    if (Debug::TestLevel(Debug::kMedia)) {
+        Bws<64> buf("InvalidateAt(");
+        buf.AppendPrintf("%u", aId);
+        buf.PtrZ();
+        LogVerbose((const TChar*)buf.Ptr());
+    }
 }
 
 void IdManager::InvalidateAfter(TUint aId)
@@ -176,14 +181,19 @@ void IdManager::InvalidateAfter(TUint aId)
         }
         iIndexTail = index;
     }
-    LogVerbose("InvalidateAfter");
+    if (Debug::TestLevel(Debug::kMedia)) {
+        Bws<64> buf("InvalidateAfter(");
+        buf.AppendPrintf("%u", aId);
+        buf.PtrZ();
+        LogVerbose((const TChar*)buf.Ptr());
+    }
 }
 
 void IdManager::InvalidatePending()
 {
     iLock.Wait();
     iIndexTail = iIndexHead;
-    LogVerbose("InvalidatePending");
+    LOG(kMedia, "IdManager::InvalidatePending()\n");
     iLock.Signal();
 }
 
@@ -195,7 +205,7 @@ void IdManager::InvalidateAll()
         iPlaying.Clear();
     }
     iIndexTail = iIndexHead;
-    LogVerbose("InvalidateAll");
+    LOG(kMedia, "IdManager::InvalidateAll()\n");
 }
 
 
