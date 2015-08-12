@@ -102,8 +102,8 @@ tests = [
     ###[ 'TestAvTransportPlayTracks',    'local', 'none',  server,  plMix,   8,           1,           'false'                          ],
 
     # Songcast
-    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',   12345,       'unicast'                                     ],
-    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',   12345,       'multicast'                                   ],
+    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',    0,          'unicast'                                     ],
+    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',    0,          'multicast'                                   ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'stop',      'unicast'                        ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'stop',      'multicast'                      ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'source',    'unicast'                        ],
