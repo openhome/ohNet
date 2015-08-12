@@ -120,6 +120,12 @@ void Filler::Quit()
 
 void Filler::Play(const Brx& aMode, TUint aTrackId)
 {
+    if (Debug::TestLevel(Debug::kMedia)) {
+        Bws<256> buf("Filler::Play(");
+        buf.Append(aMode);
+        buf.AppendPrintf(", %u)\n", aTrackId);
+        Log::Print(buf);
+    }
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->Begin(aTrackId);
@@ -129,6 +135,12 @@ void Filler::Play(const Brx& aMode, TUint aTrackId)
 
 void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 {
+    if (Debug::TestLevel(Debug::kMedia)) {
+        Bws<256> buf("Filler::PlayLater(");
+        buf.Append(aMode);
+        buf.AppendPrintf(", %u)\n", aTrackId);
+        Log::Print(buf);
+    }
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->BeginLater(aTrackId);
@@ -139,6 +151,7 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 
 TUint Filler::Stop()
 {
+    LOG(kMedia, "Filler::Stop()\n");
     AutoMutex a(iLock);
     const TUint haltId = StopLocked();
     Signal();
@@ -158,6 +171,12 @@ TUint Filler::Flush()
 
 TBool Filler::Next(const Brx& aMode)
 {
+    if (Debug::TestLevel(Debug::kMedia)) {
+        Bws<256> buf("Filler::Next(");
+        buf.Append(aMode);
+        buf.Append(")\n");
+        Log::Print(buf);
+    }
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
@@ -171,6 +190,12 @@ TBool Filler::Next(const Brx& aMode)
 
 TBool Filler::Prev(const Brx& aMode)
 {
+    if (Debug::TestLevel(Debug::kMedia)) {
+        Bws<256> buf("Filler::Prev(");
+        buf.Append(aMode);
+        buf.Append(")\n");
+        Log::Print(buf);
+    }
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
