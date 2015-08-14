@@ -46,6 +46,7 @@ TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     catch (OhmError&) {
     }
+    Reset();
     return false;
 }
 
