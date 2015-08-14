@@ -41,6 +41,12 @@ ZoneHandler::ZoneHandler(Environment& aEnv, const Brx& aSenderZone)
     , iPresetNumber(0)
     , iSendPresetInfoCount(0)
 {
+    if (Debug::TestLevel(Debug::kSongcast)) {
+        Bws<256> buf("ZoneHandler.  SenderZone is ");
+        buf.Append(aSenderZone);
+        buf.Append("\n");
+        Log::Print(buf);
+    }
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ZoneHandler::CurrentSubnetChanged), false);
     iTimerZoneUri = new Timer(aEnv, MakeFunctor(*this, &ZoneHandler::TimerZoneUriExpired), "ZoneHandlerUri");
     iTimerPresetInfo = new Timer(aEnv, MakeFunctor(*this, &ZoneHandler::TimerPresetInfoExpired), "ZoneHandlerPresetInfo");
@@ -125,6 +131,12 @@ void ZoneHandler::SetCurrentSenderUri(const Brx& aUri)
         LOG2(kSongcast, kError, "\n");
         return;
     }
+    if (Debug::TestLevel(Debug::kSongcast)) {
+        Bws<512> buf("ZoneHandler::SetCurrentSenderUri(");
+        buf.Append(aUri);
+        buf.Append(")\n");
+        Log::Print(buf);
+    }
     iLockTxData.Wait();
     iSenderUriCurrent.Replace(aUri);
     iLockTxData.Signal();
@@ -136,10 +148,11 @@ void ZoneHandler::ClearCurrentSenderUri()
     iLockTxData.Wait();
     TBool sendUpdates = false;
     if (iSenderUriCurrent.Bytes() > 0) {
-        iSenderUriCurrent.SetBytes(0);
+        iSenderUriCurrent.Replace(Brx::Empty());
         sendUpdates = true;
     }
     iLockTxData.Signal();
+    LOG(kSongcast, "ZoneHandler::ClearCurrentSenderUri - sendUpdates=%u\n", sendUpdates)
     if (sendUpdates) {
         SendZoneUri(3);
     }
@@ -181,10 +194,13 @@ void ZoneHandler::Run()
                         OhzHeaderZoneQuery headerZoneQuery;
                         headerZoneQuery.Internalise(iReadBuffer, header);
                         Brn zone = iReadBuffer.Read(headerZoneQuery.ZoneBytes());
-                        LOG(kSongcast, "ZoneHandler::Run received zone query for ");
-                        LOG(kSongcast, zone);
-                        LOG(kSongcast, "\n");
                         if (zone == iSenderZone) {
+                            if (Debug::TestLevel(Debug::kSongcast)) {
+                                Bws<256> buf("ZoneHandler::Run ZoneQuery for ");
+                                buf.Append(zone);
+                                buf.Append("\n");
+                                Log::Print(buf);
+                            }
                             SendZoneUri(1);
                         }
                     }
@@ -320,6 +336,13 @@ void ZoneHandler::TimerZoneUriExpired()
         iWriteBuffer.Write(iSenderZone);
         iWriteBuffer.Write(senderUri);
         LOG(kSongcast, "ZoneHandler::TimerZoneUriExpired %d\n", iSendZoneUriCount);
+        if (Debug::TestLevel(Debug::kSongcast)) {
+            Bws<400> buf("ZoneHandler::TimerZoneUriExpired count=");
+            buf.AppendPrintf("%u, uri=", iSendZoneUriCount);
+            buf.Append(senderUri);
+            buf.Append("\n");
+            Log::Print(buf);
+        }
         iWriteBuffer.WriteFlush();
         
         iSendZoneUriCount--;
