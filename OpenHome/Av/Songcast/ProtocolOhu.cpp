@@ -233,8 +233,13 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     iTimerListen->Cancel();
     iTimerLeave->Cancel();
     iSocket.Close();
-    if (iNextFlushId != MsgFlush::kIdInvalid) {
-        iSupply->OutputFlush(iNextFlushId);
+    iMutexTransport.Wait();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    const TUint flushId = iNextFlushId;
+    iNextFlushId = MsgFlush::kIdInvalid;
+    iMutexTransport.Signal();
+    if (flushId != MsgFlush::kIdInvalid) {
+        iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
@@ -255,15 +260,15 @@ TUint ProtocolOhu::TryStop(TUint aStreamId)
 {
     LOG(kSongcast, "OHU: TryStop()\n");
     AutoMutex _(iMutexTransport);
-    if (IsCurrentStream(aStreamId)) {
-        iLeaveLock.Wait();
-        if (iActive) {
+    if (IsCurrentStream(aStreamId) && iStreamId == aStreamId) {
+        AutoMutex a(iLeaveLock);
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
-            iStopped = true;
-            iLeaving = true;
-            iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
         }
-        iLeaveLock.Signal();
+        iStopped = true;
+        iLeaving = true;
+        iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
+        iReadBuffer.ReadInterrupt();
     }
     return iNextFlushId;
 }

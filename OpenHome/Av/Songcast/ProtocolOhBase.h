@@ -59,7 +59,6 @@ private:
     TBool RepairBegin(OhmMsgAudioBlob& aMsg);
     TBool Repair(OhmMsgAudioBlob& aMsg);
     void OutputAudio(OhmMsgAudioBlob& aMsg);
-    void PipelineEmpty();
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
     void Process(OhmMsgAudioBlob& aMsg) override;

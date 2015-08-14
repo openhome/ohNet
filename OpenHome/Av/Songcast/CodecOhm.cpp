@@ -39,6 +39,7 @@ TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
     if (aStreamInfo.RawPcm()) {
         return false;
     }
+    Reset();
     try {
         OhmHeader header;
         header.Internalise(*this);
@@ -46,7 +47,6 @@ TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
     }
     catch (OhmError&) {
     }
-    Reset();
     return false;
 }
 
