@@ -169,8 +169,13 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     iTimerJoin->Cancel();
     iTimerListen->Cancel();
     iSocket.Close();
-    if (iNextFlushId != MsgFlush::kIdInvalid) {
-        iSupply->OutputFlush(iNextFlushId);
+    iMutexTransport.Wait();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    const TUint flushId = iNextFlushId;
+    iNextFlushId = MsgFlush::kIdInvalid;
+    iMutexTransport.Signal();
+    if (flushId != MsgFlush::kIdInvalid) {
+        iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
@@ -186,8 +191,10 @@ void ProtocolOhm::Interrupt(TBool aInterrupt)
 TUint ProtocolOhm::TryStop(TUint aStreamId)
 {
     AutoMutex _(iMutexTransport);
-    if (IsCurrentStream(aStreamId)) {
-        iNextFlushId = iFlushIdProvider->NextFlushId();
+    if (IsCurrentStream(aStreamId) && iStreamId == aStreamId) {
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+        }
         iStopped = true;
         iSocket.ReadInterrupt();
     }

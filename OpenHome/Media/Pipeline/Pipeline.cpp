@@ -542,9 +542,6 @@ void Pipeline::Stop(TUint aHaltId)
                running, meaning that we want to allow Stopper to ramp down? */
     if (iBuffering) {
         iSkipper->RemoveAll(aHaltId, false);
-        iLock.Signal();
-        iStopper->StopNow();
-        return;
     }
     iStopper->BeginStop(aHaltId);
     iLock.Signal();

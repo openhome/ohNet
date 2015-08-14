@@ -138,7 +138,7 @@ TBool ProtocolOhBase::IsCurrentStream(TUint aStreamId) const
 
 void ProtocolOhBase::WaitForPipelineToEmpty()
 {
-    iSupply->OutputDrain(MakeFunctor(*this, &ProtocolOhBase::PipelineEmpty));
+    iSupply->OutputDrain(MakeFunctor(iPipelineEmpty, &Semaphore::Signal));
     iPipelineEmpty.Wait();
 }
 
@@ -509,9 +509,4 @@ void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
         }
     }
     aMsg.RemoveRef();
-}
-
-void ProtocolOhBase::PipelineEmpty()
-{
-    iPipelineEmpty.Signal();
 }

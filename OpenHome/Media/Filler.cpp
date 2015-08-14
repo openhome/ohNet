@@ -244,7 +244,7 @@ TUint Filler::StopLocked()
     if (iPendingHaltId == MsgHalt::kIdInvalid) {
         iPendingHaltId = ++iNextHaltId;
         iStopped = true;
-        iChangedMode = true; // Skipperr::RemoveAll() relies on MsgMode being sent following a MsgHalt
+        iChangedMode = true; // Skipper::RemoveAll() relies on MsgMode being sent following a MsgHalt
     }
     if (iWaitingForAudio) {
         iUriStreamer->Interrupt(true);
