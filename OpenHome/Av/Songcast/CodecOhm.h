@@ -17,7 +17,6 @@ public:
     CodecOhm(OhmMsgFactory& aMsgFactory, IOhmTimestampMapper* aTsMapper);
     ~CodecOhm();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType) override;
     TBool Recognise(const Media::Codec::EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;

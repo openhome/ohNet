@@ -6,6 +6,7 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <vector>
 
@@ -221,6 +222,8 @@ private: // from SuiteUnitTest
     void Setup();
 private: // Tests
     void TestNullContainer();
+private:
+    MimeTypeList iMimeTypes;
 };
 
 } // Codec
@@ -1168,7 +1171,7 @@ void SuiteContainerNull::Setup()
 {
     SuiteContainerBase::Setup();
     iContainer->AddContainer(new Id3v2());
-    iContainer->AddContainer(new Mpeg4Container());
+    iContainer->AddContainer(new Mpeg4Container(iMimeTypes));
 }
 
 void SuiteContainerNull::TestNullContainer()

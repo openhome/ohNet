@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 namespace OpenHome {
 namespace Media {
@@ -18,7 +19,7 @@ namespace Codec {
 class CodecAlac : public CodecAlacBase
 {
 public:
-    CodecAlac();
+    CodecAlac(IMimeTypeList& aMimeTypeList);
     ~CodecAlac();
 private: // from CodecBase
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
@@ -43,18 +44,19 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewAlac()
+CodecBase* CodecFactory::NewAlac(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecAlac();
+    return new CodecAlac(aMimeTypeList);
 }
 
 
 // CodecAlac
 
-CodecAlac::CodecAlac() 
+CodecAlac::CodecAlac(IMimeTypeList& aMimeTypeList)
     : CodecAlacBase("ALAC")
 {
     LOG(kCodec, "CodecAlac::CodecAlac\n");
+    aMimeTypeList.Add("audio/x-m4a");
 }
 
 CodecAlac::~CodecAlac()

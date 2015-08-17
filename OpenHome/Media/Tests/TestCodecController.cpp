@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <list>
 #include <limits.h>
@@ -26,7 +27,6 @@ class HelperCodecPassThrough : public CodecBase
 public:
     HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -141,6 +141,7 @@ private:
 
 class SuiteCodecControllerStream : public SuiteCodecControllerBase
                                  , public ISeekObserver
+                                 , private IMimeTypeList
 {
 public:
     SuiteCodecControllerStream();
@@ -151,6 +152,8 @@ private: // from SuiteCodecControllerBase
     TUint TrySeek(TUint aStreamId, TUint64 aOffset);
 private: // from ISeekObserver
     void NotifySeekComplete(TUint aHandle, TUint aFlushId);
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 private:
     static void WriteUint16Le(WriterBinary& aWriter, TUint16 aValue);
     static void WriteUint32Le(WriterBinary& aWriter, TUint32 aValue);
@@ -169,6 +172,7 @@ private:
     TUint iHandle;
     TUint iExpectedFlushId;
     TUint iFlushId;
+
 };
 
 class SuiteCodecControllerPcmSize : public SuiteCodecControllerBase
@@ -203,13 +207,6 @@ HelperCodecPassThrough::HelperCodecPassThrough(TUint aReadBytes, TUint aChannels
     , iReadBuf(iReadBytes)
     , iTrackOffset(0)
 {
-}
-
-TBool HelperCodecPassThrough::SupportsMimeType(const Brx& /*aMimeType*/)
-{
-    // CodecController passes through calls to this. Shouldn't happen in tests.
-    ASSERTS();
-    return false;
 }
 
 TBool HelperCodecPassThrough::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
@@ -546,7 +543,7 @@ void SuiteCodecControllerStream::Setup()
     iSemSeek = new Semaphore("SCCS", 0);
     iHandle = ISeeker::kHandleError;
     iExpectedFlushId = iFlushId = MsgFlush::kIdInvalid;
-    iController->AddCodec(CodecFactory::NewWav());
+    iController->AddCodec(CodecFactory::NewWav(*this));
     iController->Start();
 }
 
@@ -567,6 +564,10 @@ void SuiteCodecControllerStream::NotifySeekComplete(TUint aHandle, TUint aFlushI
     iHandle = aHandle;
     iFlushId = aFlushId;
     iSemSeek->Signal();
+}
+
+void SuiteCodecControllerStream::Add(const TChar* /*aMimeType*/)
+{
 }
 
 void SuiteCodecControllerStream::WriteUint16Le(WriterBinary& aWriter, TUint16 aValue)

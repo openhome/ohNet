@@ -7,6 +7,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 
@@ -17,10 +18,9 @@ namespace Codec {
 class CodecFlac : public CodecBase
 {
 public:
-    CodecFlac();
+    CodecFlac(IMimeTypeList& aMimeTypeList);
     ~CodecFlac();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -65,9 +65,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewFlac()
+CodecBase* CodecFactory::NewFlac(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecFlac();
+    return new CodecFlac(aMimeTypeList);
 }
 
 
@@ -130,7 +130,7 @@ void CallbackError(const FLAC__StreamDecoder *aDecoder,
 
 // CodecFlac
 
-CodecFlac::CodecFlac() 
+CodecFlac::CodecFlac(IMimeTypeList& aMimeTypeList)
     : CodecBase("FLAC")
     , iName("FLAC")
     , iStreamMsgDue(true)
@@ -139,20 +139,12 @@ CodecFlac::CodecFlac()
     ASSERT(iDecoder != nullptr);
     // By default, only the STREAMINFO metadata block is returned, but let's just explicitly tell the decoder that's all we want.
     ASSERT(FLAC__stream_decoder_set_metadata_respond(iDecoder, FLAC__METADATA_TYPE_STREAMINFO));
+    aMimeTypeList.Add("audio/x-flac");
 }
 
 CodecFlac::~CodecFlac()
 {
     FLAC__stream_decoder_delete(iDecoder);
-}
-
-TBool CodecFlac::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeFlac("audio/x-flac");
-    if (aMimeType == kMimeFlac) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecFlac::Recognise(const EncodedStreamInfo& aStreamInfo)

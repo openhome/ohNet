@@ -13,7 +13,7 @@ namespace Codec {
 class CodecAac : public CodecAacBase
 {
 public:
-    CodecAac();
+    CodecAac(IMimeTypeList& aMimeTypeList);
     ~CodecAac();
 private: // from CodecBase
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
@@ -41,17 +41,17 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewAac()
+CodecBase* CodecFactory::NewAac(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecAac();
+    return new CodecAac(aMimeTypeList);
 }
 
 
 
 // CodecAac
 
-CodecAac::CodecAac()
-    : CodecAacBase("AAC")
+CodecAac::CodecAac(IMimeTypeList& aMimeTypeList)
+    : CodecAacBase("AAC", aMimeTypeList)
 {
     LOG(kCodec, "CodecAac::CodecAac\n");
 }

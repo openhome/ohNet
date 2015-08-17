@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 
@@ -27,7 +28,7 @@ using namespace OpenHome::Media::Codec;
  */
 
 
-MpegTs::MpegTs()
+MpegTs::MpegTs(IMimeTypeList& aMimeTypeList)
     : iDiscarding(false)
     , iSize(0)
     , iTotalSize(0)
@@ -35,6 +36,7 @@ MpegTs::MpegTs()
     , iProgramMapPid(0)
     , iStreamPid(0)
 {
+    aMimeTypeList.Add("application/vnd.apple.mpegurl");
 }
 
 TBool MpegTs::Recognise(Brx& aBuf)

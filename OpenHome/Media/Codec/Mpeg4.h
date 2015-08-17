@@ -15,6 +15,7 @@ EXCEPTION(MediaMpeg4OutOfRange);
 
 namespace OpenHome {
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 
@@ -306,7 +307,7 @@ private:
     static const TUint kMaxStreamDescriptorBytes = 50;
     static const TUint kMaxEncodedAudioBytes = EncodedAudio::kMaxBytes;
 public:
-    Mpeg4Container();
+    Mpeg4Container(IMimeTypeList& aMimeTypeList);
 public: // from ContainerBase
     TBool Recognise(Brx& aBuf) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;

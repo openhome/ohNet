@@ -2,6 +2,7 @@
 #define HEADER_SOURCE_FACTORY
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Buffer.h>
 
 namespace OpenHome {
     class IObservableBrx;
@@ -21,10 +22,10 @@ class IOhmTimestampMapper;
 class SourceFactory
 {
 public:
-    static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId);
-    static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols);
+    static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aTuneInPartnerId);
+    static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
     static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
                                 Media::IPullableClock* aPullableClock,

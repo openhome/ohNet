@@ -434,10 +434,10 @@ void SuitePlaylist::Setup()
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));
     iDriver = new DummyDriver(iMediaPlayer->Pipeline());
-    iMediaPlayer->Add(Codec::CodecFactory::NewWav());
+    iMediaPlayer->Add(Codec::CodecFactory::NewWav(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
-    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, Brn("*")));
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     iMediaPlayer->Pipeline().AddObserver(*this);
     iMediaPlayer->Start();
 

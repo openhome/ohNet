@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 
@@ -14,7 +15,7 @@ namespace Codec {
 class CodecAiff : public CodecAiffBase
 {
 public:
-    CodecAiff();
+    CodecAiff(IMimeTypeList& aMimeTypeList);
     ~CodecAiff();
 private: // from CodecAiffBase
     TUint GetCommChunkHeader();
@@ -28,16 +29,18 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewAiff()
+CodecBase* CodecFactory::NewAiff(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecAiff();
+    return new CodecAiff(aMimeTypeList);
 }
 
 
 
-CodecAiff::CodecAiff()
+CodecAiff::CodecAiff(IMimeTypeList& aMimeTypeList)
     : CodecAiffBase("AIFF")
 {
+    aMimeTypeList.Add("audio/aiff");
+    aMimeTypeList.Add("audio/x-aiff");
 }
 
 CodecAiff::~CodecAiff()

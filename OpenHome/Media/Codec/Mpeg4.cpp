@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <limits>
 #include <vector>
@@ -973,11 +974,12 @@ void OutOfBandReader::ReadInterrupt()
 
 // Mpeg4Container
 
-Mpeg4Container::Mpeg4Container()
+Mpeg4Container::Mpeg4Container(IMimeTypeList& aMimeTypeList)
     : iBoxStack(kMetadataBoxDepth)
 {
     LOG(kMedia, "Mpeg4Container::Mpeg4Container\n");
     Clear();
+    aMimeTypeList.Add("audio/mp4");
 }
 
 TBool Mpeg4Container::Recognise(Brx& aBuf)

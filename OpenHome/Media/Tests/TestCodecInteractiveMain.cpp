@@ -18,6 +18,7 @@
 #include <OpenHome/Media/Codec/MpegTs.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <stdlib.h>
 
@@ -124,7 +125,7 @@ private:
     void SwapEndianness24(const Brx& aData);
 };
 
-class Decoder : private INonCopyable
+class Decoder : public IMimeTypeList, private INonCopyable
 {
 private:
     static const TUint kThreadPriorityMax = kPriorityHighest - 1;
@@ -134,6 +135,8 @@ public:
     void AddContainer(ContainerBase* aContainer);
     void AddCodec(CodecBase* aCodec);
     void Start();
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 private:
     Container* iContainer;
     Logger* iLoggerContainer;
@@ -637,6 +640,9 @@ void Decoder::Start()
     iCodecController->Start();
 }
 
+void Decoder::Add(const TChar* /*aMimeType*/)
+{
+}
 
 
 int CDECL main(int aArgc, char* aArgv[])
@@ -736,18 +742,18 @@ int CDECL main(int aArgc, char* aArgv[])
     Decoder* decoder = new Decoder(*msgFactory, fileReader, fileWriter, fileReader);
 
     decoder->AddContainer(new Id3v2());
-    //decoder->AddContainer(new Mpeg4Container());
-    decoder->AddContainer(new MpegTs());
+    //decoder->AddContainer(new Mpeg4Container(*decoder));
+    decoder->AddContainer(new MpegTs(*decoder));
 
-    decoder->AddCodec(CodecFactory::NewAac());
-    decoder->AddCodec(CodecFactory::NewAifc());
-    decoder->AddCodec(CodecFactory::NewAiff());
-    decoder->AddCodec(CodecFactory::NewAlac());
-    decoder->AddCodec(CodecFactory::NewAdts());
-    decoder->AddCodec(CodecFactory::NewFlac());
+    decoder->AddCodec(CodecFactory::NewAac(*decoder));
+    decoder->AddCodec(CodecFactory::NewAifc(*decoder));
+    decoder->AddCodec(CodecFactory::NewAiff(*decoder));
+    decoder->AddCodec(CodecFactory::NewAlac(*decoder));
+    decoder->AddCodec(CodecFactory::NewAdts(*decoder));
+    decoder->AddCodec(CodecFactory::NewFlac(*decoder));
     decoder->AddCodec(CodecFactory::NewPcm());
-    decoder->AddCodec(CodecFactory::NewVorbis());
-    decoder->AddCodec(CodecFactory::NewWav());
+    decoder->AddCodec(CodecFactory::NewVorbis(*decoder));
+    decoder->AddCodec(CodecFactory::NewWav(*decoder));
 
     // Try open input file.
     try {

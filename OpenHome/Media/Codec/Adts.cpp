@@ -7,6 +7,7 @@
 
 namespace OpenHome {
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 class Adts
@@ -36,10 +37,9 @@ private:
 class CodecAdts : public CodecAacBase
 {
 public:
-    CodecAdts();
+    CodecAdts(IMimeTypeList& aMimeTypeList);
     ~CodecAdts();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType) override;
     TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
@@ -62,9 +62,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewAdts()
+CodecBase* CodecFactory::NewAdts(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecAdts();
+    return new CodecAdts(aMimeTypeList);
 }
 
 
@@ -168,8 +168,8 @@ TBool Adts::ReadHeader(Brn aHeader)
 
 // CodecAdts
 
-CodecAdts::CodecAdts()
-    : CodecAacBase("ADTS")
+CodecAdts::CodecAdts(IMimeTypeList& aMimeTypeList)
+    : CodecAacBase("ADTS", aMimeTypeList)
 {
     LOG(kCodec, "CodecAdts::CodecAdts\n");
 }
@@ -177,20 +177,6 @@ CodecAdts::CodecAdts()
 CodecAdts::~CodecAdts()
 {
     LOG(kCodec, "CodecAdts::~CodecAdts\n");
-}
-
-TBool CodecAdts::SupportsMimeType(const Brx& aMimeType)
-{
-    if (CodecAacBase::SupportsMimeType(aMimeType)) {
-        return true;
-    }
-
-    // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
-    static const Brn kMimeHls("application/vnd.apple.mpegurl");
-    if (aMimeType == kMimeHls) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)

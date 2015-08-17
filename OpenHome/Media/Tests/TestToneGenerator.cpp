@@ -11,6 +11,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Globals.h>  // dummy Environment
@@ -91,7 +92,7 @@ enum EToneMsgType
 };
 
 class SuiteGeneratorAny : public SuiteUnitTest,
-     private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter
+    private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter, private IMimeTypeList
 {
 public:
     SuiteGeneratorAny(const TChar* aName);
@@ -137,6 +138,9 @@ private:  // from IMsgProcessor
 
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
+
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 
 private:
     // as per Pipeline.h
@@ -518,7 +522,7 @@ void SuiteGeneratorAny::Setup()
     iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir, *this);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
-    iCodecController->AddCodec(Codec::CodecFactory::NewWav());
+    iCodecController->AddCodec(Codec::CodecFactory::NewWav(*this));
     iCodecController->Start();
 
     iProtocolManager = new ProtocolManager(*iEncodedAudioReservoir, *iMsgFactory, *this, *this);
@@ -665,6 +669,10 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioPcm* aMsg)
 TBool SuiteGeneratorAny::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
+}
+
+void SuiteGeneratorAny::Add(const TChar* /*aMimeType*/)
+{
 }
 
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)

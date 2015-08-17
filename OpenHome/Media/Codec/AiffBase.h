@@ -15,7 +15,6 @@ protected:
     CodecAiffBase(const TChar* aName);
     ~CodecAiffBase();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();

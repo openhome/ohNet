@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Utils/Aggregator.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 #include <vector>
@@ -52,7 +53,14 @@ private:
     TUint iHaltId;
 };
 
-class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer, private IUrlBlockWriter, private IPipelineAnimator
+class SuitePipeline : public Suite
+                    , private IPipelineObserver
+                    , private IMsgProcessor
+                    , private IStreamPlayObserver
+                    , private ISeekRestreamer
+                    , private IUrlBlockWriter
+                    , private IPipelineAnimator
+                    , private IMimeTypeList
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -115,6 +123,8 @@ private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
@@ -146,7 +156,6 @@ public:
     DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private: // from CodecBase
     void StreamInitialise();
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -288,7 +297,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this);
     iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
@@ -850,6 +859,10 @@ TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint
     return 0;
 }
 
+void SuitePipeline::Add(const TChar* /*aMimeType*/)
+{
+}
+
 
 // DummyCodec
 
@@ -866,11 +879,6 @@ void DummyCodec::StreamInitialise()
 {
     iTrackOffsetJiffies = 0;
     iSentDecodedInfo = false;
-}
-
-TBool DummyCodec::SupportsMimeType(const Brx& /*aMimeType*/)
-{
-    return false;
 }
 
 TBool DummyCodec::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)

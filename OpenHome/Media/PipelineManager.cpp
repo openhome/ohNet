@@ -42,13 +42,13 @@ TUint PriorityArbitratorPipeline::HostRange() const
 
 // PipelineManager
 
-PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this);
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this, aMimeTypeList);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
@@ -262,11 +262,6 @@ TBool PipelineManager::Prev()
     (void)iFiller->Stop();
     iIdManager->InvalidateAll();
     return iFiller->Prev(iMode);
-}
-
-TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
-{
-    return iPipeline->SupportsMimeType(aMimeType);
 }
 
 IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)

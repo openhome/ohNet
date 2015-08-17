@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 namespace OpenHome {
     class Environment;
@@ -56,7 +57,6 @@ class VolumeConfig;
 class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
-//class TransportControl;
 
 class IMediaPlayer
 {
@@ -75,6 +75,7 @@ public:
     virtual Av::Product& Product() = 0;
     virtual IVolumeManager& VolumeManager() = 0;
     virtual Credentials& CredentialsManager() = 0;
+    virtual Media::MimeTypeList& MimeTypes() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
@@ -111,6 +112,7 @@ public: // from IMediaPlayer
     Av::Product& Product() override;
     OpenHome::Av::IVolumeManager& VolumeManager() override;
     Credentials& CredentialsManager() override;
+    Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
 private:
@@ -129,6 +131,7 @@ private:
     VolumeConfig* iVolumeConfig;
     Av::VolumeManager* iVolumeManager;
     Credentials* iCredentials;
+    Media::MimeTypeList iMimeTypes;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;

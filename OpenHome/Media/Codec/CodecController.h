@@ -219,14 +219,6 @@ public:
     virtual ~CodecBase();
 public:
     /**
-     * Query whether a given audio format is supported.
-     *
-     * @param[in] aMimeType      MIME type of the form type/subtype.  All lowercase.
-     *
-     * @return     true if the codec can decode aMimeType; false otherwise.
-     */
-    virtual TBool SupportsMimeType(const Brx& aMimeType) = 0;
-    /**
      * Report whether a new audio stream is handled by this codec.
      *
      * Data is fetched by calling iController->Read().  Any data read during recognition will
@@ -300,7 +292,6 @@ public:
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
-    TBool SupportsMimeType(const Brx& aMimeType);
 private:
     void CodecThread();
     void Rewind();

@@ -8,6 +8,7 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Media/MimeTypeList.h>
 #include <mad.h>
 
 #include <stdlib.h>
@@ -22,10 +23,9 @@ class Mp3Header;
 class CodecMp3 : public CodecBase
 {
 public:
-    CodecMp3();
+    CodecMp3(IMimeTypeList& aMimeTypeList);
 private: // from CodecBase
     ~CodecMp3();
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -161,9 +161,9 @@ using namespace OpenHome::Media::Codec;
 const TUint kBitDepth = 24;
 
 
-CodecBase* CodecFactory::NewMp3()
+CodecBase* CodecFactory::NewMp3(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecMp3();
+    return new CodecMp3(aMimeTypeList);
 }
 
 
@@ -565,7 +565,7 @@ static TUint32 fixedToPcm(mad_fixed_t aFixed)
 
 // CodecMp3
 
-CodecMp3::CodecMp3() 
+CodecMp3::CodecMp3(IMimeTypeList& aMimeTypeList)
     : CodecBase("MP3")
     , iHeader(nullptr)
     , iHeaderBytes(0)
@@ -573,22 +573,13 @@ CodecMp3::CodecMp3()
     (void)memset(&iMadStream, 0, sizeof(iMadStream));
     (void)memset(&iMadFrame, 0, sizeof(iMadFrame));
     (void)memset(&iMadSynth, 0, sizeof(iMadSynth));
+    aMimeTypeList.Add("audio/mpeg");
+    aMimeTypeList.Add("audio/x-mpeg");
+    aMimeTypeList.Add("audio/mp1");
 }
 
 CodecMp3::~CodecMp3()
 {
-}
-
-TBool CodecMp3::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeMpeg("audio/mpeg");
-    static const Brn kMimeXMpeg("audio/x-mpeg");
-    static const Brn kMimeMp1("audio/mp1:");
-
-    if (aMimeType == kMimeMpeg || aMimeType == kMimeXMpeg || aMimeType == kMimeMp1) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecMp3::Recognise(const EncodedStreamInfo& aStreamInfo)

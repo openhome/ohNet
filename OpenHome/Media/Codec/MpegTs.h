@@ -7,7 +7,8 @@
 
 namespace OpenHome {
 namespace Media {
-namespace Codec {
+    class IMimeTypeList;
+    namespace Codec {
 
 class MpegTs : public ContainerBase
 {
@@ -28,7 +29,7 @@ private:
     static const TUint kPesHeaderFixedBytes = 6;
     static const TUint kPesHeaderOptionalFixedBytes = 3;
 public:
-    MpegTs();
+    MpegTs(IMimeTypeList& aMimeTypeList);
 public: // from IRecogniser
     TBool Recognise(Brx& aBuf);
 private: // from IMsgProcessor

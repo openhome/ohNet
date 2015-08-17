@@ -105,6 +105,7 @@ class PreDriver;
 class ITrackObserver;
 class ISpotifyReporter;
 class ITrackChangeObserver;
+class IMimeTypeList;
 
 class Pipeline : public IPipelineElementDownstream
                , public IPipeline
@@ -134,7 +135,8 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
-             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter);
+             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
+             IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
@@ -151,7 +153,6 @@ public:
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
     ITrackChangeObserver& TrackChangeObserver() const;
-    TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;

@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 
@@ -36,10 +37,12 @@ using namespace OpenHome::Media::Codec;
 
 const Brn CodecAacBase::kCodecAac("AAC");
 
-CodecAacBase::CodecAacBase(const TChar* aId)
+CodecAacBase::CodecAacBase(const TChar* aId, IMimeTypeList& aMimeTypeList)
     : CodecBase(aId)
 {
     LOG(kCodec, "CodecAacBase::CodecAacBase\n");
+    aMimeTypeList.Add("audio/aac");
+    aMimeTypeList.Add("audio/aacp");
 }
 
 CodecAacBase::~CodecAacBase()

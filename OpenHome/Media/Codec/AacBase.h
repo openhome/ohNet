@@ -16,6 +16,7 @@ extern "C" {
 
 namespace OpenHome {
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 class CodecAacBase : public CodecBase
@@ -26,7 +27,7 @@ private:
 public:
     static const Brn kCodecAac;
 protected:
-    CodecAacBase(const TChar* aId);
+    CodecAacBase(const TChar* aId, IMimeTypeList& aMimeTypeList);
     ~CodecAacBase();
 protected: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);

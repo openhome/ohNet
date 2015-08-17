@@ -22,7 +22,6 @@ protected:
     CodecAlacBase(const TChar* aId);
     ~CodecAlacBase();
 protected: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 private:

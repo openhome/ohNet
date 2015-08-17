@@ -89,9 +89,10 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols)
+ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer)
 { // static
-    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aSupportedProtocols);
+    const Brx& protocolInfo = aMediaPlayer.MimeTypes().UpnpProtocolInfo();
+    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), protocolInfo);
 }
 
 

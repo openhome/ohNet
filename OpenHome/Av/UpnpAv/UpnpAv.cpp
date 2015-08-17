@@ -19,12 +19,13 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols)
+ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice)
 { // static
     UriProviderRepeater* uriProvider = new UriProviderRepeater("UpnpAv", aMediaPlayer.TrackFactory());
     aMediaPlayer.Pipeline().AddObserver(*uriProvider);
     aMediaPlayer.Add(uriProvider);
-    return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, aSupportedProtocols);
+    const Brx& protocolInfo = aMediaPlayer.MimeTypes().UpnpProtocolInfo();
+    return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, protocolInfo);
 }
 
 // UpnpAv

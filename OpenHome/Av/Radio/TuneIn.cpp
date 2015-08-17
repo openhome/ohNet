@@ -15,6 +15,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <limits.h>
 
@@ -35,9 +36,9 @@ typedef struct MimeTuneInPair
     const TChar* iTuneInFormat;
 } MimeTuneInPair;
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline,
-                                       const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter,
-                                       IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager)
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, const Brx& aPartnerId,
+                                       IPresetDatabaseWriter& aDbWriter, IConfigInitialiser& aConfigInit,
+                                       Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)
@@ -60,7 +61,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     TBool first = true;
     for (TUint i=0; i<maxFormats; i++) {
         Brn mimeType(kTypes[i].iMimeType);
-        if (aPipeline.SupportsMimeType(mimeType)) {
+        if (aMimeTypeList.Contains(kTypes[i].iMimeType)) {
             if (first) {
                 first = false;
             }

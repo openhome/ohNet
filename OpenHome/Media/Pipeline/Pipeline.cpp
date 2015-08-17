@@ -179,7 +179,8 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 // Pipeline
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
-                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
+                   IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -242,8 +243,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
     iContainer->AddContainer(new Codec::Id3v2());
-    iContainer->AddContainer(new Codec::Mpeg4Container());
-    iContainer->AddContainer(new Codec::MpegTs());
+    iContainer->AddContainer(new Codec::Mpeg4Container(aMimeTypeList));
+    iContainer->AddContainer(new Codec::MpegTs(aMimeTypeList));
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
@@ -582,11 +583,6 @@ ISpotifyReporter& Pipeline::SpotifyReporter() const
 ITrackChangeObserver& Pipeline::TrackChangeObserver() const
 {
     return *iSpotifyReporter;
-}
-
-TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
-{
-    return iCodecController->SupportsMimeType(aMimeType);
 }
 
 IPipelineElementUpstream& Pipeline::InsertElements(IPipelineElementUpstream& aTail)

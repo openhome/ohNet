@@ -189,16 +189,6 @@ void CodecController::StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekOb
     iSeekSeconds = aSecondsAbsolute;
 }
 
-TBool CodecController::SupportsMimeType(const Brx& aMimeType)
-{
-    for (TUint i=0; i<iCodecs.size(); i++) {
-        if (iCodecs[i]->SupportsMimeType(aMimeType)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void CodecController::CodecThread()
 {
     iStreamStarted = false;

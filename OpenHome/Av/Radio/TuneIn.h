@@ -25,6 +25,7 @@ namespace Configuration {
 }
 namespace Media {
     class PipelineManager;
+    class MimeTypeList;
 }
 namespace Av {
 
@@ -45,9 +46,9 @@ private:
     static const Brn kPartnerId;
     static const Brn kUsername;
 public:
-    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline,
-                       const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter,
-                       Configuration::IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager);
+    RadioPresetsTuneIn(Environment& aEnv, const Brx& aPartnerId,
+                       IPresetDatabaseWriter& aDbWriter, Configuration::IConfigInitialiser& aConfigInit,
+                       Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList);
     ~RadioPresetsTuneIn();
     void Refresh();
 private:
