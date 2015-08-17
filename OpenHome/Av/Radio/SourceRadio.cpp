@@ -109,8 +109,8 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     else {
         iTuneIn = new RadioPresetsTuneIn(aEnv, aTuneInPartnerId, *iPresetDatabase, aConfigInit, aCredentialsManager, aMimeTypeList);
     }
-    iPipeline.Add(ContentProcessorFactory::NewM3u());
-    iPipeline.Add(ContentProcessorFactory::NewM3u());
+    iPipeline.Add(ContentProcessorFactory::NewM3u(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewM3u(aMimeTypeList));
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
     iPipeline.Add(ContentProcessorFactory::NewPls(aMimeTypeList));

@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Radio/ContentProcessorFactory.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 /* Example pls file
 
@@ -25,7 +26,7 @@ class ContentM3u : public Media::ContentProcessor
 {
     static const TUint kMaxLineBytes = 2 * 1024;
 public:
-    ContentM3u();
+    ContentM3u(Media::IMimeTypeList& aMimeTypeList);
     ~ContentM3u();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
@@ -43,17 +44,19 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Av;
 
 
-ContentProcessor* ContentProcessorFactory::NewM3u()
+ContentProcessor* ContentProcessorFactory::NewM3u(IMimeTypeList& aMimeTypeList)
 { // static
-    return new ContentM3u();
+    return new ContentM3u(aMimeTypeList);
 }
 
 
 // ContentM3u
 
-ContentM3u::ContentM3u()
+ContentM3u::ContentM3u(IMimeTypeList& aMimeTypeList)
 {
     iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+    aMimeTypeList.Add("audio/x-mpegurl");
+    aMimeTypeList.Add("audio/mpegurl");
 }
 
 ContentM3u::~ContentM3u()

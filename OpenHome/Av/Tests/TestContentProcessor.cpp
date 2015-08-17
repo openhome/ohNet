@@ -366,7 +366,7 @@ void SuitePls::TestParse()
 SuiteM3u::SuiteM3u()
     : SuiteContent("M3u tests")
 {
-    iProcessor = ContentProcessorFactory::NewM3u();
+    iProcessor = ContentProcessorFactory::NewM3u(*this);
     iProcessor->Initialise(*this);
 }
 
