@@ -130,7 +130,7 @@ private:
     IMsgProcessor& iMsgProcessor;
 };
 
-class TestCodecMinimalPipeline : private IUrlBlockWriter, private IMimeTypeList
+class TestCodecMinimalPipeline : private IUrlBlockWriter, protected IMimeTypeList
 {
 private:
     static const TUint kEncodedAudioCount = 100;
