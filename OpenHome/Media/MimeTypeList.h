@@ -3,6 +3,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Functor.h>
 
 #include <vector>
 
@@ -24,13 +25,17 @@ public:
 class MimeTypeList : public IMimeTypeList
 {
 public:
+    MimeTypeList();
     TBool Contains(const TChar* aMimeType) const;
-    const Brx& UpnpProtocolInfo();
+    void AddUpnpProtocolInfoObserver(FunctorGeneric<const Brx&> aCallback);
+    void Start();
 public: // from IMimeTypeList
     void Add(const TChar* aMimeType) override;
 private:
     std::vector<Brn> iMimeTypes;
+    std::vector<FunctorGeneric<const Brx&>> iUpnpProtocolInfoObservers;
     Brh iUpnpProtocolInfo;
+    TBool iStarted;
 };
 
 } // namespace Media

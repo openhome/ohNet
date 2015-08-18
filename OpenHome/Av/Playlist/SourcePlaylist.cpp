@@ -9,6 +9,7 @@
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <limits.h>
 
@@ -29,7 +30,7 @@ class ProviderPlaylist;
 class SourcePlaylist : public Source, private ISourcePlaylist, private ITrackDatabaseObserver, private Media::IPipelineObserver
 {
 public:
-    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const Brx& aProtocolInfo);
+    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, Media::MimeTypeList& aMimeTypeList);
     ~SourcePlaylist();
 private:
     void EnsureActive();
@@ -91,14 +92,13 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer)
 { // static
-    const Brx& protocolInfo = aMediaPlayer.MimeTypes().UpnpProtocolInfo();
-    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), protocolInfo);
+    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aMediaPlayer.MimeTypes());
 }
 
 
 // SourcePlaylist
 
-SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const Brx& aProtocolInfo)
+SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, Media::MimeTypeList& aMimeTypeList)
     : Source("Playlist", "Playlist")
     , iLock("SPL1")
     , iActivationLock("SPL2")
@@ -115,7 +115,8 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     iRepeater = new Repeater(*iShuffler);
     iUriProvider = new UriProviderPlaylist(*iRepeater, aPipeline, *this);
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
-    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iRepeater, aProtocolInfo);
+    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iRepeater);
+    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderPlaylist, &ProviderPlaylist::NotifyProtocolInfo));
     iPipeline.AddObserver(*this);
 }
 

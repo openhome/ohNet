@@ -1,12 +1,19 @@
 #include <OpenHome/Media/MimeTypeList.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Private/Standard.h>
 
 #include <vector>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+MimeTypeList::MimeTypeList()
+    : iStarted(false)
+{
+}
 
 TBool MimeTypeList::Contains(const TChar* aMimeType) const
 {
@@ -19,10 +26,19 @@ TBool MimeTypeList::Contains(const TChar* aMimeType) const
     return false;
 }
 
-const Brx& MimeTypeList::UpnpProtocolInfo()
+void MimeTypeList::AddUpnpProtocolInfoObserver(FunctorGeneric<const Brx&> aCallback)
 {
-    if (iUpnpProtocolInfo.Bytes() > 0) {
-        return iUpnpProtocolInfo;
+    ASSERT(!iStarted);
+    ASSERT(aCallback);
+    iUpnpProtocolInfoObservers.push_back(aCallback);
+}
+
+void MimeTypeList::Start()
+{
+    ASSERT(!iStarted);
+    iStarted = true;
+    if (iUpnpProtocolInfoObservers.size() == 0) {
+        return;
     }
     TBool firstItem = true;
     WriterBwh writer(256);
@@ -42,7 +58,10 @@ const Brx& MimeTypeList::UpnpProtocolInfo()
     writer.Write(",qobuz.com:*:*:*");
     //
     writer.TransferTo(iUpnpProtocolInfo);
-    return iUpnpProtocolInfo;
+
+    for (auto it=iUpnpProtocolInfoObservers.begin(); it!=iUpnpProtocolInfoObservers.end(); ++it) {
+        (*it)(iUpnpProtocolInfo);
+    }
 }
 
 void MimeTypeList::Add(const TChar* aMimeType)

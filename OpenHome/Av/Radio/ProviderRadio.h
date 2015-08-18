@@ -20,9 +20,10 @@ class IPresetDatabaseReader;
 class ProviderRadio : public Net::DvProviderAvOpenhomeOrgRadio1, private IPresetDatabaseObserver
 {
 public:
-    ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo);
+    ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader);
     ~ProviderRadio();
     void SetTransportState(Media::EPipelineState aState);
+    void NotifyProtocolInfo(const Brx& aProtocolInfo);
 private: // from IPresetDatabaseObserver
     void PresetDatabaseChanged() override;
 private: // from Net::DvProviderAvOpenhomeOrgRadio1

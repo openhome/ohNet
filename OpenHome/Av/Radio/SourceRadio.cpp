@@ -46,20 +46,18 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClo
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(radioUriProvider);
-    const Brx& protocolInfo = aMediaPlayer.MimeTypes().UpnpProtocolInfo();
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
-        *radioUriProvider, protocolInfo, Brx::Empty(),
-                           aMediaPlayer.ConfigInitialiser(), aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
+                           *radioUriProvider, Brx::Empty(), aMediaPlayer.ConfigInitialiser(),
+                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
 }
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aTuneInPartnerId)
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(radioUriProvider);
-    const Brx& protocolInfo = aMediaPlayer.MimeTypes().UpnpProtocolInfo();
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
-        *radioUriProvider, protocolInfo, aTuneInPartnerId,
-                           aMediaPlayer.ConfigInitialiser(), aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
+                           *radioUriProvider, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser(),
+                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
 }
 
 
@@ -90,8 +88,9 @@ IClockPuller* UriProviderRadio::ClockPuller()
 // SourceRadio
 
 SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline,
-                         UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, const Brx& aTuneInPartnerId,
-                         IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList)
+                         UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
+                         IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager,
+                         Media::MimeTypeList& aMimeTypeList)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -102,7 +101,8 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iLive(false)
 {
     iPresetDatabase = new PresetDatabase();
-    iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
+    iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase);
+    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
     if (aTuneInPartnerId.Bytes() == 0) {
         iTuneIn = nullptr;
     }

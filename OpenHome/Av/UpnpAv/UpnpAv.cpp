@@ -24,15 +24,14 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
     UriProviderRepeater* uriProvider = new UriProviderRepeater("UpnpAv", aMediaPlayer.TrackFactory());
     aMediaPlayer.Pipeline().AddObserver(*uriProvider);
     aMediaPlayer.Add(uriProvider);
-    const Brx& protocolInfo = aMediaPlayer.MimeTypes().UpnpProtocolInfo();
-    return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, protocolInfo);
+    return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, aMediaPlayer.MimeTypes());
 }
 
 // UpnpAv
 
 const TChar* SourceUpnpAv::kSourceName("UPnP AV");
 
-SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols)
+SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList)
     : Source(kSourceName, "UpnpAv")
     , iLock("UPA1")
     , iActivationLock("UPA2")
@@ -46,7 +45,8 @@ SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, U
     , iNoPipelinePrefetchOnActivation(false)
 {
     iProviderAvTransport = new ProviderAvTransport(iDevice, aMediaPlayer.Env(), *this);
-    iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
+    iProviderConnectionManager = new ProviderConnectionManager(iDevice);
+    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderConnectionManager, &ProviderConnectionManager::NotifyProtocolInfo));
     iProviderRenderingControl = new ProviderRenderingControl(iDevice, aMediaPlayer.Env(), aMediaPlayer.VolumeManager());
     iPipeline.AddObserver(*this);
     iDownstreamObserver = iProviderAvTransport;

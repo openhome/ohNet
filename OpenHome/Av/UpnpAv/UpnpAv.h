@@ -13,6 +13,7 @@
 namespace OpenHome {
 namespace Media {
     class PipelineManager;
+    class MimeTypeList;
 }
 namespace Av {
     class UriProviderRepeater;
@@ -40,7 +41,7 @@ class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipel
 public:
     static const TChar* kSourceName;
 public:
-    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols);
+    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList);
     ~SourceUpnpAv();
 private:
     void EnsureActive();

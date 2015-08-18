@@ -25,13 +25,12 @@ static const Brn kIndexNotFoundMsg("Index not found");
 
 // ProviderPlaylist
 
-ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater, const Brx& aProtocolInfo)
+ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater)
     : DvProviderAvOpenhomeOrgPlaylist1(aDevice)
     , iLock("PPLY")
     , iSource(aSource)
     , iDatabase(aDatabase)
     , iRepeater(aRepeater)
-    , iProtocolInfo(aProtocolInfo)
     , iTimerLock("PPL2")
     , iTimerActive(false)
 {
@@ -77,7 +76,6 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     NotifyTrack(ITrackDatabase::kTrackIdNone);
     UpdateIdArrayProperty();
     (void)SetPropertyTracksMax(ITrackDatabase::kMaxTracks);
-    (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
 ProviderPlaylist::~ProviderPlaylist()
@@ -97,6 +95,12 @@ void ProviderPlaylist::NotifyPipelineState(Media::EPipelineState aState)
 void ProviderPlaylist::NotifyTrack(TUint aId)
 {
     (void)SetPropertyId(aId);
+}
+
+void ProviderPlaylist::NotifyProtocolInfo(const Brx& aProtocolInfo)
+{
+    iProtocolInfo.Set(aProtocolInfo);
+    (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
 void ProviderPlaylist::NotifyTrackInserted(Track& /*aTrack*/, TUint /*aIdBefore*/, TUint /*aIdAfter*/)

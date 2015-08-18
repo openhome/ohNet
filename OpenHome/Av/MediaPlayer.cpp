@@ -121,6 +121,7 @@ void MediaPlayer::Start()
     iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
     iCredentials->Start();
+    iMimeTypes.Start();
     iProduct->Start();
 }
 
