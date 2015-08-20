@@ -68,13 +68,13 @@ class OhmMsgAudio : public OhmMsgTimestamped
 public:
     static const TUint kMaxSampleBytes = 8 * 1024;
     static const TUint kMaxCodecBytes = 256;
-private:
-    static const TUint kHeaderBytes = 50; // not including codec name
-    static const TUint kReserved        = 0;
     static const TUint kFlagHalt        = 1 << 0;
     static const TUint kFlagLossless    = 1 << 1;
     static const TUint kFlagTimestamped = 1 << 2;
     static const TUint kFlagResent      = 1 << 3;
+private:
+    static const TUint kHeaderBytes = 50; // not including codec name
+    static const TUint kReserved        = 0;
 public:
     TBool Halt() const;
     TBool Lossless() const;
@@ -130,6 +130,7 @@ class OhmMsgAudioBlob : public OhmMsgTimestamped
 public:
     static const TUint kMaxBytes = 9 * 1024;
 public:
+    TByte Flags() const { return iFlags; }
     TUint Frame() const { return iFrame; }
     TUint64 SampleStart() const { return iSampleStart; }
     void ExternaliseAsBlob(IWriter& aWriter);
@@ -141,6 +142,7 @@ private:
     void Create(IReader& aReader, const OhmHeader& aHeader);
     static void Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader);
 private:
+    TByte iFlags;
     TUint iFrame;
     TUint64 iSampleStart;
     Bws<kMaxBytes> iBlob;

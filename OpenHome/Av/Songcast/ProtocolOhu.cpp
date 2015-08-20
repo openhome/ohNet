@@ -217,7 +217,7 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
             }
         }
         catch (ReaderError&) {
-            LOG2(kSongcast, kError, "OHU: ReaderError\n");
+            LOG2(kSongcast, kError, "OHU: ReaderError.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
         }
     } while (!iStopped);
     
@@ -258,7 +258,7 @@ void ProtocolOhu::Interrupt(TBool aInterrupt)
 
 TUint ProtocolOhu::TryStop(TUint aStreamId)
 {
-    LOG(kSongcast, "OHU: TryStop()\n");
+    LOG(kSongcast, "OHU: TryStop(%u)\n", aStreamId);
     AutoMutex _(iMutexTransport);
     if (IsCurrentStream(aStreamId) && iStreamId == aStreamId) {
         AutoMutex a(iLeaveLock);
