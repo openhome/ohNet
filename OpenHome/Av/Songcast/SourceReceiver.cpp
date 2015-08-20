@@ -328,6 +328,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
     }
     else {
         iZone.Replace(Brx::Empty());
+        iZoneHandler->ClearCurrentSenderUri();
         iTrackUri.Replace(aUri);
         iTrackMetadata.Replace(aMetadata);
         UriChanged();
