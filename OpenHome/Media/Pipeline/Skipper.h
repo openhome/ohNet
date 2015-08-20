@@ -17,7 +17,7 @@ If the pipeline is paused when *RemoveStream() is called, we move straight to pu
 If TryStop returned a valid flush id, the MsgFlush with this id is consumed
 */
 
-class Skipper : public IPipelineElementUpstream, private IMsgProcessor
+class Skipper : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler
 {
     friend class SuiteSkipper;
 public:
@@ -46,6 +46,11 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     TBool TryRemoveCurrentStream(TBool aRampDown);
     void StartFlushing(TBool aSendHalt);
@@ -76,6 +81,7 @@ private:
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TBool iPassGeneratedHalt;
+    TBool iRunning;
 };
 
 } // namespace Media
