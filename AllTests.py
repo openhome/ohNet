@@ -42,9 +42,7 @@ def buildArgs():
         buildArgs += ' iOs-x86=1'
     if gAndroid == 1:
         buildArgs += ' Android-anycpu=1'
-    if gQnap == 1:
-        buildArgs += ' Qnap-anycpu=1'
-    if gCore == 1:
+    if gCore == 1 or gQnap == 1:
         buildArgs += ' platform=' + gPlatform
     if gNativeTestsOnly == 1:
         buildArgs += ' native_only=yes'
@@ -268,7 +266,7 @@ for arg in sys.argv[1:]:
         gCore = 1
     elif arg == '--Android-anycpu':
         gAndroid = 1
-    elif arg == '--Qnap-anycpu':
+    elif arg == '--qnap':
         gQnap = 1;
     else:
         print 'Unrecognised argument - ' + arg

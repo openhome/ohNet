@@ -72,9 +72,9 @@ else ifeq ($(freebsd), 1)
     link = ${CROSS_COMPILE}g++ $(platform_linkflags)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
 else
-  # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
-  platform ?= Vanilla
-    ifeq ($(Qnap-anycpu), 1)
+    # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
+    platform ?= Vanilla
+    ifneq (,$(findstring Qnap,$(platform)))
         detected_openhome_system = Qnap
     else ifneq (,$(findstring linux,$(gcc_machine)))
       detected_openhome_system = Linux
@@ -240,7 +240,7 @@ ifeq ($(platform), Core-armv6)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
-ifneq (,$(findstring $(platform),Vanilla Linux-ppc32))
+ifneq (,$(findstring $(platform),Vanilla Qnap-x86 Qnap-x19 Linux-ppc32))
   ifeq ($(gcc4_1), yes)
     version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party = -Wno-non-virtual-dtor
@@ -264,16 +264,6 @@ ifneq (,$(findstring $(platform),Vanilla Linux-ppc32))
   ar = $(version_specific_library_path) ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
-ifeq ($(platform), Linux-ppc32)
-    # platform == Linux-ppc32
-    endian = BIG
-    platform_cflags = $(version_specific_cflags) -fPIC
-    platform_linkflags = $(version_specific_linkflags) -pthread
-    linkopts_ohNet = -Wl,-soname,libohNet.so
-    osbuilddir = Posix
-    osdir = Posix
-endif
-
 ifeq ($(platform), FreeBSD)
     platform_cflags = $(version_specific_cflags) -fPIC -DPLATFORM_FREEBSD
     platform_linkflags = $(version_specific_linkflags) -pthread
@@ -284,23 +274,39 @@ ifeq ($(platform), FreeBSD)
     endian ?= LITTLE
 endif
 
+vanilla_settings ?= no
 ifeq ($(platform), Vanilla)
+    vanilla_settings = yes
+endif
+ifeq ($(platform), Linux-ppc32)
+    vanilla_settings = yes
+    endian = BIG
+endif
+ifeq ($(platform), Qnap-x86)
+    vanilla_settings = yes
+    openhome_system = Qnap
+    nocpp11 = yes
+endif
+ifeq ($(platform), Qnap-x19)
+    vanilla_settings = yes
+    openhome_system = Qnap
+    openhome_architecture = x19
+    nocpp11 = yes
+endif
+
+ifeq ($(vanilla_settings), yes)
 	# platform == Vanilla (i.e. Kirkwood, x86 or x64)
 	platform_cflags = $(version_specific_cflags) -fPIC
 	platform_linkflags = $(version_specific_linkflags) -pthread
-        linkopts_ohNet = -Wl,-soname,libohNet.so
+	linkopts_ohNet = -Wl,-soname,libohNet.so
 	osbuilddir = Posix
 	osdir = Posix
 	endian ?= LITTLE
-	ifeq ($(Qnap-anycpu), 1)
-	    openhome_system = Qnap
-	    nocpp11=yes
-	else
-	    openhome_system = Linux
-	endif
+	openhome_system ?= Linux
 endif
 
 $(info Building for system ${openhome_system} and architecture ${openhome_architecture})
+
 
 # Macros used by Common.mak
 native_only ?= no
