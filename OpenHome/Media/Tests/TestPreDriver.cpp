@@ -56,6 +56,7 @@ private:
        ,EMsgDrain
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -158,6 +159,11 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgHalt);
 
+    // Send StreamInterrupted; check it is consumed and the msg that follows is passed on
+    iNextGeneratedMsg = EMsgStreamInterrupted;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgPlayable);
+
     // Send Audio then Format with different sample rate.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
@@ -194,6 +200,9 @@ Msg* SuitePreDriver::Pull()
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
+    case EMsgStreamInterrupted:
+        iNextGeneratedMsg = EMsgAudioPcm;
+        return iMsgFactory->CreateMsgStreamInterrupted();
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
