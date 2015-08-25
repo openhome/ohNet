@@ -15,39 +15,27 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-
 // Mpeg4Info
 
-Mpeg4Info::Mpeg4Info()
-    : iSampleRate(0)
-    , iTimescale(0)
-    , iChannels(0)
-    , iBitDepth(0)
-    , iDuration (0)
+Mpeg4Info::Mpeg4Info() :
+        iSampleRate(0), iTimescale(0), iChannels(0), iBitDepth(0), iDuration(0)
 {
 }
 
-Mpeg4Info::Mpeg4Info(const Brx& aCodec, TUint aSampleRate, TUint aTimescale, TUint aChannels, TUint aBitDepth, TUint64 aDuration, const Brx& aStreamDescriptor)
-    : iCodec(aCodec)
-    , iSampleRate(aSampleRate)
-    , iTimescale(aTimescale)
-    , iChannels(aChannels)
-    , iBitDepth(aBitDepth)
-    , iDuration(aDuration)
-    , iStreamDescriptor(aStreamDescriptor)
+Mpeg4Info::Mpeg4Info(const Brx& aCodec, TUint aSampleRate, TUint aTimescale,
+        TUint aChannels, TUint aBitDepth, TUint64 aDuration,
+        const Brx& aStreamDescriptor) :
+        iCodec(aCodec), iSampleRate(aSampleRate), iTimescale(aTimescale), iChannels(
+                aChannels), iBitDepth(aBitDepth), iDuration(aDuration), iStreamDescriptor(
+                aStreamDescriptor)
 {
 }
 
 TBool Mpeg4Info::Initialised() const
 {
-    const TBool initialised =
-        iCodec.Bytes() > 0
-        && iSampleRate != 0
-        && iTimescale != 0
-        && iChannels != 0
-        && iBitDepth != 0
-        && iDuration != 0
-        && iStreamDescriptor.Bytes() > 0;
+    const TBool initialised = iCodec.Bytes() > 0 && iSampleRate != 0
+            && iTimescale != 0 && iChannels != 0 && iBitDepth != 0
+            && iDuration != 0 && iStreamDescriptor.Bytes() > 0;
     return initialised;
 }
 
@@ -123,11 +111,10 @@ void Mpeg4Info::SetStreamDescriptor(const Brx& aDescriptor)
     iStreamDescriptor.Replace(aDescriptor);
 }
 
-
 // Mpeg4InfoReader
 
-Mpeg4InfoReader::Mpeg4InfoReader(IReader& aReader)
-    : iReader(aReader)
+Mpeg4InfoReader::Mpeg4InfoReader(IReader& aReader) :
+        iReader(aReader)
 {
 }
 
@@ -162,17 +149,15 @@ void Mpeg4InfoReader::Read(IMpeg4InfoWritable& aInfo)
         aInfo.SetStreamDescriptor(streamDescriptor);
 
         //ASSERT(aInfo.Initialised());
-    }
-    catch (ReaderError&) {
+    } catch (ReaderError&) {
         THROW(MediaMpeg4FileInvalid);
     }
 }
 
-
 // Mpeg4InfoWriter
 
-Mpeg4InfoWriter::Mpeg4InfoWriter(const IMpeg4InfoReadable& aInfo)
-    : iInfo(aInfo)
+Mpeg4InfoWriter::Mpeg4InfoWriter(const IMpeg4InfoReadable& aInfo) :
+        iInfo(aInfo)
 {
 }
 
@@ -191,232 +176,1659 @@ void Mpeg4InfoWriter::Write(IWriter& aWriter) const
     aWriter.WriteFlush();   // FIXME - required?
 }
 
+// Mpeg4BoxHeaderReader
 
-// Mpeg4Box
-
-Mpeg4Box::Mpeg4Box()
-    : iReader(nullptr)
-    , iSize(0)
-    , iOffset(0)
+void Mpeg4BoxHeaderReader::Reset(IMsgAudioEncodedCache& aCache)
 {
+    iCache = &aCache;
+    iHeader.SetBytes(0);
+    iId.Set(Brx::Empty());
+    iBytes = 0;
+    iHeaderReadPending = false;
 }
 
-Mpeg4Box::~Mpeg4Box()
+Msg* Mpeg4BoxHeaderReader::ReadHeader()
 {
-}
-
-void Mpeg4Box::Set(IReader& aReader)
-{
-    //Clear();
-
-    //iReader = nullptr;
-    iSize = 0;
-    iId.SetBytes(0);
-    iOffset = 0;
-
-    iReader = &aReader;
-}
-
-void Mpeg4Box::Clear()
-{
-    //iReader = nullptr;   // Clear() should definitely do this, but then Set() must be called afterwards. Otherwise, ReadFlush() could do the following.
-    iSize = 0;
-    iId.SetBytes(0);
-    iOffset = 0;
-}
-
-void Mpeg4Box::ReadHeader()
-{
-    ASSERT(iReader != nullptr);
-    // FIXME - can just call Read() here! - but would need to call it until all bytes read.
-    TUint remaining = kBoxHeaderBytes;
-    Bws<kBoxHeaderBytes> header;
-    while (remaining > 0) {
-        Brn buf = iReader->Read(remaining);
-        if (buf.Bytes() == 0) {
-            THROW(MediaMpeg4FileInvalid);
+    ASSERT(iCache != nullptr);
+    while (iId.Bytes() == 0) {
+        if (!iHeaderReadPending) {
+            iCache->Inspect(iHeader, iHeader.MaxBytes());
+            iHeaderReadPending = true;
         }
-        header.Append(buf);
-        remaining -= buf.Bytes();
-        iOffset += buf.Bytes();
+        Msg* msg = iCache->Pull();
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        if (msg == nullptr && iHeader.Bytes() == 0) {
+            // Was unable to read from cache.
+            return nullptr;
+        }
+
+        iBytes = Converter::BeUint32At(iHeader, 0);
+        iId.Set(iHeader.Ptr() + kSizeBytes, kNameBytes);
     }
-    iSize = Converter::BeUint32At(header, 0);
-    iId.Replace(header.Ptr()+kBoxSizeBytes, kBoxNameBytes);
-    //Read(iId, 4);
-    //LOG(kCodec, "Mpeg4 header %u (", iBoxSize);
-    //LOG(kCodec, iId);
-    //LOG(kCodec, ")\n");
+
+    return nullptr;
 }
 
-TUint Mpeg4Box::Size() const
+TUint Mpeg4BoxHeaderReader::Bytes() const
 {
-    ASSERT(iReader != nullptr);
-    return iSize;
+    return iBytes;
 }
 
-const Brx& Mpeg4Box::Id() const
+TUint Mpeg4BoxHeaderReader::PayloadBytes() const
 {
-    ASSERT(iReader != nullptr);
+    ASSERT(iBytes >= kHeaderBytes);
+    return iBytes - kHeaderBytes;
+}
+
+const Brx& Mpeg4BoxHeaderReader::Id() const
+{
     return iId;
 }
 
-void Mpeg4Box::SkipRemaining()
+// Mpeg4BoxSwitcherRoot
+
+Mpeg4BoxSwitcherRoot::Mpeg4BoxSwitcherRoot(
+        IMpeg4BoxProcessorFactory& aProcessorFactory) :
+        iProcessorFactory(aProcessorFactory), iCache(nullptr)
 {
-    ASSERT(iReader != nullptr);
-    ASSERT(iSize >= iOffset);
-    const TUint remaining = iSize - iOffset;
-    Skip(remaining);
+    Reset();
 }
 
-void Mpeg4Box::Skip(TUint aBytes)
+void Mpeg4BoxSwitcherRoot::Reset()
 {
-    ASSERT(iReader != nullptr);
-    ASSERT(iSize >= iOffset);
-    TUint remaining = iSize - iOffset;
-    ASSERT(aBytes <= remaining);
+    iProcessor = nullptr;
+    iState = eNone;
+    iOffset = 0;
+}
 
-    if (aBytes < remaining) {
-        remaining = aBytes;
-    }
+void Mpeg4BoxSwitcherRoot::Set(IMsgAudioEncodedCache& aCache)
+{
+    iCache = &aCache;
+}
 
-    while (remaining > 0) {
-        Brn buf = iReader->Read(remaining);
-        if (buf.Bytes() == 0) {
-            THROW(MediaMpeg4FileInvalid);
+Msg* Mpeg4BoxSwitcherRoot::Process()
+{
+    while (iState != eComplete) {
+        Msg* msg = nullptr;
+
+        // All pulling calls below returns nullptr when there is something of interest for this class.
+        if (iState == eHeader) {
+            msg = iHeaderReader.ReadHeader();
         }
-        remaining -= buf.Bytes();
-        iOffset += buf.Bytes();
+        else if (iState == eBox) {
+            msg = iProcessor->Process();
+        }
+
+        if (msg != nullptr) {
+            LOG(kCodec, "<Mpeg4BoxSwitcherRoot::Process pulled non-audio msg: %p\n", msg);
+            return msg;
+        }
+
+        if (iState == eNone) {
+            iHeaderReader.Reset(*iCache);
+            iState = eHeader;
+        }
+        else if (iState == eHeader) {
+            if (iHeaderReader.Bytes() == 0) {
+                // Didn't manage to read header.
+                return nullptr;
+            }
+
+            LOG(kCodec, "Mpeg4BoxSwitcherRoot::Process found box ");
+            LOG(kCodec, iHeaderReader.Id());
+            LOG(kCodec, ", %u bytes\n", iHeaderReader.Bytes());
+
+            // Got header, now find a processor.
+            try {
+                iProcessor = &iProcessorFactory.GetMpeg4BoxProcessor(
+                        iHeaderReader.Id(), iHeaderReader.PayloadBytes(),
+                        *iCache);
+                iState = eBox;
+            } catch (Mpeg4BoxUnrecognised) {
+
+                LOG(kCodec, "Mpeg4BoxSwitcherRoot::Process couldn't find processor for ");
+                LOG(kCodec, iHeaderReader.Id());
+                LOG(kCodec, ", %u bytes\n", iHeaderReader.Bytes());
+
+                iCache->Discard(iHeaderReader.PayloadBytes());
+                iOffset += iHeaderReader.Bytes();
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else if (iState == eBox) {
+            // Read next box.
+            iOffset += iHeaderReader.Bytes();
+            iProcessor = nullptr;
+            iHeaderReader.Reset(*iCache);
+            iState = eHeader;
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TUint64 Mpeg4BoxSwitcherRoot::BoxOffset() const
+{
+    return iOffset;
+}
+
+// Mpeg4BoxSwitcher
+
+Mpeg4BoxSwitcher::Mpeg4BoxSwitcher(IMpeg4BoxProcessorFactory& aProcessorFactory,
+        const Brx& aBoxId) :
+        iProcessorFactory(aProcessorFactory), iId(aBoxId)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxSwitcher::Process()
+{
+    while (!Complete()) {
+        Msg* msg = nullptr;
+
+        // All pulling calls below returns nullptr when there is something of interest for this class.
+        if (iState == eHeader) {
+            msg = iHeaderReader.ReadHeader();
+        }
+        else if (iState == eBox) {
+            msg = iProcessor->Process();
+        }
+
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        if (iState == eNone) {
+            iHeaderReader.Reset(*iCache);
+            iState = eHeader;
+        }
+        else if (iState == eHeader) {
+
+            LOG(kCodec, "Mpeg4BoxSwitcher::Process found box ");
+            LOG(kCodec, iHeaderReader.Id());
+            LOG(kCodec, ", %u bytes\n", iHeaderReader.Bytes());
+
+
+
+            // Got header, now find a processor.
+            try {
+                iProcessor = &iProcessorFactory.GetMpeg4BoxProcessor(
+                        iHeaderReader.Id(), iHeaderReader.PayloadBytes(),
+                        *iCache);
+                iState = eBox;
+            } catch (Mpeg4BoxUnrecognised) {
+
+                LOG(kCodec, "Mpeg4BoxSwitcher::Process couldn't find processor for ");
+                LOG(kCodec, iHeaderReader.Id());
+                LOG(kCodec, ", %u bytes\n", iHeaderReader.Bytes());
+
+                iCache->Discard(iHeaderReader.PayloadBytes());
+                iOffset += iHeaderReader.Bytes();
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else if (iState == eBox) {
+            // Box processing is complete.
+            iOffset += iHeaderReader.Bytes();
+
+            ASSERT(iOffset <= iBytes);
+            if (iOffset == iBytes) {
+                iState = eComplete;
+            }
+            else {
+                // Read next box.
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxSwitcher::Complete() const
+{
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxSwitcher::Reset()
+{
+    //iCache = nullptr;
+    iProcessor = nullptr;
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+}
+
+TBool Mpeg4BoxSwitcher::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == iId;
+}
+
+void Mpeg4BoxSwitcher::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxProcessorFactory
+
+void Mpeg4BoxProcessorFactory::Add(IMpeg4BoxRecognisable* aProcessor)
+{
+    iProcessors.push_back(
+            std::unique_ptr < IMpeg4BoxRecognisable > (aProcessor));
+}
+
+IMpeg4BoxProcessor& Mpeg4BoxProcessorFactory::GetMpeg4BoxProcessor(
+        const Brx& aBoxId, TUint aBytes, IMsgAudioEncodedCache& aCache)
+{
+    for (auto& processor : iProcessors) {
+        if (processor->Recognise(aBoxId)) {
+            processor->Reset();
+            processor->Set(aCache, aBytes);
+            return *processor;
+        }
+    }
+    THROW(Mpeg4BoxUnrecognised);
+}
+
+void Mpeg4BoxProcessorFactory::Reset()
+{
+    for (auto& processor : iProcessors) {
+        processor->Reset();
     }
 }
 
-Brn Mpeg4Box::Read(TUint aBytes)
+
+// Mpeg4BoxMoov
+
+Mpeg4BoxMoov::Mpeg4BoxMoov(IMpeg4BoxProcessorFactory& aProcessorFactory, IMpeg4MetadataNotifiable& aMetadataNotifiable)
+    : Mpeg4BoxSwitcher(aProcessorFactory, Brn("moov"))
+    , iMetadataNotifiable(aMetadataNotifiable)
 {
-    ASSERT(iReader != nullptr);
-    ASSERT(iOffset <= iSize);
-    ASSERT(iOffset+aBytes <= iSize);
-    Brn buf = iReader->Read(aBytes);
-    iOffset += buf.Bytes();
-    return buf;
+    Reset();
 }
 
-void Mpeg4Box::ReadFlush()
+Msg* Mpeg4BoxMoov::Process()
 {
-    ASSERTS();
+    Msg* msg = Mpeg4BoxSwitcher::Process();
+    if (msg == nullptr) {
+        iMetadataRetrieved = true;
+        iMetadataNotifiable.MetadataRetrieved();
+    }
+    return msg;
 }
 
-void Mpeg4Box::ReadInterrupt()
+void Mpeg4BoxMoov::Reset()
 {
-    ASSERTS();
+    Mpeg4BoxSwitcher::Reset();
+    iMetadataRetrieved = false;
+}
+
+TBool Mpeg4BoxMoov::Recognise(const Brx& aBoxId) const
+{
+    // Only recognise if metadata has not already been retrieved.
+    // i.e., ignore metadata if it was already read out-of-band.
+    if (Mpeg4BoxSwitcher::Recognise(aBoxId) && !iMetadataRetrieved) {
+        return true;
+    }
+    return false;
 }
 
 
-// Mpeg4BoxStack
 
-Mpeg4BoxStack::Mpeg4BoxStack(TUint aNestCount)
-    : iReader(nullptr)
-    , iIndex(0)
+// Mpeg4BoxStts
+
+Mpeg4BoxStts::Mpeg4BoxStts(SeekTable& aSeekTable) :
+        iSeekTable(aSeekTable), iCache(nullptr), iBytes(0), iOffset(0), iVersion(
+                kInvalid), iEntries(kInvalid), iLastSampleCount(kInvalid), iLastSampleDelta(
+                kInvalid)
 {
-    iBoxes.reserve(aNestCount);
-    for (TUint i=0; i<aNestCount; i++) {
-        iBoxes.push_back(new Mpeg4Box());
+}
+
+Msg* Mpeg4BoxStts::Process()
+{
+    // Table of audio samples per sample - used to convert audio samples to codec samples.
+
+    while (!Complete()) {
+        iCache->Inspect(iBuf, iBuf.MaxBytes());
+        Msg* msg = iCache->Pull();
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        iOffset += iBuf.Bytes();
+
+        // FIXME - use an enum state instead?
+
+        if (iVersion == kInvalid) {
+            iVersion = Converter::BeUint32At(iBuf, 0);
+            if (iVersion != kVersionExpected) {
+
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+        }
+        else if (iEntries == kInvalid) {
+            iEntries = Converter::BeUint32At(iBuf, 0);
+            iSeekTable.InitialiseAudioSamplesPerSample(iEntries);
+        }
+        else {
+            if (iLastSampleCount == kInvalid) {
+                iLastSampleCount = Converter::BeUint32At(iBuf, 0);
+            }
+            else if (iLastSampleDelta == kInvalid) {
+                iLastSampleDelta = Converter::BeUint32At(iBuf, 0);
+                iSeekTable.SetAudioSamplesPerSample(iLastSampleCount,
+                        iLastSampleDelta);
+                iLastSampleCount = kInvalid;
+                iLastSampleDelta = kInvalid;
+            }
+            else {
+
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxStts::Complete() const
+{
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxStts::Reset()
+{
+    //iSeekTable.Deinitialise();
+    iCache = nullptr;
+    iBytes = 0;
+    iOffset = 0;
+    iVersion = kInvalid;
+    iEntries = kInvalid;
+    iLastSampleCount = kInvalid;
+    iLastSampleDelta = kInvalid;
+}
+
+TBool Mpeg4BoxStts::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("stts");
+}
+
+void Mpeg4BoxStts::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxStsc
+
+Mpeg4BoxStsc::Mpeg4BoxStsc(SeekTable& aSeekTable) :
+        iSeekTable(aSeekTable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxStsc::Process()
+{
+    // Table of samples per chunk - used to seek to specific sample.
+
+    while (!Complete()) {
+        iCache->Inspect(iBuf, iBuf.MaxBytes());
+        Msg* msg = iCache->Pull();
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        iOffset += iBuf.Bytes();
+
+        if (iState == eVersion) {
+            const TUint version = Converter::BeUint32At(iBuf, 0);
+            if (version != kVersion) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+            iState = eEntries;
+        }
+        else if (iState == eEntries) {
+            const TUint entries = Converter::BeUint32At(iBuf, 0);
+            iSeekTable.InitialiseSamplesPerChunk(entries);
+            iState = eFirstChunk;
+        }
+        else if (iState == eFirstChunk) {
+            iFirstChunk = Converter::BeUint32At(iBuf, 0);
+            iState = eSamplesPerChunk;
+        }
+        else if (iState == eSamplesPerChunk) {
+            iSamplesPerChunk = Converter::BeUint32At(iBuf, 0);
+            iState = eSampleDescriptionIndex;
+        }
+        else if (iState == eSampleDescriptionIndex) {
+            iSampleDescriptionIndex = Converter::BeUint32At(iBuf, 0);
+            iSeekTable.SetSamplesPerChunk(iFirstChunk, iSamplesPerChunk,
+                    iSampleDescriptionIndex);
+            iState = eFirstChunk;
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxStsc::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxStsc::Reset()
+{
+    iCache = nullptr;
+    iState = eVersion;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+    iFirstChunk = 0;
+    iSamplesPerChunk = 0;
+    iSampleDescriptionIndex = 0;
+}
+
+TBool Mpeg4BoxStsc::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("stsc");
+}
+
+void Mpeg4BoxStsc::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxStco
+
+Mpeg4BoxStco::Mpeg4BoxStco(SeekTable& aSeekTable) :
+        iSeekTable(aSeekTable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxStco::Process()
+{
+    // Table of file offsets for each chunk (32-bit offsets).
+
+    while (!Complete()) {
+        iCache->Inspect(iBuf, iBuf.MaxBytes());
+        Msg* msg = iCache->Pull();
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        iOffset += iBuf.Bytes();
+
+        if (iState == eVersion) {
+            const TUint version = Converter::BeUint32At(iBuf, 0);
+            if (version != kVersion) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+            iState = eEntries;
+        }
+        else if (iState == eEntries) {
+            const TUint entries = Converter::BeUint32At(iBuf, 0);
+            iSeekTable.InitialiseOffsets(entries);
+            iState = eChunkOffset;
+        }
+        else if (iState == eChunkOffset) {
+            const TUint offset = Converter::BeUint32At(iBuf, 0);
+            iSeekTable.SetOffset(offset);
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxStco::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxStco::Reset()
+{
+    iCache = nullptr;
+    iState = eVersion;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+}
+
+TBool Mpeg4BoxStco::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("stco");
+}
+
+void Mpeg4BoxStco::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxCo64
+
+Mpeg4BoxCo64::Mpeg4BoxCo64(SeekTable& aSeekTable) :
+        iSeekTable(aSeekTable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxCo64::Process()
+{
+    // Table of file offsets for each chunk (64-bit offsets).
+
+    while (!Complete()) {
+        if (iState == eChunkOffset) {
+            iCache->Inspect(iBuf64, iBuf64.MaxBytes());
+        }
+        else {
+            iCache->Inspect(iBuf32, iBuf32.MaxBytes());
+        }
+        Msg* msg = iCache->Pull();
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        if (iState == eChunkOffset) {
+            iOffset += iBuf64.Bytes();
+        }
+        else {
+            iOffset += iBuf32.Bytes();
+        }
+
+        if (iState == eVersion) {
+            const TUint version = Converter::BeUint32At(iBuf32, 0);
+            if (version != kVersion) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+            iState = eEntries;
+        }
+        else if (iState == eEntries) {
+            const TUint entries = Converter::BeUint32At(iBuf32, 0);
+            iSeekTable.InitialiseOffsets(entries);
+            iState = eChunkOffset;
+        }
+        else if (iState == eChunkOffset) {
+            const TUint64 offset = Converter::BeUint64At(iBuf64, 0);
+            iSeekTable.SetOffset(offset);
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxCo64::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxCo64::Reset()
+{
+    iCache = nullptr;
+    iState = eVersion;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf32.SetBytes(0);
+    iBuf64.SetBytes(0);
+}
+
+TBool Mpeg4BoxCo64::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("co64");
+}
+
+void Mpeg4BoxCo64::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxStsz
+
+Mpeg4BoxStsz::Mpeg4BoxStsz(SampleSizeTable& aSampleSizeTable) :
+        iSampleSizeTable(aSampleSizeTable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxStsz::Process()
+{
+    while (!Complete()) {
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
+        }
+
+        if (iState == eNone) {
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf.Bytes();
+            const TUint version = Converter::BeUint32At(iBuf, 0);
+            if (version != kVersion) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eSampleSize;
+        }
+        else if (iState == eSampleSize) {
+            iOffset += iBuf.Bytes();
+            const TUint sampleSize = Converter::BeUint32At(iBuf, 0);
+            if (sampleSize != 0) {
+                // Don't support constant sample size.
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid); // FIXME - not very accurate. File is valid, it just isn't supported in this code.
+            }
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eEntryCount;
+        }
+        else if (iState == eEntryCount) {
+            iOffset += iBuf.Bytes();
+            const TUint entries = Converter::BeUint32At(iBuf, 0);
+            iSampleSizeTable.Init(entries);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eEntry;
+        }
+        else if (iState == eEntry) {
+            iOffset += iBuf.Bytes();
+            const TUint entrySize = Converter::BeUint32At(iBuf, 0);
+            iSampleSizeTable.AddSampleSize(entrySize);
+
+            ASSERT(iOffset <= iBytes);
+            if (iOffset == iBytes) {
+                iState = eComplete;
+            }
+            else {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+            }
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxStsz::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxStsz::Reset()
+{
+    iCache = nullptr;
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+}
+
+TBool Mpeg4BoxStsz::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("stsz");
+}
+
+void Mpeg4BoxStsz::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxMdhd
+
+Mpeg4BoxMdhd::Mpeg4BoxMdhd(IMpeg4DurationSettable& aDurationSettable) :
+        iDurationSettable(aDurationSettable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxMdhd::Process()
+{
+    while (!Complete()) {
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
+        }
+
+        if (iState == eNone) {
+            iCache->Inspect(iBuf32, iBuf32.MaxBytes());  // Set to read version.
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf32.Bytes();
+            iVersion = Converter::BeUint32At(iBuf32, 0);
+            if (iVersion != kVersion32 && iVersion != kVersion64) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+
+            TUint discard = 0;
+            if (iVersion == kVersion32) {
+                discard = 8;     // Discard creation time and modification time.
+            }
+            else {
+                discard = 16;    // Discard creation time and modification time.
+            }
+            iCache->Discard(discard);
+            iOffset += discard;
+            iCache->Inspect(iBuf32, iBuf32.MaxBytes()); // Set to read timescale.
+            iState = eTimescale;
+        }
+        else if (iState == eTimescale) {
+            iOffset += iBuf32.Bytes();
+            const TUint timescale = Converter::BeUint32At(iBuf32, 0);
+            iDurationSettable.SetTimescale(timescale);
+            if (iVersion == kVersion32) {
+                iCache->Inspect(iBuf32, iBuf32.MaxBytes());
+            }
+            else {
+                iCache->Inspect(iBuf64, iBuf64.MaxBytes());
+            }
+            iState = eDuration;
+        }
+        else if (iState == eDuration) {
+            TUint64 duration = 0;
+            if (iVersion == kVersion32) {
+                iOffset += iBuf32.Bytes();
+                duration = Converter::BeUint32At(iBuf32, 0);
+            }
+            else {
+                iOffset += iBuf64.Bytes();
+                duration = Converter::BeUint64At(iBuf64, 0);
+            }
+            iDurationSettable.SetDuration(duration);
+
+            if (iOffset < iBytes) {
+                const TUint discard = iBytes - iOffset;
+                iCache->Discard(discard);
+                iOffset += discard;
+
+            }
+            iState = eComplete;
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxMdhd::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxMdhd::Reset()
+{
+    iCache = nullptr;
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf32.SetBytes(0);
+    iBuf64.SetBytes(0);
+    iVersion = 0;
+}
+
+TBool Mpeg4BoxMdhd::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("mdhd");
+}
+
+void Mpeg4BoxMdhd::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxCodecBase
+
+Mpeg4BoxCodecBase::Mpeg4BoxCodecBase(const Brx& aCodecId,
+        IStreamInfoSettable& aStreamInfoSettable) :
+        iId(aCodecId), iStreamInfoSettable(aStreamInfoSettable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxCodecBase::Process()
+{
+    while (!Complete()) {
+        Msg* msg = nullptr;
+
+        // All pulling calls below returns nullptr when there is something of interest for this class.
+        if (iState == eHeader) {
+            msg = iHeaderReader.ReadHeader();
+        }
+        else if (iState == eBox) {
+            msg = iProcessor->Process();
+        }
+        else if (iState != eNone) {
+            msg = iCache->Pull();
+        }
+
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        if (iState == eNone) {
+            // Skip 6 byte reserved block.
+            // Skip 2 byte data ref index.
+            // Skip 4 byte*2 reserved block.
+            static const TUint discard = 16;
+            iCache->Discard(discard);
+            iOffset += discard;
+            iCache->Inspect(iBuf, iBuf.MaxBytes());  // Set to read channels.
+            iState = eChannels;
+        }
+        else if (iState == eChannels) {
+            iOffset += iBuf.Bytes();
+            const TUint channels = Converter::BeUint16At(iBuf, 0);
+            iStreamInfoSettable.SetChannels(channels);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());  // Set to read bit depth.
+            iState = eBitDepth;
+        }
+        else if (iState == eBitDepth) {
+            iOffset += iBuf.Bytes();
+            const TUint bitDepth = Converter::BeUint16At(iBuf, 0);
+            iStreamInfoSettable.SetBitDepth(bitDepth);
+
+            // Skip 2 byte pre-defined block.
+            // Skip 2 byte reserved block.
+            static const TUint discard = 4;
+            iCache->Discard(discard);
+            iOffset += discard;
+
+            iCache->Inspect(iBuf, iBuf.MaxBytes()); // Set to read sample rate (only care about 2 MSBs).
+            iState = eSampleRate;
+        }
+        else if (iState == eSampleRate) {
+            iOffset += iBuf.Bytes();
+            const TUint sampleRate = Converter::BeUint16At(iBuf, 0);
+            iStreamInfoSettable.SetSampleRate(sampleRate);
+
+            // Skip 2 LSBs of sample rate.
+            static const TUint discard = 2;
+            iCache->Discard(discard);
+            iOffset += discard;
+
+            iHeaderReader.Reset(*iCache);
+            iState = eHeader;
+        }
+        else if (iState == eHeader) {
+            // Got header, now find a processor.
+            try {
+                iProcessor = &iProcessorFactory.GetMpeg4BoxProcessor(
+                        iHeaderReader.Id(), iHeaderReader.PayloadBytes(),
+                        *iCache);
+                iState = eBox;
+            } catch (Mpeg4BoxUnrecognised) {
+                LOG(kCodec, "Mpeg4CodecBase::Process couldn't find processor for "); LOG(kCodec, iHeaderReader.Id()); LOG(kCodec, "\n");
+
+                iCache->Discard(iHeaderReader.PayloadBytes());
+                iOffset += iHeaderReader.Bytes();
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else if (iState == eBox) {
+            // Box processing is complete.
+            iOffset += iHeaderReader.Bytes();
+
+            ASSERT(iOffset <= iBytes);
+            if (iOffset == iBytes) {
+                iState = eComplete;
+            }
+            else {
+                // Read next box.
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxCodecBase::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxCodecBase::Reset()
+{
+    iCache = nullptr;
+    iProcessor = nullptr;
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+}
+
+TBool Mpeg4BoxCodecBase::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == iId;
+}
+
+void Mpeg4BoxCodecBase::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+    iStreamInfoSettable.SetCodec(iId);
+}
+
+// Mpeg4BoxCodecMp4a
+
+Mpeg4BoxCodecMp4a::Mpeg4BoxCodecMp4a(IStreamInfoSettable& aStreamInfoSettable,
+        ICodecInfoSettable& aCodecInfoSettable) :
+        Mpeg4BoxCodecBase(Brn("mp4a"), aStreamInfoSettable)
+{
+    iProcessorFactory.Add(new Mpeg4BoxEsds(aCodecInfoSettable));
+}
+
+// Mpeg4BoxCodecAlac
+
+Mpeg4BoxCodecAlac::Mpeg4BoxCodecAlac(IStreamInfoSettable& aStreamInfoSettable,
+        ICodecInfoSettable& aCodecInfoSettable) :
+        Mpeg4BoxCodecBase(Brn("alac"), aStreamInfoSettable)
+{
+    iProcessorFactory.Add(new Mpeg4BoxAlac(aCodecInfoSettable));
+}
+
+// Mpeg4BoxEsds
+
+Mpeg4BoxEsds::Mpeg4BoxEsds(ICodecInfoSettable& aCodecInfoSettable) :
+        iCodecInfoSettable(aCodecInfoSettable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxEsds::Process()
+{
+    while (!Complete()) {
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                msg = msg->Process(iAudioEncodedRecogniser);
+                if (msg != nullptr) {
+                    return msg;
+                }
+            }
+        }
+
+        if (iState == eNone) {
+            iCache->Inspect(iBuf, iBuf.MaxBytes());  // Set to read version.
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf.Bytes();
+            const TUint version = iBuf[0];
+            if (version != kVersion) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+
+            // Skip 24-bit field reserved for flags.
+            static const TUint discard = 3;
+            iCache->Discard(discard);
+            iOffset += discard;
+
+            const TUint remaining = iBytes-iOffset;
+            iCache->Accumulate(remaining);  // Set to read codec info.
+            iState = eCodecInfo;
+        }
+        else if (iState == eCodecInfo) {
+            MsgAudioEncoded* msg = iAudioEncodedRecogniser.AudioEncoded();
+            ASSERT(msg != nullptr);
+            iOffset += msg->Bytes();
+            iCodecInfoSettable.SetCodecInfo(msg);
+            iState = eComplete;
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxEsds::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxEsds::Reset()
+{
+    iCache = nullptr;
+    iAudioEncodedRecogniser.Reset();
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+}
+
+TBool Mpeg4BoxEsds::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("esds");
+}
+
+void Mpeg4BoxEsds::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxAlac
+
+Mpeg4BoxAlac::Mpeg4BoxAlac(ICodecInfoSettable& aCodecInfoSettable) :
+        iCodecInfoSettable(aCodecInfoSettable)
+{
+    Reset();
+}
+
+Msg* Mpeg4BoxAlac::Process()
+{
+    while (!Complete()) {
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                msg = msg->Process(iAudioEncodedRecogniser);
+                if (msg != nullptr) {
+                    return msg;
+                }
+            }
+        }
+
+        if (iState == eNone) {
+            const TUint remainder = iBytes - iOffset;
+            iCache->Accumulate(remainder);  // Set to read codec info.
+            iState = eCodecInfo;
+        }
+        else if (iState == eCodecInfo) {
+            MsgAudioEncoded* msg = iAudioEncodedRecogniser.AudioEncoded();
+            ASSERT(msg != nullptr);
+            iOffset += msg->Bytes();
+            iCodecInfoSettable.SetCodecInfo(msg);
+            iState = eComplete;
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxAlac::Complete() const
+{
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxAlac::Reset()
+{
+    iCache = nullptr;
+    iAudioEncodedRecogniser.Reset();
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+}
+
+TBool Mpeg4BoxAlac::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("alac");
+}
+
+void Mpeg4BoxAlac::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4BoxStsd
+
+Mpeg4BoxStsd::Mpeg4BoxStsd(IStreamInfoSettable& aStreamInfoSettable,
+        ICodecInfoSettable& aCodecInfoSettable) :
+        iCache(nullptr), iProcessor(nullptr), iState(eNone), iBytes(0), iOffset(
+                0)
+{
+    iProcessorFactory.Add(
+            new Mpeg4BoxCodecMp4a(aStreamInfoSettable, aCodecInfoSettable));
+    iProcessorFactory.Add(
+            new Mpeg4BoxCodecAlac(aStreamInfoSettable, aCodecInfoSettable));
+}
+
+Msg* Mpeg4BoxStsd::Process()
+{
+    while (!Complete()) {
+        Msg* msg = nullptr;
+
+        // All pulling calls below returns nullptr when there is something of interest for this class.
+        if (iState == eHeader) {
+            msg = iHeaderReader.ReadHeader();
+        }
+        else if (iState == eBox) {
+            msg = iProcessor->Process();
+        }
+        else if (iState != eNone) {
+            msg = iCache->Pull();
+        }
+
+        if (msg != nullptr) {
+            return msg;
+        }
+
+        if (iState == eNone) {
+            iCache->Inspect(iBuf, iBuf.MaxBytes());  // Set to read version.
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf.Bytes();
+            const TUint version = Converter::BeUint32At(iBuf, 0);
+            if (version != kVersion) {
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
+            }
+            iCache->Inspect(iBuf, iBuf.MaxBytes());  // Set to read entry count.
+            iState = eEntries;
+        }
+        else if (iState == eEntries) {
+            iOffset += iBuf.Bytes();
+            const TUint entries = Converter::BeUint32At(iBuf, 0);
+            LOG(kCodec, "Mpeg4BoxStsd::Process entries: %u\n", entries);
+            iHeaderReader.Reset(*iCache);
+            iState = eHeader;
+        }
+        else if (iState == eHeader) {
+            // Got header, now find a processor.
+            try {
+                iProcessor = &iProcessorFactory.GetMpeg4BoxProcessor(
+                        iHeaderReader.Id(), iHeaderReader.PayloadBytes(),
+                        *iCache);
+                iState = eBox;
+            } catch (Mpeg4BoxUnrecognised) {
+                LOG(kCodec, "Mpeg4BoxStsd::Process couldn't find processor for "); LOG(kCodec, iHeaderReader.Id()); LOG(kCodec, "\n");
+
+                iCache->Discard(iHeaderReader.PayloadBytes());
+                iOffset += iHeaderReader.Bytes();
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else if (iState == eBox) {
+            // Box processing is complete.
+            iOffset += iHeaderReader.Bytes();
+
+            ASSERT(iOffset <= iBytes);
+            if (iOffset == iBytes) {
+                iState = eComplete;
+            }
+            else {
+                // Read next box.
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+
+    return nullptr;
+}
+
+TBool Mpeg4BoxStsd::Complete() const
+{
+    return iOffset == iBytes;
+}
+
+void Mpeg4BoxStsd::Reset()
+{
+    iProcessor = nullptr;
+    iState = eNone;
+    iBytes = 0;
+    iOffset = 0;
+    iBuf.SetBytes(0);
+}
+
+TBool Mpeg4BoxStsd::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("stsd");
+}
+
+void Mpeg4BoxStsd::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+}
+
+// Mpeg4Duration
+
+Mpeg4Duration::Mpeg4Duration() :
+        iTimescale(0), iDuration(0)
+{
+}
+
+void Mpeg4Duration::Reset()
+{
+    iTimescale = 0;
+    iDuration = 0;
+}
+
+TUint Mpeg4Duration::Timescale() const
+{
+    return iTimescale;
+}
+
+TUint64 Mpeg4Duration::Duration() const
+{
+    return iDuration;
+}
+
+void Mpeg4Duration::SetTimescale(TUint aTimescale)
+{
+    iTimescale = aTimescale;
+}
+
+void Mpeg4Duration::SetDuration(TUint64 aDuration)
+{
+    iDuration = aDuration;
+}
+
+// Mpeg4StreamInfo
+
+Mpeg4StreamInfo::Mpeg4StreamInfo() :
+        iChannels(0), iBitDepth(0), iSampleRate(0)
+{
+}
+
+void Mpeg4StreamInfo::Reset()
+{
+    iChannels = 0;
+    iBitDepth = 0;
+    iSampleRate = 0;
+    iCodec.SetBytes(0);
+}
+
+TUint Mpeg4StreamInfo::Channels() const
+{
+    return iChannels;
+}
+
+TUint Mpeg4StreamInfo::BitDepth() const
+{
+    return iBitDepth;
+}
+
+TUint Mpeg4StreamInfo::SampleRate() const
+{
+    return iSampleRate;
+}
+
+const Brx& Mpeg4StreamInfo::Codec() const
+{
+    return iCodec;
+}
+
+void Mpeg4StreamInfo::SetChannels(TUint aChannels)
+{
+    iChannels = aChannels;
+}
+
+void Mpeg4StreamInfo::SetBitDepth(TUint aBitDepth)
+{
+    iBitDepth = aBitDepth;
+}
+
+void Mpeg4StreamInfo::SetSampleRate(TUint aSampleRate)
+{
+    iSampleRate = aSampleRate;
+}
+
+void Mpeg4StreamInfo::SetCodec(const Brx& aCodec)
+{
+    iCodec.Replace(aCodec);
+}
+
+// Mpeg4CodecInfo
+
+Mpeg4CodecInfo::Mpeg4CodecInfo() :
+        iAudioEncoded(nullptr)
+{
+}
+
+Mpeg4CodecInfo::~Mpeg4CodecInfo()
+{
+    Reset();
+}
+
+void Mpeg4CodecInfo::Reset()
+{
+    if (iAudioEncoded != nullptr) {
+        iAudioEncoded->RemoveRef();
+        iAudioEncoded = nullptr;
     }
 }
 
-Mpeg4BoxStack::~Mpeg4BoxStack()
+MsgAudioEncoded* Mpeg4CodecInfo::CodecInfo()
 {
-    for (TUint i=0; i<iBoxes.size(); i++) {
-        delete iBoxes[i];
+    MsgAudioEncoded* msg = iAudioEncoded;
+    iAudioEncoded = nullptr;
+    return msg;
+}
+
+void Mpeg4CodecInfo::SetCodecInfo(MsgAudioEncoded* aMsg)
+{
+    ASSERT(iAudioEncoded == nullptr);
+    iAudioEncoded = aMsg;
+}
+
+// Mpeg4BoxMdat
+
+Mpeg4BoxMdat::Mpeg4BoxMdat(Mpeg4BoxSwitcherRoot& aBoxSwitcher, IMpeg4MetadataChecker& aMetadataChecker, IMpeg4MetadataProvider& aMetadataProvider, IMpeg4ChunkSeekObservable& aChunkSeeker, IBoxOffsetProvider& aOffsetProvider, MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aUrlBlockWriter, SeekTable& aSeekTable, SampleSizeTable& aSampleSizeTable)
+    : iBoxSwitcher(aBoxSwitcher)
+    , iMetadataChecker(aMetadataChecker)
+    , iMetadataProvider(aMetadataProvider)
+    , iOffsetProvider(aOffsetProvider)
+    , iMsgFactory(aMsgFactory)
+    , iUrlBlockWriter(aUrlBlockWriter)
+    , iSeekTable(aSeekTable)
+    , iSampleSizeTable(aSampleSizeTable)
+    , iLock("MP4D")
+{
+    aChunkSeeker.RegisterChunkSeekObserver(*this);
+    Reset();
+}
+
+Msg* Mpeg4BoxMdat::Process()
+{
+    while (!Complete()) {
+        if (iState == eChunk) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                msg = msg->Process(iAudioEncodedRecogniser);
+                if (msg != nullptr) {
+                    return msg;
+                }
+            }
+        }
+
+        if (iState == eNone) {
+            if (!iMetadataChecker.MetadataAvailable()) {
+                iState = eRetrieveMetadata;
+            }
+            else {
+                iState = eTransmitMetadata;
+            }
+        }
+        else if (iState == eRetrieveMetadata) {
+            Mpeg4OutOfBandReader reader(iMsgFactory, iUrlBlockWriter, iFileReadOffset+iBytes);
+            iBoxSwitcher.Reset();
+            iBoxSwitcher.Set(reader);
+            Msg* msg = iBoxSwitcher.Process();
+            ASSERT(msg == nullptr); // Shouldn't get any msgs from out-of-band reader.
+
+            if (!iMetadataChecker.MetadataAvailable()) {
+                // Still failed to retrieve metadata.
+                return nullptr;
+            }
+
+            iState = eTransmitMetadata;
+        }
+        else if (iState == eTransmitMetadata) {
+            MsgAudioEncoded* msg = iMetadataProvider.GetMetadata();
+
+            iChunk = 0;
+            iChunkBytesRemaining = ChunkBytes();
+            iState = eChunkReadSetup;
+            return msg;
+        }
+        else if (iState == eChunkReadSetup) {
+
+            {
+                AutoMutex a(iLock);
+                if (iSeek) {
+                    LOG(kCodec, "Mpeg4BoxMdat::Process seek occured iSeekChunk: %u\n", iSeekChunk);
+                    // Chunk has changed due to seek.
+                    iChunk = iSeekChunk;
+                    iChunkBytesRemaining = ChunkBytes();
+                    iFileReadOffset = iBoxStartOffset+Mpeg4BoxHeaderReader::kHeaderBytes;
+                    iOffset = iFileReadOffset - Mpeg4BoxHeaderReader::kHeaderBytes - iBoxStartOffset;
+
+                    const TUint chunkOffset = BytesUntilChunk();
+                    iFileReadOffset += chunkOffset;
+                    iOffset = chunkOffset;
+
+                    iSeek = false;
+                    iSeekChunk = 0;
+                }
+            }
+
+            const TUint discard = BytesUntilChunk();
+            iCache->Discard(discard);
+            iOffset += discard;
+            iFileReadOffset += discard;
+
+            const TUint readBytes = BytesToRead();
+            iCache->Accumulate(readBytes);
+            iState = eChunk;
+        }
+        else if (iState == eChunk) {
+            MsgAudioEncoded* msg = iAudioEncodedRecogniser.AudioEncoded();
+            ASSERT(msg != nullptr);
+            ASSERT(msg->Bytes() <= iChunkBytesRemaining);
+
+            TBool seek = false;
+            {
+                AutoMutex a(iLock);
+                seek = iSeek;
+            }
+
+            if (seek) {
+                msg->RemoveRef();   // Discard msg; now invalid.
+                msg = nullptr;
+                iState = eChunkReadSetup;
+            }
+            else {
+                // Chunk still valid.
+                iOffset += msg->Bytes();
+                iFileReadOffset += msg->Bytes();
+                iChunkBytesRemaining -= msg->Bytes();
+
+                if (iChunkBytesRemaining == 0) {
+                    ASSERT(iOffset <= iBytes);
+                    if (iOffset == iBytes) {
+                        iState = eComplete;
+                    }
+                    else {
+                        iChunk++;
+                        iChunkBytesRemaining = ChunkBytes();
+                        iState = eChunkReadSetup;
+                    }
+                }
+                else {
+                    // Bytes remaining from this chunk; set to read next block but remain in this state.
+                    const TUint readBytes = BytesToRead();
+                    iCache->Accumulate(readBytes);
+                    iState = eChunk;
+                }
+                return msg;
+            }
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
     }
+
+    return nullptr;
 }
 
-void Mpeg4BoxStack::Set(IReader& aReader)
+TBool Mpeg4BoxMdat::Complete() const
 {
-    //ASSERT(iReader == nullptr);
-    iReader = &aReader;
+    ASSERT(iOffset <= iBytes);
+    return iOffset == iBytes;
 }
 
-void Mpeg4BoxStack::Push()
+void Mpeg4BoxMdat::Reset()
 {
-    ASSERT(iReader != nullptr);
-    ASSERT(iIndex < iBoxes.size());
+    iCache = nullptr;
+    iAudioEncodedRecogniser.Reset();
+    iState = eNone;
+    iChunk = 0;
+    iSeekChunk = 0;
+    iSeek = false;
+    iChunkBytesRemaining = 0;
+    iBytes = 0;
+    iOffset = 0;
+    iBoxStartOffset = 0;
+    iFileReadOffset = 0;
+}
 
-    IReader* reader = iReader;
-    if (iIndex > 0) {
-        reader = iBoxes[iIndex-1];
+TBool Mpeg4BoxMdat::Recognise(const Brx& aBoxId) const
+{
+    return aBoxId == Brn("mdat");
+}
+
+void Mpeg4BoxMdat::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
+{
+    ASSERT(iCache == nullptr);
+    iCache = &aCache;
+    iBytes = aBoxBytes;
+    iBoxStartOffset = iOffsetProvider.BoxOffset();
+    iFileReadOffset = iBoxStartOffset + Mpeg4BoxHeaderReader::kHeaderBytes;
+}
+
+void Mpeg4BoxMdat::ChunkSeek(TUint aChunk)
+{
+    AutoMutex a(iLock);
+    iSeek = true;
+    iSeekChunk = aChunk;
+    iState = eChunkReadSetup;
+}
+
+TUint Mpeg4BoxMdat::BytesUntilChunk() const
+{
+    const TUint64 chunkOffset = iSeekTable.GetOffset(iChunk);
+    if (chunkOffset < iFileReadOffset) {
+        THROW(MediaMpeg4FileInvalid);
     }
-
-    iIndex++;
-    iBoxes[iIndex-1]->Set(*reader);
+    const TUint64 toDiscard = chunkOffset - iFileReadOffset;
+    ASSERT(toDiscard <= std::numeric_limits < TUint > ::max());
+    const TUint bytes = static_cast<TUint>(toDiscard);
+    return bytes;
 }
 
-void Mpeg4BoxStack::Pop()
+TUint Mpeg4BoxMdat::ChunkBytes() const
 {
-    ASSERT(iIndex > 0);
-    iIndex--;
-}
-
-void Mpeg4BoxStack::Reset()
-{
-    for (TUint i=0; i<iBoxes.size(); i++) {
-        iBoxes[i]->Clear();
+    ASSERT(iChunk < iSeekTable.ChunkCount());
+    const TUint chunkSamples = iSeekTable.SamplesPerChunk(iChunk);
+    const TUint startSample = iSeekTable.StartSample(iChunk); // NOTE: this assumes first sample == 0 (which is valid with how our tables are setup), but in MPEG4 spec, first sample == 1.
+    TUint chunkBytes = 0;
+    // Samples start from 1. However, tables here are indexed from 0.
+    for (TUint i = startSample; i < startSample + chunkSamples; i++) {
+        const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
+        ASSERT(
+                chunkBytes + sampleBytes <= std::numeric_limits < TUint
+                        > ::max());    // Ensure no overflow.
+        chunkBytes += sampleBytes;
     }
-    iIndex = 0;
+    return chunkBytes;
 }
 
-void Mpeg4BoxStack::Clear()
+TUint Mpeg4BoxMdat::BytesToRead() const
 {
-    ASSERT(iIndex > 0);
-    iBoxes[iIndex-1]->Clear();
+    // Read data in sensible-sized blocks.
+    // A single file could be composed of a single chunk.
+    // Would exhaust allocators if try to buffer entire large file/chunk.
+    TUint bytes = iChunkBytesRemaining;
+    if (iChunkBytesRemaining > EncodedAudio::kMaxBytes) {
+        bytes = EncodedAudio::kMaxBytes;
+    }
+    return bytes;
 }
-
-void Mpeg4BoxStack::ReadHeader()
-{
-    ASSERT(iIndex > 0);
-    iBoxes[iIndex-1]->ReadHeader();
-}
-
-TUint Mpeg4BoxStack::Size() const
-{
-    ASSERT(iIndex > 0);
-    return iBoxes[iIndex-1]->Size();
-}
-
-const Brx& Mpeg4BoxStack::Id() const
-{
-    ASSERT(iIndex > 0);
-    return iBoxes[iIndex-1]->Id();
-}
-
-void Mpeg4BoxStack::SkipRemaining()
-{
-    ASSERT(iIndex > 0);
-    return iBoxes[iIndex-1]->SkipRemaining();
-}
-
-void Mpeg4BoxStack::Skip(TUint aBytes)
-{
-    ASSERT(iIndex > 0);
-    iBoxes[iIndex-1]->Skip(aBytes);
-}
-
-Brn Mpeg4BoxStack::Read(TUint aBytes)
-{
-    ASSERT(iIndex > 0);
-    return iBoxes[iIndex-1]->Read(aBytes);
-}
-
-void Mpeg4BoxStack::ReadFlush()
-{
-    ASSERT(iIndex > 0);
-    iBoxes[iIndex-1]->ReadFlush();
-}
-
-void Mpeg4BoxStack::ReadInterrupt()
-{
-    ASSERT(iIndex > 0);
-    iBoxes[iIndex-1]->ReadInterrupt();
-}
-
 
 // SampleSizeTable
 
@@ -451,8 +1863,8 @@ void SampleSizeTable::AddSampleSize(TUint aSize)
 
 TUint32 SampleSizeTable::SampleSize(TUint aIndex) const
 {
-    if(aIndex > iTable.size()-1) {
-        THROW(MediaMpeg4FileInvalid);   // FIXME - sign of corrupt file or programmer error (i.e., should ASSERT)?
+    if (aIndex > iTable.size() - 1) {
+        THROW(MediaMpeg4FileInvalid); // FIXME - sign of corrupt file or programmer error (i.e., should ASSERT)?
     }
     return iTable[aIndex];
 }
@@ -461,7 +1873,6 @@ TUint32 SampleSizeTable::Count() const
 {
     return iTable.size();
 }
-
 
 // SeekTable
 // Table of samples->chunk->offset required for seeking
@@ -492,10 +1903,8 @@ void SeekTable::InitialiseOffsets(TUint aEntries)
 
 TBool SeekTable::Initialised() const
 {
-    const TBool initialised =
-        iSamplesPerChunk.size() > 0
-        && iAudioSamplesPerSample.size() > 0
-        && iOffsets.size() > 0;
+    const TBool initialised = iSamplesPerChunk.size() > 0
+            && iAudioSamplesPerSample.size() > 0 && iOffsets.size() > 0;
     return initialised;
 }
 
@@ -506,13 +1915,16 @@ void SeekTable::Deinitialise()
     iOffsets.clear();
 }
 
-void SeekTable::SetSamplesPerChunk(TUint aFirstChunk, TUint aSamplesPerChunk, TUint aSampleDescriptionIndex)
+void SeekTable::SetSamplesPerChunk(TUint aFirstChunk, TUint aSamplesPerChunk,
+        TUint aSampleDescriptionIndex)
 {
-    TSamplesPerChunkEntry entry = { aFirstChunk, aSamplesPerChunk, aSampleDescriptionIndex };
+    TSamplesPerChunkEntry entry = { aFirstChunk, aSamplesPerChunk,
+            aSampleDescriptionIndex };
     iSamplesPerChunk.push_back(entry);
 }
 
-void SeekTable::SetAudioSamplesPerSample(TUint32 aSampleCount, TUint32 aAudioSamples)
+void SeekTable::SetAudioSamplesPerSample(TUint32 aSampleCount,
+        TUint32 aAudioSamples)
 {
     TAudioSamplesPerSampleEntry entry = { aSampleCount, aAudioSamples };
     iAudioSamplesPerSample.push_back(entry);
@@ -526,6 +1938,11 @@ void SeekTable::SetOffset(TUint64 aOffset)
 TUint SeekTable::ChunkCount() const
 {
     return iOffsets.size();
+}
+
+TUint SeekTable::AudioSamplesPerSample() const
+{
+    return iAudioSamplesPerSample.size();
 }
 
 TUint SeekTable::SamplesPerChunk(TUint aChunkIndex) const
@@ -549,24 +1966,24 @@ TUint SeekTable::StartSample(TUint aChunkIndex) const
 {
     // NOTE: chunk indexes passed in start from 0, but chunks referenced within seek table start from 1.
     TUint startSample = 0;
-    const TUint desiredChunk = aChunkIndex+1;
+    const TUint desiredChunk = aChunkIndex + 1;
     TUint prevFirstChunk = 1;
     TUint prevSamples = 0;
-    for (TUint i=0; i<iSamplesPerChunk.size(); i++) {
+    for (TUint i = 0; i < iSamplesPerChunk.size(); i++) {
         const TUint nextFirstChunk = iSamplesPerChunk[i].iFirstChunk;
         const TUint nextSamples = iSamplesPerChunk[i].iSamples;
 
         // Desired chunk was within last chunk range.
         if (nextFirstChunk >= desiredChunk) {
             const TUint chunkDiff = desiredChunk - prevFirstChunk;
-            startSample += chunkDiff*prevSamples;
+            startSample += chunkDiff * prevSamples;
             prevFirstChunk = nextFirstChunk;
             prevSamples = nextSamples;
             break;
         }
 
         const TUint chunkDiff = nextFirstChunk - prevFirstChunk;
-        startSample += chunkDiff*prevSamples;
+        startSample += chunkDiff * prevSamples;
         prevFirstChunk = nextFirstChunk;
         prevSamples = nextSamples;
     }
@@ -574,7 +1991,7 @@ TUint SeekTable::StartSample(TUint aChunkIndex) const
     // See if exhausted samples per chunk table without encountering desired chunk.
     if (prevFirstChunk < desiredChunk) {
         const TUint chunkDiff = desiredChunk - prevFirstChunk;
-        startSample += chunkDiff*prevSamples;
+        startSample += chunkDiff * prevSamples;
     }
 
     return startSample;
@@ -582,7 +1999,8 @@ TUint SeekTable::StartSample(TUint aChunkIndex) const
 
 TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 {
-    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size() == 0) {
+    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0
+            || iOffsets.size() == 0) {
         THROW(CodecStreamCorrupt); // seek table empty - cannot do seek // FIXME - throw a MpegMediaFileInvalid exception, which is actually expected/caught?
     }
 
@@ -594,7 +2012,8 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     const TUint chunk = Chunk(codecSampleFromAudioSample);
     // FIXME - could go one step further and use chunk-to-sample table to find offset of desired sample within desired chunk.
     const TUint codecSampleFromChunk = CodecSampleFromChunk(chunk);
-    const TUint audioSampleFromCodecSample = AudioSampleFromCodecSample(codecSampleFromChunk);
+    const TUint audioSampleFromCodecSample = AudioSampleFromCodecSample(
+            codecSampleFromChunk);
 
     aAudioSample = audioSampleFromCodecSample;
     aSample = codecSampleFromChunk;
@@ -603,7 +2022,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     if (chunk >= iOffsets.size()) { // error - required chunk doesn't exist
         THROW(MediaMpeg4OutOfRange);
     }
-    return iOffsets[chunk-1]; // entry found - return offset to required chunk
+    return iOffsets[chunk - 1]; // entry found - return offset to required chunk
 }
 
 TUint64 SeekTable::GetOffset(TUint aChunkIndex) const
@@ -618,7 +2037,7 @@ void SeekTable::Write(IWriter& aWriter) const
 
     const TUint samplesPerChunkCount = iSamplesPerChunk.size();
     writerBin.WriteUint32Be(samplesPerChunkCount);
-    for (TUint i=0; i<samplesPerChunkCount; i++) {
+    for (TUint i = 0; i < samplesPerChunkCount; i++) {
         writerBin.WriteUint32Be(iSamplesPerChunk[i].iFirstChunk);
         writerBin.WriteUint32Be(iSamplesPerChunk[i].iSamples);
         writerBin.WriteUint32Be(iSamplesPerChunk[i].iSampleDescriptionIndex);
@@ -626,14 +2045,14 @@ void SeekTable::Write(IWriter& aWriter) const
 
     const TUint audioSamplesPerSampleCount = iAudioSamplesPerSample.size();
     writerBin.WriteUint32Be(audioSamplesPerSampleCount);
-    for (TUint i=0; i<audioSamplesPerSampleCount; i++) {
+    for (TUint i = 0; i < audioSamplesPerSampleCount; i++) {
         writerBin.WriteUint32Be(iAudioSamplesPerSample[i].iSampleCount);
         writerBin.WriteUint32Be(iAudioSamplesPerSample[i].iAudioSamples);
     }
 
     const TUint chunkCount = iOffsets.size();
     writerBin.WriteUint32Be(chunkCount);
-    for (TUint i=0; i<chunkCount; i++) {
+    for (TUint i = 0; i < chunkCount; i++) {
         writerBin.WriteUint64Be(iOffsets[i]);
     }
 }
@@ -647,14 +2066,14 @@ TUint64 SeekTable::CodecSample(TUint64 aAudioSample) const
     for (TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
         const TUint sampleCount = iAudioSamplesPerSample[entry].iSampleCount;
         const TUint audioSamples = iAudioSamplesPerSample[entry].iAudioSamples;
-        const TUint audioSamplesInrange = sampleCount*audioSamples;
-        if (aAudioSample <= totalCodecSamples+audioSamplesInrange) {
+        const TUint audioSamplesInrange = sampleCount * audioSamples;
+        if (aAudioSample <= totalCodecSamples + audioSamplesInrange) {
             // Audio samples are within this range.
 
             // Find codec sample in this range that contains given audio sample.
             ASSERT(aAudioSample >= totalAudioSamples);
-            const TUint64 audioSampleOffset = aAudioSample-totalAudioSamples;
-            const TUint64 codecSampleOffset = audioSampleOffset/audioSamples;
+            const TUint64 audioSampleOffset = aAudioSample - totalAudioSamples;
+            const TUint64 codecSampleOffset = audioSampleOffset / audioSamples;
             ASSERT(codecSampleOffset <= sampleCount);
 
             totalCodecSamples += codecSampleOffset;
@@ -684,8 +2103,8 @@ TUint SeekTable::Chunk(TUint64 aCodecSample) const
         TUint endChunk = 0;
 
         // Find last chunk in current run.
-        if (entry+1 < iSamplesPerChunk.size()) {
-            endChunk = iSamplesPerChunk[entry+1].iFirstChunk;
+        if (entry + 1 < iSamplesPerChunk.size()) {
+            endChunk = iSamplesPerChunk[entry + 1].iFirstChunk;
         }
         else {
             // No next entry, so end chunk must be last chunk in file.
@@ -693,15 +2112,15 @@ TUint SeekTable::Chunk(TUint64 aCodecSample) const
         }
 
         const TUint chunkDiff = endChunk - startChunk;
-        const TUint samplesInRange = chunkDiff*spc;
+        const TUint samplesInRange = chunkDiff * spc;
 
-        if (aCodecSample < totalSamples+samplesInRange) {
+        if (aCodecSample < totalSamples + samplesInRange) {
             // Desired sample is in this range.
 
             // Find chunk in this range that contains the desired sample.
             ASSERT(aCodecSample >= totalSamples);
-            const TUint64 sampleOffset = aCodecSample-totalSamples;
-            const TUint chunkOffset = static_cast<TUint>(sampleOffset/spc);
+            const TUint64 sampleOffset = aCodecSample - totalSamples;
+            const TUint chunkOffset = static_cast<TUint>(sampleOffset / spc);
 
             chunk += chunkOffset;
             return chunk;
@@ -730,8 +2149,8 @@ TUint SeekTable::CodecSampleFromChunk(TUint aChunk) const
         TUint endChunk = 0;
 
         // Find last chunk in current run.
-        if (entry+1 < iSamplesPerChunk.size()) {
-            endChunk = iSamplesPerChunk[entry+1].iFirstChunk;
+        if (entry + 1 < iSamplesPerChunk.size()) {
+            endChunk = iSamplesPerChunk[entry + 1].iFirstChunk;
         }
         else {
             // No next entry, so end chunk must be last chunk in file.
@@ -739,13 +2158,13 @@ TUint SeekTable::CodecSampleFromChunk(TUint aChunk) const
         }
 
         const TUint chunkDiff = endChunk - startChunk;
-        const TUint samplesInRange = chunkDiff*spc;
+        const TUint samplesInRange = chunkDiff * spc;
 
         if (aChunk <= endChunk) {
             // Desired chunk is in this range.
 
-            const TUint chunkOffset = aChunk-startChunk;
-            const TUint sampleOffset = chunkOffset*spc;
+            const TUint chunkOffset = aChunk - startChunk;
+            const TUint sampleOffset = chunkOffset * spc;
             totalSamples += sampleOffset;
             return totalSamples;
         }
@@ -770,19 +2189,19 @@ TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
     for (TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
         const TUint sampleCount = iAudioSamplesPerSample[entry].iSampleCount;
         const TUint audioSamples = iAudioSamplesPerSample[entry].iAudioSamples;
-        if (aCodecSample <= totalCodecSamples+sampleCount) {
+        if (aCodecSample <= totalCodecSamples + sampleCount) {
             // Codec sample is within this range.
 
             // Find the number of audio samples at the start of the given codec sample.
             ASSERT(totalCodecSamples <= aCodecSample);
-            const TUint codecSampleOffset = aCodecSample-totalCodecSamples;
-            const TUint audioSampleOffset = codecSampleOffset*audioSamples;
+            const TUint codecSampleOffset = aCodecSample - totalCodecSamples;
+            const TUint audioSampleOffset = codecSampleOffset * audioSamples;
 
             totalAudioSamples += audioSampleOffset;
             return audioSampleOffset;
         }
         totalCodecSamples += sampleCount;
-        totalAudioSamples += sampleCount*audioSamples;
+        totalAudioSamples += sampleCount * audioSamples;
     }
 
     if (aCodecSample > totalCodecSamples) {
@@ -797,10 +2216,9 @@ TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
 
 // SeekTableInitialiser
 
-SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable, IReader& aReader)
-    : iSeekTable(aSeekTable)
-    , iReader(aReader)
-    , iInitialised(false)
+SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable,
+        IReader& aReader) :
+        iSeekTable(aSeekTable), iReader(aReader), iInitialised(false)
 {
 }
 
@@ -810,16 +2228,17 @@ void SeekTableInitialiser::Init()
     ReaderBinary readerBin(iReader);
     const TUint samplesPerChunkCount = readerBin.ReadUintBe(4);
     iSeekTable.InitialiseSamplesPerChunk(samplesPerChunkCount);
-    for (TUint i = 0; i<samplesPerChunkCount; i++) {
+    for (TUint i = 0; i < samplesPerChunkCount; i++) {
         const TUint firstChunk = readerBin.ReadUintBe(4);
         const TUint samples = readerBin.ReadUintBe(4);
         const TUint sampleDescriptionIndex = readerBin.ReadUintBe(4);
-        iSeekTable.SetSamplesPerChunk(firstChunk, samples, sampleDescriptionIndex);
+        iSeekTable.SetSamplesPerChunk(firstChunk, samples,
+                sampleDescriptionIndex);
     }
 
     const TUint audioSamplesPerSampleCount = readerBin.ReadUintBe(4);
     iSeekTable.InitialiseAudioSamplesPerSample(audioSamplesPerSampleCount);
-    for (TUint i = 0; i<audioSamplesPerSampleCount; i++) {
+    for (TUint i = 0; i < audioSamplesPerSampleCount; i++) {
         const TUint sampleCount = readerBin.ReadUintBe(4);
         const TUint audioSamples = readerBin.ReadUintBe(4);
         iSeekTable.SetAudioSamplesPerSample(sampleCount, audioSamples);
@@ -827,7 +2246,7 @@ void SeekTableInitialiser::Init()
 
     const TUint chunkCount = readerBin.ReadUintBe(4);
     iSeekTable.InitialiseOffsets(chunkCount);
-    for (TUint i = 0; i<chunkCount; i++) {
+    for (TUint i = 0; i < chunkCount; i++) {
         const TUint64 offset = readerBin.ReadUint64Be(8);
         iSeekTable.SetOffset(offset);
     }
@@ -837,9 +2256,8 @@ void SeekTableInitialiser::Init()
 
 // MsgAudioEncodedWriter
 
-MsgAudioEncodedWriter::MsgAudioEncodedWriter(MsgFactory& aMsgFactory)
-    : iMsgFactory(aMsgFactory)
-    , iMsg(nullptr)
+MsgAudioEncodedWriter::MsgAudioEncodedWriter(MsgFactory& aMsgFactory) :
+        iMsgFactory(aMsgFactory), iMsg(nullptr)
 {
 }
 
@@ -903,7 +2321,8 @@ void MsgAudioEncodedWriter::WriteFlush()
 void MsgAudioEncodedWriter::AllocateMsg()
 {
     ASSERT(iBuf.Bytes() > 0);
-    MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(Brn(iBuf.Ptr(), iBuf.Bytes()));
+    MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(
+            Brn(iBuf.Ptr(), iBuf.Bytes()));
     if (iMsg == nullptr) {
         iMsg = msg;
     }
@@ -913,300 +2332,292 @@ void MsgAudioEncodedWriter::AllocateMsg()
     iBuf.SetBytes(0);
 }
 
+// Mpeg4OutOfBandReader
 
-// OutOfBandReaderSource
-
-OutOfBandReaderSource::OutOfBandReaderSource(IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset)
-    : iBlockWriter(aBlockWriter)
-    , iStartOffset(aStartOffset)
-    , iOffset(iStartOffset)
-    , iLastReadSuccessful(true)
+Mpeg4OutOfBandReader::Mpeg4OutOfBandReader(MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset)
+    : iMsgFactory(aMsgFactory)
+    , iBlockWriter(aBlockWriter)
+    , iOffset(aStartOffset)
+    , iDiscardBytes(0)
+    , iInspectBytes(0)
+    , iAccumulateBytes(0)
+    , iInspectBuffer(nullptr)
 {
 }
 
-void OutOfBandReaderSource::Read(Bwx& aBuffer)
+void Mpeg4OutOfBandReader::Discard(TUint aBytes)
 {
-    WriterBuffer writerBuffer(aBuffer);
-    aBuffer.SetBytes(0);
+    ASSERT(iDiscardBytes == 0);
+    iDiscardBytes = aBytes;
+}
 
-    if (!iLastReadSuccessful) {
-        THROW(ReaderError); // Reading beyond end of stream.
+void Mpeg4OutOfBandReader::Inspect(Bwx& aBuf, TUint aBytes)
+{
+    ASSERT(iInspectBuffer == nullptr);
+    ASSERT(aBuf.MaxBytes() >= aBytes);
+    aBuf.SetBytes(0);
+    iInspectBuffer = &aBuf;
+    iInspectBytes = aBytes;
+}
+
+void Mpeg4OutOfBandReader::Accumulate(TUint aBytes)
+{
+    ASSERT(iAccumulateBytes == 0);
+    // FIXME - alter MPEG4 parsing so that no metadata processor directly pulls a MsgAudioEncoded?
+    ASSERT(iAccumulateBytes <= kMaxAccumulateBytes); // Can't support accumulating more than this.
+    iAccumulateBytes = aBytes;
+    iAccumulateBuffer.SetBytes(0);
+}
+
+Msg* Mpeg4OutOfBandReader::Pull()
+{
+    // Don't support just pulling msgs.
+    ASSERT(iDiscardBytes > 0 || iInspectBytes > 0 || iAccumulateBytes > 0);
+
+    if (iDiscardBytes > 0) {
+        if (iDiscardBytes == iReadBuffer.Bytes()) {
+            iDiscardBytes = 0;
+            iReadBuffer.SetBytes(0);
+        }
+        else if (iDiscardBytes > iReadBuffer.Bytes()) {
+            iDiscardBytes -= iReadBuffer.Bytes();
+            iReadBuffer.SetBytes(0);
+            iOffset += iDiscardBytes;
+            iDiscardBytes = 0;
+        }
+        else {
+            iReadBuffer.Replace(iReadBuffer.Ptr() + iDiscardBytes, iReadBuffer.Bytes() - iDiscardBytes);
+            iDiscardBytes = 0;
+        }
     }
-    iLastReadSuccessful = iBlockWriter.TryGetUrl(writerBuffer, iOffset, aBuffer.MaxBytes());
-    iOffset += aBuffer.Bytes();
+
+    if (iInspectBytes > 0) {
+        const TBool success = PopulateBuffer(*iInspectBuffer, iInspectBytes);
+        iInspectBytes = 0;
+        iInspectBuffer = nullptr;   // No need to reference anymore, as won't append more data.
+        if (success) {
+            return nullptr;
+        }
+        else {
+            return nullptr; // Not very helpful for detecting error.
+        }
+    }
+
+    if (iAccumulateBytes > 0) {
+        const TBool success = PopulateBuffer(iAccumulateBuffer, iAccumulateBytes);
+        iAccumulateBytes = 0;
+        if (success) {
+            MsgAudioEncoded* msg =iMsgFactory.CreateMsgAudioEncoded(iAccumulateBuffer);
+            iAccumulateBuffer.SetBytes(0);
+            return msg;
+        }
+        else {
+            return nullptr; // Not very helpful for detecting error.
+        }
+    }
+    ASSERTS();
+    return nullptr;
 }
 
-void OutOfBandReaderSource::ReadFlush()
+TBool Mpeg4OutOfBandReader::PopulateBuffer(Bwx& aBuf, TUint aBytes)
 {
-    // Nothing to flush (and resetting member vars here would cause block to be re-read from start offset).
+    while (aBytes > 0) {
+        TBool success = true;
+        if (iReadBuffer.Bytes() == 0) {
+            TUint bytes = iReadBuffer.MaxBytes();
+            if (aBytes < bytes) {
+                bytes = aBytes;
+            }
+            ASSERT(bytes > 0);
+            WriterBuffer writerBuffer(iReadBuffer);
+            // For efficiency, always try fully populate read buffer.
+            success = iBlockWriter.TryGetUrl(writerBuffer, iOffset, iReadBuffer.MaxBytes());
+            iOffset += iReadBuffer.Bytes();
+        }
+
+        if (iReadBuffer.Bytes() <= aBytes) {
+            aBuf.Append(iReadBuffer);
+            aBytes -= iReadBuffer.Bytes();
+            iReadBuffer.SetBytes(0);
+        }
+        else {
+            aBuf.Append(Brn(iReadBuffer.Ptr(), aBytes));
+            iReadBuffer.Replace(Brn(iReadBuffer.Ptr()+aBytes, iReadBuffer.Bytes()-aBytes));
+            aBytes = 0;
+        }
+
+        if (!success) {
+            return false;
+        }
+    }
+    ASSERT(aBytes == 0);
+    return true;
 }
 
-void OutOfBandReaderSource::ReadInterrupt()
+
+// Mpeg4MetadataChecker
+
+Mpeg4MetadataChecker::Mpeg4MetadataChecker()
+    : iMetadataAvailable(false)
 {
-    // FIXME - could hang until network timeout
 }
 
-
-// OutOfBandReader
-
-OutOfBandReader::OutOfBandReader(IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset)
-    : iReaderSource(aBlockWriter, aStartOffset)
-    , iSrs(iReaderSource)
+void Mpeg4MetadataChecker::Reset()
 {
+    iMetadataAvailable = false;
 }
 
-Brn OutOfBandReader::Read(TUint aBytes)
+TBool Mpeg4MetadataChecker::MetadataAvailable() const
 {
-    return iSrs.Read(aBytes);
+    return iMetadataAvailable;
 }
 
-void OutOfBandReader::ReadFlush()
+void Mpeg4MetadataChecker::MetadataRetrieved()
 {
-    iSrs.ReadFlush();
+    iMetadataAvailable = true;
 }
-
-void OutOfBandReader::ReadInterrupt()
-{
-    iSrs.ReadInterrupt();
-}
-
 
 // Mpeg4Container
 
 Mpeg4Container::Mpeg4Container()
-    : iBoxStack(kMetadataBoxDepth)
+    : ContainerBase(Brn("MP4"))
+    , iBoxRoot(iProcessorFactory)
+    , iBoxRootOutOfBand(iProcessorFactory) // Share factory; okay here as neither should access the same box simultaneously.
+    , iSeekObserver(nullptr)
+    , iLock("MP4L")
 {
     LOG(kMedia, "Mpeg4Container::Mpeg4Container\n");
-    Clear();
 }
 
-TBool Mpeg4Container::Recognise(Brx& aBuf)
+void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter)
 {
-    Clear();
+    ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter);
+
+    iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("trak")));
+    iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("mdia")));
+    iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("minf")));
+    iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("stbl")));
+    iProcessorFactory.Add(new Mpeg4BoxMoov(iProcessorFactory, iMetadataChecker));
+    iProcessorFactory.Add(new Mpeg4BoxStsd(iStreamInfo, iCodecInfo));
+    iProcessorFactory.Add(new Mpeg4BoxStts(iSeekTable));
+    iProcessorFactory.Add(new Mpeg4BoxStsc(iSeekTable));
+    iProcessorFactory.Add(new Mpeg4BoxStco(iSeekTable));
+    iProcessorFactory.Add(new Mpeg4BoxCo64(iSeekTable));
+    iProcessorFactory.Add(new Mpeg4BoxStsz(iSampleSizeTable));
+    iProcessorFactory.Add(new Mpeg4BoxMdhd(iDurationInfo));
+    iProcessorFactory.Add(
+        new Mpeg4BoxMdat(iBoxRootOutOfBand, iMetadataChecker, *this, *this, iBoxRoot, *iMsgFactory, *iUrlBlockWriter, iSeekTable, iSampleSizeTable));
+
+    ASSERT(iSeekObserver != nullptr);
+
+    Reset();
+}
+
+TBool Mpeg4Container::Recognise()
+{
     LOG(kMedia, "Mpeg4Container::Recognise\n");
-    if (aBuf.Bytes() >= Mpeg4Box::kBoxHeaderBytes) {
-        if (Brn(aBuf.Ptr()+Mpeg4Box::kBoxSizeBytes, Mpeg4Box::kBoxNameBytes) == Brn("ftyp")) {
-            return true;
-        }
+    static const TUint kSizeBytes = 4;
+    static const TUint kNameBytes = 4;
+    Bws<kNameBytes> boxName;
+    iCache->Discard(kSizeBytes);
+    iCache->Inspect(boxName, boxName.MaxBytes());
+
+    //Msg* msg = iCache->Pull();
+    //while (msg != nullptr) {
+    //    msg->RemoveRef();
+    //    msg = iCache->Pull();
+    //}
+
+    // Avoid pulling through new MsgEncodedStream during recognition (which would then be discarded!)
+    Msg* msg = iCache->Pull();
+    if (msg != nullptr) {
+        msg->RemoveRef();
+        return false;
+    }
+
+    if (boxName == Brn("ftyp")) {
+        return true;
     }
 
     return false;
 }
 
-Msg* Mpeg4Container::ProcessMsg(MsgAudioEncoded* aMsg)
+void Mpeg4Container::Reset()
 {
-    AddToAudioEncoded(aMsg);
-
-    if (!iPulling) {
-        if (iDiscarding) {
-            if (iAudioEncoded != nullptr) {
-                iAudioEncoded->RemoveRef();
-                iAudioEncoded = nullptr;
-                return nullptr;
-            }
-        }
-        MsgAudioEncoded* msg = Process();
-        ASSERT(iAudioEncoded == nullptr);  // iAudioEncoded should have been exhausted.
-        return msg;
-    }
-    return nullptr;
-}
-
-TUint Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
-{
-    // As TrySeek requires a byte offset, any codec that uses an Mpeg4 stream MUST find the appropriate seek offset (in bytes) and pass that via TrySeek().
-    // i.e., aOffset MUST match a chunk offset.
-    const TUint chunkCount = iSeekTable.ChunkCount();
-
-    // FIXME - need lock
-    for (TUint i = 0; i < chunkCount; i++) {
-        if (iSeekTable.GetOffset(i) == aOffset) {
-            iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, aOffset);
-            if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-                iPos = aOffset;
-                iBuf.SetBytes(0);
-                iChunkIndex = i;
-                iChunkBytesRemaining = 0;
-                iBytesToDiscard = 0;
-            }
-            return iExpectedFlushId;
-        }
-    }
-    ASSERTS();
-    return MsgFlush::kIdInvalid;
-}
-
-Brn Mpeg4Container::Read(TUint aBytes)
-{
-    // After container has been recognised (which just reads from a buffer),
-    // processing is sequential, so can discard audio from stream as it's read.
-
-    // IReaders only need to try return up to aBytes.
-    // So, if internal buffer capacity is less than aBytes, just return internal buffer.
-    TUint bytes = aBytes;
-    if (iBuf.MaxBytes() < aBytes) {
-        bytes = iBuf.MaxBytes();
-    }
-
-    iBuf.SetBytes(0);
-    ContainerBase::Read(iBuf, bytes);   // Can't inspect iAudioEncoded directly, so use helper function to copy into buffer.
-    ASSERT(iBuf.Bytes() == bytes);
-    iPos += bytes;
-
-    DiscardAudio(bytes);    // FIXME - what if MsgEncodedStream is pulled?
-
-    return Brn(iBuf.Ptr(), iBuf.Bytes());
-}
-
-void Mpeg4Container::ReadFlush()
-{
-    // FIXME - this could call DiscardAudio()
-    ASSERTS();
-}
-
-void Mpeg4Container::ReadInterrupt()
-{
-    ASSERTS();
-}
-
-void Mpeg4Container::Clear()
-{
-    iBoxStack.Reset();
-    iPos = 0;
-    iBuf.SetBytes(0);
-    iDiscarding = false;
-    iPreProcessingComplete = false;
-    iMetadataRetrieved = false;
-    iChunkIndex = 0;
-    iChunkBytesRemaining = 0;
-    iBytesToDiscard = 0;
-    iCodec.SetBytes(0);
-    iSampleRate = 0;
-    iTimescale = 0;
-    iChannels = 0;
-    iBitDepth = 0;
-    iDuration = 0;
-    //iSamplesTotal = 0;
-    iStreamDescriptor.SetBytes(0);
+    iProcessorFactory.Reset();
+    iBoxRoot.Reset();
+    iBoxRoot.Set(*iCache);
+    iBoxRootOutOfBand.Reset();
+    iMetadataChecker.Reset();
+    iDurationInfo.Reset();
+    iStreamInfo.Reset();
+    iCodecInfo.Reset();
     iSampleSizeTable.Clear();
     iSeekTable.Deinitialise();
 }
 
-MsgAudioEncoded* Mpeg4Container::Process()
+TBool Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
-    MsgAudioEncoded* msgOut = nullptr;
+    // As TrySeek requires a byte offset, any codec that uses an Mpeg4 stream MUST find the appropriate seek offset (in bytes) and pass that via TrySeek().
+    // i.e., aOffset MUST match a chunk offset.
 
-    if (!iPreProcessingComplete) {
-        try {
-            // Start reading boxes. First should be ftyp.
-            Mpeg4Box boxFtyp;
-            boxFtyp.Set(*this);
-            boxFtyp.ReadHeader();
-            if (boxFtyp.Id() != Brn("ftyp")) {
-                LOG(kMedia, "Mpeg4Container::Process no ftyp found at start of file\n");
-                ASSERTS();  // FIXME - corrupt stream (maybe fair to assert, as did see ftyp during Recognise() call).
+    const TUint chunkCount = iSeekTable.ChunkCount();
+    for (TUint i = 0; i < chunkCount; i++) {
+        if (iSeekTable.GetOffset(i) == aOffset) {
+            const TBool seek = iSeekHandler->TrySeekTo(aStreamId, aOffset);
+            if (seek) {
+                iSeekObserver->ChunkSeek(i);
             }
-            boxFtyp.SkipRemaining();
-
-            Mpeg4Box box;
-            box.Set(*this);
-            for (;;) {
-                box.ReadHeader();
-                if (box.Id() == Brn("moov")) {
-                    // Found metadata box. Parse it.
-                    ParseMetadataBox(box, box.Size());    // Exception thrown if invalid/EoS.
-                    iMetadataRetrieved = true;
-                }
-                else if (box.Id() == Brn("mdat")) {
-                    if (!iMetadataRetrieved) {
-                        // Not yet encountered metadata (moov) box.
-                        // Do out-of-band read to get moov box.
-                        const TUint boxBytes = box.Size()-Mpeg4Box::kBoxHeaderBytes;    // Already read header of mdat box.
-                        OutOfBandReader reader(*iUrlBlockWriter, iPos+boxBytes);
-
-                        Mpeg4Box box;
-                        box.Set(reader);
-                        for (;;) {
-                            box.ReadHeader();
-                            if (box.Id() == Brn("moov")) {
-
-                                ParseMetadataBox(reader, box.Size()); // Exception thrown if invalid/EoS.
-                                iMetadataRetrieved = true;
-                                break;
-                            }
-                            box.SkipRemaining();
-                            box.Clear();
-                        }
-                    }
-                    break;
-                }
-                box.SkipRemaining();
-                box.Clear();
-            }
-        }
-        // Exhausted/invalid stream while processing container.
-        // Should just silently drop all remaining audio until new stream seen.
-        catch (ReaderError&) {
-            iDiscarding = true;
-            if (iAudioEncoded != nullptr) {
-                iAudioEncoded->RemoveRef();
-                iAudioEncoded = nullptr;
-                return nullptr;
-            }
-        }
-        catch (MediaMpeg4FileInvalid&) {
-            iDiscarding = true;
-            if (iAudioEncoded != nullptr) {
-                iAudioEncoded->RemoveRef();
-                iAudioEncoded = nullptr;
-                return nullptr;
-            }
-        }
-
-        // If metadata has been retrieved, construct (one or more) MsgAudioEncoded
-        // containing a custom header for codec recognition/initialisation.
-        if (iMetadataRetrieved) {
-            // FIXME - can probably do this in metadata helper method.
-            Mpeg4Info info(iCodec, iSampleRate, iTimescale, iChannels, iBitDepth, iDuration, iStreamDescriptor);
-            Mpeg4InfoWriter writer(info);
-            Bws<Mpeg4InfoWriter::kMaxBytes> infoBuf;
-            WriterBuffer writerBuf(infoBuf);
-            writer.Write(writerBuf);
-
-            // Need to create MsgAudioEncoded w/ data for codec.
-            MsgAudioEncoded* msgInfo = iMsgFactory->CreateMsgAudioEncoded(infoBuf);
-            // Then, need to return this msg from Process(MsgAudioEncoded*) so that it is output,
-            // and doesn't interfere with audio cached in iAudioEncoded.
-            msgOut = msgInfo;
-
-            // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
-            MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
-            ASSERT(msgSampleSizeTable != nullptr);
-            msgOut->Add(msgSampleSizeTable);
-
-            // Write seek table so that codec can determine correct byte position that it should request to seek to.
-            // FIXME - there should be no need for a codec to know this, but IStreamHandler requires seek position in bytes, for which SeekTable is required.
-            MsgAudioEncoded* msgSeekTable = WriteSeekTable();
-            ASSERT(msgSeekTable != nullptr);
-            msgOut->Add(msgSeekTable);
-        }
-
-        iPreProcessingComplete = true;
-    }
-
-
-    MsgAudioEncoded* msgAudio = ProcessNextAudioBlock();
-    ASSERT(iAudioEncoded == nullptr);
-    if (msgOut == nullptr) {
-        msgOut = msgAudio;
-    }
-    else {
-        if (msgAudio != nullptr) {
-            msgOut->Add(msgAudio);
+            return seek;
         }
     }
+    ASSERTS();
+    return false;
+}
 
-    return msgOut;
+Msg* Mpeg4Container::Pull()
+{
+    return iBoxRoot.Process();
+}
+
+MsgAudioEncoded* Mpeg4Container::GetMetadata()
+{
+    // FIXME - should be able to pass codec info msg on directly without copying into buffer here.
+    // However, need to know size of it for codecs to unpack it into a buffer, and it's generally small (< 50 bytes) and a one-off per stream so it isn't a huge performance hit.
+    MsgAudioEncoded* codecInfo = iCodecInfo.CodecInfo();
+    Bws<IMpeg4InfoWritable::kMaxStreamDescriptorBytes> codecInfoBuf;
+    ASSERT(codecInfoBuf.MaxBytes() >= codecInfo->Bytes());
+    codecInfo->CopyTo(const_cast<TByte*>(codecInfoBuf.Ptr()));
+    codecInfoBuf.SetBytes(codecInfo->Bytes());
+    codecInfo->RemoveRef();
+
+    Mpeg4Info info(iStreamInfo.Codec(), iStreamInfo.SampleRate(),
+            iDurationInfo.Timescale(), iStreamInfo.Channels(),
+            iStreamInfo.BitDepth(), iDurationInfo.Duration(), codecInfoBuf);
+
+    Mpeg4InfoWriter writer(info);
+    Bws<Mpeg4InfoWriter::kMaxBytes> infoBuf;
+    WriterBuffer writerBuf(infoBuf);
+    writer.Write(writerBuf);
+
+    // Need to create MsgAudioEncoded w/ data for codec.
+    MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(infoBuf);
+
+    // Write sample size table so decoder knows how many bytes to read for each sample (MPEG4 term)/frame (AAC term).
+    MsgAudioEncoded* msgSampleSizeTable = WriteSampleSizeTable();
+    msg->Add(msgSampleSizeTable);
+
+    // Write seek table so that codec can determine correct byte position that it should request to seek to.
+    MsgAudioEncoded* msgSeekTable = WriteSeekTable();
+    msg->Add(msgSeekTable);
+
+    return msg;
+}
+
+void Mpeg4Container::RegisterChunkSeekObserver(
+        IMpeg4ChunkSeekObserver& aChunkSeekObserver)
+{
+    iSeekObserver = &aChunkSeekObserver;
 }
 
 MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
@@ -1216,7 +2627,7 @@ MsgAudioEncoded* Mpeg4Container::WriteSampleSizeTable() const
 
     const TUint count = iSampleSizeTable.Count();
     writerBin.WriteUint32Be(count);
-    for (TUint i=0; i<count; i++) {
+    for (TUint i = 0; i < count; i++) {
         writerBin.WriteUint32Be(iSampleSizeTable.SampleSize(i));
     }
     writerMsg.WriteFlush();
@@ -1233,477 +2644,4 @@ MsgAudioEncoded* Mpeg4Container::WriteSeekTable() const
 
     MsgAudioEncoded* msg = writerMsg.Msg();
     return msg;
-}
-
-MsgAudioEncoded* Mpeg4Container::ProcessNextAudioBlock()
-{
-    MsgAudioEncoded* msg = nullptr;
-    // Output audio chunk-by-chunk.
-
-    // Will not output anything if metadata has been processed.
-    // (SeekTable::ChunkCount() will be 0, so all audio should be discarded).
-    while (iChunkIndex < iSeekTable.ChunkCount() && iAudioEncoded != nullptr) {
-
-        // Are we at the start of the next chunk?
-        if (iChunkBytesRemaining == 0) {
-            const TUint64 chunkOffset = iSeekTable.GetOffset(iChunkIndex);
-            if (chunkOffset < iPos) {
-                iDiscarding = true;
-                if (iAudioEncoded != nullptr) {
-                    iAudioEncoded->RemoveRef();
-                    iAudioEncoded = nullptr;
-                    return nullptr;
-                }
-            }
-            const TUint64 toDiscard = chunkOffset-iPos;
-            ASSERT(toDiscard <= std::numeric_limits<TUint>::max());
-            iBytesToDiscard = static_cast<TUint>(toDiscard);
-
-            // FIXME - make TUint ChunkBytes(TUint aChunkIndex) a member of seek table.
-            const TUint chunkSamples = iSeekTable.SamplesPerChunk(iChunkIndex);
-            const TUint startSample = iSeekTable.StartSample(iChunkIndex);  // NOTE: this assumes first sample == 0 (which is valid with how our tables are setup), but in MPEG4 spec, first sample == 1.
-            TUint chunkBytes = 0;
-            // Samples start from 1. However, tables here are indexed from 0.
-            for (TUint i=startSample; i<startSample+chunkSamples; i++) {
-                const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
-                ASSERT(chunkBytes+sampleBytes <= std::numeric_limits<TUint>::max());    // Ensure no overflow.
-                chunkBytes += sampleBytes;
-            }
-            iChunkBytesRemaining = chunkBytes;
-        }
-
-
-        if (iBytesToDiscard > 0) {
-            if (iBytesToDiscard >= iAudioEncoded->Bytes()) {
-                iBytesToDiscard -= iAudioEncoded->Bytes();
-                iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-                iAudioEncoded->RemoveRef();
-                iAudioEncoded = nullptr;
-                return msg;
-            }
-            else {
-                DiscardAudio(iBytesToDiscard);
-                iPos += iBytesToDiscard;            // FIXME - provide wrapper for incrementing iPos?
-                iBytesToDiscard = 0;
-            }
-        }
-
-        ASSERT(iAudioEncoded != nullptr);
-        ASSERT(iBytesToDiscard == 0);
-        if (iAudioEncoded->Bytes() > iChunkBytesRemaining) {
-            MsgAudioEncoded* remainder = iAudioEncoded->Split(iChunkBytesRemaining);
-            iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-            if (msg == nullptr) {
-                msg = iAudioEncoded;
-            }
-            else {
-                msg->Add(iAudioEncoded);
-            }
-            iAudioEncoded = remainder;
-            iChunkBytesRemaining = 0;
-
-            iChunkIndex++;
-        }
-        else {  // iAudioEncoded->Bytes() <= iChunkBytesRemaining
-            iChunkBytesRemaining -= iAudioEncoded->Bytes();
-            iPos += iAudioEncoded->Bytes();     // FIXME - provide wrapper for incrementing iPos?
-            if (msg == nullptr) {
-                msg = iAudioEncoded;
-            }
-            else {
-                msg->Add(iAudioEncoded);
-            }
-            iAudioEncoded = nullptr;
-        }
-    }
-
-    if (iAudioEncoded != nullptr) {
-        // Some iAudioEncoded left, but should have exhausted all chunks.
-        // So remaining iAudioEncoded must be other data.
-        // FIXME - discard until start of next stream?
-        ASSERT(iChunkIndex == iSeekTable.ChunkCount());
-
-        // FIXME - update iPos?
-        iAudioEncoded->RemoveRef();
-        iAudioEncoded = nullptr;
-    }
-
-    return msg;
-}
-
-// FIXME - implement AutoBoxPusher and AutoBoxSkipper skipper classes to perform auto-cleanup and save remembering having to do Push()/Pop() and SkipRemaining()/Clear() in processing loops.
-
-void Mpeg4Container::ParseMetadataBox(IReader& aReader, TUint /*aBytes*/)
-{
-    // Need to move through stack to get data from the following boxes:
-    // -- moov.trak.mdia.mdhd
-    // -- moov.trak.mdia.minf
-    // ---- moov.trak.mdia.minf.stbl.stsd
-    // ------ moov.trak.mdia.minf.stbl.stsd.mp4a
-    // -------- moov.trak.mdia.minf.stbl.stsd.mp4a.esds
-    // ---- moov.trak.mdia.minf.stbl.stts
-    // ---- moov.trak.mdia.minf.stbl.stsc
-    // ---- moov.trak.mdia.minf.stbl.stco
-    // ---- moov.trak.mdia.minf.stbl.co64
-    // ---- moov.trak.mdia.minf.stbl.stsz
-
-    //iBoxStack.Set(aReader);
-    //try {
-    //    iBoxStack.Push();
-    //    for (;;) {
-    //        iBoxStack.ReadHeader();
-    //        if (iBoxStack.Id() == Brn("trak")) {
-    //            ParseBoxTrak();
-    //            break;
-    //        }
-    //        iBoxStack.SkipRemaining();
-    //        iBoxStack.Clear();
-    //    }
-    //    iBoxStack.SkipRemaining();
-    //    iBoxStack.Clear();
-    //    iBoxStack.Pop();
-    //}
-    //catch (ReaderError&) {
-    //    THROW(Mpeg4FileInvalid);
-    //}
-    //catch (Mpeg4FileInvalid&) {
-    //    throw;
-    //}
-
-    TBool complete = false;
-
-    iBoxStack.Set(aReader);
-    try {
-        iBoxStack.Push();
-        for (;;) {
-            iBoxStack.ReadHeader();
-            if (iBoxStack.Id() == Brn("trak")) {
-                iBoxStack.Push();
-                for (;;) {
-                    iBoxStack.ReadHeader();
-                    if (iBoxStack.Id() == Brn("mdia")) {
-                        iBoxStack.Push();
-                        for (;;) {
-                            iBoxStack.ReadHeader();
-                            if (iBoxStack.Id() == Brn("mdhd")) {
-                                ParseBoxMdhd(iBoxStack, iBoxStack.Size());
-                            }
-                            else if (iBoxStack.Id() == Brn("minf")) {
-                                iBoxStack.Push();
-                                for (;;) {
-                                    iBoxStack.ReadHeader();
-                                    if (iBoxStack.Id() == Brn("stbl")) {
-                                        iBoxStack.Push();
-                                        for (;;) {
-                                            iBoxStack.ReadHeader();
-                                            if (iBoxStack.Id() == Brn("stsd")) {
-                                                ReaderBinary readerBin(iBoxStack);
-                                                iBoxStack.Skip(4);   // Skip version info.
-                                                const TUint sampleEntries = readerBin.ReadUintBe(4);
-                                                iBoxStack.Push();
-                                                for (TUint i=0; i<sampleEntries; i++) {
-                                                    iBoxStack.ReadHeader();
-                                                    if (iBoxStack.Id() == Brn("mp4a")) {  // Only care about audio.
-                                                        ParseBoxCodec(iBoxStack, iBoxStack.Size(), Brn("mp4a"));
-                                                        iBoxStack.Push();
-                                                        for (;;) {
-                                                            iBoxStack.ReadHeader();
-                                                            if (iBoxStack.Id() == Brn("esds")) {
-                                                                // FIXME - valid to filter this box by known content type?
-                                                                // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                //Log::Print("found esds stream descriptor box\n");
-
-                                                                ParseBoxStreamDescriptor(iBoxStack, iBoxStack.Size());
-                                                                break;
-                                                            }
-                                                            iBoxStack.SkipRemaining();
-                                                            iBoxStack.Clear();
-                                                        }
-                                                        iBoxStack.SkipRemaining();
-                                                        iBoxStack.Clear();
-                                                        iBoxStack.Pop();
-                                                        break;  // FIXME - correct thing to do?
-
-                                                    }
-                                                    else if (iBoxStack.Id() == Brn("alac")) {
-                                                        ParseBoxCodec(iBoxStack, iBoxStack.Size(), Brn("alac"));
-                                                        iBoxStack.Push();
-                                                        for (;;) {
-                                                            iBoxStack.ReadHeader();
-                                                            if (iBoxStack.Id() == Brn("alac")) {
-                                                                // FIXME - valid to filter this box by known content type?
-                                                                // Should we just process next box, regardless of type, and assume it always sits at this position and is in same format?
-                                                                //Log::Print("found alac stream descriptor box\n");
-                                                                ParseBoxAlac(iBoxStack, iBoxStack.Size());
-                                                                break;
-                                                            }
-                                                            iBoxStack.SkipRemaining();
-                                                            iBoxStack.Clear();
-                                                        }
-                                                        iBoxStack.SkipRemaining();
-                                                        iBoxStack.Clear();
-                                                        iBoxStack.Pop();
-                                                        break;  // FIXME - correct thing to do?
-                                                    }
-                                                    iBoxStack.SkipRemaining();
-                                                    iBoxStack.Clear();
-                                                    // FIXME - what if we exhaust file (e.g., by not recognising one of the boxes above)? Should not assert (due to attempting to read more data), but should instead cause pipeline to report that stream failed to be recognised.
-                                                }
-                                                iBoxStack.SkipRemaining();
-                                                iBoxStack.Clear();
-                                                iBoxStack.Pop();
-                                            }
-                                            else if (iBoxStack.Id() == Brn("stts")) {
-                                                ParseBoxStts(iBoxStack, iBoxStack.Size());
-                                            }
-                                            else if (iBoxStack.Id() == Brn("stsc")) {
-                                                ParseBoxStsc(iBoxStack, iBoxStack.Size());
-                                            }
-                                            else if (iBoxStack.Id() == Brn("stco")) {
-                                                // FIXME - check co64 (or stco) hasn't been processed
-                                                ParseBoxStco(iBoxStack, iBoxStack.Size());
-                                            }
-                                            else if (iBoxStack.Id() == Brn("co64")) {
-                                                // FIXME - check stco (or co64) hasn't been processed
-                                                ParseBoxCo64(iBoxStack, iBoxStack.Size());
-                                            }
-                                            else if (iBoxStack.Id() == Brn("stsz")) {
-                                                ParseBoxStsz(iBoxStack, iBoxStack.Size());
-                                            }
-                                            iBoxStack.SkipRemaining();
-                                            iBoxStack.Clear();
-                                            //if (iSampleSizeTable.Count() > 0 // may not be valid if SampleSizeTable is changed to support a fixed sample size.
-                                            //    && (iSeekTable.SamplesPerChunkCount() > 0
-                                            //    && iSeekTable.AudioSamplesPerSampleCount() > 0
-                                            //    && iSeekTable.OffsetCount() > 0)
-                                            //    && (iChannels != 0
-                                            //    && iBitDepth != 0
-                                            //    && iSampleRate != 0)
-                                            //    )
-                                            //{
-
-                                            if ((iSampleSizeTable.Count() > 0) // may not be valid if SampleSizeTable is changed to support a fixed sample size.
-                                                && iSeekTable.Initialised()
-                                                && (iChannels != 0
-                                                && iBitDepth != 0
-                                                && iSampleRate != 0)) {
-                                                    iBoxStack.Pop();
-                                                    complete = true;
-                                                    break;
-                                            }
-                                        }
-                                    }
-                                    iBoxStack.SkipRemaining();
-                                    iBoxStack.Clear();
-                                    if (complete) {
-                                        iBoxStack.Pop();
-                                        break;
-                                    }
-                                }
-                            }
-                            iBoxStack.SkipRemaining();
-                            iBoxStack.Clear();
-                            //if ((iTimescale != 0 && iDuration != 0)                         // from mdhd box.
-                            //    && (iChannels != 0 && iBitDepth != 0 && iSampleRate != 0))  // from minf.stbl.stsd.mp4a box.
-                            //        {
-                            //        break;
-                            //}
-                            if (complete) {
-                                iBoxStack.Pop();
-                                break;
-                            }
-                        }
-                    }
-                    iBoxStack.SkipRemaining();
-                    iBoxStack.Clear();
-                    if (complete) {
-                        iBoxStack.Pop();
-                        break;
-                    }
-                }
-            }
-            iBoxStack.SkipRemaining();
-            iBoxStack.Clear();
-            if (complete) {
-                iBoxStack.Pop();
-                break;
-            }
-        }
-    }
-    catch (ReaderError&) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-
-    LOG(kCodec, "<Mpeg4Container::ParseMetadataBox\n");
-}
-
-void Mpeg4Container::ParseBoxMdhd(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    // May throw ReaderError or MediaMpeg4FileInvalid.
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(4);
-    if (version == 0) {
-        // All values are 32-bits in version 0.
-
-        // FIXME - only reason to pass Mpeg4Box in is to call Skip().
-        // Could instead write a helper method that calls Read() on an IReader until all bytes skipped (or throw error).
-        // FIXME - also don't need to pass in aBytes if passing in an Mpeg4Box.
-
-        aBox.Skip(4);   // Skip creation_time.
-        aBox.Skip(4);   // Skip modification_time.
-        iTimescale = readerBin.ReadUintBe(4);
-        iDuration = readerBin.ReadUintBe(4);
-    }
-    else if (version == 1) {
-        // Timescale is 32-bits and duration is 64-bits in version 1.
-        aBox.Skip(8);   // Skip creation_time.
-        aBox.Skip(8);   // Skip modification_time.
-        iTimescale = readerBin.ReadUintBe(4);
-        iDuration = readerBin.ReadUint64Be(8);
-    }
-    else {
-        THROW(MediaMpeg4FileInvalid);
-    }
-}
-
-void Mpeg4Container::ParseBoxCodec(IMpeg4Box& aBox, TUint /*aBytes*/, const Brx& aCodec)
-{
-    iCodec.Replace(aCodec);
-    ReaderBinary readerBin(aBox);
-    aBox.Skip(6);    // Skip 6-byte reserved block.
-    aBox.Skip(2);    // Skip 2 byte data ref index.
-    aBox.Skip(4*2);    // Skip 4-byte*2 reserved block.
-    iChannels = readerBin.ReadUintBe(2);    // Only 2 bytes!
-    iBitDepth = readerBin.ReadUintBe(2);    // Only 2 bytes!
-    aBox.Skip(2);    // Skip pre-defined block.
-    aBox.Skip(2);    // Skip reserved block.
-    iSampleRate = readerBin.ReadUintBe(2);  // Only read upper 2 MSBs of sample rate.
-    aBox.Skip(2);    // Don't care about 2 LSBs of sample rate (unused).
-}
-
-void Mpeg4Container::ParseBoxStts(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    // Table of audio samples per sample - used to convert audio samples to codec samples.
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(4);
-    if (version != 0) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-    const TUint entries = readerBin.ReadUintBe(4);
-    iSeekTable.InitialiseAudioSamplesPerSample(entries);
-    for (TUint i=0; i<entries; i++) {
-        const TUint sampleCount = readerBin.ReadUintBe(4);
-        const TUint sampleDelta = readerBin.ReadUintBe(4);
-        iSeekTable.SetAudioSamplesPerSample(sampleCount, sampleDelta);
-    }
-}
-
-void Mpeg4Container::ParseBoxStsc(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    // Table of samples per chunk - used to seek to specific sample.
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(4);
-    if (version != 0) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-    const TUint entries = readerBin.ReadUintBe(4);
-    iSeekTable.InitialiseSamplesPerChunk(entries);
-    for (TUint i=0; i<entries; i++) {
-        const TUint firstChunk = readerBin.ReadUintBe(4);
-        const TUint samplesPerChunk = readerBin.ReadUintBe(4);
-        const TUint sampleDescriptionIndex = readerBin.ReadUintBe(4);
-
-        iSeekTable.SetSamplesPerChunk(firstChunk, samplesPerChunk, sampleDescriptionIndex);
-    }
-}
-
-void Mpeg4Container::ParseBoxStco(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    // Table of file offsets for each chunk (32-bit offsets).
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(4);
-    if (version != 0) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-    const TUint entries = readerBin.ReadUintBe(4);
-    iSeekTable.InitialiseOffsets(entries);
-
-    for (TUint i=0; i<entries; i++) {
-        const TUint chunkOffset = readerBin.ReadUintBe(4);
-        iSeekTable.SetOffset(chunkOffset);
-    }
-}
-
-void Mpeg4Container::ParseBoxCo64(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    // Table of file offsets for each chunk (64-bit offsets).
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(4);
-    if (version != 0) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-    const TUint entries = readerBin.ReadUintBe(4);
-    iSeekTable.InitialiseOffsets(entries);
-
-    for (TUint i=0; i<entries; i++) {
-        const TUint64 chunkOffset = readerBin.ReadUint64Be(8);
-        iSeekTable.SetOffset(chunkOffset);
-    }
-}
-
-void Mpeg4Container::ParseBoxStsz(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(4);
-    if (version != 0) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-    const TUint sampleSize = readerBin.ReadUintBe(4);
-    ASSERT(sampleSize == 0); // FIXME - Don't currently support a constant sample size. Would require alterations to SampleSizeTable to allow it to be used with a fixed sample size with 0 entries.
-    const TUint sampleCount = readerBin.ReadUintBe(4);
-    if (sampleSize == 0) {
-        iSampleSizeTable.Init(sampleCount);
-        for (TUint i=0; i<sampleCount; i++) {
-            const TUint entrySize = readerBin.ReadUintBe(4);
-            iSampleSizeTable.AddSampleSize(entrySize);
-        }
-    }
-}
-
-void Mpeg4Container::ParseBoxStreamDescriptor(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    ReaderBinary readerBin(aBox);
-    const TUint version = readerBin.ReadUintBe(1);  // Only 1 byte!
-    if (version != 0) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-    aBox.Skip(3);    // Skip 24-bit field reserved for flags.
-
-    // FIXME - instead of doing this, just pass this bit of stream directly on to codec. Means no local storage req'd.
-    TUint remaining = aBox.Size() - 12;
-    iStreamDescriptor.SetBytes(0);
-    while (remaining > 0) {
-        Brn buf = aBox.Read(remaining);
-        if (buf.Bytes() == 0) {
-
-            THROW(MediaMpeg4FileInvalid);
-        }
-        iStreamDescriptor.Append(buf);
-        remaining -= buf.Bytes();
-    }
-}
-
-void Mpeg4Container::ParseBoxAlac(IMpeg4Box& aBox, TUint /*aBytes*/)
-{
-    // FIXME - instead of doing this, just pass this bit of stream directly on to codec. Means no local storage req'd.
-    TUint remaining = aBox.Size() - Mpeg4Box::kBoxHeaderBytes;
-    iStreamDescriptor.SetBytes(0);
-    while (remaining > 0) {
-        Brn buf = aBox.Read(remaining);
-        if (buf.Bytes() == 0) {
-            THROW(MediaMpeg4FileInvalid);
-        }
-        iStreamDescriptor.Append(buf);
-        remaining -= buf.Bytes();
-    }
 }

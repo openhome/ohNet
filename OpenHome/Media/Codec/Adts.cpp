@@ -222,9 +222,9 @@ TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
                 }
                 iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);    // record average payload size over 3 frames
                 LOG(kCodec, "CodecAdts::Recognise aac adts\n");
-                return true;      
+                return true;
             }
-            
+
             TUint size = adts.PayloadBytes() + adts.HeaderBytes();
             j += size;   // point to where next frame should be
         }

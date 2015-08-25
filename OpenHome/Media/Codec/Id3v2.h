@@ -10,19 +10,23 @@ namespace Codec {
 
 class Id3v2 : public ContainerBase
 {
-public:
-    Id3v2();
-public: // from IRecogniser
-    TBool Recognise(Brx& aBuf);
-private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
-private: // from IStreamHandler
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
 private:
     static const TUint kRecogniseBytes = 10;
+public:
+    Id3v2();
+public: // from ContainerBase
+    TBool Recognise() override;
+    void Reset() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Pull() override;
+private:
+    TBool RecogniseTag();
+private:
     TUint iSize;
     TUint iTotalSize;
     Bws<kRecogniseBytes> iBuf;
+    TBool iParsingComplete;
+    TBool iInspectPending;
 };
 
 } // namespace Codec
