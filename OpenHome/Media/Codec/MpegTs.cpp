@@ -666,9 +666,6 @@ Msg* MpegTs::Pull()
 
 
             if (msg != nullptr) {
-                //return msg;
-
-
                 msg = TryAppendToAudioEncoded(msg);
                 if (msg != nullptr) {
                     return msg;
@@ -680,8 +677,6 @@ Msg* MpegTs::Pull()
             ASSERT(msg != nullptr);
             ASSERT(msg->Bytes() == iRemaining);
             iState = eStart;
-            //return msg;
-
 
             msg = TryAppendToAudioEncoded(msg);
             if (msg != nullptr) {
