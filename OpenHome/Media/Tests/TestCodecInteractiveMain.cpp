@@ -137,7 +137,7 @@ public:
     void AddCodec(CodecBase* aCodec);
     void Start();
 private:
-    Container* iContainer;
+    ContainerController* iContainer;
     Logger* iLoggerContainer;
     CodecController* iCodecController;
     Logger* iLoggerCodecController;
@@ -614,7 +614,7 @@ void ProcessorPcmSwpEndianPacked::SwapEndianness24(const Brx& aData)
 
 Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter)
 {
-    iContainer = new Container(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
+    iContainer = new ContainerController(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // Construct push logger slightly out of sequence.

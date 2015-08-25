@@ -36,6 +36,8 @@ void MpegTsTransportStreamHeader::Parse(const Brx& aHeader)
 {
     ASSERT(aHeader.Bytes() == kTransportStreamHeaderBytes);
 
+    //LOG(kCodec, ">MpegTsTransportStreamHeader::Parse 0x%.2x%.2x%.2x%.2x\n", aHeader[0], aHeader[1], aHeader[2], aHeader[3]);
+
     if (aHeader[0] != kSyncByte) {
         THROW(InvalidMpegTsPacket); // Expect sync word - should seek if can't find it.
     }
@@ -306,6 +308,134 @@ void MpegTsProgramMapTable::Reset()
 }
 
 
+// StreamTerminatorDetector
+
+StreamTerminatorDetector::StreamTerminatorDetector()
+    : iStreamTerminated(false)
+{
+}
+
+void StreamTerminatorDetector::Reset()
+{
+    iStreamTerminated = false;
+}
+
+TBool StreamTerminatorDetector::StreamTerminated() const
+{
+    return iStreamTerminated;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgMode* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgSession* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgTrack* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgChangeInput* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgDelay* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgMetaText* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgHalt* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgFlush* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgWait* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    return aMsg;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
+Msg* StreamTerminatorDetector::ProcessMsg(MsgQuit* aMsg)
+{
+    ASSERT(iStreamTerminated == false);
+    iStreamTerminated = true;
+    return aMsg;
+}
+
+
 // MpegTs
 
 MpegTs::MpegTs()
@@ -314,16 +444,17 @@ MpegTs::MpegTs()
     , iProgramMapPid(0)
     , iStreamPid(0)
     , iRemaining(kPacketBytes)
-    , iAudioEncoded(nullptr)
+    //, iAudioEncoded(nullptr)
+    , iPendingMsg(nullptr)
 {
 }
 
 MpegTs::~MpegTs()
 {
-    if (iAudioEncoded != nullptr) {
-        iAudioEncoded->RemoveRef();
-    }
-    iAudioEncoded = nullptr;
+    //if (iAudioEncoded != nullptr) {
+    //    iAudioEncoded->RemoveRef();
+    //}
+    //iAudioEncoded = nullptr;
 }
 
 TBool MpegTs::Recognise()
@@ -358,6 +489,7 @@ void MpegTs::Reset()
 {
     iState = eStart;
     iEncodedStreamRecogniser.Reset();
+    iStreamTerminatorDetector.Reset();
     iAudioEncodedRecogniser.Reset();
     iStreamHeader.Reset();
     iPat.Reset();
@@ -366,10 +498,12 @@ void MpegTs::Reset()
     iStreamPid = 0;
     iRemaining = kPacketBytes;
     iBuf.SetBytes(0);
-    if (iAudioEncoded != nullptr) {
-        iAudioEncoded->RemoveRef();
-    }
-    iAudioEncoded = nullptr;
+    //if (iAudioEncoded != nullptr) {
+    //    iAudioEncoded->RemoveRef();
+    //}
+    //iAudioEncoded = nullptr;
+    iAudioEncoded.SetBytes(0);
+    ASSERT(iPendingMsg == nullptr);
 }
 
 TBool MpegTs::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -383,8 +517,28 @@ Msg* MpegTs::Pull()
     while (iState != eComplete) {
 
         if (iState != eStart) {
+            if (iPendingMsg != nullptr) {
+                Msg* msg = iPendingMsg;
+                iPendingMsg = nullptr;
+                LOG(kCodec, "<MpegTs::Pull pulled non-audio msg: %p\n", msg);
+                return msg;
+            }
+
             Msg* msg = iCache->Pull();
             if (msg != nullptr) {
+                msg = msg->Process(iStreamTerminatorDetector);
+                if (iStreamTerminatorDetector.StreamTerminated()) {
+                    LOG(kCodec, "MpegTs::Pull detected EoS.\n");
+                    if (iAudioEncoded.Bytes() > 0) {
+                        LOG(kCodec, "MpegTs::Pull EoS. Returning %u bytes of buffered audio\n.", iAudioEncoded.Bytes());
+                        MsgAudioEncoded* msgAudio = iMsgFactory->CreateMsgAudioEncoded(iAudioEncoded);
+                        iAudioEncoded.SetBytes(0);
+                        iPendingMsg = msg;
+                        return msgAudio;
+                    }
+                    return msg;
+                }
+
                 msg = msg->Process(iAudioEncodedRecogniser);
                 if (msg != nullptr) {
                     LOG(kCodec, "<MpegTs::Pull pulled non-audio msg: %p\n", msg);
@@ -494,21 +648,11 @@ Msg* MpegTs::Pull()
                 }
                 else {
                     msg = iMsgFactory->CreateMsgAudioEncoded(optionalPesHeader);
-
-                    //msg = TryAppendToAudioEncoded(msg);
-                    //if (msg != nullptr) {
-                    //    return msg;
-                    //}
                 }
             }
             else {
                 // Must output msg;
                 msg = iMsgFactory->CreateMsgAudioEncoded(iBuf);
-
-                //msg = TryAppendToAudioEncoded(msg);
-                //if (msg != nullptr) {
-                //    return msg;
-                //}
             }
 
             if (iRemaining > 0) {
@@ -522,14 +666,13 @@ Msg* MpegTs::Pull()
 
 
             if (msg != nullptr) {
-                return msg;
+                //return msg;
 
 
-
-                //msg = TryAppendToAudioEncoded(msg);
-                //if (msg != nullptr) {
-                //    return msg;
-                //}
+                msg = TryAppendToAudioEncoded(msg);
+                if (msg != nullptr) {
+                    return msg;
+                }
             }
         }
         else if (iState == ePullPayload) {
@@ -537,13 +680,13 @@ Msg* MpegTs::Pull()
             ASSERT(msg != nullptr);
             ASSERT(msg->Bytes() == iRemaining);
             iState = eStart;
-            return msg;
+            //return msg;
 
 
-            //msg = TryAppendToAudioEncoded(msg);
-            //if (msg != nullptr) {
-            //    return msg;
-            //}
+            msg = TryAppendToAudioEncoded(msg);
+            if (msg != nullptr) {
+                return msg;
+            }
         }
         else {
             // Unhandled state.
@@ -605,33 +748,91 @@ TBool MpegTs::TrySetPayloadState()
     //return true;
 }
 
-//MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
-//{
-//    if (iAudioEncoded == nullptr) {
-//        iAudioEncoded = aMsg;
-//        return nullptr;
-//    }
-//
-//    aMsg->CopyTo(const_cast<TByte*>(iBuf.Ptr()));
-//    iBuf.SetBytes(aMsg->Bytes());
-//    TUint offset = iAudioEncoded->Append(iBuf);
-//
-//    if (offset == iBuf.Bytes()) {
-//        // Appended entire msg.
-//        aMsg->RemoveRef();
-//        return nullptr;
-//    }
-//    else if (offset == 0) {
-//        // Didn't append any of msg.
-//        MsgAudioEncoded* msg = iAudioEncoded;
-//        iAudioEncoded = aMsg;
-//        return msg;
-//    }
-//    else {
-//        MsgAudioEncoded* remainder = aMsg->Split(offset);
-//        MsgAudioEncoded* msg = iAudioEncoded;
-//        iAudioEncoded = remainder;
-//        aMsg->RemoveRef();
-//        return msg;
-//    }
-//}
+MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
+{
+    const TUint avail = iAudioEncoded.MaxBytes()-iAudioEncoded.Bytes();
+    if (aMsg->Bytes() <= avail) {
+        aMsg->CopyTo(const_cast<TByte*>(iAudioEncoded.Ptr())+iAudioEncoded.Bytes());
+        iAudioEncoded.SetBytes(iAudioEncoded.Bytes()+aMsg->Bytes());
+        aMsg->RemoveRef();
+
+        if (iAudioEncoded.Bytes() == iAudioEncoded.MaxBytes()) {
+            MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(iAudioEncoded);
+            iAudioEncoded.SetBytes(0);
+            return msg;
+        }
+        return nullptr;
+    }
+    else { // aMsg->Bytes() > avail
+        MsgAudioEncoded* remainder = aMsg->Split(avail);
+
+        aMsg->CopyTo(const_cast<TByte*>(iAudioEncoded.Ptr())+iAudioEncoded.Bytes());
+        iAudioEncoded.SetBytes(iAudioEncoded.Bytes()+aMsg->Bytes());
+        aMsg->RemoveRef();
+
+        ASSERT(iAudioEncoded.Bytes() == iAudioEncoded.MaxBytes());
+        MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(iAudioEncoded);
+        iAudioEncoded.SetBytes(0);
+
+        remainder->CopyTo(const_cast<TByte*>(iAudioEncoded.Ptr())+iAudioEncoded.Bytes());
+        iAudioEncoded.SetBytes(iAudioEncoded.Bytes()+remainder->Bytes());
+        remainder->RemoveRef();
+
+        return msg;
+    }
+
+
+
+
+    //if (iAudioEncoded == nullptr) {
+    //    iAudioEncoded = aMsg;
+    //    return nullptr;
+    //}
+
+    //Log::Print(">TryAppendToAudioEncoded iAudioEncoded->Bytes(): %u\n", iAudioEncoded->Bytes());
+    //aMsg->CopyTo(const_cast<TByte*>(iBuf.Ptr()));
+    //iBuf.SetBytes(aMsg->Bytes());
+    //TUint offset = iAudioEncoded->Append(iBuf);
+
+    //if (offset == iBuf.Bytes()) {
+    //    Log::Print("TryAppendToAudioEncoded appended entire msg\n");
+    //    // Appended entire msg.
+    //    aMsg->RemoveRef();
+    //    return nullptr;
+    //}
+    //else if (offset == 0) {
+    //    Log::Print("TryAppendToAudioEncoded offset == 0\n");
+    //    // Didn't append any of msg.
+    //    MsgAudioEncoded* msg = iAudioEncoded;
+    //    iAudioEncoded = aMsg;
+
+
+    //    Bwh msgStart(msg->Bytes());
+    //    msg->CopyTo(const_cast<TByte*>(msgStart.Ptr()));
+    //    msgStart.SetBytes(msg->Bytes());
+    //    Log::Print("\t<MpegTs::TryAppendToAudioEncoded msgStart: 0x%.2x%.2x%.2x%.2x\n", msgStart[0], msgStart[1], msgStart[2], msgStart[3]);
+
+    //    return msg;
+    //}
+    //else {
+    //    Log::Print("TryAppendToAudioEncoded offset > 0. offset: %u, iAudioEncoded->Bytes(): %u, aMsg->Bytes(): %u\n", offset, iAudioEncoded->Bytes(), aMsg->Bytes());
+    //    MsgAudioEncoded* remainder = aMsg->Split(offset);
+    //    MsgAudioEncoded* msg = iAudioEncoded;
+    //    iAudioEncoded = remainder;
+    //    aMsg->RemoveRef();
+
+    //    Bwh msgStart(iAudioEncoded->Bytes());
+    //    iAudioEncoded->CopyTo(const_cast<TByte*>(msgStart.Ptr()));
+    //    msgStart.SetBytes(iAudioEncoded->Bytes());
+    //    Log::Print("\t<MpegTs::TryAppendToAudioEncoded iAudioEncoded: 0x%.2x%.2x%.2x%.2x\n", msgStart[0], msgStart[1], msgStart[2], msgStart[3]);
+
+    //    Log::Print("TryAppendToAudioEncoded offset > 0. msg->Bytes(): %u, iAudioEncoded->Bytes(): %u\n", msg->Bytes(), iAudioEncoded->Bytes());
+
+    //    Bwh msgStart2(msg->Bytes());
+    //    msg->CopyTo(const_cast<TByte*>(msgStart2.Ptr()));
+    //    msgStart2.SetBytes(msg->Bytes());
+    //    Log::Print("\t<MpegTs::TryAppendToAudioEncoded msgStart: 0x%.2x%.2x%.2x%.2x\n", msgStart2[0], msgStart2[1], msgStart2[2], msgStart2[3]);
+
+    //    return msg;
+    //}
+}

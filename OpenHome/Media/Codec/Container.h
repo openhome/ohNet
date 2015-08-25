@@ -131,8 +131,6 @@ private:
     Bwx* iBuffer;
     TUint iExpectedFlushId;
     Mutex iLock;
-    TUint64 iBytesSeen;
-    TUint64 iBytesProcessed;
 };
 
 class ContainerNull : public ContainerBase

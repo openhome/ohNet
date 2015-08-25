@@ -52,8 +52,6 @@ MsgAudioEncodedCache::MsgAudioEncodedCache(IPipelineElementUpstream& aUpstreamEl
 
 void MsgAudioEncodedCache::Reset()
 {
-    iBytesSeen = 0;
-    iBytesProcessed = 0;
     if (iAudioEncoded != nullptr) {
         iAudioEncoded->RemoveRef();
         iAudioEncoded = nullptr;
@@ -92,7 +90,6 @@ MsgAudioEncoded* MsgAudioEncodedCache::ProcessCache()
                 discard = CacheBytes();
             }
             iDiscardBytesRemaining -= discard;
-            iBytesProcessed += discard;
             MsgAudioEncoded* msg = ExtractMsgAudioEncoded(discard);
             msg->RemoveRef();
         }
@@ -105,7 +102,6 @@ MsgAudioEncoded* MsgAudioEncodedCache::ProcessCache()
             msg->CopyTo(const_cast<TByte*>(iBuffer->Ptr()));
             iBuffer->SetBytes(iInspectBytesRemaining);
             msg->RemoveRef();
-            iBytesProcessed += iInspectBytesRemaining;
             iInspectBytesRemaining = 0;
         }
         return nullptr;
@@ -114,7 +110,6 @@ MsgAudioEncoded* MsgAudioEncodedCache::ProcessCache()
     if (iAccumulateBytesRemaining > 0) {
         if (CacheBytes() >= iAccumulateBytesRemaining) {
             MsgAudioEncoded* msg = ExtractMsgAudioEncoded(iAccumulateBytesRemaining);
-            iBytesProcessed += iAccumulateBytesRemaining;
             iAccumulateBytesRemaining = 0;
             return msg;
         }
@@ -123,7 +118,6 @@ MsgAudioEncoded* MsgAudioEncodedCache::ProcessCache()
 
     if (CacheBytes() > 0) {
         MsgAudioEncoded* msg = iAudioEncoded;
-        iBytesProcessed += msg->Bytes();
         iAudioEncoded = nullptr;
         return msg;
     }
@@ -160,6 +154,8 @@ MsgAudioEncoded* MsgAudioEncodedCache::ExtractMsgAudioEncoded(TUint aBytes)
 
 Msg* MsgAudioEncodedCache::PullUpstreamMsg()
 {
+    // Must NOT be pulling another msg unless exhausted cached audio.
+    ASSERT(iAudioEncoded == nullptr || (iDiscardBytesRemaining > iAudioEncoded->Bytes() || iInspectBytesRemaining > iAudioEncoded->Bytes() || iAccumulateBytesRemaining > iAudioEncoded->Bytes()));
     Msg* msg = iUpstreamElement.Pull();
     if (msg == nullptr) {
         THROW(CodecPulledNullMsg);
@@ -713,7 +709,6 @@ Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgDelay* aMsg)
 Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgEncodedStream* aMsg)
 {
     return aMsg;
-
 }
 
 Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -775,6 +770,7 @@ Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgQuit* aMsg)
 
 
 // MsgEncodedStreamRecogniser
+
 MsgEncodedStreamRecogniser::MsgEncodedStreamRecogniser()
     : iRecognisedMsgEncodedStream(false)
 {

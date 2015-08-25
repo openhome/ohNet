@@ -13,7 +13,7 @@ namespace Media {
     class ProtocolManager;
 
 namespace Codec {
-    class Container;
+    class ContainerController;
     class CodecController;
 
 class AudioFileDescriptor
@@ -147,7 +147,7 @@ protected:
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 protected:
-    Container* iContainer;
+    ContainerController* iContainer;
     CodecController* iController;
 private:
     TestCodecInfoAggregator* iInfoAggregator;

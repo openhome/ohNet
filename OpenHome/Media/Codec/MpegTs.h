@@ -114,6 +114,35 @@ private:
     TUint iStreamPid;
 };
 
+// FIXME - bodge for fact that MpegTs buffers EncodedAudio data to allow it to detect when it should push any remaining buffered data.
+class StreamTerminatorDetector : public IMsgProcessor
+{
+public:
+    StreamTerminatorDetector();
+    void Reset();
+    TBool StreamTerminated() const;
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
+private:
+    TBool iStreamTerminated;
+};
+
 class MpegTs : public ContainerBase
 {
 private:
@@ -137,7 +166,7 @@ public: // from ContainerBase
     Msg* Pull() override;
 private:
     TBool TrySetPayloadState();
-    //MsgAudioEncoded* TryAppendToAudioEncoded(MsgAudioEncoded* aMsg);
+    MsgAudioEncoded* TryAppendToAudioEncoded(MsgAudioEncoded* aMsg);
 private:
     enum EState {
         eStart,
@@ -152,6 +181,7 @@ private:
 private:
     EState iState;
     MsgEncodedStreamRecogniser iEncodedStreamRecogniser;
+    StreamTerminatorDetector iStreamTerminatorDetector;
     MsgAudioEncodedRecogniser iAudioEncodedRecogniser;
     MpegTsTransportStreamHeader iStreamHeader;
     MpegTsProgramAssociationTable iPat;
@@ -160,7 +190,9 @@ private:
     TUint iStreamPid;
     TUint iRemaining;
     Bws<kPacketBytes> iBuf;
-    MsgAudioEncoded* iAudioEncoded;
+    //MsgAudioEncoded* iAudioEncoded;
+    Bws<EncodedAudio::kMaxBytes> iAudioEncoded;
+    Msg* iPendingMsg;   // FIXME - bodge to cope with fact that pipeline can't handle lots of small msgs (i.e., lots of <188-byte MsgAudioEncoded being returned, so that any cached audio can be flushed.
 };
 
 } // namespace Codec
