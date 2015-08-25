@@ -137,7 +137,7 @@ public: // from ContainerBase
     Msg* Pull() override;
 private:
     TBool TrySetPayloadState();
-    MsgAudioEncoded* TryAppendToAudioEncoded(MsgAudioEncoded* aMsg);
+    //MsgAudioEncoded* TryAppendToAudioEncoded(MsgAudioEncoded* aMsg);
 private:
     enum EState {
         eStart,

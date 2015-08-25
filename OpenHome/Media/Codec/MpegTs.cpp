@@ -605,33 +605,33 @@ TBool MpegTs::TrySetPayloadState()
     //return true;
 }
 
-MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
-{
-    if (iAudioEncoded == nullptr) {
-        iAudioEncoded = aMsg;
-        return nullptr;
-    }
-
-    aMsg->CopyTo(const_cast<TByte*>(iBuf.Ptr()));
-    iBuf.SetBytes(aMsg->Bytes());
-    TUint offset = iAudioEncoded->Append(iBuf);
-
-    if (offset == iBuf.Bytes()) {
-        // Appended entire msg.
-        aMsg->RemoveRef();
-        return nullptr;
-    }
-    else if (offset == 0) {
-        // Didn't append any of msg.
-        MsgAudioEncoded* msg = iAudioEncoded;
-        iAudioEncoded = aMsg;
-        return msg;
-    }
-    else {
-        MsgAudioEncoded* remainder = aMsg->Split(offset);
-        MsgAudioEncoded* msg = iAudioEncoded;
-        iAudioEncoded = remainder;
-        aMsg->RemoveRef();
-        return msg;
-    }
-}
+//MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
+//{
+//    if (iAudioEncoded == nullptr) {
+//        iAudioEncoded = aMsg;
+//        return nullptr;
+//    }
+//
+//    aMsg->CopyTo(const_cast<TByte*>(iBuf.Ptr()));
+//    iBuf.SetBytes(aMsg->Bytes());
+//    TUint offset = iAudioEncoded->Append(iBuf);
+//
+//    if (offset == iBuf.Bytes()) {
+//        // Appended entire msg.
+//        aMsg->RemoveRef();
+//        return nullptr;
+//    }
+//    else if (offset == 0) {
+//        // Didn't append any of msg.
+//        MsgAudioEncoded* msg = iAudioEncoded;
+//        iAudioEncoded = aMsg;
+//        return msg;
+//    }
+//    else {
+//        MsgAudioEncoded* remainder = aMsg->Split(offset);
+//        MsgAudioEncoded* msg = iAudioEncoded;
+//        iAudioEncoded = remainder;
+//        aMsg->RemoveRef();
+//        return msg;
+//    }
+//}
