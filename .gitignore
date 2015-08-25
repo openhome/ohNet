@@ -35,6 +35,7 @@ _ReSharper.*
 tags
 
 Build/
+Build.stripped/
 
 /Build/
 /vgout/
