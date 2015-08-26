@@ -93,7 +93,9 @@ MsgAudioEncoded* MsgAudioEncodedCache::ProcessCache()
             MsgAudioEncoded* msg = ExtractMsgAudioEncoded(discard);
             msg->RemoveRef();
         }
-        return nullptr;
+        if (iDiscardBytesRemaining > 0) {
+            return nullptr;
+        }
     }
 
     if (iInspectBytesRemaining > 0) {
