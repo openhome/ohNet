@@ -150,108 +150,182 @@ void FileResourceHandler::SetMimeType(const Brx& aUri)
 
 // FrameworkTabHandler
 
-FrameworkTabHandler::FrameworkTabHandler(IFrameworkSemaphore& aSemaphore, TUint aSendQueueSize, TUint aSendTimeoutMs)
+FrameworkTabHandler::FrameworkTabHandler(IFrameworkSemaphore& aSemRead, IFrameworkSemaphore& aSemWrite, IFrameworkTimer& aTimer, TUint aSendQueueSize, TUint aSendTimeoutMs)
     : iSendTimeoutMs(aSendTimeoutMs)
     , iFifo(aSendQueueSize)
+    , iEnabled(false)
+    , iPolling(false)
     , iLock("FTHL")
-    , iSem(aSemaphore)
+    , iSemRead(aSemRead)
+    , iSemWrite(aSemWrite)
+    , iTimer(aTimer)
 {
 }
 
 FrameworkTabHandler::~FrameworkTabHandler()
 {
-    Clear();
+    AutoMutex a(iLock);
+    ASSERT(iFifo.SlotsUsed() == 0);
 }
 
-void FrameworkTabHandler::BlockingSend(IWriter& aWriter)
+void FrameworkTabHandler::LongPoll(IWriter& aWriter)
 {
-    try {
-        iSem.Wait(iSendTimeoutMs);
+    // This routine has 3 paths:
+    // - There are >= 1 msgs in FIFO. If so, output and return.
+    // - There are no msgs in FIFO. Block until a msg arrives via Send(), output it, and return.
+    // - There are no msgs in FIFO. Block until timer triggers a timeout and return.
 
+    {
+        // Don't accept any long polls if in an interrupted state.
         AutoMutex a(iLock);
-        // If iSem signalled, msg is in iFifo.
-        aWriter.Write(Brn("["));
-        while (iFifo.SlotsUsed() > 0) {
+        if (!iEnabled) {
+            return;
+        }
+        iPolling = true;
+    }
+
+    // Start timer.
+    iTimer.Start(iSendTimeoutMs, *this);
+
+    TBool msgOutput = false;
+    for (;;) {
+        iSemRead.Wait();
+        {
+            // Check if this was interrupted.
+            AutoMutex a(iLock);
+            if (!iEnabled || !iPolling) {
+
+                if (msgOutput) {
+                    aWriter.Write(Brn("]"));
+                }
+                return;
+            }
+
             ITabMessage* msg = iFifo.Read();
+            if (!msgOutput) {
+                aWriter.Write(Brn("["));
+                msgOutput = true;
+            }
             msg->Send(aWriter);
             // All but last msg should be followed by "," in a JSON array.
             if (iFifo.SlotsUsed() > 0) {
                 aWriter.Write(Brn(","));
             }
             msg->Destroy();
+
+            // If FIFO has been exhausted, output what was queued and return
+            // instead of blocking for entire long poll duration.
+            if (iFifo.SlotsUsed() == 0) {
+                iTimer.Cancel();
+                iPolling = false;
+
+                if (msgOutput) {
+                    aWriter.Write(Brn("]"));
+                }
+
+                return;
+            }
         }
-        aWriter.Write(Brn("]"));
-        iSem.Clear();   // FIXME - clear this here, or should/can we pick up each signal each time round loop?
-    }
-    catch (Timeout&) {
-        THROW(Timeout); // FIXME - bother rethrowing this, or just don't tell upper layer that we didn't send anything?
+        iSemWrite.Signal();
     }
 }
 
-void FrameworkTabHandler::Clear()
+void FrameworkTabHandler::Disable()
 {
+    // Set interrupted state so that no further polls/sends can take place.
+    {
+        AutoMutex a(iLock);
+        iEnabled = false;
+    }
+
+    // Only need to signal iSemRead here. When FIFO is cleared, iSemWrite will be signalled.
+    iSemRead.Signal();
+
     AutoMutex a(iLock);
     while (iFifo.SlotsUsed() > 0) {
         ITabMessage* msg = iFifo.Read();
         msg->Destroy();
+        iSemWrite.Signal(); // Unblock any Send() calls. Should just discard messages.
     }
-    iSem.Clear();
+
+    iSemRead.Clear();
+}
+
+void FrameworkTabHandler::Enable()
+{
+    AutoMutex a(iLock);
+    iEnabled = true;
 }
 
 void FrameworkTabHandler::Send(ITabMessage& aMessage)
 {
+    // Blocks until message can be sent.
+
+    iSemWrite.Wait();
     AutoMutex a(iLock);
-    //ASSERT(iFifo.SlotsUsed() < iFifo.Slots());
-    iFifo.Write(&aMessage); // FIXME - should this block or not?
-    iSem.Signal();
+    if (!iEnabled) {
+        aMessage.Destroy();
+        iSemWrite.Signal(); // Dropped message instead of putting in FIFO, so can just resignal.
+    }
+    else {
+        iFifo.Write(&aMessage);
+        iSemRead.Signal();
+    }
+}
+
+void FrameworkTabHandler::Complete()
+{
+    AutoMutex a(iLock);
+    Log::Print("FrameworkTabHandler::Complete iPolling: %u\n", iPolling);
+    if (iPolling) {
+        iPolling = false;
+        iSemRead.Signal();      // FIXME - will this mess up sem count? Not if we are still in blocking send method. But what if Cancel() is called?
+    }
 }
 
 
 // FrameworkTimer
 
 FrameworkTimer::FrameworkTimer(Environment& aEnv)
-    : iHandler(nullptr)
+    : iTimer(aEnv, MakeFunctor(*this, &FrameworkTimer::Complete), "WebUiTimer")
+    , iHandler(nullptr)
     , iLock("FRTL")
-    , iStartCount(0)
-    , iCancelCount(0)
-    , iCompleteCount(0)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &FrameworkTimer::Complete), "WebUiFrameworkTimer");
 }
 
 FrameworkTimer::~FrameworkTimer()
 {
     AutoMutex a(iLock);
-    iTimer->Cancel();
-    delete iTimer;
+    iTimer.Cancel();
 }
 
 void FrameworkTimer::Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler)
 {
     AutoMutex a(iLock);
-    iStartCount++;
-    //ASSERT(iHandler == nullptr);
+    ASSERT(iHandler == nullptr);
     iHandler = &aHandler;
-    iTimer->FireIn(aDurationMs);
+    iTimer.FireIn(aDurationMs);
 }
 
 void FrameworkTimer::Cancel()
 {
     AutoMutex a(iLock);
-    iCancelCount++;
     if (iHandler != nullptr) {
-        iTimer->Cancel();
+        iTimer.Cancel();
     }
     iHandler = nullptr;
 }
 
 void FrameworkTimer::Complete()
 {
-    AutoMutex a(iLock);
-    iCompleteCount++;
-    ASSERT(iHandler != nullptr);
-    iHandler->Complete();
-    iHandler = nullptr;
+    IFrameworkTimerHandler* handler = nullptr;
+    {
+        AutoMutex a(iLock);
+        ASSERT(iHandler != nullptr);
+        handler = iHandler;
+        iHandler = nullptr;
+    }
+    handler->Complete();    // Avoid issues with attempted recursive locks on mutex if client calls back into Start()/Cancel() during callback.
 }
 
 
@@ -267,11 +341,6 @@ void FrameworkSemaphore::Wait()
     iSem.Wait();
 }
 
-void FrameworkSemaphore::Wait(TUint aTimeoutMs)
-{
-    iSem.Wait(aTimeoutMs);
-}
-
 TBool FrameworkSemaphore::Clear()
 {
     return iSem.Clear();
@@ -285,174 +354,134 @@ void FrameworkSemaphore::Signal()
 
 // FrameworkTab
 
-FrameworkTab::FrameworkTab(TUint aId, ITabDestroyHandler& aDestroyHandler, IFrameworkTimer& aTimer, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
-    : iId(aId)
+FrameworkTab::FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, ITabDestroyHandler& aDestroyHandler, IFrameworkTabHandler& aTabHandler, TUint aPollTimeoutMs)
+    : iTabId(aTabId)
     , iPollTimeoutMs(aPollTimeoutMs)
-    , iDestroyHandler(aDestroyHandler)
-    , iTabSem("FRTS", 0)
-    , iHandler(iTabSem, aSendQueueSize, aSendTimeoutMs)
+    , iHandler(aTabHandler)
     , iTimer(aTimer)
+    , iDestroyHandler(aDestroyHandler)
+    , iSessionId(kInvalidTabId)
     , iTab(nullptr)
-    , iRefCount(0)
-    , iDestructionPending(false)
     , iLock("FRTL")
 {
 }
 
 FrameworkTab::~FrameworkTab()
 {
-    // Must handle situation where a tab has been allocated and is in use, but
-    // the app framework is being destroyed.
-    // In that situation, must clear all references until Destroy() is called
-    // on underlying tab, notifying owner of underlying tab that it can now be
-    // deallocated.
-    AutoMutex a(iLock);
-    while (iRefCount > 0) {
-        RemoveRefUnlocked();
-    }
-    //iPollTimer.CancelPollWait(); - called by Destroy()
+    // Owner must have called Clear().
+    ASSERT(iTab == nullptr);
 }
 
-TBool FrameworkTab::Allocated() const
+TUint FrameworkTab::SessionId() const
 {
     AutoMutex a(iLock);
-    TBool allocated = (iTab != nullptr);
-    return allocated;
+    return iSessionId;
 }
 
-TBool FrameworkTab::Available() const
+void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguages)
 {
-    AutoMutex a(iLock);
-    TBool available = (!iDestructionPending && iTab != nullptr);
-    return available;
-}
-
-void FrameworkTab::Set(ITab& aTab, const std::vector<const Brx*>& aLanguages)
-{
-    LOG(kHttp, "FrameworkTab::Set iId: %u\n", iId);
+    LOG(kHttp, "FrameworkTab::CreateTab iSessionId: %u, iTabId: %u\n", iSessionId, iTabId);
     AutoMutex a(iLock);
     ASSERT(iTab == nullptr);
-    ASSERT(iRefCount == 0);
-    ASSERT(!iDestructionPending);
-    ASSERT(iLanguages.size() == 0);
-    iLanguages = aLanguages;    // takes ownership of pointers
-    iTab = &aTab;
-    iRefCount++;    // reference now held by caller of this
+    iSessionId = aSessionId;
+    iHandler.Enable();			// Ensure TabHandler is ready to receive messages (and not drop them).
+    iLanguages = aLanguages;    // Takes ownership of pointers.
+    try {
+        iTab = &aTabCreator.Create(iHandler, iLanguages);
+        iTimer.Start(iPollTimeoutMs, *this);
+    }
+    catch (TabAllocatorFull) {
+        iHandler.Disable();
+        iSessionId = kInvalidTabId;
+        for (TUint i=0; i<iLanguages.size(); i++) {
+            delete iLanguages[i];
+        }
+        iLanguages.clear();
+    }
 }
 
-void FrameworkTab::BlockingSend(IWriter& aWriter)
+void FrameworkTab::Clear()
+{
+    // Should not be used internally. Should only be called via owner of this class.
+
+    // Must be forgiving for cases where:
+    // - Tab is in use, but framework is being destroyed.
+    // - Tab has already been destroyed, but destroy is being called again (e.g. where a terminate request has come in from a client while a long poll request is active. The terminate request could cause a WriterError during the long poll request, which would cause Destroy() to be called again).
+    AutoMutex a(iLock);
+
+    if (iTab != nullptr) {
+        iTimer.Cancel();    // FIXME - recursive if this Clear() comes from a FrameworkTab::Complete() call.
+        iHandler.Disable();   // Should reject/drop any further calls to Send() from ITab.
+        iSessionId = kInvalidTabId;
+        iTab->Destroy();
+        iTab = nullptr;
+        for (TUint i=0; i<iLanguages.size(); i++) {
+            delete iLanguages[i];
+        }
+        iLanguages.clear();
+    }
+}
+
+void FrameworkTab::LongPoll(IWriter& aWriter)
 {
     {
         AutoMutex a(iLock);
         ASSERT(iTab != nullptr);
-        ASSERT(!iDestructionPending);
-    }
-    iHandler.BlockingSend(aWriter);
-}
-
-void FrameworkTab::StartPollWait()
-{
-    AutoMutex a(iLock);
-    ASSERT(iTab != nullptr);
-    iTimer.Start(iPollTimeoutMs, *this);
-}
-
-void FrameworkTab::CancelPollWait()
-{
-    AutoMutex a(iLock);
-    if (iTab != nullptr) {
         iTimer.Cancel();
     }
+    iHandler.LongPoll(aWriter);
+    // Will only reach here if blocking send isn't terminated (i.e., tab is still active).
+    AutoMutex a(iLock);
+    if (iTab != nullptr) {
+        // Tab hasn't been deallocated, so expect another poll.
+        iTimer.Start(iPollTimeoutMs, *this);
+    }
 }
 
-void FrameworkTab::Receive(const OpenHome::Brx& aMessage)
+void FrameworkTab::Receive(const Brx& aMessage)
 {
     AutoMutex a(iLock);
     ASSERT(iTab != nullptr);
-    ASSERT(!iDestructionPending);
     iTab->Receive(aMessage);
-}
-
-void FrameworkTab::Destroy()
-{
-    LOG(kHttp, "FrameworkTab::Destroy iId: %u\n", iId);
-    // Removes ref held by caller and passes on call to IDestroyHandler.
-    AutoMutex a(iLock);
-    ASSERT(iTab != nullptr && !iDestructionPending);
-    //iPollTimer.CancelPollWait(); // FIXME - attempted recursive lock on mutex
-    iDestructionPending = true;
-    RemoveRefUnlocked();
-    iDestroyHandler.Destroy(*this);
-    for (TUint i=0; i<iLanguages.size(); i++) {
-        delete iLanguages[i];
-    }
-    iLanguages.clear();
 }
 
 void FrameworkTab::Send(ITabMessage& aMessage)
 {
+    {
+        AutoMutex a(iLock);
+        ASSERT(iTab != nullptr);
+    }
+
+    // Can't lock here. If message queue is full, could cause deadlock.
     iHandler.Send(aMessage);
 }
 
 void FrameworkTab::Complete()
 {
-    // FIXME - bodge to ensure no attempt to AddRef() to a Destroy()ed tab and then Destroy() it again.
-    {
-        AutoMutex a(iLock);
-        if (iTab == nullptr) {
-            // Already Destroy()ed.
-            return;
-        }
-    }
-    // Timer callback method.
-    AddRef();   // all calls to Destroy() must be made by caller with ref held
-    Destroy();
-}
-
-void FrameworkTab::AddRef()
-{
-    AutoMutex a(iLock);
-    AddRefUnlocked();
-}
-
-void FrameworkTab::RemoveRef()
-{
-    AutoMutex a(iLock);
-    RemoveRefUnlocked();
-}
-
-void FrameworkTab::AddRefUnlocked()
-{
-    ASSERT(iTab != nullptr);
-    ASSERT(!iDestructionPending);
-    ASSERT(iRefCount < std::numeric_limits<TUint>::max());
-    iRefCount++;
-}
-
-void FrameworkTab::RemoveRefUnlocked()
-{
-    ASSERT(iTab != nullptr);
-    ASSERT(iRefCount > 0);
-    iRefCount--;
-
-    if (iRefCount == 0) {
-        iTab->Destroy();
-        iTab = nullptr;
-        iHandler.Clear();
-        iDestructionPending = false;
-    }
+    iDestroyHandler.Destroy(iSessionId);
 }
 
 
 // TabManager
 
 TabManager::TabManager(Environment& aEnv, TUint aMaxTabs, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
-    : iMaxTabs(aMaxTabs)
+    : iNextSessionId(FrameworkTab::kInvalidTabId+1)
     , iLock("TBML")
 {
-    for (TUint i=0; i<iMaxTabs; i++) {
-        iTimers.push_back(new FrameworkTimer(aEnv));
-        iTabs.push_back(new FrameworkTab(i, *this, *iTimers[i], aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs));
+    for (TUint i=0; i<aMaxTabs; i++) {
+        Bws<5> id("HSR");
+        Ascii::AppendDec(id, i);
+        iHandlerReadSemaphores.push_back(new FrameworkSemaphore(id.PtrZ(), 0));
+
+        id.Replace("HSW");
+        Ascii::AppendDec(id, i);
+        iHandlerWriteSemaphores.push_back(new FrameworkSemaphore(id.PtrZ(), aSendQueueSize));
+
+        iHandlerTimers.push_back(new FrameworkTimer(aEnv));
+        iTabHandlers.push_back(new FrameworkTabHandler(*iHandlerReadSemaphores[i], *iHandlerWriteSemaphores[i], *iHandlerTimers[i], aSendQueueSize, aSendTimeoutMs));
+
+        iTabTimers.push_back(new FrameworkTimer(aEnv));
+        iTabs.push_back(new FrameworkTab(i, *iTabTimers[i], *this, *iTabHandlers[i], aPollTimeoutMs));
     }
 }
 
@@ -460,62 +489,83 @@ TabManager::~TabManager()
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
-        FrameworkTab* tab = iTabs[i];
-        delete tab; // Will remove any references still held (i.e., when client holds a browser tab open).
-        delete iTimers[i];
+        delete iTabs[i];    // Will remove any references still held (i.e., when client holds a browser tab open).
+        delete iTabTimers[i];
+
+        delete iTabHandlers[i];
+        delete iHandlerTimers[i];
+        delete iHandlerWriteSemaphores[i];
+        delete iHandlerReadSemaphores[i];
     }
 }
 
-TUint TabManager::CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageList)
+TUint TabManager::CreateTab(IWebApp& aApp, const std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
-        if (!iTabs[i]->Allocated()) {
-            LOG(kHttp, "TabManager::CreateTab creating tab with ID: %u for WebApp: ", i);
+        if (iTabs[i]->SessionId() == FrameworkTab::kInvalidTabId) {
+            const TUint sessionId = iNextSessionId++;
+            LOG(kHttp, "TabManager::CreateTab creating tab with session ID: %u for WebApp: ", sessionId);
             LOG(kHttp, aApp.ResourcePrefix());
             LOG(kHttp, "\n");
-            ITab& tab = aApp.Create(*iTabs[i], aLanguageList);
-            iTabs[i]->Set(tab, aLanguageList);  // Takes ownership of (buffers in) language list.
-            TUint clientId = TabManagerIdToClientId(i);
-            return clientId;
+            iTabs[i]->CreateTab(sessionId, aApp, aLanguageList);	// Takes ownership of (buffers in) language list.
+            return sessionId;
         }
     }
     LOG(kHttp, "TabManager::CreateTab tab manager full\n");
-    THROW(TabManagerFull);  // shouldn't reach here unless there isn't enough space.
+    THROW(TabManagerFull);	// Shouldn't reach here unless there isn't enough space.
 }
 
-IFrameworkTab& TabManager::GetTab(TUint aTabId)
+void TabManager::LongPoll(TUint aId, IWriter& aWriter)
 {
-    if (aTabId == 0) { // 0 is invalid Tab ID
+    LOG(kHttp, "TabManager::LongPoll aId: %u\n", aId);
+    FrameworkTab* tab = nullptr;
+    {
+        AutoMutex a(iLock);
+        for (TUint i=0; i<iTabs.size(); i++) {
+            if (iTabs[i]->SessionId() == aId) {
+                tab = iTabs[i];
+            }
+        }
+    }
+    if (tab == nullptr) {
         THROW(InvalidTabId);
     }
+    // FIXME - race condition. As lock is released before this call, tab could potentially have been Destroy()ed and then re-assigned to a new tab before the LongPoll() call.
+    // Maybe have reference counting on FrameworkTabs to avoid that, or set flag to show tab is currently being long-polled and shouldn't be destroyed until the long-poll is complete. Is the latter just a limited form of reference counting?
+    tab->LongPoll(aWriter);
+}
 
-    TUint id = ClientIdToTabManagerId(aTabId);
-    AutoMutex a(iLock);
-    if (id < iTabs.size() && iTabs[id]->Available()) {
-        FrameworkTab& tab = *iTabs[id];
-        tab.AddRef();
-        return tab;
+void TabManager::Receive(TUint aId, const Brx& aMessage)
+{
+    LOG(kHttp, "TabManager::Receive aId: %u\n", aId);
+    {
+        AutoMutex a(iLock);
+        for (TUint i=0; i<iTabs.size(); i++) {
+            FrameworkTab* tab = iTabs[i];
+            if (tab->SessionId() == aId) {
+                tab->Receive(aMessage);
+                return;
+            }
+        }
     }
     THROW(InvalidTabId);
 }
 
-void TabManager::Destroy(IRefCountableUnlocked& aRefCountable)
+void TabManager::Destroy(TUint aId)
 {
-    AutoMutex a(iLock);
-    aRefCountable.RemoveRefUnlocked();
-}
-
-TUint TabManager::TabManagerIdToClientId(TUint aId)
-{
-    ASSERT(aId < std::numeric_limits<TUint>::max());
-    return aId+1;
-}
-
-TUint TabManager::ClientIdToTabManagerId(TUint aId)
-{
-    ASSERT(aId != 0);
-    return aId-1;
+    LOG(kHttp, "TabManager::Destroy aId: %u\n", aId);
+    {
+        AutoMutex a(iLock);
+        for (TUint i=0; i<iTabs.size(); i++) {
+            FrameworkTab* tab = iTabs[i];
+            if (tab->SessionId() == aId) {
+                tab->Clear();
+                return;
+            }
+        }
+    }
+    THROW(InvalidTabId);
 }
 
 
@@ -550,7 +600,7 @@ IResourceHandler& WebAppInternal::CreateResourceHandler(const Brx& aResource)
     return iWebApp->CreateResourceHandler(aResource);
 }
 
-ITab& WebAppInternal::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
+ITab& WebAppInternal::Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
 {
     return iWebApp->Create(aHandler, aLanguageList);
 }
@@ -928,8 +978,7 @@ void HttpSession::Post()
             for (TUint i=0; i<languageList.size(); i++) {
                 languageListHeapBufs.push_back(new Brh(languageList[i]));
             }
-            TUint id = iTabManager.CreateTab(app, languageListHeapBufs);    // FIXME - this should maybe cause framework tab to call StartPollWait() on itself.
-            IFrameworkTab& tab = iTabManager.GetTab(id);
+            TUint id = iTabManager.CreateTab(app, languageListHeapBufs);
             iResponseStarted = true;
             WriteLongPollHeaders();
             Bws<sizeof(id)> idBuf;
@@ -940,14 +989,14 @@ void HttpSession::Post()
             iWriterBuffer->Write(Brn("\r\n"));
             iWriterBuffer->WriteFlush();
             iResponseEnded = true;
-            //Log::Print("lpcreate StartPollWait()\n");
-            tab.StartPollWait();
-            tab.RemoveRef();
         }
         catch (InvalidAppPrefix&) {
             // FIXME - what if someone just inputs a bad prefix by accident?
             // Return a 404 if that is the case?
             ASSERTS(); // programmer error/misuse by client
+        }
+        catch (TabAllocatorFull&) { // FIXME - do something to distinguish between this (an IWebApp having all tabs allocated) vs TabManagerFull (the WebAppFramework has had its available tabs exhausted).
+            Error(HttpStatus::kServiceUnavailable);
         }
         catch (TabManagerFull&) {
             Error(HttpStatus::kServiceUnavailable); // FIXME - if we return this state, Javascript code should keep attempting to poll
@@ -979,42 +1028,19 @@ void HttpSession::Post()
                 Error(HttpStatus::kNotFound);
             }
             //Log::Print("lp session-id: %u\n", sessionId);
-            IFrameworkTab* tab = nullptr;
             try {
-                tab = &iTabManager.GetTab(sessionId);
-                //Log::Print("lp CancelPollWait()\n");
-                tab->CancelPollWait(); // what if polling timer has fired
-                // between GetTab() and CancelPollWait()?
-                // - reference to tab is still valid
-                // - CancelPollWait() should do nothing.
-
-                // If we have data, write it immediately.
-                // If we have no data, wait on semaphore, and if some arrives, write it immediately.
-                // If we have no data and still none after semaphore, write headers and no data.
-                // BlockingSend() covers all the above requirements for us.
-
                 iResponseStarted = true;
                 WriteLongPollHeaders();
                 iWriterBuffer->Write(Brn("lp\r\n"));
-                // FIXME - bother throwing Timeout if there is nothing useful to do with it?
-                try {
-                    tab->BlockingSend(*iWriterBuffer);  // May write no data.
-                }
-                catch (Timeout&)
-                {
-                    // No data was sent. Do nothing.
-                }
+                iTabManager.LongPoll(sessionId, *iWriterBuffer);    // May write no data and can throw WriterError.
                 iWriterBuffer->WriteFlush();
                 iResponseEnded = true;
-                //Log::Print("lp StartPollWait()\n");
-                tab->StartPollWait();
-                tab->RemoveRef();
             }
             catch (InvalidTabId&) {
                 Error(HttpStatus::kNotFound);
             }
             catch(WriterError&) {
-                tab->Destroy();
+                iTabManager.Destroy(sessionId);
                 THROW(WriterError);
             }
         }
@@ -1045,10 +1071,7 @@ void HttpSession::Post()
             }
             //Log::Print("lpterminate session-id: %u\n", sessionId);
             try {
-                IFrameworkTab& tab = iTabManager.GetTab(sessionId);
-                //Log::Print("lpterminate CancelPollWait()\n");
-                tab.CancelPollWait();
-                tab.Destroy();
+                iTabManager.Destroy(sessionId);
                 iResponseStarted = true;
                 WriteLongPollHeaders();
                 iWriterBuffer->WriteFlush();
@@ -1096,11 +1119,7 @@ void HttpSession::Post()
             }
 
             try {
-                // FIXME - what if session-id = 0?
-                // i.e., update has been sent before long polling has been set up
-                IFrameworkTab& tab = iTabManager.GetTab(sessionId);
-                tab.Receive(update);
-                tab.RemoveRef();
+                iTabManager.Receive(sessionId, update);
                 iResponseStarted = true;
                 iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
                 //IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
@@ -1122,6 +1141,14 @@ void HttpSession::Post()
     }
     else if (uriTail == Brn("probe")) {
         ASSERTS(); // FIXME - implement behaviour
+
+        // Allows a client to poll during server failure.
+        // When a response is provided, client should then attempt to reload page.
+
+        // Could just call lpcreate repeatedly, but this is much lower cost.
+
+        // What should be done if a client wishes to open the max+1 tab?
+        // Should they web app display an (overridable) "Maximum number of tabs has been reached; will automatically retry" and continue calling lpcreate (on a, say, 5s timer) until a tab ID is allocated?
     }
     else {
         Error(HttpStatus::kNotFound);

@@ -8,10 +8,10 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/Stream.h>
-#include <OpenHome/Net/Private/DviServerUpnp.h> // FIXME - move HeaderAcceptLanguage out of this
+#include <OpenHome/Net/Private/DviServerUpnp.h>
 
 EXCEPTION(ResourceInvalid);
-EXCEPTION(TabCreationFailed);
+EXCEPTION(TabAllocatorFull);    // Thrown by an IWebApp when its allocator is full.
 EXCEPTION(TabManagerFull);
 EXCEPTION(InvalidTabId);
 EXCEPTION(TabAllocated);
@@ -37,12 +37,7 @@ public:
 class IResourceManager
 {
 public:
-    // FIXME - rename param to aResourceTail? - to differentiate between
-    // a full resource URI and the fact that WebApps now have a method for
-    // retrieving their prefix
-    // - Or just pass in full URI after checking first part of URI matches
-    // IWebApp::ResourcePrefix()?
-    virtual IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) = 0;  // THROWS ResourceInvalid
+    virtual IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResourceTail) = 0;  // THROWS ResourceInvalid
     virtual ~IResourceManager() {}
 };
 
@@ -50,7 +45,6 @@ public:
 // resource handling layer. This currently only works on posix-style filesystems.
 // FIXME - make this thread aware
 // - could state of Allocated() be changed while a (thread-safe) ResourceManager is inspecting it?
-// Not thread-aware.
 class FileResourceHandler : public IResourceHandler
 {
 public:
@@ -94,7 +88,7 @@ public:
 class ITabMessage
 {
 public:
-    virtual void Send(OpenHome::IWriter& aWriter) = 0;
+    virtual void Send(IWriter& aWriter) = 0;
     virtual void Destroy() = 0;
     virtual ~ITabMessage() {}
 };
@@ -113,17 +107,23 @@ public:
 // FIXME - rename to IWebAppTimer
 class IFrameworkTimer;
 
+class ITabCreator
+{
+public:
+    virtual ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) = 0;    // throws TabAllocatorFull
+    virtual ~ITabCreator() {}
+};
+
 /**
  * Interface representing an HTTP application that will make use of the
  * framework. Requires implementations for returning a new tab and the
  * processing of resources.
  */
-class IWebApp : public IResourceManager
+class IWebApp : public ITabCreator, public IResourceManager
 {
 public:
-    virtual ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) = 0;    // throws TabCreationFailed
     //virtual IFrameworkTimer& CreateTimer() = 0;         // throws TimerCreationFailed
-    virtual const OpenHome::Brx& ResourcePrefix() const = 0; // FIXME - rename to UriPrefix?
+    virtual const OpenHome::Brx& ResourcePrefix() const = 0;
     virtual ~IWebApp() {}
 };
 
@@ -131,35 +131,6 @@ public:
 // Classes relevant to the HTTP framework.
 
 // Private classes for internal tab + session management.
-
-class IFrameworkSemaphore
-{
-public:
-    virtual void Wait() = 0;
-    virtual void Wait(TUint aTimeoutMs) = 0;
-    virtual TBool Clear() = 0;
-    virtual void Signal() = 0;
-    virtual ~IFrameworkSemaphore() {}
-};
-
-/**
- * Internal tab handler API for framework.
- */
-class FrameworkTabHandler : public ITabHandler
-{
-public:
-    FrameworkTabHandler(IFrameworkSemaphore& aSemaphore, TUint aSendQueueSize, TUint aSendTimeoutMs);
-    ~FrameworkTabHandler();
-    void BlockingSend(OpenHome::IWriter& aWriter); // THROWS Timeout
-    void Clear();   // clears FIFO and any signals // FIXME - is this called anywhere?
-public: // from ITabHandler
-    void Send(ITabMessage& aMessage);
-private:
-    const TUint iSendTimeoutMs;
-    OpenHome::FifoLiteDynamic<ITabMessage*> iFifo;
-    OpenHome::Mutex iLock;
-    IFrameworkSemaphore& iSem;
-};
 
 class IFrameworkTimerHandler
 {
@@ -176,73 +147,73 @@ public:
     virtual ~IFrameworkTimer() {}
 };
 
+class IFrameworkSemaphore
+{
+public:
+    virtual void Wait() = 0;
+    virtual TBool Clear() = 0;
+    virtual void Signal() = 0;
+    virtual ~IFrameworkSemaphore() {}
+};
+
+class IFrameworkTabHandler : public ITabHandler
+{
+public: // from ITabHandler
+    virtual void Send(ITabMessage& aMessage) = 0;
+public:
+    virtual void LongPoll(IWriter& aWriter) = 0;    // THROWS WriterError.
+    virtual void Enable() = 0;
+    virtual void Disable() = 0; // Disallow LongPoll()/Send() calls.
+    virtual ~IFrameworkTabHandler() {}
+};
+
+/**
+ * Internal tab handler API for framework.
+ */
+class FrameworkTabHandler : public IFrameworkTabHandler, public IFrameworkTimerHandler
+{
+public:
+    FrameworkTabHandler(IFrameworkSemaphore& aSemRead, IFrameworkSemaphore& aSemWrite, IFrameworkTimer& aTimer, TUint aSendQueueSize, TUint aSendTimeoutMs);
+    ~FrameworkTabHandler();
+private: // from IFrameworkTabHandler
+    void Send(ITabMessage& aMessage) override;
+    void LongPoll(IWriter& aWriter) override;
+    void Enable() override;  // Allow new polls/sends to take place.
+    void Disable() override; // Cancel blocking send and clear FIFO.
+private: // from IFrameworkTimerHandler
+    void Complete() override;
+private:
+    const TUint iSendTimeoutMs;
+    FifoLiteDynamic<ITabMessage*> iFifo;
+    TBool iEnabled;
+    TBool iPolling;
+    Mutex iLock;
+    IFrameworkSemaphore& iSemRead;
+    IFrameworkSemaphore& iSemWrite;
+    IFrameworkTimer& iTimer;
+};
+
 class FrameworkTimer : public IFrameworkTimer
 {
 public:
     FrameworkTimer(OpenHome::Environment& aEnv);
     ~FrameworkTimer();
 public: // from IFrameworkTimer
-    void Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler);
-    void Cancel();
+    void Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler) override;
+    void Cancel() override;
 private:
     void Complete();
 private:
-    OpenHome::Timer* iTimer;
+    Timer iTimer;
     IFrameworkTimerHandler* iHandler;
-    OpenHome::Mutex iLock;  // FIXME - is this necessary?
-    // FIXME - testing only - remove
-    TUint iStartCount;
-    TUint iCancelCount;
-    TUint iCompleteCount;
-};
-
-class IRefCountable
-{
-public:
-    virtual void AddRef() = 0;
-    virtual void RemoveRef() = 0;
-    virtual ~IRefCountable() {}
-};
-
-
-// FIXME - remove
-class IRefCountableUnlocked
-{
-public:
-    virtual void AddRefUnlocked() = 0;
-    virtual void RemoveRefUnlocked() = 0;
-    virtual ~IRefCountableUnlocked() {}
+    Mutex iLock;
 };
 
 class ITabDestroyHandler
 {
 public:
-    virtual void Destroy(IRefCountableUnlocked& aRefCountable) = 0;
+    virtual void Destroy(TUint aId) = 0;
     virtual ~ITabDestroyHandler() {}
-};
-
-class IBlockingSender
-{
-public:
-    virtual void BlockingSend(OpenHome::IWriter& aWriter) = 0;
-    virtual ~IBlockingSender() {}
-};
-
-class IFrameworkTab : public ITab, public IBlockingSender, public IRefCountable
-{
-public:
-    virtual void StartPollWait() = 0;
-    virtual void CancelPollWait() = 0;
-public: // from ITab
-    virtual void Receive(const OpenHome::Brx& aMessage) = 0;
-    virtual void Destroy() = 0;
-public: // from IBlockingSender
-    virtual void BlockingSend(OpenHome::IWriter& aWriter) = 0;
-public: // from IRefCountable
-    virtual void AddRef() = 0;
-    virtual void RemoveRef() = 0;
-public:
-    virtual ~IFrameworkTab() {}
 };
 
 class FrameworkSemaphore : public IFrameworkSemaphore
@@ -250,83 +221,86 @@ class FrameworkSemaphore : public IFrameworkSemaphore
 public:
     FrameworkSemaphore(const TChar* aName, TUint aCount);
 public: // from IFrameworkSemaphore
-    void Wait();
-    void Wait(TUint aTimeoutMs);
-    TBool Clear();
-    void Signal();
+    void Wait() override;
+    TBool Clear() override;
+    void Signal() override;
 private:
-    OpenHome::Semaphore iSem;
+    Semaphore iSem;
 };
 
 /**
  * Internal tab for framework.
  */
-class FrameworkTab : public IFrameworkTab, public ITabHandler, public IFrameworkTimerHandler, public IRefCountableUnlocked
+class FrameworkTab : public ITabHandler, public IFrameworkTimerHandler
 {
 public:
-    FrameworkTab(TUint aId, ITabDestroyHandler& aDestroyHandler, IFrameworkTimer& aTimer, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
+    static const TUint kInvalidTabId = 0;
+public:
+    FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, ITabDestroyHandler& aDestroyHandler, IFrameworkTabHandler& aTabHandler, TUint aPollTimeoutMs);
     ~FrameworkTab();
-    TBool Allocated() const;    // calls between this and SetTab() not thread-safe; must lock entire object
-    TBool Available() const;    // calls between this and AddRef() not thread-safe; Destroy() may be called by another thread. Appropriate locking must be in place to ensure thread-safety among these calls and the ITabDestroyHandler.
-    void Set(ITab& aTab, const std::vector<const Brx*>& aLanguages);
-    void StartPollWait();
-    void CancelPollWait();
-public: // from IFrameworkTab
-    void Receive(const OpenHome::Brx& aMessage);
-    void Destroy();
-    void BlockingSend(OpenHome::IWriter& aWriter);
-    void AddRef();
-    void RemoveRef();
-public: // from ITabHandler
+    TUint SessionId() const;
+    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguages);
+    void Clear();   // Terminates any blocking sends or outstanding timers.
+    void Receive(const Brx& aMessage);
+    void LongPoll(IWriter& aWriter);    // Terminates poll timer on entry; restarts poll timer on exit.
+private: // from ITabHandler
     void Send(ITabMessage& aMessage);
 private: // from ITimerHandler
     void Complete();
-public: // from IRefCountableUnlocked - for clients using an external lock
-    void AddRefUnlocked();
-    void RemoveRefUnlocked();
 private:
-    const TUint iId;
+    const TUint iTabId;
     const TUint iPollTimeoutMs;
-    ITabDestroyHandler& iDestroyHandler;
-    FrameworkSemaphore iTabSem; // FIXME - pass this in as parameter for testing purposes?
-    FrameworkTabHandler iHandler;
+    IFrameworkTabHandler& iHandler;
     IFrameworkTimer& iTimer;
+    ITabDestroyHandler& iDestroyHandler;
+    TUint iSessionId;
     ITab* iTab;
-    std::vector<const Brx*> iLanguages; // takes ownership of pointers
-    TUint iRefCount;
-    TBool iDestructionPending;
-    mutable OpenHome::Mutex iLock;
+    std::vector<const Brx*> iLanguages; // Takes ownership of pointers.
+    mutable Mutex iLock;
 };
 
 /**
- * Interface representing a central collection of IBufferedTabs.
+ * Interface allowing a client to create and interact with IWebApp tabs.
  */
-class ITabManager
+class ITabManager : public ITabDestroyHandler
 {
+//public: // from ITabDestroyHandler
+//    virtual void Destroy(TUint aId) = 0;
 public:
-    virtual TUint CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageList) = 0;    // returns tab ID; THROWS TabManagerFull
-    virtual IFrameworkTab& GetTab(TUint aTabId) = 0;    // THROWS InvalidTabId
+    virtual TUint CreateTab(IWebApp& aApp, const std::vector<const Brx*>& aLanguageList) = 0;    // Returns tab ID; THROWS TabManagerFull, TabAllocatorFull.
+
+    // Following calls may all throw InvalidTabId.
+    virtual void LongPoll(TUint aId, IWriter& aWriter) = 0;  // Will block until something is written or poll timeout.
+    virtual void Receive(TUint aId, const Brx& aMessage) = 0;
     virtual ~ITabManager() {}
 };
 
-class TabManager : public ITabManager, public ITabDestroyHandler, public OpenHome::INonCopyable
+class TabManager : public ITabManager, private INonCopyable
 {
 public:
     TabManager(OpenHome::Environment& aEnv, TUint aMaxTabs, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
     ~TabManager();
 public: // from ITabManager
-    TUint CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageList);    // THROWS TabManagerFull
-    IFrameworkTab& GetTab(TUint aTabId);    // THROWS InvalidTabId
-private: // from ITabDestroyHandler
-    void Destroy(IRefCountableUnlocked& aRefCountable);
+    TUint CreateTab(IWebApp& aApp, const std::vector<const Brx*>& aLanguageList);
+    void LongPoll(TUint aId, IWriter& aWriter) override; // FIXME - if this blocks, can't receive any other calls into TabManager! Maybe only hold lock to retrieve tab, then unlock during blocking call. But then, what happens if Destroy() is called while in the unlocked blocking call? The FrameworkTab must have a way of handling that.
+    void Receive(TUint aId, const Brx& aMessage) override;
+    void Destroy(TUint aId) override;
 private:
-    static TUint TabManagerIdToClientId(TUint aId);
-    static TUint ClientIdToTabManagerId(TUint aId);
-private:
-    std::vector<FrameworkTimer*> iTimers;   // Required as FrameworkTab takes reference to an IFrameworkTimer.
+
+    // FIXME - maybe have wrapper classes that initialise the tab handlers/framework tabs with real semaphores/timers.
+    // Or, pass in a vector of IFrameworkTabHandlers/IFrameworkTabs (or, even have a wrapper class that pairs the two together so only need to pass in a single vector of IFrameworkTabs, as TabManager doesn't necessarily need to know about the underlying implementation of ITabHandlers).
+
+    // Semaphores/timers belonging to tab handlers.
+    std::vector<FrameworkSemaphore*> iHandlerReadSemaphores;
+    std::vector<FrameworkSemaphore*> iHandlerWriteSemaphores;
+    std::vector<FrameworkTimer*> iHandlerTimers;
+    std::vector<FrameworkTabHandler*> iTabHandlers;
+
+    std::vector<FrameworkTimer*> iTabTimers;    // Timers belonging to tabs.
     std::vector<FrameworkTab*> iTabs;
-    const TUint iMaxTabs;
-    OpenHome::Mutex iLock;
+
+    TUint iNextSessionId;
+    Mutex iLock;
 };
 
 class IWebAppFramework
@@ -364,7 +338,7 @@ public:
     void SetPresentationUrl(const Brx& aPresentationUrl);
 public: // from IWebApp
     IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
-    ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) override;
+    ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
 private:
     IWebApp* iWebApp;
@@ -396,7 +370,7 @@ public:
     WebAppFramework(OpenHome::Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
     ~WebAppFramework();
     void Start(); // FIXME - implement
-    // Can't call Add() after Start()
+    // FIXME - Can't call Add() after Start()
 public: // from IWebAppFramework
     void Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private: // from IWebAppManager
@@ -416,7 +390,10 @@ private:
     const TUint iMaxLpSessions;
     TUint iAdapterListenerId;
     OpenHome::SocketTcpServer* iServer;
-    TabManager* iTabManager;
+    TabManager* iTabManager;    // Should there be one tab manager for ALL apps, or one TabManager per app? (And, similarly, one set of server sessions for all apps, or a set of server sessions per app? Also, need at least one extra session for receiving (and declining) additional long polling requests.)
+
+    // FIXME - what if this is created with a max of 4 tabs and an app is added that is only capable of creating 3 apps and 4 clients try to load apps?
+
     WebAppMap iWebApps; // FIXME - need comparator
     TBool iStarted;
     NetworkAdapter* iCurrentAdapter;

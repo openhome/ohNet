@@ -577,7 +577,7 @@ def build(bld):
     # WebAppFramework tests
     bld.stlib(
         source=[
-            'OpenHome/Web/Tests/TestWebAppFramework.cpp',
+            #'OpenHome/Web/Tests/TestWebAppFramework.cpp',
         ],
         use=['WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
         target='WebAppFrameworkTestUtils')
@@ -593,7 +593,7 @@ def build(bld):
     # ConfigUi tests
     bld.stlib(
         source=[
-            'OpenHome/Web/ConfigUi/Tests/TestConfigUi.cpp'
+            #'OpenHome/Web/ConfigUi/Tests/TestConfigUi.cpp'
         ],
         use=['ConfigUi', 'WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM', 'OPENSSL'],
         target='ConfigUiTestUtils')
@@ -666,11 +666,11 @@ def build(bld):
             use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
-    bld.program(
-            source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'WebAppFrameworkTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
-            target='TestShell',
-            install_path=None)
+    # bld.program(
+            # source='OpenHome/Media/Tests/TestShellMain.cpp',
+            # use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'WebAppFrameworkTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
+            # target='TestShell',
+            # install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestMsgMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -956,26 +956,26 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestNtpClient',
             install_path=None)
-    bld.program(
-            source=['OpenHome/Web/Tests/TestWebAppFrameworkInteractive.cpp'],
-            use=['OHNET', 'PLATFORM', 'WebAppFramework', 'ohMediaPlayer'],
-            target='TestWebAppFrameworkInteractive',
-            install_path=None)
-    bld.program(
-            source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiInteractive.cpp'],
-            use=['OHNET', 'PLATFORM', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'ohMediaPlayer'],
-            target='TestConfigUiInteractive',
-            install_path=None)
-    bld.program(
-            source=['OpenHome/Web/Tests/TestWebAppFrameworkMain.cpp'],
-            use=['OHNET', 'PLATFORM', 'WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayer'],
-            target='TestWebAppFramework',
-            install_path=None)
-    bld.program(
-            source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
-            use=['OHNET', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
-            target='TestConfigUi',
-            install_path=None)
+    # bld.program(
+            # source=['OpenHome/Web/Tests/TestWebAppFrameworkInteractive.cpp'],
+            # use=['OHNET', 'PLATFORM', 'WebAppFramework', 'ohMediaPlayer'],
+            # target='TestWebAppFrameworkInteractive',
+            # install_path=None)
+    # bld.program(
+            # source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiInteractive.cpp'],
+            # use=['OHNET', 'PLATFORM', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'ohMediaPlayer'],
+            # target='TestConfigUiInteractive',
+            # install_path=None)
+    # bld.program(
+            # source=['OpenHome/Web/Tests/TestWebAppFrameworkMain.cpp'],
+            # use=['OHNET', 'PLATFORM', 'WebAppFrameworkTestUtils', 'WebAppFramework', 'ohMediaPlayer'],
+            # target='TestWebAppFramework',
+            # install_path=None)
+    # bld.program(
+            # source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
+            # use=['OHNET', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
+            # target='TestConfigUi',
+            # install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestRaopMain.cpp',
             use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop'],
