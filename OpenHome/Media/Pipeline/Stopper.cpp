@@ -372,21 +372,22 @@ TUint Stopper::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    iLock.Wait();
-    if (iState != ERampingDown) {
-        iBuffering = true;
-    }
-    else {
-        if (iTargetHaltId == MsgHalt::kIdInvalid) {
-            HandlePaused();
+    AutoMutex _(iLock);
+    if (aStarving) {
+        if (iState != ERampingDown) {
+            iBuffering = true;
+        }
+        else {
+            if (iTargetHaltId == MsgHalt::kIdInvalid) {
+                HandlePaused();
+            }
         }
     }
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
-    iLock.Signal();
 }
 
 Msg* Stopper::ProcessFlushable(Msg* aMsg)

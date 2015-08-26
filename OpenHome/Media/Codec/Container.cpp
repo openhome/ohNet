@@ -217,10 +217,10 @@ TUint ContainerBase::TryStop(TUint aStreamId)
     return iExpectedFlushId;
 }
 
-void ContainerBase::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void ContainerBase::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
 
@@ -577,10 +577,10 @@ TUint ContainerFront::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void ContainerFront::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void ContainerFront::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
 
@@ -751,9 +751,9 @@ TUint Container::TryStop(TUint aStreamId)
     return iContainerFront->iActiveContainer->TryStop(aStreamId);
 }
 
-void Container::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Container::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     if (iContainerFront != nullptr) {
-        iContainerFront->NotifyStarving(aMode, aStreamId);
+        iContainerFront->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
