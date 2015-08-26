@@ -224,6 +224,37 @@ public:
     SuiteContainerUnbuffered();
 };
 
+/**
+ * Container that refuses to recognise any stream.
+ */
+class TestDummyContainer : public ContainerBase
+{
+public:
+    TestDummyContainer();
+    TUint RecogniseCount() const;
+    TUint ResetCount() const;
+public: // from SuiteContainerBase
+    TBool Recognise() override;
+    void Reset() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Pull() override;
+private:
+    TUint iRecogniseCount;
+    TUint iResetCount;
+};
+
+class SuiteContainerNull : public SuiteContainerBase
+{
+public:
+    SuiteContainerNull();
+private: // from SuiteUnitTest
+    void Setup();
+private:
+    void TestNullContainer();
+private:
+    TestDummyContainer* iDummyContainer;
+};
+
 } // Codec
 } // Media
 } // OpenHome
@@ -1050,10 +1081,93 @@ SuiteContainerUnbuffered::SuiteContainerUnbuffered()
 }
 
 
+// TestDummyContainer
+
+TestDummyContainer::TestDummyContainer()
+    : ContainerBase(Brn("DUMC"))
+    , iRecogniseCount(0)
+    , iResetCount(0)
+{
+}
+
+TUint TestDummyContainer::RecogniseCount() const
+{
+    return iRecogniseCount;
+}
+
+TUint TestDummyContainer::ResetCount() const
+{
+    return iResetCount;
+}
+
+TBool TestDummyContainer::Recognise()
+{
+    iRecogniseCount++;
+    return false;
+}
+
+void TestDummyContainer::Reset()
+{
+    iResetCount++;
+}
+
+TBool TestDummyContainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return false;
+}
+
+Msg* TestDummyContainer::Pull()
+{
+    ASSERTS();
+    return nullptr;
+}
+
+
+// SuiteContainerNull
+SuiteContainerNull::SuiteContainerNull()
+    : SuiteContainerBase("SuiteContainerNull")
+{
+    AddTest(MakeFunctor(*this, &SuiteContainerNull::TestNullContainer), "TestNullContainer");
+}
+
+void SuiteContainerNull::Setup()
+{
+    SuiteContainerBase::Setup();
+    iDummyContainer = new TestDummyContainer();
+    iContainer->AddContainer(iDummyContainer);  // Takes ownership.
+}
+
+void SuiteContainerNull::TestNullContainer()
+{
+    // add some plugins to the container and send through a stream which none
+    // will recognise; the Null container should still end up recognising it
+
+    // successful completion of this test shows that the Null plugin is working
+
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    for (TUint i = 0; i < msgOrder.size(); i++) {
+        PullAndProcess();
+    }
+
+    TEST(iDummyContainer->RecogniseCount() == 1);
+    TEST(iDummyContainer->ResetCount() > 0);
+}
+
 
 void TestContainer()
 {
     Runner runner("Container tests\n");
     runner.Add(new SuiteContainerUnbuffered());
+    runner.Add(new SuiteContainerNull());
     runner.Run();
 }
