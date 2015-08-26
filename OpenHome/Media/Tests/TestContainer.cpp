@@ -884,7 +884,7 @@ void SuiteContainerBase::TestEndOfStreamQuit()
         PullAndProcess();
     }
 
-    // OkToPlay/TrySeek should fail after a MsgQuit has been pulled; TryStop should work as before.
+    // OkToPlay/TrySeek/TryStop should fail after a MsgQuit has been pulled as no stream should be active (nor will any stream be active again) and no other msg will be sent into pipeline.
     EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iStreamId);
     TEST(iOkToPlayRes == ePlayNo);
     TEST(iProvider->OkToPlayCount() == 0);
@@ -892,8 +892,8 @@ void SuiteContainerBase::TestEndOfStreamQuit()
     TEST(iSeekRes == MsgFlush::kIdInvalid);
     TEST(iProvider->SeekCount() == 0);
     TUint iStopRes = iContainer->TryStop(iStreamId);
-    TEST(iStopRes != MsgFlush::kIdInvalid);
-    TEST(iProvider->StopCount() == 1);
+    TEST(iStopRes == MsgFlush::kIdInvalid);
+    TEST(iProvider->StopCount() == 0);
 }
 
 void SuiteContainerBase::TestNewStream()
