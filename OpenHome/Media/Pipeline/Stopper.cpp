@@ -383,6 +383,9 @@ void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
             if (iTargetHaltId == MsgHalt::kIdInvalid) {
                 HandlePaused();
             }
+            else {
+                HandleStopped();
+            }
         }
     }
     if (iStreamHandler != nullptr) {
