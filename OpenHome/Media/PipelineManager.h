@@ -265,7 +265,6 @@ private:
     public:
         PrefetchObserver();
         ~PrefetchObserver();
-        void Quit();
         void SetTrack(TUint aTrackId);
         void Wait(TUint aTimeoutMs);
     private: // from IStreamPlayObserver
@@ -291,7 +290,7 @@ private:
     Semaphore iPipelineStoppedSem;
     BwsMode iMode;
     TUint iTrackId;
-    PrefetchObserver iPrefetchObserver;
+    PrefetchObserver* iPrefetchObserver;
 };
 
 } // namespace Media

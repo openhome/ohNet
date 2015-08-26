@@ -48,12 +48,13 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this, aMimeTypeList);
+    iPrefetchObserver = new PrefetchObserver();
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, *iPrefetchObserver, *this, *this, aMimeTypeList);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
     iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory,
-                         iPrefetchObserver, *iIdManager, min-1,
+                         *iPrefetchObserver, *iIdManager, min-1,
                          iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
@@ -62,6 +63,7 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
 PipelineManager::~PipelineManager()
 {
     delete iPipeline;
+    delete iPrefetchObserver;
     delete iProtocolManager;
     delete iFiller;
     delete iIdManager;
@@ -202,14 +204,14 @@ void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
     iPipeline->Unblock();
-    iPrefetchObserver.SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
+    iPrefetchObserver->SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
     iFiller->PlayLater(aMode, aTrackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
     try {
-        iPrefetchObserver.Wait(5000); /* It's possible that a protocol module will block without
-                                         ever delivering content.  Other pipeline operations which
-                                         might interrupt it are blocked by iPublicLock so we
-                                         timeout after 5s as a workaround */
+        iPrefetchObserver->Wait(5000); /* It's possible that a protocol module will block without
+                                          ever delivering content.  Other pipeline operations which
+                                          might interrupt it are blocked by iPublicLock so we
+                                          timeout after 5s as a workaround */
     }
     catch (Timeout&) {
         Log::Print("WARNING: Timeout from PipelineManager::StopPrefetch.  trackId=%u, mode=", aTrackId);
@@ -406,12 +408,6 @@ PipelineManager::PrefetchObserver::PrefetchObserver()
 
 PipelineManager::PrefetchObserver::~PrefetchObserver()
 {
-    ASSERT(iTrackId == UINT_MAX);
-}
-
-void PipelineManager::PrefetchObserver::Quit()
-{
-    iTrackId = UINT_MAX;
     iSem.Signal();
 }
 
