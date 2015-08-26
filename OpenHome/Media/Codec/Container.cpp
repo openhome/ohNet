@@ -59,10 +59,7 @@ void MsgAudioEncodedCache::Reset()
     iDiscardBytesRemaining = 0;
     iInspectBytesRemaining = 0;
     iAccumulateBytesRemaining = 0;
-    if (iBuffer != nullptr) {
-        iBuffer->SetBytes(0);
-        iBuffer = nullptr;
-    }
+    iBuffer = nullptr;  // Acutal buffer is owned by another class.
     iExpectedFlushId = MsgFlush::kIdInvalid;
 }
 
