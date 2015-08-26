@@ -507,6 +507,7 @@ TBool MpegTs::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 
 Msg* MpegTs::Pull()
 {
+    iStreamTerminatorDetector.Reset();
     while (iState != eComplete) {
 
         if (iState != eStart) {
@@ -582,10 +583,17 @@ Msg* MpegTs::Pull()
             ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
 
             TUint discard = adaptationFieldLength;
-            if (!TrySetPayloadState()) {
-                discard += iRemaining;
-                iRemaining = 0;
+
+            if (iRemaining == 0) {
+                // Adaptation field may constitute remainder of packet.
                 iState = eStart;
+            }
+            else {
+                if (!TrySetPayloadState()) {
+                    discard += iRemaining;
+                    iRemaining = 0;
+                    iState = eStart;
+                }
             }
 
             iCache->Discard(discard);
