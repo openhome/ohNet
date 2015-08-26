@@ -82,7 +82,7 @@ protected:
     IContainerSeekHandler* iSeekHandler;
     IContainerUrlBlockWriter* iUrlBlockWriter;
 private:
-    Brn iId;
+    const Bws<kMaxNameBytes> iId;
 };
 
 class MsgAudioEncodedCache : public IMsgAudioEncodedCache, public IMsgProcessor, private INonCopyable
