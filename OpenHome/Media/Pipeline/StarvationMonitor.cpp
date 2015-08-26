@@ -188,7 +188,7 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
 #endif
     if (aStatus == EBuffering) {
         if (iStreamHandler != nullptr) {
-            iStreamHandler->NotifyStarving(iMode, iStreamId);
+            iStreamHandler->NotifyStarving(iMode, iStreamId, true);
         }
         iEventBuffering.store(true);
         iObserverThread.Schedule(iEventId);
@@ -197,6 +197,9 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
         }
     }
     else if (iStatus == EBuffering) {
+        if (iStreamHandler != nullptr) {
+            iStreamHandler->NotifyStarving(iMode, iStreamId, false);
+        }
         iEventBuffering.store(false);
         iObserverThread.Schedule(iEventId);
         if (iClockPuller != nullptr) {

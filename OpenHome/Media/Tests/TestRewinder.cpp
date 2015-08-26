@@ -68,7 +68,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -250,7 +250,7 @@ TUint SuiteRewinder::TryStop(TUint /*aStreamId*/)
     return ++iCurrentFlushId;
 }
 
-void SuiteRewinder::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteRewinder::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 

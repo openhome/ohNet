@@ -75,7 +75,7 @@ TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
     return flushId;
 }
 
-void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     IStreamHandler* streamHandler = nullptr;
     {
@@ -83,7 +83,7 @@ void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
         streamHandler = iStreamHandler;
     }
     if (streamHandler != nullptr) {
-        streamHandler->NotifyStarving(aMode, aStreamId);
+        streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
 

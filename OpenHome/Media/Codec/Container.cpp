@@ -59,10 +59,7 @@ void MsgAudioEncodedCache::Reset()
     iDiscardBytesRemaining = 0;
     iInspectBytesRemaining = 0;
     iAccumulateBytesRemaining = 0;
-    if (iBuffer != nullptr) {
-        iBuffer->SetBytes(0);
-        iBuffer = nullptr;
-    }
+    iBuffer = nullptr;  // Acutal buffer is owned by another class.
     iExpectedFlushId = MsgFlush::kIdInvalid;
 }
 
@@ -620,11 +617,11 @@ TUint ContainerController::TryStop(TUint aStreamId)
     return iExpectedFlushId;
 }
 
-void ContainerController::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void ContainerController::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex a(iLock);
     ASSERT(iStreamHandler != nullptr);
-    iStreamHandler->NotifyStarving(aMode, aStreamId);
+    iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
 }
 
 TBool ContainerController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)

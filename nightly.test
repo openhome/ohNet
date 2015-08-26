@@ -55,6 +55,7 @@ tests = '''
     TestRaop
     TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
+    TestFlywheelRamper
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()

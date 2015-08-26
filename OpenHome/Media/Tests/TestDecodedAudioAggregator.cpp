@@ -32,7 +32,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -208,7 +208,7 @@ TUint SuiteDecodedAudioAggregator::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteDecodedAudioAggregator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteDecodedAudioAggregator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 

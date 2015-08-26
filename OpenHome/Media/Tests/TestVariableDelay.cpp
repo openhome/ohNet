@@ -42,7 +42,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
@@ -245,7 +245,7 @@ TUint SuiteVariableDelay::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteVariableDelay::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteVariableDelay::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -602,7 +602,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromStarting()
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
-    iVariableDelay->NotifyStarving(kMode, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId, true);
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
     TEST(iVariableDelay->iDelayAdjustment > 0);
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -622,7 +622,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromRunning()
 {
     TestDelayFromRunning();
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
-    iVariableDelay->NotifyStarving(kMode, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId, true);
 
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     iJiffies = 0;
@@ -649,7 +649,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromRampingDown()
     PullNext(EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     const TUint remainingRamp = iVariableDelay->iRemainingRampSize;
-    iVariableDelay->NotifyStarving(kMode, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId, true);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     TEST(iVariableDelay->iRemainingRampSize == remainingRamp);
     do {
@@ -683,7 +683,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromRampingUp()
     PullNext(EMsgAudioPcm);
 
     const TUint completedRamp = iVariableDelay->iRampDuration - iVariableDelay->iRemainingRampSize;
-    iVariableDelay->NotifyStarving(kMode, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId, true);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     TEST(iVariableDelay->iRemainingRampSize == completedRamp);
     const TUint remainingRamp = iVariableDelay->iRemainingRampSize;

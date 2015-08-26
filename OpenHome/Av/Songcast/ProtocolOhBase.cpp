@@ -201,9 +201,9 @@ EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
     return ePlayYes;
 }
 
-void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    if (aMode == iMode) {
+    if (aMode == iMode && aStarving) {
         LOG(kSongcast, "OHU: NotifyStarving for stream %u\n", aStreamId);
         iStarving = true;
         iSocket.Interrupt(true);

@@ -85,7 +85,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -438,7 +438,7 @@ TUint SuiteSampleRateValidator::TryStop(TUint /*aStreamId*/)
     return iExpectedFlushId;
 }
 
-void SuiteSampleRateValidator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteSampleRateValidator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
     ASSERTS();
 }

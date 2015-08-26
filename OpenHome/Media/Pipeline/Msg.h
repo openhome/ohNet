@@ -1221,8 +1221,9 @@ public:
      * @param[in] aMode            Reported by the MsgMode which preceded the stream which dropped out.
      *                             i.e. identifier for the UriProvider associated with this stream
      * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     * @param[in] aStarving        true if entering starvation; false if starvation is over.
      */
-    virtual void NotifyStarving(const Brx& aMode, TUint aStreamId) = 0;
+    virtual void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) = 0;
 };
 
 class IUrlBlockWriter

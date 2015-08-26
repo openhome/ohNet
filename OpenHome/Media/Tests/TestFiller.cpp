@@ -54,7 +54,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     Supply iSupply;
     Semaphore& iTrackAddedSem;
@@ -291,7 +291,7 @@ TUint DummyUriStreamer::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 

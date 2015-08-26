@@ -119,18 +119,20 @@ TUint Drainer::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Drainer::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Drainer::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex _(iLock);
-    if (iIgnoreNextStarving) {
-        iIgnoreNextStarving = false;
-    }
-    else {
-        LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
-        iGenerateDrainMsg = true;
+    if (aStarving) {
+        if (iIgnoreNextStarving) {
+            iIgnoreNextStarving = false;
+        }
+        else {
+            LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
+            iGenerateDrainMsg = true;
+        }
     }
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
 

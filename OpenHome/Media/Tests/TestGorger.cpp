@@ -33,7 +33,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     enum EMsgType
     {
@@ -176,9 +176,11 @@ TUint SuiteGorger::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool aStarving)
 {
-    iStarvationNotifications++;
+    if (aStarving) {
+        iStarvationNotifications++;
+    }
 }
 
 Msg* SuiteGorger::ProcessMsg(MsgMode* aMsg)
@@ -469,7 +471,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     PullNext(EMsgDecodedStream);
     TEST(!iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
-    iGorger->NotifyStarving(kModeRealTime, 1);
+    iGorger->NotifyStarving(kModeRealTime, 1, true);
     TEST(!iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
     TEST(iStarvationNotifications == 1);
@@ -492,7 +494,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     } while (--numAudioMsgs > 0);
     TEST(iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
-    iGorger->NotifyStarving(kModeGorgable, 2);
+    iGorger->NotifyStarving(kModeGorgable, 2, true);
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
     TEST(iStarvationNotifications == 2);
