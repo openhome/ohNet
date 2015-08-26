@@ -617,11 +617,11 @@ TUint ContainerController::TryStop(TUint aStreamId)
     return iExpectedFlushId;
 }
 
-void ContainerController::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void ContainerController::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex a(iLock);
     ASSERT(iStreamHandler != nullptr);
-    iStreamHandler->NotifyStarving(aMode, aStreamId);
+    iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
 }
 
 TBool ContainerController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)

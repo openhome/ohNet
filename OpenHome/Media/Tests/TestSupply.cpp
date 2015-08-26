@@ -19,7 +19,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 };
 
 class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
@@ -115,7 +115,7 @@ TUint DummyStreamHandler::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 

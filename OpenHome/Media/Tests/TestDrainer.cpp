@@ -277,7 +277,7 @@ void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 
 void SuiteDrainer::TestDrainAfterStarvation()
 {
-    iDrainer->NotifyStarving(Brx::Empty(), 0);
+    iDrainer->NotifyStarving(Brx::Empty(), 0, true);
     PullNext(EMsgDrain);
 }
 
@@ -288,7 +288,7 @@ void SuiteDrainer::TestOneDrainAfterHaltAndStarvation()
     PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgHalt);
-    iDrainer->NotifyStarving(Brx::Empty(), 0);
+    iDrainer->NotifyStarving(Brx::Empty(), 0, true);
     PullNext(EMsgDrain);
     iMsgDrain->ReportDrained();
     PullNext(EMsgSilence);

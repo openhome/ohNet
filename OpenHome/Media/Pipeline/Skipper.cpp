@@ -258,17 +258,19 @@ TUint Skipper::TryStop(TUint aStreamId)
     return iStreamHandler->TryStop(aStreamId);
 }
 
-void Skipper::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Skipper::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     {
         AutoMutex _(iLock);
-        iRunning = false;
-        if (iState == eRamping) {
-            // FIXME - consider queueing StreamInterrupted.  But how to do this in a thread safe way?
-            StartFlushing(true);
+        if (aStarving) {
+            iRunning = false;
+            if (iState == eRamping) {
+                // FIXME - consider queueing StreamInterrupted.  But how to do this in a thread safe way?
+                StartFlushing(true);
+            }
         }
     }
-    iStreamHandler->NotifyStarving(aMode, aStreamId);
+    iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
 }
 
 TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)

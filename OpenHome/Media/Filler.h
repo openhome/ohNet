@@ -104,7 +104,7 @@ private:
         EStreamPlay OkToPlay(TUint aStreamId) override;
         TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
         TUint TryStop(TUint aStreamId) override;
-        void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+        void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
     private:
         IPipelineIdProvider& iIdProvider;
     };

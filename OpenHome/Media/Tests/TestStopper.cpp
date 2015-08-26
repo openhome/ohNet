@@ -44,7 +44,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -251,7 +251,7 @@ TUint SuiteStopper::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -942,7 +942,7 @@ void SuiteStopper::TestPauseWhileStarving()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 
-    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId);
+    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId, true);
     TEST(iPausedCount == 0);
     const TUint playingCount = iPlayingCount;
     iStopper->BeginPause();
@@ -962,7 +962,7 @@ void SuiteStopper::TestStopWhileStarving()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 
-    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId);
+    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId, true);
     TEST(iPausedCount == 0);
     const TUint playingCount = iPlayingCount;
     iStopper->BeginStop(5);

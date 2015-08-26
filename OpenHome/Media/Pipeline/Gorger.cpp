@@ -191,14 +191,14 @@ TUint Gorger::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Gorger::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Gorger::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     iLock.Wait();
-    if (aMode == iMode && iCanGorge) {
+    if (aStarving && aMode == iMode && iCanGorge) {
         SetGorging(true, "NotifyStarving");
     }
     iLock.Signal();
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }

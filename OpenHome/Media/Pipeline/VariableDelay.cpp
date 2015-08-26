@@ -408,10 +408,12 @@ TUint VariableDelay::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    HandleStarving();
+    if (aStarving) {
+        HandleStarving();
+    }
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }

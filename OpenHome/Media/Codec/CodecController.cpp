@@ -766,11 +766,11 @@ TUint CodecController::TryStop(TUint aStreamId)
     return flushId;
 }
 
-void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex a(iLock);
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
 
