@@ -15,82 +15,115 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 Id3v2::Id3v2()
-    : iSize(0)
-    , iTotalSize(0)
+    : ContainerBase(Brn("ID3"))
 {
 }
 
-TBool Id3v2::Recognise(Brx& aBuf)
+TBool Id3v2::Recognise()
+{
+    LOG(kMedia, "Id3v2::Recognise\n");
+    iCache->Inspect(iBuf, iBuf.MaxBytes());
+
+    //Msg* msg = iCache->Pull();
+    //while (msg != nullptr) {
+    //    msg->RemoveRef();
+    //    msg = iCache->Pull();
+    //}
+
+    Msg* msg = iCache->Pull();
+    if (msg != nullptr) {
+        msg->RemoveRef();
+        return false;
+    }
+
+    if (RecogniseTag()) {
+        iSize = 0;
+        return true;
+    }
+    return false;
+}
+
+void Id3v2::Reset()
 {
     iSize = 0;
     iTotalSize = 0;
+    iBuf.SetBytes(0);
+    iParsingComplete = false;
+    iInspectPending = false;
+}
 
-    if (aBuf.Bytes() < kRecogniseBytes) {
+Msg* Id3v2::Pull()
+{
+    /**
+     * Keep attempting to recognise ID3 tags until fail to recognise tags.
+     * (In case there are multiple tags in a file.)
+     */
+    Msg* msg = nullptr;
+    while (msg == nullptr) {
+        if (iSize > 0) {
+            iCache->Discard(iSize-kRecogniseBytes);
+            iSize = 0;
+        }
+        if (!iParsingComplete) {
+            if (!iInspectPending) {
+                iBuf.SetBytes(0);
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+            }
+        }
+
+        msg = iCache->Pull();
+        if (msg == nullptr) {
+            // Inspect buffer must have been filled.
+            const TBool recognised = RecogniseTag();
+            iInspectPending = false;
+            if (recognised) {
+                iTotalSize += iSize;
+            }
+            else {
+                iParsingComplete = true;
+            }
+
+        }
+    }
+    return msg;
+}
+
+TBool Id3v2::TrySeek(TUint aStreamId, TUint64 aOffset)
+{
+    TUint64 offset = aOffset + iTotalSize;
+    return iSeekHandler->TrySeekTo(aStreamId, offset);
+}
+
+
+TBool Id3v2::RecogniseTag()
+{
+    if (iBuf.Bytes() < kRecogniseBytes) {
         return false; // not enough data to recognise
     }
 
     static const char* kContainerStart = "ID3";
-    if (strncmp((const TChar*)(aBuf.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
+    if (strncmp((const TChar*)(iBuf.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
         return false;
     }
-    if (aBuf[3] > 4) { // We only support upto Id3v2.4
+    if (iBuf[3] > 4) { // We only support upto Id3v2.4
         return false;
     }
-    const TBool hasFooter = ((aBuf[5] & 0x10) != 0); // FIXME - docs suggest this is an experimental field rather than footer indicator
+    // NOTE: docs suggest this is an experimental field rather than footer indicator.
+    const TBool hasFooter = ((iBuf[5] & 0x10) != 0);
     // remaining 4 bytes give the size of container data
     // bit 7 of each byte must be zero (to avoid being mistaken for the sync frame of mp3)
     // ...so each byte only holds 7 bits of sizing data
     for (TUint i=6; i<10; i++) {
-        if ((aBuf[i] & 0x80) != 0) {
+        if ((iBuf[i] & 0x80) != 0) {
             return false;
         }
     }
 
-    iSize = ((aBuf[6] << 21) | (aBuf[7] << 14) | (aBuf[8] << 7) | aBuf[9]);
+    iSize = ((iBuf[6] << 21) | (iBuf[7] << 14) | (iBuf[8] << 7) | iBuf[9]);
     iSize += 10; // for header
-    if(hasFooter) {
+    if (hasFooter) {
         iSize += 10; // for footer if present
     }
     LOG(kMedia, "Id3v2 header found: %d bytes\n", iSize);
     return true;
-}
-
-Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    MsgAudioEncoded* msg = nullptr;
-    AddToAudioEncoded(aMsg);
-
-    if (!iPulling) {
-        iBuf.SetBytes(0);
-        Read(iBuf, kRecogniseBytes);
-        if (iBuf.Bytes() == kRecogniseBytes) {
-            TBool recognised = Recognise(iBuf);
-            if (recognised) {
-                // Discard audio data; could be splitting a large tag (i.e., one containing album art).
-                // Already read kRecogniseBytes above, but Read() doesn't discard audio, so discard
-                // iSize here.
-                DiscardAudio(iSize);
-                // Can't return remaining iAudioEncoded here; could have another tag following this one.
-                iTotalSize += iSize;
-            }
-            else {
-                msg = iAudioEncoded;
-                iAudioEncoded = nullptr;
-            }
-        }
-        else {
-            // Didn't read a full buffer, so must be at end of stream.
-            msg = iAudioEncoded;
-            iAudioEncoded = nullptr;
-        }
-    }
-
-    return msg;
-}
-
-TUint Id3v2::TrySeek(TUint aStreamId, TUint64 aOffset)
-{
-    TUint64 offset = aOffset + iTotalSize;
-    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
-    return iExpectedFlushId;
 }

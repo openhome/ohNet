@@ -72,7 +72,7 @@ private:
 };
 
 namespace Codec {
-    class Container;
+    class ContainerController;
     class CodecController;
     class CodecBase;
 }
@@ -201,7 +201,7 @@ private:
     PipelineElementObserverThread* iEventThread;
     EncodedAudioReservoir* iEncodedAudioReservoir;
     Logger* iLoggerEncodedAudioReservoir;
-    Codec::Container* iContainer;
+    Codec::ContainerController* iContainer;
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;

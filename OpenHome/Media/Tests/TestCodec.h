@@ -14,7 +14,7 @@ namespace Media {
     class ProtocolManager;
 
 namespace Codec {
-    class Container;
+    class ContainerController;
     class CodecController;
 
 class AudioFileDescriptor
@@ -150,7 +150,7 @@ private: // from IUrlBlockWriter
 private: // from IMimeTypeList
     void Add(const TChar* aMimeType) override;
 protected:
-    Container* iContainer;
+    ContainerController* iContainer;
     CodecController* iController;
 private:
     TestCodecInfoAggregator* iInfoAggregator;
