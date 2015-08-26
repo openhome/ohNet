@@ -125,7 +125,9 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iRawPcm(false)
     , iStreamHandler(nullptr)
     , iStreamId(0)
+    , iChannels(0)
     , iSampleRate(0)
+    , iBitDepth(0)
     , iStreamLength(0)
     , iStreamPos(0)
     , iTrackId(UINT_MAX)
@@ -206,6 +208,7 @@ void CodecController::CodecThread()
             iLock.Wait();
             iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
             iActiveCodec = nullptr;
+            iChannels = iBitDepth = 0;
             iSampleRate = iSeekSeconds = 0;
             iStreamId = IPipelineIdProvider::kStreamIdInvalid;
             iStreamLength = iStreamPos = 0LL;
@@ -501,7 +504,9 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     }
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler);
     iLock.Wait();
+    iChannels = aNumChannels;
     iSampleRate = aSampleRate;
+    iBitDepth = aBitDepth;
     if (iExpectedFlushId == MsgFlush::kIdInvalid) {
         Queue(msg);
     }
@@ -524,6 +529,9 @@ void CodecController::OutputDelay(TUint aJiffies)
 
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
+    ASSERT(aChannels == iChannels);
+    ASSERT(aSampleRate == iSampleRate);
+    ASSERT(aBitDepth == iBitDepth);
     if (iPostSeekStreamInfo != nullptr) {
         Queue(iPostSeekStreamInfo);
         iPostSeekStreamInfo = nullptr;
@@ -537,6 +545,9 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset,
                                         TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
+    ASSERT(aChannels == iChannels);
+    ASSERT(aSampleRate == iSampleRate);
+    ASSERT(aBitDepth == iBitDepth);
     if (iPostSeekStreamInfo != nullptr) {
         Queue(iPostSeekStreamInfo);
         iPostSeekStreamInfo = nullptr;

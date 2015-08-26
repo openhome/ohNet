@@ -374,7 +374,9 @@ private:
     IStreamHandler* iStreamHandler;
     TUint iStreamId;
     BwsTrackUri iTrackUri;
+    TUint iChannels;    // Only for detecting out-of-sequence MsgAudioPcm.
     TUint iSampleRate;
+    TUint iBitDepth;    // Only for detecting out-of-sequence MsgAudioP
     TUint64 iStreamLength;
     TUint64 iStreamPos;
     TUint iTrackId;
