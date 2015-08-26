@@ -277,7 +277,7 @@ private:
     void OutputAudio(const Brx& aAudio);
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
-    void WaitForChangeInput();
+    void WaitForDrain();
     void InputChanged();
     void ResendTimerFired();
     static TUint Delay(TUint aSamples);

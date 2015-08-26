@@ -17,7 +17,6 @@ public:
     CodecOhm(OhmMsgFactory& aMsgFactory, IOhmTimestampMapper* aTsMapper);
     ~CodecOhm();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType) override;
     TBool Recognise(const Media::Codec::EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
@@ -35,7 +34,6 @@ private:
     Bws<OhmMsgAudioBlob::kMaxBytes> iBuf;
     TUint iOffset;
     TBool iStreamOutput;
-    TBool iSendSession;
     TUint iSampleRate;
     TUint iLatency;
     IOhmTimestampMapper* iTsMapper;

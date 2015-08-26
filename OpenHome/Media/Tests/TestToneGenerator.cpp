@@ -11,6 +11,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Globals.h>  // dummy Environment
@@ -91,7 +92,7 @@ enum EToneMsgType
 };
 
 class SuiteGeneratorAny : public SuiteUnitTest,
-     private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter
+    private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter, private IMimeTypeList
 {
 public:
     SuiteGeneratorAny(const TChar* aName);
@@ -121,9 +122,8 @@ protected:  // from IMsgProcessor
 
 private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -138,6 +138,9 @@ private:  // from IMsgProcessor
 
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
+
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 
 private:
     // as per Pipeline.h
@@ -156,7 +159,6 @@ private:
     static const TUint kMsgCountFlush           = 1;
     static const TUint kMsgCountWait            = 1;
     static const TUint kMsgCountMode            = 1;
-    static const TUint kMsgCountSession         = 1;
     static const TUint kMsgCountDelay           = 1;
     static const TUint kMsgCountQuit            = 1;
     static const TUint kEncodedReservoirMaxStreams = 10;
@@ -500,9 +502,8 @@ void SuiteGeneratorAny::Setup()
     iAllocatorInfoLogger = new AllocatorInfoLogger();
     MsgFactoryInitParams init;
     init.SetMsgModeCount(kMsgCountMode);
-    init.SetMsgSessionCount(kMsgCountSession);
     init.SetMsgTrackCount(kMsgCountTrack);
-    init.SetMsgChangeInputCount(1);
+    init.SetMsgDrainCount(1);
     init.SetMsgDelayCount(kMsgCountDelay);
     init.SetMsgEncodedStreamCount(kMsgCountEncodedStream);
     init.SetMsgAudioEncodedCount(kMsgCountAudioEncoded, kMsgCountEncodedAudio);
@@ -518,10 +519,10 @@ void SuiteGeneratorAny::Setup()
     init.SetMsgQuitCount(kMsgCountQuit);
     iMsgFactory = new MsgFactory(*iAllocatorInfoLogger, init);
 
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams);
     iContainer = new Codec::ContainerController(*iMsgFactory, *iEncodedAudioReservoir, *this);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
-    iCodecController->AddCodec(Codec::CodecFactory::NewWav());
+    iCodecController->AddCodec(Codec::CodecFactory::NewWav(*this));
     iCodecController->Start();
 
     iProtocolManager = new ProtocolManager(*iEncodedAudioReservoir, *iMsgFactory, *this, *this);
@@ -579,11 +580,6 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteGeneratorAny::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(eMsgTrack == iExpectedMsgType);
@@ -593,7 +589,7 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteGeneratorAny::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -673,6 +669,10 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioPcm* aMsg)
 TBool SuiteGeneratorAny::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
+}
+
+void SuiteGeneratorAny::Add(const TChar* /*aMimeType*/)
+{
 }
 
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)

@@ -18,6 +18,7 @@ EXCEPTION(MediaMpeg4OutOfRange);
 
 namespace OpenHome {
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 
@@ -852,7 +853,7 @@ private:
 class Mpeg4Container : public ContainerBase, public IMpeg4MetadataProvider, public IMpeg4ChunkSeekObservable
 {
 public:
-    Mpeg4Container();
+    Mpeg4Container(IMimeTypeList& aMimeTypeList);
 public: // from ContainerBase
     void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter) override;
     TBool Recognise() override;

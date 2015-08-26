@@ -122,17 +122,12 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SpotifyReporter::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* SpotifyReporter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SpotifyReporter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

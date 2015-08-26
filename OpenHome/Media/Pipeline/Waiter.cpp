@@ -78,17 +78,12 @@ Msg* Waiter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Waiter::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* Waiter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Waiter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

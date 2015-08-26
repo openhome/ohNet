@@ -243,17 +243,14 @@ void SourceReceiver::Activate()
 {
     LOG(kSongcast, "SourceReceiver::Activate()\n");
     iActive = true;
-    {
-        AutoMutex _(iLock);
-        if (iTrackUri.Bytes() > 0) {
-            iZoneHandler->SetCurrentSenderUri(iTrackUri);
-        }
-    }
     if (iNoPipelinePrefetchOnActivation) {
         iPipeline.RemoveAll();
     }
     else {
         iPipeline.StopPrefetch(iUriProvider->Mode(), Track::kIdNone);
+        if (iZone.Bytes() > 0) {
+            iZoneHandler->StartMonitoring(iZone);
+        }
     }
 }
 
@@ -262,7 +259,9 @@ void SourceReceiver::Deactivate()
     LOG(kSongcast, "SourceReceiver::Deactivate()\n");
     iProviderReceiver->NotifyPipelineState(EPipelineStopped);
     iZoneHandler->ClearCurrentSenderUri();
+    iZoneHandler->StopMonitoring();
     iPlaying = false;
+    iTrackUri.Replace(Brx::Empty());
     Source::Deactivate();
 }
 
@@ -329,6 +328,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
     }
     else {
         iZone.Replace(Brx::Empty());
+        iZoneHandler->ClearCurrentSenderUri();
         iTrackUri.Replace(aUri);
         iTrackMetadata.Replace(aMetadata);
         UriChanged();

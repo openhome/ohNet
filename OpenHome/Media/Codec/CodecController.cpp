@@ -189,16 +189,6 @@ void CodecController::StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekOb
     iSeekSeconds = aSecondsAbsolute;
 }
 
-TBool CodecController::SupportsMimeType(const Brx& aMimeType)
-{
-    for (TUint i=0; i<iCodecs.size(); i++) {
-        if (iCodecs[i]->SupportsMimeType(aMimeType)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void CodecController::CodecThread()
 {
     iStreamStarted = false;
@@ -287,6 +277,7 @@ void CodecController::CodecThread()
                 }
                 iLock.Wait();
                 if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+                    (void)iStreamHandler->OkToPlay(iStreamId);
                     iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
                     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                         iConsumeExpectedFlush = true;
@@ -485,6 +476,7 @@ TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
     if (flushId != MsgFlush::kIdInvalid) {
         ReleaseAudioEncoded();
         iExpectedFlushId = flushId;
+        iConsumeExpectedFlush = false;
         iExpectedSeekFlushId = flushId;
         iStreamPos = aBytePos;
         return true;
@@ -532,6 +524,10 @@ void CodecController::OutputDelay(TUint aJiffies)
 
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
+    if (iPostSeekStreamInfo != nullptr) {
+        Queue(iPostSeekStreamInfo);
+        iPostSeekStreamInfo = nullptr;
+    }
     MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
     TUint jiffies= audio->Jiffies();
     Queue(audio);
@@ -541,6 +537,10 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset,
                                         TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
+    if (iPostSeekStreamInfo != nullptr) {
+        Queue(iPostSeekStreamInfo);
+        iPostSeekStreamInfo = nullptr;
+    }
     MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aNetworkTimestamp);
     TUint jiffies= audio->Jiffies();
     Queue(audio);
@@ -559,12 +559,6 @@ void CodecController::OutputHalt()
     Queue(halt);
 }
 
-void CodecController::OutputSession()
-{
-    MsgSession* session = iMsgFactory.CreateMsgSession();
-    Queue(session);
-}
-
 void CodecController::OutputMetaText(const Brx& aMetaText)
 {
     MsgMetaText* text = iMsgFactory.CreateMsgMetaText(aMetaText);
@@ -572,16 +566,6 @@ void CodecController::OutputMetaText(const Brx& aMetaText)
 }
 
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
-{
-    if (iRecognising) {
-        iStreamEnded = true;
-        aMsg->RemoveRef();
-        return nullptr;
-    }
-    return aMsg;
-}
-
-Msg* CodecController::ProcessMsg(MsgSession* aMsg)
 {
     if (iRecognising) {
         iStreamEnded = true;
@@ -607,7 +591,7 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* CodecController::ProcessMsg(MsgChangeInput* aMsg)
+Msg* CodecController::ProcessMsg(MsgDrain* aMsg)
 {
     Queue(aMsg);
     return nullptr;
@@ -705,10 +689,6 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
         }
         else {
             Queue(aMsg);
-            if (iPostSeekStreamInfo != nullptr) {
-                Queue(iPostSeekStreamInfo);
-                iPostSeekStreamInfo = nullptr;
-            }
         }
     }
     return nullptr;

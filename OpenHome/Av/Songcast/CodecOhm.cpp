@@ -29,16 +29,12 @@ CodecOhm::~CodecOhm()
 {
 }
 
-TBool CodecOhm::SupportsMimeType(const Brx& /*aMimeType*/)
-{
-    return false;
-}
-
 TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     if (aStreamInfo.RawPcm()) {
         return false;
     }
+    Reset();
     try {
         OhmHeader header;
         header.Internalise(*this);
@@ -79,10 +75,6 @@ void CodecOhm::Process()
         }
 
         if (msg->Samples() > 0) {
-            if (iSendSession) {
-                iController->OutputSession();
-                iSendSession = false;
-            }
             const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
             if (msg->RxTimestamped() && msg->Timestamped()) {
                 TUint rxTstamp = (iTsMapper != nullptr) ? iTsMapper->ToOhmTimestamp(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
@@ -97,7 +89,6 @@ void CodecOhm::Process()
     if (msg->Halt()) {
         iController->OutputWait();
         iController->OutputHalt();
-        iSendSession = true;
     }
 
     msg->RemoveRef();
@@ -156,7 +147,6 @@ void CodecOhm::Reset()
     iBuf.SetBytes(0);
     iOffset = 0;
     iStreamOutput = false;
-    iSendSession = false;
     iSampleRate = 0;
     iLatency = 0;
 }

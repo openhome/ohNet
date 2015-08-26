@@ -38,10 +38,11 @@ class ProviderPlaylist : public Net::DvProviderAvOpenhomeOrgPlaylist1, private I
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater, const Brx& aProtocolInfo);
+    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater);
     ~ProviderPlaylist();
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(TUint aId);
+    void NotifyProtocolInfo(const Brx& aProtocolInfo);
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;

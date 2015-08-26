@@ -167,13 +167,6 @@ public:
      */
     virtual void OutputHalt() = 0;
     /**
-     * Output a Session command to the pipeline.
-     *
-     * This informs the pipeline about a discontinuity in audio, allowing it to apply
-     * ramps or delays as appropriate.
-     */
-    virtual void OutputSession() = 0;
-    /**
      * Notify the pipeline of an update in meta text.
      *
      * This allows the pipeline to output additional information about a stream.
@@ -225,14 +218,6 @@ public:
 public:
     virtual ~CodecBase();
 public:
-    /**
-     * Query whether a given audio format is supported.
-     *
-     * @param[in] aMimeType      MIME type of the form type/subtype.  All lowercase.
-     *
-     * @return     true if the codec can decode aMimeType; false otherwise.
-     */
-    virtual TBool SupportsMimeType(const Brx& aMimeType) = 0;
     /**
      * Report whether a new audio stream is handled by this codec.
      *
@@ -307,7 +292,6 @@ public:
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
-    TBool SupportsMimeType(const Brx& aMimeType);
 private:
     void CodecThread();
     void Rewind();
@@ -331,13 +315,11 @@ private: // ICodecController
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     void OutputWait();
     void OutputHalt();
-    void OutputSession();
     void OutputMetaText(const Brx& aMetaText);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;

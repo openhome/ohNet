@@ -168,6 +168,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     volumeInit.SetFade(iVolumeLogger);
 
     // create MediaPlayer
+    auto pipelineInit = PipelineInitParams::New();
+    pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
+                                                                      // platforms with slightly unpredictable thread scheduling
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
@@ -297,41 +300,17 @@ DvDeviceStandard* TestMediaPlayer::Device()
 
 void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 {
-    const Brn kSupportedProtocols( 
-        "http-get:*:audio/x-flac:*,"    // Flac
-        "http-get:*:audio/wav:*,"       // Wav
-        "http-get:*:audio/wave:*,"      // Wav
-        "http-get:*:audio/x-wav:*,"     // Wav
-        "http-get:*:audio/aiff:*,"      // AIFF
-        "http-get:*:audio/x-aiff:*,"    // AIFF
-        "http-get:*:audio/x-m4a:*,"     // Alac
-        "http-get:*:audio/x-scpls:*,"   // M3u (content processor)
-        "http-get:*:text/xml:*,"        // Opml ??  (content processor)
-        "http-get:*:audio/aac:*,"       // Aac
-        "http-get:*:audio/aacp:*,"      // Aac
-        "http-get:*:audio/mp4:*,"       // Mpeg4 (container)
-        "http-get:*:audio/ogg:*,"       // Vorbis
-        "http-get:*:audio/x-ogg:*,"     // Vorbis
-        "http-get:*:application/ogg:*," // Vorbis
-        "tidalhifi.com:*:*:*,"          // Tidal
-        "qobuz.com:*:*:*"               // Qobuz
-        );
-    DoRegisterPlugins(aEnv, kSupportedProtocols);
-}
-
-void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols)
-{
     // Add codecs
-    iMediaPlayer->Add(Codec::CodecFactory::NewAac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewAiff());
-    iMediaPlayer->Add(Codec::CodecFactory::NewAifc());
-    iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
-    iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewMp3());
+    iMediaPlayer->Add(Codec::CodecFactory::NewFlac(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewWav(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewAiff(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewAifc(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewAac(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewAdts(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewAlac(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::CodecFactory::NewMp3(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewPcm());
-    iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
-    iMediaPlayer->Add(Codec::CodecFactory::NewWav());
+    iMediaPlayer->Add(Codec::CodecFactory::NewVorbis(iMediaPlayer->MimeTypes()));
 
     // Add protocol modules (Radio source can require several stacked Http instances)
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
@@ -359,14 +338,14 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     }
 
     // Add sources
-    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     if (iTuneInPartnerId.Bytes() == 0) {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock, aSupportedProtocols));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock));
     }
     else {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock, aSupportedProtocols, iTuneInPartnerId));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock, iTuneInPartnerId));
     }
-    iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols));
+    iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv));
 
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
@@ -524,7 +503,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-    Debug::SetLevel(Debug::kPipeline);
+    Debug::SetLevel(Debug::kPipeline | Debug::kSources);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();

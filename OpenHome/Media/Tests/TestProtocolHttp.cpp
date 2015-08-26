@@ -215,9 +215,8 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -814,18 +813,13 @@ Msg* TestHttpSupplier::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* TestHttpSupplier::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TestHttpSupplier::ProcessMsg(MsgTrack* aMsg)
 {
     iTrackCount++;
     return aMsg;
 }
 
-Msg* TestHttpSupplier::ProcessMsg(MsgChangeInput* aMsg)
+Msg* TestHttpSupplier::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -1009,7 +1003,6 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     init.SetMsgEncodedStreamCount(10);
     init.SetMsgMetaTextCount(10);
     init.SetMsgFlushCount(10);
-    init.SetMsgSessionCount(10);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
@@ -1207,7 +1200,6 @@ SuiteHttpChunked::SuiteHttpChunked()
     init.SetMsgEncodedStreamCount(10);
     init.SetMsgMetaTextCount(10);
     init.SetMsgFlushCount(10);
-    init.SetMsgSessionCount(10);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);

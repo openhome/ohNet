@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <limits>
 #include <vector>
@@ -2477,16 +2478,17 @@ void Mpeg4MetadataChecker::MetadataRetrieved()
     iMetadataAvailable = true;
 }
 
+
 // Mpeg4Container
 
-Mpeg4Container::Mpeg4Container()
+Mpeg4Container::Mpeg4Container(IMimeTypeList& aMimeTypeList)
     : ContainerBase(Brn("MP4"))
     , iBoxRoot(iProcessorFactory)
     , iBoxRootOutOfBand(iProcessorFactory) // Share factory; okay here as neither should access the same box simultaneously.
     , iSeekObserver(nullptr)
     , iLock("MP4L")
 {
-    LOG(kMedia, "Mpeg4Container::Mpeg4Container\n");
+    aMimeTypeList.Add("audio/mp4");
 }
 
 void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter)

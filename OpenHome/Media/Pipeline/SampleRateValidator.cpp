@@ -33,19 +33,13 @@ Msg* SampleRateValidator::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SampleRateValidator::ProcessMsg(MsgSession* aMsg)
-{
-    iFlushing = false;
-    return aMsg;
-}
-
 Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
 {
     iFlushing = false;
     return aMsg;
 }
 
-Msg* SampleRateValidator::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SampleRateValidator::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -106,7 +100,12 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
     }
     catch (SampleRateUnsupported&) {
         iFlushing = true;
-        iTargetFlushId = streamInfo.StreamHandler()->TryStop(streamInfo.StreamId());
+        IStreamHandler* streamHandler = streamInfo.StreamHandler();
+        const TUint streamId = streamInfo.StreamId();
+        if (streamHandler != NULL) {
+            (void)streamHandler->OkToPlay(streamId);
+            iTargetFlushId = streamHandler->TryStop(streamId);
+        }
     }
     return ProcessFlushable(aMsg);
 }

@@ -91,18 +91,13 @@ Msg* Seeker::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
     iTrackId = aMsg->Track().Id();
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Seeker::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -172,7 +167,13 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     iStreamPosJiffies *= streamInfo.SampleStart();
     if (iTargetTrackId != Track::kIdNone) {
         if (iTargetTrackId != iTrackId) {
-            (void)streamInfo.StreamHandler()->TryStop(streamInfo.StreamId());
+            IStreamHandler* streamHandler = streamInfo.StreamHandler();
+            const TUint streamId = streamInfo.StreamId();
+            if (streamHandler != NULL) {
+                (void)streamHandler->OkToPlay(streamId);
+                (void)streamHandler->TryStop(streamId);
+            }
+            return ProcessFlushable(aMsg);
         }
         else if (iTargetFlushId == MsgFlush::kIdInvalid) {
             if (iTargetTrackId == iTrackId && iSeekSeconds > 0) {

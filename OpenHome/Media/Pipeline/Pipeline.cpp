@@ -8,9 +8,11 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Codec/MpegTs.h>
+#include <OpenHome/Media/Pipeline/DecodedAudioValidator.h>
+#include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
-#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
@@ -18,10 +20,15 @@
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
+#include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
+#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
+#include <OpenHome/Media/Pipeline/Router.h>
+#include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
+#include <OpenHome/Media/Pipeline/Muter.h>
 #include <OpenHome/Media/Pipeline/PreDriver.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -172,7 +179,8 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 // Pipeline
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
-                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
+                   IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -195,9 +203,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
     MsgFactoryInitParams msgInit;
     msgInit.SetMsgModeCount(kMsgCountMode);
-    msgInit.SetMsgSessionCount(perStreamMsgCount);
     msgInit.SetMsgTrackCount(perStreamMsgCount);
-    msgInit.SetMsgChangeInputCount(kMsgCountChangeInput);
+    msgInit.SetMsgDrainCount(kMsgCountDrain);
     msgInit.SetMsgDelayCount(perStreamMsgCount);
     msgInit.SetMsgEncodedStreamCount(perStreamMsgCount);
     msgInit.SetMsgAudioEncodedCount(msgEncodedAudioCount, encodedAudioCount);
@@ -218,11 +225,11 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iEncodedAudioReservoir = new EncodedAudioReservoir(maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
+    iEncodedAudioReservoir = new EncodedAudioReservoir(maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir());
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
+    iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
@@ -236,8 +243,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     iContainer = new Codec::ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
     iContainer->AddContainer(new Codec::Id3v2());
-    iContainer->AddContainer(new Codec::Mpeg4Container());
-    iContainer->AddContainer(new Codec::MpegTs());
+    iContainer->AddContainer(new Codec::Mpeg4Container(aMimeTypeList));
+    iContainer->AddContainer(new Codec::MpegTs(aMimeTypeList));
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
@@ -251,43 +258,56 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iSeeker = new Seeker(*iMsgFactory, *iRampValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
     iRampValidatorSeeker = new RampValidator(*iLoggerSeeker, "Seeker");
-    iVariableDelay1 = new VariableDelay(*iMsgFactory, *iRampValidatorSeeker, kSenderMinLatency, aInitParams->RampEmergencyJiffies());
+    iDecodedAudioValidatorSeeker = new DecodedAudioValidator(*iRampValidatorSeeker, "Seeker");
+    iVariableDelay1 = new VariableDelay(*iMsgFactory, *iDecodedAudioValidatorSeeker, kSenderMinLatency, aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay1 = new Logger(*iVariableDelay1, "VariableDelay1");
     iRampValidatorDelay1 = new RampValidator(*iLoggerVariableDelay1, "VariableDelay1");
-    iTrackInspector = new TrackInspector(*iRampValidatorDelay1);
+    iDecodedAudioValidatorDelay1 = new DecodedAudioValidator(*iRampValidatorDelay1, "VariableDelay1");
+    iTrackInspector = new TrackInspector(*iDecodedAudioValidatorDelay1);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
     iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampLongJiffies());
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
     iRampValidatorSkipper = new RampValidator(*iLoggerSkipper, "Skipper");
-    iWaiter = new Waiter(*iMsgFactory, *iRampValidatorSkipper, *this, *iEventThread, aInitParams->RampShortJiffies());
+    iDecodedAudioValidatorSkipper = new DecodedAudioValidator(*iRampValidatorSkipper, "Skipper");
+    iWaiter = new Waiter(*iMsgFactory, *iDecodedAudioValidatorSkipper, *this, *iEventThread, aInitParams->RampShortJiffies());
     iLoggerWaiter = new Logger(*iWaiter, "Waiter");
     iRampValidatorWaiter = new RampValidator(*iLoggerWaiter, "Waiter");
-    iStopper = new Stopper(*iMsgFactory, *iRampValidatorWaiter, *this, *iEventThread, aInitParams->RampLongJiffies());
+    iDecodedAudioValidatorWaiter = new DecodedAudioValidator(*iRampValidatorWaiter, "Waiter");
+    iStopper = new Stopper(*iMsgFactory, *iDecodedAudioValidatorWaiter, *this, *iEventThread, aInitParams->RampLongJiffies());
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iRampValidatorStopper = new RampValidator(*iLoggerStopper, "Stopper");
-    iGorger = new Gorger(*iMsgFactory, *iRampValidatorStopper, threadPriority, aInitParams->GorgeDurationJiffies());
+    iDecodedAudioValidatorStopper = new DecodedAudioValidator(*iRampValidatorStopper, "Stopper");
+    iGorger = new Gorger(*iMsgFactory, *iDecodedAudioValidatorStopper, threadPriority, aInitParams->GorgeDurationJiffies());
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
-    iSpotifyReporter = new Media::SpotifyReporter(*iLoggerGorger, *this);
+    iDecodedAudioValidatorGorger = new DecodedAudioValidator(*iLoggerGorger, "Gorger");
+    iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *this);
     iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
     iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter, *iEventThread);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iRouter = new Router(*iLoggerReporter);
     iLoggerRouter = new Logger(*iRouter, "Router");
-    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerRouter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
+    iDecodedAudioValidatorRouter = new DecodedAudioValidator(*iLoggerRouter, "Router");
+    iDrainer = new Drainer(*iMsgFactory, *iDecodedAudioValidatorRouter);
+    iLoggerDrainer = new Logger(*iDrainer, "Drainer");
+    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerDrainer, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
     iRampValidatorDelay2 = new RampValidator(*iLoggerVariableDelay2, "VariableDelay2");
-    iPruner = new Pruner(*iRampValidatorDelay2);
+    iDecodedAudioValidatorDelay2 = new DecodedAudioValidator(*iRampValidatorDelay2, "VariableDelay2");
+    iPruner = new Pruner(*iDecodedAudioValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this, *iEventThread, threadPriority,
+    iDecodedAudioValidatorPruner = new DecodedAudioValidator(*iLoggerPruner, "Pruner");
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread, threadPriority,
                                                aInitParams->StarvationMonitorMaxJiffies(), aInitParams->StarvationMonitorMinJiffies(),
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iRampValidatorStarvationMonitor = new RampValidator(*iLoggerStarvationMonitor, "Starvation Monitor");
-    iMuter = new Muter(*iMsgFactory, *iRampValidatorStarvationMonitor, aInitParams->RampLongJiffies());
+    iDecodedAudioValidatorStarvationMonitor = new DecodedAudioValidator(*iRampValidatorStarvationMonitor, "Starvation Monitor");
+    iMuter = new Muter(*iMsgFactory, *iDecodedAudioValidatorStarvationMonitor, aInitParams->RampLongJiffies());
     iLoggerMuter = new Logger(*iMuter, "Muter");
-    iPreDriver = new PreDriver(*iLoggerMuter);
+    iDecodedAudioValidatorMuter = new DecodedAudioValidator(*iLoggerMuter, "Muter");
+    iPreDriver = new PreDriver(*iDecodedAudioValidatorMuter);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
@@ -314,6 +334,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerSpotifyReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerRouter->SetEnabled(true);
+    //iLoggerDrainer->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
@@ -338,6 +359,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerSpotifyReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerRouter->SetFilter(Logger::EMsgAll);
+    //iLoggerDrainer->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
@@ -355,38 +377,51 @@ Pipeline::~Pipeline()
     // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
     delete iLoggerPreDriver;
     delete iPreDriver;
+    delete iDecodedAudioValidatorMuter;
     delete iLoggerMuter;
     delete iMuter;
+    delete iDecodedAudioValidatorStarvationMonitor;
     delete iRampValidatorStarvationMonitor;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
+    delete iDecodedAudioValidatorPruner;
+    delete iLoggerPruner;
+    delete iPruner;
+    delete iDecodedAudioValidatorDelay2;
     delete iRampValidatorDelay2;
     delete iLoggerVariableDelay2;
     delete iVariableDelay2;
-    delete iLoggerPruner;
-    delete iPruner;
+    delete iLoggerDrainer;
+    delete iDrainer;
+    delete iDecodedAudioValidatorRouter;
     delete iLoggerRouter;
     delete iRouter;
     delete iLoggerReporter;
     delete iReporter;
     delete iLoggerSpotifyReporter;
     delete iSpotifyReporter;
+    delete iDecodedAudioValidatorGorger;
     delete iLoggerGorger;
     delete iGorger;
+    delete iDecodedAudioValidatorStopper;
     delete iRampValidatorStopper;
     delete iLoggerStopper;
     delete iStopper;
+    delete iDecodedAudioValidatorWaiter;
     delete iRampValidatorWaiter;
     delete iLoggerWaiter;
     delete iWaiter;
+    delete iDecodedAudioValidatorSkipper;
     delete iRampValidatorSkipper;
     delete iLoggerSkipper;
     delete iSkipper;
     delete iLoggerTrackInspector;
     delete iTrackInspector;
+    delete iDecodedAudioValidatorDelay1;
     delete iRampValidatorDelay1;
     delete iLoggerVariableDelay1;
     delete iVariableDelay1;
+    delete iDecodedAudioValidatorSeeker;
     delete iRampValidatorSeeker;
     delete iLoggerSeeker;
     delete iSeeker;
@@ -508,9 +543,6 @@ void Pipeline::Stop(TUint aHaltId)
                running, meaning that we want to allow Stopper to ramp down? */
     if (iBuffering) {
         iSkipper->RemoveAll(aHaltId, false);
-        iLock.Signal();
-        iStopper->StopNow();
-        return;
     }
     iStopper->BeginStop(aHaltId);
     iLock.Signal();
@@ -551,11 +583,6 @@ ISpotifyReporter& Pipeline::SpotifyReporter() const
 ITrackChangeObserver& Pipeline::TrackChangeObserver() const
 {
     return *iSpotifyReporter;
-}
-
-TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
-{
-    return iCodecController->SupportsMimeType(aMimeType);
 }
 
 IPipelineElementUpstream& Pipeline::InsertElements(IPipelineElementUpstream& aTail)

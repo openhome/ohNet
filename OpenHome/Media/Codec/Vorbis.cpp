@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 extern "C" {
 #include <ivorbisfile.h>
@@ -31,10 +32,9 @@ private:
 public:
     static const Brn kCodecVorbis;
 public:
-    CodecVorbis();
+    CodecVorbis(IMimeTypeList& aMimeTypeList);
     ~CodecVorbis();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -92,9 +92,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewVorbis()
+CodecBase* CodecFactory::NewVorbis(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecVorbis();
+    return new CodecVorbis(aMimeTypeList);
 }
 
 
@@ -195,7 +195,7 @@ long TellCallback(void *datasource)
 }
 
 
-CodecVorbis::CodecVorbis()
+CodecVorbis::CodecVorbis(IMimeTypeList& aMimeTypeList)
     : CodecBase("Vorbis", kCostHigh)
 {
     iDataSource = this;
@@ -203,22 +203,14 @@ CodecVorbis::CodecVorbis()
     iCallbacks.seek_func = ::SeekCallback;
     iCallbacks.close_func = ::CloseCallback;
     iCallbacks.tell_func = ::TellCallback;
+    aMimeTypeList.Add("audio/ogg");
+    aMimeTypeList.Add("audio/x-ogg");
+    aMimeTypeList.Add("application/ogg");
 }
 
 CodecVorbis::~CodecVorbis()
 {
     LOG(kCodec, "CodecVorbis::~CodecVorbis\n");
-}
-
-TBool CodecVorbis::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeOgg1("audio/ogg");
-    static const Brn kMimeXOgg("audio/x-ogg");
-    static const Brn kMimeOgg2("application/ogg");
-    if (aMimeType == kMimeOgg1 || aMimeType == kMimeXOgg || aMimeType == kMimeOgg2) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)

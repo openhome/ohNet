@@ -91,17 +91,12 @@ Msg* Muter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Muter::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Muter::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* Muter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Muter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

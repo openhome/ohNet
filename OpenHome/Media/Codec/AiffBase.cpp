@@ -19,17 +19,6 @@ CodecAiffBase::~CodecAiffBase()
 {
 }
 
-TBool CodecAiffBase::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeAiff("audio/aiff");
-    static const Brn kMimeXAiff("audio/x-aiff");
-    if (aMimeType == kMimeAiff || aMimeType == kMimeXAiff) {
-        return true;
-    }
-    return false;
-}
-
-
 TBool CodecAiffBase::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     if (aStreamInfo.RawPcm()) {

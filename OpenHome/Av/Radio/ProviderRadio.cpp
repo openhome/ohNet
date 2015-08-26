@@ -25,13 +25,12 @@ static const Brn kIdNotFoundMsg("Id not found");
 static const TUint kInvalidChannelCode = 803;
 static const Brn kInvalidChannelMsg("Selected channel is invalid");
 
-ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo)
+ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader)
     : DvProviderAvOpenhomeOrgRadio1(aDevice)
     , iLock("PRD1")
     , iActionLock("PRD2")
     , iSource(aSource)
     , iDbReader(aDbReader)
-    , iProtocolInfo(aProtocolInfo)
     , iDbSeq(0)
     , iTempVarLock("PRD3")
 {
@@ -68,7 +67,6 @@ ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPre
     (void)SetPropertyId(IPresetDatabaseReader::kPresetIdNone);
     UpdateIdArrayProperty();
     (void)SetPropertyChannelsMax(IPresetDatabaseReader::kMaxPresets);
-    (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
 ProviderRadio::~ProviderRadio()
@@ -79,6 +77,12 @@ void ProviderRadio::SetTransportState(Media::EPipelineState aState)
 {
     Brn state(Media::TransportState::FromPipelineState(aState));
     (void)SetPropertyTransportState(state);
+}
+
+void ProviderRadio::NotifyProtocolInfo(const Brx& aProtocolInfo)
+{
+    iProtocolInfo.Set(aProtocolInfo);
+    (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
 void ProviderRadio::PresetDatabaseChanged()

@@ -16,9 +16,8 @@ public:
     virtual ~SupplyAggregator();
     void Flush();
 public: // from ISupply
-    void OutputSession() override;
     void OutputTrack(Track& aTrack, TBool aStartOfStream = true) override;
-    void OutputChangeInput(Functor aCallback) override;
+    void OutputDrain(Functor aCallback) override;
     void OutputDelay(TUint aJiffies) override;
     void OutputMetadata(const Brx& aMetadata) override;
     void OutputStreamInterrupted() override;

@@ -3,6 +3,7 @@
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 namespace OpenHome {
     class Uri;
@@ -129,7 +130,7 @@ private:
     IMsgProcessor& iMsgProcessor;
 };
 
-class TestCodecMinimalPipeline : private IUrlBlockWriter
+class TestCodecMinimalPipeline : private IUrlBlockWriter, protected IMimeTypeList
 {
 private:
     static const TUint kEncodedAudioCount = 100;
@@ -146,6 +147,8 @@ protected:
     virtual void RegisterPlugins();
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 protected:
     ContainerController* iContainer;
     CodecController* iController;
@@ -171,9 +174,8 @@ public:
     ~MsgProcessor();
 public: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;

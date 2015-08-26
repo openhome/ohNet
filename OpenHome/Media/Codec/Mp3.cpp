@@ -6,27 +6,26 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Exception.h>
+#include <OpenHome/Private/Standard.h>
+#include <OpenHome/Media/MimeTypeList.h>
 #include <mad.h>
 
 #include <stdlib.h>
 #include <string.h>
 
-class Mp3Header;
-struct mad_stream;
-struct mad_frame;
-struct mad_synth;
-
 namespace OpenHome {
 namespace Media {
 namespace Codec {
 
+class Mp3Header;
+
 class CodecMp3 : public CodecBase
 {
 public:
-    CodecMp3();
+    CodecMp3(IMimeTypeList& aMimeTypeList);
 private: // from CodecBase
     ~CodecMp3();
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -35,9 +34,9 @@ private: // from CodecBase
 private:
     static const TUint kReadReqBytes = 4096;
     static const TUint kInBufBytes = kReadReqBytes+MAD_BUFFER_GUARD;
-    mad_stream* iMadStream;
-    mad_frame*  iMadFrame;
-    mad_synth*  iMadSynth;
+    mad_stream  iMadStream;
+    mad_frame   iMadFrame;
+    mad_synth   iMadSynth;
     TUint64     iSamplesWrittenTotal;
     Mp3Header*  iHeader;
     TUint       iHeaderBytes;
@@ -49,23 +48,10 @@ private:
     Bws<6*1024> iRecogBuf;
 };
 
-} // namespace Codec
-} // namespace Media
-} // namespace OpenHome
-
-using namespace OpenHome;
-using namespace OpenHome::Media;
-using namespace OpenHome::Media::Codec;
-
-EXCEPTION(CodecExtendedHeaderNotFound);
-EXCEPTION(CodecSyncInvalid);
-
-const TUint kBitDepth = 24;
-
 class IMp3HeaderExtended
 {
 public:
-    virtual ~IMp3HeaderExtended() {}    
+    virtual ~IMp3HeaderExtended() {}
     virtual TUint64 SamplesTotal() const = 0;
     virtual TUint64 SampleToByte(TUint64 aSample) const = 0;
     virtual TUint BitRate() const = 0;
@@ -97,7 +83,7 @@ private:
     TUint iBitRate;
 };
 
-class Mp3Header 
+class Mp3Header
 {
 public:
     Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes);
@@ -161,9 +147,23 @@ private:
     mutable Bws<100> iToc;
 };
 
-CodecBase* CodecFactory::NewMp3()
+} // namespace Codec
+} // namespace Media
+} // namespace OpenHome
+
+EXCEPTION(CodecExtendedHeaderNotFound);
+EXCEPTION(CodecSyncInvalid);
+
+using namespace OpenHome;
+using namespace OpenHome::Media;
+using namespace OpenHome::Media::Codec;
+
+const TUint kBitDepth = 24;
+
+
+CodecBase* CodecFactory::NewMp3(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecMp3();
+    return new CodecMp3(aMimeTypeList);
 }
 
 
@@ -565,33 +565,21 @@ static TUint32 fixedToPcm(mad_fixed_t aFixed)
 
 // CodecMp3
 
-CodecMp3::CodecMp3() 
+CodecMp3::CodecMp3(IMimeTypeList& aMimeTypeList)
     : CodecBase("MP3")
     , iHeader(nullptr)
     , iHeaderBytes(0)
 {
-    iMadStream = (struct mad_stream*)malloc(sizeof(*iMadStream));;
-    iMadFrame = (struct mad_frame*)malloc(sizeof(*iMadFrame));
-    iMadSynth = (struct mad_synth*)malloc(sizeof(*iMadSynth));
+    (void)memset(&iMadStream, 0, sizeof(iMadStream));
+    (void)memset(&iMadFrame, 0, sizeof(iMadFrame));
+    (void)memset(&iMadSynth, 0, sizeof(iMadSynth));
+    aMimeTypeList.Add("audio/mpeg");
+    aMimeTypeList.Add("audio/x-mpeg");
+    aMimeTypeList.Add("audio/mp1");
 }
 
 CodecMp3::~CodecMp3()
 {
-    free(iMadStream);
-    free(iMadFrame);
-    free(iMadSynth);
-}
-
-TBool CodecMp3::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeMpeg("audio/mpeg");
-    static const Brn kMimeXMpeg("audio/x-mpeg");
-    static const Brn kMimeMp1("audio/mp1:");
-
-    if (aMimeType == kMimeMpeg || aMimeType == kMimeXMpeg || aMimeType == kMimeMp1) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecMp3::Recognise(const EncodedStreamInfo& aStreamInfo)
@@ -622,6 +610,9 @@ void CodecMp3::StreamInitialise()
     iHeader = nullptr;
     iTrackOffset = 0;
     iStreamEnded = false;
+    mad_stream_init(&iMadStream);
+    mad_frame_init(&iMadFrame);
+    mad_synth_init(&iMadSynth);
 
     // Discard bytes preceeding frame start.
     iInput.SetBytes(0);
@@ -642,10 +633,6 @@ void CodecMp3::StreamInitialise()
 
     iTrackLengthJiffies = (iHeader->SamplesTotal() * Jiffies::kPerSecond) / iHeader->SampleRate();
     iController->OutputDecodedStream(iHeader->BitRate(), kBitDepth, iHeader->SampleRate(), iHeader->Channels(), iHeader->Name(), iTrackLengthJiffies, 0, false);
-
-    mad_stream_init(iMadStream);
-    mad_frame_init(iMadFrame);
-    mad_synth_init(iMadSynth);
 }
 
 void CodecMp3::StreamCompleted()
@@ -657,9 +644,9 @@ void CodecMp3::StreamCompleted()
     iInput.SetBytes(0);
     iHeaderBytes = 0;
 
-    mad_synth_finish(iMadSynth);
-    mad_frame_finish(iMadFrame);
-    mad_stream_finish(iMadStream);
+    mad_synth_finish(&iMadSynth);
+    mad_frame_finish(&iMadFrame);
+    mad_stream_finish(&iMadStream);
 }
 
 TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -690,18 +677,18 @@ void CodecMp3::Process()
     // Step 1: If this is the first time (buffer == 0) or the previous
     // iteration didn't have enough data in iInput for libmad to decode it
     // (MAD_ERROR_BUFLEN) then we get more data for the iInput buffer
-    if (iMadStream->buffer == 0 || iMadStream->error == MAD_ERROR_BUFLEN) {
-        //LOG(kCodec, "CodecMp3::Process iMadStream->buffer: %d, error: %s\n", iMadStream->buffer, mad_stream_errorstr(&iMadStream));
+    if (iMadStream.buffer == 0 || iMadStream.error == MAD_ERROR_BUFLEN) {
+        //LOG(kCodec, "CodecMp3::Process iMadStream.buffer: %d, error: %s\n", iMadStream.buffer, mad_stream_errorstr(&iMadStream));
 
         // mad does not necessarily consume all bytes of the input buffer.
         // If the last frame in the buffer does not entirely fit, then that
         // frame's start is pointed to by mad_stream::next_frame.  This can
         // happen when mad_frame_decode returns an error and leaves
         // next_frame pointing to the frame after the bad frame
-        if (iMadStream->next_frame != nullptr) {
+        if (iMadStream.next_frame != nullptr) {
             //LOG(kCodec, "CodecMp3::Process next_frame != 0\n");
-            TUint prevBytes = iMadStream->bufend - iMadStream->next_frame;
-            (void)memmove((void*)iInput.Ptr(), iMadStream->next_frame, prevBytes);
+            TUint prevBytes = iMadStream.bufend - iMadStream.next_frame;
+            (void)memmove((void*)iInput.Ptr(), iMadStream.next_frame, prevBytes);
             iInput.SetBytes(prevBytes);
         }
 
@@ -735,19 +722,19 @@ void CodecMp3::Process()
             iInput.SetBytes(iInput.Bytes() + MAD_BUFFER_GUARD);
         }
 
-        mad_stream_buffer(iMadStream, iInput.Ptr(), iInput.Bytes());
-        iMadStream->error = (mad_error)0;
+        mad_stream_buffer(&iMadStream, iInput.Ptr(), iInput.Bytes());
+        iMadStream.error = (mad_error)0;
     }
 
     // Decode the next mpeg frame.  mad_frame_decode returns a non zero value on error
-    TInt ret = mad_frame_decode(iMadFrame, iMadStream);
+    TInt ret = mad_frame_decode(&iMadFrame, &iMadStream);
     if (ret) {
-        if (MAD_RECOVERABLE(iMadStream->error)) {
+        if (MAD_RECOVERABLE(iMadStream.error)) {
             //LOG(kCodec, "CodecMp3::Process recoverable error: %s\n", mad_stream_errorstr(&iMadStream));
             return;
         }
         else {
-            if (iMadStream->error == MAD_ERROR_BUFLEN && !(newStreamStarted || iStreamEnded)) {
+            if (iMadStream.error == MAD_ERROR_BUFLEN && !(newStreamStarted || iStreamEnded)) {
                 // If buffer was too small to decode then return now and get more data
                 // the next time we're called.  If the stream has ended and the buffer
                 // is too small, then the file is corrupt (truncated)
@@ -761,9 +748,9 @@ void CodecMp3::Process()
     }
         
     // Once frame is decoded, synthesize to pcm samples.  
-    (void)mad_synth_frame(iMadSynth, iMadFrame);
+    (void)mad_synth_frame(&iMadSynth, &iMadFrame);
     TUint channels = iHeader->Channels();
-    TUint samplesToWrite = iMadSynth->pcm.length;
+    TUint samplesToWrite = iMadSynth.pcm.length;
     //LOG(kCodec, "CodecMp3::Process samplesToWrite: %d, written: %lld\n", samplesToWrite, iSamplesWrittenTotal);
 
     // limit output of samples to total defined in header, unless its a live stream
@@ -786,7 +773,7 @@ void CodecMp3::Process()
         TByte* dst = const_cast<TByte*>(iOutput.Ptr()) + iOutput.Bytes();
         for (TUint i=pcmIndex; i<pcmIndex+samples; i++) {
             for (TUint j=0; j<channels; j++) {
-                TUint subsample = fixedToPcm(iMadSynth->pcm.samples[j][i]);
+                TUint subsample = fixedToPcm(iMadSynth.pcm.samples[j][i]);
                 // output is always 24-bit
                 *dst++ = (TByte)(subsample >> 24);
                 *dst++ = (TByte)(subsample >> 16);
@@ -808,7 +795,7 @@ void CodecMp3::Process()
 
     // now propogate any end of stream exception
     // first check we have processed remaining frames of this stream
-    if ((iMadStream->md_len == 0) && (iStreamEnded || newStreamStarted)) {
+    if ((iMadStream.md_len == 0) && (iStreamEnded || newStreamStarted)) {
         if (iOutput.Bytes() > 0) { // only output if there is audio remaining
             iController->OutputAudioPcm(iOutput, channels, iHeader->SampleRate(),
                                         kBitDepth, EMediaDataEndianBig, iTrackOffset);

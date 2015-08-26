@@ -47,9 +47,8 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -68,9 +67,8 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -263,21 +261,15 @@ Msg* SuiteStopper::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteStopper::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuiteStopper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
     return aMsg;
 }
 
-Msg* SuiteStopper::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteStopper::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastPulledMsg = EMsgChangeInput;
+    iLastPulledMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -470,12 +462,10 @@ void SuiteStopper::TestMsgsPassWhilePlaying()
     iStopper->Play();
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false));
     PullNext(EMsgMode);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
-    PullNext(EMsgSession);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
-    PullNext(EMsgChangeInput);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     PullNext(EMsgDelay);
     iPendingMsgs.push_back(CreateEncodedStream()); // not passed on
@@ -789,8 +779,8 @@ void SuiteStopper::TestPlayNoFlushes()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
-    PullNext(EMsgChangeInput);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
@@ -801,8 +791,8 @@ void SuiteStopper::TestPlayNoFlushes()
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
     iPendingMsgs.push_back(CreateEncodedStream()); // not passed on
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgChangeInput(Functor()));
-    PullNext(EMsgChangeInput);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted()); // not passed on

@@ -1,7 +1,7 @@
 """Utility to update code to latest and build ohMediaPlayer
 """
 
-import _FunctionalTest
+import _Paths
 import BaseTest as BASE
 import LogThread
 import os
@@ -15,7 +15,9 @@ import threading
 #        into ~/.ssh/authorized_keys on server
 
 kWatchdogTime = 60  # secs
-kExcludes     = ['/thirdparty/',
+kExcludes     = ['\\thirdparty\\',
+                 "warning C4005: 'max' : macro redefinition",
+                 "warning C4005: 'min' : macro redefinition",
                  'warning generated',
                  'warnings generated',
                  'TestUpnpErrors',

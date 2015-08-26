@@ -63,9 +63,8 @@ private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -274,19 +273,13 @@ Msg* DummyDriver::ProcessMsg(MsgMode* /*aMsg*/)
     return nullptr;
 }
 
-Msg* DummyDriver::ProcessMsg(MsgSession* /*aMsg*/)
-{
-    ASSERTS(); // msg type not expected at the far right of the pipeline
-    return nullptr;
-}
-
 Msg* DummyDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
     return nullptr;
 }
 
-Msg* DummyDriver::ProcessMsg(MsgChangeInput* aMsg)
+Msg* DummyDriver::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -441,10 +434,10 @@ void SuitePlaylist::Setup()
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));
     iDriver = new DummyDriver(iMediaPlayer->Pipeline());
-    iMediaPlayer->Add(Codec::CodecFactory::NewWav());
+    iMediaPlayer->Add(Codec::CodecFactory::NewWav(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
-    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, Brn("*")));
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     iMediaPlayer->Pipeline().AddObserver(*this);
     iMediaPlayer->Start();
 

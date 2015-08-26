@@ -56,14 +56,14 @@ private:
     void UpdateStatus(EStatus aStatus);
     void EventCallback();
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgChangeInput* aMsg) override;
+    void ProcessMsgIn(MsgDrain* aMsg) override;
     void ProcessMsgIn(MsgStreamInterrupted* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgFlush* aMsg) override;
     void ProcessMsgIn(MsgWait* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
-    Msg* ProcessMsgOut(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;

@@ -100,17 +100,17 @@ void Stopper::BeginPause()
         break;
     case ERampingDown:
         // We're already pausing.  No Benefit in allowing another Pause request to interrupt this.
-        return;
+        break;
     case ERampingUp:
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
         SetState(ERampingDown);
         break;
     case EPaused:
+        break;
     case EStopped:
-        return;
     case EFlushing:
-        HandleStopped();
+        HandlePaused();
         break;
     }
 }
@@ -202,11 +202,6 @@ Msg* Stopper::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     /* IdManager expects OkToPlay to be called for every stream that is added to it.
@@ -230,7 +225,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Stopper::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -307,11 +302,7 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
     }
     Msg* msg = ProcessFlushable(aMsg);
     if (msg != nullptr) {
-        const DecodedStreamInfo& stream = aMsg->StreamInfo();
-        msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
-                                                 stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
-                                                 stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
-                                                 stream.Seekable(), stream.Live(), this);
+        msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
         aMsg->RemoveRef();
     }
     return msg;
@@ -360,9 +351,6 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->TryStop(iStreamId);
-    }
     return aMsg;
 }
 
@@ -393,9 +381,6 @@ void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId)
     else {
         if (iTargetHaltId == MsgHalt::kIdInvalid) {
             HandlePaused();
-        }
-        else {
-            HandleStopped();
         }
     }
     if (iStreamHandler != nullptr) {

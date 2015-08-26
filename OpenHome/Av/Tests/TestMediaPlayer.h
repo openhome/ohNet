@@ -103,7 +103,6 @@ public:
     Net::DvDeviceStandard* Device();
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
-    void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private: // from IPowerHandler

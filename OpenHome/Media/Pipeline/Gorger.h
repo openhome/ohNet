@@ -30,10 +30,9 @@ public: // from IPipelineElementUpstream
 private:
     void PullerThread();
     void Enqueue(Msg* aMsg);
-    void SetGorging(TBool aGorging);
+    void SetGorging(TBool aGorging, const TChar* aId);
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg) override;
-    void ProcessMsgIn(MsgSession* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;

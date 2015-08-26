@@ -21,6 +21,7 @@ class ProtocolManager;
 class ITrackObserver;
 class Filler;
 class IdManager;
+class IMimeTypeList;
 namespace Codec {
     class CodecBase;
 }
@@ -53,7 +54,7 @@ class PipelineManager : public IPipeline
                       , private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.
@@ -234,7 +235,6 @@ public:
      *          we were playing the first track in the UriProvider's list.
      */
     TBool Prev();
-    TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
 private: // from IPipeline

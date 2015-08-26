@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -24,8 +25,6 @@ using namespace OpenHome::Media::Codec;
  *  - Raw stream (e.g., AAC):              ================================================
  */
 
-
-// MpegTsTransportStreamHeader
 
 MpegTsTransportStreamHeader::MpegTsTransportStreamHeader()
 {
@@ -332,13 +331,6 @@ Msg* StreamTerminatorDetector::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* StreamTerminatorDetector::ProcessMsg(MsgSession* aMsg)
-{
-    ASSERT(iStreamTerminated == false);
-    iStreamTerminated = true;
-    return aMsg;
-}
-
 Msg* StreamTerminatorDetector::ProcessMsg(MsgTrack* aMsg)
 {
     ASSERT(iStreamTerminated == false);
@@ -346,7 +338,7 @@ Msg* StreamTerminatorDetector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* StreamTerminatorDetector::ProcessMsg(MsgChangeInput* aMsg)
+Msg* StreamTerminatorDetector::ProcessMsg(MsgDrain* aMsg)
 {
     ASSERT(iStreamTerminated == false);
     return aMsg;
@@ -438,7 +430,7 @@ Msg* StreamTerminatorDetector::ProcessMsg(MsgQuit* aMsg)
 
 // MpegTs
 
-MpegTs::MpegTs()
+MpegTs::MpegTs(IMimeTypeList& aMimeTypeList)
     : ContainerBase(Brn("MTS"))
     , iPmt(kStreamTypeAdtsAac)
     , iProgramMapPid(0)
@@ -447,6 +439,7 @@ MpegTs::MpegTs()
     //, iAudioEncoded(nullptr)
     , iPendingMsg(nullptr)
 {
+    aMimeTypeList.Add("application/vnd.apple.mpegurl");
 }
 
 MpegTs::~MpegTs()

@@ -19,25 +19,23 @@ class Logger : public IPipelineElementUpstream, public IPipelineElementDownstrea
 public:
     enum EMsgType
     {
-        EMsgMode                = 1<<0
-       ,EMsgSession             = 1<<1
-       ,EMsgTrack               = 1<<2
-       ,EMsgChangeInput         = 1<<3
-       ,EMsgDelay               = 1<<4
-       ,EMsgEncodedStream       = 1<<5
-       ,EMsgAudioEncoded        = 1<<6
-       ,EMsgMetaText            = 1<<7
-       ,EMsgStreamInterrupted   = 1<<8
-       ,EMsgAudioDecoded        = 1<<9
-       ,EMsgHalt                = 1<<10
-       ,EMsgFlush               = 1<<11
-       ,EMsgWait                = 1<<12
-       ,EMsgDecodedStream       = 1<<13
-       ,EMsgAudioPcm            = 1<<14
-       ,EMsgSilence             = 1<<15
-       ,EMsgAudioRamped         = 1<<16
-       ,EMsgPlayable            = 1<<17
-       ,EMsgQuit                = 1<<18
+        EMsgMode                = 1 <<  0
+       ,EMsgTrack               = 1 <<  1
+       ,EMsgDrain               = 1 <<  2
+       ,EMsgDelay               = 1 <<  3
+       ,EMsgEncodedStream       = 1 <<  4
+       ,EMsgAudioEncoded        = 1 <<  5
+       ,EMsgMetaText            = 1 <<  6
+       ,EMsgStreamInterrupted   = 1 <<  7
+       ,EMsgHalt                = 1 <<  8
+       ,EMsgFlush               = 1 <<  9
+       ,EMsgWait                = 1 << 10
+       ,EMsgDecodedStream       = 1 << 11
+       ,EMsgAudioPcm            = 1 << 12
+       ,EMsgSilence             = 1 << 13
+       ,EMsgAudioRamped         = 1 << 14
+       ,EMsgPlayable            = 1 << 15
+       ,EMsgQuit                = 1 << 16
        ,EMsgAll                 = 0x7fffffff
     };
 public:
@@ -52,9 +50,8 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;

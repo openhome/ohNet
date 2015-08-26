@@ -25,7 +25,6 @@ VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& 
     , iDelayAdjustment(0)
     , iDownstreamDelay(aDownstreamDelay)
     , iRampDuration(aRampDuration)
-    , iEnabled(false)
     , iWaitForAudioBeforeGeneratingSilence(false)
     , iStreamHandler(nullptr)
 {
@@ -167,47 +166,45 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
     if (split != nullptr) {
-        DoEnqueue(split);
+        EnqueueAtHead(split);
     }
 }
 
-void VariableDelay::HandleStarving(const Brx& aMode)
+void VariableDelay::HandleStarving()
 {
     AutoMutex _(iLock);
-    if (iEnabled && iMode == aMode) {
-        iDelayAdjustment = iDelayJiffies;
-        if (iDelayAdjustment == 0) {
-            return;
+    iDelayAdjustment = iDelayJiffies;
+    if (iDelayAdjustment == 0) {
+        return;
+    }
+    iWaitForAudioBeforeGeneratingSilence = true;
+    switch (iStatus)
+    {
+    case EStarting:
+        break;
+    case ERunning:
+        iStatus = ERampingDown;
+        iRampDirection = Ramp::EDown;
+        iCurrentRampValue = Ramp::kMax;
+        iRemainingRampSize = iRampDuration;
+        break;
+    case ERampingDown:
+        break;
+    case ERampedDown:
+        break;
+    case ERampingUp:
+        iRampDirection = Ramp::EDown;
+        // retain current value of iCurrentRampValue
+        iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        if (iRemainingRampSize == 0) {
+            iStatus = ERampedDown;
         }
-        iWaitForAudioBeforeGeneratingSilence = true;
-        switch (iStatus)
-        {
-        case EStarting:
-            break;
-        case ERunning:
+        else {
             iStatus = ERampingDown;
-            iRampDirection = Ramp::EDown;
-            iCurrentRampValue = Ramp::kMax;
-            iRemainingRampSize = iRampDuration;
-            break;
-        case ERampingDown:
-            break;
-        case ERampedDown:
-            break;
-        case ERampingUp:
-            iRampDirection = Ramp::EDown;
-            // retain current value of iCurrentRampValue
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
-            if (iRemainingRampSize == 0) {
-                iStatus = ERampedDown;
-            }
-            else {
-                iStatus = ERampingDown;
-            }
-            break;
-        default:
-            ASSERTS();
         }
+        break;
+    default:
+        ASSERTS();
     }
 }
 
@@ -221,7 +218,6 @@ void VariableDelay::ResetStatusAndRamp()
 
 Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 {
-    iEnabled = aMsg->Info().SupportsLatency();
     iMode.Replace(aMsg->Mode());
     iDelayJiffies = 0;
     iDelayAdjustment = 0;
@@ -230,19 +226,12 @@ Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgSession* aMsg)
-{
-    iDelayAdjustment = iDelayJiffies;
-    iWaitForAudioBeforeGeneratingSilence = true;
-    return aMsg;
-}
-
 Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgChangeInput* aMsg)
+Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -349,10 +338,7 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iStreamHandler = stream.StreamHandler();
     ResetStatusAndRamp();
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
-                                                               stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
-                                                               stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
-                                                               stream.Seekable(), stream.Live(), this);
+    auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
     aMsg->RemoveRef();
     return msg;
 }
@@ -424,7 +410,7 @@ TUint VariableDelay::TryStop(TUint aStreamId)
 
 void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
-    HandleStarving(aMode);
+    HandleStarving();
     if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId);
     }

@@ -42,13 +42,13 @@ TUint PriorityArbitratorPipeline::HostRange() const
 
 // PipelineManager
 
-PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this);
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this, aMimeTypeList);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
@@ -264,11 +264,6 @@ TBool PipelineManager::Prev()
     return iFiller->Prev(iMode);
 }
 
-TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
-{
-    return iPipeline->SupportsMimeType(aMimeType);
-}
-
 IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)
 {
     return iPipeline->InsertElements(aTail);
@@ -379,6 +374,15 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
 {
+    {
+        if (Debug::TestLevel(Debug::kPipeline)) {
+            Bws<128> buf("PipelineManager::SeekRestream(");
+            buf.Append(aMode);
+            buf.AppendPrintf(", %u)\n", aTrackId);
+            Log::Print(buf);
+        }
+    }
+    (void)iFiller->Stop();
     iIdManager->InvalidateAll();
     const TUint flushId = iFiller->Flush();
     iFiller->Play(aMode, aTrackId);

@@ -162,7 +162,7 @@ private:
 class FeedbackModel : public INonCopyable
 {
 public:
-    FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
+    FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
 
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount);
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
@@ -170,13 +170,14 @@ public:
 private:
     const std::vector<TInt32> iCoeffs;
     std::vector<TInt32> iSamples;
-    TUint iCoeffFormat;
-    TUint iDataFormat;
-    TUint iOutputFormat;
+    //TUint iCoeffFormat;
+    //TUint iDataFormat;
+    //TUint iOutputFormat;
     TUint iDataScaleBitCount;
+    TUint iScaleShiftForSum;
+    TUint iScaleShiftForProduct;
+    TInt iScaleShiftForOutput;
 };
-
-
 
 } // Media
 } // OpenHome

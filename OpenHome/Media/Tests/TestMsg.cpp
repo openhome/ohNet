@@ -206,9 +206,8 @@ public:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
@@ -228,9 +227,8 @@ public:
     EMsgType LastMsgType() const;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -282,9 +280,8 @@ public:
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgDecodedStream
@@ -312,9 +309,8 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgAudioPcm* aMsg) override;
     void ProcessMsgIn(MsgSilence* aMsg) override;
     void ProcessMsgIn(MsgMode* aMsg) override;
-    void ProcessMsgIn(MsgSession* aMsg) override;
     void ProcessMsgIn(MsgTrack* aMsg) override;
-    void ProcessMsgIn(MsgChangeInput* aMsg) override;
+    void ProcessMsgIn(MsgDrain* aMsg) override;
     void ProcessMsgIn(MsgDelay* aMsg) override;
     void ProcessMsgIn(MsgEncodedStream* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
@@ -327,9 +323,8 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
-    Msg* ProcessMsgOut(MsgSession* aMsg) override;
     Msg* ProcessMsgOut(MsgTrack* aMsg) override;
-    Msg* ProcessMsgOut(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgDelay* aMsg) override;
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
@@ -343,6 +338,27 @@ private:
     EMsgType iLastMsgIn;
     EMsgType iLastMsgOut;
     TBool iSplitNextAudio;
+};
+
+class DummyElement : public PipelineElement, private INonCopyable
+{
+public:
+    DummyElement(TUint aSupported);
+    void Process(Msg* aMsg);
+};
+
+class SuitePipelineElement : public Suite
+{
+public:
+    SuitePipelineElement();
+    ~SuitePipelineElement();
+    void Test();
+private:
+    Msg* CreateMsg(ProcessorMsgType::EMsgType aType);
+private:
+    MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
+    AllocatorInfoLogger iInfoAggregator;
 };
 
 } // namespace Media
@@ -1932,11 +1948,6 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgSession();
-    TEST(msg == msg->Process(processor));
-    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgSession);
-    msg->RemoveRef();
-
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
@@ -1944,9 +1955,9 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgChangeInput(Functor());
+    msg = iMsgFactory->CreateMsgDrain(Functor());
     TEST(msg == msg->Process(processor));
-    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgChangeInput);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDrain);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgDelay(0);
@@ -2009,21 +2020,15 @@ Msg* ProcessorMsgType::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* ProcessorMsgType::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgSession;
-    return aMsg;
-}
-
 Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgTrack;
     return aMsg;
 }
 
-Msg* ProcessorMsgType::ProcessMsg(MsgChangeInput* aMsg)
+Msg* ProcessorMsgType::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsgType = ProcessorMsgType::EMsgChangeInput;
+    iLastMsgType = ProcessorMsgType::EMsgDrain;
     return aMsg;
 }
 
@@ -2344,13 +2349,6 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgMode);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    msg = iMsgFactory->CreateMsgSession();
-    queue->Enqueue(msg);
-    jiffies = queue->Jiffies();
-    TEST(jiffies == 0);
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgSession);
-    TEST(queue->LastOut() == TestMsgReservoir::ENone);
-
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
@@ -2435,12 +2433,6 @@ void SuiteMsgReservoir::Test()
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgMode);
-    TEST(queue->Jiffies() == jiffies);
-    msg->RemoveRef();
-
-    msg = queue->Dequeue();
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
-    TEST(queue->LastOut() == TestMsgReservoir::EMsgSession);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -2560,19 +2552,14 @@ void TestMsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)
     iLastMsgIn = EMsgMode;
 }
 
-void TestMsgReservoir::ProcessMsgIn(MsgSession* /*aMsg*/)
-{
-    iLastMsgIn = EMsgSession;
-}
-
 void TestMsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
     iLastMsgIn = EMsgTrack;
 }
 
-void TestMsgReservoir::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+void TestMsgReservoir::ProcessMsgIn(MsgDrain* /*aMsg*/)
 {
-    iLastMsgIn = EMsgChangeInput;
+    iLastMsgIn = EMsgDrain;
 }
 
 void TestMsgReservoir::ProcessMsgIn(MsgDelay* /*aMsg*/)
@@ -2638,21 +2625,15 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* TestMsgReservoir::ProcessMsgOut(MsgSession* aMsg)
-{
-    iLastMsgOut = EMsgSession;
-    return aMsg;
-}
-
 Msg* TestMsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
 {
     iLastMsgOut = EMsgTrack;
     return aMsg;
 }
 
-Msg* TestMsgReservoir::ProcessMsgOut(MsgChangeInput* aMsg)
+Msg* TestMsgReservoir::ProcessMsgOut(MsgDrain* aMsg)
 {
-    iLastMsgOut = EMsgChangeInput;
+    iLastMsgOut = EMsgDrain;
     return aMsg;
 }
 
@@ -2711,6 +2692,132 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgQuit* aMsg)
 }
 
 
+// DummyElement
+
+DummyElement::DummyElement(TUint aSupported)
+    : PipelineElement(aSupported)
+{
+}
+
+void DummyElement::Process(Msg* aMsg)
+{
+    auto msg = aMsg->Process(*this);
+    TEST(msg == aMsg);
+    msg->RemoveRef();
+}
+
+
+// SuitePipelineElement
+
+SuitePipelineElement::SuitePipelineElement()
+    : Suite("PipelineElement tests")
+{
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
+}
+
+SuitePipelineElement::~SuitePipelineElement()
+{
+    delete iMsgFactory;
+    delete iTrackFactory;
+}
+
+void SuitePipelineElement::Test()
+{
+    for (TInt s = ProcessorMsgType::EMsgMode; s <= ProcessorMsgType::EMsgQuit; s++) {
+        const TUint supported = 1<<(s-1); // dodgy mapping that relies on ProcessorMsgType and PipelineElement declaring types in the same order
+        auto element = new DummyElement(supported);
+        for (TInt t=ProcessorMsgType::EMsgMode; t <= ProcessorMsgType::EMsgQuit; t++) {
+            auto msg = CreateMsg((ProcessorMsgType::EMsgType)t);
+            if (t == s) {
+                element->Process(msg);
+            }
+            else {
+                TEST_THROWS(element->Process(msg), AssertionFailed);
+                msg->RemoveRef();
+            }
+        }
+        delete element;
+    }
+
+    auto element = new DummyElement(0xffffffff);
+    for (TInt t=ProcessorMsgType::EMsgMode; t <= ProcessorMsgType::EMsgQuit; t++) {
+        auto msg = CreateMsg((ProcessorMsgType::EMsgType)t);
+        element->Process(msg);
+    }
+    delete element;
+}
+
+Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
+{
+    switch (aType)
+    {
+    default:
+    case ProcessorMsgType::ENone:
+        break;
+    case ProcessorMsgType::EMsgMode:
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
+    case ProcessorMsgType::EMsgTrack:
+    {
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
+        auto msg = iMsgFactory->CreateMsgTrack(*track);
+        track->RemoveRef();
+        return msg;
+    }
+    case ProcessorMsgType::EMsgDrain:
+        return iMsgFactory->CreateMsgDrain(Functor());
+    case ProcessorMsgType::EMsgDelay:
+        return iMsgFactory->CreateMsgDelay(0);
+    case ProcessorMsgType::EMsgEncodedStream:
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, false, false, nullptr);
+    case ProcessorMsgType::EMsgAudioEncoded:
+    {
+        const TUint kDataBytes = 256;
+        TByte audioData[kDataBytes];
+        (void)memset(audioData, 0xab, kDataBytes);
+        Brn audioBuf(audioData, kDataBytes);
+        return iMsgFactory->CreateMsgAudioEncoded(audioBuf);
+    }
+    case ProcessorMsgType::EMsgMetaText:
+        return iMsgFactory->CreateMsgMetaText(Brn("Test metatext"));
+    case ProcessorMsgType::EMsgStreamInterrupted:
+        return iMsgFactory->CreateMsgStreamInterrupted();
+    case ProcessorMsgType::EMsgHalt:
+        return iMsgFactory->CreateMsgHalt();
+    case ProcessorMsgType::EMsgFlush:
+        return iMsgFactory->CreateMsgFlush(1);
+    case ProcessorMsgType::EMsgWait:
+        return iMsgFactory->CreateMsgWait();
+    case ProcessorMsgType::EMsgDecodedStream:
+        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
+    case ProcessorMsgType::EMsgAudioPcm:
+    {
+        const TUint kDataBytes = 256;
+        TByte audioData[kDataBytes];
+        (void)memset(audioData, 0xab, kDataBytes);
+        Brn audioBuf(audioData, kDataBytes);
+        return iMsgFactory->CreateMsgAudioPcm(audioBuf, 2, 44100, 8, EMediaDataEndianLittle, 0);
+    }
+    case ProcessorMsgType::EMsgSilence:
+        return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    case ProcessorMsgType::EMsgPlayable:
+    {
+        const TUint kDataBytes = 256;
+        TByte audioData[kDataBytes];
+        (void)memset(audioData, 0xab, kDataBytes);
+        Brn audioBuf(audioData, kDataBytes);
+        MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, 2, 44100, 8, EMediaDataEndianLittle, 0);
+        return audioPcm->CreatePlayable();
+    }
+    case ProcessorMsgType::EMsgQuit:
+        return iMsgFactory->CreateMsgQuit();
+    }
+    ASSERTS();
+    return nullptr;
+}
+
+
 
 void TestMsg()
 {
@@ -2731,5 +2838,6 @@ void TestMsg()
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());
     runner.Add(new SuiteMsgReservoir());
+    runner.Add(new SuitePipelineElement());
     runner.Run();
 }

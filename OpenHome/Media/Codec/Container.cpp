@@ -232,17 +232,12 @@ Msg* MsgAudioEncodedCache::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* MsgAudioEncodedCache::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* MsgAudioEncodedCache::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgAudioEncodedCache::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgAudioEncodedCache::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -470,17 +465,12 @@ Msg* ContainerController::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* ContainerController::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* ContainerController::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* ContainerController::ProcessMsg(MsgChangeInput* aMsg)
+Msg* ContainerController::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -686,17 +676,12 @@ Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgAudioEncodedRecogniser::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -792,19 +777,13 @@ Msg* MsgEncodedStreamRecogniser::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* MsgEncodedStreamRecogniser::ProcessMsg(MsgSession* aMsg)
-{
-    ASSERT(iRecognisedMsgEncodedStream == false);
-    return aMsg;
-}
-
 Msg* MsgEncodedStreamRecogniser::ProcessMsg(MsgTrack* aMsg)
 {
     ASSERT(iRecognisedMsgEncodedStream == false);
     return aMsg;
 }
 
-Msg* MsgEncodedStreamRecogniser::ProcessMsg(MsgChangeInput* aMsg)
+Msg* MsgEncodedStreamRecogniser::ProcessMsg(MsgDrain* aMsg)
 {
     ASSERT(iRecognisedMsgEncodedStream == false);
     return aMsg;

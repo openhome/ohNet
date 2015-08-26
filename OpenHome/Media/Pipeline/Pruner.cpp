@@ -72,19 +72,13 @@ Msg* Pruner::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* Pruner::ProcessMsg(MsgSession* aMsg)
-{
-    aMsg->RemoveRef();
-    return nullptr;
-}
-
 Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
 {
     aMsg->RemoveRef();
     return nullptr;
 }
 
-Msg* Pruner::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Pruner::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

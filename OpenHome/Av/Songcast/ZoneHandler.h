@@ -62,7 +62,7 @@ private:
 private:
     Environment& iEnv;
     const Endpoint iEndpoint;
-    Bws<kMaxZoneBytes> iSenderZone;
+    const Bws<kMaxZoneBytes> iSenderZone;
     TBool iQuit;
     Mutex iLockRxSocket;
     Semaphore iSem;

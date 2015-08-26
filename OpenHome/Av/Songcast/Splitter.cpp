@@ -39,17 +39,12 @@ Msg* Splitter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Splitter::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* Splitter::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Splitter::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -142,19 +137,13 @@ Msg* Splitter::MsgCloner::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* Splitter::MsgCloner::ProcessMsg(MsgSession* aMsg)
-{
-    aMsg->AddRef();
-    return aMsg;
-}
-
 Msg* Splitter::MsgCloner::ProcessMsg(MsgTrack* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
 }
 
-Msg* Splitter::MsgCloner::ProcessMsg(MsgChangeInput* aMsg)
+Msg* Splitter::MsgCloner::ProcessMsg(MsgDrain* aMsg)
 {
     aMsg->AddRef();
     return aMsg;

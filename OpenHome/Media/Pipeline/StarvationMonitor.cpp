@@ -76,6 +76,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         iHaltDelivered = false;
         if (iPlannedHalt) {
             UpdateStatus(ERunning);
+            iCurrentRampValue = Ramp::kMax;
             iPlannedHalt = false;
         }
         else {
@@ -214,7 +215,7 @@ void StarvationMonitor::EventCallback()
     }
 }
 
-void StarvationMonitor::ProcessMsgIn(MsgChangeInput* /*aMsg*/)
+void StarvationMonitor::ProcessMsgIn(MsgDrain* /*aMsg*/)
 {
     iPriorityMsgCount++;
 }
@@ -268,7 +269,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* StarvationMonitor::ProcessMsgOut(MsgChangeInput* aMsg)
+Msg* StarvationMonitor::ProcessMsgOut(MsgDrain* aMsg)
 {
     iLock.Wait();
     iPriorityMsgCount--;
@@ -352,7 +353,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
     }
     else if (iStatus == ERampingUp) {
         iRemainingRampSize = 0;
-        iCurrentRampValue = Ramp::kMin;
+        iCurrentRampValue = Ramp::kMax;
         UpdateStatus(ERunning);
     }
 

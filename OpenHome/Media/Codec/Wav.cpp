@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 
@@ -17,10 +18,9 @@ namespace Codec {
 class CodecWav : public CodecBase
 {
 public:
-    CodecWav();
+    CodecWav(IMimeTypeList& aMimeTypeList);
     ~CodecWav();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -53,31 +53,23 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewWav()
+CodecBase* CodecFactory::NewWav(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecWav();
+    return new CodecWav(aMimeTypeList);
 }
 
 
 
-CodecWav::CodecWav()
+CodecWav::CodecWav(IMimeTypeList& aMimeTypeList)
     : CodecBase("WAV", kCostLow)
 {
+    aMimeTypeList.Add("audio/wav");
+    aMimeTypeList.Add("audio/wave");
+    aMimeTypeList.Add("audio/x-wav");
 }
 
 CodecWav::~CodecWav()
 {
-}
-
-TBool CodecWav::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeWav("audio/wav");
-    static const Brn kMimeWave("audio/wave");
-    static const Brn kMimeXWav("audio/x-wav");
-    if (aMimeType == kMimeWav || aMimeType == kMimeWave || aMimeType == kMimeXWav) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecWav::Recognise(const EncodedStreamInfo& aStreamInfo)

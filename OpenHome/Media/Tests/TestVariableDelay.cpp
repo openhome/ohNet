@@ -45,8 +45,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
@@ -70,9 +69,8 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -87,8 +85,6 @@ private:
     void PullNext(EMsgType aExpectedMsg);
     MsgAudio* CreateAudio();
     void TestAllMsgsPass();
-    void TestDisabledForUnsupportedMode();
-    void TestEnabledForSupportedMode();
     void TestDelayShorterThanDownstreamIgnored();
     void TestDelayFromRunning();
     void TestDelayFromStarting();
@@ -100,7 +96,6 @@ private:
     void TestNotifyStarvingFromRunning();
     void TestNotifyStarvingFromRampingDown();
     void TestNotifyStarvingFromRampingUp();
-    void TestNotifyStarvingIgnoredForOtherMode();
     void TestNoSilenceInjectedBeforeDecodedStream();
 private:
     MsgFactory* iMsgFactory;
@@ -131,8 +126,6 @@ SuiteVariableDelay::SuiteVariableDelay()
     : SuiteUnitTest("VariableDelay")
 {
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestAllMsgsPass), "TestAllMsgsPass");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDisabledForUnsupportedMode), "TestDisabledForUnsupportedMode");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestEnabledForSupportedMode), "TestEnabledForSupportedMode");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanDownstreamIgnored), "TestDelayShorterThanDownstreamIgnored");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayFromRunning), "TestDelayFromRunning");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayFromStarting), "TestDelayFromStarting");
@@ -144,7 +137,6 @@ SuiteVariableDelay::SuiteVariableDelay()
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRunning), "TestNotifyStarvingFromRunning");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRampingDown), "TestNotifyStarvingFromRampingDown");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRampingUp), "TestNotifyStarvingFromRampingUp");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode), "TestNotifyStarvingIgnoredForOtherMode");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
 }
 
@@ -192,8 +184,6 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, nullptr, false, false);
-    case EMsgSession:
-        return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -201,8 +191,8 @@ Msg* SuiteVariableDelay::Pull()
         track->RemoveRef();
         return msg;
     }
-    case EMsgChangeInput:
-        return iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgDelay:
         return iMsgFactory->CreateMsgDelay(iNextDelayAbsoluteJiffies);
     case EMsgEncodedStream:
@@ -265,21 +255,15 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuiteVariableDelay::ProcessMsg(MsgSession* aMsg)
-{
-    iLastMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     return aMsg;
 }
 
-Msg* SuiteVariableDelay::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuiteVariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastMsg = EMsgChangeInput;
+    iLastMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -415,7 +399,7 @@ void SuiteVariableDelay::TestAllMsgsPass()
 {
     /* 'AllMsgs' excludes encoded & playable audio - VariableDelay is assumed only
        useful to the portion of the pipeline that deals in decoded audio */
-    static const EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgChangeInput, EMsgDelay,
+    static const EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgDelay,
                                      EMsgEncodedStream, EMsgMetaText, EMsgStreamInterrupted,
                                      EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt,
                                      EMsgFlush, EMsgWait, EMsgQuit };
@@ -424,44 +408,14 @@ void SuiteVariableDelay::TestAllMsgsPass()
     }
 }
 
-void SuiteVariableDelay::TestDisabledForUnsupportedMode()
-{
-    iNextModeSupportsLatency = false;
-    PullNext(EMsgMode);
-    TEST(!iVariableDelay->iEnabled);
-    TEST(iVariableDelay->iDelayJiffies == 0);
-    TEST(iVariableDelay->iDelayAdjustment == 0);
-    iNextDelayAbsoluteJiffies = 0;
-    PullNext(EMsgDelay);
-    TEST(!iVariableDelay->iEnabled);
-    TEST(iVariableDelay->iDelayJiffies == 0);
-    TEST(iVariableDelay->iDelayAdjustment == 0);
-}
-
-void SuiteVariableDelay::TestEnabledForSupportedMode()
-{
-    PullNext(EMsgMode);
-    TEST(iVariableDelay->iEnabled);
-    TEST(iVariableDelay->iDelayJiffies == 0);
-    TEST(iVariableDelay->iDelayAdjustment == 0);
-    static const TUint kDelay = 100 * Jiffies::kPerMs;
-    iNextDelayAbsoluteJiffies = kDelay;
-    PullNext(EMsgDelay);
-    TEST(iVariableDelay->iEnabled);
-    TEST(iVariableDelay->iDelayJiffies == kDelay - kDownstreamDelay);
-    TEST(iVariableDelay->iDelayAdjustment == kDelay - kDownstreamDelay);
-}
-
 void SuiteVariableDelay::TestDelayShorterThanDownstreamIgnored()
 {
     PullNext(EMsgMode);
-    TEST(iVariableDelay->iEnabled);
     TEST(iVariableDelay->iDelayJiffies == 0);
     TEST(iVariableDelay->iDelayAdjustment == 0);
     static const TUint kDelay = kDownstreamDelay - 1;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iEnabled);
     TEST(iVariableDelay->iDelayJiffies == 0);
     TEST(iVariableDelay->iDelayAdjustment == 0);
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
@@ -742,26 +696,9 @@ void SuiteVariableDelay::TestNotifyStarvingFromRampingUp()
     TEST(iVariableDelay->iStatus == VariableDelay::ERampedDown);
 }
 
-void SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode()
-{
-    TestDelayFromRunning();
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
-    TEST(iVariableDelay->iDelayJiffies > 0);
-    TEST(iVariableDelay->iDelayAdjustment == 0);
-
-    iVariableDelay->NotifyStarving(Brn("DifferentMode"), iStreamId);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
-    TEST(iVariableDelay->iDelayJiffies > 0);
-    TEST(iVariableDelay->iDelayAdjustment == 0);
-
-    PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
-}
-
 void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
 {
     PullNext(EMsgMode);
-    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     static const TUint kDelay = 150 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;

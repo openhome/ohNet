@@ -6,6 +6,7 @@ namespace Av {
     class OhmMsgFactory;
 }
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 class CodecBase;
@@ -13,16 +14,16 @@ class CodecBase;
 class CodecFactory
 {
 public:
-    static CodecBase* NewAac();
-    static CodecBase* NewAifc();
-    static CodecBase* NewAiff();
-    static CodecBase* NewAlac();
-    static CodecBase* NewAdts();
-    static CodecBase* NewFlac();
-    static CodecBase* NewMp3();
+    static CodecBase* NewAac(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewAifc(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewAiff(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewAlac(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewAdts(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewFlac(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewMp3(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewPcm();
-    static CodecBase* NewVorbis();
-    static CodecBase* NewWav();
+    static CodecBase* NewVorbis(IMimeTypeList& aMimeTypeList);
+    static CodecBase* NewWav(IMimeTypeList& aMimeTypeList);
 };
 
 } // namespace Codec

@@ -33,20 +33,6 @@ TimestampInspector::~TimestampInspector()
     }
 }
 
-void TimestampInspector::NewSession()
-{
-    if (iClockPuller != nullptr && iStreamIsTimestamped) {
-        iClockPuller->StopTimestamp();
-    }
-    iCheckForTimestamp = (iClockPuller != nullptr);
-    iStreamIsTimestamped = false;
-    iLockedToStream = false;
-    iCalculateTimestampDelta = true;
-    iMsgsTillLock = 0;
-    iTimestampDelta = 0;
-    iDiscardedJiffies = 0;
-}
-
 void TimestampInspector::StreamInterrupted()
 {
     if (iStreamIsTimestamped) {
@@ -71,13 +57,16 @@ Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
         iClockPuller->StopTimestamp();
     }
     iClockPuller = aMsg->ClockPuller();
-    NewSession();
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgSession* aMsg)
-{
-    NewSession();
+    if (iClockPuller != nullptr && iStreamIsTimestamped) {
+        iClockPuller->StopTimestamp();
+    }
+    iCheckForTimestamp = (iClockPuller != nullptr);
+    iStreamIsTimestamped = false;
+    iLockedToStream = false;
+    iCalculateTimestampDelta = true;
+    iMsgsTillLock = 0;
+    iTimestampDelta = 0;
+    iDiscardedJiffies = 0;
     return aMsg;
 }
 
@@ -86,7 +75,7 @@ Msg* TimestampInspector::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* TimestampInspector::ProcessMsg(MsgChangeInput* aMsg)
+Msg* TimestampInspector::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }

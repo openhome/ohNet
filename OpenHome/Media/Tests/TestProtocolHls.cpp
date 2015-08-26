@@ -162,9 +162,8 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 public: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -745,18 +744,13 @@ Msg* TestElementDownstream::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* TestElementDownstream::ProcessMsg(MsgSession* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TestElementDownstream::ProcessMsg(MsgTrack* aMsg)
 {
     iTrackCount++;
     return aMsg;
 }
 
-Msg* TestElementDownstream::ProcessMsg(MsgChangeInput* aMsg)
+Msg* TestElementDownstream::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
@@ -2100,7 +2094,6 @@ void SuiteProtocolHls::Setup()
     init.SetMsgEncodedStreamCount(10);
     init.SetMsgMetaTextCount(10);
     init.SetMsgFlushCount(10);
-    init.SetMsgSessionCount(10);
     iMsgFactory = new MsgFactory(*iInfoAggregator, init);
     iIdProvider = new TestPipelineIdProvider();
     iFlushIdProvider = new TestFlushIdProvider();

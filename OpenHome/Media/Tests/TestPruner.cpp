@@ -26,9 +26,8 @@ private:
     {
         ENone
        ,EMsgMode
-       ,EMsgSession
        ,EMsgTrack
-       ,EMsgChangeInput
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
@@ -48,7 +47,7 @@ private:
     void MsgsDiscarded();
     void QuitDoesntWaitForAudio();
     void HaltPassedOn();
-    void ChangeInputPassedOn();
+    void DrainPassedOn();
     void StreamInterruptedPassedOn();
     void DecodedStreamPassedOn();
     void TrackWithoutAudioAllMsgsDiscarded();
@@ -60,9 +59,8 @@ private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgSession* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgChangeInput* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
@@ -97,7 +95,7 @@ SuitePruner::SuitePruner()
     AddTest(MakeFunctor(*this, &SuitePruner::MsgsDiscarded), "MsgsDiscarded");
     AddTest(MakeFunctor(*this, &SuitePruner::QuitDoesntWaitForAudio), "QuitDoesntWaitForAudio");
     AddTest(MakeFunctor(*this, &SuitePruner::HaltPassedOn), "HaltPassedOn");
-    AddTest(MakeFunctor(*this, &SuitePruner::ChangeInputPassedOn), "ChangeInputPassedOn");
+    AddTest(MakeFunctor(*this, &SuitePruner::DrainPassedOn), "DrainPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::StreamInterruptedPassedOn), "StreamInterruptedPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::DecodedStreamPassedOn), "DecodedStreamPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::TrackWithoutAudioAllMsgsDiscarded), "TrackWithoutAudioAllMsgsDiscarded");
@@ -141,7 +139,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -167,11 +165,11 @@ void SuitePruner::HaltPassedOn()
     TEST(DoPull() == EMsgAudioPcm);
 }
 
-void SuitePruner::ChangeInputPassedOn()
+void SuitePruner::DrainPassedOn()
 {
-    EMsgType msgs[] ={ EMsgTrack, EMsgChangeInput };
+    EMsgType msgs[] ={ EMsgTrack, EMsgDrain };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    TEST(DoPull() == EMsgChangeInput);
+    TEST(DoPull() == EMsgDrain);
     TEST(iPendingMsgs.size() == 0);
 }
 
@@ -258,12 +256,6 @@ Msg* SuitePruner::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SuitePruner::ProcessMsg(MsgSession* aMsg)
-{
-    iLastPulledMsg = EMsgSession;
-    return aMsg;
-}
-
 Msg* SuitePruner::ProcessMsg(MsgTrack* aMsg)
 {
     iPulledTrackId = aMsg->Track().Id();
@@ -271,9 +263,9 @@ Msg* SuitePruner::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuitePruner::ProcessMsg(MsgChangeInput* aMsg)
+Msg* SuitePruner::ProcessMsg(MsgDrain* aMsg)
 {
-    iLastPulledMsg = EMsgChangeInput;
+    iLastPulledMsg = EMsgDrain;
     return aMsg;
 }
 
@@ -374,8 +366,6 @@ Msg* SuitePruner::Pull()
     {
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
-    case EMsgSession:
-        return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -383,8 +373,8 @@ Msg* SuitePruner::Pull()
         track->RemoveRef();
         return msg;
     }
-    case EMsgChangeInput:
-        return iMsgFactory->CreateMsgChangeInput(Functor());
+    case EMsgDrain:
+        return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgDelay:
         return iMsgFactory->CreateMsgDelay(0);
     case EMsgEncodedStream:
