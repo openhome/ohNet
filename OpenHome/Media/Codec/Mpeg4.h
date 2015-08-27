@@ -257,8 +257,7 @@ class SeekTable;
 class Mpeg4BoxStts : public IMpeg4BoxRecognisable
 {
 private:
-    static const TUint kVersionExpected = 0;
-    static const TUint kInvalid = UINT_MAX;
+    static const TUint kVersion = 0;
 public:
     Mpeg4BoxStts(SeekTable& aSeekTable);
 public: // from IMpeg4BoxRecognisable
@@ -268,15 +267,25 @@ public: // from IMpeg4BoxRecognisable
     TBool Recognise(const Brx& aBoxId) const override;
     void Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes) override;
 private:
+    enum EState
+    {
+        eNone,
+        eVersion,
+        eEntries,
+        eSampleCount,
+        eSampleDelta,
+        eComplete,
+    };
+private:
     SeekTable& iSeekTable;
     IMsgAudioEncodedCache* iCache;
+    EState iState;
     TUint iBytes;
     TUint iOffset;
     Bws<4> iBuf;
-    TUint iVersion;
     TUint iEntries;
-    TUint iLastSampleCount;
-    TUint iLastSampleDelta;
+    TUint iEntryCount;
+    TUint iSampleCount;
 };
 
 class Mpeg4BoxStsc : public IMpeg4BoxRecognisable
@@ -294,11 +303,13 @@ public: // from IMpeg4BoxRecognisable
 private:
     enum EState
     {
+        eNone,
         eVersion,
         eEntries,
         eFirstChunk,
         eSamplesPerChunk,
         eSampleDescriptionIndex,
+        eComplete,
     };
 private:
     SeekTable& iSeekTable;
@@ -306,6 +317,8 @@ private:
     EState iState;
     TUint iBytes;
     TUint iOffset;
+    TUint iEntries;
+    TUint iEntryCount;
     TUint iFirstChunk;
     TUint iSamplesPerChunk;
     TUint iSampleDescriptionIndex;
@@ -327,9 +340,11 @@ public: // from IMpeg4BoxRecognisable
 private:
     enum EState
     {
+        eNone,
         eVersion,
         eEntries,
         eChunkOffset,
+        eComplete,
     };
 private:
     SeekTable& iSeekTable;
@@ -338,6 +353,8 @@ private:
     TUint iBytes;
     TUint iOffset;
     Bws<4> iBuf;
+    TUint iEntries;
+    TUint iEntryCount;
 };
 
 class Mpeg4BoxCo64 : public IMpeg4BoxRecognisable
@@ -355,9 +372,11 @@ public: // from IMpeg4BoxRecognisable
 private:
     enum EState
     {
+        eNone,
         eVersion,
         eEntries,
         eChunkOffset,
+        eComplete,
     };
 private:
     SeekTable& iSeekTable;
@@ -367,6 +386,8 @@ private:
     TUint iOffset;
     Bws<4> iBuf32;
     Bws<8> iBuf64;
+    TUint iEntries;
+    TUint iEntryCount;
 };
 
 class SampleSizeTable;

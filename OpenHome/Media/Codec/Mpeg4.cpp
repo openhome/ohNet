@@ -16,6 +16,7 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
+
 // Mpeg4Info
 
 Mpeg4Info::Mpeg4Info() :
@@ -496,10 +497,12 @@ TBool Mpeg4BoxMoov::Recognise(const Brx& aBoxId) const
 
 // Mpeg4BoxStts
 
-Mpeg4BoxStts::Mpeg4BoxStts(SeekTable& aSeekTable) :
-        iSeekTable(aSeekTable), iCache(nullptr), iBytes(0), iOffset(0), iVersion(
-                kInvalid), iEntries(kInvalid), iLastSampleCount(kInvalid), iLastSampleDelta(
-                kInvalid)
+Mpeg4BoxStts::Mpeg4BoxStts(SeekTable& aSeekTable)
+    : iSeekTable(aSeekTable)
+    , iCache(nullptr)
+    , iBytes(0)
+    , iOffset(0)
+    , iSampleCount(0)
 {
 }
 
@@ -508,46 +511,66 @@ Msg* Mpeg4BoxStts::Process()
     // Table of audio samples per sample - used to convert audio samples to codec samples.
 
     while (!Complete()) {
-        iCache->Inspect(iBuf, iBuf.MaxBytes());
-        Msg* msg = iCache->Pull();
-        if (msg != nullptr) {
-            return msg;
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
         }
 
-        iOffset += iBuf.Bytes();
-
-        // FIXME - use an enum state instead?
-
-        if (iVersion == kInvalid) {
-            iVersion = Converter::BeUint32At(iBuf, 0);
-            if (iVersion != kVersionExpected) {
-
+        if (iState == eNone) {
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf.Bytes();
+            const TUint version = Converter::BeUint32At(iBuf, 0);
+            if (version != kVersion) {
                 iCache->Discard(iBytes - iOffset);
                 iOffset = iBytes;
                 THROW(MediaMpeg4FileInvalid);
             }
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eEntries;
         }
-        else if (iEntries == kInvalid) {
+        else if (iState == eEntries) {
+            iOffset += iBuf.Bytes();
             iEntries = Converter::BeUint32At(iBuf, 0);
+            iEntryCount = 0;
             iSeekTable.InitialiseAudioSamplesPerSample(iEntries);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eSampleCount;
         }
-        else {
-            if (iLastSampleCount == kInvalid) {
-                iLastSampleCount = Converter::BeUint32At(iBuf, 0);
-            }
-            else if (iLastSampleDelta == kInvalid) {
-                iLastSampleDelta = Converter::BeUint32At(iBuf, 0);
-                iSeekTable.SetAudioSamplesPerSample(iLastSampleCount,
-                        iLastSampleDelta);
-                iLastSampleCount = kInvalid;
-                iLastSampleDelta = kInvalid;
+        else if (iState == eSampleCount) {
+            iOffset += iBuf.Bytes();
+            iSampleCount = Converter::BeUint32At(iBuf, 0);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eSampleDelta;
+        }
+        else if (iState == eSampleDelta) {
+            iOffset += iBuf.Bytes();
+            const TUint sampleDelta = Converter::BeUint32At(iBuf, 0);
+            iSeekTable.SetAudioSamplesPerSample(iSampleCount,
+                sampleDelta);
+            iSampleCount = 0;
+
+            iEntryCount++;
+            if (iEntryCount < iEntries) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eSampleCount;
             }
             else {
-
-                iCache->Discard(iBytes - iOffset);
-                iOffset = iBytes;
-                THROW(MediaMpeg4FileInvalid);
+                if (!Complete()) {
+                    iCache->Discard(iBytes - iOffset);
+                    iOffset = iBytes;
+                    THROW(MediaMpeg4FileInvalid);
+                }
+                iState = eComplete;
             }
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
         }
     }
 
@@ -563,12 +586,12 @@ void Mpeg4BoxStts::Reset()
 {
     //iSeekTable.Deinitialise();
     iCache = nullptr;
+    iState = eNone;
     iBytes = 0;
     iOffset = 0;
-    iVersion = kInvalid;
-    iEntries = kInvalid;
-    iLastSampleCount = kInvalid;
-    iLastSampleDelta = kInvalid;
+    iEntries = 0;
+    iEntryCount = 0;
+    iSampleCount = 0;
 }
 
 TBool Mpeg4BoxStts::Recognise(const Brx& aBoxId) const
@@ -585,8 +608,8 @@ void Mpeg4BoxStts::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
 
 // Mpeg4BoxStsc
 
-Mpeg4BoxStsc::Mpeg4BoxStsc(SeekTable& aSeekTable) :
-        iSeekTable(aSeekTable)
+Mpeg4BoxStsc::Mpeg4BoxStsc(SeekTable& aSeekTable)
+    : iSeekTable(aSeekTable)
 {
     Reset();
 }
@@ -596,41 +619,67 @@ Msg* Mpeg4BoxStsc::Process()
     // Table of samples per chunk - used to seek to specific sample.
 
     while (!Complete()) {
-        iCache->Inspect(iBuf, iBuf.MaxBytes());
-        Msg* msg = iCache->Pull();
-        if (msg != nullptr) {
-            return msg;
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
         }
 
-        iOffset += iBuf.Bytes();
-
-        if (iState == eVersion) {
+        if (iState == eNone) {
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf.Bytes();
             const TUint version = Converter::BeUint32At(iBuf, 0);
             if (version != kVersion) {
                 iCache->Discard(iBytes - iOffset);
                 iOffset = iBytes;
                 THROW(MediaMpeg4FileInvalid);
             }
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eEntries;
         }
         else if (iState == eEntries) {
-            const TUint entries = Converter::BeUint32At(iBuf, 0);
-            iSeekTable.InitialiseSamplesPerChunk(entries);
+            iOffset += iBuf.Bytes();
+            iEntries = Converter::BeUint32At(iBuf, 0);
+            iEntryCount = 0;
+            iSeekTable.InitialiseSamplesPerChunk(iEntries);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eFirstChunk;
         }
         else if (iState == eFirstChunk) {
+            iOffset += iBuf.Bytes();
             iFirstChunk = Converter::BeUint32At(iBuf, 0);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eSamplesPerChunk;
         }
         else if (iState == eSamplesPerChunk) {
+            iOffset += iBuf.Bytes();
             iSamplesPerChunk = Converter::BeUint32At(iBuf, 0);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eSampleDescriptionIndex;
         }
         else if (iState == eSampleDescriptionIndex) {
+            iOffset += iBuf.Bytes();
             iSampleDescriptionIndex = Converter::BeUint32At(iBuf, 0);
             iSeekTable.SetSamplesPerChunk(iFirstChunk, iSamplesPerChunk,
                     iSampleDescriptionIndex);
-            iState = eFirstChunk;
+
+            iEntryCount++;
+            if (iEntryCount < iEntries) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eFirstChunk;
+            }
+            else {
+                if (!Complete()) {
+                    iCache->Discard(iBytes - iOffset);
+                    iOffset = iBytes;
+                    THROW(MediaMpeg4FileInvalid);
+                }
+                iState = eComplete;
+            }
         }
         else {
             // Unhandled state.
@@ -650,10 +699,12 @@ TBool Mpeg4BoxStsc::Complete() const
 void Mpeg4BoxStsc::Reset()
 {
     iCache = nullptr;
-    iState = eVersion;
+    iState = eNone;
     iBytes = 0;
     iOffset = 0;
     iBuf.SetBytes(0);
+    iEntries = 0;
+    iEntryCount = 0;
     iFirstChunk = 0;
     iSamplesPerChunk = 0;
     iSampleDescriptionIndex = 0;
@@ -673,8 +724,8 @@ void Mpeg4BoxStsc::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
 
 // Mpeg4BoxStco
 
-Mpeg4BoxStco::Mpeg4BoxStco(SeekTable& aSeekTable) :
-        iSeekTable(aSeekTable)
+Mpeg4BoxStco::Mpeg4BoxStco(SeekTable& aSeekTable)
+    : iSeekTable(aSeekTable)
 {
     Reset();
 }
@@ -684,31 +735,54 @@ Msg* Mpeg4BoxStco::Process()
     // Table of file offsets for each chunk (32-bit offsets).
 
     while (!Complete()) {
-        iCache->Inspect(iBuf, iBuf.MaxBytes());
-        Msg* msg = iCache->Pull();
-        if (msg != nullptr) {
-            return msg;
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
         }
 
-        iOffset += iBuf.Bytes();
-
-        if (iState == eVersion) {
+        if (iState == eNone) {
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eVersion;
+        }
+        else if (iState == eVersion) {
+            iOffset += iBuf.Bytes();
             const TUint version = Converter::BeUint32At(iBuf, 0);
             if (version != kVersion) {
                 iCache->Discard(iBytes - iOffset);
                 iOffset = iBytes;
                 THROW(MediaMpeg4FileInvalid);
             }
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eEntries;
         }
         else if (iState == eEntries) {
-            const TUint entries = Converter::BeUint32At(iBuf, 0);
-            iSeekTable.InitialiseOffsets(entries);
+            iOffset += iBuf.Bytes();
+            iEntries = Converter::BeUint32At(iBuf, 0);
+            iEntryCount = 0;
+            iSeekTable.InitialiseOffsets(iEntries);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eChunkOffset;
         }
         else if (iState == eChunkOffset) {
+            iOffset += iBuf.Bytes();
             const TUint offset = Converter::BeUint32At(iBuf, 0);
             iSeekTable.SetOffset(offset);
+
+            iEntryCount++;
+            if (iEntryCount < iEntries) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eChunkOffset;
+            }
+            else {
+                if (!Complete()) {
+                    iCache->Discard(iBytes - iOffset);
+                    iOffset = iBytes;
+                    THROW(MediaMpeg4FileInvalid);
+                }
+                iState = eComplete;
+            }
         }
         else {
             // Unhandled state.
@@ -728,7 +802,7 @@ TBool Mpeg4BoxStco::Complete() const
 void Mpeg4BoxStco::Reset()
 {
     iCache = nullptr;
-    iState = eVersion;
+    iState = eNone;
     iBytes = 0;
     iOffset = 0;
     iBuf.SetBytes(0);
@@ -759,41 +833,54 @@ Msg* Mpeg4BoxCo64::Process()
     // Table of file offsets for each chunk (64-bit offsets).
 
     while (!Complete()) {
-        if (iState == eChunkOffset) {
-            iCache->Inspect(iBuf64, iBuf64.MaxBytes());
+        if (iState != eNone) {
+            Msg* msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
         }
-        else {
+
+        if (iState == eNone) {
             iCache->Inspect(iBuf32, iBuf32.MaxBytes());
+            iState = eVersion;
         }
-        Msg* msg = iCache->Pull();
-        if (msg != nullptr) {
-            return msg;
-        }
-
-        if (iState == eChunkOffset) {
-            iOffset += iBuf64.Bytes();
-        }
-        else {
+        else if (iState == eVersion) {
             iOffset += iBuf32.Bytes();
-        }
-
-        if (iState == eVersion) {
             const TUint version = Converter::BeUint32At(iBuf32, 0);
             if (version != kVersion) {
                 iCache->Discard(iBytes - iOffset);
                 iOffset = iBytes;
                 THROW(MediaMpeg4FileInvalid);
             }
+            iCache->Inspect(iBuf32, iBuf32.MaxBytes());
             iState = eEntries;
         }
         else if (iState == eEntries) {
-            const TUint entries = Converter::BeUint32At(iBuf32, 0);
-            iSeekTable.InitialiseOffsets(entries);
+            iOffset += iBuf32.Bytes();
+            iEntries = Converter::BeUint32At(iBuf32, 0);
+            iEntryCount = 0;
+            iSeekTable.InitialiseOffsets(iEntries);
+            iCache->Inspect(iBuf64, iBuf64.MaxBytes());
             iState = eChunkOffset;
         }
         else if (iState == eChunkOffset) {
+            iOffset += iBuf64.Bytes();
             const TUint64 offset = Converter::BeUint64At(iBuf64, 0);
             iSeekTable.SetOffset(offset);
+
+            iEntryCount++;
+            if (iEntryCount < iEntries) {
+                iCache->Inspect(iBuf64, iBuf64.MaxBytes());
+                iState = eChunkOffset;
+            }
+            else {
+                if (!Complete()) {
+                    iCache->Discard(iBytes - iOffset);
+                    iOffset = iBytes;
+                    THROW(MediaMpeg4FileInvalid);
+                }
+                iState = eComplete;
+            }
         }
         else {
             // Unhandled state.
@@ -813,11 +900,13 @@ TBool Mpeg4BoxCo64::Complete() const
 void Mpeg4BoxCo64::Reset()
 {
     iCache = nullptr;
-    iState = eVersion;
+    iState = eNone;
     iBytes = 0;
     iOffset = 0;
     iBuf32.SetBytes(0);
     iBuf64.SetBytes(0);
+    iEntries = 0;
+    iEntryCount = 0;
 }
 
 TBool Mpeg4BoxCo64::Recognise(const Brx& aBoxId) const
