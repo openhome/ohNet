@@ -181,7 +181,23 @@ void CodecController::Start()
 void CodecController::StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (aStreamId != iStreamId || iActiveCodec == nullptr || !iSeekable) {
+    if (aStreamId != iStreamId) {
+        LOG2(kMedia, kError, "CodecController::StartSeek(%u, %u) fail - wrong stream id (current %u)\n", aStreamId, aSecondsAbsolute, iStreamId);
+        aHandle = ISeeker::kHandleError;
+        return;
+    }
+    if (iActiveCodec == nullptr) {
+        LOG2(kMedia, kError, "CodecController::StartSeek(%u, %u) fail - no active codec\n", aStreamId, aSecondsAbsolute);
+        aHandle = ISeeker::kHandleError;
+        return;
+    }
+    if (!iSeekable) {
+        LOG2(kMedia, kError, "CodecController::StartSeek(%u, %u) fail - stream not seekable\n", aStreamId, aSecondsAbsolute);
+        aHandle = ISeeker::kHandleError;
+        return;
+    }
+    if (iSeek) {
+        LOG2(kMedia, kError, "CodecController::StartSeek(%u, %u) fail - seek already in progress\n", aStreamId, aSecondsAbsolute);
         aHandle = ISeeker::kHandleError;
         return;
     }
@@ -297,21 +313,34 @@ void CodecController::CodecThread()
                 for (;;) {
                     iLock.Wait();
                     TBool seek = iSeek;
-                    iSeek = false;
-                    ISeekObserver* seekObserver = iSeekObserver;
+                    const TUint seekHandle = iSeekHandle;
                     iLock.Signal();
-                    if (seek) {
-                        iExpectedSeekFlushId = MsgFlush::kIdInvalid;
-                        TUint64 sampleNum = iSeekSeconds * iSampleRate;
-                        (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
-                        seekObserver->NotifySeekComplete(iSeekHandle, iExpectedSeekFlushId);
-                    }
-                    else {
+                    if (!seek) {
                         iActiveCodec->Process();
                     }
+                    else {
+                        iExpectedSeekFlushId = MsgFlush::kIdInvalid;
+                        TUint64 sampleNum = iSeekSeconds * iSampleRate;
+                        try {
+                            (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
+                        }
+                        catch (Exception&) {
+                            iSeekObserver->NotifySeekComplete(seekHandle, MsgFlush::kIdInvalid);
+                            throw;
+                        }
+                        iLock.Wait();
+                        const TBool notify = (iSeek && iSeekHandle == seekHandle);
+                        if (notify) {
+                            iSeek = false;
+                        }
+                        const TUint flushId = iExpectedSeekFlushId;
+                        ISeekObserver* seekObserver = iSeekObserver;
+                        iLock.Signal();
+                        if (notify) {
+                            seekObserver->NotifySeekComplete(seekHandle, flushId);
+                        }
+                    }
                 }
-
-
             }
             catch (CodecStreamStart&) {}
             catch (CodecStreamEnded&) {
@@ -515,6 +544,10 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
             iPostSeekStreamInfo->RemoveRef();
         }
         iPostSeekStreamInfo = msg;
+        if (iSeek) {
+            iSeekObserver->NotifySeekComplete(iSeekHandle, iExpectedSeekFlushId);
+            iSeek = false;
+        }
     }
     iLock.Signal();
 }
