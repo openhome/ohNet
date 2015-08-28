@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <algorithm>
 
@@ -11,11 +13,11 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
-/*static const TChar* kStatus[] = { "Starting"
+static const TChar* kStatus[] = { "Starting"
                                  ,"Running"
                                  ,"RampingDown"
                                  ,"RampedDown"
-                                 ,"RampingUp" };*/
+                                 ,"RampingUp" };
 
 VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
@@ -61,10 +63,18 @@ Msg* VariableDelay::Pull()
             msg = iMsgFactory.CreateMsgSilence(size);
             iDelayAdjustment -= size;
             if (iDelayAdjustment == 0) {
-                iStatus = (iStatus==ERampedDown? ERampingUp : ERunning);
-                iRampDirection = Ramp::EUp;
-                iCurrentRampValue = Ramp::kMin;
-                iRemainingRampSize = iRampDuration;
+                if (iStatus == ERampedDown) {
+                    iStatus = ERampingUp;
+                    iRampDirection = Ramp::EUp;
+                    iCurrentRampValue = Ramp::kMin;
+                    iRemainingRampSize = iRampDuration;
+                }
+                else {
+                    iStatus = ERunning;
+                    iRampDirection = Ramp::ENone;
+                    iCurrentRampValue = Ramp::kMax;
+                    iRemainingRampSize = 0;
+                }
             }
         }
     }
@@ -239,8 +249,11 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
-    /*Log::Print("VariableDelay::ProcessMsg(MsgDelay*): delay=%u, iDownstreamDelay=%u, iDelayJiffies=%u, iStatus=%s\n",
-               delayJiffies, iDownstreamDelay, iDelayJiffies, kStatus[iStatus]);*/
+    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
+        delayJiffies, delayJiffies / Jiffies::kPerMs,
+        iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
+        iDelayJiffies, iDelayJiffies / Jiffies::kPerMs,
+        kStatus[iStatus]);
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
     }
@@ -251,7 +264,8 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
     iDelayJiffies = delayJiffies;
-    //Log::Print("VariableDelay: delay=%u, adjustment=%d\n", iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kJiffiesPerMs);
+    LOG(kMedia, "VariableDelay: delay=%u, adjustment=%d\n",
+        iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
     switch (iStatus)
     {
     case EStarting:
