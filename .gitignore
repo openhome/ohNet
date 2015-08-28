@@ -10,6 +10,7 @@ tags
 /install
 
 # Eclipse project files
+.cproject
 .project
 .pydevproject
 
