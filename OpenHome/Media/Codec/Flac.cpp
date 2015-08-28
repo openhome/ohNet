@@ -276,7 +276,6 @@ TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
         // Must check if decoder state is FLAC__STREAM_DECODER_SEEK_ERROR and call FLAC__stream_decoder_flush() before continuing.
         return false;
     }
-    iStreamMsgDue = true;
     return true;
 }
 
@@ -312,6 +311,7 @@ FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder*
         return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
     }
     iTrackOffset = iSampleStart * Jiffies::JiffiesPerSample(iSampleRate);
+    iStreamMsgDue = true;
     return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }
 
