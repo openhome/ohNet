@@ -194,11 +194,9 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
 
 EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
-    if (canPlay != ePlayYes) {
-        Log::Print("WARNING: ProtocolOhBase::OkToPlay(%u) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
-    }
-    return ePlayYes;
+    auto canPlay = iIdProvider->OkToPlay(aStreamId);
+    ASSERT(canPlay != ePlayLater);
+    return canPlay;
 }
 
 void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
