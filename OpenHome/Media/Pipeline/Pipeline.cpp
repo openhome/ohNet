@@ -212,7 +212,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     msgInit.SetMsgStreamInterruptedCount(perStreamMsgCount);
     msgInit.SetMsgHaltCount(msgHaltCount);
     msgInit.SetMsgFlushCount(kMsgCountFlush);
-    msgInit.SetMsgWaitCount(kMsgCountWait);
+    msgInit.SetMsgWaitCount(perStreamMsgCount);
     msgInit.SetMsgDecodedStreamCount(perStreamMsgCount);
     msgInit.SetMsgAudioPcmCount(msgAudioPcmCount, decodedAudioCount);
     msgInit.SetMsgSilenceCount(kMsgCountSilence);
