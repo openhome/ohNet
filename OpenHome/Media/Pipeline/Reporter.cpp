@@ -11,10 +11,24 @@ using namespace OpenHome::Media;
 
 // Reporter
 
+const TUint Reporter::kSupportedMsgTypes =   eMode
+                                           | eTrack
+                                           | eDrain
+                                           | eDelay
+                                           | eMetatext
+                                           | eStreamInterrupted
+                                           | eHalt
+                                           | eWait
+                                           | eDecodedStream
+                                           | eAudioPcm
+                                           | eSilence
+                                           | eQuit;
+
 const Brn Reporter::kNullMetaText("");
 
 Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, IPipelineElementObserverThread& aObserverThread)
-    : iLock("RPTR")
+    : PipelineElement(kSupportedMsgTypes)
+    , iLock("RPTR")
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
@@ -103,28 +117,6 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Reporter::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    ASSERTS(); // don't expect to see MsgEncodedStream at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return nullptr;
-}
-
 Msg* Reporter::ProcessMsg(MsgMetaText* aMsg)
 {
     AutoMutex _(iLock);
@@ -134,27 +126,6 @@ Msg* Reporter::ProcessMsg(MsgMetaText* aMsg)
     iMsgMetaText = aMsg;
     iMsgMetaText->AddRef();
     iObserverThread.Schedule(iEventId);
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to see MsgFlush at this stage of the pipeline
-    return nullptr;
-}
-
-Msg* Reporter::ProcessMsg(MsgWait* aMsg)
-{
     return aMsg;
 }
 
@@ -190,22 +161,6 @@ Msg* Reporter::ProcessMsg(MsgAudioPcm* aMsg)
         iNotifyTime= true;
         iObserverThread.Schedule(iEventId);
     }
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Reporter::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to see MsgPlayable in the pipeline
-    return nullptr;
-}
-
-Msg* Reporter::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }
 

@@ -8,8 +8,21 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TUint Muter::kSupportedMsgTypes =   eMode
+                                        | eTrack
+                                        | eDrain
+                                        | eEncodedStream
+                                        | eMetatext
+                                        | eStreamInterrupted
+                                        | eHalt
+                                        | eDecodedStream
+                                        | eAudioPcm
+                                        | eSilence
+                                        | eQuit;
+
 Muter::Muter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
+    : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iUpstream(aUpstream)
     , iLock("MPMT")
     , iState(eRunning)
@@ -86,47 +99,6 @@ Msg* Muter::Pull()
     return msg;
 }
 
-Msg* Muter::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Muter::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Muter::ProcessMsg(MsgHalt* aMsg)
 {
     iHalted = true;
@@ -135,21 +107,6 @@ Msg* Muter::ProcessMsg(MsgHalt* aMsg)
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
     }
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgFlush* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgWait* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgDecodedStream* aMsg)
-{
     return aMsg;
 }
 
@@ -210,16 +167,5 @@ Msg* Muter::ProcessMsg(MsgSilence* aMsg)
         iState = eRunning;
         break;
     }
-    return aMsg;
-}
-
-Msg* Muter::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Muter::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }

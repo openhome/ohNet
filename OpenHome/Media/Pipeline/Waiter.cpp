@@ -10,9 +10,25 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TUint Waiter::kSupportedMsgTypes =   eMode
+                                         | eTrack
+                                         | eDrain
+                                         | eDelay
+                                         | eEncodedStream
+                                         | eMetatext
+                                         | eStreamInterrupted
+                                         | eHalt
+                                         | eFlush
+                                         | eWait
+                                         | eDecodedStream
+                                         | eAudioPcm
+                                         | eSilence
+                                         | eQuit;
+
 Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
                IPipelineElementObserverThread& aObserverThread, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
+    : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
@@ -73,37 +89,6 @@ Msg* Waiter::Pull()
     return msg;
 }
 
-Msg* Waiter::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
@@ -112,11 +97,6 @@ Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
 Msg* Waiter::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
     return ProcessFlushable(aMsg);
-}
-
-Msg* Waiter::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
 }
 
 Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
@@ -209,17 +189,6 @@ Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
     }
 
     return ProcessFlushable(aMsg);
-}
-
-Msg* Waiter::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Waiter::ProcessMsg(MsgQuit* aMsg)
-{
-    return aMsg;
 }
 
 void Waiter::DoWait()
