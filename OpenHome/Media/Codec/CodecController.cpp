@@ -346,8 +346,12 @@ void CodecController::CodecThread()
             catch (CodecStreamEnded&) {
                 iStreamEnded = true;
             }
-            catch (CodecStreamCorrupt&) {}
-            catch (CodecStreamFeatureUnsupported&) {}
+            catch (CodecStreamCorrupt&) {
+                LOG2(kPipeline, kError, "WARNING: CodecStreamCorrupt\n");
+            }
+            catch (CodecStreamFeatureUnsupported&) {
+                LOG2(kPipeline, kError, "WARNING: CodecStreamFeatureUnsupported\n");
+            }
         }
         catch (CodecStreamStopped&) {}
         catch (CodecStreamFlush&) {}
