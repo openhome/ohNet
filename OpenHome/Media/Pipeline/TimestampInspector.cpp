@@ -11,8 +11,23 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TUint TimestampInspector::kSupportedMsgTypes =   eMode
+                                                     | eTrack
+                                                     | eDrain
+                                                     | eDelay
+                                                     | eEncodedStream
+                                                     | eMetatext
+                                                     | eStreamInterrupted
+                                                     | eHalt
+                                                     | eFlush
+                                                     | eWait
+                                                     | eDecodedStream
+                                                     | eAudioPcm
+                                                     | eQuit;
+
 TimestampInspector::TimestampInspector(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
-    : iMsgFactory(aMsgFactory)
+    : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iDownstreamElement(aDownstreamElement)
     , iClockPuller(nullptr)
     , iDecodedStream(nullptr)
@@ -70,39 +85,9 @@ Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* TimestampInspector::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS(); // not expected at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TimestampInspector::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
+    StreamInterrupted();
     return aMsg;
 }
 
@@ -195,22 +180,5 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
         }
         // fall through
     }
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgSilence* aMsg)
-{
-    ASSERTS(); // not expected at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS(); // not expected at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }

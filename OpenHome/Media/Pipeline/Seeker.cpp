@@ -10,7 +10,8 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
+    : iFlusher(aUpstreamElement)
+    , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iSeeker(aSeeker)
     , iRestreamer(aRestreamer)
@@ -21,7 +22,6 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iCurrentRampValue(Ramp::kMax)
     , iSeekSeconds(UINT_MAX)
     , iTargetFlushId(MsgFlush::kIdInvalid)
-    , iTargetTrackId(Track::kIdNone)
     , iTrackId(Track::kIdNone)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekConsecutiveFailureCount(0)
@@ -77,7 +77,7 @@ Msg* Seeker::Pull()
 {
     Msg* msg;
     do {
-        msg = (iQueue.IsEmpty()? iUpstreamElement.Pull() : iQueue.Dequeue());
+        msg = (iQueue.IsEmpty()? iFlusher.Pull() : iQueue.Dequeue());
         iLock.Wait();
         msg = msg->Process(*this);
         iLock.Signal();
@@ -109,7 +109,17 @@ Msg* Seeker::ProcessMsg(MsgDelay* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    NewStream();
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kMax;
+    if (iState != EFlushing) {
+        // don't move out of Flushing
+        // ...we'll use iState to start a RampUp when processing the DecodedStream that'll follow
+        iState = ERunning;
+    }
+    iSeekHandle = ISeeker::kHandleError;
+    iStreamIsSeekable = true;
+    iStreamPosJiffies = 0;
+    iFlushEndJiffies = 0;
     iStreamId = aMsg->StreamId();
     iStreamIsSeekable = aMsg->Seekable();
     return aMsg;
@@ -142,7 +152,7 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
         ASSERT(iState == EFlushing);
         aMsg->RemoveRef();
         iTargetFlushId = MsgFlush::kIdInvalid;
-        iState = ERampingUp;
+        // leave iState as Flushing.  Processing of Encoded and Decoded streams relies on this
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
         return nullptr;
@@ -165,36 +175,15 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate());
     iStreamPosJiffies *= streamInfo.SampleStart();
-    if (iTargetTrackId != Track::kIdNone) {
-        if (iTargetTrackId != iTrackId) {
-            IStreamHandler* streamHandler = streamInfo.StreamHandler();
-            const TUint streamId = streamInfo.StreamId();
-            if (streamHandler != NULL) {
-                (void)streamHandler->OkToPlay(streamId);
-                (void)streamHandler->TryStop(streamId);
-            }
-            return ProcessFlushable(aMsg);
+    if (iState == EFlushing) { // we've just completed a seek
+        if (iStreamPosJiffies == 0) {
+            iState = ERunning;
         }
-        else if (iTargetFlushId == MsgFlush::kIdInvalid) {
-            if (iTargetTrackId == iTrackId && iSeekSeconds > 0) {
-                iTargetTrackId = Track::kIdNone;
-                DoSeek();
-            }
-            else {
-                /* If tracks match and iSeekSeconds==0, we're at the seek target point now.
-                   If iTargetTrackId is non-null and tracks don't match, we're likely never going
-                   to receive the target track.  This could happen after a seek request immediately
-                   followed by a change in uri provider. */
-                iState = ERunning;
-                iRemainingRampSize = 0;
-                iCurrentRampValue = Ramp::kMax;
-            }
+        else {
+            iState = ERampingUp;
+            iRemainingRampSize = iRampDuration;
+            iCurrentRampValue = Ramp::kMin;
         }
-    }
-    else if (iState == EFlushing) {
-        iState = ERampingUp;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kMin;
     }
     return aMsg;
 }
@@ -282,12 +271,14 @@ void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
         LOG(kPipeline, "> Seeker::NotifySeekComplete - ignoring (wrong handle)\n");
         return;
     }
+    iTargetFlushId = aFlushId;
     if (aFlushId == MsgFlush::kIdInvalid) {
-        iTargetFlushId = aFlushId;
         HandleSeekFail();
     }
     else {
         iSeekConsecutiveFailureCount = 0;
+        iFlusher.DiscardUntilFlush(iTargetFlushId);
+        iState = EFlushing;
     }
 }
 
@@ -309,27 +300,11 @@ void Seeker::DoSeek()
 
 Msg* Seeker::ProcessFlushable(Msg* aMsg)
 {
-    if (iState == EFlushing) {
+    if (iState == EFlushing || iTargetFlushId != MsgFlush::kIdInvalid) {
         aMsg->RemoveRef();
         return nullptr;
     }
     return aMsg;
-}
-
-void Seeker::NewStream()
-{
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kMax;
-    if (iTargetTrackId == Track::kIdNone && iState != EFlushing) {
-        iState = ERunning;
-    }
-    else {
-        iState = EFlushing;
-    }
-    iSeekHandle = ISeeker::kHandleError;
-    iStreamIsSeekable = true;
-    iStreamPosJiffies = 0;
-    iFlushEndJiffies = 0;
 }
 
 void Seeker::HandleSeekFail()
@@ -350,22 +325,19 @@ void Seeker::HandleSeekFail()
         iSeekConsecutiveFailureCount = 0;
     }
     else {
-        if (++iSeekConsecutiveFailureCount < 2) {
-            iTargetTrackId = iTrackId;
-            iTargetFlushId = iRestreamer.SeekRestream(iMode, iTargetTrackId);
+        if (++iSeekConsecutiveFailureCount == 1) {
+            iTargetFlushId = iRestreamer.SeekRestream(iMode, iTrackId);
+            iFlusher.DiscardUntilFlush(iTargetFlushId);
+            iState = EFlushing;
             LOG(kPipeline, "SeekRestream returned %u\n", iTargetFlushId);
         }
         else {
             LOG(kPipeline, "give up, already failed to seek twice\n");
-            iTargetTrackId = Track::kIdNone;
             iTargetFlushId = MsgFlush::kIdInvalid;
             iSeekConsecutiveFailureCount = 0;
-        }
-        if (iTargetFlushId == MsgFlush::kIdInvalid) {
             iState = ERampingUp;
             iRemainingRampSize = iRampDuration;
             iCurrentRampValue = Ramp::kMin;
-            iTargetTrackId = Track::kIdNone;
         }
     }
 }

@@ -28,8 +28,6 @@ private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
-    void PipelineDrained();
-private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstream;
     Mutex iLock;

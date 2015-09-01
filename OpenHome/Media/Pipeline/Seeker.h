@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Flusher.h>
 
 namespace OpenHome {
 namespace Media {
@@ -50,7 +51,6 @@ private: // from ISeekObserver
 private:
     void DoSeek();
     Msg* ProcessFlushable(Msg* aMsg);
-    void NewStream();
     void HandleSeekFail();
 private:
     enum EState
@@ -61,6 +61,7 @@ private:
        ,EFlushing
     };
 private:
+    Flusher iFlusher;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     ISeeker& iSeeker;
@@ -75,7 +76,6 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iSeekHandle;
     TUint iTargetFlushId;
-    TUint iTargetTrackId;
     BwsMode iMode;
     TUint iTrackId;
     TUint iStreamId;

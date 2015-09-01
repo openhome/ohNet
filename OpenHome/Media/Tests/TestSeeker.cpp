@@ -403,7 +403,8 @@ Msg* SuiteSeeker::CreateEncodedStream()
 
 Msg* SuiteSeeker::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, iSeekable, false, nullptr);
+    const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, sampleStart, true, iSeekable, false, nullptr);
 }
 
 Msg* SuiteSeeker::CreateAudio()
@@ -519,26 +520,20 @@ void SuiteSeeker::TestRampSeekerAccepts()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
-    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
-    PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
-    // end of seek Flush is passed on
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    // end of seek Flush is consumed, audio will ramp
     TEST(iSeeker->iQueue.IsEmpty());
-    // ramping up now
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    iTrackOffset = kExpectedSeekSeconds * Jiffies::kPerSecond;
     iRampingUp = true;
     iJiffies = 0;
-    PullNext(EMsgFlush);
-    // need to pull MsgDecodedStream to exit flushing state
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(CreateDecodedStream());
@@ -585,26 +580,21 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
-    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
-    PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
     // end of seek Flush is passed on
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    iTrackOffset = kExpectedSeekSeconds * Jiffies::kPerSecond;
     TEST(iSeeker->iQueue.IsEmpty());
     // ramping up now
     iRampingUp = true;
     iJiffies = 0;
-    PullNext(EMsgFlush);
-    // need to pull MsgDecodedStream to exit flushing state
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(CreateDecodedStream());

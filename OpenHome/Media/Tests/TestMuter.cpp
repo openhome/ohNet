@@ -340,7 +340,6 @@ void SuiteMuter::TestMsgsPassWhenRunning()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
@@ -351,7 +350,6 @@ void SuiteMuter::TestMsgsPassWhenRunning()
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDrain);
-    PullNext(EMsgDelay);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
     PullNext(EMsgSilence);

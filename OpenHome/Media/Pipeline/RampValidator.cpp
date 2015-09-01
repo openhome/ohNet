@@ -12,8 +12,25 @@ using namespace OpenHome::Media;
 
 #define RAMP_VALIDATOR_ENABLED 0
 
+const TUint RampValidator::kSupportedMsgTypes =   eMode
+                                                | eTrack
+                                                | eDrain
+                                                | eDelay
+                                                | eEncodedStream
+                                                | eMetatext
+                                                | eStreamInterrupted
+                                                | eHalt
+                                                | eFlush
+                                                | eWait
+                                                | eDecodedStream
+                                                | eAudioPcm
+                                                | eSilence
+                                                | ePlayable
+                                                | eQuit;
+
 RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* aId)
-    : iId(aId)
+    : PipelineElement(kSupportedMsgTypes)
+    , iId(aId)
     , iUpstream(&aUpstream)
     , iDownstream(nullptr)
     , iRampedDown(false)
@@ -22,7 +39,8 @@ RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* a
 }
 
 RampValidator::RampValidator(const TChar* aId, IPipelineElementDownstream& aDownstream)
-    : iId(aId)
+    : PipelineElement(kSupportedMsgTypes)
+    , iId(aId)
     , iUpstream(nullptr)
     , iDownstream(&aDownstream)
     , iRampedDown(false)
@@ -125,52 +143,11 @@ Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* RampValidator::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
 Msg* RampValidator::ProcessMsg(MsgHalt* aMsg)
 {
     if (!iWaitingForAudio) {
         iRampedDown = true;
     }
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgFlush* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgWait* aMsg)
-{
     return aMsg;
 }
 
@@ -195,15 +172,5 @@ Msg* RampValidator::ProcessMsg(MsgSilence* aMsg)
     if (!iWaitingForAudio) {
         ProcessAudio(aMsg->Ramp());
     }
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgPlayable* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RampValidator::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }
