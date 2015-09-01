@@ -255,7 +255,6 @@ Msg* RewinderBufferProcessor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
-    ASSERTS(); // shouldn't have been buffered
     return nullptr;
 }
 
@@ -455,6 +454,7 @@ Msg* Rewinder::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* Rewinder::ProcessMsg(MsgMetaText* aMsg)
 {
+    TryBuffer(aMsg);    // Don't want MetaText coming out of sequence.
     return aMsg;
 }
 

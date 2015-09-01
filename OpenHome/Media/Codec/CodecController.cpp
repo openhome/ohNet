@@ -665,6 +665,10 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     Queue(aMsg);
     return nullptr;
 }
@@ -688,6 +692,7 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
     ReleaseAudioEncoded();
     /* Assuming that flush ids rise over time, receiving a msg with a higher id than we're
        expecting indicates that either we've missed our target msg or it wasn't sent */
+    iStreamEnded = true;
     ASSERT(iExpectedFlushId == MsgFlush::kIdInvalid || iExpectedFlushId >= aMsg->Id());
     if (iExpectedFlushId == MsgFlush::kIdInvalid || iExpectedFlushId != aMsg->Id()) {
         Queue(aMsg);
