@@ -232,7 +232,8 @@ public:
     TUint RecogniseCount() const;
     TUint ResetCount() const;
 public: // from SuiteContainerBase
-    TBool Recognise() override;
+    Msg* Recognise() override;
+    TBool Recognised() const override;
     void Reset() override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
@@ -1080,9 +1081,14 @@ TUint TestDummyContainer::ResetCount() const
     return iResetCount;
 }
 
-TBool TestDummyContainer::Recognise()
+Msg* TestDummyContainer::Recognise()
 {
     iRecogniseCount++;
+    return nullptr;
+}
+
+TBool TestDummyContainer::Recognised() const
+{
     return false;
 }
 
