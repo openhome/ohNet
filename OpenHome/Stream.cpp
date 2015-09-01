@@ -28,6 +28,7 @@ Srx::Srx(TUint aMaxBytes, IReaderSource& aSource)
     , iBytes(0)
     , iOffset(0)
 {
+
 }
 
 Brn Srx::Read(TUint aBytes)
