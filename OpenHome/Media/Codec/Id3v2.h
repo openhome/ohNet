@@ -15,13 +15,16 @@ private:
 public:
     Id3v2();
 public: // from ContainerBase
-    TBool Recognise() override;
+    Msg* Recognise() override;
+    TBool Recognised() const override;
     void Reset() override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 private:
     TBool RecogniseTag();
 private:
+    TBool iRecognitionStarted;
+    TBool iRecognitionSuccess;
     TUint iSize;
     TUint iTotalSize;
     Bws<kRecogniseBytes> iBuf;

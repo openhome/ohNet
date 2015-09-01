@@ -330,7 +330,12 @@ ContainerNull::ContainerNull()
 {
 }
 
-TBool ContainerNull::Recognise()
+Msg* ContainerNull::Recognise()
+{
+    return nullptr;
+}
+
+TBool ContainerNull::Recognised() const
 {
     return true;
 }
@@ -364,6 +369,9 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     , iStreamHandler(nullptr)
     , iPassThrough(false)
     , iRecognising(false)
+    , iState(eRecognitionStart)
+    , iRecogIdx(0)
+    , iStreamEnded(false)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iQuit(false)
     , iLock("COCO")
@@ -394,7 +402,7 @@ ContainerController::~ContainerController()
     iCache.Reset();
 }
 
-void ContainerController::RecogniseContainer()
+Msg* ContainerController::RecogniseContainer()
 {
     if (iPassThrough) {
         // No recognition on streams that support latency.
@@ -402,29 +410,68 @@ void ContainerController::RecogniseContainer()
         iRewinder.Stop();
         iCache.Reset();
         iActiveContainer->Reset();
+        return nullptr;
     }
     else {
         iActiveContainer = nullptr;
-        for (auto& container : iContainers) {
-            iRewinder.Rewind();
-            iCache.Reset();
-            container->Reset();
-            try {
-                if (container->Recognise()) {
-                    iActiveContainer = container;
-                    iRewinder.Rewind();
-                    iRewinder.Stop();
-                    iCache.Reset();
-                    return;
+        while (iState != eRecognitionComplete) {
+            if (iState == eRecognitionStart) {
+                iRecogIdx = 0;
+                iState = eRecognitionSelectContainer;
+            }
+            else if (iState == eRecognitionSelectContainer) {
+                ASSERT(iRecogIdx < iContainers.size()); // ContainerNull should always recognise.
+                auto& container = iContainers[iRecogIdx];
+                iStreamEnded = false;
+                iRewinder.Rewind();
+                iCache.Reset();
+                container->Reset();
+                iState = eRecognitionContainer;
+            }
+            else if (iState == eRecognitionContainer) {
+                if (!iStreamEnded) {
+                    auto& container = iContainers[iRecogIdx];
+                    try {
+                        Msg* msg = container->Recognise();
+                        if (msg != nullptr) {
+                            return msg;
+                        }
+
+                        if (container->Recognised()) {
+                            iActiveContainer = container;
+                            iRewinder.Rewind();
+                            iRewinder.Stop();
+                            iCache.Reset();
+                            iState = eRecognitionComplete;
+                            return nullptr;
+                        }
+                        else {
+                            iRecogIdx++;
+                            iState = eRecognitionSelectContainer;
+                        }
+                    }
+                    catch (CodecPulledNullMsg&) {
+                        LOG(kCodec, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise ");
+                        LOG(kCodec, container->Id());
+                        LOG(kCodec, "\n");
+
+                        iRecogIdx++;
+                        iState = eRecognitionSelectContainer;
+                    }
+                }
+                else {
+                    // iStreamEnded during recognition; move to next container.
+                    iRecogIdx++;
+                    iState = eRecognitionSelectContainer;
                 }
             }
-            catch (CodecPulledNullMsg&) {
-                LOG(kCodec, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise ");
-                LOG(kCodec, container->Id());
-                LOG(kCodec, "\n");
+            else { // Unhandled state.
+                ASSERTS();
+                return nullptr;
             }
         }
         ASSERT(iActiveContainer != nullptr);    // Should have been detected by at least ContainerNull.
+        return nullptr;
     }
 }
 
@@ -436,16 +483,28 @@ Msg* ContainerController::Pull()
         // might block acquiring mutex in IStreamHandler calls.
         AutoMutex a(iLock);
         recognising = iRecognising;
-        iRecognising = false;
-    }
-
-    if (recognising) { // Pulled MsgEncodedStream
-        RecogniseContainer();
     }
 
     Msg* msg = nullptr;
+    while (recognising) {
+        msg = RecogniseContainer();
+        if (msg == nullptr) { // Completed recognition.
+            iRecognising = false;
+            iStreamEnded = false;
+            recognising = false;
+        }
+        else {
+            msg = msg->Process(*this);
+            if (msg != nullptr) {
+                return msg;
+            }
+        }
+    }
+
     while (msg == nullptr) {
+        ASSERT(iActiveContainer != nullptr);
         msg = iActiveContainer->Pull();
+        ASSERT(msg != nullptr);
         msg = msg->Process(*this);
     }
 
@@ -454,6 +513,12 @@ Msg* ContainerController::Pull()
 
 Msg* ContainerController::ProcessMsg(MsgMode* aMsg)
 {
+    if (iRecognising) {
+        iStreamEnded = true;
+        aMsg->RemoveRef();
+        return nullptr;
+    }
+
     if (aMsg->Info().SupportsLatency()) {
         // Don't perform any recognition on streams that support latency.
         iPassThrough = true;
@@ -466,6 +531,13 @@ Msg* ContainerController::ProcessMsg(MsgMode* aMsg)
 
 Msg* ContainerController::ProcessMsg(MsgTrack* aMsg)
 {
+    if (iRecognising) {
+        if (aMsg->StartOfStream()) {
+            iStreamEnded = true;
+        }
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     return aMsg;
 }
 
@@ -476,12 +548,22 @@ Msg* ContainerController::ProcessMsg(MsgDrain* aMsg)
 
 Msg* ContainerController::ProcessMsg(MsgDelay* aMsg)
 {
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     return aMsg;
 }
 
 Msg* ContainerController::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    iStreamEnded = true;
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     iRecognising = true;
+    iState = eRecognitionStart;
     iUrl.Replace(aMsg->Uri());  // Required to allow containers to do an out-of-band read.
 
     if (iUrl.Bytes() == 0) {
@@ -518,21 +600,28 @@ Msg* ContainerController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* ContainerController::ProcessMsg(MsgMetaText* aMsg)
 {
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     return aMsg;
 }
 
 Msg* ContainerController::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
+    iStreamEnded = true;
     return aMsg;
 }
 
 Msg* ContainerController::ProcessMsg(MsgHalt* aMsg)
 {
+    iStreamEnded = true;
     return aMsg;
 }
 
 Msg* ContainerController::ProcessMsg(MsgFlush* aMsg)
 {
+    iStreamEnded = true;
     AutoMutex a(iLock);
     if (iExpectedFlushId == aMsg->Id()) {
         iExpectedFlushId = MsgFlush::kIdInvalid;
@@ -571,6 +660,7 @@ Msg* ContainerController::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* ContainerController::ProcessMsg(MsgQuit* aMsg)
 {
+    //iStreamEnded = true;    // Will cause container to quit prematurely.
     AutoMutex a(iLock);
     iQuit = true;
     return aMsg;

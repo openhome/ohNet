@@ -2604,33 +2604,34 @@ void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFa
     Reset();
 }
 
-TBool Mpeg4Container::Recognise()
+Msg* Mpeg4Container::Recognise()
 {
     LOG(kMedia, "Mpeg4Container::Recognise\n");
-    static const TUint kSizeBytes = 4;
-    static const TUint kNameBytes = 4;
-    Bws<kNameBytes> boxName;
-    iCache->Discard(kSizeBytes);
-    iCache->Inspect(boxName, boxName.MaxBytes());
 
-    //Msg* msg = iCache->Pull();
-    //while (msg != nullptr) {
-    //    msg->RemoveRef();
-    //    msg = iCache->Pull();
-    //}
+    if (!iRecognitionStarted) {
+        static const TUint kSizeBytes = 4;
+        iCache->Discard(kSizeBytes);
+        iCache->Inspect(iRecogBuf, iRecogBuf.MaxBytes());
+        iRecognitionStarted = true;
+    }
 
     // Avoid pulling through new MsgEncodedStream during recognition (which would then be discarded!)
     Msg* msg = iCache->Pull();
     if (msg != nullptr) {
-        msg->RemoveRef();
-        return false;
+        return msg;
     }
 
-    if (boxName == Brn("ftyp")) {
-        return true;
+    if (iRecogBuf == Brn("ftyp")) {
+        iRecognitionSuccess = true;
+        return nullptr;
     }
 
-    return false;
+    return nullptr;
+}
+
+TBool Mpeg4Container::Recognised() const
+{
+    return iRecognitionSuccess;
 }
 
 void Mpeg4Container::Reset()
@@ -2645,6 +2646,8 @@ void Mpeg4Container::Reset()
     iCodecInfo.Reset();
     iSampleSizeTable.Clear();
     iSeekTable.Deinitialise();
+    iRecognitionStarted = false;
+    iRecognitionSuccess = false;
 }
 
 TBool Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)

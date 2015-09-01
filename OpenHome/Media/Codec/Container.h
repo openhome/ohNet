@@ -68,7 +68,8 @@ private:
 protected:
     ContainerBase(const Brx& aId);
 public:
-    virtual TBool Recognise() = 0;
+    virtual Msg* Recognise() = 0;   // Returns nullptr upon recognition complete.
+    virtual TBool Recognised() const = 0; // Can only be called after Recognise() returns nullptr.
     virtual void Reset() = 0;
     virtual TBool TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     const Brx& Id() const;
@@ -137,7 +138,8 @@ class ContainerNull : public ContainerBase
 public:
     ContainerNull();
 public: // from ContainerBase
-    TBool Recognise() override;
+    Msg* Recognise() override;
+    TBool Recognised() const override;
     void Reset() override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
@@ -150,7 +152,7 @@ public:
     ~ContainerController();
     void AddContainer(ContainerBase* aContainer);
 private:
-    void RecogniseContainer();
+    Msg* RecogniseContainer();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
@@ -180,6 +182,14 @@ private: // from IContainerSeekHandler
 private: // from IContainerUrlBlockWriter
     TBool TryGetUrl(IWriter& aWriter, TUint64 aOffset, TUint aBytes) override;
 private:
+    enum ERecognitionState
+    {
+        eRecognitionStart,
+        eRecognitionSelectContainer,
+        eRecognitionContainer,
+        eRecognitionComplete,
+    };
+private:
     MsgFactory& iMsgFactory;
     IUrlBlockWriter& iUrlBlockWriter;
     Rewinder iRewinder;
@@ -191,6 +201,9 @@ private:
     Bws<Uri::kMaxUriBytes> iUrl;
     TBool iPassThrough;
     TBool iRecognising;
+    ERecognitionState iState;
+    TUint iRecogIdx;
+    TBool iStreamEnded;
     TUint iExpectedFlushId;
     TBool iQuit;
     Mutex iLock;

@@ -877,7 +877,8 @@ public:
     Mpeg4Container(IMimeTypeList& aMimeTypeList);
 public: // from ContainerBase
     void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter) override;
-    TBool Recognise() override;
+    Msg* Recognise() override;
+    TBool Recognised() const override;
     void Reset() override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
@@ -899,6 +900,9 @@ private:
     SampleSizeTable iSampleSizeTable;
     SeekTable iSeekTable;
     IMpeg4ChunkSeekObserver* iSeekObserver;
+    Bws<4> iRecogBuf;
+    TBool iRecognitionStarted;
+    TBool iRecognitionSuccess;
     mutable Mutex iLock;
 };
 

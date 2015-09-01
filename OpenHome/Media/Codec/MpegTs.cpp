@@ -450,32 +450,32 @@ MpegTs::~MpegTs()
     //iAudioEncoded = nullptr;
 }
 
-TBool MpegTs::Recognise()
+Msg* MpegTs::Recognise()
 {
     LOG(kMedia, "MpegTs::Recognise\n");
-    iCache->Inspect(iBuf, kStreamHeaderBytes);
+    if (!iRecognitionStarted) {
+        iCache->Inspect(iBuf, kStreamHeaderBytes);
+        iRecognitionStarted = true;
+    }
 
     Msg* msg = iCache->Pull();
-    while (msg != nullptr) {
-        iEncodedStreamRecogniser.Reset();
-        msg = msg->Process(iEncodedStreamRecogniser);
-        msg->RemoveRef();
-
-        if (iEncodedStreamRecogniser.RecognisedMsgEncodedStream()) {
-            // New MsgEncodedStream encountered. Don't keep trying to recognise.
-            return false;
-        }
-
-        msg = iCache->Pull();
+    if (msg != nullptr) {
+        return msg;
     }
 
     try {
         iStreamHeader.Parse(iBuf);
-        return true;
+        iRecognitionSuccess = true;
+        return nullptr;
     }
     catch (InvalidMpegTsPacket&) {
-        return false;
+        return nullptr;
     }
+}
+
+TBool MpegTs::Recognised() const
+{
+    return iRecognitionSuccess;
 }
 
 void MpegTs::Reset()
@@ -487,6 +487,8 @@ void MpegTs::Reset()
     iStreamHeader.Reset();
     iPat.Reset();
     iPmt.Reset();
+    iRecognitionStarted = false;
+    iRecognitionSuccess = false;
     iProgramMapPid = 0;
     iStreamPid = 0;
     iRemaining = kPacketBytes;

@@ -160,7 +160,8 @@ public:
     MpegTs(IMimeTypeList& aMimeTypeList);
     ~MpegTs();
 public: // from ContainerBase
-    TBool Recognise() override;
+    Msg* Recognise() override;
+    TBool Recognised() const override;
     void Reset() override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
@@ -186,6 +187,8 @@ private:
     MpegTsTransportStreamHeader iStreamHeader;
     MpegTsProgramAssociationTable iPat;
     MpegTsProgramMapTable iPmt;
+    TBool iRecognitionStarted;
+    TBool iRecognitionSuccess;
     TUint iProgramMapPid;
     TUint iStreamPid;
     TUint iRemaining;

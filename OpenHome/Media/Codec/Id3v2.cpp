@@ -19,32 +19,37 @@ Id3v2::Id3v2()
 {
 }
 
-TBool Id3v2::Recognise()
+Msg* Id3v2::Recognise()
 {
     LOG(kMedia, "Id3v2::Recognise\n");
-    iCache->Inspect(iBuf, iBuf.MaxBytes());
 
-    //Msg* msg = iCache->Pull();
-    //while (msg != nullptr) {
-    //    msg->RemoveRef();
-    //    msg = iCache->Pull();
-    //}
+    if (!iRecognitionStarted) {
+        iCache->Inspect(iBuf, iBuf.MaxBytes());
+        iRecognitionStarted = true;
+    }
 
     Msg* msg = iCache->Pull();
     if (msg != nullptr) {
-        msg->RemoveRef();
-        return false;
+        return msg;
     }
 
     if (RecogniseTag()) {
         iSize = 0;
-        return true;
+        iRecognitionSuccess = true;
+        return nullptr;
     }
-    return false;
+    return nullptr;
+}
+
+TBool Id3v2::Recognised() const
+{
+    return iRecognitionSuccess;
 }
 
 void Id3v2::Reset()
 {
+    iRecognitionStarted = false;
+    iRecognitionSuccess = false;
     iSize = 0;
     iTotalSize = 0;
     iBuf.SetBytes(0);
