@@ -790,8 +790,21 @@ void SuiteCodecControllerStream::TestTrackEncodedStreamMetatext()
     PullNext(EMsgTrack);
     Queue(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
+
+    // MsgMetaText should be buffered until audio is recognised.
     Queue(iMsgFactory->CreateMsgMetaText(Brn("dummy")));
+
+    static const TUint kAudioBytes = 6144;
+    iTotalBytes = kWavHeaderBytes + kAudioBytes;
+    Queue(CreateAudio(true, kMaxMsgBytes));
+    // Start-of-stream audio should be recognised, so MsgMetaText should be passed on.
     PullNext(EMsgMetaText);
+    PullNext(EMsgDecodedStream);
+
+    // Flush remaining audio from stream out by sending a new MsgEncodedStream.
+    Queue(CreateEncodedStream());
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgEncodedStream);
 }
 
 void SuiteCodecControllerStream::TestSeek()
