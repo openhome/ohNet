@@ -300,6 +300,7 @@ private:
     TBool QueueTrackData() const;
     void ReleaseAudioEncoded();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
+    TUint64 DoOutputAudioPcm(MsgAudio* aAudioMsg);
 private: // ISeeker
     void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // ICodecController
@@ -358,12 +359,14 @@ private:
     TBool iQuit;
     TBool iSeek;
     TBool iRecognising;
+    TBool iSeekInProgress;
     TUint iSeekSeconds;
     TUint iExpectedFlushId;
     TBool iConsumeExpectedFlush;
     ISeekObserver* iSeekObserver;
     TUint iSeekHandle;
     TUint iExpectedSeekFlushId;
+    MsgFlush* iPostSeekFlush;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
 

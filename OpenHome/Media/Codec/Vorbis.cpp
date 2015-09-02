@@ -314,11 +314,13 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
         bytes = iController->StreamLength() - 1;
     }
 
-    LOG(kCodec, "CodecVorbis::Seek to sample: %lld, byte: %llu\n", aSample, bytes);
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
+    LOG(kCodec, "CodecVorbis::Seek to sample: %lld, byte: %llu returned %u\n", aSample, bytes, canSeek);
     if (canSeek) {
         iTotalSamplesOutput = aSample;
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
+        iInBuf.SetBytes(0);
+        iOutBuf.SetBytes(0);
         iController->OutputDecodedStream(0, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
