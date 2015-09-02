@@ -50,11 +50,10 @@ void Id3v2::Reset()
 {
     iRecognitionStarted = false;
     iRecognitionSuccess = false;
+    iState = eNone;
     iSize = 0;
     iTotalSize = 0;
     iBuf.SetBytes(0);
-    iParsingComplete = false;
-    iInspectPending = false;
 }
 
 Msg* Id3v2::Pull()
@@ -65,37 +64,48 @@ Msg* Id3v2::Pull()
      */
     Msg* msg = nullptr;
     while (msg == nullptr) {
-        if (iSize > 0) {
-            iCache->Discard(iSize-kRecogniseBytes);
-            iSize = 0;
-        }
-        if (!iParsingComplete) {
-            if (!iInspectPending) {
-                iBuf.SetBytes(0);
-                iCache->Inspect(iBuf, iBuf.MaxBytes());
+        if (iState != eNone) {
+            msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
             }
         }
 
-        msg = iCache->Pull();
-        if (msg == nullptr) {
-            // Inspect buffer must have been filled.
-            const TBool recognised = RecogniseTag();
-            iInspectPending = false;
-            if (recognised) {
+
+        if (iState == eNone) {
+            iBuf.SetBytes(0);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eRecognising;
+        }
+        else if (iState == eRecognising) {
+            if (RecogniseTag()) {
                 iTotalSize += iSize;
+                iCache->Discard(iSize-kRecogniseBytes);
+                iSize = 0;
+                iState = eNone;
             }
             else {
-                iParsingComplete = true;
+                // Recognised last in (possible) chain of ID3 tags.
+                // Output recognition buffer as it is actually data destined for codec.
+                msg = iMsgFactory->CreateMsgAudioEncoded(iBuf);
+                iBuf.SetBytes(0);
+                iState = ePulling;
+                return msg;
             }
-
+        }
+        else {
+            // Shouldn't encounter any other state.
+            // ePulling should always return a msg during iCache->Pull() above.
+            ASSERTS();
         }
     }
+
     return msg;
 }
 
 TBool Id3v2::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
-    TUint64 offset = aOffset + iTotalSize;
+    const TUint64 offset = aOffset + iTotalSize;
     return iSeekHandler->TrySeekTo(aStreamId, offset);
 }
 
