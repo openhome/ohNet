@@ -23,13 +23,20 @@ public: // from ContainerBase
 private:
     TBool RecogniseTag();
 private:
+    enum EState {
+        eNone,
+        eRecognising,
+        ePulling,
+    };
+private:
     TBool iRecognitionStarted;
     TBool iRecognitionSuccess;
+    EState iState;
     TUint iSize;
     TUint iTotalSize;
     Bws<kRecogniseBytes> iBuf;
-    TBool iParsingComplete;
-    TBool iInspectPending;
+    //TBool iParsingComplete;
+    //TBool iInspectPending;
 };
 
 } // namespace Codec
