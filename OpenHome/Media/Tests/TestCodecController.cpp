@@ -1139,6 +1139,9 @@ void SuiteCodecControllerStopDuringStreamInit::TestStopDuringStreamInit()
     iStreamHandler->TryStop(iStreamId);
     iSemStreamInitContinue->Signal();
 
+    // Should now get MsgDecodedStream that was pushed just after TryStop() was called.
+    PullNext(EMsgDecodedStream);
+
     // MsgMetaText should be passed through without issue.
     Queue(iMsgFactory->CreateMsgMetaText(Brn("dummy")));
     PullNext(EMsgMetaText);
