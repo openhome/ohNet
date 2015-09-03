@@ -194,7 +194,6 @@ private:
 class DummyCodec : public Codec::CodecBase
 {
 private:
-    static const TUint kReadBufBytes = 1024;
     static const TChar* kId;
 public:
     DummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue);
