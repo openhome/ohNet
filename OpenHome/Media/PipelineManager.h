@@ -219,22 +219,16 @@ public:
      * Ramps down, removes the rest of the current track then fetches the track that
      * logically follows it.  The caller is responsible for calling Play() to start
      * playing this new track.
-     *
-     * @return  true if a track is being fetched; false if no other track exists or
-     *          we were playing the last track in the UriProvider's list.
      */
-    TBool Next();
+    void Next();
     /**
      * Move immediately to the previous track from the current UriProvider (or Source).
      *
      * Ramps down, removes the rest of the current track then fetches the track that
      * logically precedes it.  The caller is responsible for calling Play() to start
      * playing this new track.
-     *
-     * @return  true if a track is being fetched; false if no other track exists or
-     *          we were playing the first track in the UriProvider's list.
      */
-    TBool Prev();
+    void Prev();
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
 private:

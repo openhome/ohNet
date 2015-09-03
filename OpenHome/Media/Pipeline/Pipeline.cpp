@@ -548,6 +548,12 @@ void Pipeline::Stop(TUint aHaltId)
     iLock.Signal();
 }
 
+void Pipeline::RemoveCurrentStream()
+{
+    const TBool rampDown = (iState == EPlaying);
+    iSkipper->RemoveCurrentStream(rampDown);
+}
+
 void Pipeline::RemoveAll(TUint aHaltId)
 {
     const TBool rampDown = (iState == EPlaying);

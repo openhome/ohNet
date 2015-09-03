@@ -243,26 +243,26 @@ TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
     return iPipeline->Seek(aStreamId, aSecondsAbsolute);
 }
 
-TBool PipelineManager::Next()
+void PipelineManager::Next()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Next()\n");
     if (iMode.Bytes() == 0) {
-        return false; // nothing playing or ready to be played so nothing we can advance relative to
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    RemoveAllLocked();
-    return iFiller->Next(iMode);
+    iPipeline->RemoveCurrentStream();
 }
 
-TBool PipelineManager::Prev()
+void PipelineManager::Prev()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Prev()\n");
     if (iMode.Bytes() == 0) {
-        return false; // nothing playing or ready to be played so nothing we can advance relative to
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    RemoveAllLocked();
-    return iFiller->Prev(iMode);
+    (void)iFiller->Stop();
+    iIdManager->InvalidateAll();
+    (void)iFiller->Prev(iMode);
 }
 
 IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)
