@@ -237,6 +237,8 @@ public:
     TBool Prev();
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
+private:
+    void RemoveAllLocked();
 private: // from IPipeline
     Msg* Pull() override;
     void SetAnimator(IPipelineAnimator& aAnimator) override;

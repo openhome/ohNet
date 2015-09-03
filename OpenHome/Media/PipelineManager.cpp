@@ -224,6 +224,11 @@ void PipelineManager::RemoveAll()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::RemoveAll()\n");
+    RemoveAllLocked();
+}
+
+void PipelineManager::RemoveAllLocked()
+{
     iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
@@ -245,12 +250,7 @@ TBool PipelineManager::Next()
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    (void)iFiller->Stop();
-    /* Previously tried using iIdManager->InvalidateAt() to invalidate the current track only.
-       If we're playing a low res track, there is a large window when we'll be playing that but
-       pre-fetching the track to follow it.  InvalidateAt() will fail to clear that following
-       track from the pipeline. */
-    iIdManager->InvalidateAll();
+    RemoveAllLocked();
     return iFiller->Next(iMode);
 }
 
@@ -261,8 +261,7 @@ TBool PipelineManager::Prev()
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    (void)iFiller->Stop();
-    iIdManager->InvalidateAll();
+    RemoveAllLocked();
     return iFiller->Prev(iMode);
 }
 
