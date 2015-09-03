@@ -191,12 +191,12 @@ private:
     static const TUint kAudioBytesPerMsg = 2*2*kSamplesPerMsg; // 16 bits (2 bytes) * 2 channels * kSamplesPerMsg
 };
 
-class DummyCodec : public Codec::CodecBase
+class TestCodecControllerDummyCodec : public Codec::CodecBase
 {
 private:
     static const TChar* kId;
 public:
-    DummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue);
+    TestCodecControllerDummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue);
     void SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
 public: // from CodecBase
     TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
@@ -232,7 +232,7 @@ private:
 private:
     Semaphore* iSemStreamInitPending;
     Semaphore* iSemStreamInitContinue;
-    DummyCodec* iCodec;
+    TestCodecControllerDummyCodec* iCodec;
 };
 
 } // namespace Media
@@ -1023,11 +1023,11 @@ void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
 }
 
 
-// DummyCodec
+// TestCodecControllerDummyCodec
 
-const TChar* DummyCodec::kId("DUMC");
+const TChar* TestCodecControllerDummyCodec::kId("DUMC");
 
-DummyCodec::DummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue)
+TestCodecControllerDummyCodec::TestCodecControllerDummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue)
     : CodecBase(kId, CodecBase::RecognitionComplexity::kCostLow)
     , iSemStreamInitPending(aSemStreamInitPending)
     , iSemStreamInitContinue(aSemStreamInitContinue)
@@ -1042,7 +1042,7 @@ DummyCodec::DummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Se
 {
 }
 
-void DummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness)
+void TestCodecControllerDummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness)
 {
     AutoMutex a(iLock);
     ASSERT(aReadBytes <= iReadBuf.MaxBytes());
@@ -1054,14 +1054,14 @@ void DummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleR
     iTrackOffset = 0;
 }
 
-TBool DummyCodec::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
+TBool TestCodecControllerDummyCodec::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
 {
     AutoMutex a(iLock);
     ASSERT(iReadBytes != 0);    // Ensure SetStreamInfo() has been called.
     return true;
 }
 
-void DummyCodec::StreamInitialise()
+void TestCodecControllerDummyCodec::StreamInitialise()
 {
     AutoMutex a(iLock);
     iSemStreamInitPending.Signal();
@@ -1070,7 +1070,7 @@ void DummyCodec::StreamInitialise()
     iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, 0, true);
 }
 
-void DummyCodec::Process()
+void TestCodecControllerDummyCodec::Process()
 {
     AutoMutex a(iLock);
     iReadBuf.SetBytes(0);
@@ -1086,14 +1086,14 @@ void DummyCodec::Process()
     iTrackOffset += iController->OutputAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
 }
 
-TBool DummyCodec::TrySeek(TUint aStreamId, TUint64 aSample)
+TBool TestCodecControllerDummyCodec::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     AutoMutex a(iLock);
     iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true);
     return true;
 }
 
-void DummyCodec::StreamCompleted()
+void TestCodecControllerDummyCodec::StreamCompleted()
 {
 
 }
@@ -1112,7 +1112,7 @@ void SuiteCodecControllerStopDuringStreamInit::Setup()
     SuiteCodecControllerBase::Setup();
     iSemStreamInitPending = new Semaphore("SCCP", 0);
     iSemStreamInitContinue = new Semaphore("SCCC", 0);
-    iCodec = new DummyCodec(kAudioBytesPerMsg, *iSemStreamInitPending, *iSemStreamInitContinue);
+    iCodec = new TestCodecControllerDummyCodec(kAudioBytesPerMsg, *iSemStreamInitPending, *iSemStreamInitContinue);
     iController->AddCodec(iCodec);  // Takes ownership.
     iController->Start();
 }
