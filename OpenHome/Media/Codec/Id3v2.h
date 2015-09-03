@@ -35,8 +35,6 @@ private:
     TUint iSize;
     TUint iTotalSize;
     Bws<kRecogniseBytes> iBuf;
-    //TBool iParsingComplete;
-    //TBool iInspectPending;
 };
 
 } // namespace Codec
