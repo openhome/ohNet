@@ -112,9 +112,13 @@ Msg* DecodedAudioValidator::ProcessMsg(MsgAudioPcm* aMsg)
     if (iExpectDecodedStreamBeforeAudio) {
         Log::Print("WARNING: discontinuity in audio (%s): expected DecodedStream before audio\n", iId);
     }
-    else if (iStreamPos != streamPos) {
+    else if (iStreamPos < streamPos) {
         Log::Print("WARNING: discontinuity in audio (%s): missing [%llu..%llu) (%dms)\n",
             iId, iStreamPos, streamPos, (static_cast<TInt>(streamPos-iStreamPos) / Jiffies::kPerMs));
+    }
+    else if (iStreamPos > streamPos) {
+        Log::Print("WARNING: discontinuity in audio (%s): moved backwards %llu (%ums)\n",
+            iId, iStreamPos - streamPos, (iStreamPos - streamPos) / Jiffies::kPerMs);
     }
     iStreamPos = streamPos + aMsg->Jiffies();
     return aMsg;
