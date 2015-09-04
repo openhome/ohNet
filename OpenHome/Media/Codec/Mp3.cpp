@@ -656,7 +656,7 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
     // FIXME - need to know how much data has been consumed by the container
     //bytes += iController->ContainerSize();
     if (bytes >= iController->StreamLength()) {
-    	bytes = iController->StreamLength() - 1;	// keep seek within file bounds
+        bytes = iController->StreamLength() - 1;	// keep seek within file bounds
     }
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {

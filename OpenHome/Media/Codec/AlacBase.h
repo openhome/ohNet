@@ -36,6 +36,8 @@ protected:
     TBool iStreamStarted;
     TBool iStreamEnded;
     Bws<4*10240> iInBuf;          // how big can these go and need to go ?
+    Bws<16*10240> iDecodedBuf;
+    Bws<DecodedAudio::kMaxBytes> iOutBuf;
     TUint iChannels;
     TUint iBitDepth;          // alac decoder may redefine the bit depth
     TUint iBytesPerSample;
@@ -43,9 +45,6 @@ protected:
     TUint64 iSamplesWrittenTotal;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
-private:
-    Bws<16*10240> iDecodedBuf;
-    Bws<DecodedAudio::kMaxBytes> iOutBuf;
 };
 
 } // namespace Codec

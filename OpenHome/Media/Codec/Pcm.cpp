@@ -111,6 +111,7 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
         return false;
     }
     iTrackOffset = ToJiffies(aSample);
+    iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
 }

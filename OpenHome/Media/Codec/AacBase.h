@@ -46,11 +46,10 @@ private:
                   Word16 *pTimeOut,
                   Word32  frameSize,
                   Word16 *channels);
-private:
-    Bws<16*10240> iDecodedBuf;
-    Bws<DecodedAudio::kMaxBytes> iOutBuf;
 protected:
     Bws<kInputBufBytes> iInBuf;
+    Bws<16*10240> iDecodedBuf;
+    Bws<DecodedAudio::kMaxBytes> iOutBuf;
     TUint iFrameCounter;
 
     TUint iSampleRate;

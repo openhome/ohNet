@@ -99,6 +99,7 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
     }
     iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
     iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
+    iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
 }

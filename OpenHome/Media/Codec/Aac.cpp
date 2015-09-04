@@ -273,7 +273,9 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
             iTotalSamplesOutput = aSample;
             iCurrentSample = static_cast<TUint>(startSample);
             iTrackOffset = (Jiffies::kPerSecond/iOutputSampleRate)*aSample;
-
+            iInBuf.SetBytes(0);
+            iDecodedBuf.SetBytes(0);
+            iOutBuf.SetBytes(0);
             iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
         }
         return canSeek;
