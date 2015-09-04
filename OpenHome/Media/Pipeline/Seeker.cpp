@@ -10,7 +10,7 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration)
-    : iFlusher(aUpstreamElement)
+    : iFlusher(aUpstreamElement, "Seeker")
     , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iSeeker(aSeeker)

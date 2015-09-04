@@ -3,14 +3,15 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Flusher.h>
 #include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
 Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
-    , iUpstreamElement(aUpstreamElement)
+    : iFlusher(aUpstreamElement, "Skipper")
+    , iMsgFactory(aMsgFactory)
     , iLock("SKP1")
     , iBlocker("SKP2")
     , iState(eStarting)
@@ -30,11 +31,6 @@ Skipper::~Skipper()
 {
 }
 
-inline TBool Skipper::FlushUntilHalt() const
-{
-    return (iTargetHaltId != MsgHalt::kIdInvalid);
-}
-
 void Skipper::Block()
 {
     iBlocker.Wait();
@@ -43,6 +39,12 @@ void Skipper::Block()
 void Skipper::Unblock()
 {
     iBlocker.Signal();
+}
+
+void Skipper::RemoveCurrentStream(TBool aRampDown)
+{
+    AutoMutex _(iLock);
+    (void)TryRemoveCurrentStream(aRampDown);
 }
 
 TBool Skipper::TryRemoveStream(TUint aStreamId, TBool aRampDown)
@@ -63,11 +65,16 @@ void Skipper::RemoveAll(TUint aHaltId, TBool aRampDown)
     (void)TryRemoveCurrentStream(aRampDown);
 }
 
+TBool Skipper::RemoveAllPending() const
+{ // inline
+    return (iState == eRamping && iTargetHaltId != MsgHalt::kIdInvalid);
+}
+
 Msg* Skipper::Pull()
 {
     Msg* msg;
     do {
-        msg = (iQueue.IsEmpty()? iUpstreamElement.Pull() : iQueue.Dequeue());
+        msg = (iQueue.IsEmpty()? iFlusher.Pull() : iQueue.Dequeue());
         iBlocker.Wait();
         iBlocker.Signal();
         iLock.Wait();
@@ -80,12 +87,17 @@ Msg* Skipper::Pull()
 Msg* Skipper::ProcessMsg(MsgMode* aMsg)
 {
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    return ProcessFlushableRemoveAll(aMsg);
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
-    return ProcessFlushableRemoveAll(aMsg);
+    if (RemoveAllPending()) {
+        StartFlushing(true);
+        aMsg->RemoveRef();
+        return nullptr;
+    }
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgDrain* aMsg)
@@ -95,22 +107,18 @@ Msg* Skipper::ProcessMsg(MsgDrain* aMsg)
 
 Msg* Skipper::ProcessMsg(MsgDelay* aMsg)
 {
-    return ProcessFlushableRemoveAll(aMsg);
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iStreamId = aMsg->StreamId();
-    iStreamHandler = aMsg->StreamHandler();
-    if (FlushUntilHalt()) {
-        const TBool sendHalt = (iState != eFlushing); // only create a MsgHalt the first time we call StartFlushing()
-        (void)iStreamHandler->OkToPlay(iStreamId);
-        (void)iStreamHandler->TryStop(iStreamId);
-        StartFlushing(sendHalt);
+    if (RemoveAllPending()) {
+        StartFlushing(true);
         aMsg->RemoveRef();
         return nullptr;
     }
-
+    iStreamId = aMsg->StreamId();
+    iStreamHandler = aMsg->StreamHandler();
     NewStream();
     return aMsg;
 }
@@ -141,7 +149,7 @@ Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
           ...so we can terminate our ramp */
         StartFlushing(true);
     }
-    if (FlushUntilHalt() && aMsg->Id() == iTargetHaltId) {
+    if (iTargetHaltId != MsgHalt::kIdInvalid && aMsg->Id() == iTargetHaltId) {
         LOG(kPipeline, "Skipper - completed flush (pulled haltId %u)\n", iTargetHaltId);
         iTargetHaltId = MsgHalt::kIdInvalid;
         iState = eRunning;
@@ -152,18 +160,19 @@ Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
         iPassGeneratedHalt = false;
         return aMsg;
     }
-    return ProcessFlushableRemoveAll(aMsg);
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
         ASSERT(iState == eFlushing);
+        iState = eStarting;
         aMsg->RemoveRef();
         iTargetFlushId = MsgFlush::kIdInvalid;
         return nullptr;
     }
-    return ProcessFlushableRemoveAll(aMsg);
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgWait* aMsg)
@@ -175,14 +184,11 @@ Msg* Skipper::ProcessMsg(MsgWait* aMsg)
            ...so we can terminate our ramp */
         StartFlushing(true);
     }
-    return ProcessFlushableRemoveAll(aMsg);
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (FlushUntilHalt()) {
-        return ProcessFlushableRemoveAll(aMsg);
-    }
     iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
     aMsg->RemoveRef();
@@ -219,7 +225,7 @@ Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
 {
-    if (iState == eStarting && !FlushUntilHalt()) {
+    if (iState == eStarting) {
         iState = eRunning;
     }
     else if (iState == eRamping) {
@@ -300,20 +306,17 @@ void Skipper::StartFlushing(TBool aSendHalt)
     }
     iState = eFlushing;
     iTargetFlushId = (iStreamHandler==nullptr? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
+    if (iTargetHaltId != MsgHalt::kIdNone && iTargetHaltId != MsgHalt::kIdInvalid) {
+        iFlusher.DiscardUntilHalt(iTargetHaltId);
+    }
+    else if (iTargetFlushId != MsgFlush::kIdInvalid) {
+        iFlusher.DiscardUntilFlush(iTargetFlushId);
+    }
 }
 
 Msg* Skipper::ProcessFlushable(Msg* aMsg)
 {
     if (iState == eFlushing) {
-        aMsg->RemoveRef();
-        return nullptr;
-    }
-    return aMsg;
-}
-
-Msg* Skipper::ProcessFlushableRemoveAll(Msg* aMsg)
-{
-    if (FlushUntilHalt()) {
         aMsg->RemoveRef();
         return nullptr;
     }

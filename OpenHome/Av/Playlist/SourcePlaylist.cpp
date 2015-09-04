@@ -248,7 +248,7 @@ void SourcePlaylist::Next()
 {
     if (IsActive()) {
         if (!StartedShuffled()) {
-            (void)iPipeline.Next();
+            iPipeline.Next();
         }
         iPipeline.Play();
     }
@@ -258,7 +258,7 @@ void SourcePlaylist::Prev()
 {
     if (IsActive()) {
         if (!StartedShuffled()) {
-            (void)iPipeline.Prev();
+            iPipeline.Prev();
         }
         iPipeline.Play();
     }

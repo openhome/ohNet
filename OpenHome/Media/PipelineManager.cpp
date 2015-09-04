@@ -204,8 +204,9 @@ void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
     iPipeline->Unblock();
-    iPrefetchObserver->SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
-    iFiller->PlayLater(aMode, aTrackId);
+    const TUint trackId = (aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
+    iPrefetchObserver->SetTrack(trackId);
+    iFiller->PlayLater(aMode, trackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
     try {
         iPrefetchObserver->Wait(5000); /* It's possible that a protocol module will block without
@@ -224,6 +225,11 @@ void PipelineManager::RemoveAll()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::RemoveAll()\n");
+    RemoveAllLocked();
+}
+
+void PipelineManager::RemoveAllLocked()
+{
     iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
@@ -238,32 +244,26 @@ TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
     return iPipeline->Seek(aStreamId, aSecondsAbsolute);
 }
 
-TBool PipelineManager::Next()
+void PipelineManager::Next()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Next()\n");
     if (iMode.Bytes() == 0) {
-        return false; // nothing playing or ready to be played so nothing we can advance relative to
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    (void)iFiller->Stop();
-    /* Previously tried using iIdManager->InvalidateAt() to invalidate the current track only.
-       If we're playing a low res track, there is a large window when we'll be playing that but
-       pre-fetching the track to follow it.  InvalidateAt() will fail to clear that following
-       track from the pipeline. */
-    iIdManager->InvalidateAll();
-    return iFiller->Next(iMode);
+    iPipeline->RemoveCurrentStream();
 }
 
-TBool PipelineManager::Prev()
+void PipelineManager::Prev()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Prev()\n");
     if (iMode.Bytes() == 0) {
-        return false; // nothing playing or ready to be played so nothing we can advance relative to
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
     (void)iFiller->Stop();
     iIdManager->InvalidateAll();
-    return iFiller->Prev(iMode);
+    (void)iFiller->Prev(iMode);
 }
 
 IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)

@@ -216,7 +216,7 @@ void CodecController::CodecThread()
     iStreamStarted = false;
     iSeek = false;
     iQuit = false;
-    iExpectedFlushId = MsgFlush::kIdInvalid;
+    iExpectedFlushId = iExpectedSeekFlushId = MsgFlush::kIdInvalid;
     iConsumeExpectedFlush = false;
     while (!iQuit) {
         // push out any pending msg (from previous run of loop)
@@ -746,8 +746,7 @@ Msg* CodecController::ProcessMsg(MsgStreamInterrupted* aMsg)
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
     iStreamEnded = true;
-    Queue(aMsg);
-    return nullptr;
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)

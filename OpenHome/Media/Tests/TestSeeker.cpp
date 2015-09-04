@@ -523,6 +523,8 @@ void SuiteSeeker::TestRampSeekerAccepts()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgHalt);
+    PullNext(EMsgFlush);
     PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
@@ -583,6 +585,8 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgHalt);
+    PullNext(EMsgFlush);
     PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());

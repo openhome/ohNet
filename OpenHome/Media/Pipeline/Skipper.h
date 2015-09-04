@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Flusher.h>
 
 namespace OpenHome {
 namespace Media {
@@ -25,6 +26,7 @@ public:
     virtual ~Skipper();
     void Block();
     void Unblock();
+    void RemoveCurrentStream(TBool aRampDown);
     TBool TryRemoveStream(TUint aStreamId, TBool aRampDown);
     void RemoveAll(TUint aHaltId, TBool aRampDown);
 public: // from IPipelineElementUpstream
@@ -52,12 +54,11 @@ private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
+    inline TBool RemoveAllPending() const;
     TBool TryRemoveCurrentStream(TBool aRampDown);
     void StartFlushing(TBool aSendHalt);
     Msg* ProcessFlushable(Msg* aMsg);
-    Msg* ProcessFlushableRemoveAll(Msg* aMsg);
     void NewStream();
-    inline TBool FlushUntilHalt() const;
 private:
     enum EState
     {
@@ -67,8 +68,8 @@ private:
        ,eFlushing
     };
 private:
+    Flusher iFlusher;
     MsgFactory& iMsgFactory;
-    IPipelineElementUpstream& iUpstreamElement;
     Mutex iLock;
     Mutex iBlocker;
     EState iState;

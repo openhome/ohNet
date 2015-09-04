@@ -1,13 +1,16 @@
 #include <OpenHome/Media/Pipeline/Flusher.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Flusher::Flusher(IPipelineElementUpstream& aUpstream)
+Flusher::Flusher(IPipelineElementUpstream& aUpstream, const TChar* aId)
     : iLock("FLSH")
     , iUpstream(aUpstream)
+    , iId(aId)
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iTargetFlushId(MsgFlush::kIdInvalid)
 {
@@ -19,6 +22,7 @@ void Flusher::DiscardUntilHalt(TUint aId)
     ASSERT(aId != MsgHalt::kIdInvalid);
     AutoMutex _(iLock);
     iTargetHaltId = aId;
+    LOG(kPipeline, "Flusher(%s) DiscardUntilHalt(%u)\n", iId, aId);
 }
 
 void Flusher::DiscardUntilFlush(TUint aId)
@@ -26,6 +30,7 @@ void Flusher::DiscardUntilFlush(TUint aId)
     ASSERT(aId != MsgFlush::kIdInvalid);
     AutoMutex _(iLock);
     iTargetFlushId = aId;
+    LOG(kPipeline, "Flusher(%s) DiscardUntilFlush(%u)\n", iId, aId);
 }
 
 Msg* Flusher::Pull()
@@ -56,11 +61,14 @@ Msg* Flusher::ProcessFlushable(Msg* aMsg)
 
 Msg* Flusher::ProcessMsg(MsgMode* aMsg)
 {
-    return ProcessFlushable(aMsg);
+    return aMsg;
 }
 
 Msg* Flusher::ProcessMsg(MsgTrack* aMsg)
 {
+    /*if (IsFlushing()) {
+        Log::Print("Flusher(%s) flushing Track %u\n", iId, aMsg->Track().Id());
+    }*/
     return ProcessFlushable(aMsg);
 }
 
@@ -99,18 +107,18 @@ Msg* Flusher::ProcessMsg(MsgHalt* aMsg)
 {
     if (iTargetHaltId != MsgHalt::kIdInvalid && iTargetHaltId == aMsg->Id()) {
         iTargetHaltId = MsgHalt::kIdInvalid;
-        return aMsg;
+        LOG(kPipeline, "Flusher(%s), completed (pulled Halt id %u)\n", iId, aMsg->Id());
     }
-    return ProcessFlushable(aMsg);
+    return aMsg;
 }
 
 Msg* Flusher::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
         iTargetFlushId = MsgFlush::kIdInvalid;
-        return aMsg;
+        LOG(kPipeline, "Flusher(%s), completed (pulled Flush id %u)\n", iId, aMsg->Id());
     }
-    return ProcessFlushable(aMsg);
+    return aMsg;
 }
 
 Msg* Flusher::ProcessMsg(MsgWait* aMsg)
@@ -124,6 +132,7 @@ Msg* Flusher::ProcessMsg(MsgDecodedStream* aMsg)
         auto streamInfo = aMsg->StreamInfo();
         IStreamHandler* streamHandler = streamInfo.StreamHandler();
         auto streamId = streamInfo.StreamId();
+        //Log::Print("Flusher(%s) flushing DecodedStream %u\n", iId, streamId);
         (void)streamHandler->TryStop(streamId);
         (void)streamHandler->OkToPlay(streamId);
         aMsg->RemoveRef();

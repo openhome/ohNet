@@ -12,7 +12,7 @@ namespace Media {
 class Flusher : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    Flusher(IPipelineElementUpstream& aUpstream);
+    Flusher(IPipelineElementUpstream& aUpstream, const TChar* aId);
     void DiscardUntilHalt(TUint aId);
     void DiscardUntilFlush(TUint aId);
 public: // from IPipelineElementUpstream
@@ -40,6 +40,7 @@ private: // from IMsgProcessor
 private:
     Mutex iLock;
     IPipelineElementUpstream& iUpstream;
+    const TChar* iId;
     TUint iTargetHaltId;
     TUint iTargetFlushId;
 };
