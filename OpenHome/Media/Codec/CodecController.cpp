@@ -216,7 +216,7 @@ void CodecController::CodecThread()
     iStreamStarted = false;
     iSeek = false;
     iQuit = false;
-    iExpectedFlushId = MsgFlush::kIdInvalid;
+    iExpectedFlushId = iExpectedSeekFlushId = MsgFlush::kIdInvalid;
     iConsumeExpectedFlush = false;
     while (!iQuit) {
         // push out any pending msg (from previous run of loop)
