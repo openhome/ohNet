@@ -174,6 +174,12 @@ public:
      * @param[in] aMetaText          Meta text. Must be in DIDL-Lite format.
      */
     virtual void OutputMetaText(const Brx& aMetaText) = 0;
+    /**
+     * Notify the pipeline of a discontinuity in audio.
+     *
+     * This allows the pipeline to ramp audio down/up to avoid glitches caused by a stream discontinuity. A MsgDecodedStream must follow this.
+     */
+    virtual void OutputStreamInterrupted() = 0;
 };
 
 class EncodedStreamInfo
@@ -304,19 +310,20 @@ private:
 private: // ISeeker
     void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // ICodecController
-    void Read(Bwx& aBuf, TUint aBytes);
-    void ReadNextMsg(Bwx& aBuf);
-    TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes); // Read an arbitrary amount of data from current stream, out-of-band from pipeline
-    TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos);
-    TUint64 StreamLength() const;
-    TUint64 StreamPos() const;
-    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
-    void OutputDelay(TUint aJiffies);
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
-    void OutputWait();
-    void OutputHalt();
-    void OutputMetaText(const Brx& aMetaText);
+    void Read(Bwx& aBuf, TUint aBytes) override;
+    void ReadNextMsg(Bwx& aBuf) override;
+    TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes) override; // Read an arbitrary amount of data from current stream, out-of-band from pipeline
+    TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos) override;
+    TUint64 StreamLength() const override;
+    TUint64 StreamPos() const override;
+    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless) override;
+    void OutputDelay(TUint aJiffies) override;
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) override;
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
+    void OutputWait() override;
+    void OutputHalt() override;
+    void OutputMetaText(const Brx& aMetaText) override;
+    void OutputStreamInterrupted() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;

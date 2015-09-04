@@ -53,11 +53,11 @@ protected:
     Bws<kInputBufBytes> iInBuf;
     TUint iFrameCounter;
 
-    TUint32 iSampleRate;
-    TUint32 iOutputSampleRate;
-    TUint32 iBitrateMax;    
-    TUint32 iBitrateAverage;
-    TUint16 iChannels;
+    TUint iSampleRate;
+    TUint iOutputSampleRate;
+    TUint iBitrateMax;
+    TUint iBitrateAverage;
+    TUint iChannels;
     TUint iBytesPerSample;
     TUint iBitDepth;
     TUint64 iSamplesTotal;

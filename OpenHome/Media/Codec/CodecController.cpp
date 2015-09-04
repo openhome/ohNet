@@ -633,6 +633,12 @@ void CodecController::OutputMetaText(const Brx& aMetaText)
     Queue(text);
 }
 
+void CodecController::OutputStreamInterrupted()
+{
+    MsgStreamInterrupted* interrupted = iMsgFactory.CreateMsgStreamInterrupted();
+    Queue(interrupted);
+}
+
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 {
     if (iRecognising) {

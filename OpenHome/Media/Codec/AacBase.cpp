@@ -199,7 +199,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
     iFrameOk = 1;        // assume frame is always ok
     frameSize = (TInt16)(iInBuf.Bytes());
     sampleRate = iSampleRate;
-    numChannels = iChannels;
+    numChannels = static_cast<TInt16>(iChannels);
 
     // must be reinitialised every time through if the buffer size changes
     iHBitBuf = CreateInitializedBitBuffer(&iBitBuf, (unsigned char*)iInBuf.Ptr(), (TInt16)iInBuf.Bytes());
