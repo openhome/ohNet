@@ -205,6 +205,7 @@ private:
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
+    RampValidator* iRampValidatorCodec;
     SampleRateValidator* iSampleRateValidator;
     Logger* iLoggerSampleRateValidator;
     TimestampInspector* iTimestampInspector;

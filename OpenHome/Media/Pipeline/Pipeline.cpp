@@ -248,7 +248,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
-    iLoggerCodecController = new Logger("Codec Controller", *iSampleRateValidator);
+    iRampValidatorCodec = new RampValidator("Codec Controller", *iSampleRateValidator);
+    iLoggerCodecController = new Logger("Codec Controller", *iRampValidatorCodec);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
     threadPriority++;
 
@@ -436,6 +437,7 @@ Pipeline::~Pipeline()
     delete iTimestampInspector;
     delete iLoggerSampleRateValidator;
     delete iSampleRateValidator;
+    delete iRampValidatorCodec;
     delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;
