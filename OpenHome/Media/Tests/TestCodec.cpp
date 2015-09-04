@@ -270,6 +270,7 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     init.SetMsgAudioEncodedCount(kMsgAudioEncodedCount, kEncodedAudioCount);
     init.SetMsgAudioPcmCount(5, 5);
     init.SetMsgEncodedStreamCount(2);
+    init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(*iInfoAggregator, init);
     // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
     iFlushIdProvider = new TestCodecFlushIdProvider();
