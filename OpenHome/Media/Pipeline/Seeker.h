@@ -84,6 +84,7 @@ private:
     TUint64 iFlushEndJiffies;
     TUint iSeekConsecutiveFailureCount;
     MsgDecodedStream* iMsgStream;
+    TBool iSeekInNextStream;
 };
 
 } // namespace Media

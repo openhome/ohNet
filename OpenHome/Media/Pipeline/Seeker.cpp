@@ -26,6 +26,7 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekConsecutiveFailureCount(0)
     , iMsgStream(nullptr)
+    , iSeekInNextStream(false)
 {
 }
 
@@ -175,7 +176,11 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate());
     iStreamPosJiffies *= streamInfo.SampleStart();
-    if (iState == EFlushing) { // we've just completed a seek
+    if (iSeekInNextStream) {
+        iSeekInNextStream = false;
+        DoSeek();
+    }
+    else if (iState == EFlushing) { // we've just completed a seek
         if (iStreamPosJiffies == 0) {
             iState = ERunning;
         }
@@ -309,16 +314,15 @@ Msg* Seeker::ProcessFlushable(Msg* aMsg)
 
 void Seeker::HandleSeekFail()
 {
-    LOG(kPipeline, "> Seeker::HandleSeekFail()... ");
     TUint64 seekJiffies = ((TUint64)iSeekSeconds) * Jiffies::kPerSecond;
     if (seekJiffies > iStreamPosJiffies) {
-        LOG(kPipeline, "flush until seek point\n");
+        LOG(kPipeline, "Seeker::HandleSeekFail() flush until seek point\n");
         iFlushEndJiffies = seekJiffies;
         iState = EFlushing;
         iSeekConsecutiveFailureCount = 0;
     }
     else if (seekJiffies == iStreamPosJiffies) {
-        LOG(kPipeline, "(implausible but) already at seek point\n");
+        LOG(kPipeline, "Seeker::HandleSeekFail() (implausible but) already at seek point\n");
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
@@ -329,10 +333,11 @@ void Seeker::HandleSeekFail()
             iTargetFlushId = iRestreamer.SeekRestream(iMode, iTrackId);
             iFlusher.DiscardUntilFlush(iTargetFlushId);
             iState = EFlushing;
-            LOG(kPipeline, "SeekRestream returned %u\n", iTargetFlushId);
+            iSeekInNextStream = true;
+            LOG(kPipeline, "Seeker::HandleSeekFail() SeekRestream returned %u\n", iTargetFlushId);
         }
         else {
-            LOG(kPipeline, "give up, already failed to seek twice\n");
+            LOG(kPipeline, "Seeker::HandleSeekFail() give up, already failed to seek twice\n");
             iTargetFlushId = MsgFlush::kIdInvalid;
             iSeekConsecutiveFailureCount = 0;
             iState = ERampingUp;
