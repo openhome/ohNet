@@ -152,6 +152,16 @@ public:
      */
     virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
     /**
+     * Notify the pipeline of a change in bit rate.
+     *
+     * Use of this is optional but it may be useful for variable bit rate codecs.
+     * OutputDecodedStream must have been called at least once for the current stream
+     * before a change in bit rate can be notified.
+     *
+     * @param[in] aBitRate       Updated bit rate.
+     */
+    virtual void OutputBitRate(TUint aBitRate) = 0;
+    /**
      * Output a Wait command to the pipeline.
      *
      * This hints that there may now be a break in audio.  This break would be expected
@@ -320,6 +330,7 @@ private: // ICodecController
     void OutputDelay(TUint aJiffies) override;
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) override;
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
+    void OutputBitRate(TUint aBitRate) override;
     void OutputWait() override;
     void OutputHalt() override;
     void OutputMetaText(const Brx& aMetaText) override;

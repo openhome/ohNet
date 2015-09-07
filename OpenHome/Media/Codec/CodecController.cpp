@@ -615,6 +615,12 @@ TUint64 CodecController::DoOutputAudioPcm(MsgAudio* aAudioMsg)
     return jiffies;
 }
 
+void CodecController::OutputBitRate(TUint aBitRate)
+{
+    auto msg = iMsgFactory.CreateMsgBitRate(aBitRate);
+    Queue(msg);
+}
+
 void CodecController::OutputWait()
 {
     MsgWait* wait = iMsgFactory.CreateMsgWait();
