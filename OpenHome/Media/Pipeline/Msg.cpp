@@ -1407,6 +1407,35 @@ Msg* MsgDecodedStream::Process(IMsgProcessor& aProcessor)
 }
 
 
+// MsgBitRate
+
+MsgBitRate::MsgBitRate(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+    , iBitRate(0)
+{
+}
+
+TUint MsgBitRate::BitRate() const
+{
+    return iBitRate;
+}
+
+void MsgBitRate::Initialise(TUint aBitRate)
+{
+    iBitRate = aBitRate;
+}
+
+void MsgBitRate::Clear()
+{
+    iBitRate = 0;
+}
+
+Msg* MsgBitRate::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgAudio
 
 MsgAudio* MsgAudio::Split(TUint aJiffies)
@@ -2325,6 +2354,10 @@ void MsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
 {
 }
 
+void MsgReservoir::ProcessMsgIn(MsgBitRate* /*aMsg*/)
+{
+}
+
 void MsgReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
 {
 }
@@ -2393,6 +2426,11 @@ Msg* MsgReservoir::ProcessMsgOut(MsgWait* aMsg)
 }
 
 Msg* MsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgBitRate* aMsg)
 {
     return aMsg;
 }
@@ -2505,6 +2543,12 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgBitRate* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
@@ -2609,6 +2653,11 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
     iQueue.iLock.Wait();
     iQueue.iDecodedStreamCount--;
     iQueue.iLock.Signal();
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgBitRate* aMsg)
+{
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2724,6 +2773,12 @@ Msg* PipelineElement::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* PipelineElement::ProcessMsg(MsgBitRate* aMsg)
+{
+    CheckSupported(eBitRate);
+    return aMsg;
+}
+
 Msg* PipelineElement::ProcessMsg(MsgAudioPcm* aMsg)
 {
     CheckSupported(eAudioPcm);
@@ -2798,6 +2853,7 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
     , iAllocatorMsgFlush("MsgFlush", aInitParams.iMsgFlushCount, aInfoAggregator)
     , iAllocatorMsgWait("MsgWait", aInitParams.iMsgWaitCount, aInfoAggregator)
     , iAllocatorMsgDecodedStream("MsgDecodedStream", aInitParams.iMsgDecodedStreamCount, aInfoAggregator)
+    , iAllocatorMsgBitRate("MsgBitRate", aInitParams.iMsgBitRateCount, aInfoAggregator)
     , iAllocatorDecodedAudio("DecodedAudio", aInitParams.iDecodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioPcm("MsgAudioPcm", aInitParams.iMsgAudioPcmCount, aInfoAggregator)
     , iAllocatorMsgSilence("MsgSilence", aInitParams.iMsgSilenceCount, aInfoAggregator)
@@ -2902,6 +2958,13 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(MsgDecodedStream* aMsg, ISt
         stream.SampleRate(), stream.NumChannels(), stream.CodecName(),
         stream.TrackLength(), stream.SampleStart(), stream.Lossless(),
         stream.Seekable(), stream.Live(), aStreamHandler);
+    return msg;
+}
+
+MsgBitRate* MsgFactory::CreateMsgBitRate(TUint aBitRate)
+{
+    auto msg = iAllocatorMsgBitRate.Allocate();
+    msg->Initialise(aBitRate);
     return msg;
 }
 

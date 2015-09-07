@@ -133,6 +133,7 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -545,6 +546,11 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
     return nullptr;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return nullptr;
+}
+Msg* TestContainerMsgProcessor::ProcessMsg(MsgBitRate* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
     return nullptr;

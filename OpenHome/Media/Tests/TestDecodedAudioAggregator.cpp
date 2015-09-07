@@ -46,6 +46,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -62,6 +63,7 @@ protected:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgHalt
@@ -282,6 +284,12 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastReceivedMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastReceivedMsg = EMsgBitRate;
     return aMsg;
 }
 

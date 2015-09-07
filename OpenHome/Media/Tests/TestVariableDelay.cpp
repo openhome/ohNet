@@ -56,6 +56,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -75,6 +76,7 @@ private:
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgStreamInterrupted
+       ,EMsgBitRate
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -201,6 +203,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgStreamInterrupted:
         return iMsgFactory->CreateMsgStreamInterrupted();
+    case EMsgBitRate:
+        return iMsgFactory->CreateMsgBitRate(100);
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
@@ -322,6 +326,12 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteVariableDelay::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
@@ -401,8 +411,8 @@ void SuiteVariableDelay::TestAllMsgsPass()
        useful to the portion of the pipeline that deals in decoded audio */
     static const EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgDelay,
                                      EMsgEncodedStream, EMsgMetaText, EMsgStreamInterrupted,
-                                     EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt,
-                                     EMsgFlush, EMsgWait, EMsgQuit };
+                                     EMsgDecodedStream, EMsgBitRate, EMsgAudioPcm, EMsgSilence,
+                                     EMsgHalt, EMsgFlush, EMsgWait, EMsgQuit };
     for (TUint i=0; i<sizeof(msgs)/sizeof(msgs[0]); i++) {
         PullNext(msgs[i]);
     }

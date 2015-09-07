@@ -22,6 +22,7 @@ const TUint TimestampInspector::kSupportedMsgTypes =   eMode
                                                      | eFlush
                                                      | eWait
                                                      | eDecodedStream
+                                                     | eBitRate
                                                      | eAudioPcm
                                                      | eQuit;
 

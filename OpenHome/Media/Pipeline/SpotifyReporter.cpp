@@ -189,6 +189,11 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SpotifyReporter::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     ASSERT(iChannels != 0);

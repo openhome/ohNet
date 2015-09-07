@@ -182,6 +182,11 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* DecodedAudioAggregator::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
 {
     AutoMutex a(iLock);

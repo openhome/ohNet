@@ -431,6 +431,11 @@ Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* aMsg)
     //LOG(kMedia, ">MsgProcessor::ProcessMsgDecodedStream\n");
     return aMsg;
 }
+Msg* MsgProcessor::ProcessMsg(MsgBitRate* aMsg)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgBitRate\n");
+    return aMsg;
+}
 Msg* MsgProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioPcm\n");

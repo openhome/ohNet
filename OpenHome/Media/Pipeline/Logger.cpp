@@ -202,6 +202,14 @@ Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgBitRate* aMsg)
+{
+    if (IsEnabled(EMsgBitRate)) {
+        Log::Print("Pipeline (%s): bitRate {%u}\n", iId, aMsg->BitRate());
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (IsEnabled(EMsgAudioPcm) ||

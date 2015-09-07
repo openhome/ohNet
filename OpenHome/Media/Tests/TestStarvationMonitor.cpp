@@ -49,6 +49,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -70,6 +71,7 @@ private:
        ,EMsgDrain
        ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgBitRate
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -426,6 +428,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgWait* /*aMsg*/)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 {
     ASSERTS(); // MsgDecodedStream not used in this test
+    return nullptr;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS();
     return nullptr;
 }
 

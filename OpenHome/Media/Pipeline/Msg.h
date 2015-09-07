@@ -609,6 +609,21 @@ protected:
     Media::Ramp iRamp;
 };
 
+class MsgBitRate : public Msg
+{
+    friend class MsgFactory;
+public:
+    MsgBitRate(AllocatorBase& aAllocator);
+    TUint BitRate() const;
+private:
+    void Initialise(TUint aBitRate);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iBitRate;
+};
+
 class MsgPlayable;
 class MsgPlayablePcm;
 
@@ -776,6 +791,7 @@ public:
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgWait* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDecodedStream* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgBitRate* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
@@ -882,6 +898,7 @@ private:
     virtual void ProcessMsgIn(MsgFlush* aMsg);
     virtual void ProcessMsgIn(MsgWait* aMsg);
     virtual void ProcessMsgIn(MsgDecodedStream* aMsg);
+    virtual void ProcessMsgIn(MsgBitRate* aMsg);
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
     virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgQuit* aMsg);
@@ -897,6 +914,7 @@ private:
     virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
     virtual Msg* ProcessMsgOut(MsgWait* aMsg);
     virtual Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
+    virtual Msg* ProcessMsgOut(MsgBitRate* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
     virtual Msg* ProcessMsgOut(MsgQuit* aMsg);
@@ -918,6 +936,7 @@ private:
         Msg* ProcessMsg(MsgFlush* aMsg) override;
         Msg* ProcessMsg(MsgWait* aMsg) override;
         Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+        Msg* ProcessMsg(MsgBitRate* aMsg) override;
         Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
         Msg* ProcessMsg(MsgSilence* aMsg) override;
         Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -942,6 +961,7 @@ private:
         Msg* ProcessMsg(MsgFlush* aMsg) override;
         Msg* ProcessMsg(MsgWait* aMsg) override;
         Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+        Msg* ProcessMsg(MsgBitRate* aMsg) override;
         Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
         Msg* ProcessMsg(MsgSilence* aMsg) override;
         Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -977,10 +997,11 @@ protected:
        ,eFlush              = 1 <<  9
        ,eWait               = 1 << 10
        ,eDecodedStream      = 1 << 11
-       ,eAudioPcm           = 1 << 12
-       ,eSilence            = 1 << 13
-       ,ePlayable           = 1 << 14
-       ,eQuit               = 1 << 15
+       ,eBitRate            = 1 << 12
+       ,eAudioPcm           = 1 << 13
+       ,eSilence            = 1 << 14
+       ,ePlayable           = 1 << 15
+       ,eQuit               = 1 << 16
     };
 protected:
     PipelineElement(TUint aSupportedTypes);
@@ -998,6 +1019,7 @@ protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -1348,6 +1370,7 @@ public:
         , iMsgFlushCount(1)
         , iMsgWaitCount(1)
         , iMsgDecodedStreamCount(1)
+        , iMsgBitRateCount(1)
         , iDecodedAudioCount(1)
         , iMsgAudioPcmCount(1)
         , iMsgSilenceCount(1)
@@ -1367,6 +1390,7 @@ public:
     void SetMsgFlushCount(TUint aCount)                                     { iMsgFlushCount = aCount; }
     void SetMsgWaitCount(TUint aCount)                                      { iMsgWaitCount = aCount; }
     void SetMsgDecodedStreamCount(TUint aCount)                             { iMsgDecodedStreamCount = aCount; }
+    void SetMsgBitRateCount(TUint aCount)                                   { iMsgBitRateCount = aCount; }
     void SetMsgAudioPcmCount(TUint aCount, TUint aDecodedAudioCount)        { iMsgAudioPcmCount = aCount; iDecodedAudioCount = aDecodedAudioCount; }
     void SetMsgSilenceCount(TUint aCount)                                   { iMsgSilenceCount = aCount; }
     void SetMsgPlayableCount(TUint aPcmCount, TUint aSilenceCount)          { iMsgPlayablePcmCount = aPcmCount; iMsgPlayableSilenceCount = aSilenceCount; }
@@ -1385,6 +1409,7 @@ private:
     TUint iMsgFlushCount;
     TUint iMsgWaitCount;
     TUint iMsgDecodedStreamCount;
+    TUint iMsgBitRateCount;
     TUint iDecodedAudioCount;
     TUint iMsgAudioPcmCount;
     TUint iMsgSilenceCount;
@@ -1412,6 +1437,7 @@ public:
     MsgWait* CreateMsgWait();
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgDecodedStream* CreateMsgDecodedStream(MsgDecodedStream* aMsg, IStreamHandler* aStreamHandler);
+    MsgBitRate* CreateMsgBitRate(TUint aBitRate);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
@@ -1433,6 +1459,7 @@ private:
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgWait> iAllocatorMsgWait;
     Allocator<MsgDecodedStream> iAllocatorMsgDecodedStream;
+    Allocator<MsgBitRate> iAllocatorMsgBitRate;
     Allocator<DecodedAudio> iAllocatorDecodedAudio;
     Allocator<MsgAudioPcm> iAllocatorMsgAudioPcm;
     Allocator<MsgSilence> iAllocatorMsgSilence;

@@ -193,6 +193,11 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* Seeker::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iStreamPosJiffies += aMsg->Jiffies();

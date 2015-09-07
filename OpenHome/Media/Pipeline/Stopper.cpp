@@ -308,6 +308,11 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
     return msg;
 }
 
+Msg* Stopper::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (iState == ERampingDown || iState == ERampingUp) {

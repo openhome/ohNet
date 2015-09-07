@@ -42,6 +42,7 @@ private:
        ,EMsgFlush
        ,EMsgWait
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgQuit
     };
@@ -74,6 +75,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -191,6 +193,9 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
     case EMsgDecodedStream:
         msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, nullptr);
         break;
+    case EMsgBitRate:
+        msg = iMsgFactory->CreateMsgBitRate(200);
+        break;
     case EMsgAudioPcm:
     {
         Brn audioBuf(iAudioData, sizeof(iAudioData));
@@ -232,7 +237,7 @@ void SuiteTimestampInspector::NonAudioMsgsPassThrough()
 {
     EMsgType types[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
-                         EMsgQuit };
+                         EMsgBitRate, EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     TUint prevTxCount = iMsgTxCount;
     for (size_t i=0; i<numElems; i++) {
@@ -465,6 +470,12 @@ Msg* SuiteTimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
     iLastMsg = EMsgDecodedStream;
     const DecodedStreamInfo& s = aMsg->StreamInfo();
     iTrackOffsetRx = s.SampleStart() * Jiffies::JiffiesPerSample(s.SampleRate());
+    return aMsg;
+}
+
+Msg* SuiteTimestampInspector::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastMsg = EMsgBitRate;
     return aMsg;
 }
 

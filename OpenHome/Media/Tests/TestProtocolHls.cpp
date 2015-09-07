@@ -173,6 +173,7 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -805,6 +806,12 @@ Msg* TestElementDownstream::ProcessMsg(MsgWait* aMsg)
 }
 
 Msg* TestElementDownstream::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* TestElementDownstream::ProcessMsg(MsgBitRate* aMsg)
 {
     ASSERTS();
     return aMsg;
