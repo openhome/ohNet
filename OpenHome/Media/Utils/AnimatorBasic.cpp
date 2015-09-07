@@ -35,9 +35,15 @@ TUint PriorityArbitratorAnimator::HostRange() const
     return 1;
 }
 
+const TUint AnimatorBasic::kSupportedMsgTypes =   eMode
+                                                | eDrain
+                                                | eHalt
+                                                | eDecodedStream
+                                                | ePlayable
+                                                | eQuit;
 
 AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline)
-    : Thread("PipelineAnimator", kPrioritySystemHighest)
+    : PipelineElement(kSupportedMsgTypes)
     , iPipeline(aPipeline)
     , iSem("DRVB", 0)
     , iOsCtx(aEnv.OsCtx())
@@ -47,15 +53,16 @@ AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline)
     , iQuit(false)
 {
     iPipeline.SetAnimator(*this);
-    Start();
+    iThread = new ThreadFunctor("PipelineAnimator", MakeFunctor(*this, &AnimatorBasic::DriverThread), kPrioritySystemHighest);
+    iThread->Start();
 }
 
 AnimatorBasic::~AnimatorBasic()
 {
-    Join();
+    delete iThread;
 }
 
-void AnimatorBasic::Run()
+void AnimatorBasic::DriverThread()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
     Msg* msg = iPipeline.Pull();
@@ -150,46 +157,10 @@ Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* AnimatorBasic::ProcessMsg(MsgDrain* aMsg)
 {
     aMsg->ReportDrained();
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgDelay* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
@@ -201,18 +172,6 @@ Msg* AnimatorBasic::ProcessMsg(MsgHalt* aMsg)
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgWait* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
@@ -221,18 +180,6 @@ Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
     iBitDepth = stream.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
