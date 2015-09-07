@@ -93,7 +93,7 @@
     {
         "name": "FTDataPublic",
         "type": "openhome",
-        "version": "0.0.7",
+        "version": "0.0.8",
         "platform-specific": false,
         "archive-filename": "FTDataPublic-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
