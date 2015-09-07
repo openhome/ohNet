@@ -44,6 +44,8 @@ private:
     const TChar* iId;
     TUint iTargetHaltId;
     TUint iTargetFlushId;
+    TUint iLastHaltId;
+    TUint iLastFlushId;
 };
 
 } // namespace Media

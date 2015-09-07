@@ -13,6 +13,8 @@ Flusher::Flusher(IPipelineElementUpstream& aUpstream, const TChar* aId)
     , iId(aId)
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iTargetFlushId(MsgFlush::kIdInvalid)
+    , iLastHaltId(MsgHalt::kIdNone)
+    , iLastFlushId(MsgFlush::kIdInvalid)
 {
 }
 
@@ -21,16 +23,26 @@ void Flusher::DiscardUntilHalt(TUint aId)
     ASSERT(aId != MsgHalt::kIdNone);
     ASSERT(aId != MsgHalt::kIdInvalid);
     AutoMutex _(iLock);
-    iTargetHaltId = aId;
-    LOG(kPipeline, "Flusher(%s) DiscardUntilHalt(%u)\n", iId, aId);
+    if (iLastHaltId == MsgHalt::kIdNone || iLastHaltId <= iTargetHaltId) {
+        iTargetHaltId = aId;
+        LOG(kPipeline, "Flusher(%s) DiscardUntilHalt(%u)\n", iId, aId);
+    }
+    else {
+        LOG(kPipeline, "Flusher(%s) DiscardUntilHalt(%u) rejected - already pulled id %u\n", iId, aId, iLastHaltId);
+    }
 }
 
 void Flusher::DiscardUntilFlush(TUint aId)
 {
     ASSERT(aId != MsgFlush::kIdInvalid);
     AutoMutex _(iLock);
-    iTargetFlushId = aId;
-    LOG(kPipeline, "Flusher(%s) DiscardUntilFlush(%u)\n", iId, aId);
+    if (iLastFlushId == MsgFlush::kIdInvalid || iLastFlushId <= iTargetFlushId) {
+        iTargetFlushId = aId;
+        LOG(kPipeline, "Flusher(%s) DiscardUntilFlush(%u)\n", iId, aId);
+    }
+    else {
+        LOG(kPipeline, "Flusher(%s) DiscardUntilFlush(%u) rejected - already pulled id %u\n", iId, aId, iLastFlushId);
+    }
 }
 
 Msg* Flusher::Pull()
@@ -105,6 +117,9 @@ Msg* Flusher::ProcessMsg(MsgStreamInterrupted* aMsg)
 
 Msg* Flusher::ProcessMsg(MsgHalt* aMsg)
 {
+    if (aMsg->Id() != MsgHalt::kIdNone) {
+        iLastHaltId = aMsg->Id();
+    }
     if (iTargetHaltId != MsgHalt::kIdInvalid && iTargetHaltId == aMsg->Id()) {
         iTargetHaltId = MsgHalt::kIdInvalid;
         LOG(kPipeline, "Flusher(%s), completed (pulled Halt id %u)\n", iId, aMsg->Id());
@@ -114,6 +129,7 @@ Msg* Flusher::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Flusher::ProcessMsg(MsgFlush* aMsg)
 {
+    iLastFlushId = aMsg->Id();
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
         iTargetFlushId = MsgFlush::kIdInvalid;
         LOG(kPipeline, "Flusher(%s), completed (pulled Flush id %u)\n", iId, aMsg->Id());
