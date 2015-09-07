@@ -457,6 +457,14 @@ $(objdir)TestBuffer.$(objext) : OpenHome/Tests/TestBuffer.cpp $(headers)
 $(objdir)TestBufferMain.$(objext) : OpenHome/Tests/TestBufferMain.cpp $(headers)
 	$(compiler)TestBufferMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestBufferMain.cpp
 
+TestPrinter: $(objdir)TestPrinter.$(exeext) 
+$(objdir)TestPrinter.$(exeext) :  ohNetCore $(objdir)TestPrinter.$(objext) $(objdir)TestPrinterMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestPrinter.$(exeext) $(objdir)TestPrinterMain.$(objext) $(objdir)TestPrinter.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestPrinter.$(objext) : OpenHome/Tests/TestPrinter.cpp $(headers)
+	$(compiler)TestPrinter.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestPrinter.cpp
+$(objdir)TestPrinterMain.$(objext) : OpenHome/Tests/TestPrinterMain.cpp $(headers)
+	$(compiler)TestPrinterMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestPrinterMain.cpp
+    
 TestException: $(objdir)TestException.$(exeext) 
 $(objdir)TestException.$(exeext) :  ohNetCore $(objdir)TestException.$(objext) $(objdir)TestExceptionMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestException.$(exeext) $(objdir)TestExceptionMain.$(objext) $(objdir)TestException.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -791,6 +799,7 @@ $(objdir)ShellCommandWatchDog.$(objext) : OpenHome/Net/Shell/ShellCommandWatchDo
 
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \
+	$(objdir)TestPrinter.$(objext) \
 	$(objdir)TestThread.$(objext) \
 	$(objdir)TestFunctorGeneric.$(objext) \
 	$(objdir)TestFifo.$(objext) \
@@ -821,7 +830,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

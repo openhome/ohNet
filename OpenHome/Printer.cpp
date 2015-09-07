@@ -108,6 +108,7 @@ TInt Log::Print(FunctorMsg& aOutput, const Brx& aMessage)
     return ret;
 }
 
+
 TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
 {
     TChar temp[kMaxPrintBytes+1];
@@ -126,6 +127,11 @@ TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
     msg.PtrZ();
     return DoPrint(aOutput, msg.Ptr());
 }
+
+
+    
+
+
 
 void Log::ToRam(TUint aCapacityBytes)
 {

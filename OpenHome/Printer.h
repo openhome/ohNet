@@ -10,6 +10,9 @@
 
 #include <vector>
 
+
+#define PBUF(buf) buf.Bytes(), (const TChar*)(buf.Ptr())
+#define PBOOL(bool) bool ? "true\0" : "false\0"
 namespace OpenHome {
 
 // class that logs to RAM, discarding old data if it fills up
