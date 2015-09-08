@@ -133,6 +133,7 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
 
@@ -655,6 +656,12 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
     // interpretation of pitch is generator-specific
     TEST(info.NumChannels() == iExpectedToneParams.NumChannels());
     // duration checked by accumulating jiffies from PCM audio msgs
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgBitRate* aMsg)
+{
+    ASSERTS();
     return aMsg;
 }
 

@@ -20,6 +20,7 @@ const TUint TrackInspector::kSupportedMsgTypes =   eMode
                                                  | eFlush
                                                  | eWait
                                                  | eDecodedStream
+                                                 | eBitRate
                                                  | eAudioPcm
                                                  | eSilence
                                                  | eQuit;

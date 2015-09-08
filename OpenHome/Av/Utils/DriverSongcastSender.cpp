@@ -104,8 +104,15 @@ void ProcessorPcmBufPackedDualMono::ProcessSample24(const TByte* aSample, TUint 
 
 const Brn DriverSongcastSender::kSenderIconFileName("SongcastSenderIcon");
 
+const TUint DriverSongcastSender::kSupportedMsgTypes =   eMode
+                                                       | eDrain
+                                                       | eHalt
+                                                       | eDecodedStream
+                                                       | ePlayable
+                                                       | eQuit;
+
 DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel)
-    : Thread("SongcastingDriver")
+    : PipelineElement(kSupportedMsgTypes)
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
     , iEnv(aDvStack.Env())
@@ -148,13 +155,14 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     iOhmSender->SetEnabled(true);
     iDevice->SetEnabled();
     iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback), "DriverSongcastSender");
-    Start();
+    iThread = new ThreadFunctor("PipelineAnimator", MakeFunctor(*this, &DriverSongcastSender::DriverThread), kPrioritySystemHighest);
+    iThread->Start();
     iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
 }
 
 DriverSongcastSender::~DriverSongcastSender()
 {
-    Join();
+    delete iThread;
     delete iTimer;
     iDevice->SetDisabled(MakeFunctor(*this, &DriverSongcastSender::DeviceDisabled));
     iDeviceDisabled.Wait();
@@ -164,7 +172,7 @@ DriverSongcastSender::~DriverSongcastSender()
     delete iZoneHandler;
 }
 
-void DriverSongcastSender::Run()
+void DriverSongcastSender::DriverThread()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
     Msg* msg = iPipeline.Pull();
@@ -213,7 +221,7 @@ void DriverSongcastSender::Run()
                 }
                 else {
                     iLastTimeUs = now;
-                    Wait();
+                    iThread->Wait();
                 }
                 now = OsTimeInUs(iEnv.OsCtx());
                 iAudioSent = false;
@@ -242,7 +250,7 @@ void DriverSongcastSender::Run()
 
 void DriverSongcastSender::TimerCallback()
 {
-    Signal();
+    iThread->Signal();
 }
 
 void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
@@ -282,62 +290,14 @@ Msg* DriverSongcastSender::ProcessMsg(MsgMode* aMsg)
     return nullptr;
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* DriverSongcastSender::ProcessMsg(MsgDrain* aMsg)
 {
     return aMsg;
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgDelay* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* DriverSongcastSender::ProcessMsg(MsgHalt* aMsg)
 {
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgWait* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
@@ -354,18 +314,6 @@ Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
     iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels, iBitDepth, stream.Lossless(), stream.CodecName());
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 

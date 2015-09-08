@@ -18,6 +18,7 @@ const TUint Pruner::kSupportedMsgTypes =   eMode
                                          | eHalt
                                          | eWait
                                          | eDecodedStream
+                                         | eBitRate
                                          | eAudioPcm
                                          | eSilence
                                          | eQuit;
@@ -130,6 +131,12 @@ Msg* Pruner::ProcessMsg(MsgDecodedStream* aMsg)
     }
     iWaitingForAudio = true;
     return TryQueue(aMsg);
+}
+
+Msg* Pruner::ProcessMsg(MsgBitRate* aMsg)
+{
+    aMsg->RemoveRef();
+    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgAudioPcm* aMsg)

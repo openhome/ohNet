@@ -17,6 +17,7 @@ const TUint DecodedAudioValidator::kSupportedMsgTypes =   eMode
                                                         | eFlush
                                                         | eWait
                                                         | eDecodedStream
+                                                        | eBitRate
                                                         | eAudioPcm
                                                         | eSilence
                                                         | eQuit;

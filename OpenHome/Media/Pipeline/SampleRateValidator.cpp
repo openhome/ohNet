@@ -17,6 +17,7 @@ const TUint SampleRateValidator::kSupportedMsgTypes =   eMode
                                                       | eFlush
                                                       | eWait
                                                       | eDecodedStream
+                                                      | eBitRate
                                                       | eAudioPcm
                                                       | eSilence
                                                       | eQuit;

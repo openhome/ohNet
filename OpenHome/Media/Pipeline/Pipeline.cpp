@@ -233,7 +233,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
-    iDecodedAudioAggregator = new DecodedAudioAggregator(*iLoggerDecodedAudioAggregator, *iMsgFactory);
+    iDecodedAudioAggregator = new DecodedAudioAggregator(*iLoggerDecodedAudioAggregator);
 
     iLoggerTimestampInspector = new Logger("Timestamp Inspector", *iDecodedAudioAggregator);
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *iLoggerTimestampInspector);

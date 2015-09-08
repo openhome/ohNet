@@ -45,6 +45,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -57,6 +58,7 @@ private:
        ,EMsgSilence
        ,EMsgPlayable
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgMode
        ,EMsgTrack
        ,EMsgDrain
@@ -126,6 +128,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -214,7 +217,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == nullptr);
 
     // Check that uninteresting msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode,
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgBitRate, EMsgMode,
                          EMsgTrack, EMsgDrain, EMsgDelay, EMsgEncodedStream,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgFlush, EMsgWait,
                          EMsgHalt, EMsgQuit };
@@ -331,6 +334,9 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
     case EMsgDecodedStream:
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
+        break;
+    case EMsgBitRate:
+        msg = iMsgFactory->CreateMsgBitRate(1);
         break;
     case EMsgMode:
         msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
@@ -454,6 +460,12 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastMsg = EMsgBitRate;
     return aMsg;
 }
 
@@ -602,6 +614,11 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgPlayable* /*aMsg*/)
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    return aMsg;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgBitRate* aMsg)
 {
     return aMsg;
 }

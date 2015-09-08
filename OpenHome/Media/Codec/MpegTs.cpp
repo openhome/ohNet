@@ -402,6 +402,12 @@ Msg* StreamTerminatorDetector::ProcessMsg(MsgDecodedStream* /*aMsg*/)
     return nullptr;
 }
 
+Msg* StreamTerminatorDetector::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
 Msg* StreamTerminatorDetector::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();

@@ -46,6 +46,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -62,6 +63,7 @@ protected:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgHalt
@@ -146,7 +148,7 @@ void SuiteDecodedAudioAggregator::Setup()
     init.SetMsgHaltCount(2);
     init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iDecodedAudioAggregator = new DecodedAudioAggregator(*this, *iMsgFactory);
+    iDecodedAudioAggregator = new DecodedAudioAggregator(*this);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
     iLockReceived = new Mutex("TCMR");
@@ -282,6 +284,12 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastReceivedMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastReceivedMsg = EMsgBitRate;
     return aMsg;
 }
 

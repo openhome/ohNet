@@ -23,6 +23,7 @@ const TUint RampValidator::kSupportedMsgTypes =   eMode
                                                 | eFlush
                                                 | eWait
                                                 | eDecodedStream
+                                                | eBitRate
                                                 | eAudioPcm
                                                 | eSilence
                                                 | ePlayable

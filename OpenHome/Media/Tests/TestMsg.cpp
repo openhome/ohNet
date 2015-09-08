@@ -217,6 +217,7 @@ public:
        ,EMsgFlush
        ,EMsgWait
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
@@ -238,6 +239,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -285,6 +287,7 @@ public:
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgHalt
@@ -314,6 +317,7 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgDelay* aMsg) override;
     void ProcessMsgIn(MsgEncodedStream* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
+    void ProcessMsgIn(MsgBitRate* aMsg) override;
     void ProcessMsgIn(MsgMetaText* aMsg) override;
     void ProcessMsgIn(MsgStreamInterrupted* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
@@ -328,6 +332,7 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgDelay* aMsg) override;
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsgOut(MsgBitRate* aMsg) override;
     Msg* ProcessMsgOut(MsgMetaText* aMsg) override;
     Msg* ProcessMsgOut(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
@@ -805,7 +810,7 @@ void SuiteMsgAudio::Test()
     MsgAudioPcm* msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     MsgAudioPcm* msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     TUint expectedJiffiesAggregated = msgAggregate1->Jiffies() + msgAggregate2->Jiffies();
-    msgAggregate1->Aggregate(*msgAggregate2); // ref is removed
+    msgAggregate1->Aggregate(msgAggregate2); // ref is removed
     TEST(msgAggregate1->Jiffies() == expectedJiffiesAggregated);
 
     // Check underlying DecodedAudio was also combined (i.e. check that MsgAudioPcm->iSize wasn't just updated).
@@ -829,21 +834,21 @@ void SuiteMsgAudio::Test()
     // Try aggregate two msgs with different: #channels
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 1, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
     // Try aggregate two msgs with different: sample rate
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 48000, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
     // Try aggregate two msgs with different: bit depth
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 16, EMediaDataEndianLittle, secondsOffsetJiffies);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -853,7 +858,7 @@ void SuiteMsgAudio::Test()
     TUint rampRemaining = Ramp::kMax;
     MsgAudio* msgRemaining = nullptr;
     msgAggregate2->SetRamp(0, rampRemaining, Ramp::EUp, msgRemaining);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -863,7 +868,7 @@ void SuiteMsgAudio::Test()
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data3, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
 
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -874,7 +879,7 @@ void SuiteMsgAudio::Test()
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     MsgAudioPcm* msgChained = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     msgAggregate2->Add(msgChained);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -2086,6 +2091,12 @@ Msg* ProcessorMsgType::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* ProcessorMsgType::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgBitRate;
+    return aMsg;
+}
+
 Msg* ProcessorMsgType::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgAudioPcm;
@@ -2381,6 +2392,13 @@ void SuiteMsgReservoir::Test()
     TEST(queue->DecodedStreamCount() == 1);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
+    static const TUint kBitRate = 12345;
+    msg = iMsgFactory->CreateMsgBitRate(kBitRate);
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == 0);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgBitRate);
+    TEST(queue->LastOut() == TestMsgReservoir::ENone);
+
     MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     queue->Enqueue(audio);
     TEST(queue->Jiffies() == jiffies + audio->Jiffies());
@@ -2462,6 +2480,11 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastOut() == TestMsgReservoir::EMsgDecodedStream);
     TEST(queue->DecodedStreamCount() == 0);
     TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgReservoir::EMsgBitRate);
     msg->RemoveRef();
 
     msg = queue->Dequeue();
@@ -2577,6 +2600,11 @@ void TestMsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
     iLastMsgIn = EMsgDecodedStream;
 }
 
+void TestMsgReservoir::ProcessMsgIn(MsgBitRate* /*aMsg*/)
+{
+    iLastMsgIn = EMsgBitRate;
+}
+
 void TestMsgReservoir::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
     iLastMsgIn = EMsgMetaText;
@@ -2652,6 +2680,12 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
 Msg* TestMsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     iLastMsgOut = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* TestMsgReservoir::ProcessMsgOut(MsgBitRate* aMsg)
+{
+    iLastMsgOut = EMsgBitRate;
     return aMsg;
 }
 
@@ -2791,6 +2825,8 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
         return iMsgFactory->CreateMsgWait();
     case ProcessorMsgType::EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
+    case ProcessorMsgType::EMsgBitRate:
+        return iMsgFactory->CreateMsgBitRate(1234);
     case ProcessorMsgType::EMsgAudioPcm:
     {
         const TUint kDataBytes = 256;

@@ -9,8 +9,16 @@ using namespace OpenHome::Media;
 
 // Aggregator
 
+const TUint Aggregator::kSupportedMsgTypes =   eMode
+                                             | eDrain
+                                             | eHalt
+                                             | eDecodedStream
+                                             | ePlayable
+                                             | eQuit;
+
 Aggregator::Aggregator(IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies)
-    : iUpstreamElement(aUpstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iUpstreamElement(aUpstreamElement)
     , iMaxPlayableJiffies(aMaxPlayableJiffies)
     , iMaxPlayableBytes(0)
     , iPlayable(nullptr)
@@ -72,36 +80,6 @@ Msg* Aggregator::NextStoredMsg(TBool aDeliverShortPlayable)
     return msg;
 }
 
-Msg* Aggregator::AddPlayable(MsgPlayable* aPlayable)
-{
-    Msg* ret = nullptr;
-    if (iPlayable == nullptr) {
-        if (aPlayable->Bytes() < iMaxPlayableBytes) {
-            iPlayable = aPlayable;
-        }
-        else if (aPlayable->Bytes() == iMaxPlayableBytes) {
-            ret = aPlayable;
-        }
-        else {
-            iPlayable = aPlayable->Split(iMaxPlayableBytes);
-            ret = aPlayable;
-        }
-    }
-    else {
-        iPlayable->Add(aPlayable);
-        const TUint bytes = iPlayable->Bytes();
-        if (bytes == iMaxPlayableBytes) {
-            ret = iPlayable;
-            iPlayable = nullptr;
-        }
-        else if (bytes > iMaxPlayableBytes) {
-            ret = iPlayable;
-            iPlayable = iPlayable->Split(iMaxPlayableBytes);
-        }
-    }
-    return ret;
-}
-
 void Aggregator::CalculateMaxPlayable()
 {
     TUint jiffies = iMaxPlayableJiffies;
@@ -116,64 +94,11 @@ Msg* Aggregator::ProcessMsg(MsgMode* aMsg)
     return NextStoredMsg(true);
 }
 
-Msg* Aggregator::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Aggregator::ProcessMsg(MsgDelay* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* Aggregator::ProcessMsg(MsgHalt* aMsg)
 {
     ASSERT(iPending == nullptr);
     iPending = aMsg;
     return NextStoredMsg(true);
-}
-
-Msg* Aggregator::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to encounter MsgFlush this far down the pipeline
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgWait* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to encounter MsgWait this far down the pipeline
-    return nullptr;
 }
 
 Msg* Aggregator::ProcessMsg(MsgDecodedStream* aMsg)
@@ -196,24 +121,32 @@ Msg* Aggregator::ProcessMsg(MsgDecodedStream* aMsg)
     return NextStoredMsg(true);
 }
 
-Msg* Aggregator::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Aggregator::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* Aggregator::ProcessMsg(MsgPlayable* aMsg)
 {
-    return AddPlayable(aMsg);
-}
-
-Msg* Aggregator::ProcessMsg(MsgQuit* aMsg)
-{
-    return aMsg;
+    Msg* ret = nullptr;
+    if (iPlayable == nullptr) {
+        if (aMsg->Bytes() < iMaxPlayableBytes) {
+            iPlayable = aMsg;
+        }
+        else if (aMsg->Bytes() == iMaxPlayableBytes) {
+            ret = aMsg;
+        }
+        else {
+            iPlayable = aMsg->Split(iMaxPlayableBytes);
+            ret = aMsg;
+        }
+    }
+    else {
+        iPlayable->Add(aMsg);
+        const TUint bytes = iPlayable->Bytes();
+        if (bytes == iMaxPlayableBytes) {
+            ret = iPlayable;
+            iPlayable = nullptr;
+        }
+        else if (bytes > iMaxPlayableBytes) {
+            ret = iPlayable;
+            iPlayable = iPlayable->Split(iMaxPlayableBytes);
+        }
+    }
+    return ret;
 }

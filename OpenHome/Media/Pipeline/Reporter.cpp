@@ -20,6 +20,7 @@ const TUint Reporter::kSupportedMsgTypes =   eMode
                                            | eHalt
                                            | eWait
                                            | eDecodedStream
+                                           | eBitRate
                                            | eAudioPcm
                                            | eSilence
                                            | eQuit;
@@ -144,6 +145,12 @@ Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
     iMsgDecodedStreamInfo->AddRef();
     iNotifyTime = true;
     iObserverThread.Schedule(iEventId);
+    return aMsg;
+}
+
+Msg* Reporter::ProcessMsg(MsgBitRate* aMsg)
+{
+    // FIXME report change in bit rate
     return aMsg;
 }
 

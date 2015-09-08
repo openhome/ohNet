@@ -21,6 +21,7 @@ const TUint Drainer::kSupportedMsgTypes =   eMode
                                           | eHalt
                                           | eWait
                                           | eDecodedStream
+                                          | eBitRate
                                           | eAudioPcm
                                           | eSilence
                                           | eQuit;

@@ -357,6 +357,11 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
     return msg;
 }
 
+Msg* VariableDelay::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iWaitForAudioBeforeGeneratingSilence = false;

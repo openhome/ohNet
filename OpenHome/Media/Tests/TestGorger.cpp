@@ -50,6 +50,7 @@ private:
        ,EMsgFlush
        ,EMsgWait
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
@@ -68,6 +69,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -268,6 +270,12 @@ Msg* SuiteGorger::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteGorger::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteGorger::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
@@ -340,6 +348,7 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     Queue(CreateDecodedStream());
     Queue(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     Queue(iMsgFactory->CreateMsgStreamInterrupted());
+    Queue(iMsgFactory->CreateMsgBitRate(42));
     Queue(CreateAudio());
     Queue(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     Queue(iMsgFactory->CreateMsgHalt());
@@ -353,6 +362,7 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     PullNext(EMsgDecodedStream);
     PullNext(EMsgMetaText);
     PullNext(EMsgStreamInterrupted);
+    PullNext(EMsgBitRate);
     PullNext(EMsgAudioPcm);
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
