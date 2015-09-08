@@ -14,7 +14,7 @@ import threading
 #        Use Git-bash on windows to generate key (ssh-keygen), and paste key
 #        into ~/.ssh/authorized_keys on server
 
-kWatchdogTime = 60  # secs
+kWatchdogTime = 300  # secs
 kExcludes     = ['\\thirdparty\\',
                  "warning C4005: 'max' : macro redefinition",
                  "warning C4005: 'min' : macro redefinition",
