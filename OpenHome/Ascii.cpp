@@ -343,7 +343,7 @@ TUint Ascii::AppendHex(Bwx& aBuffer, const Brx& aValue)
         AppendHex(aBuffer, aValue[i]);
         if( i != length - 1){ aBuffer.Append(Brn(" "));}
     }
-    return (length * 5);
+    return ((length * 5) - 1);
 }
 /// Append the hex prefix to the specified buffer.
 
