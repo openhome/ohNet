@@ -634,7 +634,7 @@ public:
     MsgAudioPcm(AllocatorBase& aAllocator);
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
-    void Aggregate(MsgAudioPcm& aMsg); // append aMsg to the end of this msg, removes ref on aMsg
+    void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
     TBool TryGetTimestamps(TUint& aNetwork, TUint& aRx);
 public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset

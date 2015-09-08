@@ -148,7 +148,7 @@ void SuiteDecodedAudioAggregator::Setup()
     init.SetMsgHaltCount(2);
     init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iDecodedAudioAggregator = new DecodedAudioAggregator(*this, *iMsgFactory);
+    iDecodedAudioAggregator = new DecodedAudioAggregator(*this);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
     iLockReceived = new Mutex("TCMR");

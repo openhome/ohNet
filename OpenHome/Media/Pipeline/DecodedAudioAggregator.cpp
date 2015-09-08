@@ -24,10 +24,9 @@ const TUint DecodedAudioAggregator::kSupportedMsgTypes =   eMode
                                                          | eAudioPcm
                                                          | eQuit;
 
-DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement, MsgFactory& aMsgFactory)
+DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement)
     : PipelineElement(kSupportedMsgTypes)
     , iDownstreamElement(aDownstreamElement)
-    , iMsgFactory(aMsgFactory)
     , iDecodedAudio(nullptr)
     , iChannels(0)
     , iSampleRate(0)
@@ -144,7 +143,7 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
     TUint aggregatedBytes = Jiffies::BytesFromJiffies(aggregatedJiffies, jiffiesPerSample, iChannels, iBitDepth/8);
     if (aggregatedBytes + msgBytes <= kMaxBytes) {
         // Have byte capacity to add new data.
-        iDecodedAudio->Aggregate(*aMsg);
+        iDecodedAudio->Aggregate(aMsg);
 
         aggregatedJiffies = iDecodedAudio->Jiffies();
         aggregatedBytes = Jiffies::BytesFromJiffies(aggregatedJiffies, jiffiesPerSample, iChannels, iBitDepth/8);
@@ -171,14 +170,6 @@ void DecodedAudioAggregator::OutputAggregatedAudio()
 {
     if (iDecodedAudio != nullptr) {
         iDownstreamElement.Push(iDecodedAudio);
-        iDecodedAudio = nullptr;
-    }
-}
-
-void DecodedAudioAggregator::ReleaseAggregatedAudio()
-{
-    if (iDecodedAudio != nullptr) {
-        iDecodedAudio->RemoveRef();
         iDecodedAudio = nullptr;
     }
 }

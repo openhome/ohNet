@@ -20,7 +20,7 @@ public:
     static const TUint kMaxJiffies = Jiffies::kPerMs * kMaxMs;
     static const TUint kSupportedMsgTypes;
 public:
-    DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement, MsgFactory& aMsgFactory);
+    DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement);
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // IMsgProcessor
@@ -39,10 +39,8 @@ private:
     static TBool AggregatorFull(TUint aBytes, TUint aJiffies);
     MsgAudioPcm* TryAggregate(MsgAudioPcm* aMsg);
     void OutputAggregatedAudio();
-    void ReleaseAggregatedAudio();
 private:
     IPipelineElementDownstream& iDownstreamElement;
-    MsgFactory& iMsgFactory;
     MsgAudioPcm* iDecodedAudio;
     TUint iChannels;
     TUint iSampleRate;

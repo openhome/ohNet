@@ -1620,15 +1620,15 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     return playable;
 }
 
-void MsgAudioPcm::Aggregate(MsgAudioPcm& aMsg)
+void MsgAudioPcm::Aggregate(MsgAudioPcm* aMsg)
 {
-    ASSERT(aMsg.iTrackOffset == iTrackOffset+Jiffies());   // aMsg must logically follow this one
-    ASSERT(!iRamp.IsEnabled() && !aMsg.iRamp.IsEnabled()); // no ramps allowed
-    ASSERT(iNextAudio == nullptr && aMsg.iNextAudio == nullptr); // no chained msgs allowed
+    ASSERT(aMsg->iTrackOffset == iTrackOffset+Jiffies());   // aMsg must logically follow this one
+    ASSERT(!iRamp.IsEnabled() && !aMsg->iRamp.IsEnabled()); // no ramps allowed
+    ASSERT(iNextAudio == nullptr && aMsg->iNextAudio == nullptr); // no chained msgs allowed
 
-    iAudioData->Aggregate(*aMsg.iAudioData);
-    iSize += aMsg.Jiffies();
-    aMsg.RemoveRef();
+    iAudioData->Aggregate(*(aMsg->iAudioData));
+    iSize += aMsg->Jiffies();
+    aMsg->RemoveRef();
 }
 
 TBool MsgAudioPcm::TryGetTimestamps(TUint& aNetwork, TUint& aRx)

@@ -810,7 +810,7 @@ void SuiteMsgAudio::Test()
     MsgAudioPcm* msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     MsgAudioPcm* msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     TUint expectedJiffiesAggregated = msgAggregate1->Jiffies() + msgAggregate2->Jiffies();
-    msgAggregate1->Aggregate(*msgAggregate2); // ref is removed
+    msgAggregate1->Aggregate(msgAggregate2); // ref is removed
     TEST(msgAggregate1->Jiffies() == expectedJiffiesAggregated);
 
     // Check underlying DecodedAudio was also combined (i.e. check that MsgAudioPcm->iSize wasn't just updated).
@@ -834,21 +834,21 @@ void SuiteMsgAudio::Test()
     // Try aggregate two msgs with different: #channels
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 1, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
     // Try aggregate two msgs with different: sample rate
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 48000, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
     // Try aggregate two msgs with different: bit depth
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 16, EMediaDataEndianLittle, secondsOffsetJiffies);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -858,7 +858,7 @@ void SuiteMsgAudio::Test()
     TUint rampRemaining = Ramp::kMax;
     MsgAudio* msgRemaining = nullptr;
     msgAggregate2->SetRamp(0, rampRemaining, Ramp::EUp, msgRemaining);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -868,7 +868,7 @@ void SuiteMsgAudio::Test()
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataEndianLittle, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data3, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
 
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
@@ -879,7 +879,7 @@ void SuiteMsgAudio::Test()
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     MsgAudioPcm* msgChained = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, EMediaDataEndianLittle, secondsOffsetJiffies);
     msgAggregate2->Add(msgChained);
-    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
 
