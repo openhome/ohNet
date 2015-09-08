@@ -333,6 +333,18 @@ TUint Ascii::AppendHex(Bwx& aBuffer, TByte aValue)
     return(2);
 }
 
+TUint Ascii::AppendHex(Bwx& aBuffer, const Brx& aValue)
+{
+    TUint length = aValue.Bytes();
+    TUint i = 0;
+    for(i = 0; i < length; ++i)
+    {
+        AppendHexPrefix(aBuffer);
+        AppendHex(aBuffer, aValue[i]);
+        if( i != length - 1){ aBuffer.Append(Brn(" "));}
+    }
+    return (length * 5);
+}
 /// Append the hex prefix to the specified buffer.
 
 TUint Ascii::AppendHexPrefix(Bwx& aBuffer)
