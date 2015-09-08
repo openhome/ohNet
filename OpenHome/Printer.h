@@ -11,9 +11,11 @@
 #include <vector>
 
 
-#define PBUF(buf) buf.Bytes(), (const TChar*)(buf.Ptr())
-#define PBOOL(bool) bool ? "true\0" : "false\0"
 namespace OpenHome {
+//For use with formatted strings e.g. 'printf("Print this buffer %.*s. Print this bool %s. Print this hex %.*x", PBUF(buffer), PBOOL(bool), PBUF(hexconvertedstring))'
+//To print hex, you should first use AppendHex(Bwx& aBuf, const Brx& aValue) where aBuf is atleast 5x the size of the aValue to be converted.
+#define PBUF(buf) buf.Bytes(), (const TChar*)(buf.Ptr())
+inline TChar* PBOOL(TBool aBool, TChar* aIfTrue = "true", TChar* aIfFalse = "false"){ return  aBool ? aIfTrue : aIfFalse;}
 
 // class that logs to RAM, discarding old data if it fills up
 // output is only passed on if Output() is called.
