@@ -50,6 +50,7 @@ void CodecAlacBase::Initialise()
     iInBuf.SetBytes(0);
     iDecodedBuf.SetBytes(0);
     iOutBuf.SetBytes(0);
+    iTrackOffset = 0;
 }
 
 TBool CodecAlacBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
