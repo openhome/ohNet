@@ -481,12 +481,10 @@ void SocketTcp::ReadInterrupt()
 
 static void TryNetworkTcpSetNoDelay(THandle aHandle)
 {
-    try
-    {
+    try {
         OpenHome::Os::NetworkTcpSetNoDelay(aHandle);
     }
-    catch ( NetworkError )
-    {
+    catch (NetworkError&) {
         LOG2F(kNetwork, kError, "Warning -> could not set TCP NODELAY on %d\n", aHandle);
     }
 }
