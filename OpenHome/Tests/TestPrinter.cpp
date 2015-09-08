@@ -97,13 +97,13 @@ void SuitePrinter::Test()
     Log::SwapOutput(test6Functor);
     TBool trueness = true;
     TBool falseness = false;
-    Log::Print("Test 6 (Bool): True is %s false is %s\n", PBOOL(trueness), PBOOL(falseness));
+    Log::Print("Test 6 (Bool): True is %s false is %s\n", PBool(trueness), PBool(falseness));
     TEST(Test6Check.Check());
     
     MessageCheck Test7Check(Brn("Test 7 (custom Bool): True is on false is off\n")); 
     FunctorMsg test7Functor = MakeFunctorMsg(Test7Check, &MessageCheck::Compare);
     Log::SwapOutput(test7Functor);
-    Log::Print("Test 7 (custom Bool): True is %s false is %s\n", PBOOL(trueness, "on", "off"), PBOOL(falseness, "on", "off"));
+    Log::Print("Test 7 (custom Bool): True is %s false is %s\n", PBool(trueness, "on", "off"), PBool(falseness, "on", "off"));
     TEST(Test7Check.Check());
 }
 
