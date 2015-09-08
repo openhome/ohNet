@@ -28,21 +28,21 @@ public:
     TBool Check() const;
     void Compare(const char* aMsg); 
 private:
-    std::unique_ptr<Brh> iExpected;
+    Brn iExpected;
     TBool iMatch;
 };
 
 
 MessageCheck::MessageCheck(const Brx& aExpected)
-    : iMatch(false)
+    : iExpected(aExpected)
+    , iMatch(false)
 {
-    iExpected.reset(new Brh(aExpected));
 }
 
 void MessageCheck::Compare(const char* aMsg)
 {
     Brn msg(aMsg);
-    iMatch = (msg == *iExpected) ? true : false;
+    iMatch = (msg == iExpected) ? true : false;
 }
   
 TBool MessageCheck::Check() const
