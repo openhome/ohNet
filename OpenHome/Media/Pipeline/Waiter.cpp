@@ -29,8 +29,8 @@ const TUint Waiter::kSupportedMsgTypes =   eMode
 Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
                IPipelineElementObserverThread& aObserverThread, TUint aRampDuration)
     : PipelineElement(kSupportedMsgTypes)
-    , iUpstreamElement(aUpstreamElement)
     , iMsgFactory(aMsgFactory)
+    , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
     , iLock("WAIT")
