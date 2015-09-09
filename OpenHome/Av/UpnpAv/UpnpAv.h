@@ -10,6 +10,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Av/Source.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
     class PipelineManager;
@@ -75,7 +77,7 @@ private:
     ProviderConnectionManager* iProviderConnectionManager;
     ProviderRenderingControl* iProviderRenderingControl;
     Media::IPipelineObserver* iDownstreamObserver;
-    TUint iStreamId;
+    std::atomic<TUint> iStreamId;
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
     TBool iNoPipelinePrefetchOnActivation;
