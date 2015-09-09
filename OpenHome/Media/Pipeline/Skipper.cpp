@@ -119,8 +119,10 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
     }
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    aMsg->RemoveRef();
     NewStream();
-    return aMsg;
+    return msg;
 }
 
 Msg* Skipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
@@ -190,9 +192,7 @@ Msg* Skipper::ProcessMsg(MsgWait* aMsg)
 Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
-    auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
-    aMsg->RemoveRef();
-    return msg;
+    return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgBitRate* aMsg)

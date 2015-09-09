@@ -19,8 +19,9 @@ static const TChar* kStatus[] = { "Starting"
                                  ,"RampedDown"
                                  ,"RampingUp" };
 
-VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
+VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
+    : iId(aId)
+    , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iDelayJiffies(0)
     , iLock("VDLY")
@@ -249,8 +250,8 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
-    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
-        delayJiffies, delayJiffies / Jiffies::kPerMs,
+    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
+        iId, delayJiffies, delayJiffies / Jiffies::kPerMs,
         iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
         iDelayJiffies, iDelayJiffies / Jiffies::kPerMs,
         kStatus[iStatus]);
@@ -264,8 +265,8 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
     iDelayJiffies = delayJiffies;
-    LOG(kMedia, "VariableDelay: delay=%u, adjustment=%d\n",
-        iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
+    LOG(kMedia, "VariableDelay: iId=%s, delay=%u, adjustment=%d\n",
+        iId, iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
     switch (iStatus)
     {
     case EStarting:
@@ -313,7 +314,10 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    return aMsg;
+    iStreamHandler = aMsg->StreamHandler();
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
@@ -407,7 +411,7 @@ EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 {
     ASSERT(iStreamHandler != nullptr);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
-    //Log::Print("VariableDelay::OkToPlay(%u) returned", aStreamId, canPlay);
+    //Log::Print("VariableDelay::OkToPlay(%u) iId=%s returned %u", iId, aStreamId, canPlay);
     return canPlay;
 }
 

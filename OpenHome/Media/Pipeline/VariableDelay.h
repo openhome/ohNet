@@ -23,7 +23,7 @@ class VariableDelay : private MsgReservoir, public IPipelineElementUpstream, pri
     static const TUint kMaxMsgSilenceDuration = Jiffies::kPerMs * 5;
     friend class SuiteVariableDelay;
 public:
-    VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
+    VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
     virtual ~VariableDelay();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -66,6 +66,7 @@ private:
        ,ERampingUp
     };
 private:
+    const TChar* iId;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     TUint iDelayJiffies;

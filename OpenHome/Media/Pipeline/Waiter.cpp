@@ -51,30 +51,32 @@ Waiter::~Waiter()
 
 void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 {
+    // Wait can be called multiple times.
     AutoMutex a(iLock);
-    //ASSERT(iState == ERunning); // Already in process of waiting.
-    iTargetFlushId = aFlushId;
+    if (aFlushId != iTargetFlushId) {
+        iTargetFlushId = aFlushId;
 
-    if (iState == ERampingUp) {
-        iState = ERampingDown;
-        if (iRampDuration == iRemainingRampSize) {
-            // Already reached end of (previous) ramp down (and now ready to
-            // start ramp up); go straight to flushing state.
-            iState = EFlushing;
+        if (iState == ERampingUp) {
+            iState = ERampingDown;
+            if (iRampDuration == iRemainingRampSize) {
+                // Already reached end of (previous) ramp down (and now ready to
+                // start ramp up); go straight to flushing state.
+                iState = EFlushing;
+                DoWait();
+            }
+            else {
+                iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            }
+            // leave iCurrentRampValue unchanged
+        }
+        else if (!aRampDown || iState == EFlushing) {
             DoWait();
         }
-        else {
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        else if (iState != ERampingDown) {
+            iState = ERampingDown;
+            iRemainingRampSize = iRampDuration;
+            iCurrentRampValue = Ramp::kMax;
         }
-        // leave iCurrentRampValue unchanged
-    }
-    else if (!aRampDown || iState == EFlushing) {
-        DoWait();
-    }
-    else {
-        iState = ERampingDown;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kMax;
     }
 }
 
@@ -103,16 +105,11 @@ Msg* Waiter::ProcessMsg(MsgStreamInterrupted* aMsg)
 Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        //ASSERT(iState == EFlushing); // haven't received enough audio for a full ramp down
-        // FIXME - the above ASSERT can be expected at the moment if we
-        // pause/unpause/seek too quickly as the VariableDelay pipeline element
-        // does not currently give us a 2s buffer.
-        aMsg->RemoveRef();
+        ASSERT(iState == EFlushing); // Haven't received enough audio for a full ramp down.
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
-        return nullptr;
     }
     return aMsg;
 }
@@ -161,9 +158,13 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
         if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
+
+
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
                 DoWait();
+                //aMsg->RemoveRef();
+                //return nullptr;
             }
             else { // iState == ERampingUp
                 iState = ERunning;
@@ -182,13 +183,14 @@ Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
         DoWait();
+        //aMsg->RemoveRef();
+        //return nullptr;
     }
     else if (iState == ERampingUp) {
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMax;
         iState = ERunning;
     }
-
     return ProcessFlushable(aMsg);
 }
 

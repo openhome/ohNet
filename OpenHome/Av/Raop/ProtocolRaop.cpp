@@ -282,7 +282,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iSupply(nullptr)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
-    , iSemInputChanged("PRIC", 0)
+    , iSemDrain("PRSD", 0)
     , iTimerResend(aEnv, MakeFunctor(*this, &ProtocolRaop::ResendTimerFired), "ProtocolRaopResendTimer")
     , iResendSeqNext(0)
     , iResendCount(0)
@@ -346,6 +346,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iWaiting = false;
                 iResumePending = true;
+                iSem.Clear();
+                iSupply->OutputDrain(MakeFunctor(iSemDrain, &Semaphore::Signal));
+                iSemDrain.Wait();
                 // Resume normal operation.
             }
             else if (iStopped) {
@@ -587,9 +590,9 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
 
 void ProtocolRaop::WaitForDrain()
 {
-    //iSemInputChanged.Clear();
-    //iSupply->OutputDrain(MakeFunctor(*this, &ProtocolRaop::InputChanged));
-    //iSemInputChanged.Wait();
+    iSemDrain.Clear();
+    iSupply->OutputDrain(MakeFunctor(*this, &ProtocolRaop::InputChanged));
+    iSemDrain.Wait();
 }
 
 void ProtocolRaop::InputChanged()
@@ -597,12 +600,12 @@ void ProtocolRaop::InputChanged()
     AutoMutex a(iLockRaop);
     iVolumeEnabled = !iVolumeEnabled;   // Toggle volume.
     iVolume.SetVolumeEnabled(iVolumeEnabled);
-    iSemInputChanged.Signal();
+    iSemDrain.Signal();
 }
 
 void ProtocolRaop::ResendTimerFired()
 {
-    // FIXME - should probably notify pipeline of discontinuity if timer fires.
+    // FIXME - should notify pipeline of discontinuity if timer fires.
     AutoMutex a(iLockRaop);
     if (iResendCount > 0) {
         iResendCount--;
@@ -706,8 +709,12 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
     ASSERT(iActive);
     iFlushSeq = aSeq;
     iFlushTime = aTime;
-    iNextFlushId = iFlushIdProvider->NextFlushId();
-    iWaiting = true;
+
+    // Don't increment flush ID if current MsgFlush hasn't been output.
+    if (iNextFlushId == MsgFlush::kIdInvalid) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        iWaiting = true;
+    }
 
     // FIXME - clear any resend-related members here?
 
@@ -781,7 +788,12 @@ void RaopControlServer::Run()
                     LOG(kMedia, "RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
 
                     AutoMutex a(iLock);
+                    TUint latency = iLatency;
                     iLatency = syncPacket.RtpTimestamp()-syncPacket.RtpTimestampMinusLatency();
+
+                    if (iLatency != latency) {
+                        LOG(kMedia, "RaopControlServer::Run Old latency: %u; New latency: %u\n", latency, iLatency);
+                    }
 
                     LOG(kMedia, "RaopControlServer::Run RtpTimestampMinusLatency: %u, NtpTimestampSecs: %u, NtpTimestampFract: %u, RtpTimestamp: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
                 }
