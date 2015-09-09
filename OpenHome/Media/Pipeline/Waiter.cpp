@@ -29,7 +29,7 @@ const TUint Waiter::kSupportedMsgTypes =   eMode
 Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
                IPipelineElementObserverThread& aObserverThread, TUint aRampDuration)
     : PipelineElement(kSupportedMsgTypes)
-    , iFlusher(aUpstreamElement, "Waiter")
+    , iUpstreamElement(aUpstreamElement)
     , iMsgFactory(aMsgFactory)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
@@ -84,7 +84,7 @@ Msg* Waiter::Pull()
 {
     Msg* msg;
     do {
-        msg = (iQueue.IsEmpty()? iFlusher.Pull() : iQueue.Dequeue());
+        msg = (iQueue.IsEmpty()? iUpstreamElement.Pull() : iQueue.Dequeue());
         iLock.Wait();
         msg = msg->Process(*this);
         iLock.Signal();
@@ -203,7 +203,6 @@ void Waiter::DoWait()
     iQueue.Enqueue(iMsgFactory.CreateMsgWait()); /* inform downstream elements (Songcast Sender)
                                                     of waiting state */
     ScheduleEvent(true);
-    //iFlusher.DiscardUntilFlush(iTargetFlushId);
 }
 
 Msg* Waiter::ProcessFlushable(Msg* aMsg)

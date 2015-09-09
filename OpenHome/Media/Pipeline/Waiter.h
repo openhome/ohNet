@@ -4,7 +4,6 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <OpenHome/Media/Pipeline/Flusher.h>
 
 #include <atomic>
 
@@ -69,8 +68,8 @@ private:
        ,EWaiting    // required for Songcast protocol
     };
 private:
-    Flusher iFlusher;
     MsgFactory& iMsgFactory;
+    IPipelineElementUpstream& iUpstreamElement;
     IWaiterObserver& iObserver;
     IPipelineElementObserverThread& iObserverThread;
     Mutex iLock;
