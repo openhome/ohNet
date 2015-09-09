@@ -307,7 +307,7 @@ private:
     TBool iStopped;
     mutable Mutex iLockRaop;
     Semaphore iSem;
-    Semaphore iSemInputChanged;
+    Semaphore iSemDrain;
     Timer iTimerResend;
     TUint iResendSeqNext;
     TUint iResendCount;
