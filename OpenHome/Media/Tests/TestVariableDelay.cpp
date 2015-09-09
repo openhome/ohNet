@@ -151,6 +151,7 @@ void SuiteVariableDelay::Setup()
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
     init.SetMsgSilenceCount(kMsgSilenceCount);
+    init.SetMsgEncodedStreamCount(2);
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
