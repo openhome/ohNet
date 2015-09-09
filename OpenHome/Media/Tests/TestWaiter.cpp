@@ -367,6 +367,7 @@ void SuiteWaiter::PullNext(EMsgType aExpectedMsg)
     Msg* msg = iWaiter->Pull();
     msg = msg->Process(*this);
     msg->RemoveRef();
+    //Log::Print("SuiteWaiter::PullNext iLastPulledMsg: %u, aExpectedMsg: %u\n", iLastPulledMsg, aExpectedMsg);
     TEST(iLastPulledMsg == aExpectedMsg);
 }
 
@@ -734,13 +735,8 @@ void SuiteWaiter::TestWaitDuringWait()
 
     // Calling Wait() after ramp down should not have any ill effects.
     iWaiter->Wait(kWaitFlushId, kRampDown);
-    TEST(iWaitingCount == 2);
-    TEST(iWaitingTrueCount == 2);
-
-    // Already ramped down, so should expect a MsgHalt and MsgWait, rather than
-    // more audio.
-    PullNext(EMsgHalt);
-    PullNext(EMsgWait);
+    TEST(iWaitingCount == 1);
+    TEST(iWaitingTrueCount == 1);
 }
 
 void SuiteWaiter::TestWaitDuringRampingDown()
