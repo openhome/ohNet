@@ -154,7 +154,7 @@ void SuiteVariableDelay::Setup()
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iVariableDelay = new VariableDelay(*iMsgFactory, *this, kDownstreamDelay, kRampDuration);
+    iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kRampDuration);
     iLastMsg = ENone;
     iJiffies = 0;
     iNumMsgsGenerated = 0;
