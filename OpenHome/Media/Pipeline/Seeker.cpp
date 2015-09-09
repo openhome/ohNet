@@ -200,20 +200,7 @@ Msg* Seeker::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iStreamPosJiffies += aMsg->Jiffies();
-    if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
-        ASSERT(iState == EFlushing);
-        const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
-        if (splitJiffies < aMsg->Jiffies()) {
-            MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
-            if (split != nullptr) {
-                iQueue.EnqueueAtHead(split);
-            }
-        }
-        iStreamPosJiffies = iFlushEndJiffies;
-    }
-    if (iTargetFlushId == MsgFlush::kIdInvalid && iFlushEndJiffies == iStreamPosJiffies) {
-        ASSERT(iState == EFlushing);
+    if (iState == EFlushing && iFlushEndJiffies == iStreamPosJiffies) {
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
@@ -223,11 +210,22 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         const DecodedStreamInfo& info = iMsgStream->StreamInfo();
         const TUint64 numSamples = iStreamPosJiffies / Jiffies::JiffiesPerSample(info.SampleRate());
         return iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(),
-                                                    info.SampleRate(), info.NumChannels(), info.CodecName(),
-                                                    info.TrackLength(), numSamples, info.Lossless(),
-                                                    info.Seekable(), info.Live(), info.StreamHandler());
+            info.SampleRate(), info.NumChannels(), info.CodecName(),
+            info.TrackLength(), numSamples, info.Lossless(),
+            info.Seekable(), info.Live(), info.StreamHandler());
     }
-    if (iState == ERampingDown || iState == ERampingUp) {
+
+    iStreamPosJiffies += aMsg->Jiffies();
+    if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
+        ASSERT(iState == EFlushing);
+        const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
+        MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
+        if (split != nullptr) {
+            iQueue.EnqueueAtHead(split);
+        }
+        iStreamPosJiffies = iFlushEndJiffies;
+    }
+    else if (iState == ERampingDown || iState == ERampingUp) {
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);

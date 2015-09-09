@@ -107,9 +107,10 @@ private:
     TBool iGenerateAudio;
     TUint iStreamId;
     TUint64 iStreamSampleStart;
-    TUint iMsgAudioSize;
+    TUint iLastMsgAudioSize;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
+    TUint64 iTrackOffsetPulled;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
     TUint iNextStreamId;
@@ -166,8 +167,9 @@ void SuiteSeeker::Setup()
     iSeekResponseThread->Start();
     iStreamId = UINT_MAX;
     iStreamSampleStart = UINT_MAX;
-    iMsgAudioSize = 0;
+    iLastMsgAudioSize = 0;
     iTrackOffset = 0;
+    iTrackOffsetPulled = 0;
     iRampingDown = iRampingUp = false;
     iSeekable = true;
     iGenerateAudio = false;
@@ -311,7 +313,9 @@ Msg* SuiteSeeker::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastPulledMsg = EMsgDecodedStream;
-    iStreamSampleStart = aMsg->StreamInfo().SampleStart();
+    auto stream = aMsg->StreamInfo();
+    iStreamSampleStart = stream.SampleStart();
+    iTrackOffsetPulled = iStreamSampleStart * Jiffies::JiffiesPerSample(stream.SampleRate());
     return aMsg;
 }
 
@@ -324,7 +328,10 @@ Msg* SuiteSeeker::ProcessMsg(MsgBitRate* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
+    iLastMsgAudioSize = aMsg->Jiffies();
     iJiffies += aMsg->Jiffies();
+    TEST(iTrackOffsetPulled == aMsg->TrackOffset());
+    iTrackOffsetPulled += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
     ProcessorPcmBufPacked pcmProcessor;
     playable->Read(pcmProcessor);
@@ -422,7 +429,6 @@ Msg* SuiteSeeker::CreateAudio()
     (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, EMediaDataEndianLittle, iTrackOffset);
-    iMsgAudioSize = audio->Jiffies();
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -728,8 +734,11 @@ void SuiteSeeker::TestSeekForwardFailStillSeeks()
     iGenerateAudio = false;
     iRampingUp = true;
     PullNext(EMsgAudioPcm);
-    TEST(iTrackOffset >= kSeekSecs * Jiffies::kPerSecond);
-    TEST(iTrackOffset < (kSeekSecs * Jiffies::kPerSecond) + iMsgAudioSize);
+    TEST(iTrackOffsetPulled == (kSeekSecs * Jiffies::kPerSecond) + iLastMsgAudioSize);
+    for (TUint i=0; i<4; i++) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
 }
 
 
