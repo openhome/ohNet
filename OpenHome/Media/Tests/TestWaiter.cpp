@@ -431,8 +431,9 @@ void SuiteWaiter::TestWaitFromPlayingRampDown()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
@@ -457,8 +458,9 @@ void SuiteWaiter::TestWaitFromPlayingNoRampDown()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
@@ -494,8 +496,9 @@ void SuiteWaiter::TestPlayingFromWaitRampsUp()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
 
 
     // Waiter should come out of its waiting state on arrival of new audio.
@@ -599,8 +602,9 @@ void SuiteWaiter::TestMsgsPassWhileWaitPending()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
@@ -636,8 +640,9 @@ void SuiteWaiter::TestMsgsPassWhileWaiting()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
 
     // Push some msgs down pipeline (except for MsgTrack and MsgDecodedStream
     // as they cancel the waiting, MsgAudioPcm and MsgSilence as they are
@@ -695,8 +700,8 @@ void SuiteWaiter::TestAudioFlushedWhileWaiting()
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(CreateAudio());
 
-    // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
@@ -806,8 +811,9 @@ void SuiteWaiter::TestWaitDuringRampingUp()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
 
     // Waiter should come out of its waiting state on arrival of new audio.
     iRampingUp = true;
@@ -926,8 +932,9 @@ void SuiteWaiter::TestMsgDecodedStreamCancelsWaiting()
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
 
     // Pull MsgDecodedStream and check audio comes through.
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -1039,8 +1046,9 @@ void SuiteWaiter::TestSilenceEndsRamp()
     TEST(iWaitingTrueCount == 1);
     TEST(iWaitingFalseCount == 0);
     PullNext(EMsgWait);
-    // Expected MsgFlush should be consumed
+
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
+    PullNext(EMsgFlush);
 
     iRampingUp = false;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));

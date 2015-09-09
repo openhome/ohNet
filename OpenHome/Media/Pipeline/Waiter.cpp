@@ -110,8 +110,6 @@ Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
-        aMsg->RemoveRef();
-        return nullptr;
     }
     return aMsg;
 }
