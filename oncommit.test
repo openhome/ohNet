@@ -39,7 +39,7 @@ tests = '''
     TestSilencer
     TestIdProvider
     TestFiller
-    #TestUpnpErrors
+    TestUpnpErrors
     TestTrackDatabase
     TestToneGenerator
     TestMuteManager
