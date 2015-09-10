@@ -13,7 +13,6 @@ namespace Codec {
 class Adts
 {
 private:
-    static const TUint kBufferFullness = 0x7FF;     // Always 0x7FF for VBR streams.
     static const TUint kMaxAacFramesPerFrame = 1;   // This code only supports 1 AAC frame per ADTS frame.
 public:
     Adts();
@@ -22,7 +21,6 @@ public:
     TUint ChannelConfig() { return(iChannelConfig); }
     TUint SamplingFreq() { return(iSamplingFreq); }
     TUint PayloadBytes() { return(iPayloadBytes); }
-    TUint BufferFullness() { return iBufferFullness; }
     TUint AacFrames() { return iAacFrames; }
     TUint HeaderBytes() { return(iHeaderBytes); }
     TUint StartOffset() { return(iStartOffset); }
@@ -34,7 +32,6 @@ private:
     TUint  iChannelConfig;
     TUint iSamplingFreq;
     TUint iPayloadBytes;
-    TUint iBufferFullness;
     TUint iAacFrames;
     TUint iHeaderBytes;
     TUint iStartOffset;
@@ -88,7 +85,6 @@ TBool Adts::ReadHeader(Brn aHeader)
     iSamplingFreq = 0;
     iChannelConfig = 0;
     iPayloadBytes = 0;
-    iBufferFullness = 0;
     iAacFrames = 0;
 
     if(aHeader.Bytes() < 6) {
@@ -171,11 +167,7 @@ TBool Adts::ReadHeader(Brn aHeader)
     }
     iPayloadBytes -= iHeaderBytes;                 // remove header size
 
-    iBufferFullness = (((aHeader[5] & 0x1F) << 6) | ((aHeader[6] & 0xFC) >> 2));
-    if (iBufferFullness != kBufferFullness) {
-        LOG(kCodec, "Adts::ReadHeader unexpected iBufferFullness: %u; expected: %u", iBufferFullness, kBufferFullness);
-        return false;   // Always expect 0x7FF for VBR streams.
-    }
+    //iBufferFullness = (((aHeader[5] & 0x1F) << 6) | ((aHeader[6] & 0xFC) >> 2));
 
     iAacFrames = (aHeader[6] & 0x03) + 1;
     if (iAacFrames > kMaxAacFramesPerFrame) {
@@ -362,7 +354,7 @@ void CodecAdts::ProcessAdts(TBool aParseOnly)
             for (TUint i=0; i<iInBuf.Bytes(); i++) {
                 LOG(kCodec, "%02x", iInBuf[i]);
             }
-            LOG(kCodec, ", payloadBytes: %u, bufferFullness: %u, aacFrames: %u\n", adts.PayloadBytes(), adts.BufferFullness(), adts.AacFrames());
+            LOG(kCodec, ", payloadBytes: %u, aacFrames: %u\n", adts.PayloadBytes(), adts.AacFrames());
 
             if(adts.HeaderBytes() > 7) {
                 TUint readBytes = adts.HeaderBytes()-7;

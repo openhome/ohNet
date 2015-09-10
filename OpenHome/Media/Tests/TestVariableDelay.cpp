@@ -151,10 +151,11 @@ void SuiteVariableDelay::Setup()
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
     init.SetMsgSilenceCount(kMsgSilenceCount);
+    init.SetMsgEncodedStreamCount(2);
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iVariableDelay = new VariableDelay(*iMsgFactory, *this, kDownstreamDelay, kRampDuration);
+    iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kRampDuration);
     iLastMsg = ENone;
     iJiffies = 0;
     iNumMsgsGenerated = 0;

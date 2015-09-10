@@ -27,6 +27,7 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iSeekConsecutiveFailureCount(0)
     , iMsgStream(nullptr)
     , iSeekInNextStream(false)
+    , iDecodeDiscardUntilSeekPoint(false)
 {
 }
 
@@ -176,6 +177,7 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate());
     iStreamPosJiffies *= streamInfo.SampleStart();
+    iDecodeDiscardUntilSeekPoint = false;
     if (iSeekInNextStream) {
         iSeekInNextStream = false;
         DoSeek();
@@ -200,19 +202,7 @@ Msg* Seeker::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iStreamPosJiffies += aMsg->Jiffies();
-    if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
-        ASSERT(iState == EFlushing);
-        const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
-        if (splitJiffies < aMsg->Jiffies()) {
-            MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
-            if (split != nullptr) {
-                iQueue.EnqueueAtHead(split);
-            }
-        }
-        iStreamPosJiffies = iFlushEndJiffies;
-    }
-    if (iTargetFlushId == MsgFlush::kIdInvalid && iFlushEndJiffies == iStreamPosJiffies) {
+    if (iDecodeDiscardUntilSeekPoint && iFlushEndJiffies == iStreamPosJiffies) {
         ASSERT(iState == EFlushing);
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
@@ -223,16 +213,28 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         const DecodedStreamInfo& info = iMsgStream->StreamInfo();
         const TUint64 numSamples = iStreamPosJiffies / Jiffies::JiffiesPerSample(info.SampleRate());
         return iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(),
-                                                    info.SampleRate(), info.NumChannels(), info.CodecName(),
-                                                    info.TrackLength(), numSamples, info.Lossless(),
-                                                    info.Seekable(), info.Live(), info.StreamHandler());
+            info.SampleRate(), info.NumChannels(), info.CodecName(),
+            info.TrackLength(), numSamples, info.Lossless(),
+            info.Seekable(), info.Live(), info.StreamHandler());
     }
-    if (iState == ERampingDown || iState == ERampingUp) {
+
+    iStreamPosJiffies = aMsg->TrackOffset() + aMsg->Jiffies();
+    if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
+        ASSERT(iState == EFlushing);
+        const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
+        MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
+        if (split != nullptr) {
+            iQueue.EnqueueAtHead(split);
+        }
+        iStreamPosJiffies = iFlushEndJiffies;
+    }
+    else if (iState == ERampingDown || iState == ERampingUp) {
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
             if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
+                iStreamPosJiffies -= split->Jiffies();
             }
         }
         split = nullptr;
@@ -240,6 +242,7 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
+            iStreamPosJiffies -= split->Jiffies();
         }
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
@@ -324,6 +327,7 @@ void Seeker::HandleSeekFail()
         LOG(kPipeline, "Seeker::HandleSeekFail() flush until seek point\n");
         iFlushEndJiffies = seekJiffies;
         iState = EFlushing;
+        iDecodeDiscardUntilSeekPoint = true;
         iSeekConsecutiveFailureCount = 0;
     }
     else if (seekJiffies == iStreamPosJiffies) {
@@ -342,7 +346,7 @@ void Seeker::HandleSeekFail()
             LOG(kPipeline, "Seeker::HandleSeekFail() SeekRestream returned %u\n", iTargetFlushId);
         }
         else {
-            LOG(kPipeline, "Seeker::HandleSeekFail() give up, already failed to seek twice\n");
+            LOG2(kPipeline, kError, "Seeker::HandleSeekFail() give up, already failed to seek twice\n");
             iTargetFlushId = MsgFlush::kIdInvalid;
             iSeekConsecutiveFailureCount = 0;
             iState = ERampingUp;

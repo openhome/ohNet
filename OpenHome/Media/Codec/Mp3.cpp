@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+EXCEPTION(Mp3SampleInvalid);
+
 namespace OpenHome {
 namespace Media {
 namespace Codec {
@@ -200,8 +202,7 @@ Mp3HeaderExtendedBareNonSeekable::Mp3HeaderExtendedBareNonSeekable(TUint aByteRa
 
 TUint64 Mp3HeaderExtendedBareNonSeekable::SampleToByte(TUint64 /*aSample*/) const
 {
-    ASSERTS();
-    return 0;
+    THROW(Mp3SampleInvalid);
 }
 
 
@@ -296,7 +297,9 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
 
 TUint64 Mp3HeaderExtendedXing::SampleToByte(TUint64 aSamples) const
 {
-    ASSERT(aSamples < iSamplesTotal); 
+    if (aSamples >= iSamplesTotal) {
+        THROW(Mp3SampleInvalid);
+    }
     // TOC has 100 entries of 1 byte.  Each byte has the following value:
     // (TOC[i] / 256) * fileBytes
 
@@ -651,12 +654,18 @@ void CodecMp3::StreamCompleted()
 
 TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    TUint64 bytes = iHeader->SampleToByte(aSample);
+    TUint64 bytes = 0;
+    try {
+        bytes = iHeader->SampleToByte(aSample);
+    }
+    catch (Mp3SampleInvalid&) {
+        return false;
+    }
     //LOG(kCodec, "CodecMp3::Seek(%lld), byte: %lld\n", aSamples, bytes);
     // FIXME - need to know how much data has been consumed by the container
     //bytes += iController->ContainerSize();
     if (bytes >= iController->StreamLength()) {
-        bytes = iController->StreamLength() - 1;	// keep seek within file bounds
+        bytes = iController->StreamLength() - 1;    // keep seek within file bounds
     }
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {

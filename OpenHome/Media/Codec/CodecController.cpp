@@ -679,7 +679,7 @@ Msg* CodecController::ProcessMsg(MsgDrain* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 {
-    if (iRecognising) { // FIXME - why discard during recognition?
+    if (iRecognising) {
         aMsg->RemoveRef();
         return nullptr;
     }

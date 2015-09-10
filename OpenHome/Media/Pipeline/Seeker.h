@@ -86,6 +86,7 @@ private:
     TUint iSeekConsecutiveFailureCount;
     MsgDecodedStream* iMsgStream;
     TBool iSeekInNextStream;
+    TBool iDecodeDiscardUntilSeekPoint;
 };
 
 } // namespace Media
