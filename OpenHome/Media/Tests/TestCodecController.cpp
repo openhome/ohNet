@@ -22,23 +22,26 @@ using namespace OpenHome::Media::Codec;
 namespace OpenHome {
 namespace Media {
 
-class HelperCodecPassThrough : public CodecBase
+class TestCodecControllerDummyCodec : public Codec::CodecBase
 {
+private:
+    static const TChar* kId;
 public:
-    HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
-private: // from CodecBase
+    TestCodecControllerDummyCodec(TUint aReadBufBytes);
+    void SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
+public: // from CodecBase
     TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
     void StreamCompleted() override;
 private:
-    const TUint iReadBytes;
-    const TUint iChannels;
-    const TUint iSampleRate;
-    const TUint iBitDepth;
-    const EMediaDataEndian iEndianness;
     Bwh iReadBuf;
+    TUint iReadBytes;
+    TUint iChannels;
+    TUint iSampleRate;
+    TUint iBitDepth;
+    EMediaDataEndian iEndianness;
     TUint64 iTrackOffset;
 };
 
@@ -179,6 +182,10 @@ private:
 
 class SuiteCodecControllerPcmSize : public SuiteCodecControllerBase
 {
+private:
+    static const TUint kBitsPerSample = 16;
+    static const TUint kSamplesPerMsg = 16;
+    static const TUint kAudioBytesPerMsg = 2*2*kSamplesPerMsg; // 16 bits (2 bytes) * 2 channels * kSamplesPerMsg
 public:
     SuiteCodecControllerPcmSize();
 private: // // from SuiteCodecControllerBase
@@ -188,35 +195,18 @@ private:
     Msg* CreateAudio();
     void TestPcmIsExpectedSize();
 private:
-    static const TUint kBitsPerSample = 16;
-    static const TUint kSamplesPerMsg = 16;
-    static const TUint kAudioBytesPerMsg = 2*2*kSamplesPerMsg; // 16 bits (2 bytes) * 2 channels * kSamplesPerMsg
+    TestCodecControllerDummyCodec* iCodec;
 };
 
-class TestCodecControllerDummyCodec : public Codec::CodecBase
+class TestCodecControllerDummyCodecStreamInitialise : public TestCodecControllerDummyCodec
 {
-private:
-    static const TChar* kId;
 public:
-    TestCodecControllerDummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue);
-    void SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
-public: // from CodecBase
-    TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
+    TestCodecControllerDummyCodecStreamInitialise(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue);
+public: // from TestCodecControllerDummyCodec
     void StreamInitialise() override;
-    void Process() override;
-    TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
-    void StreamCompleted() override;
 private:
     Semaphore& iSemStreamInitPending;   // Notifies test code that StreamInitialise() has been entered.
     Semaphore& iSemStreamInitContinue;  // Blocks output of MsgDecodedStream until signalled.
-    Bwh iReadBuf;
-    TUint iReadBytes;
-    TUint iChannels;
-    TUint iSampleRate;
-    TUint iBitDepth;
-    EMediaDataEndian iEndianness;
-    TUint64 iTrackOffset;
-    Mutex iLock;
 };
 
 class SuiteCodecControllerStopDuringStreamInit : public SuiteCodecControllerBase
@@ -234,62 +224,12 @@ private:
 private:
     Semaphore* iSemStreamInitPending;
     Semaphore* iSemStreamInitContinue;
-    TestCodecControllerDummyCodec* iCodec;
+    TestCodecControllerDummyCodecStreamInitialise* iCodec;
 };
+
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// HelperCodecPassThrough
-
-HelperCodecPassThrough::HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness)
-    : CodecBase("PassThru")
-    , iReadBytes(aReadBytes)
-    , iChannels(aChannels)
-    , iSampleRate(aSampleRate)
-    , iBitDepth(aBitDepth)
-    , iEndianness(aEndianness)
-    , iReadBuf(iReadBytes)
-    , iTrackOffset(0)
-{
-}
-
-TBool HelperCodecPassThrough::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
-{
-    return true;    // always recognise
-}
-
-void HelperCodecPassThrough::StreamInitialise()
-{
-    iTrackOffset = 0;
-    iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, 0, true);
-}
-
-void HelperCodecPassThrough::Process()
-{
-    iReadBuf.SetBytes(0);
-    try {
-        iController->Read(iReadBuf, iReadBytes);
-        if (iReadBuf.Bytes() < iReadBytes) {
-            THROW(CodecStreamEnded);
-        }
-    }
-    catch (CodecStreamEnded&) {
-        throw; // rethrow CodecStreamEnded
-    }
-    iTrackOffset += iController->OutputAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
-}
-
-TBool HelperCodecPassThrough::TrySeek(TUint aStreamId, TUint64 aSample)
-{
-    iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true);
-    return true;
-}
-
-void HelperCodecPassThrough::StreamCompleted()
-{
-}
 
 
 // SuiteCodecControllerBase
@@ -974,7 +914,8 @@ SuiteCodecControllerPcmSize::SuiteCodecControllerPcmSize()
 void SuiteCodecControllerPcmSize::Setup()
 {
     SuiteCodecControllerBase::Setup();
-    iController->AddCodec(new HelperCodecPassThrough(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataEndianBig));
+    iCodec = new TestCodecControllerDummyCodec(kAudioBytesPerMsg);
+    iController->AddCodec(iCodec);  // Takes ownership.
     iController->Start();
 }
 
@@ -1006,6 +947,9 @@ void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
     static const TUint64 kJiffiesPerEncodedMsg = (Jiffies::kPerSecond / 44100) * kSamplesPerMsg;
 
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
+
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataEndianBig);
+
     Queue(CreateTrack());
     PullNext(EMsgTrack);
     Queue(CreateEncodedStream());
@@ -1035,10 +979,8 @@ void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
 
 const TChar* TestCodecControllerDummyCodec::kId("DUMC");
 
-TestCodecControllerDummyCodec::TestCodecControllerDummyCodec(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue)
+TestCodecControllerDummyCodec::TestCodecControllerDummyCodec(TUint aReadBufBytes)
     : CodecBase(kId, CodecBase::RecognitionComplexity::kCostLow)
-    , iSemStreamInitPending(aSemStreamInitPending)
-    , iSemStreamInitContinue(aSemStreamInitContinue)
     , iReadBuf(aReadBufBytes)
     , iReadBytes(0)
     , iChannels(0)
@@ -1046,13 +988,11 @@ TestCodecControllerDummyCodec::TestCodecControllerDummyCodec(TUint aReadBufBytes
     , iBitDepth(0)
     , iEndianness(EMediaDataEndian::EMediaDataEndianInvalid)
     , iTrackOffset(0)
-    , iLock("DMCL")
 {
 }
 
 void TestCodecControllerDummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness)
 {
-    AutoMutex a(iLock);
     ASSERT(aReadBytes <= iReadBuf.MaxBytes());
     iReadBytes = aReadBytes;
     iChannels = aChannels;
@@ -1064,23 +1004,18 @@ void TestCodecControllerDummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChann
 
 TBool TestCodecControllerDummyCodec::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
 {
-    AutoMutex a(iLock);
     ASSERT(iReadBytes != 0);    // Ensure SetStreamInfo() has been called.
     return true;
 }
 
 void TestCodecControllerDummyCodec::StreamInitialise()
 {
-    AutoMutex a(iLock);
-    iSemStreamInitPending.Signal();
     iTrackOffset = 0;
-    iSemStreamInitContinue.Wait();
     iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, 0, true);
 }
 
 void TestCodecControllerDummyCodec::Process()
 {
-    AutoMutex a(iLock);
     iReadBuf.SetBytes(0);
     try {
         iController->Read(iReadBuf, iReadBytes);
@@ -1096,14 +1031,36 @@ void TestCodecControllerDummyCodec::Process()
 
 TBool TestCodecControllerDummyCodec::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    AutoMutex a(iLock);
-    iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true);
-    return true;
+    TUint64 byte = aSample*(iBitDepth/8)*iChannels;
+    // NOTE: not doing any bounds checking here.
+    // Tests expect CodecController to do it on behalf of this codec.
+    TBool canSeek = iController->TrySeekTo(aStreamId, byte);
+    if (canSeek) {
+        iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true);
+        return true;
+    }
+    return false;
 }
 
 void TestCodecControllerDummyCodec::StreamCompleted()
 {
+}
 
+
+// TestCodecControllerDummyCodecStreamInitialise
+
+TestCodecControllerDummyCodecStreamInitialise::TestCodecControllerDummyCodecStreamInitialise(TUint aReadBufBytes, Semaphore& aSemStreamInitPending, Semaphore& aSemStreamInitContinue)
+    : TestCodecControllerDummyCodec(aReadBufBytes)
+    , iSemStreamInitPending(aSemStreamInitPending)
+    , iSemStreamInitContinue(aSemStreamInitContinue)
+{
+}
+
+void TestCodecControllerDummyCodecStreamInitialise::StreamInitialise()
+{
+    iSemStreamInitPending.Signal();
+    iSemStreamInitContinue.Wait();
+    TestCodecControllerDummyCodec::StreamInitialise();
 }
 
 
@@ -1120,7 +1077,7 @@ void SuiteCodecControllerStopDuringStreamInit::Setup()
     SuiteCodecControllerBase::Setup();
     iSemStreamInitPending = new Semaphore("SCCP", 0);
     iSemStreamInitContinue = new Semaphore("SCCC", 0);
-    iCodec = new TestCodecControllerDummyCodec(kAudioBytesPerMsg, *iSemStreamInitPending, *iSemStreamInitContinue);
+    iCodec = new TestCodecControllerDummyCodecStreamInitialise(kAudioBytesPerMsg, *iSemStreamInitPending, *iSemStreamInitContinue);
     iController->AddCodec(iCodec);  // Takes ownership.
     iController->Start();
 }
