@@ -120,6 +120,7 @@ class Pipeline : public IPipelineElementDownstream
     friend class SuitePipeline; // test code
 
     static const TUint kSenderMinLatency        = Jiffies::kPerMs * 150;
+    static const TUint kReceiverMaxLatency      = Jiffies::kPerSecond;
     static const TUint kReservoirCount          = 5; // Encoded + Decoded + Gorger + StarvationMonitor + spare
     static const TUint kSongcastFrameJiffies    = Jiffies::kPerMs * 5; // effectively hard-coded by volkano1
     static const TUint kRewinderMaxMsgs         = 100;
