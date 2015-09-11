@@ -107,8 +107,6 @@ void CodecWav::StreamInitialise()
 
 void CodecWav::Process()
 {
-    LOG(kMedia, "> CodecWav::Process()\n");
-
     if (iNumChannels == 0) {
         ProcessHeader();
         SendMsgDecodedStream(0);
@@ -136,8 +134,6 @@ void CodecWav::Process()
             THROW(CodecStreamEnded);
         }
     }
-
-    LOG(kMedia, "< CodecWav::Process()\n");
 }
 
 TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
