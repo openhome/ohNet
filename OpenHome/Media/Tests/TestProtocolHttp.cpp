@@ -1501,7 +1501,7 @@ SuiteHttpSeekInvalid::SuiteHttpSeekInvalid()
 void SuiteHttpSeekInvalid::Test()
 {
     // Set up seek thread where TrySeek will be invoked during Stream().
-    ThreadFunctor thread = ThreadFunctor("HTTP seek test", MakeFunctor(*this, &SuiteHttpSeekInvalid::SeekThread));
+    ThreadFunctor thread("HTTP seek test", MakeFunctor(*this, &SuiteHttpSeekInvalid::SeekThread));
     thread.Start();
 
     // Test if streaming is successful.
