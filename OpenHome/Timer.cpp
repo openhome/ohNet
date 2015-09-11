@@ -212,7 +212,7 @@ void TimerManager::Fire()
     }
     else if (iLastRunTimeMs == now) {
     }
-    else if (iLastRunTimeMs - now > kMaxTimerGranularityMs) {
+    else if (now - iLastRunTimeMs > kMaxTimerGranularityMs) {
         iBusyStartTimeMs = now;
         iCallbacksPerTick = 0;
     }
@@ -223,6 +223,7 @@ void TimerManager::Fire()
         iCallbackList.Log();
         ASSERTS();
     }
+    iLastRunTimeMs = now;
     iMutexNow.Wait();
     iRemoving = true;
     iNow.iTime = now + 1; // will go after all the entries before or at now
