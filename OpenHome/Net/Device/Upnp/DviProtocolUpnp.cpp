@@ -155,10 +155,10 @@ void DviProtocolUpnp::HandleInterfaceChange()
         AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp::HandleInterfaceChange");
         const NetworkAdapter* current = ref.Adapter();
         TUint i = 0;
-        if (current != NULL) {
+        if (adapterList.SingleSubnetModeEnabled()) {
             // remove listeners whose interface is no longer available
             while (i<iAdapters.size()) {
-                if (iAdapters[i]->Interface() == current->Address()) {
+                if (current != NULL && iAdapters[i]->Interface() == current->Address()) {
                     i++;
                 }
                 else {
@@ -167,7 +167,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
                     iAdapters.erase(iAdapters.begin() + i);
                 }
                 // add listener if 'current' is a new subnet
-                if (iAdapters.size() == 0) {
+                if (iAdapters.size() == 0 && current != NULL) {
                     iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
                     DviProtocolUpnpAdapterSpecificData* adapter = AddInterface(*current);
                     if (iDevice.Enabled()) {
