@@ -518,6 +518,10 @@ TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 
 TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 {
+    if (aStreamId == iStreamId && aBytePos >= iStreamLength) {
+        // Seek on valid stream, but aBytePos is beyond end of file.
+        return false;
+    }
     TUint flushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
     LOG(kPipeline, "CodecController::TrySeekTo(%u, %llu) returning %u\n", aStreamId, aBytePos, flushId);
     if (flushId != MsgFlush::kIdInvalid) {
@@ -546,7 +550,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
         THROW(CodecStreamCorrupt);
     }
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler);
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, this);
     iLock.Wait();
     iChannels = aNumChannels;
     iSampleRate = aSampleRate;
