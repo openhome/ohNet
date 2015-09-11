@@ -7,7 +7,7 @@ Prerequisites
 -------------
 On Windows:
     Microsoft Visual Studio
-    (Express versions are okay. Versions earlier than 2010 will have to edit OhNetTypes.h to
+    (Express versions are okay. Versions earlier than 2010 will have to edit Types.h to
     include content equivalent to stdint.h.)
     Microsoft .NET 4.0 SDK (optional, required for C# bindings and all changes to service descriptions)
     Java (optional, required for building Java bindings)
