@@ -312,19 +312,28 @@ TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::TrySeek\n");
 
-    iLock.Wait();
-    const TBool streamIsCurrent = IsCurrentStream(aStreamId);
-    if (streamIsCurrent) {
-        iSeek = true;
-        iSeekPos = aOffset;
-        if (iNextFlushId == MsgFlush::kIdInvalid) {
-            /* If a valid flushId is set then We've previously promised to send a Flush but haven't
-               got round to it yet.  Re-use the same id for any other requests that come in before
-               our main thread gets a chance to issue a Flush */
-            iNextFlushId = iFlushIdProvider->NextFlushId();
+    TBool streamIsCurrent = false;
+    {
+        AutoMutex a(iLock);
+        streamIsCurrent = IsCurrentStream(aStreamId);
+        if (streamIsCurrent) {
+            if (!iLive && aOffset >= iTotalBytes) {
+                // Attempting to request beyond end of file.
+                LOG(kMedia, "ProtocolHttp::TrySeek attempting to seek beyond end of file. aStreamId: %u, aOffset: %llu, iTotalBytes: %llu\n", aStreamId, aOffset, iTotalBytes);
+                return MsgFlush::kIdInvalid;
+            }
+
+            iSeek = true;
+            iSeekPos = aOffset;
+            if (iNextFlushId == MsgFlush::kIdInvalid) {
+                /* If a valid flushId is set then We've previously promised to send a Flush but haven't
+                   got round to it yet.  Re-use the same id for any other requests that come in before
+                   our main thread gets a chance to issue a Flush */
+                iNextFlushId = iFlushIdProvider->NextFlushId();
+            }
         }
     }
-    iLock.Signal();
+
     if (!streamIsCurrent) {
         return MsgFlush::kIdInvalid;
     }

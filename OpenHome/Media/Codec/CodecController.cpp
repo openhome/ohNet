@@ -518,6 +518,10 @@ TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 
 TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 {
+    if (aStreamId == iStreamId && aBytePos >= iStreamLength) {
+        // Seek on valid stream, but aBytePos is beyond end of file.
+        return false;
+    }
     TUint flushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
     LOG(kPipeline, "CodecController::TrySeekTo(%u, %llu) returning %u\n", aStreamId, aBytePos, flushId);
     if (flushId != MsgFlush::kIdInvalid) {

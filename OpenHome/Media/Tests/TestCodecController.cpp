@@ -213,7 +213,6 @@ class SuiteCodecControllerStopDuringStreamInit : public SuiteCodecControllerBase
 {
 private:
     static const TUint kAudioBytesPerMsg = 1024;
-    static const TChar* kId;
 public:
     SuiteCodecControllerStopDuringStreamInit();
 private: // from SuiteCodecControllerBase
@@ -227,6 +226,29 @@ private:
     TestCodecControllerDummyCodecStreamInitialise* iCodec;
 };
 
+class SuiteCodecControllerSeekInvalid : public SuiteCodecControllerBase, public ISeekObserver
+{
+private:
+    static const TUint kAudioBytesPerMsg = 1024;
+public:
+    SuiteCodecControllerSeekInvalid();
+private: // from SuiteCodecControllerBase
+    void Setup() override;
+    void TearDown() override;
+private: // from SuiteCodecControllerBase
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
+private: // from ISeekObserver
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
+private:
+    void TestSeekInvalid();
+private:
+    Semaphore* iSemStreamInitPending;
+    Semaphore* iSemStreamInitContinue;
+    Semaphore* iSemSeek;
+    TUint iHandle;
+    TUint iFlushId;
+    TestCodecControllerDummyCodec* iCodec;
+};
 
 } // namespace Media
 } // namespace OpenHome
@@ -1139,6 +1161,87 @@ void SuiteCodecControllerStopDuringStreamInit::TestStopDuringStreamInit()
 }
 
 
+// SuiteCodecControllerSeekInvalid
+
+SuiteCodecControllerSeekInvalid::SuiteCodecControllerSeekInvalid()
+    : SuiteCodecControllerBase("SuiteCodecControllerSeekInvalid")
+{
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerSeekInvalid::TestSeekInvalid), "TestSeekInvalid");
+}
+
+void SuiteCodecControllerSeekInvalid::Setup()
+{
+    SuiteCodecControllerBase::Setup();
+    iSemSeek = new Semaphore("SCCS", 0);
+    iHandle = ISeeker::kHandleError;
+    iFlushId = MsgFlush::kIdInvalid;
+    iCodec = new TestCodecControllerDummyCodec(kAudioBytesPerMsg);
+    iController->AddCodec(iCodec);  // Takes ownership.
+    iController->Start();
+}
+
+void SuiteCodecControllerSeekInvalid::TearDown()
+{
+    delete iSemSeek;
+    SuiteCodecControllerBase::TearDown();
+}
+
+TUint SuiteCodecControllerSeekInvalid::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    // CodecController should do bounds checking, so don't expect call to reach here.
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+void SuiteCodecControllerSeekInvalid::NotifySeekComplete(TUint aHandle, TUint aFlushId)
+{
+    iHandle = aHandle;
+    iFlushId = aFlushId;
+    iSemSeek->Signal();
+}
+
+
+void SuiteCodecControllerSeekInvalid::TestSeekInvalid()
+{
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, EMediaDataEndian::EMediaDataEndianLittle);
+
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+
+    // Output some audio.
+    TByte encodedAudioData[kAudioBytesPerMsg];
+    (void)memset(encodedAudioData, 0x7f, kAudioBytesPerMsg);
+    Brn encodedAudioBuf(encodedAudioData, kAudioBytesPerMsg);
+    MsgAudioEncoded* audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
+    Queue(audio);
+    audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
+    Queue(audio);
+
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgAudioPcm);
+
+    // Do a seek.
+    ISeeker& seeker = *iController;
+    TUint handle = ISeeker::kHandleError;
+    TUint seekSeconds = 100;    // Out of range.
+    seeker.StartSeek(iStreamId, seekSeconds, *this, handle);
+
+    // Send another audio msg down to cause CodecController to unblock and start the seek.
+    audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
+    Queue(audio);
+
+    // Wait for seek to complete.
+    iSemSeek->Wait(kSemWaitMs);
+    TEST(iHandle == handle);
+    TEST(iFlushId == MsgFlush::kIdInvalid);
+
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgAudioPcm);
+}
+
+
 
 void TestCodecController()
 {
@@ -1146,6 +1249,7 @@ void TestCodecController()
     runner.Add(new SuiteCodecControllerStream());
     runner.Add(new SuiteCodecControllerPcmSize());
     runner.Add(new SuiteCodecControllerStopDuringStreamInit());
+    runner.Add(new SuiteCodecControllerSeekInvalid());
     runner.Run();
 }
 
