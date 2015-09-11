@@ -554,22 +554,14 @@ void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aAdapter)
 
 void DviProtocolUpnp::LogUnicastNotification(const char* aType)
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
-    LOG(kDvDevice, "Device ");
-    LOG(kDvDevice, iDevice.Udn());
-    LOG(kDvDevice, " starting response to msearch type \'%s\'\n", aType);
-    lock.Signal();
+    const Brx& udn = iDevice.Udn();
+    LOG(kDvDevice, "Device %.*s starting response to msearch type \'%s\'\n", PBUF(udn), aType);
 }
 
 void DviProtocolUpnp::LogMulticastNotification(const char* aType)
 {
-    Mutex& lock = iDvStack.Env().Mutex();
-    lock.Wait();
-    LOG(kDvDevice, "Device ");
-    LOG(kDvDevice, iDevice.Udn());
-    LOG(kDvDevice, " starting to send %s notifications.\n", aType);
-    lock.Signal();
+    const Brx& udn = iDevice.Udn();
+    LOG(kDvDevice, "Device %.*s starting to send %s notifications.\n", PBUF(udn), aType);
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)

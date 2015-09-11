@@ -298,9 +298,8 @@ CpiDeviceUpnp::~CpiDeviceUpnp()
 void CpiDeviceUpnp::TimerExpired()
 {
     if (iHostUdpIsLowQuality) {
-        LOG(kDevice, "TimerExpired ignored for device ");
-        LOG(kDevice, Udn());
-        LOG(kDevice, "\n");
+        const Brx& udn = Udn();
+        LOG(kDevice, "TimerExpired ignored for device %.*s\n", PBUF(udn));
     }
     else {
         iDevice->SetExpired(true);
@@ -393,11 +392,8 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
         }
         catch (XmlFetchError&) {
             err = true;
-            LOG2(kDevice, kError, "Error fetching xml for ");
-            LOG2(kDevice, kError, Udn());
-            LOG2(kDevice, kError, " from ");
-            LOG2(kDevice, kError, iLocation);
-            LOG2(kDevice, kError, "\n");
+            const Brx& udn = Udn();
+            LOG2(kDevice, kError, "Error fetching xml for %.*s from %.*s\n", PBUF(udn), PBUF(iLocation));
         }
     }
     if (!err) {
@@ -407,13 +403,9 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
         }
         catch (XmlError&) {
             err = true;
-            LOG2(kDevice, kError, "Error within xml for ");
-            LOG2(kDevice, kError, Udn());
-            LOG2(kDevice, kError, " from ");
-            LOG2(kDevice, kError, iLocation);
-            LOG2(kDevice, kError, ".  Xml is ");
-            LOG2(kDevice, kError, iXml);
-            LOG2(kDevice, kError, "\n");
+            const Brx& udn = Udn();
+            LOG2(kDevice, kError, "Error within xml for %.*s from %.*s.  Xml is %.*s\n",
+                                  PBUF(udn), PBUF(iLocation), PBUF(iXml));
         }
     }
     iLock.Wait();
@@ -754,11 +746,10 @@ void CpiDeviceListUpnp::RemoveAll()
 void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
 {
     if (aError) {
-        LOG2(kTrace, kError, "Device xml fetch error {udn{");
-        LOG2(kTrace, kError, aDevice.Udn());
-        LOG2(kTrace, kError, "}, location{");
-        LOG2(kTrace, kError, aDevice.Location());
-        LOG2(kTrace, kError, "}}\n");
+        const Brx& udn = aDevice.Udn();
+        const Brx& location = aDevice.Location();
+        LOG2(kTrace, kError, "Device xml fetch error {udn{%.*s}, location{%.*s}}\n",
+                             PBUF(udn), PBUF(location));
         Remove(aDevice.Udn());
     }
     else {

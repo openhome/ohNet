@@ -139,11 +139,8 @@ void CpiSubscription::RunInSubscriber()
             throw;
         }
         catch(...) {
-            lock.Wait();
-            LOG2(kError, kTrace, "Subscribe (%p) for device ", this);
-            LOG2(kError, kTrace, iDevice.Udn());
-            LOG2(kError, kTrace, " failed\n");
-            lock.Signal();
+            const Brx& udn = iDevice.Udn();
+            LOG2(kError, kTrace, "Subscribe (%p) for device %.*s failed\n", this, PBUF(udn));
             throw;
         }
         break;
@@ -235,13 +232,9 @@ void CpiSubscription::DoSubscribe()
     Uri subscriber(uri);
 
     const Brx& serviceFullName = iServiceType.FullName();
-    iEnv.Mutex().Wait();
-    LOG(kEvent, "Subscribing - service = ");
-    LOG(kEvent, serviceFullName);
-    LOG(kEvent, "\n    subscription = %p\n    subscriber = ", this);
-    LOG(kEvent, subscriber.AbsoluteUri());
-    LOG(kEvent, "\n");
-    iEnv.Mutex().Signal();
+    const Brx& subscriberUri = subscriber.AbsoluteUri();
+    LOG(kEvent, "Subscribing - service = %.*s\n    subscription = %p\n    subscriber = %.*s\n",
+                PBUF(serviceFullName), this, PBUF(subscriberUri));
 
     iNextSequenceNumber = 0;
     TUint renewSecs;
@@ -255,25 +248,13 @@ void CpiSubscription::DoSubscribe()
             deviceXml.Set("[missing]");
         }
         const Brx& udn = iDevice.Udn();
-        iEnv.Mutex().Wait();
-        Log::Print("XmlError attempting to subscribe to ");
-        Log::Print(serviceFullName);
-        Log::Print(" service on device ");
-        Log::Print(udn);
-        Log::Print(", with xml\n\n");
-        Log::Print(deviceXml);
-        Log::Print("\n\n");
-        iEnv.Mutex().Signal();
+        Log::Print("XmlError attempting to subscribe to %.*s service on device %.*s, with xml\n\n%.*s\n\n",
+                   PBUF(serviceFullName), PBUF(udn), PBUF(deviceXml));
         throw;
     }
 
-    iEnv.Mutex().Wait();
-    LOG(kEvent, "Subscription (%p) for ", this);
-    LOG(kEvent, serviceFullName);
-    LOG(kEvent, " completed\n    Sid is ");
-    LOG(kEvent, iSid);
-    LOG(kEvent, "\n    Renew in %u secs\n", renewSecs);
-    iEnv.Mutex().Signal();
+    LOG(kEvent, "Subscription (%p) for %.*s completed\n    Sid is %.*s\n    Renew in %u secs\n",
+                this, PBUF(serviceFullName), PBUF(iSid), renewSecs);
 
     SetRenewTimer(renewSecs);
 }
@@ -285,18 +266,13 @@ void CpiSubscription::Renew()
 
 void CpiSubscription::DoRenew()
 {
-    LOG(kEvent, "Renewing (%p) sid ", this);
-    LOG(kEvent, iSid);
-    LOG(kEvent, "\n");
+    LOG(kEvent, "Renewing (%p) sid %.*s\n", this, PBUF(iSid));
 
     TUint renewSecs = 0;
     try {
         renewSecs = iDevice.Renew(*this);
-
-        LOG(kEvent, "Renewed (%p) ", this);
-        LOG(kEvent, iSid);
-        LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
-
+        LOG(kEvent, "Renewed (%p) %.*s.  Renew again in %u secs\n",
+                    this, PBUF(iSid), renewSecs);
         SetRenewTimer(renewSecs);
     }
     catch (NetworkTimeout&) {
@@ -325,11 +301,7 @@ void CpiSubscription::DoRenew()
 
 void CpiSubscription::DoUnsubscribe()
 {
-    iEnv.Mutex().Wait();
-    LOG(kEvent, "Unsubscribing (%p) sid ", this);
-    LOG(kEvent, iSid);
-    LOG(kEvent, "\n");
-    iEnv.Mutex().Signal();
+    LOG(kEvent, "Unsubscribing (%p) sid %.*s\n", this, PBUF(iSid));
 
     const TUint startTime = Os::TimeInMs(iEnv.OsCtx());
     iTimer->Cancel();
@@ -354,20 +326,14 @@ void CpiSubscription::DoUnsubscribe()
     }
     catch (ReaderError&) {
     }
-    iEnv.Mutex().Wait();
     const TUint diffTime = Os::TimeInMs(iEnv.OsCtx()) - startTime; // ignore possibility of time wrapping
-    LOG(kEvent, "Unsubscribed (%p) sid ", this);
-    LOG(kEvent, sid);
-    LOG(kEvent, " %ums\n", diffTime);
-    iEnv.Mutex().Signal();
+    LOG(kEvent, "Unsubscribed (%p) sid %.*s in %ums\n", this, PBUF(sid), diffTime);
 }
 
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 {
     if (aMaxSeconds == 0) {
-        LOG2(kEvent, kError, "ERROR: subscription (%p) sid ", this);
-        LOG2(kEvent, kError, iSid);
-        LOG2(kEvent, kError, " has 0s renew time\n");
+        LOG2(kEvent, kError, "ERROR: subscription (%p) sid %.*s has 0s renew time\n", this, PBUF(iSid));
         return;
     }
     TUint renewMs = iEnv.Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
@@ -430,9 +396,7 @@ void CpiSubscription::EventUpdateEnd()
 
 void CpiSubscription::EventUpdateError()
 {
-    LOG2(kEvent, kError, "ERROR: subscription (%p) sid ", this);
-    LOG2(kEvent, kError, iSid);
-    LOG2(kEvent, kError, " failure processing update\n");
+    LOG2(kEvent, kError, "ERROR: subscription (%p) sid %.*s failure processing update\n", this, PBUF(iSid));
     SetNotificationError();
     if (iEventProcessor != NULL) {
         iEventProcessor->EventUpdateError();
@@ -448,11 +412,9 @@ void CpiSubscription::EventUpdatePrepareForDelete()
 
 void CpiSubscription::ListObjectDetails() const
 {
-    Log::Print("  CpiSubscription: addr=%p, device=", this);
-    Log::Print(iDevice.Udn());
-    Log::Print(", refCount=%u, sid=", iRefCount);
-    Log::Print(iSid);
-    Log::Print("\n");
+    const Brx& udn = iDevice.Udn();
+    Log::Print("  CpiSubscription: addr=%p, device=%.*s, refCount=%u, sid=%.*s\n",
+               this, PBUF(udn), iRefCount, PBUF(iSid));
 }
 
 

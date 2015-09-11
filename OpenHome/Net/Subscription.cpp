@@ -20,6 +20,11 @@ Brh& HeaderSid::Sid()
     return iSid;
 }
 
+const Brx& HeaderSid::Value() const
+{
+    return iSid;
+}
+
 TBool HeaderSid::Recognise(const Brx& aHeader)
 {
     return (Ascii::CaseInsensitiveEquals(aHeader, kHeaderSid));

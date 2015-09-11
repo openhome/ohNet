@@ -29,11 +29,10 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     iDevice.AddRef();
     iDevice.GetCpStack().Env().AddObject(this);
     if (aVersion != iServiceType.Version()) {
-        LOG(kService, "CpiService: addr=%p, serviceType=", this);
-        LOG(kService, iServiceType.FullName());
-        LOG(kService, ", device=");
-        LOG(kService, iDevice.Udn());
-        LOG(kService, ", presenting proxy v%u as v%u\n", aVersion, iServiceType.Version());
+        const Brx& serviceName = iServiceType.FullName();
+        const Brx& udn = iDevice.Udn();
+        LOG(kService, "CpiService: addr=%p, serviceType=%.*s, device=%.*s, presenting proxy v%u as v%u\n",
+                      this, PBUF(serviceName), PBUF(udn), aVersion, iServiceType.Version());
     }
 }
 
@@ -665,13 +664,10 @@ void Invoker::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescriptio
     TUint code;
     const TChar* desc;
     (void)iInvocation->Error(level, code, desc);
-    LOG3(kService, kError, kTrace, "Error - %s(%s, %d, %s) - from invocation %p, on action ", aLogStr, Error::LevelName(level), code, (desc==NULL? "" : desc), iInvocation);
-    LOG3(kService, kError, kTrace, iInvocation->Action().Name());
-    LOG3(kService, kError, kTrace, ", from device ");
-    LOG3(kService, kError, kTrace, iInvocation->Device().Udn());
-    LOG3(kService, kError, kTrace, "\n");
-
-
+    const Brx& actionName = iInvocation->Action().Name();
+    const Brx& udn = iInvocation->Device().Udn();
+    LOG3(kService, kError, kTrace, "Error - %s(%s, %d, %s) - from invocation %p, on action %.*s, from device %.*s\n",
+        aLogStr, Error::LevelName(level), code, (desc==NULL? "" : desc), iInvocation, PBUF(actionName), PBUF(udn));
 }
 
 void Invoker::Run()
@@ -679,10 +675,9 @@ void Invoker::Run()
     for (;;) {
         Wait();
         try {
-            LOG(kService, "Invoker::Run (%s %p) action ",
-                          (const TChar*)Name().Ptr(), iInvocation);
-            LOG(kService, iInvocation->Action().Name());
-            LOG(kService, "\n");
+            const Brx& actionName = iInvocation->Action().Name();
+            LOG(kService, "Invoker::Run (%s %p) action %.*s\n",
+                          (const TChar*)Name().Ptr(), iInvocation, PBUF(actionName));
             iInvocation->Invoker().InvokeAction(*iInvocation);
         }
         catch (HttpError&) {

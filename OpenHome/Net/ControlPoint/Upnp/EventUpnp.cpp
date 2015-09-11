@@ -52,9 +52,8 @@ EventSessionUpnp::~EventSessionUpnp()
 
 void EventSessionUpnp::Error(const HttpStatus& aStatus)
 {
-    LOG2(kEvent, kError, "EventSessionUpnp::Error ");
-    LOG2(kEvent, kError, aStatus.Reason());
-    LOG2(kEvent, kError, "\n");
+    const Brx& reason = aStatus.Reason();
+    LOG2(kEvent, kError, "EventSessionUpnp::Error %.*s\n", PBUF(reason));
     iErrorStatus = &aStatus;
     THROW(HttpError);
 }
@@ -65,9 +64,9 @@ void EventSessionUpnp::LogError(CpiSubscription* aSubscription, const TChar* aEr
 void EventSessionUpnp::LogError(CpiSubscription* aSubscription, const TChar* /*aErr*/)
 #endif
 {
-    LOG2(kEvent, kError, "EventSessionUpnp::Run, %s handling\n    sid - ", aErr);
-    LOG2(kEvent, kError, iHeaderSid.Sid());
-    LOG2(kEvent, kError, " seq - %u\n", iHeaderSeq.Seq());
+    const Brx& sid = iHeaderSid.Sid();
+    LOG2(kEvent, kError, "EventSessionUpnp::Run, %s handling\n    sid - %.*s seq - %u\n",
+                         aErr, PBUF(sid), iHeaderSeq.Seq());
     if (aSubscription != NULL) {
         aSubscription->SetNotificationError();
     }
@@ -105,16 +104,14 @@ void EventSessionUpnp::Run()
             id = Ascii::Uint(idBuf);
         }
         catch (AsciiError&) {
-            LOG2(kEvent, kError, "notification for ");
-            LOG2(kEvent, kError, iHeaderSid.Sid());
-            LOG2(kEvent, kError, " failed to include id in path\n");
+            const Brx& sid = iHeaderSid.Sid();
+            LOG2(kEvent, kError, "notification for %.*s failed to include id in path\n", PBUF(sid));
             Error(HttpStatus::kPreconditionFailed);
         }
         subscription = iCpStack.SubscriptionManager().FindSubscription(id);
         if (subscription == NULL) {
-            LOG2(kEvent, kError, "notification for unexpected device - ")
-            LOG2(kEvent, kError, iHeaderSid.Sid());
-            LOG2(kEvent, kError, "\n");
+            const Brx& sid = iHeaderSid.Sid();
+            LOG2(kEvent, kError, "notification for unexpected device - %.*s\n", PBUF(sid))
             Error(HttpStatus::kPreconditionFailed);
         }
     }
@@ -165,9 +162,10 @@ void EventSessionUpnp::Run()
             writer.TransferTo(entity);
 
             // process entity
-            LOG(kEvent, "EventSessionUpnp::Run, sid - ");
-            LOG(kEvent, iHeaderSid.Sid());
-            LOG(kEvent, " seq - %u\n", iHeaderSeq.Seq());
+            {
+                const Brx& sid = iHeaderSid.Sid();
+                LOG(kEvent, "EventSessionUpnp::Run, sid - %.*s seq - %u\n", PBUF(sid), iHeaderSeq.Seq());
+            }
 
             /* defer validating the seq number till now to avoid holding subscription's lock during
                potentially long-running network reads */

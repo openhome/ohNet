@@ -47,7 +47,6 @@ class HeaderCallback : public HttpHeader
 public:
     const OpenHome::Endpoint& Endpoint() const;
     const Brx& Uri() const;
-    void Log();
 private:
     TBool Recognise(const Brx& aHeader);
     void Process(const Brx& aValue);

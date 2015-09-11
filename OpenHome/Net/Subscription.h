@@ -15,6 +15,7 @@ public:
     static const Brn kFieldSidPrefix;
 public:
     Brh& Sid();
+    const Brx& Value() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);

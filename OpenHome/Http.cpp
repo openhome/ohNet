@@ -323,9 +323,7 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
             line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
             iTimer->Cancel();
         }
-//        LOG(kHttp, "HTTP Read Request   ");
-//        LOG(kHttp, line);
-//        LOG(kHttp, "\n");
+//        LOG(kHttp, "HTTP Read Request    %.%s\n", PBUF(line));
         TUint bytes = line.Bytes();
         if (!bytes) {
             if (count == 0) {
@@ -416,9 +414,7 @@ void ReaderHttpRequest::ProcessMethod(const Brx& aMethod, const Brx& aUri, const
         }
     }
 
-    LOG2(kHttp, kError, "Unsupported method - ");
-    LOG2(kHttp, kError, aMethod);
-    LOG2(kHttp, kError, "\n");
+    LOG2(kHttp, kError, "Unsupported method - %.*s\n", PBUF(aMethod));
     THROW(HttpError);
 }
 
@@ -471,9 +467,7 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
             line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
             iTimer->Cancel();
         }
-        LOG(kHttp, "HTTP Read Response  ");
-        LOG(kHttp, line);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "HTTP Read Response   %.*s\n", PBUF(line));
         TUint bytes = line.Bytes();
         if (!bytes) {
             if (count == 0) {
@@ -569,13 +563,11 @@ WriterHttpField::WriterHttpField(IWriter& aWriter)
 
 void WriterHttpField::Write(TByte aValue)
 {
-    LOG(kHttp, Brn(&aValue, 1));
     WriterAscii::Write(aValue);
 }
 
 void WriterHttpField::Write(const Brx& aBuffer)
 {
-    LOG(kHttp, aBuffer);
     WriterAscii::Write(aBuffer);
 }
 

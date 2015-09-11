@@ -88,9 +88,7 @@ void CpiDeviceLpec::LpecThread()
             Brn method = parser.Next(' ');
             if (starting) {
                 if (method != Lpec::kMethodAlive) {
-                    LOG2(kLpec, kError, "LPEC: unable to find device ");
-                    LOG2(kLpec, kError, iLpecName);
-                    LOG2(kLpec, kError, ", exiting thread\n");
+                    LOG2(kLpec, kError, "LPEC: unable to find device %.*s, exiting thread\n", PBUF(iLpecName));
                     if (iStateChanged) {
                         iStateChanged();
                     }
@@ -108,9 +106,8 @@ void CpiDeviceLpec::LpecThread()
                 }
             }
             if (method == Lpec::kMethodAlive) {
-                LOG(kLpec, "LPEC: Alive - ");
-                LOG(kLpec, parser.Remaining());
-                LOG(kLpec, "\n");
+                Brn buf = parser.Remaining();
+                LOG(kLpec, "LPEC: Alive - %.*s\n", PBUF(buf));
             }
             else if (method == Lpec::kMethodByeBye) {
                 Brn name = parser.Next(' ');
@@ -129,9 +126,7 @@ void CpiDeviceLpec::LpecThread()
                 HandleEventedUpdate(parser.Remaining());
             }
             else if (iResponseHandler == NULL || !iResponseHandler->HandleLpecResponse(method, parser.Remaining())) {
-                LOG2(kLpec, kError, "Unexpected LPEC message: ");
-                LOG2(kLpec, kError, line);
-                LOG2(kLpec, kError, "\n");
+                LOG2(kLpec, kError, "Unexpected LPEC message: %.*s\n", PBUF(line));
             }
         }
     }
@@ -153,9 +148,7 @@ void CpiDeviceLpec::LpecThread()
 
 void CpiDeviceLpec::LogError(const TChar* aError)
 {
-    LOG2(kLpec, kError, "LPEC: error %s for device ", aError);
-    LOG2(kLpec, kError, iLpecName);
-    LOG2(kLpec, kError, ", exiting thread\n");
+    LOG2(kLpec, kError, "LPEC: error %s for device %.*s, exiting thread\n", aError, PBUF(iLpecName));
     if (iStateChanged) {
         iStateChanged();
     }
@@ -177,9 +170,7 @@ void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
         subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
     }
     if (subscription == NULL) {
-        LOG(kLpec, "LPEC: evented update received for unknown subscription - ");
-        LOG(kLpec, sid);
-        LOG(kLpec, "\n");
+        LOG(kLpec, "LPEC: evented update received for unknown subscription - %.*s\n", PBUF(sid));
         return;
     }
     Brn seqBuf = parser.Next(' ');
@@ -188,16 +179,12 @@ void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
         seq = Ascii::Uint(seqBuf);
     }
     catch (AsciiError&) {
-        LOG(kLpec, "LPEC: invalid sequence number - ");
-        LOG(kLpec, seqBuf);
-        LOG(kLpec, "in evented update\n");
+        LOG(kLpec, "LPEC: invalid sequence number - %.*s in evented update\n", PBUF(seqBuf));
         subscription->RemoveRef();
         return;
     }
     if (!subscription->UpdateSequenceNumber(seq)) {
-        LOG(kLpec, "LPEC: out of sequence update (%d) for ", seq);
-        LOG(kLpec, sid);
-        LOG(kLpec, "\n");
+        LOG(kLpec, "LPEC: out of sequence update (%d) for %.*s\n", seq, PBUF(sid));
         subscription->SetNotificationError();
         subscription->RemoveRef();
         return;
@@ -219,9 +206,7 @@ void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
         processor->EventUpdateEnd();
     }
     catch (AsciiError&) {
-        LOG2(kLpec, kError, "LPEC: Invalid evented update - ");
-        LOG2(kLpec, kError, aUpdate);
-        LOG2(kLpec, kError, "\n");
+        LOG2(kLpec, kError, "LPEC: Invalid evented update - %.*s\n", PBUF(aUpdate));
         processor->EventUpdateError();
     }
     subscription->Unlock();

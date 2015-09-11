@@ -462,9 +462,7 @@ void WsProtocol80::Read(Brn& aData, TBool& aClosed)
         Write(ePong, data);
         break;
     case ePong:
-        LOG(kDvWebSocket, "WS: Pong - ");
-        LOG(kDvWebSocket, data);
-        LOG(kDvWebSocket, "\n");
+        LOG(kDvWebSocket, "WS: Pong - %.*s\n", PBUF(data));
         break;
     default:
         // should have filtered out all other cases in the earlier switch
@@ -747,9 +745,8 @@ WsProtocol* DviSessionWebSocket::Handshake80()
         Error(HttpStatus::kBadRequest);
     }
     if (iHeaderUpgrade.Upgrade() != Brn("websocket")) {
-        LOG2(kDvWebSocket, kError, "WS: unexpected content of upgrade header - ");
-        LOG2(kDvWebSocket, kError, iHeaderUpgrade.Upgrade());
-        LOG2(kDvWebSocket, kError, "\n");
+        const Brx& header = iHeaderUpgrade.Upgrade();
+        LOG2(kDvWebSocket, kError, "WS: unexpected content of upgrade header - %.*s\n", PBUF(header));
         Error(HttpStatus::kBadRequest);
     }
     if (!iHeaderProtocol.Received()) {
@@ -757,9 +754,8 @@ WsProtocol* DviSessionWebSocket::Handshake80()
         Error(HttpStatus::kBadRequest);
     }
     if (iHeaderProtocol.Protocol() != WebSocket::kValueProtocol) {
-        LOG2(kDvWebSocket, kError, "WS: unexpected content of Sec-WebSocket-Protocol header - \n");
-        LOG2(kDvWebSocket, kError, iHeaderProtocol.Protocol());
-        LOG2(kDvWebSocket, kError, "\n");
+        const Brx& header = iHeaderProtocol.Protocol();
+        LOG2(kDvWebSocket, kError, "WS: unexpected content of Sec-WebSocket-Protocol header - %.*s\n", PBUF(header));
         Error(HttpStatus::kBadRequest);
     }
     if (!iHeadverKeyV8.Received()) {
@@ -897,9 +893,7 @@ void DviSessionWebSocket::Renew(const Brx& aRequest)
     Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
     Map::iterator it = iMap.find(sid);
     if (it == iMap.end()) {
-        LOG2(kDvWebSocket, kError, "Attempt to renew an unknown subscription - ");
-        LOG2(kDvWebSocket, kError, sid);
-        LOG2(kDvWebSocket, kError, "\n");
+        LOG2(kDvWebSocket, kError, "Attempt to renew an unknown subscription - %.*s\n", PBUF(sid));
         THROW(WebSocketError);
     }
     TUint timeout;
@@ -914,9 +908,7 @@ void DviSessionWebSocket::Renew(const Brx& aRequest)
         wrapper->Subscription().Renew(timeout);
     }
     catch (DvSubscriptionError&) {
-        LOG2(kDvWebSocket, kError, "Attempt made to renew an expired subscription - ");
-        LOG2(kDvWebSocket, kError, sid);
-        LOG2(kDvWebSocket, kError, "\n");
+        LOG2(kDvWebSocket, kError, "Attempt made to renew an expired subscription - %.*s\n", PBUF(sid));
         THROW(WebSocketError);
     }
     WriteSubscriptionRenewed(wrapper->Sid(), timeout);

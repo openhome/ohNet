@@ -120,18 +120,6 @@ const Brx& HeaderCallback::Uri() const
     return iUri;
 }
 
-void HeaderCallback::Log()
-{
-    if (!Received()) {
-        LOG(kDvEvent, "(null)");
-        return;
-    }
-    Endpoint::EndpointBuf buf;
-    iEndpoint.AppendEndpoint(buf);
-    LOG(kDvEvent, buf);
-    LOG(kDvEvent, iUri);
-}
-
 TBool HeaderCallback::Recognise(const Brx& aHeader)
 {
     return Ascii::CaseInsensitiveEquals(aHeader, kUpnpHeaderCallback);
@@ -412,9 +400,8 @@ void PropertyWriterUpnp::PropertyWriteEnd()
     readerResponse.Read(kReadTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
-        LOG2(kDvEvent, kError, "PropertyWriter, http error %u ", status.Code());
-        LOG2(kDvEvent, kError, status.Reason());
-        LOG2(kDvEvent, kError, "\n");
+        const Brx& reason = status.Reason();
+        LOG2(kDvEvent, kError, "PropertyWriter, http error %u %.*s\n", status.Code(), PBUF(reason));
     }
 }
 
@@ -605,14 +592,8 @@ void DviSessionUpnp::Run()
         const Brx& method = iReaderRequest->Method();
         iReaderRequest->UnescapeUri();
 
-        Mutex& lock = iDvStack.Env().Mutex();
-        lock.Wait();
-        LOG(kDvDevice, "Method: ");
-        LOG(kDvDevice, method);
-        LOG(kDvDevice, ", uri: ");
-        LOG(kDvDevice, iReaderRequest->Uri());
-        LOG(kDvDevice, "\n");
-        lock.Signal();
+        const Brx& reqUri = iReaderRequest->Uri();
+        LOG(kDvDevice, "Method: %.*s, uri: %.*s\n", PBUF(method), PBUF(reqUri));
 
         if (method == Http::kMethodGet) {
             Get();
@@ -699,9 +680,8 @@ void DviSessionUpnp::Get()
 
 void DviSessionUpnp::Post()
 {
-    LOG(kDvInvocation, "Action called: ");
-    LOG(kDvInvocation, iHeaderSoapAction.Action());
-    LOG(kDvInvocation, "\n");
+    const Brx& action = iHeaderSoapAction.Action();
+    LOG(kDvInvocation, "Action called: %.*s\n", PBUF(action));
 
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
@@ -758,11 +738,12 @@ void DviSessionUpnp::Post()
 
 void DviSessionUpnp::Subscribe()
 {
-    LOG(kDvEvent, "Subscription request ");
-    LOG(kDvEvent, iReaderRequest->Uri());
-    LOG(kDvEvent, " from ");
-    iHeaderCallback.Log();
-    LOG(kDvEvent, "\n");
+    {
+        Endpoint::EndpointBuf ep;
+        iHeaderCallback.Endpoint().AppendEndpoint(ep);
+        const Brx& callback = iHeaderCallback.Uri();
+        LOG(kDvEvent, "Subscription request from %s%.*s\n", reinterpret_cast<const TChar*>(ep.Ptr()), PBUF(callback));
+    }
     if (iHeaderSid.Received()) {
         try {
             Renew();
@@ -811,11 +792,11 @@ void DviSessionUpnp::Subscribe()
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
-    LOG(kDvEvent, "Subscription complete for ");
-    iHeaderCallback.Log();
-    LOG(kDvEvent, ", sid is ");
-    LOG(kDvEvent, subscription->Sid());
-    LOG(kDvEvent, "\n");
+    {
+        const Brx& callback = iHeaderCallback.Uri();
+        const Brx& sid = subscription->Sid();
+        LOG(kDvEvent, "Subscription complete for  %.*s, sid is %.*s\n", PBUF(callback), PBUF(sid));
+    }
 
     // Start subscription, prompting delivery of the first update (covering all state variables)
     service->AddSubscription(subscription);
@@ -839,11 +820,10 @@ void DviSessionUpnp::Unsubscribe()
         LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
     }
-    DviSubscription* subscription = iDvStack.SubscriptionManager().Find(iHeaderSid.Sid());
+    const Brx& sid = iHeaderSid.Sid();
+    DviSubscription* subscription = iDvStack.SubscriptionManager().Find(sid);
     if (subscription == NULL) {
-        LOG2(kDvEvent, kError, "Unsubscribe failed - couldn't match sid ");
-        LOG2(kDvEvent, kError, iHeaderSid.Sid());
-        LOG2(kDvEvent, kError, "\n");
+        LOG2(kDvEvent, kError, "Unsubscribe failed - couldn't match sid %.*s\n", PBUF(sid));
         Error(HttpStatus::kPreconditionFailed);
     }
     subscription->RemoveRef();
@@ -859,16 +839,13 @@ void DviSessionUpnp::Unsubscribe()
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
-    LOG(kDvEvent, "Unsubscribe complete: ");
-    LOG(kDvEvent, iHeaderSid.Sid());
-    LOG(kDvEvent, "\n");
+    LOG(kDvEvent, "Unsubscribe complete: %.*s\n", PBUF(sid));
 }
 
 void DviSessionUpnp::Renew()
 {
-    LOG(kDvEvent, "Renew subscription (request): ");
-    LOG(kDvEvent, iHeaderSid.Sid());
-    LOG(kDvEvent, "for %u secs\n", iHeaderTimeout.Timeout());
+    const Brx& sid = iHeaderSid.Value();
+    LOG(kDvEvent, "Renew subscription (request): %.*s for %u secs\n", PBUF(sid), iHeaderTimeout.Timeout());
 
     if (iHeaderCallback.Received() || iHeaderNt.Received()) {
         Error(HttpStatus::kBadRequest);
@@ -910,9 +887,7 @@ void DviSessionUpnp::Renew()
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
-    LOG(kDvEvent, "Renew subscription (complete): ");
-    LOG(kDvEvent, iHeaderSid.Sid());
-    LOG(kDvEvent, "for %u secs\n", duration);
+    LOG(kDvEvent, "Renew subscription (complete): %.*s for %u secs\n", PBUF(sid), duration);
 }
 
 void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, DviService** aService)
@@ -1170,9 +1145,8 @@ void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescr
         return;
     }
 
-    LOG(kDvInvocation, "Failure processing action: ");
-    LOG(kDvInvocation, iHeaderSoapAction.Action());
-    LOG(kDvInvocation, "\n");
+    const Brx& action = iHeaderSoapAction.Action();
+    LOG(kDvInvocation, "Failure processing action: %.*s\n", PBUF(action));
 
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kInternalServerError, Http::eHttp11);
@@ -1337,9 +1311,8 @@ void DviSessionUpnp::InvocationWriteEnd()
     iWriterBuffer->Write(Brn("Response></s:Body></s:Envelope>"));
     iWriterBuffer->WriteFlush();
 
-    LOG(kDvInvocation, "Completed action: ");
-    LOG(kDvInvocation, iHeaderSoapAction.Action());
-    LOG(kDvInvocation, "\n");
+    const Brx& action = iHeaderSoapAction.Action();
+    LOG(kDvInvocation, "Completed action: %.*s\n", PBUF(action));
 }
 
 

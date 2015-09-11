@@ -137,9 +137,7 @@ void SsdpListenerMulticast::Run()
             epb.PtrZ();
             try {
                 Brn buf = iReaderUntil.Read(kMaxBufferBytes);
-                LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received:\n", (const char*)epb.Ptr(), ex.File(), ex.Line());
-                LOG2(kSsdpMulticast, kError, buf);
-                LOG2(kSsdpMulticast, kError, "\n");
+                LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received: %.*s\n\n", (const char*)epb.Ptr(), ex.File(), ex.Line(), PBUF(buf));
             }
             catch (ReaderError&) {
             }

@@ -71,9 +71,8 @@ void XmlFetch::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescripti
 
 void XmlFetch::Fetch()
 {
-    LOG(kXmlFetch, "> XmlFetch::Fetch for ");
-    LOG(kXmlFetch, iUri->AbsoluteUri());
-    LOG(kXmlFetch, "\n");
+    const Brx& absUri = iUri->AbsoluteUri();
+    LOG(kXmlFetch, "> XmlFetch::Fetch for %.*s\n", PBUF(absUri));
 
     iLock.Wait();
     iSocket.Interrupt(false);
@@ -111,9 +110,7 @@ void XmlFetch::Fetch()
         SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
     }
 
-    LOG(kXmlFetch, "< XmlFetch::Fetch for ");
-    LOG(kXmlFetch, iUri->AbsoluteUri());
-    LOG(kXmlFetch, "\n");
+    LOG(kXmlFetch, "< XmlFetch::Fetch for %.*s\n", PBUF(absUri));
 }
 
 void XmlFetch::Interrupt()
@@ -192,10 +189,9 @@ void XmlFetch::Read()
     readerResponse.Read(kResponseTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
-        LOG2(kXmlFetch, kError, "XmlFetch::Read, http error %u ", status.Code());
-        LOG2(kXmlFetch, kError, status.Reason());
-        LOG2(kXmlFetch, kError, "\n");
-        SetError(Error::eHttp, status.Code(), status.Reason());
+        const Brx& reason = status.Reason();
+        LOG2(kXmlFetch, kError, "XmlFetch::Read, http error %u %.*s\n", status.Code(), PBUF(reason));
+        SetError(Error::eHttp, status.Code(), reason);
         THROW(HttpError);
     }
     if (iCheckContactable) {
@@ -286,9 +282,8 @@ void XmlFetcher::LogError(const TChar* aErr)
 void XmlFetcher::LogError(const TChar* /*aErr*/)
 #endif
 {
-    LOG2(kXmlFetch, kError, "Error - %s - from ", aErr);
-    LOG2(kXmlFetch, kError, iFetch->Uri().AbsoluteUri());
-    LOG2(kXmlFetch, kError, "\n");
+    const Brx& absUri = iFetch->Uri().AbsoluteUri();
+    LOG2(kXmlFetch, kError, "Error - %s - from %.*s\n", aErr, PBUF(absUri));
 }
 
 void XmlFetcher::Run()
@@ -391,9 +386,8 @@ XmlFetch* XmlFetchManager::Fetch()
 
 void XmlFetchManager::Fetch(XmlFetch* aFetch)
 {
-    LOG(kXmlFetch, "Fetch for ");
-    LOG(kXmlFetch, aFetch->Uri().AbsoluteUri());
-    LOG(kXmlFetch, "\n");
+    const Brx& absUri = aFetch->Uri().AbsoluteUri();
+    LOG(kXmlFetch, "Fetch for %.*s\n", PBUF(absUri));
 
     FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams()->AsyncBeginHandler();
     if (asyncBeginHandler) {
