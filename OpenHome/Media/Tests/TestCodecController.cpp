@@ -242,8 +242,6 @@ private: // from ISeekObserver
 private:
     void TestSeekInvalid();
 private:
-    Semaphore* iSemStreamInitPending;
-    Semaphore* iSemStreamInitContinue;
     Semaphore* iSemSeek;
     TUint iHandle;
     TUint iFlushId;
