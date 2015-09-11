@@ -183,6 +183,7 @@ void DviSubscription::WriteChanges()
         // we may block a publisher for a relatively long time failing to connect
         // its reasonable to assume that later attempts are also likely to fail
         // ...so its better if we don't keep blocking and instead remove the subscription
+        LOG2(kDvEvent, kError, "Timeout eventing update for %.*s\n", PBUF(iSid));
         Remove();
     }
     catch(NetworkError&) {}
@@ -196,9 +197,7 @@ void DviSubscription::WriteChanges()
 
 IPropertyWriter* DviSubscription::CreateWriter()
 {
-    LOG(kDvEvent, "WriteChanges for subscription ");
-    LOG(kDvEvent, iSid);
-    LOG(kDvEvent, " seq - %u\n", iSequenceNumber);
+    LOG(kDvEvent, "WriteChanges for subscription %.*s seq - %u\n", PBUF(iSid), iSequenceNumber);
     if (!iDevice.Enabled()) {
         LOG(kDvEvent, "Device disabled; defer publishing changes\n");
         return NULL;
@@ -208,33 +207,46 @@ IPropertyWriter* DviSubscription::CreateWriter()
         LOG(kDvEvent, "Subscription stopped; don't publish changes\n");
         return NULL;
     }
-    AutoPropertiesLock b(*iService);
-    IPropertyWriter* writer = NULL;
+
     const std::vector<Property*>& properties = iService->Properties();
     ASSERT(properties.size() == iPropertySequenceNumbers.size()); // services can't change definition after first advertisement
+    TBool changed = false;
+    {
+        AutoPropertiesLock b(*iService);
+        for (TUint i=0; i<properties.size(); i++) {
+            Property* prop = properties[i];
+            const TUint seq = prop->SequenceNumber();
+            ASSERT(seq != 0); // => implementor hasn't initialised the property
+            if (seq != iPropertySequenceNumbers[i]) {
+                changed = true;
+                break;
+            }
+        }
+
+    }
+    if (!changed) {
+        LOG(kDvEvent, "Found no changes to publish\n");
+        return NULL;
+    }
+    IPropertyWriter* writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
+    if (writer == NULL) {
+        THROW(WriterError);
+    }
+    if (iSequenceNumber == UINT32_MAX) {
+        iSequenceNumber = 1;
+    }
+    else {
+        iSequenceNumber++;
+    }
+
+    AutoPropertiesLock b(*iService);
     for (TUint i=0; i<properties.size(); i++) {
         Property* prop = properties[i];
-        TUint seq = prop->SequenceNumber();
-        ASSERT(seq != 0); // => implementor hasn't initialised the property
+        const TUint seq = prop->SequenceNumber();
         if (seq != iPropertySequenceNumbers[i]) {
-            if (writer == NULL) {
-                writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
-                if (writer == NULL) {
-                    THROW(WriterError);
-                }
-                if (iSequenceNumber == UINT32_MAX) {
-                    iSequenceNumber = 1;
-                }
-                else {
-                    iSequenceNumber++;
-                }
-            }
             prop->Write(*writer);
             iPropertySequenceNumbers[i] = seq;
         }
-    }
-    if (writer == NULL) {
-        LOG(kDvEvent, "Found no changes to publish\n");
     }
     return writer;
 }
