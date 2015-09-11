@@ -162,9 +162,9 @@ class JenkinsBuild():
         if os_platform == 'linux' and arch == 'ppc32':
             os.environ['CROSS_COMPILE'] = 'powerpc-linux-gnu-'
         if os_platform == 'Core' and arch == 'ppc32':
-            os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
+            os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11-rsb/bin/powerpc-rtems4.11-'
         if os_platform == 'Core' and (arch == 'armv5' or arch == 'armv6'):
-            os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
+            os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11-rsb/bin/arm-rtems4.11-'
         if os_platform == 'Qnap' and arch == 'x19':
             os.environ['CROSS_COMPILE'] = '/home/bldslv/qnap-gcc/cross-project/arm/marvell/bin/arm-none-linux-gnueabi-'
 

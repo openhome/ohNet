@@ -320,7 +320,7 @@ ifeq ($(nocpp11), yes)
 else ifeq ($(platform),IntelMac)
     cppflags = $(cflags_base) -std=c++11 -Werror
 else
-    cppflags = $(cflags_base) -std=c++0x -D__STDC_VERSION__=199901L -Werror
+    cppflags = $(cflags_base) -std=c++0x -Werror
 endif
 cflags = $(cflags_base) -Werror
 inc_build = Build/Include
