@@ -5,8 +5,13 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/FlywheelRamper.h>
 #include <OpenHome/Private/File.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Tests/Cdecl.h>
+#include <OpenHome/Private/OptionParser.h>
 #include <stdlib.h>
+
+
+using namespace OpenHome::TestFramework;
 
 
 using namespace OpenHome;
@@ -24,19 +29,23 @@ namespace TestFlywheelRamperManual {
 class TestFWRManual : public INonCopyable
 {
 public:
-    TestFWRManual(TChar* aInputWavFilename, TChar* aOutputWavFilename);
+    TestFWRManual(const Brx& aInputWavFilename, const Brx& aOutputWavFilename, TUint aDegree, TUint aGenMs, TUint aRampMs);
     void Run();
+
+    static void LogBuf(const Brx& aBuf);
 
 private:
     void UpdateDataSize(TUint32 aDataSizeBytes);
     void WriteOutHeader();
+    void ProcessChannelFragment(IPcmProcessor& aProc, const Brx& aBuf, TUint aChannelCount);
+    void ReadHeader();
 
-    static void ConvertToBe16(const Brx& aBuf, Bwx& aBufBe);
-    static void ConvertToBe24(const Brx& aBuf, Bwx& aBufBe);
-    static void LogBuf(const Brx& aBuf);
     static TInt32 Int32(const Brx& aBuf, TUint aIndex);
     static void Append32(Bwx& aBuf, TInt32 aSample);
-
+    static void ExtractChannelSamples(const Brx& aSamplesIn, Bwx& aChanSamplesOut, TUint aBytesPerSample, TUint aChannelCount, TUint aChannel);
+    static void EndianSwitch(Bwx& aBuf, TUint aBytesPerSample);
+    static void InterleaveChannelSamples(Bwx& aBuf, TUint aBytesPerSample, TUint aChannelCount);
+    static void ReduceBitDepthBe(Bwx& aBuf, TUint aBytesPerSample);
 
 private:
     IFile* iInputFile;
@@ -80,12 +89,14 @@ private:
 using namespace OpenHome::Media::TestFlywheelRamperManual;
 
 
-TestFWRManual::TestFWRManual(TChar* aInputWavFilename, TChar* aOutputWavFilename)
+TestFWRManual::TestFWRManual(const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs)
     :iOutputFile(new FileStream())
 {
     try
     {
-        iInputFile = IFile::Open(aInputWavFilename, eFileReadOnly);
+        Bwh inputFilename(aInputFilename);
+        inputFilename.Grow(inputFilename.Bytes()+1);
+        iInputFile = IFile::Open(inputFilename.PtrZ(), eFileReadOnly);
     }
     catch(FileOpenError)
     {
@@ -93,10 +104,30 @@ TestFWRManual::TestFWRManual(TChar* aInputWavFilename, TChar* aOutputWavFilename
         ASSERTS();
     }
 
-
     try
     {
-        iOutputFile->OpenFile(aOutputWavFilename, eFileReadWrite);
+        if (aOutputFilename==Brx::Empty())
+        {
+            Bwh outputFilename(aInputFilename);
+            outputFilename.Grow(outputFilename.Bytes()+16); // "-fwr-xx-yyy-zzz" = 15 chars + 1 for NULL terminator
+            outputFilename.SetBytes(outputFilename.Bytes()-4); // ".wav"
+            outputFilename.Append(Brn("-fwr-"));
+            Ascii::AppendDec(outputFilename, aDegree); // xx
+            outputFilename.Append("-");
+            Ascii::AppendDec(outputFilename, aGenMs); // yyy
+            outputFilename.Append("-");
+            Ascii::AppendDec(outputFilename, aRampMs); // zzz
+            outputFilename.Append(Brn(".wav"));
+            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
+        }
+        else
+        {
+            Log::Print("Here x\n");
+            Bwh outputFilename(aOutputFilename);
+            outputFilename.Grow(outputFilename.Bytes()+1);
+            Log::Print("Here y\n");
+            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
+        }
     }
     catch(FileOpenError)
     {
@@ -104,8 +135,13 @@ TestFWRManual::TestFWRManual(TChar* aInputWavFilename, TChar* aOutputWavFilename
         ASSERTS();
     }
 
+    ReadHeader();
 
+    //Log::Print("channelCount=%d  sampleRate=%d  byteRate=%d  bitsPerSample=%d   iSubChunk2Size=%d \n", iChannelCount,  iSampleRate,  iByteRate,  iBitDepth, iSubChunk2Size);
+}
 
+void TestFWRManual::ReadHeader()
+{
     iInputFile->Read(iHeader);
 
 
@@ -178,81 +214,88 @@ TestFWRManual::TestFWRManual(TChar* aInputWavFilename, TChar* aOutputWavFilename
     iSubChunk2Size += iHeader[41];
     iSubChunk2Size <<= 8;
     iSubChunk2Size += iHeader[40];
-
-    Log::Print("channelCount=%d  sampleRate=%d  byteRate=%d  bitsPerSample=%d   iSubChunk2Size=%d \n", iChannelCount,  iSampleRate,  iByteRate,  iBitDepth, iSubChunk2Size);
 }
-
-
 
 void TestFWRManual::Run()
 {
-    const TUint kRampMs = 100; // 100ms
-    const TUint kGenJiffies = Jiffies::kPerSecond/10; // 100ms
 
-    auto ramper = new FlywheelRamper(kGenJiffies, kRampMs);
+    const TUint kRampMs = 500; // 100ms
+    const TUint kGenJiffies = (Jiffies::kPerMs * 100); // 100ms
 
-    // calculate bytes of audio samples required to generate a ramp
-    TUint genJiffies = ramper->GenerationJiffies(); // should = kGenJiffies
-    TUint genSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, genJiffies, iBytesPerSample);
+    auto ramper = new FlywheelRamper(20, kGenJiffies, kRampMs);
+
+    // calculate bytes required to generate a ramp
+    TUint genSampleBytesPerChan = FlywheelRamper::Bytes(iSampleRate, kGenJiffies, iBytesPerSample);
+    TUint genSampleBytes = genSampleBytesPerChan*iChannelCount;
+    Log::Print("genSampleBytes=%d \n", genSampleBytes);
 
     // calculate bytes required to accommodate ramp audio samples
-    TUint rampJiffies = (TUint)( (TUint64)kRampMs * (TUint64)Jiffies::kPerSecond / 1000);
-    TUint rampSampleBytes = FlywheelRamper::Bytes(iSampleRate, iChannelCount, rampJiffies, iBytesPerSample);
+    TUint rampJiffies = (TUint)( (TUint64)kRampMs * (TUint64)Jiffies::kPerMs);
+    TUint rampBytesPerChannel = FlywheelRamper::Bytes(iSampleRate, rampJiffies, 4); // 32bit
+    TUint rampBytes = rampBytesPerChannel*iChannelCount;
+    Log::Print("genSampleBytes=%d \n", genSampleBytes);
+
+    Bwh rampOutput(rampBytes);
+    WriterBuffer writerFwr(rampOutput);
+    Log::Print("rampBytesPerChannel=%d  rampBytes=%d \n", rampBytesPerChannel, rampBytes);
+
+
+    /////////////////
 
     WriteOutHeader();
 
     const TUint kAudioTestBlockSecs = 1;
     TUint audioTestBlockBytes = iByteRate*kAudioTestBlockSecs;
     Bwh buf(audioTestBlockBytes);
-    TUint totalAudioDataBytes = iSubChunk2Size;
+    //TUint totalAudioDataBytes = iSubChunk2Size;
+    TUint totalAudioDataBytes = 0;
 
     TUint bufSplitIndex = buf.MaxBytes()-genSampleBytes;
 
-    //Log::Print("bufSplitIndex=%d  buf.MaxBytes()=%d  genSampleBytes=%d\n", bufSplitIndex, buf.MaxBytes(), genSampleBytes);
+    Log::Print("bufSplitIndex=%d  buf.MaxBytes()=%d  genSampleBytes=%d\n", bufSplitIndex, buf.MaxBytes(), genSampleBytes);
 
-    FormatConverter converter(*iOutputFile, iBitDepth);
-    IPcmProcessor& proc = ramper->Ramp(converter, iSampleRate, iChannelCount);
-
+    IPcmProcessor& proc = ramper->Ramp(writerFwr, iSampleRate);
 
     // append a ramp block after each AudioTestBlock
     // and write out the output file
-    for (TUint i=0; i<=(iSubChunk2Size-audioTestBlockBytes);)
+    //for (TUint i=0; i<=(iSubChunk2Size-audioTestBlockBytes);)
+    for (TUint i=0; i<audioTestBlockBytes;)
     {
         iInputFile->Read(buf); // read a test block
         iOutputFile->Write(buf); // write test block to output file
 
-        //Log::Print("here 1  bufSplitIndex=%d  buf.Bytes()=%d \n\n", bufSplitIndex, buf.Bytes() );
-        Brn genSamples(buf.Split(bufSplitIndex)); //
-        Bwh genSamplesBe(genSamples.Bytes());
+        //Log::Print("bufSplitIndex=%d  buf.Bytes()=%d \n\n", bufSplitIndex, buf.Bytes() );
+        Bwh genSamples(buf.Split(bufSplitIndex)); //
 
-        proc.BeginBlock();
-        if (iBitDepth==8)
+        //Log::Print("iBytesPerSample=%d  bufSplitIndex=%d  sampleStartIndex=%d genSamples.Bytes()=%d  genSamples=%d\n", iBytesPerSample, bufSplitIndex, bufSplitIndex/iBytesPerSample, genSamples.Bytes(), genSamples.Bytes()/4);
+
+        EndianSwitch(genSamples, iBytesPerSample);  // change to big endian
+        Bwh genChanSamples(genSamples.Bytes()/iChannelCount);
+
+        for(TUint i=0; i<iChannelCount; i++)
         {
-            Log::Print("8 bit\n");
-            proc.ProcessFragment8(genSamples, iChannelCount);
+            ExtractChannelSamples(genSamples, genChanSamples, iBytesPerSample, iChannelCount, i);
+            Log::Print("genSamplesBe.Bytes()=%d  genChanSamples.Bytes()=%d\n", genSamples.Bytes(), genChanSamples.Bytes());
+            ProcessChannelFragment(proc, genChanSamples, iChannelCount);
         }
-        else if (iBitDepth==16)
-        {
-            Log::Print("16 bit\n");
-            ConvertToBe16(genSamples, genSamplesBe);
-            proc.ProcessFragment16(genSamplesBe, iChannelCount);
-        }
-        else if (iBitDepth==24)
-        {
-            Log::Print("24 bit\n");
-            ConvertToBe24(genSamples, genSamplesBe);
-            proc.ProcessFragment24(genSamplesBe, iChannelCount);
-        }
-        else
-        {
-            Log::Print("unknown bit depth\n");
-            ASSERTS();
-        }
-        proc.EndBlock();
+
+        // reduce the bit depth back to original format
+        ReduceBitDepthBe(rampOutput, iBytesPerSample);
+
+        // convert back to little endian format
+        EndianSwitch(rampOutput, iBytesPerSample);
+
+        // interleave the samples for output
+        InterleaveChannelSamples(rampOutput, iBytesPerSample, iChannelCount);
+
+        iOutputFile->Write(rampOutput);
 
         i += audioTestBlockBytes;
         buf.SetBytes(0);
-        totalAudioDataBytes += rampSampleBytes; // increase output data by ramp block size
+        totalAudioDataBytes += audioTestBlockBytes; // increase output data by ramp block size
+        Log::Print("totalAudioDataBytes=%d  rampSamplesReduced.Bytes()=%d \n", totalAudioDataBytes, rampOutput.Bytes());
+        totalAudioDataBytes += rampOutput.Bytes(); // increase output data by ramp block size
+        Log::Print("totalAudioDataBytes=%d   \n", totalAudioDataBytes);
     }
 
 
@@ -272,27 +315,111 @@ void TestFWRManual::Run()
 }
 
 
-void TestFWRManual::ConvertToBe24(const Brx& aBuf, Bwx& aBufBe)
+void TestFWRManual::ProcessChannelFragment(IPcmProcessor& aProc, const Brx& aBuf, TUint aChannelCount)
 {
-    for (TUint i=0; i<aBuf.Bytes();)
+    aProc.BeginBlock();
+    if (iBitDepth==8)
     {
-        aBufBe.Append(aBuf[i+2]);
-        aBufBe.Append(aBuf[i+1]);
-        aBufBe.Append(aBuf[i]);
-        i+=3;
+        aProc.ProcessFragment8(aBuf, aChannelCount);
+    }
+    else if (iBitDepth==16)
+    {
+        aProc.ProcessFragment16(aBuf, aChannelCount);
+    }
+    else if (iBitDepth==24)
+    {
+        aProc.ProcessFragment24(aBuf, aChannelCount);
+    }
+    else
+    {
+        ASSERTS();
+    }
+    aProc.EndBlock();
+}
+
+
+void TestFWRManual::ExtractChannelSamples(const Brx& aBuf, Bwx& aBufChan, TUint aBytesPerSample, TUint aChannelCount, TUint aChannel)
+{
+    //Log::Print("ExtractChannelSamples\n");
+    aBufChan.SetBytes(0);
+    TUint byteInc = aBytesPerSample*aChannelCount;
+    TUint startByteIndex = aBytesPerSample*aChannel;
+
+    for(TUint i=startByteIndex; i<aBuf.Bytes(); i+=byteInc)
+    {
+        for(TUint j=0; j<aBytesPerSample; j++)
+        {
+            TUint k = i+j;
+            //Log::Print("%d ", k);
+            aBufChan.Append(aBuf[k]);
+        }
+
+        //Log::Print("\n");
+
+    }
+
+
+    ASSERT(aBufChan.Bytes()==aBuf.Bytes()/aChannelCount);
+}
+
+void TestFWRManual::InterleaveChannelSamples(Bwx& aBuf, TUint aBytesPerSample, TUint aChannelCount)
+{
+    Bwh buf(aBuf);
+    aBuf.SetBytes(0);
+
+    TUint bytesPerChan = buf.Bytes()/aChannelCount;
+
+    for(TUint i=0; i<bytesPerChan; i+=aBytesPerSample)
+    {
+        for(TUint j=0; j<aChannelCount; j++)
+        {
+            for(TUint k=0; k<aBytesPerSample; k++)
+            {
+                aBuf.Append(buf[i+(j*bytesPerChan)+k]);
+            }
+        }
     }
 }
 
 
-void TestFWRManual::ConvertToBe16(const Brx& aBuf, Bwx& aBufBe)
+
+void TestFWRManual::ReduceBitDepthBe(Bwx& aBuf, TUint aBytesPerSample)
 {
-    for (TUint i=0; i<aBuf.Bytes();)
+    // reduce (Big Endian samples) from 32bits to specified bit depth (aBytesPerSample)
+    Bwh buf(aBuf);
+    aBuf.SetBytes(0);
+
+    for(TUint i=0; i<buf.Bytes(); )
     {
-        aBufBe.Append(aBuf[i+1]);
-        aBufBe.Append(aBuf[i]);
-        i+=2;
+        for(TUint j=0; j<aBytesPerSample; j++)
+        {
+            aBuf.Append(buf[i+j]);
+        }
+        i+=4;
     }
 }
+
+
+void TestFWRManual::EndianSwitch(Bwx& aBuf, TUint aBytesPerSample)
+{
+    Bwh buf(aBuf);
+    aBuf.SetBytes(0);
+
+    if (aBytesPerSample>1)
+    {
+        for (TUint i=0; i<buf.Bytes();)
+        {
+            for (TInt j=(aBytesPerSample-1); j>=0; j--)
+            {
+                aBuf.Append(buf[i+j]);
+            }
+
+            i+=aBytesPerSample;
+        }
+    }
+}
+
+
 
 
 void TestFWRManual::UpdateDataSize(TUint32 aDataSizeBytes)
@@ -326,7 +453,7 @@ void TestFWRManual::LogBuf(const Brx& aBuf)
     {
         Log::Print("%x ", aBuf[x]);
     }
-    Log::Print("\n");
+    //Log::Print("\n");
 }
 
 
@@ -366,6 +493,9 @@ void FormatConverter::Write(const Brx& aBuffer)
 {
     // aBuffer is always 4 bytes per sample
     // output may be 1, 2 or 3 (8/16/24bit) bytes per sample
+
+    TestFWRManual::LogBuf(aBuffer);
+
     for(TUint i=0; i<aBuffer.Bytes();)
     {
         if (iBitDepth==24)
@@ -404,21 +534,43 @@ void FormatConverter::WriteFlush()
 
 int CDECL main(int aArgc, TChar* aArgv[])
 {
-    if (aArgc<2)
+    std::vector<Brn> args;
+
+    for(int i=0; i<aArgc; i++)
     {
-        Log::Print("No input/output files specified\n");
-        ASSERTS();
+        args.push_back(Brn(aArgv[i]));
     }
-    else if (aArgc<3)
-    {
-        Log::Print("No output file specified\n");
-        ASSERTS();
+
+    OptionParser parser;
+
+    OptionString optionInput("-i", "--input", Brn(""), "name of input file");
+    parser.AddOption(&optionInput);
+
+    OptionString optionOutput("-o", "--output", Brn(""), "name of output file");
+    parser.AddOption(&optionOutput);
+
+    OptionUint optionDegree("-d", "--degree", 10, "degree of filter (number of taps)");
+    parser.AddOption(&optionDegree);
+
+    OptionUint optionGenMs("-g", "--gen", 100, "generation data length in ms");
+    parser.AddOption(&optionGenMs);
+
+    OptionUint optionRampMs("-r", "--ramp", 100, "ramp length in ms");
+    parser.AddOption(&optionRampMs);
+
+    if (!parser.Parse(args) || parser.HelpDisplayed()) {
+        return(0);
     }
+
+    ASSERT(optionDegree.Value()<100);
+    ASSERT(optionGenMs.Value()<1000);
+    ASSERT(optionRampMs.Value()<1000);
+
 
     InitialisationParams* initParams = Net::InitialisationParams::Create();
     Net::Library* lib = new Net::Library(initParams);
 
-    auto test = new TestFWRManual(aArgv[1], aArgv[2]);
+    auto test = new TestFWRManual(optionInput.Value(), optionOutput.Value(), optionDegree.Value(), optionGenMs.Value(), optionRampMs.Value());
     test->Run();
 
     delete test;

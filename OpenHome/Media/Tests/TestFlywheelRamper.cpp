@@ -38,12 +38,22 @@ private:
     void Test9(); // FeedbackModel periodic impulse output
     void Test10(); // FeedbackModel oscillator (periodic alternating polarity impulse output)
 
+    void Test11(); // // double<>FFPN
+
+    void Test12(); // ConvolutionModel algorithm
+    void Test13(); // FeedabckModel algorithm
+
+
     void Setup();
     void TearDown();
 
     static void LogBuf(const Brx& aBuf);
     static TInt32 Int32(const Brx& aBuf, TUint aIndex);
     static void Append32(Bwx& aBuf, TInt32 aSample);
+
+    static double ToDouble(TInt32 aVal);
+    static TInt32 ToFfpn(double aVal);
+
 };
 
 //////////////////////////////////////////////////////////////
@@ -60,6 +70,7 @@ using namespace OpenHome::Media::TestFlywheelRamper;
 SuiteFlywheelRamper::SuiteFlywheelRamper()
     :SuiteUnitTest("SuiteFlywheelRamper")
 {
+/*
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test2));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test3));
@@ -70,12 +81,17 @@ SuiteFlywheelRamper::SuiteFlywheelRamper()
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test9));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test10));
-}
+*/
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test11));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test12));
 
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test13));
+}
 
 
 void SuiteFlywheelRamper::Test1()  // ConvolutionModel scaling
 {
+/*
     const TUint kCoeffsCount = 2;
     const TUint kSamplesInCount = 2;
     const TUint kSamplesInBytes = kSamplesInCount*4;
@@ -197,12 +213,13 @@ void SuiteFlywheelRamper::Test1()  // ConvolutionModel scaling
     TEST( sampleOut0 == 0x20000<<8); // << (8-1)+(4-1)-(3-1)
     TEST( sampleOut1 == 0x40000<<8);
     delete conv;
-
+*/
 }
 
 
 void SuiteFlywheelRamper::Test2()  // ConvolutionModel zero coeffs
 {
+/*
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 1;
     const TUint kDataOutScaling = 1;
@@ -240,11 +257,13 @@ void SuiteFlywheelRamper::Test2()  // ConvolutionModel zero coeffs
     }
 
     delete conv;
+*/
 }
 
 
 void SuiteFlywheelRamper::Test3()  // ConvolutionModel positive coeff impulse
 {
+/*
     const TUint kCoeffScaling = 2;
     const TUint kDataInScaling = 1;
     const TUint kDataOutScaling = 1;
@@ -295,11 +314,13 @@ void SuiteFlywheelRamper::Test3()  // ConvolutionModel positive coeff impulse
     }
 
     delete conv;
+*/
 }
 
 
 void SuiteFlywheelRamper::Test4()  // ConvolutionModel negative coeff impulse
 {
+/*
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 1;
     const TUint kDataOutScaling = 1;
@@ -350,11 +371,13 @@ void SuiteFlywheelRamper::Test4()  // ConvolutionModel negative coeff impulse
     }
 
     delete conv;
+*/
 }
 
 
 void SuiteFlywheelRamper::Test5()  // ConvolutionModel positive sample impulse
 {
+/*
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 2;
     const TUint kDataOutScaling = 1;
@@ -407,11 +430,13 @@ void SuiteFlywheelRamper::Test5()  // ConvolutionModel positive sample impulse
     }
 
     delete conv;
+*/
 }
 
 
 void SuiteFlywheelRamper::Test6()  // ConvolutionModel negative sample impulse
 {
+/*
     const TUint kCoeffScaling = 1;
     const TUint kDataInScaling = 1;
     const TUint kDataOutScaling = 1;
@@ -464,6 +489,7 @@ void SuiteFlywheelRamper::Test6()  // ConvolutionModel negative sample impulse
     }
 
     delete conv;
+*/
 }
 
 
@@ -472,7 +498,7 @@ void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
     const TUint kCoeffsCount = 2;
     const TUint kSamplesInCount = 2;
     const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount-1;
+    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount;
     const TUint kSamplesOutBytes = kSamplesOutCount*4;
 
     std::vector<TInt32> coeffs;
@@ -912,6 +938,217 @@ void SuiteFlywheelRamper::Test10()  // FeedbackModel alternating polarity period
 }
 
 
+//#define FRACTION_BITS 31
+//#define FIXED_BITVALUE (1.0 / (double)(1<<FRACTION_BITS))
+
+/*
+double SuiteFlywheelRamper::ToDouble(TInt32 aVal)
+{
+    //double dbl = FIXED_BITVALUE * aVal;
+    double dbl = (double)aVal/2147483648L; // 1<<31
+    return(dbl);
+}
+
+
+
+
+TInt32 SuiteFlywheelRamper::ToFfpn(double aVal)
+{
+    TInt32 s = (TInt32) ((aVal)*2147483648L);
+    return(s);
+}
+*/
+
+void SuiteFlywheelRamper::Test11()  // double<>FFPN
+{
+    //Log::Print("double >  ffpn  \n\n");
+/*
+    Log::Print(" 0x%.8lx  =  %f \n", 0x80000000L, BurgsMethod::ToDouble(0x80000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x90000000L, BurgsMethod::ToDouble(0x90000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0xa0000000L, BurgsMethod::ToDouble(0xa0000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0xb0000000L, BurgsMethod::ToDouble(0xb0000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0xc0000000L, BurgsMethod::ToDouble(0xc0000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0xd0000000L, BurgsMethod::ToDouble(0xd0000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0xe0000000L, BurgsMethod::ToDouble(0xe0000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0xf0000000L, BurgsMethod::ToDouble(0xf0000000L));
+
+    Log::Print(" 0x%.8lx  =  %f \n", 0x00000000L, BurgsMethod::ToDouble(0x00000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x10000000L, BurgsMethod::ToDouble(0x10000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x20000000L, BurgsMethod::ToDouble(0x20000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x30000000L, BurgsMethod::ToDouble(0x30000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x40000000L, BurgsMethod::ToDouble(0x40000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x50000000L, BurgsMethod::ToDouble(0x50000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x60000000L, BurgsMethod::ToDouble(0x60000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x70000000L, BurgsMethod::ToDouble(0x70000000L));
+    Log::Print(" 0x%.8lx  =  %f \n", 0x7fffffffL, BurgsMethod::ToDouble(0x7fffffffL));
+
+
+    Log::Print("\n\nffpn > double\n\n");
+
+
+    for (double i=-1; i<1; i+=0.125)
+    {
+        TInt32 ffpn = BurgsMethod::ToInt32(i);
+        Log::Print("%f = 0x%.8lx \n", i, ffpn);
+    }
+*/
+
+
+    double d = 0.125;
+    TInt32 fp = BurgsMethod::ToInt32(d, 1);
+    //Log::Print("\n\n\n%f = 0x%.8lx \n", d, fp);
+    double d2 = BurgsMethod::ToDouble(fp, 1);
+    //Log::Print("%f \n", d2);
+    TEST(d==d2);
+
+
+    d = 2.00;
+    fp = BurgsMethod::ToInt32(d, 3);
+    //Log::Print("\n\n\n%f = 0x%.8lx \n", d, fp);
+    d2 = BurgsMethod::ToDouble(fp, 3);
+    //Log::Print("%f  %x\n", d2, (TInt32)d2);
+    TEST(d==d2);
+
+    d = 2.50;
+    fp = BurgsMethod::ToInt32(d, 3);
+    //Log::Print("\n\n\n%f = 0x%.8lx \n", d, fp);
+    d2 = BurgsMethod::ToDouble(fp, 3);
+    //Log::Print("%f  %x\n", d2, (TInt32)d2);
+    TEST(d==d2);
+
+
+    //Log::Print("\n\n3.29 ...(536870912L) \n\n");
+    for(double i=-3; i<3; i+=0.125)
+    {
+        TInt32 fixed = BurgsMethod::ToInt32(i, 3);
+        //Log::Print("%.8f = 0x%.8lx \n", i, fixed);
+        double dbl = BurgsMethod::ToDouble(fixed, 3);
+        //Log::Print("0x%.8x = %.8f\n\n", fixed, dbl );
+        TEST(dbl == i);
+    }
+
+    //Log::Print("\n\n1.31 ...(2147483648L) \n\n");
+
+    for(double i=-1; i<1; i+=0.125)
+    {
+        TInt32 fixed = BurgsMethod::ToInt32(i, 1);
+        //Log::Print("%.8f = 0x%.8lx \n", i, fixed);
+        double dbl = BurgsMethod::ToDouble(fixed, 1);
+        //Log::Print("0x%.8x = %.8f\n\n", fixed, dbl );
+        TEST(dbl == i);
+    }
+
+/*
+    for(double i=-0.875; i<1; i+=0.125)
+    {
+        TInt32 fixed = BurgsMethod::ToInt32(i);
+        TInt32 inverted = (fixed^0xffffffffL)+1;
+        double invDbl = BurgsMethod::ToDouble(inverted);
+        //Log::Print("i=%.8f: 0x%.8x  inverted: 0x%.8x = %.8f\n", i, fixed, inverted, invDbl);
+        TEST(invDbl == -i);
+    }
+*/
+
+}
+
+
+void SuiteFlywheelRamper::Test12() // ConvolutionModel algorithm
+{
+    //Log::Print("\n");
+
+/*
+    const TUint kCoeffsCount = 4;
+    const TUint kSamplesInCount = 4;
+    const TUint kSamplesInBytes = kSamplesInCount*4;
+    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount-1;
+    const TUint kSamplesOutBytes = kSamplesOutCount*4;
+
+
+
+    std::vector<TInt32> coeffs;
+    coeffs.push_back(0x01000000);
+    coeffs.push_back(0x02000000);
+    coeffs.push_back(0x04000000);
+    coeffs.push_back(0x08000000);
+
+    Bws<kSamplesInBytes> samplesIn;
+    Append32(samplesIn, 0x01000000);
+    Append32(samplesIn, 0x02000000);
+    Append32(samplesIn, 0x04000000);
+    Append32(samplesIn, 0x08000000);
+
+    Bws<kSamplesOutBytes> samplesOut;
+
+    std::vector<TInt32> expectedSamplesOut;
+    expectedSamplesOut.push_back(0x00020000);
+    expectedSamplesOut.push_back(0x00080000);
+    expectedSamplesOut.push_back(0x00180000);
+    expectedSamplesOut.push_back(0x00400000);
+    expectedSamplesOut.push_back(0x00600000);
+    expectedSamplesOut.push_back(0x00800000);
+    expectedSamplesOut.push_back(0x00800000);
+
+    ConvolutionModel* conv = new ConvolutionModel(coeffs, 1, 1, 1);
+
+    conv->Process(samplesIn, samplesOut, kSamplesOutCount);
+    for (TUint i=0; i<kSamplesOutCount; i++)
+    {
+        TEST(FlywheelRamper::Int32(samplesOut, i*4) == expectedSamplesOut[i]);
+    }
+*/
+}
+
+
+
+void SuiteFlywheelRamper::Test13() // FeedbackModel algorithm
+{
+    Log::Print("\n");
+
+    const TUint kCoeffsCount = 4;
+    const TUint kSamplesInCount = 4;
+    const TUint kSamplesInBytes = kSamplesInCount*4;
+    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount-1;
+    const TUint kSamplesOutBytes = kSamplesOutCount*4;
+
+
+
+    std::vector<TInt32> coeffs;
+    coeffs.push_back(0x01000000);
+    coeffs.push_back(0x02000000);
+    coeffs.push_back(0x04000000);
+    coeffs.push_back(0x08000000);
+
+    Bws<kSamplesInBytes> samplesIn;
+    Append32(samplesIn, 0x01000000);
+    Append32(samplesIn, 0x02000000);
+    Append32(samplesIn, 0x04000000);
+    Append32(samplesIn, 0x08000000);
+
+    Log::Print("0x01000000 = %f \n", BurgsMethod::ToDouble(0x01000000, 1));
+    Log::Print("0x02000000 = %f \n", BurgsMethod::ToDouble(0x02000000, 1));
+    Log::Print("0x04000000 = %f \n", BurgsMethod::ToDouble(0x04000000, 1));
+    Log::Print("0x08000000 = %f \n", BurgsMethod::ToDouble(0x08000000, 1));
+
+
+    Bws<kSamplesOutBytes> samplesOut;
+
+    std::vector<TInt32> expectedSamplesOut;
+    expectedSamplesOut.push_back(0x01000000);
+    expectedSamplesOut.push_back(0x02020000);
+    expectedSamplesOut.push_back(0x04080400);
+    expectedSamplesOut.push_back(0x08181800);
+    expectedSamplesOut.push_back(0x00406000);
+    expectedSamplesOut.push_back(0x00614100);
+    expectedSamplesOut.push_back(0x00830500);
+
+    FeedbackModel* feedB = new FeedbackModel(coeffs, 8, 1, 1, 1);
+
+    feedB->Process(samplesIn, samplesOut, kSamplesOutCount);
+    for (TUint i=0; i<kSamplesOutCount; i++)
+    {
+        TEST(FlywheelRamper::Int32(samplesOut, i*4) == expectedSamplesOut[i]);
+    }
+}
 
 
 void SuiteFlywheelRamper::Setup()

@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <vector>
+#include <stdlib.h>
 
 namespace OpenHome {
 namespace Media {
@@ -28,35 +29,45 @@ class FlywheelRamper
     friend class PcmProcessorFwr;
 
 public:
-    static const TUint kMaxChannelCount = 2;
     static const TUint kBytesPerSample = 4; // 32 bit audio
 
 public:
     FlywheelRamper(TUint aGenerationJiffies, TUint aRampMs); // audio quantity needed to generate a ramp, ramp duration
+    FlywheelRamper(TUint aDegree, TUint aGenerationJiffies, TUint aRampMs); // audio quantity needed to generate a ramp, ramp duration
+    ~FlywheelRamper();
 
-    IPcmProcessor& Ramp(IWriter& aWriter, TUint aSampleRate, TUint aChannelCount);
+    IPcmProcessor& Ramp(IWriter& aWriter, TUint aSampleRate);
     TUint GenerationJiffies() const;
     TUint RampMs() const;
 
-    static TUint Bytes(TUint iSampleRate, TUint aChannelCount, TUint aJiffies, TUint aBytesPerSample);
+    static TUint Bytes(TUint iSampleRate, TUint aJiffies, TUint aBytesPerSample);
     static void LogBuf(const Brx& aBuf);
-    static TInt32 Int32(Bwx& aSample, TUint aIndex=0);
+    static TInt32 Int32(const Brx& aSamples, TUint aIndex=0);
+    static void Invert(std::vector<TInt32>& aInput, std::vector<TInt32>& aOutput);
+    static void Reverse(std::vector<TInt32>& aInput, std::vector<TInt32>& aOutput);
+    static void Reverse(const Brx& aInput, Bwx& aReversed);
+
+    static void Log32(std::vector<TInt32>& aVals);
+    static void Log32(const Brx& aBuf);
+
+    static void LogDouble(std::vector<double>& aVals);
+    static void LogDouble(std::vector<TInt32>& aVals, TUint aScale);
+    static void LogDouble(const Brx& aBuf, TUint aScale);
 
 
 private:
-    void CreateRamp(const Brx& aGenerationSamples);
+    void CreateRamp(const Brx& aSamples);
     void ApplyRamp(Bwx& aSamples);
     void ScaleSample(Bwx& aSample, TUint aScaleFactor);
 
 private:
     TUint iGenerationJiffies;
     TUint iRampMs;
+    TUint iDegree;
     Bwh iRampSamples;
     IPcmProcessor* iProcessor;
     IWriter* iWriter;
     TUint iSampleRate;
-    TUint iChannelCount;
-
 };
 
 
@@ -117,14 +128,13 @@ private:
 // sampleOut n = coeff(1)*sampleIn(n) + coeff(2)*sampleIn(n-1) + coeff(3)*sampleIn(n-2)...
 //
 // for n=1 to x (where x= num samples in + num coeffs -1):
-
+/*
 class ConvolutionModel : public INonCopyable
 {
 public:
     ConvolutionModel(const std::vector<TInt32>& aCoeffs, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
 
-    void Process(const Brx& aSamplesIn,  Bwx& aSamplesOut, TUint aCount);
-    void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
+    void Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCount, TBool aReverseSamplesIn = false);
 
 private:
     const std::vector<TInt32> iCoeffs;
@@ -134,7 +144,7 @@ private:
     TUint iOutputFormat;
     TUint iDataScaleBitCount;
 };
-
+*/
 //////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
@@ -157,7 +167,6 @@ private:
 //
 // sampleOut n = sampleIn(n) + coeff(1)*sampleIn(n-1) + coeff(2)*sampleIn(n-2)...
 //
-// for n=1 to x (where x= num samples in + num coeffs):
 
 class FeedbackModel : public INonCopyable
 {
@@ -168,16 +177,31 @@ public:
     void Process(const Brx& aSamplesIn, Bwx& aSamplesOut);
 
 private:
-    const std::vector<TInt32> iCoeffs;
+    std::vector<TInt32> iCoeffs;
+    TUint iStateCount;
     std::vector<TInt32> iSamples;
-    //TUint iCoeffFormat;
-    //TUint iDataFormat;
-    //TUint iOutputFormat;
     TUint iDataScaleBitCount;
     TUint iScaleShiftForSum;
     TUint iScaleShiftForProduct;
     TInt iScaleShiftForOutput;
 };
+
+////////////////////////////////////////////////////////////////////////////
+
+class BurgsMethod
+{
+public:
+    static void Coeffs(TUint aDegree, const Brx& aSamplesIn, std::vector<TInt32>& aCoeffsOut);
+    static void ARMaxEntropy(double *aInputseries, TUint aLength, TUint aDegree, double *aG);
+
+    static void ToInt32(double* aInput, TUint aLength, std::vector<TInt32>& aOutput, TUint aScale);
+    static TInt32 ToInt32(double aVal, TUint Scale);
+
+    static void ToDouble(const Brx& aSamplesIn, double* aOutput, TUint aScale);
+    static double ToDouble(TInt32 aVal, TUint aScale);
+
+};
+
 
 } // Media
 } // OpenHome
