@@ -15,6 +15,7 @@ public:
 private: // from AudioReservoir
     TBool IsFull() const;
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgEncodedStream* aMsg);
     void ProcessMsgIn(MsgAudioEncoded* aMsg);
 private:
