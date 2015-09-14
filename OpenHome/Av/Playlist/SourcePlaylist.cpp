@@ -267,9 +267,8 @@ void SourcePlaylist::Prev()
 void SourcePlaylist::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        if (iPipeline.Seek(iStreamId, aSeconds)) {
-            iPipeline.Play();
-        }
+        iPipeline.Seek(iStreamId, aSeconds);
+        iPipeline.Play();
     }
 }
 

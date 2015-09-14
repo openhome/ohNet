@@ -237,11 +237,11 @@ void PipelineManager::RemoveAllLocked()
     iPipeline->Unblock();
 }
 
-TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
+void PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Seek(%u, %u)\n", aStreamId, aSecondsAbsolute);
-    return iPipeline->Seek(aStreamId, aSecondsAbsolute);
+    iPipeline->Seek(aStreamId, aSecondsAbsolute);
 }
 
 void PipelineManager::Next()

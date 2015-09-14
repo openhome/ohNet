@@ -185,7 +185,7 @@ void SourceUpnpAv::Prev()
 void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
 {
     if (IsActive()) {
-        (void)iPipeline.Seek(iStreamId.load(), aSecondsAbsolute);
+        iPipeline.Seek(iStreamId.load(), aSecondsAbsolute);
     }
 }
 

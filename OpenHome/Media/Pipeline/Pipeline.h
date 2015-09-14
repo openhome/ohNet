@@ -150,7 +150,7 @@ public:
     void RemoveAll(TUint aHaltId);
     void Block(); // use before calls that pass flush or halt ids
     void Unblock(); // must be exactly one of these for each call to Block()
-    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
+    void Seek(TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
     ITrackChangeObserver& TrackChangeObserver() const;

@@ -209,10 +209,8 @@ public:
      *
      * @param[in] aStreamId        Stream identifier.
      * @param[in] aSecondsAbsolute Number of seconds into the track to seek to.
-     *
-     * @return  true if the seek succeeded; false otherwise.
      */
-    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
+    void Seek(TUint aStreamId, TUint aSecondsAbsolute);
     /**
      * Move immediately to the next track from the current UriProvider (or Source).
      *

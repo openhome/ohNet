@@ -38,21 +38,25 @@ Seeker::~Seeker()
     }
 }
 
-TBool Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
+void Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
 {
     LOG(kPipeline, "> Seeker::Seek(%u, %u, %u)\n", aStreamId, aSecondsAbsolute, aRampDown);
     AutoMutex a(iLock);
     if (iState != ERunning) {
         LOG(kPipeline, "Seek request rejected - iState = %u\n", iState);
-        return false;
+        THROW(SeekAlreadyInProgress);
     }
     if (iStreamId != aStreamId) {
         LOG(kPipeline, "Seek request rejected - iStreamId=%u\n", iStreamId);
-        return false;
+        THROW(SeekStreamInvalid);
     }
     if (!iStreamIsSeekable) {
         LOG(kPipeline, "Seek request rejected - stream is not seekable\n");
-        return false;
+        THROW(SeekStreamNotSeekable);
+    }
+    if (iTrackLengthSeconds != 0 && aSecondsAbsolute > iTrackLengthSeconds) {
+        LOG(kPipeline, "Seek request rejected - seekPos (%u) > trackLength (%u)\n", aSecondsAbsolute, iTrackLengthSeconds);
+        THROW(SeekPosInvalid);
     }
 
     iSeekSeconds = aSecondsAbsolute;
@@ -72,7 +76,6 @@ TBool Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMax;
     }
-    return true;
 }
 
 Msg* Seeker::Pull()
@@ -119,7 +122,7 @@ Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
         iState = ERunning;
     }
     iSeekHandle = ISeeker::kHandleError;
-    iStreamIsSeekable = true;
+    iTrackLengthSeconds = 0;
     iStreamPosJiffies = 0;
     iFlushEndJiffies = 0;
     iStreamId = aMsg->StreamId();
@@ -175,8 +178,8 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     iMsgStream = aMsg;
     iMsgStream->AddRef();
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
-    iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate());
-    iStreamPosJiffies *= streamInfo.SampleStart();
+    iTrackLengthSeconds = static_cast<TUint>(streamInfo.TrackLength() / Jiffies::kPerSecond);
+    iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate()) * streamInfo.SampleStart();
     iDecodeDiscardUntilSeekPoint = false;
     if (iSeekInNextStream) {
         iSeekInNextStream = false;
