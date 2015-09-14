@@ -660,7 +660,7 @@ void Invoker::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescriptio
 {
     iInvocation->SetError(aLevel, aCode, aDescription);
     // the above error details might be ignored if an earlier (presumed more detailed) error had been set
-    Error::ELevel level = Error::ELevel::eNone;
+    Error::ELevel level = Error::eNone;
     TUint code = 0;
     const TChar* desc = NULL;
     (void)iInvocation->Error(level, code, desc);
