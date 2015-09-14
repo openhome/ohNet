@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.4.1749",
+        "version": "1.4.1750",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -14,7 +14,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.83",
+        "version": "0.0.84",
         "archive-filename": "${name}-${version}.tar.gz",
         "source-git": "https://github.com/openhome/ohWafHelpers.git"
     },
@@ -32,7 +32,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.146",
+        "version": "0.0.149",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -43,7 +43,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.194",
+        "version":          "0.0.195",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv5": false,
@@ -85,7 +85,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.628",
+        "version": "0.0.630",
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
