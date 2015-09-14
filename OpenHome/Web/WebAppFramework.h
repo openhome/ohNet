@@ -228,35 +228,71 @@ private:
     Semaphore iSem;
 };
 
-/**
- * Internal tab for framework.
- */
-class FrameworkTab : public ITabHandler, public IFrameworkTimerHandler
+class IFrameworkTab
 {
 public:
     static const TUint kInvalidTabId = 0;
 public:
-    FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, ITabDestroyHandler& aDestroyHandler, IFrameworkTabHandler& aTabHandler, TUint aPollTimeoutMs);
+    virtual TUint SessionId() const = 0;
+    virtual void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages) = 0;
+    virtual void Clear() = 0;   // Terminates any blocking sends or outstanding timers.
+    virtual void Receive(const Brx& aMessage) = 0;
+    virtual void LongPoll(IWriter& aWriter) = 0;    // Terminates poll timer on entry; restarts poll timer on exit.
+    virtual ~IFrameworkTab() {}
+};
+
+/**
+ * Internal tab for framework.
+ */
+class FrameworkTab : public IFrameworkTab, public ITabHandler, public IFrameworkTimerHandler
+{
+
+public:
+    FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, IFrameworkTabHandler& aTabHandler, TUint aPollTimeoutMs);
     ~FrameworkTab();
-    TUint SessionId() const;
-    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguages);
-    void Clear();   // Terminates any blocking sends or outstanding timers.
-    void Receive(const Brx& aMessage);
-    void LongPoll(IWriter& aWriter);    // Terminates poll timer on entry; restarts poll timer on exit.
+public: // from IFrameworkTab
+    TUint SessionId() const override;
+    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages) override;
+    void Clear() override;   // Terminates any blocking sends or outstanding timers.
+    void Receive(const Brx& aMessage) override;
+    void LongPoll(IWriter& aWriter) override;    // Terminates poll timer on entry; restarts poll timer on exit.
 private: // from ITabHandler
     void Send(ITabMessage& aMessage);
-private: // from ITimerHandler
+private: // from IFrameworkTimerHandler
     void Complete();
 private:
     const TUint iTabId;
     const TUint iPollTimeoutMs;
     IFrameworkTabHandler& iHandler;
     IFrameworkTimer& iTimer;
-    ITabDestroyHandler& iDestroyHandler;
     TUint iSessionId;
+    ITabDestroyHandler* iDestroyHandler;
     ITab* iTab;
     std::vector<const Brx*> iLanguages; // Takes ownership of pointers.
     mutable Mutex iLock;
+};
+
+/**
+ * Class that brings together a FrameworkTab with a FrameworkTabHandler and the
+ * associated Semaphores and Timers that are required.
+ */
+class FrameworkTabFull : public IFrameworkTab
+{
+public:
+    FrameworkTabFull(Environment& aEnv, TUint aTabId, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
+public: // from IFrameworkTab
+    TUint SessionId() const override;
+    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages) override;
+    void Clear() override;
+    void Receive(const Brx& aMessage) override;
+    void LongPoll(IWriter& aWriter) override;
+private:
+    FrameworkSemaphore iSemRead;
+    FrameworkSemaphore iSemWrite;
+    FrameworkTimer iTabHandlerTimer;
+    FrameworkTabHandler iTabHandler;
+    FrameworkTimer iTabTimer;
+    FrameworkTab iTab;
 };
 
 /**
@@ -264,10 +300,10 @@ private:
  */
 class ITabManager : public ITabDestroyHandler
 {
-//public: // from ITabDestroyHandler
-//    virtual void Destroy(TUint aId) = 0;
+public: // from ITabDestroyHandler
+    virtual void Destroy(TUint aId) = 0;
 public:
-    virtual TUint CreateTab(IWebApp& aApp, const std::vector<const Brx*>& aLanguageList) = 0;    // Returns tab ID; THROWS TabManagerFull, TabAllocatorFull.
+    virtual TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList) = 0;    // Returns tab ID; THROWS TabManagerFull, TabAllocatorFull.
 
     // Following calls may all throw InvalidTabId.
     virtual void LongPoll(TUint aId, IWriter& aWriter) = 0;  // Will block until something is written or poll timeout.
@@ -278,27 +314,15 @@ public:
 class TabManager : public ITabManager, private INonCopyable
 {
 public:
-    TabManager(OpenHome::Environment& aEnv, TUint aMaxTabs, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
+    TabManager(const std::vector<IFrameworkTab*>& aTabs);
     ~TabManager();
 public: // from ITabManager
-    TUint CreateTab(IWebApp& aApp, const std::vector<const Brx*>& aLanguageList);
-    void LongPoll(TUint aId, IWriter& aWriter) override; // FIXME - if this blocks, can't receive any other calls into TabManager! Maybe only hold lock to retrieve tab, then unlock during blocking call. But then, what happens if Destroy() is called while in the unlocked blocking call? The FrameworkTab must have a way of handling that.
+    TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList);
+    void LongPoll(TUint aId, IWriter& aWriter) override;
     void Receive(TUint aId, const Brx& aMessage) override;
     void Destroy(TUint aId) override;
 private:
-
-    // FIXME - maybe have wrapper classes that initialise the tab handlers/framework tabs with real semaphores/timers.
-    // Or, pass in a vector of IFrameworkTabHandlers/IFrameworkTabs (or, even have a wrapper class that pairs the two together so only need to pass in a single vector of IFrameworkTabs, as TabManager doesn't necessarily need to know about the underlying implementation of ITabHandlers).
-
-    // Semaphores/timers belonging to tab handlers.
-    std::vector<FrameworkSemaphore*> iHandlerReadSemaphores;
-    std::vector<FrameworkSemaphore*> iHandlerWriteSemaphores;
-    std::vector<FrameworkTimer*> iHandlerTimers;
-    std::vector<FrameworkTabHandler*> iTabHandlers;
-
-    std::vector<FrameworkTimer*> iTabTimers;    // Timers belonging to tabs.
-    std::vector<FrameworkTab*> iTabs;
-
+    const std::vector<IFrameworkTab*> iTabs;
     TUint iNextSessionId;
     Mutex iLock;
 };

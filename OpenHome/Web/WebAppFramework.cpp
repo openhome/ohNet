@@ -160,6 +160,12 @@ FrameworkTabHandler::FrameworkTabHandler(IFrameworkSemaphore& aSemRead, IFramewo
     , iSemWrite(aSemWrite)
     , iTimer(aTimer)
 {
+    iSemRead.Clear();
+    iSemWrite.Clear();
+    // Allow msgs to be queued via Send().
+    for (TUint i=0; i<aSendQueueSize; i++) {
+        iSemWrite.Signal();
+    }
 }
 
 FrameworkTabHandler::~FrameworkTabHandler()
@@ -212,6 +218,7 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 aWriter.Write(Brn(","));
             }
             msg->Destroy();
+            iSemWrite.Signal();
 
             // If FIFO has been exhausted, output what was queued and return
             // instead of blocking for entire long poll duration.
@@ -226,7 +233,6 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 return;
             }
         }
-        iSemWrite.Signal();
     }
 }
 
@@ -236,6 +242,10 @@ void FrameworkTabHandler::Disable()
     {
         AutoMutex a(iLock);
         iEnabled = false;
+        if (iPolling) {
+            iTimer.Cancel();
+            iPolling = false;
+        }
     }
 
     // Only need to signal iSemRead here. When FIFO is cleared, iSemWrite will be signalled.
@@ -276,7 +286,6 @@ void FrameworkTabHandler::Send(ITabMessage& aMessage)
 void FrameworkTabHandler::Complete()
 {
     AutoMutex a(iLock);
-    Log::Print("FrameworkTabHandler::Complete iPolling: %u\n", iPolling);
     if (iPolling) {
         iPolling = false;
         iSemRead.Signal();      // FIXME - will this mess up sem count? Not if we are still in blocking send method. But what if Cancel() is called?
@@ -354,13 +363,13 @@ void FrameworkSemaphore::Signal()
 
 // FrameworkTab
 
-FrameworkTab::FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, ITabDestroyHandler& aDestroyHandler, IFrameworkTabHandler& aTabHandler, TUint aPollTimeoutMs)
+FrameworkTab::FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, IFrameworkTabHandler& aTabHandler, TUint aPollTimeoutMs)
     : iTabId(aTabId)
     , iPollTimeoutMs(aPollTimeoutMs)
     , iHandler(aTabHandler)
     , iTimer(aTimer)
-    , iDestroyHandler(aDestroyHandler)
     , iSessionId(kInvalidTabId)
+    , iDestroyHandler(nullptr)
     , iTab(nullptr)
     , iLock("FRTL")
 {
@@ -378,13 +387,15 @@ TUint FrameworkTab::SessionId() const
     return iSessionId;
 }
 
-void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguages)
+void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages)
 {
     LOG(kHttp, "FrameworkTab::CreateTab iSessionId: %u, iTabId: %u\n", iSessionId, iTabId);
+    ASSERT(aSessionId != kInvalidTabId);
     AutoMutex a(iLock);
     ASSERT(iTab == nullptr);
     iSessionId = aSessionId;
-    iHandler.Enable();			// Ensure TabHandler is ready to receive messages (and not drop them).
+    iDestroyHandler = &aDestroyHandler;
+    iHandler.Enable();          // Ensure TabHandler is ready to receive messages (and not drop them).
     iLanguages = aLanguages;    // Takes ownership of pointers.
     try {
         iTab = &aTabCreator.Create(iHandler, iLanguages);
@@ -393,10 +404,12 @@ void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, const s
     catch (TabAllocatorFull) {
         iHandler.Disable();
         iSessionId = kInvalidTabId;
+        iDestroyHandler = nullptr;
         for (TUint i=0; i<iLanguages.size(); i++) {
             delete iLanguages[i];
         }
         iLanguages.clear();
+        throw;
     }
 }
 
@@ -458,73 +471,91 @@ void FrameworkTab::Send(ITabMessage& aMessage)
 
 void FrameworkTab::Complete()
 {
-    iDestroyHandler.Destroy(iSessionId);
+    iDestroyHandler->Destroy(iSessionId);
+}
+
+
+// FrameworkTabFull
+
+FrameworkTabFull::FrameworkTabFull(Environment& aEnv, TUint aTabId, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
+    : iSemRead("FTSR", 0)
+    , iSemWrite("FTSW", aSendQueueSize)
+    , iTabHandlerTimer(aEnv)
+    , iTabHandler(iSemRead, iSemWrite, iTabHandlerTimer, aSendQueueSize, aSendTimeoutMs)
+    , iTabTimer(aEnv)
+    , iTab(aTabId, iTabTimer, iTabHandler, aPollTimeoutMs)
+{
+}
+
+TUint FrameworkTabFull::SessionId() const
+{
+    return iTab.SessionId();
+}
+
+void FrameworkTabFull::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages)
+{
+    iTab.CreateTab(aSessionId, aTabCreator, aDestroyHandler, aLanguages);
+}
+
+void FrameworkTabFull::Clear()
+{
+    iTab.Clear();
+}
+
+void FrameworkTabFull::Receive(const Brx& aMessage)
+{
+    iTab.Receive(aMessage);
+}
+
+void FrameworkTabFull::LongPoll(IWriter& aWriter)
+{
+    iTab.LongPoll(aWriter);
 }
 
 
 // TabManager
 
-TabManager::TabManager(Environment& aEnv, TUint aMaxTabs, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
-    : iNextSessionId(FrameworkTab::kInvalidTabId+1)
+TabManager::TabManager(const std::vector<IFrameworkTab*>& aTabs)
+    : iTabs(aTabs)
+    , iNextSessionId(IFrameworkTab::kInvalidTabId+1)
     , iLock("TBML")
 {
-    for (TUint i=0; i<aMaxTabs; i++) {
-        Bws<5> id("HSR");
-        Ascii::AppendDec(id, i);
-        iHandlerReadSemaphores.push_back(new FrameworkSemaphore(id.PtrZ(), 0));
-
-        id.Replace("HSW");
-        Ascii::AppendDec(id, i);
-        iHandlerWriteSemaphores.push_back(new FrameworkSemaphore(id.PtrZ(), aSendQueueSize));
-
-        iHandlerTimers.push_back(new FrameworkTimer(aEnv));
-        iTabHandlers.push_back(new FrameworkTabHandler(*iHandlerReadSemaphores[i], *iHandlerWriteSemaphores[i], *iHandlerTimers[i], aSendQueueSize, aSendTimeoutMs));
-
-        iTabTimers.push_back(new FrameworkTimer(aEnv));
-        iTabs.push_back(new FrameworkTab(i, *iTabTimers[i], *this, *iTabHandlers[i], aPollTimeoutMs));
-    }
 }
 
 TabManager::~TabManager()
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
+        iTabs[i]->Clear();
         delete iTabs[i];    // Will remove any references still held (i.e., when client holds a browser tab open).
-        delete iTabTimers[i];
-
-        delete iTabHandlers[i];
-        delete iHandlerTimers[i];
-        delete iHandlerWriteSemaphores[i];
-        delete iHandlerReadSemaphores[i];
     }
 }
 
-TUint TabManager::CreateTab(IWebApp& aApp, const std::vector<const Brx*>& aLanguageList)
+TUint TabManager::CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
         if (iTabs[i]->SessionId() == FrameworkTab::kInvalidTabId) {
             const TUint sessionId = iNextSessionId++;
-            LOG(kHttp, "TabManager::CreateTab creating tab with session ID: %u for WebApp: ", sessionId);
-            LOG(kHttp, aApp.ResourcePrefix());
-            LOG(kHttp, "\n");
-            iTabs[i]->CreateTab(sessionId, aApp, aLanguageList);	// Takes ownership of (buffers in) language list.
+            iTabs[i]->CreateTab(sessionId, aTabCreator, *this, aLanguageList); // Takes ownership of (buffers in) language list.
             return sessionId;
         }
     }
     LOG(kHttp, "TabManager::CreateTab tab manager full\n");
-    THROW(TabManagerFull);	// Shouldn't reach here unless there isn't enough space.
+    THROW(TabManagerFull);  // Shouldn't reach here unless there isn't enough space.
 }
 
 void TabManager::LongPoll(TUint aId, IWriter& aWriter)
 {
+    ASSERT(aId != IFrameworkTab::kInvalidTabId);
     LOG(kHttp, "TabManager::LongPoll aId: %u\n", aId);
-    FrameworkTab* tab = nullptr;
+    IFrameworkTab* tab = nullptr;
     {
         AutoMutex a(iLock);
         for (TUint i=0; i<iTabs.size(); i++) {
             if (iTabs[i]->SessionId() == aId) {
                 tab = iTabs[i];
+                break;
             }
         }
     }
@@ -538,11 +569,12 @@ void TabManager::LongPoll(TUint aId, IWriter& aWriter)
 
 void TabManager::Receive(TUint aId, const Brx& aMessage)
 {
+    ASSERT(aId != IFrameworkTab::kInvalidTabId);
     LOG(kHttp, "TabManager::Receive aId: %u\n", aId);
     {
         AutoMutex a(iLock);
         for (TUint i=0; i<iTabs.size(); i++) {
-            FrameworkTab* tab = iTabs[i];
+            IFrameworkTab* tab = iTabs[i];
             if (tab->SessionId() == aId) {
                 tab->Receive(aMessage);
                 return;
@@ -554,11 +586,12 @@ void TabManager::Receive(TUint aId, const Brx& aMessage)
 
 void TabManager::Destroy(TUint aId)
 {
+    ASSERT(aId != IFrameworkTab::kInvalidTabId);
     LOG(kHttp, "TabManager::Destroy aId: %u\n", aId);
     {
         AutoMutex a(iLock);
         for (TUint i=0; i<iTabs.size(); i++) {
-            FrameworkTab* tab = iTabs[i];
+            IFrameworkTab* tab = iTabs[i];
             if (tab->SessionId() == aId) {
                 tab->Clear();
                 return;
@@ -625,7 +658,11 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint
     , iStarted(false)
     , iCurrentAdapter(nullptr)
 {
-    iTabManager = new TabManager(iEnv, iMaxLpSessions, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs);
+    std::vector<IFrameworkTab*> tabs;
+    for (TUint i=0; i<iMaxLpSessions; i++) {
+        tabs.push_back(new FrameworkTabFull(aEnv, i, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs));
+    }
+    iTabManager = new TabManager(tabs); // Takes ownership.
     iServer = new SocketTcpServer(iEnv, kName, iPort, aInterface);
 
     Functor functor = MakeFunctor(*this, &WebAppFramework::CurrentAdapterChanged);
