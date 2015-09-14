@@ -13,6 +13,7 @@ class Flusher : public IPipelineElementUpstream, private IMsgProcessor, private 
 {
 public:
     Flusher(IPipelineElementUpstream& aUpstream, const TChar* aId);
+    ~Flusher();
     void DiscardUntilHalt(TUint aId);
     void DiscardUntilFlush(TUint aId);
 public: // from IPipelineElementUpstream
@@ -46,6 +47,7 @@ private:
     TUint iTargetFlushId;
     TUint iLastHaltId;
     TUint iLastFlushId;
+    Msg* iPendingMetatext;
 };
 
 } // namespace Media

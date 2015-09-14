@@ -15,7 +15,15 @@ Flusher::Flusher(IPipelineElementUpstream& aUpstream, const TChar* aId)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iLastHaltId(MsgHalt::kIdInvalid)
     , iLastFlushId(MsgFlush::kIdInvalid)
+    , iPendingMetatext(nullptr)
 {
+}
+
+Flusher::~Flusher()
+{
+    if (iPendingMetatext != nullptr) {
+        iPendingMetatext->RemoveRef();
+    }
 }
 
 void Flusher::DiscardUntilHalt(TUint aId)
@@ -47,12 +55,20 @@ void Flusher::DiscardUntilFlush(TUint aId)
 
 Msg* Flusher::Pull()
 {
-    Msg* msg;
+    Msg* msg = nullptr;
     do {
-        msg = iUpstream.Pull();
         iLock.Wait();
-        msg = msg->Process(*this);
+        if (!IsFlushing() && iPendingMetatext != nullptr) {
+            msg = iPendingMetatext;
+            iPendingMetatext = nullptr;
+        }
         iLock.Signal();
+        if (msg == nullptr) {
+            msg = iUpstream.Pull();
+            iLock.Wait();
+            msg = msg->Process(*this);
+            iLock.Signal();
+        }
     } while (msg == NULL);
     return msg;
 }
@@ -81,6 +97,10 @@ Msg* Flusher::ProcessMsg(MsgTrack* aMsg)
     /*if (IsFlushing()) {
         Log::Print("Flusher(%s) flushing Track %u\n", iId, aMsg->Track().Id());
     }*/
+    if (IsFlushing() && aMsg->StartOfStream() && iPendingMetatext != nullptr) {
+        iPendingMetatext->RemoveRef();
+        iPendingMetatext = nullptr;
+    }
     return ProcessFlushable(aMsg);
 }
 
@@ -107,7 +127,14 @@ Msg* Flusher::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 
 Msg* Flusher::ProcessMsg(MsgMetaText* aMsg)
 {
-    return ProcessFlushable(aMsg);
+    if (IsFlushing()) {
+        if (iPendingMetatext != nullptr) {
+            iPendingMetatext->RemoveRef();
+        }
+        iPendingMetatext = aMsg;
+        return nullptr;
+    }
+    return aMsg;
 }
 
 Msg* Flusher::ProcessMsg(MsgStreamInterrupted* aMsg)
