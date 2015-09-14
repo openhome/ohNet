@@ -192,9 +192,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
     Reinitialise(aUri);
 
-    LOG(kMedia, "ProtocolHttp::Stream ");
-    LOG(kMedia, iUri.AbsoluteUri());
-    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolHttp::Stream(%.*s)\n", PBUF(aUri));
 
     if (iUri.Scheme() != Brn("http")) {
         LOG(kMedia, "ProtocolHttp::Stream scheme not recognised\n");

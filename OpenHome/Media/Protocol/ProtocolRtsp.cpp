@@ -48,9 +48,7 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
     iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);
     iLock.Signal();
-    LOG(kMedia, "ProtocolRtsp::Stream ");
-    LOG(kMedia, iUri.AbsoluteUri());
-    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolRtsp::Stream(%.*s)\n", PBUF(aUri));
 
     if (iUri.Scheme() != Brn("rtsp") && iUri.Scheme() != Brn("mms")) {
         LOG(kMedia, "ProtocolRtsp::Stream Scheme not recognised\n");

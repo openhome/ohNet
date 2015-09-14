@@ -310,9 +310,7 @@ void ProtocolRaop::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstrea
 
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
-    LOG(kMedia, "ProtocolRaop::Stream ");
-    LOG(kMedia, aUri);
-    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolRaop::Stream(%.*s)\n", PBUF(aUri));
 
     {
         AutoMutex a(iLockRaop);

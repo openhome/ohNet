@@ -48,9 +48,7 @@ void FileResourceHandler::SetResource(const Brx& aUri)
         iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
     }
     catch (FileOpenError&) {
-        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: ");
-        LOG(kHttp, filename);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: %.*s\n", PBUF(filename));
         THROW(ResourceInvalid);
     }
 
@@ -471,9 +469,8 @@ TUint TabManager::CreateTab(IWebApp& aApp, std::vector<const Brx*>& aLanguageLis
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
         if (!iTabs[i]->Allocated()) {
-            LOG(kHttp, "TabManager::CreateTab creating tab with ID: %u for WebApp: ", i);
-            LOG(kHttp, aApp.ResourcePrefix());
-            LOG(kHttp, "\n");
+            const Brx& resPrefix = aApp.ResourcePrefix();
+            LOG(kHttp, "TabManager::CreateTab creating tab with ID: %u for WebApp: %.*s\n", i, PBUF(resPrefix));
             ITab& tab = aApp.Create(*iTabs[i], aLanguageList);
             iTabs[i]->Set(tab, aLanguageList);  // Takes ownership of (buffers in) language list.
             TUint clientId = TabManagerIdToClientId(i);
@@ -797,11 +794,8 @@ void HttpSession::Run()
         const Brx& method = iReaderRequest->Method();
         iReaderRequest->UnescapeUri();
 
-        LOG(kHttp, "HttpSession::Run Method: ");
-        LOG(kHttp, method);
-        LOG(kHttp, ", URI: ");
-        LOG(kHttp, iReaderRequest->Uri());
-        LOG(kHttp, "\n");
+        const Brx& uri = iReaderRequest->Uri();
+        LOG(kHttp, "HttpSession::Run Method: %.*s, URI: %.*s\n", PBUF(method), PBUF(uri));
 
         iResponseStarted = false;
         iResponseEnded = false;
@@ -871,11 +865,8 @@ void HttpSession::Get()
     const Brx& uri = iReaderRequest->Uri();
     IResourceHandler& resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
 
-    LOG(kHttp, "HttpSession::Get URI: ");
-    LOG(kHttp, uri);
-    LOG(kHttp, " Content-Type: ");
-    LOG(kHttp, resourceHandler.MimeType());
-    LOG(kHttp, "\n");
+    const Brx& mimeType = resourceHandler.MimeType();
+    LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
     // Write response headers.
 

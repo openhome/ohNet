@@ -102,9 +102,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);
 
-    LOG(kMedia, "ProtocolHttp::Stream ");
-    LOG(kMedia, iUri.AbsoluteUri());
-    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolHttp::Stream(%.*s)\n", PBUF(aUri));
     if (iUri.Scheme() != Brn("file")) {
         LOG(kMedia, "ProtocolFile::Stream Scheme not recognised\n");
         return EProtocolErrorNotSupported;

@@ -120,12 +120,7 @@ void Filler::Quit()
 
 void Filler::Play(const Brx& aMode, TUint aTrackId)
 {
-    if (Debug::TestLevel(Debug::kMedia)) {
-        Bws<256> buf("Filler::Play(");
-        buf.Append(aMode);
-        buf.AppendPrintf(", %u)\n", aTrackId);
-        Log::Print(buf);
-    }
+    LOG(kMedia, "Filler::Play(%.*s, %u)\n", PBUF(aMode), aTrackId);
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->Begin(aTrackId);
@@ -135,12 +130,7 @@ void Filler::Play(const Brx& aMode, TUint aTrackId)
 
 void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 {
-    if (Debug::TestLevel(Debug::kMedia)) {
-        Bws<256> buf("Filler::PlayLater(");
-        buf.Append(aMode);
-        buf.AppendPrintf(", %u)\n", aTrackId);
-        Log::Print(buf);
-    }
+    LOG(kMedia, "Filler::PlayLater(%.*s, %u)\n", PBUF(aMode), aTrackId);
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->BeginLater(aTrackId);
@@ -171,12 +161,7 @@ TUint Filler::Flush()
 
 TBool Filler::Next(const Brx& aMode)
 {
-    if (Debug::TestLevel(Debug::kMedia)) {
-        Bws<256> buf("Filler::Next(");
-        buf.Append(aMode);
-        buf.Append(")\n");
-        Log::Print(buf);
-    }
+    LOG(kMedia, "Filler::Next(%.*s)\n", PBUF(aMode));
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
@@ -190,12 +175,7 @@ TBool Filler::Next(const Brx& aMode)
 
 TBool Filler::Prev(const Brx& aMode)
 {
-    if (Debug::TestLevel(Debug::kMedia)) {
-        Bws<256> buf("Filler::Prev(");
-        buf.Append(aMode);
-        buf.Append(")\n");
-        Log::Print(buf);
-    }
+    LOG(kMedia, "Filler::Prev(%.*s)\n", PBUF(aMode));
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
@@ -333,14 +313,12 @@ void Filler::Run()
                 CheckForKill();
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
                 if (res == EProtocolErrorNotSupported) {
-                    LOG(kMedia, "Filler::Run Track %u not supported. URI: ", iTrack->Id());
-                    LOG(kMedia, iTrack->Uri());
-                    LOG(kMedia, "\n");
+                    LOG(kMedia, "Filler::Run Track %u not supported. URI: %.*s\n",
+                                iTrack->Id(), PBUF(iTrack->Uri()));
                 }
                 else if (res == EProtocolStreamErrorUnrecoverable) {
-                    LOG(kMedia, "Filler::Run Track %u had unrecoverable error. URI: ", iTrack->Id());
-                    LOG(kMedia, iTrack->Uri());
-                    LOG(kMedia, "\n");
+                    LOG(kMedia, "Filler::Run Track %u had unrecoverable error. URI: %.*s\n",
+                                iTrack->Id(), PBUF(iTrack->Uri()));
                 }
                 LOG(kMedia, "< iUriStreamer->DoStream(%u)\n", iTrack->Id());
             }

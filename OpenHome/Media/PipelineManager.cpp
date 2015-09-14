@@ -150,9 +150,7 @@ ITrackChangeObserver& PipelineManager::TrackChangeObserver() const
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
-    LOG(kPipeline, "PipelineManager::Begin(");
-    LOG(kPipeline, aMode);
-    LOG(kPipeline, ", %u)\n", aTrackId);
+    LOG(kPipeline, "PipelineManager::Begin(%.*s, %u)\n", PBUF(aMode), aTrackId);
     iLock.Wait();
     iMode.Replace(aMode);
     iTrackId = aTrackId;
@@ -196,9 +194,7 @@ void PipelineManager::Stop()
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
-    LOG(kPipeline, "PipelineManager::StopPrefetch(");
-    LOG(kPipeline, aMode);
-    LOG(kPipeline, ", %u)\n", aTrackId);
+    LOG(kPipeline, "PipelineManager::StopPrefetch(%.*s, %u)\n", PBUF(aMode), aTrackId);
     iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
@@ -376,14 +372,7 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
 {
-    {
-        if (Debug::TestLevel(Debug::kPipeline)) {
-            Bws<128> buf("PipelineManager::SeekRestream(");
-            buf.Append(aMode);
-            buf.AppendPrintf(", %u)\n", aTrackId);
-            Log::Print(buf);
-        }
-    }
+    LOG(kPipeline, "PipelineManager::SeekRestream(%.*s, %u)\n", PBUF(aMode), aTrackId);
     (void)iFiller->Stop();
     iIdManager->InvalidateAll();
     const TUint flushId = iFiller->Flush();

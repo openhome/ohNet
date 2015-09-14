@@ -297,9 +297,7 @@ void SourceReceiver::Stop()
 
 void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
-    LOG(kSongcast, "SourceReceiver::SetSender(");
-    LOG(kSongcast, aUri);
-    LOG(kSongcast, ")\n");
+    LOG(kSongcast, "SourceReceiver::SetSender(%.*s)\n", PBUF(aUri));
     EnsureActive();
     AutoMutex a(iLock);
     if (aUri.Bytes() > 0) {
@@ -337,11 +335,8 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 
 void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
 {
-    LOG(kSongcast, "SourceReceiver::ZoneUriChanged(");
-    LOG(kSongcast, aZone);
-    LOG(kSongcast, ", ");
-    LOG(kSongcast, aUri);
-    LOG(kSongcast, ")\n");
+    LOG(kSongcast, "SourceReceiver::ZoneUriChanged(%.*s, %.*s)\n",
+                   PBUF(aZone), PBUF(aUri));
     // FIXME - use of iZone/iTrackUri not threadsafe
     if (aZone == iZone && aUri != iTrackUri) {
         iZoneHandler->SetCurrentSenderUri(aUri);
@@ -396,9 +391,8 @@ void SourceReceiver::EnsureActive()
 
 void SourceReceiver::UriChanged()
 {
-    LOG(kSongcast, "SourceReceiver::UriChanged().  IsActive=%u, Playing=%u, url=", IsActive(), iPlaying);
-    LOG(kSongcast, iTrackUri);
-    LOG(kSongcast, "\n");
+    LOG(kSongcast, "SourceReceiver::UriChanged().  IsActive=%u, Playing=%u, url=%.*s\n",
+                   IsActive(), iPlaying, PBUF(iTrackUri));
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
     if (track == nullptr) {
         iTrackId = Track::kIdNone;

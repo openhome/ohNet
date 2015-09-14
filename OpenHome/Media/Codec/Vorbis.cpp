@@ -556,9 +556,7 @@ void CodecVorbis::OutputMetaData()
 
     for (TInt i=0; i<vc->comments; i++) {
         Brn comment(reinterpret_cast<const TByte*>(vc->user_comments[i]), vc->comment_lengths[i]);
-        LOG(kCodec, "CodecVorbis::OutputMetaData comment: ");
-        LOG(kCodec, comment);
-        LOG(kCodec, "\n");
+        LOG(kCodec, "CodecVorbis::OutputMetaData comment: %.*s\n", PBUF(comment));
 
         Parser parser(comment);
         Brn tag = parser.Next('=');

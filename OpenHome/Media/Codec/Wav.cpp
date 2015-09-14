@@ -279,9 +279,7 @@ void CodecWav::ProcessDataChunk()
 
 TUint CodecWav::FindChunk(const Brx& aChunkId)
 {
-    LOG(kCodec, "CodecWav::FindChunk: ");
-    LOG(kCodec, aChunkId);
-    LOG(kCodec, "\n");
+    LOG(kCodec, "CodecWav::FindChunk: %.*s\n", PBUF(aChunkId));
 
     for (;;) {
         iReadBuf.SetBytes(0);

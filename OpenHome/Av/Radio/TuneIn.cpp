@@ -258,9 +258,7 @@ void RadioPresetsTuneIn::DoRefresh()
                     key.Set(parser.Next('='));
                 }
                 if (!foundPresetNumber) {
-                    LOG2(kSources, kError, "No preset_id for TuneIn preset ");
-                    LOG2(kSources, kError, iPresetTitle);
-                    LOG2(kSources, kError, "\n");
+                    LOG2(kSources, kError, "No preset_id for TuneIn preset %.*s\n", PBUF(iPresetTitle));
                     continue;
                 }
                 if (presetNumber > maxPresets) {
@@ -342,9 +340,7 @@ TBool RadioPresetsTuneIn::ValidateKey(Parser& aParser, const TChar* aKey, TBool 
     Brn key = aParser.Next('=');
     if (key != Brn(aKey)) {
         if (aLogErrors) {
-            LOG2(kError, kSources, "Unexpected order of OPML elements.  Expected \"%s\", got ", aKey);
-            LOG2(kError, kSources, key);
-            LOG2(kError, kSources, "\n");
+            LOG2(kError, kSources, "Unexpected order of OPML elements.  Expected \"%s\", got %.*s\n", aKey, PBUF(key));
         }
         return false;
     }
@@ -356,9 +352,7 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
     (void)aParser.Next('\"');
     Brn value = aParser.Next('\"');
     if (value.Bytes() > aValue.MaxBytes()) {
-        LOG2(kError, kSources, "Unexpectedly long %s for preset - ", aKey);
-        LOG2(kError, kSources, value);
-        LOG2(kError, kSources, "\n");
+        LOG2(kError, kSources, "Unexpectedly long %s for preset - %.*s\n", aKey, PBUF(value));
         return false;
     }
     aValue.Replace(value);
