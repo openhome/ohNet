@@ -43,7 +43,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.192",
+        "version":          "0.0.194",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv5": false,

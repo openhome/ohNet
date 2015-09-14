@@ -310,7 +310,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
 
     // Convert to approximate byte position in file.
     TUint64 bytes = aSample * iController->StreamLength()/iSamplesTotal;
-    if (bytes > iController->StreamLength()) {
+    if (bytes >= iController->StreamLength()) {
         bytes = iController->StreamLength() - 1;
     }
 
@@ -346,7 +346,7 @@ TBool CodecVorbis::FindSync()
         searchSize = static_cast<TUint>(iController->StreamLength());
     }
     else {
-        offset = iController->StreamLength()-searchSize;
+        offset = iController->StreamLength() - searchSize;
     }
 
     while (keepLooking) {

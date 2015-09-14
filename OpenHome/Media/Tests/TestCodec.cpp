@@ -783,7 +783,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint64 aDurationJiffies, TUi
         TEST(iSeekSuccess);
 
         if (aCodec != AudioFileDescriptor::kCodecVorbis) {
-            // Vorbis seeking is isn't particularly accurate
+            // Vorbis seeking isn't particularly accurate
 
             // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
             TEST(iJiffies >= 0);   // Lower bound.
