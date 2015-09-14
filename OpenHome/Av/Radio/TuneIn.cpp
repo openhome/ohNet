@@ -84,7 +84,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, const Brx& aPartnerId,
     iConfigUsername = new ConfigText(aConfigInit, kConfigKeyUsername, kMaxUserNameBytes, kConfigUsernameDefault);
     iListenerId = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &RadioPresetsTuneIn::UsernameChanged));
 
-    new CredentialsTuneIn(*iConfigUsername, aCredentialsManager, aPartnerId); // ownership transferred to aCredentialsManager
+    new CredentialsTuneIn(aCredentialsManager, aPartnerId); // ownership transferred to aCredentialsManager
 }
 
 RadioPresetsTuneIn::~RadioPresetsTuneIn()
@@ -371,21 +371,13 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
 
 const Brn CredentialsTuneIn::kId("tunein.com");
 
-CredentialsTuneIn::CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager, const Brx& aPartnerId)
-    : iConfigUsername(aConfigUsername)
-    , iCredentialsManager(aCredentialsManager)
+CredentialsTuneIn::CredentialsTuneIn(Credentials& aCredentialsManager, const Brx& aPartnerId)
 {
     aCredentialsManager.Add(this);
     Bws<128> data("{\"partnerId\": \"");
     data.Append(aPartnerId);
     data.Append("\"}");
     aCredentialsManager.SetState(kId, Brx::Empty(), data);
-    iSubscriberId = iConfigUsername.Subscribe(MakeFunctorConfigText(*this, &CredentialsTuneIn::UsernameChanged));
-}
-
-CredentialsTuneIn::~CredentialsTuneIn()
-{
-    iConfigUsername.Unsubscribe(iSubscriberId);
 }
 
 const Brx& CredentialsTuneIn::Id() const
@@ -393,9 +385,8 @@ const Brx& CredentialsTuneIn::Id() const
     return kId;
 }
 
-void CredentialsTuneIn::CredentialsChanged(const Brx& aUsername, const Brx& /*aPassword*/)
+void CredentialsTuneIn::CredentialsChanged(const Brx& /*aUsername*/, const Brx& /*aPassword*/)
 {
-    iConfigUsername.Set(aUsername);
 }
 
 void CredentialsTuneIn::UpdateStatus()
@@ -410,9 +401,4 @@ void CredentialsTuneIn::Login(Bwx& aToken)
 void CredentialsTuneIn::ReLogin(const Brx& /*aCurrentToken*/, Bwx& aNewToken)
 {
     aNewToken.Replace(Brx::Empty());
-}
-
-void CredentialsTuneIn::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
-{
-    iCredentialsManager.Set(kId, aKvp.Value());
 }
