@@ -192,7 +192,9 @@ Msg* Skipper::ProcessMsg(MsgWait* aMsg)
 Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
-    return aMsg;
+    auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* Skipper::ProcessMsg(MsgBitRate* aMsg)
