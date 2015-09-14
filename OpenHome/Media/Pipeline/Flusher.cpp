@@ -69,7 +69,7 @@ Msg* Flusher::Pull()
             msg = msg->Process(*this);
             iLock.Signal();
         }
-    } while (msg == NULL);
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -122,7 +122,7 @@ Msg* Flusher::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Flusher::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Flusher::ProcessMsg(MsgMetaText* aMsg)
@@ -209,7 +209,7 @@ Msg* Flusher::ProcessMsg(MsgSilence* aMsg)
 Msg* Flusher::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return NULL;
+    return nullptr;
 }
 
 Msg* Flusher::ProcessMsg(MsgQuit* aMsg)
