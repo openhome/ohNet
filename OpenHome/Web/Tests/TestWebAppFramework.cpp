@@ -1951,7 +1951,7 @@ void SuiteWebAppFramework::TestDeleteWhileClientTabOpen()
 void TestWebAppFramework(Environment& aEnv)
 {
     Runner runner("WebApp Framework tests\n");
-    runner.Add(new SuiteFrameworkTabHandler());
+    //runner.Add(new SuiteFrameworkTabHandler());
     runner.Add(new SuiteFrameworkTab());
     runner.Add(new SuiteTabManager(aEnv));
     runner.Add(new SuiteWebAppFramework(aEnv));
