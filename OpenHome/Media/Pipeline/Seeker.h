@@ -2,9 +2,15 @@
 #define HEADER_PIPELINE_SEEKER
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/Flusher.h>
+
+EXCEPTION(SeekAlreadyInProgress)
+EXCEPTION(SeekStreamInvalid)
+EXCEPTION(SeekStreamNotSeekable)
+EXCEPTION(SeekPosInvalid)
 
 namespace OpenHome {
 namespace Media {
@@ -26,7 +32,7 @@ class Seeker : public IPipelineElementUpstream, private IMsgProcessor, private I
 public:
     Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration);
     virtual ~Seeker();
-    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
+    void Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
@@ -80,6 +86,7 @@ private:
     BwsMode iMode;
     TUint iTrackId;
     TUint iStreamId;
+    TUint iTrackLengthSeconds;
     TBool iStreamIsSeekable;
     TUint64 iStreamPosJiffies;
     TUint64 iFlushEndJiffies;

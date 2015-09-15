@@ -110,7 +110,7 @@ void SuiteDrainer::Setup()
     MsgFactoryInitParams init;
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDrainer = new Drainer(*iMsgFactory, *this);
-    iMsgDrain = NULL;
+    iMsgDrain = nullptr;
     iTimer = new Timer(iEnv, MakeFunctor(*this, &SuiteDrainer::TimerCallback), "SuiteDrainer");
 }
 
@@ -251,7 +251,7 @@ void SuiteDrainer::PullNext(EMsgType aExpectedMsg)
 
 void SuiteDrainer::TimerCallback()
 {
-    ASSERT(iMsgDrain != NULL);
+    ASSERT(iMsgDrain != nullptr);
     iMsgDrain->ReportDrained();
 }
 

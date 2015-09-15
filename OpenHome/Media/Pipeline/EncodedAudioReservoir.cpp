@@ -24,6 +24,11 @@ TBool EncodedAudioReservoir::IsFull() const
             EncodedStreamCount() >= iMaxStreamCount);
 }
 
+void EncodedAudioReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
+{
+    BlockIfFull();
+}
+
 void EncodedAudioReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
 {
     BlockIfFull();

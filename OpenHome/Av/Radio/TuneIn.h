@@ -93,20 +93,13 @@ class CredentialsTuneIn : public ICredentialConsumer, private INonCopyable
 {
     static const Brn kId;
 public:
-    CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager, const Brx& aPartnerId);
-    ~CredentialsTuneIn();
+    CredentialsTuneIn(Credentials& aCredentialsManager, const Brx& aPartnerId);
 private: // from ICredentialConsumer
     const Brx& Id() const override;
     void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
     void UpdateStatus() override;
     void Login(Bwx& aToken) override;
     void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) override;
-private:
-    void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-private:
-    Configuration::ConfigText& iConfigUsername;
-    ICredentials& iCredentialsManager;
-    TUint iSubscriberId;
 };
 
 } // namespace Av

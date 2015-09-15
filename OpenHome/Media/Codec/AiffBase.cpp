@@ -106,9 +106,7 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
 
 TUint CodecAiffBase::FindChunk(const Brx& aChunkId)
 {
-    LOG(kCodec, "CodecAiffBase::FindChunk: ");
-    LOG(kCodec, aChunkId);
-    LOG(kCodec, "\n");
+    LOG(kCodec, "CodecAiffBase::FindChunk(%.*s)\n", PBUF(aChunkId));
 
     for (;;) {
         iReadBuf.SetBytes(0);

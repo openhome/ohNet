@@ -32,6 +32,11 @@ TBool DecodedAudioReservoir::IsFull() const
             DecodedStreamCount() >= iMaxStreamCount);
 }
 
+void DecodedAudioReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
+{
+    DoProcessMsgIn();
+}
+
 void DecodedAudioReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
 {
     DoProcessMsgIn();

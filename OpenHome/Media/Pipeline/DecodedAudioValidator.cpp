@@ -25,7 +25,7 @@ const TUint DecodedAudioValidator::kSupportedMsgTypes =   eMode
 DecodedAudioValidator::DecodedAudioValidator(IPipelineElementUpstream& aUpstream, const TChar* aId)
     : PipelineElement(kSupportedMsgTypes)
     , iUpstream(&aUpstream)
-    , iDownstream(NULL)
+    , iDownstream(nullptr)
     , iId(aId)
     , iStreamPos(0)
     , iExpectDecodedStreamBeforeAudio(true)
@@ -35,7 +35,7 @@ DecodedAudioValidator::DecodedAudioValidator(IPipelineElementUpstream& aUpstream
 
 DecodedAudioValidator::DecodedAudioValidator(const TChar* aId, IPipelineElementDownstream& aDownstream)
     : PipelineElement(kSupportedMsgTypes)
-    , iUpstream(NULL)
+    , iUpstream(nullptr)
     , iDownstream(&aDownstream)
     , iId(aId)
     , iStreamPos(0)
@@ -51,7 +51,7 @@ void DecodedAudioValidator::SetEnabled()
 
 Msg* DecodedAudioValidator::Pull()
 {
-    ASSERT(iUpstream != NULL);
+    ASSERT(iUpstream != nullptr);
     Msg* msg = iUpstream->Pull();
     if (iEnabled) {
         msg = msg->Process(*this);
@@ -61,7 +61,7 @@ Msg* DecodedAudioValidator::Pull()
 
 void DecodedAudioValidator::Push(Msg* aMsg)
 {
-    ASSERT(iDownstream != NULL);
+    ASSERT(iDownstream != nullptr);
     if (iEnabled) {
         aMsg = aMsg->Process(*this);
     }

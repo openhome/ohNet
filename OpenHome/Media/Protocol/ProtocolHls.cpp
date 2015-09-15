@@ -225,9 +225,8 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aT
 
 void HlsM3uReader::SetUri(const Uri& aUri)
 {
-    LOG(kMedia, ">HlsM3uReader::SetUri ");
-    LOG(kMedia, aUri.AbsoluteUri());
-    LOG(kMedia, "\n");
+    const Brx& absUri = aUri.AbsoluteUri();
+    LOG(kMedia, ">HlsM3uReader::SetUri(%.*s)\n", PBUF(absUri));
     AutoMutex a(iLock);
     ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
     // iInterrupted is set to true at construction, so will be true on first call to SetUri().
@@ -309,9 +308,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             if (expectUri) {
                 segmentUri = Ascii::Trim(iNextLine);
                 expectUri = false;
-                LOG(kMedia, "HlsM3uReader::NextSegmentUri segmentUri: ");
-                LOG(kMedia, segmentUri);
-                LOG(kMedia, "\n");
+                LOG(kMedia, "HlsM3uReader::NextSegmentUri segmentUri: %.*s\n", PBUF(segmentUri));
                 iLastSegment++;
             }
             else {
@@ -328,9 +325,8 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                         Brn durationDecimalBuf = durationParser.Next();
                         if (!durationParser.Finished() && durationDecimalBuf.Bytes()>3) {
                             // Error in M3U8 format.
-                            LOG(kMedia, "HlsM3uReader::NextSegmentUri error while parsing duration of next segment. durationDecimalBuf: ");
-                            LOG(kMedia, durationDecimalBuf);
-                            LOG(kMedia, "\n");
+                            LOG(kMedia, "HlsM3uReader::NextSegmentUri error while parsing duration of next segment. durationDecimalBuf: %.*s\n",
+                                        PBUF(durationDecimalBuf));
                             iError = true;
                             THROW(HlsVariantPlaylistError);
                         }
@@ -421,9 +417,8 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     Close();
     TUint code = iSocket.Connect(iUri);
     if (code >= HttpStatus::kSuccessCodes && code < HttpStatus::kRedirectionCodes) {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist successfully connected to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist successfully connected to %.*s\n", PBUF(absUri));
         {
             AutoMutex a(iLock);
             iConnected = true;
@@ -433,15 +428,13 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     }
     else if (code == 0) {
         // Connection error. Should be temporary and recoverable.
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect to %.*s\n", PBUF(absUri));
         return false;
     }
     else {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist encountered code %u while trying to connect to ", code);
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist encountered code %u while trying to connect to %.*s\n", code, PBUF(absUri));
         THROW(HlsVariantPlaylistError);
     }
 
@@ -717,9 +710,8 @@ void SegmentStreamer::GetNextSegment()
     Close();
     TUint code = iSocket.Connect(iUri);
     if (code >= HttpStatus::kSuccessCodes && code < HttpStatus::kRedirectionCodes) {
-        LOG(kMedia, "SegmentStreamer::GetNextSegment successfully connected to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "SegmentStreamer::GetNextSegment successfully connected to %.*s\n", PBUF(absUri));
         {
             AutoMutex a(iLock);
             iConnected = true;
@@ -728,13 +720,13 @@ void SegmentStreamer::GetNextSegment()
         //iOffset = 0;
     }
     else if (code == 0) {
-        LOG(kMedia, "SegmentStreamer::GetNextSegment unable to (re-)connect to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "SegmentStreamer::GetNextSegment unable to (re-)connect to %.*s\n", PBUF(absUri));
         THROW(HlsReaderError);  // Potentially recoverable, but don't want any reconnect logic in here.
     }
     else {
-        LOG(kMedia, "SegmentStreamer::GetNextSegment encountered code %u while trying to connect to ", code);
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "SegmentStreamer::GetNextSegment encountered code %u while trying to connect to %.*s\n", code, PBUF(absUri));
         LOG(kMedia, iUri.AbsoluteUri());
         LOG(kMedia, "\n");
         iError = true;
@@ -826,9 +818,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     Reinitialise();
     Uri uriHls(aUri);
-    LOG(kMedia, "ProtocolHls::Stream ");
-    LOG(kMedia, uriHls.AbsoluteUri());
-    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolHls::Stream(%.*s)\n", PBUF(aUri));
 
     if (uriHls.Scheme() != Brn("hls")) {
         LOG(kMedia, "ProtocolHls::Stream scheme not recognised\n");

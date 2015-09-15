@@ -456,9 +456,8 @@ Msg* ContainerController::RecogniseContainer()
                         }
                     }
                     catch (CodecPulledNullMsg&) {
-                        LOG(kCodec, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise ");
-                        LOG(kCodec, container->Id());
-                        LOG(kCodec, "\n");
+                        const Brx& id = container->Id();
+                        LOG(kCodec, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise %.*s\n", PBUF(id));
 
                         iRecogIdx++;
                         iState = eRecognitionSelectContainer;

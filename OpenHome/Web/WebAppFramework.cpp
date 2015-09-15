@@ -48,9 +48,7 @@ void FileResourceHandler::SetResource(const Brx& aUri)
         iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
     }
     catch (FileOpenError&) {
-        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: ");
-        LOG(kHttp, filename);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: %.*s\n", PBUF(filename));
         THROW(ResourceInvalid);
     }
 
@@ -917,11 +915,8 @@ void HttpSession::Run()
         const Brx& method = iReaderRequest->Method();
         iReaderRequest->UnescapeUri();
 
-        LOG(kHttp, "HttpSession::Run Method: ");
-        LOG(kHttp, method);
-        LOG(kHttp, ", URI: ");
-        LOG(kHttp, iReaderRequest->Uri());
-        LOG(kHttp, "\n");
+        const Brx& uri = iReaderRequest->Uri();
+        LOG(kHttp, "HttpSession::Run Method: %.*s, URI: %.*s\n", PBUF(method), PBUF(uri));
 
         iResponseStarted = false;
         iResponseEnded = false;
@@ -991,11 +986,8 @@ void HttpSession::Get()
     const Brx& uri = iReaderRequest->Uri();
     IResourceHandler& resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
 
-    LOG(kHttp, "HttpSession::Get URI: ");
-    LOG(kHttp, uri);
-    LOG(kHttp, " Content-Type: ");
-    LOG(kHttp, resourceHandler.MimeType());
-    LOG(kHttp, "\n");
+    const Brx& mimeType = resourceHandler.MimeType();
+    LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
     // Write response headers.
 

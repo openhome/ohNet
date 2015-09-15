@@ -138,9 +138,7 @@ ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
         LOG(kMedia, "ProtocolTidal::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
-    LOG(kMedia, "ProtocolTidal::Stream(");
-    LOG(kMedia, aUri);
-    LOG(kMedia, ")\n");
+    LOG(kMedia, "ProtocolTidal::Stream(%.*s)\n", PBUF(aUri));
     if (!TryGetTrackId(iUri.Query(), iTrackId)) {
         return EProtocolStreamErrorUnrecoverable;
     }
@@ -389,7 +387,7 @@ TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
         return 0;
     }
     catch(ReaderError&) {
-        LOG(kMedia, "ProtocolTidal::WriteRequest EeaderError\n");
+        LOG(kMedia, "ProtocolTidal::WriteRequest ReaderError\n");
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();

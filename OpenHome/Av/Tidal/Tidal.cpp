@@ -100,8 +100,8 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
             LOG(kError, "Http error - %d - in response to Tidal GetStreamUrl.  Some/all of response is:\n", code);
-            LOG(kError, iReaderUntil.Read(kReadBufferBytes));
-            LOG(kError, "\n");
+            Brn buf = iReaderUntil.Read(kReadBufferBytes);
+            LOG(kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);
         }
 
@@ -246,9 +246,7 @@ TBool Tidal::TryLoginLocked()
                     iCredentialsState.SetState(kId, error, Brx::Empty());
                 }
                 updatedStatus = true;
-                LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
-                LOG(kError, status);
-                LOG(kError, "\n");
+                LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n%.*s\n", code, PBUF(status));
                 THROW(ReaderError);
             }
 
@@ -302,8 +300,8 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
         const TUint code = iReaderResponse.Status().Code();
         if (code < 200 || code >= 300) {
             LOG(kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
-            LOG(kError, iReaderUntil.Read(kReadBufferBytes));
-            LOG(kError, "\n");
+            Brn buf = iReaderUntil.Read(kReadBufferBytes);
+            LOG(kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);
         }
         success = true;
@@ -353,9 +351,7 @@ TBool Tidal::TryGetSubscriptionLocked()
                 error.AppendPrintf("Subscription Error (Response Code %d): Please Try Again.", code);
             }
             updateStatus = true;
-            LOG(kError, "Http error - %d - in response to Tidal subscription.  Some/all of response is:\n", code);
-            LOG(kError, status);
-            LOG(kError, "\n");
+            LOG(kError, "Http error - %d - in response to Tidal subscription.  Some/all of response is:\n%.*s\n", code, PBUF(status));
             THROW(ReaderError);
         }
         Brn quality = ReadString(iReaderUntil, Brn("highestSoundQuality"));

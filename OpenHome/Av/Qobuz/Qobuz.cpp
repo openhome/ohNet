@@ -119,8 +119,8 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         const TUint code = WriteRequestReadResponse(Http::kMethodGet, iPathAndQuery);
         if (code != 200) {
             LOG(kError, "Http error - %d - in response to Qobuz::TryGetStreamUrl.  Some/all of response is:\n", code);
-            LOG(kError, iDechunker.Read(kReadBufferBytes));
-            LOG(kError, "\n");
+            Brn buf = iDechunker.Read(kReadBufferBytes);
+            LOG(kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);
         }
 
@@ -255,9 +255,7 @@ TBool Qobuz::TryLoginLocked()
                 iCredentialsState.SetState(kId, status, Brx::Empty());
             }
             updatedStatus = true;
-            LOG(kError, "Http error - %d - in response to Qobuz login.  Some/all of response is:\n", code);
-            LOG(kError, status);
-            LOG(kError, "\n");
+            LOG(kError, "Http error - %d - in response to Qobuz login.  Some/all of response is:\n%.*s\n", code, PBUF(status));
             THROW(ReaderError);
         }
 

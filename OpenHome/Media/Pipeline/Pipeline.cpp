@@ -572,10 +572,10 @@ void Pipeline::Unblock()
     iSkipper->Unblock();
 }
 
-TBool Pipeline::Seek(TUint aStreamId, TUint aSecondsAbsolute)
+void Pipeline::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     const TBool rampDown = (iState == EPlaying);
-    return iSeeker->Seek(aStreamId, aSecondsAbsolute, rampDown);
+    iSeeker->Seek(aStreamId, aSecondsAbsolute, rampDown);
 }
 
 void Pipeline::AddObserver(ITrackObserver& aObserver)

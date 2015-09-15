@@ -142,9 +142,7 @@ ProtocolStreamResult ProtocolQobuz::Stream(const Brx& aUri)
         LOG(kMedia, "ProtocolQobuz::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
-    LOG(kMedia, "ProtocolQobuz::Stream(");
-    LOG(kMedia, aUri);
-    LOG(kMedia, ")\n");
+    LOG(kMedia, "ProtocolQobuz::Stream(%.*s)\n", PBUF(aUri));
     if (!TryGetTrackId(iUri.Query(), iTrackId)) {
         return EProtocolStreamErrorUnrecoverable;
     }
@@ -390,7 +388,7 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
         return 0;
     }
     catch(ReaderError&) {
-        LOG(kMedia, "ProtocolQobuz::WriteRequest EeaderError\n");
+        LOG(kMedia, "ProtocolQobuz::WriteRequest ReaderError\n");
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();

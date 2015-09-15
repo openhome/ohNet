@@ -84,7 +84,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, const Brx& aPartnerId,
     iConfigUsername = new ConfigText(aConfigInit, kConfigKeyUsername, kMaxUserNameBytes, kConfigUsernameDefault);
     iListenerId = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &RadioPresetsTuneIn::UsernameChanged));
 
-    new CredentialsTuneIn(*iConfigUsername, aCredentialsManager, aPartnerId); // ownership transferred to aCredentialsManager
+    new CredentialsTuneIn(aCredentialsManager, aPartnerId); // ownership transferred to aCredentialsManager
 }
 
 RadioPresetsTuneIn::~RadioPresetsTuneIn()
@@ -258,9 +258,7 @@ void RadioPresetsTuneIn::DoRefresh()
                     key.Set(parser.Next('='));
                 }
                 if (!foundPresetNumber) {
-                    LOG2(kSources, kError, "No preset_id for TuneIn preset ");
-                    LOG2(kSources, kError, iPresetTitle);
-                    LOG2(kSources, kError, "\n");
+                    LOG2(kSources, kError, "No preset_id for TuneIn preset %.*s\n", PBUF(iPresetTitle));
                     continue;
                 }
                 if (presetNumber > maxPresets) {
@@ -342,9 +340,7 @@ TBool RadioPresetsTuneIn::ValidateKey(Parser& aParser, const TChar* aKey, TBool 
     Brn key = aParser.Next('=');
     if (key != Brn(aKey)) {
         if (aLogErrors) {
-            LOG2(kError, kSources, "Unexpected order of OPML elements.  Expected \"%s\", got ", aKey);
-            LOG2(kError, kSources, key);
-            LOG2(kError, kSources, "\n");
+            LOG2(kError, kSources, "Unexpected order of OPML elements.  Expected \"%s\", got %.*s\n", aKey, PBUF(key));
         }
         return false;
     }
@@ -356,9 +352,7 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
     (void)aParser.Next('\"');
     Brn value = aParser.Next('\"');
     if (value.Bytes() > aValue.MaxBytes()) {
-        LOG2(kError, kSources, "Unexpectedly long %s for preset - ", aKey);
-        LOG2(kError, kSources, value);
-        LOG2(kError, kSources, "\n");
+        LOG2(kError, kSources, "Unexpectedly long %s for preset - %.*s\n", aKey, PBUF(value));
         return false;
     }
     aValue.Replace(value);
@@ -371,21 +365,13 @@ TBool RadioPresetsTuneIn::ReadValue(Parser& aParser, const TChar* aKey, Bwx& aVa
 
 const Brn CredentialsTuneIn::kId("tunein.com");
 
-CredentialsTuneIn::CredentialsTuneIn(Configuration::ConfigText& aConfigUsername, Credentials& aCredentialsManager, const Brx& aPartnerId)
-    : iConfigUsername(aConfigUsername)
-    , iCredentialsManager(aCredentialsManager)
+CredentialsTuneIn::CredentialsTuneIn(Credentials& aCredentialsManager, const Brx& aPartnerId)
 {
     aCredentialsManager.Add(this);
     Bws<128> data("{\"partnerId\": \"");
     data.Append(aPartnerId);
     data.Append("\"}");
     aCredentialsManager.SetState(kId, Brx::Empty(), data);
-    iSubscriberId = iConfigUsername.Subscribe(MakeFunctorConfigText(*this, &CredentialsTuneIn::UsernameChanged));
-}
-
-CredentialsTuneIn::~CredentialsTuneIn()
-{
-    iConfigUsername.Unsubscribe(iSubscriberId);
 }
 
 const Brx& CredentialsTuneIn::Id() const
@@ -393,9 +379,8 @@ const Brx& CredentialsTuneIn::Id() const
     return kId;
 }
 
-void CredentialsTuneIn::CredentialsChanged(const Brx& aUsername, const Brx& /*aPassword*/)
+void CredentialsTuneIn::CredentialsChanged(const Brx& /*aUsername*/, const Brx& /*aPassword*/)
 {
-    iConfigUsername.Set(aUsername);
 }
 
 void CredentialsTuneIn::UpdateStatus()
@@ -410,9 +395,4 @@ void CredentialsTuneIn::Login(Bwx& aToken)
 void CredentialsTuneIn::ReLogin(const Brx& /*aCurrentToken*/, Bwx& aNewToken)
 {
     aNewToken.Replace(Brx::Empty());
-}
-
-void CredentialsTuneIn::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
-{
-    iCredentialsManager.Set(kId, aKvp.Value());
 }

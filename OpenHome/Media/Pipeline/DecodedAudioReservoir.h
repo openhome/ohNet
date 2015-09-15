@@ -18,6 +18,7 @@ public:
     DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
     void ProcessMsgIn(MsgAudioPcm* aMsg) override;
     void ProcessMsgIn(MsgSilence* aMsg) override;

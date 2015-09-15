@@ -83,7 +83,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
         iFlushing = true;
         IStreamHandler* streamHandler = streamInfo.StreamHandler();
         const TUint streamId = streamInfo.StreamId();
-        if (streamHandler != NULL) {
+        if (streamHandler != nullptr) {
             (void)streamHandler->OkToPlay(streamId);
             iTargetFlushId = streamHandler->TryStop(streamId);
         }

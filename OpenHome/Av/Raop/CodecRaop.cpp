@@ -87,7 +87,8 @@ void CodecRaop::StreamInitialise()
     iTrackLengthJiffies = 0;// (iDuration * Jiffies::kPerSecond) / iTimescale;
 
 
-    //LOG(kCodec, "CodecRaop::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    /*LOG(kCodec, "CodecRaop::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n",
+                  iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);*/
     iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
@@ -152,9 +153,7 @@ void CodecRaop::ParseFmtp(const Brx& aFmtp)
     // Third party ALAC decoder expects the data present in this string to be
     // in a packed binary format, so parse the FMTP and pack it here.
 
-    LOG(kMedia, "CodecRaop::ParseFmtp [");
-    LOG(kMedia, aFmtp);
-    LOG(kMedia, "]\n");
+    LOG(kMedia, "CodecRaop::ParseFmtp [%.*s]\n", PBUF(aFmtp));
 
     Parser p(aFmtp);
 

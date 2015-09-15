@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Pipeline/Seeker.h>
 
 #include <climits>
 
@@ -437,7 +438,21 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
     }
 
     aInvocation.StartResponse();
-    iSourceUpnpAv.Seek(secs);
+    try {
+        iSourceUpnpAv.Seek(secs);
+    }
+    catch (SeekAlreadyInProgress&) {
+        aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+    }
+    catch (SeekStreamInvalid&) {
+        aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+    }
+    catch (SeekStreamNotSeekable&) {
+        aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+    }
+    catch (SeekPosInvalid&) {
+        aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+    }
     {
         AutoMutex a(iLock);
         iTransportStateOverride.Set(Brx::Empty());
