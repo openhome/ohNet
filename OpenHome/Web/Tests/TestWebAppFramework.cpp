@@ -358,7 +358,6 @@ private:
     void TestInvalidTabId();
     void TestDeleteWhileTabsAllocated();
 private:
-    Environment& iEnv;
     TestPipeDynamic* iTestPipe;
     std::vector<TestHelperFrameworkTab*> iTabs;
     TabManager* iTabManager;
@@ -1951,7 +1950,7 @@ void SuiteWebAppFramework::TestDeleteWhileClientTabOpen()
 
 void TestWebAppFramework(Environment& aEnv)
 {
-    Runner runner("HTTP Framework tests\n");
+    Runner runner("WebApp Framework tests\n");
     runner.Add(new SuiteFrameworkTabHandler());
     runner.Add(new SuiteFrameworkTab());
     runner.Add(new SuiteTabManager(aEnv));
