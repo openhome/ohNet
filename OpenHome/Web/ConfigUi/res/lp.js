@@ -117,10 +117,12 @@ WebUi = function() {
 
     LongPoll.prototype.Terminate = function()
     {
-        this.SendTerminate();
-        this.iSessionId = 0;
-        // this.iState = this.EStates.eCreate;
-        this.iState = this.EStates.eTerminate;
+        if (this.iSessionId != 0) {
+            this.SendTerminate();
+            this.iSessionId = 0;
+            // this.iState = this.EStates.eCreate;
+            this.iState = this.EStates.eTerminate;
+        }
     }
 
     LongPoll.prototype.ConstructSessionId = function()
