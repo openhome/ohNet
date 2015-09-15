@@ -343,7 +343,7 @@ public: // from IFrameworkTab
 class SuiteTabManager : public TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
-    SuiteTabManager(Environment& aEnv);
+    SuiteTabManager();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -1512,9 +1512,8 @@ void TestHelperFrameworkTabFull::LongPoll(IWriter& /*aWriter*/)
 
 // SuiteTabManager
 
-SuiteTabManager::SuiteTabManager(Environment& aEnv)
+SuiteTabManager::SuiteTabManager()
     : SuiteUnitTest("SuiteTabManager")
-    , iEnv(aEnv)
 {
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestCreateTab), "TestCreateTab");
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestDisableNoTabsAllocated), "TestDisableNoTabsAllocated");
@@ -1953,7 +1952,7 @@ void TestWebAppFramework(Environment& aEnv)
     Runner runner("WebApp Framework tests\n");
     //runner.Add(new SuiteFrameworkTabHandler());
     runner.Add(new SuiteFrameworkTab());
-    runner.Add(new SuiteTabManager(aEnv));
+    runner.Add(new SuiteTabManager());
     runner.Add(new SuiteWebAppFramework(aEnv));
     runner.Run();
 }
