@@ -518,6 +518,7 @@ void FrameworkTabFull::LongPoll(IWriter& aWriter)
 TabManager::TabManager(const std::vector<IFrameworkTab*>& aTabs)
     : iTabs(aTabs)
     , iNextSessionId(IFrameworkTab::kInvalidTabId+1)
+    , iEnabled(true)
     , iLock("TBML")
 {
 }
@@ -525,15 +526,33 @@ TabManager::TabManager(const std::vector<IFrameworkTab*>& aTabs)
 TabManager::~TabManager()
 {
     AutoMutex a(iLock);
+    ASSERT(!iEnabled);  // Disable() must have been called.
     for (TUint i=0; i<iTabs.size(); i++) {
         iTabs[i]->Clear();
         delete iTabs[i];    // Will remove any references still held (i.e., when client holds a browser tab open).
     }
 }
 
+void TabManager::Disable()
+{
+    AutoMutex a(iLock);
+    iEnabled = false;   // Invalidate all future calls to TabManager.
+
+    // Clear active tabs. Will terminate any blocking LongPolls.
+    for (TUint i=0; i<iTabs.size(); i++) {
+        if (iTabs[i]->SessionId() != FrameworkTab::kInvalidTabId) {
+            iTabs[i]->Clear();
+        }
+    }
+}
+
 TUint TabManager::CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
+    if (!iEnabled) {
+        THROW(TabManagerFull);
+    }
+
     for (TUint i=0; i<iTabs.size(); i++) {
         if (iTabs[i]->SessionId() == FrameworkTab::kInvalidTabId) {
             const TUint sessionId = iNextSessionId++;
@@ -552,6 +571,10 @@ void TabManager::LongPoll(TUint aId, IWriter& aWriter)
     IFrameworkTab* tab = nullptr;
     {
         AutoMutex a(iLock);
+        if (!iEnabled) {
+            THROW(InvalidTabId);
+        }
+
         for (TUint i=0; i<iTabs.size(); i++) {
             if (iTabs[i]->SessionId() == aId) {
                 tab = iTabs[i];
@@ -573,6 +596,10 @@ void TabManager::Receive(TUint aId, const Brx& aMessage)
     LOG(kHttp, "TabManager::Receive aId: %u\n", aId);
     {
         AutoMutex a(iLock);
+        if (!iEnabled) {
+            THROW(InvalidTabId);
+        }
+
         for (TUint i=0; i<iTabs.size(); i++) {
             IFrameworkTab* tab = iTabs[i];
             if (tab->SessionId() == aId) {
@@ -590,6 +617,10 @@ void TabManager::Destroy(TUint aId)
     LOG(kHttp, "TabManager::Destroy aId: %u\n", aId);
     {
         AutoMutex a(iLock);
+        if (!iEnabled) {
+            THROW(InvalidTabId);
+        }
+
         for (TUint i=0; i<iTabs.size(); i++) {
             IFrameworkTab* tab = iTabs[i];
             if (tab->SessionId() == aId) {
@@ -683,11 +714,13 @@ WebAppFramework::~WebAppFramework()
         iCurrentAdapter->RemoveRef(kAdapterCookie);
     }
 
+    // Terminate any blocking LongPoll() calls that server may have open and prevent further access/creation of tabs.
+    iTabManager->Disable();
+
     // Don't allow any more web requests.
     delete iServer;
 
-    // Delete TabManager. If a client has any browser tabs open (i.e., holds references to any tabs), deleting the TabManager will cause its FrameworkTabs to clear all references and call Destroy() on the underlying tab, allowing its owner to deallocate it.
-    // If WebApps are deleted before the TabManager, it could result in tabs being deleted from out under the TabManager/FrameworkTabs.
+    // Delete TabManager before WebApps to allow it to free up any WebApp tabs that it may hold reference for.
     delete iTabManager;
 
     WebAppMap::iterator it;

@@ -316,6 +316,7 @@ class TabManager : public ITabManager, private INonCopyable
 public:
     TabManager(const std::vector<IFrameworkTab*>& aTabs);
     ~TabManager();
+    void Disable(); // Terminate any blocking LongPoll calls and prevent any new tabs from being created.
 public: // from ITabManager
     TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList);
     void LongPoll(TUint aId, IWriter& aWriter) override;
@@ -324,6 +325,7 @@ public: // from ITabManager
 private:
     const std::vector<IFrameworkTab*> iTabs;
     TUint iNextSessionId;
+    TBool iEnabled;
     Mutex iLock;
 };
 

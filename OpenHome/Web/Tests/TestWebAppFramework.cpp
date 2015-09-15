@@ -349,6 +349,8 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     void TestCreateTab();
+    void TestDisableNoTabsAllocated();
+    void TestDisable();
     void TestTabTimeout();
     void TestTabIdsIncrement();
     void TestCreateTabManagerFull();
@@ -1516,6 +1518,8 @@ SuiteTabManager::SuiteTabManager(Environment& aEnv)
     , iEnv(aEnv)
 {
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestCreateTab), "TestCreateTab");
+    AddTest(MakeFunctor(*this, &SuiteTabManager::TestDisableNoTabsAllocated), "TestDisableNoTabsAllocated");
+    AddTest(MakeFunctor(*this, &SuiteTabManager::TestDisable), "TestDisable");
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestTabTimeout), "TestTabTimeout");
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestTabIdsIncrement), "TestTabIdsIncrement");
     AddTest(MakeFunctor(*this, &SuiteTabManager::TestCreateTabManagerFull), "TestCreateTabManagerFull");
@@ -1572,6 +1576,33 @@ void SuiteTabManager::TestCreateTab()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::Clear 0")));
 
     TEST(iTestPipe->ExpectEmpty());
+    iTabManager->Disable();
+}
+
+void SuiteTabManager::TestDisableNoTabsAllocated()
+{
+    iTabManager->Disable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 0 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 1 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 2 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 3 0")));
+    TEST(iTestPipe->ExpectEmpty());
+}
+
+void SuiteTabManager::TestDisable()
+{
+    // Allocate a tab, then call disable while active.
+    std::vector<const Brx*> languages;
+    (void)iTabManager->CreateTab(*iWebApp, languages);
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 0 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::CreateTab 0 1")));
+    iTabManager->Disable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 0 1")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::Clear 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 1 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 2 0")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 3 0")));
+    TEST(iTestPipe->ExpectEmpty());
 }
 
 void SuiteTabManager::TestTabTimeout()
@@ -1598,6 +1629,8 @@ void SuiteTabManager::TestTabTimeout()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 0 2")));
 
     TEST(iTestPipe->ExpectEmpty());
+
+    iTabManager->Disable();
 }
 
 void SuiteTabManager::TestTabIdsIncrement()
@@ -1673,6 +1706,8 @@ void SuiteTabManager::TestTabIdsIncrement()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::Clear 3")));
 
     TEST(iTestPipe->ExpectEmpty());
+
+    iTabManager->Disable();
 }
 
 void SuiteTabManager::TestCreateTabManagerFull()
@@ -1726,16 +1761,23 @@ void SuiteTabManager::TestCreateTabManagerFull()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::Clear 3")));
 
     TEST(iTestPipe->ExpectEmpty());
+
+    iTabManager->Disable();
 }
 
 void SuiteTabManager::TestCreateTabAllocatorEmpty()
 {
+    // Create a new TabManager with an IFrameworkTab that always reports TabAllocatorFull.
+    // Ignoring iTabManager for this test.
     std::vector<IFrameworkTab*> tabs;
     tabs.push_back(new TestHelperFrameworkTabFull());
     TabManager tabManager(tabs);
     std::vector<const Brx*> languages;
 
     TEST_THROWS(tabManager.CreateTab(*iWebApp, languages), TabAllocatorFull);
+    tabManager.Disable();
+
+    iTabManager->Disable();
 }
 
 void SuiteTabManager::TestInvalidTabId()
@@ -1805,8 +1847,8 @@ void SuiteTabManager::TestInvalidTabId()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 1 0")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 2 0")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 3 0")));
-
     TEST(iTestPipe->ExpectEmpty());
+    iTabManager->Disable();
 }
 
 void SuiteTabManager::TestDeleteWhileTabsAllocated()
@@ -1818,6 +1860,7 @@ void SuiteTabManager::TestDeleteWhileTabsAllocated()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::SessionId 0 0")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTab::CreateTab 0 1")));
     TEST(iTestPipe->ExpectEmpty());
+    iTabManager->Disable();
 }
 
 
