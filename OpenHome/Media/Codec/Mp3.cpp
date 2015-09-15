@@ -746,12 +746,12 @@ void CodecMp3::Process()
         }
 
         // Not start/end of stream; try some error recovery.
-        if (MAD_RECOVERABLE(iMadStream->error)) {
+        if (MAD_RECOVERABLE(iMadStream.error)) {
             //LOG(kCodec, "CodecMp3::Process recoverable error: %s\n", mad_stream_errorstr(&iMadStream));
             return;
         }
         else {
-            if (iMadStream->error == MAD_ERROR_BUFLEN) {
+            if (iMadStream.error == MAD_ERROR_BUFLEN) {
                 // If buffer was too small to decode then return now and get more data the next time we're called.
                 return;
             }
