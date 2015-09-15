@@ -159,8 +159,10 @@ WebUi = function() {
 
     LongPoll.prototype.SendTerminate = function()
     {
+        // This should only be called when a browser tab closes.
+        // Therefore, can't rely on asynchronous requests, so use a synchronous request.
         var request = LongPoll.CreateLongPollRequest(this);
-        request.Open("POST", "lpterminate", true);
+        request.Open("POST", "lpterminate", false); // "false" makes request synchronous
         this.SendSessionId(request);
     }
 
