@@ -528,7 +528,6 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
     if (code == 0) {
         return EProtocolStreamErrorRecoverable;
     }
-    iTotalBytes = iHeaderContentLength.ContentLength();
     if (code != HttpStatus::kPartialContent.Code()) {
         return EProtocolStreamErrorUnrecoverable;
     }
