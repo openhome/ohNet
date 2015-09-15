@@ -43,6 +43,7 @@ SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, U
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
     , iNoPipelinePrefetchOnActivation(false)
+    , iIgnorePipelineStateUpdates(false)
 {
     iStreamId.store(IPipelineIdProvider::kStreamIdInvalid);
     ASSERT(iStreamId.is_lock_free());
@@ -74,6 +75,13 @@ void SourceUpnpAv::EnsureActive()
         DoActivate();
     }
     iNoPipelinePrefetchOnActivation = false;
+}
+
+void SourceUpnpAv::NotifyState(EPipelineState aState)
+{
+    if (!iIgnorePipelineStateUpdates) {
+        iDownstreamObserver->NotifyPipelineState(aState);
+    }
 }
 
 void SourceUpnpAv::Activate()
@@ -123,8 +131,14 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         else {
             playNow = iTransportState == Media::EPipelinePlaying;
         }
+        iIgnorePipelineStateUpdates = true;
     }
     iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+    {
+        AutoMutex _(iLock);
+        iIgnorePipelineStateUpdates = false;
+        NotifyState(iPipelineTransportState);
+    }
     if (playNow) {
         iPipeline.Play();
     }
@@ -197,7 +211,7 @@ void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
         iTransportState = aState;
     }
     if (IsActive()) {
-        iDownstreamObserver->NotifyPipelineState(aState);
+        NotifyState(aState);
     }
 }
 
@@ -210,10 +224,10 @@ void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfSt
     iStreamId.store(IPipelineIdProvider::kStreamIdInvalid);
     if (IsActive()) {
         iDownstreamObserver->NotifyTrack(aTrack, aMode, aStartOfStream);
-        iDownstreamObserver->NotifyPipelineState(iPipelineTransportState);
+        NotifyState(iPipelineTransportState);
     }
     else {
-        iDownstreamObserver->NotifyPipelineState(EPipelineStopped);
+        NotifyState(EPipelineStopped);
     }
 }
 

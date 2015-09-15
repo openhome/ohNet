@@ -47,6 +47,7 @@ public:
     ~SourceUpnpAv();
 private:
     void EnsureActive();
+    void NotifyState(Media::EPipelineState aState);
 private: // from Source
     void Activate() override;
     void Deactivate() override;
@@ -81,6 +82,7 @@ private:
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
     TBool iNoPipelinePrefetchOnActivation;
+    TBool iIgnorePipelineStateUpdates;
 };
 
 } // namespace Av
