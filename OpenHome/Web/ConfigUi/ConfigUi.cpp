@@ -683,7 +683,7 @@ TBool ConfigTab::Allocated() const
     return allocated;
 }
 
-void ConfigTab::SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
+void ConfigTab::SetHandler(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
 {
     LOG(kHttp, "ConfigTab::SetHandler iId: %u\n", iId);
     ASSERT(iHandler == nullptr);
@@ -866,7 +866,7 @@ ConfigAppBase::~ConfigAppBase()
 //    }
 //}
 
-ITab& ConfigAppBase::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
+ITab& ConfigAppBase::Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
@@ -878,7 +878,7 @@ ITab& ConfigAppBase::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLan
             return *iTabs[i];
         }
     }
-    THROW(TabCreationFailed);
+    THROW(TabAllocatorFull);
 }
 
 const Brx& ConfigAppBase::ResourcePrefix() const

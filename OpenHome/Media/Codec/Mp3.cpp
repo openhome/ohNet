@@ -738,19 +738,25 @@ void CodecMp3::Process()
     // Decode the next mpeg frame.  mad_frame_decode returns a non zero value on error
     TInt ret = mad_frame_decode(&iMadFrame, &iMadStream);
     if (ret) {
-        if (MAD_RECOVERABLE(iMadStream.error)) {
+        if (newStreamStarted) {
+            THROW(CodecStreamStart);
+        }
+        else if (iStreamEnded) {
+            THROW(CodecStreamEnded);
+        }
+
+        // Not start/end of stream; try some error recovery.
+        if (MAD_RECOVERABLE(iMadStream->error)) {
             //LOG(kCodec, "CodecMp3::Process recoverable error: %s\n", mad_stream_errorstr(&iMadStream));
             return;
         }
         else {
-            if (iMadStream.error == MAD_ERROR_BUFLEN && !(newStreamStarted || iStreamEnded)) {
-                // If buffer was too small to decode then return now and get more data
-                // the next time we're called.  If the stream has ended and the buffer
-                // is too small, then the file is corrupt (truncated)
+            if (iMadStream->error == MAD_ERROR_BUFLEN) {
+                // If buffer was too small to decode then return now and get more data the next time we're called.
                 return;
             }
             else {
-                //LOG(kCodec, "CodecMp3::Process unrecoverable error: %s eos: %d\n", mad_stream_errorstr(&iMadStream), iEos);
+                //LOG(kCodec, "CodecMp3::Process unrecoverable error: %s\n", mad_stream_errorstr(&iMadStream));
                 THROW(CodecStreamCorrupt);
             }
         }
