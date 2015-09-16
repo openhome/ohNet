@@ -39,6 +39,7 @@ kExcludes     = ['\\thirdparty\\',
                  'Test 4: TestStreamSegmentError',
                  'Test 6: TestStreamM3uConnectionError',
                  'Test 8: TestStreamSegmentConnectionError',
+                 'Test 9: TestSeekForwardFailStillSeeks',
                  'Failed to recognise audio format (iStreamStopped',
                  'Upnp error reporting tests',
                  '0 of']
