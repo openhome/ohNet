@@ -175,8 +175,17 @@ void SourcePlaylist::Activate()
     iTrackPosSeconds = 0;
     iActive = true;
     if (!iNoPipelineStateChangeOnActivation) {
-        const TUint trackId = (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0?
-                                  iUriProvider->CurrentTrackId() : ITrackDatabase::kTrackIdNone);
+        TUint trackId = ITrackDatabase::kTrackIdNone;
+        if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
+            trackId = iUriProvider->CurrentTrackId();
+            if (trackId == ITrackDatabase::kTrackIdNone) {
+                Track* track = static_cast<ITrackDatabaseReader*>(iDatabase)->NextTrackRef(ITrackDatabase::kTrackIdNone);
+                if (track != nullptr) {
+                    trackId = track->Id();
+                    track->RemoveRef();
+                }
+            }
+        }
         iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
     }
 }
