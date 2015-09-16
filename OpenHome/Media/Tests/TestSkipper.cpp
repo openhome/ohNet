@@ -304,7 +304,7 @@ Msg* SuiteSkipper::ProcessMsg(MsgAudioPcm* aMsg)
     iLastPulledMsg = EMsgAudioPcm;
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 6);

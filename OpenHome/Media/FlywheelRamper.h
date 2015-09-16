@@ -80,14 +80,14 @@ public:
     PcmProcessorFwr(FlywheelRamper& aFwr, TUint aGenerationJiffies);
 
     // IPcmProcessor
-    virtual void BeginBlock();
-    virtual TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
-    virtual TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
-    virtual TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
-    virtual void ProcessSample8(const TByte* aSample, TUint aNumChannels);
-    virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels);
-    virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels);
-    virtual void EndBlock();
+    void BeginBlock() override;
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void EndBlock() override;
 
 private:
     FlywheelRamper& iFwr;

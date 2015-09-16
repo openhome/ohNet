@@ -17,89 +17,6 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 
-// ProcessorPcmBufPackedDualMono
-
-ProcessorPcmBufPackedDualMono::ProcessorPcmBufPackedDualMono()
-{
-}
-
-TBool ProcessorPcmBufPackedDualMono::ProcessFragment8(const Brx& /*aData*/, TUint /*aNumChannels*/)
-{
-    return false;
-}
-
-TBool ProcessorPcmBufPackedDualMono::ProcessFragment16(const Brx& /*aData*/, TUint /*aNumChannels*/)
-{
-    return false;
-}
-
-TBool ProcessorPcmBufPackedDualMono::ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels*/)
-{
-    return false;
-}
-
-void ProcessorPcmBufPackedDualMono::ProcessSample8(const TByte* aSample, TUint aNumChannels)
-{
-    if (aNumChannels == 1) {
-        aNumChannels = 2;
-        for (TUint i=0; i<aNumChannels; i++) {
-            Brn sampleBuf(aSample, 1);
-            ProcessFragment(sampleBuf);
-        }
-    }
-    else {
-        Brn sample(aSample, aNumChannels);
-        ProcessFragment(sample);
-    }
-}
-
-void ProcessorPcmBufPackedDualMono::ProcessSample16(const TByte* aSample, TUint aNumChannels)
-{
-    if (aNumChannels == 1) {
-        aNumChannels = 2;
-        const TByte* sampleStart = aSample;
-        TByte sample[2] = { 0 };
-        for (TUint i=0; i<aNumChannels; i++) {
-            aSample = sampleStart;
-            sample[0] = *aSample;
-            aSample++;
-            sample[1] = *aSample;
-            aSample++;
-            Brn sampleBuf(sample, 2);
-            ProcessFragment(sampleBuf);
-        }
-    }
-    else {
-        Brn sample(aSample, 2*aNumChannels);
-        ProcessFragment(sample);
-    }
-}
-
-void ProcessorPcmBufPackedDualMono::ProcessSample24(const TByte* aSample, TUint aNumChannels)
-{
-    if (aNumChannels == 1) {
-        aNumChannels = 2;
-        const TByte* sampleStart = aSample;
-        TByte sample[3] = { 0 };
-        for (TUint i=0; i<aNumChannels; i++) {
-            aSample = sampleStart;
-            sample[0] = *aSample;
-            aSample++;
-            sample[1] = *aSample;
-            aSample++;
-            sample[2] = *aSample;
-            aSample++;
-            Brn sampleBuf(sample, 3);
-            ProcessFragment(sampleBuf);
-        }
-    }
-    else {
-        Brn sample(aSample, 3*aNumChannels);
-        ProcessFragment(sample);
-    }
-}
-
-
 // DriverSongcastSender
 
 const Brn DriverSongcastSender::kSenderIconFileName("SongcastSenderIcon");
@@ -271,7 +188,7 @@ void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
         }
     }
     iJiffiesToSend -= jiffies;
-    ProcessorPcmBufPackedDualMono pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aMsg->Read(pcmProcessor);
     Brn buf = pcmProcessor.Buf();
     const TUint numSubsamples = buf.Bytes() / (iBitDepth/8);

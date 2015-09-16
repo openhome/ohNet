@@ -386,7 +386,7 @@ Msg* SuiteSilencer::ProcessMsg(MsgPlayable* aMsg)
     const TUint bytesPerSample = iNumChannels * iBitDepth/8;
     iLastPulledJiffies = (iLastPulledBytes / bytesPerSample) * jiffiesPerSample;
 
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aMsg->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     const TByte* ptr = buf.Ptr();

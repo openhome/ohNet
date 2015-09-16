@@ -819,13 +819,10 @@ public:
      *
      * @param aData         Packed big endian pcm data.  Will always be a complete number of samples.
      * @param aNumChannels  Number of channels.
-     *
-     * @return  true if the fragment was processed (meaning that ProcessSample will not be called for aData);
-     *          false otherwise (meaning that ProcessSample will be called for each sample in aData).
      */
-    virtual TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) = 0;
-    virtual TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) = 0;
-    virtual TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) = 0;
+    virtual void ProcessFragment8(const Brx& aData, TUint aNumChannels) = 0;
+    virtual void ProcessFragment16(const Brx& aData, TUint aNumChannels) = 0;
+    virtual void ProcessFragment24(const Brx& aData, TUint aNumChannels) = 0;
     /**
      * Process a single sample of audio.
      *

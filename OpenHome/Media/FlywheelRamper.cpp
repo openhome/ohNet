@@ -138,7 +138,7 @@ void PcmProcessorFwr::BeginBlock()
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
+void PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
 {
     if (iSamples.Bytes()==0)
     {
@@ -156,11 +156,10 @@ TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
         iSamples.Append((TByte)0); // pad lower 24 bits
         i+=1;
     }
-    return(true);
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels)
+void PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels)
 {
     Log::Print("ProcessFragment16 \n ");
 
@@ -181,12 +180,10 @@ TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels
         iSamples.Append((TByte)0); // pad lower 16 bits
         i += 2;
     }
-
-    return(true);
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels)
+void PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels)
 {
     if (iSamples.Bytes()==0)
     {
@@ -205,8 +202,6 @@ TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels
         iSamples.Append((TByte)0); // pad lower 8 bits
         i+=3;
     }
-
-    return(true);
 }
 
 

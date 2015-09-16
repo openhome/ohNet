@@ -292,22 +292,19 @@ void Sender::BeginBlock()
 {
 }
 
-TBool Sender::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
 {
     iAudioBuf.Append(aData);
-    return true;
 }
 
-TBool Sender::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
 {
     iAudioBuf.Append(aData);
-    return true;
 }
 
-TBool Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
 {
     iAudioBuf.Append(aData);
-    return true;
 }
 
 void Sender::ProcessSample8(const TByte* aSample, TUint aNumChannels)

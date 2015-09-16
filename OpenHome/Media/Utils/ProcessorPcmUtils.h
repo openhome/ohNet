@@ -3,52 +3,51 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
 namespace Media {
 
-class ProcessorPcmBuf : public IPcmProcessor
+class ProcessorPcmBufTest : public IPcmProcessor // Reads packed data into dynamically allocated buffer.
+                                                 // Suitable for test code only.
 {
     static const TUint kBufferGranularity = DecodedAudio::kMaxBytes;
 public:
+    ProcessorPcmBufTest();
     Brn Buf() const;
     const TByte* Ptr() const;
 protected:
-    ProcessorPcmBuf();
     void CheckSize(TUint aAdditionalBytes);
     void ProcessFragment(const Brx& aData);
 private: // from IPcmProcessor
-    void BeginBlock();
-    void EndBlock();
+    void BeginBlock() override;
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void EndBlock() override;
 protected:
     Bwh iBuf;
 };
 
-class ProcessorPcmBufPacked : public ProcessorPcmBuf
+class ProcessorSample : public IPcmProcessor, private INonCopyable // passes data downstream via ProcessSample* only
 {
 public:
-    ProcessorPcmBufPacked();
+    ProcessorSample(IPcmProcessor& aDownstream);
 private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
-    void ProcessSample8(const TByte* aSample, TUint aNumChannels);
-    void ProcessSample16(const TByte* aSample, TUint aNumChannels);
-    void ProcessSample24(const TByte* aSample, TUint aNumChannels);
-};
-
-class ProcessorPcmBufUnpacked : public ProcessorPcmBuf
-{
-public:
-    ProcessorPcmBufUnpacked();
-private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
-    void ProcessSample8(const TByte* aSample, TUint aNumChannels);
-    void ProcessSample16(const TByte* aSample, TUint aNumChannels);
-    void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+    void BeginBlock() override;
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void EndBlock() override;
+private:
+    IPcmProcessor& iDownstream;
 };
 
 } // namespace Media

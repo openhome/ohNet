@@ -803,7 +803,7 @@ Msg* SuitePipeline::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsgWasAudio = true;
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aMsg->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() == aMsg->Bytes());
