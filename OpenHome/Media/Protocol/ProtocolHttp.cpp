@@ -79,6 +79,7 @@ private:
     Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
     Bws<kIcyMetadataBytes> iIcyData; // only used in a single function but too large to comfortably declare on the stack
     OpenHome::Uri iUri;
+    TUint64 iTotalStreamBytes;
     TUint64 iTotalBytes;
     TUint iStreamId;
     TBool iSeekable;
@@ -152,6 +153,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
     , iDechunker(iReaderUntil)
     , iContentRecogBuf(iDechunker)
     , iUserAgent(aUserAgent)
+    , iTotalStreamBytes(0)
     , iTotalBytes(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekable(false)
@@ -315,7 +317,7 @@ TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
         AutoMutex a(iLock);
         streamIsCurrent = IsCurrentStream(aStreamId);
         if (streamIsCurrent) {
-            if (!iLive && aOffset >= iTotalBytes) {
+            if (!iLive && aOffset >= iTotalStreamBytes) {
                 // Attempting to request beyond end of file.
                 LOG(kMedia, "ProtocolHttp::TrySeek attempting to seek beyond end of file. aStreamId: %u, aOffset: %llu, iTotalBytes: %llu\n", aStreamId, aOffset, iTotalBytes);
                 return MsgFlush::kIdInvalid;
@@ -390,7 +392,7 @@ void ProtocolHttp::ReadInterrupt()
 
 void ProtocolHttp::Reinitialise(const Brx& aUri)
 {
-    iTotalBytes = iSeekPos = iOffset = 0;
+    iTotalStreamBytes = iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
     iDataChunkSize = iDataChunkRemaining = 0;
@@ -423,7 +425,8 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     }
 
     iSeekable = false;
-    iTotalBytes = iHeaderContentLength.ContentLength();
+    iTotalStreamBytes = iHeaderContentLength.ContentLength();
+    iTotalBytes = iTotalStreamBytes;
     iLive = (iTotalBytes == 0);
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
         LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
@@ -528,6 +531,7 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
     if (code == 0) {
         return EProtocolStreamErrorRecoverable;
     }
+    iTotalBytes = iHeaderContentLength.ContentLength();
     if (code != HttpStatus::kPartialContent.Code()) {
         return EProtocolStreamErrorUnrecoverable;
     }
