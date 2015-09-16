@@ -271,6 +271,7 @@ public:
     TUint StreamCount() const;
     TUint DataTotal() const;
     IStreamHandler& StreamHandler() const;
+    void WaitUntilEncodedStream();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 protected: // from IMsgProcessor
@@ -299,6 +300,7 @@ private:
     TUint iStreamCount;
     TUint iDataTotal;
     IStreamHandler* iStreamHandler;
+    Semaphore iSemEncodedStream;
 };
 
 class TestHttpSupplyChunked : public TestHttpSupplier
@@ -991,6 +993,7 @@ TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
     , iStreamCount(0)
     , iDataTotal(0)
     , iStreamHandler(nullptr)
+    , iSemEncodedStream("THSS", 0)
 {
 }
 
@@ -1028,6 +1031,11 @@ IStreamHandler& TestHttpSupplier::StreamHandler() const
     return *iStreamHandler;
 }
 
+void TestHttpSupplier::WaitUntilEncodedStream()
+{
+    iSemEncodedStream.Wait();
+}
+
 void TestHttpSupplier::Push(Msg* aMsg)
 {
     (void)aMsg->Process(*this);
@@ -1062,6 +1070,7 @@ Msg* TestHttpSupplier::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler = aMsg->StreamHandler();
     (void)iStreamHandler->OkToPlay(iStreamId);
     iStreamCount++;
+    iSemEncodedStream.Signal();
     return aMsg;
 }
 
@@ -1528,6 +1537,9 @@ void SuiteHttpSeekInvalid::Test()
 void SuiteHttpSeekInvalid::SeekThread()
 {
     iSemServerWait->Wait();
+    // Server has sent all data until wait point.
+    // However, ProtocolHttp may not have output a MsgEncodedStream yet, so wait until iSupply has seen it.
+    iSupply->WaitUntilEncodedStream();
     IStreamHandler& streamHandler = iSupply->StreamHandler();
     // Offset starts from 0, so using stream length should be 1 byte out-of-bounds.
     const TUint seekRes = streamHandler.TrySeek(iSupply->StreamId(), iHttpSession->DataSize());
