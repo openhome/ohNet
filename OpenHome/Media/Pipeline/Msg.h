@@ -823,6 +823,7 @@ public:
     virtual void ProcessFragment8(const Brx& aData, TUint aNumChannels) = 0;
     virtual void ProcessFragment16(const Brx& aData, TUint aNumChannels) = 0;
     virtual void ProcessFragment24(const Brx& aData, TUint aNumChannels) = 0;
+    virtual void ProcessFragment32(const Brx& aData, TUint aNumChannels) = 0;
     /**
      * Process a single sample of audio.
      *
@@ -834,6 +835,7 @@ public:
     virtual void ProcessSample8(const TByte* aSample, TUint aNumChannels) = 0;
     virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) = 0;
     virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) = 0;
+    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels) = 0;
     /**
      * Called once per call to MsgPlayable::Read.
      *

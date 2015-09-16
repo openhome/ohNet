@@ -118,9 +118,11 @@ private: // from IPcmProcessor
     void ProcessFragment8(const Brx& aData, TUint aNumChannels);
     void ProcessFragment16(const Brx& aData, TUint aNumChannels);
     void ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels);
     void ProcessSample8(const TByte* aSample, TUint aNumChannels);
     void ProcessSample16(const TByte* aSample, TUint aNumChannels);
     void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels);
 private:
     void SwapEndianness16(const Brx& aData);
     void SwapEndianness24(const Brx& aData);
@@ -561,6 +563,11 @@ void ProcessorPcmSwpEndianPacked::ProcessFragment24(const Brx& aData, TUint /*aN
     SwapEndianness24(aData);
 }
 
+void ProcessorPcmSwpEndianPacked::ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/)
+{
+    ASSERTS();
+}
+
 void ProcessorPcmSwpEndianPacked::ProcessSample8(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, aNumChannels);
@@ -579,6 +586,11 @@ void ProcessorPcmSwpEndianPacked::ProcessSample24(const TByte* aSample, TUint aN
     Brn sample(aSample, 3*aNumChannels);
     CheckSize(sample.Bytes());
     SwapEndianness24(sample);
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChannels*/)
+{
+    ASSERTS();
 }
 
 void ProcessorPcmSwpEndianPacked::SwapEndianness16(const Brx& aData)

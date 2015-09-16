@@ -307,6 +307,11 @@ void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
     iAudioBuf.Append(aData);
 }
 
+void Sender::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
+{
+    iAudioBuf.Append(aData);
+}
+
 void Sender::ProcessSample8(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, aNumChannels);
@@ -322,6 +327,12 @@ void Sender::ProcessSample16(const TByte* aSample, TUint aNumChannels)
 void Sender::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, 3*aNumChannels);
+    iAudioBuf.Append(sample);
+}
+
+void Sender::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+{
+    Brn sample(aSample, 4*aNumChannels);
     iAudioBuf.Append(sample);
 }
 

@@ -55,6 +55,11 @@ void ProcessorPcmBufTest::ProcessFragment24(const Brx& aData, TUint /*aNumChanne
     ProcessFragment(aData);
 }
 
+void ProcessorPcmBufTest::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
+{
+    ProcessFragment(aData);
+}
+
 void ProcessorPcmBufTest::ProcessSample8(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, aNumChannels);
@@ -70,6 +75,12 @@ void ProcessorPcmBufTest::ProcessSample16(const TByte* aSample, TUint aNumChanne
 void ProcessorPcmBufTest::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, 3*aNumChannels);
+    ProcessFragment(sample);
+}
+
+void ProcessorPcmBufTest::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+{
+    Brn sample(aSample, 4*aNumChannels);
     ProcessFragment(sample);
 }
 
@@ -123,6 +134,17 @@ void ProcessorSample::ProcessFragment24(const Brx& aData, TUint aNumChannels)
     }
 }
 
+void ProcessorSample::ProcessFragment32(const Brx& aData, TUint aNumChannels)
+{
+    const TUint bytesPerSample = 4 * aNumChannels;
+    const TUint numSamples = aData.Bytes() / bytesPerSample;
+    const TByte* ptr = aData.Ptr();
+    for (TUint i=0; i<numSamples; i++) {
+        iDownstream.ProcessSample32(ptr, bytesPerSample);
+        ptr += bytesPerSample;
+    }
+}
+
 void ProcessorSample::ProcessSample8(const TByte* aSample, TUint aNumChannels)
 {
     iDownstream.ProcessSample8(aSample, aNumChannels);
@@ -136,6 +158,11 @@ void ProcessorSample::ProcessSample16(const TByte* aSample, TUint aNumChannels)
 void ProcessorSample::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 {
     iDownstream.ProcessSample24(aSample, aNumChannels);
+}
+
+void ProcessorSample::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+{
+    iDownstream.ProcessSample32(aSample, aNumChannels);
 }
 
 void ProcessorSample::EndBlock()

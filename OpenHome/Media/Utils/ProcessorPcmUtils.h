@@ -25,9 +25,11 @@ private: // from IPcmProcessor
     void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels) override;
     void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
 protected:
     Bwh iBuf;
@@ -42,9 +44,11 @@ private: // from IPcmProcessor
     void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels) override;
     void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
 private:
     IPcmProcessor& iDownstream;
