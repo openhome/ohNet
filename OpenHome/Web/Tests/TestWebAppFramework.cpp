@@ -1230,7 +1230,7 @@ SuiteFrameworkTab::SuiteFrameworkTab()
     AddTest(MakeFunctor(*this, &SuiteFrameworkTab::TestLongPoll), "TestLongPoll");
     AddTest(MakeFunctor(*this, &SuiteFrameworkTab::TestSend), "TestSend");
     AddTest(MakeFunctor(*this, &SuiteFrameworkTab::TestTabTimeout), "TestTabTimeout");
-    AddTest(MakeFunctor(*this, &SuiteFrameworkTab::TestDeleteWhileTabAllocated), "TestDeleteWhileTabAllocated");
+    //AddTest(MakeFunctor(*this, &SuiteFrameworkTab::TestDeleteWhileTabAllocated), "TestDeleteWhileTabAllocated");
 }
 
 void SuiteFrameworkTab::Setup()
