@@ -390,7 +390,7 @@ FrameworkTab::~FrameworkTab()
 
     // Owner must have called Clear().
     AutoMutex a(iLock);
-    ASSERT(iTab != nullptr);
+    ASSERT(iTab == nullptr);
 }
 
 TUint FrameworkTab::SessionId() const
