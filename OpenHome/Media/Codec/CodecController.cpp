@@ -700,6 +700,12 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
         return nullptr;
     }
 
+    // If there was a MsgDecodedStream pending following a flush, but no audio followed, release it here as that stream is now invalid.
+    if (iPostSeekStreamInfo != nullptr) {
+        iPostSeekStreamInfo->RemoveRef();
+        iPostSeekStreamInfo = nullptr;
+    }
+
     iLock.Wait();
     iStreamStarted = true;
     iStreamId = aMsg->StreamId();
