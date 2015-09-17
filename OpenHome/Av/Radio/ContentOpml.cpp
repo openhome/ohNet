@@ -90,6 +90,9 @@ ProtocolStreamResult ContentOpml::Stream(IReader& aReader, TUint64 aTotalBytes)
     try {
         for (;;) {
             Brn line(ReadLine(*iReaderUntil, bytesRemaining));
+            if (line.Bytes() == 0) {
+                continue;
+            }
             ReaderBuffer rb(line);
             rb.ReadUntil('<');
             Parser parser(rb.ReadUntil('>'));
