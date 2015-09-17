@@ -524,6 +524,7 @@ void SuiteFrameworkTabHandler::TestDestroyUnsentMessages()
     // Memory leak if tab is not destroyed.
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
     HelperTabMessage& msg = iTabAllocator->Allocate();
     msg.Set(0);
     tabHandler.Send(msg);
@@ -543,6 +544,7 @@ void SuiteFrameworkTabHandler::TestBlockingQueueEmpty()
     // Queue no msgs, but try a blocking send. Should block until timer fired.
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
     ThreadFunctor thread("LP thread", MakeFunctor(*this, &SuiteFrameworkTabHandler::LongPollThread));
     thread.Start();
     iSemRead->BlockUntilWait(); // LongPoll() should block on read Semaphore.
@@ -564,6 +566,7 @@ void SuiteFrameworkTabHandler::TestBlockingQueueEmpty()
     // Queue no msgs, but try a blocking send. Should block until timer fired.
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
     ThreadFunctor thread("LP thread", MakeFunctor(*this, &SuiteFrameworkTabHandler::LongPollThread));
     thread.Start();
     iSemRead->BlockUntilWait(); // LongPoll() should block on read Semaphore.
@@ -572,11 +575,9 @@ void SuiteFrameworkTabHandler::TestBlockingQueueEmpty()
 
     tabHandler.Disable();   // Should terminate long poll.
     iSemLpComplete->Wait();
-
     TEST(iHelperBufferWriter->Buffer().Bytes() == 0);
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal READ")));
-    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
     TEST(iTestPipe->ExpectEmpty());
 }
 
@@ -584,6 +585,7 @@ void SuiteFrameworkTabHandler::TestBlockingSendOneMessage()
 {
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
 
     // Queue up msg.
     HelperTabMessage& msg = iTabAllocator->Allocate();
@@ -611,6 +613,7 @@ void SuiteFrameworkTabHandler::TestBlockingSendMultipleMessages()
 {
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
 
     // Queue up msg.
     HelperTabMessage& msg1 = iTabAllocator->Allocate();
@@ -646,6 +649,7 @@ void SuiteFrameworkTabHandler::TestBlockingSendQueueFull()
 {
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
 
     for (TUint i=0; i<kSendQueueSize; i++) {
         HelperTabMessage& msg = iTabAllocator->Allocate();
@@ -677,6 +681,7 @@ void SuiteFrameworkTabHandler::TestBlockingSendNewMessageQueued()
     // Try blocking send with no msgs ready, and then queue msg while blocking.
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
 
     // Start long polling without message queued.
     ThreadFunctor thread("LP thread", MakeFunctor(*this, &SuiteFrameworkTabHandler::LongPollThread));
@@ -1082,8 +1087,7 @@ TBool TestHelperFrameworkSemaphore::Clear()
     Bws<50> buf("TestHelperFrameworkSemaphore::Clear ");
     buf.Append(iId);
     iTestPipe.Write(buf);
-    iSem.Clear();
-    return true;
+    return iSem.Clear();
 }
 
 void TestHelperFrameworkSemaphore::Signal()
@@ -1950,8 +1954,8 @@ void SuiteWebAppFramework::TestDeleteWhileClientTabOpen()
 void TestWebAppFramework(Environment& aEnv)
 {
     Runner runner("WebApp Framework tests\n");
-    //runner.Add(new SuiteFrameworkTabHandler());
-    //runner.Add(new SuiteFrameworkTab());
+    runner.Add(new SuiteFrameworkTabHandler());
+    runner.Add(new SuiteFrameworkTab());
     runner.Add(new SuiteTabManager());
     runner.Add(new SuiteWebAppFramework(aEnv));
     runner.Run();

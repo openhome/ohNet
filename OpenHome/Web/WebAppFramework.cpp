@@ -178,7 +178,6 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
     // - There are >= 1 msgs in FIFO. If so, output and return.
     // - There are no msgs in FIFO. Block until a msg arrives via Send(), output it, and return.
     // - There are no msgs in FIFO. Block until timer triggers a timeout and return.
-
     {
         // Don't accept any long polls if in an interrupted state.
         AutoMutex a(iLock);
@@ -192,6 +191,7 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
     iTimer.Start(iSendTimeoutMs, *this);
 
     TBool msgOutput = false;
+
     for (;;) {
         iSemRead.Wait();
         {
@@ -255,14 +255,15 @@ void FrameworkTabHandler::Disable()
         msg->Destroy();
         iSemWrite.Signal(); // Unblock any Send() calls. Should just discard messages.
     }
-
-    iSemRead.Clear();
 }
 
 void FrameworkTabHandler::Enable()
 {
     AutoMutex a(iLock);
     iEnabled = true;
+    // Clear iSemRead in case it wasn't being waited on when Disable() was last called.
+    // No need to clear iSemWrite as its Wait()/Signal() calls should always match up.
+    iSemRead.Clear();
 }
 
 void FrameworkTabHandler::Send(ITabMessage& aMessage)
