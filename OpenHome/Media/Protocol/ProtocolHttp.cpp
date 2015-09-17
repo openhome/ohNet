@@ -88,6 +88,7 @@ private:
     TBool iStarted;
     TBool iStopped;
     TBool iStreamIncludesMetaData;
+    TBool iReadSuccess;
     TUint iDataChunkSize;
     TUint iDataChunkRemaining;
     TUint64 iSeekPos;
@@ -377,6 +378,7 @@ Brn ProtocolHttp::Read(TUint aBytes)
         iDataChunkRemaining -= buf.Bytes();
     }
     iOffset += buf.Bytes();
+    iReadSuccess = true;
     return buf;
 }
 
@@ -394,7 +396,7 @@ void ProtocolHttp::Reinitialise(const Brx& aUri)
 {
     iTotalStreamBytes = iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
+    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = iReadSuccess = false;
     iDataChunkSize = iDataChunkRemaining = 0;
     iContentProcessor = nullptr;
     iNextFlushId = MsgFlush::kIdInvalid;
@@ -657,7 +659,11 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
         }
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();
-    return iContentProcessor->Stream(*this, iTotalBytes);
+    ProtocolStreamResult res = iContentProcessor->Stream(*this, iTotalBytes);
+    if (!iReadSuccess) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
+    return res;
 }
 
 TBool ProtocolHttp::ContinueStreaming(ProtocolStreamResult aResult)
