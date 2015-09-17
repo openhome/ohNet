@@ -670,7 +670,12 @@ void RaopDiscoverySession::GenerateAppleResponse(const Brx& aChallenge)
             if (i % 16 == 0) {
                 buf.Append("\n    ");
             }
-            buf.AppendPrintf("%02x, ", challenge[i]);
+            if (i == 31) {
+                buf.AppendPrintf("%02x\n", challenge[i]);
+            }
+            else {
+                buf.AppendPrintf("%02x, ", challenge[i]);
+            }
         }
         LOG(kMedia, "%.*s\n", PBUF(buf));
     }
@@ -678,13 +683,18 @@ void RaopDiscoverySession::GenerateAppleResponse(const Brx& aChallenge)
     TInt res = RSA_private_encrypt(32, challenge, response, iRsa, RSA_PKCS1_PADDING);
 
     if (Debug::TestLevel(Debug::kMedia)) {
-        Bws<400> buf("encrypted response");
+        Bws<1280> buf("encrypted response");
         buf.AppendPrintf(" %d:", res);
         for (TInt i = 0; i < res; i++) {
             if (i % 16 == 0) {
                 buf.Append("\n    ");
             }
-            buf.AppendPrintf("%02x, ", response[i]);
+            if (i == res-1) {
+                buf.AppendPrintf("%02x\n", response[i]);
+            }
+            else {
+                buf.AppendPrintf("%02x, ", response[i]);
+            }
         }
         LOG(kMedia, "%.*s\n", PBUF(buf));
     }
@@ -706,7 +716,12 @@ void RaopDiscoverySession::GenerateAppleResponse(const Brx& aChallenge)
                 if (i % 16 == 0) {
                     buf.Append("\n    ");
                 }
-                buf.AppendPrintf("%02x, ", decrypted[i]);
+                if (i == res-1) {
+                    buf.AppendPrintf("%02x\n", decrypted[i]);
+                }
+                else {
+                    buf.AppendPrintf("%02x, ", decrypted[i]);
+                }
             }
             LOG(kMedia, "%.*s\n", PBUF(buf));
         }
@@ -1017,6 +1032,7 @@ TBool RaopDiscovery::Active()
     //if (iCurrent != nullptr) {
         return iCurrent->Active();
     //}
+    //return false;
 }
 
 void RaopDiscovery::Deactivate()
@@ -1115,7 +1131,7 @@ void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
     ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
-    iCurrent = nullptr;
+    //iCurrent = nullptr;
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionEnd();
