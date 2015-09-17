@@ -511,6 +511,7 @@ void SuiteFrameworkTabHandler::TearDown()
     delete iSemRead;
     delete iTabAllocator;
     delete iHelperBufferWriter;
+    delete iTestPipe;
 }
 
 
@@ -561,7 +562,7 @@ void SuiteFrameworkTabHandler::TestBlockingQueueEmpty()
     TEST(iTestPipe->ExpectEmpty());
 }
 
- void SuiteFrameworkTabHandler::TestDisableWhileBlockingSend()
+void SuiteFrameworkTabHandler::TestDisableWhileBlockingSend()
 {
     // Queue no msgs, but try a blocking send. Should block until timer fired.
     IFrameworkTabHandler& tabHandler = *iTabHandler;

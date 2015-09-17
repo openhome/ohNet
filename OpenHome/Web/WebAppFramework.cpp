@@ -377,7 +377,16 @@ FrameworkTab::FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, IFrameworkTabH
 FrameworkTab::~FrameworkTab()
 {
     // Owner must have called Clear().
-    ASSERT(iTab == nullptr);
+    TBool tabIsAllocated = false;
+    {
+        AutoMutex a(iLock);
+        tabIsAllocated = (iTab != nullptr);
+    }
+
+    if (tabIsAllocated) {
+        Clear(); // Clear before asserting to avoid memory leaks in tests.
+        ASSERTS();
+    }
 }
 
 TUint FrameworkTab::SessionId() const
