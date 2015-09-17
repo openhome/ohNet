@@ -173,6 +173,7 @@ private:
     void TestTrackMetatext();
     void TestTrackEncodedStreamMetatext();
     void TestSeek();
+    void TestSeekNewStream();
 private:
     Semaphore* iSemSeek;
     TUint iHandle;
@@ -550,6 +551,7 @@ SuiteCodecControllerStream::SuiteCodecControllerStream()
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestNoDataAfterRecognition), "TestNoDataAfterRecognition");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStream), "TestTruncatedStream");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestSeek), "TestSeek");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestSeekNewStream), "TestSeekNewStream");
 }
 
 void SuiteCodecControllerStream::Setup()
@@ -922,6 +924,91 @@ void SuiteCodecControllerStream::TestSeek()
     TEST(iJiffies == totalJiffies);
 }
 
+void SuiteCodecControllerStream::TestSeekNewStream()
+{
+    static const TUint kMaxEncodedBytes = kMaxMsgBytes;
+    static const TUint kSeconds = 3;
+    static const TUint kChannels = 2;
+    static const TUint kBitDepthBytes = 16/8;
+    static const TUint kSamples = kSampleRate * kSeconds;
+    static const TUint kAudioBytes = kSamples * kChannels * kBitDepthBytes;
+    iTotalBytes = kWavHeaderBytes + kAudioBytes;
+
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+
+    const TUint bytesToOutput = kAudioBytes/2;
+    const TUint msgsToOutput = (bytesToOutput/kMaxEncodedBytes) + 1;
+    for (TUint i=0; i<msgsToOutput; i++) {
+        Queue(CreateAudio(true, kMaxEncodedBytes));
+    }
+    // Pushing MsgEncodedAudio should cause a MsgDecodedStream to be pushed
+    // out other end of CodecController.
+    PullNext(EMsgDecodedStream);
+
+    // Can only pull through queued-1 msgs, as CodecController will block when no more available.
+    const TUint samplesPerMsg = kMaxEncodedBytes/kChannels/kBitDepthBytes;
+    const TUint jiffiesPerMsg = samplesPerMsg * Jiffies::JiffiesPerSample(kSampleRate);
+    const TUint jiffiesToPull = (msgsToOutput-1)*jiffiesPerMsg;
+    while (iJiffies < jiffiesToPull) {
+        PullNext(EMsgAudioPcm);
+    }
+
+    // Do a seek.
+    Thread::Sleep(50);  // FIXME - quick fix to stop race condition where last
+    // encoded audio msg may not have been processed before
+    // seek (and is thus discarded).
+    ISeeker& seeker = *iController;
+    TUint handle = ISeeker::kHandleError;
+    TUint seekSeconds = 0;
+    seeker.StartSeek(iStreamId, seekSeconds, *this, handle); // seek to 1s
+
+    // Send some more msgs down to cause CodecController to unblock and start the seek.
+    // These will be discarded.
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+
+    // Pull audio that was output just before seek start.
+    PullNext(EMsgAudioPcm);
+
+    // Wait for seek to complete.
+    iSemSeek->Wait(kSemWaitMs);
+    TEST(iHandle == handle);
+    TEST(iFlushId == kExpectedFlushId);
+
+    // Flush to signify seek end.
+    Queue(CreateFlush());
+    PullNext(EMsgFlush);
+
+    // Start new stream.
+    iTrackOffsetBytes = 0;
+    iTrackOffset = 0;
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgAudioPcm);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgEncodedStream);
+}
+
 
 // SuiteCodecControllerPcmSize
 
@@ -1197,7 +1284,6 @@ void SuiteCodecControllerSeekInvalid::NotifySeekComplete(TUint aHandle, TUint aF
     iFlushId = aFlushId;
     iSemSeek->Signal();
 }
-
 
 void SuiteCodecControllerSeekInvalid::TestSeekInvalid()
 {
