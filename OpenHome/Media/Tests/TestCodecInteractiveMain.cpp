@@ -110,17 +110,19 @@ private:
     const TUint iBytesTotal;
 };
 
-class ProcessorPcmSwpEndianPacked : public ProcessorPcmBuf
+class ProcessorPcmSwpEndianPacked : public ProcessorPcmBufTest
 {
 public:
     ProcessorPcmSwpEndianPacked();
 private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels);
     void ProcessSample8(const TByte* aSample, TUint aNumChannels);
     void ProcessSample16(const TByte* aSample, TUint aNumChannels);
     void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels);
 private:
     void SwapEndianness16(const Brx& aData);
     void SwapEndianness24(const Brx& aData);
@@ -544,24 +546,26 @@ ProcessorPcmSwpEndianPacked::ProcessorPcmSwpEndianPacked()
 {
 }
 
-TBool ProcessorPcmSwpEndianPacked::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
+void ProcessorPcmSwpEndianPacked::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
 {
     ProcessFragment(aData);
-    return true;
 }
 
-TBool ProcessorPcmSwpEndianPacked::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
+void ProcessorPcmSwpEndianPacked::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
 {
     CheckSize(aData.Bytes());
     SwapEndianness16(aData);
-    return true;
 }
 
-TBool ProcessorPcmSwpEndianPacked::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
+void ProcessorPcmSwpEndianPacked::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
 {
     CheckSize(aData.Bytes());
     SwapEndianness24(aData);
-    return true;
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/)
+{
+    ASSERTS();
 }
 
 void ProcessorPcmSwpEndianPacked::ProcessSample8(const TByte* aSample, TUint aNumChannels)
@@ -582,6 +586,11 @@ void ProcessorPcmSwpEndianPacked::ProcessSample24(const TByte* aSample, TUint aN
     Brn sample(aSample, 3*aNumChannels);
     CheckSize(sample.Bytes());
     SwapEndianness24(sample);
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChannels*/)
+{
+    ASSERTS();
 }
 
 void ProcessorPcmSwpEndianPacked::SwapEndianness16(const Brx& aData)

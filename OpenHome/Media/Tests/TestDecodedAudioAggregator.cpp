@@ -299,7 +299,7 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
     iMsgOffset = aMsg->TrackOffset();
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 4);   // check we have enough bytes to examine first

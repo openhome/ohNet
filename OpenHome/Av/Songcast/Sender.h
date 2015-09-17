@@ -77,12 +77,14 @@ private:
     void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
 private: // from IPcmProcessor
     void BeginBlock() override;
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels) override;
     void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
 private:
     class PlayableCreator : private Media::IMsgProcessor

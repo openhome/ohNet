@@ -1920,48 +1920,19 @@ void MsgPlayablePcm::Read(IPcmProcessor& aProcessor)
             }
         }
         else {
-            TBool fragmentProcessed = false;
             switch (byteDepth)
             {
             case 1:
-                 fragmentProcessed = aProcessor.ProcessFragment8(audioBuf, numChannels);
+                 aProcessor.ProcessFragment8(audioBuf, numChannels);
                 break;
             case 2:
-                 fragmentProcessed = aProcessor.ProcessFragment16(audioBuf, numChannels);
+                 aProcessor.ProcessFragment16(audioBuf, numChannels);
                 break;
             case 3:
-                 fragmentProcessed = aProcessor.ProcessFragment24(audioBuf, numChannels);
+                 aProcessor.ProcessFragment24(audioBuf, numChannels);
                 break;
             default:
                 ASSERTS();
-            }
-            if (!fragmentProcessed) {
-                const TUint numSamples = playable->iSize / (byteDepth * numChannels);
-                const TByte* ptr = audioBuf.Ptr();
-                const TUint sampleLen = byteDepth * numChannels;
-                switch (byteDepth)
-                {
-                case 1:
-                    for (TUint i=0; i<numSamples; i++) {
-                        aProcessor.ProcessSample8(ptr, numChannels);
-                        ptr += sampleLen;
-                    }
-                    break;
-                case 2:
-                    for (TUint i=0; i<numSamples; i++) {
-                        aProcessor.ProcessSample16(ptr, numChannels);
-                        ptr += sampleLen;
-                    }
-                    break;
-                case 3:
-                    for (TUint i=0; i<numSamples; i++) {
-                        aProcessor.ProcessSample24(ptr, numChannels);
-                        ptr += sampleLen;
-                    }
-                    break;
-                default:
-                    ASSERTS();
-                }
             }
         }
         playable = reinterpret_cast<MsgPlayablePcm*>(playable->iNextPlayable);
@@ -2006,7 +1977,6 @@ void MsgPlayableSilence::Read(IPcmProcessor& aProcessor)
     aProcessor.BeginBlock();
     MsgPlayableSilence* playable = this;
     while (playable != nullptr) {
-        TBool fragmentProcessed = false;
         TUint remainingBytes = playable->iSize;
         do {
             TUint bytes = (remainingBytes > DecodedAudio::kMaxBytes? DecodedAudio::kMaxBytes : remainingBytes);
@@ -2014,44 +1984,19 @@ void MsgPlayableSilence::Read(IPcmProcessor& aProcessor)
             switch (iBitDepth)
             {
             case 8:
-                fragmentProcessed = aProcessor.ProcessFragment8(audioBuf, iNumChannels);
+                aProcessor.ProcessFragment8(audioBuf, iNumChannels);
                 break;
             case 16:
-                fragmentProcessed = aProcessor.ProcessFragment16(audioBuf, iNumChannels);
+                aProcessor.ProcessFragment16(audioBuf, iNumChannels);
                 break;
             case 24:
-                fragmentProcessed = aProcessor.ProcessFragment24(audioBuf, iNumChannels);
+                aProcessor.ProcessFragment24(audioBuf, iNumChannels);
                 break;
             default:
                 ASSERTS();
             }
-            if (fragmentProcessed) {
-                remainingBytes -= bytes;
-            }
-        } while (fragmentProcessed && remainingBytes > 0);
-        if (!fragmentProcessed) {
-            const TUint numSamples = remainingBytes / ((iBitDepth/8) * iNumChannels);
-            switch (iBitDepth)
-            {
-            case 8:
-                for (TUint i=0; i<numSamples; i++) {
-                    aProcessor.ProcessSample8(silence, iNumChannels);
-                }
-                break;
-            case 16:
-                for (TUint i=0; i<numSamples; i++) {
-                    aProcessor.ProcessSample16(silence, iNumChannels);
-                }
-                break;
-            case 24:
-                for (TUint i=0; i<numSamples; i++) {
-                    aProcessor.ProcessSample24(silence, iNumChannels);
-                }
-                break;
-            default:
-                ASSERTS();
-            }
-        }
+            remainingBytes -= bytes;
+        } while (remainingBytes > 0);
         playable = reinterpret_cast<MsgPlayableSilence*>(playable->iNextPlayable);
     }
     aProcessor.EndBlock();

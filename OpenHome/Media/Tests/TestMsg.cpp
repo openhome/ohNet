@@ -816,7 +816,7 @@ void SuiteMsgAudio::Test()
     // Check underlying DecodedAudio was also combined (i.e. check that MsgAudioPcm->iSize wasn't just updated).
     MsgPlayable* aggregatedPlayable = msgAggregate1->CreatePlayable();
     TEST(aggregatedPlayable->Bytes() == dataSizeHalfDecodedAudio*2);
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aggregatedPlayable->Read(pcmProcessor);
     aggregatedPlayable->RemoveRef();
     const TByte* ptr = pcmProcessor.Ptr();
@@ -967,7 +967,7 @@ void SuiteMsgPlayable::Test()
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataEndianLittle, 0);
     playable = audioPcm->CreatePlayable();
     TEST(playable->Bytes() == data.Bytes());
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     playable->RemoveRef();
     const TByte* ptr = pcmProcessor.Ptr();
@@ -1159,7 +1159,7 @@ void SuiteMsgPlayable::Test()
 void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 {
     TUint bytes = aMsg->Bytes();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aMsg->Read(pcmProcessor);
     aMsg->RemoveRef();
     const TByte* ptr = pcmProcessor.Ptr();
@@ -1395,7 +1395,7 @@ void SuiteRamp::Test()
     TEST(remaining == nullptr);
     MsgPlayable* playable = silence->CreatePlayable(44100, 8, 2);
     TEST(playable != nullptr);
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     const TByte* ptr = pcmProcessor.Ptr();
     for (TUint i=0; i<playable->Bytes(); i++) {

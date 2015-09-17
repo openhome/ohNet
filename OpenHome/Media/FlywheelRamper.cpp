@@ -138,7 +138,7 @@ void PcmProcessorFwr::BeginBlock()
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
+void PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
 {
     if (iSamples.Bytes()==0)
     {
@@ -156,11 +156,10 @@ TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
         iSamples.Append((TByte)0); // pad lower 24 bits
         i+=1;
     }
-    return(true);
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels)
+void PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels)
 {
     Log::Print("ProcessFragment16 \n ");
 
@@ -181,12 +180,10 @@ TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels
         iSamples.Append((TByte)0); // pad lower 16 bits
         i += 2;
     }
-
-    return(true);
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels)
+void PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels)
 {
     if (iSamples.Bytes()==0)
     {
@@ -205,8 +202,28 @@ TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels
         iSamples.Append((TByte)0); // pad lower 8 bits
         i+=3;
     }
+}
 
-    return(true);
+
+void PcmProcessorFwr::ProcessFragment32(const Brx& aSamples, TUint aNumChannels)
+{
+    if (iSamples.Bytes()==0)
+    {
+        iNumChannels = aNumChannels;
+    }
+    else
+    {
+        ASSERT(aNumChannels==iNumChannels);
+    }
+
+    for (TUint i=0; i<aSamples.Bytes();)
+    {
+        iSamples.Append(aSamples[i]);
+        iSamples.Append(aSamples[i+1]);
+        iSamples.Append(aSamples[i+2]);
+        iSamples.Append(aSamples[i+3]); // pad lower 8 bits
+        i+=4;
+    }
 }
 
 
@@ -228,6 +245,13 @@ void PcmProcessorFwr::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 {
     Brn samples(aSample, 3*aNumChannels);
     ProcessFragment24(samples, aNumChannels);
+}
+
+
+void PcmProcessorFwr::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+{
+    Brn samples(aSample, 4*aNumChannels);
+    ProcessFragment32(samples, aNumChannels);
 }
 
 

@@ -368,7 +368,7 @@ Msg* DummyDriver::ProcessMsg(MsgPlayable* aMsg)
         iJiffies += numSamples * iJiffiesPerSample;
     }
 
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     aMsg->Read(proc);
     Brn buf = proc.Buf();
     const TInt subsample = (buf[buf.Bytes()-1] << 8) | buf[buf.Bytes()-2];

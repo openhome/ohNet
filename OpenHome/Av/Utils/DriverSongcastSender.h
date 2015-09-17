@@ -16,20 +16,6 @@ namespace Av {
 }
 namespace Av {
 
-class ProcessorPcmBufPackedDualMono : public Media::ProcessorPcmBuf
-{
-public:
-    ProcessorPcmBufPackedDualMono();
-private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
-    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
-};
-
-
 class DriverSongcastSender : public Media::PipelineElement, private Net::IResourceManager
 {
     static const TUint kSongcastTtl = 1;

@@ -898,7 +898,7 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
     //iLastSubsample = 0;
     MsgPlayable* msg = aMsg->CreatePlayable();
     TUint bytes = msg->Bytes();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     const TUint increment = (iBitDepth/8) * iChannels;
 
     msg->Read(pcmProcessor);

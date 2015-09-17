@@ -339,7 +339,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
     TUint jiffies = aMsg->Jiffies();
 
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     playable->RemoveRef();

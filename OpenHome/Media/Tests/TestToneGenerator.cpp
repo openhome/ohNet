@@ -689,7 +689,7 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
     // but content tests are generator-specific
     bool allZero = true;
     MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     playable->Read(proc);
     Brn buf = proc.Buf();
     for (const TByte* p = buf.Ptr(); p < (buf.Ptr() + buf.Bytes()); ++p) {
@@ -712,7 +712,7 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
     SuiteGeneratorAny::ProcessMsg(aMsg);
     // but content tests are generator-specific
     MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     playable->Read(proc);
     Brn buf = proc.Buf();
     // iExpectedToneParams.* already sanity-checked in earlier msg 
@@ -1057,7 +1057,7 @@ Msg* SuiteGeneratorConstant::ProcessMsg(MsgAudioPcm* aMsg)
     SuiteGeneratorAny::ProcessMsg(aMsg);
     // but content tests are generator-specific
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     playable->Read(proc);
     Brn buf = proc.Buf();
     TEST(buf[0] == iExpectedSubsample);
