@@ -78,6 +78,17 @@ void RampValidator::Reset(const TChar* aCallerId)
     iLastRamp = UINT_MAX;
 }
 
+void RampValidator::ResetIfRampComplete(const Ramp& aRamp)
+{
+    if (aRamp.Direction() == Ramp::EUp && iLastRamp == Ramp::kMax) {
+        Reset("completed ramp up");
+    }
+    else if (aRamp.Direction() == Ramp::EDown && iLastRamp == Ramp::kMin) {
+        Reset("completed ramp down");
+        iRampedDown = true;
+    }
+}
+
 void RampValidator::ProcessAudio(const Ramp& aRamp)
 {
     /*if (iRampedDown) {
@@ -97,13 +108,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
 #endif
         }
         iLastRamp = aRamp.End();
-        if (aRamp.Direction() == Ramp::EUp && iLastRamp == Ramp::kMax) {
-            Reset("completed ramp up");
-        }
-        else if (aRamp.Direction() == Ramp::EDown && iLastRamp == Ramp::kMin) {
-            Reset("completed ramp down");
-            iRampedDown = true;
-        }
+        ResetIfRampComplete(aRamp);
     }
     else if (aRamp.IsEnabled()) {
         iRamping = true;
@@ -124,6 +129,8 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
             }
         }
         iLastRamp = aRamp.End();
+        // It's possible to complete ramp up/down within a single MsgAudioPcm.
+        ResetIfRampComplete(aRamp);
     }
 }
 

@@ -26,6 +26,7 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private:
     void Reset(const TChar* aCallerId);
+    void ResetIfRampComplete(const Ramp& aRamp);
     void ProcessAudio(const Ramp& aRamp);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
