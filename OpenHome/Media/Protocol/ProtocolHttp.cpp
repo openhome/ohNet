@@ -717,6 +717,7 @@ void ProtocolHttp::ExtractMetadata()
                 iNewIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
                 iNewIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
                 if (iNewIcyMetadata != iIcyMetadata) {
+                    LOG(kMedia, "ProtocolHttp::ExtractMetadata() - %.*s\n", PBUF(iNewIcyMetadata));
                     iIcyMetadata.Replace(iNewIcyMetadata);
                     iSupply->OutputMetadata(iIcyMetadata);
                 }
