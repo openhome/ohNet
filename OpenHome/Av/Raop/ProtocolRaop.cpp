@@ -605,6 +605,8 @@ void ProtocolRaop::OutputDiscontinuity()
     }
     // NOTE - if there is a very high rate of drop-outs, could potentially exhaust MsgEncodedStream allocator.
     iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
+    // Allow stream to be re-recognised.
+    OutputContainer(iDiscovery.Fmtp());
 }
 
 void ProtocolRaop::WaitForDrain()
@@ -626,7 +628,7 @@ void ProtocolRaop::ResendTimerFired()
 {
     Log::Print(">ProtocolRaop::ResendTimerFired\n");
     // Timer may fire for each resend packet.
-    //OutputDiscontinuity();    // FIXME - enable
+    OutputDiscontinuity();
 
     AutoMutex a(iLockRaop);
     if (iResendCount > 0) {
@@ -727,7 +729,7 @@ void ProtocolRaop::ReceiveResend(const RaopPacketAudio& aPacket)
 
     if (discontinuity) {
         Log::Print("ProtocolRaop::ReceiveResend detected discontinuity; seq: %u\n", aPacket.Header().Seq());
-        //OutputDiscontinuity();    // FIXME - enable
+        OutputDiscontinuity();
     }
     if (outputAudio) {
         Log::Print("ProtocolRaop::ReceiveResend outputting audio; seq: %u\n", aPacket.Header().Seq());
