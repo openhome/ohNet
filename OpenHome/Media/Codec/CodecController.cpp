@@ -677,6 +677,10 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgDrain* aMsg)
 {
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     Queue(aMsg);
     return nullptr;
 }
