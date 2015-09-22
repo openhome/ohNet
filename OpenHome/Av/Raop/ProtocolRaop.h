@@ -170,13 +170,6 @@ private:
     Bws<kAesInitVectorBytes> iInitVector;
 };
 
-//class IRaopResendRequester
-//{
-//public:
-//    virtual void RequestResend(TUint aSeqStart, TUint aCount) = 0;
-//    virtual ~IRaopResendRequester() {}
-//};
-
 class IRaopResendReceiver
 {
 public:
@@ -184,28 +177,14 @@ public:
     virtual ~IRaopResendReceiver() {}
 };
 
-//class RaopResendHandler : public IRaopResendRequester, public IRaopResendReceiver
-//{
-//private:
-//    static const TUint kTimerExpiryTimeoutMs = 80;  // Taken from previous codebase.
-//public:
-//    RaopResendHandler(IRaopResendRequester& aResendRequester, IRaopResendReceiver& aResendReceiver);
-//public: // from IRaopResendRequester
-//    void RequestResend(TUint aSeqStart, TUint aCount) override;
-//public: // from IRaopResendReceiver
-//    void ReceiveResend(const RtpPacketRaop& aPacket) override;
-//private:
-//    void TimerFired();  // Called when a resend times out.
-//private:
-//    IRaopResendRequester& iRequester;
-//    IRaopResendReceiver& iReceiver;
-//    TUint iSeqNext;
-//    TUint iCount;
-//    Timer* iTimer;
-//    Mutex iLock;
-//};
+class IRaopResendRequester
+{
+public:
+    virtual void RequestResend(TUint aSeqStart, TUint aCount) = 0;
+    virtual ~IRaopResendRequester() {}
+};
 
-class RaopControlServer// : public IRaopResendRequester
+class RaopControlServer : public IRaopResendRequester
 {
 private:
     static const TUint kMaxReadBufferBytes = 1500;
@@ -221,13 +200,11 @@ private:
 public:
     RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver);
     ~RaopControlServer();
-    //void SetResendReceiver(IRaopResendReceiver& aResendReceiver);
     void DoInterrupt();
     void Reset(TUint aClientPort);
     TUint Latency() const;  // Returns latency in samples.
-    void RequestResend(TUint aSeqStart, TUint aCount);
-//public: // from IRaopResendRequester
-//    void RequestResend(TUint aSeqStart, TUint aCount) override;
+public: // from IRaopResendRequester
+    void RequestResend(TUint aSeqStart, TUint aCount) override;
 private:
     void Run();
 private:
@@ -275,6 +252,7 @@ private:
     TBool IsValidSession(TUint aSessionId) const;
     TBool ShouldFlush(TUint aSeq, TUint aTimestamp) const;
     void OutputAudio(const Brx& aAudio);
+    void OutputDiscontinuity();
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
     void WaitForDrain();

@@ -438,6 +438,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     // Missed some packets.
                     const TUint missed = seqLast-seqExpected;
                     LOG(kMedia, "ProtocolRaop::Stream missed %u audio packets\n", missed);
+                    Log::Print("ProtocolRaop::Stream expected audio packet: %u, got audio packet: %u\n", seqExpected, seqLast);
                     {
                         AutoMutex a(iLockRaop);
                         iResendSeqNext = seqExpected;
@@ -446,10 +447,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                         iControlServer.RequestResend(seqExpected, missed);
                         // Callbacks will come via ::ReceiveResend().
                     }
-                    iSemResend.Wait();  // FIXME - ensure this is only cleared once ALL packets have been resent.
-                    // FIXME - what if waiting on a resend during a flush?
-                    // Still need to check if the resent audio should be flushed.
-                    // FIXME - need to then output current audioPacket?
+
+                    // No need to notify of discontinuity here; might manage to recover if packets are resent.
+                    iSemResend.Wait();  // Only signalled once resent packets have been received and/or timed out.
+
+                    // Now, send out packet that followed discontinuity.
+                    Log::Print("After detecting missed packets, now outputting seq: %u\n", audioPacket.Header().Seq());
+                    seqExpected = audioPacket.Header().Seq()+1; // Jump over missed packets that have now been resent/dropped.
+                    OutputAudio(audioPacket.Payload());
+
                 }
                 else {
                     // Packet is one that's already been seen. Ignore.
@@ -587,6 +593,20 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
     iSupply->OutputData(iAudioDecrypted);
 }
 
+void ProtocolRaop::OutputDiscontinuity()
+{
+    iSupply->OutputStreamInterrupted();
+    TUint streamId = 0;
+    Uri uri;
+    {
+        AutoMutex a(iLock);
+        streamId = iStreamId = iIdProvider->NextStreamId();
+        uri.Replace(iUri.AbsoluteUri());
+    }
+    // NOTE - if there is a very high rate of drop-outs, could potentially exhaust MsgEncodedStream allocator.
+    iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
+}
+
 void ProtocolRaop::WaitForDrain()
 {
     iSemDrain.Clear();
@@ -604,7 +624,10 @@ void ProtocolRaop::InputChanged()
 
 void ProtocolRaop::ResendTimerFired()
 {
-    // FIXME - should notify pipeline of discontinuity if timer fires.
+    Log::Print(">ProtocolRaop::ResendTimerFired\n");
+    // Timer may fire for each resend packet.
+    //OutputDiscontinuity();    // FIXME - enable
+
     AutoMutex a(iLockRaop);
     if (iResendCount > 0) {
         iResendCount--;
@@ -615,6 +638,7 @@ void ProtocolRaop::ResendTimerFired()
         iTimerResend.FireIn(kResendTimeoutMs);
     }
     else {
+        // Resend sequence complete.
         iResendSeqNext = 0;
         iSemResend.Signal();
     }
@@ -645,60 +669,74 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::ReceiveResend(const RaopPacketAudio& aPacket)
 {
-    iLockRaop.Wait();
-    if (iResendCount > 0) {
-        if (aPacket.Header().Seq() == iResendSeqNext) {
-            // Expected resend packet.
+    TBool discontinuity = false;
+    TBool outputAudio = false;
+    TBool shouldSignal = false;
 
-            iTimerResend.Cancel();
+    {
+        AutoMutex a(iLock);
+        Log::Print(">ProtocolRaop::ReceiveResend timestamp: %u, seq: %u, iResendSeqNext %u, iResendCount: %u\n", aPacket.Timestamp(), aPacket.Header().Seq(), iResendSeqNext, iResendCount);
 
-            iResendSeqNext++;
-            iResendCount--;
+        if (iResendCount > 0) {
+            if (aPacket.Header().Seq() == iResendSeqNext) {
+                // Expected resend packet.
+                iTimerResend.Cancel();
+                iResendCount--;
+                if (iResendCount == 0) {
+                    iResendSeqNext = 0;
+                }
+                else {
+                    iResendSeqNext++;
+                }
+                outputAudio = true;
+            }
+            else if (aPacket.Header().Seq() >= iResendSeqNext) {
+                // Missed a resend packet.
+                iTimerResend.Cancel();
+                const TUint missCount = aPacket.Header().Seq()-iResendSeqNext;
 
-            TBool shouldSignal = false;
+                if (missCount > iResendCount) {
+                    // Something went very wrong or missed end of resend sequence.
+                    // Abort resend and don't output this packet.
+                    iResendSeqNext = 0;
+                    iResendCount = 0;
+                    discontinuity = true;
+                }
+                else {
+                    // Advance over missed packet.
+                    iResendSeqNext += missCount;
+                    iResendCount -= missCount;
+                    discontinuity = true;
+                    outputAudio = true;
+                }
+            }
+            else { // aPacket.Header().Seq() >= iResendSeqNext
+                // Bad sequence number. Ignore.
+            }
+
             if (iResendCount == 0) {
                 iResendSeqNext = 0;
                 shouldSignal = true;
             }
-
-            iLockRaop.Signal();
-
-            OutputAudio(aPacket.Payload());
-
-            if (shouldSignal) {
-                iSemResend.Signal();
-            }
-
-            return;
-        }
-        else if (aPacket.Header().Seq() >= iResendSeqNext) {
-            // Missed a resend packet.
-            const TUint missCount = aPacket.Header().Seq()-iResendSeqNext;
-
-            if (missCount > iResendCount) {
-                // Something went very wrong or missed end of resend sequence. Abort resend.
-                iTimerResend.Cancel();
-                iResendSeqNext = 0;
-                iResendCount = 0;
-                // FIXME - notify pipeline of discontinuity.
-
-                iSemResend.Signal();
-            }
             else {
-                // FIXME - notify pipeline of discontinuity.
-
-                // Advance over missed packet.
-                iResendSeqNext += missCount;
-                iResendCount -= missCount;
+                // Start timer for next resend packet.
+                iTimerResend.FireIn(kResendTimeoutMs);
             }
-        }
-        else { // aPacket.Header().Seq() >= iResendSeqNext
-            // Bad sequence number. Ignore.
-
-            // FIXME - notify pipeline of discontinuity.
         }
     }
-    iLockRaop.Signal();
+
+    if (discontinuity) {
+        Log::Print("ProtocolRaop::ReceiveResend detected discontinuity; seq: %u\n", aPacket.Header().Seq());
+        //OutputDiscontinuity();    // FIXME - enable
+    }
+    if (outputAudio) {
+        Log::Print("ProtocolRaop::ReceiveResend outputting audio; seq: %u\n", aPacket.Header().Seq());
+        OutputAudio(aPacket.Payload());
+    }
+    if (shouldSignal) {
+        Log::Print("ProtocolRaop::ReceiveResend end of resend sequence; seq: %u\n", aPacket.Header().Seq());
+        iSemResend.Signal();
+    }
 }
 
 TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
