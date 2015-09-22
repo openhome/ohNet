@@ -596,7 +596,7 @@ void ProtocolRaop::WaitForDrain()
 
 void ProtocolRaop::InputChanged()
 {
-    AutoMutex a(iLockRaop);
+    // Only called while WaitForDrain() is blocking main thread, so no need to lock this.
     iVolumeEnabled = !iVolumeEnabled;   // Toggle volume.
     iVolume.SetVolumeEnabled(iVolumeEnabled);
     iSemDrain.Signal();
