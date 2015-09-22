@@ -345,8 +345,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iWaiting = false;
                 iResumePending = true;
                 iSem.Clear();
-                iSupply->OutputDrain(MakeFunctor(iSemDrain, &Semaphore::Signal));
-                iSemDrain.Wait();
+
+                Semaphore sem("PRWS", 0);
+                iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+                sem.Wait();
                 // Resume normal operation.
             }
             else if (iStopped) {
@@ -418,7 +420,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iSupply->OutputTrack(*track, !resumePending);
                 iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
                 OutputContainer(iDiscovery.Fmtp());
-
                 track->RemoveRef();
             }
             iDiscovery.KeepAlive();
@@ -762,7 +763,7 @@ void RaopControlServer::Reset(TUint aClientPort)
 
 void RaopControlServer::Run()
 {
-    LOG(kMedia, "RaopControlServer::Run\n");
+    //LOG(kMedia, "RaopControlServer::Run\n");
 
     for (;;) {
 
@@ -783,7 +784,7 @@ void RaopControlServer::Run()
 
                     // Extension bit set on sync packet signifies stream (re-)starting.
                     // However, by it's nature, UDP is unreliable, so can't rely on this for detecting (re-)start.
-                    LOG(kMedia, "RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
+                    //LOG(kMedia, "RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
 
                     AutoMutex a(iLock);
                     TUint latency = iLatency;
@@ -793,7 +794,7 @@ void RaopControlServer::Run()
                         LOG(kMedia, "RaopControlServer::Run Old latency: %u; New latency: %u\n", latency, iLatency);
                     }
 
-                    LOG(kMedia, "RaopControlServer::Run RtpTimestampMinusLatency: %u, NtpTimestampSecs: %u, NtpTimestampFract: %u, RtpTimestamp: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
+                    //LOG(kMedia, "RaopControlServer::Run RtpTimestampMinusLatency: %u, NtpTimestampSecs: %u, NtpTimestampFract: %u, RtpTimestamp: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
                 }
                 else if (packet.Header().Type() == EResendResponse) {
                     // Resend response packet contains a full audio packet as payload.
@@ -875,7 +876,7 @@ void RaopAudioServer::DoInterrupt()
 
 void RaopAudioServer::ReadPacket(Bwx& aBuf)
 {
-    LOG(kMedia, ">RaopAudioServer::ReadPacket\n");
+    //LOG(kMedia, ">RaopAudioServer::ReadPacket\n");
 
     for (;;) {
         try {
@@ -911,7 +912,7 @@ void RaopAudioDecryptor::Init(const Brx& aAesKey, const Brx& aAesInitVector)
 
 void RaopAudioDecryptor::Decrypt(const Brx& aEncryptedIn, Bwx& aAudioOut) const
 {
-    LOG(kMedia, ">RaopAudioDecryptor::Decrypt aEncryptedIn.Bytes(): %u\n", aEncryptedIn.Bytes());
+    //LOG(kMedia, ">RaopAudioDecryptor::Decrypt aEncryptedIn.Bytes(): %u\n", aEncryptedIn.Bytes());
     ASSERT(iKey.Bytes() > 0);
     ASSERT(iInitVector.Bytes() > 0);
     ASSERT(aAudioOut.MaxBytes() >= kPacketSizeBytes+aEncryptedIn.Bytes());
