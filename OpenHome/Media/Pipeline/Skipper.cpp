@@ -219,7 +219,7 @@ Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
         split = nullptr;
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
         if (split != nullptr) {
-            iQueue.EnqueueAtHead(split);
+            split->RemoveRef(); // we're going to flush the rest of the stream so no need to add split to iQueue
         }
         if (iRemainingRampSize == 0) {
             StartFlushing(true);
