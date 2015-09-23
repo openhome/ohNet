@@ -177,8 +177,13 @@ Msg* Stopper::Pull()
     Msg* msg;
     do {
         if (iHaltPending) {
-            msg = iMsgFactory.CreateMsgHalt();
-            iHaltPending = false;
+            if (iQueue.IsEmpty()) {
+                msg = iMsgFactory.CreateMsgHalt();
+                iHaltPending = false;
+            }
+            else {
+                msg = iQueue.Dequeue();
+            }
         }
         else {
             if (iState == EPaused || iState == EStopped) {
@@ -320,6 +325,9 @@ Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
         if (aMsg->Jiffies() > iRemainingRampSize && iRemainingRampSize > 0) {
             split = aMsg->Split(iRemainingRampSize);
             if (split != nullptr) {
+                if (iState == ERampingDown) {
+                    split->SetMuted();
+                }
                 iQueue.EnqueueAtHead(split);
             }
         }
@@ -329,6 +337,9 @@ Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
             iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         }
         if (split != nullptr) {
+            if (iState == ERampingDown) {
+                split->SetMuted();
+            }
             iQueue.EnqueueAtHead(split);
         }
         if (iRemainingRampSize == 0) {
