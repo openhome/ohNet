@@ -158,7 +158,7 @@ class JenkinsBuild():
         if os_platform == 'linux' and arch == 'armhf':
             os.environ['CROSS_COMPILE'] = '/opt/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-'
         if os_platform == 'linux' and arch == 'mipsel':
-            os.environ['CROSS_COMPILE'] = 'mipsel-cros-linux-gnu-'
+            os.environ['CROSS_COMPILE'] = '/data/mips-2015.05-18/bin/mips-linux-gnu-'
         if os_platform == 'linux' and arch == 'ppc32':
             os.environ['CROSS_COMPILE'] = 'powerpc-linux-gnu-'
         if os_platform == 'Core' and arch == 'ppc32':

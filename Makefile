@@ -109,7 +109,9 @@ else
     ifneq (,$(findstring mipsel,$(gcc_machine)))
       detected_openhome_architecture = mipsel
     endif
-
+    ifneq (,$(findstring mips,$(gcc_machine)))
+      detected_openhome_architecture = mipsel
+    endif
 endif
 
 detected_openhome_system ?= Unknown
@@ -303,7 +305,12 @@ ifeq ($(vanilla_settings), yes)
 	osdir = Posix
 	endian ?= LITTLE
 	openhome_system ?= Linux
+	ifeq ($(detected_openhome_architecture), mipsel)
+		platform_cflags += -EL -Wa,-EL
+		platform_linkflags += -EL
+	endif
 endif
+
 
 $(info Building for system ${openhome_system} and architecture ${openhome_architecture})
 
