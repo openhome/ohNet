@@ -120,7 +120,7 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
 #endif
             }
         }
-        else { // aRamp.Direction() == Ramp::EDown
+        else if (aRamp.Direction() == Ramp::EDown) {
             if (aRamp.Start() != Ramp::kMax) {
                 Log::Print("WARNING: ramp down (%s) started at %08x\n", iId, aRamp.Start());
 #if RAMP_VALIDATOR_ENABLED
