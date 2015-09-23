@@ -306,7 +306,7 @@ ifeq ($(vanilla_settings), yes)
 	endian ?= LITTLE
 	openhome_system ?= Linux
 	ifeq ($(detected_openhome_architecture), mipsel)
-		platform_cflags += -EL -Wa,-EL
+		platform_cflags += -EL
 		platform_linkflags += -EL
 	endif
 endif
