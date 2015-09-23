@@ -170,11 +170,57 @@ private:
     Bws<kAesInitVectorBytes> iInitVector;
 };
 
+class IRaopTimer
+{
+public:
+    virtual void Start(Functor aFunctor, TUint aFireInMs) = 0;
+    virtual void Cancel() = 0;
+    virtual ~IRaopTimer() {}
+};
+
+class RaopTimer : public IRaopTimer
+{
+public:
+    RaopTimer(Environment& aEnv, const TChar* aId);
+public: // from IRaopTimer
+    void Start(Functor aFunctor, TUint aFireInMs) override;
+    void Cancel() override;
+private:
+    void TimerFired();
+private:
+    Timer iTimer;
+    Functor iFunctor;
+};
+
+/**
+ * Interface for receiving individual resent RAOP audio packets.
+ */
 class IRaopResendReceiver
 {
 public:
-    virtual void ReceiveResend(const RaopPacketAudio& aPacket) = 0;
+    virtual void ResendReceive(const RaopPacketAudio& aPacket) = 0;
     virtual ~IRaopResendReceiver() {}
+};
+
+/**
+ * Interface for receiving a block of resent RAOP audio packets.
+ *
+ * Implementor is notified of each packet that arrives via ResendReceive() and
+ * should perform some basic sequence number checking (e.g., to identify if an
+ * expected packet in the resend sequence didn't arrive and notify pipeline of a discontinuity in audio).
+ *
+ * When a resend sequence is complete (because all packets arrived or some/all
+ * packet resends timed out), ResendComplete() is called. Implementor should
+ * again perform some basic sequence number checking in case part or all of the
+ * resend failed.
+ */
+class IRaopResendBlockObserver
+{
+public:
+    virtual void ResendReceive(const RaopPacketAudio& aPacket) = 0;
+    //virtual void ResendDropped(TUint aPacketId) = 0;
+    virtual void ResendComplete() = 0;
+    virtual ~IRaopResendBlockObserver() {}
 };
 
 class IRaopResendRequester
@@ -182,6 +228,29 @@ class IRaopResendRequester
 public:
     virtual void RequestResend(TUint aSeqStart, TUint aCount) = 0;
     virtual ~IRaopResendRequester() {}
+};
+
+class RaopResendHandler : public IRaopResendRequester, public IRaopResendReceiver
+{
+private:
+    static const TUint kTimeoutMs = 80; // Taken from previous codebase.
+public:
+    RaopResendHandler(IRaopResendRequester& aRequester, IRaopTimer& aTimer);
+    void RegisterObserver(IRaopResendBlockObserver& aObserver);
+    void Interrupt();
+public: // from IRaopResendRequester
+    void RequestResend(TUint aSeqStart, TUint aCount) override;
+public: // from IRaopResendReceiver
+    void ResendReceive(const RaopPacketAudio& aPacket) override;
+private:
+    void TimerFired();
+private:
+    IRaopResendRequester& iRequester;
+    IRaopResendBlockObserver* iObserver;
+    IRaopTimer& iTimer;
+    TUint iSeqNext;
+    TUint iCount;
+    Mutex iLock;
 };
 
 class RaopControlServer : public IRaopResendRequester
@@ -198,8 +267,9 @@ private:
         EResendResponse = 0x56,
     };
 public:
-    RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver);
+    RaopControlServer(SocketUdpServer& aServer);
     ~RaopControlServer();
+    void RegisterResendObserver(IRaopResendReceiver& aReceiver);
     void DoInterrupt();
     void Reset(TUint aClientPort);
     TUint Latency() const;  // Returns latency in samples.
@@ -213,7 +283,7 @@ private:
     SocketUdpServer& iServer;
     Bws<kMaxReadBufferBytes> iPacket;
     ThreadFunctor* iThread;
-    IRaopResendReceiver& iResendReceiver;
+    IRaopResendReceiver* iResendReceiver;
     TUint iLatency;
     mutable Mutex iLock;
     TBool iExit;
@@ -227,10 +297,9 @@ class IRaopVolumeEnabler;
 // - Timing
 // However, the timing channel was never monitored in the previous codebase,
 // so no RaopTiming class exists here.
-class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendReceiver
+class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendBlockObserver
 {
 private:
-    static const TUint kResendTimeoutMs = 80;   // Taken from previous codebase.
     static const TUint kSampleRate = 44100;     // Always 44.1KHz. Can get this from fmtp field.
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
@@ -242,8 +311,9 @@ private: // from Protocol
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
-private: // from IRaopResendReceiver
-    void ReceiveResend(const RaopPacketAudio& aPacket) override;
+private: // from IRaopResendBlockObserver
+    void ResendReceive(const RaopPacketAudio& aPacket) override;
+    void ResendComplete() override;
 private:
     void Reset();
     void Start();
@@ -286,9 +356,10 @@ private:
     mutable Mutex iLockRaop;
     Semaphore iSem;
     Semaphore iSemDrain;
-    Timer iTimerResend;
-    TUint iResendSeqNext;
-    TUint iResendCount;
+
+    TUint iSeqExpected;
+    RaopTimer iResendTimer;
+    RaopResendHandler iResendHandler;
     Semaphore iSemResend;
 };
 
