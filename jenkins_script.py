@@ -12,16 +12,8 @@ parser.add_option('--type', dest='type', type='choice', choices=['oncommit', 'ni
 (opts, args) = parser.parse_args()
 
 cenv=os.environ
-if cenv['PLATFORM'] == 'Linux-mipsel':
-    cdir=cenv['CHROMIUM_BASE']
-    scrd=cenv['WORKSPACE'].replace(cenv['CHROMIUM_CHROOT'],'',1)
-    prefix=[os.path.join(cenv['DEPOT_TOOLS'], 'cros_sdk'), '--']
-    if 'OHDEVTOOLS_ROOT' in cenv:
-        prefix += ['OHDEVTOOLS_ROOT='+ cenv['OHDEVTOOLS_ROOT'],]
-else:
-    cdir=cenv['WORKSPACE']
-    scrd=cenv['WORKSPACE']
-    prefix=[]
+cdir=cenv['WORKSPACE']
+scrd=cenv['WORKSPACE']
 
 if cenv['PLATFORM'].startswith('Windows-'):
     ext='.bat'
@@ -41,4 +33,4 @@ if opts.debug:
 else:
     cargs += ['--release',]
 
-subprocess.check_call(args=prefix + [os.path.join(scrd, 'ohMediaPlayer', 'go'+ext), 'ci-build'] + cargs, cwd=cdir)
+subprocess.check_call(args=[os.path.join(scrd, 'ohMediaPlayer', 'go' + ext), 'ci-build'] + cargs, cwd=cdir)
