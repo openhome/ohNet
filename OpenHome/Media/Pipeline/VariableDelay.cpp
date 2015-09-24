@@ -244,6 +244,17 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
+    iDelayAdjustment = iDelayJiffies;
+    if (iDelayAdjustment == 0) {
+        return aMsg;
+    }
+    iWaitForAudioBeforeGeneratingSilence = true;
+
+    iRampDirection = Ramp::EDown;
+    iCurrentRampValue = Ramp::kMin;
+    iRemainingRampSize = 0;
+    iStatus = ERampedDown;
+
     return aMsg;
 }
 
@@ -392,7 +403,7 @@ Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
         }
     }
 
-    return DoProcessAudioMsg(aMsg);
+    return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
