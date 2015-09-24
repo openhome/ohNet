@@ -3,9 +3,12 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Env.h>
-#include <algorithm>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
+
+#include <algorithm>
+#include <vector>
+#include <map>
 
 using namespace OpenHome;
 
@@ -206,24 +209,28 @@ std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const
     return list;
 }
 
-TUint NetworkAdapterList::AddListener(Functor aFunctor, Map& aMap)
+TUint NetworkAdapterList::AddListener(Functor aFunctor, VectorListener& aList)
 {
     iListenerLock.Wait();
     TUint id = iNextListenerId;
-    aMap.insert(std::pair<TUint,Functor>(id, aFunctor));
+    aList.push_back(std::pair<TUint, Functor>(id, aFunctor));
     iNextListenerId++;
     iListenerLock.Signal();
     return id;
 }
 
-TBool NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
+TBool NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, VectorListener& aList)
 {
     TBool removed = false;
     iListenerLock.Wait();
-    Map::iterator it = aMap.find(aId);
-    if (it != aMap.end()) {
-        aMap.erase(it);
-        removed = true;
+    VectorListener::const_iterator it = aList.begin();
+    while (it != aList.end()) {
+        if (it->first == aId) {
+            aList.erase(it);
+            removed = true;
+            break;
+        }
+        it++;
     }
     iListenerLock.Signal();
     return removed;
@@ -432,12 +439,12 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     }
 }
 
-void NetworkAdapterList::RunCallbacks(Map& aMap)
+void NetworkAdapterList::RunCallbacks(const VectorListener& aCallbacks)
 {
     static const TUint kDelaysMs[] = { 100, 200, 400, 800, 1600, 3200, 5000, 10000, 20000, 20000, 30000 }; // roughly 90s worth of retries
     for (TUint i=0; i<sizeof(kDelaysMs)/sizeof(kDelaysMs[0]); i++) {
         try {
-            DoRunCallbacks(aMap);
+            DoRunCallbacks(aCallbacks);
             return;
         }
         catch (NetworkError&) {
@@ -449,11 +456,11 @@ void NetworkAdapterList::RunCallbacks(Map& aMap)
 
 }
 
-void NetworkAdapterList::DoRunCallbacks(Map& aMap)
+void NetworkAdapterList::DoRunCallbacks(const VectorListener& aCallbacks)
 {
     AutoMutex a(iListenerLock);
-    Map::iterator it = aMap.begin();
-    while (it != aMap.end()) {
+    VectorListener::const_iterator it = aCallbacks.begin();
+    while (it != aCallbacks.end()) {
         it->second();
         it++;
     }
