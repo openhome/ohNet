@@ -60,28 +60,94 @@ TUint FlywheelRamper::GenJiffies() const
 }
 
 
+
+/*
+        TInt32* inputSamples = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+        TInt32* outputCoeffs = (TInt32*) calloc (coeffCount, sizeof(TInt32));
+        TInt32* h = (TInt32*) calloc (aDegree, sizeof(TInt32));
+        TInt32* per = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+        TInt32* pef = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+
+
+        TInt32* ipPtr = inputSamples;
+        TInt32* opPtr = outputCoeffs;
+
+
+        for(TUint i=0; i<aSamplesIn.Bytes(); )
+        {
+            *ipPtr = FlywheelRamper::Int32(aSamplesIn, i);
+            i+=4;
+            ipPtr++;
+
+        }
+        ARMaxEntropy(inputSamples, sampleCount, aDegree, outputCoeffs, h, per, pef);
+
+
+        for(TUint i=0; i<coeffCount; i++)
+        {
+            if (i>0) // skip first coeff
+            {
+                aCoeffsOut.push_back(*opPtr);
+            }
+            opPtr++;
+        }
+
+
+        free(inputSamples);
+        free(outputCoeffs);
+        free(h);
+        free(per);
+        free(pef);
+
+
+
+*/
+
+
 void FlywheelRamper::CreateRamp(const Brx& aSamples)
 {
-    //Log::Print("\nFlywheelRamper::CreateRamp \n");
-
     TUint64 checkBytes = Samples(iSampleRate, iGenJiffies)*kBytesPerSample;
-    //Log::Print("checkBytes=%lld  aSamples.Bytes()=%d \n", checkBytes, aSamples.Bytes());
     ASSERT(aSamples.Bytes()==checkBytes);
 
     // get the coeffs from Burg's Method
 
     std::vector<TInt32> coeffs;
-    BurgsMethod::Coeffs(iDegree, aSamples, coeffs);
 
-    //Log::Print("Burg output coeffs  \n");
-    //LogDouble(coeffs, 4);
-    //Log::Print("\n");
-    //Log32(coeffs, false);
-    //Log::Print(" (3.29) \n");
+    TUint sampleCount = aSamples.Bytes()/4;
+    TUint coeffCount = iDegree+1;
 
-    //Log::Print("min=%f max=%f\n", gMin, gMax);
+    //BurgsMethod::Coeffs(iDegree, aSamples, coeffs);
+    TInt32* inputSamples = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+    TInt32* outputCoeffs = (TInt32*) calloc (coeffCount, sizeof(TInt32));
+    TInt32* h = (TInt32*) calloc (iDegree, sizeof(TInt32));
+    TInt32* per = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+    TInt32* pef = (TInt32*) calloc (sampleCount, sizeof(TInt32));
 
-    ASSERT(coeffs.size()==iDegree);
+
+    TInt32* ipPtr = inputSamples;
+    TInt32* opPtr = outputCoeffs;
+
+
+    for(TUint i=0; i<aSamples.Bytes(); )
+    {
+        *ipPtr = FlywheelRamper::Int32(aSamples, i);
+        i+=4;
+        ipPtr++;
+
+    }
+    BurgsMethod::ARMaxEntropy(inputSamples, sampleCount, iDegree, outputCoeffs, h, per, pef);
+
+
+    for(TUint i=0; i<coeffCount; i++)
+    {
+        if (i>0) // skip first coeff
+        {
+            coeffs.push_back(*opPtr);
+        }
+        opPtr++;
+    }
+
+
 
 
     // Reverse and invert the coeffs and reverse the input data
@@ -92,24 +158,9 @@ void FlywheelRamper::CreateRamp(const Brx& aSamples)
 
 
 
-    //LogDouble(invCoeffs, 4);
-    //Log::Print(" inverted \n");
-
-    //LogDouble(revInvCoeffs, 4);
-    //Log::Print(" reversed and inverted\n");
-    //Log32(revInvCoeffs, false);
-    //Log::Print(" (3.29) reversed and inverted\n");
-
-    //Log::Print("\nLast %d samples of input data:\n", iDegree);
-
-    //Log32(aSamples.Split(aSamples.Bytes()-(iDegree*4)));
-    //Log::Print("\n");
-
     Bwh samplesRev(iDegree*kBytesPerSample);
     Brn lastSamples(aSamples.Split(aSamples.Bytes()-(iDegree*kBytesPerSample)));
     Reverse(lastSamples, samplesRev);
-    //LogDouble(samplesRev, 4);
-    //Log::Print(" reversed\n");
 
     const TUint kFeedbIterations = Samples(iSampleRate, iRampJiffies); // output samples requested
 
@@ -122,13 +173,6 @@ void FlywheelRamper::CreateRamp(const Brx& aSamples)
     samplesOutFeedb.SetBytes(0);
     feedb->Process(samplesRev, samplesOutFeedb, kFeedbIterations);
 
-
-    //Log::Print("\nOutput samples: \n");
-
-    //LogDouble(samplesOutFeedb, 4); // show the output samples in double format (1.31)
-    //Log::Print("\n");
-    //Log32(samplesOutFeedb); // show the ouput samples in fixed point format (1.31)
-    //Log::Print(" (1.31)\n");
 
     // write output from Feedback model to iWriter
     iWriter->Write(samplesOutFeedb);
