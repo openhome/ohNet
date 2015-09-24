@@ -8,53 +8,6 @@ suiteRunner = MakeSuiteRunner(context)
 
 # testharness honours a '#' within this string :)
 tests = '''
-    TestStore
-    TestMsg
-    TestSupply
-    TestSupplyAggregator
-    TestAudioReservoir
-    TestVariableDelay
-    TestSampleRateValidator
-    TestSeeker
-    TestSkipper
-    TestStopper
-    TestTrackInspector
-    TestTimestampInspector
-    TestRamper
-    TestReporter
-    TestPruner
-    TestGorger
-    TestStarvationMonitor
-    TestMuter
-    TestDrainer
-    TestPreDriver
-    TestContentProcessor
-    TestPipeline
-    TestProtocolHls
-    TestProtocolHttp
-    TestCodec               -s {ws_hostname} -p {ws_port} -t quick
-    TestCodecController
-    TestDecodedAudioAggregator
-    TestAggregator
-    TestSilencer
-    TestIdProvider
-    TestFiller
-    #TestUpnpErrors
-    TestTrackDatabase
-    TestToneGenerator
-    TestMuteManager
-    TestRewinder
-    TestContainer
-    TestUdpServer
-    TestConfigManager
-    TestPowerManager
-    TestWaiter
-    TestUriProviderRepeater
-    TestJson
-    TestObservable
-    TestRaop
-    TestWebAppFramework
-    #TestConfigUi   # fails on non-desktop platforms
     TestFlywheelRamper
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

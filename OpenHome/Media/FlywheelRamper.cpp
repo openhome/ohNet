@@ -11,36 +11,33 @@ using namespace std;
 
 static const TUint kDegree = 20;
 
-static const TUint kBurgCoeffCount = kDegree+1;
-
 double gMax = 0;
 double gMin = 0;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-FlywheelRamper::FlywheelRamper(TUint aGenerationJiffies, TUint aRampMs)
-    :iGenerationJiffies(aGenerationJiffies)
-    ,iRampMs(aRampMs)
+FlywheelRamper::FlywheelRamper(TUint aGenJiffies, TUint aRampJiffies)
+    :iGenJiffies(aGenJiffies)
+    ,iRampJiffies(aRampJiffies)
     ,iDegree(kDegree)
-    ,iRampSamples(Bytes(192000, iRampMs*Jiffies::kPerMs, kBytesPerSample))
-    ,iProcessor(new PcmProcessorFwr(*this, iGenerationJiffies))
+    ,iRampSamples(Samples(192000, iRampJiffies)*kBytesPerSample)
+    ,iProcessor(new PcmProcessorFwr(*this, iGenJiffies))
 {
 
 }
 
-FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aGenerationJiffies, TUint aRampMs)
-    :iGenerationJiffies(aGenerationJiffies)
-    ,iRampMs(aRampMs)
+FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aGenJiffies, TUint aRampJiffies)
+    :iGenJiffies(aGenJiffies)
+    ,iRampJiffies(aRampJiffies)
     ,iDegree(aDegree)
-    ,iRampSamples(Bytes(192000, iRampMs*Jiffies::kPerMs, kBytesPerSample))
-    ,iProcessor(new PcmProcessorFwr(*this, iGenerationJiffies))
+    ,iRampSamples(Samples(192000, iRampJiffies)*kBytesPerSample)
+    ,iProcessor(new PcmProcessorFwr(*this, iGenJiffies))
 {
-
+    Log::Print("FlywheelRamper::FlywheelRamper  degree=%d\n", iDegree);
 }
 
 FlywheelRamper::~FlywheelRamper()
 {
-    //Log::Print("BurgsMethod::ToInt32  max=%f  min=%f\n", gMax, gMin);
 }
 
 IPcmProcessor& FlywheelRamper::Ramp(IWriter& aWriter, TUint aSampleRate)
@@ -51,23 +48,23 @@ IPcmProcessor& FlywheelRamper::Ramp(IWriter& aWriter, TUint aSampleRate)
 }
 
 
- TUint FlywheelRamper::RampMs() const
+ TUint FlywheelRamper::RampJiffies() const
 {
-    return(iRampMs);
+    return(iRampJiffies);
 }
 
 
-TUint FlywheelRamper::GenerationJiffies() const
+TUint FlywheelRamper::GenJiffies() const
 {
-    return(iGenerationJiffies);
+    return(iGenJiffies);
 }
 
 
 void FlywheelRamper::CreateRamp(const Brx& aSamples)
 {
-    Log::Print("\nFlywheelRamper::CreateRampForSingleChannel \n");
+    //Log::Print("\nFlywheelRamper::CreateRamp \n");
 
-    TUint64 checkBytes = Bytes(iSampleRate, iGenerationJiffies, kBytesPerSample);
+    TUint64 checkBytes = Samples(iSampleRate, iGenJiffies)*kBytesPerSample;
     //Log::Print("checkBytes=%lld  aSamples.Bytes()=%d \n", checkBytes, aSamples.Bytes());
     ASSERT(aSamples.Bytes()==checkBytes);
 
@@ -84,7 +81,7 @@ void FlywheelRamper::CreateRamp(const Brx& aSamples)
 
     //Log::Print("min=%f max=%f\n", gMin, gMax);
 
-    ASSERT(coeffs.size()==kDegree);
+    ASSERT(coeffs.size()==iDegree);
 
 
     // Reverse and invert the coeffs and reverse the input data
@@ -103,23 +100,23 @@ void FlywheelRamper::CreateRamp(const Brx& aSamples)
     //Log32(revInvCoeffs, false);
     //Log::Print(" (3.29) reversed and inverted\n");
 
-    //Log::Print("\nLast %d samples of input data:\n", kDegree);
+    //Log::Print("\nLast %d samples of input data:\n", iDegree);
 
-    //Log32(aSamples.Split(aSamples.Bytes()-(kDegree*4)));
+    //Log32(aSamples.Split(aSamples.Bytes()-(iDegree*4)));
     //Log::Print("\n");
 
-    Bwh samplesRev(iDegree*4);
-    Brn lastSamples(aSamples.Split(aSamples.Bytes()-(iDegree*4)));
+    Bwh samplesRev(iDegree*kBytesPerSample);
+    Brn lastSamples(aSamples.Split(aSamples.Bytes()-(iDegree*kBytesPerSample)));
     Reverse(lastSamples, samplesRev);
     //LogDouble(samplesRev, 4);
     //Log::Print(" reversed\n");
 
-    const TUint kFeedbIterations = Bytes(iSampleRate, iRampMs*Jiffies::kPerMs, 4)/4; // output samples requested
+    const TUint kFeedbIterations = Samples(iSampleRate, iRampJiffies); // output samples requested
 
     // Run the Feedback model with the coeffs and data
     auto feedb = new FeedbackModel(invCoeffs, 8, 4, 1, 1);
-    TUint samplesOutFeedbBytes = (kFeedbIterations*4);
-    Log::Print("samplesOutFeedbBytes=%d \n", samplesOutFeedbBytes);
+    TUint samplesOutFeedbBytes = (kFeedbIterations*kBytesPerSample);
+    //Log::Print("samplesOutFeedbBytes=%d \n", samplesOutFeedbBytes);
 
     Bwh samplesOutFeedb(samplesOutFeedbBytes);
     samplesOutFeedb.SetBytes(0);
@@ -144,9 +141,9 @@ void FlywheelRamper::CreateRamp(const Brx& aSamples)
 void FlywheelRamper::Reverse(const Brx& aInput, Bwx& aReversed)
 {
     aReversed.SetBytes(0);
-    TUint readStartIndex = aInput.Bytes()-4;
+    TUint readStartIndex = aInput.Bytes()-kBytesPerSample;
 
-    for(TUint i=0; i<aInput.Bytes(); i+=4)
+    for(TUint i=0; i<aInput.Bytes(); i+=kBytesPerSample)
     {
         //Log::Print("i=%d \n", i);
         aReversed.Append(aInput[readStartIndex-i]);
@@ -179,44 +176,6 @@ void FlywheelRamper::Invert(std::vector<TInt32>& aInput, std::vector<TInt32>& aO
 }
 
 
-void FlywheelRamper::ApplyRamp(Bwx& aSamples)
-{
-    TUint scalePerCent = 100;
-    TUint bytesPerScaleDec = aSamples.Bytes()/100;
-
-    for (TUint i=0; i<aSamples.Bytes();)
-    {
-
-        if ((i>0) && ((i%bytesPerScaleDec)==0))
-        {
-            if (scalePerCent>0)
-            {
-                scalePerCent--;
-            }
-        }
-
-        Bwn sample(aSamples.Ptr()+i, kBytesPerSample, kBytesPerSample);
-        ScaleSample(sample, scalePerCent);
-        i += kBytesPerSample;
-    }
-}
-
-
-void FlywheelRamper::ScaleSample(Bwx& aSample, TUint aScaleFactorPerCent)
-{
-    //Log::Print("scale = %d \n", aScaleFactorPerCent);
-    TInt32 sample = Int32(aSample);
-    TInt32 scaledSample = (TInt)(sample*aScaleFactorPerCent)/100;
-
-    //Log::Print("scaledSample=%lx  sample=%lx  aScaleFactorPerCent=%d \n", scaledSample, sample, aScaleFactorPerCent);
-
-    sample = scaledSample;
-    aSample[0] = (sample>>24)&0xff;
-    aSample[1] = (sample>>16)&0xff;
-    aSample[2] = (sample>>8)&0xff;
-    aSample[3] = sample&0xff;
-}
-
 TInt32 FlywheelRamper::Int32(const Brx& aSamples, TUint aIndex)
 {
     TInt32 sample = (TInt32)aSamples[aIndex];
@@ -229,11 +188,11 @@ TInt32 FlywheelRamper::Int32(const Brx& aSamples, TUint aIndex)
     return(sample);
 }
 
-TUint FlywheelRamper::Bytes(TUint aSampleRate, TUint aJiffies, TUint aBytesPerSample)
+TUint FlywheelRamper::Samples(TUint aSampleRate, TUint aJiffies)
 {
-    TUint64 bytes = (((TUint64)aSampleRate*aBytesPerSample*aJiffies)/Jiffies::kPerSecond);
-    //Log::Print("aChannelCount=%d  aSampleRate=%d  kBytesPerSample=%d  aJiffies=%d  Jiffies::kPerSecond=%d   bytes=%lld\n", aChannelCount, aSampleRate, kBytesPerSample, aJiffies, Jiffies::kPerSecond, bytes);
-    return((TUint)bytes);
+    TUint64 samples = (((TUint64)aSampleRate*((TUint64)aJiffies))/((TUint64)Jiffies::kPerSecond));
+    //Log::Print("FlywheelRamper::Samples  aSampleRate=%d  aJiffies=%d  Jiffies::kPerSecond=%d  samples=%lld\n", aSampleRate, aJiffies, Jiffies::kPerSecond, samples);
+    return((TUint)samples);
 }
 
 
@@ -311,7 +270,7 @@ void FlywheelRamper::Log32(std::vector<TInt32>& aVals)
 
 PcmProcessorFwr::PcmProcessorFwr(FlywheelRamper& aFwr, TUint aGenerationJiffies)
     :iFwr(aFwr)
-    ,iSamples(FlywheelRamper::Bytes(192000, aGenerationJiffies, FlywheelRamper::kBytesPerSample))
+    ,iSamples(FlywheelRamper::Samples(192000, aGenerationJiffies)*FlywheelRamper::kBytesPerSample)
 {
 
 }
@@ -322,16 +281,8 @@ void PcmProcessorFwr::BeginBlock()
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
+TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint /*aNumChannels*/)
 {
-    if (iSamples.Bytes()==0)
-    {
-        iNumChannels = aNumChannels;
-    }
-    else
-    {
-        ASSERT(aNumChannels==iNumChannels);
-    }
     for(TUint i=0; i<aSamples.Bytes();)
     {
         iSamples.Append(aSamples[i]);
@@ -344,19 +295,9 @@ TBool PcmProcessorFwr::ProcessFragment8(const Brx& aSamples, TUint aNumChannels)
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels)
+TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint /*aNumChannels*/)
 {
     //Log::Print("ProcessFragment16 \n ");
-
-    if (iSamples.Bytes()==0)
-    {
-        iNumChannels = aNumChannels;
-    }
-    else
-    {
-        ASSERT(aNumChannels==iNumChannels);
-    }
-    ASSERT(aNumChannels==iNumChannels);
     for(TUint i=0; i<aSamples.Bytes();)
     {
         iSamples.Append(aSamples[i]);
@@ -370,17 +311,8 @@ TBool PcmProcessorFwr::ProcessFragment16(const Brx& aSamples, TUint aNumChannels
 }
 
 
-TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels)
+TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint /*aNumChannels*/)
 {
-    if (iSamples.Bytes()==0)
-    {
-        iNumChannels = aNumChannels;
-    }
-    else
-    {
-        ASSERT(aNumChannels==iNumChannels);
-    }
-
     for(TUint i=0; i<aSamples.Bytes();)
     {
         iSamples.Append(aSamples[i]);
@@ -396,21 +328,21 @@ TBool PcmProcessorFwr::ProcessFragment24(const Brx& aSamples, TUint aNumChannels
 
 void PcmProcessorFwr::ProcessSample8(const TByte* aSample, TUint aNumChannels)
 {
-    Brn samples(aSample, aNumChannels);
+    Brn samples(aSample, 1);
     ProcessFragment8(samples, aNumChannels);
 }
 
 
 void PcmProcessorFwr::ProcessSample16(const TByte* aSample, TUint aNumChannels)
 {
-    Brn samples(aSample, 2*aNumChannels);
+    Brn samples(aSample, 2);
     ProcessFragment16(samples, aNumChannels);
 }
 
 
 void PcmProcessorFwr::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 {
-    Brn samples(aSample, 3*aNumChannels);
+    Brn samples(aSample, 3);
     ProcessFragment24(samples, aNumChannels);
 }
 
@@ -435,9 +367,11 @@ FeedbackModel::FeedbackModel(const std::vector<TInt32>& aCoeffs, TUint aDataScal
 {
     //Log::Print("\n\nFeedback Model: %d, %d, %d, %d, iScaleShiftForOutput=%d\n", aDataScaleBitCount, aCoeffFormat, aDataFormat, aOutputFormat, iScaleShiftForOutput);
     //Log::Print("\n\n");
-    //Log::Print("Input coeffs: ");
-    //FlywheelRamper::LogDouble(iCoeffs, aCoeffFormat);
-    //Log::Print("\n");
+    Log::Print("Input coeffs: ");
+    FlywheelRamper::LogDouble(iCoeffs, aCoeffFormat);
+    Log::Print("\n");
+
+
 }
 
 void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut)
@@ -459,7 +393,7 @@ void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCoun
     //TUint index = 0;
     TUint smpByteIdx = 0;
 
-    // put the innitial states into the circular buffer
+    // put the initial states into the circular buffer
     for(TUint i=0; i<iStateCount; i++)
     {
         TInt32 sampleIn =   (aSamplesIn[smpByteIdx]<<24) |
@@ -595,26 +529,6 @@ void FeedbackModel::Process(const Brx& aSamplesIn, Bwx& aSamplesOut, TUint aCoun
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-
-void BurgsMethod::Coeffs(TUint aDegree, const Brx& aSamplesIn, std::vector<TInt32>& aCoeffsOut)
-{
-    TUint sampleCount = aSamplesIn.Bytes()/4;
-    TUint coeffCount = kBurgCoeffCount;
-    double* inputSamples = (double*) calloc (sampleCount, sizeof(double));
-    double* outputCoeffs = (double*) calloc (coeffCount, sizeof(double));
-
-    ToDouble(aSamplesIn, inputSamples, 1);
-    ARMaxEntropy(inputSamples, sampleCount, aDegree, outputCoeffs);
-
-    ToInt32(outputCoeffs+1, coeffCount-1, aCoeffsOut, 4); // discard the 1st coeff
-
-    free(inputSamples);
-    free(outputCoeffs);
-}
-
-
-// from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
-
 void BurgsMethod::ToInt32(double* aInput, TUint aLength, std::vector<TInt32>& aOutput, TUint aScale)
 {
     for (TUint i=0; i<aLength; i++)
@@ -648,9 +562,20 @@ TInt32 BurgsMethod::ToInt32(double aVal, TUint aScale)
     return(s);
 }
 
+double BurgsMethod::ToDouble(TInt64 aVal, TUint aScale)
+{
+    // from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
+
+    TUint64 scaleFactor = (1<<(64-aScale));
+    double dbl = (double)(aVal/scaleFactor);
+    return(dbl);
+}
+
 
 double BurgsMethod::ToDouble(TInt32 aVal, TUint aScale)
 {
+    // from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
+
     TUint scaleFactor = (1<<(32-aScale));
     double dbl = (double)aVal/scaleFactor;
     return(dbl);
@@ -668,61 +593,221 @@ void BurgsMethod::ToDouble(const Brx& aInput, double* aOutput, TUint aScale)
 }
 
 
-void BurgsMethod::ARMaxEntropy (double *inputseries, TUint length, TUint degree, /*double *per, double *pef, double *h,*/ double *g)
+void BurgsMethod::Coeffs(TUint aDegree, const Brx& aSamplesIn, std::vector<TInt32>& aCoeffsOut, TBool aFloatingPoint)
 {
-    // degree = order of model (number of taps/coeffs)
-    //
-    // h : num elements = degree
-    // per : num elements = length
-    // pef : num elements = length
-    // g : num elements = degree+1
+    //Log::Print(">BurgsMethod::Coeffs  degree=%d\n", aDegree);
+    Log::Print("BurgsMethod::Coeffs  SamplesIn: ");
 
-    double* h = (double*) calloc (degree, sizeof(double));
-    double* per = (double*) calloc (length, sizeof(double));
-    double* pef = (double*) calloc (length, sizeof(double));
+    aFloatingPoint = false;
+
+    for(TUint i=0; i<12; i++)
+    {
+        Log::Print("%2x ", aSamplesIn[i]);
+    }
+
+    TUint sampleCount = aSamplesIn.Bytes()/4;
+    TUint coeffCount = aDegree+1;
+
+    if(aFloatingPoint)
+    {
+        double* inputSamples = (double*) calloc (sampleCount, sizeof(double));
+        double* outputCoeffs = (double*) calloc (coeffCount, sizeof(double));
+        double* h = (double*) calloc (aDegree, sizeof(double));
+        double* per = (double*) calloc (sampleCount, sizeof(double));
+        double* pef = (double*) calloc (sampleCount, sizeof(double));
+
+        ToDouble(aSamplesIn, inputSamples, 1);
+        ARMaxEntropy(inputSamples, sampleCount, aDegree, outputCoeffs, h, per, pef);
+        //ToInt32(outputCoeffs+1, coeffCount-1, aCoeffsOut, 4); // discard the 1st coeff
+
+        // free memory
+        free(h);
+        free(per);
+        free(pef);
+        free(inputSamples);
+        free(outputCoeffs);
+    }
+    else
+    {
+        TInt32* inputSamples = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+        TInt32* outputCoeffs = (TInt32*) calloc (coeffCount, sizeof(TInt32));
+        TInt32* h = (TInt32*) calloc (aDegree, sizeof(TInt32));
+        TInt32* per = (TInt32*) calloc (sampleCount, sizeof(TInt32));
+        TInt32* pef = (TInt32*) calloc (sampleCount, sizeof(TInt32));
 
 
-    for (TUint n = 1; n <= degree; n++)
+        TInt32* ipPtr = inputSamples;
+        TInt32* opPtr = outputCoeffs;
+
+
+        for(TUint i=0; i<aSamplesIn.Bytes(); )
+        {
+            *ipPtr = FlywheelRamper::Int32(aSamplesIn, i);
+            i+=4;
+            ipPtr++;
+
+        }
+        ARMaxEntropy(inputSamples, sampleCount, aDegree, outputCoeffs, h, per, pef);
+
+
+        for(TUint i=0; i<coeffCount; i++)
+        {
+            if (i>0) // skip first coeff
+            {
+                aCoeffsOut.push_back(*opPtr);
+            }
+            opPtr++;
+        }
+
+
+        free(inputSamples);
+        free(outputCoeffs);
+        free(h);
+        free(per);
+        free(pef);
+    }
+
+
+    //Log::Print("<BurgsMethod::Coeffs  degree=%d\n", aDegree);
+}
+
+
+void BurgsMethod::ARMaxEntropy (double* aInputseries, TUint aLength, TUint aDegree, double* aOutput, double* aH, double* aPer, double* aPef)
+{
+    Log::Print("\nBurgsMethod::ARMaxEntropy  (float) degree=%d\n\n", aDegree);
+
+    for (TUint n = 1; n <= aDegree; n++)
     {
         double t1, t2;
         double sn = 0.0;
         double sd = 0.0;
 
-        TUint jj = length - n;
+        TUint jj = aLength - n;
 
         for (TUint j = 0; j < jj; j++)
         {
-            t1 = inputseries [j + n] + pef [j];
-            t2 = inputseries [j] + per [j];
-            sn -= 2.0 * t1 * t2;
-            sd += (t1 * t1) + (t2 * t2);
+            t1 = aInputseries [j + n] + aPef [j];
+            t2 = aInputseries [j] + aPef [j];
+            double t1t2 = t1*t2;
+            double t1t1 = t1*t1;
+            double t2t2 = t2*t2;
+
+            sn -= t1t2;
+            sn -= t1t2;
+            sd += t1t1;
+            sd += t2t2;
+
         }
 
-        t1 = g [n] = sn / sd;
+        t1 = aOutput[n] = sn / sd;
+
         if (n != 1)
         {
+            Log::Print("+++++++\n");
             for (TUint j = 1; j < n; j++)
             {
-                h [j] = g [j] + t1 * g [n - j];
+                double prod =  (t1 * aOutput [n - j]);
+                aH [j] = aOutput [j] + prod;
+                Log::Print("aH[%d]=%lf \n", j, aH[j]);
             }
+            Log::Print("#######\n");
             for (TUint j = 1; j < n; j++)
             {
-                g [j] = h [j];
+                aOutput [j] = aH [j];
+                Log::Print("aOutput[%d]=%lf \n", j, aOutput[j]);
             }
             jj--;
         }
 
         for (TUint j = 0; j < jj; j++)
         {
-            per [j] += t1 * pef [j] + t1 * inputseries [j + n];
-            pef [j] = pef [j + 1] + t1 * per [j + 1] + t1 * inputseries [j + 1];
+            aPer [j] += t1 * aPef [j] + t1 * aInputseries [j + n];
+            aPef [j] = aPef [j + 1] + t1 * aPer [j + 1] + t1 * aInputseries [j + 1];
         }
     }
 
-    // free memory
-    free(h);
-    free(per);
-    free(pef);
+    for(TUint i=0; i<(aDegree+1) ; i++)
+    {
+        Log::Print("aOutput[%d]=%lf \n", i, aOutput[i]);
+    }
+
 
 }
+
+
+void BurgsMethod::ARMaxEntropy (TInt32* aInputseries, TUint aLength, TUint aDegree, TInt32* aOutput, TInt32* aH, TInt32* aPer, TInt32* aPef)
+{
+    Log::Print("\n\n\nBurgsMethod::ARMaxEntropy  (fixed point) aDegree=%d  aLength=%d \n\n", aDegree, aLength);
+
+    const TUint kDataScaleBitCount = 3;
+    const TUint kScaleShiftForLog = kDataScaleBitCount+1;
+    const TUint kScaleShiftForAdd = 32-kDataScaleBitCount-1;
+
+
+    for (TUint n = 1; n <= aDegree; n++)
+    {
+        TInt32 t1;
+        TInt32 t2;
+        TInt64 sn = 0;
+        TInt64 sd = 0;
+
+        TUint jj = aLength - n;
+
+        for (TUint j=0; j < jj; j++)
+        {
+            t1 = (aInputseries[j+n]>>kDataScaleBitCount) + aPef[j];
+            t2 = (aInputseries[j]>>kDataScaleBitCount) + aPer[j];
+
+            TInt64 t1t2 = ((TInt64)t1) * ((TInt64)t2);
+            TInt64 t1t1 = ((TInt64)t1) * ((TInt64)t1);
+            TInt64 t2t2 = ((TInt64)t2) * ((TInt64)t2);
+
+            sn -= t1t2;
+            sn -= t1t2;
+            sd += t1t1;
+            sd += t2t2;
+        }
+
+
+        TInt64 x = (sn)/(sd>>kScaleShiftForAdd);
+        t1 = (TInt32)x;
+        aOutput[n] = t1;
+
+
+        if (n != 1)
+        {
+            Log::Print("+++++++\n");
+            for (TUint j=1; j < n; j++)
+            {
+                TInt32 prod = ((TInt32)((((TInt64)t1) * ((TInt64)aOutput[n-j]))>>kScaleShiftForAdd));
+                aH[j] = aOutput[j] + prod;
+                Log::Print("aH[%d]=%lf \n", j, ToDouble(aH[j], kScaleShiftForLog));
+            }
+
+            Log::Print("#######\n");
+            for (TUint j=1; j < n; j++)
+            {
+                aOutput[j] = aH[j];
+                Log::Print("aOutput[%d]=%lf \n", j, ToDouble(aOutput[j], kScaleShiftForLog));
+
+            }
+            jj--;
+        }
+
+
+        for (TUint j = 0; j < jj; j++)
+        {
+            TInt64 x = (((((TInt64)t1) * ((TInt64)aPef[j])) + (((TInt64)t1) * ((TInt64)(aInputseries[j+n]>>kDataScaleBitCount))))>>kScaleShiftForAdd);
+            aPer[j] += (TInt32)(x);
+            aPef[j] = aPef[j+1] + ((TInt32)((((TInt64)t1) * ((TInt64)aPer[j+1]))>>kScaleShiftForAdd)) + ((TInt32)((((TInt64)t1) * ((TInt64)(aInputseries[j+1]>>kDataScaleBitCount)))>>kScaleShiftForAdd));
+        }
+
+    }
+
+    for(TUint i=0; i<(aDegree+1) ; i++)
+    {
+        Log::Print("aOutput[%d]=%lf \n", i, ToDouble(aOutput[i], kScaleShiftForLog));
+    }
+}
+
 

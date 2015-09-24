@@ -16,7 +16,7 @@ namespace Media {
 // FlywheelRamper: uses an algorthim to generate ramp audio aRampMs long.
 //
 // Needs to be fed a block of audio to allow it to generate ramp.
-// Generation audio block must be exactly aGenerationJiffies long
+// Generation audio block must be exactly aGenerationJiffies long (rounded down to nearest integer number of samples)
 // Client supplies generation audio via IPcmProcessor object returned via Ramp method.
 // Ramp audio is written to IWriter specified in Ramp method
 //
@@ -32,24 +32,23 @@ public:
     static const TUint kBytesPerSample = 4; // 32 bit audio
 
 public:
-    FlywheelRamper(TUint aGenerationJiffies, TUint aRampMs); // audio quantity needed to generate a ramp, ramp duration
-    FlywheelRamper(TUint aDegree, TUint aGenerationJiffies, TUint aRampMs); // audio quantity needed to generate a ramp, ramp duration
+    FlywheelRamper(TUint aGenJiffies, TUint aRampJiffies); // audio quantity needed to generate a ramp, ramp duration
+    FlywheelRamper(TUint aDegree, TUint aGenJiffies, TUint aRampJiffies); // filter degree/order, audio quantity needed to generate a ramp, ramp duration
     ~FlywheelRamper();
 
     IPcmProcessor& Ramp(IWriter& aWriter, TUint aSampleRate);
-    TUint GenerationJiffies() const;
-    TUint RampMs() const;
+    TUint GenJiffies() const;
+    TUint RampJiffies() const;
 
-    static TUint Bytes(TUint iSampleRate, TUint aJiffies, TUint aBytesPerSample);
-    static void LogBuf(const Brx& aBuf);
+    static TUint Samples(TUint aSampleRate, TUint aJiffies);
     static TInt32 Int32(const Brx& aSamples, TUint aIndex=0);
     static void Invert(std::vector<TInt32>& aInput, std::vector<TInt32>& aOutput);
     static void Reverse(std::vector<TInt32>& aInput, std::vector<TInt32>& aOutput);
     static void Reverse(const Brx& aInput, Bwx& aReversed);
 
+    static void LogBuf(const Brx& aBuf);
     static void Log32(std::vector<TInt32>& aVals);
     static void Log32(const Brx& aBuf);
-
     static void LogDouble(std::vector<double>& aVals);
     static void LogDouble(std::vector<TInt32>& aVals, TUint aScale);
     static void LogDouble(const Brx& aBuf, TUint aScale);
@@ -57,12 +56,10 @@ public:
 
 private:
     void CreateRamp(const Brx& aSamples);
-    void ApplyRamp(Bwx& aSamples);
-    void ScaleSample(Bwx& aSample, TUint aScaleFactor);
 
 private:
-    TUint iGenerationJiffies;
-    TUint iRampMs;
+    TUint iGenJiffies;
+    TUint iRampJiffies;
     TUint iDegree;
     Bwh iRampSamples;
     IPcmProcessor* iProcessor;
@@ -191,14 +188,16 @@ private:
 class BurgsMethod
 {
 public:
-    static void Coeffs(TUint aDegree, const Brx& aSamplesIn, std::vector<TInt32>& aCoeffsOut);
-    static void ARMaxEntropy(double *aInputseries, TUint aLength, TUint aDegree, double *aG);
+    static void Coeffs(TUint aDegree, const Brx& aSamplesIn, std::vector<TInt32>& aCoeffsOut, TBool aFloatingPoint = false);
+    static void ARMaxEntropy (double* aInputseries, TUint aLength, TUint aDegree, double* aOutput, double* aH, double* aPer, double* aPef);
+    static void ARMaxEntropy(TInt32* aInputseries, TUint aLength, TUint aDegree, TInt32* aG, TInt32* aH, TInt32* aPer, TInt32* aPef);
 
     static void ToInt32(double* aInput, TUint aLength, std::vector<TInt32>& aOutput, TUint aScale);
     static TInt32 ToInt32(double aVal, TUint Scale);
 
     static void ToDouble(const Brx& aSamplesIn, double* aOutput, TUint aScale);
     static double ToDouble(TInt32 aVal, TUint aScale);
+    static double ToDouble(TInt64 aVal, TUint aScale);
 
 };
 

@@ -1,4 +1,5 @@
 #include <OpenHome/Types.h>
+#include <OpenHome/OsWrapper.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
@@ -22,9 +23,10 @@ namespace TestFlywheelRamper {
 class SuiteFlywheelRamper : public SuiteUnitTest, public INonCopyable
 {
 public:
-    SuiteFlywheelRamper();
+    SuiteFlywheelRamper(OpenHome::Environment& aEnv);
 
 private:
+    OpenHome::Environment& iEnv;
     // from SuiteUnitTest
     void Test1(); // ConvolutionModel scaling
     void Test2(); // ConvolutionModel zero coeffs
@@ -41,8 +43,10 @@ private:
     void Test11(); // // double<>FFPN
 
     void Test12(); // ConvolutionModel algorithm
-    void Test13(); // FeedabckModel algorithm
+    void Test13(); // FeedbackModel algorithm
 
+    void Test14(); // Burg Method profiling
+    void Test15(); // Burg Method testing
 
     void Setup();
     void TearDown();
@@ -67,8 +71,9 @@ private:
 using namespace OpenHome::Media::TestFlywheelRamper;
 
 
-SuiteFlywheelRamper::SuiteFlywheelRamper()
+SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
     :SuiteUnitTest("SuiteFlywheelRamper")
+    ,iEnv(aEnv)
 {
 /*
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
@@ -82,10 +87,12 @@ SuiteFlywheelRamper::SuiteFlywheelRamper()
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test9));
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test10));
 */
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test11));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test11));
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test12));
 
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test13));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test14));
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test15));
 }
 
 
@@ -495,6 +502,7 @@ void SuiteFlywheelRamper::Test6()  // ConvolutionModel negative sample impulse
 
 void SuiteFlywheelRamper::Test7()  // FeedbackModel scaling
 {
+
     const TUint kCoeffsCount = 2;
     const TUint kSamplesInCount = 2;
     const TUint kSamplesInBytes = kSamplesInCount*4;
@@ -1151,6 +1159,116 @@ void SuiteFlywheelRamper::Test13() // FeedbackModel algorithm
 }
 
 
+void SuiteFlywheelRamper::Test14() // Burg Method profiling
+{
+    Log::Print("Burg Method profiling \n");
+    Log::Print("Double: \n");
+
+/*
+    TUint maxDegree = 200;
+    TUint maxLength = FlywheelRamper::Samples(192000, Jiffies::kPerMs*100); // 100ms at 192kHz
+
+
+    {
+    double* h = (double*) calloc (maxDegree, sizeof(double));
+    double* per = (double*) calloc (maxLength, sizeof(double));
+    double* pef = (double*) calloc (maxLength, sizeof(double));
+    double* input = (double*) calloc (maxLength, sizeof(double));
+    double* output = (double*) calloc (maxDegree+1, sizeof(double));
+
+    for(TUint degree=10; degree<200; degree*=2)
+    {
+        for(TUint genMs=1; genMs<100; genMs*=2)
+        {
+            //Log::Print("degree=%d  genMs=%d\n", degree, genMs);
+            TUint length = FlywheelRamper::Samples(192000, Jiffies::kPerMs*genMs);
+            TUint startTime = Os::TimeInMs(iEnv.OsCtx());
+            BurgsMethod::ARMaxEntropy(input, length, degree, output, h, per, pef);
+            TUint endTime = Os::TimeInMs(iEnv.OsCtx());
+            Log::Print("degree= %3d  genMs= %2d  %4dms  \n", degree, genMs, endTime-startTime);
+        }
+    }
+
+    // free memory
+    free(h);
+    free(per);
+    free(pef);
+    free(input);
+    free(output);
+    }
+*/
+
+    Log::Print("Fixed point: \n");
+/*
+    {
+    TInt32* fh = (TInt32*) calloc (maxDegree, sizeof(TInt32));
+    TInt32* fper = (TInt32*) calloc (maxLength, sizeof(TInt32));
+    TInt32* fpef = (TInt32*) calloc (maxLength, sizeof(TInt32));
+    TInt32* finput = (TInt32*) calloc (maxLength, sizeof(TInt32));
+    TInt32* foutput = (TInt32*) calloc (maxDegree+1, sizeof(TInt32));
+
+    for(TUint degree=1; degree<10; degree++)
+    {
+        for(TUint genMs=1; genMs<10; genMs++)
+        {
+            //Log::Print("degree=%d  genMs=%d\n", degree, genMs);
+            TUint length = FlywheelRamper::Samples(192000, Jiffies::kPerMs*genMs);
+            TUint64 startTime = Os::TimeInUs(iEnv.OsCtx());
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            BurgsMethod::ARMaxEntropy(finput, length, degree, foutput, fh, fper, fpef);
+            TUint64 endTime = Os::TimeInUs(iEnv.OsCtx());
+            Log::Print("degree= %3d  genMs= %2d  %8lldms  \n", degree, genMs, endTime-startTime);
+        }
+    }
+
+    // free memory
+    free(fh);
+    free(fper);
+    free(fpef);
+    free(finput);
+    free(foutput);
+    }
+*/
+
+
+}
+
+
+void SuiteFlywheelRamper::Test15() // Burg Method testing
+{
+    //Log::Print("size of double = %d \n", sizeof(double));
+
+    std::vector<TInt32> coeffsOut;
+
+ //6 a4  0  0  6 94  0  0  6 7d  0  0
+
+    Bwh samplesIn(12);
+
+    samplesIn.Append((TByte)0x06);
+    samplesIn.Append((TByte)0xa4);
+    samplesIn.Append((TByte)0x00);
+    samplesIn.Append((TByte)0x00);
+
+    samplesIn.Append((TByte)0x06);
+    samplesIn.Append((TByte)0x94);
+    samplesIn.Append((TByte)0x00);
+    samplesIn.Append((TByte)0x00);
+
+    samplesIn.Append((TByte)0x06);
+    samplesIn.Append((TByte)0x7d);
+    samplesIn.Append((TByte)0x00);
+    samplesIn.Append((TByte)0x00);
+
+    BurgsMethod::Coeffs(2, samplesIn, coeffsOut);
+}
+
+
 void SuiteFlywheelRamper::Setup()
 {
 }
@@ -1181,10 +1299,10 @@ void SuiteFlywheelRamper::Append32(Bwx& aBuf, TInt32 aSample)
 
 /////////////////////////////////////////////////////////////////
 
-void TestFlywheelRamper()
+void TestFlywheelRamper(OpenHome::Environment& aEnv)
 {
     Runner runner("Testing FlywheelRamper");
-    runner.Add(new SuiteFlywheelRamper());
+    runner.Add(new SuiteFlywheelRamper(aEnv));
     runner.Run();
 
 }
