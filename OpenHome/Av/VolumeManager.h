@@ -1,5 +1,4 @@
-#ifndef HEADER_AV_VOLUME_MANAGER
-#define HEADER_AV_VOLUME_MANAGER
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
@@ -442,4 +441,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_AV_VOLUME_MANAGER

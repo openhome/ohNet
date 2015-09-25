@@ -1,5 +1,4 @@
-#ifndef HEADER_JSON
-#define HEADER_JSON
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -30,4 +29,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_JSON

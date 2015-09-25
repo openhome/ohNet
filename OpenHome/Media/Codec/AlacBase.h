@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_ALAC_BASE
-#define HEADER_PIPELINE_CODEC_ALAC_BASE
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
@@ -51,4 +50,3 @@ protected:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC_ALAC_BASE

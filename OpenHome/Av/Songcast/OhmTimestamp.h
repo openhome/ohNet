@@ -1,5 +1,4 @@
-#ifndef HEADER_OHM_TIMESTAMP
-#define HEADER_OHM_TIMESTAMP
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -32,4 +31,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_OHM_TIMESTAMP

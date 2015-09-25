@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_ID3V2
-#define HEADER_PIPELINE_CODEC_ID3V2
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Codec/Container.h>
@@ -41,4 +40,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif  // HEADER_PIPELINE_CODEC_ID3V2

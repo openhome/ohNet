@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_MANAGER
-#define HEADER_PIPELINE_MANAGER
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
@@ -290,4 +289,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_MANAGER

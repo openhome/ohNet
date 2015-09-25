@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PROTOCOL
-#define HEADER_PIPELINE_PROTOCOL
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
@@ -247,4 +246,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif  // HEADER_PIPELINE_PROTOCOL

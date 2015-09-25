@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_CREDENTIALS_1
-#define HEADER_PROVIDER_CREDENTIALS_1
+#pragma once
 
 #include <Generated/DvAvOpenhomeOrgCredentials1.h>
 #include <OpenHome/Types.h>
@@ -37,4 +36,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_CREDENTIALS_1

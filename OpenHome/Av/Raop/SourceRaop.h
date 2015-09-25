@@ -1,5 +1,4 @@
-#ifndef HEADER_SOURCE_RAOP
-#define HEADER_SOURCE_RAOP
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -102,4 +101,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SOURCE_RAOP

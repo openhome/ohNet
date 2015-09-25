@@ -1,5 +1,4 @@
-#ifndef HEADER_TIDAL
-#define HEADER_TIDAL
+#pragma once
 
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Types.h>
@@ -82,4 +81,3 @@ private:
 };  // namespace OpenHome
 
 
-#endif // HEADER_TIDAL

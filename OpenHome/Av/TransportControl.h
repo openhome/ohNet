@@ -1,5 +1,4 @@
-#ifndef HEADER_TRANSPORT_CONTROL
-#define HEADER_TRANSPORT_CONTROL
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -72,4 +71,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_TRANSPORT_CONTROL

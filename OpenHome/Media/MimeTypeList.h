@@ -1,5 +1,4 @@
-#ifndef HEADER_MIMETYPE_LIST
-#define HEADER_MIMETYPE_LIST
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -41,4 +40,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_MIMETYPE_LIST

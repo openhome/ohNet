@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_AGGREGATOR
-#define HEADER_PIPELINE_AGGREGATOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -46,4 +45,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_AGGREGATOR

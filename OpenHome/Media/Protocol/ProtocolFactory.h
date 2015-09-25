@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PROTOCOL_FACTORY
-#define HEADER_PIPELINE_PROTOCOL_FACTORY
+#pragma once
 
 #include <OpenHome/Types.h>
 
@@ -33,4 +32,3 @@ public:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_PROTOCOL_FACTORY

@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_FACTORY
-#define HEADER_PIPELINE_CODEC_FACTORY
+#pragma once
 
 namespace OpenHome {
 namespace Av {
@@ -30,4 +29,3 @@ public:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC_FACTORY

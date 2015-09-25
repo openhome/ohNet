@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_STARVATION_MONITOR
-#define HEADER_PIPELINE_STARVATION_MONITOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -110,4 +109,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_STARVATION_MONITOR

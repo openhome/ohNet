@@ -1,5 +1,4 @@
-#ifndef HEADER_SOURCE
-#define HEADER_SOURCE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -74,4 +73,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SOURCE

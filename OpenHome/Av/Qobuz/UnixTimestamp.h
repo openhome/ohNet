@@ -1,5 +1,4 @@
-#ifndef HEADER_UNIX_TIMERSTAMP
-#define HEADER_UNIX_TIMERSTAMP
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
@@ -35,4 +34,3 @@ private:
 
 } // namespace OpenHome
 
-#endif // HEADER_UNIX_TIMERSTAMP

@@ -1,5 +1,4 @@
-#ifndef HEADER_DRIVER_SONGCAST_SENDER
-#define HEADER_DRIVER_SONGCAST_SENDER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -69,4 +68,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_DRIVER_SONGCAST_SENDER

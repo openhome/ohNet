@@ -1,5 +1,4 @@
-#ifndef PROVIDER_TRANSPORT_CONTROL_ERISKAY
-#define PROVIDER_TRANSPORT_CONTROL_ERISKAY
+#pragma once
 
 #include <Generated/DvOpenhomeOrgEriskayTransportControl1.h>
 #include <OpenHome/Av/TransportControl.h>
@@ -38,4 +37,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // PROVIDER_TRANSPORT_CONTROL_ERISKAY

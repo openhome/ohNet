@@ -1,5 +1,4 @@
-#ifndef HEADER_W32GETCH
-#define HEADER_W32GETCH
+#pragma once
 
 #include <OpenHome/Private/Thread.h>
 
@@ -43,4 +42,3 @@ int mygetch()
 
 #endif // _WIN32
 
-#endif // HEADER_W32GETCH

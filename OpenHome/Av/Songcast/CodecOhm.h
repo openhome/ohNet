@@ -1,5 +1,4 @@
-#ifndef HEADER_CODEC_OHM
-#define HEADER_CODEC_OHM
+#pragma once
 
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Types.h>
@@ -42,4 +41,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_CODEC_OHM

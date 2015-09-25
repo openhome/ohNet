@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_URIPROVIDER_SINGLE_TRACK
-#define HEADER_PIPELINE_URIPROVIDER_SINGLE_TRACK
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -38,4 +37,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_URIPROVIDER_SINGLE_TRACK

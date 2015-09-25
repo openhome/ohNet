@@ -1,5 +1,4 @@
-#ifndef HEADER_STRING_IDS
-#define HEADER_STRING_IDS
+#pragma once
 
 enum StringIdsYesNo
 {
@@ -7,4 +6,3 @@ enum StringIdsYesNo
    ,eStringIdYes
 };
 
-#endif // HEADER_STRING_IDS

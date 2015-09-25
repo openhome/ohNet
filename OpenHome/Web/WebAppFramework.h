@@ -1,5 +1,4 @@
-#ifndef HEADER_WEB_APPFRAMEWORK
-#define HEADER_WEB_APPFRAMEWORK
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -474,4 +473,3 @@ private:
 } // namespace Web
 } // namespace OpenHome
 
-#endif // HEADER_WEB_APPFRAMEWORK

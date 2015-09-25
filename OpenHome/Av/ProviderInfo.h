@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_INFO_1
-#define HEADER_PROVIDER_INFO_1
+#pragma once
 
 #include <Generated/DvAvOpenhomeOrgInfo1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
@@ -43,4 +42,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_INFO_1

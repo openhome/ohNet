@@ -1,5 +1,4 @@
-#ifndef HEADER_OHMMSG
-#define HEADER_OHMMSG
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -245,4 +244,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_OHMMSG

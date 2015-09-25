@@ -1,5 +1,4 @@
-#ifndef HEADER_KVPSTORE
-#define HEADER_KVPSTORE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -100,4 +99,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_KVPSTORE

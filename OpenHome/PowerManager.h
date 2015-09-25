@@ -1,5 +1,4 @@
-#ifndef HEADER_POWERMANAGER
-#define HEADER_POWERMANAGER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Functor.h>
@@ -155,4 +154,3 @@ private:
 
 } // namespace OpenHome
 
-#endif // HEADER_POWERMANAGER

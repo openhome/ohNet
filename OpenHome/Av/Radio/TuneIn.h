@@ -1,5 +1,4 @@
-#ifndef HEADER_TUNEIN
-#define HEADER_TUNEIN
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -105,4 +104,3 @@ private: // from ICredentialConsumer
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_TUNEIN

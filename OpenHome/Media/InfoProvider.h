@@ -1,5 +1,4 @@
-#ifndef HEADER_INFO_PROVIDER
-#define HEADER_INFO_PROVIDER
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
@@ -42,4 +41,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_INFO_PROVIDER

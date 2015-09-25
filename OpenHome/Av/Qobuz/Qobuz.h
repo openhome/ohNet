@@ -1,5 +1,4 @@
-#ifndef HEADER_QOBUZ
-#define HEADER_QOBUZ
+#pragma once
 
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Types.h>
@@ -83,4 +82,3 @@ private:
 };  // namespace OpenHome
 
 
-#endif // HEADER_QOBUZ

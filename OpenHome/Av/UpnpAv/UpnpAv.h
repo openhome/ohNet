@@ -1,5 +1,4 @@
-#ifndef HEADER_UPNPAV_DEVICE
-#define HEADER_UPNPAV_DEVICE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -88,4 +87,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_UPNPAV_DEVICE

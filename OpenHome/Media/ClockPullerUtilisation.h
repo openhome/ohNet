@@ -1,5 +1,4 @@
-#ifndef HEADER_CLOCK_PULLER_UTILISATION
-#define HEADER_CLOCK_PULLER_UTILISATION
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/ClockPuller.h>
@@ -95,4 +94,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_CLOCK_PULLER_UTILISATION

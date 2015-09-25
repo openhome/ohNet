@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_SEEKER
-#define HEADER_PIPELINE_SEEKER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
@@ -99,4 +98,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_SEEKER

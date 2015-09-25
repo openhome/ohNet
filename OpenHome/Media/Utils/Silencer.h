@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_SILENCER
-#define HEADER_PIPELINE_SILENCER
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Standard.h>
@@ -48,4 +47,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_SILENCER
