@@ -31,6 +31,7 @@ private:
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
@@ -42,6 +43,7 @@ private:
     TBool iRamping;
     TBool iRampedDown;
     TBool iWaitingForAudio;
+    TBool iDraining;
     TUint iLastRamp;
 };
 

@@ -10,8 +10,6 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-#define RAMP_VALIDATOR_ENABLED 0
-
 const TUint RampValidator::kSupportedMsgTypes =   eMode
                                                 | eTrack
                                                 | eDrain
@@ -36,6 +34,7 @@ RampValidator::RampValidator(IPipelineElementUpstream& aUpstream, const TChar* a
     , iDownstream(nullptr)
     , iRampedDown(false)
     , iWaitingForAudio(true)
+    , iDraining(false)
 {
 }
 
@@ -98,14 +97,10 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         iRampedDown = false;
     }*/
     if (iRamping) {
-#if RAMP_VALIDATOR_ENABLED
-        ASSERT(aRamp.IsEnabled());
-#endif
         if (aRamp.Start() != iLastRamp) {
-            Log::Print("WARNING: discontinuity in ramp (%s): expected %08x, got %08x\n", iId, iLastRamp, aRamp.Start());
-#if RAMP_VALIDATOR_ENABLED
-            ASSERTS();
-#endif
+            if (!iDraining || (aRamp.Start() != Ramp::kMin && aRamp.Start() != Ramp::kMax)) {
+                Log::Print("WARNING: discontinuity in ramp (%s): expected %08x, got %08x\n", iId, iLastRamp, aRamp.Start());
+            }
         }
         iLastRamp = aRamp.End();
         ResetIfRampComplete(aRamp);
@@ -115,23 +110,18 @@ void RampValidator::ProcessAudio(const Ramp& aRamp)
         if (aRamp.Direction() == Ramp::EUp) {
             if (aRamp.Start() != Ramp::kMin) {
                 Log::Print("WARNING: ramp up (%s) started at %08x\n", iId, aRamp.Start());
-#if RAMP_VALIDATOR_ENABLED
-                ASSERTS();
-#endif
             }
         }
         else if (aRamp.Direction() == Ramp::EDown) {
             if (aRamp.Start() != Ramp::kMax) {
                 Log::Print("WARNING: ramp down (%s) started at %08x\n", iId, aRamp.Start());
-#if RAMP_VALIDATOR_ENABLED
-                ASSERTS();
-#endif
             }
         }
         iLastRamp = aRamp.End();
         // It's possible to complete ramp up/down within a single MsgAudioPcm.
         ResetIfRampComplete(aRamp);
     }
+    iDraining = false;
 }
 
 Msg* RampValidator::ProcessMsg(MsgMode* aMsg)
@@ -148,6 +138,13 @@ Msg* RampValidator::ProcessMsg(MsgTrack* aMsg)
         Reset("Track");
         iRampedDown = false;
     }
+    return aMsg;
+}
+
+Msg* RampValidator::ProcessMsg(MsgDrain* aMsg)
+{
+    iDraining = true; /* elements are allowed to assume that a drain implies pending starvation
+                         (so a ramp down elsewhere) amd move immediately to Ramp::kMin or kMax */
     return aMsg;
 }
 
