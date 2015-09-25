@@ -1,5 +1,4 @@
-#ifndef HEADER_OHM_SENDER
-#define HEADER_OHM_SENDER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -172,5 +171,4 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_OHM_SENDER
 

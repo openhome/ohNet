@@ -1,5 +1,4 @@
-#ifndef HEADER_TESTCODEC
-#define HEADER_TESTCODEC
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
@@ -327,4 +326,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_TESTCODEC

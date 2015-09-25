@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_DRAINER
-#define HEADER_PIPELINE_DRAINER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -42,4 +41,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_DRAINER

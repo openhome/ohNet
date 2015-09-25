@@ -1,5 +1,4 @@
-#ifndef HEADER_CONFIGMANAGER
-#define HEADER_CONFIGMANAGER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -575,4 +574,3 @@ private:
 } // namespace Configuration
 } // namespace OpenHome
 
-#endif // HEADER_CONFIGMANAGER

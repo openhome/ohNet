@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_VOLUME_1
-#define HEADER_PROVIDER_VOLUME_1
+#pragma once
 
 #include <Generated/DvAvOpenhomeOrgVolume1.h>
 #include <OpenHome/Av/ProviderFactory.h>
@@ -87,4 +86,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_VOLUME_1

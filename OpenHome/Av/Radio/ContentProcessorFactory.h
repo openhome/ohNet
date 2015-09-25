@@ -1,5 +1,4 @@
-#ifndef HEADER_CONTENT_PROCESSOR_FACTORY
-#define HEADER_CONTENT_PROCESSOR_FACTORY
+#pragma once
 
 namespace OpenHome {
 namespace Media {
@@ -21,4 +20,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_CONTENT_PROCESSOR_FACTORY

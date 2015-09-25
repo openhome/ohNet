@@ -1,5 +1,4 @@
-#ifndef HEADER_SUPPLY_AGGREGATOR
-#define HEADER_SUPPLY_AGGREGATOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -68,4 +67,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_SUPPLY_AGGREGATOR

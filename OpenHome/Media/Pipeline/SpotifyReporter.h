@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_SAMPLE_REPORTER
-#define HEADER_PIPELINE_SAMPLE_REPORTER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -83,4 +82,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_SAMPLE_REPORTER

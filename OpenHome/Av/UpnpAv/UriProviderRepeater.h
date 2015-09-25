@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_URIPROVIDER_REPEATER
-#define HEADER_PIPELINE_URIPROVIDER_REPEATER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -42,4 +41,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_URIPROVIDER_REPEATER

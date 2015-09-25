@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_STOPPER
-#define HEADER_PIPELINE_STOPPER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -132,4 +131,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_STOPPER

@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_AVTRANSPORT
-#define HEADER_PROVIDER_AVTRANSPORT
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -129,4 +128,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_AVTRANSPORT

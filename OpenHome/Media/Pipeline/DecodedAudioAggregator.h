@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_DECODED_AUDIO_AGGREGATOR
-#define HEADER_PIPELINE_DECODED_AUDIO_AGGREGATOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -50,4 +49,3 @@ private:
 }
 }
 
-#endif // HEADER_PIPELINE_DECODED_AUDIO_AGGREGATOR

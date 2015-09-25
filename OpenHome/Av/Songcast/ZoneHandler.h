@@ -1,5 +1,4 @@
-#ifndef HEADER_ZONE_HANDLER
-#define HEADER_ZONE_HANDLER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -93,4 +92,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_ZONE_HANDLER

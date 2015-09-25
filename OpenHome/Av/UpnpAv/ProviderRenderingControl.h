@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_RENDERINGCONTROL
-#define HEADER_PROVIDER_RENDERINGCONTROL
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -59,4 +58,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_RENDERINGCONTROL

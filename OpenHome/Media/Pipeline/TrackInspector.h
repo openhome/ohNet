@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_TRACK_INSPECTOR
-#define HEADER_PIPELINE_TRACK_INSPECTOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -52,4 +51,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_TRACK_INSPECTOR

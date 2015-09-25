@@ -1,5 +1,4 @@
-#ifndef HEADER_CLOCK_PULLER
-#define HEADER_CLOCK_PULLER
+#pragma once
 
 #include <OpenHome/Types.h>
 
@@ -63,4 +62,3 @@ private: // from IClockPuller
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_CLOCK_PULLER

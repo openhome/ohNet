@@ -1,5 +1,4 @@
-#ifndef HEADER_CLOCK_PULLER_SONGCAST
-#define HEADER_CLOCK_PULLER_SONGCAST
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/ClockPuller.h>
@@ -60,4 +59,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_CLOCK_PULLER_SONGCAST

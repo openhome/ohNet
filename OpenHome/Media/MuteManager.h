@@ -1,5 +1,4 @@
-#ifndef HEADER_MUTE_MANAGER
-#define HEADER_MUTE_MANAGER
+#pragma once
 
 #include <OpenHome/Types.h>
 
@@ -113,4 +112,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_MUTE_MANAGER

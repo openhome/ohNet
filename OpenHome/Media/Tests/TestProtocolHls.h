@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_HLS_TEST_FACTORY
-#define HEADER_PIPELINE_HLS_TEST_FACTORY
+#pragma once
 
 #include <OpenHome/Types.h>
 
@@ -18,4 +17,3 @@ public:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_HLS_TEST_FACTORY

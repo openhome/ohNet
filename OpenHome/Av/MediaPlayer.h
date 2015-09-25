@@ -1,5 +1,4 @@
-#ifndef HEADER_MEDIAPLAYER
-#define HEADER_MEDIAPLAYER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -141,4 +140,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_MEDIAPLAYER

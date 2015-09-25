@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_RTSP
-#define HEADER_PIPELINE_RTSP
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Http.h>
@@ -319,5 +318,4 @@ private:
 } //namespace Media
 } //namespace OpenHome
 
-#endif // HEADER_PIPELINE_RTSP
 

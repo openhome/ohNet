@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_ID_PROVIDER
-#define HEADER_PIPELINE_ID_PROVIDER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -61,4 +60,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_ID_PROVIDER

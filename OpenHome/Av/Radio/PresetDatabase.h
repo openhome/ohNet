@@ -1,5 +1,4 @@
-#ifndef HEADER_PRESET_DATABASE
-#define HEADER_PRESET_DATABASE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -97,4 +96,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PRESET_DATABASE

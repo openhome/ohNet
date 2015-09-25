@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_REPORTER
-#define HEADER_PIPELINE_REPORTER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -68,4 +67,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_REPORTER

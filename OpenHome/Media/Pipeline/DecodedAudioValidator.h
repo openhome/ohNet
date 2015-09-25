@@ -1,5 +1,4 @@
-#ifndef HEADER_DECODED_AUDIO_VALIDATOR
-#define HEADER_DECODED_AUDIO_VALIDATOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -39,4 +38,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_DECODED_AUDIO_VALIDATOR

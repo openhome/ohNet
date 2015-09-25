@@ -1,5 +1,4 @@
-#ifndef HEADER_PROTOCOL_OHBASE
-#define HEADER_PROTOCOL_OHBASE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
@@ -110,4 +109,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROTOCOL_OHBASE

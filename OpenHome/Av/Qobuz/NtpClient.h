@@ -1,5 +1,4 @@
-#ifndef HEADER_NTP_CLIENT
-#define HEADER_NTP_CLIENT
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -84,4 +83,3 @@ private:
 
 } // namespace OpenHome
 
-#endif // HEADER_NTP_CLIENT

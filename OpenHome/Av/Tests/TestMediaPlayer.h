@@ -1,5 +1,4 @@
-#ifndef HEADER_TESTMEDIAPLAYER
-#define HEADER_TESTMEDIAPLAYER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -195,4 +194,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_TESTMEDIAPLAYER

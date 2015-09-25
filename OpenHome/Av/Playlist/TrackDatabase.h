@@ -1,5 +1,4 @@
-#ifndef HEADER_TRACK_DATABASE
-#define HEADER_TRACK_DATABASE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -168,4 +167,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_TRACK_DATABASE
