@@ -53,7 +53,7 @@ public:
     TUint AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor); // only for use by client code
     void RemoveNetworkAdapterChangeListener(TUint aId);
 private:
-    typedef std::vector<std::pair<TUint, Functor>> VectorListener;
+    typedef std::vector<std::pair<TUint, Functor> > VectorListener;
     typedef std::map<TUint,FunctorNetworkAdapter> MapNetworkAdapter;
     std::vector<NetworkAdapter*>* CreateSubnetListLocked() const;
     TUint AddListener(Functor aFunctor, VectorListener& aList);
@@ -96,10 +96,10 @@ private:
     std::vector<NetworkAdapter*>* iSubnets;
     mutable NetworkAdapter* iCurrent;
     TIpAddress iDefaultSubnet;
-    std::vector<std::pair<TUint, Functor>> iListenersCurrentInternal;
-    std::vector<std::pair<TUint, Functor>> iListenersCurrentExternal;
-    std::vector<std::pair<TUint, Functor>> iListenersSubnetInternal;
-    std::vector<std::pair<TUint, Functor>> iListenersSubnetExternal;
+    VectorListener iListenersCurrentInternal;
+    VectorListener iListenersCurrentExternal;
+    VectorListener iListenersSubnetInternal;
+    VectorListener iListenersSubnetExternal;
     MapNetworkAdapter iListenersAdded;
     MapNetworkAdapter iListenersRemoved;
     MapNetworkAdapter iListenersAdapterChanged;

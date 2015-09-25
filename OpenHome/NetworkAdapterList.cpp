@@ -223,7 +223,7 @@ TBool NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, VectorListen
 {
     TBool removed = false;
     iListenerLock.Wait();
-    VectorListener::const_iterator it = aList.begin();
+    VectorListener::iterator it = aList.begin();
     while (it != aList.end()) {
         if (it->first == aId) {
             aList.erase(it);
