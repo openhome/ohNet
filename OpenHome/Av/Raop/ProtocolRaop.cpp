@@ -278,18 +278,16 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
     , iAudioServer(iServerManager.Find(aAudioId))
-    , iControlServer(iServerManager.Find(aControlId))
+    , iControlServer(iServerManager.Find(aControlId), *this)
     , iSupply(nullptr)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
     , iSemDrain("PRSD", 0)
-    , iSeqExpected(0)
-    , iResendTimer(aEnv, "PRRT")
-    , iResendHandler(iControlServer, iResendTimer)
-    , iSemResend("PRRS", 0)
+    , iRepairableAllocator(kMaxRepairFrames+3) // +3 as must be able to cause repairer to overflow (which requires kMaxRepairFrames+2), plus could be sending from normal audio channel and control channel simultaneously.
+    , iResendRangeRequester(iControlServer)
+    , iRepairerTimer(aEnv, "PRRT")
+    , iRepairer(aEnv, iResendRangeRequester, *this, iRepairerTimer)
 {
-    iControlServer.RegisterResendObserver(iResendHandler);
-    iResendHandler.RegisterObserver(*this);
 }
 
 ProtocolRaop::~ProtocolRaop()
@@ -303,7 +301,7 @@ void ProtocolRaop::DoInterrupt()
 
     iAudioServer.DoInterrupt();
     iControlServer.DoInterrupt();
-    iResendHandler.Interrupt();
+    iRepairer.DropAudio();
 }
 
 void ProtocolRaop::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
@@ -369,7 +367,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             iAudioServer.ReadPacket(iPacketBuf);
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
-            const TUint seqLast = audioPacket.Header().Seq();
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -394,9 +391,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 LOG(kMedia, "ProtocolRaop::Stream starting new stream\n");
                 UpdateSessionId(audioPacket.Ssrc());
                 iAudioDecryptor.Init(iDiscovery.Aeskey(), iDiscovery.Aesiv());
-                iSeqExpected = seqLast;   // Init seqExpected.
                 start = false;
-
 
                 Track* track = nullptr;
                 TUint latency = 0;
@@ -431,43 +426,39 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             const TBool shouldFlush = ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp());
 
             if (validSession && !shouldFlush) {
-                if (seqLast == iSeqExpected) {
-                    // The packet that was expected.
-                    OutputAudio(audioPacket.Payload());
-                    iSeqExpected++;
+                IRepairable* repairable = iRepairableAllocator.Allocate(audioPacket);
+                try {
+                    Log::Print("iRepairer.OutputAudio(%u)\n", audioPacket.Header().Seq());
+                    iRepairer.OutputAudio(*repairable);
                 }
-                else if (seqLast > iSeqExpected) {
-                    // Missed some packets.
-                    const TUint missed = seqLast-iSeqExpected;
-                    LOG(kMedia, "ProtocolRaop::Stream missed %u audio packets\n", missed);
-                    Log::Print("ProtocolRaop::Stream expected audio packet: %u, got audio packet: %u\n", iSeqExpected, seqLast);
+                catch (RepairerBufferFull&) {
+                    Log::Print("ProtocolRaop::Stream RepairerBufferFull\n");
+                    // Set state so that no more audio is output until a MsgDrain followed by a MsgEncodedStream.
 
-                    iResendHandler.RequestResend(iSeqExpected, missed);
-                    // Callbacks will come via ::ReceiveResend().
 
-                    // No need to notify of discontinuity here; might manage to recover if packets are resent.
-                    iSemResend.Wait();  // Only signalled once resent packets have been received and/or timed out.
+                    // FIXME - need to disable/enable audio server during drain so that stale packets aren't pulled following drain (and UDP packet buffer could have filled in that time, causing a discontinuity, which would cause another drain and so on...).
+                    // Solution is to move the servers from the source into the protocol, as only the protocol knows when it is able to send.
 
-                    if (seqLast != iSeqExpected) {
-                        // Still a packet discontinuity.
-                        OutputDiscontinuity();
-                    }
 
-                    if (seqLast >= iSeqExpected) {
-                        // Now, send out packet that followed discontinuity.
-                        Log::Print("ProtocolRaop::Stream resend complete. Outputting seq: %u\n", audioPacket.Header().Seq());
-                        iSeqExpected = audioPacket.Header().Seq()+1; // Jump over missed packets that have now been resent/dropped.
-                        OutputAudio(audioPacket.Payload());
-                    }
-                    else {
-                        ASSERTS();
-                        // Shouldn't happen, but log anyway.
-                        LOG(kMedia, "ProtocolRaop::Stream resend complete. Had packet %u, but iSeqExpected is now %u\n", seqLast, iSeqExpected);
-                    }
+                    //iAudioServer.Close();
+                    iResumePending = true;
+                    iSem.Clear();
 
+                    Semaphore sem("PRWS", 0);
+                    Log::Print("ProtocolRaop::Stream RepairerBufferFull before OutputDrain()\n");
+                    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+                    Log::Print("ProtocolRaop::Stream RepairerBufferFull before sem.Wait()\n");
+                    sem.Wait();
+                    Log::Print("ProtocolRaop::Stream RepairerBufferFull after sem.Wait()\n");
+                    //iAudioServer.Open();
                 }
-                else {
-                    // Packet is one that's already been seen. Ignore.
+                catch (RepairerStreamRestarted&) {
+                    iResumePending = true;
+                    iSem.Clear();
+
+                    Semaphore sem("PRWS", 0);
+                    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+                    sem.Wait();
                 }
             }
         }
@@ -657,27 +648,28 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
 {
     Log::Print(">ProtocolRaop::ReceiveResend timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
+    IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
+    try {
+        iRepairer.OutputAudio(*repairable);
+    }
+    catch (RepairerBufferFull&) {
+        Log::Print("ProtocolRaop::ResendReceive RepairerBufferFull\n");
+        // FIXME - require some locking
+        iResumePending = true;
+        iSem.Clear();
 
-    const TUint seq = aPacket.Header().Seq();
-    if (seq == iSeqExpected) {
-        OutputAudio(aPacket.Payload());
-        iSeqExpected++;
+        Semaphore sem("PRWS", 0);
+        iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+        sem.Wait();
     }
-    else if (seq > iSeqExpected) {
-        // Missed a packet.
-        // Output this and update iSeqExpected accordingly.
-        OutputDiscontinuity();
-        OutputAudio(aPacket.Payload());
-        iSeqExpected = seq+1;
-    }
-    else {
-        // Packet that preceded current packet in sequence. Ignore.
-    }
-}
+    catch (RepairerStreamRestarted&) {
+        iResumePending = true;
+        iSem.Clear();
 
-void ProtocolRaop::ResendComplete()
-{
-    iSemResend.Signal();
+        Semaphore sem("PRWS", 0);
+        iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+        sem.Wait();
+    }
 }
 
 TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
@@ -701,166 +693,12 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 }
 
 
-// RaopTimer
-
-RaopTimer::RaopTimer(Environment& aEnv, const TChar* aId)
-    : iTimer(aEnv, MakeFunctor(*this, &RaopTimer::TimerFired), aId)
-{
-}
-
-void RaopTimer::Start(Functor aFunctor, TUint aFireInMs)
-{
-    iFunctor = aFunctor;
-    iTimer.FireIn(aFireInMs);
-}
-
-void RaopTimer::Cancel()
-{
-    iTimer.Cancel();
-}
-
-void RaopTimer::TimerFired()
-{
-    iFunctor();
-    iFunctor = Functor();
-}
-
-
-// RaopResendHandler
-
-RaopResendHandler::RaopResendHandler(IRaopResendRequester& aRequester, IRaopTimer& aTimer)
-    : iRequester(aRequester)
-    , iObserver(nullptr)
-    , iTimer(aTimer)
-    , iSeqNext(0)
-    , iCount(0)
-    , iLock("RRHL")
-{
-}
-
-void RaopResendHandler::RegisterObserver(IRaopResendBlockObserver& aObserver)
-{
-    ASSERT(iObserver == nullptr);
-    iObserver = &aObserver;
-}
-
-void RaopResendHandler::Interrupt()
-{
-    ASSERT(iObserver == nullptr);
-    AutoMutex a(iLock);
-    iTimer.Cancel();
-    iCount = 0;
-    iSeqNext = 0;
-    iObserver->ResendComplete();
-}
-
-void RaopResendHandler::RequestResend(TUint aSeqStart, TUint aCount)
-{
-    iSeqNext = aSeqStart;
-    iCount = aCount;
-    iTimer.Start(MakeFunctor(*this, &RaopResendHandler::TimerFired), kTimeoutMs);
-    iRequester.RequestResend(aSeqStart, aCount);
-}
-
-void RaopResendHandler::ResendReceive(const RaopPacketAudio& aPacket)
-{
-    TBool outputAudio = false;
-    TBool shouldSignal = false;
-    ASSERT(iObserver != nullptr);
-
-    {
-        AutoMutex a(iLock);
-        Log::Print(">RaopResendHandler::ReceiveResend timestamp: %u, seq: %u, iResendSeqNext %u, iResendCount: %u\n", aPacket.Timestamp(), aPacket.Header().Seq(), iSeqNext, iCount);
-
-        if (iCount > 0) {
-            if (aPacket.Header().Seq() == iSeqNext) {
-                // Expected resend packet.
-                iTimer.Cancel();
-                iCount--;
-                if (iCount == 0) {
-                    iSeqNext = 0;
-                }
-                else {
-                    iSeqNext++;
-                }
-                outputAudio = true;
-            }
-            else if (aPacket.Header().Seq() >= iSeqNext) {
-                // Missed a resend packet.
-                iTimer.Cancel();
-                const TUint missCount = aPacket.Header().Seq()-iSeqNext;
-
-                if (missCount > iCount) {
-                    // Something went very wrong or missed end of resend sequence.
-                    // Abort resend and don't output this packet.
-                    iSeqNext = 0;
-                    iCount = 0;
-                }
-                else {
-                    // Advance over missed packet.
-                    iSeqNext += missCount;
-                    iCount -= missCount;
-                    outputAudio = true;
-                }
-            }
-            else { // aPacket.Header().Seq() >= iResendSeqNext
-                // Bad sequence number. Ignore.
-            }
-
-            if (iCount == 0) {
-                iSeqNext = 0;
-                shouldSignal = true;
-            }
-            else {
-                // Start timer for next resend packet.
-                iTimer.Start(MakeFunctor(*this, &RaopResendHandler::TimerFired), kTimeoutMs);
-            }
-        }
-    }
-
-    if (outputAudio) {
-        Log::Print("RaopResendHandler::ReceiveResend outputting audio; seq: %u\n", aPacket.Header().Seq());
-        iObserver->ResendReceive(aPacket);
-    }
-    if (shouldSignal) {
-        Log::Print("RaopResendHandler::ReceiveResend end of resend sequence; seq: %u\n", aPacket.Header().Seq());
-        iObserver->ResendComplete();
-    }
-}
-
-void RaopResendHandler::TimerFired()
-{
-    Log::Print(">RaopResendHandler::TimerFired\n");
-    // Timer may fire for each resend packet.
-
-    ASSERT(iObserver != nullptr);
-    AutoMutex a(iLock);
-    if (iCount > 0) {
-        iCount--;
-    }
-    else {
-        // Weren't expecting any packets.
-        return;
-    }
-
-    if (iCount > 0) {
-        iSeqNext++;
-        iTimer.Start(MakeFunctor(*this, &RaopResendHandler::TimerFired), kTimeoutMs);
-    }
-    else {
-        // Resend sequence complete.
-        iSeqNext = 0;
-        iObserver->ResendComplete();
-    }
-}
-
-
 // RaopControlServer
 
-RaopControlServer::RaopControlServer(SocketUdpServer& aServer)
+RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver)
     : iClientPort(kInvalidServerPort)
     , iServer(aServer)
-    , iResendReceiver(nullptr)
+    , iResendReceiver(aResendReceiver)
     , iLatency(0)
     , iLock("RACL")
     , iExit(false)
@@ -878,12 +716,6 @@ RaopControlServer::~RaopControlServer()
     iServer.ReadInterrupt();
     iServer.ClearWaitForOpen();
     delete iThread;
-}
-
-void RaopControlServer::RegisterResendObserver(IRaopResendReceiver& aReceiver)
-{
-    ASSERT(iResendReceiver == nullptr);
-    iResendReceiver = &aReceiver;
 }
 
 void RaopControlServer::DoInterrupt()
@@ -936,11 +768,10 @@ void RaopControlServer::Run()
                     //LOG(kMedia, "RaopControlServer::Run RtpTimestampMinusLatency: %u, NtpTimestampSecs: %u, NtpTimestampFract: %u, RtpTimestamp: %u, iLatency: %u\n", syncPacket.RtpTimestampMinusLatency(), syncPacket.NtpTimestampSecs(), syncPacket.NtpTimestampFract(), syncPacket.RtpTimestamp(), iLatency);
                 }
                 else if (packet.Header().Type() == EResendResponse) {
-                    ASSERT(iResendReceiver != nullptr);
                     // Resend response packet contains a full audio packet as payload.
                     RaopPacketResendResponse resendResponsePacket(packet);
                     const RaopPacketAudio& audioPacket = resendResponsePacket.AudioPacket();
-                    iResendReceiver->ResendReceive(audioPacket);
+                    iResendReceiver.ResendReceive(audioPacket);
                 }
                 else {
                     LOG(kMedia, "RaopControlServer::Run unexpected packet type: %u\n", packet.Header().Type());
@@ -990,6 +821,122 @@ void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
 }
 
 
+// RaopRepairableAllocator
+
+RaopRepairableAllocator::RaopRepairableAllocator(TUint aMaxRepairable)
+    : iFifo(aMaxRepairable)
+    , iLock("RRAL")
+{
+    AutoMutex a(iLock);
+    for (TUint i=0; i<aMaxRepairable; i++) {
+        iFifo.Write(new RaopRepairable(*this));
+    }
+}
+
+RaopRepairableAllocator::~RaopRepairableAllocator()
+{
+    AutoMutex a(iLock);
+    ASSERT(iFifo.SlotsFree() == 0);
+    while (iFifo.SlotsUsed() > 0) {
+        RaopRepairable* repairable = iFifo.Read();
+        delete repairable;
+    }
+}
+
+IRepairable* RaopRepairableAllocator::Allocate(const RaopPacketAudio& aPacket)
+{
+    AutoMutex a(iLock);
+    RaopRepairable* repairable = iFifo.Read();
+    repairable->Set(aPacket.Header().Seq(), false, aPacket.Payload());
+    return repairable;
+}
+
+IRepairable* RaopRepairableAllocator::Allocate(const RaopPacketResendResponse& aPacket)
+{
+    AutoMutex a(iLock);
+    RaopRepairable* repairable = iFifo.Read();
+    repairable->Set(aPacket.Header().Seq(), true, aPacket.AudioPacket().Payload());
+    return repairable;
+}
+
+void RaopRepairableAllocator::Deallocate(RaopRepairable* aRepairable)
+{
+    AutoMutex a(iLock);
+    aRepairable->Set(0, false, Brx::Empty());
+    iFifo.Write(aRepairable);
+}
+
+
+// RaopResendRangeRequester
+
+RaopResendRangeRequester::RaopResendRangeRequester(IRaopResendRequester& aResendRequester)
+    : iResendRequester(aResendRequester)
+{
+}
+
+void RaopResendRangeRequester::RequestResendSequences(const std::vector<const IResendRange*> aRanges)
+{
+    Log::Print(">RaopResendRangeRequester::RequestResendSequences");
+    for (auto range : aRanges) {
+        const TUint start = range->Start();
+        const TUint end = range->End();
+        Log::Print(" %d->%d", start, end);
+        iResendRequester.RequestResend(start, end-start);
+    }
+    Log::Print("\n");
+}
+
+
+// RepairerTimer
+
+RepairerTimer::RepairerTimer(Environment& aEnv, const TChar* aId)
+    : iTimer(aEnv, MakeFunctor(*this, &RepairerTimer::TimerFired), aId)
+{
+}
+
+void RepairerTimer::Start(Functor aFunctor, TUint aFireInMs)
+{
+    iFunctor = aFunctor;
+    iTimer.FireIn(aFireInMs);
+}
+
+void RepairerTimer::Cancel()
+{
+    iTimer.Cancel();
+}
+
+void RepairerTimer::TimerFired()
+{
+    iFunctor();
+    iFunctor = Functor();
+}
+
+
+// ResendRange
+
+ResendRange::ResendRange()
+    : iStart(0)
+    , iEnd(0)
+{
+}
+
+void ResendRange::Set(TUint aStart, TUint aEnd)
+{
+    iStart = aStart;
+    iEnd = aEnd;
+}
+
+TUint ResendRange::Start() const
+{
+    return iStart;
+}
+
+TUint ResendRange::End() const
+{
+    return iEnd;
+}
+
+
 // RaopAudioServer
 
 RaopAudioServer::RaopAudioServer(SocketUdpServer& aServer)
@@ -999,6 +946,18 @@ RaopAudioServer::RaopAudioServer(SocketUdpServer& aServer)
 
 RaopAudioServer::~RaopAudioServer()
 {
+    iServer.ReadInterrupt();
+    iServer.ClearWaitForOpen();
+}
+
+void RaopAudioServer::Open()
+{
+    iServer.Open();
+}
+
+void RaopAudioServer::Close()
+{
+    iServer.Close();
 }
 
 void RaopAudioServer::Reset()

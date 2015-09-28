@@ -3,12 +3,11 @@
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
-extern void TestRaop();
+extern void TestRaop(OpenHome::Environment& aEnv);
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-    TestRaop();
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
+    Net::Library* lib = new Net::Library(aInitParams);
+    TestRaop(lib->Env());
+    delete lib;
 }
