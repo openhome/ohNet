@@ -431,7 +431,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             if (validSession && !shouldFlush) {
                 IRepairable* repairable = iRepairableAllocator.Allocate(audioPacket);
                 try {
-                    Log::Print("iRepairer.OutputAudio(%u)\n", audioPacket.Header().Seq());
+                    //Log::Print("iRepairer.OutputAudio(%u)\n", audioPacket.Header().Seq());
                     iRepairer.OutputAudio(*repairable);
                 }
                 catch (RepairerBufferFull&) {
@@ -741,6 +741,8 @@ void RaopControlServer::Run()
                     RaopPacketResendResponse resendResponsePacket(packet);
                     const RaopPacketAudio& audioPacket = resendResponsePacket.AudioPacket();
                     iResendReceiver.ResendReceive(audioPacket);
+
+                    Log::Print("\n\n\nRaopControlServer::Run EResendResponse: %u\n\n\n", packet.Header().Seq());
                 }
                 else {
                     LOG(kMedia, "RaopControlServer::Run unexpected packet type: %u\n", packet.Header().Type());
@@ -772,6 +774,7 @@ TUint RaopControlServer::Latency() const
 void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
 {
     LOG(kMedia, "RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
+    Log::Print("RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
 
     RaopPacketResendRequest resendPacket(aSeqStart, aCount);
     Bws<RaopPacketResendRequest::kBytes> resendBuf;
@@ -849,8 +852,9 @@ void RaopResendRangeRequester::RequestResendSequences(const std::vector<const IR
     for (auto range : aRanges) {
         const TUint start = range->Start();
         const TUint end = range->End();
+        const TUint count = (end-start)+1;  // +1 to include start packet.
         Log::Print(" %d->%d", start, end);
-        iResendRequester.RequestResend(start, end-start);
+        iResendRequester.RequestResend(start, count);
     }
     Log::Print("\n");
 }
