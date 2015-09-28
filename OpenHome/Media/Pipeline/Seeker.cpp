@@ -332,7 +332,7 @@ Msg* Seeker::ProcessFlushable(Msg* aMsg)
 void Seeker::HandleSeekFail()
 {
     TUint64 seekJiffies = ((TUint64)iSeekSeconds) * Jiffies::kPerSecond;
-    if (seekJiffies > iStreamPosJiffies) {
+    if (seekJiffies > iStreamPosJiffies && (seekJiffies - iStreamPosJiffies) < kMaxSeekDiscardDuration) {
         LOG(kPipeline, "Seeker::HandleSeekFail() flush until seek point\n");
         iFlushEndJiffies = seekJiffies;
         iState = EFlushing;
