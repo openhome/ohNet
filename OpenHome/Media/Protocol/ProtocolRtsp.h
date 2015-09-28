@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PROTOCOL_RTSP
-#define HEADER_PIPELINE_PROTOCOL_RTSP
+#pragma once
 
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/Rtsp.h>
@@ -44,4 +43,3 @@ private:
 };  // namespace OpenHome
 
 
-#endif  // HEADER_PIPELINE_PROTOCOL_RTSP

@@ -617,6 +617,13 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     return aSplit.IsEnabled();
 }
 
+void Ramp::SetMuted()
+{
+    iStart = iEnd = kMin;
+    iDirection = EMute;
+    iEnabled = true;
+}
+
 void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
 {
     iStart = std::min(iStart, aRequestedStart);
@@ -646,6 +653,10 @@ void Ramp::Validate()
         break;
     case EDown:
         ASSERT(iStart > iEnd);
+        break;
+    case EMute:
+        ASSERT(iStart == iEnd);
+        ASSERT(iStart == kMin);
         break;
     default:
         ASSERTS();
@@ -1517,6 +1528,15 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     Media::Ramp split;
     TUint splitPos;
     aSplit = nullptr;
+
+    ASSERT(aDirection == Ramp::EUp || aDirection == Ramp::EDown);
+    if (iRamp.IsEnabled() && iRamp.Direction() == Ramp::EMute) {
+        if (aDirection == Ramp::EDown) {
+            aRemainingDuration = 0;
+        }
+        return iRamp.End();
+    }
+
     /*TBool logAppliedRamp = false;
     if (iRamp.IsEnabled()) {
         Log::Print("++ MsgAudio::SetRamp(%08x, %u, %u): Existing ramp is [%08x...%08x]\n", aStart, aRemainingDuration, aDirection, iRamp.Start(), iRamp.End());
@@ -1555,6 +1575,11 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     }
 
     return iRamp.End();
+}
+
+void MsgAudio::SetMuted()
+{
+    iRamp.SetMuted();
 }
 
 const Media::Ramp& MsgAudio::Ramp() const
@@ -1609,8 +1634,18 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     // both size & offset will be rounded down if they don't fall on a sample boundary
     // we don't risk losing any data doing this as the start and end of each DecodedAudio's data fall on sample boundaries
 
-    MsgPlayablePcm* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp);
+    MsgPlayable* playable;
+    if (iRamp.Direction() != Ramp::EMute) {
+        MsgPlayablePcm* pcm = iAllocatorPlayablePcm->Allocate();
+        pcm->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp);
+        playable = pcm;
+    }
+    else {
+        MsgPlayableSilence* silence = iAllocatorPlayableSilence->Allocate();
+        Media::Ramp noRamp;
+        silence->Initialise(sizeBytes, iAudioData->BitDepth(), iAudioData->NumChannels(), noRamp);
+        playable = silence;
+    }
     if (iNextAudio != nullptr) { 
         MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
         playable->Add(child); 
@@ -1645,16 +1680,20 @@ MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudio* clone = MsgAudio::Clone();
     static_cast<MsgAudioPcm*>(clone)->iAudioData = iAudioData;
-    static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayable = iAllocatorPlayable;
+    static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
+    static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
     static_cast<MsgAudioPcm*>(clone)->iTrackOffset = iTrackOffset;
     iAudioData->AddRef();
     return clone;
 }
 
-void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, Allocator<MsgPlayablePcm>& aAllocatorPlayable)
+void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset,
+                             Allocator<MsgPlayablePcm>& aAllocatorPlayablePcm,
+                             Allocator<MsgPlayableSilence>& aAllocatorPlayableSilence)
 {
     MsgAudio::Initialise();
-    iAllocatorPlayable = &aAllocatorPlayable;
+    iAllocatorPlayablePcm = &aAllocatorPlayablePcm;
+    iAllocatorPlayableSilence = &aAllocatorPlayableSilence;
     iAudioData = aDecodedAudio;
     iTrackOffset = aTrackOffset;
     iSize = iAudioData->JiffiesFromBytes(iAudioData->Bytes());
@@ -1676,7 +1715,8 @@ void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
     MsgAudioPcm& remaining = static_cast<MsgAudioPcm&>(aRemaining);
     remaining.iAudioData = iAudioData;
     remaining.iTrackOffset = iTrackOffset + iSize;
-    remaining.iAllocatorPlayable = iAllocatorPlayable;
+    remaining.iAllocatorPlayablePcm = iAllocatorPlayablePcm;
+    remaining.iAllocatorPlayableSilence = iAllocatorPlayableSilence;
 }
 
 MsgAudio* MsgAudioPcm::Allocate()
@@ -1819,6 +1859,17 @@ const Media::Ramp& MsgPlayable::Ramp() const
     return iRamp;
 }
 
+void MsgPlayable::Read(IPcmProcessor& aProcessor)
+{
+    aProcessor.BeginBlock();
+    MsgPlayable* playable = this;
+    while (playable != nullptr) {
+        playable->ReadBlock(aProcessor);
+        playable = playable->iNextPlayable;
+    }
+    aProcessor.EndBlock();
+}
+
 MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
@@ -1879,65 +1930,59 @@ MsgPlayable* MsgPlayablePcm::Clone()
     return clone;
 }
 
-void MsgPlayablePcm::Read(IPcmProcessor& aProcessor)
+void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
 {
-    aProcessor.BeginBlock();
-    MsgPlayablePcm* playable = this;
-    while (playable != nullptr) {
-        Brn audioBuf(playable->iAudioData->PtrOffsetBytes(playable->iOffset), playable->iSize);
-        /*{
-            const TUint testBytes = audioBuf.Bytes();
-            for (TUint i=0; i<testBytes; i++) {
-                if (audioBuf[i] == 0xcd) {
-                    _asm int 3;
-                }
-            }
-        }*/
-        const TUint numChannels = playable->iAudioData->NumChannels();
-        const TUint bitDepth = playable->iAudioData->BitDepth();
-        const TUint byteDepth = bitDepth / 8;
-        if (playable->iRamp.IsEnabled()) {
-            // we need calculate each subsample value when ramped so there is no option to process as a single fragment
-            TByte sample[DecodedAudio::kMaxNumChannels * 3]; // largest possible sample - 24-bit, 8 channel
-            RampApplicator ra(playable->iRamp);
-            const TUint numSamples = ra.Start(audioBuf, bitDepth, numChannels);
-            for (TUint i=0; i<numSamples; i++) {
-                ra.GetNextSample(sample);
-                switch (byteDepth)
-                {
-                case 1:
-                    aProcessor.ProcessSample8(sample, numChannels);
-                    break;
-                case 2:
-                    aProcessor.ProcessSample16(sample, numChannels);
-                    break;
-                case 3:
-                    aProcessor.ProcessSample24(sample, numChannels);
-                    break;
-                default:
-                    ASSERTS();
-                }
+    Brn audioBuf(iAudioData->PtrOffsetBytes(iOffset), iSize);
+    /*{
+        const TUint testBytes = audioBuf.Bytes();
+        for (TUint i=0; i<testBytes; i++) {
+            if (audioBuf[i] == 0xcd) {
+                _asm int 3;
             }
         }
-        else {
+    }*/
+    const TUint numChannels = iAudioData->NumChannels();
+    const TUint bitDepth = iAudioData->BitDepth();
+    const TUint byteDepth = bitDepth / 8;
+    if (iRamp.IsEnabled()) {
+        // we need calculate each subsample value when ramped so there is no option to process as a single fragment
+        TByte sample[DecodedAudio::kMaxNumChannels * 3]; // largest possible sample - 24-bit, 8 channel
+        RampApplicator ra(iRamp);
+        const TUint numSamples = ra.Start(audioBuf, bitDepth, numChannels);
+        for (TUint i=0; i<numSamples; i++) {
+            ra.GetNextSample(sample);
             switch (byteDepth)
             {
             case 1:
-                 aProcessor.ProcessFragment8(audioBuf, numChannels);
+                aProcessor.ProcessSample8(sample, numChannels);
                 break;
             case 2:
-                 aProcessor.ProcessFragment16(audioBuf, numChannels);
+                aProcessor.ProcessSample16(sample, numChannels);
                 break;
             case 3:
-                 aProcessor.ProcessFragment24(audioBuf, numChannels);
+                aProcessor.ProcessSample24(sample, numChannels);
                 break;
             default:
                 ASSERTS();
             }
         }
-        playable = reinterpret_cast<MsgPlayablePcm*>(playable->iNextPlayable);
     }
-    aProcessor.EndBlock();
+    else {
+        switch (byteDepth)
+        {
+        case 1:
+                aProcessor.ProcessFragment8(audioBuf, numChannels);
+            break;
+        case 2:
+                aProcessor.ProcessFragment16(audioBuf, numChannels);
+            break;
+        case 3:
+                aProcessor.ProcessFragment24(audioBuf, numChannels);
+            break;
+        default:
+            ASSERTS();
+        }
+    }
 }
 
 MsgPlayable* MsgPlayablePcm::Allocate()
@@ -1971,35 +2016,29 @@ void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNu
     iNumChannels = aNumChannels;
 }
 
-void MsgPlayableSilence::Read(IPcmProcessor& aProcessor)
+void MsgPlayableSilence::ReadBlock(IPcmProcessor& aProcessor)
 {
     static const TByte silence[DecodedAudio::kMaxBytes] = { 0 };
-    aProcessor.BeginBlock();
-    MsgPlayableSilence* playable = this;
-    while (playable != nullptr) {
-        TUint remainingBytes = playable->iSize;
-        do {
-            TUint bytes = (remainingBytes > DecodedAudio::kMaxBytes? DecodedAudio::kMaxBytes : remainingBytes);
-            Brn audioBuf(silence, bytes);
-            switch (iBitDepth)
-            {
-            case 8:
-                aProcessor.ProcessFragment8(audioBuf, iNumChannels);
-                break;
-            case 16:
-                aProcessor.ProcessFragment16(audioBuf, iNumChannels);
-                break;
-            case 24:
-                aProcessor.ProcessFragment24(audioBuf, iNumChannels);
-                break;
-            default:
-                ASSERTS();
-            }
-            remainingBytes -= bytes;
-        } while (remainingBytes > 0);
-        playable = reinterpret_cast<MsgPlayableSilence*>(playable->iNextPlayable);
-    }
-    aProcessor.EndBlock();
+    TUint remainingBytes = iSize;
+    do {
+        TUint bytes = (remainingBytes > DecodedAudio::kMaxBytes? DecodedAudio::kMaxBytes : remainingBytes);
+        Brn audioBuf(silence, bytes);
+        switch (iBitDepth)
+        {
+        case 8:
+            aProcessor.ProcessFragment8(audioBuf, iNumChannels);
+            break;
+        case 16:
+            aProcessor.ProcessFragment16(audioBuf, iNumChannels);
+            break;
+        case 24:
+            aProcessor.ProcessFragment24(audioBuf, iNumChannels);
+            break;
+        default:
+            ASSERTS();
+        }
+        remainingBytes -= bytes;
+    } while (remainingBytes > 0);
 }
 
 MsgPlayable* MsgPlayableSilence::Allocate()
@@ -2918,7 +2957,7 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
     MsgAudioPcm* msg = iAllocatorMsgAudioPcm.Allocate();
     try {
-        msg->Initialise(decodedAudio, aTrackOffset, iAllocatorMsgPlayablePcm);
+        msg->Initialise(decodedAudio, aTrackOffset, iAllocatorMsgPlayablePcm, iAllocatorMsgPlayableSilence);
     }
     catch (AssertionFailed&) { // test code helper
         msg->RemoveRef();

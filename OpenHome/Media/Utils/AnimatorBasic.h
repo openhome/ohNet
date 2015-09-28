@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_DRIVER_BASIC
-#define HEADER_PIPELINE_DRIVER_BASIC
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -69,4 +68,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_DRIVER_BASIC

@@ -1153,6 +1153,14 @@ void SuiteMsgPlayable::Test()
     ValidateSilence(playable);
     remainingPlayable->RemoveRef();
 
+    // check we can read from a chained PlayablePcm -> PlayableSilence
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataEndianLittle, 0);
+    playable = audioPcm->CreatePlayable();
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    playable->Add(silence->CreatePlayable(44100, 8, 1));
+    playable->Read(pcmProcessor);
+    playable->RemoveRef();
+
     // clean destruction of class implies no leaked msgs
 }
 
@@ -1471,6 +1479,39 @@ void SuiteRamp::Test()
     ramp.iDirection = Ramp::EUp;
     ramp.iEnabled = true;
     ramp.Set(0x33cf3a6c, 0x00044e80, 0x0009c300, Ramp::EDown, split, splitPos); // asserts
+
+    // muted ramp
+    ramp.Reset();
+    ramp.SetMuted();
+    TEST(ramp.Direction() == Ramp::EMute);
+    TEST(ramp.Start() == Ramp::kMin);
+    TEST(ramp.End() == Ramp::kMin);
+
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, 1, 44100, 8, EMediaDataEndianLittle, 0);
+    audioPcm->SetMuted();
+    remainingDuration = Jiffies::kPerMs * 20;
+    audioPcm->SetRamp(Ramp::kMax, remainingDuration, Ramp::EDown, remaining);
+    playable = audioPcm->CreatePlayable();
+    playable->Read(pcmProcessor);
+    playable->RemoveRef();
+    ptr = pcmProcessor.Ptr();
+    bytes = pcmProcessor.Buf().Bytes();
+    for (TUint i=0; i<bytes; i++) {
+        TEST(*ptr++ == 0);
+    }
+
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, 1, 44100, 8, EMediaDataEndianLittle, 0);
+    remainingDuration = Jiffies::kPerMs * 20;
+    audioPcm->SetRamp(Ramp::kMax, remainingDuration, Ramp::EDown, remaining);
+    audioPcm->SetMuted();
+    playable = audioPcm->CreatePlayable();
+    playable->Read(pcmProcessor);
+    playable->RemoveRef();
+    ptr = pcmProcessor.Ptr();
+    bytes = pcmProcessor.Buf().Bytes();
+    for (TUint i=0; i<bytes; i++) {
+        TEST(*ptr++ == 0);
+    }
 }
 
 

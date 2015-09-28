@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_MSG
-#define HEADER_PIPELINE_MSG
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -220,11 +219,13 @@ public:
         ENone
        ,EUp
        ,EDown
+       ,EMute
     };
 public:
     Ramp();
     void Reset();
     TBool Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
+    void SetMuted();
     Ramp Split(TUint aNewSize, TUint aCurrentSize);
     TUint Start() const { return iStart; }
     TUint End() const { return iEnd; }
@@ -593,6 +594,7 @@ public:
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
     TUint SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
+    void SetMuted(); // should only be used with msgs immediately following a ramp down
     const Media::Ramp& Ramp() const;
 protected:
     MsgAudio(AllocatorBase& aAllocator);
@@ -626,6 +628,7 @@ private:
 
 class MsgPlayable;
 class MsgPlayablePcm;
+class MsgPlayableSilence;
 
 class MsgAudioPcm : public MsgAudio
 {
@@ -639,7 +642,9 @@ public:
 public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, Allocator<MsgPlayablePcm>& aAllocatorPlayable);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset,
+                    Allocator<MsgPlayablePcm>& aAllocatorPlayablePcm,
+                    Allocator<MsgPlayableSilence>& aAllocatorPlayableSilence);
     void SetTimestamps(TUint aRx, TUint aNetwork);
 private: // from MsgAudio
     MsgAudio* Allocate();
@@ -649,7 +654,8 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     DecodedAudio* iAudioData;
-    Allocator<MsgPlayablePcm>* iAllocatorPlayable;
+    Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
+    Allocator<MsgPlayableSilence>* iAllocatorPlayableSilence;
     TUint64 iTrackOffset;
     TBool iTimestamped;
     TUint iRxTimestamp;
@@ -702,7 +708,7 @@ public:
      *                             time if requested by the processor (say because it'll insert
      *                             padding around each sample) or if a ramp is being applied.
      */
-    virtual void Read(IPcmProcessor& aProcessor) = 0;
+    void Read(IPcmProcessor& aProcessor);
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
@@ -713,6 +719,7 @@ protected: // from Msg
 private:
     virtual MsgPlayable* Allocate() = 0;
     virtual void SplitCompleted(MsgPlayable& aRemaining);
+    virtual void ReadBlock(IPcmProcessor& aProcessor) = 0;
 protected:
     MsgPlayable* iNextPlayable;
     TUint iSize; // Bytes
@@ -728,10 +735,10 @@ public:
 private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
-    MsgPlayable* Clone(); // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
-    void Read(IPcmProcessor& aProcessor);
-    MsgPlayable* Allocate();
-    void SplitCompleted(MsgPlayable& aRemaining);
+    MsgPlayable* Clone() override; // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
+    MsgPlayable* Allocate() override;
+    void SplitCompleted(MsgPlayable& aRemaining) override;
+    void ReadBlock(IPcmProcessor& aProcessor) override;
 private: // from Msg
     void Clear();
 private:
@@ -741,14 +748,15 @@ private:
 class MsgPlayableSilence : public MsgPlayable
 {
     friend class MsgSilence;
+    friend class MsgAudioPcm;
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
     void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp);
 private: // from MsgPlayable
-    void Read(IPcmProcessor& aProcessor);
-    MsgPlayable* Allocate();
-    void SplitCompleted(MsgPlayable& aRemaining);
+    MsgPlayable* Allocate() override;
+    void SplitCompleted(MsgPlayable& aRemaining) override;
+    void ReadBlock(IPcmProcessor& aProcessor) override;
 private: // from Msg
     void Clear();
 private:
@@ -1470,4 +1478,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_MSG

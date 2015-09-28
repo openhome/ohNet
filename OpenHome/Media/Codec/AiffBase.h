@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_AIFF_BASE
-#define HEADER_PIPELINE_CODEC_AIFF_BASE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -57,4 +56,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC_AIFF_BASE

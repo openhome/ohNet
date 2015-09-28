@@ -1,5 +1,4 @@
-#ifndef HEADER_OHM_SOCKET
-#define HEADER_OHM_SOCKET
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -64,4 +63,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_OHM_SOCKET

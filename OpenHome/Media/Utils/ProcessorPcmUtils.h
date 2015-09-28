@@ -1,5 +1,4 @@
-#ifndef HEADER_PROCESSOR_PCM_UTILS
-#define HEADER_PROCESSOR_PCM_UTILS
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -84,4 +83,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PROCESSOR_PCM_UTILS

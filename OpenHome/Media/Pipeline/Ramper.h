@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_RAMPER
-#define HEADER_PIPELINE_RAMPER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -41,4 +40,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_RAMPER

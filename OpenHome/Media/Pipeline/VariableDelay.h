@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_VARIABLE_DELAY
-#define HEADER_PIPELINE_VARIABLE_DELAY
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -86,4 +85,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_VARIABLE_DELAY

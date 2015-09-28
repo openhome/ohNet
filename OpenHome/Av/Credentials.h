@@ -1,5 +1,4 @@
-#ifndef HEADER_CREDENTIALS_MANAGER
-#define HEADER_CREDENTIALS_MANAGER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -132,4 +131,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_CREDENTIALS_MANAGER

@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_SAMPLE_RATE_VALIDATOR
-#define HEADER_PIPELINE_SAMPLE_RATE_VALIDATOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -37,4 +36,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_SAMPLE_RATE_VALIDATOR

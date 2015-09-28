@@ -1,5 +1,4 @@
-#ifndef HEADER_SOCKET_SSL
-#define HEADER_SOCKET_SSL
+#pragma once
 
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
@@ -45,4 +44,3 @@ private:
 
 } // namespace OpenHome
 
-#endif // HEADER_SOCKET_SSL

@@ -1,5 +1,4 @@
-#ifndef HEADER_PROTOCOL_RAOP
-#define HEADER_PROTOCOL_RAOP
+#pragma once
 
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Private/Env.h>
@@ -366,4 +365,3 @@ private:
 };  // namespace Av
 };  // namespace OpenHome
 
-#endif  // HEADER_PROTOCOL_RAOP

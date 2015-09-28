@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PRUNER
-#define HEADER_PIPELINE_PRUNER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -52,4 +51,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_PRUNER

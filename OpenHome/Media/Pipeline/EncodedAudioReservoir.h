@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_ENCODED_AUDIO_RESERVOIR
-#define HEADER_PIPELINE_ENCODED_AUDIO_RESERVOIR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
@@ -26,4 +25,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_ENCODED_AUDIO_RESERVOIR

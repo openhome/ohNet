@@ -118,6 +118,7 @@ private:
     EMsgType iLastPulledMsg;
     TBool iRampingDown;
     TBool iRampingUp;
+    TBool iMuted;
     TBool iLiveStream;
     TUint iStreamId;
     TUint64 iTrackOffset;
@@ -190,7 +191,7 @@ void SuiteStopper::Setup()
     iStopper = new Stopper(*iMsgFactory, *this, *this, *iEventCallback, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
-    iRampingDown = iRampingUp = false;
+    iRampingDown = iRampingUp = iMuted = false;
     iLiveStream = false;
     iLastSubsample = 0xffffff;
     iNextStreamId = 1;
@@ -359,6 +360,10 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
     else if (iRampingUp) {
         TEST(firstSubsample >= iLastSubsample);
     }
+    else if (iMuted) {
+        TEST(firstSubsample == iLastSubsample);
+        TEST(firstSubsample == 0);
+    }
     else {
         TEST(firstSubsample == 0x7f7f7f);
     }
@@ -370,6 +375,9 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
     else if (iRampingUp) {
         TEST(iLastSubsample > firstSubsample);
         iRampingUp = (iLastSubsample < 0x7f7f7e); // FIXME - see #830
+    }
+    else if (iMuted) {
+        TEST(iLastSubsample == firstSubsample);
     }
     else {
         TEST(firstSubsample == 0x7f7f7f);
@@ -459,6 +467,7 @@ void SuiteStopper::TestHalted()
     }
     catch (Timeout&) {
         pullTimeout = true;
+        iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
         iStopper->Play();
     }
     TEST(pullTimeout);
@@ -538,12 +547,15 @@ void SuiteStopper::TestPauseRamps()
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 1);
     TEST(iJiffies == kRampDuration);
-    iJiffies = 0;
-    iRampingUp = true;
-    PullNext(EMsgHalt);
+    iMuted = true;
+    do {
+        PullNext();
+    } while (iLastPulledMsg != EMsgHalt);
     TestHalted();
+    iJiffies = 0;
 
     // check that calling Play() now ramps up
+    iRampingUp = true;
     iStopper->Play();
     while (iRampingUp) {
         iPendingMsgs.push_back(CreateAudio());
@@ -712,11 +724,15 @@ void SuiteStopper::TestStopFromPlay()
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
     }
-    PullNext(EMsgHalt);
+    TEST(iJiffies == kRampDuration);
+    iMuted = true;
+    do {
+        PullNext();
+    } while (iLastPulledMsg != EMsgHalt);
+    iMuted = false;
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 1);
-    TEST(iJiffies == kRampDuration);
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
@@ -832,8 +848,6 @@ void SuiteStopper::TestPlayLaterStops()
     TEST(iStoppedCount == 1);
     TEST(iPlayingCount == 1);
     TestHalted();
-    iPendingMsgs.push_back(CreateAudio());
-    PullNext(EMsgAudioPcm);
 }
 
 void SuiteStopper::TestPlayPausePlayWithRamp()

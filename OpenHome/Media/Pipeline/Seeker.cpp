@@ -236,6 +236,9 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
             if (split != nullptr) {
+                if (iState == ERampingDown) {
+                    split->SetMuted();
+                }
                 iQueue.EnqueueAtHead(split);
                 iStreamPosJiffies -= split->Jiffies();
             }
@@ -244,6 +247,9 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         if (split != nullptr) {
+            if (iState == ERampingDown) {
+                split->SetMuted();
+            }
             iQueue.EnqueueAtHead(split);
             iStreamPosJiffies -= split->Jiffies();
         }

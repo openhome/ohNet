@@ -5,6 +5,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Pipeline/RampValidator.h>
 
 #include <string.h>
 #include <limits.h>
@@ -25,6 +26,7 @@ class SuiteVariableDelay : public SuiteUnitTest, private IPipelineElementUpstrea
 
     static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kDownstreamDelay = 30 * Jiffies::kPerMs;
+    static const TUint kMsgSilenceSize = Jiffies::kPerMs;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
@@ -99,11 +101,13 @@ private:
     void TestNotifyStarvingFromRampingDown();
     void TestNotifyStarvingFromRampingUp();
     void TestNoSilenceInjectedBeforeDecodedStream();
+    void TestDelayAppliedAfterDrain();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     VariableDelay* iVariableDelay;
+    RampValidator* iRampValidator;
     EMsgType iNextGeneratedMsg;
     EMsgType iLastMsg;
     TUint iJiffies;
@@ -140,6 +144,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRampingDown), "TestNotifyStarvingFromRampingDown");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRampingUp), "TestNotifyStarvingFromRampingUp");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayAppliedAfterDrain), "TestDelayAppliedAfterDrain");
 }
 
 SuiteVariableDelay::~SuiteVariableDelay()
@@ -156,6 +161,7 @@ void SuiteVariableDelay::Setup()
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kRampDuration);
+    iRampValidator = new RampValidator(*iVariableDelay, "RampValidator");
     iLastMsg = ENone;
     iJiffies = 0;
     iNumMsgsGenerated = 0;
@@ -169,6 +175,7 @@ void SuiteVariableDelay::Setup()
 
 void SuiteVariableDelay::TearDown()
 {
+    delete iRampValidator;
     delete iVariableDelay;
     delete iMsgFactory;
     delete iTrackFactory;
@@ -182,7 +189,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:
-        return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+        return iMsgFactory->CreateMsgSilence(kMsgSilenceSize);
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
     case EMsgMode:
@@ -392,7 +399,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)
 
 void SuiteVariableDelay::PullNext()
 {
-    Msg* msg = iVariableDelay->Pull();
+    Msg* msg = iRampValidator->Pull();
     msg = msg->Process(*this);
     if (msg != nullptr) {
         msg->RemoveRef();
@@ -715,6 +722,39 @@ void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
     PullNext(EMsgTrack);
+}
+
+void SuiteVariableDelay::TestDelayAppliedAfterDrain()
+{
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    static const TUint kDelay = 40 * Jiffies::kPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+
+    iJiffies = 0;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    while (iJiffies < kDelay - kDownstreamDelay) {
+        PullNext();
+    }
+    PullNext(EMsgAudioPcm);
+    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    PullNext(EMsgDrain);
+    iNextGeneratedMsg = EMsgSilence;
+    PullNext();
+    TEST(iLastMsg == EMsgSilence);
+    iNextGeneratedMsg = EMsgAudioPcm;
+    iJiffies = 0;
+    while (iJiffies < kDelay - kDownstreamDelay) {
+        PullNext();
+        TEST(iLastMsg == EMsgSilence);
+    }
+    TEST(iJiffies == kDelay - kDownstreamDelay);
+    TEST(iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    PullNext(EMsgAudioPcm);
 }
 
 

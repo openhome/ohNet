@@ -1,5 +1,4 @@
-#ifndef HEADER_SONGCAST_SPLITTER
-#define HEADER_SONGCAST_SPLITTER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -69,4 +68,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SONGCAST_SPLITTER

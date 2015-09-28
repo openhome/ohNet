@@ -41,50 +41,46 @@ VariableDelay::~VariableDelay()
 Msg* VariableDelay::Pull()
 {
     Msg* msg = nullptr;
-    iLock.Wait();
-    if (iStatus != ERampingDown && iDelayAdjustment > 0) {
-        if (iWaitForAudioBeforeGeneratingSilence) {
-            do {
-                msg = NextMsgLocked();
-                if (msg != nullptr) {
-                    if (iWaitForAudioBeforeGeneratingSilence) {
-                        iLock.Signal();
-                        return msg;
-                    }
-                    else {
-                        DoEnqueue(msg);
-                    }
-                }
-            } while (msg == nullptr && iWaitForAudioBeforeGeneratingSilence);
-            msg = nullptr; // DoEnqueue() above passed ownership of msg back to reservoir
-        }
-        // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
-        if (iDelayAdjustment > 0) {
-            const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
-            msg = iMsgFactory.CreateMsgSilence(size);
-            iDelayAdjustment -= size;
-            if (iDelayAdjustment == 0) {
-                if (iStatus == ERampedDown) {
-                    iStatus = ERampingUp;
-                    iRampDirection = Ramp::EUp;
-                    iCurrentRampValue = Ramp::kMin;
-                    iRemainingRampSize = iRampDuration;
+    AutoMutex _(iLock);
+    if (iWaitForAudioBeforeGeneratingSilence) {
+        do {
+            msg = NextMsgLocked();
+            if (msg != nullptr) {
+                if (iWaitForAudioBeforeGeneratingSilence) {
+                    return msg;
                 }
                 else {
-                    iStatus = ERunning;
-                    iRampDirection = Ramp::ENone;
-                    iCurrentRampValue = Ramp::kMax;
-                    iRemainingRampSize = 0;
+                    DoEnqueue(msg);
                 }
+            }
+        } while (msg == nullptr && iWaitForAudioBeforeGeneratingSilence);
+        msg = nullptr; // DoEnqueue() above passed ownership of msg back to reservoir
+    }
+    // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
+    if ((iStatus == EStarting || iStatus == ERampedDown) && iDelayAdjustment > 0) {
+        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
+        msg = iMsgFactory.CreateMsgSilence(size);
+        iDelayAdjustment -= size;
+        if (iDelayAdjustment == 0) {
+            if (iStatus == ERampedDown) {
+                iStatus = ERampingUp;
+                iRampDirection = Ramp::EUp;
+                iCurrentRampValue = Ramp::kMin;
+                iRemainingRampSize = iRampDuration;
+            }
+            else {
+                iStatus = ERunning;
+                iRampDirection = Ramp::ENone;
+                iCurrentRampValue = Ramp::kMax;
+                iRemainingRampSize = 0;
             }
         }
     }
-    if (msg == nullptr) {
+    else if (msg == nullptr) {
         do {
             msg = NextMsgLocked();
         } while (msg == nullptr);
     }
-    iLock.Signal();
     return msg;
 }
 
@@ -172,7 +168,7 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
 {
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
-        DoEnqueue(remaining);
+        EnqueueAtHead(remaining);
     }
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
@@ -188,7 +184,6 @@ void VariableDelay::HandleStarving()
     if (iDelayAdjustment == 0) {
         return;
     }
-    iWaitForAudioBeforeGeneratingSilence = true;
     switch (iStatus)
     {
     case EStarting:
@@ -202,6 +197,7 @@ void VariableDelay::HandleStarving()
     case ERampingDown:
         break;
     case ERampedDown:
+        iWaitForAudioBeforeGeneratingSilence = true;
         break;
     case ERampingUp:
         iRampDirection = Ramp::EDown;
@@ -209,6 +205,7 @@ void VariableDelay::HandleStarving()
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         if (iRemainingRampSize == 0) {
             iStatus = ERampedDown;
+            iWaitForAudioBeforeGeneratingSilence = true;
         }
         else {
             iStatus = ERampingDown;
@@ -244,6 +241,17 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
+    iDelayAdjustment = iDelayJiffies;
+    if (iDelayAdjustment == 0) {
+        return aMsg;
+    }
+    iWaitForAudioBeforeGeneratingSilence = true;
+
+    iRampDirection = Ramp::EDown;
+    iCurrentRampValue = Ramp::kMin;
+    iRemainingRampSize = 0;
+    iStatus = ERampedDown;
+
     return aMsg;
 }
 
@@ -368,7 +376,10 @@ Msg* VariableDelay::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iWaitForAudioBeforeGeneratingSilence = false;
+    if (iWaitForAudioBeforeGeneratingSilence) {
+        iWaitForAudioBeforeGeneratingSilence = false;
+        return aMsg;
+    }
     return DoProcessAudioMsg(aMsg);
 }
 
@@ -392,7 +403,7 @@ Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
         }
     }
 
-    return DoProcessAudioMsg(aMsg);
+    return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)

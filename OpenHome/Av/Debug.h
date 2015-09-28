@@ -1,5 +1,4 @@
-#ifndef HEADER_MEDIAPLAYER_DEBUG
-#define HEADER_MEDIAPLAYER_DEBUG
+#pragma once
 
 #include <OpenHome/Private/Debug.h>
 
@@ -10,4 +9,3 @@ namespace OpenHome {
 
 } // namespace OpenHome
 
-#endif // HEADER_MEDIAPLAYER_DEBUG

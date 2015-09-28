@@ -1,5 +1,4 @@
-#ifndef HEADER_SONGCAST_SENDER
-#define HEADER_SONGCAST_SENDER
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Types.h>
@@ -138,4 +137,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SONGCAST_SENDER

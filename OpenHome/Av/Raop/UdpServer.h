@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_UDPSERVER
-#define HEADER_PIPELINE_UDPSERVER
+#pragma once
 
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Network.h>
@@ -98,4 +97,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_UDPSERVER

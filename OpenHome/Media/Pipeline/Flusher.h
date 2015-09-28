@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_FLUSHER
-#define HEADER_PIPELINE_FLUSHER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -53,4 +52,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_FLUSHER

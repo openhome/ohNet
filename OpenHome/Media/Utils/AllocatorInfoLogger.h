@@ -1,5 +1,4 @@
-#ifndef HEADER_ALLOCATOR_INFO_LOGGER
-#define HEADER_ALLOCATOR_INFO_LOGGER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -29,4 +28,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_ALLOCATOR_INFO_LOGGER

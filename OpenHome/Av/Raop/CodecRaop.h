@@ -1,5 +1,4 @@
-#ifndef HEADER_CODEC_RAOP
-#define HEADER_CODEC_RAOP
+#pragma once
 
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/AlacBase.h>
@@ -28,4 +27,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_CODEC_RAOP

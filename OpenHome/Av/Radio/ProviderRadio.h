@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_RADIO
-#define HEADER_PROVIDER_RADIO
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -67,4 +66,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_RADIO

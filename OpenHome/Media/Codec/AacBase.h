@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_AAC_BASE
-#define HEADER_PIPELINE_CODEC_AAC_BASE
+#pragma once
 
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
@@ -84,4 +83,3 @@ private:
 } //namespace Media
 } //namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC_AAC_BASE

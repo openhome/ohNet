@@ -1,5 +1,4 @@
-#ifndef HEADER_BUFPTRCMP
-#define HEADER_BUFPTRCMP
+#pragma once
 
 #include <OpenHome/Buffer.h>
 
@@ -18,4 +17,3 @@ public:
 } // namespace Configuration
 } // namespace OpenHome
 
-#endif // HEADER_BUFPTRCMP

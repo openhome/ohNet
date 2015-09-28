@@ -1,5 +1,4 @@
-#ifndef HEADER_WEB_CONFIGUI
-#define HEADER_WEB_CONFIGUI
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -428,4 +427,3 @@ private:
 } // namespace Web
 } // namespace OpenHome
 
-#endif // HEADER_WEB_CONFIGUI

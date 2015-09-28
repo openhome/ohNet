@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CONTENT_AUDIO
-#define HEADER_PIPELINE_CONTENT_AUDIO
+#pragma once
 
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
@@ -30,4 +29,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif  // HEADER_PIPELINE_CONTENT_AUDIO
