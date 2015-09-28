@@ -115,10 +115,10 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     iPipeline.Add(new CodecRaop());
     iPipeline.AddObserver(*this);
 
-    iServerAudio = &iServerManager.Find(iAudioId);
-    iServerControl = &iServerManager.Find(iControlId);
-    iServerTiming = &iServerManager.Find(iTimingId);    // never Open() this
-    iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
+    SocketUdpServer& serverAudio = iServerManager.Find(iAudioId);
+    SocketUdpServer& serverControl = iServerManager.Find(iControlId);
+    SocketUdpServer& serverTiming = iServerManager.Find(iTimingId);    // never Open() this
+    iRaopDiscovery->SetListeningPorts(serverAudio.Port(), serverControl.Port(), serverTiming.Port());
 
     std::vector<TUint> choices;
     choices.push_back(kAutoNetAuxOn);
@@ -145,7 +145,6 @@ SourceRaop::~SourceRaop()
         iTrack->RemoveRef();
     }
     if (iSessionActive) {
-        CloseServers();
         iSessionActive = false;
     }
     iLock.Signal();
@@ -169,7 +168,6 @@ void SourceRaop::Activate()
     }
 
     if (iSessionActive) {
-        OpenServers();
         StartNewTrack();
         iLock.Signal();
         iPipeline.Play();
@@ -196,7 +194,6 @@ void SourceRaop::Deactivate()
         iRaopDiscovery->Disable();
     }
     if (iSessionActive) {
-        CloseServers();
         iSessionActive = false;
     }
     iLock.Signal();
@@ -223,18 +220,6 @@ void SourceRaop::GenerateMetadata()
     iDidlLite.Append("</DIDL-Lite>");
 }
 
-void SourceRaop::OpenServers()
-{
-    iServerAudio->Open();
-    iServerControl->Open();
-}
-
-void SourceRaop::CloseServers()
-{
-    iServerAudio->Close();
-    iServerControl->Close();
-}
-
 void SourceRaop::StartNewTrack()
 {
     iPipeline.RemoveAll();
@@ -257,9 +242,6 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
     }
 
     iLock.Wait();
-    if (!iSessionActive) {
-        OpenServers();
-    }
     iSessionActive = true;
 
     iNextTrackUri.Replace(kRaopPrefix);
@@ -289,7 +271,6 @@ void SourceRaop::NotifySessionEnd()
             iTrack->RemoveRef();
             iTrack = nullptr;
         }
-        CloseServers();
     }
 
     iSessionActive = false;
@@ -396,5 +377,8 @@ void SourceRaop::HandleInterfaceChange()
 {
     //iRaopDiscovery->Disable();
     //iRaopDiscovery->Enable();
-    iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
+    SocketUdpServer& serverAudio = iServerManager.Find(iAudioId);
+    SocketUdpServer& serverControl = iServerManager.Find(iControlId);
+    SocketUdpServer& serverTiming = iServerManager.Find(iTimingId);    // never Open() this
+    iRaopDiscovery->SetListeningPorts(serverAudio.Port(), serverControl.Port(), serverTiming.Port());
 }

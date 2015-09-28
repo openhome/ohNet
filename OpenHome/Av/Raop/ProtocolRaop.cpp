@@ -9,8 +9,6 @@
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Media/SupplyAggregator.h>
 
-EXCEPTION(RaopAudioServerClosed);
-
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
@@ -281,7 +279,6 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iControlServer(iServerManager.Find(aControlId), *this)
     , iSupply(nullptr)
     , iLockRaop("PRAL")
-    , iSem("PRAS", 0)
     , iSemDrain("PRSD", 0)
     , iRepairableAllocator(kMaxRepairFrames+3) // +3 as must be able to cause repairer to overflow (which requires kMaxRepairFrames+2), plus could be sending from normal audio channel and control channel simultaneously.
     , iResendRangeRequester(iControlServer)
@@ -332,6 +329,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     Reset();
     WaitForDrain();
+    iControlServer.Open();
+    iAudioServer.Open();
 
     TBool start = true;
 
@@ -343,12 +342,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iSupply->OutputFlush(iNextFlushId);
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iWaiting = false;
-                iResumePending = true;
-                iSem.Clear();
+                OutputDiscontinuity();
 
-                Semaphore sem("PRWS", 0);
-                iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
-                sem.Wait();
                 // Resume normal operation.
             }
             else if (iStopped) {
@@ -356,6 +351,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 iSupply->OutputFlush(iNextFlushId);
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iActive = false;
+
+                iControlServer.Close();
+                iAudioServer.Close();
+
                 WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                 return EProtocolStreamStopped;
@@ -375,6 +374,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iActive = false;
                     iStopped = true;
                 }
+
+                iControlServer.Close();
+                iAudioServer.Close();
+
                 WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 return EProtocolStreamStopped;
@@ -434,31 +437,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 catch (RepairerBufferFull&) {
                     Log::Print("ProtocolRaop::Stream RepairerBufferFull\n");
                     // Set state so that no more audio is output until a MsgDrain followed by a MsgEncodedStream.
-
-
-                    // FIXME - need to disable/enable audio server during drain so that stale packets aren't pulled following drain (and UDP packet buffer could have filled in that time, causing a discontinuity, which would cause another drain and so on...).
-                    // Solution is to move the servers from the source into the protocol, as only the protocol knows when it is able to send.
-
-
-                    //iAudioServer.Close();
-                    iResumePending = true;
-                    iSem.Clear();
-
-                    Semaphore sem("PRWS", 0);
-                    Log::Print("ProtocolRaop::Stream RepairerBufferFull before OutputDrain()\n");
-                    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
-                    Log::Print("ProtocolRaop::Stream RepairerBufferFull before sem.Wait()\n");
-                    sem.Wait();
-                    Log::Print("ProtocolRaop::Stream RepairerBufferFull after sem.Wait()\n");
-                    //iAudioServer.Open();
+                    OutputDiscontinuity();
                 }
                 catch (RepairerStreamRestarted&) {
-                    iResumePending = true;
-                    iSem.Clear();
-
-                    Semaphore sem("PRWS", 0);
-                    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
-                    sem.Wait();
+                    OutputDiscontinuity();
                 }
             }
         }
@@ -478,13 +460,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         catch (HttpError&) {
             LOG(kMedia, "<ProtocolRaop::Stream sdp not received\n");
             // ignore and continue - sender should stop on a closed connection! wait for sender to re-select device
-        }
-        catch (RaopAudioServerClosed&) {
-            LOG(kMedia, "ProtocolRaop::Stream RaopAudioServerClosed\n");
-            // If this happens, it means an RAOP session should have ended.
-            // Wait for TryStop() to be called so that iNextFlushId is
-            // incremented, then return to start of loop for flush handling.
-            iSem.Wait();
         }
     }
 }
@@ -517,8 +492,6 @@ void ProtocolRaop::Reset()
     iWaiting = false;
     iResumePending = false;
     iStopped = false;
-
-    iSem.Clear();
 }
 
 void ProtocolRaop::StartStream()
@@ -593,18 +566,16 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
 
 void ProtocolRaop::OutputDiscontinuity()
 {
-    iSupply->OutputStreamInterrupted();
-    TUint streamId = 0;
-    Uri uri;
-    {
-        AutoMutex a(iLock);
-        streamId = iStreamId = iIdProvider->NextStreamId();
-        uri.Replace(iUri.AbsoluteUri());
-    }
-    // NOTE - if there is a very high rate of drop-outs, could potentially exhaust MsgEncodedStream allocator.
-    iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
-    // Allow stream to be re-recognised.
-    OutputContainer(iDiscovery.Fmtp());
+    iAudioServer.Close();
+    iResumePending = true;
+
+    Semaphore sem("PRWS", 0);
+    Log::Print("ProtocolRaop::Stream OutputDiscontinuity before OutputDrain()\n");
+    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+    Log::Print("ProtocolRaop::Stream OutputDiscontinuity before sem.Wait()\n");
+    sem.Wait();
+    Log::Print("ProtocolRaop::Stream OutputDiscontinuity after sem.Wait()\n");
+    iAudioServer.Open();
 }
 
 void ProtocolRaop::WaitForDrain()
@@ -639,7 +610,6 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
             iNextFlushId = iFlushIdProvider->NextFlushId();
             iStopped = true;
             DoInterrupt();
-            iSem.Signal();
         }
     }
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
@@ -654,21 +624,10 @@ void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
     }
     catch (RepairerBufferFull&) {
         Log::Print("ProtocolRaop::ResendReceive RepairerBufferFull\n");
-        // FIXME - require some locking
-        iResumePending = true;
-        iSem.Clear();
-
-        Semaphore sem("PRWS", 0);
-        iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
-        sem.Wait();
+        OutputDiscontinuity();
     }
     catch (RepairerStreamRestarted&) {
-        iResumePending = true;
-        iSem.Clear();
-
-        Semaphore sem("PRWS", 0);
-        iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
-        sem.Wait();
+        OutputDiscontinuity();
     }
 }
 
@@ -705,6 +664,16 @@ RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiv
 {
     iThread = new ThreadFunctor("RaopControlServer", MakeFunctor(*this, &RaopControlServer::Run), kPriority-1, kSessionStackBytes);
     iThread->Start();
+}
+
+void RaopControlServer::Open()
+{
+    iServer.Open();
+}
+
+void RaopControlServer::Close()
+{
+    iServer.Close();
 }
 
 RaopControlServer::~RaopControlServer()
@@ -985,18 +954,13 @@ void RaopAudioServer::ReadPacket(Bwx& aBuf)
         }
         catch (ReaderError&) {
             // Either no data, user abort or invalid header
-            if (!iServer.IsOpen()) {
-                LOG(kMedia, "RaopAudioServer::ReadPacket ReaderError RaopAudioServerServerClosed\n");
-                iServer.ReadFlush();
-                THROW(RaopAudioServerClosed);
-            }
+
             if (iInterrupted) {
                 LOG(kMedia, "RaopAudioServer::ReadPacket ReaderError iInterrupted %d\n", iInterrupted);
-                iServer.ReadFlush();
-                THROW(ReaderError);
             }
+            iServer.ReadFlush();
+            THROW(ReaderError);
         }
-        iServer.ReadFlush();  // Set to read next UDP packet.
     }
 }
 

@@ -204,6 +204,8 @@ private:
 public:
     RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiver& aResendReceiver);
     ~RaopControlServer();
+    void Open();
+    void Close();
     void DoInterrupt();
     void Reset(TUint aClientPort);
     TUint Latency() const;  // Returns latency in samples.
@@ -721,7 +723,6 @@ private:
     TBool iResumePending;
     TBool iStopped;
     mutable Mutex iLockRaop;
-    Semaphore iSem;
     Semaphore iSemDrain;
 
     RaopRepairableAllocator iRepairableAllocator;
