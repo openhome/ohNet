@@ -166,7 +166,7 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
         }
         split = nullptr;
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n");
+        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n", iCurrentRampValue);
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u, iRemainingRampSize: %u\n", iCurrentRampValue, iRemainingRampSize);
         if (split != nullptr) {
