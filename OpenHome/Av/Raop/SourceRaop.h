@@ -51,8 +51,6 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     void GenerateMetadata();
-    void OpenServers();
-    void CloseServers();
     void StartNewTrack();
     void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
     void ActivateIfInactive();
@@ -77,9 +75,6 @@ private:
     RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;
-    SocketUdpServer* iServerAudio;   // no ownership
-    SocketUdpServer* iServerControl; // no ownership
-    SocketUdpServer* iServerTiming;  // no ownership
     Configuration::ConfigChoice* iConfigNetAux;
     TUint iConfigSubId;
     TUint iCurrentAdapterChangeListenerId;
