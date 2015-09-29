@@ -145,7 +145,6 @@ Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
     // NOTE - can re-enable to test for invalid transitions.
     // Can happen when transitioning from MsgSilence to MsgAudioPcm.
     if (iState == EFlushing || iState == ERampingDown) {
-        ) {
         aMsg->RemoveRef();
         ASSERTS();
     }
