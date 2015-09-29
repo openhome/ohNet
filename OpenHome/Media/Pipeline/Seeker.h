@@ -28,7 +28,6 @@ If TrySeek returned a valid flush id, the MsgFlush with this id is consumed
 class Seeker : public IPipelineElementUpstream, private IMsgProcessor, private ISeekObserver
 {
     friend class SuiteSeeker;
-    static const TUint kMaxSeekDiscardDuration = Jiffies::kPerSecond * 30;
 public:
     Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration);
     virtual ~Seeker();
