@@ -280,7 +280,6 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory
     , iSupply(nullptr)
     , iLockRaop("PRAL")
     , iSemDrain("PRSD", 0)
-    , iRepairableAllocator(kMaxRepairFrames+3) // +3 as must be able to cause repairer to overflow (which requires kMaxRepairFrames+2), plus could be sending from normal audio channel and control channel simultaneously.
     , iResendRangeRequester(iControlServer)
     , iRepairerTimer(aEnv, "PRRT")
     , iRepairer(aEnv, iResendRangeRequester, *this, iRepairerTimer)
@@ -790,52 +789,6 @@ void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
     catch (NetworkError) {
         // Will handle this by timing out on receive.
     }
-}
-
-
-// RaopRepairableAllocator
-
-RaopRepairableAllocator::RaopRepairableAllocator(TUint aMaxRepairable)
-    : iFifo(aMaxRepairable)
-    , iLock("RRAL")
-{
-    AutoMutex a(iLock);
-    for (TUint i=0; i<aMaxRepairable; i++) {
-        iFifo.Write(new RaopRepairable(*this));
-    }
-}
-
-RaopRepairableAllocator::~RaopRepairableAllocator()
-{
-    AutoMutex a(iLock);
-    ASSERT(iFifo.SlotsFree() == 0);
-    while (iFifo.SlotsUsed() > 0) {
-        RaopRepairable* repairable = iFifo.Read();
-        delete repairable;
-    }
-}
-
-IRepairable* RaopRepairableAllocator::Allocate(const RaopPacketAudio& aPacket)
-{
-    AutoMutex a(iLock);
-    RaopRepairable* repairable = iFifo.Read();
-    repairable->Set(aPacket.Header().Seq(), false, aPacket.Payload());
-    return repairable;
-}
-
-IRepairable* RaopRepairableAllocator::Allocate(const RaopPacketResendResponse& aPacket)
-{
-    AutoMutex a(iLock);
-    RaopRepairable* repairable = iFifo.Read();
-    repairable->Set(aPacket.Header().Seq(), true, aPacket.AudioPacket().Payload());
-    return repairable;
-}
-
-void RaopRepairableAllocator::Deallocate(RaopRepairable* aRepairable)
-{
-    AutoMutex a(iLock);
-    aRepairable->Set(0, false, Brx::Empty());
-    iFifo.Write(aRepairable);
 }
 
 
