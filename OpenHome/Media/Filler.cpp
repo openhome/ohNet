@@ -313,12 +313,12 @@ void Filler::Run()
                 CheckForKill();
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
                 if (res == EProtocolErrorNotSupported) {
-                    LOG(kMedia, "Filler::Run Track %u not supported. URI: %.*s\n",
-                                iTrack->Id(), PBUF(iTrack->Uri()));
+                    LOG(kPipeline, "Filler::Run Track %u not supported. URI: %.*s\n",
+                                   iTrack->Id(), PBUF(iTrack->Uri()));
                 }
                 else if (res == EProtocolStreamErrorUnrecoverable) {
-                    LOG(kMedia, "Filler::Run Track %u had unrecoverable error. URI: %.*s\n",
-                                iTrack->Id(), PBUF(iTrack->Uri()));
+                    LOG(kPipeline, "Filler::Run Track %u had unrecoverable error. URI: %.*s\n",
+                                   iTrack->Id(), PBUF(iTrack->Uri()));
                 }
                 LOG(kMedia, "< iUriStreamer->DoStream(%u)\n", iTrack->Id());
             }

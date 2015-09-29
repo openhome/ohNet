@@ -287,29 +287,29 @@ TBool ProtocolQobuz::TryGetTrackId(const Brx& aQuery, Bwx& aTrackId)
     (void)parser.Next('?');
     Brn buf = parser.Next('=');
     if (buf != Brn("version")) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - no version\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - no version\n");
         return false;
     }
     Brn verBuf = parser.Next('&');
     try {
         const TUint ver = Ascii::Uint(verBuf);
         if (ver != 2) {
-            LOG2(kMedia, kError, "TryGetTrackId failed - unsupported version - %d\n", ver);
+            LOG2(kPipeline, kError, "TryGetTrackId failed - unsupported version - %d\n", ver);
             return false;
         }
     }
     catch (AsciiError&) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - invalid version\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - invalid version\n");
         return false;
     }
     buf.Set(parser.Next('='));
     if (buf != Brn("trackId")) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - no track id tag\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - no track id tag\n");
         return false;
     }
     aTrackId.Replace(parser.Remaining());
     if (aTrackId.Bytes() == 0) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - no track id value\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - no track id value\n");
         return false;
     }
     return true;
@@ -339,7 +339,7 @@ ProtocolStreamResult ProtocolQobuz::DoStream()
     iTotalBytes = iHeaderContentLength.ContentLength();
 
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        LOG(kMedia, "ProtocolQobuz::DoStream server returned error %u\n", code);
+        LOG(kPipeline, "ProtocolQobuz::DoStream server returned error %u\n", code);
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {
@@ -361,7 +361,7 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
     if (!Connect(iUri, port)) {
-        LOG(kMedia, "ProtocolQobuz::WriteRequest Connection failure\n");
+        LOG(kPipeline, "ProtocolQobuz::WriteRequest Connection failure\n");
         return 0;
     }
 
@@ -375,7 +375,7 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
         iWriterRequest.WriteFlush();
     }
     catch(WriterError&) {
-        LOG(kMedia, "ProtocolQobuz::WriteRequest WriterError\n");
+        LOG2(kPipeline, kError, "ProtocolQobuz::WriteRequest WriterError\n");
         return 0;
     }
 
@@ -384,11 +384,11 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
         iReaderResponse.Read();
     }
     catch(HttpError&) {
-        LOG(kMedia, "ProtocolQobuz::WriteRequest HttpError\n");
+        LOG2(kPipeline, kError, "ProtocolQobuz::WriteRequest HttpError\n");
         return 0;
     }
     catch(ReaderError&) {
-        LOG(kMedia, "ProtocolQobuz::WriteRequest ReaderError\n");
+        LOG2(kPipeline, kError, "ProtocolQobuz::WriteRequest ReaderError\n");
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();
