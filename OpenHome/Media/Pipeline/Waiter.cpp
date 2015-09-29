@@ -137,10 +137,10 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    //if (iState == EFlushing || iState == ERampingDown) {
+    if (iState == EFlushing || iState == ERampingDown) {
 
     // FIXME - remove this? Could this be happening if the StarvationMonitor kicks in?
-    if (iState == ERampingDown) {
+    //if (iState == ERampingDown) {
         aMsg->RemoveRef();
         ASSERTS();
     }
