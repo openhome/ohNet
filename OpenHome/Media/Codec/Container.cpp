@@ -575,13 +575,7 @@ Msg* ContainerController::ProcessMsg(MsgEncodedStream* aMsg)
         iPassThrough = true;
     }
 
-    MsgEncodedStream* msg = nullptr;
-    if (aMsg->RawPcm()) {
-        msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this, aMsg->PcmStream());
-    }
-    else {
-        msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
-    }
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
 
     AutoMutex a(iLock);
     iExpectedFlushId = MsgFlush::kIdInvalid;

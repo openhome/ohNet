@@ -2889,6 +2889,18 @@ MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx&
     return msg;
 }
 
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(MsgEncodedStream* aMsg, IStreamHandler* aStreamHandler)
+{
+    MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
+    if (aMsg->RawPcm()) {
+        msg->Initialise(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), aStreamHandler, aMsg->PcmStream());
+    }
+    else {
+        msg->Initialise(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), aStreamHandler);
+    }
+    return msg;
+}
+
 MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData)
 {
     EncodedAudio* encodedAudio = CreateEncodedAudio(aData);
