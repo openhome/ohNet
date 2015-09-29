@@ -137,10 +137,10 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    //if (iState == EFlushing || iState == ERampingDown) {
+    if (iState == EFlushing || iState == ERampingDown) {
 
     // FIXME - remove this? Could this be happening if the StarvationMonitor kicks in?
-    if (iState == ERampingDown) {
+    //if (iState == ERampingDown) {
         aMsg->RemoveRef();
         ASSERTS();
     }
@@ -166,7 +166,7 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
         }
         split = nullptr;
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n");
+        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n", iCurrentRampValue);
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u, iRemainingRampSize: %u\n", iCurrentRampValue, iRemainingRampSize);
         if (split != nullptr) {

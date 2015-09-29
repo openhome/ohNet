@@ -242,46 +242,106 @@ public:
     virtual ~IRepairable() {}
 };
 
-class RaopRepairableAllocator;
+class IRepairableAllocatable : public IRepairable
+{
+public: // from IRepairable
+    virtual TUint Frame() const = 0;
+    virtual TBool Resend() const = 0;
+    virtual const Brx& Data() const = 0;
+    virtual void Destroy() = 0;
+public:
+    virtual void Set(TUint aFrame, TBool aResend, const Brx& aData) = 0;
+    virtual ~IRepairableAllocatable() {}
+};
 
-template <TUint S> class Repairable : public IRepairable
+class IRaopRepairableDeallocator
 {
 public:
-    Repairable(RaopRepairableAllocator& aAllocator)
-        : iAllocator(aAllocator), iFrame(0), iResend(0) {}
-    void Set(TUint aFrame, TBool aResend, const Brx& aData)
+    virtual void Deallocate(IRepairableAllocatable* aRepairable) = 0;
+    virtual ~IRaopRepairableDeallocator() {}
+};
+
+template <TUint S> class Repairable : public IRepairableAllocatable
+{
+public:
+    Repairable(IRaopRepairableDeallocator& aDeallocator)
+        : iDeallocator(aDeallocator), iFrame(0), iResend(0) {}
+
+public: // from IRepairableAllocatable
+    TUint Frame() const override { return iFrame; }
+    TBool Resend() const override { return iResend; }
+    const Brx& Data() const override { return iData; }
+    void Destroy() override { iDeallocator.Deallocate(this); }
+    void Set(TUint aFrame, TBool aResend, const Brx& aData) override
     {
         iFrame = aFrame;
         iResend = aResend;
         iData.Replace(aData);
     }
-public: // from IRepairable
-    TUint Frame() const override { return iFrame; }
-    TBool Resend() const override { return iResend; }
-    const Brx& Data() const override { return iData; }
-    void Destroy() override { iAllocator.Deallocate(this); }
 private:
-    RaopRepairableAllocator& iAllocator;    // FIXME - this ties this to an RaopRepairableAllocator!
+    IRaopRepairableDeallocator& iDeallocator;
     TUint iFrame;
     TBool iResend;
     Bws<S> iData;
 };
 
-class RaopRepairableAllocator
+
+template <TUint RepairableCount,TUint DataBytes> class RaopRepairableAllocator : IRaopRepairableDeallocator
 {
-private:
-    static const TUint kMaxAudioBytes = 2048;
-    typedef Repairable<kMaxAudioBytes> RaopRepairable;
 public:
-    RaopRepairableAllocator(TUint aMaxRepairable);
+    RaopRepairableAllocator();
     ~RaopRepairableAllocator();
     IRepairable* Allocate(const RaopPacketAudio& aPacket);
     IRepairable* Allocate(const RaopPacketResendResponse& aPacket);
-    void Deallocate(RaopRepairable* aRepairable);
+public: // fromIRaopRepairableDeallocator
+    void Deallocate(IRepairableAllocatable* aRepairable) override;
 private:
-    FifoLiteDynamic<RaopRepairable*> iFifo;
+    FifoLite<IRepairableAllocatable*, RepairableCount> iFifo;
     Mutex iLock;
 };
+
+template <TUint RepairableCount, TUint DataBytes> RaopRepairableAllocator<RepairableCount,DataBytes>::RaopRepairableAllocator()
+    : iLock("RRAL")
+{
+    AutoMutex a(iLock);
+    for (TUint i=0; i<RepairableCount; i++) {
+        iFifo.Write(new Repairable<DataBytes>(*this));
+    }
+}
+
+template <TUint RepairableCount, TUint DataBytes> RaopRepairableAllocator<RepairableCount,DataBytes>::~RaopRepairableAllocator()
+{
+    AutoMutex a(iLock);
+    ASSERT(iFifo.SlotsFree() == 0);
+    while (iFifo.SlotsUsed() > 0) {
+        IRepairable* repairable = iFifo.Read();
+        delete repairable;
+    }
+}
+
+template <TUint RepairableCount, TUint DataBytes> IRepairable*  RaopRepairableAllocator<RepairableCount,DataBytes>::Allocate(const RaopPacketAudio& aPacket)
+{
+    AutoMutex a(iLock);
+    IRepairableAllocatable* repairable = iFifo.Read();
+    repairable->Set(aPacket.Header().Seq(), false, aPacket.Payload());
+    return repairable;
+}
+
+template <TUint RepairableCount, TUint DataBytes> IRepairable* RaopRepairableAllocator<RepairableCount,DataBytes>::Allocate(const RaopPacketResendResponse& aPacket)
+{
+    AutoMutex a(iLock);
+    IRepairableAllocatable* repairable = iFifo.Read();
+    repairable->Set(aPacket.Header().Seq(), true, aPacket.AudioPacket().Payload());
+    return repairable;
+}
+
+template <TUint RepairableCount, TUint DataBytes> void RaopRepairableAllocator<RepairableCount,DataBytes>::Deallocate(IRepairableAllocatable* aRepairable)
+{
+    AutoMutex a(iLock);
+    aRepairable->Set(0, false, Brx::Empty());
+    iFifo.Write(aRepairable);
+}
+
 
 /**
  * Resend ranges are inclusive.
@@ -668,6 +728,7 @@ class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendReceiver, 
 {
 private:
     static const TUint kSampleRate = 44100;     // Always 44.1KHz. Can get this from fmtp field.
+    static const TUint kMaxFrameBytes = 2048;
     static const TUint kMaxRepairFrames = 50;
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
@@ -725,7 +786,8 @@ private:
     mutable Mutex iLockRaop;
     Semaphore iSemDrain;
 
-    RaopRepairableAllocator iRepairableAllocator;
+    // +3 as must be able to cause repairer to overflow (which requires kMaxRepairFrames+2), plus could be sending from normal audio channel and control channel simultaneously.
+    RaopRepairableAllocator<kMaxRepairFrames+3,kMaxFrameBytes> iRepairableAllocator;
     RaopResendRangeRequester iResendRangeRequester;
     RepairerTimer iRepairerTimer;
     Repairer<kMaxRepairFrames> iRepairer;
