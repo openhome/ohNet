@@ -308,7 +308,14 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
         iCurrentRampValue = Ramp::kMax;
         iRemainingRampSize = iRampDownDuration;
     }
-    if (iStatus == ERampingDown) {
+
+    switch (iStatus)
+    {
+    default:
+        ASSERTS();
+    case ERunning:
+        break;
+    case ERampingDown:
         Ramp(msg, Ramp::EDown);
         if (iRemainingRampSize == 0) {
             UpdateStatus(EBuffering);
@@ -317,15 +324,21 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
         if (Jiffies() == 0) { // Ramp() can cause a msg to be split, meaning that remainingSize is inaccurate
             ASSERT(iCurrentRampValue == Ramp::kMin);
         }
-    }
-    else if (iStatus == ERampingUp) {
+        break;
+    case EBuffering:
+        if (!iPlannedHalt) {
+            msg->SetMuted();
+        }
+        break;
+    case ERampingUp:
         Ramp(msg, Ramp::EUp);
         /* don't check iCurrentRampValue here.  If our ramp up intersects with a ramp down
-           from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
+        from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
         if (iRemainingRampSize == 0) {
             iCurrentRampValue = Ramp::kMax;
             UpdateStatus(ERunning);
         }
+        break;
     }
 
     remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued

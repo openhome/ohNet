@@ -431,7 +431,7 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     iTotalBytes = iTotalStreamBytes;
     iLive = (iTotalBytes == 0);
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
+        LOG(kMedia, "ProtocolHttp::DoStream server returned error %u\n", code);
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {
@@ -487,7 +487,7 @@ ProtocolGetResult ProtocolHttp::DoGet(IWriter& aWriter, TUint64 aOffset, TUint a
         // honour our request.
         LOG(kMedia, "ProtocolHttp::DoGet response code %d\n", code);
         if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-            LOG(kMedia, "ProtocolHttp::DoGet failed\n");
+            LOG(kMedia, "ProtocolHttp::DoGet server returned error %u\n", code);
             return EProtocolGetErrorUnrecoverable;
         }
         if (code == HttpStatus::kPartialContent.Code()) {

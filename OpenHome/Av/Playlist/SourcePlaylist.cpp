@@ -283,6 +283,11 @@ void SourcePlaylist::SeekAbsolute(TUint aSeconds)
 
 void SourcePlaylist::SeekRelative(TInt aSeconds)
 {
+    if (aSeconds == 0) {
+        // assume this means no change rather than seek backwards to the most recent second boundary
+        iPipeline.Play();
+        return;
+    }
     iLock.Wait();
     TUint pos = aSeconds + iTrackPosSeconds;
     if (aSeconds < 0 && -aSeconds > (TInt)iTrackPosSeconds) {

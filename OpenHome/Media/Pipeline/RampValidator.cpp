@@ -175,7 +175,9 @@ Msg* RampValidator::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* RampValidator::ProcessMsg(MsgSilence* aMsg)
 {
     if (!iWaitingForAudio) {
+        const TBool draining = iDraining;
         ProcessAudio(aMsg->Ramp());
+        iDraining = draining; // don't reset iDraining until the next MsgAudioPcm
     }
     return aMsg;
 }
