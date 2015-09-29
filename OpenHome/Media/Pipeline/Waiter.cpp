@@ -111,9 +111,14 @@ Msg* Waiter::ProcessMsg(MsgStreamInterrupted* aMsg)
 Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        //ASSERT(iState == EFlushing); // Haven't received enough audio for a full ramp down.
+        // NOTE: Can happen if pausing/unpausing or seeking in quick succession.
+        // Is valid in some states (can uncomment to investigate invalid transitions):
+        // - Pausing/unpausing or seeking at the very start of a stream before a delay > 0 has been sent down the pipeline.
+        // - Pausing/unpausing or seeking in quick succession immediately following a previous action when insufficient audio has been delivered to allow a successful ramp down (in which case, the StarvationMonitor will kick in).
 
-        ASSERT(iState != ERampingDown); // FIXME - remove when no more pause/unpause or seek bugs.
+        //ASSERT(iState == EFlushing); // Haven't received enough audio for a full ramp down.
+        ASSERT(iState != ERampingDown);
+
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
@@ -137,13 +142,14 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    // NOTE - can re-enable to test for invalid transitions.
+    // Can happen when transitioning from MsgSilence to MsgAudioPcm.
     if (iState == EFlushing || iState == ERampingDown) {
-
-    // FIXME - remove this? Could this be happening if the StarvationMonitor kicks in?
-    //if (iState == ERampingDown) {
+        ) {
         aMsg->RemoveRef();
         ASSERTS();
     }
+
     // iState may be ERampingUp if a MsgFlush was pulled
     if (iState == EWaiting || iState == ERampingUp) {
         ScheduleEvent(false);
@@ -177,8 +183,6 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
                 DoWait();
-                //aMsg->RemoveRef();
-                //return nullptr;
             }
             else { // iState == ERampingUp
                 Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iState == ERampingUp. Moving to state ERunning\n");
@@ -199,8 +203,6 @@ Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
         DoWait();
-        //aMsg->RemoveRef();
-        //return nullptr;
     }
     else if (iState == ERampingUp) {
         iRemainingRampSize = 0;
@@ -245,6 +247,7 @@ void Waiter::HandleAudio()
 
 void Waiter::NewStream()
 {
+    Log::Print("Waiter::NewStream\n");
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
     iState = ERunning;
