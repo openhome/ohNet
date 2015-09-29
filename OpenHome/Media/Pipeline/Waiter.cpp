@@ -51,31 +51,37 @@ Waiter::~Waiter()
 
 void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 {
+    Log::Print(">Waiter::Wait %u\n", aFlushId);
     // Wait can be called multiple times.
     AutoMutex a(iLock);
+    Log::Print(">Waiter::Wait aFlushId: %u, iTargetFlushId: %u, iState: %u, iRampDuration: %u, iRemainingRampSize: %u\n", aFlushId, iTargetFlushId, iState, iRampDuration, iRemainingRampSize);
     if (aFlushId != iTargetFlushId) {
         iTargetFlushId = aFlushId;
 
-        if (iState == ERampingUp) {
-            iState = ERampingDown;
-            if (iRampDuration == iRemainingRampSize) {
-                // Already reached end of (previous) ramp down (and now ready to
-                // start ramp up); go straight to flushing state.
-                iState = EFlushing;
+        // Only need to take further action if not already waiting.
+        if (iState != EWaiting) {
+            if (iState == ERampingUp) {
+                iState = ERampingDown;
+                if (iRampDuration == iRemainingRampSize) {
+                    // Already reached end of (previous) ramp down (and now ready to
+                    // start ramp up); go straight to flushing state.
+                    iState = EFlushing;
+                    DoWait();
+                }
+                else {
+                    iRemainingRampSize = iRampDuration - iRemainingRampSize;
+                    Log::Print("Waiter::Wait iRemainingRampSize: %u\n", iRemainingRampSize);
+                }
+                // leave iCurrentRampValue unchanged
+            }
+            else if (!aRampDown || iState == EFlushing) {
                 DoWait();
             }
-            else {
-                iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            else if (iState != ERampingDown) {
+                iState = ERampingDown;
+                iRemainingRampSize = iRampDuration;
+                iCurrentRampValue = Ramp::kMax;
             }
-            // leave iCurrentRampValue unchanged
-        }
-        else if (!aRampDown || iState == EFlushing) {
-            DoWait();
-        }
-        else if (iState != ERampingDown) {
-            iState = ERampingDown;
-            iRemainingRampSize = iRampDuration;
-            iCurrentRampValue = Ramp::kMax;
         }
     }
 }
@@ -105,7 +111,9 @@ Msg* Waiter::ProcessMsg(MsgStreamInterrupted* aMsg)
 Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        ASSERT(iState == EFlushing); // Haven't received enough audio for a full ramp down.
+        //ASSERT(iState == EFlushing); // Haven't received enough audio for a full ramp down.
+
+        ASSERT(iState != ERampingDown); // FIXME - remove when no more pause/unpause or seek bugs.
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
@@ -129,7 +137,10 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (iState == EFlushing || iState == ERampingDown) {
+    //if (iState == EFlushing || iState == ERampingDown) {
+
+    // FIXME - remove this? Could this be happening if the StarvationMonitor kicks in?
+    if (iState == ERampingDown) {
         aMsg->RemoveRef();
         ASSERTS();
     }
@@ -143,6 +154,7 @@ Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    //Log::Print("Waiter::ProcessMsg(MsgAudioPcm): aMsg->TrackOffset(): %llu, aMsg->Jiffies(): %u\n", aMsg->TrackOffset(), aMsg->Jiffies());
     HandleAudio();
     if (iState == ERampingDown || iState == ERampingUp) {
         MsgAudio* split;
@@ -154,7 +166,9 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
         }
         split = nullptr;
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
+        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n");
         iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u, iRemainingRampSize: %u\n", iCurrentRampValue, iRemainingRampSize);
         if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
@@ -167,6 +181,7 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
                 //return nullptr;
             }
             else { // iState == ERampingUp
+                Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iState == ERampingUp. Moving to state ERunning\n");
                 iState = ERunning;
             }
         }
@@ -178,6 +193,7 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
 {
+    Log::Print(">Waiter::ProcessMsg(MsgSilence)\n");
     HandleAudio();
     if (iState == ERampingDown) {
         iRemainingRampSize = 0;
@@ -221,6 +237,7 @@ void Waiter::HandleAudio()
         ScheduleEvent(false);
     }
     else if (iState == EWaiting) {
+        Log::Print("Waiter::HandleAudio iState = ERunning\n");
         iState = ERunning;
         ScheduleEvent(false);
     }
