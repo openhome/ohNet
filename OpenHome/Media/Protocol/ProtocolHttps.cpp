@@ -124,7 +124,7 @@ ProtocolStreamResult ProtocolHttps::Stream(const Brx& aUri)
     }
 
     if (!Connect()) {
-        LOG2(kMedia, kError, "ProtocolHttps::Stream(%.*s) - connect failed\n", PBUF(aUri));
+        LOG2(kMedia, kError, "ProtocolHttps::Stream(%.*s) - connect failure\n", PBUF(aUri));
         return EProtocolStreamErrorUnrecoverable;
     }
     ProtocolStreamResult res = DoStream();

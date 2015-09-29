@@ -339,7 +339,7 @@ ProtocolStreamResult ProtocolQobuz::DoStream()
     iTotalBytes = iHeaderContentLength.ContentLength();
 
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        LOG(kMedia, "ProtocolQobuz::DoStream Failed\n");
+        LOG(kMedia, "ProtocolQobuz::DoStream server returned error %u\n", code);
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {

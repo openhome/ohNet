@@ -339,7 +339,7 @@ ProtocolStreamResult ProtocolTidal::DoStream()
     iTotalBytes = iHeaderContentLength.ContentLength();
 
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        LOG(kMedia, "ProtocolTidal::DoStream Failed\n");
+        LOG(kMedia, "ProtocolTidal::DoStream server returned error %u\n", code);
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {
