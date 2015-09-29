@@ -163,20 +163,22 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
     //Log::Print("Waiter::ProcessMsg(MsgAudioPcm): aMsg->TrackOffset(): %llu, aMsg->Jiffies(): %u\n", aMsg->TrackOffset(), aMsg->Jiffies());
     HandleAudio();
     if (iState == ERampingDown || iState == ERampingUp) {
-        MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize) {
-            split = aMsg->Split(iRemainingRampSize);
+        if (iRemainingRampSize > 0) {
+            MsgAudio* split;
+            if (aMsg->Jiffies() > iRemainingRampSize) {
+                split = aMsg->Split(iRemainingRampSize);
+                if (split != nullptr) {
+                    iQueue.EnqueueAtHead(split);
+                }
+            }
+            split = nullptr;
+            const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
+            Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n", iCurrentRampValue);
+            iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+            Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u, iRemainingRampSize: %u\n", iCurrentRampValue, iRemainingRampSize);
             if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
-        }
-        split = nullptr;
-        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n", iCurrentRampValue);
-        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
-        Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u, iRemainingRampSize: %u\n", iCurrentRampValue, iRemainingRampSize);
-        if (split != nullptr) {
-            iQueue.EnqueueAtHead(split);
         }
 
 
@@ -250,7 +252,6 @@ void Waiter::NewStream()
     Log::Print("Waiter::NewStream\n");
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
-    iState = ERunning;
 }
 
 void Waiter::ScheduleEvent(TBool aWaiting)
