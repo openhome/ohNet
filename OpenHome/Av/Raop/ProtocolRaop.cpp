@@ -412,9 +412,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     uri.Replace(iUri.AbsoluteUri());
                 }
 
-                // FIXME - outputting MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
-                // Not necessarily desirable when pausing or seeking.
-
+                /*
+                 * NOTE - outputting MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
+                 * Not necessarily desirable when pausing or seeking.
+                 */
                 iSupply->OutputDelay(Delay(latency));
                 iSupply->OutputTrack(*track, !resumePending);
                 iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
@@ -546,18 +547,24 @@ void ProtocolRaop::OutputContainer(const Brx& aFmtp)
 
 void ProtocolRaop::OutputAudio(const Brx& aAudio)
 {
-    TBool outputDelay = false;
-    TUint latency = iControlServer.Latency();
-    {
-        AutoMutex a(iLockRaop);
-        if (latency != iLatency) {
-            iLatency = latency;
-            outputDelay = true;
-        }
-    }
-    if (outputDelay) {
-        iSupply->OutputDelay(Delay(latency));
-    }
+    /*
+     * Outputting delay mid-stream is causing VariableDelay to ramp audio up/down
+     * mid-stream and immediately after unpausing/seeking.
+     * That makes for an unpleasant listening experience. Better to just
+     * potentially allow stream to go a few ms out of sync.
+     */
+    //TBool outputDelay = false;
+    //TUint latency = iControlServer.Latency();
+    //{
+    //    AutoMutex a(iLockRaop);
+    //    if (latency != iLatency) {
+    //        iLatency = latency;
+    //        outputDelay = true;
+    //    }
+    //}
+    //if (outputDelay) {
+    //    iSupply->OutputDelay(Delay(latency));
+    //}
 
     iAudioDecryptor.Decrypt(aAudio, iAudioDecrypted);
     iSupply->OutputData(iAudioDecrypted);
