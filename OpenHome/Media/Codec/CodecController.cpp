@@ -721,7 +721,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iLive = aMsg->Live();
     iStreamHandler = aMsg->StreamHandler();
     iLock.Signal();
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     iRawPcm = aMsg->RawPcm();
     if (iRawPcm) {
         iPcmStream = aMsg->PcmStream();

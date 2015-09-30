@@ -99,9 +99,9 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
-            LOG(kError, "Http error - %d - in response to Tidal GetStreamUrl.  Some/all of response is:\n", code);
+            LOG2(kPipeline, kError, "Http error - %d - in response to Tidal GetStreamUrl.  Some/all of response is:\n", code);
             Brn buf = iReaderUntil.Read(kReadBufferBytes);
-            LOG(kError, "%.*s\n", PBUF(buf));
+            LOG2(kPipeline, kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);
         }
 
@@ -109,13 +109,13 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         success = true;
     }
     catch (HttpError&) {
-        LOG2(kMedia, kError, "HttpError in Tidal::TryGetStreamUrl\n");
+        LOG2(kPipeline, kError, "HttpError in Tidal::TryGetStreamUrl\n");
     }
     catch (ReaderError&) {
-        LOG2(kMedia, kError, "ReaderError in Tidal::TryGetStreamUrl\n");
+        LOG2(kPipeline, kError, "ReaderError in Tidal::TryGetStreamUrl\n");
     }
     catch (WriterError&) {
-        LOG2(kMedia, kError, "WriterError in Tidal::TryGetStreamUrl\n");
+        LOG2(kPipeline, kError, "WriterError in Tidal::TryGetStreamUrl\n");
     }
     return success;
 }
@@ -211,7 +211,7 @@ TBool Tidal::TryLoginLocked()
     iSessionId.SetBytes(0);
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kMedia, kError, "Tidal::TryLogin - failed to connect\n");
+        LOG2(kPipeline, kError, "Tidal::TryLogin - failed to connect\n");
         iCredentialsState.SetState(kId, Brn("Login Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }
@@ -246,7 +246,7 @@ TBool Tidal::TryLoginLocked()
                     iCredentialsState.SetState(kId, error, Brx::Empty());
                 }
                 updatedStatus = true;
-                LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n%.*s\n", code, PBUF(status));
+                LOG(kPipeline, "Http error - %d - in response to Tidal login.  Some/all of response is:\n%.*s\n", code, PBUF(status));
                 THROW(ReaderError);
             }
 
@@ -259,15 +259,15 @@ TBool Tidal::TryLoginLocked()
         }
         catch (HttpError&) {
             error.Append("Login Error (Http Failure): Please Try Again.");
-            LOG2(kMedia, kError, "HttpError in Tidal::TryLogin\n");
+            LOG2(kPipeline, kError, "HttpError in Tidal::TryLogin\n");
         }
         catch (ReaderError&) {
             error.Append("Login Error (Read Failure): Please Try Again.");
-            LOG2(kMedia, kError, "ReaderError in Tidal::TryLogin\n");
+            LOG2(kPipeline, kError, "ReaderError in Tidal::TryLogin\n");
         }
         catch (WriterError&) {
             error.Append("Login Error (Write Failure): Please Try Again.");
-            LOG2(kMedia, kError, "WriterError in Tidal::TryLogin\n");
+            LOG2(kPipeline, kError, "WriterError in Tidal::TryLogin\n");
         }
     }
 
@@ -287,7 +287,7 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
     }
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kError, kMedia, "Tidal: failed to connect\n");
+        LOG2(kError, kPipeline, "Tidal: failed to connect\n");
         return false;
     }
     AutoSocketSsl _(iSocket);
@@ -299,22 +299,22 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
         if (code < 200 || code >= 300) {
-            LOG(kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
+            LOG2(kPipeline, kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
             Brn buf = iReaderUntil.Read(kReadBufferBytes);
-            LOG(kError, "%.*s\n", PBUF(buf));
+            LOG2(kPipeline, kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);
         }
         success = true;
         iSessionId.SetBytes(0);
     }
     catch (WriterError&) {
-        LOG2(kMedia, kError, "WriterError from Tidal logout\n");
+        LOG2(kPipeline, kError, "WriterError from Tidal logout\n");
     }
     catch (ReaderError&) {
-        LOG2(kMedia, kError, "ReaderError from Tidal logout\n");
+        LOG2(kPipeline, kError, "ReaderError from Tidal logout\n");
     }
     catch (HttpError&) {
-        LOG2(kMedia, kError, "HttpError from Tidal logout\n");
+        LOG2(kPipeline, kError, "HttpError from Tidal logout\n");
     }
     return success;
 }
@@ -351,7 +351,7 @@ TBool Tidal::TryGetSubscriptionLocked()
                 error.AppendPrintf("Subscription Error (Response Code %d): Please Try Again.", code);
             }
             updateStatus = true;
-            LOG(kError, "Http error - %d - in response to Tidal subscription.  Some/all of response is:\n%.*s\n", code, PBUF(status));
+            LOG2(kPipeline, kError, "Http error - %d - in response to Tidal subscription.  Some/all of response is:\n%.*s\n", code, PBUF(status));
             THROW(ReaderError);
         }
         Brn quality = ReadString(iReaderUntil, Brn("highestSoundQuality"));
@@ -367,15 +367,15 @@ TBool Tidal::TryGetSubscriptionLocked()
     }
     catch (HttpError&) {
         error.Append("Subscription Error (Http Failure): Please Try Again.");
-        LOG2(kMedia, kError, "HttpError in Tidal::TryGetSubscriptionLocked\n");
+        LOG2(kPipeline, kError, "HttpError in Tidal::TryGetSubscriptionLocked\n");
     }
     catch (ReaderError&) {
         error.Append("Subscription Error (Read Failure): Please Try Again.");
-        LOG2(kMedia, kError, "ReaderError in Tidal::TryGetSubscriptionLocked\n");
+        LOG2(kPipeline, kError, "ReaderError in Tidal::TryGetSubscriptionLocked\n");
     }
     catch (WriterError&) {
         error.Append("Subscription Error (Write Failure): Please Try Again.");
-        LOG2(kMedia, kError, "WriterError in Tidal::TryGetSubscriptionLocked\n");
+        LOG2(kPipeline, kError, "WriterError in Tidal::TryGetSubscriptionLocked\n");
     }
     if (updateStatus) {
         iCredentialsState.SetState(kId, error, Brx::Empty());
