@@ -43,6 +43,7 @@ private:
     TUint64 iStreamPos;
     TUint iNextFlushId;
     TUint64 iSeekPos;
+    TByte iAudioDebugBuf[10*1024];
 };
 
 } // namespace Media
