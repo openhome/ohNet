@@ -520,6 +520,14 @@ TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 {
     if (aStreamId == iStreamId && aBytePos >= iStreamLength) {
         // Seek on valid stream, but aBytePos is beyond end of file.
+        LOG(kPipeline, "CodecController::TrySeekTo(%u, %llu) - failure: seek point is beyond the end of stream (streamLen=%llu)\n",
+                       aStreamId, aBytePos, iStreamLength);
+        LOG(kPipeline, "...skip forwards to next stream\n");
+        iStreamEnded = true;
+        iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
+        if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+            iConsumeExpectedFlush = true;
+        }
         return false;
     }
     TUint flushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
