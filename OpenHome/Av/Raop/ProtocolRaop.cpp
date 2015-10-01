@@ -336,27 +336,35 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     // Output audio stream
     for (;;) {
         {
-            AutoMutex a(iLockRaop);
+            iLockRaop.Wait();
             if (iWaiting) {
-                iSupply->OutputFlush(iNextFlushId);
+                TUint flushId = iNextFlushId;
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iWaiting = false;
-                OutputDiscontinuity();
+                iLockRaop.Signal();
 
+                iSupply->OutputFlush(flushId);
+                OutputDiscontinuity();
                 // Resume normal operation.
+                LOG(kMedia, "<ProtocolRaop::Stream signalled end of wait.\n");
             }
             else if (iStopped) {
-                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-                iSupply->OutputFlush(iNextFlushId);
+                TUint flushId = iNextFlushId;
                 iNextFlushId = MsgFlush::kIdInvalid;
+                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
                 iActive = false;
+                iLockRaop.Signal();
 
                 iControlServer.Close();
                 iAudioServer.Close();
 
+                iSupply->OutputFlush(flushId);
                 WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                 return EProtocolStreamStopped;
+            }
+            else {
+                iLockRaop.Signal();
             }
         }
 
@@ -497,9 +505,13 @@ void ProtocolRaop::Reset()
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
-    AutoMutex a(iLockRaop);
-    iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, false, *this, iStreamId);
+    TUint streamId = IPipelineIdProvider::kStreamIdInvalid;;
+    {
+        AutoMutex a(iLockRaop);
+        iStreamId = iIdProvider->NextStreamId();
+        streamId = iStreamId;
+    }
+    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, false, *this, streamId);
 }
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
@@ -573,7 +585,10 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
 void ProtocolRaop::OutputDiscontinuity()
 {
     iAudioServer.Close();
-    iResumePending = true;
+    {
+        AutoMutex a(iLockRaop);
+        iResumePending = true;
+    }
 
     Semaphore sem("PRWS", 0);
     Log::Print("ProtocolRaop::Stream OutputDiscontinuity before OutputDrain()\n");
