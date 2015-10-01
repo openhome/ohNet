@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <atomic>
@@ -51,10 +52,9 @@ Waiter::~Waiter()
 
 void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 {
-    Log::Print(">Waiter::Wait %u\n", aFlushId);
     // Wait can be called multiple times.
     AutoMutex a(iLock);
-    Log::Print(">Waiter::Wait aFlushId: %u, iTargetFlushId: %u, iState: %u, iRampDuration: %u, iRemainingRampSize: %u\n", aFlushId, iTargetFlushId, iState, iRampDuration, iRemainingRampSize);
+    LOG(kPipeline, ">Waiter::Wait aFlushId: %u, iTargetFlushId: %u, iState: %u, iRampDuration: %u, iRemainingRampSize: %u\n", aFlushId, iTargetFlushId, iState, iRampDuration, iRemainingRampSize);
     if (aFlushId != iTargetFlushId) {
         iTargetFlushId = aFlushId;
 
@@ -70,7 +70,6 @@ void Waiter::Wait(TUint aFlushId, TBool aRampDown)
                 }
                 else {
                     iRemainingRampSize = iRampDuration - iRemainingRampSize;
-                    Log::Print("Waiter::Wait iRemainingRampSize: %u\n", iRemainingRampSize);
                 }
                 // leave iCurrentRampValue unchanged
             }
@@ -154,7 +153,6 @@ Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    //Log::Print("Waiter::ProcessMsg(MsgAudioPcm): aMsg->TrackOffset(): %llu, aMsg->Jiffies(): %u\n", aMsg->TrackOffset(), aMsg->Jiffies());
     HandleAudio();
     if (iState == ERampingDown || iState == ERampingUp) {
         if (iRemainingRampSize > 0) {
@@ -167,9 +165,7 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
             }
             split = nullptr;
             const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-            Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u\n", iCurrentRampValue);
             iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
-            Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iCurrentRampValue: %u, iRemainingRampSize: %u\n", iCurrentRampValue, iRemainingRampSize);
             if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
@@ -181,7 +177,6 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
                 DoWait();
             }
             else { // iState == ERampingUp
-                Log::Print("Waiter::ProcessMsg(MsgAudioPcm) iState == ERampingUp. Moving to state ERunning\n");
                 iState = ERunning;
             }
         }
@@ -193,7 +188,6 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
 {
-    Log::Print(">Waiter::ProcessMsg(MsgSilence)\n");
     HandleAudio();
     if (iState == ERampingDown) {
         iRemainingRampSize = 0;
@@ -235,7 +229,6 @@ void Waiter::HandleAudio()
         ScheduleEvent(false);
     }
     else if (iState == EWaiting) {
-        Log::Print("Waiter::HandleAudio iState = ERunning\n");
         iState = ERunning;
         ScheduleEvent(false);
     }
@@ -243,7 +236,6 @@ void Waiter::HandleAudio()
 
 void Waiter::NewStream()
 {
-    Log::Print("Waiter::NewStream\n");
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
 }
