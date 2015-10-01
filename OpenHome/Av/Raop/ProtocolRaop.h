@@ -509,7 +509,6 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::DropAudio()
 
 template <TUint MaxFrames> TBool Repairer<MaxFrames>::RepairBegin(IRepairable& aRepairable)
 {
-    Log::Print("Repairer::RepairBegin BEGIN ON %d\n", aRepairable.Frame());
     LOG(kMedia, "Repairer::RepairBegin BEGIN ON %d\n", aRepairable.Frame());
     iRepairFirst = &aRepairable;
     iTimer.Start(MakeFunctor(*this, &Repairer<MaxFrames>::TimerRepairExpired), iEnv.Random(kInitialRepairTimeoutMs));
@@ -518,7 +517,6 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::RepairBegin(IRepairable& a
 
 template <TUint MaxFrames> void Repairer<MaxFrames>::RepairReset()
 {
-    Log::Print("Repairer::RepairReset RESET\n");
     LOG(kMedia, "Repairer::RepairReset RESET\n");
     /* TimerRepairExpired() claims iMutexTransport.  Release it briefly to avoid possible deadlock.
     TimerManager guarantees that TimerRepairExpired() won't be called once Cancel() returns... */
@@ -541,7 +539,6 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
 {
     // get the incoming frame number
     const TUint frame = aRepairable.Frame();
-    Log::Print("Repairer::Repair GOT %d\n", frame);
     LOG(kMedia, "Repairer::Repair GOT %d\n", frame);
 
     // get difference between this and the last frame sent down the pipeline
@@ -662,10 +659,8 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
 
 template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
 {
-    Log::Print(">Repairer::TimerRepairExpired");
     AutoMutex a(iMutexTransport);
     if (iRepairing) {
-        Log::Print(">Repairer::TimerRepairExpired REQUEST RESEND");
         LOG(kMedia, ">Repairer::TimerRepairExpired REQUEST RESEND");
 
         TUint rangeCount = 0;
@@ -692,7 +687,6 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
                 iResend.push_back(range);
                 iResendConst.push_back(range);
 
-                Log::Print(" %d-%d", start, end);
                 LOG(kMedia, " %d-%d", start, end);
                 if (++rangeCount == kMaxMissedRanges) {
                     break;
@@ -700,7 +694,6 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
             }
 
         }
-        Log::Print("\n");
         LOG(kMedia, "\n");
 
         iResendRequester.RequestResendSequences(iResendConst);
