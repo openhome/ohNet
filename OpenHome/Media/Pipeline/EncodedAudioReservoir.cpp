@@ -6,15 +6,40 @@ using namespace OpenHome::Media;
 
 // EncodedAudioReservoir
 
-EncodedAudioReservoir::EncodedAudioReservoir(TUint aMsgCount, TUint aMaxStreamCount)
-    : iMsgCount(aMsgCount)
+EncodedAudioReservoir::EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, TUint aMsgCount, TUint aMaxStreamCount)
+    : iMsgFactory(aMsgFactory)
+    , iFlushIdProvider(aFlushIdProvider)
+    , iMsgCount(aMsgCount)
     , iMaxStreamCount(aMaxStreamCount)
+    , iLock2("ENCR")
+    , iStreamHandler(nullptr)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
+    , iStreamPos(0)
+    , iNextFlushId(MsgFlush::kIdInvalid)
+    , iSeekPos(0)
 {
 }
 
 TUint EncodedAudioReservoir::SizeInBytes() const
 {
     return EncodedBytes();
+}
+
+inline IStreamHandler* EncodedAudioReservoir::StreamHandler()
+{
+    iLock2.Wait();
+    auto streamHandler = iStreamHandler;
+    iLock2.Signal();
+    return streamHandler;
+}
+
+Msg* EncodedAudioReservoir::EndSeek(Msg* aMsg)
+{
+    EnqueueAtHead(aMsg);
+    auto flush = iMsgFactory.CreateMsgFlush(iNextFlushId);
+    iNextFlushId = MsgFlush::kIdInvalid;
+    iSeekPos = 0;
+    return flush;
 }
 
 TBool EncodedAudioReservoir::IsFull() const
@@ -37,4 +62,87 @@ void EncodedAudioReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
 void EncodedAudioReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
 {
     BlockIfFull();
+}
+
+Msg* EncodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
+{
+    {
+        AutoMutex _(iLock2);
+        if (iNextFlushId != MsgFlush::kIdInvalid) {
+            return EndSeek(aMsg);
+        }
+        iStreamHandler = aMsg->StreamHandler();
+        iStreamId = aMsg->StreamId();
+    }
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
+}
+
+Msg* EncodedAudioReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
+{
+    AutoMutex _(iLock2);
+    TUint64 newStreamPos = iStreamPos + aMsg->Bytes();
+    if (iSeekPos != 0) {
+        if (iStreamPos == iSeekPos) {
+            return EndSeek(aMsg);
+        }
+        else if (newStreamPos > iSeekPos) {
+            const TUint splitPos = static_cast<TUint>(newStreamPos - iSeekPos);
+            auto split = aMsg->Split(splitPos);
+            EnqueueAtHead(split);
+            newStreamPos -= splitPos;
+        }
+        iStreamPos = newStreamPos;
+        aMsg->RemoveRef();
+        return nullptr;
+    }
+    iStreamPos += aMsg->Bytes(); // newStreamPos may be invalid if aMsg has been split
+    return aMsg;
+}
+
+EStreamPlay EncodedAudioReservoir::OkToPlay(TUint aStreamId)
+{
+    IStreamHandler* streamHandler = StreamHandler();
+    if (streamHandler != nullptr) {
+        return streamHandler->OkToPlay(aStreamId);
+    }
+    return ePlayNo;
+}
+
+TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
+{
+    IStreamHandler* streamHandler = nullptr;
+    {
+        AutoMutex _(iLock2);
+        if (iStreamId == aStreamId && iStreamPos <= aOffset && iStreamPos + SizeInBytes() >= aOffset) {
+            iSeekPos = aOffset;
+            if (iNextFlushId == MsgFlush::kIdInvalid) {
+                iNextFlushId = iFlushIdProvider.NextFlushId();
+            }
+            return iNextFlushId;
+        }
+        streamHandler = iStreamHandler;
+    }
+    if (streamHandler != nullptr) {
+        return streamHandler->TrySeek(aStreamId, aOffset);
+    }
+    return MsgFlush::kIdInvalid;
+}
+
+TUint EncodedAudioReservoir::TryStop(TUint aStreamId)
+{
+    IStreamHandler* streamHandler = StreamHandler();
+    if (streamHandler != nullptr) {
+        return streamHandler->TryStop(aStreamId);
+    }
+    return MsgFlush::kIdInvalid;
+}
+
+void EncodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
+{
+    IStreamHandler* streamHandler = StreamHandler();
+    if (streamHandler != nullptr) {
+        streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    }
 }

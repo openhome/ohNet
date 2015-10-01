@@ -1,14 +1,18 @@
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Functor.h>
 
 #include <string.h>
 #include <vector>
+#include <list>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -160,6 +164,77 @@ private:
     TBool iStartCalled;
     TBool iNewStreamCalled;
     TBool iNotifySizeCalled;
+};
+
+class SuiteEncodedReservoir : public SuiteUnitTest, private IStreamHandler, private IMsgProcessor, private IFlushIdProvider
+{
+    static const TUint kTrySeekResponse = 42;
+    static const TUint kStreamId = 5;
+public:
+    SuiteEncodedReservoir();
+private: // from SuiteUnitTest
+    void Setup() override;
+    void TearDown() override;
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
+private: // from IFlushIdProvider
+    TUint NextFlushId() override;
+private:
+    enum EMsgType
+    {
+        ENone
+       ,EMsgTrack
+       ,EMsgEncodedStream
+       ,EMsgAudioEncoded
+       ,EMsgFlush
+       ,EMsgQuit
+    };
+private:
+    void PullNext(EMsgType aType);
+    void PushEncodedStream();
+    void PushEncodedAudio(TByte aFill);
+private:
+    void TestStreamHandlerCallsPassedOn();
+    void TestSeekBackwards();
+    void TestSeekForwardsIntoReservoir();
+    void TestSeekForwardsBeyondReservoir();
+    void TestNewStreamInterruptsSeek();
+private:
+    MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
+    AllocatorInfoLogger iInfoAggregator;
+    EncodedAudioReservoir* iReservoir;
+    TUint iNextFlushId;
+    EMsgType iLastMsg;
+    TUint iOkToPlayCount;
+    TUint iTrySeekCount;
+    TUint iTryStopCount;
+    TUint iNotifyStarvingCount;
+    TUint iPulledFlushId;
+    TUint iEncAudioFill;
+    TByte iAudioSrc[EncodedAudio::kMaxBytes];
+    TByte iAudioDest[EncodedAudio::kMaxBytes];
 };
 
 } // namespace Media
@@ -752,11 +827,234 @@ void SuiteReservoirHistory::StopStarvationMonitor()
 }
 
 
+// SuiteEncodedReservoir
+
+SuiteEncodedReservoir::SuiteEncodedReservoir()
+    : SuiteUnitTest("EncodedReservoir")
+{
+    AddTest(MakeFunctor(*this, &SuiteEncodedReservoir::TestStreamHandlerCallsPassedOn), "TestStreamHandlerCallsPassedOn");
+    AddTest(MakeFunctor(*this, &SuiteEncodedReservoir::TestSeekBackwards), "TestSeekBackwards");
+    AddTest(MakeFunctor(*this, &SuiteEncodedReservoir::TestSeekForwardsIntoReservoir), "TestSeekForwardsIntoReservoir");
+    AddTest(MakeFunctor(*this, &SuiteEncodedReservoir::TestSeekForwardsBeyondReservoir), "TestSeekForwardsBeyondReservoir");
+    AddTest(MakeFunctor(*this, &SuiteEncodedReservoir::TestNewStreamInterruptsSeek), "TestNewStreamInterruptsSeek");
+}
+
+void SuiteEncodedReservoir::Setup()
+{
+    MsgFactoryInitParams init;
+    init.SetMsgAudioEncodedCount(11, 10);
+    init.SetMsgEncodedStreamCount(3);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
+    iReservoir = new EncodedAudioReservoir(*iMsgFactory, *this, 100/*max_msg*/, 10/*max_streams*/);
+    iNextFlushId = MsgFlush::kIdInvalid;
+    iLastMsg = ENone;
+    iOkToPlayCount = iTrySeekCount = iTryStopCount = iNotifyStarvingCount = 0;
+    iPulledFlushId = MsgFlush::kIdInvalid;
+    iEncAudioFill = 12345;
+    (void)memset(iAudioDest, 0, sizeof(iAudioDest));
+}
+
+void SuiteEncodedReservoir::TearDown()
+{
+    delete iReservoir;
+    delete iTrackFactory;
+    delete iMsgFactory;
+}
+
+EStreamPlay SuiteEncodedReservoir::OkToPlay(TUint /*aStreamId*/)
+{
+    iOkToPlayCount++;
+    return ePlayNo;
+}
+
+TUint SuiteEncodedReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    iTrySeekCount++;
+    return kTrySeekResponse;
+}
+
+TUint SuiteEncodedReservoir::TryStop(TUint /*aStreamId*/)
+{
+    iTryStopCount++;
+    return MsgFlush::kIdInvalid;
+}
+
+void SuiteEncodedReservoir::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
+{
+    iNotifyStarvingCount++;
+}
+
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastMsg = EMsgEncodedStream;
+    return aMsg;
+}
+
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    iLastMsg = EMsgAudioEncoded;
+    (void)memset(iAudioDest, 0, sizeof(iAudioDest));
+    aMsg->CopyTo(iAudioDest);
+    iEncAudioFill = iAudioDest[0];
+    return aMsg;
+}
+
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastMsg = EMsgFlush;
+    iPulledFlushId = aMsg->Id();
+    return aMsg;
+}
+
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgMode* aMsg)              { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgTrack* aMsg)             { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgDrain* aMsg)             { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgDelay* aMsg)             { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgMetaText* aMsg)          { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgStreamInterrupted* aMsg) { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgHalt* aMsg)              { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgWait* aMsg)              { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgDecodedStream* aMsg)     { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgBitRate* aMsg)           { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgAudioPcm* aMsg)          { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgSilence* aMsg)           { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgPlayable* aMsg)          { ASSERTS(); return aMsg; }
+Msg* SuiteEncodedReservoir::ProcessMsg(MsgQuit* aMsg)              { ASSERTS(); return aMsg; }
+
+TUint SuiteEncodedReservoir::NextFlushId()
+{
+    return ++iNextFlushId;
+}
+
+void SuiteEncodedReservoir::PullNext(EMsgType aType)
+{
+    Msg* msg = iReservoir->Pull();
+    msg = msg->Process(*this);
+    if (msg != nullptr) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == aType);
+}
+
+void SuiteEncodedReservoir::PushEncodedStream()
+{
+    auto msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1234567LL, kStreamId, true/*seekable*/, false/*live*/, this/*stream handler*/);
+    iReservoir->Push(msg);
+}
+
+void SuiteEncodedReservoir::PushEncodedAudio(TByte aFill)
+{
+    (void)memset(iAudioSrc, aFill, sizeof(iAudioSrc));
+    Brn buf(iAudioSrc, sizeof(iAudioSrc));
+    auto msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    iReservoir->Push(msg);
+}
+
+void SuiteEncodedReservoir::TestStreamHandlerCallsPassedOn()
+{
+    PushEncodedStream();
+    PullNext(EMsgEncodedStream);
+
+    TEST(iOkToPlayCount == 0);
+    (void)iReservoir->OkToPlay(kStreamId);
+    TEST(iOkToPlayCount == 1);
+
+    TEST(iTryStopCount == 0);
+    (void)iReservoir->TryStop(kStreamId);
+    TEST(iTryStopCount == 1);
+
+    TEST(iNotifyStarvingCount == 0);
+    iReservoir->NotifyStarving(Brx::Empty(), kStreamId, true);
+    TEST(iNotifyStarvingCount == 1);
+
+    TEST(iTrySeekCount == 0);
+    TEST(iReservoir->TrySeek(kStreamId+1, 0) == kTrySeekResponse);
+    TEST(iTrySeekCount == 1);
+}
+
+void SuiteEncodedReservoir::TestSeekBackwards()
+{
+    PushEncodedStream();
+    PushEncodedAudio(1);
+    PushEncodedAudio(2);
+    PullNext(EMsgEncodedStream);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 1);
+    TEST(iReservoir->TrySeek(kStreamId, EncodedAudio::kMaxBytes-1) == kTrySeekResponse);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 2);
+}
+
+void SuiteEncodedReservoir::TestSeekForwardsIntoReservoir()
+{
+    PushEncodedStream();
+    PushEncodedAudio(1);
+    PushEncodedAudio(1);
+    PushEncodedAudio(1);
+    PushEncodedAudio(1);
+    PushEncodedAudio(2);
+    PullNext(EMsgEncodedStream);
+    static const TUint64 kSeekPos = EncodedAudio::kMaxBytes*3 + 100;
+    const TUint flushId = iReservoir->TrySeek(kStreamId, kSeekPos);
+    TEST(flushId != MsgFlush::kIdInvalid);
+    TEST(flushId != kTrySeekResponse);
+    PullNext(EMsgFlush);
+    TEST(iPulledFlushId == flushId);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 1);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 2);
+}
+
+void SuiteEncodedReservoir::TestSeekForwardsBeyondReservoir()
+{
+    PushEncodedStream();
+    PushEncodedAudio(1);
+    PushEncodedAudio(2);
+    PushEncodedAudio(3);
+    PullNext(EMsgEncodedStream);
+    static const TUint64 kSeekPos = EncodedAudio::kMaxBytes * 10;
+    TEST(iReservoir->TrySeek(kStreamId, kSeekPos) == kTrySeekResponse);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 1);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 2);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 3);
+}
+
+void SuiteEncodedReservoir::TestNewStreamInterruptsSeek()
+{
+    PushEncodedStream();
+    PushEncodedAudio(1);
+    PushEncodedAudio(2);
+    PushEncodedAudio(3);
+    PushEncodedAudio(4);
+    PushEncodedStream();
+    PushEncodedAudio(5);
+    PushEncodedAudio(6);
+    PullNext(EMsgEncodedStream);
+    static const TUint64 kSeekPos = EncodedAudio::kMaxBytes * 5;
+    const TUint flushId = iReservoir->TrySeek(kStreamId, kSeekPos);
+    TEST(flushId != MsgFlush::kIdInvalid);
+    TEST(flushId != kTrySeekResponse);
+    PullNext(EMsgFlush);
+    TEST(iPulledFlushId == flushId);
+    PullNext(EMsgEncodedStream);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 5);
+    PullNext(EMsgAudioEncoded);
+    TEST(iEncAudioFill == 6);
+}
+
+
 
 void TestAudioReservoir()
 {
     Runner runner("Decoded Audio Reservoir tests\n");
     runner.Add(new SuiteAudioReservoir());
     runner.Add(new SuiteReservoirHistory());
+    runner.Add(new SuiteEncodedReservoir());
     runner.Run();
 }
