@@ -35,7 +35,7 @@ public: // from CodecBase
     void Process() override;
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
     void StreamCompleted() override;
-private:
+protected:
     Bwh iReadBuf;
     TUint iReadBytes;
     TUint iChannels;
@@ -247,6 +247,39 @@ private:
     TUint iHandle;
     TUint iFlushId;
     TestCodecControllerDummyCodec* iCodec;
+};
+
+/**
+ * Misbehaving codec that buffers some of its decoded audio and attempts to
+ * flush its internal buffer when it detects a CodecStreamStart/CodecStreamEnded
+ * has been thrown.
+ *
+ * Simulates codecs that have some internal buffering to avoid outputting lots
+ * small MsgAudioPcm into the pipeline.
+ */
+class TestCodecControllerDummyCodecBuffered : public TestCodecControllerDummyCodec
+{
+public:
+    TestCodecControllerDummyCodecBuffered(TUint aReadBufBytes);
+public: // from TestCodecControllerDummyCodec
+    void Process() override;
+private:
+    Bwh iOutBuf;
+};
+
+class SuiteCodecControllerUnexpectedFlush : public SuiteCodecControllerBase
+{
+private:
+    static const TUint kAudioBytesPerMsg = 1024;
+public:
+    SuiteCodecControllerUnexpectedFlush();
+private: // from SuiteCodecControllerBase
+    void Setup() override;
+    void TearDown() override;
+private:
+    void TestUnexpectedFlush();
+private:
+    TestCodecControllerDummyCodecBuffered* iCodec;
 };
 
 } // namespace Media
@@ -1326,6 +1359,120 @@ void SuiteCodecControllerSeekInvalid::TestSeekInvalid()
 }
 
 
+// TestCodecControllerDummyCodecBuffered
+
+TestCodecControllerDummyCodecBuffered::TestCodecControllerDummyCodecBuffered(TUint aReadBufBytes)
+    : TestCodecControllerDummyCodec(aReadBufBytes)
+    , iOutBuf(aReadBufBytes*2)  // Enough space to buffer 2 msgs.
+{
+}
+
+void TestCodecControllerDummyCodecBuffered::Process()
+{
+    iReadBuf.SetBytes(0);
+    try {
+        iController->Read(iReadBuf, iReadBytes);
+        if (iReadBuf.Bytes() < iReadBytes) {
+            THROW(CodecStreamEnded);
+        }
+        ASSERT(iOutBuf.BytesRemaining() >= iReadBuf.Bytes());
+        iOutBuf.Append(iReadBuf);
+        iReadBuf.SetBytes(0);
+
+        // Always buffer half a msg.
+        // - If more than 1 msg buffered (which should be exactly 1.5 msgs) output 1 message.
+        // - If exactly 1 msg buffered (e.g., start of stream), only output 0.5 msgs.
+        Brn out;
+        if (iOutBuf.Bytes() > iReadBytes) {
+            out.Set(iOutBuf.Ptr(), iReadBytes);
+        }
+        else if (iOutBuf.Bytes() == iReadBytes) {
+            out.Set(iOutBuf.Ptr(), iReadBytes/2);
+        }
+        else {
+            ASSERTS();
+        }
+        iTrackOffset += iController->OutputAudioPcm(out, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
+        iOutBuf.Replace(iOutBuf.Ptr()+out.Bytes(), iOutBuf.Bytes()-out.Bytes());
+    }
+    catch (CodecStreamStart&) {
+        // Flush output buffer.
+        if (iOutBuf.Bytes() > 0) {
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
+            iOutBuf.SetBytes(0);
+        }
+        throw; // rethrow CodecStreamStart
+    }
+    catch (CodecStreamEnded&) {
+        // Flush output buffer.
+        if (iOutBuf.Bytes() > 0) {
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
+            iOutBuf.SetBytes(0);
+        }
+        throw; // rethrow CodecStreamEnded
+    }
+}
+
+
+// SuiteCodecControllerUnexpectedFlush
+
+SuiteCodecControllerUnexpectedFlush::SuiteCodecControllerUnexpectedFlush()
+    : SuiteCodecControllerBase("SuiteCodecControllerUnexpectedFlush")
+{
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerUnexpectedFlush::TestUnexpectedFlush), "TestUnexpectedFlush");
+}
+
+void SuiteCodecControllerUnexpectedFlush::Setup()
+{
+    SuiteCodecControllerBase::Setup();
+    iCodec = new TestCodecControllerDummyCodecBuffered(kAudioBytesPerMsg);
+    iController->AddCodec(iCodec);  // Takes ownership.
+    iController->Start();
+}
+
+void SuiteCodecControllerUnexpectedFlush::TearDown()
+{
+    SuiteCodecControllerBase::TearDown();
+}
+
+void SuiteCodecControllerUnexpectedFlush::TestUnexpectedFlush()
+{
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, EMediaDataEndian::EMediaDataEndianLittle);
+
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+
+    // Output some audio.
+    TByte encodedAudioData[kAudioBytesPerMsg];
+    (void)memset(encodedAudioData, 0x7f, kAudioBytesPerMsg);
+    Brn encodedAudioBuf(encodedAudioData, kAudioBytesPerMsg);
+    Queue(iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf));
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgAudioPcm);
+
+    // Push unexpected flush. Buffered audio should be pushed before the flush.
+    Queue(CreateFlush());
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgFlush);
+
+    // Push a MsgEncodedStream to start new stream, as flush will have terminated previous stream.
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+    // Push some audio.
+    Queue(iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf));
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgAudioPcm);
+
+    // Push a MsgEncodedStream to cause codec to flush its buffer.
+    Queue(CreateEncodedStream());
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgEncodedStream);
+    PullNext(EMsgDecodedStream);
+}
+
+
 
 void TestCodecController()
 {
@@ -1334,6 +1481,7 @@ void TestCodecController()
     runner.Add(new SuiteCodecControllerPcmSize());
     runner.Add(new SuiteCodecControllerStopDuringStreamInit());
     runner.Add(new SuiteCodecControllerSeekInvalid());
+    runner.Add(new SuiteCodecControllerUnexpectedFlush());
     runner.Run();
 }
 

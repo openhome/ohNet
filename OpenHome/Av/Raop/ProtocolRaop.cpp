@@ -336,27 +336,35 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     // Output audio stream
     for (;;) {
         {
-            AutoMutex a(iLockRaop);
+            iLockRaop.Wait();
             if (iWaiting) {
-                iSupply->OutputFlush(iNextFlushId);
+                TUint flushId = iNextFlushId;
                 iNextFlushId = MsgFlush::kIdInvalid;
                 iWaiting = false;
-                OutputDiscontinuity();
+                iLockRaop.Signal();
 
+                iSupply->OutputFlush(flushId);
+                OutputDiscontinuity();
                 // Resume normal operation.
+                LOG(kMedia, "<ProtocolRaop::Stream signalled end of wait.\n");
             }
             else if (iStopped) {
-                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-                iSupply->OutputFlush(iNextFlushId);
+                TUint flushId = iNextFlushId;
                 iNextFlushId = MsgFlush::kIdInvalid;
+                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
                 iActive = false;
+                iLockRaop.Signal();
 
                 iControlServer.Close();
                 iAudioServer.Close();
 
+                iSupply->OutputFlush(flushId);
                 WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                 return EProtocolStreamStopped;
+            }
+            else {
+                iLockRaop.Signal();
             }
         }
 
@@ -412,9 +420,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     uri.Replace(iUri.AbsoluteUri());
                 }
 
-                // FIXME - outputting MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
-                // Not necessarily desirable when pausing or seeking.
-
+                /*
+                 * NOTE - outputting MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
+                 * Not necessarily desirable when pausing or seeking.
+                 */
                 iSupply->OutputDelay(Delay(latency));
                 iSupply->OutputTrack(*track, !resumePending);
                 iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
@@ -430,15 +439,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             if (validSession && !shouldFlush) {
                 IRepairable* repairable = iRepairableAllocator.Allocate(audioPacket);
                 try {
-                    //Log::Print("iRepairer.OutputAudio(%u)\n", audioPacket.Header().Seq());
                     iRepairer.OutputAudio(*repairable);
                 }
                 catch (RepairerBufferFull&) {
-                    Log::Print("ProtocolRaop::Stream RepairerBufferFull\n");
+                    LOG(kMedia, "ProtocolRaop::Stream RepairerBufferFull\n");
                     // Set state so that no more audio is output until a MsgDrain followed by a MsgEncodedStream.
                     OutputDiscontinuity();
                 }
                 catch (RepairerStreamRestarted&) {
+                    LOG(kMedia, "ProtocolRaop::Stream RepairerStreamRestarted\n");
                     OutputDiscontinuity();
                 }
             }
@@ -496,9 +505,13 @@ void ProtocolRaop::Reset()
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
-    AutoMutex a(iLockRaop);
-    iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, false, *this, iStreamId);
+    TUint streamId = IPipelineIdProvider::kStreamIdInvalid;;
+    {
+        AutoMutex a(iLockRaop);
+        iStreamId = iIdProvider->NextStreamId();
+        streamId = iStreamId;
+    }
+    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, false, *this, streamId);
 }
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
@@ -546,18 +559,24 @@ void ProtocolRaop::OutputContainer(const Brx& aFmtp)
 
 void ProtocolRaop::OutputAudio(const Brx& aAudio)
 {
-    TBool outputDelay = false;
-    TUint latency = iControlServer.Latency();
-    {
-        AutoMutex a(iLockRaop);
-        if (latency != iLatency) {
-            iLatency = latency;
-            outputDelay = true;
-        }
-    }
-    if (outputDelay) {
-        iSupply->OutputDelay(Delay(latency));
-    }
+    /*
+     * Outputting delay mid-stream is causing VariableDelay to ramp audio up/down
+     * mid-stream and immediately after unpausing/seeking.
+     * That makes for an unpleasant listening experience. Better to just
+     * potentially allow stream to go a few ms out of sync.
+     */
+    //TBool outputDelay = false;
+    //TUint latency = iControlServer.Latency();
+    //{
+    //    AutoMutex a(iLockRaop);
+    //    if (latency != iLatency) {
+    //        iLatency = latency;
+    //        outputDelay = true;
+    //    }
+    //}
+    //if (outputDelay) {
+    //    iSupply->OutputDelay(Delay(latency));
+    //}
 
     iAudioDecryptor.Decrypt(aAudio, iAudioDecrypted);
     iSupply->OutputData(iAudioDecrypted);
@@ -565,16 +584,18 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
 
 void ProtocolRaop::OutputDiscontinuity()
 {
+    LOG(kMedia, ">ProtocolRaop::OutputDiscontinuity\n");
     iAudioServer.Close();
-    iResumePending = true;
+    {
+        AutoMutex a(iLockRaop);
+        iResumePending = true;
+    }
 
     Semaphore sem("PRWS", 0);
-    Log::Print("ProtocolRaop::Stream OutputDiscontinuity before OutputDrain()\n");
     iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
-    Log::Print("ProtocolRaop::Stream OutputDiscontinuity before sem.Wait()\n");
     sem.Wait();
-    Log::Print("ProtocolRaop::Stream OutputDiscontinuity after sem.Wait()\n");
     iAudioServer.Open();
+    LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
 }
 
 void ProtocolRaop::WaitForDrain()
@@ -616,16 +637,17 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
 {
-    Log::Print(">ProtocolRaop::ReceiveResend timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
+    LOG(kMedia, ">ProtocolRaop::ReceiveResend timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
     IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
     try {
         iRepairer.OutputAudio(*repairable);
     }
     catch (RepairerBufferFull&) {
-        Log::Print("ProtocolRaop::ResendReceive RepairerBufferFull\n");
+        LOG(kMedia, "ProtocolRaop::ResendReceive RepairerBufferFull\n");
         OutputDiscontinuity();
     }
     catch (RepairerStreamRestarted&) {
+        LOG(kMedia, "ProtocolRaop::ResendReceive RepairerStreamRestarted\n");
         OutputDiscontinuity();
     }
 }
@@ -740,8 +762,6 @@ void RaopControlServer::Run()
                     RaopPacketResendResponse resendResponsePacket(packet);
                     const RaopPacketAudio& audioPacket = resendResponsePacket.AudioPacket();
                     iResendReceiver.ResendReceive(audioPacket);
-
-                    Log::Print("\n\n\nRaopControlServer::Run EResendResponse: %u\n\n\n", packet.Header().Seq());
                 }
                 else {
                     LOG(kMedia, "RaopControlServer::Run unexpected packet type: %u\n", packet.Header().Type());
@@ -773,7 +793,6 @@ TUint RaopControlServer::Latency() const
 void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
 {
     LOG(kMedia, "RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
-    Log::Print("RaopControlServer::RequestResend aSeqStart: %u, aCount: %u\n", aSeqStart, aCount);
 
     RaopPacketResendRequest resendPacket(aSeqStart, aCount);
     Bws<RaopPacketResendRequest::kBytes> resendBuf;
@@ -801,15 +820,15 @@ RaopResendRangeRequester::RaopResendRangeRequester(IRaopResendRequester& aResend
 
 void RaopResendRangeRequester::RequestResendSequences(const std::vector<const IResendRange*> aRanges)
 {
-    Log::Print(">RaopResendRangeRequester::RequestResendSequences");
+    LOG(kMedia, ">RaopResendRangeRequester::RequestResendSequences");
     for (auto range : aRanges) {
         const TUint start = range->Start();
         const TUint end = range->End();
         const TUint count = (end-start)+1;  // +1 to include start packet.
-        Log::Print(" %d->%d", start, end);
+        LOG(kMedia, " %d->%d", start, end);
         iResendRequester.RequestResend(start, count);
     }
-    Log::Print("\n");
+    LOG(kMedia, "\n");
 }
 
 
