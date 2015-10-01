@@ -215,7 +215,7 @@ Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
     if (IsEnabled(EMsgAudioPcm) ||
         (IsEnabled(EMsgAudioRamped) && aMsg->Ramp().IsEnabled())) {
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): audioPcm {jiffies: %u", iId, aMsg->Jiffies());
+        iBuf.AppendPrintf("Pipeline (%s): audioPcm {track offset: %llu, jiffies: %u", iId, aMsg->TrackOffset(), aMsg->Jiffies());
         LogRamp(aMsg->Ramp());
         iBuf.Append("}\n");
         Log::Print(iBuf);
