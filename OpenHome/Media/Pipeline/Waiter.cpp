@@ -114,10 +114,8 @@ Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
         // NOTE: Can happen if pausing/unpausing or seeking in quick succession.
         // Is valid in some states (can uncomment to investigate invalid transitions):
         // - Pausing/unpausing or seeking at the very start of a stream before a delay > 0 has been sent down the pipeline.
-        // - Pausing/unpausing or seeking in quick succession immediately following a previous action when insufficient audio has been delivered to allow a successful ramp down (in which case, the StarvationMonitor will kick in).
-
-        //ASSERT(iState == EFlushing); // Haven't received enough audio for a full ramp down.
-        ASSERT(iState != ERampingDown);
+        // - Pausing/seeking in quick succession with insufficient audio between actions for a full ramp down. StarvationMonitor performs emergency ramp in that case.
+        //ASSERT(iState != ERampingDown); // Check if received enough audio for a normal ramp down.
 
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
@@ -142,12 +140,9 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    // NOTE - can re-enable to test for invalid transitions.
-    // Can happen when transitioning from MsgSilence to MsgAudioPcm.
-    if (iState == EFlushing || iState == ERampingDown) {
-        aMsg->RemoveRef();
-        ASSERTS();
-    }
+    // NOTE: can re-enable to test for invalid transitions.
+    //ASSERT(iState != EFlushing);    // Can happen if flush reaches CodecController during recognition; codec may recognise stream and StreamInitialise() call may output a MsgDecodedStream before CodecController passes on the MsgFlush.
+    //ASSERT(iState != ERampingDown); // Can happen if pausing/seeking in quick succession with insufficient audio between actions for a full ramp down. StarvationMonitor performs emergency ramp in that case.
 
     // iState may be ERampingUp if a MsgFlush was pulled
     if (iState == EWaiting || iState == ERampingUp) {
