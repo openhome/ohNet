@@ -76,7 +76,7 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
         }
         iStreamHandler = aMsg->StreamHandler();
         iStreamId = aMsg->StreamId();
-        iStreamPos = 0;
+        iStreamPos = aMsg->StartPos();
     }
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     aMsg->RemoveRef();

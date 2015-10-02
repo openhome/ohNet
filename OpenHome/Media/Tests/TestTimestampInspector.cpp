@@ -170,7 +170,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, nullptr);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, iNextStreamId, false, true, nullptr);
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerSecond);

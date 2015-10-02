@@ -387,7 +387,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgDelay(0);
     case EMsgEncodedStream:
     {
-        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, kStreamId, kSeekable, kLive, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, 0, kStreamId, kSeekable, kLive, nullptr);
     }
     case EMsgMetaText:
     {

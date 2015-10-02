@@ -427,6 +427,7 @@ public:
     const Brx& Uri() const;
     const Brx& MetaText() const;
     TUint64 TotalBytes() const;
+    TUint64 StartPos() const;
     TUint StreamId() const;
     TBool Seekable() const;
     TBool Live() const;
@@ -434,8 +435,8 @@ public:
     TBool RawPcm() const;
     const PcmStreamInfo& PcmStream() const;
 private:
-    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
-    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
+    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -443,6 +444,7 @@ private:
     Bws<kMaxUriBytes> iUri;
     Bws<MsgMetaText::kMaxBytes> iMetaText;
     TUint64 iTotalBytes;
+    TUint64 iStartPos;
     TUint iStreamId;
     TBool iSeekable;
     TBool iLive;
@@ -1104,12 +1106,13 @@ public:
      *
      * @param[in] aUri             Uri of the stream
      * @param[in] aTotalBytes      Length in bytes of the stream
+     * @param[in] aStartPos        Any offset from the actual start of the stream (e.g. when seeking)
      * @param[in] aSeekable        Whether the stream supports Seek requests
      * @param[in] aLive            Whether the stream is being broadcast live (and won't support seeking)
      * @param[in] aStreamHandler   Stream handler.  Used to allow pipeline elements to communicate upstream.
      * @param[in] aStreamId        Identifier for the pending stream.  Unique within a single track only.
      */
-    virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
+    virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TUint64 aStartPos, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     /**
      * Inform the pipeline that a new (raw PCM) audio stream is starting
      *
@@ -1457,8 +1460,8 @@ public:
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
-    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
-    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
+    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgEncodedStream* CreateMsgEncodedStream(MsgEncodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);

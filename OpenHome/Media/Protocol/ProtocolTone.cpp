@@ -611,7 +611,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     iLock.Wait();
     iStreamId = iIdProvider->NextStreamId();
     iLock.Signal();
-    iSupply->OutputStream(aUri, iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, iStreamId);
+    iSupply->OutputStream(aUri, iAudioBuf.Bytes() + nSamples * blockAlign, 0, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, iStreamId);
 
     TUint x = 0;
     TInt accRemain = 0;  // accumulation of error may tmp'ly be negative

@@ -1539,7 +1539,7 @@ void SuiteAudioStream::Test()
     TUint streamId = 8;
     TBool seekable = true;
     TBool live = true;
-    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, nullptr);
+    MsgEncodedStream* msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, 0, streamId, seekable, live, nullptr);
     TEST(msg != nullptr);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
@@ -1568,7 +1568,7 @@ void SuiteAudioStream::Test()
     streamId = 99;
     seekable = false;
     live = false;
-    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, nullptr);
+    msg = iMsgFactory->CreateMsgEncodedStream(uri, metaText, totalBytes, 0, streamId, seekable, live, nullptr);
     TEST(msg != nullptr);
     TEST(msg->Uri() == uri);
     TEST(msg->MetaText() == metaText);
@@ -2011,7 +2011,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDelay);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, false, false, nullptr);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, 0, false, false, nullptr);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgEncodedStream);
     msg->RemoveRef();
@@ -2417,7 +2417,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgDelay);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, nullptr);
+    msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
     TEST(queue->EncodedStreamCount() == 0);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);
@@ -2845,7 +2845,7 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
     case ProcessorMsgType::EMsgDelay:
         return iMsgFactory->CreateMsgDelay(0);
     case ProcessorMsgType::EMsgEncodedStream:
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, false, false, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, 0, false, false, nullptr);
     case ProcessorMsgType::EMsgAudioEncoded:
     {
         const TUint kDataBytes = 256;

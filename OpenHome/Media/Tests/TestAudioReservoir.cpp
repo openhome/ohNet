@@ -430,7 +430,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, nullptr);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
         break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -939,7 +939,7 @@ void SuiteEncodedReservoir::PullNext(EMsgType aType)
 
 void SuiteEncodedReservoir::PushEncodedStream()
 {
-    auto msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1234567LL, kStreamId, true/*seekable*/, false/*live*/, this/*stream handler*/);
+    auto msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1234567LL, 0, kStreamId, true/*seekable*/, false/*live*/, this/*stream handler*/);
     iReservoir->Push(msg);
 }
 

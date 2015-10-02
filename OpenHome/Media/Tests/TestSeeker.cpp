@@ -419,7 +419,7 @@ Msg* SuiteSeeker::CreateTrack()
 
 Msg* SuiteSeeker::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
 }
 
 Msg* SuiteSeeker::CreateDecodedStream()

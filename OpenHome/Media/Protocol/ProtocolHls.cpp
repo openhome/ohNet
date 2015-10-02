@@ -1002,7 +1002,7 @@ void ProtocolHls::StartStream(const Uri& aUri)
     TBool seekable = false;
     TBool live = true;
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(aUri.AbsoluteUri(), totalBytes, seekable, live, *this, iStreamId);
+    iSupply->OutputStream(aUri.AbsoluteUri(), totalBytes, 0, seekable, live, *this, iStreamId);
     iStarted = true;
 }
 

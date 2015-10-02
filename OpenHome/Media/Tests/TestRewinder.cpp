@@ -429,7 +429,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgDrain;
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iNextStreamId++, false, false, this);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, iNextStreamId++, false, false, this);
         iLastMsgType = EMsgEncodedStream;
         break;
     case EMsgAudioEncoded:

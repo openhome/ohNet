@@ -197,7 +197,7 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));

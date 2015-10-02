@@ -183,7 +183,7 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = iMsgFactory->CreateMsgDelay(0);
         return iLastMsg;
     case EMsgEncodedStream:
-        iLastMsg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, false /* not seekable */, true /* live */, nullptr);
+        iLastMsg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, 0, false /* not seekable */, true /* live */, nullptr);
         return iLastMsg;
     case EMsgMetaText:
         iLastMsg = iMsgFactory->CreateMsgMetaText(Brn(kMetaText));

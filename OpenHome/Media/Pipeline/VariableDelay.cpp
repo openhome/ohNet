@@ -323,7 +323,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamHandler();
-    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     aMsg->RemoveRef();
     return msg;
 }
