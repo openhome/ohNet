@@ -484,6 +484,7 @@ Msg* Rewinder::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Rewinder::ProcessMsg(MsgFlush* aMsg)
 {
+    TryBuffer(aMsg);
     return aMsg;
 }
 
