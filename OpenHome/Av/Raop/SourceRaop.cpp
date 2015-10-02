@@ -81,9 +81,9 @@ IClockPuller* UriProviderRaop::ClockPuller()
 const TChar* SourceRaop::kSourceNameStr = "Net Aux";
 const Brn SourceRaop::kRaopPrefix("raop://");
 const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
-const TUint SourceRaop::kAutoNetAuxOn = 0;              // Always visible via Airplay; auto switch when stream starts
-const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // Always visible via Airplay; don't auto switch
-const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airplay when Net Aux source selected
+const TUint SourceRaop::kAutoNetAuxOn = 0;              // RAOP device always visible; auto switch when stream starts.
+const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always visible; don't auto switch.
+const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
     : Source(kSourceNameStr, kSourceNameStr)
