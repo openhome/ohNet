@@ -1,5 +1,8 @@
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -73,6 +76,7 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
         }
         iStreamHandler = aMsg->StreamHandler();
         iStreamId = aMsg->StreamId();
+        iStreamPos = 0;
     }
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     aMsg->RemoveRef();
@@ -87,17 +91,19 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
         if (iStreamPos == iSeekPos) {
             return EndSeek(aMsg);
         }
-        else if (newStreamPos > iSeekPos) {
-            const TUint splitPos = static_cast<TUint>(newStreamPos - iSeekPos);
+        if (newStreamPos > iSeekPos) {
+            const TUint remainingBytes = static_cast<TUint>(newStreamPos - iSeekPos);
+            const TUint splitPos = aMsg->Bytes() - remainingBytes;
             auto split = aMsg->Split(splitPos);
             EnqueueAtHead(split);
-            newStreamPos -= splitPos;
+            newStreamPos -= remainingBytes;
         }
         iStreamPos = newStreamPos;
         aMsg->RemoveRef();
+        UnblockIfNotFull();
         return nullptr;
     }
-    iStreamPos += aMsg->Bytes(); // newStreamPos may be invalid if aMsg has been split
+    iStreamPos = newStreamPos;
     return aMsg;
 }
 
@@ -115,11 +121,13 @@ TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
     IStreamHandler* streamHandler = nullptr;
     {
         AutoMutex _(iLock2);
-        if (iStreamId == aStreamId && iStreamPos <= aOffset && iStreamPos + SizeInBytes() >= aOffset) {
+        const TUint64 lastBufferedPos = iStreamPos + SizeInBytes();
+        if (iStreamId == aStreamId && iStreamPos <= aOffset && lastBufferedPos >= aOffset) {
             iSeekPos = aOffset;
             if (iNextFlushId == MsgFlush::kIdInvalid) {
                 iNextFlushId = iFlushIdProvider.NextFlushId();
             }
+            LOG(kPipeline, "TrySeek(%u, %u) can be satisfied by encoded reservoir (runs %llu ... %llu)\n", aStreamId, aOffset, iStreamPos, lastBufferedPos);
             return iNextFlushId;
         }
         streamHandler = iStreamHandler;

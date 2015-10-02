@@ -2561,19 +2561,19 @@ void SuiteMsgReservoir::Test()
 
     queue->SplitNextAudio();
     msg = queue->Dequeue();
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgAudioPcm);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgAudioPcm);
     TEST(queue->Jiffies() == jiffies - (audioJiffies/2));
     jiffies = queue->Jiffies();
     msg->RemoveRef();
     msg = queue->Dequeue();
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgAudioPcm);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgAudioPcm);
     TEST(queue->Jiffies() == 0);
     msg->RemoveRef();
 
     msg = queue->Dequeue();
-    TEST(queue->LastIn() == TestMsgReservoir::EMsgAudioPcm);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgHalt);
     TEST(queue->Jiffies() == 0);
     msg->RemoveRef();

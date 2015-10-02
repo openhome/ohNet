@@ -28,6 +28,7 @@ public: // from IPipelineElementDownstream
 protected:
     AudioReservoir();
     void BlockIfFull();
+    void UnblockIfNotFull();
 private:
     virtual TBool IsFull() const = 0;
 private:
