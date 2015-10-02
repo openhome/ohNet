@@ -193,9 +193,7 @@ void SourceRaop::Deactivate()
         // selected source.
         iRaopDiscovery->Disable();
     }
-    if (iSessionActive) {
-        iSessionActive = false;
-    }
+    //iSessionActive = false; // Don't set here; session is only inactive when NotifySessionEnd() call comes in.
     iLock.Signal();
     Source::Deactivate();
 }
