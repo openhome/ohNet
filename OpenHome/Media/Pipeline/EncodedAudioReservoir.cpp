@@ -127,7 +127,8 @@ TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
             if (iNextFlushId == MsgFlush::kIdInvalid) {
                 iNextFlushId = iFlushIdProvider.NextFlushId();
             }
-            LOG(kPipeline, "TrySeek(%u, %u) can be satisfied by encoded reservoir (runs %llu ... %llu)\n", aStreamId, aOffset, iStreamPos, lastBufferedPos);
+            LOG(kPipeline, "TrySeek(%u, %llu) can be satisfied by encoded reservoir (runs %llu ... %llu)\n",
+                           aStreamId, aOffset, iStreamPos, lastBufferedPos);
             return iNextFlushId;
         }
         streamHandler = iStreamHandler;
