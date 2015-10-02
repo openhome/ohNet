@@ -785,6 +785,7 @@ void ProtocolHls::Interrupt(TBool aInterrupt)
         }
         iSegmentStreamer.ReadInterrupt();
         iM3uReader.Interrupt();
+        iSem.Signal();
     }
     iLock.Signal();
 }
@@ -952,7 +953,7 @@ EStreamPlay ProtocolHls::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "> ProtocolHls::OkToPlay(%u)\n", aStreamId);
     const EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
-    if (canPlay != ePlayNo && iStreamId == aStreamId) {
+    if (iStreamId == aStreamId) {
         iSem.Signal();
     }
     LOG(kMedia, "< ProtocolHls::OkToPlay(%u) == %s\n", aStreamId, kStreamPlayNames[canPlay]);
