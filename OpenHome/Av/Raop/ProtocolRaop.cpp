@@ -361,6 +361,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
                 iSupply->OutputFlush(flushId);
                 WaitForDrain();
+                iDiscovery.Close();
                 LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                 return EProtocolStreamStopped;
             }
@@ -388,6 +389,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
                 WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
+                iDiscovery.Close();
                 return EProtocolStreamStopped;
             }
 
