@@ -193,7 +193,7 @@ void SourceRaop::Deactivate()
         // selected source.
         iRaopDiscovery->Disable();
     }
-    //iSessionActive = false; // Don't set here; session is only inactive when NotifySessionEnd() call comes in.
+    iSessionActive = false; // If switching away from Net Aux, don't want to allow session to be re-initialised without user explicitly re-selecting device from a control point.
     iLock.Signal();
     Source::Deactivate();
 }
