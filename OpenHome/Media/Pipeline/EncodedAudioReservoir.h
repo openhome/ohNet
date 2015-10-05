@@ -27,6 +27,7 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsgOut(MsgFlush* aMsg) override;
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
@@ -43,7 +44,8 @@ private:
     TUint64 iStreamPos;
     TUint iNextFlushId;
     TUint64 iSeekPos;
-    TByte iAudioDebugBuf[10*1024];
+    TUint iPostSeekFlushId;
+    TUint64 iPostSeekStreamPos;
 };
 
 } // namespace Media

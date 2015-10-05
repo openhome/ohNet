@@ -20,6 +20,8 @@ EncodedAudioReservoir::EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdPr
     , iStreamPos(0)
     , iNextFlushId(MsgFlush::kIdInvalid)
     , iSeekPos(0)
+    , iPostSeekFlushId(MsgFlush::kIdInvalid)
+    , iPostSeekStreamPos(0)
 {
 }
 
@@ -107,6 +109,17 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
     return aMsg;
 }
 
+Msg* EncodedAudioReservoir::ProcessMsgOut(MsgFlush* aMsg)
+{
+    AutoMutex _(iLock2);
+    if (iPostSeekFlushId != MsgFlush::kIdInvalid && aMsg->Id() == iPostSeekFlushId) {
+        iPostSeekFlushId = MsgFlush::kIdInvalid;
+        iStreamPos = iPostSeekStreamPos;
+        iPostSeekStreamPos = 0;
+    }
+    return aMsg;
+}
+
 EStreamPlay EncodedAudioReservoir::OkToPlay(TUint aStreamId)
 {
     IStreamHandler* streamHandler = StreamHandler();
@@ -118,23 +131,24 @@ EStreamPlay EncodedAudioReservoir::OkToPlay(TUint aStreamId)
 
 TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
-    IStreamHandler* streamHandler = nullptr;
-    {
-        AutoMutex _(iLock2);
-        const TUint64 lastBufferedPos = iStreamPos + SizeInBytes();
-        if (iStreamId == aStreamId && iStreamPos <= aOffset && lastBufferedPos >= aOffset) {
-            iSeekPos = aOffset;
-            if (iNextFlushId == MsgFlush::kIdInvalid) {
-                iNextFlushId = iFlushIdProvider.NextFlushId();
-            }
-            LOG(kPipeline, "TrySeek(%u, %llu) can be satisfied by encoded reservoir (runs %llu ... %llu)\n",
-                           aStreamId, aOffset, iStreamPos, lastBufferedPos);
-            return iNextFlushId;
+    AutoMutex _(iLock2);
+    const TUint64 lastBufferedPos = iStreamPos + SizeInBytes();
+    if (iStreamId == aStreamId && iStreamPos <= aOffset && lastBufferedPos >= aOffset) {
+        iSeekPos = aOffset;
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
+            iNextFlushId = iFlushIdProvider.NextFlushId();
         }
-        streamHandler = iStreamHandler;
+        LOG(kPipeline, "TrySeek(%u, %llu) can be satisfied by encoded reservoir (runs %llu ... %llu)\n",
+                        aStreamId, aOffset, iStreamPos, lastBufferedPos);
+        return iNextFlushId;
     }
-    if (streamHandler != nullptr) {
-        return streamHandler->TrySeek(aStreamId, aOffset);
+    if (iStreamHandler != nullptr) {
+        const TUint flushId = iStreamHandler->TrySeek(aStreamId, aOffset);
+        if (flushId != MsgFlush::kIdInvalid) {
+            iPostSeekFlushId = flushId;
+            iPostSeekStreamPos = aOffset;
+            return flushId;
+        }
     }
     return MsgFlush::kIdInvalid;
 }
