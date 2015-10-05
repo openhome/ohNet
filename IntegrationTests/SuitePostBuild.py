@@ -38,14 +38,23 @@ except:
 tunein = config.Get( 'tunein.user.o4' )
 
 tests = [
-    # UPnP AV
-    [ 'TestAvTransportPlayTracks', 'local', 'local', 'None', 'short', 8,    1       ],
+    # # UPnP AV
+    # [ 'TestAvTransportPlayTracks', 'local', 'None',  'None',  'short', 6,    1                   ],
 
     # OH Playlist Service
-    [ 'TestLocalPlayTracks',       'local', 'local', 6,      'off',   'on', 'short' ],
+    [ 'TestLocalPlayTracks',       'local', 'None',  6,       'off',   'on', 'short'             ],
 
     # OH Radio Service (all locally served channels)
-    [ 'TestRadioPlayChannels',     'local', 'local', tunein, 7,       'on'          ]
+    [ 'TestRadioPlayChannels',     'local', 'None',  tunein,  6,       'on'                      ],
+
+    # Songcast (OHU/OHZ protocol)
+    [ 'TestSongcastConnect',       'local', 'local', 'local', 'local', '4',   'stop',  'unicast' ],
+
+    # Sources selection (Product service)
+    [ 'TestSourceSelect',          'local'                                                       ],
+
+    # Volume operation
+    [ 'TestVolumeService',         'local'                                                       ]
 ]
 
 Suite.Suite( tests, logDir )

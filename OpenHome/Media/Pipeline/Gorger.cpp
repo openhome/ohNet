@@ -137,6 +137,9 @@ Msg* Gorger::ProcessMsgOut(MsgMode* aMsg)
     iLock.Wait();
     iMode.Replace(aMsg->Mode());
     iCanGorge = !aMsg->Info().IsRealTime();
+    if (!iCanGorge) {
+        SetGorging(false, "ModeOut");
+    }
     iGorgeOnStreamOut = iCanGorge;
     iGorgeOnHaltOut = false;
     iLock.Signal();
