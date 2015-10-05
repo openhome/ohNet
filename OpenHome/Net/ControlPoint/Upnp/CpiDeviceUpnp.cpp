@@ -166,12 +166,12 @@ TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
                 return (true);
             }
             
-            Parser parser(property);
+            Parser parser2(property);
             
-            Brn token = parser.Next('.');
+            Brn token = parser2.Next('.');
             
             if (token == Brn("Service")) {
-                aValue.Set(device->ServiceVersion(parser.Remaining()));
+                aValue.Set(device->ServiceVersion(parser2.Remaining()));
                 return (true);
             }
         }
@@ -227,8 +227,7 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 
 TUint CpiDeviceUpnp::Version(const TChar* aDomain, const TChar* aName, TUint /*aProxyVersion*/) const
 {
-    ServiceType serviceType(iDevice->GetCpStack().Env(), aDomain, aName, 0);
-    const Brx& targServiceType = serviceType.FullName();
+    const Brx& targServiceType = ServiceType(iDevice->GetCpStack().Env(), aDomain, aName, 0).FullName();
     // Must have backwards compatibility. Need to compare service type and version separately.
     Parser serviceParser = targServiceType;
     serviceParser.Next(':');    // urn

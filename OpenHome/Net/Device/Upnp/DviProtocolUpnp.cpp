@@ -380,8 +380,8 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
                 completeNow = true;
             }
         }
-        for (TUint i=0; i<iAdapters.size(); i++) {
-            iAdapters[i]->BonjourDeregister();
+        for (TUint j=0; j<iAdapters.size(); j++) {
+            iAdapters[j]->BonjourDeregister();
         }
         const TChar* name = 0;
         GetAttribute("MdnsHostName", &name);

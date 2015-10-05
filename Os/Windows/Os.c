@@ -219,7 +219,7 @@ uint64_t OsTimeInUs(OsContext* aContext)
     /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
     if (now < aContext->iPrevTime) {
         diff = aContext->iPrevTime - now;
-        fprintf(stderr, "WARNING: clock moved backwards by %3lums\n", now / 10000);
+        fprintf(stderr, "WARNING: clock moved backwards by %3llums\n", now / 10000);
         aContext->iTimeAdjustment += diff;
     }
     aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */

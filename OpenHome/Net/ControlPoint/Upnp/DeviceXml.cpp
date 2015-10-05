@@ -129,13 +129,13 @@ Brn DeviceXml::ServiceVersion(const Brx& aServiceType) const
         Brn service = XmlParserBasic::Find("service", serviceList, serviceList);
         Brn type = XmlParserBasic::Find("serviceType", service);
 
-        Parser parser(type);
+        Parser parser2(type);
         
-        if (parser.Next(':') == Brn("urn")) {
-            if (parser.Next(':') == upnpDomain) {
-                if (parser.Next(':') == Brn("service")) {
-                    if (parser.Next(':') == upnpType) {
-                        return (parser.Remaining());
+        if (parser2.Next(':') == Brn("urn")) {
+            if (parser2.Next(':') == upnpDomain) {
+                if (parser2.Next(':') == Brn("service")) {
+                    if (parser2.Next(':') == upnpType) {
+                        return (parser2.Remaining());
                     }
                 }
             }

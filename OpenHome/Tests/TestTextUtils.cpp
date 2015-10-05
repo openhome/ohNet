@@ -1461,7 +1461,7 @@ void SuiteUri::Test()
     {
     Bws<1100> uriString;
     uriString.Replace("testscheme://testhost:123/testpath?testquery#testfragment");  // 59 (# -> %23)
-    for(TUint i=0 ; i<19 ; i++) {
+    for(TUint j=0 ; j<19 ; j++) {
         uriString.Append("12345678901234567890123456789012345678901234567890"); // + 19*50 = 1009
     }
     uriString.Append("123456789012345");  // + 15 = 1024
@@ -1473,7 +1473,7 @@ void SuiteUri::Test()
 
     // No fragment
     uriString.Replace("testscheme://testhost:123/testpath?testquery");  // 44
-    for(TUint i=0 ; i<19 ; i++) {
+    for(TUint k=0 ; k<19 ; k++) {
         uriString.Append("12345678901234567890123456789012345678901234567890"); // + 19*50 = 994
     }
     uriString.Append("123456789012345678901234567890"); // + 30 = 1024
@@ -1485,7 +1485,7 @@ void SuiteUri::Test()
 
     // No fragment or query
     uriString.Replace("testscheme://testhost:123/testpath");  // 34
-    for(TUint i=0 ; i<19 ; i++) {
+    for(TUint l=0 ; l<19 ; l++) {
         uriString.Append("12345678901234567890123456789012345678901234567890"); // + 19*50 = 984
     }
     uriString.Append("1234567890123456789012345678901234567890"); // + 40 = 1024
@@ -1497,7 +1497,7 @@ void SuiteUri::Test()
 
     // No fragment or query or port
     uriString.Replace("testscheme://testhost/testpath");  // 30
-    for(TUint i=0 ; i<19 ; i++) {
+    for(TUint m=0 ; m<19 ; m++) {
         uriString.Append("12345678901234567890123456789012345678901234567890"); // + 19*50 = 980
     }
     uriString.Append("12345678901234567890123456789012345678901234"); // + 44 = 1024

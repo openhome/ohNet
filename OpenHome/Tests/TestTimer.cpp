@@ -127,10 +127,10 @@ void SuiteTimerBasic::Test()
     a.Wait();
     Print("Wait finished 2\n");
 
-    for (TUint i = 1; i < 21; i++) {
-        Print("Wait for 1 second then a further %d millisecond\n", i);
+    for (TUint j = 1; j < 21; j++) {
+        Print("Wait for 1 second then a further %d millisecond\n", j);
         a.FireIn(1000);
-        b.FireIn(1000 + i);
+        b.FireIn(1000 + j);
         a.Wait();
         Print("Wait finished 1\n");
         b.Wait();

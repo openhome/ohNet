@@ -419,7 +419,7 @@ $(objdir)OhNetCCombined.$(objext) : OpenHome/Net/Bindings/C/OhNetCCombined.cpp $
 $(objdir)OsWrapper.$(objext) : Os/OsWrapper.cpp $(headers)
 	$(compiler)OsWrapper.$(objext) -c $(cppflags) $(includes) Os/OsWrapper.cpp
 $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
-	$(compiler)Os.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Os.c
+	$(compiler)Os.$(objext) -c $(cflags_third_party) $(includes) Os/$(osdir)/Os.c
 $(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)
 	$(compiler)File.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/File.cpp
 $(objdir)TerminalOs.$(objext) : Os/$(osdir)/TerminalOs.cpp $(headers)
