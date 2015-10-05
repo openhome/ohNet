@@ -245,7 +245,13 @@ void PipelineManager::Next()
     if (iMode.Bytes() == 0) {
         return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    iPipeline->RemoveCurrentStream();
+    /* Can't quite get away with only calling iPipeline->RemoveCurrentStream()
+       This works well when the pipeline is running but doesn't cope with the unusual
+       case where a protocol module is stalled before pushing any audio into the pipeline.
+       Call to iFiller->Stop() below spots this case and Interrupt()s the blocked protocol. */
+    (void)iFiller->Stop();
+    iIdManager->InvalidateAll();
+    (void)iFiller->Next(iMode);
 }
 
 void PipelineManager::Prev()
