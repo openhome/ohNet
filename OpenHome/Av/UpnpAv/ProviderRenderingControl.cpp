@@ -159,7 +159,9 @@ void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInst
         iVolume.SetVolume(aDesiredVolume);
     }
     catch (VolumeOutOfRange&) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        if (aDesiredVolume > iVolumeMax) {
+            aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        }
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
