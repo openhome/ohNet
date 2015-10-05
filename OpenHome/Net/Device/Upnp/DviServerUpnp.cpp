@@ -738,11 +738,12 @@ void DviSessionUpnp::Post()
 
 void DviSessionUpnp::Subscribe()
 {
-    Endpoint::EndpointBuf ep;
-    iHeaderCallback.Endpoint().AppendEndpoint(ep);
-    const Brx& callback = iHeaderCallback.Uri();
-    LOG(kDvEvent, "Subscription request from %s%.*s\n", reinterpret_cast<const TChar*>(ep.Ptr()), PBUF(callback));
-
+    {
+        Endpoint::EndpointBuf ep;
+        iHeaderCallback.Endpoint().AppendEndpoint(ep);
+        const Brx& callback = iHeaderCallback.Uri();
+        LOG(kDvEvent, "Subscription request from %s%.*s\n", reinterpret_cast<const TChar*>(ep.Ptr()), PBUF(callback));
+    }
     if (iHeaderSid.Received()) {
         try {
             Renew();
@@ -791,9 +792,11 @@ void DviSessionUpnp::Subscribe()
     iWriterResponse->WriteFlush();
     iResponseEnded = true;
 
-    const Brx& callback2 = iHeaderCallback.Uri();
-    const Brx& sid2 = subscription->Sid();
-    LOG(kDvEvent, "Subscription complete for  %.*s, sid is %.*s\n", PBUF(callback2), PBUF(sid2));
+    {
+        const Brx& callback2 = iHeaderCallback.Uri();
+        const Brx& sid2 = subscription->Sid();
+        LOG(kDvEvent, "Subscription complete for  %.*s, sid is %.*s\n", PBUF(callback2), PBUF(sid2));
+    }
 
     // Start subscription, prompting delivery of the first update (covering all state variables)
     service->AddSubscription(subscription);
