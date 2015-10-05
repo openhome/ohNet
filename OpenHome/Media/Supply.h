@@ -22,7 +22,7 @@ public: // from ISupply
     void OutputTrack(Track& aTrack, TBool aStartOfStream = true) override;
     void OutputDrain(Functor aCallback) override;
     void OutputDelay(TUint aJiffies) override;
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
+    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TUint64 aStartPos, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
     void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
     void OutputData(const Brx& aData) override;
     void OutputMetadata(const Brx& aMetadata) override;

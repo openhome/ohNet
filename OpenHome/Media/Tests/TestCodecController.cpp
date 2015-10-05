@@ -131,11 +131,11 @@ protected:
     TUint iStopCount;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
+    std::list<Msg*> iPendingMsgs;
+    std::list<Msg*> iReceivedMsgs;
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
-    std::list<Msg*> iPendingMsgs;
-    std::list<Msg*> iReceivedMsgs;
     Semaphore* iSemPending;
     Semaphore* iSemReceived;
     Mutex* iLockPending;
@@ -561,7 +561,7 @@ Msg* SuiteCodecControllerBase::CreateTrack()
 
 Msg* SuiteCodecControllerBase::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
 }
 
 MsgFlush* SuiteCodecControllerBase::CreateFlush()
@@ -1354,8 +1354,13 @@ void SuiteCodecControllerSeekInvalid::TestSeekInvalid()
     TEST(iHandle == handle);
     TEST(iFlushId == MsgFlush::kIdInvalid);
 
-    PullNext(EMsgAudioPcm);
-    PullNext(EMsgAudioPcm);
+    while (iReceivedMsgs.size() > 0) {
+        // we don't know how many encoded audios were pulled before the seek failed, ending the stream
+        PullNext(EMsgAudioPcm);
+    }
+    while (iPendingMsgs.size() > 0) {
+        Thread::Sleep(10); // leave time for any pending msgs to be pulled by CodecController
+    }
 }
 
 

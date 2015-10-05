@@ -75,7 +75,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
 {
     TBool success = false;
     if (!TryConnect()) {
-        LOG2(kPipeline, kError, "Qobuz::TryLogin - failed to connect\n");
+        LOG2(kPipeline, kError, "Qobuz::TryLogin - connection failure\n");
         return false;
     }
     AutoSocket _(iSocket);
@@ -86,7 +86,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         timestamp = iUnixTimestamp.Now();
     }
     catch (UnixTimestampUnavailable&) {
-        LOG2(kPipeline, kError, "Qobuz::TryLogin - failed to determine network time\n");
+        LOG2(kPipeline, kError, "Qobuz::TryLogin - failure to determine network time\n");
         return false;
     }
     Bws<Ascii::kMaxUintStringBytes> audioFormatBuf;
@@ -221,7 +221,7 @@ TBool Qobuz::TryLoginLocked()
     TBool success = false;
 
     if (!TryConnect()) {
-        LOG2(kMedia, kError, "Qobuz::TryLogin - failed to connect\n");
+        LOG2(kMedia, kError, "Qobuz::TryLogin - connection failure\n");
         iCredentialsState.SetState(kId, Brn("Login Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }

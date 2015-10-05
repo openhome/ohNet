@@ -557,7 +557,7 @@ void ProtocolHttp::StartStream()
     LOG(kMedia, "ProtocolHttp::StartStream\n");
 
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
+    iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iOffset, iSeekable, iLive, *this, iStreamId);
     iStarted = true;
 }
 

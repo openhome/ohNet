@@ -221,7 +221,7 @@ Msg* ElementFileReader::Pull()
         const TBool seekable = true;    // Streams such as those within MPEG TS containers are currently non-seekable.
         const TBool live = false;
         IStreamHandler* streamHandler = nullptr;
-        msg = iMsgFactory.CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, streamHandler);
+        msg = iMsgFactory.CreateMsgEncodedStream(uri, metaText, totalBytes, 0, streamId, seekable, live, streamHandler);
         iMode = eAudioEncoded;
     }
     else if (iMode == eAudioEncoded) {

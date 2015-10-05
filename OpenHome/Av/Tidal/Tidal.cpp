@@ -78,7 +78,7 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     AutoMutex _(iLock);
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kMedia, kError, "Tidal::TryGetStreamUrl - failed to connect\n");
+        LOG2(kMedia, kError, "Tidal::TryGetStreamUrl - connection failure\n");
         return false;
     }
     AutoSocketSsl __(iSocket);
@@ -211,7 +211,7 @@ TBool Tidal::TryLoginLocked()
     iSessionId.SetBytes(0);
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kPipeline, kError, "Tidal::TryLogin - failed to connect\n");
+        LOG2(kPipeline, kError, "Tidal::TryLogin - connection failure\n");
         iCredentialsState.SetState(kId, Brn("Login Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }
@@ -287,7 +287,7 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
     }
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kError, kPipeline, "Tidal: failed to connect\n");
+        LOG2(kError, kPipeline, "Tidal: connection failure\n");
         return false;
     }
     AutoSocketSsl _(iSocket);
@@ -325,7 +325,7 @@ TBool Tidal::TryGetSubscriptionLocked()
     Bws<ICredentials::kMaxStatusBytes> error;
     TBool success = false;
     if (!TryConnect(kPort)) {
-        LOG2(kMedia, kError, "Tidal::TryGetSubscriptionLocked - failed to connect\n");
+        LOG2(kMedia, kError, "Tidal::TryGetSubscriptionLocked - connection failure\n");
         iCredentialsState.SetState(kId, Brn("Subscription Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }
