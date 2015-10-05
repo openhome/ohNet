@@ -112,10 +112,8 @@ void LoggingPipelineObserver::NotifyMode(const Brx& aMode, const ModeInfo& aInfo
     if (!iEnable) {
         return;
     }
-    Log::Print("Pipeline report property: MODE {mode=");
-    Log::Print(aMode);
-    Log::Print("; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
-        aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
+    Log::Print("Pipeline report property: MODE {mode=%.*s; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
+               PBUF(aMode), aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
 }
 
 void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
@@ -123,13 +121,8 @@ void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TBool
     if (!iEnable) {
         return;
     }
-    Log::Print("Pipeline report property: TRACK {uri=");
-    Log::Print(aTrack.Uri());
-    //Log::Print("; metadata=");
-    //Log::Print(aTrack.MetaData());
-    Log::Print("; mode=");
-    Log::Print(aMode);
-    Log::Print("; trackId=%u; startOfStream=%u}\n", aTrack.Id(), aStartOfStream);
+    Log::Print("Pipeline report property: TRACK {uri=%.*s; mode=%.*s; trackId=%u; startOfStream=%u}\n",
+               PBUF(aTrack.Uri()), PBUF(aMode), aTrack.Id(), aStartOfStream);
 }
 
 void LoggingPipelineObserver::NotifyMetaText(const Brx& aText)
@@ -137,9 +130,7 @@ void LoggingPipelineObserver::NotifyMetaText(const Brx& aText)
     if (!iEnable) {
         return;
     }
-    Log::Print("Pipeline report property: METATEXT {");
-    Log::Print(aText);
-    Log::Print("}\n");
+    Log::Print("Pipeline report property: METATEXT {%.%s}\n", PBUF(aText));
 }
 
 void LoggingPipelineObserver::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
@@ -155,8 +146,7 @@ void LoggingPipelineObserver::NotifyStreamInfo(const DecodedStreamInfo& aStreamI
     if (!iEnable) {
         return;
     }
-    Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
-           aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
-    Log::Print(aStreamInfo.CodecName());
-    Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
+    Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=%.*s; trackLength=%llx, lossless=%u}\n",
+               aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels(),
+               PBUF(aStreamInfo.CodecName()), aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 }

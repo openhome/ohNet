@@ -429,7 +429,7 @@ Msg* SuiteStopper::CreateTrack()
 
 Msg* SuiteStopper::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, true, iLiveStream, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, true, iLiveStream, this);
 }
 
 Msg* SuiteStopper::CreateDecodedStream()

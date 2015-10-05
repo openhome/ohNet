@@ -434,7 +434,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         OhmMsgAudio* audio = iMsgFactory.CreateAudioFromBlob(reader, header);
         const TUint64 totalBytes = audio->SamplesTotal() * audio->Channels() * audio->BitDepth()/8;
         iStreamId = iIdProvider->NextStreamId();
-        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId);
+        iSupply->OutputStream(iTrackUri, totalBytes, 0, false/*seekable*/, false/*live*/, *this, iStreamId);
         audio->RemoveRef();
         iStreamMsgDue = false;
     }

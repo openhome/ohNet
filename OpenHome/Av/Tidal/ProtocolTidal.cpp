@@ -399,7 +399,7 @@ ProtocolStreamResult ProtocolTidal::ProcessContent()
 {
     if (!iStarted) {
         iStreamId = iIdProvider->NextStreamId();
-        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, false, *this, iStreamId);
+        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iOffset, iSeekable, false, *this, iStreamId);
         iStarted = true;
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();

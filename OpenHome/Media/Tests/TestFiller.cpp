@@ -264,7 +264,7 @@ ProtocolStreamResult DummyUriStreamer::DoStream(Track& aTrack)
     iStreamId++;
     iTrackId = aTrack.Id();
     iSupply.OutputTrack(aTrack);
-    iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
+    iSupply.OutputStream(aTrack.Uri(), 1LL, 0, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
     return EProtocolStreamSuccess;

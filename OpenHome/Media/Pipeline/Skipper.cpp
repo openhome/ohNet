@@ -119,7 +119,7 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
     }
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
-    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     aMsg->RemoveRef();
     NewStream();
     return msg;

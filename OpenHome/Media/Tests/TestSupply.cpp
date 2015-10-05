@@ -156,7 +156,7 @@ void SuiteSupply::Test()
     iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgDelay);
-    iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
+    iSupply->OutputStream(Brn(kUri), kTotalBytes, 0, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgEncodedStream);
     iSupply->OutputData(Brn(kTestData));

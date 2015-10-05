@@ -376,7 +376,7 @@ Msg* SuiteSkipper::CreateTrack()
 
 Msg* SuiteSkipper::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, true, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, true, false, this);
 }
 
 Msg* SuiteSkipper::CreateDecodedStream()

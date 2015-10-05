@@ -426,7 +426,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                  */
                 iSupply->OutputDelay(Delay(latency));
                 iSupply->OutputTrack(*track, !resumePending);
-                iSupply->OutputStream(uri.AbsoluteUri(), 0, false, false, *this, streamId);
+                iSupply->OutputStream(uri.AbsoluteUri(), 0, 0, false, false, *this, streamId);
                 OutputContainer(iDiscovery.Fmtp());
                 track->RemoveRef();
             }
@@ -511,7 +511,7 @@ void ProtocolRaop::StartStream()
         iStreamId = iIdProvider->NextStreamId();
         streamId = iStreamId;
     }
-    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, false, *this, streamId);
+    iSupply->OutputStream(iUri.AbsoluteUri(), 0, 0, false, false, *this, streamId);
 }
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
