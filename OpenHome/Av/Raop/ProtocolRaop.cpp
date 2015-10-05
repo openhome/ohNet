@@ -333,6 +333,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     TBool start = true;
 
+
     // Output audio stream
     for (;;) {
         {
@@ -453,20 +454,20 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             }
         }
         catch (InvalidRaopPacket&) {
-            LOG(kMedia, "<ProtocolRaop::Stream Invalid Header\n");
+            LOG(kMedia, "ProtocolRaop::Stream Invalid Header\n");
             //break;
         }
         catch (NetworkError&) {
-            LOG(kMedia, "<ProtocolRaop::Stream Network error\n");
+            LOG(kMedia, "ProtocolRaop::Stream Network error\n");
             //break;
         }
         catch (ReaderError&) {
-            LOG(kMedia, "<ProtocolRaop::Stream Reader error\n");
+            LOG(kMedia, "ProtocolRaop::Stream Reader error\n");
             // This can indicate an interrupt (caused by, e.g., a TryStop)
             // Continue around loop and see if iStopped has been set.
         }
         catch (HttpError&) {
-            LOG(kMedia, "<ProtocolRaop::Stream sdp not received\n");
+            LOG(kMedia, "ProtocolRaop::Stream sdp not received\n");
             // ignore and continue - sender should stop on a closed connection! wait for sender to re-select device
         }
     }
@@ -654,7 +655,7 @@ void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
 
 TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 {
-    LOG(kMedia, "ProtocolRaop::NotifySessionWait\n");
+    LOG(kMedia, "ProtocolRaop::SendFlush\n");
     AutoMutex a(iLockRaop);
     ASSERT(iActive);
     iFlushSeq = aSeq;
