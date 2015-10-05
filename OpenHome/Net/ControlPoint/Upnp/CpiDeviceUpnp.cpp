@@ -227,7 +227,8 @@ void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 
 TUint CpiDeviceUpnp::Version(const TChar* aDomain, const TChar* aName, TUint /*aProxyVersion*/) const
 {
-    const Brx& targServiceType = ServiceType(iDevice->GetCpStack().Env(), aDomain, aName, 0).FullName();
+    ServiceType defaultServiceType(iDevice->GetCpStack().Env(), aDomain, aName, 0);
+    const Brx& targServiceType = defaultServiceType.FullName();
     // Must have backwards compatibility. Need to compare service type and version separately.
     Parser serviceParser = targServiceType;
     serviceParser.Next(':');    // urn
