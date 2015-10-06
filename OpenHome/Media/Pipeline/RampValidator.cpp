@@ -69,10 +69,10 @@ void RampValidator::Push(Msg* aMsg)
     iDownstream->Push(msg);
 }
 
-void RampValidator::Reset(const TChar* aCallerId)
+void RampValidator::Reset(const TChar* /*aCallerId*/)
 {
     //Log::Print("RampValidator::Reset() - %s %s\n", iId, aCallerId);
-    LOG(kMedia, "RampValidator::Reset() - %s %s\n", iId, aCallerId);
+    //LOG(kMedia, "RampValidator::Reset() - %s %s\n", iId, aCallerId);
     iRamping = false;
     iLastRamp = UINT_MAX;
 }
