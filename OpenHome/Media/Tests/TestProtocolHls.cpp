@@ -753,6 +753,7 @@ Msg* TestElementDownstream::ProcessMsg(MsgTrack* aMsg)
 
 Msg* TestElementDownstream::ProcessMsg(MsgDrain* aMsg)
 {
+    aMsg->ReportDrained();
     return aMsg;
 }
 
