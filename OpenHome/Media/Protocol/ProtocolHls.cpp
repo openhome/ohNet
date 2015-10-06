@@ -78,6 +78,7 @@ private:
     void Reinitialise();
     void StartStream(const Uri& aUri);
     TBool IsCurrentStream(TUint aStreamId) const;
+    void WaitForDrain();
 private:
     IHlsReader* iHlsReaderM3u;
     IHlsReader* iHlsReaderSegment;
@@ -910,7 +911,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
                 }
             }
 
-            //iSupply->OutputEndOfStream(); // FIXME - to be implemented
+            WaitForDrain();
 
             Reinitialise();
             iM3uReader.SetUri(uriHttp);
@@ -926,8 +927,6 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iM3uReader.Interrupt();
     iSegmentStreamer.Close();
     iM3uReader.Close();
-
-    //iSupply->OutputEndOfStream(); // FIXME - to be implemented
 
     {
         AutoMutex a(iLock);
@@ -1024,4 +1023,11 @@ TBool ProtocolHls::IsCurrentStream(TUint aStreamId) const
         return false;
     }
     return true;
+}
+
+void ProtocolHls::WaitForDrain()
+{
+    Semaphore semDrain("HLSD", 0);
+    iSupply->OutputDrain(MakeFunctor(semDrain, &Semaphore::Signal));
+    semDrain.Wait();
 }
