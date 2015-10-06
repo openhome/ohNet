@@ -901,13 +901,21 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             iSegmentStreamer.Close();
             iM3uReader.Close();
 
+            // Output any pending flush.
+            {
+                AutoMutex a(iLock);
+                if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
+                    iSupply->OutputFlush(iNextFlushId);
+                    iNextFlushId = MsgFlush::kIdInvalid;
+                }
+            }
+
             //iSupply->OutputEndOfStream(); // FIXME - to be implemented
+
             Reinitialise();
             iM3uReader.SetUri(uriHttp);
             iSegmentStreamer.Stream(iM3uReader);
             iContentProcessor = iProtocolManager->GetAudioProcessor();
-
-            //Thread::Sleep(1000);    // Wait 1s before retrying. Avoid hammering server.
 
             StartStream(uriHls);    // Output new MsgEncodedStream to signify discontinuity.
         }
@@ -925,6 +933,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         AutoMutex a(iLock);
         if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
             iSupply->OutputFlush(iNextFlushId);
+            iNextFlushId = MsgFlush::kIdInvalid;
         }
         // Clear iStreamId to prevent TrySeek or TryStop returning a valid flush id.
         iStreamId = IPipelineIdProvider::kStreamIdInvalid;
@@ -982,13 +991,15 @@ TUint ProtocolHls::TryStop(TUint aStreamId)
         iM3uReader.Interrupt();
         iSem.Signal();
     }
+    const TUint nextFlushId = iNextFlushId;
     iLock.Signal();
-    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
+    return (stop ? nextFlushId : MsgFlush::kIdInvalid);
 }
 
 void ProtocolHls::Reinitialise()
 {
     LOG(kMedia, "ProtocolHls::Reinitialise\n");
+    AutoMutex a(iLock);
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStarted = iStopped = false;
     iContentProcessor = nullptr;
