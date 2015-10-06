@@ -819,12 +819,10 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     Reinitialise();
     Uri uriHls(aUri);
-    LOG(kMedia, "ProtocolHls::Stream(%.*s)\n", PBUF(aUri));
-
     if (uriHls.Scheme() != Brn("hls")) {
-        LOG(kMedia, "ProtocolHls::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
+    LOG(kMedia, "ProtocolHls::Stream(%.*s)\n", PBUF(aUri));
 
     if (!iStarted) {
         StartStream(uriHls);
