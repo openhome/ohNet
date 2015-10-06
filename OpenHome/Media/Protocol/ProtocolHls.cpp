@@ -911,9 +911,9 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             // Output any pending flush.
             {
                 AutoMutex a(iLock);
-                if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
-                    iSupply->OutputFlush(iNextFlushId);
-                    iNextFlushId = MsgFlush::kIdInvalid;
+                if (iNextFlushId != MsgFlush::kIdInvalid) {
+                    // Cleanup code will output flush before exiting this method.
+                    break;
                 }
             }
 
@@ -936,7 +936,7 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     {
         AutoMutex a(iLock);
-        if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
+        if (iNextFlushId != MsgFlush::kIdInvalid) {
             iSupply->OutputFlush(iNextFlushId);
             iNextFlushId = MsgFlush::kIdInvalid;
         }
