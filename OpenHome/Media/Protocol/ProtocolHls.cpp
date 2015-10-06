@@ -856,9 +856,12 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     while (res == EProtocolStreamErrorRecoverable) {
-        if (iStopped) {
-            res = EProtocolStreamStopped;
-            break;
+        {
+            AutoMutex a(iLock);
+            if (iStopped) {
+                res = EProtocolStreamStopped;
+                break;
+            }
         }
 
         // This will only return EProtocolStreamErrorRecoverable for live streams!
@@ -871,7 +874,12 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         //  - unrecoverable error (e.g. malformed M3U8) (EProtocolStreamErrorUnrecoverable)
         //  - recoverable interruption in stream        (EProtocolStreamErrorRecoverable)
 
-        if (iStopped) {
+        TBool stopped = false;
+        {
+            AutoMutex a(iLock);
+            stopped = iStopped;
+        }
+        if (stopped) {
             res = EProtocolStreamStopped;
             break;
         }
