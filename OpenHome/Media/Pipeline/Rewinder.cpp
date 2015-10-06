@@ -279,7 +279,6 @@ Msg* RewinderBufferProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgFlush* /*aMsg*/)
 {
-    ASSERTS(); // shouldn't have been buffered
     return nullptr;
 }
 
