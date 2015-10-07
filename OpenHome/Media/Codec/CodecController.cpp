@@ -110,7 +110,7 @@ void CodecBase::Construct(ICodecController& aController)
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
                                  IUrlBlockWriter& aUrlBlockWriter, TUint aThreadPriority)
     : iMsgFactory(aMsgFactory)
-    , iRewinder(aMsgFactory, aUpstreamElement, "CodecController")
+    , iRewinder(aMsgFactory, aUpstreamElement)
     , iDownstreamElement(aDownstreamElement)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iLock("CDCC")

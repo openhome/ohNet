@@ -33,7 +33,7 @@ public:
     static const TUint kMaxEncodedAudioMsgs = 50; // allows ~400k of data for content recognition
                                                   // hard-coded on assumption that only buggy codecs would demand more
 public:
-    Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, const TChar* aId);
+    Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     ~Rewinder();
 private:
     void TryBuffer(Msg* aMsg);
@@ -68,7 +68,6 @@ private: // from IStreamHandler
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
-    const TChar* iId;
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
     Mutex iLock;
