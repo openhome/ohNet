@@ -620,6 +620,10 @@ Msg* ContainerController::ProcessMsg(MsgHalt* aMsg)
 Msg* ContainerController::ProcessMsg(MsgFlush* aMsg)
 {
     iStreamEnded = true;
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     AutoMutex a(iLock);
     if (iExpectedFlushId == aMsg->Id()) {
         iExpectedFlushId = MsgFlush::kIdInvalid;
