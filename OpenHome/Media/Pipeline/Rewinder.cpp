@@ -358,9 +358,10 @@ TBool RewinderReservoir::IsFull() const
 
 // Rewinder
 
-Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iId(aId)
     , iStreamHandler(nullptr)
     , iBuffering(false)
     , iLock("REWI")

@@ -196,7 +196,7 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
     init.SetMsgEncodedStreamCount(3);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iRewinder = new Rewinder(*iMsgFactory, *this);
+    iRewinder = new Rewinder(*iMsgFactory, *this, "SuiteRewinder");
     iStreamHandler = nullptr;
     iMsgOrder.clear();
     iMsgCount = 0;
