@@ -1325,6 +1325,8 @@ Msg* MsgHalt::Process(IMsgProcessor& aProcessor)
 
 // MsgFlush
 
+const TUint MsgFlush::kIdInvalid  = 0;
+
 MsgFlush::MsgFlush(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {

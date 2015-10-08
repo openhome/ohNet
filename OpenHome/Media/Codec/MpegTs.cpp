@@ -510,7 +510,7 @@ void MpegTs::Reset()
 TBool MpegTs::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     // Seeking currently unsupported.
-    return MsgFlush::kIdInvalid;
+    return false;
 }
 
 Msg* MpegTs::Pull()
