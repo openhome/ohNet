@@ -130,7 +130,7 @@ void LoggingPipelineObserver::NotifyMetaText(const Brx& aText)
     if (!iEnable) {
         return;
     }
-    Log::Print("Pipeline report property: METATEXT {%.%s}\n", PBUF(aText));
+    Log::Print("Pipeline report property: METATEXT {%.*s}\n", PBUF(aText));
 }
 
 void LoggingPipelineObserver::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
