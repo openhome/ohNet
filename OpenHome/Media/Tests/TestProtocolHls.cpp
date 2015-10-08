@@ -136,7 +136,7 @@ private:
 class TestFlushIdProvider : public IFlushIdProvider
 {
 private:
-    static const TUint kIdStart = MsgFlush::kIdInvalid+1;
+    static const TUint kIdStart;
 public:
     TestFlushIdProvider();
 public: // from IFlushIdProvider
@@ -674,6 +674,8 @@ EStreamPlay TestPipelineIdProvider::OkToPlay(TUint aStreamId)
 
 
 // TestFlushIdProvider
+
+const TUint TestFlushIdProvider::kIdStart = MsgFlush::kIdInvalid+1;
 
 TestFlushIdProvider::TestFlushIdProvider()
     : iNextFlushId(kIdStart)

@@ -513,7 +513,7 @@ private:
 class MsgFlush : public Msg
 {
 public:
-    static const TUint kIdInvalid = 0;
+    static const TUint kIdInvalid;
 public:
     MsgFlush(AllocatorBase& aAllocator);
     void Initialise(TUint aId);
