@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Supply.h>
 #include <OpenHome/Media/Tests/TestProtocolHls.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 #include <algorithm>
 
@@ -998,7 +999,10 @@ TUint ProtocolHls::TryStop(TUint aStreamId)
     }
     const TUint nextFlushId = iNextFlushId;
     iLock.Signal();
-    return (stop ? nextFlushId : MsgFlush::kIdInvalid);
+    if (stop) {
+        return nextFlushId;
+    }
+    return MsgFlush::kIdInvalid;
 }
 
 void ProtocolHls::Reinitialise()
