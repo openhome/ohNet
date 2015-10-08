@@ -116,9 +116,6 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
     TUint trackId;
     {
         AutoMutex _(iLock);
-        if (iTrack != nullptr && iTrack->Uri() == aUri) {
-            return;
-        }
         if (iTrack != nullptr) {
             iTrack->RemoveRef();
         }
@@ -134,13 +131,13 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         iIgnorePipelineStateUpdates = true;
     }
     iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+    if (playNow) {
+        iPipeline.Play();
+    }
     {
         AutoMutex _(iLock);
         iIgnorePipelineStateUpdates = false;
         NotifyState(iPipelineTransportState);
-    }
-    if (playNow) {
-        iPipeline.Play();
     }
 }
 
