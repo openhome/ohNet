@@ -660,6 +660,10 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
     if (!iReadSuccess) {
         return EProtocolStreamErrorUnrecoverable;
     }
+    if (res == EProtocolStreamErrorRecoverable) {
+        LOG(kMedia, "EProtocolStreamErrorRecoverable from audio processor after %llu bytes (total=%llu)\n",
+            iOffset, iTotalBytes);
+    }
     return res;
 }
 
