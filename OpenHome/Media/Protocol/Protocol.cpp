@@ -166,9 +166,8 @@ void ProtocolNetwork::Open()
     
 void ProtocolNetwork::Close()
 {
-    LOG(kMedia, "ProtocolNetwork::Close\n");
-
     if (iSocketIsOpen) {
+        LOG(kMedia, "ProtocolNetwork::Close\n");
         iSocketIsOpen = false;
         iTcpClient.Close();
     }
