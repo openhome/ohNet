@@ -760,7 +760,7 @@ void DviSessionUpnp::Subscribe()
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
-    if (device == NULL || service == NULL) {
+    if (device == NULL || !device->Enabled() || service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
     TUint duration = (iHeaderTimeout.Received()? iHeaderTimeout.Timeout() : iDvStack.Env().InitParams()->DvMaxUpdateTimeSecs());
@@ -816,7 +816,7 @@ void DviSessionUpnp::Unsubscribe()
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
-    if (device == NULL || service == NULL) {
+    if (device == NULL  || !device->Enabled()|| service == NULL) {
         LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
     }
@@ -854,7 +854,7 @@ void DviSessionUpnp::Renew()
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
-    if (device == NULL || service == NULL) {
+    if (device == NULL  || !device->Enabled()|| service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
 
@@ -900,7 +900,7 @@ void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, D
     Brn udn = parser.Next('/');
     DviDevice* device = iDvStack.DeviceMap().Find(udn);
     *aDevice = device;
-    if (device == NULL) {
+    if (device == NULL || !device->Enabled()) {
         Error(HttpStatus::kPreconditionFailed);
     }
     Brn serviceName = parser.Next('/');
