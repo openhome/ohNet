@@ -700,6 +700,7 @@ RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiv
     , iResendReceiver(aResendReceiver)
     , iLatency(0)
     , iLock("RACL")
+    , iOpen(false)
     , iExit(false)
 {
     iThread = new ThreadFunctor("RaopControlServer", MakeFunctor(*this, &RaopControlServer::Run), kPriority-1, kSessionStackBytes);
@@ -708,12 +709,20 @@ RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiv
 
 void RaopControlServer::Open()
 {
-    iServer.Open();
+    AutoMutex a(iLock);
+    if (!iOpen) {
+        iServer.Open();
+        iOpen = true;
+    }
 }
 
 void RaopControlServer::Close()
 {
-    iServer.Close();
+    AutoMutex a(iLock);
+    if (iOpen) {
+        iServer.Close();
+        iOpen = false;
+    }
 }
 
 RaopControlServer::~RaopControlServer()

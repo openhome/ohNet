@@ -224,6 +224,7 @@ private:
     ThreadFunctor* iThread;
     TUint iLatency;
     mutable Mutex iLock;
+    TBool iOpen;
     TBool iExit;
 };
 
