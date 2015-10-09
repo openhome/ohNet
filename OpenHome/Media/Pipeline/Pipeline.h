@@ -76,6 +76,7 @@ namespace Codec {
     class CodecBase;
 }
 class PipelineElementObserverThread;
+class AudioDumper;
 class EncodedAudioReservoir;
 class Logger;
 class DecodedAudioValidator;
@@ -199,6 +200,7 @@ private:
     Mutex iLock;
     MsgFactory* iMsgFactory;
     PipelineElementObserverThread* iEventThread;
+    AudioDumper* iAudioDumper;
     EncodedAudioReservoir* iEncodedAudioReservoir;
     Logger* iLoggerEncodedAudioReservoir;
     Codec::ContainerController* iContainer;
