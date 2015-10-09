@@ -447,6 +447,7 @@ Pipeline::~Pipeline()
     delete iCodecController;
     delete iLoggerContainer;
     delete iContainer;
+    delete iAudioDumper;
     delete iLoggerEncodedAudioReservoir;
     delete iEncodedAudioReservoir;
     delete iEventThread;
