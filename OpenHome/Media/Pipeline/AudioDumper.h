@@ -43,7 +43,6 @@ private:
     IFile* iFile;
     Bws<EncodedAudio::kMaxBytes> iBuf;
     TBool iEnabled;
-    TUint iSeq;
 };
 
 } // namespace Media

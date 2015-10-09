@@ -32,7 +32,6 @@ AudioDumper::AudioDumper(IPipelineElementDownstream& aDownstream)
     , iDownstream(aDownstream)
     , iFile(nullptr)
     , iEnabled(false)
-    , iSeq(0)
 {
     /**
      * FIXME - bug in current filesystem handling: unable to create dirs.
