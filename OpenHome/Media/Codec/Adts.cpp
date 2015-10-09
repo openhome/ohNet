@@ -345,8 +345,10 @@ void CodecAdts::ProcessAdts(TBool aParseOnly)
                 }
             }
             if (streamInterruptedOutput) {
-                iTrackLengthJiffies += 1;   // Impossible to estimate how much audio has been lost, so assume only 1 jiffy.
-                iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+                const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iOutputSampleRate);
+                iTrackOffset += jiffiesPerSample;   // Impossible to estimate how much audio has been lost, so assume only 1 sample.
+                const TUint64 sampleStart = iTrackOffset / jiffiesPerSample;
+                iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, sampleStart, false);
             }
 
 
