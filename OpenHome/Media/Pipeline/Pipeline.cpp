@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
+#include <OpenHome/Media/Pipeline/AudioDumper.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -224,11 +225,14 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
     
-    // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
+    // Construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(*iMsgFactory, *this, maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir());
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
 
-    // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
+    // Construct audio dumper out of sequence. It doesn't pull from left so doesn't need to know it's preceding element (but it does need to know the element it's pushing to).
+    iAudioDumper = new AudioDumper(*iEncodedAudioReservoir);
+
+    // Construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
@@ -244,7 +248,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iContainer = new Codec::ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
     iContainer->AddContainer(new Codec::Id3v2());
     iContainer->AddContainer(new Codec::Mpeg4Container(aMimeTypeList));
-    iContainer->AddContainer(new Codec::MpegTs(aMimeTypeList));
+    iContainer->AddContainer(new Codec::MpegTsContainer(aMimeTypeList));
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
@@ -317,6 +321,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
         iPipelineEnd = iPreDriver;
     }
 
+    //iAudioDumper->SetEnabled(true);
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
@@ -442,6 +447,7 @@ Pipeline::~Pipeline()
     delete iCodecController;
     delete iLoggerContainer;
     delete iContainer;
+    delete iAudioDumper;
     delete iLoggerEncodedAudioReservoir;
     delete iEncodedAudioReservoir;
     delete iEventThread;
@@ -611,7 +617,7 @@ void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
 
 void Pipeline::Push(Msg* aMsg)
 {
-    iEncodedAudioReservoir->Push(aMsg);
+    iAudioDumper->Push(aMsg);
 }
 
 Msg* Pipeline::Pull()

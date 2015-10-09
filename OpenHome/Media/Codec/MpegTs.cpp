@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Codec/MpegTs.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/MimeTypeList.h>
@@ -434,10 +435,132 @@ Msg* StreamTerminatorDetector::ProcessMsg(MsgQuit* aMsg)
 }
 
 
+// MpegPes
+
+MpegPes::MpegPes(IPipelineElementUpstream& aUpstream, MsgFactory& aMsgFactory)
+    : iMsgFactory(aMsgFactory)
+    , iCache(aUpstream)
+    , iState(eFindSync)
+    , iBytesRemaining(0)
+{
+}
+
+void MpegPes::Reset()
+{
+    iCache.Reset();
+    iHeaderBuf.SetBytes(0);
+    iState = eStart;
+    iBytesRemaining = 0;
+}
+
+Msg* MpegPes::Pull()
+{
+    while (iState != eComplete) {
+
+        if (iState != eStart) {
+            Msg* msg = iCache.Pull();
+            if (msg != nullptr) {
+                msg = msg->Process(iAudioEncodedRecogniser);
+                if (msg != nullptr) {
+                    LOG(kCodec, "<MpegPes::Pull pulled non-audio msg: %p\n", msg);
+                    return msg;
+                }
+            }
+        }
+
+
+        if (iState == eStart) {
+            iCache.Inspect(iInspectBuf, kPesHeaderFixedBytes);
+            iState = eFindSync;
+        }
+        else if (iState == eFindSync) {
+            ASSERT(iHeaderBuf.Bytes()+iInspectBuf.Bytes() == kPesHeaderFixedBytes);
+            iHeaderBuf.Append(iInspectBuf);
+
+            Bws<50> buf;
+            Ascii::AppendHex(buf, iHeaderBuf);
+            LOG(kCodec, "MpegPes::Pull attempting to find sync: %.*s\n", PBUF(buf));
+
+            /**
+             * To get to this point, the TS packet in question MUST belong to the
+             * stream PID we are decoding (i.e., it must be one of the audio
+             * programs).
+             *
+             * It can only be a PES header if the following conditions are met
+             * (to avoid 'start code emulation' problems):
+             * - starts with the PES start code (0x000001)
+             * - is an audio stream (0xC0)
+             * - previous PES packet has been exhausted (iPesBytesRemaining == 0).
+             */
+            if (iHeaderBuf[0] == 0x00 && iHeaderBuf[1] == 0x00 && iHeaderBuf[2] == 0x01
+                && iHeaderBuf[3] == kPesAudioStreamId) {
+                iBytesRemaining = iHeaderBuf[4] << 8 | iHeaderBuf[5];    // Zero-length is only allowed for video streams, so this must be a valid length.
+                LOG(kCodec, "MpegPes::Pull eFindSync iBytesRemaining: %u\n", iBytesRemaining);
+                iHeaderBuf.SetBytes(0);
+
+                if (iBytesRemaining >= kPesHeaderFixedBytes+kPesHeaderOptionalFixedBytes) {
+                    iCache.Inspect(iInspectBuf, kPesHeaderOptionalFixedBytes);
+                    iState = eInspectOptionalHeader;
+                }
+                else {
+                    iCache.Accumulate(iBytesRemaining);
+                    iState = ePullPayload;
+                }
+            }
+            else {
+                // Not a PES header. Shift buffer along by one byte and read in next byte.
+                iHeaderBuf.Replace(iHeaderBuf.Ptr()+1, iHeaderBuf.Bytes()-1);
+                iCache.Inspect(iInspectBuf, 1);
+                iState = eFindSync;
+            }
+        }
+        else if (iState == eInspectOptionalHeader) {
+            ASSERT(iInspectBuf.Bytes() == kPesHeaderOptionalFixedBytes);
+            iBytesRemaining -= iInspectBuf.Bytes();
+            const TBool isOptionalPesHeader = (iInspectBuf[0] & 0x80) == 0x80;
+
+            if (isOptionalPesHeader) {
+                const TUint length = iInspectBuf[2];
+                iCache.Discard(length);
+                ASSERT(iBytesRemaining >= length);
+                iBytesRemaining -= length;
+                iState = ePullPayload;
+                iCache.Accumulate(iBytesRemaining);
+                LOG(kCodec, "MpegPes::Pull eInspectOptionalHeader optional header found. iBytesRemaining: %u\n", iBytesRemaining);
+            }
+            else {
+                LOG(kCodec, "MpegPes::Pull eInspectOptionalHeader optional header not found. iBytesRemaining: %u\n", iBytesRemaining);
+                iState = ePullPayload;
+                iCache.Accumulate(iBytesRemaining);
+                MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(iInspectBuf);
+                return msg;
+            }
+        }
+        else if (iState == ePullPayload) {
+            LOG(kCodec, "MpegPes::Pull ePullPayload iBytesRemaining: %u\n", iBytesRemaining);
+            MsgAudioEncoded* msg = iAudioEncodedRecogniser.AudioEncoded();
+            ASSERT(msg != nullptr);
+            ASSERT(msg->Bytes() == iBytesRemaining);
+            iBytesRemaining = 0;
+
+            iState = eStart;
+            return msg;
+        }
+        else {
+            // Unhandled state.
+            ASSERTS();
+        }
+    }
+    ASSERTS();  // Processing should never be complete.
+    return nullptr;
+}
+
+
 // MpegTs
 
-MpegTs::MpegTs(IMimeTypeList& aMimeTypeList)
-    : ContainerBase(Brn("MTS"))
+MpegTs::MpegTs(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory)
+    : iCache(aCache)
+    , iMsgFactory(aMsgFactory)
     , iPmt(kStreamTypeAdtsAac)
     , iProgramMapPid(0)
     , iStreamPid(0)
@@ -445,7 +568,6 @@ MpegTs::MpegTs(IMimeTypeList& aMimeTypeList)
     //, iAudioEncoded(nullptr)
     , iPendingMsg(nullptr)
 {
-    aMimeTypeList.Add("application/vnd.apple.mpegurl");
 }
 
 MpegTs::~MpegTs()
@@ -460,11 +582,11 @@ Msg* MpegTs::Recognise()
 {
     LOG(kMedia, "MpegTs::Recognise\n");
     if (!iRecognitionStarted) {
-        iCache->Inspect(iBuf, kStreamHeaderBytes);
+        iCache.Inspect(iBuf, kStreamHeaderBytes);
         iRecognitionStarted = true;
     }
 
-    Msg* msg = iCache->Pull();
+    Msg* msg = iCache.Pull();
     if (msg != nullptr) {
         return msg;
     }
@@ -507,12 +629,6 @@ void MpegTs::Reset()
     ASSERT(iPendingMsg == nullptr);
 }
 
-TBool MpegTs::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
-{
-    // Seeking currently unsupported.
-    return false;
-}
-
 Msg* MpegTs::Pull()
 {
     iStreamTerminatorDetector.Reset();
@@ -526,14 +642,14 @@ Msg* MpegTs::Pull()
                 return msg;
             }
 
-            Msg* msg = iCache->Pull();
+            Msg* msg = iCache.Pull();
             if (msg != nullptr) {
                 msg = msg->Process(iStreamTerminatorDetector);
                 if (iStreamTerminatorDetector.StreamTerminated()) {
                     LOG(kCodec, "MpegTs::Pull detected EoS.\n");
                     if (iAudioEncoded.Bytes() > 0) {
                         LOG(kCodec, "MpegTs::Pull EoS. Returning %u bytes of buffered audio\n.", iAudioEncoded.Bytes());
-                        MsgAudioEncoded* msgAudio = iMsgFactory->CreateMsgAudioEncoded(iAudioEncoded);
+                        MsgAudioEncoded* msgAudio = iMsgFactory.CreateMsgAudioEncoded(iAudioEncoded);
                         iAudioEncoded.SetBytes(0);
                         iPendingMsg = msg;
                         return msgAudio;
@@ -554,7 +670,7 @@ Msg* MpegTs::Pull()
             iStreamHeader.Reset();
             iRemaining = kPacketBytes;
 
-            iCache->Inspect(iBuf, kStreamHeaderBytes);
+            iCache.Inspect(iBuf, kStreamHeaderBytes);
             iState = eInspectPacketHeader;
         }
         else if (iState == eInspectPacketHeader) {
@@ -566,19 +682,19 @@ Msg* MpegTs::Pull()
                 ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
 
                 if (iStreamHeader.AdaptationField()) {
-                    iCache->Inspect(iBuf, kAdaptionFieldLengthBytes);
+                    iCache.Inspect(iBuf, kAdaptionFieldLengthBytes);
                     iState = eInspectAdaptationField;
                 }
                 else {
                     if (!TrySetPayloadState()) {
-                        iCache->Discard(iRemaining);
+                        iCache.Discard(iRemaining);
                         iRemaining = 0;
                         iState = eStart;
                     }
                 }
             }
             catch (InvalidMpegTsPacket) {
-                iCache->Discard(kPacketBytes - kStreamHeaderBytes);
+                iCache.Discard(kPacketBytes - kStreamHeaderBytes);
                 iState = eStart;
             }
         }
@@ -604,7 +720,7 @@ Msg* MpegTs::Pull()
                 }
             }
 
-            iCache->Discard(discard);
+            iCache.Discard(discard);
         }
         else if (iState == eInspectProgramAssociationTable) {
             ASSERT(iBuf.Bytes() == iRemaining);
@@ -617,7 +733,7 @@ Msg* MpegTs::Pull()
                 iState = eStart;    // Read next packet.
             }
             catch (InvalidMpegTsPacket) {
-                iCache->Discard(iRemaining);
+                iCache.Discard(iRemaining);
                 iRemaining = 0;
                 iState = eStart;
             }
@@ -633,60 +749,18 @@ Msg* MpegTs::Pull()
                 iState = eStart;    // Read next packet.
             }
             catch (InvalidMpegTsPacket) {
-                iCache->Discard(iRemaining);
+                iCache.Discard(iRemaining);
                 iRemaining = 0;
                 iState = eStart;
-            }
-        }
-        else if (iState == eInspectPesHeader) {
-            ASSERT(iBuf.Bytes() == kPesHeaderFixedBytes+kPesHeaderOptionalFixedBytes);
-            iRemaining -= iBuf.Bytes();
-            ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
-            MsgAudioEncoded* msg = nullptr;
-
-            if (iBuf[0] == 0x00 && iBuf[1] == 0x00 && iBuf[2] == 0x01) {
-                // PES packet header.
-                Brn optionalPesHeader(iBuf.Ptr()+kPesHeaderFixedBytes, iBuf.Bytes()-kPesHeaderFixedBytes);
-                const TBool isOptionalPesHeader = (optionalPesHeader[0] & 0x80) == 0x80;
-
-                if (isOptionalPesHeader) {
-                    const TUint length = optionalPesHeader[2];
-                    iCache->Discard(length);
-                    iRemaining -= length;
-                    ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
-                }
-                else {
-                    msg = iMsgFactory->CreateMsgAudioEncoded(optionalPesHeader);
-                }
-            }
-            else {
-                // Must output msg;
-                msg = iMsgFactory->CreateMsgAudioEncoded(iBuf);
-            }
-
-            if (iRemaining > 0) {
-                // Remainder should now be audio.
-                iCache->Accumulate(iRemaining);
-                iState = ePullPayload;
-            }
-            else {
-                iState = eStart;
-            }
-
-
-            if (msg != nullptr) {
-                msg = TryAppendToAudioEncoded(msg);
-                if (msg != nullptr) {
-                    return msg;
-                }
             }
         }
         else if (iState == ePullPayload) {
             MsgAudioEncoded* msg = iAudioEncodedRecogniser.AudioEncoded();
             ASSERT(msg != nullptr);
             ASSERT(msg->Bytes() == iRemaining);
-            iState = eStart;
+            iRemaining = 0;
 
+            iState = eStart;
             msg = TryAppendToAudioEncoded(msg);
             if (msg != nullptr) {
                 return msg;
@@ -704,47 +778,35 @@ Msg* MpegTs::Pull()
 TBool MpegTs::TrySetPayloadState()
 {
     //if (iStreamHeader.ContainsPayload()) {
-        if (iStreamHeader.PayloadStart()) {
-            if (iStreamHeader.PacketId() == 0 && iProgramMapPid == 0) {
-                iCache->Inspect(iBuf, iRemaining);
-                iState = eInspectProgramAssociationTable;
-            }
-            else if (iProgramMapPid != 0 && iStreamHeader.PacketId() == iProgramMapPid && iStreamPid == 0) {
-                iCache->Inspect(iBuf, iRemaining);
-                iState = eInspectProgramMapTable;
-            }
-            else if (iStreamPid != 0 && iStreamHeader.PacketId() == iStreamPid) {
-                if (iState != eInspectPesHeader) {
-                    iCache->Inspect(iBuf, kPesHeaderFixedBytes+kPesHeaderOptionalFixedBytes);
-                    iState = eInspectPesHeader;
-                }
-                else {
-                    // Remainder should now be audio.
-                    iCache->Accumulate(iRemaining);
-                    iState = ePullPayload;
-                }
-            }
-            else {
-                // Unrecognised/unhandled packet.
-                return false;
-            }
+    if (iStreamHeader.PayloadStart()) {
+        if (iStreamHeader.PacketId() == 0 && iProgramMapPid == 0) {
+            iCache.Inspect(iBuf, iRemaining);
+            iState = eInspectProgramAssociationTable;
+        }
+        else if (iProgramMapPid != 0 && iStreamHeader.PacketId() == iProgramMapPid && iStreamPid == 0) {
+            iCache.Inspect(iBuf, iRemaining);
+            iState = eInspectProgramMapTable;
         }
         else if (iStreamPid != 0 && iStreamHeader.PacketId() == iStreamPid) {
-            if (iState != eInspectPesHeader && iRemaining >= kPesHeaderFixedBytes+kPesHeaderOptionalFixedBytes) {
-                iCache->Inspect(iBuf, kPesHeaderFixedBytes+kPesHeaderOptionalFixedBytes);
-                iState = eInspectPesHeader;
-            }
-            else {
-                // Remainder should now be audio.
-                iCache->Accumulate(iRemaining);
-                iState = ePullPayload;
-            }
+            // Remainder should now be audio.
+            iCache.Accumulate(iRemaining);
+            iState = ePullPayload;
         }
         else {
-            // Unrecognised payload.
+            // Unrecognised/unhandled packet.
             return false;
         }
-        return true;
+    }
+    else if (iStreamPid != 0 && iStreamHeader.PacketId() == iStreamPid) {
+        // Remainder should now be audio.
+        iCache.Accumulate(iRemaining);
+        iState = ePullPayload;
+    }
+    else {
+        // Unrecognised payload.
+        return false;
+    }
+    return true;
     //}
     //else { // No payload.
     //    return false;
@@ -761,7 +823,7 @@ MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
         aMsg->RemoveRef();
 
         if (iAudioEncoded.Bytes() == iAudioEncoded.MaxBytes()) {
-            MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(iAudioEncoded);
+            MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(iAudioEncoded);
             iAudioEncoded.SetBytes(0);
             return msg;
         }
@@ -775,7 +837,7 @@ MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
         aMsg->RemoveRef();
 
         ASSERT(iAudioEncoded.Bytes() == iAudioEncoded.MaxBytes());
-        MsgAudioEncoded* msg = iMsgFactory->CreateMsgAudioEncoded(iAudioEncoded);
+        MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(iAudioEncoded);
         iAudioEncoded.SetBytes(0);
 
         remainder->CopyTo(const_cast<TByte*>(iAudioEncoded.Ptr())+iAudioEncoded.Bytes());
@@ -784,59 +846,56 @@ MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
 
         return msg;
     }
+}
 
 
+// MpegTsContainer
+
+MpegTsContainer::MpegTsContainer(IMimeTypeList& aMimeTypeList)
+    : ContainerBase(Brn("MTS"))
+    , iMpegTs(nullptr)
+    , iMpegPes(nullptr)
+{
+    aMimeTypeList.Add("application/vnd.apple.mpegurl");
+}
+
+MpegTsContainer::~MpegTsContainer()
+{
+    delete iMpegPes;
+    delete iMpegTs;
+}
 
 
-    //if (iAudioEncoded == nullptr) {
-    //    iAudioEncoded = aMsg;
-    //    return nullptr;
-    //}
+Msg* MpegTsContainer::Recognise()
+{
+    return iMpegTs->Recognise();
+}
 
-    //Log::Print(">TryAppendToAudioEncoded iAudioEncoded->Bytes(): %u\n", iAudioEncoded->Bytes());
-    //aMsg->CopyTo(const_cast<TByte*>(iBuf.Ptr()));
-    //iBuf.SetBytes(aMsg->Bytes());
-    //TUint offset = iAudioEncoded->Append(iBuf);
+TBool MpegTsContainer::Recognised() const
+{
+    return iMpegTs->Recognised();
+}
 
-    //if (offset == iBuf.Bytes()) {
-    //    Log::Print("TryAppendToAudioEncoded appended entire msg\n");
-    //    // Appended entire msg.
-    //    aMsg->RemoveRef();
-    //    return nullptr;
-    //}
-    //else if (offset == 0) {
-    //    Log::Print("TryAppendToAudioEncoded offset == 0\n");
-    //    // Didn't append any of msg.
-    //    MsgAudioEncoded* msg = iAudioEncoded;
-    //    iAudioEncoded = aMsg;
+void MpegTsContainer::Reset()
+{
+    iMpegTs->Reset();
+    iMpegPes->Reset();
+}
 
+TBool MpegTsContainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    // Seeking currently unsupported.
+    return false;
+}
 
-    //    Bwh msgStart(msg->Bytes());
-    //    msg->CopyTo(const_cast<TByte*>(msgStart.Ptr()));
-    //    msgStart.SetBytes(msg->Bytes());
-    //    Log::Print("\t<MpegTs::TryAppendToAudioEncoded msgStart: 0x%.2x%.2x%.2x%.2x\n", msgStart[0], msgStart[1], msgStart[2], msgStart[3]);
+Msg* MpegTsContainer::Pull()
+{
+    return iMpegPes->Pull();
+}
 
-    //    return msg;
-    //}
-    //else {
-    //    Log::Print("TryAppendToAudioEncoded offset > 0. offset: %u, iAudioEncoded->Bytes(): %u, aMsg->Bytes(): %u\n", offset, iAudioEncoded->Bytes(), aMsg->Bytes());
-    //    MsgAudioEncoded* remainder = aMsg->Split(offset);
-    //    MsgAudioEncoded* msg = iAudioEncoded;
-    //    iAudioEncoded = remainder;
-    //    aMsg->RemoveRef();
-
-    //    Bwh msgStart(iAudioEncoded->Bytes());
-    //    iAudioEncoded->CopyTo(const_cast<TByte*>(msgStart.Ptr()));
-    //    msgStart.SetBytes(iAudioEncoded->Bytes());
-    //    Log::Print("\t<MpegTs::TryAppendToAudioEncoded iAudioEncoded: 0x%.2x%.2x%.2x%.2x\n", msgStart[0], msgStart[1], msgStart[2], msgStart[3]);
-
-    //    Log::Print("TryAppendToAudioEncoded offset > 0. msg->Bytes(): %u, iAudioEncoded->Bytes(): %u\n", msg->Bytes(), iAudioEncoded->Bytes());
-
-    //    Bwh msgStart2(msg->Bytes());
-    //    msg->CopyTo(const_cast<TByte*>(msgStart2.Ptr()));
-    //    msgStart2.SetBytes(msg->Bytes());
-    //    Log::Print("\t<MpegTs::TryAppendToAudioEncoded msgStart: 0x%.2x%.2x%.2x%.2x\n", msgStart2[0], msgStart2[1], msgStart2[2], msgStart2[3]);
-
-    //    return msg;
-    //}
+void MpegTsContainer::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter)
+{
+    ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter);
+    iMpegTs = new MpegTs(*iCache, *iMsgFactory);
+    iMpegPes = new MpegPes(*iMpegTs, *iMsgFactory);
 }
