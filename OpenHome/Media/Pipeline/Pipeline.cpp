@@ -248,7 +248,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iContainer = new Codec::ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
     iContainer->AddContainer(new Codec::Id3v2());
     iContainer->AddContainer(new Codec::Mpeg4Container(aMimeTypeList));
-    iContainer->AddContainer(new Codec::MpegTs(aMimeTypeList));
+    iContainer->AddContainer(new Codec::MpegTsContainer(aMimeTypeList));
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence

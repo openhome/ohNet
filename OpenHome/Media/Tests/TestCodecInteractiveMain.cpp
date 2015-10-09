@@ -759,7 +759,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     decoder->AddContainer(new Id3v2());
     //decoder->AddContainer(new Mpeg4Container(*decoder));
-    decoder->AddContainer(new MpegTs(*decoder));
+    decoder->AddContainer(new MpegTsContainer(*decoder));
 
     decoder->AddCodec(CodecFactory::NewAac(*decoder));
     decoder->AddCodec(CodecFactory::NewAifc(*decoder));

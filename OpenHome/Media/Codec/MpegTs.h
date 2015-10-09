@@ -114,7 +114,7 @@ private:
     TUint iStreamPid;
 };
 
-// FIXME - bodge for fact that MpegTs buffers EncodedAudio data to allow it to detect when it should push any remaining buffered data.
+// FIXME - bodge for fact that MpegTs buffers EncodedAudio data, so this allows it to detect when it should push any remaining buffered data.
 class StreamTerminatorDetector : public IMsgProcessor
 {
 public:
@@ -143,7 +143,37 @@ private:
     TBool iStreamTerminated;
 };
 
-class MpegTs : public ContainerBase
+class MpegPes : public IPipelineElementUpstream
+{
+private:
+    static const TUint kPesHeaderStartCodePrefixBytes = 3;
+    static const TUint kPesHeaderFixedBytes = 6;
+    static const TUint kPesHeaderOptionalFixedBytes = 3;
+    static const TUint kPesAudioStreamId = 0xc0;
+public:
+    MpegPes(IPipelineElementUpstream& aUpstream, MsgFactory& aMsgFactory);
+    void Reset();
+public: // from IPipelineElementUpstream
+    Msg* Pull() override;
+private:
+    enum EState {
+        eStart,
+        eFindSync,
+        eInspectOptionalHeader,
+        ePullPayload,
+        eComplete,
+    };
+private:
+    MsgFactory& iMsgFactory;
+    MsgAudioEncodedCache iCache;
+    MsgAudioEncodedRecogniser iAudioEncodedRecogniser;
+    Bws<kPesHeaderFixedBytes> iInspectBuf;
+    Bws<kPesHeaderFixedBytes> iHeaderBuf;
+    EState iState;
+    TUint iBytesRemaining;
+};
+
+class MpegTs : public IPipelineElementUpstream
 {
 private:
     static const TUint kPacketBytes = 188;
@@ -152,18 +182,13 @@ private:
 
     static const TUint kStreamSpecificFixedBytes = 5;
     static const TUint kStreamTypeAdtsAac = 0x0f;   // stream type 15/0x0f is ISO/IEC 13818-7 ADTS AAC
-
-    static const TUint kPesHeaderStartCodePrefixBytes = 3;
-    static const TUint kPesHeaderFixedBytes = 6;
-    static const TUint kPesHeaderOptionalFixedBytes = 3;
 public:
-    MpegTs(IMimeTypeList& aMimeTypeList);
+    MpegTs(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory);
     ~MpegTs();
-public: // from ContainerBase
-    Msg* Recognise() override;
-    TBool Recognised() const override;
-    void Reset() override;
-    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Recognise();
+    TBool Recognised() const;
+    void Reset();
+public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private:
     TBool TrySetPayloadState();
@@ -175,11 +200,12 @@ private:
         eInspectAdaptationField,
         eInspectProgramAssociationTable,
         eInspectProgramMapTable,
-        eInspectPesHeader,
         ePullPayload,
         eComplete,
     };
 private:
+    IMsgAudioEncodedCache& iCache;
+    MsgFactory& iMsgFactory;
     EState iState;
     MsgEncodedStreamRecogniser iEncodedStreamRecogniser;
     StreamTerminatorDetector iStreamTerminatorDetector;
@@ -196,6 +222,24 @@ private:
     //MsgAudioEncoded* iAudioEncoded;
     Bws<EncodedAudio::kMaxBytes> iAudioEncoded;
     Msg* iPendingMsg;   // FIXME - bodge to cope with fact that pipeline can't handle lots of small msgs (i.e., lots of <188-byte MsgAudioEncoded being returned, so that any cached audio can be flushed.
+};
+
+class MpegTsContainer : public ContainerBase
+{
+public:
+    MpegTsContainer(IMimeTypeList& aMimeTypeList);
+    ~MpegTsContainer();
+public: // from ContainerBase
+    Msg* Recognise() override;
+    TBool Recognised() const override;
+    void Reset() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Pull() override;
+private: // from ContainerBase
+    void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter) override;
+private:
+    MpegTs* iMpegTs;
+    MpegPes* iMpegPes;
 };
 
 } // namespace Codec
