@@ -370,10 +370,13 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
                     return EProtocolStreamStopped;
                 }
-                else { // waiting
+                else if (waiting) {
                     OutputDiscontinuity();
                     // Resume normal operation.
                     LOG(kMedia, "ProtocolRaop::Stream signalled end of wait.\n");
+                }
+                else {
+                    ASSERTS();  // Shouldn't be flushing in any other state.
                 }
             }
         }
