@@ -337,36 +337,44 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     // Output audio stream
     for (;;) {
         {
-            iLockRaop.Wait();
-            if (iWaiting) {
-                TUint flushId = iNextFlushId;
+            // Can't hold lock while outputting to supply as may block pipeline
+            // if callbacks come in, so do admin here before outputting msgs.
+            TUint flushId = MsgFlush::kIdInvalid;
+            TBool waiting = false;
+            TBool stopped = false;
+            {
+                AutoMutex a(iLockRaop);
+
+                flushId = iNextFlushId;
                 iNextFlushId = MsgFlush::kIdInvalid;
-                iWaiting = false;
-                iLockRaop.Signal();
 
-                iSupply->OutputFlush(flushId);
-                OutputDiscontinuity();
-                // Resume normal operation.
-                LOG(kMedia, "<ProtocolRaop::Stream signalled end of wait.\n");
+                if (iStopped) {
+                    stopped = true;
+                    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+                    iActive = false;
+                    iStopped = false;
+                }
+                if (iWaiting) {
+                    waiting = true;
+                    iWaiting = false;
+                }
             }
-            else if (iStopped) {
-                TUint flushId = iNextFlushId;
-                iNextFlushId = MsgFlush::kIdInvalid;
-                iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-                iActive = false;
-                iLockRaop.Signal();
 
-                iControlServer.Close();
-                iAudioServer.Close();
 
+            if (flushId != MsgFlush::kIdInvalid) {
                 iSupply->OutputFlush(flushId);
-                WaitForDrain();
-                iDiscovery.Close();
-                LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
-                return EProtocolStreamStopped;
-            }
-            else {
-                iLockRaop.Signal();
+
+                if (stopped) {
+                    WaitForDrain();
+                    iDiscovery.Close();
+                    LOG(kMedia, "<ProtocolRaop::Stream iStopped\n");
+                    return EProtocolStreamStopped;
+                }
+                else { // waiting
+                    OutputDiscontinuity();
+                    // Resume normal operation.
+                    LOG(kMedia, "ProtocolRaop::Stream signalled end of wait.\n");
+                }
             }
         }
 
@@ -597,7 +605,12 @@ void ProtocolRaop::OutputDiscontinuity()
     Semaphore sem("PRWS", 0);
     iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
     sem.Wait();
-    iAudioServer.Open();
+
+    // Only reopen audio server if a TryStop() hasn't come in.
+    AutoMutex a(iLockRaop);
+    if (!iStopped) {
+        iAudioServer.Open();
+    }
     LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
 }
 
@@ -633,6 +646,9 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
             iNextFlushId = iFlushIdProvider->NextFlushId();
             iStopped = true;
             DoInterrupt();
+            // Lock doesn't need to be held for this; code that opens server from other thread must check iStopped before opening it.
+            iControlServer.Close();
+            iAudioServer.Close();
         }
     }
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
@@ -889,6 +905,9 @@ TUint ResendRange::End() const
 
 RaopAudioServer::RaopAudioServer(SocketUdpServer& aServer)
     : iServer(aServer)
+    , iInterrupted(false)
+    , iLock("RASL")
+    , iOpen(false)
 {
 }
 
@@ -900,12 +919,20 @@ RaopAudioServer::~RaopAudioServer()
 
 void RaopAudioServer::Open()
 {
-    iServer.Open();
+    AutoMutex a(iLock);
+    if (!iOpen) {
+        iServer.Open();
+        iOpen = true;
+    }
 }
 
 void RaopAudioServer::Close()
 {
-    iServer.Close();
+    AutoMutex a(iLock);
+    if (iOpen) {
+        iServer.Close();
+        iOpen = false;
+    }
 }
 
 void RaopAudioServer::Reset()
@@ -926,6 +953,9 @@ void RaopAudioServer::ReadPacket(Bwx& aBuf)
     //LOG(kMedia, ">RaopAudioServer::ReadPacket\n");
 
     for (;;) {
+        //if (iInterrupted) {
+        //    THROW(ReaderError);
+        //}
         try {
             iServer.Read(aBuf);
             iServer.ReadFlush();

@@ -155,6 +155,8 @@ public:
 private:
     SocketUdpServer& iServer;
     TBool iInterrupted;
+    Mutex iLock;
+    TBool iOpen;
 };
 
 // FIXME - this class currently writes out the packet length at the start of decoded audio.
