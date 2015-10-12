@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -49,7 +50,6 @@ AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline, TBool aPul
     , iOsCtx(aEnv.OsCtx())
     , iPullable(aPullable)
     , iPlayable(nullptr)
-    , iPullLock("DBPL")
     , iPullValue(IPullableClock::kNominalFreq)
     , iQuit(false)
 {
@@ -104,7 +104,6 @@ void AnimatorBasic::DriverThread()
             }
             else {
                 iPendingJiffies = diffMs * Jiffies::kPerMs;
-                iPullLock.Wait();
                 if (iPullValue != IPullableClock::kNominalFreq) {
                     TInt64 pending64 = iPullValue * iPendingJiffies;
                     pending64 /= IPullableClock::kNominalFreq;
@@ -113,7 +112,6 @@ void AnimatorBasic::DriverThread()
                     //Log::Print("Pulled clock, now want %u jiffies (%ums, %d%%) extra\n", (TUint)pending, pending/Jiffies::kPerMs, (pending-(TInt)iPendingJiffies)/iPendingJiffies); // FIXME
                     iPendingJiffies = (TUint)pending64;
                 }
-                iPullLock.Signal();
             }
         }
     }
@@ -151,9 +149,7 @@ void AnimatorBasic::ProcessAudio(MsgPlayable* aMsg)
 
 Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
 {
-    iPullLock.Wait();
     iPullValue = IPullableClock::kNominalFreq;
-    iPullLock.Signal();
     aMsg->RemoveRef();
     return nullptr;
 }
@@ -211,13 +207,11 @@ Msg* AnimatorBasic::ProcessMsg(MsgQuit* aMsg)
 
 void AnimatorBasic::PullClock(TUint /*aSampleRate*/, TUint aMultiplier)
 {
-    if (!iPullable) {
+    if (!iPullable || iPullValue == aMultiplier) {
         return;
     }
-    AutoMutex _(iPullLock);
     iPullValue = aMultiplier;
-    const TUint percent = (TUint)((iPullValue * 100) / IPullableClock::kNominalFreq);
-    Log::Print("AnimatorBasic::PullClock now at %u%%\n", percent);
+    LOG(kPipeline, "AnimatorBasic::PullClock now at %u%%\n", (TUint)((iPullValue * 100) / IPullableClock::kNominalFreq));
 }
 
 TUint AnimatorBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)

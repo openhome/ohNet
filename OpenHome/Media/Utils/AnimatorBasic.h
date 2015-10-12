@@ -60,7 +60,6 @@ private:
     TUint64 iLastTimeUs;
     TUint iNextTimerDuration;
     MsgPlayable* iPlayable;
-    Mutex iPullLock;
     TUint64 iPullValue;
     TBool iQuit;
 };
