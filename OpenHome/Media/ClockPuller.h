@@ -34,14 +34,14 @@ class IPullableClock
 {
 public:
     static const TUint kPullNone = 0; // no pull set
-    static const TUint kNominalFreq = 1<<30;
+    static const TUint kNominalFreq = 1u<<31;
 public:
     virtual ~IPullableClock() {}
     /**
      * Signal that the clock should be pulled.
      *
      * @param[in] aSampleRate  Nominal frequency for the stream.
-     * @param[in] aMultiplier  Amount to pull by as fix 2.30 value.
+     * @param[in] aMultiplier  Amount to pull by as fix 1.31 value.
      *                         kNominalFreq implies no pull - i.e. run at nominal frequency.
      */
     virtual void PullClock(TUint aSampleRate, TUint aMultiplier) = 0;
