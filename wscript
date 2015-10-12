@@ -200,6 +200,7 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/InfoProvider.cpp',
+                'OpenHome/Media/Pipeline/AudioDumper.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',

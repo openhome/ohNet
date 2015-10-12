@@ -155,6 +155,8 @@ public:
 private:
     SocketUdpServer& iServer;
     TBool iInterrupted;
+    Mutex iLock;
+    TBool iOpen;
 };
 
 // FIXME - this class currently writes out the packet length at the start of decoded audio.
@@ -222,6 +224,7 @@ private:
     ThreadFunctor* iThread;
     TUint iLatency;
     mutable Mutex iLock;
+    TBool iOpen;
     TBool iExit;
 };
 
@@ -383,6 +386,7 @@ class RepairerTimer : public IRepairerTimer
 {
 public:
     RepairerTimer(Environment& aEnv, const TChar* aId);
+    ~RepairerTimer();
 public: // from IRepairerTimer
     void Start(Functor aFunctor, TUint aFireInMs) override;
     void Cancel() override;
@@ -458,6 +462,7 @@ template <TUint MaxFrames> Repairer<MaxFrames>::Repairer(Environment& aEnv, IRes
 
 template <TUint MaxFrames> Repairer<MaxFrames>::~Repairer()
 {
+    iTimer.Cancel();
     ASSERT(iFifoResend.SlotsFree() == 0);
     while (iFifoResend.SlotsUsed() > 0) {
         auto resend = iFifoResend.Read();

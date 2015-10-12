@@ -98,7 +98,7 @@ private:
     TBool InspectionBufferFilled() const;
     MsgAudioEncoded* ExtractMsgAudioEncoded(TUint aBytes);
     Msg* PullUpstreamMsg();
-private: // from IMsgAudioEncodedCache
+public: // from IMsgAudioEncodedCache
     void Discard(TUint aBytes) override;
     void Inspect(Bwx& aBuf, TUint aBytes) override;
     void Accumulate(TUint aBytes) override;
