@@ -140,7 +140,8 @@ MsgAudio* StarvationMonitor::ProcessAudioOut(MsgAudio* aMsg)
         }
         iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
         if (iJiffiesUntilNextHistoryPoint == 0) {
-            iClockPuller->NotifySizeStarvationMonitor(Jiffies());
+            const TUint multiplier = iClockPuller->NotifySize(Jiffies());
+            aMsg->SetClockPull(multiplier);
             iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
         }
     }
@@ -193,7 +194,7 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
         iEventBuffering.store(true);
         iObserverThread.Schedule(iEventId);
         if (iClockPuller != nullptr) {
-            iClockPuller->StopStarvationMonitor();
+            iClockPuller->Stop();
         }
     }
     else if (iStatus == EBuffering) {
@@ -203,7 +204,7 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
         iEventBuffering.store(false);
         iObserverThread.Schedule(iEventId);
         if (iClockPuller != nullptr) {
-            iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+            iClockPuller->Start(kUtilisationSamplePeriodJiffies);
         }
     }
     iStatus = aStatus;
@@ -263,11 +264,11 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     iMode.Replace(aMsg->Mode());
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     if (iClockPuller != nullptr) {
-        iClockPuller->StopStarvationMonitor();
+        iClockPuller->Stop();
     }
-    iClockPuller = aMsg->ClockPuller();
+    iClockPuller = aMsg->ClockPullers().ReservoirRight();
     if (iClockPuller != nullptr) {
-        iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+        iClockPuller->Start(kUtilisationSamplePeriodJiffies);
     }
     return aMsg;
 }
@@ -277,15 +278,20 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDrain* aMsg)
     iLock.Wait();
     iPriorityMsgCount--;
     iLock.Signal();
+    if (iClockPuller != nullptr) {
+        iClockPuller->Reset();
+    }
+    iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     return aMsg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    iStreamHandler = aMsg->StreamInfo().StreamHandler();
-    iStreamId = aMsg->StreamInfo().StreamId();
+    auto streamInfo = aMsg->StreamInfo();
+    iStreamHandler = streamInfo.StreamHandler();
+    iStreamId = streamInfo.StreamId();
     if (iClockPuller != nullptr) {
-        iClockPuller->NewStreamStarvationMonitor(iStreamId);
+        iClockPuller->NewStream(streamInfo.SampleRate());
     }
     iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     if (iRampUntilStreamOutCount > 0) {

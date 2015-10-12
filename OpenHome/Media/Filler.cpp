@@ -38,9 +38,9 @@ TBool UriProvider::SupportsPrev() const
     return iSupportsPrev;
 }
 
-IClockPuller* UriProvider::ClockPuller()
+ModeClockPullers UriProvider::ClockPullers()
 {
-    return nullptr;
+    return ModeClockPullers();
 }
 
 UriProvider::UriProvider(const TChar* aMode,
@@ -280,7 +280,7 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, nullptr, false, false));
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, ModeClockPullers(), false, false));
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
@@ -298,7 +298,7 @@ void Filler::Run()
                     ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
                                                              hard/impossible if the Gorger was allowed to buffer
                                                              content between the two VariableDelays */
-                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller(),
+                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPullers(),
                                                              iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev()));
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));

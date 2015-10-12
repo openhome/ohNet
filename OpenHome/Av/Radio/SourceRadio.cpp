@@ -22,12 +22,11 @@ namespace Av {
 class UriProviderRadio : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
-    ~UriProviderRadio();
+    UriProviderRadio(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller() override;
+    Media::ModeClockPullers UriProviderRadio::ClockPullers() override;
 private:
-    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
+    Media::ClockPullerUtilisation iClockPuller;
 };
 
 } // namespace Av
@@ -42,18 +41,18 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
                            *radioUriProvider, Brx::Empty(), aMediaPlayer.ConfigInitialiser(),
                            aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
 }
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aTuneInPartnerId)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
                            *radioUriProvider, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser(),
@@ -63,25 +62,15 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClo
 
 // UriProviderRadio
 
-UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock)
+UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
     : UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory())
+    , iClockPuller(aMediaPlayer.Env())
 {
-    if (aPullableClock == nullptr) {
-        iClockPuller = nullptr;
-    }
-    else {
-        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
-    }
 }
 
-UriProviderRadio::~UriProviderRadio()
+ModeClockPullers UriProviderRadio::ClockPullers()
 {
-    delete iClockPuller;
-}
-
-IClockPuller* UriProviderRadio::ClockPuller()
-{
-    return iClockPuller;
+    return ModeClockPullers(&iClockPuller, nullptr, nullptr);
 }
 
 

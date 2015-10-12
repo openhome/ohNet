@@ -263,7 +263,6 @@ def build(bld):
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'OpenHome/Media/Utils/Aggregator.cpp',
                 'OpenHome/Media/Utils/Silencer.cpp',
-                'OpenHome/Media/Utils/ClockPullerLogging.cpp',
                 'OpenHome/SocketSsl.cpp',
             ],
             use=['OHNET', 'OPENSSL'],

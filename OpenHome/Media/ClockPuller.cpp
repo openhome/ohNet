@@ -10,68 +10,16 @@ using namespace OpenHome::Media;
 
 // ClockPullerUtils
 
-void ClockPullerUtils::PullClock(IPullableClock& aPullableClock, TInt aDriftJiffies, TUint64 aPeriodJiffies)
+void ClockPullerUtils::PullClock(TUint& aMultiplier, TInt aDriftJiffies, TUint64 aPeriodJiffies)
 { // static
-    static const TInt fracOne = 1<<29;
-    LOG(kPipeline, "PullClock: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, (TUint)aPeriodJiffies/Jiffies::kPerMs);
+    LOG(kMedia, "PullClock: edrifted %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, (TUint)aPeriodJiffies/Jiffies::kPerMs);
     TInt64 driftJiffies = aDriftJiffies;
-    TInt64 driftFrac = driftJiffies * fracOne;
-    const TInt64 pull = (-driftFrac) / (TInt64)aPeriodJiffies;
-    if (pull > INT_MAX || pull < INT_MIN) {
-        LOG(kPipeline, "Rejected pull of %llx (%d%%)\n", pull, static_cast<TInt>((100*pull)/fracOne));
+    TInt64 update = -driftJiffies * aMultiplier;
+    update /= (TInt64)aPeriodJiffies;
+    if (update > kMaxPull || update < kMaxPull) {
+        LOG(kMedia, "Rejected pull of %llx (%d%%)\n", update, static_cast<TInt>((100*update)/aMultiplier));
     }
     else {
-        aPullableClock.PullClock((TInt)pull);
+        aMultiplier += (TInt)update;
     }
-}
-
-
-// ClockPullerNull
-
-void ClockPullerNull::StartTimestamp()
-{
-}
-
-void ClockPullerNull::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
-{
-}
-
-void ClockPullerNull::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
-{
-}
-
-void ClockPullerNull::StopTimestamp()
-{
-}
-
-void ClockPullerNull::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
-{
-}
-
-void ClockPullerNull::NewStreamDecodedReservoir(TUint /*aStreamId*/)
-{
-}
-
-void ClockPullerNull::NotifySizeDecodedReservoir(TUint /*aJiffies*/)
-{
-}
-
-void ClockPullerNull::StopDecodedReservoir()
-{
-}
-
-void ClockPullerNull::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
-{
-}
-
-void ClockPullerNull::NewStreamStarvationMonitor(TUint /*aStreamId*/)
-{
-}
-
-void ClockPullerNull::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
-{
-}
-
-void ClockPullerNull::StopStarvationMonitor()
-{
 }

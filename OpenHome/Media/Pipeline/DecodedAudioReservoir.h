@@ -22,6 +22,7 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgAudioPcm* aMsg) override;
     void ProcessMsgIn(MsgSilence* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;
@@ -32,7 +33,7 @@ private:
     Msg* DoProcessMsgOut(MsgAudio* aMsg);
 private:
     static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond / 10;
-    IClockPuller* iClockPuller;
+    IClockPullerReservoir* iClockPuller;
     Mutex iLock;
     const TUint iMaxJiffies;
     const TUint iMaxStreamCount;

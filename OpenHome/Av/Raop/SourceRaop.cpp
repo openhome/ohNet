@@ -23,12 +23,11 @@ namespace Av {
 class UriProviderRaop : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
-    ~UriProviderRaop();
+    UriProviderRaop(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller() override;
+    Media::ModeClockPullers ClockPullers() override;
 private:
-    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
+    Media::ClockPullerUtilisation iClockPuller;
 };
 
 } // namespace Av
@@ -44,9 +43,9 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer);
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
 }
@@ -54,25 +53,15 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableCloc
 
 // UriProviderRaop
 
-UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, IPullableClock* aPullableClock)
+UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer)
     : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
+    , iClockPuller(aMediaPlayer.Env())
 {
-    if (aPullableClock == nullptr) {
-        iClockPuller = nullptr;
-    }
-    else {
-        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
-    }
 }
 
-UriProviderRaop::~UriProviderRaop()
+ModeClockPullers UriProviderRaop::ClockPullers()
 {
-    delete iClockPuller;
-}
-
-IClockPuller* UriProviderRaop::ClockPuller()
-{
-    return iClockPuller;
+    return ModeClockPullers(&iClockPuller, nullptr, nullptr);
 }
 
 

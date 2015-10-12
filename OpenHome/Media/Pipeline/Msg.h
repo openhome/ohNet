@@ -138,7 +138,7 @@ public:
     static TUint JiffiesPerSample(TUint aSampleRate);
     static TUint BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
     static TUint ToSongcastTime(TUint aJiffies, TUint aSampleRate);
-    static TUint FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
+    static TUint64 FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
 private:
     static TUint SongcastTicksPerSecond(TUint aSampleRate);
 private:
@@ -309,6 +309,25 @@ private:
     TBool iSupportsPrev;
 };
 
+class IClockPullerReservoir;
+class IClockPullerTimestamp;
+
+class ModeClockPullers
+{
+public:
+    ModeClockPullers();
+    ModeClockPullers(IClockPullerReservoir* aReservoirLeft,
+                     IClockPullerReservoir* aReservoirRight,
+                     IClockPullerTimestamp* aTimestamp);
+    IClockPullerReservoir* ReservoirLeft() const;
+    IClockPullerReservoir* ReservoirRight() const;
+    IClockPullerTimestamp* Timestamp() const;
+private:
+    IClockPullerReservoir* iReservoirLeft;
+    IClockPullerReservoir* iReservoirRight;
+    IClockPullerTimestamp* iTimestamp;
+};
+
 class IClockPuller;
 
 class MsgMode : public Msg
@@ -318,16 +337,16 @@ public:
     MsgMode(AllocatorBase& aAllocator);
     const Brx& Mode() const;
     const ModeInfo& Info() const;
-    IClockPuller* ClockPuller() const;
+    const ModeClockPullers& ClockPullers() const;
 private:
-    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev);
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     BwsMode iMode;
     ModeInfo iInfo;
-    IClockPuller* iClockPuller;
+    ModeClockPullers iClockPullers;
 };
 
 class MsgTrack : public Msg
@@ -598,6 +617,7 @@ public:
     TUint SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
     void SetMuted(); // should only be used with msgs immediately following a ramp down
     const Media::Ramp& Ramp() const;
+    void SetClockPull(TUint aMultiplier);
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
@@ -611,6 +631,7 @@ protected:
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
     Media::Ramp iRamp;
+    TUint iClockPullMultiplier;
 };
 
 class MsgBitRate : public Msg
@@ -700,6 +721,7 @@ public:
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;
+    TUint ClockPullMultiplier() const;
     /**
      * Extract pcm data from this msg.
      *
@@ -713,7 +735,7 @@ public:
     void Read(IPcmProcessor& aProcessor);
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
-    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
 protected: // from Msg
     void RefAdded();
     void RefRemoved();
@@ -727,6 +749,7 @@ protected:
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
     Media::Ramp iRamp;
+    TUint iClockPullMultiplier;
 };
 
 class MsgPlayablePcm : public MsgPlayable
@@ -735,7 +758,7 @@ class MsgPlayablePcm : public MsgPlayable
 public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
 private: // from MsgPlayable
     MsgPlayable* Clone() override; // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     MsgPlayable* Allocate() override;
@@ -754,7 +777,7 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
 private: // from MsgPlayable
     MsgPlayable* Allocate() override;
     void SplitCompleted(MsgPlayable& aRemaining) override;
@@ -1456,7 +1479,7 @@ class MsgFactory
 public:
     MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams);
     //
-    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev);
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);

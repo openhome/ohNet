@@ -42,53 +42,23 @@ private:
     TUint iDeviationCount;
 };
 
-// Intended for sources which have a reasonable latency
-// ...so can perform all calculations based on state of DecodedAudioReservoir only
-class ClockPullerUtilisationPerStreamLeft : public IClockPuller, protected IUtilisationHistoryObserver
+class ClockPullerUtilisation : public IClockPullerReservoir, private IUtilisationHistoryObserver, private INonCopyable
 {
 public:
-    ClockPullerUtilisationPerStreamLeft(Environment& aEnv, IPullableClock& aPullableClock);
-    ~ClockPullerUtilisationPerStreamLeft();
-protected: // from IClockPuller
-    void StartTimestamp() override;
-    void NotifyTimestampSampleRate(TUint aSampleRate) override;
-    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
-    void StopTimestamp() override;
-    void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamDecodedReservoir(TUint aStreamId) override;
-    void NotifySizeDecodedReservoir(TUint aJiffies) override;
-    void StopDecodedReservoir() override;
-    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamStarvationMonitor(TUint aStreamId) override;
-    void NotifySizeStarvationMonitor(TUint aJiffies) override;
-    void StopStarvationMonitor() override;
-protected: // from IUtilisationHistoryObserver
-    void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;
-protected:
-    void TryAdd(UtilisationHistory& aHistory, TUint aJiffies);
-    void NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples, TUint aUpdateFrequency);
-private:
-    IPullableClock& iPullableClock;
-    Mutex iLock;
-    TUint iStreamIdLeft;
-    TUint iStreamIdRight;
-    UtilisationHistory* iUtilisationLeft;
-    TUint iDecodedReservoirUpdateFrequency;
-};
-
-class ClockPullerUtilisationPerStreamFull : public ClockPullerUtilisationPerStreamLeft
-{
-public:
-    ClockPullerUtilisationPerStreamFull(Environment& aEnv, IPullableClock& aPullableClock);
-    ~ClockPullerUtilisationPerStreamFull();
-private: // from IClockPuller
-    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NotifySizeStarvationMonitor(TUint aJiffies) override;
+    ClockPullerUtilisation(Environment& aEnv);
+    ~ClockPullerUtilisation();
+private: // from IClockPullerReservoir
+    void NewStream(TUint aSampleRate) override;
+    void Reset() override;
+    void Stop() override;
+    void Start(TUint aNotificationFrequency) override;
+    TUint NotifySize(TUint aJiffies) override;
 private: // from IUtilisationHistoryObserver
     void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;
 private:
-    UtilisationHistory* iUtilisationRight;
-    TUint iStarvationMonitorUpdateFrequency;
+    UtilisationHistory* iUtilisation;
+    TUint iUpdateFrequency;
+    TUint iMultiplier;
 };
 
 } // namespace Media

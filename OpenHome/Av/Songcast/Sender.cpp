@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/StringIds.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 #include <vector>
 

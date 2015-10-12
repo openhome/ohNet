@@ -25,13 +25,12 @@ private:
     const TUint iOpenHomeMax;
 };
 
-class AnimatorBasic : public PipelineElement, public IPullableClock, public IPipelineAnimator
+class AnimatorBasic : public PipelineElement, private IPullableClock, public IPipelineAnimator
 {
     static const TUint kTimerFrequencyMs = 5;
-    static const TInt64 kClockPullDefault = (1 << 29) * 100LL;
     static const TUint kSupportedMsgTypes;
 public:
-    AnimatorBasic(Environment& aEnv, IPipeline& aPipeline);
+    AnimatorBasic(Environment& aEnv, IPipeline& aPipeline, TBool aPullable);
     ~AnimatorBasic();
 private:
     void DriverThread();
@@ -44,7 +43,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPullableClock
-    void PullClock(TInt32 aValue);
+    void PullClock(TUint aSampleRate, TUint aMultiplier) override;
 private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
@@ -52,6 +51,7 @@ private:
     Semaphore iSem;
     OsContext* iOsCtx;
     ThreadFunctor *iThread;
+    const TBool iPullable;
     TUint iSampleRate;
     TUint iJiffiesPerSample;
     TUint iNumChannels;
@@ -61,7 +61,7 @@ private:
     TUint iNextTimerDuration;
     MsgPlayable* iPlayable;
     Mutex iPullLock;
-    TInt64 iPullValue;
+    TUint64 iPullValue;
     TBool iQuit;
 };
 

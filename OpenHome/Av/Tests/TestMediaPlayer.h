@@ -138,7 +138,6 @@ private:
     const Brx& iTidalId;
     const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
-    Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
     IOhmTimestamper* iTxTimestamper;

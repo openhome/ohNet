@@ -77,6 +77,7 @@ private: // from IMsgProcessor
 private:
     void Queue(Msg* aMsg);
     void PullNext(EMsgType aExpectedMsg);
+    Msg* CreateMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
     Msg* CreateTrack();
     Msg* CreateDecodedStream();
     Msg* CreateAudio();
@@ -315,6 +316,11 @@ void SuiteGorger::PullNext(EMsgType aExpectedMsg)
     TEST(iLastPulledMsg == aExpectedMsg);
 }
 
+Msg* SuiteGorger::CreateMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    return iMsgFactory->CreateMsgMode(aMode, aSupportsLatency, aRealTime, ModeClockPullers(), false, false);
+}
+
 Msg* SuiteGorger::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -341,7 +347,7 @@ Msg* SuiteGorger::CreateAudio()
 
 void SuiteGorger::TestAllMsgsPassWhileNotGorging()
 {
-    Queue(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, nullptr, false, false));
+    Queue(CreateMode(kModeRealTime, false, true));
     Queue(CreateTrack());
     Queue(iMsgFactory->CreateMsgDrain(Functor()));
     Queue(iMsgFactory->CreateMsgDelay(0));
@@ -376,7 +382,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     TEST(!iGorger->iGorging);
 
     TBool realTime = false;
-    Queue(iMsgFactory->CreateMsgMode(kModeGorgable, false, realTime, nullptr, false, false));
+    Queue(CreateMode(kModeGorgable, false, realTime));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -385,7 +391,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     TEST(!iGorger->iGorging);
 
     realTime = true;
-    Queue(iMsgFactory->CreateMsgMode(kModeRealTime, false, realTime, nullptr, false, false));
+    Queue(CreateMode(kModeRealTime, false, realTime));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
 
@@ -409,7 +415,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
 
 void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 {
-    Queue(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, nullptr, false, false));
+    Queue(CreateMode(kModeGorgable, false, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -437,7 +443,7 @@ void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 
 void SuiteGorger::TestGorgingEndsWithNewMode()
 {
-    Queue(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, nullptr, false, false));
+    Queue(CreateMode(kModeGorgable, false, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -450,7 +456,7 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
 
-    Queue(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, nullptr, false, false));
+    Queue(CreateMode(kModeRealTime, false, true));
     PullNext(EMsgAudioPcm);
     while (iGorger->iGorging) {
         Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
@@ -465,7 +471,7 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
 
 void SuiteGorger::TestHaltEnablesGorging()
 {
-    Queue(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, nullptr, false, false));
+    Queue(CreateMode(kModeGorgable, false, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -493,7 +499,7 @@ void SuiteGorger::TestHaltEnablesGorging()
 
 void SuiteGorger::TestStarvationEnablesGorging()
 {
-    Queue(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, nullptr, false, false));
+    Queue(CreateMode(kModeRealTime, false, true));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -506,7 +512,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     TEST(!iGorger->iGorging);
     TEST(iStarvationNotifications == 1);
 
-    Queue(iMsgFactory->CreateMsgMode(kModeGorgable, false, false, nullptr, false, false));
+    Queue(CreateMode(kModeGorgable, false, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);

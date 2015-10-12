@@ -78,7 +78,7 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
     IPipelineElementObserverThread& iObserverThread;
-    IClockPuller* iClockPuller;
+    IClockPullerReservoir* iClockPuller;
     ThreadFunctor* iThread;
     const TUint iNormalMax;
     const TUint iStarvationThreshold;
