@@ -2105,7 +2105,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     aSample = codecSampleFromChunk;
 
     //stco:
-    if (chunk >= iOffsets.size()) { // error - required chunk doesn't exist
+    if (chunk >= iOffsets.size()+1) { // error - required chunk doesn't exist
         THROW(MediaMpeg4OutOfRange);
     }
     return iOffsets[chunk - 1]; // entry found - return offset to required chunk
@@ -2173,47 +2173,65 @@ TUint64 SeekTable::CodecSample(TUint64 aAudioSample) const
         THROW(MediaMpeg4OutOfRange);
     }
 
-    // Something went wrong. Could corrupt table or programmer error!
+    // Something went wrong. Could be corrupt table or programmer error!
     LOG(kCodec, "SeekTable::CodecSample could not find aAudioSample: %u\n", aAudioSample);
     THROW(MediaMpeg4FileInvalid);
+}
+
+TUint SeekTable::SamplesPerChunkTotal(TUint aIndex) const
+{
+    // Calculates chunks*samples_per_chunk at given index in samples-per-chunk
+    // table.
+    ASSERT(aIndex < iSamplesPerChunk.size());
+    const TUint startChunk = iSamplesPerChunk[aIndex].iFirstChunk;
+    const TUint spc = iSamplesPerChunk[aIndex].iSamples;
+    TUint endChunk = 0;
+
+    // Find last chunk in current run.
+    if (aIndex + 1 < iSamplesPerChunk.size()) {
+        endChunk = iSamplesPerChunk[aIndex + 1].iFirstChunk;
+    }
+    else {
+        // No next entry, so end chunk must be last chunk in file.
+        // Since chunk numbers start at one, must be chunk_count+1.
+        endChunk = iOffsets.size()+1;
+    }
+
+    const TUint chunkDiff = endChunk - startChunk;
+    const TUint samplesInRange = chunkDiff * spc;
+
+    return samplesInRange;
+}
+
+TUint SeekTable::ChunkWithinSamplesPerChunk(TUint aIndex, TUint aSampleOffset) const
+{
+    ASSERT(aIndex < iSamplesPerChunk.size());
+    const TUint chunk = iSamplesPerChunk[aIndex].iFirstChunk;
+    const TUint spc = iSamplesPerChunk[aIndex].iSamples;
+    const TUint chunkOffset = static_cast<TUint>(aSampleOffset / spc);
+    return chunk + chunkOffset;
 }
 
 TUint SeekTable::Chunk(TUint64 aCodecSample) const
 {
     // Use data from stsc box to find chunk containing the desired codec sample.
     TUint64 totalSamples = 0;
-    TUint chunk = 1;
     for (TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
-        const TUint startChunk = iSamplesPerChunk[entry].iFirstChunk;
-        const TUint spc = iSamplesPerChunk[entry].iSamples;
-        TUint endChunk = 0;
-
-        // Find last chunk in current run.
-        if (entry + 1 < iSamplesPerChunk.size()) {
-            endChunk = iSamplesPerChunk[entry + 1].iFirstChunk;
-        }
-        else {
-            // No next entry, so end chunk must be last chunk in file.
-            endChunk = iOffsets.size();
-        }
-
-        const TUint chunkDiff = endChunk - startChunk;
-        const TUint samplesInRange = chunkDiff * spc;
-
+        const TUint samplesInRange = SamplesPerChunkTotal(entry);
         if (aCodecSample < totalSamples + samplesInRange) {
             // Desired sample is in this range.
 
             // Find chunk in this range that contains the desired sample.
             ASSERT(aCodecSample >= totalSamples);
-            const TUint64 sampleOffset = aCodecSample - totalSamples;
-            const TUint chunkOffset = static_cast<TUint>(sampleOffset / spc);
+            const TUint64 sampleOffset64 = aCodecSample - totalSamples;
+            ASSERT(sampleOffset64 <= std::numeric_limits<TUint>::max());  // Ensure no issues with casting to smaller type.
+            const TUint sampleOffset = static_cast<TUint>(sampleOffset64);
+            const TUint chunk = ChunkWithinSamplesPerChunk(entry, sampleOffset);
 
-            chunk += chunkOffset;
             return chunk;
         }
 
         totalSamples += samplesInRange;
-        chunk = startChunk;
     }
 
     if (aCodecSample > totalSamples) {
