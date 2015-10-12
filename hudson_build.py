@@ -38,17 +38,6 @@ class PostActions():
     def armel_tests(self,type,release):
         self.__remote_tests('sheeva010.linn.co.uk', 'root', type, release)
 
-    def armhf_tests(self,type,release):
-        self.__remote_tests('test-rpi.linn.co.uk', 'test', type, release)
-
-    def ppc32_tests(self,type,release):
-        #self.__remote_tests('slave-linux-ppc.linn.co.uk', 'test', type, release)
-        pass
-
-    # TODO
-    def mipsel_tests(self,type,release):
-        pass
-
     def __remote_tests(self, host, user, type,release):
         # type will be either 'nightly' or 'commit'
         # release will be either '0' or '1'
@@ -338,22 +327,11 @@ class JenkinsBuild():
             if os_platform == 'linux':
                 if arch == 'armel':
                     postAction.armel_tests('nightly', release)
-                if arch == 'armhf':
-                    postAction.armhf_tests('nightly', release)
-                if arch == 'mipsel':
-                    postAction.mipsel_tests('nightly', release)
-                if arch == 'ppc32':
-                    postAction.ppc32_tests('nightly', release)
         else:
             if os_platform == 'linux':
                 if arch == 'armel':
                     postAction.armel_tests('commit', release)
-                if arch == 'armhf':
-                    postAction.armhf_tests('commit', release)
-                if arch == 'mipsel':
-                    postAction.mipsel_tests('commit', release)
-                if arch == 'ppc32':
-                    postAction.ppc32_tests('commit', release)
+
         if self.platform['publish'] and release == '1':
             self.do_release()
 
