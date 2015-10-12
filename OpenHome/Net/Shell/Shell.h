@@ -59,7 +59,15 @@ private:
     
 class ShellCommandHelp;
 
-class Shell : private IShellCommandHandler
+class IShell
+{
+public:
+    virtual ~IShell() {}
+    virtual void AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler) = 0;
+    virtual void RemoveCommandHandler(const TChar* aCommand) = 0;
+};
+
+class Shell : public IShell, private IShellCommandHandler
 {
     friend class ShellCommandHelp;
 public:
@@ -68,6 +76,7 @@ public:
     Shell(Environment& aStack, TUint aPort=kServerPortDefault);
     ~Shell();
     TUint Port() const;
+public: // from IShell
     void AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler);
     void RemoveCommandHandler(const TChar* aCommand);
 private: // from IShellCommandHandler
@@ -91,6 +100,13 @@ private: // from IShellCommandHandler
     void DisplayHelp(IWriter& aResponse);
 private:
     Shell& iShell;
+};
+
+class ShellNull : public IShell
+{
+public: // from IShell
+    void AddCommandHandler(const TChar* aCommand, IShellCommandHandler& aHandler);
+    void RemoveCommandHandler(const TChar* aCommand);
 };
 
 } // namespace Net

@@ -224,3 +224,14 @@ void ShellCommandHelp::DisplayHelp(IWriter& aResponse)
     aResponse.Write(Brn("  help for given command if called with one arg\n"));
     aResponse.Write(Brn("  ...ignores any args 1..n\n"));
 }
+
+
+// ShellNull
+
+void ShellNull::AddCommandHandler(const TChar* /*aCommand*/, IShellCommandHandler& /*aHandler*/)
+{
+}
+
+void ShellNull::RemoveCommandHandler(const TChar* /*aCommand*/)
+{
+}
