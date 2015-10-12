@@ -386,6 +386,7 @@ class RepairerTimer : public IRepairerTimer
 {
 public:
     RepairerTimer(Environment& aEnv, const TChar* aId);
+    ~RepairerTimer();
 public: // from IRepairerTimer
     void Start(Functor aFunctor, TUint aFireInMs) override;
     void Cancel() override;
@@ -461,6 +462,7 @@ template <TUint MaxFrames> Repairer<MaxFrames>::Repairer(Environment& aEnv, IRes
 
 template <TUint MaxFrames> Repairer<MaxFrames>::~Repairer()
 {
+    iTimer.Cancel();
     ASSERT(iFifoResend.SlotsFree() == 0);
     while (iFifoResend.SlotsUsed() > 0) {
         auto resend = iFifoResend.Read();

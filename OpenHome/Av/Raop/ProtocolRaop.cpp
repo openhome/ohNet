@@ -870,6 +870,11 @@ RepairerTimer::RepairerTimer(Environment& aEnv, const TChar* aId)
 {
 }
 
+RepairerTimer::~RepairerTimer()
+{
+    iTimer.Cancel();
+}
+
 void RepairerTimer::Start(Functor aFunctor, TUint aFireInMs)
 {
     iFunctor = aFunctor;
