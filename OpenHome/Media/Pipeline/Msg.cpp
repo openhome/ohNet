@@ -1515,6 +1515,7 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
     remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
+    remaining->iClockPullMultiplier = iClockPullMultiplier;
     if (iRamp.IsEnabled()) {
         remaining->iRamp = iRamp.Split(aJiffies, iSize);
     }
@@ -1733,6 +1734,7 @@ MsgAudio* MsgAudioPcm::Clone()
     static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
     static_cast<MsgAudioPcm*>(clone)->iTrackOffset = iTrackOffset;
+    static_cast<MsgAudioPcm*>(clone)->iClockPullMultiplier = iClockPullMultiplier;
     iAudioData->AddRef();
     return clone;
 }
