@@ -782,6 +782,8 @@ public:
 private:
     // Find the codec sample that contains the given audio sample.
     TUint64 CodecSample(TUint64 aAudioSample) const;
+    TUint SamplesPerChunkTotal(TUint aIndex) const;
+    TUint ChunkWithinSamplesPerChunk(TUint aIndex, TUint aSampleOffset) const;
     // Find the chunk that contains the desired codec sample.
     TUint Chunk(TUint64 aCodecSample) const;
     TUint CodecSampleFromChunk(TUint aChunk) const;
