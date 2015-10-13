@@ -19,7 +19,7 @@ using namespace OpenHome::Media;
 ClockPullerNonTimestamped::ClockPullerNonTimestamped(Environment& aEnv)
     : iPuller(aEnv)
     , iLock("CPNT")
-    , iEnabled(iEnabled)
+    , iEnabled(true)
 {
 }
 

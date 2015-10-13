@@ -52,7 +52,6 @@ private:
     ClockPullerNonTimestamped iPullerReservoirRight;
     TUint iMultiplier;
     TBool iUseTimestamps;
-    TBool iRunning;
     TBool iStoreNetworkTimestamp;
     std::vector<TInt> iTimestampHistory;
     TUint iNextHistoryIndex;
