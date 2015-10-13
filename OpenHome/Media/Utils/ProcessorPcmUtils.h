@@ -30,6 +30,7 @@ private: // from IPcmProcessor
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
+    void Flush() override;
 protected:
     Bwh iBuf;
 };
@@ -49,6 +50,7 @@ private: // from IPcmProcessor
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
+    void Flush() override;
 private:
     IPcmProcessor& iDownstream;
 };
@@ -73,6 +75,7 @@ private: // from IPcmProcessor
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
+    void Flush() override;
 private:
     IPcmProcessor& iDownstream;
     const TUint iNumSamples;

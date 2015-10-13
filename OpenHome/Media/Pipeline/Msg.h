@@ -875,6 +875,10 @@ public:
      * No more calls to ProcessFragment or ProcessSample will be made after this.
      */
     virtual void EndBlock() = 0;
+    /**
+     * If this is called, the processor should pass on any buffered audio.
+     */
+    virtual void Flush() = 0;
 };
 
 class MsgQueue

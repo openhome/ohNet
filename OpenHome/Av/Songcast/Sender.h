@@ -85,6 +85,7 @@ private: // from IPcmProcessor
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
+    void Flush() override;
 private:
     class PlayableCreator : private Media::IMsgProcessor
     {

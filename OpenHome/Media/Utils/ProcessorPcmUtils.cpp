@@ -88,6 +88,10 @@ void ProcessorPcmBufTest::EndBlock()
 {
 }
 
+void ProcessorPcmBufTest::Flush()
+{
+}
+
 
 // ProcessorSample
 
@@ -168,6 +172,11 @@ void ProcessorSample::ProcessSample32(const TByte* aSample, TUint aNumChannels)
 void ProcessorSample::EndBlock()
 {
     iDownstream.EndBlock();
+}
+
+void ProcessorSample::Flush()
+{
+    iDownstream.Flush();
 }
 
 
@@ -328,5 +337,9 @@ void ProcessorAggregateUnpacked::ProcessSample32(const TByte* aSample, TUint aNu
 }
 
 void ProcessorAggregateUnpacked::EndBlock()
+{
+}
+
+void ProcessorAggregateUnpacked::Flush()
 {
 }

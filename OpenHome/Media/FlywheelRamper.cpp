@@ -261,6 +261,10 @@ void PcmProcessorFwr::EndBlock()
     iSamples.SetBytes(0);
 }
 
+void PcmProcessorFwr::Flush()
+{
+}
+
 
 ////////////////////////////////////////////////////////////
 

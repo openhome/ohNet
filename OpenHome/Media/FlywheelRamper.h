@@ -89,6 +89,7 @@ public:
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
+    void Flush() override;
 
 private:
     FlywheelRamper& iFwr;

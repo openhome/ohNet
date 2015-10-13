@@ -341,6 +341,10 @@ void Sender::EndBlock()
 {
 }
 
+void Sender::Flush()
+{
+}
+
 
 // Sender::PlayableCreator
 
