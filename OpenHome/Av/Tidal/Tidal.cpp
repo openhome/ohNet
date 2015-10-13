@@ -244,6 +244,7 @@ TBool Tidal::TryLoginLocked()
                 else {
                     error.AppendPrintf("Login Error (Response Code %d): Please Try Again.", code);
                     iCredentialsState.SetState(kId, error, Brx::Empty());
+                    LOG2(kPipeline, kError, "HTTP error - %d - in Tidal::TryLogin\n", code);
                 }
                 updatedStatus = true;
                 LOG(kPipeline, "Http error - %d - in response to Tidal login.  Some/all of response is:\n%.*s\n", code, PBUF(status));
@@ -262,7 +263,9 @@ TBool Tidal::TryLoginLocked()
             LOG2(kPipeline, kError, "HttpError in Tidal::TryLogin\n");
         }
         catch (ReaderError&) {
-            error.Append("Login Error (Read Failure): Please Try Again.");
+            if (error.Bytes() == 0) {
+                error.Append("Login Error (Read Failure): Please Try Again.");
+            }
             LOG2(kPipeline, kError, "ReaderError in Tidal::TryLogin\n");
         }
         catch (WriterError&) {
