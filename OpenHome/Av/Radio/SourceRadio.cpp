@@ -24,7 +24,7 @@ class UriProviderRadio : public Media::UriProviderSingleTrack
 public:
     UriProviderRadio(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
-    Media::ModeClockPullers UriProviderRadio::ClockPullers() override;
+    Media::ModeClockPullers ClockPullers() override;
 private:
     Media::ClockPullerUtilisation iClockPuller;
 };
