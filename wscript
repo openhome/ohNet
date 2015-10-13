@@ -202,6 +202,7 @@ def build(bld):
                 'OpenHome/Media/InfoProvider.cpp',
                 'OpenHome/Media/Pipeline/AudioDumper.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/ClockPullerManual.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioValidator.cpp',
@@ -797,7 +798,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline',
             install_path=None)
     bld.program(
@@ -897,7 +898,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestPlaylist',
             install_path=None)
     bld.program(

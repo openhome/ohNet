@@ -14,6 +14,7 @@
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/TimestampInspector.h>
+#include <OpenHome/Media/Pipeline/ClockPullerManual.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
@@ -181,7 +182,7 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList)
+                   IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList, Net::IShell& aShell)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -257,7 +258,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
     threadPriority++;
 
-    iRamper = new Ramper(*iLoggerDecodedAudioReservoir, aInitParams->RampLongJiffies());
+    iClockPullerManual = new ClockPullerManual(*iLoggerDecodedAudioReservoir, aShell);
+    iRamper = new Ramper(*iClockPullerManual, aInitParams->RampLongJiffies());
     iLoggerRamper = new Logger(*iRamper, "Ramper");
     iRampValidatorRamper = new RampValidator(*iLoggerRamper, "Ramper");
     iSeeker = new Seeker(*iMsgFactory, *iRampValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
@@ -434,6 +436,7 @@ Pipeline::~Pipeline()
     delete iRampValidatorRamper;
     delete iLoggerRamper;
     delete iRamper;
+    delete iClockPullerManual;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;

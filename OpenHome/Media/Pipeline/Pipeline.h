@@ -12,6 +12,9 @@
 #include <OpenHome/Media/MuteManager.h>
 
 namespace OpenHome {
+namespace Net {
+    class IShell;
+}
 namespace Media {
 
 class PipelineInitParams
@@ -84,6 +87,7 @@ class SampleRateValidator;
 class TimestampInspector;
 class DecodedAudioAggregator;
 class DecodedAudioReservoir;
+class ClockPullerManual;
 class Ramper;
 class RampValidator;
 class Seeker;
@@ -136,7 +140,7 @@ class Pipeline : public IPipelineElementDownstream
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList);
+             IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList, Net::IShell& aShell);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
@@ -216,6 +220,7 @@ private:
     Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
+    ClockPullerManual* iClockPullerManual;
     Ramper* iRamper;
     Logger* iLoggerRamper;
     RampValidator* iRampValidatorRamper;

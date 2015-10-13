@@ -114,6 +114,11 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTxTsMapper(nullptr)
     , iRxTsMapper(nullptr)
 {
+    // create a shell
+    iShell = new Shell(aDvStack.Env(), 0);
+    Log::Print("Shell running on port %u\n", iShell->Port());
+    iShellDebug = new ShellCommandDebug(*iShell);
+
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
     friendlyName.Append(':');
@@ -170,7 +175,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
                                                                       // platforms with slightly unpredictable thread scheduling
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, pipelineInit,
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iShell, *iRamStore, *iConfigRamStore, pipelineInit,
                                    volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
@@ -178,11 +183,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // register our PowerDownUpnp function with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
     iPowerObserver = powerManager.Register(*this, kPowerPriorityLowest);
-
-    // create a shell
-    iShell = new Shell(aDvStack.Env(), 0);
-    Log::Print("Shell running on port %u\n", iShell->Port());
-    iShellDebug = new ShellCommandDebug(*iShell);
 
     // Set up config app.
     static const TUint addr = 0;    // Bind to all addresses.
