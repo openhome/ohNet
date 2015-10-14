@@ -76,13 +76,13 @@ void StartupSourceMapper::AddSource(TUint aChoice, ISource& aSource)
     iSources.push_back(ChoiceSourcePair(aChoice, &aSource));
 }
 
-void StartupSourceMapper::Write(Configuration::IConfigChoiceMappingWriter& aWriter)
+void StartupSourceMapper::Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter)
 {
     for (auto pair : iSources) {
         // FIXME - dodgy to call Name() on ISource! Internal buffer could change as soon as call returns, which means the value we're reading could be modified as it's being written.
-        aWriter.Write(pair.first, pair.second->Name());
+        aMappingWriter.Write(aWriter, pair.first, pair.second->Name());
     }
-    aWriter.WriteComplete();
+    aMappingWriter.WriteComplete(aWriter);
 }
 
 

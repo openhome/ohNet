@@ -141,12 +141,11 @@ private:
 class ConfigChoiceMappingWriterJson : public Configuration::IConfigChoiceMappingWriter, private INonCopyable
 {
 public:
-    ConfigChoiceMappingWriterJson(IWriter& aWriter);
+    ConfigChoiceMappingWriterJson();
 public: // from IConfigChoiceMappingWriter
-    void Write(TUint aChoice, const Brx& aMapping) override;
-    void WriteComplete() override;
+    void Write(IWriter& aWriter, TUint aChoice, const Brx& aMapping) override;
+    void WriteComplete(IWriter& aWriter) override;
 private:
-    IWriter& iWriter;
     TBool iStarted;
 };
 
@@ -155,7 +154,7 @@ class ConfigChoiceMapperResourceFile : public Configuration::IConfigChoiceMapper
 public:
     ConfigChoiceMapperResourceFile(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices);
 public: // from IConfigChoiceMapper
-    void Write(Configuration::IConfigChoiceMappingWriter& aWriter);
+    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter);
 private:
     ILanguageResourceReader& iReader;
     const Brx& iKey;

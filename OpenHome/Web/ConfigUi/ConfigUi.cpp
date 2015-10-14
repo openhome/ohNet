@@ -200,43 +200,32 @@ void ConfigMessageNum::WriteMeta(IWriter& aWriter)
 
 // ConfigChoiceMappingWriterJson
 
-ConfigChoiceMappingWriterJson::ConfigChoiceMappingWriterJson(IWriter& aWriter)
-    : iWriter(aWriter)
-    , iStarted(false)
+ConfigChoiceMappingWriterJson::ConfigChoiceMappingWriterJson()
+    : iStarted(false)
 {
 }
 
-void ConfigChoiceMappingWriterJson::Write(TUint aChoice, const Brx& aMapping)
+void ConfigChoiceMappingWriterJson::Write(IWriter& aWriter, TUint aChoice, const Brx& aMapping)
 {
-    try {
-        if (!iStarted) {
-            iWriter.Write(Brn("\"options\":["));
-        }
-        else {
-            iWriter.Write(',');
-        }
+    if (!iStarted) {
+        aWriter.Write(Brn("\"options\":["));
+    }
+    else {
+        aWriter.Write(',');
+    }
 
-        iWriter.Write(Brn("{"));
-        iWriter.Write(Brn("\"id\": "));
-        Ascii::StreamWriteUint(iWriter, aChoice);
-        iWriter.Write(Brn(",\"value\": \""));
-        Json::Escape(iWriter, aMapping);
-        iWriter.Write(Brn("\"}"));
-        iStarted = true;
-    }
-    catch (WriterError&) {
-        THROW(ConfigChoiceWriterError);
-    }
+    aWriter.Write(Brn("{"));
+    aWriter.Write(Brn("\"id\": "));
+    Ascii::StreamWriteUint(aWriter, aChoice);
+    aWriter.Write(Brn(",\"value\": \""));
+    Json::Escape(aWriter, aMapping);
+    aWriter.Write(Brn("\"}"));
+    iStarted = true;
 }
 
-void ConfigChoiceMappingWriterJson::WriteComplete()
+void ConfigChoiceMappingWriterJson::WriteComplete(IWriter& aWriter)
 {
-    try {
-        iWriter.Write(Brn("]"));
-    }
-    catch (WriterError&) {
-        THROW(ConfigChoiceWriterError);
-    }
+    aWriter.Write(Brn("]"));
 }
 
 
@@ -249,7 +238,7 @@ ConfigChoiceMapperResourceFile::ConfigChoiceMapperResourceFile(ILanguageResource
 {
 }
 
-void ConfigChoiceMapperResourceFile::Write(IConfigChoiceMappingWriter& aWriter)
+void ConfigChoiceMapperResourceFile::Write(IWriter& aWriter, IConfigChoiceMappingWriter& aMappingWriter)
 {
     TBool found = false;
     try {
@@ -277,9 +266,9 @@ void ConfigChoiceMapperResourceFile::Write(IConfigChoiceMappingWriter& aWriter)
                     ASSERTS();
                 }
 
-                aWriter.Write(iChoices[i], valueBuf);
+                aMappingWriter.Write(aWriter, iChoices[i], valueBuf);
             }
-            aWriter.WriteComplete();
+            aMappingWriter.WriteComplete(aWriter);
         }
         catch (ReaderError&) {
             LOG(kHttp, "ConfigChoiceMapperResourceFile::Write ReaderError");
@@ -291,7 +280,7 @@ void ConfigChoiceMapperResourceFile::Write(IConfigChoiceMappingWriter& aWriter)
     }
     catch (WriterError&) {
         LOG(kHttp, "ConfigChoiceMapperResourceFile::Write WriterError");
-        THROW(ConfigChoiceWriterError);
+        throw;
     }
 }
 
@@ -347,8 +336,8 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
     try {
         if (iChoice->HasInternalMapping()) {
             IConfigChoiceMapper& mapper = iChoice->Mapper();
-            ConfigChoiceMappingWriterJson writer(aWriter);
-            mapper.Write(writer);
+            ConfigChoiceMappingWriterJson mappingWriter;
+            mapper.Write(aWriter, mappingWriter);
         }
         else {
             // Read mapping from file.
@@ -356,15 +345,15 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
             const std::vector<TUint>& choices = iChoice->Choices();
             resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
             ConfigChoiceMapperResourceFile mapper(*resourceHandler, iChoice->Key(), choices);
-            ConfigChoiceMappingWriterJson writer(aWriter);
-            mapper.Write(writer);
+            ConfigChoiceMappingWriterJson mappingWriter;
+            mapper.Write(aWriter, mappingWriter);
             resourceHandler->Destroy();
         }
     }
-    catch (ConfigChoiceWriterError&) {
+    catch (WriterError&) {
         resourceHandler->Destroy();
         // Convert (back) to WriterError.
-        THROW(ConfigChoiceWriterError);
+        throw;
     }
 }
 

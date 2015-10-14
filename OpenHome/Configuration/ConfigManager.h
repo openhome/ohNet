@@ -17,7 +17,6 @@ EXCEPTION(ConfigNotANumber);
 EXCEPTION(ConfigValueOutOfRange);
 EXCEPTION(ConfigInvalidSelection);
 EXCEPTION(ConfigValueTooLong);
-EXCEPTION(ConfigChoiceWriterError);
 
 namespace OpenHome {
     class IWriter;
@@ -281,16 +280,15 @@ inline MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,void (CallType::*)(Key
 class IConfigChoiceMappingWriter
 {
 public:
-    // FIXME - have these take an IWriter to make it explicit that these must write via an IWriter?
-    virtual void Write(TUint aChoice, const Brx& aMapping) = 0; // THROWS ConfigChoiceWriterError
-    virtual void WriteComplete() = 0; // THROWS ConfigChoiceWriterError
+    virtual void Write(IWriter& aWriter, TUint aChoice, const Brx& aMapping) = 0; // THROWS WriterError
+    virtual void WriteComplete(IWriter& aWriter) = 0; // THROWS WriterError
     virtual ~IConfigChoiceMappingWriter() {}
 };
 
 class IConfigChoiceMapper
 {
 public:
-    virtual void Write(IConfigChoiceMappingWriter& aWriter) = 0; // THROWS ConfigChoiceWriterError
+    virtual void Write(IWriter& aWriter, IConfigChoiceMappingWriter& aMappingWriter) = 0; // THROWS WriterError
     virtual ~IConfigChoiceMapper() {}
 };
 

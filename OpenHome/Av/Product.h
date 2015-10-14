@@ -66,7 +66,7 @@ private:
 public:
     void AddSource(TUint aChoice, ISource& aSource);
 public: // from StartupSourceMapper
-    void Write(Configuration::IConfigChoiceMappingWriter& aWriter) override;
+    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter) override;
 private:
     std::vector<ChoiceSourcePair> iSources;
 };
