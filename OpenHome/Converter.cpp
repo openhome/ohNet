@@ -184,7 +184,7 @@ void Converter::FromXmlEscaped(Bwx& aValue)
         TByte ch = aValue[i];
         if (utf8CharBytesRemaining == 0) {
             TUint multibytes = 0;
-            if (IsMultiByteChar(ch, bytes)) {
+            if (IsMultiByteChar(ch, multibytes)) {
                 utf8CharBytesRemaining = multibytes;
             }
         }
