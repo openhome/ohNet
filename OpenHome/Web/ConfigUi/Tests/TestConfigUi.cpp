@@ -1130,12 +1130,11 @@ void SuiteConfigUi::TestLongPollCreate()
     WriterBuffer writerBuf(responseBuffer);
     TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
     TEST(code == HttpStatus::kOk.Code());
-    TEST(responseBuffer == kExpectedSessionId);
+    Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
+    expectedLpCreateResponse.Append(kExpectedSessionId);
+    TEST(responseBuffer == expectedLpCreateResponse);
 
-
-    // FIXME - if test ends without requesting /lpterminate, TestMediaPlayer crashes during
-    // destruction (looks like it's related to deleting ConfigVals before all
-    // observers have unsubscribed).
+    // FIXME - add test to check if can quit cleanly without seeing an "lpterminate".
     HelperWriterPrinter writerPrinter;
     code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
     TEST(code == HttpStatus::kOk.Code());
@@ -1153,7 +1152,9 @@ void SuiteConfigUi::TestLongPoll()
     WriterBuffer writerBuf(responseBuffer);
     TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
     TEST(code == HttpStatus::kOk.Code());
-    TEST(responseBuffer == kExpectedSessionId);
+    Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
+    expectedLpCreateResponse.Append(kExpectedSessionId);
+    TEST(responseBuffer == expectedLpCreateResponse);
 
     HelperWriterPrinter writerPrinter;
     code = uriRetriever.Retrieve(Brn("lp"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
@@ -1167,7 +1168,7 @@ void SuiteConfigUi::TestLongPoll()
 
 
 
-void TestConfigUi(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/)
+void TestConfigUi(CpStack& aCpStack, DvStack& aDvStack)
 {
     Runner runner("Config UI tests\n");
     runner.Add(new SuiteConfigMessageNumAllocator());
@@ -1176,6 +1177,7 @@ void TestConfigUi(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/)
     runner.Add(new SuiteConfigMessageNum());
     runner.Add(new SuiteConfigMessageChoice());
     runner.Add(new SuiteConfigMessageText());
-    //runner.Add(new SuiteConfigUi(aCpStack, aDvStack));
+    // FIXME - have ifdef for desktop-only platforms
+    runner.Add(new SuiteConfigUi(aCpStack, aDvStack));
     runner.Run();
 }
