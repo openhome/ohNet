@@ -15,7 +15,125 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
-const Brn Product::kStartupSourceBase("Startup.Source");
+
+// DummySourceDefault
+
+const Brn DummySourceDefault::kName("Default");
+
+const Brx& DummySourceDefault::SystemName() const
+{
+    ASSERTS();
+    return Brx::Empty();
+}
+
+const Brx& DummySourceDefault::Type() const
+{
+    ASSERTS();
+    return Brx::Empty();
+}
+
+const Brx& DummySourceDefault::Name() const
+{
+    return kName;
+}
+
+TBool DummySourceDefault::IsVisible() const
+{
+    ASSERTS();
+    return false;
+}
+
+void DummySourceDefault::Activate()
+{
+    ASSERTS();
+}
+
+void DummySourceDefault::Deactivate()
+{
+    ASSERTS();
+}
+
+void DummySourceDefault::SetVisible(TBool /*aVisible*/)
+{
+    ASSERTS();
+}
+
+void DummySourceDefault::PipelineStopped()
+{
+    ASSERTS();
+}
+
+void DummySourceDefault::Initialise(IProduct& /*aProduct*/, Configuration::IConfigInitialiser& /*aConfigInit*/, Configuration::IConfigManager& /*aConfigManagerReader*/, TUint /*aId*/)
+{
+    ASSERTS();
+}
+
+
+// StartupSourceMapper
+
+void StartupSourceMapper::AddSource(TUint aChoice, ISource& aSource)
+{
+    iSources.push_back(ChoiceSourcePair(aChoice, &aSource));
+}
+
+void StartupSourceMapper::Write(Configuration::IConfigChoiceMappingWriter& aWriter)
+{
+    for (auto pair : iSources) {
+        // FIXME - dodgy to call Name() on ISource! Internal buffer could change as soon as call returns, which means the value we're reading could be modified as it's being written.
+        aWriter.Write(pair.first, pair.second->Name());
+    }
+    aWriter.WriteComplete();
+}
+
+
+// ConfigStartupSource
+
+const Brn ConfigStartupSource::kKey("Source.Startup");
+
+ConfigStartupSource::ConfigStartupSource(IConfigInitialiser& aConfigInit, const std::vector<ISource*> aSources)
+    : iSourceCount(aSources.size())
+{
+    std::vector<TUint> choices;
+
+    // Add dummy source, which must be first in list and represents default/none startup source.
+    TUint choice = kDefault;
+    choices.push_back(choice);
+    iMapper.AddSource(choice, iDummySource);
+    choice++;
+
+    for (auto s : aSources) {
+        choices.push_back(choice);
+        iMapper.AddSource(choice, *s);
+        choice++;
+    }
+
+    iChoice = new ConfigChoice(aConfigInit, kKey, choices, kDefault, iMapper);
+}
+
+ConfigStartupSource::~ConfigStartupSource()
+{
+    delete iChoice;
+}
+
+TUint ConfigStartupSource::Subscribe(Configuration::ConfigChoice::FunctorConfigChoice aFunctor)
+{
+    return iChoice->Subscribe(aFunctor);
+}
+
+void ConfigStartupSource::Unsubscribe(TUint aId)
+{
+    iChoice->Unsubscribe(aId);
+}
+
+TUint ConfigStartupSource::SourceIndex(TUint aChoiceId) const
+{
+    // Default/none source occupies position 0, so real source indexes are shifted up by 1.
+    ASSERT(aChoiceId <= iSourceCount);
+    return aChoiceId-1;
+}
+
+
+const Brn Product::kStartupSourceBase("Startup.Source");    // FIXME - change to Source.Last, as this for a StoreText that stores last selected source.
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
@@ -32,6 +150,9 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iStandby(false)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
+    , iConfigStartupSource(nullptr)
+    , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
+    , iStartupSourceVal(ConfigStartupSource::kDefault)
 {
     iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceBase, Brx::Empty(), ISource::kMaxSourceTypeBytes);
     iConfigProductRoom = &aConfigReader.GetText(kConfigIdRoomBase);
@@ -43,6 +164,8 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
 
 Product::~Product()
 {
+    iConfigStartupSource->Unsubscribe(iListenerIdStartupSource);
+    delete iConfigStartupSource;
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         delete iSources[i];
     }
@@ -60,15 +183,30 @@ void Product::AddObserver(IProductObserver& aObserver)
 
 void Product::Start()
 {
-    Bws<ISource::kMaxSystemNameBytes> startupSource;
-    iStartupSource->Get(startupSource);
-    if (startupSource == Brx::Empty()) {
-        // If there is no stored startup source, select the first added source.
-        SetCurrentSource(0);
+    // All sources must have been registered; construct startup source config val.
+    iConfigStartupSource = new ConfigStartupSource(iConfigInit, iSources);
+    iListenerIdStartupSource = iConfigStartupSource->Subscribe(MakeFunctorConfigChoice(*this, &Product::StartupSourceChanged));
+
+    iLock.Wait();
+    const TUint startupSourceVal = iStartupSourceVal;
+    iLock.Signal();
+
+    if (startupSourceVal != ConfigStartupSource::kDefault) {
+        const TUint idx = iConfigStartupSource->SourceIndex(startupSourceVal);
+        SetCurrentSource(idx);
     }
-    else {
-        SetCurrentSource(startupSource);
+    else { // No startup source selected; use last selected source.
+        Bws<ISource::kMaxSystemNameBytes> startupSource;
+        iStartupSource->Get(startupSource);
+        if (startupSource == Brx::Empty()) {
+            // If there is no stored startup source, select the first added source.
+            SetCurrentSource(0);
+        }
+        else {
+            SetCurrentSource(startupSource);
+        }
     }
+
     iStarted = true;
     iSourceXmlChangeCount++;
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
@@ -147,8 +285,16 @@ void Product::SetStandby(TBool aStandby)
     if (changed) {
         iStandby = aStandby;
     }
+    const TUint startupSourceVal = iStartupSourceVal;
     iLock.Signal();
+
     if (changed) {
+        // Activate startup source (if one set) if coming out of standby.
+        if (!aStandby && startupSourceVal != ConfigStartupSource::kDefault) {
+            const TUint idx = iConfigStartupSource->SourceIndex(startupSourceVal);
+            SetCurrentSource(idx);
+        }
+
         for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
             (*it)->StandbyChanged();
             // FIXME - other observers to notify. (e.g. to disable any hardware)
@@ -221,6 +367,13 @@ void Product::ProductNameChanged(KeyValuePair<const Brx&>& aKvp)
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
         (*it)->NameChanged();
     }
+}
+
+void Product::StartupSourceChanged(KeyValuePair<TUint>& aKvp)
+{
+    ASSERT(aKvp.Key() == ConfigStartupSource::kKey);
+    AutoMutex a(iLock);
+    iStartupSourceVal = aKvp.Value();
 }
 
 void Product::SetCurrentSource(TUint aIndex)

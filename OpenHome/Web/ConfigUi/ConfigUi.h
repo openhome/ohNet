@@ -54,13 +54,6 @@ private:
     mutable Mutex iLock;
 };
 
-class OptionJsonWriter
-{
-public:
-    static void Write(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter);   // validates input from aReader against aChoices
-    static void WriteChoiceObject(ILanguageResourceReader& aReader, IWriter& aWriter, TUint aId);
-};
-
 class IConfigMessage : public ITabMessage
 {
 public:
@@ -145,6 +138,30 @@ private:
     TInt iValue;
 };
 
+class ConfigChoiceMappingWriterJson : public Configuration::IConfigChoiceMappingWriter, private INonCopyable
+{
+public:
+    ConfigChoiceMappingWriterJson(IWriter& aWriter);
+public: // from IConfigChoiceMappingWriter
+    void Write(TUint aChoice, const Brx& aMapping) override;
+    void WriteComplete() override;
+private:
+    IWriter& iWriter;
+    TBool iStarted;
+};
+
+class ConfigChoiceMapperResourceFile : public Configuration::IConfigChoiceMapper, private INonCopyable
+{
+public:
+    ConfigChoiceMapperResourceFile(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices);
+public: // from IConfigChoiceMapper
+    void Write(Configuration::IConfigChoiceMappingWriter& aWriter);
+private:
+    ILanguageResourceReader& iReader;
+    const Brx& iKey;
+    const std::vector<TUint>& iChoices;
+};
+
 class ConfigMessageChoice : public ConfigMessage
 {
     friend class ConfigMessageChoiceAllocator;
@@ -192,7 +209,7 @@ private: // from IConfigMessageDeallocator
     void Deallocate(IConfigMessage& aMessage);
 protected:
     OpenHome::Fifo<IConfigMessage*> iFifo;
-    //OpenHome::Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate()
+    //OpenHome::Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate(), which would be handled by iFifo locking.
 };
 
 class ConfigMessageNumAllocator : public ConfigMessageAllocatorBase

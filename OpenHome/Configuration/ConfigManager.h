@@ -17,6 +17,7 @@ EXCEPTION(ConfigNotANumber);
 EXCEPTION(ConfigValueOutOfRange);
 EXCEPTION(ConfigInvalidSelection);
 EXCEPTION(ConfigValueTooLong);
+EXCEPTION(ConfigChoiceWriterError);
 
 namespace OpenHome {
     class IWriter;
@@ -274,6 +275,25 @@ inline MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,void (CallType::*)(Key
     return MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,MemFunc>(aC,aF);
 }
 
+/**
+ * Write() is called for each value the mapper is aware of.
+ */
+class IConfigChoiceMappingWriter
+{
+public:
+    // FIXME - have these take an IWriter to make it explicit that these must write via an IWriter?
+    virtual void Write(TUint aChoice, const Brx& aMapping) = 0; // THROWS ConfigChoiceWriterError
+    virtual void WriteComplete() = 0; // THROWS ConfigChoiceWriterError
+    virtual ~IConfigChoiceMappingWriter() {}
+};
+
+class IConfigChoiceMapper
+{
+public:
+    virtual void Write(IConfigChoiceMappingWriter& aWriter) = 0; // THROWS ConfigChoiceWriterError
+    virtual ~IConfigChoiceMapper() {}
+};
+
 /*
  * Class representing a multiple choice value (such as true/false, on/off,
  * monkey/chicken/meerkat, etc.)
@@ -289,9 +309,14 @@ public:
     typedef KeyValuePair<TUint> KvpChoice;
 public:
     ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper);
     const std::vector<TUint>& Choices() const;
     void Set(TUint aVal);   // THROWS ConfigInvalidSelection
+
+    TBool HasInternalMapping() const;
+    IConfigChoiceMapper& Mapper() const;
 private:
+    void Init(TUint aDefault);
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigChoice aFunctor) override;
@@ -306,6 +331,7 @@ private:
     static const TUint kMaxChoiceLength = 10;
     std::vector<TUint> iChoices;
     TUint iSelected;
+    IConfigChoiceMapper* iMapper;
     mutable Mutex iMutex;
 };
 
@@ -315,6 +341,7 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
     for (TUint i=0; i<iChoices.size(); i++) {
         if (iChoices[i] != aChoice.iChoices[i]) {
             choicesEqual = false;
+            break;
         }
     }
     AutoMutex a(iMutex);

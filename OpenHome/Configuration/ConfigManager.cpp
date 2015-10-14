@@ -110,21 +110,19 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
+    , iMapper(nullptr)
     , iMutex("CVCM")
 {
-    Bws<sizeof(TUint)> initialBuf;
-    Bws<sizeof(TUint)> defaultBuf;
-    WriterBuffer writerBuf(defaultBuf);
-    WriterBinary writerBin(writerBuf);
-    writerBin.WriteUint32Be(aDefault);
-    iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
-    TUint initialVal = Converter::BeUint32At(initialBuf, 0);
+    Init(aDefault);
+}
 
-    ASSERT(IsValid(initialVal));
-    iConfigManager.Add(*this);
-    iSelected = initialVal;
-
-    AddInitialSubscribers();
+ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper)
+    : ConfigVal(aManager, aKey)
+    , iChoices(aChoices)
+    , iMapper(&aMapper)
+    , iMutex("CVCM")
+{
+    Init(aDefault);
 }
 
 const std::vector<TUint>& ConfigChoice::Choices() const
@@ -143,6 +141,37 @@ void ConfigChoice::Set(TUint aVal)
         iSelected = aVal;
         NotifySubscribers(iSelected);
     }
+}
+
+TBool ConfigChoice::HasInternalMapping() const
+{
+    if (iMapper != nullptr) {
+        return true;
+    }
+    return false;
+}
+
+IConfigChoiceMapper& ConfigChoice::Mapper() const
+{
+    ASSERT(iMapper != nullptr);
+    return *iMapper;
+}
+
+void ConfigChoice::Init(TUint aDefault)
+{
+    Bws<sizeof(TUint)> initialBuf;
+    Bws<sizeof(TUint)> defaultBuf;
+    WriterBuffer writerBuf(defaultBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aDefault);
+    iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
+    TUint initialVal = Converter::BeUint32At(initialBuf, 0);
+
+    ASSERT(IsValid(initialVal));
+    iConfigManager.Add(*this);
+    iSelected = initialVal;
+
+    AddInitialSubscribers();
 }
 
 TBool ConfigChoice::IsValid(TUint aVal) const

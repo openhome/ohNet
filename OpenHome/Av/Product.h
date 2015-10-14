@@ -10,6 +10,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Av/Source.h>
 
 #include <vector>
 
@@ -40,6 +41,52 @@ public:
     virtual void StandbyChanged() = 0;
     virtual void SourceIndexChanged() = 0;
     virtual void SourceXmlChanged() = 0;
+};
+
+class DummySourceDefault : public ISource
+{
+private:
+    static const Brn kName;
+public: // from ISource
+    const Brx& SystemName() const override;
+    const Brx& Type() const override;
+    const Brx& Name() const override;
+    TBool IsVisible() const override;
+    void Activate() override;
+    void Deactivate() override;
+    void SetVisible(TBool aVisible) override;
+    void PipelineStopped() override;
+    void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
+};
+
+class StartupSourceMapper : public Configuration::IConfigChoiceMapper
+{
+private:
+    typedef std::pair<TUint, ISource*> ChoiceSourcePair;
+public:
+    void AddSource(TUint aChoice, ISource& aSource);
+public: // from StartupSourceMapper
+    void Write(Configuration::IConfigChoiceMappingWriter& aWriter) override;
+private:
+    std::vector<ChoiceSourcePair> iSources;
+};
+
+class ConfigStartupSource
+{
+public:
+    static const Brn kKey;
+    static const TUint kDefault = 0;
+public:
+    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const std::vector<ISource*> aSources);
+    ~ConfigStartupSource();
+    TUint Subscribe(Configuration::ConfigChoice::FunctorConfigChoice aFunctor);
+    void Unsubscribe(TUint aId);
+    TUint SourceIndex(TUint aChoiceId) const;
+private:
+    DummySourceDefault iDummySource;
+    StartupSourceMapper iMapper;
+    Configuration::ConfigChoice* iChoice;
+    TUint iSourceCount;
 };
 
 class Product : private IProduct, private Media::IInfoProvider, private INonCopyable
@@ -82,6 +129,7 @@ private:
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void StartupSourceChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private: // from IProduct
     void Activate(ISource& aSource) override;
     void NotifySourceNameChanged(ISource& aSource) override;
@@ -100,7 +148,7 @@ private:
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
     TBool iStandby;
-    StoreText* iStartupSource;
+    StoreText* iStartupSource;  // FIXME - rename to iLastSelectedSource
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
     Configuration::ConfigText* iConfigProductRoom;
@@ -109,6 +157,9 @@ private:
     TUint iListenerIdProductRoom;
     Bws<kMaxNameBytes> iProductName;
     TUint iListenerIdProductName;
+    ConfigStartupSource* iConfigStartupSource;
+    TUint iListenerIdStartupSource;
+    TUint iStartupSourceVal;
 };
 
 } // namespace Av
