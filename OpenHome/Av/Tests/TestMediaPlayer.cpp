@@ -250,6 +250,12 @@ void TestMediaPlayer::Run()
     RegisterPlugins(iMediaPlayer->Env());
     AddConfigApp();
     iMediaPlayer->Start();
+
+    // Debugging for ConfigManager.
+    IConfigManager& configManager = iMediaPlayer->ConfigManager();
+    configManager.Print();
+    configManager.DumpToStore();
+
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();

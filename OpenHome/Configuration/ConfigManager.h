@@ -113,6 +113,11 @@ public:
     virtual ConfigText& GetText(const Brx& aKey) const = 0;
     virtual TBool Has(const Brx& aKey) const = 0;
     virtual ISerialisable& Get(const Brx& aKey) const = 0;
+
+    // Debugging.
+    virtual void Print() const = 0;
+    virtual void DumpToStore() = 0;
+
     virtual ~IConfigManager() {}
 };
 
@@ -543,8 +548,6 @@ private:
     typedef SerialisedMap<ConfigText> ConfigTextMap;
 public:
     ConfigManager(IStoreReadWrite& aStore);
-    void Print() const;     // for debugging!
-    void DumpToStore();     // for debugging!
 public: // from IConfigManager
     void WriteKeys(IKeyWriter& aWriter) const override;
     TBool HasNum(const Brx& aKey) const override;
@@ -555,6 +558,8 @@ public: // from IConfigManager
     ConfigText& GetText(const Brx& aKey) const override;
     TBool Has(const Brx& aKey) const override;
     ISerialisable& Get(const Brx& aKey) const override;
+    void Print() const override;
+    void DumpToStore() override;
 public: // from IConfigInitialiser
     IStoreReadWrite& Store() override;
     void Open() override;

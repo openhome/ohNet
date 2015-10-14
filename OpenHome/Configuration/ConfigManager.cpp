@@ -317,28 +317,6 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 {
 }
 
-void ConfigManager::Print() const
-{
-    Log::Print("ConfigManager: [\n");
-
-    Log::Print("ConfigNum:\n");
-    Print(iMapNum);
-    Log::Print("ConfigChoice:\n");
-    Print(iMapChoice);
-    Log::Print("ConfigText:\n");
-    Print(iMapText);
-
-    Log::Print("]\n");
-}
-
-void ConfigManager::DumpToStore()
-{
-    StoreDumper dumper(*this);
-    dumper.DumpToStore(iMapNum);
-    dumper.DumpToStore(iMapChoice);
-    dumper.DumpToStore(iMapText);
-}
-
 void ConfigManager::WriteKeys(IKeyWriter& aWriter) const
 {
     AutoMutex a(iLock);
@@ -397,6 +375,28 @@ ISerialisable& ConfigManager::Get(const Brx& aKey) const
         ASSERTS();
         return iMapNum.Get(aKey); // control will never reach here
     }
+}
+
+void ConfigManager::Print() const
+{
+    Log::Print("ConfigManager: [\n");
+
+    Log::Print("ConfigNum:\n");
+    Print(iMapNum);
+    Log::Print("ConfigChoice:\n");
+    Print(iMapChoice);
+    Log::Print("ConfigText:\n");
+    Print(iMapText);
+
+    Log::Print("]\n");
+}
+
+void ConfigManager::DumpToStore()
+{
+    StoreDumper dumper(*this);
+    dumper.DumpToStore(iMapNum);
+    dumper.DumpToStore(iMapChoice);
+    dumper.DumpToStore(iMapText);
 }
 
 IStoreReadWrite& ConfigManager::Store()

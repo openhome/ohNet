@@ -116,13 +116,11 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void MediaPlayer::Start()
 {
-    iConfigManager->Open();
-    iConfigManager->Print();
-    iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
     iCredentials->Start();
     iMimeTypes.Start();
     iProduct->Start();
+    iConfigManager->Open();
 }
 
 Environment& MediaPlayer::Env()
