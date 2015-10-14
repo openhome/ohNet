@@ -1177,7 +1177,9 @@ void TestConfigUi(CpStack& aCpStack, DvStack& aDvStack)
     runner.Add(new SuiteConfigMessageNum());
     runner.Add(new SuiteConfigMessageChoice());
     runner.Add(new SuiteConfigMessageText());
-    // FIXME - have ifdef for desktop-only platforms
+    // FIXME - SuiteConfigUi currently only works on desktop platforms.
+#if defined(_WIN32) || defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
     runner.Add(new SuiteConfigUi(aCpStack, aDvStack));
+#endif
     runner.Run();
 }
