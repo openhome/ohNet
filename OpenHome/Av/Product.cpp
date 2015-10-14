@@ -32,9 +32,9 @@ const Brx& DummySourceDefault::Type() const
     return Brx::Empty();
 }
 
-const Brx& DummySourceDefault::Name() const
+void DummySourceDefault::Name(Bwx& aBuf) const
 {
-    return kName;
+    aBuf.Replace(kName);
 }
 
 TBool DummySourceDefault::IsVisible() const
@@ -80,7 +80,9 @@ void StartupSourceMapper::Write(IWriter& aWriter, Configuration::IConfigChoiceMa
 {
     for (auto pair : iSources) {
         // FIXME - dodgy to call Name() on ISource! Internal buffer could change as soon as call returns, which means the value we're reading could be modified as it's being written.
-        aMappingWriter.Write(aWriter, pair.first, pair.second->Name());
+        Bws<ISource::kMaxSourceNameBytes> name;
+        pair.second->Name(name);
+        aMappingWriter.Write(aWriter, pair.first, name);
     }
     aMappingWriter.WriteComplete(aWriter);
 }
@@ -318,8 +320,10 @@ void Product::GetSourceXml(Bwx& aXml)
     iLock.Wait();
     for (TUint i=0; i<iSources.size(); i++) {
         ISource* src = iSources[i];
+        Bws<ISource::kMaxSourceNameBytes> name;
+        src->Name(name);
         aXml.Append("<Source>");
-        AppendTag(aXml, "Name", src->Name());
+        AppendTag(aXml, "Name", name);
         AppendTag(aXml, "Type", src->Type());
         AppendTag(aXml, "Visible", src->IsVisible()? Brn("true") : Brn("false"));
         aXml.Append("</Source>");
@@ -401,8 +405,10 @@ void Product::SetCurrentSource(const Brx& aName)
 {
     AutoMutex a(iLock);
     // volkano treats [name] as a system name and anything else as a user-defined name.  Do we need to do the same?
+    Bws<ISource::kMaxSourceNameBytes> name;
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
-        if (iSources[i]->Name() == aName) {
+        iSources[i]->Name(name);
+        if (name == aName) {
             if (iCurrentSource != UINT_MAX) {
                 iSources[iCurrentSource]->Deactivate();
             }
@@ -425,9 +431,11 @@ void Product::GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& 
         THROW(AvSourceNotFound);
     }
     ISource* source = iSources[aIndex];
+    Bws<ISource::kMaxSourceNameBytes> name;
+    source->Name(name);
     aSystemName.Append(source->SystemName());
     aType.Append(source->Type());
-    aName.Append(source->Name());
+    aName.Append(name);
     aVisible = source->IsVisible();
 }
 
@@ -454,8 +462,12 @@ void Product::Activate(ISource& aSource)
     }
 
     // find and activate new source
+    Bws<ISource::kMaxSourceNameBytes> name;
+    Bws<ISource::kMaxSourceNameBytes> nameExpected;
+    aSource.Name(nameExpected);
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
-        if (iSources[i]->Name() == aSource.Name()) {
+        iSources[i]->Name(name);
+        if (name == nameExpected) {
             iCurrentSource = i;
             iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];

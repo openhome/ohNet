@@ -23,9 +23,10 @@ const Brx& Source::Type() const
     return iType;
 }
 
-const Brx& Source::Name() const
+void Source::Name(Bwx& aBuf) const
 {
-    return iName;
+    AutoMutex a(iLock);
+    aBuf.Replace(iName);
 }
 
 TBool Source::IsVisible() const

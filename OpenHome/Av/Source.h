@@ -22,7 +22,7 @@ public:
     virtual ~ISource() {}
     virtual const Brx& SystemName() const = 0;
     virtual const Brx& Type() const = 0;
-    virtual const Brx& Name() const = 0;
+    virtual void Name(Bwx& aBuf) const = 0;
     virtual TBool IsVisible() const = 0;
     virtual void Activate() = 0;
     virtual void Deactivate() = 0;
@@ -42,7 +42,7 @@ private:
 protected: // from ISource
     const Brx& SystemName() const override;
     const Brx& Type() const override;
-    const Brx& Name() const override;
+    void Name(Bwx& aBuf) const override;
     TBool IsVisible() const override;
     void Deactivate() override;
     void SetVisible(TBool aVisible) override;
@@ -58,7 +58,7 @@ private:
 protected:
     TBool iActive;
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     Brn iSystemName;
     Brn iType;
     Bws<kMaxSourceNameBytes> iName;

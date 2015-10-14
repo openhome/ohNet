@@ -50,7 +50,7 @@ private:
 public: // from ISource
     const Brx& SystemName() const override;
     const Brx& Type() const override;
-    const Brx& Name() const override;
+    void Name(Bwx& aBuf) const override;
     TBool IsVisible() const override;
     void Activate() override;
     void Deactivate() override;
