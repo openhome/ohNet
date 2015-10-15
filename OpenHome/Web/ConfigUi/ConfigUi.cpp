@@ -1038,7 +1038,7 @@ ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager, const Brx& aResou
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppBasic(aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     // Get all product names.
@@ -1069,7 +1069,7 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<c
 
 // ConfigAppMediaPlayer
 
-ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppSources(aConfigManager, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     JsonKvpVector emptyJsonVector;

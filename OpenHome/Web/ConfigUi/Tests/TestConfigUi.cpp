@@ -10,7 +10,7 @@
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Net/Private/Ssdp.h>
 #include <OpenHome/Media/Utils/AnimatorBasic.h>
-
+#include <OpenHome/Web/ConfigUi/Tests/TestConfigUi.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Web/WebAppFramework.h>
@@ -21,19 +21,6 @@
 namespace OpenHome {
 namespace Web {
 namespace Test {
-
-class HelperDeviceListHandler
-{
-public:
-    HelperDeviceListHandler(const OpenHome::Brx& aExpectedFriendlyName);
-    void Added(OpenHome::Net::CpDevice& aDevice);
-    void Removed(OpenHome::Net::CpDevice& aDevice);
-    const OpenHome::Brx& GetPresentationUrl() const;
-private:
-    OpenHome::Brh iFriendlyName;
-    OpenHome::Bws<OpenHome::Uri::kMaxUriBytes> iPresentationUrl;
-    mutable OpenHome::Mutex iLock;
-};
 
 class UriRetriever
 {
@@ -234,54 +221,12 @@ private:
     ConfigMessageTextAllocator* iMessageAllocator;
 };
 
-// ConfigApps are not expected to check the existence of ConfigVals at startup.
-// This means that the ConfigManager will assert when the config page is loaded
-// if a ConfigVal included in the ConfigApp doesn't exist in the ConfigManager.
-
-// This test exploits that behaviour to check if the ConfigApp is valid by
-// loading the web page and initiating long-polling. If the ConfigManager
-// doesn't assert, the ConfigVals in the ConfigApp are all valid.
-
-// As a side-effect, this test also checks that the (default) language mapping
-// for ConfigOptions is valid (i.e., the mapping file is correctly formed, and
-// mapping entries for each ConfigOption are listed in the same order that they
-// are programmatically added to the ConfigOption).
-
-class SuiteConfigUi : public TestFramework::SuiteUnitTest, private INonCopyable
-{
-private:
-    static const TUint kMaxUiTabs = 4;
-    static const TUint kUiSendQueueSize = 32;
-protected:
-    SuiteConfigUi(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack);
-private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
-private:
-    void Run();
-    void TestGetStaticResource();
-    void TestLongPollCreate();
-    void TestLongPoll();
-protected:
-    virtual void InitialiseMediaPlayer(OpenHome::Net::DvStack& aDvStack, const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent) = 0;
-    virtual void PopulateUriList() = 0;
-protected:
-    OpenHome::Av::Test::TestMediaPlayer* iMediaPlayer;
-    std::vector<Uri*> iUris;
-    HelperDeviceListHandler* iDeviceListHandler;
-private:
-    OpenHome::Net::CpStack& iCpStack;
-    OpenHome::Net::DvStack& iDvStack;
-    OpenHome::Media::AnimatorBasic* iAnimator;
-    OpenHome::ThreadFunctor* iMediaPlayerThread;
-};
-
 class SuiteConfigUiMediaPlayer : public SuiteConfigUi
 {
 public:
     SuiteConfigUiMediaPlayer(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack);
 private: // from SuiteConfigUi
-    void InitialiseMediaPlayer(OpenHome::Net::DvStack& aDvStack, const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent) override;
+    void InitialiseMediaPlayer(const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent) override;
     void PopulateUriList() override;
 };
 
@@ -1046,7 +991,7 @@ void SuiteConfigUi::Setup()
     Brn qobuzIdSecret("dummyQobuz");
     Brn userAgent("dummyUA");
 
-    InitialiseMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
+    InitialiseMediaPlayer(udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
 
     iAnimator = new Media::AnimatorBasic(iDvStack.Env(), iMediaPlayer->Pipeline());
 
@@ -1189,9 +1134,9 @@ SuiteConfigUiMediaPlayer::SuiteConfigUiMediaPlayer(OpenHome::Net::CpStack& aCpSt
 {
 }
 
-void SuiteConfigUiMediaPlayer::InitialiseMediaPlayer(OpenHome::Net::DvStack& aDvStack, const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent)
+void SuiteConfigUiMediaPlayer::InitialiseMediaPlayer(const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent)
 {
-    iMediaPlayer = new Av::Test::TestMediaPlayer(aDvStack, aUdn, aRoom, aProductName, aTuneInPartnerId, aTidalId, aQobuzIdSecret, aUserAgent);
+    iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, aUdn, aRoom, aProductName, aTuneInPartnerId, aTidalId, aQobuzIdSecret, aUserAgent);
 }
 
 void SuiteConfigUiMediaPlayer::PopulateUriList()

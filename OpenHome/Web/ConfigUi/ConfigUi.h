@@ -426,13 +426,13 @@ class ConfigAppSources : public ConfigAppBasic
 private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
-     ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
-     ConfigAppMediaPlayer(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppMediaPlayer(OpenHome::Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 private:
     void AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
     void AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);

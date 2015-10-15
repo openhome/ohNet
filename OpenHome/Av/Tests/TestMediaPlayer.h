@@ -101,7 +101,8 @@ public:
     Media::PipelineManager& Pipeline();
     Net::DvDeviceStandard* Device();
 protected:
-    virtual void RegisterPlugins(Environment& aEnv);
+    virtual void InitialiseSubsystems();
+    virtual void CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private: // from IPowerHandler
@@ -110,6 +111,7 @@ private: // from IPowerHandler
 //private: // from IWebAppFramework
 //    void Add(Web::IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private:
+    void RegisterPlugins(Environment& aEnv);
     void AddConfigApp();
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
@@ -130,17 +132,17 @@ protected:
     Semaphore iSemShutdown;
     Net::Shell* iShell;
     Web::WebAppFramework* iAppFramework;
+    Web::ConfigAppMediaPlayer* iConfigApp;
 private:
     Semaphore iDisabled;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
-    const Brx& iTuneInPartnerId;
-    const Brx& iTidalId;
-    const Brx& iQobuzIdSecret;
-    const Brx& iUserAgent;
+    const Brh iTuneInPartnerId;
+    const Brh iTidalId;
+    const Brh iQobuzIdSecret;
+    const Brh iUserAgent;
     Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
-    Web::ConfigAppMediaPlayer* iConfigApp;
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;
