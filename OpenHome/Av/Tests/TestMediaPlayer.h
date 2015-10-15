@@ -124,16 +124,11 @@ private:
     void Disabled();
 protected:
     MediaPlayer* iMediaPlayer;
-    Media::LoggingPipelineObserver* iPipelineObserver;
-    Net::DvDeviceStandard* iDevice;
-    Net::DvDevice* iDeviceUpnpAv;
-    RamStore* iRamStore;
-    Configuration::ConfigRamStore* iConfigRamStore;
-    Semaphore iSemShutdown;
-    Net::Shell* iShell;
     Web::WebAppFramework* iAppFramework;
     Web::ConfigAppMediaPlayer* iConfigApp;
 private:
+    Semaphore iSemShutdown;
+    Net::Shell* iShell;
     Semaphore iDisabled;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
@@ -149,6 +144,11 @@ private:
     IOhmTimestampMapper* iTxTsMapper;
     IOhmTimestampMapper* iRxTsMapper;
     Bws<Uri::kMaxUriBytes+1> iPresentationUrl;
+    Media::LoggingPipelineObserver* iPipelineObserver;
+    Net::DvDeviceStandard* iDevice;
+    Net::DvDevice* iDeviceUpnpAv;
+    RamStore* iRamStore;
+    Configuration::ConfigRamStore* iConfigRamStore;
 };
 
 class TestMediaPlayerOptions
