@@ -930,7 +930,7 @@ TUint TestHelperHttpReader::WriteRequest(const Uri& aUri, ERequestType aRequestT
 
 TUint TestHelperHttpReader::ConnectAndProcessHeader(const Uri& aUri, ERequestType aRequestType)
 {
-    Uri uri(aUri);
+    Uri uri(aUri.AbsoluteUri());
     TUint code = 0;
 
     iDechunker.SetChunked(false);
