@@ -252,7 +252,7 @@ class SuiteConfigUi : public TestFramework::SuiteUnitTest, private INonCopyable
 private:
     static const TUint kMaxUiTabs = 4;
     static const TUint kUiSendQueueSize = 32;
-public:
+protected:
     SuiteConfigUi(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack);
 private: // from SuiteUnitTest
     void Setup();
@@ -262,13 +262,27 @@ private:
     void TestGetStaticResource();
     void TestLongPollCreate();
     void TestLongPoll();
+protected:
+    virtual void InitialiseMediaPlayer(OpenHome::Net::DvStack& aDvStack, const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent) = 0;
+    virtual void PopulateUriList() = 0;
+protected:
+    OpenHome::Av::Test::TestMediaPlayer* iMediaPlayer;
+    std::vector<Uri*> iUris;
+    HelperDeviceListHandler* iDeviceListHandler;
 private:
     OpenHome::Net::CpStack& iCpStack;
     OpenHome::Net::DvStack& iDvStack;
     OpenHome::Media::AnimatorBasic* iAnimator;
-    OpenHome::Av::Test::TestMediaPlayer* iMediaPlayer;
     OpenHome::ThreadFunctor* iMediaPlayerThread;
-    HelperDeviceListHandler* iDeviceListHandler;
+};
+
+class SuiteConfigUiMediaPlayer : public SuiteConfigUi
+{
+public:
+    SuiteConfigUiMediaPlayer(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack);
+private: // from SuiteConfigUi
+    void InitialiseMediaPlayer(OpenHome::Net::DvStack& aDvStack, const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent) override;
+    void PopulateUriList() override;
 };
 
 } // namespace Test
@@ -1032,7 +1046,8 @@ void SuiteConfigUi::Setup()
     Brn qobuzIdSecret("dummyQobuz");
     Brn userAgent("dummyUA");
 
-    iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
+    InitialiseMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
+
     iAnimator = new Media::AnimatorBasic(iDvStack.Env(), iMediaPlayer->Pipeline());
 
     iMediaPlayerThread = new ThreadFunctor("TestConfigUi", MakeFunctor(*this, &SuiteConfigUi::Run));
@@ -1055,6 +1070,8 @@ void SuiteConfigUi::Setup()
         delete blocker;
         delete deviceList;
     }
+
+    PopulateUriList();
 }
 
 void SuiteConfigUi::TearDown()
@@ -1064,6 +1081,11 @@ void SuiteConfigUi::TearDown()
     // CredentialsThread to be run after Credentials destructor has already
     // been called.
     Thread::Sleep(1000);
+
+    for (auto uri : iUris) {
+        delete uri;
+    }
+    iUris.clear();
 
     iMediaPlayer->StopPipeline();
     delete iDeviceListHandler;
@@ -1079,91 +1101,108 @@ void SuiteConfigUi::Run()
 
 void SuiteConfigUi::TestGetStaticResource()
 {
-    const Brx& url = iDeviceListHandler->GetPresentationUrl();
-    TEST(url.Bytes() > 0);
-    Log::Print("SuiteConfigUi::TestGetStaticResource url: ");
-    Log::Print(url);
-    Log::Print("\n");
+    for (auto& uri : iUris) {
+        UriRetriever uriRetriever(iDvStack.Env(), *uri);
+        Bws<1024> responseBuffer;
+        WriterBuffer writerBuf(responseBuffer);
+        TUint code = uriRetriever.Retrieve(Brn("index.html"), Http::kMethodGet, Brx::Empty(), writerBuf);
+        TEST(code == HttpStatus::kOk.Code());
+        // Check document looks like:
+        // <!DOCTYPE ...>
+        // <html>
+        // ...
+        // </html>
 
-    const Uri uri(url);
-    UriRetriever uriRetriever(iDvStack.Env(), uri);
-    Bws<1024> responseBuffer;
-    WriterBuffer writerBuf(responseBuffer);
-    TUint code = uriRetriever.Retrieve(Brn("index.html"), Http::kMethodGet, Brx::Empty(), writerBuf);
-    TEST (code == HttpStatus::kOk.Code());
-    // Check document looks like:
-    // <!DOCTYPE ...>
-    // <html>
-    // ...
-    // </html>
+        Parser p(responseBuffer);
+        p.Next('!');    // skip "<!"
+        Brn docType = p.Next();
+        TEST(docType == Brn("DOCTYPE"));
 
-    Parser p(responseBuffer);
-    p.Next('!');    // skip "<!"
-    Brn docType = p.Next();
-    TEST(docType == Brn("DOCTYPE"));
+        p.Next('<');    // skip remainder of DOCTYPE
+        Brn htmlOpen = p.Next('>');
+        TEST(htmlOpen == Brn("html"));
 
-    p.Next('<');    // skip remainder of DOCTYPE
-    Brn htmlOpen = p.Next('>');
-    TEST(htmlOpen == Brn("html"));
+        Bws<100> tag;
+        p.Next('<');    // find start of next tag
+        while (!p.Finished()) {
+            tag.Replace(p.Next('>'));   // get tag
+            p.Next('<');                // find start of next tag
+        }
 
-    Bws<100> tag;
-    p.Next('<');    // find start of next tag
-    while (!p.Finished()) {
-        tag.Replace(p.Next('>'));   // get tag
-        p.Next('<');                // find start of next tag
+        // "</html>" should be last tag in document.
+        TEST(p.Finished());
+        TEST(tag == Brn("/html"));
     }
-
-    // "</html>" should be last tag in document.
-    TEST(p.Finished());
-    TEST(tag == Brn("/html"));
 }
 
 void SuiteConfigUi::TestLongPollCreate()
 {
     static const Brn kExpectedSessionId("session-id: 1\r\n");
-    const Brx& url = iDeviceListHandler->GetPresentationUrl();
-    TEST(url.Bytes() > 0);
-    const Uri uri(url);
 
-    UriRetriever uriRetriever(iDvStack.Env(), uri);
-    Bws<1024> responseBuffer;
-    WriterBuffer writerBuf(responseBuffer);
-    TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
-    TEST(code == HttpStatus::kOk.Code());
-    Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
-    expectedLpCreateResponse.Append(kExpectedSessionId);
-    TEST(responseBuffer == expectedLpCreateResponse);
+    for (auto& uri : iUris) {
+        UriRetriever uriRetriever(iDvStack.Env(), *uri);
+        Bws<1024> responseBuffer;
+        WriterBuffer writerBuf(responseBuffer);
+        TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
+        TEST(code == HttpStatus::kOk.Code());
+        Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
+        expectedLpCreateResponse.Append(kExpectedSessionId);
+        TEST(responseBuffer == expectedLpCreateResponse);
 
-    // FIXME - add test to check if can quit cleanly without seeing an "lpterminate".
-    HelperWriterPrinter writerPrinter;
-    code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
-    TEST(code == HttpStatus::kOk.Code());
+        // FIXME - add test to check if can quit cleanly without seeing an "lpterminate".
+        HelperWriterPrinter writerPrinter;
+        code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
+        TEST(code == HttpStatus::kOk.Code());
+    }
 }
 
 void SuiteConfigUi::TestLongPoll()
 {
     static const Brn kExpectedSessionId("session-id: 1\r\n");
+
+    for (auto& uri : iUris) {
+        UriRetriever uriRetriever(iDvStack.Env(), *uri);
+        Bws<1024> responseBuffer;
+        WriterBuffer writerBuf(responseBuffer);
+        TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
+        TEST(code == HttpStatus::kOk.Code());
+        Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
+        expectedLpCreateResponse.Append(kExpectedSessionId);
+        TEST(responseBuffer == expectedLpCreateResponse);
+
+        HelperWriterPrinter writerPrinter;
+        code = uriRetriever.Retrieve(Brn("lp"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
+        TEST(code == HttpStatus::kOk.Code());
+        TEST(writerPrinter.BytesPrinted() > 0);
+        writerPrinter.Reset();
+
+        code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
+        TEST(code == HttpStatus::kOk.Code());
+    }
+}
+
+
+// SuiteConfigUiMediaPlayer
+
+SuiteConfigUiMediaPlayer::SuiteConfigUiMediaPlayer(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack)
+    : SuiteConfigUi(aCpStack, aDvStack)
+{
+}
+
+void SuiteConfigUiMediaPlayer::InitialiseMediaPlayer(OpenHome::Net::DvStack& aDvStack, const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent)
+{
+    iMediaPlayer = new Av::Test::TestMediaPlayer(aDvStack, aUdn, aRoom, aProductName, aTuneInPartnerId, aTidalId, aQobuzIdSecret, aUserAgent);
+}
+
+void SuiteConfigUiMediaPlayer::PopulateUriList()
+{
     const Brx& url = iDeviceListHandler->GetPresentationUrl();
-    TEST(url.Bytes() > 0);
-    const Uri uri(url);
+    ASSERT(url.Bytes() > 0);
+    Log::Print("SuiteConfigUiMediaPlayer::PopulateUriList url: ");
+    Log::Print(url);
+    Log::Print("\n");
 
-    UriRetriever uriRetriever(iDvStack.Env(), uri);
-    Bws<1024> responseBuffer;
-    WriterBuffer writerBuf(responseBuffer);
-    TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
-    TEST(code == HttpStatus::kOk.Code());
-    Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
-    expectedLpCreateResponse.Append(kExpectedSessionId);
-    TEST(responseBuffer == expectedLpCreateResponse);
-
-    HelperWriterPrinter writerPrinter;
-    code = uriRetriever.Retrieve(Brn("lp"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
-    TEST(code == HttpStatus::kOk.Code());
-    TEST(writerPrinter.BytesPrinted() > 0);
-    writerPrinter.Reset();
-
-    code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
-    TEST(code == HttpStatus::kOk.Code());
+    iUris.push_back(new Uri(url));
 }
 
 
@@ -1179,7 +1218,7 @@ void TestConfigUi(CpStack& aCpStack, DvStack& aDvStack)
     runner.Add(new SuiteConfigMessageText());
     // FIXME - SuiteConfigUi currently only works on desktop platforms.
 #if defined(_WIN32) || defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
-    runner.Add(new SuiteConfigUi(aCpStack, aDvStack));
+    runner.Add(new SuiteConfigUiMediaPlayer(aCpStack, aDvStack));
 #endif
     runner.Run();
 }
