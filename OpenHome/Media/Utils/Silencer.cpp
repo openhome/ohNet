@@ -2,6 +2,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 namespace OpenHome {
 namespace Media {
@@ -25,6 +26,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -39,8 +41,17 @@ private:
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+
+const TUint Silencer::kSupportedMsgTypes =   eMode
+                                           | eDrain
+                                           | eHalt
+                                           | eDecodedStream
+                                           | ePlayable
+                                           | eQuit;
+
 Silencer::Silencer(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aThreadPriority, TUint aSilenceJiffies, TUint aMaxNumMsgs)
-    : iMsgFactory(aMsgFactory)
+    : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iSilenceJiffies(aSilenceJiffies)
     , iFifo(aMaxNumMsgs)
@@ -84,21 +95,6 @@ Msg* Silencer::Pull()
     return msg;
 }
 
-Msg* Silencer::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Silencer::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Silencer::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Silencer::ProcessMsg(MsgHalt* aMsg)
 {
     // swallow halt messages - the driver presumably can't do anything with them if its using this class
@@ -121,22 +117,6 @@ Msg* Silencer::ProcessMsg(MsgPlayable* aMsg)
     iHalted = false;
     return aMsg;
 }
-
-Msg* Silencer::ProcessMsg(MsgQuit* aMsg)
-{
-    return aMsg;
-}
-
-// not expected beyond the generic pipeline
-Msg* Silencer::ProcessMsg(MsgTrack* aMsg)         { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgDelay* aMsg)         { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgEncodedStream* aMsg) { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgAudioEncoded* aMsg)  { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgMetaText* aMsg)      { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgFlush* aMsg)         { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgWait* aMsg)          { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgAudioPcm* aMsg)      { ASSERTS(); return aMsg; }
-Msg* Silencer::ProcessMsg(MsgSilence* aMsg)       { ASSERTS(); return aMsg; }
 
 
 // SilencerMsgInProcessor
@@ -165,6 +145,7 @@ Msg* SilencerMsgInProcessor::ProcessMsg(MsgHalt* aMsg)                  { return
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgFlush* aMsg)                 { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgWait* aMsg)                  { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgDecodedStream* aMsg)         { return aMsg; }
+Msg* SilencerMsgInProcessor::ProcessMsg(MsgBitRate* aMsg)               { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgAudioPcm* aMsg)              { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgSilence* aMsg)               { return aMsg; }
 Msg* SilencerMsgInProcessor::ProcessMsg(MsgPlayable* aMsg)              { return aMsg; }

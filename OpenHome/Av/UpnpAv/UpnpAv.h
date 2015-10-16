@@ -1,5 +1,4 @@
-#ifndef HEADER_UPNPAV_DEVICE
-#define HEADER_UPNPAV_DEVICE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -10,9 +9,12 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Av/Source.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
     class PipelineManager;
+    class MimeTypeList;
 }
 namespace Av {
     class UriProviderRepeater;
@@ -40,10 +42,11 @@ class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipel
 public:
     static const TChar* kSourceName;
 public:
-    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols);
+    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList);
     ~SourceUpnpAv();
 private:
     void EnsureActive();
+    void NotifyState(Media::EPipelineState aState);
 private: // from Source
     void Activate() override;
     void Deactivate() override;
@@ -74,13 +77,13 @@ private:
     ProviderConnectionManager* iProviderConnectionManager;
     ProviderRenderingControl* iProviderRenderingControl;
     Media::IPipelineObserver* iDownstreamObserver;
-    TUint iStreamId;
+    std::atomic<TUint> iStreamId;
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
     TBool iNoPipelinePrefetchOnActivation;
+    TBool iIgnorePipelineStateUpdates;
 };
 
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_UPNPAV_DEVICE

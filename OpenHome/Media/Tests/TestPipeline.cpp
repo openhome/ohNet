@@ -7,7 +7,10 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Utils/Aggregator.h>
+#include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
+#include <OpenHome/Net/Private/Shell.h>
 
 #include <string.h>
 #include <vector>
@@ -37,7 +40,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementDownstream& iDownstream;
@@ -51,7 +54,14 @@ private:
     TUint iHaltId;
 };
 
-class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer, private IUrlBlockWriter, private IPipelineAnimator
+class SuitePipeline : public Suite
+                    , private IPipelineObserver
+                    , private IMsgProcessor
+                    , private IStreamPlayObserver
+                    , private ISeekRestreamer
+                    , private IUrlBlockWriter
+                    , private IPipelineAnimator
+                    , private IMimeTypeList
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -101,6 +111,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -114,7 +125,10 @@ private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 private:
+    Net::ShellNull iShell;
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     PipelineInitParams* iInitParams;
@@ -145,7 +159,6 @@ public:
     DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private: // from CodecBase
     void StreamInitialise();
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -228,7 +241,7 @@ void Supplier::Run()
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
     iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
     track->RemoveRef();
-    iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 1, false, false, this));
+    iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, false, this));
     while (!iQuit) {
         CheckForKill();
         if (iBlock) {
@@ -237,6 +250,7 @@ void Supplier::Run()
         if (iFlushId != MsgFlush::kIdInvalid) {
             iDownstream.Push(iMsgFactory.CreateMsgFlush(iFlushId));
             iFlushId = MsgFlush::kIdInvalid;
+            iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, true, this));
         }
         else {
             iDownstream.Push(iMsgFactory.CreateMsgAudioEncoded(encodedAudioBuf));
@@ -263,7 +277,7 @@ TUint Supplier::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -286,7 +300,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this, iShell);
     iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
@@ -398,6 +412,7 @@ void SuitePipeline::Test()
     TEST(iPipelineState == EPipelinePlaying);
     TestJiffies(iInitParams->RampLongJiffies());
 
+#if 0 /* Waiter tests disabled pending decision on whether a new stream must always follow a Wait */
     // Wait. Check for ramp down in Pipeline::kWaiterRampDuration.
     // Send down expected MsgFlush, then check for ramp up in
     // Pipeline::kWaiterRampDuration.
@@ -416,7 +431,7 @@ void SuitePipeline::Test()
     WaitForStateChange(EPipelinePlaying);
     TEST(iPipelineState == EPipelinePlaying);
     TestJiffies(iInitParams->RampShortJiffies());
-
+#endif
 
     // Test pause with partial ramp down before play is called.
     Print("\nPause->Play with partial ramp down\n");
@@ -769,6 +784,12 @@ Msg* SuitePipeline::ProcessMsg(MsgDecodedStream* aMsg)
     return nullptr;
 }
 
+Msg* SuitePipeline::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
 Msg* SuitePipeline::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
@@ -784,7 +805,7 @@ Msg* SuitePipeline::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsgWasAudio = true;
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aMsg->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() == aMsg->Bytes());
@@ -847,6 +868,10 @@ TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint
     return 0;
 }
 
+void SuitePipeline::Add(const TChar* /*aMimeType*/)
+{
+}
+
 
 // DummyCodec
 
@@ -863,11 +888,6 @@ void DummyCodec::StreamInitialise()
 {
     iTrackOffsetJiffies = 0;
     iSentDecodedInfo = false;
-}
-
-TBool DummyCodec::SupportsMimeType(const Brx& /*aMimeType*/)
-{
-    return false;
 }
 
 TBool DummyCodec::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)

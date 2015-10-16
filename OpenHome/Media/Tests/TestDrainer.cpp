@@ -41,6 +41,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -57,6 +58,7 @@ private:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgHalt
@@ -108,7 +110,7 @@ void SuiteDrainer::Setup()
     MsgFactoryInitParams init;
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDrainer = new Drainer(*iMsgFactory, *this);
-    iMsgDrain = NULL;
+    iMsgDrain = nullptr;
     iTimer = new Timer(iEnv, MakeFunctor(*this, &SuiteDrainer::TimerCallback), "SuiteDrainer");
 }
 
@@ -209,6 +211,12 @@ Msg* SuiteDrainer::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteDrainer::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteDrainer::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
@@ -243,7 +251,7 @@ void SuiteDrainer::PullNext(EMsgType aExpectedMsg)
 
 void SuiteDrainer::TimerCallback()
 {
-    ASSERT(iMsgDrain != NULL);
+    ASSERT(iMsgDrain != nullptr);
     iMsgDrain->ReportDrained();
 }
 
@@ -261,7 +269,7 @@ void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false));
 
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
@@ -277,7 +285,7 @@ void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 
 void SuiteDrainer::TestDrainAfterStarvation()
 {
-    iDrainer->NotifyStarving(Brx::Empty(), 0);
+    iDrainer->NotifyStarving(Brx::Empty(), 0, true);
     PullNext(EMsgDrain);
 }
 
@@ -288,7 +296,7 @@ void SuiteDrainer::TestOneDrainAfterHaltAndStarvation()
     PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgHalt);
-    iDrainer->NotifyStarving(Brx::Empty(), 0);
+    iDrainer->NotifyStarving(Brx::Empty(), 0, true);
     PullNext(EMsgDrain);
     iMsgDrain->ReportDrained();
     PullNext(EMsgSilence);

@@ -1,5 +1,4 @@
-#ifndef HEADER_CONFIGRAMSTORE
-#define HEADER_CONFIGRAMSTORE
+#pragma once
 
 #include <OpenHome/Configuration/BufferPtrCmp.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -35,4 +34,3 @@ private:
 } // namespace Configuration
 } // namespace OpenHome
 
-#endif // HEADER_CONFIGRAMSTORE

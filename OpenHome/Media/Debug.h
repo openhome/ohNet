@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_DEBUG
-#define HEADER_PIPELINE_DEBUG
+#pragma once
 
 #include <OpenHome/Private/Debug.h>
 
@@ -11,4 +10,3 @@ namespace OpenHome {
 
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_DEBUG

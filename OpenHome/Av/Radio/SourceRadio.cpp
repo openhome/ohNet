@@ -22,12 +22,11 @@ namespace Av {
 class UriProviderRadio : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
-    ~UriProviderRadio();
+    UriProviderRadio(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller() override;
+    Media::ModeClockPullers ClockPullers() override;
 private:
-    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
+    Media::ClockPullerUtilisation iClockPuller;
 };
 
 } // namespace Av
@@ -42,54 +41,45 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
-                           *radioUriProvider, aSupportedProtocols, Brx::Empty(),
-                           aMediaPlayer.ConfigInitialiser(), aMediaPlayer.CredentialsManager());
+                           *radioUriProvider, Brx::Empty(), aMediaPlayer.ConfigInitialiser(),
+                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
 }
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
-                           *radioUriProvider, aSupportedProtocols, aTuneInPartnerId,
-                           aMediaPlayer.ConfigInitialiser(), aMediaPlayer.CredentialsManager());
+                           *radioUriProvider, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser(),
+                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
 }
 
 
 // UriProviderRadio
 
-UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock)
+UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
     : UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory())
+    , iClockPuller(aMediaPlayer.Env())
 {
-    if (aPullableClock == nullptr) {
-        iClockPuller = nullptr;
-    }
-    else {
-        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
-    }
 }
 
-UriProviderRadio::~UriProviderRadio()
+ModeClockPullers UriProviderRadio::ClockPullers()
 {
-    delete iClockPuller;
-}
-
-IClockPuller* UriProviderRadio::ClockPuller()
-{
-    return iClockPuller;
+    return ModeClockPullers(&iClockPuller, nullptr, nullptr);
 }
 
 
 // SourceRadio
 
 SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline,
-                         UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, const Brx& aTuneInPartnerId,
-                         IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager)
+                         UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
+                         IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager,
+                         Media::MimeTypeList& aMimeTypeList)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -100,21 +90,22 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iLive(false)
 {
     iPresetDatabase = new PresetDatabase();
-    iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
+    iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase);
+    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
     if (aTuneInPartnerId.Bytes() == 0) {
         iTuneIn = nullptr;
     }
     else {
-        iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, aTuneInPartnerId, *iPresetDatabase, aConfigInit, aCredentialsManager);
+        iTuneIn = new RadioPresetsTuneIn(aEnv, aTuneInPartnerId, *iPresetDatabase, aConfigInit, aCredentialsManager, aMimeTypeList);
     }
-    iPipeline.Add(ContentProcessorFactory::NewM3u());
-    iPipeline.Add(ContentProcessorFactory::NewM3u());
+    iPipeline.Add(ContentProcessorFactory::NewM3u(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewM3u(aMimeTypeList));
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
-    iPipeline.Add(ContentProcessorFactory::NewPls());
-    iPipeline.Add(ContentProcessorFactory::NewPls());
-    iPipeline.Add(ContentProcessorFactory::NewOpml());
-    iPipeline.Add(ContentProcessorFactory::NewOpml());
+    iPipeline.Add(ContentProcessorFactory::NewPls(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewPls(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewOpml(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewOpml(aMimeTypeList));
     iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.AddObserver(*this);
@@ -132,7 +123,9 @@ SourceRadio::~SourceRadio()
 
 void SourceRadio::Activate()
 {
-    iTuneIn->Refresh();
+    if (iTuneIn != nullptr) {
+        iTuneIn->Refresh();
+    }
     iTrackPosSeconds = 0;
     iActive = true;
     const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());

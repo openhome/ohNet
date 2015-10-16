@@ -2,6 +2,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
@@ -269,14 +270,15 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     init.SetMsgAudioEncodedCount(kMsgAudioEncodedCount, kEncodedAudioCount);
     init.SetMsgAudioPcmCount(5, 5);
     init.SetMsgEncodedStreamCount(2);
+    init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(*iInfoAggregator, init);
     // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
     iFlushIdProvider = new TestCodecFlushIdProvider();
     iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
     const TUint maxReservoirEncodedAudio = (kEncodedReservoirSizeBytes + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes;
-    iReservoir = new EncodedAudioReservoir(maxReservoirEncodedAudio, kEncodedReservoirMaxStreams);
+    iReservoir = new EncodedAudioReservoir(*iMsgFactory, *iFlushIdProvider, maxReservoirEncodedAudio, kEncodedReservoirMaxStreams);
     iLoggerEncodedAudioReservoir = new Logger(*iReservoir, "Encoded Audio Reservoir");
-    iContainer = new Container(*iMsgFactory, *iLoggerEncodedAudioReservoir, *this);
+    iContainer = new ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, *this);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     iLoggerCodecController = new Logger("Codec Controller", *iElementDownstream);
     iController = new CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, kPriorityNormal);
@@ -328,20 +330,20 @@ void TestCodecMinimalPipeline::RegisterPlugins()
 {
     // Add containers
     iContainer->AddContainer(new Id3v2());
-    iContainer->AddContainer(new Mpeg4Container());
-    iContainer->AddContainer(new MpegTs());
+    iContainer->AddContainer(new Mpeg4Container(*this));
+    iContainer->AddContainer(new MpegTsContainer(*this));
 
     // Add codecs
     // These can be re-ordered to check for problems in the recognise function of each codec.
-    iController->AddCodec(CodecFactory::NewWav());
-    iController->AddCodec(CodecFactory::NewAiff());
-    iController->AddCodec(CodecFactory::NewAifc());
-    iController->AddCodec(CodecFactory::NewFlac());
-    iController->AddCodec(CodecFactory::NewAac());
-    iController->AddCodec(CodecFactory::NewAdts());
-    iController->AddCodec(CodecFactory::NewAlac());
-    iController->AddCodec(CodecFactory::NewMp3());
-    iController->AddCodec(CodecFactory::NewVorbis());
+    iController->AddCodec(CodecFactory::NewWav(*this));
+    iController->AddCodec(CodecFactory::NewAiff(*this));
+    iController->AddCodec(CodecFactory::NewAifc(*this));
+    iController->AddCodec(CodecFactory::NewFlac(*this));
+    iController->AddCodec(CodecFactory::NewAac(*this));
+    iController->AddCodec(CodecFactory::NewAdts(*this));
+    iController->AddCodec(CodecFactory::NewAlac(*this));
+    iController->AddCodec(CodecFactory::NewMp3(*this));
+    iController->AddCodec(CodecFactory::NewVorbis(*this));
 }
 
 TBool TestCodecMinimalPipeline::TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes)
@@ -350,6 +352,10 @@ TBool TestCodecMinimalPipeline::TryGet(IWriter& aWriter, const Brx& aUrl, TUint6
     Log::Print(aUrl);
     Log::Print(", aOffset: %llu, aBytes: %u\n", aOffset, aBytes);
     return iFiller->TryGet(aWriter, aUrl, aOffset, aBytes);
+}
+
+void TestCodecMinimalPipeline::Add(const TChar* /*aMimeType*/)
+{
 }
 
 
@@ -423,6 +429,11 @@ Msg* MsgProcessor::ProcessMsg(MsgWait* aMsg)
 Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgDecodedStream\n");
+    return aMsg;
+}
+Msg* MsgProcessor::ProcessMsg(MsgBitRate* aMsg)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgBitRate\n");
     return aMsg;
 }
 Msg* MsgProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
@@ -772,7 +783,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint64 aDurationJiffies, TUi
         TEST(iSeekSuccess);
 
         if (aCodec != AudioFileDescriptor::kCodecVorbis) {
-            // Vorbis seeking is isn't particularly accurate
+            // Vorbis seeking isn't particularly accurate
 
             // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
             TEST(iJiffies >= 0);   // Lower bound.
@@ -887,7 +898,7 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
     //iLastSubsample = 0;
     MsgPlayable* msg = aMsg->CreatePlayable();
     TUint bytes = msg->Bytes();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     const TUint increment = (iBitDepth/8) * iChannels;
 
     msg->Read(pcmProcessor);

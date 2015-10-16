@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -35,27 +36,34 @@ TUint PriorityArbitratorAnimator::HostRange() const
     return 1;
 }
 
+const TUint AnimatorBasic::kSupportedMsgTypes =   eMode
+                                                | eDrain
+                                                | eHalt
+                                                | eDecodedStream
+                                                | ePlayable
+                                                | eQuit;
 
-AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline)
-    : Thread("PipelineAnimator", kPrioritySystemHighest)
+AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline, TBool aPullable)
+    : PipelineElement(kSupportedMsgTypes)
     , iPipeline(aPipeline)
     , iSem("DRVB", 0)
     , iOsCtx(aEnv.OsCtx())
+    , iPullable(aPullable)
     , iPlayable(nullptr)
-    , iPullLock("DBPL")
-    , iPullValue(kClockPullDefault)
+    , iPullValue(IPullableClock::kNominalFreq)
     , iQuit(false)
 {
     iPipeline.SetAnimator(*this);
-    Start();
+    iThread = new ThreadFunctor("PipelineAnimator", MakeFunctor(*this, &AnimatorBasic::DriverThread), kPrioritySystemHighest);
+    iThread->Start();
 }
 
 AnimatorBasic::~AnimatorBasic()
 {
-    Join();
+    delete iThread;
 }
 
-void AnimatorBasic::Run()
+void AnimatorBasic::DriverThread()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
     Msg* msg = iPipeline.Pull();
@@ -96,16 +104,14 @@ void AnimatorBasic::Run()
             }
             else {
                 iPendingJiffies = diffMs * Jiffies::kPerMs;
-                iPullLock.Wait();
-                if (iPullValue != kClockPullDefault) {
+                if (iPullValue != IPullableClock::kNominalFreq) {
                     TInt64 pending64 = iPullValue * iPendingJiffies;
-                    pending64 /= kClockPullDefault;
+                    pending64 /= IPullableClock::kNominalFreq;
                     //Log::Print("iPendingJiffies=%08x, pull=%08x\n", iPendingJiffies, pending64); // FIXME
                     //TInt pending = (TInt)iPendingJiffies + (TInt)pending64;
                     //Log::Print("Pulled clock, now want %u jiffies (%ums, %d%%) extra\n", (TUint)pending, pending/Jiffies::kPerMs, (pending-(TInt)iPendingJiffies)/iPendingJiffies); // FIXME
                     iPendingJiffies = (TUint)pending64;
                 }
-                iPullLock.Signal();
             }
         }
     }
@@ -143,53 +149,22 @@ void AnimatorBasic::ProcessAudio(MsgPlayable* aMsg)
 
 Msg* AnimatorBasic::ProcessMsg(MsgMode* aMsg)
 {
-    iPullLock.Wait();
-    iPullValue = kClockPullDefault;
-    iPullLock.Signal();
+    iPullValue = IPullableClock::kNominalFreq;
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
 Msg* AnimatorBasic::ProcessMsg(MsgDrain* aMsg)
 {
+    if (iPlayable != nullptr) {
+        iPlayable->RemoveRef();
+        iPlayable = nullptr;
+    }
+    if (iSampleRate != 0) {
+        PullClock(iSampleRate, IPullableClock::kNominalFreq);
+    }
     aMsg->ReportDrained();
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgDelay* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
@@ -198,18 +173,6 @@ Msg* AnimatorBasic::ProcessMsg(MsgHalt* aMsg)
     iPendingJiffies = 0;
     iNextTimerDuration = 0;
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgWait* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
@@ -224,20 +187,11 @@ Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
     return nullptr;
 }
 
-Msg* AnimatorBasic::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* AnimatorBasic::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* AnimatorBasic::ProcessMsg(MsgPlayable* aMsg)
 {
+    if (aMsg->ClockPullMultiplier() != IPullableClock::kPullNone) {
+        PullClock(iSampleRate, aMsg->ClockPullMultiplier());
+    }
     ProcessAudio(aMsg);
     return nullptr;
 }
@@ -251,11 +205,13 @@ Msg* AnimatorBasic::ProcessMsg(MsgQuit* aMsg)
     return nullptr;
 }
 
-void AnimatorBasic::PullClock(TInt32 aValue)
+void AnimatorBasic::PullClock(TUint /*aSampleRate*/, TUint aMultiplier)
 {
-    AutoMutex _(iPullLock);
-    iPullValue += aValue;
-    Log::Print("AnimatorBasic::PullClock now at %u%%\n", iPullValue / (1<<29));
+    if (!iPullable || iPullValue == aMultiplier) {
+        return;
+    }
+    iPullValue = aMultiplier;
+    LOG(kPipeline, "AnimatorBasic::PullClock now at %u%%\n", (TUint)((iPullValue * 100) / IPullableClock::kNominalFreq));
 }
 
 TUint AnimatorBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)

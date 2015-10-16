@@ -1,5 +1,4 @@
-#ifndef HEADER_SONGCAST_SPLITTER
-#define HEADER_SONGCAST_SPLITTER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -28,6 +27,7 @@ private: // Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgBitRate* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgSilence* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
@@ -52,6 +52,7 @@ private:
         Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg) override;
+        Media::Msg* ProcessMsg(Media::MsgBitRate* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgSilence* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
@@ -67,4 +68,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SONGCAST_SPLITTER

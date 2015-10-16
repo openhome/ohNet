@@ -223,7 +223,8 @@ DummySourceUpnpAv::DummySourceUpnpAv(DvStack& aDvStack, const Brx& aUdn)
     iDevice->SetAttribute("Upnp.ModelName", "None");
 
     iProviderAvTransport = new ProviderAvTransport(*iDevice, aDvStack.Env(), *this);
-    iProviderConnectionManager = new ProviderConnectionManager(*iDevice, Brn("*"));
+    iProviderConnectionManager = new ProviderConnectionManager(*iDevice);
+    iProviderConnectionManager->NotifyProtocolInfo(Brn("*"));
     iProviderRenderingControl = new ProviderRenderingControl(*iDevice, aDvStack.Env(), iVolumeManager);
 
     iDevice->SetEnabled();

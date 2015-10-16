@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Radio/ContentProcessorFactory.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 /* Example OPML file
 
@@ -30,7 +31,7 @@ class ContentOpml : public Media::ContentProcessor
 {
     static const TUint kMaxLineBytes = 2 * 1024;
 public:
-    ContentOpml();
+    ContentOpml(Media::IMimeTypeList& aMimeTypeList);
     ~ContentOpml();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
@@ -49,17 +50,18 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Av;
 
 
-ContentProcessor* ContentProcessorFactory::NewOpml()
+ContentProcessor* ContentProcessorFactory::NewOpml(IMimeTypeList& aMimeTypeList)
 { // static
-    return new ContentOpml();
+    return new ContentOpml(aMimeTypeList);
 }
 
 
 // ContentOpml
 
-ContentOpml::ContentOpml()
+ContentOpml::ContentOpml(IMimeTypeList& aMimeTypeList)
 {
     iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+    aMimeTypeList.Add("text/xml");
 }
 
 ContentOpml::~ContentOpml()
@@ -88,6 +90,9 @@ ProtocolStreamResult ContentOpml::Stream(IReader& aReader, TUint64 aTotalBytes)
     try {
         for (;;) {
             Brn line(ReadLine(*iReaderUntil, bytesRemaining));
+            if (line.Bytes() == 0) {
+                continue;
+            }
             ReaderBuffer rb(line);
             rb.ReadUntil('<');
             Parser parser(rb.ReadUntil('>'));

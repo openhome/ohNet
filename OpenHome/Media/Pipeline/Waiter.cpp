@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <atomic>
@@ -10,9 +11,26 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TUint Waiter::kSupportedMsgTypes =   eMode
+                                         | eTrack
+                                         | eDrain
+                                         | eDelay
+                                         | eEncodedStream
+                                         | eMetatext
+                                         | eStreamInterrupted
+                                         | eHalt
+                                         | eFlush
+                                         | eWait
+                                         | eDecodedStream
+                                         | eBitRate
+                                         | eAudioPcm
+                                         | eSilence
+                                         | eQuit;
+
 Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
                IPipelineElementObserverThread& aObserverThread, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
+    : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
@@ -34,30 +52,36 @@ Waiter::~Waiter()
 
 void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 {
+    // Wait can be called multiple times.
     AutoMutex a(iLock);
-    //ASSERT(iState == ERunning); // Already in process of waiting.
-    iTargetFlushId = aFlushId;
+    LOG(kPipeline, ">Waiter::Wait aFlushId: %u, iTargetFlushId: %u, iState: %u, iRampDuration: %u, iRemainingRampSize: %u\n", aFlushId, iTargetFlushId, iState, iRampDuration, iRemainingRampSize);
+    if (aFlushId != iTargetFlushId) {
+        iTargetFlushId = aFlushId;
 
-    if (iState == ERampingUp) {
-        iState = ERampingDown;
-        if (iRampDuration == iRemainingRampSize) {
-            // Already reached end of (previous) ramp down (and now ready to
-            // start ramp up); go straight to flushing state.
-            iState = EFlushing;
-            DoWait();
+        // Only need to take further action if not already waiting.
+        if (iState != EWaiting) {
+            if (iState == ERampingUp) {
+                iState = ERampingDown;
+                if (iRampDuration == iRemainingRampSize) {
+                    // Already reached end of (previous) ramp down (and now ready to
+                    // start ramp up); go straight to flushing state.
+                    iState = EFlushing;
+                    DoWait();
+                }
+                else {
+                    iRemainingRampSize = iRampDuration - iRemainingRampSize;
+                }
+                // leave iCurrentRampValue unchanged
+            }
+            else if (!aRampDown || iState == EFlushing) {
+                DoWait();
+            }
+            else if (iState != ERampingDown) {
+                iState = ERampingDown;
+                iRemainingRampSize = iRampDuration;
+                iCurrentRampValue = Ramp::kMax;
+            }
         }
-        else {
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
-        }
-        // leave iCurrentRampValue unchanged
-    }
-    else if (!aRampDown || iState == EFlushing) {
-        DoWait();
-    }
-    else {
-        iState = ERampingDown;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kMax;
     }
 }
 
@@ -73,37 +97,6 @@ Msg* Waiter::Pull()
     return msg;
 }
 
-Msg* Waiter::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Waiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
 Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
@@ -114,24 +107,19 @@ Msg* Waiter::ProcessMsg(MsgStreamInterrupted* aMsg)
     return ProcessFlushable(aMsg);
 }
 
-Msg* Waiter::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        //ASSERT(iState == EFlushing); // haven't received enough audio for a full ramp down
-        // FIXME - the above ASSERT can be expected at the moment if we
-        // pause/unpause/seek too quickly as the VariableDelay pipeline element
-        // does not currently give us a 2s buffer.
-        aMsg->RemoveRef();
+        // NOTE: Can happen if pausing/unpausing or seeking in quick succession.
+        // Is valid in some states (can uncomment to investigate invalid transitions):
+        // - Pausing/unpausing or seeking at the very start of a stream before a delay > 0 has been sent down the pipeline.
+        // - Pausing/seeking in quick succession with insufficient audio between actions for a full ramp down. StarvationMonitor performs emergency ramp in that case.
+        //ASSERT(iState != ERampingDown); // Check if received enough audio for a normal ramp down.
+
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kMin;
-        return nullptr;
     }
     return aMsg;
 }
@@ -151,10 +139,10 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (iState == EFlushing || iState == ERampingDown) {
-        aMsg->RemoveRef();
-        ASSERTS();
-    }
+    // NOTE: can re-enable to test for invalid transitions.
+    //ASSERT(iState != EFlushing);    // Can happen if flush reaches CodecController during recognition; codec may recognise stream and StreamInitialise() call may output a MsgDecodedStream before CodecController passes on the MsgFlush.
+    //ASSERT(iState != ERampingDown); // Can happen if pausing/seeking in quick succession with insufficient audio between actions for a full ramp down. StarvationMonitor performs emergency ramp in that case.
+
     // iState may be ERampingUp if a MsgFlush was pulled
     if (iState == EWaiting || iState == ERampingUp) {
         ScheduleEvent(false);
@@ -167,19 +155,23 @@ Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     HandleAudio();
     if (iState == ERampingDown || iState == ERampingUp) {
-        MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize) {
-            split = aMsg->Split(iRemainingRampSize);
+        if (iRemainingRampSize > 0) {
+            MsgAudio* split;
+            if (aMsg->Jiffies() > iRemainingRampSize) {
+                split = aMsg->Split(iRemainingRampSize);
+                if (split != nullptr) {
+                    iQueue.EnqueueAtHead(split);
+                }
+            }
+            split = nullptr;
+            const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
+            iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
             if (split != nullptr) {
                 iQueue.EnqueueAtHead(split);
             }
         }
-        split = nullptr;
-        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
-        if (split != nullptr) {
-            iQueue.EnqueueAtHead(split);
-        }
+
+
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
                 DoWait();
@@ -207,19 +199,7 @@ Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
         iCurrentRampValue = Ramp::kMax;
         iState = ERunning;
     }
-
     return ProcessFlushable(aMsg);
-}
-
-Msg* Waiter::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Waiter::ProcessMsg(MsgQuit* aMsg)
-{
-    return aMsg;
 }
 
 void Waiter::DoWait()
@@ -258,7 +238,6 @@ void Waiter::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kMax;
-    iState = ERunning;
 }
 
 void Waiter::ScheduleEvent(TBool aWaiting)

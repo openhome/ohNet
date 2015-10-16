@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_WAITER
-#define HEADER_PIPELINE_WAITER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -33,8 +32,9 @@ public:
 
 class IPipelineElementObserverThread;
 
-class Waiter : public IPipelineElementUpstream, private IMsgProcessor
+class Waiter : public PipelineElement, public IPipelineElementUpstream
 {
+    static const TUint kSupportedMsgTypes;
 public:
     Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver,
            IPipelineElementObserverThread& aObserverThread, TUint aRampDuration);
@@ -43,22 +43,13 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgDrain* aMsg) override;
-    Msg* ProcessMsg(MsgDelay* aMsg) override;
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
     Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
-    Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
-    Msg* ProcessMsg(MsgPlayable* aMsg) override;
-    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     void DoWait();
     Msg* ProcessFlushable(Msg* aMsg);
@@ -94,4 +85,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_WAITER

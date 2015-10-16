@@ -76,6 +76,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         iHaltDelivered = false;
         if (iPlannedHalt) {
             UpdateStatus(ERunning);
+            iCurrentRampValue = Ramp::kMax;
             iPlannedHalt = false;
         }
         else {
@@ -139,7 +140,8 @@ MsgAudio* StarvationMonitor::ProcessAudioOut(MsgAudio* aMsg)
         }
         iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
         if (iJiffiesUntilNextHistoryPoint == 0) {
-            iClockPuller->NotifySizeStarvationMonitor(Jiffies());
+            const TUint multiplier = iClockPuller->NotifySize(Jiffies());
+            aMsg->SetClockPull(multiplier);
             iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
         }
     }
@@ -187,19 +189,22 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
 #endif
     if (aStatus == EBuffering) {
         if (iStreamHandler != nullptr) {
-            iStreamHandler->NotifyStarving(iMode, iStreamId);
+            iStreamHandler->NotifyStarving(iMode, iStreamId, true);
         }
         iEventBuffering.store(true);
         iObserverThread.Schedule(iEventId);
         if (iClockPuller != nullptr) {
-            iClockPuller->StopStarvationMonitor();
+            iClockPuller->Stop();
         }
     }
     else if (iStatus == EBuffering) {
+        if (iStreamHandler != nullptr) {
+            iStreamHandler->NotifyStarving(iMode, iStreamId, false);
+        }
         iEventBuffering.store(false);
         iObserverThread.Schedule(iEventId);
         if (iClockPuller != nullptr) {
-            iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+            iClockPuller->Start(kUtilisationSamplePeriodJiffies);
         }
     }
     iStatus = aStatus;
@@ -259,11 +264,11 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     iMode.Replace(aMsg->Mode());
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     if (iClockPuller != nullptr) {
-        iClockPuller->StopStarvationMonitor();
+        iClockPuller->Stop();
     }
-    iClockPuller = aMsg->ClockPuller();
+    iClockPuller = aMsg->ClockPullers().ReservoirRight();
     if (iClockPuller != nullptr) {
-        iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+        iClockPuller->Start(kUtilisationSamplePeriodJiffies);
     }
     return aMsg;
 }
@@ -273,15 +278,20 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDrain* aMsg)
     iLock.Wait();
     iPriorityMsgCount--;
     iLock.Signal();
+    if (iClockPuller != nullptr) {
+        iClockPuller->Reset();
+    }
+    iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     return aMsg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    iStreamHandler = aMsg->StreamInfo().StreamHandler();
-    iStreamId = aMsg->StreamInfo().StreamId();
+    auto streamInfo = aMsg->StreamInfo();
+    iStreamHandler = streamInfo.StreamHandler();
+    iStreamId = streamInfo.StreamId();
     if (iClockPuller != nullptr) {
-        iClockPuller->NewStreamStarvationMonitor(iStreamId);
+        iClockPuller->NewStream(streamInfo.SampleRate());
     }
     iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     if (iRampUntilStreamOutCount > 0) {
@@ -304,7 +314,14 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
         iCurrentRampValue = Ramp::kMax;
         iRemainingRampSize = iRampDownDuration;
     }
-    if (iStatus == ERampingDown) {
+
+    switch (iStatus)
+    {
+    default:
+        ASSERTS();
+    case ERunning:
+        break;
+    case ERampingDown:
         Ramp(msg, Ramp::EDown);
         if (iRemainingRampSize == 0) {
             UpdateStatus(EBuffering);
@@ -313,15 +330,21 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
         if (Jiffies() == 0) { // Ramp() can cause a msg to be split, meaning that remainingSize is inaccurate
             ASSERT(iCurrentRampValue == Ramp::kMin);
         }
-    }
-    else if (iStatus == ERampingUp) {
+        break;
+    case EBuffering:
+        if (!iPlannedHalt) {
+            msg->SetMuted();
+        }
+        break;
+    case ERampingUp:
         Ramp(msg, Ramp::EUp);
         /* don't check iCurrentRampValue here.  If our ramp up intersects with a ramp down
-           from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
+        from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
         if (iRemainingRampSize == 0) {
             iCurrentRampValue = Ramp::kMax;
             UpdateStatus(ERunning);
         }
+        break;
     }
 
     remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
@@ -352,7 +375,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgSilence* aMsg)
     }
     else if (iStatus == ERampingUp) {
         iRemainingRampSize = 0;
-        iCurrentRampValue = Ramp::kMin;
+        iCurrentRampValue = Ramp::kMax;
         UpdateStatus(ERunning);
     }
 

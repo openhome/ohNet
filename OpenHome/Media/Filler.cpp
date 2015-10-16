@@ -38,9 +38,9 @@ TBool UriProvider::SupportsPrev() const
     return iSupportsPrev;
 }
 
-IClockPuller* UriProvider::ClockPuller()
+ModeClockPullers UriProvider::ClockPullers()
 {
-    return nullptr;
+    return ModeClockPullers();
 }
 
 UriProvider::UriProvider(const TChar* aMode,
@@ -120,6 +120,7 @@ void Filler::Quit()
 
 void Filler::Play(const Brx& aMode, TUint aTrackId)
 {
+    LOG(kMedia, "Filler::Play(%.*s, %u)\n", PBUF(aMode), aTrackId);
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->Begin(aTrackId);
@@ -129,6 +130,7 @@ void Filler::Play(const Brx& aMode, TUint aTrackId)
 
 void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 {
+    LOG(kMedia, "Filler::PlayLater(%.*s, %u)\n", PBUF(aMode), aTrackId);
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->BeginLater(aTrackId);
@@ -139,6 +141,7 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 
 TUint Filler::Stop()
 {
+    LOG(kMedia, "Filler::Stop()\n");
     AutoMutex a(iLock);
     const TUint haltId = StopLocked();
     Signal();
@@ -158,6 +161,7 @@ TUint Filler::Flush()
 
 TBool Filler::Next(const Brx& aMode)
 {
+    LOG(kMedia, "Filler::Next(%.*s)\n", PBUF(aMode));
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
@@ -171,6 +175,7 @@ TBool Filler::Next(const Brx& aMode)
 
 TBool Filler::Prev(const Brx& aMode)
 {
+    LOG(kMedia, "Filler::Prev(%.*s)\n", PBUF(aMode));
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != nullptr && iActiveUriProvider->Mode() == aMode) {
@@ -218,9 +223,9 @@ TUint Filler::StopLocked()
     LOG(kMedia, "Filler::StopLocked iStopped=%u\n", iStopped);
     if (iPendingHaltId == MsgHalt::kIdInvalid) {
         iPendingHaltId = ++iNextHaltId;
-        iStopped = true;
-        iChangedMode = true; // Skipperr::RemoveAll() relies on MsgMode being sent following a MsgHalt
     }
+    iStopped = true;
+    iChangedMode = true;
     if (iWaitingForAudio) {
         iUriStreamer->Interrupt(true);
         iNoAudioBeforeNextTrack = true;
@@ -275,11 +280,11 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, nullptr, false, false));
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, ModeClockPullers(), false, false));
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
-                iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
+                iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                 iStopped = true;
@@ -293,7 +298,7 @@ void Filler::Run()
                     ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
                                                              hard/impossible if the Gorger was allowed to buffer
                                                              content between the two VariableDelays */
-                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller(),
+                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPullers(),
                                                              iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev()));
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
@@ -308,14 +313,12 @@ void Filler::Run()
                 CheckForKill();
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
                 if (res == EProtocolErrorNotSupported) {
-                    LOG(kMedia, "Filler::Run Track %u not supported. URI: ", iTrack->Id());
-                    LOG(kMedia, iTrack->Uri());
-                    LOG(kMedia, "\n");
+                    LOG(kPipeline, "Filler::Run Track %u not supported. URI: %.*s\n",
+                                   iTrack->Id(), PBUF(iTrack->Uri()));
                 }
                 else if (res == EProtocolStreamErrorUnrecoverable) {
-                    LOG(kMedia, "Filler::Run Track %u had unrecoverable error. URI: ", iTrack->Id());
-                    LOG(kMedia, iTrack->Uri());
-                    LOG(kMedia, "\n");
+                    LOG(kPipeline, "Filler::Run Track %u had unrecoverable error. URI: %.*s\n",
+                                   iTrack->Id(), PBUF(iTrack->Uri()));
                 }
                 LOG(kMedia, "< iUriStreamer->DoStream(%u)\n", iTrack->Id());
             }
@@ -414,6 +417,12 @@ Msg* Filler::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* Filler::ProcessMsg(MsgBitRate* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
 Msg* Filler::ProcessMsg(MsgAudioPcm* aMsg)
 {
     ASSERTS();
@@ -462,6 +471,6 @@ TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Filler::NullTrackStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void Filler::NullTrackStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }

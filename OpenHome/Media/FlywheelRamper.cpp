@@ -142,7 +142,6 @@ void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
     TUint feedbackSampleByteCount = iDegree*kBytesPerSample;
 
     iFeedback->Initialise(iBurgCoeffs, aSamples.Split(aSamples.Bytes()-feedbackSampleByteCount));
-
 }
 
 
@@ -353,7 +352,7 @@ void FeedbackModel::Cycle(TUint aCount)
         sum >>= 8;
         sample[0] = (TByte) sum;
 
-        iOutput.ProcessSample24(sample, 1); // 1 channel
+        iOutput.ProcessSample32(sample, 1); // 1 channel
 
         //Log::Print("sum = 0x%.8lx  \n", sum);
     }

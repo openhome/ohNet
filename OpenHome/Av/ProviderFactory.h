@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_FACTORY
-#define HEADER_PROVIDER_FACTORY
+#pragma once
 
 #include <OpenHome/Types.h>
 
@@ -37,4 +36,3 @@ public:
 } // namespace Av
 } // namespaceOpenHome
 
-#endif // HEADER_PROVIDER_FACTORY

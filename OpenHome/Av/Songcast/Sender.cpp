@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/StringIds.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 #include <vector>
 
@@ -195,6 +196,12 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* Sender::ProcessMsg(MsgBitRate* aMsg)
+{
+    aMsg->RemoveRef();
+    return nullptr;
+}
+
 Msg* Sender::ProcessMsg(MsgAudioPcm* aMsg)
 {
     ASSERT(iSampleRate != 0);
@@ -286,22 +293,24 @@ void Sender::BeginBlock()
 {
 }
 
-TBool Sender::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
 {
     iAudioBuf.Append(aData);
-    return true;
 }
 
-TBool Sender::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
 {
     iAudioBuf.Append(aData);
-    return true;
 }
 
-TBool Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
 {
     iAudioBuf.Append(aData);
-    return true;
+}
+
+void Sender::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
+{
+    iAudioBuf.Append(aData);
 }
 
 void Sender::ProcessSample8(const TByte* aSample, TUint aNumChannels)
@@ -322,7 +331,17 @@ void Sender::ProcessSample24(const TByte* aSample, TUint aNumChannels)
     iAudioBuf.Append(sample);
 }
 
+void Sender::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+{
+    Brn sample(aSample, 4*aNumChannels);
+    iAudioBuf.Append(sample);
+}
+
 void Sender::EndBlock()
+{
+}
+
+void Sender::Flush()
 {
 }
 
@@ -410,6 +429,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgWait* /*aMsg*/)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgBitRate* /*aMsg*/)
 {
     ASSERTS();
     return nullptr;

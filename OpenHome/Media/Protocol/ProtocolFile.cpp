@@ -22,17 +22,17 @@ public:
     ProtocolFile(Environment& aEnv);
     ~ProtocolFile();
 private: // from Protocol
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
-    void Interrupt(TBool aInterrupt);
-    ProtocolStreamResult Stream(const Brx& aUri);
-    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
+    void Interrupt(TBool aInterrupt) override;
+    ProtocolStreamResult Stream(const Brx& aUri) override;
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aStreamId);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
 private: // from IReader
-    Brn Read(TUint aBytes);
-    void ReadFlush();
-    void ReadInterrupt();
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     TBool IsCurrentStream(TUint aStreamId) const;
 private:
@@ -102,9 +102,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);
 
-    LOG(kMedia, "ProtocolHttp::Stream ");
-    LOG(kMedia, iUri.AbsoluteUri());
-    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolHttp::Stream(%.*s)\n", PBUF(aUri));
     if (iUri.Scheme() != Brn("file")) {
         LOG(kMedia, "ProtocolFile::Stream Scheme not recognised\n");
         return EProtocolErrorNotSupported;
@@ -140,7 +138,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), fileSize, true, false, *this, iStreamId);
+    iSupply->OutputStream(iUri.AbsoluteUri(), fileSize, iSeekPos, true, false, *this, iStreamId);
     contentProcessor = iProtocolManager->GetAudioProcessor();
     TUint remaining = fileSize;
     while (res == EProtocolStreamErrorRecoverable) {

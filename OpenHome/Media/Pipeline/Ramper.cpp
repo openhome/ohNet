@@ -6,8 +6,25 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TUint Ramper::kSupportedMsgTypes =   eMode
+                                         | eTrack
+                                         | eDrain
+                                         | eDelay
+                                         | eEncodedStream
+                                         | eMetatext
+                                         | eStreamInterrupted
+                                         | eHalt
+                                         | eFlush
+                                         | eWait
+                                         | eDecodedStream
+                                         | eBitRate
+                                         | eAudioPcm
+                                         | eSilence
+                                         | eQuit;
+
 Ramper::Ramper(IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration)
-    : iUpstreamElement(aUpstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iUpstreamElement(aUpstreamElement)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iRamping(false)
     , iRampDuration(aRampDuration)
@@ -34,60 +51,9 @@ Msg* Ramper::Pull()
     return msg;
 }
 
-Msg* Ramper::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Ramper::ProcessMsg(MsgHalt* aMsg)
 {
     iRamping = false;
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgFlush* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgWait* aMsg)
-{
     return aMsg;
 }
 
@@ -136,16 +102,5 @@ Msg* Ramper::ProcessMsg(MsgSilence* aMsg)
     iRamping = false;
     iCurrentRampValue = Ramp::kMax;
     iRemainingRampSize = 0;
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* Ramper::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }

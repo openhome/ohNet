@@ -7,39 +7,43 @@
 
 namespace OpenHome {
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 class Adts
 {
+private:
+    static const TUint kMaxAacFramesPerFrame = 1;   // This code only supports 1 AAC frame per ADTS frame.
 public:
     Adts();
     TBool ReadHeader(Brn aHeader);
-    TUint16 Profile() { return(iProfile); }
-    TUint16 ChannelConfig() { return(iChannelConfig); }
-    TUint32 SamplingFreq() { return(iSamplingFreq); }
-    TUint32 PayloadBytes() { return(iPayloadBytes); }
-    TUint32 HeaderBytes() { return(iHeaderBytes); }
-    TUint32 StartOffset() { return(iStartOffset); }
-    void SetStartOffset(TUint32 aStartOffset) { iStartOffset = aStartOffset; }
-    TUint32 PayloadBytesAve() { return iPayloadBytesAve; }
-    void SetPayloadBytesAve(TUint32 aPayloadBytesAve) { iPayloadBytesAve = aPayloadBytesAve; }
+    TUint Profile() { return(iProfile); }
+    TUint ChannelConfig() { return(iChannelConfig); }
+    TUint SamplingFreq() { return(iSamplingFreq); }
+    TUint PayloadBytes() { return(iPayloadBytes); }
+    TUint AacFrames() { return iAacFrames; }
+    TUint HeaderBytes() { return(iHeaderBytes); }
+    TUint StartOffset() { return(iStartOffset); }
+    void SetStartOffset(TUint aStartOffset) { iStartOffset = aStartOffset; }
+    TUint PayloadBytesAve() { return iPayloadBytesAve; }
+    void SetPayloadBytesAve(TUint aPayloadBytesAve) { iPayloadBytesAve = aPayloadBytesAve; }
 private:
-    TUint8  iProfile;
-    TUint8  iChannelConfig;
-    TUint32 iSamplingFreq;
-    TUint32 iPayloadBytes;
-    TUint32 iHeaderBytes;
-    TUint32 iStartOffset;
-    TUint32 iPayloadBytesAve;
+    TUint  iProfile;
+    TUint  iChannelConfig;
+    TUint iSamplingFreq;
+    TUint iPayloadBytes;
+    TUint iAacFrames;
+    TUint iHeaderBytes;
+    TUint iStartOffset;
+    TUint iPayloadBytesAve;
 };
 
 class CodecAdts : public CodecAacBase
 {
 public:
-    CodecAdts();
+    CodecAdts(IMimeTypeList& aMimeTypeList);
     ~CodecAdts();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType) override;
     TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
@@ -62,9 +66,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewAdts()
+CodecBase* CodecFactory::NewAdts(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecAdts();
+    return new CodecAdts(aMimeTypeList);
 }
 
 
@@ -81,6 +85,7 @@ TBool Adts::ReadHeader(Brn aHeader)
     iSamplingFreq = 0;
     iChannelConfig = 0;
     iPayloadBytes = 0;
+    iAacFrames = 0;
 
     if(aHeader.Bytes() < 6) {
         //LOG(kCodec, "header too small %d\n", aHeader.Bytes());
@@ -104,61 +109,71 @@ TBool Adts::ReadHeader(Brn aHeader)
         //LOG(kCodec, " CRC present\n");
         iHeaderBytes += 2;             // skip CRC bytes (should do CRC - ToDo)
     }
+
+    iProfile = (aHeader[2] & 0xC0) >> 6;
+
+    TUint sf = (aHeader[2] & 0x3C) >> 2;
+    switch (sf) {
+    case 0:
+        iSamplingFreq = 96000;
+        break;
+    case 1:
+        iSamplingFreq = 88200;
+        break;
+    case 2:
+        iSamplingFreq = 64000;
+        break;
+    case 3:
+        iSamplingFreq = 48000;
+        break;
+    case 4:
+        iSamplingFreq = 44100;
+        break;
+    case 5:
+        iSamplingFreq = 32000;
+        break;
+    case 6:
+        iSamplingFreq = 24000;
+        break;
+    case 7:
+        iSamplingFreq = 22050;
+        break;
+    case 8:
+        iSamplingFreq = 16000;
+        break;
+    case 9:
+        iSamplingFreq = 12000;
+        break;
+    case 10:
+        iSamplingFreq = 11025;
+        break;
+    case 11:
+        iSamplingFreq = 8000;
+        break;
+    case 12:
+        iSamplingFreq = 7350;
+        break;
+    default:
+        //LOG(kCodec, " sample freq error %d\n", sf);
+        return false;   // invalid sample frequency
+    }
+
+    iChannelConfig = ((aHeader[2] & 0x01) << 2) | ((aHeader[3] & 0xC0) >> 6);
+
     iPayloadBytes = ((aHeader[3] & 0x03) << 11) | (aHeader[4] << 3) | ((aHeader[5] & 0xE0) >> 5);
     if(iPayloadBytes < iHeaderBytes) {
         //LOG(kCodec, " iPayloadBytes error %d\n", iPayloadBytes);
         return false;                   // size is invalid
     }
     iPayloadBytes -= iHeaderBytes;                 // remove header size
-    iProfile = (aHeader[2] & 0xC0) >> 6;
 
-    TUint sf = (aHeader[2] & 0x3C) >> 2;
-    switch (sf) {
-        case 0:
-            iSamplingFreq = 96000;
-            break;
-        case 1:
-            iSamplingFreq = 88200;
-            break;
-        case 2:
-            iSamplingFreq = 64000;
-            break;
-        case 3:
-            iSamplingFreq = 48000;
-            break;
-        case 4:
-            iSamplingFreq = 44100;
-            break;
-        case 5:
-            iSamplingFreq = 32000;
-            break;
-        case 6:
-            iSamplingFreq = 24000;
-            break;
-        case 7:
-            iSamplingFreq = 22050;
-            break;
-        case 8:
-            iSamplingFreq = 16000;
-            break;
-        case 9:
-            iSamplingFreq = 12000;
-            break;
-        case 10:
-            iSamplingFreq = 11025;
-            break;
-        case 11:
-            iSamplingFreq = 8000;
-            break;
-        case 12:
-            iSamplingFreq = 7350;
-            break;
-        default:
-            //LOG(kCodec, " sample freq error %d\n", sf);
-            return false;   // invalid sample frequency
+    //iBufferFullness = (((aHeader[5] & 0x1F) << 6) | ((aHeader[6] & 0xFC) >> 2));
+
+    iAacFrames = (aHeader[6] & 0x03) + 1;
+    if (iAacFrames > kMaxAacFramesPerFrame) {
+        LOG(kCodec, "Adts::ReadHeader unexpected iAacFrames: %u; expected %u\n", iAacFrames, kMaxAacFramesPerFrame);
+        return false;   // Currently only support 1 AAC frame per ADTS frame.
     }
-
-    iChannelConfig = ((aHeader[2] & 0x01) << 2) | ((aHeader[3] & 0xC0) >> 6);
 
     //LOG(kCodec, "Adts::Header iPayloadBytes %d, iProfile %d, iSamplingFreq %d, iChannelConfig %d\n", iPayloadBytes, iProfile, iSamplingFreq, iChannelConfig);
 
@@ -168,8 +183,8 @@ TBool Adts::ReadHeader(Brn aHeader)
 
 // CodecAdts
 
-CodecAdts::CodecAdts()
-    : CodecAacBase("ADTS")
+CodecAdts::CodecAdts(IMimeTypeList& aMimeTypeList)
+    : CodecAacBase("ADTS", aMimeTypeList)
 {
     LOG(kCodec, "CodecAdts::CodecAdts\n");
 }
@@ -177,20 +192,6 @@ CodecAdts::CodecAdts()
 CodecAdts::~CodecAdts()
 {
     LOG(kCodec, "CodecAdts::~CodecAdts\n");
-}
-
-TBool CodecAdts::SupportsMimeType(const Brx& aMimeType)
-{
-    if (CodecAacBase::SupportsMimeType(aMimeType)) {
-        return true;
-    }
-
-    // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
-    static const Brn kMimeHls("application/vnd.apple.mpegurl");
-    if (aMimeType == kMimeHls) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
@@ -222,9 +223,9 @@ TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
                 }
                 iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);    // record average payload size over 3 frames
                 LOG(kCodec, "CodecAdts::Recognise aac adts\n");
-                return true;      
+                return true;
             }
-            
+
             TUint size = adts.PayloadBytes() + adts.HeaderBytes();
             j += size;   // point to where next frame should be
         }
@@ -313,18 +314,50 @@ void CodecAdts::ProcessAdts(TBool aParseOnly)
 
     try {
         while (count < total) {
-            // read in a single aac frame at a time
+            // Read in a single aac frame at a time.
             TUint headerBytes = 7;
             iInBuf.SetBytes(0);
             iController->Read(iInBuf, headerBytes);
             if (iInBuf.Bytes() < headerBytes) {
                 THROW(CodecStreamEnded);
             }
-            if(!adts.ReadHeader(Brn(iInBuf))) {        // read and process header
-                LOG(kCodec, "CodecAdts::ProcessAdts failed to read/process header\n");
-                LOG(kCodec, "CodecAdts::ProcessAdts throwing CodecStreamCorrupt\n");
-                THROW(CodecStreamCorrupt);
+
+            TBool streamInterruptedOutput = false;
+            while (!adts.ReadHeader(Brn(iInBuf))) { // Read and process header.
+
+                // Notify pipeline of (possible) discontinuity in audio.
+                if (!streamInterruptedOutput) {
+                    iController->OutputStreamInterrupted();
+                    streamInterruptedOutput = true;
+                }
+
+                LOG(kCodec, "CodecAdts::ProcessAdts failed to process header 0x");
+                for (TUint i=0; i<iInBuf.Bytes(); i++) {
+                    LOG(kCodec, "%02x", iInBuf[i]);
+                }
+                LOG(kCodec, "\n");
+
+                // Failed to find header. Shift buffer along by 1 byte and append next byte to end, then attempt to re-recognise header.
+                iInBuf.Replace(iInBuf.Ptr()+1, iInBuf.Bytes()-1);
+                iController->Read(iInBuf, 1);
+                if (iInBuf.Bytes() < headerBytes) {
+                    THROW(CodecStreamEnded);
+                }
             }
+            if (streamInterruptedOutput) {
+                const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iOutputSampleRate);
+                iTrackOffset += jiffiesPerSample;   // Impossible to estimate how much audio has been lost, so assume only 1 sample.
+                const TUint64 sampleStart = iTrackOffset / jiffiesPerSample;
+                iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, sampleStart, false);
+            }
+
+
+            LOG(kCodec, "CodecAdts::ProcessAdts processed header 0x");
+            for (TUint i=0; i<iInBuf.Bytes(); i++) {
+                LOG(kCodec, "%02x", iInBuf[i]);
+            }
+            LOG(kCodec, ", payloadBytes: %u, aacFrames: %u\n", adts.PayloadBytes(), adts.AacFrames());
+
             if(adts.HeaderBytes() > 7) {
                 TUint readBytes = adts.HeaderBytes()-7;
                 iInBuf.SetBytes(0);

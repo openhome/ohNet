@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_SAMPLE_REPORTER
-#define HEADER_PIPELINE_SAMPLE_REPORTER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -59,6 +58,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -82,4 +82,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_SAMPLE_REPORTER

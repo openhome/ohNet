@@ -19,7 +19,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 };
 
 class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
@@ -54,6 +54,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -74,6 +75,7 @@ private:
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgStreamInterrupted
+       ,EMsgBitRate
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
@@ -115,7 +117,7 @@ TUint DummyStreamHandler::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -154,7 +156,7 @@ void SuiteSupply::Test()
     iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgDelay);
-    iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
+    iSupply->OutputStream(Brn(kUri), kTotalBytes, 0, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgEncodedStream);
     iSupply->OutputData(Brn(kTestData));
@@ -267,6 +269,13 @@ Msg* SuiteSupply::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
     iLastMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgBitRate* aMsg)
+{
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
+    iLastMsg = EMsgBitRate;
     return aMsg;
 }
 

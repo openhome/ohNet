@@ -9,6 +9,7 @@
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <limits.h>
 
@@ -29,7 +30,7 @@ class ProviderPlaylist;
 class SourcePlaylist : public Source, private ISourcePlaylist, private ITrackDatabaseObserver, private Media::IPipelineObserver
 {
 public:
-    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const Brx& aProtocolInfo);
+    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, Media::MimeTypeList& aMimeTypeList);
     ~SourcePlaylist();
 private:
     void EnsureActive();
@@ -89,15 +90,15 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols)
+ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer)
 { // static
-    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aSupportedProtocols);
+    return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aMediaPlayer.MimeTypes());
 }
 
 
 // SourcePlaylist
 
-SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const Brx& aProtocolInfo)
+SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, Media::MimeTypeList& aMimeTypeList)
     : Source("Playlist", "Playlist")
     , iLock("SPL1")
     , iActivationLock("SPL2")
@@ -114,7 +115,8 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     iRepeater = new Repeater(*iShuffler);
     iUriProvider = new UriProviderPlaylist(*iRepeater, aPipeline, *this);
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
-    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iRepeater, aProtocolInfo);
+    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iRepeater);
+    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderPlaylist, &ProviderPlaylist::NotifyProtocolInfo));
     iPipeline.AddObserver(*this);
 }
 
@@ -173,8 +175,17 @@ void SourcePlaylist::Activate()
     iTrackPosSeconds = 0;
     iActive = true;
     if (!iNoPipelineStateChangeOnActivation) {
-        const TUint trackId = (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0?
-                                  iUriProvider->CurrentTrackId() : ITrackDatabase::kTrackIdNone);
+        TUint trackId = ITrackDatabase::kTrackIdNone;
+        if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
+            trackId = iUriProvider->CurrentTrackId();
+            if (trackId == ITrackDatabase::kTrackIdNone) {
+                Track* track = static_cast<ITrackDatabaseReader*>(iDatabase)->NextTrackRef(ITrackDatabase::kTrackIdNone);
+                if (track != nullptr) {
+                    trackId = track->Id();
+                    track->RemoveRef();
+                }
+            }
+        }
         iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
     }
 }
@@ -246,7 +257,7 @@ void SourcePlaylist::Next()
 {
     if (IsActive()) {
         if (!StartedShuffled()) {
-            (void)iPipeline.Next();
+            iPipeline.Next();
         }
         iPipeline.Play();
     }
@@ -256,7 +267,7 @@ void SourcePlaylist::Prev()
 {
     if (IsActive()) {
         if (!StartedShuffled()) {
-            (void)iPipeline.Prev();
+            iPipeline.Prev();
         }
         iPipeline.Play();
     }
@@ -265,14 +276,18 @@ void SourcePlaylist::Prev()
 void SourcePlaylist::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        if (iPipeline.Seek(iStreamId, aSeconds)) {
-            iPipeline.Play();
-        }
+        iPipeline.Seek(iStreamId, aSeconds);
+        iPipeline.Play();
     }
 }
 
 void SourcePlaylist::SeekRelative(TInt aSeconds)
 {
+    if (aSeconds == 0) {
+        // assume this means no change rather than seek backwards to the most recent second boundary
+        iPipeline.Play();
+        return;
+    }
     iLock.Wait();
     TUint pos = aSeconds + iTrackPosSeconds;
     if (aSeconds < 0 && -aSeconds > (TInt)iTrackPosSeconds) {

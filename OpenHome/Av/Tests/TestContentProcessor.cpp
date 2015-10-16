@@ -5,6 +5,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/File.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -14,13 +15,15 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Av {
 
-class SuiteContent : public Suite, protected IProtocolSet, protected IReader
+class SuiteContent : public Suite, protected IProtocolSet, protected IReader, protected Media::IMimeTypeList
 {
 protected:
     SuiteContent(const TChar* aName);
     ~SuiteContent();
 protected: // from IProtocolSet
     ProtocolStreamResult Stream(const Brx& aUri) override;
+protected: // from Media::IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 private: // from IReader
     Brn Read(TUint aBytes) override;
     void ReadFlush() override;
@@ -136,6 +139,10 @@ ProtocolStreamResult SuiteContent::Stream(const Brx& aUri)
     return iNextResult;
 }
 
+void SuiteContent::Add(const TChar* /*aMimeType*/)
+{
+}
+
 Brn SuiteContent::Read(TUint aBytes)
 {
     Brn buf;
@@ -194,7 +201,7 @@ void SuiteContent::ReadInterrupt()
 SuitePls::SuitePls()
     : SuiteContent("Pls tests")
 {
-    iProcessor = ContentProcessorFactory::NewPls();
+    iProcessor = ContentProcessorFactory::NewPls(*this);
     iProcessor->Initialise(*this);
 }
 
@@ -359,7 +366,7 @@ void SuitePls::TestParse()
 SuiteM3u::SuiteM3u()
     : SuiteContent("M3u tests")
 {
-    iProcessor = ContentProcessorFactory::NewM3u();
+    iProcessor = ContentProcessorFactory::NewM3u(*this);
     iProcessor->Initialise(*this);
 }
 
@@ -828,7 +835,7 @@ SuiteOpml::SuiteOpml()
     : SuiteContent("OPML tests")
     , iNumFails(0)
 {
-    iProcessor = ContentProcessorFactory::NewOpml();
+    iProcessor = ContentProcessorFactory::NewOpml(*this);
     iProcessor->Initialise(*this);
 }
 

@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_VARIABLE_DELAY
-#define HEADER_PIPELINE_VARIABLE_DELAY
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -23,7 +22,7 @@ class VariableDelay : private MsgReservoir, public IPipelineElementUpstream, pri
     static const TUint kMaxMsgSilenceDuration = Jiffies::kPerMs * 5;
     friend class SuiteVariableDelay;
 public:
-    VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
+    VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
     virtual ~VariableDelay();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -46,6 +45,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -54,7 +54,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     enum EStatus
     {
@@ -65,6 +65,7 @@ private:
        ,ERampingUp
     };
 private:
+    const TChar* iId;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     TUint iDelayJiffies;
@@ -84,4 +85,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_VARIABLE_DELAY

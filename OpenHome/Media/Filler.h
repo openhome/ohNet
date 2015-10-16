@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_FILLER
-#define HEADER_PIPELINE_FILLER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -27,7 +26,7 @@ public:
     TBool IsRealTime() const;
     TBool SupportsNext() const;
     TBool SupportsPrev() const;
-    virtual IClockPuller* ClockPuller();
+    virtual ModeClockPullers ClockPullers();
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -89,6 +88,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -104,7 +104,7 @@ private:
         EStreamPlay OkToPlay(TUint aStreamId) override;
         TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
         TUint TryStop(TUint aStreamId) override;
-        void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+        void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
     private:
         IPipelineIdProvider& iIdProvider;
     };
@@ -137,4 +137,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_FILLER

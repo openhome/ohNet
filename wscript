@@ -200,11 +200,15 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/InfoProvider.cpp',
+                'OpenHome/Media/Pipeline/AudioDumper.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/ClockPullerManual.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/DecodedAudioValidator.cpp',
                 'OpenHome/Media/Pipeline/Drainer.cpp',
                 'OpenHome/Media/Pipeline/EncodedAudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/Flusher.cpp',
                 'OpenHome/Media/Pipeline/Gorger.cpp',
                 'OpenHome/Media/Pipeline/Logger.cpp',
                 'OpenHome/Media/Pipeline/Msg.cpp',
@@ -255,12 +259,12 @@ def build(bld):
                 'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/FlywheelRamper.cpp',
+                'OpenHome/Media/MimeTypeList.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'OpenHome/Media/Utils/Aggregator.cpp',
                 'OpenHome/Media/Utils/Silencer.cpp',
-                'OpenHome/Media/Utils/ClockPullerLogging.cpp',
                 'OpenHome/SocketSsl.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
@@ -604,7 +608,6 @@ def build(bld):
             source=[
                 'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
-                #'OpenHome/Media/Tests/PipelineUtils.cpp',  #FIXME - to be deleted if no longer used
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
                 'OpenHome/Media/Tests/TestSampleRateValidator.cpp',
@@ -795,7 +798,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline',
             install_path=None)
     bld.program(
@@ -890,7 +893,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestPlaylist',
             install_path=None)
     bld.program(

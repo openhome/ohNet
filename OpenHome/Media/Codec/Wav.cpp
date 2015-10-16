@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
 
@@ -17,10 +18,9 @@ namespace Codec {
 class CodecWav : public CodecBase
 {
 public:
-    CodecWav();
+    CodecWav(IMimeTypeList& aMimeTypeList);
     ~CodecWav();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -53,31 +53,23 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-CodecBase* CodecFactory::NewWav()
+CodecBase* CodecFactory::NewWav(IMimeTypeList& aMimeTypeList)
 { // static
-    return new CodecWav();
+    return new CodecWav(aMimeTypeList);
 }
 
 
 
-CodecWav::CodecWav()
+CodecWav::CodecWav(IMimeTypeList& aMimeTypeList)
     : CodecBase("WAV", kCostLow)
 {
+    aMimeTypeList.Add("audio/wav");
+    aMimeTypeList.Add("audio/wave");
+    aMimeTypeList.Add("audio/x-wav");
 }
 
 CodecWav::~CodecWav()
 {
-}
-
-TBool CodecWav::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeWav("audio/wav");
-    static const Brn kMimeWave("audio/wave");
-    static const Brn kMimeXWav("audio/x-wav");
-    if (aMimeType == kMimeWav || aMimeType == kMimeWave || aMimeType == kMimeXWav) {
-        return true;
-    }
-    return false;
 }
 
 TBool CodecWav::Recognise(const EncodedStreamInfo& aStreamInfo)
@@ -115,8 +107,6 @@ void CodecWav::StreamInitialise()
 
 void CodecWav::Process()
 {
-    LOG(kMedia, "> CodecWav::Process()\n");
-
     if (iNumChannels == 0) {
         ProcessHeader();
         SendMsgDecodedStream(0);
@@ -144,8 +134,6 @@ void CodecWav::Process()
             THROW(CodecStreamEnded);
         }
     }
-
-    LOG(kMedia, "< CodecWav::Process()\n");
 }
 
 TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -164,6 +152,7 @@ TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
     }
     iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
     iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
+    iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
 }
@@ -290,9 +279,7 @@ void CodecWav::ProcessDataChunk()
 
 TUint CodecWav::FindChunk(const Brx& aChunkId)
 {
-    LOG(kCodec, "CodecWav::FindChunk: ");
-    LOG(kCodec, aChunkId);
-    LOG(kCodec, "\n");
+    LOG(kCodec, "CodecWav::FindChunk: %.*s\n", PBUF(aChunkId));
 
     for (;;) {
         iReadBuf.SetBytes(0);

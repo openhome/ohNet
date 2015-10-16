@@ -1,5 +1,4 @@
-#ifndef HEADER_PROTOCOL_OHU
-#define HEADER_PROTOCOL_OHU
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -48,7 +47,6 @@ private:
     Timer* iTimerLeave;
     TBool iLeaving;
     TBool iStopped;
-    TBool iActive;
     TUint iSlaveCount;
     Endpoint iSlaveList[kMaxSlaveCount];
     Bws<kMaxFrameBytes> iMessageBuffer;
@@ -58,4 +56,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROTOCOL_OHU

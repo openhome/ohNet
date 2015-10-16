@@ -1,5 +1,4 @@
-#ifndef HEADER_CODEC_OHM
-#define HEADER_CODEC_OHM
+#pragma once
 
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Types.h>
@@ -17,7 +16,6 @@ public:
     CodecOhm(OhmMsgFactory& aMsgFactory, IOhmTimestampMapper* aTsMapper);
     ~CodecOhm();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType) override;
     TBool Recognise(const Media::Codec::EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
@@ -43,4 +41,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_CODEC_OHM

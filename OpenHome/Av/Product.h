@@ -1,5 +1,4 @@
-#ifndef HEADER_PRODUCT
-#define HEADER_PRODUCT
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -115,4 +114,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PRODUCT

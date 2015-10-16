@@ -21,6 +21,7 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Av/VolumeManager.h>
+#include <OpenHome/Net/Private/Shell.h>
 
 #include <array>
 #include <limits.h>
@@ -74,6 +75,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -134,6 +136,7 @@ private:
     DvDeviceStandard* iDevice;
     RamStore* iRamStore;
     ConfigRamStore* iConfigRamStore;
+    Net::ShellNull iShell;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
     VolumeNull iDummyVolume;
@@ -341,6 +344,12 @@ Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* DummyDriver::ProcessMsg(MsgBitRate* aMsg)
+{
+    aMsg->RemoveRef();
+    return nullptr;
+}
+
 Msg* DummyDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
@@ -361,7 +370,7 @@ Msg* DummyDriver::ProcessMsg(MsgPlayable* aMsg)
         iJiffies += numSamples * iJiffiesPerSample;
     }
 
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     aMsg->Read(proc);
     Brn buf = proc.Buf();
     const TInt subsample = (buf[buf.Bytes()-1] << 8) | buf[buf.Bytes()-2];
@@ -431,13 +440,13 @@ void SuitePlaylist::Setup()
     VolumeConsumer volumeInit;
     volumeInit.SetVolume(iDummyVolume);
     VolumeProfileNull volProfile;
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, iShell, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));
     iDriver = new DummyDriver(iMediaPlayer->Pipeline());
-    iMediaPlayer->Add(Codec::CodecFactory::NewWav());
+    iMediaPlayer->Add(Codec::CodecFactory::NewWav(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
-    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, Brn("*")));
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     iMediaPlayer->Pipeline().AddObserver(*this);
     iMediaPlayer->Start();
 

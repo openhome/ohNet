@@ -1,5 +1,4 @@
-#ifndef HEADER_RAMP_ARRAY
-#define HEADER_RAMP_ARRAY
+#pragma once
 // 31-bit signed fractional numbers representing a ramp down curve over 0 to -60dB
 
 namespace OpenHome {
@@ -152,4 +151,3 @@ const TUint kRampArrayCount = sizeof(kRampArray) / sizeof(kRampArray[0]);
 
 */
 
-#endif // HEADER_RAMP_ARRAY

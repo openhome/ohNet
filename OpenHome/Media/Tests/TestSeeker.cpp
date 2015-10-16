@@ -23,6 +23,7 @@ class SuiteSeeker : public SuiteUnitTest, private IPipelineElementUpstream, priv
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const TUint kTrackDurationSeconds = 180;
 public:
     SuiteSeeker();
     ~SuiteSeeker();
@@ -39,7 +40,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -53,6 +54,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -69,6 +71,7 @@ private:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgHalt
        ,EMsgFlush
@@ -86,6 +89,7 @@ private:
     void TestAllMsgsPassWhileNotSeeking();
     void TestRampInvalidStreamId();
     void TestRampNonSeekableStream();
+    void TestInvalidSeekPosThrows();
     //void TestRampSeekerRejects();
     void TestRampSeekerAccepts();
     //void TestNoRampSeekerRejects();
@@ -105,9 +109,11 @@ private:
     TBool iGenerateAudio;
     TUint iStreamId;
     TUint64 iStreamSampleStart;
-    TUint iMsgAudioSize;
+    TUint64 iTrackLengthJiffies;
+    TUint iLastMsgAudioSize;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
+    TUint64 iTrackOffsetPulled;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
     TUint iNextStreamId;
@@ -130,6 +136,7 @@ SuiteSeeker::SuiteSeeker()
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestAllMsgsPassWhileNotSeeking), "TestAllMsgsPassWhileNotSeeking");
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampInvalidStreamId), "TestRampInvalidStreamId");
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampNonSeekableStream), "TestRampNonSeekableStream");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestInvalidSeekPosThrows), "TestInvalidSeekPosThrows");
     /* All seeks ramp down and may flush for a short while before being informed that the ISeeker failed to seek.
        It isn't easy to test for this without a moderate amount of change.
        Testing that a new track cancels a seek already covers behaviour for the most likely cause of seek failure. */
@@ -164,8 +171,11 @@ void SuiteSeeker::Setup()
     iSeekResponseThread->Start();
     iStreamId = UINT_MAX;
     iStreamSampleStart = UINT_MAX;
-    iMsgAudioSize = 0;
+    iTrackLengthJiffies = kTrackDurationSeconds;
+    iTrackLengthJiffies *= kSampleRate * Jiffies::JiffiesPerSample(kSampleRate);
+    iLastMsgAudioSize = 0;
     iTrackOffset = 0;
+    iTrackOffsetPulled = 0;
     iRampingDown = iRampingUp = false;
     iSeekable = true;
     iGenerateAudio = false;
@@ -235,7 +245,7 @@ TUint SuiteSeeker::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteSeeker::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteSeeker::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -309,16 +319,27 @@ Msg* SuiteSeeker::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastPulledMsg = EMsgDecodedStream;
-    iStreamSampleStart = aMsg->StreamInfo().SampleStart();
+    auto stream = aMsg->StreamInfo();
+    iStreamSampleStart = stream.SampleStart();
+    iTrackOffsetPulled = iStreamSampleStart * Jiffies::JiffiesPerSample(stream.SampleRate());
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
     return aMsg;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
+    iLastMsgAudioSize = aMsg->Jiffies();
     iJiffies += aMsg->Jiffies();
+    TEST(iTrackOffsetPulled == aMsg->TrackOffset());
+    iTrackOffsetPulled += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 6);
@@ -398,12 +419,13 @@ Msg* SuiteSeeker::CreateTrack()
 
 Msg* SuiteSeeker::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
 }
 
 Msg* SuiteSeeker::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, iSeekable, false, nullptr);
+    const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), iTrackLengthJiffies, sampleStart, true, iSeekable, false, nullptr);
 }
 
 Msg* SuiteSeeker::CreateAudio()
@@ -413,7 +435,6 @@ Msg* SuiteSeeker::CreateAudio()
     (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, EMediaDataEndianLittle, iTrackOffset);
-    iMsgAudioSize = audio->Jiffies();
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -427,7 +448,7 @@ void SuiteSeeker::SeekResponseThread()
 
 void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
@@ -436,6 +457,7 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgBitRate(999));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
@@ -451,6 +473,7 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     PullNext(EMsgStreamInterrupted);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
+    PullNext(EMsgBitRate);
     PullNext(EMsgHalt);
     PullNext(EMsgFlush);
     PullNext(EMsgWait);
@@ -469,7 +492,7 @@ void SuiteSeeker::TestRampInvalidStreamId()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    TEST(!iSeeker->Seek(iStreamId+1, kExpectedSeekSeconds, true));
+    TEST_THROWS(iSeeker->Seek(iStreamId+1, kExpectedSeekSeconds, true), SeekStreamInvalid);
     iPendingMsgs.push_back(CreateAudio());
     TEST(iLastPulledMsg == EMsgAudioPcm);
 }
@@ -486,9 +509,24 @@ void SuiteSeeker::TestRampNonSeekableStream()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    TEST(!iSeeker->Seek(iStreamId+1, kExpectedSeekSeconds, true));
+    TEST_THROWS(iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true), SeekStreamNotSeekable);
     iPendingMsgs.push_back(CreateAudio());
     TEST(iLastPulledMsg == EMsgAudioPcm);
+}
+
+void SuiteSeeker::TestInvalidSeekPosThrows()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+
+    TEST_THROWS(iSeeker->Seek(iStreamId, kTrackDurationSeconds+1, true), SeekPosInvalid);
+    iSeeker->Seek(iStreamId, kTrackDurationSeconds, true);
 }
 
 void SuiteSeeker::TestRampSeekerAccepts()
@@ -502,7 +540,7 @@ void SuiteSeeker::TestRampSeekerAccepts()
     }
 
     iNextSeekResponse = kExpectedFlushId;
-    TEST(iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true));
+    iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true);
     iRampingDown = true;
     iJiffies = 0;
     while (iRampingDown) {
@@ -519,26 +557,22 @@ void SuiteSeeker::TestRampSeekerAccepts()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
-    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgHalt);
+    PullNext(EMsgFlush);
     PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
-    PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
-    // end of seek Flush is passed on
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    // end of seek Flush is consumed, audio will ramp
     TEST(iSeeker->iQueue.IsEmpty());
-    // ramping up now
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    iTrackOffset = kExpectedSeekSeconds * Jiffies::kPerSecond;
     iRampingUp = true;
     iJiffies = 0;
-    PullNext(EMsgFlush);
-    // need to pull MsgDecodedStream to exit flushing state
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(CreateDecodedStream());
@@ -575,7 +609,7 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     }
 
     iNextSeekResponse = kExpectedFlushId;
-    TEST(iSeeker->Seek(iStreamId, kExpectedSeekSeconds, false));
+    iSeeker->Seek(iStreamId, kExpectedSeekSeconds, false);
     PullNext(EMsgHalt);
     // no audio retained from end-of-ramp
     TEST(iSeeker->iQueue.IsEmpty());
@@ -585,26 +619,23 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
-    PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
+    PullNext(EMsgHalt);
+    PullNext(EMsgFlush);
     PullNext(EMsgDrain);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgStreamInterrupted());
-    PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
     // end of seek Flush is passed on
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    iTrackOffset = kExpectedSeekSeconds * Jiffies::kPerSecond;
     TEST(iSeeker->iQueue.IsEmpty());
     // ramping up now
     iRampingUp = true;
     iJiffies = 0;
-    PullNext(EMsgFlush);
-    // need to pull MsgDecodedStream to exit flushing state
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(CreateDecodedStream());
@@ -642,7 +673,7 @@ void SuiteSeeker::TestNewStreamCancelsRampDownAndSeek()
     }
 
     iNextSeekResponse = kExpectedFlushId;
-    TEST(iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true));
+    iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true);
     iRampingDown = true;
     if (iSeeker->iQueue.IsEmpty()) {
         iPendingMsgs.push_back(CreateAudio());
@@ -683,10 +714,10 @@ void SuiteSeeker::TestOverlappingSeekIgnored()
     }
 
     iNextSeekResponse = kExpectedFlushId;
-    TEST(iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true));
+    iSeeker->Seek(iStreamId, kExpectedSeekSeconds, true);
     TEST(iSeekSeconds != kExpectedSeekSeconds);
     iRampingDown = true;
-    TEST(!iSeeker->Seek(iStreamId, kExpectedSeekSeconds+10, true));
+    TEST_THROWS(iSeeker->Seek(iStreamId, kExpectedSeekSeconds+10, true), SeekAlreadyInProgress);
     TEST(iSeekSeconds != kExpectedSeekSeconds);
     iJiffies = 0;
     while (iRampingDown) {
@@ -708,7 +739,7 @@ void SuiteSeeker::TestSeekForwardFailStillSeeks()
 
     iNextSeekResponse = MsgFlush::kIdInvalid;
     static const TUint kSeekSecs = 5;
-    TEST(iSeeker->Seek(iStreamId, kSeekSecs, true));
+    iSeeker->Seek(iStreamId, kSeekSecs, true);
     iRampingDown = true;
     iJiffies = 0;
     while (iRampingDown) {
@@ -724,8 +755,11 @@ void SuiteSeeker::TestSeekForwardFailStillSeeks()
     iGenerateAudio = false;
     iRampingUp = true;
     PullNext(EMsgAudioPcm);
-    TEST(iTrackOffset >= kSeekSecs * Jiffies::kPerSecond);
-    TEST(iTrackOffset < (kSeekSecs * Jiffies::kPerSecond) + iMsgAudioSize);
+    TEST(iTrackOffsetPulled == (kSeekSecs * Jiffies::kPerSecond) + iLastMsgAudioSize);
+    for (TUint i=0; i<4; i++) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
 }
 
 

@@ -10,6 +10,7 @@
 #include <OpenHome/Av/ProviderUtils.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Timer.h>
+#include <OpenHome/Media/Pipeline/Seeker.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -22,16 +23,17 @@ static const TInt kPlaylistFull = 801;
 static const Brn kPlaylistFullMsg("Playlist full");
 static const TUint kIndexNotFoundCode = 802;
 static const Brn kIndexNotFoundMsg("Index not found");
+static const TUint kSeekFailureCode = 803;
+static const Brn kSeekFailureMsg("Seek failed");
 
 // ProviderPlaylist
 
-ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater, const Brx& aProtocolInfo)
+ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater)
     : DvProviderAvOpenhomeOrgPlaylist1(aDevice)
     , iLock("PPLY")
     , iSource(aSource)
     , iDatabase(aDatabase)
     , iRepeater(aRepeater)
-    , iProtocolInfo(aProtocolInfo)
     , iTimerLock("PPL2")
     , iTimerActive(false)
 {
@@ -77,7 +79,6 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     NotifyTrack(ITrackDatabase::kTrackIdNone);
     UpdateIdArrayProperty();
     (void)SetPropertyTracksMax(ITrackDatabase::kMaxTracks);
-    (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
 ProviderPlaylist::~ProviderPlaylist()
@@ -97,6 +98,12 @@ void ProviderPlaylist::NotifyPipelineState(Media::EPipelineState aState)
 void ProviderPlaylist::NotifyTrack(TUint aId)
 {
     (void)SetPropertyId(aId);
+}
+
+void ProviderPlaylist::NotifyProtocolInfo(const Brx& aProtocolInfo)
+{
+    iProtocolInfo.Set(aProtocolInfo);
+    (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
 void ProviderPlaylist::NotifyTrackInserted(Track& /*aTrack*/, TUint /*aIdBefore*/, TUint /*aIdAfter*/)
@@ -190,14 +197,42 @@ void ProviderPlaylist::Shuffle(IDvInvocation& aInvocation, IDvInvocationResponse
 
 void ProviderPlaylist::SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue)
 {
-    iSource.SeekAbsolute(aValue);
+    try {
+        iSource.SeekAbsolute(aValue);
+    }
+    catch (SeekAlreadyInProgress&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
+    catch (SeekStreamInvalid&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
+    catch (SeekStreamNotSeekable&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
+    catch (SeekPosInvalid&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderPlaylist::SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue)
 {
-    iSource.SeekRelative(aValue);
+    try {
+        iSource.SeekRelative(aValue);
+    }
+    catch (SeekAlreadyInProgress&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
+    catch (SeekStreamInvalid&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
+    catch (SeekStreamNotSeekable&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
+    catch (SeekPosInvalid&) {
+        aInvocation.Error(kSeekFailureCode, kSeekFailureMsg);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }

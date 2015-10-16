@@ -1,5 +1,4 @@
-#ifndef HEADER_PROTOCOL_OHM
-#define HEADER_PROTOCOL_OHM
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -33,4 +32,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROTOCOL_OHM

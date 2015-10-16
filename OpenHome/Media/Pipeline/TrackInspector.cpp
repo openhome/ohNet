@@ -9,8 +9,25 @@ using namespace OpenHome::Media;
 
 // TrackInspector
 
+const TUint TrackInspector::kSupportedMsgTypes =   eMode
+                                                 | eTrack
+                                                 | eDrain
+                                                 | eDelay
+                                                 | eEncodedStream
+                                                 | eMetatext
+                                                 | eStreamInterrupted
+                                                 | eHalt
+                                                 | eFlush
+                                                 | eWait
+                                                 | eDecodedStream
+                                                 | eBitRate
+                                                 | eAudioPcm
+                                                 | eSilence
+                                                 | eQuit;
+
 TrackInspector::TrackInspector(IPipelineElementUpstream& aUpstreamElement)
-    : iUpstreamElement(aUpstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iUpstreamElement(aUpstreamElement)
     , iTrack(nullptr)
 {
 }
@@ -54,11 +71,6 @@ void TrackInspector::NotifyTrackFailed()
     iTrack = nullptr;
 }
 
-Msg* TrackInspector::ProcessMsg(MsgMode* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != nullptr) {
@@ -66,16 +78,6 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
     }
     iTrack = &aMsg->Track();
     iTrack->AddRef();
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgDelay* aMsg)
-{
     return aMsg;
 }
 
@@ -91,62 +93,10 @@ Msg* TrackInspector::ProcessMsg(MsgEncodedStream* aMsg)
     return aMsg;
 }
 
-Msg* TrackInspector::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgFlush* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgWait* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
     if (iTrack != nullptr) {
         NotifyTrackPlaying();
     }
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }

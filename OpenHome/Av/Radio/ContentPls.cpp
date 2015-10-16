@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Radio/ContentProcessorFactory.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 /* Example pls file
 
@@ -34,7 +35,7 @@ class ContentPls : public Media::ContentProcessor
 {
     static const TUint kMaxLineBytes = 2 * 1024;
 public:
-    ContentPls();
+    ContentPls(Media::IMimeTypeList& aMimeTypeList);
     ~ContentPls();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
@@ -53,17 +54,18 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Av;
 
 
-ContentProcessor* ContentProcessorFactory::NewPls()
+ContentProcessor* ContentProcessorFactory::NewPls(IMimeTypeList& aMimeTypeList)
 { // static
-    return new ContentPls();
+    return new ContentPls(aMimeTypeList);
 }
 
 
 // ContentPls
 
-ContentPls::ContentPls()
+ContentPls::ContentPls(IMimeTypeList& aMimeTypeList)
 {
     iReaderUntil = new ReaderUntilS<kMaxLineBytes>(*this);
+    aMimeTypeList.Add("audio/x-scpls");
 }
 
 ContentPls::~ContentPls()

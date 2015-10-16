@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_AUDIO_RESERVOIR
-#define HEADER_PIPELINE_AUDIO_RESERVOIR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -29,6 +28,7 @@ public: // from IPipelineElementDownstream
 protected:
     AudioReservoir();
     void BlockIfFull();
+    void UnblockIfNotFull();
 private:
     virtual TBool IsFull() const = 0;
 private:
@@ -39,4 +39,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_AUDIO_RESERVOIR

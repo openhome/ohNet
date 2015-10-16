@@ -20,7 +20,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Av/Credentials.h>
-//#include <OpenHome/Av/TransportControl.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -31,6 +31,7 @@ using namespace OpenHome::Net;
 // MediaPlayer
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                         Net::IShell& aShell,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
@@ -47,7 +48,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, iMimeTypes, aShell);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
@@ -121,6 +122,7 @@ void MediaPlayer::Start()
     iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
     iCredentials->Start();
+    iMimeTypes.Start();
     iProduct->Start();
 }
 
@@ -189,6 +191,11 @@ Credentials& MediaPlayer::CredentialsManager()
 {
     ASSERT(iCredentials != nullptr);
     return *iCredentials;
+}
+
+MimeTypeList& MediaPlayer::MimeTypes()
+{
+    return iMimeTypes;
 }
 
 void MediaPlayer::Add(UriProvider* aUriProvider)

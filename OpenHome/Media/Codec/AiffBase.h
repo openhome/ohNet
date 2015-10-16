@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_AIFF_BASE
-#define HEADER_PIPELINE_CODEC_AIFF_BASE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -15,7 +14,6 @@ protected:
     CodecAiffBase(const TChar* aName);
     ~CodecAiffBase();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
@@ -58,4 +56,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC_AIFF_BASE

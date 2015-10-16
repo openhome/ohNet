@@ -127,7 +127,7 @@ WriterRtspRequest::WriterRtspRequest(IWriter& aWriter)
 
 void WriterRtspRequest::WriteMethod(const Brx& aMethod, const Brx& aUri)
 {
-    LOG(kHttp, "Http Write Method   ");
+    LOG(kHttp, "WriterRtspRequest::WriteMethod(%.*s, %.*s)\n", PBUF(aMethod), PBUF(aUri));
     
     iWriter.Write(aMethod);
     iWriter.WriteSpace();
@@ -159,19 +159,13 @@ void ReaderRtspResponse::ReadRtsp(TChar aFirstChar)
     TUint count = 0;
     Bws<500> firstLine;
     firstLine.Append(aFirstChar);
-    LOG(kHttp, "RTSP Read Response first char (");
-    LOG(kHttp, firstLine);
-    LOG(kHttp, ")\n");
+    LOG(kHttp, "RTSP Read Response first char (%c)\n", aFirstChar);
     firstLine.Append(iReader.ReadUntil(Ascii::kLf));
-    LOG(kHttp, "RTSP Read Response  first line (");
-    LOG(kHttp, firstLine);
-    LOG(kHttp, ")\n");
+    LOG(kHttp, "RTSP Read Response  first line (%.*s)\n", PBUF(firstLine));
     Brn line(firstLine);
 
     for (;;) {
-        LOG(kHttp, "RTSP Read Response  ");
-        LOG(kHttp, line);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "RTSP Read Response   %.*s\n", PBUF(line));
 
         TUint bytes = line.Bytes();
         if (!bytes && count) {
@@ -330,9 +324,7 @@ void RtspClient::Initialise(const Uri& aUri)
     
     iSeq = 1; // reset sequence number
 
-    LOG(kHttp, "RtspClient::Initialise ");
-    LOG(kHttp, iUri);
-    LOG(kHttp, "\n");
+    LOG(kHttp, "RtspClient::Initialise(%.*s)\n", PBUF(iUri));
 }
 
 void RtspClient::WriteMethodDescribe()
@@ -484,9 +476,7 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
                 iReaderRequest.Read();  // check for SET_PARAMETER & ANNOUNCE
 
                 //if Content-Length found - read and decode this amount of data (in context)
-                LOG(kHttp, "iReaderRequest.Method()");
-                LOG(kHttp, iReaderRequest.Method());
-                LOG(kHttp, "\n");
+                LOG(kHttp, "iReaderRequest.Method(): %.*s\n", PBUF(iReaderRequest.Method()));
                 LOG(kHttp, "iHeaderContentLength.Received() %d\n", iHeaderContentLength.Received());
                 if(iHeaderContentLength.Received()) {
                     if(iReaderRequest.Method() == Brn(RtspMethod::kAnnounce)) {
@@ -544,9 +534,7 @@ void RtspClient::ReadSdp(ISdpHandler& aSdpHandler)
     TUint remaining = iHeaderContentLength.ContentLength();
     while (remaining > 0) {
         line.Set(iReaderUntil.ReadUntil(Ascii::kLf));
-        LOG(kHttp, "SDP: ");
-        LOG(kHttp, line);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "SDP: %.*s\n", PBUF(line));
         remaining -= line.Bytes() + 1;
         LOG(kHttp, "  remaining=%u\n", remaining);
         Parser parser(line);

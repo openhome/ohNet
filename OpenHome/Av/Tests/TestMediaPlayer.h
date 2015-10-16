@@ -1,5 +1,4 @@
-#ifndef HEADER_TESTMEDIAPLAYER
-#define HEADER_TESTMEDIAPLAYER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -103,7 +102,6 @@ public:
     Net::DvDeviceStandard* Device();
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
-    void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private: // from IPowerHandler
@@ -140,7 +138,6 @@ private:
     const Brx& iTidalId;
     const Brx& iQobuzIdSecret;
     const Brx& iUserAgent;
-    Media::IPullableClock* iPullableClock;
     ObservableBrx iObservableFriendlyName;
     Web::ConfigAppMediaPlayer* iConfigApp;
     IOhmTimestamper* iTxTimestamper;
@@ -196,4 +193,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_TESTMEDIAPLAYER

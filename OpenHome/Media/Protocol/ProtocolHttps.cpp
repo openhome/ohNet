@@ -124,9 +124,7 @@ ProtocolStreamResult ProtocolHttps::Stream(const Brx& aUri)
     }
 
     if (!Connect()) {
-        LOG2(kMedia, kError, "ProtocolHttps::Stream - connect failed - ");
-        LOG2(kMedia, kError, iUri.AbsoluteUri());
-        LOG2(kMedia, kError, "\n");
+        LOG2(kMedia, kError, "ProtocolHttps::Stream(%.*s) - connect failure\n", PBUF(aUri));
         return EProtocolStreamErrorUnrecoverable;
     }
     ProtocolStreamResult res = DoStream();
@@ -258,7 +256,7 @@ ProtocolStreamResult ProtocolHttps::DoStream()
 
         iStreamId = iIdProvider->NextStreamId();
         const TUint64 totalBytes = iHeaderContentLength.ContentLength();
-        iSupply->OutputStream(iUri.AbsoluteUri(), totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId);
+        iSupply->OutputStream(iUri.AbsoluteUri(), totalBytes, 0, false/*seekable*/, false/*live*/, *this, iStreamId);
         iDechunker.SetChunked(iHeaderTransferEncoding.IsChunked());
         cp = iProtocolManager->GetAudioProcessor();
         res = cp->Stream(*this, totalBytes);

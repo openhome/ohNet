@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_PLAYLIST
-#define HEADER_PROVIDER_PLAYLIST
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -38,10 +37,11 @@ class ProviderPlaylist : public Net::DvProviderAvOpenhomeOrgPlaylist1, private I
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater, const Brx& aProtocolInfo);
+    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater);
     ~ProviderPlaylist();
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(TUint aId);
+    void NotifyProtocolInfo(const Brx& aProtocolInfo);
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
@@ -96,4 +96,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_PLAYLIST

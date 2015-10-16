@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PROTOCOL
-#define HEADER_PIPELINE_PROTOCOL
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
@@ -81,7 +80,7 @@ protected:
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     virtual void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) = 0;
     /**
@@ -151,7 +150,7 @@ protected:
     static const TUint kConnectTimeoutMs = 3000;
 protected:
     ProtocolNetwork(Environment& aEnv);
-    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
+    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort, TUint aTimeoutMs = kConnectTimeoutMs);
 protected: // from Protocol
     void Interrupt(TBool aInterrupt);
 protected:
@@ -247,4 +246,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif  // HEADER_PIPELINE_PROTOCOL

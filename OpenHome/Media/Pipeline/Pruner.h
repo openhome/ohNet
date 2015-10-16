@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PRUNER
-#define HEADER_PIPELINE_PRUNER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -18,8 +17,9 @@ Element which removes msgs which aren't needed downstream:
     All content for tracks that don't contain any audio
 */
 
-class Pruner : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
+class Pruner : public PipelineElement, public IPipelineElementUpstream, private INonCopyable
 {
+    static const TUint kSupportedMsgTypes;
 public:
     Pruner(IPipelineElementUpstream& aUpstreamElement);
     virtual ~Pruner();
@@ -31,19 +31,14 @@ private:
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
-    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
-    Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
-    Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     IPipelineElementUpstream& iUpstreamElement;
@@ -56,4 +51,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_PRUNER

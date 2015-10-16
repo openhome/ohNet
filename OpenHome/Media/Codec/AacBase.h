@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC_AAC_BASE
-#define HEADER_PIPELINE_CODEC_AAC_BASE
+#pragma once
 
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
@@ -16,6 +15,7 @@ extern "C" {
 
 namespace OpenHome {
 namespace Media {
+    class IMimeTypeList;
 namespace Codec {
 
 class CodecAacBase : public CodecBase
@@ -26,7 +26,7 @@ private:
 public:
     static const Brn kCodecAac;
 protected:
-    CodecAacBase(const TChar* aId);
+    CodecAacBase(const TChar* aId, IMimeTypeList& aMimeTypeList);
     ~CodecAacBase();
 protected: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
@@ -45,18 +45,17 @@ private:
                   Word16 *pTimeOut,
                   Word32  frameSize,
                   Word16 *channels);
-private:
-    Bws<16*10240> iDecodedBuf;
-    Bws<DecodedAudio::kMaxBytes> iOutBuf;
 protected:
     Bws<kInputBufBytes> iInBuf;
+    Bws<16*10240> iDecodedBuf;
+    Bws<DecodedAudio::kMaxBytes> iOutBuf;
     TUint iFrameCounter;
 
-    TUint32 iSampleRate;
-    TUint32 iOutputSampleRate;
-    TUint32 iBitrateMax;    
-    TUint32 iBitrateAverage;
-    TUint16 iChannels;
+    TUint iSampleRate;
+    TUint iOutputSampleRate;
+    TUint iBitrateMax;
+    TUint iBitrateAverage;
+    TUint iChannels;
     TUint iBytesPerSample;
     TUint iBitDepth;
     TUint64 iSamplesTotal;
@@ -84,4 +83,3 @@ private:
 } //namespace Media
 } //namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC_AAC_BASE

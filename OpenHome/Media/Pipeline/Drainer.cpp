@@ -21,6 +21,7 @@ const TUint Drainer::kSupportedMsgTypes =   eMode
                                           | eHalt
                                           | eWait
                                           | eDecodedStream
+                                          | eBitRate
                                           | eAudioPcm
                                           | eSilence
                                           | eQuit;
@@ -58,7 +59,7 @@ Msg* Drainer::Pull()
             iIgnoreNextStarving = true;
             iGenerateDrainMsg = false;
             iWaitForDrained = true;
-            return iMsgFactory.CreateMsgDrain(MakeFunctor(*this, &Drainer::PipelineDrained));
+            return iMsgFactory.CreateMsgDrain(MakeFunctor(iSem, &Semaphore::Signal));
         }
     }
     Msg* msg;
@@ -79,7 +80,7 @@ Msg* Drainer::Pull()
             iGenerateDrainMsg = false;
             iWaitForDrained = true;
             iPending = msg;
-            return iMsgFactory.CreateMsgDrain(MakeFunctor(*this, &Drainer::PipelineDrained));
+            return iMsgFactory.CreateMsgDrain(MakeFunctor(iSem, &Semaphore::Signal));
         }
         msg = msg->Process(*this);
     }
@@ -119,22 +120,19 @@ TUint Drainer::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Drainer::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Drainer::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex _(iLock);
-    if (iIgnoreNextStarving) {
-        iIgnoreNextStarving = false;
-    }
-    else {
-        LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
-        iGenerateDrainMsg = true;
+    if (aStarving) {
+        if (iIgnoreNextStarving) {
+            iIgnoreNextStarving = false;
+        }
+        else {
+            LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
+            iGenerateDrainMsg = true;
+        }
     }
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
-}
-
-void Drainer::PipelineDrained()
-{
-    iSem.Signal();
 }

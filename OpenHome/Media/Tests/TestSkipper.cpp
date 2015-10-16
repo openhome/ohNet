@@ -34,7 +34,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -48,6 +48,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -64,6 +65,7 @@ private:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgHalt
@@ -81,7 +83,7 @@ private:
     void TestAllMsgsPassWhileNotSkipping();
     void TestRemoveStreamRampAudioRampsDown();
     void TestRemoveStreamRampHaltDeliveredOnRampDown();
-    void TestRemoveStreamRampAllMsgsPassDuringRamp();
+    void TestRemoveStreamRampMsgsPassDuringRamp();
     void TestRemoveStreamRampFewMsgsPassAfterRamp();
     void TestRemoveStreamRampNewStreamResets();
     void TestRemoveStreamNoRampFewMsgsPass();
@@ -89,7 +91,7 @@ private:
     void TestTryRemoveRampValidStream();
     void TestTryRemoveNoRampValidStream();
     void TestSilenceEndsRamp();
-    void TestRemoveAllFlushesAllMsgs();
+    void TestRemoveAllFlushesMostMsgs();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -110,13 +112,31 @@ private:
 } // namespace OpenHome
 
 
+static const TChar* kMsgTypes[] = {  "None"
+                                    ,"Mode"
+                                    ,"Track"
+                                    ,"Drain"
+                                    ,"Delay"
+                                    ,"EncodedStream"
+                                    ,"Metatext"
+                                    ,"StreamInterrupted"
+                                    ,"DecodedStream"
+                                    ,"BitRate"
+                                    ,"AudioPcm"
+                                    ,"Silence"
+                                    ,"Halt"
+                                    ,"Flush"
+                                    ,"Wait"
+                                    ,"Quit"
+                                  };
+
 SuiteSkipper::SuiteSkipper()
     : SuiteUnitTest("Skipper")
 {
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestAllMsgsPassWhileNotSkipping), "TestAllMsgsPassWhileNotSkipping");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAudioRampsDown), "TestRemoveStreamRampAudioRampsDown");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown), "TestRemoveStreamRampHaltDeliveredOnRampDown");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp), "TestRemoveStreamRampAllMsgsPassDuringRamp");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampMsgsPassDuringRamp), "TestRemoveStreamRampMsgsPassDuringRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp), "TestRemoveStreamRampFewMsgsPassAfterRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewStreamResets), "TestRemoveStreamRampNewStreamResets");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass), "TestRemoveStreamNoRampFewMsgsPass");
@@ -124,7 +144,7 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveRampValidStream), "TestTryRemoveRampValidStream");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveNoRampValidStream), "TestTryRemoveNoRampValidStream");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestSilenceEndsRamp), "TestSilenceEndsRamp");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveAllFlushesAllMsgs), "TestRemoveAllFlushesAllMsgs");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveAllFlushesMostMsgs), "TestRemoveAllFlushesMostMsgs");
 }
 
 SuiteSkipper::~SuiteSkipper()
@@ -195,7 +215,7 @@ TUint SuiteSkipper::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteSkipper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteSkipper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -273,12 +293,18 @@ Msg* SuiteSkipper::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteSkipper::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteSkipper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 6);
@@ -334,6 +360,9 @@ void SuiteSkipper::PullNext(EMsgType aExpectedMsg)
     Msg* msg = iSkipper->Pull();
     msg = msg->Process(*this);
     msg->RemoveRef();
+    if (iLastPulledMsg != aExpectedMsg) {
+        Print("Expected %s, got %s\n", kMsgTypes[aExpectedMsg], kMsgTypes[iLastPulledMsg]);
+    }
     TEST(iLastPulledMsg == aExpectedMsg);
 }
 
@@ -347,12 +376,12 @@ Msg* SuiteSkipper::CreateTrack()
 
 Msg* SuiteSkipper::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, true, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, true, false, this);
 }
 
 Msg* SuiteSkipper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, this);
 }
 
 Msg* SuiteSkipper::CreateAudio()
@@ -368,7 +397,7 @@ Msg* SuiteSkipper::CreateAudio()
 
 void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
@@ -378,6 +407,7 @@ void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgBitRate(100));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
@@ -394,6 +424,7 @@ void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
     PullNext(EMsgSilence);
+    PullNext(EMsgBitRate);
     PullNext(EMsgHalt);
     PullNext(EMsgFlush);
     PullNext(EMsgWait);
@@ -442,7 +473,7 @@ void SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown()
     PullNext(EMsgHalt);
 }
 
-void SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp()
+void SuiteSkipper::TestRemoveStreamRampMsgsPassDuringRamp()
 {
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -458,12 +489,8 @@ void SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp()
     iRamping = true;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
     iPendingMsgs.push_back(CreateTrack());
@@ -493,19 +520,21 @@ void SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp()
         PullNext(EMsgAudioPcm);
     }
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brn("second")));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId+1));
-    PullNext(EMsgFlush);
+    PullNext(EMsgHalt);
+    PullNext(EMsgMetaText); // last Metatext pulled while flushing will be buffered and delivered later
+        PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
-    PullNext(EMsgQuit);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
 }
 
 void SuiteSkipper::TestRemoveStreamRampNewStreamResets()
@@ -546,13 +575,12 @@ void SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass()
     TEST(iSkipper->TryRemoveStream(iStreamId, false));
     // don't expect a Halt - not ramping implies that the pipeline is already halted (or buffering)
     TEST(iSkipper->iQueue.IsEmpty());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId+1));
+    PullNext(EMsgHalt);
     PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
@@ -593,12 +621,8 @@ void SuiteSkipper::TestTryRemoveRampValidStream()
     
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -610,13 +634,12 @@ void SuiteSkipper::TestTryRemoveRampValidStream()
     while (!iSkipper->iQueue.IsEmpty()) {
         PullNext(EMsgAudioPcm);
     }
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId+1));
+    PullNext(EMsgHalt);
     PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
@@ -645,9 +668,10 @@ void SuiteSkipper::TestTryRemoveNoRampValidStream()
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
-    PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId+1));
+    PullNext(EMsgHalt);
+    PullNext(EMsgMetaText);
     PullNext(EMsgFlush);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
@@ -679,11 +703,12 @@ void SuiteSkipper::TestSilenceEndsRamp()
     iRamping = false;
     TEST(iJiffies < kRampDuration);
     iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
 }
 
-void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
+void SuiteSkipper::TestRemoveAllFlushesMostMsgs()
 {
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -702,7 +727,6 @@ void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
     iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgHalt);
     TEST(iLastHaltId == MsgHalt::kIdNone);
@@ -714,8 +738,9 @@ void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false));
     iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -727,6 +752,11 @@ void SuiteSkipper::TestRemoveAllFlushesAllMsgs()
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt(kHaltId));
 
+    PullNext(EMsgHalt);
+    PullNext(EMsgFlush);
+    PullNext(EMsgMode);
+    PullNext(EMsgDrain);
+    PullNext(EMsgDelay);
     PullNext(EMsgHalt);
     TEST(iLastHaltId == kHaltId);
     TEST(iPendingMsgs.size() == 0);

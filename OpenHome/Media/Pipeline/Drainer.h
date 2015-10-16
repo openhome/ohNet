@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_DRAINER
-#define HEADER_PIPELINE_DRAINER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -26,9 +25,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
-private:
-    void PipelineDrained();
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstream;
@@ -44,4 +41,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_DRAINER

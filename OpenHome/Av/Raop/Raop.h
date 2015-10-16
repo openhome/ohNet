@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_RAOP
-#define HEADER_PIPELINE_RAOP
+#pragma once
 
 #include <OpenHome/Media/Protocol/Rtsp.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
@@ -352,4 +351,3 @@ private:
 } // namespace OpenHome
 
 
-#endif // HEADER_PIPELINE_RAOP

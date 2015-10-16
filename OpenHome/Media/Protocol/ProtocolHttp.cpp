@@ -79,6 +79,7 @@ private:
     Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
     Bws<kIcyMetadataBytes> iIcyData; // only used in a single function but too large to comfortably declare on the stack
     OpenHome::Uri iUri;
+    TUint64 iTotalStreamBytes;
     TUint64 iTotalBytes;
     TUint iStreamId;
     TBool iSeekable;
@@ -87,6 +88,7 @@ private:
     TBool iStarted;
     TBool iStopped;
     TBool iStreamIncludesMetaData;
+    TBool iReadSuccess;
     TUint iDataChunkSize;
     TUint iDataChunkRemaining;
     TUint64 iSeekPos;
@@ -152,6 +154,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
     , iDechunker(iReaderUntil)
     , iContentRecogBuf(iDechunker)
     , iUserAgent(aUserAgent)
+    , iTotalStreamBytes(0)
     , iTotalBytes(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekable(false)
@@ -191,15 +194,10 @@ void ProtocolHttp::Interrupt(TBool aInterrupt)
 ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
     Reinitialise(aUri);
-
-    LOG(kMedia, "ProtocolHttp::Stream ");
-    LOG(kMedia, iUri.AbsoluteUri());
-    LOG(kMedia, "\n");
-
     if (iUri.Scheme() != Brn("http")) {
-        LOG(kMedia, "ProtocolHttp::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
+    LOG(kMedia, "ProtocolHttp::Stream(%.*s)\n", PBUF(aUri));
 
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
@@ -312,19 +310,28 @@ TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::TrySeek\n");
 
-    iLock.Wait();
-    const TBool streamIsCurrent = IsCurrentStream(aStreamId);
-    if (streamIsCurrent) {
-        iSeek = true;
-        iSeekPos = aOffset;
-        if (iNextFlushId == MsgFlush::kIdInvalid) {
-            /* If a valid flushId is set then We've previously promised to send a Flush but haven't
-               got round to it yet.  Re-use the same id for any other requests that come in before
-               our main thread gets a chance to issue a Flush */
-            iNextFlushId = iFlushIdProvider->NextFlushId();
+    TBool streamIsCurrent = false;
+    {
+        AutoMutex a(iLock);
+        streamIsCurrent = IsCurrentStream(aStreamId);
+        if (streamIsCurrent) {
+            if (!iLive && aOffset >= iTotalStreamBytes) {
+                // Attempting to request beyond end of file.
+                LOG(kMedia, "ProtocolHttp::TrySeek attempting to seek beyond end of file. aStreamId: %u, aOffset: %llu, iTotalBytes: %llu\n", aStreamId, aOffset, iTotalBytes);
+                return MsgFlush::kIdInvalid;
+            }
+
+            iSeek = true;
+            iSeekPos = aOffset;
+            if (iNextFlushId == MsgFlush::kIdInvalid) {
+                /* If a valid flushId is set then We've previously promised to send a Flush but haven't
+                   got round to it yet.  Re-use the same id for any other requests that come in before
+                   our main thread gets a chance to issue a Flush */
+                iNextFlushId = iFlushIdProvider->NextFlushId();
+            }
         }
     }
-    iLock.Signal();
+
     if (!streamIsCurrent) {
         return MsgFlush::kIdInvalid;
     }
@@ -368,6 +375,7 @@ Brn ProtocolHttp::Read(TUint aBytes)
         iDataChunkRemaining -= buf.Bytes();
     }
     iOffset += buf.Bytes();
+    iReadSuccess = true;
     return buf;
 }
 
@@ -383,9 +391,9 @@ void ProtocolHttp::ReadInterrupt()
 
 void ProtocolHttp::Reinitialise(const Brx& aUri)
 {
-    iTotalBytes = iSeekPos = iOffset = 0;
+    iTotalStreamBytes = iTotalBytes = iSeekPos = iOffset = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
+    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = iReadSuccess = false;
     iDataChunkSize = iDataChunkRemaining = 0;
     iContentProcessor = nullptr;
     iNextFlushId = MsgFlush::kIdInvalid;
@@ -416,10 +424,11 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     }
 
     iSeekable = false;
-    iTotalBytes = iHeaderContentLength.ContentLength();
+    iTotalStreamBytes = iHeaderContentLength.ContentLength();
+    iTotalBytes = iTotalStreamBytes;
     iLive = (iTotalBytes == 0);
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
+        LOG(kMedia, "ProtocolHttp::DoStream server returned error %u\n", code);
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {
@@ -475,7 +484,7 @@ ProtocolGetResult ProtocolHttp::DoGet(IWriter& aWriter, TUint64 aOffset, TUint a
         // honour our request.
         LOG(kMedia, "ProtocolHttp::DoGet response code %d\n", code);
         if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-            LOG(kMedia, "ProtocolHttp::DoGet failed\n");
+            LOG(kMedia, "ProtocolHttp::DoGet server returned error %u\n", code);
             return EProtocolGetErrorUnrecoverable;
         }
         if (code == HttpStatus::kPartialContent.Code()) {
@@ -545,7 +554,7 @@ void ProtocolHttp::StartStream()
     LOG(kMedia, "ProtocolHttp::StartStream\n");
 
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
+    iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iOffset, iSeekable, iLive, *this, iStreamId);
     iStarted = true;
 }
 
@@ -647,7 +656,15 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
         }
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();
-    return iContentProcessor->Stream(*this, iTotalBytes);
+    ProtocolStreamResult res = iContentProcessor->Stream(*this, iTotalBytes);
+    if (!iReadSuccess) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
+    if (res == EProtocolStreamErrorRecoverable) {
+        LOG(kMedia, "EProtocolStreamErrorRecoverable from audio processor after %llu bytes (total=%llu)\n",
+            iOffset, iTotalBytes);
+    }
+    return res;
 }
 
 TBool ProtocolHttp::ContinueStreaming(ProtocolStreamResult aResult)
@@ -701,6 +718,7 @@ void ProtocolHttp::ExtractMetadata()
                 iNewIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
                 iNewIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
                 if (iNewIcyMetadata != iIcyMetadata) {
+                    LOG(kMedia, "ProtocolHttp::ExtractMetadata() - %.*s\n", PBUF(iNewIcyMetadata));
                     iIcyMetadata.Replace(iNewIcyMetadata);
                     iSupply->OutputMetadata(iIcyMetadata);
                 }

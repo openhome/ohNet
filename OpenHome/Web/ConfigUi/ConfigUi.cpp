@@ -43,9 +43,7 @@ void LanguageResourceFileReader::SetResource(const Brx& aUriTail)
         iAllocated = true;
     }
     catch (FileOpenError&) {
-        LOG(kHttp, "LanguageResourceFileReader::SetResource failed to open resource: ");
-        LOG(kHttp, filename);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "LanguageResourceFileReader::SetResource failed to open resource: %.*s\n", PBUF(filename));
         THROW(LanguageResourceInvalid);
     }
 }
@@ -540,9 +538,7 @@ void ConfigTabReceiver::Receive(const Brx& aMessage)
     Bws<1024> value;
     Brn remaining(aMessage);
 
-    LOG(kHttp, "ConfigTabReceiver::Receive\n");
-    LOG(kHttp, aMessage);
-    LOG(kHttp, "\n");
+    LOG(kHttp, "ConfigTabReceiver::Receive\n%.*s\n", PBUF(aMessage));
 
     try {
         Parser p(aMessage);
@@ -557,9 +553,7 @@ void ConfigTabReceiver::Receive(const Brx& aMessage)
         Receive(key, value);
     }
     catch (JsonStringError&) {
-        LOG(kHttp, "ConfigTabReceiver::Receive caught JsonStringError: ");
-        LOG(kHttp, aMessage);
-        LOG(kHttp, "\n");
+        LOG(kHttp, "ConfigTabReceiver::Receive caught JsonStringError: %.*s\n", PBUF(aMessage));
     }
 }
 
@@ -683,7 +677,7 @@ TBool ConfigTab::Allocated() const
     return allocated;
 }
 
-void ConfigTab::SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
+void ConfigTab::SetHandler(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
 {
     LOG(kHttp, "ConfigTab::SetHandler iId: %u\n", iId);
     ASSERT(iHandler == nullptr);
@@ -866,7 +860,7 @@ ConfigAppBase::~ConfigAppBase()
 //    }
 //}
 
-ITab& ConfigAppBase::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList)
+ITab& ConfigAppBase::Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
@@ -878,7 +872,7 @@ ITab& ConfigAppBase::Create(ITabHandler& aHandler, std::vector<const Brx*>& aLan
             return *iTabs[i];
         }
     }
-    THROW(TabCreationFailed);
+    THROW(TabAllocatorFull);
 }
 
 const Brx& ConfigAppBase::ResourcePrefix() const
@@ -929,9 +923,7 @@ ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx&
                     return handler;
                 }
                 catch (LanguageResourceInvalid&) {
-                    LOG(kHttp, "ConfigAppBase::CreateLanguageResourceHandler no mapping found for: ");
-                    LOG(kHttp, resource);
-                    LOG(kHttp, "\n");
+                    LOG(kHttp, "ConfigAppBase::CreateLanguageResourceHandler no mapping found for: %.*s\n", PBUF(resource));
                 }
             }
             ASSERTS();  // No mapping found; should have been able to find kDefaultLanguage

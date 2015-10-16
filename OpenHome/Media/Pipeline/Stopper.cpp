@@ -100,17 +100,17 @@ void Stopper::BeginPause()
         break;
     case ERampingDown:
         // We're already pausing.  No Benefit in allowing another Pause request to interrupt this.
-        return;
+        break;
     case ERampingUp:
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
         SetState(ERampingDown);
         break;
     case EPaused:
+        break;
     case EStopped:
-        return;
     case EFlushing:
-        HandleStopped();
+        HandlePaused();
         break;
     }
 }
@@ -177,8 +177,13 @@ Msg* Stopper::Pull()
     Msg* msg;
     do {
         if (iHaltPending) {
-            msg = iMsgFactory.CreateMsgHalt();
-            iHaltPending = false;
+            if (iQueue.IsEmpty()) {
+                msg = iMsgFactory.CreateMsgHalt();
+                iHaltPending = false;
+            }
+            else {
+                msg = iQueue.Dequeue();
+            }
         }
         else {
             if (iState == EPaused || iState == EStopped) {
@@ -308,6 +313,11 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
     return msg;
 }
 
+Msg* Stopper::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (iState == ERampingDown || iState == ERampingUp) {
@@ -315,6 +325,9 @@ Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
         if (aMsg->Jiffies() > iRemainingRampSize && iRemainingRampSize > 0) {
             split = aMsg->Split(iRemainingRampSize);
             if (split != nullptr) {
+                if (iState == ERampingDown) {
+                    split->SetMuted();
+                }
                 iQueue.EnqueueAtHead(split);
             }
         }
@@ -324,6 +337,9 @@ Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
             iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         }
         if (split != nullptr) {
+            if (iState == ERampingDown) {
+                split->SetMuted();
+            }
             iQueue.EnqueueAtHead(split);
         }
         if (iRemainingRampSize == 0) {
@@ -351,9 +367,6 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->TryStop(iStreamId);
-    }
     return aMsg;
 }
 
@@ -375,24 +388,25 @@ TUint Stopper::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    iLock.Wait();
-    if (iState != ERampingDown) {
-        iBuffering = true;
-    }
-    else {
-        if (iTargetHaltId == MsgHalt::kIdInvalid) {
-            HandlePaused();
+    AutoMutex _(iLock);
+    if (aStarving) {
+        if (iState != ERampingDown) {
+            iBuffering = true;
         }
         else {
-            HandleStopped();
+            if (iTargetHaltId == MsgHalt::kIdInvalid) {
+                HandlePaused();
+            }
+            else {
+                HandleStopped();
+            }
         }
     }
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
-    iLock.Signal();
 }
 
 Msg* Stopper::ProcessFlushable(Msg* aMsg)

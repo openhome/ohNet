@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR
-#define HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
@@ -18,10 +17,12 @@ public:
     DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
     void ProcessMsgIn(MsgAudioPcm* aMsg) override;
     void ProcessMsgIn(MsgSilence* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;
@@ -32,7 +33,7 @@ private:
     Msg* DoProcessMsgOut(MsgAudio* aMsg);
 private:
     static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond / 10;
-    IClockPuller* iClockPuller;
+    IClockPullerReservoir* iClockPuller;
     Mutex iLock;
     const TUint iMaxJiffies;
     const TUint iMaxStreamCount;
@@ -43,4 +44,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_DECODED_AUDIO_RESERVOIR

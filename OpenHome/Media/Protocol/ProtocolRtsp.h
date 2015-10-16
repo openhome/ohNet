@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_PROTOCOL_RTSP
-#define HEADER_PIPELINE_PROTOCOL_RTSP
+#pragma once
 
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/Rtsp.h>
@@ -18,13 +17,14 @@ public:
     ProtocolRtsp(Environment& aEnv, const Brx& aGuid);
     ~ProtocolRtsp();
 private: // from Protocol
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
-    ProtocolStreamResult Stream(const Brx& aUri);
-    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
+    ProtocolStreamResult Stream(const Brx& aUri) override;
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
+private:
     ProtocolStreamResult DoStream();
     void OutputStream();
 private: // from IStreamHandler
-    TUint TryStop(TUint aStreamId);
+    TUint TryStop(TUint aStreamId) override;
 private:
     Environment& iEnv;
     SupplyAggregatorBytes* iSupply;
@@ -44,4 +44,3 @@ private:
 };  // namespace OpenHome
 
 
-#endif  // HEADER_PIPELINE_PROTOCOL_RTSP

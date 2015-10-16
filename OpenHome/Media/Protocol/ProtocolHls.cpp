@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Supply.h>
 #include <OpenHome/Media/Tests/TestProtocolHls.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 #include <algorithm>
 
@@ -78,6 +79,7 @@ private:
     void Reinitialise();
     void StartStream(const Uri& aUri);
     TBool IsCurrentStream(TUint aStreamId) const;
+    void WaitForDrain();
 private:
     IHlsReader* iHlsReaderM3u;
     IHlsReader* iHlsReaderSegment;
@@ -225,9 +227,8 @@ HlsM3uReader::HlsM3uReader(IHttpSocket& aSocket, IReader& aReader, IHlsTimer& aT
 
 void HlsM3uReader::SetUri(const Uri& aUri)
 {
-    LOG(kMedia, ">HlsM3uReader::SetUri ");
-    LOG(kMedia, aUri.AbsoluteUri());
-    LOG(kMedia, "\n");
+    const Brx& absUri = aUri.AbsoluteUri();
+    LOG(kMedia, ">HlsM3uReader::SetUri(%.*s)\n", PBUF(absUri));
     AutoMutex a(iLock);
     ASSERT(iInterrupted);   // Interrupt() should be called before re-calling SetUri().
     // iInterrupted is set to true at construction, so will be true on first call to SetUri().
@@ -309,9 +310,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             if (expectUri) {
                 segmentUri = Ascii::Trim(iNextLine);
                 expectUri = false;
-                LOG(kMedia, "HlsM3uReader::NextSegmentUri segmentUri: ");
-                LOG(kMedia, segmentUri);
-                LOG(kMedia, "\n");
+                LOG(kMedia, "HlsM3uReader::NextSegmentUri segmentUri: %.*s\n", PBUF(segmentUri));
                 iLastSegment++;
             }
             else {
@@ -328,9 +327,8 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                         Brn durationDecimalBuf = durationParser.Next();
                         if (!durationParser.Finished() && durationDecimalBuf.Bytes()>3) {
                             // Error in M3U8 format.
-                            LOG(kMedia, "HlsM3uReader::NextSegmentUri error while parsing duration of next segment. durationDecimalBuf: ");
-                            LOG(kMedia, durationDecimalBuf);
-                            LOG(kMedia, "\n");
+                            LOG(kMedia, "HlsM3uReader::NextSegmentUri error while parsing duration of next segment. durationDecimalBuf: %.*s\n",
+                                        PBUF(durationDecimalBuf));
                             iError = true;
                             THROW(HlsVariantPlaylistError);
                         }
@@ -421,9 +419,8 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     Close();
     TUint code = iSocket.Connect(iUri);
     if (code >= HttpStatus::kSuccessCodes && code < HttpStatus::kRedirectionCodes) {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist successfully connected to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist successfully connected to %.*s\n", PBUF(absUri));
         {
             AutoMutex a(iLock);
             iConnected = true;
@@ -433,15 +430,13 @@ TBool HlsM3uReader::ReloadVariantPlaylist()
     }
     else if (code == 0) {
         // Connection error. Should be temporary and recoverable.
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist unable to (re-)connect to %.*s\n", PBUF(absUri));
         return false;
     }
     else {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist encountered code %u while trying to connect to ", code);
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist encountered code %u while trying to connect to %.*s\n", code, PBUF(absUri));
         THROW(HlsVariantPlaylistError);
     }
 
@@ -717,9 +712,8 @@ void SegmentStreamer::GetNextSegment()
     Close();
     TUint code = iSocket.Connect(iUri);
     if (code >= HttpStatus::kSuccessCodes && code < HttpStatus::kRedirectionCodes) {
-        LOG(kMedia, "SegmentStreamer::GetNextSegment successfully connected to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "SegmentStreamer::GetNextSegment successfully connected to %.*s\n", PBUF(absUri));
         {
             AutoMutex a(iLock);
             iConnected = true;
@@ -728,13 +722,13 @@ void SegmentStreamer::GetNextSegment()
         //iOffset = 0;
     }
     else if (code == 0) {
-        LOG(kMedia, "SegmentStreamer::GetNextSegment unable to (re-)connect to ");
-        LOG(kMedia, iUri.AbsoluteUri());
-        LOG(kMedia, "\n");
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "SegmentStreamer::GetNextSegment unable to (re-)connect to %.*s\n", PBUF(absUri));
         THROW(HlsReaderError);  // Potentially recoverable, but don't want any reconnect logic in here.
     }
     else {
-        LOG(kMedia, "SegmentStreamer::GetNextSegment encountered code %u while trying to connect to ", code);
+        const Brx& absUri = iUri.AbsoluteUri();
+        LOG(kMedia, "SegmentStreamer::GetNextSegment encountered code %u while trying to connect to %.*s\n", code, PBUF(absUri));
         LOG(kMedia, iUri.AbsoluteUri());
         LOG(kMedia, "\n");
         iError = true;
@@ -793,6 +787,7 @@ void ProtocolHls::Interrupt(TBool aInterrupt)
         }
         iSegmentStreamer.ReadInterrupt();
         iM3uReader.Interrupt();
+        iSem.Signal();
     }
     iLock.Signal();
 }
@@ -826,14 +821,10 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     Reinitialise();
     Uri uriHls(aUri);
-    LOG(kMedia, "ProtocolHls::Stream ");
-    LOG(kMedia, uriHls.AbsoluteUri());
-    LOG(kMedia, "\n");
-
     if (uriHls.Scheme() != Brn("hls")) {
-        LOG(kMedia, "ProtocolHls::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
+    LOG(kMedia, "ProtocolHls::Stream(%.*s)\n", PBUF(aUri));
 
     if (!iStarted) {
         StartStream(uriHls);
@@ -866,9 +857,12 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
 
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     while (res == EProtocolStreamErrorRecoverable) {
-        if (iStopped) {
-            res = EProtocolStreamStopped;
-            break;
+        {
+            AutoMutex a(iLock);
+            if (iStopped) {
+                res = EProtocolStreamStopped;
+                break;
+            }
         }
 
         // This will only return EProtocolStreamErrorRecoverable for live streams!
@@ -881,7 +875,12 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
         //  - unrecoverable error (e.g. malformed M3U8) (EProtocolStreamErrorUnrecoverable)
         //  - recoverable interruption in stream        (EProtocolStreamErrorRecoverable)
 
-        if (iStopped) {
+        TBool stopped = false;
+        {
+            AutoMutex a(iLock);
+            stopped = iStopped;
+        }
+        if (stopped) {
             res = EProtocolStreamStopped;
             break;
         }
@@ -910,13 +909,21 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
             iSegmentStreamer.Close();
             iM3uReader.Close();
 
-            //iSupply->OutputEndOfStream(); // FIXME - to be implemented
+            // Output any pending flush.
+            {
+                AutoMutex a(iLock);
+                if (iNextFlushId != MsgFlush::kIdInvalid) {
+                    // Cleanup code will output flush before exiting this method.
+                    break;
+                }
+            }
+
+            WaitForDrain();
+
             Reinitialise();
             iM3uReader.SetUri(uriHttp);
             iSegmentStreamer.Stream(iM3uReader);
             iContentProcessor = iProtocolManager->GetAudioProcessor();
-
-            //Thread::Sleep(1000);    // Wait 1s before retrying. Avoid hammering server.
 
             StartStream(uriHls);    // Output new MsgEncodedStream to signify discontinuity.
         }
@@ -928,12 +935,11 @@ ProtocolStreamResult ProtocolHls::Stream(const Brx& aUri)
     iSegmentStreamer.Close();
     iM3uReader.Close();
 
-    //iSupply->OutputEndOfStream(); // FIXME - to be implemented
-
     {
         AutoMutex a(iLock);
-        if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
+        if (iNextFlushId != MsgFlush::kIdInvalid) {
             iSupply->OutputFlush(iNextFlushId);
+            iNextFlushId = MsgFlush::kIdInvalid;
         }
         // Clear iStreamId to prevent TrySeek or TryStop returning a valid flush id.
         iStreamId = IPipelineIdProvider::kStreamIdInvalid;
@@ -962,7 +968,7 @@ EStreamPlay ProtocolHls::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "> ProtocolHls::OkToPlay(%u)\n", aStreamId);
     const EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
-    if (canPlay != ePlayNo && iStreamId == aStreamId) {
+    if (iStreamId == aStreamId) {
         iSem.Signal();
     }
     LOG(kMedia, "< ProtocolHls::OkToPlay(%u) == %s\n", aStreamId, kStreamPlayNames[canPlay]);
@@ -991,13 +997,18 @@ TUint ProtocolHls::TryStop(TUint aStreamId)
         iM3uReader.Interrupt();
         iSem.Signal();
     }
+    const TUint nextFlushId = iNextFlushId;
     iLock.Signal();
-    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
+    if (stop) {
+        return nextFlushId;
+    }
+    return MsgFlush::kIdInvalid;
 }
 
 void ProtocolHls::Reinitialise()
 {
     LOG(kMedia, "ProtocolHls::Reinitialise\n");
+    AutoMutex a(iLock);
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStarted = iStopped = false;
     iContentProcessor = nullptr;
@@ -1012,7 +1023,7 @@ void ProtocolHls::StartStream(const Uri& aUri)
     TBool seekable = false;
     TBool live = true;
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(aUri.AbsoluteUri(), totalBytes, seekable, live, *this, iStreamId);
+    iSupply->OutputStream(aUri.AbsoluteUri(), totalBytes, 0, seekable, live, *this, iStreamId);
     iStarted = true;
 }
 
@@ -1022,4 +1033,11 @@ TBool ProtocolHls::IsCurrentStream(TUint aStreamId) const
         return false;
     }
     return true;
+}
+
+void ProtocolHls::WaitForDrain()
+{
+    Semaphore semDrain("HLSD", 0);
+    iSupply->OutputDrain(MakeFunctor(semDrain, &Semaphore::Signal));
+    semDrain.Wait();
 }

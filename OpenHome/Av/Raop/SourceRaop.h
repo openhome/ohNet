@@ -1,5 +1,4 @@
-#ifndef HEADER_SOURCE_RAOP
-#define HEADER_SOURCE_RAOP
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -52,8 +51,6 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     void GenerateMetadata();
-    void OpenServers();
-    void CloseServers();
     void StartNewTrack();
     void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
     void ActivateIfInactive();
@@ -78,9 +75,6 @@ private:
     RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;
-    SocketUdpServer* iServerAudio;   // no ownership
-    SocketUdpServer* iServerControl; // no ownership
-    SocketUdpServer* iServerTiming;  // no ownership
     Configuration::ConfigChoice* iConfigNetAux;
     TUint iConfigSubId;
     TUint iCurrentAdapterChangeListenerId;
@@ -102,4 +96,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SOURCE_RAOP

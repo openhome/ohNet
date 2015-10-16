@@ -1,5 +1,4 @@
-#ifndef HEADER_DRIVER_SONGCAST_SENDER
-#define HEADER_DRIVER_SONGCAST_SENDER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -16,50 +15,26 @@ namespace Av {
 }
 namespace Av {
 
-class ProcessorPcmBufPackedDualMono : public Media::ProcessorPcmBuf
-{
-public:
-    ProcessorPcmBufPackedDualMono();
-private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
-    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
-};
-
-
-class DriverSongcastSender : public Thread, private Media::IMsgProcessor, private Net::IResourceManager
+class DriverSongcastSender : public Media::PipelineElement, private Net::IResourceManager
 {
     static const TUint kSongcastTtl = 1;
     static const TUint kSongcastLatencyMs = 300;
     static const TUint kSongcastPreset = 0;
     static const Brn kSenderIconFileName;
+    static const TUint kSupportedMsgTypes;
 public:
     DriverSongcastSender(Media::IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel);
     ~DriverSongcastSender();
-private: // from Thread
-    void Run() override;
 private:
+    void DriverThread();
     void TimerCallback();
     void SendAudio(Media::MsgPlayable* aMsg);
     void DeviceDisabled();
 private: // from Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDrain* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgMetaText* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgStreamInterrupted* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgHalt* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg) override;
-    Media::Msg* ProcessMsg(Media::MsgSilence* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgQuit* aMsg) override;
 private: // from Net::IResourceManager
@@ -72,6 +47,7 @@ private:
     OhmSender* iOhmSender;
     Net::DvDeviceStandard* iDevice;
     ZoneHandler* iZoneHandler;
+    ThreadFunctor *iThread;
     Semaphore iDeviceDisabled;
     Timer* iTimer;
     TUint iSampleRate;
@@ -92,4 +68,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_DRIVER_SONGCAST_SENDER

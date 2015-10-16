@@ -11,8 +11,24 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TUint TimestampInspector::kSupportedMsgTypes =   eMode
+                                                     | eTrack
+                                                     | eDrain
+                                                     | eDelay
+                                                     | eEncodedStream
+                                                     | eMetatext
+                                                     | eStreamInterrupted
+                                                     | eHalt
+                                                     | eFlush
+                                                     | eWait
+                                                     | eDecodedStream
+                                                     | eBitRate
+                                                     | eAudioPcm
+                                                     | eQuit;
+
 TimestampInspector::TimestampInspector(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
-    : iMsgFactory(aMsgFactory)
+    : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iDownstreamElement(aDownstreamElement)
     , iClockPuller(nullptr)
     , iDecodedStream(nullptr)
@@ -54,12 +70,9 @@ void TimestampInspector::Push(Msg* aMsg)
 Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
 {
     if (iClockPuller != nullptr && iStreamIsTimestamped) {
-        iClockPuller->StopTimestamp();
+        iClockPuller->Stop();
     }
-    iClockPuller = aMsg->ClockPuller();
-    if (iClockPuller != nullptr && iStreamIsTimestamped) {
-        iClockPuller->StopTimestamp();
-    }
+    iClockPuller = aMsg->ClockPullers().Timestamp();
     iCheckForTimestamp = (iClockPuller != nullptr);
     iStreamIsTimestamped = false;
     iLockedToStream = false;
@@ -70,39 +83,18 @@ Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* TimestampInspector::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
 Msg* TimestampInspector::ProcessMsg(MsgDrain* aMsg)
 {
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS(); // not expected at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgMetaText* aMsg)
-{
+    if (iClockPuller != nullptr) {
+        iClockPuller->Reset();
+    }
+    iLockedToStream = false;
     return aMsg;
 }
 
 Msg* TimestampInspector::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
+    StreamInterrupted();
     return aMsg;
 }
 
@@ -134,7 +126,7 @@ Msg* TimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
     const TUint sampleRate = iDecodedStream->StreamInfo().SampleRate();
     iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
     if (iStreamIsTimestamped && iClockPuller != nullptr) {
-        iClockPuller->NotifyTimestampSampleRate(sampleRate);
+        iClockPuller->NewStream(sampleRate);
     }
     return aMsg;
 }
@@ -145,8 +137,8 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
         TUint ignore;
         iStreamIsTimestamped = aMsg->TryGetTimestamps(ignore, ignore);
         if (iStreamIsTimestamped && iClockPuller != nullptr) {
-            iClockPuller->StartTimestamp();
-            iClockPuller->NotifyTimestampSampleRate(iDecodedStream->StreamInfo().SampleRate());
+            iClockPuller->Start();
+            iClockPuller->NewStream(iDecodedStream->StreamInfo().SampleRate());
         }
         iLockedToStream = !iStreamIsTimestamped;
         iCalculateTimestampDelta = iStreamIsTimestamped;
@@ -191,26 +183,10 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
         }
         if (timestamped && iClockPuller != nullptr) {
             const TInt drift = iTimestampDelta - static_cast<TInt>(rxTimestamp - networkTimestamp);
-            iClockPuller->NotifyTimestamp(drift, networkTimestamp);
+            const TUint multiplier = iClockPuller->NotifyTimestamp(drift, networkTimestamp);
+            aMsg->SetClockPull(multiplier);
         }
         // fall through
     }
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgSilence* aMsg)
-{
-    ASSERTS(); // not expected at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS(); // not expected at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* TimestampInspector::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }

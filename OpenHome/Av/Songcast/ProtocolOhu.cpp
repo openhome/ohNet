@@ -100,7 +100,7 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         return EProtocolStreamStopped;
     }
     iLeaveLock.Wait();
-    iLeaving = iStopped = iActive = false;
+    iLeaving = iStopped = false;
     iSlaveCount = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
     iLeaveLock.Signal();
@@ -217,14 +217,13 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
             }
         }
         catch (ReaderError&) {
-            LOG2(kSongcast, kError, "OHU: ReaderError\n");
+            LOG2(kSongcast, kError, "OHU: ReaderError.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
         }
     } while (!iStopped);
     
     Interrupt(false); // cancel any interrupt to allow SendLeave to succeed
     iReadBuffer.ReadFlush();
     iLeaveLock.Wait();
-    iActive = false;
     if (iLeaving) {
         iLeaving = false;
         SendLeave();
@@ -234,8 +233,13 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     iTimerListen->Cancel();
     iTimerLeave->Cancel();
     iSocket.Close();
-    if (iNextFlushId != MsgFlush::kIdInvalid) {
-        iSupply->OutputFlush(iNextFlushId);
+    iMutexTransport.Wait();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    const TUint flushId = iNextFlushId;
+    iNextFlushId = MsgFlush::kIdInvalid;
+    iMutexTransport.Signal();
+    if (flushId != MsgFlush::kIdInvalid) {
+        iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
@@ -254,17 +258,17 @@ void ProtocolOhu::Interrupt(TBool aInterrupt)
 
 TUint ProtocolOhu::TryStop(TUint aStreamId)
 {
-    LOG(kSongcast, "OHU: TryStop()\n");
+    LOG(kSongcast, "OHU: TryStop(%u)\n", aStreamId);
     AutoMutex _(iMutexTransport);
-    if (IsCurrentStream(aStreamId)) {
-        iLeaveLock.Wait();
-        if (iActive) {
+    if (IsCurrentStream(aStreamId) && iStreamId == aStreamId) {
+        AutoMutex a(iLeaveLock);
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
-            iStopped = true;
-            iLeaving = true;
-            iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
         }
-        iLeaveLock.Signal();
+        iStopped = true;
+        iLeaving = true;
+        iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
+        iReadBuffer.ReadInterrupt();
     }
     return iNextFlushId;
 }

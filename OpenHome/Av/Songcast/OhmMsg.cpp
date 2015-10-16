@@ -342,6 +342,7 @@ void OhmMsgAudioBlob::Externalise(IWriter& aWriter)
 
 OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)
     : OhmMsgTimestamped(aFactory)
+    , iFlags(0)
     , iFrame(0)
 {
 }
@@ -353,6 +354,7 @@ void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
 
     ReaderBinary reader(aReader);
     reader.ReadReplace(aHeader.MsgBytes(), iBlob);
+    iFlags = iBlob[1];
     iFrame = Converter::BeUint32At(iBlob, 4);
     iSampleStart = Converter::BeUint64At(iBlob, 20);
 }

@@ -50,15 +50,7 @@ void CodecAlacBase::Initialise()
     iInBuf.SetBytes(0);
     iDecodedBuf.SetBytes(0);
     iOutBuf.SetBytes(0);
-}
-
-TBool CodecAlacBase::SupportsMimeType(const Brx& aMimeType)
-{
-    static const Brn kMimeAlac("audio/x-m4a");
-    if (aMimeType == kMimeAlac) {
-        return true;
-    }
-    return false;
+    iTrackOffset = 0;
 }
 
 TBool CodecAlacBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)

@@ -19,7 +19,6 @@ public:
     CodecPcm();
     ~CodecPcm();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType) override;
     TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
@@ -62,11 +61,6 @@ CodecPcm::CodecPcm()
 
 CodecPcm::~CodecPcm()
 {
-}
-
-TBool CodecPcm::SupportsMimeType(const Brx& /*aMimeType*/)
-{
-    return false;
 }
 
 TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
@@ -117,6 +111,7 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
         return false;
     }
     iTrackOffset = ToJiffies(aSample);
+    iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
 }

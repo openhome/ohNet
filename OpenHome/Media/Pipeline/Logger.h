@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_LOGGER
-#define HEADER_PIPELINE_LOGGER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
@@ -31,11 +30,12 @@ public:
        ,EMsgFlush               = 1 <<  9
        ,EMsgWait                = 1 << 10
        ,EMsgDecodedStream       = 1 << 11
-       ,EMsgAudioPcm            = 1 << 12
-       ,EMsgSilence             = 1 << 13
-       ,EMsgAudioRamped         = 1 << 14
-       ,EMsgPlayable            = 1 << 15
-       ,EMsgQuit                = 1 << 16
+       ,EMsgBitRate             = 1 << 12
+       ,EMsgAudioPcm            = 1 << 13
+       ,EMsgSilence             = 1 << 14
+       ,EMsgAudioRamped         = 1 << 15
+       ,EMsgPlayable            = 1 << 16
+       ,EMsgQuit                = 1 << 17
        ,EMsgAll                 = 0x7fffffff
     };
 public:
@@ -61,6 +61,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -81,4 +82,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_LOGGER

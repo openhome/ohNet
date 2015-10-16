@@ -18,6 +18,7 @@
 #include <OpenHome/Media/Codec/MpegTs.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <stdlib.h>
 
@@ -78,6 +79,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -108,23 +110,25 @@ private:
     const TUint iBytesTotal;
 };
 
-class ProcessorPcmSwpEndianPacked : public ProcessorPcmBuf
+class ProcessorPcmSwpEndianPacked : public ProcessorPcmBufTest
 {
 public:
     ProcessorPcmSwpEndianPacked();
 private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels);
     void ProcessSample8(const TByte* aSample, TUint aNumChannels);
     void ProcessSample16(const TByte* aSample, TUint aNumChannels);
     void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels);
 private:
     void SwapEndianness16(const Brx& aData);
     void SwapEndianness24(const Brx& aData);
 };
 
-class Decoder : private INonCopyable
+class Decoder : public IMimeTypeList, private INonCopyable
 {
 private:
     static const TUint kThreadPriorityMax = kPriorityHighest - 1;
@@ -134,8 +138,10 @@ public:
     void AddContainer(ContainerBase* aContainer);
     void AddCodec(CodecBase* aCodec);
     void Start();
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 private:
-    Container* iContainer;
+    ContainerController* iContainer;
     Logger* iLoggerContainer;
     CodecController* iCodecController;
     Logger* iLoggerCodecController;
@@ -194,8 +200,7 @@ Msg* ElementFileReader::Pull()
         const Brn mode("Playlist");
         const TBool supportsLatency = false;
         const TBool realTime = false;
-        IClockPuller* clockPuller = nullptr;
-        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller, false, false);
+        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, ModeClockPullers(), false, false);
         iMode = eTrack;
     }
     else if (iMode == eTrack) {
@@ -215,7 +220,7 @@ Msg* ElementFileReader::Pull()
         const TBool seekable = true;    // Streams such as those within MPEG TS containers are currently non-seekable.
         const TBool live = false;
         IStreamHandler* streamHandler = nullptr;
-        msg = iMsgFactory.CreateMsgEncodedStream(uri, metaText, totalBytes, streamId, seekable, live, streamHandler);
+        msg = iMsgFactory.CreateMsgEncodedStream(uri, metaText, totalBytes, 0, streamId, seekable, live, streamHandler);
         iMode = eAudioEncoded;
     }
     else if (iMode == eAudioEncoded) {
@@ -432,6 +437,12 @@ Msg* ElementFileWriter::ProcessMsg(MsgDecodedStream* aMsg)
     return nullptr;
 }
 
+Msg* ElementFileWriter::ProcessMsg(MsgBitRate* aMsg)
+{
+    aMsg->RemoveRef();
+    return nullptr;
+}
+
 Msg* ElementFileWriter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     // Write audio out to file.
@@ -534,24 +545,26 @@ ProcessorPcmSwpEndianPacked::ProcessorPcmSwpEndianPacked()
 {
 }
 
-TBool ProcessorPcmSwpEndianPacked::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
+void ProcessorPcmSwpEndianPacked::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
 {
     ProcessFragment(aData);
-    return true;
 }
 
-TBool ProcessorPcmSwpEndianPacked::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
+void ProcessorPcmSwpEndianPacked::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
 {
     CheckSize(aData.Bytes());
     SwapEndianness16(aData);
-    return true;
 }
 
-TBool ProcessorPcmSwpEndianPacked::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
+void ProcessorPcmSwpEndianPacked::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
 {
     CheckSize(aData.Bytes());
     SwapEndianness24(aData);
-    return true;
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/)
+{
+    ASSERTS();
 }
 
 void ProcessorPcmSwpEndianPacked::ProcessSample8(const TByte* aSample, TUint aNumChannels)
@@ -572,6 +585,11 @@ void ProcessorPcmSwpEndianPacked::ProcessSample24(const TByte* aSample, TUint aN
     Brn sample(aSample, 3*aNumChannels);
     CheckSize(sample.Bytes());
     SwapEndianness24(sample);
+}
+
+void ProcessorPcmSwpEndianPacked::ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChannels*/)
+{
+    ASSERTS();
 }
 
 void ProcessorPcmSwpEndianPacked::SwapEndianness16(const Brx& aData)
@@ -600,7 +618,7 @@ void ProcessorPcmSwpEndianPacked::SwapEndianness24(const Brx& aData)
 
 Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter)
 {
-    iContainer = new Container(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
+    iContainer = new ContainerController(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // Construct push logger slightly out of sequence.
@@ -637,6 +655,9 @@ void Decoder::Start()
     iCodecController->Start();
 }
 
+void Decoder::Add(const TChar* /*aMimeType*/)
+{
+}
 
 
 int CDECL main(int aArgc, char* aArgv[])
@@ -736,18 +757,18 @@ int CDECL main(int aArgc, char* aArgv[])
     Decoder* decoder = new Decoder(*msgFactory, fileReader, fileWriter, fileReader);
 
     decoder->AddContainer(new Id3v2());
-    //decoder->AddContainer(new Mpeg4Container());
-    decoder->AddContainer(new MpegTs());
+    //decoder->AddContainer(new Mpeg4Container(*decoder));
+    decoder->AddContainer(new MpegTsContainer(*decoder));
 
-    decoder->AddCodec(CodecFactory::NewAac());
-    decoder->AddCodec(CodecFactory::NewAifc());
-    decoder->AddCodec(CodecFactory::NewAiff());
-    decoder->AddCodec(CodecFactory::NewAlac());
-    decoder->AddCodec(CodecFactory::NewAdts());
-    decoder->AddCodec(CodecFactory::NewFlac());
+    decoder->AddCodec(CodecFactory::NewAac(*decoder));
+    decoder->AddCodec(CodecFactory::NewAifc(*decoder));
+    decoder->AddCodec(CodecFactory::NewAiff(*decoder));
+    decoder->AddCodec(CodecFactory::NewAlac(*decoder));
+    decoder->AddCodec(CodecFactory::NewAdts(*decoder));
+    decoder->AddCodec(CodecFactory::NewFlac(*decoder));
     decoder->AddCodec(CodecFactory::NewPcm());
-    decoder->AddCodec(CodecFactory::NewVorbis());
-    decoder->AddCodec(CodecFactory::NewWav());
+    decoder->AddCodec(CodecFactory::NewVorbis(*decoder));
+    decoder->AddCodec(CodecFactory::NewWav(*decoder));
 
     // Try open input file.
     try {

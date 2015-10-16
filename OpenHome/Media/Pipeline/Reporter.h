@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_REPORTER
-#define HEADER_PIPELINE_REPORTER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -28,8 +27,9 @@ Is passive - it reports on Msgs but doesn't create/destroy/edit them.
 
 class IPipelineElementObserverThread;
 
-class Reporter : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
+class Reporter : public PipelineElement, public IPipelineElementUpstream, private INonCopyable
 {
+    static const TUint kSupportedMsgTypes;
     static const Brn kNullMetaText;
     static const TUint kTrackNotifyDelayMs = 10;
 public:
@@ -40,20 +40,10 @@ public: // from IPipelineElementUpstream
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgDrain* aMsg) override;
-    Msg* ProcessMsg(MsgDelay* aMsg) override;
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
-    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
-    Msg* ProcessMsg(MsgHalt* aMsg) override;
-    Msg* ProcessMsg(MsgFlush* aMsg) override;
-    Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
-    Msg* ProcessMsg(MsgSilence* aMsg) override;
-    Msg* ProcessMsg(MsgPlayable* aMsg) override;
-    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     void EventCallback();
 private:
@@ -77,4 +67,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_REPORTER

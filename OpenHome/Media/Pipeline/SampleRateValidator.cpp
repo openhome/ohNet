@@ -6,8 +6,25 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
+const TUint SampleRateValidator::kSupportedMsgTypes =   eMode
+                                                      | eTrack
+                                                      | eDrain
+                                                      | eDelay
+                                                      | eEncodedStream
+                                                      | eMetatext
+                                                      | eStreamInterrupted
+                                                      | eHalt
+                                                      | eFlush
+                                                      | eWait
+                                                      | eDecodedStream
+                                                      | eBitRate
+                                                      | eAudioPcm
+                                                      | eSilence
+                                                      | eQuit;
+
 SampleRateValidator::SampleRateValidator(IPipelineElementDownstream& aDownstreamElement)
-    : iDownstream(aDownstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iDownstream(aDownstreamElement)
     , iAnimator(nullptr)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iFlushing(false)
@@ -39,40 +56,9 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SampleRateValidator::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
 Msg* SampleRateValidator::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
 }
 
 Msg* SampleRateValidator::ProcessMsg(MsgFlush* aMsg)
@@ -82,11 +68,6 @@ Msg* SampleRateValidator::ProcessMsg(MsgFlush* aMsg)
         aMsg->RemoveRef();
         return nullptr;
     }
-    return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgWait* aMsg)
-{
     return aMsg;
 }
 
@@ -100,7 +81,12 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
     }
     catch (SampleRateUnsupported&) {
         iFlushing = true;
-        iTargetFlushId = streamInfo.StreamHandler()->TryStop(streamInfo.StreamId());
+        IStreamHandler* streamHandler = streamInfo.StreamHandler();
+        const TUint streamId = streamInfo.StreamId();
+        if (streamHandler != nullptr) {
+            (void)streamHandler->OkToPlay(streamId);
+            iTargetFlushId = streamHandler->TryStop(streamId);
+        }
     }
     return ProcessFlushable(aMsg);
 }
@@ -113,17 +99,6 @@ Msg* SampleRateValidator::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* SampleRateValidator::ProcessMsg(MsgSilence* aMsg)
 {
     return ProcessFlushable(aMsg);
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgQuit* aMsg)
-{
-    return aMsg;
 }
 
 Msg* SampleRateValidator::ProcessFlushable(Msg* aMsg)

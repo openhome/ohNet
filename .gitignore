@@ -10,6 +10,7 @@ tags
 /install
 
 # Eclipse project files
+.cproject
 .project
 .pydevproject
 
@@ -19,3 +20,6 @@ tags
 # waf auto-generated Visual Studio solution
 project.*
 .depproj/
+
+# FunctionalTest Config
+.testconfig.xml

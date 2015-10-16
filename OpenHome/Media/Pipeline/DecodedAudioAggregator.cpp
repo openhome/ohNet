@@ -9,17 +9,28 @@ using namespace OpenHome::Media;
 
 // DecodedAudioAggregator
 
-DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement, MsgFactory& aMsgFactory)
-    : iDownstreamElement(aDownstreamElement)
-    , iMsgFactory(aMsgFactory)
-    , iStreamHandler(nullptr)
+const TUint DecodedAudioAggregator::kSupportedMsgTypes =   eMode
+                                                         | eTrack
+                                                         | eDrain
+                                                         | eDelay
+                                                         | eEncodedStream
+                                                         | eMetatext
+                                                         | eStreamInterrupted
+                                                         | eHalt
+                                                         | eFlush
+                                                         | eWait
+                                                         | eDecodedStream
+                                                         | eBitRate
+                                                         | eAudioPcm
+                                                         | eQuit;
+
+DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iDownstreamElement(aDownstreamElement)
     , iDecodedAudio(nullptr)
-    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iChannels(0)
     , iSampleRate(0)
     , iBitDepth(0)
-    , iExpectedFlushId(MsgFlush::kIdInvalid)
-    , iLock("DAAL")
 {
 }
 
@@ -28,62 +39,7 @@ void DecodedAudioAggregator::Push(Msg* aMsg)
     ASSERT(aMsg != nullptr);
     Msg* msg = aMsg->Process(*this);
     if (msg != nullptr) {
-        Queue(msg);
-    }
-}
-
-EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aStreamId)
-{
-    IStreamHandler* streamHandler = nullptr;
-    {
-        AutoMutex a(iLock);
-        streamHandler = iStreamHandler;
-    }
-    ASSERT(streamHandler != nullptr);
-    EStreamPlay canPlay = streamHandler->OkToPlay(aStreamId);
-    //Log::Print("DecodedAudioAggregator::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
-    return canPlay;
-}
-
-TUint DecodedAudioAggregator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
-{
-    ASSERTS(); // expect Seek requests to go from Seeker to CodecController, bypassing this (and other) downstream element(s).
-    return MsgFlush::kIdInvalid;
-}
-
-TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
-{
-    IStreamHandler* streamHandler = nullptr;
-    TUint flushId = MsgFlush::kIdInvalid;
-    {
-        AutoMutex a(iLock);
-        streamHandler = iStreamHandler;
-    }
-
-    // Don't hold iLock while calling into streamHandler to avoid deadlock
-    // (i.e., streamHandler may be Push()ing to this and ::Process() methods
-    // could be awaiting iLock to process Msg).
-    if (streamHandler != nullptr) {
-        flushId = streamHandler->TryStop(aStreamId);
-    }
-
-    {
-        AutoMutex a(iLock);
-        iExpectedFlushId = flushId;
-    }
-
-    return flushId;
-}
-
-void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
-{
-    IStreamHandler* streamHandler = nullptr;
-    {
-        AutoMutex a(iLock);
-        streamHandler = iStreamHandler;
-    }
-    if (streamHandler != nullptr) {
-        streamHandler->NotifyStarving(aMode, aStreamId);
+        iDownstreamElement.Push(msg);
     }
 }
 
@@ -105,38 +61,9 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDrain* aMsg)
     return aMsg;
 }
 
-Msg* DecodedAudioAggregator::ProcessMsg(MsgDelay* aMsg)
-{
-    OutputAggregatedAudio();
-    return aMsg;
-}
-
 Msg* DecodedAudioAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 {
     OutputAggregatedAudio();
-    AutoMutex a(iLock);
-    iStreamId = aMsg->StreamId();
-    iStreamHandler = aMsg->StreamHandler();
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
-    aMsg->RemoveRef();
-    return msg;
-}
-
-Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DecodedAudioAggregator::ProcessMsg(MsgMetaText* aMsg)
-{
-    iLock.Wait();
-    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        iLock.Signal();
-        aMsg->RemoveRef();
-        return nullptr;
-    }
-    iLock.Signal();
     return aMsg;
 }
 
@@ -154,11 +81,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgHalt* aMsg)
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgFlush* aMsg)
 {
-    AutoMutex a(iLock);
-    ReleaseAggregatedAudio();
-    if (iExpectedFlushId == aMsg->Id()) {
-        iExpectedFlushId = MsgFlush::kIdInvalid;
-    }
+    OutputAggregatedAudio();
     return aMsg;
 }
 
@@ -170,10 +93,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgWait* aMsg)
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    AutoMutex a(iLock);
-    ReleaseAggregatedAudio();   // If there was any buffered audio prior to this
-                                // then there was probably a Seek, which this element
-                                // is not involved in. So, just discard buffered audio.
+    OutputAggregatedAudio();
     ASSERT(iDecodedAudio == nullptr);
     const DecodedStreamInfo& info = aMsg->StreamInfo();
     iChannels = info.NumChannels();
@@ -184,24 +104,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    AutoMutex a(iLock);
-    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        aMsg->RemoveRef();
-        return nullptr;
-    }
     return TryAggregate(aMsg);
-}
-
-Msg* DecodedAudioAggregator::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* DecodedAudioAggregator::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
 }
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgQuit* aMsg)
@@ -220,8 +123,6 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
     // This method only looks at the byte capacity when deciding whether to
     // buffer data. There is no point in chopping the data purely on a jiffy
     // limit when buffer space could be used to output all jiffies together.
-
-    // NOTE: iLock should be held by caller.
 
     TUint jiffies = aMsg->Jiffies();
     const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
@@ -242,7 +143,7 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
     TUint aggregatedBytes = Jiffies::BytesFromJiffies(aggregatedJiffies, jiffiesPerSample, iChannels, iBitDepth/8);
     if (aggregatedBytes + msgBytes <= kMaxBytes) {
         // Have byte capacity to add new data.
-        iDecodedAudio->Aggregate(*aMsg);
+        iDecodedAudio->Aggregate(aMsg);
 
         aggregatedJiffies = iDecodedAudio->Jiffies();
         aggregatedBytes = Jiffies::BytesFromJiffies(aggregatedJiffies, jiffiesPerSample, iChannels, iBitDepth/8);
@@ -265,29 +166,10 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
     return nullptr;
 }
 
-void DecodedAudioAggregator::Queue(Msg* aMsg)
-{
-    iDownstreamElement.Push(aMsg);
-}
-
 void DecodedAudioAggregator::OutputAggregatedAudio()
 {
-    iLock.Wait();
     if (iDecodedAudio != nullptr) {
-        MsgAudioPcm* msg = iDecodedAudio;
-        iDecodedAudio = nullptr;
-        iLock.Signal();
-        Queue(msg);
-        return;
-    }
-    iLock.Signal();
-}
-
-void DecodedAudioAggregator::ReleaseAggregatedAudio()
-{
-    // NOTE: iLock must be held by caller.
-    if (iDecodedAudio != nullptr) {
-        iDecodedAudio->RemoveRef();
+        iDownstreamElement.Push(iDecodedAudio);
         iDecodedAudio = nullptr;
     }
 }

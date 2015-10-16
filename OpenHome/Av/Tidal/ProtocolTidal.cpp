@@ -18,11 +18,12 @@ namespace Av {
 
 class ProtocolTidal : public Media::ProtocolNetwork, private IReader
 {
+    static const TUint kTcpConnectTimeoutMs = 10 * 1000;
 public:
     ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
 private: // from Media::Protocol
-    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream);
+    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;
     void Interrupt(TBool aInterrupt) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
@@ -135,12 +136,10 @@ ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
     iUri.Replace(aUri);
 
     if (iUri.Scheme() != Brn("tidal")) {
-        LOG(kMedia, "ProtocolTidal::Stream scheme not recognised\n");
+        LOG2(kMedia, kError, "ProtocolTidal::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
-    LOG(kMedia, "ProtocolTidal::Stream(");
-    LOG(kMedia, aUri);
-    LOG(kMedia, ")\n");
+    LOG(kMedia, "ProtocolTidal::Stream(%.*s)\n", PBUF(aUri));
     if (!TryGetTrackId(iUri.Query(), iTrackId)) {
         return EProtocolStreamErrorUnrecoverable;
     }
@@ -289,29 +288,29 @@ TBool ProtocolTidal::TryGetTrackId(const Brx& aQuery, Bwx& aTrackId)
     (void)parser.Next('?');
     Brn buf = parser.Next('=');
     if (buf != Brn("version")) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - no version\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - no version\n");
         return false;
     }
     Brn verBuf = parser.Next('&');
     try {
         const TUint ver = Ascii::Uint(verBuf);
         if (ver != 1) {
-            LOG2(kMedia, kError, "TryGetTrackId failed - unsupported version - %d\n", ver);
+            LOG2(kPipeline, kError, "TryGetTrackId failed - unsupported version - %d\n", ver);
             return false;
         }
     }
     catch (AsciiError&) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - invalid version\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - invalid version\n");
         return false;
     }
     buf.Set(parser.Next('='));
     if (buf != Brn("trackId")) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - no track id tag\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - no track id tag\n");
         return false;
     }
     aTrackId.Replace(parser.Remaining());
     if (aTrackId.Bytes() == 0) {
-        LOG2(kMedia, kError, "TryGetTrackId failed - no track id value\n");
+        LOG2(kPipeline, kError, "TryGetTrackId failed - no track id value\n");
         return false;
     }
     return true;
@@ -341,7 +340,7 @@ ProtocolStreamResult ProtocolTidal::DoStream()
     iTotalBytes = iHeaderContentLength.ContentLength();
 
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        LOG(kMedia, "ProtocolTidal::DoStream Failed\n");
+        LOG2(kPipeline, kError, "ProtocolTidal::DoStream server returned error %u\n", code);
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {
@@ -361,8 +360,8 @@ TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
 {
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-    if (!Connect(iUri, port)) {
-        LOG(kMedia, "ProtocolTidal::WriteRequest Connection failure\n");
+    if (!Connect(iUri, port, kTcpConnectTimeoutMs)) {
+        LOG2(kPipeline, kError, "ProtocolTidal::WriteRequest Connection failure\n");
         return 0;
     }
 
@@ -376,7 +375,7 @@ TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
         iWriterRequest.WriteFlush();
     }
     catch(WriterError&) {
-        LOG(kMedia, "ProtocolTidal::WriteRequest WriterError\n");
+        LOG2(kPipeline, kError, "ProtocolTidal::WriteRequest WriterError\n");
         return 0;
     }
 
@@ -385,11 +384,11 @@ TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
         iReaderResponse.Read();
     }
     catch(HttpError&) {
-        LOG(kMedia, "ProtocolTidal::WriteRequest HttpError\n");
+        LOG2(kPipeline, kError, "ProtocolTidal::WriteRequest HttpError\n");
         return 0;
     }
     catch(ReaderError&) {
-        LOG(kMedia, "ProtocolTidal::WriteRequest EeaderError\n");
+        LOG2(kPipeline, kError, "ProtocolTidal::WriteRequest ReaderError\n");
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();
@@ -401,7 +400,7 @@ ProtocolStreamResult ProtocolTidal::ProcessContent()
 {
     if (!iStarted) {
         iStreamId = iIdProvider->NextStreamId();
-        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, false, *this, iStreamId);
+        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iOffset, iSeekable, false, *this, iStreamId);
         iStarted = true;
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();

@@ -159,7 +159,9 @@ void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInst
         iVolume.SetVolume(aDesiredVolume);
     }
     catch (VolumeOutOfRange&) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        if (aDesiredVolume > iVolumeMax) {
+            aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        }
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -190,12 +192,14 @@ void ProviderRenderingControl::SetVolumeDB(IDvInvocation& aInvocation, TUint aIn
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
     // aDesiredVolume gives deviation from unity in units of 1/256 db
-    const TUint vol = iVolumeUnity + (aDesiredVolume / 256);
+    const TUint volume = iVolumeUnity + (aDesiredVolume / 256);
     try {
-        iVolume.SetVolume(vol);
+        iVolume.SetVolume(volume);
     }
     catch (VolumeOutOfRange&) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        if (volume > iVolumeMax) {
+            aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        }
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();

@@ -136,7 +136,7 @@ private:
 class TestFlushIdProvider : public IFlushIdProvider
 {
 private:
-    static const TUint kIdStart = MsgFlush::kIdInvalid+1;
+    static const TUint kIdStart;
 public:
     TestFlushIdProvider();
 public: // from IFlushIdProvider
@@ -173,6 +173,7 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -674,6 +675,8 @@ EStreamPlay TestPipelineIdProvider::OkToPlay(TUint aStreamId)
 
 // TestFlushIdProvider
 
+const TUint TestFlushIdProvider::kIdStart = MsgFlush::kIdInvalid+1;
+
 TestFlushIdProvider::TestFlushIdProvider()
     : iNextFlushId(kIdStart)
 {
@@ -752,6 +755,7 @@ Msg* TestElementDownstream::ProcessMsg(MsgTrack* aMsg)
 
 Msg* TestElementDownstream::ProcessMsg(MsgDrain* aMsg)
 {
+    aMsg->ReportDrained();
     return aMsg;
 }
 
@@ -805,6 +809,12 @@ Msg* TestElementDownstream::ProcessMsg(MsgWait* aMsg)
 }
 
 Msg* TestElementDownstream::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* TestElementDownstream::ProcessMsg(MsgBitRate* aMsg)
 {
     ASSERTS();
     return aMsg;

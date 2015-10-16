@@ -340,7 +340,7 @@ Msg* SuiteReporter::Pull()
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, nullptr);
     }
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn(kMode), true, false, nullptr, true, false);
+        return iMsgFactory->CreateMsgMode(Brn(kMode), true, false, ModeClockPullers(), true, false);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(kTrackUri), Brx::Empty());

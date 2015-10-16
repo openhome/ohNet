@@ -1,9 +1,9 @@
-#ifndef HEADER_MEDIAPLAYER
-#define HEADER_MEDIAPLAYER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 namespace OpenHome {
     class Environment;
@@ -12,6 +12,7 @@ namespace OpenHome {
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
+    class IShell;
 }
 namespace Media {
     class PipelineManager;
@@ -56,7 +57,6 @@ class VolumeConfig;
 class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
-//class TransportControl;
 
 class IMediaPlayer
 {
@@ -75,6 +75,7 @@ public:
     virtual Av::Product& Product() = 0;
     virtual IVolumeManager& VolumeManager() = 0;
     virtual Credentials& CredentialsManager() = 0;
+    virtual Media::MimeTypeList& MimeTypes() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
@@ -84,6 +85,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
     static const TUint kTrackCount = 1200;
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                Net::IShell& aShell,
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
@@ -111,6 +113,7 @@ public: // from IMediaPlayer
     Av::Product& Product() override;
     OpenHome::Av::IVolumeManager& VolumeManager() override;
     Credentials& CredentialsManager() override;
+    Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
 private:
@@ -129,6 +132,7 @@ private:
     VolumeConfig* iVolumeConfig;
     Av::VolumeManager* iVolumeManager;
     Credentials* iCredentials;
+    Media::MimeTypeList iMimeTypes;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
@@ -138,4 +142,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_MEDIAPLAYER

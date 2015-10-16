@@ -67,15 +67,15 @@ void TestMediaPlayerThread::RunInThread()
     Bwh udn;
     // Note: prefix udn with 4c494e4e- to get older versions of Linn Konfig to recognise our devices
     TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), iOptions.Udn().Value(), Brn("TestMediaPlayer"), udn);
+    Log::Print("UDN is ");
+    Log::Print(udn);
+    Log::Print("\n");
 
     // Create TestMediaPlayer.
     TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, iOptions.Room().CString(), iOptions.Name().CString(),
         iOptions.TuneIn().Value(), iOptions.Tidal().Value(), iOptions.Qobuz().Value(),
         iOptions.UserAgent().Value());
-    Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline());
-    if (iOptions.ClockPull().Value()) {
-        tmp->SetPullableClock(*animator);
-    }
+    Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline(), iOptions.ClockPull().Value());
     tmp->Run();
     tmp->StopPipeline();
     delete animator;

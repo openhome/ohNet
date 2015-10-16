@@ -44,7 +44,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -57,6 +57,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
@@ -74,6 +75,7 @@ private:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgHalt
@@ -116,6 +118,7 @@ private:
     EMsgType iLastPulledMsg;
     TBool iRampingDown;
     TBool iRampingUp;
+    TBool iMuted;
     TBool iLiveStream;
     TUint iStreamId;
     TUint64 iTrackOffset;
@@ -188,7 +191,7 @@ void SuiteStopper::Setup()
     iStopper = new Stopper(*iMsgFactory, *this, *this, *iEventCallback, kRampDuration);
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
-    iRampingDown = iRampingUp = false;
+    iRampingDown = iRampingUp = iMuted = false;
     iLiveStream = false;
     iLastSubsample = 0xffffff;
     iNextStreamId = 1;
@@ -251,7 +254,7 @@ TUint SuiteStopper::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -328,12 +331,18 @@ Msg* SuiteStopper::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteStopper::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 6);
@@ -351,6 +360,10 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
     else if (iRampingUp) {
         TEST(firstSubsample >= iLastSubsample);
     }
+    else if (iMuted) {
+        TEST(firstSubsample == iLastSubsample);
+        TEST(firstSubsample == 0);
+    }
     else {
         TEST(firstSubsample == 0x7f7f7f);
     }
@@ -362,6 +375,9 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
     else if (iRampingUp) {
         TEST(iLastSubsample > firstSubsample);
         iRampingUp = (iLastSubsample < 0x7f7f7e); // FIXME - see #830
+    }
+    else if (iMuted) {
+        TEST(iLastSubsample == firstSubsample);
     }
     else {
         TEST(firstSubsample == 0x7f7f7f);
@@ -413,7 +429,7 @@ Msg* SuiteStopper::CreateTrack()
 
 Msg* SuiteStopper::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, true, iLiveStream, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, true, iLiveStream, this);
 }
 
 Msg* SuiteStopper::CreateDecodedStream()
@@ -451,6 +467,7 @@ void SuiteStopper::TestHalted()
     }
     catch (Timeout&) {
         pullTimeout = true;
+        iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
         iStopper->Play();
     }
     TEST(pullTimeout);
@@ -460,7 +477,7 @@ void SuiteStopper::TestHalted()
 void SuiteStopper::TestMsgsPassWhilePlaying()
 {
     iStopper->Play();
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -479,6 +496,8 @@ void SuiteStopper::TestMsgsPassWhilePlaying()
     PullNext(EMsgAudioPcm);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgSilence);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgBitRate(100));
+    PullNext(EMsgBitRate);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2)); // not passed on
@@ -528,12 +547,15 @@ void SuiteStopper::TestPauseRamps()
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 1);
     TEST(iJiffies == kRampDuration);
-    iJiffies = 0;
-    iRampingUp = true;
-    PullNext(EMsgHalt);
+    iMuted = true;
+    do {
+        PullNext();
+    } while (iLastPulledMsg != EMsgHalt);
     TestHalted();
+    iJiffies = 0;
 
     // check that calling Play() now ramps up
+    iRampingUp = true;
     iStopper->Play();
     while (iRampingUp) {
         iPendingMsgs.push_back(CreateAudio());
@@ -702,11 +724,15 @@ void SuiteStopper::TestStopFromPlay()
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
     }
-    PullNext(EMsgHalt);
+    TEST(iJiffies == kRampDuration);
+    iMuted = true;
+    do {
+        PullNext();
+    } while (iLastPulledMsg != EMsgHalt);
+    iMuted = false;
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 1);
-    TEST(iJiffies == kRampDuration);
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
@@ -822,8 +848,6 @@ void SuiteStopper::TestPlayLaterStops()
     TEST(iStoppedCount == 1);
     TEST(iPlayingCount == 1);
     TestHalted();
-    iPendingMsgs.push_back(CreateAudio());
-    PullNext(EMsgAudioPcm);
 }
 
 void SuiteStopper::TestPlayPausePlayWithRamp()
@@ -942,7 +966,7 @@ void SuiteStopper::TestPauseWhileStarving()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 
-    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId);
+    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId, true);
     TEST(iPausedCount == 0);
     const TUint playingCount = iPlayingCount;
     iStopper->BeginPause();
@@ -962,7 +986,7 @@ void SuiteStopper::TestStopWhileStarving()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 
-    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId);
+    iStopper->NotifyStarving(Brx::Empty(), iNextStreamId, true);
     TEST(iPausedCount == 0);
     const TUint playingCount = iPlayingCount;
     iStopper->BeginStop(5);

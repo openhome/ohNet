@@ -1,5 +1,4 @@
-#ifndef HEADER_RAM_STORE
-#define HEADER_RAM_STORE
+#pragma once
 
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Types.h>
@@ -24,4 +23,3 @@ private: // from IStaticDataSource
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_RAM_STORE

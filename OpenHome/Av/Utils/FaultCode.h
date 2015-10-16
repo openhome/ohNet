@@ -1,5 +1,4 @@
-#ifndef HEADER_FAULT_CODE
-#define HEADER_FAULT_CODE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -27,4 +26,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_FAULT_CODE

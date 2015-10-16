@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_CODEC
-#define HEADER_PIPELINE_CODEC
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
@@ -152,6 +151,16 @@ public:
      */
     virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
     /**
+     * Notify the pipeline of a change in bit rate.
+     *
+     * Use of this is optional but it may be useful for variable bit rate codecs.
+     * OutputDecodedStream must have been called at least once for the current stream
+     * before a change in bit rate can be notified.
+     *
+     * @param[in] aBitRate       Updated bit rate.
+     */
+    virtual void OutputBitRate(TUint aBitRate) = 0;
+    /**
      * Output a Wait command to the pipeline.
      *
      * This hints that there may now be a break in audio.  This break would be expected
@@ -174,6 +183,12 @@ public:
      * @param[in] aMetaText          Meta text. Must be in DIDL-Lite format.
      */
     virtual void OutputMetaText(const Brx& aMetaText) = 0;
+    /**
+     * Notify the pipeline of a discontinuity in audio.
+     *
+     * This allows the pipeline to ramp audio down/up to avoid glitches caused by a stream discontinuity. A MsgDecodedStream must follow this.
+     */
+    virtual void OutputStreamInterrupted() = 0;
 };
 
 class EncodedStreamInfo
@@ -218,14 +233,6 @@ public:
 public:
     virtual ~CodecBase();
 public:
-    /**
-     * Query whether a given audio format is supported.
-     *
-     * @param[in] aMimeType      MIME type of the form type/subtype.  All lowercase.
-     *
-     * @return     true if the codec can decode aMimeType; false otherwise.
-     */
-    virtual TBool SupportsMimeType(const Brx& aMimeType) = 0;
     /**
      * Report whether a new audio stream is handled by this codec.
      *
@@ -300,7 +307,6 @@ public:
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
-    TBool SupportsMimeType(const Brx& aMimeType);
 private:
     void CodecThread();
     void Rewind();
@@ -309,22 +315,25 @@ private:
     TBool QueueTrackData() const;
     void ReleaseAudioEncoded();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
+    TUint64 DoOutputAudioPcm(MsgAudio* aAudioMsg);
 private: // ISeeker
     void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // ICodecController
-    void Read(Bwx& aBuf, TUint aBytes);
-    void ReadNextMsg(Bwx& aBuf);
-    TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes); // Read an arbitrary amount of data from current stream, out-of-band from pipeline
-    TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos);
-    TUint64 StreamLength() const;
-    TUint64 StreamPos() const;
-    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
-    void OutputDelay(TUint aJiffies);
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
-    void OutputWait();
-    void OutputHalt();
-    void OutputMetaText(const Brx& aMetaText);
+    void Read(Bwx& aBuf, TUint aBytes) override;
+    void ReadNextMsg(Bwx& aBuf) override;
+    TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes) override; // Read an arbitrary amount of data from current stream, out-of-band from pipeline
+    TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos) override;
+    TUint64 StreamLength() const override;
+    TUint64 StreamPos() const override;
+    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless) override;
+    void OutputDelay(TUint aJiffies) override;
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) override;
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
+    void OutputBitRate(TUint aBitRate) override;
+    void OutputWait() override;
+    void OutputHalt() override;
+    void OutputMetaText(const Brx& aMetaText) override;
+    void OutputStreamInterrupted() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -338,6 +347,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -346,7 +356,7 @@ private: // IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
@@ -367,12 +377,14 @@ private:
     TBool iQuit;
     TBool iSeek;
     TBool iRecognising;
+    TBool iSeekInProgress;
     TUint iSeekSeconds;
     TUint iExpectedFlushId;
     TBool iConsumeExpectedFlush;
     ISeekObserver* iSeekObserver;
     TUint iSeekHandle;
     TUint iExpectedSeekFlushId;
+    MsgFlush* iPostSeekFlush;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
 
@@ -383,7 +395,9 @@ private:
     IStreamHandler* iStreamHandler;
     TUint iStreamId;
     BwsTrackUri iTrackUri;
+    TUint iChannels;    // Only for detecting out-of-sequence MsgAudioPcm.
     TUint iSampleRate;
+    TUint iBitDepth;    // Only for detecting out-of-sequence MsgAudioP
     TUint64 iStreamLength;
     TUint64 iStreamPos;
     TUint iTrackId;
@@ -414,4 +428,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_CODEC

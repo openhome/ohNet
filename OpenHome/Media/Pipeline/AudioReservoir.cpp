@@ -25,11 +25,7 @@ Msg* AudioReservoir::Pull()
     Msg* msg;
     do {
         msg = DoDequeue();
-        iLock.Wait();
-        if (!IsFull()) {
-            iSem.Signal();
-        }
-        iLock.Signal();
+        UnblockIfNotFull();
     } while (msg == nullptr);
     return msg;
 }
@@ -47,5 +43,13 @@ void AudioReservoir::BlockIfFull()
     iLock.Signal();
     if (full) {
         iSem.Wait();
+    }
+}
+
+void AudioReservoir::UnblockIfNotFull()
+{
+    AutoMutex _(iLock);
+    if (!IsFull()) {
+        iSem.Signal();
     }
 }

@@ -11,6 +11,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Globals.h>  // dummy Environment
@@ -91,7 +92,7 @@ enum EToneMsgType
 };
 
 class SuiteGeneratorAny : public SuiteUnitTest,
-     private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter
+    private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor, private IUrlBlockWriter, private IMimeTypeList
 {
 public:
     SuiteGeneratorAny(const TChar* aName);
@@ -132,11 +133,15 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
 
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
+
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 
 private:
     // as per Pipeline.h
@@ -164,7 +169,7 @@ private:
     AllocatorInfoLogger* iAllocatorInfoLogger;
     MsgFactory* iMsgFactory;
     EncodedAudioReservoir* iEncodedAudioReservoir;
-    Codec::Container* iContainer;
+    Codec::ContainerController* iContainer;
     Codec::CodecController* iCodecController;
 
     TUint iNextFlushId;
@@ -515,10 +520,10 @@ void SuiteGeneratorAny::Setup()
     init.SetMsgQuitCount(kMsgCountQuit);
     iMsgFactory = new MsgFactory(*iAllocatorInfoLogger, init);
 
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams);
-    iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir, *this);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(*iMsgFactory, *this, kMsgCountEncodedAudio - 10, kEncodedReservoirMaxStreams);
+    iContainer = new Codec::ContainerController(*iMsgFactory, *iEncodedAudioReservoir, *this);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this, *this, kPriorityNormal);
-    iCodecController->AddCodec(Codec::CodecFactory::NewWav());
+    iCodecController->AddCodec(Codec::CodecFactory::NewWav(*this));
     iCodecController->Start();
 
     iProtocolManager = new ProtocolManager(*iEncodedAudioReservoir, *iMsgFactory, *this, *this);
@@ -654,6 +659,12 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteGeneratorAny::ProcessMsg(MsgBitRate* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
 Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioPcm* aMsg)
 {
     TEST(eMsgAudioPcm == iExpectedMsgType);
@@ -667,6 +678,10 @@ TBool SuiteGeneratorAny::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint
     return false;
 }
 
+void SuiteGeneratorAny::Add(const TChar* /*aMimeType*/)
+{
+}
+
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
 {
     // duration test is universal
@@ -674,7 +689,7 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
     // but content tests are generator-specific
     bool allZero = true;
     MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     playable->Read(proc);
     Brn buf = proc.Buf();
     for (const TByte* p = buf.Ptr(); p < (buf.Ptr() + buf.Bytes()); ++p) {
@@ -697,7 +712,7 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
     SuiteGeneratorAny::ProcessMsg(aMsg);
     // but content tests are generator-specific
     MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     playable->Read(proc);
     Brn buf = proc.Buf();
     // iExpectedToneParams.* already sanity-checked in earlier msg 
@@ -1042,7 +1057,7 @@ Msg* SuiteGeneratorConstant::ProcessMsg(MsgAudioPcm* aMsg)
     SuiteGeneratorAny::ProcessMsg(aMsg);
     // but content tests are generator-specific
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked proc;
+    ProcessorPcmBufTest proc;
     playable->Read(proc);
     Brn buf = proc.Buf();
     TEST(buf[0] == iExpectedSubsample);

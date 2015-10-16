@@ -1,11 +1,10 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Codec/Container.h>
-#include <OpenHome/Media/Codec/Id3v2.h>
-#include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 #include <vector>
 
@@ -31,8 +30,8 @@ public:
 public:
     ContainerNullBuffered();
 private: // from ContainerNull
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
+    Msg* Pull() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
 private:
     static const TUint kBufferedAudioBytes = EncodedAudio::kMaxBytes*2;
 };
@@ -100,7 +99,7 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 public:
     TUint OkToPlayCount();
     TUint SeekCount();
@@ -134,12 +133,37 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 };
 
+//class SuiteMsgAudioEncodedCache : public SuiteUnitTest
+//{
+//public:
+//    SuiteMsgAudioEncodedCache();
+//private: // from SuiteUnitTest
+//    void Setup() override;
+//    void TearDown() override;
+//private:
+//    void TestDiscard();
+//    void TestInspect(); // FIXME - need to test reading from cache that is already populated (i.e., doesn't have to pull more msgs through to satisfy request).
+//    void TestAccumulate();
+//    void TestMultiple();
+//    void TestPassThrough();
+//    void TestInterleaving();
+//    void TestReset();
+//private:
+//    MsgAudioEncodedCache iCache;
+//};
+
+/**
+ * Tests aspects of the ContainerController like msg ordering and stream 
+ * handling. ContainerNull is implicitly shown to work by the fact that these
+ * tests run to completion.
+ */
 class SuiteContainerBase : public SuiteUnitTest, public TestContainerMsgProcessor
 {
 public:
@@ -180,7 +204,7 @@ protected:
     TestContainerMsgGenerator* iGenerator;
     TestContainerProvider* iProvider;
     TestUrlBlockWriter* iUrlBlockWriter;
-    Container* iContainer;
+    ContainerController* iContainer;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TUint iMsgRcvdCount;
@@ -199,18 +223,24 @@ public:
     SuiteContainerUnbuffered();
 };
 
-class SuiteContainerBuffered : public SuiteContainerBase
+/**
+ * Container that refuses to recognise any stream.
+ */
+class TestDummyContainer : public ContainerBase
 {
 public:
-    SuiteContainerBuffered();
-private: // from SuiteUnitTest
-    void Setup();
-private: // from SuiteContainerBase
-    TBool TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, TByte aValue);
-    TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
-    TUint ExpectedSeekStartOffset();
+    TestDummyContainer();
+    TUint RecogniseCount() const;
+    TUint ResetCount() const;
+public: // from SuiteContainerBase
+    Msg* Recognise() override;
+    TBool Recognised() const override;
+    void Reset() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Pull() override;
 private:
-    TUint iMsgBytesRcvd;
+    TUint iRecogniseCount;
+    TUint iResetCount;
 };
 
 class SuiteContainerNull : public SuiteContainerBase
@@ -219,8 +249,10 @@ public:
     SuiteContainerNull();
 private: // from SuiteUnitTest
     void Setup();
-private: // Tests
+private:
     void TestNullContainer();
+private:
+    TestDummyContainer* iDummyContainer;
 };
 
 } // Codec
@@ -233,45 +265,6 @@ private: // Tests
 TBool TestUrlBlockWriter::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
-}
-
-
-// ContainerNullBuffered
-
-ContainerNullBuffered::ContainerNullBuffered()
-    : ContainerNull()
-{
-}
-
-Msg* ContainerNullBuffered::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    MsgAudioEncoded* msg = nullptr;
-
-    // throw away msg if awaiting a MsgFlush
-    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        aMsg->RemoveRef();
-        return nullptr;
-    }
-
-    AddToAudioEncoded(aMsg);
-
-    // buffer msgs until we have at least kBufferedAudioBytes
-    // so that there is almost always audio in iAudioEncoded during streaming
-    if (!iPulling) {
-        if ((iAudioEncoded != nullptr) && (iAudioEncoded->Bytes() > kBufferedAudioBytes)) {
-            MsgAudioEncoded* remaining = iAudioEncoded->Split(kBufferedAudioBytes/2);
-            msg = iAudioEncoded;
-            iAudioEncoded = remaining;
-        }
-    }
-    return msg;
-}
-
-TUint ContainerNullBuffered::TrySeek(TUint aStreamId, TUint64 aOffset)
-{
-    TUint64 offset = aOffset + kStartOffsetBytes;
-    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
-    return iExpectedFlushId;
 }
 
 
@@ -305,7 +298,10 @@ void TestContainerMsgGenerator::SetMsgOrder(std::vector<EMsgType>& aMsgOrder)
 Msg* TestContainerMsgGenerator::NextMsg()
 {
     Msg* msg = nullptr;
-    ASSERT(iMsgCount < iMsgOrder.size());
+    if (iMsgCount >= iMsgOrder.size()) {
+        ASSERTS();
+    }
+    //ASSERT(iMsgCount < iMsgOrder.size());
     switch (iMsgOrder[iMsgCount++])
     {
     default:
@@ -399,7 +395,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case ENull:
         return nullptr;
     case EMsgMode:
-        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
         iLastMsgType = EMsgMode;
         break;
     case EMsgTrack:
@@ -419,7 +415,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgDelay;
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory.CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iPipelineIdProvider.NextStreamId(), false, false, &iStreamHandler);
+        msg = iMsgFactory.CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, iPipelineIdProvider.NextStreamId(), false, false, &iStreamHandler);
         iLastMsgType = EMsgEncodedStream;
         break;
     case EMsgAudioEncoded:
@@ -498,7 +494,7 @@ TUint TestContainerProvider::TryStop(TUint /*aStreamId*/)
     return iCurrentFlushId++;
 }
 
-void TestContainerProvider::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void TestContainerProvider::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -550,6 +546,11 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
     return nullptr;
 }
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return nullptr;
+}
+Msg* TestContainerMsgProcessor::ProcessMsg(MsgBitRate* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
     return nullptr;
@@ -623,7 +624,7 @@ void SuiteContainerBase::Setup()
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
     iUrlBlockWriter = new TestUrlBlockWriter();
-    iContainer = new Container(*iMsgFactory, *iGenerator, *iUrlBlockWriter);
+    iContainer = new ContainerController(*iMsgFactory, *iGenerator, *iUrlBlockWriter);
     iStreamId = 0;
     iStreamHandler = nullptr;
     iMsgRcvdCount = 0;
@@ -870,7 +871,7 @@ void SuiteContainerBase::TestEndOfStreamQuit()
         PullAndProcess();
     }
 
-    // OkToPlay/TrySeek should fail after a MsgQuit has been pulled; TryStop should work as before
+    // OkToPlay/TrySeek/TryStop should fail after a MsgQuit has been pulled as no stream should be active (nor will any stream be active again) and no other msg will be sent into pipeline.
     EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iStreamId);
     TEST(iOkToPlayRes == ePlayNo);
     TEST(iProvider->OkToPlayCount() == 0);
@@ -878,8 +879,8 @@ void SuiteContainerBase::TestEndOfStreamQuit()
     TEST(iSeekRes == MsgFlush::kIdInvalid);
     TEST(iProvider->SeekCount() == 0);
     TUint iStopRes = iContainer->TryStop(iStreamId);
-    TEST(iStopRes != MsgFlush::kIdInvalid);
-    TEST(iProvider->StopCount() == 1);
+    TEST(iStopRes == MsgFlush::kIdInvalid);
+    TEST(iProvider->StopCount() == 0);
 }
 
 void SuiteContainerBase::TestNewStream()
@@ -1067,97 +1068,55 @@ SuiteContainerUnbuffered::SuiteContainerUnbuffered()
 }
 
 
-// SuiteContainerBuffered
+// TestDummyContainer
 
-SuiteContainerBuffered::SuiteContainerBuffered()
-    : SuiteContainerBase("SuiteContainerBuffered")
+TestDummyContainer::TestDummyContainer()
+    : ContainerBase(Brn("DUMC"))
+    , iRecogniseCount(0)
+    , iResetCount(0)
 {
 }
 
-void SuiteContainerBuffered::Setup()
+TUint TestDummyContainer::RecogniseCount() const
 {
-    SuiteContainerBase::Setup();
-    iContainer->AddContainer(new ContainerNullBuffered());
-    iMsgBytesRcvd = 0;
+    return iRecogniseCount;
 }
 
-TBool SuiteContainerBuffered::TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, TByte aValue)
+TUint TestDummyContainer::ResetCount() const
 {
-    // Need to handle buffered msgs that may have been split or chained
-    // i.e., msg may contain less, or more than, one distinct msg, so may
-    // contain several values. This method keeps a byte counter as it processes
-    // msgs to ensure it checks correct portion of msgs.
-
-    Bwh buf(aMsg.Bytes());
-    TByte value = aValue;
-    //Log::Print("TestMsgAudioEncodedContent: aMsg.Bytes(): %u, buf.MaxBytes(): %u\n", aMsg.Bytes(), buf.MaxBytes());
-    ASSERT(aMsg.Bytes() <= buf.MaxBytes());
-    aMsg.CopyTo(const_cast<TByte*>(buf.Ptr()));
-    buf.SetBytes(aMsg.Bytes());
-
-    TUint bytesToProcess = aMsg.Bytes();
-    TUint msgBytesRemaining = EncodedAudio::kMaxBytes - iMsgBytesRcvd;
-    TUint lowerBound = 0;
-    TUint upperBound = buf.Bytes()-1;
-    TUint bytesProcessed = 0;
-    while (bytesToProcess > 0) {
-        ASSERT(iMsgBytesRcvd < EncodedAudio::kMaxBytes); // iMsgBytesRcvd should ALWAYS be less than max at start of processing
-        // determine cut-off, if any
-        msgBytesRemaining = EncodedAudio::kMaxBytes - iMsgBytesRcvd;
-        upperBound = buf.Bytes()-1;
-        if (msgBytesRemaining < aMsg.Bytes()) {
-            upperBound = lowerBound + msgBytesRemaining-1;
-        }
-
-        // do comparison here; increment iMsgBytesRcvd
-        //Log::Print("TestMsgAudioEncodedContent: lowerBound: %u, upperBound: %u, buf[lowerBound]: %d, buf[upperBound]: %d, value: %d\n", lowerBound, upperBound, buf[lowerBound], buf[upperBound], value);
-        if ((buf[lowerBound] != value) || (buf[upperBound] != value)) {
-            return false;
-        }
-        bytesProcessed = (upperBound-lowerBound)+1;
-        iMsgBytesRcvd += bytesProcessed;
-        bytesToProcess -= bytesProcessed;
-        lowerBound = upperBound+1;
-
-        ASSERT(iMsgBytesRcvd <= EncodedAudio::kMaxBytes); // implementation error in tests
-        if (iMsgBytesRcvd == EncodedAudio::kMaxBytes) {
-            iMsgBytesRcvd = 0;
-            if (bytesToProcess > 0) {
-                iMsgRcvdCount++;
-                iAudioRcvdCount++; // only do this if iMsgBytesRcvd has increased to EncodedAudio::kMaxBytes
-                value++;
-            }
-        }
-    }
-
-    return true;
+    return iResetCount;
 }
 
-TBool SuiteContainerBuffered::TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue)
+Msg* TestDummyContainer::Recognise()
 {
-    // Test if a non-audio msg was pulled down the pipeline while audio was
-    // being buffered
-
-    if (((iGenerator->LastMsgType() != TestContainerMsgGenerator::EMsgAudioEncoded)
-        || (aMsg.Bytes() != EncodedAudio::kMaxBytes))
-        && (iGenerator->LastMsgType() != TestContainerMsgGenerator::EMsgTrack)
-        && (iGenerator->LastMsgType() != TestContainerMsgGenerator::EMsgEncodedStream)
-        && (iGenerator->LastMsgType() != TestContainerMsgGenerator::EMsgQuit)
-        )
-    {
-        return false;
-    }
-    return TestMsgAudioEncodedContent(aMsg, aValue);
+    iRecogniseCount++;
+    return nullptr;
 }
 
-TUint SuiteContainerBuffered::ExpectedSeekStartOffset()
+TBool TestDummyContainer::Recognised() const
 {
-    return ContainerNullBuffered::kStartOffsetBytes;
+    return false;
+}
+
+void TestDummyContainer::Reset()
+{
+    iResetCount++;
+}
+
+TBool TestDummyContainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return false;
+}
+
+Msg* TestDummyContainer::Pull()
+{
+    ASSERTS();
+    return nullptr;
 }
 
 
 // SuiteContainerNull
-
 SuiteContainerNull::SuiteContainerNull()
     : SuiteContainerBase("SuiteContainerNull")
 {
@@ -1167,8 +1126,8 @@ SuiteContainerNull::SuiteContainerNull()
 void SuiteContainerNull::Setup()
 {
     SuiteContainerBase::Setup();
-    iContainer->AddContainer(new Id3v2());
-    iContainer->AddContainer(new Mpeg4Container());
+    iDummyContainer = new TestDummyContainer();
+    iContainer->AddContainer(iDummyContainer);  // Takes ownership.
 }
 
 void SuiteContainerNull::TestNullContainer()
@@ -1188,19 +1147,19 @@ void SuiteContainerNull::TestNullContainer()
 
     iGenerator->SetMsgOrder(msgOrder);
 
-    for (TUint i = 0; i < msgOrder.size(); i++)
-    {
+    for (TUint i = 0; i < msgOrder.size(); i++) {
         PullAndProcess();
     }
-}
 
+    TEST(iDummyContainer->RecogniseCount() == 1);
+    TEST(iDummyContainer->ResetCount() > 0);
+}
 
 
 void TestContainer()
 {
     Runner runner("Container tests\n");
     runner.Add(new SuiteContainerUnbuffered());
-    runner.Add(new SuiteContainerBuffered());
     runner.Add(new SuiteContainerNull());
     runner.Run();
 }

@@ -1,5 +1,4 @@
-#ifndef HEADER_WEB_CONFIGUI
-#define HEADER_WEB_CONFIGUI
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -325,7 +324,7 @@ public:
     void AddKeyText(const OpenHome::Brx& aKey);
     void Start();
     TBool Allocated() const;
-    void SetHandler(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList);
+    void SetHandler(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList);
 private: // from ConfigTabReceiver
     void Receive(const OpenHome::Brx& aKey, const OpenHome::Brx& aValue);
     void Destroy();
@@ -349,7 +348,7 @@ private:
 class IConfigApp : public IWebApp
 {
 public: // from IWebApp
-    virtual ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) = 0;
+    virtual ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) = 0;
     virtual const OpenHome::Brx& ResourcePrefix() const= 0;
     virtual IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) = 0;
 public:
@@ -371,7 +370,7 @@ protected:
     ConfigAppBase(OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
     ~ConfigAppBase();
 public: // from IConfigApp
-    ITab& Create(ITabHandler& aHandler, std::vector<const Brx*>& aLanguageList) override;
+    ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) override;
     const OpenHome::Brx& ResourcePrefix() const override;
     IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) override;
 public: // from IJsonProvider
@@ -428,4 +427,3 @@ private:
 } // namespace Web
 } // namespace OpenHome
 
-#endif // HEADER_WEB_CONFIGUI

@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_STARVATION_MONITOR
-#define HEADER_PIPELINE_STARVATION_MONITOR
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -79,7 +78,7 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
     IPipelineElementObserverThread& iObserverThread;
-    IClockPuller* iClockPuller;
+    IClockPullerReservoir* iClockPuller;
     ThreadFunctor* iThread;
     const TUint iNormalMax;
     const TUint iStarvationThreshold;
@@ -110,4 +109,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_STARVATION_MONITOR

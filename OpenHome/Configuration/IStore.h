@@ -1,5 +1,4 @@
-#ifndef HEADER_ISTORE
-#define HEADER_ISTORE
+#pragma once
 
 #include <OpenHome/Exception.h>
 
@@ -62,4 +61,3 @@ public:
 } // namespace Configuration
 } // namespace OpenHome
 
-#endif // HEADER_ISTORE

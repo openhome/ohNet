@@ -23,12 +23,11 @@ namespace Av {
 class UriProviderRaop : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
-    ~UriProviderRaop();
+    UriProviderRaop(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller() override;
+    Media::ModeClockPullers ClockPullers() override;
 private:
-    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
+    Media::ClockPullerUtilisation iClockPuller;
 };
 
 } // namespace Av
@@ -44,9 +43,9 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer);
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
 }
@@ -54,25 +53,15 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableCloc
 
 // UriProviderRaop
 
-UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, IPullableClock* aPullableClock)
+UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer)
     : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
+    , iClockPuller(aMediaPlayer.Env())
 {
-    if (aPullableClock == nullptr) {
-        iClockPuller = nullptr;
-    }
-    else {
-        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *aPullableClock);
-    }
 }
 
-UriProviderRaop::~UriProviderRaop()
+ModeClockPullers UriProviderRaop::ClockPullers()
 {
-    delete iClockPuller;
-}
-
-IClockPuller* UriProviderRaop::ClockPuller()
-{
-    return iClockPuller;
+    return ModeClockPullers(&iClockPuller, nullptr, nullptr);
 }
 
 
@@ -81,9 +70,9 @@ IClockPuller* UriProviderRaop::ClockPuller()
 const TChar* SourceRaop::kSourceNameStr = "Net Aux";
 const Brn SourceRaop::kRaopPrefix("raop://");
 const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
-const TUint SourceRaop::kAutoNetAuxOn = 0;              // Always visible via Airplay; auto switch when stream starts
-const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // Always visible via Airplay; don't auto switch
-const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airplay when Net Aux source selected
+const TUint SourceRaop::kAutoNetAuxOn = 0;              // RAOP device always visible; auto switch when stream starts.
+const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always visible; don't auto switch.
+const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
     : Source(kSourceNameStr, kSourceNameStr)
@@ -115,10 +104,10 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     iPipeline.Add(new CodecRaop());
     iPipeline.AddObserver(*this);
 
-    iServerAudio = &iServerManager.Find(iAudioId);
-    iServerControl = &iServerManager.Find(iControlId);
-    iServerTiming = &iServerManager.Find(iTimingId);    // never Open() this
-    iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
+    SocketUdpServer& serverAudio = iServerManager.Find(iAudioId);
+    SocketUdpServer& serverControl = iServerManager.Find(iControlId);
+    SocketUdpServer& serverTiming = iServerManager.Find(iTimingId);    // never Open() this
+    iRaopDiscovery->SetListeningPorts(serverAudio.Port(), serverControl.Port(), serverTiming.Port());
 
     std::vector<TUint> choices;
     choices.push_back(kAutoNetAuxOn);
@@ -145,7 +134,6 @@ SourceRaop::~SourceRaop()
         iTrack->RemoveRef();
     }
     if (iSessionActive) {
-        CloseServers();
         iSessionActive = false;
     }
     iLock.Signal();
@@ -169,7 +157,6 @@ void SourceRaop::Activate()
     }
 
     if (iSessionActive) {
-        OpenServers();
         StartNewTrack();
         iLock.Signal();
         iPipeline.Play();
@@ -195,10 +182,7 @@ void SourceRaop::Deactivate()
         // selected source.
         iRaopDiscovery->Disable();
     }
-    if (iSessionActive) {
-        CloseServers();
-        iSessionActive = false;
-    }
+    iSessionActive = false; // If switching away from Net Aux, don't want to allow session to be re-initialised without user explicitly re-selecting device from a control point.
     iLock.Signal();
     Source::Deactivate();
 }
@@ -223,18 +207,6 @@ void SourceRaop::GenerateMetadata()
     iDidlLite.Append("</DIDL-Lite>");
 }
 
-void SourceRaop::OpenServers()
-{
-    iServerAudio->Open();
-    iServerControl->Open();
-}
-
-void SourceRaop::CloseServers()
-{
-    iServerAudio->Close();
-    iServerControl->Close();
-}
-
 void SourceRaop::StartNewTrack()
 {
     iPipeline.RemoveAll();
@@ -257,9 +229,6 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
     }
 
     iLock.Wait();
-    if (!iSessionActive) {
-        OpenServers();
-    }
     iSessionActive = true;
 
     iNextTrackUri.Replace(kRaopPrefix);
@@ -289,7 +258,6 @@ void SourceRaop::NotifySessionEnd()
             iTrack->RemoveRef();
             iTrack = nullptr;
         }
-        CloseServers();
     }
 
     iSessionActive = false;
@@ -396,5 +364,8 @@ void SourceRaop::HandleInterfaceChange()
 {
     //iRaopDiscovery->Disable();
     //iRaopDiscovery->Enable();
-    iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
+    SocketUdpServer& serverAudio = iServerManager.Find(iAudioId);
+    SocketUdpServer& serverControl = iServerManager.Find(iControlId);
+    SocketUdpServer& serverTiming = iServerManager.Find(iTimingId);    // never Open() this
+    iRaopDiscovery->SetListeningPorts(serverAudio.Port(), serverControl.Port(), serverTiming.Port());
 }

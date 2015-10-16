@@ -180,6 +180,53 @@ private:
     EMode iMode;
 };
 
+class TestHttpSessionSeek : public SocketTcpSession
+{
+public:
+    static const TUint kStreamLen = 123456;
+public:
+    TestHttpSessionSeek(Semaphore& aSemServerWait, Semaphore& aSemExternalOp);
+    ~TestHttpSessionSeek();
+    TUint DataSize() const;
+protected:
+    void WaitOnReadRequest();
+    void Stream(TUint aStartByte, TUint aEndByte, TUint aWaitByte);
+    virtual void Respond() = 0;
+private: // from SocketTcpSession
+    void Run();
+private:
+    static const TUint kMaxReadBytes = 1024;
+    static const TUint kReadTimeoutMs = 5000;
+    static const TUint kMaxWriteBufBytes = 1400;
+    HttpHeaderConnection iHeaderConnection;
+    // Reader and buffer.
+    Srx* iReadBuffer;
+    ReaderUntil* iReaderUntil;
+    ReaderHttpRequest* iReaderRequest;
+    // Writer and buffer.
+    Bwh iBuf;
+protected:
+    HttpHeaderRange iHeaderRange;
+    // Writer shared by derived classes
+    WriterHttpResponse* iWriterResponse;
+    WriterHttpChunked* iWriterChunked;
+    Sws<kMaxWriteBufBytes>* iWriterBuffer;
+    Semaphore& iSemServerWait;
+    Semaphore& iSemExternalOp;
+};
+
+// TestHttpSessionSeekInvalid
+
+class TestHttpSessionSeekInvalid : public TestHttpSessionSeek
+{
+public:
+    TestHttpSessionSeekInvalid(Semaphore& aSemServerWait, Semaphore& aSemExternalOp);
+private:
+    void WriteResponseContentLength(TUint aLength);
+private: // from TestHttpSessionSeek
+    void Respond();
+};
+
 
 class SessionFactory
 {
@@ -197,6 +244,18 @@ public:
     static TestHttpSession* Create(ESession aSession);
 };
 
+class SessionSeekFactory
+{
+public:
+    enum ESessionSeek
+    {
+        eSeekSuccess      = 0,
+        eSeekInvalid      = 1,
+    };
+public:
+    static TestHttpSessionSeek* Create(ESessionSeek aSession, Semaphore& aSemServerWait, Semaphore& aSemExternalOp);
+};
+
 
 // Pipeline classes.
 
@@ -206,11 +265,13 @@ public:
     TestHttpSupplier(TUint aDataSize);
     virtual ~TestHttpSupplier();
 public:
-    TUint StreamId();
-    TBool Live();
-    TUint TrackCount();
-    TUint StreamCount();
-    TUint DataTotal();
+    TUint StreamId() const;
+    TBool Live() const;
+    TUint TrackCount() const;
+    TUint StreamCount() const;
+    TUint DataTotal() const;
+    IStreamHandler& StreamHandler() const;
+    void WaitUntilEncodedStream();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 protected: // from IMsgProcessor
@@ -226,6 +287,7 @@ protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -238,6 +300,7 @@ private:
     TUint iStreamCount;
     TUint iDataTotal;
     IStreamHandler* iStreamHandler;
+    Semaphore iSemEncodedStream;
 };
 
 class TestHttpSupplyChunked : public TestHttpSupplier
@@ -278,18 +341,11 @@ private:
 
 // Suite classes.
 
-class SuiteHttp : public Suite
+class SuiteHttpBase : public Suite
 {
-public:
-    SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession);
-    ~SuiteHttp();
-private:
-    void TestStreamFull();
-    void TestServerReject();
-    void TestServerRejectDoStream();
-    void TestStreamReconnect();
-    void TestStreamLive();
-    void TestStreamLiveBreak();
+protected:
+    SuiteHttpBase(const TChar* aSuiteName);
+    ~SuiteHttpBase();
 private: // from Suite
     virtual void Test() = 0;
 private:
@@ -297,7 +353,6 @@ private:
     TestHttpFlushIdProvider* iFlushId;
 protected:
     TestHttpServer* iServer;
-    TestHttpSession* iHttpSession;
     TestHttpSupplier* iSupply;
     MsgFactory* iMsgFactory;
     ProtocolManager* iProtocolManager;
@@ -305,7 +360,17 @@ protected:
     TrackFactory* iTrackFactory;
 };
 
-class SuiteHttpStreamFull : public SuiteHttp
+class SuiteHttpStreamBase : public SuiteHttpBase
+{
+protected:
+    SuiteHttpStreamBase(const TChar* aSuiteName, SessionFactory::ESession aSession);
+private: // from Suite
+    virtual void Test() = 0;
+protected:
+    TestHttpSession* iHttpSession;
+};
+
+class SuiteHttpStreamFull : public SuiteHttpStreamBase
 {
 public:
     SuiteHttpStreamFull();
@@ -313,7 +378,7 @@ private: // from SuiteHttp
     void Test();
 };
 
-class SuiteHttpReject : public SuiteHttp
+class SuiteHttpReject : public SuiteHttpStreamBase
 {
 public:
     SuiteHttpReject();
@@ -321,7 +386,7 @@ private: // from SuiteHttp
     void Test();
 };
 
-class SuiteHttpReconnect : public SuiteHttp
+class SuiteHttpReconnect : public SuiteHttpStreamBase
 {
 public:
     SuiteHttpReconnect();
@@ -329,7 +394,7 @@ private: // from SuiteHttp
     void Test();
 };
 
-class SuiteHttpStreamLive : public SuiteHttp
+class SuiteHttpStreamLive : public SuiteHttpStreamBase
 {
 public:
     SuiteHttpStreamLive();
@@ -337,7 +402,7 @@ private: // from SuiteHttp
     void Test();
 };
 
-class SuiteHttpLiveReconnect : public SuiteHttp
+class SuiteHttpLiveReconnect : public SuiteHttpStreamBase
 {
 public:
     SuiteHttpLiveReconnect();
@@ -361,6 +426,28 @@ private:
     ProtocolManager* iProtocolManager;
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
+};
+
+
+class SuiteHttpSeekBase : public SuiteHttpBase
+{
+public:
+    SuiteHttpSeekBase(const TChar* aSuiteName, SessionSeekFactory::ESessionSeek aSession);
+    ~SuiteHttpSeekBase();
+protected:
+    Semaphore* iSemServerWait;
+    Semaphore* iSemExternalOp;
+    TestHttpSessionSeek* iHttpSession;
+};
+
+class SuiteHttpSeekInvalid : public SuiteHttpSeekBase
+{
+public:
+    SuiteHttpSeekInvalid();
+private: // from SuiteHttpSeekBase
+    void Test();
+private:
+    void SeekThread();
 };
 
 } // namespace Media
@@ -735,6 +822,123 @@ void TestHttpSessionChunked::Respond()
 }
 
 
+// TestHttpSessionSeek
+
+TestHttpSessionSeek::TestHttpSessionSeek(Semaphore& aSemServerWait, Semaphore& aSemExternalOp)
+    : iBuf(kMaxWriteBufBytes)
+    , iSemServerWait(aSemServerWait)
+    , iSemExternalOp(aSemExternalOp)
+{
+    iReadBuffer = new Srs<kMaxReadBytes>(*this);
+    iReaderUntil = new ReaderUntilS<kMaxReadBytes>(*iReadBuffer);
+    iReaderRequest = new ReaderHttpRequest(*gEnv, *iReaderUntil);
+    iReaderRequest->AddMethod(Http::kMethodGet);
+    iReaderRequest->AddHeader(iHeaderConnection);
+    iReaderRequest->AddHeader(iHeaderRange);
+
+    iWriterChunked = new WriterHttpChunked(*this);
+    iWriterBuffer = new Sws<kMaxWriteBufBytes>(*iWriterChunked);
+    iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
+}
+
+TestHttpSessionSeek::~TestHttpSessionSeek()
+{
+    delete iReaderRequest;
+    iReaderUntil->ReadInterrupt();
+    delete iReaderUntil;
+    delete iReadBuffer;
+    delete iWriterResponse;
+    delete iWriterBuffer;
+    delete iWriterChunked;
+}
+
+void TestHttpSessionSeek::WaitOnReadRequest()
+{
+    iReaderRequest->Flush();
+    iReaderRequest->Read(kReadTimeoutMs);
+
+    if (!iHeaderConnection.Received()) {
+        ASSERTS();
+    }
+}
+
+void TestHttpSessionSeek::Stream(TUint aStartByte, TUint aEndByte, TUint aWaitByte)
+{
+    ASSERT(aWaitByte >= aStartByte);
+    ASSERT(aWaitByte <= aEndByte);
+    TUint bytesRemaining = aEndByte - aStartByte;
+    TUint currentPos = aStartByte;
+
+    // Loop until we've streamed all bytes.
+    while (bytesRemaining > 0) {
+        // Bytes to transmit.
+        TUint bytes = iBuf.MaxBytes();
+        if (bytesRemaining < bytes) {
+            bytes = bytesRemaining;
+        }
+        if (currentPos < aWaitByte && currentPos+bytes >= aWaitByte) {
+            // Will encounter aWaitByte during next write.
+            // Adjust read bytes so that aWaitByte isn't passed.
+            bytes = aWaitByte - currentPos;
+        }
+
+        memset((void*)(iBuf.Ptr()), 0, bytes);
+        iBuf.SetBytes(bytes);   // Buffer of empty bytes.
+        bytesRemaining -= bytes;
+        currentPos += bytes;
+
+        // Write data out.
+        iWriterResponse->Write(iBuf);
+
+        if (currentPos == aWaitByte) {
+            iSemServerWait.Signal();
+            iSemExternalOp.Wait();
+        }
+    }
+    iWriterBuffer->WriteFlush();
+}
+
+TUint TestHttpSessionSeek::DataSize() const
+{
+    return kStreamLen;
+}
+
+void TestHttpSessionSeek::Run()
+{
+    try {
+        WaitOnReadRequest();
+        Respond();      // From derived classes.
+    }
+    catch (HttpError&) { ASSERTS(); }
+    catch (ReaderError&) { ASSERTS(); }
+    catch (WriterError&) { ASSERTS(); }
+    catch (NetworkError&) { ASSERTS(); }
+}
+
+
+// TestHttpSessionSeekInvalid
+
+TestHttpSessionSeekInvalid::TestHttpSessionSeekInvalid(Semaphore& aSemServerWait, Semaphore& aSemExternalOp)
+    : TestHttpSessionSeek(aSemServerWait, aSemExternalOp)
+{
+}
+
+void TestHttpSessionSeekInvalid::WriteResponseContentLength(TUint aLength)
+{
+    const HttpStatus* errorStatus = &HttpStatus::kOk;
+
+    iWriterResponse->WriteStatus(*errorStatus, Http::eHttp11);
+    Http::WriteHeaderContentLength(*iWriterResponse, aLength);
+    iWriterResponse->WriteFlush();
+}
+
+void TestHttpSessionSeekInvalid::Respond()
+{
+    WriteResponseContentLength(kStreamLen);
+    Stream(0, kStreamLen, kStreamLen/2);
+}
+
+
 // SessionFactory
 
 TestHttpSession* SessionFactory::Create(ESession aSession)
@@ -760,6 +964,25 @@ TestHttpSession* SessionFactory::Create(ESession aSession)
 }
 
 
+// SessionSeekFactory
+
+TestHttpSessionSeek* SessionSeekFactory::Create(ESessionSeek aSession, Semaphore& aSemServerWait, Semaphore& aSemExternalOp)
+{
+    switch (aSession)
+    {
+    case eSeekSuccess:
+        //return new TestHttpSessionSeekValid(aSemServerWait, aSemExternalOp);
+        ASSERTS();
+        return nullptr;
+    case eSeekInvalid:
+        return new TestHttpSessionSeekInvalid(aSemServerWait, aSemExternalOp);
+    default:
+        ASSERTS();
+        return nullptr;     // Will never reach here.
+    }
+}
+
+
 // TestHttpSupplier
 
 TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
@@ -770,6 +993,7 @@ TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
     , iStreamCount(0)
     , iDataTotal(0)
     , iStreamHandler(nullptr)
+    , iSemEncodedStream("THSS", 0)
 {
 }
 
@@ -777,29 +1001,39 @@ TestHttpSupplier::~TestHttpSupplier()
 {
 }
 
-TUint TestHttpSupplier::StreamId()
+TUint TestHttpSupplier::StreamId() const
 {
     return iStreamId;
 }
 
-TBool TestHttpSupplier::Live()
+TBool TestHttpSupplier::Live() const
 {
     return iLive;
 }
 
-TUint TestHttpSupplier::TrackCount()
+TUint TestHttpSupplier::TrackCount() const
 {
     return iTrackCount;
 }
 
-TUint TestHttpSupplier::StreamCount()
+TUint TestHttpSupplier::StreamCount() const
 {
     return iStreamCount;
 }
 
-TUint TestHttpSupplier::DataTotal()
+TUint TestHttpSupplier::DataTotal() const
 {
     return iDataTotal;
+}
+
+IStreamHandler& TestHttpSupplier::StreamHandler() const
+{
+    return *iStreamHandler;
+}
+
+void TestHttpSupplier::WaitUntilEncodedStream()
+{
+    iSemEncodedStream.Wait();
 }
 
 void TestHttpSupplier::Push(Msg* aMsg)
@@ -836,6 +1070,7 @@ Msg* TestHttpSupplier::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler = aMsg->StreamHandler();
     (void)iStreamHandler->OkToPlay(iStreamId);
     iStreamCount++;
+    iSemEncodedStream.Signal();
     return aMsg;
 }
 
@@ -881,6 +1116,12 @@ Msg* TestHttpSupplier::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* TestHttpSupplier::ProcessMsg(MsgBitRate* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
 Msg* TestHttpSupplier::ProcessMsg(MsgAudioPcm* aMsg)
 {
     ASSERTS();
@@ -905,7 +1146,7 @@ Msg* TestHttpSupplier::ProcessMsg(MsgQuit* aMsg)
 }
 
 
-// TestHttpSupplyChunked : public TestHttpSupplier
+// TestHttpSupplyChunked
 
 TestHttpSupplyChunked::TestHttpSupplyChunked()
     : TestHttpSupplier(TestHttpSessionChunked::kDataBytes)
@@ -966,9 +1207,9 @@ TUint TestHttpFlushIdProvider::NextFlushId()
 }
 
 
-// SuiteHttp
+// SuiteHttpBase
 
-SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
+SuiteHttpBase::SuiteHttpBase(const TChar* aSuiteName)
     : Suite(aSuiteName)
 {
     // Get a list of network adapters (using loopback, so first one should do).
@@ -987,10 +1228,6 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     //Log::Print("\n");
 
     TUint dataSize = TestHttpSession::kStreamLen;
-
-    // Create a custom HTTP session for testing purposes.
-    iHttpSession = SessionFactory::Create(aSession);
-    iServer->Add("HTP1", iHttpSession);
 
     // Create our HTTP client.
     iSupply = new TestHttpSupplier(dataSize);
@@ -1011,7 +1248,7 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iTrackFactory= new TrackFactory(iInfoAggregator, 1);
 }
 
-SuiteHttp::~SuiteHttp()
+SuiteHttpBase::~SuiteHttpBase()
 {
     delete iTrackFactory;
     delete iProtocolManager;
@@ -1023,10 +1260,21 @@ SuiteHttp::~SuiteHttp()
 }
 
 
+// SuiteHttpStreamBase
+
+SuiteHttpStreamBase::SuiteHttpStreamBase(const TChar* aSuiteName, SessionFactory::ESession aSession)
+    : SuiteHttpBase(aSuiteName)
+{
+    // Create a custom HTTP session for testing purposes.
+    iHttpSession = SessionFactory::Create(aSession);
+    iServer->Add("HTP1", iHttpSession);
+}
+
+
 // SuiteHttpStreamFull
 
 SuiteHttpStreamFull::SuiteHttpStreamFull()
-    : SuiteHttp("HTTP streaming tests", SessionFactory::eStreamFull)
+    : SuiteHttpStreamBase("HTTP streaming tests", SessionFactory::eStreamFull)
 {
 }
 
@@ -1057,7 +1305,7 @@ void SuiteHttpStreamFull::Test()
 // SuiteHttpReject
 
 SuiteHttpReject::SuiteHttpReject()
-    : SuiteHttp("HTTP server rejection tests", SessionFactory::eReject)
+    : SuiteHttpStreamBase("HTTP server rejection tests", SessionFactory::eReject)
 {
 }
 
@@ -1084,7 +1332,7 @@ void SuiteHttpReject::Test()
 // SuiteHttpReconnect
 
 SuiteHttpReconnect::SuiteHttpReconnect()
-    : SuiteHttp("HTTP stream reconnection tests", SessionFactory::eReconnect)
+    : SuiteHttpStreamBase("HTTP stream reconnection tests", SessionFactory::eReconnect)
 {
 }
 
@@ -1115,7 +1363,7 @@ void SuiteHttpReconnect::Test()
 // SuiteHttpStreamLive
 
 SuiteHttpStreamLive::SuiteHttpStreamLive()
-    : SuiteHttp("HTTP live streaming tests", SessionFactory::eStreamLive)
+    : SuiteHttpStreamBase("HTTP live streaming tests", SessionFactory::eStreamLive)
 {
 }
 
@@ -1146,7 +1394,7 @@ void SuiteHttpStreamLive::Test()
 // SuiteHttpLiveReconnect : SuiteHttp
 
 SuiteHttpLiveReconnect::SuiteHttpLiveReconnect()
-    : SuiteHttp("HTTP live stream reconnection tests", SessionFactory::eLiveReconnect)
+    : SuiteHttpStreamBase("HTTP live stream reconnection tests", SessionFactory::eLiveReconnect)
 {
 }
 
@@ -1177,7 +1425,7 @@ void SuiteHttpLiveReconnect::Test()
 // SuiteHttpChunked
 
 SuiteHttpChunked::SuiteHttpChunked()
-    : Suite("Chunked http")
+    : Suite("Chunked HTTP")
 {
     std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackUse, "SuiteHttpChunked");
     TIpAddress addr = (*ifs)[0]->Address();
@@ -1232,6 +1480,74 @@ void SuiteHttpChunked::Test()
 }
 
 
+// SuiteHttpSeekBase
+
+SuiteHttpSeekBase::SuiteHttpSeekBase(const TChar* aSuiteName, SessionSeekFactory::ESessionSeek aSession)
+    : SuiteHttpBase(aSuiteName)
+{
+    iSemServerWait = new Semaphore("HSSW", 0);
+    iSemExternalOp = new Semaphore("HSSE", 0);
+
+    // Create a custom HTTP session for testing purposes.
+    iHttpSession = SessionSeekFactory::Create(aSession, *iSemServerWait, *iSemExternalOp);
+    iServer->Add("HTP1", iHttpSession);
+}
+
+SuiteHttpSeekBase::~SuiteHttpSeekBase()
+{
+    delete iSemExternalOp;
+    delete iSemServerWait;
+}
+
+
+// SuiteHttpSeekInvalid
+
+SuiteHttpSeekInvalid::SuiteHttpSeekInvalid()
+    : SuiteHttpSeekBase("HTTP invalid seek test", SessionSeekFactory::eSeekInvalid)
+{
+}
+
+void SuiteHttpSeekInvalid::Test()
+{
+    // Set up seek thread where TrySeek will be invoked during Stream().
+    ThreadFunctor thread("HTTP seek test", MakeFunctor(*this, &SuiteHttpSeekInvalid::SeekThread));
+    thread.Start();
+
+    // Test if streaming is successful.
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
+    TEST(res == EProtocolStreamSuccess);
+
+    // Test if a single track message is received.
+    TEST(iSupply->TrackCount() == 1);
+
+    // Test if a single stream message is received.
+    TEST(iSupply->StreamCount() == 1);
+
+    // Test if it was a live stream
+    TEST(iSupply->Live() == false);
+
+    // Test if the total data transferred over both sessions is equivalent to the stream length.
+    const TUint streamSize = iHttpSession->DataSize();
+    const TUint dataTotal = iSupply->DataTotal();
+    TEST(streamSize == dataTotal);
+}
+
+void SuiteHttpSeekInvalid::SeekThread()
+{
+    iSemServerWait->Wait();
+    // Server has sent all data until wait point.
+    // However, ProtocolHttp may not have output a MsgEncodedStream yet, so wait until iSupply has seen it.
+    iSupply->WaitUntilEncodedStream();
+    IStreamHandler& streamHandler = iSupply->StreamHandler();
+    // Offset starts from 0, so using stream length should be 1 byte out-of-bounds.
+    const TUint seekRes = streamHandler.TrySeek(iSupply->StreamId(), iHttpSession->DataSize());
+    TEST(seekRes == MsgFlush::kIdInvalid);
+    iSemExternalOp->Signal();
+}
+
+
 
 void TestProtocolHttp()
 {
@@ -1242,5 +1558,6 @@ void TestProtocolHttp()
     runner.Add(new SuiteHttpStreamLive());
     runner.Add(new SuiteHttpLiveReconnect());
     runner.Add(new SuiteHttpChunked());
+    runner.Add(new SuiteHttpSeekInvalid());
     runner.Run();
 }

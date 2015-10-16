@@ -32,7 +32,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -46,6 +46,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -62,6 +63,7 @@ protected:
        ,EMsgMetaText
        ,EMsgStreamInterrupted
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgHalt
@@ -146,7 +148,7 @@ void SuiteDecodedAudioAggregator::Setup()
     init.SetMsgHaltCount(2);
     init.SetMsgFlushCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iDecodedAudioAggregator = new DecodedAudioAggregator(*this, *iMsgFactory);
+    iDecodedAudioAggregator = new DecodedAudioAggregator(*this);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
     iLockReceived = new Mutex("TCMR");
@@ -208,7 +210,7 @@ TUint SuiteDecodedAudioAggregator::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void SuiteDecodedAudioAggregator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteDecodedAudioAggregator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -285,13 +287,19 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastReceivedMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastReceivedMsg = EMsgAudioPcm;
     iMsgOffset = aMsg->TrackOffset();
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 4);   // check we have enough bytes to examine first
@@ -362,7 +370,7 @@ Msg* SuiteDecodedAudioAggregator::CreateTrack()
 
 Msg* SuiteDecodedAudioAggregator::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
 }
 
 MsgDecodedStream* SuiteDecodedAudioAggregator::CreateDecodedStream()

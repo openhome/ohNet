@@ -34,12 +34,11 @@ namespace Av {
 class UriProviderSongcast : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderSongcast(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
-    ~UriProviderSongcast();
+    UriProviderSongcast(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller() override;
+    Media::ModeClockPullers ClockPullers() override;
 private:
-    ClockPullerSongcast* iClockPuller;
+    ClockPullerSongcast iClockPuller;
 };
 
 class SongcastSender;
@@ -49,7 +48,6 @@ class SourceReceiver : public Source, private ISourceReceiver, private IZoneList
     static const TChar* kProtocolInfo;
 public:
     SourceReceiver(IMediaPlayer& aMediaPlayer,
-                   Media::IPullableClock* aPullableClock,
                    IOhmTimestamper* aTxTimestamper,
                    IOhmTimestampMapper* aTxTsMapper,
                    IOhmTimestamper* aRxTimestamper,
@@ -151,38 +149,27 @@ using namespace OpenHome::Configuration;
 // SourceFactory
 
 ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
-                                    Media::IPullableClock* aPullableClock,
                                     IOhmTimestamper* aTxTimestamper,
                                     IOhmTimestampMapper* aTxTsMapper,
                                     IOhmTimestamper* aRxTimestamper,
                                     IOhmTimestampMapper* aRxTsMapper,
                                     const Brx& aSenderIconFileName)
 { // static
-    return new SourceReceiver(aMediaPlayer, aPullableClock, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper, aSenderIconFileName);
+    return new SourceReceiver(aMediaPlayer, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper, aSenderIconFileName);
 }
 
 
 // UriProviderSongcast
 
-UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock)
+UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
     : UriProviderSingleTrack("Receiver", true, true, aMediaPlayer.TrackFactory())
+    , iClockPuller(aMediaPlayer.Env())
 {
-    if (aPullableClock == nullptr) {
-        iClockPuller = nullptr;
-    }
-    else {
-        iClockPuller = new ClockPullerSongcast(aMediaPlayer.Env(), *aPullableClock);
-    }
 }
 
-UriProviderSongcast::~UriProviderSongcast()
+Media::ModeClockPullers UriProviderSongcast::ClockPullers()
 {
-    delete iClockPuller;
-}
-
-IClockPuller* UriProviderSongcast::ClockPuller()
-{
-    return iClockPuller;
+    return iClockPuller.ClockPullers();
 }
 
 
@@ -191,7 +178,6 @@ IClockPuller* UriProviderSongcast::ClockPuller()
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
 SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
-                               Media::IPullableClock* aPullableClock,
                                IOhmTimestamper* aTxTimestamper,
                                IOhmTimestampMapper* aTxTsMapper,
                                IOhmTimestamper* aRxTimestamper,
@@ -215,7 +201,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
 
     // Receiver
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
-    iUriProvider = new UriProviderSongcast(aMediaPlayer, aPullableClock);
+    iUriProvider = new UriProviderSongcast(aMediaPlayer);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory, aRxTsMapper));
@@ -243,17 +229,14 @@ void SourceReceiver::Activate()
 {
     LOG(kSongcast, "SourceReceiver::Activate()\n");
     iActive = true;
-    {
-        AutoMutex _(iLock);
-        if (iTrackUri.Bytes() > 0) {
-            iZoneHandler->SetCurrentSenderUri(iTrackUri);
-        }
-    }
     if (iNoPipelinePrefetchOnActivation) {
         iPipeline.RemoveAll();
     }
     else {
         iPipeline.StopPrefetch(iUriProvider->Mode(), Track::kIdNone);
+        if (iZone.Bytes() > 0) {
+            iZoneHandler->StartMonitoring(iZone);
+        }
     }
 }
 
@@ -262,7 +245,9 @@ void SourceReceiver::Deactivate()
     LOG(kSongcast, "SourceReceiver::Deactivate()\n");
     iProviderReceiver->NotifyPipelineState(EPipelineStopped);
     iZoneHandler->ClearCurrentSenderUri();
+    iZoneHandler->StopMonitoring();
     iPlaying = false;
+    iTrackUri.Replace(Brx::Empty());
     Source::Deactivate();
 }
 
@@ -298,9 +283,7 @@ void SourceReceiver::Stop()
 
 void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
-    LOG(kSongcast, "SourceReceiver::SetSender(");
-    LOG(kSongcast, aUri);
-    LOG(kSongcast, ")\n");
+    LOG(kSongcast, "SourceReceiver::SetSender(%.*s)\n", PBUF(aUri));
     EnsureActive();
     AutoMutex a(iLock);
     if (aUri.Bytes() > 0) {
@@ -329,6 +312,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
     }
     else {
         iZone.Replace(Brx::Empty());
+        iZoneHandler->ClearCurrentSenderUri();
         iTrackUri.Replace(aUri);
         iTrackMetadata.Replace(aMetadata);
         UriChanged();
@@ -337,11 +321,8 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 
 void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
 {
-    LOG(kSongcast, "SourceReceiver::ZoneUriChanged(");
-    LOG(kSongcast, aZone);
-    LOG(kSongcast, ", ");
-    LOG(kSongcast, aUri);
-    LOG(kSongcast, ")\n");
+    LOG(kSongcast, "SourceReceiver::ZoneUriChanged(%.*s, %.*s)\n",
+                   PBUF(aZone), PBUF(aUri));
     // FIXME - use of iZone/iTrackUri not threadsafe
     if (aZone == iZone && aUri != iTrackUri) {
         iZoneHandler->SetCurrentSenderUri(aUri);
@@ -396,9 +377,8 @@ void SourceReceiver::EnsureActive()
 
 void SourceReceiver::UriChanged()
 {
-    LOG(kSongcast, "SourceReceiver::UriChanged().  IsActive=%u, Playing=%u, url=", IsActive(), iPlaying);
-    LOG(kSongcast, iTrackUri);
-    LOG(kSongcast, "\n");
+    LOG(kSongcast, "SourceReceiver::UriChanged().  IsActive=%u, Playing=%u, url=%.*s\n",
+                   IsActive(), iPlaying, PBUF(iTrackUri));
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
     if (track == nullptr) {
         iTrackId = Track::kIdNone;

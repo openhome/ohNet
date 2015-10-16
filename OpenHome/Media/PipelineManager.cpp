@@ -42,18 +42,19 @@ TUint PriorityArbitratorPipeline::HostRange() const
 
 // PipelineManager
 
-PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList, Net::IShell& aShell)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this, *this);
+    iPrefetchObserver = new PrefetchObserver();
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, *iPrefetchObserver, *this, *this, aMimeTypeList, aShell);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
     iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory,
-                         iPrefetchObserver, *iIdManager, min-1,
+                         *iPrefetchObserver, *iIdManager, min-1,
                          iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
@@ -62,6 +63,7 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
 PipelineManager::~PipelineManager()
 {
     delete iPipeline;
+    delete iPrefetchObserver;
     delete iProtocolManager;
     delete iFiller;
     delete iIdManager;
@@ -148,9 +150,7 @@ ITrackChangeObserver& PipelineManager::TrackChangeObserver() const
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
-    LOG(kPipeline, "PipelineManager::Begin(");
-    LOG(kPipeline, aMode);
-    LOG(kPipeline, ", %u)\n", aTrackId);
+    LOG(kPipeline, "PipelineManager::Begin(%.*s, %u)\n", PBUF(aMode), aTrackId);
     iLock.Wait();
     iMode.Replace(aMode);
     iTrackId = aTrackId;
@@ -194,27 +194,24 @@ void PipelineManager::Stop()
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
-    LOG(kPipeline, "PipelineManager::StopPrefetch(");
-    LOG(kPipeline, aMode);
-    LOG(kPipeline, ", %u)\n", aTrackId);
+    LOG(kPipeline, "PipelineManager::StopPrefetch(%.*s, %u)\n", PBUF(aMode), aTrackId);
     iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iPipeline->RemoveAll(haltId);
     iPipeline->Unblock();
-    iPrefetchObserver.SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
-    iFiller->PlayLater(aMode, aTrackId);
+    const TUint trackId = (aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
+    iPrefetchObserver->SetTrack(trackId);
+    iFiller->PlayLater(aMode, trackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
     try {
-        iPrefetchObserver.Wait(5000); /* It's possible that a protocol module will block without
-                                         ever delivering content.  Other pipeline operations which
-                                         might interrupt it are blocked by iPublicLock so we
-                                         timeout after 5s as a workaround */
+        iPrefetchObserver->Wait(5000); /* It's possible that a protocol module will block without
+                                          ever delivering content.  Other pipeline operations which
+                                          might interrupt it are blocked by iPublicLock so we
+                                          timeout after 5s as a workaround */
     }
     catch (Timeout&) {
-        Log::Print("WARNING: Timeout from PipelineManager::StopPrefetch.  trackId=%u, mode=", aTrackId);
-        Log::Print(aMode);
-        Log::Print("\n");
+        Log::Print("Timeout from PipelineManager::StopPrefetch.  trackId=%u, mode=%.*s\n", aTrackId, PBUF(aMode));
     }
 }
 
@@ -222,6 +219,11 @@ void PipelineManager::RemoveAll()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::RemoveAll()\n");
+    RemoveAllLocked();
+}
+
+void PipelineManager::RemoveAllLocked()
+{
     iPipeline->Block();
     const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
@@ -229,44 +231,41 @@ void PipelineManager::RemoveAll()
     iPipeline->Unblock();
 }
 
-TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
+void PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Seek(%u, %u)\n", aStreamId, aSecondsAbsolute);
-    return iPipeline->Seek(aStreamId, aSecondsAbsolute);
+    iPipeline->Seek(aStreamId, aSecondsAbsolute);
 }
 
-TBool PipelineManager::Next()
+void PipelineManager::Next()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Next()\n");
     if (iMode.Bytes() == 0) {
-        return false; // nothing playing or ready to be played so nothing we can advance relative to
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    (void)iFiller->Stop();
-    /* Previously tried using iIdManager->InvalidateAt() to invalidate the current track only.
-       If we're playing a low res track, there is a large window when we'll be playing that but
-       pre-fetching the track to follow it.  InvalidateAt() will fail to clear that following
-       track from the pipeline. */
-    iIdManager->InvalidateAll();
-    return iFiller->Next(iMode);
+    /* Can't quite get away with only calling iPipeline->RemoveCurrentStream()
+       This works well when the pipeline is running but doesn't cope with the unusual
+       case where a protocol module is stalled before pushing any audio into the pipeline.
+       Call to iFiller->Stop() below spots this case and Interrupt()s the blocked protocol. */
+    const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
+    (void)iFiller->Next(iMode);
 }
 
-TBool PipelineManager::Prev()
+void PipelineManager::Prev()
 {
     AutoMutex _(iPublicLock);
     LOG(kPipeline, "PipelineManager::Prev()\n");
     if (iMode.Bytes() == 0) {
-        return false; // nothing playing or ready to be played so nothing we can advance relative to
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    (void)iFiller->Stop();
-    iIdManager->InvalidateAll();
-    return iFiller->Prev(iMode);
-}
-
-TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
-{
-    return iPipeline->SupportsMimeType(aMimeType);
+    const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
+    (void)iFiller->Prev(iMode);
 }
 
 IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)
@@ -379,6 +378,8 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
 {
+    LOG(kPipeline, "PipelineManager::SeekRestream(%.*s, %u)\n", PBUF(aMode), aTrackId);
+    (void)iFiller->Stop();
     iIdManager->InvalidateAll();
     const TUint flushId = iFiller->Flush();
     iFiller->Play(aMode, aTrackId);
@@ -402,12 +403,6 @@ PipelineManager::PrefetchObserver::PrefetchObserver()
 
 PipelineManager::PrefetchObserver::~PrefetchObserver()
 {
-    ASSERT(iTrackId == UINT_MAX);
-}
-
-void PipelineManager::PrefetchObserver::Quit()
-{
-    iTrackId = UINT_MAX;
     iSem.Signal();
 }
 

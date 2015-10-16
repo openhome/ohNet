@@ -1,10 +1,10 @@
-#ifndef HEADER_SOURCE_RADIO
-#define HEADER_SOURCE_RADIO
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/PipelineObserver.h>
 
 namespace OpenHome {
     class Environment;
@@ -14,6 +14,7 @@ namespace Net {
 namespace Media {
     class PipelineManager;
     class UriProviderSingleTrack;
+    class MimeTypeList;
 }
 namespace Av {
 
@@ -39,9 +40,9 @@ class SourceRadio : public Source, private ISourceRadio, private Media::IPipelin
 {
 public:
     SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline,
-                Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo,
-                const Brx& aTuneInPartnerId, Configuration::IConfigInitialiser& aConfigInit,
-                Credentials& aCredentialsManager);
+                Media::UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
+                Configuration::IConfigInitialiser& aConfigInit,
+                Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList);
     ~SourceRadio();
 private: // from ISource
     void Activate() override;
@@ -77,4 +78,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SOURCE_RADIO

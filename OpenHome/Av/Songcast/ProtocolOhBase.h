@@ -1,5 +1,4 @@
-#ifndef HEADER_PROTOCOL_OHBASE
-#define HEADER_PROTOCOL_OHBASE
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
@@ -51,7 +50,7 @@ private: // from Media::Protocol
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
     Media::EStreamPlay OkToPlay(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     void CurrentSubnetChanged();
     void RepairReset();
@@ -59,7 +58,6 @@ private:
     TBool RepairBegin(OhmMsgAudioBlob& aMsg);
     TBool Repair(OhmMsgAudioBlob& aMsg);
     void OutputAudio(OhmMsgAudioBlob& aMsg);
-    void PipelineEmpty();
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
     void Process(OhmMsgAudioBlob& aMsg) override;
@@ -111,4 +109,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROTOCOL_OHBASE

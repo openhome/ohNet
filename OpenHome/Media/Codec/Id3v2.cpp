@@ -15,82 +15,130 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 Id3v2::Id3v2()
-    : iSize(0)
-    , iTotalSize(0)
+    : ContainerBase(Brn("ID3"))
 {
 }
 
-TBool Id3v2::Recognise(Brx& aBuf)
+Msg* Id3v2::Recognise()
 {
+    LOG(kMedia, "Id3v2::Recognise\n");
+
+    if (!iRecognitionStarted) {
+        iCache->Inspect(iBuf, iBuf.MaxBytes());
+        iRecognitionStarted = true;
+    }
+
+    Msg* msg = iCache->Pull();
+    if (msg != nullptr) {
+        return msg;
+    }
+
+    if (RecogniseTag()) {
+        iSize = 0;
+        iRecognitionSuccess = true;
+        return nullptr;
+    }
+    return nullptr;
+}
+
+TBool Id3v2::Recognised() const
+{
+    return iRecognitionSuccess;
+}
+
+void Id3v2::Reset()
+{
+    iRecognitionStarted = false;
+    iRecognitionSuccess = false;
+    iState = eNone;
     iSize = 0;
     iTotalSize = 0;
-
-    if (aBuf.Bytes() < kRecogniseBytes) {
-        return false; // not enough data to recognise
-    }
-
-    static const char* kContainerStart = "ID3";
-    if (strncmp((const TChar*)(aBuf.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
-        return false;
-    }
-    if (aBuf[3] > 4) { // We only support upto Id3v2.4
-        return false;
-    }
-    const TBool hasFooter = ((aBuf[5] & 0x10) != 0); // FIXME - docs suggest this is an experimental field rather than footer indicator
-    // remaining 4 bytes give the size of container data
-    // bit 7 of each byte must be zero (to avoid being mistaken for the sync frame of mp3)
-    // ...so each byte only holds 7 bits of sizing data
-    for (TUint i=6; i<10; i++) {
-        if ((aBuf[i] & 0x80) != 0) {
-            return false;
-        }
-    }
-
-    iSize = ((aBuf[6] << 21) | (aBuf[7] << 14) | (aBuf[8] << 7) | aBuf[9]);
-    iSize += 10; // for header
-    if(hasFooter) {
-        iSize += 10; // for footer if present
-    }
-    LOG(kMedia, "Id3v2 header found: %d bytes\n", iSize);
-    return true;
+    iBuf.SetBytes(0);
 }
 
-Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* Id3v2::Pull()
 {
-    MsgAudioEncoded* msg = nullptr;
-    AddToAudioEncoded(aMsg);
+    /**
+     * Keep attempting to recognise ID3 tags until fail to recognise tags.
+     * (In case there are multiple tags in a file.)
+     */
+    Msg* msg = nullptr;
+    while (msg == nullptr) {
+        if (iState != eNone) {
+            msg = iCache->Pull();
+            if (msg != nullptr) {
+                return msg;
+            }
+        }
 
-    if (!iPulling) {
-        iBuf.SetBytes(0);
-        Read(iBuf, kRecogniseBytes);
-        if (iBuf.Bytes() == kRecogniseBytes) {
-            TBool recognised = Recognise(iBuf);
-            if (recognised) {
-                // Discard audio data; could be splitting a large tag (i.e., one containing album art).
-                // Already read kRecogniseBytes above, but Read() doesn't discard audio, so discard
-                // iSize here.
-                DiscardAudio(iSize);
-                // Can't return remaining iAudioEncoded here; could have another tag following this one.
+
+        if (iState == eNone) {
+            iBuf.SetBytes(0);
+            iCache->Inspect(iBuf, iBuf.MaxBytes());
+            iState = eRecognising;
+        }
+        else if (iState == eRecognising) {
+            if (RecogniseTag()) {
                 iTotalSize += iSize;
+                iCache->Discard(iSize-kRecogniseBytes);
+                iSize = 0;
+                iState = eNone;
             }
             else {
-                msg = iAudioEncoded;
-                iAudioEncoded = nullptr;
+                // Recognised last in (possible) chain of ID3 tags.
+                // Output recognition buffer as it is actually data destined for codec.
+                msg = iMsgFactory->CreateMsgAudioEncoded(iBuf);
+                iBuf.SetBytes(0);
+                iState = ePulling;
+                return msg;
             }
         }
         else {
-            // Didn't read a full buffer, so must be at end of stream.
-            msg = iAudioEncoded;
-            iAudioEncoded = nullptr;
+            // Shouldn't encounter any other state.
+            // ePulling should always return a msg during iCache->Pull() above.
+            ASSERTS();
         }
     }
 
     return msg;
 }
 
-TUint Id3v2::TrySeek(TUint aStreamId, TUint64 aOffset)
+TBool Id3v2::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
-    TUint64 offset = aOffset + iTotalSize;
-    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
-    return iExpectedFlushId;
+    const TUint64 offset = aOffset + iTotalSize;
+    return iSeekHandler->TrySeekTo(aStreamId, offset);
+}
+
+
+TBool Id3v2::RecogniseTag()
+{
+    if (iBuf.Bytes() < kRecogniseBytes) {
+        return false; // not enough data to recognise
+    }
+
+    static const char* kContainerStart = "ID3";
+    if (strncmp((const TChar*)(iBuf.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
+        return false;
+    }
+    if (iBuf[3] > 4) { // We only support upto Id3v2.4
+        return false;
+    }
+    // NOTE: docs suggest this is an experimental field rather than footer indicator.
+    const TBool hasFooter = ((iBuf[5] & 0x10) != 0);
+    // remaining 4 bytes give the size of container data
+    // bit 7 of each byte must be zero (to avoid being mistaken for the sync frame of mp3)
+    // ...so each byte only holds 7 bits of sizing data
+    for (TUint i=6; i<10; i++) {
+        if ((iBuf[i] & 0x80) != 0) {
+            return false;
+        }
+    }
+
+    iSize = ((iBuf[6] << 21) | (iBuf[7] << 14) | (iBuf[8] << 7) | iBuf[9]);
+    iSize += 10; // for header
+    if (hasFooter) {
+        iSize += 10; // for footer if present
+    }
+    LOG(kMedia, "Id3v2 header found: %d bytes\n", iSize);
+    return true;
 }

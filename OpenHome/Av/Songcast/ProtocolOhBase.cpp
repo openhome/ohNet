@@ -138,8 +138,10 @@ TBool ProtocolOhBase::IsCurrentStream(TUint aStreamId) const
 
 void ProtocolOhBase::WaitForPipelineToEmpty()
 {
-    iSupply->OutputDrain(MakeFunctor(*this, &ProtocolOhBase::PipelineEmpty));
+    LOG(kSongcast, "> ProtocolOhBase::WaitForPipelineToEmpty()\n");
+    iSupply->OutputDrain(MakeFunctor(iPipelineEmpty, &Semaphore::Signal));
     iPipelineEmpty.Wait();
+    LOG(kSongcast, "< ProtocolOhBase::WaitForPipelineToEmpty()\n");
 }
 
 void ProtocolOhBase::Interrupt(TBool aInterrupt)
@@ -192,16 +194,14 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
 
 EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
-    if (canPlay != ePlayYes) {
-        Log::Print("WARNING: ProtocolOhBase::OkToPlay(%u) - IdManager returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
-    }
-    return ePlayYes;
+    auto canPlay = iIdProvider->OkToPlay(aStreamId);
+    ASSERT(canPlay != ePlayLater);
+    return canPlay;
 }
 
-void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    if (aMode == iMode) {
+    if (aMode == iMode && aStarving) {
         LOG(kSongcast, "OHU: NotifyStarving for stream %u\n", aStreamId);
         iStarving = true;
         iSocket.Interrupt(true);
@@ -258,10 +258,16 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
     // get difference between this and the last frame sent down the pipeline
     TInt diff = frame - iFrame;
     if (diff < 1) {
+        TBool repairing = true;
+        if ((aMsg.Flags() & OhmMsgAudio::kFlagResent) == 0) {
+            // A frame in the past that is not a resend implies that the sender has reset their frame count
+            RepairReset();
+            repairing = false;
+        }
         // incoming frames is equal to or earlier than the last frame sent down the pipeline
         // in other words, it's a duplicate, so discard it and continue
         aMsg.RemoveRef();
-        return true;
+        return repairing;
     }
     if (diff == 1) {
         // incoming frame is one greater than the last frame sent down the pipeline, so send this ...
@@ -428,7 +434,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         OhmMsgAudio* audio = iMsgFactory.CreateAudioFromBlob(reader, header);
         const TUint64 totalBytes = audio->SamplesTotal() * audio->Channels() * audio->BitDepth()/8;
         iStreamId = iIdProvider->NextStreamId();
-        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId);
+        iSupply->OutputStream(iTrackUri, totalBytes, 0, false/*seekable*/, false/*live*/, *this, iStreamId);
         audio->RemoveRef();
         iStreamMsgDue = false;
     }
@@ -474,6 +480,13 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
         OutputAudio(aMsg);
     }
     else if (diff < 1) {
+        if ((aMsg.Flags() & OhmMsgAudio::kFlagResent) == 0) {
+            // A frame in the past that is not a resend implies that the sender has reset their frame count
+            iSupply->OutputStreamInterrupted(); // force recently output audio to ramp down 
+            // accept the next received frame as the start of a new stream
+            iRunning = false;
+            iStreamMsgDue = true;
+        }
         aMsg.RemoveRef();
     }
     else {
@@ -509,9 +522,4 @@ void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
         }
     }
     aMsg.RemoveRef();
-}
-
-void ProtocolOhBase::PipelineEmpty()
-{
-    iPipelineEmpty.Signal();
 }

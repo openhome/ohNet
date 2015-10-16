@@ -62,6 +62,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -141,7 +142,7 @@ void SuiteSilencer::TearDown()
 
 void SuiteSilencer::TestMsgsPassedOn()
 {
-    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false));
+    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false));
     QueuePendingMsg(iMsgFactory->CreateMsgDrain(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
@@ -206,7 +207,7 @@ void SuiteSilencer::TestPassesMsgsAfterSilenceGeneration()
     PullNext(EMsgDecodedStream);
     PullNextNoWait(EMsgPlayable);
 
-    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false));
+    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false));
     QueuePendingMsg(iMsgFactory->CreateMsgDrain(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
@@ -359,6 +360,12 @@ Msg* SuiteSilencer::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteSilencer::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
 Msg* SuiteSilencer::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS();
@@ -379,7 +386,7 @@ Msg* SuiteSilencer::ProcessMsg(MsgPlayable* aMsg)
     const TUint bytesPerSample = iNumChannels * iBitDepth/8;
     iLastPulledJiffies = (iLastPulledBytes / bytesPerSample) * jiffiesPerSample;
 
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     aMsg->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     const TByte* ptr = buf.Ptr();

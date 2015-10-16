@@ -9,8 +9,23 @@ using namespace OpenHome::Media;
 
 // Pruner
 
+const TUint Pruner::kSupportedMsgTypes =   eMode
+                                         | eTrack
+                                         | eDrain
+                                         | eDelay
+                                         | eMetatext
+                                         | eStreamInterrupted
+                                         | eHalt
+                                         | eWait
+                                         | eDecodedStream
+                                         | eBitRate
+                                         | eAudioPcm
+                                         | eSilence
+                                         | eQuit;
+
 Pruner::Pruner(IPipelineElementUpstream& aUpstreamElement)
-    : iUpstreamElement(aUpstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iUpstreamElement(aUpstreamElement)
     , iPendingMode(nullptr)
     , iWaitingForAudio(false)
     , iConsumeHalts(false)
@@ -78,26 +93,9 @@ Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
     return nullptr;
 }
 
-Msg* Pruner::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
 Msg* Pruner::ProcessMsg(MsgDelay* aMsg)
 {
     aMsg->RemoveRef();
-    return nullptr;
-}
-
-Msg* Pruner::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
-}
-
-Msg* Pruner::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
     return nullptr;
 }
 
@@ -105,11 +103,6 @@ Msg* Pruner::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->RemoveRef();
     return nullptr;
-}
-
-Msg* Pruner::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
 }
 
 Msg* Pruner::ProcessMsg(MsgHalt* aMsg)
@@ -121,12 +114,6 @@ Msg* Pruner::ProcessMsg(MsgHalt* aMsg)
     }
     iConsumeHalts = true;
     return TryQueue(aMsg);
-}
-
-Msg* Pruner::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgWait* aMsg)
@@ -146,6 +133,12 @@ Msg* Pruner::ProcessMsg(MsgDecodedStream* aMsg)
     return TryQueue(aMsg);
 }
 
+Msg* Pruner::ProcessMsg(MsgBitRate* aMsg)
+{
+    aMsg->RemoveRef();
+    return nullptr;
+}
+
 Msg* Pruner::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iConsumeHalts = false;
@@ -155,12 +148,6 @@ Msg* Pruner::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* Pruner::ProcessMsg(MsgSilence* aMsg)
 {
     return TryQueueCancelWaiting(aMsg);
-}
-
-Msg* Pruner::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return nullptr;
 }
 
 Msg* Pruner::ProcessMsg(MsgQuit* aMsg)

@@ -15,6 +15,16 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
+class NullClockPullerTimestamp : public IClockPullerTimestamp
+{
+private: // from IClockPullerTimestamp
+    void NewStream(TUint aSampleRate) override;
+    void Reset() override;
+    void Stop() override;
+    void Start() override;
+    TUint NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+};
+
 class SuiteTimestampInspector : public SuiteUnitTest, private IPipelineElementDownstream, private IMsgProcessor
 {
     static const TUint kBitrate = 256;
@@ -42,6 +52,7 @@ private:
        ,EMsgFlush
        ,EMsgWait
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgQuit
     };
@@ -74,6 +85,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -91,7 +103,7 @@ private:
     TByte iAudioData[884]; // 884 => 5ms @ 44.1, 16-bit, stereo
     TUint64 iTrackOffsetTx;
     TUint64 iTrackOffsetRx;
-    ClockPullerNull iClockPuller;
+    NullClockPullerTimestamp iClockPuller;
     TBool iTimestampNextAudioMsg;
     TBool iUseClockPuller;
     TUint iNextNetworkTimestamp;
@@ -103,6 +115,24 @@ private:
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+
+void NullClockPullerTimestamp::NewStream(TUint /*aSampleRate*/)
+{
+}
+void NullClockPullerTimestamp::Reset()
+{
+}
+void NullClockPullerTimestamp::Stop()
+{
+}
+void NullClockPullerTimestamp::Start()
+{
+}
+TUint NullClockPullerTimestamp::NotifyTimestamp(TInt /*aDrift*/, TUint /*aNetwork*/)
+{
+    return IPullableClock::kNominalFreq;
+}
 
 
 SuiteTimestampInspector::SuiteTimestampInspector()
@@ -153,8 +183,8 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
     {
     case EMsgMode:
     {
-        IClockPuller* clockPuller = (iUseClockPuller? &iClockPuller : nullptr);
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPuller, false, false);
+        ModeClockPullers clockPullers(nullptr, nullptr, iUseClockPuller? &iClockPuller : nullptr);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPullers, false, false);
     }
         break;
     case EMsgTrack:
@@ -168,7 +198,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, nullptr);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, iNextStreamId, false, true, nullptr);
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerSecond);
@@ -190,6 +220,9 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         break;
     case EMsgDecodedStream:
         msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, nullptr);
+        break;
+    case EMsgBitRate:
+        msg = iMsgFactory->CreateMsgBitRate(200);
         break;
     case EMsgAudioPcm:
     {
@@ -232,7 +265,7 @@ void SuiteTimestampInspector::NonAudioMsgsPassThrough()
 {
     EMsgType types[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
-                         EMsgQuit };
+                         EMsgBitRate, EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     TUint prevTxCount = iMsgTxCount;
     for (size_t i=0; i<numElems; i++) {
@@ -465,6 +498,12 @@ Msg* SuiteTimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
     iLastMsg = EMsgDecodedStream;
     const DecodedStreamInfo& s = aMsg->StreamInfo();
     iTrackOffsetRx = s.SampleStart() * Jiffies::JiffiesPerSample(s.SampleRate());
+    return aMsg;
+}
+
+Msg* SuiteTimestampInspector::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastMsg = EMsgBitRate;
     return aMsg;
 }
 

@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <algorithm>
 
@@ -11,14 +13,15 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
-/*static const TChar* kStatus[] = { "Starting"
+static const TChar* kStatus[] = { "Starting"
                                  ,"Running"
                                  ,"RampingDown"
                                  ,"RampedDown"
-                                 ,"RampingUp" };*/
+                                 ,"RampingUp" };
 
-VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
-    : iMsgFactory(aMsgFactory)
+VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
+    : iId(aId)
+    , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iDelayJiffies(0)
     , iLock("VDLY")
@@ -38,42 +41,46 @@ VariableDelay::~VariableDelay()
 Msg* VariableDelay::Pull()
 {
     Msg* msg = nullptr;
-    iLock.Wait();
-    if (iStatus != ERampingDown && iDelayAdjustment > 0) {
-        if (iWaitForAudioBeforeGeneratingSilence) {
-            do {
-                msg = NextMsgLocked();
-                if (msg != nullptr) {
-                    if (iWaitForAudioBeforeGeneratingSilence) {
-                        iLock.Signal();
-                        return msg;
-                    }
-                    else {
-                        DoEnqueue(msg);
-                    }
+    AutoMutex _(iLock);
+    if (iWaitForAudioBeforeGeneratingSilence) {
+        do {
+            msg = NextMsgLocked();
+            if (msg != nullptr) {
+                if (iWaitForAudioBeforeGeneratingSilence) {
+                    return msg;
                 }
-            } while (msg == nullptr && iWaitForAudioBeforeGeneratingSilence);
-            msg = nullptr; // DoEnqueue() above passed ownership of msg back to reservoir
-        }
-        // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
-        if (iDelayAdjustment > 0) {
-            const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
-            msg = iMsgFactory.CreateMsgSilence(size);
-            iDelayAdjustment -= size;
-            if (iDelayAdjustment == 0) {
-                iStatus = (iStatus==ERampedDown? ERampingUp : ERunning);
+                else {
+                    DoEnqueue(msg);
+                }
+            }
+        } while (msg == nullptr && iWaitForAudioBeforeGeneratingSilence);
+        msg = nullptr; // DoEnqueue() above passed ownership of msg back to reservoir
+    }
+    // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
+    if ((iStatus == EStarting || iStatus == ERampedDown) && iDelayAdjustment > 0) {
+        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
+        msg = iMsgFactory.CreateMsgSilence(size);
+        iDelayAdjustment -= size;
+        if (iDelayAdjustment == 0) {
+            if (iStatus == ERampedDown) {
+                iStatus = ERampingUp;
                 iRampDirection = Ramp::EUp;
                 iCurrentRampValue = Ramp::kMin;
                 iRemainingRampSize = iRampDuration;
             }
+            else {
+                iStatus = ERunning;
+                iRampDirection = Ramp::ENone;
+                iCurrentRampValue = Ramp::kMax;
+                iRemainingRampSize = 0;
+            }
         }
     }
-    if (msg == nullptr) {
+    else if (msg == nullptr) {
         do {
             msg = NextMsgLocked();
         } while (msg == nullptr);
     }
-    iLock.Signal();
     return msg;
 }
 
@@ -161,12 +168,12 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
 {
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
-        DoEnqueue(remaining);
+        EnqueueAtHead(remaining);
     }
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
     if (split != nullptr) {
-        DoEnqueue(split);
+        EnqueueAtHead(split);
     }
 }
 
@@ -177,7 +184,6 @@ void VariableDelay::HandleStarving()
     if (iDelayAdjustment == 0) {
         return;
     }
-    iWaitForAudioBeforeGeneratingSilence = true;
     switch (iStatus)
     {
     case EStarting:
@@ -191,6 +197,7 @@ void VariableDelay::HandleStarving()
     case ERampingDown:
         break;
     case ERampedDown:
+        iWaitForAudioBeforeGeneratingSilence = true;
         break;
     case ERampingUp:
         iRampDirection = Ramp::EDown;
@@ -198,6 +205,7 @@ void VariableDelay::HandleStarving()
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         if (iRemainingRampSize == 0) {
             iStatus = ERampedDown;
+            iWaitForAudioBeforeGeneratingSilence = true;
         }
         else {
             iStatus = ERampingDown;
@@ -233,14 +241,28 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 {
+    iDelayAdjustment = iDelayJiffies;
+    if (iDelayAdjustment == 0) {
+        return aMsg;
+    }
+    iWaitForAudioBeforeGeneratingSilence = true;
+
+    iRampDirection = Ramp::EDown;
+    iCurrentRampValue = Ramp::kMin;
+    iRemainingRampSize = 0;
+    iStatus = ERampedDown;
+
     return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
-    /*Log::Print("VariableDelay::ProcessMsg(MsgDelay*): delay=%u, iDownstreamDelay=%u, iDelayJiffies=%u, iStatus=%s\n",
-               delayJiffies, iDownstreamDelay, iDelayJiffies, kStatus[iStatus]);*/
+    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
+        iId, delayJiffies, delayJiffies / Jiffies::kPerMs,
+        iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
+        iDelayJiffies, iDelayJiffies / Jiffies::kPerMs,
+        kStatus[iStatus]);
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
     }
@@ -251,7 +273,8 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
     iDelayJiffies = delayJiffies;
-    //Log::Print("VariableDelay: delay=%u, adjustment=%d\n", iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kJiffiesPerMs);
+    LOG(kMedia, "VariableDelay: iId=%s, delay=%u, adjustment=%d\n",
+        iId, iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
     switch (iStatus)
     {
     case EStarting:
@@ -299,7 +322,10 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    return aMsg;
+    iStreamHandler = aMsg->StreamHandler();
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
@@ -343,9 +369,17 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
     return msg;
 }
 
+Msg* VariableDelay::ProcessMsg(MsgBitRate* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iWaitForAudioBeforeGeneratingSilence = false;
+    if (iWaitForAudioBeforeGeneratingSilence) {
+        iWaitForAudioBeforeGeneratingSilence = false;
+        return aMsg;
+    }
     return DoProcessAudioMsg(aMsg);
 }
 
@@ -369,7 +403,7 @@ Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
         }
     }
 
-    return DoProcessAudioMsg(aMsg);
+    return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
@@ -388,7 +422,7 @@ EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 {
     ASSERT(iStreamHandler != nullptr);
     EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
-    //Log::Print("VariableDelay::OkToPlay(%u) returned", aStreamId, canPlay);
+    //Log::Print("VariableDelay::OkToPlay(%u) iId=%s returned %u", iId, aStreamId, canPlay);
     return canPlay;
 }
 
@@ -408,10 +442,12 @@ TUint VariableDelay::TryStop(TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
+void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    HandleStarving();
+    if (aStarving) {
+        HandleStarving();
+    }
     if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }

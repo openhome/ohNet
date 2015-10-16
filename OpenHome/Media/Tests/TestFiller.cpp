@@ -54,7 +54,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     Supply iSupply;
     Semaphore& iTrackAddedSem;
@@ -90,6 +90,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -263,7 +264,7 @@ ProtocolStreamResult DummyUriStreamer::DoStream(Track& aTrack)
     iStreamId++;
     iTrackId = aTrack.Id();
     iSupply.OutputTrack(aTrack);
-    iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
+    iSupply.OutputStream(aTrack.Uri(), 1LL, 0, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
     return EProtocolStreamSuccess;
@@ -291,7 +292,7 @@ TUint DummyUriStreamer::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -417,6 +418,12 @@ Msg* DummySupply::ProcessMsg(MsgWait* aMsg)
 }
 
 Msg* DummySupply::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgBitRate* aMsg)
 {
     ASSERTS();
     return aMsg;

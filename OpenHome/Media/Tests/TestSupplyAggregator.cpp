@@ -20,7 +20,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 };
 
 class SuiteSupplyAggregator : public Suite, private IPipelineElementDownstream, private IMsgProcessor
@@ -57,6 +57,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -120,7 +121,7 @@ TUint DummyStreamHandler::TryStop(TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
-void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -213,7 +214,7 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         iSupply->OutputDelay(kDelayJiffies);
         break;
     case EMsgEncodedStream:
-        iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
+        iSupply->OutputStream(Brn(kUri), kTotalBytes, 0, kSeekable, kLive, iDummyStreamHandler, kStreamId);
         break;
     case EMsgMetaText:
         iSupply->OutputMetadata(Brn(kMetaData));
@@ -347,6 +348,12 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgWait* aMsg)
 }
 
 Msg* SuiteSupplyAggregator::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
+    return aMsg;
+}
+
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgBitRate* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
     return aMsg;

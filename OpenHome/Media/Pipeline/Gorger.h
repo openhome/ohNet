@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_GORGER
-#define HEADER_PIPELINE_GORGER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
@@ -30,7 +29,7 @@ public: // from IPipelineElementUpstream
 private:
     void PullerThread();
     void Enqueue(Msg* aMsg);
-    void SetGorging(TBool aGorging);
+    void SetGorging(TBool aGorging, const TChar* aId);
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
@@ -43,7 +42,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
@@ -63,4 +62,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_GORGER

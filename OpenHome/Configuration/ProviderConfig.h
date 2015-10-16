@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_CONFIG1
-#define HEADER_PROVIDER_CONFIG1
+#pragma once
 
 #include <Generated/DvAvOpenhomeOrgConfiguration1.h>
 #include <OpenHome/Av/ProviderFactory.h>
@@ -45,4 +44,3 @@ private:
 }  // namespace Configuration
 }  // namespace OpenHome
 
-#endif // HEADER_PROVIDER_CONFIG1

@@ -51,9 +51,12 @@ except:
     os._exit( -1 )
 radio2    = config.Get( 'tunein.user.o2' )
 radio4    = config.Get( 'tunein.user.o4' )
-plEnc     = config.Get( 'playlist.asset.enc-free' )
-plMix     = config.Get( 'playlist.asset.mixed-free' )
-server    = config.Get( 'mediaserver.asset' )
+# plEnc     = config.Get( 'playlist.asset.enc-free' )
+# plMix     = config.Get( 'playlist.asset.mixed-free' )
+# server    = config.Get( 'mediaserver.asset' )
+plEnc     = config.Get( 'playlist.kazoo.enc-free' )
+plMix     = config.Get( 'playlist.kazoo.mixed-free' )
+server    = config.Get( 'mediaserver.kazoo' )
 tidalId   = config.Get( 'tidal.id' )
 tidalUser = config.Get( 'tidal.user' )
 tidalPwd  = config.Get( 'tidal.password' )
@@ -72,7 +75,7 @@ tests = [
     [ 'TestPlaylistAddDelSoak',       'local',  server, plEnc,   100                                                                 ],
     [ 'TestLocalPlayTracks',          'local', 'none',  8,       'off',   'on'                                                       ],
     [ 'TestLocalPlayTracks',          'local', 'none',  'none',  'off',   'on',        'hls'                                         ],
-    [ 'TestUpnpMsPlayTracks',         'local', 'none',  8,       'off',   'on',        server,      plEnc                            ],
+    [ 'TestUpnpMsPlayTracks',         'local', 'none',  8,       'off',   'off',       server,      plEnc                            ],
     [ 'TestLocalDropout',             'local', 'local', 'local', 1800,    'multicast'                                                ],
     [ 'TestLocalDropout',             'local', 'local', 'local', 1800,    'unicast'                                                  ],
     [ 'TestUpnpMsDropout',            'local', 'none',  'none',  1800,    'multicast', server,      plEnc                            ],
@@ -98,11 +101,12 @@ tests = [
     [ 'TestAvTransportService',       'local', 'ALL'                                                                                 ],
     [ 'TestRenderingControlService',  'local'                                                                                        ],
     [ 'TestConnectionManagerService', 'local'                                                                                        ],
+    [ 'TestAvTransportPlayTracks',    'local', 'none',  'none',  'full',  10,          1,           'true'                           ],
     [ 'TestAvTransportPlayTracks',    'local', 'none',  server,  plMix,   8,           1,           'false'                          ],
 
     # Songcast
-    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',   12345,       'unicast'                                     ],
-    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',   12345,       'multicast'                                   ],
+    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',    0,          'unicast'                                     ],
+    [ 'TestSongcastPlayback',         'local', 'local', 'local', 'all',    0,          'multicast'                                   ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'stop',      'unicast'                        ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'stop',      'multicast'                      ],
     [ 'TestSongcastConnect',          'local', 'local', 'local', 'local', 'all',       'source',    'unicast'                        ],
@@ -120,7 +124,7 @@ tests = [
 
     # Misc
     [ 'TestAudioConx',                'local', 'all'                                                                                 ],
-    [ 'TestStandbyCycleSoak',         'local',  100                                                                                  ]
+    [ 'TestStandbyCycleSoak',         'local',  100                                                                                  ],
 
     # N/A to SoftPlayer(s)
     #    - AutoPlay

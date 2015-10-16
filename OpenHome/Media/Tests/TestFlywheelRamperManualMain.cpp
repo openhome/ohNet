@@ -79,13 +79,15 @@ public:
     virtual void BeginBlock() {};
     virtual void EndBlock() {};
 
-    virtual TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) {ASSERTS(); return(false);};
-    virtual TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) {ASSERTS(); return(false);};
-    virtual TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);// {ASSERTS(); return(false);};
+    virtual void ProcessFragment8(const Brx& aData, TUint aNumChannels) {ASSERTS();};
+    virtual void ProcessFragment16(const Brx& aData, TUint aNumChannels) {ASSERTS();};
+    virtual void ProcessFragment24(const Brx& aData, TUint aNumChannels) {ASSERTS();};
+    virtual void ProcessFragment32(const Brx& aData, TUint aNumChannels) {ASSERTS();};
     virtual void ProcessSample8(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
     virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
-
-    virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+    virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
+    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels);
+    virtual void Flush() {ASSERTS();};
 
 private:
     Bwx& iBuf;
@@ -711,14 +713,8 @@ PcmProcessorFwrMan::PcmProcessorFwrMan(Bwx& aBuf)
 
 }
 
-TBool PcmProcessorFwrMan::ProcessFragment24(const Brx& aData, TUint aNumChannels)
-{
-    ASSERT(aNumChannels==1);
-    iBuf.Append(aData);
-    return(true);
-}
 
-void PcmProcessorFwrMan::ProcessSample24(const TByte* aSample, TUint aNumChannels)
+void PcmProcessorFwrMan::ProcessSample32(const TByte* aSample, TUint aNumChannels)
 {
     ASSERT(aNumChannels==1);
     iBuf.Append(Brn(aSample, 4));

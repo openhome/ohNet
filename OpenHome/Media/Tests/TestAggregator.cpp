@@ -49,6 +49,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -287,7 +288,7 @@ Msg* SuiteAggregator::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false);
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgQuit:
@@ -405,6 +406,12 @@ Msg* SuiteAggregator::ProcessMsg(MsgDecodedStream* aMsg)
     TEST(aMsg->StreamInfo().NumChannels() == iNumChannels);
     iLastMsg = EMsgDecodedStream;
     return aMsg;
+}
+
+Msg* SuiteAggregator::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
 }
 
 Msg* SuiteAggregator::ProcessMsg(MsgAudioPcm* /*aMsg*/)

@@ -102,7 +102,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 Msg* Logger::ProcessMsg(MsgDrain* aMsg)
 {
     if (IsEnabled(EMsgDrain)) {
-        Log::Print("Pipeline (%s): changeInput\n", iId);
+        Log::Print("Pipeline (%s): drain\n", iId);
     }
     return aMsg;
 }
@@ -202,12 +202,20 @@ Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgBitRate* aMsg)
+{
+    if (IsEnabled(EMsgBitRate)) {
+        Log::Print("Pipeline (%s): bitRate {%u}\n", iId, aMsg->BitRate());
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (IsEnabled(EMsgAudioPcm) ||
         (IsEnabled(EMsgAudioRamped) && aMsg->Ramp().IsEnabled())) {
         iBuf.SetBytes(0);
-        iBuf.AppendPrintf("Pipeline (%s): audioPcm {jiffies: %u", iId, aMsg->Jiffies());
+        iBuf.AppendPrintf("Pipeline (%s): audioPcm {track offset: %llu, jiffies: %u", iId, aMsg->TrackOffset(), aMsg->Jiffies());
         LogRamp(aMsg->Ramp());
         iBuf.Append("}\n");
         Log::Print(iBuf);

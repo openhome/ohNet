@@ -45,6 +45,7 @@ private:
        ,EMsgFlush
        ,EMsgWait
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgQuit
@@ -75,6 +76,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -85,7 +87,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -148,7 +150,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
     switch (aType)
     {
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false);
         break;
     case EMsgTrack:
     {
@@ -161,7 +163,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, nullptr);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, iNextStreamId, false, true, nullptr);
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerSecond);
@@ -183,6 +185,9 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         break;
     case EMsgDecodedStream:
         msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, this);
+        break;
+    case EMsgBitRate:
+        msg = iMsgFactory->CreateMsgBitRate(123);
         break;
     case EMsgAudioPcm:
     {
@@ -219,7 +224,7 @@ void SuiteSampleRateValidator::MsgsPassThrough()
 {
     EMsgType types[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgEncodedStream, EMsgDelay,
                          EMsgMetaText, EMsgStreamInterrupted, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
-                         EMsgAudioPcm, EMsgSilence, EMsgQuit };
+                         EMsgBitRate, EMsgAudioPcm, EMsgSilence, EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     for (size_t i=0; i<numElems; i++) {
         PushMsg(types[i]);
@@ -389,6 +394,12 @@ Msg* SuiteSampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteSampleRateValidator::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuiteSampleRateValidator::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
@@ -424,7 +435,6 @@ TUint SuiteSampleRateValidator::PipelineDriverDelayJiffies(TUint aSampleRateFrom
 
 EStreamPlay SuiteSampleRateValidator::OkToPlay(TUint /*aStreamId*/)
 {
-    ASSERTS();
     return ePlayNo;
 }
 
@@ -439,7 +449,7 @@ TUint SuiteSampleRateValidator::TryStop(TUint /*aStreamId*/)
     return iExpectedFlushId;
 }
 
-void SuiteSampleRateValidator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteSampleRateValidator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
     ASSERTS();
 }

@@ -1,9 +1,15 @@
-#ifndef HEADER_PIPELINE_SEEKER
-#define HEADER_PIPELINE_SEEKER
+#pragma once
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Flusher.h>
+
+EXCEPTION(SeekAlreadyInProgress)
+EXCEPTION(SeekStreamInvalid)
+EXCEPTION(SeekStreamNotSeekable)
+EXCEPTION(SeekPosInvalid)
 
 namespace OpenHome {
 namespace Media {
@@ -25,7 +31,7 @@ class Seeker : public IPipelineElementUpstream, private IMsgProcessor, private I
 public:
     Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration);
     virtual ~Seeker();
-    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
+    void Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
@@ -41,6 +47,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -50,7 +57,6 @@ private: // from ISeekObserver
 private:
     void DoSeek();
     Msg* ProcessFlushable(Msg* aMsg);
-    void NewStream();
     void HandleSeekFail();
 private:
     enum EState
@@ -61,6 +67,7 @@ private:
        ,EFlushing
     };
 private:
+    Flusher iFlusher;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     ISeeker& iSeeker;
@@ -75,18 +82,19 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iSeekHandle;
     TUint iTargetFlushId;
-    TUint iTargetTrackId;
     BwsMode iMode;
     TUint iTrackId;
     TUint iStreamId;
+    TUint iTrackLengthSeconds;
     TBool iStreamIsSeekable;
     TUint64 iStreamPosJiffies;
     TUint64 iFlushEndJiffies;
     TUint iSeekConsecutiveFailureCount;
     MsgDecodedStream* iMsgStream;
+    TBool iSeekInNextStream;
+    TBool iDecodeDiscardUntilSeekPoint;
 };
 
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_SEEKER

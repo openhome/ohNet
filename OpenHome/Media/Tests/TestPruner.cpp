@@ -37,6 +37,7 @@ private:
        ,EMsgFlush
        ,EMsgWait
        ,EMsgDecodedStream
+       ,EMsgBitRate
        ,EMsgAudioPcm
        ,EMsgSilence
        ,EMsgPlayable
@@ -70,6 +71,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -139,7 +141,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgBitRate, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -323,6 +325,12 @@ Msg* SuitePruner::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuitePruner::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
+    return aMsg;
+}
+
 Msg* SuitePruner::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
@@ -365,7 +373,7 @@ Msg* SuitePruner::Pull()
     switch (msgType)
     {
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -379,7 +387,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgDelay(0);
     case EMsgEncodedStream:
     {
-        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, kStreamId, kSeekable, kLive, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, 0, kStreamId, kSeekable, kLive, nullptr);
     }
     case EMsgMetaText:
     {
@@ -392,9 +400,9 @@ Msg* SuitePruner::Pull()
     case EMsgWait:
         return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
-    {
         return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, nullptr);
-    }
+    case EMsgBitRate:
+        return iMsgFactory->CreateMsgBitRate(kBitRate + 1000);
     case EMsgAudioPcm:
     {
         static const TUint kDataBytes = 3 * 1024;

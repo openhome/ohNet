@@ -68,7 +68,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -82,6 +82,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -250,7 +251,7 @@ TUint SuiteRewinder::TryStop(TUint /*aStreamId*/)
     return ++iCurrentFlushId;
 }
 
-void SuiteRewinder::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
+void SuiteRewinder::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /*aStarving*/)
 {
 }
 
@@ -341,6 +342,12 @@ Msg* SuiteRewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
     return nullptr;
 }
 
+Msg* SuiteRewinder::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return nullptr;
+}
+
 Msg* SuiteRewinder::ProcessMsg(MsgAudioPcm* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
@@ -422,7 +429,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgDrain;
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iNextStreamId++, false, false, this);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, iNextStreamId++, false, false, this);
         iLastMsgType = EMsgEncodedStream;
         break;
     case EMsgAudioEncoded:

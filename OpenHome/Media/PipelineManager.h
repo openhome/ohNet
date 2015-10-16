@@ -1,5 +1,4 @@
-#ifndef HEADER_PIPELINE_MANAGER
-#define HEADER_PIPELINE_MANAGER
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
@@ -13,6 +12,9 @@ namespace OpenHome {
 namespace Av {
     class IInfoAggregator;
 }
+namespace Net {
+    class IShell;
+}
 namespace Media {
 class Pipeline;
 class PipelineInitParams;
@@ -21,6 +23,7 @@ class ProtocolManager;
 class ITrackObserver;
 class Filler;
 class IdManager;
+class IMimeTypeList;
 namespace Codec {
     class CodecBase;
 }
@@ -53,7 +56,7 @@ class PipelineManager : public IPipeline
                       , private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList, Net::IShell& aShell);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.
@@ -208,35 +211,28 @@ public:
      *
      * @param[in] aStreamId        Stream identifier.
      * @param[in] aSecondsAbsolute Number of seconds into the track to seek to.
-     *
-     * @return  true if the seek succeeded; false otherwise.
      */
-    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
+    void Seek(TUint aStreamId, TUint aSecondsAbsolute);
     /**
      * Move immediately to the next track from the current UriProvider (or Source).
      *
      * Ramps down, removes the rest of the current track then fetches the track that
      * logically follows it.  The caller is responsible for calling Play() to start
      * playing this new track.
-     *
-     * @return  true if a track is being fetched; false if no other track exists or
-     *          we were playing the last track in the UriProvider's list.
      */
-    TBool Next();
+    void Next();
     /**
      * Move immediately to the previous track from the current UriProvider (or Source).
      *
      * Ramps down, removes the rest of the current track then fetches the track that
      * logically precedes it.  The caller is responsible for calling Play() to start
      * playing this new track.
-     *
-     * @return  true if a track is being fetched; false if no other track exists or
-     *          we were playing the first track in the UriProvider's list.
      */
-    TBool Prev();
-    TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
+    void Prev();
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
+private:
+    void RemoveAllLocked();
 private: // from IPipeline
     Msg* Pull() override;
     void SetAnimator(IPipelineAnimator& aAnimator) override;
@@ -265,7 +261,6 @@ private:
     public:
         PrefetchObserver();
         ~PrefetchObserver();
-        void Quit();
         void SetTrack(TUint aTrackId);
         void Wait(TUint aTimeoutMs);
     private: // from IStreamPlayObserver
@@ -291,10 +286,9 @@ private:
     Semaphore iPipelineStoppedSem;
     BwsMode iMode;
     TUint iTrackId;
-    PrefetchObserver iPrefetchObserver;
+    PrefetchObserver* iPrefetchObserver;
 };
 
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_MANAGER

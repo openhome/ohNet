@@ -1,5 +1,4 @@
-#ifndef HEADER_INFO_PROVIDER
-#define HEADER_INFO_PROVIDER
+#pragma once
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
@@ -28,10 +27,10 @@ public:
     InfoAggregator(Net::Shell& aShell);
     ~InfoAggregator();
 private: // from IInfoAggregator
-    void Register(IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-private: // Net::IShellCommandHandler
-    void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
-    void DisplayHelp(IWriter& aResponse);
+    void Register(IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries) override;
+private: // from Net::IShellCommandHandler
+    void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) override;
+    void DisplayHelp(IWriter& aResponse) override;
 private:
     Net::Shell& iShell;
     std::vector<IInfoProvider*> iInfoProviders;
@@ -42,4 +41,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_INFO_PROVIDER

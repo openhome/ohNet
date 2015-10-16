@@ -1,5 +1,4 @@
-#ifndef HEADER_PROVIDER_TIME_1
-#define HEADER_PROVIDER_TIME_1
+#pragma once
 
 #include <Generated/DvAvOpenhomeOrgTime1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
@@ -32,4 +31,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_TIME_1

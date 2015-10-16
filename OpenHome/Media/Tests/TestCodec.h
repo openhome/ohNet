@@ -1,8 +1,8 @@
-#ifndef HEADER_TESTCODEC
-#define HEADER_TESTCODEC
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
+#include <OpenHome/Media/MimeTypeList.h>
 
 namespace OpenHome {
     class Uri;
@@ -13,7 +13,7 @@ namespace Media {
     class ProtocolManager;
 
 namespace Codec {
-    class Container;
+    class ContainerController;
     class CodecController;
 
 class AudioFileDescriptor
@@ -129,7 +129,7 @@ private:
     IMsgProcessor& iMsgProcessor;
 };
 
-class TestCodecMinimalPipeline : private IUrlBlockWriter
+class TestCodecMinimalPipeline : private IUrlBlockWriter, protected IMimeTypeList
 {
 private:
     static const TUint kEncodedAudioCount = 100;
@@ -146,8 +146,10 @@ protected:
     virtual void RegisterPlugins();
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
+private: // from IMimeTypeList
+    void Add(const TChar* aMimeType) override;
 protected:
-    Container* iContainer;
+    ContainerController* iContainer;
     CodecController* iController;
 private:
     TestCodecInfoAggregator* iInfoAggregator;
@@ -182,6 +184,7 @@ public: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -323,4 +326,3 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_TESTCODEC

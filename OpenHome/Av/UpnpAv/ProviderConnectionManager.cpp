@@ -13,9 +13,8 @@ static const Brn kInvalidConnectionIdMsg("Invalid connection reference");
 static const Brn kDirectionInput("Input");
 static const Brn kStatusUnknown("Unknown");
 
-ProviderConnectionManager::ProviderConnectionManager(Net::DvDevice& aDevice, const Brx& aSinkProtocolInfo)
+ProviderConnectionManager::ProviderConnectionManager(Net::DvDevice& aDevice)
     : DvProviderUpnpOrgConnectionManager1(aDevice)
-    , iSinkProtocolInfo(aSinkProtocolInfo)
 {
     EnablePropertySourceProtocolInfo();
     EnablePropertySinkProtocolInfo();
@@ -26,7 +25,6 @@ ProviderConnectionManager::ProviderConnectionManager(Net::DvDevice& aDevice, con
     EnableActionGetCurrentConnectionInfo();
 
     (void)SetPropertySourceProtocolInfo(Brx::Empty());
-    (void)SetPropertySinkProtocolInfo(iSinkProtocolInfo);
     Bws<Ascii::kMaxIntStringBytes> connectionId;
     Ascii::AppendDec(connectionId, kConnectionId);
     (void)SetPropertyCurrentConnectionIDs(connectionId);
@@ -34,6 +32,12 @@ ProviderConnectionManager::ProviderConnectionManager(Net::DvDevice& aDevice, con
 
 ProviderConnectionManager::~ProviderConnectionManager()
 {
+}
+
+void ProviderConnectionManager::NotifyProtocolInfo(const Brx& aProtocolInfo)
+{
+    iSinkProtocolInfo.Set(aProtocolInfo);
+    (void)SetPropertySinkProtocolInfo(iSinkProtocolInfo);
 }
 
 void ProviderConnectionManager::GetProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aSource, IDvInvocationResponseString& aSink)

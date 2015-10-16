@@ -1,5 +1,4 @@
-#ifndef HEADER_QOBUZ
-#define HEADER_QOBUZ
+#pragma once
 
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Types.h>
@@ -24,7 +23,7 @@ class Qobuz : public ICredentialConsumer
     friend class TestQobuz;
     static const TUint kReadBufferBytes = 4 * 1024;
     static const TUint kWriteBufferBytes = 1024;
-    static const TUint kConnectTimeoutMs = 5000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
+    static const TUint kConnectTimeoutMs = 10000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
     static const Brn kHost;
     static const TUint kPort = 80;
     static const TUint kMaxUsernameBytes = 128;
@@ -83,4 +82,3 @@ private:
 };  // namespace OpenHome
 
 
-#endif // HEADER_QOBUZ

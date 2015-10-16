@@ -43,6 +43,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
@@ -236,12 +237,18 @@ Msg* SuiteMuter::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteMuter::ProcessMsg(MsgBitRate* /*aMsg*/)
+{
+    ASSERTS();
+    return nullptr;
+}
+
 Msg* SuiteMuter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
-    ProcessorPcmBufPacked pcmProcessor;
+    ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
     Brn buf(pcmProcessor.Buf());
     ASSERT(buf.Bytes() >= 6);
@@ -337,10 +344,9 @@ Msg* SuiteMuter::CreateAudio()
 
 void SuiteMuter::TestMsgsPassWhenRunning()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, nullptr, false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
@@ -351,7 +357,6 @@ void SuiteMuter::TestMsgsPassWhenRunning()
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDrain);
-    PullNext(EMsgDelay);
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
     PullNext(EMsgSilence);

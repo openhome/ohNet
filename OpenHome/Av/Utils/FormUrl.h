@@ -1,5 +1,4 @@
-#ifndef HEADER_FORM_URL
-#define HEADER_FORM_URL
+#pragma once
 
 #include <OpenHome/Buffer.h>
 
@@ -16,4 +15,3 @@ public:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_FORM_URL

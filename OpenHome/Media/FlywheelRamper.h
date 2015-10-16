@@ -1,5 +1,4 @@
-#ifndef HEADER_FLYWHEEL_RAMPER
-#define HEADER_FLYWHEEL_RAMPER
+#pragma once
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
@@ -134,4 +133,3 @@ private:
 } // OpenHome
 
 
-#endif // HEADER_FLYWHEEL_RAMPER

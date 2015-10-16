@@ -1,5 +1,4 @@
-#ifndef HEADER_SONGCAST_SENDER
-#define HEADER_SONGCAST_SENDER
+#pragma once
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Types.h>
@@ -63,6 +62,7 @@ private: // from Media::IMsgProcessor
     Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgBitRate* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgSilence* aMsg) override;
     Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
@@ -76,13 +76,16 @@ private:
     void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
 private: // from IPcmProcessor
     void BeginBlock() override;
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels) override;
     void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
     void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
+    void Flush() override;
 private:
     class PlayableCreator : private Media::IMsgProcessor
     {
@@ -102,6 +105,7 @@ private:
         Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg) override;
+        Media::Msg* ProcessMsg(Media::MsgBitRate* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgSilence* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
@@ -134,4 +138,3 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_SONGCAST_SENDER
