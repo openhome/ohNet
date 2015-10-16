@@ -10,8 +10,15 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
-const Brn Source::kSourceNameKeyPrefix("Source.");
-const Brn Source::kSourceNameKeySuffix(".Name");
+const Brn Source::kKeySourceNamePrefix("Source.");
+const Brn Source::kKeySourceNameSuffix(".Name");
+
+void Source::GetSourceNameKey(const Brx& aName, Bwx& aBuf)
+{
+    aBuf.Replace(kKeySourceNamePrefix);
+    aBuf.Append(aName);
+    aBuf.Append(kKeySourceNameSuffix);
+}
 
 const Brx& Source::SystemName() const
 {
@@ -81,17 +88,16 @@ void Source::DoActivate()
 
 void Source::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint aId)
 {
-    const TUint maxKeyBytes = kSourceNameKeyPrefix.Bytes() + kMaxSourceIndexDigits + kSourceNameKeySuffix.Bytes();
     iProduct = &aProduct;
-    Bwh key(maxKeyBytes);
-    key.Replace(kSourceNameKeyPrefix);
-    Ascii::AppendDec(key, aId);
-    key.Append(kSourceNameKeySuffix);
+    Bws<kKeySourceNameMaxBytes> key;
+    Bws<Ascii::kMaxUintStringBytes> id;
+    Ascii::AppendDec(id, aId);
+    GetSourceNameKey(id, key);
     if (aConfigManagerReader.HasText(key)) {
         iConfigName = &aConfigManagerReader.GetText(key);
         iConfigNameCreated = false;
     } else {
-        iConfigName = new ConfigText(aConfigInit, key, maxKeyBytes, iName);
+        iConfigName = new ConfigText(aConfigInit, key, ISource::kMaxSourceNameBytes, iName);
         iConfigNameCreated = true;
     }
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &Source::NameChanged));

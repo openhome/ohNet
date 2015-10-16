@@ -44,6 +44,21 @@ public:
     virtual void SourceXmlChanged() = 0;
 };
 
+class ConfigSourceNameObserver
+{
+public:
+    ConfigSourceNameObserver(Configuration::IConfigManager& aConfigReader, const Brx& aSourceName);
+    ~ConfigSourceNameObserver();
+    void Name(Bwx& aBuf) const;
+private:
+    void SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+private:
+    Configuration::ConfigText* iConfigSourceName;
+    TUint iListenerId;
+    Bws<ISource::kMaxSourceNameBytes> iName;
+    mutable Mutex iLock;
+};
+
 class ConfigStartupSource : public Configuration::IConfigChoiceMapper, private INonCopyable
 {
 public:
@@ -51,13 +66,14 @@ public:
     static const Brn kNoneName;
     static const TUint kNone = UINT_MAX;
 public:
-    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const Product& aProduct);
+    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames);
     ~ConfigStartupSource();
+    void DeregisterObservers();
 public: // from StartupSourceMapper
     void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter) override;
 private:
-    const Product& iProduct;
-    Configuration::ConfigChoice* iChoice;
+    Configuration::ConfigChoice* iSourceStartup;
+    std::vector<ConfigSourceNameObserver*> iObservers;
 };
 
 class Product : private IProduct, private Media::IInfoProvider, private INonCopyable

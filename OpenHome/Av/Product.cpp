@@ -16,50 +16,81 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
+// ConfigSourceNameObserver
+
+ConfigSourceNameObserver::ConfigSourceNameObserver(IConfigManager& aConfigReader, const Brx& aSourceName)
+    : iLock("CSNO")
+{
+    Bws<Source::kKeySourceNameMaxBytes> key;
+    Source::GetSourceNameKey(aSourceName, key);
+    iConfigSourceName = &aConfigReader.GetText(key);
+    iListenerId = iConfigSourceName->Subscribe(MakeFunctorConfigText(*this, &ConfigSourceNameObserver::SourceNameChanged));
+}
+
+ConfigSourceNameObserver::~ConfigSourceNameObserver()
+{
+    iConfigSourceName->Unsubscribe(iListenerId);
+}
+
+void ConfigSourceNameObserver::Name(Bwx& aBuf) const
+{
+    AutoMutex a(iLock);
+    aBuf.Replace(iName);
+}
+
+void ConfigSourceNameObserver::SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
+{
+    AutoMutex a(iLock);
+    ASSERT(aKvp.Key() == iConfigSourceName->Key());
+    iName.Replace(aKvp.Value());
+}
+
+
 // ConfigStartupSource
 
 const Brn ConfigStartupSource::kKeySource("Source.Startup");
 const Brn ConfigStartupSource::kNoneName("Default");
 
-ConfigStartupSource::ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const Product& aProduct)
-    : iProduct(aProduct)
+ConfigStartupSource::ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames)
 {
-    const TUint sourceCount = iProduct.SourceCount();
     std::vector<TUint> choices;
 
     // Add dummy source, which must be first in list and represents default/none startup source.
     choices.push_back(kNone);
 
     // Push real sources on, starting at index 0, which maps directly to product sources.
-    for (TUint i=0; i<sourceCount; i++) {
+    for (TUint i=0; i<aSystemNames.size(); i++) {
         choices.push_back(i);
+        iObservers.push_back(new ConfigSourceNameObserver(aConfigReader, *aSystemNames[i]));
     }
 
-    iChoice = new ConfigChoice(aConfigInit, kKeySource, choices, kNone, *this);
+    iSourceStartup = new ConfigChoice(aConfigInit, kKeySource, choices, kNone, *this);
 }
 
 ConfigStartupSource::~ConfigStartupSource()
 {
-    delete iChoice;
+    delete iSourceStartup;
+}
+
+void ConfigStartupSource::DeregisterObservers()
+{
+    for (auto observer : iObservers) {
+        delete observer;
+    }
+    iObservers.clear();
 }
 
 void ConfigStartupSource::Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter)
 {
-    const std::vector<TUint>& choices = iChoice->Choices();
-    Bws<ISource::kMaxSystemNameBytes> systemName;
+    const std::vector<TUint>& choices = iSourceStartup->Choices();
     Bws<ISource::kMaxSourceNameBytes> sourceName;
-    Bws<ISource::kMaxSourceTypeBytes> sourceType;
-    TBool visible;
 
     for (auto choice : choices) {
         if (choice == kNone) {
             aMappingWriter.Write(aWriter, choice, kNoneName);
         }
         else {
-            systemName.SetBytes(0);
-            sourceName.SetBytes(0);
-            sourceType.SetBytes(0);
-            iProduct.GetSourceDetails(choice, systemName, sourceType, sourceName, visible);
+            iObservers[choice]->Name(sourceName);
             aMappingWriter.Write(aWriter, choice, sourceName);
         }
     }
