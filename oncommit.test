@@ -8,8 +8,6 @@ suiteRunner = MakeSuiteRunner(context)
 
 # testharness honours a '#' within this string :)
 tests = '''
-<<<<<<< HEAD
-=======
     TestStore
     TestMsg
     TestSupply
@@ -57,7 +55,6 @@ tests = '''
     TestRaop
     TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
->>>>>>> ed7235aa5dd2a888a502c0bf2079f4fbd99748d5
     TestFlywheelRamper
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

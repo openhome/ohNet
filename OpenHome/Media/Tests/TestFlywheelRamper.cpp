@@ -746,6 +746,23 @@ void SuiteFlywheelRamper::Test6() // Burg Method testing
 
 void SuiteFlywheelRamper::Test7() // Burg Method profiling
 {
+
+    Log::Print("circular buffer profiling: \n");
+
+    std::vector<TInt32> v(2, 0);
+
+    TUint startTime0 = Os::TimeInMs(iEnv.OsCtx());
+    for(TUint i=0; i<(1000*8*1000); i++)
+    {
+        for (TInt j=2; j>0; j--)
+        {
+            v[j] = v[j-1];
+        }
+    }
+    TUint endTime0 = Os::TimeInMs(iEnv.OsCtx());
+    Log::Print("circular buffer 1000x1000 32 bit samples = %dms  \n", endTime0-startTime0);
+
+
     Log::Print("Buffer profiling: \n");
     Bws<4> sample;
 
