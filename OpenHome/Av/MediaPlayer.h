@@ -56,6 +56,7 @@ class VolumeConfig;
 class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
+class ConfigStartupSource;
 
 class IMediaPlayer
 {
@@ -129,6 +130,7 @@ private:
     Av::Product* iProduct;
     VolumeConfig* iVolumeConfig;
     Av::VolumeManager* iVolumeManager;
+    ConfigStartupSource* iConfigStartupSource;
     Credentials* iCredentials;
     Media::MimeTypeList iMimeTypes;
     ProviderTime* iProviderTime;

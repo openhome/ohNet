@@ -43,6 +43,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iReadWriteStore(aReadWriteStore)
     , iConfigProductRoom(nullptr)
     , iConfigProductName(nullptr)
+    , iConfigStartupSource(nullptr)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
@@ -72,6 +73,7 @@ MediaPlayer::~MediaPlayer()
     ASSERT(!iDevice.Enabled());
     delete iPipeline;
     delete iCredentials;
+    delete iConfigStartupSource;
     delete iProduct;
     delete iVolumeManager;
     delete iVolumeConfig;
@@ -116,11 +118,15 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void MediaPlayer::Start()
 {
+    // All sources must have been added to Product by time this is called.
+    // So, can now initialise startup source ConfigVal.
+    iConfigStartupSource = new ConfigStartupSource(*iConfigManager, *iProduct);
+
+    iConfigManager->Open();
     iPipeline->Start();
     iCredentials->Start();
     iMimeTypes.Start();
     iProduct->Start();
-    iConfigManager->Open();
 }
 
 Environment& MediaPlayer::Env()

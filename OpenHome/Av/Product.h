@@ -12,6 +12,7 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/Source.h>
 
+#include <climits>
 #include <vector>
 
 EXCEPTION(AvSourceNotFound);
@@ -43,50 +44,20 @@ public:
     virtual void SourceXmlChanged() = 0;
 };
 
-class DummySourceDefault : public ISource
-{
-private:
-    static const Brn kName;
-public: // from ISource
-    const Brx& SystemName() const override;
-    const Brx& Type() const override;
-    void Name(Bwx& aBuf) const override;
-    TBool IsVisible() const override;
-    void Activate() override;
-    void Deactivate() override;
-    void SetVisible(TBool aVisible) override;
-    void PipelineStopped() override;
-    void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
-};
-
-class StartupSourceMapper : public Configuration::IConfigChoiceMapper
-{
-private:
-    typedef std::pair<TUint, ISource*> ChoiceSourcePair;
-public:
-    void AddSource(TUint aChoice, ISource& aSource);
-public: // from StartupSourceMapper
-    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter) override;
-private:
-    std::vector<ChoiceSourcePair> iSources;
-};
-
-class ConfigStartupSource
+class ConfigStartupSource : public Configuration::IConfigChoiceMapper, private INonCopyable
 {
 public:
     static const Brn kKeySource;
-    static const TUint kDefault = 0;
+    static const Brn kNoneName;
+    static const TUint kNone = UINT_MAX;
 public:
-    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const std::vector<ISource*> aSources);
+    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const Product& aProduct);
     ~ConfigStartupSource();
-    TUint Subscribe(Configuration::ConfigChoice::FunctorConfigChoice aFunctor);
-    void Unsubscribe(TUint aId);
-    TUint SourceIndex(TUint aChoiceId) const;
+public: // from StartupSourceMapper
+    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter) override;
 private:
-    DummySourceDefault iDummySource;
-    StartupSourceMapper iMapper;
+    const Product& iProduct;
     Configuration::ConfigChoice* iChoice;
-    TUint iSourceCount;
 };
 
 class Product : private IProduct, private Media::IInfoProvider, private INonCopyable
@@ -121,7 +92,7 @@ public:
     void GetSourceXml(Bwx& aXml);
     void SetCurrentSource(TUint aIndex);
     void SetCurrentSource(const Brx& aName);
-    void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible);
+    void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
     TUint SourceXmlChangeCount();
 private:
@@ -157,7 +128,7 @@ private:
     TUint iListenerIdProductRoom;
     Bws<kMaxNameBytes> iProductName;
     TUint iListenerIdProductName;
-    ConfigStartupSource* iConfigStartupSource;
+    Configuration::ConfigChoice* iConfigStartupSource;
     TUint iListenerIdStartupSource;
     TUint iStartupSourceVal;
 };

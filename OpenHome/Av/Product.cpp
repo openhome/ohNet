@@ -16,99 +16,26 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
-// DummySourceDefault
-
-const Brn DummySourceDefault::kName("Default");
-
-const Brx& DummySourceDefault::SystemName() const
-{
-    ASSERTS();
-    return Brx::Empty();
-}
-
-const Brx& DummySourceDefault::Type() const
-{
-    ASSERTS();
-    return Brx::Empty();
-}
-
-void DummySourceDefault::Name(Bwx& aBuf) const
-{
-    aBuf.Replace(kName);
-}
-
-TBool DummySourceDefault::IsVisible() const
-{
-    ASSERTS();
-    return false;
-}
-
-void DummySourceDefault::Activate()
-{
-    ASSERTS();
-}
-
-void DummySourceDefault::Deactivate()
-{
-    ASSERTS();
-}
-
-void DummySourceDefault::SetVisible(TBool /*aVisible*/)
-{
-    ASSERTS();
-}
-
-void DummySourceDefault::PipelineStopped()
-{
-    ASSERTS();
-}
-
-void DummySourceDefault::Initialise(IProduct& /*aProduct*/, Configuration::IConfigInitialiser& /*aConfigInit*/, Configuration::IConfigManager& /*aConfigManagerReader*/, TUint /*aId*/)
-{
-    ASSERTS();
-}
-
-
-// StartupSourceMapper
-
-void StartupSourceMapper::AddSource(TUint aChoice, ISource& aSource)
-{
-    iSources.push_back(ChoiceSourcePair(aChoice, &aSource));
-}
-
-void StartupSourceMapper::Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter)
-{
-    for (auto pair : iSources) {
-        Bws<ISource::kMaxSourceNameBytes> name;
-        pair.second->Name(name);
-        aMappingWriter.Write(aWriter, pair.first, name);
-    }
-    aMappingWriter.WriteComplete(aWriter);
-}
-
-
 // ConfigStartupSource
 
 const Brn ConfigStartupSource::kKeySource("Source.Startup");
+const Brn ConfigStartupSource::kNoneName("Default");
 
-ConfigStartupSource::ConfigStartupSource(IConfigInitialiser& aConfigInit, const std::vector<ISource*> aSources)
-    : iSourceCount(aSources.size())
+ConfigStartupSource::ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const Product& aProduct)
+    : iProduct(aProduct)
 {
+    const TUint sourceCount = iProduct.SourceCount();
     std::vector<TUint> choices;
 
     // Add dummy source, which must be first in list and represents default/none startup source.
-    TUint choice = kDefault;
-    choices.push_back(choice);
-    iMapper.AddSource(choice, iDummySource);
-    choice++;
+    choices.push_back(kNone);
 
-    for (auto s : aSources) {
-        choices.push_back(choice);
-        iMapper.AddSource(choice, *s);
-        choice++;
+    // Push real sources on, starting at index 0, which maps directly to product sources.
+    for (TUint i=0; i<sourceCount; i++) {
+        choices.push_back(i);
     }
 
-    iChoice = new ConfigChoice(aConfigInit, kKeySource, choices, kDefault, iMapper);
+    iChoice = new ConfigChoice(aConfigInit, kKeySource, choices, kNone, *this);
 }
 
 ConfigStartupSource::~ConfigStartupSource()
@@ -116,23 +43,31 @@ ConfigStartupSource::~ConfigStartupSource()
     delete iChoice;
 }
 
-TUint ConfigStartupSource::Subscribe(Configuration::ConfigChoice::FunctorConfigChoice aFunctor)
+void ConfigStartupSource::Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter)
 {
-    return iChoice->Subscribe(aFunctor);
+    const std::vector<TUint>& choices = iChoice->Choices();
+    Bws<ISource::kMaxSystemNameBytes> systemName;
+    Bws<ISource::kMaxSourceNameBytes> sourceName;
+    Bws<ISource::kMaxSourceTypeBytes> sourceType;
+    TBool visible;
+
+    for (auto choice : choices) {
+        if (choice == kNone) {
+            aMappingWriter.Write(aWriter, choice, kNoneName);
+        }
+        else {
+            systemName.SetBytes(0);
+            sourceName.SetBytes(0);
+            sourceType.SetBytes(0);
+            iProduct.GetSourceDetails(choice, systemName, sourceType, sourceName, visible);
+            aMappingWriter.Write(aWriter, choice, sourceName);
+        }
+    }
+    aMappingWriter.WriteComplete(aWriter);
 }
 
-void ConfigStartupSource::Unsubscribe(TUint aId)
-{
-    iChoice->Unsubscribe(aId);
-}
 
-TUint ConfigStartupSource::SourceIndex(TUint aChoiceId) const
-{
-    // Default/none source occupies position 0, so real source indexes are shifted up by 1.
-    ASSERT(aChoiceId <= iSourceCount);
-    return aChoiceId-1;
-}
-
+// Product
 
 const Brn Product::kKeyLastSelectedSource("Last.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
@@ -153,7 +88,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iSourceXmlChangeCount(0)
     , iConfigStartupSource(nullptr)
     , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
-    , iStartupSourceVal(ConfigStartupSource::kDefault)
+    , iStartupSourceVal(ConfigStartupSource::kNone)
 {
     iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
     iConfigProductRoom = &aConfigReader.GetText(kConfigIdRoomBase);
@@ -166,7 +101,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
 Product::~Product()
 {
     iConfigStartupSource->Unsubscribe(iListenerIdStartupSource);
-    delete iConfigStartupSource;
+    iConfigStartupSource = nullptr; // Didn't have ownership.
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         delete iSources[i];
     }
@@ -185,16 +120,15 @@ void Product::AddObserver(IProductObserver& aObserver)
 void Product::Start()
 {
     // All sources must have been registered; construct startup source config val.
-    iConfigStartupSource = new ConfigStartupSource(iConfigInit, iSources);
+    iConfigStartupSource = &iConfigReader.GetChoice(ConfigStartupSource::kKeySource);
     iListenerIdStartupSource = iConfigStartupSource->Subscribe(MakeFunctorConfigChoice(*this, &Product::StartupSourceChanged));
 
     iLock.Wait();
     const TUint startupSourceVal = iStartupSourceVal;
     iLock.Signal();
 
-    if (startupSourceVal != ConfigStartupSource::kDefault) {
-        const TUint idx = iConfigStartupSource->SourceIndex(startupSourceVal);
-        SetCurrentSource(idx);
+    if (startupSourceVal != ConfigStartupSource::kNone) {
+        SetCurrentSource(startupSourceVal);
     }
     else { // No startup source selected; use last selected source.
         Bws<ISource::kMaxSystemNameBytes> startupSource;
@@ -291,9 +225,8 @@ void Product::SetStandby(TBool aStandby)
 
     if (changed) {
         // Activate startup source (if one set) if coming out of standby.
-        if (!aStandby && startupSourceVal != ConfigStartupSource::kDefault) {
-            const TUint idx = iConfigStartupSource->SourceIndex(startupSourceVal);
-            SetCurrentSource(idx);
+        if (!aStandby && startupSourceVal != ConfigStartupSource::kNone) {
+            SetCurrentSource(startupSourceVal);
         }
 
         for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
@@ -423,7 +356,7 @@ void Product::SetCurrentSource(const Brx& aName)
     THROW(AvSourceNotFound);
 }
 
-void Product::GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible)
+void Product::GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const
 {
     AutoMutex a(iLock);
     if (aIndex >= (TUint)iSources.size()) {
