@@ -208,7 +208,6 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesInCount, TUint 
             {
                 TInt32 prod = ( t3 * aOutput[n-j-1] );  // 4.12 + 4.12
                 aH[j] = (TInt16)(prod>>12); // 8.24 >  4.12
-
                 aH[j] += aOutput[j];
             }
 

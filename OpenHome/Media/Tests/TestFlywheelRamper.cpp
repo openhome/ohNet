@@ -767,6 +767,7 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
     Log::Print("circular buffer 1000x1000 32 bit samples = %dms  \n", endTime0-startTime0);
 */
 
+/*
     Log::Print("Buffer profiling: \n");
     Bws<4> sample;
 
@@ -828,11 +829,13 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
     Log::Print("processed = %d 32bit samples (%d)\n", rampOutput.Bytes()/4, rampByteCount/4);
 
     delete ramper;
+*/
 }
 
 
 void SuiteFlywheelRamper::Test8() // FeedbackModel profiling
 {
+/*
     const TUint kTestCount = 192*8*100;  // 8 channels at 192khz 100 times
 
     TUint aCount = 1;  // output samples = 768 bytes
@@ -904,7 +907,7 @@ void SuiteFlywheelRamper::Test8() // FeedbackModel profiling
 
     TUint endTime = Os::TimeInMs(iEnv.OsCtx());
     Log::Print("Feedback Process: time taken = %4dms  \n", endTime-startTime);
-
+*/
 }
 
 void SuiteFlywheelRamper::Setup()
