@@ -186,7 +186,7 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesInCount, TUint 
         TInt16 t3 = 0;
         if (sn!=0)
         {
-            t3 = (sn)/(sd>>12);  // 4.12
+            t3 = (TInt16)((sn)/(sd>>12)&0x0000ffff);  // 4.12
         }
 
 

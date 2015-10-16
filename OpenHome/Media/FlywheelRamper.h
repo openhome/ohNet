@@ -26,7 +26,7 @@ class FeedbackModel;
 // Ramp audio is 32bit and written out in big endian format
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-class FlywheelRamper
+class FlywheelRamper : public INonCopyable
 {
     friend class PcmProcessorFwr;
 
@@ -67,7 +67,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-class FlywheelRamperManager
+class FlywheelRamperManager : public INonCopyable
 {
 public:
     FlywheelRamperManager(OpenHome::Environment& aEnv, IPcmProcessor& aOutput, TUint aChannelCount, TUint aGenJiffies, TUint aRampJiffies);

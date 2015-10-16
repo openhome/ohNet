@@ -70,7 +70,7 @@ private:
 
 //////////////////////////////////////////////////////////////
 
-class PcmProcessorFwrMan: public IPcmProcessor
+class PcmProcessorFwrMan: public IPcmProcessor, public INonCopyable
 {
 public:
     PcmProcessorFwrMan(Bwx& aBuf);
@@ -79,13 +79,13 @@ public:
     virtual void BeginBlock() {};
     virtual void EndBlock() {};
 
-    virtual void ProcessFragment8(const Brx& aData, TUint aNumChannels) {ASSERTS();};
-    virtual void ProcessFragment16(const Brx& aData, TUint aNumChannels) {ASSERTS();};
-    virtual void ProcessFragment24(const Brx& aData, TUint aNumChannels) {ASSERTS();};
-    virtual void ProcessFragment32(const Brx& aData, TUint aNumChannels) {ASSERTS();};
-    virtual void ProcessSample8(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
-    virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
-    virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
+    virtual void ProcessFragment8(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessFragment16(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessSample8(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessSample16(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessSample24(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels);
     virtual void Flush() {ASSERTS();};
 
