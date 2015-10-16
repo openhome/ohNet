@@ -30,6 +30,15 @@ FlywheelRamperManager::FlywheelRamperManager(OpenHome::Environment& aEnv, IPcmPr
     }
 }
 
+
+FlywheelRamperManager::~FlywheelRamperManager()
+{
+    for(TUint i=0; i<iChannelCount; i++)
+    {
+        delete iRampers[i];
+    }
+}
+
 void FlywheelRamperManager::Ramp(const Brx& aSamples, TUint aSampleRate)
 {
     TUint startTime = Os::TimeInMs(iEnv.OsCtx());
@@ -107,6 +116,7 @@ FlywheelRamper::~FlywheelRamper()
     free(iBurgH);
     free(iBurgPer);
     free(iBurgPef);
+    delete iFeedback;
 }
 
 

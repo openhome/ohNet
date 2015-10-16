@@ -115,7 +115,7 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test5));
 */
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test6)); // Burg Method testing
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8)); // Feedback profiling
 }
 
@@ -179,6 +179,8 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
         Log::Print(" actual=%lx   expected=%lx  i=%d\n", Int32(samplesOut, i*4), expectedSamplesOut[i], i);
     }
 
+    delete feedback;
+    free(coeffs);
 }
 
 void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
@@ -330,6 +332,7 @@ void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
     delete feedback;
 
 
+    free(coeffs);
 }
 
 
@@ -747,6 +750,7 @@ void SuiteFlywheelRamper::Test6() // Burg Method testing
 void SuiteFlywheelRamper::Test7() // Burg Method profiling
 {
 
+/*
     Log::Print("circular buffer profiling: \n");
 
     std::vector<TInt32> v(2, 0);
@@ -761,7 +765,7 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
     }
     TUint endTime0 = Os::TimeInMs(iEnv.OsCtx());
     Log::Print("circular buffer 1000x1000 32 bit samples = %dms  \n", endTime0-startTime0);
-
+*/
 
     Log::Print("Buffer profiling: \n");
     Bws<4> sample;
@@ -823,7 +827,7 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
 
     Log::Print("processed = %d 32bit samples (%d)\n", rampOutput.Bytes()/4, rampByteCount/4);
 
-
+    delete ramper;
 }
 
 

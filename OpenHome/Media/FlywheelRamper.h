@@ -71,6 +71,8 @@ class FlywheelRamperManager : public INonCopyable
 {
 public:
     FlywheelRamperManager(OpenHome::Environment& aEnv, IPcmProcessor& aOutput, TUint aChannelCount, TUint aGenJiffies, TUint aRampJiffies);
+    ~FlywheelRamperManager();
+
     void Ramp(const Brx& aSamples, TUint aSampleRate);
 
 private:
@@ -120,7 +122,7 @@ private:
     TUint iStateCount;
     std::vector<TInt32> iSamples;
     TUint iDataScaleBitCount;
-    TUint iScaleShiftForSum;
+    //TUint iScaleShiftForSum;
     TUint iScaleShiftForProduct;
     TInt iScaleShiftForOutput;
 };
