@@ -868,11 +868,6 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMuteManager',
             install_path=None)
-    #bld.program(
-    #        source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='TestVolumeManager',
-    #        install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
