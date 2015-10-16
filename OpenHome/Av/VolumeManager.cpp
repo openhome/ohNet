@@ -406,8 +406,8 @@ TBool MuteReporter::Report(TBool aMuted)
 
 // VolumeConfig
 
-const Brn VolumeConfig::kKeyStartupVolume("Startup.Volume");
-const Brn VolumeConfig::kKeyStartupMute("Startup.Mute");
+const Brn VolumeConfig::kKeyStartupVolume("Last.Volume");
+const Brn VolumeConfig::kKeyStartupMute("Last.Mute");
 const Brn VolumeConfig::kKeyStartupValue("Volume.StartupValue");
 const Brn VolumeConfig::kKeyStartupEnabled("Volume.StartupEnabled");
 const Brn VolumeConfig::kKeyLimit("Volume.Limit");
