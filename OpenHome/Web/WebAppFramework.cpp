@@ -1067,9 +1067,9 @@ void HttpSession::Post()
             iResponseEnded = true;
         }
         catch (InvalidAppPrefix&) {
-            // FIXME - what if someone just inputs a bad prefix by accident?
-            // Return a 404 if that is the case?
-            ASSERTS(); // programmer error/misuse by client
+            // Programmer error/misuse by client.
+            // Long-polling can only be initiated from a page served up by this framework (which implies that it must have a valid app prefix!).
+            ASSERTS();
         }
         catch (TabAllocatorFull&) { // FIXME - do something to distinguish between this (an IWebApp having all tabs allocated) vs TabManagerFull (the WebAppFramework has had its available tabs exhausted).
             Error(HttpStatus::kServiceUnavailable);
