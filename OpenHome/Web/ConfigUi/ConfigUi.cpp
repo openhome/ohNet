@@ -9,6 +9,7 @@
 #include <OpenHome/Av/Utils/Json.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 #include <limits>
 
@@ -1064,7 +1065,7 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, const std::ve
     }
 
     JsonKvpVector emptyJsonVector;
-    AddChoice(Brn("Source.Startup"), emptyJsonVector);
+    AddChoice(ConfigStartupSource::kKeySource, emptyJsonVector);
 }
 
 // ConfigAppMediaPlayer
@@ -1076,14 +1077,14 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, const
 
     AddNumConditional(Brn("Sender.Channel"), emptyJsonVector);
     AddNumConditional(Brn("Sender.Preset"), emptyJsonVector);
-    AddNumConditional(Brn("Volume.Balance"), emptyJsonVector);
-    AddNumConditional(Brn("Volume.Limit"), emptyJsonVector);
-    AddNumConditional(Brn("Volume.Startup"), emptyJsonVector);
+    AddNumConditional(VolumeConfig::kKeyBalance, emptyJsonVector);
+    AddNumConditional(VolumeConfig::kKeyLimit, emptyJsonVector);
+    AddNumConditional(VolumeConfig::kKeyStartupValue, emptyJsonVector);
 
     AddChoiceConditional(Brn("Sender.Enabled"), emptyJsonVector);
     AddChoiceConditional(Brn("Sender.Mode"), emptyJsonVector);
     AddChoiceConditional(Brn("Source.NetAux.Auto"), emptyJsonVector);
-    AddChoiceConditional(Brn("Volume.Startup.Enabled"), emptyJsonVector);
+    AddChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled, emptyJsonVector);
     AddChoiceConditional(Brn("qobuz.com.SoundQuality"), emptyJsonVector);
     AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
 

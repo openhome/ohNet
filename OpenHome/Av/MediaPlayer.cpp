@@ -150,6 +150,8 @@ void MediaPlayer::Start()
         delete source;
     }
 
+
+
     iConfigManager->Open();
     iPipeline->Start();
     iCredentials->Start();
