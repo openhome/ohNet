@@ -74,7 +74,7 @@ private:
 class ConfigStartupSource
 {
 public:
-    static const Brn kKey;
+    static const Brn kKeySource;
     static const TUint kDefault = 0;
 public:
     ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, const std::vector<ISource*> aSources);
@@ -92,7 +92,7 @@ private:
 class Product : private IProduct, private Media::IInfoProvider, private INonCopyable
 {
 private:
-    static const Brn kStartupSourceBase;
+    static const Brn kKeyLastSelectedSource;
     static const TUint kMaxAttributeBytes = 1024;
 public:
     static const Brn kConfigIdRoomBase;
@@ -148,7 +148,7 @@ private:
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
     TBool iStandby;
-    StoreText* iStartupSource;  // FIXME - rename to iLastSelectedSource
+    StoreText* iLastSelectedSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
     Configuration::ConfigText* iConfigProductRoom;

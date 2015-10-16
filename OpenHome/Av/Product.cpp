@@ -79,7 +79,6 @@ void StartupSourceMapper::AddSource(TUint aChoice, ISource& aSource)
 void StartupSourceMapper::Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter)
 {
     for (auto pair : iSources) {
-        // FIXME - dodgy to call Name() on ISource! Internal buffer could change as soon as call returns, which means the value we're reading could be modified as it's being written.
         Bws<ISource::kMaxSourceNameBytes> name;
         pair.second->Name(name);
         aMappingWriter.Write(aWriter, pair.first, name);
@@ -90,7 +89,7 @@ void StartupSourceMapper::Write(IWriter& aWriter, Configuration::IConfigChoiceMa
 
 // ConfigStartupSource
 
-const Brn ConfigStartupSource::kKey("Source.Startup");
+const Brn ConfigStartupSource::kKeySource("Source.Startup");
 
 ConfigStartupSource::ConfigStartupSource(IConfigInitialiser& aConfigInit, const std::vector<ISource*> aSources)
     : iSourceCount(aSources.size())
@@ -109,7 +108,7 @@ ConfigStartupSource::ConfigStartupSource(IConfigInitialiser& aConfigInit, const 
         choice++;
     }
 
-    iChoice = new ConfigChoice(aConfigInit, kKey, choices, kDefault, iMapper);
+    iChoice = new ConfigChoice(aConfigInit, kKeySource, choices, kDefault, iMapper);
 }
 
 ConfigStartupSource::~ConfigStartupSource()
@@ -135,7 +134,7 @@ TUint ConfigStartupSource::SourceIndex(TUint aChoiceId) const
 }
 
 
-const Brn Product::kStartupSourceBase("Startup.Source");    // FIXME - change to Source.Last, as this for a StoreText that stores last selected source.
+const Brn Product::kKeyLastSelectedSource("Last.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
@@ -156,7 +155,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
     , iStartupSourceVal(ConfigStartupSource::kDefault)
 {
-    iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceBase, Brx::Empty(), ISource::kMaxSourceTypeBytes);
+    iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
     iConfigProductRoom = &aConfigReader.GetText(kConfigIdRoomBase);
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
     iConfigProductName = &aConfigReader.GetText(kConfigIdNameBase);
@@ -175,7 +174,7 @@ Product::~Product()
     delete iProviderProduct;
     iConfigProductName->Unsubscribe(iListenerIdProductName);
     iConfigProductRoom->Unsubscribe(iListenerIdProductRoom);
-    delete iStartupSource;
+    delete iLastSelectedSource;
 }
 
 void Product::AddObserver(IProductObserver& aObserver)
@@ -199,7 +198,7 @@ void Product::Start()
     }
     else { // No startup source selected; use last selected source.
         Bws<ISource::kMaxSystemNameBytes> startupSource;
-        iStartupSource->Get(startupSource);
+        iLastSelectedSource->Get(startupSource);
         if (startupSource == Brx::Empty()) {
             // If there is no stored startup source, select the first added source.
             SetCurrentSource(0);
@@ -375,7 +374,7 @@ void Product::ProductNameChanged(KeyValuePair<const Brx&>& aKvp)
 
 void Product::StartupSourceChanged(KeyValuePair<TUint>& aKvp)
 {
-    ASSERT(aKvp.Key() == ConfigStartupSource::kKey);
+    ASSERT(aKvp.Key() == ConfigStartupSource::kKeySource);
     AutoMutex a(iLock);
     iStartupSourceVal = aKvp.Value();
 }
@@ -393,7 +392,7 @@ void Product::SetCurrentSource(TUint aIndex)
         iSources[iCurrentSource]->Deactivate();
     }
     iCurrentSource = aIndex;
-    iStartupSource->Set(iSources[iCurrentSource]->SystemName());
+    iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
     iSources[iCurrentSource]->Activate();
 
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
@@ -413,7 +412,7 @@ void Product::SetCurrentSource(const Brx& aName)
                 iSources[iCurrentSource]->Deactivate();
             }
             iCurrentSource = i;
-            iStartupSource->Set(iSources[iCurrentSource]->SystemName());
+            iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
             iSources[iCurrentSource]->Activate();
             for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
                 (*it)->SourceIndexChanged();
@@ -469,7 +468,7 @@ void Product::Activate(ISource& aSource)
         iSources[i]->Name(name);
         if (name == nameExpected) {
             iCurrentSource = i;
-            iStartupSource->Set(iSources[iCurrentSource]->SystemName());
+            iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
             srcNew->Activate();
             for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {

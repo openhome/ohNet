@@ -124,7 +124,7 @@ private:
     void Disabled();
 protected:
     MediaPlayer* iMediaPlayer;
-    Web::WebAppFramework* iAppFramework;
+    Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
     Web::ConfigAppMediaPlayer* iConfigApp;
 private:
     Semaphore iSemShutdown;
