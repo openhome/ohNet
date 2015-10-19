@@ -49,7 +49,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, iMimeTypes, aShell);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, aShell);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
@@ -101,6 +101,11 @@ void MediaPlayer::Quit()
 {
     iProduct->Stop();
     iPipeline->Quit();
+}
+
+void MediaPlayer::Add(Codec::ContainerBase* aContainer)
+{
+    iPipeline->Add(aContainer);
 }
 
 void MediaPlayer::Add(Codec::CodecBase* aCodec)

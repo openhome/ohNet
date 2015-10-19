@@ -75,6 +75,7 @@ private:
 
 namespace Codec {
     class ContainerController;
+    class ContainerBase;
     class CodecController;
     class CodecBase;
 }
@@ -140,8 +141,9 @@ class Pipeline : public IPipelineElementDownstream
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList, Net::IShell& aShell);
+             IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell);
     virtual ~Pipeline();
+    void AddContainer(Codec::ContainerBase* aContainer);
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
     void Quit();

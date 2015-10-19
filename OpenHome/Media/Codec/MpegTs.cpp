@@ -1,6 +1,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Codec/MpegTs.h>
+#include <OpenHome/Media/Codec/ContainerFactory.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Ascii.h>
@@ -11,6 +12,13 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
+
+ContainerBase* ContainerFactory::NewMpegTs(IMimeTypeList& aMimeTypeList)
+{ // static
+    return new MpegTsContainer(aMimeTypeList);
+}
+
+
 
 /*
  * http://en.wikipedia.org/wiki/MPEG_transport_stream

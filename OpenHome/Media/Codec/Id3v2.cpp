@@ -2,6 +2,7 @@
 // Based on description from http://id3.org/id3v2.3.0
 
 #include <OpenHome/Media/Codec/Id3v2.h>
+#include <OpenHome/Media/Codec/ContainerFactory.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Debug.h>
@@ -13,6 +14,13 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
+
+ContainerBase* ContainerFactory::NewId3v2()
+{ // static
+    return new Id3v2();
+}
+
+
 
 Id3v2::Id3v2()
     : ContainerBase(Brn("ID3"))

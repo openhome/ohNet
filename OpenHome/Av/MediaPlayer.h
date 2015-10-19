@@ -22,6 +22,7 @@ namespace Media {
     class UriProvider;
     class Protocol;
     namespace Codec {
+        class ContainerBase;
         class CodecBase;
     }
     class AllocatorInfoLogger;
@@ -96,6 +97,7 @@ public:
                 const Brx& aDefaultName);
     ~MediaPlayer();
     void Quit();
+    void Add(Media::Codec::ContainerBase* aContainer);
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);

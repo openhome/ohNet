@@ -25,6 +25,7 @@ class Filler;
 class IdManager;
 class IMimeTypeList;
 namespace Codec {
+    class ContainerBase;
     class CodecBase;
 }
 class Protocol;
@@ -56,7 +57,7 @@ class PipelineManager : public IPipeline
                       , private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList, Net::IShell& aShell);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, Net::IShell& aShell);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.
@@ -68,9 +69,18 @@ public:
      */
     void Quit();
     /**
+    * Add a container to the pipeline.
+    *
+    * There should only be a single instance of each container added.
+    * Must be called before Start().
+    *
+    * @param[in] aContainer       Ownership transfers to PipelineManager.
+    */
+    void Add(Codec::ContainerBase* aContainer);
+    /**
      * Add a codec to the pipeline.
      *
-     * There should only be a single instance of each codec aded.
+     * There should only be a single instance of each codec added.
      * Must be called before Start().
      *
      * @param[in] aCodec           Ownership transfers to PipelineManager.
