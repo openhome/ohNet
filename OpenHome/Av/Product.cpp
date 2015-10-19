@@ -50,6 +50,7 @@ void ConfigSourceNameObserver::SourceNameChanged(Configuration::KeyValuePair<con
 
 const Brn ConfigStartupSource::kKeySource("Source.Startup");
 const Brn ConfigStartupSource::kNoneName("Default");
+const TUint ConfigStartupSource::kNone = UINT_MAX;
 
 ConfigStartupSource::ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames)
 {

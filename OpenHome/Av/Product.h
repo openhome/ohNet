@@ -12,7 +12,6 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/Source.h>
 
-#include <climits>
 #include <vector>
 
 EXCEPTION(AvSourceNotFound);
@@ -64,7 +63,7 @@ class ConfigStartupSource : public Configuration::IConfigChoiceMapper, private I
 public:
     static const Brn kKeySource;
     static const Brn kNoneName;
-    static const TUint kNone = UINT_MAX;
+    static const TUint kNone;
 public:
     ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames);
     ~ConfigStartupSource();
