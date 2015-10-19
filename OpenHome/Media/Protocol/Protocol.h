@@ -150,7 +150,7 @@ protected:
     static const TUint kConnectTimeoutMs = 3000;
 protected:
     ProtocolNetwork(Environment& aEnv);
-    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
+    TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort, TUint aTimeoutMs = kConnectTimeoutMs);
 protected: // from Protocol
     void Interrupt(TBool aInterrupt);
 protected:

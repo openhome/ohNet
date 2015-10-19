@@ -103,7 +103,7 @@ private:
     TUint64 iTrackOffset;
 };
 
-class SuiteReservoirHistory : public Suite, private IMsgProcessor, private IClockPuller
+class SuiteReservoirHistory : public Suite, private IMsgProcessor, private IClockPullerReservoir
 {
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
@@ -137,19 +137,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
-private: // from IClockPuller
-    void StartTimestamp() override;
-    void NotifyTimestampSampleRate(TUint aSampleRate) override;
-    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
-    void StopTimestamp() override;
-    void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamDecodedReservoir(TUint aStreamId);
-    void NotifySizeDecodedReservoir(TUint aJiffies);
-    void StopDecodedReservoir();
-    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamStarvationMonitor(TUint aStreamId);
-    void NotifySizeStarvationMonitor(TUint aJiffies);
-    void StopStarvationMonitor();
+private: // from IClockPullerReservoir
+    void NewStream(TUint aSampleRate) override;
+    void Reset() override;
+    void Stop() override;
+    void Start(TUint aNotificationFrequency) override;
+    TUint NotifySize(TUint aJiffies) override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -161,6 +154,7 @@ private:
     TBool iStopAudioGeneration;
     TByte iBuf[DecodedAudio::kMaxBytes];
     TUint iStreamId;
+    TUint iSampleRate;
     TBool iStartCalled;
     TBool iNewStreamCalled;
     TBool iNotifySizeCalled;
@@ -414,7 +408,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgBitRate(1);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, nullptr, false, false);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
         break;
     case EMsgTrack:
     {
@@ -616,13 +610,15 @@ void SuiteReservoirHistory::Test()
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
     iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
-    iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this, false, false));
+    ModeClockPullers clockPullers(this, nullptr, nullptr);
+    iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, clockPullers, false, false));
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     iReservoir->Push(msgTrack);
     MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, nullptr);
     iStreamId = msgStream->StreamInfo().StreamId();
+    iSampleRate = msgStream->StreamInfo().SampleRate();
     iReservoir->Push(msgStream);
     TUint pcmMsgs = kPcmMsgCount;
     TUint64 trackOffset = 0;
@@ -759,37 +755,23 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
     return nullptr;
 }
-
-void SuiteReservoirHistory::StartTimestamp()
+void SuiteReservoirHistory::Start(TUint aNotificationFrequency)
 {
-}
-
-void SuiteReservoirHistory::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
-{
-}
-
-void SuiteReservoirHistory::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
-{
-}
-
-void SuiteReservoirHistory::StopTimestamp()
-{
-}
-
-void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency)
-{
-    TEST(aCapacityJiffies == kReservoirSize);
     TEST(aNotificationFrequency == iReservoir->kUtilisationSamplePeriodJiffies);
     iStartCalled = true;
 }
 
-void SuiteReservoirHistory::NewStreamDecodedReservoir(TUint aStreamId)
+void SuiteReservoirHistory::NewStream(TUint aSampleRate)
 {
-    TEST(aStreamId == iStreamId);
+    TEST(aSampleRate == iSampleRate);
     iNewStreamCalled = true;
 }
 
-void SuiteReservoirHistory::NotifySizeDecodedReservoir(TUint aJiffies)
+void SuiteReservoirHistory::Reset()
+{
+}
+
+TUint SuiteReservoirHistory::NotifySize(TUint aJiffies)
 {
     iHistoryPointCount++;
     TEST(aJiffies != 0);
@@ -799,31 +781,12 @@ void SuiteReservoirHistory::NotifySizeDecodedReservoir(TUint aJiffies)
         iStopAudioGeneration = true;
     }
     iNotifySizeCalled = true;
+    return IPullableClock::kNominalFreq;
 }
 
-void SuiteReservoirHistory::StopDecodedReservoir()
+void SuiteReservoirHistory::Stop()
 {
     ASSERTS(); // test only generates a single MsgMode so this shouldn't be called
-}
-
-void SuiteReservoirHistory::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
-{
-    ASSERTS();
-}
-
-void SuiteReservoirHistory::NewStreamStarvationMonitor(TUint /*aStreamId*/)
-{
-    ASSERTS();
-}
-
-void SuiteReservoirHistory::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
-{
-    ASSERTS();
-}
-
-void SuiteReservoirHistory::StopStarvationMonitor()
-{
-    ASSERTS();
 }
 
 

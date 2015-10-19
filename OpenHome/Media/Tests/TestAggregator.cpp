@@ -288,7 +288,7 @@ Msg* SuiteAggregator::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, nullptr, false, false);
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false);
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
     case EMsgQuit:

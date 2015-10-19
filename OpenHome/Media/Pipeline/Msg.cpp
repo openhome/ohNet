@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
@@ -311,9 +312,9 @@ TUint Jiffies::ToSongcastTime(TUint aJiffies, TUint aSampleRate)
     return static_cast<TUint>((static_cast<TUint64>(aJiffies) * SongcastTicksPerSecond(aSampleRate)) / kPerSecond);
 }
 
-TUint Jiffies::FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate)
+TUint64 Jiffies::FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate)
 { // static
-    return static_cast<TUint>((aSongcastTime * kPerSecond) / SongcastTicksPerSecond(aSampleRate));
+    return (aSongcastTime * kPerSecond) / SongcastTicksPerSecond(aSampleRate);
 }
 
 TUint Jiffies::SongcastTicksPerSecond(TUint aSampleRate)
@@ -837,6 +838,40 @@ void ModeInfo::Clear()
 }
 
 
+// ModeClockPullers
+
+ModeClockPullers::ModeClockPullers()
+    : iReservoirLeft(nullptr)
+    , iReservoirRight(nullptr)
+    , iTimestamp(nullptr)
+{
+}
+
+ModeClockPullers::ModeClockPullers(IClockPullerReservoir* aReservoirLeft,
+                                   IClockPullerReservoir* aReservoirRight,
+                                   IClockPullerTimestamp* aTimestamp)
+    : iReservoirLeft(aReservoirLeft)
+    , iReservoirRight(aReservoirRight)
+    , iTimestamp(aTimestamp)
+{
+}
+
+IClockPullerReservoir* ModeClockPullers::ReservoirLeft() const
+{
+    return iReservoirLeft;
+}
+
+IClockPullerReservoir* ModeClockPullers::ReservoirRight() const
+{
+    return iReservoirRight;
+}
+
+IClockPullerTimestamp* ModeClockPullers::Timestamp() const
+{
+    return iTimestamp;
+}
+
+
 // MsgMode
 
 MsgMode::MsgMode(AllocatorBase& aAllocator)
@@ -854,23 +889,23 @@ const ModeInfo& MsgMode::Info() const
     return iInfo;
 }
 
-IClockPuller* MsgMode::ClockPuller() const
+const ModeClockPullers& MsgMode::ClockPullers() const
 {
-    return iClockPuller;
+    return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev)
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iMode.Replace(aMode);
     iInfo.Set(aSupportsLatency, aIsRealTime, aSupportsNext, aSupportsPrev);
-    iClockPuller = aClockPuller;
+    iClockPullers = aClockPullers;
 }
 
 void MsgMode::Clear()
 {
     iMode.Replace(Brx::Empty());
     iInfo.Clear();
-    iClockPuller = nullptr;
+    iClockPullers = ModeClockPullers();
 }
 
 Msg* MsgMode::Process(IMsgProcessor& aProcessor)
@@ -1480,6 +1515,7 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
     remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
+    remaining->iClockPullMultiplier = iClockPullMultiplier;
     if (iRamp.IsEnabled()) {
         remaining->iRamp = iRamp.Split(aJiffies, iSize);
     }
@@ -1596,6 +1632,11 @@ const Media::Ramp& MsgAudio::Ramp() const
     return iRamp;
 }
 
+void MsgAudio::SetClockPull(TUint aMultiplier)
+{
+    iClockPullMultiplier = aMultiplier;
+}
+
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)
     : Msg(aAllocator)
 {
@@ -1605,6 +1646,7 @@ void MsgAudio::Initialise()
 {
     iNextAudio = nullptr;
     iRamp.Reset();
+    iClockPullMultiplier = IPullableClock::kPullNone;
 }
 
 void MsgAudio::Clear() 
@@ -1646,13 +1688,13 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     MsgPlayable* playable;
     if (iRamp.Direction() != Ramp::EMute) {
         MsgPlayablePcm* pcm = iAllocatorPlayablePcm->Allocate();
-        pcm->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp);
+        pcm->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp, iClockPullMultiplier);
         playable = pcm;
     }
     else {
         MsgPlayableSilence* silence = iAllocatorPlayableSilence->Allocate();
         Media::Ramp noRamp;
-        silence->Initialise(sizeBytes, iAudioData->BitDepth(), iAudioData->NumChannels(), noRamp);
+        silence->Initialise(sizeBytes, iAudioData->BitDepth(), iAudioData->NumChannels(), noRamp, iClockPullMultiplier);
         playable = silence;
     }
     if (iNextAudio != nullptr) { 
@@ -1692,6 +1734,7 @@ MsgAudio* MsgAudioPcm::Clone()
     static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     static_cast<MsgAudioPcm*>(clone)->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
     static_cast<MsgAudioPcm*>(clone)->iTrackOffset = iTrackOffset;
+    static_cast<MsgAudioPcm*>(clone)->iClockPullMultiplier = iClockPullMultiplier;
     iAudioData->AddRef();
     return clone;
 }
@@ -1761,9 +1804,9 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
     TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, aBitDepth/8);
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp);
+    playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp, iClockPullMultiplier);
     if (iNextAudio != nullptr) { 
-        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aBitDepth, aNumChannels); 
+        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aBitDepth, aNumChannels);
         playable->Add(child); 
     } 
     RemoveRef();
@@ -1868,6 +1911,11 @@ const Media::Ramp& MsgPlayable::Ramp() const
     return iRamp;
 }
 
+TUint MsgPlayable::ClockPullMultiplier() const
+{
+    return iClockPullMultiplier;
+}
+
 void MsgPlayable::Read(IPcmProcessor& aProcessor)
 {
     aProcessor.BeginBlock();
@@ -1884,12 +1932,13 @@ MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp)
+void MsgPlayable::Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier)
 {
     iNextPlayable = nullptr;
     iSize = aSizeBytes;
     iOffset = aOffsetBytes;
     iRamp = aRamp;
+    iClockPullMultiplier = aClockPullMultiplier;
 }
 
 void MsgPlayable::RefAdded()
@@ -1924,9 +1973,10 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp)
+void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes,
+                                const Media::Ramp& aRamp, TUint aClockPullMultiplier)
 {
-    MsgPlayable::Initialise(aSizeBytes, aOffsetBytes, aRamp);
+    MsgPlayable::Initialise(aSizeBytes, aOffsetBytes, aRamp, aClockPullMultiplier);
     iAudioData = aDecodedAudio;
     iAudioData->AddRef();
 }
@@ -2018,9 +2068,10 @@ MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
 {
 }
 
-void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp)
+void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
+                                    const Media::Ramp& aRamp, TUint aClockPullMultiplier)
 {
-    MsgPlayable::Initialise(aSizeBytes, 0, aRamp);
+    MsgPlayable::Initialise(aSizeBytes, 0, aRamp, aClockPullMultiplier);
     iBitDepth = aBitDepth;
     iNumChannels = aNumChannels;
 }
@@ -2811,10 +2862,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller, TBool aSupportsNext, TBool aSupportsPrev)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPuller, aSupportsNext, aSupportsPrev);
+    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPullers, aSupportsNext, aSupportsPrev);
     return msg;
 }
 

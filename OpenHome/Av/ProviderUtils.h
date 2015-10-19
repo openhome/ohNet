@@ -17,9 +17,9 @@ public:
     WriterInvocationResponseString(Net::IDvInvocationResponseString& aIrs);
     ~WriterInvocationResponseString();
 public: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
+    void Write(TByte aValue) override;
+    void Write(const Brx& aBuffer) override;
+    void WriteFlush() override;
 private:
     Net::IDvInvocationResponseString& iIrs;
 };

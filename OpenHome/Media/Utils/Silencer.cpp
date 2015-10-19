@@ -2,6 +2,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 namespace OpenHome {
 namespace Media {

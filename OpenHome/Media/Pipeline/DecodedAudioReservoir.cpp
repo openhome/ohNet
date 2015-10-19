@@ -65,19 +65,28 @@ void DecodedAudioReservoir::DoProcessMsgIn()
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 {
     if (iClockPuller != nullptr) {
-        iClockPuller->StopDecodedReservoir();
+        iClockPuller->Stop();
     }
-    iClockPuller = aMsg->ClockPuller();
+    iClockPuller = aMsg->ClockPullers().ReservoirLeft();
     if (iClockPuller != nullptr) {
-        iClockPuller->StartDecodedReservoir(iMaxJiffies, kUtilisationSamplePeriodJiffies);
+        iClockPuller->Start(kUtilisationSamplePeriodJiffies);
     }
+    return aMsg;
+}
+
+Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDrain* aMsg)
+{
+    if (iClockPuller != nullptr) {
+        iClockPuller->Reset();
+    }
+    iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     return aMsg;
 }
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     if (iClockPuller != nullptr) {
-        iClockPuller->NewStreamDecodedReservoir(aMsg->StreamInfo().StreamId());
+        iClockPuller->NewStream(aMsg->StreamInfo().SampleRate());
     }
     iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     return aMsg;
@@ -113,7 +122,8 @@ Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
     }
     iJiffiesUntilNextUsageReport -= aMsg->Jiffies();
     if (iJiffiesUntilNextUsageReport == 0) {
-        iClockPuller->NotifySizeDecodedReservoir(Jiffies());
+        const TUint multiplier = iClockPuller->NotifySize(Jiffies());
+        aMsg->SetClockPull(multiplier);
         iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     }
 

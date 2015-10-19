@@ -18,11 +18,12 @@ namespace Av {
 
 class ProtocolQobuz : public Media::ProtocolNetwork, private IReader
 {
+    static const TUint kTcpConnectTimeoutMs = 10 * 1000;
 public:
     ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolQobuz();
 private: // from Media::Protocol
-    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream);
+    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;
     void Interrupt(TBool aInterrupt) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
@@ -360,7 +361,7 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
 {
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-    if (!Connect(iUri, port)) {
+    if (!Connect(iUri, port, kTcpConnectTimeoutMs)) {
         LOG(kPipeline, "ProtocolQobuz::WriteRequest Connection failure\n");
         return 0;
     }

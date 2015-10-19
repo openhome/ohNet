@@ -15,6 +15,16 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
+class NullClockPullerTimestamp : public IClockPullerTimestamp
+{
+private: // from IClockPullerTimestamp
+    void NewStream(TUint aSampleRate) override;
+    void Reset() override;
+    void Stop() override;
+    void Start() override;
+    TUint NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+};
+
 class SuiteTimestampInspector : public SuiteUnitTest, private IPipelineElementDownstream, private IMsgProcessor
 {
     static const TUint kBitrate = 256;
@@ -93,7 +103,7 @@ private:
     TByte iAudioData[884]; // 884 => 5ms @ 44.1, 16-bit, stereo
     TUint64 iTrackOffsetTx;
     TUint64 iTrackOffsetRx;
-    ClockPullerNull iClockPuller;
+    NullClockPullerTimestamp iClockPuller;
     TBool iTimestampNextAudioMsg;
     TBool iUseClockPuller;
     TUint iNextNetworkTimestamp;
@@ -105,6 +115,24 @@ private:
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+
+void NullClockPullerTimestamp::NewStream(TUint /*aSampleRate*/)
+{
+}
+void NullClockPullerTimestamp::Reset()
+{
+}
+void NullClockPullerTimestamp::Stop()
+{
+}
+void NullClockPullerTimestamp::Start()
+{
+}
+TUint NullClockPullerTimestamp::NotifyTimestamp(TInt /*aDrift*/, TUint /*aNetwork*/)
+{
+    return IPullableClock::kNominalFreq;
+}
 
 
 SuiteTimestampInspector::SuiteTimestampInspector()
@@ -155,8 +183,8 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
     {
     case EMsgMode:
     {
-        IClockPuller* clockPuller = (iUseClockPuller? &iClockPuller : nullptr);
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPuller, false, false);
+        ModeClockPullers clockPullers(nullptr, nullptr, iUseClockPuller? &iClockPuller : nullptr);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, clockPullers, false, false);
     }
         break;
     case EMsgTrack:

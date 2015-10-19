@@ -42,14 +42,14 @@ TUint PriorityArbitratorPipeline::HostRange() const
 
 // PipelineManager
 
-PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IMimeTypeList& aMimeTypeList, Net::IShell& aShell)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
     iPrefetchObserver = new PrefetchObserver();
-    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, *iPrefetchObserver, *this, *this, aMimeTypeList);
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, *iPrefetchObserver, *this, *this, aMimeTypeList, aShell);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
@@ -249,8 +249,9 @@ void PipelineManager::Next()
        This works well when the pipeline is running but doesn't cope with the unusual
        case where a protocol module is stalled before pushing any audio into the pipeline.
        Call to iFiller->Stop() below spots this case and Interrupt()s the blocked protocol. */
-    (void)iFiller->Stop();
-    iIdManager->InvalidateAll();
+    const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
     (void)iFiller->Next(iMode);
 }
 
@@ -261,8 +262,9 @@ void PipelineManager::Prev()
     if (iMode.Bytes() == 0) {
         return; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    (void)iFiller->Stop();
-    iIdManager->InvalidateAll();
+    const TUint haltId = iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iPipeline->RemoveAll(haltId);
     (void)iFiller->Prev(iMode);
 }
 

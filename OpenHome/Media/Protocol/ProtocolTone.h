@@ -85,14 +85,14 @@ class ToneGeneratorSilence : public ToneGenerator
 {
 public:
     ToneGeneratorSilence();
-    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset) override;  // from ToneGenerator
 };
 
 class ToneGeneratorSquare : public ToneGenerator
 {
 public:
     ToneGeneratorSquare();
-    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset) override;  // from ToneGenerator
 };
 
 
@@ -105,7 +105,7 @@ class ToneGeneratorSawtooth : public ToneGenerator
 {
 public:
     ToneGeneratorSawtooth();
-    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset) override;  // from ToneGenerator
 };
 
 // .       /\        .
@@ -117,14 +117,14 @@ class ToneGeneratorTriangle : public ToneGenerator
 {
 public:
     ToneGeneratorTriangle();
-    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset) override;  // from ToneGenerator
 };
 
 class ToneGeneratorSine : public ToneGenerator
 {
 public:
     ToneGeneratorSine();
-    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset) override;  // from ToneGenerator
 };
 
 class ToneGeneratorConstant : public ToneGenerator
@@ -132,8 +132,8 @@ class ToneGeneratorConstant : public ToneGenerator
 public:
     ToneGeneratorConstant();
 private: // from ToneGenerator
-    TBool Recognise(const Brx& aName) const;
-    TInt32 Generate(TUint aOffset, TUint aMaxOffset);
+    TBool Recognise(const Brx& aName) const override;
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset) override;
 private:
     mutable TInt32 iValue;
 };
@@ -148,12 +148,12 @@ private:
     void HexDump(const TByte *aBase, TUint aSize) const;
 #endif  // DEFINE_DEBUG
 private: // from Protocol
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
-    void Interrupt(TBool aInterrupt);
-    ProtocolStreamResult Stream(const Brx& aUri);
-    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
+    void Interrupt(TBool aInterrupt) override;
+    ProtocolStreamResult Stream(const Brx& aUri) override;
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private:  // from IStreamHandler
-    TUint TryStop(TUint aStreamId);
+    TUint TryStop(TUint aStreamId) override;
 private:
     Mutex iLock;
     Supply* iSupply;

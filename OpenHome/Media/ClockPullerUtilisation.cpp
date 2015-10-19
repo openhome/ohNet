@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <cstdlib>
 #include <vector>
@@ -121,123 +122,48 @@ void UtilisationHistory::Smooth(TUint& aJiffies, TInt aIndexToSkip)
 }
 
 
-// ClockPullerUtilisationPerStreamLeft
+// ClockPullerUtilisation
 
-ClockPullerUtilisationPerStreamLeft::ClockPullerUtilisationPerStreamLeft(Environment& aEnv, IPullableClock& aPullableClock)
-    : iPullableClock(aPullableClock)
-    , iLock("CPLL")
+ClockPullerUtilisation::ClockPullerUtilisation(Environment& aEnv)
+    : iMultiplier(IPullableClock::kNominalFreq)
 {
-    iUtilisationLeft = new UtilisationHistory(aEnv, *this);
+    iUtilisation = new UtilisationHistory(aEnv, *this);
 }
 
-ClockPullerUtilisationPerStreamLeft::~ClockPullerUtilisationPerStreamLeft()
+ClockPullerUtilisation::~ClockPullerUtilisation()
 {
-    delete iUtilisationLeft;
+    delete iUtilisation;
 }
 
-void ClockPullerUtilisationPerStreamLeft::StartTimestamp()
-{
-}
-
-void ClockPullerUtilisationPerStreamLeft::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
+void ClockPullerUtilisation::NewStream(TUint /*aSampleRate*/)
 {
 }
 
-void ClockPullerUtilisationPerStreamLeft::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+void ClockPullerUtilisation::Reset()
 {
+    iUtilisation->Reset();
+    iMultiplier = IPullableClock::kNominalFreq;
 }
 
-void ClockPullerUtilisationPerStreamLeft::StopTimestamp()
+void ClockPullerUtilisation::Stop()
 {
+    iUtilisation->Reset();
 }
 
-void ClockPullerUtilisationPerStreamLeft::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
+void ClockPullerUtilisation::Start(TUint aNotificationFrequency)
 {
-    iDecodedReservoirUpdateFrequency = aNotificationFrequency;
+    iUpdateFrequency = aNotificationFrequency;
+    Reset();
 }
 
-void ClockPullerUtilisationPerStreamLeft::NewStreamDecodedReservoir(TUint aStreamId)
+TUint ClockPullerUtilisation::NotifySize(TUint aJiffies)
 {
-    AutoMutex a(iLock);
-    iStreamIdLeft = aStreamId;
-    iUtilisationLeft->Reset();
+    iUtilisation->Add(aJiffies);
+    return iMultiplier;
 }
 
-void ClockPullerUtilisationPerStreamLeft::NotifySizeDecodedReservoir(TUint aJiffies)
+void ClockPullerUtilisation::NotifyClockDrift(UtilisationHistory* /*aHistory*/, TInt aDriftJiffies, TUint aNumSamples)
 {
-    TryAdd(*iUtilisationLeft, aJiffies);
-}
-
-void ClockPullerUtilisationPerStreamLeft::StopDecodedReservoir()
-{
-}
-
-void ClockPullerUtilisationPerStreamLeft::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
-{
-}
-
-void ClockPullerUtilisationPerStreamLeft::NewStreamStarvationMonitor(TUint aStreamId)
-{
-    iStreamIdRight = aStreamId;
-}
-
-void ClockPullerUtilisationPerStreamLeft::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
-{
-}
-
-void ClockPullerUtilisationPerStreamLeft::StopStarvationMonitor()
-{
-}
-
-void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples)
-{
-    ASSERT(aHistory == iUtilisationLeft);
-    NotifyClockDrift(aDriftJiffies, aNumSamples, iDecodedReservoirUpdateFrequency);
-}
-
-void ClockPullerUtilisationPerStreamLeft::TryAdd(UtilisationHistory& aHistory, TUint aJiffies)
-{
-    if (iStreamIdLeft == iStreamIdRight) {
-        aHistory.Add(aJiffies);
-    }
-}
-
-void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples, TUint aUpdateFrequency)
-{
-    const TUint64 periodJiffies = aNumSamples * static_cast<TUint64>(aUpdateFrequency);
-    ClockPullerUtils::PullClock(iPullableClock, aDriftJiffies, periodJiffies);
-}
-
-
-// ClockPullerUtilisationPerStreamFull
-
-ClockPullerUtilisationPerStreamFull::ClockPullerUtilisationPerStreamFull(Environment& aEnv, IPullableClock& aPullableClock)
-    : ClockPullerUtilisationPerStreamLeft(aEnv, aPullableClock)
-{
-    iUtilisationRight = new UtilisationHistory(aEnv, *this);
-}
-
-ClockPullerUtilisationPerStreamFull::~ClockPullerUtilisationPerStreamFull()
-{
-    delete iUtilisationRight;
-}
-
-void ClockPullerUtilisationPerStreamFull::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
-{
-    iStarvationMonitorUpdateFrequency = aNotificationFrequency;
-}
-
-void ClockPullerUtilisationPerStreamFull::NotifySizeStarvationMonitor(TUint aJiffies)
-{
-    TryAdd(*iUtilisationRight, aJiffies);
-}
-
-void ClockPullerUtilisationPerStreamFull::NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples)
-{
-    if (aHistory == iUtilisationRight) {
-        ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(aDriftJiffies, aNumSamples, iStarvationMonitorUpdateFrequency);
-    }
-    else {
-        ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(aHistory, aDriftJiffies, aNumSamples);
-    }
+    const TUint64 periodJiffies = aNumSamples * static_cast<TUint64>(iUpdateFrequency);
+    ClockPullerUtils::PullClock(iMultiplier, aDriftJiffies, periodJiffies);
 }

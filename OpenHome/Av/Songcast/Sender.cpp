@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/StringIds.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 #include <vector>
 
@@ -337,6 +338,10 @@ void Sender::ProcessSample32(const TByte* aSample, TUint aNumChannels)
 }
 
 void Sender::EndBlock()
+{
+}
+
+void Sender::Flush()
 {
 }
 

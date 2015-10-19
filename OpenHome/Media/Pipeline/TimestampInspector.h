@@ -24,6 +24,7 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgHalt* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
@@ -33,7 +34,7 @@ private: // from IMsgProcessor
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementDownstream& iDownstreamElement;
-    IClockPuller* iClockPuller;
+    IClockPullerTimestamp* iClockPuller;
     MsgDecodedStream* iDecodedStream;
     TBool iCheckForTimestamp;
     TBool iStreamIsTimestamped;

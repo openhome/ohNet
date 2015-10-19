@@ -200,8 +200,7 @@ Msg* ElementFileReader::Pull()
         const Brn mode("Playlist");
         const TBool supportsLatency = false;
         const TBool realTime = false;
-        IClockPuller* clockPuller = nullptr;
-        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, clockPuller, false, false);
+        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, ModeClockPullers(), false, false);
         iMode = eTrack;
     }
     else if (iMode == eTrack) {

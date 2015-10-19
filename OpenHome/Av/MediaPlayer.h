@@ -12,6 +12,7 @@ namespace OpenHome {
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
+    class IShell;
 }
 namespace Media {
     class PipelineManager;
@@ -85,6 +86,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
     static const TUint kTrackCount = 1200;
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                Net::IShell& aShell,
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,

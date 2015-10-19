@@ -103,7 +103,7 @@ ProtocolNetwork::ProtocolNetwork(Environment& aEnv)
 {
 }
 
-TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
+TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort, TUint aTimeoutMs)
 {
     LOG(kMedia, ">ProtocolNetwork::Connect\n");
 
@@ -129,7 +129,7 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
         return false;
     }
     try {        
-        iTcpClient.Connect(endpoint, kConnectTimeoutMs);
+        iTcpClient.Connect(endpoint, aTimeoutMs);
     }
     catch (NetworkTimeout&) {
         Close();
@@ -166,9 +166,8 @@ void ProtocolNetwork::Open()
     
 void ProtocolNetwork::Close()
 {
-    LOG(kMedia, "ProtocolNetwork::Close\n");
-
     if (iSocketIsOpen) {
+        LOG(kMedia, "ProtocolNetwork::Close\n");
         iSocketIsOpen = false;
         iTcpClient.Close();
     }

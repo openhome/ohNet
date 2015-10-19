@@ -22,12 +22,11 @@ class SourceFactory
 {
 public:
     static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const Brx& aTuneInPartnerId);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Media::IPullableClock* aPullableClock, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
-                                Media::IPullableClock* aPullableClock,
                                 IOhmTimestamper* aTxTimestamper,
                                 IOhmTimestampMapper* aTxTsMapper,
                                 IOhmTimestamper* aRxTimestamper,

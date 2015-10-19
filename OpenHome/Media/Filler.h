@@ -26,7 +26,7 @@ public:
     TBool IsRealTime() const;
     TBool SupportsNext() const;
     TBool SupportsPrev() const;
-    virtual IClockPuller* ClockPuller();
+    virtual ModeClockPullers ClockPullers();
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;

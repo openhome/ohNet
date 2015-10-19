@@ -31,6 +31,7 @@ using namespace OpenHome::Net;
 // MediaPlayer
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                         Net::IShell& aShell,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
@@ -48,7 +49,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, iMimeTypes);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, iMimeTypes, aShell);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);

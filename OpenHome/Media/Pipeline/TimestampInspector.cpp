@@ -70,12 +70,9 @@ void TimestampInspector::Push(Msg* aMsg)
 Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
 {
     if (iClockPuller != nullptr && iStreamIsTimestamped) {
-        iClockPuller->StopTimestamp();
+        iClockPuller->Stop();
     }
-    iClockPuller = aMsg->ClockPuller();
-    if (iClockPuller != nullptr && iStreamIsTimestamped) {
-        iClockPuller->StopTimestamp();
-    }
+    iClockPuller = aMsg->ClockPullers().Timestamp();
     iCheckForTimestamp = (iClockPuller != nullptr);
     iStreamIsTimestamped = false;
     iLockedToStream = false;
@@ -83,6 +80,15 @@ Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
     iMsgsTillLock = 0;
     iTimestampDelta = 0;
     iDiscardedJiffies = 0;
+    return aMsg;
+}
+
+Msg* TimestampInspector::ProcessMsg(MsgDrain* aMsg)
+{
+    if (iClockPuller != nullptr) {
+        iClockPuller->Reset();
+    }
+    iLockedToStream = false;
     return aMsg;
 }
 
@@ -120,7 +126,7 @@ Msg* TimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
     const TUint sampleRate = iDecodedStream->StreamInfo().SampleRate();
     iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
     if (iStreamIsTimestamped && iClockPuller != nullptr) {
-        iClockPuller->NotifyTimestampSampleRate(sampleRate);
+        iClockPuller->NewStream(sampleRate);
     }
     return aMsg;
 }
@@ -131,8 +137,8 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
         TUint ignore;
         iStreamIsTimestamped = aMsg->TryGetTimestamps(ignore, ignore);
         if (iStreamIsTimestamped && iClockPuller != nullptr) {
-            iClockPuller->StartTimestamp();
-            iClockPuller->NotifyTimestampSampleRate(iDecodedStream->StreamInfo().SampleRate());
+            iClockPuller->Start();
+            iClockPuller->NewStream(iDecodedStream->StreamInfo().SampleRate());
         }
         iLockedToStream = !iStreamIsTimestamped;
         iCalculateTimestampDelta = iStreamIsTimestamped;
@@ -177,7 +183,8 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
         }
         if (timestamped && iClockPuller != nullptr) {
             const TInt drift = iTimestampDelta - static_cast<TInt>(rxTimestamp - networkTimestamp);
-            iClockPuller->NotifyTimestamp(drift, networkTimestamp);
+            const TUint multiplier = iClockPuller->NotifyTimestamp(drift, networkTimestamp);
+            aMsg->SetClockPull(multiplier);
         }
         // fall through
     }

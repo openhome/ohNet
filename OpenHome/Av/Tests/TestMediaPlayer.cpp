@@ -108,13 +108,17 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iPullableClock(nullptr)
     , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
     , iTxTsMapper(nullptr)
     , iRxTsMapper(nullptr)
 {
+    // create a shell
+    iShell = new Shell(aDvStack.Env(), 0);
+    Log::Print("Shell running on port %u\n", iShell->Port());
+    iShellDebug = new ShellCommandDebug(*iShell);
+
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
     friendlyName.Append(':');
@@ -171,7 +175,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
                                                                       // platforms with slightly unpredictable thread scheduling
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, pipelineInit,
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iShell, *iRamStore, *iConfigRamStore, pipelineInit,
                                    volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
@@ -179,11 +183,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // register our PowerDownUpnp function with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
     iPowerObserver = powerManager.Register(*this, kPowerPriorityLowest);
-
-    // create a shell
-    iShell = new Shell(aDvStack.Env(), 0);
-    Log::Print("Shell running on port %u\n", iShell->Port());
-    iShellDebug = new ShellCommandDebug(*iShell);
 
     // Set up config app.
     static const TUint addr = 0;    // Bind to all addresses.
@@ -204,11 +203,6 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDeviceUpnpAv;
     delete iRamStore;
     delete iConfigRamStore;
-}
-
-void TestMediaPlayer::SetPullableClock(IPullableClock& aPullableClock)
-{
-    iPullableClock = &aPullableClock;
 }
 
 void TestMediaPlayer::SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper)
@@ -353,10 +347,10 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     if (iTuneInPartnerId.Bytes() == 0) {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer));
     }
     else {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iPullableClock, iTuneInPartnerId));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iTuneInPartnerId));
     }
     iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv));
 
@@ -367,9 +361,9 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     const TChar* friendlyName;
     iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
     iObservableFriendlyName.Replace(Brn(friendlyName));
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iPullableClock, hostName.PtrZ(), iObservableFriendlyName, macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iPullableClock, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
 }
 
 void TestMediaPlayer::InitialiseSubsystems()

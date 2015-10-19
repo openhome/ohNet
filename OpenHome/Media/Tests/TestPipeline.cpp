@@ -10,6 +10,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/MimeTypeList.h>
+#include <OpenHome/Net/Private/Shell.h>
 
 #include <string.h>
 #include <vector>
@@ -127,6 +128,7 @@ private: // from IPipelineAnimator
 private: // from IMimeTypeList
     void Add(const TChar* aMimeType) override;
 private:
+    Net::ShellNull iShell;
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     PipelineInitParams* iInitParams;
@@ -298,7 +300,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this, iShell);
     iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
