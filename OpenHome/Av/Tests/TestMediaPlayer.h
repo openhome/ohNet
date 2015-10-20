@@ -101,6 +101,7 @@ public:
     Media::PipelineManager& Pipeline();
     Net::DvDeviceStandard* Device();
 protected:
+    virtual void RegisterPlugins(Environment& aEnv);
     virtual void InitialiseSubsystems();
     virtual void CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
 private: // from Net::IResourceManager
@@ -111,7 +112,6 @@ private: // from IPowerHandler
 //private: // from IWebAppFramework
 //    void Add(Web::IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private:
-    void RegisterPlugins(Environment& aEnv);
     void AddConfigApp();
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
