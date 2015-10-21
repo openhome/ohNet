@@ -34,15 +34,15 @@ public:
     static const TUint kBytesPerSample = 4; // 32 bit audio
 
 public:
-    FlywheelRamper(OpenHome::Environment& aEnv, IPcmProcessor& aOutput, TUint aGenJiffies); // generation(input) audio length
+    FlywheelRamper(OpenHome::Environment& aEnv, TUint aGenJiffies); // generation(input) audio length
     ~FlywheelRamper();
 
     void Initialise(const Brx& aSamples, TUint aSampleRate);
     TUint GenJiffies() const;
-    void Cycle(TUint aCount = 1);
+    TInt32 Cycle();
     void Reset();
 
-    static void BurgsMethod(TInt16* aSamples, TUint aSamplesInCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef);
+    static void BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef);
 
     static TUint SampleCount(TUint aSampleRate, TUint aJiffies);
     static void Invert(TInt16* aData, TUint aLength);
@@ -52,7 +52,6 @@ private:
     TUint iGenJiffies;
     TUint iDegree;
     FeedbackModel* iFeedback;
-    IPcmProcessor* iProcessor;
 
     TInt16* iGenSamples;
     TInt16* iBurgCoeffs;
@@ -60,8 +59,6 @@ private:
     TInt16* iBurgPer;
     TInt16* iBurgPef;
     TUint iMaxGenSampleCount;
-
-    IWriter* iWriter;
 };
 
 
@@ -82,6 +79,7 @@ private:
     OpenHome::Environment& iEnv;
     IPcmProcessor& iOutput;
     TUint iChannelCount;
+    Bwh iOutBuf;
     TUint iRampJiffies;
     std::vector<FlywheelRamper*> iRampers;
 };
@@ -111,18 +109,15 @@ private:
 class FeedbackModel : public INonCopyable
 {
 public:
-    FeedbackModel(IPcmProcessor& aOutput, TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
+    FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
     void Initialise(TInt16* aCoeffs, const Brx& aSamples);
-
-    void Cycle(TUint aCount = 1);
+    TInt32 Cycle();
 
 private:
-    IPcmProcessor& iOutput;
     TInt16* iCoeffs;
     TUint iStateCount;
     std::vector<TInt32> iSamples;
     TUint iDataScaleBitCount;
-    //TUint iScaleShiftForSum;
     TUint iScaleShiftForProduct;
     TInt iScaleShiftForOutput;
 };

@@ -20,6 +20,8 @@ namespace TestFlywheelRamper {
 
 /////////////////////////////////////////////
 
+class PcmProcessorFeedback;
+
 class SuiteFlywheelRamper : public SuiteUnitTest, public INonCopyable
 {
 public:
@@ -43,6 +45,8 @@ private:
     void Setup();
     void TearDown();
 
+    void FeedbackCycle();
+
     static void LogBuf(const Brx& aBuf);
     static TInt32 Int32(const Brx& aBuf, TUint aIndex);
     static void Append32(Bwx& aBuf, TInt32 aSample);
@@ -50,6 +54,13 @@ private:
     static double ToDouble(TInt32 aVal);
     static TInt32 ToFfpn(double aVal);
 
+private:
+    TInt16* iCoeffs;
+    std::vector<TInt32> iSamples;
+    PcmProcessorFeedback* iOutputProc;
+    TUint iScaleShiftForProduct;
+    TUint iScaleShiftForOutput;
+    TUint iDegree;
 };
 
 //////////////////////////////////////////////////////////////
@@ -66,7 +77,7 @@ public:
     virtual void ProcessFragment8(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessFragment16(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
-    virtual void ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessFragment32(const Brx& aData, TUint aNumChannels);
     virtual void ProcessSample8(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample16(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample24(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
@@ -116,7 +127,7 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
 */
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test6)); // Burg Method testing
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8)); // Feedback profiling
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8)); // Feedback profiling
 }
 
 
@@ -168,10 +179,10 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
 
     Bws<kSamplesOutBytes> samplesOut;
     PcmProcessorFeedback opProc(samplesOut);
-    FeedbackModel* feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    FeedbackModel* feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
 
-    feedback->Cycle(kSamplesOutCount);
+    feedback->Cycle(/*kSamplesOutCount*/);
 
     for (TUint i=0; i<kSamplesOutCount; i++)
     {
@@ -185,6 +196,7 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
 
 void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
 {
+/*
     const TUint kDataInDescaleBits = 8;
 
     const TUint kCoeffsCount = 2;
@@ -333,6 +345,7 @@ void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
 
 
     free(coeffs);
+*/
 }
 
 
@@ -749,53 +762,6 @@ void SuiteFlywheelRamper::Test6() // Burg Method testing
 
 void SuiteFlywheelRamper::Test7() // Burg Method profiling
 {
-
-/*
-    Log::Print("circular buffer profiling: \n");
-
-    std::vector<TInt32> v(2, 0);
-
-    TUint startTime0 = Os::TimeInMs(iEnv.OsCtx());
-    for(TUint i=0; i<(1000*8*1000); i++)
-    {
-        for (TInt j=2; j>0; j--)
-        {
-            v[j] = v[j-1];
-        }
-    }
-    TUint endTime0 = Os::TimeInMs(iEnv.OsCtx());
-    Log::Print("circular buffer 1000x1000 32 bit samples = %dms  \n", endTime0-startTime0);
-*/
-
-/*
-    Log::Print("Buffer profiling: \n");
-    Bws<4> sample;
-
-
-    TInt32 x = 0xfe546735;
-    TByte bufArr[4];
-
-    TUint startTime1 = Os::TimeInMs(iEnv.OsCtx());
-    for(TUint i=0; i<1000000; i++)
-    {
-        Bws<4> sample;
-
-        bufArr[3] = (TByte) x;
-        x >>= 8;
-        bufArr[2] = (TByte) x;
-        x >>= 8;
-        bufArr[1] = (TByte) x;
-        x >>= 8;
-        bufArr[0] = (TByte) x;
-
-        sample.Append(bufArr, 4);
-    }
-    TUint endTime1 = Os::TimeInMs(iEnv.OsCtx());
-    Log::Print("buffering 1000x1000 32 bit samples = %dms  \n", endTime1-startTime1);
-
-
-
-
     Log::Print("Burg Method profiling:: \n");
 
     const TUint kSampleRate = 192000;
@@ -808,106 +774,178 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
     TUint genByteCount = FlywheelRamper::SampleCount(kSampleRate, kGenJiffies)*FlywheelRamper::kBytesPerSample*kChanCount;
     TUint rampByteCount = FlywheelRamper::SampleCount(kSampleRate, kRampJiffies)*FlywheelRamper::kBytesPerSample*kChanCount;
 
-    Log::Print("rampByteCount:  %d\n", rampByteCount);
-    Log::Print("rampByteCount (8 channels):  %d\n", rampByteCount*8);
-    Log::Print("rampSampleCount (8 channels):  %d\n", rampByteCount*2);
+    Log::Print("rampByteCount (%d channels) =  %d\n", kChanCount, rampByteCount);
 
 
     Bwh genSamples(genByteCount);
     genSamples.SetBytes(genByteCount);
+    genSamples.Fill(0); // to keep valgrind happy
 
     Bwh rampOutput(rampByteCount*1000);
     PcmProcessorFeedback opProc(rampOutput);
     auto ramper = new FlywheelRamperManager(iEnv, opProc, kChanCount, kGenJiffies, kRampJiffies);
 
-    //TUint startTime = Os::TimeInMs(iEnv.OsCtx());
     ramper->Ramp(genSamples, kSampleRate); // generate the ramp
-    //TUint endTime = Os::TimeInMs(iEnv.OsCtx());
 
+
+    //TUint startTime = Os::TimeInMs(iEnv.OsCtx());
+    //TUint endTime = Os::TimeInMs(iEnv.OsCtx());
     //Log::Print("time taken = %dms  \n", endTime-startTime);
 
     Log::Print("processed = %d 32bit samples (%d)\n", rampOutput.Bytes()/4, rampByteCount/4);
 
     delete ramper;
-*/
+
 }
 
 
 void SuiteFlywheelRamper::Test8() // FeedbackModel profiling
 {
-/*
-    const TUint kTestCount = 192*8*100;  // 8 channels at 192khz 100 times
+    iScaleShiftForProduct = 4;
+    iScaleShiftForOutput = 0;
 
-    TUint aCount = 1;  // output samples = 768 bytes
+    const TUint kTestScaleCount = 1000;
+    const TUint kSampleCount = 192;  // 1 channel at 192khz
+    const TUint kChannelCount = 8;
+    const TUint kBytesPerSample = 4;
+    const TUint kBufBytes = kSampleCount*kChannelCount*kBytesPerSample*kTestScaleCount;
 
-
-
-    TUint iStateCount = 3;
+    iDegree = 3;
 
     TInt16 coeffs;
 
-    TInt16* iCoeffs = &coeffs;
-    std::vector<TInt32> iSamples;
+    iCoeffs = &coeffs;
     iSamples.push_back(0);
     iSamples.push_back(0);
     iSamples.push_back(0);
 
-    Bwh aSamplesOut(aCount*4);
-    PcmProcessorFeedback opProc(aSamplesOut);
+    Bwh aSamplesOut(kBufBytes);
+    iOutputProc = new PcmProcessorFeedback(aSamplesOut);
+
 
     TUint startTime = Os::TimeInMs(iEnv.OsCtx());
 
-    for(TUint x=0; x<kTestCount; x++)
+    for(TUint i=0; i<kTestScaleCount; i++)
     {
-        aSamplesOut.SetBytes(0);
-
-        ASSERT(iCoeffs!=NULL);
-
-        for(TUint i=0; i<aCount; i++)
+        iOutputProc->BeginBlock();
+        for(TUint j=0; j<kSampleCount; j++)
         {
-            TInt32 sum = 0;
-
-            TInt16* coeffPtr = iCoeffs;
-
-            // iterate through the circular buff and calculate the output
-            for (TUint j=0; j<iStateCount; j++)
+            for(TUint k=0; k<kChannelCount; k++)
             {
-                TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
-                TInt64 product = ((TInt64)iSamples[j]) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (10.54 with >>8 data  scaling etc)
-                //sum += product;
-                sum += (TInt32)(product>>32);   // 5.27
+                FeedbackCycle();
             }
 
-            // update the states
-
-            for (TInt j=(iStateCount-1); j>0; j--)
-            {
-                iSamples[j] = iSamples[j-1];
-            }
-
-            //iSamples[0] = (TInt32)(sum>>iScaleShiftForProduct);
-            sum <<= 4;
-
-            iSamples[0] = sum;
-
-            TByte sample[4];
-
-            sample[3] = (TByte) sum;
-            sum >>= 8;
-            sample[2] = (TByte) sum;
-            sum >>= 8;
-            sample[1] = (TByte) sum;
-            sum >>= 8;
-            sample[0] = (TByte) sum;
-
-            opProc.ProcessSample24(sample, 1); // 1 channel
-            //Log::Print("scaledOutSample=0x%.8lx  sampleOut=0x%.8lx  \n", scaledOutSample, Int32(aSamplesOut, aSamplesOut.Bytes()-4));
         }
+        iOutputProc->EndBlock();
     }
 
     TUint endTime = Os::TimeInMs(iEnv.OsCtx());
-    Log::Print("Feedback Process: time taken = %4dms  \n", endTime-startTime);
-*/
+
+    Log::Print("Feedback Process: time taken = %dms  (%d samples) \n", endTime-startTime, aSamplesOut.Bytes()/4);
+
+    aSamplesOut.SetBytes(0);
+
+    TUint startTime2 = Os::TimeInMs(iEnv.OsCtx());
+
+    for(TUint i=0; i<kTestScaleCount; i++)
+    {
+        iOutputProc->BeginBlock();
+        for(TUint j=0; j<kSampleCount; j++)
+        {
+            for(TUint k=0; k<kChannelCount; k++)
+            {
+                ASSERT(iCoeffs!=NULL);
+
+                TInt32 sum = 0;
+
+                TInt16* coeffPtr = iCoeffs;
+
+                // iterate through the circular buff and calculate the output
+                for (TUint j=0; j<iDegree; j++)
+                {
+                    TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
+                    TInt64 product = ((TInt64)iSamples[j]) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (10.54 with >>8 data  scaling etc)
+                    sum += (TInt32)(product>>32);   // 5.27
+                }
+
+                // update the states
+
+                for (TInt j=(iDegree-1); j>0; j--)
+                {
+                    iSamples[j] = iSamples[j-1];
+                }
+
+                sum <<= iScaleShiftForProduct;
+
+                iSamples[0] = sum;
+
+                sum <<= iScaleShiftForOutput;
+
+                TByte sample[4];
+
+                sample[3] = (TByte) sum;
+                sum >>= 8;
+                sample[2] = (TByte) sum;
+                sum >>= 8;
+                sample[1] = (TByte) sum;
+                sum >>= 8;
+                sample[0] = (TByte) sum;
+
+                iOutputProc->ProcessSample32(sample, 1); // 1 channel
+
+            }
+        }
+        iOutputProc->EndBlock();
+    }
+
+    TUint endTime2 = Os::TimeInMs(iEnv.OsCtx());
+
+
+    Log::Print("Feedback Process(inline): time taken = %dms  (%d samples)  \n", endTime2-startTime2, aSamplesOut.Bytes()/4);
+
+}
+
+
+void SuiteFlywheelRamper::FeedbackCycle()
+{
+    ASSERT(iCoeffs!=NULL);
+
+    TInt32 sum = 0;
+
+    TInt16* coeffPtr = iCoeffs;
+
+    // iterate through the circular buff and calculate the output
+    for (TUint j=0; j<iDegree; j++)
+    {
+        TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
+        TInt64 product = ((TInt64)iSamples[j]) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (10.54 with >>8 data  scaling etc)
+        sum += (TInt32)(product>>32);   // 5.27
+    }
+
+    // update the states
+
+    for (TInt j=(iDegree-1); j>0; j--)
+    {
+        iSamples[j] = iSamples[j-1];
+    }
+
+    sum <<= iScaleShiftForProduct;
+
+    iSamples[0] = sum;
+
+    sum <<= iScaleShiftForOutput;
+
+    TByte sample[4];
+
+    sample[3] = (TByte) sum;
+    sum >>= 8;
+    sample[2] = (TByte) sum;
+    sum >>= 8;
+    sample[1] = (TByte) sum;
+    sum >>= 8;
+    sample[0] = (TByte) sum;
+
+    iOutputProc->ProcessSample32(sample, 1); // 1 channel
 }
 
 void SuiteFlywheelRamper::Setup()
@@ -938,6 +976,25 @@ void SuiteFlywheelRamper::Append32(Bwx& aBuf, TInt32 aSample)
     aBuf.Append((TByte)(aSample));
 }
 
+
+/*
+double FlywheelRamper::ToDouble(TInt32 aVal, TUint aScale)
+{
+    // from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
+    TUint scaleFactor = (1<<(32-aScale));
+    double dbl = ((double)aVal)/scaleFactor;
+    return(dbl);
+}
+
+double FlywheelRamper::ToDouble(TInt16 aVal, TUint aScale)
+{
+    // from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
+    TUint scaleFactor = (1<<(16-aScale));
+    double dbl = ((double)aVal)/scaleFactor;
+    return(dbl);
+}
+*/
+
 /////////////////////////////////////////////////////////////////
 
 PcmProcessorFeedback::PcmProcessorFeedback(Bwx& aBuf)
@@ -946,20 +1003,14 @@ PcmProcessorFeedback::PcmProcessorFeedback(Bwx& aBuf)
 
 }
 
+void PcmProcessorFeedback::ProcessFragment32(const Brx& aData, TUint aNumChannels)
+{
+
+}
+
 
 void PcmProcessorFeedback::ProcessSample32(const TByte* aSample, TUint aNumChannels)
 {
-    ASSERT(aNumChannels==1);
-
-    TByte* ptr = (TByte*)iBuf.Ptr();
-
-    *(ptr++) = *(aSample++);
-    *(ptr++) = *(aSample++);
-    *(ptr++) = *(aSample++);
-    *(ptr) = *(aSample);
-    iBuf.SetBytes(iBuf.Bytes()+4);
-
-    //iBuf.Append(aSample, 4);
 }
 
 
