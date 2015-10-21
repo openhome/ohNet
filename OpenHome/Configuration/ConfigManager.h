@@ -113,6 +113,11 @@ public:
     virtual ConfigText& GetText(const Brx& aKey) const = 0;
     virtual TBool Has(const Brx& aKey) const = 0;
     virtual ISerialisable& Get(const Brx& aKey) const = 0;
+
+    // Debugging.
+    virtual void Print() const = 0;
+    virtual void DumpToStore() = 0;
+
     virtual ~IConfigManager() {}
 };
 
@@ -274,6 +279,24 @@ inline MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,void (CallType::*)(Key
     return MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,MemFunc>(aC,aF);
 }
 
+/**
+ * Write() is called for each value the mapper is aware of.
+ */
+class IConfigChoiceMappingWriter
+{
+public:
+    virtual void Write(IWriter& aWriter, TUint aChoice, const Brx& aMapping) = 0; // THROWS WriterError
+    virtual void WriteComplete(IWriter& aWriter) = 0; // THROWS WriterError
+    virtual ~IConfigChoiceMappingWriter() {}
+};
+
+class IConfigChoiceMapper
+{
+public:
+    virtual void Write(IWriter& aWriter, IConfigChoiceMappingWriter& aMappingWriter) = 0; // THROWS WriterError
+    virtual ~IConfigChoiceMapper() {}
+};
+
 /*
  * Class representing a multiple choice value (such as true/false, on/off,
  * monkey/chicken/meerkat, etc.)
@@ -289,9 +312,14 @@ public:
     typedef KeyValuePair<TUint> KvpChoice;
 public:
     ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper);
     const std::vector<TUint>& Choices() const;
     void Set(TUint aVal);   // THROWS ConfigInvalidSelection
+
+    TBool HasInternalMapping() const;
+    IConfigChoiceMapper& Mapper() const;
 private:
+    void Init(TUint aDefault);
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigChoice aFunctor) override;
@@ -306,6 +334,7 @@ private:
     static const TUint kMaxChoiceLength = 10;
     std::vector<TUint> iChoices;
     TUint iSelected;
+    IConfigChoiceMapper* iMapper;
     mutable Mutex iMutex;
 };
 
@@ -315,6 +344,7 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
     for (TUint i=0; i<iChoices.size(); i++) {
         if (iChoices[i] != aChoice.iChoices[i]) {
             choicesEqual = false;
+            break;
         }
     }
     AutoMutex a(iMutex);
@@ -518,8 +548,6 @@ private:
     typedef SerialisedMap<ConfigText> ConfigTextMap;
 public:
     ConfigManager(IStoreReadWrite& aStore);
-    void Print() const;     // for debugging!
-    void DumpToStore();     // for debugging!
 public: // from IConfigManager
     void WriteKeys(IKeyWriter& aWriter) const override;
     TBool HasNum(const Brx& aKey) const override;
@@ -530,6 +558,8 @@ public: // from IConfigManager
     ConfigText& GetText(const Brx& aKey) const override;
     TBool Has(const Brx& aKey) const override;
     ISerialisable& Get(const Brx& aKey) const override;
+    void Print() const override;
+    void DumpToStore() override;
 public: // from IConfigInitialiser
     IStoreReadWrite& Store() override;
     void Open() override;

@@ -110,21 +110,19 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
+    , iMapper(nullptr)
     , iMutex("CVCM")
 {
-    Bws<sizeof(TUint)> initialBuf;
-    Bws<sizeof(TUint)> defaultBuf;
-    WriterBuffer writerBuf(defaultBuf);
-    WriterBinary writerBin(writerBuf);
-    writerBin.WriteUint32Be(aDefault);
-    iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
-    TUint initialVal = Converter::BeUint32At(initialBuf, 0);
+    Init(aDefault);
+}
 
-    ASSERT(IsValid(initialVal));
-    iConfigManager.Add(*this);
-    iSelected = initialVal;
-
-    AddInitialSubscribers();
+ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper)
+    : ConfigVal(aManager, aKey)
+    , iChoices(aChoices)
+    , iMapper(&aMapper)
+    , iMutex("CVCM")
+{
+    Init(aDefault);
 }
 
 const std::vector<TUint>& ConfigChoice::Choices() const
@@ -143,6 +141,37 @@ void ConfigChoice::Set(TUint aVal)
         iSelected = aVal;
         NotifySubscribers(iSelected);
     }
+}
+
+TBool ConfigChoice::HasInternalMapping() const
+{
+    if (iMapper != nullptr) {
+        return true;
+    }
+    return false;
+}
+
+IConfigChoiceMapper& ConfigChoice::Mapper() const
+{
+    ASSERT(iMapper != nullptr);
+    return *iMapper;
+}
+
+void ConfigChoice::Init(TUint aDefault)
+{
+    Bws<sizeof(TUint)> initialBuf;
+    Bws<sizeof(TUint)> defaultBuf;
+    WriterBuffer writerBuf(defaultBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aDefault);
+    iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
+    TUint initialVal = Converter::BeUint32At(initialBuf, 0);
+
+    ASSERT(IsValid(initialVal));
+    iConfigManager.Add(*this);
+    iSelected = initialVal;
+
+    AddInitialSubscribers();
 }
 
 TBool ConfigChoice::IsValid(TUint aVal) const
@@ -288,28 +317,6 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 {
 }
 
-void ConfigManager::Print() const
-{
-    Log::Print("ConfigManager: [\n");
-
-    Log::Print("ConfigNum:\n");
-    Print(iMapNum);
-    Log::Print("ConfigChoice:\n");
-    Print(iMapChoice);
-    Log::Print("ConfigText:\n");
-    Print(iMapText);
-
-    Log::Print("]\n");
-}
-
-void ConfigManager::DumpToStore()
-{
-    StoreDumper dumper(*this);
-    dumper.DumpToStore(iMapNum);
-    dumper.DumpToStore(iMapChoice);
-    dumper.DumpToStore(iMapText);
-}
-
 void ConfigManager::WriteKeys(IKeyWriter& aWriter) const
 {
     AutoMutex a(iLock);
@@ -368,6 +375,28 @@ ISerialisable& ConfigManager::Get(const Brx& aKey) const
         ASSERTS();
         return iMapNum.Get(aKey); // control will never reach here
     }
+}
+
+void ConfigManager::Print() const
+{
+    Log::Print("ConfigManager: [\n");
+
+    Log::Print("ConfigNum:\n");
+    Print(iMapNum);
+    Log::Print("ConfigChoice:\n");
+    Print(iMapChoice);
+    Log::Print("ConfigText:\n");
+    Print(iMapText);
+
+    Log::Print("]\n");
+}
+
+void ConfigManager::DumpToStore()
+{
+    StoreDumper dumper(*this);
+    dumper.DumpToStore(iMapNum);
+    dumper.DumpToStore(iMapChoice);
+    dumper.DumpToStore(iMapText);
 }
 
 IStoreReadWrite& ConfigManager::Store()

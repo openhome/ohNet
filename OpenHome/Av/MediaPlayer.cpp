@@ -44,11 +44,12 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iReadWriteStore(aReadWriteStore)
     , iConfigProductRoom(nullptr)
     , iConfigProductName(nullptr)
+    , iConfigStartupSource(nullptr)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, iMimeTypes, aShell);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, aShell);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
@@ -73,7 +74,14 @@ MediaPlayer::~MediaPlayer()
     ASSERT(!iDevice.Enabled());
     delete iPipeline;
     delete iCredentials;
+    /**
+     * Circular dependency between ConfigStartupSource and Product on certain ConfigValues.
+     * Force ConfigStartupSource to de-register it's source name listeners.
+     * Safe to do as WebAppFramework must already have been stopped.
+     */
+    iConfigStartupSource->DeregisterObservers();
     delete iProduct;
+    delete iConfigStartupSource;
     delete iVolumeManager;
     delete iVolumeConfig;
     //delete iTransportControl;
@@ -93,6 +101,11 @@ void MediaPlayer::Quit()
 {
     iProduct->Stop();
     iPipeline->Quit();
+}
+
+void MediaPlayer::Add(Codec::ContainerBase* aContainer)
+{
+    iPipeline->Add(aContainer);
 }
 
 void MediaPlayer::Add(Codec::CodecBase* aCodec)
@@ -117,9 +130,35 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void MediaPlayer::Start()
 {
+    // All sources must have been added to Product by time this is called.
+    // So, can now initialise startup source ConfigVal.
+
+    std::vector<const Brx*> sources;
+    const TUint sourceCount = iProduct->SourceCount();
+    Bws<ISource::kMaxSystemNameBytes> systemName;
+    Bws<ISource::kMaxSourceNameBytes> sourceName;
+    Bws<ISource::kMaxSourceTypeBytes> sourceType;
+    TBool visible;
+    for (TUint i=0; i<sourceCount; i++) {
+        systemName.SetBytes(0);
+        sourceName.SetBytes(0);
+        sourceType.SetBytes(0);
+        iProduct->GetSourceDetails(i, systemName, sourceType, sourceName, visible);
+
+        Bwh* name = new Bwh(Ascii::kMaxUintStringBytes);
+        Ascii::AppendDec(*name, i);
+        sources.push_back(name);
+    }
+
+    iConfigStartupSource = new ConfigStartupSource(*iConfigManager, *iConfigManager, sources);
+
+    for (auto source : sources) {
+        delete source;
+    }
+
+
+
     iConfigManager->Open();
-    iConfigManager->Print();
-    iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
     iCredentials->Start();
     iMimeTypes.Start();

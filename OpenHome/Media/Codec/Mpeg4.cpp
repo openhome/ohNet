@@ -1,4 +1,5 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
+#include <OpenHome/Media/Codec/ContainerFactory.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
@@ -15,6 +16,12 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
+
+ContainerBase* ContainerFactory::NewMpeg4(IMimeTypeList& aMimeTypeList)
+{ // static
+    return new Mpeg4Container(aMimeTypeList);
+}
+
 
 
 // Mpeg4Info

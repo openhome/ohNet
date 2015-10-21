@@ -9,6 +9,7 @@
 #include <OpenHome/Av/Utils/Json.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/VolumeManager.h>
 
 #include <limits>
 
@@ -65,68 +66,6 @@ void LanguageResourceFileReader::Destroy()
     iReaderText.ReadFlush();
     iFileStream.CloseFile();
     iAllocated = false;
-}
-
-
-// OptionJsonWriter
-
-void OptionJsonWriter::Write(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter)
-{
-    TBool found = false;
-    try {
-        aWriter.Write(Brn("\"options\":["));
-        try {
-            while (!found) {
-                Brn line = aReader.ReadLine();
-                if (Ascii::Contains(line, aKey)) {
-                    found = true;
-                }
-            }
-
-            ASSERT(found);
-
-            for (TUint i=0; i<aChoices.size()-1; i++) {
-                OptionJsonWriter::WriteChoiceObject(aReader, aWriter, aChoices[i]);
-                aWriter.Write(Brn(","));
-            }
-            OptionJsonWriter::WriteChoiceObject(aReader, aWriter, aChoices[aChoices.size()-1]);
-            // Last value in array should not be followed by a ",".
-        }
-        catch (ReaderError&) {
-            LOG(kHttp, "OptionJsonWriter::Write ReaderError");
-            // This is reading from file, so shouldn't fail.
-            ASSERTS();
-        }
-
-        aWriter.Write(Brn("]"));
-    }
-    catch (WriterError&) {
-        LOG(kHttp, "OptionJsonWriter::Write WriterError");
-        //ASSERTS();
-    }
-}
-
-void OptionJsonWriter::WriteChoiceObject(ILanguageResourceReader& aReader, IWriter& aWriter, TUint aId)
-{
-    aWriter.Write(Brn("{"));
-    Brn line = aReader.ReadLine();
-    Parser p(line);
-    Brn idBuf = p.Next();
-    Brn valueBuf = p.NextToEnd();
-    ASSERT(valueBuf.Bytes() > 0);
-    try {
-        TUint id = Ascii::Uint(idBuf);
-        ASSERT(id == aId);
-    }
-    catch (AsciiError&) {
-        ASSERTS();
-    }
-
-    aWriter.Write(Brn("\"id\": "));
-    Ascii::StreamWriteUint(aWriter, aId);
-    aWriter.Write(Brn(",\"value\": \""));
-    Json::Escape(aWriter, valueBuf);
-    aWriter.Write(Brn("\"}"));
 }
 
 
@@ -260,6 +199,93 @@ void ConfigMessageNum::WriteMeta(IWriter& aWriter)
 }
 
 
+// ConfigChoiceMappingWriterJson
+
+ConfigChoiceMappingWriterJson::ConfigChoiceMappingWriterJson()
+    : iStarted(false)
+{
+}
+
+void ConfigChoiceMappingWriterJson::Write(IWriter& aWriter, TUint aChoice, const Brx& aMapping)
+{
+    if (!iStarted) {
+        aWriter.Write(Brn("\"options\":["));
+    }
+    else {
+        aWriter.Write(',');
+    }
+
+    aWriter.Write(Brn("{"));
+    aWriter.Write(Brn("\"id\": "));
+    Ascii::StreamWriteUint(aWriter, aChoice);
+    aWriter.Write(Brn(",\"value\": \""));
+    Json::Escape(aWriter, aMapping);
+    aWriter.Write(Brn("\"}"));
+    iStarted = true;
+}
+
+void ConfigChoiceMappingWriterJson::WriteComplete(IWriter& aWriter)
+{
+    aWriter.Write(Brn("]"));
+}
+
+
+// ConfigChoiceMapperResourceFile
+
+ConfigChoiceMapperResourceFile::ConfigChoiceMapperResourceFile(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices)
+    : iReader(aReader)
+    , iKey(aKey)
+    , iChoices(aChoices)
+{
+}
+
+void ConfigChoiceMapperResourceFile::Write(IWriter& aWriter, IConfigChoiceMappingWriter& aMappingWriter)
+{
+    TBool found = false;
+    try {
+        try {
+            while (!found) {
+                Brn line = iReader.ReadLine();
+                if (Ascii::Contains(line, iKey)) {
+                    found = true;
+                }
+            }
+            ASSERT(found);
+
+            for (TUint i=0; i<iChoices.size(); i++) {
+                // Get next choice entry from file.
+                Brn line = iReader.ReadLine();
+                Parser p(line);
+                Brn idBuf = p.Next();
+                Brn valueBuf = p.NextToEnd();
+                ASSERT(valueBuf.Bytes() > 0);
+                try {
+                    TUint id = Ascii::Uint(idBuf);
+                    ASSERT(id == iChoices[i]);
+                }
+                catch (AsciiError&) {
+                    ASSERTS();
+                }
+
+                aMappingWriter.Write(aWriter, iChoices[i], valueBuf);
+            }
+            aMappingWriter.WriteComplete(aWriter);
+        }
+        catch (ReaderError&) {
+            LOG(kHttp, "ConfigChoiceMapperResourceFile::Write ReaderError");
+            // This is reading from file, so shouldn't fail.
+            // Indicative of reading beyond end of file (i.e., couldn't find desired value).
+            ASSERTS();
+        }
+
+    }
+    catch (WriterError&) {
+        LOG(kHttp, "ConfigChoiceMapperResourceFile::Write WriterError");
+        throw;
+    }
+}
+
+
 // ConfigMessageChoice
 
 ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager)
@@ -307,19 +333,29 @@ void ConfigMessageChoice::WriteType(IWriter& aWriter)
 
 void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
 {
-    static const Brn kConfigOptionsFile("ConfigOptions.txt");
-    const std::vector<TUint>& choices = iChoice->Choices();
-
     ILanguageResourceReader* resourceHandler = nullptr;
     try {
-        resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
+        if (iChoice->HasInternalMapping()) {
+            IConfigChoiceMapper& mapper = iChoice->Mapper();
+            ConfigChoiceMappingWriterJson mappingWriter;
+            mapper.Write(aWriter, mappingWriter);
+        }
+        else {
+            // Read mapping from file.
+            static const Brn kConfigOptionsFile("ConfigOptions.txt");
+            const std::vector<TUint>& choices = iChoice->Choices();
+            resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
+            ConfigChoiceMapperResourceFile mapper(*resourceHandler, iChoice->Key(), choices);
+            ConfigChoiceMappingWriterJson mappingWriter;
+            mapper.Write(aWriter, mappingWriter);
+            resourceHandler->Destroy();
+        }
     }
-    catch (LanguageResourceInvalid&) {
-        // FIXME - is this thrown?
-        ASSERTS();
+    catch (WriterError&) {
+        resourceHandler->Destroy();
+        // Convert (back) to WriterError.
+        throw;
     }
-    OptionJsonWriter::Write(*resourceHandler, iChoice->Key(), choices, aWriter);
-    resourceHandler->Destroy();
 }
 
 
@@ -1003,7 +1039,7 @@ ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager, const Brx& aResou
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppBasic(aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     // Get all product names.
@@ -1027,25 +1063,28 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, std::vector<c
 
         AddText(key, sourceInfoVector);
     }
+
+    JsonKvpVector emptyJsonVector;
+    AddChoice(ConfigStartupSource::kKeySource, emptyJsonVector);
 }
 
 // ConfigAppMediaPlayer
 
-ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppSources(aConfigManager, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     JsonKvpVector emptyJsonVector;
 
     AddNumConditional(Brn("Sender.Channel"), emptyJsonVector);
     AddNumConditional(Brn("Sender.Preset"), emptyJsonVector);
-    AddNumConditional(Brn("Volume.Balance"), emptyJsonVector);
-    AddNumConditional(Brn("Volume.Limit"), emptyJsonVector);
-    AddNumConditional(Brn("Volume.Startup"), emptyJsonVector);
+    AddNumConditional(VolumeConfig::kKeyBalance, emptyJsonVector);
+    AddNumConditional(VolumeConfig::kKeyLimit, emptyJsonVector);
+    AddNumConditional(VolumeConfig::kKeyStartupValue, emptyJsonVector);
 
     AddChoiceConditional(Brn("Sender.Enabled"), emptyJsonVector);
     AddChoiceConditional(Brn("Sender.Mode"), emptyJsonVector);
     AddChoiceConditional(Brn("Source.NetAux.Auto"), emptyJsonVector);
-    AddChoiceConditional(Brn("Volume.Startup.Enabled"), emptyJsonVector);
+    AddChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled, emptyJsonVector);
     AddChoiceConditional(Brn("qobuz.com.SoundQuality"), emptyJsonVector);
     AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
 

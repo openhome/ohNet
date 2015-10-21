@@ -9,7 +9,6 @@
 #include <OpenHome/Media/Utils/Aggregator.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
-#include <OpenHome/Media/MimeTypeList.h>
 #include <OpenHome/Net/Private/Shell.h>
 
 #include <string.h>
@@ -61,7 +60,6 @@ class SuitePipeline : public Suite
                     , private ISeekRestreamer
                     , private IUrlBlockWriter
                     , private IPipelineAnimator
-                    , private IMimeTypeList
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -125,8 +123,6 @@ private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IPipelineAnimator
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
-private: // from IMimeTypeList
-    void Add(const TChar* aMimeType) override;
 private:
     Net::ShellNull iShell;
     AllocatorInfoLogger iInfoAggregator;
@@ -300,7 +296,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, *this, iShell);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this, *this, iShell);
     iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
@@ -866,10 +862,6 @@ TBool SuitePipeline::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /
 TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
 {
     return 0;
-}
-
-void SuitePipeline::Add(const TChar* /*aMimeType*/)
-{
 }
 
 

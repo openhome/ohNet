@@ -182,7 +182,7 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, IMimeTypeList& aMimeTypeList, Net::IShell& aShell)
+                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -247,9 +247,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iSampleRateValidator = new SampleRateValidator(*iLoggerSampleRateValidator);
 
     iContainer = new Codec::ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
-    iContainer->AddContainer(new Codec::Id3v2());
-    iContainer->AddContainer(new Codec::Mpeg4Container(aMimeTypeList));
-    iContainer->AddContainer(new Codec::MpegTsContainer(aMimeTypeList));
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
@@ -456,6 +453,11 @@ Pipeline::~Pipeline()
     delete iEventThread;
     delete iMsgFactory;
     delete iInitParams;
+}
+
+void Pipeline::AddContainer(Codec::ContainerBase* aContainer)
+{
+    iContainer->AddContainer(aContainer);
 }
 
 void Pipeline::AddCodec(Codec::CodecBase* aCodec)

@@ -22,7 +22,7 @@ public:
     virtual ~ISource() {}
     virtual const Brx& SystemName() const = 0;
     virtual const Brx& Type() const = 0;
-    virtual const Brx& Name() const = 0;
+    virtual void Name(Bwx& aBuf) const = 0;
     virtual TBool IsVisible() const = 0;
     virtual void Activate() = 0;
     virtual void Deactivate() = 0;
@@ -37,12 +37,15 @@ class Source : public ISource/*, protected IInfoProvider*/
 private:
     static const TUint kMaxSourceTypeBytes = 20;
     static const TUint kMaxSourceIndexDigits = 2; // assume a source count of 0..99 is reasonable
-    static const OpenHome::Brn kSourceNameKeyPrefix;
-    static const OpenHome::Brn kSourceNameKeySuffix;
+    static const OpenHome::Brn kKeySourceNamePrefix;
+    static const OpenHome::Brn kKeySourceNameSuffix;
+public:
+    static const TUint kKeySourceNameMaxBytes = 32;
+    static void GetSourceNameKey(const Brx& aName, Bwx& aBuf);
 protected: // from ISource
     const Brx& SystemName() const override;
     const Brx& Type() const override;
-    const Brx& Name() const override;
+    void Name(Bwx& aBuf) const override;
     TBool IsVisible() const override;
     void Deactivate() override;
     void SetVisible(TBool aVisible) override;
@@ -58,7 +61,7 @@ private:
 protected:
     TBool iActive;
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     Brn iSystemName;
     Brn iType;
     Bws<kMaxSourceNameBytes> iName;

@@ -10,6 +10,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Av/Source.h>
 
 #include <vector>
 
@@ -42,10 +43,42 @@ public:
     virtual void SourceXmlChanged() = 0;
 };
 
+class ConfigSourceNameObserver
+{
+public:
+    ConfigSourceNameObserver(Configuration::IConfigManager& aConfigReader, const Brx& aSourceName);
+    ~ConfigSourceNameObserver();
+    void Name(Bwx& aBuf) const;
+private:
+    void SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+private:
+    Configuration::ConfigText* iConfigSourceName;
+    TUint iListenerId;
+    Bws<ISource::kMaxSourceNameBytes> iName;
+    mutable Mutex iLock;
+};
+
+class ConfigStartupSource : public Configuration::IConfigChoiceMapper, private INonCopyable
+{
+public:
+    static const Brn kKeySource;
+    static const Brn kNoneName;
+    static const TUint kNone;
+public:
+    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames);
+    ~ConfigStartupSource();
+    void DeregisterObservers();
+public: // from StartupSourceMapper
+    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter) override;
+private:
+    Configuration::ConfigChoice* iSourceStartup;
+    std::vector<ConfigSourceNameObserver*> iObservers;
+};
+
 class Product : private IProduct, private Media::IInfoProvider, private INonCopyable
 {
 private:
-    static const Brn kStartupSourceBase;
+    static const Brn kKeyLastSelectedSource;
     static const TUint kMaxAttributeBytes = 1024;
 public:
     static const Brn kConfigIdRoomBase;
@@ -74,7 +107,7 @@ public:
     void GetSourceXml(Bwx& aXml);
     void SetCurrentSource(TUint aIndex);
     void SetCurrentSource(const Brx& aName);
-    void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible);
+    void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
     TUint SourceXmlChangeCount();
 private:
@@ -82,6 +115,7 @@ private:
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void StartupSourceChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private: // from IProduct
     void Activate(ISource& aSource) override;
     void NotifySourceNameChanged(ISource& aSource) override;
@@ -100,7 +134,7 @@ private:
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
     TBool iStandby;
-    StoreText* iStartupSource;
+    StoreText* iLastSelectedSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
     Configuration::ConfigText* iConfigProductRoom;
@@ -109,6 +143,9 @@ private:
     TUint iListenerIdProductRoom;
     Bws<kMaxNameBytes> iProductName;
     TUint iListenerIdProductName;
+    Configuration::ConfigChoice* iConfigStartupSource;
+    TUint iListenerIdStartupSource;
+    TUint iStartupSourceVal;
 };
 
 } // namespace Av

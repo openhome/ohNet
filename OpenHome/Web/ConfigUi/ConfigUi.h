@@ -54,13 +54,6 @@ private:
     mutable Mutex iLock;
 };
 
-class OptionJsonWriter
-{
-public:
-    static void Write(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter);   // validates input from aReader against aChoices
-    static void WriteChoiceObject(ILanguageResourceReader& aReader, IWriter& aWriter, TUint aId);
-};
-
 class IConfigMessage : public ITabMessage
 {
 public:
@@ -145,6 +138,29 @@ private:
     TInt iValue;
 };
 
+class ConfigChoiceMappingWriterJson : public Configuration::IConfigChoiceMappingWriter, private INonCopyable
+{
+public:
+    ConfigChoiceMappingWriterJson();
+public: // from IConfigChoiceMappingWriter
+    void Write(IWriter& aWriter, TUint aChoice, const Brx& aMapping) override;
+    void WriteComplete(IWriter& aWriter) override;
+private:
+    TBool iStarted;
+};
+
+class ConfigChoiceMapperResourceFile : public Configuration::IConfigChoiceMapper, private INonCopyable
+{
+public:
+    ConfigChoiceMapperResourceFile(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices);
+public: // from IConfigChoiceMapper
+    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter);
+private:
+    ILanguageResourceReader& iReader;
+    const Brx& iKey;
+    const std::vector<TUint>& iChoices;
+};
+
 class ConfigMessageChoice : public ConfigMessage
 {
     friend class ConfigMessageChoiceAllocator;
@@ -192,7 +208,7 @@ private: // from IConfigMessageDeallocator
     void Deallocate(IConfigMessage& aMessage);
 protected:
     OpenHome::Fifo<IConfigMessage*> iFifo;
-    //OpenHome::Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate()
+    //OpenHome::Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate(), which would be handled by iFifo locking.
 };
 
 class ConfigMessageNumAllocator : public ConfigMessageAllocatorBase
@@ -410,13 +426,13 @@ class ConfigAppSources : public ConfigAppBasic
 private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
-     ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
-     ConfigAppMediaPlayer(OpenHome::Configuration::IConfigManager& aConfigManager, std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppMediaPlayer(OpenHome::Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
 private:
     void AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
     void AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);

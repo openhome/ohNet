@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
+#include <OpenHome/Media/Codec/ContainerFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
@@ -244,6 +245,13 @@ void TestMediaPlayer::Run()
     RegisterPlugins(iMediaPlayer->Env());
     AddConfigApp();
     iMediaPlayer->Start();
+    InitialiseSubsystems();
+
+    // Debugging for ConfigManager.
+    IConfigManager& configManager = iMediaPlayer->ConfigManager();
+    configManager.Print();
+    configManager.DumpToStore();
+
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -266,9 +274,15 @@ void TestMediaPlayer::Run()
 void TestMediaPlayer::RunWithSemaphore()
 {
     RegisterPlugins(iMediaPlayer->Env());
-    iMediaPlayer->Start();
-
     AddConfigApp();
+    iMediaPlayer->Start();
+    InitialiseSubsystems();
+
+    // Debugging for ConfigManager.
+    IConfigManager& configManager = iMediaPlayer->ConfigManager();
+    configManager.Print();
+    configManager.DumpToStore();
+
     iAppFramework->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -294,6 +308,11 @@ DvDeviceStandard* TestMediaPlayer::Device()
 
 void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 {
+    // Add containers
+    iMediaPlayer->Add(Codec::ContainerFactory::NewId3v2());
+    iMediaPlayer->Add(Codec::ContainerFactory::NewMpeg4(iMediaPlayer->MimeTypes()));
+    iMediaPlayer->Add(Codec::ContainerFactory::NewMpegTs(iMediaPlayer->MimeTypes()));
+
     // Add codecs
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewWav(iMediaPlayer->MimeTypes()));
@@ -353,7 +372,14 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
 }
 
+void TestMediaPlayer::InitialiseSubsystems()
+{
+}
 
+void TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
+{
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize);
+}
 
 void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
 {
@@ -400,7 +426,7 @@ void TestMediaPlayer::AddConfigApp()
         sourcesBufs.push_back(new Brh(systemName));
     }
     // FIXME - take resource dir as param or copy res dir to build dir
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), sourcesBufs, Brn("Softplayer"), Brn("res/"), kMaxUiTabs, kUiSendQueueSize);
+    CreateConfigApp(sourcesBufs, Brn("res/"), kMaxUiTabs, kUiSendQueueSize);    // Initialises iConfigApp.
     iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
     //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
     for (TUint i=0;i<sourcesBufs.size(); i++) {

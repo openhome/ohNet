@@ -1014,7 +1014,8 @@ def bundle(ctx):
                  'CodecPcm',
                  'libOgg',
                  'WebAppFramework',
-                 'ConfigUi'
+                 'ConfigUi',
+                 'ConfigUiTestUtils'
                 ]
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     res_files = gather_files(ctx, '{top}/OpenHome/Web/ConfigUi/res', ['**/*'])

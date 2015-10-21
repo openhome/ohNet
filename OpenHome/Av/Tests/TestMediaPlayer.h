@@ -102,6 +102,8 @@ public:
     Net::DvDeviceStandard* Device();
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
+    virtual void InitialiseSubsystems();
+    virtual void CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private: // from IPowerHandler
@@ -122,30 +124,30 @@ private:
     void Disabled();
 protected:
     MediaPlayer* iMediaPlayer;
-    Media::LoggingPipelineObserver* iPipelineObserver;
-    Net::DvDeviceStandard* iDevice;
-    Net::DvDevice* iDeviceUpnpAv;
-    RamStore* iRamStore;
-    Configuration::ConfigRamStore* iConfigRamStore;
+    Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
+    Web::ConfigAppMediaPlayer* iConfigApp;
+private:
     Semaphore iSemShutdown;
     Net::Shell* iShell;
-    Web::WebAppFramework* iAppFramework;
-private:
     Semaphore iDisabled;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
-    const Brx& iTuneInPartnerId;
-    const Brx& iTidalId;
-    const Brx& iQobuzIdSecret;
-    const Brx& iUserAgent;
+    const Brh iTuneInPartnerId;
+    const Brh iTidalId;
+    const Brh iQobuzIdSecret;
+    const Brh iUserAgent;
     ObservableBrx iObservableFriendlyName;
-    Web::ConfigAppMediaPlayer* iConfigApp;
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;
     IOhmTimestampMapper* iTxTsMapper;
     IOhmTimestampMapper* iRxTsMapper;
     Bws<Uri::kMaxUriBytes+1> iPresentationUrl;
+    Media::LoggingPipelineObserver* iPipelineObserver;
+    Net::DvDeviceStandard* iDevice;
+    Net::DvDevice* iDeviceUpnpAv;
+    RamStore* iRamStore;
+    Configuration::ConfigRamStore* iConfigRamStore;
 };
 
 class TestMediaPlayerOptions

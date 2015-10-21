@@ -10,7 +10,7 @@
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Net/Private/Ssdp.h>
 #include <OpenHome/Media/Utils/AnimatorBasic.h>
-
+#include <OpenHome/Web/ConfigUi/Tests/TestConfigUi.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Web/WebAppFramework.h>
@@ -21,19 +21,6 @@
 namespace OpenHome {
 namespace Web {
 namespace Test {
-
-class HelperDeviceListHandler
-{
-public:
-    HelperDeviceListHandler(const OpenHome::Brx& aExpectedFriendlyName);
-    void Added(OpenHome::Net::CpDevice& aDevice);
-    void Removed(OpenHome::Net::CpDevice& aDevice);
-    const OpenHome::Brx& GetPresentationUrl() const;
-private:
-    OpenHome::Brh iFriendlyName;
-    OpenHome::Bws<OpenHome::Uri::kMaxUriBytes> iPresentationUrl;
-    mutable OpenHome::Mutex iLock;
-};
 
 class UriRetriever
 {
@@ -234,41 +221,13 @@ private:
     ConfigMessageTextAllocator* iMessageAllocator;
 };
 
-// ConfigApps are not expected to check the existence of ConfigVals at startup.
-// This means that the ConfigManager will assert when the config page is loaded
-// if a ConfigVal included in the ConfigApp doesn't exist in the ConfigManager.
-
-// This test exploits that behaviour to check if the ConfigApp is valid by
-// loading the web page and initiating long-polling. If the ConfigManager
-// doesn't assert, the ConfigVals in the ConfigApp are all valid.
-
-// As a side-effect, this test also checks that the (default) language mapping
-// for ConfigOptions is valid (i.e., the mapping file is correctly formed, and
-// mapping entries for each ConfigOption are listed in the same order that they
-// are programmatically added to the ConfigOption).
-
-class SuiteConfigUi : public TestFramework::SuiteUnitTest, private INonCopyable
+class SuiteConfigUiMediaPlayer : public SuiteConfigUi
 {
-private:
-    static const TUint kMaxUiTabs = 4;
-    static const TUint kUiSendQueueSize = 32;
 public:
-    SuiteConfigUi(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack);
-private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
-private:
-    void Run();
-    void TestGetStaticResource();
-    void TestLongPollCreate();
-    void TestLongPoll();
-private:
-    OpenHome::Net::CpStack& iCpStack;
-    OpenHome::Net::DvStack& iDvStack;
-    OpenHome::Media::AnimatorBasic* iAnimator;
-    OpenHome::Av::Test::TestMediaPlayer* iMediaPlayer;
-    OpenHome::ThreadFunctor* iMediaPlayerThread;
-    HelperDeviceListHandler* iDeviceListHandler;
+    SuiteConfigUiMediaPlayer(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack);
+private: // from SuiteConfigUi
+    void InitialiseMediaPlayer(const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent) override;
+    void PopulateUriList() override;
 };
 
 } // namespace Test
@@ -1032,7 +991,7 @@ void SuiteConfigUi::Setup()
     Brn qobuzIdSecret("dummyQobuz");
     Brn userAgent("dummyUA");
 
-    iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
+    InitialiseMediaPlayer(udn, suiteConfigUiStr, "SoftPlayer", tuneInPartnerId, tidalId, qobuzIdSecret, userAgent);
     iAnimator = new Media::AnimatorBasic(iDvStack.Env(), iMediaPlayer->Pipeline(), false);
 
     iMediaPlayerThread = new ThreadFunctor("TestConfigUi", MakeFunctor(*this, &SuiteConfigUi::Run));
@@ -1055,6 +1014,8 @@ void SuiteConfigUi::Setup()
         delete blocker;
         delete deviceList;
     }
+
+    PopulateUriList();
 }
 
 void SuiteConfigUi::TearDown()
@@ -1064,6 +1025,11 @@ void SuiteConfigUi::TearDown()
     // CredentialsThread to be run after Credentials destructor has already
     // been called.
     Thread::Sleep(1000);
+
+    for (auto uri : iUris) {
+        delete uri;
+    }
+    iUris.clear();
 
     iMediaPlayer->StopPipeline();
     delete iDeviceListHandler;
@@ -1079,95 +1045,113 @@ void SuiteConfigUi::Run()
 
 void SuiteConfigUi::TestGetStaticResource()
 {
-    const Brx& url = iDeviceListHandler->GetPresentationUrl();
-    TEST(url.Bytes() > 0);
-    Log::Print("SuiteConfigUi::TestGetStaticResource url: ");
-    Log::Print(url);
-    Log::Print("\n");
+    for (auto& uri : iUris) {
+        UriRetriever uriRetriever(iDvStack.Env(), *uri);
+        Bws<1024> responseBuffer;
+        WriterBuffer writerBuf(responseBuffer);
+        TUint code = uriRetriever.Retrieve(Brn("index.html"), Http::kMethodGet, Brx::Empty(), writerBuf);
+        TEST(code == HttpStatus::kOk.Code());
+        // Check document looks like:
+        // <!DOCTYPE ...>
+        // <html>
+        // ...
+        // </html>
 
-    const Uri uri(url);
-    UriRetriever uriRetriever(iDvStack.Env(), uri);
-    Bws<1024> responseBuffer;
-    WriterBuffer writerBuf(responseBuffer);
-    TUint code = uriRetriever.Retrieve(Brn("index.html"), Http::kMethodGet, Brx::Empty(), writerBuf);
-    TEST (code == HttpStatus::kOk.Code());
-    // Check document looks like:
-    // <!DOCTYPE ...>
-    // <html>
-    // ...
-    // </html>
+        Parser p(responseBuffer);
+        p.Next('!');    // skip "<!"
+        Brn docType = p.Next();
+        TEST(docType == Brn("DOCTYPE"));
 
-    Parser p(responseBuffer);
-    p.Next('!');    // skip "<!"
-    Brn docType = p.Next();
-    TEST(docType == Brn("DOCTYPE"));
+        p.Next('<');    // skip remainder of DOCTYPE
+        Brn htmlOpen = p.Next('>');
+        TEST(htmlOpen == Brn("html"));
 
-    p.Next('<');    // skip remainder of DOCTYPE
-    Brn htmlOpen = p.Next('>');
-    TEST(htmlOpen == Brn("html"));
+        Bws<100> tag;
+        p.Next('<');    // find start of next tag
+        while (!p.Finished()) {
+            tag.Replace(p.Next('>'));   // get tag
+            p.Next('<');                // find start of next tag
+        }
 
-    Bws<100> tag;
-    p.Next('<');    // find start of next tag
-    while (!p.Finished()) {
-        tag.Replace(p.Next('>'));   // get tag
-        p.Next('<');                // find start of next tag
+        // "</html>" should be last tag in document.
+        TEST(p.Finished());
+        TEST(tag == Brn("/html"));
     }
-
-    // "</html>" should be last tag in document.
-    TEST(p.Finished());
-    TEST(tag == Brn("/html"));
 }
 
 void SuiteConfigUi::TestLongPollCreate()
 {
     static const Brn kExpectedSessionId("session-id: 1\r\n");
-    const Brx& url = iDeviceListHandler->GetPresentationUrl();
-    TEST(url.Bytes() > 0);
-    const Uri uri(url);
 
-    UriRetriever uriRetriever(iDvStack.Env(), uri);
-    Bws<1024> responseBuffer;
-    WriterBuffer writerBuf(responseBuffer);
-    TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
-    TEST(code == HttpStatus::kOk.Code());
-    TEST(responseBuffer == kExpectedSessionId);
+    for (auto& uri : iUris) {
+        UriRetriever uriRetriever(iDvStack.Env(), *uri);
+        Bws<1024> responseBuffer;
+        WriterBuffer writerBuf(responseBuffer);
+        TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
+        TEST(code == HttpStatus::kOk.Code());
+        Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
+        expectedLpCreateResponse.Append(kExpectedSessionId);
+        TEST(responseBuffer == expectedLpCreateResponse);
 
-
-    // FIXME - if test ends without requesting /lpterminate, TestMediaPlayer crashes during
-    // destruction (looks like it's related to deleting ConfigVals before all
-    // observers have unsubscribed).
-    HelperWriterPrinter writerPrinter;
-    code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
-    TEST(code == HttpStatus::kOk.Code());
+        // FIXME - add test to check if can quit cleanly without seeing an "lpterminate".
+        HelperWriterPrinter writerPrinter;
+        code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
+        TEST(code == HttpStatus::kOk.Code());
+    }
 }
 
 void SuiteConfigUi::TestLongPoll()
 {
     static const Brn kExpectedSessionId("session-id: 1\r\n");
+
+    for (auto& uri : iUris) {
+        UriRetriever uriRetriever(iDvStack.Env(), *uri);
+        Bws<1024> responseBuffer;
+        WriterBuffer writerBuf(responseBuffer);
+        TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
+        TEST(code == HttpStatus::kOk.Code());
+        Bws<1024> expectedLpCreateResponse("lpcreate\r\n");
+        expectedLpCreateResponse.Append(kExpectedSessionId);
+        TEST(responseBuffer == expectedLpCreateResponse);
+
+        HelperWriterPrinter writerPrinter;
+        code = uriRetriever.Retrieve(Brn("lp"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
+        TEST(code == HttpStatus::kOk.Code());
+        TEST(writerPrinter.BytesPrinted() > 0);
+        writerPrinter.Reset();
+
+        code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
+        TEST(code == HttpStatus::kOk.Code());
+    }
+}
+
+
+// SuiteConfigUiMediaPlayer
+
+SuiteConfigUiMediaPlayer::SuiteConfigUiMediaPlayer(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStack& aDvStack)
+    : SuiteConfigUi(aCpStack, aDvStack)
+{
+}
+
+void SuiteConfigUiMediaPlayer::InitialiseMediaPlayer(const OpenHome::Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const OpenHome::Brx& aTuneInPartnerId, const OpenHome::Brx& aTidalId, const OpenHome::Brx& aQobuzIdSecret, const OpenHome::Brx& aUserAgent)
+{
+    iMediaPlayer = new Av::Test::TestMediaPlayer(iDvStack, aUdn, aRoom, aProductName, aTuneInPartnerId, aTidalId, aQobuzIdSecret, aUserAgent);
+}
+
+void SuiteConfigUiMediaPlayer::PopulateUriList()
+{
     const Brx& url = iDeviceListHandler->GetPresentationUrl();
-    TEST(url.Bytes() > 0);
-    const Uri uri(url);
+    ASSERT(url.Bytes() > 0);
+    Log::Print("SuiteConfigUiMediaPlayer::PopulateUriList url: ");
+    Log::Print(url);
+    Log::Print("\n");
 
-    UriRetriever uriRetriever(iDvStack.Env(), uri);
-    Bws<1024> responseBuffer;
-    WriterBuffer writerBuf(responseBuffer);
-    TUint code = uriRetriever.Retrieve(Brn("lpcreate"), Http::kMethodPost, Brx::Empty(), writerBuf);
-    TEST(code == HttpStatus::kOk.Code());
-    TEST(responseBuffer == kExpectedSessionId);
-
-    HelperWriterPrinter writerPrinter;
-    code = uriRetriever.Retrieve(Brn("lp"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
-    TEST(code == HttpStatus::kOk.Code());
-    TEST(writerPrinter.BytesPrinted() > 0);
-    writerPrinter.Reset();
-
-    code = uriRetriever.Retrieve(Brn("lpterminate"), Http::kMethodPost, kExpectedSessionId, writerPrinter);
-    TEST(code == HttpStatus::kOk.Code());
+    iUris.push_back(new Uri(url));
 }
 
 
 
-void TestConfigUi(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/)
+void TestConfigUi(CpStack& aCpStack, DvStack& aDvStack)
 {
     Runner runner("Config UI tests\n");
     runner.Add(new SuiteConfigMessageNumAllocator());
@@ -1176,6 +1160,9 @@ void TestConfigUi(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/)
     runner.Add(new SuiteConfigMessageNum());
     runner.Add(new SuiteConfigMessageChoice());
     runner.Add(new SuiteConfigMessageText());
-    //runner.Add(new SuiteConfigUi(aCpStack, aDvStack));
+    // FIXME - SuiteConfigUi currently only works on desktop platforms.
+#if defined(_WIN32) || defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+    runner.Add(new SuiteConfigUiMediaPlayer(aCpStack, aDvStack));
+#endif
     runner.Run();
 }

@@ -56,7 +56,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Parse command line args.
     OptionParser parser;
-    OptionString optionDir("-d", "--root-dir", Brn("../OpenHome/Web/ConfigUi/Tests/res/"), "Root directory for serving static files");
+    OptionString optionDir("-d", "--root-dir", Brn(""), "Root directory for serving static files");
     parser.AddOption(&optionDir);
 
     if (!parser.Parse(aArgc, aArgv)) {

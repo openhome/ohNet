@@ -22,6 +22,7 @@ namespace Media {
     class UriProvider;
     class Protocol;
     namespace Codec {
+        class ContainerBase;
         class CodecBase;
     }
     class AllocatorInfoLogger;
@@ -57,6 +58,7 @@ class VolumeConfig;
 class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
+class ConfigStartupSource;
 
 class IMediaPlayer
 {
@@ -95,6 +97,7 @@ public:
                 const Brx& aDefaultName);
     ~MediaPlayer();
     void Quit();
+    void Add(Media::Codec::ContainerBase* aContainer);
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);
@@ -131,6 +134,7 @@ private:
     Av::Product* iProduct;
     VolumeConfig* iVolumeConfig;
     Av::VolumeManager* iVolumeManager;
+    ConfigStartupSource* iConfigStartupSource;
     Credentials* iCredentials;
     Media::MimeTypeList iMimeTypes;
     ProviderTime* iProviderTime;
