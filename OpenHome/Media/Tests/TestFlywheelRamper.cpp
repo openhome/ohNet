@@ -81,7 +81,7 @@ public:
     virtual void ProcessSample8(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample16(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample24(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
-    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
+    virtual void ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void Flush() {ASSERTS();};
 
 
