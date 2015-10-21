@@ -81,12 +81,12 @@ public:
     virtual void ProcessSample8(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample16(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample24(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
-    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels);
+    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels) {ASSERTS();};
     virtual void Flush() {ASSERTS();};
 
 
 private:
-    Bwx& iBuf;
+    //Bwx& iBuf;
 };
 
 
@@ -180,7 +180,7 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
     Bws<kSamplesOutBytes> samplesOut;
     PcmProcessorFeedback opProc(samplesOut);
     FeedbackModel* feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
-    feedback->Initialise(coeffs, samplesIn);
+    //feedback->Initialise(coeffs, samplesIn);
 
     feedback->Cycle(/*kSamplesOutCount*/);
 
@@ -801,6 +801,7 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
 
 void SuiteFlywheelRamper::Test8() // FeedbackModel profiling
 {
+/*
     iScaleShiftForProduct = 4;
     iScaleShiftForOutput = 0;
 
@@ -902,7 +903,7 @@ void SuiteFlywheelRamper::Test8() // FeedbackModel profiling
 
 
     Log::Print("Feedback Process(inline): time taken = %dms  (%d samples)  \n", endTime2-startTime2, aSamplesOut.Bytes()/4);
-
+*/
 }
 
 
@@ -997,21 +998,17 @@ double FlywheelRamper::ToDouble(TInt16 aVal, TUint aScale)
 
 /////////////////////////////////////////////////////////////////
 
-PcmProcessorFeedback::PcmProcessorFeedback(Bwx& aBuf)
-    :iBuf(aBuf)
+PcmProcessorFeedback::PcmProcessorFeedback(Bwx& /*aBuf*/)
+    //:iBuf(aBuf)
 {
 
 }
 
-void PcmProcessorFeedback::ProcessFragment32(const Brx& aData, TUint aNumChannels)
+void PcmProcessorFeedback::ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/)
 {
 
 }
 
-
-void PcmProcessorFeedback::ProcessSample32(const TByte* aSample, TUint aNumChannels)
-{
-}
 
 
 
