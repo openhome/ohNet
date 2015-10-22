@@ -57,6 +57,7 @@ public:
 private: // from ISource
     void Activate() override;
     void Deactivate() override;
+    void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceReceiver
     void Play() override;
@@ -249,6 +250,11 @@ void SourceReceiver::Deactivate()
     iPlaying = false;
     iTrackUri.Replace(Brx::Empty());
     Source::Deactivate();
+}
+
+void SourceReceiver::StandbyEnabled()
+{
+    Stop();
 }
 
 void SourceReceiver::PipelineStopped()

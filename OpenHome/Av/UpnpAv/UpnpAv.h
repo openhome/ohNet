@@ -50,6 +50,7 @@ private:
 private: // from Source
     void Activate() override;
     void Deactivate() override;
+    void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceUpnpAv
     void SetTrack(const Brx& aUri, const Brx& aMetaData) override;

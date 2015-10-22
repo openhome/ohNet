@@ -39,6 +39,7 @@ private:
 private: // from ISource
     void Activate() override;
     void Deactivate() override;
+    void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourcePlaylist
     void Play() override;
@@ -197,6 +198,11 @@ void SourcePlaylist::Deactivate()
     iProviderPlaylist->NotifyPipelineState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
+}
+
+void SourcePlaylist::StandbyEnabled()
+{
+    Stop();
 }
 
 void SourcePlaylist::PipelineStopped()

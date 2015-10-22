@@ -27,6 +27,7 @@ public:
     virtual void Activate() = 0;
     virtual void Deactivate() = 0;
     virtual void SetVisible(TBool aVisible) = 0;
+    virtual void StandbyEnabled() = 0;
     virtual void PipelineStopped() = 0;
 private:
     virtual void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) = 0;
