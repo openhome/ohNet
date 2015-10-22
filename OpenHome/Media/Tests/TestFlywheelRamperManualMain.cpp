@@ -135,7 +135,7 @@ TestFWRManual::TestFWRManual(Net::Library& aLib, const Brx& aInputFilename, cons
         inputFilename.Grow(inputFilename.Bytes()+1);
         iInputFile = IFile::Open(inputFilename.PtrZ(), eFileReadOnly);
     }
-    catch(FileOpenError)
+    catch(FileOpenError&)
     {
         Log::Print("Failed to open input file \n");
         ASSERTS();
@@ -164,7 +164,7 @@ TestFWRManual::TestFWRManual(Net::Library& aLib, const Brx& aInputFilename, cons
             iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
         }
     }
-    catch(FileOpenError)
+    catch(FileOpenError&)
     {
         Log::Print("Failed to open output file \n");
         ASSERTS();

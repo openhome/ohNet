@@ -142,7 +142,7 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
             iReadOffset = iController->StreamPos();
         }
     }
-    catch(CodecStreamEnded) {
+    catch(CodecStreamEnded&) {
         buf.SetBytes(0);
     }
 
@@ -514,10 +514,10 @@ void CodecVorbis::Process()
                 LOG(kCodec, "CodecVorbis::Process output - total samples = %llu\n", iTotalSamplesOutput);
             }
         }
-        catch(CodecStreamEnded) {
+        catch(CodecStreamEnded&) {
             iStreamEnded = true;
         }
-        catch (CodecStreamStart) {
+        catch (CodecStreamStart&) {
             iNewStreamStarted = true;
         }
     }
