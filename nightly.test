@@ -51,7 +51,6 @@ tests = '''
     TestWaiter
     TestUriProviderRepeater
     TestJson
-    TestObservable
     TestRaop
     TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
