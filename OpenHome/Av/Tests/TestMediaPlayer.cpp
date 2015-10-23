@@ -97,6 +97,113 @@ void VolumeSinkLogger::SetFade(TInt aFade)
 }
 
 
+// UpnpDeviceNameChangerBase
+
+UpnpDeviceNameChangerBase::UpnpDeviceNameChangerBase(DvDevice& aDevice)
+    : iDevice(aDevice)
+    , iLock("DNCL")
+    , iSemDisabled("UFDS", 0)
+    , iSemUpdate("UFUS", 0)
+    , iQuit(false)
+{
+    iThread = new ThreadFunctor("UpnpNameChanger", MakeFunctor(*this, &UpnpDeviceNameChangerBase::Run));
+    iThread->Start();
+}
+
+UpnpDeviceNameChangerBase::~UpnpDeviceNameChangerBase()
+{
+    {
+        AutoMutex a(iLock);
+        iQuit = true;
+    }
+    iSemUpdate.Signal();
+}
+
+void UpnpDeviceNameChangerBase::FriendlyNameChanged(const Brx& aFriendlyName)
+{
+    iFriendlyName.Replace(aFriendlyName);
+    iSemUpdate.Signal();
+}
+
+void UpnpDeviceNameChangerBase::Run()
+{
+    for (;;) {
+        iSemUpdate.Wait();
+        AutoMutex a(iLock);
+
+        if (iQuit) {
+            return;
+        }
+
+        const TBool wasEnabled = iDevice.Enabled();
+
+        if (wasEnabled) {
+            iDevice.SetDisabled(MakeFunctor(*this, &UpnpDeviceNameChangerBase::DeviceDisabledCallback));
+            iSemDisabled.Wait();
+        }
+
+        iDevice.SetAttribute("Upnp.FriendlyName", iFriendlyName.PtrZ());
+
+        if (wasEnabled) {
+            iDevice.SetEnabled();
+        }
+    }
+}
+
+void UpnpDeviceNameChangerBase::DeviceDisabledCallback()
+{
+    iSemDisabled.Signal();
+}
+
+
+// UpnpDeviceNameChangerMediaPlayer
+
+UpnpDeviceNameChangerMediaPlayer::UpnpDeviceNameChangerMediaPlayer(DvDevice& aDevice, IFriendlyNameObservable& aObservable)
+    : UpnpDeviceNameChangerBase(aDevice)
+    , iObservable(aObservable)
+{
+    iObserverId = iObservable.RegisterFriendlyNameObserver(MakeFunctorGeneric<const Brx&>(*this, &UpnpDeviceNameChangerMediaPlayer::NameChanged));
+}
+
+UpnpDeviceNameChangerMediaPlayer::~UpnpDeviceNameChangerMediaPlayer()
+{
+    iObservable.DeregisterFriendlyNameObserver(iObserverId);
+}
+
+void UpnpDeviceNameChangerMediaPlayer::NameChanged(const Brx& aFriendlyName)
+{
+    FriendlyNameChanged(aFriendlyName);
+}
+
+
+// UpnpDeviceNameChangerMediaRenderer
+
+UpnpDeviceNameChangerMediaRenderer::UpnpDeviceNameChangerMediaRenderer(DvDevice& aDevice, IProductNameObservable& aObservable)
+    : UpnpDeviceNameChangerBase(aDevice)
+{
+    aObservable.AddNameObserver(*this);
+}
+
+void UpnpDeviceNameChangerMediaRenderer::RoomChanged(const Brx& aRoom)
+{
+    // The renderer name should be <room name>:<UPnP AV source name> to allow
+    // our control point to match the renderer device to the upnp av source.
+    //
+    // FIXME - will have to observe UPnP AV source name and update friendly name when it changes.
+
+    Bws<256> friendlyName(aRoom);
+    friendlyName.Append(":");
+    friendlyName.Append(SourceUpnpAv::kSourceName);
+    friendlyName.Append(":MediaRenderer");
+    FriendlyNameChanged(friendlyName);
+}
+
+void UpnpDeviceNameChangerMediaRenderer::NameChanged(const Brx& /*aName*/)
+{
+    // UPnP AV source name is used instead of product name.
+}
+
+
 // TestMediaPlayer
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
@@ -109,7 +216,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
     , iTxTsMapper(nullptr)
@@ -120,38 +226,26 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
 
-    Bws<256> friendlyName;
-    friendlyName.Append(aRoom);
-    friendlyName.Append(':');
-    friendlyName.Append(aProductName);
+    // Do NOT set UPnP friendly name attributes at this stage.
+    // (Wait until MediaPlayer is created so that friendly name can be observed.)
 
-    // create UPnP device
+    // Create UPnP device.
+    // Friendly name not set here.
     iDevice = new DvDeviceStandard(aDvStack, aUdn, *this);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Source");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
     iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDevice->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
-    // create separate UPnP device for standard MediaRenderer
+    // Create separate UPnP device for standard MediaRenderer.
     Bws<256> buf(aUdn);
     buf.Append("-MediaRenderer");
-    // The renderer name should be <room name>:<UPnP AV source name> to allow
-    // our control point to match the renderer device to the upnp av source.
-    //
-    // FIXME - will have to allow this to be dynamically changed at runtime if
-    // someone changes the name of the UPnP AV source.
-    // Disable device -> change name -> re-enable device.
-    Bws<256> rendererName(aRoom);
-    rendererName.Append(":");
-    rendererName.Append(SourceUpnpAv::kSourceName);
     iDeviceUpnpAv = new DvDeviceStandard(aDvStack, buf);
+    // Friendly name not set here.
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
-    friendlyName.Append(":MediaRenderer");
-    iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", rendererName.PtrZ());
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
@@ -162,26 +256,30 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // create a read/write store using the new config framework
     iConfigRamStore = new ConfigRamStore();
 
-    // FIXME - available store keys should be listed somewhere
-    iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
-    iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
-
     VolumeProfile volumeProfile;
     VolumeConsumer volumeInit;
     volumeInit.SetVolume(iVolumeLogger);
     volumeInit.SetBalance(iVolumeLogger);
     volumeInit.SetFade(iVolumeLogger);
 
-    // create MediaPlayer
+    // Create MediaPlayer.
+    // NOTE: If values for Room.Name and Product.Name already exist in the Store,
+    //       the aRoom and aProductName default values will be ignored.
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
                                                                       // platforms with slightly unpredictable thread scheduling
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iShell, *iRamStore, *iConfigRamStore, pipelineInit,
-                                   volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   volumeInit, volumeProfile, aUdn, Brn(aRoom), Brn(aProductName));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
-    // register our PowerDownUpnp function with the PowerManager
+    // FIXME - possible race condition between friendly name observers and power manager -if PowerManager is called during a friendly name update, just after friendly name observer has taken device offline, friendly name observer would then attempt to bring device back online.
+    // Attempts to power up/down UPnP devices should maybe go through TestMediaPlayer helper methods that will know if PowerDown() has been called.
+    // Create UPnP friendly name observers.
+    iUpnpFriendlyNameObserver = new UpnpDeviceNameChangerMediaPlayer(*iDevice, iMediaPlayer->FriendlyNameObservable());
+    iUpnpAvFriendlyNameObserver = new UpnpDeviceNameChangerMediaRenderer(*iDeviceUpnpAv, iMediaPlayer->Product());
+
+    // Register with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
     iPowerObserver = powerManager.Register(*this, kPowerPriorityLowest);
 
@@ -195,6 +293,8 @@ TestMediaPlayer::~TestMediaPlayer()
 {
     delete iAppFramework;
     delete iPowerObserver;
+    delete iUpnpAvFriendlyNameObserver;
+    delete iUpnpFriendlyNameObserver;
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
     delete iPipelineObserver;
@@ -364,10 +464,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     hostName.Replace(iDevice->Udn());
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
-    const TChar* friendlyName;
-    iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
-    iObservableFriendlyName.Replace(Brn(friendlyName));
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iMediaPlayer->FriendlyNameObservable(), macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
 }

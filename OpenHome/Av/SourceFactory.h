@@ -13,6 +13,7 @@ namespace Media {
 }
 namespace Av {
 
+class IFriendlyNameObservable;
 class ISource;
 class IMediaPlayer;
 class IOhmTimestamper;
@@ -25,7 +26,7 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer);
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
                                 IOhmTimestamper* aTxTimestamper,
                                 IOhmTimestampMapper* aTxTsMapper,

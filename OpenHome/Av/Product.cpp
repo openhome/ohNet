@@ -314,31 +314,23 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
 
 void Product::ProductRoomChanged(KeyValuePair<const Brx&>& aKvp)
 {
-    {
-        AutoMutex a(iLockDetails);
-        const TBool changed = (iProductRoom != aKvp.Value());
-        if (!changed) {
-            return;
-        }
+    AutoMutex a(iLockDetails);
+    if (iProductRoom != aKvp.Value()) {
         iProductRoom.Replace(aKvp.Value());
-    }
-    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->RoomChanged();
+        for (auto it=iNameObservers.begin(); it!=iNameObservers.end(); ++it) {
+            (*it)->RoomChanged(iProductRoom);
+        }
     }
 }
 
 void Product::ProductNameChanged(KeyValuePair<const Brx&>& aKvp)
 {
-    {
-        AutoMutex a(iLockDetails);
-        const TBool changed = (iProductName != aKvp.Value());
-        if (!changed) {
-            return;
-        }
+    AutoMutex a(iLockDetails);
+    if (iProductName != aKvp.Value()) {
         iProductName.Replace(aKvp.Value());
-    }
-    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->NameChanged();
+        for (auto it=iNameObservers.begin(); it!=iNameObservers.end(); ++it) {
+            (*it)->NameChanged(iProductName);
+        }
     }
 }
 
@@ -460,6 +452,77 @@ void Product::NotifySourceNameChanged(ISource& /*aSource*/)
     }
 }
 
+void Product::AddNameObserver(IProductNameObserver& aObserver)
+{
+    AutoMutex a(iLockDetails);
+    iNameObservers.push_back(&aObserver);
+    // Notify new observer immediately with its initial values.
+    aObserver.RoomChanged(iProductRoom);
+    aObserver.NameChanged(iProductName);
+}
+
 void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)
 {
+}
+
+
+// FriendlyNameManager
+
+FriendlyNameManager::FriendlyNameManager(IProductNameObservable& aProduct)
+    : iNextObserverId(1)
+    , iMutex("FNHM")
+{
+    aProduct.AddNameObserver(*this);    // Observer methods called during registration.
+}
+
+FriendlyNameManager::~FriendlyNameManager()
+{
+    AutoMutex a(iMutex);
+    ASSERT(iObservers.size() == 0);
+}
+
+TUint FriendlyNameManager::RegisterFriendlyNameObserver(FunctorGeneric<const Brx&> aObserver)
+{
+    AutoMutex a(iMutex);
+    const TUint id = iNextObserverId++;
+    auto it = iObservers.insert(std::pair<TUint,FunctorGeneric<const Brx&>>(id, aObserver));
+    ASSERT(it.second);
+    aObserver(iFriendlyName);
+    return id;
+}
+
+void FriendlyNameManager::DeregisterFriendlyNameObserver(TUint aId)
+{
+    const TUint count = iObservers.erase(aId);
+    ASSERT(count == 1);
+}
+
+void FriendlyNameManager::RoomChanged(const Brx& aRoom)
+{
+    AutoMutex a(iMutex);
+    iRoom.Replace(aRoom);
+    ConstructFriendlyNameLocked();
+    NotifyObserversLocked();
+}
+
+void FriendlyNameManager::NameChanged(const Brx& aName)
+{
+    AutoMutex a(iMutex);
+    iName.Replace(aName);
+    ConstructFriendlyNameLocked();
+    NotifyObserversLocked();
+}
+
+void FriendlyNameManager::ConstructFriendlyNameLocked()
+{
+    iFriendlyName.Replace(iRoom);
+    iFriendlyName.Append(':');
+    iFriendlyName.Append(iName);
+}
+
+void FriendlyNameManager::NotifyObserversLocked()
+{
+    for (auto observer : iObservers) {
+        observer.second(iFriendlyName);
+    }
 }

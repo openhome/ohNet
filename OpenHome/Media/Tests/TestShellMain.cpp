@@ -48,7 +48,7 @@ SIMPLE_TEST_DECLARATION(TestUriProviderRepeater);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
 SIMPLE_TEST_DECLARATION(TestWaiter);
 SIMPLE_TEST_DECLARATION(TestJson);
-SIMPLE_TEST_DECLARATION(TestObservable);
+SIMPLE_TEST_DECLARATION(TestFriendlyNameManager);
 ENV_TEST_DECLARATION(TestFlywheelRamper);
 ENV_TEST_DECLARATION(TestRaop);
 ENV_TEST_DECLARATION(TestUdpServer);
@@ -118,7 +118,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
     shellTests.push_back(ShellTest("TestJson", ShellTestJson));
     shellTests.push_back(ShellTest("TestCredentials", ShellTestCredentials));
-    shellTests.push_back(ShellTest("TestObservable", ShellTestObservable));
+    shellTests.push_back(ShellTest("TestFriendlyNameManager", ShellTestFriendlyNameManager));
     shellTests.push_back(ShellTest("TestFlywheelRamper", ShellTestFlywheelRamper));
     shellTests.push_back(ShellTest("TestRaop", ShellTestRaop));
     shellTests.push_back(ShellTest("TestWebAppFramework", ShellTestWebAppFramework));

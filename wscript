@@ -295,7 +295,6 @@ def build(bld):
                 'OpenHome/Av/Credentials.cpp',
                 'Generated/DvAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/ProviderCredentials.cpp',
-                'OpenHome/ObservableBrx.cpp',
                 'OpenHome/Av/VolumeManager.cpp',
                 #'OpenHome/Av/TransportControl.cpp',
                 #'Generated/DvOpenhomeOrgEriskayTransportControl1.cpp',
@@ -647,6 +646,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
+                'OpenHome/Av/Tests/TestFriendlyNameManager.cpp',
                 'OpenHome/Av/Tests/TestUdpServer.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
@@ -662,7 +662,6 @@ def build(bld):
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
                 'OpenHome/Tests/TestSsl.cpp',
-                'OpenHome/Tests/TestObservable.cpp',
                 'OpenHome/Av/Tests/TestCredentials.cpp',
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/Tests/TestJson.cpp',
@@ -932,9 +931,9 @@ def build(bld):
             target='TestHttps',
             install_path=None)
     bld.program(
-            source='OpenHome/Tests/TestObservableMain.cpp',
+            source='OpenHome/Av/Tests/TestFriendlyNameManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestObservable',
+            target='TestFriendlyNameManager',
             install_path=None)
     #bld.program(
     #        source='OpenHome/Tests/TestHttpsBsd.cpp',

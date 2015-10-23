@@ -51,11 +51,11 @@ tests = '''
     TestWaiter
     TestUriProviderRepeater
     TestJson
-    TestObservable
     TestRaop
     TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
     TestFlywheelRamper
+    TestFriendlyNameManager
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()

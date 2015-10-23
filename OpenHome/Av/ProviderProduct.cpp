@@ -263,26 +263,6 @@ void ProviderProduct::Started()
     SourceXmlChanged();
 }
 
-void ProviderProduct::RoomChanged()
-{
-    Bws<Product::kMaxRoomBytes> room;
-    Bws<Product::kMaxNameBytes> name;
-    Brn info;
-    Brn imageUri;
-    iProduct.GetProductDetails(room, name, info, imageUri);
-    SetPropertyProductRoom(room);
-}
-
-void ProviderProduct::NameChanged()
-{
-    Bws<Product::kMaxRoomBytes> room;
-    Bws<Product::kMaxNameBytes> name;
-    Brn info;
-    Brn imageUri;
-    iProduct.GetProductDetails(room, name, info, imageUri);
-    SetPropertyProductName(name);
-}
-
 void ProviderProduct::StandbyChanged()
 {
     SetPropertyStandby(iProduct.StandbyEnabled());
@@ -300,4 +280,14 @@ void ProviderProduct::SourceXmlChanged()
     iProduct.GetSourceXml(iSourceXml);
     SetPropertySourceXml(iSourceXml);
     iLock.Signal();
+}
+
+void ProviderProduct::RoomChanged(const Brx& aRoom)
+{
+    SetPropertyProductRoom(aRoom);
+}
+
+void ProviderProduct::NameChanged(const Brx& aName)
+{
+    SetPropertyProductName(aName);
 }

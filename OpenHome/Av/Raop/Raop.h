@@ -7,7 +7,6 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/PowerManager.h>
-#include <OpenHome/ObservableBrx.h>
 #include <OpenHome/Av/VolumeManager.h>
 
 #include  <openssl/rsa.h>
@@ -106,6 +105,8 @@ private:
     TUint iRtpTime;
 };
 
+class IFriendlyNameObservable;
+
 class RaopDevice
 {
 public:
@@ -113,7 +114,7 @@ public:
     static const TUint kMacAddrBytes = 12;
 public:
     // aMacAddr in hex of form 001122334455
-    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, IObservableBrx& aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, IFriendlyNameObservable& aFriendlyNameObservable, TIpAddress aIpAddr, const Brx& aMacAddr);
     ~RaopDevice();
     void Register();
     void Deregister();
@@ -127,12 +128,13 @@ private:
 private:
     Net::IMdnsProvider& iProvider;
     TUint iHandleRaop;
+    IFriendlyNameObservable& iFriendlyNameObservable;
+    TUint iFriendlyNameId;
     Bws<kMaxNameBytes> iName;
     const Endpoint iEndpoint;
     const Bws<kMacAddrBytes> iMacAddress;
     TBool iRegistered;
     Mutex iLock;
-    IObservableBrx& iFriendlyName;
 };
 
 class IRaopDiscovery
@@ -256,7 +258,7 @@ private:
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IRaopVolume& aVolume);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IRaopVolume& aVolume);
     virtual ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -301,7 +303,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr, IRaopVolume& aVolume);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IRaopVolume& aVolume);
     virtual ~RaopDiscovery();
     void Enable();
     void Disable();
@@ -333,7 +335,7 @@ private:
     Environment& iEnv;
     Net::DvStack& iDvStack;
     const Bws<RaopDevice::kMaxNameBytes> iHostName;
-    IObservableBrx& iFriendlyName;
+    IFriendlyNameObservable& iFriendlyNameObservable;
     const Bws<RaopDevice::kMacAddrBytes> iMacAddr;
     std::vector<RaopDiscoveryServer*> iServers;
     std::vector<IRaopObserver*> iObservers;
