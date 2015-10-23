@@ -161,11 +161,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // create a read/write store using the new config framework
     iConfigRamStore = new ConfigRamStore();
 
-    // FIXME - remove these; defaults are passed into MediaPlayer construction
-    // FIXME - available store keys should be listed somewhere
-    iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
-    iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
-
     VolumeProfile volumeProfile;
     VolumeConsumer volumeInit;
     volumeInit.SetVolume(iVolumeLogger);
@@ -177,7 +172,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
                                                                       // platforms with slightly unpredictable thread scheduling
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iShell, *iRamStore, *iConfigRamStore, pipelineInit,
-                                   volumeInit, volumeProfile, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   volumeInit, volumeProfile, aUdn, Brn(aRoom), Brn(aProductName));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
