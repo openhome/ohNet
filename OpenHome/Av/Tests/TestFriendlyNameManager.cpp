@@ -37,7 +37,6 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     void TestRegisterDeregister();
-    void TestRegisterNoDeregister();
     void TestUpdate();  // Deregister one observer for second update.
 private:
     MockProductNameObservable* iObservable;
@@ -99,7 +98,6 @@ SuiteFriendlyNameManager::SuiteFriendlyNameManager()
     : SuiteUnitTest("SuiteFriendlyNameManager")
 {
     AddTest(MakeFunctor(*this, &SuiteFriendlyNameManager::TestRegisterDeregister), "TestRegisterDeregister");
-    AddTest(MakeFunctor(*this, &SuiteFriendlyNameManager::TestRegisterNoDeregister), "TestRegisterNoDeregister");
     AddTest(MakeFunctor(*this, &SuiteFriendlyNameManager::TestUpdate), "TestUpdate");
 }
 
@@ -133,14 +131,6 @@ void SuiteFriendlyNameManager::TestRegisterDeregister()
 
     observable.DeregisterFriendlyNameObserver(id2);
     observable.DeregisterFriendlyNameObserver(id1);
-}
-
-void SuiteFriendlyNameManager::TestRegisterNoDeregister()
-{
-    IFriendlyNameObservable& observable = *iFriendlyNameManager;
-    MockFriendlyNameObserver observer;
-    (void)observable.RegisterFriendlyNameObserver(MakeFunctorGeneric<const Brx&>(observer, &MockFriendlyNameObserver::FriendlyNameChanged));
-    TEST_THROWS(delete iFriendlyNameManager, AssertionFailed);
 }
 
 void SuiteFriendlyNameManager::TestUpdate()
