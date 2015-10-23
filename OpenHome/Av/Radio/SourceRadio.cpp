@@ -140,6 +140,11 @@ void SourceRadio::Deactivate()
     Source::Deactivate();
 }
 
+void SourceRadio::StandbyEnabled()
+{
+    Stop();
+}
+
 void SourceRadio::PipelineStopped()
 {
     // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)

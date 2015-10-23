@@ -188,6 +188,21 @@ void SourceRaop::Deactivate()
     Source::Deactivate();
 }
 
+void SourceRaop::StandbyEnabled()
+{
+    iPipeline.Stop();
+    {
+        AutoMutex _(iLock);
+        iTransportState = Media::EPipelineStopped;
+        if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
+            // Disable RAOP visibility if config val was updated while Net Aux was
+            // selected source.
+            iRaopDiscovery->Disable();
+        }
+        iSessionActive = false; // If switching away from Net Aux, don't want to allow session to be re-initialised without user explicitly re-selecting device from a control point.
+    }
+}
+
 void SourceRaop::PipelineStopped()
 {
     // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)

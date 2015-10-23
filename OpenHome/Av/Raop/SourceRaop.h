@@ -36,6 +36,7 @@ public:
 private: // from ISource
     void Activate() override;
     void Deactivate() override;
+    void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from IRaopObserver
     void NotifySessionStart(TUint aControlPort, TUint aTimingPort) override;

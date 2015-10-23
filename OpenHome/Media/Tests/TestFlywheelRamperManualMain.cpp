@@ -82,11 +82,11 @@ public:
     virtual void ProcessFragment8(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessFragment16(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
-    virtual void ProcessFragment32(const Brx& /*aData*/, TUint /*aNumChannels*/) {ASSERTS();};
+    virtual void ProcessFragment32(const Brx& aData, TUint aNumChannels);
     virtual void ProcessSample8(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample16(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void ProcessSample24(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
-    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels);
+    virtual void ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChannels*/) {ASSERTS();};
     virtual void Flush() {ASSERTS();};
 
 private:
@@ -135,7 +135,7 @@ TestFWRManual::TestFWRManual(Net::Library& aLib, const Brx& aInputFilename, cons
         inputFilename.Grow(inputFilename.Bytes()+1);
         iInputFile = IFile::Open(inputFilename.PtrZ(), eFileReadOnly);
     }
-    catch(FileOpenError)
+    catch(FileOpenError&)
     {
         Log::Print("Failed to open input file \n");
         ASSERTS();
@@ -164,7 +164,7 @@ TestFWRManual::TestFWRManual(Net::Library& aLib, const Brx& aInputFilename, cons
             iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
         }
     }
-    catch(FileOpenError)
+    catch(FileOpenError&)
     {
         Log::Print("Failed to open output file \n");
         ASSERTS();
@@ -714,10 +714,10 @@ PcmProcessorFwrMan::PcmProcessorFwrMan(Bwx& aBuf)
 }
 
 
-void PcmProcessorFwrMan::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+void PcmProcessorFwrMan::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
 {
-    ASSERT(aNumChannels==1);
-    iBuf.Append(Brn(aSample, 4));
+    //ASSERT(aNumChannels==1);
+    iBuf.Append(aData);
 }
 
 /////////////////////////////////////////////////////////////////

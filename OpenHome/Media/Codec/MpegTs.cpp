@@ -701,7 +701,7 @@ Msg* MpegTs::Pull()
                     }
                 }
             }
-            catch (InvalidMpegTsPacket) {
+            catch (InvalidMpegTsPacket&) {
                 iCache.Discard(kPacketBytes - kStreamHeaderBytes);
                 iState = eStart;
             }
@@ -740,7 +740,7 @@ Msg* MpegTs::Pull()
                 iProgramMapPid = iPat.ProgramMapPid();
                 iState = eStart;    // Read next packet.
             }
-            catch (InvalidMpegTsPacket) {
+            catch (InvalidMpegTsPacket&) {
                 iCache.Discard(iRemaining);
                 iRemaining = 0;
                 iState = eStart;
@@ -756,7 +756,7 @@ Msg* MpegTs::Pull()
                 iStreamPid = iPmt.StreamPid();
                 iState = eStart;    // Read next packet.
             }
-            catch (InvalidMpegTsPacket) {
+            catch (InvalidMpegTsPacket&) {
                 iCache.Discard(iRemaining);
                 iRemaining = 0;
                 iState = eStart;

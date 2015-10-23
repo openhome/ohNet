@@ -47,6 +47,7 @@ public:
 private: // from ISource
     void Activate() override;
     void Deactivate() override;
+    void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceRadio
     void Fetch(const Brx& aUri, const Brx& aMetaData) override;

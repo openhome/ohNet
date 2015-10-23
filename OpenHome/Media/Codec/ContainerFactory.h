@@ -5,7 +5,7 @@ namespace Media {
     class IMimeTypeList;
 namespace Codec {
 
-class CodntainerBase;
+class ContainerBase;
 
 class ContainerFactory
 {

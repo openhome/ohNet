@@ -265,6 +265,11 @@ void Product::SetStandby(TBool aStandby)
             (*it)->StandbyChanged();
             // FIXME - other observers to notify. (e.g. to disable any hardware)
         }
+
+        if (aStandby) {
+            AutoMutex _(iLock);
+            iSources[iCurrentSource]->StandbyEnabled();
+        }
     }
 }
 

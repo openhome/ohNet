@@ -582,7 +582,7 @@ void RaopDiscoverySession::Run()
                     break;
                 }
             }
-            catch (HttpError) {
+            catch (HttpError&) {
                 LOG(kMedia, "RaopDiscoverySession::Run %u. HttpError\n", iInstance);
             }
         }

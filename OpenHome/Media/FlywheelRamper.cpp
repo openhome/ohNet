@@ -15,6 +15,9 @@ double gMax = 0;
 double gMin = 0;
 
 
+const TUint kMaxSampleRate = 192000;
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -22,11 +25,13 @@ FlywheelRamperManager::FlywheelRamperManager(OpenHome::Environment& aEnv, IPcmPr
     :iEnv(aEnv)
     ,iOutput(aOutput)
     ,iChannelCount(aChannelCount)
+    ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, aRampJiffies)*aChannelCount*4)
     ,iRampJiffies(aRampJiffies)
 {
+    //Log::Print("iOutBuf.MaxBytes() = %d \n", iOutBuf.MaxBytes());
     for(TUint i=0; i<iChannelCount; i++)
     {
-        iRampers.push_back(new FlywheelRamper(iEnv, aOutput, aGenJiffies));
+        iRampers.push_back(new FlywheelRamper(iEnv, aGenJiffies));
     }
 }
 
@@ -55,23 +60,46 @@ void FlywheelRamperManager::Ramp(const Brx& aSamples, TUint aSampleRate)
             ptr += bytesPerChan;
         }
     }
-    TUint endPrepTime = Os::TimeInMs(iEnv.OsCtx());
 
     TUint rampSamplesPerChan = FlywheelRamper::SampleCount(aSampleRate, iRampJiffies);
+    //Log::Print("rampSamplesPerChan = %d \n", rampSamplesPerChan);
 
-    //for (TUint j=0; j<1000; j++)  // scale up for profiling
+    TUint endPrepTime = Os::TimeInMs(iEnv.OsCtx());
+
+    TByte* ptr = (TByte*)iOutBuf.Ptr();
+    TUint outputBytes = 0;
+
+
+    //for (TUint i=0; i<1000; i++)  // scale up for profiling
     {
-        iOutput.BeginBlock();
+        //outputBytes = 0;
+        //ptr = (TByte*)iOutBuf.Ptr();
+
         for(TUint j=0; j<rampSamplesPerChan; j++)
         {
-            for(TUint i=0; i<iChannelCount; i++)
+            for(TUint k=0; k<iChannelCount; k++)
             {
-                iRampers[i]->Cycle();
+                //Log::Print("outputBytes = %d ", outputBytes);
+                TInt32 sample = iRampers[k]->Cycle();
+
+                *(ptr+3) = (TByte) sample;
+                sample >>= 8;
+                *(ptr+2) = (TByte) sample;
+                sample >>= 8;
+                *(ptr+1) = (TByte) sample;
+                sample >>= 8;
+                *(ptr) = (TByte) sample;
+
+                ptr += 4;
+                outputBytes += 4;
             }
         }
-        iOutput.EndBlock();
     }
 
+    iOutBuf.SetBytes(outputBytes);
+    iOutput.BeginBlock();
+    iOutput.ProcessFragment32(iOutBuf, iChannelCount);
+    iOutput.EndBlock();
 
     TUint endGenTime = Os::TimeInMs(iEnv.OsCtx());
 
@@ -90,15 +118,14 @@ void FlywheelRamperManager::Reset()
 }
 
 
-const TUint kMaxSampleRate = 192000;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-FlywheelRamper::FlywheelRamper(OpenHome::Environment& aEnv, IPcmProcessor& aOutput, TUint aGenJiffies)
+FlywheelRamper::FlywheelRamper(OpenHome::Environment& aEnv, TUint aGenJiffies)
     :iEnv(aEnv)
     ,iGenJiffies(aGenJiffies)
     ,iDegree(kDegree)
-    ,iFeedback(new FeedbackModel(aOutput, iDegree, 0, 4, 1, 1))
+    ,iFeedback(new FeedbackModel(iDegree, 0, 4, 1, 1))
     ,iMaxGenSampleCount(SampleCount(kMaxSampleRate, iGenJiffies))
 {
     iGenSamples = (TInt16*) calloc (iMaxGenSampleCount, sizeof(TInt16));
@@ -137,11 +164,11 @@ void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
     const TByte* bufPtr = aSamples.Ptr();
     for(TUint i=0; i<aSamples.Bytes(); i+=kBytesPerSample)
     {
-        TInt16 sample2 = (TInt16) (*(bufPtr++));
-        sample2 <<= 8;
-        sample2 += (TInt16) (*bufPtr);
+        TInt16 sample = (TInt16) (*(bufPtr++));
+        sample <<= 8;
+        sample += (TInt16) (*bufPtr);
         bufPtr += 3;
-        *(ipPtr++) = sample2;
+        *(ipPtr++) = sample;
     }
 
     BurgsMethod(iGenSamples, aSamples.Bytes()/kBytesPerSample, iDegree, iBurgCoeffs, iBurgH, iBurgPer, iBurgPef);
@@ -162,16 +189,16 @@ void FlywheelRamper::Reset()
 }
 
 
-void FlywheelRamper::Cycle(TUint aCount)
+TInt32 FlywheelRamper::Cycle()
 {
-    iFeedback->Cycle(aCount);
+    return(iFeedback->Cycle());
 }
 
 
-void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesInCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef)
+void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef)
 {
-    TUint limit1 = aSamplesInCount-1;
-    TUint limit2 = limit1-1;
+    TUint limit1 = aSamplesCount-1;
+    TUint limit2 = limit1;
 
     for (TUint n = 0; n < aDegree; n++)
     {
@@ -239,15 +266,8 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesInCount, TUint 
             aPef[j] += aPef[i];
         }
     }
-
-/*
-    for (TUint i=0; i<aDegree; i++)
-    {
-        //Log::Print("aOutput[%d] = 0x%08x (%f) \n", i, aOutput[i], ToDouble(aOutput[i], 4));
-        //Log::Print("%d, ", aOutput[i]);
-    }
-*/
 }
+
 
 void FlywheelRamper::Invert(TInt16* aData, TUint aLength)
 {
@@ -267,35 +287,17 @@ TUint FlywheelRamper::SampleCount(TUint aSampleRate, TUint aJiffies)
     return((TUint)sampleCount);
 }
 
-/*
-double FlywheelRamper::ToDouble(TInt32 aVal, TUint aScale)
-{
-    // from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
-    TUint scaleFactor = (1<<(32-aScale));
-    double dbl = ((double)aVal)/scaleFactor;
-    return(dbl);
-}
-
-double FlywheelRamper::ToDouble(TInt16 aVal, TUint aScale)
-{
-    // from : http://forums.devshed.com/programming-42/converting-12-20-fixed-float-636842.html
-    TUint scaleFactor = (1<<(16-aScale));
-    double dbl = ((double)aVal)/scaleFactor;
-    return(dbl);
-}
-*/
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
-FeedbackModel::FeedbackModel(IPcmProcessor& aOutput, TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat)
-    :iOutput(aOutput)
-    ,iCoeffs(NULL)
+FeedbackModel::FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat)
+    :iCoeffs(NULL)
     ,iStateCount(aCoeffCount)
     ,iSamples(aCoeffCount, 0)
     ,iDataScaleBitCount(aDataScaleBitCount)
     ,iScaleShiftForProduct(aCoeffFormat)
     ,iScaleShiftForOutput(aDataFormat+iDataScaleBitCount-aOutputFormat)
 {
+    //Log::Print("FeedbackModel  iScaleShiftForProduct=%d  iScaleShiftForOutput=%d \n", iScaleShiftForProduct, iScaleShiftForOutput);
 }
 
 void FeedbackModel::Initialise(TInt16* aCoeffs, const Brx& aSamples)
@@ -322,49 +324,32 @@ void FeedbackModel::Initialise(TInt16* aCoeffs, const Brx& aSamples)
 }
 
 
-void FeedbackModel::Cycle(TUint aCount)
+TInt32 FeedbackModel::Cycle()
 {
     ASSERT(iCoeffs!=NULL);
 
-    for(TUint i=0; i<aCount; i++)
+    TInt32 sum = 0;
+    TInt16* coeffPtr = iCoeffs;
+
+    // iterate through the circular buff and calculate the output
+    for (TUint j=0; j<iStateCount; j++)
     {
-        TInt32 sum = 0;
-        TInt16* coeffPtr = iCoeffs;
-
-        // iterate through the circular buff and calculate the output
-        for (TUint j=0; j<iStateCount; j++)
-        {
-            TInt32 coeff = (TInt32)(*(coeffPtr++));
-            TInt64 product = ((TInt64)iSamples[j]) * ((TInt64)(coeff<<16)); // 1.31 * 4.28 = 37.59
-            sum += (TInt32)(product>>32);
-        }
-
-        // update the states
-        for (TUint j=(iStateCount-1); j>0; j--)
-        {
-            iSamples[j] = iSamples[j-1];
-        }
-
-        sum <<= iScaleShiftForProduct;
-
-        iSamples[0] = sum;
-
-        sum <<= iScaleShiftForOutput;
-
-        TByte sample[4];
-
-        sample[3] = (TByte) sum;
-        sum >>= 8;
-        sample[2] = (TByte) sum;
-        sum >>= 8;
-        sample[1] = (TByte) sum;
-        sum >>= 8;
-        sample[0] = (TByte) sum;
-
-        iOutput.ProcessSample32(sample, 1); // 1 channel
-
-        //Log::Print("sum = 0x%.8lx  \n", sum);
+        TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
+        TInt64 product = ((TInt64)iSamples[j]) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (10.54 with >>8 data  scaling etc)
+        sum += (TInt32)(product>>32);   // 5.27
     }
+
+    // update the states
+    for (TUint j=(iStateCount-1); j>0; j--)
+    {
+        iSamples[j] = iSamples[j-1];
+    }
+
+    sum <<= iScaleShiftForProduct;
+
+    iSamples[0] = sum;
+
+    return(sum<<iScaleShiftForOutput);
 }
 
 

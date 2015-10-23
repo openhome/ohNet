@@ -104,6 +104,11 @@ void SourceUpnpAv::Deactivate()
     Source::Deactivate();
 }
 
+void SourceUpnpAv::StandbyEnabled()
+{
+    Stop();
+}
+
 void SourceUpnpAv::PipelineStopped()
 {
     // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)

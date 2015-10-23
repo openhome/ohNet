@@ -205,7 +205,7 @@ void ReaderRtspResponse::ProcessStatus(const Brx& aVersion, const Brx& aCode, co
     try {
         code = Ascii::Uint(aCode);
     }
-    catch (AsciiError) {
+    catch (AsciiError&) {
         THROW(HttpError);
     }
     iStatus.Set(code, aDescription);
@@ -491,11 +491,11 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
                     }
                 }
             }
-            catch(HttpError) {
+            catch(HttpError&) {
                 LOG(kHttp, "unexpected data\n");
                 return Brx::Empty();   //terminate on unexpected data
             }
-            catch(BufferOverflow) {
+            catch(BufferOverflow&) {
                 LOG(kHttp, "data overflow\n");
                 return Brx::Empty();   //terminate on unexpected data
             }
@@ -748,7 +748,7 @@ void SdpInfo::DecodeAttributeAudioStream(const Brx& aValue)
     try {
         iAudioStream = Ascii::Uint(aValue);
     }
-    catch (AsciiError) {
+    catch (AsciiError&) {
     }
 }
 
@@ -801,7 +801,7 @@ void SdpInfo::DecodeM(const Brx& aValue)
             try {
                 iMediaAudioPort = Ascii::Uint(port);
             }
-            catch (AsciiError) {
+            catch (AsciiError&) {
                 return;
             }
 

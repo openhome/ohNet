@@ -836,7 +836,7 @@ void RaopControlServer::RequestResend(TUint aSeqStart, TUint aCount)
         iLock.Signal();
         iServer.Send(resendBuf, iEndpoint);
     }
-    catch (NetworkError) {
+    catch (NetworkError&) {
         // Will handle this by timing out on receive.
     }
 }

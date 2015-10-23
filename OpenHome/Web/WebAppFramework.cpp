@@ -70,7 +70,7 @@ void FileResourceHandler::Write(IWriter& aWriter, TUint aOffset, TUint aBytes)
         try {
             iFile->Seek(aOffset, eSeekFromStart);
         }
-        catch (FileSeekError) {
+        catch (FileSeekError&) {
             THROW(WriterError);
         }
     }
@@ -413,7 +413,7 @@ void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDes
         iTab = &aTabCreator.Create(iHandler, iLanguages);
         iTimer.Start(iPollTimeoutMs, *this);
     }
-    catch (TabAllocatorFull) {
+    catch (TabAllocatorFull&) {
         iHandler.Disable();
         iSessionId = kInvalidTabId;
         iDestroyHandler = nullptr;

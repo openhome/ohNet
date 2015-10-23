@@ -83,13 +83,13 @@ void ProviderConfig::SetValue(IDvInvocation& aInvocation, const Brx& aKey, const
     catch (ConfigNotANumber&) {
         aInvocation.Error(kErrorCodeNotANumber, kErrorDescNotANumber);
     }
-    catch (ConfigValueOutOfRange) {
+    catch (ConfigValueOutOfRange&) {
         aInvocation.Error(kErrorCodeValueOutOfRange, kErrorDescValueOutOfRange);
     }
-    catch (ConfigInvalidSelection) {
+    catch (ConfigInvalidSelection&) {
         aInvocation.Error(kErrorCodeInvalidSelection, kErrorDescInvalidSelection);
     }
-    catch (ConfigValueTooLong) {
+    catch (ConfigValueTooLong&) {
         aInvocation.Error(kErrorCodeValueTooLong, kErrorDescValueTooLong);
     }
 
