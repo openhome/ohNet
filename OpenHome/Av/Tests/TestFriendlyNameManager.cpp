@@ -141,7 +141,6 @@ void SuiteFriendlyNameManager::TestRegisterNoDeregister()
     MockFriendlyNameObserver observer;
     (void)observable.RegisterFriendlyNameObserver(MakeFunctorGeneric<const Brx&>(observer, &MockFriendlyNameObserver::FriendlyNameChanged));
     TEST_THROWS(delete iFriendlyNameManager, AssertionFailed);
-    iFriendlyNameManager = nullptr;
 }
 
 void SuiteFriendlyNameManager::TestUpdate()
