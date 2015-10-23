@@ -240,7 +240,9 @@ void StarvationMonitor::ProcessMsgIn(MsgStreamInterrupted* /*aMsg*/)
 
 void StarvationMonitor::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
-    iPlannedHalt = true;
+    if (iStatus != ERampingDown && iStatus != EBuffering) {
+        iPlannedHalt = true;
+    }
 }
 
 void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
