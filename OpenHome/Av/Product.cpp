@@ -485,7 +485,7 @@ TUint FriendlyNameManager::RegisterFriendlyNameObserver(FunctorGeneric<const Brx
 {
     AutoMutex a(iMutex);
     const TUint id = iNextObserverId++;
-    auto it = iObservers.emplace(id, aObserver);
+    auto it = iObservers.insert(std::pair<TUint,FunctorGeneric<const Brx&>>(id, aObserver));
     ASSERT(it.second);
     aObserver(iFriendlyName);
     return id;
