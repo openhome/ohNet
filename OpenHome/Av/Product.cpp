@@ -449,7 +449,11 @@ void Product::NotifySourceNameChanged(ISource& /*aSource*/)
 
 void Product::AddNameObserver(IProductNameObserver& aObserver)
 {
+    AutoMutex a(iLockDetails);
     iNameObservers.push_back(&aObserver);
+    // Notify new observer immediately with its initial values.
+    aObserver.RoomChanged(iProductRoom);
+    aObserver.NameChanged(iProductName);
 }
 
 void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)
