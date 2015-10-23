@@ -56,7 +56,7 @@ void RaopDevice::FriendlyNameUpdate(const Brx& aNewFriendlyName)
     iName.Append("@");
     iName.Append(aNewFriendlyName);
 
-    LOG(kBonjour, "RaopDevice::FriendlyNameUpdate %.*s", iName);
+    LOG(kBonjour, "RaopDevice::FriendlyNameUpdate %.*s", PBUF(iName));
 
     if (wasRegistered) {
         DoRegister();
