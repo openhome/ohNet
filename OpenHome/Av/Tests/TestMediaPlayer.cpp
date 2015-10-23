@@ -109,7 +109,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iObservableFriendlyName(new Bws<RaopDevice::kMaxNameBytes>())
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
     , iTxTsMapper(nullptr)
@@ -162,6 +161,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // create a read/write store using the new config framework
     iConfigRamStore = new ConfigRamStore();
 
+    // FIXME - remove these; defaults are passed into MediaPlayer construction
     // FIXME - available store keys should be listed somewhere
     iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
@@ -364,10 +364,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     hostName.Replace(iDevice->Udn());
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
-    const TChar* friendlyName;
-    iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
-    iObservableFriendlyName.Replace(Brn(friendlyName));
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iObservableFriendlyName, macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iMediaPlayer->FriendlyNameObservable(), macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
 }

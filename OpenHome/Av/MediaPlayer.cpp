@@ -55,6 +55,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, aDefaultName);
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
+    iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
     iVolumeManager = new OpenHome::Av::VolumeManager(aVolumeConsumer, iPipeline, *iVolumeConfig, aDevice, *iProduct, *iConfigManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
@@ -81,6 +82,7 @@ MediaPlayer::~MediaPlayer()
      */
     iConfigStartupSource->DeregisterObservers();
     delete iProduct;
+    delete iFriendlyNameManager;    // All observers should have deregistered.
     delete iConfigStartupSource;
     delete iVolumeManager;
     delete iVolumeConfig;
@@ -218,6 +220,11 @@ IPowerManager& MediaPlayer::PowerManager()
 Product& MediaPlayer::Product()
 {
     return *iProduct;
+}
+
+IFriendlyNameObservable& MediaPlayer::FriendlyNameObservable()
+{
+    return *iFriendlyNameManager;
 }
 
 IVolumeManager& MediaPlayer::VolumeManager()

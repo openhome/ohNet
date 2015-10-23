@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/PipelineManager.h>
@@ -43,11 +44,11 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer);
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
+    return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyNameObservable, aMacAddr);
 }
 
 
@@ -74,7 +75,7 @@ const TUint SourceRaop::kAutoNetAuxOn = 0;              // RAOP device always vi
 const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always visible; don't auto switch.
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
-SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IObservableBrx& aFriendlyName, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
     : Source(kSourceNameStr, kSourceNameStr)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
@@ -92,7 +93,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 {
     GenerateMetadata();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr, iVolume);
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyNameObservable, aMacAddr, iVolume);
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();

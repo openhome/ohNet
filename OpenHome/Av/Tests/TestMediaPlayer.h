@@ -45,6 +45,7 @@ namespace Web {
     class ConfigAppMediaPlayer;
 }
 namespace Av {
+    class FriendlyNameHandler;
     class RamStore;
 namespace Test {
 
@@ -136,7 +137,6 @@ private:
     const Brh iTidalId;
     const Brh iQobuzIdSecret;
     const Brh iUserAgent;
-    ObservableBrx iObservableFriendlyName;
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;

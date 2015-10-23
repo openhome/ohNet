@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/DvDevice.h>
@@ -12,6 +13,7 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/Source.h>
 
+#include <map>
 #include <vector>
 
 EXCEPTION(AvSourceNotFound);
@@ -31,13 +33,26 @@ public:
     virtual void NotifySourceNameChanged(ISource& aSource) = 0;
 };
 
+class IProductNameObserver
+{
+public:
+    virtual void RoomChanged(const Brx& aRoom) = 0;
+    virtual void NameChanged(const Brx& aName) = 0;
+    virtual ~IProductNameObserver() {}
+};
+
+class IProductNameObservable
+{
+public:
+    virtual void AddNameObserver(IProductNameObserver& aObserver) = 0;
+    virtual ~IProductNameObservable() {}
+};
+
 class IProductObserver
 {
 public:
     virtual ~IProductObserver() {}
     virtual void Started() = 0;
-    virtual void RoomChanged() = 0;
-    virtual void NameChanged() = 0;
     virtual void StandbyChanged() = 0;
     virtual void SourceIndexChanged() = 0;
     virtual void SourceXmlChanged() = 0;
@@ -75,7 +90,7 @@ private:
     std::vector<ConfigSourceNameObserver*> iObservers;
 };
 
-class Product : private IProduct, private Media::IInfoProvider, private INonCopyable
+class Product : private IProduct, public IProductNameObservable, private Media::IInfoProvider, private INonCopyable
 {
 private:
     static const Brn kKeyLastSelectedSource;
@@ -119,6 +134,8 @@ private:
 private: // from IProduct
     void Activate(ISource& aSource) override;
     void NotifySourceNameChanged(ISource& aSource) override;
+private: // from IProductNameObservable
+    void AddNameObserver(IProductNameObserver& aObserver) override;
 private: // from Media::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter) override;
 private:
@@ -130,6 +147,7 @@ private:
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
     std::vector<IProductObserver*> iObservers;
+    std::vector<IProductNameObserver*> iNameObservers;
     std::vector<ISource*> iSources;
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
@@ -148,6 +166,39 @@ private:
     TUint iStartupSourceVal;
 };
 
+class IFriendlyNameObservable
+{
+public:
+    static const TUint kMaxFriendlyNameBytes = Product::kMaxRoomBytes+1+Product::kMaxNameBytes;
+public:
+    virtual TUint RegisterFriendlyNameObserver(FunctorGeneric<const Brx&> aObserver) = 0;
+    virtual void DeregisterFriendlyNameObserver(TUint aId) = 0;
+    virtual ~IFriendlyNameObservable() {}
+};
+
+class FriendlyNameManager : public IFriendlyNameObservable, public IProductNameObserver
+{
+public:
+    FriendlyNameManager(IProductNameObservable& aProduct);
+    ~FriendlyNameManager();
+private: // from IFriendlyNameObservable
+    TUint RegisterFriendlyNameObserver(FunctorGeneric<const Brx&> aObserver) override;
+    void DeregisterFriendlyNameObserver(TUint aId) override;
+private: // from IProductNameObserver
+    void RoomChanged(const Brx& aRoom) override;
+    void NameChanged(const Brx& aName) override;
+private:
+    void UpdateDetails();
+    void ConstructFriendlyNameLocked();
+    void NotifyObserversLocked();
+private:
+    Bws<Product::kMaxRoomBytes> iRoom;
+    Bws<Product::kMaxNameBytes> iName;
+    Bws<kMaxFriendlyNameBytes> iFriendlyName;
+    TUint iNextObserverId;
+    std::map<TUint, FunctorGeneric<const Brx&>> iObservers;
+    Mutex iMutex;
+};
+
 } // namespace Av
 } // namespace OpenHome
-

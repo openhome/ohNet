@@ -11,7 +11,7 @@
 namespace OpenHome {
 namespace Av {
 
-class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1, private IProductObserver
+class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1, private IProductObserver, private IProductNameObserver
 {
 public:
     ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct);
@@ -32,11 +32,12 @@ private: // from DvProviderAvOpenhomeOrgProduct1
     void SourceXmlChangeCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 private: // from IProductObserver
     void Started() override;
-    void RoomChanged() override;
-    void NameChanged() override;
     void StandbyChanged() override;
     void SourceIndexChanged() override;
     void SourceXmlChanged() override;
+private: // from IProductNameObserver
+    void RoomChanged(const Brx& aRoom) override;
+    void NameChanged(const Brx& aName) override;
 private:
     Av::Product& iProduct;
     Mutex iLock;
