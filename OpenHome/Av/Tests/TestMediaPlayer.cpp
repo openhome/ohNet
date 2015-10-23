@@ -167,7 +167,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     volumeInit.SetBalance(iVolumeLogger);
     volumeInit.SetFade(iVolumeLogger);
 
-    // create MediaPlayer
+    // Create MediaPlayer.
+    // NOTE: If values for Room.Name and Product.Name already exist in the Store,
+    //       the aRoom and aProductName default values will be ignored.
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
                                                                       // platforms with slightly unpredictable thread scheduling
