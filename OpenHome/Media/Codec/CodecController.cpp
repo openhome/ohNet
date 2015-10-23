@@ -411,7 +411,9 @@ Msg* CodecController::PullMsg()
         ASSERT(iRecognising);
         THROW(CodecRecognitionOutOfData);
     }
+    iLock.Wait();
     msg = msg->Process(*this);
+    iLock.Signal();
     return msg;
 }
 
@@ -677,9 +679,7 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
         return nullptr;
     }
 
-    iLock.Wait();
     iTrackId = aMsg->Track().Id();
-    iLock.Signal();
     return aMsg;
 }
 
@@ -719,7 +719,6 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
         iPostSeekStreamInfo = nullptr;
     }
 
-    iLock.Wait();
     iStreamStarted = true;
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
@@ -728,7 +727,6 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iSeekable = aMsg->Seekable();
     iLive = aMsg->Live();
     iStreamHandler = aMsg->StreamHandler();
-    iLock.Signal();
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     iRawPcm = aMsg->RawPcm();
     if (iRawPcm) {
