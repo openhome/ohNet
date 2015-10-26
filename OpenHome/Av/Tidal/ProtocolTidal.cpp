@@ -358,6 +358,7 @@ ProtocolStreamResult ProtocolTidal::DoStream()
 
 TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
 {
+    iReaderUntil.ReadFlush();
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
     if (!Connect(iUri, port, kTcpConnectTimeoutMs)) {
