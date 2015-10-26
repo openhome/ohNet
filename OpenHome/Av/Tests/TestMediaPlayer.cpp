@@ -116,7 +116,9 @@ UpnpDeviceNameChangerBase::~UpnpDeviceNameChangerBase()
         AutoMutex a(iLock);
         iQuit = true;
     }
+    iThread->Kill();
     iSemUpdate.Signal();
+    iThread->Join();
 }
 
 void UpnpDeviceNameChangerBase::FriendlyNameChanged(const Brx& aFriendlyName)
