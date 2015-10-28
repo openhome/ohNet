@@ -137,7 +137,7 @@ private:
 class Mp3HeaderExtendedXing : public IMp3HeaderExtended
 {
 public:
-    Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint64 aTotalBytes);
+    Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
     virtual TUint64 SamplesTotal() const { return iSamplesTotal; }
     virtual TUint64 SampleToByte(TUint64 aSample) const;
     virtual TUint BitRate() const { return iBitRate; }
@@ -209,12 +209,12 @@ TUint64 Mp3HeaderExtendedBareNonSeekable::SampleToByte(TUint64 /*aSample*/) cons
 
 // Mp3HeaderExtendedXing
 
-Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint64 aTotalBytes)
+Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
     : iSampleRate(0)
     , iSamplesTotal(0)
     , iFrames(0)
     , iBytes(0)
-    , iBitRate(0)
+    , iBitRate(aByteRate*8)
 {
     // We already know we have at least an mp3 file (checked by CodecMp3::Recognise)
     // See if there is a XING or INFO header at any of the common positions
@@ -281,9 +281,6 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
             offBytes += 4;
             iBytes = Converter::BeUint32At(aHeaderData, offBytes);
         }
-        else {
-            iBytes = static_cast<TUint>(aTotalBytes);
-        }
         if ((flags & 0x04) == 0x04) { // Toc present
             offBytes += 4;
             iToc.Replace(aHeaderData.Ptr() + offBytes, 100); // Toc always 100 bytes 
@@ -299,14 +296,6 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     TUint32 samplesPerFrame = aHeader.kFrameSamples[aHeader.iMpegLsf][aHeader.iLayer];
     iSampleRate = aHeader.SampleRate();
     iSamplesTotal = iFrames * samplesPerFrame;
-
-    // BitRate = (TotalBytes / TotalSamples) * SampleRate * 8
-    // Done in order below to avoid floating point divison
-    // Believed not to overflow as mp3 total bytes is no bigger than 32 bit.
-    TUint64 bitRate = (TUint64)iBytes * iSampleRate;
-    bitRate *= 8;
-    bitRate /= iSamplesTotal;
-    iBitRate = (TUint32)bitRate;
 
     //LOG(kCodec, "Mp3HeaderExtendedXing: frames: %d, bytes: %d, SamplesTotal: %lld, BitRate: %d\n", iFrames, iBytes, iSamplesTotal, iBitRate);
 }
@@ -454,7 +443,7 @@ Mp3Header::Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalB
     }
     else {
         try {
-            iExtended = new Mp3HeaderExtendedXing(aHeaderData, *this, aTotalBytes-iHeaderBytes);
+            iExtended = new Mp3HeaderExtendedXing(aHeaderData, *this, byteRate);
         }
         catch (CodecExtendedHeaderNotFound&) {
             iExtended = new Mp3HeaderExtendedBare(aTotalBytes-iHeaderBytes, byteRate, iSampleRate);
