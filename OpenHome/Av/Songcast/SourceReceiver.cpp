@@ -270,6 +270,9 @@ void SourceReceiver::Play()
     EnsureActive();
     AutoMutex a(iLock);
     iPlaying = true;
+    if (iZone.Bytes() > 0) {
+        iZoneHandler->StartMonitoring(iZone);
+    }
     if (iTrackUri.Bytes() > 0) {
         iZoneHandler->SetCurrentSenderUri(iTrackUri);
         iPipeline.Begin(iUriProvider->Mode(), iTrackId);
@@ -284,6 +287,7 @@ void SourceReceiver::Stop()
     iPlaying = false;
     iPipeline.Stop();
     iZoneHandler->ClearCurrentSenderUri();
+    iZoneHandler->StopMonitoring();
     iLock.Signal();
 }
 
@@ -314,11 +318,14 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
         iTrackUri.Replace(Brx::Empty());
         iTrackMetadata.Replace(Brx::Empty());
         iZone.Replace(path.Split(1)); // remove leading /
-        iZoneHandler->StartMonitoring(iZone);
+        if (iPlaying) {
+            iZoneHandler->StartMonitoring(iZone);
+        }
     }
     else {
         iZone.Replace(Brx::Empty());
         iZoneHandler->ClearCurrentSenderUri();
+        iZoneHandler->StopMonitoring();
         iTrackUri.Replace(aUri);
         iTrackMetadata.Replace(aMetadata);
         UriChanged();
