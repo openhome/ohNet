@@ -55,10 +55,6 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvi
     iTrackDurationMs = ParseDurationMs(duration);
     iReporterSubSampleStart = iSubSamples;
 
-    // FIXME - if we retrieved a new track ID by calling NextTrackId(), seeking
-    // (and stopping) would break as SourceSpotify would be aware of the new
-    // track, but the rest of the pipeline would not.
-    // As a hack, reuse the pipeline ID of the last MsgTrack that was seen.
     Track* track = aTrackFactory.CreateTrack(Brn("spotify://"), aMetadata);
     iPropertyObserver.NotifyTrack(*track, kInterceptMode, true);
     track->RemoveRef();
