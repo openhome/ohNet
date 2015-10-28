@@ -359,6 +359,7 @@ ProtocolStreamResult ProtocolQobuz::DoStream()
 
 TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
 {
+    iDechunker.ReadFlush();
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
     if (!Connect(iUri, port, kTcpConnectTimeoutMs)) {
@@ -382,9 +383,9 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
 
     try {
         LOG(kMedia, "ProtocolQobuz::WriteRequest read response\n");
-        iTcpClient.LogVerbose(true);
+        //iTcpClient.LogVerbose(true);
         iReaderResponse.Read();
-        iTcpClient.LogVerbose(false);
+        //iTcpClient.LogVerbose(false);
     }
     catch(HttpError&) {
         LOG2(kPipeline, kError, "ProtocolQobuz::WriteRequest HttpError\n");
