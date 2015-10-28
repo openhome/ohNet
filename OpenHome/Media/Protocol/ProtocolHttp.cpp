@@ -664,6 +664,11 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
         LOG(kMedia, "EProtocolStreamErrorRecoverable from audio processor after %llu bytes (total=%llu)\n",
             iOffset, iTotalBytes);
     }
+    if (res == EProtocolStreamSuccess && iSeek) {
+        // Seek request was accepted just before we read the last fragment of this stream
+        // Report a recoverable error to allow Stream()'s main loop a chance to process the seek.
+        res = EProtocolStreamErrorRecoverable;
+    }
     return res;
 }
 
