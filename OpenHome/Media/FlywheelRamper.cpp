@@ -90,7 +90,7 @@ void FlywheelRamperManager::Ramp(const Brx& aSamples, TUint aSampleRate, TUint a
     //for (TUint i=0; i<1000; i++)  // scale up for profiling
     {
         TUint sampleHoldCount = 0;
-        TInt32 prevSample[aChannelCount];
+        TInt32 prevSample[kMaxChannelCount];
 
         while (remainingSamples > 0)
         {

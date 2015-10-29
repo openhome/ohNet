@@ -51,7 +51,7 @@ private:
     static void IncreaseBitDepthBe32(const Brx& aBufIn, Bwx& aBufOut, TUint iBytesPerSample);
 
 private:
-    Net::Library& iLib;
+    //Net::Library& iLib;
     IFile* iInputFile;
     FileStream* iOutputFile;
     TUint iDegree;
@@ -122,9 +122,9 @@ private:
 using namespace OpenHome::Media::TestFlywheelRamperManual;
 
 
-TestFWRManual::TestFWRManual(Net::Library& aLib, const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs)
-    :iLib(aLib)
-    ,iOutputFile(new FileStream())
+TestFWRManual::TestFWRManual(Net::Library& /*aLib*/, const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs)
+    :/*iLib(aLib)
+    ,*/iOutputFile(new FileStream())
     ,iDegree(aDegree)
     ,iGenMs(aGenMs)
     ,iRampMs(aRampMs)
