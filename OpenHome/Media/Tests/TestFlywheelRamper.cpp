@@ -435,8 +435,8 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     const TUint kDegree = 6;
 
 
-    TInt16* coeffs = (TInt16*) calloc (kDegree, sizeof(TInt16));
-    TInt16* coeffPtr = coeffs;
+    TUint16* coeffs = (TUint16*) calloc (kDegree, sizeof(TUint16));
+    TUint16* coeffPtr = coeffs;
     *(coeffPtr++) = 0xc000;
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
@@ -456,7 +456,7 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
 
 
     auto feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
-    feedback->Initialise(coeffs, samplesIn);
+    feedback->Initialise((TInt16*)coeffs, samplesIn);
 
     //Log::Print("\n\nUnit Test\n\n");
     //
@@ -491,7 +491,7 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
 
 
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
-    feedback->Initialise(coeffs, samplesIn);
+    feedback->Initialise((TInt16*)coeffs, samplesIn);
 
     for(TUint i=0; i<kDegree;)
     {
@@ -528,7 +528,7 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
 
 
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
-    feedback->Initialise(coeffs, samplesIn);
+    feedback->Initialise((TInt16*)coeffs, samplesIn);
 
     for(TUint i=0; i<kDegree;)
     {
