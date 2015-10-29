@@ -118,35 +118,29 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
     ,iEnv(aEnv)
 {
 
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
-/*
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test2));
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test3));
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test4));
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test5));
-*/
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test2));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test3));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test4));
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test5));
+
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test6)); // Burg Method testing
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8)); // Feedback profiling
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test8)); // Feedback profiling
 }
 
 
 void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
 {
-    //Log::Print("\n");
-    const TUint kDataInDescaleBits = 8;
+    Log::Print("\n");
+    const TUint kDataInDescaleBits = 0;
     const TUint kCoeffFormat = 1;
     const TUint kDataInFormat = 1;
     const TUint kDataOutFormat = 1;
 
-    const TUint kCoeffsCount = 4;
-    const TUint kSamplesInCount = 4;
-    const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount-1;
-    const TUint kSamplesOutBytes = kSamplesOutCount*4;
+    const TUint kDegree = 4;
 
-
-    TInt16* coeffs = (TInt16*) calloc (kCoeffsCount, sizeof(TInt16));
+    TInt16* coeffs = (TInt16*) calloc (kDegree, sizeof(TInt16));
     TInt16* coeffsPtr = coeffs;
 
     *(coeffsPtr++) = 0x0100;
@@ -154,18 +148,21 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
     *(coeffsPtr++) = 0x0400;
     *(coeffsPtr++) = 0x0800;
 
-    Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x01000000);
-    Append32(samplesIn, 0x02000000);
-    Append32(samplesIn, 0x04000000);
+    TInt32* samplesIn = (TInt32*) calloc (kDegree, sizeof(TInt32));
+    TInt32* samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0x01000000;
+    *(samplesInPtr++) = 0x02000000;
+    *(samplesInPtr++) = 0x04000000;
+    *(samplesInPtr++) = 0x08000000;
 
 /*
-    Log::Print("0x01000000 = %f \n", BurgsMethod::ToDouble(0x01000000, 1));
-    Log::Print("0x02000000 = %f \n", BurgsMethod::ToDouble(0x02000000, 1));
-    Log::Print("0x04000000 = %f \n", BurgsMethod::ToDouble(0x04000000, 1));
-    Log::Print("0x08000000 = %f \n", BurgsMethod::ToDouble(0x08000000, 1));
-*/
+    Log::Print("0x01000000 = %f \n", FlywheelRamper::ToDouble(0x01000000, 1));
+    Log::Print("0x02000000 = %f \n", FlywheelRamper::ToDouble(0x02000000, 1));
+    Log::Print("0x04000000 = %f \n", FlywheelRamper::ToDouble(0x04000000, 1));
+    Log::Print("0x08000000 = %f \n", FlywheelRamper::ToDouble(0x08000000, 1));
 
+    Log::Print("0.005188 = %lx \n", FlywheelRamper::ToInt32(0.005188, 1));
+*/
 
     std::vector<TInt32> expectedSamplesOut;
     expectedSamplesOut.push_back(0x00aa0000);
@@ -177,197 +174,124 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
     expectedSamplesOut.push_back(0x0003b3dc);
 
 
-    Bws<kSamplesOutBytes> samplesOut;
-    PcmProcessorFeedback opProc(samplesOut);
-    FeedbackModel* feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
-    //feedback->Initialise(coeffs, samplesIn);
+    FeedbackModel* feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    feedback->Initialise(coeffs, samplesIn);
 
-    feedback->Cycle(/*kSamplesOutCount*/);
-
-    for (TUint i=0; i<kSamplesOutCount; i++)
+    for (TUint i=0; i<kDegree; i++)
     {
-        TEST(Int32(samplesOut, i*4) == expectedSamplesOut[i]);
-        Log::Print(" actual=%lx   expected=%lx  i=%d\n", Int32(samplesOut, i*4), expectedSamplesOut[i], i);
+        TInt sample = feedback->NextSample();
+        TEST(sample == expectedSamplesOut[i]);
+        //Log::Print(" actual=%lx   expected=%lx  i=%d\n", sample, expectedSamplesOut[i], i);
     }
 
     delete feedback;
     free(coeffs);
+    free(samplesIn);
 }
 
 void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
 {
-/*
-    const TUint kDataInDescaleBits = 8;
+    const TUint kDataInDescaleBits = 0;
 
-    const TUint kCoeffsCount = 2;
-    const TUint kSamplesInCount = 2;
-    const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount;
-    const TUint kSamplesOutBytes = kSamplesOutCount*4;
+    const TUint kDegree = 2;
 
-
-    TInt16* coeffs = (TInt16*) calloc (kCoeffsCount, sizeof(TInt16));
-
+    TInt16* coeffs = (TInt16*) calloc (kDegree, sizeof(TInt16));
     *coeffs = 0x0100;
     *(coeffs+1) = 0;
 
-
-
-    Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x01000000);
-    Append32(samplesIn, 0);
-
-    Bws<kSamplesOutBytes> samplesOut;
-
+    TInt32* samplesIn = (TInt32*) calloc (kDegree, sizeof(TInt32));
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
 
     FeedbackModel* feedback;
-    TInt32 sampleOut0;
-    TInt32 sampleOut1;
 
-
-    PcmProcessorFeedback opProc(samplesOut);
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 1, 1);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 1);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
+    TEST( feedback->NextSample() == 0x20000);
+    TEST( feedback->NextSample() == 0x400);
+    delete feedback;
 
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x20000);
-    TEST( sampleOut1 == 0x400);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 2, 1, 1);
+    feedback->Initialise(coeffs, samplesIn);
+    TEST( feedback->NextSample() == 0x40000);
+    TEST( feedback->NextSample() == 0x1000); // (2/x/x)
+    delete feedback;
+
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 3, 1, 1);
+    feedback->Initialise(coeffs, samplesIn);
+    TEST( feedback->NextSample() == 0x80000);
+    TEST( feedback->NextSample() == 0x4000); // (3/x/x)
+    delete feedback;
+
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 4, 1, 1);
+    feedback->Initialise(coeffs, samplesIn);
+    TEST( feedback->NextSample() == 0x0100000);
+    TEST( feedback->NextSample() == 0x10000); // (4/x/x)
+    delete feedback;
+
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 2, 1);
+    feedback->Initialise(coeffs, samplesIn);
+    TEST( feedback->NextSample() == 0x40000); //  (x/2/x)
+    TEST( feedback->NextSample() == 0x800);  //  (x/2/x)
+    delete feedback;
+
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 3, 1);
+    feedback->Initialise(coeffs, samplesIn);
+    TEST( feedback->NextSample() == 0x80000); //  (x/3/x)
+    TEST( feedback->NextSample() == 0x1000);  //  (x/3/x)
+    delete feedback;
+
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 4, 1);
+    feedback->Initialise(coeffs, samplesIn);
+    TEST( feedback->NextSample() == 0x0100000); //  (x/4/x)
+    TEST( feedback->NextSample() == 0x2000);  //  (x/4/x)
     delete feedback;
 
 
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 2, 1, 1);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 2);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x40000);
-    TEST( sampleOut1 == 0x1000); // (2/x/x)
+    TEST( feedback->NextSample() == 0x10000); //  (x/x/2)
+    TEST( feedback->NextSample() == 0x200); //  (x/x/2)
     delete feedback;
 
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 3, 1, 1);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 3);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x80000);
-    TEST( sampleOut1 == 0x4000); // (3/x/x)
-    delete feedback;
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 4, 1, 1);
-    feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x0100000);
-    TEST( sampleOut1 == 0x10000); // (4/x/x)
+    TEST( feedback->NextSample() == 0x8000); //  (x/x/3)
+    TEST( feedback->NextSample() == 0x100); //  (x/x/3)
     delete feedback;
 
 
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 2, 1);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 4);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x40000); //  (x/2/x)
-    TEST( sampleOut1 == 0x800);  //  (x/2/x)
-    delete feedback;
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 3, 1);
-    feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x80000); //  (x/3/x)
-    TEST( sampleOut1 == 0x1000);  //  (x/3/x)
-    delete feedback;
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 4, 1);
-    feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x0100000); //  (x/4/x)
-    TEST( sampleOut1 == 0x2000);  //  (x/4/x)
+    TEST( feedback->NextSample() == 0x4000); //  (x/x/4)
+    TEST( feedback->NextSample() == 0x80); //  (x/x/4)
     delete feedback;
 
 
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 1, 2);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 2, 2, 2);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x10000); //  (x/x/2)
-    TEST( sampleOut1 == 0x200); //  (x/x/2)
+    TEST( feedback->NextSample() == 0x40000); //  (x/2/2)
+    TEST( feedback->NextSample() == 0x1000); // *2*2/2  (2/2/2)
+
     delete feedback;
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 1, 3);
-    feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x8000); //  (x/x/3)
-    TEST( sampleOut1 == 0x100); //  (x/x/3)
-    delete feedback;
-
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 1, 1, 4);
-    feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x4000); //  (x/x/4)
-    TEST( sampleOut1 == 0x80); //  (x/x/4)
-    delete feedback;
-
-
-    feedback = new FeedbackModel(opProc, kCoeffsCount, kDataInDescaleBits, 2, 2, 2);
-    feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Cycle(2);
-    sampleOut0 = Int32(samplesOut, 0);
-    sampleOut1 = Int32(samplesOut, 4);
-    TEST( sampleOut0 == 0x40000); //  (x/2/2)
-    TEST( sampleOut1 == 0x1000); // *2*2/2  (2/2/2)
-    delete feedback;
-
-
     free(coeffs);
-*/
+    free(samplesIn);
 }
 
 
 void SuiteFlywheelRamper::Test3()  // FeedbackModel step response output
 {
-/*
+
     const TUint kDataInDescaleBits = 8;
 
     const TUint kCoeffFormat = 2;
     const TUint kDataInFormat = 2;
     const TUint kDataOutFormat = 2;
 
-    const TUint kCoeffsCount = 6;
-    const TUint kSamplesInCount = 6;
+    const TUint kDegree = 6;
 
-    const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount;
-    const TUint kSamplesOutBytes = kSamplesOutCount*4;
-
-    TInt16* coeffs = (TInt16*) calloc (kCoeffsCount, sizeof(TInt16));
+    TInt16* coeffs = (TInt16*) calloc (kDegree, sizeof(TInt16));
     TInt16* coeffPtr = coeffs;
-
     *(coeffPtr++) = 0x4000;
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
@@ -375,19 +299,19 @@ void SuiteFlywheelRamper::Test3()  // FeedbackModel step response output
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
 
-    Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x40000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
+    TInt32* samplesIn = (TInt32*) calloc (kDegree, sizeof(TInt32));
+    TInt32* samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0;
+    *(samplesInPtr++) = 0x40000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
 
-    Bws<kSamplesOutBytes> samplesOut;
 
-    auto feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    auto feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
-    feedback->Process(samplesOut, kSamplesOutCount);
 
     //Log::Print("\n\nUnit Test\n\n");
     //
@@ -396,34 +320,29 @@ void SuiteFlywheelRamper::Test3()  // FeedbackModel step response output
     // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
-    for(TUint i=0; i<kSamplesOutCount; i++)
+    for(TUint i=0; i<kDegree; i++)
     {
-        TInt32 sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0x40000000 );
+        TEST( feedback->NextSample() == 0x40000000 );
     }
 
     delete feedback;
-*/
+    free(coeffs);
+    free(samplesIn);
 }
 
 
 void SuiteFlywheelRamper::Test4()  // FeedbackModel periodic impulse output
 {
-/*
+
     const TUint kDataInDescaleBits = 8;
     const TUint kCoeffFormat = 2;
     const TUint kDataInFormat = 2;
     const TUint kDataOutFormat = 2;
 
-    const TUint kCoeffsCount = 6;
-    const TUint kSamplesInCount = 6;
+    const TUint kDegree = 6;
 
-    const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount;
-    const TUint kSamplesOutBytes = kSamplesOutCount*4;
-
-    TInt16* coeffs = (TInt16*) calloc (kCoeffsCount, sizeof(TInt16));
+    TInt16* coeffs = (TInt16*) calloc (kDegree, sizeof(TInt16));
     TInt16* coeffPtr = coeffs;
 
     *(coeffPtr++) = 0;
@@ -433,20 +352,19 @@ void SuiteFlywheelRamper::Test4()  // FeedbackModel periodic impulse output
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
 
-    Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x40000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
 
-    Bws<kSamplesOutBytes> samplesOut;
+    TInt32* samplesIn = (TInt32*) calloc (kDegree, sizeof(TInt32));
+    TInt32* samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0x40000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
 
-    auto feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+
+    auto feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Process(samplesOut, kSamplesOutCount);
 
 
     //Log::Print("\n\nUnit Test\n\n");
@@ -456,16 +374,14 @@ void SuiteFlywheelRamper::Test4()  // FeedbackModel periodic impulse output
     // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
-    for(TUint i=0; i<kSamplesOutCount;)
+    for(TUint i=0; i<kDegree;)
     {
-        TInt32 sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0x40000000 );
+        TEST( feedback->NextSample() == 0x40000000 );
         i++;
     }
 
@@ -481,53 +397,45 @@ void SuiteFlywheelRamper::Test4()  // FeedbackModel periodic impulse output
     *(coeffPtr++) = 0;
 
 
-    feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Process(samplesOut, kSamplesOutCount);
 
-    for(TUint i=0; i<kSamplesOutCount;)
+    for(TUint i=0; i<kDegree;)
     {
-        TInt32 sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0x40000000 );
+        TEST( feedback->NextSample() == 0x40000000 );
         i++;
     }
 
     delete feedback;
-*/
+    free(coeffs);
+    free(samplesIn);
 }
 
 
 void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodic impulse output (oscillator)
 {
     // Period of oscillation is determined by position of coeff in list
-/*
+
     const TUint kDataInDescaleBits = 8;
     const TUint kCoeffFormat = 2;
     const TUint kDataInFormat = 2;
     const TUint kDataOutFormat = 2;
 
-    const TUint kCoeffsCount = 6;
-    const TUint kSamplesInCount = 6;
+    const TUint kDegree = 6;
 
-    const TUint kSamplesInBytes = kSamplesInCount*4;
-    const TUint kSamplesOutCount = kSamplesInCount+kCoeffsCount;
-    const TUint kSamplesOutBytes = kSamplesOutCount*4;
 
-    TInt16* coeffs = (TInt16*) calloc (kCoeffsCount, sizeof(TInt16));
+    TInt16* coeffs = (TInt16*) calloc (kDegree, sizeof(TInt16));
     TInt16* coeffPtr = coeffs;
     *(coeffPtr++) = 0xc000;
     *(coeffPtr++) = 0;
@@ -537,20 +445,18 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     *(coeffPtr++) = 0;
 
 
-    Bws<kSamplesInBytes> samplesIn;
-    Append32(samplesIn, 0x40000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
-    Append32(samplesIn, 0x00000000);
+    TInt32* samplesIn = (TInt32*) calloc (kDegree, sizeof(TInt32));
+    TInt32* samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0x40000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
 
-    Bws<kSamplesOutBytes> samplesOut;
 
-    auto feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    auto feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Process(samplesOut, kSamplesOutCount);
 
     //Log::Print("\n\nUnit Test\n\n");
     //
@@ -559,17 +465,15 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
-    for(TUint i=0; i<kSamplesOutCount;)
+    for(TUint i=0; i<kDegree;)
     {
-        TInt32 sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == (TInt32)0xc0000000L );
+        TEST( feedback->NextSample() == (TInt32)0xc0000000L );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the sample value
-        TEST( sampleOut == 0x40000000L );
+        TEST( feedback->NextSample() == 0x40000000L );
         i++;
         //Log::Print("\n");
     }
@@ -586,36 +490,30 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     *(coeffPtr++) = 0;
 
 
-    feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Process(samplesOut, kSamplesOutCount);
 
-    for(TUint i=0; i<kSamplesOutCount;)
+    for(TUint i=0; i<kDegree;)
     {
-        TInt32 sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the sample value
-        TEST( sampleOut == (TInt32)0xc0000000L );
+        TEST( feedback->NextSample() == (TInt32)0xc0000000L );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0x40000000 );
+        TEST( feedback->NextSample() == 0x40000000 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
     }
 
     delete feedback;
@@ -629,54 +527,45 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     *(coeffPtr++) = 0;
 
 
-    feedback = new FeedbackModel(kCoeffsCount, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
+    feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
-    samplesOut.SetBytes(0);
-    feedback->Process(samplesOut, kSamplesOutCount);
 
-    for(TUint i=0; i<kSamplesOutCount;)
+    for(TUint i=0; i<kDegree;)
     {
-        TInt32 sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == (TInt32)0xc0000000L );
+        TEST( feedback->NextSample() == (TInt32)0xc0000000L );
         i++;
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0 );
+        TEST( feedback->NextSample() == 0 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
 
-        sampleOut = Int32(samplesOut, i*4);
         // output sample will equal the coeff value
-        TEST( sampleOut == 0x40000000 );
+        TEST( feedback->NextSample() == 0x40000000 );
         i++;
-        if(i>=kSamplesOutCount) {break;}
+        if(i>=kDegree) {break;}
     }
 
     delete feedback;
-*/
+    free(coeffs);
+    free(samplesIn);
 }
-
-
 
 
 
@@ -693,6 +582,7 @@ TInt32 kBurgTestInput2[] =
     80150528, 78249984, 75628544, 74055680, 73924608, 73924608, 73400320, 72744960, 72351744, 70189056, 67174400, 64225280, 60948480, 57999360, 53673984, 49676288, 46596096, 42598400, 38731776, 36044800, 34144256, 31588352, 28966912, 26673152, 24838144, 21889024, 18087936, 14548992, 9961472, 7208960, 3735552, 131072, -3342336, -7602176, -10616832, -14417920, -18546688, -21626880, -25296896, -28901376, -32505856, -35913728, -38731776, -42401792
 
 };
+
 
 
 TInt16 kBurgTestOutput1[] =
@@ -732,6 +622,7 @@ void SuiteFlywheelRamper::Test6() // Burg Method testing
     for(TUint i=0; i<kDegree; i++)
     {
         TEST(coeffsOut[i]==kBurgTestOutput1[i]);
+        Log::Print("coeffsOut[%d]= %d  kBurgTestOutput1[%d]= %d \n", i, coeffsOut[i], i, kBurgTestOutput1[i]);
     }
 
 
@@ -783,10 +674,9 @@ void SuiteFlywheelRamper::Test7() // Burg Method profiling
 
     Bwh rampOutput(rampByteCount*1000);
     PcmProcessorFeedback opProc(rampOutput);
-    auto ramper = new FlywheelRamperManager(iEnv, opProc, kChanCount, kGenJiffies, kRampJiffies);
+    auto ramper = new FlywheelRamperManager(/*iEnv,*/ opProc, kGenJiffies, kRampJiffies);
 
-    ramper->Ramp(genSamples, kSampleRate); // generate the ramp
-
+    ramper->Ramp(genSamples, kSampleRate, kChanCount); // generate the ramp
 
     //TUint startTime = Os::TimeInMs(iEnv.OsCtx());
     //TUint endTime = Os::TimeInMs(iEnv.OsCtx());
