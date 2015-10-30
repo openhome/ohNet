@@ -148,8 +148,8 @@ class Environment;
 class SocketTcpClient : public SocketTcp
 {
 public:
-    void Open(Environment& aEnv);                              /// Open
-    void Connect(const Endpoint& aEndpoint, TUint aTimeout);    /// Connect to a given IP address and port number (timeout in milliseconds)
+    void Open(Environment& aEnv);
+    void Connect(const Endpoint& aEndpoint, TUint aTimeoutMs);
 };
 
 /// Tcp Session
