@@ -107,6 +107,20 @@ private:
     Socket& iSocket;
 };
 
+/**
+* Utility class.
+*
+* Calls ReadFlush() on its IReader and Close() on its Socket on destruction.
+*/
+class AutoSocketReader : public AutoSocket
+{
+public:
+    AutoSocketReader(Socket& aSocket, IReader& aReader);
+    ~AutoSocketReader();
+private:
+    IReader& iReader;
+};
+
 /// Shared Tcp client / Tcp session base class
 class SocketTcp : public Socket, public IWriter, public IReaderSource
 {

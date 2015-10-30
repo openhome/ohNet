@@ -400,6 +400,21 @@ AutoSocket::~AutoSocket()
     iSocket.Close();
 }
 
+
+// AutoSocketReader
+
+AutoSocketReader::AutoSocketReader(Socket& aSocket, IReader& aReader)
+    : AutoSocket(aSocket)
+    , iReader(aReader)
+{
+}
+
+AutoSocketReader::~AutoSocketReader()
+{
+    iReader.ReadFlush();
+}
+
+
 // Tcp socket base class
 
 SocketTcp::SocketTcp()
