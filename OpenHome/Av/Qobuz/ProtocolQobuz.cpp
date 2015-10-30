@@ -167,7 +167,6 @@ ProtocolStreamResult ProtocolQobuz::Stream(const Brx& aUri)
             res = EProtocolStreamStopped;
             break;
         }
-        Close();
         if (iSeek) {
             iLock.Wait();
             iSupply->OutputFlush(iNextFlushId);
@@ -214,6 +213,7 @@ void ProtocolQobuz::Deactivated()
         iContentProcessor->Reset();
         iContentProcessor = nullptr;
     }
+    iDechunker.ReadFlush();
     Close();
 }
 
@@ -383,9 +383,9 @@ TUint ProtocolQobuz::WriteRequest(TUint64 aOffset)
 
     try {
         LOG(kMedia, "ProtocolQobuz::WriteRequest read response\n");
-        //iTcpClient.LogVerbose(true);
+        iTcpClient.LogVerbose(true);
         iReaderResponse.Read();
-        //iTcpClient.LogVerbose(false);
+        iTcpClient.LogVerbose(false);
     }
     catch(HttpError&) {
         LOG2(kPipeline, kError, "ProtocolQobuz::WriteRequest HttpError\n");
