@@ -60,13 +60,17 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
+    void ClearDecodedStreamLocked();
+    void UpdateDecodedStreamLocked(MsgDecodedStream& aMsg);
+    TUint64 TrackLengthSamplesLocked() const;
+    MsgDecodedStream* CreateMsgDecodedStreamLocked() const;
     // Expects duration of form: H+:MM:SS[.F0/F1]
     static TUint ParseDurationMs(const Brx& aDuration);
 private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgFactory& iMsgFactory;
     TUint iTrackDurationMs;
-    TUint64 iTrackOffsetSubSamples;
+    TUint64 iTrackOffsetSamples;
     Track* iTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
