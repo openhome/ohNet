@@ -12,10 +12,25 @@ using namespace OpenHome::Media;
 
 // SpotifyReporter
 
+const TUint SpotifyReporter::kSupportedMsgTypes =   eMode
+                                                  | eTrack
+                                                  | eDrain
+                                                  | eDelay
+                                                  | eMetatext
+                                                  | eStreamInterrupted
+                                                  | eHalt
+                                                  | eWait
+                                                  | eDecodedStream
+                                                  | eBitRate
+                                                  | eAudioPcm
+                                                  | eSilence
+                                                  | eQuit;
+
 const Brn SpotifyReporter::kInterceptMode("Spotify");
 
 SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory)
-    : iUpstreamElement(aUpstreamElement)
+    : PipelineElement(kSupportedMsgTypes)
+    , iUpstreamElement(aUpstreamElement)
     , iMsgFactory(aMsgFactory)
     , iTrackDurationMs(0)
     , iTrackOffsetSamples(0)
@@ -100,7 +115,7 @@ void SpotifyReporter::TrackChanged(Track* aTrack, TUint aDurationMs)
     if (iTrackPending) {
         /*
          * Notified of new track before opportunity to output previous track.
-         * May be a valid state due to race conditions around track
+         * May be a valid state due to race condition around track
          * notifications and pipeline playback starting.
          */
         iTrackPending->RemoveRef();
@@ -126,59 +141,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
-Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgDrain* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    ASSERTS(); // don't expect to see MsgEncodedStream at this stage of the pipeline
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return nullptr;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgStreamInterrupted* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to see MsgFlush at this stage of the pipeline
-    return nullptr;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgWait* aMsg)
-{
-    return aMsg;
-}
-
 Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     AutoMutex a(iLock);
@@ -200,11 +162,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
-Msg* SpotifyReporter::ProcessMsg(MsgBitRate* aMsg)
-{
-    return aMsg;
-}
-
 Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     AutoMutex a(iLock);
@@ -214,22 +171,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
     ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to see MsgPlayable in the pipeline
-    return nullptr;
-}
-
-Msg* SpotifyReporter::ProcessMsg(MsgQuit* aMsg)
-{
     return aMsg;
 }
 
