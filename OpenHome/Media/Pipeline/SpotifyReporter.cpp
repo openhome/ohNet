@@ -14,12 +14,16 @@ using namespace OpenHome::Media;
 
 const Brn SpotifyReporter::kInterceptMode("Spotify");
 
-SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver)
+SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory, IPipelinePropertyObserver& aObserver)
     : iUpstreamElement(aUpstreamElement)
+    , iMsgFactory(aMsgFactory)
     , iPropertyObserver(aObserver)
     , iTrackDurationMs(0)
     , iTrackOffsetSubSamples(0)
     , iReporterSubSampleStart(0)
+    , iTrackPending(nullptr)
+    , iMsgDecodedStreamPending(false)
+    , iDecodedStream(nullptr)
     , iChannels(0)
     , iSampleRate(0)
     , iSubSamples(0)
@@ -28,10 +32,47 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, IPi
 {
 }
 
+SpotifyReporter::~SpotifyReporter()
+{
+    if (iTrackPending != nullptr) {
+        iTrackPending->RemoveRef();
+    }
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
+}
+
 Msg* SpotifyReporter::Pull()
 {
+    {
+        AutoMutex a(iLock);
+        if (iTrackPending != nullptr) {
+            const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
+            MsgTrack* msg = iMsgFactory.CreateMsgTrack(*iTrackPending, startOfStream);
+            iTrackPending->RemoveRef();
+            iTrackPending = nullptr;
+            return msg;
+        }
+        if (iMsgDecodedStreamPending) {
+            // If iDecodedStream is nullptr, means still need to pull first MsgDecodedStream from upstream element. Return control to keep pulling from upstream until first MsgDecodedStream is eventually pulled.
+            if (iDecodedStream != nullptr) {
+                iMsgDecodedStreamPending = false;
+
+                const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
+                const TUint64 trackLengthSamples = (static_cast<TUint64>(iTrackDurationMs)*iSampleRate)/1000;
+                const TUint64 trackLengthJiffies = Jiffies::JiffiesPerSample(info.SampleRate())*trackLengthSamples;
+                MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iTrackOffsetSubSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
+
+                iDecodedStream->RemoveRef();    // Discard old MsgDecodedStream
+                iDecodedStream = msg;           // Hold reference to new MsgDecodedStream.
+                iDecodedStream->AddRef();
+
+                return iDecodedStream;
+            }
+        }
+    }
     Msg* msg = iUpstreamElement.Pull();
-    (void)msg->Process(*this);
+    msg = msg->Process(*this);
     return msg;
 }
 
@@ -48,16 +89,25 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
     return iSubSamples - aPrevSubSamples;
 }
 
-void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& /*aIdProvider*/, const Brx& aMetadata, TUint aStartMs)
+// FIXME - why even pass in both a TrackFactory and metadata? Just pass in a ptr to a Track that's already been allocated! Then, this class doesn't need to know anything about Spotify protocol format, or the TrackFactory!
+void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& /*aIdProvider*/, const Brx& aMetadata, TUint /*aStartMs*/)
 {
-    iTrackOffsetSubSamples = aStartMs;
+    AutoMutex a(iLock);
     Brn duration = Net::XmlParserBasic::FindAttribute("res", "duration", aMetadata);
+
+    // FIXME - pass track duration as param, instead of having an element upstream write out metadata, only for this to have to parse it and waste time undoing all that work.
+
+    // Start offset should always be 0 when this is seen.
+    // If a seek is performed, a new MsgEncodedStream will be output by Protocol with start sample, which is passed into MsgDecodedStream.
+    // But, when Spotify runs on to next track, only get this notification, and start offset should definitely be 0 in that case.
+    // Modified MsgDecodedStream will pick up last set value for track offset, which is always the correct one.
+    iTrackOffsetSubSamples = 0; // FIXME - always 0 now; can remove aStartMs param.
     iTrackDurationMs = ParseDurationMs(duration);
     iReporterSubSampleStart = iSubSamples;
 
-    Track* track = aTrackFactory.CreateTrack(Brn("spotify://"), aMetadata);
-    iPropertyObserver.NotifyTrack(*track, kInterceptMode, true);
-    track->RemoveRef();
+    // FIXME - only set these if in intercept mode.
+    iTrackPending = aTrackFactory.CreateTrack(Brn("spotify://"), aMetadata);
+    iMsgDecodedStreamPending = true;
 }
 
 void SpotifyReporter::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
@@ -77,23 +127,23 @@ void SpotifyReporter::NotifyMetaText(const Brx& aText)
 
 void SpotifyReporter::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
-    iLock.Wait();
-    if (iInterceptMode) {
-        // Adjust to expected time based on number of (sub)samples seen since
-        // TrackChanged() or a MsgDecodedStream.
-        TUint durationSeconds = iTrackDurationMs/1000;
-        TUint64 subSamples = (iSubSamples-iReporterSubSampleStart)+iTrackOffsetSubSamples;
-        TUint64 seconds = subSamples/iChannels/iSampleRate;
+    //iLock.Wait();
+    //if (iInterceptMode) {
+    //    // Adjust to expected time based on number of (sub)samples seen since
+    //    // TrackChanged() or a MsgDecodedStream.
+    //    TUint durationSeconds = iTrackDurationMs/1000;
+    //    TUint64 subSamples = (iSubSamples-iReporterSubSampleStart)+iTrackOffsetSubSamples;
+    //    TUint64 seconds = subSamples/iChannels/iSampleRate;
 
-        iLock.Signal();
-        ASSERT(seconds <= std::numeric_limits<TUint>::max());
-        TUint secondsCast = static_cast<TUint>(seconds);
-        iPropertyObserver.NotifyTime(secondsCast, durationSeconds);
-    }
-    else {
-        iLock.Signal();
+    //    iLock.Signal();
+    //    ASSERT(seconds <= std::numeric_limits<TUint>::max());
+    //    TUint secondsCast = static_cast<TUint>(seconds);
+    //    iPropertyObserver.NotifyTime(secondsCast, durationSeconds);
+    //}
+    //else {
+    //    iLock.Signal();
         iPropertyObserver.NotifyTime(aSeconds, aTrackDurationSeconds);
-    }
+    //}
 }
 
 void SpotifyReporter::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
@@ -103,6 +153,8 @@ void SpotifyReporter::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 {
+    // FIXME - clear iDecodedStream here?
+    // Probably not safe to clear Track here, due to race condition.
     AutoMutex a(iLock);
     if (aMsg->Mode() == kInterceptMode) {
         iInterceptMode = true;
@@ -168,20 +220,48 @@ Msg* SpotifyReporter::ProcessMsg(MsgFlush* /*aMsg*/)
 
 Msg* SpotifyReporter::ProcessMsg(MsgWait* aMsg)
 {
+    // FIXME - if we see this, should anything be done to update subsamples? Maybe just reset iSubSamples (and associated members) and make it a requirement that when Spotify protocol is resuming (MsgEncodedStream) from a wait, it resets its sample counter to whatever this class currently reports.
+    // Actually, does that mean that iSubSamples SHOULDN'T be reset here, as protocol module has no idea when MsgWait or MsgDecodedStream will arrive here?
     return aMsg;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
+    const DecodedStreamInfo& info = aMsg->StreamInfo();
     AutoMutex a(iLock);
-    iChannels = streamInfo.NumChannels();
-    iSampleRate = streamInfo.SampleRate();
+    iChannels = info.NumChannels();
+    iSampleRate = info.SampleRate();
     ASSERT(iChannels != 0);
     ASSERT(iSampleRate != 0);
 
-    iTrackOffsetSubSamples = streamInfo.SampleStart()*iChannels;
-    iReporterSubSampleStart = iSubSamples;
+
+    // FIXME - don't do this if spotify isn't active as it will alter MsgDecodedStream belonging to non-Spotify sources.
+
+    //iTrackOffsetSubSamples = info.SampleStart()*iChannels;
+    iReporterSubSampleStart = iSubSamples;  // FIXME - rather than storing/manipulating iTrackOffsetSubSamples along with iSubSamples/iReporterSubSampleStart, just increment iSubSamples with the value of iTrackOffsetSubSamples and do away with that member?
+
+
+    // FIXME - what if iTrackDurationMs is 0? (i.e., haven't been notified of track yet? Is that possible?
+
+    // Update track duration, which should now be known, as it probably wasn't known when the audio belonging to this decoded stream was pushed into the pipeline.
+    iTrackOffsetSubSamples = info.SampleStart();    // FIXME - rename to iTrackOffsetSamples.
+
+    const TUint64 trackLengthSamples = (static_cast<TUint64>(iTrackDurationMs)*iSampleRate)/1000;
+    const TUint64 trackLengthJiffies = Jiffies::JiffiesPerSample(info.SampleRate())*trackLengthSamples;// *info.NumChannels(); // FIXME - require #channels in calculation?
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iTrackOffsetSubSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
+
+    aMsg->RemoveRef();
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
+    iDecodedStream = msg;
+    iDecodedStream->AddRef();
+    iMsgDecodedStreamPending = false;
+
+    return iDecodedStream;
+
+
+
     return aMsg;
 }
 

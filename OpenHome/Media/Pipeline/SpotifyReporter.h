@@ -31,20 +31,25 @@ class SpotifyReporter : public IPipelineElementUpstream, public ISpotifyReporter
 private:
     static const Brn kInterceptMode;
 public:
-    SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver);
+    SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory, IPipelinePropertyObserver& aObserver);
+    ~SpotifyReporter();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
 private: // from ITrackChangeObserver
+    // FIXME - when this is called, output a new MsgTrack (it's fine to increment its ID), but do not mark it as start-of-stream to stop upstream elements going into new-stream-detect behaviour
+    // and also output a new MsgDecodedStream, if available/seen (using the same ID as last seen MsgDecodedStream (for Spotify!)).
     void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) override;
+    // FIXME - can try removing this interface implementation completely, as outputting the two messages above should now allow correct reporting of all elements.
 private: // from IPipelinePropertyObserver
     void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
     void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
+    // FIXME - can also derive from new pipeline element classes and only implement subset of IMsgProcessor methods that are actually required.
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -68,10 +73,15 @@ private:
     static TUint ParseDurationMs(const Brx& aDuration);
 private:
     IPipelineElementUpstream& iUpstreamElement;
+    MsgFactory& iMsgFactory;
+    // FIXME - if removing implementation of above interfaces, can probably also remove iPropertyObserver, track duration, one or more of the subsample counters and iInterceptMode. And maybe also iChannels/iSampleRate if storing a pointer to a MsgDecodedStream.
     IPipelinePropertyObserver& iPropertyObserver;
     TUint iTrackDurationMs;
     TUint64 iTrackOffsetSubSamples;
     TUint64 iReporterSubSampleStart;
+    Track* iTrackPending;
+    TBool iMsgDecodedStreamPending;
+    MsgDecodedStream* iDecodedStream;
     TUint iChannels;
     TUint iSampleRate;
     TUint64 iSubSamples;
