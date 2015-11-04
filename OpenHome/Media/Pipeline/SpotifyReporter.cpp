@@ -42,25 +42,27 @@ Msg* SpotifyReporter::Pull()
 {
     {
         AutoMutex a(iLock);
-        if (iTrackPending != nullptr) {
-            const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
-            MsgTrack* msg = iMsgFactory.CreateMsgTrack(*iTrackPending, startOfStream);
-            iTrackPending->RemoveRef();
-            iTrackPending = nullptr;
-            return msg;
-        }
-        if (iMsgDecodedStreamPending) {
-            /*
-             * If iDecodedStream == nullptr, means still need to pull first
-             * MsgDecodedStream of Spotify stream from upstream element.
-             * Return control to keep pulling from upstream until first
-             * MsgDecodedStream is eventually pulled.
-             */
-            if (iDecodedStream != nullptr) {
-                iMsgDecodedStreamPending = false;
-                MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
-                UpdateDecodedStreamLocked(*msg);
-                return iDecodedStream;
+        if (iInterceptMode) {
+            if (iTrackPending != nullptr) {
+                const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
+                MsgTrack* msg = iMsgFactory.CreateMsgTrack(*iTrackPending, startOfStream);
+                iTrackPending->RemoveRef();
+                iTrackPending = nullptr;
+                return msg;
+            }
+            if (iMsgDecodedStreamPending) {
+                /*
+                 * If iDecodedStream == nullptr, means still need to pull first
+                 * MsgDecodedStream of Spotify stream from upstream element.
+                 * Return control to keep pulling from upstream until first
+                 * MsgDecodedStream is eventually pulled.
+                 */
+                if (iDecodedStream != nullptr) {
+                    iMsgDecodedStreamPending = false;
+                    MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
+                    UpdateDecodedStreamLocked(*msg);
+                    return iDecodedStream;
+                }
             }
         }
     }
@@ -168,8 +170,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgFlush* /*aMsg*/)
 
 Msg* SpotifyReporter::ProcessMsg(MsgWait* aMsg)
 {
-    // FIXME - if we see this, should anything be done to update subsamples? Maybe just reset iSubSamples (and associated members) and make it a requirement that when Spotify protocol is resuming (MsgEncodedStream) from a wait, it resets its sample counter to whatever this class currently reports.
-    // Actually, does that mean that iSubSamples SHOULDN'T be reset here, as protocol module has no idea when MsgWait or MsgDecodedStream will arrive here?
     return aMsg;
 }
 
@@ -177,20 +177,21 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     AutoMutex a(iLock);
 
-    // FIXME - don't do this if spotify isn't active as it will alter MsgDecodedStream belonging to non-Spotify sources.
+    if (iInterceptMode) {
+        // Clear any previous cached MsgDecodedStream and cache the one received.
+        UpdateDecodedStreamLocked(*aMsg);
+        aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
 
-    // Clear any previous cached MsgDecodedStream and cache the one received.
-    UpdateDecodedStreamLocked(*aMsg);
-    aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
+        const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
+        iTrackOffsetSamples = info.SampleStart();
 
-    const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-    iTrackOffsetSamples = info.SampleStart();
-
-    // Generate a new MsgDecodedStream (which requires most up-to-date MsgDecodedStream in cache).
-    MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
-    // Now, update the cache with the new MsgDecodedStream.
-    UpdateDecodedStreamLocked(*msg);
-    return iDecodedStream;
+        // Generate a new MsgDecodedStream (which requires most up-to-date MsgDecodedStream in cache).
+        MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
+        // Now, update the cache with the new MsgDecodedStream.
+        UpdateDecodedStreamLocked(*msg);
+        return iDecodedStream;
+    }
+    return aMsg;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgBitRate* aMsg)
@@ -257,7 +258,7 @@ MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
 {
     ASSERT(iDecodedStream != nullptr);
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-    // Due to out-of-band track notification from Spotify, audio for current track was probably pushed into pipeline before track offset was known, so update it here.
+    // Due to out-of-band track notification from Spotify, audio for current track was probably pushed into pipeline before track offset was known, so use updated value here.
     const TUint64 trackLengthSamples = TrackLengthSamplesLocked();
     const TUint64 trackLengthJiffies = Jiffies::JiffiesPerSample(info.SampleRate())*trackLengthSamples;
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iTrackOffsetSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
