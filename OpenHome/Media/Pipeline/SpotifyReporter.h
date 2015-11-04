@@ -64,8 +64,6 @@ private:
     void UpdateDecodedStreamLocked(MsgDecodedStream& aMsg);
     TUint64 TrackLengthSamplesLocked() const;
     MsgDecodedStream* CreateMsgDecodedStreamLocked() const;
-    // Expects duration of form: H+:MM:SS[.F0/F1]
-    static TUint ParseDurationMs(const Brx& aDuration);
 private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgFactory& iMsgFactory;

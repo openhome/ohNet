@@ -270,30 +270,3 @@ MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iTrackOffsetSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
     return msg;
 }
-
-TUint SpotifyReporter::ParseDurationMs(const Brx& aDuration)
-{
-    // H+:MM:SS[.F0/F1]
-    Parser p(aDuration);
-    TUint hours = Ascii::Uint(p.Next(':'));
-    TUint minutes = Ascii::Uint(p.Next(':'));
-    TUint seconds = Ascii::Uint(p.Next('.'));
-    TUint partialSeconds = 0;
-    TUint partialSecondsDivisor = 0;
-    if (!p.Finished()) {
-        partialSeconds = Ascii::Uint(p.Next('/'));
-        partialSecondsDivisor = Ascii::Uint(p.Next());
-    }
-    ASSERT(p.Finished());
-
-    TUint milliseconds = hours*3600*1000;
-    milliseconds += minutes*60*1000;
-    milliseconds += seconds*1000;
-
-    if (partialSeconds != 0) {
-        ASSERT(partialSecondsDivisor == 1000);
-        milliseconds += partialSeconds;
-    }
-
-    return milliseconds;
-}
