@@ -54,9 +54,9 @@ Msg* ClockPullerManual::ProcessMsg(MsgMode* aMsg)
 {
     auto pullers = aMsg->ClockPullers();
     AutoMutex _(iLock);
-    iEnabled = (pullers.ReservoirLeft()  != nullptr ||
-                pullers.ReservoirRight() != nullptr ||
-                pullers.Timestamp()      != nullptr);
+    iEnabled = (pullers.ReservoirLeft()  == nullptr &&
+                pullers.ReservoirRight() == nullptr &&
+                pullers.Timestamp()      == nullptr);
     if (iEnabled && iMultiplier != IPullableClock::kNominalFreq) {
         LOG(kPipeline, "Manual clock pull suppressed for mode with automatic clock puller\n");
     }

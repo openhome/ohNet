@@ -28,27 +28,33 @@ class FeedbackModel;
 
 class FlywheelRamper : public INonCopyable
 {
-    friend class PcmProcessorFwr;
-
 public:
     static const TUint kBytesPerSample = 4; // 32 bit audio
 
 public:
-    FlywheelRamper(OpenHome::Environment& aEnv, TUint aGenJiffies); // generation(input) audio length
+    FlywheelRamper(/*OpenHome::Environment& aEnv, */TUint aGenJiffies); // generation(input) audio length
     ~FlywheelRamper();
 
     void Initialise(const Brx& aSamples, TUint aSampleRate);
     TUint GenJiffies() const;
-    TInt32 Cycle();
+    TInt32 NextSample();
     void Reset();
 
     static void BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef);
+    static void BurgsMethod(double* aSamples, TUint aSamplesCount, TUint aDegree, double* aOutput, double* aH, double* aPer, double* aPef);
 
     static TUint SampleCount(TUint aSampleRate, TUint aJiffies);
     static void Invert(TInt16* aData, TUint aLength);
+    static TUint DecimationFactor(TUint aSampleRate);
+
+    static void ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale);
+    static TInt32 ToInt32(double aVal, TUint aScale);
+    static double ToDouble(TInt32 aVal, TUint aScale);
+    static void ToDouble(const Brx& aInput, double* aOutput, TUint aScale);
+
 
 private:
-    OpenHome::Environment& iEnv;
+    //OpenHome::Environment& iEnv;
     TUint iGenJiffies;
     TUint iDegree;
     FeedbackModel* iFeedback;
@@ -58,7 +64,16 @@ private:
     TInt16* iBurgH;
     TInt16* iBurgPer;
     TInt16* iBurgPef;
+
+/*
+    double* iFpGenSamples;
+    double* iFpBurgCoeffs;
+    double* iFpBurgH;
+    double* iFpBurgPer;
+    double* iFpBurgPef;
+*/
     TUint iMaxGenSampleCount;
+    TInt32* iFeedbackSamples;
 };
 
 
@@ -67,18 +82,17 @@ private:
 class FlywheelRamperManager : public INonCopyable
 {
 public:
-    FlywheelRamperManager(OpenHome::Environment& aEnv, IPcmProcessor& aOutput, TUint aChannelCount, TUint aGenJiffies, TUint aRampJiffies);
+    FlywheelRamperManager(/*OpenHome::Environment& aEnv, */IPcmProcessor& aOutput, TUint aGenJiffies, TUint aRampJiffies);
     ~FlywheelRamperManager();
 
-    void Ramp(const Brx& aSamples, TUint aSampleRate);
+    void Ramp(const Brx& aSamples, TUint aSampleRate, TUint aChannelCount);
 
 private:
     void Reset();
 
 private:
-    OpenHome::Environment& iEnv;
+    //OpenHome::Environment& iEnv;
     IPcmProcessor& iOutput;
-    TUint iChannelCount;
     Bwh iOutBuf;
     TUint iRampJiffies;
     std::vector<FlywheelRamper*> iRampers;
@@ -110,13 +124,13 @@ class FeedbackModel : public INonCopyable
 {
 public:
     FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
-    void Initialise(TInt16* aCoeffs, const Brx& aSamples);
-    TInt32 Cycle();
+    void Initialise(TInt16* aCoeffs, TInt32* aSamples);
+    TInt32 NextSample();
 
 private:
     TInt16* iCoeffs;
+    TInt32* iSamples;
     TUint iStateCount;
-    std::vector<TInt32> iSamples;
     TUint iDataScaleBitCount;
     TUint iScaleShiftForProduct;
     TInt iScaleShiftForOutput;

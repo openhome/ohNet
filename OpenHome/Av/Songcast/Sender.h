@@ -26,7 +26,7 @@ class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProc
     static const Brn kConfigIdChannel;
     static const Brn kConfigIdMode;
     static const Brn kConfigIdPreset;
-    static const TInt kChannelMin = 30000;
+    static const TInt kChannelMin = 1024;
     static const TInt kChannelMax = 65535;
     static const TInt kPresetMin = 0;
     static const TInt kPresetMax = 0x7fffffff;
