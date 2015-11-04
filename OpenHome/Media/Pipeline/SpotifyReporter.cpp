@@ -84,22 +84,28 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
     return iSubSamples - aPrevSubSamples;
 }
 
-// FIXME - why even pass in both a TrackFactory and metadata? Just pass in a ptr to a Track that's already been allocated! Then, this class doesn't need to know anything about Spotify protocol format, or the TrackFactory!
-void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& /*aIdProvider*/, const Brx& aMetadata, TUint /*aStartMs*/)
+void SpotifyReporter::TrackChanged(Track* aTrack, TUint aDurationMs)
 {
     AutoMutex a(iLock);
-    Brn duration = Net::XmlParserBasic::FindAttribute("res", "duration", aMetadata);
+    /*
+     * Start offset is always 0 when out-of-band track is seen.
+     * If there is a non-zero start or seek offset, Protocol will output it in
+     * a MsgEncodedStream.
+     * Modified MsgDecodedStream will pick up last set value for track offset,
+     * which is always the correct one.
+     */
+    iTrackOffsetSamples = 0;
+    iTrackDurationMs = aDurationMs;
 
-    // FIXME - pass track duration as param, instead of having an element upstream write out metadata, only for this to have to parse it and waste time undoing all that work.
-
-    // Start offset is now always 0 when out-of-band track is seen.
-    // If there is a non-zero start or seek offset, Protocol will output it in a MsgEncodedStream.
-    // Modified MsgDecodedStream will pick up last set value for track offset, which is always the correct one.
-    iTrackOffsetSamples = 0; // FIXME - always 0 now; can remove aStartMs param.
-    iTrackDurationMs = ParseDurationMs(duration);
-
-    // FIXME - only set these if in intercept mode.
-    iTrackPending = aTrackFactory.CreateTrack(Brn("spotify://"), aMetadata);
+    if (iTrackPending) {
+        /*
+         * Notified of new track before opportunity to output previous track.
+         * May be a valid state due to race conditions around track
+         * notifications and pipeline playback starting.
+         */
+        iTrackPending->RemoveRef();
+    }
+    iTrackPending = aTrack;
     iMsgDecodedStreamPending = true;
 }
 

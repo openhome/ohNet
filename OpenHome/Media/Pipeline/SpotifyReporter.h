@@ -19,7 +19,7 @@ public:
 class ITrackChangeObserver
 {
 public:
-    virtual void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) = 0;
+    virtual void TrackChanged(Track* aTrack, TUint aDurationMs) = 0;
     virtual ~ITrackChangeObserver() {}
 };
 
@@ -39,7 +39,7 @@ public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
 private: // from ITrackChangeObserver
-    void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) override;
+    void TrackChanged(Track* aTrack, TUint aDurationMs) override;
     // FIXME - can also derive from new pipeline element classes and only implement subset of IMsgProcessor methods that are actually required.
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
