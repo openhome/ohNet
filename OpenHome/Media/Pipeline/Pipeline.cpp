@@ -286,9 +286,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iDecodedAudioValidatorGorger = new DecodedAudioValidator(*iLoggerGorger, "Gorger");
-    iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *iMsgFactory, *this);
+    iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *iMsgFactory);
     iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
-    iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter, *iEventThread);
+    iReporter = new Reporter(*iLoggerSpotifyReporter, *this, *iEventThread);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iRouter = new Router(*iLoggerReporter);
     iLoggerRouter = new Logger(*iRouter, "Router");

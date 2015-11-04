@@ -16,16 +16,6 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
-{
-public: // from IPipelinePropertyObserver
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
-    void NotifyMetaText(const Brx& aText) override;
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
-};
-
 class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
 {
 #define KTrackUri "http://host:port/path/file.ext"
@@ -82,7 +72,6 @@ private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
-    HelperPipelinePropertyObserver* iPropertyObserver;
     SpotifyReporter* iReporter;
     EMsgType iNextGeneratedMsg;
     Msg* iLastMsg;
@@ -96,33 +85,6 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-
-
-// HelperPipelinePropertyObserver
-
-void HelperPipelinePropertyObserver::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
-{
-}
-
-void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
-{
-
-}
-
-void HelperPipelinePropertyObserver::NotifyMetaText(const Brx& /*aText*/)
-{
-
-}
-
-void HelperPipelinePropertyObserver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSeconds*/)
-{
-
-}
-
-void HelperPipelinePropertyObserver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
-{
-
-}
 
 
 // SuiteSpotifyReporter
@@ -152,14 +114,12 @@ void SuiteSpotifyReporter::Setup()
     MsgFactoryInitParams init;
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iPropertyObserver = new HelperPipelinePropertyObserver();
-    iReporter = new SpotifyReporter(*this, *iPropertyObserver);
+    iReporter = new SpotifyReporter(*this, *iMsgFactory);
 }
 
 void SuiteSpotifyReporter::TearDown()
 {
     delete iReporter;
-    delete iPropertyObserver;
     delete iTrackFactory;
     delete iMsgFactory;
 }
