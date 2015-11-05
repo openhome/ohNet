@@ -143,14 +143,17 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    const DecodedStreamInfo& info = aMsg->StreamInfo();
+    ASSERT(info.SampleRate() != 0);
+    ASSERT(info.NumChannels() != 0);
     AutoMutex a(iLock);
+    // Clear any previous cached MsgDecodedStream and cache the one received.
+    UpdateDecodedStreamLocked(*aMsg);
 
     if (iInterceptMode) {
-        // Clear any previous cached MsgDecodedStream and cache the one received.
-        UpdateDecodedStreamLocked(*aMsg);
         aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
 
-        const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
+        iMsgDecodedStreamPending = false;
         iTrackOffsetSamples = info.SampleStart();
 
         // Generate a new MsgDecodedStream (which requires most up-to-date MsgDecodedStream in cache).
@@ -189,7 +192,7 @@ void SpotifyReporter::UpdateDecodedStreamLocked(MsgDecodedStream& aMsg)
     iDecodedStream->AddRef();
 }
 
-TUint64 SpotifyReporter::TrackLengthSamplesLocked() const
+TUint64 SpotifyReporter::TrackLengthJiffiesLocked() const
 {
     if (iTrackDurationMs == 0) {
         return 0;
@@ -197,8 +200,8 @@ TUint64 SpotifyReporter::TrackLengthSamplesLocked() const
 
     ASSERT(iDecodedStream != nullptr);
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-    const TUint64 trackLengthSamples = (static_cast<TUint64>(iTrackDurationMs)*info.SampleRate())/1000;
-    return trackLengthSamples;
+    const TUint64 trackLengthJiffies = (static_cast<TUint64>(iTrackDurationMs)*info.SampleRate()*Jiffies::JiffiesPerSample(info.SampleRate()))/1000;
+    return trackLengthJiffies;
 }
 
 MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
@@ -206,8 +209,7 @@ MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
     ASSERT(iDecodedStream != nullptr);
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     // Due to out-of-band track notification from Spotify, audio for current track was probably pushed into pipeline before track offset was known, so use updated value here.
-    const TUint64 trackLengthSamples = TrackLengthSamplesLocked();
-    const TUint64 trackLengthJiffies = Jiffies::JiffiesPerSample(info.SampleRate())*trackLengthSamples;
+    const TUint64 trackLengthJiffies = TrackLengthJiffiesLocked();
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iTrackOffsetSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
     return msg;
 }

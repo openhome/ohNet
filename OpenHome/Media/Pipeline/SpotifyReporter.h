@@ -39,7 +39,7 @@ public: // from IPipelineElementUpstream
 public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
-private: // from ITrackChangeObserver
+public: // from ITrackChangeObserver
     void TrackChanged(Track* aTrack, TUint aDurationMs) override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
@@ -48,7 +48,7 @@ private: // PipelineElement
 private:
     void ClearDecodedStreamLocked();
     void UpdateDecodedStreamLocked(MsgDecodedStream& aMsg);
-    TUint64 TrackLengthSamplesLocked() const;
+    TUint64 TrackLengthJiffiesLocked() const;
     MsgDecodedStream* CreateMsgDecodedStreamLocked() const;
 private:
     IPipelineElementUpstream& iUpstreamElement;
