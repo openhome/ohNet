@@ -98,7 +98,6 @@ private:
     BwsMode iMode;
     TUint64 iTrackOffset;
     Bws<1024> iTrackUri;
-    TUint iTrackIdPipeline;
     TUint iSampleRate;
     TUint iNumChannels;
     TUint iBitRate;
