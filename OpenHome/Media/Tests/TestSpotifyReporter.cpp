@@ -818,7 +818,7 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
     MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
     const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
-    TEST(info.TrackLength() == kDurationJiffies);   // Duration should have been updated by SpotifyReported.
+    TEST(info.TrackLength() == kDurationJiffies);   // Duration should have been updated by SpotifyReporter.
     TEST(info.SampleStart() == iSampleStart);   // Sample start passed with this should be unchanged.
     msgDecodedStream->RemoveRef();
 
