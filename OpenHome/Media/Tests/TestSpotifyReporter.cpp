@@ -165,7 +165,7 @@ void SuiteSpotifyReporter::Setup()
     iTrackOffset = 0;
     iSampleRate = kDefaultSampleRate;
     iNumChannels = kDefaultNumChannels;
-    iBitRate = kDefaultBitrate; kBitDepth * kDefaultSampleRate;
+    iBitRate = kDefaultBitrate;
     iTrackLength = kDefaultTrackLength;
     iSampleStart = kDefaultSampleStart;
     MsgFactoryInitParams init;
