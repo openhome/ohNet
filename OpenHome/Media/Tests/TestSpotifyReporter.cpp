@@ -388,7 +388,7 @@ void SuiteSpotifyReporter::TestSubSamples()
 void SuiteSpotifyReporter::TestSubSamplesDiff()
 {
     TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
-    TUint samplesExpected = samplesExpectedPerMsg;
+    TUint samplesExpected = 0;
 
     // Set up sequence.
     EMsgType setupTypes[] = {
@@ -411,11 +411,14 @@ void SuiteSpotifyReporter::TestSubSamplesDiff()
     };
     for (TUint i=0; i<sizeof(audioTypes)/sizeof(audioTypes[0]); i++) {
         iNextGeneratedMsg = audioTypes[i];
+        samplesExpected += samplesExpectedPerMsg;
         Msg* msg = iReporter->Pull();
         msg->RemoveRef();
         TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
-        samplesExpected += samplesExpectedPerMsg;
     }
+
+    // Finally, test code asserts if passed in a subsample value greater than what SpotifyReporter has observed.
+    TEST_THROWS(iReporter->SubSamplesDiff(samplesExpected+1), AssertionFailed);
 }
 
 void SuiteSpotifyReporter::TestSampleRateChange()
