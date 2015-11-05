@@ -88,7 +88,6 @@ private:
     void TestModeSpotifyNoTrackInjectedAtStart();
     void TestModeSpotifyTrackInjected();
     void TestModeSpotifySeek();
-    void TestSampleOverflow();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -156,7 +155,6 @@ SuiteSpotifyReporter::SuiteSpotifyReporter()
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart), "TestModeSpotifyNoTrackInjectedAtStart");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifyTrackInjected), "TestModeSpotifyTrackInjected");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifySeek), "TestModeSpotifySeek");
-    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSampleOverflow), "TestSampleOverflow");
 }
 
 void SuiteSpotifyReporter::Setup()
@@ -832,41 +830,6 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     TEST(iReporter->SubSamples() == expectedSubsamples);
 }
 
-void SuiteSpotifyReporter::TestSampleOverflow()
-{
-    // Test that if subsample count overflows, SpotifyReporter asserts.
-    TUint kSamplesExpectedPerMsg = kDataBytes/kByteDepth;
-
-    // Set up sequence.
-    EMsgType setupTypes[] ={
-        EMsgMode,
-        EMsgTrack,
-        EMsgDecodedStream,
-    };
-    for (TUint i=0; i<sizeof(setupTypes)/sizeof(setupTypes[0]); i++) {
-        iNextGeneratedMsg = setupTypes[i];
-        Msg* msg = iReporter->Pull();
-        msg->RemoveRef();
-    }
-
-    // Now, pass in audio until 1 message before overflow will occur.
-    const TUint64 kOverflowSamples = std::numeric_limits<TUint64>::max()/iNumChannels;
-
-    // Now, pass in audio that will cause overflow to occur.
-    TUint64 expectedSubsamples = 0;
-    for (TUint64 i=0; i<kOverflowSamples; i+=kSamplesExpectedPerMsg) {
-        iNextGeneratedMsg = EMsgAudioPcm;
-        Msg* msg = iReporter->Pull();
-        msg->RemoveRef();
-        expectedSubsamples += kSamplesExpectedPerMsg;
-        TEST(iReporter->SubSamples() == expectedSubsamples);
-        Log::Print("%llu\n", expectedSubsamples);
-    }
-
-    // Try pull another audio msg. Should cause overflow.
-    iNextGeneratedMsg = EMsgAudioPcm;
-    TEST_THROWS(iReporter->Pull(), AssertionFailed);
-}
 
 
 void TestSpotifyReporter()
