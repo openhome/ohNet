@@ -971,7 +971,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iVolume(aVolume)
 {
     // NOTE: iRaopDevice is not registered by default
-    iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest);
+    iPowerObserver = aPowerManager.RegisterPowerHandler(*this, kPowerPriorityLowest);
 }
 
 RaopDiscovery::~RaopDiscovery()

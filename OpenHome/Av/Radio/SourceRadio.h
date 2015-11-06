@@ -8,6 +8,7 @@
 
 namespace OpenHome {
     class Environment;
+    class PowerManager;
 namespace Net {
     class DvDevice;
 }
@@ -42,7 +43,8 @@ public:
     SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline,
                 Media::UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
                 Configuration::IConfigInitialiser& aConfigInit,
-                Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList);
+                Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList,
+                IPowerManager& aPowerManager);
     ~SourceRadio();
 private: // from ISource
     void Activate() override;
@@ -65,7 +67,6 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     Mutex iLock;
-    Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
     ProviderRadio* iProviderRadio;
     PresetDatabase* iPresetDatabase;

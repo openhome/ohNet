@@ -20,17 +20,15 @@ using namespace OpenHome::Media;
 
 // ProtocolOhu
 
-ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode, IPowerManager& aPowerManager)
+ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, nullptr /* no timestamper required */, "ohu", aMode)
     , iLeaveLock("POHU")
 {
-    iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest+1);
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired), "ProtocolOhuLeave");
 }
 
 ProtocolOhu::~ProtocolOhu()
 {
-    delete iPowerObserver;
     delete iTimerLeave;
 }
 
@@ -271,21 +269,6 @@ TUint ProtocolOhu::TryStop(TUint aStreamId)
         iReadBuffer.ReadInterrupt();
     }
     return iNextFlushId;
-}
-
-void ProtocolOhu::PowerUp()
-{
-    // FIXME - initialise iTimerLeave here?
-}
-
-void ProtocolOhu::PowerDown()
-{
-    //iLeaveLock.Wait();
-    //// FIXME - use of Send from TimerLeaveExpired isn't obviously threadsafe
-    //iStopped = true;
-    //iLeaving = true;
-    //iLeaveLock.Signal();
-    //TimerLeaveExpired();
 }
 
 void ProtocolOhu::SendLeave()

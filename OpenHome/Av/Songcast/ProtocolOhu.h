@@ -4,11 +4,9 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/ProtocolOhBase.h>
 #include <OpenHome/Private/Network.h>
-#include <OpenHome/PowerManager.h>
 
 namespace OpenHome {
     class Environment;
-    class IPowerManager;
     class Timer;
 namespace Media {
     class TrackFactory;
@@ -17,12 +15,12 @@ namespace Av {
 
 class IOhmMsgFactory;
 
-class ProtocolOhu : public ProtocolOhBase, public IPowerHandler
+class ProtocolOhu : public ProtocolOhBase
 {
     static const TUint kTimerLeaveTimeoutMs = 50;
     static const TUint kMaxSlaveCount = 4;
 public:
-    ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode, IPowerManager& aPowerManager);
+    ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode);
     ~ProtocolOhu();
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
@@ -30,9 +28,6 @@ private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
-private: // from IPowerHandler
-    void PowerUp() override;
-    void PowerDown() override;
 private:
     void HandleAudio(const OhmHeader& aHeader);
     void HandleTrack(const OhmHeader& aHeader);
@@ -43,7 +38,6 @@ private:
     void TimerLeaveExpired();
 private:
     Mutex iLeaveLock;
-    IPowerManagerObserver* iPowerObserver;
     Timer* iTimerLeave;
     TBool iLeaving;
     TBool iStopped;

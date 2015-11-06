@@ -71,7 +71,6 @@ private:
     Mutex iLock;
     Mutex iActivationLock;
     Net::DvDevice& iDevice;
-    Media::PipelineManager& iPipeline;
     UriProviderRepeater& iUriProvider;
     Media::Track* iTrack;
     ProviderAvTransport* iProviderAvTransport;

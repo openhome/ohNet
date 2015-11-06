@@ -465,12 +465,12 @@ void ConfigManager::AddText(const Brx& aKey, ConfigText& aText)
 
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
 {
-    iLock.Wait();
-    if (iOpen) {
-        iLock.Signal();
-        ASSERTS();
+    {
+        AutoMutex _(iLock);
+        if (iOpen) {
+            ASSERTS();
+        }
     }
-    iLock.Signal();
     if (HasNum(aKey) || HasChoice(aKey) || HasText(aKey)) {
         THROW(ConfigKeyExists);
     }
