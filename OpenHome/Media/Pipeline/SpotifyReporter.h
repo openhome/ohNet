@@ -16,10 +16,20 @@ public:
     virtual ~ISpotifyReporter() {}
 };
 
+class IDidlLiteWriter
+{
+public:
+    static const TUint kMaxBytes = kTrackMetaDataMaxBytes;
+public:
+    // Implementor must omit any attributes with value 0.
+    virtual void WriteDidlLite(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const = 0;
+    virtual ~IDidlLiteWriter() {}
+};
+
 class ITrackChangeObserver
 {
 public:
-    virtual void TrackChanged(Track* aTrack, TUint aDurationMs) = 0;
+    virtual void TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) = 0;
     virtual ~ITrackChangeObserver() {}
 };
 
@@ -40,7 +50,7 @@ public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
 public: // from ITrackChangeObserver
-    void TrackChanged(Track* aTrack, TUint aDurationMs) override;
+    void TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;

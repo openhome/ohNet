@@ -99,8 +99,18 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
     return iSubSamples - aPrevSubSamples;
 }
 
-void SpotifyReporter::TrackChanged(Track* aTrack, TUint aDurationMs)
+void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs)
 {
+    // FIXME - 2 track race condition (where pipeline MsgTrack may be output after generated MsgTrack at start of stream).
+    // Solution:
+    // - Leave this method unmodified
+    // - In Pull() call above, do 'if (iInterceptMode && iPipelineTrackSeen)
+    //   and set clear iPipelineTrackSeen() when MsgMode seen and set it when MsgTrack seen.
+    // - The above means that we will always get the MsgMode followed by MsgTrack that came through the pipeline (which will be the only ones received for any single Spotify steam) before outputting the custom ones.
+
+    // - FIXME - should also hold off on outputting dummy track until real MsgDecodedStream seen, as that is the point at which we know the stream format which is required for metadata.
+    // But still, at the moment would be no worse than what's already happening. (And would be slightly better because bit depth, channel count and sample rate would be read from decoded stream associated with track that's currently playing, rather than track that's just been queued.)
+
     AutoMutex a(iLock);
     /*
      * Start offset is always 0 when out-of-band track is seen.
@@ -120,7 +130,23 @@ void SpotifyReporter::TrackChanged(Track* aTrack, TUint aDurationMs)
          */
         iTrackPending->RemoveRef();
     }
-    iTrackPending = aTrack;
+
+
+    // FIXME - might not yet have received MsgDecodedStream so bitdepth, samplefrequency, numchannels fields of DIDL-Lite may be 0. This should only be possible when setting up Connect.
+    TUint bitDepth = 0;
+    TUint channels = 0;
+    TUint sampleRate = 0;
+    if (iDecodedStream != nullptr) {
+        const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
+        bitDepth = info.BitDepth();
+        channels = info.NumChannels();
+        sampleRate = info.SampleRate();
+    }
+
+    Bws<IDidlLiteWriter::kMaxBytes> metadata;
+    WriterBuffer writerBuf(metadata);
+    aWriter.WriteDidlLite(writerBuf, bitDepth, channels, sampleRate);   // Writer will omit any fields with value 0.
+    iTrackPending = aTrackFactory.CreateTrack(aUri, metadata);
     iMsgDecodedStreamPending = true;
 }
 

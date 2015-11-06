@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
+#include <OpenHome/Private/Ascii.h>
 
 #include <limits>
 #include <string.h>
@@ -27,6 +28,12 @@ private: // from PipelineElement
     Msg* ProcessMsg(T* aMsg) override;
 private:
     T* iMsg;
+};
+
+class MockDidlLiteWriter : public IDidlLiteWriter
+{
+public: // from IDidlLiteWriter
+    void WriteDidlLite(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const override;
 };
 
 class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
@@ -109,6 +116,8 @@ private:
 } // namespace OpenHome
 
 
+// MsgIdentifier
+
 template <class T>
 MsgIdentifier<T>::MsgIdentifier()
     : PipelineElement(0)
@@ -133,6 +142,26 @@ Msg* MsgIdentifier<T>::ProcessMsg(T* aMsg)
     iMsg = aMsg;
     return nullptr;
 }
+
+
+// MockDidlLiteWriter
+
+void MockDidlLiteWriter::WriteDidlLite(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const
+{
+    Bws<Ascii::kMaxUintStringBytes> bufUint;
+    aWriter.Write(Brn("bitDepth: "));
+    Ascii::AppendDec(bufUint, aBitDepth);
+    aWriter.Write(bufUint);
+    aWriter.Write(Brn(", numChannels: "));
+    bufUint.SetBytes(0);
+    Ascii::AppendDec(bufUint, aChannels);
+    aWriter.Write(bufUint);
+    aWriter.Write(Brn(", sampleRate: "));
+    bufUint.SetBytes(0);
+    Ascii::AppendDec(bufUint, aSampleRate);
+    aWriter.Write(bufUint);
+}
+
 
 
 // SuiteSpotifyReporter
@@ -566,11 +595,10 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
 {
     // This could happen if Spotify source is just starting, but audio has yet to arrive at SpotifyReporter, so track is injected during non-Spotify stream.
     static const Brn kSpotifyTrackUri("spotify://");
-    static const Brn kSpotifyTrackMetadata("spotify-metadata");
-    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
-    const TUint duration = 1234;
+    const TUint kDurationMs = 1234;
 
-    iReporter->TrackChanged(track, duration);
+    MockDidlLiteWriter writer;
+    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDurationMs);
 
     iNextGeneratedMsg = EMsgMode;
     Msg* msg = iReporter->Pull();
@@ -644,11 +672,10 @@ void SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart()
 
     // Now, inject a Track. Should now pull a MsgTrack followed by a MsgDecodedStream.
     static const Brn kSpotifyTrackUri("spotify://");
-    static const Brn kSpotifyTrackMetadata("spotify-metadata");
-    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
-    const TUint duration = 1234;
-    const TUint64 kDurationJiffies = (static_cast<TUint64>(duration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    iReporter->TrackChanged(track, duration);
+    const TUint kDurationMs = 1234;
+    const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    MockDidlLiteWriter writer;
+    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDurationMs);
 
     // First, set audio to be pulled next.
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -656,7 +683,7 @@ void SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart()
     msg = iReporter->Pull();
     msgTrack = msgIdTrack.GetMsg(msg);
     TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == kSpotifyTrackMetadata);
+    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 16, numChannels: 2, sampleRate: 44100"));
     msgTrack->RemoveRef();
     // Try pull again. Should be MsgDecodedStream with injected duration and sample start of 0 (as track injection resets sample start).
     msg = iReporter->Pull();
@@ -676,11 +703,10 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
 {
     // Inject a track to simulate real-world condition where out-of-band track notification is reach SpotifyReporter before MsgMode at Spotify initialisation.
     static const Brn kSpotifyTrackUri("spotify://");
-    static const Brn kSpotifyTrackMetadata("spotify-metadata");
-    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
-    const TUint duration = 1234;
-    const TUint64 kDurationJiffies = (static_cast<TUint64>(duration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    iReporter->TrackChanged(track, duration);
+    const TUint kDurationMs = 1234;
+    const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    MockDidlLiteWriter writer;
+    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDurationMs);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
@@ -694,7 +720,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     MsgIdentifier<MsgTrack> msgIdTrack;
     MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
     TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == kSpotifyTrackMetadata);
+    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 0, numChannels: 0, sampleRate: 0"));
     msgTrack->RemoveRef();
 
     // Pull again. Should be in-band pipeline MsgTrack.
@@ -732,11 +758,9 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     // Now, insert another track to signify track change.
 
     // Inject a MsgTrack.
-    static const Brn kSpotifyTrackMetadata2("spotify-metadata2");
-    Track* track2 = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata2);
     const TUint kDuration2 = 5678;
     const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    iReporter->TrackChanged(track2, kDuration2);
+    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDuration2);
 
     // Set audio to be pulled.
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -745,7 +769,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     msg = iReporter->Pull();
     msgTrack = msgIdTrack.GetMsg(msg);
     TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == kSpotifyTrackMetadata2);
+    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 16, numChannels: 2, sampleRate: 44100"));
     msgTrack->RemoveRef();
     // Pull again. Should be generated MsgDecodedStream. SampleStart should now be 0, as injected track resets it.
     msg = iReporter->Pull();
@@ -766,11 +790,10 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     // Pass in a MsgMode followed by a MsgDecodedStream mid-way through stream to simulate a seek.
     // First part of this test is already tested by TestModeSpotifyTrackInjected().
     static const Brn kSpotifyTrackUri("spotify://");
-    static const Brn kSpotifyTrackMetadata("spotify-metadata");
-    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
     const TUint kDuration = 1234;
     const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    iReporter->TrackChanged(track, kDuration);
+    MockDidlLiteWriter writer;
+    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDuration);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
