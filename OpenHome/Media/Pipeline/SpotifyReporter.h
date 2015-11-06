@@ -19,61 +19,45 @@ public:
 class ITrackChangeObserver
 {
 public:
-    virtual void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) = 0;
+    virtual void TrackChanged(Track* aTrack, TUint aDurationMs) = 0;
     virtual ~ITrackChangeObserver() {}
 };
 
 /*
  * Element to report number of samples seen since last MsgMode.
  */
-class SpotifyReporter : public IPipelineElementUpstream, public ISpotifyReporter, public ITrackChangeObserver, public IPipelinePropertyObserver, private IMsgProcessor, private INonCopyable
+class SpotifyReporter : public PipelineElement, public IPipelineElementUpstream, public ISpotifyReporter, public ITrackChangeObserver, private INonCopyable
 {
 private:
+    static const TUint kSupportedMsgTypes;
     static const Brn kInterceptMode;
 public:
-    SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver);
+    SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory);
+    ~SpotifyReporter();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
-private: // from ITrackChangeObserver
-    void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) override;
-private: // from IPipelinePropertyObserver
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
-    void NotifyMetaText(const Brx& aText) override;
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
-private: // IMsgProcessor
+public: // from ITrackChangeObserver
+    void TrackChanged(Track* aTrack, TUint aDurationMs) override;
+private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgDrain* aMsg) override;
-    Msg* ProcessMsg(MsgDelay* aMsg) override;
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
-    Msg* ProcessMsg(MsgMetaText* aMsg) override;
-    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
-    Msg* ProcessMsg(MsgHalt* aMsg) override;
-    Msg* ProcessMsg(MsgFlush* aMsg) override;
-    Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
-    Msg* ProcessMsg(MsgSilence* aMsg) override;
-    Msg* ProcessMsg(MsgPlayable* aMsg) override;
-    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
-    // Expects duration of form: H+:MM:SS[.F0/F1]
-    static TUint ParseDurationMs(const Brx& aDuration);
+    void ClearDecodedStreamLocked();
+    void UpdateDecodedStreamLocked(MsgDecodedStream& aMsg);
+    TUint64 TrackLengthJiffiesLocked() const;
+    MsgDecodedStream* CreateMsgDecodedStreamLocked() const;
 private:
     IPipelineElementUpstream& iUpstreamElement;
-    IPipelinePropertyObserver& iPropertyObserver;
+    MsgFactory& iMsgFactory;
     TUint iTrackDurationMs;
-    TUint64 iTrackOffsetSubSamples;
-    TUint64 iReporterSubSampleStart;
-    TUint iChannels;
-    TUint iSampleRate;
+    TUint64 iTrackOffsetSamples;
+    Track* iTrackPending;
+    TBool iMsgDecodedStreamPending;
+    MsgDecodedStream* iDecodedStream;
     TUint64 iSubSamples;
     TBool iInterceptMode;
     Mutex iLock;
@@ -81,4 +65,3 @@ private:
 
 } // namespace Media
 } // namespace OpenHome
-

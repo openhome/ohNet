@@ -122,16 +122,18 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
     , iStartupSourceVal(ConfigStartupSource::kNone)
 {
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this);
     iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
     iConfigProductRoom = &aConfigReader.GetText(kConfigIdRoomBase);
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
     iConfigProductName = &aConfigReader.GetText(kConfigIdNameBase);
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorConfigText(*this, &Product::ProductNameChanged));
-    iProviderProduct = new ProviderProduct(aDevice, *this);
+    iProviderProduct = new ProviderProduct(aDevice, *this, aPowerManager);
 }
 
 Product::~Product()
 {
+    delete iStandbyObserver;
     iConfigStartupSource->Unsubscribe(iListenerIdStartupSource);
     iConfigStartupSource = nullptr; // Didn't have ownership.
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
@@ -237,40 +239,6 @@ void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageU
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));
-}
-
-TBool Product::StandbyEnabled() const
-{
-    AutoMutex a(iLock);
-    return iStandby;
-}
-
-void Product::SetStandby(TBool aStandby)
-{
-    iLock.Wait();
-    const TBool changed = ((aStandby && !iStandby) || (!aStandby && iStandby));
-    if (changed) {
-        iStandby = aStandby;
-    }
-    const TUint startupSourceVal = iStartupSourceVal;
-    iLock.Signal();
-
-    if (changed) {
-        // Activate startup source (if one set) if coming out of standby.
-        if (!aStandby && startupSourceVal != ConfigStartupSource::kNone) {
-            SetCurrentSource(startupSourceVal);
-        }
-
-        for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-            (*it)->StandbyChanged();
-            // FIXME - other observers to notify. (e.g. to disable any hardware)
-        }
-
-        if (aStandby) {
-            AutoMutex _(iLock);
-            iSources[iCurrentSource]->StandbyEnabled();
-        }
-    }
 }
 
 TUint Product::SourceCount() const
@@ -459,6 +427,23 @@ void Product::AddNameObserver(IProductNameObserver& aObserver)
     // Notify new observer immediately with its initial values.
     aObserver.RoomChanged(iProductRoom);
     aObserver.NameChanged(iProductName);
+}
+
+void Product::StandbyEnabled()
+{
+    AutoMutex _(iLock);
+    iSources[iCurrentSource]->StandbyEnabled();
+}
+
+void Product::StandbyDisabled(StandbyDisableReason aReason)
+{
+    iLock.Wait();
+    const TUint startupSourceVal = iStartupSourceVal;
+    iLock.Signal();
+
+    if (aReason == eStandbyDisableUser && startupSourceVal != ConfigStartupSource::kNone) {
+        SetCurrentSource(startupSourceVal);
+    }
 }
 
 void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)

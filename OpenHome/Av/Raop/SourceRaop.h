@@ -69,7 +69,6 @@ private:
     static const Brn kKeyNetAux;
     Environment& iEnv;
     Mutex iLock;
-    Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
     RaopVolumeHandler iVolume;
     RaopDiscovery* iRaopDiscovery;

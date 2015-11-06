@@ -2,7 +2,9 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Product.h>
+#include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/PowerManager.h>
 #include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;
@@ -10,48 +12,50 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
-const Brn Source::kKeySourceNamePrefix("Source.");
-const Brn Source::kKeySourceNameSuffix(".Name");
+// SourceBase
 
-void Source::GetSourceNameKey(const Brx& aName, Bwx& aBuf)
+const Brn SourceBase::kKeySourceNamePrefix("Source.");
+const Brn SourceBase::kKeySourceNameSuffix(".Name");
+
+void SourceBase::GetSourceNameKey(const Brx& aName, Bwx& aBuf)
 {
     aBuf.Replace(kKeySourceNamePrefix);
     aBuf.Append(aName);
     aBuf.Append(kKeySourceNameSuffix);
 }
 
-const Brx& Source::SystemName() const
+const Brx& SourceBase::SystemName() const
 {
     return iSystemName;
 }
 
-const Brx& Source::Type() const
+const Brx& SourceBase::Type() const
 {
     return iType;
 }
 
-void Source::Name(Bwx& aBuf) const
+void SourceBase::Name(Bwx& aBuf) const
 {
     AutoMutex a(iLock);
     aBuf.Replace(iName);
 }
 
-TBool Source::IsVisible() const
+TBool SourceBase::IsVisible() const
 {
     return iVisible;
 }
 
-void Source::Deactivate()
+void SourceBase::Deactivate()
 {
     iActive = false;
 }
 
-void Source::SetVisible(TBool aVisible)
+void SourceBase::SetVisible(TBool aVisible)
 {
     iVisible = aVisible;
 }
 
-Source::Source(const TChar* aSystemName, const TChar* aType)
+SourceBase::SourceBase(const TChar* aSystemName, const TChar* aType)
     : iActive(false)
     , iLock("SRCM")
     , iSystemName(aSystemName)
@@ -65,7 +69,7 @@ Source::Source(const TChar* aSystemName, const TChar* aType)
 {
 }
 
-Source::~Source()
+SourceBase::~SourceBase()
 {
     if (iConfigName != nullptr) {
         iConfigName->Unsubscribe(iConfigNameSubscriptionId);
@@ -75,18 +79,18 @@ Source::~Source()
     }
 }
 
-TBool Source::IsActive() const
+TBool SourceBase::IsActive() const
 {
     return iActive;
 }
 
-void Source::DoActivate()
+void SourceBase::DoActivate()
 {
     iActive = true;
     iProduct->Activate(*this);
 }
 
-void Source::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint aId)
+void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint aId)
 {
     iProduct = &aProduct;
     Bws<kKeySourceNameMaxBytes> key;
@@ -100,13 +104,29 @@ void Source::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, ICo
         iConfigName = new ConfigText(aConfigInit, key, ISource::kMaxSourceNameBytes, iName);
         iConfigNameCreated = true;
     }
-    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &Source::NameChanged));
+    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SourceBase::NameChanged));
 }
 
-void Source::NameChanged(KeyValuePair<const Brx&>& aName)
+void SourceBase::NameChanged(KeyValuePair<const Brx&>& aName)
 {
     iLock.Wait();
     iName.Replace(aName.Value());
     iLock.Signal();
     iProduct->NotifySourceNameChanged(*this);
+}
+
+
+// Source
+
+Source::Source(const TChar* aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager)
+    : SourceBase(aSystemName, aType)
+    , iPipeline(aPipeline)
+    , iPowerManager(aPowerManager)
+{
+}
+
+void Source::DoPlay()
+{
+    iPowerManager.StandbyDisable(eStandbyDisableUser);
+    iPipeline.Play();
 }

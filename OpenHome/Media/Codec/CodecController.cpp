@@ -316,7 +316,7 @@ void CodecController::CodecThread()
                 iActiveCodec->StreamInitialise();
                 for (;;) {
                     iLock.Wait();
-                    TBool seek = iSeek;
+                    const TBool seek = iSeek;
                     const TUint seekHandle = iSeekHandle;
                     iLock.Signal();
                     if (!seek) {
@@ -522,6 +522,14 @@ TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 
 TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 {
+    {
+        AutoMutex a(iLock);
+        if (iStreamStopped) {
+            // Don't want to seek when in a stopped state.
+            THROW(CodecStreamStopped);
+        }
+    }
+
     if (aStreamId == iStreamId && aBytePos >= iStreamLength) {
         // Seek on valid stream, but aBytePos is beyond end of file.
         LOG(kPipeline, "CodecController::TrySeekTo(%u, %llu) - failure: seek point is beyond the end of stream (streamLen=%llu)\n",

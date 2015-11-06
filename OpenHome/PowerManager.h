@@ -3,18 +3,23 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 #include <list>
+#include <vector>
 
 namespace OpenHome {
-namespace Configuration {
-    class IStoreReadWrite;
-}
 
 enum PowerDownPriority {
     kPowerPriorityLowest = 0
    ,kPowerPriorityNormal = 50
    ,kPowerPriorityHighest = 100
+};
+
+enum StandbyDisableReason {
+    eStandbyDisableUser
+   ,eStandbyDisableAlarm
 };
 
 class IPowerHandler
@@ -23,6 +28,14 @@ public:
     virtual void PowerUp() = 0;
     virtual void PowerDown() = 0;
     virtual ~IPowerHandler() {}
+};
+
+class IStandbyHandler
+{
+public:
+    virtual void StandbyEnabled() = 0;
+    virtual void StandbyDisabled(StandbyDisableReason aReason) = 0;
+    virtual ~IStandbyHandler() {}
 };
 
 /**
@@ -38,32 +51,57 @@ public:
     virtual ~IPowerManagerObserver() {}
 };
 
+class IStandbyObserver
+{
+public:
+    virtual ~IStandbyObserver() {}
+};
+
 class IPowerManager
 {
 public:
-    virtual IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority) = 0;
+    virtual void NotifyPowerDown() = 0;
+    virtual void StandbyEnable() = 0;
+    virtual void StandbyDisable(StandbyDisableReason aReason) = 0;
+    virtual IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) = 0;
+    virtual IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler) = 0;
     virtual ~IPowerManager() {}
 };
 
 class PowerManagerObserver;
+class StandbyObserver;
 
 class PowerManager : public IPowerManager
 {
     friend class PowerManagerObserver;
+    friend class StandbyObserver;
+    static const Brn kConfigKey;
+    static const TUint kConfigIdStartupStandbyEnabled;
+    static const TUint kConfigIdStartupStandbyDisabled;
 public:
-    PowerManager();
+    PowerManager(Configuration::IConfigInitialiser& aConfigInit);
     ~PowerManager();
-    void PowerDown();
 public: // from IPowerManager
-    IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority) override;
+    void NotifyPowerDown() override;
+    void StandbyEnable() override;
+    void StandbyDisable(StandbyDisableReason aReason) override;
+    IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) override;
+    IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler) override;
 private:
-    void Deregister(TUint aId);
+    void DeregisterPower(TUint aId);
+    void DeregisterStandby(TUint aId);
+    void StartupStandbyChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private:
     typedef std::list<PowerManagerObserver*> PriorityList;  // efficient insertion and removal
-    PriorityList iList;
-    TUint iNextHandlerId;
+    PriorityList iPowerObservers;
+    std::vector<StandbyObserver*> iStandbyObservers;
+    TUint iNextPowerId;
+    TUint iNextStandbyId;
     TBool iPowerDown;
-    Mutex iLock;
+    TBool iStandby;
+    StandbyDisableReason iLastDisableReason;
+    mutable Mutex iLock;
+    Configuration::ConfigChoice* iConfigStartupStandby;
 };
 
 /**
@@ -95,6 +133,19 @@ private:
     const TUint iPriority;
 };
 
+class StandbyObserver : public IStandbyObserver, private INonCopyable
+{
+public:
+    StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId);
+    ~StandbyObserver();
+    IStandbyHandler& Handler() const;
+    TUint Id() const;
+private:
+    PowerManager& iPowerManager;
+    IStandbyHandler& iHandler;
+    const TUint iId;
+};
+
 /*
  * Abstract class that only writes its value out to store at power down.
  */
@@ -106,7 +157,9 @@ protected:
     StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey);
 protected: // from IPowerHandler
     virtual void PowerUp() = 0;
-    virtual void PowerDown() = 0;
+    void PowerDown() override;
+private:
+    virtual void Write() = 0;
 protected:
     IPowerManagerObserver* iObserver;
     Configuration::IStoreReadWrite& iStore;
@@ -126,9 +179,8 @@ public:
     void Set(TInt aValue); // owning class knows limits
 private: // from StoreVal
     void PowerUp() override;
-    void PowerDown() override;
-private:
-    void Write();
+private: // from StoreVal
+    void Write() override;
 private:
     TInt iVal;
 };
@@ -145,9 +197,8 @@ public:
     void Set(const Brx& aValue);
 private: // from StoreVal
     void PowerUp() override;
-    void PowerDown() override;
-private:
-    void Write();
+private: // from StoreVal
+    void Write() override;
 private:
     Bwh iVal;
 };

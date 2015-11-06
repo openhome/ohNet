@@ -283,7 +283,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // Register with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
-    iPowerObserver = powerManager.Register(*this, kPowerPriorityLowest);
+    iPowerObserver = powerManager.RegisterPowerHandler(*this, kPowerPriorityLowest);
 
     // Set up config app.
     static const TUint addr = 0;    // Bind to all addresses.

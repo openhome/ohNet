@@ -83,7 +83,6 @@ private:
 private:
     Mutex iLock;
     Mutex iActivationLock;
-    Media::PipelineManager& iPipeline;
     Mutex iUriLock;
     ThreadFunctor* iZoneChangeThread;
     ZoneHandler* iZoneHandler;
@@ -184,10 +183,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                IOhmTimestamper* aRxTimestamper,
                                IOhmTimestampMapper* aRxTsMapper,
                                const Brx& aSenderIconFileName)
-    : Source("Songcast", "Receiver")
+    : Source("Songcast", "Receiver", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
-    , iPipeline(aMediaPlayer.Pipeline())
     , iUriLock("SRX3")
     , iTrackId(Track::kIdNone)
     , iPlaying(false)
@@ -208,7 +206,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory, aRxTsMapper));
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode()));
-    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
+    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
 
@@ -276,7 +274,7 @@ void SourceReceiver::Play()
     if (iTrackUri.Bytes() > 0) {
         iZoneHandler->SetCurrentSenderUri(iTrackUri);
         iPipeline.Begin(iUriProvider->Mode(), iTrackId);
-        iPipeline.Play();
+        DoPlay();
     }
 }
 
@@ -403,7 +401,7 @@ void SourceReceiver::UriChanged()
         if (IsActive() && iPlaying) {
             iPipeline.RemoveAll();
             iPipeline.Begin(iUriProvider->Mode(), iTrackId);
-            iPipeline.Play();
+            DoPlay();
         }
     }
 }
