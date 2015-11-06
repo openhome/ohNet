@@ -30,7 +30,7 @@ class TestAirplayFunctions( BASE.CommonAirplayFunctions ):
         self._MonitorPlayback( 5 )
 
     # noinspection PyUnusedLocal
-    def _DoCheckVolume( self, aVol ):
+    def _DoCheckVolume( self, aVol1, aVol2 ):
         self._MonitorPlayback( 5 )
 
     def _MonitorPlayback( self, aSecs ):
