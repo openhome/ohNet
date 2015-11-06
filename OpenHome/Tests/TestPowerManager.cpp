@@ -593,7 +593,7 @@ void SuitePowerManager::TestNoPowerDown()
 void SuitePowerManager::TestShutdownCallbackOnRegistration()
 {
     HelperStandbyHandler observer;
-    iPowerManager->RegisterStandbyHandler(observer);
+    auto handler = iPowerManager->RegisterStandbyHandler(observer);
     if (observer.DisableCount() == 0) {
         TEST(observer.EnableCount() > 0);
     }
@@ -603,12 +603,13 @@ void SuitePowerManager::TestShutdownCallbackOnRegistration()
     else {
         ASSERTS();
     }
+    delete handler;
 }
 
 void SuitePowerManager::TestShutdownToggleGeneratesCallback()
 {
     HelperStandbyHandler observer;
-    iPowerManager->RegisterStandbyHandler(observer);
+    auto handler = iPowerManager->RegisterStandbyHandler(observer);
     TEST(!observer.Standby()); // assume that PowerManager defaults to starting up out of standby
 
     TEST(observer.DisableCount() == 1);
@@ -622,12 +623,14 @@ void SuitePowerManager::TestShutdownToggleGeneratesCallback()
     TEST(observer.EnableCount() == 1);
     TEST(!observer.Standby());
     TEST(observer.DisableReason() == eStandbyDisableUser);
+    
+    delete handler;
 }
 
 void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
 {
     HelperStandbyHandler observer;
-    iPowerManager->RegisterStandbyHandler(observer);
+    auto handler = iPowerManager->RegisterStandbyHandler(observer);
     TEST(!observer.Standby()); // assume that PowerManager defaults to starting up out of standby
 
     TEST(observer.DisableCount() == 1);
@@ -636,6 +639,8 @@ void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
     TEST(observer.DisableCount() == 1);
     TEST(observer.EnableCount() == 0);
     TEST(!observer.Standby());
+    
+    delete handler;
 }
 
 
