@@ -53,6 +53,7 @@ public: // from ITrackChangeObserver
     void TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
@@ -70,6 +71,7 @@ private:
     MsgDecodedStream* iDecodedStream;
     TUint64 iSubSamples;
     TBool iInterceptMode;
+    TBool iPipelineTrackSeen;
     Mutex iLock;
 };
 

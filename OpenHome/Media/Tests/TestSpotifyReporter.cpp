@@ -66,6 +66,7 @@ private:
         ENone
        ,EMsgMode
        ,EMsgTrack
+       ,EMsgDrain
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
@@ -81,6 +82,7 @@ private:
     };
 private:
     MsgAudio* CreateAudio();
+    void DrainCallback();
     void TestMsgsCauseAssertion();
     void TestMsgsPassedThroughNoSamplesInPipeline();
     void TestMsgsPassedThroughSamplesInPipeline();
@@ -225,6 +227,9 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = msg;
         return iLastMsg;
     }
+    case EMsgDrain:
+        iLastMsg = iMsgFactory->CreateMsgDrain(MakeFunctor(*this, &SuiteSpotifyReporter::DrainCallback));
+        return iLastMsg;
     case EMsgDelay:
         iLastMsg = iMsgFactory->CreateMsgDelay(0);
         return iLastMsg;
@@ -269,6 +274,10 @@ MsgAudio* SuiteSpotifyReporter::CreateAudio()
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
+}
+
+void SuiteSpotifyReporter::DrainCallback()
+{
 }
 
 void SuiteSpotifyReporter::TestMsgsCauseAssertion()
@@ -715,20 +724,20 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     msg->RemoveRef();
 
     // Set track to be next msg down pipeline.
-    // Pull again. Should be injected track.
-    msg = iReporter->Pull();
-    MsgIdentifier<MsgTrack> msgIdTrack;
-    MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
-    TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 0, numChannels: 0, sampleRate: 0"));
-    msgTrack->RemoveRef();
-
     // Pull again. Should be in-band pipeline MsgTrack.
     iNextGeneratedMsg = EMsgTrack;
     msg = iReporter->Pull();
-    msgTrack = msgIdTrack.GetMsg(msg);
+    MsgIdentifier<MsgTrack> msgIdTrack;
+    MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
     TEST(msgTrack->Track().Uri() == Brn(kTrackUri));
     TEST(msgTrack->Track().MetaData() == Brx::Empty());
+    msgTrack->RemoveRef();
+
+    // Pull again. Should be injected track.
+    msg = iReporter->Pull();
+    msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
+    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 0, numChannels: 0, sampleRate: 0"));
     msgTrack->RemoveRef();
 
     // Now, queue up MsgDecodedStream. Should be intercepted and a modified one output.
@@ -802,12 +811,12 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     msg->RemoveRef();
 
     // Set track to be next msg down pipeline.
-    // Pull again. Should be injected track.
+    // Pull again. Should be in-band pipeline MsgTrack.
+    iNextGeneratedMsg = EMsgTrack;
     msg = iReporter->Pull();
     msg->RemoveRef();
 
-    // Pull again. Should be in-band pipeline MsgTrack.
-    iNextGeneratedMsg = EMsgTrack;
+    // Pull again. Should be injected track.
     msg = iReporter->Pull();
     msg->RemoveRef();
 
@@ -828,11 +837,12 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
 
     /* ---------- Setup code ends; test case begins. ---------- */
 
-    // MsgMode, followed by MsgDecodedStream to signify a flush.
-    expectedSubsamples = 0; // Subsample count is reset when MsgMode seen.
-    iNextGeneratedMsg = EMsgMode;
+    // MsgDrain, followed by MsgDecodedStream to signify a flush.
+    iNextGeneratedMsg = EMsgDrain;
     msg = iReporter->Pull();
-    msg->RemoveRef();
+    MsgIdentifier<MsgDrain> msgIdDrain;
+    MsgDrain* msgDrain = msgIdDrain.GetMsg(msg);
+    msgDrain->RemoveRef();
 
     iSampleStart = 5678;
     iNextGeneratedMsg = EMsgDecodedStream;

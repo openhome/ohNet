@@ -39,6 +39,7 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iDecodedStream(nullptr)
     , iSubSamples(0)
     , iInterceptMode(false)
+    , iPipelineTrackSeen(false)
     , iLock("SARL")
 {
 }
@@ -57,7 +58,7 @@ Msg* SpotifyReporter::Pull()
 {
     {
         AutoMutex a(iLock);
-        if (iInterceptMode) {
+        if (iInterceptMode && iPipelineTrackSeen) {
             if (iTrackPending != nullptr) {
                 const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
                 MsgTrack* msg = iMsgFactory.CreateMsgTrack(*iTrackPending, startOfStream);
@@ -101,13 +102,6 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
 
 void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs)
 {
-    // FIXME - 2 track race condition (where pipeline MsgTrack may be output after generated MsgTrack at start of stream).
-    // Solution:
-    // - Leave this method unmodified
-    // - In Pull() call above, do 'if (iInterceptMode && iPipelineTrackSeen)
-    //   and set clear iPipelineTrackSeen() when MsgMode seen and set it when MsgTrack seen.
-    // - The above means that we will always get the MsgMode followed by MsgTrack that came through the pipeline (which will be the only ones received for any single Spotify steam) before outputting the custom ones.
-
     // - FIXME - should also hold off on outputting dummy track until real MsgDecodedStream seen, as that is the point at which we know the stream format which is required for metadata.
     // But still, at the moment would be no worse than what's already happening. (And would be slightly better because bit depth, channel count and sample rate would be read from decoded stream associated with track that's currently playing, rather than track that's just been queued.)
 
@@ -160,10 +154,18 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     else {
         iInterceptMode = false;
     }
+    iPipelineTrackSeen = false;
     iMsgDecodedStreamPending = true;
     ClearDecodedStreamLocked();
     iTrackOffsetSamples = 0;
     iSubSamples = 0;
+    return aMsg;
+}
+
+Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
+{
+    AutoMutex a(iLock);
+    iPipelineTrackSeen = true;  // Only matters when in iInterceptMode. Ensures in-band MsgTrack is output before any are generated from out-of-band notifications.
     return aMsg;
 }
 
