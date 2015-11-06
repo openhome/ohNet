@@ -6,6 +6,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
+#include <limits>
 #include <string.h>
 #include <vector>
 
@@ -16,21 +17,30 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
+template <class T>
+class MsgIdentifier : public PipelineElement
 {
-public: // from IPipelinePropertyObserver
-    void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
-    void NotifyMetaText(const Brx& aText) override;
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
+public:
+    MsgIdentifier();
+    T* GetMsg(Msg* aMsg);   // ASSERTS if not msg of type T passed in.
+private: // from PipelineElement
+    Msg* ProcessMsg(T* aMsg) override;
+private:
+    T* iMsg;
 };
 
 class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
 {
-#define KTrackUri "http://host:port/path/file.ext"
+#define kDefaultMode "null"
+#define kModeSpotify "Spotify"
+#define kTrackUri "http://host:port/path/file.ext"
     static const TUint kBitDepth      = 16;
     static const TUint kByteDepth = kBitDepth/8;
+    static const TUint kDefaultSampleRate = 44100;
+    static const TUint kDefaultNumChannels = 2;
+    static const TUint kDefaultBitrate = kBitDepth * kDefaultSampleRate;
+    static const TUint kDefaultTrackLength = Jiffies::kPerSecond * 10;
+    static const TUint kDefaultSampleStart = 0;
 #define kCodecName "Dummy codec"
     static const TUint64 kTrackLength = Jiffies::kPerSecond * 60;
     static const TBool kLossless      = true;
@@ -74,54 +84,54 @@ private:
     void TestNumChannelsChange();
     void TestInvalidSampleRate();
     void TestInvalidNumChannels();
-    void TestSampleAtOverflowLimit();
-    void TestSampleOverflow();
-    void TestSampleMultipleOverflows();
-    void TestInjectTrack();
+    void TestPassThroughInjectTrack();
+    void TestModeSpotifyNoTrackInjectedAtStart();
+    void TestModeSpotifyTrackInjected();
+    void TestModeSpotifySeek();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
-    HelperPipelinePropertyObserver* iPropertyObserver;
     SpotifyReporter* iReporter;
     EMsgType iNextGeneratedMsg;
     Msg* iLastMsg;
+    BwsMode iMode;
     TUint64 iTrackOffset;
     Bws<1024> iTrackUri;
-    TUint iTrackIdPipeline;
     TUint iSampleRate;
     TUint iNumChannels;
     TUint iBitRate;
+    TUint64 iTrackLength;
+    TUint64 iSampleStart;
 };
 
 } // namespace Media
 } // namespace OpenHome
 
 
-// HelperPipelinePropertyObserver
-
-void HelperPipelinePropertyObserver::NotifyMode(const Brx& /*aMode*/, const ModeInfo& /*aInfo*/)
+template <class T>
+MsgIdentifier<T>::MsgIdentifier()
+    : PipelineElement(0)
+    , iMsg(nullptr)
 {
 }
 
-void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
+template <class T>
+T* MsgIdentifier<T>::GetMsg(Msg* aMsg)
 {
-
+    Msg* msg = aMsg->Process(*this);
+    ASSERT(msg == nullptr);
+    ASSERT(iMsg != nullptr);
+    T* msgOut = iMsg;
+    iMsg = nullptr;
+    return msgOut;
 }
 
-void HelperPipelinePropertyObserver::NotifyMetaText(const Brx& /*aText*/)
+template <class T>
+Msg* MsgIdentifier<T>::ProcessMsg(T* aMsg)
 {
-
-}
-
-void HelperPipelinePropertyObserver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSeconds*/)
-{
-
-}
-
-void HelperPipelinePropertyObserver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
-{
-
+    iMsg = aMsg;
+    return nullptr;
 }
 
 
@@ -130,6 +140,7 @@ void HelperPipelinePropertyObserver::NotifyStreamInfo(const DecodedStreamInfo& /
 SuiteSpotifyReporter::SuiteSpotifyReporter()
     : SuiteUnitTest("SuiteSpotifyReporter")
 {
+    //AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgsCauseAssertion), "TestMsgsCauseAssertion");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgsPassedThroughNoSamplesInPipeline), "TestMsgsPassedThroughNoSamplesInPipeline");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline), "TestMsgsPassedThroughSamplesInPipeline");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgModeResets), "TestMsgModeResets");
@@ -139,27 +150,33 @@ SuiteSpotifyReporter::SuiteSpotifyReporter()
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestNumChannelsChange), "TestNumChannelsChange");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidSampleRate), "TestInvalidSampleRate");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidNumChannels), "TestInvalidNumChannels");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestPassThroughInjectTrack), "TestPassThroughInjectTrack");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart), "TestModeSpotifyNoTrackInjectedAtStart");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifyTrackInjected), "TestModeSpotifyTrackInjected");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifySeek), "TestModeSpotifySeek");
 }
 
 void SuiteSpotifyReporter::Setup()
 {
     iNextGeneratedMsg = ENone;
     iLastMsg = nullptr;
+    iMode.Replace(kDefaultMode);
     iTrackOffset = 0;
-    iSampleRate = 44100;
-    iNumChannels = 2;
-    iBitRate = kBitDepth * iSampleRate;
+    iSampleRate = kDefaultSampleRate;
+    iNumChannels = kDefaultNumChannels;
+    iBitRate = kDefaultBitrate;
+    iTrackLength = kDefaultTrackLength;
+    iSampleStart = kDefaultSampleStart;
     MsgFactoryInitParams init;
+    init.SetMsgDecodedStreamCount(2);   // SpotifyReporter always caches last seen MsgDecodedStream, so require at least 2 in pipeline.
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iPropertyObserver = new HelperPipelinePropertyObserver();
-    iReporter = new SpotifyReporter(*this, *iPropertyObserver);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 2);   // Require at least 2 Tracks for SpotifyReporter, as it will cache one.
+    iReporter = new SpotifyReporter(*this, *iMsgFactory);
 }
 
 void SuiteSpotifyReporter::TearDown()
 {
     delete iReporter;
-    delete iPropertyObserver;
     delete iTrackFactory;
     delete iMsgFactory;
 }
@@ -169,11 +186,11 @@ Msg* SuiteSpotifyReporter::Pull()
     switch (iNextGeneratedMsg)
     {
     case EMsgMode:
-        iLastMsg = iMsgFactory->CreateMsgMode(Brn("null"), false, true, ModeClockPullers(), false, false);
+        iLastMsg = iMsgFactory->CreateMsgMode(iMode, false, true, ModeClockPullers(), false, false);
         return iLastMsg;
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
+        Track* track = iTrackFactory->CreateTrack(Brn(kTrackUri), Brx::Empty());
         Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         iLastMsg = msg;
@@ -198,7 +215,7 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = iMsgFactory->CreateMsgWait();
         return iLastMsg;
     case EMsgDecodedStream:
-        iLastMsg = iMsgFactory->CreateMsgDecodedStream(0, iBitRate, kBitDepth, iSampleRate, iNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false, nullptr);
+        iLastMsg = iMsgFactory->CreateMsgDecodedStream(0, iBitRate, kBitDepth, iSampleRate, iNumChannels, Brn(kCodecName), iTrackLength, iSampleStart, kLossless, false, false, nullptr);
         return iLastMsg;
     case EMsgAudioPcm:
         iLastMsg = CreateAudio();
@@ -368,7 +385,7 @@ void SuiteSpotifyReporter::TestSubSamples()
 void SuiteSpotifyReporter::TestSubSamplesDiff()
 {
     TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
-    TUint samplesExpected = samplesExpectedPerMsg;
+    TUint samplesExpected = 0;
 
     // Set up sequence.
     EMsgType setupTypes[] = {
@@ -391,11 +408,14 @@ void SuiteSpotifyReporter::TestSubSamplesDiff()
     };
     for (TUint i=0; i<sizeof(audioTypes)/sizeof(audioTypes[0]); i++) {
         iNextGeneratedMsg = audioTypes[i];
+        samplesExpected += samplesExpectedPerMsg;
         Msg* msg = iReporter->Pull();
         msg->RemoveRef();
         TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
-        samplesExpected += samplesExpectedPerMsg;
     }
+
+    // Finally, test code asserts if passed in a subsample value greater than what SpotifyReporter has observed.
+    TEST_THROWS(iReporter->SubSamplesDiff(samplesExpected+1), AssertionFailed);
 }
 
 void SuiteSpotifyReporter::TestSampleRateChange()
@@ -541,6 +561,274 @@ void SuiteSpotifyReporter::TestInvalidNumChannels()
     TEST_THROWS(iReporter->Pull(), AssertionFailed);
     iLastMsg->RemoveRef();  // avoid memory leaks
 }
+
+void SuiteSpotifyReporter::TestPassThroughInjectTrack()
+{
+    // This could happen if Spotify source is just starting, but audio has yet to arrive at SpotifyReporter, so track is injected during non-Spotify stream.
+    static const Brn kSpotifyTrackUri("spotify://");
+    static const Brn kSpotifyTrackMetadata("spotify-metadata");
+    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
+    const TUint duration = 1234;
+
+    iReporter->TrackChanged(track, duration);
+
+    iNextGeneratedMsg = EMsgMode;
+    Msg* msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    iNextGeneratedMsg = EMsgTrack;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgTrack> msgIdTrack;
+    MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == Brn(kTrackUri));
+    TEST(msgTrack->Track().MetaData() == Brx::Empty());
+    msgTrack->RemoveRef();
+
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
+    MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
+    const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
+    // Check a modified MsgDecodedStream wasn't inserted.
+    TEST(info.TrackLength() == kDefaultTrackLength);
+    msgDecodedStream->RemoveRef();
+
+    // Pull some audio to check that no modified MsgTrack or MsgDecodedStream is injected.
+    const TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+    TEST(iReporter->SubSamples() == samplesExpectedPerMsg);
+}
+
+void SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart()
+{
+    // Enter Spotify mode, but have no track injected.
+    // MsgDecodedStream should end up with zero length, as length not yet known.
+    iMode.Replace(kModeSpotify);
+    iNextGeneratedMsg = EMsgMode;
+    Msg* msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    // URI for in-band track doesn't matter in SpotifyReporter.
+    iNextGeneratedMsg = EMsgTrack;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgTrack> msgIdTrack;
+    MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == Brn(kTrackUri));
+    TEST(msgTrack->Track().MetaData() == Brx::Empty());
+    msgTrack->RemoveRef();
+
+    const TUint kStartSample = 88200;
+    iSampleStart = kStartSample;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
+    MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
+    const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
+    // Check MsgDecodedStream length has been set to 0, but that start sample unmodified.
+    TEST(info.TrackLength() == 0);
+    TEST(info.SampleStart() == kStartSample);
+    msgDecodedStream->RemoveRef();
+
+    // Pull some audio.
+    TUint64 expectedSubsamples = 0;
+    const TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgAudioPcm> msgIdAudioPcm;
+    MsgAudioPcm* msgAudioPcm = msgIdAudioPcm.GetMsg(msg);
+    msgAudioPcm->RemoveRef();
+    expectedSubsamples += samplesExpectedPerMsg;
+    TEST(iReporter->SubSamples() == expectedSubsamples);
+
+    // Now, inject a Track. Should now pull a MsgTrack followed by a MsgDecodedStream.
+    static const Brn kSpotifyTrackUri("spotify://");
+    static const Brn kSpotifyTrackMetadata("spotify-metadata");
+    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
+    const TUint duration = 1234;
+    const TUint64 kDurationJiffies = (static_cast<TUint64>(duration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    iReporter->TrackChanged(track, duration);
+
+    // First, set audio to be pulled next.
+    iNextGeneratedMsg = EMsgAudioPcm;
+    // Now, try pull. MsgTrack should be output.
+    msg = iReporter->Pull();
+    msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
+    TEST(msgTrack->Track().MetaData() == kSpotifyTrackMetadata);
+    msgTrack->RemoveRef();
+    // Try pull again. Should be MsgDecodedStream with injected duration and sample start of 0 (as track injection resets sample start).
+    msg = iReporter->Pull();
+    msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
+    const DecodedStreamInfo& info2 = msgDecodedStream->StreamInfo();
+    TEST(info2.TrackLength() == kDurationJiffies);
+    TEST(info2.SampleStart() == 0);
+    msgDecodedStream->RemoveRef();
+    // Pull again. Should finally be the audio that was queued up.
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+    expectedSubsamples += samplesExpectedPerMsg;
+    TEST(iReporter->SubSamples() == expectedSubsamples);
+}
+
+void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
+{
+    // Inject a track to simulate real-world condition where out-of-band track notification is reach SpotifyReporter before MsgMode at Spotify initialisation.
+    static const Brn kSpotifyTrackUri("spotify://");
+    static const Brn kSpotifyTrackMetadata("spotify-metadata");
+    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
+    const TUint duration = 1234;
+    const TUint64 kDurationJiffies = (static_cast<TUint64>(duration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    iReporter->TrackChanged(track, duration);
+
+    // Pull mode.
+    iMode.Replace(kModeSpotify);
+    iNextGeneratedMsg = EMsgMode;
+    Msg* msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    // Set track to be next msg down pipeline.
+    // Pull again. Should be injected track.
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgTrack> msgIdTrack;
+    MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
+    TEST(msgTrack->Track().MetaData() == kSpotifyTrackMetadata);
+    msgTrack->RemoveRef();
+
+    // Pull again. Should be in-band pipeline MsgTrack.
+    iNextGeneratedMsg = EMsgTrack;
+    msg = iReporter->Pull();
+    msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == Brn(kTrackUri));
+    TEST(msgTrack->Track().MetaData() == Brx::Empty());
+    msgTrack->RemoveRef();
+
+    // Now, queue up MsgDecodedStream. Should be intercepted and a modified one output.
+    static const TUint kStartSample = 88200;
+    iSampleStart = kStartSample;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
+    MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
+    const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
+    TEST(info.TrackLength() == kDurationJiffies);
+    TEST(info.SampleStart() == kStartSample);   // Last seen sample start is the one output.
+    msgDecodedStream->RemoveRef();
+
+    // Now, queue up some audio.
+    TUint64 expectedSubsamples = 0;
+    const TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+    expectedSubsamples += samplesExpectedPerMsg;
+    TEST(iReporter->SubSamples() == expectedSubsamples);
+
+
+
+
+    // Now, insert another track to signify track change.
+
+    // Inject a MsgTrack.
+    static const Brn kSpotifyTrackMetadata2("spotify-metadata2");
+    Track* track2 = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata2);
+    const TUint kDuration2 = 5678;
+    const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    iReporter->TrackChanged(track2, kDuration2);
+
+    // Set audio to be pulled.
+    iNextGeneratedMsg = EMsgAudioPcm;
+
+    // Now pull. Should get generated MsgTrack.
+    msg = iReporter->Pull();
+    msgTrack = msgIdTrack.GetMsg(msg);
+    TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
+    TEST(msgTrack->Track().MetaData() == kSpotifyTrackMetadata2);
+    msgTrack->RemoveRef();
+    // Pull again. Should be generated MsgDecodedStream. SampleStart should now be 0, as injected track resets it.
+    msg = iReporter->Pull();
+    msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
+    const DecodedStreamInfo& info2 = msgDecodedStream->StreamInfo();
+    TEST(info2.TrackLength() == kDurationJiffies2);
+    TEST(info2.SampleStart() == 0);
+    msgDecodedStream->RemoveRef();
+    // Pull again. Should finally be audio that was queued up.
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+    expectedSubsamples += samplesExpectedPerMsg;
+    TEST(iReporter->SubSamples() == expectedSubsamples);
+}
+
+void SuiteSpotifyReporter::TestModeSpotifySeek()
+{
+    // Pass in a MsgMode followed by a MsgDecodedStream mid-way through stream to simulate a seek.
+    // First part of this test is already tested by TestModeSpotifyTrackInjected().
+    static const Brn kSpotifyTrackUri("spotify://");
+    static const Brn kSpotifyTrackMetadata("spotify-metadata");
+    Track* track = iTrackFactory->CreateTrack(kSpotifyTrackUri, kSpotifyTrackMetadata);
+    const TUint kDuration = 1234;
+    const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    iReporter->TrackChanged(track, kDuration);
+
+    // Pull mode.
+    iMode.Replace(kModeSpotify);
+    iNextGeneratedMsg = EMsgMode;
+    Msg* msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    // Set track to be next msg down pipeline.
+    // Pull again. Should be injected track.
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    // Pull again. Should be in-band pipeline MsgTrack.
+    iNextGeneratedMsg = EMsgTrack;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    // Now, queue up MsgDecodedStream. Should be intercepted and a modified one output.
+    static const TUint kStartSample = 88200;
+    iSampleStart = kStartSample;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    // Now, queue up some audio.
+    TUint64 expectedSubsamples = 0;
+    const TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+    expectedSubsamples += samplesExpectedPerMsg;
+
+    /* ---------- Setup code ends; test case begins. ---------- */
+
+    // MsgMode, followed by MsgDecodedStream to signify a flush.
+    expectedSubsamples = 0; // Subsample count is reset when MsgMode seen.
+    iNextGeneratedMsg = EMsgMode;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+
+    iSampleStart = 5678;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iReporter->Pull();
+    MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
+    MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
+    const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
+    TEST(info.TrackLength() == kDurationJiffies);   // Duration should have been updated by SpotifyReporter.
+    TEST(info.SampleStart() == iSampleStart);   // Sample start passed with this should be unchanged.
+    msgDecodedStream->RemoveRef();
+
+    // Pull some audio.
+    iNextGeneratedMsg = EMsgAudioPcm;
+    msg = iReporter->Pull();
+    msg->RemoveRef();
+    expectedSubsamples += samplesExpectedPerMsg;
+    TEST(iReporter->SubSamples() == expectedSubsamples);
+}
+
 
 
 void TestSpotifyReporter()
