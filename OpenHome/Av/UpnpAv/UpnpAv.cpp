@@ -33,11 +33,10 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
 const TChar* SourceUpnpAv::kSourceName("UPnP AV");
 
 SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList)
-    : Source(kSourceName, "UpnpAv")
+    : Source(kSourceName, "UpnpAv", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("UPA1")
     , iActivationLock("UPA2")
     , iDevice(aDevice)
-    , iPipeline(aMediaPlayer.Pipeline())
     , iUriProvider(aUriProvider)
     , iTrack(nullptr)
     , iTransportState(Media::EPipelineStopped)
@@ -137,7 +136,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
     }
     iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     if (playNow) {
-        iPipeline.Play();
+        DoPlay();
     }
     {
         AutoMutex _(iLock);
@@ -164,7 +163,7 @@ void SourceUpnpAv::Play()
         iPipeline.RemoveAll();
         iPipeline.Begin(iUriProvider.Mode(), trackId);
     }
-    iPipeline.Play();
+    DoPlay();
 }
 
 void SourceUpnpAv::Pause()

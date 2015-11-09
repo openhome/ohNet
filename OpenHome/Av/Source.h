@@ -6,6 +6,10 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 
 namespace OpenHome {
+    class IPowerManager;
+namespace Media {
+    class PipelineManager;
+}
 namespace Av {
 
 class IProduct;
@@ -33,7 +37,7 @@ private:
     virtual void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) = 0;
 };
 
-class Source : public ISource/*, protected IInfoProvider*/
+class SourceBase : public ISource
 {
 private:
     static const TUint kMaxSourceTypeBytes = 20;
@@ -51,8 +55,8 @@ protected: // from ISource
     void Deactivate() override;
     void SetVisible(TBool aVisible) override;
 protected:
-    Source(const TChar* aSystemName, const TChar* aType);
-    ~Source();
+    SourceBase(const TChar* aSystemName, const TChar* aType);
+    ~SourceBase();
     TBool IsActive() const;
     void DoActivate();
 private: // from ISource
@@ -72,6 +76,17 @@ private:
     Configuration::ConfigText* iConfigName;
     TUint iConfigNameSubscriptionId;
     TBool iConfigNameCreated;
+};
+
+class Source : public SourceBase
+{
+protected:
+    Source(const TChar* aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager);
+    void DoPlay();
+protected:
+    Media::PipelineManager& iPipeline;
+private:
+    IPowerManager& iPowerManager;
 };
 
 } // namespace Av

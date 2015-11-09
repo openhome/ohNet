@@ -53,7 +53,6 @@ class IProductObserver
 public:
     virtual ~IProductObserver() {}
     virtual void Started() = 0;
-    virtual void StandbyChanged() = 0;
     virtual void SourceIndexChanged() = 0;
     virtual void SourceXmlChanged() = 0;
 };
@@ -90,7 +89,11 @@ private:
     std::vector<ConfigSourceNameObserver*> iObservers;
 };
 
-class Product : private IProduct, public IProductNameObservable, private Media::IInfoProvider, private INonCopyable
+class Product : private IProduct
+              , public IProductNameObservable
+              , private IStandbyHandler
+              , private Media::IInfoProvider
+              , private INonCopyable
 {
 private:
     static const Brn kKeyLastSelectedSource;
@@ -115,8 +118,6 @@ public:
     void GetManufacturerDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
     void GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
     void GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri);
-    TBool StandbyEnabled() const;
-    void SetStandby(TBool aStandby);
     TUint SourceCount() const;
     TUint CurrentSourceIndex() const;
     void GetSourceXml(Bwx& aXml);
@@ -136,6 +137,9 @@ private: // from IProduct
     void NotifySourceNameChanged(ISource& aSource) override;
 private: // from IProductNameObservable
     void AddNameObserver(IProductNameObserver& aObserver) override;
+private: // from IStandbyHandler
+    void StandbyEnabled() override;
+    void StandbyDisabled(StandbyDisableReason aReason) override;
 private: // from Media::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter) override;
 private:
@@ -146,6 +150,7 @@ private:
     mutable Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
+    IStandbyObserver* iStandbyObserver;
     std::vector<IProductObserver*> iObservers;
     std::vector<IProductNameObserver*> iNameObservers;
     std::vector<ISource*> iSources;

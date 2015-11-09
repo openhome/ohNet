@@ -47,7 +47,8 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer)
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
                            *radioUriProvider, Brx::Empty(), aMediaPlayer.ConfigInitialiser(),
-                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
+                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes(),
+                           aMediaPlayer.PowerManager());
 }
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
@@ -56,7 +57,8 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInP
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
                            *radioUriProvider, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser(),
-                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes());
+                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes(),
+                           aMediaPlayer.PowerManager());
 }
 
 
@@ -79,10 +81,9 @@ ModeClockPullers UriProviderRadio::ClockPullers()
 SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline,
                          UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
                          IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager,
-                         Media::MimeTypeList& aMimeTypeList)
-    : Source("Radio", "Radio")
+                         Media::MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager)
+    : Source("Radio", "Radio", aPipeline, aPowerManager)
     , iLock("SRAD")
-    , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
     , iTrack(nullptr)
     , iTrackPosSeconds(0)
@@ -200,7 +201,7 @@ void SourceRadio::Play()
      */
     iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
-    iPipeline.Play();
+    DoPlay();
 }
 
 void SourceRadio::Pause()

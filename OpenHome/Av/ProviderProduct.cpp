@@ -5,14 +5,16 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Utils/FaultCode.h>
+#include <OpenHome/PowerManager.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 
-ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct)
+ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, IPowerManager& aPowerManager)
     : DvProviderAvOpenhomeOrgProduct1(aDevice)
     , iProduct(aProduct)
+    , iPowerManager(aPowerManager)
     , iLock("PrPr")
 {
     EnablePropertyManufacturerName();
@@ -84,11 +86,13 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct)
     }
     SetPropertyProductUrl(Brn(presentationUrl));
 
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this);
     iProduct.AddObserver(*this);
 }
 
 ProviderProduct::~ProviderProduct()
 {
+    delete iStandbyObserver;
 }
 
 void ProviderProduct::Manufacturer(IDvInvocation& aInvocation, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri)
@@ -157,14 +161,21 @@ void ProviderProduct::Product(IDvInvocation& aInvocation, IDvInvocationResponseS
 
 void ProviderProduct::Standby(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue)
 {
+    TBool standby;
+    GetPropertyStandby(standby);
     aInvocation.StartResponse();
-    aValue.Write(iProduct.StandbyEnabled());
+    aValue.Write(standby);
     aInvocation.EndResponse();
 }
 
 void ProviderProduct::SetStandby(IDvInvocation& aInvocation, TBool aValue)
 {
-    iProduct.SetStandby(aValue);
+    if (aValue) {
+        iPowerManager.StandbyEnable();
+    }
+    else {
+        iPowerManager.StandbyDisable(eStandbyDisableUser);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -256,16 +267,10 @@ void ProviderProduct::SourceXmlChangeCount(IDvInvocation& aInvocation, IDvInvoca
 
 void ProviderProduct::Started()
 {
-    SetPropertyStandby(iProduct.StandbyEnabled());
     SetPropertySourceIndex(iProduct.CurrentSourceIndex());
     SetPropertySourceCount(iProduct.SourceCount());
     SetPropertyAttributes(iProduct.Attributes());
     SourceXmlChanged();
-}
-
-void ProviderProduct::StandbyChanged()
-{
-    SetPropertyStandby(iProduct.StandbyEnabled());
 }
 
 void ProviderProduct::SourceIndexChanged()
@@ -290,4 +295,14 @@ void ProviderProduct::RoomChanged(const Brx& aRoom)
 void ProviderProduct::NameChanged(const Brx& aName)
 {
     SetPropertyProductName(aName);
+}
+
+void ProviderProduct::StandbyEnabled()
+{
+    SetPropertyStandby(true);
+}
+
+void ProviderProduct::StandbyDisabled(StandbyDisableReason /*aReason*/)
+{
+    SetPropertyStandby(false);
 }
