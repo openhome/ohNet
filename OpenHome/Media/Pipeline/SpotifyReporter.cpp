@@ -102,9 +102,6 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
 
 void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs)
 {
-    // - FIXME - should also hold off on outputting dummy track until real MsgDecodedStream seen, as that is the point at which we know the stream format which is required for metadata.
-    // But still, at the moment would be no worse than what's already happening. (And would be slightly better because bit depth, channel count and sample rate would be read from decoded stream associated with track that's currently playing, rather than track that's just been queued.)
-
     AutoMutex a(iLock);
     /*
      * Start offset is always 0 when out-of-band track is seen.
@@ -125,11 +122,14 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri,
         iTrackPending->RemoveRef();
     }
 
-
-    // FIXME - might not yet have received MsgDecodedStream so bitdepth, samplefrequency, numchannels fields of DIDL-Lite may be 0. This should only be possible when setting up Connect.
     TUint bitDepth = 0;
     TUint channels = 0;
     TUint sampleRate = 0;
+
+    // FIXME - When Spotify source starting, bitDepth, channels and sampleRate
+    // will not be known, as MsgDecodedStream not yet seen. So, first generated
+    // MsgTrack will go out without sampleFrequency, bitPerSample and
+    // nrAudioChannels attributes, but subsequent ones will include them.
     if (iDecodedStream != nullptr) {
         const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
         bitDepth = info.BitDepth();
