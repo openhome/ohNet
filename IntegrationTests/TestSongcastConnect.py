@@ -7,7 +7,7 @@ Parameters:
     arg#3 - DUT #3 ['local' for internal SoftPlayer on loopback]
     arg#4 - DUT #4 ['local' for internal SoftPlayer on loopback]
     arg#5 - test scenarios [1,2,3,4,5,all]
-    arg#6 - disconnect method [stop,source,sender,standby,all]
+    arg#6 - disconnect method [stop,source,sender,standby]
     arg#7 - sender mode [unicast/multicast] - (optional - default unicast)
 
 Terminology:
