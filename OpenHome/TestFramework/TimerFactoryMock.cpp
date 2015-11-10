@@ -12,13 +12,18 @@ using namespace OpenHome::TestFramework;
 
 // TimerMock
 
-TimerMock::TimerMock(ITimerFactoryMock& aFactory, OpenHome::Functor aCb, const TChar* aId)
+TimerMock::TimerMock(ITimerFactoryMock& aFactory, Functor aCb, const TChar* aId)
     : iFactory(aFactory)
     , iCb(aCb)
     , iId(aId)
     , iBusy("TMKS", 1)
     , iRefCount(0)
 {
+}
+
+const TChar* TimerMock::Id() const
+{
+    return iId;
 }
 
 TimerMock::~TimerMock()
@@ -83,7 +88,7 @@ void TimerFactoryMock::Advance(TUint aMs)
             if (iTimers.size() == 0)
                 break;
 
-            const auto nextTimerIt = iTimers.begin();
+            const std::map<TUint, TimerMock*>::iterator nextTimerIt = iTimers.begin();
             TUint timerAbsTime = nextTimerIt->first;
             timer = nextTimerIt->second;
 
@@ -108,7 +113,7 @@ void TimerFactoryMock::Advance(TUint aMs)
 
 ITimer* TimerFactoryMock::CreateTimer(Functor aCallback, const TChar* aId)
 {
-    auto timer = new TimerMock(*this, aCallback, aId);
+    TimerMock* timer = new TimerMock(*this, aCallback, aId);
     iTimers.insert(std::pair<TUint, TimerMock*>(kDueTimeNever, timer));
     return timer;
 }
@@ -133,7 +138,8 @@ void TimerFactoryMock::Remove(TimerMock& aTimer)
 
 void TimerFactoryMock::RemoveLocked(TimerMock& aTimer)
 {
-    for (auto it=iTimers.begin(); it!=iTimers.end(); ++it) {
+
+    for (std::map<TUint, TimerMock*>::iterator it=iTimers.begin(); it!=iTimers.end(); ++it) {
         if (it->second == &aTimer) {
             iTimers.erase(it);
             return;

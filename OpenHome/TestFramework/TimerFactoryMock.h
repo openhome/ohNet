@@ -13,23 +13,24 @@ namespace TestFramework {
 
 class ITimerFactoryMock;
 
-class TimerMock : public OpenHome::ITimer, private OpenHome::INonCopyable
+class TimerMock : public ITimer, private INonCopyable
 {
     friend class TimerFactoryMock;
 public:
-    TimerMock(ITimerFactoryMock& aFactory, OpenHome::Functor aCb, const TChar* aId);
-private: // from OpenHome::ITimer
+    TimerMock(ITimerFactoryMock& aFactory, Functor aCb, const TChar* aId);
+    const TChar* Id() const;
+private: // from ITimer
     ~TimerMock();
-    void FireIn(TUint aMs) override;
-    void Cancel() override;
+    void FireIn(TUint aMs);
+    void Cancel();
 private:
     void AddRef();
     void RemoveRef();
 private:
     ITimerFactoryMock& iFactory;
-    OpenHome::Functor iCb;
+    Functor iCb;
     const TChar* iId;
-    OpenHome::Semaphore iBusy;
+    Semaphore iBusy;
     TUint iRefCount;
 };
 
@@ -51,15 +52,15 @@ public:
     ~TimerFactoryMock();
     void Advance(TUint aMs);
 public: // from ITimerFactory
-    OpenHome::ITimer* CreateTimer(OpenHome::Functor aCallback, const TChar* aId) override;
+    ITimer* CreateTimer(Functor aCallback, const TChar* aId);
 private: // from ITimerFactoryMock
-    void Queue(TimerMock& aTimer, TUint aIn) override;
-    void Cancel(TimerMock& aTimer) override;
-    void Remove(TimerMock& aTimer) override;
+    void Queue(TimerMock& aTimer, TUint aIn);
+    void Cancel(TimerMock& aTimer);
+    void Remove(TimerMock& aTimer);
 private:
     void RemoveLocked(TimerMock& aTimer);
 private:
-    OpenHome::Mutex iLock;
+    Mutex iLock;
     std::map<TUint, TimerMock*> iTimers;
     TUint iNowMs;
 };
