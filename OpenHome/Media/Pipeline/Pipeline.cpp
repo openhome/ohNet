@@ -180,7 +180,7 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 
 // Pipeline
 
-Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
+Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
                    IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell)
     : iInitParams(aInitParams)
@@ -286,7 +286,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iDecodedAudioValidatorGorger = new DecodedAudioValidator(*iLoggerGorger, "Gorger");
-    iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *iMsgFactory);
+    iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *iMsgFactory, aTrackFactory);
     iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
     iReporter = new Reporter(*iLoggerSpotifyReporter, *this, *iEventThread);
     iLoggerReporter = new Logger(*iReporter, "Reporter");

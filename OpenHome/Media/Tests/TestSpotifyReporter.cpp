@@ -202,7 +202,7 @@ void SuiteSpotifyReporter::Setup()
     init.SetMsgDecodedStreamCount(2);   // SpotifyReporter always caches last seen MsgDecodedStream, so require at least 2 in pipeline.
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 2);   // Require at least 2 Tracks for SpotifyReporter, as it will cache one.
-    iReporter = new SpotifyReporter(*this, *iMsgFactory);
+    iReporter = new SpotifyReporter(*this, *iMsgFactory, *iTrackFactory);
 }
 
 void SuiteSpotifyReporter::TearDown()
@@ -607,7 +607,7 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     const TUint kDurationMs = 1234;
 
     MockDidlLiteWriter writer;
-    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDurationMs);
+    iReporter->TrackChanged(kSpotifyTrackUri, writer, kDurationMs);
 
     iNextGeneratedMsg = EMsgMode;
     Msg* msg = iReporter->Pull();
@@ -684,7 +684,7 @@ void SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart()
     const TUint kDurationMs = 1234;
     const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
     MockDidlLiteWriter writer;
-    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDurationMs);
+    iReporter->TrackChanged(kSpotifyTrackUri, writer, kDurationMs);
 
     // First, set audio to be pulled next.
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -715,7 +715,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     const TUint kDurationMs = 1234;
     const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
     MockDidlLiteWriter writer;
-    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDurationMs);
+    iReporter->TrackChanged(kSpotifyTrackUri, writer, kDurationMs);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
@@ -769,7 +769,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     // Inject a MsgTrack.
     const TUint kDuration2 = 5678;
     const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDuration2);
+    iReporter->TrackChanged(kSpotifyTrackUri, writer, kDuration2);
 
     // Set audio to be pulled.
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -802,7 +802,7 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     const TUint kDuration = 1234;
     const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
     MockDidlLiteWriter writer;
-    iReporter->TrackChanged(*iTrackFactory, kSpotifyTrackUri, writer, kDuration);
+    iReporter->TrackChanged(kSpotifyTrackUri, writer, kDuration);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);

@@ -28,10 +28,11 @@ const TUint SpotifyReporter::kSupportedMsgTypes =   eMode
 
 const Brn SpotifyReporter::kInterceptMode("Spotify");
 
-SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory)
+SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory, TrackFactory& aTrackFactory)
     : PipelineElement(kSupportedMsgTypes)
     , iUpstreamElement(aUpstreamElement)
     , iMsgFactory(aMsgFactory)
+    , iTrackFactory(aTrackFactory)
     , iTrackDurationMs(0)
     , iTrackOffsetSamples(0)
     , iTrackPending(nullptr)
@@ -100,7 +101,7 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
     return iSubSamples - aPrevSubSamples;
 }
 
-void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs)
+void SpotifyReporter::TrackChanged(const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs)
 {
     AutoMutex a(iLock);
     /*
@@ -128,7 +129,7 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri,
 
     // FIXME - When Spotify source starting, bitDepth, channels and sampleRate
     // will not be known, as MsgDecodedStream not yet seen. So, first generated
-    // MsgTrack will go out without sampleFrequency, bitPerSample and
+    // MsgTrack will go out without sampleFrequency, bitsPerSample and
     // nrAudioChannels attributes, but subsequent ones will include them.
     if (iDecodedStream != nullptr) {
         const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
@@ -140,7 +141,10 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri,
     Bws<IDidlLiteWriter::kMaxBytes> metadata;
     WriterBuffer writerBuf(metadata);
     aWriter.WriteDidlLite(writerBuf, bitDepth, channels, sampleRate);   // Writer will omit any fields with value 0.
-    iTrackPending = aTrackFactory.CreateTrack(aUri, metadata);
+
+
+    // FIXME - creating the MsgTrack here can cause race condition with MsgTrack being pushed into left of pipeline, as this MsgTrack may be delayed until first pipeline MsgTrack arrives.
+    iTrackPending = iTrackFactory.CreateTrack(aUri, metadata);
     iMsgDecodedStreamPending = true;
 }
 

@@ -29,7 +29,7 @@ public:
 class ITrackChangeObserver
 {
 public:
-    virtual void TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) = 0;
+    virtual void TrackChanged(const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) = 0;
     virtual ~ITrackChangeObserver() {}
 };
 
@@ -42,7 +42,7 @@ private:
     static const TUint kSupportedMsgTypes;
     static const Brn kInterceptMode;
 public:
-    SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory);
+    SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory, TrackFactory& aTrackFactory);
     ~SpotifyReporter();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
@@ -50,7 +50,7 @@ public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
 public: // from ITrackChangeObserver
-    void TrackChanged(TrackFactory& aTrackFactory, const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) override;
+    void TrackChanged(const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -64,6 +64,7 @@ private:
 private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgFactory& iMsgFactory;
+    TrackFactory& iTrackFactory;
     TUint iTrackDurationMs;
     TUint64 iTrackOffsetSamples;
     Track* iTrackPending;

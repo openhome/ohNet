@@ -139,7 +139,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kMsgCountDrain           = 5;
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
-    Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
+    Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
              IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell);
     virtual ~Pipeline();
