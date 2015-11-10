@@ -39,6 +39,9 @@ static void RunTestNetwork(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const s
 extern void TestTimer(Environment& aEnv);
 static void RunTestTimer(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTimer(aCpStack.Env()); }
 
+extern void TestTimerMock();
+static void RunTestTimerMock(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTimerMock(); }
+
 extern void TestSsdpMListen(Environment& aEnv, const std::vector<Brn>& aArgs);
 static void RunTestSsdpMListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpMListen(aCpStack.Env(), aArgs); }
 
@@ -101,6 +104,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestTextUtils", RunTestTextUtils));
     shellTests.push_back(ShellTest("TestNetwork", RunTestNetwork, true));
     shellTests.push_back(ShellTest("TestTimer", RunTestTimer));
+    shellTests.push_back(ShellTest("TestTimerMock", RunTestTimerMock));
     shellTests.push_back(ShellTest("TestSsdpMListen", RunTestSsdpMListen, true));
     shellTests.push_back(ShellTest("TestSsdpUListen", RunTestSsdpUListen, true));
     shellTests.push_back(ShellTest("TestDeviceList", RunTestDeviceList, true));

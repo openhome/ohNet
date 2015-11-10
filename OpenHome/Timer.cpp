@@ -369,3 +369,16 @@ void TimerManager::CallbackList::DecIndex(TUint& aIndex)
     }
     --aIndex;
 }
+
+// TimerFactory
+
+TimerFactory::TimerFactory(Environment& aEnv)
+    : iEnv(aEnv)
+{
+}
+
+ITimer* TimerFactory::CreateTimer(Functor aCallback, const TChar* aId)
+{
+    return new Timer(iEnv, aCallback, aId);
+}
+
