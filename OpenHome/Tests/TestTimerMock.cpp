@@ -11,10 +11,10 @@ class EventRecorder
 {
 public:
     void Push0() {
-        iEvents.emplace_back(0);
+        iEvents.push_back(0);
     }
     void Push1() {
-        iEvents.emplace_back(1);
+        iEvents.push_back(1);
     }
     Functor Get0() {
         return MakeFunctor(*this, &EventRecorder::Push0);
@@ -39,22 +39,25 @@ public:
         : iPeriodMs(aPeriodMs)
         , iCount(0)
     {
-        iTimer.reset(aTimerFactory.CreateTimer(
-            MakeFunctor(*this, &Repeater::PushIncAndRepeat), "PushIncAndRepeat"));
+        iTimer = aTimerFactory.CreateTimer(
+            MakeFunctor(*this, &Repeater::PushIncAndRepeat), "PushIncAndRepeat");
         iTimer->FireIn(iPeriodMs);
+    }
+    ~Repeater() {
+        delete iTimer;
     }
     TBool Compare(const std::vector<TUint>& aExpected) {
         return iEvents == aExpected;
     }
 private:
     void PushIncAndRepeat() {
-        iEvents.emplace_back(iCount++);
+        iEvents.push_back(iCount++);
         iTimer->FireIn(iPeriodMs);
     }
 private:
     TUint iPeriodMs;
     TUint iCount;
-    std::unique_ptr<ITimer> iTimer;
+    ITimer* iTimer;
     std::vector<TUint> iEvents;
 };
 
@@ -62,7 +65,7 @@ class SuiteTimerMock : public Suite
 {
 public:
     SuiteTimerMock() : Suite("Test TimerMock") {}
-    void Test() override;
+    void Test();
 };
 
 void SuiteTimerMock::Test()
@@ -71,23 +74,26 @@ void SuiteTimerMock::Test()
         TimerFactoryMock tmm;
         ITimerFactory& tm = tmm;
         EventRecorder er;
+        std::vector<TUint> expected;
 
-        auto t0 = tm.CreateTimer(er.Get0(), "0");
-        auto t1 = tm.CreateTimer(er.Get1(), "1");
+        ITimer* t0 = tm.CreateTimer(er.Get0(), "0");
+        ITimer* t1 = tm.CreateTimer(er.Get1(), "1");
 
         t0->FireIn(100);
         t1->FireIn(200);
 
         tmm.Advance(99);        // nothing should fire yet
-        TEST(er.Compare({}));   // check no events
+        TEST(er.Compare(expected));   // check no events
 
         tmm.Advance(1);         // t0 should fire
-        TEST(er.Compare({0}));  // check single event0
+        expected.push_back(0);
+        TEST(er.Compare(expected));  // check single event0
 
         tmm.Advance(99);        // t1 still waiting
-        TEST(er.Compare({0}));  // check no change
+        TEST(er.Compare(expected));  // check no change
         tmm.Advance(1);         // t0 should fire
-        TEST(er.Compare({0, 1}));  // check t1 has fired.
+        expected.push_back(1);
+        TEST(er.Compare(expected));  // check t1 has fired.
 
         delete t0;
         delete t1;
@@ -96,15 +102,19 @@ void SuiteTimerMock::Test()
     {
         TimerFactoryMock tmm;
         Repeater r(tmm, 100);
+        std::vector<TUint> expected;
 
         tmm.Advance(99);
-        TEST(r.Compare({})); // no events
+        TEST(r.Compare(expected)); // no events
         tmm.Advance(1);
-        TEST(r.Compare({0})); // first firing.
+        expected.push_back(0);
+        TEST(r.Compare(expected)); // first firing.
 
         tmm.Advance(300); // now at 400ms
-        TEST(r.Compare({0,1,2,3})); // should have fired at 100ms, 200ms, 300ms and 400ms.
-
+        expected.push_back(1);
+        expected.push_back(2);
+        expected.push_back(3);
+        TEST(r.Compare(expected)); // should have fired at 100ms, 200ms, 300ms and 400ms.
     }
 }
 
