@@ -5,6 +5,8 @@
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -88,14 +90,14 @@ private:
     TBool iMsgTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
-    TUint64 iSubSamples;
+    // SpotifyReporter will receive calls to SubSamples() methods via Spotify
+    // callbacks, potentially while also calling out to the ITrackInfoAccessor.
+    // To avoid deadlocks, make iSubSamples atomic and don't hold iLock while
+    // accessing it..
+    std::atomic<TUint64> iSubSamples;
     TBool iInterceptMode;
     TBool iPipelineTrackSeen;
     Mutex iLock;
-    // SpotifyReporter will receive calls to SubSamples() methods via Spotify
-    // callbacks, potentially while also calling out to the ITrackInfoAccessor.
-    // To avoid deadlocks, have a separate lock for SubSamples() calls.
-    mutable Mutex iLockSubsamples;
 };
 
 class MetadataWriter : public IMetadataWriter, private INonCopyable

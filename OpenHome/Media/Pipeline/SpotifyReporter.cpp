@@ -41,7 +41,6 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iInterceptMode(false)
     , iPipelineTrackSeen(false)
     , iLock("SARL")
-    , iLockSubsamples("SRSL")
 {
 }
 
@@ -104,15 +103,14 @@ Msg* SpotifyReporter::Pull()
 
 TUint64 SpotifyReporter::SubSamples() const
 {
-    AutoMutex a(iLockSubsamples);
     return iSubSamples;
 }
 
 TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
 {
-    AutoMutex a(iLockSubsamples);
-    ASSERT(iSubSamples >= aPrevSubSamples);
-    return iSubSamples - aPrevSubSamples;
+    const TUint64 subSamples = iSubSamples;
+    ASSERT(subSamples >= aPrevSubSamples);
+    return subSamples - aPrevSubSamples;
 }
 
 void SpotifyReporter::RegisterTrackAccessor(const Brx& aUri, ITrackInfoAccessor& aInfoAccessor)
@@ -131,9 +129,7 @@ void SpotifyReporter::TrackChanged()
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 {
-    AutoMutex lock(iLock);
-    AutoMutex lockSubsamples(iLockSubsamples);
-
+    AutoMutex a(iLock);
     ASSERT(iTrackInfoAccessor != nullptr);  // 2-stage initialisation must be complete.
     if (aMsg->Mode() == kInterceptMode) {
         iInterceptMode = true;
@@ -176,9 +172,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    AutoMutex lock(iLock);
-    AutoMutex lockSubsamples(iLockSubsamples);
-
+    AutoMutex a(iLock);
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     TUint samples = aMsg->Jiffies()/Jiffies::JiffiesPerSample(info.SampleRate());
