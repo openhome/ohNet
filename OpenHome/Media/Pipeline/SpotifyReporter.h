@@ -11,8 +11,8 @@ namespace Media {
 class ISpotifyReporter
 {
 public:
-    virtual TUint64 SubSamples() = 0;
-    virtual TUint64 SubSamplesDiff(TUint64 aPrevSubSamples) = 0;
+    virtual TUint64 SubSamples() const = 0;
+    virtual TUint64 SubSamplesDiff(TUint64 aPrevSubSamples) const = 0;
     virtual ~ISpotifyReporter() {}
 };
 
@@ -26,10 +26,27 @@ public:
     virtual ~IDidlLiteWriter() {}
 };
 
+class IMetadataWriter
+{
+public:
+    virtual void WriteMetadata(const IDidlLiteWriter& aWriter) = 0;
+    virtual ~IMetadataWriter() {}
+};
+
+class ITrackInfoAccessor
+{
+public:
+    virtual TUint PlaybackPositionMs() const = 0;
+    virtual TUint DurationMs() const = 0;
+    virtual void WriteMetadata(IMetadataWriter& aWriter) = 0;
+    virtual ~ITrackInfoAccessor() {}
+};
+
 class ITrackChangeObserver
 {
 public:
-    virtual void TrackChanged(const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) = 0;
+    virtual void RegisterTrackAccessor(const Brx& aUri, ITrackInfoAccessor& aInfoAccessor) = 0;
+    virtual void TrackChanged() = 0;    // Unsafe to make any calls on aInfoAccessor during this. Implementors should set a flag and call it from another thread.
     virtual ~ITrackChangeObserver() {}
 };
 
@@ -47,10 +64,11 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from ISpotifyReporter
-    TUint64 SubSamples() override;
-    TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
+    TUint64 SubSamples() const override;
+    TUint64 SubSamplesDiff(TUint64 aPrevSamples) const override;
 public: // from ITrackChangeObserver
-    void TrackChanged(const Brx& aUri, const IDidlLiteWriter& aWriter, TUint aDurationMs) override;
+    void RegisterTrackAccessor(const Brx& aUri, ITrackInfoAccessor& aInfoAccessor) override;
+    void TrackChanged() override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -65,15 +83,32 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgFactory& iMsgFactory;
     TrackFactory& iTrackFactory;
-    TUint iTrackDurationMs;
-    TUint64 iTrackOffsetSamples;
-    Track* iTrackPending;
+    BwsTrackUri iTrackUri;
+    ITrackInfoAccessor* iTrackInfoAccessor;
+    TBool iMsgTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
     TUint64 iSubSamples;
     TBool iInterceptMode;
     TBool iPipelineTrackSeen;
     Mutex iLock;
+    // SpotifyReporter will receive calls to SubSamples() methods via Spotify
+    // callbacks, potentially while also calling out to the ITrackInfoAccessor.
+    // To avoid deadlocks, have a separate lock for SubSamples() calls.
+    mutable Mutex iLockSubsamples;
+};
+
+class MetadataWriter : public IMetadataWriter, private INonCopyable
+{
+public:
+    MetadataWriter(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate);
+private: // from IMetadataWriter
+    void WriteMetadata(const IDidlLiteWriter& aWriter) override;
+private:
+    IWriter& iWriter;
+    TUint iBitDepth;
+    TUint iChannels;
+    TUint iSampleRate;
 };
 
 } // namespace Media
