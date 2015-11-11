@@ -57,9 +57,12 @@ Msg* SpotifyReporter::Pull()
     while (msg == nullptr) {
         {
             AutoMutex a(iLock);
-            if (iInterceptMode && iPipelineTrackSeen) {
+            // Don't output any generated MsgTrack or modified MsgDecodedStream
+            // unless in Spotify mode, and seen a MsgTrack and MsgDecodedStream
+            // arrive via pipeline.
+            if (iInterceptMode && iPipelineTrackSeen && iDecodedStream != nullptr) {
                 // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
-                if (iMsgTrackPending && iDecodedStream != nullptr) {    // FIXME - can move iDecodedStream check into outer if statement.
+                if (iMsgTrackPending) {    // FIXME - can move iDecodedStream check into outer if statement.
 
                     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
                     const TUint bitDepth = info.BitDepth();
@@ -78,7 +81,7 @@ Msg* SpotifyReporter::Pull()
                     iMsgTrackPending = false;
                     return msg;
                 }
-                if (!iMsgTrackPending && iMsgDecodedStreamPending && iDecodedStream != nullptr) {
+                if (!iMsgTrackPending && iMsgDecodedStreamPending) {
                     /*
                      * If iDecodedStream == nullptr, means still need to pull first
                      * MsgDecodedStream of Spotify stream from upstream element.
