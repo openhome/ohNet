@@ -106,6 +106,7 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         }
 
         aStreamUrl.Replace(ReadString(iReaderUntil, Brn("url")));
+        LOG(kMedia, "Tidal::TryGetStreamUrl aStreamUrl: %.*s\n", PBUF(aStreamUrl));
         success = true;
     }
     catch (HttpError&) {
