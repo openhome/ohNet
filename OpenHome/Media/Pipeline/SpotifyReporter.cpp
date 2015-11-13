@@ -301,11 +301,13 @@ Msg* SpotifyReporter::Pull()
 
 TUint64 SpotifyReporter::SubSamples() const
 {
+    AutoMutex a(iLock);
     return iSubSamples;
 }
 
 TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
 {
+    AutoMutex a(iLock);
     const TUint64 subSamples = iSubSamples;
     ASSERT(subSamples >= aPrevSubSamples);
     return subSamples - aPrevSubSamples;

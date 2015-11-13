@@ -124,7 +124,7 @@ private:
     TBool iMsgTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
-    std::atomic<TUint64> iSubSamples;   // FIXME - make this no longer atomic and hold iLock while accessing.
+    TUint64 iSubSamples;
     TBool iInterceptMode;
     TBool iPipelineTrackSeen;
     Mutex iLock;
