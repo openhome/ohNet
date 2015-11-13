@@ -155,6 +155,49 @@ void SpotifyDidlLiteWriter::WriteOptionalAttributes(IWriter& aWriter, TUint aBit
 }
 
 
+// StartOffset
+
+StartOffset::StartOffset()
+    : iOffsetMs(0)
+    , iOffsetSample(0)
+{
+}
+
+void StartOffset::SetMs(TUint aOffsetMs)
+{
+    iOffsetMs = aOffsetMs;
+    iOffsetSample = 0;
+}
+
+void StartOffset::SetSample(TUint64 aOffsetSample)
+{
+    iOffsetMs = 0;
+    iOffsetSample = aOffsetSample;
+}
+
+TUint64 StartOffset::OffsetSample(TUint aSampleRate) const
+{
+    if (iOffsetMs == 0 && iOffsetSample == 0) {
+        return 0;
+    }
+
+    if (iOffsetMs > 0 && iOffsetSample == 0) {
+        // Offset was set as a ms value.
+        const TUint64 offsetSample = (static_cast<TUint64>(iOffsetMs)*aSampleRate)/1000;
+        return offsetSample;
+    }
+
+    if (iOffsetMs == 0 && iOffsetSample > 0) {
+        // Offset was set as a sample value.
+        return iOffsetSample;
+    }
+
+    // Unknown/unreachable condition.
+    ASSERTS();
+    return 0;
+}
+
+
 // SpotifyReporter
 
 const TUint SpotifyReporter::kSupportedMsgTypes =   eMode
@@ -178,7 +221,6 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iUpstreamElement(aUpstreamElement)
     , iMsgFactory(aMsgFactory)
     , iTrackFactory(aTrackFactory)
-    , iStartOffsetSamples(0)
     , iTrackDurationMs(0)
     , iMetadata(nullptr)
     , iMsgTrackPending(nullptr)
@@ -269,7 +311,7 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
     return subSamples - aPrevSubSamples;
 }
 
-void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata)
+void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs)
 {
     AutoMutex a(iLock);
     iMsgTrackPending = true;
@@ -279,9 +321,14 @@ void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata)
     }
     iTrackUri.Replace(aUri);
     iMetadata = aMetadata;
-    iStartOffsetSamples = 0;    // Always 0 when this is seen. Any in-band MsgDecodedStream will carry correct start offset after skip/seek, etc, so its value will be used in that case.
+    iStartOffset.SetMs(aStartMs);
     iTrackDurationMs = iMetadata->DurationMs();
     iMsgDecodedStreamPending = true;
+}
+
+void SpotifyReporter::NotifySeek(TUint aOffsetMs)
+{
+    iStartOffset.SetMs(aOffsetMs);
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
@@ -320,7 +367,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 
     if (iInterceptMode) {
         aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
-        iStartOffsetSamples = iDecodedStream->StreamInfo().SampleStart();
         iMsgDecodedStreamPending = true;    // Set flag so that a MsgDecodedStream with updated attributes is output in place of this.
         return nullptr;
     }
@@ -369,6 +415,6 @@ MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     // Due to out-of-band track notification from Spotify, audio for current track was probably pushed into pipeline before track offset/duration was known, so use updated values here.
     const TUint64 trackLengthJiffies = TrackLengthJiffiesLocked();
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iStartOffsetSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iStartOffset.OffsetSample(info.SampleRate()), info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
     return msg;
 }

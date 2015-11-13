@@ -40,7 +40,8 @@ public:
 class ITrackChangeObserver
 {
 public:
-    virtual void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata) = 0;
+    virtual void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs) = 0;
+    virtual void NotifySeek(TUint aOffsetMs) = 0;
     virtual ~ITrackChangeObserver() {}
 };
 
@@ -66,6 +67,23 @@ protected:
     const ISpotifyMetadata& iMetadata;
 };
 
+/**
+ * Helper class to store start offset expressed in milliseconds or samples.
+ * Each call to either of the Set() methods overwrites any value set (be it in
+ * milliseconds or samples) in a previous call.
+ */
+class StartOffset
+{
+public:
+    StartOffset();
+    void SetMs(TUint aOffsetMs);
+    void SetSample(TUint64 aOffsetSample);
+    TUint64 OffsetSample(TUint aSampleRate) const;
+private:
+    TUint iOffsetMs;
+    TUint64 iOffsetSample;
+};
+
 /*
  * Element to report number of samples seen since last MsgMode.
  */
@@ -83,7 +101,8 @@ public: // from ISpotifyReporter
     TUint64 SubSamples() const override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) const override;
 public: // from ITrackChangeObserver
-    void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata) override;
+    void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs) override;
+    void NotifySeek(TUint aOffsetMs);
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -98,7 +117,7 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgFactory& iMsgFactory;
     TrackFactory& iTrackFactory;
-    TUint64 iStartOffsetSamples;
+    StartOffset iStartOffset;
     TUint iTrackDurationMs;
     BwsTrackUri iTrackUri;
     ISpotifyMetadata* iMetadata;

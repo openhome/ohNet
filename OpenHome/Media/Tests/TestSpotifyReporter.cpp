@@ -738,9 +738,10 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     // This could happen if Spotify source is just starting, but audio has yet to arrive at SpotifyReporter, so track is injected during non-Spotify stream.
     static const Brn kSpotifyTrackUri("spotify://");
     const TUint kDurationMs = 1234;
+    const TUint kOffsetMs = 0;
 
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDurationMs);
-    iReporter->TrackChanged(kSpotifyTrackUri, metadata);
+    iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
     iNextGeneratedMsg = EMsgMode;
     Msg* msg = iReporter->Pull();
@@ -818,8 +819,9 @@ void SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart()
     static const Brn kSpotifyTrackUri("spotify://");
     const TUint kDurationMs = 1234;
     const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    const TUint kOffsetMs = 0;
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDurationMs);
-    iReporter->TrackChanged(kSpotifyTrackUri, metadata);
+    iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
     // First, set audio to be pulled next.
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -850,8 +852,9 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     static const Brn kSpotifyTrackUri("spotify://");
     const TUint kDurationMs = 1234;
     const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    const TUint kOffsetMs = 0;
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDurationMs);
-    iReporter->TrackChanged(kSpotifyTrackUri, metadata);
+    iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
@@ -907,7 +910,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     const TUint kDuration2 = 5678;
     const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
     metadata = iMetadataAllocator->Allocate(kDuration2);
-    iReporter->TrackChanged(kSpotifyTrackUri, metadata);
+    iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
     // Set audio to be pulled.
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -940,8 +943,9 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     static const Brn kSpotifyTrackUri("spotify://");
     const TUint kDuration = 1234;
     const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    const TUint kOffsetMs = 0;
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDuration);
-    iReporter->TrackChanged(kSpotifyTrackUri, metadata);
+    iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
