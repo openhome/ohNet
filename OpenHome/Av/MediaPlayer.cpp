@@ -182,6 +182,11 @@ Net::DvDeviceStandard& MediaPlayer::Device()
     return iDevice;
 }
 
+Media::IInfoAggregator& MediaPlayer::InfoAggregator()
+{
+    return *iInfoLogger;
+}
+
 Media::PipelineManager& MediaPlayer::Pipeline()
 {
     return *iPipeline;

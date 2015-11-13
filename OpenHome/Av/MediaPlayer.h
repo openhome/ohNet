@@ -25,6 +25,7 @@ namespace Media {
         class ContainerBase;
         class CodecBase;
     }
+    class IInfoAggregator;
     class AllocatorInfoLogger;
     class LoggingPipelineObserver;
     class TrackFactory;
@@ -69,6 +70,7 @@ public:
     virtual Environment& Env() = 0;
     virtual Net::DvStack& DvStack() = 0;
     virtual Net::DvDeviceStandard& Device() = 0;
+    virtual Media::IInfoAggregator& InfoAggregator() = 0;
     virtual Media::PipelineManager& Pipeline() = 0;
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
@@ -109,6 +111,7 @@ public: // from IMediaPlayer
     Environment& Env() override;
     Net::DvStack& DvStack() override;
     Net::DvDeviceStandard& Device() override;
+    Media::IInfoAggregator& InfoAggregator() override;
     Media::PipelineManager& Pipeline() override;
     Media::TrackFactory& TrackFactory() override;
     IReadStore& ReadStore() override;
