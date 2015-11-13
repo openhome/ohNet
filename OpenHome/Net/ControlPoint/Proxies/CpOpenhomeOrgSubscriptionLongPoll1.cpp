@@ -7,21 +7,58 @@
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
 
-using namespace OpenHome;
-using namespace OpenHome::Net;
-
+namespace OpenHome {
+namespace Net {
 
 class SyncSubscribeOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
 {
 public:
     SyncSubscribeOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, Brh& aSid, TUint& aDuration);
     virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSubscribeOpenhomeOrgSubscriptionLongPoll1() {}
 private:
     CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
     Brh& iSid;
     TUint& iDuration;
 };
+
+class SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
+{
+public:
+    SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
+};
+
+class SyncRenewOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
+{
+public:
+    SyncRenewOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, TUint& aDuration);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
+    TUint& iDuration;
+};
+
+class SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
+{
+public:
+    SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, Brh& aUpdates);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
+    Brh& iUpdates;
+};
+
+} // namespace Net
+} // namespace OpenHome
+
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+
+
+// SyncSubscribeOpenhomeOrgSubscriptionLongPoll1
 
 SyncSubscribeOpenhomeOrgSubscriptionLongPoll1::SyncSubscribeOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, Brh& aSid, TUint& aDuration)
     : iService(aProxy)
@@ -35,16 +72,7 @@ void SyncSubscribeOpenhomeOrgSubscriptionLongPoll1::CompleteRequest(IAsync& aAsy
     iService.EndSubscribe(aAsync, iSid, iDuration);
 }
 
-
-class SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
-{
-public:
-    SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1() {}
-private:
-    CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
-};
+// SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1
 
 SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1::SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy)
     : iService(aProxy)
@@ -56,17 +84,7 @@ void SyncUnsubscribeOpenhomeOrgSubscriptionLongPoll1::CompleteRequest(IAsync& aA
     iService.EndUnsubscribe(aAsync);
 }
 
-
-class SyncRenewOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
-{
-public:
-    SyncRenewOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, TUint& aDuration);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncRenewOpenhomeOrgSubscriptionLongPoll1() {}
-private:
-    CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
-    TUint& iDuration;
-};
+// SyncRenewOpenhomeOrgSubscriptionLongPoll1
 
 SyncRenewOpenhomeOrgSubscriptionLongPoll1::SyncRenewOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, TUint& aDuration)
     : iService(aProxy)
@@ -79,17 +97,7 @@ void SyncRenewOpenhomeOrgSubscriptionLongPoll1::CompleteRequest(IAsync& aAsync)
     iService.EndRenew(aAsync, iDuration);
 }
 
-
-class SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1 : public SyncProxyAction
-{
-public:
-    SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, Brh& aUpdates);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1() {}
-private:
-    CpProxyOpenhomeOrgSubscriptionLongPoll1& iService;
-    Brh& iUpdates;
-};
+// SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1
 
 SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1::SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1(CpProxyOpenhomeOrgSubscriptionLongPoll1& aProxy, Brh& aUpdates)
     : iService(aProxy)
@@ -102,6 +110,8 @@ void SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1::CompleteRequest(IAs
     iService.EndGetPropertyUpdates(aAsync, iUpdates);
 }
 
+
+// CpProxyOpenhomeOrgSubscriptionLongPoll1
 
 CpProxyOpenhomeOrgSubscriptionLongPoll1::CpProxyOpenhomeOrgSubscriptionLongPoll1(CpDevice& aDevice)
     : CpProxy("openhome-org", "SubscriptionLongPoll", 1, aDevice.Device())

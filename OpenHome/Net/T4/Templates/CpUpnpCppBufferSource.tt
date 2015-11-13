@@ -58,18 +58,16 @@
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
 
-using namespace OpenHome;
-using namespace OpenHome::Net;
+namespace OpenHome {
+namespace Net {
+
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-
-
 class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
 {
 public:
     Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
     virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~Sync<#=a.name#><#=syncClassSuffix#>() {}
 private:
     <#=className#>& iService;
 <#      foreach (Argument o in a.outargs) #>
@@ -77,6 +75,19 @@ private:
     <#=outargtype[o.variable.type]#> i<#=o.name#>;
 <#      } #>
 };
+
+<#  } #>
+} // namespace Net
+} // namespace OpenHome
+
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+// Sync<#=a.name#><#=syncClassSuffix#>
 
 Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>)
     : iService(aProxy)
@@ -93,6 +104,8 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 }
 <#  } #>
 
+
+// <#=className#>
 
 <#=className#>::<#=className#>(CpDevice& aDevice)
     : CpProxy("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device())
