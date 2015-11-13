@@ -1,6 +1,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 
@@ -8,6 +9,150 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+
+// SpotifyDidlLiteWriter
+
+SpotifyDidlLiteWriter::SpotifyDidlLiteWriter(const Brx& aUri, ISpotifyMetadata& aMetadata)
+    : iUri(aUri)
+    , iMetadata(aMetadata)
+{
+}
+
+void SpotifyDidlLiteWriter::Write(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const
+{
+    WriterAscii writer(aWriter);
+    writer.Write(Brn("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" "));
+    writer.Write(Brn("xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" "));
+    writer.Write(Brn("xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">"));
+    writer.Write(Brn("<item id=\"0\" parentID=\"0\" restricted=\"True\">"));
+
+    writer.Write(Brn("<dc:title>"));
+    Converter::ToXmlEscaped(writer, iMetadata.Track());
+    writer.Write(Brn("</dc:title>"));
+
+    writer.Write(Brn("<dc:creator>"));
+    Converter::ToXmlEscaped(writer, iMetadata.Artist());
+    writer.Write(Brn("</dc:creator>"));
+
+    writer.Write(Brn("<upnp:artist role='AlbumArtist'>"));
+    Converter::ToXmlEscaped(writer, iMetadata.Artist());
+    writer.Write(Brn("</upnp:artist>"));
+
+    writer.Write(Brn("<upnp:album>"));
+    Converter::ToXmlEscaped(writer, iMetadata.Album());
+    writer.Write(Brn("</upnp:album>"));
+
+    writer.Write(Brn("<upnp:albumArtURI>"));
+    Converter::ToXmlEscaped(writer, iMetadata.AlbumCoverUrl());
+    writer.Write(Brn("</upnp:albumArtURI>"));
+
+    WriteRes(writer, aBitDepth, aChannels, aSampleRate);
+
+    writer.Write(Brn("<upnp:class>object.item.audioItem.musicTrack</upnp:class></item></DIDL-Lite>"));
+}
+
+void SpotifyDidlLiteWriter::SetDurationString(Bwx& aBuf) const
+{
+    // H+:MM:SS[.F0/F1]
+    const TUint msPerSecond = 1000;
+    const TUint msPerMinute = msPerSecond*60;
+    const TUint msPerHour = msPerMinute*60;
+
+    TUint timeRemaining = iMetadata.DurationMs();
+    const TUint hours = iMetadata.DurationMs()/msPerHour;
+    timeRemaining -= hours*msPerHour;
+
+    const TUint minutes = timeRemaining/msPerMinute;
+    timeRemaining -= minutes*msPerMinute;
+
+    const TUint seconds = timeRemaining/msPerSecond;
+    timeRemaining -= seconds*msPerSecond;
+
+    const TUint milliseconds = timeRemaining;
+
+    ASSERT(hours <= 99);
+    if (hours < 10) {
+        aBuf.Append('0');
+    }
+    Ascii::AppendDec(aBuf, hours);
+    aBuf.Append(':');
+
+    ASSERT(minutes <= 59);
+    if (minutes < 10) {
+        aBuf.Append('0');
+    }
+    Ascii::AppendDec(aBuf, minutes);
+    aBuf.Append(':');
+
+    ASSERT(seconds <= 60);
+    if (seconds < 10) {
+        aBuf.Append('0');
+    }
+    Ascii::AppendDec(aBuf, seconds);
+
+    if (milliseconds > 0) {
+        aBuf.Append('.');
+        Ascii::AppendDec(aBuf, milliseconds);
+        aBuf.Append('/');
+        Ascii::AppendDec(aBuf, msPerSecond);
+    }
+}
+
+void SpotifyDidlLiteWriter::WriteRes(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const
+{
+    WriterAscii writer(aWriter);
+
+    Bws<kMaxDurationBytes> duration;
+    SetDurationString(duration);
+    writer.Write(Brn("<res"));
+    writer.Write(Brn(" duration=\""));
+    writer.Write(duration);
+    writer.Write(Brn("\""));
+
+    writer.Write(Brn(" protocolInfo=\""));
+    writer.Write(Brn("spotify:*:audio/L16:*"));
+    writer.Write(Brn("\""));
+
+    WriteOptionalAttributes(writer, aBitDepth, aChannels, aSampleRate);
+
+    writer.Write(Brn(">"));
+    writer.Write(iUri);
+    writer.Write(Brn("</res>"));
+}
+
+void SpotifyDidlLiteWriter::WriteOptionalAttributes(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const
+{
+    WriterAscii writer(aWriter);
+
+    if (aBitDepth != 0) {
+        writer.Write(Brn(" bitsPerSample=\""));
+        writer.WriteUint(aBitDepth);
+        writer.Write(Brn("\""));
+    }
+
+    if (aSampleRate != 0) {
+        writer.Write(Brn(" sampleFrequency=\""));
+        writer.WriteUint(aSampleRate);
+        writer.Write(Brn("\""));
+    }
+
+    if (aChannels != 0) {
+        writer.Write(Brn(" nrAudioChannels=\""));
+        writer.WriteUint(aChannels);
+        writer.Write(Brn("\""));
+    }
+
+    if (aBitDepth != 0 && aChannels != 0 && aSampleRate != 0) {
+        const TUint byteDepth = aBitDepth/8;
+        const TUint bytesPerSec = byteDepth*aSampleRate*aChannels;
+        const TUint bytesPerMs = bytesPerSec / 1000;
+        const TUint totalBytes = iMetadata.DurationMs() * bytesPerMs;
+        writer.Write(Brn(" size=\""));
+        writer.WriteUint(totalBytes);
+        writer.Write(Brn("\""));
+    }
+}
 
 
 // SpotifyReporter
@@ -33,7 +178,9 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iUpstreamElement(aUpstreamElement)
     , iMsgFactory(aMsgFactory)
     , iTrackFactory(aTrackFactory)
-    , iTrackInfoAccessor(nullptr)
+    , iStartOffsetSamples(0)
+    , iTrackDurationMs(0)
+    , iMetadata(nullptr)
     , iMsgTrackPending(nullptr)
     , iMsgDecodedStreamPending(false)
     , iDecodedStream(nullptr)
@@ -46,6 +193,10 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
 
 SpotifyReporter::~SpotifyReporter()
 {
+    AutoMutex a(iLock);
+    if (iMetadata != nullptr) {
+        iMetadata->Destroy();
+    }
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
     }
@@ -62,17 +213,19 @@ Msg* SpotifyReporter::Pull()
             // arrive via pipeline.
             if (iInterceptMode && iPipelineTrackSeen && iDecodedStream != nullptr) {
                 // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
-                if (iMsgTrackPending) {    // FIXME - can move iDecodedStream check into outer if statement.
-
+                if (iMsgTrackPending) {
+                    ASSERT(iMetadata != nullptr);
                     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
                     const TUint bitDepth = info.BitDepth();
                     const TUint channels = info.NumChannels();
                     const TUint sampleRate = info.SampleRate();
 
-                    Bws<IDidlLiteWriter::kMaxBytes> metadata;
-                    WriterBuffer writerBuf(metadata);
-                    MetadataWriter metadataWriter(writerBuf, bitDepth, channels, sampleRate); // Writer will omit any fields with value 0.
-                    iTrackInfoAccessor->WriteMetadata(metadataWriter);  // FIXME - locking issues here. Left-hand side of pipeline may be trying to push audio into pipeline from Spotify thread (which holds lock during callbacks), and pipeline is blocked until this element output the MsgDecodedStream, but call to WriteMetadata acquires same lock as Spotify thread.
+                    BwsTrackMetaData metadata;
+                    WriterBuffer writerBuffer(metadata);
+                    SpotifyDidlLiteWriter metadataWriter(iTrackUri, *iMetadata);
+                    metadataWriter.Write(writerBuffer, bitDepth, channels, sampleRate);
+                    iMetadata->Destroy();
+                    iMetadata = nullptr;
                     Track* track = iTrackFactory.CreateTrack(iTrackUri, metadata);
 
                     const TBool startOfStream = false;  // Report false as don't want downstream elements to re-enter any stream detection mode.
@@ -116,24 +269,24 @@ TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
     return subSamples - aPrevSubSamples;
 }
 
-void SpotifyReporter::RegisterTrackAccessor(const Brx& aUri, ITrackInfoAccessor& aInfoAccessor)
-{
-    ASSERT(iTrackInfoAccessor == nullptr);
-    iTrackUri.Replace(aUri);
-    iTrackInfoAccessor = &aInfoAccessor;
-}
-
-void SpotifyReporter::TrackChanged()
+void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata)
 {
     AutoMutex a(iLock);
     iMsgTrackPending = true;
+    if (iMetadata != nullptr) {
+        iMetadata->Destroy();
+        iMetadata = nullptr;
+    }
+    iTrackUri.Replace(aUri);
+    iMetadata = aMetadata;
+    iStartOffsetSamples = 0;    // Always 0 when this is seen. Any in-band MsgDecodedStream will carry correct start offset after skip/seek, etc, so its value will be used in that case.
+    iTrackDurationMs = iMetadata->DurationMs();
     iMsgDecodedStreamPending = true;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 {
     AutoMutex a(iLock);
-    ASSERT(iTrackInfoAccessor != nullptr);  // 2-stage initialisation must be complete.
     if (aMsg->Mode() == kInterceptMode) {
         iInterceptMode = true;
     }
@@ -167,6 +320,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 
     if (iInterceptMode) {
         aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
+        iStartOffsetSamples = iDecodedStream->StreamInfo().SampleStart();
         iMsgDecodedStreamPending = true;    // Set flag so that a MsgDecodedStream with updated attributes is output in place of this.
         return nullptr;
     }
@@ -204,9 +358,8 @@ void SpotifyReporter::UpdateDecodedStreamLocked(MsgDecodedStream& aMsg)
 TUint64 SpotifyReporter::TrackLengthJiffiesLocked() const
 {
     ASSERT(iDecodedStream != nullptr);
-    const TUint trackDurationMs = iTrackInfoAccessor->DurationMs();
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-    const TUint64 trackLengthJiffies = (static_cast<TUint64>(trackDurationMs)*info.SampleRate()*Jiffies::JiffiesPerSample(info.SampleRate()))/1000;
+    const TUint64 trackLengthJiffies = (static_cast<TUint64>(iTrackDurationMs)*info.SampleRate()*Jiffies::JiffiesPerSample(info.SampleRate()))/1000;
     return trackLengthJiffies;
 }
 
@@ -215,26 +368,7 @@ MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
     ASSERT(iDecodedStream != nullptr);
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     // Due to out-of-band track notification from Spotify, audio for current track was probably pushed into pipeline before track offset/duration was known, so use updated values here.
-    const TUint trackOffsetMs = iTrackInfoAccessor->PlaybackPositionMs();
-    const TUint64 trackOffsetSamples = (static_cast<TUint64>(trackOffsetMs)*info.SampleRate())/1000;
-
     const TUint64 trackLengthJiffies = TrackLengthJiffiesLocked();
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, trackOffsetSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iStartOffsetSamples, info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
     return msg;
-}
-
-
-// MetadataWriter
-
-MetadataWriter::MetadataWriter(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate)
-    : iWriter(aWriter)
-    , iBitDepth(aBitDepth)
-    , iChannels(aChannels)
-    , iSampleRate(aSampleRate)
-{
-}
-
-void MetadataWriter::WriteMetadata(const IDidlLiteWriter& aWriter)
-{
-    aWriter.WriteDidlLite(iWriter, iBitDepth, iChannels, iSampleRate);
 }

@@ -18,38 +18,52 @@ public:
     virtual ~ISpotifyReporter() {}
 };
 
-class IDidlLiteWriter
+class ISpotifyMetadata
 {
 public:
-    static const TUint kMaxBytes = kTrackMetaDataMaxBytes;
-public:
-    // Implementor must omit any attributes with value 0.
-    virtual void WriteDidlLite(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const = 0;
-    virtual ~IDidlLiteWriter() {}
-};
-
-class IMetadataWriter
-{
-public:
-    virtual void WriteMetadata(const IDidlLiteWriter& aWriter) = 0;
-    virtual ~IMetadataWriter() {}
-};
-
-class ITrackInfoAccessor
-{
-public:
-    virtual TUint PlaybackPositionMs() const = 0;
+    // FIXME - omit what isn't required from this interface.
+    virtual const Brx& PlaybackSource() const = 0;
+    virtual const Brx& PlaybackSourceUri() const = 0;
+    virtual const Brx& Track() const = 0;
+    virtual const Brx& TrackUri() const = 0;
+    virtual const Brx& Artist() const = 0;
+    virtual const Brx& ArtistUri() const = 0;
+    virtual const Brx& Album() const = 0;
+    virtual const Brx& AlbumUri() const = 0;
+    virtual const Brx& AlbumCoverUri() const = 0;
+    virtual const Brx& AlbumCoverUrl() const = 0;
     virtual TUint DurationMs() const = 0;
-    virtual void WriteMetadata(IMetadataWriter& aWriter) = 0;
-    virtual ~ITrackInfoAccessor() {}
+    virtual void Destroy() = 0;
+    virtual ~ISpotifyMetadata() {}
 };
 
 class ITrackChangeObserver
 {
 public:
-    virtual void RegisterTrackAccessor(const Brx& aUri, ITrackInfoAccessor& aInfoAccessor) = 0;
-    virtual void TrackChanged() = 0;    // Unsafe to make any calls on aInfoAccessor during this. Implementors should set a flag and call it from another thread.
+    virtual void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata) = 0;
     virtual ~ITrackChangeObserver() {}
+};
+
+class SpotifyDidlLiteWriter : private INonCopyable
+{
+private:
+    // H+:MM:SS[.F0/F1]
+    // Fraction of seconds is fixed (value is in milliseconds, so F0 is always
+    // 3 bytes, and F1 always has value 1000, i.e., is 4 bytes).
+    // Everything else apart from hours is fixed. Assume no track will ever be
+    // >99 hours, so hours requires 2 bytes.
+    // Therefore, need enough bytes for string of form: 12:34:56.789/1000
+    static const TUint kMaxDurationBytes = 17;
+public:
+    SpotifyDidlLiteWriter(const Brx& aUri, ISpotifyMetadata& aMetadata);
+    void Write(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const;
+private:
+    void SetDurationString(Bwx& aBuf) const;
+    void WriteRes(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const;
+    void WriteOptionalAttributes(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate) const;
+protected:
+    const BwsTrackUri iUri;
+    const ISpotifyMetadata& iMetadata;
 };
 
 /*
@@ -69,8 +83,7 @@ public: // from ISpotifyReporter
     TUint64 SubSamples() const override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) const override;
 public: // from ITrackChangeObserver
-    void RegisterTrackAccessor(const Brx& aUri, ITrackInfoAccessor& aInfoAccessor) override;
-    void TrackChanged() override;
+    void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata) override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -85,32 +98,17 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgFactory& iMsgFactory;
     TrackFactory& iTrackFactory;
+    TUint64 iStartOffsetSamples;
+    TUint iTrackDurationMs;
     BwsTrackUri iTrackUri;
-    ITrackInfoAccessor* iTrackInfoAccessor;
+    ISpotifyMetadata* iMetadata;
     TBool iMsgTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
-    // SpotifyReporter will receive calls to SubSamples() methods via Spotify
-    // callbacks, potentially while also calling out to the ITrackInfoAccessor.
-    // To avoid deadlocks, make iSubSamples atomic and don't hold iLock while
-    // accessing it..
-    std::atomic<TUint64> iSubSamples;
+    std::atomic<TUint64> iSubSamples;   // FIXME - make this no longer atomic and hold iLock while accessing.
     TBool iInterceptMode;
     TBool iPipelineTrackSeen;
     Mutex iLock;
-};
-
-class MetadataWriter : public IMetadataWriter, private INonCopyable
-{
-public:
-    MetadataWriter(IWriter& aWriter, TUint aBitDepth, TUint aChannels, TUint aSampleRate);
-private: // from IMetadataWriter
-    void WriteMetadata(const IDidlLiteWriter& aWriter) override;
-private:
-    IWriter& iWriter;
-    TUint iBitDepth;
-    TUint iChannels;
-    TUint iSampleRate;
 };
 
 } // namespace Media
