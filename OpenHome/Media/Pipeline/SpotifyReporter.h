@@ -127,7 +127,7 @@ private:
     TUint64 iSubSamples;
     TBool iInterceptMode;
     TBool iPipelineTrackSeen;
-    Mutex iLock;
+    mutable Mutex iLock;
 };
 
 } // namespace Media
