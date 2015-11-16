@@ -99,7 +99,7 @@ void CodecPcm::Process()
         iReadBuf.SetBytes(bytes);
     }
     if (iReadBuf.Bytes() > 0) {
-        iTrackOffset = iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
+        iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
     }
     iReadBuf.Replace(pending);
 }
