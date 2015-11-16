@@ -5,8 +5,6 @@
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 
-#include <atomic>
-
 namespace OpenHome {
 namespace Media {
 
