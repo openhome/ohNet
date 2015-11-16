@@ -744,7 +744,6 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDurationMs);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
     static const TUint kSeekMs = 500;
-    static const TUint kSeekSample = (kSeekMs*iSampleRate)/1000;
     iReporter->NotifySeek(kSeekMs);
 
     iNextGeneratedMsg = EMsgMode;
@@ -880,7 +879,6 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDuration);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
     static const TUint kSeekMs = 500;
-    static const TUint kSeekSample = (kSeekMs*iSampleRate)/1000;
     iReporter->NotifySeek(kSeekMs);
 
     // Pull mode.
