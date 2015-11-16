@@ -52,6 +52,7 @@ tests = '''
     TestUriProviderRepeater
     TestJson
     TestRaop
+    TestSpotifyReporter
     TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
     TestFlywheelRamper
