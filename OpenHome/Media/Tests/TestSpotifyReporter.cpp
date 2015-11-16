@@ -37,7 +37,7 @@ class MockSpotifyMetadataAllocator
 public:
     MockSpotifyMetadataAllocator();
     ~MockSpotifyMetadataAllocator();
-    MockSpotifyMetadata* Allocate(TUint aDurationMs);
+    MockSpotifyMetadata* Allocate(const Brx& aTrack, const Brx& aArtist, const Brx& aAlbum, const Brx& aAlbumArtUrl, TUint aDurationMs);
     void Destroy(MockSpotifyMetadata* aMetadata);
     TUint DeallocatedCount() const;
 private:
@@ -49,8 +49,7 @@ class MockSpotifyMetadata : public ISpotifyMetadata, private INonCopyable
 {
     friend class MockSpotifyMetadataAllocator;
 private:
-    MockSpotifyMetadata(MockSpotifyMetadataAllocator& aAllocator);
-    void Initialise(TUint aDurationMs);
+    MockSpotifyMetadata(MockSpotifyMetadataAllocator& aAllocator, const Brx& aTrack, const Brx& aArtist, const Brx& aAlbum, const Brx& aAlbumArtUrl, TUint aDurationMs);
 public: // from ISpotifyMetadata
     const Brx& PlaybackSource() const override;
     const Brx& PlaybackSourceUri() const override;
@@ -66,7 +65,11 @@ public: // from ISpotifyMetadata
     void Destroy() override;
 private:
     MockSpotifyMetadataAllocator& iAllocator;
-    TUint iDurationMs;
+    const Brh iTrack;
+    const Brh iArtist;
+    const Brh iAlbum;
+    const Brh iAlbumArtUrl;
+    const TUint iDurationMs;
 };
 
 class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
@@ -74,6 +77,10 @@ class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstre
 #define kDefaultMode "null"
 #define kModeSpotify "Spotify"
 #define kTrackUri "http://host:port/path/file.ext"
+#define kTrackTitle "spotify track"
+#define kTrackArtist "spotify artist"
+#define kTrackAlbum "spotify album"
+#define kTrackAlbumArt "http://some/album/art.jpg"
     static const TUint kBitDepth      = 16;
     static const TUint kByteDepth = kBitDepth/8;
     static const TUint kDefaultSampleRate = 44100;
@@ -127,7 +134,6 @@ private:
     void TestInvalidSampleRate();
     void TestInvalidNumChannels();
     void TestPassThroughInjectTrack();
-    void TestModeSpotifyNoTrackInjectedAtStart();
     void TestModeSpotifyTrackInjected();
     void TestModeSpotifySeek();
 private:
@@ -194,16 +200,17 @@ MockSpotifyMetadataAllocator::~MockSpotifyMetadataAllocator()
     ASSERT(iAllocCount == iDeallocCount);
 }
 
-MockSpotifyMetadata* MockSpotifyMetadataAllocator::Allocate(TUint aDurationMs)
+MockSpotifyMetadata* MockSpotifyMetadataAllocator::Allocate(const Brx& aTrack, const Brx& aArtist, const Brx& aAlbum, const Brx& aAlbumArtUrl, TUint aDurationMs)
 {
-    MockSpotifyMetadata* metadata = new MockSpotifyMetadata(*this);
-    metadata->Initialise(aDurationMs);
+    MockSpotifyMetadata* metadata = new MockSpotifyMetadata(*this, aTrack, aArtist, aAlbum, aAlbumArtUrl, aDurationMs);
+    iAllocCount++;
     return metadata;
 }
 
 void MockSpotifyMetadataAllocator::Destroy(MockSpotifyMetadata* aMetadata)
 {
     ASSERT(aMetadata != nullptr);
+    iDeallocCount++;
     delete aMetadata;
 }
 
@@ -215,15 +222,14 @@ TUint MockSpotifyMetadataAllocator::DeallocatedCount() const
 
 // MockSpotifyMetadata
 
-MockSpotifyMetadata::MockSpotifyMetadata(MockSpotifyMetadataAllocator& aAllocator)
+MockSpotifyMetadata::MockSpotifyMetadata(MockSpotifyMetadataAllocator& aAllocator, const Brx& aTrack, const Brx& aArtist, const Brx& aAlbum, const Brx& aAlbumArtUrl, TUint aDurationMs)
     : iAllocator(aAllocator)
-    , iDurationMs(0)
+    , iTrack(aTrack)
+    , iArtist(aArtist)
+    , iAlbum(aAlbum)
+    , iAlbumArtUrl(aAlbumArtUrl)
+    , iDurationMs(aDurationMs)
 {
-}
-
-void MockSpotifyMetadata::Initialise(TUint aDurationMs)
-{
-    iDurationMs = aDurationMs;
 }
 
 const Brx& MockSpotifyMetadata::PlaybackSource() const
@@ -240,8 +246,7 @@ const Brx& MockSpotifyMetadata::PlaybackSourceUri() const
 
 const Brx& MockSpotifyMetadata::Track() const
 {
-    ASSERTS();
-    return Brx::Empty();
+    return iTrack;
 }
 
 const Brx& MockSpotifyMetadata::TrackUri() const
@@ -252,8 +257,7 @@ const Brx& MockSpotifyMetadata::TrackUri() const
 
 const Brx& MockSpotifyMetadata::Artist() const
 {
-    ASSERTS();
-    return Brx::Empty();
+    return iArtist;
 }
 
 const Brx& MockSpotifyMetadata::ArtistUri() const
@@ -264,8 +268,7 @@ const Brx& MockSpotifyMetadata::ArtistUri() const
 
 const Brx& MockSpotifyMetadata::Album() const
 {
-    ASSERTS();
-    return Brx::Empty();
+    return iAlbum;
 }
 
 const Brx& MockSpotifyMetadata::AlbumUri() const
@@ -282,8 +285,7 @@ const Brx& MockSpotifyMetadata::AlbumCoverUri() const
 
 const Brx& MockSpotifyMetadata::AlbumCoverUrl() const
 {
-    ASSERTS();
-    return Brx::Empty();
+    return iAlbumArtUrl;
 }
 
 TUint MockSpotifyMetadata::DurationMs() const
@@ -313,7 +315,6 @@ SuiteSpotifyReporter::SuiteSpotifyReporter()
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidSampleRate), "TestInvalidSampleRate");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidNumChannels), "TestInvalidNumChannels");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestPassThroughInjectTrack), "TestPassThroughInjectTrack");
-    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart), "TestModeSpotifyNoTrackInjectedAtStart");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifyTrackInjected), "TestModeSpotifyTrackInjected");
     AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestModeSpotifySeek), "TestModeSpotifySeek");
 }
@@ -740,8 +741,11 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     const TUint kDurationMs = 1234;
     const TUint kOffsetMs = 0;
 
-    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDurationMs);
+    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDurationMs);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
+    static const TUint kSeekMs = 500;
+    static const TUint kSeekSample = (kSeekMs*iSampleRate)/1000;
+    iReporter->NotifySeek(kSeekMs);
 
     iNextGeneratedMsg = EMsgMode;
     Msg* msg = iReporter->Pull();
@@ -754,8 +758,8 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     TEST(msgTrack->Track().Uri() == Brn(kTrackUri));
     TEST(msgTrack->Track().MetaData() == Brx::Empty());
     msgTrack->RemoveRef();
-    // SpotifyReporter should dispose of metadata once it has been used.
-    TEST(iMetadataAllocator->DeallocatedCount() == 1);  // If in pass-through mode, do we expect the SpotifyReporter to deallocate track? If not, DeallocatedCount() should be 0 here, but it should be deallocated in the destructor of SpotifyReporter, which will be checked by the MockSpotifyMetadataAllocator destructor.
+    // If in pass-through mode, metadata won't be deallocated until more is passed in, forcing current metadata to be deallocated, or at shutdown (which internal allocator check will catch).
+    TEST(iMetadataAllocator->DeallocatedCount() == 0);
 
     iNextGeneratedMsg = EMsgDecodedStream;
     msg = iReporter->Pull();
@@ -774,78 +778,6 @@ void SuiteSpotifyReporter::TestPassThroughInjectTrack()
     TEST(iReporter->SubSamples() == samplesExpectedPerMsg);
 }
 
-void SuiteSpotifyReporter::TestModeSpotifyNoTrackInjectedAtStart()
-{
-    // Enter Spotify mode, but have no track injected.
-    // MsgDecodedStream should end up with zero length, as length not yet known.
-    iMode.Replace(kModeSpotify);
-    iNextGeneratedMsg = EMsgMode;
-    Msg* msg = iReporter->Pull();
-    msg->RemoveRef();
-
-    // URI for in-band track doesn't matter in SpotifyReporter.
-    iNextGeneratedMsg = EMsgTrack;
-    msg = iReporter->Pull();
-    MsgIdentifier<MsgTrack> msgIdTrack;
-    MsgTrack* msgTrack = msgIdTrack.GetMsg(msg);
-    TEST(msgTrack->Track().Uri() == Brn(kTrackUri));
-    TEST(msgTrack->Track().MetaData() == Brx::Empty());
-    msgTrack->RemoveRef();
-
-    const TUint kStartSample = 88200;
-    iSampleStart = kStartSample;
-    iNextGeneratedMsg = EMsgDecodedStream;
-    msg = iReporter->Pull();
-    MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
-    MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
-    const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
-    // Check MsgDecodedStream length has been set to 0, but that start sample unmodified.
-    TEST(info.TrackLength() == 0);
-    TEST(info.SampleStart() == kStartSample);
-    msgDecodedStream->RemoveRef();
-
-    // Pull some audio.
-    TUint64 expectedSubsamples = 0;
-    const TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
-    iNextGeneratedMsg = EMsgAudioPcm;
-    msg = iReporter->Pull();
-    MsgIdentifier<MsgAudioPcm> msgIdAudioPcm;
-    MsgAudioPcm* msgAudioPcm = msgIdAudioPcm.GetMsg(msg);
-    msgAudioPcm->RemoveRef();
-    expectedSubsamples += samplesExpectedPerMsg;
-    TEST(iReporter->SubSamples() == expectedSubsamples);
-
-    // Now, inject a Track. Should now pull a MsgTrack followed by a MsgDecodedStream.
-    static const Brn kSpotifyTrackUri("spotify://");
-    const TUint kDurationMs = 1234;
-    const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    const TUint kOffsetMs = 0;
-    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDurationMs);
-    iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
-
-    // First, set audio to be pulled next.
-    iNextGeneratedMsg = EMsgAudioPcm;
-    // Now, try pull. MsgTrack should be output.
-    msg = iReporter->Pull();
-    msgTrack = msgIdTrack.GetMsg(msg);
-    TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 16, numChannels: 2, sampleRate: 44100"));
-    msgTrack->RemoveRef();
-    TEST(iMetadataAllocator->DeallocatedCount() == 1);
-    // Try pull again. Should be MsgDecodedStream with injected duration and sample start of 0 (as track injection resets sample start).
-    msg = iReporter->Pull();
-    msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
-    const DecodedStreamInfo& info2 = msgDecodedStream->StreamInfo();
-    TEST(info2.TrackLength() == kDurationJiffies);
-    TEST(info2.SampleStart() == 0);
-    msgDecodedStream->RemoveRef();
-    // Pull again. Should finally be the audio that was queued up.
-    msg = iReporter->Pull();
-    msg->RemoveRef();
-    expectedSubsamples += samplesExpectedPerMsg;
-    TEST(iReporter->SubSamples() == expectedSubsamples);
-}
-
 void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
 {
     // Inject a track to simulate real-world condition where out-of-band track notification is reach SpotifyReporter before MsgMode at Spotify initialisation.
@@ -853,8 +785,11 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     const TUint kDurationMs = 1234;
     const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
     const TUint kOffsetMs = 0;
-    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDurationMs);
+    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDurationMs);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
+    static const TUint kSeekMs = 500;
+    static const TUint kSeekSample = (kSeekMs*iSampleRate)/1000;
+    iReporter->NotifySeek(kSeekMs);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
@@ -872,24 +807,22 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     TEST(msgTrack->Track().MetaData() == Brx::Empty());
     msgTrack->RemoveRef();
 
-    // Pull again. Should be injected track.
+    // Queue up MsgDecodedStream and pull again. Should be injected track.
+    iNextGeneratedMsg = EMsgDecodedStream;
     msg = iReporter->Pull();
     msgTrack = msgIdTrack.GetMsg(msg);
     TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 0, numChannels: 0, sampleRate: 0"));
+    TEST(msgTrack->Track().MetaData().Bytes() != 0);
     msgTrack->RemoveRef();
     TEST(iMetadataAllocator->DeallocatedCount() == 1);
 
-    // Now, queue up MsgDecodedStream. Should be intercepted and a modified one output.
-    static const TUint kStartSample = 88200;
-    iSampleStart = kStartSample;
-    iNextGeneratedMsg = EMsgDecodedStream;
+    // Pull again. Modified MsgDecodedStream should be output.
     msg = iReporter->Pull();
     MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
     MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
     const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
     TEST(info.TrackLength() == kDurationJiffies);
-    TEST(info.SampleStart() == kStartSample);   // Last seen sample start is the one output.
+    TEST(info.SampleStart() == kSeekSample);
     msgDecodedStream->RemoveRef();
 
     // Now, queue up some audio.
@@ -909,7 +842,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     // Inject a MsgTrack.
     const TUint kDuration2 = 5678;
     const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
-    metadata = iMetadataAllocator->Allocate(kDuration2);
+    metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDuration2);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
     // Set audio to be pulled.
@@ -919,7 +852,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     msg = iReporter->Pull();
     msgTrack = msgIdTrack.GetMsg(msg);
     TEST(msgTrack->Track().Uri() == kSpotifyTrackUri);
-    TEST(msgTrack->Track().MetaData() == Brn("bitDepth: 16, numChannels: 2, sampleRate: 44100"));
+    TEST(msgTrack->Track().MetaData().Bytes() != 0);
     msgTrack->RemoveRef();
     TEST(iMetadataAllocator->DeallocatedCount() == 2);
     // Pull again. Should be generated MsgDecodedStream. SampleStart should now be 0, as injected track resets it.
@@ -944,8 +877,11 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     const TUint kDuration = 1234;
     const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
     const TUint kOffsetMs = 0;
-    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(kDuration);
+    MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDuration);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
+    static const TUint kSeekMs = 500;
+    static const TUint kSeekSample = (kSeekMs*iSampleRate)/1000;
+    iReporter->NotifySeek(kSeekMs);
 
     // Pull mode.
     iMode.Replace(kModeSpotify);
@@ -959,15 +895,16 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     msg = iReporter->Pull();
     msg->RemoveRef();
 
-    // Pull again. Should be injected track.
+    // Queue up MsgDecodedStream and pull again. Should get injected track.
+    iNextGeneratedMsg = EMsgDecodedStream;
     msg = iReporter->Pull();
     msg->RemoveRef();
     TEST(iMetadataAllocator->DeallocatedCount() == 1);
 
-    // Now, queue up MsgDecodedStream. Should be intercepted and a modified one output.
+    // Pull again. Delayed MsgDecodedStream should be output with modified info.
     static const TUint kStartSample = 88200;
     iSampleStart = kStartSample;
-    iNextGeneratedMsg = EMsgDecodedStream;
+
     msg = iReporter->Pull();
     msg->RemoveRef();
 
@@ -981,6 +918,11 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
 
     /* ---------- Setup code ends; test case begins. ---------- */
 
+    // Tell SpotifyReporter about a seek.
+    static const TUint kSeekMs2 = 250;
+    static const TUint kSeekSample2 = (kSeekMs2*iSampleRate)/1000;
+    iReporter->NotifySeek(kSeekMs2);
+
     // MsgDrain, followed by MsgDecodedStream to signify a flush.
     iNextGeneratedMsg = EMsgDrain;
     msg = iReporter->Pull();
@@ -988,14 +930,13 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     MsgDrain* msgDrain = msgIdDrain.GetMsg(msg);
     msgDrain->RemoveRef();
 
-    iSampleStart = 5678;
     iNextGeneratedMsg = EMsgDecodedStream;
     msg = iReporter->Pull();
     MsgIdentifier<MsgDecodedStream> msgIdDecodedStream;
     MsgDecodedStream* msgDecodedStream = msgIdDecodedStream.GetMsg(msg);
     const DecodedStreamInfo& info = msgDecodedStream->StreamInfo();
     TEST(info.TrackLength() == kDurationJiffies);   // Duration should have been updated by SpotifyReporter.
-    TEST(info.SampleStart() == iSampleStart);   // Sample start passed with this should be unchanged.
+    TEST(info.SampleStart() == kSeekSample2);       // Start sample should also have been updated due to NotifySeek() call.
     msgDecodedStream->RemoveRef();
 
     // Pull some audio.
