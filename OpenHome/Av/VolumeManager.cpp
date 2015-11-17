@@ -705,3 +705,72 @@ void VolumeManager::Unmute()
     }
     iMuteUser->Unmute();
 }
+
+
+// VolumeScaler
+
+VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolRangeUser, TUint aVolRangeScale)
+    : iVolumeOffset(aVolumeOffset)
+    , iVolRangeUser(aVolRangeUser)
+    , iVolRangeScale(aVolRangeScale)
+    , iEnabled(false)
+    , iVolUser(0)
+    , iVolScale(0)
+    , iLock("VSCL")
+{
+    // Check there is no overflow if max values of both ranges are multiplied together.
+    const TUint prod = iVolRangeUser * iVolRangeScale;
+    const TUint div = prod/iVolRangeUser;
+    ASSERT(div == iVolRangeScale);
+    aVolumeReporter.AddVolumeObserver(*this);
+}
+
+void VolumeScaler::SetVolume(TUint aVolume)
+{
+    ASSERT(aVolume <= iVolRangeScale);
+    // Scale volume to within range of system volume.
+    AutoMutex a(iLock);
+    iVolScale = aVolume;
+    if (iEnabled) {
+        UpdateOffsetLocked();
+    }
+}
+
+void VolumeScaler::SetVolumeEnabled(TBool aEnabled)
+{
+    AutoMutex a(iLock);
+    if (aEnabled) {
+        if (iEnabled != aEnabled) {
+            iEnabled = aEnabled;
+            UpdateOffsetLocked();
+        }
+    }
+    else {
+        if (iEnabled != aEnabled) {
+            iEnabled = aEnabled;
+            iVolumeOffset.SetVolumeOffset(0);
+        }
+    }
+}
+
+void VolumeScaler::VolumeChanged(TUint aVolume)
+{
+    ASSERT(aVolume <= iVolRangeUser);
+    AutoMutex a(iLock);
+    iVolUser = aVolume;
+    if (iEnabled) {
+        UpdateOffsetLocked();
+    }
+}
+
+void VolumeScaler::UpdateOffsetLocked()
+{
+    // Already know from check in constructor that this can't overflow.
+    const TUint volProd = iVolScale*iVolUser;
+
+    const TUint vol = volProd / iVolRangeScale;
+    ASSERT(iVolUser >= vol);    // Scaled vol must be within user vol.
+    const TInt offset = (iVolUser - vol) * -1;
+
+    iVolumeOffset.SetVolumeOffset(offset);
+}
