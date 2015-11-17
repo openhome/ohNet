@@ -709,28 +709,28 @@ void VolumeManager::Unmute()
 
 // VolumeScaler
 
-VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolRangeUser, TUint aVolRangeScale)
+VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxUser, TUint aVolMaxExternal)
     : iVolumeOffset(aVolumeOffset)
-    , iVolRangeUser(aVolRangeUser)
-    , iVolRangeScale(aVolRangeScale)
+    , iVolMaxUser(aVolMaxUser)
+    , iVolMaxExternal(aVolMaxExternal)
     , iEnabled(false)
     , iVolUser(0)
-    , iVolScale(0)
+    , iVolExternal(0)
     , iLock("VSCL")
 {
     // Check there is no overflow if max values of both ranges are multiplied together.
-    const TUint prod = iVolRangeUser * iVolRangeScale;
-    const TUint div = prod/iVolRangeUser;
-    ASSERT(div == iVolRangeScale);
+    const TUint prod = iVolMaxUser * iVolMaxExternal;
+    const TUint div = prod/iVolMaxUser;
+    ASSERT(div == iVolMaxExternal);
     aVolumeReporter.AddVolumeObserver(*this);
 }
 
 void VolumeScaler::SetVolume(TUint aVolume)
 {
-    ASSERT(aVolume <= iVolRangeScale);
+    ASSERT(aVolume <= iVolMaxExternal);
     // Scale volume to within range of system volume.
     AutoMutex a(iLock);
-    iVolScale = aVolume;
+    iVolExternal = aVolume;
     if (iEnabled) {
         UpdateOffsetLocked();
     }
@@ -755,7 +755,7 @@ void VolumeScaler::SetVolumeEnabled(TBool aEnabled)
 
 void VolumeScaler::VolumeChanged(TUint aVolume)
 {
-    ASSERT(aVolume <= iVolRangeUser);
+    ASSERT(aVolume <= iVolMaxUser);
     AutoMutex a(iLock);
     iVolUser = aVolume;
     if (iEnabled) {
@@ -766,9 +766,9 @@ void VolumeScaler::VolumeChanged(TUint aVolume)
 void VolumeScaler::UpdateOffsetLocked()
 {
     // Already know from check in constructor that this can't overflow.
-    const TUint volProd = iVolScale*iVolUser;
+    const TUint volProd = iVolExternal*iVolUser;
 
-    const TUint vol = volProd / iVolRangeScale;
+    const TUint vol = volProd / iVolMaxUser;
     ASSERT(iVolUser >= vol);    // Scaled vol must be within user vol.
     const TInt offset = (iVolUser - vol) * -1;
 

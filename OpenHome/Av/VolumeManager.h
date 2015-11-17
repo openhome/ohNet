@@ -452,7 +452,7 @@ public:
 class VolumeScaler : public IVolume, public IVolumeScalerEnabler, public IVolumeObserver
 {
 public:
-    VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolRangeUser, TUint aVolRangeScale);
+    VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxUser, TUint aVolMaxExternal);
 public: // from IVolume
     void SetVolume(TUint aVolume) override;
 public: // from IVolumeScalerEnabler
@@ -463,11 +463,11 @@ private:
     void UpdateOffsetLocked();
 private:
     IVolumeSourceOffset& iVolumeOffset;
-    const TUint iVolRangeUser;
-    const TUint iVolRangeScale;
+    const TUint iVolMaxUser;
+    const TUint iVolMaxExternal;
     TBool iEnabled;
     TUint iVolUser;
-    TUint iVolScale;
+    TUint iVolExternal;
     Mutex iLock;
 };
 
