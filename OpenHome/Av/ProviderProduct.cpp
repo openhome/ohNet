@@ -88,6 +88,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, 
 
     iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this);
     iProduct.AddObserver(*this);
+    iProduct.AddNameObserver(*this);
 }
 
 ProviderProduct::~ProviderProduct()

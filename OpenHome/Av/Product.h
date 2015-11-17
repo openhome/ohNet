@@ -135,7 +135,7 @@ private:
 private: // from IProduct
     void Activate(ISource& aSource) override;
     void NotifySourceNameChanged(ISource& aSource) override;
-private: // from IProductNameObservable
+public: // from IProductNameObservable
     void AddNameObserver(IProductNameObserver& aObserver) override;
 private: // from IStandbyHandler
     void StandbyEnabled() override;
