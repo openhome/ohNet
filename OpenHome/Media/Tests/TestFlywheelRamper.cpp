@@ -117,12 +117,11 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
     :SuiteUnitTest("SuiteFlywheelRamper")
     ,iEnv(aEnv)
 {
-
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test1));
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test2));
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test3));
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test4));
-    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test5));
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test2));
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test3));
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test4));
+    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test5));
 
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test6)); // Burg Method testing
     //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
@@ -132,8 +131,8 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
 
 void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
 {
-    Log::Print("\n");
-    const TUint kDataInDescaleBits = 0;
+    //Log::Print("\n");
+    const TUint kDataInDescaleBits = 8;
     const TUint kCoeffFormat = 1;
     const TUint kDataInFormat = 1;
     const TUint kDataOutFormat = 1;
@@ -155,23 +154,11 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
     *(samplesInPtr++) = 0x04000000;
     *(samplesInPtr++) = 0x08000000;
 
-/*
-    Log::Print("0x01000000 = %f \n", FlywheelRamper::ToDouble(0x01000000, 1));
-    Log::Print("0x02000000 = %f \n", FlywheelRamper::ToDouble(0x02000000, 1));
-    Log::Print("0x04000000 = %f \n", FlywheelRamper::ToDouble(0x04000000, 1));
-    Log::Print("0x08000000 = %f \n", FlywheelRamper::ToDouble(0x08000000, 1));
-
-    Log::Print("0.005188 = %lx \n", FlywheelRamper::ToInt32(0.005188, 1));
-*/
-
     std::vector<TInt32> expectedSamplesOut;
     expectedSamplesOut.push_back(0x00aa0000);
     expectedSamplesOut.push_back(0x00555400);
-    expectedSamplesOut.push_back(0x002b52a8);
-    expectedSamplesOut.push_back(0x0016fbf4);
-    expectedSamplesOut.push_back(0x000e25de);
-    expectedSamplesOut.push_back(0x00072806);
-    expectedSamplesOut.push_back(0x0003b3dc);
+    expectedSamplesOut.push_back(0x002b5200);
+    expectedSamplesOut.push_back(0x0016fa00);
 
 
     FeedbackModel* feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
@@ -191,7 +178,8 @@ void SuiteFlywheelRamper::Test1() // FeedbackModel algorithm
 
 void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
 {
-    const TUint kDataInDescaleBits = 0;
+    //Log::Print("\n");
+    const TUint kDataInDescaleBits = 8;
 
     const TUint kDegree = 2;
 
@@ -211,69 +199,86 @@ void SuiteFlywheelRamper::Test2()  // FeedbackModel scaling
     TEST( feedback->NextSample() == 0x400);
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 2, 1, 1);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x40000);
     TEST( feedback->NextSample() == 0x1000); // (2/x/x)
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 3, 1, 1);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x80000);
     TEST( feedback->NextSample() == 0x4000); // (3/x/x)
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 4, 1, 1);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x0100000);
     TEST( feedback->NextSample() == 0x10000); // (4/x/x)
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 2, 1);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x40000); //  (x/2/x)
     TEST( feedback->NextSample() == 0x800);  //  (x/2/x)
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 3, 1);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x80000); //  (x/3/x)
     TEST( feedback->NextSample() == 0x1000);  //  (x/3/x)
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 4, 1);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x0100000); //  (x/4/x)
     TEST( feedback->NextSample() == 0x2000);  //  (x/4/x)
     delete feedback;
 
-
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 2);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x10000); //  (x/x/2)
     TEST( feedback->NextSample() == 0x200); //  (x/x/2)
     delete feedback;
 
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 3);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x8000); //  (x/x/3)
     TEST( feedback->NextSample() == 0x100); //  (x/x/3)
     delete feedback;
 
-
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 1, 1, 4);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x4000); //  (x/x/4)
     TEST( feedback->NextSample() == 0x80); //  (x/x/4)
     delete feedback;
 
-
+    *samplesIn = 0x01000000;
+    *(samplesIn+1) = 0;
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, 2, 2, 2);
     feedback->Initialise(coeffs, samplesIn);
     TEST( feedback->NextSample() == 0x40000); //  (x/2/2)
     TEST( feedback->NextSample() == 0x1000); // *2*2/2  (2/2/2)
-
     delete feedback;
+
     free(coeffs);
     free(samplesIn);
 }
@@ -301,7 +306,6 @@ void SuiteFlywheelRamper::Test3()  // FeedbackModel step response output
 
     TInt32* samplesIn = (TInt32*) calloc (kDegree, sizeof(TInt32));
     TInt32* samplesInPtr = samplesIn;
-    *(samplesInPtr++) = 0;
     *(samplesInPtr++) = 0x40000000;
     *(samplesInPtr++) = 0x00000000;
     *(samplesInPtr++) = 0x00000000;
@@ -320,7 +324,7 @@ void SuiteFlywheelRamper::Test3()  // FeedbackModel step response output
     // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
-    for(TUint i=0; i<kDegree; i++)
+    for(TUint i=0; i<10; i++)
     {
         // output sample will equal the coeff value
         TEST( feedback->NextSample() == 0x40000000 );
@@ -374,16 +378,14 @@ void SuiteFlywheelRamper::Test4()  // FeedbackModel periodic impulse output
     // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
-    for(TUint i=0; i<kDegree;)
-    {
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0x40000000 );
-        i++;
-    }
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
 
     delete feedback;
 
@@ -396,26 +398,24 @@ void SuiteFlywheelRamper::Test4()  // FeedbackModel periodic impulse output
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
 
+    samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0x40000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+
 
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise(coeffs, samplesIn);
 
-    for(TUint i=0; i<kDegree;)
-    {
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0x40000000 );
-        i++;
-    }
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
 
     delete feedback;
     free(coeffs);
@@ -465,18 +465,12 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     // for n=1 to x (where x= num samples in + num coeffs -1):
 
 
-    for(TUint i=0; i<kDegree;)
-    {
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == (TInt32)0xc0000000L );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the sample value
-        TEST( feedback->NextSample() == 0x40000000L );
-        i++;
-        //Log::Print("\n");
-    }
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
+    TEST( feedback->NextSample() == 0x40000000L );
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
+    TEST( feedback->NextSample() == 0x40000000L );
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
+    TEST( feedback->NextSample() == 0x40000000L );
 
     delete feedback;
 
@@ -489,32 +483,24 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
 
+    samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0x40000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+
 
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise((TInt16*)coeffs, samplesIn);
 
-    for(TUint i=0; i<kDegree;)
-    {
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the sample value
-        TEST( feedback->NextSample() == (TInt32)0xc0000000L );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0x40000000 );
-        i++;
-        if(i>=kDegree) {break;}
-    }
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
 
     delete feedback;
 
@@ -525,42 +511,32 @@ void SuiteFlywheelRamper::Test5()  // FeedbackModel alternating polarity periodi
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
     *(coeffPtr++) = 0;
+    samplesInPtr = samplesIn;
+    *(samplesInPtr++) = 0x40000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
+    *(samplesInPtr++) = 0x00000000;
 
 
     feedback = new FeedbackModel(kDegree, kDataInDescaleBits, kCoeffFormat, kDataInFormat, kDataOutFormat);
     feedback->Initialise((TInt16*)coeffs, samplesIn);
 
-    for(TUint i=0; i<kDegree;)
-    {
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
 
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == (TInt32)0xc0000000L );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0 );
+    TEST( feedback->NextSample() == 0x40000000 );
 
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == (TInt32)0xc0000000L );
-        i++;
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0 );
-        i++;
-        if(i>=kDegree) {break;}
-
-        // output sample will equal the coeff value
-        TEST( feedback->NextSample() == 0x40000000 );
-        i++;
-        if(i>=kDegree) {break;}
-    }
 
     delete feedback;
     free(coeffs);

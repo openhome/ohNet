@@ -124,11 +124,11 @@ class FeedbackModel : public INonCopyable
 {
 public:
     FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
-    void Initialise(TInt16* aCoeffs, TInt32* aSamples);
+    void Initialise(const TInt16* aCoeffs, TInt32* aSamples);
     TInt32 NextSample();
 
 private:
-    TInt16* iCoeffs;
+    const TInt16* iCoeffs;
     TInt32* iSamples;
     TUint iStateCount;
     TUint iDataScaleBitCount;

@@ -547,6 +547,7 @@ void FlywheelRamper::ToDouble(const Brx& aInput, double* aOutput, TUint aScale)
         *aOutput = ToDouble(s, aScale);
         aOutput++;
     }
+
 }
 
 
@@ -557,17 +558,37 @@ FeedbackModel::FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint 
     ,iSamples(NULL)
     ,iStateCount(aCoeffCount)
     ,iDataScaleBitCount(aDataScaleBitCount)
+    ,iScaleShiftForProduct(aCoeffFormat+iDataScaleBitCount)
+    ,iScaleShiftForOutput(aDataFormat-aOutputFormat)
+/*
     ,iScaleShiftForProduct(aCoeffFormat)
     ,iScaleShiftForOutput(aDataFormat+iDataScaleBitCount-aOutputFormat)
+*/
 {
     //Log::Print("FeedbackModel  iScaleShiftForProduct=%d  iScaleShiftForOutput=%d \n", iScaleShiftForProduct, iScaleShiftForOutput);
 }
 
 
-void FeedbackModel::Initialise(TInt16* aCoeffs, TInt32* aSamples)
+void FeedbackModel::Initialise(const TInt16* aCoeffs, TInt32* aSamples)
 {
     iCoeffs = aCoeffs;
     iSamples = aSamples;
+
+/*
+    Log::Print("Init: samples: \n");
+    for (TUint j=0; j<iStateCount; j++)
+    {
+        Log::Print("%08lx  \n", iSamples[j]);
+    }
+
+    Log::Print("Init: coeffs: \n");
+    for (TUint j=0; j<iStateCount; j++)
+    {
+        Log::Print("%04lx  \n", iCoeffs[j]);
+    }
+
+    Log::Print("\n");
+*/
 }
 
 
@@ -577,13 +598,16 @@ TInt32 FeedbackModel::NextSample()
     ASSERT(iSamples!=NULL);
 
     TInt32 sum = 0;
-    TInt16* coeffPtr = iCoeffs;
+    const TInt16* coeffPtr = iCoeffs;
 
     // iterate through the circular buff and calculate the output
     for (TUint j=0; j<iStateCount; j++)
     {
         TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
-        TInt64 product = ((TInt64)(iSamples[j]>>iDataScaleBitCount)) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (13.51 with >>8 data  scaling etc)
+        TInt32 sample = (iSamples[j]>>iDataScaleBitCount);;
+
+        TInt64 product = ((TInt64)sample) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (13.51 with >>8 data  scaling etc)
+        //Log::Print("sample=%08x  coeff=%08x  product = %016lx  \n", sample, coeff, product);
         TInt32 prod = (TInt32)(product>>32);
         sum += prod;   // 5.27
         //Log::Print("prod = %08lx   new sum = %08lx \n", prod, sum);
@@ -597,20 +621,24 @@ TInt32 FeedbackModel::NextSample()
         iSamples[j] = iSamples[j-1];
     }
 
-    //Log::Print("sum = %08lx  <<%d = ", sum, iScaleShiftForProduct);
+    //Log::Print("sum = %08lx  <<%d = %08lx ", sum, iScaleShiftForProduct, sum << iScaleShiftForProduct);
 
     sum <<= iScaleShiftForProduct;
 
-    //Log::Print("%08lx  ", sum);
-
-
     iSamples[0] = sum;
 
-    //Log::Print("<<%d = %08lx (output) \n", iScaleShiftForOutput, sum<<iScaleShiftForOutput);
+    if (iScaleShiftForOutput<0)
+    {
+        //Log::Print(">>%d = %08lx (output) \n\n", -iScaleShiftForOutput, sum>>iScaleShiftForOutput);
+        sum >>= (-iScaleShiftForOutput);
+    }
+    else
+    {
+        //Log::Print("<<%d = %08lx (output) \n\n", iScaleShiftForOutput, sum<<iScaleShiftForOutput);
+        sum <<= iScaleShiftForOutput;
+    }
 
-    //Log::Print("feedback out = %08lx  \n", sum<<iScaleShiftForOutput);
-
-    return(sum<<iScaleShiftForOutput);
+    return(sum);
 }
 
 
