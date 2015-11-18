@@ -2,6 +2,8 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Av/VolumeManager.h>
 
+#include <limits>
+
 namespace OpenHome {
 namespace Av {
 namespace Test {
