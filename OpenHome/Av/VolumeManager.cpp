@@ -768,7 +768,7 @@ void VolumeScaler::UpdateOffsetLocked()
     // Already know from check in constructor that this can't overflow.
     const TUint volProd = iVolExternal*iVolUser;
 
-    const TUint vol = volProd / iVolMaxUser;
+    const TUint vol = volProd / iVolMaxExternal;
     ASSERT(iVolUser >= vol);    // Scaled vol must be within user vol.
     const TInt offset = (iVolUser - vol) * -1;
 
