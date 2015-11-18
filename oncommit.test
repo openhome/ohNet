@@ -53,6 +53,7 @@ tests = '''
     TestJson
     TestRaop
     TestSpotifyReporter
+    TestVolumeManager
     TestWebAppFramework
     #TestConfigUi   # fails on non-desktop platforms
     TestFlywheelRamper

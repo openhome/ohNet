@@ -438,6 +438,38 @@ private:
     ProviderVolume* iProviderVolume;
 };
 
+class IVolumeScalerEnabler
+{
+public:
+    virtual void SetVolumeEnabled(TBool aEnabled) = 0;
+    virtual ~IVolumeScalerEnabler() {}
+};
+
+/**
+ * Class that scales volumes to within range of current user volume.
+ * Expects that user volume and volume range to be scaled both start at 0.
+ */
+class VolumeScaler : public IVolume, public IVolumeScalerEnabler, public IVolumeObserver
+{
+public:
+    VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxUser, TUint aVolMaxExternal);
+public: // from IVolume
+    void SetVolume(TUint aVolume) override;
+public: // from IVolumeScalerEnabler
+    void SetVolumeEnabled(TBool aEnabled) override;
+public: // from IVolumeObserver
+    void VolumeChanged(TUint aVolume) override;
+private:
+    void UpdateOffsetLocked();
+private:
+    IVolumeSourceOffset& iVolumeOffset;
+    const TUint iVolMaxUser;
+    const TUint iVolMaxExternal;
+    TBool iEnabled;
+    TUint iVolUser;
+    TUint iVolExternal;
+    Mutex iLock;
+};
+
 } // namespace Av
 } // namespace OpenHome
-
