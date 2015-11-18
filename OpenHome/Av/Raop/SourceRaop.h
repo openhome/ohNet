@@ -70,7 +70,6 @@ private:
     Environment& iEnv;
     Mutex iLock;
     Media::UriProviderSingleTrack& iUriProvider;
-    RaopVolumeHandler iVolume;
     RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;

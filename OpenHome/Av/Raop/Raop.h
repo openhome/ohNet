@@ -151,45 +151,6 @@ public:
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
 };
 
-class IRaopVolumeEnabler
-{
-public:
-    virtual void SetVolumeEnabled(TBool aEnabled) = 0;
-    virtual ~IRaopVolumeEnabler() {}
-};
-
-class IRaopVolume
-{
-public:
-    virtual void SetRaopVolume(TInt aVolume) = 0;
-    virtual ~IRaopVolume() {}
-};
-
-class RaopVolumeHandler : public IRaopVolume, public IRaopVolumeEnabler, public IVolumeObserver
-{
-public:
-    static const TInt kVolMin = -30;
-    static const TInt kVolMax = 0;
-    static const TUint kVolSteps = 30;
-    static const TInt kMute = -144;
-public:
-    RaopVolumeHandler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset);
-public: // from IRaopVolume
-    void SetRaopVolume(TInt aVolume) override;
-public: // from IRaopVolumeEnabler
-    void SetVolumeEnabled(TBool aEnabled) override;
-public: // from IVolumeObserver
-    void VolumeChanged(TUint aVolume) override;
-private:
-    void UpdateOffsetLocked();
-private:
-    IVolumeSourceOffset& iVolumeOffset;
-    TBool iEnabled;
-    TUint iVolUser;
-    TInt iVolRaop;
-    Mutex iLock;
-};
-
 class RaopDiscoveryServer;
 
 class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
@@ -197,7 +158,7 @@ class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
     static const TUint kMaxReadBufferBytes = 12000;
     static const TUint kMaxWriteBufferBytes = 4000;
 public:
-    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IRaopVolume& aVolume);
+    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolume& aVolume);
     ~RaopDiscoverySession();
 private: // from SocketTcpSession
     void Run() override;
@@ -252,13 +213,13 @@ private:
     TUint iTimingPort;
     TUint iClientControlPort;
     TUint iClientTimingPort;
-    IRaopVolume& iVolume;
+    IVolume& iVolume;
 };
 
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IRaopVolume& aVolume);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume);
     virtual ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -300,10 +261,16 @@ private:
     Mutex iObserversLock;
 };
 
-class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
+class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, public IVolumeScalerEnabler, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IRaopVolume& aVolume);
+    static const TInt kVolMin = -30;
+    static const TInt kVolMax = 0;
+    static const TInt kMute = -144;
+
+    static const TUint kVolMaxScaled = 30;
+public:
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMax);
     virtual ~RaopDiscovery();
     void Enable();
     void Disable();
@@ -322,6 +289,8 @@ public: // from IRaopObserver
     void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort) override;
     void NotifySessionEnd(const NetworkAdapter& aNif) override;
     void NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime) override;
+public: // from IVolumeScalerEnabler
+    void SetVolumeEnabled(TBool aEnabled) override;
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;
@@ -345,7 +314,7 @@ private:
     IPowerManagerObserver* iPowerObserver;
     Mutex iServersLock;
     Mutex iObserversLock;
-    IRaopVolume& iVolume;
+    VolumeScaler iVolume;
 };
 
 

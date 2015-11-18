@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Raop/Raop.h>
+#include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Media/SupplyAggregator.h>
 
 using namespace OpenHome;
@@ -268,7 +269,7 @@ TUint RaopPacketAudio::Ssrc() const
 
 // ProtocolRaop
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IVolumeScalerEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
     : ProtocolNetwork(aEnv)
     , iTrackFactory(aTrackFactory)
     , iVolumeEnabled(false)

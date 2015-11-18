@@ -80,7 +80,6 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
     , iUriProvider(aUriProvider)
-    , iVolume(aMediaPlayer.VolumeManager(), aMediaPlayer.VolumeManager())
     , iServerManager(aMediaPlayer.Env(), kMaxUdpSize, kMaxUdpPackets)
     , iAutoNetAux(kAutoNetAuxOn)
     , iAutoSwitch(true)
@@ -92,14 +91,14 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 {
     GenerateMetadata();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyNameObservable, aMacAddr, iVolume);
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyNameObservable, aMacAddr, aMediaPlayer.VolumeManager(), aMediaPlayer.VolumeManager(), aMediaPlayer.VolumeManager().VolumeMax());
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();
     iControlId = iServerManager.CreateServer();
     iTimingId = iServerManager.CreateServer();
 
-    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), iVolume, *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
+    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), *iRaopDiscovery, *iRaopDiscovery, iServerManager, iAudioId, iControlId);   // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
     iPipeline.Add(new CodecRaop());
     iPipeline.AddObserver(*this);

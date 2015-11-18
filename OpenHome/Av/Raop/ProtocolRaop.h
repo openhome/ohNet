@@ -714,7 +714,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
     }
 }
 
-class IRaopVolumeEnabler;
+class IVolumeScalerEnabler;
 
 // NOTE: there are three channels to monitor:
 // - Audio
@@ -729,7 +729,7 @@ private:
     static const TUint kMaxFrameBytes = 2048;
     static const TUint kMaxRepairFrames = 50;
 public:
-    ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopVolumeEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
+    ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IVolumeScalerEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
     TUint SendFlush(TUint aSeq, TUint aTime);
 private: // from Protocol
@@ -760,7 +760,7 @@ private:
 private:
     Media::TrackFactory& iTrackFactory;
     TBool iVolumeEnabled;
-    IRaopVolumeEnabler& iVolume;
+    IVolumeScalerEnabler& iVolume;
     IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;
     Bws<RtpPacketRaop::kMaxPacketBytes> iPacketBuf;
