@@ -181,6 +181,7 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     iTrackLengthSeconds = static_cast<TUint>(streamInfo.TrackLength() / Jiffies::kPerSecond);
     iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate()) * streamInfo.SampleStart();
     iDecodeDiscardUntilSeekPoint = false;
+    iFlushEndJiffies = 0;
     if (iSeekInNextStream) {
         iSeekInNextStream = false;
         DoSeek();
