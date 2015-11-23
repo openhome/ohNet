@@ -1184,7 +1184,9 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
         return 0;
     }
     if (!Connect(ep)) {
-        LOG(kHttp, "HttpReader::WriteRequest connection failure\n");
+        Endpoint::AddressBuf buf;
+        ep.AppendAddress(buf);
+        LOG2(kHttp, kError, "HttpReader::WriteRequest connection failure %.*s\n", PBUF(buf));
         return 0;
     }
 
