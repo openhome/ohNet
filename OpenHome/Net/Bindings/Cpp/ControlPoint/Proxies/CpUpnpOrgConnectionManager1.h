@@ -24,19 +24,19 @@ class ICpProxyUpnpOrgConnectionManager1Cpp
 {
 public:
     virtual void SyncGetProtocolInfo(std::string& aSource, std::string& aSink) = 0;
-    virtual void BeginGetProtocolInfo( FunctorAsync& aFunctor) = 0;
+    virtual void BeginGetProtocolInfo(FunctorAsync& aFunctor) = 0;
     virtual void EndGetProtocolInfo(IAsync& aAsync, std::string& aSource, std::string& aSink) = 0;
     virtual void SyncPrepareForConnection(const std::string& aRemoteProtocolInfo, const std::string& aPeerConnectionManager, int32_t aPeerConnectionID, const std::string& aDirection, int32_t& aConnectionID, int32_t& aAVTransportID, int32_t& aRcsID) = 0;
-    virtual void BeginPrepareForConnection(const std::string& aRemoteProtocolInfo, const std::string& aPeerConnectionManager, int32_t aPeerConnectionID, const std::string& aDirection,  FunctorAsync& aFunctor) = 0;
+    virtual void BeginPrepareForConnection(const std::string& aRemoteProtocolInfo, const std::string& aPeerConnectionManager, int32_t aPeerConnectionID, const std::string& aDirection, FunctorAsync& aFunctor) = 0;
     virtual void EndPrepareForConnection(IAsync& aAsync, int32_t& aConnectionID, int32_t& aAVTransportID, int32_t& aRcsID) = 0;
     virtual void SyncConnectionComplete(int32_t aConnectionID) = 0;
-    virtual void BeginConnectionComplete(int32_t aConnectionID,  FunctorAsync& aFunctor) = 0;
+    virtual void BeginConnectionComplete(int32_t aConnectionID, FunctorAsync& aFunctor) = 0;
     virtual void EndConnectionComplete(IAsync& aAsync) = 0;
     virtual void SyncGetCurrentConnectionIDs(std::string& aConnectionIDs) = 0;
-    virtual void BeginGetCurrentConnectionIDs( FunctorAsync& aFunctor) = 0;
+    virtual void BeginGetCurrentConnectionIDs(FunctorAsync& aFunctor) = 0;
     virtual void EndGetCurrentConnectionIDs(IAsync& aAsync, std::string& aConnectionIDs) = 0;
     virtual void SyncGetCurrentConnectionInfo(int32_t aConnectionID, int32_t& aRcsID, int32_t& aAVTransportID, std::string& aProtocolInfo, std::string& aPeerConnectionManager, int32_t& aPeerConnectionID, std::string& aDirection, std::string& aStatus) = 0;
-    virtual void BeginGetCurrentConnectionInfo(int32_t aConnectionID,  FunctorAsync& aFunctor) = 0;
+    virtual void BeginGetCurrentConnectionInfo(int32_t aConnectionID, FunctorAsync& aFunctor) = 0;
     virtual void EndGetCurrentConnectionInfo(IAsync& aAsync, int32_t& aRcsID, int32_t& aAVTransportID, std::string& aProtocolInfo, std::string& aPeerConnectionManager, int32_t& aPeerConnectionID, std::string& aDirection, std::string& aStatus) = 0;
     virtual void SetPropertySourceProtocolInfoChanged(Functor& aSourceProtocolInfoChanged) = 0;
     virtual void PropertySourceProtocolInfo(std::string& aSourceProtocolInfo) const = 0;

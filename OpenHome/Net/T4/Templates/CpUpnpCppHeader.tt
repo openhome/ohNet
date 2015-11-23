@@ -94,7 +94,7 @@ public:
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     virtual void Sync<#=a.name#>(<#=ArgString(a)#>) = 0;
-    virtual void Begin<#=a.name#>(<#=InStringTrailingComma(a)#> FunctorAsync& aFunctor) = 0;
+    virtual void Begin<#=a.name#>(<#=InStringTrailingComma(a)#>FunctorAsync& aFunctor) = 0;
     virtual void End<#=a.name#>(<#=OutputArgStringPrefix("IAsync& aAsync", a)#>) = 0;
 <#  } #>
 <#  foreach (Variable s in u.evented) #>

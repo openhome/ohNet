@@ -24,19 +24,19 @@ class ICpProxyAvOpenhomeOrgSender1Cpp
 {
 public:
     virtual void SyncPresentationUrl(std::string& aValue) = 0;
-    virtual void BeginPresentationUrl( FunctorAsync& aFunctor) = 0;
+    virtual void BeginPresentationUrl(FunctorAsync& aFunctor) = 0;
     virtual void EndPresentationUrl(IAsync& aAsync, std::string& aValue) = 0;
     virtual void SyncMetadata(std::string& aValue) = 0;
-    virtual void BeginMetadata( FunctorAsync& aFunctor) = 0;
+    virtual void BeginMetadata(FunctorAsync& aFunctor) = 0;
     virtual void EndMetadata(IAsync& aAsync, std::string& aValue) = 0;
     virtual void SyncAudio(bool& aValue) = 0;
-    virtual void BeginAudio( FunctorAsync& aFunctor) = 0;
+    virtual void BeginAudio(FunctorAsync& aFunctor) = 0;
     virtual void EndAudio(IAsync& aAsync, bool& aValue) = 0;
     virtual void SyncStatus(std::string& aValue) = 0;
-    virtual void BeginStatus( FunctorAsync& aFunctor) = 0;
+    virtual void BeginStatus(FunctorAsync& aFunctor) = 0;
     virtual void EndStatus(IAsync& aAsync, std::string& aValue) = 0;
     virtual void SyncAttributes(std::string& aValue) = 0;
-    virtual void BeginAttributes( FunctorAsync& aFunctor) = 0;
+    virtual void BeginAttributes(FunctorAsync& aFunctor) = 0;
     virtual void EndAttributes(IAsync& aAsync, std::string& aValue) = 0;
     virtual void SetPropertyPresentationUrlChanged(Functor& aPresentationUrlChanged) = 0;
     virtual void PropertyPresentationUrl(std::string& aPresentationUrl) const = 0;

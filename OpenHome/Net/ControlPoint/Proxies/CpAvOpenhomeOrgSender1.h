@@ -23,19 +23,19 @@ class ICpProxyAvOpenhomeOrgSender1
 {
 public:
     virtual void SyncPresentationUrl(Brh& aValue) = 0;
-    virtual void BeginPresentationUrl( FunctorAsync& aFunctor) = 0;
+    virtual void BeginPresentationUrl(FunctorAsync& aFunctor) = 0;
     virtual void EndPresentationUrl(IAsync& aAsync, Brh& aValue) = 0;
     virtual void SyncMetadata(Brh& aValue) = 0;
-    virtual void BeginMetadata( FunctorAsync& aFunctor) = 0;
+    virtual void BeginMetadata(FunctorAsync& aFunctor) = 0;
     virtual void EndMetadata(IAsync& aAsync, Brh& aValue) = 0;
     virtual void SyncAudio(TBool& aValue) = 0;
-    virtual void BeginAudio( FunctorAsync& aFunctor) = 0;
+    virtual void BeginAudio(FunctorAsync& aFunctor) = 0;
     virtual void EndAudio(IAsync& aAsync, TBool& aValue) = 0;
     virtual void SyncStatus(Brh& aValue) = 0;
-    virtual void BeginStatus( FunctorAsync& aFunctor) = 0;
+    virtual void BeginStatus(FunctorAsync& aFunctor) = 0;
     virtual void EndStatus(IAsync& aAsync, Brh& aValue) = 0;
     virtual void SyncAttributes(Brh& aValue) = 0;
-    virtual void BeginAttributes( FunctorAsync& aFunctor) = 0;
+    virtual void BeginAttributes(FunctorAsync& aFunctor) = 0;
     virtual void EndAttributes(IAsync& aAsync, Brh& aValue) = 0;
     virtual void SetPropertyPresentationUrlChanged(Functor& aPresentationUrlChanged) = 0;
     virtual void PropertyPresentationUrl(Brhz& aPresentationUrl) const = 0;
