@@ -19,11 +19,37 @@ class PropertyInt;
 class PropertyString;
 class PropertyUint;
 
+class ICpProxyUpnpOrgConnectionManager1
+{
+public:
+    virtual void SyncGetProtocolInfo(Brh& aSource, Brh& aSink) = 0;
+    virtual void BeginGetProtocolInfo( FunctorAsync& aFunctor) = 0;
+    virtual void EndGetProtocolInfo(IAsync& aAsync, Brh& aSource, Brh& aSink) = 0;
+    virtual void SyncPrepareForConnection(const Brx& aRemoteProtocolInfo, const Brx& aPeerConnectionManager, TInt aPeerConnectionID, const Brx& aDirection, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID) = 0;
+    virtual void BeginPrepareForConnection(const Brx& aRemoteProtocolInfo, const Brx& aPeerConnectionManager, TInt aPeerConnectionID, const Brx& aDirection,  FunctorAsync& aFunctor) = 0;
+    virtual void EndPrepareForConnection(IAsync& aAsync, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID) = 0;
+    virtual void SyncConnectionComplete(TInt aConnectionID) = 0;
+    virtual void BeginConnectionComplete(TInt aConnectionID,  FunctorAsync& aFunctor) = 0;
+    virtual void EndConnectionComplete(IAsync& aAsync) = 0;
+    virtual void SyncGetCurrentConnectionIDs(Brh& aConnectionIDs) = 0;
+    virtual void BeginGetCurrentConnectionIDs( FunctorAsync& aFunctor) = 0;
+    virtual void EndGetCurrentConnectionIDs(IAsync& aAsync, Brh& aConnectionIDs) = 0;
+    virtual void SyncGetCurrentConnectionInfo(TInt aConnectionID, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus) = 0;
+    virtual void BeginGetCurrentConnectionInfo(TInt aConnectionID,  FunctorAsync& aFunctor) = 0;
+    virtual void EndGetCurrentConnectionInfo(IAsync& aAsync, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus) = 0;
+    virtual void SetPropertySourceProtocolInfoChanged(Functor& aSourceProtocolInfoChanged) = 0;
+    virtual void PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const = 0;
+    virtual void SetPropertySinkProtocolInfoChanged(Functor& aSinkProtocolInfoChanged) = 0;
+    virtual void PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const = 0;
+    virtual void SetPropertyCurrentConnectionIDsChanged(Functor& aCurrentConnectionIDsChanged) = 0;
+    virtual void PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const = 0;
+};
+
 /**
  * Proxy for upnp.org:ConnectionManager:1
  * @ingroup Proxies
  */
-class CpProxyUpnpOrgConnectionManager1 : public CpProxy
+class CpProxyUpnpOrgConnectionManager1 : public CpProxy, public ICpProxyUpnpOrgConnectionManager1
 {
 public:
     /**
