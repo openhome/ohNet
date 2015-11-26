@@ -52,14 +52,26 @@ private:
 #define THROW_PROXYERROR(level, code)   throw(ProxyError(__FILE__, __LINE__, (level), (code)))
 
 
+class ICpProxy
+{
+public:
+    virtual ~ICpProxy() {}
+    virtual void Subscribe() = 0;
+    virtual void Unsubscribe() = 0;
+    virtual void SetPropertyChanged(Functor& aFunctor) = 0;
+    virtual void SetPropertyInitialEvent(Functor& aFunctor) = 0;
+    virtual TUint Version() const = 0;
+};
+
 /**
  * Base class for all proxies
  * @ingroup ControlPoint
  */
-class DllExportClass CpProxy : private IEventProcessor
+class DllExportClass CpProxy : public ICpProxy, private IEventProcessor
 {
 public:
     DllExport virtual ~CpProxy();
+public: // from ICpProxy
     /**
      * Subscribe to notification of changes in state variables.
      * Use SetProperty[stateVarName]Changed() to register a callback on change
