@@ -52,6 +52,9 @@ public:
     static double ToDouble(TInt32 aVal, TUint aScale);
     static void ToDouble(const Brx& aInput, double* aOutput, TUint aScale);
 
+    //static TBool OverflowCheckAdd(TInt32 aX, TInt32 aY);
+    //static TBool OverflowCheckMult(TInt32 aX, TInt32 aY);
+
 
 private:
     //OpenHome::Environment& iEnv;

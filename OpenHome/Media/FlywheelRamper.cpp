@@ -8,16 +8,16 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace std;
 
-// 2 and 5
 
-static const TUint kDataScaleShift = 2;
-static const TUint kFeedbackDataFormat = kDataScaleShift+1;
-static const TUint kBurgOutputFormat = 5;  // 4 gives better (less overflows) but divbyzero!
+static const TUint kBurgDataDescaleBitCount = 4;
+static const TUint kFeedbackDataDescaleBitCount = 0;
+static const TUint kFeedbackDataFormat = kBurgDataDescaleBitCount+1;
+static const TUint kBurgOutputFormat = 4;  // 4 gives better (less overflows) but divbyzero!
 static const TUint kBurgScaleShift = 16-kBurgOutputFormat;
 static const TUint kDegree = 3;
 
-static const TUint kMaxChannelCount = 8;
 
+static const TUint kMaxChannelCount = 8;
 static const TUint kMaxSampleRate = 192000;
 static const TUint kMaxRampJiffiesBlockSize = Jiffies::kPerMs; // 1ms
 
@@ -174,7 +174,7 @@ FlywheelRamper::FlywheelRamper(/*OpenHome::Environment& aEnv,*/TUint aGenJiffies
     :/*iEnv(aEnv)
     ,*/iGenJiffies(aGenJiffies)
     ,iDegree(kDegree)
-    ,iFeedback(new FeedbackModel(iDegree, 0, kBurgOutputFormat, kFeedbackDataFormat, 1))
+    ,iFeedback(new FeedbackModel(iDegree, kFeedbackDataDescaleBitCount, kBurgOutputFormat, kFeedbackDataFormat, 1))
     ,iMaxGenSampleCount(SampleCount(kMaxSampleRate, iGenJiffies))
 {
     iGenSamples = (TInt16*) calloc (iMaxGenSampleCount, sizeof(TInt16));
@@ -245,7 +245,7 @@ void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
         sample += (TUint16) (*(bufPtr+1));
         bufPtr += ptrInc;
 
-        *(iGenSampPtr++) = ((TInt16)(sample))>>kDataScaleShift;
+        *(iGenSampPtr++) = ((TInt16)(sample))>>kBurgDataDescaleBitCount;
         //*(iFpGenSampPtr++) = ToDouble(((TInt32)sample)<<16, 1);
     }
 
@@ -304,12 +304,25 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
 
         for (TUint j=0; j < limit1; j++)
         {
+            //ASSERT(OverflowCheckAdd(aSamples[j+n+1], aPef[j]));
+            //ASSERT(OverflowCheckAdd(aSamples[j], aPer[j]));
+
             TInt16 t1 =  (aSamples[j+n+1] + aPef[j]);  // 1.15 + 1.15
             TInt16 t2 =  (aSamples[j] + aPer[j]);
+
+            //ASSERT(OverflowCheckMult(t1, t1));
+            //ASSERT(OverflowCheckMult(t2, t2));
+            //ASSERT(OverflowCheckMult(t1, t2));
 
             TInt32 t1t1 = (TInt32)t1*(TInt32)t1;  // 2.30
             TInt32 t2t2 = (TInt32)t2*(TInt32)t2;
             TInt32 t1t2 = (TInt32)t1*(TInt32)t2;
+
+            //ASSERT(OverflowCheckMult(2, t1t2));
+            //ASSERT(OverflowCheckAdd(t1t1, t2t2));
+            //ASSERT(OverflowCheckAdd(sn, -(2*t2t2)));
+            //ASSERT(OverflowCheckAdd(sd, (t2t2+t1t1) ) );
+
 
             sn -= (2*t1t2);  // 2.30
             sd += t1t1 + t2t2; // 2.30
@@ -319,22 +332,11 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
 
         TInt16 t3 = 0;
 
-
-        TInt32 sdShift = (sd>>kBurgScaleShift);
-
-        if (sdShift==0)
+        if (sn!=0)
         {
-            Log::Print(" div by zero !!! \n");
-        }
-
-
-        if ( (sn!=0) && (sdShift!=0))
-        {
-            TInt32 ratio = sn/sdShift; // 20.12
+            TInt64 ratio = (((TInt64)sn)<<kBurgScaleShift)/(TInt64)sd; // 32.12
             t3 = (TInt16) (ratio);
-            //Log::Print(" sn=%08lx  sd=%08lx  (%08lx)  ratio=%08lx  t3=%04x (%f) \n", sn , sd, sdShift, ratio, t3, ToDouble(((TInt32)t3)<<16, kBurgOutputFormat) );
         }
-
 
         aOutput[n] = t3; // 4.12
 
@@ -342,8 +344,10 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
         {
             for (TUint j=0; j < n; j++)
             {
+                //ASSERT(OverflowCheckMult(t3, aOutput[n-j-1]));
                 TInt32 prod = ( t3 * aOutput[n-j-1] );  // 4.12 + 4.12
                 aH[j] = (TInt16)(prod>>kBurgScaleShift); // 8.24 >  4.12
+                //ASSERT(OverflowCheckAdd(aH[j], aOutput[j]));
                 aH[j] += aOutput[j];
             }
 
@@ -365,13 +369,19 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
         for (TUint j = 0; j < limit2; j++)
         {
             TUint i = j+1;
+            //ASSERT(OverflowCheckAdd(aPef[j], aSamples[i+n]));
             TInt32 per = aPef[j] + aSamples[i+n];  // 1.15 + 1.15
+            //ASSERT(OverflowCheckMult(per, t3));
             per *= t3;  // +4.12 = 5.27
+            //ASSERT(OverflowCheckAdd(aPer[j], (per>>kBurgScaleShift)));
             aPer[j] += (TInt16)(per>>kBurgScaleShift); //  5.27 > 1.15
 
+            //ASSERT(OverflowCheckAdd(aPer[j], aSamples[i]));
             TInt32 pef = aPer[i] + aSamples[i]; // 1.15 + 1.15
+            //ASSERT(OverflowCheckMult(pef, t3));
             pef *= t3; // +4.12 = 5.27
             aPef[j] = (TInt16)(pef>>kBurgScaleShift); //  5.27 > 1.15 (>>12 = >>(16-4) = >>(16-kBurgOutputFormat))
+            //ASSERT(OverflowCheckAdd(aPef[j], aPef[i]));
             aPef[j] += aPef[i];
         }
     }
@@ -387,7 +397,34 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
 */
 }
 
+/*
+TBool FlywheelRamper::OverflowCheckAdd(TInt32 aX, TInt32 aY)
+{
+    TInt32 xTest = aX + aY;
 
+    if((xTest-aX) != aY)
+    {
+        return(false);
+    }
+    return(true);
+}
+
+TBool FlywheelRamper::OverflowCheckMult(TInt32 aX, TInt32 aY)
+{
+    TInt32 xTest = aX * aY;
+
+    if (xTest==0)
+    {
+        return(true);
+    }
+
+    if ((xTest/aX) != aY)
+    {
+        return(false);
+    }
+    return(true);
+}
+*/
 
 void FlywheelRamper::BurgsMethod(double *inputseries, TUint length, TUint degree, double *g, double *h, double *per, double *pef)
 {
@@ -560,10 +597,6 @@ FeedbackModel::FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint 
     ,iDataScaleBitCount(aDataScaleBitCount)
     ,iScaleShiftForProduct(aCoeffFormat+iDataScaleBitCount)
     ,iScaleShiftForOutput(aDataFormat-aOutputFormat)
-/*
-    ,iScaleShiftForProduct(aCoeffFormat)
-    ,iScaleShiftForOutput(aDataFormat+iDataScaleBitCount-aOutputFormat)
-*/
 {
     //Log::Print("FeedbackModel  iScaleShiftForProduct=%d  iScaleShiftForOutput=%d \n", iScaleShiftForProduct, iScaleShiftForOutput);
 }
@@ -606,10 +639,15 @@ TInt32 FeedbackModel::NextSample()
         TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
         TInt32 sample = (iSamples[j]>>iDataScaleBitCount);;
 
+        //FlywheelRamper::OverflowCheckMult(sample, coeff);
+
         TInt64 product = ((TInt64)sample) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (13.51 with >>8 data  scaling etc)
         //Log::Print("sample=%08x  coeff=%08x  product = %016lx  \n", sample, coeff, product);
+
         TInt32 prod = (TInt32)(product>>32);
+        //FlywheelRamper::OverflowCheckAdd(sum, prod);
         sum += prod;   // 5.27
+
         //Log::Print("prod = %08lx   new sum = %08lx \n", prod, sum);
     }
 

@@ -42,7 +42,12 @@ kExcludes     = ['\\thirdparty\\',
                  'Test 9: TestSeekForwardFailStillSeeks',
                  'Failed to recognise audio format (iStreamStopped',
                  'Upnp error reporting tests',
-                 '0 of']
+                 '0 of',
+                 "['valgrind', '--error-exitcode=255'",
+                 'Memcheck; a memory error detector',
+                 'ERROR SUMMARY: 0 errors from',
+                 'For counts of detected and suppressed errors',
+                 '']
 
 class BuildOhmp( BASE.BaseTest ):
 
