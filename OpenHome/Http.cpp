@@ -1224,7 +1224,7 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
 
 TUint HttpReader::ConnectAndProcessHeader(const Uri& aUri)
 {
-    Uri uri(aUri);
+    Uri uri(aUri.AbsoluteUri());
     TUint code = 0;
 
     iDechunker.SetChunked(false);

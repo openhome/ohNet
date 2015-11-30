@@ -12,7 +12,7 @@ namespace OpenHome {
 
 class IWriter;
 
-class Uri
+class Uri : private INonCopyable
 {
 public:
     explicit Uri();
