@@ -177,6 +177,7 @@ public:
     ~StoreInt();
     TInt Get() const;
     void Set(TInt aValue); // owning class knows limits
+    static void Write(const Brx& aKey, TInt aValue, Configuration::IStoreReadWrite& aStore);
 private: // from StoreVal
     void PowerUp() override;
 private: // from StoreVal
