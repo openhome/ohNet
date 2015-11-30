@@ -39,6 +39,23 @@ public:
     virtual void Cancel() = 0;
 };
 
+class ITimerFactory
+{
+public:
+    virtual ~ITimerFactory() {}
+    virtual ITimer* CreateTimer(Functor aCallback, const TChar* aId) = 0;
+};
+
+class TimerFactory : public ITimerFactory, private OpenHome::INonCopyable
+{
+public:
+    TimerFactory(Environment& aEnv);
+public: // from ITimerFactory
+    ITimer* CreateTimer(Functor aCallback, const TChar* aId);
+private:
+    Environment& iEnv;
+};
+
 class Timer : public QueueSortedEntryTimer, public ITimer
 {
     friend class TimerManager;

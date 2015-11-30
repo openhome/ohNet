@@ -87,7 +87,7 @@ void SuiteHttpReader::Test1()
 
 void TestHttpReader(Environment& aEnv)
 {
-    Debug::SetLevel(Debug::kNone);
+    Debug::SetLevel(Debug::kError);
     Runner runner("HttpReader tests\n");
     runner.Add(new SuiteHttpReader(aEnv));
     runner.Run();

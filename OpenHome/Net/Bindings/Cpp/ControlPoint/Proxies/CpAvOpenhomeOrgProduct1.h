@@ -20,11 +20,91 @@ class PropertyInt;
 class PropertyString;
 class PropertyUint;
 
+class ICpProxyAvOpenhomeOrgProduct1Cpp
+{
+public:
+    virtual void SyncManufacturer(std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
+    virtual void BeginManufacturer(FunctorAsync& aFunctor) = 0;
+    virtual void EndManufacturer(IAsync& aAsync, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
+    virtual void SyncModel(std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
+    virtual void BeginModel(FunctorAsync& aFunctor) = 0;
+    virtual void EndModel(IAsync& aAsync, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
+    virtual void SyncProduct(std::string& aRoom, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
+    virtual void BeginProduct(FunctorAsync& aFunctor) = 0;
+    virtual void EndProduct(IAsync& aAsync, std::string& aRoom, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
+    virtual void SyncStandby(bool& aValue) = 0;
+    virtual void BeginStandby(FunctorAsync& aFunctor) = 0;
+    virtual void EndStandby(IAsync& aAsync, bool& aValue) = 0;
+    virtual void SyncSetStandby(bool aValue) = 0;
+    virtual void BeginSetStandby(bool aValue, FunctorAsync& aFunctor) = 0;
+    virtual void EndSetStandby(IAsync& aAsync) = 0;
+    virtual void SyncSourceCount(uint32_t& aValue) = 0;
+    virtual void BeginSourceCount(FunctorAsync& aFunctor) = 0;
+    virtual void EndSourceCount(IAsync& aAsync, uint32_t& aValue) = 0;
+    virtual void SyncSourceXml(std::string& aValue) = 0;
+    virtual void BeginSourceXml(FunctorAsync& aFunctor) = 0;
+    virtual void EndSourceXml(IAsync& aAsync, std::string& aValue) = 0;
+    virtual void SyncSourceIndex(uint32_t& aValue) = 0;
+    virtual void BeginSourceIndex(FunctorAsync& aFunctor) = 0;
+    virtual void EndSourceIndex(IAsync& aAsync, uint32_t& aValue) = 0;
+    virtual void SyncSetSourceIndex(uint32_t aValue) = 0;
+    virtual void BeginSetSourceIndex(uint32_t aValue, FunctorAsync& aFunctor) = 0;
+    virtual void EndSetSourceIndex(IAsync& aAsync) = 0;
+    virtual void SyncSetSourceIndexByName(const std::string& aValue) = 0;
+    virtual void BeginSetSourceIndexByName(const std::string& aValue, FunctorAsync& aFunctor) = 0;
+    virtual void EndSetSourceIndexByName(IAsync& aAsync) = 0;
+    virtual void SyncSource(uint32_t aIndex, std::string& aSystemName, std::string& aType, std::string& aName, bool& aVisible) = 0;
+    virtual void BeginSource(uint32_t aIndex, FunctorAsync& aFunctor) = 0;
+    virtual void EndSource(IAsync& aAsync, std::string& aSystemName, std::string& aType, std::string& aName, bool& aVisible) = 0;
+    virtual void SyncAttributes(std::string& aValue) = 0;
+    virtual void BeginAttributes(FunctorAsync& aFunctor) = 0;
+    virtual void EndAttributes(IAsync& aAsync, std::string& aValue) = 0;
+    virtual void SyncSourceXmlChangeCount(uint32_t& aValue) = 0;
+    virtual void BeginSourceXmlChangeCount(FunctorAsync& aFunctor) = 0;
+    virtual void EndSourceXmlChangeCount(IAsync& aAsync, uint32_t& aValue) = 0;
+    virtual void SetPropertyManufacturerNameChanged(Functor& aManufacturerNameChanged) = 0;
+    virtual void PropertyManufacturerName(std::string& aManufacturerName) const = 0;
+    virtual void SetPropertyManufacturerInfoChanged(Functor& aManufacturerInfoChanged) = 0;
+    virtual void PropertyManufacturerInfo(std::string& aManufacturerInfo) const = 0;
+    virtual void SetPropertyManufacturerUrlChanged(Functor& aManufacturerUrlChanged) = 0;
+    virtual void PropertyManufacturerUrl(std::string& aManufacturerUrl) const = 0;
+    virtual void SetPropertyManufacturerImageUriChanged(Functor& aManufacturerImageUriChanged) = 0;
+    virtual void PropertyManufacturerImageUri(std::string& aManufacturerImageUri) const = 0;
+    virtual void SetPropertyModelNameChanged(Functor& aModelNameChanged) = 0;
+    virtual void PropertyModelName(std::string& aModelName) const = 0;
+    virtual void SetPropertyModelInfoChanged(Functor& aModelInfoChanged) = 0;
+    virtual void PropertyModelInfo(std::string& aModelInfo) const = 0;
+    virtual void SetPropertyModelUrlChanged(Functor& aModelUrlChanged) = 0;
+    virtual void PropertyModelUrl(std::string& aModelUrl) const = 0;
+    virtual void SetPropertyModelImageUriChanged(Functor& aModelImageUriChanged) = 0;
+    virtual void PropertyModelImageUri(std::string& aModelImageUri) const = 0;
+    virtual void SetPropertyProductRoomChanged(Functor& aProductRoomChanged) = 0;
+    virtual void PropertyProductRoom(std::string& aProductRoom) const = 0;
+    virtual void SetPropertyProductNameChanged(Functor& aProductNameChanged) = 0;
+    virtual void PropertyProductName(std::string& aProductName) const = 0;
+    virtual void SetPropertyProductInfoChanged(Functor& aProductInfoChanged) = 0;
+    virtual void PropertyProductInfo(std::string& aProductInfo) const = 0;
+    virtual void SetPropertyProductUrlChanged(Functor& aProductUrlChanged) = 0;
+    virtual void PropertyProductUrl(std::string& aProductUrl) const = 0;
+    virtual void SetPropertyProductImageUriChanged(Functor& aProductImageUriChanged) = 0;
+    virtual void PropertyProductImageUri(std::string& aProductImageUri) const = 0;
+    virtual void SetPropertyStandbyChanged(Functor& aStandbyChanged) = 0;
+    virtual void PropertyStandby(bool& aStandby) const = 0;
+    virtual void SetPropertySourceIndexChanged(Functor& aSourceIndexChanged) = 0;
+    virtual void PropertySourceIndex(uint32_t& aSourceIndex) const = 0;
+    virtual void SetPropertySourceCountChanged(Functor& aSourceCountChanged) = 0;
+    virtual void PropertySourceCount(uint32_t& aSourceCount) const = 0;
+    virtual void SetPropertySourceXmlChanged(Functor& aSourceXmlChanged) = 0;
+    virtual void PropertySourceXml(std::string& aSourceXml) const = 0;
+    virtual void SetPropertyAttributesChanged(Functor& aAttributesChanged) = 0;
+    virtual void PropertyAttributes(std::string& aAttributes) const = 0;
+};
+
 /**
  * Proxy for av.openhome.org:Product:1
  * @ingroup Proxies
  */
-class CpProxyAvOpenhomeOrgProduct1Cpp : public CpProxy
+class CpProxyAvOpenhomeOrgProduct1Cpp : public CpProxy, public ICpProxyAvOpenhomeOrgProduct1Cpp
 {
 public:
     /**

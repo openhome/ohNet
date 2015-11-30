@@ -19,11 +19,28 @@ class PropertyInt;
 class PropertyString;
 class PropertyUint;
 
+class ICpProxyOpenhomeOrgSubscriptionLongPoll1
+{
+public:
+    virtual void SyncSubscribe(const Brx& aClientId, const Brx& aUdn, const Brx& aService, TUint aRequestedDuration, Brh& aSid, TUint& aDuration) = 0;
+    virtual void BeginSubscribe(const Brx& aClientId, const Brx& aUdn, const Brx& aService, TUint aRequestedDuration, FunctorAsync& aFunctor) = 0;
+    virtual void EndSubscribe(IAsync& aAsync, Brh& aSid, TUint& aDuration) = 0;
+    virtual void SyncUnsubscribe(const Brx& aSid) = 0;
+    virtual void BeginUnsubscribe(const Brx& aSid, FunctorAsync& aFunctor) = 0;
+    virtual void EndUnsubscribe(IAsync& aAsync) = 0;
+    virtual void SyncRenew(const Brx& aSid, TUint aRequestedDuration, TUint& aDuration) = 0;
+    virtual void BeginRenew(const Brx& aSid, TUint aRequestedDuration, FunctorAsync& aFunctor) = 0;
+    virtual void EndRenew(IAsync& aAsync, TUint& aDuration) = 0;
+    virtual void SyncGetPropertyUpdates(const Brx& aClientId, Brh& aUpdates) = 0;
+    virtual void BeginGetPropertyUpdates(const Brx& aClientId, FunctorAsync& aFunctor) = 0;
+    virtual void EndGetPropertyUpdates(IAsync& aAsync, Brh& aUpdates) = 0;
+};
+
 /**
  * Proxy for openhome.org:SubscriptionLongPoll:1
  * @ingroup Proxies
  */
-class CpProxyOpenhomeOrgSubscriptionLongPoll1 : public CpProxy
+class CpProxyOpenhomeOrgSubscriptionLongPoll1 : public CpProxy, public ICpProxyOpenhomeOrgSubscriptionLongPoll1
 {
 public:
     /**

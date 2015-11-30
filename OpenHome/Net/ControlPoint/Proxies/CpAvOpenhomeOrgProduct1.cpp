@@ -7,16 +7,14 @@
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
 
-using namespace OpenHome;
-using namespace OpenHome::Net;
-
+namespace OpenHome {
+namespace Net {
 
 class SyncManufacturerAvOpenhomeOrgProduct1 : public SyncProxyAction
 {
 public:
     SyncManufacturerAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
     virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncManufacturerAvOpenhomeOrgProduct1() {}
 private:
     CpProxyAvOpenhomeOrgProduct1& iService;
     Brh& iName;
@@ -24,6 +22,143 @@ private:
     Brh& iUrl;
     Brh& iImageUri;
 };
+
+class SyncModelAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncModelAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    Brh& iName;
+    Brh& iInfo;
+    Brh& iUrl;
+    Brh& iImageUri;
+};
+
+class SyncProductAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncProductAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aRoom, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    Brh& iRoom;
+    Brh& iName;
+    Brh& iInfo;
+    Brh& iUrl;
+    Brh& iImageUri;
+};
+
+class SyncStandbyAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TBool& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    TBool& iValue;
+};
+
+class SyncSetStandbyAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSetStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+};
+
+class SyncSourceCountAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSourceCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    TUint& iValue;
+};
+
+class SyncSourceXmlAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSourceXmlAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    Brh& iValue;
+};
+
+class SyncSourceIndexAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    TUint& iValue;
+};
+
+class SyncSetSourceIndexAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSetSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+};
+
+class SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+};
+
+class SyncSourceAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSourceAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aSystemName, Brh& aType, Brh& aName, TBool& aVisible);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    Brh& iSystemName;
+    Brh& iType;
+    Brh& iName;
+    TBool& iVisible;
+};
+
+class SyncAttributesAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncAttributesAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    Brh& iValue;
+};
+
+class SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 : public SyncProxyAction
+{
+public:
+    SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgProduct1& iService;
+    TUint& iValue;
+};
+
+} // namespace Net
+} // namespace OpenHome
+
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+
+
+// SyncManufacturerAvOpenhomeOrgProduct1
 
 SyncManufacturerAvOpenhomeOrgProduct1::SyncManufacturerAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri)
     : iService(aProxy)
@@ -39,20 +174,7 @@ void SyncManufacturerAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndManufacturer(aAsync, iName, iInfo, iUrl, iImageUri);
 }
 
-
-class SyncModelAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncModelAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncModelAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    Brh& iName;
-    Brh& iInfo;
-    Brh& iUrl;
-    Brh& iImageUri;
-};
+// SyncModelAvOpenhomeOrgProduct1
 
 SyncModelAvOpenhomeOrgProduct1::SyncModelAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri)
     : iService(aProxy)
@@ -68,21 +190,7 @@ void SyncModelAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndModel(aAsync, iName, iInfo, iUrl, iImageUri);
 }
 
-
-class SyncProductAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncProductAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aRoom, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncProductAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    Brh& iRoom;
-    Brh& iName;
-    Brh& iInfo;
-    Brh& iUrl;
-    Brh& iImageUri;
-};
+// SyncProductAvOpenhomeOrgProduct1
 
 SyncProductAvOpenhomeOrgProduct1::SyncProductAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aRoom, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri)
     : iService(aProxy)
@@ -99,17 +207,7 @@ void SyncProductAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndProduct(aAsync, iRoom, iName, iInfo, iUrl, iImageUri);
 }
 
-
-class SyncStandbyAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TBool& aValue);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncStandbyAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    TBool& iValue;
-};
+// SyncStandbyAvOpenhomeOrgProduct1
 
 SyncStandbyAvOpenhomeOrgProduct1::SyncStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TBool& aValue)
     : iService(aProxy)
@@ -122,16 +220,7 @@ void SyncStandbyAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndStandby(aAsync, iValue);
 }
 
-
-class SyncSetStandbyAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSetStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSetStandbyAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-};
+// SyncSetStandbyAvOpenhomeOrgProduct1
 
 SyncSetStandbyAvOpenhomeOrgProduct1::SyncSetStandbyAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy)
     : iService(aProxy)
@@ -143,17 +232,7 @@ void SyncSetStandbyAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndSetStandby(aAsync);
 }
 
-
-class SyncSourceCountAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSourceCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSourceCountAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    TUint& iValue;
-};
+// SyncSourceCountAvOpenhomeOrgProduct1
 
 SyncSourceCountAvOpenhomeOrgProduct1::SyncSourceCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue)
     : iService(aProxy)
@@ -166,17 +245,7 @@ void SyncSourceCountAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndSourceCount(aAsync, iValue);
 }
 
-
-class SyncSourceXmlAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSourceXmlAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSourceXmlAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    Brh& iValue;
-};
+// SyncSourceXmlAvOpenhomeOrgProduct1
 
 SyncSourceXmlAvOpenhomeOrgProduct1::SyncSourceXmlAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue)
     : iService(aProxy)
@@ -189,17 +258,7 @@ void SyncSourceXmlAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndSourceXml(aAsync, iValue);
 }
 
-
-class SyncSourceIndexAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSourceIndexAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    TUint& iValue;
-};
+// SyncSourceIndexAvOpenhomeOrgProduct1
 
 SyncSourceIndexAvOpenhomeOrgProduct1::SyncSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue)
     : iService(aProxy)
@@ -212,16 +271,7 @@ void SyncSourceIndexAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndSourceIndex(aAsync, iValue);
 }
 
-
-class SyncSetSourceIndexAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSetSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSetSourceIndexAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-};
+// SyncSetSourceIndexAvOpenhomeOrgProduct1
 
 SyncSetSourceIndexAvOpenhomeOrgProduct1::SyncSetSourceIndexAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy)
     : iService(aProxy)
@@ -233,16 +283,7 @@ void SyncSetSourceIndexAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndSetSourceIndex(aAsync);
 }
 
-
-class SyncSetSourceIndexByNameAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSetSourceIndexByNameAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-};
+// SyncSetSourceIndexByNameAvOpenhomeOrgProduct1
 
 SyncSetSourceIndexByNameAvOpenhomeOrgProduct1::SyncSetSourceIndexByNameAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy)
     : iService(aProxy)
@@ -254,20 +295,7 @@ void SyncSetSourceIndexByNameAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsy
     iService.EndSetSourceIndexByName(aAsync);
 }
 
-
-class SyncSourceAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSourceAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aSystemName, Brh& aType, Brh& aName, TBool& aVisible);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSourceAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    Brh& iSystemName;
-    Brh& iType;
-    Brh& iName;
-    TBool& iVisible;
-};
+// SyncSourceAvOpenhomeOrgProduct1
 
 SyncSourceAvOpenhomeOrgProduct1::SyncSourceAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aSystemName, Brh& aType, Brh& aName, TBool& aVisible)
     : iService(aProxy)
@@ -283,17 +311,7 @@ void SyncSourceAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndSource(aAsync, iSystemName, iType, iName, iVisible);
 }
 
-
-class SyncAttributesAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncAttributesAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncAttributesAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    Brh& iValue;
-};
+// SyncAttributesAvOpenhomeOrgProduct1
 
 SyncAttributesAvOpenhomeOrgProduct1::SyncAttributesAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, Brh& aValue)
     : iService(aProxy)
@@ -306,17 +324,7 @@ void SyncAttributesAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsync)
     iService.EndAttributes(aAsync, iValue);
 }
 
-
-class SyncSourceXmlChangeCountAvOpenhomeOrgProduct1 : public SyncProxyAction
-{
-public:
-    SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue);
-    virtual void CompleteRequest(IAsync& aAsync);
-    virtual ~SyncSourceXmlChangeCountAvOpenhomeOrgProduct1() {}
-private:
-    CpProxyAvOpenhomeOrgProduct1& iService;
-    TUint& iValue;
-};
+// SyncSourceXmlChangeCountAvOpenhomeOrgProduct1
 
 SyncSourceXmlChangeCountAvOpenhomeOrgProduct1::SyncSourceXmlChangeCountAvOpenhomeOrgProduct1(CpProxyAvOpenhomeOrgProduct1& aProxy, TUint& aValue)
     : iService(aProxy)
@@ -329,6 +337,8 @@ void SyncSourceXmlChangeCountAvOpenhomeOrgProduct1::CompleteRequest(IAsync& aAsy
     iService.EndSourceXmlChangeCount(aAsync, iValue);
 }
 
+
+// CpProxyAvOpenhomeOrgProduct1
 
 CpProxyAvOpenhomeOrgProduct1::CpProxyAvOpenhomeOrgProduct1(CpDevice& aDevice)
     : CpProxy("av-openhome-org", "Product", 1, aDevice.Device())

@@ -20,11 +20,28 @@ class PropertyInt;
 class PropertyString;
 class PropertyUint;
 
+class ICpProxyOpenhomeOrgSubscriptionLongPoll1Cpp
+{
+public:
+    virtual void SyncSubscribe(const std::string& aClientId, const std::string& aUdn, const std::string& aService, uint32_t aRequestedDuration, std::string& aSid, uint32_t& aDuration) = 0;
+    virtual void BeginSubscribe(const std::string& aClientId, const std::string& aUdn, const std::string& aService, uint32_t aRequestedDuration, FunctorAsync& aFunctor) = 0;
+    virtual void EndSubscribe(IAsync& aAsync, std::string& aSid, uint32_t& aDuration) = 0;
+    virtual void SyncUnsubscribe(const std::string& aSid) = 0;
+    virtual void BeginUnsubscribe(const std::string& aSid, FunctorAsync& aFunctor) = 0;
+    virtual void EndUnsubscribe(IAsync& aAsync) = 0;
+    virtual void SyncRenew(const std::string& aSid, uint32_t aRequestedDuration, uint32_t& aDuration) = 0;
+    virtual void BeginRenew(const std::string& aSid, uint32_t aRequestedDuration, FunctorAsync& aFunctor) = 0;
+    virtual void EndRenew(IAsync& aAsync, uint32_t& aDuration) = 0;
+    virtual void SyncGetPropertyUpdates(const std::string& aClientId, std::string& aUpdates) = 0;
+    virtual void BeginGetPropertyUpdates(const std::string& aClientId, FunctorAsync& aFunctor) = 0;
+    virtual void EndGetPropertyUpdates(IAsync& aAsync, std::string& aUpdates) = 0;
+};
+
 /**
  * Proxy for openhome.org:SubscriptionLongPoll:1
  * @ingroup Proxies
  */
-class CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp : public CpProxy
+class CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp : public CpProxy, public ICpProxyOpenhomeOrgSubscriptionLongPoll1Cpp
 {
 public:
     /**

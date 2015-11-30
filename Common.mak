@@ -437,8 +437,8 @@ ohNet: proxies devices
 
 TestFramework: $(libprefix)TestFramework.$(libext)
 
-$(libprefix)TestFramework.$(libext): $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext)
-	$(ar)$(libprefix)TestFramework.$(libext) $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext)
+$(libprefix)TestFramework.$(libext): $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext) $(objdir)TimerFactoryMock.$(objext)
+	$(ar)$(libprefix)TestFramework.$(libext) $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext) $(objdir)TimerFactoryMock.$(objext)
 $(objdir)TestFramework.$(objext) : OpenHome/TestFramework/TestFramework.cpp $(headers)
 	$(compiler)TestFramework.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/TestFramework.cpp
 $(objdir)Main.$(objext) : Os/$(osdir)/Main.cpp $(headers)
@@ -447,6 +447,8 @@ $(objdir)OptionParser.$(objext) : OpenHome/TestFramework/OptionParser.cpp $(head
 	$(compiler)OptionParser.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/OptionParser.cpp
 $(objdir)SuiteUnitTest.$(objext) : OpenHome/TestFramework/SuiteUnitTest.cpp $(headers)
 	$(compiler)SuiteUnitTest.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/SuiteUnitTest.cpp
+$(objdir)TimerFactoryMock.$(objext) : OpenHome/TestFramework/TimerFactoryMock.cpp $(headers)
+	$(compiler)TimerFactoryMock.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/TimerFactoryMock.cpp
 
 
 TestBuffer: $(objdir)TestBuffer.$(exeext) 
@@ -556,6 +558,14 @@ $(objdir)TestTimer.$(objext) : OpenHome/Tests/TestTimer.cpp $(headers)
 	$(compiler)TestTimer.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTimer.cpp
 $(objdir)TestTimerMain.$(objext) : OpenHome/Tests/TestTimerMain.cpp $(headers)
 	$(compiler)TestTimerMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTimerMain.cpp
+
+TestTimerMock: $(objdir)TestTimerMock.$(exeext)
+$(objdir)TestTimerMock.$(exeext) :  ohNetCore $(objdir)TestTimerMock.$(objext) $(objdir)TestTimerMockMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTimerMock.$(exeext) $(objdir)TestTimerMockMain.$(objext) $(objdir)TestTimerMock.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestTimerMock.$(objext) : OpenHome/Tests/TestTimerMock.cpp $(headers)
+	$(compiler)TestTimerMock.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTimerMock.cpp
+$(objdir)TestTimerMockMain.$(objext) : OpenHome/Tests/TestTimerMockMain.cpp $(headers)
+	$(compiler)TestTimerMockMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestTimerMockMain.cpp
 
 TestHttpReader: $(objdir)TestHttpReader.$(exeext)
 $(objdir)TestHttpReader.$(exeext) :  ohNetCore $(objdir)TestHttpReader.$(objext) $(objdir)TestHttpReaderMain.$(objext) $(libprefix)TestFramework.$(libext)
@@ -809,6 +819,7 @@ tests_core = \
 	$(objdir)TestTextUtils.$(objext) \
 	$(objdir)TestNetwork.$(objext) \
 	$(objdir)TestTimer.$(objext) \
+	$(objdir)TestTimerMock.$(objext) \
 	$(objdir)TestSsdpMListen.$(objext) \
 	$(objdir)TestSsdpUListen.$(objext) \
 	$(objdir)TestXmlParser.$(objext) \
@@ -830,7 +841,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestPrinter TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestTimerMock TestHttpReader TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

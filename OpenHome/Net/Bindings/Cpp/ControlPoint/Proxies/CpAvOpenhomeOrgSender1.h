@@ -20,11 +20,41 @@ class PropertyInt;
 class PropertyString;
 class PropertyUint;
 
+class ICpProxyAvOpenhomeOrgSender1Cpp
+{
+public:
+    virtual void SyncPresentationUrl(std::string& aValue) = 0;
+    virtual void BeginPresentationUrl(FunctorAsync& aFunctor) = 0;
+    virtual void EndPresentationUrl(IAsync& aAsync, std::string& aValue) = 0;
+    virtual void SyncMetadata(std::string& aValue) = 0;
+    virtual void BeginMetadata(FunctorAsync& aFunctor) = 0;
+    virtual void EndMetadata(IAsync& aAsync, std::string& aValue) = 0;
+    virtual void SyncAudio(bool& aValue) = 0;
+    virtual void BeginAudio(FunctorAsync& aFunctor) = 0;
+    virtual void EndAudio(IAsync& aAsync, bool& aValue) = 0;
+    virtual void SyncStatus(std::string& aValue) = 0;
+    virtual void BeginStatus(FunctorAsync& aFunctor) = 0;
+    virtual void EndStatus(IAsync& aAsync, std::string& aValue) = 0;
+    virtual void SyncAttributes(std::string& aValue) = 0;
+    virtual void BeginAttributes(FunctorAsync& aFunctor) = 0;
+    virtual void EndAttributes(IAsync& aAsync, std::string& aValue) = 0;
+    virtual void SetPropertyPresentationUrlChanged(Functor& aPresentationUrlChanged) = 0;
+    virtual void PropertyPresentationUrl(std::string& aPresentationUrl) const = 0;
+    virtual void SetPropertyMetadataChanged(Functor& aMetadataChanged) = 0;
+    virtual void PropertyMetadata(std::string& aMetadata) const = 0;
+    virtual void SetPropertyAudioChanged(Functor& aAudioChanged) = 0;
+    virtual void PropertyAudio(bool& aAudio) const = 0;
+    virtual void SetPropertyStatusChanged(Functor& aStatusChanged) = 0;
+    virtual void PropertyStatus(std::string& aStatus) const = 0;
+    virtual void SetPropertyAttributesChanged(Functor& aAttributesChanged) = 0;
+    virtual void PropertyAttributes(std::string& aAttributes) const = 0;
+};
+
 /**
  * Proxy for av.openhome.org:Sender:1
  * @ingroup Proxies
  */
-class CpProxyAvOpenhomeOrgSender1Cpp : public CpProxy
+class CpProxyAvOpenhomeOrgSender1Cpp : public CpProxy, public ICpProxyAvOpenhomeOrgSender1Cpp
 {
 public:
     /**
