@@ -2,8 +2,6 @@
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/Private/Parser.h>
-#include <OpenHome/Net/Private/XmlParser.h>
 
 #include <limits>
 
