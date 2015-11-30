@@ -198,13 +198,13 @@ def install(context):
 @build_condition(OH_PLATFORM="Windows-x86")
 @build_condition(OH_PLATFORM="Windows-x64")
 def integration_test(context):
-    python("IntegrationTests/SuitePostBuild.py")
+    python("IntegrationTests/SuitePostBuild_OHMP.py")
 
 @build_step("integration_test_full", optional=True, default=False)
 @build_condition(OH_PLATFORM="Windows-x86")
 @build_condition(OH_PLATFORM="Linux-x86")
 def integration_test_full(context):
-    python("IntegrationTests/SuiteLocal.py", context.integration_test_media_server, context.integration_test_dacp_server, context.integration_test_log_dir )
+    python("IntegrationTests/SuiteLocal_OHMP.py", context.integration_test_media_server, context.integration_test_dacp_server, context.integration_test_log_dir )
 
 @build_step("publish", optional=True, default=False)
 def publish(context):
