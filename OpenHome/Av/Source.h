@@ -42,10 +42,13 @@ class SourceBase : public ISource
 private:
     static const TUint kMaxSourceTypeBytes = 20;
     static const TUint kMaxSourceIndexDigits = 2; // assume a source count of 0..99 is reasonable
+    static const TUint kConfigValSourceInvisible = 0;
+    static const TUint kConfigValSourceVisible   = 1;
     static const OpenHome::Brn kKeySourceNamePrefix;
     static const OpenHome::Brn kKeySourceNameSuffix;
+    static const OpenHome::Brn kKeySourceVisibleSuffix;
 public:
-    static const TUint kKeySourceNameMaxBytes = 32;
+    static const TUint kKeySourceNameMaxBytes = 40;
     static void GetSourceNameKey(const Brx& aName, Bwx& aBuf);
 protected: // from ISource
     const Brx& SystemName() const override;
@@ -63,6 +66,7 @@ private: // from ISource
     void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
 private:
     void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
+    void VisibleChanged(Configuration::KeyValuePair<TInt>& aKvp);
 protected:
     TBool iActive;
 private:
@@ -74,8 +78,11 @@ private:
 
     IProduct* iProduct;
     Configuration::ConfigText* iConfigName;
+    Configuration::ConfigNum* iConfigVisible;
     TUint iConfigNameSubscriptionId;
+    TUint iConfigVisibleSubscriptionId;
     TBool iConfigNameCreated;
+    TBool iConfigVisibleCreated;
 };
 
 class Source : public SourceBase
