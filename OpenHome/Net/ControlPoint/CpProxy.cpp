@@ -215,3 +215,23 @@ void CpProxy::EventUpdatePrepareForDelete()
     iPropertyWriteLock->Wait();
     iPropertyWriteLock->Signal();
 }
+
+CpiService& CpProxy::GetService() const
+{
+  return *iService;
+}
+
+IInvocable& CpProxy::GetInvocable() const
+{
+  return iInvocable;
+}
+
+Mutex& CpProxy::GetLock() const
+{
+  return *iLock;
+}
+
+CpProxy::SubscriptionStatus CpProxy::GetSubscriptionStatus() const
+{
+  return iCpSubscriptionStatus;
+}

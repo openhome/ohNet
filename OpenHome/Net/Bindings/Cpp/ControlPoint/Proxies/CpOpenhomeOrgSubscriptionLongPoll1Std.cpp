@@ -106,7 +106,7 @@ void SyncGetPropertyUpdatesOpenhomeOrgSubscriptionLongPoll1Cpp::CompleteRequest(
 
 
 CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp(CpDeviceCpp& aDevice)
-    : CpProxy("openhome-org", "SubscriptionLongPoll", 1, aDevice.Device())
+    : iCpProxy("openhome-org", "SubscriptionLongPoll", 1, aDevice.Device())
 {
     OpenHome::Net::Parameter* param;
 
@@ -161,7 +161,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::SyncSubscribe(const std::string
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginSubscribe(const std::string& aClientId, const std::string& aUdn, const std::string& aService, uint32_t aRequestedDuration, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSubscribe, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSubscribe, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSubscribe->InputParameters();
     {
@@ -181,7 +181,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginSubscribe(const std::strin
     const Action::VectorParameters& outParams = iActionSubscribe->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndSubscribe(IAsync& aAsync, std::string& aSid, uint32_t& aDuration)
@@ -213,14 +213,14 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::SyncUnsubscribe(const std::stri
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginUnsubscribe(const std::string& aSid, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionUnsubscribe, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionUnsubscribe, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionUnsubscribe->InputParameters();
     {
         Brn buf((const TByte*)aSid.c_str(), (TUint)aSid.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndUnsubscribe(IAsync& aAsync)
@@ -246,7 +246,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::SyncRenew(const std::string& aS
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginRenew(const std::string& aSid, uint32_t aRequestedDuration, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionRenew, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionRenew, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionRenew->InputParameters();
     {
@@ -257,7 +257,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginRenew(const std::string& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRenew->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndRenew(IAsync& aAsync, uint32_t& aDuration)
@@ -285,7 +285,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::SyncGetPropertyUpdates(const st
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginGetPropertyUpdates(const std::string& aClientId, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetPropertyUpdates, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetPropertyUpdates, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetPropertyUpdates->InputParameters();
     {
@@ -295,7 +295,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::BeginGetPropertyUpdates(const s
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetPropertyUpdates->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndGetPropertyUpdates(IAsync& aAsync, std::string& aUpdates)
@@ -315,5 +315,44 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndGetPropertyUpdates(IAsync& a
         const Brx& val = ((ArgumentString*)invocation.OutputArguments()[index++])->Value();
         aUpdates.assign((const char*)val.Ptr(), val.Bytes());
     }
+}
+
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::Subscribe()
+{
+  iCpProxy.Subscribe();
+}
+
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::Unsubscribe()
+{
+ iCpProxy.Unsubscribe();
+}
+
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::SetPropertyChanged(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyChanged(aFunctor);
+}
+
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::SetPropertyInitialEvent(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyInitialEvent(aFunctor);
+}
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::AddProperty(Property* aProperty)
+{
+  iCpProxy.AddProperty(aProperty);
+}
+
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::DestroyService()
+{
+  iCpProxy.DestroyService();
+}
+
+void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::ReportEvent(Functor aFunctor)
+{
+  iCpProxy.ReportEvent(aFunctor);
+}
+
+TUint CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::Version() const
+{
+  return iCpProxy.Version();
 }
 

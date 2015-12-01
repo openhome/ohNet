@@ -97,7 +97,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 
 
 <#=className#>::<#=className#>(CpDeviceCpp& aDevice)
-    : CpProxy("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device())
+    : iCpProxy("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device())
 {
     <#=DeclareConstructLocalVars(u)#>
 <#  foreach (Method a in u.methods) #>
@@ -174,7 +174,7 @@ void <#=className#>::Sync<#=a.name#>(<#=ArgString(a)#>)
 
 void <#=className#>::Begin<#=a.name#>(<#=InTypesAndNamesTrailingComma(a)#>FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iAction<#=a.name#>, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iAction<#=a.name#>, aFunctor);
 <#      if (a.inargs.Count > 0) #>
 <#      { #>
     TUint inIndex = 0;
@@ -203,7 +203,7 @@ void <#=className#>::Begin<#=a.name#>(<#=InTypesAndNamesTrailingComma(a)#>Functo
     invocation->AddOutput(new <#=argclass[o.variable.type]#>(*outParams[outIndex++]));
 <#          } #>
 <#      } #>
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void <#=className#>::End<#=a.name#>(<#=PrefixedOutArgTypesAndNames("IAsync& aAsync", a)#>)
@@ -243,9 +243,9 @@ void <#=className#>::End<#=a.name#>(<#=PrefixedOutArgTypesAndNames("IAsync& aAsy
 
 void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     i<#=s.name#>Changed = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
@@ -253,8 +253,8 @@ void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 
 void <#=className#>::Property<#=s.name#>(<#=outargtype[s.type]#> a<#=s.name#>) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
     const Brx& val = i<#=s.name#>->Value();
@@ -274,6 +274,45 @@ void <#=className#>::<#=s.name#>PropertyChanged()
     ReportEvent(i<#=s.name#>Changed);
 }
 <#  } #>
+
+void <#=className#>::Subscribe()
+{
+  iCpProxy.Subscribe();
+}
+
+void <#=className#>::Unsubscribe()
+{
+ iCpProxy.Unsubscribe();
+}
+
+void <#=className#>::SetPropertyChanged(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyChanged(aFunctor);
+}
+
+void <#=className#>::SetPropertyInitialEvent(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyInitialEvent(aFunctor);
+}
+void <#=className#>::AddProperty(Property* aProperty)
+{
+  iCpProxy.AddProperty(aProperty);
+}
+
+void <#=className#>::DestroyService()
+{
+  iCpProxy.DestroyService();
+}
+
+void <#=className#>::ReportEvent(Functor aFunctor)
+{
+  iCpProxy.ReportEvent(aFunctor);
+}
+
+TUint <#=className#>::Version() const
+{
+  return iCpProxy.Version();
+}
 
 <#+
 Dictionary<string,string> inargtype = new Dictionary<string,string>();
@@ -542,15 +581,15 @@ string ParameterAllowedValues(Argument a)
 string TemplateArgument(string aName)
 {
     string[] args =  System.Environment.GetCommandLineArgs();
-        
+
     bool isarg = false;
-    
+
     foreach (string arg in args)
     {
         if (isarg)
         {
             string[] parts = arg.Split(new char[] {':'});
-            
+
             if (parts.Length == 2)
             {
                 if (parts[0] == aName)
@@ -558,17 +597,17 @@ string TemplateArgument(string aName)
                     return (parts[1]);
                 }
             }
-            
+
             isarg = false;
             continue;
         }
-        
+
         if (arg == "-a")
         {
             isarg = true;
         }
     }
-    
+
     throw (new ArgumentException(aName + " not specified"));
 }
 #>
