@@ -18,11 +18,21 @@ const Brn SourceBase::kKeySourceNamePrefix("Source.");
 const Brn SourceBase::kKeySourceNameSuffix(".Name");
 const Brn SourceBase::kKeySourceVisibleSuffix(".Visible");
 
-void SourceBase::GetSourceNameKey(const Brx& aName, Bwx& aBuf)
-{
+void SourceBase::GetSourceNameKey(const Brx& aSystemName, Bwx& aBuf)
+{ // static
+    GetSourceKey(aSystemName, kKeySourceNameSuffix, aBuf);
+}
+
+void SourceBase::GetSourceVisibleKey(const Brx& aSystemName, Bwx& aBuf)
+{ // static
+    GetSourceKey(aSystemName, kKeySourceVisibleSuffix, aBuf);
+}
+
+void SourceBase::GetSourceKey(const Brx& aSystemName, const Brx& aSuffix, Bwx& aBuf)
+{ // static
     aBuf.Replace(kKeySourceNamePrefix);
-    aBuf.Append(aName);
-    aBuf.Append(kKeySourceNameSuffix);
+    aBuf.Append(aSystemName);
+    aBuf.Append(aSuffix);
 }
 
 const Brx& SourceBase::SystemName() const
@@ -115,10 +125,8 @@ void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit,
     }
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SourceBase::NameChanged));
 
-    key.Replace(kKeySourceNamePrefix);
-    key.Append(iSystemName);
-    key.Append(kKeySourceVisibleSuffix);
-    if (aConfigManagerReader.HasText(key)) {
+    GetSourceVisibleKey(iSystemName, key);
+    if (aConfigManagerReader.HasNum(key)) {
         iConfigVisible = &aConfigManagerReader.GetNum(key);
         iConfigVisibleCreated = false;
     }

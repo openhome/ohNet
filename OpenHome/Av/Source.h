@@ -49,7 +49,8 @@ private:
     static const OpenHome::Brn kKeySourceVisibleSuffix;
 public:
     static const TUint kKeySourceNameMaxBytes = 40;
-    static void GetSourceNameKey(const Brx& aName, Bwx& aBuf);
+    static void GetSourceNameKey(const Brx& aSystemName, Bwx& aBuf);
+    static void GetSourceVisibleKey(const Brx& aSystemName, Bwx& aBuf);
 protected: // from ISource
     const Brx& SystemName() const override;
     const Brx& Type() const override;
@@ -65,6 +66,7 @@ protected:
 private: // from ISource
     void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
 private:
+    static void GetSourceKey(const Brx& aSystemName, const Brx& aSuffix, Bwx& aBuf);
     void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
     void VisibleChanged(Configuration::KeyValuePair<TInt>& aKvp);
 protected:
