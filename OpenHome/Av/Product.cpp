@@ -410,7 +410,7 @@ void Product::Activate(ISource& aSource)
     THROW(AvSourceNotFound);
 }
 
-void Product::NotifySourceNameChanged(ISource& /*aSource*/)
+void Product::NotifySourceChanged(ISource& /*aSource*/)
 {
     iLock.Wait();
     iSourceXmlChangeCount++;

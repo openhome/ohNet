@@ -30,7 +30,7 @@ class IProduct
 public:
     virtual ~IProduct() {}
     virtual void Activate(ISource& aSource) = 0;
-    virtual void NotifySourceNameChanged(ISource& aSource) = 0;
+    virtual void NotifySourceChanged(ISource& aSource) = 0;
 };
 
 class IProductNameObserver
@@ -134,7 +134,7 @@ private:
     void StartupSourceChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private: // from IProduct
     void Activate(ISource& aSource) override;
-    void NotifySourceNameChanged(ISource& aSource) override;
+    void NotifySourceChanged(ISource& aSource) override;
 public: // from IProductNameObservable
     void AddNameObserver(IProductNameObserver& aObserver) override;
 private: // from IStandbyHandler

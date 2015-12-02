@@ -268,6 +268,15 @@ void StoreInt::Set(TInt aValue)
     iVal = aValue;
 }
 
+void StoreInt::Write(const Brx& aKey, TInt aValue, Configuration::IStoreReadWrite& aStore)
+{ // static
+    Bws<sizeof(TInt)> buf;
+    WriterBuffer writerBuf(buf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aValue);
+    aStore.Write(aKey, buf);
+}
+
 void StoreInt::PowerUp()
 {
     AutoMutex _(iLock);
@@ -284,11 +293,7 @@ void StoreInt::PowerUp()
 
 void StoreInt::Write()
 {
-    Bws<sizeof(TInt)> buf;
-    WriterBuffer writerBuf(buf);
-    WriterBinary writerBin(writerBuf);
-    writerBin.WriteUint32Be(iVal);
-    iStore.Write(iKey, buf);
+    Write(iKey, iVal, iStore);
 }
 
 

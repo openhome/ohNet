@@ -146,19 +146,12 @@ void MediaPlayer::Start()
         sourceName.SetBytes(0);
         sourceType.SetBytes(0);
         iProduct->GetSourceDetails(i, systemName, sourceType, sourceName, visible);
-
-        Bwh* name = new Bwh(Ascii::kMaxUintStringBytes);
-        Ascii::AppendDec(*name, i);
-        sources.push_back(name);
+        sources.push_back(new Bwh(systemName));
     }
-
     iConfigStartupSource = new ConfigStartupSource(*iConfigManager, *iConfigManager, sources);
-
     for (auto source : sources) {
         delete source;
     }
-
-
 
     iConfigManager->Open();
     iPipeline->Start();

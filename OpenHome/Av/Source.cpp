@@ -16,12 +16,23 @@ using namespace OpenHome::Configuration;
 
 const Brn SourceBase::kKeySourceNamePrefix("Source.");
 const Brn SourceBase::kKeySourceNameSuffix(".Name");
+const Brn SourceBase::kKeySourceVisibleSuffix(".Visible");
 
-void SourceBase::GetSourceNameKey(const Brx& aName, Bwx& aBuf)
-{
+void SourceBase::GetSourceNameKey(const Brx& aSystemName, Bwx& aBuf)
+{ // static
+    GetSourceKey(aSystemName, kKeySourceNameSuffix, aBuf);
+}
+
+void SourceBase::GetSourceVisibleKey(const Brx& aSystemName, Bwx& aBuf)
+{ // static
+    GetSourceKey(aSystemName, kKeySourceVisibleSuffix, aBuf);
+}
+
+void SourceBase::GetSourceKey(const Brx& aSystemName, const Brx& aSuffix, Bwx& aBuf)
+{ // static
     aBuf.Replace(kKeySourceNamePrefix);
-    aBuf.Append(aName);
-    aBuf.Append(kKeySourceNameSuffix);
+    aBuf.Append(aSystemName);
+    aBuf.Append(aSuffix);
 }
 
 const Brx& SourceBase::SystemName() const
@@ -64,8 +75,11 @@ SourceBase::SourceBase(const TChar* aSystemName, const TChar* aType)
     , iVisible(true)
     , iProduct(nullptr)
     , iConfigName(nullptr)
+    , iConfigVisible(nullptr)
     , iConfigNameSubscriptionId(IConfigManager::kSubscriptionIdInvalid)
+    , iConfigVisibleSubscriptionId(IConfigManager::kSubscriptionIdInvalid)
     , iConfigNameCreated(false)
+    , iConfigVisibleCreated(false)
 {
 }
 
@@ -73,9 +87,15 @@ SourceBase::~SourceBase()
 {
     if (iConfigName != nullptr) {
         iConfigName->Unsubscribe(iConfigNameSubscriptionId);
+        if (iConfigNameCreated) {
+            delete iConfigName;
+        }
     }
-    if (iConfigNameCreated) {
-        delete iConfigName;
+    if (iConfigVisible != nullptr) {
+        iConfigVisible->Unsubscribe(iConfigVisibleSubscriptionId);
+        if (iConfigVisibleCreated) {
+            delete iConfigVisible;
+        }
     }
 }
 
@@ -90,13 +110,12 @@ void SourceBase::DoActivate()
     iProduct->Activate(*this);
 }
 
-void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint aId)
+void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint /*aId*/)
 {
     iProduct = &aProduct;
+
     Bws<kKeySourceNameMaxBytes> key;
-    Bws<Ascii::kMaxUintStringBytes> id;
-    Ascii::AppendDec(id, aId);
-    GetSourceNameKey(id, key);
+    GetSourceNameKey(iSystemName, key);
     if (aConfigManagerReader.HasText(key)) {
         iConfigName = &aConfigManagerReader.GetText(key);
         iConfigNameCreated = false;
@@ -105,6 +124,18 @@ void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit,
         iConfigNameCreated = true;
     }
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SourceBase::NameChanged));
+
+    GetSourceVisibleKey(iSystemName, key);
+    if (aConfigManagerReader.HasNum(key)) {
+        iConfigVisible = &aConfigManagerReader.GetNum(key);
+        iConfigVisibleCreated = false;
+    }
+    else {
+        iConfigVisible = new ConfigNum(aConfigInit, key, kConfigValSourceInvisible, kConfigValSourceVisible, kConfigValSourceVisible);
+        iConfigVisibleCreated = true;
+    }
+    iConfigVisibleSubscriptionId = iConfigVisible->Subscribe(MakeFunctorConfigNum(*this, &SourceBase::VisibleChanged));
+
 }
 
 void SourceBase::NameChanged(KeyValuePair<const Brx&>& aName)
@@ -112,7 +143,15 @@ void SourceBase::NameChanged(KeyValuePair<const Brx&>& aName)
     iLock.Wait();
     iName.Replace(aName.Value());
     iLock.Signal();
-    iProduct->NotifySourceNameChanged(*this);
+    iProduct->NotifySourceChanged(*this);
+}
+
+void SourceBase::VisibleChanged(Configuration::KeyValuePair<TInt>& aKvp)
+{
+    iLock.Wait();
+    iVisible = (aKvp.Value() == kConfigValSourceVisible);
+    iLock.Signal();
+    iProduct->NotifySourceChanged(*this);
 }
 
 
