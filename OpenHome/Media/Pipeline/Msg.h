@@ -233,7 +233,8 @@ public:
     TBool IsEnabled() const { return iEnabled; }
 private:
     void SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd);
-    void Validate();
+    void Validate(const TChar* aId);
+    TBool DoValidate();
 private:
     TUint iStart;
     TUint iEnd;

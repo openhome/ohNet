@@ -508,6 +508,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     buf.AppendPrintf("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x, current=[%08x..%08x]\n", 
                      aDirection, aStart, aFragmentSize, aRemainingDuration, iStart, iEnd);
     Log::Print(buf);*/
+    Ramp before(*this);
     ASSERT(aRemainingDuration >=  aFragmentSize);
     ASSERT(aDirection != ENone);
     iEnabled = true;
@@ -614,7 +615,13 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             }
         }
     }
-    Validate();
+    if (!DoValidate()) {
+        Log::Print("Ramp::Set created invalid ramp.\n");
+        Log::Print("  before: [%08x..%08x], direction=%u\n", before.iStart, before.iEnd, before.iDirection);
+        Log::Print("  after:  [%08x..%08x], direction=%u\n", iStart, iEnd, iDirection);
+        Log::Print("  split:  [%08x..%08x], direction=%u\n", aSplit.iStart, aSplit.iEnd, aSplit.iDirection);
+        ASSERTS();
+    }
     return aSplit.IsEnabled();
 }
 
@@ -640,28 +647,52 @@ void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
     }
 }
 
-void Ramp::Validate()
+void Ramp::Validate(const TChar* aId)
 {
-    ASSERT(iStart <= kMax);
-    ASSERT(iEnd <= kMax);
+    if (!DoValidate()) {
+        Log::Print("Ramp::Validate failure %%s)\n", aId);
+        Log::Print("  ramp: [%08x..%08x], direction=%u\n", iStart, iEnd, iDirection);
+        ASSERTS();
+    }
+}
+
+TBool Ramp::DoValidate()
+{
+    if (iStart > kMax) {
+        return false;
+    }
+    if (iEnd > kMax) {
+        return false;
+    }
     switch (iDirection)
     {
     case ENone:
-        ASSERT(iStart == iEnd);
+        if (iStart != iEnd) {
+            return false;
+        }
         break;
     case EUp:
-        ASSERT(iStart < iEnd);
+        if (iStart >= iEnd) {
+            return false;
+        }
         break;
     case EDown:
-        ASSERT(iStart > iEnd);
+        if (iStart <= iEnd) {
+            return false;
+        }
         break;
     case EMute:
-        ASSERT(iStart == iEnd);
-        ASSERT(iStart == kMin);
+        if (iStart != iEnd) {
+            return false;
+        }
+        if (iStart != kMin) {
+            return false;
+        }
         break;
     default:
         ASSERTS();
     }
+    return true;
 }
 
 Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
@@ -684,8 +715,8 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
     }
     remaining.iStart = iEnd; // FIXME - remaining.iStart is one sample on from iEnd so should have a ramp value that progresses one 'step'
     //Log::Print("Split [%08x : %08x] ramp into [%08x : %08x] and [%08x : %08x]\n", start, end, iStart, iEnd, remaining.iStart, remaining.iEnd);
-    Validate();
-    remaining.Validate();
+    Validate("Split");
+    remaining.Validate("Split - remaining");
     return remaining;
 }
 
