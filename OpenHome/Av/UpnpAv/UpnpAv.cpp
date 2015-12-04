@@ -30,7 +30,7 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
 
 // UpnpAv
 
-const TChar* SourceUpnpAv::kSourceName("UPnP AV");
+const Brn SourceUpnpAv::kSourceName("UPnP AV");
 
 SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList)
     : Source(kSourceName, "UpnpAv", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())

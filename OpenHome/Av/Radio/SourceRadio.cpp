@@ -82,7 +82,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
                          UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
                          IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager,
                          Media::MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager)
-    : Source("Radio", "Radio", aPipeline, aPowerManager)
+    : Source(Brn("Radio"), "Radio", aPipeline, aPowerManager)
     , iLock("SRAD")
     , iUriProvider(aUriProvider)
     , iTrack(nullptr)

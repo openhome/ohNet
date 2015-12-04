@@ -40,7 +40,7 @@ class ProviderRenderingControl;
 class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipelineObserver
 {
 public:
-    static const TChar* kSourceName;
+    static const Brn kSourceName;
 public:
     SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList);
     ~SourceUpnpAv();

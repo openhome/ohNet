@@ -183,7 +183,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                IOhmTimestamper* aRxTimestamper,
                                IOhmTimestampMapper* aRxTsMapper,
                                const Brx& aSenderIconFileName)
-    : Source("Songcast", "Receiver", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
+    : Source(Brn("Songcast"), "Receiver", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
     , iUriLock("SRX3")

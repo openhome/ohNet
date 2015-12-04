@@ -101,7 +101,7 @@ ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer)
 
 SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline,
                                TrackFactory& aTrackFactory, MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager)
-    : Source("Playlist", "Playlist", aPipeline, aPowerManager)
+    : Source(Brn("Playlist"), "Playlist", aPipeline, aPowerManager)
     , iLock("SPL1")
     , iActivationLock("SPL2")
     , iTrackPosSeconds(0)

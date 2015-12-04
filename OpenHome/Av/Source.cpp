@@ -66,7 +66,7 @@ void SourceBase::SetVisible(TBool aVisible)
     iVisible = aVisible;
 }
 
-SourceBase::SourceBase(const TChar* aSystemName, const TChar* aType)
+SourceBase::SourceBase(const Brx& aSystemName, const TChar* aType)
     : iActive(false)
     , iLock("SRCM")
     , iSystemName(aSystemName)
@@ -157,7 +157,7 @@ void SourceBase::VisibleChanged(Configuration::KeyValuePair<TInt>& aKvp)
 
 // Source
 
-Source::Source(const TChar* aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager)
+Source::Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager)
     : SourceBase(aSystemName, aType)
     , iPipeline(aPipeline)
     , iPowerManager(aPowerManager)

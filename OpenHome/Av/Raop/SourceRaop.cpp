@@ -76,7 +76,7 @@ const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always vi
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
-    : Source(kSourceNameStr, kSourceNameStr, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
+    : Source(Brn(kSourceNameStr), kSourceNameStr, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
     , iUriProvider(aUriProvider)

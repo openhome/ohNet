@@ -59,7 +59,7 @@ protected: // from ISource
     void Deactivate() override;
     void SetVisible(TBool aVisible) override;
 protected:
-    SourceBase(const TChar* aSystemName, const TChar* aType);
+    SourceBase(const Brx& aSystemName, const TChar* aType);
     ~SourceBase();
     TBool IsActive() const;
     void DoActivate();
@@ -73,7 +73,7 @@ protected:
     TBool iActive;
 private:
     mutable Mutex iLock;
-    Brn iSystemName;
+    Bws<kMaxSystemNameBytes> iSystemName;
     Brn iType;
     Bws<kMaxSourceNameBytes> iName;
     TBool iVisible;
@@ -90,7 +90,7 @@ private:
 class Source : public SourceBase
 {
 protected:
-    Source(const TChar* aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager);
+    Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager);
     void DoPlay();
 protected:
     Media::PipelineManager& iPipeline;
