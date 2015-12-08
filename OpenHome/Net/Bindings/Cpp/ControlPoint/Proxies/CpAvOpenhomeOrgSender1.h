@@ -23,6 +23,7 @@ class CpProxy;
 class ICpProxyAvOpenhomeOrgSender1Cpp : public ICpProxy
 {
 public:
+    virtual ~ICpProxyAvOpenhomeOrgSender1Cpp() {}
     virtual void SyncPresentationUrl(std::string& aValue) = 0;
     virtual void BeginPresentationUrl(FunctorAsync& aFunctor) = 0;
     virtual void EndPresentationUrl(IAsync& aAsync, std::string& aValue) = 0;

@@ -23,6 +23,7 @@ class CpProxy;
 class ICpProxyUpnpOrgConnectionManager1Cpp : public ICpProxy
 {
 public:
+    virtual ~ICpProxyUpnpOrgConnectionManager1Cpp() {}
     virtual void SyncGetProtocolInfo(std::string& aSource, std::string& aSink) = 0;
     virtual void BeginGetProtocolInfo(FunctorAsync& aFunctor) = 0;
     virtual void EndGetProtocolInfo(IAsync& aAsync, std::string& aSource, std::string& aSink) = 0;

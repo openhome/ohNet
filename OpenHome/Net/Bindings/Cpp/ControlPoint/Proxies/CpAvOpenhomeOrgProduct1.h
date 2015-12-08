@@ -23,6 +23,7 @@ class CpProxy;
 class ICpProxyAvOpenhomeOrgProduct1Cpp : public ICpProxy
 {
 public:
+    virtual ~ICpProxyAvOpenhomeOrgProduct1Cpp() {}
     virtual void SyncManufacturer(std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
     virtual void BeginManufacturer(FunctorAsync& aFunctor) = 0;
     virtual void EndManufacturer(IAsync& aAsync, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri) = 0;
