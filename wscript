@@ -296,6 +296,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgCredentials1.cpp',
                 'OpenHome/Av/ProviderCredentials.cpp',
                 'OpenHome/Av/VolumeManager.cpp',
+                'OpenHome/Av/FriendlyNameAdapter.cpp',
                 #'OpenHome/Av/TransportControl.cpp',
                 #'Generated/DvOpenhomeOrgEriskayTransportControl1.cpp',
                 #'OpenHome/Av/ProviderTransportControlEriskay.cpp',

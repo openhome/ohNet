@@ -8,6 +8,7 @@ suiteRunner = MakeSuiteRunner(context)
 
 # testharness honours a '#' within this string :)
 tests = '''
+    TestFriendlyNameManager
     TestStore
     TestMsg
     TestSupply
