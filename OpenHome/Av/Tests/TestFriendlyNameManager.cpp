@@ -44,7 +44,6 @@ private:
     void TestUpdate();  // Deregister one observer for second update.
     void TestDvUpdate();
 private:
-    Net::CpStack& iCpStack;
     Net::DvStack& iDvStack;
     FriendlyNameManager* iFriendlyNameManager;
     MockProductNameObservable* iObservable;
@@ -102,9 +101,8 @@ void MockFriendlyNameObserver::FriendlyNameChanged(const Brx& aFriendlyName)
 
 // SuiteFriendlyNameManager
 
-SuiteFriendlyNameManager::SuiteFriendlyNameManager(CpStack& aCpStack, DvStack& aDvStack)
+SuiteFriendlyNameManager::SuiteFriendlyNameManager(CpStack& /* aCpStack */, DvStack& aDvStack)
     : SuiteUnitTest("SuiteFriendlyNameManager")
-    , iCpStack(aCpStack)
     , iDvStack(aDvStack)
 {
     AddTest(MakeFunctor(*this, &SuiteFriendlyNameManager::TestRegisterDeregister), "TestRegisterDeregister");
