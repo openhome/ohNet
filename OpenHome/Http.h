@@ -12,7 +12,6 @@
 #include <vector>
 
 EXCEPTION(HttpError)
-EXCEPTION(HttpInvalidResponse)
 
 namespace OpenHome {
 
