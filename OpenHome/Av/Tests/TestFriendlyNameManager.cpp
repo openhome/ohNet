@@ -32,7 +32,7 @@ private:
     Bws<IFriendlyNameObservable::kMaxFriendlyNameBytes> iFriendlyName;
 };
 
-class SuiteFriendlyNameManager : public OpenHome::TestFramework::SuiteUnitTest
+class SuiteFriendlyNameManager : public OpenHome::TestFramework::SuiteUnitTest, private INonCopyable
 {
 public:
     SuiteFriendlyNameManager(Net::CpStack& aCpStack, Net::DvStack& aDvStack);
