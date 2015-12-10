@@ -22,6 +22,7 @@ class CpProxy;
 class ICpProxyAvOpenhomeOrgSender1 : public ICpProxy
 {
 public:
+    virtual ~ICpProxyAvOpenhomeOrgSender1() {}
     virtual void SyncPresentationUrl(Brh& aValue) = 0;
     virtual void BeginPresentationUrl(FunctorAsync& aFunctor) = 0;
     virtual void EndPresentationUrl(IAsync& aAsync, Brh& aValue) = 0;

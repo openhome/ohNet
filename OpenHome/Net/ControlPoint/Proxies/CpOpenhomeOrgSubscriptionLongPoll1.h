@@ -22,6 +22,7 @@ class CpProxy;
 class ICpProxyOpenhomeOrgSubscriptionLongPoll1 : public ICpProxy
 {
 public:
+    virtual ~ICpProxyOpenhomeOrgSubscriptionLongPoll1() {}
     virtual void SyncSubscribe(const Brx& aClientId, const Brx& aUdn, const Brx& aService, TUint aRequestedDuration, Brh& aSid, TUint& aDuration) = 0;
     virtual void BeginSubscribe(const Brx& aClientId, const Brx& aUdn, const Brx& aService, TUint aRequestedDuration, FunctorAsync& aFunctor) = 0;
     virtual void EndSubscribe(IAsync& aAsync, Brh& aSid, TUint& aDuration) = 0;

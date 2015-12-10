@@ -91,6 +91,7 @@ class CpProxy;
 class I<#=className#> : public ICpProxy
 {
 public:
+    virtual ~I<#=className#>() {}
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     virtual void Sync<#=a.name#>(<#=ArgString(a)#>) = 0;

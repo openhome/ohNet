@@ -23,6 +23,7 @@ class CpProxy;
 class ICpProxyOpenhomeOrgSubscriptionLongPoll1Cpp : public ICpProxy
 {
 public:
+    virtual ~ICpProxyOpenhomeOrgSubscriptionLongPoll1Cpp() {}
     virtual void SyncSubscribe(const std::string& aClientId, const std::string& aUdn, const std::string& aService, uint32_t aRequestedDuration, std::string& aSid, uint32_t& aDuration) = 0;
     virtual void BeginSubscribe(const std::string& aClientId, const std::string& aUdn, const std::string& aService, uint32_t aRequestedDuration, FunctorAsync& aFunctor) = 0;
     virtual void EndSubscribe(IAsync& aAsync, std::string& aSid, uint32_t& aDuration) = 0;

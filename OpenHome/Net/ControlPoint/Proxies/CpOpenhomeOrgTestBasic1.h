@@ -22,6 +22,7 @@ class CpProxy;
 class ICpProxyOpenhomeOrgTestBasic1 : public ICpProxy
 {
 public:
+    virtual ~ICpProxyOpenhomeOrgTestBasic1() {}
     virtual void SyncIncrement(TUint aValue, TUint& aResult) = 0;
     virtual void BeginIncrement(TUint aValue, FunctorAsync& aFunctor) = 0;
     virtual void EndIncrement(IAsync& aAsync, TUint& aResult) = 0;

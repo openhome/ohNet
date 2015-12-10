@@ -254,10 +254,9 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
     if (aUriTail == kDeviceXmlName) {
         Brh xml;
         Brn xmlBuf;
-        iLock.Wait();
+        AutoMutex _(iLock);
         const TInt index = FindListenerForInterface(aAdapter);
         if (index == -1) {
-            iLock.Signal();
             return;
         }
         if (iDevice.IsRoot()) {
@@ -276,7 +275,6 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
                 xmlBuf.Set(xml);
             }
         }
-        iLock.Signal();
         aResourceWriter.WriteResourceBegin(xmlBuf.Bytes(), kOhNetMimeTypeXml);
         aResourceWriter.WriteResource(xmlBuf.Ptr(), xmlBuf.Bytes());
         aResourceWriter.WriteResourceEnd();

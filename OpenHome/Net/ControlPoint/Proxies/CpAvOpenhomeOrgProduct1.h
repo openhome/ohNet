@@ -22,6 +22,7 @@ class CpProxy;
 class ICpProxyAvOpenhomeOrgProduct1 : public ICpProxy
 {
 public:
+    virtual ~ICpProxyAvOpenhomeOrgProduct1() {}
     virtual void SyncManufacturer(Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri) = 0;
     virtual void BeginManufacturer(FunctorAsync& aFunctor) = 0;
     virtual void EndManufacturer(IAsync& aAsync, Brh& aName, Brh& aInfo, Brh& aUrl, Brh& aImageUri) = 0;
