@@ -651,10 +651,14 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface);
  */
 typedef struct OsNetworkAdapter
 {
-    TIpAddress iAddress;  /**< Address of the interface */
-    char*      iName;     /**< Nul-terminated name of the interface */
-    TIpAddress iNetMask;  /**< netmask for the interface */
-    int32_t    iReserved; /**< for OS-internal use */
+    TIpAddress iAddress;    /**< Address of the interface */
+    char*      iName;       /**< Nul-terminated name of the interface */
+    TIpAddress iNetMask;    /**< netmask for the interface */
+    TIpAddress iDhcpServer; /**< DHCP server address for the interface.
+                                 0 => not supported by this platform */
+    TIpAddress iGateway;    /**< Gateway address for the interface.
+                                  0 => not supported by this platform */
+    int32_t    iReserved;   /**< for OS-internal use */
     struct OsNetworkAdapter* iNext; /**< Pointer to next interface or NULL */
 } OsNetworkAdapter;
 
