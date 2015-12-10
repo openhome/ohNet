@@ -87,10 +87,11 @@ class PropertyBool;
 class PropertyInt;
 class PropertyString;
 class PropertyUint;
-
-class I<#=className#>
+class CpProxy;
+class I<#=className#> : public ICpProxy
 {
 public:
+    virtual ~I<#=className#>() {}
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     virtual void Sync<#=a.name#>(<#=ArgString(a)#>) = 0;
@@ -108,13 +109,13 @@ public:
  * Proxy for <#=domain#>:<#=type#>:<#=version#>
  * @ingroup Proxies
  */
-class <#=className#> : public CpProxy, public I<#=className#>
+class <#=className#> : public I<#=className#>
 {
 public:
     /**
      * Constructor.
      *
-     * Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable
+     * Use iCpProxy::[Un]Subscribe() to enable/disable querying of state variable
      * and reporting of their changes.
      *
      * @param[in]  aDevice   The device to use
@@ -201,7 +202,40 @@ public:
      */
     void Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) const;
 <#  } #>
+    /**
+    * This function exposes the Subscribe() function of the iCpProxy member variable
+    */
+    void Subscribe();
+    /**
+    * This function exposes the Unsubscribe() function of the iCpProxy member variable
+    */
+    void Unsubscribe();
+    /**
+    * This function exposes the SetPropertyChanged() function of the iCpProxy member variable
+    */
+    void SetPropertyChanged(Functor& aFunctor);
+    /**
+    * This function exposes the SetPropertyInitialEvent() function of the iCpProxy member variable
+    */
+    void SetPropertyInitialEvent(Functor& aFunctor);
+    /**
+    * This function exposes the AddProperty() function of the iCpProxy member variable
+    */
+    void AddProperty(Property* aProperty);
+    /**
+    * This function exposes DestroyService() function of the iCpProxy member variable
+    */
+    void DestroyService();
+    /**
+    * This function exposes the REportEvent() function of the iCpProxy member variable
+    */
+    void ReportEvent(Functor aFunctor);
+    /**
+    * This function exposes the Version() function of the iCpProxy member variable
+    */
+    TUint Version() const;
 private:
+    CpProxy iCpProxy;
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
     void <#=s.name#>PropertyChanged();
@@ -324,19 +358,19 @@ void Initialise(uint aUseBuffers)
 string InString(Method a)
 {
     string result = "";
-    
+
     foreach (Argument i in a.inargs)
     {
         if (result.Length > 0)
         {
             result += ", ";
         }
-        
+
         result += inargtype[i.variable.type];
         result += " ";
         result += "a" + i.name;
     }
-    
+
     return(result);
 }
 
@@ -389,15 +423,15 @@ string InStringTrailingComma(Method a)
 string TemplateArgument(string aName)
 {
     string[] args =  System.Environment.GetCommandLineArgs();
-        
+
     bool isarg = false;
-    
+
     foreach (string arg in args)
     {
         if (isarg)
         {
             string[] parts = arg.Split(new char[] {':'});
-            
+
             if (parts.Length == 2)
             {
                 if (parts[0] == aName)
@@ -405,17 +439,17 @@ string TemplateArgument(string aName)
                     return (parts[1]);
                 }
             }
-            
+
             isarg = false;
             continue;
         }
-        
+
         if (arg == "-a")
         {
             isarg = true;
         }
     }
-    
+
     throw (new ArgumentException(aName + " not specified"));
 }
 #>

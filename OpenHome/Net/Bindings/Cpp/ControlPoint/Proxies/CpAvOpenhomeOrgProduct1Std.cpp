@@ -333,7 +333,7 @@ void SyncSourceXmlChangeCountAvOpenhomeOrgProduct1Cpp::CompleteRequest(IAsync& a
 
 
 CpProxyAvOpenhomeOrgProduct1Cpp::CpProxyAvOpenhomeOrgProduct1Cpp(CpDeviceCpp& aDevice)
-    : CpProxy("av-openhome-org", "Product", 1, aDevice.Device())
+    : iCpProxy("av-openhome-org", "Product", 1, aDevice.Device())
 {
     OpenHome::Net::Parameter* param;
 
@@ -501,14 +501,14 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncManufacturer(std::string& aName, std::
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginManufacturer(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionManufacturer, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionManufacturer, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionManufacturer->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndManufacturer(IAsync& aAsync, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri)
@@ -551,14 +551,14 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncModel(std::string& aName, std::string&
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginModel(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionModel, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionModel, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionModel->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndModel(IAsync& aAsync, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri)
@@ -601,7 +601,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncProduct(std::string& aRoom, std::strin
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginProduct(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionProduct, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionProduct, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionProduct->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
@@ -609,7 +609,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::BeginProduct(FunctorAsync& aFunctor)
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndProduct(IAsync& aAsync, std::string& aRoom, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri)
@@ -656,11 +656,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncStandby(bool& aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginStandby(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionStandby, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionStandby, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStandby->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndStandby(IAsync& aAsync, bool& aValue)
@@ -688,11 +688,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSetStandby(bool aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSetStandby(bool aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetStandby, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetStandby, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStandby->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aValue));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSetStandby(IAsync& aAsync)
@@ -718,11 +718,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSourceCount(uint32_t& aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSourceCount(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSourceCount, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSourceCount, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceCount->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceCount(IAsync& aAsync, uint32_t& aValue)
@@ -750,11 +750,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSourceXml(std::string& aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSourceXml(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSourceXml, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSourceXml, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceXml->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceXml(IAsync& aAsync, std::string& aValue)
@@ -785,11 +785,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSourceIndex(uint32_t& aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSourceIndex(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSourceIndex, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSourceIndex, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceIndex->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceIndex(IAsync& aAsync, uint32_t& aValue)
@@ -817,11 +817,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSetSourceIndex(uint32_t aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSetSourceIndex(uint32_t aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetSourceIndex, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetSourceIndex, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetSourceIndex->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValue));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSetSourceIndex(IAsync& aAsync)
@@ -847,14 +847,14 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSetSourceIndexByName(const std::string
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSetSourceIndexByName(const std::string& aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetSourceIndexByName, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetSourceIndexByName, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetSourceIndexByName->InputParameters();
     {
         Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSetSourceIndexByName(IAsync& aAsync)
@@ -880,7 +880,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSource(uint32_t aIndex, std::string& a
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSource(uint32_t aIndex, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSource, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSource, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSource->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aIndex));
@@ -890,7 +890,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSource(uint32_t aIndex, FunctorAsync&
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSource(IAsync& aAsync, std::string& aSystemName, std::string& aType, std::string& aName, bool& aVisible)
@@ -930,11 +930,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncAttributes(std::string& aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginAttributes(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionAttributes, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionAttributes, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionAttributes->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndAttributes(IAsync& aAsync, std::string& aValue)
@@ -965,11 +965,11 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SyncSourceXmlChangeCount(uint32_t& aValue)
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::BeginSourceXmlChangeCount(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSourceXmlChangeCount, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSourceXmlChangeCount, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceXmlChangeCount->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceXmlChangeCount(IAsync& aAsync, uint32_t& aValue)
@@ -990,267 +990,267 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceXmlChangeCount(IAsync& aAsync, ui
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyManufacturerNameChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iManufacturerNameChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyManufacturerInfoChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iManufacturerInfoChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyManufacturerUrlChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iManufacturerUrlChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyManufacturerImageUriChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iManufacturerImageUriChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyModelNameChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iModelNameChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyModelInfoChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iModelInfoChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyModelUrlChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iModelUrlChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyModelImageUriChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iModelImageUriChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyProductRoomChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iProductRoomChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyProductNameChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iProductNameChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyProductInfoChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iProductInfoChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyProductUrlChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iProductUrlChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyProductImageUriChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iProductImageUriChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyStandbyChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iStandbyChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertySourceIndexChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iSourceIndexChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertySourceCountChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iSourceCountChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertySourceXmlChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iSourceXmlChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyAttributesChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iAttributesChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerName(std::string& aManufacturerName) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iManufacturerName->Value();
     aManufacturerName.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerInfo(std::string& aManufacturerInfo) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iManufacturerInfo->Value();
     aManufacturerInfo.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerUrl(std::string& aManufacturerUrl) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iManufacturerUrl->Value();
     aManufacturerUrl.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerImageUri(std::string& aManufacturerImageUri) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iManufacturerImageUri->Value();
     aManufacturerImageUri.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelName(std::string& aModelName) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iModelName->Value();
     aModelName.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelInfo(std::string& aModelInfo) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iModelInfo->Value();
     aModelInfo.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelUrl(std::string& aModelUrl) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iModelUrl->Value();
     aModelUrl.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelImageUri(std::string& aModelImageUri) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iModelImageUri->Value();
     aModelImageUri.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductRoom(std::string& aProductRoom) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iProductRoom->Value();
     aProductRoom.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductName(std::string& aProductName) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iProductName->Value();
     aProductName.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductInfo(std::string& aProductInfo) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iProductInfo->Value();
     aProductInfo.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductUrl(std::string& aProductUrl) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iProductUrl->Value();
     aProductUrl.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductImageUri(std::string& aProductImageUri) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iProductImageUri->Value();
     aProductImageUri.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyStandby(bool& aStandby) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertySourceIndex(uint32_t& aSourceIndex) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aSourceIndex = iSourceIndex->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertySourceCount(uint32_t& aSourceCount) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aSourceCount = iSourceCount->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertySourceXml(std::string& aSourceXml) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iSourceXml->Value();
     aSourceXml.assign((const char*)val.Ptr(), val.Bytes());
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyAttributes(std::string& aAttributes) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     const Brx& val = iAttributes->Value();
     aAttributes.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -1343,5 +1343,44 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SourceXmlPropertyChanged()
 void CpProxyAvOpenhomeOrgProduct1Cpp::AttributesPropertyChanged()
 {
     ReportEvent(iAttributesChanged);
+}
+
+void CpProxyAvOpenhomeOrgProduct1Cpp::Subscribe()
+{
+  iCpProxy.Subscribe();
+}
+
+void CpProxyAvOpenhomeOrgProduct1Cpp::Unsubscribe()
+{
+ iCpProxy.Unsubscribe();
+}
+
+void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyChanged(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyChanged(aFunctor);
+}
+
+void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyInitialEvent(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyInitialEvent(aFunctor);
+}
+void CpProxyAvOpenhomeOrgProduct1Cpp::AddProperty(Property* aProperty)
+{
+  iCpProxy.AddProperty(aProperty);
+}
+
+void CpProxyAvOpenhomeOrgProduct1Cpp::DestroyService()
+{
+  iCpProxy.DestroyService();
+}
+
+void CpProxyAvOpenhomeOrgProduct1Cpp::ReportEvent(Functor aFunctor)
+{
+  iCpProxy.ReportEvent(aFunctor);
+}
+
+TUint CpProxyAvOpenhomeOrgProduct1Cpp::Version() const
+{
+  return iCpProxy.Version();
 }
 

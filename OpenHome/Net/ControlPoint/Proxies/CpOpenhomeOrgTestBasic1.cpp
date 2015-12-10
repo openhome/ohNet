@@ -514,7 +514,7 @@ void SyncShutdownOpenhomeOrgTestBasic1::CompleteRequest(IAsync& aAsync)
 // CpProxyOpenhomeOrgTestBasic1
 
 CpProxyOpenhomeOrgTestBasic1::CpProxyOpenhomeOrgTestBasic1(CpDevice& aDevice)
-    : CpProxy("openhome-org", "TestBasic", 1, aDevice.Device())
+    : iCpProxy("openhome-org", "TestBasic", 1, aDevice.Device())
 {
     OpenHome::Net::Parameter* param;
     TChar** allowedValues;
@@ -689,14 +689,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncIncrement(TUint aValue, TUint& aResult)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginIncrement(TUint aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionIncrement, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionIncrement, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionIncrement->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionIncrement->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndIncrement(IAsync& aAsync, TUint& aResult)
@@ -724,14 +724,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncEchoAllowedRangeUint(TUint aValue, TUint&
 
 void CpProxyOpenhomeOrgTestBasic1::BeginEchoAllowedRangeUint(TUint aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionEchoAllowedRangeUint, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionEchoAllowedRangeUint, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEchoAllowedRangeUint->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEchoAllowedRangeUint->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndEchoAllowedRangeUint(IAsync& aAsync, TUint& aResult)
@@ -759,14 +759,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncDecrement(TInt aValue, TInt& aResult)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginDecrement(TInt aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionDecrement, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionDecrement, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDecrement->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDecrement->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndDecrement(IAsync& aAsync, TInt& aResult)
@@ -794,14 +794,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncToggle(TBool aValue, TBool& aResult)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginToggle(TBool aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionToggle, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionToggle, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionToggle->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionToggle->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndToggle(IAsync& aAsync, TBool& aResult)
@@ -829,14 +829,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncEchoString(const Brx& aValue, Brh& aResul
 
 void CpProxyOpenhomeOrgTestBasic1::BeginEchoString(const Brx& aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionEchoString, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionEchoString, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEchoString->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEchoString->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndEchoString(IAsync& aAsync, Brh& aResult)
@@ -864,14 +864,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncEchoAllowedValueString(const Brx& aValue,
 
 void CpProxyOpenhomeOrgTestBasic1::BeginEchoAllowedValueString(const Brx& aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionEchoAllowedValueString, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionEchoAllowedValueString, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEchoAllowedValueString->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEchoAllowedValueString->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndEchoAllowedValueString(IAsync& aAsync, Brh& aResult)
@@ -899,14 +899,14 @@ void CpProxyOpenhomeOrgTestBasic1::SyncEchoBinary(const Brx& aValue, Brh& aResul
 
 void CpProxyOpenhomeOrgTestBasic1::BeginEchoBinary(const Brx& aValue, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionEchoBinary, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionEchoBinary, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEchoBinary->InputParameters();
     invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], aValue));
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEchoBinary->OutputParameters();
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndEchoBinary(IAsync& aAsync, Brh& aResult)
@@ -934,11 +934,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncSetUint(TUint aValueUint)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginSetUint(TUint aValueUint, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetUint, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetUint, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetUint->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValueUint));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndSetUint(IAsync& aAsync)
@@ -964,11 +964,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncGetUint(TUint& aValueUint)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginGetUint(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetUint, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetUint, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetUint->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndGetUint(IAsync& aAsync, TUint& aValueUint)
@@ -996,11 +996,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncSetInt(TInt aValueInt)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginSetInt(TInt aValueInt, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetInt, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetInt, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetInt->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aValueInt));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndSetInt(IAsync& aAsync)
@@ -1026,11 +1026,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncGetInt(TInt& aValueInt)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginGetInt(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetInt, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetInt, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetInt->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndGetInt(IAsync& aAsync, TInt& aValueInt)
@@ -1058,11 +1058,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncSetBool(TBool aValueBool)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginSetBool(TBool aValueBool, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetBool, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetBool, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBool->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aValueBool));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndSetBool(IAsync& aAsync)
@@ -1088,11 +1088,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncGetBool(TBool& aValueBool)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginGetBool(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetBool, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetBool, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBool->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndGetBool(IAsync& aAsync, TBool& aValueBool)
@@ -1120,13 +1120,13 @@ void CpProxyOpenhomeOrgTestBasic1::SyncSetMultiple(TUint aValueUint, TInt aValue
 
 void CpProxyOpenhomeOrgTestBasic1::BeginSetMultiple(TUint aValueUint, TInt aValueInt, TBool aValueBool, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetMultiple, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetMultiple, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetMultiple->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValueUint));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aValueInt));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aValueBool));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndSetMultiple(IAsync& aAsync)
@@ -1152,13 +1152,13 @@ void CpProxyOpenhomeOrgTestBasic1::SyncGetMultiple(TUint& aValueUint, TInt& aVal
 
 void CpProxyOpenhomeOrgTestBasic1::BeginGetMultiple(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetMultiple, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetMultiple, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetMultiple->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndGetMultiple(IAsync& aAsync, TUint& aValueUint, TInt& aValueInt, TBool& aValueBool)
@@ -1188,11 +1188,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncSetString(const Brx& aValueStr)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginSetString(const Brx& aValueStr, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetString, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetString, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetString->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aValueStr));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndSetString(IAsync& aAsync)
@@ -1218,11 +1218,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncGetString(Brh& aValueStr)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginGetString(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetString, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetString, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetString->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndGetString(IAsync& aAsync, Brh& aValueStr)
@@ -1250,11 +1250,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncSetBinary(const Brx& aValueBin)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginSetBinary(const Brx& aValueBin, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionSetBinary, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionSetBinary, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBinary->InputParameters();
     invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], aValueBin));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndSetBinary(IAsync& aAsync)
@@ -1280,11 +1280,11 @@ void CpProxyOpenhomeOrgTestBasic1::SyncGetBinary(Brh& aValueBin)
 
 void CpProxyOpenhomeOrgTestBasic1::BeginGetBinary(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionGetBinary, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionGetBinary, aFunctor);
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBinary->OutputParameters();
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndGetBinary(IAsync& aAsync, Brh& aValueBin)
@@ -1312,8 +1312,8 @@ void CpProxyOpenhomeOrgTestBasic1::SyncToggleBool()
 
 void CpProxyOpenhomeOrgTestBasic1::BeginToggleBool(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionToggleBool, aFunctor);
-    iInvocable.InvokeAction(*invocation);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionToggleBool, aFunctor);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndToggleBool(IAsync& aAsync)
@@ -1339,12 +1339,12 @@ void CpProxyOpenhomeOrgTestBasic1::SyncWriteFile(const Brx& aData, const Brx& aF
 
 void CpProxyOpenhomeOrgTestBasic1::BeginWriteFile(const Brx& aData, const Brx& aFileFullName, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionWriteFile, aFunctor);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionWriteFile, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionWriteFile->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aData));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aFileFullName));
-    iInvocable.InvokeAction(*invocation);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndWriteFile(IAsync& aAsync)
@@ -1370,8 +1370,8 @@ void CpProxyOpenhomeOrgTestBasic1::SyncShutdown()
 
 void CpProxyOpenhomeOrgTestBasic1::BeginShutdown(FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionShutdown, aFunctor);
-    iInvocable.InvokeAction(*invocation);
+    Invocation* invocation = iCpProxy.GetService().Invocation(*iActionShutdown, aFunctor);
+    iCpProxy.GetInvocable().InvokeAction(*invocation);
 }
 
 void CpProxyOpenhomeOrgTestBasic1::EndShutdown(IAsync& aAsync)
@@ -1390,71 +1390,71 @@ void CpProxyOpenhomeOrgTestBasic1::EndShutdown(IAsync& aAsync)
 
 void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarUintChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iVarUintChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarIntChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iVarIntChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarBoolChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iVarBoolChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarStrChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iVarStrChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarBinChanged(Functor& aFunctor)
 {
-    iLock->Wait();
+    iCpProxy.GetLock().Wait();
     iVarBinChanged = aFunctor;
-    iLock->Signal();
+    iCpProxy.GetLock().Signal();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarUint(TUint& aVarUint) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aVarUint = iVarUint->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarInt(TInt& aVarInt) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aVarInt = iVarInt->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarBool(TBool& aVarBool) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aVarBool = iVarBool->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarStr(Brhz& aVarStr) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aVarStr.Set(iVarStr->Value());
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarBin(Brh& aVarBin) const
 {
-    AutoMutex a(PropertyReadLock());
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    AutoMutex a(iCpProxy.PropertyReadLock());
+    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
     aVarBin.Set(iVarBin->Value());
 }
 
@@ -1482,4 +1482,45 @@ void CpProxyOpenhomeOrgTestBasic1::VarBinPropertyChanged()
 {
     ReportEvent(iVarBinChanged);
 }
+
+
+void CpProxyOpenhomeOrgTestBasic1::Subscribe()
+{
+  iCpProxy.Subscribe();
+}
+
+void CpProxyOpenhomeOrgTestBasic1::Unsubscribe()
+{
+ iCpProxy.Unsubscribe();
+}
+
+void CpProxyOpenhomeOrgTestBasic1::SetPropertyChanged(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyChanged(aFunctor);
+}
+
+void CpProxyOpenhomeOrgTestBasic1::SetPropertyInitialEvent(Functor& aFunctor)
+{
+  iCpProxy.SetPropertyInitialEvent(aFunctor);
+}
+void CpProxyOpenhomeOrgTestBasic1::AddProperty(Property* aProperty)
+{
+  iCpProxy.AddProperty(aProperty);
+}
+
+void CpProxyOpenhomeOrgTestBasic1::DestroyService()
+{
+  iCpProxy.DestroyService();
+}
+
+void CpProxyOpenhomeOrgTestBasic1::ReportEvent(Functor aFunctor)
+{
+  iCpProxy.ReportEvent(aFunctor);
+}
+
+TUint CpProxyOpenhomeOrgTestBasic1::Version() const
+{
+  return iCpProxy.Version();
+}
+
 
