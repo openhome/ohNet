@@ -381,11 +381,11 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
         for (TUint j=0; j<iAdapters.size(); j++) {
             iAdapters[j]->BonjourDeregister();
         }
-        const TChar* name = 0;
+        /*const TChar* name = 0;
         GetAttribute("MdnsHostName", &name);
         if (name != NULL) {
             iDvStack.MdnsProvider()->MdnsSetHostName("");
-        }
+        }*/
     }
     if (completeNow) {
         iSubnetDisableCount = 0;
