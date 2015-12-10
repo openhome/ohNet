@@ -524,6 +524,11 @@ namespace OpenHome.Net.Core
         /// Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
         /// Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.</remarks>
         public bool DvEnableBonjour { get; set; }
+        /// <summary>
+        /// Set a MDNS hostname.
+        /// </summary>
+        /// <remarks>Only used if DvEnableBonjour is true.</remarks>
+        public string DvMdnsHostName { private get; set; }
 
         private uint iDvUpnpWebServerPort;
 
@@ -700,7 +705,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams);
+        static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams, IntPtr aHostName);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -917,7 +922,9 @@ namespace OpenHome.Net.Core
             OhNetInitParamsSetDvWebSocketPort(nativeParams, DvWebSocketPort);
             if (DvEnableBonjour)
             {
-                OhNetInitParamsSetDvEnableBonjour(nativeParams);
+                IntPtr hostName = InteropUtils.StringToHGlobalUtf8(DvMdnsHostName);
+                OhNetInitParamsSetDvEnableBonjour(nativeParams, hostName);
+                Marshal.FreeHGlobal(hostName);
             }
             if (UseLoopbackNetworkAdapter)
             {

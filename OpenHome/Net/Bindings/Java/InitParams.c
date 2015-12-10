@@ -658,16 +658,18 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetDvEnableBonjour
- * Signature: (J)V
+ * Signature: (JLjava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvEnableBonjour
-  (JNIEnv *aEnv, jclass aClass, jlong aParams)
+(JNIEnv *aEnv, jclass aClass, jlong aParams, jstring aHostName)
 {
 	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	OhNetInitParamsSetDvEnableBonjour(params);
+    const char* hostName = (*aEnv)->GetStringUTFChars(aEnv, aHostName, NULL);
+    OhNetInitParamsSetDvEnableBonjour(params, hostName);
+    (*aEnv)->ReleaseStringUTFChars(aEnv, aHostName, hostName);
 }
 
 /*

@@ -271,10 +271,10 @@ void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams aParams, ui
     ip->SetDvWebSocketPort(aPort);
 }
 
-void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams)
+void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    ip->SetDvEnableBonjour();
+    ip->SetDvEnableBonjour(aHostName);
 }
 
 uint32_t STDCALL OhNetInitParamsTcpConnectTimeoutMs(OhNetHandleInitParams aParams)
@@ -382,7 +382,8 @@ uint32_t STDCALL OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams aParams)
 uint32_t STDCALL OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    return (ip->DvIsBonjourEnabled()? 1 : 0);
+    const TChar* ignore = NULL;
+    return (ip->DvIsBonjourEnabled(ignore)? 1 : 0);
 }
 
 TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)

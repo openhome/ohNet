@@ -357,8 +357,9 @@ void InitialisationParams::SetDvWebSocketPort(TUint aPort)
     iDvWebSocketPort = aPort;
 }
 
-void InitialisationParams::SetDvEnableBonjour()
+void InitialisationParams::SetDvEnableBonjour(const TChar* aHostName)
 {
+    iDvBonjourHostName.Set(aHostName);
     iEnableBonjour = true;
 }
 
@@ -526,8 +527,9 @@ uint32_t InitialisationParams::DvWebSocketPort() const
     return iDvWebSocketPort;
 }
 
-bool InitialisationParams::DvIsBonjourEnabled() const
+bool InitialisationParams::DvIsBonjourEnabled(const TChar*& aHostName) const
 {
+    aHostName = iDvBonjourHostName.CString();
     return iEnableBonjour;
 }
 
@@ -575,8 +577,8 @@ InitialisationParams::InitialisationParams()
     , iCpUpnpEventServerPort(0)
     , iDvUpnpWebServerPort(0)
     , iDvWebSocketPort(0)
-    , iEnableBonjour(false)
     , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
+    , iEnableBonjour(false)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
 {
