@@ -54,7 +54,7 @@ class BuildOhmp( BASE.CommonBuild ):
 
     def Test( self, aArgs ):
         """Perform update and build"""
-        buildOpts = '--steps=default,-integration_test --incremental-fetch'
+        buildOpts = ['--steps=default,-integration_test', '--incremental-fetch']
 
         if len( aArgs ) > 1:
             if aArgs[1].lower() == 'debug':
@@ -66,8 +66,10 @@ class BuildOhmp( BASE.CommonBuild ):
 
         ohmpPath = os.path.normpath( os.path.split( os.getcwd() )[0] )
         goCmd    = os.path.normpath( os.path.join( ohmpPath, go ))
-        self._Execute( 'git pull', ohmpPath, 'Updating source to latest' )
-        self._Execute( '%s build %s' % (goCmd, buildOpts), ohmpPath, 'Executing build' )
+        buildCmd = [goCmd, 'build']
+        buildCmd.extend( buildOpts )
+        self._Execute( ['git', 'pull'], ohmpPath, 'Updating source to latest' )
+        self._Execute( buildCmd, ohmpPath, 'Executing build' )
 
     def Cleanup( self ):
         """Clean up base class"""
