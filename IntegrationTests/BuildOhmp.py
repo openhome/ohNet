@@ -66,8 +66,8 @@ class BuildOhmp( BASE.CommonBuild ):
 
         ohmpPath = os.path.normpath( os.path.split( os.getcwd() )[0] )
         goCmd    = os.path.normpath( os.path.join( ohmpPath, go ))
-        self._Execute( 'git pull', ohmpPath, 'Updating source to latest' )
-        self._Execute( '%s build %s' % (goCmd, buildOpts), ohmpPath, 'Executing build' )
+        self._Execute( ['git', 'pull'], ohmpPath, 'Updating source to latest' )
+        self._Execute( [goCmd, 'build', buildOpts], ohmpPath, 'Executing build' )
 
     def Cleanup( self ):
         """Clean up base class"""
