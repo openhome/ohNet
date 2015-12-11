@@ -35,7 +35,7 @@ TestMediaPlayerThread::TestMediaPlayerThread(const TestMediaPlayerOptions& aOpti
     , iArbAnimator(kPrioritySystemHighest)
     , iArbPipeline(kPrioritySystemHighest-1)
 {
-    iLib = TestMediaPlayerInit::CreateLibrary(iOptions.Loopback().Value(), iOptions.Adapter().Value());
+    iLib = TestMediaPlayerInit::CreateLibrary(iOptions.Room().CString(), iOptions.Loopback().Value(), iOptions.Adapter().Value());
     ThreadPriorityArbitrator& priorityArbitrator = iLib->Env().PriorityArbitrator();
     priorityArbitrator.Add(iArbAnimator);
     priorityArbitrator.Add(iArbPipeline);
@@ -67,9 +67,7 @@ void TestMediaPlayerThread::RunInThread()
     Bwh udn;
     // Note: prefix udn with 4c494e4e- to get older versions of Linn Konfig to recognise our devices
     TestMediaPlayerInit::AppendUniqueId(dvStack->Env(), iOptions.Udn().Value(), Brn("TestMediaPlayer"), udn);
-    Log::Print("UDN is ");
-    Log::Print(udn);
-    Log::Print("\n");
+    Log::Print("UDN is %.*s\n", PBUF(udn));
 
     // Create TestMediaPlayer.
     TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, iOptions.Room().CString(), iOptions.Name().CString(),
