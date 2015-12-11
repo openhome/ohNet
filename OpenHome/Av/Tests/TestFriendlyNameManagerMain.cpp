@@ -1,11 +1,26 @@
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Private/OptionParser.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
-extern void TestFriendlyNameManager();
+using namespace OpenHome;
+using namespace OpenHome::Net;
+
+extern void TestFriendlyNameManager(CpStack& aCpStack, DvStack& aDvStack);
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-    TestFriendlyNameManager();
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
+    Debug::SetLevel(Debug::kError | Debug::kApplication6);
+    aInitParams->SetDvUpnpServerPort(0);
+    Library* lib = new Library(aInitParams);
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    Library::DestroySubnetList(subnetList);
+    CpStack* cpStack = NULL;
+    DvStack* dvStack = NULL;
+    lib->StartCombined(subnet, cpStack, dvStack);
+
+    TestFriendlyNameManager(*cpStack, *dvStack);
+
+    delete lib;
 }
