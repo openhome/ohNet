@@ -47,11 +47,15 @@ const NetworkAdapter* AutoNetworkAdapterRef::Adapter() const
 
 // NetworkAdapter
 
-NetworkAdapter::NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask, const char* aName, const char* aCookie)
+NetworkAdapter::NetworkAdapter(Environment& aEnv, TIpAddress aAddress, TIpAddress aNetMask,
+                               TIpAddress aDhcp, TIpAddress aGateway,
+                               const char* aName, const char* aCookie)
     : iEnv(&aEnv)
     , iRefCount(1)
     , iAddress(aAddress)
     , iNetMask(aNetMask)
+    , iDhcpServer(aDhcp)
+    , iGateway(aGateway)
     , iName(aName)
 {
     iEnv->AddObject(this);
@@ -129,6 +133,26 @@ char* NetworkAdapter::FullName() const
     Brhz buf2;
     buf.TransferTo(buf2);
     return (char*)buf2.Transfer();
+}
+
+TBool NetworkAdapter::DhcpServerAddressAvailable() const
+{
+    return (iDhcpServer != 0);
+}
+
+TIpAddress NetworkAdapter::DhcpServerAddress() const
+{
+    return iDhcpServer;
+}
+
+TBool NetworkAdapter::GatewayAddressAvailable() const
+{
+    return (iGateway != 0);
+}
+
+TIpAddress NetworkAdapter::GatewayAddress() const
+{
+    return iGateway;
 }
 
 void NetworkAdapter::ListObjectDetails() const
@@ -357,8 +381,9 @@ void InitialisationParams::SetDvWebSocketPort(TUint aPort)
     iDvWebSocketPort = aPort;
 }
 
-void InitialisationParams::SetDvEnableBonjour()
+void InitialisationParams::SetDvEnableBonjour(const TChar* aHostName)
 {
+    iDvBonjourHostName.Set(aHostName);
     iEnableBonjour = true;
 }
 
@@ -526,8 +551,9 @@ uint32_t InitialisationParams::DvWebSocketPort() const
     return iDvWebSocketPort;
 }
 
-bool InitialisationParams::DvIsBonjourEnabled() const
+bool InitialisationParams::DvIsBonjourEnabled(const TChar*& aHostName) const
 {
+    aHostName = iDvBonjourHostName.CString();
     return iEnableBonjour;
 }
 
@@ -575,8 +601,8 @@ InitialisationParams::InitialisationParams()
     , iCpUpnpEventServerPort(0)
     , iDvUpnpWebServerPort(0)
     , iDvWebSocketPort(0)
-    , iEnableBonjour(false)
     , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
+    , iEnableBonjour(false)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
 {

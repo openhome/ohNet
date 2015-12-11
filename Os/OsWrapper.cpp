@@ -212,7 +212,9 @@ std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Environment& aEn
     std::vector<NetworkAdapter*>* ifs = new std::vector<NetworkAdapter*>;
     OsNetworkAdapter* ptr = cIfs;
     while (ptr != NULL) {
-        NetworkAdapter* iface = new NetworkAdapter(aEnv, ptr->iAddress, ptr->iNetMask, ptr->iName, aCookie);
+        NetworkAdapter* iface = new NetworkAdapter(aEnv, ptr->iAddress, ptr->iNetMask,
+                                                   ptr->iDhcpServer, ptr->iGateway,
+                                                   ptr->iName, aCookie);
         ifs->push_back(iface);
         ptr = ptr->iNext;
     }

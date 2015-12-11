@@ -30,8 +30,9 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager(*this);
     iDviServerWebSocket = new DviServerWebSocket(*this);
-    if (initParams->DvIsBonjourEnabled()) {
-        iMdns = new OpenHome::Net::MdnsProvider(iEnv, ""); // replace this to allow clients to set an alternative Bonjour implementation
+    const TChar* hostName = NULL;
+    if (initParams->DvIsBonjourEnabled(hostName)) {
+        iMdns = new OpenHome::Net::MdnsProvider(iEnv, hostName);
     }
     if (initParams->DvNumLpecThreads() == 0) {
         iLpecServer = NULL;
