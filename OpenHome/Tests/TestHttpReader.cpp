@@ -66,10 +66,12 @@ void SuiteHttpReader::Test1()
     (void)httpReader.ReadFlush();
     (void)httpReader.ReadInterrupt();
 
-    TEST(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))));
+    const Uri uri(Brn("http://www.google.co.uk"));
+
+    TEST(httpReader.Connect(uri));
 
     // if trying to reuse an open socket, should automatically close and connect to new URL.
-    TEST(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))));
+    TEST(httpReader.Connect(uri));
 
     for(;;) {
         try {
