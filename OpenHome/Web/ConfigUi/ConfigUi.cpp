@@ -976,7 +976,7 @@ void ConfigAppBase::AddNum(const OpenHome::Brx& aKey, JsonKvpVector& aAdditional
     AddJson(*key, aAdditionalInfo);
 
     for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyNum(aKey);
+        iTabs[i]->AddKeyNum(*key);
     }
 }
 
@@ -987,7 +987,7 @@ void ConfigAppBase::AddChoice(const OpenHome::Brx& aKey, JsonKvpVector& aAdditio
     AddJson(*key, aAdditionalInfo);
 
     for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyChoice(aKey);
+        iTabs[i]->AddKeyChoice(*key);
     }
 }
 
@@ -1042,12 +1042,13 @@ ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager, const Brx& aResou
 ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppBasic(aConfigManager, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
+    JsonKvpVector emptyJsonVector;
+
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
-        Brn suffix(".Name");
-        Bws<kMaxSourceNameBytes> key("Source.");
-        Ascii::AppendDec(key, i);
-        key.Append(suffix);
+
+        Bws<Av::Source::kKeySourceNameMaxBytes> key;
+        Av::Source::GetSourceNameKey(*aSources[i], key);
 
         JsonKvpVector sourceInfoVector;
         // FIXME - enable this
@@ -1062,9 +1063,13 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager, const std::ve
         //sourceInfoVector.push_back(new JsonKvpString(Brn("name"), systemName));
 
         AddText(key, sourceInfoVector);
+
+
+        Av::Source::GetSourceVisibleKey(*aSources[i], key);
+        AddNum(key, emptyJsonVector);   // FIXME - why not a ConfigChoice?
+        //AddChoice(key, emptyJsonVector);
     }
 
-    JsonKvpVector emptyJsonVector;
     AddChoice(ConfigStartupSource::kKeySource, emptyJsonVector);
 }
 
