@@ -7,7 +7,6 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Net;
 
-static const TUint kMaxFriendlyNameDeviceType = 30;
 
 FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(
         IFriendlyNameObservable& aFriendlyNameObservable,
@@ -16,7 +15,11 @@ FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(
         : iFriendlyNameObservable(aFriendlyNameObservable)
         , iDvDevice(aDvDevice)
         , iAppend(aAppend)
+        , iLock("DNCL")
 {
+    iThread = new ThreadFunctor("UpnpNameChanger", MakeFunctor(*this, &FriendlyNameAttributeUpdater::Run));
+    iThread->Start();
+
     iId = iFriendlyNameObservable.RegisterFriendlyNameObserver(
         MakeFunctorGeneric<const Brx&>(*this, &FriendlyNameAttributeUpdater::Observer));
 }
@@ -31,34 +34,39 @@ FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(
 FriendlyNameAttributeUpdater::~FriendlyNameAttributeUpdater()
 {
     iFriendlyNameObservable.DeregisterFriendlyNameObserver(iId);
-}
-
-const OpenHome::Brx& FriendlyNameAttributeUpdater::Appendage()
-{
-    return iAppend;
+    delete iThread;
 }
 
 void FriendlyNameAttributeUpdater::Observer(const Brx& aNewFriendlyName)
 {
-    Bws<IFriendlyNameObservable::kMaxFriendlyNameBytes+kMaxFriendlyNameDeviceType+1> fullName;
-    fullName.Replace(aNewFriendlyName);
-    fullName.Append(iAppend);
+    AutoMutex a(iLock);
+    iFullName.Replace(aNewFriendlyName);
+    iFullName.Append(iAppend);
 
-    // apply change to DvDevice
-    if(iDvDevice.Enabled()) // must be disabled to change attribute
-    {
-        // Note: the device must only be disabled here as there is no mutex protection
-        Semaphore sema("ufn", 0);
-        iDvDevice.SetDisabled(MakeFunctor(sema, &Semaphore::Signal));
-        sema.Wait();
-        iDvDevice.SetAttribute("Upnp.FriendlyName", fullName.PtrZ());
-        iDvDevice.SetEnabled();
-    }
-    else
-    {
-        iDvDevice.SetAttribute("Upnp.FriendlyName", fullName.PtrZ());
-    }
+    iThread->Signal();
 }
 
+void FriendlyNameAttributeUpdater::Run()
+{
+    try {
+        for (;;) {
+            iThread->Wait();
+            AutoMutex a(iLock);
 
-
+            if(iDvDevice.Enabled()) // must be disabled to change attribute
+            {
+                // Note: the device must only be disabled here as there is no mutex protection
+                Semaphore sema("ufn", 0);
+                iDvDevice.SetDisabled(MakeFunctor(sema, &Semaphore::Signal));
+                sema.Wait();
+                iDvDevice.SetAttribute("Upnp.FriendlyName", iFullName.PtrZ());
+                iDvDevice.SetEnabled();
+            }
+            else
+            {
+                iDvDevice.SetAttribute("Upnp.FriendlyName", iFullName.PtrZ());
+            }
+        }
+    }
+    catch (ThreadKill&) {}
+}

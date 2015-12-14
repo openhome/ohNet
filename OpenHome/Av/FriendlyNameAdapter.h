@@ -20,16 +20,21 @@ public:
         IFriendlyNameObservable& aFriendlyNameObservable,
         OpenHome::Net::DvDevice& aDvDevice);
     ~FriendlyNameAttributeUpdater();
-    const OpenHome::Brx& Appendage();
 
 private:
     void Observer(const Brx& aNewFriendlyName);
+    void Run();
 
 private:
+    static const TUint kMaxFriendlyNameDeviceType = 30;
+
     IFriendlyNameObservable& iFriendlyNameObservable;
     Net::DvDevice& iDvDevice;
     TUint iId;
     const OpenHome::Bwh iAppend;
+    Mutex iLock;
+    ThreadFunctor* iThread;
+    Bws<IFriendlyNameObservable::kMaxFriendlyNameBytes+kMaxFriendlyNameDeviceType+1> iFullName;
 };
 
 }
