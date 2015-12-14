@@ -114,7 +114,7 @@ public:
     static const TUint kMacAddrBytes = 12;
 public:
     // aMacAddr in hex of form 001122334455
-    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, IFriendlyNameObservable& aFriendlyNameObservable, TIpAddress aIpAddr, const Brx& aMacAddr);
+    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, IFriendlyNameObservable& aFriendlyNameObservable, TIpAddress aIpAddr, const Brx& aMacAddr);
     ~RaopDevice();
     void Register();
     void Deregister();
@@ -219,7 +219,7 @@ private:
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume);
     virtual ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -270,7 +270,7 @@ public:
 
     static const TUint kVolMaxScaled = 30;
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMax);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMax);
     virtual ~RaopDiscovery();
     void Enable();
     void Disable();

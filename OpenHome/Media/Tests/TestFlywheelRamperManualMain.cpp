@@ -11,6 +11,8 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <stdlib.h>
 
+#include <algorithm>
+
 
 using namespace OpenHome::TestFramework;
 
@@ -30,7 +32,7 @@ namespace TestFlywheelRamperManual {
 class TestFWRManual : public INonCopyable
 {
 public:
-    TestFWRManual(Net::Library& aLib, const Brx& aInputWavFilename, const Brx& aOutputWavFilename, TUint aDegree, TUint aGenMs, TUint aRampMs);
+    TestFWRManual(Net::Library& aLib, const Brx& aInputWavFilename, const Brx& aOutputWavFilename, TUint aDegree, TUint aGenMs, TUint aRampMs, TBool aSingleBlock, TUint aBlockIndex);
     void Run();
 
     static void LogBuf(const Brx& aBuf);
@@ -38,7 +40,6 @@ public:
 private:
     void UpdateDataSize(TUint32 aDataSizeBytes);
     void WriteOutHeader();
-    //void ProcessChannelFragment(IPcmProcessor& aProc, const Brx& aBuf, TUint aChannelCount);
     void ReadHeader();
 
     static TInt32 Int32(const Brx& aBuf, TUint aIndex);
@@ -57,6 +58,8 @@ private:
     TUint iDegree;
     TUint iGenMs;
     TUint iRampMs;
+    TBool iSingleBlock;
+    TUint iBlockIndex;
 
     Bws<44> iHeader;
     TUint32 iChunkSize;
@@ -122,12 +125,14 @@ private:
 using namespace OpenHome::Media::TestFlywheelRamperManual;
 
 
-TestFWRManual::TestFWRManual(Net::Library& /*aLib*/, const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs)
+TestFWRManual::TestFWRManual(Net::Library& /*aLib*/, const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs, TBool aSingleBlock, TUint aBlockIndex)
     :/*iLib(aLib)
     ,*/iOutputFile(new FileStream())
     ,iDegree(aDegree)
     ,iGenMs(aGenMs)
     ,iRampMs(aRampMs)
+    ,iSingleBlock(aSingleBlock)
+    ,iBlockIndex(aBlockIndex)
 {
     try
     {
@@ -294,20 +299,36 @@ void TestFWRManual::Run()
     // append a ramp block after each AudioTestBlock
     // and write out the output file
 
-    //TUint blockCount = 0;
-
-    for (TUint i=0; i<=(iSubChunk2Size-audioTestBlockBytes);)
-    //for (TUint i=0; i<audioTestBlockBytes;)
+    TUint blockCount = 0;
+    TUint limit;
+    if(iSingleBlock)
     {
+        limit = audioTestBlockBytes;
+    }
+    else
+    {
+        limit = iSubChunk2Size-audioTestBlockBytes;
+    }
+
+
+    for (TUint i=0; i<limit;)
+    {
+        buf.SetBytes(0);
+        rampOutput.SetBytes(0);
         iInputFile->Read(buf); // read a test block
 
-/*
-        if (++blockCount < 32)
+        if ( iSingleBlock && (blockCount != iBlockIndex) )
         {
-            buf.SetBytes(0);
+            blockCount++;
             continue;
         }
-*/
+        else
+        {
+            blockCount++;
+        }
+
+        //Log::Print("block %d:\n", blockCount);
+
         iOutputFile->Write(buf); // write test block to output file
 
         Bwh genSamples(buf.Split(bufSplitIndex)); //
@@ -331,15 +352,13 @@ void TestFWRManual::Run()
         i += buf.Bytes();
         totalAudioDataBytes += buf.Bytes();
         totalAudioDataBytes += rampOutput.Bytes(); // increase output data by ramp block size
-
-        buf.SetBytes(0);
-        rampOutput.SetBytes(0);
     }
 
 
     // write out any remaining block (end portion < audioTestBlockBytes)
-    if (iInputFile->Tell()<iInputFile->Bytes())
+    if (!iSingleBlock && (iInputFile->Tell()<iInputFile->Bytes()) )
     {
+        buf.SetBytes(0);
         iInputFile->Read(buf);
         totalAudioDataBytes += buf.Bytes();
         iOutputFile->Write(buf);
@@ -436,16 +455,12 @@ void TestFWRManual::IncreaseBitDepthBe32(const Brx& aBufIn, Bwx& aBufOut, TUint 
     {
         for(TUint j=0; j<iBytesPerSample; j++)
         {
-            //Log::Print("TestFWRManual::IncreaseBitDepthBe32 1\n");
             aBufOut.Append(aBufIn[i+j]);
-            //Log::Print("TestFWRManual::IncreaseBitDepthBe32 2\n");
         }
 
         for(TUint k=0; k<padByteCount; k++)
         {
-            //Log::Print("TestFWRManual::IncreaseBitDepthBe32 3\n");
             aBufOut.Append((TByte)0);
-            //Log::Print("TestFWRManual::IncreaseBitDepthBe32 4\n");
         }
 
         i+=iBytesPerSample;
@@ -625,6 +640,13 @@ int CDECL main(int aArgc, TChar* aArgv[])
         args.push_back(Brn(aArgv[i]));
     }
 
+    TBool singleBlock = false;
+
+    if( find(args.begin(), args.end(), Brn("--block")) != args.end() )
+    {
+        singleBlock = true;
+    }
+
     OptionParser parser;
 
     OptionString optionInput("-i", "--input", Brn(""), "name of input file");
@@ -642,6 +664,10 @@ int CDECL main(int aArgc, TChar* aArgv[])
     OptionUint optionRampMs("-r", "--ramp", 100, "ramp length in ms");
     parser.AddOption(&optionRampMs);
 
+    OptionUint optionBlock("", "--block", 0, "index of block to process");
+    parser.AddOption(&optionBlock);
+
+
     if (!parser.Parse(args) || parser.HelpDisplayed()) {
         return(0);
     }
@@ -654,7 +680,15 @@ int CDECL main(int aArgc, TChar* aArgv[])
     InitialisationParams* initParams = Net::InitialisationParams::Create();
     Net::Library* lib = new Net::Library(initParams);
 
-    auto test = new TestFWRManual(*lib, optionInput.Value(), optionOutput.Value(), optionDegree.Value(), optionGenMs.Value(), optionRampMs.Value());
+    auto test = new TestFWRManual(*lib,
+                                    optionInput.Value(),
+                                    optionOutput.Value(),
+                                    optionDegree.Value(),
+                                    optionGenMs.Value(),
+                                    optionRampMs.Value(),
+                                    singleBlock,
+                                    optionBlock.Value());
+
     test->Run();
     //Log::Print("time = %d \n", Os::TimeInMs(lib->Env().OsCtx()));
 
@@ -664,6 +698,3 @@ int CDECL main(int aArgc, TChar* aArgv[])
 }
 
 /////////////////////////////////////////////////////////////////
-
-
-

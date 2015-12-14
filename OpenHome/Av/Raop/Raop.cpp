@@ -21,7 +21,7 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 // RaopDevice
-RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, IFriendlyNameObservable& aFriendlyNameObservable, TIpAddress aIpAddr, const Brx& aMacAddr)
+RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, IFriendlyNameObservable& aFriendlyNameObservable, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
     , iFriendlyNameObservable(aFriendlyNameObservable)
     , iEndpoint(aDiscoveryPort, aIpAddr)
@@ -34,7 +34,6 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar
 
     ASSERT(aMacAddr.Bytes() == 12);
     iFriendlyNameId = aFriendlyNameObservable.RegisterFriendlyNameObserver(MakeFunctorGeneric<const Brx&>(*this, &RaopDevice::FriendlyNameUpdate));   // Functor is called within this.
-    aDvStack.MdnsProvider()->MdnsSetHostName(aHost); // FIXME - required?
 }
 
 RaopDevice::~RaopDevice()
@@ -731,7 +730,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
 
-RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume)
+RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume)
     : iEnv(aEnv)
     , iAdapter(aNif)
     , iObserversLock("RDOL")
@@ -740,7 +739,7 @@ RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvSta
     iAdapter.AddRef(kAdapterCookie);
 
     iRaopDiscoveryServer = new SocketTcpServer(iEnv, "MDNS", 0, iAdapter.Address(), kPriority, kSessionStackBytes);
-    iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aFriendlyNameObservable, iAdapter.Address(), aMacAddr);
+    iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aFriendlyNameObservable, iAdapter.Address(), aMacAddr);
 
     // Require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging.
     TUint nextSessionId = 1;
@@ -891,10 +890,9 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 
 
 // RaopDiscovery
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMax)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMax)
     : iEnv(aEnv)
     , iDvStack(aDvStack)
-    , iHostName(aHostName)
     , iFriendlyNameObservable(aFriendlyNameObservable)
     , iMacAddr(aMacAddr)
     , iCurrent(nullptr)
@@ -1212,7 +1210,7 @@ void RaopDiscovery::HandleInterfaceChange()
 
 void RaopDiscovery::AddAdapter(NetworkAdapter& aNif)
 {
-    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyNameObservable, iMacAddr, iVolume);
+    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iFriendlyNameObservable, iMacAddr, iVolume);
     iServers.push_back(server);
     server->Enable();
     server->AddObserver(*this);

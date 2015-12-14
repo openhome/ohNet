@@ -45,11 +45,19 @@ void FriendlyNameAttributeUpdater::Observer(const Brx& aNewFriendlyName)
     fullName.Append(iAppend);
 
     // apply change to DvDevice
-    Semaphore sema("ufn", 0);
-    iDvDevice.SetDisabled(MakeFunctor(sema, &Semaphore::Signal));
-    sema.Wait();
-    iDvDevice.SetAttribute("Upnp.FriendlyName", fullName.PtrZ());
-    iDvDevice.SetEnabled();
+    if(iDvDevice.Enabled()) // must be disabled to change attribute
+    {
+        // Note: the device must only be disabled here as there is no mutex protection
+        Semaphore sema("ufn", 0);
+        iDvDevice.SetDisabled(MakeFunctor(sema, &Semaphore::Signal));
+        sema.Wait();
+        iDvDevice.SetAttribute("Upnp.FriendlyName", fullName.PtrZ());
+        iDvDevice.SetEnabled();
+    }
+    else
+    {
+        iDvDevice.SetAttribute("Upnp.FriendlyName", fullName.PtrZ());
+    }
 }
 
 
