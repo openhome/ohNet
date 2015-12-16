@@ -15,6 +15,7 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/Product.h>
+#include <OpenHome/Av/FriendlyNameAdapter.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/Raop/Raop.h>
@@ -81,53 +82,6 @@ private: // from IFade
     void SetFade(TInt aFade) override;
 };
 
-/*
- * Calls to change name may come in via UPnP.
- * That creates a problem, as can't disable device on same thread that's trying
- * to service a UPnP request.
- *
- * So, handle device renaming in its own thread, allowing UPnP request to
- * complete (and not block the disabling of devices!).
- */
-class UpnpDeviceNameChangerBase
-{
-protected:
-    UpnpDeviceNameChangerBase(Net::DvDevice& aDevice);
-    ~UpnpDeviceNameChangerBase();
-    void FriendlyNameChanged(const Brx& aFriendlyName);
-private:
-    void DeviceDisabledCallback();
-    void Run();
-private:
-    Net::DvDevice& iDevice;
-    ThreadFunctor* iThread;
-    Bws<256> iFriendlyName;
-    Mutex iLock;
-    Semaphore iSemDisabled;
-    Semaphore iSemUpdate;
-    TBool iQuit;
-};
-
-class UpnpDeviceNameChangerMediaPlayer : public UpnpDeviceNameChangerBase
-{
-public:
-    UpnpDeviceNameChangerMediaPlayer(Net::DvDevice& aDevice, IFriendlyNameObservable& aObservable);
-    ~UpnpDeviceNameChangerMediaPlayer();
-private:
-    void NameChanged(const Brx& aFriendlyName);
-private:
-    IFriendlyNameObservable& iObservable;
-    TUint iObserverId;
-};
-
-class UpnpDeviceNameChangerMediaRenderer : public UpnpDeviceNameChangerBase, public IProductNameObserver
-{
-public:
-    UpnpDeviceNameChangerMediaRenderer(Net::DvDevice& aDevice, IProductNameObservable& aObservable);
-private: // from IProductNameObserver
-    void RoomChanged(const Brx& aRoom) override;
-    void NameChanged(const Brx& aName) override;
-};
 
 class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, public Web::IWebAppFramework*/
 {
@@ -195,8 +149,8 @@ private:
     Media::LoggingPipelineObserver* iPipelineObserver;
     Net::DvDeviceStandard* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
-    UpnpDeviceNameChangerMediaPlayer* iUpnpFriendlyNameObserver;
-    UpnpDeviceNameChangerMediaRenderer* iUpnpAvFriendlyNameObserver;
+    Av::FriendlyNameAttributeUpdater* iFnUpdaterStandard;
+    Av::FriendlyNameAttributeUpdater* iFnUpdaterUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
 };
@@ -237,7 +191,7 @@ private:
 class TestMediaPlayerInit
 {
 public:
-    static OpenHome::Net::Library* CreateLibrary(TBool aLoopback, TUint aAdapter);  // creates lib; client must start appropriate stacks
+    static OpenHome::Net::Library* CreateLibrary(const TChar* aRoom, TBool aLoopback, TUint aAdapter);  // creates lib; client must start appropriate stacks
     static void SeedRandomNumberGenerator(Environment& aEnv, const Brx& aRoom, TIpAddress aAddress, Net::DviServerUpnp& aServer);    // seed from room + server port
     static void AppendUniqueId(Environment& aEnv, const Brx& aUserUdn, const Brx& aDefaultUdn, Bwh& aOutput);
 };

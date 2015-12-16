@@ -43,6 +43,8 @@ private:
     void TestRegisterDeregister();
     void TestUpdate();  // Deregister one observer for second update.
     void TestDvUpdate();
+    TBool WaitForNameChange(Net::DvDevice& aDevice, const Brx& aNewName);
+
 private:
     Net::DvStack& iDvStack;
     FriendlyNameManager* iFriendlyNameManager;
@@ -155,6 +157,7 @@ void SuiteFriendlyNameManager::TestUpdate()
     const TUint id2 = observable.RegisterFriendlyNameObserver(MakeFunctorGeneric<const Brx&>(observer2, &MockFriendlyNameObserver::FriendlyNameChanged));
 
     iObservable->SetRoomName(Brn("NewRoom"));
+
     TEST(observer1.FriendlyName() == Brn("NewRoom:Product"));
     TEST(observer2.FriendlyName() == Brn("NewRoom:Product"));
 
@@ -211,7 +214,6 @@ DvDevice& DeviceBasic::Device()
 
 void SuiteFriendlyNameManager::TestDvUpdate()
 {
-    const TChar* updatedName;
 
     DeviceBasic* deviceBasic1 = new DeviceBasic(iDvStack);
     DvDevice& dvDevice1 = deviceBasic1->Device();
@@ -226,18 +228,14 @@ void SuiteFriendlyNameManager::TestDvUpdate()
     auto updater2 = new FriendlyNameAttributeUpdater(*iFriendlyNameManager, dvDevice2, Brn(":MediaRenderer"));
 
     // check initial updates
-    dvDevice1.GetAttribute("Upnp.FriendlyName", &updatedName);
-    TEST(Brn(updatedName) == Brn("Room:Product"));
-    dvDevice2.GetAttribute("Upnp.FriendlyName", &updatedName);
-    TEST(Brn(updatedName) == Brn("Room:Product:MediaRenderer"));
+    TEST(WaitForNameChange(dvDevice1, Brn("Room:Product")) == true);
+    TEST(WaitForNameChange(dvDevice2, Brn("Room:Product:MediaRenderer")) == true);
 
     iObservable->SetRoomName(Brn("NewRoom"));
 
     // check updates after room name modified
-    dvDevice1.GetAttribute("Upnp.FriendlyName", &updatedName);
-    TEST(Brn(updatedName) == Brn("NewRoom:Product"));
-    dvDevice2.GetAttribute("Upnp.FriendlyName", &updatedName);
-    TEST(Brn(updatedName) == Brn("NewRoom:Product:MediaRenderer"));
+    TEST(WaitForNameChange(dvDevice1, Brn("NewRoom:Product")) == true);
+    TEST(WaitForNameChange(dvDevice2, Brn("NewRoom:Product:MediaRenderer")) == true);
 
     delete updater2;
     delete updater1;
@@ -245,9 +243,23 @@ void SuiteFriendlyNameManager::TestDvUpdate()
     delete deviceBasic1;
 }
 
+TBool SuiteFriendlyNameManager::WaitForNameChange(DvDevice& aDevice, const Brx& aNewName)
+{
+    static const TUint kMaxRetries = 50;
+    TUint retries;
+    const TChar* updatedName;
 
- //   FriendlyNameAttributeUpdater(*iFriendlyNameManager, dvDevice);
-  //  TEST(Brn(updatedName) == Brn("NewRoom:Product:MediaRenderer")); //appends correctly
+    for (retries = kMaxRetries; retries > 0; retries--)
+    {
+        aDevice.GetAttribute("Upnp.FriendlyName", &updatedName);
+        if(Brn(updatedName) == aNewName)
+        {
+            return true;
+        }
+        Thread::Sleep(20);              // wait for name to update
+    }
+    return false;
+}
 
 void TestFriendlyNameManager(CpStack& aCpStack, DvStack& aDvStack)
 {

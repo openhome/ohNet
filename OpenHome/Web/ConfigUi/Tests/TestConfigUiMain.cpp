@@ -8,7 +8,6 @@ extern void TestConfigUi(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStac
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    aInitParams->SetDvEnableBonjour();
     aInitParams->SetUseLoopbackNetworkAdapter();
     Net::Library* lib = new Net::Library(aInitParams);
 
