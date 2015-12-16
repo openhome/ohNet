@@ -62,13 +62,13 @@ qobuzUser = config.Get( 'qobuz.user' )
 qobuzPwd  = config.Get( 'qobuz.password' )
 
 tests = [
-    # # UPnP compliance
-    # [ 'TestComplianceDevice',         'local'                                                                                        ],
-    #
-    # # OH Playlist Service
-    # [ 'TestPlaylistHandling',         'local', 'all',   0                                                                            ],
-    # [ 'TestPlaylistModes',            'local', 'all',   0                                                                            ],
-    # [ 'TestPlaylistPlayback',         'local', 'all',   0                                                                            ],
+    # UPnP compliance
+    [ 'TestComplianceDevice',         'local'                                                                                        ],
+
+    # OH Playlist Service
+    [ 'TestPlaylistHandling',         'local', 'all',   0                                                                            ],
+    [ 'TestPlaylistModes',            'local', 'all',   0                                                                            ],
+    [ 'TestPlaylistPlayback',         'local', 'all',   0                                                                            ],
     [ 'TestPlaylistAddDelSoak',       'local',  server, plEnc,   100                                                                 ],
     [ 'TestLocalPlayTracks',          'local', 'none',  8,       'off',   'on'                                                       ],
     [ 'TestLocalPlayTracks',          'local', 'none',  'none',  'off',   'on',        'hls'                                         ],
