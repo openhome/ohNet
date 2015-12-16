@@ -51,6 +51,7 @@ private:
     void TimerExpired();
     void SubnetListChanged();
     void CurrentAdapterChanged();
+    void DoSetHostName();
     Status AddInterface(NetworkAdapter* aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
