@@ -20,7 +20,7 @@ import BaseSuite as Suite
 import Config
 import os
 import sys
- 
+
 config = None
 logDir = None
 mode   = None
@@ -51,12 +51,9 @@ except:
     os._exit( -1 )
 radio2    = config.Get( 'tunein.user.o2' )
 radio4    = config.Get( 'tunein.user.o4' )
-plEnc     = config.Get( 'playlist.asset.enc-free' )
-plMix     = config.Get( 'playlist.asset.mixed-free' )
-server    = config.Get( 'mediaserver.asset' )
-# plEnc     = config.Get( 'playlist.kazoo.enc-free' )
-# plMix     = config.Get( 'playlist.kazoo.mixed-free' )
-# server    = config.Get( 'mediaserver.kazoo' )
+plEnc     = config.Get( 'playlist.enc-free' )
+plMix     = config.Get( 'playlist.mixed-free' )
+server    = config.Get( 'mediaserver.name' )
 tidalId   = config.Get( 'tidal.id' )
 tidalUser = config.Get( 'tidal.user' )
 tidalPwd  = config.Get( 'tidal.password' )
