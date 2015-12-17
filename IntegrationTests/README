@@ -75,7 +75,7 @@ contains sensitive data such as streaming services IDs/users/passwords
 	</softplayer>
 
 	<mediaserver>
-		<asset>FuncTest</asset>
+		<name>FuncTest</name>
 	</mediaserver>
 
 	<itunes>
@@ -107,10 +107,8 @@ contains sensitive data such as streaming services IDs/users/passwords
 	</qobuz>
 
 	<playlist>
-		<asset>
-			<encodings>Playlists  ~Encodings-ALLCodecs</encodings>
-			<mixed>Playlists  ~Mixed-ALLCodecs</mixed>
-			<albums>Playlists  ~5TrackAlbums</albums>
-		</asset>
+		<encodings>Playlists  ~Encodings-ALLCodecs</encodings>
+		<mixed>Playlists  ~Mixed-ALLCodecs</mixed>
+		<albums>Playlists  ~5TrackAlbums</albums>
 	</playlist>
 </configuration>

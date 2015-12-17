@@ -30,7 +30,7 @@ tests = '''
     TestPreDriver
     TestContentProcessor
     TestPipeline
-    TestProtocolHls
+   # TestProtocolHls
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t full
     TestCodecController
