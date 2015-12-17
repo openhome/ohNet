@@ -49,6 +49,7 @@ AnimatorBasic::AnimatorBasic(Environment& aEnv, IPipeline& aPipeline, TBool aPul
     , iSem("DRVB", 0)
     , iOsCtx(aEnv.OsCtx())
     , iPullable(aPullable)
+    , iSampleRate(0)
     , iPlayable(nullptr)
     , iPullValue(IPullableClock::kNominalFreq)
     , iQuit(false)
