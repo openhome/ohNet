@@ -1,4 +1,6 @@
 #include "OhmSocket.h"
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -30,7 +32,7 @@ void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
     iRxSocket = new SocketUdp(iEnv, 0, aInterface);
     iRxSocket->SetTtl(aTtl);
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
-    iRxSocket->SetSendBufBytes(kSendBufBytes);
+//    iRxSocket->SetSendBufBytes(kSendBufBytes);    // hangs in lwip, use default allocation for now - ToDo
     iReader = new UdpReader(*iRxSocket);
     iThis.Replace(Endpoint(iRxSocket->Port(), aInterface));
 }
@@ -44,7 +46,7 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
     iTxSocket = new SocketUdp(iEnv, 0, aInterface);
     iTxSocket->SetTtl(aTtl);
-    iTxSocket->SetSendBufBytes(kSendBufBytes);
+//    iTxSocket->SetSendBufBytes(kSendBufBytes);    // hangs in lwip, use default allocation for now - ToDo
     iReader = new UdpReader(*iRxSocket);
     iThis.Replace(aEndpoint);
 }

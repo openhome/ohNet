@@ -64,11 +64,13 @@ class BuildOhmp( BASE.CommonBuild ):
         if sys.platform in ['win32', 'win64', 'cli']:
             go += '.bat'
 
-        ohmpPath = os.path.normpath( os.path.split( os.getcwd() )[0] )
-        goCmd    = os.path.normpath( os.path.join( ohmpPath, go ))
-        buildCmd = [goCmd, 'build']
+        ohmpPath  = os.path.normpath( os.path.split( os.getcwd() )[0] )
+        goCmd     = os.path.normpath( os.path.join( ohmpPath, go ))
+        cleanDeps = [goCmd, 'fetch', '--clean']
+        buildCmd  = [goCmd, 'build']
         buildCmd.extend( buildOpts )
         self._Execute( ['git', 'pull'], ohmpPath, 'Updating source to latest' )
+        self._Execute( cleanDeps, ohmpPath, 'Cleaning dependencies' )
         self._Execute( buildCmd, ohmpPath, 'Executing build' )
 
     def Cleanup( self ):

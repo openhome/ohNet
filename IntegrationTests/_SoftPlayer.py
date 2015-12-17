@@ -1,23 +1,23 @@
 """Utility to execute standalone TestMediaPlayer executable
 """
 import _Paths
-import _SoftPlayer as BASE
+import CommonSoftPlayer as BASE
 import Config
 import os
 import platform
 
 _platform = platform.system()
 if _platform in ['Windows', 'cli']:
-    kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer.exe' )
+    kExe = os.path.join( '..', 'install', 'bin', 'TestMediaPlayer.exe' )
 elif _platform in ['Linux', 'Darwin']:
-    kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer' )
+    kExe = os.path.join( '..', 'install', 'bin', 'TestMediaPlayer' )
 
 
-class SoftPlayer( BASE.SoftPlayer ):
+class SoftPlayer( BASE.CommonSoftPlayer ):
 
     def __init__( self, **kw ):
         """Constructor for Airplay Dropout test"""
-        BASE.SoftPlayer.__init__( self, **kw )
+        BASE.CommonSoftPlayer.__init__( self, kExe, **kw )
         self.doc = __doc__
 
 
