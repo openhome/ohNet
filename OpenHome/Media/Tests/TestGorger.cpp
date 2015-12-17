@@ -387,7 +387,6 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
     TEST(iGorger->iCanGorge);
-    TEST(iGorger->iGorgeOnStreamOut);
     TEST(!iGorger->iGorging);
 
     realTime = true;
@@ -398,14 +397,12 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
     TEST(iGorger->iCanGorge);
-    TEST(!iGorger->iGorgeOnStreamOut);
     while (iGorger->iGorging) {
         Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
     }
     TEST(!iGorger->iGorging);
     PullNext(EMsgMode);
     TEST(!iGorger->iCanGorge);
-    TEST(!iGorger->iGorgeOnStreamOut);
     TEST(!iGorger->iGorging);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
