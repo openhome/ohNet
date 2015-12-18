@@ -58,7 +58,7 @@ class BuildOhmp( BASE.CommonBuild ):
 
         if len( aArgs ) > 1:
             if aArgs[1].lower() == 'debug':
-                buildOpts += ' --debug'
+                buildOpts.append( '--debug' )
 
         go = 'go'
         if sys.platform in ['win32', 'win64', 'cli']:
