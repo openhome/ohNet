@@ -32,11 +32,13 @@ private:
     void SetGorging(TBool aGorging, const TChar* aId);
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg) override;
+    void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgDrain* aMsg) override;
     void ProcessMsgIn(MsgHalt* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     void ProcessMsgIn(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
     Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;

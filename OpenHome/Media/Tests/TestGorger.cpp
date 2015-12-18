@@ -488,9 +488,9 @@ void SuiteGorger::TestHaltEnablesGorging()
     TEST(!iGorger->iGorging);
 
     Queue(iMsgFactory->CreateMsgHalt());
-    Queue(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgHalt);
     TEST(iGorger->iGorging);
+    Queue(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
 
