@@ -26,7 +26,9 @@ using namespace OpenHome::Configuration;
 const Brn Qobuz::kHost("www.qobuz.com");
 const Brn Qobuz::kId("qobuz.com");
 const Brn Qobuz::kVersionAndFormat("/api.json/0.2/");
-const Brn Qobuz::kConfigKeySoundQuality("qobuz.com.SoundQuality");
+const Brn Qobuz::kConfigKeySoundQuality("qobuz.com.AudioQuality");
+
+static const TUint kQualityValues[] ={ 5, 6, 7, 27 };
 
 Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICredentialsState& aCredentialsState, IConfigInitialiser& aConfigInitialiser)
     : iEnv(aEnv)
@@ -47,7 +49,7 @@ Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICrede
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 
-    const int arr[] = {5, 6, 7, 27};
+    const int arr[] = {0, 1, 2, 3};
     /* 'arr' above describes the highest possible quality of a Qobuz stream
          5:  320kbps AAC
          6:  FLAC 16-bit, 44.1kHz
@@ -55,7 +57,7 @@ Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICrede
         27:  FLAC 24-bit, up to 192kHz
     */
     std::vector<TUint> qualities(arr, arr + sizeof(arr)/sizeof(arr[0]));
-    iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 27);
+    iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 3);
     iSubscriberIdQuality = iConfigQuality->Subscribe(MakeFunctorConfigChoice(*this, &Qobuz::QualityChanged));
 }
 
@@ -309,7 +311,7 @@ Brn Qobuz::ReadString()
 void Qobuz::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
 {
     iLockConfig.Wait();
-    iSoundQuality = aKvp.Value();
+    iSoundQuality = kQualityValues[aKvp.Value()];
     iLockConfig.Signal();
 }
 

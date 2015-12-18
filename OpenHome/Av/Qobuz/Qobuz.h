@@ -30,8 +30,9 @@ class Qobuz : public ICredentialConsumer
     static const TUint kMaxPasswordBytes = 128;
     static const Brn kId;
     static const Brn kVersionAndFormat;
-    static const Brn kConfigKeySoundQuality;
     static const TUint kSecsBetweenNtpAndUnixEpoch = 2208988800; // secs between 1900 and 1970
+public:
+    static const Brn kConfigKeySoundQuality;
 public:
     Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICredentialsState& aCredentialsState, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~Qobuz();

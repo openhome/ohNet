@@ -17,10 +17,10 @@ Volume.StartupEnabled
 0   False
 
 qobuz.com.SoundQuality
-5   320kbps MP3
-6   Lossless (FLAC 44.1kHz, 16-bit)
-7   Lossless+ (FLAC 96kHz, 24-bit)
-27  Lossless++ (FLAC 192kHz, 24-bit)
+0   320kbps MP3
+1   Lossless (FLAC 44.1kHz, 16-bit)
+2   Lossless+ (FLAC 96kHz, 24-bit)
+3   Lossless++ (FLAC 192kHz, 24-bit)
 
 tidalhifi.com.SoundQuality
 0   Low

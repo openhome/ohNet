@@ -1090,7 +1090,7 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(IConfigManager& aConfigManager, const
     AddChoiceConditional(Brn("Sender.Mode"), emptyJsonVector);
     AddChoiceConditional(Brn("Source.NetAux.Auto"), emptyJsonVector);
     AddChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled, emptyJsonVector);
-    AddChoiceConditional(Brn("qobuz.com.SoundQuality"), emptyJsonVector);
+    AddChoiceConditional(Brn("qobuz.com.AudioQuality"), emptyJsonVector);
     AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
 
     AddTextConditional(Brn("Radio.TuneInUserName"), emptyJsonVector);
