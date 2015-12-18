@@ -452,6 +452,11 @@ void MdnsPlatform::SetDomainName(domainname& aName, const TChar* aBuffer)
 void MdnsPlatform::SetHostName(const TChar* aName)
 {
     iHost.Set(aName);
+    void DoSetHostName();
+}
+
+void MdnsPlatform::DoSetHostName()
+{
     if (iHost.Bytes() > 0) {
         SetDomainLabel(iMdns->nicelabel, (const TChar*)iHost.Ptr());
         SetDomainLabel(iMdns->hostlabel, (const TChar*)iHost.Ptr());
@@ -543,6 +548,9 @@ void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
 {
     LOG(kBonjour, "Bonjour             InitCallback - aStatus %d\n", aStatus);
     m->mDNSPlatformStatus = aStatus;
+    if (aStatus != mStatus_NoError) {
+        Log::Print("ERROR: mdns status=%d\n", aStatus);
+    }
     ASSERT(aStatus == mStatus_NoError);
 }
 
@@ -577,7 +585,7 @@ MdnsPlatform::Status MdnsPlatform::Init()
 {
     LOG(kBonjour, "Bonjour             Init\n");
     LOG(kBonjour, "Bonjour             Init - Set FQDN\n");
-    SetHostName((const char*)iHost.Ptr());
+    DoSetHostName();
     LOG(kBonjour, "Bonjour             Init - Register Interface\n");
 
     iInterfacesLock.Wait();
