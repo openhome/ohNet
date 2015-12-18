@@ -251,6 +251,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         }
     }
 
+    iSupply->Flush();
     iLock.Wait();
     if ((iStopped || iSeek) && iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);

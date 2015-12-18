@@ -102,6 +102,7 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
             res = EProtocolStreamErrorUnrecoverable;
         }
     }
+    iSupply->Flush();
     iLock.Wait();
     if (iStopped) {
         iSupply->OutputFlush(iNextFlushId);
