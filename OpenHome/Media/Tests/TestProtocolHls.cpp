@@ -44,9 +44,6 @@ class TestSemaphore : public ISemaphore
 {
 public:
     TestSemaphore(Semaphore& aSem);
-    //TUint WaitCount() const;
-    TUint ClearCount() const;
-    //TUint SignalCount() const;
 public: // from ISemaphore
     void Wait() override;
     TBool Clear() override;
@@ -54,7 +51,6 @@ public: // from ISemaphore
 private:
     Semaphore& iSemWait;
     Semaphore iSem;
-    TUint iClearCount;
 };
 
 class TestHttpReader : public IHlsReader, public IHttpSocket, public IReader
@@ -192,7 +188,7 @@ private:
 class SuiteHlsM3uReader : public OpenHome::TestFramework::SuiteUnitTest
 {
 private:
-    static const TUint kSemWaitMs = 50;
+    static const TUint kSemWaitMs = 0;
     static const Brn kFileDefault;
 public:
     SuiteHlsM3uReader();
@@ -233,7 +229,7 @@ private:
 class SuiteSegmentStreamer : public OpenHome::TestFramework::SuiteUnitTest
 {
 private:
-    static const TUint kSemWaitMs = 50;
+    static const TUint kSemWaitMs = 0;
 public:
     SuiteSegmentStreamer();
 public: // from SuiteUnitTest
@@ -258,7 +254,7 @@ private:
 class SuiteProtocolHls : public OpenHome::TestFramework::SuiteUnitTest, public INonCopyable
 {
 private:
-    static const TUint kSemWaitMs = 50;
+    static const TUint kSemWaitMs = 0;
 public:
     SuiteProtocolHls(Environment& aEnv);
 public: // from SuiteUnitTest
@@ -385,20 +381,11 @@ void TestTimer::Cancel()
 TestSemaphore::TestSemaphore(Semaphore& aSem)
     : iSemWait(aSem)
     , iSem("TSES", 0)
-    //, iWaitCount(0)
-    , iClearCount(0)
-    //, iSignalCount(0)
 {
-}
-
-TUint TestSemaphore::ClearCount() const
-{
-    return iClearCount;
 }
 
 void TestSemaphore::Wait()
 {
-    //iWaitCount++;
     iSemWait.Signal();
     iSem.Wait();
 }
@@ -406,13 +393,11 @@ void TestSemaphore::Wait()
 TBool TestSemaphore::Clear()
 {
     return iSem.Clear();
-    //iClearCount++;
 }
 
 void TestSemaphore::Signal()
 {
     iSem.Signal();
-    //iSignalCount++;
 }
 
 
@@ -559,35 +544,6 @@ Brn TestHttpReader::Read(TUint aBytes)
     Brn buf = iCurrent.Split(iOffset, aBytes);
     iOffset = offsetNew;
     return buf;
-/*
-    if (iOffset == iCurrent.Bytes()) {
-        THROW(ReaderError);
-    }
-    TUint offsetNew = iOffset + aBytes;
-    if (offsetNew > iCurrent.Bytes()) {
-        aBytes -= (offsetNew - iCurrent.Bytes());
-        offsetNew = iCurrent.Bytes();
-    }
-
-    if (offsetNew >= iBlockOffset) {
-        iObserverSem.Signal();
-        iBlockSem.Wait();
-        iBlockOffset = std::numeric_limits<TUint>::max();
-        THROW(ReaderError);
-    }
-    else if (offsetNew >= iWaitOffset) {
-        iObserverSem.Signal();
-        iWaitSem.Wait();
-        iWaitOffset = std::numeric_limits<TUint>::max();
-    }
-    else if (offsetNew >= iThrowOffset) {
-        iThrowOffset = std::numeric_limits<TUint>::max();
-        THROW(ReaderError);
-    }
-
-    Brn buf = iCurrent.Split(iOffset, aBytes);
-    iOffset = offsetNew;
-    return buf;*/
 }
 
 void TestHttpReader::ReadFlush()
