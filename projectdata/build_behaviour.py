@@ -109,7 +109,7 @@ def choose_platform(context):
 def setup_universal(context):
     env = context.env
     env.update(
-        OH_PUBLISHDIR="releases@www.openhome.org:~/www/artifacts",
+        OH_PUBLISHDIR="releases@builds.openhome.org:~/www/artifacts",
         OH_PROJECT="ohMediaPlayer",
         OH_DEBUG=context.options.debugmode,
         BUILDDIR='buildhudson',
