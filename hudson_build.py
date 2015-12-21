@@ -306,7 +306,7 @@ class JenkinsBuild():
             if os.path.exists(native_dest):
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
-        rem.check_rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
+        rem.check_rsync('releases','builds.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
                         
     
     def do_postAction(self):
