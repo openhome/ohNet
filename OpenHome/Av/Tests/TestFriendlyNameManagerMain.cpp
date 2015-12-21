@@ -10,7 +10,6 @@ extern void TestFriendlyNameManager(CpStack& aCpStack, DvStack& aDvStack);
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    Debug::SetLevel(Debug::kError | Debug::kApplication6);
     aInitParams->SetDvUpnpServerPort(0);
     Library* lib = new Library(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
