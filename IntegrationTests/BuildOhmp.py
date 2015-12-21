@@ -49,8 +49,7 @@ class BuildOhmp( BASE.CommonBuild ):
                              "['valgrind', '--error-exitcode=255'",
                              'Memcheck; a memory error detector',
                              'ERROR SUMMARY: 0 errors from',
-                             'For counts of detected and suppressed errors',
-                             '']
+                             'For counts of detected and suppressed errors']
 
     def Test( self, aArgs ):
         """Perform update and build"""
