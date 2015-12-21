@@ -459,7 +459,9 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
         try {
             aMsg.SetRxTimestamp(iTimestamper->Timestamp(aMsg.Frame()));
         }
-        catch (OhmTimestampNotFound&) {}
+        catch (OhmTimestampNotFound&) {
+            LOG(kSongcast, "OHM - OhmTimestampNotFound for frame #%u\n", aMsg.Frame());
+        }
     }
 
     AutoMutex a(iMutexTransport);
