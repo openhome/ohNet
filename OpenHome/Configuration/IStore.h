@@ -20,6 +20,7 @@ should throw StoreKeyNotFound
 class IStoreReadOnly
 {
 public:
+    virtual ~IStoreReadOnly() {}
     virtual void Read(const Brx& aKey, Bwx& aDest) = 0;
 };
 
