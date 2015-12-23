@@ -82,7 +82,10 @@ void FlywheelRamperManager::RenderChannels(TUint aSampleCount, TUint aDecFactor,
     TByte* ptr = (TByte*)iOutBuf.Ptr();
     TUint outputBytes = 0;
     TUint sampleHoldCount = 0;
-    TInt32 prevSample[aChannelCount];
+
+    const TUint kChannelCount = aChannelCount;
+
+    TInt32 prevSample[kChannelCount];
 
     for(TUint j=0; j<aSampleCount; j++)
     {
@@ -420,7 +423,7 @@ FeedbackModel::FeedbackModel(TUint aStateCount, TUint aDataDescaleBitCount, TUin
     ,iSamples(NULL)
     ,iStateCount(aStateCount)
     ,iDataDescaleBitCount(aDataDescaleBitCount)
-    ,iDataFormat(aDataFormat)
+    //,iDataFormat(aDataFormat)
     ,iCoeffFormat(aCoeffFormat)
     ,iScaleShiftForOutput(aDataFormat+aDataDescaleBitCount-aOutputFormat)
 {

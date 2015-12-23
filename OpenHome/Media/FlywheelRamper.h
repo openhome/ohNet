@@ -149,7 +149,7 @@ private:
     TInt32* iSamples;
     TUint iStateCount;
     TUint iDataDescaleBitCount;
-    TUint iDataFormat;
+    //TUint iDataFormat;
     TUint iCoeffFormat;
     TInt iScaleShiftForOutput;
 };
