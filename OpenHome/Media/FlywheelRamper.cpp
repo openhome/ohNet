@@ -8,42 +8,29 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace std;
 
-
-static const TUint kBurgDataDescaleBitCount = 4;
-static const TUint kFeedbackDataDescaleBitCount = 0;
-static const TUint kFeedbackDataFormat = kBurgDataDescaleBitCount+1;
-static const TUint kBurgOutputFormat = 4;  // 4 gives better (less overflows) but divbyzero!
+static const TUint kBurgDataDescaleBitCount = 1;
+static const TUint kBurgOutputFormat = 3;
 static const TUint kBurgScaleShift = 16-kBurgOutputFormat;
 static const TUint kDegree = 3;
 
+static const TUint kFeedbackDataDescaleBitCount = 0;
+static const TUint kFeedbackDataFormat = 1;
 
 static const TUint kMaxChannelCount = 8;
 static const TUint kMaxSampleRate = 192000;
-static const TUint kMaxRampJiffiesBlockSize = Jiffies::kPerMs; // 1ms
-
-//double gMax;
-//double gMin;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-
-FlywheelRamperManager::FlywheelRamperManager(/*OpenHome::Environment& aEnv, */IPcmProcessor& aOutput, TUint aGenJiffies, TUint aRampJiffies)
-    :/*iEnv(aEnv)
-    ,*/iOutput(aOutput)
-    ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, aRampJiffies)*kMaxChannelCount*4)
+FlywheelRamperManager::FlywheelRamperManager(IPcmProcessor& aOutput, TUint aGenJiffies, TUint aRampJiffies)
+    :iOutput(aOutput)
+    ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, kMaxRampJiffiesBlockSize)*kMaxChannelCount*4)
     ,iRampJiffies(aRampJiffies)
 {
-//    gMax = 0;
-//    gMin = 0;
-
-
-    //Log::Print("iOutBuf.MaxBytes() = %d \n", iOutBuf.MaxBytes());
     for(TUint i=0; i<kMaxChannelCount; i++)
     {
-        iRampers.push_back(new FlywheelRamper(/*iEnv, */aGenJiffies));
+        iRampers.push_back(new FlywheelRamper(kDegree, aGenJiffies));
     }
 }
-
 
 FlywheelRamperManager::~FlywheelRamperManager()
 {
@@ -55,108 +42,88 @@ FlywheelRamperManager::~FlywheelRamperManager()
 
 void FlywheelRamperManager::Ramp(const Brx& aSamples, TUint aSampleRate, TUint aChannelCount)
 {
-    ASSERT(aChannelCount<=kMaxChannelCount);
-    //Log::Print("FlywheelRamperManager::Ramp \n");
-
-    //TUint startTime = Os::TimeInMs(iEnv.OsCtx());
-
-    //for (TUint j=0; j<1000; j++)  // scale up for profiling
-    {
-        const TByte* ptr = aSamples.Ptr();
-        TUint bytesPerChan = aSamples.Bytes()/aChannelCount;
-
-        // initialise all the rampers
-        for(TUint i=0; i<aChannelCount; i++)
-        {
-            Brn chanSamples(ptr, bytesPerChan);
-            iRampers[i]->Initialise(chanSamples, aSampleRate);
-            ptr += bytesPerChan;
-        }
-    }
-
+    InitChannels(aSamples, aSampleRate, aChannelCount); // prepare the ramp generation
 
     TUint decFactor = FlywheelRamper::DecimationFactor(aSampleRate);
-    TUint remainingSamples = FlywheelRamper::SampleCount(aSampleRate, iRampJiffies);
-    //Log::Print("rampSamplesPerChan = %d \n", rampSamplesPerChan);
-
-    //TUint endPrepTime = Os::TimeInMs(iEnv.OsCtx());
-
-    //Log::Print("FlywheelRamperManager::Ramp  processing\n");
-
     TUint maxRampSamplesBlockSize = FlywheelRamper::SampleCount(aSampleRate, kMaxRampJiffiesBlockSize);
+    TUint remainingSamples = FlywheelRamper::SampleCount(aSampleRate, iRampJiffies);
 
-    TUint outputBytes = 0;
-
-    //for (TUint i=0; i<1000; i++)  // scale up for profiling
+    while (remainingSamples > 0)
     {
-        TUint sampleHoldCount = 0;
-        TInt32 prevSample[kMaxChannelCount];
-
-        while (remainingSamples > 0)
+        TUint rampSamples = remainingSamples;
+        if (remainingSamples>maxRampSamplesBlockSize)
         {
-            TByte* ptr = (TByte*)iOutBuf.Ptr();
-            outputBytes = 0;
+            rampSamples = maxRampSamplesBlockSize; // 1ms blocks
+        }
 
-            TUint rampSamples = remainingSamples;
-            if (remainingSamples>maxRampSamplesBlockSize)
+        remainingSamples -= rampSamples;
+        RenderChannels(rampSamples, decFactor, aChannelCount); // output ramp audio data
+    }
+
+    Reset(); // clear memory ready for next ramp request
+}
+
+void FlywheelRamperManager::InitChannels(const Brx& aSamples, TUint aSampleRate, TUint aChannelCount)
+{
+    const TByte* ptr = aSamples.Ptr();
+    TUint bytesPerChan = aSamples.Bytes()/aChannelCount;
+
+    // initialise the rampers for each channel
+    for(TUint i=0; i<aChannelCount; i++)
+    {
+        Brn chanSamples(ptr, bytesPerChan);
+        iRampers[i]->Initialise(chanSamples, aSampleRate);
+        ptr += bytesPerChan;
+    }
+}
+
+void FlywheelRamperManager::RenderChannels(TUint aSampleCount, TUint aDecFactor, TUint aChannelCount)
+{
+    TByte* ptr = (TByte*)iOutBuf.Ptr();
+    TUint outputBytes = 0;
+    TUint sampleHoldCount = 0;
+    TInt32 prevSample[aChannelCount];
+
+    for(TUint j=0; j<aSampleCount; j++)
+    {
+        for(TUint k=0; k<aChannelCount; k++)
+        {
+            TInt32 sample;
+            if (sampleHoldCount==0)
             {
-                rampSamples = maxRampSamplesBlockSize;
+                sample = iRampers[k]->NextSample();
+                prevSample[k] = sample;
+            }
+            else
+            {
+                sample = prevSample[k];
             }
 
-            remainingSamples -= rampSamples;
+            // write out in big endian format
+            *(ptr+3) = (TByte) sample;
+            sample >>= 8;
+            *(ptr+2) = (TByte) sample;
+            sample >>= 8;
+            *(ptr+1) = (TByte) sample;
+            sample >>= 8;
+            *(ptr) = (TByte) sample;
 
-            for(TUint j=0; j<rampSamples; j++)
-            {
-                for(TUint k=0; k<aChannelCount; k++)
-                {
-                    TInt32 sample;
-                    if (sampleHoldCount==0)
-                    {
-                        sample = iRampers[k]->NextSample();
-                        //Log::Print("sample = %8x  chan=%d   sampleHoldCount=%d \n", sample, k, sampleHoldCount);
-                        prevSample[k] = sample;
-                    }
-                    else
-                    {
-                        sample = prevSample[k];
-                    }
+            ptr += 4;
+            outputBytes += 4;
+        }
 
-                    //Log::Print("sample = %8x  chan=%d   sampleHoldCount=%d \n", sample, k, sampleHoldCount);
-
-                    *(ptr+3) = (TByte) sample;
-                    sample >>= 8;
-                    *(ptr+2) = (TByte) sample;
-                    sample >>= 8;
-                    *(ptr+1) = (TByte) sample;
-                    sample >>= 8;
-                    *(ptr) = (TByte) sample;
-
-                    ptr += 4;
-                    outputBytes += 4;
-                }
-
-                sampleHoldCount++;
-
-                if (sampleHoldCount > (decFactor-1))
-                {
-                    sampleHoldCount = 0;
-                }
-            }
-
-            iOutBuf.SetBytes(outputBytes);
-            iOutput.BeginBlock();
-            iOutput.ProcessFragment32(iOutBuf, aChannelCount);
-            iOutput.EndBlock();
+        if ( (sampleHoldCount++) >= aDecFactor)
+        {
+            sampleHoldCount = 0;
         }
     }
 
+    iOutBuf.SetBytes(outputBytes);
+    iOutput.BeginBlock();
+    iOutput.ProcessFragment32(iOutBuf, aChannelCount);
+    iOutput.EndBlock();
 
-    //TUint endGenTime = Os::TimeInMs(iEnv.OsCtx());
-    //Log::Print("FWRMan prep time = %dms   sample pull time = %dms \n", endPrepTime-startTime, endGenTime-endPrepTime);
-
-    Reset(); // clears memory ready for next ramp request
 }
-
 
 void FlywheelRamperManager::Reset()
 {
@@ -166,14 +133,11 @@ void FlywheelRamperManager::Reset()
     }
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-FlywheelRamper::FlywheelRamper(/*OpenHome::Environment& aEnv,*/TUint aGenJiffies)
-    :/*iEnv(aEnv)
-    ,*/iGenJiffies(aGenJiffies)
-    ,iDegree(kDegree)
+FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aGenJiffies)
+    :iDegree(aDegree)
+    ,iGenJiffies(aGenJiffies)
     ,iFeedback(new FeedbackModel(iDegree, kFeedbackDataDescaleBitCount, kBurgOutputFormat, kFeedbackDataFormat, 1))
     ,iMaxGenSampleCount(SampleCount(kMaxSampleRate, iGenJiffies))
 {
@@ -184,16 +148,8 @@ FlywheelRamper::FlywheelRamper(/*OpenHome::Environment& aEnv,*/TUint aGenJiffies
     iBurgH = (TInt16*) calloc (iDegree, sizeof(TInt16));
 
     iFeedbackSamples = (TInt32*) calloc (iDegree, sizeof(TInt32));
-
-/*
-    iFpGenSamples = (double*) calloc (iMaxGenSampleCount, sizeof(double));
-    iFpBurgPer = (double*) calloc (iMaxGenSampleCount, sizeof(double));
-    iFpBurgPef = (double*) calloc (iMaxGenSampleCount, sizeof(double));
-    iFpBurgCoeffs = (double*) calloc (iDegree, sizeof(double));
-    iFpBurgH = (double*) calloc (iDegree, sizeof(double));
-*/
+    iFeedbackCoeffs = (TInt32*) calloc (iDegree, sizeof(TInt32));
 }
-
 
 FlywheelRamper::~FlywheelRamper()
 {
@@ -203,97 +159,82 @@ FlywheelRamper::~FlywheelRamper()
     free(iBurgPer);
     free(iBurgPef);
     free(iFeedbackSamples);
+    free(iFeedbackCoeffs);
     delete iFeedback;
 }
-
 
 TUint FlywheelRamper::GenJiffies() const
 {
     return(iGenJiffies);
 }
 
-
 void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
 {
-    //Log::Print("FlywheelRamper::Initialise \n");
     ASSERT(aSampleRate<=kMaxSampleRate);
     ASSERT(aSamples.Bytes()==(SampleCount(aSampleRate, iGenJiffies)*kBytesPerSample));
-/*
-    Log::Print("\nFlywheelRamper::Initialise samples in: \n");
-
-    for (TUint i=0; i<aSamples.Bytes(); i++)  // scale up for profiling
-    {
-        Log::Print("%x ", aSamples[i]);
-    }
-
-    Log::Print("\n");
-*/
-
-    //double* iFpGenSampPtr = iFpGenSamples;
 
     // copy input samples out of buffer into memory
     TUint decFactor = DecimationFactor(aSampleRate);
     TInt16* iGenSampPtr = iGenSamples;
     const TByte* bufPtr = aSamples.Ptr();
+
     TUint sampleCount = aSamples.Bytes()/(kBytesPerSample*decFactor);
     TUint ptrInc = 4*decFactor;
 
     for(TUint i=0; i<sampleCount; i++)
     {
-        TUint16 sample = (TUint16) (*(bufPtr));
+        TUint32 sample = (TUint32) (*(bufPtr));
         sample <<= 8;
-        sample += (TUint16) (*(bufPtr+1));
+        sample += (TUint32) (*(bufPtr+1));
+
+        TInt16 sample16 = (TInt16)sample;
+
+        sample <<= 8;
+        sample += (TUint32) (*(bufPtr+2));
+        sample <<= 8;
+        sample += (TUint32) (*(bufPtr+3));
+
         bufPtr += ptrInc;
 
-        *(iGenSampPtr++) = ((TInt16)(sample))>>kBurgDataDescaleBitCount;
-        //*(iFpGenSampPtr++) = ToDouble(((TInt32)sample)<<16, 1);
+        if (i>=(sampleCount-iDegree))
+        {
+            // put the initial states into feedback buffer (in reverse order)
+            iFeedbackSamples[sampleCount-i-1] = sample;
+        }
+
+        *(iGenSampPtr++) = sample16>>kBurgDataDescaleBitCount;
     }
 
     BurgsMethod(iGenSamples, sampleCount, iDegree, iBurgCoeffs, iBurgH, iBurgPer, iBurgPef);
-    //BurgsMethod(iFpGenSamples, sampleCount, iDegree, iFpBurgCoeffs, iFpBurgH, iFpBurgPer, iFpBurgPef);
 
-    // Invert the coeffs
-    Invert(iBurgCoeffs, iDegree);
+    CorrectBurgCoeffs(); // remove overflow
+    PrepareFeedbackCoeffs(); // upcast and invert
 
-    // put the initial states into buffer (in reverse order)
-    for(TUint i=0; i<iDegree; i++)
-    {
-        iFeedbackSamples[i] = ((TInt32)iGenSamples[sampleCount-1-i])<<16;
-    }
-
-    iFeedback->Initialise(iBurgCoeffs, iFeedbackSamples);
+    iFeedback->Initialise(iFeedbackCoeffs, iFeedbackSamples);
 }
 
+void FlywheelRamper::PrepareFeedbackCoeffs()
+{
+    for(TUint i=0; i<iDegree; i++)
+    {
+        // invert and upcast to 32 bit
+        iFeedbackCoeffs[i] = -(((TInt32)iBurgCoeffs[i])<<16);
+    }
+}
 
 void FlywheelRamper::Reset()
 {
     memset(iBurgPer, 0, iMaxGenSampleCount*sizeof(TInt16)); // clear
     memset(iBurgPef, 0, iMaxGenSampleCount*sizeof(TInt16)); // clear
-/*
-    memset(iFpBurgPer, 0, iMaxGenSampleCount*sizeof(double)); // clear
-    memset(iFpBurgPef, 0, iMaxGenSampleCount*sizeof(double)); // clear
-*/
 }
-
 
 TInt32 FlywheelRamper::NextSample()
 {
     return(iFeedback->NextSample());
 }
 
-
 void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef)
 {
-/*
-    Log::Print("Fixed: ");
-    for(TUint i=0; i<5; i++)
-    {
-        TInt32 sample = (TInt32) *(aSamples+i);
-        Log::Print("%f  ", ToDouble(sample<<16, 1));
-    }
-    Log::Print("\n");
-*/
-
     TUint limit1 = aSamplesCount-1;
     TUint limit2 = limit1;
 
@@ -304,26 +245,11 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
 
         for (TUint j=0; j < limit1; j++)
         {
-            //ASSERT(OverflowCheckAdd(aSamples[j+n+1], aPef[j]));
-            //ASSERT(OverflowCheckAdd(aSamples[j], aPer[j]));
-
-            TInt16 t1 =  (aSamples[j+n+1] + aPef[j]);  // 1.15 + 1.15
+            TInt16 t1 =  (aSamples[j+n+1] + aPef[j]);
             TInt16 t2 =  (aSamples[j] + aPer[j]);
-
-            //ASSERT(OverflowCheckMult(t1, t1));
-            //ASSERT(OverflowCheckMult(t2, t2));
-            //ASSERT(OverflowCheckMult(t1, t2));
-
-            TInt32 t1t1 = (TInt32)t1*(TInt32)t1;  // 2.30
+            TInt32 t1t1 = (TInt32)t1*(TInt32)t1;
             TInt32 t2t2 = (TInt32)t2*(TInt32)t2;
             TInt32 t1t2 = (TInt32)t1*(TInt32)t2;
-
-            //ASSERT(OverflowCheckMult(2, t1t2));
-            //ASSERT(OverflowCheckAdd(t1t1, t2t2));
-            //ASSERT(OverflowCheckAdd(sn, -(2*t2t2)));
-            //ASSERT(OverflowCheckAdd(sd, (t2t2+t1t1) ) );
-
-
             sn -= (2*t1t2);  // 2.30
             sd += t1t1 + t2t2; // 2.30
         }
@@ -334,184 +260,51 @@ void FlywheelRamper::BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aD
 
         if (sn!=0)
         {
-            TInt64 ratio = (((TInt64)sn)<<kBurgScaleShift)/(TInt64)sd; // 32.12
+            TInt64 ratio = (((TInt64)sn)<<kBurgScaleShift)/(TInt64)sd;
             t3 = (TInt16) (ratio);
         }
 
-        aOutput[n] = t3; // 4.12
+        aOutput[n] = t3;
 
         if (n > 0)  // skip the first one
         {
             for (TUint j=0; j < n; j++)
             {
-                //ASSERT(OverflowCheckMult(t3, aOutput[n-j-1]));
-                TInt32 prod = ( t3 * aOutput[n-j-1] );  // 4.12 + 4.12
-                aH[j] = (TInt16)(prod>>kBurgScaleShift); // 8.24 >  4.12
-                //ASSERT(OverflowCheckAdd(aH[j], aOutput[j]));
+                TInt32 prod = ( t3 * aOutput[n-j-1] );
+                aH[j] = (TInt16)(prod>>kBurgScaleShift);
                 aH[j] += aOutput[j];
             }
 
             for (TUint j=0; j < n; j++)
             {
-                aOutput[j] = aH[j];  // 4.12
+                aOutput[j] = aH[j];
             }
 
             limit2--;
         }
-
 
         if (n==(aDegree-1))  // exit early to avoid next loop
         {
             break;
         }
 
-
         for (TUint j = 0; j < limit2; j++)
         {
             TUint i = j+1;
-            //ASSERT(OverflowCheckAdd(aPef[j], aSamples[i+n]));
-            TInt32 per = aPef[j] + aSamples[i+n];  // 1.15 + 1.15
-            //ASSERT(OverflowCheckMult(per, t3));
-            per *= t3;  // +4.12 = 5.27
-            //ASSERT(OverflowCheckAdd(aPer[j], (per>>kBurgScaleShift)));
-            aPer[j] += (TInt16)(per>>kBurgScaleShift); //  5.27 > 1.15
+            TInt32 per = aPef[j] + aSamples[i+n];
+            per *= t3;
+            aPer[j] += (TInt16)(per>>kBurgScaleShift);
 
-            //ASSERT(OverflowCheckAdd(aPer[j], aSamples[i]));
-            TInt32 pef = aPer[i] + aSamples[i]; // 1.15 + 1.15
-            //ASSERT(OverflowCheckMult(pef, t3));
-            pef *= t3; // +4.12 = 5.27
-            aPef[j] = (TInt16)(pef>>kBurgScaleShift); //  5.27 > 1.15 (>>12 = >>(16-4) = >>(16-kBurgOutputFormat))
-            //ASSERT(OverflowCheckAdd(aPef[j], aPef[i]));
+            TInt32 pef = aPer[i] + aSamples[i];
+            pef *= t3;
+            aPef[j] = (TInt16)(pef>>kBurgScaleShift);
             aPef[j] += aPef[i];
         }
     }
-
-/*
-    Log::Print("(Fixed) Coeffs:");
-    for(TUint i=0; i<aDegree; i++)
-    {
-        //Log::Print("%08x  (%f)", aOutput[i], ToDouble(((TInt32)aOutput[i])<<16, kBurgOutputFormat));
-        Log::Print("%f  ", ToDouble(((TInt32)aOutput[i])<<16, kBurgOutputFormat));
-    }
-    Log::Print("\n");
-*/
 }
 
-/*
-TBool FlywheelRamper::OverflowCheckAdd(TInt32 aX, TInt32 aY)
+TUint FlywheelRamper::DecimationFactor(TUint aSampleRate)
 {
-    TInt32 xTest = aX + aY;
-
-    if((xTest-aX) != aY)
-    {
-        return(false);
-    }
-    return(true);
-}
-
-TBool FlywheelRamper::OverflowCheckMult(TInt32 aX, TInt32 aY)
-{
-    TInt32 xTest = aX * aY;
-
-    if (xTest==0)
-    {
-        return(true);
-    }
-
-    if ((xTest/aX) != aY)
-    {
-        return(false);
-    }
-    return(true);
-}
-*/
-
-void FlywheelRamper::BurgsMethod(double *inputseries, TUint length, TUint degree, double *g, double *h, double *per, double *pef)
-{
-/*
-    Log::Print("Float: ");
-    for(TUint i=0; i<5; i++)
-    {
-        Log::Print("%f  ", *(inputseries+i));
-    }
-    Log::Print("\n");
-*/
-
-    for (TUint n = 1; n <= degree; n++)
-    {
-        double t1, t2;
-        double sn = 0.0;
-        double sd = 0.0;
-
-        TUint jj = length - n;
-
-        for (TUint j = 0; j < jj; j++)
-        {
-            t1 = inputseries [j + n] + pef [j];
-            t2 = inputseries [j] + per [j];
-            sn -= 2.0 * t1 * t2;
-            sd += (t1 * t1) + (t2 * t2);
-        }
-
-        t1 = g [n] = sn / sd;
-        //Log::Print("sn=%f  sd=%f  ratio=%f  t3=%f  \n", sn , sd, sn/sd, t1 );
-
-
-        if (n != 1)
-        {
-            for (TUint j = 1; j < n; j++)
-            {
-                h [j] = g [j] + t1 * g [n - j];
-            }
-            for (TUint j = 1; j < n; j++)
-            {
-                g [j] = h [j];
-            }
-            jj--;
-        }
-
-        for (TUint j = 0; j < jj; j++)
-        {
-            per [j] += t1 * pef [j] + t1 * inputseries [j + n];
-            pef [j] = pef [j + 1] + t1 * per [j + 1] + t1 * inputseries [j + 1];
-        }
-    }
-
-/*
-    //Log::Print("(Float) Coeffs:");
-    for(TUint i=1; i<=degree; i++)
-    {
-        if (g[i]>gMax)
-        {
-            gMax = g[i];
-            Log::Print("gMax = %f \n", gMax);
-        }
-        else if (g[i]<gMin)
-        {
-            gMin = g[i];
-            Log::Print("gMin = %f \n", gMin);
-        }
-
-        //Log::Print("%f  ", g[i]);
-    }
-    //Log::Print("\n\n");
-*/
-}
-
-
-void FlywheelRamper::Invert(TInt16* aData, TUint aLength)
-{
-    // get 2's compliment (= 1's compliment + 1)
-    for(TUint i=0; i<aLength; i++)
-    {
-        TInt16 x = *aData; // 1's compliment
-        *(aData++) = (~x)+1; // 2's compliment
-    }
-}
-
-TUint FlywheelRamper::DecimationFactor(TUint /*aSampleRate*/)
-{
-/*
     switch(aSampleRate)
     {
         case 192000:
@@ -523,18 +316,56 @@ TUint FlywheelRamper::DecimationFactor(TUint /*aSampleRate*/)
         default:
             break;
     }
-*/
+
     return(1);
 }
 
+void FlywheelRamper::CorrectBurgCoeffs()
+{
+    TInt16 coeffExcess = CoeffOverflow(iBurgCoeffs, iDegree, kBurgOutputFormat);
+    if (coeffExcess!=0)
+    {
+        iBurgCoeffs[0] -= (coeffExcess*2);
+    }
+}
+
+TInt16 FlywheelRamper::CoeffOverflow(TInt16* aCoeffs, TUint aCoeffCount, TUint aFormat)
+{
+    const TInt16 kOne = (1<<(16-aFormat));
+    TInt16 coeffTotal = 0;
+
+    for (TUint j=0; j<aCoeffCount; j++)
+    {
+        coeffTotal += aCoeffs[j];
+    }
+
+    if ( (coeffTotal<=kOne) && (coeffTotal>=(-kOne)) )
+    {
+        return(0);
+    }
+
+    TInt16 excess = 0;
+
+    // find how much beyond the range the total is
+    if (coeffTotal&0x8000)
+    {
+        // total < 0
+        excess = coeffTotal + kOne;
+    }
+    else
+    {
+        // total > 0
+        excess = coeffTotal - kOne;
+    }
+
+    return(excess);
+}
 
 TUint FlywheelRamper::SampleCount(TUint aSampleRate, TUint aJiffies)
 {
     TUint64 sampleCount = (((TUint64)aSampleRate*((TUint64)aJiffies))/((TUint64)Jiffies::kPerSecond));
-    //Log::Print("FlywheelRamper::Samples  aSampleRate=%d  aJiffies=%d  Jiffies::kPerSecond=%d  samples=%lld\n", aSampleRate, aJiffies, Jiffies::kPerSecond, samples);
     return((TUint)sampleCount);
 }
-
 
 void FlywheelRamper::ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale)
 {
@@ -546,9 +377,7 @@ void FlywheelRamper::ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUi
         TInt32 s = ToInt32(val, aScale);
         *(ptr++) = s;
     }
-
 }
-
 
 TInt32 FlywheelRamper::ToInt32(double aVal, TUint aScale)
 {
@@ -558,14 +387,12 @@ TInt32 FlywheelRamper::ToInt32(double aVal, TUint aScale)
     return(s);
 }
 
-
 double FlywheelRamper::ToDouble(TInt32 aVal, TUint aScale)
 {
     TUint scaleFactor = (1<<(32-aScale));
     double dbl = (double)aVal/scaleFactor;
     return(dbl);
 }
-
 
 void FlywheelRamper::ToDouble(const Brx& aInput, double* aOutput, TUint aScale)
 {
@@ -584,46 +411,32 @@ void FlywheelRamper::ToDouble(const Brx& aInput, double* aOutput, TUint aScale)
         *aOutput = ToDouble(s, aScale);
         aOutput++;
     }
-
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-FeedbackModel::FeedbackModel(TUint aCoeffCount, TUint aDataScaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat)
+FeedbackModel::FeedbackModel(TUint aStateCount, TUint aDataDescaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat)
     :iCoeffs(NULL)
     ,iSamples(NULL)
-    ,iStateCount(aCoeffCount)
-    ,iDataScaleBitCount(aDataScaleBitCount)
-    ,iScaleShiftForProduct(aCoeffFormat+iDataScaleBitCount)
-    ,iScaleShiftForOutput(aDataFormat-aOutputFormat)
+    ,iStateCount(aStateCount)
+    ,iDataDescaleBitCount(aDataDescaleBitCount)
+    ,iDataFormat(aDataFormat)
+    ,iCoeffFormat(aCoeffFormat)
+    ,iScaleShiftForOutput(aDataFormat+aDataDescaleBitCount-aOutputFormat)
 {
     //Log::Print("FeedbackModel  iScaleShiftForProduct=%d  iScaleShiftForOutput=%d \n", iScaleShiftForProduct, iScaleShiftForOutput);
 }
 
-
-void FeedbackModel::Initialise(const TInt16* aCoeffs, TInt32* aSamples)
+void FeedbackModel::Initialise(TInt32* aCoeffs, TInt32* aSamples)
 {
     iCoeffs = aCoeffs;
     iSamples = aSamples;
 
-/*
-    Log::Print("Init: samples: \n");
     for (TUint j=0; j<iStateCount; j++)
     {
-        Log::Print("%08lx  \n", iSamples[j]);
+        iSamples[j] >>= iDataDescaleBitCount;
     }
-
-    Log::Print("Init: coeffs: \n");
-    for (TUint j=0; j<iStateCount; j++)
-    {
-        Log::Print("%04lx  \n", iCoeffs[j]);
-    }
-
-    Log::Print("\n");
-*/
 }
-
 
 TInt32 FeedbackModel::NextSample()
 {
@@ -631,27 +444,20 @@ TInt32 FeedbackModel::NextSample()
     ASSERT(iSamples!=NULL);
 
     TInt32 sum = 0;
-    const TInt16* coeffPtr = iCoeffs;
+    const TInt32* coeffPtr = iCoeffs;
 
     // iterate through the circular buff and calculate the output
     for (TUint j=0; j<iStateCount; j++)
     {
-        TInt32 coeff = (((TInt32)(*(coeffPtr++)))<<16);
-        TInt32 sample = (iSamples[j]>>iDataScaleBitCount);;
-
-        //FlywheelRamper::OverflowCheckMult(sample, coeff);
+        TInt32 coeff = (*(coeffPtr++));
+        TInt32 sample = iSamples[j];;
 
         TInt64 product = ((TInt64)sample) * ((TInt64)coeff); // 1.31 + 4.28 = 5.59 (13.51 with >>8 data  scaling etc)
-        //Log::Print("sample=%08x  coeff=%08x  product = %016lx  \n", sample, coeff, product);
 
         TInt32 prod = (TInt32)(product>>32);
-        //FlywheelRamper::OverflowCheckAdd(sum, prod);
         sum += prod;   // 5.27
-
-        //Log::Print("prod = %08lx   new sum = %08lx \n", prod, sum);
     }
 
-    //Log::Print("\n");
 
     // update the states
     for (TUint j=(iStateCount-1); j>0; j--)
@@ -659,32 +465,20 @@ TInt32 FeedbackModel::NextSample()
         iSamples[j] = iSamples[j-1];
     }
 
-    //Log::Print("sum = %08lx  <<%d = %08lx ", sum, iScaleShiftForProduct, sum << iScaleShiftForProduct);
 
-    sum <<= iScaleShiftForProduct;
-
+    sum <<= iCoeffFormat;
     iSamples[0] = sum;
 
     if (iScaleShiftForOutput<0)
     {
-        //Log::Print(">>%d = %08lx (output) \n\n", -iScaleShiftForOutput, sum>>iScaleShiftForOutput);
         sum >>= (-iScaleShiftForOutput);
     }
     else
     {
-        //Log::Print("<<%d = %08lx (output) \n\n", iScaleShiftForOutput, sum<<iScaleShiftForOutput);
         sum <<= iScaleShiftForOutput;
     }
 
     return(sum);
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////////
-
-
-
-
-
