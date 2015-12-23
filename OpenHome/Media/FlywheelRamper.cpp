@@ -83,9 +83,7 @@ void FlywheelRamperManager::RenderChannels(TUint aSampleCount, TUint aDecFactor,
     TUint outputBytes = 0;
     TUint sampleHoldCount = 0;
 
-    const TUint kChannelCount = aChannelCount;
-
-    TInt32 prevSample[kChannelCount];
+    TInt32 prevSample[kMaxChannelCount];
 
     for(TUint j=0; j<aSampleCount; j++)
     {
