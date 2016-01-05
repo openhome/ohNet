@@ -450,6 +450,7 @@ def build(bld):
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
             use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
+            shlib=['m'],
             target='CodecFlac')
 
     # AlacBase
