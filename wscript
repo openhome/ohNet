@@ -199,6 +199,10 @@ def build(bld):
     install_path = os.path.join('..', 'install', 'bin', 'res')
     create_copy_task(bld, confui_files, Node, install_path, cwd, True, None)
 
+    # rebuild if ohNet libraries, but not headers, are updated
+    for lib in bld.env['STLIB_OHNET']:
+        bld.read_stlib(lib, paths=[bld.env['STLIBPATH_OHNET']])
+
     # Library
     bld.stlib(
             source=[
@@ -270,7 +274,7 @@ def build(bld):
                 'OpenHome/Media/Utils/Silencer.cpp',
                 'OpenHome/SocketSsl.cpp',
             ],
-            use=['OHNET', 'OPENSSL'],
+            use=['ohNetCore', 'OHNET', 'OPENSSL'],
             target='ohPipeline')
 
     # Library
@@ -580,7 +584,7 @@ def build(bld):
         source=[
             'OpenHome/Web/WebAppFramework.cpp',
         ],
-        use=['OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
+        use=['ohNetCore', 'OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
         target='WebAppFramework')
 
     # WebAppFramework tests
@@ -673,7 +677,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestRaop.cpp',
                 'OpenHome/Av/Tests/TestVolumeManager.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'OHNET', 'OPENSSL'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'TestFramework', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
