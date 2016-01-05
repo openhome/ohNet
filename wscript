@@ -31,6 +31,7 @@ def options(opt):
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
     opt.add_option('--cross', action='store', default=None)
+    opt.add_option('--with-default-fpm', action='store_true', default=False)
 
 def configure(conf):
 
@@ -116,7 +117,9 @@ def configure(conf):
 
     # Setup Mad (mp3) lib options
     fixed_point_model = 'FPM_INTEL'
-    if conf.options.dest_platform in ['Linux-ARM', 'Linux-armhf', 'Core-armv5', 'Core-armv6']:
+    if conf.options.with_default_fpm:
+        fixed_point_model = 'FPM_DEFAULT'
+    elif conf.options.dest_platform in ['Linux-ARM', 'Linux-armhf', 'Core-armv5', 'Core-armv6']:
         fixed_point_model = 'FPM_ARM'
     elif conf.options.dest_platform in ['Linux-ppc32', 'Core-ppc32']:
         fixed_point_model = 'FPM_PPC'
