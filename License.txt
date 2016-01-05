@@ -1,4 +1,4 @@
-Copyright 2011-15, OpenHome Ltd. All rights reserved.
+Copyright 2011-16, OpenHome Ltd. All rights reserved.
 
 Unless otherwise stated, all code in this project is licensed under the
 MIT license.  See MitLicense.txt for details.
