@@ -23,7 +23,7 @@ class SuitePreDriver : public Suite, private IPipelineElementUpstream, private I
 public:
     SuitePreDriver();
     ~SuitePreDriver();
-    void Test();
+    void Test() override;
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor

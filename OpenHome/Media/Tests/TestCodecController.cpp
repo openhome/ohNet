@@ -55,8 +55,8 @@ class SuiteCodecControllerBase : public SuiteUnitTest
 public:
     SuiteCodecControllerBase(const TChar* aName);
 protected: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IPipelineElementDownstream
@@ -152,12 +152,12 @@ class SuiteCodecControllerStream : public SuiteCodecControllerBase
 public:
     SuiteCodecControllerStream();
 private: // from SuiteCodecControllerBase
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from SuiteCodecControllerBase
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
 private: // from ISeekObserver
-    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId) override;
 private: // from IMimeTypeList
     void Add(const TChar* aMimeType) override;
 private:
@@ -190,8 +190,8 @@ private:
 public:
     SuiteCodecControllerPcmSize();
 private: // // from SuiteCodecControllerBase
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     Msg* CreateAudio();
     void TestPcmIsExpectedSize();
@@ -237,9 +237,9 @@ private: // from SuiteCodecControllerBase
     void Setup() override;
     void TearDown() override;
 private: // from SuiteCodecControllerBase
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
 private: // from ISeekObserver
-    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId) override;
 private:
     void TestSeekInvalid();
 private:

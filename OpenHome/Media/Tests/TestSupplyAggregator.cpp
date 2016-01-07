@@ -39,7 +39,7 @@ class SuiteSupplyAggregator : public Suite, private IPipelineElementDownstream, 
 public:
     SuiteSupplyAggregator();
     ~SuiteSupplyAggregator();
-    void Test();
+    void Test() override;
 private:
     void OutputNextNonAudioMsg();
 private: // from IPipelineElementDownstream

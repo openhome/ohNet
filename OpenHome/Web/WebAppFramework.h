@@ -256,9 +256,9 @@ public: // from IFrameworkTab
     void Receive(const Brx& aMessage) override;
     void LongPoll(IWriter& aWriter) override;    // Terminates poll timer on entry; restarts poll timer on exit.
 private: // from ITabHandler
-    void Send(ITabMessage& aMessage);
+    void Send(ITabMessage& aMessage) override;
 private: // from IFrameworkTimerHandler
-    void Complete();
+    void Complete() override;
 private:
     const TUint iTabId;
     const TUint iPollTimeoutMs;
@@ -317,7 +317,7 @@ public:
     ~TabManager();
     void Disable(); // Terminate any blocking LongPoll calls and prevent any new tabs from being created.
 public: // from ITabManager
-    TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList);
+    TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList) override;
     void LongPoll(TUint aId, IWriter& aWriter) override;
     void Receive(TUint aId, const Brx& aMessage) override;
     void Destroy(TUint aId) override;
@@ -403,8 +403,8 @@ private: // from IWebAppManager
 private: // from IResourceManager
     IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) override;  // THROWS ResourceInvalid
 public: // from IServer
-    TUint Port() const;
-    TIpAddress Interface() const;
+    TUint Port() const override;
+    TIpAddress Interface() const override;
 private:
     void AddSessions();
     void CurrentAdapterChanged();

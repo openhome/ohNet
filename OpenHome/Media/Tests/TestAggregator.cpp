@@ -20,8 +20,8 @@ public:
     SuiteAggregator();
     ~SuiteAggregator();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestPlayablesAreAggregated();
     void TestPlayablesAreSplit();

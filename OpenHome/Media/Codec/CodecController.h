@@ -317,7 +317,7 @@ private:
     TBool DoRead(Bwx& aBuf, TUint aBytes);
     TUint64 DoOutputAudioPcm(MsgAudio* aAudioMsg);
 private: // ISeeker
-    void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
+    void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle) override;
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes) override;
     void ReadNextMsg(Bwx& aBuf) override;

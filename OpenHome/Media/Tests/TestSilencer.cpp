@@ -21,8 +21,8 @@ public:
     SuiteSilencer();
     ~SuiteSilencer();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestMsgsPassedOn();
     void TestSilenceGeneratedWhenNoMsgAvailable();

@@ -71,7 +71,7 @@ public:
     SuitePipeline();
 private: // from Suite
     ~SuitePipeline();
-    void Test();
+    void Test() override;
 private:
     enum EState
     {
@@ -90,12 +90,12 @@ private:
     void TestRampsUp(TUint aMaxMsgs);
     void WaitForStateChange(EPipelineState aState);
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
+    void NotifyPipelineState(EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;

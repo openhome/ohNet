@@ -72,7 +72,7 @@ private:
     void UpdateActiveUriProvider(const Brx& aMode);
     TUint StopLocked();
 private: // from Thread
-    void Run();
+    void Run() override;
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor

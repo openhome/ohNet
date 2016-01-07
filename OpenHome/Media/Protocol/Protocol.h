@@ -152,7 +152,7 @@ protected:
     ProtocolNetwork(Environment& aEnv);
     TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort, TUint aTimeoutMs = kConnectTimeoutMs);
 protected: // from Protocol
-    void Interrupt(TBool aInterrupt);
+    void Interrupt(TBool aInterrupt) override;
 protected:
     void Open();
     void Close();
@@ -223,8 +223,8 @@ public:
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
 public: // from IUriStreamer
-    ProtocolStreamResult DoStream(Track& aTrack);
-    void Interrupt(TBool aInterrupt);
+    ProtocolStreamResult DoStream(Track& aTrack) override;
+    void Interrupt(TBool aInterrupt) override;
 public: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolManager

@@ -19,8 +19,8 @@ class SuiteTrackInspector : public SuiteUnitTest, private ITrackObserver, privat
 public:
     SuiteTrackInspector();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     enum EMsgType
     {

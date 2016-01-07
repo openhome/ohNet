@@ -156,7 +156,7 @@ public:
 protected:
     StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey);
 protected: // from IPowerHandler
-    virtual void PowerUp() = 0;
+    virtual void PowerUp() override = 0;
     void PowerDown() override;
 private:
     virtual void Write() = 0;

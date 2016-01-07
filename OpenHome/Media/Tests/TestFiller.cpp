@@ -26,12 +26,12 @@ public:
     const Brx& TrackUriByIndex(TUint aIndex) const;
     TUint IdByIndex(TUint aIndex) const;
 private: // from UriProvider
-    void Begin(TUint aTrackId);
-    void BeginLater(TUint aTrackId);
-    EStreamPlay GetNext(Track*& aTrack);
-    TUint CurrentTrackId() const;
-    TBool MoveNext();
-    TBool MovePrevious();
+    void Begin(TUint aTrackId) override;
+    void BeginLater(TUint aTrackId) override;
+    EStreamPlay GetNext(Track*& aTrack) override;
+    TUint CurrentTrackId() const override;
+    TBool MoveNext() override;
+    TBool MovePrevious() override;
 private:
     static const TInt kNumEntries = 3;
     TrackFactory& iTrackFactory;
@@ -48,8 +48,8 @@ public:
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer
-    ProtocolStreamResult DoStream(Track& aTrack);
-    void Interrupt(TBool aInterrupt);
+    ProtocolStreamResult DoStream(Track& aTrack) override;
+    void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
@@ -112,14 +112,14 @@ public:
     SuiteFiller();
     ~SuiteFiller();
 private: // from Suite
-    void Test();
+    void Test() override;
 private: // from IPipelineIdTracker
-    void AddStream(TUint aId, TUint aStreamId, TBool aPlayNow);
+    void AddStream(TUint aId, TUint aStreamId, TBool aPlayNow) override;
 private: // from IFlushIdProvider
-    TUint NextFlushId();
+    TUint NextFlushId() override;
 private: // from IStreamPlayObserver
-    void NotifyTrackFailed(TUint aTrackId);
-    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
+    void NotifyTrackFailed(TUint aTrackId) override;
+    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus) override;
 private: // from IPipelineIdProvider
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint aStreamId) override;

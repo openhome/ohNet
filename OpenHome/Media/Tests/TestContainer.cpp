@@ -170,8 +170,8 @@ public:
     SuiteContainerBase(const TChar* aSuiteName);
     ~SuiteContainerBase();
 protected: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsg(MsgMode* aMsg) override;

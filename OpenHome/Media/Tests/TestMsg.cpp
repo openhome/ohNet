@@ -18,7 +18,7 @@ class SuiteAllocator : public Suite
 {
 public:
     SuiteAllocator();
-    void Test();
+    void Test() override;
 private:
     static const TUint kNumTestCells = 10;
     AllocatorInfoLogger iInfoAggregator;
@@ -41,7 +41,7 @@ class SuiteMsgAudioEncoded : public Suite
 public:
     SuiteMsgAudioEncoded();
     ~SuiteMsgAudioEncoded();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -53,7 +53,7 @@ class SuiteMsgAudio : public Suite
 public:
     SuiteMsgAudio();
     ~SuiteMsgAudio();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -65,7 +65,7 @@ class SuiteMsgPlayable : public Suite
 public:
     SuiteMsgPlayable();
     ~SuiteMsgPlayable();
-    void Test();
+    void Test() override;
 private:
     void ValidateSilence(MsgPlayable* aMsg);
 private:
@@ -79,7 +79,7 @@ class SuiteRamp : public Suite
 public:
     SuiteRamp();
     ~SuiteRamp();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -91,7 +91,7 @@ class SuiteAudioStream : public Suite
 public:
     SuiteAudioStream();
     ~SuiteAudioStream();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -103,7 +103,7 @@ class SuiteMetaText : public Suite
 public:
     SuiteMetaText();
     ~SuiteMetaText();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -115,7 +115,7 @@ class SuiteTrack : public Suite
 public:
     SuiteTrack();
     ~SuiteTrack();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -128,7 +128,7 @@ class SuiteFlush : public Suite
 public:
     SuiteFlush();
     ~SuiteFlush();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -140,7 +140,7 @@ class SuiteHalt : public Suite
 public:
     SuiteHalt();
     ~SuiteHalt();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -152,7 +152,7 @@ class SuiteMode : public Suite
 public:
     SuiteMode();
     ~SuiteMode();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -164,7 +164,7 @@ class SuiteDelay : public Suite
 public:
     SuiteDelay();
     ~SuiteDelay();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -176,7 +176,7 @@ class SuiteDecodedStream : public Suite, private IStreamHandler
 public:
     SuiteDecodedStream();
     ~SuiteDecodedStream();
-    void Test();
+    void Test() override;
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
@@ -192,7 +192,7 @@ class SuiteMsgProcessor : public Suite
 public:
     SuiteMsgProcessor();
     ~SuiteMsgProcessor();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -253,7 +253,7 @@ class SuiteMsgQueue : public Suite
 public:
     SuiteMsgQueue();
     ~SuiteMsgQueue();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -266,7 +266,7 @@ class SuiteMsgReservoir : public Suite
 public:
     SuiteMsgReservoir();
     ~SuiteMsgReservoir();
-    void Test();
+    void Test() override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -357,7 +357,7 @@ class SuitePipelineElement : public Suite
 public:
     SuitePipelineElement();
     ~SuitePipelineElement();
-    void Test();
+    void Test() override;
 private:
     Msg* CreateMsg(ProcessorMsgType::EMsgType aType);
 private:

@@ -131,11 +131,11 @@ public:
     virtual ~ConfigVal();
     const Brx& Key() const;
 public: // from IObservable
-    virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
+    virtual TUint Subscribe(FunctorObserver aFunctor) override = 0;
     void Unsubscribe(TUint aId) override;
 public: // from ISerialisable
-    virtual void Serialise(IWriter& aWriter) const = 0;
-    virtual void Deserialise(const Brx& aString) = 0;
+    virtual void Serialise(IWriter& aWriter) const override = 0;
+    virtual void Deserialise(const Brx& aString) override = 0;
 protected:
     TUint Subscribe(FunctorObserver aFunctor, T aVal);
     void NotifySubscribers(T aVal);

@@ -55,7 +55,7 @@ public:
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
     Media::ProtocolStreamResult Stream(IReader& aReader, TUint64 aTotalBytes) override;
-    void Reset();
+    void Reset() override;
 private:
     enum FormatVersion
     {
