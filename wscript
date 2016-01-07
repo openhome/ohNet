@@ -1033,10 +1033,12 @@ def bundle(ctx):
                 ]
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     res_files = gather_files(ctx, '{top}/OpenHome/Web/ConfigUi/res', ['**/*'])
+    dep_file = gather_files(ctx, '{top}/projectdata', ['dependencies.json'])
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
         'ohMediaPlayer/include' : header_files,
         'ohMediaPlayer/res' : res_files,
+        'ohMediaPlayer' : dep_file
         })
     bundle_dev_files.create_tgz_task(ctx, 'ohMediaPlayer.tar.gz')
 
