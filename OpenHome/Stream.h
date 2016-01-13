@@ -150,6 +150,7 @@ public: // from IReader
 private:
     Brn iBuffer;
     TUint iOffset;
+    TBool iEnd;
 };
 
 class ReaderBinary : private INonCopyable
