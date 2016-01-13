@@ -266,8 +266,12 @@ void ReaderBuffer::Set(const Brx& aBuffer)
 
 Brn ReaderBuffer::Read(TUint aBytes)
 {
-    if (iOffset == iBuffer.Bytes()) {
+    if (iEnd) {
         THROW(ReaderError);
+    }
+    if (iOffset == iBuffer.Bytes()) {
+        iEnd = true;
+        return Brx::Empty();
     }
     TUint offset = iOffset + aBytes;
     if (offset > iBuffer.Bytes()) {
@@ -326,6 +330,7 @@ Brn ReaderBuffer::ReadUntil(TByte aSeparator)
 void ReaderBuffer::ReadFlush()
 {
     iOffset = 0;
+    iEnd = false;
 }
 
 void ReaderBuffer::ReadInterrupt()
