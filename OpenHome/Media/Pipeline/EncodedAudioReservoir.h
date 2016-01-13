@@ -20,7 +20,7 @@ private:
     inline IStreamHandler* StreamHandler();
     Msg* EndSeek(Msg* aMsg);
 private: // from AudioReservoir
-    TBool IsFull() const;
+    TBool IsFull() const override;
 private: // from MsgReservoir
     void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgEncodedStream* aMsg) override;

@@ -35,7 +35,7 @@ class SuiteAudioReservoir : public Suite, private IMsgProcessor
 public:
     SuiteAudioReservoir();
     ~SuiteAudioReservoir();
-    void Test();
+    void Test() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
@@ -116,7 +116,7 @@ public:
     SuiteReservoirHistory();
     ~SuiteReservoirHistory();
 private: // from Suite
-    void Test();
+    void Test() override;
 private:
     void PullerThread();
 private: // from IMsgProcessor

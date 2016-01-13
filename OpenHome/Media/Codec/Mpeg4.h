@@ -490,7 +490,7 @@ public: // from IMpeg4BoxRecognisable
     Msg* Process() override;
     TBool Complete() const override;
     void Reset() override;
-    TBool Recognise(const Brx& aBoxId) const;
+    TBool Recognise(const Brx& aBoxId) const override;
     void Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes) override;
 private:
     enum EState

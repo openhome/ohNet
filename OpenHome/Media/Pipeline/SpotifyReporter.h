@@ -100,7 +100,7 @@ public: // from ISpotifyReporter
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) const override;
 public: // from ITrackChangeObserver
     void TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata, TUint aStartMs) override;
-    void NotifySeek(TUint aOffsetMs);
+    void NotifySeek(TUint aOffsetMs) override;
 private: // PipelineElement
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;

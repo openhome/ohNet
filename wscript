@@ -31,6 +31,7 @@ def options(opt):
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
     opt.add_option('--cross', action='store', default=None)
+    opt.add_option('--with-default-fpm', action='store_true', default=False)
 
 def configure(conf):
 
@@ -116,7 +117,9 @@ def configure(conf):
 
     # Setup Mad (mp3) lib options
     fixed_point_model = 'FPM_INTEL'
-    if conf.options.dest_platform in ['Linux-ARM', 'Linux-armhf', 'Core-armv5', 'Core-armv6']:
+    if conf.options.with_default_fpm:
+        fixed_point_model = 'FPM_DEFAULT'
+    elif conf.options.dest_platform in ['Linux-ARM', 'Linux-armhf', 'Core-armv5', 'Core-armv6']:
         fixed_point_model = 'FPM_ARM'
     elif conf.options.dest_platform in ['Linux-ppc32', 'Core-ppc32']:
         fixed_point_model = 'FPM_PPC'
@@ -196,6 +199,10 @@ def build(bld):
     install_path = os.path.join('..', 'install', 'bin', 'res')
     create_copy_task(bld, confui_files, Node, install_path, cwd, True, None)
 
+    # rebuild if ohNet libraries, but not headers, are updated
+    for lib in bld.env['STLIB_OHNET']:
+        bld.read_stlib(lib, paths=[bld.env['STLIBPATH_OHNET']])
+
     # Library
     bld.stlib(
             source=[
@@ -267,7 +274,7 @@ def build(bld):
                 'OpenHome/Media/Utils/Silencer.cpp',
                 'OpenHome/SocketSsl.cpp',
             ],
-            use=['OHNET', 'OPENSSL'],
+            use=['ohNetCore', 'OHNET', 'OPENSSL'],
             target='ohPipeline')
 
     # Library
@@ -447,6 +454,7 @@ def build(bld):
                 'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
             use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
+            shlib=['m'],
             target='CodecFlac')
 
     # AlacBase
@@ -576,7 +584,7 @@ def build(bld):
         source=[
             'OpenHome/Web/WebAppFramework.cpp',
         ],
-        use=['OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
+        use=['ohNetCore', 'OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
         target='WebAppFramework')
 
     # WebAppFramework tests
@@ -669,7 +677,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestRaop.cpp',
                 'OpenHome/Av/Tests/TestVolumeManager.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'OHNET', 'OPENSSL'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'TestFramework', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -1025,10 +1033,12 @@ def bundle(ctx):
                 ]
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     res_files = gather_files(ctx, '{top}/OpenHome/Web/ConfigUi/res', ['**/*'])
+    dep_file = gather_files(ctx, '{top}/projectdata', ['dependencies.json'])
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
         'ohMediaPlayer/include' : header_files,
         'ohMediaPlayer/res' : res_files,
+        'ohMediaPlayer' : dep_file
         })
     bundle_dev_files.create_tgz_task(ctx, 'ohMediaPlayer.tar.gz')
 

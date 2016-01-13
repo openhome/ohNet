@@ -25,7 +25,7 @@ public:
     VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
     virtual ~VariableDelay();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     Msg* NextMsgLocked();
     MsgAudio* DoProcessAudioMsg(MsgAudio* aMsg);

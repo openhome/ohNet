@@ -94,12 +94,12 @@ public:
 class NullPipelineObserver : public IPipelineObserver
 {
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
+    void NotifyPipelineState(EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 };
 
 class LoggingPipelineObserver : public IPipelineObserver
@@ -108,12 +108,12 @@ public:
     LoggingPipelineObserver();
     void Enable(TBool aEnable);
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
+    void NotifyPipelineState(EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private:
     TBool iEnable;
 };

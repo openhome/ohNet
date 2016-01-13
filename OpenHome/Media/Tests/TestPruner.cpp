@@ -19,8 +19,8 @@ class SuitePruner : public SuiteUnitTest, private IPipelineElementUpstream, priv
 public:
     SuitePruner();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     enum EMsgType
     {

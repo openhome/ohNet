@@ -111,7 +111,7 @@ public:
 private:
     void Construct(const Brx& aData);
 private: // from Allocated
-    void Clear();
+    void Clear() override;
 private:
     Bws<kMaxBytes> iData;
 };
@@ -184,7 +184,7 @@ private:
     void CopyToBigEndian16(const Brx& aData);
     void CopyToBigEndian24(const Brx& aData);
 private: // from Allocated
-    void Clear();
+    void Clear() override;
 private:
     TByte iData[kMaxBytes];
     TUint iSubsampleCount;
@@ -283,7 +283,7 @@ public:
 private:
     void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId);
 private: // from Allocated
-    void Clear();
+    void Clear() override;
 private:
     BwsTrackUri iUri;
     BwsTrackMetaData iMetaData;
@@ -342,8 +342,8 @@ public:
 private:
     void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     BwsMode iMode;
     ModeInfo iInfo;
@@ -362,8 +362,8 @@ public:
 private:
     void Initialise(Media::Track& aTrack, TBool aStartOfStream);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Media::Track* iTrack;
     TBool iStartOfStream;
@@ -378,8 +378,8 @@ public:
 private:
     void Initialise(Functor aCallback);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Functor iCallback;
 };
@@ -393,8 +393,8 @@ public:
 private:
     void Initialise(TUint aDelayJiffies);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iDelayJiffies;
 };
@@ -431,8 +431,8 @@ public:
 private:
     void Initialise(const Brx& aMetaText);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Bws<kMaxBytes> iMetaText;
 };
@@ -458,8 +458,8 @@ private:
     void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Bws<kMaxUriBytes> iUri;
     Bws<MsgMetaText::kMaxBytes> iMetaText;
@@ -487,10 +487,10 @@ public:
 private:
     void Initialise(EncodedAudio* aEncodedAudio);
 private: // from Msg
-    void RefAdded();
-    void RefRemoved();
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void RefAdded() override;
+    void RefRemoved() override;
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     MsgAudioEncoded* iNextAudio;
     TUint iSize; // Bytes
@@ -503,7 +503,7 @@ class MsgStreamInterrupted : public Msg
 public:
     MsgStreamInterrupted(AllocatorBase& aAllocator);
 private: // from Msg
-    Msg* Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor) override;
 };
 
 /**
@@ -524,8 +524,8 @@ public:
 private:
     void Initialise(TUint aId);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iId;
 };
@@ -539,8 +539,8 @@ public:
     void Initialise(TUint aId);
     TUint Id() const;
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iId;
 };
@@ -550,7 +550,7 @@ class MsgWait : public Msg
 public:
     MsgWait(AllocatorBase& aAllocator);
 private: // from Msg
-    Msg* Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor) override;
 };
 
 class DecodedStreamInfo
@@ -601,8 +601,8 @@ public:
 private:
     void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     DecodedStreamInfo iStreamInfo;
 };
@@ -622,7 +622,7 @@ public:
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
-    void Clear();
+    void Clear() override;
 private:
     virtual MsgAudio* Allocate() = 0;
     MsgAudio* DoSplit(TUint aJiffies);
@@ -644,8 +644,8 @@ public:
 private:
     void Initialise(TUint aBitRate);
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iBitRate;
 };
@@ -664,18 +664,18 @@ public:
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
     TBool TryGetTimestamps(TUint& aNetwork, TUint& aRx);
 public: // from MsgAudio
-    MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
+    MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset,
                     Allocator<MsgPlayablePcm>& aAllocatorPlayablePcm,
                     Allocator<MsgPlayableSilence>& aAllocatorPlayableSilence);
     void SetTimestamps(TUint aRx, TUint aNetwork);
 private: // from MsgAudio
-    MsgAudio* Allocate();
-    void SplitCompleted(MsgAudio& aRemaining);
+    MsgAudio* Allocate() override;
+    void SplitCompleted(MsgAudio& aRemaining) override;
 private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void Clear() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     DecodedAudio* iAudioData;
     Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
@@ -695,14 +695,14 @@ public:
     MsgSilence(AllocatorBase& aAllocator);
     MsgPlayable* CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels); // removes ref
 public: // from MsgAudio
-    MsgAudio* Clone();
+    MsgAudio* Clone() override;
 private:
     void Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable);
 private: // from MsgAudio
-    MsgAudio* Allocate();
-    void SplitCompleted(MsgAudio& aRemaining);
+    MsgAudio* Allocate() override;
+    void SplitCompleted(MsgAudio& aRemaining) override;
 private: // from Msg
-    Msg* Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Allocator<MsgPlayableSilence>* iAllocatorPlayable;
 };
@@ -738,9 +738,9 @@ protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
 protected: // from Msg
-    void RefAdded();
-    void RefRemoved();
-    Msg* Process(IMsgProcessor& aProcessor);
+    void RefAdded() override;
+    void RefRemoved() override;
+    Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     virtual MsgPlayable* Allocate() = 0;
     virtual void SplitCompleted(MsgPlayable& aRemaining);
@@ -766,7 +766,7 @@ private: // from MsgPlayable
     void SplitCompleted(MsgPlayable& aRemaining) override;
     void ReadBlock(IPcmProcessor& aProcessor) override;
 private: // from Msg
-    void Clear();
+    void Clear() override;
 private:
     DecodedAudio* iAudioData;
 };
@@ -784,7 +784,7 @@ private: // from MsgPlayable
     void SplitCompleted(MsgPlayable& aRemaining) override;
     void ReadBlock(IPcmProcessor& aProcessor) override;
 private: // from Msg
-    void Clear();
+    void Clear() override;
 private:
     TUint iBitDepth;
     TUint iNumChannels;
@@ -800,7 +800,7 @@ class MsgQuit : public Msg
 public:
     MsgQuit(AllocatorBase& aAllocator);
 private: // from Msg
-    Msg* Process(IMsgProcessor& aProcessor);
+    Msg* Process(IMsgProcessor& aProcessor) override;
 };
 
 /**

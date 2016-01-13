@@ -33,9 +33,9 @@ private: // from Media::IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
 private: // from IProtocolReader
-    Brn Read(TUint aBytes);
-    void ReadFlush();
-    void ReadInterrupt();
+    Brn Read(TUint aBytes) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     static TBool TryGetTrackId(const Brx& aQuery, Bwx& aTrackId);
     Media::ProtocolStreamResult DoStream();

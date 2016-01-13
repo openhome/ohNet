@@ -33,7 +33,7 @@ class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, p
 public:
     SuiteStarvationMonitor();
     ~SuiteStarvationMonitor();
-    void Test();
+    void Test() override;
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor

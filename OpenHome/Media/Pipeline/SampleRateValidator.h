@@ -15,7 +15,7 @@ public:
     SampleRateValidator(IPipelineElementDownstream& aDownstreamElement);
     void SetAnimator(IPipelineAnimator& aPipelineAnimator);
 private: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
+    void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;

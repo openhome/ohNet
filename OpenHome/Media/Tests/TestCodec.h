@@ -105,7 +105,7 @@ public:
 public: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from Thread
-    void Run();
+    void Run() override;
 private: // from IPipelineIdProvider
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint aStreamId) override;
@@ -210,8 +210,8 @@ protected:
 private:
     void TestJiffies();
 protected: // from SuiteUnitTest
-    virtual void Setup();
-    virtual void TearDown();
+    void Setup() override;
+    void TearDown() override;
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 protected:
@@ -244,7 +244,7 @@ private: // from SuiteUnitTest
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private: // ISeekObserver
-    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId) override;
 private:
     void TestSeeking(TUint64 aDurationJiffies, TUint64 aSeekPosJiffies, TUint aCodec, TBool aSeekable);
     void TestSeekingToStart();
@@ -295,7 +295,7 @@ private:
     Msg* TestSimilarity(MsgAudioPcm* aMsg);
     void TestZeroCrossings();
 private: // from SuiteUnitTest
-    void Setup();
+    void Setup() override;
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;

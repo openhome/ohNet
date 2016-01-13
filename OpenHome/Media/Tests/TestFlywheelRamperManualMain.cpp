@@ -32,7 +32,7 @@ namespace TestFlywheelRamperManual {
 class TestFWRManual : public INonCopyable
 {
 public:
-    TestFWRManual(Net::Library& aLib, const Brx& aInputWavFilename, const Brx& aOutputWavFilename, TUint aDegree, TUint aGenMs, TUint aRampMs, TBool aSingleBlock, TUint aBlockIndex);
+    TestFWRManual(const Brx& aInputWavFilename, const Brx& aOutputWavFilename, TUint aDegree, TUint aGenMs, TUint aRampMs, TBool aSingleBlock, TUint aBlockIndex);
     void Run();
 
     static void LogBuf(const Brx& aBuf);
@@ -52,7 +52,6 @@ private:
     static void IncreaseBitDepthBe32(const Brx& aBufIn, Bwx& aBufOut, TUint iBytesPerSample);
 
 private:
-    //Net::Library& iLib;
     IFile* iInputFile;
     FileStream* iOutputFile;
     TUint iDegree;
@@ -125,9 +124,8 @@ private:
 using namespace OpenHome::Media::TestFlywheelRamperManual;
 
 
-TestFWRManual::TestFWRManual(Net::Library& /*aLib*/, const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs, TBool aSingleBlock, TUint aBlockIndex)
-    :/*iLib(aLib)
-    ,*/iOutputFile(new FileStream())
+TestFWRManual::TestFWRManual(const Brx& aInputFilename, const Brx& aOutputFilename, TUint aDegree, TUint aGenMs, TUint aRampMs, TBool aSingleBlock, TUint aBlockIndex)
+    :iOutputFile(new FileStream())
     ,iDegree(aDegree)
     ,iGenMs(aGenMs)
     ,iRampMs(aRampMs)
@@ -283,7 +281,7 @@ void TestFWRManual::Run()
     PcmProcessorFwrMan opProc(rampOutput);
 
 
-    auto ramper = new FlywheelRamperManager(/*iLib.Env(), */opProc, genJiffies, rampJiffies);
+    auto ramper = new FlywheelRamperManager(opProc, genJiffies, rampJiffies);
 
     /////////////////
 
@@ -317,6 +315,8 @@ void TestFWRManual::Run()
         rampOutput.SetBytes(0);
         iInputFile->Read(buf); // read a test block
 
+        //Log::Print("block %d: \n", blockCount);
+
         if ( iSingleBlock && (blockCount != iBlockIndex) )
         {
             blockCount++;
@@ -327,11 +327,15 @@ void TestFWRManual::Run()
             blockCount++;
         }
 
-        //Log::Print("block %d:\n", blockCount);
 
         iOutputFile->Write(buf); // write test block to output file
 
+
+
         Bwh genSamples(buf.Split(bufSplitIndex)); //
+
+        //Log::Print("test buf bytes = %d, gen bytes =%d  \n", buf.Bytes(), genSamples.Bytes());
+
 
         EndianSwitch(genSamples, iBytesPerSample);  // change to big endian
         DeinterleaveChannelSamples(genSamples, iBytesPerSample, iChannelCount);
@@ -676,12 +680,7 @@ int CDECL main(int aArgc, TChar* aArgv[])
     ASSERT(optionGenMs.Value()<1000);
     ASSERT(optionRampMs.Value()<1000);
 
-
-    InitialisationParams* initParams = Net::InitialisationParams::Create();
-    Net::Library* lib = new Net::Library(initParams);
-
-    auto test = new TestFWRManual(*lib,
-                                    optionInput.Value(),
+    auto test = new TestFWRManual(  optionInput.Value(),
                                     optionOutput.Value(),
                                     optionDegree.Value(),
                                     optionGenMs.Value(),
@@ -690,10 +689,8 @@ int CDECL main(int aArgc, TChar* aArgv[])
                                     optionBlock.Value());
 
     test->Run();
-    //Log::Print("time = %d \n", Os::TimeInMs(lib->Env().OsCtx()));
 
     delete test;
-    delete lib;
 
 }
 

@@ -33,7 +33,7 @@ class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPi
 public:
     SuiteReporter();
     ~SuiteReporter();
-    void Test();
+    void Test() override;
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IPipelinePropertyObserver

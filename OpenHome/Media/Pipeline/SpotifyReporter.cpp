@@ -221,7 +221,7 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iTrackFactory(aTrackFactory)
     , iTrackDurationMs(0)
     , iMetadata(nullptr)
-    , iMsgTrackPending(nullptr)
+    , iMsgTrackPending(false)
     , iMsgDecodedStreamPending(false)
     , iDecodedStream(nullptr)
     , iSubSamples(0)

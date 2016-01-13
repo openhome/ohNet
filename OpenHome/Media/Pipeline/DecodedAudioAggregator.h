@@ -21,7 +21,7 @@ public:
 public:
     DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement);
 public: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
+    void Push(Msg* aMsg) override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;

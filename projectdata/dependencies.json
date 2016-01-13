@@ -14,7 +14,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.85",
+        "version": "0.0.90",
         "archive-filename": "${name}-${version}.tar.gz",
         "source-git": "https://github.com/openhome/ohWafHelpers.git"
     },
@@ -85,7 +85,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.688",
+        "version": "0.0.695",
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

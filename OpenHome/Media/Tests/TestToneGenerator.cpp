@@ -35,7 +35,7 @@ class SuiteLimits : public Suite
 public:
     SuiteLimits();
     ~SuiteLimits();
-    void Test();
+    void Test() override;
 private:
     ToneUriParser* iParser;
 };
@@ -45,7 +45,7 @@ class SuiteDuplicate : public Suite
 public:
     SuiteDuplicate();
     ~SuiteDuplicate();
-    void Test();
+    void Test() override;
 private:
     ToneUriParser* iParser;
 };
@@ -55,7 +55,7 @@ class SuiteMissing : public Suite
 public:
     SuiteMissing();
     ~SuiteMissing();
-    void Test();
+    void Test() override;
 private:
     ToneUriParser* iParser;
 };
@@ -65,7 +65,7 @@ class SuiteSpurious : public Suite
 public:
     SuiteSpurious();
     ~SuiteSpurious();
-    void Test();
+    void Test() override;
 private:
     ToneUriParser* iParser;
 };
@@ -75,7 +75,7 @@ class SuiteSyntaxError : public Suite
 public:
     SuiteSyntaxError();
     ~SuiteSyntaxError();
-    void Test();
+    void Test() override;
 private:
     ToneUriParser* iParser;
 };
@@ -109,7 +109,7 @@ private:  // from IPipelineIdProvider
     EStreamPlay OkToPlay(TUint) override;
 
 private:  // from IFlushIdProvider
-    TUint NextFlushId();
+    TUint NextFlushId() override;
 
 private:  // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
@@ -219,7 +219,7 @@ public:
     SuiteGeneratorSquare();
 
 protected:  // indirectly from SuiteUnitTest
-    void Setup();
+    void Setup() override;
 
 private:
     void Test_8bit_44100_20Hz_2ch_1s();  // various bitsPerSample
@@ -258,7 +258,7 @@ class SuiteGeneratorConstant : public SuiteGeneratorAny
 public:
     SuiteGeneratorConstant();
 protected:  // indirectly from SuiteUnitTest
-    void Setup();
+    void Setup() override;
 private:
     void Test_val5_8bit_44100_20Hz_2ch_1s();
 private:  // indirectly from IMsgProcessor

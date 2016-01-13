@@ -16,12 +16,12 @@ public:
     IdManager(IStopper& aStopper);
     TUint MaxStreams() const;
 public: // from IPipelineIdTracker
-    void AddStream(TUint aId, TUint aStreamId, TBool aPlayNow);
+    void AddStream(TUint aId, TUint aStreamId, TBool aPlayNow) override;
 public: // from IPipelineIdManager
-    void InvalidateAt(TUint aId);
-    void InvalidateAfter(TUint aId);
-    void InvalidatePending();
-    void InvalidateAll();
+    void InvalidateAt(TUint aId) override;
+    void InvalidateAfter(TUint aId) override;
+    void InvalidatePending() override;
+    void InvalidateAll() override;
 private:
     static inline void UpdateIndex(TUint& aIndex);
     TUint UpdateId(TUint& aId);
