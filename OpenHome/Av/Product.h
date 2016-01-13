@@ -102,7 +102,7 @@ public:
     static const Brn kConfigIdRoomBase;
     static const Brn kConfigIdNameBase;
     static const TUint kMaxNameBytes = 20;
-    static const TUint kMaxRoomBytes = 20;
+    static const TUint kMaxRoomBytes = 40;
     static const TUint kMaxSourceXmlBytes = 1024 * 3;
 public:
     Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore,
