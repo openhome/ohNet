@@ -200,9 +200,11 @@ def build(bld):
     create_copy_task(bld, confui_files, Node, install_path, cwd, True, None)
 
     # rebuild if ohNet libraries, but not headers, are updated
-    # TC: commented out as it breaks libplatform/libtarget wscript integration (line 70)
-    #for lib in bld.env['STLIB_OHNET']:
-    #    bld.read_stlib(lib, paths=[bld.env['STLIBPATH_OHNET']])
+    # skip libplatform binaries (which are munged into STLIB_OHNET to avoid
+    # making USE platform-specific for all executables)
+    for lib in bld.env['STLIB_OHNET']:
+        if lib not in ['target', 'platform']:
+            bld.read_stlib(lib, paths=[bld.env['STLIBPATH_OHNET']])
 
     # Library
     bld.stlib(
