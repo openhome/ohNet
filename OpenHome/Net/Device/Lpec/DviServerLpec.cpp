@@ -420,6 +420,8 @@ void DviSessionLpec::Run()
             }
             catch (LpecParseError&) {
             }
+            catch (InvocationError&) {
+            }
             if (!iResponseStarted) {
                 iWriteLock.Wait();
                 iResponseStarted = true;
