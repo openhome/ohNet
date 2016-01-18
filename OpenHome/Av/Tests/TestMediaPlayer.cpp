@@ -27,6 +27,8 @@
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Web/ConfigUi/ConfigUi.h>
 
+#undef LPEC_ENABLE
+
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
@@ -130,7 +132,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDevice->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
+#ifdef LPEC_ENABLE
     iDevice->SetAttribute("Lpec.Name", "ohPipeline");
+#endif
 
     // Create separate UPnP device for standard MediaRenderer.
     Bws<256> buf(aUdn);
@@ -142,7 +146,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
+#ifdef LPEC_ENABLE
     iDeviceUpnpAv->SetAttribute("Lpec.Name", "MediaRenderer");
+#endif
 
     // create read/write store.  This creates a number of static (constant) entries automatically
     // FIXME - to be removed; this only exists to populate static data
@@ -511,8 +517,10 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(const TChar* aRoom, T
     if (aLoopback == true) {
         initParams->SetUseLoopbackNetworkAdapter();
     }
+#ifdef LPEC_ENABLE
     initParams->SetDvNumLpecThreads(4);
     initParams->SetDvLpecServerPort(2324);
+#endif
 
     Debug::SetLevel(Debug::kPipeline | Debug::kSources | Debug::kMedia);
     Net::Library* lib = new Net::Library(initParams);
