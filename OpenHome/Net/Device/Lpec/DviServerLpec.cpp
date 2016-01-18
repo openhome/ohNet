@@ -646,6 +646,7 @@ void DviSessionLpec::ReportErrorNoThrow(const LpecError& aError)
 void DviSessionLpec::ReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 {
     if (!iResponseStarted) {
+        iWriteLock.Wait();
         iWriteBuffer->Write(Lpec::kMethodError);
         iWriteBuffer->Write(' ');
         Bws<Ascii::kMaxUintStringBytes> code;
