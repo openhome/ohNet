@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Configuration/BufferPtrCmp.h>
@@ -506,6 +507,7 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
     AutoMutex a(iLock);
     typename Map::const_iterator it = iMap.find(&key);
     if (it == iMap.end()) {
+        Log::Print("SerialisedMap: no element with key %.*s\n", PBUF(aKey));
         ASSERTS();  // value with ID of aKey does not exist
     }
 
