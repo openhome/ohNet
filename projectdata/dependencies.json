@@ -32,7 +32,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.174",
+        "version": "0.0.183",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -53,7 +53,7 @@
         "ignore":           "${platform-ignore[$platform]}"
     },
     {   "name":             "transmute",
-        "version":          "0.0.14",
+        "version":          "0.1.34",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
