@@ -93,7 +93,6 @@ LanguageResourceFileReader::LanguageResourceFileReader(const Brx& aRootDir)
 
 void LanguageResourceFileReader::SetResource(const Brx& aUriTail)
 {
-    Log::Print("LanguageResourceFileReader::SetResource(%.*s) %p\n", PBUF(aUriTail), this);
     AutoMutex a(iLock);
     Bws<Uri::kMaxUriBytes+1> filename(iRootDir);
     filename.Append(aUriTail);
@@ -130,7 +129,7 @@ void LanguageResourceFileReader::Process(IResourceFileConsumer& aResourceConsume
     catch (ReaderError&) {
         LOG(kHttp, "LanguageResourceFileReader::Run ReaderError\n");
     }
-    Log::Print("< LanguageResourceFileReader::Process %p\n", this);
+    iReaderText.ReadFlush();
     iFileStream.CloseFile();
     iAllocated = false;
 }
