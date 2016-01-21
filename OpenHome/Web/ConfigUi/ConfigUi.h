@@ -14,16 +14,16 @@ namespace OpenHome {
 namespace Av {
     class Product;
 }
-}
-
-namespace OpenHome {
 namespace Web {
+
+class IResourceFileConsumer;
 
 class ILanguageResourceReader
 {
 public:
-    virtual Brn ReadLine() = 0;
-    virtual void Destroy() = 0;
+    virtual void SetResource(const Brx& aUriTail) = 0;
+    virtual TBool Allocated() const = 0;
+    virtual void Process(IResourceFileConsumer& aResourceConsumer) = 0;
     virtual ~ILanguageResourceReader() {}
 };
 
@@ -34,34 +34,14 @@ public:
     virtual ~ILanguageResourceManager() {}
 };
 
-class LanguageResourceFileReader : public ILanguageResourceReader
-{
-private:
-    static const TUint kMaxBufBytes = 1024;
-public:
-    LanguageResourceFileReader(const Brx& aRootDir);
-    void SetResource(const Brx& aUriTail);
-    TBool Allocated() const;
-public: // from ILanguageResourceReader
-    Brn ReadLine() override;
-    void Destroy() override;
-private:
-    Brn iRootDir;
-    FileStream iFileStream;
-    Srs<512> iReadBuffer;
-    ReaderTextS<kMaxBufBytes> iReaderText;
-    TBool iAllocated;
-    mutable Mutex iLock;
-};
-
 class IConfigMessage : public ITabMessage
 {
 public:
-    virtual void Set(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson) = 0;
-    virtual void Set(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
-    virtual void Set(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson) = 0;
+    virtual void Set(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson) = 0;
+    virtual void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
+    virtual void Set(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson) = 0;
 public: // from ITabMessage
-    virtual void Send(OpenHome::IWriter& aWriter) = 0;
+    virtual void Send(IWriter& aWriter) = 0;
     virtual void Destroy() = 0;
 public:
     virtual ~IConfigMessage() {}
@@ -78,9 +58,9 @@ public:
     // And maybe IConfigMessage shouldn't even be an interface!
 
     // FIXME - also, would it be smarter just to subscribe directly to the ConfigVal, rather than taking a value? Means that most up-to-date val will always be sent.
-    virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson) = 0;
-    virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
-    virtual IConfigMessage& Allocate(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson) = 0;
+    virtual IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson) = 0;
+    virtual IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
+    virtual IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson) = 0;
     virtual ~IConfigMessageAllocator() {}
 };
 
@@ -92,32 +72,32 @@ public:
     virtual ~IConfigMessageDeallocator() {}
 };
 
-class ConfigMessage : public IConfigMessage, public OpenHome::INonCopyable
+class ConfigMessage : public IConfigMessage, public INonCopyable
 {
 public:
     static const TUint kMaxAdditionalDataBytes = 512; // FIXME - this needs to be written out somewhere
 protected:
     ConfigMessage(IConfigMessageDeallocator& aDeallocator);
-    void Set(const OpenHome::Brx& aAdditionalJson);
+    void Set(const Brx& aAdditionalJson);
 protected:
-    virtual void WriteKey(OpenHome::IWriter& aWriter) = 0;
-    virtual void WriteValue(OpenHome::IWriter& aWriter) = 0;
-    virtual void WriteType(OpenHome::IWriter& aWriter) = 0;
-    virtual void WriteMeta(OpenHome::IWriter& aWriter) = 0;
+    virtual void WriteKey(IWriter& aWriter) = 0;
+    virtual void WriteValue(IWriter& aWriter) = 0;
+    virtual void WriteType(IWriter& aWriter) = 0;
+    virtual void WriteMeta(IWriter& aWriter) = 0;
 protected:
     // FIXME - instead of providing a default implementation here and expecting subclasses to override it but then still call it, instead have the following:
     //public: void Clear(); // Does work to clear shared members of msg. Also calls into ClearDerived();
     //protected: virtual void ClearDerived() = 0;   // Derived members MUST implement this to clear their own members (and there is no need for them to remember to call Clear()).
     virtual void Clear();
 private: // from IConfigMessage
-    void Set(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
-    void Set(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
-    void Set(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson);
+    void Set(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson);
+    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    void Set(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson);
     // FIXME - give this a default impl that calls a virtual method that deriving classes must implement to write out their own values
-    void Send(OpenHome::IWriter& aWriter);
+    void Send(IWriter& aWriter);
     void Destroy();
 private:
-    OpenHome::Bws<kMaxAdditionalDataBytes> iAdditionalJson;
+    Bws<kMaxAdditionalDataBytes> iAdditionalJson;
     IConfigMessageDeallocator& iDeallocator;
 };
 
@@ -127,14 +107,14 @@ class ConfigMessageNum : public ConfigMessage
 private:
     ConfigMessageNum(IConfigMessageDeallocator& aDeallocator);
 private: // from ConfigMessage
-    void Set(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
+    void Set(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson);
     void Clear();
-    void WriteKey(OpenHome::IWriter& aWriter);
-    void WriteValue(OpenHome::IWriter& aWriter);
-    void WriteType(OpenHome::IWriter& aWriter);
-    void WriteMeta(OpenHome::IWriter& aWriter);
+    void WriteKey(IWriter& aWriter);
+    void WriteValue(IWriter& aWriter);
+    void WriteType(IWriter& aWriter);
+    void WriteMeta(IWriter& aWriter);
 private:
-    OpenHome::Configuration::ConfigNum* iNum;
+    Configuration::ConfigNum* iNum;
     TInt iValue;
 };
 
@@ -149,16 +129,30 @@ private:
     TBool iStarted;
 };
 
-class ConfigChoiceMapperResourceFile : public Configuration::IConfigChoiceMapper, private INonCopyable
+class IResourceFileConsumer
 {
 public:
-    ConfigChoiceMapperResourceFile(ILanguageResourceReader& aReader, const Brx& aKey, const std::vector<TUint>& aChoices);
-public: // from IConfigChoiceMapper
-    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter);
+    virtual ~IResourceFileConsumer() {}
+    virtual TBool ProcessLine(const Brx& aLine) = 0; // true => continue (more lines required)
+};
+
+class ConfigChoiceMapperResourceFile : public IResourceFileConsumer,
+                                       private INonCopyable
+{
+public:
+    ConfigChoiceMapperResourceFile(const Brx& aKey,
+                                   const std::vector<TUint>& aChoices,
+                                   IWriter& aWriter,
+                                   Configuration::IConfigChoiceMappingWriter& aMappingWriter);
+private: // from IResourceFileConsumer
+    TBool ProcessLine(const Brx& aLine) override;
 private:
-    ILanguageResourceReader& iReader;
     const Brx& iKey;
     const std::vector<TUint>& iChoices;
+    IWriter& iWriter;
+    Configuration::IConfigChoiceMappingWriter& iMappingWriter;
+    TUint iChoicesIndex;
+    TBool iFoundKey;
 };
 
 class ConfigMessageChoice : public ConfigMessage
@@ -167,15 +161,15 @@ class ConfigMessageChoice : public ConfigMessage
 private:
     ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager);
 private: // from ConfigMessage
-    void Set(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
     void Clear();
-    void WriteKey(OpenHome::IWriter& aWriter);
-    void WriteValue(OpenHome::IWriter& aWriter);
-    void WriteType(OpenHome::IWriter& aWriter);
-    void WriteMeta(OpenHome::IWriter& aWriter);
+    void WriteKey(IWriter& aWriter);
+    void WriteValue(IWriter& aWriter);
+    void WriteType(IWriter& aWriter);
+    void WriteMeta(IWriter& aWriter);
 private:
     ILanguageResourceManager& iLanguageResourceManager;
-    OpenHome::Configuration::ConfigChoice* iChoice;
+    Configuration::ConfigChoice* iChoice;
     TUint iValue;
     std::vector<const Brx*>* iLanguageList;
 };
@@ -184,19 +178,19 @@ class ConfigMessageText : public ConfigMessage
 {
     friend class ConfigMessageTextAllocator;
 private:
-    static const TUint kMaxBytes = OpenHome::Configuration::ConfigText::kMaxBytes;
+    static const TUint kMaxBytes = Configuration::ConfigText::kMaxBytes;
 private:
     ConfigMessageText(IConfigMessageDeallocator& aDeallocator);
 private: // from ConfigMessage
-    void Set(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson);
+    void Set(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson);
     void Clear();
-    void WriteKey(OpenHome::IWriter& aWriter);
-    void WriteValue(OpenHome::IWriter& aWriter);
-    void WriteType(OpenHome::IWriter& aWriter);
-    void WriteMeta(OpenHome::IWriter& aWriter);
+    void WriteKey(IWriter& aWriter);
+    void WriteValue(IWriter& aWriter);
+    void WriteType(IWriter& aWriter);
+    void WriteMeta(IWriter& aWriter);
 private:
-    OpenHome::Configuration::ConfigText* iText;
-    OpenHome::Bws<kMaxBytes> iValue;
+    Configuration::ConfigText* iText;
+    Bws<kMaxBytes> iValue;
 };
 
 class ConfigMessageAllocatorBase : public IConfigMessageDeallocator
@@ -207,29 +201,29 @@ protected:
 private: // from IConfigMessageDeallocator
     void Deallocate(IConfigMessage& aMessage);
 protected:
-    OpenHome::Fifo<IConfigMessage*> iFifo;
-    //OpenHome::Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate(), which would be handled by iFifo locking.
+    Fifo<IConfigMessage*> iFifo;
+    //Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate(), which would be handled by iFifo locking.
 };
 
 class ConfigMessageNumAllocator : public ConfigMessageAllocatorBase
 {
 public:
     ConfigMessageNumAllocator(TUint aMessageCount);
-    IConfigMessage& Allocate(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
+    IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson);
 };
 
 class ConfigMessageChoiceAllocator : public ConfigMessageAllocatorBase
 {
 public:
     ConfigMessageChoiceAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager);
-    IConfigMessage& Allocate(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
 };
 
 class ConfigMessageTextAllocator : public ConfigMessageAllocatorBase
 {
 public:
     ConfigMessageTextAllocator(TUint aMessageCount);
-    IConfigMessage& Allocate(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson);
+    IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson);
 };
 
 class ConfigMessageAllocator : public IConfigMessageAllocator
@@ -237,9 +231,9 @@ class ConfigMessageAllocator : public IConfigMessageAllocator
 public:
     ConfigMessageAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager);
 public: // from IConfigMessageAllocator
-    IConfigMessage& Allocate(OpenHome::Configuration::ConfigNum& aNum, TInt aValue, const OpenHome::Brx& aAdditionalJson);
-    IConfigMessage& Allocate(OpenHome::Configuration::ConfigChoice& aChoice, TUint aValue, const OpenHome::Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
-    IConfigMessage& Allocate(OpenHome::Configuration::ConfigText& aText, const OpenHome::Brx& aValue, const OpenHome::Brx& aAdditionalJson);
+    IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson);
+    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson);
 private:
     ConfigMessageNumAllocator iAllocatorNum;
     ConfigMessageChoiceAllocator iAllocatorChoice;
@@ -260,9 +254,9 @@ class ConfigTabReceiver : public ITab
 {
 protected:
     ConfigTabReceiver();
-    virtual void Receive(const OpenHome::Brx& aKey, const OpenHome::Brx& aValue) = 0;
+    virtual void Receive(const Brx& aKey, const Brx& aValue) = 0;
 public: // from ITab
-    void Receive(const OpenHome::Brx& aMessage);
+    void Receive(const Brx& aMessage);
     virtual void Destroy() = 0;
 };
 
@@ -276,25 +270,25 @@ public: // from ITab
 
 // FIXME - MUST ensure all strings are JSON escaped correctly when written out (into additional json blob/string).
 
-class JsonKvp : public OpenHome::INonCopyable
+class JsonKvp : public INonCopyable
 {
 public:
-    void Serialise(OpenHome::IWriter& aWriter) const;
+    void Serialise(IWriter& aWriter) const;
 protected:
-    JsonKvp(const OpenHome::Brx& aKey);
-    virtual void SerialiseValue(OpenHome::IWriter& aWriter) const = 0;
+    JsonKvp(const Brx& aKey);
+    virtual void SerialiseValue(IWriter& aWriter) const = 0;
 private:
-    void SerialiseKey(OpenHome::IWriter& aWriter) const;
+    void SerialiseKey(IWriter& aWriter) const;
 private:
-    const OpenHome::Brn iKey;
+    const Brn iKey;
 };
 
 class JsonKvpInt : public JsonKvp
 {
 public:
-    JsonKvpInt(const OpenHome::Brx& aKey, TInt aValue);
+    JsonKvpInt(const Brx& aKey, TInt aValue);
 private: // from JsonKvp
-    void SerialiseValue(OpenHome::IWriter& aWriter) const;
+    void SerialiseValue(IWriter& aWriter) const;
 private:
     TInt iValue;
 };
@@ -302,9 +296,9 @@ private:
 class JsonKvpUint : public JsonKvp
 {
 public:
-    JsonKvpUint(const OpenHome::Brx& aKey, TUint aValue);
+    JsonKvpUint(const Brx& aKey, TUint aValue);
 private: // from JsonKvp
-    void SerialiseValue(OpenHome::IWriter& aWriter) const;
+    void SerialiseValue(IWriter& aWriter) const;
 private:
     TUint iValue;
 };
@@ -312,46 +306,46 @@ private:
 class JsonKvpString : public JsonKvp
 {
 public:
-    JsonKvpString(const OpenHome::Brx& aKey, const OpenHome::Brx& aValue);
+    JsonKvpString(const Brx& aKey, const Brx& aValue);
 private: // from JsonKvp
-    void SerialiseValue(OpenHome::IWriter& aWriter) const;
+    void SerialiseValue(IWriter& aWriter) const;
 private:
-    const OpenHome::Brx& iValue;
+    const Brx& iValue;
 };
 
 class IJsonProvider
 {
 public:
-    virtual const OpenHome::Brx& GetJson(const OpenHome::Brx& aKey) = 0;
+    virtual const Brx& GetJson(const Brx& aKey) = 0;
     virtual ~IJsonProvider() {}
 };
 
-class ConfigTab : public ConfigTabReceiver, public OpenHome::INonCopyable
+class ConfigTab : public ConfigTabReceiver, public INonCopyable
 {
 private:
     static const TUint kInvalidSubscription;
-    typedef std::pair<OpenHome::Brn,TUint> SubscriptionPair;
+    typedef std::pair<Brn,TUint> SubscriptionPair;
     typedef std::vector<SubscriptionPair> SubscriptionVector;
 public:
-    ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, OpenHome::Configuration::IConfigManager& aConfigManager, IJsonProvider& aJsonProvider);
+    ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, Configuration::IConfigManager& aConfigManager, IJsonProvider& aJsonProvider);
     ~ConfigTab();
-    void AddKeyNum(const OpenHome::Brx& aKey);
-    void AddKeyChoice(const OpenHome::Brx& aKey);
-    void AddKeyText(const OpenHome::Brx& aKey);
+    void AddKeyNum(const Brx& aKey);
+    void AddKeyChoice(const Brx& aKey);
+    void AddKeyText(const Brx& aKey);
     void Start();
     TBool Allocated() const;
     void SetHandler(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList);
 private: // from ConfigTabReceiver
-    void Receive(const OpenHome::Brx& aKey, const OpenHome::Brx& aValue);
+    void Receive(const Brx& aKey, const Brx& aValue);
     void Destroy();
 private:
-    void ConfigNumCallback(OpenHome::Configuration::ConfigNum::KvpNum& aKvp);
-    void ConfigChoiceCallback(OpenHome::Configuration::ConfigChoice::KvpChoice& aKvp);
-    void ConfigTextCallback(OpenHome::Configuration::ConfigText::KvpText& aKvp);
+    void ConfigNumCallback(Configuration::ConfigNum::KvpNum& aKvp);
+    void ConfigChoiceCallback(Configuration::ConfigChoice::KvpChoice& aKvp);
+    void ConfigTextCallback(Configuration::ConfigText::KvpText& aKvp);
 private:
     const TUint iId;
     IConfigMessageAllocator& iMsgAllocator;
-    OpenHome::Configuration::IConfigManager& iConfigManager;
+    Configuration::IConfigManager& iConfigManager;
     IJsonProvider& iJsonProvider;
     ITabHandler* iHandler;
     SubscriptionVector iConfigNums;
@@ -365,10 +359,18 @@ class IConfigApp : public IWebApp
 {
 public: // from IWebApp
     virtual ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) = 0;
-    virtual const OpenHome::Brx& ResourcePrefix() const= 0;
-    virtual IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) = 0;
+    virtual const Brx& ResourcePrefix() const= 0;
+    virtual IResourceHandler& CreateResourceHandler(const Brx& aResource) = 0;
 public:
     virtual ~IConfigApp() {}
+};
+
+class IConfigAppResourceHandlerFactory
+{
+public:
+    virtual ~IConfigAppResourceHandlerFactory() {}
+    virtual IResourceHandler* NewResourceHandler(const Brx& aResourceDir) = 0;
+    virtual ILanguageResourceReader* NewLanguageReader(const Brx& aResourceDir) = 0;
 };
 
 class ConfigAppBase : public IConfigApp, public IJsonProvider, public ILanguageResourceManager
@@ -379,46 +381,52 @@ private:
     static const TUint kMaxResourcePrefixBytes = 25;
     static const Brn kLangRoot;
     static const Brn kDefaultLanguage;
-    typedef std::vector<const OpenHome::Brx*> KeyVector;
-    typedef std::pair<OpenHome::Brn, OpenHome::Brx*> JsonPair;
-    typedef std::map<OpenHome::Brn, OpenHome::Brx*, OpenHome::BufferCmp> JsonMap;
+    typedef std::vector<const Brx*> KeyVector;
+    typedef std::pair<Brn, Brx*> JsonPair;
+    typedef std::map<Brn, Brx*, BufferCmp> JsonMap;
 protected:
-    ConfigAppBase(OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppBase(Configuration::IConfigManager& aConfigManager,
+                  IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
+                  const Brx& aResourcePrefix, const Brx& aResourceDir,
+                  TUint aMaxTabs, TUint aSendQueueSize);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) override;
-    const OpenHome::Brx& ResourcePrefix() const override;
-    IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) override;
+    const Brx& ResourcePrefix() const override;
+    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
 public: // from IJsonProvider
-    const OpenHome::Brx& GetJson(const OpenHome::Brx& aKey) override;
+    const Brx& GetJson(const Brx& aKey) override;
 public: // from ILanguageResourceManager
     ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<const Brx*>& aLanguageList) override;
 protected:
-    void AddNum(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    void AddChoice(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    void AddText(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddNum(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddChoice(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddText(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
 private:
-    void AddJson(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddJson(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
 protected:
-    OpenHome::Configuration::IConfigManager& iConfigManager;
+    Configuration::IConfigManager& iConfigManager;
 private:
     ConfigMessageAllocator* iMsgAllocator;
     Bwh iLangResourceDir;
-    const OpenHome::Bws<kMaxResourcePrefixBytes> iResourcePrefix;
-    std::vector<FileResourceHandler*> iResourceHandlers;
-    std::vector<LanguageResourceFileReader*> iLanguageResourceHandlers;
+    const Bws<kMaxResourcePrefixBytes> iResourcePrefix;
+    std::vector<IResourceHandler*> iResourceHandlers;
+    std::vector<ILanguageResourceReader*> iLanguageResourceHandlers;
     std::vector<ConfigTab*> iTabs;
     KeyVector iKeysNums;
     KeyVector iKeysChoices;
     KeyVector iKeysTexts;
     JsonMap iJsonMap;       // additional JSON for all ConfigVals
-    OpenHome::Mutex iLock;
+    Mutex iLock;
 };
 
 class ConfigAppBasic : public ConfigAppBase
 {
 public:
-     ConfigAppBasic(OpenHome::Configuration::IConfigManager& aConfigManager, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+     ConfigAppBasic(Configuration::IConfigManager& aConfigManager,
+                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
+                    const Brx& aResourcePrefix, const Brx& aResourceDir,
+                    TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppSources : public ConfigAppBasic
@@ -426,20 +434,12 @@ class ConfigAppSources : public ConfigAppBasic
 private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
-    ConfigAppSources(OpenHome::Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppSources(Configuration::IConfigManager& aConfigManager,
+                     IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
+                     const std::vector<const Brx*>& aSources,
+                     const Brx& aResourcePrefix, const Brx& aResourceDir,
+                     TUint aMaxTabs, TUint aSendQueueSize);
 };
-
-class ConfigAppMediaPlayer : public ConfigAppSources
-{
-public:
-     ConfigAppMediaPlayer(OpenHome::Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
-private:
-    void AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    void AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    void AddTextConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo);
-};
-
 
 } // namespace Web
 } // namespace OpenHome
-

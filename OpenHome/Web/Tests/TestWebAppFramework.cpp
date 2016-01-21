@@ -162,11 +162,11 @@ private:
 
 class TestHelperResourceHandler : public IResourceHandler
 {
-private:
-    static const Brn kMimeType;
 public: // from IResourceHandler
-    const OpenHome::Brx& MimeType() override;
-    void Write(OpenHome::IWriter& aWriter, TUint aOffset, TUint aBytes) override;
+    TBool Allocated() override;
+    void SetResource(const Brx& aUri) override;
+    TUint Bytes() override;
+    void Write(IWriter& aWriter) override;
     void Destroy() override;
 };
 
@@ -718,14 +718,21 @@ void SuiteFrameworkTabHandler::LongPollThread()
 
 // TestHelperResourceHandler
 
-const Brn TestHelperResourceHandler::kMimeType("text/html");
-
-const Brx& TestHelperResourceHandler::MimeType()
+TBool TestHelperResourceHandler::Allocated()
 {
-    return kMimeType;
+    return true;
 }
 
-void TestHelperResourceHandler::Write(IWriter& /*aWriter*/, TUint /*aOffset*/, TUint /*aBytes*/)
+void TestHelperResourceHandler::SetResource(const Brx& /*aUri*/)
+{
+}
+
+TUint TestHelperResourceHandler::Bytes()
+{
+    return 0;
+}
+
+void TestHelperResourceHandler::Write(IWriter& /*aWriter*/)
 {
 }
 

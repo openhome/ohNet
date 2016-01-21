@@ -25,10 +25,10 @@ namespace Web {
 class IResourceHandler
 {
 public:
-    static const TUint kMaxMimeTypeBytes = 255; // RFC 4288 (4.2) (RFC 6838 (4.2) obseletes this and recommends 127 bytes)
-public:
-    virtual const OpenHome::Brx& MimeType() = 0;
-    virtual void Write(OpenHome::IWriter& aWriter, TUint aOffset, TUint aBytes) = 0;    // THROWS WriterError
+    virtual TBool Allocated() = 0;
+    virtual void SetResource(const Brx& aUri) = 0;
+    virtual TUint Bytes() = 0; // 0 => unknown size
+    virtual void Write(IWriter& aWriter) = 0;    // THROWS WriterError
     virtual void Destroy() = 0;
     virtual ~IResourceHandler() {}
 };
@@ -36,32 +36,9 @@ public:
 class IResourceManager
 {
 public:
-    virtual IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResourceTail) = 0;  // THROWS ResourceInvalid
+    virtual IResourceHandler& CreateResourceHandler(const Brx& aResourceTail) = 0;  // THROWS ResourceInvalid
     virtual ~IResourceManager() {}
 };
-
-// FIXME - file handling should eventually be replaced with a cross-platform
-// resource handling layer. This currently only works on posix-style filesystems.
-// FIXME - make this thread aware
-// - could state of Allocated() be changed while a (thread-safe) ResourceManager is inspecting it?
-class FileResourceHandler : public IResourceHandler
-{
-public:
-    FileResourceHandler(const OpenHome::Brx& aRootDir);
-    TBool Allocated();
-    void SetResource(const OpenHome::Brx& aUri);
-public : // from IResourceHandler
-    const OpenHome::Brx& MimeType();
-    void Write(OpenHome::IWriter& aWriter, TUint aOffset, TUint aBytes);
-    void Destroy();
-private:
-    void SetMimeType(const OpenHome::Brx& aUri);
-private:
-    OpenHome::Brh iRootDir;
-    OpenHome::FileAnsii* iFile;
-    OpenHome::Bws<kMaxMimeTypeBytes> iMimeType;
-};
-
 
 // Interfaces and abstract classes relevant to clients wishing to make use of
 // the HttpFramework.
@@ -76,7 +53,7 @@ private:
 class ITab
 {
 public:
-    virtual void Receive(const OpenHome::Brx& aMessage) = 0;
+    virtual void Receive(const Brx& aMessage) = 0;
     virtual void Destroy() = 0;
     virtual ~ITab() {}
 };
@@ -122,7 +99,7 @@ class IWebApp : public ITabCreator, public IResourceManager
 {
 public:
     //virtual IFrameworkTimer& CreateTimer() = 0;         // throws TimerCreationFailed
-    virtual const OpenHome::Brx& ResourcePrefix() const = 0;
+    virtual const Brx& ResourcePrefix() const = 0;
     virtual ~IWebApp() {}
 };
 
@@ -195,7 +172,7 @@ private:
 class FrameworkTimer : public IFrameworkTimer
 {
 public:
-    FrameworkTimer(OpenHome::Environment& aEnv);
+    FrameworkTimer(Environment& aEnv);
     ~FrameworkTimer();
 public: // from IFrameworkTimer
     void Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler) override;
@@ -341,7 +318,7 @@ class IWebAppManager
 {
 public:
     // FIXME - automatically append "/" to end of resource prefix if not present?
-    virtual IWebApp& GetApp(const OpenHome::Brx& aResourcePrefix) = 0; // THROWS InvalidAppPrefix
+    virtual IWebApp& GetApp(const Brx& aResourcePrefix) = 0; // THROWS InvalidAppPrefix
     virtual ~IWebAppManager() {}
 };
 
@@ -389,19 +366,19 @@ private:
     // Spare session(s) for receiving user input and rejecting new long polling
     // connections when iMaxLpSessions in use.
     static const TUint kSpareSessions = 1;
-    typedef std::pair<const OpenHome::Brx*,WebAppInternal*> WebAppPair;
-    typedef std::map<const OpenHome::Brx*,WebAppInternal*, BrxPtrCmp> WebAppMap;
+    typedef std::pair<const Brx*,WebAppInternal*> WebAppPair;
+    typedef std::map<const Brx*,WebAppInternal*, BrxPtrCmp> WebAppMap;
 public:
-    WebAppFramework(OpenHome::Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
+    WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
     ~WebAppFramework();
     void Start(); // FIXME - implement
     // FIXME - Can't call Add() after Start()
 public: // from IWebAppFramework
     void Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private: // from IWebAppManager
-    IWebApp& GetApp(const OpenHome::Brx& aResourcePrefix) override;  // THROWS InvalidAppPrefix
+    IWebApp& GetApp(const Brx& aResourcePrefix) override;  // THROWS InvalidAppPrefix
 private: // from IResourceManager
-    IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource) override;  // THROWS ResourceInvalid
+    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;  // THROWS ResourceInvalid
 public: // from IServer
     TUint Port() const override;
     TIpAddress Interface() const override;
@@ -409,12 +386,12 @@ private:
     void AddSessions();
     void CurrentAdapterChanged();
 private:
-    OpenHome::Environment& iEnv;
+    Environment& iEnv;
     FrameworkTimer iPollTimer; // FIXME  remove
     const TUint iPort;
     const TUint iMaxLpSessions;
     TUint iAdapterListenerId;
-    OpenHome::SocketTcpServer* iServer;
+    SocketTcpServer* iServer;
     TabManager* iTabManager;    // Should there be one tab manager for ALL apps, or one TabManager per app? (And, similarly, one set of server sessions for all apps, or a set of server sessions per app? Also, need at least one extra session for receiving (and declining) additional long polling requests.)
 
     // FIXME - what if this is created with a max of 4 tabs and an app is added that is only capable of creating 3 apps and 4 clients try to load apps?
@@ -428,7 +405,7 @@ private:
  * HttpSession that handles serving files (via GET), processing POST requests
  * and allows long polling.
  */
-class HttpSession : public OpenHome::SocketTcpSession
+class HttpSession : public SocketTcpSession
 {
 private:
     static const TUint kMaxRequestBytes = 4*1024;
@@ -437,13 +414,13 @@ private:
     static const TUint kPollTimeoutMs = 5 * 1000;
     static const TUint kPollPeriodTimeoutMs = 5*1000;
 public:
-    HttpSession(OpenHome::Environment& aEnv, IWebAppManager& aAppManager, ITabManager& aTabManager, IResourceManager& aResourceManager);
+    HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabManager& aTabManager, IResourceManager& aResourceManager);
     ~HttpSession();
     void Start();   // FIXME - Until this is called, return a service (temporarily) unavailable status?
 private: // from SocketTcpSession
     void Run();
 private:
-    void Error(const OpenHome::HttpStatus& aStatus);
+    void Error(const HttpStatus& aStatus);
     void Get();
     void Post();
     void WriteLongPollHeaders();
@@ -451,23 +428,36 @@ private:
     IWebAppManager& iAppManager;
     ITabManager& iTabManager;
     IResourceManager& iResourceManager;
-    OpenHome::Srx* iReadBuffer;
+    Srx* iReadBuffer;
     ReaderUntil* iReaderUntilPreChunker;
-    OpenHome::ReaderHttpRequest* iReaderRequest;
+    ReaderHttpRequest* iReaderRequest;
     ReaderHttpChunked* iReaderChunked;
     ReaderUntil* iReaderUntil;
-    OpenHome::WriterHttpChunked* iWriterChunked;
-    OpenHome::Sws<kMaxResponseBytes>* iWriterBuffer;
-    OpenHome::WriterHttpResponse* iWriterResponse;
-    OpenHome::HttpHeaderHost iHeaderHost;
-    OpenHome::HttpHeaderTransferEncoding iHeaderTransferEncoding;
-    OpenHome::HttpHeaderConnection iHeaderConnection;
+    WriterHttpChunked* iWriterChunked;
+    Sws<kMaxResponseBytes>* iWriterBuffer;
+    WriterHttpResponse* iWriterResponse;
+    HttpHeaderHost iHeaderHost;
+    HttpHeaderTransferEncoding iHeaderTransferEncoding;
+    HttpHeaderConnection iHeaderConnection;
     Net::HeaderAcceptLanguage iHeaderAcceptLanguage;
-    const OpenHome::HttpStatus* iErrorStatus;
+    const HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;
     TBool iResourceWriterHeadersOnly;
     TUint iUpdateCount;
+};
+
+class MimeUtils
+{
+    static const Brn kExtCss;
+    static const Brn kExtJs;
+    static const Brn kExtXml;
+    static const Brn kExtBmp;
+    static const Brn kExtGif;
+    static const Brn kExtJpeg;
+    static const Brn kExtPng;
+public:
+    static Brn MimeTypeFromUri(const Brx& aUri);
 };
 
 } // namespace Web

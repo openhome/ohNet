@@ -25,7 +25,8 @@
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Web/WebAppFramework.h>
-#include <OpenHome/Web/ConfigUi/ConfigUi.h>
+#include <OpenHome/Web/ConfigUi/ConfigUiMediaPlayer.h>
+#include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 
 #undef LPEC_ENABLE
 
@@ -373,7 +374,9 @@ void TestMediaPlayer::InitialiseSubsystems()
 
 void TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
 {
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize);
+    FileResourceHandlerFactory resourceHandlerFactory;
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources,
+                                          Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize);
 }
 
 void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)

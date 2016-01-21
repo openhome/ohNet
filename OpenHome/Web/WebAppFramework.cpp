@@ -23,129 +23,6 @@ using namespace OpenHome::Configuration;
 using namespace OpenHome::Web;
 
 
-// FileResourceHandler
-
-FileResourceHandler::FileResourceHandler(const OpenHome::Brx& aRootDir)
-    : iRootDir(aRootDir)
-    , iFile(nullptr)
-{
-}
-
-TBool FileResourceHandler::Allocated()
-{
-    return (iFile != nullptr);
-}
-
-void FileResourceHandler::SetResource(const Brx& aUri)
-{
-    ASSERT(iFile == nullptr);
-    Bwh filename(iRootDir.Bytes()+aUri.Bytes()+1);
-    filename.Replace(iRootDir);
-    filename.Append(aUri);
-
-    try {
-        // FIXME - dynamic allocation!
-        iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
-    }
-    catch (FileOpenError&) {
-        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: %.*s\n", PBUF(filename));
-        THROW(ResourceInvalid);
-    }
-
-    SetMimeType(aUri);
-}
-
-const Brx& FileResourceHandler::MimeType()
-{
-    ASSERT(iFile != nullptr);
-    ASSERT(iMimeType.Bytes() != 0);
-    return iMimeType;
-}
-
-void FileResourceHandler::Write(IWriter& aWriter, TUint aOffset, TUint aBytes)
-{
-    ASSERT(iFile != nullptr);
-    if (aOffset != 0) {
-        // Seek to desired pos.
-        try {
-            iFile->Seek(aOffset, eSeekFromStart);
-        }
-        catch (FileSeekError&) {
-            THROW(WriterError);
-        }
-    }
-
-    // Bytes to be written.
-    TUint bytes = iFile->Bytes();
-    if (aBytes != bytes && aBytes != 0) {   // if aBytes == 0 write whole file
-        bytes = aBytes;
-    }
-
-    // Write.
-    Bws<1024> buf;
-    try {
-        while (bytes > 0) {
-            iFile->Read(buf);
-            aWriter.Write(buf);
-            bytes -= buf.Bytes();
-            buf.SetBytes(0);
-        }
-    }
-    catch (FileReadError&) {
-        // FIXME - this behaviour seems undesirable
-        // iFile->Read() should EITHER do what we ask, OR throw an exception
-        // It shouldn't do both (either partially or fully)!
-        if (buf.Bytes() > 0) {
-            aWriter.Write(buf);
-        }
-        THROW(WriterError);
-    }
-}
-
-void FileResourceHandler::Destroy()
-{
-    ASSERT(iFile != nullptr);
-    delete iFile;
-    iFile = nullptr;
-    iMimeType.SetBytes(0);
-}
-
-void FileResourceHandler::SetMimeType(const Brx& aUri)
-{
-    // Infer mime type from file extension.
-    Parser p(aUri);
-    Brn buf;
-    while (!p.Finished()) {
-        buf = p.Next('.');
-    }
-
-    if (Ascii::CaseInsensitiveEquals(buf, Brn("css"))) {
-        iMimeType.Replace(kOhNetMimeTypeCss);
-    }
-    else if (Ascii::CaseInsensitiveEquals(buf, Brn("js"))) {
-        iMimeType.Replace(kOhNetMimeTypeJs);
-    }
-    else if (Ascii::CaseInsensitiveEquals(buf, Brn("xml"))) {
-        iMimeType.Replace(kOhNetMimeTypeXml);
-    }
-    else if (Ascii::CaseInsensitiveEquals(buf, Brn("bmp"))) {
-        iMimeType.Replace(kOhNetMimeTypeBmp);
-    }
-    else if (Ascii::CaseInsensitiveEquals(buf, Brn("gif"))) {
-        iMimeType.Replace(kOhNetMimeTypeGif);
-    }
-    else if (Ascii::CaseInsensitiveEquals(buf, Brn("jpeg"))) {
-        iMimeType.Replace(kOhNetMimeTypeJpeg);
-    }
-    else if (Ascii::CaseInsensitiveEquals(buf, Brn("png"))) {
-        iMimeType.Replace(kOhNetMimeTypePng);
-    }
-    else {  // default to "text/html"
-        iMimeType.Replace(kOhNetMimeTypeHtml);
-    }
-}
-
-
 // FrameworkTabHandler
 
 FrameworkTabHandler::FrameworkTabHandler(IFrameworkSemaphore& aSemRead, IFrameworkSemaphore& aSemWrite, IFrameworkTimer& aTimer, TUint aSendQueueSize, TUint aSendTimeoutMs)
@@ -990,7 +867,8 @@ void HttpSession::Error(const HttpStatus& aStatus)
 
 void HttpSession::Get()
 {
-    if (iReaderRequest->Version() == Http::eHttp11) {
+    auto reqVersion = iReaderRequest->Version();
+    if (reqVersion == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
             Error(HttpStatus::kBadRequest);
         }
@@ -1000,36 +878,39 @@ void HttpSession::Get()
     const Brx& uri = iReaderRequest->Uri();
     IResourceHandler& resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
 
-    const Brx& mimeType = resourceHandler.MimeType();
+    Brn mimeType = MimeUtils::MimeTypeFromUri(uri);
     LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
     // Write response headers.
 
-    // FIXME - what if resource unavailable/doesn't exist?
-    // Should certainly NOT return a 200 OK!
-    // Also, should it be possible to send long poll requests via GETs?
+    // FIXME - should it be possible to send long poll requests via GETs?
     iResponseStarted = true;
-    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
+    iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
     IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
-    writer.Write(resourceHandler.MimeType());
+    writer.Write(mimeType);
     //writer.Write(Brn("; charset=\"utf-8\""));
     writer.WriteFlush();
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     //WriteServerHeader(*iWriterResponse);
-    //if (iReaderRequest->Version() == Http::eHttp11) {
-    //    iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
-    //}
+    if (reqVersion == Http::eHttp11) {
+        iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    }
+    else { // Http::eHttp10
+        const TUint len = resourceHandler.Bytes();
+        if (len > 0) {
+            Http::WriteHeaderContentLength(*iWriterResponse, len);
+        }
+    }
     iWriterResponse->WriteFlush();
 
     // Write content.
-    resourceHandler.Write(*iWriterBuffer, 0, 0);
-    iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
+    if (reqVersion == Http::eHttp11) {
+        iWriterChunked->SetChunked(true);
+    }
+    resourceHandler.Write(*iWriterChunked);
+    iWriterChunked->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
     resourceHandler.Destroy();
     iResponseEnded = true;
-
-    if (iResponseStarted) {
-        ASSERT(iResponseEnded);
-    }
 }
 
 void HttpSession::Post()
@@ -1240,4 +1121,48 @@ void HttpSession::WriteLongPollHeaders()
     writer.WriteFlush();
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterResponse->WriteFlush();
+}
+
+
+// MimeUtils
+
+const Brn MimeUtils::kExtCss("css");
+const Brn MimeUtils::kExtJs("js");
+const Brn MimeUtils::kExtXml("xml");
+const Brn MimeUtils::kExtBmp("bmp");
+const Brn MimeUtils::kExtGif("gif");
+const Brn MimeUtils::kExtJpeg("jpeg");
+const Brn MimeUtils::kExtPng("png");
+
+Brn MimeUtils::MimeTypeFromUri(const Brx& aUri)
+{ // static
+    Parser p(aUri);
+    Brn buf;
+    while (!p.Finished()) {
+        buf = p.Next('.');
+    }
+
+    if (Ascii::CaseInsensitiveEquals(buf, kExtCss)) {
+        return Brn(kOhNetMimeTypeCss);
+    }
+    else if (Ascii::CaseInsensitiveEquals(buf, kExtJs)) {
+        return Brn(kOhNetMimeTypeJs);
+    }
+    else if (Ascii::CaseInsensitiveEquals(buf, kExtXml)) {
+        return Brn(kOhNetMimeTypeXml);
+    }
+    else if (Ascii::CaseInsensitiveEquals(buf, kExtBmp)) {
+        return Brn(kOhNetMimeTypeBmp);
+    }
+    else if (Ascii::CaseInsensitiveEquals(buf, kExtGif)) {
+        return Brn(kOhNetMimeTypeGif);
+    }
+    else if (Ascii::CaseInsensitiveEquals(buf, kExtJpeg)) {
+        return Brn(kOhNetMimeTypeJpeg);
+    }
+    else if (Ascii::CaseInsensitiveEquals(buf, kExtPng)) {
+        return Brn(kOhNetMimeTypePng);
+    }
+    // default to "text/html"
+    return Brn(kOhNetMimeTypeHtml);
 }

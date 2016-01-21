@@ -602,6 +602,8 @@ def build(bld):
     bld.stlib(
         source=[
             'OpenHome/Web/ConfigUi/ConfigUi.cpp',
+            'OpenHome/Web/ConfigUi/FileResourceHandler.cpp',
+            'OpenHome/Web/ConfigUi/ConfigUiMediaPlayer.cpp',
         ],
         use=['WebAppFramework', 'OHMEDIAPLAYER', 'OHNET', 'PLATFORM'],
         target='ConfigUi')
@@ -975,7 +977,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source=['OpenHome/Web/Tests/TestWebAppFrameworkInteractive.cpp'],
-            use=['OHNET', 'PLATFORM', 'WebAppFramework', 'ohMediaPlayer'],
+            use=['OHNET', 'PLATFORM', 'WebAppFramework', 'ohMediaPlayer', 'ConfigUi'],
             target='TestWebAppFrameworkInteractive',
             install_path=None)
     bld.program(

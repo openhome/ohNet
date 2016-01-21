@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Tests/Cdecl.h>
 #include <OpenHome/Media/Tests/GetCh.h>
 #include <OpenHome/Web/WebAppFramework.h>
+#include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Private/Printer.h>

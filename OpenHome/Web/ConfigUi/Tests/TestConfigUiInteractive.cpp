@@ -9,6 +9,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Av/Product.h>
+#include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 
 #include <stdlib.h>
 
@@ -90,8 +91,11 @@ int CDECL main(int aArgc, char* aArgv[])
 
      // Web App should only be initialised once ConfigManager is opened (i.e.,
      // once ALL ConfigVals have been registered).
+    FileResourceHandlerFactory resourceHandlerFactory;
     Brn resourcePrefix("SoftPlayerBasic");
-    ConfigAppBasic* app = new ConfigAppBasic(*confMgr, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize);
+    ConfigAppBasic* app = new ConfigAppBasic(*confMgr, resourceHandlerFactory,
+                                             resourcePrefix, optionDir.Value(),
+                                             maxSessions, sendQueueSize);
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership

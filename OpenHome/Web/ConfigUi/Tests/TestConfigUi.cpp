@@ -77,12 +77,14 @@ class HelperLanguageResourceReader : public ILanguageResourceReader, private INo
 public:
     HelperLanguageResourceReader(const Brx& aLanguageMap, ILanguageResourceReaderDestroyer& aDestroyer);
 public: // from ILanguageResourceReader
-    Brn ReadLine() override;
-    void Destroy() override;
+    void SetResource(const Brx& aUriTail);
+    TBool Allocated() const;
+    void Process(IResourceFileConsumer& aResourceConsumer) override;
 private:
     const Brx& iLanguageMap;
     ILanguageResourceReaderDestroyer& iDestroyer;
     Parser iParser;
+    TBool iAllocated;
 };
 
 class HelperLanguageResourceManager : public ILanguageResourceManager, public ILanguageResourceReaderDestroyer, private INonCopyable
@@ -430,18 +432,29 @@ HelperLanguageResourceReader::HelperLanguageResourceReader(const Brx& aLanguageM
     : iLanguageMap(aLanguageMap)
     , iDestroyer(aDestroyer)
     , iParser(iLanguageMap)
+    , iAllocated(false)
 {
 }
 
-// FIXME - what if parse is exhausted?
-Brn HelperLanguageResourceReader::ReadLine()
+void HelperLanguageResourceReader::SetResource(const Brx& /*aUriTail*/)
 {
-    //return Ascii::Trim(iParser.Next('\n')); // FIXME - if Trim() is done, may strip any escaped chars in key.
-    return iParser.Next('\n');
+    iAllocated = true;
 }
 
-void HelperLanguageResourceReader::Destroy()
+TBool HelperLanguageResourceReader::Allocated() const
 {
+    return iAllocated;
+}
+
+void HelperLanguageResourceReader::Process(IResourceFileConsumer& aResourceConsumer)
+{
+    for (;;) {
+        Brn line = iParser.Next('\n');
+        if (!aResourceConsumer.ProcessLine(line)) {
+            break;
+        }
+    }
+    iAllocated = false;
     iDestroyer.Destroy(this);
 }
 
