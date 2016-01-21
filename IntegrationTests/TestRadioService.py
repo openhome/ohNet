@@ -16,6 +16,7 @@ in the TestRadioPlayback test script)
 """
 import _Paths
 import CommonRadioService as BASE
+import _ProtocolInfo      as ProtocolInfo
 import sys
 
 
@@ -25,31 +26,7 @@ class TestRadioService( BASE.CommonRadioService ):
         BASE.CommonRadioService.__init__( self )
         self.doc          = __doc__
         self.tuneInBrowse = 'Browse.ashx?c=presets&formats=aac,ogg,hls'
-        self.protocolInfo = 'http-get:*:audio/mp4:*,'                     +\
-                            'http-get:*:application/vnd.apple.mpegurl:*,' +\
-                            'http-get:*:audio/x-flac:*,'                  +\
-                            'http-get:*:audio/wav:*,'                     +\
-                            'http-get:*:audio/wave:*,'                    +\
-                            'http-get:*:audio/x-wav:*,'                   +\
-                            'http-get:*:audio/aiff:*,'                    +\
-                            'http-get:*:audio/x-aiff:*,'                  +\
-                            'http-get:*:audio/aifc:*,'                    +\
-                            'http-get:*:audio/x-aifc:*,'                  +\
-                            'http-get:*:audio/aac:*,'                     +\
-                            'http-get:*:audio/aacp:*,'                    +\
-                            'http-get:*:audio/x-m4a:*,'                   +\
-                            'http-get:*:audio/mpeg:*,'                    +\
-                            'http-get:*:audio/x-mpeg:*,'                  +\
-                            'http-get:*:audio/mp1:*,'                     +\
-                            'http-get:*:audio/ogg:*,'                     +\
-                            'http-get:*:audio/x-ogg:*,'                   +\
-                            'http-get:*:application/ogg:*,'               +\
-                            'http-get:*:audio/x-mpegurl:*,'               +\
-                            'http-get:*:audio/mpegurl:*,'                 +\
-                            'http-get:*:audio/x-scpls:*,'                 +\
-                            'http-get:*:text/xml:*,'                      +\
-                            'tidalhifi.com:*:*:*,'                        +\
-                            'qobuz.com:*:*:*'
+        self.protocolInfo = ProtocolInfo.kProtocolInfo
 
 
 if __name__ == '__main__':
