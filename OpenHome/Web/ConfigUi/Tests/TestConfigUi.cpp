@@ -77,8 +77,8 @@ class HelperLanguageResourceReader : public ILanguageResourceReader, private INo
 public:
     HelperLanguageResourceReader(const Brx& aLanguageMap, ILanguageResourceReaderDestroyer& aDestroyer);
 public: // from ILanguageResourceReader
-    void SetResource(const Brx& aUriTail);
-    TBool Allocated() const;
+    void SetResource(const Brx& aUriTail) override;
+    TBool Allocated() const override;
     void Process(IResourceFileConsumer& aResourceConsumer) override;
 private:
     const Brx& iLanguageMap;
