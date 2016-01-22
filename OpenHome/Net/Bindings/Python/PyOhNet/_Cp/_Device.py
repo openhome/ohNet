@@ -68,13 +68,13 @@ class Device():
     def _AddProxy( self, aService ):
         """Generate and add proxy for specified service"""
         # The proxy code is auto-generated (from the service XML) and then
-        # imported and added as a class attribute to the device. Named the
-        # same as the service, with lower-case first letter. All ohNet proxy
-        # actions and properties are accessible via these attributes
+        # imported and added as a class attribute to the device. Named as
+        # 'DomainService'. All ohNet proxy actions and properties are 
+        # accessible via these attributes
         #
         # TestBasic service   -> device.testBasic
         # AVTransport service -> device.aVTRansport
-        attrName  = aService['name'][0].lower() + aService['name'][1:]
+        attrName  = aService['domain'] + aService['name']
         proxyName = 'CpProxy%s%s%s' % \
             (aService['domain'], aService['name'][0].upper() + aService['name'][1:], aService['version'])
 
