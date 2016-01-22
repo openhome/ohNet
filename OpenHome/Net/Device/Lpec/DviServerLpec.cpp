@@ -423,8 +423,7 @@ void DviSessionLpec::Run()
             catch (InvocationError&) {
             }
             if (!iResponseStarted) {
-                iWriteLock.Wait();
-                iResponseStarted = true;
+                ASSERT(!iResponseEnded);
                 ReportErrorNoThrow(LpecError::kMethodExecutionError);
             }
             if (!iResponseEnded) {
@@ -436,6 +435,7 @@ void DviSessionLpec::Run()
     }
     catch (WriterError&) {
     }
+    ASSERT(iResponseEnded);
 
     iDeviceLock.Wait();
     std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin();
@@ -486,15 +486,7 @@ void DviSessionLpec::Subscribe()
         }
 
         AutoMutex b(iDeviceLock);
-        try {
-            ParseDeviceAndService();
-        }
-        catch (LpecParseError&) {
-            iResponseEnded = true;
-            iWriteBuffer->Write(Lpec::kMsgTerminator);
-            iWriteBuffer->WriteFlush();
-            throw;
-        }
+        ParseDeviceAndService();
 
         // check we don't already have a subscription for this service
         for (TUint i=0; i<iSubscriptions.size(); i++) {
@@ -558,15 +550,7 @@ void DviSessionLpec::Unsubscribe()
     }
 
     AutoMutex b(iDeviceLock);
-    try {
-        ParseDeviceAndService();
-    }
-    catch (LpecParseError&) {
-        iResponseEnded = true;
-        iWriteBuffer->Write(Lpec::kMsgTerminator);
-        iWriteBuffer->WriteFlush();
-        throw;
-    }
+    ParseDeviceAndService();
     for (TUint i=0; i<iSubscriptions.size(); i++) {
         if (iSubscriptions[i].Matches(*iTargetDevice, *iTargetService)) {
             DoUnsubscribe(i);
@@ -648,6 +632,7 @@ void DviSessionLpec::ReportErrorNoThrow(const LpecError& aError)
 void DviSessionLpec::ReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 {
     if (!iResponseStarted) {
+        ASSERT(!iResponseEnded);
         iWriteLock.Wait();
         iWriteBuffer->Write(Lpec::kMethodError);
         iWriteBuffer->Write(' ');
@@ -860,9 +845,14 @@ void DviSessionLpec::InvocationWriteStringEnd(const TChar* /*aName*/)
 
 void DviSessionLpec::InvocationWriteEnd()
 {
+    ASSERT(iResponseStarted);
     iResponseEnded = true;
-    iWriteBuffer->Write(Lpec::kMsgTerminator);
-    iWriteBuffer->WriteFlush();
+    try {
+        iWriteBuffer->Write(Lpec::kMsgTerminator);
+        iWriteBuffer->WriteFlush();
+    }
+    catch (WriterError&) {
+    }
     iWriteLock.Signal();
 }
 
