@@ -187,10 +187,10 @@ ConfigChoiceMapperResourceFile::ConfigChoiceMapperResourceFile(const Brx& aKey,
                                                                IConfigChoiceMappingWriter& aMappingWriter)
     : iKey(aKey)
     , iChoices(aChoices)
-    , iChoicesIndex(0)
-    , iFoundKey(false)
     , iWriter(aWriter)
     , iMappingWriter(aMappingWriter)
+    , iChoicesIndex(0)
+    , iFoundKey(false)
 {
 }
 
