@@ -33,6 +33,7 @@ class Mp3HeaderExtendedBare : public IMp3HeaderExtended
 {
 public:
     Mp3HeaderExtendedBare();
+    void Clear();
     void Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate);
 private: // from IMp3HeaderExtended
     TUint64 SamplesTotal() const override { return iSamplesTotal; }
@@ -48,6 +49,7 @@ class Mp3HeaderExtendedBareNonSeekable : public IMp3HeaderExtended
 {
 public:
     Mp3HeaderExtendedBareNonSeekable();
+    void Clear();
     void Replace(TUint aByteRate);
 private: // from IMp3HeaderExtended
     TUint64 SamplesTotal() const override { return 0; }
@@ -63,6 +65,7 @@ class Mp3HeaderExtendedXing : public IMp3HeaderExtended
 {
 public:
     Mp3HeaderExtendedXing();
+    void Clear();
     void Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
 private: // from IMp3HeaderExtended
     TUint64 SamplesTotal() const override { return iSamplesTotal; }
@@ -108,6 +111,7 @@ private:
 public:
     Mp3Header();
     ~Mp3Header();
+    void Clear();
     void Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes);
     TUint Channels() const { return iChannels; }
     TUint SampleRate() const { return iSampleRate; }
@@ -187,6 +191,13 @@ Mp3HeaderExtendedBare::Mp3HeaderExtendedBare()
 {
 }
 
+void Mp3HeaderExtendedBare::Clear()
+{
+    iSamplesTotal = 0;
+    iBitRate = 0;
+    iBytesPerSample = 0;
+}
+
 void Mp3HeaderExtendedBare::Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate)
 {
     iBitRate = aByteRate*8;
@@ -219,6 +230,11 @@ Mp3HeaderExtendedBareNonSeekable::Mp3HeaderExtendedBareNonSeekable()
 {
 }
 
+void Mp3HeaderExtendedBareNonSeekable::Clear()
+{
+    iBitRate = 0;
+}
+
 void Mp3HeaderExtendedBareNonSeekable::Replace(TUint aByteRate)
 {
     iBitRate = aByteRate*8;
@@ -239,6 +255,15 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing()
     , iBytes(0)
     , iBitRate(0)
 {
+}
+
+void Mp3HeaderExtendedXing::Clear()
+{
+    iSampleRate = 0;
+    iSamplesTotal = 0;
+    iFrames = 0;
+    iBytes = 0;
+    iBitRate = 0;
 }
 
 void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
@@ -431,6 +456,14 @@ Mp3Header::Mp3Header()
 Mp3Header::~Mp3Header()
 {
     //LOG(kCodec, "Mp3Header::~Mp3Header\n");
+}
+
+void Mp3Header::Clear()
+{
+    iExtended = nullptr;
+    iExtendedBare.Clear();
+    iExtendedNonSeekable.Clear();
+    iExtendedXing.Clear();
 }
 
 void Mp3Header::Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes)
@@ -699,7 +732,7 @@ void CodecMp3::StreamInitialise()
 void CodecMp3::StreamCompleted()
 {
     //LOG(kCodec, "CodecMp3::Deinitialise\n");
-
+    iHeader.Clear();
     iInput.SetBytes(0);
     iHeaderBytes = 0;
 
