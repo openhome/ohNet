@@ -368,6 +368,7 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     : iMsgFactory(aMsgFactory)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iRewinder(iMsgFactory, aUpstreamElement)
+    , iLoggerRewinder(iRewinder, "Codec Container Rewinder")
     , iCache(iRewinder)
     , iActiveContainer(nullptr)
     , iContainerNull(nullptr)
@@ -385,6 +386,9 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     iContainerNull->Construct(iCache, iMsgFactory, *this, *this);
     iContainers.push_back(iContainerNull);
     iActiveContainer = iContainerNull;
+
+    //iLoggerRewinder.SetEnabled(true);
+    //iLoggerRewinder.SetFilter(Logger::EMsgAll);
 }
 
 void ContainerController::AddContainer(ContainerBase* aContainer)

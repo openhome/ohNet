@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/Rewinder.h>
+#include <OpenHome/Media/Pipeline/Logger.h>
 
 #include <vector>
 
@@ -194,6 +195,7 @@ private:
     MsgFactory& iMsgFactory;
     IUrlBlockWriter& iUrlBlockWriter;
     Rewinder iRewinder;
+    Logger iLoggerRewinder;
     MsgAudioEncodedCache iCache;
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
