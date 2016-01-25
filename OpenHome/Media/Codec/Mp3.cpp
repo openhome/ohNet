@@ -29,6 +29,54 @@ public:
     virtual ~IMp3HeaderExtended() {}
 };
 
+class Mp3HeaderExtendedBare : public IMp3HeaderExtended
+{
+public:
+    Mp3HeaderExtendedBare();
+    void Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate);
+private: // from IMp3HeaderExtended
+    TUint64 SamplesTotal() const override { return iSamplesTotal; }
+    TUint64 SampleToByte(TUint64 aSample) const override;
+    TUint BitRate() const override { return iBitRate; }
+private:
+    TUint64 iSamplesTotal;
+    TUint iBitRate;
+    TUint iBytesPerSample;
+};
+
+class Mp3HeaderExtendedBareNonSeekable : public IMp3HeaderExtended
+{
+public:
+    Mp3HeaderExtendedBareNonSeekable();
+    void Replace(TUint aByteRate);
+private: // from IMp3HeaderExtended
+    TUint64 SamplesTotal() const override { return 0; }
+    TUint64 SampleToByte(TUint64 aSample) const override;
+    TUint BitRate() const override { return iBitRate; }
+private:
+    TUint iBitRate;
+};
+
+class Mp3Header;
+
+class Mp3HeaderExtendedXing : public IMp3HeaderExtended
+{
+public:
+    Mp3HeaderExtendedXing();
+    void Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
+private: // from IMp3HeaderExtended
+    TUint64 SamplesTotal() const override { return iSamplesTotal; }
+    TUint64 SampleToByte(TUint64 aSample) const override;
+    TUint BitRate() const override { return iBitRate; }
+private:
+    TUint iSampleRate;
+    TUint64 iSamplesTotal;
+    TUint iFrames; // total number of frames
+    TUint iBytes;  // number of bytes in the mp3 audio data _only_ no tags included
+    TUint iBitRate;
+    Bws<100> iToc;
+};
+
 class Mp3Header
 {
 private:
@@ -71,7 +119,10 @@ public:
     static TBool Exists(const Brx& aData, TUint& aSyncFrameOffsetBytes);
     static TUint ValidSync(const Brx& aSync, TUint& layer, TUint& mode);
 private:
-    IMp3HeaderExtended* iExtended;
+    IMp3HeaderExtended* iExtended;  // No ownership; points to active extended header.
+    Mp3HeaderExtendedBare iExtendedBare;
+    Mp3HeaderExtendedBareNonSeekable iExtendedNonSeekable;
+    Mp3HeaderExtendedXing iExtendedXing;
     TUint iHeaderBytes;
     TUint iSampleRate;
     TUint iChannels;
@@ -106,48 +157,6 @@ private:
     Bws<6*1024> iRecogBuf;
 };
 
-class Mp3HeaderExtendedBare : public IMp3HeaderExtended
-{
-public:
-    Mp3HeaderExtendedBare(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate);
-private: // from IMp3HeaderExtended
-    TUint64 SamplesTotal() const { return iSamplesTotal; }
-    TUint64 SampleToByte(TUint64 aSample) const;
-    TUint BitRate() const { return iBitRate; }
-private:
-    TUint64 iSamplesTotal;
-    TUint iBitRate;
-    TUint iBytesPerSample;
-};
-
-class Mp3HeaderExtendedBareNonSeekable : public IMp3HeaderExtended
-{
-public:
-    Mp3HeaderExtendedBareNonSeekable(TUint aByteRate);
-private: // from IMp3HeaderExtended
-    TUint64 SamplesTotal() const { return 0; }
-    TUint64 SampleToByte(TUint64 aSample) const;
-    TUint BitRate() const { return iBitRate; }
-private:
-    TUint iBitRate;
-};
-
-class Mp3HeaderExtendedXing : public IMp3HeaderExtended
-{
-public:
-    Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
-    virtual TUint64 SamplesTotal() const { return iSamplesTotal; }
-    virtual TUint64 SampleToByte(TUint64 aSample) const;
-    virtual TUint BitRate() const { return iBitRate; }
-private:
-    TUint iSampleRate;
-    TUint64 iSamplesTotal;
-    TUint iFrames; // total number of frames
-    TUint iBytes;  // number of bytes in the mp3 audio data _only_ no tags included
-    TUint iBitRate;
-    Bws<100> iToc;
-};
-
 } // namespace Codec
 } // namespace Media
 } // namespace OpenHome
@@ -171,14 +180,21 @@ CodecBase* CodecFactory::NewMp3(IMimeTypeList& aMimeTypeList)
 
 // Mp3HeaderExtendedBare
 
-Mp3HeaderExtendedBare::Mp3HeaderExtendedBare(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate)
-    : iBitRate(aByteRate*8)
-{    
+Mp3HeaderExtendedBare::Mp3HeaderExtendedBare()
+    : iSamplesTotal(0)
+    , iBitRate(0)
+    , iBytesPerSample(0)
+{
+}
+
+void Mp3HeaderExtendedBare::Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate)
+{
+    iBitRate = aByteRate*8;
     /* Provide an estimate of the total samples.  This won't be valid for all
-       files, but it's a worst case guess if we don't have further information
-       in another header.  This isn't prefectly accurate because of the mp3
-       header in each frame as well as any id3 or similar tags included in the
-       file.  However, it's close enough for our seeking purposes. */
+    files, but it's a worst case guess if we don't have further information
+    in another header.  This isn't prefectly accurate because of the mp3
+    header in each frame as well as any id3 or similar tags included in the
+    file.  However, it's close enough for our seeking purposes. */
     TUint64 seconds = 0;
     if (aByteRate != 0) {
         seconds = aTotalBytes / aByteRate;
@@ -198,9 +214,14 @@ TUint64 Mp3HeaderExtendedBare::SampleToByte(TUint64 aSample) const
 
 // Mp3HeaderExtendedBareNonSeekable
 
-Mp3HeaderExtendedBareNonSeekable::Mp3HeaderExtendedBareNonSeekable(TUint aByteRate)
-    : iBitRate(aByteRate*8)
+Mp3HeaderExtendedBareNonSeekable::Mp3HeaderExtendedBareNonSeekable()
+    : iBitRate(0)
 {
+}
+
+void Mp3HeaderExtendedBareNonSeekable::Replace(TUint aByteRate)
+{
+    iBitRate = aByteRate*8;
 }
 
 TUint64 Mp3HeaderExtendedBareNonSeekable::SampleToByte(TUint64 /*aSample*/) const
@@ -211,13 +232,18 @@ TUint64 Mp3HeaderExtendedBareNonSeekable::SampleToByte(TUint64 /*aSample*/) cons
 
 // Mp3HeaderExtendedXing
 
-Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
+Mp3HeaderExtendedXing::Mp3HeaderExtendedXing()
     : iSampleRate(0)
     , iSamplesTotal(0)
     , iFrames(0)
     , iBytes(0)
-    , iBitRate(aByteRate*8)
+    , iBitRate(0)
 {
+}
+
+void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
+{
+    iBitRate = aByteRate*8;
     // We already know we have at least an mp3 file (checked by CodecMp3::Recognise)
     // See if there is a XING or INFO header at any of the common positions
     // Byte Pos of "XING" or "INFO" for LAYER 3 ONLY
@@ -239,7 +265,7 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     TUint offBytes = 0x15;
     if (aHeader.Channels() == 1) {
         value = aHeaderData.Split(offBytes);
-        check = (const TChar*) value.Ptr();
+        check = (const TChar*)value.Ptr();
         //LOG(kCodec, "Xing check at offbytes %x: ", offBytes);
         //LOG(kCodec, Brn(value.Ptr(), 4));
         //LOG(kCodec, "\n");
@@ -251,7 +277,7 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     else {
         offBytes = 0x24;
         value = aHeaderData.Split(offBytes);
-        check = (const TChar*) value.Ptr();
+        check = (const TChar*)value.Ptr();
         //LOG(kCodec, "Xing check at offbytes %x: ", offBytes);
         //LOG(kCodec, Brn(value.Ptr(), 4));
         //LOG(kCodec, "\n");
@@ -269,24 +295,24 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     //LOG(kCodec, "VBR flags: %08x\n", flags);
 
     //if ((flags & 0x7) == 0x7) { // frames, bytes, toc
-        if ((flags & 0x01) == 0x01) { // Frames field present
-            offBytes += 4;
-            iFrames = Converter::BeUint32At(aHeaderData, offBytes);
-        }
-        else {
-            // Can't accurately determine VBR track length if no frame count
-            // present, which makes doing anything else with this header pointless.
-            THROW(CodecExtendedHeaderNotFound);
-        }
-        // If neither of the following fields are present, then seeking will be inaccurate.
-        if ((flags & 0x02) == 0x02) { // Bytes field present
-            offBytes += 4;
-            iBytes = Converter::BeUint32At(aHeaderData, offBytes);
-        }
-        if ((flags & 0x04) == 0x04) { // Toc present
-            offBytes += 4;
-            iToc.Replace(aHeaderData.Ptr() + offBytes, 100); // Toc always 100 bytes 
-        }
+    if ((flags & 0x01) == 0x01) { // Frames field present
+        offBytes += 4;
+        iFrames = Converter::BeUint32At(aHeaderData, offBytes);
+    }
+    else {
+        // Can't accurately determine VBR track length if no frame count
+        // present, which makes doing anything else with this header pointless.
+        THROW(CodecExtendedHeaderNotFound);
+    }
+    // If neither of the following fields are present, then seeking will be inaccurate.
+    if ((flags & 0x02) == 0x02) { // Bytes field present
+        offBytes += 4;
+        iBytes = Converter::BeUint32At(aHeaderData, offBytes);
+    }
+    if ((flags & 0x04) == 0x04) { // Toc present
+        offBytes += 4;
+        iToc.Replace(aHeaderData.Ptr() + offBytes, 100); // Toc always 100 bytes 
+    }
     //}
     //else {
     //    // If there's a Xing header, but frames, bytes, and toc are not all
@@ -405,7 +431,6 @@ Mp3Header::Mp3Header()
 Mp3Header::~Mp3Header()
 {
     //LOG(kCodec, "Mp3Header::~Mp3Header\n");
-    delete iExtended;
 }
 
 void Mp3Header::Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes)
@@ -457,14 +482,17 @@ void Mp3Header::Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTot
 
     //LOG(kCodec, "Mp3Header::Mp3Header: iLayer: %d\nbitRate: %d\nsampleRate: %d\nchannels: %d\n", iLayer+1, byteRate*8, iSampleRate, iChannels);
     if (aTotalBytes == 0) { //non seekable stream
-        iExtended = new Mp3HeaderExtendedBareNonSeekable(byteRate);
+        iExtendedNonSeekable.Replace(byteRate);
+        iExtended = &iExtendedNonSeekable;
     }
     else {
         try {
-            iExtended = new Mp3HeaderExtendedXing(aHeaderData, *this, byteRate);
+            iExtendedXing.Replace(aHeaderData, *this, byteRate);
+            iExtended = &iExtendedXing;
         }
         catch (CodecExtendedHeaderNotFound&) {
-            iExtended = new Mp3HeaderExtendedBare(aTotalBytes-iHeaderBytes, byteRate, iSampleRate);
+            iExtendedBare.Replace(aTotalBytes-iHeaderBytes, byteRate, iSampleRate);
+            iExtended = &iExtendedBare;
         }
     }
 }
