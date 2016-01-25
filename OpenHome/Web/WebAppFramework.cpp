@@ -288,6 +288,9 @@ void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDes
     iLanguages.clear();
     for (auto it=aLanguages.begin(); it!=aLanguages.end(); ++it) {
         Bws<10> lang(*it);
+        for (TUint i=0; i<lang.Bytes(); i++) {
+            lang[i] = Ascii::ToLowerCase(lang[i]);
+        }
         iLanguages.push_back(lang);
     }
     try {
