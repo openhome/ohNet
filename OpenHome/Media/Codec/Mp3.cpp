@@ -173,14 +173,18 @@ CodecBase* CodecFactory::NewMp3(IMimeTypeList& aMimeTypeList)
 
 // Mp3HeaderExtendedBare
 
-Mp3HeaderExtendedBare::Mp3HeaderExtendedBare(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate) : iBitRate(aByteRate*8)
+Mp3HeaderExtendedBare::Mp3HeaderExtendedBare(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate)
+    : iBitRate(aByteRate*8)
 {    
     /* Provide an estimate of the total samples.  This won't be valid for all
        files, but it's a worst case guess if we don't have further information
        in another header.  This isn't prefectly accurate because of the mp3
        header in each frame as well as any id3 or similar tags included in the
        file.  However, it's close enough for our seeking purposes. */
-    TUint64 seconds = aTotalBytes / aByteRate;
+    TUint64 seconds = 0;
+    if (aByteRate != 0) {
+        seconds = aTotalBytes / aByteRate;
+    }
     iSamplesTotal = seconds * aSampleRate;
     iBytesPerSample = aByteRate / aSampleRate;
     //LOG(kCodec, "Mp3HeaderExtendedBare::Mp3HeaderExtendedBare: iSamplesTotal: %lld, iBytesPerSample: %f\n", iSamplesTotal, iBytesPerSample);
