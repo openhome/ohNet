@@ -86,7 +86,7 @@ class IFrameworkTimer;
 class ITabCreator
 {
 public:
-    virtual ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) = 0;    // throws TabAllocatorFull
+    virtual ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) = 0;    // throws TabAllocatorFull
     virtual ~ITabCreator() {}
 };
 
@@ -210,7 +210,7 @@ public:
     static const TUint kInvalidTabId = 0;
 public:
     virtual TUint SessionId() const = 0;
-    virtual void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages) = 0;
+    virtual void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages) = 0;
     virtual void Clear() = 0;   // Terminates any blocking sends or outstanding timers.
     virtual void Receive(const Brx& aMessage) = 0;
     virtual void LongPoll(IWriter& aWriter) = 0;    // Terminates poll timer on entry; restarts poll timer on exit.
@@ -228,7 +228,7 @@ public:
     ~FrameworkTab();
 public: // from IFrameworkTab
     TUint SessionId() const override;
-    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages) override;
+    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages) override;
     void Clear() override;   // Terminates any blocking sends or outstanding timers.
     void Receive(const Brx& aMessage) override;
     void LongPoll(IWriter& aWriter) override;    // Terminates poll timer on entry; restarts poll timer on exit.
@@ -244,7 +244,7 @@ private:
     TUint iSessionId;
     ITabDestroyHandler* iDestroyHandler;
     ITab* iTab;
-    std::vector<const Brx*> iLanguages; // Takes ownership of pointers.
+    std::vector<Bws<10>> iLanguages; // Takes ownership of pointers.
     mutable Mutex iLock;
 };
 
@@ -258,7 +258,7 @@ public:
     FrameworkTabFull(Environment& aEnv, TUint aTabId, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs);
 public: // from IFrameworkTab
     TUint SessionId() const override;
-    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages) override;
+    void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages) override;
     void Clear() override;
     void Receive(const Brx& aMessage) override;
     void LongPoll(IWriter& aWriter) override;
@@ -279,7 +279,7 @@ class ITabManager : public ITabDestroyHandler
 public: // from ITabDestroyHandler
     virtual void Destroy(TUint aId) = 0;
 public:
-    virtual TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList) = 0;    // Returns tab ID; THROWS TabManagerFull, TabAllocatorFull.
+    virtual TUint CreateTab(ITabCreator& aTabCreator, const std::vector<char*>& aLanguageList) = 0;    // Returns tab ID; THROWS TabManagerFull, TabAllocatorFull.
 
     // Following calls may all throw InvalidTabId.
     virtual void LongPoll(TUint aId, IWriter& aWriter) = 0;  // Will block until something is written or poll timeout.
@@ -294,7 +294,7 @@ public:
     ~TabManager();
     void Disable(); // Terminate any blocking LongPoll calls and prevent any new tabs from being created.
 public: // from ITabManager
-    TUint CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList) override;
+    TUint CreateTab(ITabCreator& aTabCreator, const std::vector<char*>& aLanguageList) override;
     void LongPoll(TUint aId, IWriter& aWriter) override;
     void Receive(TUint aId, const Brx& aMessage) override;
     void Destroy(TUint aId) override;
@@ -340,7 +340,7 @@ public:
     void SetPresentationUrl(const Brx& aPresentationUrl);
 public: // from IWebApp
     IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
-    ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) override;
+    ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
 private:
     IWebApp* iWebApp;
