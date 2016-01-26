@@ -369,7 +369,7 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     , iUrlBlockWriter(aUrlBlockWriter)
     , iRewinder(iMsgFactory, aUpstreamElement)
     , iLoggerRewinder(iRewinder, "Codec Container Rewinder")
-    , iCache(iRewinder)
+    , iCache(iLoggerRewinder)
     , iActiveContainer(nullptr)
     , iContainerNull(nullptr)
     , iStreamHandler(nullptr)
