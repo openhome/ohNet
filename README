@@ -3,9 +3,10 @@ See http://wiki.openhome.org/wiki/Av:Developer for an overview of the network se
 
 The code can be built for Windows, Linux or some embedded platforms.
 System requirements:
-- Python (v2.6 or 2.7)
+- Python (v2.7)
 - MSVC (Windows)
 - GCC (Linux / embedded)
+- clang (Mac)
 - ohdevtools (source)
 - ohNet (either binary or source)
 - others (binary)
