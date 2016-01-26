@@ -1,5 +1,5 @@
 ohMediaPlayer provides a software av.openhome media renderer.
-See http://www.openhome.org/wiki/Av:Developer for an overview of the network services involved.
+See http://wiki.openhome.org/wiki/Av:Developer for an overview of the network services involved.
 
 The code can be built for Windows, Linux or some embedded platforms.
 System requirements:
