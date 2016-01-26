@@ -30,7 +30,7 @@ public:
 class ILanguageResourceManager
 {
 public:
-    virtual ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<const Brx*>& aLanguageList) = 0;  // THROWS LanguageResourceInvalid
+    virtual ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList) = 0;  // THROWS LanguageResourceInvalid
     virtual ~ILanguageResourceManager() {}
 };
 
@@ -38,7 +38,7 @@ class IConfigMessage : public ITabMessage
 {
 public:
     virtual void Set(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson) = 0;
-    virtual void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
+    virtual void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList) = 0;
     virtual void Set(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson) = 0;
 public: // from ITabMessage
     virtual void Send(IWriter& aWriter) = 0;
@@ -59,7 +59,7 @@ public:
 
     // FIXME - also, would it be smarter just to subscribe directly to the ConfigVal, rather than taking a value? Means that most up-to-date val will always be sent.
     virtual IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson) = 0;
-    virtual IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList) = 0;
+    virtual IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList) = 0;
     virtual IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson) = 0;
     virtual ~IConfigMessageAllocator() {}
 };
@@ -91,7 +91,7 @@ protected:
     virtual void Clear();
 private: // from IConfigMessage
     void Set(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson);
-    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList);
     void Set(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson);
     // FIXME - give this a default impl that calls a virtual method that deriving classes must implement to write out their own values
     void Send(IWriter& aWriter);
@@ -161,7 +161,7 @@ class ConfigMessageChoice : public ConfigMessage
 private:
     ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager);
 private: // from ConfigMessage
-    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList);
     void Clear();
     void WriteKey(IWriter& aWriter);
     void WriteValue(IWriter& aWriter);
@@ -171,7 +171,7 @@ private:
     ILanguageResourceManager& iLanguageResourceManager;
     Configuration::ConfigChoice* iChoice;
     TUint iValue;
-    std::vector<const Brx*>* iLanguageList;
+    std::vector<Bws<10>>* iLanguageList;
 };
 
 class ConfigMessageText : public ConfigMessage
@@ -216,7 +216,7 @@ class ConfigMessageChoiceAllocator : public ConfigMessageAllocatorBase
 {
 public:
     ConfigMessageChoiceAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager);
-    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList);
 };
 
 class ConfigMessageTextAllocator : public ConfigMessageAllocatorBase
@@ -232,7 +232,7 @@ public:
     ConfigMessageAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager);
 public: // from IConfigMessageAllocator
     IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson);
-    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList);
+    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList);
     IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson);
 private:
     ConfigMessageNumAllocator iAllocatorNum;
@@ -334,7 +334,7 @@ public:
     void AddKeyText(const Brx& aKey);
     void Start();
     TBool Allocated() const;
-    void SetHandler(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList);
+    void SetHandler(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList);
 private: // from ConfigTabReceiver
     void Receive(const Brx& aKey, const Brx& aValue);
     void Destroy();
@@ -352,13 +352,13 @@ private:
     SubscriptionVector iConfigChoices;
     SubscriptionVector iConfigTexts;
     TBool iStarted;
-    std::vector<const Brx*> iLanguageList;
+    std::vector<Bws<10>> iLanguageList;
 };
 
 class IConfigApp : public IWebApp
 {
 public: // from IWebApp
-    virtual ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) = 0;
+    virtual ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) = 0;
     virtual const Brx& ResourcePrefix() const= 0;
     virtual IResourceHandler& CreateResourceHandler(const Brx& aResource) = 0;
 public:
@@ -391,13 +391,13 @@ protected:
                   TUint aMaxTabs, TUint aSendQueueSize);
     ~ConfigAppBase();
 public: // from IConfigApp
-    ITab& Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList) override;
+    ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
     IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
 public: // from IJsonProvider
     const Brx& GetJson(const Brx& aKey) override;
 public: // from ILanguageResourceManager
-    ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<const Brx*>& aLanguageList) override;
+    ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList) override;
 protected:
     void AddNum(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
     void AddChoice(const Brx& aKey, JsonKvpVector& aAdditionalInfo);

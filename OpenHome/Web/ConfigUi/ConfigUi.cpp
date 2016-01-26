@@ -35,7 +35,7 @@ void ConfigMessage::Set(ConfigNum& /*aNum*/, TInt /*aValue*/, const Brx& /*aAddi
     ASSERTS();
 }
 
-void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const Brx& /*aAdditionalJson*/, std::vector<const Brx*>& /*aLanguageList*/)
+void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const Brx& /*aAdditionalJson*/, std::vector<Bws<10>>& /*aLanguageList*/)
 {
     ASSERTS();
 }
@@ -237,7 +237,7 @@ ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator
 {
 }
 
-void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
+void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList)
 {
     ConfigMessage::Set(aAdditionalJson);
     ASSERT(iChoice == nullptr);
@@ -394,7 +394,7 @@ ConfigMessageChoiceAllocator::ConfigMessageChoiceAllocator(TUint aMessageCount, 
     }
 }
 
-IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
+IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList)
 {
     IConfigMessage& msg = *iFifo.Read();
     msg.Set(aChoice, aValue, aAdditionalJson, aLanguageList);
@@ -434,7 +434,7 @@ IConfigMessage& ConfigMessageAllocator::Allocate(ConfigNum& aNum, TInt aValue, c
     return iAllocatorNum.Allocate(aNum, aValue, aAdditionalJson);
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<const Brx*>& aLanguageList)
+IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList)
 {
     return iAllocatorChoice.Allocate(aChoice, aValue, aAdditionalJson, aLanguageList);
 }
@@ -645,11 +645,14 @@ TBool ConfigTab::Allocated() const
     return allocated;
 }
 
-void ConfigTab::SetHandler(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
+void ConfigTab::SetHandler(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList)
 {
     LOG(kHttp, "ConfigTab::SetHandler iId: %u\n", iId);
     ASSERT(iHandler == nullptr);
-    iLanguageList = aLanguageList;
+    iLanguageList.clear();
+    for (auto it=aLanguageList.begin(); it!=aLanguageList.end(); ++it) {
+        iLanguageList.push_back(*it);
+    }
     iHandler = &aHandler;
     for (TUint i=0; i<iConfigNums.size(); i++) {
         const Brx& key = iConfigNums[i].first;
@@ -831,7 +834,7 @@ ConfigAppBase::~ConfigAppBase()
 //    }
 //}
 
-ITab& ConfigAppBase::Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
+ITab& ConfigAppBase::Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList)
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
@@ -874,18 +877,19 @@ const Brx& ConfigAppBase::GetJson(const OpenHome::Brx& aKey)
     return *it->second;
 }
 
-ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<const Brx*>& aLanguageList)
+ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList)
 {
     // If no desired language can be found, should default to English.
     // Developer error if English mappings don't exist.
-    std::vector<const Brx*> languages(aLanguageList);
-    languages.push_back(&kDefaultLanguage);
+    std::vector<Bws<10>> languages(aLanguageList);
+    Bws<10> def(kDefaultLanguage);
+    languages.push_back(def);
 
     AutoMutex a(iLock);
     for (TUint i=0; i<iLanguageResourceHandlers.size(); i++) {
         if (!iLanguageResourceHandlers[i]->Allocated()) {
             for (TUint j=0; j<languages.size(); j++) {
-                Bws<Uri::kMaxUriBytes> resource(*languages[j]);
+                Bws<Uri::kMaxUriBytes> resource(languages[j]);
                 resource.Append("/");
                 resource.Append(aResourceUriTail);
                 try {

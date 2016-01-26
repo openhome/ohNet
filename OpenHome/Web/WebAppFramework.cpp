@@ -276,7 +276,7 @@ TUint FrameworkTab::SessionId() const
     return iSessionId;
 }
 
-void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages)
+void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages)
 {
     LOG(kHttp, "FrameworkTab::CreateTab iSessionId: %u, iTabId: %u\n", iSessionId, iTabId);
     ASSERT(aSessionId != kInvalidTabId);
@@ -285,7 +285,14 @@ void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDes
     iSessionId = aSessionId;
     iDestroyHandler = &aDestroyHandler;
     iHandler.Enable();          // Ensure TabHandler is ready to receive messages (and not drop them).
-    iLanguages = aLanguages;    // Takes ownership of pointers.
+    iLanguages.clear();
+    for (auto it=aLanguages.begin(); it!=aLanguages.end(); ++it) {
+        Bws<10> lang(*it);
+        for (TUint i=0; i<lang.Bytes(); i++) {
+            lang[i] = Ascii::ToLowerCase(lang[i]);
+        }
+        iLanguages.push_back(lang);
+    }
     try {
         iTab = &aTabCreator.Create(iHandler, iLanguages);
         iTimer.Start(iPollTimeoutMs, *this);
@@ -294,9 +301,6 @@ void FrameworkTab::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDes
         iHandler.Disable();
         iSessionId = kInvalidTabId;
         iDestroyHandler = nullptr;
-        for (TUint i=0; i<iLanguages.size(); i++) {
-            delete iLanguages[i];
-        }
         iLanguages.clear();
         throw;
     }
@@ -317,9 +321,6 @@ void FrameworkTab::Clear()
         iSessionId = kInvalidTabId;
         iTab->Destroy();
         iTab = nullptr;
-        for (TUint i=0; i<iLanguages.size(); i++) {
-            delete iLanguages[i];
-        }
         iLanguages.clear();
     }
 }
@@ -381,7 +382,7 @@ TUint FrameworkTabFull::SessionId() const
     return iTab.SessionId();
 }
 
-void FrameworkTabFull::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<const Brx*>& aLanguages)
+void FrameworkTabFull::CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages)
 {
     iTab.CreateTab(aSessionId, aTabCreator, aDestroyHandler, aLanguages);
 }
@@ -435,7 +436,7 @@ void TabManager::Disable()
     }
 }
 
-TUint TabManager::CreateTab(ITabCreator& aTabCreator, const std::vector<const Brx*>& aLanguageList)
+TUint TabManager::CreateTab(ITabCreator& aTabCreator, const std::vector<char*>& aLanguageList)
 {
     AutoMutex a(iLock);
     if (!iEnabled) {
@@ -553,7 +554,7 @@ IResourceHandler& WebAppInternal::CreateResourceHandler(const Brx& aResource)
     return iWebApp->CreateResourceHandler(aResource);
 }
 
-ITab& WebAppInternal::Create(ITabHandler& aHandler, const std::vector<const Brx*>& aLanguageList)
+ITab& WebAppInternal::Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList)
 {
     return iWebApp->Create(aHandler, aLanguageList);
 }
@@ -930,12 +931,7 @@ void HttpSession::Post()
     if (uriTail == Brn("lpcreate")) {
         try {
             IWebApp& app = iAppManager.GetApp(uriPrefix); // FIXME - pass full uri to this instead of prefix?
-            std::vector<char*>& languageList = iHeaderAcceptLanguage.LanguageList();
-            std::vector<const Brx*> languageListHeapBufs;
-            for (TUint i=0; i<languageList.size(); i++) {
-                languageListHeapBufs.push_back(new Brh(languageList[i]));
-            }
-            TUint id = iTabManager.CreateTab(app, languageListHeapBufs);
+            TUint id = iTabManager.CreateTab(app, iHeaderAcceptLanguage.LanguageList());
             iResponseStarted = true;
             WriteLongPollHeaders();
             Bws<sizeof(id)> idBuf;
