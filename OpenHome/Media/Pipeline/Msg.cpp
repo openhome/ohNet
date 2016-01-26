@@ -959,8 +959,14 @@ void MsgDrain::ReportDrained()
     }
 }
 
-void MsgDrain::Initialise(Functor aCallback)
+TUint MsgDrain::Id() const
 {
+    return iId;
+}
+
+void MsgDrain::Initialise(TUint aId, Functor aCallback)
+{
+    iId = aId;
     iCallback = aCallback;
 }
 
@@ -2873,6 +2879,7 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
     : iAllocatorMsgMode("MsgMode", aInitParams.iMsgModeCount, aInfoAggregator)
     , iAllocatorMsgTrack("MsgTrack", aInitParams.iMsgTrackCount, aInfoAggregator)
     , iAllocatorMsgDrain("MsgDrain", aInitParams.iMsgDrainCount, aInfoAggregator)
+    , iDrainId(0)
     , iAllocatorMsgDelay("MsgDelay", aInitParams.iMsgDelayCount, aInfoAggregator)
     , iAllocatorMsgEncodedStream("MsgEncodedStream", aInitParams.iMsgEncodedStreamCount, aInfoAggregator)
     , iAllocatorEncodedAudio("EncodedAudio", aInitParams.iEncodedAudioCount, aInfoAggregator)
@@ -2910,7 +2917,7 @@ MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream)
 MsgDrain* MsgFactory::CreateMsgDrain(Functor aCallback)
 {
     MsgDrain* msg = iAllocatorMsgDrain.Allocate();
-    msg->Initialise(aCallback);
+    msg->Initialise(iDrainId++, aCallback);
     return msg;
 }
 
