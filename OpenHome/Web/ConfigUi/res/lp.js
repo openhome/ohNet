@@ -141,6 +141,7 @@ WebUi = function() {
 
     LongPoll.prototype.SendCreate = function()
     {
+        console.log(">LongPoll.SendCreate\n")
         var request = LongPoll.CreateLongPollRequest(this);
         // FIXME - need to send URI prefix here
         // FIXME - what if we don't get a response to this?
@@ -148,11 +149,13 @@ WebUi = function() {
         request.Open("POST", "lpcreate", true);
         try {
             request.Send()
+            console.log("LongPoll.SendCreate Request sent\n")
         }
         catch (err) { // InvalidStateError
             // If InvalidStateError, aRequest was not opened.
             // Try calling SendCreate() again.
             // FIXME - delay for 5s first?
+            console.log("LongPoll.SendCreate Request failed. Retrying.\n")
             this.SendCreate();
         }
     }
@@ -168,6 +171,7 @@ WebUi = function() {
 
     LongPoll.prototype.SendPoll = function()
     {
+        console.log("LongPoll.SendPoll\n");
         var request = LongPoll.CreateLongPollRequest(this);
         request.Open("POST", "lp", true);
         this.SendSessionId(request);
@@ -208,6 +212,7 @@ WebUi = function() {
 
     LongPoll.prototype.ParseResponse = function(aResponse)
     {
+        var parseErr = "Unable to parse JSON";
         if (aResponse == "") {
             this.iCallbackSuccess(aResponse);
         }
@@ -215,14 +220,14 @@ WebUi = function() {
             try {
                 var json = JSON.parse(aResponse);
                 if (!json) {
-                    throw "Unable to parse JSON";
+                    throw parseErr;
                 }
                 for (var i=0; i<json.length; i++) {
                     this.iCallbackSuccess(json[i]);
                 }
             }
             catch (err) {
-                alert("Error: LongPoll.ParseResponse could not parse JSON response");
+                throw parseErr;
             }
 
         }
@@ -248,6 +253,7 @@ WebUi = function() {
             return;
         }
 
+        console.log("LongPoll.ProcessResponse response: " + aRequest.ResponseText() + "\n");
         var lines = aRequest.ResponseText().split("\r\n");
         var request = lines[0]
 
@@ -273,18 +279,29 @@ WebUi = function() {
                             return;
                         }
                     }
+                    // FIXME - wait for 5s and/or go into probing mode
+                    sleep(5)
                     this.SendCreate();
                 }
                 else { // request == lp
                     // FIXME - check session ID?
                     // Split string after request line, as the response (i.e., any JSON) may contain newlines.
                     var json = aRequest.ResponseText().substring(lines[0].length+2);    // +2 to account for stripped \r\n
+                    try {
                     this.ParseResponse(json);
-                    // FIXME - should delay for 5s
-                    this.SendPoll();
+                        console.log("LongPoll.ProcessResponse sending next lp request\n");
+                        this.SendPoll();
+                    }
+                    catch (err) {
+                        out = "LongPoll.ProcessResponse " + err + ". Terminating long polling\n"
+                        console.log(out);
+                        alert(out);
+                    }
                 }
             }
             else if (aRequest.Status() == 0) {
+                // FIXME - wait for 5s and/or go into probing mode
+                sleep(5)
                 this.SendCreate();
             }
         }
