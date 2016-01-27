@@ -295,6 +295,8 @@ WebUi = function() {
                     catch (err) {
                         out = "LongPoll.ProcessResponse " + err + ". Terminating long polling\n"
                         console.log(out);
+                        // FIXME - as web page is no longer usable at this point (as long polls have been terminated),
+                        // replace with a custom error page (that encourages user to reload, and/or also trigger a probe // request that will attempt to reload the page if the user doesn't manually reload)?
                         alert(out);
                     }
                 }
