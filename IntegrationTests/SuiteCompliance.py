@@ -19,8 +19,8 @@ import sys
 try:
     dut = sys.argv[1]
 except:
-    print '\n', __doc__, '\n'
-    print 'Invalid arguments %s' % (str( sys.argv ))
+    print( '\n%s\n' % __doc__ )
+    print( 'Invalid arguments %s' % (str( sys.argv )) )
     # noinspection PyProtectedMember
     os._exit( -1 )
 

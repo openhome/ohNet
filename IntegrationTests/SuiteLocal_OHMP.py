@@ -30,14 +30,14 @@ try:
     if len( sys.argv ) > 2:
         logDir = sys.argv[2]
 except:
-    print '\n', __doc__, '\n'
-    print 'Invalid arguments %s' % (str( sys.argv ))
+    print( '\n%s\n' % __doc__ )
+    print( '\nInvalid arguments %s' % (str( sys.argv )) )
     # noinspection PyProtectedMember
     os._exit( -1 )
 
 if mode not in ['incremental', 'clean']:
-    print '\n', __doc__, '\n'
-    print 'Invalid mode: %s' % mode
+    print( '\n%s\n' % __doc__ )
+    print( 'Invalid mode: %s' % mode )
     # noinspection PyProtectedMember
     os._exit( -1 )
 
