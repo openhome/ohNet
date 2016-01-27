@@ -775,9 +775,7 @@ ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager,
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
 {
-    Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: ");
-    Log::Print(iResourcePrefix);
-    Log::Print("\n");
+    Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: %.*s\n", PBUF(iResourcePrefix));
 
     iLangResourceDir.Replace(aResourceDir);
     if (iLangResourceDir.Bytes() == 0 || iLangResourceDir[iLangResourceDir.Bytes()-1] != '/') {
