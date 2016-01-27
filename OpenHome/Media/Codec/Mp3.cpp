@@ -20,7 +20,118 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
+class IMp3HeaderExtended
+{
+public:
+    virtual TUint64 SamplesTotal() const = 0;
+    virtual TUint64 SampleToByte(TUint64 aSample) const = 0;
+    virtual TUint BitRate() const = 0;
+    virtual ~IMp3HeaderExtended() {}
+};
+
+class Mp3HeaderExtendedBare : public IMp3HeaderExtended
+{
+public:
+    Mp3HeaderExtendedBare();
+    void Clear();
+    void Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate);
+private: // from IMp3HeaderExtended
+    TUint64 SamplesTotal() const override { return iSamplesTotal; }
+    TUint64 SampleToByte(TUint64 aSample) const override;
+    TUint BitRate() const override { return iBitRate; }
+private:
+    TUint64 iSamplesTotal;
+    TUint iBitRate;
+    TUint iBytesPerSample;
+};
+
+class Mp3HeaderExtendedBareNonSeekable : public IMp3HeaderExtended
+{
+public:
+    Mp3HeaderExtendedBareNonSeekable();
+    void Clear();
+    void Replace(TUint aByteRate);
+private: // from IMp3HeaderExtended
+    TUint64 SamplesTotal() const override { return 0; }
+    TUint64 SampleToByte(TUint64 aSample) const override;
+    TUint BitRate() const override { return iBitRate; }
+private:
+    TUint iBitRate;
+};
+
 class Mp3Header;
+
+class Mp3HeaderExtendedXing : public IMp3HeaderExtended
+{
+public:
+    Mp3HeaderExtendedXing();
+    void Clear();
+    void Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
+private: // from IMp3HeaderExtended
+    TUint64 SamplesTotal() const override { return iSamplesTotal; }
+    TUint64 SampleToByte(TUint64 aSample) const override;
+    TUint BitRate() const override { return iBitRate; }
+private:
+    TUint iSampleRate;
+    TUint64 iSamplesTotal;
+    TUint iFrames; // total number of frames
+    TUint iBytes;  // number of bytes in the mp3 audio data _only_ no tags included
+    TUint iBitRate;
+    Bws<100> iToc;
+};
+
+class Mp3Header
+{
+private:
+    static const TUint32 kFrameSyncMask   = 0xFFE00000;
+    static const TUint32 kVersionMask     = 0x00180000;
+    static const TUint32 kLayerMask       = 0x00060000;
+    static const TUint32 kBitRateMask     = 0x0000F000;
+    static const TUint32 kSampleRateMask  = 0x00000C00;
+    static const TUint32 kChannelMask     = 0x000000C0;
+
+    static const TUint32 kSampleRates[4][3];
+    static const TUint32 kBitRates[2][3][15];
+    static const TUint32 kFrameSamples[2][3];
+    static const Brn*    kNames[4][3];
+
+    enum EMpegVersion {
+        eMpeg25 = 0,
+        eMpegReserved,
+        eMpeg2,
+        eMpeg1
+    } iVersion;
+
+    enum EMpegLayer {
+        eLayer1 = 0,
+        eLayer2,
+        eLayer3,
+        eLayerReserved
+    } iLayer;
+public:
+    Mp3Header();
+    ~Mp3Header();
+    void Clear();
+    void Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes);
+    TUint Channels() const { return iChannels; }
+    TUint SampleRate() const { return iSampleRate; }
+    TUint64 SamplesTotal() const { return iExtended->SamplesTotal(); }
+    TUint64 SampleToByte(TUint64 aSample) const { return iExtended->SampleToByte(aSample) + iHeaderBytes; }
+    TUint BitRate() const { return iExtended->BitRate(); }
+    const Brx& Name() const { return *(kNames[iVersion][iLayer]); }
+    TUint SamplesPerFrame() const;
+    static TBool Exists(const Brx& aData, TUint& aSyncFrameOffsetBytes);
+    static TUint ValidSync(const Brx& aSync, TUint& layer, TUint& mode);
+private:
+    IMp3HeaderExtended* iExtended;  // No ownership; points to active extended header.
+    Mp3HeaderExtendedBare iExtendedBare;
+    Mp3HeaderExtendedBareNonSeekable iExtendedNonSeekable;
+    Mp3HeaderExtendedXing iExtendedXing;
+    TUint iHeaderBytes;
+    TUint iSampleRate;
+    TUint iChannels;
+    TBool iMpegLsf;
+};
 
 class CodecMp3 : public CodecBase
 {
@@ -40,7 +151,7 @@ private:
     mad_frame   iMadFrame;
     mad_synth   iMadSynth;
     TUint64     iSamplesWrittenTotal;
-    Mp3Header*  iHeader;
+    Mp3Header   iHeader;
     TUint       iHeaderBytes;
     Bws<kInBufBytes> iInput;
     TUint64     iTrackLengthJiffies;
@@ -48,106 +159,6 @@ private:
     Bws<DecodedAudio::kMaxBytes> iOutput;
     TBool       iStreamEnded;
     Bws<6*1024> iRecogBuf;
-};
-
-class IMp3HeaderExtended
-{
-public:
-    virtual ~IMp3HeaderExtended() {}
-    virtual TUint64 SamplesTotal() const = 0;
-    virtual TUint64 SampleToByte(TUint64 aSample) const = 0;
-    virtual TUint BitRate() const = 0;
-};
-
-class Mp3HeaderExtendedBare : public IMp3HeaderExtended
-{
-public:
-    Mp3HeaderExtendedBare(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate);
-private: // from IMp3HeaderExtended
-    TUint64 SamplesTotal() const { return iSamplesTotal; }
-    TUint64 SampleToByte(TUint64 aSample) const;
-    TUint BitRate() const { return iBitRate; }
-private:
-    TUint64 iSamplesTotal;
-    TUint iBitRate;
-    TUint iBytesPerSample;
-};
-
-class Mp3HeaderExtendedBareNonSeekable : public IMp3HeaderExtended
-{
-public:
-    Mp3HeaderExtendedBareNonSeekable(TUint aByteRate);
-private: // from IMp3HeaderExtended
-    TUint64 SamplesTotal() const { return 0; }
-    TUint64 SampleToByte(TUint64 aSample) const;
-    TUint BitRate() const { return iBitRate; }
-private:
-    TUint iBitRate;
-};
-
-class Mp3Header
-{
-public:
-    Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes);
-    ~Mp3Header();
-    TUint Channels() const { return iChannels; }
-    TUint SampleRate() const { return iSampleRate; }
-    TUint64 SamplesTotal() const { return iExtended->SamplesTotal(); }
-    TUint64 SampleToByte(TUint64 aSample) const { return iExtended->SampleToByte(aSample) + iHeaderBytes; }
-    TUint BitRate() const { return iExtended->BitRate(); }
-    const Brx& Name() const { return *(kNames[iVersion][iLayer]); }
-    static TBool Exists(const Brx& aData, TUint& aSyncFrameOffsetBytes);
-    static TUint ValidSync(const Brx& aSync, TUint& layer, TUint& mode);
-private:
-    IMp3HeaderExtended* iExtended;
-    TUint iHeaderBytes;
-    TUint iSampleRate;
-    TUint iChannels;
-    enum EMpegVersion {
-        eMpeg25 = 0,
-        eMpegReserved,
-        eMpeg2,
-        eMpeg1
-    } iVersion;
-
-    enum EMpegLayer {
-        eLayer1 = 0,
-        eLayer2,
-        eLayer3,
-        eLayerReserved
-    } iLayer;
-
-    TBool iMpegLsf;
-
-    static const TUint32 kFrameSyncMask   = 0xFFE00000;
-    static const TUint32 kVersionMask     = 0x00180000;
-    static const TUint32 kLayerMask       = 0x00060000;
-    static const TUint32 kBitRateMask     = 0x0000F000;
-    static const TUint32 kSampleRateMask  = 0x00000C00;
-    static const TUint32 kChannelMask     = 0x000000C0;
-
-    static const TUint32 kSampleRates[4][3];
-    static const TUint32 kBitRates[2][3][15];
-    static const TUint32 kFrameSamples[2][3];
-    static const Brn*    kNames[4][3];
-
-    friend class Mp3HeaderExtendedXing;
-};
-
-class Mp3HeaderExtendedXing : public IMp3HeaderExtended
-{
-public:
-    Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
-    virtual TUint64 SamplesTotal() const { return iSamplesTotal; }
-    virtual TUint64 SampleToByte(TUint64 aSample) const;
-    virtual TUint BitRate() const { return iBitRate; }
-private:
-    TUint iSampleRate;
-    TUint64 iSamplesTotal;
-    TUint iFrames; // total number of frames
-    TUint iBytes;  // number of bytes in the mp3 audio data _only_ no tags included
-    TUint iBitRate;
-    Bws<100> iToc;
 };
 
 } // namespace Codec
@@ -173,14 +184,32 @@ CodecBase* CodecFactory::NewMp3(IMimeTypeList& aMimeTypeList)
 
 // Mp3HeaderExtendedBare
 
-Mp3HeaderExtendedBare::Mp3HeaderExtendedBare(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate) : iBitRate(aByteRate*8)
-{    
+Mp3HeaderExtendedBare::Mp3HeaderExtendedBare()
+    : iSamplesTotal(0)
+    , iBitRate(0)
+    , iBytesPerSample(0)
+{
+}
+
+void Mp3HeaderExtendedBare::Clear()
+{
+    iSamplesTotal = 0;
+    iBitRate = 0;
+    iBytesPerSample = 0;
+}
+
+void Mp3HeaderExtendedBare::Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate)
+{
+    iBitRate = aByteRate*8;
     /* Provide an estimate of the total samples.  This won't be valid for all
-       files, but it's a worst case guess if we don't have further information
-       in another header.  This isn't prefectly accurate because of the mp3
-       header in each frame as well as any id3 or similar tags included in the
-       file.  However, it's close enough for our seeking purposes. */
-    TUint64 seconds = aTotalBytes / aByteRate;
+    files, but it's a worst case guess if we don't have further information
+    in another header.  This isn't prefectly accurate because of the mp3
+    header in each frame as well as any id3 or similar tags included in the
+    file.  However, it's close enough for our seeking purposes. */
+    TUint64 seconds = 0;
+    if (aByteRate != 0) {
+        seconds = aTotalBytes / aByteRate;
+    }
     iSamplesTotal = seconds * aSampleRate;
     iBytesPerSample = aByteRate / aSampleRate;
     //LOG(kCodec, "Mp3HeaderExtendedBare::Mp3HeaderExtendedBare: iSamplesTotal: %lld, iBytesPerSample: %f\n", iSamplesTotal, iBytesPerSample);
@@ -196,9 +225,19 @@ TUint64 Mp3HeaderExtendedBare::SampleToByte(TUint64 aSample) const
 
 // Mp3HeaderExtendedBareNonSeekable
 
-Mp3HeaderExtendedBareNonSeekable::Mp3HeaderExtendedBareNonSeekable(TUint aByteRate)
-    : iBitRate(aByteRate*8)
+Mp3HeaderExtendedBareNonSeekable::Mp3HeaderExtendedBareNonSeekable()
+    : iBitRate(0)
 {
+}
+
+void Mp3HeaderExtendedBareNonSeekable::Clear()
+{
+    iBitRate = 0;
+}
+
+void Mp3HeaderExtendedBareNonSeekable::Replace(TUint aByteRate)
+{
+    iBitRate = aByteRate*8;
 }
 
 TUint64 Mp3HeaderExtendedBareNonSeekable::SampleToByte(TUint64 /*aSample*/) const
@@ -209,13 +248,27 @@ TUint64 Mp3HeaderExtendedBareNonSeekable::SampleToByte(TUint64 /*aSample*/) cons
 
 // Mp3HeaderExtendedXing
 
-Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
+Mp3HeaderExtendedXing::Mp3HeaderExtendedXing()
     : iSampleRate(0)
     , iSamplesTotal(0)
     , iFrames(0)
     , iBytes(0)
-    , iBitRate(aByteRate*8)
+    , iBitRate(0)
 {
+}
+
+void Mp3HeaderExtendedXing::Clear()
+{
+    iSampleRate = 0;
+    iSamplesTotal = 0;
+    iFrames = 0;
+    iBytes = 0;
+    iBitRate = 0;
+}
+
+void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
+{
+    iBitRate = aByteRate*8;
     // We already know we have at least an mp3 file (checked by CodecMp3::Recognise)
     // See if there is a XING or INFO header at any of the common positions
     // Byte Pos of "XING" or "INFO" for LAYER 3 ONLY
@@ -237,7 +290,7 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     TUint offBytes = 0x15;
     if (aHeader.Channels() == 1) {
         value = aHeaderData.Split(offBytes);
-        check = (const TChar*) value.Ptr();
+        check = (const TChar*)value.Ptr();
         //LOG(kCodec, "Xing check at offbytes %x: ", offBytes);
         //LOG(kCodec, Brn(value.Ptr(), 4));
         //LOG(kCodec, "\n");
@@ -249,7 +302,7 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     else {
         offBytes = 0x24;
         value = aHeaderData.Split(offBytes);
-        check = (const TChar*) value.Ptr();
+        check = (const TChar*)value.Ptr();
         //LOG(kCodec, "Xing check at offbytes %x: ", offBytes);
         //LOG(kCodec, Brn(value.Ptr(), 4));
         //LOG(kCodec, "\n");
@@ -267,24 +320,24 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     //LOG(kCodec, "VBR flags: %08x\n", flags);
 
     //if ((flags & 0x7) == 0x7) { // frames, bytes, toc
-        if ((flags & 0x01) == 0x01) { // Frames field present
-            offBytes += 4;
-            iFrames = Converter::BeUint32At(aHeaderData, offBytes);
-        }
-        else {
-            // Can't accurately determine VBR track length if no frame count
-            // present, which makes doing anything else with this header pointless.
-            THROW(CodecExtendedHeaderNotFound);
-        }
-        // If neither of the following fields are present, then seeking will be inaccurate.
-        if ((flags & 0x02) == 0x02) { // Bytes field present
-            offBytes += 4;
-            iBytes = Converter::BeUint32At(aHeaderData, offBytes);
-        }
-        if ((flags & 0x04) == 0x04) { // Toc present
-            offBytes += 4;
-            iToc.Replace(aHeaderData.Ptr() + offBytes, 100); // Toc always 100 bytes 
-        }
+    if ((flags & 0x01) == 0x01) { // Frames field present
+        offBytes += 4;
+        iFrames = Converter::BeUint32At(aHeaderData, offBytes);
+    }
+    else {
+        // Can't accurately determine VBR track length if no frame count
+        // present, which makes doing anything else with this header pointless.
+        THROW(CodecExtendedHeaderNotFound);
+    }
+    // If neither of the following fields are present, then seeking will be inaccurate.
+    if ((flags & 0x02) == 0x02) { // Bytes field present
+        offBytes += 4;
+        iBytes = Converter::BeUint32At(aHeaderData, offBytes);
+    }
+    if ((flags & 0x04) == 0x04) { // Toc present
+        offBytes += 4;
+        iToc.Replace(aHeaderData.Ptr() + offBytes, 100); // Toc always 100 bytes 
+    }
     //}
     //else {
     //    // If there's a Xing header, but frames, bytes, and toc are not all
@@ -293,7 +346,7 @@ Mp3HeaderExtendedXing::Mp3HeaderExtendedXing(const Brx& aHeaderData, const Mp3He
     //    THROW(CodecExtendedHeaderNotFound);
     //}
 
-    TUint32 samplesPerFrame = aHeader.kFrameSamples[aHeader.iMpegLsf][aHeader.iLayer];
+    TUint32 samplesPerFrame = aHeader.SamplesPerFrame();
     iSampleRate = aHeader.SampleRate();
     iSamplesTotal = iFrames * samplesPerFrame;
 
@@ -391,12 +444,35 @@ const Brn* Mp3Header::kNames[4][3] =
     {&kNameM1L1,  &kNameM1L2,  &kNameM1L3    }     // MPEG 1
 };
 
-Mp3Header::Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes)
-    :iHeaderBytes(aHeaderBytes)
+Mp3Header::Mp3Header()
+    : iExtended(nullptr)
+    , iHeaderBytes(0)
+    , iSampleRate(0)
+    , iChannels(0)
+    , iMpegLsf(false)
 {
+}
+
+Mp3Header::~Mp3Header()
+{
+    //LOG(kCodec, "Mp3Header::~Mp3Header\n");
+}
+
+void Mp3Header::Clear()
+{
+    iExtended = nullptr;
+    iExtendedBare.Clear();
+    iExtendedNonSeekable.Clear();
+    iExtendedXing.Clear();
+}
+
+void Mp3Header::Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalBytes)
+{
+    iHeaderBytes = aHeaderBytes;
+
     TUint32 frame = Converter::BeUint32At(aHeaderData, 0);
     //LOG(kCodec, "Mp3Header::Mp3Header frame: %08x, totalBytes: %lld\n", frame, aTotalBytes);
-    
+
     // We must only be given the beginning of an mp3 frame.
     ASSERT((frame & kFrameSyncMask) == kFrameSyncMask);
 
@@ -434,27 +510,29 @@ Mp3Header::Mp3Header(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTotalB
     else {
         // Stereo (0b00), JointStereo(0b01), DualChannel(0b10) are all 2
         // channels from our persepective
-        iChannels = 2; 
+        iChannels = 2;
     }
 
     //LOG(kCodec, "Mp3Header::Mp3Header: iLayer: %d\nbitRate: %d\nsampleRate: %d\nchannels: %d\n", iLayer+1, byteRate*8, iSampleRate, iChannels);
     if (aTotalBytes == 0) { //non seekable stream
-        iExtended = new Mp3HeaderExtendedBareNonSeekable(byteRate);
+        iExtendedNonSeekable.Replace(byteRate);
+        iExtended = &iExtendedNonSeekable;
     }
     else {
         try {
-            iExtended = new Mp3HeaderExtendedXing(aHeaderData, *this, byteRate);
+            iExtendedXing.Replace(aHeaderData, *this, byteRate);
+            iExtended = &iExtendedXing;
         }
         catch (CodecExtendedHeaderNotFound&) {
-            iExtended = new Mp3HeaderExtendedBare(aTotalBytes-iHeaderBytes, byteRate, iSampleRate);
+            iExtendedBare.Replace(aTotalBytes-iHeaderBytes, byteRate, iSampleRate);
+            iExtended = &iExtendedBare;
         }
     }
 }
 
-Mp3Header::~Mp3Header()
+TUint Mp3Header::SamplesPerFrame() const
 {
-    //LOG(kCodec, "Mp3Header::~Mp3Header\n");
-    delete iExtended;
+    return kFrameSamples[iMpegLsf][iLayer];
 }
 
 TBool Mp3Header::Exists(const Brx& aData, TUint& aSyncFrameOffsetBytes)
@@ -586,7 +664,6 @@ static TUint32 fixedToPcm(mad_fixed_t aFixed)
 
 CodecMp3::CodecMp3(IMimeTypeList& aMimeTypeList)
     : CodecBase("MP3")
-    , iHeader(nullptr)
     , iHeaderBytes(0)
 {
     (void)memset(&iMadStream, 0, sizeof(iMadStream));
@@ -626,13 +703,13 @@ void CodecMp3::StreamInitialise()
     //LOG(kCodec, "CodecMp3::StreamInitialise, syncFrameOffsetBytes: %d\n", iHeaderBytes);
 
     iSamplesWrittenTotal = 0;
-    iHeader = nullptr;
     iTrackOffset = 0;
     iStreamEnded = false;
     mad_stream_init(&iMadStream);
     mad_frame_init(&iMadFrame);
     mad_synth_init(&iMadSynth);
 
+    iOutput.SetBytes(0);
     // Discard bytes preceeding frame start.
     iInput.SetBytes(0);
     if (iHeaderBytes > 0) {
@@ -647,20 +724,18 @@ void CodecMp3::StreamInitialise()
     if (iInput.Bytes() < kReadReqBytes) {
         THROW(CodecStreamEnded);
     }
-    ASSERT_DEBUG(iHeader == nullptr);
-    iHeader = new Mp3Header(iInput, iHeaderBytes, iController->StreamLength());
+    iHeader.Replace(iInput, iHeaderBytes, iController->StreamLength());
 
-    iTrackLengthJiffies = (iHeader->SamplesTotal() * Jiffies::kPerSecond) / iHeader->SampleRate();
-    iController->OutputDecodedStream(iHeader->BitRate(), kBitDepth, iHeader->SampleRate(), iHeader->Channels(), iHeader->Name(), iTrackLengthJiffies, 0, false);
+    iTrackLengthJiffies = (iHeader.SamplesTotal() * Jiffies::kPerSecond) / iHeader.SampleRate();
+    iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, 0, false);
 }
 
 void CodecMp3::StreamCompleted()
 {
     //LOG(kCodec, "CodecMp3::Deinitialise\n");
-
-    delete iHeader;
-    iHeader = nullptr;
+    iHeader.Clear();
     iInput.SetBytes(0);
+    iOutput.SetBytes(0);
     iHeaderBytes = 0;
 
     mad_synth_finish(&iMadSynth);
@@ -672,7 +747,7 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     TUint64 bytes = 0;
     try {
-        bytes = iHeader->SampleToByte(aSample);
+        bytes = iHeader.SampleToByte(aSample);
     }
     catch (Mp3SampleInvalid&) {
         return false;
@@ -686,9 +761,10 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iInput.SetBytes(0);
+        iOutput.SetBytes(0);
         iSamplesWrittenTotal = aSample;
-        iTrackOffset = (aSample * Jiffies::kPerSecond) / iHeader->SampleRate();
-        iController->OutputDecodedStream(iHeader->BitRate(), kBitDepth, iHeader->SampleRate(), iHeader->Channels(), iHeader->Name(), iTrackLengthJiffies, aSample, false);
+        iTrackOffset = (aSample * Jiffies::kPerSecond) / iHeader.SampleRate();
+        iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
 }
@@ -780,15 +856,15 @@ void CodecMp3::Process()
         
     // Once frame is decoded, synthesize to pcm samples.  
     (void)mad_synth_frame(&iMadSynth, &iMadFrame);
-    TUint channels = iHeader->Channels();
+    TUint channels = iHeader.Channels();
     TUint samplesToWrite = iMadSynth.pcm.length;
     //LOG(kCodec, "CodecMp3::Process samplesToWrite: %d, written: %lld\n", samplesToWrite, iSamplesWrittenTotal);
 
     // limit output of samples to total defined in header, unless its a live stream
-    if (iHeader->SamplesTotal()) {
-//        const TUint64 remaining = (iHeader->SamplesTotal() - iSamplesWrittenTotal);
-        if (samplesToWrite > (iHeader->SamplesTotal() - iSamplesWrittenTotal)) {
-            samplesToWrite = (TUint)(iHeader->SamplesTotal() - iSamplesWrittenTotal);
+    if (iHeader.SamplesTotal()) {
+//        const TUint64 remaining = (iHeader.SamplesTotal() - iSamplesWrittenTotal);
+        if (samplesToWrite > (iHeader.SamplesTotal() - iSamplesWrittenTotal)) {
+            samplesToWrite = (TUint)(iHeader.SamplesTotal() - iSamplesWrittenTotal);
         }
     }
 
@@ -816,7 +892,7 @@ void CodecMp3::Process()
         // only output audio when we have data for a full-sized msg.
         // any data not output now will be picked up the next time round
         if (iOutput.MaxBytes() - iOutput.Bytes() < (kBitDepth/8) * channels) {
-            iTrackOffset += iController->OutputAudioPcm(iOutput, channels, iHeader->SampleRate(),
+            iTrackOffset += iController->OutputAudioPcm(iOutput, channels, iHeader.SampleRate(),
                                                         kBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutput.SetBytes(0);
         }
@@ -828,7 +904,7 @@ void CodecMp3::Process()
     // first check we have processed remaining frames of this stream
     if ((iMadStream.md_len == 0) && (iStreamEnded || newStreamStarted)) {
         if (iOutput.Bytes() > 0) { // only output if there is audio remaining
-            iController->OutputAudioPcm(iOutput, channels, iHeader->SampleRate(),
+            iController->OutputAudioPcm(iOutput, channels, iHeader.SampleRate(),
                                         kBitDepth, EMediaDataEndianBig, iTrackOffset);
         }
         if (newStreamStarted) {

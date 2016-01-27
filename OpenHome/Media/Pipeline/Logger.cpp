@@ -102,7 +102,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 Msg* Logger::ProcessMsg(MsgDrain* aMsg)
 {
     if (IsEnabled(EMsgDrain)) {
-        Log::Print("Pipeline (%s): drain\n", iId);
+        Log::Print("Pipeline (%s): drain %u\n", iId, aMsg->Id());
     }
     return aMsg;
 }

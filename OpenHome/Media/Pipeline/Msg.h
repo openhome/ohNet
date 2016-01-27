@@ -375,13 +375,15 @@ class MsgDrain : public Msg
 public:
     MsgDrain(AllocatorBase& aAllocator);
     void ReportDrained();
+    TUint Id() const;
 private:
-    void Initialise(Functor aCallback);
+    void Initialise(TUint aId, Functor aCallback);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Functor iCallback;
+    TUint iId;
 };
 
 class MsgDelay : public Msg
@@ -1511,6 +1513,7 @@ private:
     Allocator<MsgMode> iAllocatorMsgMode;
     Allocator<MsgTrack> iAllocatorMsgTrack;
     Allocator<MsgDrain> iAllocatorMsgDrain;
+    TUint iDrainId;
     Allocator<MsgDelay> iAllocatorMsgDelay;
     Allocator<MsgEncodedStream> iAllocatorMsgEncodedStream;
     Allocator<EncodedAudio> iAllocatorEncodedAudio;

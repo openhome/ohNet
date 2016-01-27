@@ -362,9 +362,9 @@ void Product::GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& 
     ISource* source = iSources[aIndex];
     Bws<ISource::kMaxSourceNameBytes> name;
     source->Name(name);
-    aSystemName.Append(source->SystemName());
-    aType.Append(source->Type());
-    aName.Append(name);
+    aSystemName.Replace(source->SystemName());
+    aType.Replace(source->Type());
+    aName.Replace(name);
     aVisible = source->IsVisible();
 }
 

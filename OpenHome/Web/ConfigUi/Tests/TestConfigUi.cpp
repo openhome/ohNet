@@ -92,7 +92,7 @@ class HelperLanguageResourceManager : public ILanguageResourceManager, public IL
 public:
     HelperLanguageResourceManager(const Brx& aLanguageMap);
 public: // from ILanguageResourceManager
-    ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<const Brx*>& aLanguageList) override;
+    ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList) override;
 private: // from ILanguageResourceReaderDestroyer
     void Destroy(ILanguageResourceReader* aResourceReader) override;
 private:
@@ -138,7 +138,7 @@ private:
     std::vector<TUint> iOptions;
     Configuration::ConfigChoice* iConfigChoice;
     Bws<256> iLanguageMap;
-    std::vector<const Brx*> iLanguages;
+    std::vector<Bws<10>> iLanguages;
     HelperLanguageResourceManager* iResourceManager;
     ConfigMessageChoiceAllocator* iAllocator;
 };
@@ -466,7 +466,7 @@ HelperLanguageResourceManager::HelperLanguageResourceManager(const Brx& aLanguag
 {
 }
 
-ILanguageResourceReader& HelperLanguageResourceManager::CreateLanguageResourceHandler(const Brx& /*aResourceUriTail*/, std::vector<const Brx*>& /*aLanguageList*/)
+ILanguageResourceReader& HelperLanguageResourceManager::CreateLanguageResourceHandler(const Brx& /*aResourceUriTail*/, std::vector<Bws<10>>& /*aLanguageList*/)
 {
     HelperLanguageResourceReader* reader = new HelperLanguageResourceReader(iLanguageMap, *this);
     return *reader;
@@ -810,7 +810,7 @@ void SuiteConfigMessageChoice::TestSend()
     std::vector<TUint> options;
     options.push_back(0);
     options.push_back(1);
-    std::vector<const Brx*> languages;
+    std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
     IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, Brx::Empty(), languages);
     Bws<kMaxMsgBytes> buf;
@@ -838,7 +838,7 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
     std::vector<TUint> options;
     options.push_back(0);
     options.push_back(1);
-    std::vector<const Brx*> languages;
+    std::vector<Bws<10>> languages;
 
     // FIXME - can't have \n in ConfigChoice keys, as language resource parser relies on \n as a separator!
     // Nor can have whitespace chars at start/end of keys, as Parser will strip these!
@@ -870,7 +870,7 @@ void SuiteConfigMessageChoice::TestSendAdditional()
     std::vector<TUint> options;
     options.push_back(0);
     options.push_back(1);
-    std::vector<const Brx*> languages;
+    std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
     Brn additionalJson("\"additional\": {\"additionalKey\": 1}");
     IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, additionalJson, languages);
