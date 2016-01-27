@@ -75,7 +75,6 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
             // Check if this was interrupted.
             AutoMutex a(iLock);
             if (!iEnabled || !iPolling) {
-
                 if (msgOutput) {
                     aWriter.Write(Brn("]"));
                 }
@@ -84,6 +83,9 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
 
             ITabMessage* msg = iFifo.Read();
             if (!msgOutput) {
+                // Now committed to sending a msg in response to this lp.
+                // Cancel timer and clear polling statei.
+                iTimer.Cancel();
                 aWriter.Write(Brn("["));
                 msgOutput = true;
             }
@@ -98,9 +100,7 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
             // If FIFO has been exhausted, output what was queued and return
             // instead of blocking for entire long poll duration.
             if (iFifo.SlotsUsed() == 0) {
-                iTimer.Cancel();
                 iPolling = false;
-
                 if (msgOutput) {
                     aWriter.Write(Brn("]"));
                 }
