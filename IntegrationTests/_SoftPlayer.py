@@ -30,11 +30,11 @@ if __name__ == '__main__':
     s = SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aTidalId=tidalId, aQobuzId=qobuzId )
     if _platform in ['Windows', 'cli']:
         import msvcrt
-        print '\nPress ANY KEY to EXIT'
+        print( '\nPress ANY KEY to EXIT' )
         msvcrt.getch()
     else:
         import sys
-        print '\nPress ENTER to EXIT'
+        print( '\nPress ENTER to EXIT' )
         sys.stdin.readline()
     s.Shutdown()
     s.log.Cleanup()

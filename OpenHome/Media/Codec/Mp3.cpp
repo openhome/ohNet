@@ -709,6 +709,7 @@ void CodecMp3::StreamInitialise()
     mad_frame_init(&iMadFrame);
     mad_synth_init(&iMadSynth);
 
+    iOutput.SetBytes(0);
     // Discard bytes preceeding frame start.
     iInput.SetBytes(0);
     if (iHeaderBytes > 0) {
@@ -734,6 +735,7 @@ void CodecMp3::StreamCompleted()
     //LOG(kCodec, "CodecMp3::Deinitialise\n");
     iHeader.Clear();
     iInput.SetBytes(0);
+    iOutput.SetBytes(0);
     iHeaderBytes = 0;
 
     mad_synth_finish(&iMadSynth);
@@ -759,6 +761,7 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iInput.SetBytes(0);
+        iOutput.SetBytes(0);
         iSamplesWrittenTotal = aSample;
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iHeader.SampleRate();
         iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, aSample, false);
