@@ -761,6 +761,7 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
     TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iInput.SetBytes(0);
+        iOutput.SetBytes(0);
         iSamplesWrittenTotal = aSample;
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iHeader.SampleRate();
         iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, aSample, false);
