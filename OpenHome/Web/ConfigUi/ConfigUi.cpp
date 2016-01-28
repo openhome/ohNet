@@ -18,36 +18,69 @@ using namespace OpenHome::Configuration;
 using namespace OpenHome::Web;
 
 
+// WritableJsonEmpty
+
+void WritableJsonEmpty::Write(IWriter& aWriter) const
+{
+    aWriter.Write(Brn("{}"));
+}
+
+
+// WritableJsonInfo
+
+WritableJsonInfo::WritableJsonInfo(TBool aRebootRequired)
+    : iRebootRequired(aRebootRequired)
+{
+}
+
+void WritableJsonInfo::Write(IWriter& aWriter) const
+{
+    aWriter.Write(Brn("{\"reboot-required\":"));
+    WriteBool(aWriter, iRebootRequired);
+    aWriter.Write(Brn("}"));
+}
+
+void WritableJsonInfo::WriteBool(IWriter& aWriter, TBool aValue)
+{
+    if (aValue) {
+        aWriter.Write(Brn("true"));
+    }
+    else {
+        aWriter.Write(Brn("false"));
+    }
+}
+
+
 // ConfigMessage
 
 ConfigMessage::ConfigMessage(IConfigMessageDeallocator& aDeallocator)
     : iDeallocator(aDeallocator)
+    , iWriterAdditional(nullptr)
 {
 }
 
-void ConfigMessage::Set(const Brx& aAdditionalJson) {
-    ASSERT(aAdditionalJson.Bytes() < kMaxAdditionalDataBytes);
-    iAdditionalJson.Replace(aAdditionalJson);
+void ConfigMessage::Set(const IWritable& aJsonWriter) {
+    iWriterAdditional = &aJsonWriter;
 }
 
-void ConfigMessage::Set(ConfigNum& /*aNum*/, TInt /*aValue*/, const Brx& /*aAdditionalJson*/)
-{
-    ASSERTS();
-}
-
-void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const Brx& /*aAdditionalJson*/, std::vector<Bws<10>>& /*aLanguageList*/)
+void ConfigMessage::Set(ConfigNum& /*aNum*/, TInt /*aValue*/, const IWritable& /*aJsonWriter*/)
 {
     ASSERTS();
 }
 
-void ConfigMessage::Set(ConfigText& /*aText*/, const OpenHome::Brx& /*aValue*/, const Brx& /*aAdditionalJson*/)
+void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const IWritable& /*aJsonWriter*/, std::vector<Bws<10>>& /*aLanguageList*/)
+{
+    ASSERTS();
+}
+
+void ConfigMessage::Set(ConfigText& /*aText*/, const OpenHome::Brx& /*aValue*/, const IWritable& /*aJsonWriter*/)
 {
     ASSERTS();
 }
 
 void ConfigMessage::Clear()
 {
-    iAdditionalJson.SetBytes(0);
+    iWriterAdditional = nullptr;
 }
 
 void ConfigMessage::Send(IWriter& aWriter)
@@ -76,15 +109,10 @@ void ConfigMessage::Send(IWriter& aWriter)
 
     aWriter.Write(Brn("\"meta\":{"));
     WriteMeta(aWriter);
-    aWriter.Write(Brn("}"));
+    aWriter.Write(Brn("},"));
 
-    // FIXME - write out "additional"/"info" regardless of whether it contains anything?
-    //aWriter.Write(Brn("\"info\":{"));
-    if (iAdditionalJson != Brx::Empty()) {
-        aWriter.Write(Brn(","));
-        aWriter.Write(iAdditionalJson); // FIXME - this is going to write out "additional: {<kvps>}"
-    }
-    //aWriter.Write(Brn("}"));
+    aWriter.Write(Brn("\"info\":"));
+    iWriterAdditional->Write(aWriter);
 
     aWriter.Write(Brn("}"));
 }
@@ -105,9 +133,9 @@ ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
 {
 }
 
-void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson)
+void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
 {
-    ConfigMessage::Set(aAdditionalJson);
+    ConfigMessage::Set(aJsonWriter);
     ASSERT(iNum == nullptr);
     iNum = &aNum;
     iValue = aValue;
@@ -237,9 +265,9 @@ ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator
 {
 }
 
-void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList)
+void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessage::Set(aAdditionalJson);
+    ConfigMessage::Set(aJsonWriter);
     ASSERT(iChoice == nullptr);
     iChoice = &aChoice;
     iValue = aValue;
@@ -300,9 +328,9 @@ ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
 {
 }
 
-void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, const Brx& aAdditionalJson)
+void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, const IWritable& aJsonWriter)
 {
-    ConfigMessage::Set(aAdditionalJson);
+    ConfigMessage::Set(aJsonWriter);
     ASSERT(iText == nullptr);
     iText = &aText;
     iValue.Replace(aValue);
@@ -376,10 +404,10 @@ ConfigMessageNumAllocator::ConfigMessageNumAllocator(TUint aMessageCount)
     }
 }
 
-IConfigMessage& ConfigMessageNumAllocator::Allocate(ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson)
+IConfigMessage& ConfigMessageNumAllocator::Allocate(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
 {
     IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aNum, aValue, aAdditionalJson);
+    msg.Set(aNum, aValue, aJsonWriter);
     return msg;
 }
 
@@ -394,10 +422,10 @@ ConfigMessageChoiceAllocator::ConfigMessageChoiceAllocator(TUint aMessageCount, 
     }
 }
 
-IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList)
+IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
 {
     IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aChoice, aValue, aAdditionalJson, aLanguageList);
+    msg.Set(aChoice, aValue, aJsonWriter, aLanguageList);
     return msg;
 }
 
@@ -412,10 +440,10 @@ ConfigMessageTextAllocator::ConfigMessageTextAllocator(TUint aMessageCount)
     }
 }
 
-IConfigMessage& ConfigMessageTextAllocator::Allocate(ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson)
+IConfigMessage& ConfigMessageTextAllocator::Allocate(ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter)
 {
     IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aText, aValue, aAdditionalJson);
+    msg.Set(aText, aValue, aJsonWriter);
     return msg;
 }
 
@@ -429,19 +457,19 @@ ConfigMessageAllocator::ConfigMessageAllocator(TUint aMessageCount, ILanguageRes
 {
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigNum& aNum, TInt aValue, const Brx& aAdditionalJson)
+IConfigMessage& ConfigMessageAllocator::Allocate(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
 {
-    return iAllocatorNum.Allocate(aNum, aValue, aAdditionalJson);
+    return iAllocatorNum.Allocate(aNum, aValue, aJsonWriter);
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const Brx& aAdditionalJson, std::vector<Bws<10>>& aLanguageList)
+IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
 {
-    return iAllocatorChoice.Allocate(aChoice, aValue, aAdditionalJson, aLanguageList);
+    return iAllocatorChoice.Allocate(aChoice, aValue, aJsonWriter, aLanguageList);
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigText& aText, const Brx& aValue, const Brx& aAdditionalJson)
+IConfigMessage& ConfigMessageAllocator::Allocate(ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter)
 {
-    return iAllocatorText.Allocate(aText, aValue, aAdditionalJson);
+    return iAllocatorText.Allocate(aText, aValue, aJsonWriter);
 }
 
 
@@ -596,11 +624,11 @@ void JsonKvpString::SerialiseValue(IWriter& aWriter) const
 
 const TUint ConfigTab::kInvalidSubscription = OpenHome::Configuration::IConfigManager::kSubscriptionIdInvalid;
 
-ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, IConfigManager& aConfigManager, IJsonProvider& aJsonProvider)
+ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, IConfigManager& aConfigManager, IJsonInfoProvider& aInfoProvider)
     : iId(aId)
     , iMsgAllocator(aMessageAllocator)
     , iConfigManager(aConfigManager)
-    , iJsonProvider(aJsonProvider)
+    , iInfoProvider(aInfoProvider)
     , iHandler(nullptr)
     , iStarted(false)
 {
@@ -734,11 +762,11 @@ void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
 {
     ASSERT(iHandler != nullptr);
     ConfigNum& num = iConfigManager.GetNum(aKvp.Key());
-    const Brx& json = iJsonProvider.GetJson(aKvp.Key());
+    const WritableJsonInfo& info = iInfoProvider.GetInfo(aKvp.Key());
     // FIXME - because JSON is static and now stored in ConfigApp, it means
     // that ConfigMessages can also now just take a reference to the JSON
     // instead of copying it.
-    IConfigMessage& msg = iMsgAllocator.Allocate(num, aKvp.Value(), json);
+    IConfigMessage& msg = iMsgAllocator.Allocate(num, aKvp.Value(), info);
     iHandler->Send(msg);
 }
 
@@ -746,8 +774,8 @@ void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
 {
     ASSERT(iHandler != nullptr);
     ConfigChoice& choice = iConfigManager.GetChoice(aKvp.Key());
-    const Brx& json = iJsonProvider.GetJson(aKvp.Key());
-    IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), json, iLanguageList);
+    const WritableJsonInfo& info = iInfoProvider.GetInfo(aKvp.Key());
+    IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), info, iLanguageList);
     iHandler->Send(msg);
 }
 
@@ -755,7 +783,7 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 {
     ASSERT(iHandler != nullptr);
     ConfigText& text = iConfigManager.GetText(aKvp.Key());
-    const Brx& json = iJsonProvider.GetJson(aKvp.Key());
+    const WritableJsonInfo& json = iInfoProvider.GetInfo(aKvp.Key());
     IConfigMessage& msg = iMsgAllocator.Allocate(text, aKvp.Value(), json);
     iHandler->Send(msg);
 }
@@ -818,8 +846,8 @@ ConfigAppBase::~ConfigAppBase()
         delete iKeysTexts[i];
     }
 
-    JsonMap::iterator it;
-    for (it = iJsonMap.begin(); it != iJsonMap.end(); ++it) {
+    InfoMap::iterator it;
+    for (it = iInfoMap.begin(); it != iInfoMap.end(); ++it) {
         delete it->second;
     }
 
@@ -870,10 +898,10 @@ IResourceHandler& ConfigAppBase::CreateResourceHandler(const OpenHome::Brx& aRes
     return *iResourceHandlers[0];   // unreachable
 }
 
-const Brx& ConfigAppBase::GetJson(const OpenHome::Brx& aKey)
+const WritableJsonInfo& ConfigAppBase::GetInfo(const OpenHome::Brx& aKey)
 {
-    JsonMap::iterator it = iJsonMap.find(Brn(aKey));
-    ASSERT(it != iJsonMap.end());
+    InfoMap::iterator it = iInfoMap.find(Brn(aKey));
+    ASSERT(it != iInfoMap.end());
     return *it->second;
 }
 
@@ -908,60 +936,49 @@ ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx&
     return *iLanguageResourceHandlers[0];   // unreachable
 }
 
-void ConfigAppBase::AddNum(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppBase::AddReadOnly(const Brx& /*aKey*/)
+{
+
+}
+
+void ConfigAppBase::AddNum(const OpenHome::Brx& aKey, TBool aRebootRequired)
 {
     Brh* key = new Brh(aKey);
     iKeysNums.push_back(key);
-    AddJson(*key, aAdditionalInfo);
+    AddInfo(*key, aRebootRequired);
 
     for (TUint i=0; i<iTabs.size(); i++) {
         iTabs[i]->AddKeyNum(*key);
     }
 }
 
-void ConfigAppBase::AddChoice(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppBase::AddChoice(const OpenHome::Brx& aKey, TBool aRebootRequired)
 {
     Brh* key = new Brh(aKey);
     iKeysChoices.push_back(key);
-    AddJson(*key, aAdditionalInfo);
+    AddInfo(*key, aRebootRequired);
 
     for (TUint i=0; i<iTabs.size(); i++) {
         iTabs[i]->AddKeyChoice(*key);
     }
 }
 
-void ConfigAppBase::AddText(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppBase::AddText(const OpenHome::Brx& aKey, TBool aRebootRequired)
 {
     Brh* key = new Brh(aKey);
     iKeysTexts.push_back(key);
-    AddJson(*key, aAdditionalInfo);
+    AddInfo(*key, aRebootRequired);
 
     for (TUint i=0; i<iTabs.size(); i++) {
         iTabs[i]->AddKeyText(*key);
     }
 }
 
-void ConfigAppBase::AddJson(const Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppBase::AddInfo(const Brx& aKey, TBool aRebootRequired)
 {
     //ASSERT(!iStarted);
-    Bwh* json = new Bwh(ConfigMessage::kMaxAdditionalDataBytes);
-    WriterBuffer writerBuf(*json);
-
-    // Will only write the "additional" object if any key-value pairs exist.
-    // FIXME - should write out "additional" (or "info") object even if it contains no values
-    // FIXME - maybe JsonKvpVector should have its own Serialise() method? - why should the ConfigTab know how to serialise the values?
-    if (aAdditionalInfo.size() > 0) {
-        writerBuf.Write(Brn("\"additional\":{"));
-        for (TUint i=0; i<aAdditionalInfo.size(); i++) {
-            aAdditionalInfo[i]->Serialise(writerBuf);
-            if (i < aAdditionalInfo.size()-1) {
-                writerBuf.Write(Brn(","));
-            }
-        }
-        writerBuf.Write(Brn("}"));
-    }
-
-    iJsonMap.insert(JsonPair(Brn(aKey), json));
+    const WritableJsonInfo* info = new WritableJsonInfo(aRebootRequired);
+    iInfoMap.insert(InfoPair(Brn(aKey), info));
 }
 
 
@@ -973,9 +990,8 @@ ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager,
                                TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppBase(aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
-    JsonKvpVector emptyJsonVector;
-    AddText(Brn("Product.Name"), emptyJsonVector);
-    AddText(Brn("Product.Room"), emptyJsonVector);
+    AddText(Brn("Product.Name"));
+    AddText(Brn("Product.Room"));
 }
 
 
@@ -995,26 +1011,12 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager,
 
         Bws<Av::Source::kKeySourceNameMaxBytes> key;
         Av::Source::GetSourceNameKey(*aSources[i], key);
-
-        JsonKvpVector sourceInfoVector;
-        // FIXME - enable this
-        //Bws<Av::ISource::kMaxSystemNameBytes> systemName;
-        //Bws<Av::ISource::kMaxSourceTypeBytes> type;
-        //Bws<Av::ISource::kMaxSourceNameBytes> sourceName;
-        //TBool visible;
-        //aProduct.GetSourceDetails(i, systemName, type, sourceName, visible);
-
-        // FIXME - no sources have been added when this is called - why?
-        //sourceInfoVector.push_back(new JsonKvpString(Brn("type"), type));
-        //sourceInfoVector.push_back(new JsonKvpString(Brn("name"), systemName));
-
-        AddText(key, sourceInfoVector);
-
+        AddText(key);
 
         Av::Source::GetSourceVisibleKey(*aSources[i], key);
-        AddNum(key, emptyJsonVector);   // FIXME - why not a ConfigChoice?
-        //AddChoice(key, emptyJsonVector);
+        AddNum(key);   // FIXME - why not a ConfigChoice?
+        //AddChoice(key);
     }
 
-    AddChoice(ConfigStartupSource::kKeySource, emptyJsonVector);
+    AddChoice(ConfigStartupSource::kKeySource);
 }

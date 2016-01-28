@@ -511,15 +511,16 @@ void SuiteConfigMessageNumAllocator::TearDown()
 
 void SuiteConfigMessageNumAllocator::RecycleMessage()
 {
-    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
-    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
-    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
+    WritableJsonEmpty nullInfo;
+    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
+    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
+    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
 
     msg1.Destroy();
     msg2.Destroy();
     msg3.Destroy();
 
-    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
+    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
     msg4.Destroy();
 }
 
@@ -541,7 +542,8 @@ void SuiteConfigMessageNumAllocator::TestDeleteWhileAllocated()
 {
     // Try delete allocator while msg is allocated.
     // Should assert, as all msgs must be returned to allocator before it can be deleted.
-    (void)iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
+    WritableJsonEmpty nullInfo;
+    (void)iAllocator->Allocate(*iConfigNum, 1, nullInfo);
     TEST_THROWS(delete iAllocator, AssertionFailed);
     iAllocator = nullptr;
 }
@@ -586,15 +588,16 @@ void SuiteConfigMessageChoiceAllocator::TearDown()
 
 void SuiteConfigMessageChoiceAllocator::RecycleMessage()
 {
-    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
-    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
-    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
+    WritableJsonEmpty nullInfo;
+    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
+    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
+    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
 
     msg1.Destroy();
     msg2.Destroy();
     msg3.Destroy();
 
-    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
+    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
     msg4.Destroy();
 }
 
@@ -616,7 +619,8 @@ void SuiteConfigMessageChoiceAllocator::TestDeleteWhileAllocated()
 {
     // Try delete allocator while msg is allocated.
     // Should assert, as all msgs must be returned to allocator before it can be deleted.
-    (void)iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
+    WritableJsonEmpty nullInfo;
+    (void)iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
     TEST_THROWS(delete iAllocator, AssertionFailed);
     iAllocator = nullptr;
 }
@@ -656,15 +660,16 @@ void SuiteConfigMessageTextAllocator::TearDown()
 
 void SuiteConfigMessageTextAllocator::RecycleMessage()
 {
-    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
-    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
-    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
+    WritableJsonEmpty nullInfo;
+    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
+    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
+    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
 
     msg1.Destroy();
     msg2.Destroy();
     msg3.Destroy();
 
-    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
+    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
     msg4.Destroy();
 }
 
@@ -686,7 +691,8 @@ void SuiteConfigMessageTextAllocator::TestDeleteWhileAllocated()
 {
     // Try delete allocator while msg is allocated.
     // Should assert, as all msgs must be returned to allocator before it can be deleted.
-    (void)iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
+    WritableJsonEmpty nullInfo;
+    (void)iAllocator->Allocate(*iConfigText, iValue, nullInfo);
     TEST_THROWS(delete iAllocator, AssertionFailed);
     iAllocator = nullptr;
 }
@@ -719,46 +725,9 @@ void SuiteConfigMessageNum::TearDown()
 void SuiteConfigMessageNum::TestSend()
 {
     static const TUint value = 1;
+    WritableJsonEmpty nullInfo;
     ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, Brx::Empty());
-    Bws<kMaxMsgBytes> buf;
-    WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
-
-    Bws<kMaxMsgBytes> expectedBuf("{"
-        "\"key\":\"Config.Num.Key\","
-        "\"value\":1,"
-        "\"type\":\"numeric\","
-        "\"meta\":{\"min\":0,\"max\":10}}");
-    TEST(buf == expectedBuf);
-    msg.Destroy();
-}
-
-void SuiteConfigMessageNum::TestSendEscapedChars()
-{
-    // Try sending text that should be escaped.
-    static const TUint value = 1;
-    ConfigNum configNum(*iConfigManager, Brn("\nConfig.\rNum.\tKey"), 0, 10, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, Brx::Empty());
-    Bws<kMaxMsgBytes> buf;
-    WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
-
-    Bws<kMaxMsgBytes> expectedBuf("{"
-        "\"key\":\"\\nConfig.\\rNum.\\tKey\","
-        "\"value\":1,"
-        "\"type\":\"numeric\","
-        "\"meta\":{\"min\":0,\"max\":10}}");
-    TEST(buf == expectedBuf);
-    msg.Destroy();
-}
-
-void SuiteConfigMessageNum::TestSendAdditional()
-{
-    static const TUint value = 1;
-    ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
-    Brn additionalJson("\"additional\": {\"additionalKey\": 1}");
-    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, additionalJson);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, nullInfo);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg.Send(writerBuffer);
@@ -768,7 +737,48 @@ void SuiteConfigMessageNum::TestSendAdditional()
         "\"value\":1,"
         "\"type\":\"numeric\","
         "\"meta\":{\"min\":0,\"max\":10},"
-        "\"additional\": {\"additionalKey\": 1}}");
+        "\"info\":{}}");
+    TEST(buf == expectedBuf);
+    msg.Destroy();
+}
+
+void SuiteConfigMessageNum::TestSendEscapedChars()
+{
+    // Try sending text that should be escaped.
+    static const TUint value = 1;
+    WritableJsonEmpty nullInfo;
+    ConfigNum configNum(*iConfigManager, Brn("\nConfig.\rNum.\tKey"), 0, 10, value);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, nullInfo);
+    Bws<kMaxMsgBytes> buf;
+    WriterBuffer writerBuffer(buf);
+    msg.Send(writerBuffer);
+
+    Bws<kMaxMsgBytes> expectedBuf("{"
+        "\"key\":\"\\nConfig.\\rNum.\\tKey\","
+        "\"value\":1,"
+        "\"type\":\"numeric\","
+        "\"meta\":{\"min\":0,\"max\":10},"
+        "\"info\":{}}");
+    TEST(buf == expectedBuf);
+    msg.Destroy();
+}
+
+void SuiteConfigMessageNum::TestSendAdditional()
+{
+    static const TUint value = 1;
+    const WritableJsonInfo info(true);
+    ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, info);
+    Bws<kMaxMsgBytes> buf;
+    WriterBuffer writerBuffer(buf);
+    msg.Send(writerBuffer);
+
+    Bws<kMaxMsgBytes> expectedBuf("{"
+        "\"key\":\"Config.Num.Key\","
+        "\"value\":1,"
+        "\"type\":\"numeric\","
+        "\"meta\":{\"min\":0,\"max\":10},"
+        "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
     msg.Destroy();
 }
@@ -807,12 +817,13 @@ void SuiteConfigMessageChoice::TearDown()
 void SuiteConfigMessageChoice::TestSend()
 {
     static const TUint value = 0;
+    WritableJsonEmpty nullInfo;
     std::vector<TUint> options;
     options.push_back(0);
     options.push_back(1);
     std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, Brx::Empty(), languages);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, nullInfo, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg.Send(writerBuffer);
@@ -825,8 +836,8 @@ void SuiteConfigMessageChoice::TestSend()
             "\"options\":["
                 "{\"id\": 0,\"value\": \"False\"},"
                 "{\"id\": 1,\"value\": \"True\"}"
-            "]"
-        "}}");
+                "]},"
+        "\"info\":{}}");
     TEST(buf == expectedBuf);
     msg.Destroy();
 }
@@ -835,17 +846,14 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
 {
     // Try sending text that should be escaped.
     static const TUint value = 0;
+    WritableJsonEmpty nullInfo;
     std::vector<TUint> options;
     options.push_back(0);
     options.push_back(1);
     std::vector<Bws<10>> languages;
 
-    // FIXME - can't have \n in ConfigChoice keys, as language resource parser relies on \n as a separator!
-    // Nor can have whitespace chars at start/end of keys, as Parser will strip these!
-    //ConfigChoice configChoice(*iConfigManager, Brn("\nConfig.\rChoice.\tKey"), options, value);
-
     ConfigChoice configChoice(*iConfigManager, Brn("Config.\rChoice.\tKey"), options, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, Brx::Empty(), languages);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, nullInfo, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg.Send(writerBuffer);
@@ -858,8 +866,8 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
             "\"options\":["
                 "{\"id\": 0,\"value\": \"Fal\\tse\"},"
                 "{\"id\": 1,\"value\": \"Tr\\fue\"}"
-            "]"
-        "}}");
+            "]},"
+        "\"info\":{}}");
     TEST(buf == expectedBuf);
     msg.Destroy();
 }
@@ -867,13 +875,13 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
 void SuiteConfigMessageChoice::TestSendAdditional()
 {
     static const TUint value = 0;
+    const WritableJsonInfo info(true);
     std::vector<TUint> options;
     options.push_back(0);
     options.push_back(1);
     std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
-    Brn additionalJson("\"additional\": {\"additionalKey\": 1}");
-    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, additionalJson, languages);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, info, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg.Send(writerBuffer);
@@ -886,9 +894,8 @@ void SuiteConfigMessageChoice::TestSendAdditional()
             "\"options\":["
                 "{\"id\": 0,\"value\": \"False\"},"
                 "{\"id\": 1,\"value\": \"True\"}"
-            "]"
-        "},"
-        "\"additional\": {\"additionalKey\": 1}}");
+            "]},"
+        "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
     msg.Destroy();
 }
@@ -921,46 +928,9 @@ void SuiteConfigMessageText::TearDown()
 void SuiteConfigMessageText::TestSend()
 {
     static const Brn value("abc");
+    WritableJsonEmpty nullInfo;
     ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, Brx::Empty());
-    Bws<kMaxMsgBytes> buf;
-    WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
-
-    Bws<kMaxMsgBytes> expectedBuf("{"
-        "\"key\":\"Config.Text.Key\","
-        "\"value\":\"abc\","
-        "\"type\":\"text\","
-        "\"meta\":{\"maxlength\":25}}");
-    TEST(buf == expectedBuf);
-    msg.Destroy();
-}
-
-void SuiteConfigMessageText::TestSendEscapedChars()
-{
-    // Try sending text that should be escaped.
-    static const Brn value("a\rb\bc");
-    ConfigText configText(*iConfigManager, Brn("\nConfig.\rText.\tKey"), 25, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, Brx::Empty());
-    Bws<kMaxMsgBytes> buf;
-    WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
-
-    Bws<kMaxMsgBytes> expectedBuf("{"
-        "\"key\":\"\\nConfig.\\rText.\\tKey\","
-        "\"value\":\"a\\rb\\bc\","
-        "\"type\":\"text\","
-        "\"meta\":{\"maxlength\":25}}");
-    TEST(buf == expectedBuf);
-    msg.Destroy();
-}
-
-void SuiteConfigMessageText::TestSendAdditional()
-{
-    static const Brn value("abc");
-    ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
-    Brn additionalJson("\"additional\": {\"additionalKey\": 1}");
-    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, additionalJson);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, nullInfo);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg.Send(writerBuffer);
@@ -970,7 +940,48 @@ void SuiteConfigMessageText::TestSendAdditional()
         "\"value\":\"abc\","
         "\"type\":\"text\","
         "\"meta\":{\"maxlength\":25},"
-        "\"additional\": {\"additionalKey\": 1}}");
+        "\"info\":{}}");
+    TEST(buf == expectedBuf);
+    msg.Destroy();
+}
+
+void SuiteConfigMessageText::TestSendEscapedChars()
+{
+    // Try sending text that should be escaped.
+    static const Brn value("a\rb\bc");
+    WritableJsonEmpty nullInfo;
+    ConfigText configText(*iConfigManager, Brn("\nConfig.\rText.\tKey"), 25, value);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, nullInfo);
+    Bws<kMaxMsgBytes> buf;
+    WriterBuffer writerBuffer(buf);
+    msg.Send(writerBuffer);
+
+    Bws<kMaxMsgBytes> expectedBuf("{"
+        "\"key\":\"\\nConfig.\\rText.\\tKey\","
+        "\"value\":\"a\\rb\\bc\","
+        "\"type\":\"text\","
+        "\"meta\":{\"maxlength\":25},"
+        "\"info\":{}}");
+    TEST(buf == expectedBuf);
+    msg.Destroy();
+}
+
+void SuiteConfigMessageText::TestSendAdditional()
+{
+    static const Brn value("abc");
+    const WritableJsonInfo info(true);
+    ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
+    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, info);
+    Bws<kMaxMsgBytes> buf;
+    WriterBuffer writerBuffer(buf);
+    msg.Send(writerBuffer);
+
+    Bws<kMaxMsgBytes> expectedBuf("{"
+        "\"key\":\"Config.Text.Key\","
+        "\"value\":\"abc\","
+        "\"type\":\"text\","
+        "\"meta\":{\"maxlength\":25},"
+        "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
     msg.Destroy();
 }

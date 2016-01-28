@@ -19,41 +19,39 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Configuration::IConfigManager& aConfi
                                            TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppSources(aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
-    JsonKvpVector emptyJsonVector;
+    AddNumConditional(Brn("Sender.Channel"));
+    AddNumConditional(Brn("Sender.Preset"));
+    AddNumConditional(VolumeConfig::kKeyBalance);
+    AddNumConditional(VolumeConfig::kKeyLimit);
+    AddNumConditional(VolumeConfig::kKeyStartupValue);
 
-    AddNumConditional(Brn("Sender.Channel"), emptyJsonVector);
-    AddNumConditional(Brn("Sender.Preset"), emptyJsonVector);
-    AddNumConditional(VolumeConfig::kKeyBalance, emptyJsonVector);
-    AddNumConditional(VolumeConfig::kKeyLimit, emptyJsonVector);
-    AddNumConditional(VolumeConfig::kKeyStartupValue, emptyJsonVector);
+    AddChoiceConditional(Brn("Sender.Enabled"));
+    AddChoiceConditional(Brn("Sender.Mode"));
+    AddChoiceConditional(Brn("Source.NetAux.Auto"));
+    AddChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled);
+    AddChoiceConditional(Brn("qobuz.com.AudioQuality"));
+    AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"));
 
-    AddChoiceConditional(Brn("Sender.Enabled"), emptyJsonVector);
-    AddChoiceConditional(Brn("Sender.Mode"), emptyJsonVector);
-    AddChoiceConditional(Brn("Source.NetAux.Auto"), emptyJsonVector);
-    AddChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled, emptyJsonVector);
-    AddChoiceConditional(Brn("qobuz.com.AudioQuality"), emptyJsonVector);
-    AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"), emptyJsonVector);
-
-    AddTextConditional(Brn("Radio.TuneInUserName"), emptyJsonVector);
+    AddTextConditional(Brn("Radio.TuneInUserName"));
 }
 
-void ConfigAppMediaPlayer::AddNumConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppMediaPlayer::AddNumConditional(const OpenHome::Brx& aKey)
 {
     if (iConfigManager.HasNum(aKey)) {
-        AddNum(aKey, aAdditionalInfo);
+        AddNum(aKey);
     }
 }
 
-void ConfigAppMediaPlayer::AddChoiceConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppMediaPlayer::AddChoiceConditional(const OpenHome::Brx& aKey)
 {
     if (iConfigManager.HasChoice(aKey)) {
-        AddChoice(aKey, aAdditionalInfo);
+        AddChoice(aKey);
     }
 }
 
-void ConfigAppMediaPlayer::AddTextConditional(const OpenHome::Brx& aKey, JsonKvpVector& aAdditionalInfo)
+void ConfigAppMediaPlayer::AddTextConditional(const OpenHome::Brx& aKey)
 {
     if (iConfigManager.HasText(aKey)) {
-        AddText(aKey, aAdditionalInfo);
+        AddText(aKey);
     }
 }

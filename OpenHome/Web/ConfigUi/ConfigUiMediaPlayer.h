@@ -21,9 +21,9 @@ public:
                           const Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir,
                           TUint aMaxTabs, TUint aSendQueueSize);
 private:
-    void AddNumConditional(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    void AddChoiceConditional(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
-    void AddTextConditional(const Brx& aKey, JsonKvpVector& aAdditionalInfo);
+    void AddNumConditional(const Brx& aKey);
+    void AddChoiceConditional(const Brx& aKey);
+    void AddTextConditional(const Brx& aKey);
 };
 
 } // namespace Web
