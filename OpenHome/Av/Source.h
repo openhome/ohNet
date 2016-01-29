@@ -42,12 +42,12 @@ class SourceBase : public ISource
 private:
     static const TUint kMaxSourceTypeBytes = 20;
     static const TUint kMaxSourceIndexDigits = 2; // assume a source count of 0..99 is reasonable
-    static const TUint kConfigValSourceInvisible;
-    static const TUint kConfigValSourceVisible;
     static const OpenHome::Brn kKeySourceNamePrefix;
     static const OpenHome::Brn kKeySourceNameSuffix;
     static const OpenHome::Brn kKeySourceVisibleSuffix;
 public:
+    static const TUint kConfigValSourceInvisible;
+    static const TUint kConfigValSourceVisible;
     static const TUint kKeySourceNameMaxBytes = 40;
     static void GetSourceNameKey(const Brx& aSystemName, Bwx& aBuf);
     static void GetSourceVisibleKey(const Brx& aSystemName, Bwx& aBuf);

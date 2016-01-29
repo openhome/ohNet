@@ -128,7 +128,7 @@ void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit,
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SourceBase::NameChanged));
 
     GetSourceVisibleKey(iSystemName, key);
-    if (aConfigManagerReader.HasNum(key)) {
+    if (aConfigManagerReader.HasChoice(key)) {
         iConfigVisible = &aConfigManagerReader.GetChoice(key);
         iConfigVisibleCreated = false;
     }
