@@ -10,16 +10,20 @@ namespace OpenHome {
 namespace Configuration {
     class IConfigManager;
 }
+namespace Media {
+    class IInfoAggregator;
+}
 namespace Web {
 
 class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
-     ConfigAppMediaPlayer(Configuration::IConfigManager& aConfigManager,
-                          IConfigAppResourceHandlerFactory& aResourceFactory,
-                          const std::vector<const Brx*>& aSources,
-                          const Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir,
-                          TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregator,
+                         Configuration::IConfigManager& aConfigManager,
+                         IConfigAppResourceHandlerFactory& aResourceFactory,
+                         const std::vector<const Brx*>& aSources,
+                         const Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir,
+                         TUint aMaxTabs, TUint aSendQueueSize);
 private:
     void AddNumConditional(const Brx& aKey);
     void AddChoiceConditional(const Brx& aKey);

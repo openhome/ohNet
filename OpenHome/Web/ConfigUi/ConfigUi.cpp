@@ -8,6 +8,8 @@
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Utils/Json.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Debug.h>
 
 #include <limits>
@@ -15,6 +17,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
+using namespace OpenHome::Media;
 using namespace OpenHome::Web;
 
 
@@ -51,39 +54,24 @@ void WritableJsonInfo::WriteBool(IWriter& aWriter, TBool aValue)
 }
 
 
-// ConfigMessage
+// ConfigMessageBase
 
-ConfigMessage::ConfigMessage(IConfigMessageDeallocator& aDeallocator)
-    : iDeallocator(aDeallocator)
+ConfigMessageBase::ConfigMessageBase(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
     , iWriterAdditional(nullptr)
 {
 }
 
-void ConfigMessage::Set(const IWritable& aJsonWriter) {
+void ConfigMessageBase::Set(const IWritable& aJsonWriter) {
     iWriterAdditional = &aJsonWriter;
 }
 
-void ConfigMessage::Set(ConfigNum& /*aNum*/, TInt /*aValue*/, const IWritable& /*aJsonWriter*/)
-{
-    ASSERTS();
-}
-
-void ConfigMessage::Set(ConfigChoice& /*aChoice*/, TUint /*aValue*/, const IWritable& /*aJsonWriter*/, std::vector<Bws<10>>& /*aLanguageList*/)
-{
-    ASSERTS();
-}
-
-void ConfigMessage::Set(ConfigText& /*aText*/, const OpenHome::Brx& /*aValue*/, const IWritable& /*aJsonWriter*/)
-{
-    ASSERTS();
-}
-
-void ConfigMessage::Clear()
+void ConfigMessageBase::Clear()
 {
     iWriterAdditional = nullptr;
 }
 
-void ConfigMessage::Send(IWriter& aWriter)
+void ConfigMessageBase::Send(IWriter& aWriter)
 {
     // {
     //     "key": aKey,
@@ -117,17 +105,16 @@ void ConfigMessage::Send(IWriter& aWriter)
     aWriter.Write(Brn("}"));
 }
 
-void ConfigMessage::Destroy()
+void ConfigMessageBase::Destroy()
 {
-    Clear();
-    iDeallocator.Deallocate(*this);
+    RemoveRef();
 }
 
 
 // ConfigMessageNum
 
-ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
-    : ConfigMessage(aDeallocator)
+ConfigMessageNum::ConfigMessageNum(AllocatorBase& aAllocator)
+    : ConfigMessageBase(aAllocator)
     , iNum(nullptr)
     , iValue(std::numeric_limits<TInt>::max())
 {
@@ -135,7 +122,7 @@ ConfigMessageNum::ConfigMessageNum(IConfigMessageDeallocator& aDeallocator)
 
 void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
 {
-    ConfigMessage::Set(aJsonWriter);
+    ConfigMessageBase::Set(aJsonWriter);
     ASSERT(iNum == nullptr);
     iNum = &aNum;
     iValue = aValue;
@@ -143,8 +130,8 @@ void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const IWritable& aJsonW
 
 void ConfigMessageNum::Clear()
 {
+    ConfigMessageBase::Clear();
     ASSERT(iNum != nullptr);
-    ConfigMessage::Clear();
     iNum = nullptr;
     iValue = std::numeric_limits<TInt>::max();
 }
@@ -209,10 +196,7 @@ void ConfigChoiceMappingWriterJson::WriteComplete(IWriter& aWriter)
 
 // ConfigChoiceMapperResourceFile
 
-ConfigChoiceMapperResourceFile::ConfigChoiceMapperResourceFile(const Brx& aKey,
-                                                               const std::vector<TUint>& aChoices,
-                                                               IWriter& aWriter,
-                                                               IConfigChoiceMappingWriter& aMappingWriter)
+ConfigChoiceMapperResourceFile::ConfigChoiceMapperResourceFile(const Brx& aKey, const std::vector<TUint>& aChoices, IWriter& aWriter, IConfigChoiceMappingWriter& aMappingWriter)
     : iKey(aKey)
     , iChoices(aChoices)
     , iWriter(aWriter)
@@ -257,29 +241,31 @@ TBool ConfigChoiceMapperResourceFile::ProcessLine(const Brx& aLine)
 
 // ConfigMessageChoice
 
-ConfigMessageChoice::ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager)
-    : ConfigMessage(aDeallocator)
-    , iLanguageResourceManager(aLanguageResourceManager)
+ConfigMessageChoice::ConfigMessageChoice(AllocatorBase& aAllocator)
+    : ConfigMessageBase(aAllocator)
+    , iLanguageResourceManager(nullptr)
     , iChoice(nullptr)
     , iValue(std::numeric_limits<TUint>::max())
 {
 }
 
-void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
+void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessage::Set(aJsonWriter);
+    ConfigMessageBase::Set(aJsonWriter);
     ASSERT(iChoice == nullptr);
     iChoice = &aChoice;
     iValue = aValue;
+    iLanguageResourceManager = &aLanguageResourceManager;
     iLanguageList = &aLanguageList;
 }
 
 void ConfigMessageChoice::Clear()
 {
+    ConfigMessageBase::Clear();
     ASSERT(iChoice != nullptr);
-    ConfigMessage::Clear();
     iChoice = nullptr;
     iValue = std::numeric_limits<TUint>::max();
+    iLanguageResourceManager = nullptr;
     iLanguageList = nullptr;
 }
 
@@ -313,7 +299,7 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
         const std::vector<TUint>& choices = iChoice->Choices();
         ConfigChoiceMappingWriterJson mappingWriter;
         ConfigChoiceMapperResourceFile mapper(iChoice->Key(), choices, aWriter, mappingWriter);
-        ILanguageResourceReader* resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
+        ILanguageResourceReader* resourceHandler = &iLanguageResourceManager->CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
         resourceHandler->Process(mapper);
     }
 }
@@ -321,8 +307,8 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
 
 // ConfigMessageText
 
-ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
-    : ConfigMessage(aDeallocator)
+ConfigMessageText::ConfigMessageText(AllocatorBase& aAllocator)
+    : ConfigMessageBase(aAllocator)
     , iText(nullptr)
     , iValue(kMaxBytes)
 {
@@ -330,7 +316,7 @@ ConfigMessageText::ConfigMessageText(IConfigMessageDeallocator& aDeallocator)
 
 void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, const IWritable& aJsonWriter)
 {
-    ConfigMessage::Set(aJsonWriter);
+    ConfigMessageBase::Set(aJsonWriter);
     ASSERT(iText == nullptr);
     iText = &aText;
     iValue.Replace(aValue);
@@ -338,8 +324,8 @@ void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, cons
 
 void ConfigMessageText::Clear()
 {
+    ConfigMessageBase::Clear();
     ASSERT(iText != nullptr);
-    ConfigMessage::Clear();
     iText = nullptr;
     iValue.SetBytes(0);
 }
@@ -370,106 +356,41 @@ void ConfigMessageText::WriteMeta(IWriter& aWriter)
 }
 
 
-// ConfigMessageAllocatorBase
-
-ConfigMessageAllocatorBase::ConfigMessageAllocatorBase(TUint aMessageCount)
-    : iFifo(aMessageCount)
-{
-}
-
-ConfigMessageAllocatorBase::~ConfigMessageAllocatorBase()
-{
-    ASSERT(iFifo.SlotsFree() == 0); // all allocated messages must have been Destroy()ed
-    while (iFifo.SlotsUsed() > 0) {
-        IConfigMessage* msg = iFifo.Read();
-        delete msg;
-    }
-}
-
-void ConfigMessageAllocatorBase::Deallocate(IConfigMessage& aMessage)
-{
-    // This should never have to block - only msgs written are msgs that have
-    // previously been read from iFifo - so there should always be a slot.
-    iFifo.Write(&aMessage);
-}
-
-
-// ConfigMessageNumAllocator
-
-ConfigMessageNumAllocator::ConfigMessageNumAllocator(TUint aMessageCount)
-    : ConfigMessageAllocatorBase(aMessageCount)
-{
-    for (TUint i=0; i<aMessageCount; i++) {
-        iFifo.Write(new ConfigMessageNum(*this));
-    }
-}
-
-IConfigMessage& ConfigMessageNumAllocator::Allocate(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
-{
-    IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aNum, aValue, aJsonWriter);
-    return msg;
-}
-
-
-// ConfigMessageChoiceAllocator
-
-ConfigMessageChoiceAllocator::ConfigMessageChoiceAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager)
-    : ConfigMessageAllocatorBase(aMessageCount)
-{
-    for (TUint i=0; i<aMessageCount; i++) {
-        iFifo.Write(new ConfigMessageChoice(*this, aLanguageResourceManager));
-    }
-}
-
-IConfigMessage& ConfigMessageChoiceAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
-{
-    IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aChoice, aValue, aJsonWriter, aLanguageList);
-    return msg;
-}
-
-
-// ConfigMessageTextAllocator
-
-ConfigMessageTextAllocator::ConfigMessageTextAllocator(TUint aMessageCount)
-    : ConfigMessageAllocatorBase(aMessageCount)
-{
-    for (TUint i=0; i<aMessageCount; i++) {
-        iFifo.Write(new ConfigMessageText(*this));
-    }
-}
-
-IConfigMessage& ConfigMessageTextAllocator::Allocate(ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter)
-{
-    IConfigMessage& msg = *iFifo.Read();
-    msg.Set(aText, aValue, aJsonWriter);
-    return msg;
-}
-
-
 // ConfigMessageAllocator
 
-ConfigMessageAllocator::ConfigMessageAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager)
-    : iAllocatorNum(aMessageCount)
-    , iAllocatorChoice(aMessageCount, aLanguageResourceManager)
-    , iAllocatorText(aMessageCount)
+ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint /*aMsgCountReadOnly*/, TUint aMsgCountNum, TUint aMsgCountChoice, TUint aMsgCountText, ILanguageResourceManager& aLanguageResourceManager)
+    : /*iAllocatorMsgReadOnly("ConfigMessageReadOnly", aMsgCountReadOnly, aInfoAggregator)
+    ,*/ iAllocatorMsgNum("ConfigMessageNum", aMsgCountNum, aInfoAggregator)
+    , iAllocatorMsgChoice("ConfigMessageChoice", aMsgCountChoice, aInfoAggregator)
+    , iAllocatorMsgText("ConfigMessageText", aMsgCountText, aInfoAggregator)
+    , iLanguageResourceManager(aLanguageResourceManager)
 {
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
+ITabMessage* ConfigMessageAllocator::AllocateReadOnly(const Brx& /*aKey*/, const Brx& /*aValue*/)
 {
-    return iAllocatorNum.Allocate(aNum, aValue, aJsonWriter);
+    return nullptr;
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
+ITabMessage* ConfigMessageAllocator::AllocateNum(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
 {
-    return iAllocatorChoice.Allocate(aChoice, aValue, aJsonWriter, aLanguageList);
+    ConfigMessageNum* msg = iAllocatorMsgNum.Allocate();
+    msg->Set(aNum, aValue, aJsonWriter);
+    return msg;
 }
 
-IConfigMessage& ConfigMessageAllocator::Allocate(ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter)
+ITabMessage* ConfigMessageAllocator::AllocateChoice(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
 {
-    return iAllocatorText.Allocate(aText, aValue, aJsonWriter);
+    ConfigMessageChoice* msg = iAllocatorMsgChoice.Allocate();
+    msg->Set(aChoice, aValue, aJsonWriter, iLanguageResourceManager, aLanguageList);
+    return msg;
+}
+
+ITabMessage* ConfigMessageAllocator::AllocateText(ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter)
+{
+    ConfigMessageText* msg = iAllocatorMsgText.Allocate();
+    msg->Set(aText, aValue, aJsonWriter);
+    return msg;
 }
 
 
@@ -766,8 +687,8 @@ void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
     // FIXME - because JSON is static and now stored in ConfigApp, it means
     // that ConfigMessages can also now just take a reference to the JSON
     // instead of copying it.
-    IConfigMessage& msg = iMsgAllocator.Allocate(num, aKvp.Value(), info);
-    iHandler->Send(msg);
+    ITabMessage* msg = iMsgAllocator.AllocateNum(num, aKvp.Value(), info);
+    iHandler->Send(*msg);
 }
 
 void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
@@ -775,8 +696,8 @@ void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
     ASSERT(iHandler != nullptr);
     ConfigChoice& choice = iConfigManager.GetChoice(aKvp.Key());
     const WritableJsonInfo& info = iInfoProvider.GetInfo(aKvp.Key());
-    IConfigMessage& msg = iMsgAllocator.Allocate(choice, aKvp.Value(), info, iLanguageList);
-    iHandler->Send(msg);
+    ITabMessage* msg = iMsgAllocator.AllocateChoice(choice, aKvp.Value(), info, iLanguageList);
+    iHandler->Send(*msg);
 }
 
 void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
@@ -784,8 +705,8 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
     ASSERT(iHandler != nullptr);
     ConfigText& text = iConfigManager.GetText(aKvp.Key());
     const WritableJsonInfo& json = iInfoProvider.GetInfo(aKvp.Key());
-    IConfigMessage& msg = iMsgAllocator.Allocate(text, aKvp.Value(), json);
-    iHandler->Send(msg);
+    ITabMessage* msg = iMsgAllocator.AllocateText(text, aKvp.Value(), json);
+    iHandler->Send(*msg);
 }
 
 
@@ -794,10 +715,7 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 const Brn ConfigAppBase::kLangRoot("lang");
 const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
-ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager,
-                             IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
-                             const Brx& aResourcePrefix, const Brx& aResourceDir,
-                             TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : iConfigManager(aConfigManager)
     , iLangResourceDir(aResourceDir.Bytes()+1+kLangRoot.Bytes()+1)  // "<aResourceDir>/<kLangRoot>/"
     , iResourcePrefix(aResourcePrefix)
@@ -814,7 +732,7 @@ ConfigAppBase::ConfigAppBase(IConfigManager& aConfigManager,
     iLangResourceDir.Append(kLangRoot);
     iLangResourceDir.Append('/');
 
-    iMsgAllocator = new ConfigMessageAllocator(aSendQueueSize, *this);
+    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, aSendQueueSize, aSendQueueSize, aSendQueueSize, *this);
 
     for (TUint i=0; i<aMaxTabs; i++) {
         iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
@@ -984,11 +902,8 @@ void ConfigAppBase::AddInfo(const Brx& aKey, TBool aRebootRequired)
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager,
-                               IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
-                               const Brx& aResourcePrefix, const Brx& aResourceDir,
-                               TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppBase(aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     AddText(Brn("Product.Name"));
     AddText(Brn("Product.Room"));
@@ -997,12 +912,8 @@ ConfigAppBasic::ConfigAppBasic(IConfigManager& aConfigManager,
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager,
-                                   IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
-                                   const std::vector<const Brx*>& aSources,
-                                   const Brx& aResourcePrefix, const Brx& aResourceDir,
-                                   TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppBasic(aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
     JsonKvpVector emptyJsonVector;
 

@@ -6,6 +6,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Av/Source.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 EXCEPTION(LanguageResourceInvalid);
 EXCEPTION(JsonStringError);
@@ -13,6 +14,9 @@ EXCEPTION(JsonStringError);
 namespace OpenHome {
 namespace Av {
     class Product;
+}
+namespace Media {
+    class IInfoAggregator;
 }
 namespace Web {
 
@@ -39,20 +43,6 @@ class IWritable
 public:
     virtual void Write(IWriter& aWriter) const = 0;
     virtual ~IWritable() {}
-};
-
-// FIXME - remove this interface.
-class IConfigMessage : public ITabMessage
-{
-public:
-    virtual void Set(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter) = 0;
-    virtual void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList) = 0;
-    virtual void Set(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter) = 0;
-public: // from ITabMessage
-    virtual void Send(IWriter& aWriter) = 0;
-    virtual void Destroy() = 0;
-public:
-    virtual ~IConfigMessage() {}
 };
 
 /**
@@ -146,72 +136,48 @@ private:
 //    const WritableAdditionalJson iAdditional;
 //};
 
-// FIXME - should all Allocate() methods return a pointer to indicate taking ownership?
 class IConfigMessageAllocator
 {
 public:
-    // FIXME - by returning an IConfigMessage here, are exposing all the Set() methods above!
-    // Only want to expose the Send()/Destroy() methods.
-    // Fixing the above would also make it clearer how ConfigMessages should be created/used (i.e., allocated via the allocators, and Set() not called directly).
-    // Should surely return an ITabMessage from each of these.
-    // And maybe IConfigMessage shouldn't even be an interface!
-
-    // FIXME - also, would it be smarter just to subscribe directly to the ConfigVal, rather than taking a value? Means that most up-to-date val will always be sent - but that, without logic to check if ConfigVal already in queue, would end up with duplicates in queue, so may as well just send sequence of changes anyway.
-    virtual IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter) = 0;
-    virtual IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList) = 0;
-    virtual IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter) = 0;
+    virtual ITabMessage* AllocateReadOnly(const Brx& aKey, const Brx& aValue) = 0;
+    virtual ITabMessage* AllocateNum(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter) = 0;
+    virtual ITabMessage* AllocateChoice(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList) = 0;
+    virtual ITabMessage* AllocateText(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter) = 0;
     virtual ~IConfigMessageAllocator() {}
 };
 
-class IConfigMessageDeallocator
+class ConfigMessageBase : public Media::Allocated, public ITabMessage, public INonCopyable
 {
-public:
-    // FIXME - if anything, this should take a pointer to show passing of ownership.
-    virtual void Deallocate(IConfigMessage& aMessage) = 0;
-    virtual ~IConfigMessageDeallocator() {}
-};
-
-class ConfigMessage : public IConfigMessage, public INonCopyable
-{
-public:
-    static const TUint kMaxAdditionalDataBytes = 512; // FIXME - this needs to be written out somewhere
 protected:
-    ConfigMessage(IConfigMessageDeallocator& aDeallocator);
+    ConfigMessageBase(Media::AllocatorBase& aAllocator);
     void Set(const IWritable& aJsonWriter);
 protected:
     virtual void WriteKey(IWriter& aWriter) = 0;
     virtual void WriteValue(IWriter& aWriter) = 0;
     virtual void WriteType(IWriter& aWriter) = 0;
     virtual void WriteMeta(IWriter& aWriter) = 0;
-protected:
-    // FIXME - instead of providing a default implementation here and expecting subclasses to override it but then still call it, instead have the following:
-    //public: void Clear(); // Does work to clear shared members of msg. Also calls into ClearDerived();
-    //protected: virtual void ClearDerived() = 0;   // Derived members MUST implement this to clear their own members (and there is no need for them to remember to call Clear()).
-    virtual void Clear();
-private: // from IConfigMessage
-    void Set(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter);
-    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList);
-    void Set(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter);
-    // FIXME - give this a default impl that calls a virtual method that deriving classes must implement to write out their own values
+protected: // from Allocated
+    void Clear() override;
+private: // from ITabMessage
     void Send(IWriter& aWriter);
     void Destroy();
 private:
-    IConfigMessageDeallocator& iDeallocator;
     const IWritable* iWriterAdditional;
 };
 
-class ConfigMessageNum : public ConfigMessage
+class ConfigMessageNum : public ConfigMessageBase
 {
-    friend class ConfigMessageNumAllocator;
+    friend class ConfigMessageAllocator;
+public:
+    ConfigMessageNum(Media::AllocatorBase& aAllocator);
 private:
-    ConfigMessageNum(IConfigMessageDeallocator& aDeallocator);
-private: // from ConfigMessage
     void Set(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter);
-    void Clear();
-    void WriteKey(IWriter& aWriter);
-    void WriteValue(IWriter& aWriter);
-    void WriteType(IWriter& aWriter);
-    void WriteMeta(IWriter& aWriter);
+private: // from ConfigMessageBase
+    void Clear() override;
+    void WriteKey(IWriter& aWriter) override;
+    void WriteValue(IWriter& aWriter) override;
+    void WriteType(IWriter& aWriter) override;
+    void WriteMeta(IWriter& aWriter) override;
 private:
     Configuration::ConfigNum* iNum;
     TInt iValue;
@@ -254,89 +220,61 @@ private:
     TBool iFoundKey;
 };
 
-class ConfigMessageChoice : public ConfigMessage
+class ConfigMessageChoice : public ConfigMessageBase
 {
-    friend class ConfigMessageChoiceAllocator;
+    friend class ConfigMessageAllocator;
+public:
+    ConfigMessageChoice(Media::AllocatorBase& aAllocator);
 private:
-    ConfigMessageChoice(IConfigMessageDeallocator& aDeallocator, ILanguageResourceManager& aLanguageResourceManager);
-private: // from ConfigMessage
-    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList);
-    void Clear();
-    void WriteKey(IWriter& aWriter);
-    void WriteValue(IWriter& aWriter);
-    void WriteType(IWriter& aWriter);
-    void WriteMeta(IWriter& aWriter);
+    void Set(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList);
+private: // from ConfigMessageBase
+    void Clear() override;
+    void WriteKey(IWriter& aWriter) override;
+    void WriteValue(IWriter& aWriter) override;
+    void WriteType(IWriter& aWriter) override;
+    void WriteMeta(IWriter& aWriter) override;
 private:
-    ILanguageResourceManager& iLanguageResourceManager;
+    ILanguageResourceManager* iLanguageResourceManager;
     Configuration::ConfigChoice* iChoice;
     TUint iValue;
     std::vector<Bws<10>>* iLanguageList;
 };
 
-class ConfigMessageText : public ConfigMessage
+class ConfigMessageText : public ConfigMessageBase
 {
-    friend class ConfigMessageTextAllocator;
+    friend class ConfigMessageAllocator;
 private:
     static const TUint kMaxBytes = Configuration::ConfigText::kMaxBytes;
+public:
+    ConfigMessageText(Media::AllocatorBase& aAllocator);
 private:
-    ConfigMessageText(IConfigMessageDeallocator& aDeallocator);
-private: // from ConfigMessage
     void Set(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter);
-    void Clear();
-    void WriteKey(IWriter& aWriter);
-    void WriteValue(IWriter& aWriter);
-    void WriteType(IWriter& aWriter);
-    void WriteMeta(IWriter& aWriter);
+private: // from ConfigMessageBase
+    void Clear() override;
+    void WriteKey(IWriter& aWriter) override;
+    void WriteValue(IWriter& aWriter) override;
+    void WriteType(IWriter& aWriter) override;
+    void WriteMeta(IWriter& aWriter) override;
 private:
     Configuration::ConfigText* iText;
     Bws<kMaxBytes> iValue;
 };
 
-class ConfigMessageAllocatorBase : public IConfigMessageDeallocator
-{
-protected:
-    ConfigMessageAllocatorBase(TUint aMessageCount);
-    ~ConfigMessageAllocatorBase();
-private: // from IConfigMessageDeallocator
-    void Deallocate(IConfigMessage& aMessage);
-protected:
-    Fifo<IConfigMessage*> iFifo;
-    //Mutex iLock; // FIXME - required? - only things that can come from multiple threads are Allocate(), which would be handled by iFifo locking.
-};
-
-class ConfigMessageNumAllocator : public ConfigMessageAllocatorBase
-{
-public:
-    ConfigMessageNumAllocator(TUint aMessageCount);
-    IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter);
-};
-
-class ConfigMessageChoiceAllocator : public ConfigMessageAllocatorBase
-{
-public:
-    ConfigMessageChoiceAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager);
-    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList);
-};
-
-class ConfigMessageTextAllocator : public ConfigMessageAllocatorBase
-{
-public:
-    ConfigMessageTextAllocator(TUint aMessageCount);
-    IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter);
-};
-
 class ConfigMessageAllocator : public IConfigMessageAllocator
 {
 public:
-    ConfigMessageAllocator(TUint aMessageCount, ILanguageResourceManager& aLanguageResourceManager);
+    ConfigMessageAllocator(Media::IInfoAggregator& aInfoAggregator, TUint aMsgCountReadOnly, TUint aMsgCountNum, TUint aMsgCountChoice, TUint aMsgCountText, ILanguageResourceManager& aLanguageResourceManager);
 public: // from IConfigMessageAllocator
-    IConfigMessage& Allocate(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter);
-    IConfigMessage& Allocate(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList);
-    IConfigMessage& Allocate(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter);
+    ITabMessage* AllocateReadOnly(const Brx& aKey, const Brx& aValue) override;
+    ITabMessage* AllocateNum(Configuration::ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter) override;
+    ITabMessage* AllocateChoice(Configuration::ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList) override;
+    ITabMessage* AllocateText(Configuration::ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter) override;
 private:
-    ConfigMessageNumAllocator iAllocatorNum;
-    ConfigMessageChoiceAllocator iAllocatorChoice;
-    ConfigMessageTextAllocator iAllocatorText;
+    //Media::Allocator<ConfigMessageReadOnly> iAllocatorMsgReadOnly;
+    Media::Allocator<ConfigMessageNum> iAllocatorMsgNum;
+    Media::Allocator<ConfigMessageChoice> iAllocatorMsgChoice;
+    Media::Allocator<ConfigMessageText> iAllocatorMsgText;
+    ILanguageResourceManager& iLanguageResourceManager;
 };
 
 class JsonStringParser
@@ -368,7 +306,7 @@ public: // from ITab
  */
 
 // FIXME - MUST ensure all strings are JSON escaped correctly when written out (into additional json blob/string).
-
+// FIXME - are any of these classes required now?
 class JsonKvp : public INonCopyable
 {
 public:
@@ -484,10 +422,7 @@ private:
     typedef std::pair<Brn, const WritableJsonInfo*> InfoPair;
     typedef std::map<Brn, const WritableJsonInfo*, BufferCmp> InfoMap;
 protected:
-    ConfigAppBase(Configuration::IConfigManager& aConfigManager,
-                  IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
-                  const Brx& aResourcePrefix, const Brx& aResourceDir,
-                  TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
@@ -523,10 +458,11 @@ private:
 class ConfigAppBasic : public ConfigAppBase
 {
 public:
-     ConfigAppBasic(Configuration::IConfigManager& aConfigManager,
-                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
-                    const Brx& aResourcePrefix, const Brx& aResourceDir,
-                    TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppBasic(Media::IInfoAggregator& aInfoAggregator,
+                   Configuration::IConfigManager& aConfigManager,
+                   IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
+                   const Brx& aResourcePrefix, const Brx& aResourceDir,
+                   TUint aMaxTabs, TUint aSendQueueSize);
 };
 
 class ConfigAppSources : public ConfigAppBasic
@@ -534,7 +470,8 @@ class ConfigAppSources : public ConfigAppBasic
 private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
-    ConfigAppSources(Configuration::IConfigManager& aConfigManager,
+    ConfigAppSources(Media::IInfoAggregator& aInfoAggregator,
+                     Configuration::IConfigManager& aConfigManager,
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,
                      const Brx& aResourcePrefix, const Brx& aResourceDir,

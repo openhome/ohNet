@@ -15,6 +15,7 @@
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Web/ConfigUi/ConfigUi.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Av/Tests/TestMediaPlayer.h>
 
 
@@ -65,6 +66,12 @@ private:
     TUint iBytesPrinted;
 };
 
+class MockInfoAggregator : public Media::IInfoAggregator
+{
+public: // from IInfoAggregator
+    void Register(Media::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries) override;
+};
+
 class ILanguageResourceReaderDestroyer
 {
 public:
@@ -99,71 +106,6 @@ private:
     const Brx& iLanguageMap;
 };
 
-class SuiteConfigMessageNumAllocator : public TestFramework::SuiteUnitTest
-{
-public:
-    SuiteConfigMessageNumAllocator();
-private: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
-private:
-    void RecycleMessage();
-    void TestExhaustMessageQueue();
-    void TestDeleteWhileAllocated();
-private:
-    Configuration::ConfigRamStore* iStore;
-    Configuration::ConfigManager* iConfigManager;
-    Bws<1024> iAdditionalJson;
-    Bws<32> iKey;
-    Configuration::ConfigNum* iConfigNum;
-    ConfigMessageNumAllocator* iAllocator;
-};
-
-class SuiteConfigMessageChoiceAllocator : public TestFramework::SuiteUnitTest
-{
-public:
-    SuiteConfigMessageChoiceAllocator();
-private: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
-private:
-    void RecycleMessage();
-    void TestExhaustMessageQueue();
-    void TestDeleteWhileAllocated();
-private:
-    Configuration::ConfigRamStore* iStore;
-    Configuration::ConfigManager* iConfigManager;
-    Bws<1024> iAdditionalJson;
-    Bws<32> iKey;
-    std::vector<TUint> iOptions;
-    Configuration::ConfigChoice* iConfigChoice;
-    Bws<256> iLanguageMap;
-    std::vector<Bws<10>> iLanguages;
-    HelperLanguageResourceManager* iResourceManager;
-    ConfigMessageChoiceAllocator* iAllocator;
-};
-
-class SuiteConfigMessageTextAllocator : public TestFramework::SuiteUnitTest
-{
-public:
-    SuiteConfigMessageTextAllocator();
-private: // from SuiteUnitTest
-    void Setup() override;
-    void TearDown() override;
-private:
-    void RecycleMessage();
-    void TestExhaustMessageQueue();
-    void TestDeleteWhileAllocated();
-private:
-    Configuration::ConfigRamStore* iStore;
-    Configuration::ConfigManager* iConfigManager;
-    Bws<1024> iAdditionalJson;
-    Bws<32> iKey;
-    Bws<32> iValue;
-    Configuration::ConfigText* iConfigText;
-    ConfigMessageTextAllocator* iAllocator;
-};
-
 class SuiteConfigMessageNum : public TestFramework::SuiteUnitTest
 {
 private:
@@ -180,7 +122,10 @@ private:
 private:
     Configuration::ConfigRamStore* iStore;
     Configuration::ConfigManager* iConfigManager;
-    ConfigMessageNumAllocator* iMessageAllocator;
+    MockInfoAggregator* iInfoAggregator;
+    Bws<1024> iLanguageMap;
+    HelperLanguageResourceManager* iResourceManager;
+    ConfigMessageAllocator* iMessageAllocator;
 };
 
 class SuiteConfigMessageChoice : public TestFramework::SuiteUnitTest
@@ -199,9 +144,10 @@ private:
 private:
     Configuration::ConfigRamStore* iStore;
     Configuration::ConfigManager* iConfigManager;
-    ConfigMessageChoiceAllocator* iMessageAllocator;
+    MockInfoAggregator* iInfoAggregator;
     Bws<1024> iLanguageMap;
     HelperLanguageResourceManager* iResourceManager;
+    ConfigMessageAllocator* iMessageAllocator;
 };
 
 class SuiteConfigMessageText : public TestFramework::SuiteUnitTest
@@ -220,7 +166,10 @@ private:
 private:
     Configuration::ConfigRamStore* iStore;
     Configuration::ConfigManager* iConfigManager;
-    ConfigMessageTextAllocator* iMessageAllocator;
+    MockInfoAggregator* iInfoAggregator;
+    Bws<1024> iLanguageMap;
+    HelperLanguageResourceManager* iResourceManager;
+    ConfigMessageAllocator* iMessageAllocator;
 };
 
 class SuiteConfigUiMediaPlayer : public SuiteConfigUi
@@ -426,6 +375,13 @@ void HelperWriterPrinter::WriteFlush()
 }
 
 
+// MockInfoAggregator
+
+void MockInfoAggregator::Register(Media::IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
+{
+}
+
+
 // HelperLanguageResourceReader
 
 HelperLanguageResourceReader::HelperLanguageResourceReader(const Brx& aLanguageMap, ILanguageResourceReaderDestroyer& aDestroyer)
@@ -478,226 +434,6 @@ void HelperLanguageResourceManager::Destroy(ILanguageResourceReader* aResourceRe
 }
 
 
-
-// SuiteConfigMessageNumAllocator
-
-SuiteConfigMessageNumAllocator::SuiteConfigMessageNumAllocator()
-    : SuiteUnitTest("SuiteConfigMessageNumAllocator")
-{
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageNumAllocator::RecycleMessage), "RecycleMessage");
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageNumAllocator::TestExhaustMessageQueue), "TestExhaustMessageQueue");
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageNumAllocator::TestDeleteWhileAllocated), "TestDeleteWhileAllocated");
-}
-
-void SuiteConfigMessageNumAllocator::Setup()
-{
-    iStore = new ConfigRamStore();
-    iConfigManager = new ConfigManager(*iStore);
-    iAdditionalJson.Replace("\"additional\": {\"additionalKey\": 1}");
-    iKey.Replace("Config.Num.Key");
-    iConfigNum = new ConfigNum(*iConfigManager, iKey, 0, 10, 1);
-    iAllocator = new ConfigMessageNumAllocator(3);
-}
-
-void SuiteConfigMessageNumAllocator::TearDown()
-{
-    delete iAllocator;
-    delete iConfigNum;
-    iKey.SetBytes(0);
-    iAdditionalJson.SetBytes(0);
-    delete iConfigManager;
-    delete iStore;
-}
-
-void SuiteConfigMessageNumAllocator::RecycleMessage()
-{
-    WritableJsonEmpty nullInfo;
-    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
-    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
-    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
-
-    msg1.Destroy();
-    msg2.Destroy();
-    msg3.Destroy();
-
-    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigNum, 1, nullInfo);
-    msg4.Destroy();
-}
-
-void SuiteConfigMessageNumAllocator::TestExhaustMessageQueue()
-{
-    //IConfigMessage& msg1 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
-    //IConfigMessage& msg2 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
-    //IConfigMessage& msg3 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
-    //IConfigMessage& msg4 = iAllocator->Allocate(*iConfigNum, 1, iAdditionalJson);
-
-    //msg4;
-
-    //msg1.Destroy();
-    //msg2.Destroy();
-    //msg3.Destroy();
-}
-
-void SuiteConfigMessageNumAllocator::TestDeleteWhileAllocated()
-{
-    // Try delete allocator while msg is allocated.
-    // Should assert, as all msgs must be returned to allocator before it can be deleted.
-    WritableJsonEmpty nullInfo;
-    (void)iAllocator->Allocate(*iConfigNum, 1, nullInfo);
-    TEST_THROWS(delete iAllocator, AssertionFailed);
-    iAllocator = nullptr;
-}
-
-
-// SuiteConfigMessageChoiceAllocator
-
-SuiteConfigMessageChoiceAllocator::SuiteConfigMessageChoiceAllocator()
-    : SuiteUnitTest("SuiteConfigMessageChoiceAllocator")
-{
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageChoiceAllocator::RecycleMessage), "RecycleMessage");
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageChoiceAllocator::TestExhaustMessageQueue), "TestExhaustMessageQueue");
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageChoiceAllocator::TestDeleteWhileAllocated), "TestDeleteWhileAllocated");
-}
-
-void SuiteConfigMessageChoiceAllocator::Setup()
-{
-    iStore = new ConfigRamStore();
-    iConfigManager = new ConfigManager(*iStore);
-    iAdditionalJson.Replace("\"additional\": {\"additionalKey\": 1}");
-    iKey.Replace("Config.Choice.Key");
-    iOptions.push_back(0);
-    iOptions.push_back(1);
-    iConfigChoice = new ConfigChoice(*iConfigManager, iKey, iOptions, 0);
-    iLanguageMap.Replace("Config.Choice.Key\r\n0 False\r\n1 True\r\n");
-    iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iAllocator = new ConfigMessageChoiceAllocator(3, *iResourceManager);
-}
-
-void SuiteConfigMessageChoiceAllocator::TearDown()
-{
-    delete iAllocator;
-    delete iResourceManager;
-    iLanguageMap.SetBytes(0);
-    delete iConfigChoice;
-    iOptions.clear();
-    iKey.SetBytes(0);
-    iAdditionalJson.SetBytes(0);
-    delete iConfigManager;
-    delete iStore;
-}
-
-void SuiteConfigMessageChoiceAllocator::RecycleMessage()
-{
-    WritableJsonEmpty nullInfo;
-    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
-    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
-    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
-
-    msg1.Destroy();
-    msg2.Destroy();
-    msg3.Destroy();
-
-    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
-    msg4.Destroy();
-}
-
-void SuiteConfigMessageChoiceAllocator::TestExhaustMessageQueue()
-{
-    //IConfigMessage& msg1 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
-    //IConfigMessage& msg2 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
-    //IConfigMessage& msg3 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
-    //IConfigMessage& msg4 = iAllocator->Allocate(*iConfigChoice, 0, iAdditionalJson, iLanguages);
-
-    //msg4;
-
-    //msg1.Destroy();
-    //msg2.Destroy();
-    //msg3.Destroy();
-}
-
-void SuiteConfigMessageChoiceAllocator::TestDeleteWhileAllocated()
-{
-    // Try delete allocator while msg is allocated.
-    // Should assert, as all msgs must be returned to allocator before it can be deleted.
-    WritableJsonEmpty nullInfo;
-    (void)iAllocator->Allocate(*iConfigChoice, 0, nullInfo, iLanguages);
-    TEST_THROWS(delete iAllocator, AssertionFailed);
-    iAllocator = nullptr;
-}
-
-
-// SuiteConfigMessageTextAllocator
-
-SuiteConfigMessageTextAllocator::SuiteConfigMessageTextAllocator()
-    : SuiteUnitTest("SuiteConfigMessageTextAllocator")
-{
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageTextAllocator::RecycleMessage), "RecycleMessage");
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageTextAllocator::TestExhaustMessageQueue), "TestExhaustMessageQueue");
-    AddTest(MakeFunctor(*this, &SuiteConfigMessageTextAllocator::TestDeleteWhileAllocated), "TestDeleteWhileAllocated");
-}
-
-void SuiteConfigMessageTextAllocator::Setup()
-{
-    iStore = new ConfigRamStore();
-    iConfigManager = new ConfigManager(*iStore);
-    iAdditionalJson.Replace("\"additional\": {\"additionalKey\": 1}");
-    iKey.Replace("Config.Num.Key");
-    iValue.Replace("ConfigText dummy val");
-    iConfigText = new ConfigText(*iConfigManager, iKey, iValue.MaxBytes(), iValue);
-    iAllocator = new ConfigMessageTextAllocator(3);
-}
-
-void SuiteConfigMessageTextAllocator::TearDown()
-{
-    delete iAllocator;
-    delete iConfigText;
-    iValue.SetBytes(0);
-    iKey.SetBytes(0);
-    iAdditionalJson.SetBytes(0);
-    delete iConfigManager;
-    delete iStore;
-}
-
-void SuiteConfigMessageTextAllocator::RecycleMessage()
-{
-    WritableJsonEmpty nullInfo;
-    IConfigMessage& msg1 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
-    IConfigMessage& msg2 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
-    IConfigMessage& msg3 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
-
-    msg1.Destroy();
-    msg2.Destroy();
-    msg3.Destroy();
-
-    IConfigMessage& msg4 = iAllocator->Allocate(*iConfigText, iValue, nullInfo);
-    msg4.Destroy();
-}
-
-void SuiteConfigMessageTextAllocator::TestExhaustMessageQueue()
-{
-    //IConfigMessage& msg1 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
-    //IConfigMessage& msg2 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
-    //IConfigMessage& msg3 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
-    //IConfigMessage& msg4 = iAllocator->Allocate(*iConfigText, iValue, iAdditionalJson);
-
-    //msg4;
-
-    //msg1.Destroy();
-    //msg2.Destroy();
-    //msg3.Destroy();
-}
-
-void SuiteConfigMessageTextAllocator::TestDeleteWhileAllocated()
-{
-    // Try delete allocator while msg is allocated.
-    // Should assert, as all msgs must be returned to allocator before it can be deleted.
-    WritableJsonEmpty nullInfo;
-    (void)iAllocator->Allocate(*iConfigText, iValue, nullInfo);
-    TEST_THROWS(delete iAllocator, AssertionFailed);
-    iAllocator = nullptr;
-}
-
-
 // SuiteConfigMessageNum
 
 SuiteConfigMessageNum::SuiteConfigMessageNum()
@@ -712,12 +448,18 @@ void SuiteConfigMessageNum::Setup()
 {
     iStore = new Configuration::ConfigRamStore();
     iConfigManager = new ConfigManager(*iStore);
-    iMessageAllocator = new ConfigMessageNumAllocator(1);
+    iLanguageMap.Replace("");
+    iInfoAggregator = new MockInfoAggregator();
+    iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageNum::TearDown()
 {
     delete iMessageAllocator;
+    delete iResourceManager;
+    delete iInfoAggregator;
+    iLanguageMap.SetBytes(0);
     delete iConfigManager;
     delete iStore;
 }
@@ -727,10 +469,10 @@ void SuiteConfigMessageNum::TestSend()
     static const TUint value = 1;
     WritableJsonEmpty nullInfo;
     ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateNum(configNum, value, nullInfo);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.Num.Key\","
@@ -739,7 +481,7 @@ void SuiteConfigMessageNum::TestSend()
         "\"meta\":{\"min\":0,\"max\":10},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 void SuiteConfigMessageNum::TestSendEscapedChars()
@@ -748,10 +490,10 @@ void SuiteConfigMessageNum::TestSendEscapedChars()
     static const TUint value = 1;
     WritableJsonEmpty nullInfo;
     ConfigNum configNum(*iConfigManager, Brn("\nConfig.\rNum.\tKey"), 0, 10, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateNum(configNum, value, nullInfo);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"\\nConfig.\\rNum.\\tKey\","
@@ -760,7 +502,7 @@ void SuiteConfigMessageNum::TestSendEscapedChars()
         "\"meta\":{\"min\":0,\"max\":10},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 void SuiteConfigMessageNum::TestSendAdditional()
@@ -768,10 +510,10 @@ void SuiteConfigMessageNum::TestSendAdditional()
     static const TUint value = 1;
     const WritableJsonInfo info(true);
     ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configNum, value, info);
+    ITabMessage* msg = iMessageAllocator->AllocateNum(configNum, value, info);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.Num.Key\","
@@ -780,7 +522,7 @@ void SuiteConfigMessageNum::TestSendAdditional()
         "\"meta\":{\"min\":0,\"max\":10},"
         "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 
@@ -801,14 +543,16 @@ void SuiteConfigMessageChoice::Setup()
     iLanguageMap.Replace("Config.Choice.Key\r\n0 False\r\n1 True\r\n"
                          "\r\n"
                          "Config.\rChoice.\tKey\r\n0 Fal\tse\r\n1 Tr\fue\r\n");
+    iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageChoiceAllocator(1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageChoice::TearDown()
 {
     delete iMessageAllocator;
     delete iResourceManager;
+    delete iInfoAggregator;
     iLanguageMap.SetBytes(0);
     delete iConfigManager;
     delete iStore;
@@ -823,10 +567,10 @@ void SuiteConfigMessageChoice::TestSend()
     options.push_back(1);
     std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, nullInfo, languages);
+    ITabMessage* msg = iMessageAllocator->AllocateChoice(configChoice, value, nullInfo, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.Choice.Key\","
@@ -839,7 +583,7 @@ void SuiteConfigMessageChoice::TestSend()
                 "]},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 void SuiteConfigMessageChoice::TestSendEscapedChars()
@@ -853,10 +597,10 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
     std::vector<Bws<10>> languages;
 
     ConfigChoice configChoice(*iConfigManager, Brn("Config.\rChoice.\tKey"), options, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, nullInfo, languages);
+    ITabMessage* msg = iMessageAllocator->AllocateChoice(configChoice, value, nullInfo, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.\\rChoice.\\tKey\","
@@ -869,7 +613,7 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
             "]},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 void SuiteConfigMessageChoice::TestSendAdditional()
@@ -881,10 +625,10 @@ void SuiteConfigMessageChoice::TestSendAdditional()
     options.push_back(1);
     std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configChoice, value, info, languages);
+    ITabMessage* msg = iMessageAllocator->AllocateChoice(configChoice, value, info, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.Choice.Key\","
@@ -897,7 +641,7 @@ void SuiteConfigMessageChoice::TestSendAdditional()
             "]},"
         "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 
@@ -915,12 +659,18 @@ void SuiteConfigMessageText::Setup()
 {
     iStore = new Configuration::ConfigRamStore();
     iConfigManager = new ConfigManager(*iStore);
-    iMessageAllocator = new ConfigMessageTextAllocator(1);
+    iLanguageMap.Replace("");
+    iInfoAggregator = new MockInfoAggregator();
+    iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageText::TearDown()
 {
     delete iMessageAllocator;
+    delete iResourceManager;
+    delete iInfoAggregator;
+    iLanguageMap.SetBytes(0);
     delete iConfigManager;
     delete iStore;
 }
@@ -930,10 +680,10 @@ void SuiteConfigMessageText::TestSend()
     static const Brn value("abc");
     WritableJsonEmpty nullInfo;
     ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateText(configText, value, nullInfo);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.Text.Key\","
@@ -942,7 +692,7 @@ void SuiteConfigMessageText::TestSend()
         "\"meta\":{\"maxlength\":25},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 void SuiteConfigMessageText::TestSendEscapedChars()
@@ -951,10 +701,10 @@ void SuiteConfigMessageText::TestSendEscapedChars()
     static const Brn value("a\rb\bc");
     WritableJsonEmpty nullInfo;
     ConfigText configText(*iConfigManager, Brn("\nConfig.\rText.\tKey"), 25, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateText(configText, value, nullInfo);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"\\nConfig.\\rText.\\tKey\","
@@ -963,7 +713,7 @@ void SuiteConfigMessageText::TestSendEscapedChars()
         "\"meta\":{\"maxlength\":25},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 void SuiteConfigMessageText::TestSendAdditional()
@@ -971,10 +721,10 @@ void SuiteConfigMessageText::TestSendAdditional()
     static const Brn value("abc");
     const WritableJsonInfo info(true);
     ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
-    IConfigMessage& msg = iMessageAllocator->Allocate(configText, value, info);
+    ITabMessage* msg = iMessageAllocator->AllocateText(configText, value, info);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
-    msg.Send(writerBuffer);
+    msg->Send(writerBuffer);
 
     Bws<kMaxMsgBytes> expectedBuf("{"
         "\"key\":\"Config.Text.Key\","
@@ -983,7 +733,7 @@ void SuiteConfigMessageText::TestSendAdditional()
         "\"meta\":{\"maxlength\":25},"
         "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
-    msg.Destroy();
+    msg->Destroy();
 }
 
 
@@ -1178,9 +928,6 @@ void SuiteConfigUiMediaPlayer::PopulateUriList()
 void TestConfigUi(CpStack& aCpStack, DvStack& aDvStack)
 {
     Runner runner("Config UI tests\n");
-    runner.Add(new SuiteConfigMessageNumAllocator());
-    runner.Add(new SuiteConfigMessageChoiceAllocator());
-    runner.Add(new SuiteConfigMessageTextAllocator());
     runner.Add(new SuiteConfigMessageNum());
     runner.Add(new SuiteConfigMessageChoice());
     runner.Add(new SuiteConfigMessageText());
