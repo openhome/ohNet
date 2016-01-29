@@ -664,9 +664,9 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 (JNIEnv *aEnv, jclass aClass, jlong aParams, jstring aHostName)
 {
 	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
-	aClass = aClass;
-	
     const char* hostName = (*aEnv)->GetStringUTFChars(aEnv, aHostName, NULL);
+    aClass = aClass;
+
     OhNetInitParamsSetDvEnableBonjour(params, hostName);
     (*aEnv)->ReleaseStringUTFChars(aEnv, aHostName, hostName);
 }
