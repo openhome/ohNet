@@ -280,11 +280,26 @@ void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
         mapper.Write(aWriter, mappingWriter);
     }
     else {
+        // Bodge to map certain Source.*.xxxx values to the same set of choices
+        static const Brn kSourcePrefix("Source.");
+        Bws<128> key(iChoice->Key());
+        if (key.BeginsWith(kSourcePrefix)) {
+            // Assume source-specific keys have the form Source.SystemName.Suffix
+            // For selected suffices, change this to Source.Suffix
+            Parser parser(key);
+            (void)parser.Next('.');
+            (void)parser.Next('.');
+            Brn suffix = parser.Remaining();
+            if (suffix == Brn("Visible") || suffix == Brn("UnityGain")) {
+                key.Replace("Source.");
+                key.Append(suffix);
+            }
+        }
+
         // Read mapping from file.
         static const Brn kConfigOptionsFile("ConfigOptions.txt");
-        const std::vector<TUint>& choices = iChoice->Choices();
         ConfigChoiceMappingWriterJson mappingWriter;
-        ConfigChoiceMapperResourceFile mapper(iChoice->Key(), choices, aWriter, mappingWriter);
+        ConfigChoiceMapperResourceFile mapper(key, iChoice->Choices(), aWriter, mappingWriter);
         ILanguageResourceReader* resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
         resourceHandler->Process(mapper);
     }
@@ -1010,7 +1025,7 @@ ConfigAppSources::ConfigAppSources(IConfigManager& aConfigManager,
 
 
         Av::Source::GetSourceVisibleKey(*aSources[i], key);
-        AddNum(key, emptyJsonVector);   // FIXME - why not a ConfigChoice?
+        AddChoice(key, emptyJsonVector);
         //AddChoice(key, emptyJsonVector);
     }
 

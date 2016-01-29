@@ -68,7 +68,7 @@ private: // from ISource
 private:
     static void GetSourceKey(const Brx& aSystemName, const Brx& aSuffix, Bwx& aBuf);
     void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
-    void VisibleChanged(Configuration::KeyValuePair<TInt>& aKvp);
+    void VisibleChanged(Configuration::KeyValuePair<TUint>& aKvp);
 protected:
     TBool iActive;
 private:
@@ -80,7 +80,7 @@ private:
 
     IProduct* iProduct;
     Configuration::ConfigText* iConfigName;
-    Configuration::ConfigNum* iConfigVisible;
+    Configuration::ConfigChoice* iConfigVisible;
     TUint iConfigNameSubscriptionId;
     TUint iConfigVisibleSubscriptionId;
     TBool iConfigNameCreated;
