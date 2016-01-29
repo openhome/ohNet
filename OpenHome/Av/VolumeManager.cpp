@@ -110,9 +110,10 @@ void VolumeUser::StartupVolumeEnabledChanged(ConfigChoice::KvpChoice& aKvp)
 
 // VolumeLimiter
 
-VolumeLimiter::VolumeLimiter(IVolume& aVolume, IConfigManager& aConfigReader)
+VolumeLimiter::VolumeLimiter(IVolume& aVolume, TUint aMilliDbPerStep, IConfigManager& aConfigReader)
     : iLock("VLMT")
     , iVolume(aVolume)
+    , iMilliDbPerStep(aMilliDbPerStep)
     , iConfigLimit(aConfigReader.GetNum(VolumeConfig::kKeyLimit))
     , iUpstreamVolume(0)
 {
@@ -137,7 +138,7 @@ void VolumeLimiter::SetVolume(TUint aValue)
 void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
 {
     AutoMutex _(iLock);
-    iLimit = aKvp.Value();
+    iLimit = aKvp.Value() * iMilliDbPerStep;
     SetVolume();
 }
 
@@ -150,8 +151,9 @@ void VolumeLimiter::SetVolume()
 
 // VolumeReporter
 
-VolumeReporter::VolumeReporter(IVolume& aVolume)
+VolumeReporter::VolumeReporter(IVolume& aVolume, TUint aMilliDbPerStep)
     : iVolume(aVolume)
+    , iMilliDbPerStep(aMilliDbPerStep)
     , iUpstreamVolume(0)
 {
 }
@@ -165,8 +167,9 @@ void VolumeReporter::AddVolumeObserver(IVolumeObserver& aObserver)
 void VolumeReporter::SetVolume(TUint aVolume)
 {
     iUpstreamVolume = aVolume;
+    const TUint volume = iUpstreamVolume / iMilliDbPerStep;
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->VolumeChanged(aVolume);
+        (*it)->VolumeChanged(volume);
     }
     iVolume.SetVolume(aVolume);
 }
@@ -557,12 +560,15 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iMuteUser = new MuteUser(*iMuteReporter, aVolumeConfig.StoreUserMute());
     }
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*aVolumeConsumer.Volume(), iVolumeConfig.VolumeUnity());
-        iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, iVolumeConfig.VolumeUnity());
+        const TUint milliDbPerStep = iVolumeConfig.VolumeMilliDbPerStep();
+        const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
+        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*aVolumeConsumer.Volume(), volumeUnity);
+        iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, volumeUnity);
         iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
-        iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset);
-        iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, aConfigReader);
-        iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aVolumeConfig.StoreUserVolume(), iVolumeConfig.VolumeMax());
+        iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
+        iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
+        iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aVolumeConfig.StoreUserVolume(),
+                                     iVolumeConfig.VolumeMax() * milliDbPerStep);
         iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
         aProduct.AddAttribute("Volume");
     }
@@ -671,7 +677,8 @@ void VolumeManager::SetVolume(TUint aValue)
     if (iVolumeUser == nullptr) {
         THROW(VolumeNotSupported);
     }
-    iVolumeUser->SetVolume(aValue);
+    const TUint volume = aValue * iVolumeConfig.VolumeMilliDbPerStep();
+    iVolumeUser->SetVolume(volume);
 }
 
 void VolumeManager::SetBalance(TInt aBalance)

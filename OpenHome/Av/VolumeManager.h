@@ -56,7 +56,7 @@ namespace Av {
 class IVolume
 {
 public:
-    virtual void SetVolume(TUint aVolume) = 0;
+    virtual void SetVolume(TUint aVolume) = 0; // volume is in binary-milli-db (1/1024 db)
     virtual ~IVolume() {}
 };
 
@@ -152,7 +152,7 @@ private:
 class VolumeLimiter : public IVolume, private INonCopyable
 {
 public:
-    VolumeLimiter(IVolume& aVolume, Configuration::IConfigManager& aConfigReader);
+    VolumeLimiter(IVolume& aVolume, TUint aMilliDbPerStep, Configuration::IConfigManager& aConfigReader);
     ~VolumeLimiter();
 public: // from IVolume
     void SetVolume(TUint aValue) override;
@@ -162,6 +162,7 @@ private:
 private:
     Mutex iLock;
     IVolume& iVolume;
+    const TUint iMilliDbPerStep;
     Configuration::ConfigNum& iConfigLimit;
     TUint iSubscriberIdLimit;
     TUint iUpstreamVolume;
@@ -185,13 +186,14 @@ public:
 class VolumeReporter : public IVolumeReporter, public IVolume, private INonCopyable
 {
 public:
-    VolumeReporter(IVolume& aVolume);
+    VolumeReporter(IVolume& aVolume, TUint aMilliDbPerStep);
 public: // from IVolumeReporter
     void AddVolumeObserver(IVolumeObserver& aObserver) override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
 private:
     IVolume& iVolume;
+    const TUint iMilliDbPerStep;
     std::vector<IVolumeObserver*> iObservers;
     TUint iUpstreamVolume;
 };
@@ -381,14 +383,19 @@ private:
     TBool iVolumeControlEnabled;
 };
 
-class IVolumeManager : public IVolumeReporter, public IMuteReporter, public IVolume, public IVolumeProfile, public IVolumeSourceOffset, public Media::IMute
+class IVolumeManager : public IVolumeReporter
+                     , public IMuteReporter
+                     , public IVolume
+                     , public IVolumeProfile
+                     , public IVolumeSourceOffset
+                     , public IVolumeSourceUnityGain
+                     , public Media::IMute
 {
 public:
     virtual ~IVolumeManager() {}
 };
 
 class VolumeManager : public IVolumeManager
-                    , public IVolumeSourceUnityGain
                     , private IBalance
                     , private IFade
                     , private INonCopyable
