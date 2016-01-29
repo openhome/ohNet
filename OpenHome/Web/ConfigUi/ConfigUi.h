@@ -297,59 +297,6 @@ public: // from ITab
     virtual void Destroy() = 0;
 };
 
-/**
- * Hiearchy of classes that can write objects out as JSON key-value pairs.
- * Store references rather than taking copies of data, so references passed
- * must be valid for lifetime of object.
- *
- * JSON strings (for keys/values) must not contain " or \
- */
-
-// FIXME - MUST ensure all strings are JSON escaped correctly when written out (into additional json blob/string).
-// FIXME - are any of these classes required now?
-class JsonKvp : public INonCopyable
-{
-public:
-    void Serialise(IWriter& aWriter) const;
-protected:
-    JsonKvp(const Brx& aKey);
-    virtual void SerialiseValue(IWriter& aWriter) const = 0;
-private:
-    void SerialiseKey(IWriter& aWriter) const;
-private:
-    const Brn iKey;
-};
-
-class JsonKvpInt : public JsonKvp
-{
-public:
-    JsonKvpInt(const Brx& aKey, TInt aValue);
-private: // from JsonKvp
-    void SerialiseValue(IWriter& aWriter) const;
-private:
-    TInt iValue;
-};
-
-class JsonKvpUint : public JsonKvp
-{
-public:
-    JsonKvpUint(const Brx& aKey, TUint aValue);
-private: // from JsonKvp
-    void SerialiseValue(IWriter& aWriter) const;
-private:
-    TUint iValue;
-};
-
-class JsonKvpString : public JsonKvp
-{
-public:
-    JsonKvpString(const Brx& aKey, const Brx& aValue);
-private: // from JsonKvp
-    void SerialiseValue(IWriter& aWriter) const;
-private:
-    const Brx& iValue;
-};
-
 class IJsonInfoProvider
 {
 public:
@@ -412,8 +359,6 @@ public:
 
 class ConfigAppBase : public IConfigApp, public IJsonInfoProvider, public ILanguageResourceManager
 {
-public:
-     typedef std::vector<JsonKvp*> JsonKvpVector;
 private:
     static const TUint kMaxResourcePrefixBytes = 25;
     static const Brn kLangRoot;

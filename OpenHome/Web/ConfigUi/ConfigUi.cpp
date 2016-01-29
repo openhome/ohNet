@@ -475,72 +475,6 @@ void ConfigTabReceiver::Receive(const Brx& aMessage)
 }
 
 
-// JsonKvp
-
-void JsonKvp::Serialise(IWriter& aWriter) const
-{
-    SerialiseKey(aWriter);
-    aWriter.Write(':');
-    SerialiseValue(aWriter);
-}
-
-JsonKvp::JsonKvp(const Brx& aKey)
-    : iKey(aKey)
-{
-}
-
-void JsonKvp::SerialiseKey(IWriter& aWriter) const
-{
-    aWriter.Write('\"');
-    aWriter.Write(iKey);
-    aWriter.Write('\"');
-}
-
-
-// JsonKvpInt
-
-JsonKvpInt::JsonKvpInt(const Brx& aKey, TInt aValue)
-    : JsonKvp(aKey)
-    , iValue(aValue)
-{
-}
-
-void JsonKvpInt::SerialiseValue(IWriter& aWriter) const
-{
-    Ascii::StreamWriteInt(aWriter, iValue);
-}
-
-
-// JsonKvpUint
-
-JsonKvpUint::JsonKvpUint(const Brx& aKey, TUint aValue)
-    : JsonKvp(aKey)
-    , iValue(aValue)
-{
-}
-
-void JsonKvpUint::SerialiseValue(IWriter& aWriter) const
-{
-     Ascii::StreamWriteUint(aWriter, iValue);
-}
-
-
-// JsonKvpString
-
-JsonKvpString::JsonKvpString(const Brx& aKey, const Brx& aValue)
-    : JsonKvp(aKey)
-    , iValue(aValue)
-{
-}
-
-void JsonKvpString::SerialiseValue(IWriter& aWriter) const
-{
-    aWriter.Write('\"');
-    aWriter.Write(iValue);
-    aWriter.Write('\"');
-}
-
-
 // ConfigTab
 
 const TUint ConfigTab::kInvalidSubscription = OpenHome::Configuration::IConfigManager::kSubscriptionIdInvalid;
@@ -915,8 +849,6 @@ ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager&
 ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
     : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
 {
-    JsonKvpVector emptyJsonVector;
-
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {
 
