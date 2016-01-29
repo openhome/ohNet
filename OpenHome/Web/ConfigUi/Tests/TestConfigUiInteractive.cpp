@@ -11,6 +11,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
+#include <OpenHome/Av/RebootHandler.h>
 
 #include <stdlib.h>
 
@@ -22,6 +23,12 @@ class TestPresentationUrlHandler
 {
 public:
     void PresentationUrlChanged(const Brx& aUrl);
+};
+
+class MockRebootHandler : public Av::IRebootHandler
+{
+public: // from IRebootHandler
+    void Reboot(const Brx& aReason) override;
 };
 
 } // namespace Test
@@ -43,6 +50,14 @@ void TestPresentationUrlHandler::PresentationUrlChanged(const Brx& aUrl)
     Log::Print("Presentation URL changed: ");
     Log::Print(aUrl);
     Log::Print("\n");
+}
+
+
+// MockRebootHandler
+
+void MockRebootHandler::Reboot(const Brx& aReason)
+{
+    Log::Print("\n\n\nRebootLogger::Reboot. Reason:\n%.*s\n\n\n", PBUF(aReason));
 }
 
 
@@ -72,6 +87,7 @@ int CDECL main(int aArgc, char* aArgv[])
     DvStack* dvStack = lib->StartDv();
     Environment& env = dvStack->Env();
     Media::AllocatorInfoLogger infoAggregator;
+    MockRebootHandler rebootHandler;
 
     // Set up the server.
     Debug::SetLevel(Debug::kHttp);
@@ -95,7 +111,7 @@ int CDECL main(int aArgc, char* aArgv[])
      // once ALL ConfigVals have been registered).
     FileResourceHandlerFactory resourceHandlerFactory;
     Brn resourcePrefix("SoftPlayerBasic");
-    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize);
+    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize, rebootHandler);
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership

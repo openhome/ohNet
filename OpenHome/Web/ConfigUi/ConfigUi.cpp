@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Av/RebootHandler.h>
 #include <OpenHome/Private/Debug.h>
 
 #include <limits>
@@ -460,25 +461,59 @@ ConfigTabReceiver::ConfigTabReceiver()
 void ConfigTabReceiver::Receive(const Brx& aMessage)
 {
     // FIXME - what if aMessage is malformed? - call some form of error handler?
+    // FIXME - this should maybe also take an IWriter to allow writing out of a response (which could be none if successful, and an error description if unsuccessful/malformed request).
 
     // Parse JSON response.
-    Bws<128> key;
-    Bws<1024> value;
+    Bws<128> keyBuf;
+    Bws<1024> valueBuf;
     Brn remaining(aMessage);
 
-    LOG(kHttp, "ConfigTabReceiver::Receive\n%.*s\n", PBUF(aMessage));
+    LOG(kHttp, "ConfigTabReceiver::Receive:\n%.*s\n", PBUF(aMessage));
 
     try {
         Parser p(aMessage);
-        (void)p.Next(':');  // {"key:
-        key.Replace(JsonStringParser::ParseString(Brn(remaining.Ptr()+p.Index(), remaining.Bytes()-p.Index()+1), remaining));
-        Json::Unescape(key);
+        (void)p.Next('{');
+        Brn request = JsonStringParser::ParseString(p.Remaining(), remaining);
+
+        if (request != Brn("request")) {
+            LOG(kHttp, "ConfigTabReceiver::Receive Unknown response.\n");
+            return;
+        }
 
         p.Set(remaining);
-        (void)p.Next(':');  // ", value":
-        value.Replace(JsonStringParser::ParseString(Brn(remaining.Ptr()+p.Index(), remaining.Bytes()-p.Index()+1), remaining));
-        Json::Unescape(value);
-        Receive(key, value);
+        (void)p.Next('{');
+        (void)JsonStringParser::ParseString(p.Remaining(), remaining);  // "type"
+        p.Set(remaining);
+        (void)p.Next(':');
+        Brn type = JsonStringParser::ParseString(p.Remaining(), remaining);
+
+        if (type == Brn("update")) {
+            p.Set(remaining);
+            (void)p.Next(',');
+            (void)JsonStringParser::ParseString(p.Remaining(), remaining);  // "key"
+
+            p.Set(remaining);
+            (void)p.Next(':');
+            Brn key = JsonStringParser::ParseString(p.Remaining(), remaining);
+
+            p.Set(remaining);
+            (void)p.Next(',');
+            (void)JsonStringParser::ParseString(p.Remaining(), remaining);  // "value"
+
+            p.Set(remaining);
+            (void)p.Next(':');
+            Brn value = JsonStringParser::ParseString(p.Remaining(), remaining);
+
+            keyBuf.Replace(key);
+            Json::Unescape(keyBuf);
+            valueBuf.Replace(value);
+            Json::Unescape(valueBuf);
+            Receive(keyBuf, valueBuf);
+        }
+        else if (type == Brn("reboot")) {
+            // FIXME - passing on reboot call here means that the DS may reboot before this call returns, so the WebAppFramework may not get chance to send a response to the UI (but does that matter, as the device is going to abruptly disappear at some point in the near future?).
+            Reboot();
+        }
     }
     catch (JsonStringError&) {
         LOG(kHttp, "ConfigTabReceiver::Receive caught JsonStringError: %.*s\n", PBUF(aMessage));
@@ -490,11 +525,12 @@ void ConfigTabReceiver::Receive(const Brx& aMessage)
 
 const TUint ConfigTab::kInvalidSubscription = OpenHome::Configuration::IConfigManager::kSubscriptionIdInvalid;
 
-ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, IConfigManager& aConfigManager, IJsonInfoProvider& aInfoProvider)
+ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, IConfigManager& aConfigManager, IJsonInfoProvider& aInfoProvider, IRebootHandler& aRebootHandler)
     : iId(aId)
     , iMsgAllocator(aMessageAllocator)
     , iConfigManager(aConfigManager)
     , iInfoProvider(aInfoProvider)
+    , iRebootHandler(aRebootHandler)
     , iHandler(nullptr)
     , iStarted(false)
 {
@@ -598,6 +634,11 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
     }
 }
 
+void ConfigTab::Reboot()
+{
+    iRebootHandler.Reboot(Brn("ConfigTab::Reboot"));
+}
+
 void ConfigTab::Destroy()
 {
     LOG(kHttp, "ConfigTab::Destroy iId: %u\n", iId);
@@ -660,7 +701,7 @@ void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
 const Brn ConfigAppBase::kLangRoot("lang");
 const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
-ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
+ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : iConfigManager(aConfigManager)
     , iLangResourceDir(aResourceDir.Bytes()+1+kLangRoot.Bytes()+1)  // "<aResourceDir>/<kLangRoot>/"
     , iResourcePrefix(aResourcePrefix)
@@ -681,7 +722,7 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
 
     for (TUint i=0; i<aMaxTabs; i++) {
         iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
-        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, *this));
+        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, *this, aRebootHandler));
     }
 
     for (TUint i=0; i<aMaxTabs; i++) {
@@ -847,8 +888,8 @@ void ConfigAppBase::AddInfo(const Brx& aKey, TBool aRebootRequired)
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     AddText(Brn("Product.Name"));
     AddText(Brn("Product.Room"));
@@ -857,8 +898,8 @@ ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager&
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {

@@ -13,6 +13,7 @@ EXCEPTION(JsonStringError);
 
 namespace OpenHome {
 namespace Av {
+    class IRebootHandler;
     class Product;
 }
 namespace Media {
@@ -292,6 +293,7 @@ class ConfigTabReceiver : public ITab
 protected:
     ConfigTabReceiver();
     virtual void Receive(const Brx& aKey, const Brx& aValue) = 0;
+    virtual void Reboot() = 0;
 public: // from ITab
     void Receive(const Brx& aMessage);
     virtual void Destroy() = 0;
@@ -311,7 +313,7 @@ private:
     typedef std::pair<Brn,TUint> SubscriptionPair;
     typedef std::vector<SubscriptionPair> SubscriptionVector;
 public:
-    ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, Configuration::IConfigManager& aConfigManager, IJsonInfoProvider& aInfoProvider);
+    ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, Configuration::IConfigManager& aConfigManager, IJsonInfoProvider& aInfoProvider, Av::IRebootHandler& aRebootHandler);
     ~ConfigTab();
     void AddKeyNum(const Brx& aKey);
     void AddKeyChoice(const Brx& aKey);
@@ -321,6 +323,7 @@ public:
     void SetHandler(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList);
 private: // from ConfigTabReceiver
     void Receive(const Brx& aKey, const Brx& aValue);
+    void Reboot();
     void Destroy();
 private:
     void ConfigNumCallback(Configuration::ConfigNum::KvpNum& aKvp);
@@ -331,6 +334,7 @@ private:
     IConfigMessageAllocator& iMsgAllocator;
     Configuration::IConfigManager& iConfigManager;
     IJsonInfoProvider& iInfoProvider;
+    Av::IRebootHandler& iRebootHandler;
     ITabHandler* iHandler;
     SubscriptionVector iConfigNums;
     SubscriptionVector iConfigChoices;
@@ -367,7 +371,7 @@ private:
     typedef std::pair<Brn, const WritableJsonInfo*> InfoPair;
     typedef std::map<Brn, const WritableJsonInfo*, BufferCmp> InfoMap;
 protected:
-    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize);
+    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
@@ -407,7 +411,7 @@ public:
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
-                   TUint aMaxTabs, TUint aSendQueueSize);
+                   TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 class ConfigAppSources : public ConfigAppBasic
@@ -420,7 +424,7 @@ public:
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,
                      const Brx& aResourcePrefix, const Brx& aResourceDir,
-                     TUint aMaxTabs, TUint aSendQueueSize);
+                     TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 } // namespace Web

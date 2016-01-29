@@ -24,6 +24,7 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Web/WebAppFramework.h>
+#include <OpenHome/Av/RebootHandler.h>
 
 namespace OpenHome {
     class PowerManager;
@@ -71,7 +72,7 @@ private: // from IVolumeProfile
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
 };
-    
+
 class VolumeSinkLogger : public IVolume, public IBalance, public IFade
 {
 private: // from IVolume
@@ -82,6 +83,11 @@ private: // from IFade
     void SetFade(TInt aFade) override;
 };
 
+class RebootLogger : public IRebootHandler
+{
+public: // from IRebootHandler
+    void Reboot(const Brx& aReason) override;
+};
 
 class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, public Web::IWebAppFramework*/
 {
@@ -153,6 +159,7 @@ private:
     Av::FriendlyNameAttributeUpdater* iFnUpdaterUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
+    RebootLogger iRebootHandler;
 };
 
 class TestMediaPlayerOptions

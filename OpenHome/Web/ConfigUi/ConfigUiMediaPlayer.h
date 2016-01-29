@@ -7,6 +7,9 @@
 #include <vector>
 
 namespace OpenHome {
+namespace Av {
+        class IRebootHandler;
+    }
 namespace Configuration {
     class IConfigManager;
 }
@@ -23,7 +26,7 @@ public:
                          IConfigAppResourceHandlerFactory& aResourceFactory,
                          const std::vector<const Brx*>& aSources,
                          const Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir,
-                         TUint aMaxTabs, TUint aSendQueueSize);
+                         TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 private:
     void AddNumConditional(const Brx& aKey);
     void AddChoiceConditional(const Brx& aKey);

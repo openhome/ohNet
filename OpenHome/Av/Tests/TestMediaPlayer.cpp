@@ -100,6 +100,14 @@ void VolumeSinkLogger::SetFade(TInt aFade)
 }
 
 
+// RebootLogger
+
+void RebootLogger::Reboot(const Brx& aReason)
+{
+    Log::Print("\n\n\nRebootLogger::Reboot. Reason:\n%.*s\n\n\n", PBUF(aReason));
+}
+
+
 // TestMediaPlayer
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
@@ -375,7 +383,7 @@ void TestMediaPlayer::InitialiseSubsystems()
 void TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
 {
     FileResourceHandlerFactory resourceHandlerFactory;
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize);
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
 }
 
 void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)

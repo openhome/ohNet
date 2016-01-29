@@ -5,6 +5,7 @@
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Av/RebootHandler.h>
 
 #include <vector>
 
@@ -18,8 +19,8 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
                                            IConfigAppResourceHandlerFactory& aResourceFactory,
                                            const std::vector<const Brx*>& aSources,
                                            const Brx& aResourcePrefix, const Brx& aResourceDir,
-                                           TUint aMaxTabs, TUint aSendQueueSize)
-    : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize)
+                                           TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+                                           : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     AddNumConditional(Brn("Sender.Channel"));
     AddNumConditional(Brn("Sender.Preset"));

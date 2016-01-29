@@ -30,8 +30,20 @@ Config = function() {
          */
         SendUpdateToServer: function(aKey, aValue, aCallbackResponse, aCallbackError)
         {
-            var kvp = "{\"key\":" + JSON.stringify(aKey) +",\"value\":" + JSON.stringify(aValue) +"}";
-            WebUi.SendUpdateToServer(kvp, aCallbackResponse, aCallbackError);
+            var request = {};
+            request.request = {}
+            request.request.type = "update";
+            request.request.key = aKey;
+            request.request.value = aValue;
+            WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, aCallbackError);
+        },
+
+        Reboot: function(aCallbackResponse, aCallbackError)
+        {
+            var request = {};
+            request.request = {};
+            request.request.type = "reboot";
+            WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, aCallbackError);
         }
     };
 

@@ -286,3 +286,18 @@ function SendUpdate(aKey, aValue)
 
     Config.SendUpdateToServer(aKey, aValue, DummyUpdateCallbackResponse, DummyUpdateCallbackError);
 }
+
+function Reboot()
+{
+    var DummyUpdateCallbackResponse = function(aStringSent, aStringReceived)
+    {
+        //alert("DummyUpdateCallbackResponse sent: "+aStringSent+", rcvd: "+aStringReceived);
+    }
+
+    var DummyUpdateCallbackError = function(aStringSent)
+    {
+        //alert("DummyUpdateCallbackError: "+aStringSent);
+    }
+
+    Config.Reboot(DummyUpdateCallbackResponse, DummyUpdateCallbackError);
+}
