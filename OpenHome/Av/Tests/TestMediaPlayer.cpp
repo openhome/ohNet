@@ -105,7 +105,8 @@ void VolumeSinkLogger::SetFade(TInt aFade)
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
-                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent)
+                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
+                                 TUint aMaxUiTabs, TUint aUiSendQueueSize)
     : iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
     , iTuneInPartnerId(aTuneInPartnerId)
@@ -116,6 +117,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iRxTimestamper(nullptr)
     , iTxTsMapper(nullptr)
     , iRxTsMapper(nullptr)
+    , iMaxUiTabs(aMaxUiTabs)
+    , iUiSendQueueSize(aUiSendQueueSize)
 {
     // create a shell
     iShell = new Shell(aDvStack.Env(), 0);
@@ -185,7 +188,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // Set up config app.
     static const TUint addr = 0;    // Bind to all addresses.
     static const TUint port = 0;    // Bind to whatever free port the OS allocates to the framework server.
-    iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, kMaxUiTabs, kUiSendQueueSize);
+    iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, aMaxUiTabs, aUiSendQueueSize);
 }
 
 TestMediaPlayer::~TestMediaPlayer()
@@ -424,7 +427,7 @@ void TestMediaPlayer::AddConfigApp()
         sourcesBufs.push_back(new Brh(systemName));
     }
     // FIXME - take resource dir as param or copy res dir to build dir
-    CreateConfigApp(sourcesBufs, Brn("res/"), kMaxUiTabs, kUiSendQueueSize);    // Initialises iConfigApp.
+    CreateConfigApp(sourcesBufs, Brn("res/"), iMaxUiTabs, iUiSendQueueSize);    // Initialises iConfigApp.
     iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
     //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
     for (TUint i=0;i<sourcesBufs.size(); i++) {
