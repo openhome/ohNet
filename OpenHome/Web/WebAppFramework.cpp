@@ -688,7 +688,7 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
     Parser p(aResource);
     p.Next('/');    // skip leading '/'
     Brn prefix = p.Next('/');
-    Brn tail = p.Next('/');
+    Brn tail = p.Next('?'); // Read up to query string (if any).
 
     WebAppMap::const_iterator it = iWebApps.find(&prefix);
     if (it == iWebApps.cend()) {
