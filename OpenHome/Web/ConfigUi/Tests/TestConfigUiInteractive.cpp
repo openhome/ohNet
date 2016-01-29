@@ -10,6 +10,7 @@
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 #include <stdlib.h>
 
@@ -70,6 +71,7 @@ int CDECL main(int aArgc, char* aArgv[])
     Library* lib = new Library(initParams);
     DvStack* dvStack = lib->StartDv();
     Environment& env = dvStack->Env();
+    Media::AllocatorInfoLogger infoAggregator;
 
     // Set up the server.
     Debug::SetLevel(Debug::kHttp);
@@ -93,9 +95,7 @@ int CDECL main(int aArgc, char* aArgv[])
      // once ALL ConfigVals have been registered).
     FileResourceHandlerFactory resourceHandlerFactory;
     Brn resourcePrefix("SoftPlayerBasic");
-    ConfigAppBasic* app = new ConfigAppBasic(*confMgr, resourceHandlerFactory,
-                                             resourcePrefix, optionDir.Value(),
-                                             maxSessions, sendQueueSize);
+    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize);
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership
