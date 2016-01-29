@@ -14,6 +14,8 @@ using namespace OpenHome::Configuration;
 
 // SourceBase
 
+const TUint SourceBase::kConfigValSourceInvisible = 0;
+const TUint SourceBase::kConfigValSourceVisible   = 1;
 const Brn SourceBase::kKeySourceNamePrefix("Source.");
 const Brn SourceBase::kKeySourceNameSuffix(".Name");
 const Brn SourceBase::kKeySourceVisibleSuffix(".Visible");
