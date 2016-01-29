@@ -131,6 +131,7 @@ protected:
 public:
     virtual ~ConfigVal();
     const Brx& Key() const;
+    virtual T Default() const = 0;
 public: // from IObservable
     virtual TUint Subscribe(FunctorObserver aFunctor) override = 0;
     void Unsubscribe(TUint aId) override;
@@ -245,8 +246,8 @@ public:
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
+    TInt Default() const override;
     TUint Subscribe(FunctorConfigNum aFunctor) override;
-public: // from ConfigVal
     void Serialise(IWriter& aWriter) const override;
     void Deserialise(const Brx& aString) override;   // THROWS ConfigNotANumber, ConfigValueOutOfRange
 private: // from ConfigVal
@@ -257,6 +258,7 @@ private:
     static const TUint kMaxNumLength = 11;
     TInt iMin;
     TInt iMax;
+    const TInt iDefault;
     TInt iVal;
     mutable Mutex iMutex;
 };
@@ -323,8 +325,8 @@ private:
     void Init(TUint aDefault);
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
+    TUint Default() const override;
     TUint Subscribe(FunctorConfigChoice aFunctor) override;
-public: // from ConfigVal
     void Serialise(IWriter& aWriter) const override;
     void Deserialise(const Brx& aString) override;   // THROWS ConfigNotANumber, ConfigInvalidSelection
 private: // from ConfigVal
@@ -334,6 +336,7 @@ private:
 private:
     static const TUint kMaxChoiceLength = 10;
     std::vector<TUint> iChoices;
+    const TUint iDefault;
     TUint iSelected;
     IConfigChoiceMapper* iMapper;
     mutable Mutex iMutex;
@@ -382,8 +385,8 @@ public:
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
+    const Brx& Default() const override;
     TUint Subscribe(FunctorConfigText aFunctor) override;
-public: // from ConfigVal
     void Serialise(IWriter& aWriter) const override;
     void Deserialise(const Brx& aString) override;   // THROWS ConfigValueTooLong
 private: // from ConfigVal
@@ -391,6 +394,7 @@ private: // from ConfigVal
 private:
     inline TBool operator==(const ConfigText& aText) const;
 private:
+    const Bwh iDefault;
     Bwh iText;
     mutable Mutex iMutex;
 };

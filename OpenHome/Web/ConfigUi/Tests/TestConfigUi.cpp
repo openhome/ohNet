@@ -478,7 +478,7 @@ void SuiteConfigMessageNum::TestSend()
         "\"key\":\"Config.Num.Key\","
         "\"value\":1,"
         "\"type\":\"numeric\","
-        "\"meta\":{\"min\":0,\"max\":10},"
+        "\"meta\":{\"default\":1,\"min\":0,\"max\":10},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
     msg->Destroy();
@@ -499,7 +499,7 @@ void SuiteConfigMessageNum::TestSendEscapedChars()
         "\"key\":\"\\nConfig.\\rNum.\\tKey\","
         "\"value\":1,"
         "\"type\":\"numeric\","
-        "\"meta\":{\"min\":0,\"max\":10},"
+        "\"meta\":{\"default\":1,\"min\":0,\"max\":10},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
     msg->Destroy();
@@ -519,7 +519,7 @@ void SuiteConfigMessageNum::TestSendAdditional()
         "\"key\":\"Config.Num.Key\","
         "\"value\":1,"
         "\"type\":\"numeric\","
-        "\"meta\":{\"min\":0,\"max\":10},"
+        "\"meta\":{\"default\":1,\"min\":0,\"max\":10},"
         "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
     msg->Destroy();
@@ -577,6 +577,7 @@ void SuiteConfigMessageChoice::TestSend()
         "\"value\":0,"
         "\"type\":\"choice\","
         "\"meta\":{"
+            "\"default\":0,"
             "\"options\":["
                 "{\"id\": 0,\"value\": \"False\"},"
                 "{\"id\": 1,\"value\": \"True\"}"
@@ -607,6 +608,7 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
         "\"value\":0,"
         "\"type\":\"choice\","
         "\"meta\":{"
+            "\"default\":0,"
             "\"options\":["
                 "{\"id\": 0,\"value\": \"Fal\\tse\"},"
                 "{\"id\": 1,\"value\": \"Tr\\fue\"}"
@@ -635,6 +637,7 @@ void SuiteConfigMessageChoice::TestSendAdditional()
         "\"value\":0,"
         "\"type\":\"choice\","
         "\"meta\":{"
+            "\"default\":0,"
             "\"options\":["
                 "{\"id\": 0,\"value\": \"False\"},"
                 "{\"id\": 1,\"value\": \"True\"}"
@@ -689,7 +692,7 @@ void SuiteConfigMessageText::TestSend()
         "\"key\":\"Config.Text.Key\","
         "\"value\":\"abc\","
         "\"type\":\"text\","
-        "\"meta\":{\"maxlength\":25},"
+        "\"meta\":{\"default\":\"abc\",\"maxlength\":25},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
     msg->Destroy();
@@ -710,7 +713,7 @@ void SuiteConfigMessageText::TestSendEscapedChars()
         "\"key\":\"\\nConfig.\\rText.\\tKey\","
         "\"value\":\"a\\rb\\bc\","
         "\"type\":\"text\","
-        "\"meta\":{\"maxlength\":25},"
+        "\"meta\":{\"default\":\"a\\rb\\bc\",\"maxlength\":25},"
         "\"info\":{}}");
     TEST(buf == expectedBuf);
     msg->Destroy();
@@ -730,7 +733,7 @@ void SuiteConfigMessageText::TestSendAdditional()
         "\"key\":\"Config.Text.Key\","
         "\"value\":\"abc\","
         "\"type\":\"text\","
-        "\"meta\":{\"maxlength\":25},"
+        "\"meta\":{\"default\":\"abc\",\"maxlength\":25},"
         "\"info\":{\"reboot-required\":true}}");
     TEST(buf == expectedBuf);
     msg->Destroy();

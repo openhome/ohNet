@@ -155,6 +155,9 @@ void ConfigMessageNum::WriteType(IWriter& aWriter)
 
 void ConfigMessageNum::WriteMeta(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\"default\":"));
+    Ascii::StreamWriteInt(aWriter, iNum->Default());
+    aWriter.Write(Brn(","));
     aWriter.Write(Brn("\"min\":"));
     Ascii::StreamWriteInt(aWriter, iNum->Min());
     aWriter.Write(Brn(","));
@@ -288,6 +291,9 @@ void ConfigMessageChoice::WriteType(IWriter& aWriter)
 
 void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\"default\":"));
+    Ascii::StreamWriteUint(aWriter, iChoice->Default());
+    aWriter.Write(Brn(","));
     if (iChoice->HasInternalMapping()) {
         IConfigChoiceMapper& mapper = iChoice->Mapper();
         ConfigChoiceMappingWriterJson mappingWriter;
@@ -351,6 +357,11 @@ void ConfigMessageText::WriteType(IWriter& aWriter)
 
 void ConfigMessageText::WriteMeta(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\"default\":"));
+    aWriter.Write(Brn("\""));
+    Json::Escape(aWriter, iText->Default());
+    aWriter.Write(Brn("\""));
+    aWriter.Write(Brn(","));
     aWriter.Write(Brn("\"maxlength\":"));
     Ascii::StreamWriteUint(aWriter, iText->MaxLength());
 }

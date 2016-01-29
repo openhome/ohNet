@@ -17,6 +17,7 @@ ConfigNum::ConfigNum(IConfigInitialiser& aManager, const Brx& aKey, TInt aMin, T
     : ConfigVal(aManager, aKey)
     , iMin(aMin)
     , iMax(aMax)
+    , iDefault(aDefault)
     , iMutex("CVNM")
 {
     ASSERT(iMax >= iMin);
@@ -67,6 +68,11 @@ TBool ConfigNum::IsValid(TInt aVal) const
     return true;
 }
 
+TInt ConfigNum::Default() const
+{
+    return iDefault;
+}
+
 TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
 {
     AutoMutex a(iMutex);
@@ -110,6 +116,7 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
+    , iDefault(aDefault)
     , iMapper(nullptr)
     , iMutex("CVCM")
 {
@@ -118,6 +125,7 @@ ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const 
 
 ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper)
     : ConfigVal(aManager, aKey)
+    , iDefault(aDefault)
     , iChoices(aChoices)
     , iMapper(&aMapper)
     , iMutex("CVCM")
@@ -184,6 +192,11 @@ TBool ConfigChoice::IsValid(TUint aVal) const
     return true;
 }
 
+TUint ConfigChoice::Default() const
+{
+    return iDefault;
+}
+
 TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
 {
     AutoMutex a(iMutex);
@@ -226,6 +239,7 @@ void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 
 ConfigText::ConfigText(IConfigInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aKey)
+    , iDefault(aDefault)
     , iText(aMaxLength)
     , iMutex("CVTM")
 {
@@ -264,6 +278,11 @@ TBool ConfigText::IsValid(const Brx& aVal) const
         return false;
     }
     return true;
+}
+
+const Brx& ConfigText::Default() const
+{
+    return iDefault;
 }
 
 TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
