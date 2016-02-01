@@ -365,8 +365,7 @@ private:
     Configuration::ConfigNum& iNum;
     TUint iListenerId;
     TInt iVal;
-    Mutex iLockListener;
-    Mutex iLockVal;
+    Mutex iLock;
 };
 
 class ConfigUiValChoice : public ConfigUiValBase
@@ -385,8 +384,7 @@ private:
     Configuration::ConfigChoice& iChoice;
     TUint iListenerId;
     TUint iVal;
-    Mutex iLockListener;
-    Mutex iLockVal;
+    Mutex iLock;
 };
 
 class ConfigUiValText : public ConfigUiValBase
@@ -405,8 +403,7 @@ private:
     Configuration::ConfigText& iText;
     TUint iListenerId;
     Bws<Configuration::ConfigText::kMaxBytes> iVal;
-    Mutex iLockListener;
-    Mutex iLockVal;
+    Mutex iLock;
 };
 
 /**

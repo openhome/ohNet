@@ -668,36 +668,19 @@ ConfigUiValNum::ConfigUiValNum(Configuration::ConfigNum& aNum, IWritable& aAddit
     , iNum(aNum)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
     , iVal(0)
-    , iLockListener("CUNL")
-    , iLockVal("CUNV")
+    , iLock("CUNL")
 {
     iListenerId = iNum.Subscribe(MakeFunctorConfigNum(*this, &ConfigUiValNum::Update));
 }
 
 ConfigUiValNum::~ConfigUiValNum()
 {
-    //AutoMutex a(iLockListener);
-    //if (iListenerId != IConfigManager::kSubscriptionIdInvalid) {
-    //    iNum.Unsubscribe(iListenerId);
-    //}
-
     iNum.Unsubscribe(iListenerId);
 }
 
 void ConfigUiValNum::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    //AutoMutex a(iLockListener);
-    //if (iListenerId == IConfigManager::kSubscriptionIdInvalid) {
-    //    // No need to call to aObserver here; the callback during subscription will handle updating it.
-    //    iListenerId = iNum.Subscribe(MakeFunctorConfigNum(*this, &ConfigUiValNum::Update));
-    //}
-    //else {
-    //    AutoMutex a(iLockVal);
-    //    // Already subscribed. Tell observer last known value.
-    //    aObserver.ValueChangedInt(*this, iVal);
-    //}
-
-    AutoMutex a(iLockVal);
+    AutoMutex a(iLock);
     aObserver.ValueChangedInt(*this, iVal);
 }
 
@@ -729,7 +712,7 @@ void ConfigUiValNum::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLa
 
 void ConfigUiValNum::Update(Configuration::ConfigNum::KvpNum& aKvp)
 {
-    AutoMutex a(iLockVal);
+    AutoMutex a(iLock);
     iVal = aKvp.Value();
     ValueChangedInt(iVal);
 }
@@ -742,36 +725,19 @@ ConfigUiValChoice::ConfigUiValChoice(Configuration::ConfigChoice& aChoice, IWrit
     , iChoice(aChoice)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
     , iVal(0)
-    , iLockListener("CUCL")
-    , iLockVal("CUCV")
+    , iLock("CUCL")
 {
     iListenerId = iChoice.Subscribe(MakeFunctorConfigChoice(*this, &ConfigUiValChoice::Update));
 }
 
 ConfigUiValChoice::~ConfigUiValChoice()
 {
-    //AutoMutex a(iLockListener);
-    //if (iListenerId != IConfigManager::kSubscriptionIdInvalid) {
-    //    iChoice.Unsubscribe(iListenerId);
-    //}
-
     iChoice.Unsubscribe(iListenerId);
 }
 
 void ConfigUiValChoice::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    //AutoMutex a(iLockListener);
-    //if (iListenerId == IConfigManager::kSubscriptionIdInvalid) {
-    //    // No need to call to aObserver here; the callback during subscription will handle updating it.
-    //    iListenerId = iChoice.Subscribe(MakeFunctorConfigChoice(*this, &ConfigUiValChoice::Update));
-    //}
-    //else {
-    //    AutoMutex a(iLockVal);
-    //    // Already subscribed. Tell observer last known value.
-    //    aObserver.ValueChangedUint(*this, iVal);
-    //}
-
-    AutoMutex a(iLockVal);
+    AutoMutex a(iLock);
     aObserver.ValueChangedUint(*this, iVal);
 }
 
@@ -813,7 +779,7 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
 
 void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
 {
-    AutoMutex a(iLockVal);
+    AutoMutex a(iLock);
     iVal = aKvp.Value();
     ValueChangedUint(iVal);
 }
@@ -825,36 +791,19 @@ ConfigUiValText::ConfigUiValText(Configuration::ConfigText& aText, IWritable& aA
     : ConfigUiValBase(aAdditionalJson)
     , iText(aText)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
-    , iLockListener("CUTL")
-    , iLockVal("CUTV")
+    , iLock("CUTL")
 {
     iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValText::Update));
 }
 
 ConfigUiValText::~ConfigUiValText()
 {
-    //AutoMutex a(iLockListener);
-    //if (iListenerId != IConfigManager::kSubscriptionIdInvalid) {
-    //    iText.Unsubscribe(iListenerId);
-    //}
-
     iText.Unsubscribe(iListenerId);
 }
 
 void ConfigUiValText::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    //AutoMutex a(iLockListener);
-    //if (iListenerId == IConfigManager::kSubscriptionIdInvalid) {
-    //    // No need to call to aObserver here; the callback during subscription will handle updating it.
-    //    iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValText::Update));
-    //}
-    //else {
-    //    AutoMutex a(iLockVal);
-    //    // Already subscribed. Tell observer last known value.
-    //    aObserver.ValueChangedString(*this, iVal);
-    //}
-
-    AutoMutex a(iLockVal);
+    AutoMutex a(iLock);
     aObserver.ValueChangedString(*this, iVal);
 }
 
@@ -885,7 +834,7 @@ void ConfigUiValText::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aL
 
 void ConfigUiValText::Update(Configuration::ConfigText::KvpText& aKvp)
 {
-    AutoMutex a(iLockVal);
+    AutoMutex a(iLock);
     iVal.Replace(aKvp.Value());
     ValueChangedString(iVal);
 }
