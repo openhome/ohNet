@@ -15,8 +15,8 @@ using namespace OpenHome::Net;
 extern void TestBuffer();
 static void RunTestBuffer(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestBuffer(); }
 
-extern void TestThread();
-static void RunTestThread(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestThread(); }
+extern void TestThread(const std::vector<Brn>& aArgs);
+static void RunTestThread(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestThread(aArgs); }
 
 extern void TestException();
 static void RunTestException(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestException(); }
@@ -98,7 +98,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     std::vector<ShellTest> shellTests;
     shellTests.push_back(ShellTest("TestBuffer", RunTestBuffer));
-    shellTests.push_back(ShellTest("TestThread", RunTestThread));
+    shellTests.push_back(ShellTest("TestThread", RunTestThread, true));
     shellTests.push_back(ShellTest("TestFifo", RunTestFifo));
     shellTests.push_back(ShellTest("TestQueue", RunTestQueue));
     shellTests.push_back(ShellTest("TestTextUtils", RunTestTextUtils));
