@@ -63,47 +63,8 @@ ConfigMessageBase::ConfigMessageBase(AllocatorBase& aAllocator)
 {
 }
 
-void ConfigMessageBase::Set(const IWritable& aJsonWriter) {
-    iWriterAdditional = &aJsonWriter;
-}
-
 void ConfigMessageBase::Clear()
 {
-    iWriterAdditional = nullptr;
-}
-
-void ConfigMessageBase::Send(IWriter& aWriter)
-{
-    // {
-    //     "key": aKey,
-    //     "value": aValue,
-    //     "type": aType,
-    //     "meta": {}
-    //     "info": {}
-    // }
-
-    aWriter.Write(Brn("{"));
-
-    aWriter.Write(Brn("\"key\":"));
-    WriteKey(aWriter);
-    aWriter.Write(Brn(","));
-
-    aWriter.Write(Brn("\"value\":"));
-    WriteValue(aWriter);
-    aWriter.Write(Brn(","));
-
-    aWriter.Write(Brn("\"type\":"));
-    WriteType(aWriter);
-    aWriter.Write(Brn(","));
-
-    aWriter.Write(Brn("\"meta\":{"));
-    WriteMeta(aWriter);
-    aWriter.Write(Brn("},"));
-
-    aWriter.Write(Brn("\"info\":"));
-    iWriterAdditional->Write(aWriter);
-
-    aWriter.Write(Brn("}"));
 }
 
 void ConfigMessageBase::Destroy()
@@ -112,58 +73,46 @@ void ConfigMessageBase::Destroy()
 }
 
 
-// ConfigMessageNum
+// ConfigMessageInt
 
-ConfigMessageNum::ConfigMessageNum(AllocatorBase& aAllocator)
+ConfigMessageInt::ConfigMessageInt(AllocatorBase& aAllocator)
     : ConfigMessageBase(aAllocator)
-    , iNum(nullptr)
-    , iValue(std::numeric_limits<TInt>::max())
+    , iUiVal(nullptr)
+    , iUpdatedVal(std::numeric_limits<TInt>::max())
+    , iLanguageResourceManager(nullptr)
+    , iLanguageList(nullptr)
 {
 }
 
-void ConfigMessageNum::Set(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
+void ConfigMessageInt::Set(IConfigUiVal& aUiVal, TInt aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessageBase::Set(aJsonWriter);
-    ASSERT(iNum == nullptr);
-    iNum = &aNum;
-    iValue = aValue;
+    ASSERT(iUiVal == nullptr);
+    iUiVal = &aUiVal;
+    iUpdatedVal = aUpdatedVal;
+    iLanguageResourceManager = &aLanguageResourceManager;
+    iLanguageList = &aLanguageList;
 }
 
-void ConfigMessageNum::Clear()
+void ConfigMessageInt::Clear()
 {
     ConfigMessageBase::Clear();
-    ASSERT(iNum != nullptr);
-    iNum = nullptr;
-    iValue = std::numeric_limits<TInt>::max();
+    ASSERT(iUiVal != nullptr);
+    iUiVal = nullptr;
+    iUpdatedVal = std::numeric_limits<TInt>::max();
+    iLanguageResourceManager = nullptr;
+    iLanguageList = nullptr;
 }
 
-void ConfigMessageNum::WriteKey(IWriter& aWriter)
+void ConfigMessageInt::Send(IWriter& aWriter)
 {
-    aWriter.Write(Brn("\""));
-    Json::Escape(aWriter, iNum->Key());
-    aWriter.Write(Brn("\""));
+    ASSERT(iUiVal != nullptr);
+    iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
 }
 
-void ConfigMessageNum::WriteValue(IWriter& aWriter)
+void ConfigMessageInt::WriteValueJson(IWriter& aWriter)
 {
-    Ascii::StreamWriteInt(aWriter, iValue);
-}
-
-void ConfigMessageNum::WriteType(IWriter& aWriter)
-{
-    aWriter.Write(Brn("\"numeric\""));
-}
-
-void ConfigMessageNum::WriteMeta(IWriter& aWriter)
-{
-    aWriter.Write(Brn("\"default\":"));
-    Ascii::StreamWriteInt(aWriter, iNum->Default());
-    aWriter.Write(Brn(","));
-    aWriter.Write(Brn("\"min\":"));
-    Ascii::StreamWriteInt(aWriter, iNum->Min());
-    aWriter.Write(Brn(","));
-    aWriter.Write(Brn("\"max\":"));
-    Ascii::StreamWriteInt(aWriter, iNum->Max());
+    ASSERT(iUiVal != nullptr);
+    Ascii::StreamWriteInt(aWriter, iUpdatedVal);
 }
 
 
@@ -243,165 +192,119 @@ TBool ConfigChoiceMapperResourceFile::ProcessLine(const Brx& aLine)
 }
 
 
-// ConfigMessageChoice
+// ConfigMessageUint
 
-ConfigMessageChoice::ConfigMessageChoice(AllocatorBase& aAllocator)
+ConfigMessageUint::ConfigMessageUint(AllocatorBase& aAllocator)
     : ConfigMessageBase(aAllocator)
+    , iUiVal(nullptr)
+    , iUpdatedVal(std::numeric_limits<TUint>::max())
     , iLanguageResourceManager(nullptr)
-    , iChoice(nullptr)
-    , iValue(std::numeric_limits<TUint>::max())
+    , iLanguageList(nullptr)
 {
 }
 
-void ConfigMessageChoice::Set(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+void ConfigMessageUint::Set(IConfigUiVal& aUiVal, TUint aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessageBase::Set(aJsonWriter);
-    ASSERT(iChoice == nullptr);
-    iChoice = &aChoice;
-    iValue = aValue;
+    ASSERT(iUiVal == nullptr);
+    iUiVal = &aUiVal;
+    iUpdatedVal = aUpdatedVal;
     iLanguageResourceManager = &aLanguageResourceManager;
     iLanguageList = &aLanguageList;
 }
 
-void ConfigMessageChoice::Clear()
+void ConfigMessageUint::Clear()
 {
     ConfigMessageBase::Clear();
-    ASSERT(iChoice != nullptr);
-    iChoice = nullptr;
-    iValue = std::numeric_limits<TUint>::max();
+    ASSERT(iUiVal != nullptr);
+    iUiVal = nullptr;
+    iUpdatedVal = std::numeric_limits<TInt>::max();
     iLanguageResourceManager = nullptr;
     iLanguageList = nullptr;
 }
 
-void ConfigMessageChoice::WriteKey(IWriter& aWriter)
+void ConfigMessageUint::Send(IWriter& aWriter)
 {
-    aWriter.Write(Brn("\""));
-    Json::Escape(aWriter, iChoice->Key());
-    aWriter.Write(Brn("\""));
+    ASSERT(iUiVal != nullptr);
+    iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
 }
 
-void ConfigMessageChoice::WriteValue(IWriter& aWriter)
+void ConfigMessageUint::WriteValueJson(IWriter& aWriter)
 {
-    Ascii::StreamWriteUint(aWriter, iValue);
-}
-
-void ConfigMessageChoice::WriteType(IWriter& aWriter)
-{
-    aWriter.Write(Brn("\"choice\""));
-}
-
-void ConfigMessageChoice::WriteMeta(IWriter& aWriter)
-{
-    aWriter.Write(Brn("\"default\":"));
-    Ascii::StreamWriteUint(aWriter, iChoice->Default());
-    aWriter.Write(Brn(","));
-    if (iChoice->HasInternalMapping()) {
-        IConfigChoiceMapper& mapper = iChoice->Mapper();
-        ConfigChoiceMappingWriterJson mappingWriter;
-        mapper.Write(aWriter, mappingWriter);
-    }
-    else {
-        // Read mapping from file.
-        static const Brn kConfigOptionsFile("ConfigOptions.txt");
-        const std::vector<TUint>& choices = iChoice->Choices();
-        ConfigChoiceMappingWriterJson mappingWriter;
-        ConfigChoiceMapperResourceFile mapper(iChoice->Key(), choices, aWriter, mappingWriter);
-        ILanguageResourceReader* resourceHandler = &iLanguageResourceManager->CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
-        resourceHandler->Process(mapper);
-    }
+    ASSERT(iUiVal != nullptr);
+    Ascii::StreamWriteUint(aWriter, iUpdatedVal);
 }
 
 
-// ConfigMessageText
+// ConfigMessageString
 
-ConfigMessageText::ConfigMessageText(AllocatorBase& aAllocator)
+ConfigMessageString::ConfigMessageString(AllocatorBase& aAllocator)
     : ConfigMessageBase(aAllocator)
-    , iText(nullptr)
-    , iValue(kMaxBytes)
+    , iUiVal(nullptr)
+    , iLanguageResourceManager(nullptr)
+    , iLanguageList(nullptr)
 {
 }
 
-void ConfigMessageText::Set(ConfigText& aText, const OpenHome::Brx& aValue, const IWritable& aJsonWriter)
+void ConfigMessageString::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessageBase::Set(aJsonWriter);
-    ASSERT(iText == nullptr);
-    iText = &aText;
-    iValue.Replace(aValue);
+    ASSERT(iUiVal == nullptr);
+    iUiVal = &aUiVal;
+    iUpdatedVal.Replace(aUpdatedVal);
+    iLanguageResourceManager = &aLanguageResourceManager;
+    iLanguageList = &aLanguageList;
 }
 
-void ConfigMessageText::Clear()
+void ConfigMessageString::Clear()
 {
     ConfigMessageBase::Clear();
-    ASSERT(iText != nullptr);
-    iText = nullptr;
-    iValue.SetBytes(0);
+    ASSERT(iUiVal != nullptr);
+    iUiVal = nullptr;
+    iUpdatedVal.SetBytes(0);
+    iLanguageResourceManager = nullptr;
+    iLanguageList = nullptr;
 }
 
-void ConfigMessageText::WriteKey(IWriter& aWriter)
+void ConfigMessageString::Send(IWriter& aWriter)
 {
-    aWriter.Write(Brn("\""));
-    Json::Escape(aWriter, iText->Key());
-    aWriter.Write(Brn("\""));
+    ASSERT(iUiVal != nullptr);
+    iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
 }
 
-void ConfigMessageText::WriteValue(IWriter& aWriter)
+void ConfigMessageString::WriteValueJson(IWriter& aWriter)
 {
-    aWriter.Write(Brn("\""));
-    Json::Escape(aWriter, iValue);
-    aWriter.Write(Brn("\""));
-}
-
-void ConfigMessageText::WriteType(IWriter& aWriter)
-{
-    aWriter.Write(Brn("\"text\""));
-}
-
-void ConfigMessageText::WriteMeta(IWriter& aWriter)
-{
-    aWriter.Write(Brn("\"default\":"));
-    aWriter.Write(Brn("\""));
-    Json::Escape(aWriter, iText->Default());
-    aWriter.Write(Brn("\""));
-    aWriter.Write(Brn(","));
-    aWriter.Write(Brn("\"maxlength\":"));
-    Ascii::StreamWriteUint(aWriter, iText->MaxLength());
+    ASSERT(iUiVal != nullptr);
+    Json::Escape(aWriter, iUpdatedVal);
 }
 
 
 // ConfigMessageAllocator
 
-ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint /*aMsgCountReadOnly*/, TUint aMsgCountNum, TUint aMsgCountChoice, TUint aMsgCountText, ILanguageResourceManager& aLanguageResourceManager)
-    : /*iAllocatorMsgReadOnly("ConfigMessageReadOnly", aMsgCountReadOnly, aInfoAggregator)
-    ,*/ iAllocatorMsgNum("ConfigMessageNum", aMsgCountNum, aInfoAggregator)
-    , iAllocatorMsgChoice("ConfigMessageChoice", aMsgCountChoice, aInfoAggregator)
-    , iAllocatorMsgText("ConfigMessageText", aMsgCountText, aInfoAggregator)
+ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint aMsgCountInt, TUint aMsgCountUint, TUint aMsgCountString, ILanguageResourceManager& aLanguageResourceManager)
+    : iAllocatorMsgInt("ConfigMessageInt", aMsgCountInt, aInfoAggregator)
+    , iAllocatorMsgUint("ConfigMessageUint", aMsgCountUint, aInfoAggregator)
+    , iAllocatorMsgString("ConfigMessageText", aMsgCountString, aInfoAggregator)
     , iLanguageResourceManager(aLanguageResourceManager)
 {
 }
 
-ITabMessage* ConfigMessageAllocator::AllocateReadOnly(const Brx& /*aKey*/, const Brx& /*aValue*/)
+ITabMessage* ConfigMessageAllocator::AllocateInt(IConfigUiVal& aUiVal, TInt aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
 {
-    return nullptr;
-}
-
-ITabMessage* ConfigMessageAllocator::AllocateNum(ConfigNum& aNum, TInt aValue, const IWritable& aJsonWriter)
-{
-    ConfigMessageNum* msg = iAllocatorMsgNum.Allocate();
-    msg->Set(aNum, aValue, aJsonWriter);
+    ConfigMessageInt* msg = iAllocatorMsgInt.Allocate();
+    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
     return msg;
 }
 
-ITabMessage* ConfigMessageAllocator::AllocateChoice(ConfigChoice& aChoice, TUint aValue, const IWritable& aJsonWriter, std::vector<Bws<10>>& aLanguageList)
+ITabMessage* ConfigMessageAllocator::AllocateUint(IConfigUiVal& aUiVal, TUint aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessageChoice* msg = iAllocatorMsgChoice.Allocate();
-    msg->Set(aChoice, aValue, aJsonWriter, iLanguageResourceManager, aLanguageList);
+    ConfigMessageUint* msg = iAllocatorMsgUint.Allocate();
+    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
     return msg;
 }
 
-ITabMessage* ConfigMessageAllocator::AllocateText(ConfigText& aText, const Brx& aValue, const IWritable& aJsonWriter)
+ITabMessage* ConfigMessageAllocator::AllocateString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessageText* msg = iAllocatorMsgText.Allocate();
-    msg->Set(aText, aValue, aJsonWriter);
+    ConfigMessageString* msg = iAllocatorMsgString.Allocate();
+    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
     return msg;
 }
 
@@ -525,11 +428,10 @@ void ConfigTabReceiver::Receive(const Brx& aMessage)
 
 const TUint ConfigTab::kInvalidSubscription = OpenHome::Configuration::IConfigManager::kSubscriptionIdInvalid;
 
-ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, IConfigManager& aConfigManager, IJsonInfoProvider& aInfoProvider, IRebootHandler& aRebootHandler)
+ConfigTab::ConfigTab(TUint aId, IConfigMessageAllocator& aMessageAllocator, IConfigManager& aConfigManager, IRebootHandler& aRebootHandler)
     : iId(aId)
-    , iMsgAllocator(aMessageAllocator)
     , iConfigManager(aConfigManager)
-    , iInfoProvider(aInfoProvider)
+    , iMsgAllocator(aMessageAllocator)
     , iRebootHandler(aRebootHandler)
     , iHandler(nullptr)
     , iStarted(false)
@@ -543,29 +445,17 @@ ConfigTab::~ConfigTab()
     }
 }
 
-void ConfigTab::AddKeyNum(const Brx& aKey)
+void ConfigTab::AddValue(IConfigUiVal& aValue)
 {
     ASSERT(!iStarted);
-    iConfigNums.push_back(SubscriptionPair(Brn(aKey),kInvalidSubscription));
-}
-
-void ConfigTab::AddKeyChoice(const Brx& aKey)
-{
-    ASSERT(!iStarted);
-    iConfigChoices.push_back(SubscriptionPair(Brn(aKey),kInvalidSubscription));
-}
-
-void ConfigTab::AddKeyText(const Brx& aKey)
-{
-    ASSERT(!iStarted);
-    iConfigTexts.push_back(SubscriptionPair(Brn(aKey),kInvalidSubscription));
+    iConfigUiVals.push_back(SubscriptionPair(&aValue, kInvalidSubscription));
 }
 
 // FIXME - remove?
 void ConfigTab::Start()
 {
     ASSERT(!iStarted);
-    ASSERT(iConfigNums.size()>0 || iConfigChoices.size()>0 || iConfigTexts.size() > 0);
+    ASSERT(iConfigUiVals.size() > 0);
     iStarted = true;
 }
 
@@ -584,28 +474,15 @@ void ConfigTab::SetHandler(ITabHandler& aHandler, const std::vector<Bws<10>>& aL
         iLanguageList.push_back(*it);
     }
     iHandler = &aHandler;
-    for (TUint i=0; i<iConfigNums.size(); i++) {
-        const Brx& key = iConfigNums[i].first;
-        ConfigNum& num = iConfigManager.GetNum(key);
-        TUint subscription = num.Subscribe(MakeFunctorConfigNum(*this, &ConfigTab::ConfigNumCallback));
-        iConfigNums[i].second = subscription;
-    }
-    for (TUint i=0; i<iConfigChoices.size(); i++) {
-        const Brx& key = iConfigChoices[i].first;
-        ConfigChoice& choice = iConfigManager.GetChoice(key);
-        TUint subscription = choice.Subscribe(MakeFunctorConfigChoice(*this, &ConfigTab::ConfigChoiceCallback));
-        iConfigChoices[i].second = subscription;
-    }
-    for (TUint i=0; i<iConfigTexts.size(); i++) {
-        const Brx& key = iConfigTexts[i].first;
-        ConfigText& text = iConfigManager.GetText(key);
-        TUint subscription = text.Subscribe(MakeFunctorConfigText(*this, &ConfigTab::ConfigTextCallback));
-        iConfigTexts[i].second = subscription;
+    for (auto val : iConfigUiVals) {
+        val.second = val.first->AddObserver(*this);
     }
 }
 
 void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
 {
+    // FIXME - backdoor trickery going on here. Accessing iConfigManager directly, when should really be updating value via IConfigUiVal object.
+
     // TabManager in HttpFramework should handle any race between Destroy() and
     // Receive() being called, as it will defer destruction of a tab until all
     // references are removed.
@@ -645,54 +522,305 @@ void ConfigTab::Destroy()
     ASSERT(iHandler != nullptr);
     iHandler = nullptr;
 
-    for (TUint i=0; i<iConfigNums.size(); i++) {
-        const Brx& key = iConfigNums[i].first;
-        ConfigNum& num = iConfigManager.GetNum(key);
-        num.Unsubscribe(iConfigNums[i].second);
-        iConfigNums[i].second = kInvalidSubscription;
-    }
-    for (TUint i=0; i<iConfigChoices.size(); i++) {
-        const Brx& key = iConfigChoices[i].first;
-        ConfigChoice& choice = iConfigManager.GetChoice(key);
-        choice.Unsubscribe(iConfigChoices[i].second);
-        iConfigChoices[i].second = kInvalidSubscription;
-    }
-    for (TUint i=0; i<iConfigTexts.size(); i++) {
-        const Brx& key = iConfigTexts[i].first;
-        ConfigText& text = iConfigManager.GetText(key);
-        text.Unsubscribe(iConfigTexts[i].second);
-        iConfigTexts[i].second = kInvalidSubscription;
+    for (auto val : iConfigUiVals) {
+        val.first->RemoveObserver(val.second);
     }
 }
 
-void ConfigTab::ConfigNumCallback(ConfigNum::KvpNum& aKvp)
+void ConfigTab::ValueChangedInt(IConfigUiVal& aUiVal, TInt aUpdatedVal)
 {
-    ASSERT(iHandler != nullptr);
-    ConfigNum& num = iConfigManager.GetNum(aKvp.Key());
-    const WritableJsonInfo& info = iInfoProvider.GetInfo(aKvp.Key());
-    // FIXME - because JSON is static and now stored in ConfigApp, it means
-    // that ConfigMessages can also now just take a reference to the JSON
-    // instead of copying it.
-    ITabMessage* msg = iMsgAllocator.AllocateNum(num, aKvp.Value(), info);
+    ITabMessage* msg = iMsgAllocator.AllocateInt(aUiVal, aUpdatedVal, iLanguageList);
     iHandler->Send(*msg);
 }
 
-void ConfigTab::ConfigChoiceCallback(ConfigChoice::KvpChoice& aKvp)
+void ConfigTab::ValueChangedUint(IConfigUiVal& aUiVal, TUint aUpdatedVal)
 {
-    ASSERT(iHandler != nullptr);
-    ConfigChoice& choice = iConfigManager.GetChoice(aKvp.Key());
-    const WritableJsonInfo& info = iInfoProvider.GetInfo(aKvp.Key());
-    ITabMessage* msg = iMsgAllocator.AllocateChoice(choice, aKvp.Value(), info, iLanguageList);
+    ITabMessage* msg = iMsgAllocator.AllocateUint(aUiVal, aUpdatedVal, iLanguageList);
     iHandler->Send(*msg);
 }
 
-void ConfigTab::ConfigTextCallback(ConfigText::KvpText& aKvp)
+void ConfigTab::ValueChangedString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
 {
-    ASSERT(iHandler != nullptr);
-    ConfigText& text = iConfigManager.GetText(aKvp.Key());
-    const WritableJsonInfo& json = iInfoProvider.GetInfo(aKvp.Key());
-    ITabMessage* msg = iMsgAllocator.AllocateText(text, aKvp.Value(), json);
+    ITabMessage* msg = iMsgAllocator.AllocateString(aUiVal, aUpdatedVal, iLanguageList);
     iHandler->Send(*msg);
+}
+
+
+// ConfigUiValBase
+
+ConfigUiValBase::ConfigUiValBase(IWritable& aAdditionalJson)
+    : iAdditionalJson(aAdditionalJson)
+    , iNextObserverId(kObserverIdInvalid+1)
+    , iLockObservers("CUVL")
+{
+}
+
+void ConfigUiValBase::WriteAdditional(IWriter& aWriter)
+{
+    iAdditionalJson.Write(aWriter);
+}
+
+void ConfigUiValBase::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    aWriter.Write(Brn("\"key\":"));
+    WriteKey(aWriter);
+    aWriter.Write(Brn(","));
+
+    aWriter.Write(Brn("\"value\":"));
+    aValWriter.WriteValueJson(aWriter);
+    aWriter.Write(Brn(","));
+
+    aWriter.Write(Brn("\"meta\":"));
+    WriteMeta(aWriter, aLanguageResourceManager, aLanguageList);
+    aWriter.Write(Brn(","));
+
+    aWriter.Write(Brn("\"info\":"));
+    WriteAdditional(aWriter);
+}
+
+void ConfigUiValBase::ValueChangedInt(TInt aValue)
+{
+    AutoMutex a(iLockObservers);
+    for (auto it : iObservers) {
+        it.second->ValueChangedInt(*this, aValue);
+    }
+}
+
+void ConfigUiValBase::ValueChangedUint(TUint aValue)
+{
+    AutoMutex a(iLockObservers);
+    for (auto it : iObservers) {
+        it.second->ValueChangedUint(*this, aValue);
+    }
+}
+
+void ConfigUiValBase::ValueChangedString(const Brx& aValue)
+{
+    AutoMutex a(iLockObservers);
+    for (auto it : iObservers) {
+        it.second->ValueChangedString(*this, aValue);
+    }
+}
+
+TUint ConfigUiValBase::AddObserver(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLockObservers);
+    const TUint id = iNextObserverId++;
+    iObservers.insert(std::pair<TUint, IConfigUiValObserver*>(id, &aObserver));
+    NotifyObserver(aObserver);
+    return id;
+}
+
+void ConfigUiValBase::RemoveObserver(TUint aObserverId)
+{
+    AutoMutex a(iLockObservers);
+    auto it = iObservers.find(aObserverId);
+    if (it != iObservers.end()) {
+        iObservers.erase(it);
+    }
+}
+
+
+// ConfigUiValReadOnly
+
+ConfigUiValReadOnly::ConfigUiValReadOnly(const Brx& aKey, const Brx& aValue)
+    : ConfigUiValBase(iAdditional)
+    , iKey(aKey)
+    , iValue(aValue)
+{
+}
+
+void ConfigUiValReadOnly::NotifyObserver(IConfigUiValObserver& aObserver)
+{
+    aObserver.ValueChangedString(*this, iValue);
+}
+
+void ConfigUiValReadOnly::WriteKey(IWriter& aWriter)
+{
+    Json::Escape(aWriter, iKey);
+}
+
+void ConfigUiValReadOnly::WriteType(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"read-only\""));
+}
+
+void ConfigUiValReadOnly::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLanguageResourceManager*/, std::vector<Bws<10>>& /*aLanguageList*/)
+{
+    aWriter.Write(Brn("{}"));
+}
+
+
+// ConfigUiValNum
+
+ConfigUiValNum::ConfigUiValNum(Configuration::ConfigNum& aNum, IWritable& aAdditionalJson)
+    : ConfigUiValBase(aAdditionalJson)
+    , iNum(aNum)
+    , iListenerId(IConfigManager::kSubscriptionIdInvalid)
+    , iVal(0)
+    , iLock("CUNL")
+{
+    iListenerId = iNum.Subscribe(MakeFunctorConfigNum(*this, &ConfigUiValNum::Update));
+}
+
+ConfigUiValNum::~ConfigUiValNum()
+{
+    iNum.Unsubscribe(iListenerId);
+}
+
+void ConfigUiValNum::NotifyObserver(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    aObserver.ValueChangedInt(*this, iVal);
+}
+
+void ConfigUiValNum::WriteKey(IWriter& aWriter)
+{
+    Json::Escape(aWriter, iNum.Key());
+}
+
+void ConfigUiValNum::WriteType(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"numeric\""));
+}
+
+void ConfigUiValNum::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLanguageResourceManager*/, std::vector<Bws<10>>& /*aLanguageList*/)
+{
+    aWriter.Write('{');
+    aWriter.Write(Brn("\"default\":"));
+    Ascii::StreamWriteInt(aWriter, iNum.Default());
+    aWriter.Write(Brn(","));
+    aWriter.Write(Brn("\"min\":"));
+    Ascii::StreamWriteInt(aWriter, iNum.Min());
+    aWriter.Write(Brn(","));
+    aWriter.Write(Brn("\"max\":"));
+    Ascii::StreamWriteInt(aWriter, iNum.Max());
+    aWriter.Write('}');
+}
+
+void ConfigUiValNum::Update(Configuration::ConfigNum::KvpNum& aKvp)
+{
+    AutoMutex a(iLock);
+    iVal = aKvp.Value();
+    ValueChangedInt(iVal);
+}
+
+
+// ConfigUiValChoice
+
+ConfigUiValChoice::ConfigUiValChoice(Configuration::ConfigChoice& aChoice, IWritable& aAdditionalJson)
+    : ConfigUiValBase(aAdditionalJson)
+    , iChoice(aChoice)
+    , iListenerId(IConfigManager::kSubscriptionIdInvalid)
+    , iVal(0)
+    , iLock("CUCL")
+{
+    iListenerId = iChoice.Subscribe(MakeFunctorConfigChoice(*this, &ConfigUiValChoice::Update));
+}
+
+ConfigUiValChoice::~ConfigUiValChoice()
+{
+    iChoice.Unsubscribe(iListenerId);
+}
+
+void ConfigUiValChoice::NotifyObserver(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    aObserver.ValueChangedUint(*this, iVal);
+}
+
+void ConfigUiValChoice::WriteKey(IWriter& aWriter)
+{
+    Json::Escape(aWriter, iChoice.Key());
+}
+
+void ConfigUiValChoice::WriteType(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"choice\""));
+}
+
+void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    aWriter.Write('{');
+    aWriter.Write(Brn("\"default\":"));
+    Ascii::StreamWriteUint(aWriter, iChoice.Default());
+    aWriter.Write(Brn(","));
+    if (iChoice.HasInternalMapping()) {
+        IConfigChoiceMapper& mapper = iChoice.Mapper();
+        ConfigChoiceMappingWriterJson mappingWriter;
+        mapper.Write(aWriter, mappingWriter);
+    }
+    else {
+        // Read mapping from file.
+        static const Brn kConfigOptionsFile("ConfigOptions.txt");
+        const std::vector<TUint>& choices = iChoice.Choices();
+        ConfigChoiceMappingWriterJson mappingWriter;
+        ConfigChoiceMapperResourceFile mapper(iChoice.Key(), choices, aWriter, mappingWriter);
+        ILanguageResourceReader* resourceHandler = &aLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, aLanguageList);
+        resourceHandler->Process(mapper);
+        //resourceHandler->Destroy();
+    }
+    aWriter.Write('}');
+}
+
+void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
+{
+    AutoMutex a(iLock);
+    iVal = aKvp.Value();
+    ValueChangedUint(iVal);
+}
+
+
+// ConfigUiValText
+
+ConfigUiValText::ConfigUiValText(Configuration::ConfigText& aText, IWritable& aAdditionalJson)
+    : ConfigUiValBase(aAdditionalJson)
+    , iText(aText)
+    , iListenerId(IConfigManager::kSubscriptionIdInvalid)
+    , iLock("CUTL")
+{
+    iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValText::Update));
+}
+
+ConfigUiValText::~ConfigUiValText()
+{
+    iText.Unsubscribe(iListenerId);
+}
+
+void ConfigUiValText::NotifyObserver(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    aObserver.ValueChangedString(*this, iVal);
+}
+
+void ConfigUiValText::WriteKey(IWriter& aWriter)
+{
+    Json::Escape(aWriter, iText.Key());
+}
+
+void ConfigUiValText::WriteType(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"text\""));
+}
+
+void ConfigUiValText::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLanguageResourceManager*/, std::vector<Bws<10>>& /*aLanguageList*/)
+{
+    aWriter.Write('{');
+    aWriter.Write(Brn("\"default\":"));
+    aWriter.Write(Brn("\""));
+    Json::Escape(aWriter, iText.Default());
+    aWriter.Write(Brn("\""));
+    aWriter.Write(Brn(","));
+    aWriter.Write(Brn("\"maxlength\":"));
+    Ascii::StreamWriteUint(aWriter, iText.MaxLength());
+    aWriter.Write('}');
+}
+
+void ConfigUiValText::Update(Configuration::ConfigText::KvpText& aKvp)
+{
+    AutoMutex a(iLock);
+    iVal.Replace(aKvp.Value());
+    ValueChangedString(iVal);
 }
 
 
@@ -718,11 +846,11 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
     iLangResourceDir.Append(kLangRoot);
     iLangResourceDir.Append('/');
 
-    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, aSendQueueSize, aSendQueueSize, aSendQueueSize, *this);
+    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, aSendQueueSize, aSendQueueSize, *this);
 
     for (TUint i=0; i<aMaxTabs; i++) {
         iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
-        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, *this, aRebootHandler));
+        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, aRebootHandler));
     }
 
     for (TUint i=0; i<aMaxTabs; i++) {
@@ -740,19 +868,9 @@ ConfigAppBase::~ConfigAppBase()
         delete iTabs[i];
         delete iResourceHandlers[i];
     }
-    for (TUint i=0; i<iKeysNums.size(); i++) {
-        delete iKeysNums[i];
-    }
-    for (TUint i=0; i<iKeysChoices.size(); i++) {
-        delete iKeysChoices[i];
-    }
-    for (TUint i=0; i<iKeysTexts.size(); i++) {
-        delete iKeysTexts[i];
-    }
 
-    InfoMap::iterator it;
-    for (it = iInfoMap.begin(); it != iInfoMap.end(); ++it) {
-        delete it->second;
+    for (auto val : iUiVals) {
+        delete val;
     }
 
     delete iMsgAllocator;
@@ -802,13 +920,6 @@ IResourceHandler& ConfigAppBase::CreateResourceHandler(const OpenHome::Brx& aRes
     return *iResourceHandlers[0];   // unreachable
 }
 
-const WritableJsonInfo& ConfigAppBase::GetInfo(const OpenHome::Brx& aKey)
-{
-    InfoMap::iterator it = iInfoMap.find(Brn(aKey));
-    ASSERT(it != iInfoMap.end());
-    return *it->second;
-}
-
 ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList)
 {
     // If no desired language can be found, should default to English.
@@ -840,49 +951,12 @@ ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx&
     return *iLanguageResourceHandlers[0];   // unreachable
 }
 
-void ConfigAppBase::AddReadOnly(const Brx& /*aKey*/)
+void ConfigAppBase::AddValue(IConfigUiVal* aValue)
 {
-
-}
-
-void ConfigAppBase::AddNum(const OpenHome::Brx& aKey, TBool aRebootRequired)
-{
-    Brh* key = new Brh(aKey);
-    iKeysNums.push_back(key);
-    AddInfo(*key, aRebootRequired);
-
-    for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyNum(*key);
+    iUiVals.push_back(aValue);
+    for (auto tab : iTabs) {
+        tab->AddValue(*aValue);
     }
-}
-
-void ConfigAppBase::AddChoice(const OpenHome::Brx& aKey, TBool aRebootRequired)
-{
-    Brh* key = new Brh(aKey);
-    iKeysChoices.push_back(key);
-    AddInfo(*key, aRebootRequired);
-
-    for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyChoice(*key);
-    }
-}
-
-void ConfigAppBase::AddText(const OpenHome::Brx& aKey, TBool aRebootRequired)
-{
-    Brh* key = new Brh(aKey);
-    iKeysTexts.push_back(key);
-    AddInfo(*key, aRebootRequired);
-
-    for (TUint i=0; i<iTabs.size(); i++) {
-        iTabs[i]->AddKeyText(*key);
-    }
-}
-
-void ConfigAppBase::AddInfo(const Brx& aKey, TBool aRebootRequired)
-{
-    //ASSERT(!iStarted);
-    const WritableJsonInfo* info = new WritableJsonInfo(aRebootRequired);
-    iInfoMap.insert(InfoPair(Brn(aKey), info));
 }
 
 
@@ -890,9 +964,40 @@ void ConfigAppBase::AddInfo(const Brx& aKey, TBool aRebootRequired)
 
 ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+    , iRebootRequired(true)
 {
-    AddText(Brn("Product.Name"));
-    AddText(Brn("Product.Room"));
+    AddConfigText(Brn("Product.Name"));
+    AddConfigText(Brn("Product.Room"));
+}
+
+void ConfigAppBasic::AddConfigNum(const Brx& aKey, TBool aRebootRequired)
+{
+    if (aRebootRequired) {
+        AddValue(new ConfigUiValNum(iConfigManager.GetNum(aKey), iRebootRequired));
+    }
+    else {
+        AddValue(new ConfigUiValNum(iConfigManager.GetNum(aKey), iRebootNotRequired));
+    }
+}
+
+void ConfigAppBasic::AddConfigChoice(const Brx& aKey, TBool aRebootRequired)
+{
+    if (aRebootRequired) {
+        AddValue(new ConfigUiValChoice(iConfigManager.GetChoice(aKey), iRebootRequired));
+    }
+    else {
+        AddValue(new ConfigUiValChoice(iConfigManager.GetChoice(aKey), iRebootNotRequired));
+    }
+}
+
+void ConfigAppBasic::AddConfigText(const Brx& aKey, TBool aRebootRequired)
+{
+    if (aRebootRequired) {
+        AddValue(new ConfigUiValText(iConfigManager.GetText(aKey), iRebootRequired));
+    }
+    else {
+        AddValue(new ConfigUiValText(iConfigManager.GetText(aKey), iRebootNotRequired));
+    }
 }
 
 
@@ -906,12 +1011,12 @@ ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigMana
 
         Bws<Av::Source::kKeySourceNameMaxBytes> key;
         Av::Source::GetSourceNameKey(*aSources[i], key);
-        AddText(key);
+        AddConfigText(key);
 
         Av::Source::GetSourceVisibleKey(*aSources[i], key);
-        AddNum(key);   // FIXME - why not a ConfigChoice?
+        AddConfigNum(key); // FIXME - why not a ConfigChoice?
         //AddChoice(key);
     }
 
-    AddChoice(ConfigStartupSource::kKeySource);
+    AddConfigChoice(ConfigStartupSource::kKeySource);
 }

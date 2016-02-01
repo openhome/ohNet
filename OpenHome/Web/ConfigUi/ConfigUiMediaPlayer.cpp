@@ -38,23 +38,23 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
     AddTextConditional(Brn("Radio.TuneInUserName"));
 }
 
-void ConfigAppMediaPlayer::AddNumConditional(const OpenHome::Brx& aKey)
+void ConfigAppMediaPlayer::AddNumConditional(const Brx& aKey, TBool aRebootRequired)
 {
     if (iConfigManager.HasNum(aKey)) {
-        AddNum(aKey);
+        AddConfigNum(aKey, aRebootRequired);
     }
 }
 
-void ConfigAppMediaPlayer::AddChoiceConditional(const OpenHome::Brx& aKey)
+void ConfigAppMediaPlayer::AddChoiceConditional(const Brx& aKey, TBool aRebootRequired)
 {
     if (iConfigManager.HasChoice(aKey)) {
-        AddChoice(aKey);
+        AddConfigChoice(aKey, aRebootRequired);
     }
 }
 
-void ConfigAppMediaPlayer::AddTextConditional(const OpenHome::Brx& aKey)
+void ConfigAppMediaPlayer::AddTextConditional(const Brx& aKey, TBool aRebootRequired)
 {
     if (iConfigManager.HasText(aKey)) {
-        AddText(aKey);
+        AddConfigText(aKey, aRebootRequired);
     }
 }
