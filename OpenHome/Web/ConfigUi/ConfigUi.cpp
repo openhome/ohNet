@@ -273,7 +273,9 @@ void ConfigMessageString::Send(IWriter& aWriter)
 void ConfigMessageString::WriteValueJson(IWriter& aWriter)
 {
     ASSERT(iUiVal != nullptr);
+    aWriter.Write(Brn("\""));
     Json::Escape(aWriter, iUpdatedVal);
+    aWriter.Write(Brn("\""));
 }
 
 
@@ -562,6 +564,8 @@ void ConfigUiValBase::WriteAdditional(IWriter& aWriter)
 
 void ConfigUiValBase::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
+    aWriter.Write(Brn("{"));
+
     aWriter.Write(Brn("\"key\":"));
     WriteKey(aWriter);
     aWriter.Write(Brn(","));
@@ -570,12 +574,18 @@ void ConfigUiValBase::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWri
     aValWriter.WriteValueJson(aWriter);
     aWriter.Write(Brn(","));
 
+    aWriter.Write(Brn("\"type\":"));
+    WriteType(aWriter);
+    aWriter.Write(Brn(","));
+
     aWriter.Write(Brn("\"meta\":"));
     WriteMeta(aWriter, aLanguageResourceManager, aLanguageList);
     aWriter.Write(Brn(","));
 
     aWriter.Write(Brn("\"info\":"));
     WriteAdditional(aWriter);
+
+    aWriter.Write(Brn("}"));
 }
 
 void ConfigUiValBase::ValueChangedInt(TInt aValue)
@@ -607,7 +617,7 @@ TUint ConfigUiValBase::AddObserver(IConfigUiValObserver& aObserver)
     AutoMutex a(iLockObservers);
     const TUint id = iNextObserverId++;
     iObservers.insert(std::pair<TUint, IConfigUiValObserver*>(id, &aObserver));
-    NotifyObserver(aObserver);
+    ObserverAdded(aObserver);
     return id;
 }
 
@@ -630,7 +640,7 @@ ConfigUiValReadOnly::ConfigUiValReadOnly(const Brx& aKey, const Brx& aValue)
 {
 }
 
-void ConfigUiValReadOnly::NotifyObserver(IConfigUiValObserver& aObserver)
+void ConfigUiValReadOnly::ObserverAdded(IConfigUiValObserver& aObserver)
 {
     aObserver.ValueChangedString(*this, iValue);
 }
@@ -658,25 +668,44 @@ ConfigUiValNum::ConfigUiValNum(Configuration::ConfigNum& aNum, IWritable& aAddit
     , iNum(aNum)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
     , iVal(0)
-    , iLock("CUNL")
+    , iLockListener("CUNL")
+    , iLockVal("CUNV")
 {
     iListenerId = iNum.Subscribe(MakeFunctorConfigNum(*this, &ConfigUiValNum::Update));
 }
 
 ConfigUiValNum::~ConfigUiValNum()
 {
+    //AutoMutex a(iLockListener);
+    //if (iListenerId != IConfigManager::kSubscriptionIdInvalid) {
+    //    iNum.Unsubscribe(iListenerId);
+    //}
+
     iNum.Unsubscribe(iListenerId);
 }
 
-void ConfigUiValNum::NotifyObserver(IConfigUiValObserver& aObserver)
+void ConfigUiValNum::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    AutoMutex a(iLock);
+    //AutoMutex a(iLockListener);
+    //if (iListenerId == IConfigManager::kSubscriptionIdInvalid) {
+    //    // No need to call to aObserver here; the callback during subscription will handle updating it.
+    //    iListenerId = iNum.Subscribe(MakeFunctorConfigNum(*this, &ConfigUiValNum::Update));
+    //}
+    //else {
+    //    AutoMutex a(iLockVal);
+    //    // Already subscribed. Tell observer last known value.
+    //    aObserver.ValueChangedInt(*this, iVal);
+    //}
+
+    AutoMutex a(iLockVal);
     aObserver.ValueChangedInt(*this, iVal);
 }
 
 void ConfigUiValNum::WriteKey(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\""));
     Json::Escape(aWriter, iNum.Key());
+    aWriter.Write(Brn("\""));
 }
 
 void ConfigUiValNum::WriteType(IWriter& aWriter)
@@ -700,7 +729,7 @@ void ConfigUiValNum::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLa
 
 void ConfigUiValNum::Update(Configuration::ConfigNum::KvpNum& aKvp)
 {
-    AutoMutex a(iLock);
+    AutoMutex a(iLockVal);
     iVal = aKvp.Value();
     ValueChangedInt(iVal);
 }
@@ -713,25 +742,44 @@ ConfigUiValChoice::ConfigUiValChoice(Configuration::ConfigChoice& aChoice, IWrit
     , iChoice(aChoice)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
     , iVal(0)
-    , iLock("CUCL")
+    , iLockListener("CUCL")
+    , iLockVal("CUCV")
 {
     iListenerId = iChoice.Subscribe(MakeFunctorConfigChoice(*this, &ConfigUiValChoice::Update));
 }
 
 ConfigUiValChoice::~ConfigUiValChoice()
 {
+    //AutoMutex a(iLockListener);
+    //if (iListenerId != IConfigManager::kSubscriptionIdInvalid) {
+    //    iChoice.Unsubscribe(iListenerId);
+    //}
+
     iChoice.Unsubscribe(iListenerId);
 }
 
-void ConfigUiValChoice::NotifyObserver(IConfigUiValObserver& aObserver)
+void ConfigUiValChoice::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    AutoMutex a(iLock);
+    //AutoMutex a(iLockListener);
+    //if (iListenerId == IConfigManager::kSubscriptionIdInvalid) {
+    //    // No need to call to aObserver here; the callback during subscription will handle updating it.
+    //    iListenerId = iChoice.Subscribe(MakeFunctorConfigChoice(*this, &ConfigUiValChoice::Update));
+    //}
+    //else {
+    //    AutoMutex a(iLockVal);
+    //    // Already subscribed. Tell observer last known value.
+    //    aObserver.ValueChangedUint(*this, iVal);
+    //}
+
+    AutoMutex a(iLockVal);
     aObserver.ValueChangedUint(*this, iVal);
 }
 
 void ConfigUiValChoice::WriteKey(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\""));
     Json::Escape(aWriter, iChoice.Key());
+    aWriter.Write(Brn("\""));
 }
 
 void ConfigUiValChoice::WriteType(IWriter& aWriter)
@@ -765,7 +813,7 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
 
 void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
 {
-    AutoMutex a(iLock);
+    AutoMutex a(iLockVal);
     iVal = aKvp.Value();
     ValueChangedUint(iVal);
 }
@@ -777,25 +825,44 @@ ConfigUiValText::ConfigUiValText(Configuration::ConfigText& aText, IWritable& aA
     : ConfigUiValBase(aAdditionalJson)
     , iText(aText)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
-    , iLock("CUTL")
+    , iLockListener("CUTL")
+    , iLockVal("CUTV")
 {
     iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValText::Update));
 }
 
 ConfigUiValText::~ConfigUiValText()
 {
+    //AutoMutex a(iLockListener);
+    //if (iListenerId != IConfigManager::kSubscriptionIdInvalid) {
+    //    iText.Unsubscribe(iListenerId);
+    //}
+
     iText.Unsubscribe(iListenerId);
 }
 
-void ConfigUiValText::NotifyObserver(IConfigUiValObserver& aObserver)
+void ConfigUiValText::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    AutoMutex a(iLock);
+    //AutoMutex a(iLockListener);
+    //if (iListenerId == IConfigManager::kSubscriptionIdInvalid) {
+    //    // No need to call to aObserver here; the callback during subscription will handle updating it.
+    //    iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValText::Update));
+    //}
+    //else {
+    //    AutoMutex a(iLockVal);
+    //    // Already subscribed. Tell observer last known value.
+    //    aObserver.ValueChangedString(*this, iVal);
+    //}
+
+    AutoMutex a(iLockVal);
     aObserver.ValueChangedString(*this, iVal);
 }
 
 void ConfigUiValText::WriteKey(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\""));
     Json::Escape(aWriter, iText.Key());
+    aWriter.Write(Brn("\""));
 }
 
 void ConfigUiValText::WriteType(IWriter& aWriter)
@@ -818,9 +885,54 @@ void ConfigUiValText::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aL
 
 void ConfigUiValText::Update(Configuration::ConfigText::KvpText& aKvp)
 {
-    AutoMutex a(iLock);
+    AutoMutex a(iLockVal);
     iVal.Replace(aKvp.Value());
     ValueChangedString(iVal);
+}
+
+
+// ConfigUiValChoiceDelayed
+
+ConfigUiValChoiceDelayed::ConfigUiValChoiceDelayed(Configuration::IConfigManager& aConfigManager, const Brx& aKey, IWritable& aAdditionalJson)
+    : iConfigManager(aConfigManager)
+    , iKey(aKey)
+    , iAdditionalJson(aAdditionalJson)
+    , iChoice(nullptr)
+    , iUiChoice(nullptr)
+    , iLock("CUCD")
+{
+}
+
+ConfigUiValChoiceDelayed::~ConfigUiValChoiceDelayed()
+{
+    if (iUiChoice != nullptr) {
+        delete iUiChoice;
+    }
+}
+
+void ConfigUiValChoiceDelayed::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    AutoMutex a(iLock);
+    ASSERT(iUiChoice != nullptr);
+    iUiChoice->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValChoiceDelayed::AddObserver(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    if (iUiChoice == nullptr) {
+        iChoice = &iConfigManager.GetChoice(iKey);
+        // This dynamic allocation at runtime only happens once.
+        iUiChoice = new ConfigUiValChoice(*iChoice, iAdditionalJson);
+    }
+    return iUiChoice->AddObserver(aObserver);
+}
+
+void ConfigUiValChoiceDelayed::RemoveObserver(TUint aObserverId)
+{
+    AutoMutex a(iLock);
+    ASSERT(iUiChoice != nullptr);
+    iUiChoice->RemoveObserver(aObserverId);
 }
 
 
@@ -1018,5 +1130,7 @@ ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigMana
         //AddChoice(key);
     }
 
-    AddConfigChoice(ConfigStartupSource::kKeySource);
+    // Startup.Source isn't added to ConfigManager until after ConfigApp is created.
+    // Use special "delayed instantiation" ConfigUi value.
+    AddValue(new ConfigUiValChoiceDelayed(iConfigManager, ConfigStartupSource::kKeySource, iRebootNotRequired));
 }

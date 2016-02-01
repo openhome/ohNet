@@ -315,14 +315,14 @@ protected:
     void ValueChangedInt(TInt aValue);
     void ValueChangedUint(TUint aValue);
     void ValueChangedString(const Brx& aValue);
-    virtual void NotifyObserver(IConfigUiValObserver& aObserver) = 0;
+    virtual void ObserverAdded(IConfigUiValObserver& aObserver) = 0;
 
     virtual void WriteKey(IWriter& aWriter) = 0;
     virtual void WriteType(IWriter& aWriter) = 0;
     virtual void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) = 0;
 private:
     void WriteAdditional(IWriter& aWriter);
-private: // from IConfigUiVal
+public: // from IConfigUiVal
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
     void RemoveObserver(TUint aObserverId) override;
@@ -339,7 +339,7 @@ class ConfigUiValReadOnly : public ConfigUiValBase
 public:
     ConfigUiValReadOnly(const Brx& aKey, const Brx& aValue);
 private: // from ConfigUiValBase
-    void NotifyObserver(IConfigUiValObserver& aObserver) override;
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
     void WriteType(IWriter& aWriter) override;
     void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
@@ -355,7 +355,7 @@ public:
     ConfigUiValNum(Configuration::ConfigNum& aNum, IWritable& aAdditionalJson);
     ~ConfigUiValNum();
 private: // from ConfigUiValBase
-    void NotifyObserver(IConfigUiValObserver& aObserver) override;
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
     void WriteType(IWriter& aWriter) override;
     void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
@@ -365,7 +365,8 @@ private:
     Configuration::ConfigNum& iNum;
     TUint iListenerId;
     TInt iVal;
-    Mutex iLock;
+    Mutex iLockListener;
+    Mutex iLockVal;
 };
 
 class ConfigUiValChoice : public ConfigUiValBase
@@ -374,7 +375,7 @@ public:
     ConfigUiValChoice(Configuration::ConfigChoice& aChoice, IWritable& aAdditionalJson);
     ~ConfigUiValChoice();
 private: // from ConfigUiValBase
-    void NotifyObserver(IConfigUiValObserver& aObserver) override;
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
     void WriteType(IWriter& aWriter) override;
     void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
@@ -384,7 +385,8 @@ private:
     Configuration::ConfigChoice& iChoice;
     TUint iListenerId;
     TUint iVal;
-    Mutex iLock;
+    Mutex iLockListener;
+    Mutex iLockVal;
 };
 
 class ConfigUiValText : public ConfigUiValBase
@@ -393,7 +395,7 @@ public:
     ConfigUiValText(Configuration::ConfigText& aText, IWritable& aAdditionalJson);
     ~ConfigUiValText();
 private: // from ConfigUiValBase
-    void NotifyObserver(IConfigUiValObserver& aObserver) override;
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
     void WriteType(IWriter& aWriter) override;
     void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
@@ -403,6 +405,29 @@ private:
     Configuration::ConfigText& iText;
     TUint iListenerId;
     Bws<Configuration::ConfigText::kMaxBytes> iVal;
+    Mutex iLockListener;
+    Mutex iLockVal;
+};
+
+/**
+ * Custom class for ConfigChoice values that do not exist in ConfigManager when
+ * ConfigApp is initialised (i.e., supports delayed instantiation of ConfigVals).
+ */
+class ConfigUiValChoiceDelayed : public IConfigUiVal
+{
+public:
+    ConfigUiValChoiceDelayed(Configuration::IConfigManager& aConfigManager, const Brx& aKey, IWritable& aAdditionalJson);
+    ~ConfigUiValChoiceDelayed();
+private: // from IConfigValUi
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    Configuration::IConfigManager& iConfigManager;
+    Bwh iKey;
+    IWritable& iAdditionalJson;
+    Configuration::ConfigChoice* iChoice;
+    ConfigUiValChoice* iUiChoice;
     Mutex iLock;
 };
 
