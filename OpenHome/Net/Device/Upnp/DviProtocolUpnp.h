@@ -140,6 +140,7 @@ private:
     ~DviProtocolUpnpAdapterSpecificData();
     IUpnpMsearchHandler* Handler();
     void ByeByesComplete();
+    TBool IsLocationReachable(const Endpoint& aEndpoint);
 private: // from ISsdpMsearchHandler
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx);
     void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx);
@@ -154,6 +155,7 @@ private:
     TInt iId;
     TIpAddress iSubnet;
     TIpAddress iAdapter;
+    TIpAddress iMask;
     Bws<Uri::kMaxUriBytes> iUriBase;
     TUint iServerPort;
     Brh iDeviceXml;

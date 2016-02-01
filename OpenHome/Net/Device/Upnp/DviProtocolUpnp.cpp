@@ -562,6 +562,14 @@ void DviProtocolUpnp::LogMulticastNotification(const char* aType)
     LOG(kDvDevice, "Device %.*s starting to send %s notifications.\n", PBUF(udn), aType);
 }
 
+TBool DviProtocolUpnpAdapterSpecificData::IsLocationReachable(const Endpoint& aEndpoint)
+{
+    /* This method has the same purpose as CpiDeviceListUpnp::IsLocationReachable.
+        The reachability check is needed to ensure that all M-SEARCH responses contain
+        a location Uri that can be accessed by the M-SEARCH sender. */
+    return (aEndpoint.Address() & iMask) == (iSubnet & iMask);
+}
+
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter)
 {
     if (iDevice.Enabled()) {
@@ -649,6 +657,7 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& 
     , iId(0x7fffffff)
     , iSubnet(aAdapter.Subnet())
     , iAdapter(aAdapter.Address())
+    , iMask(aAdapter.Mask())
     , iUriBase(aUriBase)
     , iServerPort(aServerPort)
     , iBonjourWebPage(0)
@@ -792,6 +801,9 @@ IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
 {
+    if (!IsLocationReachable(aEndpoint)) {
+        return;
+    }
     IUpnpMsearchHandler* handler = Handler();
     if (handler != NULL) {
         handler->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
@@ -800,6 +812,9 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
 {
+    if (!IsLocationReachable(aEndpoint)) {
+        return;
+    }
     IUpnpMsearchHandler* handler = Handler();
     if (handler != NULL) {
         handler->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
@@ -808,6 +823,9 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoin
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
 {
+    if (!IsLocationReachable(aEndpoint)) {
+        return;
+    }
     IUpnpMsearchHandler* handler = Handler();
     if (handler != NULL) {
         handler->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
@@ -816,6 +834,9 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoin
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
+    if (!IsLocationReachable(aEndpoint)) {
+        return;
+    }
     IUpnpMsearchHandler* handler = Handler();
     if (handler != NULL) {
         handler->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
@@ -824,6 +845,9 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aE
 
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
+    if (!IsLocationReachable(aEndpoint)) {
+        return;
+    }
     IUpnpMsearchHandler* handler = Handler();
     if (handler != NULL) {
         handler->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
