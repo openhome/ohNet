@@ -294,7 +294,7 @@ class TestCase(object):
 
 gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestStream', [], True)
-             ,TestCase('TestThread', [], True)
+             ,TestCase('TestThread', ['--full'], False)
              ,TestCase('TestFunctorGeneric', [], True)
              ,TestCase('TestFifo', [], True)
              ,TestCase('TestFile', [], True)

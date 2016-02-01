@@ -1,6 +1,9 @@
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/OsWrapper.h>
+
+#include <vector>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -983,8 +986,13 @@ TUint SuitePriorityArbitrator::HostRange() const
 class MainTestThread : public Thread
 {
 public:
-    MainTestThread() : Thread("MAIN") {}
+    MainTestThread(TBool aFull)
+        : Thread("MAIN")
+        , iFull(aFull)
+    {}
     void Run();
+private:
+    TBool iFull;
 };
 
 void MainTestThread::Run()
@@ -994,16 +1002,22 @@ void MainTestThread::Run()
     runner.Add(new SuiteMutex());
     runner.Add(new SuiteAutoMutex());
     runner.Add(new SuiteAutoSemaphore());
-    runner.Add(new SuiteStartStop());
+    if (iFull) {
+        runner.Add(new SuiteStartStop());
+    }
     // Performance tests disabled as they cause intermittent failures for automated tests
     // (which run on servers with variable loads)
     //runner.Add(new SuitePerformance());
     runner.Add(new SuiteThreadKill());
     runner.Add(new SuiteThreadNotStarted());
-    runner.Add(new SuiteThreadStartDelete());
+    if (iFull) {
+        runner.Add(new SuiteThreadStartDelete());
+    }
     runner.Add(new SuiteThreadFunctor());
     runner.Add(new SuiteThreadFunctorNotStarted());
-    runner.Add(new SuiteThreadFunctorStartDelete());
+    if (iFull) {
+        runner.Add(new SuiteThreadFunctorStartDelete());
+    }
     runner.Add(new SuitePriorityArbitrator());
     if (OpenHome::Thread::SupportsPriorities())
     {
@@ -1015,10 +1029,17 @@ void MainTestThread::Run()
     Signal();
 }
 
-void TestThread()
+void TestThread(const std::vector<Brn>& aArgs)
 {
+    OptionParser parser;
+    OptionBool full("-f", "--full", "Run full (slow) set of test cases");
+    parser.AddOption(&full);
+    if (!parser.Parse(aArgs, true) || parser.HelpDisplayed()) {
+        return;
+    }
+
     gTestStack = new TestStack();
-    Thread* th = new MainTestThread();
+    Thread* th = new MainTestThread(full.Value());
     th->Start();
     th->Wait();
     delete th;

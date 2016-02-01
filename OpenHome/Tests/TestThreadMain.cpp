@@ -1,11 +1,16 @@
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Private/OptionParser.h>
+#include <OpenHome/Buffer.h>
 
-extern void TestThread();
+#include <vector>
 
-void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
+extern void TestThread(const std::vector<OpenHome::Brn>& aArgs);
+
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-    TestThread();
+    std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
+    TestThread(args);
     delete aInitParams;
     Net::UpnpLibrary::Close();
 }
