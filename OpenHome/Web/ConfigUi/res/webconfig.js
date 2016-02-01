@@ -118,6 +118,17 @@ function StartLongPolling()
         alert("No such key: " + aKey);
     }
 
+    var CreateReadOnlyElement = function(aJsonConfigReadOnlyVal)
+    {
+        var elemInput = document.createElement("input");
+        elemInput.type = "text";
+        elemInput.id = aJsonConfigReadOnlyVal.key;
+        elemInput.name = aJsonConfigReadOnlyVal.key;
+        elemInput.readOnly = true;
+        //eleminput.value = aJsonConfigReadOnlyVal.value;
+        return elemInput;
+    }
+
     var CreateNumElement = function(aJsonConfigNumVal)
     {
         var elemInput = document.createElement("input");
@@ -160,6 +171,9 @@ function StartLongPolling()
 
     var CreateValElement = function(aJsonConfigVal)
     {
+        if (aJsonConfigVal.type == "read-only") {
+            return CreateReadOnlyElement(aJsonConfigVal)
+        }
         if (aJsonConfigVal.type == "numeric") {
             return CreateNumElement(aJsonConfigVal)
         }
@@ -215,6 +229,9 @@ function StartLongPolling()
     var SetElementValue = function(aElement, aJsonResponse)
     {
         // Element should NOT be null.
+        if (aJsonResponse.type == "read-only") {
+            aElement.value = aJsonResponse.value;
+        }
         if (aJsonResponse.type == "numeric") {
             aElement.value = aJsonResponse.value;
         }

@@ -633,7 +633,7 @@ void ConfigUiValBase::RemoveObserver(TUint aObserverId)
 
 // ConfigUiValReadOnly
 
-ConfigUiValReadOnly::ConfigUiValReadOnly(const Brx& aKey, const Brx& aValue)
+ConfigUiValReadOnly::ConfigUiValReadOnly(Brn aKey, Brn aValue)
     : ConfigUiValBase(iAdditional)
     , iKey(aKey)
     , iValue(aValue)
@@ -647,7 +647,9 @@ void ConfigUiValReadOnly::ObserverAdded(IConfigUiValObserver& aObserver)
 
 void ConfigUiValReadOnly::WriteKey(IWriter& aWriter)
 {
+    aWriter.Write(Brn("\""));
     Json::Escape(aWriter, iKey);
+    aWriter.Write(Brn("\""));
 }
 
 void ConfigUiValReadOnly::WriteType(IWriter& aWriter)
@@ -885,6 +887,70 @@ void ConfigUiValChoiceDelayed::RemoveObserver(TUint aObserverId)
 }
 
 
+// ConfigUiValReadOnlyManufacturerName
+
+const Brn ConfigUiValReadOnlyManufacturerName::kKey("Manufacturer.Name");
+
+ConfigUiValReadOnlyManufacturerName::ConfigUiValReadOnlyManufacturerName(Product& aProduct)
+{
+    Brn name, info, url, imageUri;
+    aProduct.GetManufacturerDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValReadOnly(kKey, name);
+}
+
+ConfigUiValReadOnlyManufacturerName::~ConfigUiValReadOnlyManufacturerName()
+{
+    delete iUiVal;
+}
+
+void ConfigUiValReadOnlyManufacturerName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValReadOnlyManufacturerName::AddObserver(IConfigUiValObserver& aObserver)
+{
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValReadOnlyManufacturerName::RemoveObserver(TUint aObserverId)
+{
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+
+// ConfigUiValReadOnlyModelName
+
+const Brn ConfigUiValReadOnlyModelName::kKey("Model.Name");
+
+ConfigUiValReadOnlyModelName::ConfigUiValReadOnlyModelName(Product& aProduct)
+{
+    Brn name, info, url, imageUri;
+    aProduct.GetModelDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValReadOnly(kKey, name);
+}
+
+ConfigUiValReadOnlyModelName::~ConfigUiValReadOnlyModelName()
+{
+    delete iUiVal;
+}
+
+void ConfigUiValReadOnlyModelName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValReadOnlyModelName::AddObserver(IConfigUiValObserver& aObserver)
+{
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValReadOnlyModelName::RemoveObserver(TUint aObserverId)
+{
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+
 // ConfigAppBase
 
 const Brn ConfigAppBase::kLangRoot("lang");
@@ -1023,10 +1089,13 @@ void ConfigAppBase::AddValue(IConfigUiVal* aValue)
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
     , iRebootRequired(true)
 {
+    AddValue(new ConfigUiValReadOnlyManufacturerName(aProduct));
+    AddValue(new ConfigUiValReadOnlyModelName(aProduct));
+
     AddConfigText(Brn("Product.Name"));
     AddConfigText(Brn("Product.Room"));
 }
@@ -1064,8 +1133,8 @@ void ConfigAppBasic::AddConfigText(const Brx& aKey, TBool aRebootRequired)
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBasic(aInfoAggregator, aProduct, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {

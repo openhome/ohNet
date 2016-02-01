@@ -337,7 +337,7 @@ private:
 class ConfigUiValReadOnly : public ConfigUiValBase
 {
 public:
-    ConfigUiValReadOnly(const Brx& aKey, const Brx& aValue);
+    ConfigUiValReadOnly(Brn aKey, Brn aValue);
 private: // from ConfigUiValBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
@@ -345,8 +345,8 @@ private: // from ConfigUiValBase
     void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
 private:
     WritableJsonEmpty iAdditional;
-    const Brx& iKey;
-    const Brx& iValue;
+    const Brn iKey;
+    const Brn iValue;
 };
 
 class ConfigUiValNum : public ConfigUiValBase
@@ -428,6 +428,36 @@ private:
     Mutex iLock;
 };
 
+class ConfigUiValReadOnlyManufacturerName : public IConfigUiVal
+{
+public:
+    static const Brn kKey;
+public:
+    ConfigUiValReadOnlyManufacturerName(Av::Product& aProduct);
+    ~ConfigUiValReadOnlyManufacturerName();
+private: // from IConfigUiValReadOnly
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    ConfigUiValReadOnly* iUiVal;
+};
+
+class ConfigUiValReadOnlyModelName : public IConfigUiVal
+{
+public:
+    static const Brn kKey;
+public:
+    ConfigUiValReadOnlyModelName(Av::Product& aProduct);
+    ~ConfigUiValReadOnlyModelName();
+private: // from IConfigUiValReadOnly
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    ConfigUiValReadOnly* iUiVal;
+};
+
 class ConfigAppBase : public IConfigApp, public ILanguageResourceManager
 {
 private:
@@ -462,6 +492,7 @@ class ConfigAppBasic : public ConfigAppBase
 {
 public:
     ConfigAppBasic(Media::IInfoAggregator& aInfoAggregator,
+                   Av::Product& aProduct,
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
@@ -483,6 +514,7 @@ private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
     ConfigAppSources(Media::IInfoAggregator& aInfoAggregator,
+                     Av::Product& aProduct,
                      Configuration::IConfigManager& aConfigManager,
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,

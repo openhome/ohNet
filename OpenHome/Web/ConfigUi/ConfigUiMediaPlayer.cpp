@@ -15,12 +15,13 @@ using namespace OpenHome::Web;
 
 
 ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregator,
+                                           Product& aProduct,
                                            Configuration::IConfigManager& aConfigManager,
                                            IConfigAppResourceHandlerFactory& aResourceFactory,
                                            const std::vector<const Brx*>& aSources,
                                            const Brx& aResourcePrefix, const Brx& aResourceDir,
                                            TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-                                           : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+                                           : ConfigAppSources(aInfoAggregator, aProduct, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     AddNumConditional(Brn("Sender.Channel"));
     AddNumConditional(Brn("Sender.Preset"));
