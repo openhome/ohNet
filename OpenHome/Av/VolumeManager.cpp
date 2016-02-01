@@ -68,17 +68,20 @@ void VolumeNull::SetVolume(TUint /*aVolume*/)
 
 const Brn VolumeUser::kStartupVolumeKey("Startup.Volume");
 
-VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, StoreInt& aStoreUserVolume, TUint aMaxVolume)
+VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, StoreInt& aStoreUserVolume,
+                       TUint aMaxVolume, TUint aMilliDbPerStep)
     : iVolume(aVolume)
     , iConfigStartupVolume(aConfigReader.GetNum(VolumeConfig::kKeyStartupValue))
     , iConfigStartupVolumeEnabled(aConfigReader.GetChoice(VolumeConfig::kKeyStartupEnabled))
     , iStoreUserVolume(aStoreUserVolume)
     , iMaxVolume(aMaxVolume)
+    , iMilliDbPerStep(aMilliDbPerStep)
 {
     iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
     iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
 
-    const TUint startupVolume = (iStartupVolumeEnabled? iStartupVolume : iStoreUserVolume.Get());
+    TUint startupVolume = (iStartupVolumeEnabled? iStartupVolume : iStoreUserVolume.Get());
+    startupVolume *= iMilliDbPerStep;
     iVolume.SetVolume(startupVolume);
 }
 
@@ -160,7 +163,7 @@ VolumeReporter::VolumeReporter(IVolume& aVolume, TUint aMilliDbPerStep)
 
 void VolumeReporter::AddVolumeObserver(IVolumeObserver& aObserver)
 {
-    aObserver.VolumeChanged(iUpstreamVolume);
+    aObserver.VolumeChanged(iUpstreamVolume / iMilliDbPerStep);
     iObservers.push_back(&aObserver);
 }
 
@@ -568,7 +571,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aVolumeConfig.StoreUserVolume(),
-                                     iVolumeConfig.VolumeMax() * milliDbPerStep);
+                                     iVolumeConfig.VolumeMax() * milliDbPerStep, milliDbPerStep);
         iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
         aProduct.AddAttribute("Volume");
     }

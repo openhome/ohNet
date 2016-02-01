@@ -130,7 +130,8 @@ class VolumeUser : public IVolume, private INonCopyable
 public:
     static const Brn kStartupVolumeKey;
 public:
-    VolumeUser(IVolume& aVolume, Configuration::IConfigManager& aConfigReader, StoreInt& aStoreUserVolume, TUint aMaxVolume);
+    VolumeUser(IVolume& aVolume, Configuration::IConfigManager& aConfigReader, StoreInt& aStoreUserVolume,
+               TUint aMaxVolume, TUint aMilliDbPerStep);
     ~VolumeUser();
 public: // from IVolume
     void SetVolume(TUint aVolume) override;
@@ -146,7 +147,8 @@ private:
     StoreInt& iStoreUserVolume;
     TBool iStartupVolumeEnabled;
     TUint iStartupVolume;
-    TUint iMaxVolume;
+    const TUint iMaxVolume;
+    const TUint iMilliDbPerStep;
 };
 
 class VolumeLimiter : public IVolume, private INonCopyable
