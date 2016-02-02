@@ -80,6 +80,8 @@ private: // from IVolume
     void SetVolume(TUint aValue) override;
 private: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
+private: // from IVolumeSourceUnityGain
+    void SetUnityGain(TBool aEnable) override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
@@ -204,6 +206,7 @@ TUint DummyVolumeManager::BalanceMax() const                         { return 5;
 TUint DummyVolumeManager::FadeMax() const                            { return 4; }
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
 void DummyVolumeManager::SetVolumeOffset(TInt /*aValue*/)            {}
+void DummyVolumeManager::SetUnityGain(TBool /*aEnable*/)             {}
 void DummyVolumeManager::Mute()                                      {}
 void DummyVolumeManager::Unmute()                                    {}
 

@@ -32,7 +32,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.183",
+        "version": "0.0.191",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -85,7 +85,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.704",
+        "version": "0.0.707",
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

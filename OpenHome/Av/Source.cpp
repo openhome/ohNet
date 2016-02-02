@@ -14,6 +14,8 @@ using namespace OpenHome::Configuration;
 
 // SourceBase
 
+const TUint SourceBase::kConfigValSourceInvisible = 0;
+const TUint SourceBase::kConfigValSourceVisible   = 1;
 const Brn SourceBase::kKeySourceNamePrefix("Source.");
 const Brn SourceBase::kKeySourceNameSuffix(".Name");
 const Brn SourceBase::kKeySourceVisibleSuffix(".Visible");
@@ -126,15 +128,18 @@ void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit,
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SourceBase::NameChanged));
 
     GetSourceVisibleKey(iSystemName, key);
-    if (aConfigManagerReader.HasNum(key)) {
-        iConfigVisible = &aConfigManagerReader.GetNum(key);
+    if (aConfigManagerReader.HasChoice(key)) {
+        iConfigVisible = &aConfigManagerReader.GetChoice(key);
         iConfigVisibleCreated = false;
     }
     else {
-        iConfigVisible = new ConfigNum(aConfigInit, key, kConfigValSourceInvisible, kConfigValSourceVisible, kConfigValSourceVisible);
+        std::vector<TUint> choices;
+        choices.push_back(kConfigValSourceInvisible);
+        choices.push_back(kConfigValSourceVisible);
+        iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceVisible);
         iConfigVisibleCreated = true;
     }
-    iConfigVisibleSubscriptionId = iConfigVisible->Subscribe(MakeFunctorConfigNum(*this, &SourceBase::VisibleChanged));
+    iConfigVisibleSubscriptionId = iConfigVisible->Subscribe(MakeFunctorConfigChoice(*this, &SourceBase::VisibleChanged));
 
 }
 
@@ -146,7 +151,7 @@ void SourceBase::NameChanged(KeyValuePair<const Brx&>& aName)
     iProduct->NotifySourceChanged(*this);
 }
 
-void SourceBase::VisibleChanged(Configuration::KeyValuePair<TInt>& aKvp)
+void SourceBase::VisibleChanged(Configuration::KeyValuePair<TUint>& aKvp)
 {
     iLock.Wait();
     iVisible = (aKvp.Value() == kConfigValSourceVisible);

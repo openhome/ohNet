@@ -23,8 +23,8 @@ try:
     if len( sys.argv ) > 1:
         logDir = sys.argv[1]
 except:
-    print '\n', __doc__, '\n'
-    print '\n\nInvalid arguments %s' % (str( sys.argv ))
+    print( '\n%s\n' % __doc__ )
+    print( '\n\nInvalid arguments %s' % (str( sys.argv )) )
     # noinspection PyProtectedMember
     os._exit( -1 )
 

@@ -45,7 +45,7 @@ namespace Configuration {
     class ConfigManager;
 }
 namespace Web {
-    class ConfigAppMediaPlayer;
+    class ConfigAppBase;
 }
 namespace Av {
     class FriendlyNameHandler;
@@ -99,7 +99,8 @@ private:
     static const TUint kUiSendQueueSize = 32;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
-                    const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent);
+                    const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
+                    TUint aMaxUiTabs=kMaxUiTabs, TUint aUiSendQueueSize=kUiSendQueueSize);
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
     void SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper);
@@ -135,7 +136,7 @@ private:
 protected:
     MediaPlayer* iMediaPlayer;
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
-    Web::ConfigAppMediaPlayer* iConfigApp;
+    Web::ConfigAppBase* iConfigApp;
 private:
     Semaphore iSemShutdown;
     Net::Shell* iShell;
@@ -160,6 +161,8 @@ private:
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
     RebootLogger iRebootHandler;
+    TUint iMaxUiTabs;
+    TUint iUiSendQueueSize;
 };
 
 class TestMediaPlayerOptions
