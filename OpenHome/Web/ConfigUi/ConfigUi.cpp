@@ -631,44 +631,66 @@ void ConfigUiValBase::RemoveObserver(TUint aObserverId)
 }
 
 
-// ConfigUiValReadOnly
+// ConfigUiValRoBase
 
-ConfigUiValReadOnly::ConfigUiValReadOnly(Brn aKey, Brn aValue)
+ConfigUiValRoBase::ConfigUiValRoBase(const Brx& aKey)
     : ConfigUiValBase(iAdditional)
     , iKey(aKey)
-    , iValue(aValue)
-    , iLock("CURL")
 {
 }
 
-void ConfigUiValReadOnly::Update(Brn aValue)
-{
-    AutoMutex a(iLock);
-    iValue.Set(aValue);
-    ValueChangedString(iValue);
-}
-
-void ConfigUiValReadOnly::ObserverAdded(IConfigUiValObserver& aObserver)
-{
-    AutoMutex a(iLock);
-    aObserver.ValueChangedString(*this, iValue);
-}
-
-void ConfigUiValReadOnly::WriteKey(IWriter& aWriter)
+void ConfigUiValRoBase::WriteKey(IWriter& aWriter)
 {
     aWriter.Write(Brn("\""));
     Json::Escape(aWriter, iKey);
     aWriter.Write(Brn("\""));
 }
 
-void ConfigUiValReadOnly::WriteType(IWriter& aWriter)
+void ConfigUiValRoBase::WriteType(IWriter& aWriter)
 {
     aWriter.Write(Brn("\"read-only\""));
 }
 
-void ConfigUiValReadOnly::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLanguageResourceManager*/, std::vector<Bws<10>>& /*aLanguageList*/)
+void ConfigUiValRoBase::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLanguageResourceManager*/, std::vector<Bws<10>>& /*aLanguageList*/)
 {
     aWriter.Write(Brn("{}"));
+}
+
+
+// ConfigUiValRo
+
+ConfigUiValRo::ConfigUiValRo(const Brx& aKey, Brn aValue)
+    : ConfigUiValRoBase(aKey)
+    , iValue(aValue)
+{
+}
+
+void ConfigUiValRo::ObserverAdded(IConfigUiValObserver& aObserver)
+{
+    aObserver.ValueChangedString(*this, iValue);
+}
+
+
+// ConfigUiValRoUpdatable
+
+ConfigUiValRoUpdatable::ConfigUiValRoUpdatable(const Brx& aKey, const Brx& aValue)
+    : ConfigUiValRoBase(aKey)
+    , iValue(aValue)
+    , iLock("CURL")
+{
+}
+
+void ConfigUiValRoUpdatable::Update(const Brx& aValue)
+{
+    AutoMutex a(iLock);
+    iValue.Replace(aValue);
+    ValueChangedString(iValue);
+}
+
+void ConfigUiValRoUpdatable::ObserverAdded(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    aObserver.ValueChangedString(*this, iValue);
 }
 
 
@@ -896,65 +918,65 @@ void ConfigUiValChoiceDelayed::RemoveObserver(TUint aObserverId)
 }
 
 
-// ConfigUiValReadOnlyManufacturerName
+// ConfigUiValRoManufacturerName
 
-const Brn ConfigUiValReadOnlyManufacturerName::kKey("Manufacturer.Name");
+const Brn ConfigUiValRoManufacturerName::kKey("Manufacturer.Name");
 
-ConfigUiValReadOnlyManufacturerName::ConfigUiValReadOnlyManufacturerName(Product& aProduct)
+ConfigUiValRoManufacturerName::ConfigUiValRoManufacturerName(Product& aProduct)
 {
     Brn name, info, url, imageUri;
     aProduct.GetManufacturerDetails(name, info, url, imageUri);
-    iUiVal = new ConfigUiValReadOnly(kKey, name);
+    iUiVal = new ConfigUiValRo(kKey, name);
 }
 
-ConfigUiValReadOnlyManufacturerName::~ConfigUiValReadOnlyManufacturerName()
+ConfigUiValRoManufacturerName::~ConfigUiValRoManufacturerName()
 {
     delete iUiVal;
 }
 
-void ConfigUiValReadOnlyManufacturerName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+void ConfigUiValRoManufacturerName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
     iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
 }
 
-TUint ConfigUiValReadOnlyManufacturerName::AddObserver(IConfigUiValObserver& aObserver)
+TUint ConfigUiValRoManufacturerName::AddObserver(IConfigUiValObserver& aObserver)
 {
     return iUiVal->AddObserver(aObserver);
 }
 
-void ConfigUiValReadOnlyManufacturerName::RemoveObserver(TUint aObserverId)
+void ConfigUiValRoManufacturerName::RemoveObserver(TUint aObserverId)
 {
     iUiVal->RemoveObserver(aObserverId);
 }
 
 
-// ConfigUiValReadOnlyModelName
+// ConfigUiValRoModelName
 
-const Brn ConfigUiValReadOnlyModelName::kKey("Model.Name");
+const Brn ConfigUiValRoModelName::kKey("Model.Name");
 
-ConfigUiValReadOnlyModelName::ConfigUiValReadOnlyModelName(Product& aProduct)
+ConfigUiValRoModelName::ConfigUiValRoModelName(Product& aProduct)
 {
     Brn name, info, url, imageUri;
     aProduct.GetModelDetails(name, info, url, imageUri);
-    iUiVal = new ConfigUiValReadOnly(kKey, name);
+    iUiVal = new ConfigUiValRo(kKey, name);
 }
 
-ConfigUiValReadOnlyModelName::~ConfigUiValReadOnlyModelName()
+ConfigUiValRoModelName::~ConfigUiValRoModelName()
 {
     delete iUiVal;
 }
 
-void ConfigUiValReadOnlyModelName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+void ConfigUiValRoModelName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
     iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
 }
 
-TUint ConfigUiValReadOnlyModelName::AddObserver(IConfigUiValObserver& aObserver)
+TUint ConfigUiValRoModelName::AddObserver(IConfigUiValObserver& aObserver)
 {
     return iUiVal->AddObserver(aObserver);
 }
 
-void ConfigUiValReadOnlyModelName::RemoveObserver(TUint aObserverId)
+void ConfigUiValRoModelName::RemoveObserver(TUint aObserverId)
 {
     iUiVal->RemoveObserver(aObserverId);
 }
@@ -969,7 +991,7 @@ ConfigUiValRoIpAddress::ConfigUiValRoIpAddress(NetworkAdapterList& aAdapterList)
     : iAdapterList(aAdapterList)
 {
     // Initialise with dummy value.
-    iUiVal = new ConfigUiValReadOnly(kKey, Brx::Empty());
+    iUiVal = new ConfigUiValRoUpdatable(kKey, Brx::Empty());
     iListenerId = iAdapterList.AddCurrentChangeListener(MakeFunctor(*this, &ConfigUiValRoIpAddress::CurrentAdapterChanged));
 
     // Callback isn't made when registering observer.
@@ -1152,8 +1174,8 @@ ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, Environment& aE
     : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
     , iRebootRequired(true)
 {
-    AddValue(new ConfigUiValReadOnlyManufacturerName(aProduct));
-    AddValue(new ConfigUiValReadOnlyModelName(aProduct));
+    AddValue(new ConfigUiValRoManufacturerName(aProduct));
+    AddValue(new ConfigUiValRoModelName(aProduct));
     AddValue(new ConfigUiValRoIpAddress(aEnv.NetworkAdapterList()));
 
     AddConfigText(Brn("Product.Name"));

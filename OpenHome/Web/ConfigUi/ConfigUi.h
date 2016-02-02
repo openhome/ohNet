@@ -334,20 +334,40 @@ private:
     Mutex iLockObservers;
 };
 
-class ConfigUiValReadOnly : public ConfigUiValBase
+class ConfigUiValRoBase : public ConfigUiValBase
 {
 public:
-    ConfigUiValReadOnly(Brn aKey, Brn aValue);
-    void Update(Brn aValue);
+    ConfigUiValRoBase(const Brx& aKey);
 private: // from ConfigUiValBase
-    void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
     void WriteType(IWriter& aWriter) override;
     void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
 private:
     WritableJsonEmpty iAdditional;
-    const Brn iKey;
-    Brn iValue;
+    const Bwh iKey;
+};
+
+class ConfigUiValRo : public ConfigUiValRoBase
+{
+public:
+    ConfigUiValRo(const Brx& aKey, Brn aValue);
+private: // from ConfigUiValRoBase
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
+private:
+    const Brn iValue;
+};
+
+class ConfigUiValRoUpdatable : public ConfigUiValRoBase
+{
+public:
+    static const TUint kMaxValueBytes = 512;
+public:
+    ConfigUiValRoUpdatable(const Brx& aKey, const Brx& aValue);
+    void Update(const Brx& aValue);
+private: // from ConfigUiValRoBase
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
+private:
+    Bws<kMaxValueBytes> iValue;
     Mutex iLock;
 };
 
@@ -430,34 +450,34 @@ private:
     Mutex iLock;
 };
 
-class ConfigUiValReadOnlyManufacturerName : public IConfigUiVal
+class ConfigUiValRoManufacturerName : public IConfigUiVal
 {
 public:
     static const Brn kKey;
 public:
-    ConfigUiValReadOnlyManufacturerName(Av::Product& aProduct);
-    ~ConfigUiValReadOnlyManufacturerName();
+    ConfigUiValRoManufacturerName(Av::Product& aProduct);
+    ~ConfigUiValRoManufacturerName();
 private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
     void RemoveObserver(TUint aObserverId) override;
 private:
-    ConfigUiValReadOnly* iUiVal;
+    ConfigUiValRo* iUiVal;
 };
 
-class ConfigUiValReadOnlyModelName : public IConfigUiVal
+class ConfigUiValRoModelName : public IConfigUiVal
 {
 public:
     static const Brn kKey;
 public:
-    ConfigUiValReadOnlyModelName(Av::Product& aProduct);
-    ~ConfigUiValReadOnlyModelName();
+    ConfigUiValRoModelName(Av::Product& aProduct);
+    ~ConfigUiValRoModelName();
 private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
     void RemoveObserver(TUint aObserverId) override;
 private:
-    ConfigUiValReadOnly* iUiVal;
+    ConfigUiValRo* iUiVal;
 };
 
 class ConfigUiValRoIpAddress : public IConfigUiVal, private INonCopyable
@@ -478,7 +498,7 @@ private:
     NetworkAdapterList& iAdapterList;
     TUint iListenerId;
     Endpoint::AddressBuf iAddress;
-    ConfigUiValReadOnly* iUiVal;
+    ConfigUiValRoUpdatable* iUiVal;
 };
 
 class ConfigAppBase : public IConfigApp, public ILanguageResourceManager
