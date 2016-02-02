@@ -637,11 +637,20 @@ ConfigUiValReadOnly::ConfigUiValReadOnly(Brn aKey, Brn aValue)
     : ConfigUiValBase(iAdditional)
     , iKey(aKey)
     , iValue(aValue)
+    , iLock("CURL")
 {
+}
+
+void ConfigUiValReadOnly::Update(Brn aValue)
+{
+    AutoMutex a(iLock);
+    iValue.Set(aValue);
+    ValueChangedString(iValue);
 }
 
 void ConfigUiValReadOnly::ObserverAdded(IConfigUiValObserver& aObserver)
 {
+    AutoMutex a(iLock);
     aObserver.ValueChangedString(*this, iValue);
 }
 
@@ -951,6 +960,56 @@ void ConfigUiValReadOnlyModelName::RemoveObserver(TUint aObserverId)
 }
 
 
+// ConfigUiValRoIpAddress
+
+const Brn ConfigUiValRoIpAddress::kKey("Device.Ip");
+const TChar* ConfigUiValRoIpAddress::kCookie("UiValRoIp");
+
+ConfigUiValRoIpAddress::ConfigUiValRoIpAddress(NetworkAdapterList& aAdapterList)
+    : iAdapterList(aAdapterList)
+{
+    // Initialise with dummy value.
+    iUiVal = new ConfigUiValReadOnly(kKey, Brx::Empty());
+    iListenerId = iAdapterList.AddCurrentChangeListener(MakeFunctor(*this, &ConfigUiValRoIpAddress::CurrentAdapterChanged));
+
+    // Callback isn't made when registering observer.
+    // Make callback internally to get newest val.
+    CurrentAdapterChanged();
+}
+
+ConfigUiValRoIpAddress::~ConfigUiValRoIpAddress()
+{
+    iAdapterList.RemoveCurrentChangeListener(iListenerId);
+    delete iUiVal;
+}
+
+void ConfigUiValRoIpAddress::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValRoIpAddress::AddObserver(IConfigUiValObserver& aObserver)
+{
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValRoIpAddress::RemoveObserver(TUint aObserverId)
+{
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+void ConfigUiValRoIpAddress::CurrentAdapterChanged()
+{
+    NetworkAdapter* adpt = iAdapterList.CurrentAdapter(kCookie);
+    const TIpAddress addr = adpt->Address();
+    adpt->RemoveRef(kCookie);
+
+    iAddress.SetBytes(0);
+    Endpoint::AppendAddress(iAddress, addr);
+    iUiVal->Update(Brn(iAddress));
+}
+
+
 // ConfigAppBase
 
 const Brn ConfigAppBase::kLangRoot("lang");
@@ -1089,12 +1148,13 @@ void ConfigAppBase::AddValue(IConfigUiVal* aValue)
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, Environment& aEnv, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
     , iRebootRequired(true)
 {
     AddValue(new ConfigUiValReadOnlyManufacturerName(aProduct));
     AddValue(new ConfigUiValReadOnlyModelName(aProduct));
+    AddValue(new ConfigUiValRoIpAddress(aEnv.NetworkAdapterList()));
 
     AddConfigText(Brn("Product.Name"));
     AddConfigText(Brn("Product.Room"));
@@ -1133,8 +1193,8 @@ void ConfigAppBasic::AddConfigText(const Brx& aKey, TBool aRebootRequired)
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppBasic(aInfoAggregator, aProduct, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, Environment& aEnv, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBasic(aInfoAggregator, aEnv, aProduct, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {

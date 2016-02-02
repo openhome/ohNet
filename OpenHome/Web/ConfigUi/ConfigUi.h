@@ -338,6 +338,7 @@ class ConfigUiValReadOnly : public ConfigUiValBase
 {
 public:
     ConfigUiValReadOnly(Brn aKey, Brn aValue);
+    void Update(Brn aValue);
 private: // from ConfigUiValBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteKey(IWriter& aWriter) override;
@@ -346,7 +347,8 @@ private: // from ConfigUiValBase
 private:
     WritableJsonEmpty iAdditional;
     const Brn iKey;
-    const Brn iValue;
+    Brn iValue;
+    Mutex iLock;
 };
 
 class ConfigUiValNum : public ConfigUiValBase
@@ -458,6 +460,27 @@ private:
     ConfigUiValReadOnly* iUiVal;
 };
 
+class ConfigUiValRoIpAddress : public IConfigUiVal, private INonCopyable
+{
+public:
+    static const Brn kKey;
+    static const TChar* kCookie;
+public:
+    ConfigUiValRoIpAddress(NetworkAdapterList& aAdapterList);
+    ~ConfigUiValRoIpAddress();
+private: // from IConfigUiValReadOnly
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    void CurrentAdapterChanged();
+private:
+    NetworkAdapterList& iAdapterList;
+    TUint iListenerId;
+    Endpoint::AddressBuf iAddress;
+    ConfigUiValReadOnly* iUiVal;
+};
+
 class ConfigAppBase : public IConfigApp, public ILanguageResourceManager
 {
 private:
@@ -492,6 +515,7 @@ class ConfigAppBasic : public ConfigAppBase
 {
 public:
     ConfigAppBasic(Media::IInfoAggregator& aInfoAggregator,
+                   Environment& aEnv,
                    Av::Product& aProduct,
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
@@ -514,6 +538,7 @@ private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
     ConfigAppSources(Media::IInfoAggregator& aInfoAggregator,
+                     Environment& aEnv,
                      Av::Product& aProduct,
                      Configuration::IConfigManager& aConfigManager,
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,

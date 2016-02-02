@@ -22,6 +22,7 @@ class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
     ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregator,
+                         Environment& aEnv,
                          Av::Product& aProduct,
                          Configuration::IConfigManager& aConfigManager,
                          IConfigAppResourceHandlerFactory& aResourceFactory,

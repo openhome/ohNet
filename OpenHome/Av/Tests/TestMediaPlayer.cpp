@@ -383,7 +383,7 @@ void TestMediaPlayer::InitialiseSubsystems()
 void TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
 {
     FileResourceHandlerFactory resourceHandlerFactory;
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->Product(), iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
+    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->Env(), iMediaPlayer->Product(), iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
 }
 
 void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
