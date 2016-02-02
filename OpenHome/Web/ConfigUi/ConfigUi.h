@@ -553,8 +553,6 @@ class ConfigAppBasic : public ConfigAppBase
 {
 public:
     ConfigAppBasic(Media::IInfoAggregator& aInfoAggregator,
-                   Environment& aEnv,
-                   Av::Product& aProduct,
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
@@ -576,8 +574,6 @@ private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
     ConfigAppSources(Media::IInfoAggregator& aInfoAggregator,
-                     Environment& aEnv,
-                     Av::Product& aProduct,
                      Configuration::IConfigManager& aConfigManager,
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,

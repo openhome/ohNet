@@ -815,15 +815,15 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
     Ascii::StreamWriteUint(aWriter, iChoice.Default());
     aWriter.Write(Brn(","));
 
-    if (iChoice->HasInternalMapping()) {
-        IConfigChoiceMapper& mapper = iChoice->Mapper();
+    if (iChoice.HasInternalMapping()) {
+        IConfigChoiceMapper& mapper = iChoice.Mapper();
         ConfigChoiceMappingWriterJson mappingWriter;
         mapper.Write(aWriter, mappingWriter);
     }
     else {
         // Bodge to map certain Source.*.xxxx values to the same set of choices
         static const Brn kSourcePrefix("Source.");
-        Bws<128> key(iChoice->Key());
+        Bws<128> key(iChoice.Key());
         if (key.BeginsWith(kSourcePrefix)) {
             // Assume source-specific keys have the form Source.SystemName.Suffix
             // For selected suffices, change this to Source.Suffix
@@ -840,12 +840,19 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
         // Read mapping from file.
         static const Brn kConfigOptionsFile("ConfigOptions.txt");
         ConfigChoiceMappingWriterJson mappingWriter;
-        ConfigChoiceMapperResourceFile mapper(key, iChoice->Choices(), aWriter, mappingWriter);
-        ILanguageResourceReader* resourceHandler = &iLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, *iLanguageList);
+        ConfigChoiceMapperResourceFile mapper(key, iChoice.Choices(), aWriter, mappingWriter);
+        ILanguageResourceReader* resourceHandler = &aLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, aLanguageList);
         resourceHandler->Process(mapper);
         //resourceHandler->Destroy();
     }
     aWriter.Write('}');
+}
+
+void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
+{
+    AutoMutex a(iLock);
+    iVal = aKvp.Value();
+    ValueChangedUint(iVal);
 }
 
 
@@ -1199,14 +1206,10 @@ void ConfigAppBase::AddValue(IConfigUiVal* aValue)
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, Environment& aEnv, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
     , iRebootRequired(true)
 {
-    AddValue(new ConfigUiValRoManufacturerName(aProduct));
-    AddValue(new ConfigUiValRoModelName(aProduct));
-    AddValue(new ConfigUiValRoIpAddress(aEnv.NetworkAdapterList()));
-
     AddConfigText(Brn("Product.Name"));
     AddConfigText(Brn("Product.Room"));
 }
@@ -1244,8 +1247,8 @@ void ConfigAppBasic::AddConfigText(const Brx& aKey, TBool aRebootRequired)
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, Environment& aEnv, Product& aProduct, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppBasic(aInfoAggregator, aEnv, aProduct, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {

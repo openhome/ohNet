@@ -22,8 +22,12 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
                                            const std::vector<const Brx*>& aSources,
                                            const Brx& aResourcePrefix, const Brx& aResourceDir,
                                            TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-                                           : ConfigAppSources(aInfoAggregator, aEnv, aProduct, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+                                           : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
+    AddValue(new ConfigUiValRoManufacturerName(aProduct));
+    AddValue(new ConfigUiValRoModelName(aProduct));
+    AddValue(new ConfigUiValRoIpAddress(aEnv.NetworkAdapterList()));
+
     AddNumConditional(Brn("Sender.Channel"));
     AddNumConditional(Brn("Sender.Preset"));
     AddNumConditional(VolumeConfig::kKeyBalance);
