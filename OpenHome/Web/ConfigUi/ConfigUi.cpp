@@ -572,7 +572,7 @@ void ConfigTab::ValueChangedString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
 
 // ConfigUiValBase
 
-ConfigUiValBase::ConfigUiValBase(IWritable& aAdditionalJson)
+ConfigUiValBase::ConfigUiValBase(const IWritable& aAdditionalJson)
     : iAdditionalJson(aAdditionalJson)
     , iNextObserverId(kObserverIdInvalid+1)
     , iLockObservers("CUVL")
@@ -718,7 +718,7 @@ void ConfigUiValRoUpdatable::ObserverAdded(IConfigUiValObserver& aObserver)
 
 // ConfigUiValNum
 
-ConfigUiValNum::ConfigUiValNum(Configuration::ConfigNum& aNum, IWritable& aAdditionalJson)
+ConfigUiValNum::ConfigUiValNum(Configuration::ConfigNum& aNum, const IWritable& aAdditionalJson)
     : ConfigUiValBase(aAdditionalJson)
     , iNum(aNum)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
@@ -775,7 +775,7 @@ void ConfigUiValNum::Update(Configuration::ConfigNum::KvpNum& aKvp)
 
 // ConfigUiValChoice
 
-ConfigUiValChoice::ConfigUiValChoice(Configuration::ConfigChoice& aChoice, IWritable& aAdditionalJson)
+ConfigUiValChoice::ConfigUiValChoice(Configuration::ConfigChoice& aChoice, const IWritable& aAdditionalJson)
     : ConfigUiValBase(aAdditionalJson)
     , iChoice(aChoice)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
@@ -842,7 +842,7 @@ void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
 
 // ConfigUiValText
 
-ConfigUiValText::ConfigUiValText(Configuration::ConfigText& aText, IWritable& aAdditionalJson)
+ConfigUiValText::ConfigUiValText(Configuration::ConfigText& aText, const IWritable& aAdditionalJson)
     : ConfigUiValBase(aAdditionalJson)
     , iText(aText)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)

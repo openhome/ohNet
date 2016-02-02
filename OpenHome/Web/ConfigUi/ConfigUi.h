@@ -328,7 +328,7 @@ private:
     static const TUint kObserverIdInvalid = 0;
     typedef std::map<TUint, IConfigUiValObserver*> Map;
 protected:
-    ConfigUiValBase(IWritable& aAdditionalJson);
+    ConfigUiValBase(const IWritable& aAdditionalJson);
 
     void ValueChangedInt(TInt aValue);
     void ValueChangedUint(TUint aValue);
@@ -347,7 +347,7 @@ public: // from IConfigUiVal
 protected:
     Map iObservers; // Not taking ownership.
 private:
-    IWritable& iAdditionalJson;
+    const IWritable& iAdditionalJson;
     TUint iNextObserverId;
     Mutex iLockObservers;
 };
@@ -392,7 +392,7 @@ private:
 class ConfigUiValNum : public ConfigUiValBase
 {
 public:
-    ConfigUiValNum(Configuration::ConfigNum& aNum, IWritable& aAdditionalJson);
+    ConfigUiValNum(Configuration::ConfigNum& aNum, const IWritable& aAdditionalJson);
     ~ConfigUiValNum();
 private: // from ConfigUiValBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;
@@ -411,7 +411,7 @@ private:
 class ConfigUiValChoice : public ConfigUiValBase
 {
 public:
-    ConfigUiValChoice(Configuration::ConfigChoice& aChoice, IWritable& aAdditionalJson);
+    ConfigUiValChoice(Configuration::ConfigChoice& aChoice, const IWritable& aAdditionalJson);
     ~ConfigUiValChoice();
 private: // from ConfigUiValBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;
@@ -430,7 +430,7 @@ private:
 class ConfigUiValText : public ConfigUiValBase
 {
 public:
-    ConfigUiValText(Configuration::ConfigText& aText, IWritable& aAdditionalJson);
+    ConfigUiValText(Configuration::ConfigText& aText, const IWritable& aAdditionalJson);
     ~ConfigUiValText();
 private: // from ConfigUiValBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;

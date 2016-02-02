@@ -451,7 +451,7 @@ void SuiteConfigMessageNum::Setup()
     iLanguageMap.Replace("");
     iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageNum::TearDown()
@@ -468,8 +468,10 @@ void SuiteConfigMessageNum::TestSend()
 {
     static const TUint value = 1;
     WritableJsonEmpty nullInfo;
+    std::vector<Bws<10>> langList;
     ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
-    ITabMessage* msg = iMessageAllocator->AllocateNum(configNum, value, nullInfo);
+    ConfigUiValNum configUiNum(configNum, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateInt(configUiNum, value, langList);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -489,8 +491,10 @@ void SuiteConfigMessageNum::TestSendEscapedChars()
     // Try sending text that should be escaped.
     static const TUint value = 1;
     WritableJsonEmpty nullInfo;
+    std::vector<Bws<10>> langList;
     ConfigNum configNum(*iConfigManager, Brn("\nConfig.\rNum.\tKey"), 0, 10, value);
-    ITabMessage* msg = iMessageAllocator->AllocateNum(configNum, value, nullInfo);
+    ConfigUiValNum configUiNum(configNum, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateInt(configUiNum, value, langList);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -509,8 +513,10 @@ void SuiteConfigMessageNum::TestSendAdditional()
 {
     static const TUint value = 1;
     const WritableJsonInfo info(true);
+    std::vector<Bws<10>> langList;
     ConfigNum configNum(*iConfigManager, Brn("Config.Num.Key"), 0, 10, value);
-    ITabMessage* msg = iMessageAllocator->AllocateNum(configNum, value, info);
+    ConfigUiValNum configUiNum(configNum, info);
+    ITabMessage* msg = iMessageAllocator->AllocateInt(configUiNum, value, langList);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -545,7 +551,7 @@ void SuiteConfigMessageChoice::Setup()
                          "Config.\rChoice.\tKey\r\n0 Fal\tse\r\n1 Tr\fue\r\n");
     iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageChoice::TearDown()
@@ -567,7 +573,8 @@ void SuiteConfigMessageChoice::TestSend()
     options.push_back(1);
     std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
-    ITabMessage* msg = iMessageAllocator->AllocateChoice(configChoice, value, nullInfo, languages);
+    ConfigUiValChoice configUiChoice(configChoice, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateUint(configUiChoice, value, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -598,7 +605,8 @@ void SuiteConfigMessageChoice::TestSendEscapedChars()
     std::vector<Bws<10>> languages;
 
     ConfigChoice configChoice(*iConfigManager, Brn("Config.\rChoice.\tKey"), options, value);
-    ITabMessage* msg = iMessageAllocator->AllocateChoice(configChoice, value, nullInfo, languages);
+    ConfigUiValChoice configUiChoice(configChoice, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateUint(configUiChoice, value, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -627,7 +635,8 @@ void SuiteConfigMessageChoice::TestSendAdditional()
     options.push_back(1);
     std::vector<Bws<10>> languages;
     ConfigChoice configChoice(*iConfigManager, Brn("Config.Choice.Key"), options, value);
-    ITabMessage* msg = iMessageAllocator->AllocateChoice(configChoice, value, info, languages);
+    ConfigUiValChoice configUiChoice(configChoice, info);
+    ITabMessage* msg = iMessageAllocator->AllocateUint(configUiChoice, value, languages);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -665,7 +674,7 @@ void SuiteConfigMessageText::Setup()
     iLanguageMap.Replace("");
     iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageText::TearDown()
@@ -682,8 +691,10 @@ void SuiteConfigMessageText::TestSend()
 {
     static const Brn value("abc");
     WritableJsonEmpty nullInfo;
+    std::vector<Bws<10>> langList;
     ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
-    ITabMessage* msg = iMessageAllocator->AllocateText(configText, value, nullInfo);
+    ConfigUiValText configUiText(configText, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateString(configUiText, value, langList);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -703,8 +714,10 @@ void SuiteConfigMessageText::TestSendEscapedChars()
     // Try sending text that should be escaped.
     static const Brn value("a\rb\bc");
     WritableJsonEmpty nullInfo;
+    std::vector<Bws<10>> langList;
     ConfigText configText(*iConfigManager, Brn("\nConfig.\rText.\tKey"), 25, value);
-    ITabMessage* msg = iMessageAllocator->AllocateText(configText, value, nullInfo);
+    ConfigUiValText configUiText(configText, nullInfo);
+    ITabMessage* msg = iMessageAllocator->AllocateString(configUiText, value, langList);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
@@ -723,8 +736,10 @@ void SuiteConfigMessageText::TestSendAdditional()
 {
     static const Brn value("abc");
     const WritableJsonInfo info(true);
+    std::vector<Bws<10>> langList;
     ConfigText configText(*iConfigManager, Brn("Config.Text.Key"), 25, value);
-    ITabMessage* msg = iMessageAllocator->AllocateText(configText, value, info);
+    ConfigUiValText configUiText(configText, info);
+    ITabMessage* msg = iMessageAllocator->AllocateString(configUiText, value, langList);
     Bws<kMaxMsgBytes> buf;
     WriterBuffer writerBuffer(buf);
     msg->Send(writerBuffer);
