@@ -65,6 +65,7 @@ private:
     static const TUint kAutoNetAuxOn;
     static const TUint kAutoNetAuxOffVisible;
     static const TUint kAutoNetAuxOffNotVisible;
+    static const TChar* kSourceTypeStr;
     static const TChar* kSourceNameStr;
     static const Brn kKeyNetAux;
     Environment& iEnv;

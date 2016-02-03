@@ -59,7 +59,7 @@ protected: // from ISource
     void Deactivate() override;
     void SetVisible(TBool aVisible) override;
 protected:
-    SourceBase(const Brx& aSystemName, const TChar* aType);
+    SourceBase(const Brx& aSystemName, const TChar* aType, TBool aIsVisibleByDefault = true);
     ~SourceBase();
     TBool IsActive() const;
     void DoActivate();
@@ -85,12 +85,13 @@ private:
     TUint iConfigVisibleSubscriptionId;
     TBool iConfigNameCreated;
     TBool iConfigVisibleCreated;
+    TBool iIsVisibleByDefault;
 };
 
 class Source : public SourceBase
 {
 protected:
-    Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager);
+    Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager, TBool aIsVisibleByDefault = true);
     void DoPlay();
 protected:
     Media::PipelineManager& iPipeline;

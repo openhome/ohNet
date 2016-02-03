@@ -68,7 +68,7 @@ void SourceBase::SetVisible(TBool aVisible)
     iVisible = aVisible;
 }
 
-SourceBase::SourceBase(const Brx& aSystemName, const TChar* aType)
+SourceBase::SourceBase(const Brx& aSystemName, const TChar* aType, TBool aIsVisibleByDefault)
     : iActive(false)
     , iLock("SRCM")
     , iSystemName(aSystemName)
@@ -82,6 +82,7 @@ SourceBase::SourceBase(const Brx& aSystemName, const TChar* aType)
     , iConfigVisibleSubscriptionId(IConfigManager::kSubscriptionIdInvalid)
     , iConfigNameCreated(false)
     , iConfigVisibleCreated(false)
+	, iIsVisibleByDefault(aIsVisibleByDefault)
 {
 }
 
@@ -136,7 +137,12 @@ void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit,
         std::vector<TUint> choices;
         choices.push_back(kConfigValSourceInvisible);
         choices.push_back(kConfigValSourceVisible);
-        iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceVisible);
+        if (iIsVisibleByDefault) {
+        	iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceVisible);
+        }
+        else {
+        	iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceInvisible);
+        }
         iConfigVisibleCreated = true;
     }
     iConfigVisibleSubscriptionId = iConfigVisible->Subscribe(MakeFunctorConfigChoice(*this, &SourceBase::VisibleChanged));
@@ -162,8 +168,8 @@ void SourceBase::VisibleChanged(Configuration::KeyValuePair<TUint>& aKvp)
 
 // Source
 
-Source::Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager)
-    : SourceBase(aSystemName, aType)
+Source::Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManager& aPipeline, IPowerManager& aPowerManager, TBool aIsVisibleByDefault)
+    : SourceBase(aSystemName, aType, aIsVisibleByDefault)
     , iPipeline(aPipeline)
     , iPowerManager(aPowerManager)
 {
