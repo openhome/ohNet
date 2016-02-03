@@ -68,6 +68,7 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 
 // SourceRaop
 
+const TChar* SourceRaop::kSourceTypeStr = "NetAux";
 const TChar* SourceRaop::kSourceNameStr = "Net Aux";
 const Brn SourceRaop::kRaopPrefix("raop://");
 const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
@@ -76,7 +77,7 @@ const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always vi
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
-    : Source(Brn(kSourceNameStr), kSourceNameStr, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
+    : Source(Brn(kSourceNameStr), kSourceTypeStr, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
     , iUriProvider(aUriProvider)
