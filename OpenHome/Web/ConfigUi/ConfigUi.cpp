@@ -1080,6 +1080,7 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
     , iLangResourceDir(aResourceDir.Bytes()+1+kLangRoot.Bytes()+1)  // "<aResourceDir>/<kLangRoot>/"
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
+    , iRebootRequired(true)
 {
     Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: %.*s\n", PBUF(iResourcePrefix));
 
@@ -1203,18 +1204,7 @@ void ConfigAppBase::AddValue(IConfigUiVal* aValue)
     }
 }
 
-
-// ConfigAppBasic
-
-ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
-    , iRebootRequired(true)
-{
-    AddConfigText(Brn("Product.Name"));
-    AddConfigText(Brn("Product.Room"));
-}
-
-void ConfigAppBasic::AddConfigNum(const Brx& aKey, TBool aRebootRequired)
+void ConfigAppBase::AddConfigNum(const Brx& aKey, TBool aRebootRequired)
 {
     if (aRebootRequired) {
         AddValue(new ConfigUiValNum(iConfigManager.GetNum(aKey), iRebootRequired));
@@ -1224,7 +1214,7 @@ void ConfigAppBasic::AddConfigNum(const Brx& aKey, TBool aRebootRequired)
     }
 }
 
-void ConfigAppBasic::AddConfigChoice(const Brx& aKey, TBool aRebootRequired)
+void ConfigAppBase::AddConfigChoice(const Brx& aKey, TBool aRebootRequired)
 {
     if (aRebootRequired) {
         AddValue(new ConfigUiValChoice(iConfigManager.GetChoice(aKey), iRebootRequired));
@@ -1234,7 +1224,7 @@ void ConfigAppBasic::AddConfigChoice(const Brx& aKey, TBool aRebootRequired)
     }
 }
 
-void ConfigAppBasic::AddConfigText(const Brx& aKey, TBool aRebootRequired)
+void ConfigAppBase::AddConfigText(const Brx& aKey, TBool aRebootRequired)
 {
     if (aRebootRequired) {
         AddValue(new ConfigUiValText(iConfigManager.GetText(aKey), iRebootRequired));
@@ -1242,6 +1232,16 @@ void ConfigAppBasic::AddConfigText(const Brx& aKey, TBool aRebootRequired)
     else {
         AddValue(new ConfigUiValText(iConfigManager.GetText(aKey), iRebootNotRequired));
     }
+}
+
+
+// ConfigAppBasic
+
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+{
+    AddConfigText(Brn("Product.Name"));
+    AddConfigText(Brn("Product.Room"));
 }
 
 

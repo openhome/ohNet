@@ -536,8 +536,16 @@ public: // from ILanguageResourceManager
     ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList) override;
 protected:
     void AddValue(IConfigUiVal* aValue);    // Takes ownership.
+
+    // Convenience methods for adding ConfigVals to config app.
+    void AddConfigNum(const Brx& aKey, TBool aRebootRequired = false);
+    void AddConfigChoice(const Brx& aKey, TBool aRebootRequired = false);
+    void AddConfigText(const Brx& aKey, TBool aRebootRequired = false);
 protected:
     Configuration::IConfigManager& iConfigManager;
+    // Helper additional JSON info writers for use in deriving classes.
+    WritableJsonInfo iRebootRequired;
+    WritableJsonInfo iRebootNotRequired;
 private:
     ConfigMessageAllocator* iMsgAllocator;
     Bwh iLangResourceDir;
@@ -557,15 +565,6 @@ public:
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
                    TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
-protected:
-    // Convenience methods for adding ConfigVals to config app.
-    void AddConfigNum(const Brx& aKey, TBool aRebootRequired = false);
-    void AddConfigChoice(const Brx& aKey, TBool aRebootRequired = false);
-    void AddConfigText(const Brx& aKey, TBool aRebootRequired = false);
-protected:
-    // Helper additional JSON info writers for use in deriving classes.
-    WritableJsonInfo iRebootRequired;
-    WritableJsonInfo iRebootNotRequired;
 };
 
 class ConfigAppSources : public ConfigAppBasic
