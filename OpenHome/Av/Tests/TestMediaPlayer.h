@@ -137,6 +137,7 @@ protected:
     MediaPlayer* iMediaPlayer;
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
     Web::ConfigAppBase* iConfigApp;
+    RebootLogger iRebootHandler;
 private:
     Semaphore iSemShutdown;
     Net::Shell* iShell;
@@ -160,7 +161,6 @@ private:
     Av::FriendlyNameAttributeUpdater* iFnUpdaterUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
-    RebootLogger iRebootHandler;
     TUint iMaxUiTabs;
     TUint iUiSendQueueSize;
 };
