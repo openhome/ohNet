@@ -101,7 +101,6 @@ void WritableJsonInfo::Write(IWriter& aWriter) const
 
 ConfigMessageBase::ConfigMessageBase(AllocatorBase& aAllocator)
     : Allocated(aAllocator)
-    , iWriterAdditional(nullptr)
 {
 }
 

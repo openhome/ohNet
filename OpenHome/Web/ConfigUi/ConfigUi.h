@@ -125,8 +125,6 @@ private: // from ITabMessage
     void Destroy() override;
 private: // from IConfigUiUpdateWriter
     virtual void WriteValueJson(IWriter& aWriter) override = 0;
-private:
-    const IWritable* iWriterAdditional;
 };
 
 class ConfigMessageInt : public ConfigMessageBase
