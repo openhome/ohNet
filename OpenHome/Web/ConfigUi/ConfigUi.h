@@ -124,7 +124,7 @@ private: // from ITabMessage
     virtual void Send(IWriter& aWriter) override = 0;
     void Destroy() override;
 private: // from IConfigUiUpdateWriter
-    virtual void WriteValueJson(IWriter& aWriter) = 0;
+    virtual void WriteValueJson(IWriter& aWriter) override = 0;
 private:
     const IWritable* iWriterAdditional;
 };
@@ -256,7 +256,7 @@ protected:
     virtual void Receive(const Brx& aKey, const Brx& aValue) = 0;
     virtual void Reboot() = 0;
 public: // from ITab
-    void Receive(const Brx& aMessage);
+    void Receive(const Brx& aMessage) override;
     virtual void Destroy() override = 0;
 };
 
