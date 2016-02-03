@@ -121,7 +121,7 @@ protected:
 protected: // from Allocated
     void Clear() override;
 private: // from ITabMessage
-    virtual void Send(IWriter& aWriter) = 0;
+    virtual void Send(IWriter& aWriter) override = 0;
     void Destroy() override;
 private: // from IConfigUiUpdateWriter
     virtual void WriteValueJson(IWriter& aWriter) = 0;
@@ -257,7 +257,7 @@ protected:
     virtual void Reboot() = 0;
 public: // from ITab
     void Receive(const Brx& aMessage);
-    virtual void Destroy() = 0;
+    virtual void Destroy() override = 0;
 };
 
 class IConfigUiVal;
@@ -286,9 +286,9 @@ public:
     TBool Allocated() const;
     void SetHandler(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList);
 private: // from ConfigTabReceiver
-    void Receive(const Brx& aKey, const Brx& aValue);
-    void Reboot();
-    void Destroy();
+    void Receive(const Brx& aKey, const Brx& aValue) override;
+    void Reboot() override;
+    void Destroy() override;
 private: // from IConfigUiValObserver
     void ValueChangedInt(IConfigUiVal& aUiVal, TInt aUpdatedVal) override;
     void ValueChangedUint(IConfigUiVal& aUiVal, TUint aUpdatedVal) override;
@@ -307,9 +307,9 @@ private:
 class IConfigApp : public IWebApp
 {
 public: // from IWebApp
-    virtual ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) = 0;
-    virtual const Brx& ResourcePrefix() const= 0;
-    virtual IResourceHandler& CreateResourceHandler(const Brx& aResource) = 0;
+    virtual ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override = 0;
+    virtual const Brx& ResourcePrefix() const override = 0;
+    virtual IResourceHandler& CreateResourceHandler(const Brx& aResource) override = 0;
 public:
     virtual ~IConfigApp() {}
 };
