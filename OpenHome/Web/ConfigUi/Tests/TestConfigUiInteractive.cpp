@@ -97,19 +97,12 @@ int CDECL main(int aArgc, char* aArgv[])
     const TUint port = 0;         // bind on OS-allocated port
     const TUint maxSessions = 1;
     const TUint sendQueueSize = 32;
-    Av::RamStore* ramStore = new Av::RamStore();
-    Av::KvpStore* kvpStore = new Av::KvpStore(*ramStore);
     ConfigRamStore* configRamStore = new ConfigRamStore();
     ConfigManager* confMgr = new ConfigManager(*configRamStore);
-    PowerManager* powerMgr = new PowerManager(*confMgr);
 
     // ConfigAppBasic expects Product.Name and Room.Name ConfigVals.
     ConfigText* productName = new ConfigText(*confMgr, Av::Product::kConfigIdNameBase, 50, Brn("Product Name"));
     ConfigText* productRoom = new ConfigText(*confMgr, Av::Product::kConfigIdRoomBase, 50, Brn("Product Room"));
-
-    Brn udn("TestConfigUiInteractive");
-    DvDeviceStandard* dev = new DvDeviceStandard(*dvStack, udn);
-    Av::Product* product = new Av::Product(*dev, *kvpStore, *configRamStore, *confMgr, *confMgr, *powerMgr);
 
     confMgr->Print();
     confMgr->Open();
@@ -140,15 +133,10 @@ int CDECL main(int aArgc, char* aArgv[])
     // Shutdown.
     delete server;
     delete urlHandler;
-    delete product;
-    delete dev;
-    delete powerMgr;
     delete confMgr;
     delete productRoom;
     delete productName;
     delete configRamStore;
-    delete kvpStore;
-    delete ramStore;
     delete lib;
 
     return 0;
