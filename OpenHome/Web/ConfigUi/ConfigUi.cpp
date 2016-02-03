@@ -1097,10 +1097,10 @@ const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
 ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : iConfigManager(aConfigManager)
+    , iRebootRequired(true)
     , iLangResourceDir(aResourceDir.Bytes()+1+kLangRoot.Bytes()+1)  // "<aResourceDir>/<kLangRoot>/"
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
-    , iRebootRequired(true)
 {
     Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: %.*s\n", PBUF(iResourcePrefix));
 
