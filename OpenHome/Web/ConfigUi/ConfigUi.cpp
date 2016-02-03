@@ -32,47 +32,67 @@ void WritableJsonEmpty::Write(IWriter& aWriter) const
 
 // JsonWriterBool
 
-JsonWriterBool::JsonWriterBool(TBool aValue)
-    : iValue(aValue)
+JsonWriterBool::JsonWriterBool(IWriter& aWriter)
+    : iWriter(aWriter)
 {
 }
 
-void JsonWriterBool::Write(IWriter& aWriter) const
+void JsonWriterBool::Write(TBool aValue) const
 {
-    if (iValue) {
-        aWriter.Write(Brn("true"));
+    if (aValue) {
+        iWriter.Write(Brn("true"));
     }
     else {
-        aWriter.Write(Brn("false"));
+        iWriter.Write(Brn("false"));
     }
+}
+
+
+// JsonWriterString
+
+JsonWriterString::JsonWriterString(IWriter& aWriter)
+    : iWriter(aWriter)
+{
+}
+
+void JsonWriterString::Write(const Brx& aValue) const
+{
+    iWriter.Write('\"');
+    Json::Escape(iWriter, aValue);
+    iWriter.Write('\"');
 }
 
 
 // JsonWriterReboot
 
 JsonWriterReboot::JsonWriterReboot(TBool aRebootRequired)
-    : iWriterBool(aRebootRequired)
+    : iRebootRequired(aRebootRequired)
 {
 }
 
 void JsonWriterReboot::Write(IWriter& aWriter) const
 {
     aWriter.Write(Brn("\"reboot-required\":"));
-    iWriterBool.Write(aWriter);
+
+    JsonWriterBool writerBool(aWriter);
+    writerBool.Write(iRebootRequired);
 }
 
 
 // WritableJsonInfo
 
 WritableJsonInfo::WritableJsonInfo(TBool aRebootRequired)
-    : iWriterReboot(aRebootRequired)
+    : iRebootRequired(aRebootRequired)
 {
 }
 
 void WritableJsonInfo::Write(IWriter& aWriter) const
 {
     aWriter.Write(Brn("{"));
-    iWriterReboot.Write(aWriter);
+
+    JsonWriterReboot writerReboot(iRebootRequired);
+    writerReboot.Write(aWriter);
+
     aWriter.Write(Brn("}"));
 }
 

@@ -59,13 +59,22 @@ public: // from IWritable
 class JsonWriterBool : private INonCopyable
 {
 public:
-    JsonWriterBool(TBool aValue);
-    void Write(IWriter& aWriter) const;
+    JsonWriterBool(IWriter& aWriter);
+    void Write(TBool aValue) const;
 private:
-    const TBool iValue;
+    IWriter& iWriter;
 };
 
-class JsonWriterReboot
+class JsonWriterString : private INonCopyable
+{
+public:
+    JsonWriterString(IWriter& aWriter);
+    void Write(const Brx& aValue) const;
+private:
+    IWriter& iWriter;
+};
+
+class JsonWriterReboot : private INonCopyable
 {
 public:
     JsonWriterReboot(TBool aRebootRequired = false);
@@ -73,7 +82,7 @@ public:
 private:
     static void WriteBool(IWriter& aWriter, TBool aValue);
 private:
-    const JsonWriterBool iWriterBool;
+    const TBool iRebootRequired;
 };
 
 class WritableJsonInfo : public IWritable, private INonCopyable
@@ -83,7 +92,7 @@ public:
 public: //from IWritable
     void Write(IWriter& aWriter) const override;
 private:
-    const JsonWriterReboot iWriterReboot;
+    const TBool iRebootRequired;
 };
 
 class IConfigUiVal;
