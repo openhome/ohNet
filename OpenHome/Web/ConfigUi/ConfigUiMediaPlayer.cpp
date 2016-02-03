@@ -28,39 +28,18 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
     AddValue(new ConfigUiValRoModelName(aProduct));
     AddValue(new ConfigUiValRoIpAddress(aEnv.NetworkAdapterList()));
 
-    AddNumConditional(Brn("Sender.Channel"));
-    AddNumConditional(Brn("Sender.Preset"));
-    AddNumConditional(VolumeConfig::kKeyBalance);
-    AddNumConditional(VolumeConfig::kKeyLimit);
-    AddNumConditional(VolumeConfig::kKeyStartupValue);
+    AddConfigNumConditional(Brn("Sender.Channel"));
+    AddConfigNumConditional(Brn("Sender.Preset"));
+    AddConfigNumConditional(VolumeConfig::kKeyBalance);
+    AddConfigNumConditional(VolumeConfig::kKeyLimit);
+    AddConfigNumConditional(VolumeConfig::kKeyStartupValue);
 
-    AddChoiceConditional(Brn("Sender.Enabled"));
-    AddChoiceConditional(Brn("Sender.Mode"));
-    AddChoiceConditional(Brn("Source.NetAux.Auto"));
-    AddChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled);
-    AddChoiceConditional(Brn("qobuz.com.AudioQuality"));
-    AddChoiceConditional(Brn("tidalhifi.com.SoundQuality"));
+    AddConfigChoiceConditional(Brn("Sender.Enabled"));
+    AddConfigChoiceConditional(Brn("Sender.Mode"));
+    AddConfigChoiceConditional(Brn("Source.NetAux.Auto"));
+    AddConfigChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled);
+    AddConfigChoiceConditional(Brn("qobuz.com.AudioQuality"));
+    AddConfigChoiceConditional(Brn("tidalhifi.com.SoundQuality"));
 
-    AddTextConditional(Brn("Radio.TuneInUserName"));
-}
-
-void ConfigAppMediaPlayer::AddNumConditional(const Brx& aKey, TBool aRebootRequired)
-{
-    if (iConfigManager.HasNum(aKey)) {
-        AddConfigNum(aKey, aRebootRequired);
-    }
-}
-
-void ConfigAppMediaPlayer::AddChoiceConditional(const Brx& aKey, TBool aRebootRequired)
-{
-    if (iConfigManager.HasChoice(aKey)) {
-        AddConfigChoice(aKey, aRebootRequired);
-    }
-}
-
-void ConfigAppMediaPlayer::AddTextConditional(const Brx& aKey, TBool aRebootRequired)
-{
-    if (iConfigManager.HasText(aKey)) {
-        AddConfigText(aKey, aRebootRequired);
-    }
+    AddConfigTextConditional(Brn("Radio.TuneInUserName"));
 }

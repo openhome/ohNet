@@ -550,6 +550,10 @@ protected:
     void AddConfigNum(const Brx& aKey, TBool aRebootRequired = false);
     void AddConfigChoice(const Brx& aKey, TBool aRebootRequired = false);
     void AddConfigText(const Brx& aKey, TBool aRebootRequired = false);
+
+    void AddConfigNumConditional(const Brx& aKey, TBool aRebootRequired = false);
+    void AddConfigChoiceConditional(const Brx& aKey, TBool aRebootRequired = false);
+    void AddConfigTextConditional(const Brx& aKey, TBool aRebootRequired = false);
 protected:
     Configuration::IConfigManager& iConfigManager;
     // Helper additional JSON info writers for use in deriving classes.

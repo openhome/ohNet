@@ -1254,6 +1254,27 @@ void ConfigAppBase::AddConfigText(const Brx& aKey, TBool aRebootRequired)
     }
 }
 
+void ConfigAppBase::AddConfigNumConditional(const Brx& aKey, TBool aRebootRequired)
+{
+    if (iConfigManager.HasNum(aKey)) {
+        AddConfigNum(aKey, aRebootRequired);
+    }
+}
+
+void ConfigAppBase::AddConfigChoiceConditional(const Brx& aKey, TBool aRebootRequired)
+{
+    if (iConfigManager.HasChoice(aKey)) {
+        AddConfigChoice(aKey, aRebootRequired);
+    }
+}
+
+void ConfigAppBase::AddConfigTextConditional(const Brx& aKey, TBool aRebootRequired)
+{
+    if (iConfigManager.HasText(aKey)) {
+        AddConfigText(aKey, aRebootRequired);
+    }
+}
+
 
 // ConfigAppBasic
 
