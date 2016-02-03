@@ -125,8 +125,8 @@ ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const 
 
 ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper)
     : ConfigVal(aManager, aKey)
-    , iDefault(aDefault)
     , iChoices(aChoices)
+    , iDefault(aDefault)
     , iMapper(&aMapper)
     , iMutex("CVCM")
 {
