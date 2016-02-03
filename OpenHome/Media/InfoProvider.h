@@ -13,12 +13,14 @@ class IInfoProvider
 {
 public:
     virtual void QueryInfo(const Brx& aQuery, IWriter& aWriter) = 0;
+    virtual ~IInfoProvider() {}
 };
 
 class IInfoAggregator
 {
 public:
     virtual void Register(IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries) = 0;
+    virtual ~IInfoAggregator() {}
 };
 
 class InfoAggregator : public IInfoAggregator, private Net::IShellCommandHandler
