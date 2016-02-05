@@ -977,7 +977,7 @@ void ConfigUiValChoiceDelayed::RemoveObserver(TUint aObserverId)
 
 // ConfigUiValRoManufacturerName
 
-const Brn ConfigUiValRoManufacturerName::kKey("Manufacturer.Name");
+const Brn ConfigUiValRoManufacturerName::kKey("About.ManufacturerName");
 
 ConfigUiValRoManufacturerName::ConfigUiValRoManufacturerName(Product& aProduct)
 {
@@ -1009,7 +1009,7 @@ void ConfigUiValRoManufacturerName::RemoveObserver(TUint aObserverId)
 
 // ConfigUiValRoModelName
 
-const Brn ConfigUiValRoModelName::kKey("Model.Name");
+const Brn ConfigUiValRoModelName::kKey("About.ProductId");
 
 ConfigUiValRoModelName::ConfigUiValRoModelName(Product& aProduct)
 {
@@ -1041,7 +1041,7 @@ void ConfigUiValRoModelName::RemoveObserver(TUint aObserverId)
 
 // ConfigUiValRoIpAddress
 
-const Brn ConfigUiValRoIpAddress::kKey("Device.Ip");
+const Brn ConfigUiValRoIpAddress::kKey("About.IpAddress");
 const TChar* ConfigUiValRoIpAddress::kCookie("UiValRoIp");
 
 ConfigUiValRoIpAddress::ConfigUiValRoIpAddress(NetworkAdapterList& aAdapterList)
