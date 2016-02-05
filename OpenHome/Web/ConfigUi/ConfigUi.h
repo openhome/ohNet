@@ -103,6 +103,7 @@ public:
     virtual ITabMessage* AllocateInt(IConfigUiVal& aUiVal, TInt aUpdatedVal, std::vector<Bws<10>>& aLanguageList) = 0;
     virtual ITabMessage* AllocateUint(IConfigUiVal& aUiVal, TUint aUpdatedVal, std::vector<Bws<10>>& aLanguageList) = 0;
     virtual ITabMessage* AllocateString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList) = 0;
+    virtual ITabMessage* AllocateStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList) = 0;
     virtual ~IConfigMessageAllocator() {}
 };
 
@@ -200,40 +201,62 @@ private:
     std::vector<Bws<10>>* iLanguageList;
 };
 
-class ConfigMessageString : public ConfigMessageBase
+class ConfigMessageStringBase : public ConfigMessageBase
 {
     friend class ConfigMessageAllocator;
 private:
     static const TUint kMaxBytes = Configuration::ConfigText::kMaxBytes;
 public:
-    ConfigMessageString(Media::AllocatorBase& aAllocator);
+    ConfigMessageStringBase(Media::AllocatorBase& aAllocator);
 private:
     void Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList);
+protected: // from ConfigMessageBase
+    virtual void WriteValueJson(IWriter& aWriter) override = 0;
 private: // from ConfigMessageBase
     void Clear() override;
     void Send(IWriter& aWriter) override;
-    void WriteValueJson(IWriter& aWriter) override;
-private:
+protected:
     IConfigUiVal* iUiVal;
     Bws<kMaxBytes> iUpdatedVal;
+private:
     ILanguageResourceManager* iLanguageResourceManager;
     std::vector<Bws<10>>* iLanguageList;
+};
+
+class ConfigMessageString : public ConfigMessageStringBase
+{
+    friend class ConfigMessageAllocator;
+public:
+    ConfigMessageString(Media::AllocatorBase& aAllocator);
+private: // from ConfigMessageBase
+    void WriteValueJson(IWriter& aWriter) override;
+};
+
+class ConfigMessageStringUnescaped : public ConfigMessageStringBase
+{
+    friend class ConfigMessageAllocator;
+public:
+    ConfigMessageStringUnescaped(Media::AllocatorBase& aAllocator);
+private: // from ConfigMessageBase
+    void WriteValueJson(IWriter& aWriter) override;
 };
 
 // FIXME - correct to pass lang resource manager in via constructor, but then pass individual lang vectors in on Allocate()?
 class ConfigMessageAllocator : public IConfigMessageAllocator
 {
 public:
-    ConfigMessageAllocator(Media::IInfoAggregator& aInfoAggregator, TUint aMsgCountInt, TUint aMsgCountUint, TUint aMsgCountString, ILanguageResourceManager& aLanguageResourceManager);
+    ConfigMessageAllocator(Media::IInfoAggregator& aInfoAggregator, TUint aMsgCountInt, TUint aMsgCountUint, TUint aMsgCountString, TUint aMsgCountStringUnescaped, ILanguageResourceManager& aLanguageResourceManager);
 public: // from IConfigMessageAllocator
     ITabMessage* AllocateInt(IConfigUiVal& aUiVal, TInt aUpdatedVal, std::vector<Bws<10>>& aLanguageList) override;
     ITabMessage* AllocateUint(IConfigUiVal& aUiVal, TUint aUpdatedVal, std::vector<Bws<10>>& aLanguageList) override;
     ITabMessage* AllocateString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList) override;
+    ITabMessage* AllocateStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList) override;
 private:
     //Media::Allocator<ConfigMessageReadOnly> iAllocatorMsgReadOnly;
     Media::Allocator<ConfigMessageInt> iAllocatorMsgInt;
     Media::Allocator<ConfigMessageUint> iAllocatorMsgUint;
     Media::Allocator<ConfigMessageString> iAllocatorMsgString;
+    Media::Allocator<ConfigMessageStringUnescaped> iAllocatorMsgStringUnescaped;
     ILanguageResourceManager& iLanguageResourceManager;
 };
 
@@ -267,6 +290,7 @@ public:
     virtual void ValueChangedInt(IConfigUiVal& aUiVal, TInt aUpdatedVal) = 0;
     virtual void ValueChangedUint(IConfigUiVal& aUiVal, TUint aUpdatedVal) = 0;
     virtual void ValueChangedString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal) = 0;
+    virtual void ValueChangedStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal) = 0;
     virtual ~IConfigUiValObserver() {}
 };
 
@@ -291,6 +315,7 @@ private: // from IConfigUiValObserver
     void ValueChangedInt(IConfigUiVal& aUiVal, TInt aUpdatedVal) override;
     void ValueChangedUint(IConfigUiVal& aUiVal, TUint aUpdatedVal) override;
     void ValueChangedString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal) override;
+    void ValueChangedStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal) override;
 private:
     const TUint iId;
     Configuration::IConfigManager& iConfigManager;
@@ -340,6 +365,7 @@ protected:
     void ValueChangedInt(TInt aValue);
     void ValueChangedUint(TUint aValue);
     void ValueChangedString(const Brx& aValue);
+    void ValueChangedStringUnescaped(const Brx& aValue);
     virtual void ObserverAdded(IConfigUiValObserver& aObserver) = 0;
 
     virtual void WriteKey(IWriter& aWriter) = 0;
@@ -382,12 +408,15 @@ private:
     const Brn iValue;
 };
 
-class ConfigUiValRoList : public OpenHome::Web::ConfigUiValRo
+class ConfigUiValRoList : public OpenHome::Web::ConfigUiValRoBase
 {
 public:
     ConfigUiValRoList(const OpenHome::Brx& aKey, OpenHome::Brn aValue);
 private: // from ConfigUiValRo
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
     void WriteType(OpenHome::IWriter& aWriter) override;
+private:
+    const Brn iValue;
 };
 
 class ConfigUiValRoUpdatable : public ConfigUiValRoBase

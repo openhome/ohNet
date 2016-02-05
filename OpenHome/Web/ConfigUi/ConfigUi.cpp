@@ -276,9 +276,9 @@ void ConfigMessageUint::WriteValueJson(IWriter& aWriter)
 }
 
 
-// ConfigMessageString
+// ConfigMessageStringBase
 
-ConfigMessageString::ConfigMessageString(AllocatorBase& aAllocator)
+ConfigMessageStringBase::ConfigMessageStringBase(AllocatorBase& aAllocator)
     : ConfigMessageBase(aAllocator)
     , iUiVal(nullptr)
     , iLanguageResourceManager(nullptr)
@@ -286,7 +286,7 @@ ConfigMessageString::ConfigMessageString(AllocatorBase& aAllocator)
 {
 }
 
-void ConfigMessageString::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+void ConfigMessageStringBase::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
     ASSERT(iUiVal == nullptr);
     iUiVal = &aUiVal;
@@ -295,7 +295,7 @@ void ConfigMessageString::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILan
     iLanguageList = &aLanguageList;
 }
 
-void ConfigMessageString::Clear()
+void ConfigMessageStringBase::Clear()
 {
     ConfigMessageBase::Clear();
     ASSERT(iUiVal != nullptr);
@@ -305,10 +305,18 @@ void ConfigMessageString::Clear()
     iLanguageList = nullptr;
 }
 
-void ConfigMessageString::Send(IWriter& aWriter)
+void ConfigMessageStringBase::Send(IWriter& aWriter)
 {
     ASSERT(iUiVal != nullptr);
     iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
+}
+
+
+// ConfigMessageString
+
+ConfigMessageString::ConfigMessageString(Media::AllocatorBase& aAllocator)
+    : ConfigMessageStringBase(aAllocator)
+{
 }
 
 void ConfigMessageString::WriteValueJson(IWriter& aWriter)
@@ -320,12 +328,27 @@ void ConfigMessageString::WriteValueJson(IWriter& aWriter)
 }
 
 
+// ConfigMessageStringUnescaped
+
+ConfigMessageStringUnescaped::ConfigMessageStringUnescaped(Media::AllocatorBase& aAllocator)
+    : ConfigMessageStringBase(aAllocator)
+{
+}
+
+void ConfigMessageStringUnescaped::WriteValueJson(IWriter& aWriter)
+{
+    ASSERT(iUiVal != nullptr);
+    aWriter.Write(iUpdatedVal);
+}
+
+
 // ConfigMessageAllocator
 
-ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint aMsgCountInt, TUint aMsgCountUint, TUint aMsgCountString, ILanguageResourceManager& aLanguageResourceManager)
+ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint aMsgCountInt, TUint aMsgCountUint, TUint aMsgCountString, TUint aMsgCountStringUnescaped, ILanguageResourceManager& aLanguageResourceManager)
     : iAllocatorMsgInt("ConfigMessageInt", aMsgCountInt, aInfoAggregator)
     , iAllocatorMsgUint("ConfigMessageUint", aMsgCountUint, aInfoAggregator)
     , iAllocatorMsgString("ConfigMessageText", aMsgCountString, aInfoAggregator)
+    , iAllocatorMsgStringUnescaped("ConfigMessageTextUnescaped", aMsgCountStringUnescaped, aInfoAggregator)
     , iLanguageResourceManager(aLanguageResourceManager)
 {
 }
@@ -347,6 +370,13 @@ ITabMessage* ConfigMessageAllocator::AllocateUint(IConfigUiVal& aUiVal, TUint aU
 ITabMessage* ConfigMessageAllocator::AllocateString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
 {
     ConfigMessageString* msg = iAllocatorMsgString.Allocate();
+    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
+    return msg;
+}
+
+ITabMessage* ConfigMessageAllocator::AllocateStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
+{
+    ConfigMessageStringUnescaped* msg = iAllocatorMsgStringUnescaped.Allocate();
     msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
     return msg;
 }
@@ -588,6 +618,12 @@ void ConfigTab::ValueChangedString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
     iHandler->Send(*msg);
 }
 
+void ConfigTab::ValueChangedStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
+{
+    ITabMessage* msg = iMsgAllocator.AllocateStringUnescaped(aUiVal, aUpdatedVal, iLanguageList);
+    iHandler->Send(*msg);
+}
+
 
 // ConfigUiValBase
 
@@ -715,8 +751,14 @@ void ConfigUiValRo::ObserverAdded(IConfigUiValObserver& aObserver)
 // ConfigUiValRoList
 
 ConfigUiValRoList::ConfigUiValRoList(const Brx& aKey, Brn aValue)
-    : ConfigUiValRo(aKey, aValue)
+    : ConfigUiValRoBase(aKey)
+    , iValue(aValue)
 {
+}
+
+void ConfigUiValRoList::ObserverAdded(IConfigUiValObserver& aObserver)
+{
+    aObserver.ValueChangedStringUnescaped(*this, iValue);
 }
 
 void ConfigUiValRoList::WriteType(IWriter& aWriter)
@@ -1123,7 +1165,7 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
     iLangResourceDir.Append(kLangRoot);
     iLangResourceDir.Append('/');
 
-    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, aSendQueueSize, aSendQueueSize, *this);
+    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, aSendQueueSize, aSendQueueSize, aSendQueueSize, *this);
 
     for (TUint i=0; i<aMaxTabs; i++) {
         iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
