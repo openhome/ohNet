@@ -125,7 +125,16 @@ function StartLongPolling()
         elemInput.id = aJsonConfigReadOnlyVal.key;
         elemInput.name = aJsonConfigReadOnlyVal.key;
         elemInput.readOnly = true;
-        //eleminput.value = aJsonConfigReadOnlyVal.value;
+        return elemInput;
+    }
+
+    var CreateReadOnlyListElement = function(aJsonConfigReadOnlyListVal)
+    {
+        var elemInput = document.createElement("input");
+        elemInput.type = "text";
+        elemInput.id = aJsonConfigReadOnlyListVal.key;
+        elemInput.name = aJsonConfigReadOnlyListVal.key;
+        elemInput.readOnly = true;
         return elemInput;
     }
 
@@ -173,6 +182,9 @@ function StartLongPolling()
     {
         if (aJsonConfigVal.type == "read-only") {
             return CreateReadOnlyElement(aJsonConfigVal)
+        }
+        if (aJsonConfigVal.type == "read-only-list") {
+            return CreateReadOnlyListElement(aJsonConfigVal)
         }
         if (aJsonConfigVal.type == "numeric") {
             return CreateNumElement(aJsonConfigVal)
@@ -230,6 +242,9 @@ function StartLongPolling()
     {
         // Element should NOT be null.
         if (aJsonResponse.type == "read-only") {
+            aElement.value = aJsonResponse.value;
+        }
+        if (aJsonResponse.type == "read-only-list") {
             aElement.value = aJsonResponse.value;
         }
         if (aJsonResponse.type == "numeric") {

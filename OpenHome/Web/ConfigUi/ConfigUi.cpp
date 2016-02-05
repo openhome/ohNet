@@ -712,6 +712,19 @@ void ConfigUiValRo::ObserverAdded(IConfigUiValObserver& aObserver)
 }
 
 
+// ConfigUiValRoList
+
+ConfigUiValRoList::ConfigUiValRoList(const Brx& aKey, Brn aValue)
+    : ConfigUiValRo(aKey, aValue)
+{
+}
+
+void ConfigUiValRoList::WriteType(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"read-only-list\""));
+}
+
+
 // ConfigUiValRoUpdatable
 
 ConfigUiValRoUpdatable::ConfigUiValRoUpdatable(const Brx& aKey, const Brx& aValue)
