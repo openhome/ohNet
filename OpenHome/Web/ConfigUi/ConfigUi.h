@@ -382,6 +382,14 @@ private:
     const Brn iValue;
 };
 
+class ConfigUiValRoList : public OpenHome::Web::ConfigUiValRo
+{
+public:
+    ConfigUiValRoList(const OpenHome::Brx& aKey, OpenHome::Brn aValue);
+private: // from ConfigUiValRo
+    void WriteType(OpenHome::IWriter& aWriter) override;
+};
+
 class ConfigUiValRoUpdatable : public ConfigUiValRoBase
 {
 public:
