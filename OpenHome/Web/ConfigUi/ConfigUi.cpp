@@ -1022,7 +1022,7 @@ void ConfigUiValRoManufacturerName::RemoveObserver(TUint aObserverId)
 
 // ConfigUiValRoModelName
 
-const Brn ConfigUiValRoModelName::kKey("About.ProductId");
+const Brn ConfigUiValRoModelName::kKey("About.ModelName");
 
 ConfigUiValRoModelName::ConfigUiValRoModelName(Product& aProduct)
 {
