@@ -114,7 +114,8 @@ public:
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
     virtual void InitialiseSubsystems();
-    virtual void CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
+    virtual Web::IWebApp* CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
+    void DestroyAppFramework();
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private: // from IPowerHandler
@@ -136,7 +137,6 @@ private:
 protected:
     MediaPlayer* iMediaPlayer;
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
-    Web::ConfigAppBase* iConfigApp;
     RebootLogger iRebootHandler;
 private:
     Semaphore iSemShutdown;

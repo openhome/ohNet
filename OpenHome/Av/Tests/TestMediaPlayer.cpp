@@ -383,10 +383,19 @@ void TestMediaPlayer::InitialiseSubsystems()
 {
 }
 
-void TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
+IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
 {
     FileResourceHandlerFactory resourceHandlerFactory;
-    iConfigApp = new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->Env(), iMediaPlayer->Product(), iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources, Brn("Softplayer"), aResourceDir, aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
+    return new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->Env(), iMediaPlayer->Product(),
+                                    iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources,
+                                    Brn("Softplayer"), aResourceDir,
+                                    aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
+}
+
+void TestMediaPlayer::DestroyAppFramework()
+{
+    delete iAppFramework;
+    iAppFramework = nullptr;
 }
 
 void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
@@ -434,9 +443,8 @@ void TestMediaPlayer::AddConfigApp()
         sourcesBufs.push_back(new Brh(systemName));
     }
     // FIXME - take resource dir as param or copy res dir to build dir
-    CreateConfigApp(sourcesBufs, Brn("res/"), iMaxUiTabs, iUiSendQueueSize);    // Initialises iConfigApp.
-    iAppFramework->Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
-    //Add(iConfigApp, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));    // iAppFramework takes ownership
+    auto configUi = CreateConfigApp(sourcesBufs, Brn("res/"), iMaxUiTabs, iUiSendQueueSize);
+    iAppFramework->Add(configUi, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
     for (TUint i=0;i<sourcesBufs.size(); i++) {
         delete sourcesBufs[i];
     }
