@@ -451,7 +451,7 @@ void SuiteConfigMessageNum::Setup()
     iLanguageMap.Replace("");
     iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageNum::TearDown()
@@ -551,7 +551,7 @@ void SuiteConfigMessageChoice::Setup()
                          "Config.\rChoice.\tKey\r\n0 Fal\tse\r\n1 Tr\fue\r\n");
     iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageChoice::TearDown()
@@ -674,7 +674,7 @@ void SuiteConfigMessageText::Setup()
     iLanguageMap.Replace("");
     iInfoAggregator = new MockInfoAggregator();
     iResourceManager = new HelperLanguageResourceManager(iLanguageMap);
-    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, *iResourceManager);
+    iMessageAllocator = new ConfigMessageAllocator(*iInfoAggregator, 1, 1, 1, 1, *iResourceManager);
 }
 
 void SuiteConfigMessageText::TearDown()
