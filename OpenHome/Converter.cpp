@@ -102,21 +102,24 @@ void Converter::ToBase64(IWriter& aWriter, const Brx& aValue)
 {
     TUint b = 0;
     TByte block[3];
+    const TByte* p = aValue.Ptr();
+    const TByte* end = p + aValue.Bytes();
+    TByte enc[4];
+    Brn encBuf(enc, sizeof(enc));
 
-    for(TUint i = 0; i < aValue.Bytes(); ++i) {
-
-        block[b++] = aValue[i];
-
-        if (b >= 3) {
+    while (p < end) {
+        block[b++] = *p++;
+        if (b == 3) {
             TByte index0 = block[0] >> 2;
             TByte index1 = (block[0] & 0x03) << 4 | block[1] >> 4;
             TByte index2 = (block[1] & 0x0f) << 2 | block[2] >> 6;
             TByte index3 = (block[2] & 0x3f);
 
-            aWriter.Write(kBase64[index0]);
-            aWriter.Write(kBase64[index1]);
-            aWriter.Write(kBase64[index2]);
-            aWriter.Write(kBase64[index3]);
+            enc[0] = kBase64[index0];
+            enc[1] = kBase64[index1];
+            enc[2] = kBase64[index2];
+            enc[3] = kBase64[index3];
+            aWriter.Write(encBuf);
 
             b = 0;
         }
@@ -125,53 +128,55 @@ void Converter::ToBase64(IWriter& aWriter, const Brx& aValue)
     if (b == 1) {
         TByte index0 = block[0] >> 2;
         TByte index1 = (block[0] & 0x03) << 4;
-        aWriter.Write(kBase64[index0]);
-        aWriter.Write(kBase64[index1]);
-        aWriter.Write('=');
-        aWriter.Write('=');
+        enc[0] = kBase64[index0];
+        enc[1] = kBase64[index1];
+        enc[2] = '=';
+        enc[3] = '=';
+        aWriter.Write(encBuf);
     }
     else if (b == 2) {
         TByte index0 = block[0] >> 2;
         TByte index1 = (block[0] & 0x03) << 4 | block[1] >> 4;
         TByte index2 = (block[1] & 0x0f) << 2;
-        aWriter.Write(kBase64[index0]);
-        aWriter.Write(kBase64[index1]);
-        aWriter.Write(kBase64[index2]);
-        aWriter.Write('=');
+        enc[0] = kBase64[index0];
+        enc[1] = kBase64[index1];
+        enc[2] = kBase64[index2];
+        enc[3] = '=';
+        aWriter.Write(encBuf);
     }
 }
 
 void Converter::FromBase64(Bwx& aValue)
 {
-    TUint bytes = aValue.Bytes();
-
-    TUint j = 0;
     TUint b = 0;
     TByte block[4];
+    TByte* dest = const_cast<TByte*>(aValue.Ptr());
+    const TByte* p = dest;
+    const TByte* end = p + aValue.Bytes();
 
-    for (TUint i = 0; i < bytes; i++) {
+    for (; p < end; p++) {
 
-        TByte d = kDecode64[aValue[i]];
+        TByte d = kDecode64[*p];
         if (d > 64) {
             continue;
         }
         block[b++] = d;
         if (b >= 4) {
-            aValue[j++] = block[0] << 2 | block[1] >> 4;
-            aValue[j++] = block[1] << 4 | block[2] >> 2;
-            aValue[j++] = block[2] << 6 | block[3];
+            *dest++ = block[0] << 2 | block[1] >> 4;
+            *dest++ = block[1] << 4 | block[2] >> 2;
+            *dest++ = block[2] << 6 | block[3];
             b = 0;
         }
     }
 
     if (b > 1) {
-        aValue[j++] = block[0] << 2 | block[1] >> 4;
+        *dest++ = block[0] << 2 | block[1] >> 4;
     }
     if (b > 2) {
-        aValue[j++] = block[1] << 4 | block[2] >> 2;
+        *dest++ = block[1] << 4 | block[2] >> 2;
     }
 
-    aValue.SetBytes(j);
+    aValue.SetBytes(dest - aValue.Ptr());
 }
 
 void Converter::FromXmlEscaped(Bwx& aValue)
