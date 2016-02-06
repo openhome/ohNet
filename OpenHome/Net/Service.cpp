@@ -650,6 +650,16 @@ TUint OpenHome::Net::ServiceType::Version() const
     return iVersion;
 }
 
+const Brx& OpenHome::Net::ServiceType::VersionBuf() const
+{
+    AutoMutex _(iEnv.Mutex());
+    if (iVersionBuf.Bytes() == 0) {
+        (void)Ascii::AppendDec(iVersionBuf, iVersion);
+        iVersionBuf.PtrZ();
+    }
+    return iVersionBuf;
+}
+
 const Brx& OpenHome::Net::ServiceType::FullName() const
 {
     iEnv.Mutex().Wait();

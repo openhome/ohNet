@@ -396,6 +396,30 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
 void DviProtocolUpnp::GetAttribute(const TChar* aKey, const TChar** aValue) const
 {
     *aValue = iAttributeMap.Get(aKey);
+    if (*aValue == NULL) {
+        Brn key(aKey);
+        static const Brn kServicePrefix("Service.");
+        if (key.BeginsWith(kServicePrefix)) {
+            Brn pathUpnp = key.Split(kServicePrefix.Bytes());
+            const TUint count = iDevice.ServiceCount();
+            for (TUint i=0; i<count; i++) {
+                DviService& service = iDevice.Service(i);
+                Bws<128> name(service.ServiceType().Domain());
+                const TUint bytes = name.Bytes();
+                for (TUint j=0; j<bytes; j++) {
+                    if (name[j] == '.') {
+                        name[j] = '-';
+                    }
+                }
+                name.Append('.');
+                name.Append(service.ServiceType().Name());
+                if (name == pathUpnp) {
+                    *aValue = (const TChar*)(service.ServiceType().VersionBuf().Ptr());
+                    return;
+                }
+            }
+        }
+    }
 }
 
 void DviProtocolUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)

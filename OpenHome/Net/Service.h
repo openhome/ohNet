@@ -12,6 +12,7 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Network.h>
+#include <OpenHome/Private/Ascii.h>
 
 #include <vector>
 #include <map>
@@ -353,6 +354,7 @@ public:
     const Brx& Domain() const;
     const Brx& Name() const;
     TUint Version() const;
+    const Brx& VersionBuf() const; // nul terminated
     const Brx& FullName() const;
     const Brx& FullNameUpnp() const; // serviceType tag from device xml
     const Brx& PathUpnp() const; // paths within device xml
@@ -367,6 +369,7 @@ private:
     Brh iDomain;
     Brh iName;
     TUint iVersion;
+    mutable Bws<Ascii::kMaxUintStringBytes+1> iVersionBuf;
     mutable Bwh iFullName;
     mutable Bwh iServiceType;
     mutable Bwh iPathUpnp;
