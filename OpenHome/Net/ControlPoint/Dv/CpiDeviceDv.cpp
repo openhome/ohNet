@@ -59,6 +59,7 @@ TBool CpiDeviceDv::GetAttribute(const char* aKey, Brh& aValue) const
     iDeviceDv.GetAttribute(aKey, &value);
     if (value != NULL) {
         aValue.Set(value);
+        return true;
     }
     return false;
 }
