@@ -114,49 +114,6 @@ void ConfigMessageBase::Destroy()
 }
 
 
-// ConfigMessageInt
-
-ConfigMessageInt::ConfigMessageInt(AllocatorBase& aAllocator)
-    : ConfigMessageBase(aAllocator)
-    , iUiVal(nullptr)
-    , iUpdatedVal(std::numeric_limits<TInt>::max())
-    , iLanguageResourceManager(nullptr)
-    , iLanguageList(nullptr)
-{
-}
-
-void ConfigMessageInt::Set(IConfigUiVal& aUiVal, TInt aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
-{
-    ASSERT(iUiVal == nullptr);
-    iUiVal = &aUiVal;
-    iUpdatedVal = aUpdatedVal;
-    iLanguageResourceManager = &aLanguageResourceManager;
-    iLanguageList = &aLanguageList;
-}
-
-void ConfigMessageInt::Clear()
-{
-    ConfigMessageBase::Clear();
-    ASSERT(iUiVal != nullptr);
-    iUiVal = nullptr;
-    iUpdatedVal = std::numeric_limits<TInt>::max();
-    iLanguageResourceManager = nullptr;
-    iLanguageList = nullptr;
-}
-
-void ConfigMessageInt::Send(IWriter& aWriter)
-{
-    ASSERT(iUiVal != nullptr);
-    iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
-}
-
-void ConfigMessageInt::WriteValueJson(IWriter& aWriter)
-{
-    ASSERT(iUiVal != nullptr);
-    Ascii::StreamWriteInt(aWriter, iUpdatedVal);
-}
-
-
 // ConfigChoiceMappingWriterJson
 
 ConfigChoiceMappingWriterJson::ConfigChoiceMappingWriterJson()
@@ -233,52 +190,9 @@ TBool ConfigChoiceMapperResourceFile::ProcessLine(const Brx& aLine)
 }
 
 
-// ConfigMessageUint
+// ConfigMessage
 
-ConfigMessageUint::ConfigMessageUint(AllocatorBase& aAllocator)
-    : ConfigMessageBase(aAllocator)
-    , iUiVal(nullptr)
-    , iUpdatedVal(std::numeric_limits<TUint>::max())
-    , iLanguageResourceManager(nullptr)
-    , iLanguageList(nullptr)
-{
-}
-
-void ConfigMessageUint::Set(IConfigUiVal& aUiVal, TUint aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
-{
-    ASSERT(iUiVal == nullptr);
-    iUiVal = &aUiVal;
-    iUpdatedVal = aUpdatedVal;
-    iLanguageResourceManager = &aLanguageResourceManager;
-    iLanguageList = &aLanguageList;
-}
-
-void ConfigMessageUint::Clear()
-{
-    ConfigMessageBase::Clear();
-    ASSERT(iUiVal != nullptr);
-    iUiVal = nullptr;
-    iUpdatedVal = std::numeric_limits<TInt>::max();
-    iLanguageResourceManager = nullptr;
-    iLanguageList = nullptr;
-}
-
-void ConfigMessageUint::Send(IWriter& aWriter)
-{
-    ASSERT(iUiVal != nullptr);
-    iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
-}
-
-void ConfigMessageUint::WriteValueJson(IWriter& aWriter)
-{
-    ASSERT(iUiVal != nullptr);
-    Ascii::StreamWriteUint(aWriter, iUpdatedVal);
-}
-
-
-// ConfigMessageStringBase
-
-ConfigMessageStringBase::ConfigMessageStringBase(AllocatorBase& aAllocator)
+ConfigMessage::ConfigMessage(AllocatorBase& aAllocator)
     : ConfigMessageBase(aAllocator)
     , iUiVal(nullptr)
     , iLanguageResourceManager(nullptr)
@@ -286,7 +200,7 @@ ConfigMessageStringBase::ConfigMessageStringBase(AllocatorBase& aAllocator)
 {
 }
 
-void ConfigMessageStringBase::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+void ConfigMessage::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
     ASSERT(iUiVal == nullptr);
     iUiVal = &aUiVal;
@@ -295,7 +209,7 @@ void ConfigMessageStringBase::Set(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, 
     iLanguageList = &aLanguageList;
 }
 
-void ConfigMessageStringBase::Clear()
+void ConfigMessage::Clear()
 {
     ConfigMessageBase::Clear();
     ASSERT(iUiVal != nullptr);
@@ -305,37 +219,13 @@ void ConfigMessageStringBase::Clear()
     iLanguageList = nullptr;
 }
 
-void ConfigMessageStringBase::Send(IWriter& aWriter)
+void ConfigMessage::Send(IWriter& aWriter)
 {
     ASSERT(iUiVal != nullptr);
     iUiVal->WriteJson(aWriter, *this, *iLanguageResourceManager, *iLanguageList);
 }
 
-
-// ConfigMessageString
-
-ConfigMessageString::ConfigMessageString(Media::AllocatorBase& aAllocator)
-    : ConfigMessageStringBase(aAllocator)
-{
-}
-
-void ConfigMessageString::WriteValueJson(IWriter& aWriter)
-{
-    ASSERT(iUiVal != nullptr);
-    aWriter.Write(Brn("\""));
-    Json::Escape(aWriter, iUpdatedVal);
-    aWriter.Write(Brn("\""));
-}
-
-
-// ConfigMessageStringUnescaped
-
-ConfigMessageStringUnescaped::ConfigMessageStringUnescaped(Media::AllocatorBase& aAllocator)
-    : ConfigMessageStringBase(aAllocator)
-{
-}
-
-void ConfigMessageStringUnescaped::WriteValueJson(IWriter& aWriter)
+void ConfigMessage::WriteValueJson(IWriter& aWriter)
 {
     ASSERT(iUiVal != nullptr);
     aWriter.Write(iUpdatedVal);
@@ -344,39 +234,15 @@ void ConfigMessageStringUnescaped::WriteValueJson(IWriter& aWriter)
 
 // ConfigMessageAllocator
 
-ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint aMsgCountInt, TUint aMsgCountUint, TUint aMsgCountString, TUint aMsgCountStringUnescaped, ILanguageResourceManager& aLanguageResourceManager)
-    : iAllocatorMsgInt("ConfigMessageInt", aMsgCountInt, aInfoAggregator)
-    , iAllocatorMsgUint("ConfigMessageUint", aMsgCountUint, aInfoAggregator)
-    , iAllocatorMsgString("ConfigMessageText", aMsgCountString, aInfoAggregator)
-    , iAllocatorMsgStringUnescaped("ConfigMessageTextUnescaped", aMsgCountStringUnescaped, aInfoAggregator)
+ConfigMessageAllocator::ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint aMsgCount, ILanguageResourceManager& aLanguageResourceManager)
+    : iAllocatorMsg("ConfigMessage", aMsgCount, aInfoAggregator)
     , iLanguageResourceManager(aLanguageResourceManager)
 {
 }
 
-ITabMessage* ConfigMessageAllocator::AllocateInt(IConfigUiVal& aUiVal, TInt aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
+ITabMessage* ConfigMessageAllocator::AllocateMessage(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
 {
-    ConfigMessageInt* msg = iAllocatorMsgInt.Allocate();
-    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
-    return msg;
-}
-
-ITabMessage* ConfigMessageAllocator::AllocateUint(IConfigUiVal& aUiVal, TUint aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
-{
-    ConfigMessageUint* msg = iAllocatorMsgUint.Allocate();
-    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
-    return msg;
-}
-
-ITabMessage* ConfigMessageAllocator::AllocateString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
-{
-    ConfigMessageString* msg = iAllocatorMsgString.Allocate();
-    msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
-    return msg;
-}
-
-ITabMessage* ConfigMessageAllocator::AllocateStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList)
-{
-    ConfigMessageStringUnescaped* msg = iAllocatorMsgStringUnescaped.Allocate();
+    ConfigMessage* msg = iAllocatorMsg.Allocate();
     msg->Set(aUiVal, aUpdatedVal, iLanguageResourceManager, aLanguageList);
     return msg;
 }
@@ -600,27 +466,9 @@ void ConfigTab::Destroy()
     }
 }
 
-void ConfigTab::ValueChangedInt(IConfigUiVal& aUiVal, TInt aUpdatedVal)
+void ConfigTab::ValueChanged(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
 {
-    ITabMessage* msg = iMsgAllocator.AllocateInt(aUiVal, aUpdatedVal, iLanguageList);
-    iHandler->Send(*msg);
-}
-
-void ConfigTab::ValueChangedUint(IConfigUiVal& aUiVal, TUint aUpdatedVal)
-{
-    ITabMessage* msg = iMsgAllocator.AllocateUint(aUiVal, aUpdatedVal, iLanguageList);
-    iHandler->Send(*msg);
-}
-
-void ConfigTab::ValueChangedString(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
-{
-    ITabMessage* msg = iMsgAllocator.AllocateString(aUiVal, aUpdatedVal, iLanguageList);
-    iHandler->Send(*msg);
-}
-
-void ConfigTab::ValueChangedStringUnescaped(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
-{
-    ITabMessage* msg = iMsgAllocator.AllocateStringUnescaped(aUiVal, aUpdatedVal, iLanguageList);
+    ITabMessage* msg = iMsgAllocator.AllocateMessage(aUiVal, aUpdatedVal, iLanguageList);
     iHandler->Send(*msg);
 }
 
@@ -665,27 +513,11 @@ void ConfigUiValBase::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWri
     aWriter.Write(Brn("}"));
 }
 
-void ConfigUiValBase::ValueChangedInt(TInt aValue)
+void ConfigUiValBase::ValueChanged(const Brx& aValue)
 {
     AutoMutex a(iLockObservers);
     for (auto it : iObservers) {
-        it.second->ValueChangedInt(*this, aValue);
-    }
-}
-
-void ConfigUiValBase::ValueChangedUint(TUint aValue)
-{
-    AutoMutex a(iLockObservers);
-    for (auto it : iObservers) {
-        it.second->ValueChangedUint(*this, aValue);
-    }
-}
-
-void ConfigUiValBase::ValueChangedString(const Brx& aValue)
-{
-    AutoMutex a(iLockObservers);
-    for (auto it : iObservers) {
-        it.second->ValueChangedString(*this, aValue);
+        it.second->ValueChanged(*this, aValue);
     }
 }
 
@@ -740,11 +572,15 @@ ConfigUiValRo::ConfigUiValRo(const Brx& aKey, Brn aValue)
     : ConfigUiValRoBase(aKey)
     , iValue(aValue)
 {
+    WriterBuffer writerBuf(iJsonValue);
+    writerBuf.Write('\"');
+    Json::Escape(writerBuf, iValue);
+    writerBuf.Write('\"');
 }
 
 void ConfigUiValRo::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    aObserver.ValueChangedString(*this, iValue);
+    aObserver.ValueChanged(*this, iJsonValue);
 }
 
 
@@ -758,7 +594,7 @@ ConfigUiValRoList::ConfigUiValRoList(const Brx& aKey, Brn aValue)
 
 void ConfigUiValRoList::ObserverAdded(IConfigUiValObserver& aObserver)
 {
-    aObserver.ValueChangedStringUnescaped(*this, iValue);
+    aObserver.ValueChanged(*this, iValue);
 }
 
 void ConfigUiValRoList::WriteType(IWriter& aWriter)
@@ -780,13 +616,21 @@ void ConfigUiValRoUpdatable::Update(const Brx& aValue)
 {
     AutoMutex a(iLock);
     iValue.Replace(aValue);
-    ValueChangedString(iValue);
+
+    // Update JSON string.
+    iJsonValue.SetBytes(0);
+    WriterBuffer writerBuf(iJsonValue);
+    writerBuf.Write('\"');
+    Json::Escape(writerBuf, iValue);
+    writerBuf.Write('\"');
+
+    ValueChanged(iJsonValue);
 }
 
 void ConfigUiValRoUpdatable::ObserverAdded(IConfigUiValObserver& aObserver)
 {
     AutoMutex a(iLock);
-    aObserver.ValueChangedString(*this, iValue);
+    aObserver.ValueChanged(*this, iJsonValue);
 }
 
 
@@ -810,7 +654,9 @@ ConfigUiValNum::~ConfigUiValNum()
 void ConfigUiValNum::ObserverAdded(IConfigUiValObserver& aObserver)
 {
     AutoMutex a(iLock);
-    aObserver.ValueChangedInt(*this, iVal);
+    Bws<Ascii::kMaxIntStringBytes> val;
+    Ascii::AppendDec(val, iVal);
+    aObserver.ValueChanged(*this, val);
 }
 
 void ConfigUiValNum::WriteKey(IWriter& aWriter)
@@ -843,7 +689,9 @@ void ConfigUiValNum::Update(Configuration::ConfigNum::KvpNum& aKvp)
 {
     AutoMutex a(iLock);
     iVal = aKvp.Value();
-    ValueChangedInt(iVal);
+    Bws<Ascii::kMaxIntStringBytes> val;
+    Ascii::AppendDec(val, iVal);
+    ValueChanged(val);
 }
 
 
@@ -867,7 +715,9 @@ ConfigUiValChoice::~ConfigUiValChoice()
 void ConfigUiValChoice::ObserverAdded(IConfigUiValObserver& aObserver)
 {
     AutoMutex a(iLock);
-    aObserver.ValueChangedUint(*this, iVal);
+    Bws<Ascii::kMaxUintStringBytes> val;
+    Ascii::AppendDec(val, iVal);
+    aObserver.ValueChanged(*this, val);
 }
 
 void ConfigUiValChoice::WriteKey(IWriter& aWriter)
@@ -926,7 +776,9 @@ void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
 {
     AutoMutex a(iLock);
     iVal = aKvp.Value();
-    ValueChangedUint(iVal);
+    Bws<Ascii::kMaxIntStringBytes> val;
+    Ascii::AppendDec(val, iVal);
+    ValueChanged(val);
 }
 
 
@@ -949,7 +801,7 @@ ConfigUiValText::~ConfigUiValText()
 void ConfigUiValText::ObserverAdded(IConfigUiValObserver& aObserver)
 {
     AutoMutex a(iLock);
-    aObserver.ValueChangedString(*this, iVal);
+    aObserver.ValueChanged(*this, iJsonValue);
 }
 
 void ConfigUiValText::WriteKey(IWriter& aWriter)
@@ -981,7 +833,15 @@ void ConfigUiValText::Update(Configuration::ConfigText::KvpText& aKvp)
 {
     AutoMutex a(iLock);
     iVal.Replace(aKvp.Value());
-    ValueChangedString(iVal);
+
+    // Update JSON string.
+    iJsonValue.SetBytes(0);
+    WriterBuffer writerBuf(iJsonValue);
+    writerBuf.Write('\"');
+    Json::Escape(writerBuf, iVal);
+    writerBuf.Write('\"');
+
+    ValueChanged(iJsonValue);
 }
 
 
@@ -1165,7 +1025,7 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
     iLangResourceDir.Append(kLangRoot);
     iLangResourceDir.Append('/');
 
-    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, aSendQueueSize, aSendQueueSize, aSendQueueSize, *this);
+    iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, *this);
 
     for (TUint i=0; i<aMaxTabs; i++) {
         iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
