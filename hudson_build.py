@@ -274,6 +274,8 @@ class JenkinsBuild():
             build.append('make')
             build.append('tt')
             build.append('uset4=yes')
+            if self.platform['os'] == 'Qnap':
+                build.append('platform=' + platform)
             ret = subprocess.check_call(build)
             if ret != 0:
                 print ret
@@ -289,6 +291,8 @@ class JenkinsBuild():
             #build.append('targetplatform=%s' %(platform,))
             #build.append('releasetype=%s' %(release,))
             build.append('uset4=yes')
+            if self.platform['os'] == 'Qnap':
+                build.append('platform=' + platform)
             build.append('openhome_system=' + openhome_system)
             build.append('openhome_architecture=' + openhome_architecture)
             build.append('openhome_configuration=' + openhome_configuration)

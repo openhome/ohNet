@@ -80,10 +80,18 @@ else
       detected_openhome_system = Linux
     endif
     ifeq ($(gcc_machine),arm-none-linux-gnueabi)
-      detected_openhome_architecture = armel
+        ifeq (${detected_openhome_system},Qnap)
+            detected_openhome_architecture = x19
+        else
+            detected_openhome_architecture = armel
+        endif
     endif
     ifeq ($(gcc_machine),arm-linux-gnueabi)
-      detected_openhome_architecture = armel
+        ifeq (${detected_openhome_system},Qnap)
+            detected_openhome_architecture = x19
+        else
+            detected_openhome_architecture = armel
+        endif
     endif
     ifeq ($(gcc_machine),arm-linux-gnueabihf)
       detected_openhome_architecture = armhf
@@ -286,13 +294,10 @@ ifeq ($(platform), Linux-ppc32)
 endif
 ifeq ($(platform), Qnap-x86)
     vanilla_settings = yes
-    openhome_system = Qnap
     nocpp11 = yes
 endif
 ifeq ($(platform), Qnap-x19)
     vanilla_settings = yes
-    openhome_system = Qnap
-    openhome_architecture = x19
     nocpp11 = yes
 endif
 
