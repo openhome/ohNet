@@ -176,7 +176,7 @@ void Converter::FromBase64(Bwx& aValue)
         *dest++ = block[1] << 4 | block[2] >> 2;
     }
 
-    aValue.SetBytes(dest - aValue.Ptr());
+    aValue.SetBytes((TUint)(dest - aValue.Ptr()));
 }
 
 void Converter::FromXmlEscaped(Bwx& aValue)
