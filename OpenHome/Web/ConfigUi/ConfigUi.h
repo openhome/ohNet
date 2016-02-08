@@ -101,6 +101,7 @@ class IConfigMessageAllocator
 {
 public:
     virtual ITabMessage* AllocateMessage(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList) = 0;
+    virtual ~IConfigMessageAllocator() {}
 };
 
 // FIXME - why not just reuse IWritable?
