@@ -1379,14 +1379,29 @@ TUint MsgHalt::Id() const
     return iId;
 }
 
+void MsgHalt::ReportHalted()
+{
+    if (iCallback) {
+        iCallback();
+        iCallback = Functor();
+    }
+}
+
 void MsgHalt::Initialise(TUint aId)
 {
+    Initialise(aId, Functor());
+}
+
+void MsgHalt::Initialise(TUint aId, Functor aCallback)
+{
     iId = aId;
+    iCallback = aCallback;
 }
 
 void MsgHalt::Clear()
 {
     iId = UINT_MAX;
+    iCallback = Functor();
 }
 
 Msg* MsgHalt::Process(IMsgProcessor& aProcessor)
@@ -2978,6 +2993,13 @@ MsgHalt* MsgFactory::CreateMsgHalt(TUint aId)
 {
     MsgHalt* msg = iAllocatorMsgHalt.Allocate();
     msg->Initialise(aId);
+    return msg;
+}
+
+MsgHalt* MsgFactory::CreateMsgHalt(TUint aId, Functor aCallback)
+{
+    MsgHalt* msg = iAllocatorMsgHalt.Allocate();
+    msg->Initialise(aId, aCallback);
     return msg;
 }
 

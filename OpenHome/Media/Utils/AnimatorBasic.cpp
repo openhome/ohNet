@@ -173,6 +173,7 @@ Msg* AnimatorBasic::ProcessMsg(MsgHalt* aMsg)
 {
     iPendingJiffies = 0;
     iNextTimerDuration = 0;
+    aMsg->ReportHalted();
     aMsg->RemoveRef();
     return nullptr;
 }
@@ -213,6 +214,11 @@ void AnimatorBasic::PullClock(TUint /*aSampleRate*/, TUint aMultiplier)
     }
     iPullValue = aMultiplier;
     LOG(kPipeline, "AnimatorBasic::PullClock now at %u%%\n", (TUint)((iPullValue * 100) / IPullableClock::kNominalFreq));
+}
+
+TUint AnimatorBasic::PipelineAnimatorBufferJiffies()
+{
+    return 0;
 }
 
 TUint AnimatorBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)

@@ -319,6 +319,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     if (iPipelineEnd == nullptr) {
         iPipelineEnd = iPreDriver;
     }
+    iMuteCounted = new MuteCounted(*iMuter);
 
     //iAudioDumper->SetEnabled(true);
 
@@ -381,6 +382,7 @@ Pipeline::~Pipeline()
     iEventThread->Stop();
 
     // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
+    delete iMuteCounted;
     delete iLoggerPreDriver;
     delete iPreDriver;
     delete iDecodedAudioValidatorMuter;
@@ -684,12 +686,12 @@ void Pipeline::RemoveStream(TUint aStreamId)
 
 void Pipeline::Mute()
 {
-    iMuter->Mute();
+    iMuteCounted->Mute();
 }
 
 void Pipeline::Unmute()
 {
-    iMuter->Unmute();
+    iMuteCounted->Unmute();
 }
 
 void Pipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)

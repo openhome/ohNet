@@ -122,6 +122,7 @@ private: // from ISeekRestreamer
 private: // from IUrlBlockWriter
     TBool TryGet(IWriter& aWriter, const Brx& aUrl, TUint64 aOffset, TUint aBytes) override;
 private: // from IPipelineAnimator
+    TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
     Net::ShellNull iShell;
@@ -857,6 +858,11 @@ TUint SuitePipeline::SeekRestream(const Brx& /*aMode*/, TUint /*aTrackId*/)
 TBool SuitePipeline::TryGet(IWriter& /*aWriter*/, const Brx& /*aUrl*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
+}
+
+TUint SuitePipeline::PipelineAnimatorBufferJiffies()
+{
+    return 0;
 }
 
 TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
