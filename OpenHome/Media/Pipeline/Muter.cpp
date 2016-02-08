@@ -220,6 +220,7 @@ Msg* Muter::ProcessMsg(MsgSilence* aMsg)
     switch (iState)
     {
     case eRunning:
+    case eMuting:
     case eMuted:
         break;
     case eRampingDown:
