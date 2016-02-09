@@ -9,6 +9,7 @@ extern void TestConfigUi(OpenHome::Net::CpStack& aCpStack, OpenHome::Net::DvStac
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     aInitParams->SetUseLoopbackNetworkAdapter();
+    aInitParams->SetDvEnableBonjour("TestConfigUi");
     Net::Library* lib = new Net::Library(aInitParams);
 
     // Set a subnet.
