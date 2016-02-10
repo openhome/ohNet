@@ -523,13 +523,16 @@ public:
 public:
     MsgHalt(AllocatorBase& aAllocator);
     TUint Id() const;
+    void ReportHalted();
 private:
     void Initialise(TUint aId);
+    void Initialise(TUint aId, Functor aCallback);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iId;
+    Functor iCallback;
 };
 
 class MsgFlush : public Msg
@@ -1383,6 +1386,13 @@ class IPipelineAnimator
 public:
     virtual ~IPipelineAnimator() {}
     /**
+     * Query how much (if any) buffering is performed post-pipeline
+     *
+     * @return     Delay applied beyond the pipeline in Jiffies.
+     *             See Jiffies class for time conversion utilities.
+     */
+    virtual TUint PipelineAnimatorBufferJiffies() = 0;
+    /**
      * Report any post-pipeline delay.
      *
      * Throws SampleRateUnsupported is aSampleRateTo is not supported.
@@ -1497,6 +1507,7 @@ public:
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgStreamInterrupted* CreateMsgStreamInterrupted();
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);
+    MsgHalt* CreateMsgHalt(TUint aId, Functor aCallback);
     MsgFlush* CreateMsgFlush(TUint aId);
     MsgWait* CreateMsgWait();
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);

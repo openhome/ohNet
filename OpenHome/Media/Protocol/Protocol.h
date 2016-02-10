@@ -145,7 +145,7 @@ private:
 class ProtocolNetwork : public Protocol
 {
 protected:
-    static const TUint kReadBufferBytes = 1024;
+    static const TUint kReadBufferBytes = 8 * 1024;
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
 protected:

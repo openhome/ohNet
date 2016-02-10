@@ -382,9 +382,9 @@ TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
 
     try {
         LOG(kMedia, "ProtocolTidal::WriteRequest read response\n");
-        iTcpClient.LogVerbose(true);
+        //iTcpClient.LogVerbose(true);
         iReaderResponse.Read();
-        iTcpClient.LogVerbose(false);
+        //iTcpClient.LogVerbose(false);
     }
     catch(HttpError&) {
         LOG2(kPipeline, kError, "ProtocolTidal::WriteRequest HttpError\n");

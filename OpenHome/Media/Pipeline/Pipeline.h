@@ -277,6 +277,7 @@ private:
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
+    IMute* iMuteCounted;
     EStatus iState;
     TBool iBuffering;
     TBool iWaiting;

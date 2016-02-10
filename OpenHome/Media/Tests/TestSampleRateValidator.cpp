@@ -82,6 +82,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPipelineAnimator
+    TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
@@ -422,6 +423,11 @@ Msg* SuiteSampleRateValidator::ProcessMsg(MsgQuit* aMsg)
 {
     iLastMsg = EMsgQuit;
     return aMsg;
+}
+
+TUint SuiteSampleRateValidator::PipelineAnimatorBufferJiffies()
+{
+    return 0;
 }
 
 TUint SuiteSampleRateValidator::PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint /*aSampleRateTo*/)

@@ -45,6 +45,7 @@ private: // from IMsgProcessor
 private: // from IPullableClock
     void PullClock(TUint aSampleRate, TUint aMultiplier) override;
 private: // from IPipelineAnimator
+    TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
     IPipeline& iPipeline;

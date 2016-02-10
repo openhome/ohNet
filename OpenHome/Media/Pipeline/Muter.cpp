@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Functor.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -25,36 +26,62 @@ Muter::Muter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, TUint
     , iMsgFactory(aMsgFactory)
     , iUpstream(aUpstream)
     , iLock("MPMT")
+    , iSemMuted("MPMT", 0)
     , iState(eRunning)
     , iRampDuration(aRampDuration)
+    , iAnimatorBufferJiffies(0)
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kMax)
+    , iHalting(false)
     , iHalted(true)
 {
+}
+
+void Muter::SetAnimator(IPipelineAnimator& aPipelineAnimator)
+{
+    iAnimatorBufferJiffies = aPipelineAnimator.PipelineAnimatorBufferJiffies();
 }
 
 void Muter::Mute()
 {
     LOG(kPipeline, "Muter::Mute\n");
-    AutoMutex _(iLock);
-    if (iState == eRunning) {
-        if (iHalted) {
-            iState = eMuted;
+    TBool block = false;
+    {
+        AutoMutex _(iLock);
+        if (iState == eRunning) {
+            if (iHalted) {
+                iState = eMuted;
+            }
+            else if (iHalting) {
+                iState = eMuting;
+                block = true;
+            }
+            else {
+                iState = eRampingDown;
+                iRemainingRampSize = iRampDuration;
+                iCurrentRampValue = Ramp::kMax;
+                block = true;
+            }
         }
-        else {
-            iState = eRampingDown;
-            iRemainingRampSize = iRampDuration;
-            iCurrentRampValue = Ramp::kMax;
+        else if (iState == eRampingUp) {
+            if (iRemainingRampSize == iRampDuration) {
+                iState = eMuted;
+            }
+            else {
+                iState = eRampingDown;
+                iRemainingRampSize = iRampDuration - iRemainingRampSize;
+                block = true;
+            }
+        }
+        else { // shouldn't be possible to be called for remaining states
+            ASSERTS();
+        }
+        if (block) {
+            (void)iSemMuted.Clear();
         }
     }
-    else if (iState == eRampingUp) {
-        if (iRemainingRampSize == iRampDuration) {
-            iState = eMuted;
-        }
-        else {
-            iState = eRampingDown;
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
-        }
+    if (block) {
+        iSemMuted.Wait();
     }
 }
 
@@ -62,7 +89,31 @@ void Muter::Unmute()
 {
     LOG(kPipeline, "Muter::Unmute\n");
     AutoMutex _(iLock);
-    if (iState == eMuted) {
+    switch (iState)
+    {
+    case eRunning:
+    case eRampingUp:
+        // not supported - error in upstream IMute?
+        ASSERTS();
+        break;
+    case eRampingDown:
+        iSemMuted.Signal();
+        if (iRemainingRampSize == iRampDuration) {
+            iState = eRunning;
+        }
+        else {
+            iState = eRampingUp;
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        }
+        break;
+    case eMuting:
+        iSemMuted.Signal();
+        iHalting = false;
+        iState = eRampingUp;
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kMin;
+        break;
+    case eMuted:
         if (iHalted) {
             iState = eRunning;
         }
@@ -71,15 +122,7 @@ void Muter::Unmute()
             iRemainingRampSize = iRampDuration;
             iCurrentRampValue = Ramp::kMin;
         }
-    }
-    else if (iState == eRampingDown) {
-        if (iRemainingRampSize == iRampDuration) {
-            iState = eRunning;
-        }
-        else {
-            iState = eRampingUp;
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
-        }
+        break;
     }
 }
 
@@ -101,18 +144,20 @@ Msg* Muter::Pull()
 
 Msg* Muter::ProcessMsg(MsgHalt* aMsg)
 {
-    iHalted = true;
+    auto msg = iMsgFactory.CreateMsgHalt(aMsg->Id(), MakeFunctor(*this, &Muter::PipelineHalted));
+    aMsg->RemoveRef();
+    iHalting = true;
     if (iState == eRampingDown) {
-        iState = eMuted;
+        iState = eMuting;
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
     }
-    return aMsg;
+    return msg;
 }
 
 Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iHalted = false;
+    iHalting = iHalted = false;
     MsgAudio* msg = aMsg;
     switch (iState)
     {
@@ -134,13 +179,30 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
             iCurrentRampValue = msg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         }
         if (iRemainingRampSize == 0) {
-            iState = (iState == eRampingDown? eMuted : eRunning);
+            if (iState == eRampingUp) {
+                iState = eRunning;
+            }
+            else {
+                iState = eMuting;
+                iJiffiesUntilMute = iAnimatorBufferJiffies;
+            }
         }
         if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
     }
         break;
+    case eMuting:
+    {
+        const TUint size = aMsg->Jiffies();
+        if (size >= iJiffiesUntilMute) {
+            PlayingSilence();
+        }
+        else {
+            iJiffiesUntilMute -= size;
+        }
+    }
+        // fallthrough
     case eMuted:
     {
         MsgSilence* silence = iMsgFactory.CreateMsgSilence(aMsg->Jiffies());
@@ -158,6 +220,7 @@ Msg* Muter::ProcessMsg(MsgSilence* aMsg)
     switch (iState)
     {
     case eRunning:
+    case eMuting:
     case eMuted:
         break;
     case eRampingDown:
@@ -168,4 +231,22 @@ Msg* Muter::ProcessMsg(MsgSilence* aMsg)
         break;
     }
     return aMsg;
+}
+
+void Muter::PlayingSilence()
+{
+    iJiffiesUntilMute = 0;
+    iState = eMuted;
+    iSemMuted.Signal();
+}
+
+void Muter::PipelineHalted()
+{
+    AutoMutex _(iLock);
+    if (iHalting) {
+        iHalted = true;
+    }
+    if (iState == eMuting) {
+        PlayingSilence();
+    }
 }

@@ -61,6 +61,7 @@ private: // from Thread
 private:
     void TrackCompleted();
 private: // from IPipelineAnimator
+    TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
@@ -263,6 +264,11 @@ void DummyDriver::TrackCompleted()
     if (iTrackCompleted) {
         iTrackCompleted();
     }
+}
+
+TUint DummyDriver::PipelineAnimatorBufferJiffies()
+{
+    return 0;
 }
 
 TUint DummyDriver::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
