@@ -252,7 +252,7 @@ private: // from IPipelineIdManager
     void InvalidatePending() override;
     void InvalidateAll() override;
 private: // from IMute
-    void Mute() override;
+    void Mute() override;   // Synchronous; i.e., pipeline will be muted when this call returns.
     void Unmute() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
