@@ -15,13 +15,6 @@ public:
     virtual ~IMuteObserver() { /*NOP*/ }
 };
 
-class IMuteObservable
-{
-public:
-    virtual void SetObserver(IMuteObserver& aObserver) = 0;
-    virtual ~IMuteObservable() { /*NOP*/ }
-};
-
 // element interface
 class IMute
 {
