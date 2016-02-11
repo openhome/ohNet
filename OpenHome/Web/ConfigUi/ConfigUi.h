@@ -438,13 +438,13 @@ private:
     Mutex iLock;
 };
 
-class ConfigUiValRoManufacturerName : public IConfigUiVal
+class ConfigUiValRoModelIcon : public IConfigUiVal
 {
 public:
     static const Brn kKey;
 public:
-    ConfigUiValRoManufacturerName(Av::Product& aProduct);
-    ~ConfigUiValRoManufacturerName();
+    ConfigUiValRoModelIcon(Av::Product& aProduct);
+    ~ConfigUiValRoModelIcon();
 private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
@@ -460,6 +460,51 @@ public:
 public:
     ConfigUiValRoModelName(Av::Product& aProduct);
     ~ConfigUiValRoModelName();
+private: // from IConfigUiValReadOnly
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    ConfigUiValRo* iUiVal;
+};
+
+class ConfigUiValRoModelUrl : public IConfigUiVal
+{
+public:
+    static const Brn kKey;
+public:
+    ConfigUiValRoModelUrl(Av::Product& aProduct);
+    ~ConfigUiValRoModelUrl();
+private: // from IConfigUiValReadOnly
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    ConfigUiValRo* iUiVal;
+};
+
+class ConfigUiValRoManufacturerName : public IConfigUiVal
+{
+public:
+    static const Brn kKey;
+public:
+    ConfigUiValRoManufacturerName(Av::Product& aProduct);
+    ~ConfigUiValRoManufacturerName();
+private: // from IConfigUiValReadOnly
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    ConfigUiValRo* iUiVal;
+};
+
+class ConfigUiValRoManufacturerUrl : public IConfigUiVal
+{
+public:
+    static const Brn kKey;
+public:
+    ConfigUiValRoManufacturerUrl(Av::Product& aProduct);
+    ~ConfigUiValRoManufacturerUrl();
 private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
