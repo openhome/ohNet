@@ -161,7 +161,8 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     void TestValueFromStore();
-    void TestValueWrittenToStore();
+    void TestValueWrittenToStoreWhenChanged();
+    void TestValueNotWrittenToStoreWhenDefault();
     void TestGet();
     void TestSet();
     void TestWrite();
@@ -179,7 +180,8 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
-    static const TInt kDefault = 50;
+    static const TInt kDefault = 10;
+    static const TInt kValueBase = 50;
     StoreInt* iStoreInt1;
     StoreInt* iStoreInt2;
     StoreInt* iStoreInt3;
@@ -194,7 +196,8 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     void TestValueFromStore();
-    void TestValueWrittenToStore();
+    void TestValueWrittenToStoreWhenChanged();
+    void TestValueNotWrittenToStoreWhenDefault();
     void TestGet();
     void TestSet();
     void TestWrite();
@@ -214,9 +217,9 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     static const TUint kMaxLength = 30;
-    static const Brn kDefault1;
-    static const Brn kDefault2;
-    static const Brn kDefault3;
+    static const Brn kVal1;
+    static const Brn kVal2;
+    static const Brn kVal3;
     StoreText* iStoreText1;
     StoreText* iStoreText2;
     StoreText* iStoreText3;
@@ -698,7 +701,7 @@ SuiteStoreValOrdering::SuiteStoreValOrdering(const TChar* aName, Environment& aE
     : SuiteUnitTest(aName)
     , iEnv(aEnv)
 {
-    AddTest(MakeFunctor(*this, &SuiteStoreValOrdering::TestPriorityPassedCorrectly));
+    AddTest(MakeFunctor(*this, &SuiteStoreValOrdering::TestPriorityPassedCorrectly), "TestPriorityPassedCorrectly");
 }
 
 void SuiteStoreValOrdering::Setup()
@@ -737,11 +740,12 @@ void SuiteStoreValOrdering::TestPriorityPassedCorrectly()
 SuiteStoreInt::SuiteStoreInt()
     : SuiteStoreVal("SuiteStoreInt")
 {
-    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueFromStore));
-    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueWrittenToStore));
-    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestGet));
-    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestSet));
-    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestWrite));
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueFromStore), "TestValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueWrittenToStoreWhenChanged), "TestValueWrittenToStoreWhenChanged");
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueNotWrittenToStoreWhenDefault), "TestValueNotWrittenToStoreWhenDefault");
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestGet), "TestGet");
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestSet), "TestSet");
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestWrite), "TestWrite");
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestNormalShutdown), "TestNormalShutdown");
 }
 
@@ -786,10 +790,18 @@ void SuiteStoreInt::TestValueFromStore()
     TEST(IntFromStore(*iStore, key) == storeVal);
 }
 
-void SuiteStoreInt::TestValueWrittenToStore()
+void SuiteStoreInt::TestValueWrittenToStoreWhenChanged()
 {
-    // Test that the default value has been written out to store at creation.
-    TEST(IntFromStore(*iStore, kKey) == kDefault);
+    iStoreInt->Set(kDefault + 1);
+    TEST_THROWS(IntFromStore(*iStore, kKey), StoreKeyNotFound);
+    iStoreInt->Write();
+    TEST(IntFromStore(*iStore, kKey) == kDefault + 1);
+}
+
+void SuiteStoreInt::TestValueNotWrittenToStoreWhenDefault()
+{
+    // Test that the default value has not been written out to store at creation.
+    TEST_THROWS(IntFromStore(*iStore, kKey), StoreKeyNotFound);
 }
 
 void SuiteStoreInt::TestGet()
@@ -806,7 +818,7 @@ void SuiteStoreInt::TestSet()
     TEST(iStoreInt->Get() == newVal);
 
     // check store hasn't been updated
-    TEST(IntFromStore(*iStore, kKey) == kDefault);
+    TEST_THROWS(IntFromStore(*iStore, kKey), StoreKeyNotFound);
 }
 
 void SuiteStoreInt::TestWrite()
@@ -853,8 +865,11 @@ void SuiteStoreIntOrdering::Setup()
 {
     SuiteStoreValOrdering::Setup();
     iStoreInt1 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityNormal, kKey1, kDefault);
+    iStoreInt1->Set(kValueBase);
     iStoreInt2 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityLowest, kKey2, kDefault+1);
+    iStoreInt2->Set(kValueBase+1);
     iStoreInt3 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityHighest, kKey3, kDefault+2);
+    iStoreInt3->Set(kValueBase+2);
 }
 
 void SuiteStoreIntOrdering::TearDown()
@@ -873,11 +888,12 @@ const Brn SuiteStoreText::kDefault("abcdefghijklmnopqrstuvwxyz");
 SuiteStoreText::SuiteStoreText()
     : SuiteStoreVal("SuiteStoreText")
 {
-    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueFromStore));
-    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueWrittenToStore));
-    AddTest(MakeFunctor(*this, &SuiteStoreText::TestGet));
-    AddTest(MakeFunctor(*this, &SuiteStoreText::TestSet));
-    AddTest(MakeFunctor(*this, &SuiteStoreText::TestWrite));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueFromStore), "TestValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueWrittenToStoreWhenChanged), "TestValueWrittenToStoreWhenChanged");
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueNotWrittenToStoreWhenDefault), "TestValueNotWrittenToStoreWhenDefault");
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestGet), "TestGet");
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestSet), "TestSet");
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestWrite), "TestWrite");
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestNormalShutdown), "TestNormalShutdown");
 }
 
@@ -914,12 +930,22 @@ void SuiteStoreText::TestValueFromStore()
     TEST(buf == storeVal);
 }
 
-void SuiteStoreText::TestValueWrittenToStore()
+void SuiteStoreText::TestValueWrittenToStoreWhenChanged()
 {
-    // Test that the default value has been written out to store at creation.
-    Bws<kMaxLength> buf;
+    Bws<kMaxLength> val("foo");
+    Bws<kMaxLength> buf("foo");
+    iStoreText->Set(val);
+    TEST_THROWS(iStore->Read(kKey, buf), StoreKeyNotFound);
+    iStoreText->Write();
     iStore->Read(kKey, buf);
-    TEST(buf == kDefault);
+    TEST(buf == val);
+}
+
+void SuiteStoreText::TestValueNotWrittenToStoreWhenDefault()
+{
+    // Test that the default value has not been written out to store at creation.
+    Bws<kMaxLength> buf;
+    TEST_THROWS(iStore->Read(kKey, buf), StoreKeyNotFound);
 }
 
 void SuiteStoreText::TestGet()
@@ -941,8 +967,7 @@ void SuiteStoreText::TestSet()
 
     // check store hasn't been updated
     Bws<kMaxLength> buf;
-    iStore->Read(kKey, buf);
-    TEST(buf == kDefault);
+    TEST_THROWS(iStore->Read(kKey, buf), StoreKeyNotFound);
 }
 
 void SuiteStoreText::TestWrite()
@@ -986,9 +1011,9 @@ void SuiteStoreText::TestNormalShutdown()
 
 // SuiteStoreTextOrdering
 
-const Brn SuiteStoreTextOrdering::kDefault1("abc");
-const Brn SuiteStoreTextOrdering::kDefault2("def");
-const Brn SuiteStoreTextOrdering::kDefault3("ghi");
+const Brn SuiteStoreTextOrdering::kVal1("abc");
+const Brn SuiteStoreTextOrdering::kVal2("def");
+const Brn SuiteStoreTextOrdering::kVal3("ghi");
 
 SuiteStoreTextOrdering::SuiteStoreTextOrdering(Environment& aEnv)
     : SuiteStoreValOrdering("SuiteStoreTextOrdering", aEnv)
@@ -998,9 +1023,12 @@ SuiteStoreTextOrdering::SuiteStoreTextOrdering(Environment& aEnv)
 void SuiteStoreTextOrdering::Setup()
 {
     SuiteStoreValOrdering::Setup();
-    iStoreText1 = new StoreText(*iStore, *iPowerManager, kPowerPriorityNormal, kKey1, kDefault1, kMaxLength);
-    iStoreText2 = new StoreText(*iStore, *iPowerManager, kPowerPriorityLowest, kKey2, kDefault2, kMaxLength);
-    iStoreText3 = new StoreText(*iStore, *iPowerManager, kPowerPriorityHighest, kKey3, kDefault3, kMaxLength);
+    iStoreText1 = new StoreText(*iStore, *iPowerManager, kPowerPriorityNormal, kKey1, Brx::Empty(), kMaxLength);
+    iStoreText1->Set(kVal1);
+    iStoreText2 = new StoreText(*iStore, *iPowerManager, kPowerPriorityLowest, kKey2, Brx::Empty(), kMaxLength);
+    iStoreText2->Set(kVal2);
+    iStoreText3 = new StoreText(*iStore, *iPowerManager, kPowerPriorityHighest, kKey3, Brx::Empty(), kMaxLength);
+    iStoreText3->Set(kVal3);
 }
 
 void SuiteStoreTextOrdering::TearDown()

@@ -234,7 +234,6 @@ StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aKey)
 
 void StoreVal::PowerDown()
 {
-    AutoMutex a(iLock);
     Write();
 }
 
@@ -244,6 +243,7 @@ void StoreVal::PowerDown()
 StoreInt::StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
     : StoreVal(aStore, aKey)
     , iVal(aDefault)
+    , iChanged(false)
 {
     // Cannot allow StoreVal to register, as IPowerManager will call PowerUp()
     // after successful registration, and can't successfully call an overridden
@@ -265,7 +265,11 @@ TInt StoreInt::Get() const
 void StoreInt::Set(TInt aValue)
 {
     AutoMutex a(iLock);
+    if (iVal == aValue) {
+        return;
+    }
     iVal = aValue;
+    iChanged = true;
 }
 
 void StoreInt::Write(const Brx& aKey, TInt aValue, Configuration::IStoreReadWrite& aStore)
@@ -280,20 +284,21 @@ void StoreInt::Write(const Brx& aKey, TInt aValue, Configuration::IStoreReadWrit
 void StoreInt::PowerUp()
 {
     AutoMutex _(iLock);
-    // read value from store (if it exists; otherwise write default)
     Bws<sizeof(TInt)> buf;
     try {
         iStore.Read(iKey, buf);
         iVal = Converter::BeUint32At(buf, 0);
     }
-    catch (StoreKeyNotFound&) {
-        Write();
-    }
+    catch (StoreKeyNotFound&) {}
 }
 
 void StoreInt::Write()
 {
-    Write(iKey, iVal, iStore);
+    AutoMutex _(iLock);
+    if (iChanged) {
+        Write(iKey, iVal, iStore);
+        iChanged = true;
+    }
 }
 
 
@@ -302,6 +307,7 @@ void StoreInt::Write()
 StoreText::StoreText(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength)
     : StoreVal(aStore, aKey)
     , iVal(aMaxLength)
+    , iChanged(false)
 {
     iVal.Replace(aDefault);
     iObserver = aPowerManager.RegisterPowerHandler(*this, aPriority);
@@ -321,7 +327,11 @@ void StoreText::Get(Bwx& aBuf) const
 void StoreText::Set(const Brx& aValue)
 {
     AutoMutex a(iLock);
+    if (iVal == aValue) {
+        return;
+    }
     iVal.Replace(aValue);
+    iChanged = true;
 }
 
 void StoreText::PowerUp()
@@ -330,12 +340,14 @@ void StoreText::PowerUp()
     try {
         iStore.Read(iKey, iVal);
     }
-    catch (StoreKeyNotFound&) {
-        Write();
-    }
+    catch (StoreKeyNotFound&) {}
 }
 
 void StoreText::Write()
 {
-    iStore.Write(iKey, iVal);
+    AutoMutex a(iLock);
+    if (iChanged) {
+        iStore.Write(iKey, iVal);
+        iChanged = false;
+    }
 }

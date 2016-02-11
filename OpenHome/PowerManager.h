@@ -158,7 +158,7 @@ protected:
 protected: // from IPowerHandler
     virtual void PowerUp() override = 0;
     void PowerDown() override;
-private:
+public:
     virtual void Write() = 0;
 protected:
     IPowerManagerObserver* iObserver;
@@ -180,10 +180,11 @@ public:
     static void Write(const Brx& aKey, TInt aValue, Configuration::IStoreReadWrite& aStore);
 private: // from StoreVal
     void PowerUp() override;
-private: // from StoreVal
+public: // from StoreVal
     void Write() override;
 private:
     TInt iVal;
+    TBool iChanged;
 };
 
 /*
@@ -198,10 +199,11 @@ public:
     void Set(const Brx& aValue);
 private: // from StoreVal
     void PowerUp() override;
-private: // from StoreVal
+public: // from StoreVal
     void Write() override;
 private:
     Bwh iVal;
+    TBool iChanged;
 };
 
 } // namespace OpenHome
