@@ -11,6 +11,8 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <limits.h>
+
 namespace OpenHome {
     class Uri;
 namespace Net {
@@ -28,6 +30,7 @@ public:
 
 class CpiDeviceLpec : private ICpiProtocol, private ICpiDeviceObserver
 {
+    static const TUint kSubscriptionDurationSecs = UINT_MAX / 1000; // max value that can be converted to milliseconds
 public:
     CpiDeviceLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& aLpecName, Functor aStateChanged);
     void Destroy();

@@ -336,7 +336,10 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
         LOG2(kEvent, kError, "ERROR: subscription (%p) sid %.*s has 0s renew time\n", this, PBUF(iSid));
         return;
     }
-    TUint renewMs = iEnv.Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    TUint64 maxSeconds = aMaxSeconds;
+    const TUint randMin = (TUint)((maxSeconds*1000*3)/4);
+    const TUint randMax = (TUint)((maxSeconds*1000)/2);
+    TUint renewMs = iEnv.Random(randMin, randMax);
     iTimer->FireIn(renewMs);
 }
 

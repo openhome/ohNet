@@ -17,8 +17,6 @@
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/CpiSubscription.h>
 
-#include <limits.h>
-
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
@@ -247,12 +245,12 @@ TUint CpiDeviceLpec::Subscribe(CpiSubscription& aSubscription, const OpenHome::U
     aSubscription.SetSid(sid2);
 
     iResponseHandler = NULL;
-    return UINT_MAX; // subscription never expires so report the longest possible duration
+    return kSubscriptionDurationSecs;
 }
 
 TUint CpiDeviceLpec::Renew(CpiSubscription& /*aSubscription*/)
 {
-    return UINT_MAX; // subscription never expires so report the longest possible duration
+    return kSubscriptionDurationSecs;
 }
 
 void CpiDeviceLpec::Unsubscribe(CpiSubscription& aSubscription, const Brx& /*aSid*/)
