@@ -23,6 +23,8 @@ class Credential
     friend class Credentials;
 
     static const TUint kEventModerationMs = 500;
+    static const TUint kEnableNo;
+    static const TUint kEnableYes;
 public:
     Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~Credential();
@@ -39,6 +41,7 @@ public:
 private:
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void EnableChanged(Configuration::KeyValuePair<TUint>& aKvp);
     void ModerationTimerCallback();
     void CheckStatus();
     void ReportChangesLocked();
@@ -50,8 +53,10 @@ private:
     Fifo<Credential*>& iFifoCredentialsChanged;
     Configuration::ConfigText* iConfigUsername;
     Configuration::ConfigText* iConfigPassword;
+    Configuration::ConfigChoice* iConfigEnable;
     TUint iSubscriberIdUsername;
     TUint iSubscriberIdPassword;
+    TUint iSubscriberIdEnable;
     Timer* iModerationTimer;
     Bws<ICredentials::kMaxUsernameBytes> iUsername;
     Bws<ICredentials::kMaxPasswordBytes> iPassword;
@@ -71,6 +76,9 @@ using namespace OpenHome::Configuration;
 
 // Credential
 
+const TUint Credential::kEnableNo  = 0;
+const TUint Credential::kEnableYes = 1;
+
 Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged, Configuration::IConfigInitialiser& aConfigInitialiser)
     : iLock("CRED")
     , iConsumer(aConsumer)
@@ -79,6 +87,7 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
     , iFifoCredentialsChanged(aFifoCredentialsChanged)
     , iSubscriberIdUsername(IConfigManager::kSubscriptionIdInvalid)
     , iSubscriberIdPassword(IConfigManager::kSubscriptionIdInvalid)
+    , iSubscriberIdEnable(IConfigManager::kSubscriptionIdInvalid)
     , iEnabled(true)
     , iModerationTimerStarted(false)
 {
@@ -91,6 +100,13 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
     key.Append('.');
     key.Append(Brn("Password"));
     iConfigPassword = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
+    key.Replace(iConsumer->Id());
+    key.Append('.');
+    key.Append(Brn("Enabled"));
+    std::vector<TUint> choices;
+    choices.push_back(kEnableNo);
+    choices.push_back(kEnableYes);
+    iConfigEnable = new ConfigChoice(aConfigInitialiser, key, choices, kEnableYes);
 }
 
 Credential::~Credential()
@@ -104,6 +120,10 @@ Credential::~Credential()
         iConfigPassword->Unsubscribe(iSubscriberIdPassword);
         delete iConfigPassword;
     }
+    if (iConfigEnable != nullptr) {
+        iConfigEnable->Unsubscribe(iSubscriberIdEnable);
+        delete iConfigEnable;
+    }
     delete iConsumer;
 }
 
@@ -112,6 +132,7 @@ void Credential::SetKey(RSA* aKey)
     iRsa = aKey;
     iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &Credential::UsernameChanged));
     iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &Credential::PasswordChanged));
+    iSubscriberIdEnable = iConfigEnable->Subscribe(MakeFunctorConfigChoice(*this, &Credential::EnableChanged));
 }
 
 const Brx& Credential::Id() const
@@ -214,6 +235,17 @@ void Credential::PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
             iPassword.SetBytes((TUint)decryptedLen);
         }
     }
+    iObserver.CredentialChanged();
+    if (!iModerationTimerStarted) {
+        iModerationTimer->FireIn(kEventModerationMs);
+        iModerationTimerStarted = true;
+    }
+}
+
+void Credential::EnableChanged(Configuration::KeyValuePair<TUint>& aKvp)
+{
+    AutoMutex _(iLock);
+    iEnabled = (aKvp.Value() == kEnableYes);
     iObserver.CredentialChanged();
     if (!iModerationTimerStarted) {
         iModerationTimer->FireIn(kEventModerationMs);

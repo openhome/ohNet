@@ -25,7 +25,19 @@ qobuz.com.AudioQuality
 2   Lossless+ (FLAC 96kHz, 24-bit)
 3   Lossless++ (FLAC 192kHz, 24-bit)
 
+qobuz.com.Enabled
+0   No
+1   Yes
+
 tidalhifi.com.SoundQuality
 0   Low
 1   High
 2   Lossless
+
+tidalhifi.com.Enabled
+0   No
+1   Yes
+
+tunein.com.Enabled
+0   No
+1   Yes

@@ -39,7 +39,10 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
     AddConfigChoiceConditional(Brn("Source.NetAux.Auto"));
     AddConfigChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled);
     AddConfigChoiceConditional(Brn("qobuz.com.AudioQuality"));
+    AddConfigChoiceConditional(Brn("qobuz.com.Enabled"));
     AddConfigChoiceConditional(Brn("tidalhifi.com.SoundQuality"));
+    AddConfigChoiceConditional(Brn("tidalhifi.com.Enabled"));
+    AddConfigChoiceConditional(Brn("tunein.com.Enabled"));
 
     AddConfigTextConditional(Brn("Radio.TuneInUserName"));
 }
