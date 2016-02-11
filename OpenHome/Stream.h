@@ -278,6 +278,28 @@ private:
     IWriter& iWriter;
 };
 
+class WriterRingBuffer
+    : public IWriter
+    , private INonCopyable
+{
+public:
+    WriterRingBuffer(TUint aBytes);
+    ~WriterRingBuffer();
+    void Read(IWriter& aWriter) const;
+public: // IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
+private:
+    static OpenHome::Brn Tail(const OpenHome::Brx& aBuffer, TUint aMaxBytes);
+private:
+    TByte* iData;
+    TUint iBytes;
+    TUint iCursor; // next unwritten
+    TBool iWrapped;
+};
+
+
 } // namespace OpenHome
 
 #endif // HEADER_STREAM

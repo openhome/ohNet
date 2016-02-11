@@ -263,3 +263,40 @@ TUint RamLogger::Chunk::BytesRemaining() const
 {
     return kDataBytes - iUsed;
 }
+
+// RingBufferLogger
+
+RingBufferLogger::RingBufferLogger(TUint aBytes)
+    : iMutex("")
+    , iBytes(aBytes)
+    , iRingBuffer(aBytes)
+{
+    // interpose our own handler, store old handler
+    auto functor = MakeFunctorMsg(*this, &RingBufferLogger::LogFunctor);
+    iDownstreamFunctorMsg = Log::SwapOutput(functor);
+}
+
+RingBufferLogger::~RingBufferLogger()
+{
+    // restore old handler
+    Log::SwapOutput(iDownstreamFunctorMsg);
+}
+
+void RingBufferLogger::LogFunctor(const TChar* aMsg)
+{
+    {
+        // write to buffer
+        AutoMutex amx(iMutex);
+        iRingBuffer.Write(Brn(aMsg));
+    }
+
+    // forward downstream
+    iDownstreamFunctorMsg(aMsg);
+}
+
+void RingBufferLogger::Read(IWriter& aWriter)
+{
+    AutoMutex amx(iMutex);
+    iRingBuffer.Read(aWriter);
+}
+

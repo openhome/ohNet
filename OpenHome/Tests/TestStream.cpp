@@ -226,10 +226,64 @@ void SuiteWriterBinary::Test()
     TEST(CheckBuffer(8, 0xf0, 0xde, 0xbc, 0x9a, 0x78, 0x56, 0x34, 0x12));
 }
 
+class SuiteWriterRingBuffer : public Suite
+{
+public:
+    SuiteWriterRingBuffer() : Suite("WriterRingBuffer") {}
+    void Test();
+private:
+    TBool Check(const WriterRingBuffer& aWriterRingBuffer, TUint aBytes, ...)
+    {
+        va_list args;
+        va_start(args, aBytes);
+        Bwh expected(aBytes);
+        for (TUint i = 0 ; i < aBytes ; ++i) {
+            expected.Append(static_cast<TByte>(va_arg(args, int)));
+        }
+        va_end(args);
+
+        Bwh actual(1024);
+        WriterBuffer writerBuffer(actual);
+        aWriterRingBuffer.Read(writerBuffer);
+
+        return actual == expected;
+    }
+};
+
+void SuiteWriterRingBuffer::Test()
+{
+    {
+        WriterRingBuffer writerRingBuffer(4);
+
+        writerRingBuffer.Write('a');
+        TEST(Check(writerRingBuffer, 1, 'a'));
+
+        writerRingBuffer.Write('b');
+        TEST(Check(writerRingBuffer, 2, 'a', 'b'));
+
+        writerRingBuffer.Write('c');
+        TEST(Check(writerRingBuffer, 3, 'a', 'b', 'c'));
+
+        writerRingBuffer.Write('d');
+        TEST(Check(writerRingBuffer, 4, 'a', 'b', 'c', 'd'));
+
+        // check that 'a' falls of the back
+        writerRingBuffer.Write('e');
+        TEST(Check(writerRingBuffer, 4, 'b', 'c', 'd', 'e'));
+
+        writerRingBuffer.Write(Brn("fg"));
+        TEST(Check(writerRingBuffer, 4, 'd', 'e', 'f', 'g'));
+
+        writerRingBuffer.Write(Brn("hijklmno"));
+        TEST(Check(writerRingBuffer, 4, 'l', 'm', 'n', 'o'));
+    }
+}
+
 void TestStream()
 {
     Runner runner("Stream Testing\n");
     runner.Add(new SuiteReaderBinary());
     runner.Add(new SuiteWriterBinary());
+    runner.Add(new SuiteWriterRingBuffer());
     runner.Run();
 }

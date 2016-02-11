@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Stream.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -45,6 +46,29 @@ private:
 private:
     FunctorMsg iLogOutput;
     std::vector<Chunk*> iChunks;
+};
+
+// A class that records the last N bytes of log data
+// in a ring-buffer.
+// It installs itself at the head of the log-chain
+// on construction, uninstalling on destruction. This
+// is racy (SwapOutput) and not quite as composable as
+// it seems.
+// Call Read() to stream out a snapshot of the current
+// buffer.
+class RingBufferLogger
+{
+public:
+    RingBufferLogger(TUint aBytes);
+    ~RingBufferLogger();
+    void Read(OpenHome::IWriter& aWriter);
+private:
+    void LogFunctor(const TChar*);
+private:
+    Mutex iMutex;
+    TUint iBytes;
+    WriterRingBuffer iRingBuffer;
+    FunctorMsg iDownstreamFunctorMsg;
 };
 
 class Log

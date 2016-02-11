@@ -796,3 +796,93 @@ void WriterBinary::WriteInt64Le(TInt64 aValue)
     iWriter.Write((TByte)(aValue >> 48));
     iWriter.Write((TByte)(aValue >> 56));
 }
+
+// WriterRingBuffer
+
+WriterRingBuffer::WriterRingBuffer(TUint aBytes)
+    : iData(new TByte[aBytes])
+    , iBytes(aBytes)
+    , iCursor(0)
+    , iWrapped(false)
+{}
+
+WriterRingBuffer::~WriterRingBuffer()
+{
+    delete[] iData;
+}
+
+Brn WriterRingBuffer::Tail(const Brx& aBuffer, TUint aMaxBytes)
+{
+    const auto bytes = aBuffer.Bytes();
+
+    if (bytes <= aMaxBytes)
+        return Brn(aBuffer);
+    else
+        return aBuffer.Split(bytes - aMaxBytes, aMaxBytes);
+}
+
+void WriterRingBuffer::Read(IWriter& aWriter) const
+{
+    if (iWrapped)
+    {
+        aWriter.Write(Brn(&(iData[iCursor]), iBytes - iCursor));
+    }
+
+    aWriter.Write(Brn(&(iData[0]), iCursor));
+}
+
+void WriterRingBuffer::Write(TByte aValue)
+{
+    iData[iCursor] = aValue;
+
+    ++iCursor;
+
+    if (iCursor == iBytes)
+    {
+        iCursor = 0;
+        iWrapped = true;
+    }
+}
+
+void WriterRingBuffer::Write(const Brx& aBuffer)
+{
+    const auto tail = Tail(aBuffer, iBytes); // tail.Bytes() <= iBytes
+    const auto ptr = tail.Ptr();
+    const auto bytes = tail.Bytes();
+    const auto bytesToEnd = iBytes - iCursor;
+
+    if (bytes <= bytesToEnd)
+    {
+        // single write
+        memcpy(&(iData[iCursor]), ptr, bytes);
+
+        iCursor += bytes;
+
+        if (iCursor == iBytes)
+        {
+            iCursor = 0;
+            iWrapped = true;
+        }
+    }
+    else
+    {
+        // double write
+        memcpy(
+            &(iData[iCursor]),
+            ptr,
+            bytesToEnd);
+
+        memcpy(
+            &(iData[0]),
+            ptr + bytesToEnd,
+            bytes - bytesToEnd);
+
+        iCursor = bytes - bytesToEnd;
+        iWrapped = true;
+    }
+}
+
+void WriterRingBuffer::WriteFlush()
+{}
+
+
