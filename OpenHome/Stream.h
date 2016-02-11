@@ -291,7 +291,7 @@ public: // IWriter
     void Write(const Brx& aBuffer);
     void WriteFlush();
 private:
-    static OpenHome::Brn Tail(const OpenHome::Brx& aBuffer, TUint aMaxBytes);
+    static Brn Tail(const Brx& aBuffer, TUint aMaxBytes);
 private:
     TByte* iData;
     TUint iBytes;

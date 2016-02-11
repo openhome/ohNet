@@ -813,7 +813,7 @@ WriterRingBuffer::~WriterRingBuffer()
 
 Brn WriterRingBuffer::Tail(const Brx& aBuffer, TUint aMaxBytes)
 {
-    const auto bytes = aBuffer.Bytes();
+    const TUint bytes = aBuffer.Bytes();
 
     if (bytes <= aMaxBytes)
         return Brn(aBuffer);
@@ -846,10 +846,10 @@ void WriterRingBuffer::Write(TByte aValue)
 
 void WriterRingBuffer::Write(const Brx& aBuffer)
 {
-    const auto tail = Tail(aBuffer, iBytes); // tail.Bytes() <= iBytes
-    const auto ptr = tail.Ptr();
-    const auto bytes = tail.Bytes();
-    const auto bytesToEnd = iBytes - iCursor;
+    const Brn tail = Tail(aBuffer, iBytes); // tail.Bytes() <= iBytes
+    const TByte* ptr = tail.Ptr();
+    const TUint bytes = tail.Bytes();
+    const TUint bytesToEnd = iBytes - iCursor;
 
     if (bytes <= bytesToEnd)
     {
