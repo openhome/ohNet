@@ -41,7 +41,6 @@ class SourceBase : public ISource
 {
 private:
     static const TUint kMaxSourceTypeBytes = 20;
-    static const TUint kMaxSourceIndexDigits = 2; // assume a source count of 0..99 is reasonable
     static const OpenHome::Brn kKeySourceNamePrefix;
     static const OpenHome::Brn kKeySourceNameSuffix;
     static const OpenHome::Brn kKeySourceVisibleSuffix;
