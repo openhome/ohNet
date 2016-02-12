@@ -24,8 +24,11 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
                                            TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
                                            : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
-    AddValue(new ConfigUiValRoManufacturerName(aProduct));
+    AddValue(new ConfigUiValRoModelIcon(aProduct));
     AddValue(new ConfigUiValRoModelName(aProduct));
+    AddValue(new ConfigUiValRoModelUrl(aProduct));
+    AddValue(new ConfigUiValRoManufacturerName(aProduct));
+    AddValue(new ConfigUiValRoManufacturerUrl(aProduct));
     AddValue(new ConfigUiValRoIpAddress(aEnv.NetworkAdapterList()));
 
     AddConfigNumConditional(Brn("Sender.Channel"));

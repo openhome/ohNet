@@ -890,33 +890,33 @@ void ConfigUiValChoiceDelayed::RemoveObserver(TUint aObserverId)
 }
 
 
-// ConfigUiValRoManufacturerName
+// ConfigUiValRoModelIcon
 
-const Brn ConfigUiValRoManufacturerName::kKey("About.ManufacturerName");
+const Brn ConfigUiValRoModelIcon::kKey("About.ModelIcon");
 
-ConfigUiValRoManufacturerName::ConfigUiValRoManufacturerName(Product& aProduct)
+ConfigUiValRoModelIcon::ConfigUiValRoModelIcon(Av::Product& aProduct)
 {
     Brn name, info, url, imageUri;
-    aProduct.GetManufacturerDetails(name, info, url, imageUri);
-    iUiVal = new ConfigUiValRo(kKey, name);
+    aProduct.GetModelDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValRo(kKey, imageUri);
 }
 
-ConfigUiValRoManufacturerName::~ConfigUiValRoManufacturerName()
+ConfigUiValRoModelIcon::~ConfigUiValRoModelIcon()
 {
     delete iUiVal;
 }
 
-void ConfigUiValRoManufacturerName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+void ConfigUiValRoModelIcon::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
 {
     iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
 }
 
-TUint ConfigUiValRoManufacturerName::AddObserver(IConfigUiValObserver& aObserver)
+TUint ConfigUiValRoModelIcon::AddObserver(IConfigUiValObserver& aObserver)
 {
     return iUiVal->AddObserver(aObserver);
 }
 
-void ConfigUiValRoManufacturerName::RemoveObserver(TUint aObserverId)
+void ConfigUiValRoModelIcon::RemoveObserver(TUint aObserverId)
 {
     iUiVal->RemoveObserver(aObserverId);
 }
@@ -949,6 +949,102 @@ TUint ConfigUiValRoModelName::AddObserver(IConfigUiValObserver& aObserver)
 }
 
 void ConfigUiValRoModelName::RemoveObserver(TUint aObserverId)
+{
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+
+// ConfigUiValRoModelUrl
+
+const Brn ConfigUiValRoModelUrl::kKey("About.ModelUrl");
+
+ConfigUiValRoModelUrl::ConfigUiValRoModelUrl(Av::Product& aProduct)
+{
+    Brn name, info, url, imageUri;
+    aProduct.GetModelDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValRo(kKey, url);
+}
+
+ConfigUiValRoModelUrl::~ConfigUiValRoModelUrl()
+{
+    delete iUiVal;
+}
+
+void ConfigUiValRoModelUrl::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValRoModelUrl::AddObserver(IConfigUiValObserver& aObserver)
+{
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValRoModelUrl::RemoveObserver(TUint aObserverId)
+{
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+
+// ConfigUiValRoManufacturerName
+
+const Brn ConfigUiValRoManufacturerName::kKey("About.ManufacturerName");
+
+ConfigUiValRoManufacturerName::ConfigUiValRoManufacturerName(Product& aProduct)
+{
+    Brn name, info, url, imageUri;
+    aProduct.GetManufacturerDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValRo(kKey, name);
+}
+
+ConfigUiValRoManufacturerName::~ConfigUiValRoManufacturerName()
+{
+    delete iUiVal;
+}
+
+void ConfigUiValRoManufacturerName::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValRoManufacturerName::AddObserver(IConfigUiValObserver& aObserver)
+{
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValRoManufacturerName::RemoveObserver(TUint aObserverId)
+{
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+
+// ConfigUiValRoManufacturerUrl
+
+const Brn ConfigUiValRoManufacturerUrl::kKey("About.ManufacturerUrl");
+
+ConfigUiValRoManufacturerUrl::ConfigUiValRoManufacturerUrl(Av::Product& aProduct)
+{
+    Brn name, info, url, imageUri;
+    aProduct.GetManufacturerDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValRo(kKey, url);
+}
+
+ConfigUiValRoManufacturerUrl::~ConfigUiValRoManufacturerUrl()
+{
+    delete iUiVal;
+}
+
+void ConfigUiValRoManufacturerUrl::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValRoManufacturerUrl::AddObserver(IConfigUiValObserver& aObserver)
+{
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValRoManufacturerUrl::RemoveObserver(TUint aObserverId)
 {
     iUiVal->RemoveObserver(aObserverId);
 }
