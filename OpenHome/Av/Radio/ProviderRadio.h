@@ -22,6 +22,7 @@ public:
     ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader);
     ~ProviderRadio();
     void SetTransportState(Media::EPipelineState aState);
+    void NotifyPresetInfo(TUint aPresetId, const Brx& aUri, const Brx& aMetadata);
     void NotifyProtocolInfo(const Brx& aProtocolInfo);
 private: // from IPresetDatabaseObserver
     void PresetDatabaseChanged() override;
@@ -59,7 +60,6 @@ private:
     Bws<IPresetDatabaseReader::kMaxPresets * sizeof(TUint32)> iIdArrayBuf;
     // only required locally by certain functions but too large for the stack
     Mutex iTempVarLock;
-    Media::BwsTrackUri iTempUri;
     Media::BwsTrackMetaData iTempMetadata;
 };
 

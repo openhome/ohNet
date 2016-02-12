@@ -206,7 +206,7 @@ void ProviderProduct::SourceIndex(IDvInvocation& aInvocation, IDvInvocationRespo
 void ProviderProduct::SetSourceIndex(IDvInvocation& aInvocation, TUint aValue)
 {
     try {
-        iProduct.SetCurrentSource(aValue);
+        (void)iProduct.SetCurrentSource(aValue);
     }
     catch(AvSourceNotFound& ) {
         FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);

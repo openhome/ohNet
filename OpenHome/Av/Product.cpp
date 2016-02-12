@@ -104,6 +104,9 @@ void ConfigStartupSource::Write(IWriter& aWriter, Configuration::IConfigChoiceMa
 const Brn Product::kKeyLastSelectedSource("Last.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
+const TUint Product::kAutoPlayDisable = 0;
+const TUint Product::kAutoPlayEnable  = 1;
+const TUint Product::kCurrentSourceNone = UINT_MAX;
 
 Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore,
                  IConfigManager& aConfigReader, IConfigInitialiser& aConfigInit,
@@ -116,7 +119,8 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iLockDetails("PRDD")
     , iStarted(false)
     , iStandby(false)
-    , iCurrentSource(UINT_MAX)
+    , iAutoPlay(false)
+    , iCurrentSource(kCurrentSourceNone)
     , iSourceXmlChangeCount(0)
     , iConfigStartupSource(nullptr)
     , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
@@ -128,6 +132,11 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
     iConfigProductName = &aConfigReader.GetText(kConfigIdNameBase);
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorConfigText(*this, &Product::ProductNameChanged));
+    std::vector<TUint> choices;
+    choices.push_back(kAutoPlayDisable);
+    choices.push_back(kAutoPlayEnable);
+    iConfigAutoPlay = new ConfigChoice(aConfigInit, Brn("Device.AutoPlay"), choices, kAutoPlayDisable);
+    iListenerIdAutoPlay = iConfigAutoPlay->Subscribe(MakeFunctorConfigChoice(*this, &Product::AutoPlayChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this, aPowerManager);
 }
 
@@ -143,6 +152,7 @@ Product::~Product()
     delete iProviderProduct;
     iConfigProductName->Unsubscribe(iListenerIdProductName);
     iConfigProductRoom->Unsubscribe(iListenerIdProductRoom);
+    iConfigAutoPlay->Unsubscribe(iListenerIdAutoPlay);
     delete iLastSelectedSource;
 }
 
@@ -162,17 +172,17 @@ void Product::Start()
     iLock.Signal();
 
     if (startupSourceVal != ConfigStartupSource::kNone) {
-        SetCurrentSource(startupSourceVal);
+        (void)SetCurrentSource(startupSourceVal);
     }
     else { // No startup source selected; use last selected source.
         Bws<ISource::kMaxSystemNameBytes> startupSource;
         iLastSelectedSource->Get(startupSource);
         if (startupSource == Brx::Empty()) {
             // If there is no stored startup source, select the first added source.
-            SetCurrentSource(0);
+            (void)SetCurrentSource(0);
         }
         else {
-            SetCurrentSource(startupSource);
+            (void)SetCurrentSource(startupSource);
         }
     }
 
@@ -309,25 +319,33 @@ void Product::StartupSourceChanged(KeyValuePair<TUint>& aKvp)
     iStartupSourceVal = aKvp.Value();
 }
 
-void Product::SetCurrentSource(TUint aIndex)
+void Product::AutoPlayChanged(KeyValuePair<TUint>& aKvp)
+{
+    iLock.Wait();
+    iAutoPlay = (aKvp.Value() == kAutoPlayEnable);
+    iLock.Signal();
+}
+
+TBool Product::SetCurrentSource(TUint aIndex)
 {
     AutoMutex a(iLock);
     if (aIndex >= (TUint)iSources.size()) {
         THROW(AvSourceNotFound);
     }
     if (iCurrentSource == aIndex) {
-        return;
+        return false;
     }
-    if (iCurrentSource != UINT_MAX) {
+    if (iCurrentSource != kCurrentSourceNone) {
         iSources[iCurrentSource]->Deactivate();
     }
     iCurrentSource = aIndex;
     iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
-    iSources[iCurrentSource]->Activate();
+    iSources[iCurrentSource]->Activate(iAutoPlay);
 
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
         (*it)->SourceIndexChanged();
     }
+    return true;
 }
 
 void Product::SetCurrentSource(const Brx& aName)
@@ -338,12 +356,12 @@ void Product::SetCurrentSource(const Brx& aName)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         iSources[i]->Name(name);
         if (name == aName) {
-            if (iCurrentSource != UINT_MAX) {
+            if (iCurrentSource != kCurrentSourceNone) {
                 iSources[iCurrentSource]->Deactivate();
             }
             iCurrentSource = i;
             iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
-            iSources[iCurrentSource]->Activate();
+            iSources[iCurrentSource]->Activate(iAutoPlay);
             for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
                 (*it)->SourceIndexChanged();
             }
@@ -385,7 +403,7 @@ void Product::Activate(ISource& aSource)
 
     AutoMutex a(iLock);
     // deactivate current (old) source, if one exists
-    if (iCurrentSource != UINT_MAX) {
+    if (iCurrentSource != kCurrentSourceNone) {
         srcOld = iSources[iCurrentSource];
         srcOld->Deactivate();
     }
@@ -400,7 +418,7 @@ void Product::Activate(ISource& aSource)
             iCurrentSource = i;
             iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
-            srcNew->Activate();
+            srcNew->Activate(iAutoPlay);
             for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
                 (*it)->SourceIndexChanged();
             }
@@ -437,12 +455,20 @@ void Product::StandbyEnabled()
 
 void Product::StandbyDisabled(StandbyDisableReason aReason)
 {
-    iLock.Wait();
-    const TUint startupSourceVal = iStartupSourceVal;
-    iLock.Signal();
-
-    if (aReason == eStandbyDisableUser && startupSourceVal != ConfigStartupSource::kNone) {
-        SetCurrentSource(startupSourceVal);
+    TBool activated = false;
+    if (aReason == eStandbyDisableUser) {
+        iLock.Wait();
+        const TUint startupSourceVal = iStartupSourceVal;
+        iLock.Signal();
+        if (startupSourceVal != ConfigStartupSource::kNone) {
+            activated = SetCurrentSource(startupSourceVal);
+        }
+    }
+    if (!activated) {
+        AutoMutex _(iLock);
+        if (iCurrentSource != kCurrentSourceNone) {
+            iSources[iCurrentSource]->Activate(iAutoPlay);
+        }
     }
 }
 

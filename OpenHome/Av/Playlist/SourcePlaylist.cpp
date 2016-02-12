@@ -38,7 +38,7 @@ private:
     TBool StartedShuffled();
     void DoSeekToTrackId(Media::Track* aTrack);
 private: // from ISource
-    void Activate() override;
+    void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
     void StandbyEnabled() override;
     void PipelineStopped() override;
@@ -171,7 +171,7 @@ void SourcePlaylist::DoSeekToTrackId(Track* aTrack)
     iLock.Signal();
 }
 
-void SourcePlaylist::Activate()
+void SourcePlaylist::Activate(TBool aAutoPlay)
 {
     iTrackPosSeconds = 0;
     iActive = true;
@@ -188,6 +188,9 @@ void SourcePlaylist::Activate()
             }
         }
         iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
+        if (aAutoPlay && trackId != ITrackDatabase::kTrackIdNone) {
+            iPipeline.Play();
+        }
     }
 }
 

@@ -11,6 +11,7 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/PowerManager.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media//ClockPullerUtilisation.h>
 
@@ -45,20 +46,14 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer)
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
-                           *radioUriProvider, Brx::Empty(), aMediaPlayer.ConfigInitialiser(),
-                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes(),
-                           aMediaPlayer.PowerManager());
+    return new SourceRadio(aMediaPlayer, *radioUriProvider, Brx::Empty());
 }
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(),
-                           *radioUriProvider, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser(),
-                           aMediaPlayer.CredentialsManager(), aMediaPlayer.MimeTypes(),
-                           aMediaPlayer.PowerManager());
+    return new SourceRadio(aMediaPlayer, *radioUriProvider, aTuneInPartnerId);
 }
 
 
@@ -78,11 +73,8 @@ ModeClockPullers UriProviderRadio::ClockPullers()
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline,
-                         UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
-                         IConfigInitialiser& aConfigInit, Credentials& aCredentialsManager,
-                         Media::MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager)
-    : Source(Brn("Radio"), "Radio", aPipeline, aPowerManager)
+SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId)
+    : Source(Brn("Radio"), "Radio", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRAD")
     , iUriProvider(aUriProvider)
     , iTrack(nullptr)
@@ -91,38 +83,45 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iLive(false)
 {
     iPresetDatabase = new PresetDatabase();
-    iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase);
-    aMimeTypeList.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
+    iProviderRadio = new ProviderRadio(aMediaPlayer.Device(), *this, *iPresetDatabase);
+    MimeTypeList& mimeTypes = aMediaPlayer.MimeTypes();
+    mimeTypes.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
     if (aTuneInPartnerId.Bytes() == 0) {
         iTuneIn = nullptr;
     }
     else {
-        iTuneIn = new RadioPresetsTuneIn(aEnv, aTuneInPartnerId, *iPresetDatabase, aConfigInit, aCredentialsManager, aMimeTypeList);
+        iTuneIn = new RadioPresetsTuneIn(aMediaPlayer.Env(), aTuneInPartnerId,
+                                         *iPresetDatabase, aMediaPlayer.ConfigInitialiser(),
+                                         aMediaPlayer.CredentialsManager(), mimeTypes);
     }
-    iPipeline.Add(ContentProcessorFactory::NewM3u(aMimeTypeList));
-    iPipeline.Add(ContentProcessorFactory::NewM3u(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewM3u(mimeTypes));
+    iPipeline.Add(ContentProcessorFactory::NewM3u(mimeTypes));
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
-    iPipeline.Add(ContentProcessorFactory::NewPls(aMimeTypeList));
-    iPipeline.Add(ContentProcessorFactory::NewPls(aMimeTypeList));
-    iPipeline.Add(ContentProcessorFactory::NewOpml(aMimeTypeList));
-    iPipeline.Add(ContentProcessorFactory::NewOpml(aMimeTypeList));
+    iPipeline.Add(ContentProcessorFactory::NewPls(mimeTypes));
+    iPipeline.Add(ContentProcessorFactory::NewPls(mimeTypes));
+    iPipeline.Add(ContentProcessorFactory::NewOpml(mimeTypes));
+    iPipeline.Add(ContentProcessorFactory::NewOpml(mimeTypes));
     iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.AddObserver(*this);
+    iStorePresetId = new StoreInt(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(),
+                                  kPowerPriorityNormal, Brn("Radio.PresetId"),
+                                  IPresetDatabaseReader::kPresetIdNone);
 }
 
 SourceRadio::~SourceRadio()
 {
     delete iTuneIn;
     delete iPresetDatabase;
+    delete iStorePresetId;
     delete iProviderRadio;
     if (iTrack != nullptr) {
         iTrack->RemoveRef();
     }
 }
 
-void SourceRadio::Activate()
+void SourceRadio::Activate(TBool /*aAutoPlay*/)
 {
     if (iTuneIn != nullptr) {
         iTuneIn->Refresh();
@@ -138,6 +137,7 @@ void SourceRadio::Deactivate()
     iLock.Wait();
     iProviderRadio->SetTransportState(EPipelineStopped);
     iLock.Signal();
+    iStorePresetId->Write();
     Source::Deactivate();
 }
 
@@ -151,9 +151,36 @@ void SourceRadio::PipelineStopped()
     // FIXME - could nullptr iPipeline (if we also changed it to be a pointer)
 }
 
+TBool SourceRadio::TryFetch(TUint aPresetId, const Brx& aUri)
+{
+    AutoMutex _(iLock);
+    if (aPresetId == IPresetDatabaseReader::kPresetIdNone) {
+        return false;
+    }
+    if (aUri.Bytes() > 0) {
+        iPresetUri.Replace(aUri);
+        if (!iPresetDatabase->TryGetPresetById(aPresetId, iPresetMetadata)) {
+            return false;
+        }
+    }
+    else if (!iPresetDatabase->TryGetPresetById(aPresetId, iPresetUri, iPresetMetadata)) {
+        return false;
+    }
+    iStorePresetId->Set(aPresetId);
+    iProviderRadio->NotifyPresetInfo(aPresetId, iPresetUri, iPresetMetadata);
+    FetchLocked(iPresetUri, iPresetMetadata);
+    return true;
+}
+
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
 {
     AutoMutex _(iLock);
+    iStorePresetId->Set(IPresetDatabaseReader::kPresetIdNone);
+    FetchLocked(aUri, aMetaData);
+}
+
+void SourceRadio::FetchLocked(const Brx& aUri, const Brx& aMetaData)
+{
     if (!IsActive()) {
         DoActivate();
     }

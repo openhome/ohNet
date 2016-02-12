@@ -49,7 +49,7 @@ private:
     void EnsureActive();
     void NotifyState(Media::EPipelineState aState);
 private: // from Source
-    void Activate() override;
+    void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
     void StandbyEnabled() override;
     void PipelineStopped() override;

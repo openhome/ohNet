@@ -147,7 +147,7 @@ IRaopDiscovery& SourceRaop::Discovery()
     return *iRaopDiscovery;
 }
 
-void SourceRaop::Activate()
+void SourceRaop::Activate(TBool /*aAutoPlay*/)
 {
     iLock.Wait();
     iTrackPosSeconds = 0;

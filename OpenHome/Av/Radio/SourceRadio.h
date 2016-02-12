@@ -9,6 +9,7 @@
 namespace OpenHome {
     class Environment;
     class PowerManager;
+    class StoreInt;
 namespace Net {
     class DvDevice;
 }
@@ -23,6 +24,7 @@ class ISourceRadio
 {
 public:
     virtual ~ISourceRadio() {}
+    virtual TBool TryFetch(TUint aPresetId, const Brx& aUri) = 0;
     virtual void Fetch(const Brx& aUri, const Brx& aMetaData) = 0;
     virtual void Play() = 0;
     virtual void Pause() = 0;
@@ -34,30 +36,28 @@ public:
 class PresetDatabase;
 class ProviderRadio;
 class RadioPresetsTuneIn;
-class IReadStore;
-class Credentials;
+class IMediaPlayer;
 
-class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
+class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver, private INonCopyable
 {
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline,
-                Media::UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId,
-                Configuration::IConfigInitialiser& aConfigInit,
-                Credentials& aCredentialsManager, Media::MimeTypeList& aMimeTypeList,
-                IPowerManager& aPowerManager);
+    SourceRadio(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId);
     ~SourceRadio();
 private: // from ISource
-    void Activate() override;
+    void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
     void StandbyEnabled() override;
     void PipelineStopped() override;
 private: // from ISourceRadio
+    TBool TryFetch(TUint aPresetId, const Brx& aUri) override;
     void Fetch(const Brx& aUri, const Brx& aMetaData) override;
     void Play() override;
     void Pause() override;
     void Stop() override;
     void SeekAbsolute(TUint aSeconds) override;
     void SeekRelative(TUint aSeconds) override;
+private:
+    void FetchLocked(const Brx& aUri, const Brx& aMetaData);
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const Media::ModeInfo& aInfo) override;
@@ -75,6 +75,9 @@ private:
     TUint iTrackPosSeconds;
     TUint iStreamId;
     TBool iLive;
+    StoreInt* iStorePresetId;
+    Media::BwsTrackUri iPresetUri; // only required by Fetch(TUint) but too large for the stack
+    Media::BwsTrackMetaData iPresetMetadata; // only required by Fetch(TUint) but too large for the stack
 };
 
 } // namespace Av

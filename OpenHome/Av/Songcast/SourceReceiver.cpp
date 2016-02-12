@@ -23,6 +23,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/PowerManager.h>
 
 namespace OpenHome {
 namespace Media {
@@ -55,7 +56,7 @@ public:
                    const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
-    void Activate() override;
+    void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
     void StandbyEnabled() override;
     void PipelineStopped() override;
@@ -99,6 +100,7 @@ private:
     TBool iNoPipelinePrefetchOnActivation;
     Media::BwsTrackUri iPendingTrackUri;
     SongcastSender* iSender;
+    StoreText* iStoreZone;
 };
 
 class SongcastSender : private Media::IPipelineObserver
@@ -207,6 +209,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode()));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));
+    iStoreZone = new StoreText(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(), kPowerPriorityNormal,
+                               Brn("Receiver.Zone"), Brx::Empty(), iZone.MaxBytes());
+    iStoreZone->Get(iZone);
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
 
@@ -217,6 +222,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
 SourceReceiver::~SourceReceiver()
 {
     delete iSender;
+    delete iStoreZone;
     delete iOhmMsgFactory;
     iZoneHandler->RemoveListener(*this);
     delete iZoneChangeThread;
@@ -224,7 +230,7 @@ SourceReceiver::~SourceReceiver()
     delete iZoneHandler;
 }
 
-void SourceReceiver::Activate()
+void SourceReceiver::Activate(TBool aAutoPlay)
 {
     LOG(kSongcast, "SourceReceiver::Activate()\n");
     iActive = true;
@@ -235,6 +241,9 @@ void SourceReceiver::Activate()
         iPipeline.StopPrefetch(iUriProvider->Mode(), Track::kIdNone);
         if (iZone.Bytes() > 0) {
             iZoneHandler->StartMonitoring(iZone);
+        }
+        if (aAutoPlay) {
+            iPlaying = true;
         }
     }
 }
@@ -247,6 +256,7 @@ void SourceReceiver::Deactivate()
     iZoneHandler->StopMonitoring();
     iPlaying = false;
     iTrackUri.Replace(Brx::Empty());
+    iStoreZone->Write();
     Source::Deactivate();
 }
 
@@ -316,12 +326,14 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
         iTrackUri.Replace(Brx::Empty());
         iTrackMetadata.Replace(Brx::Empty());
         iZone.Replace(path.Split(1)); // remove leading /
+        iStoreZone->Set(iZone);
         if (iPlaying) {
             iZoneHandler->StartMonitoring(iZone);
         }
     }
     else {
         iZone.Replace(Brx::Empty());
+        iStoreZone->Set(iZone);
         iZoneHandler->ClearCurrentSenderUri();
         iZoneHandler->StopMonitoring();
         iTrackUri.Replace(aUri);

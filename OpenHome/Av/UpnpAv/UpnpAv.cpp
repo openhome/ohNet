@@ -84,7 +84,7 @@ void SourceUpnpAv::NotifyState(EPipelineState aState)
     }
 }
 
-void SourceUpnpAv::Activate()
+void SourceUpnpAv::Activate(TBool aAutoPlay)
 {
     iActive = true;
     if (!iNoPipelinePrefetchOnActivation) {
@@ -92,6 +92,12 @@ void SourceUpnpAv::Activate()
         const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
         iLock.Signal();
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+        if (aAutoPlay && trackId != Track::kIdNone) {
+            iLock.Wait();
+            iTransportState = Media::EPipelinePlaying;
+            iLock.Signal();
+            iPipeline.Play();
+        }
     }
 }
 

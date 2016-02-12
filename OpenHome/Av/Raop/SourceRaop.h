@@ -34,7 +34,7 @@ public:
     ~SourceRaop();
     IRaopDiscovery& Discovery();
 private: // from ISource
-    void Activate() override;
+    void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
     void StandbyEnabled() override;
     void PipelineStopped() override;

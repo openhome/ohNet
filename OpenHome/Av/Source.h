@@ -28,7 +28,7 @@ public:
     virtual const Brx& Type() const = 0;
     virtual void Name(Bwx& aBuf) const = 0;
     virtual TBool IsVisible() const = 0;
-    virtual void Activate() = 0;
+    virtual void Activate(TBool aAutoPlay) = 0;
     virtual void Deactivate() = 0;
     virtual void SetVisible(TBool aVisible) = 0;
     virtual void StandbyEnabled() = 0;
@@ -41,9 +41,9 @@ class SourceBase : public ISource
 {
 private:
     static const TUint kMaxSourceTypeBytes = 20;
-    static const OpenHome::Brn kKeySourceNamePrefix;
-    static const OpenHome::Brn kKeySourceNameSuffix;
-    static const OpenHome::Brn kKeySourceVisibleSuffix;
+    static const Brn kKeySourceNamePrefix;
+    static const Brn kKeySourceNameSuffix;
+    static const Brn kKeySourceVisibleSuffix;
 public:
     static const TUint kConfigValSourceInvisible;
     static const TUint kConfigValSourceVisible;
@@ -62,6 +62,7 @@ protected:
     ~SourceBase();
     TBool IsActive() const;
     void DoActivate();
+    void AutoPlay();
 private: // from ISource
     void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
 private:

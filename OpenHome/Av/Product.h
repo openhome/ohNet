@@ -98,6 +98,9 @@ class Product : private IProduct
 private:
     static const Brn kKeyLastSelectedSource;
     static const TUint kMaxAttributeBytes = 1024;
+    static const TUint kAutoPlayDisable;
+    static const TUint kAutoPlayEnable;
+    static const TUint kCurrentSourceNone;
 public:
     static const Brn kConfigIdRoomBase;
     static const Brn kConfigIdNameBase;
@@ -121,7 +124,7 @@ public:
     TUint SourceCount() const;
     TUint CurrentSourceIndex() const;
     void GetSourceXml(Bwx& aXml);
-    void SetCurrentSource(TUint aIndex);
+    TBool SetCurrentSource(TUint aIndex); // returns true if aIndex wasn't already active
     void SetCurrentSource(const Brx& aName);
     void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
@@ -132,6 +135,7 @@ private:
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void StartupSourceChanged(Configuration::KeyValuePair<TUint>& aKvp);
+    void AutoPlayChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private: // from IProduct
     void Activate(ISource& aSource) override;
     void NotifySourceChanged(ISource& aSource) override;
@@ -157,6 +161,7 @@ private:
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
     TBool iStandby;
+    TBool iAutoPlay;
     StoreText* iLastSelectedSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
@@ -169,6 +174,8 @@ private:
     Configuration::ConfigChoice* iConfigStartupSource;
     TUint iListenerIdStartupSource;
     TUint iStartupSourceVal;
+    Configuration::ConfigChoice* iConfigAutoPlay;
+    TUint iListenerIdAutoPlay;
 };
 
 class IFriendlyNameObservable
