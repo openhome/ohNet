@@ -21,6 +21,30 @@
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/MimeTypeList.h>
+#include <OpenHome/Av/ProviderDebug.h>
+
+#include <memory>
+
+namespace OpenHome {
+namespace Av {
+
+class BufferedLogger
+{
+public:
+    BufferedLogger(Net::DvDevice& aDevice, Product& aProduct, TUint aBytes)
+    {
+        iRingBufferLogger.reset(new RingBufferLogger(aBytes));
+        iProviderDebug.reset(new ProviderDebug(aDevice, *iRingBufferLogger));
+        aProduct.AddAttribute("Debug");
+    }
+private:
+    std::unique_ptr<RingBufferLogger> iRingBufferLogger;
+    std::unique_ptr<ProviderDebug> iProviderDebug;
+};
+
+}
+}
+
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -45,6 +69,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigProductRoom(nullptr)
     , iConfigProductName(nullptr)
     , iConfigStartupSource(nullptr)
+    , iBufferedLogger(nullptr)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
@@ -97,6 +122,7 @@ MediaPlayer::~MediaPlayer()
     delete iTrackFactory;
     delete iKvpStore;
     delete iInfoLogger;
+    delete iBufferedLogger;
 }
 
 void MediaPlayer::Quit()
@@ -128,6 +154,11 @@ void MediaPlayer::Add(ISource* aSource)
 void MediaPlayer::AddAttribute(const TChar* aAttribute)
 {
     iProduct->AddAttribute(aAttribute);
+}
+
+void MediaPlayer::BufferLogOutput(TUint aBytes)
+{
+    iBufferedLogger = new BufferedLogger(iDevice, *iProduct, aBytes);
 }
 
 void MediaPlayer::Start()

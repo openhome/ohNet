@@ -62,6 +62,7 @@ class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
 class ConfigStartupSource;
+class BufferedLogger;
 
 class IMediaPlayer
 {
@@ -106,6 +107,7 @@ public:
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);
+    void BufferLogOutput(TUint aBytes); // must be called before Start()
     void Start();
 public: // from IMediaPlayer
     Environment& Env() override;
@@ -148,6 +150,7 @@ private:
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
+    BufferedLogger* iBufferedLogger;
     //TransportControl* iTransportControl;
 };
 

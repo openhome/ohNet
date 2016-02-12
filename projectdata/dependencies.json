@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.6.1908",
+        "version": "1.6.1935",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -14,7 +14,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.90",
+        "version": "0.0.92",
         "archive-filename": "${name}-${version}.tar.gz",
         "source-git": "https://github.com/openhome/ohWafHelpers.git"
     },
@@ -35,8 +35,6 @@
         "version": "0.0.195",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
-            "Core-armv5": false,
-            "Core-armv6": false,
             "Core-ppc32": false,
             "*": true },
         "ignore": "${platform-ignore[$platform]}"
@@ -46,8 +44,6 @@
         "version":          "0.0.197",
         "archive-suffix":   "-Release",
         "platform-ignore": {
-            "Core-armv5": false,
-            "Core-armv6": false,
             "Core-ppc32": false,
             "*": true },
         "ignore":           "${platform-ignore[$platform]}"
@@ -57,8 +53,6 @@
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
-            "Core-armv5": false,
-            "Core-armv6": false,
             "Core-ppc32": false,
             "*": true },
         "ignore":           "${platform-ignore[$platform]}",
@@ -69,8 +63,6 @@
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
-            "Core-armv5": false,
-            "Core-armv6": false,
             "Core-ppc32": false,
             "*": true },
         "ignore":           "${platform-ignore[$platform]}",

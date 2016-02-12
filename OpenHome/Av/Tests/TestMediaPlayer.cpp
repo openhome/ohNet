@@ -377,6 +377,8 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iMediaPlayer->FriendlyNameObservable(), macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
+
+    iMediaPlayer->BufferLogOutput(128 * 1024);
 }
 
 void TestMediaPlayer::InitialiseSubsystems()

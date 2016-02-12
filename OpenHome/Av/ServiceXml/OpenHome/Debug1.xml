@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <actionList>
+    <action>
+      <name>GetLog</name>
+      <argumentList>
+        <argument>
+          <name>Log</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+  </actionList>
+  <serviceStateTable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_String</name>
+      <dataType>string</dataType>
+    </stateVariable>
+  </serviceStateTable>
+</scpd>
