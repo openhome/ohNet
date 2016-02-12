@@ -22,7 +22,7 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
                                            const std::vector<const Brx*>& aSources,
                                            const Brx& aResourcePrefix, const Brx& aResourceDir,
                                            TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-                                           : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+    : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     AddValue(new ConfigUiValRoModelIcon(aProduct));
     AddValue(new ConfigUiValRoModelName(aProduct));
@@ -37,6 +37,7 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
     AddConfigNumConditional(VolumeConfig::kKeyLimit);
     AddConfigNumConditional(VolumeConfig::kKeyStartupValue);
 
+    AddConfigChoiceConditional(Brn("Device.AutoPlay"));
     AddConfigChoiceConditional(Brn("Sender.Enabled"));
     AddConfigChoiceConditional(Brn("Sender.Mode"));
     AddConfigChoiceConditional(Brn("Source.NetAux.Auto"));
