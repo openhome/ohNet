@@ -34,7 +34,7 @@ ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPre
     , iDbSeq(0)
     , iTempVarLock("PRD3")
 {
-    iDbReader.SetObserver(*this);
+    iDbReader.AddObserver(*this);
 
     EnablePropertyUri();
     EnablePropertyMetadata();

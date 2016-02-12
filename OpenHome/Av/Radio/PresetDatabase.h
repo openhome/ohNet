@@ -36,7 +36,7 @@ public:
     static const TUint kPresetIdNone = 0;
 public:
     virtual ~IPresetDatabaseReader() {}
-    virtual void SetObserver(IPresetDatabaseObserver& aObserver) = 0;
+    virtual void AddObserver(IPresetDatabaseObserver& aObserver) = 0;
     virtual void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const = 0;
     virtual void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const = 0;
     virtual TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const = 0;
@@ -55,7 +55,7 @@ public:
     ~PresetDatabase();
     void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData, TUint& aId);
 public: // from IPresetDatabaseReader
-    void SetObserver(IPresetDatabaseObserver& aObserver) override;
+    void AddObserver(IPresetDatabaseObserver& aObserver) override;
     void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const override;
     void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const override;
     TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const override;
@@ -86,7 +86,7 @@ private:
     };
 private:
     mutable Mutex iLock;
-    IPresetDatabaseObserver* iObserver;
+    std::vector<IPresetDatabaseObserver*> iObservers;
     Preset iPresets[kMaxPresets];
     TUint iNextId;
     TUint iSeq;

@@ -81,19 +81,11 @@ SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUr
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
     , iLive(false)
+    , iPresetsUpdated(false)
+    , iAutoPlay(false)
 {
-    iPresetDatabase = new PresetDatabase();
-    iProviderRadio = new ProviderRadio(aMediaPlayer.Device(), *this, *iPresetDatabase);
     MimeTypeList& mimeTypes = aMediaPlayer.MimeTypes();
-    mimeTypes.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
-    if (aTuneInPartnerId.Bytes() == 0) {
-        iTuneIn = nullptr;
-    }
-    else {
-        iTuneIn = new RadioPresetsTuneIn(aMediaPlayer.Env(), aTuneInPartnerId,
-                                         *iPresetDatabase, aMediaPlayer.ConfigInitialiser(),
-                                         aMediaPlayer.CredentialsManager(), mimeTypes);
-    }
+
     iPipeline.Add(ContentProcessorFactory::NewM3u(mimeTypes));
     iPipeline.Add(ContentProcessorFactory::NewM3u(mimeTypes));
     iPipeline.Add(ContentProcessorFactory::NewM3uX());
@@ -108,6 +100,19 @@ SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUr
     iStorePresetId = new StoreInt(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(),
                                   kPowerPriorityNormal, Brn("Radio.PresetId"),
                                   IPresetDatabaseReader::kPresetIdNone);
+
+    iPresetDatabase = new PresetDatabase();
+    iPresetDatabase->AddObserver(*this);
+    iProviderRadio = new ProviderRadio(aMediaPlayer.Device(), *this, *iPresetDatabase);
+    mimeTypes.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
+    if (aTuneInPartnerId.Bytes() == 0) {
+        iTuneIn = nullptr;
+    }
+    else {
+        iTuneIn = new RadioPresetsTuneIn(aMediaPlayer.Env(), aTuneInPartnerId,
+                                         *iPresetDatabase, aMediaPlayer.ConfigInitialiser(),
+                                         aMediaPlayer.CredentialsManager(), mimeTypes);
+    }
 }
 
 SourceRadio::~SourceRadio()
@@ -121,15 +126,19 @@ SourceRadio::~SourceRadio()
     }
 }
 
-void SourceRadio::Activate(TBool /*aAutoPlay*/)
+void SourceRadio::Activate(TBool aAutoPlay)
 {
     if (iTuneIn != nullptr) {
         iTuneIn->Refresh();
     }
     iTrackPosSeconds = 0;
     iActive = true;
+    iAutoPlay = aAutoPlay;
     const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
     iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+    if (trackId != Track::kIdNone && aAutoPlay) {
+        iPipeline.Play();
+    }
 }
 
 void SourceRadio::Deactivate()
@@ -266,6 +275,35 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
 {
     if (IsActive()) {
         iProviderRadio->SetTransportState(aState);
+    }
+}
+
+void SourceRadio::PresetDatabaseChanged()
+{
+    AutoMutex _(iLock);
+    if (iPresetsUpdated) {
+        return;
+    }
+    iPresetsUpdated = true;
+    if (iTrack != nullptr) {
+        return;
+    }
+    const TUint presetId = iStorePresetId->Get();
+    if (presetId == IPresetDatabaseReader::kPresetIdNone) {
+        return;
+    }
+    if (!iPresetDatabase->TryGetPresetById(presetId, iPresetUri, iPresetMetadata)) {
+        iStorePresetId->Set(IPresetDatabaseReader::kPresetIdNone);
+        return;
+    }
+    iProviderRadio->NotifyPresetInfo(presetId, iPresetUri, iPresetMetadata);
+    if (IsActive() && iAutoPlay) {
+        iProviderRadio->NotifyPresetInfo(presetId, iPresetUri, iPresetMetadata);
+        FetchLocked(iPresetUri, iPresetMetadata);
+        iPipeline.Play();
+    }
+    else {
+        iTrack = iUriProvider.SetTrack(iPresetUri, iPresetMetadata);
     }
 }
 

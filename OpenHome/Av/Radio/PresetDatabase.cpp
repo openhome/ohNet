@@ -11,7 +11,6 @@ using namespace OpenHome::Av;
 
 PresetDatabase::PresetDatabase()
     : iLock("RADB")
-    , iObserver(nullptr)
     , iNextId(kPresetIdNone + 1)
     , iSeq(0)
     , iUpdated(false)
@@ -22,9 +21,9 @@ PresetDatabase::~PresetDatabase()
 {
 }
 
-void PresetDatabase::SetObserver(IPresetDatabaseObserver& aObserver)
+void PresetDatabase::AddObserver(IPresetDatabaseObserver& aObserver)
 {
-    iObserver = &aObserver;
+    iObservers.push_back(&aObserver);
 }
 
 void PresetDatabase::GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const
@@ -161,8 +160,10 @@ void PresetDatabase::EndSetPresets()
     const TBool updated = iUpdated;
     iUpdated = false;
     iLock.Signal();
-    if (updated && iObserver != nullptr) {
-        iObserver->PresetDatabaseChanged();
+    if (updated) {
+        for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+            (*it)->PresetDatabaseChanged();
+        }
     }
 }
 

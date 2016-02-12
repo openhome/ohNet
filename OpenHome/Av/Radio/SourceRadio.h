@@ -5,6 +5,7 @@
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Av/Radio/PresetDatabase.h>
 
 namespace OpenHome {
     class Environment;
@@ -33,12 +34,14 @@ public:
     virtual void SeekRelative(TUint aSeconds) = 0;
 };
 
-class PresetDatabase;
 class ProviderRadio;
 class RadioPresetsTuneIn;
 class IMediaPlayer;
 
-class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver, private INonCopyable
+class SourceRadio : public Source
+                  , private ISourceRadio
+                  , private Media::IPipelineObserver
+                  , private IPresetDatabaseObserver
 {
 public:
     SourceRadio(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId);
@@ -56,6 +59,8 @@ private: // from ISourceRadio
     void Stop() override;
     void SeekAbsolute(TUint aSeconds) override;
     void SeekRelative(TUint aSeconds) override;
+private: // from IPresetDatabaseObserver
+    void PresetDatabaseChanged() override;
 private:
     void FetchLocked(const Brx& aUri, const Brx& aMetaData);
 private: // from IPipelineObserver
@@ -75,6 +80,8 @@ private:
     TUint iTrackPosSeconds;
     TUint iStreamId;
     TBool iLive;
+    TBool iPresetsUpdated;
+    TBool iAutoPlay;
     StoreInt* iStorePresetId;
     Media::BwsTrackUri iPresetUri; // only required by Fetch(TUint) but too large for the stack
     Media::BwsTrackMetaData iPresetMetadata; // only required by Fetch(TUint) but too large for the stack
