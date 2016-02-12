@@ -113,11 +113,6 @@ void SourceBase::DoActivate()
     iProduct->Activate(*this);
 }
 
-void SourceBase::AutoPlay()
-{
-    // Support for AutoPlay is optional.  The default implementation is to do nothing.
-}
-
 void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint /*aId*/)
 {
     iProduct = &aProduct;

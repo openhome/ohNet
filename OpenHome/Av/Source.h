@@ -62,7 +62,6 @@ protected:
     ~SourceBase();
     TBool IsActive() const;
     void DoActivate();
-    void AutoPlay();
 private: // from ISource
     void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
 private:
