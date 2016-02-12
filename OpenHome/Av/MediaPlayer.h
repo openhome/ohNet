@@ -36,6 +36,7 @@ namespace Configuration {
     class IConfigInitialiser;
     class IStoreReadWrite;
     class ConfigText;
+    class ConfigChoice;
     class ProviderConfig;
 }
 namespace Net {
@@ -140,6 +141,7 @@ private:
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
+    Configuration::ConfigChoice* iConfigAutoPlay;
     Av::Product* iProduct;
     Av::FriendlyNameManager* iFriendlyNameManager;
     VolumeConfig* iVolumeConfig;

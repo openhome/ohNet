@@ -104,6 +104,7 @@ void ConfigStartupSource::Write(IWriter& aWriter, Configuration::IConfigChoiceMa
 const Brn Product::kKeyLastSelectedSource("Last.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
+const Brn Product::kConfigIdAutoPlay("Device.AutoPlay");
 const TUint Product::kAutoPlayDisable = 0;
 const TUint Product::kAutoPlayEnable  = 1;
 const TUint Product::kCurrentSourceNone = UINT_MAX;
@@ -125,6 +126,8 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iConfigStartupSource(nullptr)
     , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
     , iStartupSourceVal(ConfigStartupSource::kNone)
+    , iConfigAutoPlay(nullptr)
+    , iListenerIdAutoPlay(IConfigManager::kSubscriptionIdInvalid)
 {
     iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this);
     iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
@@ -132,11 +135,10 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
     iConfigProductName = &aConfigReader.GetText(kConfigIdNameBase);
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorConfigText(*this, &Product::ProductNameChanged));
-    std::vector<TUint> choices;
-    choices.push_back(kAutoPlayDisable);
-    choices.push_back(kAutoPlayEnable);
-    iConfigAutoPlay = new ConfigChoice(aConfigInit, Brn("Device.AutoPlay"), choices, kAutoPlayDisable);
-    iListenerIdAutoPlay = iConfigAutoPlay->Subscribe(MakeFunctorConfigChoice(*this, &Product::AutoPlayChanged));
+    if (aConfigReader.HasChoice(kConfigIdAutoPlay)) {
+        iConfigAutoPlay = &aConfigReader.GetChoice(kConfigIdAutoPlay);
+        iListenerIdAutoPlay = iConfigAutoPlay->Subscribe(MakeFunctorConfigChoice(*this, &Product::AutoPlayChanged));
+    }
     iProviderProduct = new ProviderProduct(aDevice, *this, aPowerManager);
 }
 
@@ -152,7 +154,9 @@ Product::~Product()
     delete iProviderProduct;
     iConfigProductName->Unsubscribe(iListenerIdProductName);
     iConfigProductRoom->Unsubscribe(iListenerIdProductRoom);
-    iConfigAutoPlay->Unsubscribe(iListenerIdAutoPlay);
+    if (iConfigAutoPlay != nullptr) {
+        iConfigAutoPlay->Unsubscribe(iListenerIdAutoPlay);
+    }
     delete iLastSelectedSource;
 }
 

@@ -68,6 +68,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iReadWriteStore(aReadWriteStore)
     , iConfigProductRoom(nullptr)
     , iConfigProductName(nullptr)
+    , iConfigAutoPlay(nullptr)
     , iConfigStartupSource(nullptr)
     , iBufferedLogger(nullptr)
 {
@@ -79,6 +80,10 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iPowerManager = new OpenHome::PowerManager(*iConfigManager);
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, aDefaultName);
+    std::vector<TUint> choices;
+    choices.push_back(Product::kAutoPlayDisable);
+    choices.push_back(Product::kAutoPlayEnable);
+    iConfigAutoPlay = new ConfigChoice(*iConfigManager, Product::kConfigIdAutoPlay, choices, Product::kAutoPlayDisable);
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
@@ -115,6 +120,7 @@ MediaPlayer::~MediaPlayer()
     delete iProviderConfig;
     delete iProviderTime;
     delete iProviderInfo;
+    delete iConfigAutoPlay;
     delete iConfigProductRoom;
     delete iConfigProductName;
     delete iPowerManager;

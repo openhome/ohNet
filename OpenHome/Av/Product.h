@@ -98,12 +98,13 @@ class Product : private IProduct
 private:
     static const Brn kKeyLastSelectedSource;
     static const TUint kMaxAttributeBytes = 1024;
-    static const TUint kAutoPlayDisable;
-    static const TUint kAutoPlayEnable;
     static const TUint kCurrentSourceNone;
 public:
     static const Brn kConfigIdRoomBase;
     static const Brn kConfigIdNameBase;
+    static const Brn kConfigIdAutoPlay;
+    static const TUint kAutoPlayDisable;
+    static const TUint kAutoPlayEnable;
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 40;
     static const TUint kMaxSourceXmlBytes = 1024 * 3;
