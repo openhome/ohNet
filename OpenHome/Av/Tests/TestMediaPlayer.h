@@ -96,7 +96,7 @@ private:
     static const TUint kTrackCount = 1200;
     // FIXME - make at least kMaxUiTabs a parameter?
     static const TUint kMaxUiTabs = 4;
-    static const TUint kUiSendQueueSize = 32;
+    static const TUint kUiSendQueueSize = 100;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
