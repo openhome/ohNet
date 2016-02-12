@@ -391,14 +391,12 @@ ProtocolManager::~ProtocolManager()
 
 void ProtocolManager::Add(Protocol* aProtocol)
 {
-    LOG(kMedia, "ProtocolManager::Add(Protocol*)\n");
     iProtocols.push_back(aProtocol);
     aProtocol->Initialise(*this, iIdProvider, iMsgFactory, iDownstream, iFlushIdProvider);
 }
 
 void ProtocolManager::Add(ContentProcessor* aProcessor)
 {
-    LOG(kMedia, "ProtocolManager::Add(ContentProcessor*)\n");
     iContentProcessors.push_back(aProcessor);
     aProcessor->Initialise(*this);
 }
