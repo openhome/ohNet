@@ -75,7 +75,7 @@ def configure(conf):
         conf.path.find_node('.').abspath()
         ]
 
-    mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
+    mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--runtime=v4.0"])
 
     # Setup Ogg lib options
     # Using https://git.xiph.org/?p=ogg.git
