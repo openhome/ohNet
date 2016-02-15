@@ -170,10 +170,14 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
+        if not os_platform in ['windows', 'linux', 'macos']:
         if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32']) or (os_platform == 'Android'):
             args.append('--buildonly')
-        elif (arch == 'x64' and not os_platform in ['windows', 'linux', 'macos']):
-            args.append('--native')
+        elif arch == 'x64':
+            if os_platform  == 'macos':
+                args.append('--native-tests')
+            elif not os_platform in ['windows', 'linux']:
+                args.append('--native-builds')
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
             args.append('--java')

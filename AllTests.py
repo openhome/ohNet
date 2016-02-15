@@ -44,7 +44,7 @@ def buildArgs():
         buildArgs += ' Android-anycpu=1'
     if gCore == 1 or gQnap == 1:
         buildArgs += ' platform=' + gPlatform
-    if gNativeTestsOnly == 1:
+    if gNativeBuildsOnly == 1:
         buildArgs += ' native_only=yes'
     return buildArgs
 
@@ -192,6 +192,7 @@ gBuildOnly = 0
 gFullTests = 0
 gIncremental = 0
 gNativeTestsOnly = 0
+gNativeBuildsOnly = 0
 gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
@@ -224,8 +225,10 @@ for arg in sys.argv[1:]:
         gRunJavaTests = 1
     elif arg == '--js':
         gJsTests = 1
-    elif arg == '-n' or arg == '--native':
+    elif arg == '-n' or arg == '--native-tests':
         gNativeTestsOnly = 1
+    elif                arg == '--native-builds':
+        gNativeBuildsOnly = 1
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
     elif arg == '-t' or arg == '--testsonly':
