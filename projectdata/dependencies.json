@@ -24,15 +24,9 @@
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
-    {   "name":             "testharness",
-        "version":          "0.1.36",
-        "type":             "openhome",
-        "archive-filename": "${name}-${version}.tar.gz",
-        "dest":             "dependencies/AnyPlatform/"
-    },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.195",
+        "version": "0.0.204",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-ppc32": false,
@@ -48,8 +42,37 @@
             "*": true },
         "ignore":           "${platform-ignore[$platform]}"
     },
+    {   "name": "openssl",
+        "type": "openhome",
+        "platform-specific": true,
+        "version": "0.2.61",
+        "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
+    },
+    {   "name":             "testharness",
+        "version":          "0.1.39",
+        "type":             "openhome",
+        "archive-filename": "${name}-${version}.tar.gz",
+        "dest":             "dependencies/AnyPlatform/"
+    },
+    {   "name":             "Reprog",
+        "version":          "0.1.30",
+        "type":             "internal",
+        "archive-filename": "${name}-${version}-${host-platform}-Release.tar.gz",
+        "platform-ignore": {
+            "Core-ppc32": false,
+            "*": true },
+        "ignore":           "${platform-ignore[$platform]}",
+        "dest":             "dependencies/${host-platform}/Reprog/"
+    },
+    {
+        "name":             "hardware",
+        "version":          "0.0.78",
+        "type":             "internal",
+        "archive-filename": "${name}-Lib-${version}.tar.gz",
+        "dest":             "dependencies/AnyPlatform/${name}/"
+    },
     {   "name":             "transmute",
-        "version":          "0.1.34",
+        "version":          "0.2.44",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
@@ -57,22 +80,6 @@
             "*": true },
         "ignore":           "${platform-ignore[$platform]}",
         "dest":             "dependencies/AnyPlatform/"
-    },
-    {   "name":             "volkano-tools",
-        "version":          "0.0.5",
-        "type":             "internal",
-        "archive-filename": "${name}-${version}.tar.gz",
-        "platform-ignore": {
-            "Core-ppc32": false,
-            "*": true },
-        "ignore":           "${platform-ignore[$platform]}",
-        "dest":             "dependencies/AnyPlatform/${name}/"
-    },
-    {   "name": "openssl",
-        "type": "openhome",
-        "platform-specific": true,
-        "version": "0.2.61",
-        "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {
         "name": "FunctionalTest",

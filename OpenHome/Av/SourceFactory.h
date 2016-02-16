@@ -33,6 +33,18 @@ public:
                                 IOhmTimestamper* aRxTimestamper,
                                 IOhmTimestampMapper* aRxTsMapper,
                                 const Brx& aSenderIconFileName);
+
+    static const TChar* kSourceTypePlaylist;
+    static const TChar* kSourceTypeRadio;
+    static const TChar* kSourceTypeUpnpAv;
+    static const TChar* kSourceTypeRaop;
+    static const TChar* kSourceTypeReceiver;
+
+    static const Brn kSourceNamePlaylist;
+	static const Brn kSourceNameRadio;
+	static const Brn kSourceNameUpnpAv;
+	static const Brn kSourceNameRaop;
+	static const Brn kSourceNameReceiver;
 };
 
 } // namespace Av

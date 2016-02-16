@@ -160,11 +160,14 @@ ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
     return new SourceReceiver(aMediaPlayer, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper, aSenderIconFileName);
 }
 
+const TChar* SourceFactory::kSourceTypeReceiver = "Receiver";
+const Brn SourceFactory::kSourceNameReceiver("Songcast");
+
 
 // UriProviderSongcast
 
 UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
-    : UriProviderSingleTrack("Receiver", true, true, aMediaPlayer.TrackFactory())
+    : UriProviderSingleTrack(SourceFactory::kSourceTypeReceiver, true, true, aMediaPlayer.TrackFactory())
     , iClockPuller(aMediaPlayer.Env())
 {
 }
@@ -185,7 +188,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                IOhmTimestamper* aRxTimestamper,
                                IOhmTimestampMapper* aRxTsMapper,
                                const Brx& aSenderIconFileName)
-    : Source(Brn("Songcast"), "Receiver", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
+    : Source(SourceFactory::kSourceNameReceiver, SourceFactory::kSourceTypeReceiver, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
     , iUriLock("SRX3")

@@ -37,6 +37,10 @@ public:
         iProviderDebug.reset(new ProviderDebug(aDevice, *iRingBufferLogger));
         aProduct.AddAttribute("Debug");
     }
+    RingBufferLogger* LogBuffer()
+    {
+        return iRingBufferLogger.get();
+    }
 private:
     std::unique_ptr<RingBufferLogger> iRingBufferLogger;
     std::unique_ptr<ProviderDebug> iProviderDebug;
@@ -294,4 +298,9 @@ void MediaPlayer::Unmute()
 {
     ASSERT(iPipeline != nullptr);
     static_cast<IMute*>(iPipeline)->Unmute();
+}
+
+RingBufferLogger* MediaPlayer::LogBuffer()
+{
+    return (iBufferedLogger ? iBufferedLogger->LogBuffer() : nullptr);
 }
