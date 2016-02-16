@@ -26,7 +26,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.204",
+        "version": "0.0.205",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-ppc32": false,
@@ -72,7 +72,7 @@
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name":             "transmute",
-        "version":          "0.2.44",
+        "version":          "0.2.46",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
