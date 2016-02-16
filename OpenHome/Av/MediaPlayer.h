@@ -9,6 +9,7 @@ namespace OpenHome {
     class Environment;
     class IPowerManager;
     class PowerManager;
+    class RingBufferLogger;
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
@@ -109,6 +110,7 @@ public:
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);
     void BufferLogOutput(TUint aBytes); // must be called before Start()
+    RingBufferLogger* LogBuffer(); // an optional. returns nullptr if not available. no transter of ownership.
     void Start();
 public: // from IMediaPlayer
     Environment& Env() override;
