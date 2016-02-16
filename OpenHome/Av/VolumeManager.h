@@ -8,6 +8,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
 
 #include <vector>
 
@@ -269,6 +270,25 @@ public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
 };
 
+class AnalogBypassRamper : public IVolume
+                         , public Media::IAnalogBypassVolumeRamper
+                         , private INonCopyable
+{
+public:
+    AnalogBypassRamper(IVolume& aVolume);
+private: // from IVolume
+    void SetVolume(TUint aValue) override;
+private: // from Media::IAnalogBypassVolumeRamper
+    void ApplyVolumeMultiplier(TUint aValue) override;
+private:
+    void SetVolume();
+private:
+    IVolume& iVolume;
+    Mutex iLock;
+    TUint iUpstreamVolume;
+    TUint iMultiplier;
+};
+
 class BalanceUser : public IBalance, private INonCopyable
 {
 public:
@@ -391,6 +411,7 @@ class IVolumeManager : public IVolumeReporter
                      , public IVolumeProfile
                      , public IVolumeSourceOffset
                      , public IVolumeSourceUnityGain
+                     , public Media::IAnalogBypassVolumeRamper
                      , public Media::IMute
 {
 public:
@@ -429,11 +450,14 @@ private: // from IBalance
     void SetBalance(TInt aBalance) override;
 private: // from IFade
     void SetFade(TInt aFade) override;
+private: // from Media::IAnalogBypassVolumeRamper
+    void ApplyVolumeMultiplier(TUint aValue) override;
 private: // from Media::IMute
     void Mute() override;
     void Unmute() override;
 private:
     VolumeConfig& iVolumeConfig;
+    AnalogBypassRamper* iAnalogBypassRamper;
     VolumeSourceUnityGain* iVolumeSourceUnityGain;
     VolumeUnityGain* iVolumeUnityGain;
     VolumeSourceOffset* iVolumeSourceOffset;

@@ -408,7 +408,7 @@ Msg* SuiteMuter::CreateTrack()
 
 Msg* SuiteMuter::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, nullptr);
 }
 
 Msg* SuiteMuter::CreateAudio()

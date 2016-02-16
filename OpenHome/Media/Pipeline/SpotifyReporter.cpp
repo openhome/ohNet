@@ -415,6 +415,11 @@ MsgDecodedStream* SpotifyReporter::CreateMsgDecodedStreamLocked() const
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     // Due to out-of-band track notification from Spotify, audio for current track was probably pushed into pipeline before track offset/duration was known, so use updated values here.
     const TUint64 trackLengthJiffies = TrackLengthJiffiesLocked();
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(), info.SampleRate(), info.NumChannels(), info.CodecName(), trackLengthJiffies, iStartOffset.OffsetSample(info.SampleRate()), info.Lossless(), info.Seekable(), info.Live(), info.StreamHandler());
+    MsgDecodedStream* msg =
+        iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(),
+                                           info.SampleRate(), info.NumChannels(), info.CodecName(),
+                                           trackLengthJiffies, iStartOffset.OffsetSample(info.SampleRate()),
+                                           info.Lossless(), info.Seekable(), info.Live(), info.AnalogBypass(),
+                                           info.StreamHandler());
     return msg;
 }

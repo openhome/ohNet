@@ -16,6 +16,10 @@ namespace Net {
     class IShell;
 }
 namespace Media {
+    namespace Codec {
+        class ContainerBase;
+        class CodecBase;
+    }
 class Pipeline;
 class PipelineInitParams;
 class IPipelineAnimator;
@@ -24,13 +28,10 @@ class ITrackObserver;
 class Filler;
 class IdManager;
 class IMimeTypeList;
-namespace Codec {
-    class ContainerBase;
-    class CodecBase;
-}
 class Protocol;
 class ContentProcessor;
 class UriProvider;
+class IAnalogBypassVolumeRamper;
 
 class PriorityArbitratorPipeline : public IPriorityArbitrator, private INonCopyable
 {
@@ -57,7 +58,8 @@ class PipelineManager : public IPipeline
                       , private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, Net::IShell& aShell);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory,
+                    Net::IShell& aShell, IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.

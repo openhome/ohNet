@@ -31,6 +31,7 @@
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
 #include <OpenHome/Media/Pipeline/Muter.h>
+#include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
 #include <OpenHome/Media/Pipeline/PreDriver.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -182,7 +183,8 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell)
+                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell,
+                   IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -311,7 +313,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iMuter = new Muter(*iMsgFactory, *iDecodedAudioValidatorStarvationMonitor, aInitParams->RampLongJiffies());
     iLoggerMuter = new Logger(*iMuter, "Muter");
     iDecodedAudioValidatorMuter = new DecodedAudioValidator(*iLoggerMuter, "Muter");
-    iPreDriver = new PreDriver(*iDecodedAudioValidatorMuter);
+    iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *iDecodedAudioValidatorMuter, aAnalogBypassVolumeRamper);
+    iLoggerAnalogBypassRamper = new Logger(*iAnalogBypassRamper, "AnalogBypassRamper");
+    iPreDriver = new PreDriver(*iLoggerAnalogBypassRamper);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
@@ -346,6 +350,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerMuter->SetEnabled(true);
+    //iLoggerAnalogBypassRamper->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
@@ -371,6 +376,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
     //iLoggerMuter->SetFilter(Logger::EMsgAll);
+    //iLoggerAnalogBypassRamper->SetFilter(Logger::EMsgAll);
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
 }
 
@@ -385,6 +391,8 @@ Pipeline::~Pipeline()
     delete iMuteCounted;
     delete iLoggerPreDriver;
     delete iPreDriver;
+    delete iLoggerAnalogBypassRamper;
+    delete iAnalogBypassRamper;
     delete iDecodedAudioValidatorMuter;
     delete iLoggerMuter;
     delete iMuter;

@@ -799,6 +799,25 @@ void RampApplicator::GetNextSample(TByte* aDest)
     iLoopCount++;
 }
 
+TUint RampApplicator::MedianMultiplier(const Media::Ramp& aRamp)
+{ // static
+    TUint medRamp;
+    switch (aRamp.Direction())
+    {
+    case Ramp::EUp:
+        medRamp = aRamp.Start() + ((aRamp.End() - aRamp.Start()) / 2);
+        break;
+    case Ramp::EDown:
+        medRamp = aRamp.Start() - ((aRamp.Start() - aRamp.End()) / 2);
+        break;
+    default:
+        medRamp = aRamp.Start();
+        break;
+    }
+    const TUint rampIndex = (Ramp::kMax - Ramp::kMin - medRamp + (1<<20)) >> 21; // assumes (Ramp::kMax - Ramp::kMin)==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
+    return kRampArray[rampIndex];
+}
+
  
 // Track
 
@@ -1063,10 +1082,16 @@ void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, 
     iStartSample = aStartSample;
 }
 
+void PcmStreamInfo::SetAnalogBypass()
+{
+    iAnalogBypass = true;
+}
+
 void PcmStreamInfo::Clear()
 {
     iBitDepth = iSampleRate = iNumChannels = UINT_MAX;
     iEndian = EMediaDataEndianInvalid;
+    iAnalogBypass = false;
 }
 
 TUint PcmStreamInfo::BitDepth() const
@@ -1092,6 +1117,11 @@ EMediaDataEndian PcmStreamInfo::Endian() const
 TUint64 PcmStreamInfo::StartSample() const
 {
     return iStartSample;
+}
+
+TBool PcmStreamInfo::AnalogBypass() const
+{
+    return iAnalogBypass;
 }
 
 
@@ -1467,7 +1497,7 @@ DecodedStreamInfo::DecodedStreamInfo()
 {
 }
 
-void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler)
 {
     iStreamId = aStreamId;
     iBitRate = aBitRate;
@@ -1480,6 +1510,7 @@ void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TU
     iLossless = aLossless;
     iSeekable = aSeekable;
     iLive = aLive;
+    iAnalogBypass = aAnalogBypass;
     iStreamHandler = aStreamHandler;
 }
 
@@ -1496,15 +1527,15 @@ const DecodedStreamInfo& MsgDecodedStream::StreamInfo() const
     return iStreamInfo;
 }
 
-void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler)
 {
-    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aStreamHandler);
+    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aStreamHandler);
 }
 
 void MsgDecodedStream::Clear()
 {
 #ifdef DEFINE_DEBUG
-    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, nullptr);
+    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, false, nullptr);
 #endif
 }
 
@@ -1687,6 +1718,14 @@ const Media::Ramp& MsgAudio::Ramp() const
 void MsgAudio::SetClockPull(TUint aMultiplier)
 {
     iClockPullMultiplier = aMultiplier;
+}
+
+TUint MsgAudio::MedianRampMultiplier() const
+{
+    if (!iRamp.IsEnabled()) {
+        return 0x80000000; // see RampArray.h
+    }
+    return RampApplicator::MedianMultiplier(iRamp);
 }
 
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)
@@ -3015,10 +3054,10 @@ MsgWait* MsgFactory::CreateMsgWait()
     return iAllocatorMsgWait.Allocate();
 }
 
-MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler)
 {
     MsgDecodedStream* msg = iAllocatorMsgDecodedStream.Allocate();
-    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aStreamHandler);
+    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aStreamHandler);
     return msg;
 }
 
@@ -3028,7 +3067,7 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(MsgDecodedStream* aMsg, ISt
     auto msg = CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
         stream.SampleRate(), stream.NumChannels(), stream.CodecName(),
         stream.TrackLength(), stream.SampleStart(), stream.Lossless(),
-        stream.Seekable(), stream.Live(), aStreamHandler);
+        stream.Seekable(), stream.Live(), stream.AnalogBypass(), aStreamHandler);
     return msg;
 }
 

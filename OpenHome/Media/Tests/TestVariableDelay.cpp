@@ -191,7 +191,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(kMsgSilenceSize);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, ModeClockPullers(), false, false);
     case EMsgTrack:

@@ -52,6 +52,11 @@ TUint64 EncodedStreamInfo::StartSample() const
     return iStartSample;
 }
 
+TBool EncodedStreamInfo::AnalogBypass() const
+{
+    return iAnalogBypass;
+}
+
 EncodedStreamInfo::EncodedStreamInfo()
     : iRawPcm(false)
     , iBitDepth(UINT_MAX)
@@ -59,10 +64,11 @@ EncodedStreamInfo::EncodedStreamInfo()
     , iNumChannels(UINT_MAX)
     , iEndian(EMediaDataEndianInvalid)
     , iStartSample(0)
+    , iAnalogBypass(false)
 {
 }
 
-void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample)
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
@@ -70,6 +76,7 @@ void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChanne
     iNumChannels = aNumChannels;
     iEndian = aEndian;
     iStartSample = aStartSample;
+    iAnalogBypass = aAnalogBypass;
 }
 
 
@@ -251,7 +258,8 @@ void CodecController::CodecThread()
             iRecognising = true;
             EncodedStreamInfo streamInfo;
             if (iRawPcm) {
-                streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(), iPcmStream.Endian(), iPcmStream.StartSample());
+                streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(),
+                               iPcmStream.Endian(), iPcmStream.StartSample(), iPcmStream.AnalogBypass());
             }
 
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);
@@ -565,12 +573,18 @@ TUint64 CodecController::StreamPos() const
     return iStreamPos;
 }
 
-void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
+void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate,
+                                          TUint aNumChannels, const Brx& aCodecName,
+                                          TUint64 aTrackLength, TUint64 aSampleStart,
+                                          TBool aLossless, TBool aAnalogBypass)
 {
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
         THROW(CodecStreamCorrupt);
     }
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, this);
+    MsgDecodedStream* msg =
+        iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels,
+                                           aCodecName, aTrackLength, aSampleStart,
+                                           aLossless, iSeekable, iLive, aAnalogBypass, this);
     iLock.Wait();
     iChannels = aNumChannels;
     iSampleRate = aSampleRate;

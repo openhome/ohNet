@@ -376,7 +376,7 @@ Msg* SuiteDecodedAudioAggregator::CreateEncodedStream()
 MsgDecodedStream* SuiteDecodedAudioAggregator::CreateDecodedStream()
 {
     static const TUint kBitrate = 256;
-    return iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, this);
+    return iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, this);
 }
 
 MsgFlush* SuiteDecodedAudioAggregator::CreateFlush()

@@ -434,7 +434,7 @@ Msg* SuiteStopper::CreateEncodedStream()
 
 Msg* SuiteStopper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, nullptr);
 }
 
 Msg* SuiteStopper::CreateAudio()

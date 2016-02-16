@@ -248,6 +248,7 @@ public:
     RampApplicator(const Media::Ramp& aRamp);
     TUint Start(const Brx& aData, TUint aBitDepth, TUint aNumChannels); // returns number of samples
     void GetNextSample(TByte* aDest);
+    static TUint MedianMultiplier(const Media::Ramp& aRamp);
 private:
     const Media::Ramp& iRamp;
     const TByte* iPtr;
@@ -408,18 +409,21 @@ class PcmStreamInfo
 public:
     PcmStreamInfo();
     void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample = 0);
+    void SetAnalogBypass();
     void Clear();
     TUint BitDepth() const;
     TUint SampleRate() const;
     TUint NumChannels() const;
     EMediaDataEndian Endian() const;
     TUint64 StartSample() const;
+    TBool AnalogBypass() const;
 private:
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
     EMediaDataEndian iEndian;
     TUint64 iStartSample;
+    TBool iAnalogBypass;
 };
 
 class MsgMetaText : public Msg
@@ -575,10 +579,11 @@ public:
     TBool Lossless() const { return iLossless; }
     TBool Seekable() const { return iSeekable; }
     TBool Live() const { return iLive; }
+    TBool AnalogBypass() const { return iAnalogBypass; }
     IStreamHandler* StreamHandler() const { return iStreamHandler;}
 private:
     DecodedStreamInfo();
-    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler);
 private:
     TUint iStreamId;
     TUint iBitRate;
@@ -591,6 +596,7 @@ private:
     TBool iLossless;
     TBool iSeekable;
     TBool iLive;
+    TBool iAnalogBypass;
     IStreamHandler* iStreamHandler;
 };
 
@@ -604,7 +610,7 @@ public:
     MsgDecodedStream(AllocatorBase& aAllocator);
     const DecodedStreamInfo& StreamInfo() const;
 private:
-    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
@@ -624,6 +630,7 @@ public:
     void SetMuted(); // should only be used with msgs immediately following a ramp down
     const Media::Ramp& Ramp() const;
     void SetClockPull(TUint aMultiplier);
+    TUint MedianRampMultiplier() const; // 1<<31 => full level
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
@@ -1510,7 +1517,7 @@ public:
     MsgHalt* CreateMsgHalt(TUint aId, Functor aCallback);
     MsgFlush* CreateMsgFlush(TUint aId);
     MsgWait* CreateMsgWait();
-    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler);
     MsgDecodedStream* CreateMsgDecodedStream(MsgDecodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgBitRate* CreateMsgBitRate(TUint aBitRate);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);

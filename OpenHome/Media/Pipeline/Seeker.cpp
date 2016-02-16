@@ -219,7 +219,7 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
         return iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(),
             info.SampleRate(), info.NumChannels(), info.CodecName(),
             info.TrackLength(), numSamples, info.Lossless(),
-            info.Seekable(), info.Live(), info.StreamHandler());
+            info.Seekable(), info.Live(), info.AnalogBypass(), info.StreamHandler());
     }
 
     iStreamPosJiffies = aMsg->TrackOffset() + aMsg->Jiffies();

@@ -111,6 +111,8 @@ class ITrackObserver;
 class ISpotifyReporter;
 class ITrackChangeObserver;
 class IMimeTypeList;
+class AnalogBypassRamper;
+class IAnalogBypassVolumeRamper;
 
 class Pipeline : public IPipelineElementDownstream
                , public IPipeline
@@ -141,7 +143,7 @@ class Pipeline : public IPipelineElementDownstream
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell);
+             IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell, IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper);
     virtual ~Pipeline();
     void AddContainer(Codec::ContainerBase* aContainer);
     void AddCodec(Codec::CodecBase* aCodec);
@@ -274,6 +276,8 @@ private:
     Muter* iMuter;
     Logger* iLoggerMuter;
     DecodedAudioValidator* iDecodedAudioValidatorMuter;
+    AnalogBypassRamper* iAnalogBypassRamper;
+    Logger* iLoggerAnalogBypassRamper;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;

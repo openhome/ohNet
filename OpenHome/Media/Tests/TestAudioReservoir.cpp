@@ -402,7 +402,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     }
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, nullptr);
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(1);
@@ -616,7 +616,7 @@ void SuiteReservoirHistory::Test()
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     iReservoir->Push(msgTrack);
-    MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, nullptr);
+    MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, false, nullptr);
     iStreamId = msgStream->StreamInfo().StreamId();
     iSampleRate = msgStream->StreamInfo().SampleRate();
     iReservoir->Push(msgStream);

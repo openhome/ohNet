@@ -173,7 +173,8 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
                 const TUint64 sampleStart = s.SampleStart() + discardedSamples;
                 Msg* msg = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
                                                               s.NumChannels(), s.CodecName(), s.TrackLength(), sampleStart,
-                                                              s.Lossless(), s.Seekable(), s.Live(), s.StreamHandler());
+                                                              s.Lossless(), s.Seekable(), s.Live(), s.AnalogBypass(),
+                                                              s.StreamHandler());
                 iDiscardedJiffies = 0;
                 iDecodedStream->RemoveRef();
                 iDecodedStream = nullptr;

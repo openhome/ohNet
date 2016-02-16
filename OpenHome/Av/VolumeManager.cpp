@@ -282,6 +282,47 @@ void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
 }
 
 
+// AnalogBypassRamper
+
+AnalogBypassRamper::AnalogBypassRamper(IVolume& aVolume)
+    : iVolume(aVolume)
+    , iLock("ABVR")
+    , iUpstreamVolume(0)
+    , iMultiplier(IAnalogBypassVolumeRamper::kMultiplierFull)
+{
+}
+
+void AnalogBypassRamper::SetVolume(TUint aValue)
+{
+    AutoMutex _(iLock);
+    iUpstreamVolume = aValue;
+    SetVolume();
+}
+
+void AnalogBypassRamper::ApplyVolumeMultiplier(TUint aValue)
+{
+    AutoMutex _(iLock);
+    if (iMultiplier == aValue) {
+        return;
+    }
+    iMultiplier = aValue;
+    SetVolume();
+}
+
+void AnalogBypassRamper::SetVolume()
+{
+    if (iMultiplier == IAnalogBypassVolumeRamper::kMultiplierFull) {
+        iVolume.SetVolume(iUpstreamVolume);
+    }
+    else {
+        TUint64 volume = iUpstreamVolume;
+        volume *= iMultiplier;
+        volume /= IAnalogBypassVolumeRamper::kMultiplierFull;
+        iVolume.SetVolume((TUint)volume);
+    }
+}
+
+
 // BalanceUser
 
 BalanceUser::BalanceUser(IBalance& aBalance, IConfigManager& aConfigReader)
@@ -565,7 +606,8 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
         const TUint milliDbPerStep = iVolumeConfig.VolumeMilliDbPerStep();
         const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*aVolumeConsumer.Volume(), volumeUnity);
+        iAnalogBypassRamper = new AnalogBypassRamper(*aVolumeConsumer.Volume());
+        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iAnalogBypassRamper, volumeUnity);
         iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, volumeUnity);
         iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
@@ -576,6 +618,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         aProduct.AddAttribute("Volume");
     }
     else {
+        iAnalogBypassRamper = nullptr;
         iVolumeSourceUnityGain = nullptr;
         iVolumeUnityGain = nullptr;
         iVolumeSourceOffset = nullptr;
@@ -599,6 +642,7 @@ VolumeManager::~VolumeManager()
     delete iVolumeSourceOffset;
     delete iVolumeUnityGain;
     delete iVolumeSourceUnityGain;
+    delete iAnalogBypassRamper;
 }
 
 void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
@@ -698,6 +742,14 @@ void VolumeManager::SetFade(TInt aFade)
         THROW(FadeNotSupported);
     }
     iFadeUser->SetFade(aFade);
+}
+
+void VolumeManager::ApplyVolumeMultiplier(TUint aValue)
+{
+    if (iAnalogBypassRamper == nullptr) {
+        THROW(VolumeNotSupported);
+    }
+    static_cast<IAnalogBypassVolumeRamper*>(iAnalogBypassRamper)->ApplyVolumeMultiplier(aValue);
 }
 
 void VolumeManager::Mute()

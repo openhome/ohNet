@@ -10,6 +10,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
 
 #include <string.h>
 #include <vector>
@@ -60,6 +61,7 @@ class SuitePipeline : public Suite
                     , private ISeekRestreamer
                     , private IUrlBlockWriter
                     , private IPipelineAnimator
+                    , private IAnalogBypassVolumeRamper
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -124,6 +126,8 @@ private: // from IUrlBlockWriter
 private: // from IPipelineAnimator
     TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
+private: // from IAnalogBypassVolumeRamper
+    void ApplyVolumeMultiplier(TUint aValue) override;
 private:
     Net::ShellNull iShell;
     AllocatorInfoLogger iInfoAggregator;
@@ -298,7 +302,7 @@ SuitePipeline::SuitePipeline()
 {
     iInitParams = PipelineInitParams::New();
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this, iShell);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this, iShell, *this);
     iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
@@ -755,6 +759,7 @@ Msg* SuitePipeline::ProcessMsg(MsgStreamInterrupted* /*aMsg*/)
 Msg* SuitePipeline::ProcessMsg(MsgHalt* aMsg)
 {
     iLastMsgWasAudio = false;
+    aMsg->ReportHalted();
     aMsg->RemoveRef();
     return nullptr;
 }
@@ -868,6 +873,10 @@ TUint SuitePipeline::PipelineAnimatorBufferJiffies()
 TUint SuitePipeline::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
 {
     return 0;
+}
+
+void SuitePipeline::ApplyVolumeMultiplier(TUint /*aValue*/)
+{
 }
 
 

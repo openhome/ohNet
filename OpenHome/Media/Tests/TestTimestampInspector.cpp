@@ -219,7 +219,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, nullptr);
+        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, nullptr);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(200);
