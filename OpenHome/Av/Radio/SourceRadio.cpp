@@ -56,6 +56,8 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInP
     return new SourceRadio(aMediaPlayer, *radioUriProvider, aTuneInPartnerId);
 }
 
+const TChar* SourceFactory::kSourceTypeRadio = "Radio";
+const Brn SourceFactory::kSourceNameRadio("Radio");
 
 // UriProviderRadio
 
@@ -74,7 +76,7 @@ ModeClockPullers UriProviderRadio::ClockPullers()
 // SourceRadio
 
 SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId)
-    : Source(Brn("Radio"), "Radio", aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
+    : Source(SourceFactory::kSourceNameRadio, SourceFactory::kSourceTypeRadio, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRAD")
     , iUriProvider(aUriProvider)
     , iTrack(nullptr)

@@ -96,12 +96,15 @@ ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer)
     return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aMediaPlayer.MimeTypes(), aMediaPlayer.PowerManager());
 }
 
+const TChar* SourceFactory::kSourceTypePlaylist = "Playlist";
+const Brn SourceFactory::kSourceNamePlaylist("Playlist");
+
 
 // SourcePlaylist
 
 SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline,
                                TrackFactory& aTrackFactory, MimeTypeList& aMimeTypeList, IPowerManager& aPowerManager)
-    : Source(Brn("Playlist"), "Playlist", aPipeline, aPowerManager)
+    : Source(SourceFactory::kSourceNamePlaylist, SourceFactory::kSourceTypePlaylist, aPipeline, aPowerManager)
     , iLock("SPL1")
     , iActivationLock("SPL2")
     , iTrackPosSeconds(0)

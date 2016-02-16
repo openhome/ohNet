@@ -51,6 +51,9 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, IFriendlyNameObserva
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aFriendlyNameObservable, aMacAddr);
 }
 
+const TChar* SourceFactory::kSourceTypeRaop = "NetAux";
+const Brn SourceFactory::kSourceNameRaop("Net Aux");
+
 
 // UriProviderRaop
 
@@ -68,8 +71,6 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 
 // SourceRaop
 
-const TChar* SourceRaop::kSourceTypeStr = "NetAux";
-const TChar* SourceRaop::kSourceNameStr = "Net Aux";
 const Brn SourceRaop::kRaopPrefix("raop://");
 const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
 const TUint SourceRaop::kAutoNetAuxOn = 0;              // RAOP device always visible; auto switch when stream starts.
@@ -77,7 +78,7 @@ const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always vi
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
-    : Source(Brn(kSourceNameStr), kSourceTypeStr, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
+    : Source(SourceFactory::kSourceNameRaop, SourceFactory::kSourceTypeRaop, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
     , iUriProvider(aUriProvider)
@@ -215,7 +216,7 @@ void SourceRaop::GenerateMetadata()
     iDidlLite.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
     iDidlLite.Append("<item id=\"\" parentID=\"\" restricted=\"True\">");
     iDidlLite.Append("<dc:title>");
-    iDidlLite.Append(kSourceNameStr);
+    iDidlLite.Append(SourceFactory::kSourceNameRaop);
     iDidlLite.Append("</dc:title>");
     iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
     iDidlLite.Append("</item>");

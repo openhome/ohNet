@@ -22,7 +22,7 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice)
 { // static
-    UriProviderRepeater* uriProvider = new UriProviderRepeater(SourceUpnpAv::kSourceType, aMediaPlayer.TrackFactory());
+    UriProviderRepeater* uriProvider = new UriProviderRepeater(kSourceTypeUpnpAv, aMediaPlayer.TrackFactory());
     aMediaPlayer.Pipeline().AddObserver(*uriProvider);
     aMediaPlayer.Add(uriProvider);
     return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, aMediaPlayer.MimeTypes());
@@ -30,11 +30,11 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
 
 // UpnpAv
 
-const TChar* SourceUpnpAv::kSourceType = "UpnpAv";
-const Brn SourceUpnpAv::kSourceName("UPnP AV");
+const TChar* SourceFactory::kSourceTypeUpnpAv = "UpnpAv";
+const Brn SourceFactory::kSourceNameUpnpAv("UPnP AV");
 
 SourceUpnpAv::SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList)
-    : Source(kSourceName, kSourceType, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
+    : Source(SourceFactory::kSourceNameUpnpAv, SourceFactory::kSourceTypeUpnpAv, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iLock("UPA1")
     , iActivationLock("UPA2")
     , iDevice(aDevice)
