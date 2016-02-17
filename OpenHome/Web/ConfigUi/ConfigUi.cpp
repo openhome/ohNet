@@ -755,7 +755,11 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
             (void)parser.Next('.');
             (void)parser.Next('.');
             Brn suffix = parser.Remaining();
-            if (suffix == Brn("Visible") || suffix == Brn("UnityGain")) {
+            if (   suffix == Brn("Visible")
+                || suffix == Brn("UnityGain")
+                || suffix == Brn("InputTransformer")
+                || suffix == Brn("AnalogBypass")
+                || suffix.BeginsWith(Brn("InputLevel."))) {
                 key.Replace("Source.");
                 key.Append(suffix);
             }
