@@ -758,7 +758,7 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
             if (   suffix == Brn("Visible")
                 || suffix == Brn("UnityGain")
                 || suffix == Brn("InputTransformer")
-                || suffix == Brn("AnalogBypass")) {
+                || suffix == Brn("DigitalFeatures")) {
                 key.Replace("Source.");
                 key.Append(suffix);
             }
