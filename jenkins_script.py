@@ -23,7 +23,7 @@ else:
 type_cargs = {
     'oncommit' : ['--steps=default', '--incremental-fetch'],
     'nightly'  : ['--steps=default,-test,test_full', '--incremental-fetch'],
-    'publish'  : ['--steps=-test,-integration_test,default,publish', '--publish-version', cenv.get('RELEASE_VERSION')],
+    'publish'  : ['--steps=-integration_test,default,publish', '--publish-version', cenv.get('RELEASE_VERSION')],
     'integration_tests' : ['--steps=fetch,configure,clean,build,install,integration_test_full',]
 }
 
