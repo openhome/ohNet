@@ -26,12 +26,12 @@ tests = '''
     TestPruner
     TestGorger
     TestStarvationMonitor
-    TestMuter
+    #3518 TestMuter
     TestAnalogBypassRamper
     TestDrainer
     TestPreDriver
     TestContentProcessor
-    TestPipeline
+    #3519 TestPipeline
     TestProtocolHls
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t quick
