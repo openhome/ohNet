@@ -268,19 +268,22 @@ function StartLongPolling()
     var UpdateCallback = function(aResponse)
     {
         if (aResponse != null && aResponse != "") {
-            var key = aResponse.key;
-            //var val = aResponse.value;
-            var elem = document.getElementById(key);
-            if (elem != null) {
-                SetElementValue(elem, aResponse);
-            }
-            else {
-                // Element not found; may be one that has just been discovered.
-                // Check if an element can be created and set the value. Ignore it
-                // otherwise.
-                elem = CreateElement(aResponse);
+            for (var i=0; i<aResponse.length; i++) {
+                var res = aResponse[i];
+                var key = res.key;
+                //var val = res.value;
+                var elem = document.getElementById(key);
                 if (elem != null) {
-                    SetElementValue(elem, aResponse);
+                    SetElementValue(elem, res);
+                }
+                else {
+                    // Element not found; may be one that has just been discovered.
+                    // Check if an element can be created and set the value. Ignore it
+                    // otherwise.
+                    elem = CreateElement(res);
+                    if (elem != null) {
+                        SetElementValue(elem, res);
+                    }
                 }
             }
         }

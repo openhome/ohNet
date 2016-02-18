@@ -222,9 +222,7 @@ WebUi = function() {
                 if (!json) {
                     throw parseErr;
                 }
-                for (var i=0; i<json.length; i++) {
-                    this.iCallbackSuccess(json[i]);
-                }
+                this.iCallbackSuccess(json);
             }
             catch (err) {
                 throw parseErr;
