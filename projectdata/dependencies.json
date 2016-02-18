@@ -72,7 +72,7 @@
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name":             "transmute",
-        "version":          "0.2.47",
+        "version":          "0.2.48",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
