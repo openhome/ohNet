@@ -66,13 +66,13 @@
     },
     {
         "name":             "hardware",
-        "version":          "0.0.78",
+        "version":          "0.0.80",
         "type":             "internal",
         "archive-filename": "${name}-Lib-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name":             "transmute",
-        "version":          "0.2.46",
+        "version":          "0.2.48",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
