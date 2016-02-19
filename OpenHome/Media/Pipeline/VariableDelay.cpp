@@ -263,10 +263,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
         iDelayJiffies, iDelayJiffies / Jiffies::kPerMs,
         kStatus[iStatus]);
-    if (iDownstreamDelay >= delayJiffies) {
-        return aMsg;
-    }
-    delayJiffies -= iDownstreamDelay;
+    delayJiffies = (iDownstreamDelay >= delayJiffies? 0 : delayJiffies - iDownstreamDelay);
     if (delayJiffies == iDelayJiffies) {
         return aMsg;
     }
