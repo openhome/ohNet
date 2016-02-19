@@ -195,7 +195,7 @@ def build(bld):
     confui_node = find_dir_or_fail(bld, bld.path, os.path.join('OpenHome', 'Web', 'ConfigUi', 'res'))
     confui_files = confui_node.ant_glob('**/*')
     cwd = confui_node.path_from(bld.path)
-    create_copy_task(bld, confui_files, Node, 'res', cwd, True, None)
+    create_copy_task(bld, confui_files, Node, 'res', cwd, True, 'WebUiStatic')
     # Also copy to install/bin/
     install_path = os.path.join('..', 'install', 'bin', 'res')
     create_copy_task(bld, confui_files, Node, install_path, cwd, True, None)
@@ -591,7 +591,7 @@ def build(bld):
         source=[
             'OpenHome/Web/WebAppFramework.cpp',
         ],
-        use=['ohNetCore', 'OHNET', 'OHMEDIAPLAYER', 'PLATFORM'],
+        use=['ohNetCore', 'OHNET', 'OHMEDIAPLAYER', 'PLATFORM', 'WebUiStatic'],
         target='WebAppFramework')
 
     # WebAppFramework tests
