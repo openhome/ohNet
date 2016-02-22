@@ -26,7 +26,7 @@ using namespace OpenHome::Configuration;
 const Brn Qobuz::kHost("www.qobuz.com");
 const Brn Qobuz::kId("qobuz.com");
 const Brn Qobuz::kVersionAndFormat("/api.json/0.2/");
-const Brn Qobuz::kConfigKeySoundQuality("qobuz.com.AudioQuality");
+const Brn Qobuz::kConfigKeySoundQuality("qobuz.com.SoundQuality");
 
 static const TUint kQualityValues[] ={ 5, 6, 7, 27 };
 

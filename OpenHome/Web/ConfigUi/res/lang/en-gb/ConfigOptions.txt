@@ -23,7 +23,7 @@ Volume.StartupEnabled
 1   True
 0   False
 
-qobuz.com.AudioQuality
+qobuz.com.SoundQuality
 0   320kbps MP3
 1   Lossless (FLAC 44.1kHz, 16-bit)
 2   Lossless+ (FLAC 96kHz, 24-bit)
