@@ -169,7 +169,12 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigInitialiser& aManager, const B
 template <class T> ConfigVal<T>::~ConfigVal()
 {
     Unsubscribe(iWriteObserverId);
-    ASSERT(iObservers.size() == 0);
+    if(iObservers.size() != 0)
+    {
+        Log::Print("Observer: %.*s \n", PBUF(iKey));
+        ASSERTS();
+    }
+    //ASSERT(iObservers.size() == 0);
 }
 
 template <class T> const Brx& ConfigVal<T>::Key() const
@@ -609,4 +614,3 @@ private:
 
 } // namespace Configuration
 } // namespace OpenHome
-
