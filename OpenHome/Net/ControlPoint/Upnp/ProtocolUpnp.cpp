@@ -117,7 +117,11 @@ void InvocationUpnp::ReadResponse()
         if (length != 0) {
             TUint remaining = length;
             do {
-                Brn buf = iReaderUntil.Read(kMaxReadBytes);
+                TUint bytes = remaining;
+                if (bytes > kMaxReadBytes) {
+                    bytes = kMaxReadBytes;
+                }
+                Brn buf = iReaderUntil.Read(bytes);
                 remaining -= buf.Bytes();
                 writer.Write(buf);
             } while (remaining > 0);
