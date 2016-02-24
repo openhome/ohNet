@@ -351,7 +351,11 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerMuter->SetEnabled(true);
     //iLoggerAnalogBypassRamper->SetEnabled(true);
-    //iLoggerPreDriver->SetEnabled(true);
+
+    // A logger that is enabled will block waiting for MsgQuit in its dtor
+    // ~Pipeline (below) relies on this to synchronise its destruction
+    // i.e. NEVER DISABLE THIS LOGGER
+    iLoggerPreDriver->SetEnabled(true);
 
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);

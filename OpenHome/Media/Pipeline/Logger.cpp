@@ -17,7 +17,7 @@ Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     , iDownstreamElement(nullptr)
     , iId(aId)
     , iEnabled(false)
-    , iFilter(EMsgAll)
+    , iFilter(EMsgNone)
     , iShutdownSem("PDSD", 0)
 {
 }
@@ -27,14 +27,16 @@ Logger::Logger(const TChar* aId, IPipelineElementDownstream& aDownstreamElement)
     , iDownstreamElement(&aDownstreamElement)
     , iId(aId)
     , iEnabled(false)
-    , iFilter(EMsgAll)
+    , iFilter(EMsgNone)
     , iShutdownSem("PDSD", 0)
 {
 }
 
 Logger::~Logger()
 {
-    iShutdownSem.Wait();
+    if (iEnabled) {
+        iShutdownSem.Wait();
+    }
 }
 
 void Logger::SetEnabled(TBool aEnabled)
@@ -50,11 +52,7 @@ void Logger::SetFilter(TUint aMsgTypes)
 Msg* Logger::Pull()
 {
     Msg* msg = iUpstreamElement->Pull();
-    if (msg == nullptr) {
-        Log::Print("Pipeline (%s): nullptr\n", iId);
-    }
-    else {
-        ASSERT_DEBUG(msg->iRefCount > 0);
+    if (iEnabled) {
         (void)msg->Process(*this);
     }
     return msg;
@@ -62,9 +60,18 @@ Msg* Logger::Pull()
 
 void Logger::Push(Msg* aMsg)
 {
-    ASSERT(aMsg != nullptr);
-    (void)aMsg->Process(*this);
+    if (iEnabled) {
+        (void)aMsg->Process(*this);
+    }
     iDownstreamElement->Push(aMsg);
+}
+
+inline TBool Logger::IsEnabled(EMsgType aType) const
+{
+    if (iEnabled && (iFilter & aType) == aType) {
+        return true;
+    }
+    return false;
 }
 
 Msg* Logger::ProcessMsg(MsgMode* aMsg)
@@ -263,12 +270,4 @@ void Logger::LogRamp(const Media::Ramp& aRamp)
     if (aRamp.IsEnabled()) {
         iBuf.AppendPrintf(", ramp: [%08x..%08x]", aRamp.Start(), aRamp.End());
     }
-}
-
-TBool Logger::IsEnabled(EMsgType aType) const
-{
-    if (iEnabled && (iFilter & aType) == aType) {
-        return true;
-    }
-    return false;
 }

@@ -18,7 +18,8 @@ class Logger : public IPipelineElementUpstream, public IPipelineElementDownstrea
 public:
     enum EMsgType
     {
-        EMsgMode                = 1 <<  0
+        EMsgNone                = 0
+       ,EMsgMode                = 1 <<  0
        ,EMsgTrack               = 1 <<  1
        ,EMsgDrain               = 1 <<  2
        ,EMsgDelay               = 1 <<  3
@@ -68,7 +69,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     void LogRamp(const Media::Ramp& aRamp);
-    TBool IsEnabled(EMsgType aType) const;
+    inline TBool IsEnabled(EMsgType aType) const;
 private:
     IPipelineElementUpstream* iUpstreamElement;
     IPipelineElementDownstream* iDownstreamElement;
