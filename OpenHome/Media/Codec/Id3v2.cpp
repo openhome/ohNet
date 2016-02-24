@@ -124,8 +124,8 @@ TBool Id3v2::RecogniseTag()
         return false; // not enough data to recognise
     }
 
-    static const char* kContainerStart = "ID3";
-    if (strncmp((const TChar*)(iBuf.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
+    static const Brn kContainerStart("ID3");
+    if (Brn(iBuf.Ptr(), kContainerStart.Bytes()) != kContainerStart) {
         return false;
     }
     if (iBuf[3] > 4) { // We only support upto Id3v2.4

@@ -192,6 +192,7 @@ public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private:
     TBool TrySetPayloadState();
+    void DiscardRemaining();
     MsgAudioEncoded* TryAppendToAudioEncoded(MsgAudioEncoded* aMsg);
 private:
     enum EState {
@@ -202,6 +203,7 @@ private:
         eInspectProgramMapTable,
         ePullPayload,
         eComplete,
+        eDiscarding,
     };
 private:
     IMsgAudioEncodedCache& iCache;
