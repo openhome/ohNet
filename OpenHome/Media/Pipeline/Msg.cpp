@@ -1306,7 +1306,6 @@ void MsgAudioEncoded::CopyTo(TByte* aPtr)
 MsgAudioEncoded* MsgAudioEncoded::Clone()
 {
     MsgAudioEncoded* clone = static_cast<Allocator<MsgAudioEncoded>&>(iAllocator).Allocate();
-    AutoMutex a(iLock);
     clone->iNextAudio = nullptr;
     if (iNextAudio) {
         clone->iNextAudio = iNextAudio->Clone();
@@ -1578,7 +1577,6 @@ Msg* MsgBitRate::Process(IMsgProcessor& aProcessor)
 
 MsgAudio* MsgAudio::Split(TUint aJiffies)
 {
-    AutoMutex a(iLock);
     if (aJiffies > iSize && iNextAudio != nullptr) {
         return iNextAudio->Split(aJiffies - iSize);
     }
@@ -1613,7 +1611,6 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
 
 void MsgAudio::Add(MsgAudio* aMsg)
 {
-    iLock.Wait();
     MsgAudio* end = this;
     MsgAudio* next = iNextAudio;
     while (next != nullptr) {
@@ -1621,13 +1618,11 @@ void MsgAudio::Add(MsgAudio* aMsg)
         next = next->iNextAudio;
     }
     end->iNextAudio = aMsg;
-    iLock.Signal();
 }
 
 MsgAudio* MsgAudio::Clone()
 {
     MsgAudio* clone = Allocate();
-    AutoMutex a(iLock);
     clone->iSize = iSize;
     clone->iOffset = iOffset;
     clone->iRamp = iRamp;
@@ -1637,20 +1632,17 @@ MsgAudio* MsgAudio::Clone()
 
 TUint MsgAudio::Jiffies() const
 {
-    iLock.Wait();
     TUint jiffies = iSize; 
     MsgAudio* next = iNextAudio; 
     while (next != nullptr) { 
         jiffies += next->iSize; 
         next = next->iNextAudio; 
     }
-    iLock.Signal();
     return jiffies;
 }
 
 TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)  // FIXME
 {
-    AutoMutex a(iLock);
     ASSERT(iNextAudio == nullptr);
     const TUint remainingDuration = aRemainingDuration;
     Media::Ramp split;
