@@ -9,6 +9,8 @@
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/MimeTypeList.h>
 
+#include <limits>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
@@ -687,18 +689,22 @@ Msg* MpegTs::Pull()
                 Brn headerBuf(iBuf.Ptr(), kStreamHeaderBytes);
                 iStreamHeader.Parse(headerBuf);
                 iRemaining -= kStreamHeaderBytes;
-                ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
 
-                if (iStreamHeader.AdaptationField()) {
-                    iCache.Inspect(iBuf, kAdaptionFieldLengthBytes);
-                    iState = eInspectAdaptationField;
+                if (iRemaining <= kPacketBytes) {
+                    if (iStreamHeader.AdaptationField()) {
+                        iCache.Inspect(iBuf, kAdaptionFieldLengthBytes);
+                        iState = eInspectAdaptationField;
+                    }
+                    else {
+                        if (!TrySetPayloadState()) {
+                            iCache.Discard(iRemaining);
+                            iRemaining = 0;
+                            iState = eStart;
+                        }
+                    }
                 }
                 else {
-                    if (!TrySetPayloadState()) {
-                        iCache.Discard(iRemaining);
-                        iRemaining = 0;
-                        iState = eStart;
-                    }
+                    DiscardRemaining();
                 }
             }
             catch (InvalidMpegTsPacket&) {
@@ -712,54 +718,66 @@ Msg* MpegTs::Pull()
 
             iRemaining -= iBuf.Bytes();
             iRemaining -= adaptationFieldLength;
-            ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
 
-            TUint discard = adaptationFieldLength;
+            if (iRemaining <= kPacketBytes) {
+                TUint discard = adaptationFieldLength;
 
-            if (iRemaining == 0) {
-                // Adaptation field may constitute remainder of packet.
-                iState = eStart;
-            }
-            else {
-                if (!TrySetPayloadState()) {
-                    discard += iRemaining;
-                    iRemaining = 0;
+                if (iRemaining == 0) {
+                    // Adaptation field may constitute remainder of packet.
                     iState = eStart;
                 }
-            }
+                else {
+                    if (!TrySetPayloadState()) {
+                        discard += iRemaining;
+                        iRemaining = 0;
+                        iState = eStart;
+                    }
+                }
 
-            iCache.Discard(discard);
+                iCache.Discard(discard);
+            }
+            else {
+                DiscardRemaining();
+            }
         }
         else if (iState == eInspectProgramAssociationTable) {
             ASSERT(iBuf.Bytes() == iRemaining);
             iRemaining -= iBuf.Bytes();
-            ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
 
-            try {
-                iPat.Parse(iBuf);
-                iProgramMapPid = iPat.ProgramMapPid();
-                iState = eStart;    // Read next packet.
+            if (iRemaining <= kPacketBytes) {
+                try {
+                    iPat.Parse(iBuf);
+                    iProgramMapPid = iPat.ProgramMapPid();
+                    iState = eStart;    // Read next packet.
+                }
+                catch (InvalidMpegTsPacket&) {
+                    iCache.Discard(iRemaining);
+                    iRemaining = 0;
+                    iState = eStart;
+                }
             }
-            catch (InvalidMpegTsPacket&) {
-                iCache.Discard(iRemaining);
-                iRemaining = 0;
-                iState = eStart;
+            else {
+                DiscardRemaining();
             }
         }
         else if (iState == eInspectProgramMapTable) {
             ASSERT(iBuf.Bytes() == iRemaining);
             iRemaining -= iBuf.Bytes();
-            ASSERT(iRemaining <= kPacketBytes); // Ensure no wrapping.
 
-            try {
-                iPmt.Parse(iBuf);
-                iStreamPid = iPmt.StreamPid();
-                iState = eStart;    // Read next packet.
+            if (iRemaining <= kPacketBytes) {
+                try {
+                    iPmt.Parse(iBuf);
+                    iStreamPid = iPmt.StreamPid();
+                    iState = eStart;    // Read next packet.
+                }
+                catch (InvalidMpegTsPacket&) {
+                    iCache.Discard(iRemaining);
+                    iRemaining = 0;
+                    iState = eStart;
+                }
             }
-            catch (InvalidMpegTsPacket&) {
-                iCache.Discard(iRemaining);
-                iRemaining = 0;
-                iState = eStart;
+            else {
+                DiscardRemaining();
             }
         }
         else if (iState == ePullPayload) {
@@ -773,6 +791,9 @@ Msg* MpegTs::Pull()
             if (msg != nullptr) {
                 return msg;
             }
+        }
+        else if (iState == eDiscarding) {
+            DiscardRemaining();
         }
         else {
             // Unhandled state.
@@ -820,6 +841,17 @@ TBool MpegTs::TrySetPayloadState()
     //    return false;
     //}
     //return true;
+}
+
+void MpegTs::DiscardRemaining()
+{
+    // This is called when stream corruption is detected, so discard the
+    // largest possible number of bytes. If a new stream starts before that
+    // number of bytes is discarded, that message should still be passed on so
+    // that this container can terminate.
+    iCache.Discard(std::numeric_limits<TUint>::max());
+    iRemaining = 0;
+    iState = eDiscarding;
 }
 
 MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
