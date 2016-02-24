@@ -18,6 +18,7 @@ ContainerBase::ContainerBase(const Brx& aId)
     , iMsgFactory(nullptr)
     , iSeekHandler(nullptr)
     , iUrlBlockWriter(nullptr)
+    , iStopper(nullptr)
     , iId(aId)
 {
 }
@@ -27,12 +28,13 @@ const Brx& ContainerBase::Id() const
     return iId;
 }
 
-void ContainerBase::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter)
+void ContainerBase::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper)
 {
     iCache = &aCache;
     iMsgFactory = &aMsgFactory;
     iSeekHandler = &aSeekHandler;
     iUrlBlockWriter = &aUrlBlockWriter;
+    iStopper = &aContainerStopper;
 }
 
 
@@ -378,12 +380,13 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     , iState(eRecognitionStart)
     , iRecogIdx(0)
     , iStreamEnded(false)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iQuit(false)
     , iLock("COCO")
 {
     iContainerNull = new ContainerNull();
-    iContainerNull->Construct(iCache, iMsgFactory, *this, *this);
+    iContainerNull->Construct(iCache, iMsgFactory, *this, *this, *this);
     iContainers.push_back(iContainerNull);
     iActiveContainer = iContainerNull;
 
@@ -393,7 +396,7 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
 
 void ContainerController::AddContainer(ContainerBase* aContainer)
 {
-    aContainer->Construct(iCache, iMsgFactory, *this, *this);
+    aContainer->Construct(iCache, iMsgFactory, *this, *this, *this);
 
      // Pop ContainerNull from end and re-attach after aContainer.
      ASSERT(iContainers.size() >= 1);
@@ -461,7 +464,7 @@ Msg* ContainerController::RecogniseContainer()
                     }
                     catch (CodecPulledNullMsg&) {
                         const Brx& id = container->Id();
-                        LOG(kCodec, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise %.*s\n", PBUF(id));
+                        LOG(kMedia, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise %.*s\n", PBUF(id));
 
                         iRecogIdx++;
                         iState = eRecognitionSelectContainer;
@@ -582,6 +585,7 @@ Msg* ContainerController::ProcessMsg(MsgEncodedStream* aMsg)
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
 
     AutoMutex a(iLock);
+    iStreamId = aMsg->StreamId();
     iExpectedFlushId = MsgFlush::kIdInvalid;
     iStreamHandler = aMsg->StreamHandler();
     iQuit = false;
@@ -715,7 +719,11 @@ TUint ContainerController::TryStop(TUint aStreamId)
     }
 
     ASSERT(iStreamHandler != nullptr);
-    iExpectedFlushId = iStreamHandler->TryStop(aStreamId);
+    const TUint flushId = iStreamHandler->TryStop(aStreamId);
+    if (flushId == MsgFlush::kIdInvalid) {
+        return MsgFlush::kIdInvalid;
+    }
+    iExpectedFlushId = flushId;
     return iExpectedFlushId;
 }
 
@@ -730,15 +738,15 @@ TBool ContainerController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 {
     // Lock not required; will be called back from a ContainerBase while iLock is held in TrySeek.
     if (iQuit) {
-        iExpectedFlushId = MsgFlush::kIdInvalid;
         return false;
     }
 
     ASSERT(iStreamHandler != nullptr);
-    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
-    if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+    const TUint flushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
+    if (flushId == MsgFlush::kIdInvalid) {
         return false;
     }
+    iExpectedFlushId = flushId;
     iCache.SetFlushing(iExpectedFlushId);
     return true;
 }
@@ -746,6 +754,21 @@ TBool ContainerController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 TBool ContainerController::TryGetUrl(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 {
     return iUrlBlockWriter.TryGet(aWriter, iUrl, aOffset, aBytes);
+}
+
+void ContainerController::ContainerTryStop()
+{
+    AutoMutex a(iLock);
+    if (!iQuit) {
+        ASSERT(iStreamHandler != nullptr);
+        LOG(kMedia, "ContainerController::ContainerTryStop iStreamId: %u\n", iStreamId);
+        const TUint flushId = iStreamHandler->TryStop(iStreamId);
+        if (flushId != MsgFlush::kIdInvalid) {
+            // Could try consume this flush ID, as no downstream elements should care about it.
+            iExpectedFlushId = flushId;
+            iCache.SetFlushing(iExpectedFlushId);
+        }
+    }
 }
 
 

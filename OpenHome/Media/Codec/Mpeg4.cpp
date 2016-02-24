@@ -2601,9 +2601,9 @@ Mpeg4Container::Mpeg4Container(IMimeTypeList& aMimeTypeList)
     aMimeTypeList.Add("audio/mp4");
 }
 
-void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter)
+void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper)
 {
-    ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter);
+    ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter, aContainerStopper);
 
     iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("trak")));
     iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("mdia")));

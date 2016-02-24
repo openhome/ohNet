@@ -183,7 +183,7 @@ private:
     static const TUint kStreamSpecificFixedBytes = 5;
     static const TUint kStreamTypeAdtsAac = 0x0f;   // stream type 15/0x0f is ISO/IEC 13818-7 ADTS AAC
 public:
-    MpegTs(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory);
+    MpegTs(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerStopper& aStopper);
     ~MpegTs();
     Msg* Recognise();
     TBool Recognised() const;
@@ -208,6 +208,7 @@ private:
 private:
     IMsgAudioEncodedCache& iCache;
     MsgFactory& iMsgFactory;
+    IContainerStopper& iStopper;
     EState iState;
     MsgEncodedStreamRecogniser iEncodedStreamRecogniser;
     StreamTerminatorDetector iStreamTerminatorDetector;
@@ -238,7 +239,7 @@ public: // from ContainerBase
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 private: // from ContainerBase
-    void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter) override;
+    void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper) override;
 private:
     MpegTs* iMpegTs;
     MpegPes* iMpegPes;

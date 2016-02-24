@@ -568,9 +568,10 @@ Msg* MpegPes::Pull()
 
 // MpegTs
 
-MpegTs::MpegTs(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory)
+MpegTs::MpegTs(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerStopper& aStopper)
     : iCache(aCache)
     , iMsgFactory(aMsgFactory)
+    , iStopper(aStopper)
     , iPmt(kStreamTypeAdtsAac)
     , iProgramMapPid(0)
     , iStreamPid(0)
@@ -852,6 +853,9 @@ void MpegTs::DiscardRemaining()
     iCache.Discard(std::numeric_limits<TUint>::max());
     iRemaining = 0;
     iState = eDiscarding;
+    // Tell ContainerController to stop stream instead of allowing this to
+    // discard stream indefinitely.
+    iStopper.ContainerTryStop();
 }
 
 MsgAudioEncoded* MpegTs::TryAppendToAudioEncoded(MsgAudioEncoded* aMsg)
@@ -933,9 +937,9 @@ Msg* MpegTsContainer::Pull()
     return iMpegPes->Pull();
 }
 
-void MpegTsContainer::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter)
+void MpegTsContainer::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper)
 {
-    ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter);
-    iMpegTs = new MpegTs(*iCache, *iMsgFactory);
+    ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter, aContainerStopper);
+    iMpegTs = new MpegTs(*iCache, *iMsgFactory, *iStopper);
     iMpegPes = new MpegPes(*iMpegTs, *iMsgFactory);
 }

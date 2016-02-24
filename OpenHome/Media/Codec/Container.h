@@ -58,6 +58,13 @@ public:
     virtual ~IContainerUrlBlockWriter() {}
 };
 
+class IContainerStopper
+{
+public:
+    virtual void ContainerTryStop() = 0;
+    virtual ~IContainerStopper() {}
+};
+
 class ContainerController;
 
 class ContainerBase : public IPipelineElementUpstream, private INonCopyable
@@ -74,7 +81,7 @@ public:
     virtual TBool TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     const Brx& Id() const;
 protected:
-    virtual void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter);
+    virtual void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper);
 public: // from IPipelineElementUpstream
     Msg* Pull() = 0;
 protected:
@@ -82,6 +89,7 @@ protected:
     MsgFactory* iMsgFactory;
     IContainerSeekHandler* iSeekHandler;
     IContainerUrlBlockWriter* iUrlBlockWriter;
+    IContainerStopper* iStopper;
 private:
     const Bws<kMaxNameBytes> iId;
 };
@@ -146,7 +154,7 @@ public: // from ContainerBase
     Msg* Pull() override;
 };
 
-class ContainerController : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, public IContainerSeekHandler, public IContainerUrlBlockWriter, private INonCopyable
+class ContainerController : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, public IContainerSeekHandler, public IContainerUrlBlockWriter, public IContainerStopper, private INonCopyable
 {
 public:
     ContainerController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter);
@@ -183,6 +191,8 @@ private: // from IContainerSeekHandler
     TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos) override;
 private: // from IContainerUrlBlockWriter
     TBool TryGetUrl(IWriter& aWriter, TUint64 aOffset, TUint aBytes) override;
+private: // from IContainerStopper
+    void ContainerTryStop() override;
 private:
     enum ERecognitionState
     {
@@ -207,6 +217,7 @@ private:
     ERecognitionState iState;
     TUint iRecogIdx;
     TBool iStreamEnded;
+    TUint iStreamId;
     TUint iExpectedFlushId;
     TBool iQuit;
     Mutex iLock;

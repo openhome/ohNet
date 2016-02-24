@@ -877,7 +877,7 @@ class Mpeg4Container : public ContainerBase, public IMpeg4MetadataProvider, publ
 public:
     Mpeg4Container(IMimeTypeList& aMimeTypeList);
 public: // from ContainerBase
-    void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter) override;
+    void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper) override;
     Msg* Recognise() override;
     TBool Recognised() const override;
     void Reset() override;
