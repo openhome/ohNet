@@ -454,7 +454,9 @@ void Product::AddNameObserver(IProductNameObserver& aObserver)
 void Product::StandbyEnabled()
 {
     AutoMutex _(iLock);
-    iSources[iCurrentSource]->StandbyEnabled();
+    if (iCurrentSource != kCurrentSourceNone) {
+        iSources[iCurrentSource]->StandbyEnabled();
+    }
 }
 
 void Product::StandbyDisabled(StandbyDisableReason aReason)
