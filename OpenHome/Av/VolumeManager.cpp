@@ -724,6 +724,14 @@ void VolumeManager::SetVolume(TUint aValue)
     if (iVolumeUser == nullptr) {
         THROW(VolumeNotSupported);
     }
+
+    // OpenHome Volume service is expected to unmute
+    // UPnP AV RenderingControl doesn't want to unmute but that seems ill-considered
+    // unmute here to both sources of volume changes the same behaviour
+    if (iMuteUser != nullptr) {
+        iMuteUser->Unmute();
+    }
+    
     const TUint volume = aValue * iVolumeConfig.VolumeMilliDbPerStep();
     iVolumeUser->SetVolume(volume);
 }
