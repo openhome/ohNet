@@ -94,6 +94,7 @@ Msg* AnalogBypassRamper::ProcessAudio(MsgAudio* aMsg)
         iVolumeRamper->ApplyVolumeMultiplier(rampMultiplier);
     }
     else if (iHalted) {
+        iHalted = false;
         iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierFull);
     }
     return aMsg;
