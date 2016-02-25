@@ -58,8 +58,8 @@ class PipelineManager : public IPipeline
                       , private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory,
-                    Net::IShell& aShell, IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator,
+                    TrackFactory& aTrackFactory, Net::IShell& aShell);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.
@@ -121,7 +121,7 @@ public:
      *
      * Begin() can only be called after Start() returns.
      */
-    void Start();
+    void Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper);
     /**
      * Add an observer of changes in pipeline state.
      *

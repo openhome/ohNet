@@ -2,7 +2,6 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/MimeTypeList.h>
 
 namespace OpenHome {
@@ -90,7 +89,7 @@ public:
     virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
 
-class MediaPlayer : public IMediaPlayer, private Media::IMute, private INonCopyable
+class MediaPlayer : public IMediaPlayer, private INonCopyable
 {
     static const TUint kTrackCount = 1200;
 public:
@@ -131,9 +130,6 @@ public: // from IMediaPlayer
     Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
-private: // from Media::IMute
-    void Mute() override;
-    void Unmute() override;
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;

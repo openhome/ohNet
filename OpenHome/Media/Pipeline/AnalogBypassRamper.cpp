@@ -17,14 +17,12 @@ const TUint AnalogBypassRamper::kSupportedMsgTypes =   eMode
                                                      | eSilence
                                                      | eQuit;
 
-AnalogBypassRamper::AnalogBypassRamper(MsgFactory& aMsgFactory,
-                                       IPipelineElementUpstream& aUpstream,
-                                       IAnalogBypassVolumeRamper& aVolumeRamper)
+AnalogBypassRamper::AnalogBypassRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream)
     : PipelineElement(kSupportedMsgTypes)
     , iMsgFactory(aMsgFactory)
     , iUpstream(aUpstream)
     , iLock("MPMT")
-    , iVolumeRamper(aVolumeRamper)
+    , iVolumeRamper(nullptr)
     , iMsgDrain(nullptr)
     , iMsgHalt(nullptr)
     , iHalting(false)
@@ -41,6 +39,11 @@ AnalogBypassRamper::~AnalogBypassRamper()
     if (iMsgHalt != nullptr) {
         iMsgHalt->RemoveRef();
     }
+}
+
+void AnalogBypassRamper::SetVolumeRamper(IAnalogBypassVolumeRamper& aVolumeRamper)
+{
+    iVolumeRamper = &aVolumeRamper;
 }
 
 Msg* AnalogBypassRamper::Pull()
@@ -88,10 +91,10 @@ Msg* AnalogBypassRamper::ProcessAudio(MsgAudio* aMsg)
 {
     if (iAnalogBypassEnabled) {
         const TUint rampMultiplier = aMsg->MedianRampMultiplier();
-        iVolumeRamper.ApplyVolumeMultiplier(rampMultiplier);
+        iVolumeRamper->ApplyVolumeMultiplier(rampMultiplier);
     }
     else if (iHalted) {
-        iVolumeRamper.ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierFull);
+        iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierFull);
     }
     return aMsg;
 }
@@ -120,6 +123,6 @@ void AnalogBypassRamper::CheckForHalted()
 {
     if (iHalting) {
         iHalted = true;
-        iVolumeRamper.ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierZero);
+        iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierZero);
     }
 }
