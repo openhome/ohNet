@@ -641,7 +641,9 @@ void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std
         if (it != iMap.end()) {
             DviDevice* device = it->second;
             iLock.Signal();
-            device->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
+            if (it->second->Enabled()) {
+                device->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
+            }
             return;
         }
     }
