@@ -11,6 +11,11 @@ namespace Codec {
 
 class CodecAlacAppleBase : public CodecBase
 {
+private:
+    static const TUint kMaxByteDepth = 4;
+    static const TUint kTypicalSamplesPerFrame = 4096;
+protected:
+    static const TUint kMaxChannels = 2;
 public:
     static const Brn kCodecAlac;
 protected:
@@ -27,8 +32,8 @@ private:
     static EMediaDataEndian Endianness();
 protected:
     ALACDecoder iDecoder;
-    Bws<4096*2*2> iInBuf;
-    Bws<4096*2*2> iDecodedBuf;  // Typical alac frame samples * bit depth * channels.
+    Bws<kTypicalSamplesPerFrame*kMaxByteDepth*kMaxChannels> iInBuf;
+    Bws<kTypicalSamplesPerFrame*kMaxByteDepth*kMaxChannels> iDecodedBuf;
     TUint iChannels;
     TUint iBitDepth;
     TUint iBytesPerSample;

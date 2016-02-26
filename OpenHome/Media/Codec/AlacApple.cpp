@@ -136,6 +136,10 @@ void CodecAlacApple::StreamInitialise()
     }
 
     iChannels = info.Channels();
+    if (iChannels > kMaxChannels) {
+        // Current buffer size doesn't support more than 2 channels.
+        THROW(CodecStreamCorrupt);
+    }
     iBitDepth = info.BitDepth();
     iBytesPerSample = info.Channels()*iBitDepth/8;
     iSampleRate = info.Timescale();

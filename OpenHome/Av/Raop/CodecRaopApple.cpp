@@ -75,6 +75,11 @@ void CodecRaopApple::StreamInitialise()
         THROW(CodecStreamCorrupt);
     }
 
+    if (iChannels > kMaxChannels) {
+        // Current buffer size doesn't support more than 2 channels.
+        THROW(CodecStreamCorrupt);
+    }
+
     iInBuf.SetBytes(0);
 
     // Apple's implementation requires a 24-byte config and ignores first 4 bytes from CodecSpecificData.
