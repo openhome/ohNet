@@ -154,7 +154,7 @@ void PowerManager::DeregisterStandby(TUint aId)
 void PowerManager::StartupStandbyChanged(KeyValuePair<TUint>& aKvp)
 {
     iStandby = (aKvp.Value() == kConfigIdStartupStandbyEnabled);
-    iLastDisableReason = eStandbyDisableUser; // this callback only runs during PowerManager c'tor - assume this only happens due to user interaction
+    iLastDisableReason = StandbyDisableReason::Boot; // this callback only runs during PowerManager c'tor
 }
 
 

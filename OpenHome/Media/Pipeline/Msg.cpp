@@ -1712,12 +1712,14 @@ void MsgAudio::SetClockPull(TUint aMultiplier)
     iClockPullMultiplier = aMultiplier;
 }
 
-TUint MsgAudio::MedianRampMultiplier() const
+TUint MsgAudio::MedianRampMultiplier()
 {
     if (!iRamp.IsEnabled()) {
         return 0x80000000; // see RampArray.h
     }
-    return RampApplicator::MedianMultiplier(iRamp);
+    const TUint mult = RampApplicator::MedianMultiplier(iRamp);
+    iRamp.Reset();
+    return mult;
 }
 
 MsgAudio::MsgAudio(AllocatorBase& aAllocator)

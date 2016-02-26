@@ -183,8 +183,7 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell,
-                   IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper)
+                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -313,7 +312,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iMuter = new Muter(*iMsgFactory, *iDecodedAudioValidatorStarvationMonitor, aInitParams->RampLongJiffies());
     iLoggerMuter = new Logger(*iMuter, "Muter");
     iDecodedAudioValidatorMuter = new DecodedAudioValidator(*iLoggerMuter, "Muter");
-    iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *iDecodedAudioValidatorMuter, aAnalogBypassVolumeRamper);
+    iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *iDecodedAudioValidatorMuter);
     iLoggerAnalogBypassRamper = new Logger(*iAnalogBypassRamper, "AnalogBypassRamper");
     iPreDriver = new PreDriver(*iLoggerAnalogBypassRamper);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
@@ -480,8 +479,9 @@ void Pipeline::AddCodec(Codec::CodecBase* aCodec)
     iCodecController->AddCodec(aCodec);
 }
 
-void Pipeline::Start()
+void Pipeline::Start(IAnalogBypassVolumeRamper& aAnalogBypassVolumeRamper)
 {
+    iAnalogBypassRamper->SetVolumeRamper(aAnalogBypassVolumeRamper);
     iCodecController->Start();
 }
 

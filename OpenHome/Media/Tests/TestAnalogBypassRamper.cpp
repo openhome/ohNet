@@ -138,7 +138,8 @@ void SuiteAnalogBypassRamper::Setup()
     init.SetMsgDrainCount(2);
     init.SetMsgHaltCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *this, *this);
+    iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *this);
+    iAnalogBypassRamper->SetVolumeRamper(*this);
     iNextMsg = iLastPulledMsg = ENone;
     iTrackOffset = 0;
     iDrainAcknowledged = iHaltAcknowledged = iDeferDrainAcknowledgement = iDeferHaltAcknowledgement = false;

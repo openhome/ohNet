@@ -4,7 +4,6 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/PipelineManager.h>
-#include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
@@ -89,9 +88,9 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigAutoPlay = new ConfigChoice(*iConfigManager, Product::kConfigIdAutoPlay, choices, Product::kAutoPlayDisable);
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, aShell);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
-    iVolumeManager = new OpenHome::Av::VolumeManager(aVolumeConsumer, this, *iVolumeConfig, aDevice, *iProduct, *iConfigManager);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, aShell, *iVolumeManager);
+    iVolumeManager = new OpenHome::Av::VolumeManager(aVolumeConsumer, iPipeline, *iVolumeConfig, aDevice, *iProduct, *iConfigManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
     iProduct->AddAttribute("Credentials");
     iProviderTime = new ProviderTime(aDevice, *iPipeline);
@@ -195,7 +194,7 @@ void MediaPlayer::Start()
     }
 
     iConfigManager->Open();
-    iPipeline->Start();
+    iPipeline->Start(*iVolumeManager);
     iCredentials->Start();
     iMimeTypes.Start();
     iProduct->Start();
@@ -286,18 +285,6 @@ MimeTypeList& MediaPlayer::MimeTypes()
 void MediaPlayer::Add(UriProvider* aUriProvider)
 {
     iPipeline->Add(aUriProvider);
-}
-
-void MediaPlayer::Mute()
-{
-    ASSERT(iPipeline != nullptr);
-    static_cast<IMute*>(iPipeline)->Mute();
-}
-
-void MediaPlayer::Unmute()
-{
-    ASSERT(iPipeline != nullptr);
-    static_cast<IMute*>(iPipeline)->Unmute();
 }
 
 RingBufferLogger* MediaPlayer::LogBuffer()

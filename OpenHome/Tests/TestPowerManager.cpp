@@ -621,11 +621,11 @@ void SuitePowerManager::TestShutdownToggleGeneratesCallback()
     TEST(observer.DisableCount() == 1);
     TEST(observer.EnableCount() == 1);
     TEST(observer.Standby());
-    iPowerManager->StandbyDisable(eStandbyDisableUser);
+    iPowerManager->StandbyDisable(StandbyDisableReason::User);
     TEST(observer.DisableCount() == 2);
     TEST(observer.EnableCount() == 1);
     TEST(!observer.Standby());
-    TEST(observer.DisableReason() == eStandbyDisableUser);
+    TEST(observer.DisableReason() == StandbyDisableReason::User);
     
     delete handler;
 }
@@ -638,7 +638,7 @@ void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
 
     TEST(observer.DisableCount() == 1);
     TEST(observer.EnableCount() == 0);
-    iPowerManager->StandbyDisable(eStandbyDisableUser);
+    iPowerManager->StandbyDisable(StandbyDisableReason::User);
     TEST(observer.DisableCount() == 1);
     TEST(observer.EnableCount() == 0);
     TEST(!observer.Standby());

@@ -630,7 +630,7 @@ public:
     void SetMuted(); // should only be used with msgs immediately following a ramp down
     const Media::Ramp& Ramp() const;
     void SetClockPull(TUint aMultiplier);
-    TUint MedianRampMultiplier() const; // 1<<31 => full level
+    TUint MedianRampMultiplier(); // 1<<31 => full level.  Note - clears any existing ramp
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();

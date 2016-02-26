@@ -175,7 +175,7 @@ void ProviderProduct::SetStandby(IDvInvocation& aInvocation, TBool aValue)
         iPowerManager.StandbyEnable();
     }
     else {
-        iPowerManager.StandbyDisable(eStandbyDisableUser);
+        iPowerManager.StandbyDisable(StandbyDisableReason::User);
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();

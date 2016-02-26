@@ -24,7 +24,7 @@ class AnalogBypassRamper : public PipelineElement, public IPipelineElementUpstre
 {
     static const TUint kSupportedMsgTypes;
 public:
-    AnalogBypassRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, IAnalogBypassVolumeRamper& aVolumeRamper);
+    AnalogBypassRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream);
     ~AnalogBypassRamper();
     void SetVolumeRamper(IAnalogBypassVolumeRamper& aVolumeRamper);
 private: // from IPipelineElementUpstream
@@ -44,7 +44,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstream;
     Mutex iLock;
-    IAnalogBypassVolumeRamper& iVolumeRamper;
+    IAnalogBypassVolumeRamper* iVolumeRamper;
     MsgDrain* iMsgDrain;
     MsgHalt* iMsgHalt;
     TBool iHalting;
