@@ -19,6 +19,13 @@
  */
 
 /*
+ * CHANGELOG:
+ *
+ * 26-02-2016 Gregg Hamilton
+ * - Replace multi-char enums with hex vals.
+ */
+
+/*
 	File:		ALACAudioTypes.h
 */
 
@@ -61,8 +68,8 @@ enum
 
 enum
 {
-    kALACFormatAppleLossless = 'alac',
-    kALACFormatLinearPCM = 'lpcm'
+    kALACFormatAppleLossless = 0x616c6163,  // 'alac'
+    kALACFormatLinearPCM = 0x6c70636d       // 'lpcm'
 };
 
 enum
@@ -151,7 +158,7 @@ typedef struct AudioFormatDescription  AudioFormatDescription;
 
 enum
 {
-	kALACCodecFormat		= 'alac',
+    kALACCodecFormat		= 0x616c6163,   // 'alac'
 	kALACVersion			= 0,
 	kALACCompatibleVersion	= kALACVersion,
 	kALACDefaultFrameSize	= 4096
@@ -179,7 +186,7 @@ typedef struct ALACSpecificConfig
 // The AudioChannelLayout atom type is not exposed yet so define it here
 enum
 {
-	AudioChannelLayoutAID = 'chan'
+    AudioChannelLayoutAID = 0x6368616e // 'chan'
 };
 
 #if PRAGMA_STRUCT_ALIGN
