@@ -30,7 +30,7 @@ public:
 
 class CpiDeviceLpec : private ICpiProtocol, private ICpiDeviceObserver
 {
-    static const TUint kSubscriptionDurationSecs = UINT_MAX / 1000; // max value that can be converted to milliseconds
+    static const TUint kSubscriptionDurationSecs = 60 * 60 * 24; // arbitrarily chosen largish value
 public:
     CpiDeviceLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& aLpecName, Functor aStateChanged);
     void Destroy();
