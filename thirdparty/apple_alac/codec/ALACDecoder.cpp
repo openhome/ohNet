@@ -23,6 +23,7 @@
  *
  * 26-02-2016 Gregg Hamilton
  * - Comment out unused "samples" and "element_instance_tag" members.
+ * - Comment out unused "kMaxBitDepth" member.
  */
 
 /*
@@ -42,7 +43,7 @@
 #include "EndianPortable.h"
 
 // constants/data
-const uint32_t kMaxBitDepth = 32;			// max allowed bit depth is 32
+//const uint32_t kMaxBitDepth = 32;			// max allowed bit depth is 32
 
 
 // prototypes
