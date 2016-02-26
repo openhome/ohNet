@@ -13,8 +13,8 @@ class CodecAlacAppleBase : public CodecBase
 {
 private:
     static const TUint kMaxByteDepth = 4;
-    static const TUint kTypicalSamplesPerFrame = 4096;
 protected:
+    static const TUint kMaxSamplesPerFrame = 4096;  // ALAC files typically use 4096 samples per frame.
     static const TUint kMaxChannels = 2;
 public:
     static const Brn kCodecAlac;
@@ -32,8 +32,9 @@ private:
     static EMediaDataEndian Endianness();
 protected:
     ALACDecoder iDecoder;
-    Bws<kTypicalSamplesPerFrame*kMaxByteDepth*kMaxChannels> iInBuf;
-    Bws<kTypicalSamplesPerFrame*kMaxByteDepth*kMaxChannels> iDecodedBuf;
+    Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iInBuf;
+    Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iDecodedBuf;
+    TUint iFrameLength;
     TUint iChannels;
     TUint iBitDepth;
     TUint iBytesPerSample;

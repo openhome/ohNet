@@ -62,13 +62,13 @@ void CodecAlacAppleBase::Decode()
     BitBufferInit(&bitBuffer, (uint8_t*)iInBuf.Ptr(), iInBuf.Bytes());
 
     // Use alac decoder to decode a frame at a time.
-    TUint status = iDecoder.Decode(&bitBuffer, (uint8_t*)iDecodedBuf.Ptr(), iDecoder.mConfig.frameLength, iDecoder.mConfig.numChannels, &outSamples);
+    TUint status = iDecoder.Decode(&bitBuffer, (uint8_t*)iDecodedBuf.Ptr(), iFrameLength, iChannels, &outSamples);
     if (status != ALAC_noErr) {
         LOG(kCodec, "CodecAlacAppleBase::Decode third-party decoder error. status: %d\n", status);
         THROW(CodecStreamCorrupt);
     }
 
-    iDecodedBuf.SetBytes(outSamples*(iDecoder.mConfig.bitDepth/8)*iDecoder.mConfig.numChannels);
+    iDecodedBuf.SetBytes(outSamples*(iBitDepth/8)*iChannels);
     //LOG(kCodec, "CodecAlacAppleBase::Process  iDecodedBuf.Bytes(): %u\n", iDecodedBuf.Bytes());
 
     // Output all samples, as will probably fill full iDecodedBuf on next decode.

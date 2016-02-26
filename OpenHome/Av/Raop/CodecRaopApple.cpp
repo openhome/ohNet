@@ -75,8 +75,12 @@ void CodecRaopApple::StreamInitialise()
         THROW(CodecStreamCorrupt);
     }
 
+    if (iFrameLength > kMaxSamplesPerFrame) {
+        // Current buffer size doesn't accomodate more than kMaxSamplesPerFrame.
+        THROW(CodecStreamCorrupt);
+    }
     if (iChannels > kMaxChannels) {
-        // Current buffer size doesn't support more than 2 channels.
+        // Current buffer size doesn't support more than kMaxChannels.
         THROW(CodecStreamCorrupt);
     }
 
@@ -170,23 +174,24 @@ void CodecRaopApple::ParseFmtp(const Brx& aFmtp)
     try {
         WriterBuffer writerBuf(iCodecSpecificData);
         WriterBinary writerBin(writerBuf);
-        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // ?
-        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // max_samples_per_frame
-        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // 7a
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next())); // ?
+        iFrameLength = Ascii::Uint(p.Next());
+        writerBin.WriteUint32Be(iFrameLength);          // max_samples_per_frame
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));    // 7a
 
-        iBitDepth = Ascii::Uint(p.Next());               // bit depth
+        iBitDepth = Ascii::Uint(p.Next());              // bit depth
         writerBin.WriteUint8(iBitDepth);
 
-        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_historymult
-        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_initialhistory
-        writerBin.WriteUint8(Ascii::Uint(p.Next()));     // rice_kmodifier
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));    // rice_historymult
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));    // rice_initialhistory
+        writerBin.WriteUint8(Ascii::Uint(p.Next()));    // rice_kmodifier
 
-        iChannels = Ascii::Uint(p.Next());               // 7f
+        iChannels = Ascii::Uint(p.Next());              // 7f
         writerBin.WriteUint8(iChannels);
 
-        writerBin.WriteUint16Be(Ascii::Uint(p.Next()));  // 80
-        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 82
-        writerBin.WriteUint32Be(Ascii::Uint(p.Next()));  // 86
+        writerBin.WriteUint16Be(Ascii::Uint(p.Next())); // 80
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next())); // 82
+        writerBin.WriteUint32Be(Ascii::Uint(p.Next())); // 86
 
         iSampleRate = Ascii::Uint(p.Next());
         writerBin.WriteUint32Be(iSampleRate);

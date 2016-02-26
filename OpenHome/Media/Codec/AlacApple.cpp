@@ -135,9 +135,15 @@ void CodecAlacApple::StreamInitialise()
         THROW(CodecStreamCorrupt);
     }
 
+    // FIXME - instead of parsing/storing these values in distinct members, have a class that parses/stores the decoder config and have getters on it.
+    iFrameLength = Converter::BeUint32At(config, 0);
     iChannels = info.Channels();
+    if (iFrameLength > kMaxSamplesPerFrame) {
+        // Current buffer size doesn't accomodate more than kMaxSamplesPerFrame.
+        THROW(CodecStreamCorrupt);
+    }
     if (iChannels > kMaxChannels) {
-        // Current buffer size doesn't support more than 2 channels.
+        // Current buffer size doesn't support more than kMaxChannels.
         THROW(CodecStreamCorrupt);
     }
     iBitDepth = info.BitDepth();
