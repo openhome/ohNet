@@ -177,6 +177,6 @@ Source::Source(const Brx& aSystemName, const TChar* aType, Media::PipelineManage
 
 void Source::DoPlay()
 {
-    iPowerManager.StandbyDisable(eStandbyDisableUser);
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
     iPipeline.Play();
 }

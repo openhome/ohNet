@@ -462,7 +462,7 @@ void Product::StandbyEnabled()
 void Product::StandbyDisabled(StandbyDisableReason aReason)
 {
     TBool activated = false;
-    if (aReason == eStandbyDisableUser) {
+    if (aReason != StandbyDisableReason::Alarm) {
         iLock.Wait();
         const TUint startupSourceVal = iStartupSourceVal;
         iLock.Signal();

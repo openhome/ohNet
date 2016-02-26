@@ -17,9 +17,10 @@ enum PowerDownPriority {
    ,kPowerPriorityHighest = 100
 };
 
-enum StandbyDisableReason {
-    eStandbyDisableUser
-   ,eStandbyDisableAlarm
+enum class StandbyDisableReason {
+     User
+    ,Boot
+    ,Alarm
 };
 
 class IPowerHandler
