@@ -19,6 +19,13 @@
  */
 
 /*
+ * CHANGELOG:
+ *
+ * 26-02-2016 Gregg Hamilton
+ * - Include msvc.h for compiling under Windows.
+ */
+
+/*
 	File:		ag_dec.c
 	
 	Contains:   Adaptive Golomb decode routines.
@@ -29,6 +36,7 @@
 #include "aglib.h"
 #include "ALACBitUtilities.h"
 #include "ALACAudioTypes.h"
+#include "msvc.h"
 
 #include <math.h>
 #include <stdio.h>

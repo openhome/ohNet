@@ -19,6 +19,13 @@
  */
 
 /*
+ * CHANGELOG:
+ *
+ * 26-02-2016 Gregg Hamilton
+ * - Include msvc.h for compiling under Windows.
+ */
+
+/*
 	File:		dp_dec.c
 
 	Contains:	Dynamic Predictor decode routines
@@ -28,6 +35,7 @@
 
 
 #include "dplib.h"
+#include "msvc.h"
 #include <string.h>
 
 #if __GNUC__
