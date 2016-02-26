@@ -93,7 +93,15 @@ def configure(conf):
         ]
 
     conf.env.STLIB_SHELL = ['Shell']
-    
+
+    # Setup Apple ALAC
+    # Using http://svn.macosforge.org/repository/alac/trunk
+    # Revision: 4
+    # (2012-12-12 22:09:07 +0000 (Wed, 12 Dec 2012))
+    conf.env.INCLUDES_ALAC_APPLE = [
+        'thirdparty/apple_alac/codec/',
+        ]
+
     # Setup ALAC lib options
     conf.env.INCLUDES_ALAC = [
         'thirdparty/alac_decoder',
@@ -384,9 +392,10 @@ def build(bld):
                 'OpenHome/Av/Raop/SourceRaop.cpp',
                 'OpenHome/Av/Raop/ProtocolRaop.cpp',
                 'OpenHome/Av/Raop/UdpServer.cpp',
-                'OpenHome/Av/Raop/CodecRaop.cpp'
+                'OpenHome/Av/Raop/CodecRaop.cpp',
+                'OpenHome/Av/Raop/CodecRaopApple.cpp',
             ],
-            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'CodecAlacBase'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'CodecAlacBase', 'CodecAlacAppleBase'],
             target='SourceRaop')
 
     # Library
@@ -463,6 +472,28 @@ def build(bld):
             use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
             shlib=['m'],
             target='CodecFlac')
+
+    # AlacAppleBase
+    bld.stlib(
+            source=[
+                 'OpenHome/Media/Codec/AlacAppleBase.cpp',
+                 'thirdparty/apple_alac/codec/ag_dec.c',
+                 'thirdparty/apple_alac/codec/ALACDecoder.cpp',
+                 'thirdparty/apple_alac/codec/ALACBitUtilities.c',
+                 'thirdparty/apple_alac/codec/dp_dec.c',
+                 'thirdparty/apple_alac/codec/EndianPortable.c',
+                 'thirdparty/apple_alac/codec/matrix_dec.c',
+            ],
+            use=['ALAC_APPLE', 'OHNET', 'ohMediaPlayer'],
+            target='CodecAlacAppleBase')
+
+    # AlacApple
+    bld.stlib(
+            source=[
+                 'OpenHome/Media/Codec/AlacApple.cpp',
+            ],
+            use=['CodecAlacAppleBase', 'OHNET'],
+            target='CodecAlacApple')
 
     # AlacBase
     bld.stlib(
@@ -687,7 +718,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestRaop.cpp',
                 'OpenHome/Av/Tests/TestVolumeManager.cpp',
             ],
-            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'TestFramework', 'OHNET', 'OPENSSL'],
+            use=['ConfigUi', 'WebAppFramework', 'ohMediaPlayer', 'WebAppFramework', 'CodecFlac', 'CodecWav', 'CodecPcm', 'CodecAlac', 'CodecAlacApple', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecMp3', 'CodecVorbis', 'TestFramework', 'OHNET', 'OPENSSL'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -1034,6 +1065,8 @@ def bundle(ctx):
                  'CodecAifc',
                  'CodecAiff',
                  'CodecAiffBase',
+                 'CodecAlacAppleBase',
+                 'CodecAlacApple',
                  'CodecAlac',
                  'CodecAlacBase',
                  'CodecFlac',
