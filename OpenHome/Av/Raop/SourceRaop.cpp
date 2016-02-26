@@ -14,6 +14,7 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaop.h>
+#include <OpenHome/Av/Raop/CodecRaopApple.h>
 #include <OpenHome/Media//ClockPullerUtilisation.h>
 
 #include <limits.h>
@@ -102,7 +103,9 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 
     iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), *iRaopDiscovery, *iRaopDiscovery, iServerManager, iAudioId, iControlId);   // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
-    iPipeline.Add(new CodecRaop());
+    // Only one RAOP codec should be added. Only the first will be used.
+    //iPipeline.Add(new CodecRaop());
+    iPipeline.Add(new CodecRaopApple());
     iPipeline.AddObserver(*this);
 
     SocketUdpServer& serverAudio = iServerManager.Find(iAudioId);
