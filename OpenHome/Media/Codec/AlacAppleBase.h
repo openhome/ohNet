@@ -29,7 +29,7 @@ protected:
     void Initialise();
     void Decode();
 private:
-    static EMediaDataEndian Endianness();
+    EMediaDataEndian Endianness() const;
 protected:
     ALACDecoder iDecoder;
     Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iInBuf;

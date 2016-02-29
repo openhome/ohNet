@@ -93,10 +93,15 @@ void CodecAlacAppleBase::Decode()
     iDecodedBuf.SetBytes(0);
 }
 
-EMediaDataEndian CodecAlacAppleBase::Endianness()
+EMediaDataEndian CodecAlacAppleBase::Endianness() const
 {
-    // Apple's ALAC implementation outputs samples in platform endianness, so
-    // use this to select correct endianness.
+    // Apple's ALAC implementation output endianness seems to be
+    // platform-dependent, except for 24-bit output which always appears to be
+    // little-endian.
+    if (iBitDepth == 24) {
+        return EMediaDataEndian::EMediaDataEndianLittle;
+    }
+
 #ifdef DEFINE_BIG_ENDIAN
     return EMediaDataEndian::EMediaDataEndianBig;
 #else
