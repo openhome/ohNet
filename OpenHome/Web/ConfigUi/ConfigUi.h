@@ -275,7 +275,7 @@ public:
 class IConfigUiVal
 {
 public:
-    virtual void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) = 0;
+    virtual void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) = 0;   // THROWS WriterError
     virtual TUint AddObserver(IConfigUiValObserver& aObserver) = 0;
     virtual void RemoveObserver(TUint aObserverId) = 0;
     virtual ~IConfigUiVal() {}

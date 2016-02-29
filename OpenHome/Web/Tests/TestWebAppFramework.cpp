@@ -437,6 +437,7 @@ void HelperDynamicTabAllocator::Deallocate(ITabMessage& aMessage)
     auto it = iMsgs.begin();
     for (; it != iMsgs.end(); ++it) {
         if (*it == &aMessage) {
+            delete *it;
             (void)iMsgs.erase(it);
             return;
         }
