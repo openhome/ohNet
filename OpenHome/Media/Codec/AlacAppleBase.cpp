@@ -25,6 +25,12 @@ const Brn CodecAlacAppleBase::kCodecAlac("ALAC");
 CodecAlacAppleBase::CodecAlacAppleBase(const TChar* aId)
     : CodecBase(aId)
 {
+    // valgrind notices the decoder accessing bits that are uninitialised:
+    // we need to initialise this iInBuf's memory to prevent valgrind errors.
+    iInBuf.SetBytes(iInBuf.MaxBytes());
+    iInBuf.FillZ();
+    iInBuf.SetBytes(0);
+
     LOG(kCodec, "CodecAlacAppleBase::CodecAlacAppleBase\n");
 }
 
