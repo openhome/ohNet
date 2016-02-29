@@ -153,7 +153,7 @@ public:
     ~FrameworkTabHandler();
 private: // from IFrameworkTabHandler
     void Send(ITabMessage& aMessage) override;
-    void LongPoll(IWriter& aWriter) override;
+    void LongPoll(IWriter& aWriter) override;   // THROWS WriterError.
     void Enable() override;  // Allow new polls/sends to take place.
     void Disable() override; // Cancel blocking send and clear FIFO.
 private: // from IFrameworkTimerHandler
@@ -213,7 +213,7 @@ public:
     virtual void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages) = 0;
     virtual void Clear() = 0;   // Terminates any blocking sends or outstanding timers.
     virtual void Receive(const Brx& aMessage) = 0;
-    virtual void LongPoll(IWriter& aWriter) = 0;    // Terminates poll timer on entry; restarts poll timer on exit.
+    virtual void LongPoll(IWriter& aWriter) = 0;    // Terminates poll timer on entry; restarts poll timer on exit. THROWS WriterError.
     virtual ~IFrameworkTab() {}
 };
 
@@ -231,7 +231,7 @@ public: // from IFrameworkTab
     void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages) override;
     void Clear() override;   // Terminates any blocking sends or outstanding timers.
     void Receive(const Brx& aMessage) override;
-    void LongPoll(IWriter& aWriter) override;    // Terminates poll timer on entry; restarts poll timer on exit.
+    void LongPoll(IWriter& aWriter) override;    // Terminates poll timer on entry; restarts poll timer on exit. THROWS WriterError.
 private: // from ITabHandler
     void Send(ITabMessage& aMessage) override;
 private: // from IFrameworkTimerHandler
@@ -261,7 +261,7 @@ public: // from IFrameworkTab
     void CreateTab(TUint aSessionId, ITabCreator& aTabCreator, ITabDestroyHandler& aDestroyHandler, const std::vector<char*>& aLanguages) override;
     void Clear() override;
     void Receive(const Brx& aMessage) override;
-    void LongPoll(IWriter& aWriter) override;
+    void LongPoll(IWriter& aWriter) override;   // THROWS WriterError.
 private:
     FrameworkSemaphore iSemRead;
     FrameworkSemaphore iSemWrite;
@@ -282,7 +282,7 @@ public:
     virtual TUint CreateTab(ITabCreator& aTabCreator, const std::vector<char*>& aLanguageList) = 0;    // Returns tab ID; THROWS TabManagerFull, TabAllocatorFull.
 
     // Following calls may all throw InvalidTabId.
-    virtual void LongPoll(TUint aId, IWriter& aWriter) = 0;  // Will block until something is written or poll timeout.
+    virtual void LongPoll(TUint aId, IWriter& aWriter) = 0;  // Will block until something is written or poll timeout. THROWS WriterError on write failure.
     virtual void Receive(TUint aId, const Brx& aMessage) = 0;
     virtual ~ITabManager() {}
 };
@@ -295,7 +295,7 @@ public:
     void Disable(); // Terminate any blocking LongPoll calls and prevent any new tabs from being created.
 public: // from ITabManager
     TUint CreateTab(ITabCreator& aTabCreator, const std::vector<char*>& aLanguageList) override;
-    void LongPoll(TUint aId, IWriter& aWriter) override;
+    void LongPoll(TUint aId, IWriter& aWriter) override;    // THROWS WriterError.
     void Receive(TUint aId, const Brx& aMessage) override;
     void Destroy(TUint aId) override;
 private:

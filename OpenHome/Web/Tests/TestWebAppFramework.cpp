@@ -22,9 +22,13 @@ class HelperTabMessage;
 class HelperDynamicTabAllocator : public IHelperTabDeallocator
 {
 public:
+    HelperDynamicTabAllocator();
+    ~HelperDynamicTabAllocator();
     HelperTabMessage& Allocate();
 public: // from IHelperTabDeallocator
     void Deallocate(ITabMessage& aMessage);
+private:
+    std::vector<HelperTabMessage*> iMsgs;
 };
 
 class HelperTabMessage : public ITabMessage, public OpenHome::INonCopyable
@@ -126,6 +130,14 @@ private:
     ITestPipeWritable& iTestPipe;
 };
 
+class MockWriterThrowsWriterError : public OpenHome::IWriter
+{
+public: // from IWriter
+    void Write(TByte aValue) override;
+    void Write(const OpenHome::Brx& aBuffer) override;
+    void WriteFlush() override;
+};
+
 class SuiteFrameworkTabHandler : public OpenHome::TestFramework::SuiteUnitTest
 {
 public:
@@ -147,6 +159,7 @@ private:
     void TestBlockingSendMultipleMessages();
     void TestBlockingSendQueueFull();
     void TestBlockingSendNewMessageQueued();
+    void TestWriterError();
 private:
     void LongPollThread();
 private:
@@ -395,15 +408,41 @@ using namespace OpenHome::Web::Test;
 
 // HelperDynamicTabAllocator
 
+HelperDynamicTabAllocator::HelperDynamicTabAllocator()
+{
+}
+
+HelperDynamicTabAllocator::~HelperDynamicTabAllocator()
+{
+    if (iMsgs.size() > 0) {
+        Log::Print("~HelperDynamicTabAllocator msgs not deallocated:\n");
+        for (auto* m : iMsgs) {
+            Log::Print("\t%p\n", m);
+        }
+        Log::Print("\n");
+
+        ASSERTS();  // All msgs must have been deallocated.
+    }
+}
+
 HelperTabMessage& HelperDynamicTabAllocator::Allocate()
 {
     HelperTabMessage* msg = new HelperTabMessage(*this);
+    iMsgs.push_back(msg);
     return *msg;
 }
 
 void HelperDynamicTabAllocator::Deallocate(ITabMessage& aMessage)
 {
-    delete &aMessage;
+    auto it = iMsgs.begin();
+    for (; it != iMsgs.end(); ++it) {
+        if (*it == &aMessage) {
+            (void)iMsgs.erase(it);
+            return;
+        }
+    }
+
+    ASSERTS();  // Couldn't find aMessage in list of allocated msgs.
 }
 
 
@@ -465,6 +504,24 @@ void HelperBufferWriter::WriteFlush()
 }
 
 
+// MockWriterThrowsWriterError
+
+void MockWriterThrowsWriterError::Write(TByte /*aValue*/)
+{
+    THROW(WriterError);
+}
+
+void MockWriterThrowsWriterError::Write(const Brx& /*aBuffer*/)
+{
+    THROW(WriterError);
+}
+
+void MockWriterThrowsWriterError::WriteFlush()
+{
+    THROW(WriterError);
+}
+
+
 // SuiteFrameworkTabHandler
 
 SuiteFrameworkTabHandler::SuiteFrameworkTabHandler()
@@ -479,6 +536,7 @@ SuiteFrameworkTabHandler::SuiteFrameworkTabHandler()
     AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestBlockingSendMultipleMessages), "TestBlockingSendMultipleMessages");
     AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestBlockingSendQueueFull), "TestBlockingSendQueueFull");
     AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestBlockingSendNewMessageQueued), "TestBlockingSendNewMessageQueued");
+    AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestWriterError), "TestWriterError");
 }
 
 void SuiteFrameworkTabHandler::Setup()
@@ -707,6 +765,30 @@ void SuiteFrameworkTabHandler::TestBlockingSendNewMessageQueued()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal READ")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+    TEST(iTestPipe->ExpectEmpty());
+}
+
+void SuiteFrameworkTabHandler::TestWriterError()
+{
+    IFrameworkTabHandler& tabHandler = *iTabHandler;
+    tabHandler.Enable();
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Clear READ")));
+
+    // Allocate and send msg.
+    HelperTabMessage& msg = iTabAllocator->Allocate();
+    msg.Set(0);
+    tabHandler.Send(msg);
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait WRITE")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal READ")));
+
+    // Now, attempt to long-poll tab handler with an IWriter that will throw a WriterError (to simulate a network error).
+    MockWriterThrowsWriterError writer;
+    TEST_THROWS(tabHandler.LongPoll(writer), WriterError);
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Start 5")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+
     TEST(iTestPipe->ExpectEmpty());
 }
 

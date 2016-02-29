@@ -82,17 +82,26 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
             }
 
             ITabMessage* msg = iFifo.Read();
-            if (!msgOutput) {
-                // Now committed to sending a msg in response to this lp.
-                // Cancel timer and clear polling statei.
-                iTimer.Cancel();
-                aWriter.Write(Brn("["));
-                msgOutput = true;
+            try {
+                if (!msgOutput) {
+                    // Now committed to sending a msg in response to this lp.
+                    // Cancel timer and clear polling state.
+                    iTimer.Cancel();
+                    aWriter.Write(Brn("["));
+                    msgOutput = true;
+                }
+                msg->Send(aWriter);
+                // All but last msg should be followed by "," in a JSON array.
+                if (iFifo.SlotsUsed() > 0) {
+                    aWriter.Write(Brn(","));
+                }
             }
-            msg->Send(aWriter);
-            // All but last msg should be followed by "," in a JSON array.
-            if (iFifo.SlotsUsed() > 0) {
-                aWriter.Write(Brn(","));
+            catch (WriterError&) {
+                // Destroy msg and rethrow so that higher level can take
+                // appropriate action.
+                msg->Destroy();
+                iSemWrite.Signal();
+                throw;
             }
             msg->Destroy();
             iSemWrite.Signal();
