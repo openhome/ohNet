@@ -75,6 +75,7 @@ public:
     static const TUint kServerPortDefault = 2323;
 public:
     Shell(Environment& aStack, TUint aPort=kServerPortDefault);
+    Shell(Environment& aStack, TUint aPort, TUint aSessionPriority);
     ~Shell();
     TUint Port() const;
 public: // from IShell
@@ -83,6 +84,8 @@ public: // from IShell
 private: // from IShellCommandHandler
     void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
     void DisplayHelp(IWriter& aResponse);
+private:
+    void Initialise(Environment& aEnv, TUint aPort, TUint aSessionPriority);
 private:
     Mutex iLock;
     SocketTcpServer* iServer;
