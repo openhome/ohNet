@@ -9,12 +9,15 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
 
+#include <functional>
+
 EXCEPTION(ResourceInvalid);
 EXCEPTION(TabAllocatorFull);    // Thrown by an IWebApp when its allocator is full.
 EXCEPTION(TabManagerFull);
 EXCEPTION(InvalidTabId);
 EXCEPTION(TabAllocated);
 EXCEPTION(InvalidAppPrefix);
+EXCEPTION(WebAppServiceUnavailable);
 
 
 namespace OpenHome {
@@ -347,6 +350,8 @@ private:
     FunctorPresentationUrl iFunctor;
 };
 
+class HttpSession;
+
 // FIXME - handle redirects from "/" to "/index.html"? - job of resource handler
 class WebAppFramework : public IWebAppFramework, public IWebAppManager, public IResourceManager, public IServer
 {
@@ -397,6 +402,7 @@ private:
     // FIXME - what if this is created with a max of 4 tabs and an app is added that is only capable of creating 3 apps and 4 clients try to load apps?
 
     WebAppMap iWebApps; // FIXME - need comparator
+    std::vector<std::reference_wrapper<HttpSession>> iSessions;
     TBool iStarted;
     NetworkAdapter* iCurrentAdapter;
 };
@@ -416,7 +422,8 @@ private:
 public:
     HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabManager& aTabManager, IResourceManager& aResourceManager);
     ~HttpSession();
-    void Start();   // FIXME - Until this is called, return a service (temporarily) unavailable status?
+    // Will return 503 (Service Unavailable) to all requests until StartSession() is called.
+    void StartSession();    // Avoid clash with SocketTcpSession::Start().
 private: // from SocketTcpSession
     void Run();
 private:
@@ -445,6 +452,8 @@ private:
     TBool iResponseEnded;
     TBool iResourceWriterHeadersOnly;
     TUint iUpdateCount;
+    TBool iStarted;
+    Mutex iLock;
 };
 
 class MimeUtils

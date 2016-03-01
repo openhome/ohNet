@@ -390,6 +390,8 @@ private:
     void TestInterface();
     void TestPresentationUrl();
     void TestDeleteWhileClientTabOpen();
+    void TestGetStaticResourceBeforeStarted();
+    void TestPostLongPollRequestBeforeStarted();
 private:
     Environment& iEnv;
     Bws<Uri::kMaxUriBytes> iPresentationUrl;
@@ -1969,6 +1971,8 @@ SuiteWebAppFramework::SuiteWebAppFramework(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteWebAppFramework::TestInterface), "TestInterface");
     AddTest(MakeFunctor(*this, &SuiteWebAppFramework::TestPresentationUrl), "TestPresentationUrl");
     AddTest(MakeFunctor(*this, &SuiteWebAppFramework::TestDeleteWhileClientTabOpen), "TestDeleteWhileClientTabOpen");
+    AddTest(MakeFunctor(*this, &SuiteWebAppFramework::TestGetStaticResourceBeforeStarted), "TestGetStaticResourceBeforeStarted");
+    AddTest(MakeFunctor(*this, &SuiteWebAppFramework::TestPostLongPollRequestBeforeStarted), "TestPostLongPollRequestBeforeStarted");
 }
 
 void SuiteWebAppFramework::Setup()
@@ -1977,7 +1981,6 @@ void SuiteWebAppFramework::Setup()
     iFramework = new WebAppFramework(iEnv);
     TestHelperWebApp* webApp = new TestHelperWebApp();
     iFramework->Add(webApp, MakeFunctorGeneric(*this, &SuiteWebAppFramework::PresentationUrlChanged));
-    iFramework->Start();
 }
 
 void SuiteWebAppFramework::TearDown()
@@ -1992,16 +1995,18 @@ void SuiteWebAppFramework::PresentationUrlChanged(const Brx& aUrl)
 
 void SuiteWebAppFramework::TestPort()
 {
-
+    iFramework->Start();
 }
 
 void SuiteWebAppFramework::TestInterface()
 {
-
+    iFramework->Start();
 }
 
 void SuiteWebAppFramework::TestPresentationUrl()
 {
+    iFramework->Start();
+
     Bws<Uri::kMaxUriBytes> expectedUrl;
     expectedUrl.Append("http://");
     Endpoint ep(iFramework->Port(), iFramework->Interface());
@@ -2019,6 +2024,8 @@ void SuiteWebAppFramework::TestPresentationUrl()
 
 void SuiteWebAppFramework::TestDeleteWhileClientTabOpen()
 {
+    iFramework->Start();
+
     TestHelperHttpReader httpReader(iEnv);
 
     Bws<Uri::kMaxUriBytes> lpUrl;
@@ -2040,6 +2047,41 @@ void SuiteWebAppFramework::TestDeleteWhileClientTabOpen()
     httpReader.Close();
 
     // Tab should be automatically de-allocated if long-poll times out.
+}
+
+void SuiteWebAppFramework::TestGetStaticResourceBeforeStarted()
+{
+    // Don't start framework, and try request a static resource.
+
+    TestHelperHttpReader httpReader(iEnv);
+    Uri uri(iPresentationUrl);  // Assume this is set when App is added (and not after Start() call.)
+
+    // This does a get. Should get a 503 (Service Unavailable) if Start() has not been called.
+    TUint code = httpReader.Connect(uri, TestHelperHttpReader::EGet);
+    TEST(code == HttpStatus::kServiceUnavailable.Code());
+    httpReader.Close();
+}
+
+void SuiteWebAppFramework::TestPostLongPollRequestBeforeStarted()
+{
+    // Don't start framework, and try start a long poll request.
+
+    // Construct long-poll request URL.
+    Bws<Uri::kMaxUriBytes> lpUrl;
+    lpUrl.Append("http://");
+    Endpoint ep(iFramework->Port(), iFramework->Interface());
+    ep.AppendEndpoint(lpUrl);
+    lpUrl.Append("/");
+    lpUrl.Append(TestHelperWebApp::kPrefix);
+    lpUrl.Append("/lpcreate");
+
+    TestHelperHttpReader httpReader(iEnv);
+    Uri uri(lpUrl);
+
+    // This does a post. Should get a 503 (Service Unavailable) if Start() has not been called.
+    TUint code = httpReader.Connect(uri, TestHelperHttpReader::EPost);
+    TEST(code == HttpStatus::kServiceUnavailable.Code());
+    httpReader.Close();
 }
 
 

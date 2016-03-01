@@ -16,6 +16,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
+#include <functional>
 #include <limits>
 
 using namespace OpenHome;
@@ -631,9 +632,12 @@ WebAppFramework::~WebAppFramework()
 
 void WebAppFramework::Start()
 {
-    // FIXME - lock here?
     ASSERT(iWebApps.size() > 0);
+    ASSERT(!iStarted);
     iStarted = true;
+    for (HttpSession& s : iSessions) {
+        s.StartSession();
+    }
 }
 
 TUint WebAppFramework::Port() const
@@ -716,7 +720,9 @@ void WebAppFramework::AddSessions()
     for (TUint i=0; i<iMaxLpSessions+kSpareSessions; i++) {
         Bws<kMaxSessionNameBytes> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
-        iServer->Add(name.PtrZ(), new HttpSession(iEnv, *this, *iTabManager, *this));
+        auto* session = new HttpSession(iEnv, *this, *iTabManager, *this);
+        iSessions.push_back(*session);
+        iServer->Add(name.PtrZ(), session);
     }
 }
 
@@ -764,6 +770,8 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     , iResponseEnded(false)
     , iResourceWriterHeadersOnly(false)
     , iUpdateCount(0)
+    , iStarted(false)
+    , iLock("HTSL")
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderUntilPreChunker = new ReaderUntilS<kMaxRequestBytes>(*iReadBuffer);
@@ -796,6 +804,12 @@ HttpSession::~HttpSession()
     delete iReadBuffer;
 }
 
+void HttpSession::StartSession()
+{
+    AutoMutex a(iLock);
+    iStarted = true;
+}
+
 void HttpSession::Run()
 {
     iErrorStatus = &HttpStatus::kOk;
@@ -824,6 +838,20 @@ void HttpSession::Run()
 
         iReaderChunked->SetChunked(iHeaderTransferEncoding.IsChunked());
 
+        {
+            /* TCP server is already active (and can't be temporarily deactivated),
+            * even if !iStarted.
+            * So, it is possible that, e.g., an existing web session, attempts to
+            * access a web app before a new device with the same IP address is
+            * fully initialised.
+            * Report a 503 (Service Unavailable) in that case.
+            */
+            AutoMutex a(iLock);
+            if (!iStarted) {
+                THROW(WebAppServiceUnavailable);
+            }
+        }
+
         if (method == Http::kMethodGet) {
             Get();
         }
@@ -849,6 +877,9 @@ void HttpSession::Run()
         if (iErrorStatus == &HttpStatus::kOk) {
             iErrorStatus = &HttpStatus::kBadRequest;
         }
+    }
+    catch (WebAppServiceUnavailable&) {
+        iErrorStatus = &HttpStatus::kServiceUnavailable;
     }
     catch (WriterError&) {
     }
@@ -1001,7 +1032,7 @@ void HttpSession::Post()
             catch (InvalidTabId&) {
                 Error(HttpStatus::kNotFound);
             }
-            catch(WriterError&) {
+            catch (WriterError&) {
                 iTabManager.Destroy(sessionId);
                 THROW(WriterError);
             }
