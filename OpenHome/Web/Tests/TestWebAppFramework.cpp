@@ -159,7 +159,7 @@ private:
     void TestBlockingSendMultipleMessages();
     void TestBlockingSendQueueFull();
     void TestBlockingSendNewMessageQueued();
-    void TestWriterError();
+    void TestWriterDisconnected();
 private:
     void LongPollThread();
 private:
@@ -537,7 +537,7 @@ SuiteFrameworkTabHandler::SuiteFrameworkTabHandler()
     AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestBlockingSendMultipleMessages), "TestBlockingSendMultipleMessages");
     AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestBlockingSendQueueFull), "TestBlockingSendQueueFull");
     AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestBlockingSendNewMessageQueued), "TestBlockingSendNewMessageQueued");
-    AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestWriterError), "TestWriterError");
+    AddTest(MakeFunctor(*this, &SuiteFrameworkTabHandler::TestWriterDisconnected), "TestWriterDisconnected");
 }
 
 void SuiteFrameworkTabHandler::Setup()
@@ -769,7 +769,7 @@ void SuiteFrameworkTabHandler::TestBlockingSendNewMessageQueued()
     TEST(iTestPipe->ExpectEmpty());
 }
 
-void SuiteFrameworkTabHandler::TestWriterError()
+void SuiteFrameworkTabHandler::TestWriterDisconnected()
 {
     IFrameworkTabHandler& tabHandler = *iTabHandler;
     tabHandler.Enable();
