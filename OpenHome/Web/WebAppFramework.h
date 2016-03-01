@@ -451,7 +451,6 @@ private:
     TBool iResponseStarted;
     TBool iResponseEnded;
     TBool iResourceWriterHeadersOnly;
-    TUint iUpdateCount;
     TBool iStarted;
     Mutex iLock;
 };

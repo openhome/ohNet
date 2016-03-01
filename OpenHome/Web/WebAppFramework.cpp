@@ -769,7 +769,6 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     , iResponseStarted(false)
     , iResponseEnded(false)
     , iResourceWriterHeadersOnly(false)
-    , iUpdateCount(0)
     , iStarted(false)
     , iLock("HTSL")
 {
