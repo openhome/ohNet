@@ -27,6 +27,7 @@ public:
 class WriterShellResponse : public IWriter
 {
     static const TUint kWriteBufferSizeBytes = 1024;
+    static const Brn kCrLf;
 public:
     WriterShellResponse(IWriter& aWriter);
     ~WriterShellResponse();

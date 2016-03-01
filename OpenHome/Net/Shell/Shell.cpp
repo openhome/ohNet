@@ -1,5 +1,6 @@
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -7,6 +8,8 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // WriterShellResponse
+
+const Brn WriterShellResponse::kCrLf("\r\n");
 
 WriterShellResponse::WriterShellResponse(IWriter& aWriter)
 {
@@ -30,11 +33,27 @@ void WriterShellResponse::Write(TByte aValue)
 
 void WriterShellResponse::Write(const Brx& aBuffer)
 {
-    const TUint bytes = aBuffer.Bytes();
-    for (TUint i=0; i<bytes; i++) {
-        Write(aBuffer[i]);
+    Brn buf(aBuffer);
+    for (;;) {
+        const TUint index = Ascii::IndexOf(buf, '\n');
+        if (index == buf.Bytes()) {
+            if (buf.Bytes() > 0) {
+                iWriteBuffer->Write(buf);
+            }
+            break;
+        }
+        Brn line(buf.Ptr(), index+1);
+        buf.Set(buf.Ptr()+index+1, buf.Bytes()-index-1);
+        TBool writeNewline = false;
+        if (index == 0 || line[index-1] != '\r') {
+            line.Set(line.Ptr(), line.Bytes()-1);
+            writeNewline = true;
+        }
+        iWriteBuffer->Write(line);
+        if (writeNewline) {
+            iWriteBuffer->Write(kCrLf);
+        }
     }
-    WriteFlush();
 }
 
 void WriterShellResponse::WriteFlush()
@@ -97,6 +116,7 @@ void ShellSession::Run()
                 args.push_back(arg);
             }
             iCommandHandler.HandleShellCommand(command, args, *iWriterResponse);
+            iWriterResponse->WriteFlush();
         }
         catch (ReaderError&) {
             break;
