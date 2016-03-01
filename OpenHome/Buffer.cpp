@@ -310,8 +310,9 @@ TBool Bwx::TryAppend(const Brx& aB)
 void Bwx::Append(const Brx& aB)
 {
     const TByte* ptr = aB.Ptr();
-    ASSERT(ptr != NULL);
-    Append(ptr, aB.Bytes());
+    if (ptr != NULL) {
+        Append(ptr, aB.Bytes());
+    }
 }
 
 TBool Bwx::TryAppend(const TByte* aPtr, TUint aBytes)
