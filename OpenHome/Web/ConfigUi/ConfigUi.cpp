@@ -629,6 +629,7 @@ void ConfigUiValRoUpdatable::ObserverAdded(IConfigUiValObserver& aObserver)
 
 void ConfigUiValRoUpdatable::UpdateJsonValLocked()
 {
+    iJsonValue.SetBytes(0);
     WriterBuffer writerBuf(iJsonValue);
     writerBuf.Write('\"');
     Json::Escape(writerBuf, iValue);
