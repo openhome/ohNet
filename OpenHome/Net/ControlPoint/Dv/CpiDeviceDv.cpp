@@ -454,8 +454,9 @@ void PropertyWriterDv::Release()
 
 void OutputProcessorDv::ProcessString(const Brx& aBuffer, Brhz& aVal)
 {
-    TUint bytes = aBuffer.Bytes();
+    TUint bytes = aVal.Bytes() + aBuffer.Bytes();
     Bwh tmp(bytes + 1);
+    tmp.Append(aVal);
     tmp.Append(aBuffer);
     tmp.Append((TByte)0);
     tmp.SetBytes(bytes);
@@ -482,9 +483,8 @@ void OutputProcessorDv::ProcessBool(const Brx& aBuffer, TBool& aVal)
 
 void OutputProcessorDv::ProcessBinary(const Brx& aBuffer, Brh& aVal)
 {
-    Bwh tmp(aBuffer.Bytes());
-    if (aBuffer.Bytes() > 0) {
-        tmp.Append(aBuffer);
-    }
+    Bwh tmp(aVal.Bytes() + aBuffer.Bytes());
+    tmp.Append(aVal);
+    tmp.Append(aBuffer);
     tmp.TransferTo(aVal);
 }

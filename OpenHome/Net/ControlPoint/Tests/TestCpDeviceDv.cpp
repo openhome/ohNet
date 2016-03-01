@@ -111,7 +111,13 @@ void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvo
 void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
 {
     aInvocation.StartResponse();
-    aResult.Write(aValue);
+    // validate that string response can be streamed over multiple calls
+    Brn start(aValue);
+    const TUint pos = start.Bytes() / 2;
+    Brn end = start.Split(pos);
+    start.Set(start.Ptr(), pos);
+    aResult.Write(start);
+    aResult.Write(end);
     aResult.WriteFlush();
     aInvocation.EndResponse();
 }
@@ -119,7 +125,13 @@ void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue
 void ProviderTestBasic::EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult)
 {
     aInvocation.StartResponse();
-    aResult.Write(aValue);
+    // validate that binary response can be streamed over multiple calls
+    Brn start(aValue);
+    const TUint pos = start.Bytes() / 2;
+    Brn end = start.Split(pos);
+    start.Set(start.Ptr(), pos);
+    aResult.Write(start);
+    aResult.Write(end);
     aResult.WriteFlush();
     aInvocation.EndResponse();
 }
