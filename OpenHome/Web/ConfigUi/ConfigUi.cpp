@@ -610,20 +610,14 @@ ConfigUiValRoUpdatable::ConfigUiValRoUpdatable(const Brx& aKey, const Brx& aValu
     , iValue(aValue)
     , iLock("CURL")
 {
+    UpdateJsonValLocked();
 }
 
 void ConfigUiValRoUpdatable::Update(const Brx& aValue)
 {
     AutoMutex a(iLock);
     iValue.Replace(aValue);
-
-    // Update JSON string.
-    iJsonValue.SetBytes(0);
-    WriterBuffer writerBuf(iJsonValue);
-    writerBuf.Write('\"');
-    Json::Escape(writerBuf, iValue);
-    writerBuf.Write('\"');
-
+    UpdateJsonValLocked();
     ValueChanged(iJsonValue);
 }
 
@@ -631,6 +625,14 @@ void ConfigUiValRoUpdatable::ObserverAdded(IConfigUiValObserver& aObserver)
 {
     AutoMutex a(iLock);
     aObserver.ValueChanged(*this, iJsonValue);
+}
+
+void ConfigUiValRoUpdatable::UpdateJsonValLocked()
+{
+    WriterBuffer writerBuf(iJsonValue);
+    writerBuf.Write('\"');
+    Json::Escape(writerBuf, iValue);
+    writerBuf.Write('\"');
 }
 
 

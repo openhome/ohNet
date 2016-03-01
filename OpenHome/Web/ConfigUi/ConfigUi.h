@@ -353,6 +353,8 @@ public:
 private: // from ConfigUiValRoBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;
 private:
+    void UpdateJsonValLocked();
+private:
     Bws<kMaxValueBytes> iValue;
     Bws<kMaxValueBytes> iJsonValue;
     Mutex iLock;
