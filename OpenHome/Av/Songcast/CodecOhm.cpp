@@ -75,13 +75,17 @@ void CodecOhm::Process()
         }
 
         if (msg->Samples() > 0) {
-            const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
+            if (iTrackOffset == 0) {
+                iTrackOffset = jiffiesPerSample * msg->SampleStart();
+            }
             if (msg->RxTimestamped() && msg->Timestamped()) {
                 TUint rxTstamp = (iTsMapper != nullptr) ? iTsMapper->ToOhmTimestamp(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
-                iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart, rxTstamp, msg->NetworkTimestamp());
+                iTrackOffset += iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(),
+                                                            EMediaDataEndianBig, iTrackOffset, rxTstamp, msg->NetworkTimestamp());
             }
             else {
-                iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart);
+                iTrackOffset += iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(),
+                                                            EMediaDataEndianBig, iTrackOffset);
             }
         }
     }
@@ -149,4 +153,5 @@ void CodecOhm::Reset()
     iStreamOutput = false;
     iSampleRate = 0;
     iLatency = 0;
+    iTrackOffset = 0;
 }
