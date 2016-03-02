@@ -179,6 +179,7 @@ WebUi = function() {
 
     LongPoll.prototype.SendUpdate = function(aString, aCallbackResponse, aCallbackError)
     {
+        console.log("LongPoll.SendUpdate " + aString);
         var request = new HttpRequest();
         var sessionId = this.ConstructSessionId();
 
