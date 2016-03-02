@@ -1032,7 +1032,14 @@ void HttpSession::Post()
                 Error(HttpStatus::kNotFound);
             }
             catch (WriterError&) {
-                iTabManager.Destroy(sessionId);
+                try {
+                    iTabManager.Destroy(sessionId);
+                }
+                catch (InvalidTabId&) {
+                    // Don't set error state to kNotFound.
+                    // Just fall through to WriterError;
+                    //Error(HttpStatus::kNotFound);
+                }
                 THROW(WriterError);
             }
         }
