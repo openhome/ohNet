@@ -2,7 +2,7 @@
                 individual tests)  SoftPlayer(s) as DUT(s)
 
 Parameters:
-    arg#1 - mode: 'clean' to pull source from git and rebuild; 'incremental' to use local source + build
+    arg#1 - clean/nobuild (pull/clean/build vs. use pre-existing source/deps/executable)
     arg#2 - [Optional] log directory
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s).
@@ -35,7 +35,7 @@ except:
     # noinspection PyProtectedMember
     os._exit( -1 )
 
-if mode not in ['incremental', 'clean']:
+if mode not in ['nobuild', 'clean']:
     print( '\n%s\n' % __doc__ )
     print( 'Invalid mode: %s' % mode )
     # noinspection PyProtectedMember
