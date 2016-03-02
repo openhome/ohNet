@@ -36,6 +36,7 @@ private:
     TUint iSampleRate;
     TUint iLatency;
     IOhmTimestampMapper* iTsMapper;
+    TUint64 iTrackOffset;
 };
 
 } // namespace Av
