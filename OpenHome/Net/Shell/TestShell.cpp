@@ -93,7 +93,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
 
-    Shell* shell = new Shell(cpStack->Env());
+    Shell* shell = new Shell(cpStack->Env(), Shell::kServerPortDefault, kPriorityHigh);
     Semaphore* blocker = new Semaphore("BLCK", 0);
 
     std::vector<ShellTest> shellTests;
