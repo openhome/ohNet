@@ -24,6 +24,7 @@ const Brn CodecAlacAppleBase::kCodecAlac("ALAC");
 
 CodecAlacAppleBase::CodecAlacAppleBase(const TChar* aId)
     : CodecBase(aId)
+    , iDecoder(nullptr)
 {
     // valgrind notices the decoder accessing bits that are uninitialised:
     // we need to initialise this iInBuf's memory to prevent valgrind errors.
@@ -43,6 +44,7 @@ void CodecAlacAppleBase::Initialise()
 {
     LOG(kCodec, "CodecAlacAppleBase::Initialise\n");
 
+    iDecoder = new ALACDecoder();
     iInBuf.SetBytes(0);
     iDecodedBuf.SetBytes(0);
     iTrackOffset = 0;
@@ -56,6 +58,8 @@ TBool CodecAlacAppleBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 void CodecAlacAppleBase::StreamCompleted()
 {
     LOG(kCodec, "CodecAlacAppleBase::StreamCompleted\n");
+    delete iDecoder;
+    iDecoder = nullptr;
 }
 
 void CodecAlacAppleBase::Decode() 
@@ -68,7 +72,7 @@ void CodecAlacAppleBase::Decode()
     BitBufferInit(&bitBuffer, (uint8_t*)iInBuf.Ptr(), iInBuf.Bytes());
 
     // Use alac decoder to decode a frame at a time.
-    TUint status = iDecoder.Decode(&bitBuffer, (uint8_t*)iDecodedBuf.Ptr(), iFrameLength, iChannels, &outSamples);
+    TUint status = iDecoder->Decode(&bitBuffer, (uint8_t*)iDecodedBuf.Ptr(), iFrameLength, iChannels, &outSamples);
     if (status != ALAC_noErr) {
         LOG(kCodec, "CodecAlacAppleBase::Decode third-party decoder error. status: %d\n", status);
         THROW(CodecStreamCorrupt);
