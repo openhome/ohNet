@@ -31,10 +31,10 @@ Config = function() {
         SendUpdateToServer: function(aKey, aValue, aCallbackResponse, aCallbackError)
         {
             var request = {};
-            request.request = {}
+            request.request = {};
             request.request.type = "update";
-            request.request.key = aKey;
-            request.request.value = aValue;
+            request.request.key = aKey.toString();
+            request.request.value = aValue.toString();  // All values handled as strings on server, irrespective of input type (i.e., num, choice or text).
             WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, aCallbackError);
         },
 
