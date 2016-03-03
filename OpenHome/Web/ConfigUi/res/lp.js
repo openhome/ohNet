@@ -199,7 +199,7 @@ WebUi = function() {
                     aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
-                    aCallbackError(aString);
+                    aCallbackError(aString, request.ResponseText(), request.Status());
                 }
             }
         }
