@@ -79,16 +79,6 @@ Msg* AnalogBypassRamper::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* AnalogBypassRamper::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    return ProcessAudio(aMsg);
-}
-
-Msg* AnalogBypassRamper::ProcessMsg(MsgSilence* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* AnalogBypassRamper::ProcessAudio(MsgAudio* aMsg)
-{
     if (iAnalogBypassEnabled) {
         const TUint rampMultiplier = aMsg->MedianRampMultiplier();
         iVolumeRamper->ApplyVolumeMultiplier(rampMultiplier);
@@ -96,6 +86,14 @@ Msg* AnalogBypassRamper::ProcessAudio(MsgAudio* aMsg)
     else if (iHalted) {
         iHalted = false;
         iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierFull);
+    }
+    return aMsg;
+}
+
+Msg* AnalogBypassRamper::ProcessMsg(MsgSilence* aMsg)
+{
+    if (iAnalogBypassEnabled) {
+        iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierZero);
     }
     return aMsg;
 }
