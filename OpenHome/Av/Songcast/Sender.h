@@ -41,6 +41,7 @@ public:
            IOhmTimestamper* aTimestamper,
            IOhmTimestampMapper* aTsMapper,
            Configuration::IConfigInitialiser& aConfigInit,
+           TUint aThreadPriority,
            const Brx& aName,
            TUint aMinLatencyMs,
            const Brx& aIconFileName);

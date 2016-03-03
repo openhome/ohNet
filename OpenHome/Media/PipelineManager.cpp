@@ -285,6 +285,11 @@ TUint PipelineManager::SenderMinLatencyMs() const
     return iPipeline->SenderMinLatencyMs();
 }
 
+void PipelineManager::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
+{
+    iPipeline->GetThreadPriorityRange(aMin, aMax);
+}
+
 Msg* PipelineManager::Pull()
 {
     return iPipeline->Pull();

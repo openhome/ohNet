@@ -36,6 +36,7 @@ Sender::Sender(Environment& aEnv,
                IOhmTimestamper* aTimestamper,
                IOhmTimestampMapper* aTsMapper,
                Configuration::IConfigInitialiser& aConfigInit,
+               TUint aThreadPriority,
                const Brx& aName,
                TUint aMinLatencyMs,
                const Brx& aIconFileName)
@@ -47,7 +48,8 @@ Sender::Sender(Environment& aEnv,
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
     iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper, aTsMapper);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
-    iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
+    iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aThreadPriority,
+                               aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
 
     iConfigChannel = new ConfigNum(aConfigInit, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
     iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigChannelChanged));

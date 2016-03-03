@@ -72,7 +72,6 @@ class OhmSender
     static const TUint kMaxMetadataBytes = 1000;
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kThreadStackBytesNetwork = 64 * 1024;
-    static const TUint kThreadPriorityNetwork = kPriorityNormal;
     static const TUint kTimerAliveJoinTimeoutMs = 10000;
     static const TUint kTimerAliveAudioTimeoutMs = 3000;
     static const TUint kTimerExpiryTimeoutMs = 10000;
@@ -84,7 +83,9 @@ public:
     static const TUint kMaxTrackMetadataBytes = Ohm::kMaxTrackMetadataBytes;
     static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 public:
-    OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSenderDriver& aDriver, ZoneHandler& aZoneHandler, const Brx& aName, TUint aChannel, TUint aLatency, TBool aMulticast, const Brx& aImageFileName);
+    OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSenderDriver& aDriver,
+              ZoneHandler& aZoneHandler, TUint aThreadPriority, const Brx& aName,
+              TUint aChannel, TUint aLatency, TBool aMulticast, const Brx& aImageFileName);
     ~OhmSender();
 
     void SetName(const Brx& aValue);
