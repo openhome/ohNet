@@ -80,8 +80,13 @@ VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, StoreInt
     iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
     iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
 
-    TUint startupVolume = (iStartupVolumeEnabled? iStartupVolume : iStoreUserVolume.Get());
-    startupVolume *= iMilliDbPerStep;
+    TUint startupVolume;
+    if (iStartupVolumeEnabled) {
+        startupVolume = iStartupVolume * iMilliDbPerStep;
+    }
+    else {
+        startupVolume = iStoreUserVolume.Get();
+    }
     iVolume.SetVolume(startupVolume);
 }
 
