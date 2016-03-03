@@ -1138,17 +1138,6 @@ void HttpSession::Post()
             Error(HttpStatus::kBadRequest);
         }
     }
-    else if (uriTail == Brn("probe")) {
-        ASSERTS(); // FIXME - implement behaviour
-
-        // Allows a client to poll during server failure.
-        // When a response is provided, client should then attempt to reload page.
-
-        // Could just call lpcreate repeatedly, but this is much lower cost.
-
-        // What should be done if a client wishes to open the max+1 tab?
-        // Should they web app display an (overridable) "Maximum number of tabs has been reached; will automatically retry" and continue calling lpcreate (on a, say, 5s timer) until a tab ID is allocated?
-    }
     else {
         Error(HttpStatus::kNotFound);
     }

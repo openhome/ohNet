@@ -92,8 +92,19 @@ WebUi = function() {
         }
     }
 
+    // When "this.SendCreate" is passed into a setTimeout call, in SendCreate()
+    // "this" ends up pointing to a Window object instead of a LongPoll object.
+    // Create this closure to pass into setTimeout to resolve the issue.
+    var CreateRetryFunction = function(aLongPoll)
+    {
+        return function() {
+            aLongPoll.SendCreate();
+        }
+    }
+
     var LongPoll = function(aCallbackStarted, aCallbackSuccess, aCallbackFailure)
     {
+        this.kRetryTimeoutMs = 1000;
         this.iSessionId = 0;    // 0 == invalid
         this.iCallbackStarted = aCallbackStarted;
         this.iCallbackSuccess = aCallbackSuccess;
@@ -152,11 +163,10 @@ WebUi = function() {
             console.log("LongPoll.SendCreate Request sent\n")
         }
         catch (err) { // InvalidStateError
-            // If InvalidStateError, aRequest was not opened.
-            // Try calling SendCreate() again.
-            // FIXME - delay for 5s first?
+            // Failure; retry.
+            // FIXME - pass error up and have something else retry?
             console.log("LongPoll.SendCreate Request failed. Retrying.\n")
-            this.SendCreate();
+            setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
         }
     }
 
@@ -189,7 +199,7 @@ WebUi = function() {
                     aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
-                    aCallbackError(aString);
+                    aCallbackError(aString, request.ResponseText(), request.Status());
                 }
             }
         }
@@ -239,37 +249,17 @@ WebUi = function() {
         // In that case, the terminate call will have reset the state to
         // eCreate. If long polling fails, it will also fall back to being in
         // the eCreate state until a new session is established.
-        var session = null;
-        var sessionVal = null;
-        // if (this.iState == this.EStates.eTerminate) {
-            // return;
-        // }
-        // else if (aRequest.status == 0) {
-            // this.SendCreate();
-        // }
 
-        if (aRequest == null || aRequest.ReadyState() != 4) {
-            return;
-        }
+        if (aRequest != null) {
+            if (aRequest.ReadyState() == 4 && aRequest.Status() == 200) {
+                console.log("LongPoll.ProcessResponse status: " + aRequest.Status() + " responseText " + aRequest.ResponseText());
+                var lines = aRequest.ResponseText().split("\r\n");
+                var request = lines[0];
 
-        console.log("LongPoll.ProcessResponse response: " + aRequest.ResponseText() + "\n");
-        var lines = aRequest.ResponseText().split("\r\n");
-        var request = lines[0]
-
-        if (this.iState == this.EStates.eTerminate && request == "lpcreate") {
-            if (aRequest.ReadyState()==4 && aRequest.Status()==200) {
-                this.iState = this.EStates.eTerminate;
-                location.reload();  // re-established connection; reload page
-                // FIXME - reloading page here means long polling connection will be destroyed and re-established again
-            }
-        }
-
-        if (request == "lpcreate" || request == 'lp') {
-            if (aRequest.ReadyState()==4 && aRequest.Status()==200) {
                 if (request == 'lpcreate') {
-                    session = lines[1].split(":");
+                    var session = lines[1].split(":");
                     if (session.length == 2) {
-                        sessionVal = session[1].split(" ");
+                        var sessionVal = session[1].split(" ");
                         if (session[0] == "session-id" && sessionVal.length == 2) {
                             this.iSessionId = parseInt(sessionVal[1].trim());
                             this.iState = this.EStates.eLongPoll;
@@ -278,46 +268,45 @@ WebUi = function() {
                             return;
                         }
                     }
-                    // FIXME - wait for 5s and/or go into probing mode
-                    sleep(5)
-                    this.SendCreate();
                 }
-                else { // request == lp
+                else if (request == 'lp') {
                     // FIXME - check session ID?
                     // Split string after request line, as the response (i.e., any JSON) may contain newlines.
                     var json = aRequest.ResponseText().substring(lines[0].length+2);    // +2 to account for stripped \r\n
                     try {
-                    this.ParseResponse(json);
+                        this.ParseResponse(json);
                         console.log("LongPoll.ProcessResponse sending next lp request\n");
                         this.SendPoll();
+                        return;
                     }
                     catch (err) {
-                        out = "LongPoll.ProcessResponse " + err + ". Terminating long polling\n"
-                        console.log(out);
+                        console.log("LongPoll.ProcessResponse " + err + ". Trying to re-establish session");
                         // FIXME - as web page is no longer usable at this point (as long polls have been terminated),
                         // replace with a custom error page (that encourages user to reload, and/or also trigger a probe // request that will attempt to reload the page if the user doesn't manually reload)?
-                        alert(out);
                     }
                 }
+                else if (request == 'lpterminate') {
+                    // Session has been ended. Don't attempt to send anything futher.
+                    return;
+                }
+                // Everything falls through to here if invalid response.
+                setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
             }
-            else if (aRequest.Status() == 0) {
-                // FIXME - wait for 5s and/or go into probing mode
-                sleep(5)
-                this.SendCreate();
+            else {
+                // AJAX request readyState iterates from 0..4 as it is processed.
+                // If state is not yet 4, it is not ready to be handled here.
             }
         }
-        else { // some other URL unrelated to longpolling
+        else {
+            setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
         }
-        // else {
-            // alert("Error: WebUi.LongPoll.MakeNextPollCall() unknown iState: "+this.iState);
-        // }
     }
 
     LongPoll.prototype.ResponseFailure = function()
     {
         this.iCallbackFailure();
         this.iState = this.EStates.eTerminate;
-        this.SendCreate();  // FIXME - is calling this after response code above calling SendCreate() causing the request to abort on Open()?
+        setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);  // FIXME - is calling this after response code above calling SendCreate() causing the request to abort on Open()?
     }
 
     return {

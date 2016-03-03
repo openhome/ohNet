@@ -31,7 +31,12 @@ protected:
 private:
     EMediaDataEndian Endianness() const;
 protected:
-    ALACDecoder iDecoder;
+    /*
+     * ALACDecoder::Init() allocates memory that is only freed upon deleting
+     * the decoder object. So, must new/delete ALACDecoder in StreamInitialise()
+     * and StreamCompleted(), respectively, to avoid memory leaks.
+     */
+    ALACDecoder* iDecoder;
     Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iInBuf;
     Bws<kMaxSamplesPerFrame*kMaxByteDepth*kMaxChannels> iDecodedBuf;
     TUint iFrameLength;

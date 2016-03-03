@@ -130,7 +130,7 @@ void CodecAlacApple::StreamInitialise()
     Bws<kConfigBytes> config(Brn(info.StreamDescriptor().Ptr()+4, info.StreamDescriptor().Bytes()-4));
 
     // Configure decoder (re-initialise rather than delete/new whole object).
-    TUint status = iDecoder.Init((void*)config.Ptr(), config.Bytes());
+    TUint status = iDecoder->Init((void*)config.Ptr(), config.Bytes());
     if (status != ALAC_noErr) {
         THROW(CodecStreamCorrupt);
     }
