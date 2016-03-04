@@ -79,7 +79,7 @@ class TimerManager : public QueueSorted<Timer>
 {
     friend class Timer;
 public:
-    TimerManager(Environment& aEnv);
+    TimerManager(Environment& aEnv, TUint aThreadPriority);
     void Stop();
     ~TimerManager();
     void CallbackLock();

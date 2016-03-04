@@ -402,6 +402,11 @@ void InitialisationParams::SetHostUdpIsLowQuality(TBool aLow)
     iHostUdpLowQuality = aLow;
 }
 
+void InitialisationParams::SetTimerManagerPriority(uint32_t aPriority)
+{
+    iTimerManagerThreadPriority = aPriority;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -572,6 +577,11 @@ bool InitialisationParams::IsHostUdpLowQuality()
     return iHostUdpLowQuality;
 }
 
+uint32_t InitialisationParams::TimerManagerPriority() const
+{
+    return iTimerManagerThreadPriority;
+}
+
 #if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)
 /* Assume that all Apple products have poor quality networking.
    This won't be the case for a wired Mac desktop but we'd need a way of signalling which
@@ -605,6 +615,7 @@ InitialisationParams::InitialisationParams()
     , iEnableBonjour(false)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
+    , iTimerManagerThreadPriority(kPriorityHigh)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);
