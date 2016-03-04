@@ -79,7 +79,7 @@ VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, IPowerMa
 {
     iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
     iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
-    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this);
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal);
     // StandbyDisabled will be called either inside the call above or when we later exit standby
 }
 

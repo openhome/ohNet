@@ -17,6 +17,12 @@ enum PowerDownPriority {
    ,kPowerPriorityHighest = 100
 };
 
+enum StandbyHandlerPriority {
+    kStandbyHandlerPriorityLowest = 0    // first to be called for StandbyEnabled(), last for StandbyDisabled()
+   ,kStandbyHandlerPriorityNormal = 50
+   ,kStandbyHandlerPriorityHighest = 100 // last to be called for StandbyEnabled(), first for StandbyDisabled()
+};
+
 enum class StandbyDisableReason {
      User
     ,Boot
@@ -65,7 +71,7 @@ public:
     virtual void StandbyEnable() = 0;
     virtual void StandbyDisable(StandbyDisableReason aReason) = 0;
     virtual IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) = 0;
-    virtual IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler) = 0;
+    virtual IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority) = 0;
     virtual ~IPowerManager() {}
 };
 
@@ -87,7 +93,7 @@ public: // from IPowerManager
     void StandbyEnable() override;
     void StandbyDisable(StandbyDisableReason aReason) override;
     IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) override;
-    IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler) override;
+    IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority) override;
 private:
     void DeregisterPower(TUint aId);
     void DeregisterStandby(TUint aId);
@@ -137,14 +143,16 @@ private:
 class StandbyObserver : public IStandbyObserver, private INonCopyable
 {
 public:
-    StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId);
+    StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId, TUint aPriority);
     ~StandbyObserver();
     IStandbyHandler& Handler() const;
     TUint Id() const;
+    TUint Priority() const;
 private:
     PowerManager& iPowerManager;
     IStandbyHandler& iHandler;
     const TUint iId;
+    const TUint iPriority;
 };
 
 /*
