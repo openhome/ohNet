@@ -111,15 +111,15 @@ IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler
     AutoMutex _(iLock);
     auto* observer = new StandbyObserver(*this, aHandler, iNextStandbyId++, aPriority);
 
-    std::vector<StandbyObserver*>::const_iterator it;
-    for (it = iStandbyObservers.cbegin(); it != iStandbyObservers.cend(); ++it) {
+    std::vector<StandbyObserver*>::iterator it;
+    for (it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
         if ((*it)->Priority() < observer->Priority()) {
             it = iStandbyObservers.insert(it, observer);
             break;
         }
     }
 
-    if (it == iStandbyObservers.cend()) {
+    if (it == iStandbyObservers.end()) {
         // Callback is lower priority than anything in list.
         iStandbyObservers.push_back(observer);
     }

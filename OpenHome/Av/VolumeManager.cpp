@@ -85,6 +85,7 @@ VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, IPowerMa
 
 VolumeUser::~VolumeUser()
 {
+    delete iStandbyObserver;
     iConfigStartupVolume.Unsubscribe(iSubscriberIdStartupVolume);
     iConfigStartupVolumeEnabled.Unsubscribe(iSubscriberIdStartupVolumeEnabled);
 }
