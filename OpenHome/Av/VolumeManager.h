@@ -126,16 +126,19 @@ private: // from IVolumeProfile
     TUint FadeMax() const override              { return 0; }
 };
 
-class VolumeUser : public IVolume, private INonCopyable
+class VolumeUser : public IVolume, private IStandbyHandler, private INonCopyable
 {
 public:
     static const Brn kStartupVolumeKey;
 public:
-    VolumeUser(IVolume& aVolume, Configuration::IConfigManager& aConfigReader, StoreInt& aStoreUserVolume,
-               TUint aMaxVolume, TUint aMilliDbPerStep);
+    VolumeUser(IVolume& aVolume, Configuration::IConfigManager& aConfigReader, IPowerManager& aPowerManager,
+               StoreInt& aStoreUserVolume, TUint aMaxVolume, TUint aMilliDbPerStep);
     ~VolumeUser();
 public: // from IVolume
     void SetVolume(TUint aVolume) override;
+private: // from IStandbyHandler
+    void StandbyEnabled() override;
+    void StandbyDisabled(StandbyDisableReason aReason) override;
 private:
     void StartupVolumeChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void StartupVolumeEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
@@ -143,6 +146,7 @@ private:
     IVolume& iVolume;
     Configuration::ConfigNum& iConfigStartupVolume;
     Configuration::ConfigChoice& iConfigStartupVolumeEnabled;
+    IStandbyObserver* iStandbyObserver;
     TUint iSubscriberIdStartupVolume;
     TUint iSubscriberIdStartupVolumeEnabled;
     StoreInt& iStoreUserVolume;
@@ -425,7 +429,8 @@ class VolumeManager : public IVolumeManager
 {
 public:
     VolumeManager(VolumeConsumer& aVolumeConsumer, Media::IMute* aMute, VolumeConfig& aVolumeConfig,
-                  Net::DvDevice& aDevice, Product& aProduct, Configuration::IConfigManager& aConfigReader);
+                  Net::DvDevice& aDevice, Product& aProduct, Configuration::IConfigManager& aConfigReader,
+                  IPowerManager& aPowerManager);
     ~VolumeManager();
 public: // from IVolumeReporter
     void AddVolumeObserver(IVolumeObserver& aObserver) override;
