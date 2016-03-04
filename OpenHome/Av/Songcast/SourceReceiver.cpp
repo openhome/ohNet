@@ -445,10 +445,15 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     : iLock("STX1")
 {
     Media::PipelineManager& pipeline = aMediaPlayer.Pipeline();
+    TUint priorityMin, priorityMax;
+    pipeline.GetThreadPriorityRange(priorityMin, priorityMax);
+    const TUint senderThreadPriority = priorityMax - 2; // FIXME - aiming for less that 2 furthest right pipeline threads
+                                                        // ...but not less than CodecController thread
     IConfigManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aTxTsMapper,
-                         aMediaPlayer.ConfigInitialiser(), Brx::Empty(), pipeline.SenderMinLatencyMs(),
+                         aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
+                         Brx::Empty(), pipeline.SenderMinLatencyMs(),
                          aSenderIconFileName);
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);

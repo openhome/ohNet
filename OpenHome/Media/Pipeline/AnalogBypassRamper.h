@@ -36,7 +36,6 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
 private:
-    Msg* ProcessAudio(MsgAudio* aMsg);
     void Drained();
     void Halted();
     void CheckForHalted();

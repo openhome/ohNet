@@ -435,7 +435,9 @@ void OhmSenderDriver::ResetLocked()
 
 // OhmSender
 
-OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSenderDriver& aDriver, ZoneHandler& aZoneHandler, const Brx& aName, TUint aChannel, TUint aLatency, TBool aMulticast, const Brx& aImageFileName)
+OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSenderDriver& aDriver,
+                     ZoneHandler& aZoneHandler, TUint aThreadPriority, const Brx& aName,
+                     TUint aChannel, TUint aLatency, TBool aMulticast, const Brx& aImageFileName)
     : iEnv(aEnv)
     , iDevice(aDevice)
     , iDriver(aDriver)
@@ -472,10 +474,10 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     iTimerAliveAudio = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired), "OhmSenderAliveAudio");
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerExpiryExpired), "OhmSenderExpiry");
 
-    iThreadMulticast = new ThreadFunctor("OhmSenderM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadMulticast = new ThreadFunctor("OhmSenderM", MakeFunctor(*this, &OhmSender::RunMulticast), aThreadPriority, kThreadStackBytesNetwork);
     iThreadMulticast->Start();
     
-    iThreadUnicast = new ThreadFunctor("OhmSenderU", MakeFunctor(*this, &OhmSender::RunUnicast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadUnicast = new ThreadFunctor("OhmSenderU", MakeFunctor(*this, &OhmSender::RunUnicast), aThreadPriority, kThreadStackBytesNetwork);
     iThreadUnicast->Start();
     
     UpdateChannel();
