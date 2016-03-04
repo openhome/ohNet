@@ -100,7 +100,7 @@ void VolumeUser::SetVolume(TUint aVolume)
 
 void VolumeUser::StandbyEnabled()
 {
-    // no need to change volume when we exit standby
+    // no need to change volume when we enter standby
 }
 
 void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
@@ -400,28 +400,36 @@ void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 
 // MuteUser
 
-MuteUser::MuteUser(Media::IMute& aMute, StoreInt& aStoreUserMute)
+MuteUser::MuteUser(Media::IMute& aMute, IPowerManager& aPowerManager)
     : iMute(aMute)
-    , iStoreUserMute(aStoreUserMute)
 {
-    if (iStoreUserMute.Get() == VolumeConfig::kValueMuted) {
-        iMute.Mute();
-    }
-    else {
-        iMute.Unmute();
-    }
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal);
+}
+
+MuteUser::~MuteUser()
+{
+    delete iStandbyObserver;
 }
 
 void MuteUser::Mute()
 {
-    iStoreUserMute.Set(VolumeConfig::kValueMuted);
     iMute.Mute();
 }
 
 void MuteUser::Unmute()
 {
-    iStoreUserMute.Set(VolumeConfig::kValueUnmuted);
     iMute.Unmute();
+}
+
+void MuteUser::StandbyEnabled()
+{
+    // no need to change mute when we enter standby
+}
+
+void MuteUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
+{
+    // clear any previous mute when we leave standby
+    Unmute();
 }
 
 
@@ -469,7 +477,6 @@ TBool MuteReporter::Report(TBool aMuted)
 // VolumeConfig
 
 const Brn VolumeConfig::kKeyStartupVolume("Last.Volume");
-const Brn VolumeConfig::kKeyStartupMute("Last.Mute");
 const Brn VolumeConfig::kKeyStartupValue("Volume.StartupValue");
 const Brn VolumeConfig::kKeyStartupEnabled("Volume.StartupEnabled");
 const Brn VolumeConfig::kKeyLimit("Volume.Limit");
@@ -479,7 +486,6 @@ const Brn VolumeConfig::kKeyFade("Volume.Fade");
 
 VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, const IVolumeProfile& aProfile)
     : iStoreUserVolume(aStore, aPowerManager, kPowerPriorityHighest, kKeyStartupVolume, aProfile.VolumeDefault())
-    , iStoreUserMute(aStore, aPowerManager, kPowerPriorityHighest, kKeyStartupMute, kValueUnmuted)
 {
     iVolumeMax            = aProfile.VolumeMax();
     iVolumeDefault        = aProfile.VolumeDefault();
@@ -532,11 +538,6 @@ VolumeConfig::~VolumeConfig()
 StoreInt& VolumeConfig::StoreUserVolume()
 {
     return iStoreUserVolume;
-}
-
-StoreInt& VolumeConfig::StoreUserMute()
-{
-    return iStoreUserMute;
 }
 
 TBool VolumeConfig::VolumeControlEnabled() const
@@ -617,7 +618,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     }
     else {
         iMuteReporter = new MuteReporter(*aMute);
-        iMuteUser = new MuteUser(*iMuteReporter, aVolumeConfig.StoreUserMute());
+        iMuteUser = new MuteUser(*iMuteReporter, aPowerManager);
     }
     iAnalogBypassRamper = new AnalogBypassRamper(*aVolumeConsumer.Volume());
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {

@@ -323,16 +323,20 @@ private:
     TUint iSubscriberIdFade;
 };
 
-class MuteUser : public Media::IMute, private INonCopyable
+class MuteUser : public Media::IMute, private IStandbyHandler, private INonCopyable
 {
 public:
-    MuteUser(Media::IMute& aMute, StoreInt& aStoreUserMute);
+    MuteUser(Media::IMute& aMute, IPowerManager& aPowerManager);
+    ~MuteUser();
 public: // from Media::IMute
     void Mute() override;
     void Unmute() override;
+private: // from IStandbyHandler
+    void StandbyEnabled() override;
+    void StandbyDisabled(StandbyDisableReason aReason) override;
 private:
     Media::IMute& iMute;
-    StoreInt& iStoreUserMute;
+    IStandbyObserver* iStandbyObserver;
 };
 
 class IMuteReporter
@@ -363,7 +367,6 @@ class VolumeConfig : public IVolumeProfile
 {
 public:
     static const Brn kKeyStartupVolume;
-    static const Brn kKeyStartupMute;
     static const Brn kKeyStartupValue;
     static const Brn kKeyStartupEnabled;
     static const Brn kKeyLimit;
@@ -376,7 +379,6 @@ public:
     VolumeConfig(Configuration::IStoreReadWrite& aStore, Configuration::IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, const IVolumeProfile& aProfile);
     ~VolumeConfig();
     StoreInt& StoreUserVolume();
-    StoreInt& StoreUserMute();
     TBool VolumeControlEnabled() const;
 public: // from IVolumeProfile
     TUint VolumeMax() const override;
@@ -391,7 +393,6 @@ private:
     void EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
     StoreInt iStoreUserVolume;
-    StoreInt iStoreUserMute;
     Configuration::ConfigNum* iVolumeStartup;
     Configuration::ConfigChoice* iVolumeStartupEnabled;
     Configuration::ConfigNum* iVolumeLimit;
