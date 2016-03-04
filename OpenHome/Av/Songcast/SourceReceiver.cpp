@@ -447,8 +447,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     Media::PipelineManager& pipeline = aMediaPlayer.Pipeline();
     TUint priorityMin, priorityMax;
     pipeline.GetThreadPriorityRange(priorityMin, priorityMax);
-    const TUint senderThreadPriority = priorityMax - 2; // FIXME - aiming for less that 2 furthest right pipeline threads
-                                                        // ...but not less than CodecController thread
+    const TUint senderThreadPriority = priorityMin - 1;
     IConfigManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aTxTsMapper,
