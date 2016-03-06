@@ -91,6 +91,23 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGet
 #endif
 }
 
+
+/*
+ * Class:     org_openhome_net_device_DvInvocation
+ * Method:    DvInvocationGetClientUserAgent
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationGetClientUserAgent
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
+{
+    DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+    const char* userAgent;
+    uint32_t len;
+	
+    DvInvocationGetClientUserAgent(invocation, &userAgent, &len);
+    return (*aEnv)->NewStringUTF(aEnv, userAgent);
+}
+
 /*
  * Class:     org_openhome_net_device_DvInvocation
  * Method:    DvInvocationGetClientPort
