@@ -547,6 +547,7 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
     iReaderRequest->AddHeader(iHeaderNt);
     iReaderRequest->AddHeader(iHeaderCallback);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
+    iReaderRequest->AddHeader(iHeaderUserAgent);
 
     iPropertyWriterFactory = new PropertyWriterFactory(iDvStack, aInterface, aPort);
 }
@@ -1026,6 +1027,14 @@ Endpoint DviSessionUpnp::ClientEndpoint() const
 {
     Endpoint ep(SocketTcpSession::ClientEndpoint());
     return ep;
+}
+
+Brhz DviSessionUpnp::ClientUserAgent() const
+{
+    if (!iHeaderUserAgent.Received())
+        return Brhz();
+
+    return Brhz(iHeaderUserAgent.UserAgent());
 }
 
 void DviSessionUpnp::InvocationReadStart()

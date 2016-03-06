@@ -234,6 +234,11 @@ Endpoint InvocationDv::ClientEndpoint() const
     return Endpoint(0, 0);
 }
 
+Brhz InvocationDv::ClientUserAgent() const
+{
+    return Brhz();
+}
+
 void InvocationDv::InvocationReadStart()
 {
     iReadIndex = 0;

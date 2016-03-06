@@ -30,6 +30,7 @@ public:
     virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
     virtual Endpoint ClientEndpoint() const = 0;
+    virtual Brhz ClientUserAgent() const = 0;
 
     virtual void InvocationReadStart() = 0;
     virtual TBool InvocationReadBool(const TChar* aName) = 0;
@@ -125,6 +126,7 @@ public:
     virtual TIpAddress Adapter() const;
     virtual const char* ResourceUriPrefix() const;
     virtual Endpoint ClientEndpoint() const;
+    virtual Brhz ClientUserAgent() const;
 private:
     IDviInvocation& iInvocation;
 };
