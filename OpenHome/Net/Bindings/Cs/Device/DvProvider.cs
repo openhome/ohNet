@@ -304,6 +304,11 @@ namespace OpenHome.Net.Device
         /// <param name="aAddress">IPv4 address in network byte order</param>
         /// <param name="aPort">Client's port [1..65535]</param>
         void GetClientEndpoint(out uint aAddress, out uint aPort);
+        /// <summary>
+        /// Get the user agent provided by the client.
+        /// </summary>
+        /// <returns>The clien'ts user agent.</returns>
+        string ClientUserAgent();
     }
 
     /// <summary>
@@ -336,6 +341,12 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
 #endif
         static extern void DvInvocationGetClientEndpoint(IntPtr aInvocation, out uint aAddress, out uint aPort);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
+        static extern void DvInvocationGetClientUserAgent(IntPtr aInvocation, out IntPtr aUserAgent, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -510,6 +521,18 @@ namespace OpenHome.Net.Device
             DvInvocationGetClientEndpoint(iHandle, out address, out port);
             aAddress = address;
             aPort = port;
+        }
+        /// <summary>
+        /// Get the user agent provided by the client.
+        /// </summary>
+        /// <returns>The clien'ts user agent.</returns>
+        public string ClientUserAgent()
+        {
+            IntPtr cUserAgent;
+            uint len;
+            DvInvocationGetClientUserAgent(iHandle, out cUserAgent, out len);
+            String userAgent = InteropUtils.PtrToStringUtf8(cUserAgent, len);
+            return userAgent;
         }
         /// <summary>
         /// Begin reading (input arguments for) an invocation
