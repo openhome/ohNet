@@ -132,6 +132,7 @@ private: // from IDviInvocation
     TIpAddress Adapter() const;
     const char* ResourceUriPrefix() const;
     Endpoint ClientEndpoint() const;
+    Brhz ClientUserAgent() const;
     void InvocationReadStart();
     TBool InvocationReadBool(const TChar* aName);
     void InvocationReadString(const TChar* aName, Brhz& aString);

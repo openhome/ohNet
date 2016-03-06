@@ -687,6 +687,11 @@ Endpoint DviSessionLpec::ClientEndpoint() const
     return ep;
 }
 
+Brhz DviSessionLpec::ClientUserAgent() const
+{
+    return Brhz(); // TODO
+}
+
 void DviSessionLpec::InvocationReadStart()
 {
     // nothing to do here
