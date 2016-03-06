@@ -47,6 +47,15 @@ typedef const char* (STDCALL *DvInvocationResourceUriPrefix)(void* aPtr);
 typedef void (STDCALL *DvInvocationClientEndpoint)(void* aPtr, TIpAddress* aClientAddress, uint32_t* aClientPort);
 
 /**
+ * Read the user agent of the client which has invoked this action.
+ *
+ * @param[in]  aPtr  aInvocationPtr passed to the action
+ * @param[out] aUserAgent  User agent of client
+ * @param[out] aLen  Length (in bytes) of aUserAgent.
+ */
+typedef void (STDCALL *DvInvocationClientUserAgent)(void* aPtr, const char** aUserAgent, uint32_t* aLen);
+
+/**
  * Table of function pointers passed to invoked actions.
  */
 typedef struct IDvInvocationC
@@ -55,6 +64,7 @@ typedef struct IDvInvocationC
     DvInvocationAdapter iAdapter;
     DvInvocationResourceUriPrefix iResourceUriPrefix;
     DvInvocationClientEndpoint iClientEndpoint;
+    DvInvocationClientUserAgent iClientUserAgent;
 }
 IDvInvocationC;
 

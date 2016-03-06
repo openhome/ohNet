@@ -21,6 +21,7 @@ private:
     static TIpAddress STDCALL Adapter(void* aPtr);
     static const char* STDCALL ResourceUriPrefix(void* aPtr);
     static void STDCALL ClientEndpoint(void* aPtr, TIpAddress* aClientAddress, uint32_t* aClientPort);
+    static void STDCALL ClientUserAgent(void* aPtr, const char** aUserAgent, uint32_t* aLen);
 private:
     IDviInvocation& iInvocation;
     IDvInvocationC iFnTable;

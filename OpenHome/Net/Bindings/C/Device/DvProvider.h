@@ -234,6 +234,15 @@ DllExport void STDCALL DvInvocationGetResourceUriPrefix(DvInvocationC aInvocatio
 DllExport void STDCALL DvInvocationGetClientEndpoint(DvInvocationC aInvocation, TIpAddress* aAddress, uint32_t* aPort);
 
 /**
+ * Get the client's user agent.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation.
+ * @param[out] aUserAgent   User agent of client.
+ * @param[out] aLen         Length (in bytes) of aUserAgent.
+ */
+DllExport void STDCALL DvInvocationGetClientUserAgent(DvInvocationC aInvocation, const char** aUserAgent, uint32_t* aLen);
+
+/**
  * Begin reading (input arguments for) an invocation
  *
  * Must be called before the values of any input arguments are read.
