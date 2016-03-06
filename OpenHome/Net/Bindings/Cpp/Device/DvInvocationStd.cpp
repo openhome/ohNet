@@ -33,6 +33,11 @@ void DvInvocationStd::GetClientEndpoint(TIpAddress& aClientAddress, uint32_t& aC
     aClientPort = ep.Port();
 }
 
+std::string DvInvocationStd::ClientUserAgent() const
+{
+    return std::string((const char*)iInvocation.ClientUserAgent().Ptr(), iInvocation.ClientUserAgent().Bytes());
+}
+
 void DvInvocationStd::ReportError(uint32_t aCode, const std::string& aDescription)
 {
     Brn desc((const TByte*)aDescription.c_str(), (TUint)aDescription.length());
