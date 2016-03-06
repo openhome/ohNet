@@ -450,6 +450,18 @@ private:
     Bws<kMaxMethodBytes> iMethod;
 };
 
+class HttpHeaderUserAgent : public HttpHeader
+{
+    static const TUint kMaxUserAgentBytes = 1000;
+public:
+    const Brx& UserAgent() const;
+private:
+    virtual TBool Recognise(const Brx& aHeader);
+    virtual void Process(const Brx& aValue);
+private:
+    Bws<kMaxUserAgentBytes> iUserAgent;
+};
+
 class ReaderHttpChunked : public IReader
 {
     static const TUint kChunkSizeBufBytes = 10;

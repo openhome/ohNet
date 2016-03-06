@@ -929,6 +929,29 @@ void HttpHeaderAccessControlRequestMethod::Process(const Brx& aValue)
 }
 
 
+// HttpHeaderUserAgent
+
+const Brx& HttpHeaderUserAgent::UserAgent() const
+{
+    return (iUserAgent);
+}
+
+TBool HttpHeaderUserAgent::Recognise(const Brx& aHeader)
+{
+    return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderUserAgent);
+}
+
+void HttpHeaderUserAgent::Process(const Brx& aValue)
+{
+    try {
+        iUserAgent.ReplaceThrow(aValue);
+        SetReceived();
+    }
+    catch (BufferOverflow&) {
+    }
+}
+
+
 // ReaderHttpChunked
 
 ReaderHttpChunked::ReaderHttpChunked(IReader& aReader)
