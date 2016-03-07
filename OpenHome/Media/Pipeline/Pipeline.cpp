@@ -223,7 +223,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     msgInit.SetMsgQuitCount(kMsgCountQuit);
     iMsgFactory = new MsgFactory(aInfoAggregator, msgInit);
     const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
-    TUint threadPriority = threadPriorityBase;
+    TUint threadPriority = threadPriorityBase - 1; // -1 to allow for a gap between CodecController and Gorger
 
     iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
     
@@ -254,7 +254,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iRampValidatorCodec = new RampValidator("Codec Controller", *iSampleRateValidator);
     iLoggerCodecController = new Logger("Codec Controller", *iRampValidatorCodec);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
-    threadPriority++;
+    threadPriority += 2; // leave a gap for any high priority on-device UI (e.g. text scrolling)
 
     iClockPullerManual = new ClockPullerManual(*iLoggerDecodedAudioReservoir, aShell);
     iRamper = new Ramper(*iClockPullerManual, aInitParams->RampLongJiffies());
@@ -632,7 +632,7 @@ TUint Pipeline::SenderMinLatencyMs() const
 void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
 {
     aMax = iInitParams->ThreadPriorityMax();
-    aMin = aMax - kThreadCount;
+    aMin = aMax - kThreadCount - 1;
 }
 
 void Pipeline::Push(Msg* aMsg)
