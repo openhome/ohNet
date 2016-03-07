@@ -382,6 +382,14 @@ static void TestSubscription(CpDevice& aDevice)
     Brh valStr;
     proxy->SyncGetString(valStr);
     ASSERT(propStr == valStr);
+    // change str, check evented update doesn't aggregate previous and new values
+    Brn str2(str.Ptr(), str.Bytes()/2);
+    proxy->SyncSetString(str2);
+    sem.Wait();
+    Brhz propStr2;
+    proxy->PropertyVarStr(propStr2);
+    ASSERT(propStr2 == str2);
+    ASSERT(propStr2.Bytes() == propStr.Bytes()/2);
 
     Print("    Binary...\n");
     char bin[256];
@@ -400,6 +408,14 @@ static void TestSubscription(CpDevice& aDevice)
     Brh valBin;
     proxy->SyncGetBinary(valBin);
     ASSERT(propBin == valBin);
+    // change bufBin, check evented update doesn't aggregate previous and new values
+    Brn bufBin2(bufBin.Ptr(), bufBin.Bytes()/2);
+    proxy->SyncSetBinary(bufBin2);
+    sem.Wait();
+    Brh propBin2;
+    proxy->PropertyVarBin(propBin2);
+    ASSERT(propBin2 == bufBin2);
+    ASSERT(propBin2.Bytes() == propBin.Bytes()/2);
 
     Print("    Multiple...\n");
     proxy->SyncSetMultiple(15, 658, false);

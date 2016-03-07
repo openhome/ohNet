@@ -324,6 +324,7 @@ void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
     AutoMutex _(iLock);
     Brhz old;
     iValue.TransferTo(old);
+    iValue.Set(Brx::Empty());
     aProcessor.ProcessString(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
@@ -540,6 +541,7 @@ void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex _(iLock);
     Bwh old(iValue.Ptr(), iValue.Bytes());
+    iValue.Set(Brx::Empty());
     aProcessor.ProcessBinary(aBuffer, iValue);
     if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
