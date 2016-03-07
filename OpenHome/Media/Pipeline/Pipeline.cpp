@@ -632,7 +632,7 @@ TUint Pipeline::SenderMinLatencyMs() const
 void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
 {
     aMax = iInitParams->ThreadPriorityMax();
-    aMin = aMax - kThreadCount - 1;
+    aMin = aMax - kThreadCount;
 }
 
 void Pipeline::Push(Msg* aMsg)
