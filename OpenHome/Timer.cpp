@@ -99,7 +99,7 @@ Timer::~Timer()
 
 // TimerManager
 
-TimerManager::TimerManager(Environment& aEnv)
+TimerManager::TimerManager(Environment& aEnv, TUint aThreadPriority)
     : iEnv(aEnv)
     , iMutexNow("TIM1")
     , iRemoving(false)
@@ -116,7 +116,7 @@ TimerManager::TimerManager(Environment& aEnv)
     , iCallbacksPerTick(0)
 {
     LOG(kTimer, ">TimerManager::TimerManager()\n");
-    iThread = new ThreadFunctor("TimerManager", MakeFunctor(*this, &TimerManager::Run), kPriorityHigh);
+    iThread = new ThreadFunctor("TimerManager", MakeFunctor(*this, &TimerManager::Run), aThreadPriority);
     iThread->Start();
     LOG(kTimer, "<TimerManager::TimerManager()\n");
 }

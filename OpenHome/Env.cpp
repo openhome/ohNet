@@ -92,7 +92,7 @@ Environment::Environment(InitialisationParams* aInitParams)
 #else
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
 #endif // PLATFORM_MACOSX_GNU
-    iTimerManager = new OpenHome::TimerManager(*this);
+    iTimerManager = new OpenHome::TimerManager(*this, iInitParams->TimerManagerPriority());
     iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
     if (subnetListChangeListener) {

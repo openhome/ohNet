@@ -365,6 +365,11 @@ public:
      */
     void SetHostUdpIsLowQuality(TBool aLow);
 
+    /**
+     * Set TimerManager priority.
+     */
+    void SetTimerManagerPriority(uint32_t aPriority);
+
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
     FunctorAsync& AsyncBeginHandler();
@@ -398,6 +403,7 @@ public:
     uint32_t DvNumLpecThreads();
     uint32_t DvLpecServerPort();
     bool IsHostUdpLowQuality();
+    uint32_t TimerManagerPriority() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -438,6 +444,7 @@ private:
     Brhz iDvBonjourHostName;
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;
+    uint32_t iTimerManagerThreadPriority;
 };
 
 class CpStack;
