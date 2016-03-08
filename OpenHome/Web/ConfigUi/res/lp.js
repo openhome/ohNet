@@ -118,10 +118,6 @@ WebUi = function() {
             eLongPoll: "performing long polling",
             eTerminate: "terminating long polling",
         };
-
-        // FIXME - remove iState
-        this.iState = this.EStates.eCreate;
-        //this.iState = this.EStates.eLongPoll;
     }
 
     LongPoll.CreateLongPollRequest = function(aLongPoll)
@@ -137,8 +133,6 @@ WebUi = function() {
         if (this.iSessionId != 0) {
             this.SendTerminate();
             this.iSessionId = 0;
-            // this.iState = this.EStates.eCreate;
-            this.iState = this.EStates.eTerminate;
         }
     }
 
@@ -238,8 +232,6 @@ WebUi = function() {
         if (this.iSessionId != 0) {
             this.SendTerminate();
             this.iSessionId = 0;
-            // this.iState = this.EStates.eCreate;
-            this.iState = this.EStates.eTerminate;
         }
 
         // Delay before trying to reconnect.
@@ -292,7 +284,6 @@ WebUi = function() {
                         var sessionVal = session[1].split(" ");
                         if (session[0] == "session-id" && sessionVal.length == 2) {
                             this.iSessionId = parseInt(sessionVal[1].trim());
-                            this.iState = this.EStates.eLongPoll;
                             this.iCallbackStarted();
                             this.SendPoll();
                             return;
@@ -335,7 +326,6 @@ WebUi = function() {
     LongPoll.prototype.ResponseFailure = function()
     {
         this.iCallbackFailure();
-        this.iState = this.EStates.eTerminate;
 
         // FIXME - don't want this sent for every failed response in case multiple lpcreate requests end up simultaneously active.
         setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);  // FIXME - is calling this after response code above calling SendCreate() causing the request to abort on Open()?
