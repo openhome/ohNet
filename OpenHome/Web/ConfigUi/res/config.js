@@ -44,6 +44,7 @@ Config = function() {
             request.request = {};
             request.request.type = "reboot";
             WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, aCallbackError);
+            WebUi.RestartLongPolling();
         }
     };
 

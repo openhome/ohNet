@@ -105,15 +105,21 @@ WebUi = function() {
     var LongPoll = function(aCallbackStarted, aCallbackSuccess, aCallbackFailure)
     {
         this.kRetryTimeoutMs = 1000;
-        this.iSessionId = 0;    // 0 == invalid
+        this.kInvalidSessionId = 0;
+        this.iSessionId = this.kInvalidSessionId;
         this.iCallbackStarted = aCallbackStarted;
         this.iCallbackSuccess = aCallbackSuccess;
         this.iCallbackFailure = aCallbackFailure;
+
+
+
         this.EStates = {
             eCreate : "initialising long polling",
             eLongPoll: "performing long polling",
             eTerminate: "terminating long polling",
         };
+
+        // FIXME - remove iState
         this.iState = this.EStates.eCreate;
         //this.iState = this.EStates.eLongPoll;
     }
@@ -193,22 +199,28 @@ WebUi = function() {
         var request = new HttpRequest();
         var sessionId = this.ConstructSessionId();
 
-        Response = function() {
+        var Response = function(aLongPoll) {
+            console.log("LongPoll.SendUpdate response handler this.iSessionId: " + aLongPoll.iSessionId);
+            if (aLongPoll.iSessionId == aLongPoll.kSessionIdInvalid) {
+                console.log("Invalid session ID (response arrived after session terminated). Notifying upper layer of success.");
+                aCallbackResponse(aString, "");
+                return;
+            }
             if (request.ReadyState() == 4) {
                 if (request.Status() == 200) {
                     aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
-                    aCallbackError(aString, request.ResponseText(), request.Status());
+                    aCallbackError(aString), request.ResponseText(), request.Status());
                 }
             }
         }
 
-        ResponseError = function() {
+        var ResponseError = function() {
             aCallbackError(aString);
         }
 
-        request.SetOnReadyStateChange(Response);
+        request.SetOnReadyStateChange(Response(this));
         request.AddEventListener("error", ResponseError, false);
         request.Open("POST", "update", true);
         request.SetRequestHeader("Content-type", "text/plain");
@@ -219,6 +231,19 @@ WebUi = function() {
     LongPoll.prototype.Start = function()
     {
         this.SendCreate();
+    }
+
+    LongPoll.prototype.Restart = function(aWaitMs)
+    {
+        if (this.iSessionId != 0) {
+            this.SendTerminate();
+            this.iSessionId = 0;
+            // this.iState = this.EStates.eCreate;
+            this.iState = this.EStates.eTerminate;
+        }
+
+        // Delay before trying to reconnect.
+        setTimeout(CreateRetryFunction(this), aWaitMs);
     }
 
     LongPoll.prototype.ParseResponse = function(aResponse)
@@ -249,6 +274,11 @@ WebUi = function() {
         // In that case, the terminate call will have reset the state to
         // eCreate. If long polling fails, it will also fall back to being in
         // the eCreate state until a new session is established.
+
+        if (this.iSessionId == this.kSessionIdInvalid) {
+            // Not an active session, so don't process this response or call any handlers.
+            return;
+        }
 
         if (aRequest != null) {
             if (aRequest.ReadyState() == 4 && aRequest.Status() == 200) {
@@ -306,6 +336,8 @@ WebUi = function() {
     {
         this.iCallbackFailure();
         this.iState = this.EStates.eTerminate;
+
+        // FIXME - don't want this sent for every failed response in case multiple lpcreate requests end up simultaneously active.
         setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);  // FIXME - is calling this after response code above calling SendCreate() causing the request to abort on Open()?
     }
 
@@ -354,6 +386,14 @@ WebUi = function() {
             gLongPoll.Terminate();
             // FIXME - how to hook this into MakeNextPollCall()?
             gStarted = false;
+        },
+
+        RestartLongPolling: function()
+        {
+            if (gLongPoll == null) {
+                alert("Error: WebUi.RestartLongPolling(): StartLongPolling() must have been called prior to RestartLongPolling()");
+            }
+            gLongPoll.Restart(5000);
         },
 
         /**
