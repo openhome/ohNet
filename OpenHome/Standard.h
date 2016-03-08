@@ -19,6 +19,13 @@ EXCEPTION(AssertionFailed)
 # define ASSERT_DEBUG(x)
 #endif //DEFINE_DEBUG
 
+#define ASSERT_VA(cond, format, ...)                                                \
+    do {                                                                            \
+        if (!(cond)) {                                                              \
+            OpenHome::CallAssertHandlerVA(__FILE__, __LINE__, format, __VA_ARGS__); \
+        }                                                                           \
+    } while (0)
+
 namespace OpenHome {
 
 class INonCopyable

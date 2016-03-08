@@ -44,7 +44,9 @@ namespace OpenHome {
 
 DllExport void SetAssertThrows(TBool aAssertThrows);
 
-DllExport void CallAssertHandler(const TChar*, TUint);
+DllExport void CallAssertHandler(const TChar* aFile, TUint aLine);
+
+DllExport void CallAssertHandlerVA(const TChar* aFile, TUint aLine, const TChar* aFormat, ...);
 
 /** Base class for all ohNet exceptions.  Some may be recoverable, others may
 not. */

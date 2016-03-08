@@ -70,6 +70,15 @@ void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
     AssertHandlerDefault(aFile, aLine);
 }
 
+void OpenHome::CallAssertHandlerVA(const TChar* aFile, TUint aLine, const TChar* aFormat, ...)
+{
+    va_list args;
+    va_start(args, aFormat);
+    (void)Log::PrintVA(aFormat, args);
+    va_end(args);
+    OpenHome::CallAssertHandler(aFile, aLine);
+}
+
 static void GetThreadName(Bwx& aThName)
 {
     aThName.SetBytes(0);
