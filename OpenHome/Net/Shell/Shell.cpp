@@ -88,6 +88,7 @@ void ShellSession::Log(const char* aMsg)
 {
     Brn msg(aMsg);
     iWriterResponse->Write(msg);
+    iWriterResponse->WriteFlush();
 }
 
 void ShellSession::Run()
