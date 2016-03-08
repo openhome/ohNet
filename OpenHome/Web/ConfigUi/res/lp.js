@@ -320,7 +320,7 @@ WebUi = function() {
                     return;
                 }
                 // Everything falls through to here if invalid response.
-                setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
+                //setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
             }
             else {
                 // AJAX request readyState iterates from 0..4 as it is processed.
@@ -328,7 +328,7 @@ WebUi = function() {
             }
         }
         else {
-            setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
+            //setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
         }
     }
 
