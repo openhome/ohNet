@@ -205,7 +205,7 @@ WebUi = function() {
                     aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
-                    aCallbackError(aString), request.ResponseText(), request.Status());
+                    aCallbackError(aString, request.ResponseText(), request.Status());
                 }
             }
         }
