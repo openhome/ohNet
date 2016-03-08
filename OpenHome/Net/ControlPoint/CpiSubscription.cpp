@@ -233,8 +233,8 @@ void CpiSubscription::DoSubscribe()
 
     const Brx& serviceFullName = iServiceType.FullName();
     const Brx& subscriberUri = subscriber.AbsoluteUri();
-    LOG(kEvent, "Subscribing - service = %.*s\n    subscription = %p\n    subscriber = %.*s\n",
-                PBUF(serviceFullName), this, PBUF(subscriberUri));
+    LOG(kEvent, "Subscribing - device = %.*s\n    service = %.*s\n    subscription = %p\n    subscriber = %.*s\n",
+                PBUF(iDevice.Udn()), PBUF(serviceFullName), this, PBUF(subscriberUri));
 
     iNextSequenceNumber = 0;
     TUint renewSecs;
@@ -253,8 +253,8 @@ void CpiSubscription::DoSubscribe()
         throw;
     }
 
-    LOG(kEvent, "Subscription (%p) for %.*s completed\n    Sid is %.*s\n    Renew in %u secs\n",
-                this, PBUF(serviceFullName), PBUF(iSid), renewSecs);
+    LOG(kEvent, "Subscription (%p) for %.*s, %.*s completed\n    Sid is %.*s\n    Renew in %u secs\n",
+                this, PBUF(iDevice.Udn()), PBUF(serviceFullName), PBUF(iSid), renewSecs);
 
     SetRenewTimer(renewSecs);
 }
