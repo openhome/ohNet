@@ -170,12 +170,12 @@ WebUi = function() {
         }
     }
 
-    LongPoll.prototype.SendTerminate = function()
+    LongPoll.prototype.SendTerminate = function(aAsynchronous)
     {
         // This should only be called when a browser tab closes.
         // Therefore, can't rely on asynchronous requests, so use a synchronous request.
         var request = LongPoll.CreateLongPollRequest(this);
-        request.Open("POST", "lpterminate", false); // "false" makes request synchronous
+        request.Open("POST", "lpterminate", aAsynchronous); // "false" makes request synchronous
         this.SendSessionId(request);
     }
 
@@ -230,7 +230,8 @@ WebUi = function() {
     LongPoll.prototype.Restart = function(aWaitMs)
     {
         if (this.iSessionId != 0) {
-            this.SendTerminate();
+            var asynchronous = true;
+            this.SendTerminate(asynchronous);
             this.iSessionId = 0;
         }
 
@@ -373,7 +374,8 @@ WebUi = function() {
                 alert("Error: WebUi.EndLongPolling(): long polling is not active");
                 return;
             }
-            gLongPoll.Terminate();
+            var asynchronous = false;
+            gLongPoll.Terminate(asynchronous);
             // FIXME - how to hook this into MakeNextPollCall()?
             gStarted = false;
         },
