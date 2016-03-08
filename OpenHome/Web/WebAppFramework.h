@@ -376,8 +376,7 @@ private:
 public:
     WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
     ~WebAppFramework();
-    void Start(); // FIXME - implement
-    // FIXME - Can't call Add() after Start()
+    void Start();
 public: // from IWebAppFramework
     void Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private: // from IWebAppManager
