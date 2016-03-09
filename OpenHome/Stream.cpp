@@ -662,68 +662,92 @@ void WriterBinary::WriteUint8(TUint aValue)
 
 void WriterBinary::WriteUint16Be(TUint aValue)
 {
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[2];
+    bin[0] = (TByte)(aValue >> 8);
+    bin[1] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint24Be(TUint aValue)
 {
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[3];
+    bin[0] = (TByte)(aValue >> 16);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint32Be(TUint aValue)
 {
-    iWriter.Write((TByte)(aValue >> 24));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[4];
+    bin[0] = (TByte)(aValue >> 24);
+    bin[1] = (TByte)(aValue >> 16);
+    bin[2] = (TByte)(aValue >> 8);
+    bin[3] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint64Be(TUint64 aValue)
 {
-    iWriter.Write((TByte)(aValue >> 56));
-    iWriter.Write((TByte)(aValue >> 48));
-    iWriter.Write((TByte)(aValue >> 40));
-    iWriter.Write((TByte)(aValue >> 32));
-    iWriter.Write((TByte)(aValue >> 24));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[8];
+    bin[0] = (TByte)(aValue >> 56);
+    bin[1] = (TByte)(aValue >> 48);
+    bin[2] = (TByte)(aValue >> 40);
+    bin[3] = (TByte)(aValue >> 32);
+    bin[4] = (TByte)(aValue >> 24);
+    bin[5] = (TByte)(aValue >> 16);
+    bin[6] = (TByte)(aValue >> 8);
+    bin[7] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint16Le(TUint aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
+    TByte bin[2];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint24Le(TUint aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue >> 16));
+    TByte bin[3];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue >> 16);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint32Le(TUint aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 24));
+    TByte bin[4];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue >> 16);
+    bin[3] = (TByte)(aValue >> 24);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteUint64Le(TUint64 aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 24));
-    iWriter.Write((TByte)(aValue >> 32));
-    iWriter.Write((TByte)(aValue >> 40));
-    iWriter.Write((TByte)(aValue >> 48));
-    iWriter.Write((TByte)(aValue >> 56));
+    TByte bin[8];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue >> 16);
+    bin[3] = (TByte)(aValue >> 24);
+    bin[4] = (TByte)(aValue >> 32);
+    bin[5] = (TByte)(aValue >> 40);
+    bin[6] = (TByte)(aValue >> 48);
+    bin[7] = (TByte)(aValue >> 56);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt8(TInt aValue)
@@ -733,68 +757,92 @@ void WriterBinary::WriteInt8(TInt aValue)
 
 void WriterBinary::WriteInt16Be(TInt aValue)
 {
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[2];
+    bin[0] = (TByte)(aValue >> 8);
+    bin[1] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt24Be(TInt aValue)
 {
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[3];
+    bin[0] = (TByte)(aValue >> 16);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt32Be(TInt aValue)
 {
-    iWriter.Write((TByte)(aValue >> 24));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[4];
+    bin[0] = (TByte)(aValue >> 24);
+    bin[1] = (TByte)(aValue >> 16);
+    bin[2] = (TByte)(aValue >> 8);
+    bin[3] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt64Be(TInt64 aValue)
 {
-    iWriter.Write((TByte)(aValue >> 56));
-    iWriter.Write((TByte)(aValue >> 48));
-    iWriter.Write((TByte)(aValue >> 40));
-    iWriter.Write((TByte)(aValue >> 32));
-    iWriter.Write((TByte)(aValue >> 24));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue));
+    TByte bin[8];
+    bin[0] = (TByte)(aValue >> 56);
+    bin[1] = (TByte)(aValue >> 48);
+    bin[2] = (TByte)(aValue >> 40);
+    bin[3] = (TByte)(aValue >> 32);
+    bin[4] = (TByte)(aValue >> 24);
+    bin[5] = (TByte)(aValue >> 16);
+    bin[6] = (TByte)(aValue >> 8);
+    bin[7] = (TByte)(aValue);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt16Le(TInt aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
+    TByte bin[2];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt24Le(TInt aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue >> 16));
+    TByte bin[3];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue >> 16);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt32Le(TInt aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 24));
+    TByte bin[4];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue >> 16);
+    bin[3] = (TByte)(aValue >> 24);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 void WriterBinary::WriteInt64Le(TInt64 aValue)
 {
-    iWriter.Write((TByte)(aValue));
-    iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)(aValue >> 16));
-    iWriter.Write((TByte)(aValue >> 24));
-    iWriter.Write((TByte)(aValue >> 32));
-    iWriter.Write((TByte)(aValue >> 40));
-    iWriter.Write((TByte)(aValue >> 48));
-    iWriter.Write((TByte)(aValue >> 56));
+    TByte bin[8];
+    bin[0] = (TByte)(aValue);
+    bin[1] = (TByte)(aValue >> 8);
+    bin[2] = (TByte)(aValue >> 16);
+    bin[3] = (TByte)(aValue >> 24);
+    bin[4] = (TByte)(aValue >> 32);
+    bin[5] = (TByte)(aValue >> 40);
+    bin[6] = (TByte)(aValue >> 48);
+    bin[7] = (TByte)(aValue >> 56);
+    Brn buf(bin, sizeof(bin));
+    iWriter.Write(buf);
 }
 
 // WriterRingBuffer
