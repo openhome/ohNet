@@ -40,10 +40,21 @@ Config = function() {
 
         Reboot: function(aCallbackResponse, aCallbackError)
         {
+            // Once the reboot request has been sent, there is no guarantee of
+            // a response as the device may reboot immediately without sending
+            // any response.
+            // In that scenario, certainly don't want to suggest to client that
+            // there has been an error, so ignore aCallbackError and provide a
+            // custom error handler that redirects errors to aCallbackResponse.
+
+            var CallbackError = function(aString, aResponseText, aResponseStatus) {
+                aCallbackResponse(aString, "");
+            }
+
             var request = {};
             request.request = {};
             request.request.type = "reboot";
-            WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, aCallbackError);
+            WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, CallbackError);
             WebUi.RestartLongPolling();
         }
     };

@@ -85,13 +85,6 @@ WebUi = function() {
         }
     }
 
-    var CreateFailureCallback = function(aLongPoll, aRequest)
-    {
-        return function() {
-            aLongPoll.ResponseFailure(aRequest);
-        }
-    }
-
     // When "this.SendCreate" is passed into a setTimeout call, in SendCreate()
     // "this" ends up pointing to a Window object instead of a LongPoll object.
     // Create this closure to pass into setTimeout to resolve the issue.
@@ -105,8 +98,9 @@ WebUi = function() {
     var LongPoll = function(aCallbackStarted, aCallbackSuccess, aCallbackFailure)
     {
         this.kRetryTimeoutMs = 1000;
-        this.kInvalidSessionId = 0;
-        this.iSessionId = this.kInvalidSessionId;
+        this.kSessionIdStart = 0
+        this.kSessionIdInvalid = Number.MAX_SAFE_INTEGER;
+        this.iSessionId = this.kSessionIdStart;
         this.iCallbackStarted = aCallbackStarted;
         this.iCallbackSuccess = aCallbackSuccess;
         this.iCallbackFailure = aCallbackFailure;
@@ -122,17 +116,20 @@ WebUi = function() {
 
     LongPoll.CreateLongPollRequest = function(aLongPoll)
     {
-         var request = new HttpRequest();
-         request.SetOnReadyStateChange(CreateResponseCallback(aLongPoll, request));
-         request.AddEventListener("error", CreateFailureCallback(aLongPoll, request), false);
-         return request;
+        var request = new HttpRequest();
+        // An alternative to observing all onreadystatechange callbacks and
+        // filtering would be to observe onerror and onload callbacks.
+        // Note: must not mix the two approaches, as onreadystatechange receives callbacks for all events.
+        request.SetOnReadyStateChange(CreateResponseCallback(aLongPoll, request));
+        return request;
     }
 
     LongPoll.prototype.Terminate = function()
     {
-        if (this.iSessionId != 0) {
+        if (this.iSessionId !== this.kSessionIdStart
+            && this.iSessionId !== this.kSessionIdInvalid) {
             this.SendTerminate();
-            this.iSessionId = 0;
+            this.iSessionId = this.kSessionIdInvalid;
         }
     }
 
@@ -155,8 +152,6 @@ WebUi = function() {
         console.log(">LongPoll.SendCreate\n")
         var request = LongPoll.CreateLongPollRequest(this);
         // FIXME - need to send URI prefix here
-        // FIXME - what if we don't get a response to this?
-        // - need a timeout for each request so we can resend
         request.Open("POST", "lpcreate", true);
         try {
             request.Send()
@@ -194,7 +189,6 @@ WebUi = function() {
         var sessionId = this.ConstructSessionId();
 
         var Response = function(aLongPoll) {
-            console.log("LongPoll.SendUpdate response handler this.iSessionId: " + aLongPoll.iSessionId);
             if (aLongPoll.iSessionId == aLongPoll.kSessionIdInvalid) {
                 console.log("Invalid session ID (response arrived after session terminated). Notifying upper layer of success.");
                 aCallbackResponse(aString, "");
@@ -205,17 +199,24 @@ WebUi = function() {
                     aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
+                    // Covers status of 0, i.e., network issues.
                     aCallbackError(aString, request.ResponseText(), request.Status());
                 }
             }
+            else if (request.ReadyState() == 0) {
+                // Unable to send request for some reason.
+                aCallbackError(aString, request.ResponseText(), request.Status());
+            }
         }
 
-        var ResponseError = function() {
-            aCallbackError(aString);
+        var CreateResponseCallback = function(aLongPoll)
+        {
+            return function() {
+                Response(aLongPoll);
+            }
         }
 
-        request.SetOnReadyStateChange(Response(this));
-        request.AddEventListener("error", ResponseError, false);
+        request.SetOnReadyStateChange(CreateResponseCallback(this));
         request.Open("POST", "update", true);
         request.SetRequestHeader("Content-type", "text/plain");
         //request.setRequestHeader("Connection", "close");
@@ -229,10 +230,11 @@ WebUi = function() {
 
     LongPoll.prototype.Restart = function(aWaitMs)
     {
-        if (this.iSessionId != 0) {
+        console.log("LongPoll.Restart this.iSessionId: " + this.iSessionId + " this.kSessionIdInvalid " + this.kSessionIdInvalid);
+        if (this.iSessionId !== this.kSessionIdInvalid) {
             var asynchronous = true;
             this.SendTerminate(asynchronous);
-            this.iSessionId = 0;
+            this.iSessionId = this.kSessionIdStart;
         }
 
         // Delay before trying to reconnect.
@@ -274,8 +276,13 @@ WebUi = function() {
         }
 
         if (aRequest != null) {
-            if (aRequest.ReadyState() == 4 && aRequest.Status() == 200) {
-                console.log("LongPoll.ProcessResponse status: " + aRequest.Status() + " responseText " + aRequest.ResponseText());
+            if (aRequest.ReadyState() == 4) {
+                if (aRequest.Status() != 200) {
+                    // Response was not OK.
+                    this.ResponseFailure(aRequest); // Handles retry.
+                    return;
+                }
+
                 var lines = aRequest.ResponseText().split("\r\n");
                 var request = lines[0];
 
@@ -314,8 +321,12 @@ WebUi = function() {
                 // Everything falls through to here if invalid response.
                 //setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
             }
+            else if (aRequest.ReadyState() === 0) {
+                // Error.
+                this.ResponseFailure(aRequest); // Handles retry.
+            }
             else {
-                // AJAX request readyState iterates from 0..4 as it is processed.
+                // AJAX request readyState iterates from 1..4 as it is processed.
                 // If state is not yet 4, it is not ready to be handled here.
             }
         }
@@ -327,9 +338,8 @@ WebUi = function() {
     LongPoll.prototype.ResponseFailure = function()
     {
         this.iCallbackFailure();
-
-        // FIXME - don't want this sent for every failed response in case multiple lpcreate requests end up simultaneously active.
-        setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);  // FIXME - is calling this after response code above calling SendCreate() causing the request to abort on Open()?
+        console.log("LongPoll.ResponseFailure");
+        setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
     }
 
     return {
@@ -376,7 +386,6 @@ WebUi = function() {
             }
             var asynchronous = false;
             gLongPoll.Terminate(asynchronous);
-            // FIXME - how to hook this into MakeNextPollCall()?
             gStarted = false;
         },
 
