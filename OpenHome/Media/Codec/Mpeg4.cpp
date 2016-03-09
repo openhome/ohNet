@@ -2412,7 +2412,7 @@ void MsgAudioEncodedWriter::Write(const Brx& aBuffer)
             if (remaining < bufCapacity) {
                 bytes = remaining;
             }
-            iBuf.Append(iBuf.Ptr() + offset, bytes);
+            iBuf.Append(aBuffer.Ptr() + offset, bytes);
             offset += bytes;
             remaining -= bytes;
         }
