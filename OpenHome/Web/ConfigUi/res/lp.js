@@ -98,8 +98,9 @@ WebUi = function() {
     var LongPoll = function(aCallbackStarted, aCallbackSuccess, aCallbackFailure)
     {
         this.kRetryTimeoutMs = 1000;
-        this.kInvalidSessionId = 0;
-        this.iSessionId = this.kInvalidSessionId;
+        this.kSessionIdStart = 0
+        this.kSessionIdInvalid = Number.MAX_SAFE_INTEGER;
+        this.iSessionId = this.kSessionIdStart;
         this.iCallbackStarted = aCallbackStarted;
         this.iCallbackSuccess = aCallbackSuccess;
         this.iCallbackFailure = aCallbackFailure;
@@ -125,9 +126,10 @@ WebUi = function() {
 
     LongPoll.prototype.Terminate = function()
     {
-        if (this.iSessionId != 0) {
+        if (this.iSessionId !== this.kSessionIdStart
+            && this.iSessionId !== this.kSessionIdInvalid) {
             this.SendTerminate();
-            this.iSessionId = 0;
+            this.iSessionId = this.kSessionIdInvalid;
         }
     }
 
@@ -150,8 +152,6 @@ WebUi = function() {
         console.log(">LongPoll.SendCreate\n")
         var request = LongPoll.CreateLongPollRequest(this);
         // FIXME - need to send URI prefix here
-        // FIXME - what if we don't get a response to this?
-        // - need a timeout for each request so we can resend
         request.Open("POST", "lpcreate", true);
         try {
             request.Send()
@@ -189,7 +189,6 @@ WebUi = function() {
         var sessionId = this.ConstructSessionId();
 
         var Response = function(aLongPoll) {
-            console.log("LongPoll.SendUpdate response handler this.iSessionId: " + aLongPoll.iSessionId);
             if (aLongPoll.iSessionId == aLongPoll.kSessionIdInvalid) {
                 console.log("Invalid session ID (response arrived after session terminated). Notifying upper layer of success.");
                 aCallbackResponse(aString, "");
@@ -200,16 +199,24 @@ WebUi = function() {
                     aCallbackResponse(aString, request.ResponseText());
                 }
                 else {
+                    // Covers status of 0, i.e., network issues.
                     aCallbackError(aString, request.ResponseText(), request.Status());
                 }
             }
             else if (request.ReadyState() == 0) {
-                // Error.
+                // Unable to send request for some reason.
                 aCallbackError(aString, request.ResponseText(), request.Status());
             }
         }
 
-        request.SetOnReadyStateChange(Response(this));
+        var CreateResponseCallback = function(aLongPoll)
+        {
+            return function() {
+                Response(aLongPoll);
+            }
+        }
+
+        request.SetOnReadyStateChange(CreateResponseCallback(this));
         request.Open("POST", "update", true);
         request.SetRequestHeader("Content-type", "text/plain");
         //request.setRequestHeader("Connection", "close");
@@ -223,10 +230,11 @@ WebUi = function() {
 
     LongPoll.prototype.Restart = function(aWaitMs)
     {
-        if (this.iSessionId != 0) {
+        console.log("LongPoll.Restart this.iSessionId: " + this.iSessionId + " this.kSessionIdInvalid " + this.kSessionIdInvalid);
+        if (this.iSessionId !== this.kSessionIdInvalid) {
             var asynchronous = true;
             this.SendTerminate(asynchronous);
-            this.iSessionId = 0;
+            this.iSessionId = this.kSessionIdStart;
         }
 
         // Delay before trying to reconnect.
@@ -270,13 +278,11 @@ WebUi = function() {
         if (aRequest != null) {
             if (aRequest.ReadyState() == 4) {
                 if (aRequest.Status() != 200) {
-                    // Valid ready state, but response was not OK.
-                    console.log("aRequest.Status() != 200");
+                    // Response was not OK.
                     this.ResponseFailure(aRequest); // Handles retry.
                     return;
                 }
 
-                console.log("LongPoll.ProcessResponse status: " + aRequest.Status() + " responseText " + aRequest.ResponseText());
                 var lines = aRequest.ResponseText().split("\r\n");
                 var request = lines[0];
 
@@ -320,7 +326,7 @@ WebUi = function() {
                 this.ResponseFailure(aRequest); // Handles retry.
             }
             else {
-                // AJAX request readyState iterates from 0..4 as it is processed.
+                // AJAX request readyState iterates from 1..4 as it is processed.
                 // If state is not yet 4, it is not ready to be handled here.
             }
         }
