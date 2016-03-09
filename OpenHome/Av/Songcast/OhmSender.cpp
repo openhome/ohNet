@@ -202,6 +202,9 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     iBitDepth = aBitDepth;
     iLossless = aLossless;
     iCodecName.Replace(aCodecName);
+
+    iStreamHeader.Replace(Brx::Empty());
+    OhmMsgAudio::GetStreamHeader(iStreamHeader, iSamplesTotal, aSampleRate, aBitRate, 0/*VolumeOffset*/, aBitDepth, aChannels, aCodecName);
 }
 
 void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
@@ -252,20 +255,13 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         aHalt,
         iLossless,
         isTimeStamped,
-        false,
+        false, // resent
         samples,
         iFrame,
         timeStamp, // network timestamp
         latency,
-        0,
         iSampleStart,
-        iSamplesTotal,
-        iSampleRate,
-        iBitRate,
-        0, // volume offset
-        iBitDepth,
-        iChannels,
-        iCodecName,
+        iStreamHeader,
         Brn(aData, aBytes)
     );
 

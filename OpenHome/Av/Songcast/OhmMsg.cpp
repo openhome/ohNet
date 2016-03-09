@@ -138,6 +138,7 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     
     const TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
     reader.ReadReplace(audio, iAudio);
+    iStreamHeader.Replace(Brx::Empty());
 }
 
 void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
@@ -162,6 +163,42 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     iChannels = aChannels;
     iCodec.Replace(aCodec);
     iAudio.Replace(aAudio);
+    iStreamHeader.Replace(Brx::Empty());
+}
+
+void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
+{
+    OhmMsgTimestamped::Create();
+
+    iHalt = aHalt;
+    iLossless = aLossless;
+    iTimestamped = aTimestamped;
+    iResent = aResent;
+    iSamples = aSamples;
+    iFrame = aFrame;
+    iNetworkTimestamp = aNetworkTimestamp;
+    iMediaLatency = aMediaLatency;
+    iMediaTimestamp = 0;
+    iSampleStart = aSampleStart;
+    iStreamHeader.Replace(aStreamHeader);
+    iAudio.Replace(aAudio);
+}
+
+void OhmMsgAudio::GetStreamHeader(Bwx& aBuf, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec)
+{ // static
+    WriterBuffer wb(aBuf);
+    WriterBinary writer(wb);
+    writer.WriteUint64Be(aSamplesTotal);
+    writer.WriteUint32Be(aSampleRate);
+    writer.WriteUint32Be(aBitRate);
+    writer.WriteInt16Be(aVolumeOffset);
+    writer.WriteUint8(aBitDepth);
+    writer.WriteUint8(aChannels);
+    writer.WriteUint8(kReserved);
+    writer.WriteUint8(aCodec.Bytes());
+    if (aCodec.Bytes() > 0) {
+        writer.Write(aCodec);
+    }
 }
 
 TBool OhmMsgAudio::Halt() const
@@ -292,17 +329,21 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
     writer.WriteUint32Be(iMediaLatency);
     writer.WriteUint32Be(iMediaTimestamp);
     writer.WriteUint64Be(iSampleStart);
-    writer.WriteUint64Be(iSamplesTotal);
-    writer.WriteUint32Be(iSampleRate);
-    writer.WriteUint32Be(iBitRate);
-    writer.WriteInt16Be(iVolumeOffset);
-    writer.WriteUint8(iBitDepth);
-    writer.WriteUint8(iChannels);
-    writer.WriteUint8(kReserved);
-    writer.WriteUint8(iCodec.Bytes());
-    
-    if (iCodec.Bytes() > 0) {
-        writer.Write(iCodec);
+    if (iStreamHeader.Bytes() > 0) {
+        writer.Write(iStreamHeader);
+    }
+    else {
+        writer.WriteUint64Be(iSamplesTotal);
+        writer.WriteUint32Be(iSampleRate);
+        writer.WriteUint32Be(iBitRate);
+        writer.WriteInt16Be(iVolumeOffset);
+        writer.WriteUint8(iBitDepth);
+        writer.WriteUint8(iChannels);
+        writer.WriteUint8(kReserved);
+        writer.WriteUint8(iCodec.Bytes());
+        if (iCodec.Bytes() > 0) {
+            writer.Write(iCodec);
+        }
     }
     writer.Write(iAudio);
 
@@ -596,6 +637,13 @@ OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTim
 {
     OhmMsgAudio* msg = iFifoAudio.Read();
     msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aMediaTimestamp, aSampleStart, aSamplesTotal, aSampleRate, aBitRate, aVolumeOffset, aBitDepth, aChannels,  aCodec, aAudio);
+    return msg;
+}
+
+OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
+{
+    OhmMsgAudio* msg = iFifoAudio.Read();
+    msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aSampleStart, aStreamHeader, aAudio);
     return msg;
 }
 

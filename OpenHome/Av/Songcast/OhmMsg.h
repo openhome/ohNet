@@ -71,10 +71,13 @@ public:
     static const TUint kFlagLossless    = 1 << 1;
     static const TUint kFlagTimestamped = 1 << 2;
     static const TUint kFlagResent      = 1 << 3;
+    static const TUint kStreamHeaderBytes = 80;
 private:
     static const TUint kHeaderBytes = 50; // not including codec name
     static const TUint kReserved        = 0;
 public:
+    static void GetStreamHeader(Bwx& aBuf, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec);
+
     TBool Halt() const;
     TBool Lossless() const;
     TBool Timestamped() const;
@@ -102,6 +105,7 @@ private:
     OhmMsgAudio(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);
     void Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio);
+    void Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio);
 private:
     TBool iHalt;
     TBool iLossless;
@@ -120,6 +124,7 @@ private:
     TUint iBitDepth;
     TUint iChannels;
     Bws<kMaxCodecBytes> iCodec;
+    Bws<kStreamHeaderBytes> iStreamHeader;
     Bws<kMaxSampleBytes> iAudio;
 };
 
@@ -203,6 +208,7 @@ public:
     virtual OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio) = 0;
+    virtual OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio) = 0;
     virtual OhmMsgTrack* CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata) = 0;
     virtual OhmMsgMetatext* CreateMetatext(TUint aSequence, const Brx& aMetatext) = 0;
 };
@@ -222,6 +228,7 @@ public: // from IOhmMsgFactory
     OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio) override;
+    OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio) override;
     OhmMsgTrack* CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata) override;
     OhmMsgMetatext* CreateMetatext(TUint aSequence, const Brx& aMetatext) override;
 private:
