@@ -6,7 +6,29 @@ function StartLongPolling()
 
     var LongPollStarted = function()
     {
-        // Do nothing.
+        // Replace document with something that can be populated with config vals.
+        var content =  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\
+                        <html>\
+                        <head>\
+                        <script src=\"lp.js\"></script>\
+                        <script src=\"config.js\"></script>\
+                        <script src=\"webconfig.js\"></script>\
+                        <title>\
+                        Web Config\
+                        </title>\
+                        </head>\
+                        <body onload=\"StartLongPolling()\" onunload=\"EndLongPolling()\">\
+                        \
+                        <h1>Web Config UI</h1>\
+                        \
+                        <table id=\"ConfigValContainer\">\
+                        </table>\
+                        \
+                        <button type=\"button\" onclick=\"Reboot()\">Reboot</button>\
+                        \
+                        </body>\
+                        </html>"
+        document.body.innerHTML = content;
     }
 
     var ConfigNumLimits = function(aKey, aMin, aMax)
@@ -294,7 +316,15 @@ function StartLongPolling()
     {
         // This, combined with the reconnect behaviour, causes long-polling to
         // be restarted again after the connection has just been re-established.
-        var content = "<h1>Error: HTTP Framework cannot connect to server</h1>";
+        var content =  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\
+                        <title>\
+                        Web Config\
+                        </title>\
+                        </head>\
+                        <body>\
+                        <h3>Error: Cannot connect to device. Attempting to re-establish connection.</h3>\
+                        </body>\
+                        </html>"
         document.body.innerHTML = content;
     }
 

@@ -85,13 +85,6 @@ WebUi = function() {
         }
     }
 
-    var CreateFailureCallback = function(aLongPoll, aRequest)
-    {
-        return function() {
-            aLongPoll.ResponseFailure(aRequest);
-        }
-    }
-
     // When "this.SendCreate" is passed into a setTimeout call, in SendCreate()
     // "this" ends up pointing to a Window object instead of a LongPoll object.
     // Create this closure to pass into setTimeout to resolve the issue.
@@ -122,10 +115,12 @@ WebUi = function() {
 
     LongPoll.CreateLongPollRequest = function(aLongPoll)
     {
-         var request = new HttpRequest();
-         request.SetOnReadyStateChange(CreateResponseCallback(aLongPoll, request));
-         request.AddEventListener("error", CreateFailureCallback(aLongPoll, request), false);
-         return request;
+        var request = new HttpRequest();
+        // An alternative to observing all onreadystatechange callbacks and
+        // filtering would be to observe onerror and onload callbacks.
+        // Note: must not mix the two approaches, as onreadystatechange receives callbacks for all events.
+        request.SetOnReadyStateChange(CreateResponseCallback(aLongPoll, request));
+        return request;
     }
 
     LongPoll.prototype.Terminate = function()
@@ -208,14 +203,13 @@ WebUi = function() {
                     aCallbackError(aString, request.ResponseText(), request.Status());
                 }
             }
-        }
-
-        var ResponseError = function() {
-            aCallbackError(aString);
+            else if (request.ReadyState() == 0) {
+                // Error.
+                aCallbackError(aString, request.ResponseText(), request.Status());
+            }
         }
 
         request.SetOnReadyStateChange(Response(this));
-        request.AddEventListener("error", ResponseError, false);
         request.Open("POST", "update", true);
         request.SetRequestHeader("Content-type", "text/plain");
         //request.setRequestHeader("Connection", "close");
@@ -274,7 +268,14 @@ WebUi = function() {
         }
 
         if (aRequest != null) {
-            if (aRequest.ReadyState() == 4 && aRequest.Status() == 200) {
+            if (aRequest.ReadyState() == 4) {
+                if (aRequest.Status() != 200) {
+                    // Valid ready state, but response was not OK.
+                    console.log("aRequest.Status() != 200");
+                    this.ResponseFailure(aRequest); // Handles retry.
+                    return;
+                }
+
                 console.log("LongPoll.ProcessResponse status: " + aRequest.Status() + " responseText " + aRequest.ResponseText());
                 var lines = aRequest.ResponseText().split("\r\n");
                 var request = lines[0];
@@ -314,6 +315,10 @@ WebUi = function() {
                 // Everything falls through to here if invalid response.
                 //setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
             }
+            else if (aRequest.ReadyState() === 0) {
+                // Error.
+                this.ResponseFailure(aRequest); // Handles retry.
+            }
             else {
                 // AJAX request readyState iterates from 0..4 as it is processed.
                 // If state is not yet 4, it is not ready to be handled here.
@@ -327,9 +332,8 @@ WebUi = function() {
     LongPoll.prototype.ResponseFailure = function()
     {
         this.iCallbackFailure();
-
-        // FIXME - don't want this sent for every failed response in case multiple lpcreate requests end up simultaneously active.
-        setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);  // FIXME - is calling this after response code above calling SendCreate() causing the request to abort on Open()?
+        console.log("LongPoll.ResponseFailure");
+        setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
     }
 
     return {
@@ -376,7 +380,6 @@ WebUi = function() {
             }
             var asynchronous = false;
             gLongPoll.Terminate(asynchronous);
-            // FIXME - how to hook this into MakeNextPollCall()?
             gStarted = false;
         },
 
