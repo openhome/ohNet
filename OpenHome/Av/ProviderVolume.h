@@ -62,9 +62,14 @@ private: // from IVolumeObserver
 private: // from Media::IMuteObserver
     void MuteChanged(TBool aValue) override;
 private:
-    void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolume);
-    void HelperSetBalance(Net::IDvInvocation& aInvocation, TInt aBalance);
-    void HelperSetFade(Net::IDvInvocation& aInvocation, TInt aFade);
+    enum class ErrorOutOfRange {
+        Report,
+        Ignore
+    };
+private:
+    void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolume, ErrorOutOfRange aReportOutOfRange);
+    void HelperSetBalance(Net::IDvInvocation& aInvocation, TInt aBalance, ErrorOutOfRange aReportOutOfRange);
+    void HelperSetFade(Net::IDvInvocation& aInvocation, TInt aFade, ErrorOutOfRange aReportOutOfRange);
     void VolumeLimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void BalanceChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void FadeChanged(Configuration::ConfigNum::KvpNum& aKvp);

@@ -86,7 +86,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, 
     }
     SetPropertyProductUrl(Brn(presentationUrl));
 
-    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this);
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityLowest);
     iProduct.AddObserver(*this);
     iProduct.AddNameObserver(*this);
 }

@@ -601,8 +601,7 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint
     iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
 
     CurrentAdapterChanged();    // Force to set iCurrentAdapter, as not called at point of subscription.
-
-    AddSessions();
+    // no need to call AddSessions() - this happens inside CurrentAdapterChanged()
 }
 
 WebAppFramework::~WebAppFramework()

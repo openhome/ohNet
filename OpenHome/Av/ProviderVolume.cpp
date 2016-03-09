@@ -133,21 +133,21 @@ void ProviderVolume::Characteristics(IDvInvocation& aInvocation, IDvInvocationRe
 
 void ProviderVolume::SetVolume(IDvInvocation& aInvocation, TUint aValue)
 {
-    HelperSetVolume(aInvocation, aValue);
+    HelperSetVolume(aInvocation, aValue, ErrorOutOfRange::Report);
 }
 
 void ProviderVolume::VolumeInc(IDvInvocation& aInvocation)
 {
     TUint volume = 0;
     GetPropertyVolume(volume);
-    HelperSetVolume(aInvocation, volume+1);
+    HelperSetVolume(aInvocation, volume+1, ErrorOutOfRange::Ignore);
 }
 
 void ProviderVolume::VolumeDec(IDvInvocation& aInvocation)
 {
     TUint volume = 0;
     GetPropertyVolume(volume);
-    HelperSetVolume(aInvocation, volume-1);
+    HelperSetVolume(aInvocation, volume-1, ErrorOutOfRange::Ignore);
 }
 
 void ProviderVolume::Volume(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
@@ -161,21 +161,21 @@ void ProviderVolume::Volume(IDvInvocation& aInvocation, IDvInvocationResponseUin
 
 void ProviderVolume::SetBalance(IDvInvocation& aInvocation, TInt aValue)
 {
-    HelperSetBalance(aInvocation, aValue);
+    HelperSetBalance(aInvocation, aValue, ErrorOutOfRange::Report);
 }
 
 void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
 {
     TInt balance = 0;
     GetPropertyBalance(balance);
-    HelperSetBalance(aInvocation, balance+1);
+    HelperSetBalance(aInvocation, balance+1, ErrorOutOfRange::Ignore);
 }
 
 void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
 {
     TInt balance = 0;
     GetPropertyBalance(balance);
-    HelperSetBalance(aInvocation, balance-1);
+    HelperSetBalance(aInvocation, balance-1, ErrorOutOfRange::Ignore);
 }
 
 void ProviderVolume::Balance(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
@@ -189,21 +189,21 @@ void ProviderVolume::Balance(IDvInvocation& aInvocation, IDvInvocationResponseIn
 
 void ProviderVolume::SetFade(IDvInvocation& aInvocation, TInt aValue)
 {
-    HelperSetFade(aInvocation, aValue);
+    HelperSetFade(aInvocation, aValue, ErrorOutOfRange::Report);
 }
 
 void ProviderVolume::FadeInc(IDvInvocation& aInvocation)
 {
     TInt fade = 0;
     GetPropertyFade(fade);
-    HelperSetFade(aInvocation, fade+1);
+    HelperSetFade(aInvocation, fade+1, ErrorOutOfRange::Ignore);
 }
 
 void ProviderVolume::FadeDec(IDvInvocation& aInvocation)
 {
     TInt fade = 0;
     GetPropertyFade(fade);
-    HelperSetFade(aInvocation, fade-1);
+    HelperSetFade(aInvocation, fade-1, ErrorOutOfRange::Ignore);
 }
 
 void ProviderVolume::Fade(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
@@ -260,13 +260,13 @@ void ProviderVolume::MuteChanged(TBool aValue)
     SetPropertyMute(aValue);
 }
 
-void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume)
+void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume, ErrorOutOfRange aReportOutOfRange)
 {
     try {
         iVolume.SetVolume(aVolume);
     }
     catch (VolumeOutOfRange&) {
-        if (aVolume > iVolumeMax) {
+        if (aVolume > iVolumeMax && aReportOutOfRange == ErrorOutOfRange::Report) {
             aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
         }
     }
@@ -274,7 +274,7 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume)
     aInvocation.EndResponse();
 }
 
-void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance)
+void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance, ErrorOutOfRange aReportOutOfRange)
 {
     if (iBalance == nullptr) {
         aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg);
@@ -283,13 +283,15 @@ void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance)
         iBalance->SetBalance(aBalance);
     }
     catch (BalanceOutOfRange&) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
+        if (aReportOutOfRange == ErrorOutOfRange::Report) {
+            aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
+        }
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
-void ProviderVolume::HelperSetFade(IDvInvocation& aInvocation, TInt aFade)
+void ProviderVolume::HelperSetFade(IDvInvocation& aInvocation, TInt aFade, ErrorOutOfRange aReportOutOfRange)
 {
     if (iFade == nullptr) {
         aInvocation.Error(kActionNotSupportedCode, kActionNotSupportedMsg);
@@ -298,7 +300,9 @@ void ProviderVolume::HelperSetFade(IDvInvocation& aInvocation, TInt aFade)
         iFade->SetFade(aFade);
     }
     catch (FadeOutOfRange&) {
-        aInvocation.Error(kInvalidFadeCode, kInvalidFadeMsg);
+        if (aReportOutOfRange == ErrorOutOfRange::Report) {
+            aInvocation.Error(kInvalidFadeCode, kInvalidFadeMsg);
+        }
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();

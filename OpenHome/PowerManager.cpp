@@ -59,7 +59,7 @@ void PowerManager::StandbyEnable()
         return;
     }
     iStandby = true;
-    for (auto it = iStandbyObservers.cbegin(); it != iStandbyObservers.cend(); ++it) {
+    for (auto it = iStandbyObservers.rbegin(); it != iStandbyObservers.rend(); ++it) {
         (*it)->Handler().StandbyEnabled();
     }
 }
@@ -72,7 +72,7 @@ void PowerManager::StandbyDisable(StandbyDisableReason aReason)
     }
     iStandby = false;
     iLastDisableReason = aReason;
-    for (auto it = iStandbyObservers.cbegin(); it != iStandbyObservers.cend(); ++it) {
+    for (auto it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
         (*it)->Handler().StandbyDisabled(aReason);
     }
 }
@@ -106,11 +106,24 @@ IPowerManagerObserver* PowerManager::RegisterPowerHandler(IPowerHandler& aHandle
     return observer;
 }
 
-IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler)
+IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority)
 {
     AutoMutex _(iLock);
-    auto* observer = new StandbyObserver(*this, aHandler, iNextStandbyId++);
-    iStandbyObservers.push_back(observer);
+    auto* observer = new StandbyObserver(*this, aHandler, iNextStandbyId++, aPriority);
+
+    std::vector<StandbyObserver*>::iterator it;
+    for (it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
+        if ((*it)->Priority() < observer->Priority()) {
+            it = iStandbyObservers.insert(it, observer);
+            break;
+        }
+    }
+
+    if (it == iStandbyObservers.end()) {
+        // Callback is lower priority than anything in list.
+        iStandbyObservers.push_back(observer);
+    }
+
     if (iStandby) {
         aHandler.StandbyEnabled();
     }
@@ -199,10 +212,11 @@ TUint PowerManagerObserver::Priority() const
 
 // StandbyObserver
 
-StandbyObserver::StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId)
+StandbyObserver::StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId, TUint aPriority)
     : iPowerManager(aPowerManager)
     , iHandler(aHandler)
     , iId(aId)
+    , iPriority(aPriority)
 {
 }
 
@@ -219,6 +233,11 @@ IStandbyHandler& StandbyObserver::Handler() const
 TUint StandbyObserver::Id() const
 {
     return iId;
+}
+
+TUint StandbyObserver::Priority() const
+{
+    return iPriority;
 }
 
 

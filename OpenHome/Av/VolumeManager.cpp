@@ -68,8 +68,8 @@ void VolumeNull::SetVolume(TUint /*aVolume*/)
 
 const Brn VolumeUser::kStartupVolumeKey("Startup.Volume");
 
-VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, StoreInt& aStoreUserVolume,
-                       TUint aMaxVolume, TUint aMilliDbPerStep)
+VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, IPowerManager& aPowerManager,
+                       StoreInt& aStoreUserVolume, TUint aMaxVolume, TUint aMilliDbPerStep)
     : iVolume(aVolume)
     , iConfigStartupVolume(aConfigReader.GetNum(VolumeConfig::kKeyStartupValue))
     , iConfigStartupVolumeEnabled(aConfigReader.GetChoice(VolumeConfig::kKeyStartupEnabled))
@@ -79,19 +79,13 @@ VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, StoreInt
 {
     iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
     iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
-
-    TUint startupVolume;
-    if (iStartupVolumeEnabled) {
-        startupVolume = iStartupVolume * iMilliDbPerStep;
-    }
-    else {
-        startupVolume = iStoreUserVolume.Get();
-    }
-    iVolume.SetVolume(startupVolume);
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal);
+    // StandbyDisabled will be called either inside the call above or when we later exit standby
 }
 
 VolumeUser::~VolumeUser()
 {
+    delete iStandbyObserver;
     iConfigStartupVolume.Unsubscribe(iSubscriberIdStartupVolume);
     iConfigStartupVolumeEnabled.Unsubscribe(iSubscriberIdStartupVolumeEnabled);
 }
@@ -103,6 +97,23 @@ void VolumeUser::SetVolume(TUint aVolume)
     }
     iStoreUserVolume.Set(aVolume);
     iVolume.SetVolume(aVolume);
+}
+
+void VolumeUser::StandbyEnabled()
+{
+    // no need to change volume when we enter standby
+}
+
+void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
+{
+    TUint startupVolume;
+    if (iStartupVolumeEnabled) {
+        startupVolume = iStartupVolume * iMilliDbPerStep;
+    }
+    else {
+        startupVolume = iStoreUserVolume.Get();
+    }
+    iVolume.SetVolume(startupVolume);
 }
 
 void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)
@@ -390,28 +401,36 @@ void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 
 // MuteUser
 
-MuteUser::MuteUser(Media::IMute& aMute, StoreInt& aStoreUserMute)
+MuteUser::MuteUser(Media::IMute& aMute, IPowerManager& aPowerManager)
     : iMute(aMute)
-    , iStoreUserMute(aStoreUserMute)
 {
-    if (iStoreUserMute.Get() == VolumeConfig::kValueMuted) {
-        iMute.Mute();
-    }
-    else {
-        iMute.Unmute();
-    }
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal);
+}
+
+MuteUser::~MuteUser()
+{
+    delete iStandbyObserver;
 }
 
 void MuteUser::Mute()
 {
-    iStoreUserMute.Set(VolumeConfig::kValueMuted);
     iMute.Mute();
 }
 
 void MuteUser::Unmute()
 {
-    iStoreUserMute.Set(VolumeConfig::kValueUnmuted);
     iMute.Unmute();
+}
+
+void MuteUser::StandbyEnabled()
+{
+    // no need to change mute when we enter standby
+}
+
+void MuteUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
+{
+    // clear any previous mute when we leave standby
+    Unmute();
 }
 
 
@@ -459,7 +478,6 @@ TBool MuteReporter::Report(TBool aMuted)
 // VolumeConfig
 
 const Brn VolumeConfig::kKeyStartupVolume("Last.Volume");
-const Brn VolumeConfig::kKeyStartupMute("Last.Mute");
 const Brn VolumeConfig::kKeyStartupValue("Volume.StartupValue");
 const Brn VolumeConfig::kKeyStartupEnabled("Volume.StartupEnabled");
 const Brn VolumeConfig::kKeyLimit("Volume.Limit");
@@ -469,7 +487,6 @@ const Brn VolumeConfig::kKeyFade("Volume.Fade");
 
 VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager, const IVolumeProfile& aProfile)
     : iStoreUserVolume(aStore, aPowerManager, kPowerPriorityHighest, kKeyStartupVolume, aProfile.VolumeDefault())
-    , iStoreUserMute(aStore, aPowerManager, kPowerPriorityHighest, kKeyStartupMute, kValueUnmuted)
 {
     iVolumeMax            = aProfile.VolumeMax();
     iVolumeDefault        = aProfile.VolumeDefault();
@@ -522,11 +539,6 @@ VolumeConfig::~VolumeConfig()
 StoreInt& VolumeConfig::StoreUserVolume()
 {
     return iStoreUserVolume;
-}
-
-StoreInt& VolumeConfig::StoreUserMute()
-{
-    return iStoreUserMute;
 }
 
 TBool VolumeConfig::VolumeControlEnabled() const
@@ -583,7 +595,8 @@ void VolumeConfig::EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp)
 // VolumeManager
 
 VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, VolumeConfig& aVolumeConfig,
-                             Net::DvDevice& aDevice, Product& aProduct, IConfigManager& aConfigReader)
+                             Net::DvDevice& aDevice, Product& aProduct, IConfigManager& aConfigReader,
+                             IPowerManager& aPowerManager)
     : iVolumeConfig(aVolumeConfig)
 {
     IBalance* balance = aVolumeConsumer.Balance();
@@ -606,7 +619,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     }
     else {
         iMuteReporter = new MuteReporter(*aMute);
-        iMuteUser = new MuteUser(*iMuteReporter, aVolumeConfig.StoreUserMute());
+        iMuteUser = new MuteUser(*iMuteReporter, aPowerManager);
     }
     iAnalogBypassRamper = new AnalogBypassRamper(*aVolumeConsumer.Volume());
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
@@ -617,7 +630,8 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
-        iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aVolumeConfig.StoreUserVolume(),
+        iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aPowerManager,
+                                     aVolumeConfig.StoreUserVolume(),
                                      iVolumeConfig.VolumeMax() * milliDbPerStep, milliDbPerStep);
         iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
         aProduct.AddAttribute("Volume");
