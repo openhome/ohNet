@@ -21,7 +21,7 @@ PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     : iNextPowerId(0)
     , iNextStandbyId(0)
     , iPowerDown(false)
-    , iStandby(false)
+    , iStandby(Standby::Undefined)
     , iLock("PMLO")
 {
     const int arr[] ={ kConfigIdStartupStandbyDisabled, kConfigIdStartupStandbyEnabled };
@@ -55,10 +55,10 @@ void PowerManager::NotifyPowerDown()
 void PowerManager::StandbyEnable()
 {
     AutoMutex _(iLock);
-    if (iStandby) {
+    if (iStandby == Standby::On) {
         return;
     }
-    iStandby = true;
+    iStandby = Standby::On;
     for (auto it = iStandbyObservers.rbegin(); it != iStandbyObservers.rend(); ++it) {
         (*it)->Handler().StandbyEnabled();
     }
@@ -67,10 +67,10 @@ void PowerManager::StandbyEnable()
 void PowerManager::StandbyDisable(StandbyDisableReason aReason)
 {
     AutoMutex _(iLock);
-    if (!iStandby) {
+    if (iStandby == Standby::Off) {
         return;
     }
-    iStandby = false;
+    iStandby = Standby::Off;
     iLastDisableReason = aReason;
     for (auto it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
         (*it)->Handler().StandbyDisabled(aReason);
@@ -124,7 +124,7 @@ IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler
         iStandbyObservers.push_back(observer);
     }
 
-    if (iStandby) {
+    if (iStandby == Standby::On) {
         aHandler.StandbyEnabled();
     }
     else {
@@ -166,7 +166,7 @@ void PowerManager::DeregisterStandby(TUint aId)
 
 void PowerManager::StartupStandbyChanged(KeyValuePair<TUint>& aKvp)
 {
-    iStandby = (aKvp.Value() == kConfigIdStartupStandbyEnabled);
+    iStandby = (aKvp.Value() == kConfigIdStartupStandbyEnabled? Standby::On: Standby::Off);
     iLastDisableReason = StandbyDisableReason::Boot; // this callback only runs during PowerManager c'tor
 }
 

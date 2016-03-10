@@ -99,13 +99,19 @@ private:
     void DeregisterStandby(TUint aId);
     void StartupStandbyChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private:
+    enum class Standby {
+        On,
+        Off,
+        Undefined
+    };
+private:
     typedef std::list<PowerManagerObserver*> PriorityList;  // efficient insertion and removal
     PriorityList iPowerObservers;
     std::vector<StandbyObserver*> iStandbyObservers;
     TUint iNextPowerId;
     TUint iNextStandbyId;
     TBool iPowerDown;
-    TBool iStandby;
+    Standby iStandby;
     StandbyDisableReason iLastDisableReason;
     mutable Mutex iLock;
     Configuration::ConfigChoice* iConfigStartupStandby;
