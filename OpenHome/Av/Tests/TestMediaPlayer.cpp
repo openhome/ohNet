@@ -263,6 +263,7 @@ void TestMediaPlayer::Run()
     configManager.DumpToStore();
 
     iAppFramework->Start();
+    iMediaPlayer->PowerManager().StandbyDisable(StandbyDisableReason::Boot);
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
 

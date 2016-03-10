@@ -116,10 +116,11 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iReadStore(aReadStore)
     , iConfigReader(aConfigReader)
     , iConfigInit(aConfigInit)
+    , iPowerManager(aPowerManager)
     , iLock("PRDM")
     , iLockDetails("PRDD")
     , iStarted(false)
-    , iStandby(false)
+    , iStandby(true)
     , iAutoPlay(false)
     , iCurrentSource(kCurrentSourceNone)
     , iSourceXmlChangeCount(0)
@@ -176,17 +177,17 @@ void Product::Start()
     iLock.Signal();
 
     if (startupSourceVal != ConfigStartupSource::kNone) {
-        (void)SetCurrentSource(startupSourceVal);
+        (void)DoSetCurrentSource(startupSourceVal);
     }
     else { // No startup source selected; use last selected source.
         Bws<ISource::kMaxSystemNameBytes> startupSource;
         iLastSelectedSource->Get(startupSource);
         if (startupSource == Brx::Empty()) {
             // If there is no stored startup source, select the first added source.
-            (void)SetCurrentSource(0);
+            (void)DoSetCurrentSource(0);
         }
         else {
-            (void)SetCurrentSource(startupSource);
+            DoSetCurrentSource(startupSource);
         }
     }
 
@@ -332,6 +333,12 @@ void Product::AutoPlayChanged(KeyValuePair<TUint>& aKvp)
 
 TBool Product::SetCurrentSource(TUint aIndex)
 {
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
+    return DoSetCurrentSource(aIndex);
+}
+
+TBool Product::DoSetCurrentSource(TUint aIndex)
+{
     AutoMutex a(iLock);
     if (aIndex >= (TUint)iSources.size()) {
         THROW(AvSourceNotFound);
@@ -344,7 +351,9 @@ TBool Product::SetCurrentSource(TUint aIndex)
     }
     iCurrentSource = aIndex;
     iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
-    iSources[iCurrentSource]->Activate(iAutoPlay);
+    if (!iStandby) {
+        iSources[iCurrentSource]->Activate(iAutoPlay);
+    }
 
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
         (*it)->SourceIndexChanged();
@@ -354,6 +363,13 @@ TBool Product::SetCurrentSource(TUint aIndex)
 
 void Product::SetCurrentSource(const Brx& aName)
 {
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
+    DoSetCurrentSource(aName);
+}
+
+void Product::DoSetCurrentSource(const Brx& aName)
+{
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
     AutoMutex a(iLock);
     // volkano treats [name] as a system name and anything else as a user-defined name.  Do we need to do the same?
     Bws<ISource::kMaxSourceNameBytes> name;
@@ -402,6 +418,8 @@ TUint Product::SourceXmlChangeCount()
 
 void Product::Activate(ISource& aSource)
 {
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
+
     ISource* srcNew = nullptr;
     ISource* srcOld = nullptr;
 
@@ -454,6 +472,7 @@ void Product::AddNameObserver(IProductNameObserver& aObserver)
 void Product::StandbyEnabled()
 {
     AutoMutex _(iLock);
+    iStandby = true;
     if (iCurrentSource != kCurrentSourceNone) {
         iSources[iCurrentSource]->StandbyEnabled();
     }
@@ -461,13 +480,17 @@ void Product::StandbyEnabled()
 
 void Product::StandbyDisabled(StandbyDisableReason aReason)
 {
+    iLock.Wait();
+    iStandby = false;
+    iLock.Signal();
+
     TBool activated = false;
     if (aReason != StandbyDisableReason::Alarm) {
         iLock.Wait();
         const TUint startupSourceVal = iStartupSourceVal;
         iLock.Signal();
         if (startupSourceVal != ConfigStartupSource::kNone) {
-            activated = SetCurrentSource(startupSourceVal);
+            activated = DoSetCurrentSource(startupSourceVal);
         }
     }
     if (!activated) {

@@ -131,6 +131,8 @@ public:
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
     TUint SourceXmlChangeCount();
 private:
+    TBool DoSetCurrentSource(TUint aIndex); // returns true if aIndex wasn't already active
+    void DoSetCurrentSource(const Brx& aName);
     void AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue);
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
@@ -152,6 +154,7 @@ private:
     IReadStore& iReadStore;
     Configuration::IConfigManager& iConfigReader;
     Configuration::IConfigInitialiser& iConfigInit;
+    IPowerManager& iPowerManager;
     mutable Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
