@@ -127,7 +127,7 @@ IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler
     if (iStandby == Standby::On) {
         aHandler.StandbyEnabled();
     }
-    else {
+    else if (iStandby == Standby::Off) {
         aHandler.StandbyDisabled(iLastDisableReason);
     }
     return observer;
