@@ -24,7 +24,7 @@ PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     , iStandby(Standby::Undefined)
     , iLock("PMLO")
 {
-    const int arr[] ={ kConfigIdStartupStandbyDisabled, kConfigIdStartupStandbyEnabled };
+    const int arr[] = { kConfigIdStartupStandbyEnabled, kConfigIdStartupStandbyDisabled };
     std::vector<TUint> options(arr, arr + sizeof(arr)/sizeof(arr[0]));
     iConfigStartupStandby = new ConfigChoice(aConfigInit, kConfigKey, options, kConfigIdStartupStandbyDisabled);
 }
