@@ -88,6 +88,7 @@ class PowerManager : public IPowerManager
 public:
     PowerManager(Configuration::IConfigInitialiser& aConfigInit);
     ~PowerManager();
+    void Start();
 public: // from IPowerManager
     void NotifyPowerDown() override;
     void StandbyEnable() override;

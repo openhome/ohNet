@@ -13,9 +13,9 @@ using namespace OpenHome::Configuration;
 
 // PowerManager
 
-const Brn PowerManager::kConfigKey("StartupStandby");
-const TUint PowerManager::kConfigIdStartupStandbyDisabled = 0;
-const TUint PowerManager::kConfigIdStartupStandbyEnabled  = 1;
+const Brn PowerManager::kConfigKey("Device.StartupMode");
+const TUint PowerManager::kConfigIdStartupStandbyEnabled = 0;
+const TUint PowerManager::kConfigIdStartupStandbyDisabled  = 1;
 
 PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     : iNextPowerId(0)
@@ -27,9 +27,6 @@ PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     const int arr[] ={ kConfigIdStartupStandbyDisabled, kConfigIdStartupStandbyEnabled };
     std::vector<TUint> options(arr, arr + sizeof(arr)/sizeof(arr[0]));
     iConfigStartupStandby = new ConfigChoice(aConfigInit, kConfigKey, options, kConfigIdStartupStandbyDisabled);
-    auto id = iConfigStartupStandby->Subscribe(MakeFunctorConfigChoice(*this, &PowerManager::StartupStandbyChanged));
-    // we don't care about run-time changes to iConfigStartupStandby so can unsubscribe as soon as we've read its initial value
-    iConfigStartupStandby->Unsubscribe(id);
 }
 
 PowerManager::~PowerManager()
@@ -37,6 +34,13 @@ PowerManager::~PowerManager()
     AutoMutex _(iLock);
     ASSERT(iPowerObservers.empty());
     delete iConfigStartupStandby;
+}
+
+void PowerManager::Start()
+{
+    const TUint id = iConfigStartupStandby->Subscribe(MakeFunctorConfigChoice(*this, &PowerManager::StartupStandbyChanged));
+    // we don't care about run-time changes to iConfigStartupStandby so can unsubscribe as soon as we've read its initial value
+    iConfigStartupStandby->Unsubscribe(id);
 }
 
 void PowerManager::NotifyPowerDown()
@@ -166,8 +170,14 @@ void PowerManager::DeregisterStandby(TUint aId)
 
 void PowerManager::StartupStandbyChanged(KeyValuePair<TUint>& aKvp)
 {
-    iStandby = (aKvp.Value() == kConfigIdStartupStandbyEnabled? Standby::On: Standby::Off);
-    iLastDisableReason = StandbyDisableReason::Boot; // this callback only runs during PowerManager c'tor
+    Standby standby = (aKvp.Value() == kConfigIdStartupStandbyEnabled? Standby::On : Standby::Off);
+    iLastDisableReason = StandbyDisableReason::Boot; // this callback only runs during PowerManager construction
+    if (standby == Standby::On) {
+        StandbyEnable();
+    }
+    else {
+        StandbyDisable(iLastDisableReason);
+    }
 }
 
 

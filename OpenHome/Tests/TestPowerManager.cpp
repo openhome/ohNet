@@ -8,6 +8,8 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <memory>
+
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Configuration;
@@ -104,7 +106,8 @@ private:
     void TestPowerDownNotCalledAfterDeregistering();
     void TestRegisterAfterPowerDown();
     void TestNoPowerDown();
-    void TestShutdownCallbackOnRegistration();
+    void TestNoShutdownCallbackOnRegistrationBeforeStart();
+    void TestShutdownCallbackOnRegistrationAfterStart();
     void TestShutdownToggleGeneratesCallback();
     void TestShutdownNoCallbackOnDuplicateStateSet();
     void TestStandbyHandlerPriorities();
@@ -399,7 +402,8 @@ SuitePowerManager::SuitePowerManager(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownNotCalledAfterDeregistering), "TestPowerDownNotCalledAfterDeregistering");
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestRegisterAfterPowerDown), "TestRegisterAfterPowerDown");
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestNoPowerDown), "TestNoPowerDown");
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestShutdownCallbackOnRegistration), "TestShutdownCallbackOnRegistration");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestNoShutdownCallbackOnRegistrationBeforeStart), "TestNoShutdownCallbackOnRegistrationBeforeStart");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestShutdownCallbackOnRegistrationAfterStart), "TestShutdownCallbackOnRegistrationAfterStart");
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestShutdownToggleGeneratesCallback), "TestShutdownToggleGeneratesCallback");
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet), "TestShutdownNoCallbackOnDuplicateStateSet");
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestStandbyHandlerPriorities), "TestStandbyHandlerPriorities");
@@ -611,16 +615,25 @@ void SuitePowerManager::TestNoPowerDown()
     // Test that if PowerDown() is not called on the PowerManager, then
     // PowerDown() is called on the IPowerHandler when its observer is
     // destroyed.
-    IPowerManagerObserver* observer = iPowerManager->RegisterPowerHandler(*iHandler1, kPowerPriorityNormal);
+    auto observer = iPowerManager->RegisterPowerHandler(*iHandler1, kPowerPriorityNormal);
     TEST(iHandler1->Time() == 0);
     delete observer;
     TEST(iHandler1->Time() != 0);
 }
 
-void SuitePowerManager::TestShutdownCallbackOnRegistration()
+void SuitePowerManager::TestNoShutdownCallbackOnRegistrationBeforeStart()
 {
     HelperStandbyHandler observer(0, *this);
-    auto handler = iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal);
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
+    TEST(observer.EnableCount() == 0);
+    TEST(observer.DisableCount() == 0);
+}
+
+void SuitePowerManager::TestShutdownCallbackOnRegistrationAfterStart()
+{
+    iPowerManager->Start();
+    HelperStandbyHandler observer(0, *this);
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
     if (observer.DisableCount() == 0) {
         TEST(observer.EnableCount() > 0);
     }
@@ -630,13 +643,13 @@ void SuitePowerManager::TestShutdownCallbackOnRegistration()
     else {
         ASSERTS();
     }
-    delete handler;
 }
 
 void SuitePowerManager::TestShutdownToggleGeneratesCallback()
 {
+    iPowerManager->Start();
     HelperStandbyHandler observer(0, *this);
-    auto handler = iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal);
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
     TEST(!observer.Standby()); // assume that PowerManager defaults to starting up out of standby
 
     TEST(observer.DisableCount() == 1);
@@ -650,14 +663,13 @@ void SuitePowerManager::TestShutdownToggleGeneratesCallback()
     TEST(observer.EnableCount() == 1);
     TEST(!observer.Standby());
     TEST(observer.DisableReason() == StandbyDisableReason::User);
-    
-    delete handler;
 }
 
 void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
 {
     HelperStandbyHandler observer(0, *this);
-    auto handler = iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal);
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
+    iPowerManager->Start();
     TEST(!observer.Standby()); // assume that PowerManager defaults to starting up out of standby
 
     TEST(observer.DisableCount() == 1);
@@ -666,18 +678,17 @@ void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
     TEST(observer.DisableCount() == 1);
     TEST(observer.EnableCount() == 0);
     TEST(!observer.Standby());
-    
-    delete handler;
 }
 
 void SuitePowerManager::TestStandbyHandlerPriorities()
 {
     HelperStandbyHandler obs1(1, *this);
-    auto handler1 = iPowerManager->RegisterStandbyHandler(obs1, kStandbyHandlerPriorityNormal);
+    std::unique_ptr<IStandbyObserver> handler1(iPowerManager->RegisterStandbyHandler(obs1, kStandbyHandlerPriorityNormal));
     HelperStandbyHandler obs2(2, *this);
-    auto handler2 = iPowerManager->RegisterStandbyHandler(obs2, kStandbyHandlerPriorityHighest);
+    std::unique_ptr<IStandbyObserver> handler2(iPowerManager->RegisterStandbyHandler(obs2, kStandbyHandlerPriorityHighest));
     HelperStandbyHandler obs3(3, *this);
-    auto handler3 = iPowerManager->RegisterStandbyHandler(obs3, kStandbyHandlerPriorityLowest);
+    std::unique_ptr<IStandbyObserver> handler3(iPowerManager->RegisterStandbyHandler(obs3, kStandbyHandlerPriorityLowest));
+    iPowerManager->Start();
 
     iStandbyHandlerRunOrder.clear();
     iPowerManager->StandbyEnable();
@@ -692,10 +703,6 @@ void SuitePowerManager::TestStandbyHandlerPriorities()
     TEST(iStandbyHandlerRunOrder[0] == 2);
     TEST(iStandbyHandlerRunOrder[1] == 1);
     TEST(iStandbyHandlerRunOrder[2] == 3);
-
-    delete handler1;
-    delete handler2;
-    delete handler3;
 }
 
 

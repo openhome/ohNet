@@ -198,6 +198,7 @@ void MediaPlayer::Start()
     iCredentials->Start();
     iMimeTypes.Start();
     iProduct->Start();
+    iPowerManager->Start();
 }
 
 Environment& MediaPlayer::Env()
