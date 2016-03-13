@@ -10,6 +10,7 @@
 #include <OpenHome/Media/ClockPuller.h>
 
 #include <vector>
+#include <algorithm>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -128,9 +129,7 @@ Msg* Sender::ProcessMsg(MsgDelay* aMsg)
 {
     SendPendingAudio();
     const TUint latencyMs = aMsg->DelayJiffies() / Jiffies::kPerMs;
-    if (latencyMs > iMinLatencyMs) {
-        iOhmSender->SetLatency(latencyMs);
-    }
+    iOhmSender->SetLatency(std::max(latencyMs, iMinLatencyMs));
     aMsg->RemoveRef();
     return nullptr;
 }
