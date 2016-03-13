@@ -303,7 +303,14 @@ void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
-    OhmHeader header(OhmHeader::kMsgTypeAudio, kHeaderBytes + iCodec.Bytes() + iAudio.Bytes());
+    TUint frameBytes;
+    if (iStreamHeader.Bytes() > 0) {
+        frameBytes = iStreamHeader.Bytes() + iAudio.Bytes();
+    }
+    else {
+        frameBytes = kHeaderBytes + iCodec.Bytes() + iAudio.Bytes();
+    }
+    OhmHeader header(OhmHeader::kMsgTypeAudio, frameBytes);
     header.Externalise(aWriter);
     WriterBinary writer(aWriter);
 
