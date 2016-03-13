@@ -52,14 +52,12 @@ private:
     Bws<OhmMsgAudio::kStreamHeaderBytes> iStreamHeader;
     TUint iFrame;
     TUint iSampleRate;
-    TUint iBitRate;
-    TUint iChannels;
-    TUint iBitDepth;
+    TUint iTimestampMultiplier;
+    TUint iBytesPerSample;
     TBool iLossless;
-    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
     TUint64 iSamplesTotal;
     TUint64 iSampleStart;
-    TUint iLatency;
+    TUint iLatency; // in ohm units
     SocketUdp iSocket;
     OhmMsgFactory iFactory;
     FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;

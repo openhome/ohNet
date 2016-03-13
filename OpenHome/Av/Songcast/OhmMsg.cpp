@@ -141,31 +141,6 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     iStreamHeader.Replace(Brx::Empty());
 }
 
-void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
-{
-    OhmMsgTimestamped::Create();
-
-    iHalt = aHalt;
-    iLossless = aLossless;
-    iTimestamped = aTimestamped;
-    iResent = aResent;
-    iSamples = aSamples;
-    iFrame = aFrame;
-    iNetworkTimestamp = aNetworkTimestamp;
-    iMediaLatency = aMediaLatency;
-    iMediaTimestamp = aMediaTimestamp;
-    iSampleStart = aSampleStart;
-    iSamplesTotal = aSamplesTotal;
-    iSampleRate = aSampleRate;
-    iBitRate = aBitRate;
-    iVolumeOffset = aVolumeOffset;
-    iBitDepth = aBitDepth;
-    iChannels = aChannels;
-    iCodec.Replace(aCodec);
-    iAudio.Replace(aAudio);
-    iStreamHeader.Replace(Brx::Empty());
-}
-
 void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
 {
     OhmMsgTimestamped::Create();
@@ -303,14 +278,7 @@ void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
-    TUint frameBytes;
-    if (iStreamHeader.Bytes() > 0) {
-        frameBytes = iStreamHeader.Bytes() + iAudio.Bytes();
-    }
-    else {
-        frameBytes = kHeaderBytes + iCodec.Bytes() + iAudio.Bytes();
-    }
-    OhmHeader header(OhmHeader::kMsgTypeAudio, frameBytes);
+    OhmHeader header(OhmHeader::kMsgTypeAudio, iStreamHeader.Bytes() + iAudio.Bytes());
     header.Externalise(aWriter);
     WriterBinary writer(aWriter);
 
@@ -336,22 +304,8 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
     writer.WriteUint32Be(iMediaLatency);
     writer.WriteUint32Be(iMediaTimestamp);
     writer.WriteUint64Be(iSampleStart);
-    if (iStreamHeader.Bytes() > 0) {
-        writer.Write(iStreamHeader);
-    }
-    else {
-        writer.WriteUint64Be(iSamplesTotal);
-        writer.WriteUint32Be(iSampleRate);
-        writer.WriteUint32Be(iBitRate);
-        writer.WriteInt16Be(iVolumeOffset);
-        writer.WriteUint8(iBitDepth);
-        writer.WriteUint8(iChannels);
-        writer.WriteUint8(kReserved);
-        writer.WriteUint8(iCodec.Bytes());
-        if (iCodec.Bytes() > 0) {
-            writer.Write(iCodec);
-        }
-    }
+    ASSERT(iStreamHeader.Bytes() > 0);
+    writer.Write(iStreamHeader);
     writer.Write(iAudio);
 
     aWriter.WriteFlush();
@@ -637,13 +591,6 @@ OhmMsgMetatext* OhmMsgFactory::CreateMetatext(IReader& aReader, const OhmHeader&
 {
     OhmMsgMetatext* msg = iFifoMetatext.Read();
     msg->Create(aReader, aHeader);
-    return msg;
-}
-
-OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio)
-{
-    OhmMsgAudio* msg = iFifoAudio.Read();
-    msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aMediaTimestamp, aSampleStart, aSamplesTotal, aSampleRate, aBitRate, aVolumeOffset, aBitDepth, aChannels,  aCodec, aAudio);
     return msg;
 }
 

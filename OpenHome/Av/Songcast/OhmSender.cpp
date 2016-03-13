@@ -177,13 +177,12 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
     , iSend(false)
     , iFrame(0)
     , iSampleRate(0)
-    , iBitRate(0)
-    , iChannels(0)
-    , iBitDepth(0)
+    , iTimestampMultiplier(0)
+    , iBytesPerSample(0)
     , iLossless(false)
     , iSamplesTotal(0)
     , iSampleStart(0)
-    , iLatency(100)
+    , iLatency(0)
     , iSocket(aEnv)
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
     , iTimestamper(aTimestamper)
@@ -197,11 +196,9 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     AutoMutex mutex(iMutex);
 
     iSampleRate = aSampleRate;
-    iBitRate = aBitRate;
-    iChannels = aChannels;
-    iBitDepth = aBitDepth;
+    iTimestampMultiplier = (aSampleRate % 441 == 0? 44100 * 256 : 48000 * 256);
+    iBytesPerSample = aChannels * aBitDepth / 8;
     iLossless = aLossless;
-    iCodecName.Replace(aCodecName);
 
     iStreamHeader.Replace(Brx::Empty());
     OhmMsgAudio::GetStreamHeader(iStreamHeader, iSamplesTotal, aSampleRate, aBitRate, 0/*VolumeOffset*/, aBitDepth, aChannels, aCodecName);
@@ -212,11 +209,11 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     AutoMutex mutex(iMutex);
 
     TUint samples;
-    if (iChannels == 0 || iBitDepth == 0) {
+    if (iBytesPerSample == 0) {
         samples = 0;
     }
     else {
-        samples = aBytes * 8 / iChannels / iBitDepth;
+        samples = aBytes / iBytesPerSample;
     }
     if (!iSend) {
         iSampleStart += samples;
@@ -226,11 +223,6 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         // nothing to usefully communicate to receivers
         return;
     }
-    TUint multiplier = 48000 * 256;
-    if ((iSampleRate % 441) == 0) {
-        multiplier = 44100 * 256;
-    }
-    const TUint latency = iLatency * multiplier / 1000;
     if (iFifoHistory.SlotsUsed() == kMaxHistoryFrames) {
         iFifoHistory.Read()->RemoveRef();
     }
@@ -259,7 +251,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         samples,
         iFrame,
         timeStamp, // network timestamp
-        latency,
+        iLatency,
         iSampleStart,
         iStreamHeader,
         Brn(aData, aBytes)
@@ -337,7 +329,7 @@ void OhmSenderDriver::SetTtl(TUint aValue)
 void OhmSenderDriver::SetLatency(TUint aValue)
 {
     AutoMutex mutex(iMutex);
-    iLatency = aValue;
+    iLatency = aValue * iTimestampMultiplier / 1000;
 }
 
 void OhmSenderDriver::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart)
