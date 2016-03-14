@@ -187,7 +187,13 @@ void Product::Start()
             (void)DoSetCurrentSource(0);
         }
         else {
-            DoSetCurrentSource(startupSource);
+            try {
+                DoSetCurrentSource(startupSource);
+            }
+            catch (AvSourceNotFound&) {
+                (void)DoSetCurrentSource(0);
+                iLastSelectedSource->Set(Brx::Empty());
+            }
         }
     }
 
