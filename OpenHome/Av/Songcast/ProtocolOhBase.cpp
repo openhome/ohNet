@@ -407,7 +407,7 @@ void ProtocolOhBase::TimerRepairExpired()
         RequestResend(missed);
         iTimerRepair->FireIn(kSubsequentRepairTimeoutMs);
     }
-T}
+}
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
