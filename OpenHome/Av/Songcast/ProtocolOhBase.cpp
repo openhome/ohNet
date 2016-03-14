@@ -407,7 +407,7 @@ void ProtocolOhBase::TimerRepairExpired()
         RequestResend(missed);
         iTimerRepair->FireIn(kSubsequentRepairTimeoutMs);
     }
-}
+T}
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
@@ -464,10 +464,11 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
         }
     }
 
-    AutoMutex a(iMutexTransport);
+    iMutexTransport.Wait();
     if (!iRunning) {
         iFrame = aMsg.Frame();
         iRunning = true;
+        iMutexTransport.Signal();
         OutputAudio(aMsg);
         return;
     }
@@ -479,9 +480,11 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
     const TInt diff = aMsg.Frame() - iFrame;
     if (diff == 1) {
         iFrame++;
+        iMutexTransport.Signal();
         OutputAudio(aMsg);
+        return;
     }
-    else if (diff < 1) {
+    if (diff < 1) {
         if ((aMsg.Flags() & OhmMsgAudio::kFlagResent) == 0) {
             // A frame in the past that is not a resend implies that the sender has reset their frame count
             iSupply->OutputStreamInterrupted(); // force recently output audio to ramp down 
@@ -494,6 +497,7 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
     else {
         iRepairing = RepairBegin(aMsg);
     }
+    iMutexTransport.Signal();
 }
 
 void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
