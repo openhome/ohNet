@@ -278,7 +278,9 @@ void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
-    OhmHeader header(OhmHeader::kMsgTypeAudio, iStreamHeader.Bytes() + iAudio.Bytes());
+    static const TUint kPerFrameBytes = 28; // binary values written between OhmHeader and iStreamHeader
+    OhmHeader header(OhmHeader::kMsgTypeAudio,
+                     kPerFrameBytes + iStreamHeader.Bytes() + iAudio.Bytes());
     header.Externalise(aWriter);
     WriterBinary writer(aWriter);
 
