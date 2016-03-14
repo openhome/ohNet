@@ -371,10 +371,8 @@ void Product::DoSetCurrentSource(const Brx& aName)
 {
     AutoMutex a(iLock);
     // volkano treats [name] as a system name and anything else as a user-defined name.  Do we need to do the same?
-    Bws<ISource::kMaxSourceNameBytes> name;
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
-        iSources[i]->SystemName(name);
-        if (name == aName) {
+        if (iSources[i]->SystemName() == aName) {
             if (iCurrentSource != kCurrentSourceNone) {
                 iSources[iCurrentSource]->Deactivate();
             }
