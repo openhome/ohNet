@@ -650,19 +650,19 @@ void SuitePowerManager::TestShutdownToggleGeneratesCallback()
     iPowerManager->Start();
     HelperStandbyHandler observer(0, *this);
     std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
-    TEST(!observer.Standby()); // assume that PowerManager defaults to starting up out of standby
+    TEST(observer.Standby()); // assume that PowerManager defaults to starting in standby
 
-    TEST(observer.DisableCount() == 1);
-    TEST(observer.EnableCount() == 0);
-    iPowerManager->StandbyEnable();
-    TEST(observer.DisableCount() == 1);
+    TEST(observer.DisableCount() == 0);
     TEST(observer.EnableCount() == 1);
-    TEST(observer.Standby());
     iPowerManager->StandbyDisable(StandbyDisableReason::User);
-    TEST(observer.DisableCount() == 2);
+    TEST(observer.DisableReason() == StandbyDisableReason::User);
+    TEST(observer.DisableCount() == 1);
     TEST(observer.EnableCount() == 1);
     TEST(!observer.Standby());
-    TEST(observer.DisableReason() == StandbyDisableReason::User);
+    iPowerManager->StandbyEnable();
+    TEST(observer.DisableCount() == 1);
+    TEST(observer.EnableCount() == 2);
+    TEST(observer.Standby());
 }
 
 void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
@@ -670,14 +670,14 @@ void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
     HelperStandbyHandler observer(0, *this);
     std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
     iPowerManager->Start();
-    TEST(!observer.Standby()); // assume that PowerManager defaults to starting up out of standby
+    TEST(observer.Standby()); // assume that PowerManager defaults to starting in standby
 
-    TEST(observer.DisableCount() == 1);
-    TEST(observer.EnableCount() == 0);
-    iPowerManager->StandbyDisable(StandbyDisableReason::User);
-    TEST(observer.DisableCount() == 1);
-    TEST(observer.EnableCount() == 0);
-    TEST(!observer.Standby());
+    TEST(observer.DisableCount() == 0);
+    TEST(observer.EnableCount() == 1);
+    iPowerManager->StandbyEnable();
+    TEST(observer.DisableCount() == 0);
+    TEST(observer.EnableCount() == 1);
+    TEST(observer.Standby());
 }
 
 void SuitePowerManager::TestStandbyHandlerPriorities()
@@ -691,18 +691,18 @@ void SuitePowerManager::TestStandbyHandlerPriorities()
     iPowerManager->Start();
 
     iStandbyHandlerRunOrder.clear();
-    iPowerManager->StandbyEnable();
-    TEST(iStandbyHandlerRunOrder.size() == 3);
-    TEST(iStandbyHandlerRunOrder[0] == 3);
-    TEST(iStandbyHandlerRunOrder[1] == 1);
-    TEST(iStandbyHandlerRunOrder[2] == 2);
-
-    iStandbyHandlerRunOrder.clear();
     iPowerManager->StandbyDisable(StandbyDisableReason::User);
     TEST(iStandbyHandlerRunOrder.size() == 3);
     TEST(iStandbyHandlerRunOrder[0] == 2);
     TEST(iStandbyHandlerRunOrder[1] == 1);
     TEST(iStandbyHandlerRunOrder[2] == 3);
+
+    iStandbyHandlerRunOrder.clear();
+    iPowerManager->StandbyEnable();
+    TEST(iStandbyHandlerRunOrder.size() == 3);
+    TEST(iStandbyHandlerRunOrder[0] == 3);
+    TEST(iStandbyHandlerRunOrder[1] == 1);
+    TEST(iStandbyHandlerRunOrder[2] == 2);
 }
 
 

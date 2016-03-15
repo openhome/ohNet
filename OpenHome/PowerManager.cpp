@@ -26,7 +26,7 @@ PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
 {
     const int arr[] = { kConfigIdStartupStandbyEnabled, kConfigIdStartupStandbyDisabled };
     std::vector<TUint> options(arr, arr + sizeof(arr)/sizeof(arr[0]));
-    iConfigStartupStandby = new ConfigChoice(aConfigInit, kConfigKey, options, kConfigIdStartupStandbyDisabled);
+    iConfigStartupStandby = new ConfigChoice(aConfigInit, kConfigKey, options, kConfigIdStartupStandbyEnabled);
 }
 
 PowerManager::~PowerManager()
