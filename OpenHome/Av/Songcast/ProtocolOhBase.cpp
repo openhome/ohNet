@@ -474,6 +474,7 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
     }
     if (iRepairing) {
         iRepairing = Repair(aMsg);
+        iMutexTransport.Signal();
         return;
     }
 
