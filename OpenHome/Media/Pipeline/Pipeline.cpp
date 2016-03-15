@@ -296,7 +296,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iDecodedAudioValidatorRouter = new DecodedAudioValidator(*iLoggerRouter, "Router");
     iDrainer = new Drainer(*iMsgFactory, *iDecodedAudioValidatorRouter);
     iLoggerDrainer = new Logger(*iDrainer, "Drainer");
-    iVariableDelay2 = new VariableDelay("VariableDelay2", *iMsgFactory, *iLoggerDrainer, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
+    iVariableDelay2 = new VariableDelay("VariableDelay2", *iMsgFactory, *iLoggerDrainer, 0, aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
     iRampValidatorDelay2 = new RampValidator(*iLoggerVariableDelay2, "VariableDelay2");
     iDecodedAudioValidatorDelay2 = new DecodedAudioValidator(*iRampValidatorDelay2, "VariableDelay2");
