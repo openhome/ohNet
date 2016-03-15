@@ -1045,6 +1045,17 @@ void SuiteStoreText::TestWrite()
     Bws<kMaxLength> val;
     iStoreText->Get(val);
     TEST(val == newVal);
+
+    // repeat for entering standby
+    newVal.Set("foo");
+    iStoreText->Set(newVal);
+    iPowerManager->StandbyEnable();
+    buf.Replace(Brx::Empty());
+    iStore->Read(kKey, buf);
+    TEST(buf == newVal);
+    val.Replace(Brx::Empty());
+    iStoreText->Get(val);
+    TEST(val == newVal);
 }
 
 void SuiteStoreText::TestNormalShutdown()

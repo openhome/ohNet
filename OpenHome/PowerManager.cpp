@@ -253,12 +253,15 @@ TUint StandbyObserver::Priority() const
 
 // StoreVal
 
-StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aKey)
+StoreVal::StoreVal(IStoreReadWrite& aStore, IPowerManager& aPowerManager, const Brx& aKey)
     : iObserver(nullptr)
     , iStore(aStore)
     , iKey(aKey)
     , iLock("STVM")
 {
+    // our standby observer is relatively unimportant
+    // priority enum describes importance when exiting Standby - we only do any work when we enter Standby
+    iStandbyObserver.reset(aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityHighest-1));
 }
 
 void StoreVal::PowerDown()
@@ -266,11 +269,20 @@ void StoreVal::PowerDown()
     Write();
 }
 
+void StoreVal::StandbyEnabled()
+{
+    Write();
+}
+
+void StoreVal::StandbyDisabled(StandbyDisableReason /*aReason*/)
+{
+}
+
 
 // StoreInt
 
 StoreInt::StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
-    : StoreVal(aStore, aKey)
+    : StoreVal(aStore, aPowerManager, aKey)
     , iVal(aDefault)
     , iChanged(false)
 {
@@ -334,7 +346,7 @@ void StoreInt::Write()
 // StoreText
 
 StoreText::StoreText(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength)
-    : StoreVal(aStore, aKey)
+    : StoreVal(aStore, aPowerManager, aKey)
     , iVal(aMaxLength)
     , iChanged(false)
 {

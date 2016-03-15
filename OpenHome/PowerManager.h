@@ -8,6 +8,7 @@
 
 #include <list>
 #include <vector>
+#include <memory>
 
 namespace OpenHome {
 
@@ -165,15 +166,18 @@ private:
 /*
  * Abstract class that only writes its value out to store at power down.
  */
-class StoreVal : public IPowerHandler
+class StoreVal : protected IPowerHandler, protected IStandbyHandler
 {
 public:
     static const TUint kMaxIdLength = 32;
 protected:
-    StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey);
+    StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, const Brx& aKey);
 protected: // from IPowerHandler
     virtual void PowerUp() override = 0;
     void PowerDown() override;
+private: // from IStandbyHandler
+    void StandbyEnabled() override;
+    void StandbyDisabled(StandbyDisableReason aReason) override;
 public:
     virtual void Write() = 0;
 protected:
@@ -181,6 +185,8 @@ protected:
     Configuration::IStoreReadWrite& iStore;
     const Bws<kMaxIdLength> iKey;
     mutable Mutex iLock;
+private:
+    std::unique_ptr<IStandbyObserver> iStandbyObserver;
 };
 
 /*
