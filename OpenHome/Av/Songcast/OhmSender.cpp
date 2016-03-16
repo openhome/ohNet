@@ -1,6 +1,8 @@
 #include "OhmSender.h"
 #include <Generated/DvAvOpenhomeOrgSender1.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Debug.h>
@@ -1075,7 +1077,8 @@ void OhmSender::UpdateMetadata()
     iSenderMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
     iSenderMetadata.Append("<item id=\"0\" restricted=\"True\">");
     iSenderMetadata.Append("<dc:title>");
-    iSenderMetadata.Append(iName);
+    WriterBuffer writer(iSenderMetadata);
+    Converter::ToXmlEscaped(writer, iName);
     iSenderMetadata.Append("</dc:title>");
     
     if (iMulticast) {
