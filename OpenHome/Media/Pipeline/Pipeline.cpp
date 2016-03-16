@@ -270,7 +270,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iDecodedAudioValidatorDelay1 = new DecodedAudioValidator(*iRampValidatorDelay1, "VariableDelay1");
     iTrackInspector = new TrackInspector(*iDecodedAudioValidatorDelay1);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
-    iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampLongJiffies());
+    iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampShortJiffies());
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
     iRampValidatorSkipper = new RampValidator(*iLoggerSkipper, "Skipper");
     iDecodedAudioValidatorSkipper = new DecodedAudioValidator(*iRampValidatorSkipper, "Skipper");
