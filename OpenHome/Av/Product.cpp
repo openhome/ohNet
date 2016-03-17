@@ -284,6 +284,7 @@ void Product::GetSourceXml(Bwx& aXml)
         AppendTag(aXml, "Name", name);
         AppendTag(aXml, "Type", src->Type());
         AppendTag(aXml, "Visible", src->IsVisible()? Brn("true") : Brn("false"));
+        AppendTag(aXml, "SystemName", src->SystemName());
         aXml.Append("</Source>");
     }
     iLock.Signal();
