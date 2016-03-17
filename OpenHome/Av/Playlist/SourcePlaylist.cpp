@@ -221,29 +221,35 @@ void SourcePlaylist::Play()
     if (!IsActive()) {
         EnsureActive();
 
-        TUint trackId = ITrackDatabase::kTrackIdNone;
-        if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
-            trackId = iUriProvider->CurrentTrackId();
-            if (trackId == ITrackDatabase::kTrackIdNone) {
-                Track* track = static_cast<ITrackDatabaseReader*>(iDatabase)->NextTrackRef(ITrackDatabase::kTrackIdNone);
-                if (track != nullptr) {
-                    trackId = track->Id();
-                    track->RemoveRef();
+        if (!StartedShuffled()) {
+            TUint trackId = ITrackDatabase::kTrackIdNone;
+            if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
+                trackId = iUriProvider->CurrentTrackId();
+                if (trackId == ITrackDatabase::kTrackIdNone) {
+                    Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->NextTrackRef(ITrackDatabase::kTrackIdNone);
+                    if (track != nullptr) {
+                        trackId = track->Id();
+                        track->RemoveRef();
+                    }
                 }
             }
-        }
 
-        if (trackId == ITrackDatabase::kTrackIdNone) {
-            iPipeline.Stop();
-        }
-        else {
+            if (trackId == ITrackDatabase::kTrackIdNone) {
+                iLock.Wait();
+                iTransportState = EPipelineStopped;
+                iLock.Signal();
+                iPipeline.Stop();
+                return;
+            }
+
             iPipeline.RemoveAll();
             iPipeline.Begin(iUriProvider->Mode(), trackId);
-            iLock.Wait();
-            iTransportState = EPipelinePlaying;
-            iLock.Signal();
-            DoPlay();
         }
+
+        iLock.Wait();
+        iTransportState = EPipelinePlaying;
+        iLock.Signal();
+        DoPlay();
 
         return;
     }
