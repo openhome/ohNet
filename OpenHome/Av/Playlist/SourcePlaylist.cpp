@@ -219,8 +219,35 @@ void SourcePlaylist::PipelineStopped()
 void SourcePlaylist::Play()
 {
     if (!IsActive()) {
-        DoActivate();
+        EnsureActive();
+
+        TUint trackId = ITrackDatabase::kTrackIdNone;
+        if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
+            trackId = iUriProvider->CurrentTrackId();
+            if (trackId == ITrackDatabase::kTrackIdNone) {
+                Track* track = static_cast<ITrackDatabaseReader*>(iDatabase)->NextTrackRef(ITrackDatabase::kTrackIdNone);
+                if (track != nullptr) {
+                    trackId = track->Id();
+                    track->RemoveRef();
+                }
+            }
+        }
+
+        if (trackId == ITrackDatabase::kTrackIdNone) {
+            iPipeline.Stop();
+        }
+        else {
+            iPipeline.RemoveAll();
+            iPipeline.Begin(iUriProvider->Mode(), trackId);
+            iLock.Wait();
+            iTransportState = EPipelinePlaying;
+            iLock.Signal();
+            DoPlay();
+        }
+
+        return;
     }
+
     if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
         iPipeline.Stop();
         return;
@@ -241,7 +268,7 @@ void SourcePlaylist::Play()
 void SourcePlaylist::Pause()
 {
     if (!IsActive()) {
-        DoActivate();
+        return;
     }
     if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
         iPipeline.Stop();
