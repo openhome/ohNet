@@ -1,6 +1,6 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <Generated/DvAvOpenhomeOrgProduct2.h>
+#include <Generated/DvAvOpenhomeOrgProduct1.h>
 #include <OpenHome/Av/ProviderProduct.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
@@ -12,7 +12,7 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 
 ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, IPowerManager& aPowerManager)
-    : DvProviderAvOpenhomeOrgProduct2(aDevice)
+    : DvProviderAvOpenhomeOrgProduct1(aDevice)
     , iProduct(aProduct)
     , iPowerManager(aPowerManager)
     , iLock("PrPr")
