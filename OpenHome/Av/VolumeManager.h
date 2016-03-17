@@ -165,7 +165,7 @@ public: // from IVolume
     void SetVolume(TUint aValue) override;
 private:
     void LimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
-    void SetVolume();
+    void DoSetVolume(TUint aValue);
 private:
     Mutex iLock;
     IVolume& iVolume;
@@ -221,7 +221,7 @@ public:  // from IVolume
 public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aOffset) override;
 private:
-    void SetVolume();
+    void DoSetVolume(TUint aValue);
 private:
     Mutex iLock;
     IVolume& iVolume;

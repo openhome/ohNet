@@ -95,8 +95,8 @@ void VolumeUser::SetVolume(TUint aVolume)
     if (aVolume > iMaxVolume) {
         THROW(VolumeOutOfRange);
     }
-    iStoreUserVolume.Set(aVolume);
     iVolume.SetVolume(aVolume);
+    iStoreUserVolume.Set(aVolume);
 }
 
 void VolumeUser::StandbyEnabled()
@@ -150,20 +150,20 @@ void VolumeLimiter::SetVolume(TUint aValue)
     if (aValue > iLimit && iUpstreamVolume >= iLimit) {
         THROW(VolumeOutOfRange);
     }
+    DoSetVolume(aValue);
     iUpstreamVolume = aValue;
-    SetVolume();
 }
 
 void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
 {
     AutoMutex _(iLock);
     iLimit = aKvp.Value() * iMilliDbPerStep;
-    SetVolume();
+    DoSetVolume(iUpstreamVolume);
 }
 
-void VolumeLimiter::SetVolume()
+void VolumeLimiter::DoSetVolume(TUint aValue)
 {
-    const TUint volume = std::min(iUpstreamVolume, iLimit);
+    const TUint volume = std::min(aValue, iLimit);
     iVolume.SetVolume(volume);
 }
 
@@ -185,12 +185,12 @@ void VolumeReporter::AddVolumeObserver(IVolumeObserver& aObserver)
 
 void VolumeReporter::SetVolume(TUint aVolume)
 {
+    iVolume.SetVolume(aVolume);
     iUpstreamVolume = aVolume;
     const TUint volume = iUpstreamVolume / iMilliDbPerStep;
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
         (*it)->VolumeChanged(volume);
     }
-    iVolume.SetVolume(aVolume);
 }
 
 
@@ -207,25 +207,25 @@ VolumeSourceOffset::VolumeSourceOffset(IVolume& aVolume)
 void VolumeSourceOffset::SetVolume(TUint aValue)
 {
     AutoMutex _(iLock);
+    DoSetVolume(aValue);
     iUpstreamVolume = aValue;
-    SetVolume();
 }
 
 void VolumeSourceOffset::SetVolumeOffset(TInt aOffset)
 {
     AutoMutex _(iLock);
     iSourceOffset = aOffset;
-    SetVolume();
+    SetVolume(iUpstreamVolume);
 }
 
-void VolumeSourceOffset::SetVolume()
+void VolumeSourceOffset::DoSetVolume(TUint aValue)
 {
-    TUint volume = iUpstreamVolume + iSourceOffset;
-    if (volume > iUpstreamVolume && iSourceOffset < 0) {
+    TUint volume = aValue + iSourceOffset;
+    if (volume > aValue && iSourceOffset < 0) {
         volume = 0;
     }
-    else if (volume < iUpstreamVolume && iSourceOffset > 0) {
-        volume= iUpstreamVolume;
+    else if (volume < aValue && iSourceOffset > 0) {
+        volume = aValue;
     }
     iVolume.SetVolume(volume);
 }
@@ -244,10 +244,11 @@ VolumeUnityGainBase::VolumeUnityGainBase(IVolume& aVolume, TUint aUnityGainValue
 void VolumeUnityGainBase::SetVolume(TUint aValue)
 {
     AutoMutex _(iLock);
-    iUpstreamVolume = aValue;
-    if (iVolumeControlEnabled) {
-        iVolume.SetVolume(aValue);
+    if (!iVolumeControlEnabled) {
+        THROW(VolumeNotSupported);
     }
+    iVolume.SetVolume(aValue);
+    iUpstreamVolume = aValue;
 }
 
 void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
@@ -625,9 +626,9 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
         const TUint milliDbPerStep = iVolumeConfig.VolumeMilliDbPerStep();
         const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iAnalogBypassRamper, volumeUnity);
-        iVolumeUnityGain = new VolumeUnityGain(*iVolumeSourceUnityGain, aConfigReader, volumeUnity);
-        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeUnityGain);
+        iVolumeUnityGain = new VolumeUnityGain(*iAnalogBypassRamper, aConfigReader, volumeUnity);
+        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iVolumeUnityGain, volumeUnity);
+        iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeSourceUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aPowerManager,

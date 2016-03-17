@@ -25,6 +25,10 @@ const TInt kInvalidFadeCode = 813;
 const Brn  kInvalidFadeMsg("Fade invalid");
 
 
+const TInt kVolumeNotSupportedCode = 814;
+const Brn  kVolumeNotSupportedMsg("Volume not supported");
+
+
 ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
                                IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
@@ -269,6 +273,9 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume, 
         if (aVolume > iVolumeMax && aReportOutOfRange == ErrorOutOfRange::Report) {
             aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
         }
+    }
+    catch (VolumeNotSupported&) {
+        aInvocation.Error(kVolumeNotSupportedCode, kVolumeNotSupportedMsg);
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
