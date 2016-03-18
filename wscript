@@ -163,7 +163,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/AVTransport1.xml',       'upnp.org',        'AVTransport',       '1', 'UpnpOrgAVTransport1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org',        'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/RenderingControl1.xml',  'upnp.org',        'RenderingControl',  '1', 'UpnpOrgRenderingControl1'),
-        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product1.xml',       'av.openhome.org', 'Product',           '1', 'AvOpenhomeOrgProduct1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product2.xml',       'av.openhome.org', 'Product',           '1', 'AvOpenhomeOrgProduct1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Radio1.xml',         'av.openhome.org', 'Radio',             '1', 'AvOpenhomeOrgRadio1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml',        'av.openhome.org', 'Sender',            '1', 'AvOpenhomeOrgSender1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Playlist1.xml',      'av.openhome.org', 'Playlist',          '1', 'AvOpenhomeOrgPlaylist1'),
