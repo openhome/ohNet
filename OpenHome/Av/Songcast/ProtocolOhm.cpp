@@ -59,10 +59,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
 
-    if (iTimestamper != nullptr) {
-        iTimestamper->Start(iEndpoint);
-    }
-
     do {
         WaitForPipelineToEmpty();
         if (iStarving && !iStopped) {
@@ -70,6 +66,11 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
             iSocket.Interrupt(false);
         }
         try {
+            if (iTimestamper != nullptr) {
+                iTimestamper->Stop();
+                iTimestamper->Start(iEndpoint);
+            }
+
             OhmHeader header;
             SendJoin();
 
@@ -90,7 +91,8 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                     case OhmHeader::kMsgTypeSlave:
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
+                        /* ignore audio while joining - it might be from while we were waiting
+                           for the pipeline to empty if we're re-starting a stream following a drop-out */
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         Add(iMsgFactory.CreateTrack(iReadBuffer, header));

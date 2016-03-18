@@ -141,6 +141,10 @@ void ProtocolOhBase::WaitForPipelineToEmpty()
     LOG(kSongcast, "> ProtocolOhBase::WaitForPipelineToEmpty()\n");
     iSupply->OutputDrain(MakeFunctor(iPipelineEmpty, &Semaphore::Signal));
     iPipelineEmpty.Wait();
+    {
+        AutoMutex _(iMutexTransport);
+        RepairReset(); // allow for clean restart of stream following a drain
+    }
     LOG(kSongcast, "< ProtocolOhBase::WaitForPipelineToEmpty()\n");
 }
 
@@ -202,7 +206,7 @@ EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     if (aMode == iMode && aStarving) {
-        LOG(kSongcast, "OHU: NotifyStarving for stream %u\n", aStreamId);
+        LOG(kSongcast, "ProtocolOhBase::NotifyStarving for stream %u\n", aStreamId);
         iStarving = true;
         iSocket.Interrupt(true);
     }
