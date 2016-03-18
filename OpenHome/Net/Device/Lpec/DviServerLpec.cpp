@@ -414,6 +414,11 @@ void DviSessionLpec::Run()
                 else if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodUnsubscribe)) {
                     Unsubscribe();
                 }
+                else if (method.Bytes() == 0) {
+                    /* Allow blank lines - these may be entered to make output from
+                       manual LPEC session more readable */
+                    continue;
+                }
                 else {
                     ReportErrorNoThrow(LpecError::kMethodNotSupported);
                 }
