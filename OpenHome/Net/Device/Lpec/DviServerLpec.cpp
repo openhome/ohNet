@@ -440,7 +440,6 @@ void DviSessionLpec::Run()
     }
     catch (WriterError&) {
     }
-    ASSERT(iResponseEnded);
 
     iDeviceLock.Wait();
     std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin();
@@ -451,6 +450,9 @@ void DviSessionLpec::Run()
     iDeviceMap.clear();
     iDeviceLock.Signal();
     iSubscriptionLock.Wait();
+    for (TUint i=0; i<iSubscriptions.size(); i++) {
+        DoUnsubscribe(0);
+    }
     iSubscriptions.clear();
     iSubscriptionLock.Signal();
 
