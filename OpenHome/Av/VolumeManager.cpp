@@ -215,7 +215,7 @@ void VolumeSourceOffset::SetVolumeOffset(TInt aOffset)
 {
     AutoMutex _(iLock);
     iSourceOffset = aOffset;
-    SetVolume(iUpstreamVolume);
+    DoSetVolume(iUpstreamVolume);
 }
 
 void VolumeSourceOffset::DoSetVolume(TUint aValue)
