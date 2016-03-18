@@ -451,7 +451,7 @@ void DviSessionLpec::Run()
     iDeviceLock.Signal();
     iSubscriptionLock.Wait();
     for (TUint i=0; i<iSubscriptions.size(); i++) {
-        DoUnsubscribe(0);
+        DoUnsubscribe(0, false);
     }
     iSubscriptions.clear();
     iSubscriptionLock.Signal();
@@ -606,13 +606,13 @@ void DviSessionLpec::ParseDeviceAndService()
     }
 }
 
-void DviSessionLpec::DoUnsubscribe(TUint aIndex)
+void DviSessionLpec::DoUnsubscribe(TUint aIndex, TBool aRespond)
 {
     DviSubscription* subscription = iSubscriptions[aIndex].Subscription();
     ASSERT(subscription != NULL);
     iSubscriptions[aIndex].Service().RemoveSubscription(subscription->Sid());
 
-    {
+    if (aRespond) {
         AutoMutex a(iWriteLock);
         iResponseStarted = true;
         iWriteBuffer->Write(Lpec::kMethodUnsubscribe);

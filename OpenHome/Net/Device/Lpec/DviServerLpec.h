@@ -122,7 +122,7 @@ private:
     void Subscribe();
     void Unsubscribe();
     void ParseDeviceAndService();
-    void DoUnsubscribe(TUint aIndex);
+    void DoUnsubscribe(TUint aIndex, TBool aRespond = true);
     void ReportError(const LpecError& aError);
     void ReportErrorNoThrow(const LpecError& aError);
     void ReportErrorNoThrow(TUint aCode, const Brx& aDescription);
