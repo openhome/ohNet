@@ -128,6 +128,7 @@ public:
     TBool SetCurrentSource(TUint aIndex); // returns true if aIndex wasn't already active
     void SetCurrentSource(const Brx& aName);
     void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
+    void GetSourceDetails(const Brx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
     TUint SourceXmlChangeCount();
 private:

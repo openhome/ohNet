@@ -410,6 +410,23 @@ void Product::GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& 
     aVisible = source->IsVisible();
 }
 
+void Product::GetSourceDetails(const Brx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const
+{
+    AutoMutex a(iLock);
+    for (TUint i=0; i<(TUint)iSources.size(); i++) {
+        ISource* source = iSources[i];
+        if (source->SystemName() == aSystemName) {
+            Bws<ISource::kMaxSourceNameBytes> name;
+            source->Name(name);
+            aType.Replace(source->Type());
+            aName.Replace(name);
+            aVisible = source->IsVisible();
+            return;
+        }
+    }
+    THROW(AvSourceNotFound);
+}
+
 const Brx& Product::Attributes() const
 {
     return iAttributes;
