@@ -28,7 +28,7 @@ class OhmSenderDriver : public IOhmSenderDriver
     static const TUint kMaxHistoryFrames = 100;
 public:
     OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper);
-    void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
+    void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart);
     void SendAudio(const TByte* aData, TUint aBytes, TBool aHalt = false);
 private: // from IOhmSenderDriver
     void SetEnabled(TBool aValue) override;

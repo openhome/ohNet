@@ -192,7 +192,9 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
     iNumChannels = streamInfo.NumChannels();
     const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::JiffiesPerSample(iSampleRate);
     iOhmSender->SetTrackPosition(samplesTotal, streamInfo.SampleStart());
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), iNumChannels, iBitDepth, streamInfo.Lossless(), streamInfo.CodecName());
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), iNumChannels,
+                                     iBitDepth, streamInfo.Lossless(), streamInfo.CodecName(),
+                                     streamInfo.SampleStart());
 
     return aMsg;
 }

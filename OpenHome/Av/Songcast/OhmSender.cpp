@@ -193,7 +193,7 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
 {
 }
 
-void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName)
+void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart)
 {
     AutoMutex mutex(iMutex);
 
@@ -201,6 +201,7 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     iTimestampMultiplier = (aSampleRate % 441 == 0? 44100 * 256 : 48000 * 256);
     iBytesPerSample = aChannels * aBitDepth / 8;
     iLossless = aLossless;
+    iSampleStart = aSampleStart;
 
     iStreamHeader.Replace(Brx::Empty());
     OhmMsgAudio::GetStreamHeader(iStreamHeader, iSamplesTotal, aSampleRate, aBitRate, 0/*VolumeOffset*/, aBitDepth, aChannels, aCodecName);

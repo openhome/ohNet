@@ -229,7 +229,9 @@ Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
     }
     iBitDepth = stream.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels, iBitDepth, stream.Lossless(), stream.CodecName());
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels,
+                                     iBitDepth, stream.Lossless(), stream.CodecName(),
+                                     stream.SampleStart());
     aMsg->RemoveRef();
     return nullptr;
 }
