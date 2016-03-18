@@ -420,7 +420,7 @@ void DviSessionLpec::Run()
                     continue;
                 }
                 else {
-                    ReportErrorNoThrow(LpecError::kMethodNotSupported);
+                    ReportErrorNoThrow(LpecError::kCommandNotRecognised);
                 }
             }
             catch (LpecParseError&) {
