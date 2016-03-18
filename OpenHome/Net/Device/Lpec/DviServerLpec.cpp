@@ -474,6 +474,9 @@ void DviSessionLpec::Action()
         catch (AsciiError&) {
             ReportError(LpecError::kVersionNotSpecified);
         }
+        if (iVersion > iTargetService->ServiceType().Version()) {
+            ReportError(LpecError::kVersionNotSupported);
+        }
         Invoke();
     }
     catch (LpecParseError&) {
