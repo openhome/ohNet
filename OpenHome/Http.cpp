@@ -179,6 +179,11 @@ void Http::WriteHeaderConnectionClose(WriterHttpHeader& aWriter)
     aWriter.WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
 }
 
+void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, const Brx& aUserAgent)
+{
+    aWriter.WriteHeader(Http::kHeaderUserAgent, aUserAgent);
+}
+
 // HttpStatus
 
 TUint HttpStatus::Code() const
@@ -1218,7 +1223,7 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
         iWriterRequest.WriteMethod(Http::kMethodGet, aUri.PathAndQuery(), Http::eHttp11);
         Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), port);
         if (iUserAgent.Bytes() > 0) {
-            iWriterRequest.WriteHeader(Http::kHeaderUserAgent, iUserAgent);
+            Http::WriteHeaderUserAgent(iWriterRequest, iUserAgent);
         }
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
