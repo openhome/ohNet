@@ -370,6 +370,11 @@ public:
      */
     void SetTimerManagerPriority(uint32_t aPriority);
 
+    /**
+     * Set the user agent used in HTTP requests.
+     */
+    void SetUserAgent(const TChar* aUserAgent);
+
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
     FunctorAsync& AsyncBeginHandler();
@@ -404,6 +409,7 @@ public:
     uint32_t DvLpecServerPort();
     bool IsHostUdpLowQuality();
     uint32_t TimerManagerPriority() const;
+    const TChar* UserAgent() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -445,6 +451,7 @@ private:
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;
     uint32_t iTimerManagerThreadPriority;
+    Brhz iUserAgent;
 };
 
 class CpStack;

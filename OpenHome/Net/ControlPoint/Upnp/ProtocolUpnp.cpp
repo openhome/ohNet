@@ -179,6 +179,10 @@ void InvocationUpnp::WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& 
     Http::WriteHeaderContentLength(aWriterRequest, aBodyBytes);
     Http::WriteHeaderContentType(aWriterRequest, kContentType);
 
+    const TChar* userAgent = iCpStack.Env().InitParams()->UserAgent();
+    if (userAgent != NULL)
+        Http::WriteHeaderUserAgent(aWriterRequest, Brn(userAgent));
+
     IWriterAscii& writerField = aWriterRequest.WriteHeaderField(kSoapAction);
     writerField.Write('\"');
     WriteServiceType(writerField, iInvocation);

@@ -63,6 +63,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetDvUpnpServerPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvWebSocketPort(long aParams, int aPort);
 	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams, String aHostName);
+	private static native void OhNetInitParamsSetUserAgent(long aParams, String aHostName);
     private static native long OhNetInitParamsSetLogOutput(long aParams, IMessageListener aListener);
     private static native long OhNetInitParamsSetFatalErrorHandler(long aParams, IMessageListener aListener);
     private static native void OhNetInitParamsSetThreadExitHandler(long aParams, IThreadExitListener aListener);
@@ -592,6 +593,14 @@ public class InitParams
 	{
 		OhNetInitParamsSetDvEnableBonjour(iHandle, aHostName);
 	}
+	
+	/**
+	 * Set the user agent used in HTTP requests.
+	 */
+	public void setUserAgent(String aUserAgent)
+	{
+		OhNetInitParamsSetUserAgent(iHandle, aUserAgent);
+	}
     
     /**
      * Set the listener callback for log messages.
@@ -741,6 +750,7 @@ public class InitParams
 		params.setDvNumWebSocketThreads(numWebSocketThreads + 1);
 		params.setDvWebSocketPort(webSocketPort + 1);
 		params.setDvEnableBonjour("");
+    params.setUserAgent("");
 		
 		System.out.println();
 		System.out.println("Params TCP timeout:\t\t\t" + params.getTcpConnectTimeoutMs() + " ms");

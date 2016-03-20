@@ -481,6 +481,14 @@ DllExport void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams a
 DllExport void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName);
 
 /**
+ * Set the user agent used in HTTP requests.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aUserAgent       HTTP user agent
+ */
+DllExport void STDCALL OhNetInitParamsSetUserAgent(OhNetHandleInitParams aParams, const char* aHostName);
+
+/**
  * Query the tcp connection timeout
  *
  * @param[in] aParams          Initialisation params
