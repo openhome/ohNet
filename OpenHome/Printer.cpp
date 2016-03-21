@@ -118,6 +118,9 @@ TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
     if (self) {
         self->iLockStdio.Wait();
     }
+#ifdef _WIN32
+#define snprintf _snprintf_s
+#endif
     TInt n = vsnprintf(temp, kMaxPrintBytes, aFormat, aArgs);
     if (self) {
         self->iLockStdio.Signal();
