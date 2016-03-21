@@ -1,5 +1,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Private/Timer.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -284,13 +286,15 @@ RingBufferLogger::~RingBufferLogger()
 
 void RingBufferLogger::LogFunctor(const TChar* aMsg)
 {
-    {
-        // write to buffer
-        AutoMutex amx(iMutex);
-        iRingBuffer.Write(Brn(aMsg));
-    }
+    AutoMutex amx(iMutex);
+    iRingBuffer.Write(Brn(aMsg));
 
     // forward downstream
+    if (aMsg[strlen(aMsg)-1] == '\n') {
+        char buf[20];
+        snprintf(buf, sizeof(buf), "%010lu: ", (unsigned long)Time::Now(*gEnv));
+        iDownstreamFunctorMsg(buf);
+    }
     iDownstreamFunctorMsg(aMsg);
 }
 
