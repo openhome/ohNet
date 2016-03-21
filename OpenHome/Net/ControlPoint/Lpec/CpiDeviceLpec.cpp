@@ -424,7 +424,7 @@ TBool CpiDeviceLpec::SubscriptionResponse::HandleLpecResponse(const Brx& aMethod
     if (aMethod != Lpec::kMethodSubscribe) {
         return false;
     }
-    iSidFragment.Set(Ascii::Trim(aBody));
+    iSidFragment.Replace(Ascii::Trim(aBody));
     iComplete.Signal();
     return true;
 }

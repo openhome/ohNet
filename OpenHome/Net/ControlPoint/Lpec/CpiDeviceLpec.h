@@ -80,7 +80,7 @@ private:
         TBool HandleLpecResponse(const Brx& aMethod, const Brx& aBody);
     private:
         Semaphore& iComplete;
-        Brn iSidFragment;
+        Bws<Ascii::kMaxUintStringBytes> iSidFragment;
     };
     class OutputProcessor : public IOutputProcessor
     {
