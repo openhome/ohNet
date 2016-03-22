@@ -840,12 +840,13 @@ void DviSessionLpec::InvocationWriteStringStart(const TChar* /*aName*/)
 
 void DviSessionLpec::InvocationWriteString(TByte aValue)
 {
-    iWriteBuffer->Write(aValue);
+    Brn buf(&aValue, 1);
+    InvocationWriteString(buf);
 }
 
 void DviSessionLpec::InvocationWriteString(const Brx& aValue)
 {
-    iWriteBuffer->Write(aValue);
+    Converter::ToXmlEscaped(*iWriteBuffer, aValue);
 }
 
 void DviSessionLpec::InvocationWriteStringEnd(const TChar* /*aName*/)
