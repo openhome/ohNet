@@ -125,30 +125,8 @@ TBool DviDevice::Enabled() const
 void DviDevice::SetEnabled()
 {
     ASSERT(iEnabled != eEnabled);
-    iLock.Wait();
-    if (iProtocolDisableCount != 0) {
-        // We're in the unusual situation of having the client Enable this device while its in the process of disabling.
-        // It'd be potentially fiddly for each protocol to halt a disable.
-        // ...so we prefer to waste a little time but avoid complex code by waiting for the disable to complete
-        iDisableComplete = MakeFunctor(*this, &DviDevice::DisableComplete);
-        iLock.Signal();
-        iShutdownSem.Wait();
-        iLock.Wait();
-    }
-    iEnabled = eEnabled;
-    iConfigUpdated = false;
-    iShutdownSem.Clear();
-    iLock.Signal();
-    TUint i;
-    for (i=0; i<(TUint)iProtocols.size(); i++) {
-        iProtocols[i]->Enable();
-    }
-    // queue updates for all service properties
-    // nothing may have changed but individual subscriptions will spot this and skip any update message
-    for (i=0; i<iServices.size(); i++) {
-        iServices[i]->Enable();
-        iServices[i]->PublishPropertyUpdates();
-    }
+    AutoMutex _(iLock);
+    SetEnabledLocked();
 }
 
 void DviDevice::SetDisabled(Functor aCompleted)
@@ -178,10 +156,6 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     Parser parser(key);
     Brn name = parser.Next('.');
     aKey += name.Bytes() + 1;
-    // assume keys starting 'Test' are a special case which can be updated at any time
-    if (strlen(aKey) < 4 || strncmp(aKey, "Test", 4) != 0) {
-        ASSERT(iEnabled == eDisabled);
-    }
     if (name == Brn("Core")) {
         static const char* longPollEnable = "LongPollEnable";
         if (iProviderSubscriptionLongPoll == NULL && 
@@ -191,6 +165,15 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
         }
     }
     else {
+        AutoMutex _(iLock);
+        TBool reEnable = false;
+        // assume keys starting 'Test' are a special case which can be updated at any time
+        if (iEnabled == eEnabled && strncmp(aKey, "Test", 4) != 0) {
+            Semaphore sem("DVAT", 0);
+            SetDisabled(MakeFunctor(sem, &Semaphore::Signal), true);
+            reEnable = true;
+        }
+
         for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
             IDvProtocol* protocol = iProtocols[i];
             if (protocol->ProtocolName() == name) {
@@ -198,6 +181,10 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
                 ConfigChanged();
                 break;
             }
+        }
+
+        if (reEnable) {
+            SetEnabledLocked();
         }
     }
 }
@@ -370,6 +357,32 @@ DviDevice* DviDevice::Root() const
         root = root->iParent;
     }
     return const_cast<DviDevice*>(root);
+}
+
+void DviDevice::SetEnabledLocked()
+{
+    if (iProtocolDisableCount != 0) {
+        // We're in the unusual situation of having the client Enable this device while its in the process of disabling.
+        // It'd be potentially fiddly for each protocol to halt a disable.
+        // ...so we prefer to waste a little time but avoid complex code by waiting for the disable to complete
+        iDisableComplete = MakeFunctor(*this, &DviDevice::DisableComplete);
+        iLock.Signal();
+        iShutdownSem.Wait();
+        iLock.Wait();
+    }
+    iEnabled = eEnabled;
+    iConfigUpdated = false;
+    iShutdownSem.Clear();
+    TUint i;
+    for (i=0; i<(TUint)iProtocols.size(); i++) {
+        iProtocols[i]->Enable();
+    }
+    // queue updates for all service properties
+    // nothing may have changed but individual subscriptions will spot this and skip any update message
+    for (i=0; i<iServices.size(); i++) {
+        iServices[i]->Enable();
+        iServices[i]->PublishPropertyUpdates();
+    }
 }
 
 void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)

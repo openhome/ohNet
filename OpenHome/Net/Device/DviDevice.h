@@ -70,6 +70,7 @@ protected:
 private:
     void Construct(const Brx& aUdn);
     void SetParent(DviDevice* aParent);
+    void SetEnabledLocked();
     void SetDisabled(Functor aCompleted, bool aLocked);
     void ProtocolDisabled();
     void DisableComplete();
