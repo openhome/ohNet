@@ -26,7 +26,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.205",
+        "version": "0.1.237",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-ppc32": false,
@@ -35,7 +35,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.208",
+        "version":          "0.0.212",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-ppc32": false,
