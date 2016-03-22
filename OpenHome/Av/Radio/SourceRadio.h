@@ -82,7 +82,7 @@ private:
     TBool iLive;
     TBool iPresetsUpdated;
     TBool iAutoPlay;
-    StoreInt* iStorePresetId;
+    StoreInt* iStorePresetNumber;
     Media::BwsTrackUri iPresetUri; // only required by Fetch(TUint) but too large for the stack
     Media::BwsTrackMetaData iPresetMetadata; // only required by Fetch(TUint) but too large for the stack
 };
