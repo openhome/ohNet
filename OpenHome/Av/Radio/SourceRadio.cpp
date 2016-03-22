@@ -177,6 +177,7 @@ TBool SourceRadio::TryFetch(TUint aPresetId, const Brx& aUri)
     else if (!iPresetDatabase->TryGetPresetById(aPresetId, iPresetUri, iPresetMetadata)) {
         return false;
     }
+    Log::Print("iStorePresetId->Set(%d)\n", aPresetId);
     iStorePresetId->Set(aPresetId);
     iProviderRadio->NotifyPresetInfo(aPresetId, iPresetUri, iPresetMetadata);
     FetchLocked(iPresetUri, iPresetMetadata);
@@ -186,6 +187,7 @@ TBool SourceRadio::TryFetch(TUint aPresetId, const Brx& aUri)
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
 {
     AutoMutex _(iLock);
+    Log::Print("190 iStorePresetId->Set(%d)\n", IPresetDatabaseReader::kPresetIdNone);
     iStorePresetId->Set(IPresetDatabaseReader::kPresetIdNone);
     FetchLocked(aUri, aMetaData);
 }
@@ -282,6 +284,7 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
 
 void SourceRadio::PresetDatabaseChanged()
 {
+	Log::Print("######################### SourceRadio::PresetDatabaseChanged() #########################\n");
     AutoMutex _(iLock);
     if (iPresetsUpdated) {
         return;
@@ -290,11 +293,19 @@ void SourceRadio::PresetDatabaseChanged()
     if (iTrack != nullptr) {
         return;
     }
-    const TUint presetId = iStorePresetId->Get();
+    const TUint presetIndex = iStorePresetId->Get() - 1;
+    TUint presetId;
+
+    Log::Print("presetIndex = %d\n", presetIndex);
+
+    iPresetDatabase->GetPreset(presetIndex, presetId, iPresetMetadata);
+
+    Log::Print("presetId = %d\n", presetId);
     if (presetId == IPresetDatabaseReader::kPresetIdNone) {
         return;
     }
     if (!iPresetDatabase->TryGetPresetById(presetId, iPresetUri, iPresetMetadata)) {
+    	Log::Print("302 iStorePresetId->Set(%d)\n", IPresetDatabaseReader::kPresetIdNone);
         iStorePresetId->Set(IPresetDatabaseReader::kPresetIdNone);
         return;
     }
