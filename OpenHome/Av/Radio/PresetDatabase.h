@@ -43,9 +43,6 @@ public:
     virtual TBool TryGetPresetById(TUint aId, Bwx& aUri, Bwx& aMetaData) const = 0;
     virtual TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const = 0;
     virtual TBool TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const = 0;
-
-    //virtual TUint GetPresetId(TUint aPresetNumber) const = 0;
-    //virtual TUint GetPresetNumber(TUint aPresetId) const = 0;
 };
 
 class PresetDatabase : public IPresetDatabaseWriter, public IPresetDatabaseReader
