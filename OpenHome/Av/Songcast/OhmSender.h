@@ -26,6 +26,8 @@ class OhmSenderDriver : public IOhmSenderDriver
 {
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kMaxHistoryFrames = 100;
+    static const TUint kLatencyMultiplier44k1;
+    static const TUint kLatencyMultiplier48k;
 public:
     OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart);
@@ -39,6 +41,7 @@ private: // from IOhmSenderDriver
     void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal) override;
     void Resend(const Brx& aFrames) override;
 private:
+    inline void UpdateLatencyOhm();
     void ResetLocked();
     void Resend(OhmMsgAudio& aMsg);
 private:
@@ -57,7 +60,8 @@ private:
     TBool iLossless;
     TUint64 iSamplesTotal;
     TUint64 iSampleStart;
-    TUint iLatency; // in ohm units
+    TUint iLatencyMs;
+    TUint iLatencyOhm;
     SocketUdp iSocket;
     OhmMsgFactory iFactory;
     FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
