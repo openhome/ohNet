@@ -110,7 +110,6 @@ TInt Log::Print(FunctorMsg& aOutput, const Brx& aMessage)
     return ret;
 }
 
-
 TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
 {
     TChar temp[kMaxPrintBytes+1];
@@ -118,9 +117,6 @@ TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
     if (self) {
         self->iLockStdio.Wait();
     }
-#ifdef _WIN32
-#define snprintf _snprintf_s
-#endif
     TInt n = vsnprintf(temp, kMaxPrintBytes, aFormat, aArgs);
     if (self) {
         self->iLockStdio.Signal();
@@ -132,11 +128,6 @@ TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
     msg.PtrZ();
     return DoPrint(aOutput, msg.Ptr());
 }
-
-
-    
-
-
 
 void Log::ToRam(TUint aCapacityBytes)
 {
@@ -275,6 +266,7 @@ RingBufferLogger::RingBufferLogger(TUint aBytes)
     : iMutex("RingBufferLogger")
     , iBytes(aBytes)
     , iRingBuffer(aBytes)
+    , iTimestamp(false)
 {
     // interpose our own handler, store old handler
     FunctorMsg functor = MakeFunctorMsg(*this, &RingBufferLogger::LogFunctor);
@@ -287,13 +279,21 @@ RingBufferLogger::~RingBufferLogger()
     Log::SwapOutput(iDownstreamFunctorMsg);
 }
 
+void RingBufferLogger::PrefixTimestamp(TBool aEnable)
+{
+    iTimestamp = aEnable;
+}
+
 void RingBufferLogger::LogFunctor(const TChar* aMsg)
 {
     AutoMutex amx(iMutex);
     iRingBuffer.Write(Brn(aMsg));
 
     // forward downstream
-    if (aMsg[strlen(aMsg)-1] == '\n') {
+    if (iTimestamp && aMsg[strlen(aMsg)-1] == '\n') {
+#ifdef _WIN32
+# define snprintf _snprintf_s
+#endif
         char buf[20];
         snprintf(buf, sizeof(buf), "%010lu: ", (unsigned long)Time::Now(*gEnv));
         iDownstreamFunctorMsg(buf);

@@ -61,6 +61,7 @@ class RingBufferLogger
 public:
     RingBufferLogger(TUint aBytes);
     ~RingBufferLogger();
+    void PrefixTimestamp(TBool aEnable); // defaults to off
     void Read(OpenHome::IWriter& aWriter);
 private:
     void LogFunctor(const TChar*);
@@ -69,6 +70,7 @@ private:
     TUint iBytes;
     WriterRingBuffer iRingBuffer;
     FunctorMsg iDownstreamFunctorMsg;
+    TBool iTimestamp;
 };
 
 class Log
