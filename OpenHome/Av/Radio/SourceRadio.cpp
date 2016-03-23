@@ -99,7 +99,7 @@ SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUr
     iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.AddObserver(*this);
-    iStorePresetId = new StoreInt(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(),
+    iStorePresetNumber = new StoreInt(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(),
                                   kPowerPriorityNormal, Brn("Radio.PresetId"),
                                   IPresetDatabaseReader::kPresetIdNone);
 
@@ -121,7 +121,7 @@ SourceRadio::~SourceRadio()
 {
     delete iTuneIn;
     delete iPresetDatabase;
-    delete iStorePresetId;
+    delete iStorePresetNumber;
     delete iProviderRadio;
     if (iTrack != nullptr) {
         iTrack->RemoveRef();
@@ -148,7 +148,7 @@ void SourceRadio::Deactivate()
     iLock.Wait();
     iProviderRadio->SetTransportState(EPipelineStopped);
     iLock.Signal();
-    iStorePresetId->Write();
+    iStorePresetNumber->Write();
     Source::Deactivate();
 }
 
@@ -177,7 +177,7 @@ TBool SourceRadio::TryFetch(TUint aPresetId, const Brx& aUri)
     else if (!iPresetDatabase->TryGetPresetById(aPresetId, iPresetUri, iPresetMetadata)) {
         return false;
     }
-    iStorePresetId->Set(aPresetId);
+    iStorePresetNumber->Set(iPresetDatabase->GetPresetNumber(aPresetId));
     iProviderRadio->NotifyPresetInfo(aPresetId, iPresetUri, iPresetMetadata);
     FetchLocked(iPresetUri, iPresetMetadata);
     return true;
@@ -186,7 +186,7 @@ TBool SourceRadio::TryFetch(TUint aPresetId, const Brx& aUri)
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
 {
     AutoMutex _(iLock);
-    iStorePresetId->Set(IPresetDatabaseReader::kPresetIdNone);
+    iStorePresetNumber->Set(IPresetDatabaseReader::kPresetIdNone);
     FetchLocked(aUri, aMetaData);
 }
 
@@ -290,12 +290,13 @@ void SourceRadio::PresetDatabaseChanged()
     if (iTrack != nullptr) {
         return;
     }
-    const TUint presetId = iStorePresetId->Get();
+ 
+    const TUint presetId = iPresetDatabase->GetPresetId(iStorePresetNumber->Get());
     if (presetId == IPresetDatabaseReader::kPresetIdNone) {
         return;
     }
     if (!iPresetDatabase->TryGetPresetById(presetId, iPresetUri, iPresetMetadata)) {
-        iStorePresetId->Set(IPresetDatabaseReader::kPresetIdNone);
+        iStorePresetNumber->Set(IPresetDatabaseReader::kPresetIdNone);
         return;
     }
     iProviderRadio->NotifyPresetInfo(presetId, iPresetUri, iPresetMetadata);

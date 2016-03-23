@@ -172,6 +172,9 @@ void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 
 // OhmSenderDriver
 
+const TUint OhmSenderDriver::kLatencyMultiplier44k1 = 44100 * 256;
+const TUint OhmSenderDriver::kLatencyMultiplier48k  = 48000 * 256;
+
 OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper)
     : iMutex("OHMD")
     , iEnabled(false)
@@ -184,7 +187,8 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
     , iLossless(false)
     , iSamplesTotal(0)
     , iSampleStart(0)
-    , iLatency(0)
+    , iLatencyMs(0)
+    , iLatencyOhm(0)
     , iSocket(aEnv)
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
     , iTimestamper(aTimestamper)
@@ -193,12 +197,18 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
 {
 }
 
+inline void OhmSenderDriver::UpdateLatencyOhm()
+{
+    iLatencyOhm = iLatencyMs * iTimestampMultiplier / 1000;
+}
+
 void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart)
 {
     AutoMutex mutex(iMutex);
 
     iSampleRate = aSampleRate;
-    iTimestampMultiplier = (aSampleRate % 441 == 0? 44100 * 256 : 48000 * 256);
+    iTimestampMultiplier = (aSampleRate % 441 == 0? kLatencyMultiplier44k1 : kLatencyMultiplier48k);
+    UpdateLatencyOhm();
     iBytesPerSample = aChannels * aBitDepth / 8;
     iLossless = aLossless;
     iSampleStart = aSampleStart;
@@ -254,7 +264,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         samples,
         iFrame,
         timeStamp, // network timestamp
-        iLatency,
+        iLatencyOhm,
         iSampleStart,
         iStreamHeader,
         Brn(aData, aBytes)
@@ -332,7 +342,8 @@ void OhmSenderDriver::SetTtl(TUint aValue)
 void OhmSenderDriver::SetLatency(TUint aValue)
 {
     AutoMutex mutex(iMutex);
-    iLatency = aValue * iTimestampMultiplier / 1000;
+    iLatencyMs = aValue;
+    UpdateLatencyOhm();
 }
 
 void OhmSenderDriver::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart)
