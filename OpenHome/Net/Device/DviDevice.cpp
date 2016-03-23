@@ -171,9 +171,11 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
         TBool reEnable = false;
         // assume keys starting 'Test' are a special case which can be updated at any time
         if (iEnabled == eEnabled && strncmp(aKey, "Test", 4) != 0) {
-            Semaphore sem("DVAT", 0);
+            Semaphore sem("DVSA", 0);
             SetDisabled(MakeFunctor(sem, &Semaphore::Signal), true);
+            iLock.Signal();
             sem.Wait();
+            iLock.Wait();
             reEnable = true;
         }
 
@@ -368,14 +370,18 @@ void DviDevice::SetEnabledLocked()
         // We're in the unusual situation of having the client Enable this device while its in the process of disabling.
         // It'd be potentially fiddly for each protocol to halt a disable.
         // ...so we prefer to waste a little time but avoid complex code by waiting for the disable to complete
-        iDisableComplete = MakeFunctor(*this, &DviDevice::DisableComplete);
+        Semaphore sem("DSEL", 0);
+        iDisableComplete = MakeFunctor(sem, &Semaphore::Signal);
         iLock.Signal();
-        iShutdownSem.Wait();
+        sem.Wait();
         iLock.Wait();
     }
     iEnabled = eEnabled;
     iConfigUpdated = false;
+    iDisableLock.Wait();
     iShutdownSem.Clear();
+    iDisableLock.Signal();
+    iLock.Signal();
     TUint i;
     for (i=0; i<(TUint)iProtocols.size(); i++) {
         iProtocols[i]->Enable();
@@ -386,6 +392,7 @@ void DviDevice::SetEnabledLocked()
         iServices[i]->Enable();
         iServices[i]->PublishPropertyUpdates();
     }
+    iLock.Wait();
 }
 
 void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
@@ -414,7 +421,6 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
         if (iDisableComplete) {
             iDisableComplete();
         }
-        iShutdownSem.Signal();
     }
     else {
         if (aLocked) {
@@ -449,11 +455,6 @@ void DviDevice::ProtocolDisabled()
         }
         iShutdownSem.Signal();
     }
-}
-
-void DviDevice::DisableComplete()
-{
-    iShutdownSem.Signal();
 }
 
 TBool DviDevice::HasService(const OpenHome::Net::ServiceType& aServiceType) const
@@ -497,9 +498,7 @@ TUint DviDevice::SubscriptionId()
 
 void DviDevice::ListObjectDetails() const
 {
-    Log::Print("  DviDevice: addr=%p, udn=", this);
-    Log::Print(iUdn);
-    Log::Print(", refCount=%u\n", iRefCount);
+    Log::Print("  DviDevice: addr=%p, udn=%.*s, refCount=%u\n", this, PBUF(iUdn), iRefCount);
 }
 
 

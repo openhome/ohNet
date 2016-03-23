@@ -64,7 +64,7 @@ void CpDevices::Test()
     CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*(iList[0]));
     TUint i;
 
-    Print("Unsigned integer arguments...\n");
+    Print("  Unsigned integer arguments...\n");
     TUint valUint = 15;
     for (i=0; i<kTestIterations; i++) {
         TUint result;
@@ -91,7 +91,7 @@ void CpDevices::Test()
     catch (ProxyError&) {}
 #endif
 
-    Print("Integer arguments...\n");
+    Print("  Integer arguments...\n");
     TInt valInt = 3;
     for (i=0; i<kTestIterations; i++) {
         TInt result;
@@ -100,7 +100,7 @@ void CpDevices::Test()
         valInt = result;
     }
 
-    Print("Boolean arguments...\n");
+    Print("  Boolean arguments...\n");
     TBool valBool = true;
     for (i=0; i<kTestIterations; i++) {
         TBool result;
@@ -109,7 +109,7 @@ void CpDevices::Test()
         valBool = result;
     }
 
-    Print("String arguments...\n");
+    Print("  String arguments...\n");
     Brn valStr("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
                "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
                "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in "
@@ -140,7 +140,7 @@ void CpDevices::Test()
     catch (ProxyError&) {}
 #endif
 
-    Print("Binary arguments...\n");
+    Print("  Binary arguments...\n");
     char bin[256];
     for (i=0; i<256; i++) {
         bin[i] = (char)i;
@@ -157,13 +157,12 @@ void CpDevices::Test()
 
 void CpDevices::Added(CpDevice& aDevice)
 {
-    iLock.Wait();
+    AutoMutex _(iLock);
     if (aDevice.Udn() == iTargetUdn) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
         iAddedSem.Signal();
     }
-    iLock.Signal();
 }
 
 void CpDevices::Removed(CpDevice& /*aDevice*/)
@@ -189,10 +188,10 @@ void TestDvInvocation(CpStack& aCpStack, DvStack& aDvStack)
     CpDeviceListUpnpServiceType* list =
                 new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
     sem->Wait(30*1000); // allow up to 30 seconds to find our one device
-    delete sem;
     deviceList->Test();
     delete list;
     delete deviceList;
+    delete sem;
     delete device;
 
     Print("TestDvInvocation - completed\n");
