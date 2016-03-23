@@ -104,6 +104,7 @@ private:
     IResourceManager* iResourceManager;
     TUint iProtocolDisableCount;
     Functor iDisableComplete;
+    Mutex iDisableLock;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
     DviProviderSubscriptionLongPoll* iProviderSubscriptionLongPoll;

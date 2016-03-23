@@ -21,6 +21,7 @@ DviDevice::DviDevice(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn)
     , iLock("DDVM")
     , iServiceLock("DVM2")
     , iResourceManager(NULL)
+    , iDisableLock("DVM3")
     , iShutdownSem("DVSD", 1)
 {
     Construct(aUdn);
@@ -31,6 +32,7 @@ DviDevice::DviDevice(OpenHome::Net::DvStack& aDvStack, const Brx& aUdn, IResourc
     , iLock("DDVM")
     , iServiceLock("DVM2")
     , iResourceManager(&aResourceManager)
+    , iDisableLock("DVM3")
     , iShutdownSem("DVSD", 1)
 {
     Construct(aUdn);
@@ -171,6 +173,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
         if (iEnabled == eEnabled && strncmp(aKey, "Test", 4) != 0) {
             Semaphore sem("DVAT", 0);
             SetDisabled(MakeFunctor(sem, &Semaphore::Signal), true);
+            sem.Wait();
             reEnable = true;
         }
 
@@ -391,23 +394,23 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
         iLock.Wait();
     }
     iDisableComplete = aCompleted;
+    TUint protocolDisableCount = 0;
     switch (iEnabled)
     {
     case eDisabled:
-        iProtocolDisableCount = 0;
         break;
     case eDisabling:
         ASSERTS();
         break;
     case eEnabled:
         iEnabled = eDisabling;
-        iProtocolDisableCount = (TUint)iProtocols.size();
+        protocolDisableCount = (TUint)iProtocols.size();
         break;
     }
     if (!aLocked) {
         iLock.Signal();
     }
-    if (iProtocolDisableCount == 0) {
+    if (protocolDisableCount == 0) {
         if (iDisableComplete) {
             iDisableComplete();
         }
@@ -418,6 +421,9 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
             // unlock around calls to Disable in case any call back to ProtocolDisabled synchronously
             iLock.Signal();
         }
+        iDisableLock.Wait();
+        iProtocolDisableCount = protocolDisableCount;
+        iDisableLock.Signal();
         Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
         for (TUint i=0; i<iProtocols.size(); i++) {
             iProtocols[i]->Disable(functor);
@@ -434,7 +440,7 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
 
 void DviDevice::ProtocolDisabled()
 {
-    iLock.Wait();
+    AutoMutex _(iDisableLock);
     ASSERT(iProtocolDisableCount != 0);
     if (--iProtocolDisableCount == 0) {
         iEnabled = eDisabled;
@@ -443,7 +449,6 @@ void DviDevice::ProtocolDisabled()
         }
         iShutdownSem.Signal();
     }
-    iLock.Signal();
 }
 
 void DviDevice::DisableComplete()
