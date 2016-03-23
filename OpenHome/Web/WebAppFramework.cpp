@@ -581,7 +581,7 @@ const TChar* WebAppFramework::kName("WebUiServer");
 const TChar* WebAppFramework::kAdapterCookie("WebAppFramework");
 const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
-WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
+WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
     : iEnv(aEnv)
     , iPollTimer(iEnv)
     , iPort(aPort)
