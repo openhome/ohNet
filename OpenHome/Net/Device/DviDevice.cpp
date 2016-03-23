@@ -402,6 +402,7 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     }
     iDisableComplete = aCompleted;
     TUint protocolDisableCount = 0;
+    TBool changedState = false;
     switch (iEnabled)
     {
     case eDisabled:
@@ -412,6 +413,7 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     case eEnabled:
         iEnabled = eDisabling;
         protocolDisableCount = (TUint)iProtocols.size();
+        changedState = true;
         break;
     }
     if (!aLocked) {
@@ -420,6 +422,11 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     if (protocolDisableCount == 0) {
         if (iDisableComplete) {
             iDisableComplete();
+        }
+        if (changedState) {
+            iDisableLock.Wait();
+            iShutdownSem.Signal();
+            iDisableLock.Signal();
         }
     }
     else {
