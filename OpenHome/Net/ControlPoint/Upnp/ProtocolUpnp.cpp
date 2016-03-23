@@ -32,7 +32,8 @@ InvocationUpnp::~InvocationUpnp()
 void InvocationUpnp::Invoke(const Uri& aUri)
 {
     const Brx& actionName = iInvocation.Action().Name();
-    LOG(kService, "> InvocationUpnp::Invoke (%p, action %.*s)\n", &iInvocation, PBUF(actionName));
+    LOG(kService, "> InvocationUpnp::Invoke (%p, action %.*s, device %.*s)\n",
+                  &iInvocation, PBUF(actionName), PBUF(iInvocation.Udn()));
 
     iSocket.Open(iCpStack.Env());
     WriteRequest(aUri);

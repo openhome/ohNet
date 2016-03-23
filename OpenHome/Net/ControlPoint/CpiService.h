@@ -375,6 +375,7 @@ public:
 
     void SetInvoker(IInvocable& aInvocable);
     IInvocable& Invoker();
+    const Brx& Udn() const;
 private:
     Invocation(CpStack& aCpStack, Fifo<OpenHome::Net::Invocation*>& aFree);
     Invocation& operator=(const Invocation& aInvocation);
