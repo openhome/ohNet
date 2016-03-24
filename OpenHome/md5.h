@@ -60,14 +60,6 @@
  * efficiently on either one than if ARCH_IS_BIG_ENDIAN is defined.
  */
 
-// modifications follow...
-#ifdef DEFINE_LITTLE_ENDIAN
-# define ARCH_IS_BIG_ENDIAN 1
-#elif defined DEFINE_BIG_ENDIAN
-# define ARCH_IS_BIG_ENDIAN 0
-#endif
-// modifications end
-
 typedef unsigned char md5_byte_t; /* 8-bit byte */
 typedef unsigned int md5_word_t; /* 32-bit word */
 
