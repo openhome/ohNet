@@ -273,6 +273,12 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
         aMsg.RemoveRef();
         return repairing;
     }
+    if (diff > (TInt)kMaxRepairBacklogFrames) {
+        // we're so far behind that we can't fit all the missing frames into iRepairFrames
+        RepairReset();
+        aMsg.RemoveRef();
+        return false;
+    }
     if (diff == 1) {
         // incoming frame is one greater than the last frame sent down the pipeline, so send this ...
         iFrame++;
