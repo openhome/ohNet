@@ -706,6 +706,13 @@ void Pipeline::Unmute()
     iMuteCounted->Unmute();
 }
 
+void Pipeline::SetPostPipelineLatency(TUint /*aLatencyJiffies*/)
+{
+    // FIXME - notify VariableDelay elements of downstream latency.
+    //iVariableDelay1->SetLatency(aLatencyJiffies);
+    //iVariableDelay2->SetLatency(aLatencyJiffies);
+}
+
 void Pipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
 {
     iObserver.NotifyMode(aMode, aInfo);
