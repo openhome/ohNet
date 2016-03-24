@@ -133,7 +133,8 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
                     case OhmHeader::kMsgTypeLeave:
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        HandleAudio(header);
+                        /* ignore audio while joining - it might be from while we were waiting
+                        for the pipeline to empty if we're re-starting a stream following a drop-out */
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         LOG(kSongcast, "OHU: Joining, received track\n");
