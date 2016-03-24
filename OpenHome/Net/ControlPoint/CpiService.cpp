@@ -579,6 +579,11 @@ IInvocable& OpenHome::Net::Invocation::Invoker()
     return *iInvoker;
 }
 
+const Brx& OpenHome::Net::Invocation::Udn() const
+{
+    return iDevice->Udn();
+}
+
 TUint OpenHome::Net::Invocation::Type() const
 {
     return eInvocation;
@@ -676,8 +681,8 @@ void Invoker::Run()
         Wait();
         try {
             const Brx& actionName = iInvocation->Action().Name();
-            LOG(kService, "Invoker::Run (%s %p) action %.*s\n",
-                          (const TChar*)Name().Ptr(), iInvocation, PBUF(actionName));
+            LOG(kService, "Invoker::Run (%s %p), action %.*s, device %.*s\n",
+                          (const TChar*)Name().Ptr(), iInvocation, PBUF(actionName), PBUF(iInvocation->Udn()));
             iInvocation->Invoker().InvokeAction(*iInvocation);
         }
         catch (HttpError&) {

@@ -73,7 +73,6 @@ private:
     void SetEnabledLocked();
     void SetDisabled(Functor aCompleted, bool aLocked);
     void ProtocolDisabled();
-    void DisableComplete();
     TBool HasService(const OpenHome::Net::ServiceType& aServiceType) const;
     TBool ChildHasService(const OpenHome::Net::ServiceType& aServiceType) const;
     void ConfigChanged();
@@ -104,6 +103,7 @@ private:
     IResourceManager* iResourceManager;
     TUint iProtocolDisableCount;
     Functor iDisableComplete;
+    Mutex iDisableLock;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
     DviProviderSubscriptionLongPoll* iProviderSubscriptionLongPoll;
