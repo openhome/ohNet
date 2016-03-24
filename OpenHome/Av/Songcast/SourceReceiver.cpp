@@ -521,11 +521,9 @@ void SongcastSender::ConfigNameChanged(KeyValuePair<const Brx&>& aKvp)
 
 void SongcastSender::UpdateSenderName()
 {
-    Bws<Product::kMaxRoomBytes + Product::kMaxNameBytes + 3> name;
+    Bws<Product::kMaxRoomBytes + Product::kMaxNameBytes + 1> name;
     name.Append(iRoom);
-    name.Append(' ');
-    name.Append('(');
+    name.Append(':');
     name.Append(iName);
-    name.Append(')');
     iSender->SetName(name);
 }
