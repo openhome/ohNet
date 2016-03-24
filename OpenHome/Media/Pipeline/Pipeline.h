@@ -120,6 +120,7 @@ class Pipeline : public IPipelineElementDownstream
                , public IWaiterObserver
                , public IStopper
                , public IMute
+               , public IPostPipelineLatency
                , private IStopperObserver
                , private IPipelinePropertyObserver
                , private IStarvationMonitorObserver
@@ -179,6 +180,8 @@ private: // from IStopper
 private: // from IMute
     void Mute() override;
     void Unmute() override;
+public: // from IPostPipelineLatency
+    void SetPostPipelineLatency(TUint aLatencyJiffies) override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();

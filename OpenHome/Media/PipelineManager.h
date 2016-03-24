@@ -53,6 +53,7 @@ private:
 class PipelineManager : public IPipeline
                       , public IPipelineIdManager
                       , public IMute
+                      , public IPostPipelineLatency
                       , private IPipelineObserver
                       , private ISeekRestreamer
                       , private IUrlBlockWriter
@@ -257,6 +258,8 @@ private: // from IPipelineIdManager
 private: // from IMute
     void Mute() override;   // Synchronous; i.e., pipeline will be muted when this call returns.
     void Unmute() override;
+private: // from IPostPipelineLatency
+    void SetPostPipelineLatency(TUint aLatencyJiffies) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;

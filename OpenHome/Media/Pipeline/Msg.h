@@ -1420,6 +1420,13 @@ public:
     virtual void SetAnimator(IPipelineAnimator& aAnimator) = 0;
 };
 
+class IPostPipelineLatency
+{
+public:
+    virtual void SetPostPipelineLatency(TUint aLatencyJiffies) = 0;
+    virtual ~IPostPipelineLatency() {}
+};
+
 class TrackFactory
 {
 public:

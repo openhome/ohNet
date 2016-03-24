@@ -330,6 +330,11 @@ void PipelineManager::Unmute()
     static_cast<IMute*>(iPipeline)->Unmute();
 }
 
+void PipelineManager::SetPostPipelineLatency(TUint aLatencyJiffies)
+{
+    iPipeline->SetPostPipelineLatency(aLatencyJiffies);
+}
+
 void PipelineManager::NotifyPipelineState(EPipelineState aState)
 {
     for (TUint i=0; i<iObservers.size(); i++) {
