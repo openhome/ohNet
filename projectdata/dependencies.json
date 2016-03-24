@@ -26,7 +26,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.1.237",
+        "version": "0.0.239",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-ppc32": false,
@@ -66,7 +66,7 @@
     },
     {
         "name":             "hardware",
-        "version":          "0.0.80",
+        "version":          "0.0.113",
         "type":             "internal",
         "archive-filename": "${name}-Lib-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/${name}/"
@@ -84,7 +84,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.728",
+        "version": "0.0.731",
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

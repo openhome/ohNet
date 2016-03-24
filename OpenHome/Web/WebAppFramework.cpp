@@ -581,11 +581,12 @@ const TChar* WebAppFramework::kName("WebUiServer");
 const TChar* WebAppFramework::kAdapterCookie("WebAppFramework");
 const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
-WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
+WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
     : iEnv(aEnv)
     , iPollTimer(iEnv)
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
+    , iServer(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
 {
@@ -594,7 +595,6 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress aInterface, TUint
         tabs.push_back(new FrameworkTabFull(aEnv, i, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs));
     }
     iTabManager = new TabManager(tabs); // Takes ownership.
-    iServer = new SocketTcpServer(iEnv, kName, iPort, aInterface);
 
     Functor functor = MakeFunctor(*this, &WebAppFramework::CurrentAdapterChanged);
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();

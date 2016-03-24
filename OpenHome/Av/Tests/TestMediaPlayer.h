@@ -138,9 +138,9 @@ protected:
     MediaPlayer* iMediaPlayer;
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
     RebootLogger iRebootHandler;
+    Net::Shell* iShell;
 private:
     Semaphore iSemShutdown;
-    Net::Shell* iShell;
     Semaphore iDisabled;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
@@ -209,4 +209,3 @@ public:
 } // namespace Test
 } // namespace Av
 } // namespace OpenHome
-
