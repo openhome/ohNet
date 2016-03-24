@@ -217,6 +217,14 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     OhmMsgAudio::GetStreamHeader(iStreamHeader, iSamplesTotal, aSampleRate, aBitRate, 0/*VolumeOffset*/, aBitDepth, aChannels, aCodecName);
 }
 
+OhmMsgAudio* OhmSenderDriver::CreateAudio()
+{
+    if (iFifoHistory.SlotsUsed() == kMaxHistoryFrames) {
+        iFifoHistory.Read()->RemoveRef();
+    }
+    return iFactory.CreateAudio();
+}
+
 void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
 {
     AutoMutex mutex(iMutex);
@@ -275,6 +283,75 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     msg->Externalise(writer);
     msg->SetResent(true);
     iFifoHistory.Write(msg);
+    try {
+        iSocket.Send(iBuffer, iEndpoint);
+    }
+    catch (NetworkError&) {
+    }
+
+    iSampleStart += samples;
+    iFrame++;
+}
+
+void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
+{
+    AutoMutex mutex(iMutex);
+
+    TUint samples;
+    if (iBytesPerSample == 0) {
+        samples = 0;
+    }
+    else {
+        samples = aMsg->Audio().Bytes() / iBytesPerSample;
+    }
+    if (!iSend) {
+        iSampleStart += samples;
+        aMsg->RemoveRef();
+        return;
+    }
+    if (iSampleRate == 0 || (samples == 0 && !aHalt)) {
+        // nothing to usefully communicate to receivers
+        aMsg->RemoveRef();
+        return;
+    }
+    if (iFifoHistory.SlotsUsed() == kMaxHistoryFrames) {
+        iFifoHistory.Read()->RemoveRef();
+    }
+
+    TBool isTimeStamped = false;
+    TUint timeStamp = 0;
+    if (iFirstFrame) {
+        iFirstFrame = false;
+    }
+    else if (iTimestamper != nullptr) {
+        try {
+            timeStamp = iTimestamper->Timestamp(iFrame - 1);
+            if (iTsMapper != nullptr) {
+                timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
+            }
+            isTimeStamped = true;
+        }
+        catch (OhmTimestampNotFound&) {}
+    }
+
+    aMsg->ReinitialiseFields(
+        aHalt,
+        iLossless,
+        isTimeStamped,
+        false, // resent
+        samples,
+        iFrame,
+        timeStamp, // network timestamp
+        iLatencyOhm,
+        iSampleStart,
+        iStreamHeader
+    );
+
+    WriterBuffer writer(iBuffer);
+    writer.Flush();
+    aMsg->Externalise(writer);
+    aMsg->SetResent(true);
+    iFifoHistory.Write(aMsg);
     try {
         iSocket.Send(iBuffer, iEndpoint);
     }

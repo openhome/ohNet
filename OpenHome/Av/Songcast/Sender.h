@@ -129,7 +129,7 @@ private:
     Configuration::ConfigNum* iConfigPreset;
     TUint iListenerIdConfigPreset;
     std::vector<Media::MsgAudio*> iPendingAudio;
-    Bws<kSongcastPacketMaxBytes> iAudioBuf;
+    Bwx* iAudioBuf;
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
