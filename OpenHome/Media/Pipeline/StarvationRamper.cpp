@@ -1,10 +1,10 @@
-#include<OpenHome/Media/Pipeline/StarvationRamper.h>
+#include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/FlywheelRamper.h>
-#include<OpenHome/Media/Pipeline/StarvationMonitor.h> // FIXME - for IStarvationMonitorObserver
+#include <OpenHome/Media/Pipeline/StarvationMonitor.h> // FIXME - for IStarvationMonitorObserver
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <algorithm>
@@ -387,11 +387,11 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     , iSem("SRM2", 0)
     , iFlywheelInput(kRampDownJiffies)
     , iRecentAudioJiffies(0)
-    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(nullptr)
     , iState(State::Halted)
     , iStarving(false)
     , iExit(false)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
