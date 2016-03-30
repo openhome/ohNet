@@ -21,6 +21,8 @@ static const TUint kMaxSampleRate = 192000;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+const TUint FlywheelRamperManager::kMaxRampJiffiesBlockSize = Jiffies::kPerMs; // 1ms
+
 FlywheelRamperManager::FlywheelRamperManager(IPcmProcessor& aOutput, TUint aGenJiffies, TUint aRampJiffies)
     :iOutput(aOutput)
     ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, kMaxRampJiffiesBlockSize)*kMaxChannelCount*4)

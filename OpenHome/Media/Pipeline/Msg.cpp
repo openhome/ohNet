@@ -748,6 +748,7 @@ void RampApplicator::GetNextSample(TByte* aDest)
     const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
     //Log::Print(" %08x ", ramp);
     const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
+    TByte upperByte = 0; // 32-bit subsamples only (assumed to be 24-bit audio + 8-bit implementation-defined)
     for (TUint i=0; i<iNumChannels; i++) {
         TInt subsample = 0;
         switch (iBitDepth)
@@ -770,6 +771,13 @@ void RampApplicator::GetNextSample(TByte* aDest)
             subsample += *iPtr << 8;
             iPtr++;
             break;
+        case 32:
+            upperByte = *iPtr++;
+            subsample += *iPtr << 16;
+            iPtr++;
+            subsample += *iPtr << 8;
+            iPtr++;
+            break;
         default:
             ASSERTS();
         }
@@ -787,6 +795,12 @@ void RampApplicator::GetNextSample(TByte* aDest)
             *aDest++ = (TByte)(rampedSubsample >> 16);
             break;
         case 24:
+            *aDest++ = (TByte)(rampedSubsample >> 24);
+            *aDest++ = (TByte)(rampedSubsample >> 16);
+            *aDest++ = (TByte)(rampedSubsample >> 8);
+            break;
+        case 32:
+            *aDest++ = upperByte;
             *aDest++ = (TByte)(rampedSubsample >> 24);
             *aDest++ = (TByte)(rampedSubsample >> 16);
             *aDest++ = (TByte)(rampedSubsample >> 8);
@@ -2090,7 +2104,7 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
     const TUint byteDepth = bitDepth / 8;
     if (iRamp.IsEnabled()) {
         // we need calculate each subsample value when ramped so there is no option to process as a single fragment
-        TByte sample[DecodedAudio::kMaxNumChannels * 3]; // largest possible sample - 24-bit, 8 channel
+        TByte sample[DecodedAudio::kMaxNumChannels * 4]; // largest possible sample - 32-bit, 8 channel
         RampApplicator ra(iRamp);
         const TUint numSamples = ra.Start(audioBuf, bitDepth, numChannels);
         for (TUint i=0; i<numSamples; i++) {
@@ -2106,6 +2120,9 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
             case 3:
                 aProcessor.ProcessSample24(sample, numChannels);
                 break;
+            case 4:
+                aProcessor.ProcessSample32(sample, numChannels);
+                break;
             default:
                 ASSERTS();
             }
@@ -2115,13 +2132,16 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
         switch (byteDepth)
         {
         case 1:
-                aProcessor.ProcessFragment8(audioBuf, numChannels);
+            aProcessor.ProcessFragment8(audioBuf, numChannels);
             break;
         case 2:
-                aProcessor.ProcessFragment16(audioBuf, numChannels);
+            aProcessor.ProcessFragment16(audioBuf, numChannels);
             break;
         case 3:
-                aProcessor.ProcessFragment24(audioBuf, numChannels);
+            aProcessor.ProcessFragment24(audioBuf, numChannels);
+            break;
+        case 4:
+            aProcessor.ProcessFragment32(audioBuf, numChannels);
             break;
         default:
             ASSERTS();
@@ -2178,6 +2198,9 @@ void MsgPlayableSilence::ReadBlock(IPcmProcessor& aProcessor)
             break;
         case 24:
             aProcessor.ProcessFragment24(audioBuf, iNumChannels);
+            break;
+        case 32:
+            aProcessor.ProcessFragment32(audioBuf, iNumChannels);
             break;
         default:
             ASSERTS();
