@@ -20,7 +20,7 @@ class ZoneHandler;
 class IOhmTimestamper;
 class IOhmTimestampMapper;
 
-class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor
+class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor, private INonCopyable
 {
     static const Brn kConfigIdEnabled;
     static const Brn kConfigIdChannel;
@@ -129,7 +129,7 @@ private:
     Configuration::ConfigNum* iConfigPreset;
     TUint iListenerIdConfigPreset;
     std::vector<Media::MsgAudio*> iPendingAudio;
-    Bws<kSongcastPacketMaxBytes> iAudioBuf;
+    Bwx* iAudioBuf;
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;

@@ -41,7 +41,8 @@ Sender::Sender(Environment& aEnv,
                const Brx& aName,
                TUint aMinLatencyMs,
                const Brx& aIconFileName)
-    : iSampleRate(0)
+    : iAudioBuf(nullptr)
+    , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
@@ -259,14 +260,17 @@ void Sender::ProcessAudio(MsgAudio* aMsg)
 
 void Sender::SendPendingAudio(TBool aHalt)
 {
-    iAudioBuf.SetBytes(0);
+    auto msg = iOhmSenderDriver->CreateAudio();
+    iAudioBuf = &(msg->Audio());
+    iAudioBuf->SetBytes(0);
     PlayableCreator pc(iSampleRate, iBitDepth, iNumChannels);
     for (TUint i=0; i<iPendingAudio.size(); i++) {
         MsgPlayable* playable = pc.Process(iPendingAudio[i]);
         playable->Read(*this);
         playable->RemoveRef();
     }
-    iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes(), aHalt);
+    iOhmSenderDriver->SendAudio(msg, aHalt);
+    iAudioBuf = nullptr;
     iPendingAudio.clear();
 }
 
@@ -294,50 +298,51 @@ void Sender::ConfigPresetChanged(KeyValuePair<TInt>& aKvp)
 
 void Sender::BeginBlock()
 {
+    ASSERT(iAudioBuf);
 }
 
 void Sender::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
 {
-    iAudioBuf.Append(aData);
+    iAudioBuf->Append(aData);
 }
 
 void Sender::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
 {
-    iAudioBuf.Append(aData);
+    iAudioBuf->Append(aData);
 }
 
 void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
 {
-    iAudioBuf.Append(aData);
+    iAudioBuf->Append(aData);
 }
 
 void Sender::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
 {
-    iAudioBuf.Append(aData);
+    iAudioBuf->Append(aData);
 }
 
 void Sender::ProcessSample8(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, aNumChannels);
-    iAudioBuf.Append(sample);
+    iAudioBuf->Append(sample);
 }
 
 void Sender::ProcessSample16(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, 2*aNumChannels);
-    iAudioBuf.Append(sample);
+    iAudioBuf->Append(sample);
 }
 
 void Sender::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, 3*aNumChannels);
-    iAudioBuf.Append(sample);
+    iAudioBuf->Append(sample);
 }
 
 void Sender::ProcessSample32(const TByte* aSample, TUint aNumChannels)
 {
     Brn sample(aSample, 4*aNumChannels);
-    iAudioBuf.Append(sample);
+    iAudioBuf->Append(sample);
 }
 
 void Sender::EndBlock()

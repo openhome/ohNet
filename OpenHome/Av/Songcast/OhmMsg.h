@@ -96,13 +96,16 @@ public:
     TUint Channels() const;
     const Brx& Codec() const;
     const Brx& Audio() const;
+    Bwx& Audio();
 
     void SetResent(TBool aValue);
 public: // from OhmMsg
     void Process(IOhmMsgProcessor& aProcessor) override;
     void Externalise(IWriter& aWriter) override;
+    void ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader);
 private:
     OhmMsgAudio(OhmMsgFactory& aFactory);
+    void Create();
     void Create(IReader& aReader, const OhmHeader& aHeader);
     void Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio);
 private:
@@ -207,6 +210,7 @@ public:
     virtual OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio) = 0;
+    virtual OhmMsgAudio* CreateAudio() = 0;
     virtual OhmMsgTrack* CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata) = 0;
     virtual OhmMsgMetatext* CreateMetatext(TUint aSequence, const Brx& aMetatext) = 0;
 };
@@ -226,6 +230,7 @@ public: // from IOhmMsgFactory
     OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio) override;
+    OhmMsgAudio* CreateAudio() override;
     OhmMsgTrack* CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata) override;
     OhmMsgMetatext* CreateMetatext(TUint aSequence, const Brx& aMetatext) override;
 private:
