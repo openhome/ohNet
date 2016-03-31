@@ -25,6 +25,7 @@ tests = '''
     TestPruner
     TestGorger
     TestStarvationMonitor
+    #TestStarvationRamper
     TestMuter
     TestAnalogBypassRamper
     TestDrainer

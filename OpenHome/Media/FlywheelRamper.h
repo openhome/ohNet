@@ -3,10 +3,10 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <vector>
-#include <stdlib.h>
 #include <OpenHome/OsWrapper.h>
 
+#include <vector>
+#include <stdlib.h>
 
 namespace OpenHome {
 namespace Media {
@@ -34,37 +34,27 @@ class FlywheelRamper : public INonCopyable
 {
     friend class FlywheelRamperManager;
     friend class TestFlywheelRamper::SuiteFlywheelRamper;
-
 public:
     static const TUint kBytesPerSample = 4; // 32 bit audio
-
 private:
     FlywheelRamper(TUint aDegree, TUint aInputJiffies); // generation(input) audio length
     ~FlywheelRamper();
-
     void Initialise(const Brx& aSamples, TUint aSampleRate);
     TUint InputJiffies() const;
     TInt32 NextSample();
     void Reset();
-
 public:
     static void BurgsMethod(TInt16* aSamples, TUint aSamplesCount, TUint aDegree, TInt16* aOutput, TInt16* aH, TInt16* aPer, TInt16* aPef);
-
     static TUint SampleCount(TUint aSampleRate, TUint aJiffies);
     static TUint DecimationFactor(TUint aSampleRate);
     static TInt16 CoeffOverflow(TInt16* aCoeffs, TUint aCoeffCount, TUint aFormat);
-
-
     static void ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale);
     static TInt32 ToInt32(double aVal, TUint aScale);
     static double ToDouble(TInt32 aVal, TUint aScale);
     static void ToDouble(const Brx& aInput, double* aOutput, TUint aScale);
-
 private:
     void PrepareFeedbackCoeffs();
     void CorrectBurgCoeffs();
-
-
 private:
     TUint iDegree;
     TUint iInputJiffies;
@@ -88,24 +78,16 @@ private:
 class FlywheelRamperManager : public INonCopyable
 {
     friend class TestFlywheelRamper::SuiteFlywheelRamper;
-
 public:
-    static const TUint kMaxOutputJiffiesBlockSize = Jiffies::kPerMs; // 1ms
-
+    static const TUint kMaxOutputJiffiesBlockSize;
 public:
     FlywheelRamperManager(IPcmProcessor& aOutput, TUint aInputJiffies, TUint aOutputJiffies);
     ~FlywheelRamperManager();
-
     void Ramp(const Brx& aSamples, TUint aSampleRate, TUint aChannelCount);
-
 private:
     void InitChannels(const Brx& aSamples, TUint aSampleRate, TUint aChannelCount);
     void RenderChannels(TUint aSampleCount, TUint aDecFactor, TUint aChannelCount);
-
-
-private:
     void Reset();
-
 private:
     IPcmProcessor& iOutput;
     Bwh iOutBuf;
@@ -143,7 +125,6 @@ public:
     FeedbackModel(TUint aStateCount, TUint aDataDescaleBitCount, TUint aCoeffFormat, TUint aDataFormat, TUint aOutputFormat);
     void Initialise(TInt32* aCoeffs, TInt32* aSamples);
     TInt32 NextSample();
-
 private:
     TInt32* iCoeffs;
     TInt32* iSamples;
@@ -152,10 +133,6 @@ private:
     TUint iCoeffFormat;
     TInt iScaleShiftForOutput;
 };
-
-
-////////////////////////////////////////////////////////////////////////////
-
 
 } // Media
 } // OpenHome

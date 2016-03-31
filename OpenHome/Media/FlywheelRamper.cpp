@@ -19,6 +19,8 @@ static const TUint kFeedbackDataFormat = 1;
 static const TUint kMaxChannelCount = 8;
 static const TUint kMaxSampleRate = 192000;
 
+const TUint FlywheelRamperManager::kMaxOutputJiffiesBlockSize = Jiffies::kPerMs; // 1ms
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 FlywheelRamperManager::FlywheelRamperManager(IPcmProcessor& aOutput, TUint aInputJiffies, TUint aOutputJiffies)
