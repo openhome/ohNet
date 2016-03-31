@@ -19,18 +19,18 @@ static const TUint kFeedbackDataFormat = 1;
 static const TUint kMaxChannelCount = 8;
 static const TUint kMaxSampleRate = 192000;
 
+const TUint FlywheelRamperManager::kMaxOutputJiffiesBlockSize = Jiffies::kPerMs; // 1ms
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-const TUint FlywheelRamperManager::kMaxRampJiffiesBlockSize = Jiffies::kPerMs; // 1ms
-
-FlywheelRamperManager::FlywheelRamperManager(IPcmProcessor& aOutput, TUint aGenJiffies, TUint aRampJiffies)
+FlywheelRamperManager::FlywheelRamperManager(IPcmProcessor& aOutput, TUint aInputJiffies, TUint aOutputJiffies)
     :iOutput(aOutput)
-    ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, kMaxRampJiffiesBlockSize)*kMaxChannelCount*4)
-    ,iRampJiffies(aRampJiffies)
+    ,iOutBuf(FlywheelRamper::SampleCount(kMaxSampleRate, kMaxOutputJiffiesBlockSize)*kMaxChannelCount*4)
+    ,iOutputJiffies(aOutputJiffies)
 {
     for(TUint i=0; i<kMaxChannelCount; i++)
     {
-        iRampers.push_back(new FlywheelRamper(kDegree, aGenJiffies));
+        iRampers.push_back(new FlywheelRamper(kDegree, aInputJiffies));
     }
 }
 
@@ -47,19 +47,19 @@ void FlywheelRamperManager::Ramp(const Brx& aSamples, TUint aSampleRate, TUint a
     InitChannels(aSamples, aSampleRate, aChannelCount); // prepare the ramp generation
 
     TUint decFactor = FlywheelRamper::DecimationFactor(aSampleRate);
-    TUint maxRampSamplesBlockSize = FlywheelRamper::SampleCount(aSampleRate, kMaxRampJiffiesBlockSize);
-    TUint remainingSamples = FlywheelRamper::SampleCount(aSampleRate, iRampJiffies);
+    TUint maxOutputSamplesBlockSize = FlywheelRamper::SampleCount(aSampleRate, kMaxOutputJiffiesBlockSize);
+    TUint remainingSamples = FlywheelRamper::SampleCount(aSampleRate, iOutputJiffies);
 
     while (remainingSamples > 0)
     {
-        TUint rampSamples = remainingSamples;
-        if (remainingSamples>maxRampSamplesBlockSize)
+        TUint outputSamples = remainingSamples;
+        if (remainingSamples>maxOutputSamplesBlockSize)
         {
-            rampSamples = maxRampSamplesBlockSize; // 1ms blocks
+            outputSamples = maxOutputSamplesBlockSize; // 1ms blocks
         }
 
-        remainingSamples -= rampSamples;
-        RenderChannels(rampSamples, decFactor, aChannelCount); // output ramp audio data
+        remainingSamples -= outputSamples;
+        RenderChannels(outputSamples, decFactor, aChannelCount); // output ramp audio data
     }
 
     Reset(); // clear memory ready for next ramp request
@@ -138,15 +138,15 @@ void FlywheelRamperManager::Reset()
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aGenJiffies)
+FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aInputJiffies)
     :iDegree(aDegree)
-    ,iGenJiffies(aGenJiffies)
+    ,iInputJiffies(aInputJiffies)
     ,iFeedback(new FeedbackModel(iDegree, kFeedbackDataDescaleBitCount, kBurgOutputFormat, kFeedbackDataFormat, 1))
-    ,iMaxGenSampleCount(SampleCount(kMaxSampleRate, iGenJiffies))
+    ,iMaxInputSampleCount(SampleCount(kMaxSampleRate, iInputJiffies))
 {
-    iGenSamples = (TInt16*) calloc (iMaxGenSampleCount, sizeof(TInt16));
-    iBurgPer = (TInt16*) calloc (iMaxGenSampleCount, sizeof(TInt16));
-    iBurgPef = (TInt16*) calloc (iMaxGenSampleCount, sizeof(TInt16));
+    iInputSamples = (TInt16*) calloc (iMaxInputSampleCount, sizeof(TInt16));
+    iBurgPer = (TInt16*) calloc (iMaxInputSampleCount, sizeof(TInt16));
+    iBurgPef = (TInt16*) calloc (iMaxInputSampleCount, sizeof(TInt16));
     iBurgCoeffs = (TInt16*) calloc (iDegree, sizeof(TInt16));
     iBurgH = (TInt16*) calloc (iDegree, sizeof(TInt16));
 
@@ -156,7 +156,7 @@ FlywheelRamper::FlywheelRamper(TUint aDegree, TUint aGenJiffies)
 
 FlywheelRamper::~FlywheelRamper()
 {
-    free(iGenSamples);
+    free(iInputSamples);
     free(iBurgCoeffs);
     free(iBurgH);
     free(iBurgPer);
@@ -166,19 +166,19 @@ FlywheelRamper::~FlywheelRamper()
     delete iFeedback;
 }
 
-TUint FlywheelRamper::GenJiffies() const
+TUint FlywheelRamper::InputJiffies() const
 {
-    return(iGenJiffies);
+    return(iInputJiffies);
 }
 
 void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
 {
     ASSERT(aSampleRate<=kMaxSampleRate);
-    ASSERT(aSamples.Bytes()==(SampleCount(aSampleRate, iGenJiffies)*kBytesPerSample));
+    ASSERT(aSamples.Bytes()==(SampleCount(aSampleRate, iInputJiffies)*kBytesPerSample));
 
     // copy input samples out of buffer into memory
     TUint decFactor = DecimationFactor(aSampleRate);
-    TInt16* iGenSampPtr = iGenSamples;
+    TInt16* inputSamplesPtr = iInputSamples;
     const TByte* bufPtr = aSamples.Ptr();
 
     TUint sampleCount = aSamples.Bytes()/(kBytesPerSample*decFactor);
@@ -205,10 +205,10 @@ void FlywheelRamper::Initialise(const Brx& aSamples, TUint aSampleRate)
             iFeedbackSamples[sampleCount-i-1] = sample;
         }
 
-        *(iGenSampPtr++) = sample16>>kBurgDataDescaleBitCount;
+        *(inputSamplesPtr++) = sample16>>kBurgDataDescaleBitCount;
     }
 
-    BurgsMethod(iGenSamples, sampleCount, iDegree, iBurgCoeffs, iBurgH, iBurgPer, iBurgPef);
+    BurgsMethod(iInputSamples, sampleCount, iDegree, iBurgCoeffs, iBurgH, iBurgPer, iBurgPef);
 
     CorrectBurgCoeffs(); // remove overflow
     PrepareFeedbackCoeffs(); // upcast and invert
@@ -227,8 +227,8 @@ void FlywheelRamper::PrepareFeedbackCoeffs()
 
 void FlywheelRamper::Reset()
 {
-    memset(iBurgPer, 0, iMaxGenSampleCount*sizeof(TInt16)); // clear
-    memset(iBurgPef, 0, iMaxGenSampleCount*sizeof(TInt16)); // clear
+    memset(iBurgPer, 0, iMaxInputSampleCount*sizeof(TInt16)); // clear
+    memset(iBurgPef, 0, iMaxInputSampleCount*sizeof(TInt16)); // clear
 }
 
 TInt32 FlywheelRamper::NextSample()
@@ -423,7 +423,6 @@ FeedbackModel::FeedbackModel(TUint aStateCount, TUint aDataDescaleBitCount, TUin
     ,iSamples(NULL)
     ,iStateCount(aStateCount)
     ,iDataDescaleBitCount(aDataDescaleBitCount)
-    //,iDataFormat(aDataFormat)
     ,iCoeffFormat(aCoeffFormat)
     ,iScaleShiftForOutput(aDataFormat+aDataDescaleBitCount-aOutputFormat)
 {

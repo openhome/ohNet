@@ -96,7 +96,7 @@ const Brx& FlywheelInput::Prepare(MsgQueue& aQueue, TUint aJiffies, TUint aSampl
         iChannelPtr[i] = p;
         p += channelBytes;
     }
-    
+
     FlywheelPlayableCreator playableCreator(aSampleRate, aNumChannels);
     while (!aQueue.IsEmpty()) {
         MsgPlayable* playable = playableCreator.CreatePlayable(aQueue.Dequeue());
@@ -247,7 +247,7 @@ RampGenerator::RampGenerator(MsgFactory& aMsgFactory, TUint aRampJiffies, TUint 
     iFlywheelRamper = new FlywheelRamperManager(*this, aRampJiffies, aRampJiffies);
 
     const TUint minJiffiesPerSample = Jiffies::JiffiesPerSample(kMaxSampleRate);
-    const TUint numSamples = (FlywheelRamperManager::kMaxRampJiffiesBlockSize + minJiffiesPerSample - 1) / minJiffiesPerSample;
+    const TUint numSamples = (FlywheelRamperManager::kMaxOutputJiffiesBlockSize + minJiffiesPerSample - 1) / minJiffiesPerSample;
     const TUint channelBytes = numSamples * kSubsampleBytes;
     const TUint bytes = channelBytes * kMaxChannels;
     iFlywheelAudio = new Bwh(bytes);
@@ -455,7 +455,7 @@ void StarvationRamper::StartFlywheelRamp()
     else {
         TUint remaining = kRampDownJiffies - iRecentAudioJiffies;
         while (remaining > 0) {
-            TUint size = std::min(remaining, FlywheelRamperManager::kMaxRampJiffiesBlockSize);
+            TUint size = std::min(remaining, FlywheelRamperManager::kMaxOutputJiffiesBlockSize);
             auto silence = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
             iRecentAudio.EnqueueAtHead(silence);
             remaining -= size;
