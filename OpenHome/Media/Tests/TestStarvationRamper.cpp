@@ -86,8 +86,8 @@ private:
     };
 private:
     void AddPending(Msg* aMsg);
-    void PullNext();
-    void PullNext(EMsgType aExpectedMsg);
+    void PullNext(TBool aWait=true);
+    void PullNext(EMsgType aExpectedMsg, TBool aWait=true);
     Msg* CreateTrack();
     Msg* CreateDecodedStream();
     Msg* CreateAudio();
@@ -375,18 +375,24 @@ void SuiteStarvationRamper::AddPending(Msg* aMsg)
     }
 }
 
-void SuiteStarvationRamper::PullNext()
+void SuiteStarvationRamper::PullNext(TBool aWait)
 {
+    if (aWait && !iRampingDown) {
+        // no ramping => we expect a msg to be available
+        // poll StarvationRamper state until it has pulled something
+        TInt retries = 1000;
+        while (iStarvationRamper->IsEmpty() && retries-- > 0) {
+            Thread::Sleep(10);
+        }
+    }
     Msg* msg = iStarvationRamper->Pull();
     msg = msg->Process(*this);
     msg->RemoveRef();
 }
 
-void SuiteStarvationRamper::PullNext(EMsgType aExpectedMsg)
+void SuiteStarvationRamper::PullNext(EMsgType aExpectedMsg, TBool aWait)
 {
-    Msg* msg = iStarvationRamper->Pull();
-    msg = msg->Process(*this);
-    msg->RemoveRef();
+    PullNext(aWait);
     if (iLastPulledMsg != aExpectedMsg) {
         static const TChar* types[] ={
             "None"
@@ -465,6 +471,10 @@ void SuiteStarvationRamper::TestBlocksWhenHasMaxAudio()
     AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+
     TUint audioCount = 0;
     do {
         AddPending(CreateAudio());
@@ -472,23 +482,25 @@ void SuiteStarvationRamper::TestBlocksWhenHasMaxAudio()
     } while (iTrackOffset < kMaxAudioBuffer);
     AddPending(CreateAudio());
     audioCount++;
-    AddPending(iMsgFactory->CreateMsgQuit());
 
-    PullNext(EMsgMode);
-    PullNext(EMsgTrack);
-    PullNext(EMsgDecodedStream);
+    // wait for expected number of pending msgs to be pulled
     TInt retries = 100;
     while (retries-- > 0) {
-        if (iPendingMsgs.size() == 2) { // 2 == EMsgAudioPcm + EMsgQuit
+        if (iPendingMsgs.size() == 1) { // 1 == EMsgAudioPcm that doesn't yet fit into SR
             break;
         }
         ASSERT(retries != 0);
+        Thread::Sleep(10);
     }
-    Thread::Sleep(100); // wait long enough for pending audio to be pulled if SR is running
-    TEST(iPendingMsgs.size() == 2);
+    
+    // ...now wait long enough for pending audio to be pulled if SR is running
+    Thread::Sleep(100); 
+    TEST(iPendingMsgs.size() == 1);
+    
     while (audioCount-- > 0) {
         PullNext(EMsgAudioPcm);
     }
+    AddPending(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
 
@@ -541,7 +553,7 @@ void SuiteStarvationRamper::TestRampsAroundStarvation()
         PullNext(EMsgAudioPcm);
     }
     TEST(iJiffies == StarvationRamper::kRampDownJiffies);
-    PullNext(EMsgHalt);
+    PullNext(EMsgHalt, false);
     TEST(iStarvationRamper->iState == StarvationRamper::State::RampingUp);
 
     // ramps up once audio is available, ramp up takes kRampUpDuration
@@ -574,7 +586,7 @@ void SuiteStarvationRamper::TestRampsAroundStarvation()
         PullNext(EMsgAudioPcm);
     }
     TEST(iJiffies == StarvationRamper::kRampDownJiffies);
-    PullNext(EMsgHalt);
+    PullNext(EMsgHalt, false);
     TEST(iStarvationRamper->iState == StarvationRamper::State::RampingUp);
 
     Quit();
@@ -599,7 +611,7 @@ void SuiteStarvationRamper::TestNotifyStarvingAroundStarvation()
         PullNext(EMsgAudioPcm);
     }
     TEST(iStarving);
-    PullNext(EMsgHalt);
+    PullNext(EMsgHalt, false);
 
     iRampingUp = true;
     AddPending(CreateAudio());
@@ -629,7 +641,7 @@ void SuiteStarvationRamper::TestReportsBuffering()
         PullNext(EMsgAudioPcm);
         TEST(iBuffering);
     }
-    PullNext(EMsgHalt);
+    PullNext(EMsgHalt, false);
     AddPending(CreateAudio());
     iRampingUp = true;
     PullNext(EMsgAudioPcm);
