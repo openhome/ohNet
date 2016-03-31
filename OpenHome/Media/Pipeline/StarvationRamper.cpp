@@ -16,7 +16,7 @@ using namespace OpenHome::Media;
 class FlywheelPlayableCreator : private IMsgProcessor
 {
 public:
-    FlywheelPlayableCreator(TUint aSampleRate, TUint aNumChannels);
+    FlywheelPlayableCreator();
     MsgPlayable* CreatePlayable(Msg* aAudio);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override                 { ASSERTS(); return aMsg; }
@@ -37,16 +37,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override             { ASSERTS(); return aMsg; }
     Msg* ProcessMsg(MsgQuit* aMsg) override                 { ASSERTS(); return aMsg; }
 private:
-    TUint iSampleRate;
-    TUint iNumChannels;
     MsgPlayable* iPlayable;
 };
 
 
-FlywheelPlayableCreator::FlywheelPlayableCreator(TUint aSampleRate, TUint aNumChannels)
-    : iSampleRate(aSampleRate)
-    , iNumChannels(aNumChannels)
-    , iPlayable(nullptr)
+FlywheelPlayableCreator::FlywheelPlayableCreator()
+    : iPlayable(nullptr)
 {
 }
 
@@ -97,7 +93,7 @@ const Brx& FlywheelInput::Prepare(MsgQueue& aQueue, TUint aJiffies, TUint aSampl
         p += channelBytes;
     }
 
-    FlywheelPlayableCreator playableCreator(aSampleRate, aNumChannels);
+    FlywheelPlayableCreator playableCreator;
     while (!aQueue.IsEmpty()) {
         MsgPlayable* playable = playableCreator.CreatePlayable(aQueue.Dequeue());
         playable->Read(*this);
