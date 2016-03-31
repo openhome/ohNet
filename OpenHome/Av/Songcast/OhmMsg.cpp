@@ -1,6 +1,7 @@
 #include "OhmMsg.h"
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -85,6 +86,11 @@ OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
 {
 }
 
+void OhmMsgAudio::Create()
+{
+    OhmMsgTimestamped::Create();
+}
+
 void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 {
     OhmMsgTimestamped::Create();
@@ -157,6 +163,21 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     iSampleStart = aSampleStart;
     iStreamHeader.Replace(aStreamHeader);
     iAudio.Replace(aAudio);
+}
+
+void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader)
+{
+    iHalt = aHalt;
+    iLossless = aLossless;
+    iTimestamped = aTimestamped;
+    iResent = aResent;
+    iSamples = aSamples;
+    iFrame = aFrame;
+    iNetworkTimestamp = aNetworkTimestamp;
+    iMediaLatency = aMediaLatency;
+    iMediaTimestamp = 0;
+    iSampleStart = aSampleStart;
+    iStreamHeader.Replace(aStreamHeader);
 }
 
 void OhmMsgAudio::GetStreamHeader(Bwx& aBuf, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec)
@@ -262,6 +283,11 @@ const Brx& OhmMsgAudio::Codec() const
 }
 
 const Brx& OhmMsgAudio::Audio() const
+{
+    return iAudio;
+}
+
+Bwx& OhmMsgAudio::Audio()
 {
     return iAudio;
 }
@@ -600,6 +626,13 @@ OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTim
 {
     OhmMsgAudio* msg = iFifoAudio.Read();
     msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aSampleStart, aStreamHeader, aAudio);
+    return msg;
+}
+
+OhmMsgAudio* OhmMsgFactory::CreateAudio()
+{
+    OhmMsgAudio* msg = iFifoAudio.Read();
+    msg->Create();
     return msg;
 }
 
