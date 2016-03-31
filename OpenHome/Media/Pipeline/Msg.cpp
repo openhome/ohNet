@@ -307,6 +307,19 @@ TUint Jiffies::BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint 
     return bytes;
 }
 
+void Jiffies::RoundDown(TUint& aJiffies, TUint aSampleRate)
+{
+    const TUint jiffiesPerSample = JiffiesPerSample(aSampleRate);
+    aJiffies -= aJiffies % jiffiesPerSample;
+}
+
+void Jiffies::RoundUp(TUint& aJiffies, TUint aSampleRate)
+{
+    const TUint jiffiesPerSample = JiffiesPerSample(aSampleRate);
+    aJiffies += jiffiesPerSample - 1;
+    aJiffies -= aJiffies % jiffiesPerSample;
+}
+
 TUint Jiffies::ToSongcastTime(TUint aJiffies, TUint aSampleRate)
 { // static
     return static_cast<TUint>((static_cast<TUint64>(aJiffies) * SongcastTicksPerSecond(aSampleRate)) / kPerSecond);
@@ -1895,17 +1908,21 @@ MsgSilence::MsgSilence(AllocatorBase& aAllocator)
 {
 }
 
-MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels)
+MsgPlayable* MsgSilence::CreatePlayable()
 {
     TUint offsetJiffies = iOffset;
-    TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    const TUint bytesPerSubsample = iBitDepth/8;
+    (void)Jiffies::BytesFromJiffies(offsetJiffies, jiffiesPerSample, iNumChannels, bytesPerSubsample);
     TUint sizeJiffies = iSize + (iOffset - offsetJiffies);
-    TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, aBitDepth/8);
+    const TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, iNumChannels, bytesPerSubsample);
+    // both size & offset will be rounded down if they don't fall on a sample boundary
+    // we don't risk losing any data doing this as each original MsgSilence had an integer number of samples
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp, iClockPullMultiplier);
+    playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp, iClockPullMultiplier);
     if (iNextAudio != nullptr) { 
-        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aBitDepth, aNumChannels);
+        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable();
         playable->Add(child); 
     } 
     RemoveRef();
@@ -1914,8 +1931,11 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
 
 MsgAudio* MsgSilence::Clone()
 {
-    MsgAudio* clone = MsgAudio::Clone();
-    static_cast<MsgSilence*>(clone)->iAllocatorPlayable = iAllocatorPlayable;
+    MsgSilence* clone = static_cast<MsgSilence*>(MsgAudio::Clone());
+    clone->iAllocatorPlayable = iAllocatorPlayable;
+    clone->iSampleRate = iSampleRate;
+    clone->iBitDepth = iBitDepth;
+    clone->iNumChannels = iNumChannels;
     return clone;
 }
 
@@ -1931,13 +1951,28 @@ Msg* MsgSilence::Process(IMsgProcessor& aProcessor)
 
 void MsgSilence::SplitCompleted(MsgAudio& aRemaining)
 {
-    static_cast<MsgSilence&>(aRemaining).iAllocatorPlayable = iAllocatorPlayable;
+    MsgSilence& remaining = static_cast<MsgSilence&>(aRemaining);
+    remaining.iAllocatorPlayable = iAllocatorPlayable;
+    remaining.iSampleRate = iSampleRate;
+    remaining.iBitDepth = iBitDepth;
+    remaining.iNumChannels = iNumChannels;
 }
 
-void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
+void MsgSilence::Initialise(TUint& aJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
 {
     MsgAudio::Initialise();
     iAllocatorPlayable = &aAllocatorPlayable;
+    iSampleRate = aSampleRate;
+    iBitDepth = aBitDepth;
+    iNumChannels = aChannels;
+    TUint jiffies = aJiffies;
+    Jiffies::RoundDown(jiffies, aSampleRate);
+    if (jiffies == 0) {
+        Jiffies::RoundUp(aJiffies, aSampleRate);
+    }
+    else {
+        aJiffies = jiffies;
+    }
     iSize = aJiffies;
     iOffset = 0;
 }
@@ -3116,10 +3151,10 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
     return msg;
 }
 
-MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
+MsgSilence* MsgFactory::CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels)
 {
     MsgSilence* msg = iAllocatorMsgSilence.Allocate();
-    msg->Initialise(aSizeJiffies, iAllocatorMsgPlayableSilence);
+    msg->Initialise(aSizeJiffies, aSampleRate, aBitDepth, aChannels, iAllocatorMsgPlayableSilence);
     return msg;
 }
 

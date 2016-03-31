@@ -396,7 +396,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
     case EMsgSilence:
     {
-        MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+        TUint size = Jiffies::kPerMs;
+        MsgAudio* audio = iMsgFactory->CreateMsgSilence(size, kSampleRate, 16, kNumChannels);
         shouldBlock = (iReservoir->SizeInJiffies() + audio->Jiffies() >= kReservoirSize);
         msg = audio;
         break;
@@ -626,7 +627,8 @@ void SuiteReservoirHistory::Test()
     while (!iStopAudioGeneration) {
         MsgAudio* audio;
         if (pcmMsgs == 0) {
-            audio = iMsgFactory->CreateMsgSilence(400 * Jiffies::kPerMs);
+            TUint size = 400 * Jiffies::kPerMs;
+            audio = iMsgFactory->CreateMsgSilence(size, kSampleRate, kBitDepth, kNumChannels);
             pcmMsgs = kPcmMsgCount;
         }
         else {

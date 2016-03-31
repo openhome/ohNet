@@ -452,7 +452,8 @@ void SuiteStarvationRamper::TestMsgsPassWhenRunning()
     AddPending(iMsgFactory->CreateMsgDrain(Functor()));
     AddPending(CreateDecodedStream());
     AddPending(CreateAudio());
-    AddPending(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    TUint size = Jiffies::kPerMs * 3;
+    AddPending(iMsgFactory->CreateMsgSilence(size, 44100, 8, 2));
     AddPending(iMsgFactory->CreateMsgHalt());
     AddPending(iMsgFactory->CreateMsgQuit());
 

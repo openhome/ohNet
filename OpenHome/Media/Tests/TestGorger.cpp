@@ -356,7 +356,8 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     Queue(iMsgFactory->CreateMsgStreamInterrupted());
     Queue(iMsgFactory->CreateMsgBitRate(42));
     Queue(CreateAudio());
-    Queue(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    TUint size = 0;
+    Queue(iMsgFactory->CreateMsgSilence(size, 44100, 16, 2));
     Queue(iMsgFactory->CreateMsgHalt());
     Queue(iMsgFactory->CreateMsgWait());
     Queue(iMsgFactory->CreateMsgQuit());

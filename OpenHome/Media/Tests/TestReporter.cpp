@@ -333,7 +333,10 @@ Msg* SuiteReporter::Pull()
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:
-        return iMsgFactory->CreateMsgSilence(Jiffies::kPerSecond * 10);
+    {
+        TUint size = Jiffies::kPerMs * 10;
+        return iMsgFactory->CreateMsgSilence(size, kSampleRate, 16, kNumChannels);
+    }
     case EMsgDecodedStream:
     {
         const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);

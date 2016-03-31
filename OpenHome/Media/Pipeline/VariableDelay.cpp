@@ -30,6 +30,9 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
     , iRampDuration(aRampDuration)
     , iWaitForAudioBeforeGeneratingSilence(false)
     , iStreamHandler(nullptr)
+    , iSampleRate(0)
+    , iBitDepth(0)
+    , iNumChannels(0)
 {
     ResetStatusAndRamp();
 }
@@ -58,8 +61,8 @@ Msg* VariableDelay::Pull()
     }
     // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
     if ((iStatus == EStarting || iStatus == ERampedDown) && iDelayAdjustment > 0) {
-        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
-        msg = iMsgFactory.CreateMsgSilence(size);
+        TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
+        msg = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
             if (iStatus == ERampedDown) {
@@ -360,6 +363,9 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iStreamHandler = stream.StreamHandler();
+    iSampleRate = stream.SampleRate();
+    iBitDepth = stream.BitDepth();
+    iNumChannels = stream.NumChannels();
     ResetStatusAndRamp();
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
     aMsg->RemoveRef();

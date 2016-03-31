@@ -415,7 +415,8 @@ Msg* SuitePruner::Pull()
     }
     case EMsgSilence:
     {
-        return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 5);
+        TUint size = Jiffies::kPerMs * 5;
+        return iMsgFactory->CreateMsgSilence(size, kSampleRate, 16, kNumChannels);
     }
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();

@@ -80,6 +80,9 @@ private:
     TUint iRemainingRampSize;
     BwsMode iMode;
     IStreamHandler* iStreamHandler;
+    TUint iSampleRate;
+    TUint iBitDepth;
+    TUint iNumChannels;
 };
 
 } // namespace Media

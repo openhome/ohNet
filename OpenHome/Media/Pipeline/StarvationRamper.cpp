@@ -65,7 +65,7 @@ Msg* FlywheelPlayableCreator::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* FlywheelPlayableCreator::ProcessMsg(MsgSilence* aMsg)
 {
-    iPlayable = aMsg->CreatePlayable(iSampleRate, 32, iNumChannels);
+    iPlayable = aMsg->CreatePlayable();
     return nullptr;
 }
 
@@ -455,8 +455,8 @@ void StarvationRamper::StartFlywheelRamp()
     else {
         TUint remaining = kRampDownJiffies - iRecentAudioJiffies;
         while (remaining > 0) {
-            const TUint size = std::min(remaining, FlywheelRamperManager::kMaxRampJiffiesBlockSize);
-            auto silence = iMsgFactory.CreateMsgSilence(size);
+            TUint size = std::min(remaining, FlywheelRamperManager::kMaxRampJiffiesBlockSize);
+            auto silence = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
             iRecentAudio.EnqueueAtHead(silence);
             remaining -= size;
             iRecentAudioJiffies += size;

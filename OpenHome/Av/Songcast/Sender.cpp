@@ -263,7 +263,7 @@ void Sender::SendPendingAudio(TBool aHalt)
     auto msg = iOhmSenderDriver->CreateAudio();
     iAudioBuf = &(msg->Audio());
     iAudioBuf->SetBytes(0);
-    PlayableCreator pc(iSampleRate, iBitDepth, iNumChannels);
+    PlayableCreator pc;
     for (TUint i=0; i<iPendingAudio.size(); i++) {
         MsgPlayable* playable = pc.Process(iPendingAudio[i]);
         playable->Read(*this);
@@ -356,10 +356,7 @@ void Sender::Flush()
 
 // Sender::PlayableCreator
 
-Sender::PlayableCreator::PlayableCreator(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels)
-    : iSampleRate(aSampleRate)
-    , iBitDepth(aBitDepth)
-    , iNumChannels(aNumChannels)
+Sender::PlayableCreator::PlayableCreator()
 {
 }
 
@@ -456,7 +453,7 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgSilence* aMsg)
 {
-    iPlayable = aMsg->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
+    iPlayable = aMsg->CreatePlayable();
     return nullptr;
 }
 

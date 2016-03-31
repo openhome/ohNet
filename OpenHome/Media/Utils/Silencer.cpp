@@ -88,8 +88,9 @@ Msg* Silencer::Pull()
         }
         else { // generate silence
             ASSERT(iHalted);
-            auto msgSilence = iMsgFactory.CreateMsgSilence(iSilenceJiffies);
-            msg = msgSilence->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
+            TUint size = iSilenceJiffies;
+            auto msgSilence = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
+            msg = msgSilence->CreatePlayable();
         }
     }
     return msg;

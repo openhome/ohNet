@@ -75,7 +75,7 @@ Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
-    return aMsg->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
+    return aMsg->CreatePlayable();
 }
 
 Msg* PreDriver::ProcessMsg(MsgQuit* aMsg)

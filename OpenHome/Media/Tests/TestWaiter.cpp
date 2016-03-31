@@ -82,6 +82,7 @@ private:
     Msg* CreateEncodedStream();
     Msg* CreateDecodedStream();
     Msg* CreateAudio();
+    Msg* CreateSilence(TUint aJiffies);
 
     void TestWaitFromPlayingRampDown();
     void TestWaitFromPlayingNoRampDown();
@@ -397,6 +398,12 @@ Msg* SuiteWaiter::CreateAudio()
     return audio;
 }
 
+Msg* SuiteWaiter::CreateSilence(TUint aJiffies)
+{
+    TUint jiffies = aJiffies;
+    return iMsgFactory->CreateMsgSilence(jiffies, kSampleRate, 24, kNumChannels);
+}
+
 void SuiteWaiter::TestWaitFromPlayingRampDown()
 {
     iPendingMsgs.push_back(CreateTrack());
@@ -536,7 +543,7 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
     PullNext(EMsgStreamInterrupted);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgBitRate(100));
     PullNext(EMsgBitRate);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    iPendingMsgs.push_back(CreateSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
@@ -976,7 +983,7 @@ void SuiteWaiter::TestSilenceEndsRamp()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
     TEST(iRampingDown);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    iPendingMsgs.push_back(CreateSilence(Jiffies::kPerMs));
     iRampingDown = false;
     // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
@@ -989,7 +996,7 @@ void SuiteWaiter::TestSilenceEndsRamp()
     PullNext(EMsgFlush);
 
     iRampingUp = false;
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs));
+    iPendingMsgs.push_back(CreateSilence(Jiffies::kPerMs));
     PullNext(EMsgSilence);
     TEST(iWaitingCount == 2);
     TEST(iWaitingTrueCount == 1);

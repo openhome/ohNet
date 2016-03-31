@@ -389,8 +389,11 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = CreateAudio();
         return iLastMsg;
     case EMsgSilence:
-        iLastMsg = iMsgFactory->CreateMsgSilence(Jiffies::kPerSecond * 10);
+    {
+        TUint size = Jiffies::kPerSecond * 10;
+        iLastMsg = iMsgFactory->CreateMsgSilence(size, iSampleRate, kBitDepth, iNumChannels);
         return iLastMsg;
+    }
     case EMsgQuit:
         iLastMsg = iMsgFactory->CreateMsgQuit();
         return iLastMsg;
