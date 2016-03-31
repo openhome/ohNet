@@ -39,11 +39,11 @@ public:
     static const TUint kBytesPerSample = 4; // 32 bit audio
 
 private:
-    FlywheelRamper(TUint aDegree, TUint aGenJiffies); // generation(input) audio length
+    FlywheelRamper(TUint aDegree, TUint aInputJiffies); // generation(input) audio length
     ~FlywheelRamper();
 
     void Initialise(const Brx& aSamples, TUint aSampleRate);
-    TUint GenJiffies() const;
+    TUint InputJiffies() const;
     TInt32 NextSample();
     void Reset();
 
@@ -67,16 +67,16 @@ private:
 
 private:
     TUint iDegree;
-    TUint iGenJiffies;
+    TUint iInputJiffies;
     FeedbackModel* iFeedback;
 
-    TInt16* iGenSamples;
+    TInt16* iInputSamples;
     TInt16* iBurgCoeffs;
     TInt16* iBurgH;
     TInt16* iBurgPer;
     TInt16* iBurgPef;
 
-    TUint iMaxGenSampleCount;
+    TUint iMaxInputSampleCount;
     TInt32* iFeedbackSamples;
     TInt32* iFeedbackCoeffs;
 };
@@ -90,10 +90,10 @@ class FlywheelRamperManager : public INonCopyable
     friend class TestFlywheelRamper::SuiteFlywheelRamper;
 
 public:
-    static const TUint kMaxRampJiffiesBlockSize = Jiffies::kPerMs; // 1ms
+    static const TUint kMaxOutputJiffiesBlockSize = Jiffies::kPerMs; // 1ms
 
 public:
-    FlywheelRamperManager(IPcmProcessor& aOutput, TUint aGenJiffies, TUint aRampJiffies);
+    FlywheelRamperManager(IPcmProcessor& aOutput, TUint aInputJiffies, TUint aOutputJiffies);
     ~FlywheelRamperManager();
 
     void Ramp(const Brx& aSamples, TUint aSampleRate, TUint aChannelCount);
@@ -109,7 +109,7 @@ private:
 private:
     IPcmProcessor& iOutput;
     Bwh iOutBuf;
-    TUint iRampJiffies;
+    TUint iOutputJiffies;
     std::vector<FlywheelRamper*> iRampers;
 };
 
@@ -149,7 +149,6 @@ private:
     TInt32* iSamples;
     TUint iStateCount;
     TUint iDataDescaleBitCount;
-    //TUint iDataFormat;
     TUint iCoeffFormat;
     TInt iScaleShiftForOutput;
 };
