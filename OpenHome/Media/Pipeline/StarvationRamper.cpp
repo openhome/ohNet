@@ -464,6 +464,7 @@ void StarvationRamper::StartFlywheelRamp()
     }
 
     const Brx& recentSamples = iFlywheelInput.Prepare(iRecentAudio, iRecentAudioJiffies, iSampleRate, iBitDepth, iNumChannels);
+    iRecentAudioJiffies = 0;
     iRampGenerator->Start(recentSamples, iSampleRate, iNumChannels, iCurrentRampValue);
     iState = State::RampingDown;
 }
