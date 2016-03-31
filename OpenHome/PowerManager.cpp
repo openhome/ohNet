@@ -253,15 +253,28 @@ TUint StandbyObserver::Priority() const
 
 // StoreVal
 
-StoreVal::StoreVal(IStoreReadWrite& aStore, IPowerManager& aPowerManager, const Brx& aKey)
+StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aKey)
     : iObserver(nullptr)
     , iStore(aStore)
     , iKey(aKey)
     , iLock("STVM")
 {
+}
+
+void StoreVal::RegisterPowerHandlers(IPowerManager& aPowerManager, TUint aPowerHandlerPriority)
+{
+    /*
+     * Unsafe to register standby/power handlers in constructor of this base
+     * class, as the callbacks may call into overridden virtual functions which
+     * cannot yet be resolved.
+     *
+     * So, deriving classes must call this during their initialisation.
+     */
+
     // our standby observer is relatively unimportant
     // priority enum describes importance when exiting Standby - we only do any work when we enter Standby
-    iStandbyObserver.reset(aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityHighest-1));
+    iStandbyObserver.reset(aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityHighest - 1));
+    iObserver = aPowerManager.RegisterPowerHandler(*this, aPowerHandlerPriority);
 }
 
 void StoreVal::PowerDown()
@@ -282,14 +295,11 @@ void StoreVal::StandbyDisabled(StandbyDisableReason /*aReason*/)
 // StoreInt
 
 StoreInt::StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
-    : StoreVal(aStore, aPowerManager, aKey)
+    : StoreVal(aStore, aKey)
     , iVal(aDefault)
     , iChanged(false)
 {
-    // Cannot allow StoreVal to register, as IPowerManager will call PowerUp()
-    // after successful registration, and can't successfully call an overridden
-    // virtual function from constructor (or destructor).
-    iObserver = aPowerManager.RegisterPowerHandler(*this, aPriority);
+    RegisterPowerHandlers(aPowerManager, aPriority);
 }
 
 StoreInt::~StoreInt()
@@ -346,12 +356,12 @@ void StoreInt::Write()
 // StoreText
 
 StoreText::StoreText(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength)
-    : StoreVal(aStore, aPowerManager, aKey)
+    : StoreVal(aStore, aKey)
     , iVal(aMaxLength)
     , iChanged(false)
 {
     iVal.Replace(aDefault);
-    iObserver = aPowerManager.RegisterPowerHandler(*this, aPriority);
+    RegisterPowerHandlers(aPowerManager, aPriority);
 }
 
 StoreText::~StoreText()

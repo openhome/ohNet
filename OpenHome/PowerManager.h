@@ -171,7 +171,8 @@ class StoreVal : protected IPowerHandler, protected IStandbyHandler
 public:
     static const TUint kMaxIdLength = 32;
 protected:
-    StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, const Brx& aKey);
+    StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey);
+    void RegisterPowerHandlers(IPowerManager& aPowerManager, TUint aPowerHandlerPriority);
 protected: // from IPowerHandler
     virtual void PowerUp() override = 0;
     void PowerDown() override;
