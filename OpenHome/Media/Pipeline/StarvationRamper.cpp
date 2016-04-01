@@ -280,6 +280,9 @@ TBool RampGenerator::TryGetAudio(Msg*& aMsg)
         return false;
     }
     iSem.Wait();
+    if (!iActive.load() && iQueue.IsEmpty()) {
+        return false;
+    }
     aMsg = iQueue.Dequeue();
     return true;
 }

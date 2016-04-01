@@ -652,15 +652,15 @@ void SuiteStarvationRamper::TestReportsBuffering()
     TEST(iBuffering);
 
     AddPending(CreateTrack());
-    AddPending(CreateDecodedStream());
-    AddPending(CreateAudio());
     do {
         PullNext();
     } while (iLastPulledMsg != EMsgTrack);
     iRampingDown = false;
     TEST(iBuffering);
+    AddPending(CreateDecodedStream());
     PullNext(EMsgDecodedStream);
     TEST(iBuffering);
+    AddPending(CreateAudio());
     PullNext(EMsgAudioPcm);
     TEST(!iBuffering);
 
