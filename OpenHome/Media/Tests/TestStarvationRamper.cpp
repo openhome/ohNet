@@ -571,15 +571,14 @@ void SuiteStarvationRamper::TestRampsAroundStarvation()
     TEST(iStarvationRamper->iState == StarvationRamper::State::Running);
 
     // clear any split msg at the end of the ramp up
-    const TBool empty = iStarvationRamper->IsEmpty();
-    AddPending(CreateDecodedStream());
-    if (!empty) {
+    if (!iStarvationRamper->IsEmpty()) {
         PullNext(EMsgAudioPcm);
     }
 
     // ramps down after < kMaxAudioBuffer of prior audio, ramp down takes StarvationRamper::kRampDownJiffies
-    AddPending(CreateAudio());
+    AddPending(CreateDecodedStream());
     PullNext(EMsgDecodedStream);
+    AddPending(CreateAudio());
     PullNext(EMsgAudioPcm);
     iRampingDown = true;
     iJiffies = 0;
