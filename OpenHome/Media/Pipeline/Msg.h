@@ -672,6 +672,8 @@ class MsgAudioPcm : public MsgAudio
 {
     friend class MsgFactory;
 public:
+    static const TUint64 kTrackOffsetInvalid;
+public:
     MsgAudioPcm(AllocatorBase& aAllocator);
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio

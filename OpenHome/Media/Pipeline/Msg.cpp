@@ -15,6 +15,7 @@
 #include <string.h>
 #include <climits>
 #include <algorithm>
+#include <cstdint>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -1777,6 +1778,8 @@ void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 
 
 // MsgAudioPcm
+
+const TUint64 MsgAudioPcm::kTrackOffsetInvalid = UINT64_MAX;
 
 MsgAudioPcm::MsgAudioPcm(AllocatorBase& aAllocator)
     : MsgAudio(aAllocator)

@@ -27,10 +27,10 @@ class SuiteStarvationRamper : public SuiteUnitTest
     static const TUint kMaxAudioBuffer = Jiffies::kPerMs * 10;
     static const TUint kRampUpDuration = Jiffies::kPerMs * 50;
     static const TUint kExpectedFlushId = 5;
-    static const TUint kSampleRate = 44100;
+    static const TUint kSampleRate = 48000;
     static const TUint kBitDepth = 16;
     static const TUint kNumChannels = 2;
-    static const TUint kAudioPcmBytes = 1024;
+    static const TUint kAudioPcmBytes = 960; // 5ms of 48k, 16-bit stereo
     static const Brn kMode;
 public:
     SuiteStarvationRamper();
@@ -111,7 +111,6 @@ private:
     TBool iRampingUp;
     TBool iRampingDown;
     TBool iBuffering;
-    TBool iStarted;
     TUint iStreamId;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
@@ -162,7 +161,7 @@ void SuiteStarvationRamper::Setup()
     iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iJiffies = 0;
-    iRampingUp = iRampingDown = iBuffering = iStarted = false;
+    iRampingUp = iRampingDown = iBuffering = false;
     iLastRampPos = Ramp::kMax;
     iNextStreamId = 1;
     iStarving = false;
@@ -369,10 +368,6 @@ void SuiteStarvationRamper::AddPending(Msg* aMsg)
     iPendingMsgs.push_back(aMsg);
     iPendingMsgLock.Signal();
     iMsgAvailable.Signal();
-    if (!iStarted) {
-        iStarvationRamper->Start();
-        iStarted = true;
-    }
 }
 
 void SuiteStarvationRamper::PullNext(TBool aWait)

@@ -49,7 +49,6 @@ class RampGenerator : public IPcmProcessor
     static const TUint kMaxSampleRate = 192000; // FIXME - duplicated in FlywheelInput
     static const TUint kMaxChannels = 8;
     static const TUint kSubsampleBytes = 4;
-    static const TUint64 kTrackOffsetInvalid = UINT64_MAX;
 public:
     RampGenerator(MsgFactory& iMsgFactory, TUint aRampJiffies, TUint aThreadPriority);
     ~RampGenerator();
@@ -92,13 +91,13 @@ class StarvationRamper : public MsgReservoir, public IPipelineElementUpstream
 {
     friend class SuiteStarvationRamper;
     static const TUint kRampDownJiffies = 20 * Jiffies::kPerMs;
+    static const TUint kMaxAudioOutJiffies = 5 * Jiffies::kPerMs;
 public:
     StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
                      IStarvationMonitorObserver& aObserver,
                      IPipelineElementObserverThread& aObserverThread, TUint aSizeJiffies,
                      TUint aThreadPriority, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationRamper();
-    void Start();
 private:
     inline TBool IsFull() const;
     void PullerThread();
