@@ -40,7 +40,6 @@ private:
 class SourceBase : public ISource
 {
 private:
-    static const TUint kMaxSourceTypeBytes = 20;
     static const Brn kKeySourceNamePrefix;
     static const Brn kKeySourceNameSuffix;
     static const Brn kKeySourceVisibleSuffix;
