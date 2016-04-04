@@ -176,6 +176,7 @@ void SourcePlaylist::DoSeekToTrackId(Track* aTrack)
 
 void SourcePlaylist::Activate(TBool aAutoPlay)
 {
+    SourceBase::Activate(aAutoPlay);
     iTrackPosSeconds = 0;
     iActive = true;
     if (!iNoPipelineStateChangeOnActivation) {

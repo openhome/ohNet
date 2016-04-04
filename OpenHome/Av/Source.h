@@ -55,6 +55,7 @@ protected: // from ISource
     const Brx& Type() const override;
     void Name(Bwx& aBuf) const override;
     TBool IsVisible() const override;
+    void Activate(TBool aAutoPlay) override;
     void Deactivate() override;
     void SetVisible(TBool aVisible) override;
 protected:

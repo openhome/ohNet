@@ -86,7 +86,7 @@ void SourceUpnpAv::NotifyState(EPipelineState aState)
 
 void SourceUpnpAv::Activate(TBool aAutoPlay)
 {
-    iActive = true;
+    SourceBase::Activate(aAutoPlay);
     if (!iNoPipelinePrefetchOnActivation) {
         iLock.Wait();
         const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
