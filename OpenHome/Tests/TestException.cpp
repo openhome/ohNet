@@ -53,7 +53,7 @@ void SuiteThreadSafety::Test()
     t3.Start();
     t4.Start();
 
-    for ( TUint soakSeconds = 300 ; soakSeconds > 0 ; --soakSeconds )    
+    for ( TUint soakSeconds = 5 ; soakSeconds > 0 ; --soakSeconds )
     {
         Print("%d\n", soakSeconds);
         Thread::Sleep(1000);
