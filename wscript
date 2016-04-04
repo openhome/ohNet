@@ -86,10 +86,13 @@ def configure(conf):
         ]
 
     # Setup FLAC lib options 
-    conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG']
+    conf.env.DEFINES_FLAC = ['VERSION=\"1.3.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG', 'HAVE_LROUND', 'HAVE_STDINT_H']
+    if conf.options.dest_platform.endswith('ppc32'):
+        conf.env.DEFINES_FLAC.extend(['WORDS_BIGENDIAN=(DEFINE_BIG_ENDIAN==1)'])
     conf.env.INCLUDES_FLAC = [
-        'thirdparty/flac-1.2.1/src/libFLAC/include',
-        'thirdparty/flac-1.2.1/include',
+        'thirdparty/flac-1.3.1/src/libFLAC/include',
+        'thirdparty/flac-1.3.1/src/libFLAC/include/private',
+        'thirdparty/flac-1.3.1/include',
         ]
 
     conf.env.STLIB_SHELL = ['Shell']
@@ -457,18 +460,18 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Media/Codec/Flac.cpp',
-                'thirdparty/flac-1.2.1/src/libFLAC/bitreader.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/bitmath.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/cpu.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/crc.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/fixed.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/format.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/lpc.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/md5.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/memory.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/stream_decoder.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
-                'thirdparty/flac-1.2.1/src/libFLAC/ogg_mapping.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/bitreader.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/bitmath.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/cpu.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/crc.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/fixed.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/format.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/lpc.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/md5.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/memory.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/stream_decoder.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/ogg_decoder_aspect.c',
+                'thirdparty/flac-1.3.1/src/libFLAC/ogg_mapping.c',
             ],
             use=['FLAC', 'OGG', 'libOgg', 'OHNET'],
             shlib=['m'],
