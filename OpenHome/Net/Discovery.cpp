@@ -137,7 +137,8 @@ void SsdpListenerMulticast::Run()
             epb.PtrZ();
             try {
                 Brn buf = iReaderUntil.Read(kMaxBufferBytes);
-                LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received: %.*s\n\n", (const char*)epb.Ptr(), ex.File(), ex.Line(), PBUF(buf));
+                LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received: %.*s\n\n",
+                                             (const char*)epb.Ptr(), ex.File(), ex.Line(), PBUF(buf));
             }
             catch (ReaderError&) {
             }
@@ -183,15 +184,17 @@ void SsdpListenerMulticast::Msearch(ISsdpMsearchHandler& aMsearchHandler)
             aMsearchHandler.SsdpSearchRoot(iSocket.Sender(), mx);
             return;
         case eSsdpUuid:
-            LOG(kSsdpMulticast, "SSDP Multicast      Msearch Uuid\n");
+            LOG(kSsdpMulticast, "SSDP Multicast      Msearch Uuid - %.*s\n", PBUF(iHeaderSt.Uuid()));
             aMsearchHandler.SsdpSearchUuid(iSocket.Sender(), mx, iHeaderSt.Uuid());
             return;
         case eSsdpDeviceType:
-            LOG(kSsdpMulticast, "SSDP Multicast      Msearch Device Type\n");
+            LOG(kSsdpMulticast, "SSDP Multicast      Msearch Device Type - %.*s : %.*s : %u\n",
+                                PBUF(iHeaderSt.Domain()), PBUF(iHeaderSt.Type()), iHeaderSt.Version());
             aMsearchHandler.SsdpSearchDeviceType(iSocket.Sender(), mx, iHeaderSt.Domain(), iHeaderSt.Type(), iHeaderSt.Version());
             return;
         case eSsdpServiceType:
-            LOG(kSsdpMulticast, "SSDP Multicast      Msearch Service Type\n");
+            LOG(kSsdpMulticast, "SSDP Multicast      Msearch Service Type - %.*s : %.*s : %u\n",
+                                PBUF(iHeaderSt.Domain()), PBUF(iHeaderSt.Type()), iHeaderSt.Version());
             aMsearchHandler.SsdpSearchServiceType(iSocket.Sender(), mx, iHeaderSt.Domain(), iHeaderSt.Type(), iHeaderSt.Version());
             return;
         case eSsdpAll:
@@ -229,7 +232,8 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                 case eSsdpUuid:
                     if (iHeaderUsn.Target() == eSsdpUuid) {
                         if (iHeaderNt.Uuid() == iHeaderUsn.Uuid()) {
-                            LOG(kSsdpMulticast, "SSDP Multicast      Notify Alive Uuid\n");
+                            LOG(kSsdpMulticast, "SSDP Multicast      Notify Alive Uuid - %.*s, %.*s, %u\n",
+                                                PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderLocation.Location()), maxage);
                             aNotifyHandler.SsdpNotifyUuidAlive(iHeaderUsn.Uuid(), iHeaderLocation.Location(), maxage);
                             return;
                         }
@@ -240,7 +244,9 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                         if (iHeaderNt.Domain() == iHeaderUsn.Domain()) {
                             if (iHeaderNt.Type() == iHeaderUsn.Type()) {
                                 if (iHeaderNt.Version() == iHeaderUsn.Version()) {
-                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify Alive Device Type\n");
+                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify Alive Device Type - %.*s, %.*s, %.*s, %u, %.*s, %u\n",
+                                                        PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderNt.Domain()), PBUF(iHeaderNt.Type()),
+                                                        iHeaderNt.Version(), PBUF(iHeaderLocation.Location()), maxage);
                                     aNotifyHandler.SsdpNotifyDeviceTypeAlive(iHeaderUsn.Uuid(), iHeaderNt.Domain(), iHeaderNt.Type(), iHeaderNt.Version(), iHeaderLocation.Location(), maxage);
                                     return;
                                 }
@@ -253,7 +259,9 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                         if (iHeaderNt.Domain() == iHeaderUsn.Domain()) {
                             if (iHeaderNt.Type() == iHeaderUsn.Type()) {
                                 if (iHeaderNt.Version() == iHeaderUsn.Version()) {
-                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify Alive Service Type\n");
+                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify Alive Service Type - %.*s, %.*s, %.*s, %u, %.*s, %u\n",
+                                                        PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderNt.Domain()), PBUF(iHeaderNt.Type()),
+                                                        iHeaderNt.Version(), PBUF(iHeaderLocation.Location()), maxage);
                                     aNotifyHandler.SsdpNotifyServiceTypeAlive(iHeaderUsn.Uuid(), iHeaderNt.Domain(), iHeaderNt.Type(), iHeaderNt.Version(), iHeaderLocation.Location(), maxage);
                                     return;
                                 }
@@ -271,7 +279,7 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                 switch(iHeaderNt.Target()) {
                 case eSsdpRoot:
                     if (iHeaderUsn.Target() == eSsdpRoot) {
-                        LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Root\n");
+                        LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Root - %.*s\n", PBUF(iHeaderUsn.Uuid()));
                         aNotifyHandler.SsdpNotifyRootByeBye(iHeaderUsn.Uuid());
                         return;
                     }
@@ -279,7 +287,7 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                 case eSsdpUuid:
                     if (iHeaderUsn.Target() == eSsdpUuid) {
                         if (iHeaderNt.Uuid() == iHeaderUsn.Uuid()) {
-                            LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Uuid\n");
+                            LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Uuid - %.*s\n", PBUF(iHeaderUsn.Uuid()));
                             aNotifyHandler.SsdpNotifyUuidByeBye(iHeaderUsn.Uuid());
                             return;
                         }
@@ -290,7 +298,8 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                         if (iHeaderNt.Domain() == iHeaderUsn.Domain()) {
                             if (iHeaderNt.Type() == iHeaderUsn.Type()) {
                                 if (iHeaderNt.Version() == iHeaderUsn.Version()) {
-                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Device Type\n");
+                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Device Type - %.*s, %.*s, %.*s, %u\n",
+                                                        PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderNt.Domain()), PBUF(iHeaderNt.Type()), iHeaderNt.Version());
                                     aNotifyHandler.SsdpNotifyDeviceTypeByeBye(iHeaderUsn.Uuid(), iHeaderNt.Domain(), iHeaderNt.Type(), iHeaderNt.Version());
                                     return;
                                 }
@@ -303,7 +312,8 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
                         if (iHeaderNt.Domain() == iHeaderUsn.Domain()) {
                             if (iHeaderNt.Type() == iHeaderUsn.Type()) {
                                 if (iHeaderNt.Version() == iHeaderUsn.Version()) {
-                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Service Type\n");
+                                    LOG(kSsdpMulticast, "SSDP Multicast      Notify ByeBye Service Type - %.*s, %.*s, %.*s, %u\n",
+                                                        PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderNt.Domain()), PBUF(iHeaderNt.Type()), iHeaderNt.Version());
                                     aNotifyHandler.SsdpNotifyServiceTypeByeBye(iHeaderUsn.Uuid(), iHeaderNt.Domain(), iHeaderNt.Type(), iHeaderNt.Version());
                                     return;
                                 }
@@ -502,14 +512,16 @@ void SsdpListenerUnicast::Run()
                         switch(iHeaderSt.Target()) {
                         case eSsdpRoot:
                             if (iHeaderUsn.Target() == eSsdpRoot) {
-                                LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Root\n");
+                                LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Root - %.*s, %.*s, %u\n",
+                                                   PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderLocation.Location()), maxage);
                                 iNotifyHandler.SsdpNotifyRootAlive(iHeaderUsn.Uuid(), iHeaderLocation.Location(), maxage);
                             }
                             break;
                         case eSsdpUuid:
                             if (iHeaderUsn.Target() == eSsdpUuid) {
                                 if (iHeaderSt.Uuid() == iHeaderUsn.Uuid()) {
-                                    LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Uuid\n");
+                                    LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Uuid - %.*s, %.*s, %u\n",
+                                                      PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderLocation.Location()), maxage);
                                     iNotifyHandler.SsdpNotifyUuidAlive(iHeaderUsn.Uuid(), iHeaderLocation.Location(), maxage);
                                 }
                             }
@@ -519,7 +531,9 @@ void SsdpListenerUnicast::Run()
                                 if (iHeaderSt.Domain() == iHeaderUsn.Domain()) {
                                     if (iHeaderSt.Type() == iHeaderUsn.Type()) {
                                         if (iHeaderSt.Version() == iHeaderUsn.Version()) {
-                                            LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Device Type\n");
+                                            LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Device Type - %.*s, %.*s, %.*s, %u, %.*s, %u\n",
+                                                              PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderSt.Domain()), PBUF(iHeaderSt.Type()),
+                                                              iHeaderSt.Version(), PBUF(iHeaderLocation.Location()), maxage);
                                             iNotifyHandler.SsdpNotifyDeviceTypeAlive(iHeaderUsn.Uuid(), iHeaderSt.Domain(), iHeaderSt.Type(), iHeaderSt.Version(), iHeaderLocation.Location(), maxage);
                                         }
                                     }
@@ -531,7 +545,9 @@ void SsdpListenerUnicast::Run()
                                 if (iHeaderSt.Domain() == iHeaderUsn.Domain()) {
                                     if (iHeaderSt.Type() == iHeaderUsn.Type()) {
                                         if (iHeaderSt.Version() == iHeaderUsn.Version()) {
-                                            LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Service Type\n");
+                                            LOG(kSsdpUnicast, "SSDP Unicast        Notify Alive Service Type - %.*s, %.*s, %.*s, %u, %.*s, %u\n",
+                                                              PBUF(iHeaderUsn.Uuid()), PBUF(iHeaderSt.Domain()), PBUF(iHeaderSt.Type()),
+                                                              iHeaderSt.Version(), PBUF(iHeaderLocation.Location()), maxage);
                                             iNotifyHandler.SsdpNotifyServiceTypeAlive(iHeaderUsn.Uuid(), iHeaderSt.Domain(), iHeaderSt.Type(), iHeaderSt.Version(), iHeaderLocation.Location(), maxage);
                                         }
                                     }
