@@ -48,6 +48,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     , iSemaphoreOpen("UDPO", 0)
     , iQuit(false)
     , iAdapterListenerId(0)
+    , iRebindPosted(false)
 {
     // Populate iFifoWaiting with empty packets/bufs
     while (iFifoWaiting.SlotsFree() > 0) {
