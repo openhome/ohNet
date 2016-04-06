@@ -440,7 +440,7 @@ TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)
 TUint VariableDelay::TryStop(TUint aStreamId)
 {
     if (iStreamHandler != nullptr) {
-        iStreamHandler->TryStop(aStreamId);
+        return iStreamHandler->TryStop(aStreamId);
     }
     return MsgFlush::kIdInvalid;
 }
