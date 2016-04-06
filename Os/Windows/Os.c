@@ -89,6 +89,7 @@ OsContext* OsCreate()
         CHAR path[MAX_PATH];
         GetModuleFileName(hModule, path, MAX_PATH);
         ctx->iDebugSymbolHandle = GetCurrentProcess();
+        SymSetOptions(SYMOPT_FAIL_CRITICAL_ERRORS);
         (void)SymInitialize(ctx->iDebugSymbolHandle, /*NULL*/path, TRUE);
     }
 
