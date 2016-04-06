@@ -360,11 +360,9 @@ void SocketUdpServer::PostRebind(TIpAddress aAddress, TUint aPort, Functor aComp
 {
     AutoMutex amx(iLock);
 
-    iRebindJob = {
-        .iAddress = aAddress,
-        .iPort = aPort,
-        .iCompleteFunctor = aCompleteFunctor,
-    };
+    iRebindJob.iAddress         = aAddress;
+    iRebindJob.iPort            = aPort;
+    iRebindJob.iCompleteFunctor = aCompleteFunctor;
 
     iRebindPosted = true;
     iSocket.Interrupt(true);
