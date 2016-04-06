@@ -24,6 +24,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
@@ -35,6 +36,8 @@ private:
     TUint iBitDepth;
     TUint iNumChannels;
     Semaphore iShutdownSem;
+    TUint64 iSilenceSinceLastDrain;
+    TBool iSilenceSincePcm;
 };
 
 } // namespace Media

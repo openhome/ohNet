@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -26,6 +27,8 @@ PreDriver::PreDriver(IPipelineElementUpstream& aUpstreamElement)
     , iBitDepth(0)
     , iNumChannels(0)
     , iShutdownSem("PDSD", 0)
+    , iSilenceSinceLastDrain(0)
+    , iSilenceSincePcm(false)
 {
 }
 
@@ -40,9 +43,21 @@ Msg* PreDriver::Pull()
     do {
         msg = iUpstreamElement.Pull();
         ASSERT(msg != nullptr);
+        const TBool silenceSincePcm = iSilenceSincePcm;
         msg = msg->Process(*this);
+        if (silenceSincePcm && !iSilenceSincePcm) {
+            const TUint ms = static_cast<TUint>(iSilenceSinceLastDrain / Jiffies::kPerMs);
+            LOG(kPipeline, "PreDriver: silence since last drain - %ums\n", ms);
+        }
     } while (msg == nullptr);
     return msg;
+}
+
+Msg* PreDriver::ProcessMsg(MsgDrain* aMsg)
+{
+    iSilenceSinceLastDrain = 0;
+    iSilenceSincePcm = false;
+    return aMsg;
 }
 
 Msg* PreDriver::ProcessMsg(MsgStreamInterrupted* aMsg)
@@ -70,11 +85,14 @@ Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    iSilenceSincePcm = false;
     return aMsg->CreatePlayable();
 }
 
 Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
+    iSilenceSincePcm = true;
+    iSilenceSinceLastDrain += aMsg->Jiffies();
     return aMsg->CreatePlayable();
 }
 
