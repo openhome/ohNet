@@ -56,17 +56,20 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 
     iDiscard = new MsgUdp(iMaxSize);
 
-    Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
-
     iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread));
     iServerThread->Start();
     iSemaphore.Wait();
+
+    Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
 }
 
 SocketUdpServer::~SocketUdpServer()
 {
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    nifList.RemoveCurrentChangeListener(iAdapterListenerId);
+
     iLock.Wait();
 
     if (iQuit)
@@ -83,9 +86,6 @@ SocketUdpServer::~SocketUdpServer()
     iFifoReady.ReadInterrupt(true);
 
     delete iServerThread;
-
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    nifList.RemoveCurrentChangeListener(iAdapterListenerId);
 
     iReadyLock.Wait();
     while (iFifoReady.SlotsUsed() > 0) {
