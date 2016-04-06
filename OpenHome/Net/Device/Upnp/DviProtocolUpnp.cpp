@@ -166,13 +166,13 @@ void DviProtocolUpnp::HandleInterfaceChange()
                     pendingDelete.push_back(iAdapters[i]);
                     iAdapters.erase(iAdapters.begin() + i);
                 }
-                // add listener if 'current' is a new subnet
-                if (iAdapters.size() == 0 && current != NULL) {
-                    iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
-                    DviProtocolUpnpAdapterSpecificData* adapter = AddInterface(*current);
-                    if (iDevice.Enabled()) {
-                        adapter->SendByeByeThenAlive(*this);
-                    }
+            }
+            // add listener if 'current' is a new subnet
+            if (iAdapters.size() == 0 && current != NULL) {
+                iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
+                DviProtocolUpnpAdapterSpecificData* adapter = AddInterface(*current);
+                if (iDevice.Enabled()) {
+                    adapter->SendByeByeThenAlive(*this);
                 }
             }
         }
