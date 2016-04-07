@@ -110,10 +110,10 @@ IPowerManagerObserver* PowerManager::RegisterPowerHandler(IPowerHandler& aHandle
     return observer;
 }
 
-IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority)
+IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority, const TChar* aClientId)
 {
     AutoMutex _(iLock);
-    auto* observer = new StandbyObserver(*this, aHandler, iNextStandbyId++, aPriority);
+    auto* observer = new StandbyObserver(*this, aHandler, iNextStandbyId++, aPriority, aClientId);
 
     std::vector<StandbyObserver*>::iterator it;
     for (it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
@@ -222,11 +222,12 @@ TUint PowerManagerObserver::Priority() const
 
 // StandbyObserver
 
-StandbyObserver::StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId, TUint aPriority)
+StandbyObserver::StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId, TUint aPriority, const TChar* aClientId)
     : iPowerManager(aPowerManager)
     , iHandler(aHandler)
     , iId(aId)
     , iPriority(aPriority)
+    , iClientId(aClientId)
 {
 }
 
@@ -243,6 +244,11 @@ IStandbyHandler& StandbyObserver::Handler() const
 TUint StandbyObserver::Id() const
 {
     return iId;
+}
+
+const TChar* StandbyObserver::ClientId() const
+{
+    return iClientId;
 }
 
 TUint StandbyObserver::Priority() const
@@ -273,7 +279,7 @@ void StoreVal::RegisterPowerHandlers(IPowerManager& aPowerManager, TUint aPowerH
 
     // our standby observer is relatively unimportant
     // priority enum describes importance when exiting Standby - we only do any work when we enter Standby
-    iStandbyObserver.reset(aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityHighest - 1));
+    iStandbyObserver.reset(aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityHighest - 1, "StoreVal"));
     iObserver = aPowerManager.RegisterPowerHandler(*this, aPowerHandlerPriority);
 }
 

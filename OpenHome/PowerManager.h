@@ -72,7 +72,7 @@ public:
     virtual void StandbyEnable() = 0;
     virtual void StandbyDisable(StandbyDisableReason aReason) = 0;
     virtual IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) = 0;
-    virtual IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority) = 0;
+    virtual IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority, const TChar* aClientId) = 0;
     virtual ~IPowerManager() {}
 };
 
@@ -95,7 +95,7 @@ public: // from IPowerManager
     void StandbyEnable() override;
     void StandbyDisable(StandbyDisableReason aReason) override;
     IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) override;
-    IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority) override;
+    IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority, const TChar* aClientId) override;
 private:
     void DeregisterPower(TUint aId);
     void DeregisterStandby(TUint aId);
@@ -151,16 +151,18 @@ private:
 class StandbyObserver : public IStandbyObserver, private INonCopyable
 {
 public:
-    StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId, TUint aPriority);
+    StandbyObserver(PowerManager& aPowerManager, IStandbyHandler& aHandler, TUint aId, TUint aPriority, const TChar* aClientId);
     ~StandbyObserver();
     IStandbyHandler& Handler() const;
     TUint Id() const;
     TUint Priority() const;
+    const TChar* ClientId() const;
 private:
     PowerManager& iPowerManager;
     IStandbyHandler& iHandler;
     const TUint iId;
     const TUint iPriority;
+    const TChar* iClientId;
 };
 
 /*

@@ -47,7 +47,7 @@ private:
     TUint iCellsUsed;
     TUint iCellsUsedMax;
 };
-    
+
 template <class T> class Allocator : public AllocatorBase
 {
 public:
@@ -387,6 +387,7 @@ private: // from Msg
 private:
     Functor iCallback;
     TUint iId;
+    TBool iCallbackPending;
 };
 
 class MsgDelay : public Msg

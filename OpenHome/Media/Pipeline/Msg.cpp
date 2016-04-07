@@ -243,7 +243,7 @@ void EncodedAudio::Clear()
     iData.SetBytes(0);
 }
 
-    
+
 // Jiffies
 
 TBool Jiffies::IsValidSampleRate(TUint aSampleRate)
@@ -519,7 +519,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
 {
     /*Bws<256> buf("Ramp::Set (");
     buf.Append(Thread::CurrentThreadName());
-    buf.AppendPrintf("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x, current=[%08x..%08x]\n", 
+    buf.AppendPrintf("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x, current=[%08x..%08x]\n",
                      aDirection, aStart, aFragmentSize, aRemainingDuration, iStart, iEnd);
     Log::Print(buf);*/
     Ramp before(*this);
@@ -529,7 +529,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     aSplit.Reset();
     aSplitPos = 0xffffffff;
     const TUint rampRemaining = (aDirection == EDown? aStart : kMax-aStart);
-    // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration 
+    // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration
     TUint rampDelta = ((rampRemaining * (TUint64)aFragmentSize) + aRemainingDuration - 1) / aRemainingDuration;
     // Rounding up rampDelta means that a ramp may overshoot.
     // ...check for this and clamp end values to min/max dependent on direction
@@ -846,7 +846,7 @@ TUint RampApplicator::MedianMultiplier(const Media::Ramp& aRamp)
     return kRampArray[rampIndex];
 }
 
- 
+
 // Track
 
 Track::Track(AllocatorBase& aAllocator)
@@ -1003,6 +1003,7 @@ void MsgDrain::ReportDrained()
 {
     if (iCallback) {
         iCallback();
+        iCallbackPending = false;
     }
 }
 
@@ -1015,12 +1016,16 @@ void MsgDrain::Initialise(TUint aId, Functor aCallback)
 {
     iId = aId;
     iCallback = aCallback;
+	iCallbackPending = iCallback? true : false;
 }
 
 void MsgDrain::Clear()
 {
+	ASSERT(!iCallbackPending);
     iCallback = Functor();
 }
+
+
 
 Msg* MsgDrain::Process(IMsgProcessor& aProcessor)
 {
@@ -1660,11 +1665,11 @@ MsgAudio* MsgAudio::Clone()
 
 TUint MsgAudio::Jiffies() const
 {
-    TUint jiffies = iSize; 
-    MsgAudio* next = iNextAudio; 
-    while (next != nullptr) { 
-        jiffies += next->iSize; 
-        next = next->iNextAudio; 
+    TUint jiffies = iSize;
+    MsgAudio* next = iNextAudio;
+    while (next != nullptr) {
+        jiffies += next->iSize;
+        next = next->iNextAudio;
     }
     return jiffies;
 }
@@ -1762,14 +1767,14 @@ void MsgAudio::Initialise()
     iClockPullMultiplier = IPullableClock::kPullNone;
 }
 
-void MsgAudio::Clear() 
+void MsgAudio::Clear()
 {
     iSize = 0;
-    if (iNextAudio != nullptr) { 
-        iNextAudio->RemoveRef(); 
+    if (iNextAudio != nullptr) {
+        iNextAudio->RemoveRef();
         iNextAudio = nullptr;
-    } 
-} 
+    }
+}
 
 void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 {
@@ -1812,9 +1817,9 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
         silence->Initialise(sizeBytes, iAudioData->BitDepth(), iAudioData->NumChannels(), noRamp, iClockPullMultiplier);
         playable = silence;
     }
-    if (iNextAudio != nullptr) { 
-        MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
-        playable->Add(child); 
+    if (iNextAudio != nullptr) {
+        MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable();
+        playable->Add(child);
         iNextAudio = nullptr;
     }
     RemoveRef();
@@ -1924,10 +1929,10 @@ MsgPlayable* MsgSilence::CreatePlayable()
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
     playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp, iClockPullMultiplier);
-    if (iNextAudio != nullptr) { 
+    if (iNextAudio != nullptr) {
         MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable();
-        playable->Add(child); 
-    } 
+        playable->Add(child);
+    }
     RemoveRef();
     return playable;
 }
@@ -2961,7 +2966,7 @@ AutoAllocatedRef::~AutoAllocatedRef()
     iAllocated->RemoveRef();
 }
 
-    
+
 // TrackFactory
 
 TrackFactory::TrackFactory(IInfoAggregator& aInfoAggregator, TUint aTrackCount)

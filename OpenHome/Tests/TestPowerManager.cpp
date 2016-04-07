@@ -624,7 +624,7 @@ void SuitePowerManager::TestNoPowerDown()
 void SuitePowerManager::TestNoShutdownCallbackOnRegistrationBeforeStart()
 {
     HelperStandbyHandler observer(0, *this);
-    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal, "TestNoShutdownCallbackOnRegistrationBeforeStart"));
     TEST(observer.EnableCount() == 0);
     TEST(observer.DisableCount() == 0);
 }
@@ -633,7 +633,7 @@ void SuitePowerManager::TestShutdownCallbackOnRegistrationAfterStart()
 {
     iPowerManager->Start();
     HelperStandbyHandler observer(0, *this);
-    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal, "TestShutdownCallbackOnRegistrationAfterStart"));
     if (observer.DisableCount() == 0) {
         TEST(observer.EnableCount() > 0);
     }
@@ -649,7 +649,7 @@ void SuitePowerManager::TestShutdownToggleGeneratesCallback()
 {
     iPowerManager->Start();
     HelperStandbyHandler observer(0, *this);
-    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal, "TestShutdownToggleGeneratesCallback"));
     TEST(observer.Standby()); // assume that PowerManager defaults to starting in standby
 
     TEST(observer.DisableCount() == 0);
@@ -668,7 +668,7 @@ void SuitePowerManager::TestShutdownToggleGeneratesCallback()
 void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
 {
     HelperStandbyHandler observer(0, *this);
-    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal));
+    std::unique_ptr<IStandbyObserver> handler(iPowerManager->RegisterStandbyHandler(observer, kStandbyHandlerPriorityNormal, "TestShutdownNoCallbackOnDuplicateStateSet"));
     iPowerManager->Start();
     TEST(observer.Standby()); // assume that PowerManager defaults to starting in standby
 
@@ -683,11 +683,11 @@ void SuitePowerManager::TestShutdownNoCallbackOnDuplicateStateSet()
 void SuitePowerManager::TestStandbyHandlerPriorities()
 {
     HelperStandbyHandler obs1(1, *this);
-    std::unique_ptr<IStandbyObserver> handler1(iPowerManager->RegisterStandbyHandler(obs1, kStandbyHandlerPriorityNormal));
+    std::unique_ptr<IStandbyObserver> handler1(iPowerManager->RegisterStandbyHandler(obs1, kStandbyHandlerPriorityNormal, "TestStandbyHandlerPriorities-Normal"));
     HelperStandbyHandler obs2(2, *this);
-    std::unique_ptr<IStandbyObserver> handler2(iPowerManager->RegisterStandbyHandler(obs2, kStandbyHandlerPriorityHighest));
+    std::unique_ptr<IStandbyObserver> handler2(iPowerManager->RegisterStandbyHandler(obs2, kStandbyHandlerPriorityHighest, "TestStandbyHandlerPriorities-Highest"));
     HelperStandbyHandler obs3(3, *this);
-    std::unique_ptr<IStandbyObserver> handler3(iPowerManager->RegisterStandbyHandler(obs3, kStandbyHandlerPriorityLowest));
+    std::unique_ptr<IStandbyObserver> handler3(iPowerManager->RegisterStandbyHandler(obs3, kStandbyHandlerPriorityLowest, "TestStandbyHandlerPriorities-Lowest"));
     iPowerManager->Start();
 
     iStandbyHandlerRunOrder.clear();
