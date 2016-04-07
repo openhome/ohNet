@@ -122,10 +122,11 @@ void SuiteDrainer::TearDown()
         iPendingMsgs.pop_front();
     }
     delete iTimer;
-    delete iDrainer;
     if (iMsgDrain != nullptr) {
+        iMsgDrain->ReportDrained();
         iMsgDrain->RemoveRef();
     }
+    delete iDrainer;
     delete iMsgFactory;
     delete iTrackFactory;
 }
@@ -254,6 +255,8 @@ void SuiteDrainer::TimerCallback()
 {
     ASSERT(iMsgDrain != nullptr);
     iMsgDrain->ReportDrained();
+    iMsgDrain->RemoveRef();
+    iMsgDrain = nullptr;
 }
 
 Msg* SuiteDrainer::CreateMsgSilence()
@@ -306,6 +309,8 @@ void SuiteDrainer::TestOneDrainAfterHaltAndStarvation()
     iDrainer->NotifyStarving(Brx::Empty(), 0, true);
     PullNext(EMsgDrain);
     iMsgDrain->ReportDrained();
+    iMsgDrain->RemoveRef();
+    iMsgDrain = nullptr;
     PullNext(EMsgSilence);
 }
 

@@ -122,7 +122,6 @@ private:
     };
 private:
     MsgAudio* CreateAudio();
-    void DrainCallback();
     void TestMsgsCauseAssertion();
     void TestMsgsPassedThroughNoSamplesInPipeline();
     void TestMsgsPassedThroughSamplesInPipeline();
@@ -362,7 +361,7 @@ Msg* SuiteSpotifyReporter::Pull()
         return iLastMsg;
     }
     case EMsgDrain:
-        iLastMsg = iMsgFactory->CreateMsgDrain(MakeFunctor(*this, &SuiteSpotifyReporter::DrainCallback));
+        iLastMsg = iMsgFactory->CreateMsgDrain(Functor());
         return iLastMsg;
     case EMsgDelay:
         iLastMsg = iMsgFactory->CreateMsgDelay(0);
@@ -411,10 +410,6 @@ MsgAudio* SuiteSpotifyReporter::CreateAudio()
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
-}
-
-void SuiteSpotifyReporter::DrainCallback()
-{
 }
 
 void SuiteSpotifyReporter::TestMsgsCauseAssertion()
