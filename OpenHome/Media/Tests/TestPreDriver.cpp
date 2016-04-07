@@ -187,7 +187,10 @@ Msg* SuitePreDriver::Pull()
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:
-        return iMsgFactory->CreateMsgSilence(iNextMsgSilenceSize);
+    {
+        TUint size = iNextMsgSilenceSize;
+        return iMsgFactory->CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
+    }
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, nullptr);

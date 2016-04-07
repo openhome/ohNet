@@ -233,12 +233,11 @@ void CodecController::CodecThread()
         }
         try {
             iLock.Wait();
-            iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = iSeekInProgress = false;
+            iQueueTrackData = iStreamEnded = iStreamStopped = iSeek = iRecognising = iSeekInProgress = false;
             iActiveCodec = nullptr;
             iChannels = iBitDepth = 0;
             iSampleRate = iSeekSeconds = 0;
-            iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-            iStreamLength = iStreamPos = 0LL;
+            iStreamPos = 0LL;
             ReleaseAudioEncoded();
             iLock.Signal();
 

@@ -69,6 +69,7 @@ private:
 private:
     void PullNext(EMsgType aExpectedMsg);
     void TimerCallback();
+    Msg* CreateMsgSilence();
 private:
     void TestMsgDrainFollowsHalt();
     void TestBlocksWaitingForDrainResponse();
@@ -121,10 +122,11 @@ void SuiteDrainer::TearDown()
         iPendingMsgs.pop_front();
     }
     delete iTimer;
-    delete iDrainer;
     if (iMsgDrain != nullptr) {
+        iMsgDrain->ReportDrained();
         iMsgDrain->RemoveRef();
     }
+    delete iDrainer;
     delete iMsgFactory;
     delete iTrackFactory;
 }
@@ -253,11 +255,19 @@ void SuiteDrainer::TimerCallback()
 {
     ASSERT(iMsgDrain != nullptr);
     iMsgDrain->ReportDrained();
+    iMsgDrain->RemoveRef();
+    iMsgDrain = nullptr;
+}
+
+Msg* SuiteDrainer::CreateMsgSilence()
+{
+    TUint size = Jiffies::kPerMs * 3;
+    return iMsgFactory->CreateMsgSilence(size, 44100, 16, 2);
 }
 
 void SuiteDrainer::TestMsgDrainFollowsHalt()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    iPendingMsgs.push_back(CreateMsgSilence());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
 
     PullNext(EMsgSilence);
@@ -267,7 +277,7 @@ void SuiteDrainer::TestMsgDrainFollowsHalt()
 
 void SuiteDrainer::TestBlocksWaitingForDrainResponse()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    iPendingMsgs.push_back(CreateMsgSilence());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false));
 
@@ -291,14 +301,16 @@ void SuiteDrainer::TestDrainAfterStarvation()
 
 void SuiteDrainer::TestOneDrainAfterHaltAndStarvation()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    iPendingMsgs.push_back(CreateMsgSilence());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgSilence);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
+    iPendingMsgs.push_back(CreateMsgSilence());
     PullNext(EMsgHalt);
     iDrainer->NotifyStarving(Brx::Empty(), 0, true);
     PullNext(EMsgDrain);
     iMsgDrain->ReportDrained();
+    iMsgDrain->RemoveRef();
+    iMsgDrain = nullptr;
     PullNext(EMsgSilence);
 }
 

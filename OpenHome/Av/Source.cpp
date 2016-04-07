@@ -58,6 +58,11 @@ TBool SourceBase::IsVisible() const
     return iVisible;
 }
 
+void SourceBase::Activate(TBool /*aAutoPlay*/)
+{
+    iActive = true;
+}
+
 void SourceBase::Deactivate()
 {
     iActive = false;

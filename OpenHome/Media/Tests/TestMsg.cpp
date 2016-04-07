@@ -888,7 +888,7 @@ void SuiteMsgAudio::Test()
 
     // Create silence msg.  Check its length is as expected
     jiffies = Jiffies::kPerMs;
-    msg = iMsgFactory->CreateMsgSilence(jiffies);
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
     TEST(jiffies == msg->Jiffies());
 
     // Split silence msg.  Check lengths of both parts are as expected.
@@ -911,7 +911,7 @@ void SuiteMsgAudio::Test()
     // MsgSilence needs to take a pointer to its iAllocatorPlayable when cloning.
     // As we don't have access to iAllocatorPlayable, try calling CreatePlayable(),
     // which should fail if iAllocatorPlayable hasn't been assigned.
-    MsgPlayable* playable = static_cast<MsgSilence*>(clone)->CreatePlayable(44100, 16, 2); // removes ref from clone
+    MsgPlayable* playable = static_cast<MsgSilence*>(clone)->CreatePlayable(); // removes ref from clone
     msg->RemoveRef();
     playable->RemoveRef();
 
@@ -1110,8 +1110,9 @@ void SuiteMsgPlayable::Test()
     prevBytes = 0;
     MsgSilence* silence;
     for (TUint i=0; i<numRates; i++) {
-        silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 5);
-        playable = silence->CreatePlayable(sampleRates[i], 8, 2);
+        TUint size = Jiffies::kPerMs * 5;
+        silence = iMsgFactory->CreateMsgSilence(size, sampleRates[i], 8, 2);
+        playable = silence->CreatePlayable();
         bytes = playable->Bytes();
         playable->RemoveRef();
         if (prevBytes != 0) {
@@ -1121,14 +1122,15 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create silence msg.  Read/validate its content
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
-    playable = silence->CreatePlayable(44100, 8, 1);
+    TUint size = Jiffies::kPerMs;
+    silence = iMsgFactory->CreateMsgSilence(size, 44100, 8, 1);
+    playable = silence->CreatePlayable();
     bytes = playable->Bytes();
     ValidateSilence(playable);
 
     // Create silence msg, convert to playable then split.  Check sizes/contents of each
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
-    playable = silence->CreatePlayable(44100, 8, 1);
+    silence = iMsgFactory->CreateMsgSilence(size, 44100, 8, 1);
+    playable = silence->CreatePlayable();
     remainingPlayable = playable->Split(playable->Bytes() / 4);
     TEST(3 * playable->Bytes() == remainingPlayable->Bytes());
     TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
@@ -1136,18 +1138,18 @@ void SuiteMsgPlayable::Test()
     ValidateSilence(remainingPlayable);
 
     // Create silence msg, split at non-sample boundary.  Check that fragments have the correct total length
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
-    playable = silence->CreatePlayable(44100, 8, 1);
+    silence = iMsgFactory->CreateMsgSilence(size, 44100, 8, 1);
+    playable = silence->CreatePlayable();
     remainingPlayable = playable->Split((playable->Bytes() / 4) - 1);
     TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
     playable->RemoveRef();
     remainingPlayable->RemoveRef();
 
     // Create silence msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    silence = iMsgFactory->CreateMsgSilence(size, 44100, 8, 1);
     MsgSilence* remainingSilence = (MsgSilence*)silence->Split(1);
-    playable = silence->CreatePlayable(44100, 8, 1);
-    remainingPlayable = remainingSilence->CreatePlayable(44100, 8, 1);
+    playable = silence->CreatePlayable();
+    remainingPlayable = remainingSilence->CreatePlayable();
     TEST(playable->Bytes() == 0);
     TEST(remainingPlayable->Bytes() == bytes);
     ValidateSilence(playable);
@@ -1156,8 +1158,8 @@ void SuiteMsgPlayable::Test()
     // check we can read from a chained PlayablePcm -> PlayableSilence
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataEndianLittle, 0);
     playable = audioPcm->CreatePlayable();
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
-    playable->Add(silence->CreatePlayable(44100, 8, 1));
+    silence = iMsgFactory->CreateMsgSilence(size, 44100, 8, 1);
+    playable->Add(silence->CreatePlayable());
     playable->Read(pcmProcessor);
     playable->RemoveRef();
 
@@ -1397,11 +1399,11 @@ void SuiteRamp::Test()
     TEST(ramp.Direction() == Ramp::EDown);
 
     // Create MsgSilence.  Set [Max...Min] ramp.  Convert to playable and check output is all zeros
-    MsgSilence* silence = iMsgFactory->CreateMsgSilence(jiffies);
+    MsgSilence* silence = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
     MsgAudio* remaining = nullptr;
     TEST(Ramp::kMin == silence->SetRamp(Ramp::kMax, jiffies, Ramp::EDown, remaining));
     TEST(remaining == nullptr);
-    MsgPlayable* playable = silence->CreatePlayable(44100, 8, 2);
+    MsgPlayable* playable = silence->CreatePlayable();
     TEST(playable != nullptr);
     ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
@@ -1461,8 +1463,10 @@ void SuiteRamp::Test()
 
     // Create 2 MsgSilences with different durations.
     // Check can ramp down over them (i.e. there is no rounding error at msg boundary)
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 17);
-    MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 23);
+    TUint silenceSize = Jiffies::kPerMs * 17;
+    silence = iMsgFactory->CreateMsgSilence(silenceSize, 44100, 16, 2);
+    silenceSize = Jiffies::kPerMs * 23;
+    MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(silenceSize, 44100, 16, 2);
     const TUint duration = silence->Jiffies() + silence2->Jiffies();
     remainingDuration = duration;
     TUint currentRamp = Ramp::kMax;
@@ -1976,10 +1980,11 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    MsgSilence* silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    TUint silenceSize = Jiffies::kPerMs;
+    MsgSilence* silence = iMsgFactory->CreateMsgSilence(silenceSize, 44100, 8, 2);
     TEST(silence == static_cast<Msg*>(silence)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgSilence);
-    playable = silence->CreatePlayable(44100, 8, 2);
+    playable = silence->CreatePlayable();
     TEST(playable == static_cast<Msg*>(playable)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
@@ -2185,7 +2190,8 @@ void SuiteMsgQueue::Test()
     
     // queue can be populated and read from
     TEST(queue->IsEmpty());
-    Msg* msg = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    TUint size = Jiffies::kPerMs;
+    Msg* msg = iMsgFactory->CreateMsgSilence(size, 44100, 8, 2);
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
     Msg* dequeued = queue->Dequeue();
@@ -2440,7 +2446,8 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgBitRate);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    TUint silenceSize = Jiffies::kPerMs;
+    MsgAudio* audio = iMsgFactory->CreateMsgSilence(silenceSize, 44100, 8, 2);
     queue->Enqueue(audio);
     TEST(queue->Jiffies() == jiffies + audio->Jiffies());
     jiffies = queue->Jiffies();
@@ -2531,7 +2538,7 @@ void SuiteMsgReservoir::Test()
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgSilence);
-    TEST(queue->Jiffies() == jiffies - Jiffies::kPerMs);
+    TEST(queue->Jiffies() == jiffies - silenceSize);
     jiffies = queue->Jiffies();
     msg->RemoveRef();
 
@@ -2877,7 +2884,10 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
         return iMsgFactory->CreateMsgAudioPcm(audioBuf, 2, 44100, 8, EMediaDataEndianLittle, 0);
     }
     case ProcessorMsgType::EMsgSilence:
-        return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
+    {
+        TUint size = Jiffies::kPerMs;
+        return iMsgFactory->CreateMsgSilence(size, 44100, 8, 2);
+    }
     case ProcessorMsgType::EMsgPlayable:
     {
         const TUint kDataBytes = 256;

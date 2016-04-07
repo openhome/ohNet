@@ -6,6 +6,8 @@
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Printer.h>
 
 #include <limits.h>
@@ -130,7 +132,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iConfigAutoPlay(nullptr)
     , iListenerIdAutoPlay(IConfigManager::kSubscriptionIdInvalid)
 {
-    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityLowest);
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityLowest, "Product");
     iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
     iConfigProductRoom = &aConfigReader.GetText(kConfigIdRoomBase);
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
@@ -274,32 +276,35 @@ TUint Product::CurrentSourceIndex() const
 
 void Product::GetSourceXml(Bwx& aXml)
 {
-    aXml.Append("<SourceList>");
+    WriterBuffer writer(aXml);
+    writer.Write(Brn("<SourceList>"));
     iLock.Wait();
     for (TUint i=0; i<iSources.size(); i++) {
         ISource* src = iSources[i];
         Bws<ISource::kMaxSourceNameBytes> name;
         src->Name(name);
-        aXml.Append("<Source>");
-        AppendTag(aXml, "Name", name);
-        AppendTag(aXml, "Type", src->Type());
-        AppendTag(aXml, "Visible", src->IsVisible()? Brn("true") : Brn("false"));
-        AppendTag(aXml, "SystemName", src->SystemName());
-        aXml.Append("</Source>");
+        writer.Write(Brn("<Source>"));
+        AppendTag(writer, "Name", name);
+        AppendTag(writer, "Type", src->Type());
+        AppendTag(writer, "Visible", src->IsVisible()? Brn("true") : Brn("false"));
+        AppendTag(writer, "SystemName", src->SystemName());
+        writer.Write(Brn("</Source>"));
     }
     iLock.Signal();
-    aXml.Append("</SourceList>");
+    writer.Write(Brn("</SourceList>"));
+    writer.WriteFlush();
 }
 
-void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
+void Product::AppendTag(IWriter& aWriter, const TChar* aTag, const Brx& aValue)
 {
-    aXml.Append('<');
-    aXml.Append(aTag);
-    aXml.Append('>');
-    aXml.Append(aValue);
-    aXml.Append("</");
-    aXml.Append(aTag);
-    aXml.Append('>');
+    Brn tag(aTag);
+    aWriter.Write('<');
+    aWriter.Write(tag);
+    aWriter.Write('>');
+    Converter::ToXmlEscaped(aWriter, aValue);
+    aWriter.Write(Brn("</"));
+    aWriter.Write(tag);
+    aWriter.Write('>');
 }
 
 void Product::ProductRoomChanged(KeyValuePair<const Brx&>& aKvp)

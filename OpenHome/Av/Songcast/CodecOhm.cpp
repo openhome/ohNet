@@ -138,9 +138,9 @@ void CodecOhm::ReadInterrupt()
 
 void CodecOhm::OutputDelay()
 {
-    static const TUint kDelayDivisor48k = (48000 * 256) / 1000;
-    static const TUint kDelayDivisor44k = (44100 * 256) / 1000;
-    const TUint delayMs = iLatency / ((iSampleRate % 441) == 0 ? kDelayDivisor44k : kDelayDivisor48k);
+    static const TUint kDelayDivisor48k = (480 * 256);
+    static const TUint kDelayDivisor44k = (441 * 256);
+    const TUint delayMs = (10 * iLatency) / ((iSampleRate % 441) == 0 ? kDelayDivisor44k : kDelayDivisor48k);
     //Log::Print("-- CodecOhm - delayMs=%u\n", delayMs);
     const TUint delayJiffies = delayMs * Jiffies::kPerMs;
     iController->OutputDelay(delayJiffies);

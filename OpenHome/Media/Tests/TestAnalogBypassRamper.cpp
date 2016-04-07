@@ -172,7 +172,10 @@ Msg* SuiteAnalogBypassRamper::Pull()
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:
-        return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3);
+    {
+        TUint size = Jiffies::kPerMs * 3;
+        return iMsgFactory->CreateMsgSilence(size, kSampleRate, 24, kNumChannels);
+    }
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt(42, MakeFunctor(*this, &SuiteAnalogBypassRamper::HaltCallback));
     case EMsgQuit:

@@ -151,11 +151,11 @@ IRaopDiscovery& SourceRaop::Discovery()
     return *iRaopDiscovery;
 }
 
-void SourceRaop::Activate(TBool /*aAutoPlay*/)
+void SourceRaop::Activate(TBool aAutoPlay)
 {
+    SourceBase::Activate(aAutoPlay);
     iLock.Wait();
     iTrackPosSeconds = 0;
-    iActive = true;
     if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
         iRaopDiscovery->Enable();
     }

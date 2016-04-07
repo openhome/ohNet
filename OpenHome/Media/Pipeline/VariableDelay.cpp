@@ -30,6 +30,9 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
     , iRampDuration(aRampDuration)
     , iWaitForAudioBeforeGeneratingSilence(false)
     , iStreamHandler(nullptr)
+    , iSampleRate(0)
+    , iBitDepth(0)
+    , iNumChannels(0)
 {
     ResetStatusAndRamp();
 }
@@ -58,8 +61,8 @@ Msg* VariableDelay::Pull()
     }
     // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
     if ((iStatus == EStarting || iStatus == ERampedDown) && iDelayAdjustment > 0) {
-        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
-        msg = iMsgFactory.CreateMsgSilence(size);
+        TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
+        msg = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
             if (iStatus == ERampedDown) {
@@ -258,6 +261,8 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
+    aMsg->RemoveRef();
+    auto msg = iMsgFactory.CreateMsgDelay(iDownstreamDelay);
     LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
         iId, delayJiffies, delayJiffies / Jiffies::kPerMs,
         iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
@@ -265,7 +270,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         kStatus[iStatus]);
     delayJiffies = (iDownstreamDelay >= delayJiffies? 0 : delayJiffies - iDownstreamDelay);
     if (delayJiffies == iDelayJiffies) {
-        return aMsg;
+        return msg;
     }
 
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
@@ -313,8 +318,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         break;
     }
 
-    aMsg->RemoveRef();
-    return iMsgFactory.CreateMsgDelay(iDownstreamDelay);
+    return msg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
@@ -360,6 +364,9 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iStreamHandler = stream.StreamHandler();
+    iSampleRate = stream.SampleRate();
+    iBitDepth = stream.BitDepth();
+    iNumChannels = stream.NumChannels();
     ResetStatusAndRamp();
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
     aMsg->RemoveRef();
@@ -434,7 +441,7 @@ TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)
 TUint VariableDelay::TryStop(TUint aStreamId)
 {
     if (iStreamHandler != nullptr) {
-        iStreamHandler->TryStop(aStreamId);
+        return iStreamHandler->TryStop(aStreamId);
     }
     return MsgFlush::kIdInvalid;
 }

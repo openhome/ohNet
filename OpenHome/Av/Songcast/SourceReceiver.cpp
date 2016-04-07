@@ -236,7 +236,7 @@ SourceReceiver::~SourceReceiver()
 void SourceReceiver::Activate(TBool aAutoPlay)
 {
     LOG(kSongcast, "SourceReceiver::Activate()\n");
-    iActive = true;
+    SourceBase::Activate(aAutoPlay);
     if (iNoPipelinePrefetchOnActivation) {
         iPipeline.RemoveAll();
     }

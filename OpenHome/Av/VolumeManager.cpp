@@ -79,7 +79,7 @@ VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, IPowerMa
 {
     iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
     iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
-    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal);
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal, "VolumeUser");
     // StandbyDisabled will be called either inside the call above or when we later exit standby
 }
 
@@ -113,7 +113,11 @@ void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
     else {
         startupVolume = iStoreUserVolume.Get();
     }
-    iVolume.SetVolume(startupVolume);
+
+    try {
+    	iVolume.SetVolume(startupVolume);
+	}
+	catch (VolumeNotSupported&) { }
 }
 
 void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)
@@ -408,7 +412,7 @@ void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 MuteUser::MuteUser(Media::IMute& aMute, IPowerManager& aPowerManager)
     : iMute(aMute)
 {
-    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal);
+    iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal, "MuteUser");
 }
 
 MuteUser::~MuteUser()
@@ -754,7 +758,7 @@ void VolumeManager::SetVolume(TUint aValue)
     if (iMuteUser != nullptr) {
         iMuteUser->Unmute();
     }
-    
+
     const TUint volume = aValue * iVolumeConfig.VolumeMilliDbPerStep();
     iVolumeUser->SetVolume(volume);
 }

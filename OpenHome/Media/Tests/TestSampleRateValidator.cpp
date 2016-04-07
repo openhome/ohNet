@@ -199,7 +199,10 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
     }
         break;
     case EMsgSilence:
-        msg = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 4);
+    {
+        TUint size = Jiffies::kPerMs * 4;
+        msg = iMsgFactory->CreateMsgSilence(size, kSampleRate, kBitDepth, kChannels);
+    }
         break;
     case EMsgQuit:
         msg = iMsgFactory->CreateMsgQuit();

@@ -75,19 +75,25 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
     iEndian = aStreamInfo.Endian();
     iStartSample = aStreamInfo.StartSample();
     iAnalogBypass = aStreamInfo.AnalogBypass();
+    //Log::Print("CodecPcm::Recognise iBitDepth %d, iSampleRate %d, iNumChannels %d, iEndian %d, iStartSample %d, iAnalogBypass %d\n", iBitDepth, iSampleRate, iNumChannels, iEndian, iStartSample, iAnalogBypass);
     return true;
 }
 
 void CodecPcm::StreamInitialise()
 {
-    iReadBuf.SetBytes(0);
-    const TUint64 lenBytes = iController->StreamLength();
-    const TUint bytesPerSample = (iBitDepth * iNumChannels) / 8;
-    const TUint64 numSamples = lenBytes / bytesPerSample;
-    iBitRate = iBitDepth * iNumChannels * iSampleRate;
-    iTrackLengthJiffies = numSamples * Jiffies::JiffiesPerSample(iSampleRate);
-    iTrackOffset = ToJiffies(iStartSample);
-    SendMsgDecodedStream(iStartSample);
+    try {
+        iReadBuf.SetBytes(0);
+        const TUint64 lenBytes = iController->StreamLength();
+        const TUint bytesPerSample = (iBitDepth * iNumChannels) / 8;
+        const TUint64 numSamples = lenBytes / bytesPerSample;
+        iBitRate = iBitDepth * iNumChannels * iSampleRate;
+        iTrackLengthJiffies = numSamples * Jiffies::JiffiesPerSample(iSampleRate);
+        iTrackOffset = ToJiffies(iStartSample);
+        SendMsgDecodedStream(iStartSample);
+    }
+    catch (SampleRateInvalid&) {
+        THROW(CodecStreamCorrupt);
+    }
 }
 
 void CodecPcm::Process()

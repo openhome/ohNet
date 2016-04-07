@@ -656,7 +656,7 @@ void SuiteFlywheelRamper::Test7() // Speed testing (profiling)
     for(TUint i=0; i<1000; i++)
     {
         TUint decFactor = FlywheelRamper::DecimationFactor(kSampleRate);
-        TUint maxRampSamplesBlockSize = FlywheelRamper::SampleCount(kSampleRate, FlywheelRamperManager::kMaxRampJiffiesBlockSize);
+        TUint maxRampSamplesBlockSize = FlywheelRamper::SampleCount(kSampleRate, FlywheelRamperManager::kMaxOutputJiffiesBlockSize);
         TUint remainingSamples = FlywheelRamper::SampleCount(kSampleRate, kRampJiffies);
 
         while (remainingSamples > 0)

@@ -132,6 +132,7 @@ SourceRadio::~SourceRadio()
 
 void SourceRadio::Activate(TBool aAutoPlay)
 {
+    SourceBase::Activate(aAutoPlay);
     if (iTuneIn != nullptr) {
         iTuneIn->Refresh();
     }

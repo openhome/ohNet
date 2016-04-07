@@ -204,11 +204,7 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
     }
         // fallthrough
     case eMuted:
-    {
-        MsgSilence* silence = iMsgFactory.CreateMsgSilence(aMsg->Jiffies());
-        msg->RemoveRef();
-        msg = silence;
-    }
+        aMsg->SetMuted();
         break;
     }
 

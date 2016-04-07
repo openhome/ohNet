@@ -47,7 +47,7 @@ private:
     TUint iCellsUsed;
     TUint iCellsUsedMax;
 };
-    
+
 template <class T> class Allocator : public AllocatorBase
 {
 public:
@@ -137,6 +137,8 @@ public:
     static TBool IsValidSampleRate(TUint aSampleRate);
     static TUint JiffiesPerSample(TUint aSampleRate);
     static TUint BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
+    static void RoundDown(TUint& aJiffies, TUint aSampleRate);
+    static void RoundUp(TUint& aJiffies, TUint aSampleRate);
     static TUint ToSongcastTime(TUint aJiffies, TUint aSampleRate);
     static TUint64 FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
 private:
@@ -385,6 +387,7 @@ private: // from Msg
 private:
     Functor iCallback;
     TUint iId;
+    TBool iCallbackPending;
 };
 
 class MsgDelay : public Msg
@@ -670,6 +673,8 @@ class MsgAudioPcm : public MsgAudio
 {
     friend class MsgFactory;
 public:
+    static const TUint64 kTrackOffsetInvalid;
+public:
     MsgAudioPcm(AllocatorBase& aAllocator);
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
@@ -705,11 +710,11 @@ class MsgSilence : public MsgAudio
     friend class MsgFactory;
 public:
     MsgSilence(AllocatorBase& aAllocator);
-    MsgPlayable* CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels); // removes ref
+    MsgPlayable* CreatePlayable(); // removes ref
 public: // from MsgAudio
     MsgAudio* Clone() override;
 private:
-    void Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable);
+    void Initialise(TUint& aJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels, Allocator<MsgPlayableSilence>& aAllocatorPlayable);
 private: // from MsgAudio
     MsgAudio* Allocate() override;
     void SplitCompleted(MsgAudio& aRemaining) override;
@@ -717,6 +722,9 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Allocator<MsgPlayableSilence>* iAllocatorPlayable;
+    TUint iSampleRate;
+    TUint iBitDepth;
+    TUint iNumChannels;
 };
 
 class IPcmProcessor;
@@ -1529,7 +1537,7 @@ public:
     MsgBitRate* CreateMsgBitRate(TUint aBitRate);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
-    MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
+    MsgSilence* CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels);
     MsgQuit* CreateMsgQuit();
 private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);

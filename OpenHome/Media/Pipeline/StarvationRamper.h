@@ -49,7 +49,6 @@ class RampGenerator : public IPcmProcessor
     static const TUint kMaxSampleRate = 192000; // FIXME - duplicated in FlywheelInput
     static const TUint kMaxChannels = 8;
     static const TUint kSubsampleBytes = 4;
-    static const TUint64 kTrackOffsetInvalid = UINT64_MAX;
 public:
     RampGenerator(MsgFactory& iMsgFactory, TUint aRampJiffies, TUint aThreadPriority);
     ~RampGenerator();
@@ -91,20 +90,19 @@ class IPipelineElementObserverThread;
 class StarvationRamper : public MsgReservoir, public IPipelineElementUpstream
 {
     friend class SuiteStarvationRamper;
-    static const TUint kRampDownJiffies = 20 * Jiffies::kPerMs;
+    static const TUint kRampDownJiffies;
+    static const TUint kMaxAudioOutJiffies;
 public:
     StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
                      IStarvationMonitorObserver& aObserver,
                      IPipelineElementObserverThread& aObserverThread, TUint aSizeJiffies,
                      TUint aThreadPriority, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationRamper();
-    void Start();
 private:
     inline TBool IsFull() const;
     void PullerThread();
     void StartFlywheelRamp();
     void NewStream();
-    void HandleAudioIn();
     void ProcessAudioOut(MsgAudio* aMsg);
     void SetBuffering(TBool aBuffering);
     void EventCallback();
@@ -157,6 +155,7 @@ private:
     TUint iNumChannels;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
+    TUint iLastPulledAudioRampValue;
     TUint iEventId;
     std::atomic<bool> iEventBuffering;
     TBool iLastEventBuffering;

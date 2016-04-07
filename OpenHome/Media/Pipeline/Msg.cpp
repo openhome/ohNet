@@ -15,6 +15,7 @@
 #include <string.h>
 #include <climits>
 #include <algorithm>
+#include <cstdint>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -242,7 +243,7 @@ void EncodedAudio::Clear()
     iData.SetBytes(0);
 }
 
-    
+
 // Jiffies
 
 TBool Jiffies::IsValidSampleRate(TUint aSampleRate)
@@ -305,6 +306,19 @@ TUint Jiffies::BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint 
     const TUint numSubsamples = numSamples * aNumChannels;
     const TUint bytes = numSubsamples * aBytesPerSubsample;
     return bytes;
+}
+
+void Jiffies::RoundDown(TUint& aJiffies, TUint aSampleRate)
+{
+    const TUint jiffiesPerSample = JiffiesPerSample(aSampleRate);
+    aJiffies -= aJiffies % jiffiesPerSample;
+}
+
+void Jiffies::RoundUp(TUint& aJiffies, TUint aSampleRate)
+{
+    const TUint jiffiesPerSample = JiffiesPerSample(aSampleRate);
+    aJiffies += jiffiesPerSample - 1;
+    aJiffies -= aJiffies % jiffiesPerSample;
 }
 
 TUint Jiffies::ToSongcastTime(TUint aJiffies, TUint aSampleRate)
@@ -505,7 +519,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
 {
     /*Bws<256> buf("Ramp::Set (");
     buf.Append(Thread::CurrentThreadName());
-    buf.AppendPrintf("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x, current=[%08x..%08x]\n", 
+    buf.AppendPrintf("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x, current=[%08x..%08x]\n",
                      aDirection, aStart, aFragmentSize, aRemainingDuration, iStart, iEnd);
     Log::Print(buf);*/
     Ramp before(*this);
@@ -515,7 +529,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     aSplit.Reset();
     aSplitPos = 0xffffffff;
     const TUint rampRemaining = (aDirection == EDown? aStart : kMax-aStart);
-    // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration 
+    // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration
     TUint rampDelta = ((rampRemaining * (TUint64)aFragmentSize) + aRemainingDuration - 1) / aRemainingDuration;
     // Rounding up rampDelta means that a ramp may overshoot.
     // ...check for this and clamp end values to min/max dependent on direction
@@ -832,7 +846,7 @@ TUint RampApplicator::MedianMultiplier(const Media::Ramp& aRamp)
     return kRampArray[rampIndex];
 }
 
- 
+
 // Track
 
 Track::Track(AllocatorBase& aAllocator)
@@ -989,6 +1003,7 @@ void MsgDrain::ReportDrained()
 {
     if (iCallback) {
         iCallback();
+        iCallbackPending = false;
     }
 }
 
@@ -1001,12 +1016,16 @@ void MsgDrain::Initialise(TUint aId, Functor aCallback)
 {
     iId = aId;
     iCallback = aCallback;
+	iCallbackPending = iCallback? true : false;
 }
 
 void MsgDrain::Clear()
 {
+	ASSERT(!iCallbackPending);
     iCallback = Functor();
 }
+
+
 
 Msg* MsgDrain::Process(IMsgProcessor& aProcessor)
 {
@@ -1646,11 +1665,11 @@ MsgAudio* MsgAudio::Clone()
 
 TUint MsgAudio::Jiffies() const
 {
-    TUint jiffies = iSize; 
-    MsgAudio* next = iNextAudio; 
-    while (next != nullptr) { 
-        jiffies += next->iSize; 
-        next = next->iNextAudio; 
+    TUint jiffies = iSize;
+    MsgAudio* next = iNextAudio;
+    while (next != nullptr) {
+        jiffies += next->iSize;
+        next = next->iNextAudio;
     }
     return jiffies;
 }
@@ -1748,14 +1767,14 @@ void MsgAudio::Initialise()
     iClockPullMultiplier = IPullableClock::kPullNone;
 }
 
-void MsgAudio::Clear() 
+void MsgAudio::Clear()
 {
     iSize = 0;
-    if (iNextAudio != nullptr) { 
-        iNextAudio->RemoveRef(); 
+    if (iNextAudio != nullptr) {
+        iNextAudio->RemoveRef();
         iNextAudio = nullptr;
-    } 
-} 
+    }
+}
 
 void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 {
@@ -1764,6 +1783,8 @@ void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 
 
 // MsgAudioPcm
+
+const TUint64 MsgAudioPcm::kTrackOffsetInvalid = UINT64_MAX;
 
 MsgAudioPcm::MsgAudioPcm(AllocatorBase& aAllocator)
     : MsgAudio(aAllocator)
@@ -1796,9 +1817,9 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
         silence->Initialise(sizeBytes, iAudioData->BitDepth(), iAudioData->NumChannels(), noRamp, iClockPullMultiplier);
         playable = silence;
     }
-    if (iNextAudio != nullptr) { 
-        MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
-        playable->Add(child); 
+    if (iNextAudio != nullptr) {
+        MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable();
+        playable->Add(child);
         iNextAudio = nullptr;
     }
     RemoveRef();
@@ -1895,27 +1916,34 @@ MsgSilence::MsgSilence(AllocatorBase& aAllocator)
 {
 }
 
-MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels)
+MsgPlayable* MsgSilence::CreatePlayable()
 {
     TUint offsetJiffies = iOffset;
-    TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    const TUint bytesPerSubsample = iBitDepth/8;
+    (void)Jiffies::BytesFromJiffies(offsetJiffies, jiffiesPerSample, iNumChannels, bytesPerSubsample);
     TUint sizeJiffies = iSize + (iOffset - offsetJiffies);
-    TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, aNumChannels, aBitDepth/8);
+    const TUint sizeBytes = Jiffies::BytesFromJiffies(sizeJiffies, jiffiesPerSample, iNumChannels, bytesPerSubsample);
+    // both size & offset will be rounded down if they don't fall on a sample boundary
+    // we don't risk losing any data doing this as each original MsgSilence had an integer number of samples
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp, iClockPullMultiplier);
-    if (iNextAudio != nullptr) { 
-        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aBitDepth, aNumChannels);
-        playable->Add(child); 
-    } 
+    playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp, iClockPullMultiplier);
+    if (iNextAudio != nullptr) {
+        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable();
+        playable->Add(child);
+    }
     RemoveRef();
     return playable;
 }
 
 MsgAudio* MsgSilence::Clone()
 {
-    MsgAudio* clone = MsgAudio::Clone();
-    static_cast<MsgSilence*>(clone)->iAllocatorPlayable = iAllocatorPlayable;
+    MsgSilence* clone = static_cast<MsgSilence*>(MsgAudio::Clone());
+    clone->iAllocatorPlayable = iAllocatorPlayable;
+    clone->iSampleRate = iSampleRate;
+    clone->iBitDepth = iBitDepth;
+    clone->iNumChannels = iNumChannels;
     return clone;
 }
 
@@ -1931,13 +1959,28 @@ Msg* MsgSilence::Process(IMsgProcessor& aProcessor)
 
 void MsgSilence::SplitCompleted(MsgAudio& aRemaining)
 {
-    static_cast<MsgSilence&>(aRemaining).iAllocatorPlayable = iAllocatorPlayable;
+    MsgSilence& remaining = static_cast<MsgSilence&>(aRemaining);
+    remaining.iAllocatorPlayable = iAllocatorPlayable;
+    remaining.iSampleRate = iSampleRate;
+    remaining.iBitDepth = iBitDepth;
+    remaining.iNumChannels = iNumChannels;
 }
 
-void MsgSilence::Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
+void MsgSilence::Initialise(TUint& aJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels, Allocator<MsgPlayableSilence>& aAllocatorPlayable)
 {
     MsgAudio::Initialise();
     iAllocatorPlayable = &aAllocatorPlayable;
+    iSampleRate = aSampleRate;
+    iBitDepth = aBitDepth;
+    iNumChannels = aChannels;
+    TUint jiffies = aJiffies;
+    Jiffies::RoundDown(jiffies, aSampleRate);
+    if (jiffies == 0) {
+        Jiffies::RoundUp(aJiffies, aSampleRate);
+    }
+    else {
+        aJiffies = jiffies;
+    }
     iSize = aJiffies;
     iOffset = 0;
 }
@@ -2923,7 +2966,7 @@ AutoAllocatedRef::~AutoAllocatedRef()
     iAllocated->RemoveRef();
 }
 
-    
+
 // TrackFactory
 
 TrackFactory::TrackFactory(IInfoAggregator& aInfoAggregator, TUint aTrackCount)
@@ -3116,10 +3159,10 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
     return msg;
 }
 
-MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
+MsgSilence* MsgFactory::CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels)
 {
     MsgSilence* msg = iAllocatorMsgSilence.Allocate();
-    msg->Initialise(aSizeJiffies, iAllocatorMsgPlayableSilence);
+    msg->Initialise(aSizeJiffies, aSampleRate, aBitDepth, aChannels, iAllocatorMsgPlayableSilence);
     return msg;
 }
 

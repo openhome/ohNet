@@ -91,7 +91,7 @@ private:
     class PlayableCreator : private Media::IMsgProcessor
     {
     public:
-        PlayableCreator(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels);
+        PlayableCreator();
         Media::MsgPlayable* Process(Media::MsgAudio* aMsg);
     private: // from Media::IMsgProcessor
         Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
@@ -112,9 +112,6 @@ private:
         Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
         Media::Msg* ProcessMsg(Media::MsgQuit* aMsg) override;
     private:
-        TUint iSampleRate;
-        TUint iBitDepth;
-        TUint iNumChannels;
         Media::MsgPlayable* iPlayable;
     };
 private:

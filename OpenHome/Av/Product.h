@@ -134,7 +134,7 @@ public:
 private:
     TBool DoSetCurrentSource(TUint aIndex); // returns true if aIndex wasn't already active
     void DoSetCurrentSource(const Brx& aName);
-    void AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue);
+    void AppendTag(IWriter& aWriter, const TChar* aTag, const Brx& aValue);
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
