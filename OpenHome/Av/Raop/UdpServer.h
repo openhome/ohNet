@@ -55,6 +55,13 @@ private:
     static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
     void ServerThread();
     void CurrentAdapterChanged();
+    struct RebindJob {
+        TIpAddress iAddress;
+        TUint iPort;
+        Functor iCompleteFunctor;
+    };
+    void PostRebind(TIpAddress aAddress, TUint aPort, Functor aCompleteFunctor);
+    void CheckRebind();
 private:
     Environment& iEnv;
     SocketUdp iSocket;
@@ -71,6 +78,8 @@ private:
     ThreadFunctor* iServerThread;
     TBool iQuit;
     TUint iAdapterListenerId;
+    TBool iRebindPosted;
+    RebindJob iRebindJob;
 };
 
 /**

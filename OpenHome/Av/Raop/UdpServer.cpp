@@ -48,6 +48,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     , iSemaphoreOpen("UDPO", 0)
     , iQuit(false)
     , iAdapterListenerId(0)
+    , iRebindPosted(false)
 {
     // Populate iFifoWaiting with empty packets/bufs
     while (iFifoWaiting.SlotsFree() > 0) {
@@ -56,17 +57,20 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 
     iDiscard = new MsgUdp(iMaxSize);
 
-    Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
-
     iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread));
     iServerThread->Start();
     iSemaphore.Wait();
+
+    Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
 }
 
 SocketUdpServer::~SocketUdpServer()
 {
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    nifList.RemoveCurrentChangeListener(iAdapterListenerId);
+
     iLock.Wait();
 
     if (iQuit)
@@ -83,9 +87,6 @@ SocketUdpServer::~SocketUdpServer()
     iFifoReady.ReadInterrupt(true);
 
     delete iServerThread;
-
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    nifList.RemoveCurrentChangeListener(iAdapterListenerId);
 
     iReadyLock.Wait();
     while (iFifoReady.SlotsUsed() > 0) {
@@ -298,6 +299,7 @@ void SocketUdpServer::ServerThread()
                 iDiscard->Read(iSocket);
             }
             catch (NetworkError&) {
+                CheckRebind();
             }
         }
 
@@ -326,6 +328,7 @@ void SocketUdpServer::ServerThread()
                 iDiscard->Read(iSocket);
             }
             catch (NetworkError&) {
+                CheckRebind();
                 continue;
             }
 
@@ -354,6 +357,30 @@ void SocketUdpServer::ServerThread()
     }
 }
 
+void SocketUdpServer::PostRebind(TIpAddress aAddress, TUint aPort, Functor aCompleteFunctor)
+{
+    AutoMutex amx(iLock);
+
+    iRebindJob.iAddress         = aAddress;
+    iRebindJob.iPort            = aPort;
+    iRebindJob.iCompleteFunctor = aCompleteFunctor;
+
+    iRebindPosted = true;
+    iSocket.Interrupt(true);
+}
+
+void SocketUdpServer::CheckRebind()
+{
+    AutoMutex amx(iLock);
+
+    if (iRebindPosted)
+    {
+        iSocket.ReBind(iRebindJob.iPort, iRebindJob.iAddress);
+        iRebindPosted = false;
+        iRebindJob.iCompleteFunctor(); // we have to call this with iLock held. Should be ok unless the
+    }                                  // functor tries to take the lock: We have control of this, so it's cool.
+}
+
 void SocketUdpServer::CurrentAdapterChanged()
 {
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
@@ -371,7 +398,9 @@ void SocketUdpServer::CurrentAdapterChanged()
 
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
     if (current != nullptr) {
-        iSocket.ReBind(iSocket.Port(), current->Address());
+        Semaphore waiter("", 0);
+        PostRebind(current->Address(), iSocket.Port(), MakeFunctor(waiter, &Semaphore::Signal));
+        waiter.Wait();
     }
 }
 
