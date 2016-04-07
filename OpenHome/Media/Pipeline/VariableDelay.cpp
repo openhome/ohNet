@@ -261,6 +261,8 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
+    aMsg->RemoveRef();
+    auto msg = iMsgFactory.CreateMsgDelay(iDownstreamDelay);
     LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
         iId, delayJiffies, delayJiffies / Jiffies::kPerMs,
         iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
@@ -268,7 +270,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         kStatus[iStatus]);
     delayJiffies = (iDownstreamDelay >= delayJiffies? 0 : delayJiffies - iDownstreamDelay);
     if (delayJiffies == iDelayJiffies) {
-        return aMsg;
+        return msg;
     }
 
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
@@ -316,8 +318,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         break;
     }
 
-    aMsg->RemoveRef();
-    return iMsgFactory.CreateMsgDelay(iDownstreamDelay);
+    return msg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
