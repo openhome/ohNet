@@ -103,7 +103,6 @@ private:
     void PullerThread();
     void StartFlywheelRamp();
     void NewStream();
-    void HandleAudioIn();
     void ProcessAudioOut(MsgAudio* aMsg);
     void SetBuffering(TBool aBuffering);
     void EventCallback();
@@ -156,6 +155,7 @@ private:
     TUint iNumChannels;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
+    TUint iLastPulledAudioRampValue;
     TUint iEventId;
     std::atomic<bool> iEventBuffering;
     TBool iLastEventBuffering;
