@@ -90,8 +90,8 @@ class IPipelineElementObserverThread;
 class StarvationRamper : public MsgReservoir, public IPipelineElementUpstream
 {
     friend class SuiteStarvationRamper;
-    static const TUint kRampDownJiffies = 20 * Jiffies::kPerMs;
-    static const TUint kMaxAudioOutJiffies = 5 * Jiffies::kPerMs;
+    static const TUint kRampDownJiffies;
+    static const TUint kMaxAudioOutJiffies;
 public:
     StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
                      IStarvationMonitorObserver& aObserver,
