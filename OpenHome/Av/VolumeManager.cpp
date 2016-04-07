@@ -114,14 +114,10 @@ void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
         startupVolume = iStoreUserVolume.Get();
     }
 
-    try
-    {
+    try {
     	iVolume.SetVolume(startupVolume);
 	}
-	catch(VolumeNotSupported&)
-	{
-
-	}
+	catch (VolumeNotSupported&) { }
 }
 
 void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)
