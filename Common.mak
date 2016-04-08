@@ -23,6 +23,8 @@ objects_core = \
 	$(objdir)Bonjour.$(objext) \
 	$(objdir)Buffer.$(objext) \
 	$(objdir)Converter.$(objext) \
+	$(objdir)cencode.$(objext) \
+	$(objdir)cdecode.$(objext) \
 	$(objdir)Discovery.$(objext) \
 	$(objdir)Debug.$(objext) \
 	$(objdir)CpDeviceCore.$(objext) \
@@ -240,6 +242,10 @@ $(objdir)Buffer.$(objext) : OpenHome/Buffer.cpp $(headers)
 	$(compiler)Buffer.$(objext) -c $(cppflags) $(includes) OpenHome/Buffer.cpp
 $(objdir)Converter.$(objext) : OpenHome/Converter.cpp $(headers)
 	$(compiler)Converter.$(objext) -c $(cppflags) $(includes) OpenHome/Converter.cpp
+$(objdir)cencode.$(objext) : thirdparty/libb64/cencode.c $(headers)
+	$(compiler)cencode.$(objext) -c $(cflags_third_party) $(includes) thirdparty/libb64/cencode.c
+$(objdir)cdecode.$(objext) : thirdparty/libb64/cdecode.c $(headers)
+	$(compiler)cdecode.$(objext) -c $(cflags_third_party) $(includes) thirdparty/libb64/cdecode.c
 $(objdir)Discovery.$(objext) : OpenHome/Net/Discovery.cpp $(headers)
 	$(compiler)Discovery.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Discovery.cpp
 $(objdir)Debug.$(objext) : OpenHome/Debug.cpp $(headers)
@@ -778,6 +784,12 @@ $(objdir)TestPerformanceCp.$(exeext) :  ohNetCore $(objdir)TestPerformanceCp.$(o
 	$(link) $(linkoutput)$(objdir)TestPerformanceCp.$(exeext) $(objdir)TestPerformanceCp.$(objext) $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestPerformanceCp.$(objext) : OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp $(headers)
 	$(compiler)TestPerformanceCp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Bindings/Cpp/ControlPoint/Tests/TestPerformanceCp.cpp
+
+TestKazooServer: $(objdir)TestKazooServer.$(exeext) 
+$(objdir)TestKazooServer.$(exeext) :  ohNetCore $(objdir)TestKazooServer.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestKazooServer.$(exeext) $(objdir)TestKazooServer.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestKazooServer.$(objext) : OpenHome/Tests/TestKazooServer.cpp $(headers)
+	$(compiler)TestKazooServer.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestKazooServer.cpp
 
 TestShell: $(objdir)TestShell.$(exeext)
 $(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext) TestsCore
