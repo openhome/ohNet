@@ -30,6 +30,7 @@
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
+#include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/Pipeline/Muter.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
 #include <OpenHome/Media/Pipeline/PreDriver.h>
@@ -53,8 +54,7 @@ PipelineInitParams::PipelineInitParams()
     : iEncodedReservoirBytes(kEncodedReservoirSizeBytes)
     , iDecodedReservoirJiffies(kDecodedReservoirSize)
     , iGorgeDurationJiffies(kGorgerSizeDefault)
-    , iStarvationMonitorMaxJiffies(kStarvationMonitorMaxSizeDefault)
-    , iStarvationMonitorMinJiffies(kStarvationMonitorMinSizeDefault)
+    , iStarvationRamperJiffies(kStarvationRamperSizeDefault)
     , iMaxStreamsPerReservoir(kMaxReservoirStreamsDefault)
     , iRampLongJiffies(kLongRampDurationDefault)
     , iRampShortJiffies(kShortRampDurationDefault)
@@ -83,14 +83,9 @@ void PipelineInitParams::SetGorgerDuration(TUint aJiffies)
     iGorgeDurationJiffies = aJiffies;
 }
 
-void PipelineInitParams::SetStarvationMonitorMaxSize(TUint aJiffies)
+void PipelineInitParams::SetStarvationRamperSize(TUint aJiffies)
 {
-    iStarvationMonitorMaxJiffies = aJiffies;
-}
-
-void PipelineInitParams::SetStarvationMonitorMinSize(TUint aJiffies)
-{
-    iStarvationMonitorMinJiffies = aJiffies;
+    iStarvationRamperJiffies = aJiffies;
 }
 
 void PipelineInitParams::SetMaxStreamsPerReservoir(TUint aCount)
@@ -138,14 +133,9 @@ TUint PipelineInitParams::GorgeDurationJiffies() const
    return iGorgeDurationJiffies;
 }
 
-TUint PipelineInitParams::StarvationMonitorMaxJiffies() const
+TUint PipelineInitParams::StarvationRamperJiffies() const
 {
-    return iStarvationMonitorMaxJiffies;
-}
-
-TUint PipelineInitParams::StarvationMonitorMinJiffies() const
-{
-    return iStarvationMonitorMinJiffies;
+    return iStarvationRamperJiffies;
 }
 
 TUint PipelineInitParams::MaxStreamsPerReservoir() const
@@ -200,7 +190,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint maxEncodedReservoirMsgs = encodedAudioCount;
     encodedAudioCount += kRewinderMaxMsgs; // this may only be required on platforms that don't guarantee priority based thread scheduling
     const TUint msgEncodedAudioCount = encodedAudioCount + 100; // +100 allows for Split()ing by Container and CodecController
-    const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationMonitorMaxJiffies();
+    const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationRamperJiffies();
     const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
     const TUint msgAudioPcmCount = decodedAudioCount + 100; // +100 allows for Split()ing in various elements
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
@@ -284,7 +274,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iRampValidatorStopper = new RampValidator(*iLoggerStopper, "Stopper");
     iDecodedAudioValidatorStopper = new DecodedAudioValidator(*iRampValidatorStopper, "Stopper");
     iGorger = new Gorger(*iMsgFactory, *iDecodedAudioValidatorStopper, threadPriority, aInitParams->GorgeDurationJiffies());
-    threadPriority++;
+    threadPriority += 2; // StarvationRamper + FlywheelRamper threads
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iDecodedAudioValidatorGorger = new DecodedAudioValidator(*iLoggerGorger, "Gorger");
     iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *iMsgFactory, aTrackFactory);
@@ -303,13 +293,17 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iPruner = new Pruner(*iDecodedAudioValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iDecodedAudioValidatorPruner = new DecodedAudioValidator(*iLoggerPruner, "Pruner");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread, threadPriority,
-                                               aInitParams->StarvationMonitorMaxJiffies(), aInitParams->StarvationMonitorMinJiffies(),
+    //iStarvationRamper = new StarvationRamper(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread,
+    //                                         aInitParams->StarvationRamperJiffies(), threadPriority,
+    //                                         aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
+    iStarvationRamper = new StarvationMonitor(*iMsgFactory, *iDecodedAudioValidatorPruner,
+                                               *this, *iEventThread,
+                                               threadPriority, Jiffies::kPerMs * 100, Jiffies::kPerMs * 20,
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
-    iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iRampValidatorStarvationMonitor = new RampValidator(*iLoggerStarvationMonitor, "Starvation Monitor");
-    iDecodedAudioValidatorStarvationMonitor = new DecodedAudioValidator(*iRampValidatorStarvationMonitor, "Starvation Monitor");
-    iMuter = new Muter(*iMsgFactory, *iDecodedAudioValidatorStarvationMonitor, aInitParams->RampLongJiffies());
+    iLoggerStarvationRamper = new Logger(*iStarvationRamper, "StarvationRamper");
+    iRampValidatorStarvationRamper = new RampValidator(*iLoggerStarvationRamper, "StarvationRamper");
+    iDecodedAudioValidatorStarvationRamper = new DecodedAudioValidator(*iRampValidatorStarvationRamper, "StarvationRamper");
+    iMuter = new Muter(*iMsgFactory, *iDecodedAudioValidatorStarvationRamper, aInitParams->RampLongJiffies());
     iLoggerMuter = new Logger(*iMuter, "Muter");
     iDecodedAudioValidatorMuter = new DecodedAudioValidator(*iLoggerMuter, "Muter");
     iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *iDecodedAudioValidatorMuter);
@@ -347,7 +341,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerDrainer->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
-    //iLoggerStarvationMonitor->SetEnabled(true);
+    //iLoggerStarvationRamper->SetEnabled(true);
     //iLoggerMuter->SetEnabled(true);
     //iLoggerAnalogBypassRamper->SetEnabled(true);
 
@@ -377,7 +371,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerDrainer->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
-    //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
+    //iLoggerStarvationRamper->SetFilter(Logger::EMsgAll);
     //iLoggerMuter->SetFilter(Logger::EMsgAll);
     //iLoggerAnalogBypassRamper->SetFilter(Logger::EMsgAll);
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
@@ -399,10 +393,10 @@ Pipeline::~Pipeline()
     delete iDecodedAudioValidatorMuter;
     delete iLoggerMuter;
     delete iMuter;
-    delete iDecodedAudioValidatorStarvationMonitor;
-    delete iRampValidatorStarvationMonitor;
-    delete iLoggerStarvationMonitor;
-    delete iStarvationMonitor;
+    delete iDecodedAudioValidatorStarvationRamper;
+    delete iRampValidatorStarvationRamper;
+    delete iLoggerStarvationRamper;
+    delete iStarvationRamper;
     delete iDecodedAudioValidatorPruner;
     delete iLoggerPruner;
     delete iPruner;

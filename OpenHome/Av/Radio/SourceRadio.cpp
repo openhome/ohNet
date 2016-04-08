@@ -69,7 +69,9 @@ UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
 
 ModeClockPullers UriProviderRadio::ClockPullers()
 {
-    return ModeClockPullers(&iClockPuller, nullptr, nullptr);
+    // FIXME - temporarily disable clock pulling on radio until clock puller is fixed.
+    return ModeClockPullers(nullptr, nullptr, nullptr);
+    //return ModeClockPullers(&iClockPuller, nullptr, nullptr);
 }
 
 

@@ -6,6 +6,7 @@
 #include <OpenHome/Media/FlywheelRamper.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h> // FIXME - for IStarvationMonitorObserver
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <algorithm>
 #include <atomic>
@@ -371,6 +372,9 @@ void RampGenerator::Flush()
 
 // StarvationRamper
 
+const TUint StarvationRamper::kRampDownJiffies    = Jiffies::kPerMs * 20;
+const TUint StarvationRamper::kMaxAudioOutJiffies = Jiffies::kPerMs * 5;
+
 StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
                                    IStarvationMonitorObserver& aObserver,
                                    IPipelineElementObserverThread& aObserverThread, TUint aSizeJiffies,
@@ -396,6 +400,7 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     , iNumChannels(0)
     , iCurrentRampValue(Ramp::kMin)
     , iRemainingRampSize(0)
+    , iLastPulledAudioRampValue(Ramp::kMax)
     , iLastEventBuffering(false)
 {
     ASSERT(iEventBuffering.is_lock_free());
@@ -455,9 +460,9 @@ void StarvationRamper::StartFlywheelRamp()
         }
     }
     else {
-        TUint remaining = kRampDownJiffies - iRecentAudioJiffies;
+        TInt remaining = kRampDownJiffies - iRecentAudioJiffies;
         while (remaining > 0) {
-            TUint size = std::min(remaining, FlywheelRamperManager::kMaxOutputJiffiesBlockSize);
+            TUint size = std::min((TUint)remaining, kMaxAudioOutJiffies);
             auto silence = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
             iRecentAudio.EnqueueAtHead(silence);
             remaining -= size;
@@ -467,7 +472,13 @@ void StarvationRamper::StartFlywheelRamp()
 
     const Brx& recentSamples = iFlywheelInput.Prepare(iRecentAudio, iRecentAudioJiffies, iSampleRate, iBitDepth, iNumChannels);
     iRecentAudioJiffies = 0;
-    iRampGenerator->Start(recentSamples, iSampleRate, iNumChannels, iCurrentRampValue);
+
+    TUint rampStart = iCurrentRampValue;
+    if (rampStart == Ramp::kMax) {
+        rampStart = iLastPulledAudioRampValue;
+    }
+    LOG(kPipeline, "StarvationRamper::StartFlywheelRamp rampStart=%08x\n", rampStart);
+    iRampGenerator->Start(recentSamples, iSampleRate, iNumChannels, rampStart);
     iState = State::RampingDown;
 }
 
@@ -478,13 +489,7 @@ void StarvationRamper::NewStream()
     iRecentAudioJiffies = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iCurrentRampValue = Ramp::kMax;
-}
-
-void StarvationRamper::HandleAudioIn()
-{
-    if (iState == State::Starting || iState == State::Halted) {
-        iState = State::Running;
-    }
+    iLastPulledAudioRampValue = Ramp::kMax;
 }
 
 void StarvationRamper::ProcessAudioOut(MsgAudio* aMsg)
@@ -498,6 +503,8 @@ void StarvationRamper::ProcessAudioOut(MsgAudio* aMsg)
         Msg* split = aMsg->Split(kMaxAudioOutJiffies);
         EnqueueAtHead(split);
     }
+
+    iLastPulledAudioRampValue = aMsg->Ramp().End();
 
     iRecentAudio.Enqueue(aMsg);
     aMsg->AddRef();
@@ -594,12 +601,16 @@ void StarvationRamper::ProcessMsgIn(MsgDecodedStream* aMsg)
 
 void StarvationRamper::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
 {
-    HandleAudioIn();
+    if (iState == State::Starting || iState == State::Halted) {
+        iState = State::Running;
+    }
 }
 
 void StarvationRamper::ProcessMsgIn(MsgSilence* /*aMsg*/)
 {
-    HandleAudioIn();
+    if (iState == State::Halted) {
+        iState = State::Starting;
+    }
 }
 
 void StarvationRamper::ProcessMsgIn(MsgQuit* /*aMsg*/)

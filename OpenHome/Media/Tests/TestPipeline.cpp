@@ -377,8 +377,8 @@ void SuitePipeline::Test()
     PullUntilEnd(ERampDownDeferred);
     WaitForStateChange(EPipelineBuffering);
     TEST(iPipelineState == EPipelineBuffering);
-    TEST((iJiffies >= iInitParams->StarvationMonitorMinJiffies()) &&
-         (iJiffies <= iInitParams->StarvationMonitorMinJiffies() + iLastMsgJiffies + kDriverMaxAudioJiffies));
+    TEST((iJiffies >= iInitParams->StarvationRamperJiffies()) &&
+        (iJiffies <= iInitParams->StarvationRamperJiffies() + iLastMsgJiffies + kDriverMaxAudioJiffies));
 
     // Push audio again.  Check that it ramps up in Pipeline::kStarvationMonitorRampUpDuration.
     Print("\nRecover from starvation\n");

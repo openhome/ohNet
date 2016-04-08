@@ -22,8 +22,7 @@ class PipelineInitParams
     static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
     static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 1536; // some clock pulling algorithms will prefer this is larger than kGorgerSizeDefault
     static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1024;
-    static const TUint kStarvationMonitorMaxSizeDefault = Jiffies::kPerMs * 50;
-    static const TUint kStarvationMonitorMinSizeDefault = Jiffies::kPerMs * 20;
+    static const TUint kStarvationRamperSizeDefault     = Jiffies::kPerMs * 20;
     static const TUint kMaxReservoirStreamsDefault      = 10;
     static const TUint kLongRampDurationDefault         = Jiffies::kPerMs * 500;
     static const TUint kShortRampDurationDefault        = Jiffies::kPerMs * 50;
@@ -37,8 +36,7 @@ public:
     void SetEncodedReservoirSize(TUint aBytes);
     void SetDecodedReservoirSize(TUint aJiffies);
     void SetGorgerDuration(TUint aJiffies);
-    void SetStarvationMonitorMaxSize(TUint aJiffies);
-    void SetStarvationMonitorMinSize(TUint aJiffies);
+    void SetStarvationRamperSize(TUint aJiffies);
     void SetMaxStreamsPerReservoir(TUint aCount);
     void SetLongRamp(TUint aJiffies);
     void SetShortRamp(TUint aJiffies);
@@ -49,8 +47,7 @@ public:
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
     TUint GorgeDurationJiffies() const;
-    TUint StarvationMonitorMaxJiffies() const;
-    TUint StarvationMonitorMinJiffies() const;
+    TUint StarvationRamperJiffies() const;
     TUint MaxStreamsPerReservoir() const;
     TUint RampLongJiffies() const;
     TUint RampShortJiffies() const;
@@ -63,8 +60,7 @@ private:
     TUint iEncodedReservoirBytes;
     TUint iDecodedReservoirJiffies;
     TUint iGorgeDurationJiffies;
-    TUint iStarvationMonitorMaxJiffies;
-    TUint iStarvationMonitorMinJiffies;
+    TUint iStarvationRamperJiffies;
     TUint iMaxStreamsPerReservoir;
     TUint iRampLongJiffies;
     TUint iRampShortJiffies;
@@ -104,6 +100,7 @@ class Router;
 class Drainer;
 class VariableDelay;
 class Pruner;
+class StarvationRamper;
 class StarvationMonitor;
 class Muter;
 class PreDriver;
@@ -129,7 +126,7 @@ class Pipeline : public IPipelineElementDownstream
 
     static const TUint kSenderMinLatency        = Jiffies::kPerMs * 150;
     static const TUint kReceiverMaxLatency      = Jiffies::kPerSecond;
-    static const TUint kReservoirCount          = 5; // Encoded + Decoded + Gorger + StarvationMonitor + spare
+    static const TUint kReservoirCount          = 5; // Encoded + Decoded + Gorger + StarvationRamper + spare
     static const TUint kSongcastFrameJiffies    = Jiffies::kPerMs * 5; // effectively hard-coded by volkano1
     static const TUint kRewinderMaxMsgs         = 100;
 
@@ -140,7 +137,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kMsgCountMode            = 20;
     static const TUint kMsgCountQuit            = 1;
     static const TUint kMsgCountDrain           = 5;
-    static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
+    static const TUint kThreadCount             = 4; // CodecController, Gorger, StarvationRamper, FlywheelRamper
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
@@ -272,10 +269,11 @@ private:
     Pruner* iPruner;
     Logger* iLoggerPruner;
     DecodedAudioValidator* iDecodedAudioValidatorPruner;
-    StarvationMonitor* iStarvationMonitor;
-    Logger* iLoggerStarvationMonitor;
-    RampValidator* iRampValidatorStarvationMonitor;
-    DecodedAudioValidator* iDecodedAudioValidatorStarvationMonitor;
+    //StarvationRamper* iStarvationRamper;
+    StarvationMonitor* iStarvationRamper;
+    Logger* iLoggerStarvationRamper;
+    RampValidator* iRampValidatorStarvationRamper;
+    DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;
     Muter* iMuter;
     Logger* iLoggerMuter;
     DecodedAudioValidator* iDecodedAudioValidatorMuter;
