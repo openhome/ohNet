@@ -293,9 +293,13 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iPruner = new Pruner(*iDecodedAudioValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iDecodedAudioValidatorPruner = new DecodedAudioValidator(*iLoggerPruner, "Pruner");
-    iStarvationRamper = new StarvationRamper(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread,
-                                             aInitParams->StarvationRamperJiffies(), threadPriority,
-                                             aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
+    //iStarvationRamper = new StarvationRamper(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread,
+    //                                         aInitParams->StarvationRamperJiffies(), threadPriority,
+    //                                         aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
+    iStarvationRamper = new StarvationMonitor(*iMsgFactory, *iDecodedAudioValidatorPruner,
+                                               *this, *iEventThread,
+                                               threadPriority, Jiffies::kPerMs * 100, Jiffies::kPerMs * 20,
+                                               aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationRamper = new Logger(*iStarvationRamper, "StarvationRamper");
     iRampValidatorStarvationRamper = new RampValidator(*iLoggerStarvationRamper, "StarvationRamper");
     iDecodedAudioValidatorStarvationRamper = new DecodedAudioValidator(*iRampValidatorStarvationRamper, "StarvationRamper");

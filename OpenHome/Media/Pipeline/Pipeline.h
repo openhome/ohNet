@@ -101,6 +101,7 @@ class Drainer;
 class VariableDelay;
 class Pruner;
 class StarvationRamper;
+class StarvationMonitor;
 class Muter;
 class PreDriver;
 class ITrackObserver;
@@ -268,7 +269,8 @@ private:
     Pruner* iPruner;
     Logger* iLoggerPruner;
     DecodedAudioValidator* iDecodedAudioValidatorPruner;
-    StarvationRamper* iStarvationRamper;
+    //StarvationRamper* iStarvationRamper;
+    StarvationMonitor* iStarvationRamper;
     Logger* iLoggerStarvationRamper;
     RampValidator* iRampValidatorStarvationRamper;
     DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;
