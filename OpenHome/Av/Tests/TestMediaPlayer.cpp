@@ -179,8 +179,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // NOTE: If values for Room.Name and Product.Name already exist in the Store,
     //       the aRoom and aProductName default values will be ignored.
     auto pipelineInit = PipelineInitParams::New();
-    pipelineInit->SetStarvationMonitorMaxSize(100 * Jiffies::kPerMs); // larger StarvationMonitor size useful for desktop
-                                                                      // platforms with slightly unpredictable thread scheduling
+    pipelineInit->SetStarvationRamperSize(100 * Jiffies::kPerMs); // larger StarvationRamper size useful for desktop
+                                                                  // platforms with slightly unpredictable thread scheduling
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iShell, *iRamStore, *iConfigRamStore, pipelineInit,
                                    volumeInit, volumeProfile, aUdn, Brn(aRoom), Brn(aProductName));
     iPipelineObserver = new LoggingPipelineObserver();
