@@ -757,7 +757,7 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
             Parser parser(key);
             (void)parser.Next('.');
             (void)parser.Next('.');
-            Brn suffix = parser.Remaining();
+            Bws<32> suffix(parser.Remaining());
             if (   suffix == Brn("Visible")
                 || suffix == Brn("UnityGain")
                 || suffix == Brn("InputTransformer")
