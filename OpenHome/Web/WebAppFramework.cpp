@@ -589,6 +589,7 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, T
     , iServer(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
+    , iMutex("webapp")
 {
     std::vector<IFrameworkTab*> tabs;
     for (TUint i=0; i<iMaxLpSessions; i++) {
@@ -631,6 +632,7 @@ WebAppFramework::~WebAppFramework()
 
 void WebAppFramework::Start()
 {
+    AutoMutex amx(iMutex);
     ASSERT(iWebApps.size() > 0);
     ASSERT(!iStarted);
     iStarted = true;
@@ -641,16 +643,19 @@ void WebAppFramework::Start()
 
 TUint WebAppFramework::Port() const
 {
+    AutoMutex amx(iMutex);
     return iServer->Port();
 }
 
 TIpAddress WebAppFramework::Interface() const
 {
+    AutoMutex amx(iMutex);
     return iServer->Interface();
 }
 
 void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
 {
+    AutoMutex amx(iMutex);
     ASSERT(!iStarted);
 
     WebAppMap::const_iterator it = iWebApps.find(&aWebApp->ResourcePrefix());
@@ -669,10 +674,10 @@ void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
             addr = iCurrentAdapter->Address();
         }
     }
-    Endpoint ep(iServer->Port(), addr);
 
-    Bws<Uri::kMaxUriBytes> uri("http://");
-    ep.AppendEndpoint(uri);
+    Bws<Uri::kMaxUriBytes> uri;
+    uri.Append(":");
+    Ascii::AppendDec(uri, iServer->Port());
     uri.Append("/");
     uri.Append(aWebApp->ResourcePrefix());
     uri.Append("/");
@@ -685,6 +690,7 @@ void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
 
 IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
 {
+    AutoMutex amx(iMutex);
     ASSERT(iStarted);
     WebAppMap::const_iterator it = iWebApps.find(&aResourcePrefix);
     if (it == iWebApps.cend()) {
@@ -696,6 +702,7 @@ IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
 
 IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
 {
+    AutoMutex amx(iMutex);
     ASSERT(iStarted);
     Parser p(aResource);
     p.Next('/');    // skip leading '/'
@@ -739,6 +746,9 @@ void WebAppFramework::CurrentAdapterChanged()
         }
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
+
+    AutoMutex amx(iMutex);
+
     if (iCurrentAdapter != current) {
         if (iCurrentAdapter != nullptr) {
             iCurrentAdapter->RemoveRef(kAdapterCookie);
@@ -750,12 +760,17 @@ void WebAppFramework::CurrentAdapterChanged()
     }
 
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
-    //if (current != nullptr) {
+    if (current != nullptr) {
         delete iServer;
-        // FIXME - bind only to current adapter or all adapters?
+        iSessions.clear();
         iServer = new SocketTcpServer(iEnv, kName, iPort, current->Address());
         AddSessions();
-    //}
+        if (iStarted) {
+            for (HttpSession& s : iSessions) {
+                s.StartSession();
+            }
+        }
+    }
 }
 
 

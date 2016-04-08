@@ -404,6 +404,7 @@ private:
     std::vector<std::reference_wrapper<HttpSession>> iSessions;
     TBool iStarted;
     NetworkAdapter* iCurrentAdapter;
+    mutable Mutex iMutex;
 };
 
 /**
