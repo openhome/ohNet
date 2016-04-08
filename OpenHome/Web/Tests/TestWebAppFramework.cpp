@@ -2008,10 +2008,9 @@ void SuiteWebAppFramework::TestPresentationUrl()
     iFramework->Start();
 
     Bws<Uri::kMaxUriBytes> expectedUrl;
-    expectedUrl.Append("http://");
-    Endpoint ep(iFramework->Port(), iFramework->Interface());
-    ep.AppendEndpoint(expectedUrl);
-    expectedUrl.Append("/");
+    expectedUrl.Append(':');
+    Ascii::AppendDec(expectedUrl, iFramework->Port());
+    expectedUrl.Append('/');
     expectedUrl.Append(TestHelperWebApp::kPrefix);
     expectedUrl.Append("/index.html");
 
@@ -2054,7 +2053,11 @@ void SuiteWebAppFramework::TestGetStaticResourceBeforeStarted()
     // Don't start framework, and try request a static resource.
 
     TestHelperHttpReader httpReader(iEnv);
-    Uri uri(iPresentationUrl);  // Assume this is set when App is added (and not after Start() call.)
+    Bws<Uri::kMaxUriBytes> urlBuf("http://");
+    Endpoint ep(iFramework->Port(), iFramework->Interface());
+    ep.AppendAddress(urlBuf);
+    urlBuf.Append(iPresentationUrl);
+    Uri uri(urlBuf);  // Assume this is set when App is added (and not after Start() call.)
 
     // This does a get. Should get a 503 (Service Unavailable) if Start() has not been called.
     TUint code = httpReader.Connect(uri, TestHelperHttpReader::EGet);
