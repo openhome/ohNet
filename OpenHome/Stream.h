@@ -286,6 +286,7 @@ public:
     WriterRingBuffer(TUint aBytes);
     ~WriterRingBuffer();
     void Read(IWriter& aWriter) const;
+    Brn MakeContiguous();
 public: // IWriter
     void Write(TByte aValue);
     void Write(const Brx& aBuffer);

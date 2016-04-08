@@ -933,4 +933,14 @@ void WriterRingBuffer::Write(const Brx& aBuffer)
 void WriterRingBuffer::WriteFlush()
 {}
 
+Brn WriterRingBuffer::MakeContiguous()
+{
+    if (iWrapped) {
+        std::rotate(iData, iData + iCursor, iData+iBytes);
+        return Brn(iData, iBytes);
+    }
+    else {
+        return Brn(iData, iCursor);
+    }
+}
 
