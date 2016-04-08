@@ -30,8 +30,10 @@ TChar hexChar(TUint8 aNum)
 
 FunctorMsg Log::SwapOutput(FunctorMsg& aLogOutput)
 { // static
+    Lock();
     FunctorMsg old = gLogger->iLogOutput;
     gLogger->iLogOutput = aLogOutput;
+    Unlock();
     return old;
 }
 
@@ -40,15 +42,37 @@ inline FunctorMsg& Log::LogOutput()
     return gLogger? gLogger->iLogOutput : gDefaultPrinter;
 }
 
+inline void Log::Lock()
+{ // static
+    Log* self = gLogger;
+    if (self) {
+        self->iLockFunctor.Wait();
+    }
+}
+
+inline void Log::Unlock()
+{ // static
+    Log* self = gLogger;
+    if (self) {
+        self->iLockFunctor.Signal();
+    }
+}
+
 #define Min(a, b) ((a)<(b)? (a) : (b))
 TInt Log::Print(const Brx& aMessage)
 {
-    return Print(LogOutput(), aMessage);
+    Lock();
+    const TInt ret = Print(LogOutput(), aMessage);
+    Unlock();
+    return ret;
 }
 
 TInt Log::PrintHex(const Brx& aBrx)
 {
-    return PrintHex(LogOutput(), aBrx);
+    Lock();
+    const TInt ret = PrintHex(LogOutput(), aBrx);
+    Unlock();
+    return ret;
 }
 
 TInt Log::Print(const TChar* aFormat, ...)
@@ -62,7 +86,10 @@ TInt Log::Print(const TChar* aFormat, ...)
 
 TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
 {
-    return Print(LogOutput(), aFormat, aArgs);
+    Lock();
+    const TInt ret = Print(LogOutput(), aFormat, aArgs);
+    Unlock();
+    return ret;
 }
 
 TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
@@ -141,19 +168,14 @@ void Log::Flush()
 
 TInt Log::DoPrint(FunctorMsg& aOutput, const TByte* aMessage)
 { // static
-    Log* self = gLogger;
-    if (self) {
-        self->iLockFunctor.Wait();
-    }
+
     if (aOutput) {
         try {
             aOutput((const char*)aMessage);
         }
         catch (...) { }
     }
-    if (self) {
-        self->iLockFunctor.Signal();
-    }
+
     return (TUint)strlen((const char*)aMessage);
 }
 

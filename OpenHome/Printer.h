@@ -95,6 +95,8 @@ private:
     static TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
     Log(FunctorMsg& aLogOutput);
     static inline FunctorMsg& LogOutput();
+    static inline void Lock();
+    static inline void Unlock();
 private:
     FunctorMsg iLogOutput;
     Mutex iLockStdio;

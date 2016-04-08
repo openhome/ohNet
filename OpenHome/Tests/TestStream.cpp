@@ -267,7 +267,7 @@ void SuiteWriterRingBuffer::Test()
         writerRingBuffer.Write('d');
         TEST(Check(writerRingBuffer, 4, 'a', 'b', 'c', 'd'));
 
-        // check that 'a' falls of the back
+        // check that 'a' falls off the back
         writerRingBuffer.Write('e');
         TEST(Check(writerRingBuffer, 4, 'b', 'c', 'd', 'e'));
 
@@ -276,6 +276,32 @@ void SuiteWriterRingBuffer::Test()
 
         writerRingBuffer.Write(Brn("hijklmno"));
         TEST(Check(writerRingBuffer, 4, 'l', 'm', 'n', 'o'));
+    }
+
+    // Test WriterRingBuffer::MakeContiguous()
+
+    {
+        WriterRingBuffer writerRingBuffer(4);
+        Brn buffer = writerRingBuffer.MakeContiguous();
+        TEST(buffer.Bytes() == 0);
+
+        writerRingBuffer.Write('a');
+        TEST(Check(writerRingBuffer, 1, 'a'));
+
+        buffer = writerRingBuffer.MakeContiguous();
+        TEST(buffer.Bytes() == 1);
+        TEST(buffer[0] == 'a');
+    }
+
+    {
+        WriterRingBuffer writerRingBuffer(4);
+
+        writerRingBuffer.Write(Brn("123456"));
+        TEST(Check(writerRingBuffer, 4, '3', '4', '5', '6'));
+
+        Brn buffer = writerRingBuffer.MakeContiguous();
+        TEST(buffer.Bytes() == 4);
+        TEST(buffer == Brn("3456"));
     }
 }
 
