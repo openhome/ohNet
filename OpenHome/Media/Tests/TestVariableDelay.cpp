@@ -117,6 +117,7 @@ private:
     TUint64 iTrackOffset;
     TBool iNextModeSupportsLatency;
     TUint iNextDelayAbsoluteJiffies;
+    TUint iLastPulledDelay;
     TUint iStreamId;
     TUint iNextStreamId;
 };
@@ -170,6 +171,7 @@ void SuiteVariableDelay::Setup()
     iTrackOffset = 0;
     iNextModeSupportsLatency = true;
     iNextDelayAbsoluteJiffies = 0;
+    iLastPulledDelay = 0;
     iStreamId = UINT_MAX;
     iNextStreamId = 0;
 }
@@ -286,6 +288,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgDrain* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
+    iLastPulledDelay = aMsg->DelayJiffies();
     return aMsg;
 }
 
@@ -752,27 +755,12 @@ void SuiteVariableDelay::TestDelayAppliedAfterDrain()
 void SuiteVariableDelay::TestDelayShorterThanDownstream()
 {
     PullNext(EMsgMode);
-    static const TUint kDelay = 40 * Jiffies::kPerMs;
-    iNextDelayAbsoluteJiffies = kDelay;
-    PullNext(EMsgDelay);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    iNextGeneratedMsg = EMsgAudioPcm;
-    do {
-        PullNext();
-    } while (iLastMsg == EMsgSilence);
-    PullNext(EMsgAudioPcm);
-
-    iNextDelayAbsoluteJiffies = kDownstreamDelay;
+    static const TUint kDelay = kDownstreamDelay - (10 * Jiffies::kPerMs);
+    iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
-    do {
-        PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingDown);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampedDown);
-
-    PullNext(EMsgAudioPcm);
-    TEST(iTrackOffset - iJiffiesAudioPcm == kDelay - kDownstreamDelay);
+    TEST(iLastPulledDelay == kDelay);
 }
 
 

@@ -262,7 +262,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
     aMsg->RemoveRef();
-    auto msg = iMsgFactory.CreateMsgDelay(iDownstreamDelay);
+    auto msg = iMsgFactory.CreateMsgDelay(std::min(iDownstreamDelay, delayJiffies));
     LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
         iId, delayJiffies, delayJiffies / Jiffies::kPerMs,
         iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
