@@ -1673,6 +1673,11 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     return iRamp.End();
 }
 
+void MsgAudio::ClearRamp()
+{
+    iRamp.Reset();
+}
+
 void MsgAudio::SetMuted()
 {
     iRamp.SetMuted();

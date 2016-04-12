@@ -7,6 +7,8 @@
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h> // FIXME - for IStarvationMonitorObserver
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
 #include <OpenHome/Media/Debug.h>
+//#include <OpenHome/Private/Timer.h>
+//#include <OpenHome/Net/Private/Globals.h>
 
 #include <algorithm>
 #include <atomic>
@@ -56,12 +58,14 @@ MsgPlayable* FlywheelPlayableCreator::CreatePlayable(Msg* aAudio)
 
 Msg* FlywheelPlayableCreator::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    aMsg->ClearRamp();
     iPlayable = aMsg->CreatePlayable();
     return nullptr;
 }
 
 Msg* FlywheelPlayableCreator::ProcessMsg(MsgSilence* aMsg)
 {
+    aMsg->ClearRamp();
     iPlayable = aMsg->CreatePlayable();
     return nullptr;
 }
@@ -112,26 +116,26 @@ void FlywheelInput::BeginBlock()
 
 inline void FlywheelInput::AppendSubsample8(TByte*& aDest, const TByte*& aSrc)
 {
-    *aDest++ = 0;
-    *aDest++ = 0;
-    *aDest++ = 0;
     *aDest++ = *aSrc++;
+    *aDest++ = 0;
+    *aDest++ = 0;
+    *aDest++ = 0;
 }
 
 inline void FlywheelInput::AppendSubsample16(TByte*& aDest, const TByte*& aSrc)
 {
-    *aDest++ = 0;
-    *aDest++ = 0;
     *aDest++ = *aSrc++;
     *aDest++ = *aSrc++;
+    *aDest++ = 0;
+    *aDest++ = 0;
 }
 
 inline void FlywheelInput::AppendSubsample24(TByte*& aDest, const TByte*& aSrc)
 {
+    *aDest++ = *aSrc++;
+    *aDest++ = *aSrc++;
+    *aDest++ = *aSrc++;
     *aDest++ = 0;
-    *aDest++ = *aSrc++;
-    *aDest++ = *aSrc++;
-    *aDest++ = *aSrc++;
 }
 
 inline void FlywheelInput::AppendSubsample32(TByte*& aDest, const TByte*& aSrc)
@@ -304,7 +308,7 @@ void RampGenerator::FlywheelRamperThread()
 
 void RampGenerator::BeginBlock()
 {
-    iFlywheelAudio->Replace(Brx::Empty());
+    iFlywheelAudio->SetBytes(0);
 }
 
 void RampGenerator::ProcessFragment8(const Brx& /*aData*/, TUint /*aNumChannels*/)
@@ -325,9 +329,25 @@ void RampGenerator::ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels
     ASSERTS();
 }
 
-void RampGenerator::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
+void RampGenerator::ProcessFragment32(const Brx& aData, TUint aNumChannels)
 {
     iFlywheelAudio->Append(aData);
+    //Log::Print("++ RampGenerator::ProcessFragment32 numSamples=%u\n", aData.Bytes() / 8);
+#if 0
+    if (aNumChannels == 2) {
+        const TByte* p = aData.Ptr();
+        static const TUint stride = 8;
+        const TUint samples = aData.Bytes() / stride;
+        ASSERT(aData.Bytes() % stride == 0);
+        for (TUint i=0; i<samples; i++) {
+            TByte b[stride];
+            for (TUint j=0; j<stride; j++) {
+                b[j] = *p++;
+            }
+            Log::Print("  %02x%02x%02x%02x  %02x%02x%02x%02x\n", b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
+        }
+    }
+#endif
 }
 
 void RampGenerator::ProcessSample8(const TByte* /*aSample*/, TUint /*aNumChannels*/)
@@ -357,9 +377,14 @@ void RampGenerator::ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChanne
 void RampGenerator::EndBlock()
 {
     auto audio = iMsgFactory.CreateMsgAudioPcm(*iFlywheelAudio, iNumChannels, iSampleRate, 32, AudioDataEndian::Big, MsgAudioPcm::kTrackOffsetInvalid);
-    MsgAudio* split;
-    iCurrentRampValue = audio->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
-    ASSERT(split == nullptr);
+    if (iCurrentRampValue == Ramp::kMin) {
+        audio->SetMuted();
+    }
+    else {
+        MsgAudio* split;
+        iCurrentRampValue = audio->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
+        ASSERT(split == nullptr);
+    }
     iQueue.Enqueue(audio);
     iSem.Signal();
 }
@@ -445,6 +470,7 @@ void StarvationRamper::PullerThread()
 
 void StarvationRamper::StartFlywheelRamp()
 {
+//    const TUint startTime = Time::Now(*gEnv);
     if (iRecentAudioJiffies > kRampDownJiffies) {
         TUint excess = iRecentAudioJiffies - kRampDownJiffies;
         while (excess > 0) {
@@ -471,15 +497,18 @@ void StarvationRamper::StartFlywheelRamp()
     }
 
     const Brx& recentSamples = iFlywheelInput.Prepare(iRecentAudio, iRecentAudioJiffies, iSampleRate, iBitDepth, iNumChannels);
+//    const TUint prepEnd = Time::Now(*gEnv);
     iRecentAudioJiffies = 0;
 
     TUint rampStart = iCurrentRampValue;
-    if (rampStart == Ramp::kMax) {
+    /*if (rampStart == Ramp::kMax) {
         rampStart = iLastPulledAudioRampValue;
-    }
+    }*/
     LOG(kPipeline, "StarvationRamper::StartFlywheelRamp rampStart=%08x\n", rampStart);
     iRampGenerator->Start(recentSamples, iSampleRate, iNumChannels, rampStart);
+//    const TUint flywheelEnd = Time::Now(*gEnv);
     iState = State::RampingDown;
+//    Log::Print("StarvationRamper::StartFlywheelRamp rampStart=%08x, prepTime=%ums, flywheelTime=%ums\n", rampStart, prepEnd - startTime, flywheelEnd - prepEnd);
 }
 
 void StarvationRamper::NewStream()
@@ -488,7 +517,6 @@ void StarvationRamper::NewStream()
     iRecentAudio.Clear();
     iRecentAudioJiffies = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iCurrentRampValue = Ramp::kMax;
     iLastPulledAudioRampValue = Ramp::kMax;
 }
 
@@ -630,6 +658,12 @@ Msg* StarvationRamper::ProcessMsgOut(MsgHalt* aMsg)
     // ...on entry to avoid us starting a ramp down before outputting a Halt
     // ...on exit in case Halted state from entry was reset by outputting Audio
     iState = State::Halted;
+    return aMsg;
+}
+
+Msg* StarvationRamper::ProcessMsgOut(MsgDecodedStream* aMsg)
+{
+    iCurrentRampValue = Ramp::kMax;
     return aMsg;
 }
 
