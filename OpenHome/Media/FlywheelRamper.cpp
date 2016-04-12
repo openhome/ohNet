@@ -115,7 +115,7 @@ void FlywheelRamperManager::RenderChannels(TUint aSampleCount, TUint aDecFactor,
             outputBytes += 4;
         }
 
-        if ( (sampleHoldCount++) >= aDecFactor)
+        if (++sampleHoldCount == aDecFactor)
         {
             sampleHoldCount = 0;
         }
