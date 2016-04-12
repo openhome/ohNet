@@ -102,14 +102,14 @@ void FlywheelRamperManager::RenderChannels(TUint aSampleCount, TUint aDecFactor,
                 sample = prevSample[k];
             }
 
-            // write out in big endian format
-            *(ptr+3) = (TByte) sample;
+            // write out in big endian format, discarding least significant byte
             sample >>= 8;
-            *(ptr+2) = (TByte) sample;
+            *(ptr+3) = (TByte)sample;
             sample >>= 8;
-            *(ptr+1) = (TByte) sample;
+            *(ptr+2) = (TByte)sample;
             sample >>= 8;
-            *(ptr) = (TByte) sample;
+            *(ptr+1) = (TByte)sample;
+            *(ptr) = 0;
 
             ptr += 4;
             outputBytes += 4;
