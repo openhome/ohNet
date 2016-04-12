@@ -329,7 +329,7 @@ void RampGenerator::ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels
     ASSERTS();
 }
 
-void RampGenerator::ProcessFragment32(const Brx& aData, TUint aNumChannels)
+void RampGenerator::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
 {
     iFlywheelAudio->Append(aData);
     //Log::Print("++ RampGenerator::ProcessFragment32 numSamples=%u\n", aData.Bytes() / 8);
