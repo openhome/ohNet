@@ -81,11 +81,11 @@ void CodecOhm::Process()
             if (msg->RxTimestamped() && msg->Timestamped()) {
                 TUint rxTstamp = (iTsMapper != nullptr) ? iTsMapper->ToOhmTimestamp(msg->RxTimestamp(), sampleRate) : msg->RxTimestamp();
                 iTrackOffset += iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(),
-                                                            EMediaDataEndianBig, iTrackOffset, rxTstamp, msg->NetworkTimestamp());
+                                                            AudioDataEndian::Big, iTrackOffset, rxTstamp, msg->NetworkTimestamp());
             }
             else {
                 iTrackOffset += iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(),
-                                                            EMediaDataEndianBig, iTrackOffset);
+                                                            AudioDataEndian::Big, iTrackOffset);
             }
         }
     }

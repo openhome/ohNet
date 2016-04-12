@@ -65,7 +65,7 @@ void CodecAifc::ProcessCommChunkExtra()
     //Apple's proprietary aifc compression format where the 'compression' is Little endian
     if ((strncmp((const TChar*)commData+18, "sowt", 4) == 0)
             || (strncmp((const TChar*)commData+18, "SOWT", 4) == 0)) {
-        iEndian = EMediaDataEndianLittle;
+        iEndian = AudioDataEndian::Little;
     }
     else if (strncmp((const TChar*)commData+18, "NONE", 4) != 0) {
         THROW(CodecStreamFeatureUnsupported);   // unsupported compression

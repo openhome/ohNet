@@ -98,11 +98,11 @@ private:
     TUint iRefCount;
 };
 
-enum EMediaDataEndian
+enum class AudioDataEndian
 {
-    EMediaDataEndianInvalid
-    , EMediaDataEndianLittle
-    , EMediaDataEndianBig
+    Invalid,
+    Little,
+    Big
 };
 
 class AudioData : public Allocated
@@ -138,7 +138,7 @@ public:
     void Aggregate(DecodedAudio& aDecodedAudio);
 private:
     DecodedAudio(AllocatorBase& aAllocator);
-    void Construct(const Brx& aData, TUint aBitDepth, EMediaDataEndian aEndian);
+    void Construct(const Brx& aData, TUint aBitDepth, AudioDataEndian aEndian);
     static void CopyToBigEndian16(const Brx& aData, TByte* aDest);
     static void CopyToBigEndian24(const Brx& aData, TByte* aDest);
 };
@@ -400,20 +400,20 @@ class PcmStreamInfo
 {
 public:
     PcmStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample = 0);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample = 0);
     void SetAnalogBypass();
     void Clear();
     TUint BitDepth() const;
     TUint SampleRate() const;
     TUint NumChannels() const;
-    EMediaDataEndian Endian() const;
+    AudioDataEndian Endian() const;
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
 private:
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
-    EMediaDataEndian iEndian;
+    AudioDataEndian iEndian;
     TUint64 iStartSample;
     TBool iAnalogBypass;
 };
@@ -1525,14 +1525,14 @@ public:
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler);
     MsgDecodedStream* CreateMsgDecodedStream(MsgDecodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgBitRate* CreateMsgBitRate(TUint aBitRate);
-    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
-    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
+    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset);
+    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     MsgAudioPcm* CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset); // aAudio must contain big endian pcm data
     MsgSilence* CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels);
     MsgQuit* CreateMsgQuit();
 private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);
-    DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aBitDepth, EMediaDataEndian aEndian);
+    DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aBitDepth, AudioDataEndian aEndian);
     MsgAudioPcm* CreateMsgAudioPcm(DecodedAudio* aAudioData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset);
 private:
     Allocator<MsgMode> iAllocatorMsgMode;

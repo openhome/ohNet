@@ -263,12 +263,12 @@ void DecodedAudio::Aggregate(DecodedAudio& aDecodedAudio)
     iData.Append(aDecodedAudio.iData);
 }
 
-void DecodedAudio::Construct(const Brx& aData, TUint aBitDepth, EMediaDataEndian aEndian)
+void DecodedAudio::Construct(const Brx& aData, TUint aBitDepth, AudioDataEndian aEndian)
 {
     ASSERT((aBitDepth & 7) == 0);
     ASSERT(aData.Bytes() % (aBitDepth/8) == 0);
     TByte* ptr = const_cast<TByte*>(iData.Ptr());
-    if (aEndian == EMediaDataEndianBig || aBitDepth == 8) {
+    if (aEndian == AudioDataEndian::Big || aBitDepth == 8) {
         (void)memcpy(ptr, aData.Ptr(), aData.Bytes());
     }
     else if (aBitDepth == 16) {
@@ -1043,7 +1043,7 @@ PcmStreamInfo::PcmStreamInfo()
     Clear();
 }
 
-void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample)
+void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample)
 {
     iBitDepth = aBitDepth;
     iSampleRate = aSampleRate;
@@ -1060,7 +1060,7 @@ void PcmStreamInfo::SetAnalogBypass()
 void PcmStreamInfo::Clear()
 {
     iBitDepth = iSampleRate = iNumChannels = UINT_MAX;
-    iEndian = EMediaDataEndianInvalid;
+    iEndian = AudioDataEndian::Invalid;
     iAnalogBypass = false;
 }
 
@@ -1079,7 +1079,7 @@ TUint PcmStreamInfo::NumChannels() const
     return iNumChannels;
 }
 
-EMediaDataEndian PcmStreamInfo::Endian() const
+AudioDataEndian PcmStreamInfo::Endian() const
 {
     return iEndian;
 }
@@ -3089,13 +3089,13 @@ MsgBitRate* MsgFactory::CreateMsgBitRate(TUint aBitRate)
     return msg;
 }
 
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset)
 {
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aBitDepth, aEndian);
     return CreateMsgAudioPcm(decodedAudio, aChannels, aSampleRate, aBitDepth, aTrackOffset);
 }
 
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp)
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
     MsgAudioPcm* msg = CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
     msg->SetTimestamps(aRxTimestamp, aNetworkTimestamp);
@@ -3129,7 +3129,7 @@ EncodedAudio* MsgFactory::CreateEncodedAudio(const Brx& aData)
     return encodedAudio;
 }
 
-DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aBitDepth, EMediaDataEndian aEndian)
+DecodedAudio* MsgFactory::CreateDecodedAudio(const Brx& aData, TUint aBitDepth, AudioDataEndian aEndian)
 {
     DecodedAudio* decodedAudio = static_cast<DecodedAudio*>(iAllocatorAudioData.Allocate());
     decodedAudio->Construct(aData, aBitDepth, aEndian);

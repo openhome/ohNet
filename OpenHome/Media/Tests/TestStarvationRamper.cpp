@@ -425,7 +425,7 @@ Msg* SuiteStarvationRamper::CreateDecodedStream()
 
 Msg* SuiteStarvationRamper::CreateAudio()
 {
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iPcmData, kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iPcmData, kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
 }

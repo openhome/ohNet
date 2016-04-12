@@ -465,7 +465,7 @@ void CodecVorbis::Process()
                 // buffered PCM from previous stream.
                 if (iOutBuf.Bytes() > 0) {
                     iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                        kBitDepth, EMediaDataEndianBig, iTrackOffset);
+                        kBitDepth, AudioDataEndian::Big, iTrackOffset);
                     iOutBuf.SetBytes(0);
                     LOG(kCodec, "CodecVorbis::Process output (new bitstream detected) - total samples = %llu\n", iTotalSamplesOutput);
                 }
@@ -509,7 +509,7 @@ void CodecVorbis::Process()
             LOG(kCodec, "CodecVorbis::Process read - bytes %d, iPrevBytes %d\n", bytes, iPrevBytes);
             if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)((kBitDepth/8) * iChannels)) {
                 iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                    kBitDepth, EMediaDataEndianBig, iTrackOffset);
+                    kBitDepth, AudioDataEndian::Big, iTrackOffset);
                 iOutBuf.SetBytes(0);
                 LOG(kCodec, "CodecVorbis::Process output - total samples = %llu\n", iTotalSamplesOutput);
             }
@@ -533,7 +533,7 @@ void CodecVorbis::FlushOutput()
     if (iStreamEnded || iNewStreamStarted) {
         if (iOutBuf.Bytes() > 0) {
             iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                kBitDepth, EMediaDataEndianBig, iTrackOffset);
+                kBitDepth, AudioDataEndian::Big, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
         if (iNewStreamStarted) {

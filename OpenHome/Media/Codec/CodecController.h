@@ -143,7 +143,7 @@ public:
      *
      * @return     Number of jiffies of audio contained in aData.
      */
-    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) = 0;
+    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset) = 0;
     /**
      * Add a block of decoded (PCM) audio to the pipeline.
      *
@@ -162,7 +162,7 @@ public:
      *
      * @return     Number of jiffies of audio contained in aData.
      */
-    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
+    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
     /**
      * Add a block of decoded (PCM) audio to the pipeline.
      *
@@ -226,18 +226,18 @@ public:
     TUint BitDepth() const;
     TUint SampleRate() const;
     TUint NumChannels() const;
-    EMediaDataEndian Endian() const;
+    AudioDataEndian Endian() const;
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
 private:
     EncodedStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass);
 private:
     TBool iRawPcm;
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
-    EMediaDataEndian iEndian;
+    AudioDataEndian iEndian;
     TUint64 iStartSample;
     TBool iAnalogBypass;
 };
@@ -357,8 +357,8 @@ private: // ICodecController
     TUint64 StreamPos() const override;
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aAnalogBypass) override;
     void OutputDelay(TUint aJiffies) override;
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) override;
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset) override;
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
     TUint64 OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset) override;
     void OutputBitRate(TUint aBitRate) override;
     void OutputWait() override;

@@ -193,7 +193,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
     case EMsgAudioPcm:
     {
         Brn audioBuf(iAudioData, sizeof(iAudioData));
-        MsgAudioPcm* msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffsetTx);
+        MsgAudioPcm* msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffsetTx);
         iTrackOffsetTx += msgPcm->Jiffies();
         msg = msgPcm;
     }

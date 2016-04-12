@@ -42,7 +42,7 @@ TUint EncodedStreamInfo::NumChannels() const
     return iNumChannels;
 }
 
-EMediaDataEndian EncodedStreamInfo::Endian() const
+AudioDataEndian EncodedStreamInfo::Endian() const
 {
     return iEndian;
 }
@@ -62,13 +62,13 @@ EncodedStreamInfo::EncodedStreamInfo()
     , iBitDepth(UINT_MAX)
     , iSampleRate(UINT_MAX)
     , iNumChannels(UINT_MAX)
-    , iEndian(EMediaDataEndianInvalid)
+    , iEndian(AudioDataEndian::Invalid)
     , iStartSample(0)
     , iAnalogBypass(false)
 {
 }
 
-void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass)
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
@@ -624,7 +624,7 @@ void CodecController::OutputDelay(TUint aJiffies)
     iLock.Signal();
 }
 
-TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
+TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset)
 {
     ASSERT(aChannels == iChannels);
     ASSERT(aSampleRate == iSampleRate);
@@ -633,7 +633,7 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     return DoOutputAudioPcm(audio);
 }
 
-TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset,
+TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset,
                                         TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
     ASSERT(aChannels == iChannels);

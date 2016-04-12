@@ -893,7 +893,7 @@ void CodecMp3::Process()
         // any data not output now will be picked up the next time round
         if (iOutput.MaxBytes() - iOutput.Bytes() < (kBitDepth/8) * channels) {
             iTrackOffset += iController->OutputAudioPcm(iOutput, channels, iHeader.SampleRate(),
-                                                        kBitDepth, EMediaDataEndianBig, iTrackOffset);
+                                                        kBitDepth, AudioDataEndian::Big, iTrackOffset);
             iOutput.SetBytes(0);
         }
         iSamplesWrittenTotal += samples;
@@ -905,7 +905,7 @@ void CodecMp3::Process()
     if ((iMadStream.md_len == 0) && (iStreamEnded || newStreamStarted)) {
         if (iOutput.Bytes() > 0) { // only output if there is audio remaining
             iController->OutputAudioPcm(iOutput, channels, iHeader.SampleRate(),
-                                        kBitDepth, EMediaDataEndianBig, iTrackOffset);
+                                        kBitDepth, AudioDataEndian::Big, iTrackOffset);
         }
         if (newStreamStarted) {
             THROW(CodecStreamStart);

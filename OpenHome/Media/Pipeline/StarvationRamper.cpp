@@ -356,7 +356,7 @@ void RampGenerator::ProcessSample32(const TByte* /*aSample*/, TUint /*aNumChanne
 
 void RampGenerator::EndBlock()
 {
-    auto audio = iMsgFactory.CreateMsgAudioPcm(*iFlywheelAudio, iNumChannels, iSampleRate, 32, EMediaDataEndianBig, MsgAudioPcm::kTrackOffsetInvalid);
+    auto audio = iMsgFactory.CreateMsgAudioPcm(*iFlywheelAudio, iNumChannels, iSampleRate, 32, AudioDataEndian::Big, MsgAudioPcm::kTrackOffsetInvalid);
     MsgAudio* split;
     iCurrentRampValue = audio->SetRamp(iCurrentRampValue, iRemainingRampSize, Ramp::EDown, split);
     ASSERT(split == nullptr);

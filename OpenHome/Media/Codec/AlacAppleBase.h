@@ -29,7 +29,7 @@ protected:
     void Initialise();
     void Decode();
 private:
-    EMediaDataEndian Endianness() const;
+    AudioDataEndian Endianness() const;
 protected:
     /*
      * ALACDecoder::Init() allocates memory that is only freed upon deleting

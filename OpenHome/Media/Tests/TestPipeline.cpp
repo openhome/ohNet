@@ -157,7 +157,7 @@ private:
 class DummyCodec : public CodecBase
 {
 public:
-    DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
+    DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian);
 private: // from CodecBase
     void StreamInitialise();
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
@@ -168,7 +168,7 @@ private:
     TUint iChannels;
     TUint iSampleRate;
     TUint iBitDepth;
-    EMediaDataEndian iEndian;
+    AudioDataEndian iEndian;
     TUint64 iTrackOffsetJiffies;
     TBool iSentDecodedInfo;
 };
@@ -306,7 +306,7 @@ SuitePipeline::SuitePipeline()
     iPipeline->SetAnimator(*this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
-    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle));
+    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little));
     iPipeline->Start(*this);
     iPipelineEnd = iAggregator;
 }
@@ -882,7 +882,7 @@ void SuitePipeline::ApplyVolumeMultiplier(TUint /*aValue*/)
 
 // DummyCodec
 
-DummyCodec::DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
+DummyCodec::DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian)
     : CodecBase("Dummy")
     , iChannels(aChannels)
     , iSampleRate(aSampleRate)

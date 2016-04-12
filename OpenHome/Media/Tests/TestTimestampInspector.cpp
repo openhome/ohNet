@@ -229,10 +229,10 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         Brn audioBuf(iAudioData, sizeof(iAudioData));
         MsgAudioPcm* msgPcm;
         if (!iTimestampNextAudioMsg) {
-            msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffsetTx);
+            msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffsetTx);
         }
         else {
-            msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffsetTx, iNextRxTimestamp, iNextNetworkTimestamp);
+            msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffsetTx, iNextRxTimestamp, iNextNetworkTimestamp);
             iNextRxTimestamp += kTimestampIncrement;
             iNextNetworkTimestamp += kTimestampIncrement;
         }

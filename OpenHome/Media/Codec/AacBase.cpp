@@ -178,7 +178,7 @@ void CodecAacBase::FlushOutput()
 {    
     if ((iStreamEnded || iNewStreamStarted) && iOutBuf.Bytes() > 0) {
         iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iOutputSampleRate,
-            iBitDepth, EMediaDataEndianBig, iTrackOffset);
+            iBitDepth, AudioDataEndian::Big, iTrackOffset);
         iOutBuf.SetBytes(0);
     }
     //LOG(kCodec, "CodecAac::Process complete - total samples = %lld\n", iTotalSamplesOutput);
@@ -305,7 +305,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
         if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iChannels) {
             iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iOutputSampleRate,
-                iBitDepth, EMediaDataEndianBig, iTrackOffset);
+                iBitDepth, AudioDataEndian::Big, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
         samplesToWrite -= samples;
