@@ -64,7 +64,7 @@ private: // from IOhmMsgProcessor
     void Process(OhmMsgTrack& aMsg) override;
     void Process(OhmMsgMetatext& aMsg) override;
 protected:
-    static const TUint kMaxFrameBytes = 16*1024;
+    static const TUint kMaxFrameBytes = 6*1024;
     static const TUint kTimerListenTimeoutMs = 10000;
 protected:
     Environment& iEnv;

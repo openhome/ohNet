@@ -1072,7 +1072,7 @@ void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& a
     // first msg, indicating start of new track
     iExpectedMsgType = eMsgTrack;
     iExpectedToneParams = aToneParams;
-    iExpectedJiffies = aToneParams.DurationSeconds() * aToneParams.SampleRate() * Jiffies::JiffiesPerSample(aToneParams.SampleRate());
+    iExpectedJiffies = aToneParams.DurationSeconds() * aToneParams.SampleRate() * Jiffies::PerSample(aToneParams.SampleRate());
     Bws<128> toneUrl;
     toneUrl.AppendPrintf("tone://%s.wav?bitdepth=%u&samplerate=%u&pitch=%u&channels=%u&duration=%u", aWaveform, aToneParams.BitsPerSample(), aToneParams.SampleRate(), aToneParams.Pitch(), aToneParams.NumChannels(), aToneParams.DurationSeconds());
     Track& trk = *iTrackFactory->CreateTrack(toneUrl, Brx::Empty());

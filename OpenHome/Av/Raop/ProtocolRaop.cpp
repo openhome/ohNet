@@ -635,7 +635,7 @@ void ProtocolRaop::InputChanged()
 
 TUint ProtocolRaop::Delay(TUint aSamples)
 {
-    static const TUint kJiffiesPerSample = Jiffies::JiffiesPerSample(kSampleRate);
+    static const TUint kJiffiesPerSample = Jiffies::PerSample(kSampleRate);
     return kJiffiesPerSample*aSamples;
 }
 

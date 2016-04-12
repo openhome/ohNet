@@ -344,7 +344,7 @@ Msg* DummyDriver::ProcessMsg(MsgWait* /*aMsg*/)
 Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERT(aMsg->StreamInfo().BitDepth() == 16); // ProcessMsg for MsgPlayable will need to change if this isn't true
-    iJiffiesPerSample = Jiffies::JiffiesPerSample(aMsg->StreamInfo().SampleRate());
+    iJiffiesPerSample = Jiffies::PerSample(aMsg->StreamInfo().SampleRate());
     iBitDepth = aMsg->StreamInfo().BitDepth();
     iNumChannels = aMsg->StreamInfo().NumChannels();
     return aMsg;

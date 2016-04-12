@@ -497,7 +497,7 @@ Msg* SuiteTimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastMsg = EMsgDecodedStream;
     const DecodedStreamInfo& s = aMsg->StreamInfo();
-    iTrackOffsetRx = s.SampleStart() * Jiffies::JiffiesPerSample(s.SampleRate());
+    iTrackOffsetRx = s.SampleStart() * Jiffies::PerSample(s.SampleRate());
     return aMsg;
 }
 

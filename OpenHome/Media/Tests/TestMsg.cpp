@@ -801,7 +801,7 @@ void SuiteMsgAudio::Test()
     // Aggregate 2 msgs. Check their combined lengths are reported.
     static const TUint dataSizeHalfDecodedAudio = DecodedAudio::kMaxBytes/2;
     static const TUint secondOffsetSamples = dataSizeHalfDecodedAudio / 2; // iBitDepth = 8 bits = 1 byte
-    static const TUint secondsOffsetJiffies = Jiffies::JiffiesPerSample(44100) * secondOffsetSamples;
+    static const TUint secondsOffsetJiffies = Jiffies::PerSample(44100) * secondOffsetSamples;
     Bwh data1(dataSizeHalfDecodedAudio, dataSizeHalfDecodedAudio);
     (void)memset((void*)data1.Ptr(), 0x01, data1.Bytes());
     Bwh data2(dataSizeHalfDecodedAudio, dataSizeHalfDecodedAudio);

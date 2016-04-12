@@ -169,7 +169,7 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
                 iLockedToStream = true;
                 ASSERT(iDecodedStream != nullptr);
                 const DecodedStreamInfo& s = iDecodedStream->StreamInfo();
-                const TUint64 discardedSamples = iDiscardedJiffies / Jiffies::JiffiesPerSample(s.SampleRate());
+                const TUint64 discardedSamples = iDiscardedJiffies / Jiffies::PerSample(s.SampleRate());
                 const TUint64 sampleStart = s.SampleStart() + discardedSamples;
                 Msg* msg = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
                                                               s.NumChannels(), s.CodecName(), s.TrackLength(), sampleStart,

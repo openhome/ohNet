@@ -780,7 +780,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
     // Inject a track to simulate real-world condition where out-of-band track notification is reach SpotifyReporter before MsgMode at Spotify initialisation.
     static const Brn kSpotifyTrackUri("spotify://");
     const TUint kDurationMs = 1234;
-    const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    const TUint64 kDurationJiffies = (static_cast<TUint64>(kDurationMs*iSampleRate)*Jiffies::PerSample(iSampleRate))/1000;
     const TUint kOffsetMs = 0;
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDurationMs);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
@@ -838,7 +838,7 @@ void SuiteSpotifyReporter::TestModeSpotifyTrackInjected()
 
     // Inject a MsgTrack.
     const TUint kDuration2 = 5678;
-    const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    const TUint64 kDurationJiffies2 = (static_cast<TUint64>(kDuration2*iSampleRate)*Jiffies::PerSample(iSampleRate))/1000;
     metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDuration2);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);
 
@@ -872,7 +872,7 @@ void SuiteSpotifyReporter::TestModeSpotifySeek()
     // First part of this test is already tested by TestModeSpotifyTrackInjected().
     static const Brn kSpotifyTrackUri("spotify://");
     const TUint kDuration = 1234;
-    const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::JiffiesPerSample(iSampleRate))/1000;
+    const TUint kDurationJiffies = (static_cast<TUint64>(kDuration*iSampleRate)*Jiffies::PerSample(iSampleRate))/1000;
     const TUint kOffsetMs = 0;
     MockSpotifyMetadata* metadata = iMetadataAllocator->Allocate(Brn(kTrackTitle), Brn(kTrackArtist), Brn(kTrackAlbum), Brn(kTrackAlbumArt), kDuration);
     iReporter->TrackChanged(kSpotifyTrackUri, metadata, kOffsetMs);

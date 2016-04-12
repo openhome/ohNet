@@ -98,29 +98,49 @@ private:
     TUint iRefCount;
 };
 
-class EncodedAudio : public Allocated
-{
-    friend class MsgFactory;
-public:
-    static const TUint kMaxBytes = 9 * 1024; // 9k buffer required for Songcast; other codecs are fine with 6k
-public:
-    EncodedAudio(AllocatorBase& aAllocator);
-    const TByte* Ptr(TUint aBytes) const;
-    TUint Bytes() const;
-    TUint Append(const Brx& aData);
-private:
-    void Construct(const Brx& aData);
-private: // from Allocated
-    void Clear() override;
-private:
-    Bws<kMaxBytes> iData;
-};
-
 enum EMediaDataEndian
 {
     EMediaDataEndianInvalid
-   ,EMediaDataEndianLittle
-   ,EMediaDataEndianBig
+    , EMediaDataEndianLittle
+    , EMediaDataEndianBig
+};
+
+class AudioData : public Allocated
+{
+public: 
+    static const TUint kMaxBytes = 6 * 1024;
+public:
+    AudioData(AllocatorBase& aAllocator);
+    const TByte* Ptr(TUint aOffsetBytes) const;
+    TUint Bytes() const;
+private: // from Allocated
+    void Clear() override;
+protected:
+    Bws<kMaxBytes> iData;
+};
+
+class EncodedAudio : public AudioData
+{
+    friend class MsgFactory;
+public:
+    TUint Append(const Brx& aData); // returns number of bytes appended
+private:
+    EncodedAudio(AllocatorBase& aAllocator);
+    void Construct(const Brx& aData);
+};
+
+class DecodedAudio : public AudioData
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxNumChannels = 8;
+public:
+    void Aggregate(DecodedAudio& aDecodedAudio);
+private:
+    DecodedAudio(AllocatorBase& aAllocator);
+    void Construct(const Brx& aData, TUint aBitDepth, EMediaDataEndian aEndian);
+    static void CopyToBigEndian16(const Brx& aData, TByte* aDest);
+    static void CopyToBigEndian24(const Brx& aData, TByte* aDest);
 };
 
 /**
@@ -135,8 +155,8 @@ public:
     static const TUint kPerMs = kPerSecond / 1000;
 public:
     static TBool IsValidSampleRate(TUint aSampleRate);
-    static TUint JiffiesPerSample(TUint aSampleRate);
-    static TUint BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
+    static TUint PerSample(TUint aSampleRate);
+    static TUint ToBytes(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
     static void RoundDown(TUint& aJiffies, TUint aSampleRate);
     static void RoundUp(TUint& aJiffies, TUint aSampleRate);
     static TUint ToSongcastTime(TUint aJiffies, TUint aSampleRate);
@@ -164,37 +184,6 @@ private:
 
     static const TUint kSongcastTicksPerSec44k = 44100 * 256;
     static const TUint kSongcastTicksPerSec48k = 48000 * 256;
-};
-
-class DecodedAudio : public Allocated
-{
-    friend class MsgFactory;
-public:
-    static const TUint kMaxBytes = 6 * 1024;
-    static const TUint kMaxNumChannels = 8;
-public:
-    DecodedAudio(AllocatorBase& aAllocator);
-    const TByte* PtrOffsetBytes(TUint aBytes) const;
-    TUint Bytes() const;
-    TUint BytesFromJiffies(TUint& aJiffies) const;
-    TUint JiffiesFromBytes(TUint aBytes) const;
-    TUint NumChannels() const;
-    TUint BitDepth() const;
-    void Aggregate(DecodedAudio& aDecodedAudio);
-private:
-    void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
-    void CopyToBigEndian16(const Brx& aData);
-    void CopyToBigEndian24(const Brx& aData);
-private: // from Allocated
-    void Clear() override;
-private:
-    TByte iData[kMaxBytes];
-    TUint iSubsampleCount;
-    TUint iChannels;
-    TUint iSampleRate;
-    TUint iBitDepth;
-    TUint iByteDepth;
-    TUint iJiffiesPerSample; // cached on construction for convenience
 };
 
 class IMsgProcessor;
@@ -636,7 +625,7 @@ public:
     TUint MedianRampMultiplier(); // 1<<31 => full level.  Note - clears any existing ramp
 protected:
     MsgAudio(AllocatorBase& aAllocator);
-    void Initialise();
+    void Initialise(TUint aSampleRate, TUint aBitDepth, TUint aChannels);
     void Clear() override;
 private:
     virtual MsgAudio* Allocate() = 0;
@@ -648,6 +637,9 @@ protected:
     TUint iOffset; // Jiffies
     Media::Ramp iRamp;
     TUint iClockPullMultiplier;
+    TUint iSampleRate;
+    TUint iBitDepth;
+    TUint iNumChannels;
 };
 
 class MsgBitRate : public Msg
@@ -683,7 +675,7 @@ public:
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset,
+    void Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUint aBitDepth, TUint aChannels, TUint64 aTrackOffset,
                     Allocator<MsgPlayablePcm>& aAllocatorPlayablePcm,
                     Allocator<MsgPlayableSilence>& aAllocatorPlayableSilence);
     void SetTimestamps(TUint aRx, TUint aNetwork);
@@ -722,9 +714,6 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     Allocator<MsgPlayableSilence>* iAllocatorPlayable;
-    TUint iSampleRate;
-    TUint iBitDepth;
-    TUint iNumChannels;
 };
 
 class IPcmProcessor;
@@ -756,7 +745,8 @@ public:
     void Read(IPcmProcessor& aProcessor);
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
-    void Initialise(TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
+    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
+                    TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
 protected: // from Msg
     void RefAdded() override;
     void RefRemoved() override;
@@ -768,6 +758,8 @@ private:
 protected:
     MsgPlayable* iNextPlayable;
     TUint iSize; // Bytes
+    TUint iBitDepth;
+    TUint iNumChannels;
     TUint iOffset; // Bytes
     Media::Ramp iRamp;
     TUint iClockPullMultiplier;
@@ -779,7 +771,8 @@ class MsgPlayablePcm : public MsgPlayable
 public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
+                    TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
 private: // from MsgPlayable
     MsgPlayable* Clone() override; // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     MsgPlayable* Allocate() override;
@@ -805,9 +798,6 @@ private: // from MsgPlayable
     void ReadBlock(IPcmProcessor& aProcessor) override;
 private: // from Msg
     void Clear() override;
-private:
-    TUint iBitDepth;
-    TUint iNumChannels;
 };
 
 /**
@@ -1537,11 +1527,13 @@ public:
     MsgBitRate* CreateMsgBitRate(TUint aBitRate);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
+    MsgAudioPcm* CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset); // aAudio must contain big endian pcm data
     MsgSilence* CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels);
     MsgQuit* CreateMsgQuit();
 private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);
-    DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
+    DecodedAudio* CreateDecodedAudio(const Brx& aData, TUint aBitDepth, EMediaDataEndian aEndian);
+    MsgAudioPcm* CreateMsgAudioPcm(DecodedAudio* aAudioData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset);
 private:
     Allocator<MsgMode> iAllocatorMsgMode;
     Allocator<MsgTrack> iAllocatorMsgTrack;
@@ -1549,7 +1541,7 @@ private:
     TUint iDrainId;
     Allocator<MsgDelay> iAllocatorMsgDelay;
     Allocator<MsgEncodedStream> iAllocatorMsgEncodedStream;
-    Allocator<EncodedAudio> iAllocatorEncodedAudio;
+    Allocator<AudioData> iAllocatorAudioData;
     Allocator<MsgAudioEncoded> iAllocatorMsgAudioEncoded;
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
     Allocator<MsgStreamInterrupted> iAllocatorMsgStreamInterrupted;
@@ -1558,7 +1550,6 @@ private:
     Allocator<MsgWait> iAllocatorMsgWait;
     Allocator<MsgDecodedStream> iAllocatorMsgDecodedStream;
     Allocator<MsgBitRate> iAllocatorMsgBitRate;
-    Allocator<DecodedAudio> iAllocatorDecodedAudio;
     Allocator<MsgAudioPcm> iAllocatorMsgAudioPcm;
     Allocator<MsgSilence> iAllocatorMsgSilence;
     Allocator<MsgPlayablePcm> iAllocatorMsgPlayablePcm;

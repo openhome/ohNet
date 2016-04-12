@@ -65,7 +65,7 @@ class OhmMsgAudio : public OhmMsgTimestamped
     friend class OhmMsgFactory;
     friend class OhmMsgAudioBlob;
 public:
-    static const TUint kMaxSampleBytes = 8 * 1024;
+    static const TUint kMaxSampleBytes = 5760; // 5ms of 192/24 stereo
     static const TUint kMaxCodecBytes = 256;
     static const TUint kFlagHalt        = 1 << 0;
     static const TUint kFlagLossless    = 1 << 1;
@@ -134,7 +134,7 @@ class OhmMsgAudioBlob : public OhmMsgTimestamped
 {
     friend class OhmMsgFactory;
 public:
-    static const TUint kMaxBytes = 9 * 1024;
+    static const TUint kMaxBytes = (6 * 1024) - 16; // externalised object to fit into 6k pipeline msg
 public:
     TByte Flags() const { return iFlags; }
     TUint Frame() const { return iFrame; }

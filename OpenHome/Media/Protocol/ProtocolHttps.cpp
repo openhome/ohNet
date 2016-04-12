@@ -17,7 +17,7 @@ namespace Media {
 
 class ProtocolHttps : public Protocol, private IReader
 {
-    static const TUint kReadBufferBytes = 8 * 1024;
+    static const TUint kReadBufferBytes = 6 * 1024;
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 5000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
     static const TUint kDefaultPort = 443;

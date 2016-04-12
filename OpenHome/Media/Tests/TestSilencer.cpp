@@ -382,7 +382,7 @@ Msg* SuiteSilencer::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsg = EMsgPlayable;
     iLastPulledBytes = aMsg->Bytes();
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    const TUint jiffiesPerSample = Jiffies::PerSample(iSampleRate);
     const TUint bytesPerSample = iNumChannels * iBitDepth/8;
     iLastPulledJiffies = (iLastPulledBytes / bytesPerSample) * jiffiesPerSample;
 

@@ -59,7 +59,7 @@ void CodecOhm::Process()
 
     if (msg->Samples() > 0) {
         const TUint sampleRate = msg->SampleRate();
-        const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(sampleRate);
+        const TUint jiffiesPerSample = Jiffies::PerSample(sampleRate);
         const TUint latency = msg->MediaLatency();
 
         if (!iStreamOutput) {

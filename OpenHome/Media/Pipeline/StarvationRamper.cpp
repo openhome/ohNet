@@ -71,7 +71,7 @@ Msg* FlywheelPlayableCreator::ProcessMsg(MsgSilence* aMsg)
 
 FlywheelInput::FlywheelInput(TUint aMaxJiffies)
 {
-    const TUint minJiffiesPerSample = Jiffies::JiffiesPerSample(kMaxSampleRate);
+    const TUint minJiffiesPerSample = Jiffies::PerSample(kMaxSampleRate);
     const TUint numSamples = (aMaxJiffies + minJiffiesPerSample - 1) / minJiffiesPerSample;
     const TUint channelBytes = numSamples * kSubsampleBytes;
     const TUint bytes = channelBytes * kMaxChannels;
@@ -86,7 +86,7 @@ FlywheelInput::~FlywheelInput()
 const Brx& FlywheelInput::Prepare(MsgQueue& aQueue, TUint aJiffies, TUint aSampleRate, TUint /*aBitDepth*/, TUint aNumChannels)
 {
     ASSERT(aNumChannels < kMaxChannels);
-    const TUint numSamples = aJiffies / Jiffies::JiffiesPerSample(aSampleRate);
+    const TUint numSamples = aJiffies / Jiffies::PerSample(aSampleRate);
     const TUint channelBytes = numSamples * kSubsampleBytes;
     TByte* p = iPtr;
     for (TUint i=0; i<aNumChannels; i++) {
@@ -243,7 +243,7 @@ RampGenerator::RampGenerator(MsgFactory& aMsgFactory, TUint aRampJiffies, TUint 
 
     iFlywheelRamper = new FlywheelRamperManager(*this, aRampJiffies, aRampJiffies);
 
-    const TUint minJiffiesPerSample = Jiffies::JiffiesPerSample(kMaxSampleRate);
+    const TUint minJiffiesPerSample = Jiffies::PerSample(kMaxSampleRate);
     const TUint numSamples = (FlywheelRamperManager::kMaxOutputJiffiesBlockSize + minJiffiesPerSample - 1) / minJiffiesPerSample;
     const TUint channelBytes = numSamples * kSubsampleBytes;
     const TUint bytes = channelBytes * kMaxChannels;

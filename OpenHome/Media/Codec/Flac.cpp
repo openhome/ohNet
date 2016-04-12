@@ -310,7 +310,7 @@ FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder*
         //return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
         return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
     }
-    iTrackOffset = iSampleStart * Jiffies::JiffiesPerSample(iSampleRate);
+    iTrackOffset = iSampleStart * Jiffies::PerSample(iSampleRate);
     iStreamMsgDue = true;
     return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 }

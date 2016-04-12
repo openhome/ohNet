@@ -19,6 +19,7 @@ EXCEPTION(CodecRecognitionOutOfData);
 namespace OpenHome {
 namespace Media {
     class Logger;
+    class MsgAudioEncoded;
 namespace Codec {
 
 /**
@@ -49,6 +50,16 @@ public:
      * @param[in] aBuf           Buffer to write into.  Data is appended to any existing content.
      */
     virtual void ReadNextMsg(Bwx& aBuf) = 0;
+    /**
+     * Retrieve an opaque pointer to the next audio msg.
+     *
+     * This is the lowest cost but least flexible way to read audio data.
+     * The only supported use of MsgAudioEncoded is to pass it back out via
+     * the appropriate overload of OutputAudioPcm
+     *
+     * @return     Opaque pointer to the next audio msg
+     */
+    virtual MsgAudioEncoded* ReadNextMsg() = 0;
     /**
      * Read a block of data out of band, without affecting the state of the current stream.
      *
@@ -152,6 +163,20 @@ public:
      * @return     Number of jiffies of audio contained in aData.
      */
     virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
+    /**
+     * Add a block of decoded (PCM) audio to the pipeline.
+     *
+     * Only supported for encoded audio that is already big endian, packed PCM.
+     *
+     * @param[in] aMsg           Returned from ReadNextMsg().
+     * @param[in] aChannels      Number of channels.  Must be in the range [2..8].
+     * @param[in] aSampleRate    Sample rate.
+     * @param[in] aBitDepth      Number of bits of audio for a single sample for a single channel.
+     * @param[in] aTrackOffset   Offset (in jiffies) into the stream at the start of aData.
+     *
+     * @return     Number of jiffies of audio contained in aMsg.
+     */
+    virtual TUint64 OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset) = 0;
     /**
      * Notify the pipeline of a change in bit rate.
      *
@@ -325,6 +350,7 @@ private: // ISeeker
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes) override;
     void ReadNextMsg(Bwx& aBuf) override;
+    MsgAudioEncoded* ReadNextMsg() override;
     TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes) override; // Read an arbitrary amount of data from current stream, out-of-band from pipeline
     TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos) override;
     TUint64 StreamLength() const override;
@@ -333,6 +359,7 @@ private: // ICodecController
     void OutputDelay(TUint aJiffies) override;
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) override;
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
+    TUint64 OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset) override;
     void OutputBitRate(TUint aBitRate) override;
     void OutputWait() override;
     void OutputHalt() override;

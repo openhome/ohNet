@@ -519,6 +519,22 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
     DoRead(aBuf, iAudioEncoded->Bytes());
 }
 
+MsgAudioEncoded* CodecController::ReadNextMsg()
+{
+    while (iAudioEncoded == nullptr) {
+        Msg* msg = PullMsg();
+        if (msg != nullptr) {
+            Queue(msg);
+        }
+        if (iStreamEnded || iQuit) {
+            THROW(CodecStreamEnded);
+        }
+    }
+    auto msg = iAudioEncoded;
+    iAudioEncoded = nullptr;
+    return msg;
+}
+
 TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 {
     if (!iStreamEnded && !iQuit) {
@@ -624,6 +640,16 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     ASSERT(aSampleRate == iSampleRate);
     ASSERT(aBitDepth == iBitDepth);
     MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aNetworkTimestamp);
+    return DoOutputAudioPcm(audio);
+}
+
+TUint64 CodecController::OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset)
+{
+    ASSERT(aChannels == iChannels);
+    ASSERT(aSampleRate == iSampleRate);
+    ASSERT(aBitDepth == iBitDepth);
+    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aMsg, aChannels, aSampleRate, aBitDepth, aTrackOffset);
+    aMsg->RemoveRef();
     return DoOutputAudioPcm(audio);
 }
 

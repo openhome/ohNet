@@ -89,7 +89,7 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
     const TUint64 bytePos = aSample * iNumChannels * byteDepth;
 
     // Some bounds checking.
-    const TUint64 seekPosJiffies = Jiffies::JiffiesPerSample(iSampleRate)*aSample;
+    const TUint64 seekPosJiffies = Jiffies::PerSample(iSampleRate)*aSample;
     if (seekPosJiffies > iTrackLengthJiffies) {
         return false;
     }

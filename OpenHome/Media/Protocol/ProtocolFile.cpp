@@ -36,7 +36,7 @@ private: // from IReader
 private:
     TBool IsCurrentStream(TUint aStreamId) const;
 private:
-    static const TUint kReadBufBytes = 9 * 1024;
+    static const TUint kReadBufBytes = 6 * 1024;
     Mutex iLock;
     Supply* iSupply;
     OpenHome::Uri iUri;

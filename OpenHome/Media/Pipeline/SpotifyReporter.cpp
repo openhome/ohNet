@@ -378,7 +378,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     AutoMutex a(iLock);
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-    TUint samples = aMsg->Jiffies()/Jiffies::JiffiesPerSample(info.SampleRate());
+    TUint samples = aMsg->Jiffies()/Jiffies::PerSample(info.SampleRate());
 
     TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
@@ -405,7 +405,7 @@ TUint64 SpotifyReporter::TrackLengthJiffiesLocked() const
 {
     ASSERT(iDecodedStream != nullptr);
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
-    const TUint64 trackLengthJiffies = (static_cast<TUint64>(iTrackDurationMs)*info.SampleRate()*Jiffies::JiffiesPerSample(info.SampleRate()))/1000;
+    const TUint64 trackLengthJiffies = (static_cast<TUint64>(iTrackDurationMs)*info.SampleRate()*Jiffies::PerSample(info.SampleRate()))/1000;
     return trackLengthJiffies;
 }
 

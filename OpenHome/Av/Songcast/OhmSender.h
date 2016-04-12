@@ -24,7 +24,7 @@ class IOhmTimestampMapper;
 
 class OhmSenderDriver : public IOhmSenderDriver
 {
-    static const TUint kMaxAudioFrameBytes = 16 * 1024;
+    static const TUint kMaxAudioFrameBytes = 6 * 1024;
     static const TUint kMaxHistoryFrames = 100;
     static const TUint kLatencyMultiplier44k1;
     static const TUint kLatencyMultiplier48k;
@@ -75,7 +75,7 @@ private:
 class OhmSender
 {
     static const TUint kMaxMetadataBytes = 1000;
-    static const TUint kMaxAudioFrameBytes = 16 * 1024;
+    static const TUint kMaxAudioFrameBytes = 6 * 1024;
     static const TUint kThreadStackBytesNetwork = 64 * 1024;
     static const TUint kTimerAliveJoinTimeoutMs = 10000;
     static const TUint kTimerAliveAudioTimeoutMs = 3000;

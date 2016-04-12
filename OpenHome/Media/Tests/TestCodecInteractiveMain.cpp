@@ -486,7 +486,7 @@ Msg* ElementFileWriter::ProcessMsg(MsgQuit* aMsg)
 
 TUint ElementFileWriter::PcmBytes(TUint64 aDurationJiffies, TUint aSampleRate, TUint aNumChannels, TUint aBitDepth)
 {
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
+    const TUint jiffiesPerSample = Jiffies::PerSample(aSampleRate);
     ASSERT(aDurationJiffies % jiffiesPerSample == 0);       // Ensure whole samples.
     const TUint64 samples = aDurationJiffies/jiffiesPerSample;
 

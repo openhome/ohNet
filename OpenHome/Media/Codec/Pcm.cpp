@@ -27,11 +27,9 @@ private:
     void SendMsgDecodedStream(TUint64 aStartSample);
     TUint64 ToJiffies(TUint64 aSample);
 private:
-    Bws<DecodedAudio::kMaxBytes> iReadBuf;
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
-    EMediaDataEndian iEndian;
     TUint iBitRate;
     TUint64 iStartSample;
     TUint64 iTrackOffset;
@@ -72,22 +70,20 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
     iBitDepth = aStreamInfo.BitDepth();
     iSampleRate = aStreamInfo.SampleRate();
     iNumChannels = aStreamInfo.NumChannels();
-    iEndian = aStreamInfo.Endian();
     iStartSample = aStreamInfo.StartSample();
     iAnalogBypass = aStreamInfo.AnalogBypass();
-    //Log::Print("CodecPcm::Recognise iBitDepth %d, iSampleRate %d, iNumChannels %d, iEndian %d, iStartSample %d, iAnalogBypass %d\n", iBitDepth, iSampleRate, iNumChannels, iEndian, iStartSample, iAnalogBypass);
+    //Log::Print("CodecPcm::Recognise iBitDepth %d, iSampleRate %d, iNumChannels %d, iStartSample %d, iAnalogBypass %d\n", iBitDepth, iSampleRate, iNumChannels, iStartSample, iAnalogBypass);
     return true;
 }
 
 void CodecPcm::StreamInitialise()
 {
     try {
-        iReadBuf.SetBytes(0);
         const TUint64 lenBytes = iController->StreamLength();
         const TUint bytesPerSample = (iBitDepth * iNumChannels) / 8;
         const TUint64 numSamples = lenBytes / bytesPerSample;
         iBitRate = iBitDepth * iNumChannels * iSampleRate;
-        iTrackLengthJiffies = numSamples * Jiffies::JiffiesPerSample(iSampleRate);
+        iTrackLengthJiffies = numSamples * Jiffies::PerSample(iSampleRate);
         iTrackOffset = ToJiffies(iStartSample);
         SendMsgDecodedStream(iStartSample);
     }
@@ -98,18 +94,8 @@ void CodecPcm::StreamInitialise()
 
 void CodecPcm::Process()
 {
-    iController->Read(iReadBuf, iReadBuf.MaxBytes() - iReadBuf.Bytes());
-    const TUint pendingBytes = iReadBuf.Bytes() % ((iBitDepth)/8 * iNumChannels);
-    Bws<24> pending;
-    if (pendingBytes != 0) {
-        const TUint bytes = iReadBuf.Bytes() - pendingBytes;
-        pending.Append(iReadBuf.Split(bytes));
-        iReadBuf.SetBytes(bytes);
-    }
-    if (iReadBuf.Bytes() > 0) {
-        iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
-    }
-    iReadBuf.Replace(pending);
+    MsgAudioEncoded* msg = iController->ReadNextMsg();
+    iTrackOffset += iController->OutputAudioPcm(msg, iNumChannels, iSampleRate, iBitDepth, iTrackOffset);
 }
 
 TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -119,7 +105,6 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
         return false;
     }
     iTrackOffset = ToJiffies(aSample);
-    iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
 }

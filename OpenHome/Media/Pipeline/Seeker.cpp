@@ -179,7 +179,7 @@ Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
     iMsgStream->AddRef();
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iTrackLengthSeconds = static_cast<TUint>(streamInfo.TrackLength() / Jiffies::kPerSecond);
-    iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate()) * streamInfo.SampleStart();
+    iStreamPosJiffies = Jiffies::PerSample(streamInfo.SampleRate()) * streamInfo.SampleStart();
     iDecodeDiscardUntilSeekPoint = false;
     iFlushEndJiffies = 0;
     if (iSeekInNextStream) {
@@ -215,7 +215,7 @@ Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
 
         iQueue.EnqueueAtHead(aMsg);
         const DecodedStreamInfo& info = iMsgStream->StreamInfo();
-        const TUint64 numSamples = iStreamPosJiffies / Jiffies::JiffiesPerSample(info.SampleRate());
+        const TUint64 numSamples = iStreamPosJiffies / Jiffies::PerSample(info.SampleRate());
         return iMsgFactory.CreateMsgDecodedStream(info.StreamId(), info.BitRate(), info.BitDepth(),
             info.SampleRate(), info.NumChannels(), info.CodecName(),
             info.TrackLength(), numSamples, info.Lossless(),

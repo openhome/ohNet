@@ -136,7 +136,7 @@ void AnimatorBasic::ProcessAudio(MsgPlayable* aMsg)
     TUint jiffies = numSamples * iJiffiesPerSample;
     if (jiffies > iPendingJiffies) {
         jiffies = iPendingJiffies;
-        const TUint bytes = Jiffies::BytesFromJiffies(jiffies, iJiffiesPerSample, iNumChannels, (iBitDepth/8));
+        const TUint bytes = Jiffies::ToBytes(jiffies, iJiffiesPerSample, iNumChannels, (iBitDepth/8));
         if (bytes == 0) {
             iPendingJiffies = 0;
             iPlayable = aMsg;
@@ -184,7 +184,7 @@ Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
     iSampleRate = stream.SampleRate();
     iNumChannels = stream.NumChannels();
     iBitDepth = stream.BitDepth();
-    iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    iJiffiesPerSample = Jiffies::PerSample(iSampleRate);
     aMsg->RemoveRef();
     return nullptr;
 }

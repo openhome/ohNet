@@ -83,8 +83,8 @@ Msg* Aggregator::NextStoredMsg(TBool aDeliverShortPlayable)
 void Aggregator::CalculateMaxPlayable()
 {
     TUint jiffies = iMaxPlayableJiffies;
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
-    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iNumChannels, iBitDepth/8);
+    const TUint jiffiesPerSample = Jiffies::PerSample(iSampleRate);
+    iMaxPlayableBytes = Jiffies::ToBytes(jiffies, jiffiesPerSample, iNumChannels, iBitDepth/8);
 }
 
 Msg* Aggregator::ProcessMsg(MsgMode* aMsg)

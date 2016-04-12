@@ -834,7 +834,7 @@ Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
     const TUint bytesPerSample = (iBitDepth/8) * iNumChannels;
     ASSERT(bytes % bytesPerSample == 0);
     const TUint numSamples = bytes / bytesPerSample;
-    iLastMsgJiffies = Jiffies::JiffiesPerSample(iSampleRate) * numSamples;
+    iLastMsgJiffies = Jiffies::PerSample(iSampleRate) * numSamples;
     iJiffies += iLastMsgJiffies;
     return nullptr;
 }

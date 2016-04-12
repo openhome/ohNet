@@ -103,7 +103,7 @@ Msg* DecodedAudioValidator::ProcessMsg(MsgDecodedStream* aMsg)
     //Log::Print("MsgDecodedStream (%s)\n", iId);
     iExpectDecodedStreamBeforeAudio = false;
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
-    iStreamPos = streamInfo.SampleStart() * Jiffies::JiffiesPerSample(streamInfo.SampleRate());
+    iStreamPos = streamInfo.SampleStart() * Jiffies::PerSample(streamInfo.SampleRate());
     return aMsg;
 }
 

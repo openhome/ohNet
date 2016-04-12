@@ -140,7 +140,7 @@ private:
 } // namespace OpenHome
 
 
-const TUint SuiteStopper::kJiffiesPerMsg = kDataBytes/kNumChannels/(kBitDepth/8) * Jiffies::JiffiesPerSample(kSampleRate);
+const TUint SuiteStopper::kJiffiesPerMsg = kDataBytes/kNumChannels/(kBitDepth/8) * Jiffies::PerSample(kSampleRate);
 
 SuiteStopper::SuiteStopper()
     : SuiteUnitTest("Stopper")

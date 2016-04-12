@@ -179,7 +179,7 @@ void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
         iAudioSent = true;
         if (jiffies > iJiffiesToSend) {
             jiffies = iJiffiesToSend;
-            const TUint bytes = Jiffies::BytesFromJiffies(jiffies, iJiffiesPerSample, iNumChannels, (iBitDepth/8));
+            const TUint bytes = Jiffies::ToBytes(jiffies, iJiffiesPerSample, iNumChannels, (iBitDepth/8));
             if (bytes == 0) {
                 iPlayable = aMsg;
                 return;
@@ -228,7 +228,7 @@ Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
         reportedChannels = 2;   // output mono as stereo
     }
     iBitDepth = stream.BitDepth();
-    iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    iJiffiesPerSample = Jiffies::PerSample(iSampleRate);
     iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels,
                                      iBitDepth, stream.Lossless(), stream.CodecName(),
                                      stream.SampleStart());

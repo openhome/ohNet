@@ -172,7 +172,7 @@ void SuiteSeeker::Setup()
     iStreamId = UINT_MAX;
     iStreamSampleStart = UINT_MAX;
     iTrackLengthJiffies = kTrackDurationSeconds;
-    iTrackLengthJiffies *= kSampleRate * Jiffies::JiffiesPerSample(kSampleRate);
+    iTrackLengthJiffies *= kSampleRate * Jiffies::PerSample(kSampleRate);
     iLastMsgAudioSize = 0;
     iTrackOffset = 0;
     iTrackOffsetPulled = 0;
@@ -321,7 +321,7 @@ Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
     iLastPulledMsg = EMsgDecodedStream;
     auto stream = aMsg->StreamInfo();
     iStreamSampleStart = stream.SampleStart();
-    iTrackOffsetPulled = iStreamSampleStart * Jiffies::JiffiesPerSample(stream.SampleRate());
+    iTrackOffsetPulled = iStreamSampleStart * Jiffies::PerSample(stream.SampleRate());
     return aMsg;
 }
 
@@ -424,7 +424,7 @@ Msg* SuiteSeeker::CreateEncodedStream()
 
 Msg* SuiteSeeker::CreateDecodedStream()
 {
-    const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);
+    const TUint64 sampleStart = iTrackOffset / Jiffies::PerSample(kSampleRate);
     return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), iTrackLengthJiffies, sampleStart, true, iSeekable, false, false, nullptr);
 }
 

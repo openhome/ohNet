@@ -303,7 +303,7 @@ MsgPlayable* SuiteAggregator::CreateAudio()
 {
     TUint jiffies = iAudioMsgSizeJiffies + Jiffies::kPerMs; /* choose a size that doesn't match kAggregatorJiffies
                                                                to force the Aggregator to do some work */
-    const TUint bytes = Jiffies:: BytesFromJiffies(jiffies, Jiffies::JiffiesPerSample(iSampleRate), iNumChannels, iBitDepth/8);
+    const TUint bytes = Jiffies::ToBytes(jiffies, Jiffies::PerSample(iSampleRate), iNumChannels, iBitDepth/8);
     Brn encodedAudioBuf(iAudioSrc, bytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
@@ -430,7 +430,7 @@ Msg* SuiteAggregator::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsg = EMsgPlayable;
     iLastPulledBytes = aMsg->Bytes();
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    const TUint jiffiesPerSample = Jiffies::PerSample(iSampleRate);
     const TUint bytesPerSample = iNumChannels * iBitDepth/8;
     iLastPulledJiffies = (iLastPulledBytes / bytesPerSample) * jiffiesPerSample;
     return aMsg;

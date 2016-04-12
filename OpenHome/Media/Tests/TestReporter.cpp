@@ -339,7 +339,7 @@ Msg* SuiteReporter::Pull()
     }
     case EMsgDecodedStream:
     {
-        const TUint64 sampleStart = iTrackOffset / Jiffies::JiffiesPerSample(kSampleRate);
+        const TUint64 sampleStart = iTrackOffset / Jiffies::PerSample(kSampleRate);
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, false, nullptr);
     }
     case EMsgMode:

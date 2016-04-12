@@ -883,7 +883,7 @@ void SuiteCodecControllerStream::TestSeek()
     // Can only pull through queued-1 msgs, as CodecController will block when no more available.
     TUint maxPullBytes = iTrackOffsetBytes - kMaxEncodedBytes;
     TUint maxPullSamples = maxPullBytes/kChannels/kBitDepthBytes;
-    TUint maxPullJiffies = maxPullSamples * Jiffies::JiffiesPerSample(kSampleRate);
+    TUint maxPullJiffies = maxPullSamples * Jiffies::PerSample(kSampleRate);
     while (iJiffies < maxPullJiffies) {
         TUint64 jiffiesBefore = iJiffies;
         PullNext(EMsgAudioPcm);
@@ -983,7 +983,7 @@ void SuiteCodecControllerStream::TestSeekNewStream()
 
     // Can only pull through queued-1 msgs, as CodecController will block when no more available.
     const TUint samplesPerMsg = kMaxEncodedBytes/kChannels/kBitDepthBytes;
-    const TUint jiffiesPerMsg = samplesPerMsg * Jiffies::JiffiesPerSample(kSampleRate);
+    const TUint jiffiesPerMsg = samplesPerMsg * Jiffies::PerSample(kSampleRate);
     const TUint jiffiesToPull = (msgsToOutput-1)*jiffiesPerMsg;
     while (iJiffies < jiffiesToPull) {
         PullNext(EMsgAudioPcm);
