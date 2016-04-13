@@ -24,7 +24,8 @@ class UriProviderPlaylist : public Media::UriProvider, private ITrackDatabaseObs
 public:
     UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Media::PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver);
     ~UriProviderPlaylist();
-private: // from UriProvider
+    void SetActive(TBool aActive);
+public: // from UriProvider
     void Begin(TUint aTrackId) override;
     void BeginLater(TUint aTrackId) override;
     Media::EStreamPlay GetNext(Media::Track*& aTrack) override;
@@ -66,6 +67,7 @@ private:
     TUint iLastTrackId;
     TUint iPlayingTrackId;
     TUint iFirstFailedTrackId; // first id from a string of failures; reset by any track generating audio
+    TBool iActive;
 };
 
 } // namespace Av
