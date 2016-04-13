@@ -17,44 +17,27 @@ After a delay is actioned, audio spends RampDuration ramping up.
 FIXME - no handling of pause-resumes
 */
     
-class VariableDelay : private MsgReservoir, public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler
+class VariableDelay : public PipelineElement, public IPipelineElementUpstream
 {
     static const TUint kMaxMsgSilenceDuration = Jiffies::kPerMs * 5;
     friend class SuiteVariableDelay;
+    static const TUint kSupportedMsgTypes;
 public:
     VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
     virtual ~VariableDelay();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private:
-    Msg* NextMsgLocked();
-    MsgAudio* DoProcessAudioMsg(MsgAudio* aMsg);
+    Msg* NextMsg();
     void RampMsg(MsgAudio* aMsg);
-    void HandleStarving();
     void ResetStatusAndRamp();
-private: // from IMsgProcessor
+private: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgMode* aMsg) override;
-    Msg* ProcessMsg(MsgTrack* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
-    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
-    Msg* ProcessMsg(MsgMetaText* aMsg) override;
-    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
-    Msg* ProcessMsg(MsgHalt* aMsg) override;
-    Msg* ProcessMsg(MsgFlush* aMsg) override;
-    Msg* ProcessMsg(MsgWait* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
-    Msg* ProcessMsg(MsgBitRate* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
-    Msg* ProcessMsg(MsgPlayable* aMsg) override;
-    Msg* ProcessMsg(MsgQuit* aMsg) override;
-private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aStreamId) override;
-    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     enum EStatus
     {
@@ -68,8 +51,8 @@ private:
     const TChar* iId;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    MsgQueue iQueue;
     TUint iDelayJiffies;
-    Mutex iLock;
     TInt iDelayAdjustment;
     EStatus iStatus;
     Ramp::EDirection iRampDirection;
