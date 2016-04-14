@@ -1107,6 +1107,253 @@ void ConfigUiValRoIpAddress::CurrentAdapterChanged()
 }
 
 
+// ConfigUiValStartupSource
+
+ConfigUiValStartupSource::ConfigUiValStartupSource(IConfigManager& aConfigManager, ConfigText& aText, Av::Product& aProduct, const OpenHome::Web::IWritable& aAdditionalJson)
+    : ConfigUiValBase(aAdditionalJson)
+    , iText(aText)
+    , iListenerId(IConfigManager::kSubscriptionIdInvalid)
+    , iLock("CUTL")
+{
+    iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValStartupSource::Update));
+
+    const TUint srcCount = aProduct.SourceCount();
+    Bws<ISource::kMaxSystemNameBytes> systemName;
+    Bws<ISource::kMaxSourceNameBytes> sourceName;
+    Bws<ISource::kMaxSourceTypeBytes> sourceType;
+    TBool visible;
+
+    for (TUint i = 0; i < srcCount; i++) {
+        systemName.SetBytes(0);
+        sourceName.SetBytes(0);
+        sourceType.SetBytes(0);
+        aProduct.GetSourceDetails(i, systemName, sourceType, sourceName, visible);
+
+        Bws<Source::kKeySourceNameMaxBytes> key;
+        Source::GetSourceNameKey(systemName, key);
+
+        ConfigText& configText = aConfigManager.GetText(key);
+        SourceNameObserver* obs = new SourceNameObserver(systemName, configText, MakeFunctor(*this, &ConfigUiValStartupSource::SourceNameChanged));
+        iObservers.push_back(obs);
+    }
+}
+
+ConfigUiValStartupSource::~ConfigUiValStartupSource()
+{
+    for (TUint i = 0; i < iObservers.size(); i++) {
+        delete iObservers[i];
+    }
+    iText.Unsubscribe(iListenerId);
+}
+
+void ConfigUiValStartupSource::ObserverAdded(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    aObserver.ValueChanged(*this, iJsonValue);
+}
+
+void ConfigUiValStartupSource::WriteKey(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\""));
+    Json::Escape(aWriter, iText.Key());
+    aWriter.Write(Brn("\""));
+}
+
+void ConfigUiValStartupSource::WriteType(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"text\""));
+}
+
+void ConfigUiValStartupSource::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLanguageResourceManager*/, std::vector<Bws<10>>& /*aLanguageList*/)
+{
+    aWriter.Write('{');
+    aWriter.Write(Brn("\"default\":"));
+    aWriter.Write(Brn("\""));
+    Av::Json::Escape(aWriter, iText.Default());
+    aWriter.Write(Brn("\""));
+    aWriter.Write(Brn(","));
+    aWriter.Write(Brn("\"maxlength\":"));
+    Ascii::StreamWriteUint(aWriter, iText.MaxLength());
+    aWriter.Write(Brn(","));
+    WriteMetaOptions(aWriter);
+    aWriter.Write('}');
+}
+
+void ConfigUiValStartupSource::WriteMetaOption(IWriter& aWriter, SourceNameObserver& aObserver)
+{
+    JsonWriterString writerString(aWriter);
+
+    aWriter.Write(Brn("{"));
+    writerString.Write(Brn("id"));
+    aWriter.Write(Brn(":"));
+    aObserver.WriteSystemNameJson(aWriter);
+    aWriter.Write(Brn(","));
+    writerString.Write(Brn("value"));
+    aWriter.Write(Brn(":"));
+    aObserver.WriteNameJson(aWriter);
+    aWriter.Write(Brn("}"));
+}
+
+void ConfigUiValStartupSource::WriteMetaOptions(IWriter& aWriter)
+{
+    aWriter.Write(Brn("\"options\":"));
+    aWriter.Write(Brn("["));
+
+    // Write out special "Last Used" value.
+    Bws<64> lastUsed("{\"id\":\"");
+    lastUsed.Append(ConfigStartupSource::kLastUsed);
+    lastUsed.Append("\", \"value\":\"");
+    lastUsed.Append(ConfigStartupSource::kLastUsed);
+    lastUsed.Append("\"}");
+    aWriter.Write(lastUsed);
+    if (iObservers.size() > 0) {
+        // More values to follow; add delimiter.
+        aWriter.Write(Brn(","));
+    }
+
+    for (TUint i = 0; i<iObservers.size() - 1; i++) {
+        SourceNameObserver* obs = iObservers[i];
+        WriteMetaOption(aWriter, *obs);
+        aWriter.Write(Brn(","));
+    }
+    SourceNameObserver* obs = iObservers[iObservers.size() - 1];
+    WriteMetaOption(aWriter, *obs);
+
+    aWriter.Write(Brn("]"));
+}
+
+void ConfigUiValStartupSource::Update(Configuration::ConfigText::KvpText& aKvp)
+{
+    AutoMutex a(iLock);
+
+    // Check if aKvp.Val() is a valid value expected by the UI (i.e., last used or a valid source system name).
+    TBool sourceFound = false;
+    if (aKvp.Value() == ConfigStartupSource::kLastUsed) {
+        sourceFound = true;
+    }
+    else {
+        for (const SourceNameObserver* o: iObservers) {
+            if (aKvp.Value() == o->SystemName()) {
+                sourceFound = true;
+            }
+        }
+    }
+
+    if (sourceFound) {
+        iVal.Replace(aKvp.Value());
+    }
+    else {
+        // Garbage data in store. Default to reporting last used as startup source.
+        iVal.Replace(ConfigStartupSource::kLastUsed);
+    }
+
+    // Update JSON string.
+    iJsonValue.SetBytes(0);
+    WriterBuffer writerBuf(iJsonValue);
+    writerBuf.Write('\"');
+    Json::Escape(writerBuf, iVal);
+    writerBuf.Write('\"');
+
+    ValueChanged(iJsonValue);
+}
+
+void ConfigUiValStartupSource::SourceNameChanged()
+{
+    // If source name has change, pretend that the startup source value has
+    // changed so that WebUI updates its drop-down list of source names.
+    AutoMutex a(iLock);
+    ValueChanged(iJsonValue);
+}
+
+
+// ConfigUiValStartupSource::SourceNameObserver
+
+ConfigUiValStartupSource::SourceNameObserver::SourceNameObserver(const Brx& aSystemName, Configuration::ConfigText& aConfigText, Functor aObserver)
+    : iConfigText(aConfigText)
+    , iFunctor(aObserver)
+    , iSystemName(aSystemName)
+    , iLock("CVSO")
+{
+    iSubscriberId = iConfigText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValStartupSource::SourceNameObserver::SourceNameChanged));
+}
+
+ConfigUiValStartupSource::SourceNameObserver::~SourceNameObserver()
+{
+    iConfigText.Unsubscribe(iSubscriberId);
+}
+
+const Brx& ConfigUiValStartupSource::SourceNameObserver::SystemName() const
+{
+    return iSystemName;
+}
+
+void ConfigUiValStartupSource::SourceNameObserver::WriteSystemNameJson(IWriter& aWriter) const
+{
+    JsonWriterString writerString(aWriter);
+    writerString.Write(iSystemName);
+}
+
+void ConfigUiValStartupSource::SourceNameObserver::WriteNameJson(IWriter& aWriter) const
+{
+    AutoMutex a(iLock);
+    JsonWriterString writerString(aWriter);
+    writerString.Write(iName);
+}
+
+void ConfigUiValStartupSource::SourceNameObserver::SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
+{
+    {
+        AutoMutex a(iLock);
+        iName.Replace(aKvp.Value());
+    }
+    iFunctor();
+}
+
+
+// ConfigUiValStartupSourceDelayed
+
+ConfigUiValStartupSourceDelayed::ConfigUiValStartupSourceDelayed(IConfigManager& aConfigManager, Product& aProduct, const IWritable& aAdditionalJson)
+    : iConfigManager(aConfigManager)
+    , iProduct(aProduct)
+    , iAdditionalJson(aAdditionalJson)
+    , iUiVal(nullptr)
+    , iLock("CVSS")
+{
+}
+
+ConfigUiValStartupSourceDelayed::~ConfigUiValStartupSourceDelayed()
+{
+    if (iUiVal != nullptr) {
+        delete iUiVal;
+    }
+}
+
+void ConfigUiValStartupSourceDelayed::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList)
+{
+    AutoMutex a(iLock);
+    ASSERT(iUiVal != nullptr);
+    iUiVal->WriteJson(aWriter, aValWriter, aLanguageResourceManager, aLanguageList);
+}
+
+TUint ConfigUiValStartupSourceDelayed::AddObserver(IConfigUiValObserver& aObserver)
+{
+    AutoMutex a(iLock);
+    if (iUiVal == nullptr) {
+        ConfigText& text = iConfigManager.GetText(ConfigStartupSource::kKeySource);
+        // This dynamic allocation at runtime only happens once.
+        iUiVal = new ConfigUiValStartupSource(iConfigManager, text, iProduct, iAdditionalJson);
+    }
+    return iUiVal->AddObserver(aObserver);
+}
+
+void ConfigUiValStartupSourceDelayed::RemoveObserver(TUint aObserverId)
+{
+    AutoMutex a(iLock);
+    ASSERT(iUiVal != nullptr);
+    iUiVal->RemoveObserver(aObserverId);
+}
+
+
 // ConfigAppBase
 
 const Brn ConfigAppBase::kLangRoot("lang");

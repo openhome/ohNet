@@ -110,10 +110,9 @@ MediaPlayer::~MediaPlayer()
     delete iCredentials;
     /**
      * Circular dependency between ConfigStartupSource and Product on certain ConfigValues.
-     * Force ConfigStartupSource to de-register it's source name listeners.
+     * Force ConfigStartupSource to de-register its source name listeners.
      * Safe to do as WebAppFramework must already have been stopped.
      */
-    iConfigStartupSource->DeregisterObservers();
     delete iProduct;
     delete iFriendlyNameManager;    // All observers should have deregistered.
     delete iConfigStartupSource;
@@ -174,24 +173,7 @@ void MediaPlayer::Start()
 {
     // All sources must have been added to Product by time this is called.
     // So, can now initialise startup source ConfigVal.
-
-    std::vector<const Brx*> sources;
-    const TUint sourceCount = iProduct->SourceCount();
-    Bws<ISource::kMaxSystemNameBytes> systemName;
-    Bws<ISource::kMaxSourceNameBytes> sourceName;
-    Bws<ISource::kMaxSourceTypeBytes> sourceType;
-    TBool visible;
-    for (TUint i=0; i<sourceCount; i++) {
-        systemName.SetBytes(0);
-        sourceName.SetBytes(0);
-        sourceType.SetBytes(0);
-        iProduct->GetSourceDetails(i, systemName, sourceType, sourceName, visible);
-        sources.push_back(new Bwh(systemName));
-    }
-    iConfigStartupSource = new ConfigStartupSource(*iConfigManager, *iConfigManager, sources);
-    for (auto source : sources) {
-        delete source;
-    }
+    iConfigStartupSource = new ConfigStartupSource(*iConfigManager);
 
     iConfigManager->Open();
     iPipeline->Start(*iVolumeManager);

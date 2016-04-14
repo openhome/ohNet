@@ -18,86 +18,19 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
-// ConfigSourceNameObserver
-
-ConfigSourceNameObserver::ConfigSourceNameObserver(IConfigManager& aConfigReader, const Brx& aSourceName)
-    : iLock("CSNO")
-{
-    Bws<Source::kKeySourceNameMaxBytes> key;
-    Source::GetSourceNameKey(aSourceName, key);
-    iConfigSourceName = &aConfigReader.GetText(key);
-    iListenerId = iConfigSourceName->Subscribe(MakeFunctorConfigText(*this, &ConfigSourceNameObserver::SourceNameChanged));
-}
-
-ConfigSourceNameObserver::~ConfigSourceNameObserver()
-{
-    iConfigSourceName->Unsubscribe(iListenerId);
-}
-
-void ConfigSourceNameObserver::Name(Bwx& aBuf) const
-{
-    AutoMutex a(iLock);
-    aBuf.Replace(iName);
-}
-
-void ConfigSourceNameObserver::SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
-{
-    AutoMutex a(iLock);
-    ASSERT(aKvp.Key() == iConfigSourceName->Key());
-    iName.Replace(aKvp.Value());
-}
-
-
 // ConfigStartupSource
 
-const Brn ConfigStartupSource::kKeySource("Source.Startup");
-const Brn ConfigStartupSource::kNoneName("Last Used");
-const TUint ConfigStartupSource::kNone = UINT_MAX;
+const Brn ConfigStartupSource::kKeySource("Source.StartupName");
+const Brn ConfigStartupSource::kLastUsed("Last Used");
 
-ConfigStartupSource::ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames)
+ConfigStartupSource::ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit)
 {
-    std::vector<TUint> choices;
-
-    // Add dummy source, which must be first in list and represents default/none startup source.
-    choices.push_back(kNone);
-
-    // Push real sources on, starting at index 0, which maps directly to product sources.
-    for (TUint i=0; i<aSystemNames.size(); i++) {
-        choices.push_back(i);
-        iObservers.push_back(new ConfigSourceNameObserver(aConfigReader, *aSystemNames[i]));
-    }
-
-    iSourceStartup = new ConfigChoice(aConfigInit, kKeySource, choices, kNone, *this);
+    iSourceStartup = new ConfigText(aConfigInit, kKeySource, Product::kMaxNameBytes, kLastUsed);
 }
 
 ConfigStartupSource::~ConfigStartupSource()
 {
     delete iSourceStartup;
-}
-
-void ConfigStartupSource::DeregisterObservers()
-{
-    for (auto observer : iObservers) {
-        delete observer;
-    }
-    iObservers.clear();
-}
-
-void ConfigStartupSource::Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter)
-{
-    const std::vector<TUint>& choices = iSourceStartup->Choices();
-    Bws<ISource::kMaxSourceNameBytes> sourceName;
-
-    for (auto choice : choices) {
-        if (choice == kNone) {
-            aMappingWriter.Write(aWriter, choice, kNoneName);
-        }
-        else {
-            iObservers[choice]->Name(sourceName);
-            aMappingWriter.Write(aWriter, choice, sourceName);
-        }
-    }
-    aMappingWriter.WriteComplete(aWriter);
 }
 
 
@@ -128,7 +61,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iSourceXmlChangeCount(0)
     , iConfigStartupSource(nullptr)
     , iListenerIdStartupSource(IConfigManager::kSubscriptionIdInvalid)
-    , iStartupSourceVal(ConfigStartupSource::kNone)
+    , iStartupSourceVal(ConfigStartupSource::kLastUsed)
     , iConfigAutoPlay(nullptr)
     , iListenerIdAutoPlay(IConfigManager::kSubscriptionIdInvalid)
 {
@@ -171,17 +104,25 @@ void Product::AddObserver(IProductObserver& aObserver)
 void Product::Start()
 {
     // All sources must have been registered; construct startup source config val.
-    iConfigStartupSource = &iConfigReader.GetChoice(ConfigStartupSource::kKeySource);
-    iListenerIdStartupSource = iConfigStartupSource->Subscribe(MakeFunctorConfigChoice(*this, &Product::StartupSourceChanged));
+    iConfigStartupSource = &iConfigReader.GetText(ConfigStartupSource::kKeySource);
+    iListenerIdStartupSource = iConfigStartupSource->Subscribe(MakeFunctorConfigText(*this, &Product::StartupSourceChanged));
 
     iLock.Wait();
-    const TUint startupSourceVal = iStartupSourceVal;
+    const Bws<ISource::kMaxSystemNameBytes> startupSourceVal(iStartupSourceVal);
     iLock.Signal();
 
-    if (startupSourceVal != ConfigStartupSource::kNone) {
-        (void)DoSetCurrentSource(startupSourceVal);
+    TBool sourceSelected = false;
+    if (startupSourceVal != ConfigStartupSource::kLastUsed) {
+        try {
+            (void)DoSetCurrentSource(startupSourceVal);
+            sourceSelected = true;
+        }
+        catch (AvSourceNotFound&) {
+            // Invalid content in iStartupSourceVal.
+        }
     }
-    else { // No startup source selected; use last selected source.
+
+    if (!sourceSelected) { // No startup source selected; use last selected source.
         Bws<ISource::kMaxSystemNameBytes> startupSource;
         iLastSelectedSource->Get(startupSource);
         if (startupSource == Brx::Empty()) {
@@ -329,11 +270,11 @@ void Product::ProductNameChanged(KeyValuePair<const Brx&>& aKvp)
     }
 }
 
-void Product::StartupSourceChanged(KeyValuePair<TUint>& aKvp)
+void Product::StartupSourceChanged(KeyValuePair<const Brx&>& aKvp)
 {
     ASSERT(aKvp.Key() == ConfigStartupSource::kKeySource);
     AutoMutex a(iLock);
-    iStartupSourceVal = aKvp.Value();
+    iStartupSourceVal.Replace(aKvp.Value());
 }
 
 void Product::AutoPlayChanged(KeyValuePair<TUint>& aKvp)
@@ -343,15 +284,14 @@ void Product::AutoPlayChanged(KeyValuePair<TUint>& aKvp)
     iLock.Signal();
 }
 
-TBool Product::SetCurrentSource(TUint aIndex)
+void Product::SetCurrentSource(TUint aIndex)
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
-    return DoSetCurrentSource(aIndex);
+    (void)DoSetCurrentSource(aIndex);
 }
 
-TBool Product::DoSetCurrentSource(TUint aIndex)
+TBool Product::DoSetCurrentSourceLocked(TUint aIndex)
 {
-    AutoMutex a(iLock);
     if (aIndex >= (TUint)iSources.size()) {
         THROW(AvSourceNotFound);
     }
@@ -373,31 +313,29 @@ TBool Product::DoSetCurrentSource(TUint aIndex)
     return true;
 }
 
+TBool Product::DoSetCurrentSource(TUint aIndex)
+{
+    AutoMutex a(iLock);
+    return DoSetCurrentSourceLocked(aIndex);
+}
+
 void Product::SetCurrentSource(const Brx& aName)
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
     DoSetCurrentSource(aName);
 }
 
-void Product::DoSetCurrentSource(const Brx& aName)
+TBool Product::DoSetCurrentSource(const Brx& aName)
 {
     AutoMutex a(iLock);
     // volkano treats [name] as a system name and anything else as a user-defined name.  Do we need to do the same?
-    for (TUint i=0; i<(TUint)iSources.size(); i++) {
+    TUint i = 0;
+    for (i = 0; i < (TUint)iSources.size(); i++) {
         if (iSources[i]->SystemName() == aName) {
-            if (iCurrentSource != kCurrentSourceNone) {
-                iSources[iCurrentSource]->Deactivate();
-            }
-            iCurrentSource = i;
-            iLastSelectedSource->Set(iSources[iCurrentSource]->SystemName());
-            iSources[iCurrentSource]->Activate(iAutoPlay);
-            for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-                (*it)->SourceIndexChanged();
-            }
-            return;
+            break;
         }
     }
-    THROW(AvSourceNotFound);
+    return DoSetCurrentSourceLocked(i);
 }
 
 void Product::GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const
@@ -513,10 +451,15 @@ void Product::StandbyDisabled(StandbyDisableReason aReason)
     TBool activated = false;
     if (aReason != StandbyDisableReason::Alarm) {
         iLock.Wait();
-        const TUint startupSourceVal = iStartupSourceVal;
+        const Bws<ISource::kMaxSystemNameBytes> startupSourceVal(iStartupSourceVal);
         iLock.Signal();
-        if (startupSourceVal != ConfigStartupSource::kNone) {
-            activated = DoSetCurrentSource(startupSourceVal);
+        if (startupSourceVal != ConfigStartupSource::kLastUsed) {
+            try {
+                activated = DoSetCurrentSource(startupSourceVal);
+            }
+            catch (AvSourceNotFound&) {
+                // Invalid content in iStartupSourceVal. Leave last source set.
+            }
         }
     }
     if (!activated) {

@@ -57,36 +57,16 @@ public:
     virtual void SourceXmlChanged() = 0;
 };
 
-class ConfigSourceNameObserver
-{
-public:
-    ConfigSourceNameObserver(Configuration::IConfigManager& aConfigReader, const Brx& aSourceName);
-    ~ConfigSourceNameObserver();
-    void Name(Bwx& aBuf) const;
-private:
-    void SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-private:
-    Configuration::ConfigText* iConfigSourceName;
-    TUint iListenerId;
-    Bws<ISource::kMaxSourceNameBytes> iName;
-    mutable Mutex iLock;
-};
-
-class ConfigStartupSource : public Configuration::IConfigChoiceMapper, private INonCopyable
+class ConfigStartupSource : private INonCopyable
 {
 public:
     static const Brn kKeySource;
-    static const Brn kNoneName;
-    static const TUint kNone;
+    static const Brn kLastUsed;
 public:
-    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigReader, const std::vector<const Brx*> aSystemNames);
+    ConfigStartupSource(Configuration::IConfigInitialiser& aConfigInit);
     ~ConfigStartupSource();
-    void DeregisterObservers();
-public: // from StartupSourceMapper
-    void Write(IWriter& aWriter, Configuration::IConfigChoiceMappingWriter& aMappingWriter) override;
 private:
-    Configuration::ConfigChoice* iSourceStartup;
-    std::vector<ConfigSourceNameObserver*> iObservers;
+    Configuration::ConfigText* iSourceStartup;
 };
 
 class Product : private IProduct
@@ -125,20 +105,21 @@ public:
     TUint SourceCount() const;
     TUint CurrentSourceIndex() const;
     void GetSourceXml(Bwx& aXml);
-    TBool SetCurrentSource(TUint aIndex); // returns true if aIndex wasn't already active
+    void SetCurrentSource(TUint aIndex);
     void SetCurrentSource(const Brx& aName);
     void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     void GetSourceDetails(const Brx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
     TUint SourceXmlChangeCount();
 private:
-    TBool DoSetCurrentSource(TUint aIndex); // returns true if aIndex wasn't already active
-    void DoSetCurrentSource(const Brx& aName);
+    TBool DoSetCurrentSourceLocked(TUint aIndex); // returns true if aIndex wasn't already active
+    TBool DoSetCurrentSource(TUint aIndex);
+    TBool DoSetCurrentSource(const Brx& aName);
     void AppendTag(IWriter& aWriter, const TChar* aTag, const Brx& aValue);
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void StartupSourceChanged(Configuration::KeyValuePair<TUint>& aKvp);
+    void StartupSourceChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void AutoPlayChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private: // from IProduct
     void Activate(ISource& aSource) override;
@@ -176,9 +157,9 @@ private:
     TUint iListenerIdProductRoom;
     Bws<kMaxNameBytes> iProductName;
     TUint iListenerIdProductName;
-    Configuration::ConfigChoice* iConfigStartupSource;
+    Configuration::ConfigText* iConfigStartupSource;
     TUint iListenerIdStartupSource;
-    TUint iStartupSourceVal;
+    Bws<ISource::kMaxSystemNameBytes> iStartupSourceVal;
     Configuration::ConfigChoice* iConfigAutoPlay;
     TUint iListenerIdAutoPlay;
 };
