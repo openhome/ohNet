@@ -536,6 +536,66 @@ private:
     ConfigUiValRoUpdatable* iUiVal;
 };
 
+class ConfigUiValStartupSource : public ConfigUiValBase
+{
+public:
+    ConfigUiValStartupSource(Configuration::IConfigManager& aConfigManager, Configuration::ConfigText& aText, Av::Product& aProduct, const OpenHome::Web::IWritable& aAdditionalJson);
+    ~ConfigUiValStartupSource();
+private: // from ConfigUiValBase
+    void ObserverAdded(IConfigUiValObserver& aObserver) override;
+    void WriteKey(IWriter& aWriter) override;
+    void WriteType(IWriter& aWriter) override;
+    void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+private:
+    class SourceNameObserver
+    {
+    public:
+        SourceNameObserver(const Brx& aSystemName, Configuration::ConfigText& aConfigText, Functor aObserver);
+        ~SourceNameObserver();
+        const Brx& SystemName() const;
+        void WriteSystemNameJson(IWriter& aWriter) const;
+        void WriteNameJson(IWriter& aWriter) const;
+    private:
+        void SourceNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    private:
+        Configuration::ConfigText& iConfigText;
+        Functor iFunctor;
+        TUint iSubscriberId;
+        const Bws<Av::ISource::kMaxSystemNameBytes> iSystemName;
+        Bws<Av::ISource::kMaxSourceNameBytes> iName;
+        mutable Mutex iLock;
+    };
+private:
+    static void WriteMetaOption(IWriter& aWriter, SourceNameObserver& aObserver);
+    void WriteMetaOptions(IWriter& aWriter);
+    void Update(Configuration::ConfigText::KvpText& aKvp);
+    void SourceNameChanged();
+private:
+    Configuration::ConfigText& iText;
+    TUint iListenerId;
+    Bws<Configuration::ConfigText::kMaxBytes> iVal;
+    Bws<kMaxValueBytes> iJsonValue;
+    std::vector<SourceNameObserver*> iObservers;
+    Mutex iLock;
+};
+
+class ConfigUiValStartupSourceDelayed : public IConfigUiVal
+{
+public:
+    ConfigUiValStartupSourceDelayed(Configuration::IConfigManager& aConfigManager, Av::Product& aProduct, const OpenHome::Web::IWritable& aAdditionalJson);
+    ~ConfigUiValStartupSourceDelayed();
+private: // from IConfigValUi
+    void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
+    TUint AddObserver(IConfigUiValObserver& aObserver) override;
+    void RemoveObserver(TUint aObserverId) override;
+private:
+    Configuration::IConfigManager& iConfigManager;
+    Av::Product& iProduct;
+    const IWritable& iAdditionalJson;
+    ConfigUiValStartupSource* iUiVal;
+    Mutex iLock;
+};
+
 class ConfigAppBase : public IConfigApp, public ILanguageResourceManager
 {
 private:
