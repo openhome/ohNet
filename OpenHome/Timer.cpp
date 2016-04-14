@@ -51,21 +51,18 @@ Timer::Timer(Environment& aEnv, Functor aFunctor, const TChar* aId)
 
 void Timer::FireIn(TUint aTime)
 {
-    LOG(kTimer, ">Timer::FireIn(%d)\n", aTime);
     FireAt(Time::Now(iMgr.iEnv) + aTime);
-    LOG(kTimer, "<Timer::FireIn(%d)\n", aTime);
 }
 
 void Timer::FireAt(TUint aTime)
 {
-    LOG(kTimer, ">Timer::FireAt(%d)\n", aTime);
+    //LOG(kTimer, "Timer::FireAt(%u) for %s\n", aTime, iId);
     iMgr.FireAt(*this, aTime);
-    LOG(kTimer, "<Timer::FireAt(%d)\n", aTime);
 }
 
 void Timer::Cancel()
 {
-    LOG(kTimer, ">Timer::Cancel()\n");
+    //LOG(kTimer, "Timer::Cancel() for %s\n", iId);
     TBool lock = !IsInManagerThread(iMgr);
     if (lock) {
         iMgr.CallbackLock();
@@ -74,7 +71,6 @@ void Timer::Cancel()
     if (lock) {
         iMgr.CallbackUnlock();
     }
-    LOG(kTimer, "<Timer::Cancel()\n");
 }
 
 const TChar* Timer::Id() const
@@ -115,39 +111,29 @@ TimerManager::TimerManager(Environment& aEnv, TUint aThreadPriority)
     , iLastRunTimeMs(0)
     , iCallbacksPerTick(0)
 {
-    LOG(kTimer, ">TimerManager::TimerManager()\n");
     iThread = new ThreadFunctor("TimerManager", MakeFunctor(*this, &TimerManager::Run), aThreadPriority);
     iThread->Start();
-    LOG(kTimer, "<TimerManager::TimerManager()\n");
 }
 
 TimerManager::~TimerManager()
 {
-    LOG(kTimer, ">TimerManager::~TimerManager()\n");
     Stop();
     delete iThread;
-    LOG(kTimer, "<TimerManager::~TimerManager()\n");
 }
 
 void TimerManager::Stop()
 {
-    LOG(kTimer, ">TimerManager::Stop()\n");
-
     iMutex.Wait();
     
     if (!iStop) {
         iStop = true;
         iMutex.Signal();
         iSemaphore.Signal();
-        LOG(kTimer, "-TimerManager::Stop() Wait for stopped\n");
         iStopped.Wait();
     }
     else {
         iMutex.Signal();
-        LOG(kTimer, "-TimerManager::Stop() Already stopped\n");
     }
-    
-    LOG(kTimer, "<TimerManager::Stop()\n");
 }
 
 void TimerManager::CallbackLock()
@@ -166,10 +152,7 @@ void TimerManager::CallbackUnlock()
 
 void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
 {
-    LOG(kTimer, ">TimerManager::HeadChanged()\n", iRemoving);
-
     if(IsTail(aEntry)) {
-        LOG(kTimer, "<TimerManager::HeadChanged() queue is empty\n");
         return;
     }
 
@@ -181,7 +164,6 @@ void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
         iNextTimer = Entry(aEntry).iTime;
         iMutex.Signal();
         iSemaphore.Signal();
-        LOG(kTimer, "<TimerManager::HeadChanged() retrigger timer\n");
         return;
     }
 
@@ -190,8 +172,6 @@ void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
     }
 
     iMutexNow.Signal();
-
-    LOG(kTimer, "<TimerManager::HeadChanged() while removing\n");
 }
 
 // Fire expired timers
@@ -233,7 +213,7 @@ void TimerManager::Fire()
 
     DoAdd(iNow);
     
-    LOG(kTimer, "-TimerManager::Fire() - TimerExpired, removing entries before %d\n", iNow.iTime);
+    //LOG(kTimer, "TimerManager::Fire() - TimerExpired, removing entries before %u\n", iNow.iTime);
 
     // remove all the entries before now
     // See HeadChanged() for how iRemoving gets turned off
@@ -245,7 +225,6 @@ void TimerManager::Fire()
     for (;;) {
         Timer& head = RemoveHead();
         if(&head == &iNow) {
-            LOG(kTimer, "-TimerManager::Fire() done signalling\n");
             break;
         }
         iCallbackList.Add(head);
@@ -253,8 +232,8 @@ void TimerManager::Fire()
             iCallbackList.Log();
             ASSERTS();
         }
+        LOG(kTimer, "TimerManager::Fire() - running %s\n", head.iId);
         head.iFunctor(); // run the timer's callback
-        LOG(kTimer, "-TimerManager::Fire() signaling consumer\n");
     }
     CallbackUnlock();
 }
