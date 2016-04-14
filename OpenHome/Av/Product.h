@@ -106,7 +106,8 @@ public:
     TUint CurrentSourceIndex() const;
     void GetSourceXml(Bwx& aXml);
     void SetCurrentSource(TUint aIndex);
-    void SetCurrentSource(const Brx& aName);
+    void SetCurrentSourceBySystemName(const Brx& aSystemName);
+    void SetCurrentSourceByName(const Brx& aName);
     void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     void GetSourceDetails(const Brx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
@@ -114,7 +115,7 @@ public:
 private:
     TBool DoSetCurrentSourceLocked(TUint aIndex); // returns true if aIndex wasn't already active
     TBool DoSetCurrentSource(TUint aIndex);
-    TBool DoSetCurrentSource(const Brx& aName);
+    TBool DoSetCurrentSource(const Brx& aSystemName);
     void AppendTag(IWriter& aWriter, const TChar* aTag, const Brx& aValue);
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);

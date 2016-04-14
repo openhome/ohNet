@@ -46,6 +46,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, 
     EnableActionSourceIndex();
     EnableActionSetSourceIndex();
     EnableActionSetSourceIndexByName();
+    EnableActionSetSourceBySystemName();
     EnableActionSource();
     EnableActionAttributes();
     EnableActionSourceXmlChangeCount();
@@ -218,9 +219,21 @@ void ProviderProduct::SetSourceIndex(IDvInvocation& aInvocation, TUint aValue)
 void ProviderProduct::SetSourceIndexByName(IDvInvocation& aInvocation, const Brx& aValue)
 {
     try {
-        iProduct.SetCurrentSource(aValue);
+        iProduct.SetCurrentSourceByName(aValue);
     }
     catch(AvSourceNotFound& ) {
+        FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
+void ProviderProduct::SetSourceBySystemName(Net::IDvInvocation& aInvocation, const Brx& aValue)
+{
+    try {
+        iProduct.SetCurrentSourceBySystemName(aValue);
+    }
+    catch (AvSourceNotFound&) {
         FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);
     }
     aInvocation.StartResponse();
