@@ -216,6 +216,11 @@ void CpiDeviceUpnp::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     eventUpnp.Unsubscribe(uri, aSid);
 }
 
+TBool CpiDeviceUpnp::OrphanSubscriptionsOnSubnetChange() const
+{
+    return true;
+}
+
 void CpiDeviceUpnp::NotifyRemovedBeforeReady()
 {
     iLock.Wait();

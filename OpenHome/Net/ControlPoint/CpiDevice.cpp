@@ -101,6 +101,11 @@ void CpiDevice::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     iProtocol.Unsubscribe(aSubscription, aSid);
 }
 
+TBool CpiDevice::OrphanSubscriptionsOnSubnetChange() const
+{
+    return iProtocol.OrphanSubscriptionsOnSubnetChange();
+}
+
 void CpiDevice::NotifyRemovedBeforeReady()
 {
     iProtocol.NotifyRemovedBeforeReady();

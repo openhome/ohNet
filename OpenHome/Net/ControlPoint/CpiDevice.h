@@ -48,6 +48,7 @@ public:
     virtual TUint Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& aSubscriber) = 0;
     virtual TUint Renew(CpiSubscription& aSubscription) = 0;
     virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid) = 0;
+    virtual TBool OrphanSubscriptionsOnSubnetChange() const = 0;
     virtual void NotifyRemovedBeforeReady() = 0;
     virtual TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const = 0;
 };
@@ -105,6 +106,7 @@ public:
     virtual TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber);
     virtual TUint Renew(CpiSubscription& aSubscription);
     virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
+    virtual TBool OrphanSubscriptionsOnSubnetChange() const;
     virtual void NotifyRemovedBeforeReady();
     virtual TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const;
 

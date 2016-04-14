@@ -267,6 +267,11 @@ void CpiDeviceLpec::Unsubscribe(CpiSubscription& aSubscription, const Brx& /*aSi
     // no great benefit in waiting for a response
 }
 
+TBool CpiDeviceLpec::OrphanSubscriptionsOnSubnetChange() const
+{
+    return true;
+}
+
 void CpiDeviceLpec::NotifyRemovedBeforeReady()
 {
 }

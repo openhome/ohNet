@@ -470,10 +470,8 @@ DviSubscriptionManager::~DviSubscriptionManager()
     }
     free(iPublishers);
 
-    std::list<DviSubscription*>::iterator it = iList.begin();
-    while (it != iList.end()) {
+    for (std::list<DviSubscription*>::iterator it = iList.begin(); it != iList.end(); ++it) {
         (*it)->RemoveRef();
-        it++;
     }
 
     LOG(kDvEvent, "< ~DviSubscriptionManager\n");

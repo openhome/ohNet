@@ -139,6 +139,7 @@ private:
     void Resubscribe();
     void NotifySubnetChanged();
     void Suspend();
+    TBool RemoveOnSubnetChange() const;
 private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);

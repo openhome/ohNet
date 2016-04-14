@@ -376,6 +376,11 @@ void CpiSubscription::Suspend()
     }
 }
 
+TBool CpiSubscription::RemoveOnSubnetChange() const
+{
+    return iDevice.OrphanSubscriptionsOnSubnetChange();
+}
+
 void CpiSubscription::EventUpdateStart()
 {
     if (iEventProcessor != NULL) {
@@ -732,8 +737,10 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
         size_t count = iMap.size();
         while (count-- > 0) {
             CpiSubscription* subscription = iMap.begin()->second;
-            RemoveLocked(*subscription);
-            subscription->NotifySubnetChanged();
+            if (subscription->RemoveOnSubnetChange()) {
+                RemoveLocked(*subscription);
+                subscription->NotifySubnetChanged();
+            }
         }
     }
     /* Don't try to migrate subscriptions here if !aNewSubnet - this causes a race between

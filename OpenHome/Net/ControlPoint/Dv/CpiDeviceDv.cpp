@@ -128,6 +128,11 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     // can't safely access subscription now - RemoveRef() above may have resulted in it being deleted
 }
 
+TBool CpiDeviceDv::OrphanSubscriptionsOnSubnetChange() const
+{
+    return false;
+}
+
 void CpiDeviceDv::NotifyRemovedBeforeReady()
 {
 }

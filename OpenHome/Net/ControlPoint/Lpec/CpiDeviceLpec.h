@@ -47,6 +47,7 @@ private: // from ICpiProtocol
     TUint Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& aSubscriber);
     TUint Renew(CpiSubscription& aSubscription);
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
+    TBool OrphanSubscriptionsOnSubnetChange() const;
     void NotifyRemovedBeforeReady();
     TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const;
 private: // from ICpiDeviceObserver
