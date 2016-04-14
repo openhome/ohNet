@@ -165,9 +165,6 @@ void SuiteSupply::Test()
     iSupply->OutputMetadata(Brn(kMetaData));
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgMetaText);
-    iSupply->OutputStreamInterrupted();
-    TEST(++expectedMsgCount == iMsgPushCount);
-    TEST(iLastMsg == EMsgStreamInterrupted);
     iSupply->OutputFlush(1);
     TEST(++expectedMsgCount == iMsgPushCount);
     TEST(iLastMsg == EMsgFlush);
