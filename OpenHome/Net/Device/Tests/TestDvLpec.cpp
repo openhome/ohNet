@@ -300,7 +300,7 @@ void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack)
     sem->Wait(5*1000); // allow up to 5 seconds to connect to LPEC server and receive initial ALIVE message
     delete sem;
     cpDevice->TestActions();
-    cpDevice->TestSubscriptions();
+    //cpDevice->TestSubscriptions();
     delete cpDevice;
     delete device;
 

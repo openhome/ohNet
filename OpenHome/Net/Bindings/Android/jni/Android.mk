@@ -14,6 +14,8 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/Bonjour.cpp \
                    $(ohroot)OpenHome/Buffer.cpp \
                    $(ohroot)OpenHome/Converter.cpp \
+                   $(ohroot)thirdparty/libb64/cencode.c \
+                   $(ohroot)thirdparty/libb64/cdecode.c \
                    $(ohroot)OpenHome/Net/Discovery.cpp \
                    $(ohroot)OpenHome/Debug.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpDeviceCore.cpp \
