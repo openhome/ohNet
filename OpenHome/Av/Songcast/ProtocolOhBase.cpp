@@ -496,14 +496,14 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
         return;
     }
     if (diff < 1) {
-        if ((aMsg.Flags() & OhmMsgAudio::kFlagResent) == 0) {
-            // A frame in the past that is not a resend implies that the sender has reset their frame count
-            iSupply->OutputStreamInterrupted(); // force recently output audio to ramp down 
-            // accept the next received frame as the start of a new stream
-            iRunning = false;
-            iStreamMsgDue = true;
-        }
+        const TBool resent = ((aMsg.Flags() & OhmMsgAudio::kFlagResent) != 0);
         aMsg.RemoveRef();
+        if (!resent) {
+            // A frame in the past that is not a resend implies that the sender has reset their frame count
+            // force recently output audio to ramp down
+            iMutexTransport.Signal();
+            THROW(ReaderError);
+        }
     }
     else {
         iRepairing = RepairBegin(aMsg);

@@ -71,7 +71,6 @@ private:
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
-       ,EMsgStreamInterrupted
        ,EMsgFlush
        ,EMsgWait
        ,EMsgNone
@@ -219,9 +218,6 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
     case EMsgMetaText:
         iSupply->OutputMetadata(Brn(kMetaData));
         break;
-    case EMsgStreamInterrupted:
-        iSupply->OutputStreamInterrupted();
-        break;
     case EMsgFlush:
         iSupply->OutputFlush(1);
         break;
@@ -325,7 +321,7 @@ Msg* SuiteSupplyAggregator::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* SuiteSupplyAggregator::ProcessMsg(MsgStreamInterrupted* aMsg)
 {
-    iLastMsg = EMsgStreamInterrupted;
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
     return aMsg;
 }
 

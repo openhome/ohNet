@@ -1185,13 +1185,6 @@ public:
      */
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     /**
-    * Inform the pipeline of a break in content.
-    *
-    * This should only be called for 'live' streams which are unable to
-    * restart from the point where a connection was dropped.
-    */
-    virtual void OutputStreamInterrupted() = 0;
-    /**
      * Push a Flush command into the pipeline.
      *
      * This is typically called after a call to TrySeek() or TryStop() from IStreamHandler.

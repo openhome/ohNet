@@ -70,7 +70,7 @@ private:
     TrackDatabase* iDatabase;
     Shuffler* iShuffler;
     Repeater* iRepeater;
-    Media::UriProvider* iUriProvider;
+    UriProviderPlaylist* iUriProvider;
     ProviderPlaylist* iProviderPlaylist;
     TUint iTrackPosSeconds;
     TUint iStreamId;
@@ -179,6 +179,7 @@ void SourcePlaylist::Activate(TBool aAutoPlay)
     SourceBase::Activate(aAutoPlay);
     iTrackPosSeconds = 0;
     iActive = true;
+    iUriProvider->SetActive(true);
     if (!iNoPipelineStateChangeOnActivation) {
         TUint trackId = ITrackDatabase::kTrackIdNone;
         if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
@@ -204,6 +205,7 @@ void SourcePlaylist::Deactivate()
     iTransportState = EPipelineStopped;
     iProviderPlaylist->NotifyPipelineState(EPipelineStopped);
     iLock.Signal();
+    iUriProvider->SetActive(false);
     Source::Deactivate();
 }
 

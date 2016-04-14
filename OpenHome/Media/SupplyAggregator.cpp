@@ -54,12 +54,6 @@ void SupplyAggregator::OutputMetadata(const Brx& aMetadata)
     Output(msg);
 }
 
-void SupplyAggregator::OutputStreamInterrupted()
-{
-    auto msg = iMsgFactory.CreateMsgStreamInterrupted();
-    Output(msg);
-}
-
 void SupplyAggregator::OutputFlush(TUint aFlushId)
 {
     MsgFlush* msg = iMsgFactory.CreateMsgFlush(aFlushId);

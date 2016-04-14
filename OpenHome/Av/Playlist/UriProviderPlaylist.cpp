@@ -24,6 +24,7 @@ UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Pipeli
     , iLastTrackId(ITrackDatabase::kTrackIdNone)
     , iPlayingTrackId(ITrackDatabase::kTrackIdNone)
     , iFirstFailedTrackId(ITrackDatabase::kTrackIdNone)
+    , iActive(false)
 {
     aPipeline.AddObserver(static_cast<IPipelineObserver&>(*this));
     iDatabase.SetObserver(*this);
@@ -35,6 +36,13 @@ UriProviderPlaylist::~UriProviderPlaylist()
     if (iPending != nullptr) {
         iPending->RemoveRef();
     }
+}
+
+void UriProviderPlaylist::SetActive(TBool aActive)
+{
+    iLock.Wait();
+    iActive = aActive;
+    iLock.Signal();
 }
 
 void UriProviderPlaylist::Begin(TUint aTrackId)
@@ -163,7 +171,9 @@ void UriProviderPlaylist::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TU
                 iPending->AddRef();
             }
         }
-        iIdManager.InvalidateAfter(aIdBefore);
+        if (iActive) {
+            iIdManager.InvalidateAfter(aIdBefore);
+        }
         if (aIdBefore == iPlayingTrackId) {
             iLastTrackId = iPlayingTrackId;
         }
@@ -198,7 +208,9 @@ void UriProviderPlaylist::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* a
         else if (iLastTrackId == aId) {
             iLastTrackId = (aBefore==nullptr? ITrackDatabase::kTrackIdNone : aBefore->Id());
         }
-        iIdManager.InvalidateAt(aId);
+        if (iActive) {
+            iIdManager.InvalidateAt(aId);
+        }
     }
 
     iObserver.NotifyTrackDeleted(aId, aBefore, aAfter);
@@ -212,7 +224,9 @@ void UriProviderPlaylist::NotifyAllDeleted()
             iPending->RemoveRef();
             iPending = nullptr;
         }
-        iIdManager.InvalidateAll();
+        if (iActive) {
+            iIdManager.InvalidateAll();
+        }
     }
 
     iObserver.NotifyAllDeleted();
