@@ -33,6 +33,7 @@ private: // from DvProviderAvOpenhomeOrgProduct1
     void SourceIndex(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
     void SetSourceIndex(Net::IDvInvocation& aInvocation, TUint aValue) override;
     void SetSourceIndexByName(Net::IDvInvocation& aInvocation, const Brx& aValue) override;
+    void SetSourceBySystemName(Net::IDvInvocation& aInvocation, const Brx& aValue) override;
     void Source(Net::IDvInvocation& aInvocation, TUint aIndex, Net::IDvInvocationResponseString& aSystemName, Net::IDvInvocationResponseString& aType, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseBool& aVisible) override;
     void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
     void SourceXmlChangeCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;

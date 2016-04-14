@@ -775,6 +775,8 @@ TUint RampApplicator::MedianMultiplier(const Media::Ramp& aRamp)
     case Ramp::EDown:
         medRamp = aRamp.Start() - ((aRamp.Start() - aRamp.End()) / 2);
         break;
+    case Ramp::EMute:
+        return 0;
     default:
         medRamp = aRamp.Start();
         break;
@@ -1697,6 +1699,9 @@ TUint MsgAudio::MedianRampMultiplier()
 {
     if (!iRamp.IsEnabled()) {
         return 0x80000000; // see RampArray.h
+    }
+    else if (iRamp.Direction() == Ramp::EMute) {
+        return 0;
     }
     const TUint mult = RampApplicator::MedianMultiplier(iRamp);
     iRamp.Reset();

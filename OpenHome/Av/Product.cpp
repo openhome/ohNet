@@ -319,19 +319,33 @@ TBool Product::DoSetCurrentSource(TUint aIndex)
     return DoSetCurrentSourceLocked(aIndex);
 }
 
-void Product::SetCurrentSource(const Brx& aName)
+void Product::SetCurrentSourceByName(const Brx& aName)
 {
     iPowerManager.StandbyDisable(StandbyDisableReason::User);
-    DoSetCurrentSource(aName);
-}
-
-TBool Product::DoSetCurrentSource(const Brx& aName)
-{
     AutoMutex a(iLock);
-    // volkano treats [name] as a system name and anything else as a user-defined name.  Do we need to do the same?
+    Bws<ISource::kMaxSourceNameBytes> name;
     TUint i = 0;
     for (i = 0; i < (TUint)iSources.size(); i++) {
-        if (iSources[i]->SystemName() == aName) {
+        iSources[i]->Name(name);
+        if (name == aName) {
+            break;
+        }
+    }
+    (void)DoSetCurrentSourceLocked(i);
+}
+
+void Product::SetCurrentSourceBySystemName(const Brx& aSystemName)
+{
+    iPowerManager.StandbyDisable(StandbyDisableReason::User);
+    DoSetCurrentSource(aSystemName);
+}
+
+TBool Product::DoSetCurrentSource(const Brx& aSystemName)
+{
+    AutoMutex a(iLock);
+    TUint i = 0;
+    for (i = 0; i < (TUint)iSources.size(); i++) {
+        if (iSources[i]->SystemName() == aSystemName) {
             break;
         }
     }
