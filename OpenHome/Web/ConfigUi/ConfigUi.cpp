@@ -1109,7 +1109,7 @@ void ConfigUiValRoIpAddress::CurrentAdapterChanged()
 
 // ConfigUiValStartupSource
 
-ConfigUiValStartupSource::ConfigUiValStartupSource(IConfigManager& aConfigManager, ConfigText& aText, Av::Product& aProduct, const OpenHome::Web::IWritable& aAdditionalJson)
+ConfigUiValStartupSource::ConfigUiValStartupSource(IConfigManager& aConfigManager, ConfigText& aText, const std::vector<const Brx*>& aSources, const OpenHome::Web::IWritable& aAdditionalJson)
     : ConfigUiValBase(aAdditionalJson)
     , iText(aText)
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
@@ -1117,23 +1117,12 @@ ConfigUiValStartupSource::ConfigUiValStartupSource(IConfigManager& aConfigManage
 {
     iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValStartupSource::Update));
 
-    const TUint srcCount = aProduct.SourceCount();
-    Bws<ISource::kMaxSystemNameBytes> systemName;
-    Bws<ISource::kMaxSourceNameBytes> sourceName;
-    Bws<ISource::kMaxSourceTypeBytes> sourceType;
-    TBool visible;
-
-    for (TUint i = 0; i < srcCount; i++) {
-        systemName.SetBytes(0);
-        sourceName.SetBytes(0);
-        sourceType.SetBytes(0);
-        aProduct.GetSourceDetails(i, systemName, sourceType, sourceName, visible);
-
+    for (TUint i = 0; i < aSources.size(); i++) {
         Bws<Source::kKeySourceNameMaxBytes> key;
-        Source::GetSourceNameKey(systemName, key);
+        Source::GetSourceNameKey(*aSources[i], key);
 
         ConfigText& configText = aConfigManager.GetText(key);
-        SourceNameObserver* obs = new SourceNameObserver(systemName, configText, MakeFunctor(*this, &ConfigUiValStartupSource::SourceNameChanged));
+        SourceNameObserver* obs = new SourceNameObserver(*aSources[i], configText, MakeFunctor(*this, &ConfigUiValStartupSource::SourceNameChanged));
         iObservers.push_back(obs);
     }
 }
@@ -1312,19 +1301,26 @@ void ConfigUiValStartupSource::SourceNameObserver::SourceNameChanged(Configurati
 
 // ConfigUiValStartupSourceDelayed
 
-ConfigUiValStartupSourceDelayed::ConfigUiValStartupSourceDelayed(IConfigManager& aConfigManager, Product& aProduct, const IWritable& aAdditionalJson)
+ConfigUiValStartupSourceDelayed::ConfigUiValStartupSourceDelayed(IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const IWritable& aAdditionalJson)
     : iConfigManager(aConfigManager)
-    , iProduct(aProduct)
     , iAdditionalJson(aAdditionalJson)
     , iUiVal(nullptr)
     , iLock("CVSS")
 {
+    for (const Brx* systemName : aSources) {
+        Bwh* name = new Bwh(*systemName);
+        iSources.push_back(name);
+    }
 }
 
 ConfigUiValStartupSourceDelayed::~ConfigUiValStartupSourceDelayed()
 {
     if (iUiVal != nullptr) {
         delete iUiVal;
+    }
+
+    for (TUint i=0; i<iSources.size(); i++) {
+        delete iSources[i];
     }
 }
 
@@ -1341,7 +1337,7 @@ TUint ConfigUiValStartupSourceDelayed::AddObserver(IConfigUiValObserver& aObserv
     if (iUiVal == nullptr) {
         ConfigText& text = iConfigManager.GetText(ConfigStartupSource::kKeySource);
         // This dynamic allocation at runtime only happens once.
-        iUiVal = new ConfigUiValStartupSource(iConfigManager, text, iProduct, iAdditionalJson);
+        iUiVal = new ConfigUiValStartupSource(iConfigManager, text, iSources, iAdditionalJson);
     }
     return iUiVal->AddObserver(aObserver);
 }
@@ -1566,7 +1562,7 @@ ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigMana
         AddConfigChoice(key);
     }
 
-    // Startup.Source isn't added to ConfigManager until after ConfigApp is created.
+    // Startup source value isn't added to ConfigManager until after ConfigApp is created.
     // Use special "delayed instantiation" ConfigUi value.
-    AddValue(new ConfigUiValChoiceDelayed(iConfigManager, ConfigStartupSource::kKeySource, iRebootNotRequired));
+    AddValue(new ConfigUiValStartupSourceDelayed(iConfigManager, aSources, iRebootNotRequired));
 }

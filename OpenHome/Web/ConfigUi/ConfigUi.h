@@ -539,7 +539,7 @@ private:
 class ConfigUiValStartupSource : public ConfigUiValBase
 {
 public:
-    ConfigUiValStartupSource(Configuration::IConfigManager& aConfigManager, Configuration::ConfigText& aText, Av::Product& aProduct, const OpenHome::Web::IWritable& aAdditionalJson);
+    ConfigUiValStartupSource(Configuration::IConfigManager& aConfigManager, Configuration::ConfigText& aText, const std::vector<const Brx*>& aSources, const OpenHome::Web::IWritable& aAdditionalJson);
     ~ConfigUiValStartupSource();
 private: // from ConfigUiValBase
     void ObserverAdded(IConfigUiValObserver& aObserver) override;
@@ -582,7 +582,7 @@ private:
 class ConfigUiValStartupSourceDelayed : public IConfigUiVal
 {
 public:
-    ConfigUiValStartupSourceDelayed(Configuration::IConfigManager& aConfigManager, Av::Product& aProduct, const OpenHome::Web::IWritable& aAdditionalJson);
+    ConfigUiValStartupSourceDelayed(Configuration::IConfigManager& aConfigManager, const std::vector<const Brx*>& aSources, const OpenHome::Web::IWritable& aAdditionalJson);
     ~ConfigUiValStartupSourceDelayed();
 private: // from IConfigValUi
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
@@ -590,7 +590,7 @@ private: // from IConfigValUi
     void RemoveObserver(TUint aObserverId) override;
 private:
     Configuration::IConfigManager& iConfigManager;
-    Av::Product& iProduct;
+    std::vector<const Brx*> iSources;
     const IWritable& iAdditionalJson;
     ConfigUiValStartupSource* iUiVal;
     Mutex iLock;
