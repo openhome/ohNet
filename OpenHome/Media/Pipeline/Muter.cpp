@@ -6,6 +6,8 @@
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Functor.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
@@ -193,15 +195,12 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
     }
         break;
     case eMuting:
-    {
-        const TUint size = aMsg->Jiffies();
-        if (size >= iJiffiesUntilMute) {
+        if (iJiffiesUntilMute == 0) {
             PlayingSilence();
         }
         else {
-            iJiffiesUntilMute -= size;
+            iJiffiesUntilMute -= std::min(aMsg->Jiffies(), iJiffiesUntilMute);
         }
-    }
         // fallthrough
     case eMuted:
         aMsg->SetMuted();
