@@ -16,6 +16,9 @@ FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
             iFilePtr = fopen(aFilename, "rb");
             break;
         case eFileReadWrite:
+            iFilePtr = fopen(aFilename, "r+b");
+            break;
+        case eFileWriteOnly:
             iFilePtr = fopen(aFilename, "wb");
             break;
         default:
