@@ -14,6 +14,7 @@ public:
     SupplyAggregator(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement);
     virtual ~SupplyAggregator();
     void Flush();
+    void Discard();
 public: // from ISupply
     void OutputTrack(Track& aTrack, TBool aStartOfStream = true) override;
     void OutputDrain(Functor aCallback) override;
