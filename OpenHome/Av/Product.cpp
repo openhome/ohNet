@@ -305,7 +305,6 @@ void Product::CurrentAdapterChanged()
         }
     }
 
-    TUint i=0;
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
         (*it)->ProductUrisChanged();
     }
