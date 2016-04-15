@@ -955,12 +955,12 @@ void MsgDrain::Initialise(TUint aId, Functor aCallback)
 {
     iId = aId;
     iCallback = aCallback;
-	iCallbackPending = iCallback? true : false;
+    iCallbackPending = iCallback? true : false;
 }
 
 void MsgDrain::Clear()
 {
-	ASSERT(!iCallbackPending);
+    ASSERT(!iCallbackPending);
     iCallback = Functor();
 }
 
