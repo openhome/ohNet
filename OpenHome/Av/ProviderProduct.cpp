@@ -54,8 +54,8 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, 
     {
         Brn name;
         Brn info;
-        Brn url;
-        Brn imageUri;
+        Bws<Product::kMaxUriBytes> url;
+        Bws<Product::kMaxUriBytes> imageUri;
         iProduct.GetManufacturerDetails(name, info, url, imageUri);
         SetPropertyManufacturerName(name);
         SetPropertyManufacturerInfo(info);
@@ -73,7 +73,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, 
         Bws<Product::kMaxRoomBytes> room;
         Bws<Product::kMaxNameBytes> name;
         Brn info;
-        Brn imageUri;
+        Bws<Product::kMaxUriBytes> imageUri;
         iProduct.GetProductDetails(room, name, info, imageUri);
         SetPropertyProductRoom(room);
         SetPropertyProductName(name);
@@ -101,8 +101,8 @@ void ProviderProduct::Manufacturer(IDvInvocation& aInvocation, IDvInvocationResp
 {
     Brn name;
     Brn info;
-    Brn url;
-    Brn imageUri;
+    Bws<Product::kMaxUriBytes> url;
+    Bws<Product::kMaxUriBytes> imageUri;
     iProduct.GetManufacturerDetails(name, info, url, imageUri);
 
     aInvocation.StartResponse();
@@ -121,8 +121,8 @@ void ProviderProduct::Model(IDvInvocation& aInvocation, IDvInvocationResponseStr
 {
     Brn name;
     Brn info;
-    Brn url;
-    Brn imageUri;
+    Bws<Product::kMaxUriBytes> url;
+    Bws<Product::kMaxUriBytes> imageUri;
     iProduct.GetModelDetails(name, info, url, imageUri);
 
     aInvocation.StartResponse();
@@ -142,7 +142,7 @@ void ProviderProduct::Product(IDvInvocation& aInvocation, IDvInvocationResponseS
     Bws<Product::kMaxRoomBytes> room;
     Bws<Product::kMaxNameBytes> name;
     Brn info;
-    Brn imageUri;
+    Bws<Product::kMaxUriBytes> imageUri;
     iProduct.GetProductDetails(room, name, info, imageUri);
     const TChar* p = aInvocation.ResourceUriPrefix();
     const Brx& presentationUrl = (p != nullptr) ? Brn(p) : Brx::Empty();
@@ -285,6 +285,32 @@ void ProviderProduct::Started()
     SetPropertySourceCount(iProduct.SourceCount());
     SetPropertyAttributes(iProduct.Attributes());
     SourceXmlChanged();
+}
+
+void ProviderProduct::ProductUrisChanged()
+{
+    {
+        Brn name;
+        Brn info;
+        Bws<Product::kMaxUriBytes> url;
+        Bws<Product::kMaxUriBytes> imageUri;
+        iProduct.GetManufacturerDetails(name, info, url, imageUri);
+        SetPropertyManufacturerUrl(url);
+        SetPropertyManufacturerImageUri(imageUri);
+
+        iProduct.GetModelDetails(name, info, url, imageUri);
+        SetPropertyModelUrl(url);
+        SetPropertyModelImageUri(imageUri);
+    }
+
+    {
+        Bws<Product::kMaxRoomBytes> room;
+        Bws<Product::kMaxNameBytes> name;
+        Brn info;
+        Bws<Product::kMaxUriBytes> imageUri;
+        iProduct.GetProductDetails(room, name, info, imageUri);
+        SetPropertyProductImageUri(imageUri);
+    }
 }
 
 void ProviderProduct::SourceIndexChanged()

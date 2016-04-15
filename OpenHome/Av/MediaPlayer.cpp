@@ -86,7 +86,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     choices.push_back(Product::kAutoPlayDisable);
     choices.push_back(Product::kAutoPlayEnable);
     iConfigAutoPlay = new ConfigChoice(*iConfigManager, Product::kConfigIdAutoPlay, choices, Product::kAutoPlayDisable);
-    iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
+    iProduct = new Av::Product(aDvStack.Env(), aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
     iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, aShell);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);

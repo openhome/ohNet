@@ -15,9 +15,9 @@ namespace OpenHome {
 namespace Av {
 
 class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1
-                        , private IProductObserver
-                        , private IProductNameObserver
-                        , private IStandbyHandler
+                      , private IProductObserver
+                      , private IProductNameObserver
+                      , private IStandbyHandler
 {
 public:
     ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, IPowerManager& aPowerManager);
@@ -41,6 +41,7 @@ private: // from IProductObserver
     void Started() override;
     void SourceIndexChanged() override;
     void SourceXmlChanged() override;
+    void ProductUrisChanged() override;
 private: // from IProductNameObserver
     void RoomChanged(const Brx& aRoom) override;
     void NameChanged(const Brx& aName) override;

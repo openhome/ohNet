@@ -902,10 +902,13 @@ void ConfigUiValChoiceDelayed::RemoveObserver(TUint aObserverId)
 const Brn ConfigUiValRoModelIcon::kKey("About.ModelIcon");
 
 ConfigUiValRoModelIcon::ConfigUiValRoModelIcon(Av::Product& aProduct)
+    : iProduct(aProduct)
 {
-    Brn name, info, url, imageUri;
-    aProduct.GetModelDetails(name, info, url, imageUri);
-    iUiVal = new ConfigUiValRo(kKey, imageUri);
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
+    iProduct.GetModelDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValRoUpdatable(kKey, imageUri);
+    iProduct.AddObserver(*this);
 }
 
 ConfigUiValRoModelIcon::~ConfigUiValRoModelIcon()
@@ -928,6 +931,26 @@ void ConfigUiValRoModelIcon::RemoveObserver(TUint aObserverId)
     iUiVal->RemoveObserver(aObserverId);
 }
 
+void ConfigUiValRoModelIcon::Started()
+{
+}
+
+void ConfigUiValRoModelIcon::SourceIndexChanged()
+{
+}
+
+void ConfigUiValRoModelIcon::SourceXmlChanged()
+{
+}
+
+void ConfigUiValRoModelIcon::ProductUrisChanged()
+{
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
+    iProduct.GetModelDetails(name, info, url, imageUri);
+    iUiVal->Update(imageUri);
+}
+
 
 // ConfigUiValRoModelName
 
@@ -935,7 +958,8 @@ const Brn ConfigUiValRoModelName::kKey("About.ModelName");
 
 ConfigUiValRoModelName::ConfigUiValRoModelName(Product& aProduct)
 {
-    Brn name, info, url, imageUri;
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
     aProduct.GetModelDetails(name, info, url, imageUri);
     iUiVal = new ConfigUiValRo(kKey, name);
 }
@@ -966,10 +990,13 @@ void ConfigUiValRoModelName::RemoveObserver(TUint aObserverId)
 const Brn ConfigUiValRoModelUrl::kKey("About.ModelUrl");
 
 ConfigUiValRoModelUrl::ConfigUiValRoModelUrl(Av::Product& aProduct)
+    : iProduct(aProduct)
 {
-    Brn name, info, url, imageUri;
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
     aProduct.GetModelDetails(name, info, url, imageUri);
-    iUiVal = new ConfigUiValRo(kKey, url);
+    iUiVal = new ConfigUiValRoUpdatable(kKey, url);
+    iProduct.AddObserver(*this);
 }
 
 ConfigUiValRoModelUrl::~ConfigUiValRoModelUrl()
@@ -992,6 +1019,26 @@ void ConfigUiValRoModelUrl::RemoveObserver(TUint aObserverId)
     iUiVal->RemoveObserver(aObserverId);
 }
 
+void ConfigUiValRoModelUrl::Started()
+{
+}
+
+void ConfigUiValRoModelUrl::SourceIndexChanged()
+{
+}
+
+void ConfigUiValRoModelUrl::SourceXmlChanged()
+{
+}
+
+void ConfigUiValRoModelUrl::ProductUrisChanged()
+{
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
+    iProduct.GetModelDetails(name, info, url, imageUri);
+    iUiVal->Update(url);
+}
+
 
 // ConfigUiValRoManufacturerName
 
@@ -999,7 +1046,8 @@ const Brn ConfigUiValRoManufacturerName::kKey("About.ManufacturerName");
 
 ConfigUiValRoManufacturerName::ConfigUiValRoManufacturerName(Product& aProduct)
 {
-    Brn name, info, url, imageUri;
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
     aProduct.GetManufacturerDetails(name, info, url, imageUri);
     iUiVal = new ConfigUiValRo(kKey, name);
 }
@@ -1030,10 +1078,13 @@ void ConfigUiValRoManufacturerName::RemoveObserver(TUint aObserverId)
 const Brn ConfigUiValRoManufacturerUrl::kKey("About.ManufacturerUrl");
 
 ConfigUiValRoManufacturerUrl::ConfigUiValRoManufacturerUrl(Av::Product& aProduct)
+    : iProduct(aProduct)
 {
-    Brn name, info, url, imageUri;
-    aProduct.GetManufacturerDetails(name, info, url, imageUri);
-    iUiVal = new ConfigUiValRo(kKey, url);
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
+    iProduct.GetManufacturerDetails(name, info, url, imageUri);
+    iUiVal = new ConfigUiValRoUpdatable(kKey, url);
+    iProduct.AddObserver(*this);
 }
 
 ConfigUiValRoManufacturerUrl::~ConfigUiValRoManufacturerUrl()
@@ -1054,6 +1105,26 @@ TUint ConfigUiValRoManufacturerUrl::AddObserver(IConfigUiValObserver& aObserver)
 void ConfigUiValRoManufacturerUrl::RemoveObserver(TUint aObserverId)
 {
     iUiVal->RemoveObserver(aObserverId);
+}
+
+void ConfigUiValRoManufacturerUrl::Started()
+{
+}
+
+void ConfigUiValRoManufacturerUrl::SourceIndexChanged()
+{
+}
+
+void ConfigUiValRoManufacturerUrl::SourceXmlChanged()
+{
+}
+
+void ConfigUiValRoManufacturerUrl::ProductUrisChanged()
+{
+    Brn name, info;
+    Bws<Product::kMaxUriBytes> url, imageUri;
+    iProduct.GetManufacturerDetails(name, info, url, imageUri);
+    iUiVal->Update(url);
 }
 
 

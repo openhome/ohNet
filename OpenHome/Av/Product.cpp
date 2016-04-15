@@ -9,6 +9,8 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <limits.h>
 
@@ -44,10 +46,11 @@ const TUint Product::kAutoPlayDisable = 0;
 const TUint Product::kAutoPlayEnable  = 1;
 const TUint Product::kCurrentSourceNone = UINT_MAX;
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore,
-                 IConfigManager& aConfigReader, IConfigInitialiser& aConfigInit,
-                 IPowerManager& aPowerManager)
-    : iDevice(aDevice)
+Product::Product(Environment& aEnv, Net::DvDeviceStandard& aDevice, IReadStore& aReadStore,
+                 Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManager& aConfigReader,
+                 Configuration::IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager)
+    : iEnv(aEnv)
+    , iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigReader(aConfigReader)
     , iConfigInit(aConfigInit)
@@ -64,6 +67,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iStartupSourceVal(ConfigStartupSource::kLastUsed)
     , iConfigAutoPlay(nullptr)
     , iListenerIdAutoPlay(IConfigManager::kSubscriptionIdInvalid)
+    , iAdapterChangeListenerId(NetworkAdapterList::kListenerIdNull)
 {
     iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityLowest, "Product");
     iLastSelectedSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kKeyLastSelectedSource, Brx::Empty(), ISource::kMaxSourceTypeBytes);
@@ -80,6 +84,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
 
 Product::~Product()
 {
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iAdapterChangeListenerId);
     delete iStandbyObserver;
     iConfigStartupSource->Unsubscribe(iListenerIdStartupSource);
     iConfigStartupSource = nullptr; // Didn't have ownership.
@@ -109,7 +114,9 @@ void Product::Start()
 
     iLock.Wait();
     const Bws<ISource::kMaxSystemNameBytes> startupSourceVal(iStartupSourceVal);
+    iAdapterChangeListenerId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &Product::CurrentAdapterChanged), false);
     iLock.Signal();
+    CurrentAdapterChanged(); // NetworkAdapterList doesn't run callbacks on registration
 
     TBool sourceSelected = false;
     if (startupSourceVal != ConfigStartupSource::kLastUsed) {
@@ -178,23 +185,23 @@ void Product::AddAttribute(const Brx& aAttribute)
     iAttributes.Append(aAttribute);
 }
 
-void Product::GetManufacturerDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
+void Product::GetManufacturerDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri)
 {
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufManufacturerName, aName));
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufManufacturerInfo, aInfo));
-    ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufManufacturerUrl, aUrl));
-    ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufManufacturerImageUrl, aImageUri)); // FIXME - generate (at least partially) dynamically
+    GetUri(StaticDataKey::kBufManufacturerUrl, aUrl);
+    GetUri(StaticDataKey::kBufManufacturerImageUrl, aImageUri);
 }
 
-void Product::GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
+void Product::GetModelDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri)
 {
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelName, aName));
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
-    ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelUrl, aUrl));
-    ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri)); // FIXME - generate (at least partially) dynamically
+    GetUri(StaticDataKey::kBufModelUrl, aUrl);
+    GetUri(StaticDataKey::kBufModelImageUrl, aImageUri);
 }
 
-void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri)
+void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Bwx& aImageUri)
 {
     iLockDetails.Wait();
     aRoom.Append(iProductRoom);
@@ -202,7 +209,7 @@ void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageU
     iLockDetails.Signal();
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
-    ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));
+    GetUri(StaticDataKey::kBufModelImageUrl, aImageUri);
 }
 
 TUint Product::SourceCount() const
@@ -282,6 +289,42 @@ void Product::AutoPlayChanged(KeyValuePair<TUint>& aKvp)
     iLock.Wait();
     iAutoPlay = (aKvp.Value() == kAutoPlayEnable);
     iLock.Signal();
+}
+
+void Product::CurrentAdapterChanged()
+{
+    {
+        AutoMutex _(iLock);
+        AutoNetworkAdapterRef ar(iEnv, "Av::Product");
+        auto current = ar.Adapter();
+        if (current == nullptr) {
+            iUriPrefix.Set("");
+        }
+        else {
+            iDevice.GetResourceManagerUri(*current, iUriPrefix);
+        }
+    }
+
+    TUint i=0;
+    for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
+        (*it)->ProductUrisChanged();
+    }
+}
+
+void Product::GetUri(const Brx& aStaticDataKey, Bwx& aUri)
+{
+    Brn uri;
+    ASSERT(iReadStore.TryReadStoreStaticItem(aStaticDataKey, uri));
+    static const Brn kPrefixHttp("http://");
+    if (uri.BeginsWith(kPrefixHttp)) {
+        aUri.Replace(uri);
+    }
+    else {
+        iLock.Wait();
+        aUri.Replace(iUriPrefix);
+        iLock.Signal();
+        aUri.Append(uri);
+    }
 }
 
 void Product::SetCurrentSource(TUint aIndex)

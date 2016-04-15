@@ -55,6 +55,7 @@ public:
     virtual void Started() = 0;
     virtual void SourceIndexChanged() = 0;
     virtual void SourceXmlChanged() = 0;
+    virtual void ProductUrisChanged() = 0; // only useful while we're limited to a single adapter
 };
 
 class ConfigStartupSource : private INonCopyable
@@ -88,10 +89,11 @@ public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 40;
     static const TUint kMaxSourceXmlBytes = 1024 * 3;
+    static const TUint kMaxUriBytes = 128;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore,
-            Configuration::IConfigManager& aConfigReader, Configuration::IConfigInitialiser& aConfigInit,
-            IPowerManager& aPowerManager);
+    Product(Environment& aEnv, Net::DvDeviceStandard& aDevice, IReadStore& aReadStore,
+            Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManager& aConfigReader,
+            Configuration::IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager);
     ~Product();
     void AddObserver(IProductObserver& aObserver);
     void Start();
@@ -99,9 +101,9 @@ public:
     void AddSource(ISource* aSource);
     void AddAttribute(const TChar* aAttribute);
     void AddAttribute(const Brx& aAttribute);
-    void GetManufacturerDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
-    void GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
-    void GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri);
+    void GetManufacturerDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri);
+    void GetModelDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri);
+    void GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Bwx& aImageUri);
     TUint SourceCount() const;
     TUint CurrentSourceIndex() const;
     void GetSourceXml(Bwx& aXml);
@@ -122,6 +124,8 @@ private:
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void StartupSourceChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void AutoPlayChanged(Configuration::KeyValuePair<TUint>& aKvp);
+    void CurrentAdapterChanged();
+    void GetUri(const Brx& aStaticDataKey, Bwx& aUri);
 private: // from IProduct
     void Activate(ISource& aSource) override;
     void NotifySourceChanged(ISource& aSource) override;
@@ -133,7 +137,8 @@ private: // from IStandbyHandler
 private: // from Media::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter) override;
 private:
-    Net::DvDevice& iDevice; // do we need to store this?
+    Environment& iEnv;
+    Net::DvDeviceStandard& iDevice; // do we need to store this?
     IReadStore& iReadStore;
     Configuration::IConfigManager& iConfigReader;
     Configuration::IConfigInitialiser& iConfigInit;
@@ -163,6 +168,8 @@ private:
     Bws<ISource::kMaxSystemNameBytes> iStartupSourceVal;
     Configuration::ConfigChoice* iConfigAutoPlay;
     TUint iListenerIdAutoPlay;
+    TUint iAdapterChangeListenerId;
+    Brh iUriPrefix;
 };
 
 class IFriendlyNameObservable
