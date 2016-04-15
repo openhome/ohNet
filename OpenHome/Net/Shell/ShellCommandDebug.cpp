@@ -15,7 +15,7 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     iShell.AddCommandHandler(kShellCommandDebug, *this);
     AddLevel("Error", Debug::kError);
     AddLevel("Thread", Debug::kThread);
-    AddLevel("Network", Debug::kNetwork);
+    //AddLevel("Network", Debug::kNetwork); // Shell is only contactable over network. Attempting to log network interactions will result in endless chain of logging until device crashes.
     AddLevel("Timer", Debug::kTimer);
     AddLevel("SsdpMulticast", Debug::kSsdpMulticast);
     AddLevel("SsdpUnicast", Debug::kSsdpUnicast);
@@ -39,7 +39,12 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application7", Debug::kApplication7);
     AddLevel("Application8", Debug::kApplication8);
     AddLevel("Application9", Debug::kApplication9);
-    AddLevel("All", Debug::kAll);
+
+    // Debug::kAll level includes Debug::kNetwork, which will crash device if
+    // activated via shell.
+    // So, mask out Debug::kNetwork level.
+    static const TUint kDebugAll = Debug::kAll & ~Debug::kNetwork;
+    AddLevel("All", kDebugAll);
 }
 
 ShellCommandDebug::~ShellCommandDebug()
