@@ -204,7 +204,10 @@ Msg* Skipper::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iRunning = true;
+    if (!iRunning) {
+        LOG(kMedia, "Skipper::ProcessMsg(MsgAudioPcm* ), setting iRunning=true\n");
+        iRunning = true;
+    }
     if (iState == eStarting) {
         iState = eRunning;
     }
@@ -291,7 +294,7 @@ TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
     if (!iRunning) {
         aRampDown = false;
     }
-    LOG(kMedia, "Skipper::TryRemoveCurrentStream(%u), iState=%u\n", aRampDown, iState);
+    LOG(kMedia, "Skipper::TryRemoveCurrentStream(%u), iState=%u, iRunning=%u\n", aRampDown, iState, iRunning);
     EState state = iState;
     if (!aRampDown || iState == eStarting) {
         StartFlushing(false); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
