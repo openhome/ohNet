@@ -48,29 +48,29 @@ void PresetDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
 
 TUint PresetDatabase::GetPresetId(TUint aPresetNumber) const
 {
-	if (aPresetNumber == 0 || aPresetNumber > kMaxPresets) {
-		return kPresetIdNone;
-	}
-	TUint id;
-	TUint index = aPresetNumber - 1;
+    if (aPresetNumber == 0 || aPresetNumber > kMaxPresets) {
+        return kPresetIdNone;
+    }
+    TUint id;
+    TUint index = aPresetNumber - 1;
 
-	iLock.Wait();
-	const Preset& preset = iPresets[index];
-	id = preset.Id();
-	iLock.Signal();
+    iLock.Wait();
+    const Preset& preset = iPresets[index];
+    id = preset.Id();
+    iLock.Signal();
 
-	return id;
+    return id;
 }
 
 TUint PresetDatabase::GetPresetNumber(TUint aPresetId) const
 {
-	AutoMutex a(iLock);
-	for (TUint i=0; i<kMaxPresets; i++) {
-		if (iPresets[i].Id() == aPresetId) {
-			return (i+1);
-		}
-	}
-	return kPresetIdNone;
+    AutoMutex a(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        if (iPresets[i].Id() == aPresetId) {
+            return (i+1);
+        }
+    }
+    return kPresetIdNone;
 }
 
 TBool PresetDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const

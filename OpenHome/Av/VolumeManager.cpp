@@ -115,9 +115,9 @@ void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
     }
 
     try {
-    	iVolume.SetVolume(startupVolume);
-	}
-	catch (VolumeNotSupported&) { }
+        iVolume.SetVolume(startupVolume);
+    }
+    catch (VolumeNotSupported&) { }
 }
 
 void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)

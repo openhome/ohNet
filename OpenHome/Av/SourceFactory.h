@@ -41,10 +41,10 @@ public:
     static const TChar* kSourceTypeReceiver;
 
     static const Brn kSourceNamePlaylist;
-	static const Brn kSourceNameRadio;
-	static const Brn kSourceNameUpnpAv;
-	static const Brn kSourceNameRaop;
-	static const Brn kSourceNameReceiver;
+    static const Brn kSourceNameRadio;
+    static const Brn kSourceNameUpnpAv;
+    static const Brn kSourceNameRaop;
+    static const Brn kSourceNameReceiver;
 };
 
 } // namespace Av

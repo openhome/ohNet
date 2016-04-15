@@ -40,7 +40,7 @@ public:
     virtual void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const = 0;
     virtual void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const = 0;
     virtual TUint GetPresetId(TUint aPresetNumber) const = 0;
-	virtual TUint GetPresetNumber(TUint aPresetId) const = 0;
+    virtual TUint GetPresetNumber(TUint aPresetId) const = 0;
     virtual TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const = 0;
     virtual TBool TryGetPresetById(TUint aId, Bwx& aUri, Bwx& aMetaData) const = 0;
     virtual TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const = 0;
@@ -61,7 +61,7 @@ public: // from IPresetDatabaseReader
     void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const override;
     void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const override;
     TUint GetPresetId(TUint aPresetNumber) const override;
-	TUint GetPresetNumber(TUint aPresetId) const override;
+    TUint GetPresetNumber(TUint aPresetId) const override;
     TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const override;
     TBool TryGetPresetById(TUint aId, Bwx& aUri, Bwx& aMetaData) const override;
     TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const override;

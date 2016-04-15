@@ -87,7 +87,7 @@ SourceBase::SourceBase(const Brx& aSystemName, const TChar* aType, TBool aIsVisi
     , iConfigVisibleSubscriptionId(IConfigManager::kSubscriptionIdInvalid)
     , iConfigNameCreated(false)
     , iConfigVisibleCreated(false)
-	, iIsVisibleByDefault(aIsVisibleByDefault)
+    , iIsVisibleByDefault(aIsVisibleByDefault)
 {
 }
 
@@ -143,10 +143,10 @@ void SourceBase::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit,
         choices.push_back(kConfigValSourceInvisible);
         choices.push_back(kConfigValSourceVisible);
         if (iIsVisibleByDefault) {
-        	iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceVisible);
+            iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceVisible);
         }
         else {
-        	iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceInvisible);
+            iConfigVisible = new ConfigChoice(aConfigInit, key, choices, kConfigValSourceInvisible);
         }
         iConfigVisibleCreated = true;
     }
