@@ -1186,8 +1186,6 @@ ConfigUiValStartupSource::ConfigUiValStartupSource(IConfigManager& aConfigManage
     , iListenerId(IConfigManager::kSubscriptionIdInvalid)
     , iLock("CUTL")
 {
-    iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValStartupSource::Update));
-
     for (TUint i = 0; i < aSources.size(); i++) {
         Bws<Source::kKeySourceNameMaxBytes> key;
         Source::GetSourceNameKey(*aSources[i], key);
@@ -1196,14 +1194,16 @@ ConfigUiValStartupSource::ConfigUiValStartupSource(IConfigManager& aConfigManage
         SourceNameObserver* obs = new SourceNameObserver(*aSources[i], configText, MakeFunctor(*this, &ConfigUiValStartupSource::SourceNameChanged));
         iObservers.push_back(obs);
     }
+
+    iListenerId = iText.Subscribe(MakeFunctorConfigText(*this, &ConfigUiValStartupSource::Update));
 }
 
 ConfigUiValStartupSource::~ConfigUiValStartupSource()
 {
+    iText.Unsubscribe(iListenerId);
     for (TUint i = 0; i < iObservers.size(); i++) {
         delete iObservers[i];
     }
-    iText.Unsubscribe(iListenerId);
 }
 
 void ConfigUiValStartupSource::ObserverAdded(IConfigUiValObserver& aObserver)
@@ -1295,6 +1295,7 @@ void ConfigUiValStartupSource::Update(Configuration::ConfigText::KvpText& aKvp)
         for (const SourceNameObserver* o: iObservers) {
             if (aKvp.Value() == o->SystemName()) {
                 sourceFound = true;
+                break;
             }
         }
     }
