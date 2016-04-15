@@ -229,8 +229,12 @@ void Bwx::Replace(const Brx& aBuf)
 
 void Bwx::ReplaceThrow(const Brx& aBuf)
 {
-    if (aBuf.Bytes() > MaxBytes()) {
+    const TUint bytes = aBuf.Bytes();
+    if (bytes > MaxBytes()) {
         THROW(BufferOverflow);
+    }
+    else if (bytes == 0) {
+        iBytes = 0;
     }
     else
     {
@@ -238,8 +242,8 @@ void Bwx::ReplaceThrow(const Brx& aBuf)
         ASSERT(dest != NULL);
         const TByte* src = aBuf.Ptr();
         ASSERT(src != NULL);
-        (void)memmove(const_cast<TByte*>(dest), src, aBuf.Bytes());
-        iBytes = aBuf.Bytes();
+        (void)memmove(const_cast<TByte*>(dest), src, bytes);
+        iBytes = bytes;
     }
 }
 
