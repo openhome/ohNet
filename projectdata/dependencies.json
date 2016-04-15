@@ -15,18 +15,21 @@
         "type": "openhome",
         "platform-specific": false,
         "version": "0.0.92",
+        "cross-check": false,
         "archive-filename": "${name}-${version}.tar.gz",
         "source-git": "https://github.com/openhome/ohWafHelpers.git"
     },
     {   "name": "TestTones",
         "type": "external",
         "version": "1.9",
+        "cross-check": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name": "libplatform",
         "type": "internal",
         "version": "0.0.239",
+        "cross-check": false,
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-ppc32": false,
@@ -36,6 +39,7 @@
     {   "name":             "libosa",
         "type":             "internal",
         "version":          "0.0.212",
+        "cross-check":      false,
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-ppc32": false,
@@ -50,12 +54,14 @@
     },
     {   "name":             "testharness",
         "version":          "0.1.39",
+        "cross-check":      false,
         "type":             "openhome",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
     },
     {   "name":             "Reprog",
         "version":          "0.1.30",
+        "cross-check":      false,
         "type":             "internal",
         "archive-filename": "${name}-${version}-${host-platform}-Release.tar.gz",
         "platform-ignore": {
@@ -67,12 +73,14 @@
     {
         "name":             "hardware",
         "version":          "0.0.113",
+        "cross-check": false,
         "type":             "internal",
         "archive-filename": "${name}-Lib-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name":             "transmute",
         "version":          "0.2.48",
+        "cross-check":      false,
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
@@ -85,6 +93,7 @@
         "name": "FunctionalTest",
         "type": "openhome",
         "version": "0.0.740",
+        "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
@@ -93,6 +102,7 @@
         "name": "FTDataPublic",
         "type": "openhome",
         "version": "0.0.9",
+        "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FTDataPublic-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
@@ -106,6 +116,7 @@
         "name": "FTDataPrivate",
         "type": "internal",
         "version": "0.0.5",
+        "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FTDataPrivate-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTestData",
