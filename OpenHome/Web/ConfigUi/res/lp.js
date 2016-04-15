@@ -302,6 +302,7 @@ WebUi = function() {
                     // FIXME - check session ID?
                     // Split string after request line, as the response (i.e., any JSON) may contain newlines.
                     var json = aRequest.ResponseText().substring(lines[0].length+2);    // +2 to account for stripped \r\n
+                    console.log('LongPoll.prototype.ProcessResponse json:\n' + json);
                     try {
                         this.ParseResponse(json);
                         console.log("LongPoll.ProcessResponse sending next lp request\n");
