@@ -159,13 +159,15 @@ void SuiteVolumeScaler::TestRangeOverflow()
 
 void SuiteVolumeScaler::TestEnable()
 {
-    VolumeScaler scaler(*iReporter, *iOffset, 100, 50);
+    // Assume 1024 binary-milli-Db per step. So 100*1024 = 102400 binary-milli-Db max.
+    VolumeScaler scaler(*iReporter, *iOffset, 102400, 50);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(50);
+    const VolumeValue vol(50, 51200);
+    scaler.VolumeChanged(vol);
     scaler.SetVolume(25);
     TEST(iOffset->Offset() == 0);
     scaler.SetVolumeEnabled(true);
-    TEST(iOffset->Offset() == -25);
+    TEST(iOffset->Offset() == -25600);
 
     scaler.SetVolumeEnabled(false);
     TEST(iOffset->Offset() == 0);
@@ -173,14 +175,16 @@ void SuiteVolumeScaler::TestEnable()
 
 void SuiteVolumeScaler::TestUserVolumeInvalid()
 {
-    VolumeScaler scaler(*iReporter, *iOffset, 100, 50);
-    TEST_THROWS(scaler.VolumeChanged(101), AssertionFailed);
-    TEST_THROWS(scaler.VolumeChanged(999), AssertionFailed);
+    VolumeScaler scaler(*iReporter, *iOffset, 102400, 50);
+    const VolumeValue vol1(101, 103424);
+    TEST_THROWS(scaler.VolumeChanged(vol1), AssertionFailed);
+    const VolumeValue vol2(999, 1022976);
+    TEST_THROWS(scaler.VolumeChanged(vol2), AssertionFailed);
 }
 
 void SuiteVolumeScaler::TestExternalVolumeInvalid()
 {
-    VolumeScaler scaler(*iReporter, *iOffset, 100, 50);
+    VolumeScaler scaler(*iReporter, *iOffset, 102400, 50);
     TEST_THROWS(scaler.SetVolume(51), AssertionFailed);
     TEST_THROWS(scaler.SetVolume(999), AssertionFailed);
 }
@@ -189,41 +193,47 @@ void SuiteVolumeScaler::TestLimits()
 {
     // Max user vol > max external vol.
     {
-        VolumeScaler scaler(*iReporter, *iOffset, 100, 50);
+        VolumeScaler scaler(*iReporter, *iOffset, 102400, 50);
         scaler.SetVolumeEnabled(true);
         // User: 0, external: 0.
-        scaler.VolumeChanged(0);
+        const VolumeValue vol0(0, 0);
+        scaler.VolumeChanged(vol0);
         scaler.SetVolume(0);
         TEST(iOffset->Offset() == 0);
         // User: 100, external: 50.
-        scaler.VolumeChanged(100);
+        const VolumeValue vol100(100, 102400);
+        scaler.VolumeChanged(vol100);
         scaler.SetVolume(50);
         TEST(iOffset->Offset() == 0);
         iReporter->Clear();
     }
     // Max user vol < max external vol.
     {
-        VolumeScaler scaler(*iReporter, *iOffset, 50, 100);
+        VolumeScaler scaler(*iReporter, *iOffset, 51200, 100);
         scaler.SetVolumeEnabled(true);
         // User: 0, external: 0.
-        scaler.VolumeChanged(0);
+        const VolumeValue vol0(0, 0);
+        scaler.VolumeChanged(vol0);
         scaler.SetVolume(0);
         // User: 50, external: 100.
-        scaler.VolumeChanged(50);
+        const VolumeValue vol50(50, 51200);
+        scaler.VolumeChanged(vol50);
         scaler.SetVolume(100);
         TEST(iOffset->Offset() == 0);
         iReporter->Clear();
     }
     // Max user vol == max external vol.
     {
-        VolumeScaler scaler(*iReporter, *iOffset, 100, 100);
+        VolumeScaler scaler(*iReporter, *iOffset, 102400, 100);
         scaler.SetVolumeEnabled(true);
         // User: 0, external: 0.
-        scaler.VolumeChanged(0);
+        const VolumeValue vol0(0, 0);
+        scaler.VolumeChanged(vol0);
         scaler.SetVolume(0);
         TEST(iOffset->Offset() == 0);
         // User: 100, external: 100.
-        scaler.VolumeChanged(100);
+        const VolumeValue vol100(100, 102400);
+        scaler.VolumeChanged(vol100);
         scaler.SetVolume(100);
         TEST(iOffset->Offset() == 0);
         iReporter->Clear();
@@ -232,56 +242,63 @@ void SuiteVolumeScaler::TestLimits()
 
 void SuiteVolumeScaler::TestUserVolumeChanges()
 {
-    VolumeScaler scaler(*iReporter, *iOffset, 100, 100);
+    VolumeScaler scaler(*iReporter, *iOffset, 102400, 100);
     scaler.SetVolumeEnabled(true);
+
+    const VolumeValue vol0(0, 0);
+    const VolumeValue vol25(25, 25600);
+    const VolumeValue vol50(50, 51200);
+    const VolumeValue vol75(75, 76800);
+    const VolumeValue vol100(100, 102400);
 
     // External vol at 0.
     scaler.SetVolume(0);
-    scaler.VolumeChanged(0);
+    scaler.VolumeChanged(vol0);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(25);
-    TEST(iOffset->Offset() == -25);
-    scaler.VolumeChanged(50);
-    TEST(iOffset->Offset() == -50);
-    scaler.VolumeChanged(75);
-    TEST(iOffset->Offset() == -75);
-    scaler.VolumeChanged(100);
-    TEST(iOffset->Offset() == -100);
+    scaler.VolumeChanged(vol25);
+    TEST(iOffset->Offset() == -25600);
+    scaler.VolumeChanged(vol50);
+    TEST(iOffset->Offset() == -51200);
+    scaler.VolumeChanged(vol75);
+    TEST(iOffset->Offset() == -76800);
+    scaler.VolumeChanged(vol100);
+    TEST(iOffset->Offset() == -102400);
 
     // External vol at 50.
     scaler.SetVolume(50);
-    scaler.VolumeChanged(0);
+    scaler.VolumeChanged(vol0);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(25);
-    TEST(iOffset->Offset() == -13);
-    scaler.VolumeChanged(50);
-    TEST(iOffset->Offset() == -25);
-    scaler.VolumeChanged(75);
-    TEST(iOffset->Offset() == -38);
-    scaler.VolumeChanged(100);
-    TEST(iOffset->Offset() == -50);
+    scaler.VolumeChanged(vol25);
+    TEST(iOffset->Offset() == -12800);
+    scaler.VolumeChanged(vol50);
+    TEST(iOffset->Offset() == -25600);
+    scaler.VolumeChanged(vol75);
+    TEST(iOffset->Offset() == -38400);
+    scaler.VolumeChanged(vol100);
+    TEST(iOffset->Offset() == -51200);
 
     // External vol at 100.
     scaler.SetVolume(100);
-    scaler.VolumeChanged(0);
+    scaler.VolumeChanged(vol0);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(25);
+    scaler.VolumeChanged(vol25);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(50);
+    scaler.VolumeChanged(vol50);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(75);
+    scaler.VolumeChanged(vol75);
     TEST(iOffset->Offset() == 0);
-    scaler.VolumeChanged(100);
+    scaler.VolumeChanged(vol100);
     TEST(iOffset->Offset() == 0);
 }
 
 void SuiteVolumeScaler::TestExternalVolumeChanges()
 {
-    VolumeScaler scaler(*iReporter, *iOffset, 100, 100);
+    VolumeScaler scaler(*iReporter, *iOffset, 102400, 100);
     scaler.SetVolumeEnabled(true);
 
     // User vol at 0.
-    scaler.VolumeChanged(0);
+    const VolumeValue vol0(0, 0);
+    scaler.VolumeChanged(vol0);
     scaler.SetVolume(0);
     TEST(iOffset->Offset() == 0);
     scaler.SetVolume(25);
@@ -294,28 +311,30 @@ void SuiteVolumeScaler::TestExternalVolumeChanges()
     TEST(iOffset->Offset() == 0);
 
     // User vol at 50.
-    scaler.VolumeChanged(50);
+    const VolumeValue vol50(50, 51200);
+    scaler.VolumeChanged(vol50);
     scaler.SetVolume(0);
-    TEST(iOffset->Offset() == -50);
+    TEST(iOffset->Offset() == -51200);
     scaler.SetVolume(25);
-    TEST(iOffset->Offset() == -38);
+    TEST(iOffset->Offset() == -38400);
     scaler.SetVolume(50);
-    TEST(iOffset->Offset() == -25);
+    TEST(iOffset->Offset() == -25600);
     scaler.SetVolume(75);
-    TEST(iOffset->Offset() == -13);
+    TEST(iOffset->Offset() == -12800);
     scaler.SetVolume(100);
     TEST(iOffset->Offset() == 0);
 
     // User vol at 100.
-    scaler.VolumeChanged(100);
+    const VolumeValue vol100(100, 102400);
+    scaler.VolumeChanged(vol100);
     scaler.SetVolume(0);
-    TEST(iOffset->Offset() == -100);
+    TEST(iOffset->Offset() == -102400);
     scaler.SetVolume(25);
-    TEST(iOffset->Offset() == -75);
+    TEST(iOffset->Offset() == -76800);
     scaler.SetVolume(50);
-    TEST(iOffset->Offset() == -50);
+    TEST(iOffset->Offset() == -51200);
     scaler.SetVolume(75);
-    TEST(iOffset->Offset() == -25);
+    TEST(iOffset->Offset() == -25600);
     scaler.SetVolume(100);
     TEST(iOffset->Offset() == 0);
 }

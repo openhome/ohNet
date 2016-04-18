@@ -254,9 +254,9 @@ void ProviderVolume::VolumeLimit(IDvInvocation& aInvocation, IDvInvocationRespon
     aInvocation.EndResponse();
 }
 
-void ProviderVolume::VolumeChanged(TUint aVolume)
+void ProviderVolume::VolumeChanged(const IVolumeValue& aVolume)
 {
-    SetPropertyVolume(aVolume);
+    SetPropertyVolume(aVolume.VolumeUser());
 }
 
 void ProviderVolume::MuteChanged(TBool aValue)

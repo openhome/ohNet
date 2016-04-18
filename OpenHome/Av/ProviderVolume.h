@@ -58,7 +58,7 @@ private: // from DvProviderAvOpenhomeOrgVolume1
 
     void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 private: // from IVolumeObserver
-    void VolumeChanged(TUint aVolume) override;
+    void VolumeChanged(const IVolumeValue& aVolume) override;
 private: // from Media::IMuteObserver
     void MuteChanged(TBool aValue) override;
 private:
