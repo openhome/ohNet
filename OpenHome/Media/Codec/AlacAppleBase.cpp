@@ -72,7 +72,7 @@ void CodecAlacAppleBase::Decode()
     BitBufferInit(&bitBuffer, (uint8_t*)iInBuf.Ptr(), iInBuf.Bytes());
 
     // Use alac decoder to decode a frame at a time.
-    TUint status = iDecoder->Decode(&bitBuffer, (uint8_t*)iDecodedBuf.Ptr(), iFrameLength, iChannels, &outSamples);
+    TInt status = iDecoder->Decode(&bitBuffer, (uint8_t*)iDecodedBuf.Ptr(), iFrameLength, iChannels, &outSamples);
     if (status != ALAC_noErr) {
         LOG(kCodec, "CodecAlacAppleBase::Decode third-party decoder error. status: %d\n", status);
         THROW(CodecStreamCorrupt);
