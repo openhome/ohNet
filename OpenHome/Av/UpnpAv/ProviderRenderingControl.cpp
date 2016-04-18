@@ -222,10 +222,10 @@ void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUin
     aInvocation.EndResponse();
 }
 
-void ProviderRenderingControl::VolumeChanged(TUint aVolume)
+void ProviderRenderingControl::VolumeChanged(const IVolumeValue& aVolume)
 {
     AutoMutex _(iLock);
-    iVolumeCurrent = (aVolume * kVolumeReportedSteps) / iVolumeMax;
+    iVolumeCurrent = (aVolume.VolumeUser() * kVolumeReportedSteps) / iVolumeMax;
     UpdateVolumeDb();
     ScheduleUpdate();
 }

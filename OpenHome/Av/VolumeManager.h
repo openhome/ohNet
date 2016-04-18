@@ -176,10 +176,17 @@ private:
     TUint iLimit;
 };
 
+class IVolumeValue
+{
+public:
+    virtual TUint VolumeUser() const = 0;
+    virtual TUint VolumeBinaryMilliDb() const = 0;
+};
+
 class IVolumeObserver
 {
 public:
-    virtual void VolumeChanged(TUint aVolume) = 0;
+    virtual void VolumeChanged(const IVolumeValue& aVolume) = 0;
     virtual ~IVolumeObserver() {}
 };
 
@@ -188,6 +195,18 @@ class IVolumeReporter
 public:
     virtual void AddVolumeObserver(IVolumeObserver& aObserver) = 0;
     virtual ~IVolumeReporter() {}
+};
+
+class VolumeValue : public IVolumeValue, private INonCopyable
+{
+public:
+    VolumeValue(TUint aVolumeUser, TUint aBinaryMilliDb);
+public: // from IVolumeValue
+    TUint VolumeUser() const override;
+    TUint VolumeBinaryMilliDb() const override;
+private:
+    const TUint iVolumeUser;
+    const TUint iVolumeBinaryMilliDb;
 };
 
 class VolumeReporter : public IVolumeReporter, public IVolume, private INonCopyable
@@ -491,18 +510,18 @@ public:
 class VolumeScaler : public IVolume, public IVolumeScalerEnabler, public IVolumeObserver
 {
 public:
-    VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxUser, TUint aVolMaxExternal);
+    VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxMilliDb, TUint aVolMaxExternal);
 public: // from IVolume
     void SetVolume(TUint aVolume) override;
 public: // from IVolumeScalerEnabler
     void SetVolumeEnabled(TBool aEnabled) override;
 public: // from IVolumeObserver
-    void VolumeChanged(TUint aVolume) override;
+    void VolumeChanged(const IVolumeValue& aVolume) override;
 private:
     void UpdateOffsetLocked();
 private:
     IVolumeSourceOffset& iVolumeOffset;
-    const TUint iVolMaxUser;
+    const TUint iVolMaxMilliDb;
     const TUint iVolMaxExternal;
     TBool iEnabled;
     TUint iVolUser;

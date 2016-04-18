@@ -91,7 +91,7 @@ void CodecRaopApple::StreamInitialise()
     Bws<kConfigBytes> config(Brn(iCodecSpecificData.Ptr()+4, iCodecSpecificData.Bytes()-4));
 
     // Configure decoder (re-initialise rather than delete/new whole object).
-    TUint status = iDecoder->Init((void*)(config.Ptr()), config.Bytes());
+    TInt status = iDecoder->Init((void*)(config.Ptr()), config.Bytes());
     if (status != ALAC_noErr) {
         THROW(CodecStreamCorrupt);
     }

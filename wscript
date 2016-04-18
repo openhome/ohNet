@@ -98,6 +98,8 @@ def configure(conf):
     # Using http://svn.macosforge.org/repository/alac/trunk
     # Revision: 4
     # (2012-12-12 22:09:07 +0000 (Wed, 12 Dec 2012))
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.DEFINES_ALAC_APPLE = ['TARGET_OS_WIN32']
     conf.env.INCLUDES_ALAC_APPLE = [
         'thirdparty/apple_alac/codec/',
         ]

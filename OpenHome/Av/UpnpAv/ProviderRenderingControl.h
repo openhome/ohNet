@@ -31,7 +31,7 @@ private: // from Net::DvProviderUpnpOrgRenderingControl1
     void SetVolumeDB(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume) override;
     void GetVolumeDBRange(Net::IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, Net::IDvInvocationResponseInt& aMinValue, Net::IDvInvocationResponseInt& aMaxValue) override;
 private: // from IVolumeObserver
-    void VolumeChanged(TUint aVolume) override;
+    void VolumeChanged(const IVolumeValue& aVolume) override;
 private: // from Media::IMuteObserver
     void MuteChanged(TBool aValue) override;
 private:
