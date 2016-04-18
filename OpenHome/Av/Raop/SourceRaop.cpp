@@ -94,7 +94,9 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 {
     GenerateMetadata();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aFriendlyNameObservable, aMacAddr, aMediaPlayer.VolumeManager(), aMediaPlayer.VolumeManager(), aMediaPlayer.VolumeManager().VolumeMax());
+    IVolumeManager& volManager = aMediaPlayer.VolumeManager();
+
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aFriendlyNameObservable, aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();

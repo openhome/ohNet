@@ -117,8 +117,10 @@ Msg* Logger::ProcessMsg(MsgDrain* aMsg)
 Msg* Logger::ProcessMsg(MsgDelay* aMsg)
 {
     if (IsEnabled(EMsgDelay)) {
-        const TUint jiffies = aMsg->DelayJiffies();
-        Log::Print("Pipeline (%s): delay {jiffies: %x, ms: %u}\n", iId, jiffies, jiffies/Jiffies::kPerMs);
+        const TUint total = aMsg->DelayJiffies();
+        const TUint animator = aMsg->AnimatorDelayJiffies();
+        Log::Print("Pipeline (%s): delay {total: %ums (%x jiffies), animator: %ums (%x jiffies)}\n",
+                   iId, total/Jiffies::kPerMs, total, animator/Jiffies::kPerMs, animator);
     }
     return aMsg;
 }

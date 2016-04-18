@@ -27,11 +27,11 @@ Muter::Muter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, TUint
     : PipelineElement(kSupportedMsgTypes)
     , iMsgFactory(aMsgFactory)
     , iUpstream(aUpstream)
+    , iAnimator(nullptr)
     , iLock("MPMT")
     , iSemMuted("MPMT", 0)
     , iState(eRunning)
     , iRampDuration(aRampDuration)
-    , iAnimatorBufferJiffies(0)
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kMax)
     , iHalting(false)
@@ -41,7 +41,7 @@ Muter::Muter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream, TUint
 
 void Muter::SetAnimator(IPipelineAnimator& aPipelineAnimator)
 {
-    iAnimatorBufferJiffies = aPipelineAnimator.PipelineAnimatorBufferJiffies();
+    iAnimator = &aPipelineAnimator;
 }
 
 void Muter::Mute()
@@ -186,7 +186,7 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
             }
             else {
                 iState = eMuting;
-                iJiffiesUntilMute = iAnimatorBufferJiffies;
+                iJiffiesUntilMute = iAnimator->PipelineAnimatorBufferJiffies();
             }
         }
         if (split != nullptr) {

@@ -890,7 +890,7 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 
 
 // RaopDiscovery
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMax)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMaxMilliDb)
     : iEnv(aEnv)
     , iDvStack(aDvStack)
     , iFriendlyNameObservable(aFriendlyNameObservable)
@@ -898,7 +898,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iCurrent(nullptr)
     , iServersLock("RDSL")
     , iObserversLock("RDOL")
-    , iVolume(aVolumeReporter, aVolumeOffset, aVolumeMax, kVolMaxScaled)
+    , iVolume(aVolumeReporter, aVolumeOffset, aVolumeMaxMilliDb, kVolMaxScaled)
 {
     // NOTE: iRaopDevice is not registered by default
     iPowerObserver = aPowerManager.RegisterPowerHandler(*this, kPowerPriorityLowest);

@@ -12,13 +12,14 @@ class SampleRateValidator : public PipelineElement, public IPipelineElementDowns
 
     static const TUint kSupportedMsgTypes;
 public:
-    SampleRateValidator(IPipelineElementDownstream& aDownstreamElement);
+    SampleRateValidator(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
     void SetAnimator(IPipelineAnimator& aPipelineAnimator);
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
@@ -27,10 +28,13 @@ private: // from IMsgProcessor
 private:
     Msg* ProcessFlushable(Msg* aMsg);
 private:
+    MsgFactory& iMsgFactory;
     IPipelineElementDownstream& iDownstream;
     IPipelineAnimator* iAnimator;
     TUint iTargetFlushId;
     TBool iFlushing;
+    TUint iDelayJiffies;
+    TUint iAnimatorDelayJiffies;
 };
 
 } // namespace Media

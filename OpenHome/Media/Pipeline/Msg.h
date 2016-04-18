@@ -385,13 +385,15 @@ class MsgDelay : public Msg
 public:
     MsgDelay(AllocatorBase& aAllocator);
     TUint DelayJiffies() const;
+    TUint AnimatorDelayJiffies() const;
 private:
-    void Initialise(TUint aDelayJiffies);
+    void Initialise(TUint aDelayJiffies, TUint aAnimatorDelayJiffies);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iDelayJiffies;
+    TUint iAnimatorDelayJiffies;
 };
 
 class IStreamHandler;
@@ -1387,22 +1389,23 @@ public:
     /**
      * Query how much (if any) buffering is performed post-pipeline
      *
-     * @return     Delay applied beyond the pipeline in Jiffies.
+     * @return     Delay currently applied beyond the pipeline in Jiffies.
      *             See Jiffies class for time conversion utilities.
      */
     virtual TUint PipelineAnimatorBufferJiffies() = 0;
     /**
      * Report any post-pipeline delay.
      *
-     * Throws SampleRateUnsupported is aSampleRateTo is not supported.
+     * Throws SampleRateUnsupported is aSampleRate is not supported.
      *
-     * @param[in] aSampleRateFrom   Previous sample rate (in Hz).  0 implies pipeline startup.
-     * @param[in] aSampleRateTo     New sample rate (in Hz).
+     * @param[in] aSampleRate       Sample rate (in Hz).
+     * @param[in] aBitDepth         Bit depth (8, 16, 24 or 32).
+     * @param[in] aNumChannels      Number of channels [1..8].
      *
      * @return     Delay applied beyond the pipeline in Jiffies.
      *             See Jiffies class for time conversion utilities.
      */
-    virtual TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) = 0;
+    virtual TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) = 0;
 };
 
 class IPipeline : public IPipelineElementUpstream
@@ -1505,7 +1508,7 @@ public:
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
-    MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
+    MsgDelay* CreateMsgDelay(TUint aDelayJiffies, TUint aAnimatorDelayJiffies = 0);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgEncodedStream* CreateMsgEncodedStream(MsgEncodedStream* aMsg, IStreamHandler* aStreamHandler);

@@ -172,6 +172,25 @@ void VolumeLimiter::DoSetVolume(TUint aValue)
 }
 
 
+// VolumeValue
+
+VolumeValue::VolumeValue(TUint aVolumeUser, TUint aBinaryMilliDb)
+    : iVolumeUser(aVolumeUser)
+    , iVolumeBinaryMilliDb(aBinaryMilliDb)
+{
+}
+
+TUint VolumeValue::VolumeUser() const
+{
+    return iVolumeUser;
+}
+
+TUint VolumeValue::VolumeBinaryMilliDb() const
+{
+    return iVolumeBinaryMilliDb;
+}
+
+
 // VolumeReporter
 
 VolumeReporter::VolumeReporter(IVolume& aVolume, TUint aMilliDbPerStep)
@@ -183,7 +202,8 @@ VolumeReporter::VolumeReporter(IVolume& aVolume, TUint aMilliDbPerStep)
 
 void VolumeReporter::AddVolumeObserver(IVolumeObserver& aObserver)
 {
-    aObserver.VolumeChanged(iUpstreamVolume / iMilliDbPerStep);
+    const VolumeValue vol(iUpstreamVolume / iMilliDbPerStep, iUpstreamVolume);
+    aObserver.VolumeChanged(vol);
     iObservers.push_back(&aObserver);
 }
 
@@ -191,9 +211,9 @@ void VolumeReporter::SetVolume(TUint aVolume)
 {
     iVolume.SetVolume(aVolume);
     iUpstreamVolume = aVolume;
-    const TUint volume = iUpstreamVolume / iMilliDbPerStep;
+    const VolumeValue vol(iUpstreamVolume / iMilliDbPerStep, iUpstreamVolume);
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
-        (*it)->VolumeChanged(volume);
+        (*it)->VolumeChanged(vol);
     }
 }
 
@@ -675,7 +695,8 @@ VolumeManager::~VolumeManager()
 void VolumeManager::AddVolumeObserver(IVolumeObserver& aObserver)
 {
     if (iVolumeReporter == nullptr) {
-        aObserver.VolumeChanged(0);
+        const VolumeValue vol(0, 0);
+        aObserver.VolumeChanged(vol);
     }
     else {
         iVolumeReporter->AddVolumeObserver(aObserver);
@@ -803,9 +824,9 @@ void VolumeManager::Unmute()
 
 // VolumeScaler
 
-VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxUser, TUint aVolMaxExternal)
+VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolMaxMilliDb, TUint aVolMaxExternal)
     : iVolumeOffset(aVolumeOffset)
-    , iVolMaxUser(aVolMaxUser)
+    , iVolMaxMilliDb(aVolMaxMilliDb)
     , iVolMaxExternal(aVolMaxExternal)
     , iEnabled(false)
     , iVolUser(0)
@@ -813,8 +834,8 @@ VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset
     , iLock("VSCL")
 {
     // Check there is no overflow if max values of both ranges are multiplied together.
-    const TUint prod = iVolMaxUser * iVolMaxExternal;
-    const TUint div = prod/iVolMaxUser;
+    const TUint prod = iVolMaxMilliDb * iVolMaxExternal;
+    const TUint div = prod/iVolMaxMilliDb;
     ASSERT(div == iVolMaxExternal);
     aVolumeReporter.AddVolumeObserver(*this);
 }
@@ -847,11 +868,11 @@ void VolumeScaler::SetVolumeEnabled(TBool aEnabled)
     }
 }
 
-void VolumeScaler::VolumeChanged(TUint aVolume)
+void VolumeScaler::VolumeChanged(const IVolumeValue& aVolume)
 {
-    ASSERT(aVolume <= iVolMaxUser);
+    ASSERT(aVolume.VolumeBinaryMilliDb() <= iVolMaxMilliDb);
     AutoMutex a(iLock);
-    iVolUser = aVolume;
+    iVolUser = aVolume.VolumeBinaryMilliDb();
     if (iEnabled) {
         UpdateOffsetLocked();
     }

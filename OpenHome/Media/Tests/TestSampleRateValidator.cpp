@@ -61,6 +61,7 @@ private:
     void MsgsPassWhileFlushing();
     void MsgsEndFlush();
     void ExpectedFlushConsumed();
+    void ChangeInAnimatorDelay();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
@@ -83,7 +84,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPipelineAnimator
     TUint PipelineAnimatorBufferJiffies() override;
-    TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
+    TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) override;
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
@@ -100,6 +101,8 @@ private:
     TUint64 iTrackOffsetTx;
     TBool iRateSupported;
     TUint iExpectedFlushId;
+    TUint iAnimatorDelayJiffiesReported;
+    TUint iAnimatorDelayJiffiesPulled;
 };
 
 } // namespace Media
@@ -119,6 +122,7 @@ SuiteSampleRateValidator::SuiteSampleRateValidator()
     AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::MsgsPassWhileFlushing), "MsgsPassWhileFlushing");
     AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::MsgsEndFlush), "MsgsEndFlush");
     AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::ExpectedFlushConsumed), "ExpectedFlushConsumed");
+    AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::ChangeInAnimatorDelay), "ChangeInAnimatorDelay");
 }
 
 void SuiteSampleRateValidator::Setup()
@@ -128,7 +132,7 @@ void SuiteSampleRateValidator::Setup()
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iSampleRateValidator = new SampleRateValidator(*this);
+    iSampleRateValidator = new SampleRateValidator(*iMsgFactory, *this);
     iSampleRateValidator->SetAnimator(*this);
     iLastMsg = EMsgNone;
     iNextStreamId = 1;
@@ -136,6 +140,7 @@ void SuiteSampleRateValidator::Setup()
     iTrackOffsetTx = 0;
     iRateSupported = true;
     iExpectedFlushId = MsgFlush::kIdInvalid;
+    iAnimatorDelayJiffiesReported = iAnimatorDelayJiffiesPulled = 0;
 }
 
 void SuiteSampleRateValidator::TearDown()
@@ -320,6 +325,18 @@ void SuiteSampleRateValidator::ExpectedFlushConsumed()
     TEST(iLastMsg == EMsgFlush);
 }
 
+void SuiteSampleRateValidator::ChangeInAnimatorDelay()
+{
+    PushMsg(EMsgDecodedStream);
+    TEST(iLastMsg == EMsgDecodedStream);
+    TEST(iAnimatorDelayJiffiesPulled == 0);
+
+    static const TUint kAnimatorDelay = Jiffies::kPerMs * 10;
+    iAnimatorDelayJiffiesReported = kAnimatorDelay;
+    PushMsg(EMsgDecodedStream);
+    TEST(iAnimatorDelayJiffiesPulled == kAnimatorDelay);
+}
+
 void SuiteSampleRateValidator::Push(Msg* aMsg)
 {
     aMsg = aMsg->Process(*this);
@@ -347,6 +364,7 @@ Msg* SuiteSampleRateValidator::ProcessMsg(MsgDrain* aMsg)
 Msg* SuiteSampleRateValidator::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
+    iAnimatorDelayJiffiesPulled = aMsg->AnimatorDelayJiffies();
     return aMsg;
 }
 
@@ -433,13 +451,12 @@ TUint SuiteSampleRateValidator::PipelineAnimatorBufferJiffies()
     return 0;
 }
 
-TUint SuiteSampleRateValidator::PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint /*aSampleRateTo*/)
+TUint SuiteSampleRateValidator::PipelineAnimatorDelayJiffies(TUint /*aSampleRate*/, TUint /*aBitDepth*/, TUint /*aNumChannels*/)
 {
-    ASSERT(aSampleRateFrom == 0);
     if (!iRateSupported) {
         THROW(SampleRateUnsupported);
     }
-    return 0;
+    return iAnimatorDelayJiffiesReported;
 }
 
 EStreamPlay SuiteSampleRateValidator::OkToPlay(TUint /*aStreamId*/)
