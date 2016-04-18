@@ -6,7 +6,9 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Av/Source.h>
+#include <OpenHome/Av/Product.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Private/Standard.h>
 
 EXCEPTION(LanguageResourceInvalid);
 EXCEPTION(JsonStringError);
@@ -14,7 +16,6 @@ EXCEPTION(JsonStringError);
 namespace OpenHome {
 namespace Av {
     class IRebootHandler;
-    class Product;
 }
 namespace Media {
     class IInfoAggregator;
@@ -440,7 +441,7 @@ private:
     Mutex iLock;
 };
 
-class ConfigUiValRoModelIcon : public IConfigUiVal
+class ConfigUiValRoModelIcon : public IConfigUiVal, private Av::IProductObserver, private INonCopyable
 {
 public:
     static const Brn kKey;
@@ -451,8 +452,14 @@ private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
     void RemoveObserver(TUint aObserverId) override;
+private: // from IProductObserver
+    void Started() override;
+    void SourceIndexChanged() override;
+    void SourceXmlChanged() override;
+    void ProductUrisChanged() override;
 private:
-    ConfigUiValRo* iUiVal;
+    Av::Product& iProduct;
+    ConfigUiValRoUpdatable* iUiVal;
 };
 
 class ConfigUiValRoModelName : public IConfigUiVal
@@ -470,7 +477,7 @@ private:
     ConfigUiValRo* iUiVal;
 };
 
-class ConfigUiValRoModelUrl : public IConfigUiVal
+class ConfigUiValRoModelUrl : public IConfigUiVal, private Av::IProductObserver, private INonCopyable
 {
 public:
     static const Brn kKey;
@@ -481,8 +488,14 @@ private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
     void RemoveObserver(TUint aObserverId) override;
+private: // from IProductObserver
+    void Started() override;
+    void SourceIndexChanged() override;
+    void SourceXmlChanged() override;
+    void ProductUrisChanged() override;
 private:
-    ConfigUiValRo* iUiVal;
+    Av::Product& iProduct;
+    ConfigUiValRoUpdatable* iUiVal;
 };
 
 class ConfigUiValRoManufacturerName : public IConfigUiVal
@@ -500,7 +513,7 @@ private:
     ConfigUiValRo* iUiVal;
 };
 
-class ConfigUiValRoManufacturerUrl : public IConfigUiVal
+class ConfigUiValRoManufacturerUrl : public IConfigUiVal, private Av::IProductObserver, private INonCopyable
 {
 public:
     static const Brn kKey;
@@ -511,8 +524,14 @@ private: // from IConfigUiValReadOnly
     void WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) override;
     TUint AddObserver(IConfigUiValObserver& aObserver) override;
     void RemoveObserver(TUint aObserverId) override;
+private: // from IProductObserver
+    void Started() override;
+    void SourceIndexChanged() override;
+    void SourceXmlChanged() override;
+    void ProductUrisChanged() override;
 private:
-    ConfigUiValRo* iUiVal;
+    Av::Product& iProduct;
+    ConfigUiValRoUpdatable* iUiVal;
 };
 
 class ConfigUiValRoIpAddress : public IConfigUiVal, private INonCopyable

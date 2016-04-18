@@ -30,6 +30,14 @@ void SupplyAggregator::Flush()
     }
 }
 
+void SupplyAggregator::Discard()
+{
+    if (iAudioEncoded != nullptr) {
+        iAudioEncoded->RemoveRef();
+        iAudioEncoded = nullptr;
+    }
+}
+
 void SupplyAggregator::OutputTrack(Track& aTrack, TBool aStartOfStream)
 {
     MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aStartOfStream);
