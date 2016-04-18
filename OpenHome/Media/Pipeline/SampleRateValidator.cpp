@@ -22,12 +22,15 @@ const TUint SampleRateValidator::kSupportedMsgTypes =   eMode
                                                       | eSilence
                                                       | eQuit;
 
-SampleRateValidator::SampleRateValidator(IPipelineElementDownstream& aDownstreamElement)
+SampleRateValidator::SampleRateValidator(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement)
     : PipelineElement(kSupportedMsgTypes)
+    , iMsgFactory(aMsgFactory)
     , iDownstream(aDownstreamElement)
     , iAnimator(nullptr)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iFlushing(false)
+    , iDelayJiffies(0)
+    , iAnimatorDelayJiffies(0)
 {
 }
 
@@ -56,6 +59,15 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
+Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
+{
+    if (aMsg->AnimatorDelayJiffies() == iAnimatorDelayJiffies) {
+        return aMsg;
+    }
+    iAnimatorDelayJiffies = aMsg->AnimatorDelayJiffies();
+    return iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies);
+}
+
 Msg* SampleRateValidator::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
@@ -76,8 +88,14 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     try {
         ASSERT(iAnimator != nullptr);
-        (void)iAnimator->PipelineDriverDelayJiffies(0, streamInfo.SampleRate());
+        const TUint animatorDelayJiffies = iAnimator->PipelineAnimatorDelayJiffies(streamInfo.SampleRate(),
+                                                                                   streamInfo.BitDepth(),
+                                                                                   streamInfo.NumChannels());
         iFlushing = false;
+        if (iAnimatorDelayJiffies != animatorDelayJiffies) {
+            iAnimatorDelayJiffies = animatorDelayJiffies;
+            iDownstream.Push(iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies));
+        }
     }
     catch (SampleRateUnsupported&) {
         iFlushing = true;

@@ -235,7 +235,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *iLoggerTimestampInspector);
 
     iLoggerSampleRateValidator = new Logger("Sample Rate Validator", *iTimestampInspector);
-    iSampleRateValidator = new SampleRateValidator(*iLoggerSampleRateValidator);
+    iSampleRateValidator = new SampleRateValidator(*iMsgFactory, *iLoggerSampleRateValidator);
 
     iContainer = new Codec::ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");

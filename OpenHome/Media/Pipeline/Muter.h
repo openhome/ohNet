@@ -50,11 +50,11 @@ private:
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstream;
+    IPipelineAnimator* iAnimator;
     Mutex iLock;
     Semaphore iSemMuted;
     EState iState;
     const TUint iRampDuration;
-    TUint iAnimatorBufferJiffies;
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     TUint iJiffiesUntilMute;

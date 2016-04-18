@@ -46,7 +46,7 @@ private: // from IPullableClock
     void PullClock(TUint aSampleRate, TUint aMultiplier) override;
 private: // from IPipelineAnimator
     TUint PipelineAnimatorBufferJiffies() override;
-    TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
+    TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) override;
 private:
     IPipeline& iPipeline;
     Semaphore iSem;
