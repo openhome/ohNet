@@ -642,6 +642,7 @@ Msg* Pipeline::Pull()
 void Pipeline::SetAnimator(IPipelineAnimator& aAnimator)
 {
     iSampleRateValidator->SetAnimator(aAnimator);
+    iMuter->SetAnimator(aAnimator);
 }
 
 void Pipeline::PipelinePaused()

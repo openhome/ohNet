@@ -523,6 +523,7 @@ private:
     IVolumeSourceOffset& iVolumeOffset;
     const TUint iVolMaxMilliDb;
     const TUint iVolMaxExternal;
+    const TUint iVolMaxExternalNonLinear;
     TBool iEnabled;
     TUint iVolUser;
     TUint iVolExternal;
