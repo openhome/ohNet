@@ -53,7 +53,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPipelineAnimator
     TUint PipelineAnimatorBufferJiffies() override;
-    TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
+    TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) override;
 private:
     enum EMsgType
     {
@@ -341,7 +341,7 @@ TUint SuiteMuter::PipelineAnimatorBufferJiffies()
     return Jiffies::kPerMs * 7;
 }
 
-TUint SuiteMuter::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
+TUint SuiteMuter::PipelineAnimatorDelayJiffies(TUint /*aSampleRate*/, TUint /*aBitDepth*/, TUint /*aNumChannels*/)
 {
     ASSERTS();
     return 0;

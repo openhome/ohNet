@@ -221,7 +221,7 @@ TUint AnimatorBasic::PipelineAnimatorBufferJiffies()
     return 0;
 }
 
-TUint AnimatorBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
+TUint AnimatorBasic::PipelineAnimatorDelayJiffies(TUint /*aSampleRate*/, TUint /*aBitDepth*/, TUint /*aNumChannels*/)
 {
     return 0;
 }
