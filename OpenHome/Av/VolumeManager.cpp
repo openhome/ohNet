@@ -828,15 +828,19 @@ VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset
     : iVolumeOffset(aVolumeOffset)
     , iVolMaxMilliDb(aVolMaxMilliDb)
     , iVolMaxExternal(aVolMaxExternal)
+    , iVolMaxExternalNonLinear(aVolMaxExternal*aVolMaxExternal)
     , iEnabled(false)
     , iVolUser(0)
     , iVolExternal(0)
     , iLock("VSCL")
 {
+    // Check iVolMaxExternalScaled didn't overflow.
+    ASSERT(iVolMaxExternalNonLinear/iVolMaxExternal == iVolMaxExternal);
+
     // Check there is no overflow if max values of both ranges are multiplied together.
-    const TUint prod = iVolMaxMilliDb * iVolMaxExternal;
+    const TUint prod = iVolMaxMilliDb * iVolMaxExternalNonLinear;
     const TUint div = prod/iVolMaxMilliDb;
-    ASSERT(div == iVolMaxExternal);
+    ASSERT(div == iVolMaxExternalNonLinear);
     aVolumeReporter.AddVolumeObserver(*this);
 }
 
@@ -880,10 +884,13 @@ void VolumeScaler::VolumeChanged(const IVolumeValue& aVolume)
 
 void VolumeScaler::UpdateOffsetLocked()
 {
-    // Already know from check in constructor that this can't overflow.
-    const TUint volProd = iVolExternal*iVolUser;
+    // Take volume out of linear range.
+    const TUint volNonLinear = iVolExternal*iVolExternal;
 
-    const TUint vol = volProd / iVolMaxExternal;
+    // Already know from check in constructor that this can't overflow.
+    const TUint volProd = volNonLinear * iVolUser;
+
+    const TUint vol = volProd / iVolMaxExternalNonLinear;
     ASSERT(iVolUser >= vol);    // Scaled vol must be within user vol.
     const TInt offset = (iVolUser - vol) * -1;
 
