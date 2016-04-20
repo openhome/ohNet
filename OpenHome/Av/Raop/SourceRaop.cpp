@@ -292,17 +292,27 @@ void SourceRaop::NotifySessionEnd()
 
 void SourceRaop::NotifySessionWait(TUint aSeq, TUint aTime)
 {
-    iLock.Wait();
-    if (IsActive() && iSessionActive) {
-        // Possible race condition here - MsgFlush could pass Waiter before
-        // iPipeline::Wait is called.
-        TUint flushId = iProtocol->SendFlush(aSeq, aTime);
-        iTransportState = Media::EPipelineWaiting;
-        iLock.Signal();
-        iPipeline.Wait(flushId);
+    // This call will only come in while session should be active.
+    // However, it's possible that the pipeline may not have recognised the
+    // stream and asked ProtocolRaop to TryStop(), which will have caused it to
+    // exit its Stream() method, so SendFlush() will return
+    // MsgFlush::kIdInvalid (as it can no longer send a flush).
+
+    TUint flushId = MsgFlush::kIdInvalid;
+    {
+        AutoMutex a(iLock);
+        if (IsActive() && iSessionActive) {
+            // Possible race condition here - MsgFlush could pass Waiter before
+            // iPipeline::Wait is called.
+            flushId = iProtocol->SendFlush(aSeq, aTime);
+            if (flushId != MsgFlush::kIdInvalid) {
+                iTransportState = Media::EPipelineWaiting;
+            }
+        }
     }
-    else {
-        iLock.Signal();
+
+    if (flushId != MsgFlush::kIdInvalid) {
+        iPipeline.Wait(flushId);
     }
 }
 

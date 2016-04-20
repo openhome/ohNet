@@ -679,7 +679,16 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 {
     LOG(kMedia, "ProtocolRaop::SendFlush\n");
     AutoMutex a(iLockRaop);
-    ASSERT(iActive);
+
+    if (!iActive) {
+        // It's possible that the RAOP session is still active, so this is a
+        // valid call from the source module, but the pipeline has been unable
+        // to play the stream for some reason (network issue, change in
+        // protocol) and TryStop() has been called which has caused Stream() to
+        // return, so no valid flush can be sent.
+        return MsgFlush::kIdInvalid;
+    }
+
     iFlushSeq = aSeq;
     iFlushTime = aTime;
 
