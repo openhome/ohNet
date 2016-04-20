@@ -68,7 +68,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
 
     iZoneHandler = new ZoneHandler(iEnv, udn);
 
-    iOhmSender = new OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, kPriorityHigh, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
+    iOhmSender = new OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, kPriorityHigh, udn, aChannel, kSongcastLatencyMs, false/*unicast*/);
     iOhmSender->SetEnabled(true);
     iDevice->SetEnabled();
     iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback), "DriverSongcastSender");

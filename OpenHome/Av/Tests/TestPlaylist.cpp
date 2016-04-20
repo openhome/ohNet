@@ -441,7 +441,7 @@ void SuitePlaylist::Setup()
     iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDevice->SetAttribute("Upnp.ModelName", "TestPlaylist");
 
-    iRamStore = new RamStore();
+    iRamStore = new RamStore(Brx::Empty());
     iConfigRamStore = new ConfigRamStore();
     VolumeConsumer volumeInit;
     volumeInit.SetVolume(iDummyVolume);

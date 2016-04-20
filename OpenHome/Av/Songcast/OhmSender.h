@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
+#include <OpenHome/Av/Product.h>
 
 #include "Ohm.h"
 #include "OhmMsg.h"
@@ -90,10 +91,11 @@ public:
 public:
     OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSenderDriver& aDriver,
               ZoneHandler& aZoneHandler, TUint aThreadPriority, const Brx& aName,
-              TUint aChannel, TUint aLatency, TBool aMulticast, const Brx& aImageFileName);
+              TUint aChannel, TUint aLatency, TBool aMulticast);
     ~OhmSender();
 
     void SetName(const Brx& aValue);
+    void SetImageUri(const Brx& aUri);
     void SetChannel(TUint aValue);
     void SetLatency(TUint aValue);
     void SetMulticast(TBool aValue);
@@ -138,7 +140,7 @@ private:
     TUint iLatency;
     TBool iMulticast;
     TBool iEnabled;
-    Brh iImageFileName;
+    Bws<Product::kMaxUriBytes> iImageUri;
     OhmSocket iSocketOhm;
     Srs<kMaxAudioFrameBytes> iRxBuffer;
     Bws<kMaxAudioFrameBytes> iTxBuffer;
