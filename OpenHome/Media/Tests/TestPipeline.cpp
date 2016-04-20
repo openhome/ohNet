@@ -408,7 +408,7 @@ void SuitePipeline::Test()
     Print("\nResume\n");
     iJiffies = 0;
     iPipeline->Play();
-    PullUntilEnd(ERampUp);
+    PullUntilEnd(ERampUpDeferred);
     WaitForStateChange(EPipelinePlaying);
     TEST(iPipelineState == EPipelinePlaying);
     TestJiffies(iInitParams->RampLongJiffies());
@@ -554,7 +554,6 @@ void SuitePipeline::PullUntilEnd(EState aState)
                 ramping = true;
             }
             // fallthrough
-            break;
         case ERampUp:
             TEST(iFirstSubsample < iLastSubsample);
             if (iFirstSubsample >= iLastSubsample) {
