@@ -1,0 +1,16 @@
+{
+   AllRaces
+   Helgrind:Race
+   fun:*
+}
+
+{
+   NetworkAdapterChangeNotifier
+   Helgrind:Race
+   fun:_ZN8OpenHome28NetworkAdapterChangeNotifierD1Ev
+   fun:_ZN8OpenHome28NetworkAdapterChangeNotifierD0Ev
+   fun:_ZN8OpenHome18NetworkAdapterListD1Ev
+   fun:_ZN8OpenHome18NetworkAdapterListD0Ev
+   fun:_ZN8OpenHome11EnvironmentD1Ev
+   fun:_ZN8OpenHome3Net7LibraryD1Ev
+}

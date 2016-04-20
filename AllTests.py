@@ -172,6 +172,7 @@ def runTestsHelgrind():
         cmdLine = []
         cmdLine.append('valgrind')
         cmdLine.append('--tool=helgrind')
+        cmdLine.append('--suppressions=HelgrindSuppressions.txt')
         cmdLine.append('--xml=yes')
         cmdLine.append('--xml-file=' + os.path.join(outputDir, test.name) + '.xml')
         cmdLine.append(test.Path())

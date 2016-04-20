@@ -509,7 +509,6 @@ private:
 
 void MutexThread::Run()
 {
-    iCount++;
     iMutex.Wait();
     iCount++;
     iMutex.Signal();
@@ -521,21 +520,18 @@ void SuiteMutex::Test()
     mutex.Wait();
     mutex.Signal();
 
-    // check we can delete a locked mutex
-    Mutex* mutex2 = new Mutex("MUT2");
-    mutex2->Wait();
-    delete mutex2;
-
     // check that another thread will block waiting on this mutex
     TInt count = 0;
     mutex.Wait();
     MutexThread* mutexTh = new MutexThread(mutex, count);
     mutexTh->Start();
     Thread::Sleep(kSleepMs);
-    TEST(count == 1);
+    TEST(count == 0);
     mutex.Signal();
     Thread::Sleep(kSleepMs);
-    TEST(count == 2);
+    mutex.Wait();
+    TEST(count == 1);
+    mutex.Signal();
     delete mutexTh;
 }
 
@@ -619,6 +615,8 @@ void SuiteAutoMutex::Test()
         AutoMutex amB(mB);
     }
     mB.Wait();
+    mB.Signal();
+    mA.Signal();
 }
 
 

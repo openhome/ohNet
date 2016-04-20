@@ -18,11 +18,11 @@ DviServer::~DviServer()
     iLock.Wait();
     iDvStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iDvStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iLock.Signal();
     for (TUint i=0; i<iServers.size(); i++) {
         delete iServers[i];
     }
     iServers.clear();
-    iLock.Signal();
 }
 
 TUint DviServer::Port(TIpAddress aInterface)

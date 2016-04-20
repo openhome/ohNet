@@ -34,7 +34,8 @@ void Semaphore::Wait()
 void Semaphore::Wait(TUint aTimeoutMs)
 {
     if (aTimeoutMs == 0) {
-        return (Wait());
+        Wait();
+        return;
     }
     ASSERT(iHandle != kHandleNull);
     if (!OpenHome::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
@@ -188,7 +189,7 @@ void Thread::Signal()
 TBool Thread::TryWait()
 {
     CheckForKill();
-    return (iSema.Clear());
+    return iSema.Clear();
 }
 
 void Thread::Sleep(TUint aMilliSecs)
@@ -237,8 +238,7 @@ void Thread::CheckCurrentForKill()
 void Thread::CheckForKill() const
 {
     AutoMutex _amtx(iKillMutex);
-    TBool kill = iKill;
-    if (kill) {
+    if (iKill) {
         THROW(ThreadKill);
     }
 }
