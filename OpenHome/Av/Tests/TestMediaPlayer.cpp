@@ -164,7 +164,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // create read/write store.  This creates a number of static (constant) entries automatically
     // FIXME - to be removed; this only exists to populate static data
-    iRamStore = new RamStore();
+    iRamStore = new RamStore(kSongcastSenderIconFileName);
 
     // create a read/write store using the new config framework
     iConfigRamStore = new ConfigRamStore();
@@ -379,7 +379,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     MacAddrFromUdn(aEnv, macAddr);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iMediaPlayer->FriendlyNameObservable(), macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper, kSongcastSenderIconFileName));
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper));
 
     iMediaPlayer->BufferLogOutput(128 * 1024);
 }

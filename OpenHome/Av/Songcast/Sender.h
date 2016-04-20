@@ -43,10 +43,10 @@ public:
            Configuration::IConfigInitialiser& aConfigInit,
            TUint aThreadPriority,
            const Brx& aName,
-           TUint aMinLatencyMs,
-           const Brx& aIconFileName);
+           TUint aMinLatencyMs);
     ~Sender();
     void SetName(const Brx& aName);
+    void SetImageUri(const Brx& aUri);
     void NotifyPipelineState(Media::EPipelineState aState);
 private: // from Media::IPipelineElementDownstream
     void Push(Media::Msg* aMsg) override;

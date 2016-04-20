@@ -28,7 +28,7 @@ SuiteStore::SuiteStore()
 
 void SuiteStore::Test()
 {
-    RamStore* ramStore = new RamStore();
+    RamStore* ramStore = new RamStore(Brx::Empty());
     KvpStore* kvpStore = new KvpStore(*ramStore);
     IReadStore* rStore = (IReadStore*)kvpStore;
 
