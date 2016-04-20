@@ -104,11 +104,6 @@ def configure(conf):
         'thirdparty/apple_alac/codec/',
         ]
 
-    # Setup ALAC lib options
-    conf.env.INCLUDES_ALAC = [
-        'thirdparty/alac_decoder',
-        ]
-
     # Setup AAC lib options
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.DEFINES_AAC = ['WIN32', 'MONO_ONLY', 'LP_SBR_ONLY']
@@ -395,10 +390,9 @@ def build(bld):
                 'OpenHome/Av/Raop/SourceRaop.cpp',
                 'OpenHome/Av/Raop/ProtocolRaop.cpp',
                 'OpenHome/Av/Raop/UdpServer.cpp',
-                'OpenHome/Av/Raop/CodecRaop.cpp',
                 'OpenHome/Av/Raop/CodecRaopApple.cpp',
             ],
-            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'CodecAlacBase', 'CodecAlacAppleBase'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'CodecAlacAppleBase'],
             target='SourceRaop')
 
     # Library
@@ -497,22 +491,6 @@ def build(bld):
             ],
             use=['CodecAlacAppleBase', 'OHNET'],
             target='CodecAlacApple')
-
-    # AlacBase
-    bld.stlib(
-            source=[
-                 'OpenHome/Media/Codec/AlacBase.cpp',
-                 'thirdparty/alac_decoder/alac.c',
-            ],
-            use=['ALAC', 'OHNET', 'ohMediaPlayer'],
-            target='CodecAlacBase')
-    # Alac
-    bld.stlib(
-            source=[
-                 'OpenHome/Media/Codec/Alac.cpp',
-            ],
-            use=['CodecAlacBase', 'OHNET'],
-            target='CodecAlac')
 
     # AACBase
     bld.stlib(
@@ -1076,8 +1054,6 @@ def bundle(ctx):
                  'CodecAiffBase',
                  'CodecAlacAppleBase',
                  'CodecAlacApple',
-                 'CodecAlac',
-                 'CodecAlacBase',
                  'CodecFlac',
                  'CodecMp3',
                  'CodecVorbis',

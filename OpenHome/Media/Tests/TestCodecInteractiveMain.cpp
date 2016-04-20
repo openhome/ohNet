@@ -763,7 +763,7 @@ int CDECL main(int aArgc, char* aArgv[])
     decoder->AddCodec(CodecFactory::NewAac(*decoder));
     decoder->AddCodec(CodecFactory::NewAifc(*decoder));
     decoder->AddCodec(CodecFactory::NewAiff(*decoder));
-    decoder->AddCodec(CodecFactory::NewAlac(*decoder));
+    decoder->AddCodec(CodecFactory::NewAlacApple(*decoder));
     decoder->AddCodec(CodecFactory::NewAdts(*decoder));
     decoder->AddCodec(CodecFactory::NewFlac(*decoder));
     decoder->AddCodec(CodecFactory::NewPcm());
