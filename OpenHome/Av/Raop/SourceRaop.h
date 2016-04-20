@@ -62,22 +62,14 @@ private:
     static const TUint kRaopPrefixBytes = 7;
     static const TUint kMaxPortBytes = 5; // 0-65535
     static const TUint kMaxUriBytes = kRaopPrefixBytes+kMaxPortBytes*2+1;   // raop://xxxxx.yyyyy
-    static const TUint kAutoNetAuxOn;
-    static const TUint kAutoNetAuxOffVisible;
-    static const TUint kAutoNetAuxOffNotVisible;
-    static const Brn kKeyNetAux;
     Environment& iEnv;
     Mutex iLock;
     Media::UriProviderSingleTrack& iUriProvider;
     RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;
-    Configuration::ConfigChoice* iConfigNetAux;
-    TUint iConfigSubId;
     TUint iCurrentAdapterChangeListenerId;
     TUint iSubnetListChangeListenerId;
-    TUint iAutoNetAux;
-    TBool iAutoSwitch;
     TBool iSessionActive;
     Bws<Media::kTrackMetaDataMaxBytes> iDidlLite;
     Bws<kMaxUriBytes> iNextTrackUri;
