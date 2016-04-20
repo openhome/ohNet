@@ -16,7 +16,6 @@ public:
     static CodecBase* NewAac(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewAifc(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewAiff(IMimeTypeList& aMimeTypeList);
-    static CodecBase* NewAlac(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewAlacApple(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewAdts(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewFlac(IMimeTypeList& aMimeTypeList);

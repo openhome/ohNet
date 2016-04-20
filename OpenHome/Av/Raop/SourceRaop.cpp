@@ -13,7 +13,6 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/VolumeManager.h>
-#include <OpenHome/Av/Raop/CodecRaop.h>
 #include <OpenHome/Av/Raop/CodecRaopApple.h>
 #include <OpenHome/Media//ClockPullerUtilisation.h>
 
