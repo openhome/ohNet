@@ -76,9 +76,6 @@ private: // from Media::IPipelineObserver
 private:
     void EnsureActive();
     void UriChanged();
-    void ConfigRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void ConfigNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void UpdateSenderName();
     void ZoneChangeThread();
 private:
     Mutex iLock;
@@ -104,6 +101,7 @@ private:
 
 class SongcastSender : private Media::IPipelineObserver
                      , private IProductObserver
+                     , private IProductNameObserver
 {
 public:
     SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
@@ -122,13 +120,11 @@ private: // from IProductObserver
     void SourceIndexChanged() override;
     void SourceXmlChanged() override;
     void ProductUrisChanged() override;
+private: // from IProductNameObserver
+    void RoomChanged(const Brx& aRoom) override;
+    void NameChanged(const Brx& aName) override;
 private:
-    void EnsureActive();
-    void UriChanged();
-    void ConfigRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void ConfigNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void UpdateSenderName();
-    void ZoneChangeThread();
 private:
     Mutex iLock;
     Sender* iSender;
@@ -453,7 +449,6 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     TUint priorityMin, priorityMax;
     pipeline.GetThreadPriorityRange(priorityMin, priorityMax);
     const TUint senderThreadPriority = priorityMin - 1;
-    IConfigManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aTxTsMapper,
                          aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
@@ -467,18 +462,13 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     aMediaPlayer.AddAttribute("Sender");
-    iConfigRoom = &configManager.GetText(Product::kConfigIdRoomBase);
-    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorConfigText(*this, &SongcastSender::ConfigRoomChanged));
-    iConfigName = &configManager.GetText(Product::kConfigIdNameBase);
-    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SongcastSender::ConfigNameChanged));
     pipeline.AddObserver(*this);
     iProduct.AddObserver(*this);
+    iProduct.AddNameObserver(*this);
 }
 
 SongcastSender::~SongcastSender()
 {
-    iConfigRoom->Unsubscribe(iConfigRoomSubscriberId);
-    iConfigName->Unsubscribe(iConfigNameSubscriberId);
     delete iLoggerSplitter;
     delete iSplitter;
     delete iLoggerSender;
@@ -532,17 +522,17 @@ void SongcastSender::ProductUrisChanged()
     iSender->SetImageUri(imageUri);
 }
 
-void SongcastSender::ConfigRoomChanged(KeyValuePair<const Brx&>& aKvp)
+void SongcastSender::RoomChanged(const Brx& aRoom)
 {
-    AutoMutex a(iLock);
-    iRoom.Replace(aKvp.Value());
+    AutoMutex _(iLock);
+    iRoom.Replace(aRoom);
     UpdateSenderName();
 }
 
-void SongcastSender::ConfigNameChanged(KeyValuePair<const Brx&>& aKvp)
+void SongcastSender::NameChanged(const Brx& aName)
 {
-    AutoMutex a(iLock);
-    iName.Replace(aKvp.Value());
+    AutoMutex _(iLock);
+    iName.Replace(aName);
     UpdateSenderName();
 }
 
