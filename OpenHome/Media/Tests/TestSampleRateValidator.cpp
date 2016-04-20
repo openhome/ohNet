@@ -128,6 +128,7 @@ SuiteSampleRateValidator::SuiteSampleRateValidator()
 void SuiteSampleRateValidator::Setup()
 {
     MsgFactoryInitParams init;
+    init.SetMsgDelayCount(2);
     init.SetMsgAudioPcmCount(6, 5);
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
@@ -331,10 +332,12 @@ void SuiteSampleRateValidator::ChangeInAnimatorDelay()
     TEST(iLastMsg == EMsgDecodedStream);
     TEST(iAnimatorDelayJiffiesPulled == 0);
 
-    static const TUint kAnimatorDelay = Jiffies::kPerMs * 10;
-    iAnimatorDelayJiffiesReported = kAnimatorDelay;
+    TUint animatorDelay = Jiffies::kPerMs * 10;
+    iAnimatorDelayJiffiesReported = animatorDelay;
     PushMsg(EMsgDecodedStream);
-    TEST(iAnimatorDelayJiffiesPulled == kAnimatorDelay);
+    TEST(iAnimatorDelayJiffiesPulled == animatorDelay);
+    PushMsg(EMsgDelay);
+    TEST(iAnimatorDelayJiffiesPulled == animatorDelay);
 }
 
 void SuiteSampleRateValidator::Push(Msg* aMsg)
