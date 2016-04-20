@@ -132,10 +132,6 @@ private:
     Media::Logger* iLoggerSender;
     Splitter* iSplitter;
     Media::Logger* iLoggerSplitter;
-    Configuration::ConfigText* iConfigRoom;
-    TUint iConfigRoomSubscriberId;
-    Configuration::ConfigText* iConfigName;
-    TUint iConfigNameSubscriberId;
     Bws<Product::kMaxRoomBytes> iRoom;
     Bws<Product::kMaxNameBytes> iName;
 };
