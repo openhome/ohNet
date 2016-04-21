@@ -134,7 +134,6 @@ class TestCodecMinimalPipeline : private IUrlBlockWriter, protected IMimeTypeLis
 private:
     static const TUint kEncodedAudioCount = 100;
     static const TUint kMsgAudioEncodedCount = 100;
-    static const TUint kEncodedReservoirSizeBytes = EncodedAudio::kMaxBytes;
     static const TUint kReservoirEncodedAudioMsgs = 1;  // Limit size for seek testing.
     static const TUint kEncodedReservoirMaxStreams = 10;
 public:
