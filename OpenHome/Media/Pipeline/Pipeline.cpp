@@ -620,7 +620,7 @@ IPipelineElementUpstream& Pipeline::InsertElements(IPipelineElementUpstream& aTa
 
 TUint Pipeline::SenderMinLatencyMs() const
 {
-    return kSenderMinLatency / Jiffies::kPerMs;
+    return Jiffies::ToMs(kSenderMinLatency);
 }
 
 void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
@@ -744,8 +744,8 @@ void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
 #if 1
         if (aBuffering && !iWaiting) {
             const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
-            const TUint decodedMs = iDecodedAudioReservoir->SizeInJiffies() / Jiffies::kPerMs;
-            const TUint gorgedMs = iGorger->SizeInJiffies() / Jiffies::kPerMs;
+            const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
+            const TUint gorgedMs = Jiffies::ToMs(iGorger->SizeInJiffies());
             Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, gorgedMs=%u\n", encodedBytes, decodedMs, gorgedMs);
         }
 #endif

@@ -110,7 +110,7 @@ void AnimatorBasic::DriverThread()
                     pending64 /= IPullableClock::kNominalFreq;
                     //Log::Print("iPendingJiffies=%08x, pull=%08x\n", iPendingJiffies, pending64); // FIXME
                     //TInt pending = (TInt)iPendingJiffies + (TInt)pending64;
-                    //Log::Print("Pulled clock, now want %u jiffies (%ums, %d%%) extra\n", (TUint)pending, pending/Jiffies::kPerMs, (pending-(TInt)iPendingJiffies)/iPendingJiffies); // FIXME
+                    //Log::Print("Pulled clock, now want %u jiffies (%ums, %d%%) extra\n", (TUint)pending, Jiffies::ToMs(pending), (pending-(TInt)iPendingJiffies)/iPendingJiffies); // FIXME
                     iPendingJiffies = (TUint)pending64;
                 }
             }

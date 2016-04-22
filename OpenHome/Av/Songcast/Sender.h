@@ -75,6 +75,7 @@ private:
     void ConfigChannelChanged(Configuration::KeyValuePair<TInt>& aValue);
     void ConfigModeChanged(Configuration::KeyValuePair<TUint>& aStringId);
     void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
+    static inline void ProcessSample32LeftAligned(TByte*& aDest, const TByte*& aSrc, TUint aNumChannels);
 private: // from IPcmProcessor
     void BeginBlock() override;
     void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
