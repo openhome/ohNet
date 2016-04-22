@@ -39,8 +39,7 @@ Sender::Sender(Environment& aEnv,
                Configuration::IConfigInitialiser& aConfigInit,
                TUint aThreadPriority,
                const Brx& aName,
-               TUint aMinLatencyMs,
-               const Brx& aIconFileName)
+               TUint aMinLatencyMs)
     : iAudioBuf(nullptr)
     , iSampleRate(0)
     , iBitDepth(0)
@@ -51,7 +50,7 @@ Sender::Sender(Environment& aEnv,
     iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper, aTsMapper);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aThreadPriority,
-                               aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
+                               aName, defaultChannel, aMinLatencyMs, false/*unicast*/);
 
     iConfigChannel = new ConfigNum(aConfigInit, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
     iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigChannelChanged));
@@ -91,6 +90,11 @@ Sender::~Sender()
 void Sender::SetName(const Brx& aName)
 {
     iOhmSender->SetName(aName);
+}
+
+void Sender::SetImageUri(const Brx& aUri)
+{
+    iOhmSender->SetImageUri(aUri);
 }
 
 void Sender::NotifyPipelineState(EPipelineState aState)

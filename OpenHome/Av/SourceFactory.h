@@ -31,8 +31,7 @@ public:
                                 IOhmTimestamper* aTxTimestamper,
                                 IOhmTimestampMapper* aTxTsMapper,
                                 IOhmTimestamper* aRxTimestamper,
-                                IOhmTimestampMapper* aRxTsMapper,
-                                const Brx& aSenderIconFileName);
+                                IOhmTimestampMapper* aRxTsMapper);
 
     static const TChar* kSourceTypePlaylist;
     static const TChar* kSourceTypeRadio;

@@ -52,8 +52,7 @@ public:
                    IOhmTimestamper* aTxTimestamper,
                    IOhmTimestampMapper* aTxTsMapper,
                    IOhmTimestamper* aRxTimestamper,
-                   IOhmTimestampMapper* aRxTsMapper,
-                   const Brx& aSenderIconFileName);
+                   IOhmTimestampMapper* aRxTsMapper);
     ~SourceReceiver();
 private: // from ISource
     void Activate(TBool aAutoPlay) override;
@@ -77,9 +76,6 @@ private: // from Media::IPipelineObserver
 private:
     void EnsureActive();
     void UriChanged();
-    void ConfigRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void ConfigNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void UpdateSenderName();
     void ZoneChangeThread();
 private:
     Mutex iLock;
@@ -104,11 +100,13 @@ private:
 };
 
 class SongcastSender : private Media::IPipelineObserver
+                     , private IProductObserver
+                     , private IProductNameObserver
 {
 public:
     SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
                    IOhmTimestamper* aTxTimestamper, IOhmTimestampMapper* aTxTsMapper,
-                   const Brx& aSenderIconFileName, const Brx& aMode);
+                   const Brx& aMode);
     ~SongcastSender();
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
@@ -117,23 +115,23 @@ private: // from Media::IPipelineObserver
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
+private: // from IProductObserver
+    void Started() override;
+    void SourceIndexChanged() override;
+    void SourceXmlChanged() override;
+    void ProductUrisChanged() override;
+private: // from IProductNameObserver
+    void RoomChanged(const Brx& aRoom) override;
+    void NameChanged(const Brx& aName) override;
 private:
-    void EnsureActive();
-    void UriChanged();
-    void ConfigRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-    void ConfigNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void UpdateSenderName();
-    void ZoneChangeThread();
 private:
     Mutex iLock;
     Sender* iSender;
+    Product& iProduct;
     Media::Logger* iLoggerSender;
     Splitter* iSplitter;
     Media::Logger* iLoggerSplitter;
-    Configuration::ConfigText* iConfigRoom;
-    TUint iConfigRoomSubscriberId;
-    Configuration::ConfigText* iConfigName;
-    TUint iConfigNameSubscriberId;
     Bws<Product::kMaxRoomBytes> iRoom;
     Bws<Product::kMaxNameBytes> iName;
 };
@@ -154,10 +152,9 @@ ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
                                     IOhmTimestamper* aTxTimestamper,
                                     IOhmTimestampMapper* aTxTsMapper,
                                     IOhmTimestamper* aRxTimestamper,
-                                    IOhmTimestampMapper* aRxTsMapper,
-                                    const Brx& aSenderIconFileName)
+                                    IOhmTimestampMapper* aRxTsMapper)
 { // static
-    return new SourceReceiver(aMediaPlayer, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper, aSenderIconFileName);
+    return new SourceReceiver(aMediaPlayer, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper);
 }
 
 const TChar* SourceFactory::kSourceTypeReceiver = "Receiver";
@@ -186,8 +183,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                IOhmTimestamper* aTxTimestamper,
                                IOhmTimestampMapper* aTxTsMapper,
                                IOhmTimestamper* aRxTimestamper,
-                               IOhmTimestampMapper* aRxTsMapper,
-                               const Brx& aSenderIconFileName)
+                               IOhmTimestampMapper* aRxTsMapper)
     : Source(SourceFactory::kSourceNameReceiver, SourceFactory::kSourceTypeReceiver, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -219,7 +215,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iPipeline.AddObserver(*this);
 
     // Sender
-    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, aTxTsMapper, aSenderIconFileName, iUriProvider->Mode());
+    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, aTxTsMapper, iUriProvider->Mode());
 }
 
 SourceReceiver::~SourceReceiver()
@@ -440,20 +436,19 @@ void SourceReceiver::ZoneChangeThread()
 // SongcastSender
 
 SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
-    IOhmTimestamper* aTxTimestamper, IOhmTimestampMapper* aTxTsMapper,
-    const Brx& aSenderIconFileName, const Brx& aMode)
+                               IOhmTimestamper* aTxTimestamper, IOhmTimestampMapper* aTxTsMapper,
+                               const Brx& aMode)
     : iLock("STX1")
+    , iProduct(aMediaPlayer.Product())
 {
     Media::PipelineManager& pipeline = aMediaPlayer.Pipeline();
     TUint priorityMin, priorityMax;
     pipeline.GetThreadPriorityRange(priorityMin, priorityMax);
     const TUint senderThreadPriority = priorityMin - 1;
-    IConfigManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aTxTsMapper,
                          aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
-                         Brx::Empty(), pipeline.SenderMinLatencyMs(),
-                         aSenderIconFileName);
+                         Brx::Empty(), pipeline.SenderMinLatencyMs());
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);
@@ -463,17 +458,13 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     aMediaPlayer.AddAttribute("Sender");
-    iConfigRoom = &configManager.GetText(Product::kConfigIdRoomBase);
-    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorConfigText(*this, &SongcastSender::ConfigRoomChanged));
-    iConfigName = &configManager.GetText(Product::kConfigIdNameBase);
-    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SongcastSender::ConfigNameChanged));
     pipeline.AddObserver(*this);
+    iProduct.AddObserver(*this);
+    iProduct.AddNameObserver(*this);
 }
 
 SongcastSender::~SongcastSender()
 {
-    iConfigRoom->Unsubscribe(iConfigRoomSubscriberId);
-    iConfigName->Unsubscribe(iConfigNameSubscriberId);
     delete iLoggerSplitter;
     delete iSplitter;
     delete iLoggerSender;
@@ -505,17 +496,39 @@ void SongcastSender::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
 }
 
-void SongcastSender::ConfigRoomChanged(KeyValuePair<const Brx&>& aKvp)
+void SongcastSender::Started()
 {
-    AutoMutex a(iLock);
-    iRoom.Replace(aKvp.Value());
+}
+
+void SongcastSender::SourceIndexChanged()
+{
+}
+
+void SongcastSender::SourceXmlChanged()
+{
+}
+
+void SongcastSender::ProductUrisChanged()
+{
+    Bws<Product::kMaxRoomBytes> room;
+    Bws<Product::kMaxNameBytes> name;
+    Brn info;
+    Bws<Product::kMaxUriBytes> imageUri;
+    iProduct.GetProductDetails(room, name, info, imageUri);
+    iSender->SetImageUri(imageUri);
+}
+
+void SongcastSender::RoomChanged(const Brx& aRoom)
+{
+    AutoMutex _(iLock);
+    iRoom.Replace(aRoom);
     UpdateSenderName();
 }
 
-void SongcastSender::ConfigNameChanged(KeyValuePair<const Brx&>& aKvp)
+void SongcastSender::NameChanged(const Brx& aName)
 {
-    AutoMutex a(iLock);
-    iName.Replace(aKvp.Value());
+    AutoMutex _(iLock);
+    iName.Replace(aName);
     UpdateSenderName();
 }
 

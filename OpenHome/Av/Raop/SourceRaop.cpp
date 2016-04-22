@@ -13,7 +13,6 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/VolumeManager.h>
-#include <OpenHome/Av/Raop/CodecRaop.h>
 #include <OpenHome/Av/Raop/CodecRaopApple.h>
 #include <OpenHome/Media//ClockPullerUtilisation.h>
 
@@ -73,10 +72,6 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 // SourceRaop
 
 const Brn SourceRaop::kRaopPrefix("raop://");
-const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
-const TUint SourceRaop::kAutoNetAuxOn = 0;              // RAOP device always visible; auto switch when stream starts.
-const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // RAOP device always visible; don't auto switch.
-const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // RAOP device only visible when Net Aux source selected.
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
     : Source(SourceFactory::kSourceNameRaop, SourceFactory::kSourceTypeRaop, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
@@ -84,8 +79,6 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iLock("SRAO")
     , iUriProvider(aUriProvider)
     , iServerManager(aMediaPlayer.Env(), kMaxUdpSize, kMaxUdpPackets)
-    , iAutoNetAux(kAutoNetAuxOn)
-    , iAutoSwitch(true)
     , iSessionActive(false)
     , iTrack(nullptr)
     , iTrackPosSeconds(0)
@@ -115,14 +108,6 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     SocketUdpServer& serverTiming = iServerManager.Find(iTimingId);    // never Open() this
     iRaopDiscovery->SetListeningPorts(serverAudio.Port(), serverControl.Port(), serverTiming.Port());
 
-    std::vector<TUint> choices;
-    choices.push_back(kAutoNetAuxOn);
-    choices.push_back(kAutoNetAuxOffVisible);
-    choices.push_back(kAutoNetAuxOffNotVisible);
-    iConfigNetAux = new ConfigChoice(aMediaPlayer.ConfigInitialiser(), kKeyNetAux, choices, iAutoNetAux);
-    iConfigSubId = iConfigNetAux->Subscribe(MakeFunctorConfigChoice(*this, &SourceRaop::AutoNetAuxChanged));
-
-
     NetworkAdapterList& adapterList = iEnv.NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &SourceRaop::HandleInterfaceChange);
     iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
@@ -143,9 +128,6 @@ SourceRaop::~SourceRaop()
         iSessionActive = false;
     }
     iLock.Signal();
-
-    iConfigNetAux->Unsubscribe(iConfigSubId);
-    delete iConfigNetAux;
 }
 
 IRaopDiscovery& SourceRaop::Discovery()
@@ -158,9 +140,6 @@ void SourceRaop::Activate(TBool aAutoPlay)
     SourceBase::Activate(aAutoPlay);
     iLock.Wait();
     iTrackPosSeconds = 0;
-    if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
-        iRaopDiscovery->Enable();
-    }
 
     if (iSessionActive) {
         StartNewTrack();
@@ -183,11 +162,6 @@ void SourceRaop::Deactivate()
 {
     iLock.Wait();
     iTransportState = Media::EPipelineStopped;
-    if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
-        // Disable RAOP visibility if config val was updated while Net Aux was
-        // selected source.
-        iRaopDiscovery->Disable();
-    }
     iSessionActive = false; // If switching away from Net Aux, don't want to allow session to be re-initialised without user explicitly re-selecting device from a control point.
     iLock.Signal();
     Source::Deactivate();
@@ -199,11 +173,6 @@ void SourceRaop::StandbyEnabled()
     {
         AutoMutex _(iLock);
         iTransportState = Media::EPipelineStopped;
-        if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
-            // Disable RAOP visibility if config val was updated while Net Aux was
-            // selected source.
-            iRaopDiscovery->Disable();
-        }
         iSessionActive = false; // If switching away from Net Aux, don't want to allow session to be re-initialised without user explicitly re-selecting device from a control point.
     }
 }
@@ -249,22 +218,19 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
         DoActivate();
     }
 
-    iLock.Wait();
-    iSessionActive = true;
+    {
+        AutoMutex a(iLock);
+        iSessionActive = true;
 
-    iNextTrackUri.Replace(kRaopPrefix);
-    Ascii::AppendDec(iNextTrackUri, aControlPort);
-    iNextTrackUri.Append('.');
-    Ascii::AppendDec(iNextTrackUri, aTimingPort);
+        iNextTrackUri.Replace(kRaopPrefix);
+        Ascii::AppendDec(iNextTrackUri, aControlPort);
+        iNextTrackUri.Append('.');
+        Ascii::AppendDec(iNextTrackUri, aTimingPort);
 
-    if (iAutoSwitch || IsActive()) {
         StartNewTrack();
-        iLock.Signal();
-        DoPlay();
     }
-    else {
-        iLock.Signal();
-    }
+
+    DoPlay();
 }
 
 void SourceRaop::NotifySessionEnd()
@@ -292,17 +258,27 @@ void SourceRaop::NotifySessionEnd()
 
 void SourceRaop::NotifySessionWait(TUint aSeq, TUint aTime)
 {
-    iLock.Wait();
-    if (IsActive() && iSessionActive) {
-        // Possible race condition here - MsgFlush could pass Waiter before
-        // iPipeline::Wait is called.
-        TUint flushId = iProtocol->SendFlush(aSeq, aTime);
-        iTransportState = Media::EPipelineWaiting;
-        iLock.Signal();
-        iPipeline.Wait(flushId);
+    // This call will only come in while session should be active.
+    // However, it's possible that the pipeline may not have recognised the
+    // stream and asked ProtocolRaop to TryStop(), which will have caused it to
+    // exit its Stream() method, so SendFlush() will return
+    // MsgFlush::kIdInvalid (as it can no longer send a flush).
+
+    TUint flushId = MsgFlush::kIdInvalid;
+    {
+        AutoMutex a(iLock);
+        if (IsActive() && iSessionActive) {
+            // Possible race condition here - MsgFlush could pass Waiter before
+            // iPipeline::Wait is called.
+            flushId = iProtocol->SendFlush(aSeq, aTime);
+            if (flushId != MsgFlush::kIdInvalid) {
+                iTransportState = Media::EPipelineWaiting;
+            }
+        }
     }
-    else {
-        iLock.Signal();
+
+    if (flushId != MsgFlush::kIdInvalid) {
+        iPipeline.Wait(flushId);
     }
 }
 
@@ -345,42 +321,7 @@ void SourceRaop::NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo)
     iStreamId = aStreamInfo.StreamId();
     iLock.Signal();
 }
-
-void SourceRaop::AutoNetAuxChanged(ConfigChoice::KvpChoice& aKvp)
-{
-    AutoMutex a(iLock);
-    iAutoNetAux = aKvp.Value();
-
-    switch (iAutoNetAux) {
-    case kAutoNetAuxOn:
-        ActivateIfInactive();
-        iAutoSwitch = true;
-        break;
-    case kAutoNetAuxOffVisible:
-        ActivateIfInactive();
-        iAutoSwitch = false;
-        break;
-    case kAutoNetAuxOffNotVisible:
-        DeactivateIfActive();
-        iAutoSwitch = false;
-        break;
-    default:
-        ASSERTS();
-    }
-}
-
-void SourceRaop::ActivateIfInactive()
-{
-    iRaopDiscovery->Enable();
-}
-
-void SourceRaop::DeactivateIfActive()
-{
-    if (!iActive) {
-        iRaopDiscovery->Disable();
-    }
-}
-
+ 
 void SourceRaop::HandleInterfaceChange()
 {
     //iRaopDiscovery->Disable();

@@ -516,7 +516,7 @@ void OhmSenderDriver::ResetLocked()
 
 OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSenderDriver& aDriver,
                      ZoneHandler& aZoneHandler, TUint aThreadPriority, const Brx& aName,
-                     TUint aChannel, TUint aLatency, TBool aMulticast, const Brx& aImageFileName)
+                     TUint aChannel, TUint aLatency, TBool aMulticast)
     : iEnv(aEnv)
     , iDevice(aDevice)
     , iDriver(aDriver)
@@ -527,7 +527,6 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     , iLatency(aLatency)
     , iMulticast(aMulticast)
     , iEnabled(false)
-    , iImageFileName(aImageFileName)
     , iSocketOhm(aEnv)
     , iRxBuffer(iSocketOhm)
     , iMutexStartStop("OHMS")
@@ -596,6 +595,15 @@ void OhmSender::SetName(const Brx& aValue)
     
     if (iName != aValue) {
         iName.Replace(aValue);
+        UpdateMetadata();
+    }
+}
+
+void OhmSender::SetImageUri(const Brx& aUri)
+{
+    AutoMutex _(iMutexStartStop);
+    if (aUri != iImageUri) {
+        iImageUri.Replace(aUri);
         UpdateMetadata();
     }
 }
@@ -1181,20 +1189,10 @@ void OhmSender::UpdateMetadata()
     iSenderMetadata.Append(iSenderUri.AbsoluteUri());
     iSenderMetadata.Append("</res>");
     
-    if (iImageFileName.Bytes() > 0)
-    {
-        AutoNetworkAdapterRef nifRef(iEnv, "OhmSender");
-        NetworkAdapter* nif = nifRef.Adapter();
-        if (nif != nullptr) {
-            Brh imageUriPrefix;
-            iDevice.GetResourceManagerUri(*nif, imageUriPrefix);
-            if (imageUriPrefix.Bytes() > 0) {
-                iSenderMetadata.Append("<upnp:albumArtURI>");
-                iSenderMetadata.Append(imageUriPrefix);
-                iSenderMetadata.Append(iImageFileName);
-                iSenderMetadata.Append("</upnp:albumArtURI>");
-            }
-        }
+    if (iImageUri.Bytes() > 0) {
+        iSenderMetadata.Append("<upnp:albumArtURI>");
+        iSenderMetadata.Append(iImageUri);
+        iSenderMetadata.Append("</upnp:albumArtURI>");
     }
         
     iSenderMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
