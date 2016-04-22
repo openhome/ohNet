@@ -176,9 +176,9 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
     auto msg = iMsgFactory.CreateMsgDelay(std::min(downstream, delayJiffies));
     delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
     LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
-        iId, delayJiffies, delayJiffies / Jiffies::kPerMs,
-        iDownstreamDelay, iDownstreamDelay / Jiffies::kPerMs,
-        iDelayJiffies, iDelayJiffies / Jiffies::kPerMs,
+        iId, delayJiffies, Jiffies::ToMs(delayJiffies),
+        iDownstreamDelay, Jiffies::ToMs(iDownstreamDelay),
+        iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
         kStatus[iStatus]);
     if (delayJiffies == iDelayJiffies) {
         return msg;

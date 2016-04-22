@@ -46,7 +46,7 @@ Msg* PreDriver::Pull()
         const TBool silenceSincePcm = iSilenceSincePcm;
         msg = msg->Process(*this);
         if (silenceSincePcm && !iSilenceSincePcm) {
-            const TUint ms = static_cast<TUint>(iSilenceSinceLastDrain / Jiffies::kPerMs);
+            const TUint ms = Jiffies::ToMs(iSilenceSinceLastDrain);
             LOG(kPipeline, "PreDriver: silence since last drain - %ums\n", ms);
         }
     } while (msg == nullptr);

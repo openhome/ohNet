@@ -237,7 +237,7 @@ TUint DummyDriver::MarkEnd()
     iLock.Wait();
     ASSERT(iCountJiffies);
     iCountJiffies = false;
-    TUint milliSecs = (TUint)(iJiffies / Jiffies::kPerMs);
+    TUint milliSecs = Jiffies::ToMs((TUint)iJiffies);
     iJiffies = 0;
     iLock.Signal();
     return milliSecs;
