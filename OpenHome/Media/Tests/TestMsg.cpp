@@ -1252,7 +1252,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [Max...Min].  Check start/end values and that subsequent values never rise
 //    const TUint kNumChannels = 2;
-    const TUint kAudioDataSize = 804;
+    const TUint kAudioDataSize = 792;
     TByte audioData[kAudioDataSize];
     (void)memset(audioData, 0x7f, kAudioDataSize);
     Brn audioBuf(audioData, kAudioDataSize);
