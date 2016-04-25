@@ -269,8 +269,11 @@ private:
     Pruner* iPruner;
     Logger* iLoggerPruner;
     DecodedAudioValidator* iDecodedAudioValidatorPruner;
-    //StarvationRamper* iStarvationRamper;
+#if 1
+    StarvationRamper* iStarvationRamper;
+#else
     StarvationMonitor* iStarvationRamper;
+#endif
     Logger* iLoggerStarvationRamper;
     RampValidator* iRampValidatorStarvationRamper;
     DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;
