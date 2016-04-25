@@ -26,7 +26,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 {
 	const char* codechar = code_in;
 	char* plainchar = plaintext_out;
-	char fragment;
+	signed char fragment;
 	
 	*plainchar = state_in->plainchar;
 	
