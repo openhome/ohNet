@@ -413,7 +413,7 @@ void ConfigTab::SetHandler(ITabHandler& aHandler, const std::vector<Bws<10>>& aL
         iLanguageList.push_back(*it);
     }
     iHandler = &aHandler;
-    for (auto val : iConfigUiVals) {
+    for (auto& val : iConfigUiVals) {
         val.second = val.first->AddObserver(*this);
     }
 }
@@ -469,6 +469,7 @@ void ConfigTab::Destroy()
 void ConfigTab::ValueChanged(IConfigUiVal& aUiVal, const Brx& aUpdatedVal)
 {
     ITabMessage* msg = iMsgAllocator.AllocateMessage(aUiVal, aUpdatedVal, iLanguageList);
+    ASSERT(iHandler != nullptr);
     iHandler->Send(*msg);
 }
 
@@ -534,9 +535,8 @@ void ConfigUiValBase::RemoveObserver(TUint aObserverId)
 {
     AutoMutex a(iLockObservers);
     auto it = iObservers.find(aObserverId);
-    if (it != iObservers.end()) {
-        iObservers.erase(it);
-    }
+    ASSERT(it != iObservers.end()); // Must be a valid observer ID.
+    iObservers.erase(it);
 }
 
 
