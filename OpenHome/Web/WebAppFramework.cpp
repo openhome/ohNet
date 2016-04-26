@@ -189,6 +189,9 @@ FrameworkTimer::FrameworkTimer(Environment& aEnv, const TChar* aStringId, TUint 
     , iHandler(nullptr)
     , iLock("FRTL")
 {
+    // Make use of iStringId and iNumericId to prevent compilers complaining about unused members.
+    ASSERT(strlen(iStringId) > 0);
+    ASSERT(iNumericId >= 0);
 }
 
 FrameworkTimer::~FrameworkTimer()
