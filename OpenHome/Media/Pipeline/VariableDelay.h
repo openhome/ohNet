@@ -25,12 +25,15 @@ class VariableDelay : public PipelineElement, public IPipelineElementUpstream
 public:
     VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
     virtual ~VariableDelay();
+    void OverrideAnimatorLatency(TUint aJiffies); // 0 => do not override
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private:
     Msg* NextMsg();
+    void ApplyAnimatorOverride();
     void RampMsg(MsgAudio* aMsg);
     void ResetStatusAndRamp();
+    void SetupRamp();
 private: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
@@ -51,8 +54,10 @@ private:
     const TChar* iId;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    Mutex iLock;
     MsgQueue iQueue;
     TUint iDelayJiffies;
+    TUint iDelayJiffiesTotal;
     TInt iDelayAdjustment;
     EStatus iStatus;
     Ramp::EDirection iRampDirection;
@@ -66,6 +71,8 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
+    TUint iAnimatorLatencyOverride;
+    TBool iAnimatorOverridePending;
 };
 
 } // namespace Media

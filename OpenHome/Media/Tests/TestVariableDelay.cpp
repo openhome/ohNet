@@ -93,6 +93,7 @@ private:
     void TestNoSilenceInjectedBeforeDecodedStream();
     void TestDelayAppliedAfterDrain();
     void TestDelayShorterThanDownstream();
+    void TestAnimatorOverride();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -134,6 +135,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayAppliedAfterDrain), "TestDelayAppliedAfterDrain");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanDownstream), "TestDelayShorterThanDownstream");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestAnimatorOverride), "TestAnimatorOverride");
 }
 
 SuiteVariableDelay::~SuiteVariableDelay()
@@ -627,6 +629,32 @@ void SuiteVariableDelay::TestDelayShorterThanDownstream()
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
     TEST(iLastPulledDelay == kDelay);
+}
+
+void SuiteVariableDelay::TestAnimatorOverride()
+{
+    *const_cast<TUint*>(&iVariableDelay->iDownstreamDelay) = 0;
+
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+
+    static const TUint kAnimatorOverride = 10 * Jiffies::kPerMs;
+    iVariableDelay->OverrideAnimatorLatency(kAnimatorOverride);
+    static const TUint kDelay = 20 * Jiffies::kPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+
+    iJiffies = 0;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    while (iJiffies < kDelay - kAnimatorOverride) {
+        PullNext();
+        TEST(iLastMsg == EMsgSilence);
+    }
+    TEST(iJiffies == kDelay - kAnimatorOverride);
+    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    PullNext(EMsgAudioPcm);
+    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 }
 
 
