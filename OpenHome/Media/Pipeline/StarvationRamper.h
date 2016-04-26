@@ -50,7 +50,7 @@ class RampGenerator : public IPcmProcessor
     static const TUint kMaxChannels = 8;
     static const TUint kSubsampleBytes = 4;
 public:
-    RampGenerator(MsgFactory& iMsgFactory, TUint aRampJiffies, TUint aThreadPriority);
+    RampGenerator(MsgFactory& iMsgFactory, TUint aInputJiffies, TUint aRampJiffies, TUint aThreadPriority);
     ~RampGenerator();
     void Start(const Brx& aRecentAudio, TUint aSampleRate, TUint aNumChannels, TUint aCurrentRampValue);
     TBool TryGetAudio(Msg*& aMsg); // returns false / nullptr when all msgs generated & returned
@@ -90,6 +90,7 @@ class IPipelineElementObserverThread;
 class StarvationRamper : public MsgReservoir, public IPipelineElementUpstream
 {
     friend class SuiteStarvationRamper;
+    static const TUint kTrainingJiffies;
     static const TUint kRampDownJiffies;
     static const TUint kMaxAudioOutJiffies;
 public:

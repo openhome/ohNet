@@ -232,7 +232,7 @@ void FlywheelInput::Flush()
 
 // RampGenerator
 
-RampGenerator::RampGenerator(MsgFactory& aMsgFactory, TUint aRampJiffies, TUint aThreadPriority)
+RampGenerator::RampGenerator(MsgFactory& aMsgFactory, TUint aInputJiffies, TUint aRampJiffies, TUint aThreadPriority)
     : iMsgFactory(aMsgFactory)
     , iRampJiffies(aRampJiffies)
     , iSem("FWRG", 0)
@@ -245,7 +245,7 @@ RampGenerator::RampGenerator(MsgFactory& aMsgFactory, TUint aRampJiffies, TUint 
     ASSERT(iActive.is_lock_free());
     iActive.store(false);
 
-    iFlywheelRamper = new FlywheelRamperManager(*this, aRampJiffies, aRampJiffies);
+    iFlywheelRamper = new FlywheelRamperManager(*this, aInputJiffies, aRampJiffies);
 
     const TUint minJiffiesPerSample = Jiffies::PerSample(kMaxSampleRate);
     const TUint numSamples = (FlywheelRamperManager::kMaxOutputJiffiesBlockSize + minJiffiesPerSample - 1) / minJiffiesPerSample;
@@ -397,6 +397,7 @@ void RampGenerator::Flush()
 
 // StarvationRamper
 
+const TUint StarvationRamper::kTrainingJiffies    = Jiffies::kPerMs * 1;
 const TUint StarvationRamper::kRampDownJiffies    = Jiffies::kPerMs * 20;
 const TUint StarvationRamper::kMaxAudioOutJiffies = Jiffies::kPerMs * 5;
 
@@ -413,7 +414,7 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     , iMaxStreamCount(aMaxStreamCount)
     , iLock("SRM1")
     , iSem("SRM2", 0)
-    , iFlywheelInput(kRampDownJiffies)
+    , iFlywheelInput(kTrainingJiffies)
     , iRecentAudioJiffies(0)
     , iStreamHandler(nullptr)
     , iState(State::Halted)
@@ -433,7 +434,7 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     iEventBuffering.store(false); // ensure SetBuffering call below detects a state change
     SetBuffering(true);
 
-    iRampGenerator = new RampGenerator(aMsgFactory, kRampDownJiffies, aThreadPriority);
+    iRampGenerator = new RampGenerator(aMsgFactory, kTrainingJiffies, kRampDownJiffies, aThreadPriority);
     iPullerThread = new ThreadFunctor("StarvationRamper",
                                       MakeFunctor(*this, &StarvationRamper::PullerThread),
                                       aThreadPriority-1);
@@ -471,8 +472,8 @@ void StarvationRamper::PullerThread()
 void StarvationRamper::StartFlywheelRamp()
 {
 //    const TUint startTime = Time::Now(*gEnv);
-    if (iRecentAudioJiffies > kRampDownJiffies) {
-        TUint excess = iRecentAudioJiffies - kRampDownJiffies;
+    if (iRecentAudioJiffies > kTrainingJiffies) {
+        TUint excess = iRecentAudioJiffies - kTrainingJiffies;
         while (excess > 0) {
             MsgAudio* audio = static_cast<MsgAudio*>(iRecentAudio.Dequeue());
             if (audio->Jiffies() > excess) {
@@ -486,7 +487,7 @@ void StarvationRamper::StartFlywheelRamp()
         }
     }
     else {
-        TInt remaining = kRampDownJiffies - iRecentAudioJiffies;
+        TInt remaining = kTrainingJiffies - iRecentAudioJiffies;
         while (remaining > 0) {
             TUint size = std::min((TUint)remaining, kMaxAudioOutJiffies);
             auto silence = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
@@ -537,10 +538,10 @@ void StarvationRamper::ProcessAudioOut(MsgAudio* aMsg)
     iRecentAudio.Enqueue(aMsg);
     aMsg->AddRef();
     iRecentAudioJiffies += aMsg->Jiffies();
-    if (iRecentAudioJiffies >= kRampDownJiffies) {
+    if (iRecentAudioJiffies >= kTrainingJiffies) {
         MsgAudio* msg = static_cast<MsgAudio*>(iRecentAudio.Dequeue());
         iRecentAudioJiffies -= msg->Jiffies();
-        if (iRecentAudioJiffies >= kRampDownJiffies) {
+        if (iRecentAudioJiffies >= kTrainingJiffies) {
             msg->RemoveRef();
         }
         else {
