@@ -699,7 +699,6 @@ void RampApplicator::GetNextSample(TByte* aDest)
     const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
     //Log::Print(" %08x ", ramp);
     const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
-    TByte upperByte = 0; // 32-bit subsamples only (assumed to be 24-bit audio + 8-bit implementation-defined)
     for (TUint i=0; i<iNumChannels; i++) {
         TInt subsample = 0;
         switch (iBitDepth)
@@ -723,10 +722,13 @@ void RampApplicator::GetNextSample(TByte* aDest)
             iPtr++;
             break;
         case 32:
-            upperByte = *iPtr++;
+            subsample = *iPtr << 24;
+            iPtr++;
             subsample += *iPtr << 16;
             iPtr++;
             subsample += *iPtr << 8;
+            iPtr++;
+            subsample += *iPtr << 0;
             iPtr++;
             break;
         default:
@@ -751,10 +753,10 @@ void RampApplicator::GetNextSample(TByte* aDest)
             *aDest++ = (TByte)(rampedSubsample >> 8);
             break;
         case 32:
-            *aDest++ = upperByte;
             *aDest++ = (TByte)(rampedSubsample >> 24);
             *aDest++ = (TByte)(rampedSubsample >> 16);
             *aDest++ = (TByte)(rampedSubsample >> 8);
+            *aDest++ = (TByte)(rampedSubsample);
             break;
         default:
             ASSERTS();

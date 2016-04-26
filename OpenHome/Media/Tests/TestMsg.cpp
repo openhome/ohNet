@@ -1252,7 +1252,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [Max...Min].  Check start/end values and that subsequent values never rise
 //    const TUint kNumChannels = 2;
-    const TUint kAudioDataSize = 804;
+    const TUint kAudioDataSize = 792;
     TByte audioData[kAudioDataSize];
     (void)memset(audioData, 0x7f, kAudioDataSize);
     Brn audioBuf(audioData, kAudioDataSize);
@@ -1261,7 +1261,7 @@ void SuiteRamp::Test()
     TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
     RampApplicator applicator(ramp);
     TUint prevSampleVal = 0x7f, sampleVal = 0;
-    TByte sample[DecodedAudio::kMaxNumChannels * 3];
+    TByte sample[DecodedAudio::kMaxNumChannels * 4];
     TUint numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
         applicator.GetNextSample(sample);
@@ -1297,6 +1297,19 @@ void SuiteRamp::Test()
         applicator.GetNextSample(sample);
         sampleVal = (sample[0]<<16) | (sample[1]<<8) | sample[2];
         TEST(sampleVal == (TUint)((sample[3]<<16) | (sample[4]<<8) | sample[5]));
+        TEST(prevSampleVal >= sampleVal);
+        prevSampleVal = sampleVal;
+    }
+
+    // Repeat the above test, but for 32-bit subsamples
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    prevSampleVal = 0x7f7f7f7f;
+    numSamples = applicator.Start(audioBuf, 32, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = (sample[0]<<24) | (sample[1]<<16) | (sample[2]<<8) | (sample[3]);
+        TEST(sampleVal == (TUint)((sample[4]<<24) | (sample[5]<<16) | (sample[6]<<8) | (sample[7])));
         TEST(prevSampleVal >= sampleVal);
         prevSampleVal = sampleVal;
     }
