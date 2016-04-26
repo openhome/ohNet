@@ -471,7 +471,6 @@ void StarvationRamper::PullerThread()
 
 void StarvationRamper::StartFlywheelRamp()
 {
-    TSLOG("StartFlywheelRamp");
 //    const TUint startTime = Time::Now(*gEnv);
     if (iRecentAudioJiffies > kTrainingJiffies) {
         TUint excess = iRecentAudioJiffies - kTrainingJiffies;
