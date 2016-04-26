@@ -225,9 +225,19 @@ public:
     TUint Port() const;
 private: // from DviServerUpnp
     SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
+    void NotifyServerDeleted(TIpAddress aInterface);
+private:
+    class AdapterData
+    {
+    public:
+        AdapterData(TIpAddress aInterface);
+    public:
+        TIpAddress iInterface;
+        std::vector<DviSessionLpec*> iSessions;
+    };
 private:
     TUint iPort;
-    std::vector<DviSessionLpec*> iSessions;
+    std::vector<AdapterData*> iAdapterData;
 };
 
 } // namespace Net

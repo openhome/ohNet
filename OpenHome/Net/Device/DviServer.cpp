@@ -20,7 +20,9 @@ DviServer::~DviServer()
     iDvStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iLock.Signal();
     for (TUint i=0; i<iServers.size(); i++) {
-        delete iServers[i];
+        DviServer::Server* server = iServers[i];
+        NotifyServerDeleted(server->Interface());
+        delete server;
     }
     iServers.clear();
 }
@@ -66,6 +68,10 @@ void DviServer::Initialise()
     }
 }
 
+void DviServer::NotifyServerDeleted(TIpAddress /*aInterface*/)
+{
+}
+
 void DviServer::AddServer(NetworkAdapter& aNif)
 {
     SocketTcpServer* tcpServer = CreateServer(aNif);
@@ -91,6 +97,7 @@ void DviServer::SubnetListChanged()
         for (i = (TInt)iServers.size() - 1; i >= 0; i--) {
             DviServer::Server* server = iServers[i];
             if (current == NULL || server->Interface() != current->Address()) {
+                NotifyServerDeleted(server->Interface());
                 delete server;
                 iServers.erase(iServers.begin() + i);
             }
@@ -108,6 +115,7 @@ void DviServer::SubnetListChanged()
         for (i = (TInt)iServers.size() - 1; i >= 0; i--) {
             DviServer::Server* server = iServers[i];
             if (FindInterface(server->Interface(), *nifList) == -1) {
+                NotifyServerDeleted(server->Interface());
                 delete server;
                 iServers.erase(iServers.begin() + i);
             }

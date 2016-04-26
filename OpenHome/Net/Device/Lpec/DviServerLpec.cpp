@@ -910,8 +910,11 @@ DviServerLpec::DviServerLpec(DvStack& aDvStack, TUint aPort)
 
 void DviServerLpec::NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn)
 {
-    for (TUint i=0; i<iSessions.size(); i++) {
-        iSessions[i]->NotifyDeviceDisabled(aName, aUdn);
+    for (TUint i=0; i<iAdapterData.size(); i++) {
+        AdapterData* ad = iAdapterData[i];
+        for (TUint j=0; j<ad->iSessions.size(); j++) {
+            ad->iSessions[j]->NotifyDeviceDisabled(aName, aUdn);
+        }
     }
 }
 
@@ -924,16 +927,39 @@ SocketTcpServer* DviServerLpec::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "LpecServer", iPort, aNif.Address());
     const TUint numThreads = iDvStack.Env().InitParams()->DvNumLpecThreads();
+    AdapterData* ad = new AdapterData(aNif.Address());
+    iAdapterData.push_back(ad);
     for (TUint i=0; i<numThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("LpecSession %d", i);
         thName.PtrZ();
         DviSessionLpec* session = new DviSessionLpec(iDvStack, aNif.Address(), iPort);
         server->Add((const TChar*)thName.Ptr(), session);
-        iSessions.push_back(session);
+        ad->iSessions.push_back(session);
     }
     return server;
 }
+
+void DviServerLpec::NotifyServerDeleted(TIpAddress aInterface)
+{
+    for (TUint i=0; i<iAdapterData.size(); i++) {
+        AdapterData* ad = iAdapterData[i];
+        if (ad->iInterface == aInterface) {
+            iAdapterData.erase(iAdapterData.begin() + i);
+            delete ad;
+            break;
+        }
+    }
+}
+
+
+// DviServerLpec::AdapterData
+
+DviServerLpec::AdapterData::AdapterData(TIpAddress aInterface)
+    : iInterface(aInterface)
+{
+}
+
 
 
 // DviSessionLpec::EventWriterAdapter
