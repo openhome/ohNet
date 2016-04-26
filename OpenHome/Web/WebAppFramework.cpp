@@ -77,7 +77,10 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
             // Check if this was interrupted.
             AutoMutex a(iLock);
             if (!iEnabled || !iPolling) {
-                iTimer.Cancel();
+                // No need to cancel timer.
+                // Can only get here via Disable() call (which cancels timer if
+                // polling active) or Complete() call (in which case, timer has
+                // already fired due to timeout).
                 if (msgOutput) {
                     aWriter.Write(Brn("]"));
                 }
