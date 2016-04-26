@@ -527,6 +527,7 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     , iLatency(aLatency)
     , iMulticast(aMulticast)
     , iEnabled(false)
+    , iUnicastOverride(false)
     , iSocketOhm(aEnv)
     , iRxBuffer(iSocketOhm)
     , iMutexStartStop("OHMS")
@@ -719,7 +720,7 @@ void OhmSender::Start()
 {
     // always called with the start/stop mutex locked
     if (!iStarted) {
-        if (iMulticast) {
+        if (iMulticast && !iUnicastOverride) {
             iSocketOhm.OpenMulticast(iInterface, kTtl, iMulticastEndpoint);
             iTargetEndpoint.Replace(iMulticastEndpoint);
             iTargetInterface = iInterface;
@@ -799,6 +800,16 @@ void OhmSender::SetPreset(TUint aValue)
 void OhmSender::NotifyAudioPlaying(TBool aPlaying)
 {
     iProvider->NotifyAudioPlaying(aPlaying);
+}
+
+void OhmSender::EnableUnicastOverride(TBool aEnable)
+{
+    AutoMutex _(iMutexStartStop);
+    iUnicastOverride = aEnable;
+    if (iEnabled) {
+        Stop();
+        Start();
+    }
 }
 
 //  This runs a little state machine where the current state is reflected by:
@@ -1153,7 +1164,7 @@ void OhmSender::UpdateUri()
 {
     // access to iUri is protected by iStartStopMutex which is locked in all callers
     if (iStarted) {
-        if (iMulticast) {
+        if (iMulticast && !iUnicastOverride) {
             iUri.Replace("ohm://");
             iMulticastEndpoint.AppendEndpoint(iUri);
         }

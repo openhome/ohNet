@@ -43,7 +43,8 @@ public:
            Configuration::IConfigInitialiser& aConfigInit,
            TUint aThreadPriority,
            const Brx& aName,
-           TUint aMinLatencyMs);
+           TUint aMinLatencyMs,
+           const Brx& aSongcastMode);
     ~Sender();
     void SetName(const Brx& aName);
     void SetImageUri(const Brx& aUri);
@@ -132,6 +133,8 @@ private:
     TUint iBitDepth;
     TUint iNumChannels;
     const TUint iMinLatencyMs;
+    const Media::BwsMode iSongcastMode;
+    TBool iEnabled;
 };
 
 } // namespace Av
