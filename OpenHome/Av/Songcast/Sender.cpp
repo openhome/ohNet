@@ -351,7 +351,7 @@ void Sender::ProcessFragment32(const Brx& aData, TUint aNumChannels)
     for (TUint i=0; i<numSamples; i++) {
         ProcessSample32LeftAligned(p, src, aNumChannels);
     }
-    bytes += 3 * aNumChannels * numSamples;
+    bytes = 3 * aNumChannels * numSamples;
     iAudioBuf->SetBytes(bytes);
 }
 

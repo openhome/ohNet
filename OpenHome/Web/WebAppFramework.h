@@ -175,7 +175,7 @@ private:
 class FrameworkTimer : public IFrameworkTimer
 {
 public:
-    FrameworkTimer(Environment& aEnv);
+    FrameworkTimer(Environment& aEnv, const TChar* aStringId, TUint aNumericId);
     ~FrameworkTimer();
 public: // from IFrameworkTimer
     void Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler) override;
@@ -183,6 +183,8 @@ public: // from IFrameworkTimer
 private:
     void Complete();
 private:
+    const TChar* iStringId;
+    const TUint iNumericId;
     Timer iTimer;
     IFrameworkTimerHandler* iHandler;
     Mutex iLock;
@@ -248,6 +250,7 @@ private:
     ITabDestroyHandler* iDestroyHandler;
     ITab* iTab;
     std::vector<Bws<10>> iLanguages; // Takes ownership of pointers.
+    TBool iPollActive;
     mutable Mutex iLock;
 };
 

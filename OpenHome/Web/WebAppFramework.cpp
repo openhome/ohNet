@@ -58,8 +58,9 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
     // - There are no msgs in FIFO. Block until timer triggers a timeout and return.
     {
         // Don't accept any long polls if in an interrupted state.
+        // Don't accept long polls if already polling (i.e., misbehaving client is making overlapping long polls).
         AutoMutex a(iLock);
-        if (!iEnabled) {
+        if (!iEnabled || iPolling) {
             return;
         }
         iPolling = true;
@@ -76,6 +77,10 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
             // Check if this was interrupted.
             AutoMutex a(iLock);
             if (!iEnabled || !iPolling) {
+                // No need to cancel timer.
+                // Can only get here via Disable() call (which cancels timer if
+                // polling active) or Complete() call (in which case, timer has
+                // already fired due to timeout).
                 if (msgOutput) {
                     aWriter.Write(Brn("]"));
                 }
@@ -114,7 +119,6 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 if (msgOutput) {
                     aWriter.Write(Brn("]"));
                 }
-
                 return;
             }
         }
@@ -181,11 +185,16 @@ void FrameworkTabHandler::Complete()
 
 // FrameworkTimer
 
-FrameworkTimer::FrameworkTimer(Environment& aEnv)
-    : iTimer(aEnv, MakeFunctor(*this, &FrameworkTimer::Complete), "WebUiTimer")
+FrameworkTimer::FrameworkTimer(Environment& aEnv, const TChar* aStringId, TUint aNumericId)
+    : iStringId(aStringId)
+    , iNumericId(aNumericId)
+    , iTimer(aEnv, MakeFunctor(*this, &FrameworkTimer::Complete), "WebUiTimer")
     , iHandler(nullptr)
     , iLock("FRTL")
 {
+    // Make use of iStringId and iNumericId to prevent compilers complaining about unused members.
+    ASSERT(strlen(iStringId) > 0);
+    ASSERT(iNumericId >= 0);
 }
 
 FrameworkTimer::~FrameworkTimer()
@@ -196,6 +205,7 @@ FrameworkTimer::~FrameworkTimer()
 
 void FrameworkTimer::Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler)
 {
+    //LOG(kHttp, "FrameworkTimer::Start iStringId: %s, iNumericId: %u, aDurationMs: %u\n", iStringId, iNumericId, aDurationMs);
     AutoMutex a(iLock);
     ASSERT(iHandler == nullptr);
     iHandler = &aHandler;
@@ -204,6 +214,7 @@ void FrameworkTimer::Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler)
 
 void FrameworkTimer::Cancel()
 {
+    //LOG(kHttp, "FrameworkTimer::Cancel iStringId: %s, iNumericId: %u\n", iStringId, iNumericId);
     AutoMutex a(iLock);
     if (iHandler != nullptr) {
         iTimer.Cancel();
@@ -213,6 +224,7 @@ void FrameworkTimer::Cancel()
 
 void FrameworkTimer::Complete()
 {
+    //LOG(kHttp, "FrameworkTimer::Complete: iStringId: %s, iNumericId: %u\n", iStringId, iNumericId);
     IFrameworkTimerHandler* handler = nullptr;
     {
         AutoMutex a(iLock);
@@ -257,6 +269,7 @@ FrameworkTab::FrameworkTab(TUint aTabId, IFrameworkTimer& aTimer, IFrameworkTabH
     , iSessionId(kInvalidTabId)
     , iDestroyHandler(nullptr)
     , iTab(nullptr)
+    , iPollActive(false)
     , iLock("FRTL")
 {
 }
@@ -322,7 +335,7 @@ void FrameworkTab::Clear()
 
     // Must be forgiving for cases where:
     // - Tab is in use, but framework is being destroyed.
-    // - Tab has already been destroyed, but destroy is being called again (e.g. where a terminate request has come in from a client while a long poll request is active. The terminate request could cause a WriterError during the long poll request, which would cause Destroy() to be called again).
+    // - Tab has already been destroyed, but destroy is being called again (e.g., where a terminate request has come in from a client while a long poll request is active. The terminate request could cause a WriterError during the long poll request, which would cause Destroy() to be called again).
     AutoMutex a(iLock);
 
     if (iTab != nullptr) {
@@ -340,7 +353,13 @@ void FrameworkTab::LongPoll(IWriter& aWriter)
     {
         AutoMutex a(iLock);
         ASSERT(iTab != nullptr);
+
+        if (iPollActive) {
+            return;
+        }
+
         iTimer.Cancel();
+        iPollActive = true;
     }
     iHandler.LongPoll(aWriter);
     // Will only reach here if blocking send isn't terminated (i.e., tab is still active).
@@ -349,6 +368,7 @@ void FrameworkTab::LongPoll(IWriter& aWriter)
         // Tab hasn't been deallocated, so expect another poll.
         iTimer.Start(iPollTimeoutMs, *this);
     }
+    iPollActive = false;
 }
 
 void FrameworkTab::Receive(const Brx& aMessage)
@@ -380,9 +400,9 @@ void FrameworkTab::Complete()
 FrameworkTabFull::FrameworkTabFull(Environment& aEnv, TUint aTabId, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
     : iSemRead("FTSR", 0)
     , iSemWrite("FTSW", aSendQueueSize)
-    , iTabHandlerTimer(aEnv)
+    , iTabHandlerTimer(aEnv, "TabHandlerTimer", aTabId)
     , iTabHandler(iSemRead, iSemWrite, iTabHandlerTimer, aSendQueueSize, aSendTimeoutMs)
-    , iTabTimer(aEnv)
+    , iTabTimer(aEnv, "TabTimer", aTabId)
     , iTab(aTabId, iTabTimer, iTabHandler, aPollTimeoutMs)
 {
 }
@@ -583,7 +603,7 @@ const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
 WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
     : iEnv(aEnv)
-    , iPollTimer(iEnv)
+    , iPollTimer(iEnv, "WebAppFrameworkPollTimer", 0)
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
     , iServer(nullptr)

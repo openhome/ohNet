@@ -583,7 +583,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         Ascii::CaseInsensitiveEquals(ext, Brn(".m3u")) ||
         Ascii::CaseInsensitiveEquals(ext, Brn(".xml")) ||
         Ascii::CaseInsensitiveEquals(ext, Brn(".opml"))) {
-        suppressIcyHeader = true;;
+        suppressIcyHeader = true;
     }
     try {
         LOG(kMedia, "ProtocolHttp::WriteRequest send request\n");
