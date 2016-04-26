@@ -148,9 +148,7 @@ void SourceRadio::Activate(TBool aAutoPlay)
 
 void SourceRadio::Deactivate()
 {
-    iLock.Wait();
     iProviderRadio->SetTransportState(EPipelineStopped);
-    iLock.Signal();
     iStorePresetNumber->Write();
     Source::Deactivate();
 }

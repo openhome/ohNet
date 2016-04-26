@@ -37,7 +37,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iSampleRate(0)
     , iNumChannels(0)
     , iJiffiesToSend(aMaxMsgSizeJiffies)
-    , iTimerFrequencyMs(aMaxMsgSizeJiffies / Jiffies::kPerMs)
+    , iTimerFrequencyMs(Jiffies::ToMs(aMaxMsgSizeJiffies))
     , iLastTimeUs(0)
     , iTimeOffsetUs(0)
     , iPlayable(nullptr)

@@ -12,7 +12,7 @@ using namespace OpenHome::Media;
 
 void ClockPullerUtils::PullClock(TUint& aMultiplier, TInt aDriftJiffies, TUint64 aPeriodJiffies)
 { // static
-    LOG(kMedia, "PullClock: drifted %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, (TUint)aPeriodJiffies/Jiffies::kPerMs);
+    LOG(kMedia, "PullClock: drifted %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, Jiffies::ToMs((TUint)aPeriodJiffies));
     TInt64 driftJiffies = aDriftJiffies;
     TInt64 update = -driftJiffies * aMultiplier;
     update /= (TInt64)aPeriodJiffies;

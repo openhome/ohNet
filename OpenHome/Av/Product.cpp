@@ -447,6 +447,12 @@ void Product::Activate(ISource& aSource)
     // deactivate current (old) source, if one exists
     if (iCurrentSource != kCurrentSourceNone) {
         srcOld = iSources[iCurrentSource];
+
+        if (&aSource == srcOld) {
+            // This source is already active. Do nothing.
+            return;
+        }
+
         srcOld->Deactivate();
     }
 

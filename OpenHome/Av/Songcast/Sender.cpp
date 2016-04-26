@@ -133,7 +133,7 @@ Msg* Sender::ProcessMsg(MsgDrain* aMsg)
 Msg* Sender::ProcessMsg(MsgDelay* aMsg)
 {
     SendPendingAudio();
-    const TUint latencyMs = aMsg->DelayJiffies() / Jiffies::kPerMs;
+    const TUint latencyMs = Jiffies::ToMs(aMsg->DelayJiffies());
     iOhmSender->SetLatency(std::max(latencyMs, iMinLatencyMs));
     aMsg->RemoveRef();
     return nullptr;
@@ -300,6 +300,16 @@ void Sender::ConfigPresetChanged(KeyValuePair<TInt>& aKvp)
     iOhmSender->SetPreset(aKvp.Value());
 }
 
+inline void Sender::ProcessSample32LeftAligned(TByte*& aDest, const TByte*& aSrc, TUint aNumChannels)
+{ // static
+    for (TUint i=0; i<aNumChannels; i++) {
+        *aDest++ = *aSrc++;
+        *aDest++ = *aSrc++;
+        *aDest++ = *aSrc++;
+        aSrc++;
+    }
+}
+
 void Sender::BeginBlock()
 {
     ASSERT(iAudioBuf);
@@ -320,9 +330,17 @@ void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
     iAudioBuf->Append(aData);
 }
 
-void Sender::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment32(const Brx& aData, TUint aNumChannels)
 {
-    iAudioBuf->Append(aData);
+    TByte* p = const_cast<TByte*>(iAudioBuf->Ptr());
+    const TByte* src = aData.Ptr();
+    TUint bytes = iAudioBuf->Bytes();
+    const TUint numSamples = bytes / (4 * aNumChannels);
+    for (TUint i=0; i<numSamples; i++) {
+        ProcessSample32LeftAligned(p, src, aNumChannels);
+    }
+    bytes = 3 * aNumChannels * numSamples;
+    iAudioBuf->SetBytes(bytes);
 }
 
 void Sender::ProcessSample8(const TByte* aSample, TUint aNumChannels)
@@ -345,8 +363,10 @@ void Sender::ProcessSample24(const TByte* aSample, TUint aNumChannels)
 
 void Sender::ProcessSample32(const TByte* aSample, TUint aNumChannels)
 {
-    Brn sample(aSample, 4*aNumChannels);
-    iAudioBuf->Append(sample);
+    TByte* p = const_cast<TByte*>(iAudioBuf->Ptr());
+    ProcessSample32LeftAligned(p, aSample, aNumChannels);
+    const TUint bytes = iAudioBuf->Bytes() + (3 * aNumChannels);
+    iAudioBuf->SetBytes(bytes);
 }
 
 void Sender::EndBlock()

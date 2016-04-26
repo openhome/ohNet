@@ -64,6 +64,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
     if (aMsg->AnimatorDelayJiffies() == iAnimatorDelayJiffies) {
         return aMsg;
     }
+    iDelayJiffies = aMsg->DelayJiffies();
     aMsg->RemoveRef();
     return iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies);
 }

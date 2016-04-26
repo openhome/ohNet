@@ -463,7 +463,7 @@ void SuitePipeline::Test()
     for (TUint i=0; i<kTestMsgs; i++) {
         PullNextAudio();
         //Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs); // ensure StarvationMonitor doesn't kick in
+        Thread::Sleep(Jiffies::ToMs(iLastMsgJiffies)); // ensure StarvationMonitor doesn't kick in
     }
     TEST(iFirstSubsample == iLastSubsample);    // only check last message; StarvationMonitor could have kicked in between Pause() and Play() above.
     WaitForStateChange(EPipelinePlaying);
@@ -525,7 +525,7 @@ void SuitePipeline::PullUntilEnd(EState aState)
         }
         // Introduce a delay to avoid the risk of this thread pulling data faster than the supplier can push it
         // ...which would cause the starvation monitor to kick in at unpredictable times.
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
+        Thread::Sleep(Jiffies::ToMs(iLastMsgJiffies));
         switch (aState)
         {
         case ERampDownDeferred:
@@ -590,7 +590,7 @@ void SuitePipeline::TestRampingDownStarts(TUint aMaxMsgs)
             rampingDown = true;
             break;
         }
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
+        Thread::Sleep(Jiffies::ToMs(iLastMsgJiffies));
     }
     TEST(rampingDown);
     TEST(iFirstSubsample > iLastSubsample);
@@ -606,7 +606,7 @@ void SuitePipeline::TestRampingUpStartsFromPartialRampDown(TUint aMaxMsgs)
             rampingUp = true;
             break;
         }
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
+        Thread::Sleep(Jiffies::ToMs(iLastMsgJiffies));
     }
     TEST(rampingUp);
     TEST(iLastSubsample > kSubsampleRampedDownFull);
@@ -622,7 +622,7 @@ void SuitePipeline::TestRampsUp(TUint aMaxMsgs)
             finishedRamping = true;
             break;
         }
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs); // ensure StarvationMonitor doesn't kick in
+        Thread::Sleep(Jiffies::ToMs(iLastMsgJiffies)); // ensure StarvationMonitor doesn't kick in
     }
     TEST(finishedRamping);
     TEST(iFirstSubsample == kSubsampleRampedUpFull);

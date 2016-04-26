@@ -161,6 +161,8 @@ public:
     static void RoundUp(TUint& aJiffies, TUint aSampleRate);
     static TUint ToSongcastTime(TUint aJiffies, TUint aSampleRate);
     static TUint64 FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
+    static TUint ToMs(TUint aJiffies) { return aJiffies / kPerMs; }
+    static TUint ToMs(TUint64 aJiffies) { return static_cast<TUint>(aJiffies / kPerMs); }
 private:
     static TUint SongcastTicksPerSecond(TUint aSampleRate);
 private:
