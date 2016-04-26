@@ -293,7 +293,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iPruner = new Pruner(*iDecodedAudioValidatorDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iDecodedAudioValidatorPruner = new DecodedAudioValidator(*iLoggerPruner, "Pruner");
-#if 1
+#if FLYWHEEL
     iStarvationRamper = new StarvationRamper(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread,
                                                aInitParams->StarvationRamperJiffies(), threadPriority,
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
