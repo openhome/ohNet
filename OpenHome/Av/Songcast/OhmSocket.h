@@ -35,6 +35,8 @@ private:
     SocketUdpBase* iTxSocket;
     UdpReader* iReader;
     Endpoint iThis;
+    Mutex iLock;
+    TBool iInterrupt;
 };
 
 class OhzSocket : public IReaderSource, public INonCopyable
