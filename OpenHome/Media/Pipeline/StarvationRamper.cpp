@@ -273,7 +273,8 @@ void RampGenerator::Start(const Brx& aRecentAudio, TUint aSampleRate, TUint aNum
     iSampleRate = aSampleRate;
     iNumChannels = aNumChannels;
     iCurrentRampValue = aCurrentRampValue;
-    iRemainingRampSize = iRampJiffies;
+    const TUint genSampleCount = FlywheelRamper::SampleCount(iSampleRate, iRampJiffies);
+    iRemainingRampSize = Jiffies::PerSample(iSampleRate) * genSampleCount;
     (void)iSem.Clear();
     iActive.store(true);
     iThread->Signal();

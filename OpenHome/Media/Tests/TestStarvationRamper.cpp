@@ -27,10 +27,10 @@ class SuiteStarvationRamper : public SuiteUnitTest
     static const TUint kMaxAudioBuffer = Jiffies::kPerMs * 10;
     static const TUint kRampUpDuration = Jiffies::kPerMs * 50;
     static const TUint kExpectedFlushId = 5;
-    static const TUint kSampleRate = 48000;
-    static const TUint kBitDepth = 16;
+    static const TUint kSampleRateDefault = 48000;
+    static const TUint kBitDepthDefault = 16;
     static const TUint kNumChannels = 2;
-    static const TUint kAudioPcmBytes = 960; // 5ms of 48k, 16-bit stereo
+    static const TUint kAudioPcmBytesDefault = 960; // 5ms of 48k, 16-bit stereo
     static const Brn kMode;
 public:
     SuiteStarvationRamper();
@@ -99,6 +99,7 @@ private:
     void TestRampsAroundStarvation();
     void TestNotifyStarvingAroundStarvation();
     void TestReportsBuffering();
+    void TestAllSampleRates();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -117,9 +118,11 @@ private:
     std::list<Msg*> iPendingMsgs;
     TUint iLastRampPos;
     TUint iNextStreamId;
-    Bws<kAudioPcmBytes> iPcmData;
+    Bws<AudioData::kMaxBytes> iPcmData;
     TBool iStarving;
     TUint iStarvingStreamId;
+    TUint iSampleRate;
+    TUint iBitDepth;
 };
 
 } // namespace Media
@@ -139,11 +142,12 @@ SuiteStarvationRamper::SuiteStarvationRamper()
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestRampsAroundStarvation), "TestRampsAroundStarvation");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestNotifyStarvingAroundStarvation), "TestNotifyStarvingAroundStarvation");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestReportsBuffering), "TestReportsBuffering");
+    AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestAllSampleRates), "TestAllSampleRates");
 
     // audio data with left=0x7f, right=0x00
-    iPcmData.SetBytes(iPcmData.MaxBytes());
+    iPcmData.SetBytes(kAudioPcmBytesDefault);
     TByte* p = const_cast<TByte*>(iPcmData.Ptr());
-    const TUint samples = iPcmData.MaxBytes() / ((kBitDepth/8) * kNumChannels);
+    const TUint samples = iPcmData.Bytes() / ((kBitDepthDefault/8) * kNumChannels);
     for (TUint i=0; i<samples; i++) {
         *p++ = 0x7f;
         *p++ = 0x7f;
@@ -166,6 +170,8 @@ void SuiteStarvationRamper::Setup()
     iNextStreamId = 1;
     iStarving = false;
     iStarvingStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iSampleRate = kSampleRateDefault;
+    iBitDepth = kBitDepthDefault;
 
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     iEventCallback = new ElementObserverSync();
@@ -310,7 +316,6 @@ Msg* SuiteStarvationRamper::ProcessMsg(MsgAudioPcm* aMsg)
         TEST(ramp.Direction() == Ramp::ENone);
     }
     iLastRampPos = ramp.End();
-
     return aMsg;
 }
 
@@ -420,12 +425,12 @@ Msg* SuiteStarvationRamper::CreateTrack()
 
 Msg* SuiteStarvationRamper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, kBitDepth, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, this);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, iBitDepth, iSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, this);
 }
 
 Msg* SuiteStarvationRamper::CreateAudio()
 {
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iPcmData, kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(iPcmData, kNumChannels, iSampleRate, iBitDepth, AudioDataEndian::Big, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -535,7 +540,7 @@ void SuiteStarvationRamper::TestRampsAroundStarvation()
     do {
         AddPending(CreateAudio());
         audioCount++;
-    } while (iTrackOffset < StarvationRamper::kRampDownJiffies);
+    } while (iTrackOffset < StarvationRamper::kTrainingJiffies);
 
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
@@ -667,6 +672,66 @@ void SuiteStarvationRamper::TestReportsBuffering()
     PullNext(EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
     TEST(!iBuffering);
+
+    Quit();
+}
+
+void SuiteStarvationRamper::TestAllSampleRates()
+{
+    static const TUint kSampleRates[] = {  7350,   8000,  11025,  12000,
+                                          14700,  16000,  22050,  24000,
+                                          29400,  32000,  44100,  48000,
+                                          88200,  96000, 176400, 192000 };
+    static const TUint kBitDepths[] = { 8, 16, 24, 32 };
+#define NUM_ELEMS(arr) sizeof(arr) / sizeof(arr[0])
+    static const TUint kNumSampleRates = NUM_ELEMS(kSampleRates);
+    static const TUint kNumBitDepths = NUM_ELEMS(kBitDepths);
+
+    for (TUint i=0; i<kNumBitDepths; i++) {
+        iBitDepth = kBitDepths[i];
+        const TUint byteDepth = iBitDepth / 8;
+        TByte* p = const_cast<TByte*>(iPcmData.Ptr());
+        const TUint samples = iPcmData.MaxBytes() / (byteDepth * kNumChannels);
+        for (TUint j=0; j<samples; j++) {
+            for (TUint k=0; k<byteDepth; k++) {
+                *p++ = 0x7f;
+            }
+            for (TUint k=0; k<byteDepth; k++) {
+                *p++ = 0x00;
+            }
+        }
+        iPcmData.SetBytes(samples * byteDepth * kNumChannels);
+        for (TUint j=0; j<kNumSampleRates; j++) {
+            iSampleRate = kSampleRates[j];
+            Print("\nbitDepth=%2u, sampleRate=%6u\n", iBitDepth, iSampleRate);
+            iTrackOffset = 0;
+            iJiffies = 0;
+            AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+            AddPending(CreateTrack());
+            AddPending(CreateDecodedStream());
+            TInt audioCount = 0;
+            do {
+                AddPending(CreateAudio());
+                audioCount++;
+            } while (iTrackOffset < StarvationRamper::kTrainingJiffies);
+
+            PullNext(EMsgMode);
+            PullNext(EMsgTrack);
+            PullNext(EMsgDecodedStream);
+            do {
+                PullNext(EMsgAudioPcm);
+            } while (iJiffies < iTrackOffset);
+            iRampingDown = true;
+            iJiffies = 0;
+            while (iRampingDown) {
+                PullNext(EMsgAudioPcm);
+            }
+            TUint expected = StarvationRamper::kRampDownJiffies;
+            Jiffies::RoundDown(expected, iSampleRate);
+            TEST(iJiffies == expected);
+            PullNext(EMsgHalt, false);
+        }
+    }
 
     Quit();
 }

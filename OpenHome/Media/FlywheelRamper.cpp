@@ -366,8 +366,8 @@ TInt16 FlywheelRamper::CoeffOverflow(TInt16* aCoeffs, TUint aCoeffCount, TUint a
 
 TUint FlywheelRamper::SampleCount(TUint aSampleRate, TUint aJiffies)
 {
-    TUint64 sampleCount = (((TUint64)aSampleRate*((TUint64)aJiffies))/((TUint64)Jiffies::kPerSecond));
-    return((TUint)sampleCount);
+    TUint64 sampleCount = (((TUint64)aSampleRate) * aJiffies) / Jiffies::kPerSecond;
+    return (TUint)sampleCount;
 }
 
 void FlywheelRamper::ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale)
