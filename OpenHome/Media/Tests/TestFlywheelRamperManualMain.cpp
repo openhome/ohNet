@@ -158,13 +158,13 @@ TestFWRManual::TestFWRManual(const Brx& aInputFilename, const Brx& aOutputFilena
             outputFilename.Append("-");
             Ascii::AppendDec(outputFilename, iRampMs); // zzz
             outputFilename.Append(Brn(".wav"));
-            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
+            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileWriteOnly);
         }
         else
         {
             Bwh outputFilename(aOutputFilename);
             outputFilename.Grow(outputFilename.Bytes()+1);
-            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
+            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileWriteOnly);
         }
     }
     catch(FileOpenError&)
@@ -637,6 +637,8 @@ void PcmProcessorFwrMan::ProcessFragment32(const Brx& aData, TUint /*aNumChannel
 
 int CDECL main(int aArgc, TChar* aArgv[])
 {
+    Library lib(InitialisationParams::Create());
+
     std::vector<Brn> args;
 
     for(int i=0; i<aArgc; i++)
