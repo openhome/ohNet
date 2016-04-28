@@ -536,18 +536,16 @@ void SuiteStarvationRamper::TestRampsAroundStarvation()
     AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
-    TInt audioCount = 0;
     do {
         AddPending(CreateAudio());
-        audioCount++;
     } while (iTrackOffset < StarvationRamper::kTrainingJiffies);
 
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    while (audioCount-- > 0) {
+    do {
         PullNext(EMsgAudioPcm);
-    }
+    } while (iJiffies < iTrackOffset);
     iRampingDown = true;
     iJiffies = 0;
     while (iRampingDown) {
@@ -709,10 +707,8 @@ void SuiteStarvationRamper::TestAllSampleRates()
             AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
             AddPending(CreateTrack());
             AddPending(CreateDecodedStream());
-            TInt audioCount = 0;
             do {
                 AddPending(CreateAudio());
-                audioCount++;
             } while (iTrackOffset < StarvationRamper::kTrainingJiffies);
 
             PullNext(EMsgMode);

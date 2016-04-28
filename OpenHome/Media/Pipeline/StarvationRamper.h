@@ -110,14 +110,9 @@ private:
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgMode* aMsg) override;
-    void ProcessMsgIn(MsgTrack* aMsg) override;
-    void ProcessMsgIn(MsgHalt* aMsg) override;
-    void ProcessMsgIn(MsgDecodedStream* aMsg) override;
-    void ProcessMsgIn(MsgAudioPcm* aMsg) override;
-    void ProcessMsgIn(MsgSilence* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;

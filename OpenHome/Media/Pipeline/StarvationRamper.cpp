@@ -529,11 +529,6 @@ void StarvationRamper::ProcessAudioOut(MsgAudio* aMsg)
         iStreamHandler->NotifyStarving(iMode, iStreamId, false);
     }
 
-    if (aMsg->Jiffies() > kMaxAudioOutJiffies) {
-        Msg* split = aMsg->Split(kMaxAudioOutJiffies);
-        EnqueueAtHead(split);
-    }
-
     iLastPulledAudioRampValue = aMsg->Ramp().End();
 
     iRecentAudio.Enqueue(aMsg);
@@ -602,47 +597,6 @@ Msg* StarvationRamper::Pull()
     return msg;
 }
 
-void StarvationRamper::ProcessMsgIn(MsgMode* /*aMsg*/)
-{
-    NewStream();
-}
-
-void StarvationRamper::ProcessMsgIn(MsgTrack* /*aMsg*/)
-{
-    NewStream();
-}
-
-void StarvationRamper::ProcessMsgIn(MsgHalt* /*aMsg*/)
-{
-    iState = State::Halted;
-}
-
-void StarvationRamper::ProcessMsgIn(MsgDecodedStream* aMsg)
-{
-    NewStream();
-
-    auto streamInfo = aMsg->StreamInfo();
-    iStreamId = streamInfo.StreamId();
-    iStreamHandler = streamInfo.StreamHandler();
-    iSampleRate = streamInfo.SampleRate();
-    iBitDepth = streamInfo.BitDepth();
-    iNumChannels = streamInfo.NumChannels();
-}
-
-void StarvationRamper::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
-{
-    if (iState == State::Starting || iState == State::Halted) {
-        iState = State::Running;
-    }
-}
-
-void StarvationRamper::ProcessMsgIn(MsgSilence* /*aMsg*/)
-{
-    if (iState == State::Halted) {
-        iState = State::Starting;
-    }
-}
-
 void StarvationRamper::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
     iExit = true;
@@ -650,7 +604,14 @@ void StarvationRamper::ProcessMsgIn(MsgQuit* /*aMsg*/)
 
 Msg* StarvationRamper::ProcessMsgOut(MsgMode* aMsg)
 {
+    NewStream();
     iMode.Replace(aMsg->Mode());
+    return aMsg;
+}
+
+Msg* StarvationRamper::ProcessMsgOut(MsgTrack* aMsg)
+{
+    NewStream();
     return aMsg;
 }
 
@@ -665,14 +626,28 @@ Msg* StarvationRamper::ProcessMsgOut(MsgHalt* aMsg)
 
 Msg* StarvationRamper::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
+    NewStream();
+
+    auto streamInfo = aMsg->StreamInfo();
+    iStreamId = streamInfo.StreamId();
+    iStreamHandler = streamInfo.StreamHandler();
+    iSampleRate = streamInfo.SampleRate();
+    iBitDepth = streamInfo.BitDepth();
+    iNumChannels = streamInfo.NumChannels();
     iCurrentRampValue = Ramp::kMax;
     return aMsg;
 }
 
 Msg* StarvationRamper::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
-    ProcessAudioOut(aMsg);
-    SetBuffering(false);
+    if (iState == State::Starting || iState == State::Halted) {
+        iState = State::Running;
+    }
+
+    if (aMsg->Jiffies() > kMaxAudioOutJiffies) {
+        Msg* split = aMsg->Split(kMaxAudioOutJiffies);
+        EnqueueAtHead(split);
+    }
 
     if (iState == State::RampingUp && iRemainingRampSize > 0) {
         if (aMsg->Jiffies() > iRemainingRampSize) {
@@ -689,11 +664,21 @@ Msg* StarvationRamper::ProcessMsgOut(MsgAudioPcm* aMsg)
         }
     }
 
+    ProcessAudioOut(aMsg);
+    SetBuffering(false);
+
     return aMsg;
 }
 
 Msg* StarvationRamper::ProcessMsgOut(MsgSilence* aMsg)
 {
+    if (iState == State::Halted) {
+        iState = State::Starting;
+    }
+    if (aMsg->Jiffies() > kMaxAudioOutJiffies) {
+        Msg* split = aMsg->Split(kMaxAudioOutJiffies);
+        EnqueueAtHead(split);
+    }
     ProcessAudioOut(aMsg);
     return aMsg;
 }
