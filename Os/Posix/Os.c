@@ -42,6 +42,7 @@
 
 #define kMinStackBytes (1024 * 512)
 #define kThreadSchedPolicy (SCHED_RR)
+#define kMaxThreadNameChars 50
 
 #define TEMP_FAILURE_RETRY_2(expression, handle)                            \
     (__extension__                                                          \
@@ -564,6 +565,11 @@ static THandle DoThreadCreate(OsContext* aContext, const char* aName, uint32_t a
         return kHandleNull;
     }
     (void)pthread_attr_destroy(&attr);
+
+    char name[kMaxThreadNameChars] = {0};
+    strncpy(name, aName, kMaxThreadNameChars-1); // leave trailing \0
+    (void)pthread_setname_np(data->iThread, name);
+
     return (THandle)data;
 }
 
