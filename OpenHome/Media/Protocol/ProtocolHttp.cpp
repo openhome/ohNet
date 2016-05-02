@@ -577,13 +577,13 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
             break;
         }
     }
-    TBool suppressIcyHeader = false;
+    TBool nonAudioUri = false;
     if (Ascii::CaseInsensitiveEquals(ext, Brn(".asx")) ||
         Ascii::CaseInsensitiveEquals(ext, Brn(".pls")) ||
         Ascii::CaseInsensitiveEquals(ext, Brn(".m3u")) ||
         Ascii::CaseInsensitiveEquals(ext, Brn(".xml")) ||
         Ascii::CaseInsensitiveEquals(ext, Brn(".opml"))) {
-        suppressIcyHeader = true;
+        nonAudioUri = true;
     }
     try {
         LOG(kMedia, "ProtocolHttp::WriteRequest send request\n");
@@ -594,10 +594,11 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
             iWriterRequest.WriteHeader(Http::kHeaderUserAgent, iUserAgent);
         }
         Http::WriteHeaderConnectionClose(iWriterRequest);
-        if (!suppressIcyHeader) {
+        if (!nonAudioUri) {
+            // Suppress ICY metadata and Range header for things such playlist files.
             HeaderIcyMetadata::Write(iWriterRequest);
+            Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
         }
-        Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
         iWriterRequest.WriteFlush();
     }
     catch(WriterError&) {
