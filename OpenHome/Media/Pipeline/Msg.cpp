@@ -2340,12 +2340,12 @@ TBool MsgQueue::IsEmpty() const
 
 void MsgQueue::Clear()
 {
-    iLock.Wait();
+    AutoMutex _(iLock);
     while (iHead != nullptr) {
         Msg* msg = DequeueLocked();
         msg->RemoveRef();
     }
-    iLock.Signal();
+    (void)iSem.Clear();
 }
 
 TUint MsgQueue::NumMsgs() const

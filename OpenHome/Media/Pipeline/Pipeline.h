@@ -1,5 +1,7 @@
 #pragma once
 
+#define FLYWHEEL 1
+
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
@@ -269,8 +271,11 @@ private:
     Pruner* iPruner;
     Logger* iLoggerPruner;
     DecodedAudioValidator* iDecodedAudioValidatorPruner;
-    //StarvationRamper* iStarvationRamper;
+#if FLYWHEEL
+    StarvationRamper* iStarvationRamper;
+#else
     StarvationMonitor* iStarvationRamper;
+#endif
     Logger* iLoggerStarvationRamper;
     RampValidator* iRampValidatorStarvationRamper;
     DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;

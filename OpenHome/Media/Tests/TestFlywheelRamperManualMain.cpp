@@ -158,13 +158,13 @@ TestFWRManual::TestFWRManual(const Brx& aInputFilename, const Brx& aOutputFilena
             outputFilename.Append("-");
             Ascii::AppendDec(outputFilename, iRampMs); // zzz
             outputFilename.Append(Brn(".wav"));
-            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
+            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileWriteOnly);
         }
         else
         {
             Bwh outputFilename(aOutputFilename);
             outputFilename.Grow(outputFilename.Bytes()+1);
-            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileReadWrite);
+            iOutputFile->OpenFile(outputFilename.PtrZ(), eFileWriteOnly);
         }
     }
     catch(FileOpenError&)
@@ -637,6 +637,8 @@ void PcmProcessorFwrMan::ProcessFragment32(const Brx& aData, TUint /*aNumChannel
 
 int CDECL main(int aArgc, TChar* aArgv[])
 {
+    Library lib(InitialisationParams::Create());
+
     std::vector<Brn> args;
 
     for(int i=0; i<aArgc; i++)
@@ -646,29 +648,30 @@ int CDECL main(int aArgc, TChar* aArgv[])
 
     TBool singleBlock = false;
 
-    if( find(args.begin(), args.end(), Brn("--block")) != args.end() )
+    if( (find(args.begin(), args.end(), Brn("--block")) != args.end()) ||
+        (find(args.begin(), args.end(), Brn("-b")) != args.end()))
     {
         singleBlock = true;
     }
 
     OptionParser parser;
 
-    OptionString optionInput("-i", "--input", Brn(""), "name of input file");
+    OptionString optionInput("-r", "--read", Brn(""), "name of input file to read");
     parser.AddOption(&optionInput);
 
-    OptionString optionOutput("-o", "--output", Brn(""), "name of output file");
+    OptionString optionOutput("-w", "--write", Brn(""), "name of output file to write (defaults to input filename with suffix )");
     parser.AddOption(&optionOutput);
 
-    OptionUint optionDegree("-d", "--degree", 10, "degree of filter (number of taps)");
+    OptionUint optionDegree("-d", "--degree", 3, "degree of filter (number of taps) [this has no effect - hardwired to 3 in FWR]");
     parser.AddOption(&optionDegree);
 
-    OptionUint optionGenMs("-g", "--gen", 100, "generation data length in ms");
+    OptionUint optionGenMs("-i", "--input", 100, "input data length in ms");
     parser.AddOption(&optionGenMs);
 
-    OptionUint optionRampMs("-r", "--ramp", 100, "ramp length in ms");
+    OptionUint optionRampMs("-o", "--output", 100, "output data length in ms");
     parser.AddOption(&optionRampMs);
 
-    OptionUint optionBlock("", "--block", 0, "index of block to process");
+    OptionUint optionBlock("-b", "--block", 0, "index of single block to process (ramp will only be applied to a single block of the input file (defaults to multi block mode))");
     parser.AddOption(&optionBlock);
 
 

@@ -25,8 +25,12 @@ void Splitter::SetUpstream(IPipelineElementUpstream& aUpstream)
 Msg* Splitter::Pull()
 {
     Msg* msg = iUpstream->Pull();
+    const auto branchWasEnabled = iBranchEnabled;
     (void)msg->Process(*this);
-    if (iBranchEnabled) {
+    if (iBranchEnabled || branchWasEnabled) {
+        // pass on the MsgMode that signals the branch being disabled
+        // ...OhmSender needs to be halted to reduce demand on multicast sockets on old hardware targets
+        // ...and we can't disable the sender outide the pipeline without risking audio glitches
         Msg* copy = MsgCloner::NewRef(*msg);
         iBranch.Push(copy);
     }

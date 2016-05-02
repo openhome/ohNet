@@ -10,6 +10,8 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -43,6 +45,7 @@ using namespace OpenHome::Media;
 
 ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
+    , iStoppedLock("POHM")
 {
 }
 
@@ -54,17 +57,28 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         return EProtocolStreamStopped;
     }
     iNextFlushId = MsgFlush::kIdInvalid;
+    iStoppedLock.Wait();
     iStopped = false;
+    iStoppedLock.Signal();
     iEndpoint.Replace(aEndpoint);
+    // drain the pipeline before creating a multicast socket
+    // ...to ensure any songcast sender first stops, removing membership of their multicast group
+    // ...this helps keep a full player at membership of 4 multicast groups
+    // ...matching hardware limits of some clients
+    WaitForPipelineToEmpty();
     iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
 
     do {
-        WaitForPipelineToEmpty();
+        if (!firstJoin) {
+            WaitForPipelineToEmpty();
+        }
+        iStoppedLock.Wait();
         if (iStarving && !iStopped) {
             iStarving = false;
             iSocket.Interrupt(false);
         }
+        iStoppedLock.Signal();
         try {
             if (iTimestamper != nullptr) {
                 iTimestamper->Stop();
@@ -184,8 +198,11 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
 
 void ProtocolOhm::Interrupt(TBool aInterrupt)
 {
+    //LOG(kSongcast, "OHM: Interrupt(%u)\n", aInterrupt);
     if (aInterrupt) {
+        iStoppedLock.Wait();
         iStopped = aInterrupt;
+        iStoppedLock.Signal();
     }
     ProtocolOhBase::Interrupt(aInterrupt);
 }
@@ -197,7 +214,9 @@ TUint ProtocolOhm::TryStop(TUint aStreamId)
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
         }
+        iStoppedLock.Wait();
         iStopped = true;
+        iStoppedLock.Signal();
         iSocket.ReadInterrupt();
     }
     return iNextFlushId;

@@ -110,7 +110,7 @@ SuiteFlywheelRamper::SuiteFlywheelRamper(OpenHome::Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test5));
 
     AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test6)); // Burg Method testing
-    AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
+    //AddTest(MakeFunctor(*this, &SuiteFlywheelRamper::Test7)); // Burg Method profiling
 }
 
 

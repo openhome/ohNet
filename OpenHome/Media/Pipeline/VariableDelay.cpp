@@ -41,7 +41,9 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
     , iId(aId)
     , iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iLock("VDEL")
     , iDelayJiffies(0)
+    , iDelayJiffiesTotal(0)
     , iDelayAdjustment(0)
     , iDownstreamDelay(aDownstreamDelay)
     , iRampDuration(aRampDuration)
@@ -50,6 +52,8 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
+    , iAnimatorLatencyOverride(0)
+    , iAnimatorOverridePending(false)
 {
     ResetStatusAndRamp();
 }
@@ -58,8 +62,24 @@ VariableDelay::~VariableDelay()
 {
 }
 
+void VariableDelay::OverrideAnimatorLatency(TUint aJiffies)
+{
+    iLock.Wait();
+    iAnimatorLatencyOverride = aJiffies;
+    iAnimatorOverridePending = true;
+    iLock.Signal();
+}
+
 Msg* VariableDelay::Pull()
 {
+    {
+        AutoMutex _(iLock);
+        if (iAnimatorOverridePending) {
+            ApplyAnimatorOverride();
+            iAnimatorOverridePending = false;
+        }
+    }
+
     Msg* msg = nullptr;
     if (iWaitForAudioBeforeGeneratingSilence) {
         do {
@@ -118,6 +138,19 @@ Msg* VariableDelay::NextMsg()
     return msg;
 }
 
+void VariableDelay::ApplyAnimatorOverride()
+{
+    ASSERT(iDownstreamDelay == 0); // only expect to support iAnimatorLatencyOverride in rightmost delay element
+    TUint delayJiffies = (iAnimatorLatencyOverride >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatencyOverride);
+    if (delayJiffies == iDelayJiffies) {
+        return;
+    }
+
+    iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
+    iDelayJiffies = delayJiffies;
+    SetupRamp();
+}
+
 void VariableDelay::RampMsg(MsgAudio* aMsg)
 {
     if (aMsg->Jiffies() > iRemainingRampSize) {
@@ -139,53 +172,8 @@ void VariableDelay::ResetStatusAndRamp()
     iRemainingRampSize = iRampDuration;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
+void VariableDelay::SetupRamp()
 {
-    iMode.Replace(aMsg->Mode());
-    iDelayJiffies = 0;
-    iDelayAdjustment = 0;
-    iWaitForAudioBeforeGeneratingSilence = true;
-    ResetStatusAndRamp();
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
-{
-    iDelayAdjustment = iDelayJiffies;
-    if (iDelayAdjustment == 0) {
-        iWaitForAudioBeforeGeneratingSilence = false;
-        ResetStatusAndRamp();
-    }
-    else {
-        iWaitForAudioBeforeGeneratingSilence = true;
-        iRampDirection = Ramp::EDown;
-        iCurrentRampValue = Ramp::kMin;
-        iRemainingRampSize = 0;
-        iStatus = ERampedDown;
-
-    }
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
-{
-    TUint delayJiffies = aMsg->DelayJiffies();
-    const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
-    aMsg->RemoveRef();
-    const TUint& downstream = (iDownstreamDelay > 0? iDownstreamDelay : animatorDelay);
-    auto msg = iMsgFactory.CreateMsgDelay(std::min(downstream, delayJiffies), animatorDelay);
-    delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
-    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
-        iId, delayJiffies, Jiffies::ToMs(delayJiffies),
-        iDownstreamDelay, Jiffies::ToMs(iDownstreamDelay),
-        iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
-        kStatus[iStatus]);
-    if (delayJiffies == iDelayJiffies) {
-        return msg;
-    }
-
-    iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
-    iDelayJiffies = delayJiffies;
     iWaitForAudioBeforeGeneratingSilence = true;
     LOG(kMedia, "VariableDelay: iId=%s, delay=%u, adjustment=%d\n",
         iId, iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
@@ -229,6 +217,60 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         }
         break;
     }
+}
+
+Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
+{
+    iMode.Replace(aMsg->Mode());
+    iDelayJiffies = 0;
+    iDelayJiffiesTotal = 0;
+    iDelayAdjustment = 0;
+    iWaitForAudioBeforeGeneratingSilence = true;
+    ResetStatusAndRamp();
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
+{
+    iDelayAdjustment = iDelayJiffies;
+    if (iDelayAdjustment == 0) {
+        iWaitForAudioBeforeGeneratingSilence = false;
+        ResetStatusAndRamp();
+    }
+    else {
+        iWaitForAudioBeforeGeneratingSilence = true;
+        iRampDirection = Ramp::EDown;
+        iCurrentRampValue = Ramp::kMin;
+        iRemainingRampSize = 0;
+        iStatus = ERampedDown;
+
+    }
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
+{
+    TUint delayJiffies = aMsg->DelayJiffies();
+    iDelayJiffiesTotal = delayJiffies;
+    const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
+    aMsg->RemoveRef();
+    const TUint downstream = (iDownstreamDelay > 0? iDownstreamDelay :
+                                                    iAnimatorLatencyOverride > 0? iAnimatorLatencyOverride :
+                                                                                  animatorDelay);
+    auto msg = iMsgFactory.CreateMsgDelay(std::min(downstream, delayJiffies), animatorDelay);
+    delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
+    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
+        iId, delayJiffies, Jiffies::ToMs(delayJiffies),
+        iDownstreamDelay, Jiffies::ToMs(iDownstreamDelay),
+        iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
+        kStatus[iStatus]);
+    if (delayJiffies == iDelayJiffies) {
+        return msg;
+    }
+
+    iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
+    iDelayJiffies = delayJiffies;
+    SetupRamp();
 
     return msg;
 }

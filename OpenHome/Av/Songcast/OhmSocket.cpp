@@ -14,6 +14,8 @@ OhmSocket::OhmSocket(Environment& aEnv)
     , iRxSocket(0)
     , iTxSocket(0)
     , iReader(0)
+    , iLock("OHMS")
+    , iInterrupt(false)
 {
 }
 
@@ -26,12 +28,16 @@ OhmSocket::~OhmSocket()
 
 void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
 {
+    AutoMutex _(iLock);
     ASSERT(!iRxSocket);
     ASSERT(!iTxSocket);
     ASSERT(!iReader);
     iRxSocket = new SocketUdp(iEnv, 0, aInterface);
     iRxSocket->SetTtl(aTtl);
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
+    if (iInterrupt) {
+        iRxSocket->Interrupt(true);
+    }
 //    iRxSocket->SetSendBufBytes(kSendBufBytes);    // hangs in lwip, use default allocation for now - ToDo
     iReader = new UdpReader(*iRxSocket);
     iThis.Replace(Endpoint(iRxSocket->Port(), aInterface));
@@ -39,6 +45,7 @@ void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
 
 void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
+    AutoMutex _(iLock);
     ASSERT(!iRxSocket);
     ASSERT(!iTxSocket);
     ASSERT(!iReader);
@@ -46,6 +53,10 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
     iRxSocket->SetRecvBufBytes(kReceiveBufBytes);
     iTxSocket = new SocketUdp(iEnv, 0, aInterface);
     iTxSocket->SetTtl(aTtl);
+    if (iInterrupt) {
+        iRxSocket->Interrupt(true);
+        iTxSocket->Interrupt(true);
+    }
 //    iTxSocket->SetSendBufBytes(kSendBufBytes);    // hangs in lwip, use default allocation for now - ToDo
     iReader = new UdpReader(*iRxSocket);
     iThis.Replace(aEndpoint);
@@ -74,6 +85,8 @@ Endpoint OhmSocket::Sender() const
 
 void OhmSocket::Close()
 {
+    AutoMutex _(iLock);
+    iInterrupt = false;
     ASSERT(iReader != nullptr);
     delete iReader;
     iReader = nullptr;
@@ -88,7 +101,8 @@ void OhmSocket::Close()
 
 void OhmSocket::Interrupt(TBool aInterrupt)
 {
-    // FIXME - thread-safety
+    AutoMutex _(iLock);
+    iInterrupt = aInterrupt;
     if (iRxSocket != nullptr) {
         iRxSocket->Interrupt(aInterrupt);
     }

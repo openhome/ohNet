@@ -105,6 +105,7 @@ public:
     void SetMetatext(const Brx& aValue);
     void SetPreset(TUint aValue);
     void NotifyAudioPlaying(TBool aPlaying);
+    void EnableUnicastOverride(TBool aEnable);
 private:
     void RunMulticast();
     void RunUnicast();
@@ -140,6 +141,7 @@ private:
     TUint iLatency;
     TBool iMulticast;
     TBool iEnabled;
+    TBool iUnicastOverride;
     Bws<Product::kMaxUriBytes> iImageUri;
     OhmSocket iSocketOhm;
     Srs<kMaxAudioFrameBytes> iRxBuffer;

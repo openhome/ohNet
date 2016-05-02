@@ -102,14 +102,14 @@ void FlywheelRamperManager::RenderChannels(TUint aSampleCount, TUint aDecFactor,
                 sample = prevSample[k];
             }
 
-            // write out in big endian format, discarding least significant byte
-            sample >>= 8;
+            // write out in big endian format
             *(ptr+3) = (TByte)sample;
             sample >>= 8;
             *(ptr+2) = (TByte)sample;
             sample >>= 8;
             *(ptr+1) = (TByte)sample;
-            *(ptr) = 0;
+            sample >>= 8;
+            *(ptr) = (TByte)sample;
 
             ptr += 4;
             outputBytes += 4;
@@ -366,8 +366,8 @@ TInt16 FlywheelRamper::CoeffOverflow(TInt16* aCoeffs, TUint aCoeffCount, TUint a
 
 TUint FlywheelRamper::SampleCount(TUint aSampleRate, TUint aJiffies)
 {
-    TUint64 sampleCount = (((TUint64)aSampleRate*((TUint64)aJiffies))/((TUint64)Jiffies::kPerSecond));
-    return((TUint)sampleCount);
+    TUint64 sampleCount = (((TUint64)aSampleRate) * aJiffies) / Jiffies::kPerSecond;
+    return (TUint)sampleCount;
 }
 
 void FlywheelRamper::ToInt32(double* aInput, TUint aLength, TInt32* aOutput, TUint aScale)

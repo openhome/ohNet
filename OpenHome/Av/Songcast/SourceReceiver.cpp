@@ -347,6 +347,7 @@ void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
                    PBUF(aZone), PBUF(aUri));
     // FIXME - use of iZone/iTrackUri not threadsafe
     if (aZone == iZone && aUri != iTrackUri) {
+
         iZoneHandler->SetCurrentSenderUri(aUri);
         iUriLock.Wait();
         iPendingTrackUri.Replace(aUri);
@@ -448,7 +449,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aTxTsMapper,
                          aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
-                         Brx::Empty(), pipeline.SenderMinLatencyMs());
+                         Brx::Empty(), pipeline.SenderMinLatencyMs(), aMode);
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);

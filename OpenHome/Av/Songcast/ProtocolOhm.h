@@ -27,6 +27,7 @@ private: // from IStreamHandler
 private:
     TUint iNextFlushId;
     TBool iStopped;
+    Mutex iStoppedLock;
 };
 
 } // namespace Av

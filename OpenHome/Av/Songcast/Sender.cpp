@@ -39,12 +39,15 @@ Sender::Sender(Environment& aEnv,
                Configuration::IConfigInitialiser& aConfigInit,
                TUint aThreadPriority,
                const Brx& aName,
-               TUint aMinLatencyMs)
+               TUint aMinLatencyMs,
+               const Brx& aSongcastMode)
     : iAudioBuf(nullptr)
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
+    , iSongcastMode(aSongcastMode)
+    , iEnabled(true)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
     iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper, aTsMapper);
@@ -112,6 +115,15 @@ void Sender::Push(Msg* aMsg)
 
 Msg* Sender::ProcessMsg(MsgMode* aMsg)
 {
+    const TBool wasEnabled = iEnabled;
+    iEnabled = (aMsg->Mode() != iSongcastMode);
+    if (wasEnabled && !iEnabled) {
+        SendPendingAudio(true);
+        iOhmSender->EnableUnicastOverride(true);
+    }
+    else if (!wasEnabled && iEnabled) {
+        iOhmSender->EnableUnicastOverride(false);
+    }
     aMsg->RemoveRef();
     return nullptr;
 }
