@@ -32,9 +32,15 @@ AllocatorBase::~AllocatorBase()
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);
-        Allocated* ptr = Read();
-        //Log::Print("(%p)", ptr);
-        delete ptr;
+        try {
+            Allocated* ptr = Read();
+            //Log::Print("(%p)", ptr);
+            delete ptr;
+        }
+        catch (AssertionFailed&) {
+            Log::Print("...leak at %u of %u\n", i+1, slots);
+            throw;
+        }
     }
     LOG(kPipeline, "< ~AllocatorBase for %s\n", iName);
 }
