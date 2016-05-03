@@ -161,12 +161,12 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUs
         return NULL;
     }
     Subscription* subscription = it->second;
+    ASSERT(subscription->iCp != NULL);
     if (!subscription->iCp->UpdateSequenceNumber(aSequenceNumber)) {
         subscription->iCp->SetNotificationError();
         return NULL;
     }
     subscription->iCp->Unlock();
-    ASSERT(subscription->iCp != NULL);
     return new PropertyWriterDv(*(subscription->iCp));
 }
 
