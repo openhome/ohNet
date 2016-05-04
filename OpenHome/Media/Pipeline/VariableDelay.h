@@ -67,10 +67,7 @@ private:
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
     BwsMode iMode;
-    IStreamHandler* iStreamHandler;
-    TUint iSampleRate;
-    TUint iBitDepth;
-    TUint iNumChannels;
+    MsgDecodedStream* iDecodedStream;
     TUint iAnimatorLatencyOverride;
     TBool iAnimatorOverridePending;
 };

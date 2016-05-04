@@ -482,6 +482,9 @@ void SuiteVariableDelay::TestReduceDelayFromRunning()
     iJiffies = 0;
     const TUint64 prevOffset = iTrackOffset;
     const TUint queuedAudio = (TUint)iTrackOffset - iJiffiesAudioPcm;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    PullNext();
+    TEST(iLastMsg == EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingUp);
 
@@ -570,6 +573,7 @@ void SuiteVariableDelay::TestNewStreamCancelsRamp()
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     PullNext(EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    iTrackOffset = 0;
     PullNext(EMsgDecodedStream);
     while (iVariableDelay->iStatus == VariableDelay::EStarting) {
         iNextGeneratedMsg = ENone;

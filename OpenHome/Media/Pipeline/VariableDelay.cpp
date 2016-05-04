@@ -48,10 +48,7 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
     , iDownstreamDelay(aDownstreamDelay)
     , iRampDuration(aRampDuration)
     , iWaitForAudioBeforeGeneratingSilence(false)
-    , iStreamHandler(nullptr)
-    , iSampleRate(0)
-    , iBitDepth(0)
-    , iNumChannels(0)
+    , iDecodedStream(nullptr)
     , iAnimatorLatencyOverride(0)
     , iAnimatorOverridePending(false)
 {
@@ -60,6 +57,9 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
 
 VariableDelay::~VariableDelay()
 {
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
 }
 
 void VariableDelay::OverrideAnimatorLatency(TUint aJiffies)
@@ -99,7 +99,8 @@ Msg* VariableDelay::Pull()
     // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
     if ((iStatus == EStarting || iStatus == ERampedDown) && iDelayAdjustment > 0) {
         TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
-        msg = iMsgFactory.CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
+        auto stream = iDecodedStream->StreamInfo();
+        msg = iMsgFactory.CreateMsgSilence(size, stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
             if (iStatus == ERampedDown) {
@@ -277,11 +278,11 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    const DecodedStreamInfo& stream = aMsg->StreamInfo();
-    iStreamHandler = stream.StreamHandler();
-    iSampleRate = stream.SampleRate();
-    iBitDepth = stream.BitDepth();
-    iNumChannels = stream.NumChannels();
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
+    iDecodedStream = aMsg;
+    iDecodedStream->AddRef();
     ResetStatusAndRamp();
     return aMsg;
 }
@@ -293,7 +294,7 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
         return aMsg;
     }
 
-    MsgAudio* msg = aMsg;
+    MsgAudioPcm* msg = aMsg;
     switch (iStatus)
     {
     case EStarting:
@@ -327,13 +328,24 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
             iQueue.EnqueueAtHead(remaining);
         }
         iDelayAdjustment += jiffies;
-        msg->RemoveRef();
-        msg = nullptr;
         if (iDelayAdjustment == 0) {
             iStatus = ERampingUp;
             iRampDirection = Ramp::EUp;
             iRemainingRampSize = iRampDuration;
+            auto s = iDecodedStream->StreamInfo();
+            const auto sampleStart = (msg->TrackOffset() + msg->Jiffies()) / Jiffies::PerSample(s.SampleRate());
+            msg->RemoveRef();
+            auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
+                                                             s.NumChannels(), s.CodecName(), s.TrackLength(),
+                                                             sampleStart, s.Lossless(), s.Seekable(), s.Live(),
+                                                             s.AnalogBypass(), s.StreamHandler());
+            iDecodedStream->RemoveRef();
+            iDecodedStream = stream;
+            iDecodedStream->AddRef();
+            return stream;
         }
+        msg->RemoveRef();
+        msg = nullptr;
     }
         break;
     case ERampingUp:
