@@ -79,7 +79,7 @@ private:
     Msg* CreateEncodedStream();
     MsgDecodedStream* CreateDecodedStream();
     MsgFlush* CreateFlush();
-    MsgAudioPcm* CreateAudio(TUint aBytes);
+    MsgAudioPcm* CreateAudio(TUint aBytes, TUint aSampleRate=kSampleRate, TUint aBitDepth=kBitDepth, TUint aNumChannels=kChannels);
 private:
     void TestStreamSuccessful();
     void TestNoDataAfterDecodedStream();
@@ -87,6 +87,7 @@ private:
     void TestTrackTrack();
     void TestTrackEncodedStreamTrack();
     void TestPcmIsExpectedSize();
+    void TestRawPcmNotAggregated();
 private:
     static const TUint kWavHeaderBytes = 44;
     static const TUint kSampleRate = 44100;
@@ -130,6 +131,7 @@ SuiteDecodedAudioAggregator::SuiteDecodedAudioAggregator()
     AddTest(MakeFunctor(*this, &SuiteDecodedAudioAggregator::TestTrackTrack), "TestTrackTrack");
     AddTest(MakeFunctor(*this, &SuiteDecodedAudioAggregator::TestTrackEncodedStreamTrack), "TestTrackEncodedStreamTrack");
     AddTest(MakeFunctor(*this, &SuiteDecodedAudioAggregator::TestPcmIsExpectedSize), "TestPcmIsExpectedSize");
+    AddTest(MakeFunctor(*this, &SuiteDecodedAudioAggregator::TestRawPcmNotAggregated), "TestRawPcmNotAggregated");
 }
 
 void SuiteDecodedAudioAggregator::Setup()
@@ -384,18 +386,16 @@ MsgFlush* SuiteDecodedAudioAggregator::CreateFlush()
     return iMsgFactory->CreateMsgFlush(kExpectedFlushId);
 }
 
-MsgAudioPcm* SuiteDecodedAudioAggregator::CreateAudio(TUint aBytes)
+MsgAudioPcm* SuiteDecodedAudioAggregator::CreateAudio(TUint aBytes, TUint aSampleRate, TUint aBitDepth, TUint aNumChannels)
 {
-    static const TUint kByteDepth = kBitDepth/8;
-
     TByte* decodedAudioData = new TByte[aBytes];
     (void)memset(decodedAudioData, 0x7f, aBytes);
     Brn decodedAudioBuf(decodedAudioData, aBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(decodedAudioBuf, kChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(decodedAudioBuf, aNumChannels, aSampleRate, aBitDepth, AudioDataEndian::Little, iTrackOffset);
     delete[] decodedAudioData;
 
-    TUint samples = aBytes / (kChannels*kByteDepth);
-    TUint jiffiesPerSample = Jiffies::kPerSecond / kSampleRate;
+    TUint samples = aBytes / (aNumChannels * (aBitDepth/8));
+    TUint jiffiesPerSample = Jiffies::kPerSecond / aSampleRate;
     iTrackOffset += samples * jiffiesPerSample;
     iTrackOffsetBytes += aBytes;
     return audio;
@@ -520,6 +520,24 @@ void SuiteDecodedAudioAggregator::TestPcmIsExpectedSize()
     PullNext(EMsgEncodedStream);
 
     ASSERT(iTrackOffsetBytes == kAudioBytes); // check correct number of bytes have been output by test code
+    TEST(iJiffies == iTrackOffset);
+}
+
+void SuiteDecodedAudioAggregator::TestRawPcmNotAggregated()
+{
+    Queue(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, true, ModeClockPullers(nullptr, nullptr, nullptr), false, false));
+    Queue(CreateTrack());
+    PcmStreamInfo pcmStream;
+    pcmStream.Set(32, 48000, 2, AudioDataEndian::Big, 0LL);
+    Queue(iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this, pcmStream));
+    Queue(CreateDecodedStream());
+    Queue(CreateAudio(8, 48000, 32, 2)); // one sample for 32-bit stereo
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgEncodedStream);
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgAudioPcm);
+    TEST(iJiffies == Jiffies::PerSample(48000));
     TEST(iJiffies == iTrackOffset);
 }
 

@@ -283,6 +283,9 @@ void DecodedAudio::Construct(const Brx& aData, TUint aBitDepth, AudioDataEndian 
     else if (aBitDepth == 24) {
         CopyToBigEndian24(aData, ptr);
     }
+    else if (aBitDepth == 32) {
+        CopyToBigEndian32(aData, ptr);
+    }
     else { // unsupported bit depth
         ASSERTS();
     }
@@ -302,6 +305,17 @@ void DecodedAudio::CopyToBigEndian24(const Brx& aData, TByte* aDest)
 { // static
     const TByte* src = aData.Ptr();
     for (TUint i=0; i<aData.Bytes(); i+=3) {
+        *aDest++ = src[i+2];
+        *aDest++ = src[i+1];
+        *aDest++ = src[i];
+    }
+}
+
+void DecodedAudio::CopyToBigEndian32(const Brx& aData, TByte* aDest)
+{ // static
+    const TByte* src = aData.Ptr();
+    for (TUint i=0; i<aData.Bytes(); i+=4) {
+        *aDest++ = src[i+3];
         *aDest++ = src[i+2];
         *aDest++ = src[i+1];
         *aDest++ = src[i];

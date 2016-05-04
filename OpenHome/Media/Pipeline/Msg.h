@@ -141,6 +141,7 @@ private:
     void Construct(const Brx& aData, TUint aBitDepth, AudioDataEndian aEndian);
     static void CopyToBigEndian16(const Brx& aData, TByte* aDest);
     static void CopyToBigEndian24(const Brx& aData, TByte* aDest);
+    static void CopyToBigEndian32(const Brx& aData, TByte* aDest);
 };
 
 /**
