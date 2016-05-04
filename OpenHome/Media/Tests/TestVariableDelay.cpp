@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
+#include <OpenHome/Media/Pipeline/DecodedAudioValidator.h>
 
 #include <string.h>
 #include <limits.h>
@@ -100,6 +101,7 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     VariableDelay* iVariableDelay;
     RampValidator* iRampValidator;
+    DecodedAudioValidator* iDecodedAudioValidator;
     EMsgType iNextGeneratedMsg;
     EMsgType iLastMsg;
     TUint iJiffies;
@@ -153,6 +155,7 @@ void SuiteVariableDelay::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kRampDuration);
     iRampValidator = new RampValidator(*iVariableDelay, "RampValidator");
+    iDecodedAudioValidator = new DecodedAudioValidator(*iRampValidator, "DecodedAudioValidator");
     iLastMsg = ENone;
     iJiffies = iJiffiesAudioPcm = 0;
     iNumMsgsGenerated = 0;
@@ -167,6 +170,7 @@ void SuiteVariableDelay::Setup()
 
 void SuiteVariableDelay::TearDown()
 {
+    delete iDecodedAudioValidator;
     delete iRampValidator;
     delete iVariableDelay;
     delete iMsgFactory;
@@ -374,7 +378,7 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)
 
 void SuiteVariableDelay::PullNext()
 {
-    Msg* msg = iRampValidator->Pull();
+    Msg* msg = iDecodedAudioValidator->Pull();
     msg = msg->Process(*this);
     if (msg != nullptr) {
         msg->RemoveRef();
