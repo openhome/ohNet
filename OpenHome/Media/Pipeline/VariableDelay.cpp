@@ -333,7 +333,7 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
             iRampDirection = Ramp::EUp;
             iRemainingRampSize = iRampDuration;
             auto s = iDecodedStream->StreamInfo();
-            const auto sampleStart = (msg->TrackOffset() + msg->Jiffies()) / Jiffies::PerSample(s.SampleRate());
+            const auto sampleStart = Jiffies::ToSamples(msg->TrackOffset() + msg->Jiffies(), s.SampleRate());
             msg->RemoveRef();
             auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
                                                              s.NumChannels(), s.CodecName(), s.TrackLength(),

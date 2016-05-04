@@ -163,6 +163,8 @@ public:
     static TUint64 FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
     static TUint ToMs(TUint aJiffies) { return aJiffies / kPerMs; }
     static TUint ToMs(TUint64 aJiffies) { return static_cast<TUint>(aJiffies / kPerMs); }
+    static TUint ToSamples(TUint aJiffies, TUint aSampleRate) { return aJiffies / PerSample(aSampleRate); }
+    static TUint64 ToSamples(TUint64 aJiffies, TUint aSampleRate) { return aJiffies / PerSample(aSampleRate); }
 private:
     static TUint SongcastTicksPerSecond(TUint aSampleRate);
 private:
