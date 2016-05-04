@@ -27,6 +27,7 @@ class SuiteVariableDelay : public SuiteUnitTest, private IPipelineElementUpstrea
 
     static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kDownstreamDelay = 30 * Jiffies::kPerMs;
+    static const TUint kMinDelay = 2 * Jiffies::kPerMs;
     static const TUint kMsgSilenceSize = Jiffies::kPerMs;
 
     static const TUint kSampleRate  = 44100;
@@ -94,6 +95,7 @@ private:
     void TestNoSilenceInjectedBeforeDecodedStream();
     void TestDelayAppliedAfterDrain();
     void TestDelayShorterThanDownstream();
+    void TestDelayShorterThanMinimum();
     void TestAnimatorOverride();
 private:
     MsgFactory* iMsgFactory;
@@ -137,6 +139,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayAppliedAfterDrain), "TestDelayAppliedAfterDrain");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanDownstream), "TestDelayShorterThanDownstream");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanMinimum), "TestDelayShorterThanMinimum");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestAnimatorOverride), "TestAnimatorOverride");
 }
 
@@ -153,7 +156,7 @@ void SuiteVariableDelay::Setup()
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kRampDuration);
+    iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kMinDelay, kRampDuration);
     iRampValidator = new RampValidator(*iVariableDelay, "RampValidator");
     iDecodedAudioValidator = new DecodedAudioValidator(*iRampValidator, "DecodedAudioValidator");
     iLastMsg = ENone;
@@ -396,10 +399,10 @@ void SuiteVariableDelay::TestAllMsgsPass()
 {
     /* 'AllMsgs' excludes encoded & playable audio - VariableDelay is assumed only
        useful to the portion of the pipeline that deals in decoded audio */
-    static const EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgDelay,
+    static const EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDrain,
                                      EMsgEncodedStream, EMsgMetaText, EMsgStreamInterrupted,
                                      EMsgDecodedStream, EMsgBitRate, EMsgAudioPcm, EMsgSilence,
-                                     EMsgHalt, EMsgFlush, EMsgWait, EMsgQuit };
+                                     EMsgHalt, EMsgFlush, EMsgWait, EMsgDelay, EMsgQuit };
     for (TUint i=0; i<sizeof(msgs)/sizeof(msgs[0]); i++) {
         PullNext(msgs[i]);
     }
@@ -633,10 +636,22 @@ void SuiteVariableDelay::TestDelayShorterThanDownstream()
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    static const TUint kDelay = kDownstreamDelay - (10 * Jiffies::kPerMs);
+    static const TUint kDelay = kMinDelay - Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iLastPulledDelay == kDelay);
+    TEST(iLastPulledDelay == kMinDelay);
+    iNextGeneratedMsg = EMsgAudioPcm;
+    while (iJiffies < kMinDelay) {
+        PullNext();
+        TEST(iLastMsg == EMsgSilence);
+    }
+    PullNext();
+    TEST(iLastMsg == EMsgAudioPcm);
+}
+
+void SuiteVariableDelay::TestDelayShorterThanMinimum()
+{
+
 }
 
 void SuiteVariableDelay::TestAnimatorOverride()

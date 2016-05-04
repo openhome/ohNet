@@ -36,7 +36,7 @@ static const TChar* kStatus[] = { "Starting"
                                  ,"RampedDown"
                                  ,"RampingUp" };
 
-VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
+VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aMinDelay, TUint aRampDuration)
     : PipelineElement(kSupportedMsgTypes)
     , iId(aId)
     , iMsgFactory(aMsgFactory)
@@ -46,6 +46,7 @@ VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelin
     , iDelayJiffiesTotal(0)
     , iDelayAdjustment(0)
     , iDownstreamDelay(aDownstreamDelay)
+    , iMinDelay(aMinDelay)
     , iRampDuration(aRampDuration)
     , iWaitForAudioBeforeGeneratingSilence(false)
     , iDecodedStream(nullptr)
@@ -251,7 +252,7 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
-    TUint delayJiffies = aMsg->DelayJiffies();
+    TUint delayJiffies = std::max(aMsg->DelayJiffies(), iMinDelay);
     iDelayJiffiesTotal = delayJiffies;
     const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
     aMsg->RemoveRef();
@@ -260,6 +261,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
                                                                                   animatorDelay);
     auto msg = iMsgFactory.CreateMsgDelay(std::min(downstream, delayJiffies), animatorDelay);
     delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
+    delayJiffies = std::max(delayJiffies, iMinDelay);
     LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
         iId, delayJiffies, Jiffies::ToMs(delayJiffies),
         iDownstreamDelay, Jiffies::ToMs(iDownstreamDelay),

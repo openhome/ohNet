@@ -23,7 +23,7 @@ class VariableDelay : public PipelineElement, public IPipelineElementUpstream
     friend class SuiteVariableDelay;
     static const TUint kSupportedMsgTypes;
 public:
-    VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
+    VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aMinDelay, TUint aRampDuration);
     virtual ~VariableDelay();
     void OverrideAnimatorLatency(TUint aJiffies); // 0 => do not override
 public: // from IPipelineElementUpstream
@@ -62,6 +62,7 @@ private:
     EStatus iStatus;
     Ramp::EDirection iRampDirection;
     const TUint iDownstreamDelay;
+    const TUint iMinDelay;
     const TUint iRampDuration;
     TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
