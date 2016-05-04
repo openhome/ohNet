@@ -130,7 +130,7 @@ Allocated* AllocatorBase::Read()
         p = iFree.Read();
     }
     catch (FifoReadError&) {
-        Log::Print("Allocator error for %s\n", iName);
+        Log::Print("Warning: Allocator error for %s\n", iName);
         ASSERTS();
     }
     return p;
