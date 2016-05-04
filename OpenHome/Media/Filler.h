@@ -34,13 +34,13 @@ public:
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
 protected:
-    enum LatencySupport  { LatencySupported, LatencyNotSupported };
-    enum RealTimeSupport { RealTimeSupported, RealTimeNotSupported };
-    enum NextSupport     { NextSupported, NextNotSupported };
-    enum PrevSupport     { PrevSupported, PrevNotSupported };
+    enum class Latency  { Supported, NotSupported };
+    enum class RealTime { Supported, NotSupported };
+    enum class Next     { Supported, NotSupported };
+    enum class Prev     { Supported, NotSupported };
 protected:
-    UriProvider(const TChar* aMode, LatencySupport aLatency, RealTimeSupport aRealTime,
-                NextSupport aNextSupported, PrevSupport aPrevSupported);
+    UriProvider(const TChar* aMode, Latency aLatency, RealTime aRealTime,
+                Next aNextSupported, Prev aPrevSupported);
 private:
     BwsMode iMode;
     TBool iSupportsLatency;
