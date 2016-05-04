@@ -524,6 +524,7 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
     iVolumeMilliDbPerStep = aProfile.VolumeMilliDbPerStep();
     iBalanceMax           = aProfile.BalanceMax();
     iFadeMax              = aProfile.FadeMax();
+    iAlwaysOn             = aProfile.AlwaysOn();
 
     iVolumeStartup = new ConfigNum(aConfigInit, kKeyStartupValue, 0, iVolumeMax, iVolumeDefault);
     std::vector<TUint> choices;
@@ -531,12 +532,18 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
     choices.push_back(eStringIdNo);
     iVolumeStartupEnabled = new ConfigChoice(aConfigInit, kKeyStartupEnabled, choices, eStringIdYes);
     iVolumeLimit = new ConfigNum(aConfigInit, kKeyLimit, 0, iVolumeMax, iVolumeDefaultLimit);
-    iVolumeEnabled = new ConfigChoice(aConfigInit, kKeyEnabled, choices, eStringIdYes);
 
-    const TUint id = iVolumeEnabled->Subscribe(MakeFunctorConfigChoice(*this, &VolumeConfig::EnabledChanged));
-    // EnabledChanged runs inside the call to Subscribe().
-    // We don't support runtime change of this value so can immediately unsubscribe.
-    iVolumeEnabled->Unsubscribe(id);
+    if (iAlwaysOn) {
+        iVolumeControlEnabled = true;
+    }
+    else {
+        iVolumeEnabled = new ConfigChoice(aConfigInit, kKeyEnabled, choices, eStringIdYes);
+
+        const TUint id = iVolumeEnabled->Subscribe(MakeFunctorConfigChoice(*this, &VolumeConfig::EnabledChanged));
+        // EnabledChanged runs inside the call to Subscribe().
+        // We don't support runtime change of this value so can immediately unsubscribe.
+        iVolumeEnabled->Unsubscribe(id);
+    }
 
     const TInt maxBalance = iBalanceMax;
     if (maxBalance == 0) {
@@ -559,7 +566,9 @@ VolumeConfig::~VolumeConfig()
     delete iVolumeStartup;
     delete iVolumeStartupEnabled;
     delete iVolumeLimit;
-    delete iVolumeEnabled;
+    if (!iAlwaysOn) {
+        delete iVolumeEnabled;
+    }
     delete iBalance;
     delete iFade;
 }
@@ -614,6 +623,11 @@ TUint VolumeConfig::FadeMax() const
     return iFadeMax;
 }
 
+TBool VolumeConfig::AlwaysOn() const
+{
+    return iAlwaysOn;
+}
+
 void VolumeConfig::EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp)
 {
     iVolumeControlEnabled = (aKvp.Value() == eStringIdYes);
@@ -653,8 +667,13 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
     const TUint volumeUnity = iVolumeConfig.VolumeUnity() * milliDbPerStep;
     iAnalogBypassRamper = new AnalogBypassRamper(*aVolumeConsumer.Volume());
     if (aVolumeConfig.VolumeControlEnabled() && aVolumeConsumer.Volume() != nullptr) {
-        iVolumeUnityGain = new VolumeUnityGain(*iAnalogBypassRamper, aConfigReader, volumeUnity);
-        iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iVolumeUnityGain, volumeUnity);
+        if (iVolumeConfig.AlwaysOn()) {
+            iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iAnalogBypassRamper, volumeUnity);
+        }
+        else {
+            iVolumeUnityGain = new VolumeUnityGain(*iAnalogBypassRamper, aConfigReader, volumeUnity);
+            iVolumeSourceUnityGain = new VolumeSourceUnityGain(*iVolumeUnityGain, volumeUnity);
+        }
         iVolumeSourceOffset = new VolumeSourceOffset(*iVolumeSourceUnityGain);
         iVolumeReporter = new VolumeReporter(*iVolumeSourceOffset, milliDbPerStep);
         iVolumeLimiter = new VolumeLimiter(*iVolumeReporter, milliDbPerStep, aConfigReader);
@@ -765,6 +784,11 @@ TUint VolumeManager::BalanceMax() const
 TUint VolumeManager::FadeMax() const
 {
     return iVolumeConfig.FadeMax();
+}
+
+TBool VolumeManager::AlwaysOn() const
+{
+    return iVolumeConfig.AlwaysOn();
 }
 
 void VolumeManager::SetVolume(TUint aValue)

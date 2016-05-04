@@ -88,6 +88,7 @@ public:
     virtual TUint VolumeMilliDbPerStep() const = 0;
     virtual TUint BalanceMax() const = 0;
     virtual TUint FadeMax() const = 0;
+    virtual TBool AlwaysOn() const = 0;
     virtual ~IVolumeProfile() {}
 };
 
@@ -124,6 +125,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override { return 0; }
     TUint BalanceMax() const override           { return 0; }
     TUint FadeMax() const override              { return 0; }
+    TBool AlwaysOn() const override             { return false; }
 };
 
 class VolumeUser : public IVolume, private IStandbyHandler, private INonCopyable
@@ -408,6 +410,7 @@ public: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TBool AlwaysOn() const override;
 private:
     void EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
@@ -426,6 +429,7 @@ private:
     TUint iVolumeMilliDbPerStep;
     TUint iBalanceMax;
     TUint iFadeMax;
+    TBool iAlwaysOn;
     TBool iVolumeControlEnabled;
 };
 
@@ -469,6 +473,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TBool AlwaysOn() const override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
 private: // from IBalance
