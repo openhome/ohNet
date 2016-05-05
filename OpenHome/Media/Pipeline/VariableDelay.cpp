@@ -208,6 +208,12 @@ void VariableDelay::SetupRamp()
         }
         break;
     case ERampedDown:
+        if (iDelayAdjustment == 0) {
+            iStatus = ERampingUp;
+            iRampDirection = Ramp::EUp;
+            // retain current value of iCurrentRampValue
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        }
         break;
     case ERampingUp:
         iStatus = ERampingDown;
