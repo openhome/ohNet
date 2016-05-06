@@ -315,12 +315,11 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
     ResetHeaders();
 
     for (;;) {
-        Brn line;
-        {
-            if (aTimeoutMs > 0) {
-                iTimer->FireIn(aTimeoutMs);
-            }
-            line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
+        if (aTimeoutMs > 0) {
+            iTimer->FireIn(aTimeoutMs);
+        }
+        Brn line = Ascii::Trim(iReader.ReadUntil(Ascii::kLf));
+        if (aTimeoutMs > 0) {
             iTimer->Cancel();
         }
 //        LOG(kHttp, "HTTP Read Request    %.%s\n", PBUF(line));
@@ -459,12 +458,11 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
     ResetHeaders();
     TUint count = 0;
     for (;;) {
-        Brn line;
-        {
-            if (aTimeoutMs > 0) {
-                iTimer->FireIn(aTimeoutMs);
-            }
-            line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
+        if (aTimeoutMs > 0) {
+            iTimer->FireIn(aTimeoutMs);
+        }
+        Brn line = Ascii::Trim(iReader.ReadUntil(Ascii::kLf));
+        if (aTimeoutMs > 0) {
             iTimer->Cancel();
         }
         LOG(kHttp, "HTTP Read Response   %.*s\n", PBUF(line));

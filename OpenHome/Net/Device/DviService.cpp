@@ -2,6 +2,7 @@
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/DviSubscription.h>
@@ -161,16 +162,8 @@ const std::vector<DvAction>& DviService::DvActions() const
 void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
 {
     iLock.Wait();
-#if 0 // debug logging
-    {
-        Bws<512> debugBuf("Service: ");
-        debugBuf.Append(iServiceType.Name());
-        debugBuf.Append(", Action: ");
-        debugBuf.Append(aActionName);
-        debugBuf.Append("\n");
-        Log::Print(debugBuf);
-    }
-#endif
+    LOG(kDvInvocation, "Service: %.*s, Action: %.*s\n",
+                       PBUF(iServiceType.Name()), PBUF(aActionName));
     TBool disabled = iDisabled;
     if (disabled) {
         iLock.Signal();

@@ -681,7 +681,7 @@ void DviSessionUpnp::Get()
 void DviSessionUpnp::Post()
 {
     const Brx& action = iHeaderSoapAction.Action();
-    LOG(kDvInvocation, "Action called: %.*s\n", PBUF(action));
+    LOG(kDvInvocation, "UPnP Action called: %.*s\n", PBUF(action));
 
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
@@ -1312,7 +1312,7 @@ void DviSessionUpnp::InvocationWriteEnd()
     iWriterBuffer->WriteFlush();
 
     const Brx& action = iHeaderSoapAction.Action();
-    LOG(kDvInvocation, "Completed action: %.*s\n", PBUF(action));
+    LOG(kDvInvocation, "Completed UPnP action: %.*s\n", PBUF(action));
 }
 
 
