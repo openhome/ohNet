@@ -106,6 +106,8 @@ TBool UriProviderPlaylist::MoveNext()
     iPending = iDatabase.NextTrackRef(trackId);
     if (iPending != nullptr) {
         iPendingCanPlay = ePlayYes;
+        // allow additional loop round the playlist in case we've skipped discovering whether a track we started fetching is playable
+        iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
     }
     else {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
@@ -126,6 +128,8 @@ TBool UriProviderPlaylist::MovePrevious()
     iPending = iDatabase.PrevTrackRef(trackId);
     if (iPending != nullptr) {
         iPendingCanPlay = ePlayYes;
+        // allow additional loop round the playlist in case we've skipped discovering whether a track we started fetching is playable
+        iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
     }
     else {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
@@ -261,7 +265,7 @@ void UriProviderPlaylist::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInf
 {
 }
 
-void UriProviderPlaylist::NotifyTrackPlay(Track& /*aTrack*/)
+void UriProviderPlaylist::NotifyTrackPlay(Track& aTrack)
 {
     iLock.Wait();
     iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;

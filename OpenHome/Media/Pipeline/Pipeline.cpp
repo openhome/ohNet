@@ -327,10 +327,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iDecodedAudioValidatorDelay1, new DecodedAudioValidator(*upstream, "VariableDelay1"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
-    ATTACH_ELEMENT(iTrackInspector, new TrackInspector(*upstream),
-                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
-    ATTACH_ELEMENT(iLoggerTrackInspector, new Logger(*iTrackInspector, "TrackInspector"),
-                   upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iSkipper, new Skipper(*iMsgFactory, *upstream, aInitParams->RampShortJiffies()),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerSkipper, new Logger(*iSkipper, "Skipper"),
@@ -339,6 +335,10 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iDecodedAudioValidatorSkipper, new DecodedAudioValidator(*upstream, "Skipper"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iTrackInspector, new TrackInspector(*upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerTrackInspector, new Logger(*iTrackInspector, "TrackInspector"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iWaiter, new Waiter(*iMsgFactory, *upstream, *this, *iEventThread, aInitParams->RampShortJiffies()),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerWaiter, new Logger(*iWaiter, "Waiter"),
