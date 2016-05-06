@@ -265,7 +265,7 @@ void UriProviderPlaylist::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInf
 {
 }
 
-void UriProviderPlaylist::NotifyTrackPlay(Track& aTrack)
+void UriProviderPlaylist::NotifyTrackPlay(Track& /*aTrack*/)
 {
     iLock.Wait();
     iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
