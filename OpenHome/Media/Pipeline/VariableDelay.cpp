@@ -258,7 +258,8 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
-    TUint delayJiffies = std::max(aMsg->DelayJiffies(), iMinDelay);
+    const TUint msgDelayJiffies = aMsg->DelayJiffies();
+    TUint delayJiffies = std::max(msgDelayJiffies, iMinDelay);
     iDelayJiffiesTotal = delayJiffies;
     const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
     aMsg->RemoveRef();
@@ -268,9 +269,10 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
     auto msg = iMsgFactory.CreateMsgDelay(std::min(downstream, delayJiffies), animatorDelay);
     delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
     delayJiffies = std::max(delayJiffies, iMinDelay);
-    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay*): iId=%s, : delay=%u(%u), iDownstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
-        iId, delayJiffies, Jiffies::ToMs(delayJiffies),
-        iDownstreamDelay, Jiffies::ToMs(iDownstreamDelay),
+    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay(%u, %u): iId=%s, : delay=%u(%u), downstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
+        msgDelayJiffies, animatorDelay, iId,
+        delayJiffies, Jiffies::ToMs(delayJiffies),
+        downstream, Jiffies::ToMs(downstream),
         iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
         kStatus[iStatus]);
     if (delayJiffies == iDelayJiffies) {
