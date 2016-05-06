@@ -115,6 +115,7 @@ void SuitePipelineConfig::Test()
                                          EPipelineSupportElementsLogger,
                                          EPipelineSupportElementsDecodedAudioValidator,
                                          EPipelineSupportElementsRampValidator,
+                                         EPipelineSupportElementsValidatorMinimal,
                                          EPipelineSupportElementsAudioDumper,
                                          EPipelineSupportElementsClockPullerManual,
                                          };
