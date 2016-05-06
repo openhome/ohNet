@@ -16,7 +16,7 @@ namespace OpenHome.Net.Core
     {
     }
 
-    
+
     /// <summary>
     /// Description of the type plus any bounds of action arguments plus properties.  Only intended for use by auto-generated proxies and providers.
     /// </summary>
@@ -34,7 +34,7 @@ namespace OpenHome.Net.Core
         {
         }
     }
-    
+
     /// <summary>
     /// Integer type parameter.  Only intended for use by auto-generated proxies and providers.
     /// </summary>
@@ -126,7 +126,7 @@ namespace OpenHome.Net.Core
         static extern IntPtr ServiceParameterCreateString(IntPtr aName, IntPtr[] aAllowedValues, uint aCount);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="aName">Parameter name</param>
         /// <param name="aAllowedValues">List of allowed values for the string</param>
@@ -196,7 +196,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
 #endif
         static extern IntPtr ServicePropertyDestroy(IntPtr aHandle);
-        
+
         protected delegate void Callback(IntPtr aPtr);
 
         protected IntPtr iHandle;
@@ -226,9 +226,8 @@ namespace OpenHome.Net.Core
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         No exceptions should be thrown by property change delegates");
-                Console.WriteLine(e.ToString());
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown", new object[] { e });
+                System.Diagnostics.Debug.WriteLine("         No exceptions should be thrown by property change delegates");
             }
         }
 
@@ -236,7 +235,7 @@ namespace OpenHome.Net.Core
         {
             return iHandle;
         }
-        
+
         protected Property(bool aOwnsNativeProperty)
         {
             iGch = GCHandle.Alloc(this);
@@ -722,7 +721,7 @@ namespace OpenHome.Net.Core
         private IntPtr iHandle;
         private List<Parameter> iInputParameters;
         private List<Parameter> iOutputParameters;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>

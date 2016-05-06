@@ -17,15 +17,15 @@ namespace OpenHome.Net.ControlPoint
         public ProxyError()
         {
         }
-        
+
         public ProxyError(uint aCode, string aDesc)
-            : base(String.Format("{0}:{1}", aCode, aDesc))
+            : base(String.Format("{0}:{1}", new object[] { aCode, aDesc }))
         {
             Code = aCode;
             Description = aDesc;
         }
     }
-    
+
     /// <summary>
     /// Base interface for all proxies
     /// </summary>
@@ -138,7 +138,7 @@ namespace OpenHome.Net.ControlPoint
             eSubscribing,
             eSubscribed
         };
-        
+
         protected IntPtr iHandle;
         protected CpService iService;
         private GCHandle iGchProxy;
@@ -311,8 +311,8 @@ namespace OpenHome.Net.ControlPoint
             catch (System.Exception e)
             {
                 iProxyError = new ProxyError();
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("       Only ProxyError can be thrown by action complete delegates");
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown", new object[] { e });
+                System.Diagnostics.Debug.WriteLine("       Only ProxyError can be thrown by action complete delegates");
             }
             iSem.Release();
         }

@@ -92,7 +92,7 @@ namespace OpenHome.Net.Device
         /// <remarks>This is not necessary when updating a single property but is used by providers that
         /// have >1 properties whose values are related.  Without locking, updates to some properties may
         /// be published, leaving related properties in their old (now incompatible) states.
-        /// 
+        ///
         /// Every call to this must be followed by (exactly) one call to PropertiesUnlock().</remarks>
         public void PropertiesLock()
         {
@@ -103,7 +103,7 @@ namespace OpenHome.Net.Device
         /// Unlock the provider's properties, allowing publication of updates.
         /// </summary>
         /// <remarks>Any pending updates will automatically be scheduled.
-        /// 
+        ///
         /// This must only be called following a call to PropertiesLock().</remarks>
         public void PropertiesUnlock()
         {
@@ -139,7 +139,7 @@ namespace OpenHome.Net.Device
             iActions.Add(aAction);
             DvProviderAddAction(iHandle, aAction.Handle(), aDelegate, aPtr);
         }
-        
+
         /// <summary>
         /// Add a property to this provider
         /// </summary>
@@ -151,7 +151,7 @@ namespace OpenHome.Net.Device
             iProperties.Add(aProperty);
             DvProviderAddProperty(iHandle, aProperty.Handle());
         }
-        
+
         /// <summary>
         /// Utility function which updates the value of a PropertyInt. (Not intended for external use)
         /// </summary>
@@ -458,7 +458,7 @@ namespace OpenHome.Net.Device
         static extern void OhNetFree(IntPtr aPtr);
 
         protected IntPtr iHandle;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -728,7 +728,7 @@ namespace OpenHome.Net.Device
 
             String msg = aException.Message;
             if (msg == null || msg.Length == 0)
-                msg = String.Format("Action {0} failed", aActionName);
+                msg = String.Format("Action {0} failed", new object[] { aActionName });
 
             ReportError(errCode, msg);
         }

@@ -369,7 +369,7 @@ namespace OpenHome.Net.Core
         /// A callback which will be run if the library encounters an error it cannot recover from
         /// </summary>
         /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
-        /// 
+        ///
         /// The string passed to the callback is an error message so would be useful to log.</remarks>
         public MessageListener FatalErrorHandler { internal get; set; }
         public AsyncListener AsyncBeginHandler { internal get; set; }
@@ -420,7 +420,7 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <remarks>If more that this number are pending, the additional attempted invocations
         /// will block until a pre-allocated slot becomes clear.
-        /// 
+        ///
         /// A higher number of invocations will decrease the likelihood and duration of
         /// any UI-level delays but will also increase the peaks in RAM requirements.</remarks>
         public uint NumInvocations { get; set; }
@@ -840,18 +840,18 @@ namespace OpenHome.Net.Core
             SubnetAddedListener = null;
             SubnetRemovedListener = null;
             NetworkAdapterChangedListener = null;
-            TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
-            MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
-            MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams); 
-            NumEventSessionThreads = OhNetInitParamsNumEventSessionThreads(defaultParams); 
-            NumXmlFetcherThreads = OhNetInitParamsNumXmlFetcherThreads(defaultParams); 
-            NumActionInvokerThreads = OhNetInitParamsNumActionInvokerThreads(defaultParams); 
-            NumInvocations = OhNetInitParamsNumInvocations(defaultParams); 
+            TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams);
+            MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams);
+            MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams);
+            NumEventSessionThreads = OhNetInitParamsNumEventSessionThreads(defaultParams);
+            NumXmlFetcherThreads = OhNetInitParamsNumXmlFetcherThreads(defaultParams);
+            NumActionInvokerThreads = OhNetInitParamsNumActionInvokerThreads(defaultParams);
+            NumInvocations = OhNetInitParamsNumInvocations(defaultParams);
             NumSubscriberThreads = OhNetInitParamsNumSubscriberThreads(defaultParams);
             SubscriptionDurationSecs = OhNetInitParamsSubscriptionDurationSecs(defaultParams);
-            PendingSubscriptionTimeoutMs = OhNetInitParamsPendingSubscriptionTimeoutMs(defaultParams); 
-            DvMaxUpdateTimeSecs = OhNetInitParamsDvMaxUpdateTimeSecs(defaultParams); 
-            DvNumServerThreads = OhNetInitParamsDvNumServerThreads(defaultParams); 
+            PendingSubscriptionTimeoutMs = OhNetInitParamsPendingSubscriptionTimeoutMs(defaultParams);
+            DvMaxUpdateTimeSecs = OhNetInitParamsDvMaxUpdateTimeSecs(defaultParams);
+            DvNumServerThreads = OhNetInitParamsDvNumServerThreads(defaultParams);
             DvNumPublisherThreads = OhNetInitParamsDvNumPublisherThreads(defaultParams);
             DvNumWebSocketThreads = OhNetInitParamsDvNumWebSocketThreads(defaultParams);
             CpUpnpEventPort = OhNetInitParamsCpUpnpEventServerPort(defaultParams);
@@ -859,7 +859,7 @@ namespace OpenHome.Net.Core
             DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams);
             UseLoopbackNetworkAdapter = false; // FIXME: No getter?
             IncludeLoopbackNetworkAdapter = false;
-            DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
+            DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0;
 
             OhNetInitParamsDestroy(defaultParams);
         }
@@ -934,7 +934,7 @@ namespace OpenHome.Net.Core
             {
                 if (UseLoopbackNetworkAdapter)
                 {
-                    Console.WriteLine("WARNING: IncludeLoopbackNetworkAdapter is incompatible with UseLoopbackNetworkAdapter. Ignoring UseLoopbackNetworkAdapter.");
+                    System.Diagnostics.Debug.WriteLine("WARNING: IncludeLoopbackNetworkAdapter is incompatible with UseLoopbackNetworkAdapter. Ignoring UseLoopbackNetworkAdapter.");
                 }
                 OhNetInitParamsSetIncludeLoopbackNetworkAdapter(nativeParams);
             }
@@ -946,16 +946,11 @@ namespace OpenHome.Net.Core
         }
     }
 
-    [Serializable]
     public class LibraryException : Exception
     {
         public LibraryException() { }
         public LibraryException(string message) : base(message) { }
         public LibraryException(string message, Exception inner) : base(message, inner) { }
-        protected LibraryException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context)
-            : base(info, context) { }
     }
 
 
@@ -1216,7 +1211,7 @@ namespace OpenHome.Net.Core
         /// Set which subnet the library should use
         /// </summary>
         /// <remarks>Device lists and subscriptions will be automatically updated.
-        /// 
+        ///
         /// No other subnet will be selected if aSubnet is not available</remarks>
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
@@ -1385,7 +1380,7 @@ namespace OpenHome.Net.Core
             {
                 byte[] array = new byte[aLen];
                 Marshal.Copy(aPtr, array, 0, (int)aLen);
-                str = System.Text.Encoding.UTF8.GetString(array);
+                str = System.Text.Encoding.UTF8.GetString(array, 0, array.Length);
             }
             return str;
         }
@@ -1401,7 +1396,7 @@ namespace OpenHome.Net.Core
                 return "";
             byte[] array = new byte[len];
             Marshal.Copy(aPtr, array, 0, len);
-            return System.Text.Encoding.UTF8.GetString(array);
+            return System.Text.Encoding.UTF8.GetString(array, 0, array.Length);
         }
     }
 }
