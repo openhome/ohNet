@@ -66,7 +66,7 @@ class OhmMsgAudio : public OhmMsgTimestamped
     friend class OhmMsgAudioBlob;
 public:
     static const TUint kMaxSampleBytes = 5760; // 5ms of 192/24 stereo
-    static const TUint kMaxCodecBytes = 256;
+    static const TUint kMaxCodecBytes  = 30-1;
     static const TUint kFlagHalt        = 1 << 0;
     static const TUint kFlagLossless    = 1 << 1;
     static const TUint kFlagTimestamped = 1 << 2;
@@ -99,6 +99,8 @@ public:
     Bwx& Audio();
 
     void SetResent(TBool aValue);
+    void Serialise();
+    Brn SendableBuffer();
 public: // from OhmMsg
     void Process(IOhmMsgProcessor& aProcessor) override;
     void Externalise(IWriter& aWriter) override;
@@ -126,8 +128,10 @@ private:
     TUint iBitDepth;
     TUint iChannels;
     Bws<kMaxCodecBytes> iCodec;
-    Bws<kStreamHeaderBytes> iStreamHeader;
-    Bws<kMaxSampleBytes> iAudio;
+    Bws<kStreamHeaderBytes+kMaxSampleBytes> iUnifiedBuffer;
+    Bwn iAudio;
+    TUint iStreamHeaderOffset;
+    TBool iHeaderSerialised;
 };
 
 class OhmMsgAudioBlob : public OhmMsgTimestamped

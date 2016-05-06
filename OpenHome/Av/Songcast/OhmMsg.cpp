@@ -83,6 +83,8 @@ void OhmMsgTimestamped::Create()
 
 OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
     : OhmMsgTimestamped(aFactory)
+    , iAudio(iUnifiedBuffer.Ptr() + kStreamHeaderBytes, kMaxSampleBytes)
+    , iHeaderSerialised(false)
 {
 }
 
@@ -144,7 +146,7 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     
     const TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
     reader.ReadReplace(audio, iAudio);
-    iStreamHeader.Replace(Brx::Empty());
+    iHeaderSerialised = false;
 }
 
 void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
@@ -161,8 +163,13 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     iMediaLatency = aMediaLatency;
     iMediaTimestamp = 0;
     iSampleStart = aSampleStart;
-    iStreamHeader.Replace(aStreamHeader);
-    iAudio.Replace(aAudio);
+
+    iStreamHeaderOffset = kStreamHeaderBytes - aStreamHeader.Bytes();
+    iUnifiedBuffer.SetBytes(iStreamHeaderOffset);
+    iUnifiedBuffer.Append(aStreamHeader);
+    iUnifiedBuffer.Append(aAudio);
+    iAudio.SetBytes(aAudio.Bytes());
+    iHeaderSerialised = false;
 }
 
 void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader)
@@ -177,7 +184,11 @@ void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimest
     iMediaLatency = aMediaLatency;
     iMediaTimestamp = 0;
     iSampleStart = aSampleStart;
-    iStreamHeader.Replace(aStreamHeader);
+
+    iStreamHeaderOffset = kStreamHeaderBytes - aStreamHeader.Bytes();
+    iUnifiedBuffer.SetBytes(iStreamHeaderOffset);
+    iUnifiedBuffer.Append(aStreamHeader);
+    iHeaderSerialised = false;
 }
 
 void OhmMsgAudio::GetStreamHeader(Bwx& aBuf, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec)
@@ -304,11 +315,32 @@ void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
+    Serialise(); // prepends the ohm header, now ready to send!
+    iUnifiedBuffer.SetBytes(kStreamHeaderBytes+iAudio.Bytes());
+    aWriter.Write(iUnifiedBuffer.Split(iStreamHeaderOffset));
+}
+
+void OhmMsgAudio::Serialise()
+{
+    if (iHeaderSerialised)
+        return;
+
     static const TUint kPerFrameBytes = 28; // binary values written between OhmHeader and iStreamHeader
-    OhmHeader header(OhmHeader::kMsgTypeAudio,
-                     kPerFrameBytes + iStreamHeader.Bytes() + iAudio.Bytes());
-    header.Externalise(aWriter);
-    WriterBinary writer(aWriter);
+
+    const TUint streamHeaderBytes = kStreamHeaderBytes - iStreamHeaderOffset;
+    const TUint additionalHeaderBytes = kPerFrameBytes + streamHeaderBytes + iAudio.Bytes();
+    OhmHeader header(OhmHeader::kMsgTypeAudio, additionalHeaderBytes);
+
+    // prepare to prepend
+    const TUint prependOffset = iStreamHeaderOffset - kPerFrameBytes - OhmHeader::kHeaderBytes;
+    const TByte* ptr = iUnifiedBuffer.Ptr() + prependOffset;
+
+    Bwn headerBuffer(ptr, kPerFrameBytes + OhmHeader::kHeaderBytes);
+
+    WriterBuffer writerBuffer(headerBuffer);
+
+    header.Externalise(writerBuffer);
+    WriterBinary writer(writerBuffer);
 
     TUint flags = 0;
     if (iHalt) {
@@ -332,13 +364,20 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
     writer.WriteUint32Be(iMediaLatency);
     writer.WriteUint32Be(iMediaTimestamp);
     writer.WriteUint64Be(iSampleStart);
-    ASSERT(iStreamHeader.Bytes() > 0);
-    writer.Write(iStreamHeader);
-    writer.Write(iAudio);
 
-    aWriter.WriteFlush();
+    iStreamHeaderOffset = prependOffset;
+
+    //Log::PrintHex(iUnifiedBuffer.Split(iStreamHeaderOffset, kStreamHeaderBytes-iStreamHeaderOffset));
+    //Log::Print("\n");
+
+    ASSERT(headerBuffer.BytesRemaining() == 0);
+    iHeaderSerialised = true;
 }
 
+Brn OhmMsgAudio::SendableBuffer()
+{
+    return iUnifiedBuffer.Split(iStreamHeaderOffset);
+}
 
 // OhmMsgAudioBlob
 
