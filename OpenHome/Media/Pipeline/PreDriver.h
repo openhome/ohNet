@@ -38,6 +38,7 @@ private:
     Semaphore iShutdownSem;
     TUint64 iSilenceSinceLastDrain;
     TBool iSilenceSincePcm;
+    TBool iQuit;
 };
 
 } // namespace Media

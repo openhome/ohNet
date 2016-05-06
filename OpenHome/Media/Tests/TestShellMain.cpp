@@ -23,6 +23,7 @@ SIMPLE_TEST_DECLARATION(TestToneGenerator);
 SIMPLE_TEST_DECLARATION(TestMuteManager);
 SIMPLE_TEST_DECLARATION(TestMsg);
 SIMPLE_TEST_DECLARATION(TestPipeline);
+SIMPLE_TEST_DECLARATION(TestPipelineConfig);
 SIMPLE_TEST_DECLARATION(TestPreDriver);
 SIMPLE_TEST_DECLARATION(TestProtocolHttp);
 SIMPLE_TEST_DECLARATION(TestRamper);
@@ -90,6 +91,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestMuteManager", ShellTestMuteManager));
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
+    shellTests.push_back(ShellTest("TestPipelineConfig", ShellTestPipelineConfig));
     shellTests.push_back(ShellTest("TestPowerManager", ShellTestPowerManager));
     shellTests.push_back(ShellTest("TestProtocolHls", ShellTestProtocolHls));
     shellTests.push_back(ShellTest("TestSsl", ShellTestSsl));

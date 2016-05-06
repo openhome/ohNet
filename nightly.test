@@ -32,6 +32,7 @@ tests = '''
     TestPreDriver
     TestContentProcessor
     TestPipeline
+    TestPipelineConfig
     TestProtocolHls
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t full

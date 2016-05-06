@@ -33,6 +33,7 @@ tests = '''
     TestPreDriver
     TestContentProcessor
     #3519 TestPipeline
+    TestPipelineConfig
     TestProtocolHls
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t quick

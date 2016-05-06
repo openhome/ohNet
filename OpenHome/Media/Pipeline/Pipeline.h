@@ -19,6 +19,17 @@ namespace Net {
 }
 namespace Media {
 
+enum EPipelineSupportElements {
+    EPipelineSupportElementsMandatory             = 0,
+    EPipelineSupportElementsLogger                = 1 << 0,
+    EPipelineSupportElementsDecodedAudioValidator = 1 << 1,
+    EPipelineSupportElementsRampValidator         = 1 << 2,
+    EPipelineSupportElementsValidatorMinimal      = 1 << 3,
+    EPipelineSupportElementsAudioDumper           = 1 << 4,
+    EPipelineSupportElementsClockPullerManual     = 1 << 5,
+    EPipelineSupportElementsAll                   = 0x7fffffff
+};
+
 class PipelineInitParams
 {
     static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
@@ -45,6 +56,7 @@ public:
     void SetEmergencyRamp(TUint aJiffies);
     void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
     void SetMaxLatency(TUint aJiffies);
+    void SetSupportElements(TUint aElements); // EPipelineSupportElements members OR'd together
     // getters
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
@@ -56,6 +68,7 @@ public:
     TUint RampEmergencyJiffies() const;
     TUint ThreadPriorityMax() const;
     TUint MaxLatencyJiffies() const;
+    TUint SupportElements() const;
 private:
     PipelineInitParams();
 private:
@@ -69,6 +82,7 @@ private:
     TUint iRampEmergencyJiffies;
     TUint iThreadPriorityMax;
     TUint iMaxLatencyJiffies;
+    TUint iSupportElements;
 };
 
 namespace Codec {
@@ -286,6 +300,7 @@ private:
     Logger* iLoggerAnalogBypassRamper;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
+    IPipelineElementDownstream* iPipelineStart;
     IPipelineElementUpstream* iPipelineEnd;
     IMute* iMuteCounted;
     EStatus iState;

@@ -29,6 +29,7 @@ PreDriver::PreDriver(IPipelineElementUpstream& aUpstreamElement)
     , iShutdownSem("PDSD", 0)
     , iSilenceSinceLastDrain(0)
     , iSilenceSincePcm(false)
+    , iQuit(false)
 {
 }
 
@@ -49,6 +50,10 @@ Msg* PreDriver::Pull()
             const TUint ms = Jiffies::ToMs(iSilenceSinceLastDrain);
             LOG(kPipeline, "PreDriver: silence since last drain - %ums\n", ms);
         }
+        if (iQuit) {
+            iShutdownSem.Signal();
+        }
+
     } while (msg == nullptr);
     return msg;
 }
@@ -98,6 +103,6 @@ Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 
 Msg* PreDriver::ProcessMsg(MsgQuit* aMsg)
 {
-    iShutdownSem.Signal();
+    iQuit = true;
     return aMsg;
 }
