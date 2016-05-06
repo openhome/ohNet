@@ -182,17 +182,17 @@ TUint PipelineInitParams::SupportElements() const
 
 // Pipeline
 
-#define ATTACH_ELEMENT(elem, ctor, prev_elem, supported, type)     \
-    do {                                                           \
-        if ((supported & (type)) ||                                \
-            (true, (type)) == EPipelineSupportElementsMandatory) { \
-            elem = ctor;                                           \
-            prev_elem = elem;                                      \
-        }                                                          \
-        else {                                                     \
-            elem = nullptr;                                        \
-        }                                                          \
-    } while (0,0) // 0,0 required to fool MSVC C4127 (conditional expression is constant)
+#define ATTACH_ELEMENT(elem, ctor, prev_elem, supported, type)  \
+    do {                                                        \
+        if ((supported & (type)) ||                             \
+            (type) == EPipelineSupportElementsMandatory) {      \
+            elem = ctor;                                        \
+            prev_elem = elem;                                   \
+        }                                                       \
+        else {                                                  \
+            elem = nullptr;                                     \
+        }                                                       \
+    } while (0)
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
@@ -242,6 +242,12 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     IPipelineElementDownstream* downstream = nullptr;
     IPipelineElementUpstream* upstream = nullptr;
     const auto elementsSupported = aInitParams->SupportElements();
+
+    // disable "conditional expression is constant" warnings from ATTACH_ELEMENT
+#ifdef _WIN32
+# pragma warning( push )
+# pragma warning( disable : 4127)
+#endif // _WIN32
 
     // Construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(*iMsgFactory, *this, maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir());
@@ -427,6 +433,10 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
+
+#ifdef _WIN32
+# pragma warning( pop )
+#endif // _WIN32
 
     iPipelineEnd = iLoggerPreDriver;
     if (iPipelineEnd == nullptr) {
