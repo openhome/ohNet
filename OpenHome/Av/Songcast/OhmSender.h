@@ -54,7 +54,6 @@ private:
     TBool iSend;
     Endpoint iEndpoint;
     TIpAddress iAdapter;
-    Bws<kMaxAudioFrameBytes> iBuffer;
     Bws<OhmMsgAudio::kStreamHeaderBytes> iStreamHeader;
     TUint iFrame;
     TUint iSampleRate;

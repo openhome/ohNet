@@ -278,13 +278,11 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         Brn(aData, aBytes)
     );
 
-    WriterBuffer writer(iBuffer);
-    writer.Flush();
-    msg->Externalise(writer);
+    msg->Serialise();
     msg->SetResent(true);
     iFifoHistory.Write(msg);
     try {
-        iSocket.Send(iBuffer, iEndpoint);
+        iSocket.Send(msg->SendableBuffer(), iEndpoint);
     }
     catch (NetworkError&) {
     }
@@ -347,13 +345,11 @@ void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
         iStreamHeader
     );
 
-    WriterBuffer writer(iBuffer);
-    writer.Flush();
-    aMsg->Externalise(writer);
+    aMsg->Serialise();
     aMsg->SetResent(true);
     iFifoHistory.Write(aMsg);
     try {
-        iSocket.Send(iBuffer, iEndpoint);
+        iSocket.Send(aMsg->SendableBuffer(), iEndpoint);
     }
     catch (NetworkError&) {
     }
@@ -432,11 +428,9 @@ void OhmSenderDriver::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleSta
 
 void OhmSenderDriver::Resend(OhmMsgAudio& aMsg)
 {
-    WriterBuffer writer(iBuffer);
-    writer.Flush();
-    aMsg.Externalise(writer);
     try {
-        iSocket.Send(iBuffer, iEndpoint);
+        aMsg.Serialise();
+        iSocket.Send(aMsg.SendableBuffer(), iEndpoint);
     }
     catch (NetworkError&) {
     }

@@ -376,6 +376,7 @@ void OhmMsgAudio::Serialise()
 
 Brn OhmMsgAudio::SendableBuffer()
 {
+    iUnifiedBuffer.SetBytes(kStreamHeaderBytes + iAudio.Bytes());
     return iUnifiedBuffer.Split(iStreamHeaderOffset);
 }
 
