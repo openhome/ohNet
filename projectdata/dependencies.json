@@ -53,7 +53,7 @@
         "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name":             "testharness",
-        "version":          "0.1.41",
+        "version":          "0.1.42",
         "cross-check":      false,
         "type":             "openhome",
         "archive-filename": "${name}-${version}.tar.gz",
