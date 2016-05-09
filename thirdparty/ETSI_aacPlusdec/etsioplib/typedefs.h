@@ -154,8 +154,12 @@ typedef struct {
  ********* define boolean type
  */
 typedef int Bool;
-#define false 0
-#define true 1
+#ifndef false
+# define false 0
+#endif // false
+#ifndef true
+# define true 1
+#endif // true
 
 /*
  ********* Check current platform
