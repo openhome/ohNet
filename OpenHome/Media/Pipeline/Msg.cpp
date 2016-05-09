@@ -2396,14 +2396,19 @@ void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
 // MsgReservoir
 
 MsgReservoir::MsgReservoir()
-    : iLock("MQJF")
-    , iEncodedBytes(0)
+    : iEncodedBytes(0)
     , iJiffies(0)
     , iTrackCount(0)
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
     , iEncodedAudioCount(0)
 {
+    ASSERT(iEncodedBytes.is_lock_free());
+    ASSERT(iJiffies.is_lock_free());
+    ASSERT(iTrackCount.is_lock_free());
+    ASSERT(iEncodedStreamCount.is_lock_free());
+    ASSERT(iDecodedStreamCount.is_lock_free());
+    ASSERT(iEncodedAudioCount.is_lock_free());
 }
 
 MsgReservoir::~MsgReservoir()
@@ -2438,7 +2443,6 @@ void MsgReservoir::EnqueueAtHead(Msg* aMsg)
 
 TUint MsgReservoir::Jiffies() const
 {
-    AutoMutex a(iLock);
     return iJiffies;
 }
 
@@ -2454,41 +2458,22 @@ TBool MsgReservoir::IsEmpty() const
 
 TUint MsgReservoir::TrackCount() const
 {
-    AutoMutex a(iLock);
     return iTrackCount;
 }
 
 TUint MsgReservoir::EncodedStreamCount() const
 {
-    AutoMutex a(iLock);
     return iEncodedStreamCount;
 }
 
 TUint MsgReservoir::DecodedStreamCount() const
 {
-    AutoMutex a(iLock);
     return iDecodedStreamCount;
 }
 
 TUint MsgReservoir::EncodedAudioCount() const
 {
-    AutoMutex a(iLock);
     return iEncodedAudioCount;
-}
-
-void MsgReservoir::Add(TUint& aValue, TUint aAdded)
-{
-    iLock.Wait();
-    aValue += aAdded;
-    iLock.Signal();
-}
-
-void MsgReservoir::Remove(TUint& aValue, TUint aRemoved)
-{
-    iLock.Wait();
-    ASSERT(aValue >= aRemoved);
-    aValue -= aRemoved;
-    iLock.Signal();
 }
 
 void MsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)              { }
@@ -2537,9 +2522,7 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgMode* aMsg)               { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgTrack* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iTrackCount++;
-    iQueue.iLock.Signal();
     return aMsg;
 }
 
@@ -2548,18 +2531,14 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgDelay* aMsg)              { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedStreamCount++;
-    iQueue.iLock.Signal();
     return aMsg;
 }
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedAudioCount++;
-    iQueue.iLock.Signal();
-    iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
+    iQueue.iEncodedBytes += aMsg->Bytes();
     return aMsg;
 }
 
@@ -2571,9 +2550,7 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgWait* aMsg)               { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iDecodedStreamCount++;
-    iQueue.iLock.Signal();
     return aMsg;
 }
 
@@ -2581,13 +2558,13 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgBitRate* aMsg)            { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies += aMsg->Jiffies();
     return aMsg;
 }
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgSilence* aMsg)
 {
-    iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies += aMsg->Jiffies();
     return aMsg;
 }
 
@@ -2730,9 +2707,7 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMode* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iTrackCount--;
-    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2748,18 +2723,14 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDelay* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedStreamCount--;
-    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedAudioCount--;
-    iQueue.iLock.Signal();
-    iQueue.Remove(iQueue.iEncodedBytes, aMsg->Bytes());
+    iQueue.iEncodedBytes -= aMsg->Bytes();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2790,9 +2761,7 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgWait* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iDecodedStreamCount--;
-    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2803,13 +2772,13 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies -= aMsg->Jiffies();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
 {
-    iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies -= aMsg->Jiffies();
     return iQueue.ProcessMsgOut(aMsg);
 }
 

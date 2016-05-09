@@ -10,6 +10,7 @@
 #include <OpenHome/Media/InfoProvider.h>
 
 #include <limits.h>
+#include <atomic>
 
 EXCEPTION(SampleRateInvalid);
 EXCEPTION(SampleRateUnsupported);
@@ -938,9 +939,6 @@ protected:
     TUint DecodedStreamCount() const;
     TUint EncodedAudioCount() const;
 private:
-    void Add(TUint& aValue, TUint aAdded);
-    void Remove(TUint& aValue, TUint aRemoved);
-private:
     virtual void ProcessMsgIn(MsgMode* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgDrain* aMsg);
@@ -1048,14 +1046,13 @@ private:
         MsgReservoir& iQueue;
     };
 private:
-    mutable Mutex iLock;
     MsgQueue iQueue;
-    TUint iEncodedBytes;
-    TUint iJiffies;
-    TUint iTrackCount;
-    TUint iEncodedStreamCount;
-    TUint iDecodedStreamCount;
-    TUint iEncodedAudioCount;
+    std::atomic<TUint> iEncodedBytes;
+    std::atomic<TUint> iJiffies;
+    std::atomic<TUint> iTrackCount;
+    std::atomic<TUint> iEncodedStreamCount;
+    std::atomic<TUint> iDecodedStreamCount;
+    std::atomic<TUint> iEncodedAudioCount;
 };
 
 class PipelineElement : protected IMsgProcessor
