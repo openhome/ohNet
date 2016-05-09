@@ -196,7 +196,7 @@ class IMsgProcessor;
 
 class Msg : public Allocated
 {
-    friend class MsgQueue;
+    friend class MsgQueueBase;
 public:
     virtual Msg* Process(IMsgProcessor& aProcessor) = 0;
 protected:
@@ -901,11 +901,40 @@ public:
     virtual void Flush() = 0;
 };
 
-class MsgQueue
+class MsgQueueBase
+{
+public:
+    virtual ~MsgQueueBase();
+protected:
+    MsgQueueBase();
+    void DoEnqueue(Msg* aMsg);
+    Msg* DoDequeue();
+    void DoEnqueueAtHead(Msg* aMsg);
+    TBool IsEmpty() const;
+    void DoClear();
+    TUint NumMsgs() const; // test/debug use only
+private:
+    void CheckMsgNotQueued(Msg* aMsg) const;
+private:
+    Msg* iHead;
+    Msg* iTail;
+    TUint iNumMsgs;
+};
+
+class MsgQueueLite : public MsgQueueBase
+{
+public:
+    void Enqueue(Msg* aMsg)         { DoEnqueue(aMsg); }
+    Msg* Dequeue()                  { return DoDequeue(); }
+    void EnqueueAtHead(Msg* aMsg)   { DoEnqueueAtHead(aMsg); }
+    TBool IsEmpty() const           { return MsgQueueBase::IsEmpty(); }
+    void Clear()                    { MsgQueueBase::DoClear(); }
+};
+
+class MsgQueue : public MsgQueueBase
 {
 public:
     MsgQueue();
-    ~MsgQueue();
     void Enqueue(Msg* aMsg);
     Msg* Dequeue();
     void EnqueueAtHead(Msg* aMsg);

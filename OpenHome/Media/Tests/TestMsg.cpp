@@ -260,6 +260,18 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
+class SuiteMsgQueueLite : public Suite
+{
+public:
+    SuiteMsgQueueLite();
+    ~SuiteMsgQueueLite();
+    void Test() override;
+private:
+    MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
 class SuiteMsgReservoir : public Suite
 {
     static const TUint kMsgCount = 8;
@@ -2384,6 +2396,210 @@ void SuiteMsgQueue::Test()
 }
 
 
+// SuiteMsgQueueLite
+
+SuiteMsgQueueLite::SuiteMsgQueueLite()
+    : Suite("MsgQueueLite tests")
+{
+    MsgFactoryInitParams init;
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
+}
+
+SuiteMsgQueueLite::~SuiteMsgQueueLite()
+{
+    delete iMsgFactory;
+    delete iTrackFactory;
+}
+
+void SuiteMsgQueueLite::Test()
+{
+    MsgQueueLite* queue = new MsgQueueLite();
+
+    // queue can be populated and read from
+    TEST(queue->IsEmpty());
+    TUint size = Jiffies::kPerMs;
+    Msg* msg = iMsgFactory->CreateMsgSilence(size, 44100, 8, 2);
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    Msg* dequeued = queue->Dequeue();
+    TEST(msg == dequeued);
+    TEST(queue->IsEmpty());
+    dequeued->RemoveRef();
+
+    // queue can be emptied then reused
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
+    msg = iMsgFactory->CreateMsgTrack(*track);
+    track->RemoveRef();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    TEST(msg == dequeued);
+    TEST(queue->IsEmpty());
+    dequeued->RemoveRef();
+
+    // queue is fifo by default
+    msg = iMsgFactory->CreateMsgMetaText(Brn("Test metatext"));
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgWait();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgQuit();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    ProcessorMsgType processor;
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgWait);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgQuit);
+    dequeued->RemoveRef();
+
+    // EnqueueAtHead skips existing items
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah"));
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->EnqueueAtHead(msg);
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
+    dequeued->RemoveRef();
+
+    // EnqueueAtHead for empty list correctly sets Head and Tail
+    TEST(queue->IsEmpty());
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah"));
+    queue->EnqueueAtHead(msg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    dequeued->RemoveRef();
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+    // Enqueueing the same msg consecutively fails
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    TEST_THROWS(queue->Enqueue(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+    // Enqueueing the same msg at head consecutively fails
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->EnqueueAtHead(msg);
+    TEST_THROWS(queue->EnqueueAtHead(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+    // Enqueueing the same msg at head and tail consecutively fails
+    // queue at tail first, then head
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah")); // filler msg so that iHead != iTail
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    TEST_THROWS(queue->EnqueueAtHead(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+    // queue at head first, then tail
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah")); // filler msg so that iHead != iTail
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->EnqueueAtHead(msg);
+    TEST_THROWS(queue->Enqueue(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+#ifdef DEFINE_DEBUG
+    // Enqueueing the same msg as a msg already in queue fails
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah")); // filler msg so that iHead != iTail
+    queue->Enqueue(msg);
+    Msg* flushMsg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(flushMsg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    TEST_THROWS(queue->Enqueue(flushMsg), AssertionFailed);
+    // try do the same again, but by enqueuing at head
+    TEST_THROWS(queue->EnqueueAtHead(flushMsg), AssertionFailed);
+    // clear queue
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+#endif
+
+    // Clear() removes all items
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgWait();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgQuit();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    queue->Clear();
+    TEST(queue->IsEmpty());
+
+    // reading from an empty queue asserts
+    TEST_THROWS(queue->Dequeue(), AssertionFailed);
+
+    delete queue;
+}
+
+
 // SuiteMsgReservoir
 
 SuiteMsgReservoir::SuiteMsgReservoir()
@@ -2937,6 +3153,7 @@ void TestMsg()
     runner.Add(new SuiteDecodedStream());
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());
+    runner.Add(new SuiteMsgQueueLite());
     runner.Add(new SuiteMsgReservoir());
     runner.Add(new SuitePipelineElement());
     runner.Run();

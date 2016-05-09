@@ -2274,33 +2274,28 @@ Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 }
 
 
-// MsgQueue
+// MsgQueueBase
 
-MsgQueue::MsgQueue()
-    : iLock("MSGQ")
-    , iSem("MSGQ", 0)
-    , iHead(nullptr)
+MsgQueueBase::MsgQueueBase()
+    : iHead(nullptr)
     , iTail(nullptr)
     , iNumMsgs(0)
 {
 }
 
-MsgQueue::~MsgQueue()
+MsgQueueBase::~MsgQueueBase()
 {
-    iLock.Wait();
     Msg* head = iHead;
     while (head != nullptr) {
         iHead = head->iNextMsg;
         head->RemoveRef();
         head = iHead;
     }
-    iLock.Signal();
 }
 
-void MsgQueue::Enqueue(Msg* aMsg)
+void MsgQueueBase::DoEnqueue(Msg* aMsg)
 {
     ASSERT(aMsg != nullptr);
-    AutoMutex a(iLock);
     CheckMsgNotQueued(aMsg); // duplicate checking
     if (iHead == nullptr) {
         iHead = aMsg;
@@ -2311,19 +2306,9 @@ void MsgQueue::Enqueue(Msg* aMsg)
     iTail = aMsg;
     aMsg->iNextMsg = nullptr;
     iNumMsgs++;
-    iSem.Signal();
 }
 
-Msg* MsgQueue::Dequeue()
-{
-    iSem.Wait();
-    iLock.Wait();
-    Msg* head = DequeueLocked();
-    iLock.Signal();
-    return head;
-}
-
-Msg* MsgQueue::DequeueLocked()
+Msg* MsgQueueBase::DoDequeue()
 {
     ASSERT(iHead != nullptr);
     Msg* head = iHead;
@@ -2336,10 +2321,9 @@ Msg* MsgQueue::DequeueLocked()
     return head;
 }
 
-void MsgQueue::EnqueueAtHead(Msg* aMsg)
+void MsgQueueBase::DoEnqueueAtHead(Msg* aMsg)
 {
     ASSERT(aMsg != nullptr);
-    AutoMutex a(iLock);
     CheckMsgNotQueued(aMsg); // duplicate checking
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
@@ -2347,34 +2331,28 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
         iTail = aMsg;
     }
     iNumMsgs++;
-    iSem.Signal();
 }
 
-TBool MsgQueue::IsEmpty() const
+TBool MsgQueueBase::IsEmpty() const
 {
-    iLock.Wait();
     const TBool empty = (iHead == nullptr);
-    iLock.Signal();
     return empty;
 }
 
-void MsgQueue::Clear()
+void MsgQueueBase::DoClear()
 {
-    AutoMutex _(iLock);
     while (iHead != nullptr) {
-        Msg* msg = DequeueLocked();
+        Msg* msg = DoDequeue();
         msg->RemoveRef();
     }
-    (void)iSem.Clear();
 }
 
-TUint MsgQueue::NumMsgs() const
+TUint MsgQueueBase::NumMsgs() const
 {
-    AutoMutex a(iLock);
     return iNumMsgs;
 }
 
-void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
+void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
 {
     // iLock must be held (using an AutoMutex)
     ASSERT(aMsg != iTail);
@@ -2386,10 +2364,59 @@ void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
         count++;
     }
     if (count != iNumMsgs) {    // ensure a msg mid-queue hasn't had iNextMsg
-                                // modified elsewhere
+        // modified elsewhere
         ASSERTS();
     }
 #endif
+}
+
+
+// MsgQueue
+
+MsgQueue::MsgQueue()
+    : iLock("MSGQ")
+    , iSem("MSGQ", 0)
+{
+}
+
+void MsgQueue::Enqueue(Msg* aMsg)
+{
+    AutoMutex _(iLock);
+    DoEnqueue(aMsg);
+    iSem.Signal();
+}
+
+Msg* MsgQueue::Dequeue()
+{
+    iSem.Wait();
+    AutoMutex _(iLock);
+    return MsgQueueBase::DoDequeue();
+}
+
+void MsgQueue::EnqueueAtHead(Msg* aMsg)
+{
+    AutoMutex _(iLock);
+    DoEnqueueAtHead(aMsg);
+    iSem.Signal();
+}
+
+TBool MsgQueue::IsEmpty() const
+{
+    AutoMutex _(iLock);
+    return MsgQueueBase::IsEmpty();
+}
+
+void MsgQueue::Clear()
+{
+    AutoMutex _(iLock);
+    DoClear();
+    (void)iSem.Clear();
+}
+
+TUint MsgQueue::NumMsgs() const
+{
+    AutoMutex _(iLock);
+    return MsgQueueBase::NumMsgs();
 }
 
 

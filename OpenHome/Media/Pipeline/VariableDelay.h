@@ -55,7 +55,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     Mutex iLock;
-    MsgQueue iQueue;
+    MsgQueueLite iQueue;
     TUint iDelayJiffies;
     TUint iDelayJiffiesTotal;
     TInt iDelayAdjustment;
