@@ -399,7 +399,6 @@ private:
     std::vector<CodecBase*> iCodecs;
     ThreadFunctor* iDecoderThread;
     CodecBase* iActiveCodec;
-    MsgQueue iQueue;
     Msg* iPendingMsg;
     TBool iQueueTrackData;
     TBool iStreamStarted;
