@@ -41,6 +41,8 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSeqTrackValid(false)
     , iSeqTrack(UINT_MAX)
     , iLastSampleStart(UINT_MAX)
+    , iSampleRate(0)
+    , iLatency(0)
     , iRepairFirst(nullptr)
     , iPipelineEmpty("OHBS", 0)
 {
@@ -185,6 +187,8 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iMetatext.Replace(Brx::Empty());
     iSeqTrack = UINT_MAX;
     iLastSampleStart = UINT_MAX;
+    iSampleRate = 0;
+    iLatency = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
 
@@ -224,7 +228,7 @@ void ProtocolOhBase::CurrentSubnetChanged()
     iSocket.ReadInterrupt();
 }
 
-TBool ProtocolOhBase::RepairBegin(OhmMsgAudioBlob& aMsg)
+TBool ProtocolOhBase::RepairBegin(OhmMsgAudio& aMsg)
 {
     LOG(kSongcast, "BEGIN ON %d\n", aMsg.Frame());
     iRepairFirst = &aMsg;
@@ -249,11 +253,11 @@ void ProtocolOhBase::RepairReset()
     }
     iRepairFrames.clear();
     iRunning = false;
-    iRepairing = false; // FIXME - not absolutely required as test for iRunning takes precedence in Process(OhmMsgAudioBlob&
+    iRepairing = false; // FIXME - not absolutely required as test for iRunning takes precedence in Process(OhmMsgAudio&
     iStreamMsgDue = true; // a failed repair implies a discontinuity in audio.  This should be noted as a new stream.
 }
 
-TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
+TBool ProtocolOhBase::Repair(OhmMsgAudio& aMsg)
 {
     // get the incoming frame number
     const TUint frame = aMsg.Frame();
@@ -263,7 +267,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
     TInt diff = frame - iFrame;
     if (diff < 1) {
         TBool repairing = true;
-        if ((aMsg.Flags() & OhmMsgAudio::kFlagResent) == 0) {
+        if (aMsg.Resent()) {
             // A frame in the past that is not a resend implies that the sender has reset their frame count
             RepairReset();
             repairing = false;
@@ -401,7 +405,7 @@ void ProtocolOhBase::TimerRepairExpired()
 
         // phase 2 - if there is room add the missing frames in the backlog
         for (TUint j = 0; count < kMaxRepairMissedFrames && j < iRepairFrames.size(); j++) {
-            OhmMsgAudioBlob* msg = iRepairFrames[j];
+            OhmMsgAudio* msg = iRepairFrames[j];
             start = end + 1;
             end = msg->Frame();
             for (TUint i = start; i < end; i++) {
@@ -419,7 +423,7 @@ void ProtocolOhBase::TimerRepairExpired()
     }
 }
 
-void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
+void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
 {
     TBool startOfStream = false;
     if (aMsg.SampleStart() < iLastSampleStart) {
@@ -433,37 +437,30 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         iTrackMsgDue = false;
     }
     iLastSampleStart = aMsg.SampleStart();
-    iFrameBuf.SetBytes(0);
-    WriterBuffer writer(iFrameBuf);
-    aMsg.ExternaliseAsBlob(writer);
-    const TUint bytesBefore = iFrameBuf.Bytes();
     if (iStreamMsgDue) {
-        ReaderBuffer reader(iFrameBuf);
-        OhmHeader header;
-        header.Internalise(reader);
-        OhmMsgAudio* audio = iMsgFactory.CreateAudioFromBlob(reader, header);
-        const TUint64 totalBytes = audio->SamplesTotal() * audio->Channels() * audio->BitDepth()/8;
+        const TUint64 totalBytes = static_cast<TUint64>(aMsg.SamplesTotal()) * aMsg.Channels() * aMsg.BitDepth()/8;
         iStreamId = iIdProvider->NextStreamId();
-        iSupply->OutputStream(iTrackUri, totalBytes, 0, false/*seekable*/, false/*live*/, *this, iStreamId);
-        audio->RemoveRef();
+        PcmStreamInfo pcmStream;
+        pcmStream.Set(aMsg.BitDepth(), aMsg.SampleRate(), aMsg.Channels(), AudioDataEndian::Big, aMsg.SampleStart());
+        iSupply->OutputPcmStream(iTrackUri, totalBytes, false/*seekable*/, true/*live*/, *this, iStreamId, pcmStream);
         iStreamMsgDue = false;
+    }
+    if (iSampleRate != aMsg.SampleRate() || iLatency != aMsg.MediaLatency()) {
+        iSampleRate = aMsg.SampleRate();
+        iLatency = aMsg.MediaLatency();
+        const TUint delayJiffies = static_cast<TUint>(Jiffies::FromSongcastTime(iLatency, iSampleRate));
+        iSupply->OutputDelay(delayJiffies);
     }
     if (iMetatextMsgDue) {
         iSupply->OutputMetadata(iPendingMetatext);
         iPendingMetatext.Replace(Brx::Empty());
         iMetatextMsgDue = false;
     }
-    ASSERT(bytesBefore == iFrameBuf.Bytes());
-    iSupply->OutputData(iFrameBuf);
+    iSupply->OutputData(aMsg.Audio());
     aMsg.RemoveRef();
 }
 
-void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
-{
-    ASSERTS();
-}
-
-void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
+void ProtocolOhBase::Process(OhmMsgAudio& aMsg)
 {
     if (iTimestamper != nullptr) {
         try {
@@ -496,7 +493,7 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
         return;
     }
     if (diff < 1) {
-        const TBool resent = ((aMsg.Flags() & OhmMsgAudio::kFlagResent) != 0);
+        const TBool resent = aMsg.Resent();
         aMsg.RemoveRef();
         if (!resent) {
             // A frame in the past that is not a resend implies that the sender has reset their frame count
@@ -509,6 +506,11 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
         iRepairing = RepairBegin(aMsg);
     }
     iMutexTransport.Signal();
+}
+
+void ProtocolOhBase::Process(OhmMsgAudioBlob& /*aMsg*/)
+{
+    ASSERTS();
 }
 
 void ProtocolOhBase::Process(OhmMsgTrack& aMsg)

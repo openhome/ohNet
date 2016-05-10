@@ -154,7 +154,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                         iTimerListen->FireIn((kTimerListenTimeoutMs >> 1) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen secondary timeout
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
+                        Add(iMsgFactory.CreateAudio(iReadBuffer, header));
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         Add(iMsgFactory.CreateTrack(iReadBuffer, header));

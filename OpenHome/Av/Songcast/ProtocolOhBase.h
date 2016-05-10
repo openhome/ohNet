@@ -18,9 +18,6 @@ namespace OpenHome {
     class Timer;
 namespace Av {
 
-class OhmMsgAudioBlob;
-class OhmMsg;
-
 class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
 {
     static const TUint kMaxRepairBacklogFrames = 200;
@@ -55,9 +52,9 @@ private:
     void CurrentSubnetChanged();
     void RepairReset();
     void TimerRepairExpired();
-    TBool RepairBegin(OhmMsgAudioBlob& aMsg);
-    TBool Repair(OhmMsgAudioBlob& aMsg);
-    void OutputAudio(OhmMsgAudioBlob& aMsg);
+    TBool RepairBegin(OhmMsgAudio& aMsg);
+    TBool Repair(OhmMsgAudio& aMsg);
+    void OutputAudio(OhmMsgAudio& aMsg);
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
     void Process(OhmMsgAudioBlob& aMsg) override;
@@ -96,10 +93,11 @@ private:
     Bws<Media::MsgMetaText::kMaxBytes> iPendingMetatext;
     TUint iSeqTrack;
     TUint64 iLastSampleStart;
-    OhmMsgAudioBlob* iRepairFirst;
-    std::vector<OhmMsgAudioBlob*> iRepairFrames;
+    TUint iSampleRate;
+    TUint64 iLatency;
+    OhmMsgAudio* iRepairFirst;
+    std::vector<OhmMsgAudio*> iRepairFrames;
     Timer* iTimerRepair;
-    Bws<Media::EncodedAudio::kMaxBytes> iFrameBuf;
     TUint iAddr; // FIXME - should listen for subnet changes and update this value
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;

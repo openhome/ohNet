@@ -34,7 +34,7 @@ ProtocolOhu::~ProtocolOhu()
 
 void ProtocolOhu::HandleAudio(const OhmHeader& aHeader)
 {
-    Broadcast(iMsgFactory.CreateAudioBlob(iReadBuffer, aHeader));
+    Broadcast(iMsgFactory.CreateAudio(iReadBuffer, aHeader));
 
     AutoMutex a(iLeaveLock);
     if (iLeaving) {
