@@ -128,8 +128,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iUserAgent(aUserAgent)
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
-    , iTxTsMapper(nullptr)
-    , iRxTsMapper(nullptr)
     , iMaxUiTabs(aMaxUiTabs)
     , iUiSendQueueSize(aUiSendQueueSize)
 {
@@ -225,12 +223,6 @@ void TestMediaPlayer::SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, I
 {
     iTxTimestamper = &aTxTimestamper;
     iRxTimestamper = &aRxTimestamper;
-}
-
-void TestMediaPlayer::SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper)
-{
-    iTxTsMapper = &aTxTsMapper;
-    iRxTsMapper = &aRxTsMapper;
 }
 
 void TestMediaPlayer::StopPipeline()
@@ -384,7 +376,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     MacAddrFromUdn(aEnv, macAddr);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iMediaPlayer->FriendlyNameObservable(), macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iTxTsMapper, iRxTimestamper, iRxTsMapper));
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iRxTimestamper));
 
     iMediaPlayer->BufferLogOutput(128 * 1024);
 }

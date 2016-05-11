@@ -17,7 +17,6 @@ class IFriendlyNameObservable;
 class ISource;
 class IMediaPlayer;
 class IOhmTimestamper;
-class IOhmTimestampMapper;
 
 class SourceFactory
 {
@@ -27,11 +26,7 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
     static ISource* NewRaop(IMediaPlayer& aMediaPlayer, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr);
-    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
-                                IOhmTimestamper* aTxTimestamper,
-                                IOhmTimestampMapper* aTxTsMapper,
-                                IOhmTimestamper* aRxTimestamper,
-                                IOhmTimestampMapper* aRxTsMapper);
+    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTxTimestamper, IOhmTimestamper* aRxTimestamper);
 
     static const TChar* kSourceTypePlaylist;
     static const TChar* kSourceTypeRadio;

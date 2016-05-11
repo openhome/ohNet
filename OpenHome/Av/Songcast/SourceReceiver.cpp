@@ -47,11 +47,7 @@ class SourceReceiver : public Source, private ISourceReceiver, private IZoneList
 {
     static const TChar* kProtocolInfo;
 public:
-    SourceReceiver(IMediaPlayer& aMediaPlayer,
-                   IOhmTimestamper* aTxTimestamper,
-                   IOhmTimestampMapper* aTxTsMapper,
-                   IOhmTimestamper* aRxTimestamper,
-                   IOhmTimestampMapper* aRxTsMapper);
+    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTxTimestamper, IOhmTimestamper* aRxTimestamper);
     ~SourceReceiver();
 private: // from ISource
     void Activate(TBool aAutoPlay) override;
@@ -105,8 +101,7 @@ class SongcastSender : private Media::IPipelineObserver
 {
 public:
     SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
-                   IOhmTimestamper* aTxTimestamper, IOhmTimestampMapper* aTxTsMapper,
-                   const Brx& aMode);
+                   IOhmTimestamper* aTxTimestamper, const Brx& aMode);
     ~SongcastSender();
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
@@ -150,11 +145,9 @@ using namespace OpenHome::Configuration;
 
 ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
                                     IOhmTimestamper* aTxTimestamper,
-                                    IOhmTimestampMapper* aTxTsMapper,
-                                    IOhmTimestamper* aRxTimestamper,
-                                    IOhmTimestampMapper* aRxTsMapper)
+                                    IOhmTimestamper* aRxTimestamper)
 { // static
-    return new SourceReceiver(aMediaPlayer, aTxTimestamper, aTxTsMapper, aRxTimestamper, aRxTsMapper);
+    return new SourceReceiver(aMediaPlayer, aTxTimestamper, aRxTimestamper);
 }
 
 const TChar* SourceFactory::kSourceTypeReceiver = "Receiver";
@@ -181,9 +174,7 @@ const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
 SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                IOhmTimestamper* aTxTimestamper,
-                               IOhmTimestampMapper* aTxTsMapper,
-                               IOhmTimestamper* aRxTimestamper,
-                               IOhmTimestampMapper* /*aRxTsMapper*/)
+                               IOhmTimestamper* aRxTimestamper)
     : Source(SourceFactory::kSourceNameReceiver, SourceFactory::kSourceTypeReceiver, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -215,7 +206,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iPipeline.AddObserver(*this);
 
     // Sender
-    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, aTxTsMapper, iUriProvider->Mode());
+    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode());
 }
 
 SourceReceiver::~SourceReceiver()
@@ -437,8 +428,7 @@ void SourceReceiver::ZoneChangeThread()
 // SongcastSender
 
 SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
-                               IOhmTimestamper* aTxTimestamper, IOhmTimestampMapper* aTxTsMapper,
-                               const Brx& aMode)
+                               IOhmTimestamper* aTxTimestamper, const Brx& aMode)
     : iLock("STX1")
     , iProduct(aMediaPlayer.Product())
 {
@@ -447,8 +437,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     pipeline.GetThreadPriorityRange(priorityMin, priorityMax);
     const TUint senderThreadPriority = priorityMin - 1;
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
-                         aTxTimestamper, aTxTsMapper,
-                         aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
+                         aTxTimestamper, aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
                          Brx::Empty(), pipeline.SenderMinLatencyMs(), aMode);
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);

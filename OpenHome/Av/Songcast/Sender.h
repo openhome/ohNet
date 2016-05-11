@@ -18,7 +18,6 @@ class OhmSenderDriver;
 class OhmSender;
 class ZoneHandler;
 class IOhmTimestamper;
-class IOhmTimestampMapper;
 
 class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor, private INonCopyable
 {
@@ -39,7 +38,6 @@ public:
            Net::DvDeviceStandard& aDevice,
            ZoneHandler& aZoneHandler,
            IOhmTimestamper* aTimestamper,
-           IOhmTimestampMapper* aTsMapper,
            Configuration::IConfigInitialiser& aConfigInit,
            TUint aThreadPriority,
            const Brx& aName,

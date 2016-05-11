@@ -106,7 +106,6 @@ public:
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
     void SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper);
-    void SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -153,8 +152,6 @@ private:
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;
-    IOhmTimestampMapper* iTxTsMapper;
-    IOhmTimestampMapper* iRxTsMapper;
     Bws<Uri::kMaxUriBytes+1> iPresentationUrl;
     Media::LoggingPipelineObserver* iPipelineObserver;
     Net::DvDeviceStandard* iDevice;

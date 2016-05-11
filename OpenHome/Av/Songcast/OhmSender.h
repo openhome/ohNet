@@ -21,7 +21,6 @@ namespace Av {
 
 class ProviderSender;
 class IOhmTimestamper;
-class IOhmTimestampMapper;
 
 class OhmSenderDriver : public IOhmSenderDriver
 {
@@ -30,7 +29,7 @@ class OhmSenderDriver : public IOhmSenderDriver
     static const TUint kLatencyMultiplier44k1;
     static const TUint kLatencyMultiplier48k;
 public:
-    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper);
+    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart);
     void SendAudio(const TByte* aData, TUint aBytes, TBool aHalt = false);
     OhmMsgAudio* CreateAudio();
@@ -69,7 +68,6 @@ private:
     FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
     IOhmTimestamper* iTimestamper;
     TBool iFirstFrame;
-    IOhmTimestampMapper* iTsMapper;
 };
 
 class OhmSender

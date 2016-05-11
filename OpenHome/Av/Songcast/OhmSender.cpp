@@ -175,7 +175,7 @@ void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 const TUint OhmSenderDriver::kLatencyMultiplier44k1 = 44100 * 256;
 const TUint OhmSenderDriver::kLatencyMultiplier48k  = 48000 * 256;
 
-OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper)
+OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper)
     : iMutex("OHMD")
     , iEnabled(false)
     , iActive(false)
@@ -193,7 +193,6 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
     , iTimestamper(aTimestamper)
     , iFirstFrame(true)
-    , iTsMapper(aTsMapper)
 {
 }
 
@@ -256,9 +255,6 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     else if (iTimestamper != nullptr) {
         try {
             timeStamp = iTimestamper->Timestamp(iFrame - 1);
-            if (iTsMapper != nullptr) {
-                timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
-            }
             isTimeStamped = true;
         }
         catch (OhmTimestampNotFound&) {}
@@ -324,9 +320,6 @@ void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
     else if (iTimestamper != nullptr) {
         try {
             timeStamp = iTimestamper->Timestamp(iFrame - 1);
-            if (iTsMapper != nullptr) {
-                timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
-            }
             isTimeStamped = true;
         }
         catch (OhmTimestampNotFound&) {}
