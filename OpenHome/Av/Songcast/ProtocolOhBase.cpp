@@ -464,7 +464,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         iPendingMetatext.Replace(Brx::Empty());
         iMetatextMsgDue = false;
     }
-    iSupply->OutputData(aMsg.Audio());
+    iSupply->OutputPcmData(aMsg.Audio(), clockPullMultiplier);
     aMsg.RemoveRef();
 }
 

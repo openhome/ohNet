@@ -61,6 +61,15 @@ void Supply::OutputData(const Brx& aData)
     iDownStreamElement.Push(msg);
 }
 
+void Supply::OutputPcmData(const Brx& aData, TUint aClockPullMultiplier)
+{
+    if (aData.Bytes() == 0) {
+        return;
+    }
+    MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(aData, aClockPullMultiplier);
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputMetadata(const Brx& aMetadata)
 {
     MsgMetaText* msg = iMsgFactory.CreateMsgMetaText(aMetadata);

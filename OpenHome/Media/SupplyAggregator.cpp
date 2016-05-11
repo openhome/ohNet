@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -93,11 +94,13 @@ void SupplyAggregator::OutputEncodedAudio()
 
 SupplyAggregatorBytes::SupplyAggregatorBytes(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement)
     : SupplyAggregator(aMsgFactory, aDownStreamElement)
+    , iLastClockMultiplier(IPullableClock::kPullNone)
 {
 }
 void SupplyAggregatorBytes::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TUint64 aStartPos, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
     // FIXME - no metatext available
+    iLastClockMultiplier = IPullableClock::kPullNone;
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aUri, Brx::Empty(), aTotalBytes, aStartPos, aStreamId, aSeekable, aLive, &aStreamHandler);
     Output(msg);
 }
@@ -105,6 +108,7 @@ void SupplyAggregatorBytes::OutputStream(const Brx& aUri, TUint64 aTotalBytes, T
 void SupplyAggregatorBytes::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
 {
     // FIXME - no metatext available
+    iLastClockMultiplier = IPullableClock::kPullNone;
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aUri, Brx::Empty(), aTotalBytes, 0, aStreamId, aSeekable, aLive, &aStreamHandler, aPcmStream);
     Output(msg);
 }
@@ -127,12 +131,26 @@ void SupplyAggregatorBytes::OutputData(const Brx& aData)
     }
 }
 
+void SupplyAggregatorBytes::OutputPcmData(const Brx& aData, TUint aClockPullMultiplier)
+{
+    if (aData.Bytes() == 0) {
+        return;
+    }
+    if (iLastClockMultiplier != aClockPullMultiplier) {
+        OutputEncodedAudio();
+        iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(aData, aClockPullMultiplier);
+        OutputEncodedAudio();
+        iLastClockMultiplier = aClockPullMultiplier;
+    }
+}
+
 
 // SupplyAggregatorJiffies
 
 SupplyAggregatorJiffies::SupplyAggregatorJiffies(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement)
     : SupplyAggregator(aMsgFactory, aDownStreamElement)
     , iDataMaxBytes(0)
+    , iLastClockMultiplier(IPullableClock::kPullNone)
 {
 }
 
@@ -144,6 +162,7 @@ void SupplyAggregatorJiffies::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotal
 void SupplyAggregatorJiffies::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
 {
     // FIXME - no metatext available
+    iLastClockMultiplier = IPullableClock::kPullNone;
     TUint ignore = kMaxPcmDataJiffies;
     const TUint jiffiesPerSample = Jiffies::PerSample(aPcmStream.SampleRate());
     iDataMaxBytes = Jiffies::ToBytes(ignore, jiffiesPerSample, aPcmStream.NumChannels(), aPcmStream.BitDepth() / 8);
@@ -173,6 +192,19 @@ void SupplyAggregatorJiffies::OutputData(const Brx& aData)
     }
     if (iAudioEncoded->Bytes() >= iDataMaxBytes) {
         OutputEncodedAudio();
+    }
+}
+
+void SupplyAggregatorJiffies::OutputPcmData(const Brx& aData, TUint aClockPullMultiplier)
+{
+    if (aData.Bytes() == 0) {
+        return;
+    }
+    if (iLastClockMultiplier != aClockPullMultiplier) {
+        OutputEncodedAudio();
+        iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(aData, aClockPullMultiplier);
+        OutputEncodedAudio();
+        iLastClockMultiplier = aClockPullMultiplier;
     }
 }
 

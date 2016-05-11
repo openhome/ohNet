@@ -1317,12 +1317,18 @@ MsgAudioEncoded* MsgAudioEncoded::Clone()
     return clone;
 }
 
-void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
+TUint MsgAudioEncoded::ClockPullMultiplier() const
+{
+    return iClockPullMultiplier;
+}
+
+void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio, TUint aClockPullMultiplier)
 {
     iAudioData = aEncodedAudio;
     iSize = iAudioData->Bytes();
     iOffset = 0;
     iNextAudio = nullptr;
+    iClockPullMultiplier = aClockPullMultiplier;
 }
 
 void MsgAudioEncoded::RefAdded()
@@ -1345,6 +1351,7 @@ void MsgAudioEncoded::RefRemoved()
 void MsgAudioEncoded::Clear()
 {
     iAudioData->RemoveRef();
+    iClockPullMultiplier = IPullableClock::kPullNone;
 }
 
 Msg* MsgAudioEncoded::Process(IMsgProcessor& aProcessor)
@@ -3055,9 +3062,14 @@ MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(MsgEncodedStream* aMsg, ISt
 
 MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData)
 {
+    return CreateMsgAudioEncoded(aData, IPullableClock::kPullNone);
+}
+
+MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData, TUint aClockPullMultiplier)
+{
     EncodedAudio* encodedAudio = CreateEncodedAudio(aData);
     MsgAudioEncoded* msg = iAllocatorMsgAudioEncoded.Allocate();
-    msg->Initialise(encodedAudio);
+    msg->Initialise(encodedAudio, aClockPullMultiplier);
     return msg;
 }
 
@@ -3140,8 +3152,10 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChann
 {
     AudioData* audioData = aAudio->iAudioData;
     audioData->AddRef();
-    return CreateMsgAudioPcm(static_cast<DecodedAudio*>(audioData),
-                             aChannels, aSampleRate, aBitDepth, aTrackOffset);
+    auto audioPcm = CreateMsgAudioPcm(static_cast<DecodedAudio*>(audioData),
+                                      aChannels, aSampleRate, aBitDepth, aTrackOffset);
+    audioPcm->SetClockPull(aAudio->ClockPullMultiplier());
+    return audioPcm;
 }
 
 MsgSilence* MsgFactory::CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels)

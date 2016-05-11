@@ -489,8 +489,9 @@ public:
     TUint Bytes() const;
     void CopyTo(TByte* aPtr);
     MsgAudioEncoded* Clone();
+    TUint ClockPullMultiplier() const; // PCM data only
 private:
-    void Initialise(EncodedAudio* aEncodedAudio);
+    void Initialise(EncodedAudio* aEncodedAudio, TUint aClockPull);
 private: // from Msg
     void RefAdded() override;
     void RefRemoved() override;
@@ -501,6 +502,7 @@ private:
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
     EncodedAudio* iAudioData;
+    TUint iClockPullMultiplier;
 };
 
 class MsgStreamInterrupted : public Msg
@@ -1199,13 +1201,22 @@ public:
      */
     virtual void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) = 0;
     /**
-     * Push a block of encoded audio into the pipeline.
+     * Push a block of (encoded or PCM) audio into the pipeline.
      *
      * Data is copied into the pipeline.  The caller is free to reuse its buffer.
      *
      * @param[in] aData            Encoded audio.  Must be <= EncodedAudio::kMaxBytes
      */
     virtual void OutputData(const Brx& aData) = 0;
+    /**
+    * Push a block of PCM audio into the pipeline.
+    *
+    * Data is copied into the pipeline.  The caller is free to reuse its buffer.
+    *
+    * @param[in] aData                 Encoded audio.  Must be <= EncodedAudio::kMaxBytes
+    * @param[in] aClockPullMultiplier  Clock pull to be applied when this audio is played
+    */
+    virtual void OutputPcmData(const Brx& aData, TUint aClockPullMultiplier) = 0;
     /**
      * Push metadata, describing the current stream, into the pipeline.
      *
@@ -1543,6 +1554,7 @@ public:
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgEncodedStream* CreateMsgEncodedStream(MsgEncodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
+    MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData, TUint aClockPullMultiplier); // aData must be PCM
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgStreamInterrupted* CreateMsgStreamInterrupted();
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);
