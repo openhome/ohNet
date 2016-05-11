@@ -72,6 +72,7 @@ public:
     static const TUint kFlagLossless      = 1 << 1;
     static const TUint kFlagTimestamped   = 1 << 2;
     static const TUint kFlagResent        = 1 << 3;
+    static const TUint kFlagTimestamped2  = 1 << 4;
     static const TUint kStreamHeaderBytes = 88; // 8 bytes Ohm header, 50 bytes audio header, 30 bytes codec name
 private:
     static const TUint kHeaderBytes = 50; // not including codec name
@@ -82,7 +83,8 @@ public:
 
     TBool Halt() const;
     TBool Lossless() const;
-    TBool Timestamped() const;
+    TBool Timestamped() const; // NetworkTimestamp is present but may not be accurate until MediaLatency after clock family change
+    TBool Timestamped2() const; // NetworkTimestamp is present and accurate one frame after clock family change
     TBool Resent() const;
     TUint Samples() const;
     TUint Frame() const;
@@ -120,6 +122,7 @@ private:
     TBool iHalt;
     TBool iLossless;
     TBool iTimestamped;
+    TBool iTimestamped2;
     TBool iResent;
     TUint iSamples;
     TUint iFrame;

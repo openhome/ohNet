@@ -11,6 +11,7 @@
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 #include <stdio.h>
 
@@ -172,9 +173,6 @@ void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 
 // OhmSenderDriver
 
-const TUint OhmSenderDriver::kLatencyMultiplier44k1 = 44100 * 256;
-const TUint OhmSenderDriver::kLatencyMultiplier48k  = 48000 * 256;
-
 OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper)
     : iMutex("OHMD")
     , iEnabled(false)
@@ -206,7 +204,7 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     AutoMutex mutex(iMutex);
 
     iSampleRate = aSampleRate;
-    iTimestampMultiplier = (aSampleRate % 441 == 0? kLatencyMultiplier44k1 : kLatencyMultiplier48k);
+    iTimestampMultiplier = Media::Jiffies::SongcastTicksPerSecond(aSampleRate);
     UpdateLatencyOhm();
     iBytesPerSample = aChannels * aBitDepth / 8;
     iLossless = aLossless;
@@ -214,6 +212,12 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
 
     iStreamHeader.Replace(Brx::Empty());
     OhmMsgAudio::GetStreamHeader(iStreamHeader, iSamplesTotal, aSampleRate, aBitRate, 0/*VolumeOffset*/, aBitDepth, aChannels, aCodecName);
+
+    if (iTimestamper != nullptr) {
+        // ignore return value below - false just implies iTimestamper->Timestamp will throw
+        // ...and we already have to deal with this
+        (void)iTimestamper->SetSampleRate(iSampleRate);
+    }
 }
 
 OhmMsgAudio* OhmSenderDriver::CreateAudio()

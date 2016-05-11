@@ -26,8 +26,6 @@ class OhmSenderDriver : public IOhmSenderDriver
 {
     static const TUint kMaxAudioFrameBytes = 6 * 1024;
     static const TUint kMaxHistoryFrames = 100;
-    static const TUint kLatencyMultiplier44k1;
-    static const TUint kLatencyMultiplier48k;
 public:
     OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart);

@@ -121,6 +121,7 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     iHalt = false;
     iLossless = false;
     iTimestamped = false;
+    iTimestamped2 = false;
     iResent = false;
     const TUint flags = reader2.ReadUintBe(1);
     if (flags & kFlagHalt) {
@@ -131,6 +132,9 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     }
     if (flags & kFlagTimestamped) {
         iTimestamped = true;
+    }
+    if (flags & kFlagTimestamped2) {
+        iTimestamped2 = true;
     }
     if (flags & kFlagResent) {
         iResent = true;
@@ -167,6 +171,7 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     iHalt = aHalt;
     iLossless = aLossless;
     iTimestamped = aTimestamped;
+    iTimestamped2 = iTimestamped; // assume that all senders other than original Linn have accurate timestamps
     iResent = aResent;
     iSamples = aSamples;
     iFrame = aFrame;
@@ -190,6 +195,7 @@ void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimest
     iHalt = aHalt;
     iLossless = aLossless;
     iTimestamped = aTimestamped;
+    iTimestamped2 = iTimestamped; // assume that all senders other than original Linn have accurate timestamps
     iResent = aResent;
     iSamples = aSamples;
     iFrame = aFrame;
@@ -235,6 +241,11 @@ TBool OhmMsgAudio::Lossless() const
 TBool OhmMsgAudio::Timestamped() const
 {
     return iTimestamped;
+}
+
+TBool OhmMsgAudio::Timestamped2() const
+{
+    return iTimestamped2;
 }
 
 TBool OhmMsgAudio::Resent() const
@@ -369,7 +380,10 @@ void OhmMsgAudio::Serialise()
     if (iResent) {
         flags |= kFlagResent;
     }
-    
+    if (iTimestamped2) {
+        flags |= kFlagTimestamped2;
+    }
+
     writer.WriteUint8(kHeaderBytes);
     writer.WriteUint8(flags);
     writer.WriteUint16Be(iSamples);

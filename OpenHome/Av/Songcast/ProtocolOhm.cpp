@@ -234,15 +234,22 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
     const TUint timestamperFreq = Jiffies::SongcastTicksPerSecond(sampleRate);
     if (iTimestamperFreq != timestamperFreq) {
         // any stored timestamps are unreliable - reset timestamper
+        (void)iTimestamper->SetSampleRate(sampleRate);
         iTimestamper->Stop();
         iTimestamper->Start(iEndpoint);
         iClockPuller.NewStream(sampleRate); // despite function name, try only reporting changes in clock family
 
         iTimestamperFreq = timestamperFreq;
         iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
-        iJiffiesBeforeTimestampsReliable = static_cast<TUint>(Jiffies::FromSongcastTime(aMsg.MediaLatency(), sampleRate));
-        // FIXME - if sender also has more reliable timestamping (FIXME - new flag) we can safely use the next msg
-        // ...in that case, set aDiscard and return
+        if (!aMsg.Timestamped2()) { // Original Linn sender.  Next MediaLatency() worth of timestamps may be wrong.
+            iJiffiesBeforeTimestampsReliable = static_cast<TUint>(Jiffies::FromSongcastTime(aMsg.MediaLatency(), sampleRate));
+        }
+        else {
+            // Single timestamp on clock family change may be unreliable.
+            // Set things up so that timestampReliable gets set false below
+            const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
+            iJiffiesBeforeTimestampsReliable = msgJiffies;
+        }
     }
 
     const TBool timestampReliable = (iJiffiesBeforeTimestampsReliable == 0);
@@ -253,10 +260,6 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
         }
         else {
             iJiffiesBeforeTimestampsReliable -= msgJiffies;
-        }
-        if (!iLockedToStream) {
-            aDiscard = true;
-            return;
         }
     }
 
@@ -279,6 +282,8 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
         else if (--iMsgsTillLock == 0) {
             iLockedToStream = true;
         }
+        aDiscard = true;
+        return;
     }
 
     if (timestampReliable && msgTimestamped) {
