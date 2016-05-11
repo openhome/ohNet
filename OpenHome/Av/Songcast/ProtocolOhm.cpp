@@ -213,7 +213,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
 void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TUint& aClockPullMultiplier)
 {
     aDiscard = false;
-    aClockPullMultiplier = IPullableClock::kNominalFreq;
+    aClockPullMultiplier = IPullableClock::kPullNone;
     if (iTimestamper == nullptr) {
         return;
     }
