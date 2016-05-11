@@ -39,6 +39,7 @@ protected:
     void WaitForPipelineToEmpty();
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
+    virtual void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TUint& aClockPullMultiplier) = 0;
 protected: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from Media::Protocol

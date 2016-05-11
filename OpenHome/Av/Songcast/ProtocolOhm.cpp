@@ -12,6 +12,11 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
+
+#include <cstdlib>
+#include <limits>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -43,9 +48,14 @@ using namespace OpenHome::Media;
 
 // ProtocolOhm
 
-ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const Brx& aMode)
+const TInt ProtocolOhm::kLockingMaxDeviation = Jiffies::kPerMs / 2;
+const TUint ProtocolOhm::kLockingMsgCount = 4;
+
+ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFactory& aTrackFactory,
+                         IOhmTimestamper* aTimestamper, IClockPullerTimestamp& aClockPuller, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
     , iStoppedLock("POHM")
+    , iClockPuller(aClockPuller)
 {
 }
 
@@ -68,6 +78,8 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     WaitForPipelineToEmpty();
     iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
+    iCheckForTimestamp = true;
+    iStreamIsTimestamped = false;
 
     do {
         if (!firstJoin) {
@@ -84,6 +96,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                 iTimestamper->Stop();
                 iTimestamper->Start(iEndpoint);
             }
+            ResetClockPuller();
 
             OhmHeader header;
             SendJoin();
@@ -180,6 +193,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     if (iTimestamper != nullptr) {
         iTimestamper->Stop();
     }
+    iClockPuller.Stop();
 
     iReadBuffer.ReadFlush();
     iTimerJoin->Cancel();
@@ -194,6 +208,83 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
+}
+
+void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TUint& aClockPullMultiplier)
+{
+    aDiscard = false;
+    aClockPullMultiplier = IPullableClock::kNominalFreq;
+    if (iTimestamper == nullptr) {
+        return;
+    }
+    const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
+    if (iCheckForTimestamp) {
+        iCheckForTimestamp = false;
+        iStreamIsTimestamped = msgTimestamped;
+        if (iStreamIsTimestamped) {
+            iClockPuller.Start();
+        }
+    }
+
+    if (!iStreamIsTimestamped) {
+        return;
+    }
+
+    const TUint sampleRate = aMsg.SampleRate();
+    const TUint timestamperFreq = Jiffies::SongcastTicksPerSecond(sampleRate);
+    if (iTimestamperFreq != timestamperFreq) {
+        // any stored timestamps are unreliable - reset timestamper
+        iTimestamper->Stop();
+        iTimestamper->Start(iEndpoint);
+        iClockPuller.NewStream(sampleRate); // despite function name, try only reporting changes in clock family
+
+        iTimestamperFreq = timestamperFreq;
+        iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
+        iJiffiesBeforeTimestampsReliable = static_cast<TUint>(Jiffies::FromSongcastTime(aMsg.MediaLatency(), sampleRate));
+        // FIXME - if sender also has more reliable timestamping (FIXME - new flag) we can safely use the next msg
+        // ...in that case, set aDiscard and return
+    }
+
+    if (iJiffiesBeforeTimestampsReliable > 0) {
+        const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
+        if (msgJiffies > iJiffiesBeforeTimestampsReliable) {
+            iJiffiesBeforeTimestampsReliable = 0;
+        }
+        else {
+            iJiffiesBeforeTimestampsReliable -= msgJiffies;
+        }
+        if (!iLockedToStream) {
+            aDiscard = true;
+            return;
+        }
+    }
+
+    if (!iLockedToStream) {
+        if (!msgTimestamped) {
+            aDiscard = true;
+            return;
+        }
+        const TInt delta = static_cast<TInt>(aMsg.RxTimestamp() - aMsg.NetworkTimestamp());
+        if (iCalculateTimestampDelta) {
+            iTimestampDelta = delta;
+            iMsgsTillLock = kLockingMsgCount - 1;
+            iCalculateTimestampDelta = false;
+        }
+        else if ((TUint)std::abs(iTimestampDelta - delta) > iLockingMaxDeviation) {
+            iMsgsTillLock = kLockingMsgCount;
+            iCalculateTimestampDelta = true;
+            iTimestampDelta = 0;
+        }
+        else if (--iMsgsTillLock == 0) {
+            iLockedToStream = true;
+        }
+    }
+
+    if (iJiffiesBeforeTimestampsReliable == 0 && msgTimestamped) {
+        const TUint networkTimestamp = aMsg.NetworkTimestamp();
+        const TInt drift = iTimestampDelta - static_cast<TInt>(aMsg.RxTimestamp() - networkTimestamp);
+        aClockPullMultiplier = iClockPuller.NotifyTimestamp(drift, networkTimestamp);
+    }
 }
 
 void ProtocolOhm::Interrupt(TBool aInterrupt)
@@ -220,4 +311,15 @@ TUint ProtocolOhm::TryStop(TUint aStreamId)
         iSocket.ReadInterrupt();
     }
     return iNextFlushId;
+}
+
+void ProtocolOhm::ResetClockPuller()
+{
+    iLockedToStream = false;
+    iCalculateTimestampDelta = true;
+    iTimestamperFreq = 0;
+    iLockingMaxDeviation = UINT_MAX;
+    iJiffiesBeforeTimestampsReliable = 0;
+    iTimestampDelta = 0;
+    iMsgsTillLock = 0;
 }

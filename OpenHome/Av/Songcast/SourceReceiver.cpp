@@ -35,11 +35,11 @@ namespace Av {
 class UriProviderSongcast : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderSongcast(IMediaPlayer& aMediaPlayer);
+    UriProviderSongcast(IMediaPlayer& aMediaPlayer, ClockPullerSongcast& aClockPuller);
 private: // from UriProvider
     Media::ModeClockPullers ClockPullers() override;
 private:
-    ClockPullerSongcast iClockPuller;
+    ClockPullerSongcast& iClockPuller;
 };
 
 class SongcastSender;
@@ -84,6 +84,7 @@ private:
     ThreadFunctor* iZoneChangeThread;
     ZoneHandler* iZoneHandler;
     ProviderReceiver* iProviderReceiver;
+    ClockPullerSongcast iClockPuller;
     UriProviderSongcast* iUriProvider;
     OhmMsgFactory* iOhmMsgFactory;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
@@ -163,9 +164,9 @@ const Brn SourceFactory::kSourceNameReceiver("Songcast");
 
 // UriProviderSongcast
 
-UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
+UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer, ClockPullerSongcast& aClockPuller)
     : UriProviderSingleTrack(SourceFactory::kSourceTypeReceiver, true, true, aMediaPlayer.TrackFactory())
-    , iClockPuller(aMediaPlayer.Env())
+    , iClockPuller(aClockPuller)
 {
 }
 
@@ -188,6 +189,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     , iLock("SRX1")
     , iActivationLock("SRX2")
     , iUriLock("SRX3")
+    , iClockPuller(aMediaPlayer.Env())
     , iTrackId(Track::kIdNone)
     , iPlaying(false)
     , iQuit(false)
@@ -201,12 +203,12 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
 
     // Receiver
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
-    iUriProvider = new UriProviderSongcast(aMediaPlayer);
+    iUriProvider = new UriProviderSongcast(aMediaPlayer, iClockPuller);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory, aRxTsMapper));
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
-    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode()));
+    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iClockPuller, iUriProvider->Mode()));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));
     iStoreZone = new StoreText(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(), kPowerPriorityNormal,
                                Brn("Receiver.Zone"), Brx::Empty(), iZone.MaxBytes());

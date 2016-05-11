@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -241,6 +242,12 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
+}
+
+void ProtocolOhu::ProcessTimestamps(const OhmMsgAudio& /*aMsg*/, TBool& aDiscard, TUint& aClockPullMultiplier)
+{
+    aDiscard = false;
+    aClockPullMultiplier = IPullableClock::kNominalFreq;
 }
 
 void ProtocolOhu::Interrupt(TBool aInterrupt)

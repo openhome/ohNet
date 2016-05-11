@@ -425,6 +425,14 @@ void ProtocolOhBase::TimerRepairExpired()
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
 {
+    TBool discard;
+    TUint clockPullMultiplier;
+    ProcessTimestamps(aMsg, discard, clockPullMultiplier);
+    if (discard) {
+        aMsg.RemoveRef();
+        return;
+    }
+
     TBool startOfStream = false;
     if (aMsg.SampleStart() < iLastSampleStart) {
         startOfStream = true;
