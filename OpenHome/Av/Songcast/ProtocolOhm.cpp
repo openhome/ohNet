@@ -245,7 +245,8 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
         // ...in that case, set aDiscard and return
     }
 
-    if (iJiffiesBeforeTimestampsReliable > 0) {
+    const TBool timestampReliable = (iJiffiesBeforeTimestampsReliable == 0);
+    if (!timestampReliable) {
         const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
         if (msgJiffies > iJiffiesBeforeTimestampsReliable) {
             iJiffiesBeforeTimestampsReliable = 0;
@@ -280,7 +281,7 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
         }
     }
 
-    if (iJiffiesBeforeTimestampsReliable == 0 && msgTimestamped) {
+    if (timestampReliable && msgTimestamped) {
         const TUint networkTimestamp = aMsg.NetworkTimestamp();
         const TInt drift = iTimestampDelta - static_cast<TInt>(aMsg.RxTimestamp() - networkTimestamp);
         aClockPullMultiplier = iClockPuller.NotifyTimestamp(drift, networkTimestamp);
