@@ -46,7 +46,6 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestSupplyAggregator);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
-SIMPLE_TEST_DECLARATION(TestTimestampInspector);
 SIMPLE_TEST_DECLARATION(TestUriProviderRepeater);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
 SIMPLE_TEST_DECLARATION(TestWaiter);
@@ -116,7 +115,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestSupplyAggregator", ShellTestSupplyAggregator));
     shellTests.push_back(ShellTest("TestTrackDatabase", ShellTestTrackDatabase));
     shellTests.push_back(ShellTest("TestTrackInspector", ShellTestTrackInspector));
-    shellTests.push_back(ShellTest("TestTimestampInspector", ShellTestTimestampInspector));
     shellTests.push_back(ShellTest("TestUriProviderRepeater", ShellTestUriProviderRepeater));
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
     shellTests.push_back(ShellTest("TestWaiter", ShellTestWaiter));

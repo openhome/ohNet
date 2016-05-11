@@ -10,7 +10,6 @@
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Av/Songcast/ClockPullerSongcast.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Av/Songcast/CodecOhm.h>
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
 #include <OpenHome/Private/Uri.h>
@@ -184,7 +183,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                IOhmTimestamper* aTxTimestamper,
                                IOhmTimestampMapper* aTxTsMapper,
                                IOhmTimestamper* aRxTimestamper,
-                               IOhmTimestampMapper* aRxTsMapper)
+                               IOhmTimestampMapper* /*aRxTsMapper*/)
     : Source(SourceFactory::kSourceNameReceiver, SourceFactory::kSourceTypeReceiver, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -206,7 +205,6 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iUriProvider = new UriProviderSongcast(aMediaPlayer, iClockPuller);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
-    iPipeline.Add(new CodecOhm(*iOhmMsgFactory, aRxTsMapper));
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iClockPuller, iUriProvider->Mode()));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));

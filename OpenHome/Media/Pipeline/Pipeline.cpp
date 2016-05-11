@@ -13,7 +13,6 @@
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
-#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/ClockPullerManual.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
@@ -279,12 +278,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iDecodedAudioAggregator, new DecodedAudioAggregator(*downstream),
                    downstream, elementsSupported, EPipelineSupportElementsMandatory);
 
-    ATTACH_ELEMENT(iLoggerTimestampInspector, new Logger("Timestamp Inspector", *iDecodedAudioAggregator),
-                   downstream, elementsSupported, EPipelineSupportElementsLogger);
-    ATTACH_ELEMENT(iTimestampInspector, new TimestampInspector(*iMsgFactory, *downstream),
-                   downstream, elementsSupported, EPipelineSupportElementsMandatory);
-
-    ATTACH_ELEMENT(iLoggerSampleRateValidator, new Logger("Sample Rate Validator", *iTimestampInspector),
+    ATTACH_ELEMENT(iLoggerSampleRateValidator, new Logger("Sample Rate Validator", *iDecodedAudioAggregator),
                    downstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iSampleRateValidator, new SampleRateValidator(*iMsgFactory, *downstream),
                    downstream, elementsSupported, EPipelineSupportElementsMandatory);
@@ -450,7 +444,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerSampleRateValidator->SetEnabled(true);
-    //iLoggerTimestampInspector->SetEnabled(true);
     //iLoggerDecodedAudioAggregator->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerSeeker->SetEnabled(true);
@@ -480,7 +473,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerSampleRateValidator->SetFilter(Logger::EMsgAll);
-    //iLoggerTimestampInspector->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioAggregator->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerSeeker->SetFilter(Logger::EMsgAll);
@@ -572,8 +564,6 @@ Pipeline::~Pipeline()
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;
     delete iDecodedAudioAggregator;
-    delete iLoggerTimestampInspector;
-    delete iTimestampInspector;
     delete iLoggerSampleRateValidator;
     delete iSampleRateValidator;
     delete iRampValidatorCodec;

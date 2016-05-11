@@ -97,7 +97,6 @@ class EncodedAudioReservoir;
 class Logger;
 class DecodedAudioValidator;
 class SampleRateValidator;
-class TimestampInspector;
 class DecodedAudioAggregator;
 class DecodedAudioReservoir;
 class ClockPullerManual;
@@ -234,8 +233,6 @@ private:
     RampValidator* iRampValidatorCodec;
     SampleRateValidator* iSampleRateValidator;
     Logger* iLoggerSampleRateValidator;
-    TimestampInspector* iTimestampInspector;
-    Logger* iLoggerTimestampInspector;
     DecodedAudioAggregator* iDecodedAudioAggregator;
     Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
