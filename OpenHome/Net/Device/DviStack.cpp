@@ -26,8 +26,8 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     iPropertyUpdateCollection = new DviPropertyUpdateCollection(*this);
     InitialisationParams* initParams = iEnv.InitParams();
     TUint port = initParams->DvUpnpServerPort();
-    iDviServerUpnp = new DviServerUpnp(*this, port);
     iDviDeviceMap = new DviDeviceMap;
+    iDviServerUpnp = new DviServerUpnp(*this, port);
     iSubscriptionManager = new DviSubscriptionManager(*this);
     iDviServerWebSocket = new DviServerWebSocket(*this);
     const TChar* hostName = NULL;
