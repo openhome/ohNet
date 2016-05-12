@@ -128,7 +128,6 @@ private: // from IPipelineAnimator
 private: // from IAnalogBypassVolumeRamper
     void ApplyVolumeMultiplier(TUint aValue) override;
 private:
-    Net::ShellNull iShell;
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     PipelineInitParams* iInitParams;
@@ -331,7 +330,7 @@ SuitePipeline::SuitePipeline()
     iInitParams = PipelineInitParams::New();
     iInitParams->SetLongRamp(Jiffies::kPerMs * 150); // reduced size to ensure that 1ms chunks of ramped audio show a change
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this, iShell);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this);
     iPipeline->SetAnimator(*this);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little));

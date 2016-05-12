@@ -149,6 +149,7 @@ private:
     const Brh iTidalId;
     const Brh iQobuzIdSecret;
     const Brh iUserAgent;
+    Media::IPullableClock* iPullableClock;
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;

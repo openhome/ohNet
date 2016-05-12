@@ -12,9 +12,6 @@ namespace OpenHome {
 namespace Av {
     class IInfoAggregator;
 }
-namespace Net {
-    class IShell;
-}
 namespace Media {
     namespace Codec {
         class ContainerBase;
@@ -59,8 +56,7 @@ class PipelineManager : public IPipeline
                       , private IUrlBlockWriter
 {
 public:
-    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator,
-                    TrackFactory& aTrackFactory, Net::IShell& aShell);
+    PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory);
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.

@@ -142,7 +142,7 @@ private: // from IClockPullerReservoir
     void Reset() override;
     void Stop() override;
     void Start(TUint aNotificationFrequency) override;
-    TUint NotifySize(TUint aJiffies) override;
+    void NotifySize(TUint aJiffies) override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -611,7 +611,7 @@ void SuiteReservoirHistory::Test()
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
     iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
-    ModeClockPullers clockPullers(this, nullptr, nullptr);
+    ModeClockPullers clockPullers(this);
     iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, clockPullers, false, false));
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
@@ -773,7 +773,7 @@ void SuiteReservoirHistory::Reset()
 {
 }
 
-TUint SuiteReservoirHistory::NotifySize(TUint aJiffies)
+void SuiteReservoirHistory::NotifySize(TUint aJiffies)
 {
     iHistoryPointCount++;
     TEST(aJiffies != 0);
@@ -783,7 +783,6 @@ TUint SuiteReservoirHistory::NotifySize(TUint aJiffies)
         iStopAudioGeneration = true;
     }
     iNotifySizeCalled = true;
-    return IPullableClock::kNominalFreq;
 }
 
 void SuiteReservoirHistory::Stop()

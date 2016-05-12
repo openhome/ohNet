@@ -1,6 +1,7 @@
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -34,7 +35,7 @@ const Brn Sender::kConfigIdPreset("Sender.Preset");
 Sender::Sender(Environment& aEnv,
                Net::DvDeviceStandard& aDevice,
                ZoneHandler& aZoneHandler,
-               IOhmTimestamper* aTimestamper,
+               Optional<IOhmTimestamper> aTimestamper,
                Configuration::IConfigInitialiser& aConfigInit,
                TUint aThreadPriority,
                const Brx& aName,

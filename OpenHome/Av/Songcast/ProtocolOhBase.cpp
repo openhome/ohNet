@@ -19,7 +19,8 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
+ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory,
+                               Optional<IOhmTimestamper> aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
@@ -29,7 +30,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iMode(aMode)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iMutexTransport("POHB")
-    , iTimestamper(aTimestamper)
+    , iTimestamper(aTimestamper.Ptr())
     , iStarving(false)
     , iTrackFactory(aTrackFactory)
     , iSupportedScheme(aSupportedScheme)
@@ -426,8 +427,7 @@ void ProtocolOhBase::TimerRepairExpired()
 void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
 {
     TBool discard;
-    TUint clockPullMultiplier;
-    ProcessTimestamps(aMsg, discard, clockPullMultiplier);
+    ProcessTimestamps(aMsg, discard);
     if (discard) {
         aMsg.RemoveRef();
         return;
@@ -465,7 +465,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         iPendingMetatext.Replace(Brx::Empty());
         iMetatextMsgDue = false;
     }
-    iSupply->OutputPcmData(aMsg.Audio(), clockPullMultiplier);
+    iSupply->OutputData(aMsg.Audio());
     aMsg.RemoveRef();
 }
 

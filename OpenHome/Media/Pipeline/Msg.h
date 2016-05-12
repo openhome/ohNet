@@ -310,25 +310,19 @@ private:
 };
 
 class IClockPullerReservoir;
-class IClockPullerTimestamp;
 
 class ModeClockPullers
 {
 public:
     ModeClockPullers();
-    ModeClockPullers(IClockPullerReservoir* aReservoirLeft,
-                     IClockPullerReservoir* aReservoirRight,
-                     IClockPullerTimestamp* aTimestamp);
+    ModeClockPullers(TBool aEnabled);
+    ModeClockPullers(IClockPullerReservoir* aReservoirLeft);
+    TBool Enabled() const;
     IClockPullerReservoir* ReservoirLeft() const;
-    IClockPullerReservoir* ReservoirRight() const;
-    IClockPullerTimestamp* Timestamp() const;
 private:
+    TBool iEnabled;
     IClockPullerReservoir* iReservoirLeft;
-    IClockPullerReservoir* iReservoirRight;
-    IClockPullerTimestamp* iTimestamp;
 };
-
-class IClockPuller;
 
 class MsgMode : public Msg
 {
@@ -495,9 +489,8 @@ public:
     TUint Bytes() const;
     void CopyTo(TByte* aPtr);
     MsgAudioEncoded* Clone();
-    TUint ClockPullMultiplier() const; // PCM data only
 private:
-    void Initialise(EncodedAudio* aEncodedAudio, TUint aClockPull);
+    void Initialise(EncodedAudio* aEncodedAudio);
 private: // from Msg
     void RefAdded() override;
     void RefRemoved() override;
@@ -508,7 +501,6 @@ private:
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
     EncodedAudio* iAudioData;
-    TUint iClockPullMultiplier;
 };
 
 class MsgStreamInterrupted : public Msg
@@ -635,7 +627,6 @@ public:
     void ClearRamp();
     void SetMuted(); // should only be used with msgs immediately following a ramp down
     const Media::Ramp& Ramp() const;
-    void SetClockPull(TUint aMultiplier);
     TUint MedianRampMultiplier(); // 1<<31 => full level.  Note - clears any existing ramp
 protected:
     MsgAudio(AllocatorBase& aAllocator);
@@ -650,7 +641,6 @@ protected:
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
     Media::Ramp iRamp;
-    TUint iClockPullMultiplier;
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
@@ -745,7 +735,6 @@ public:
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;
-    TUint ClockPullMultiplier() const;
     /**
      * Extract pcm data from this msg.
      *
@@ -760,7 +749,7 @@ public:
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
     void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                    TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
+                    TUint aOffsetBytes, const Media::Ramp& aRamp);
 protected: // from Msg
     void RefAdded() override;
     void RefRemoved() override;
@@ -776,7 +765,6 @@ protected:
     TUint iNumChannels;
     TUint iOffset; // Bytes
     Media::Ramp iRamp;
-    TUint iClockPullMultiplier;
 };
 
 class MsgPlayablePcm : public MsgPlayable
@@ -786,7 +774,7 @@ public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                    TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
+                    TUint aOffsetBytes, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Clone() override; // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     MsgPlayable* Allocate() override;
@@ -805,7 +793,7 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp, TUint aClockPullMultiplier);
+    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp);
 private: // from MsgPlayable
     MsgPlayable* Allocate() override;
     void SplitCompleted(MsgPlayable& aRemaining) override;
@@ -1213,15 +1201,6 @@ public:
      */
     virtual void OutputData(const Brx& aData) = 0;
     /**
-    * Push a block of PCM audio into the pipeline.
-    *
-    * Data is copied into the pipeline.  The caller is free to reuse its buffer.
-    *
-    * @param[in] aData                 Encoded audio.  Must be <= EncodedAudio::kMaxBytes
-    * @param[in] aClockPullMultiplier  Clock pull to be applied when this audio is played
-    */
-    virtual void OutputPcmData(const Brx& aData, TUint aClockPullMultiplier) = 0;
-    /**
      * Push metadata, describing the current stream, into the pipeline.
      *
      * Use of this is optional.  The pipeline will treat the data as opaque and will merely
@@ -1558,7 +1537,6 @@ public:
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgEncodedStream* CreateMsgEncodedStream(MsgEncodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
-    MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData, TUint aClockPullMultiplier); // aData must be PCM
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgStreamInterrupted* CreateMsgStreamInterrupted();
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);

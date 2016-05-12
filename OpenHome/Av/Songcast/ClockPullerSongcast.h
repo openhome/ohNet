@@ -13,7 +13,7 @@ namespace Av {
 class ClockPullerNonTimestamped : public Media::IClockPullerReservoir, private INonCopyable
 {
 public:
-    ClockPullerNonTimestamped(Environment& aEnv);
+    ClockPullerNonTimestamped(Environment& aEnv, Media::IPullableClock& aPullableClock);
     void SetEnabled(TBool aEnabled);
 private:
     inline Media::IClockPullerReservoir& Puller();
@@ -22,7 +22,7 @@ private: // from IClockPullerReservoir
     void Reset() override;
     void Stop() override;
     void Start(TUint aNotificationFrequency) override;
-    TUint NotifySize(TUint aJiffies) override;
+    void NotifySize(TUint aJiffies) override;
 private:
     Media::ClockPullerUtilisation iPuller;
     Mutex iLock;
@@ -36,7 +36,7 @@ class ClockPullerSongcast : public Media::IClockPullerTimestamp, private INonCop
     static const TUint kMclkTicksPerSec44k = 44100 * 256;
     static const TUint kMclkTicksPerSec48k = 48000 * 256;
 public:
-    ClockPullerSongcast(Environment& aEnv);
+    ClockPullerSongcast(Environment& aEnv, Media::IPullableClock& aPullableClock);
     Media::ModeClockPullers ClockPullers();
 private:
     void ResetTimestampHistory();
@@ -46,10 +46,10 @@ private: // from Media::IClockPullerTimestamp
     void Reset() override;
     void Stop() override;
     void Start() override;
-    TUint NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
 private:
     ClockPullerNonTimestamped iPullerReservoirLeft;
-    ClockPullerNonTimestamped iPullerReservoirRight;
+    Media::IPullableClock& iPullableClock;
     TUint iMultiplier;
     TBool iUseTimestamps;
     TBool iStoreNetworkTimestamp;

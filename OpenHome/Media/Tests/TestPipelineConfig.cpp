@@ -7,7 +7,6 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
-#include <OpenHome/Net/Private/Shell.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -22,7 +21,6 @@ class SuitePipelineConfig : public Suite
                           , private ISeekRestreamer
                           , private IUrlBlockWriter
                           , private IPipelineAnimator
-                          , private Net::IShell
                           , private IAnalogBypassVolumeRamper
 {
 public:
@@ -58,9 +56,6 @@ private: // from IUrlBlockWriter
 private: // from IPipelineAnimator
     TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) override;
-private: // from Net::IShell
-    void AddCommandHandler(const TChar* aCommand, Net::IShellCommandHandler& aHandler) override;
-    void RemoveCommandHandler(const TChar* aCommand) override;
 private: // from IAnalogBypassVolumeRamper
     void ApplyVolumeMultiplier(TUint aValue) override;
 private:
@@ -117,13 +112,12 @@ void SuitePipelineConfig::Test()
                                          EPipelineSupportElementsRampValidator,
                                          EPipelineSupportElementsValidatorMinimal,
                                          EPipelineSupportElementsAudioDumper,
-                                         EPipelineSupportElementsClockPullerManual,
                                          };
     const TUint num_elems = sizeof(elems) / sizeof(elems[0]);
     for (TUint i=0; i<num_elems; i++) {
         auto initParams = PipelineInitParams::New();
         initParams->SetSupportElements(elems[i]);
-        Pipeline* pipeline = new Pipeline(initParams, iInfoAggregator, *iTrackFactory, iPipelineObserver, *this, *this, *this, *this);
+        Pipeline* pipeline = new Pipeline(initParams, iInfoAggregator, *iTrackFactory, iPipelineObserver, *this, *this, *this);
         pipeline->Start(*this);
         pipeline->Push(iMsgFactory->CreateMsgQuit());
         Msg* msg = pipeline->Pull();
@@ -213,14 +207,6 @@ TUint SuitePipelineConfig::PipelineAnimatorBufferJiffies()
 TUint SuitePipelineConfig::PipelineAnimatorDelayJiffies(TUint /*aSampleRate*/, TUint /*aBitDepth*/, TUint /*aNumChannels*/)
 {
     return 0;
-}
-
-void SuitePipelineConfig::AddCommandHandler(const TChar* /*aCommand*/, Net::IShellCommandHandler& /*aHandler*/)
-{
-}
-
-void SuitePipelineConfig::RemoveCommandHandler(const TChar* /*aCommand*/)
-{
 }
 
 void SuitePipelineConfig::ApplyVolumeMultiplier(TUint /*aValue*/)

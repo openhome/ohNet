@@ -42,8 +42,7 @@ TUint PriorityArbitratorPipeline::HostRange() const
 
 // PipelineManager
 
-PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator,
-                                 TrackFactory& aTrackFactory, Net::IShell& aShell)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
@@ -51,7 +50,7 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
 {
     iPrefetchObserver = new PrefetchObserver();
     iPipeline = new Pipeline(aInitParams, aInfoAggregator, aTrackFactory,
-                             *this, *iPrefetchObserver, *this, *this, aShell);
+                             *this, *iPrefetchObserver, *this, *this);
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);

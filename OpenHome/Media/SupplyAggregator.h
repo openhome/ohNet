@@ -40,9 +40,6 @@ public: // from ISupply
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TUint64 aStartPos, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
     void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
     void OutputData(const Brx& aData) override;
-    void OutputPcmData(const Brx& aData, TUint aClockPullMultiplier) override;
-private:
-    TUint iLastClockMultiplier;
 };
 
 class SupplyAggregatorJiffies : public SupplyAggregator
@@ -54,10 +51,8 @@ public: // from ISupply
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TUint64 aStartPos, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
     void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
     void OutputData(const Brx& aData) override;
-    void OutputPcmData(const Brx& aData, TUint aClockPullMultiplier) override;
 private:
     TUint iDataMaxBytes;
-    TUint iLastClockMultiplier;
 };
 
 class AutoSupplyFlush : private INonCopyable

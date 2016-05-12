@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
@@ -37,7 +38,7 @@ public:
     Sender(Environment& aEnv,
            Net::DvDeviceStandard& aDevice,
            ZoneHandler& aZoneHandler,
-           IOhmTimestamper* aTimestamper,
+           Optional<IOhmTimestamper> aTimestamper,
            Configuration::IConfigInitialiser& aConfigInit,
            TUint aThreadPriority,
            const Brx& aName,

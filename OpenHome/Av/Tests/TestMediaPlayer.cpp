@@ -126,6 +126,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
+    , iPullableClock(nullptr)
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
     , iMaxUiTabs(aMaxUiTabs)
@@ -184,7 +185,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationRamperSize(100 * Jiffies::kPerMs); // larger StarvationRamper size useful for desktop
                                                                   // platforms with slightly unpredictable thread scheduling
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iShell, *iRamStore, *iConfigRamStore, pipelineInit,
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, pipelineInit,
                                    volumeInit, volumeProfile, aUdn, Brn(aRoom), Brn(aProductName));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
@@ -217,6 +218,11 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDeviceUpnpAv;
     delete iRamStore;
     delete iConfigRamStore;
+}
+
+void TestMediaPlayer::SetPullableClock(Media::IPullableClock& aPullableClock)
+{
+    iPullableClock = &aPullableClock;
 }
 
 void TestMediaPlayer::SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper)
@@ -363,10 +369,10 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     if (iTuneInPartnerId.Bytes() == 0) {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, Optional<IPullableClock>(iPullableClock)));
     }
     else {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iTuneInPartnerId));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, Optional<IPullableClock>(iPullableClock), iTuneInPartnerId));
     }
     iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv));
 
@@ -374,9 +380,13 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     hostName.Replace(iDevice->Udn());
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iMediaPlayer->FriendlyNameObservable(), macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, Optional<IPullableClock>(iPullableClock),
+                                             iMediaPlayer->FriendlyNameObservable(), macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iTxTimestamper, iRxTimestamper));
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer,
+                                                 Optional<IPullableClock>(iPullableClock),
+                                                 Optional<IOhmTimestamper>(iTxTimestamper),
+                                                 Optional<IOhmTimestamper>(iRxTimestamper)));
 
     iMediaPlayer->BufferLogOutput(128 * 1024);
 }

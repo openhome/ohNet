@@ -880,34 +880,31 @@ void ModeInfo::Clear()
 // ModeClockPullers
 
 ModeClockPullers::ModeClockPullers()
-    : iReservoirLeft(nullptr)
-    , iReservoirRight(nullptr)
-    , iTimestamp(nullptr)
+    : iEnabled(false)
+    , iReservoirLeft(nullptr)
 {
 }
 
-ModeClockPullers::ModeClockPullers(IClockPullerReservoir* aReservoirLeft,
-                                   IClockPullerReservoir* aReservoirRight,
-                                   IClockPullerTimestamp* aTimestamp)
-    : iReservoirLeft(aReservoirLeft)
-    , iReservoirRight(aReservoirRight)
-    , iTimestamp(aTimestamp)
+ModeClockPullers::ModeClockPullers(TBool aEnabled)
+    : iEnabled(aEnabled)
+    , iReservoirLeft(nullptr)
 {
+}
+
+ModeClockPullers::ModeClockPullers(IClockPullerReservoir* aReservoirLeft)
+    : iEnabled(aReservoirLeft != nullptr)
+    , iReservoirLeft(aReservoirLeft)
+{
+}
+
+TBool ModeClockPullers::Enabled() const
+{
+    return iEnabled;
 }
 
 IClockPullerReservoir* ModeClockPullers::ReservoirLeft() const
 {
     return iReservoirLeft;
-}
-
-IClockPullerReservoir* ModeClockPullers::ReservoirRight() const
-{
-    return iReservoirRight;
-}
-
-IClockPullerTimestamp* ModeClockPullers::Timestamp() const
-{
-    return iTimestamp;
 }
 
 
@@ -1340,18 +1337,12 @@ MsgAudioEncoded* MsgAudioEncoded::Clone()
     return clone;
 }
 
-TUint MsgAudioEncoded::ClockPullMultiplier() const
-{
-    return iClockPullMultiplier;
-}
-
-void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio, TUint aClockPullMultiplier)
+void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
 {
     iAudioData = aEncodedAudio;
     iSize = iAudioData->Bytes();
     iOffset = 0;
     iNextAudio = nullptr;
-    iClockPullMultiplier = aClockPullMultiplier;
 }
 
 void MsgAudioEncoded::RefAdded()
@@ -1374,7 +1365,6 @@ void MsgAudioEncoded::RefRemoved()
 void MsgAudioEncoded::Clear()
 {
     iAudioData->RemoveRef();
-    iClockPullMultiplier = IPullableClock::kPullNone;
 }
 
 Msg* MsgAudioEncoded::Process(IMsgProcessor& aProcessor)
@@ -1626,7 +1616,6 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
     remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
-    remaining->iClockPullMultiplier = iClockPullMultiplier;
     remaining->iSampleRate = iSampleRate;
     remaining->iBitDepth = iBitDepth;
     remaining->iNumChannels = iNumChannels;
@@ -1748,11 +1737,6 @@ const Media::Ramp& MsgAudio::Ramp() const
     return iRamp;
 }
 
-void MsgAudio::SetClockPull(TUint aMultiplier)
-{
-    iClockPullMultiplier = aMultiplier;
-}
-
 TUint MsgAudio::MedianRampMultiplier()
 {
     if (!iRamp.IsEnabled()) {
@@ -1775,7 +1759,6 @@ void MsgAudio::Initialise(TUint aSampleRate, TUint aBitDepth, TUint aChannels)
 {
     iNextAudio = nullptr;
     iRamp.Reset();
-    iClockPullMultiplier = IPullableClock::kPullNone;
     iSampleRate = aSampleRate;
     iBitDepth = aBitDepth;
     iNumChannels = aChannels;
@@ -1823,13 +1806,13 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     MsgPlayable* playable;
     if (iRamp.Direction() != Ramp::EMute) {
         MsgPlayablePcm* pcm = iAllocatorPlayablePcm->Allocate();
-        pcm->Initialise(iAudioData, sizeBytes, iBitDepth, iNumChannels, offsetBytes, iRamp, iClockPullMultiplier);
+        pcm->Initialise(iAudioData, sizeBytes, iBitDepth, iNumChannels, offsetBytes, iRamp);
         playable = pcm;
     }
     else {
         MsgPlayableSilence* silence = iAllocatorPlayableSilence->Allocate();
         Media::Ramp noRamp;
-        silence->Initialise(sizeBytes, iBitDepth, iNumChannels, noRamp, iClockPullMultiplier);
+        silence->Initialise(sizeBytes, iBitDepth, iNumChannels, noRamp);
         playable = silence;
     }
     if (iNextAudio != nullptr) {
@@ -1872,7 +1855,6 @@ MsgAudio* MsgAudioPcm::Clone()
     clone->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     clone->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
     clone->iTrackOffset = iTrackOffset;
-    clone->iClockPullMultiplier = iClockPullMultiplier;
     iAudioData->AddRef();
     return clone;
 }
@@ -1951,7 +1933,7 @@ MsgPlayable* MsgSilence::CreatePlayable()
     // we don't risk losing any data doing this as each original MsgSilence had an integer number of samples
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp, iClockPullMultiplier);
+    playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp);
     if (iNextAudio != nullptr) {
         MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable();
         playable->Add(child);
@@ -2071,11 +2053,6 @@ const Media::Ramp& MsgPlayable::Ramp() const
     return iRamp;
 }
 
-TUint MsgPlayable::ClockPullMultiplier() const
-{
-    return iClockPullMultiplier;
-}
-
 void MsgPlayable::Read(IPcmProcessor& aProcessor)
 {
     aProcessor.BeginBlock();
@@ -2093,7 +2070,7 @@ MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
 }
 
 void MsgPlayable::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                             TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier)
+                             TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
     iNextPlayable = nullptr;
     iSize = aSizeBytes;
@@ -2101,7 +2078,6 @@ void MsgPlayable::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChanne
     iNumChannels = aNumChannels;
     iOffset = aOffsetBytes;
     iRamp = aRamp;
-    iClockPullMultiplier = aClockPullMultiplier;
 }
 
 void MsgPlayable::RefAdded()
@@ -2137,9 +2113,9 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 }
 
 void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                                TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier)
+                                TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
-    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, aOffsetBytes, aRamp, aClockPullMultiplier);
+    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, aOffsetBytes, aRamp);
     iAudioData = aDecodedAudio;
     iAudioData->AddRef();
 }
@@ -2237,9 +2213,9 @@ MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
 }
 
 void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                                    const Media::Ramp& aRamp, TUint aClockPullMultiplier)
+                                    const Media::Ramp& aRamp)
 {
-    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, 0, aRamp, aClockPullMultiplier);
+    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, 0, aRamp);
     iBitDepth = aBitDepth;
     iNumChannels = aNumChannels;
 }
@@ -3085,14 +3061,9 @@ MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(MsgEncodedStream* aMsg, ISt
 
 MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData)
 {
-    return CreateMsgAudioEncoded(aData, IPullableClock::kPullNone);
-}
-
-MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData, TUint aClockPullMultiplier)
-{
     EncodedAudio* encodedAudio = CreateEncodedAudio(aData);
     MsgAudioEncoded* msg = iAllocatorMsgAudioEncoded.Allocate();
-    msg->Initialise(encodedAudio, aClockPullMultiplier);
+    msg->Initialise(encodedAudio);
     return msg;
 }
 
@@ -3175,10 +3146,8 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChann
 {
     AudioData* audioData = aAudio->iAudioData;
     audioData->AddRef();
-    auto audioPcm = CreateMsgAudioPcm(static_cast<DecodedAudio*>(audioData),
-                                      aChannels, aSampleRate, aBitDepth, aTrackOffset);
-    audioPcm->SetClockPull(aAudio->ClockPullMultiplier());
-    return audioPcm;
+    return CreateMsgAudioPcm(static_cast<DecodedAudio*>(audioData),
+                             aChannels, aSampleRate, aBitDepth, aTrackOffset);
 }
 
 MsgSilence* MsgFactory::CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels)

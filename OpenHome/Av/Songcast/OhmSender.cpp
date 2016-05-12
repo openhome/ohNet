@@ -12,6 +12,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Optional.h>
 
 #include <stdio.h>
 
@@ -173,7 +174,7 @@ void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 
 // OhmSenderDriver
 
-OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper)
+OhmSenderDriver::OhmSenderDriver(Environment& aEnv, Optional<IOhmTimestamper> aTimestamper)
     : iMutex("OHMD")
     , iEnabled(false)
     , iActive(false)
@@ -189,7 +190,7 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
     , iLatencyOhm(0)
     , iSocket(aEnv)
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
-    , iTimestamper(aTimestamper)
+    , iTimestamper(aTimestamper.Ptr())
     , iFirstFrame(true)
 {
 }

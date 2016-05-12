@@ -52,10 +52,11 @@ const TInt ProtocolOhm::kLockingMaxDeviation = Jiffies::kPerMs / 2;
 const TUint ProtocolOhm::kLockingMsgCount = 4;
 
 ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFactory& aTrackFactory,
-                         IOhmTimestamper* aTimestamper, IClockPullerTimestamp& aClockPuller, const Brx& aMode)
+                         Optional<IOhmTimestamper> aTimestamper, Optional<IClockPullerTimestamp> aClockPuller,
+                         const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
     , iStoppedLock("POHM")
-    , iClockPuller(aClockPuller)
+    , iClockPuller(aClockPuller.Ptr())
 {
 }
 
@@ -193,7 +194,9 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     if (iTimestamper != nullptr) {
         iTimestamper->Stop();
     }
-    iClockPuller.Stop();
+    if (iClockPuller != nullptr) {
+        iClockPuller->Stop();
+    }
 
     iReadBuffer.ReadFlush();
     iTimerJoin->Cancel();
@@ -210,11 +213,10 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TUint& aClockPullMultiplier)
+void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
 {
     aDiscard = false;
-    aClockPullMultiplier = IPullableClock::kPullNone;
-    if (iTimestamper == nullptr) {
+    if (iTimestamper == nullptr || iClockPuller == nullptr) {
         return;
     }
     const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
@@ -222,7 +224,7 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
         iCheckForTimestamp = false;
         iStreamIsTimestamped = msgTimestamped;
         if (iStreamIsTimestamped) {
-            iClockPuller.Start();
+            iClockPuller->Start();
         }
     }
 
@@ -237,7 +239,7 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
         (void)iTimestamper->SetSampleRate(sampleRate);
         iTimestamper->Stop();
         iTimestamper->Start(iEndpoint);
-        iClockPuller.NewStream(sampleRate); // despite function name, try only reporting changes in clock family
+        iClockPuller->NewStream(sampleRate); // despite function name, try only reporting changes in clock family
 
         iTimestamperFreq = timestamperFreq;
         iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
@@ -289,7 +291,7 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TU
     if (timestampReliable && msgTimestamped) {
         const TUint networkTimestamp = aMsg.NetworkTimestamp();
         const TInt drift = iTimestampDelta - static_cast<TInt>(aMsg.RxTimestamp() - networkTimestamp);
-        aClockPullMultiplier = iClockPuller.NotifyTimestamp(drift, networkTimestamp);
+        iClockPuller->NotifyTimestamp(drift, networkTimestamp);
     }
 }
 

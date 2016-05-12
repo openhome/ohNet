@@ -122,8 +122,7 @@ Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
     }
     iJiffiesUntilNextUsageReport -= aMsg->Jiffies();
     if (iJiffiesUntilNextUsageReport == 0) {
-        const TUint multiplier = iClockPuller->NotifySize(Jiffies());
-        aMsg->SetClockPull(multiplier);
+        iClockPuller->NotifySize(Jiffies());
         iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     }
 

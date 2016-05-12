@@ -2,6 +2,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Av/Songcast/ProtocolOhBase.h>
 
 namespace OpenHome {
@@ -18,11 +19,12 @@ class IOhmTimestamper;
 class ProtocolOhm : public ProtocolOhBase
 {
 public:
-    ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper,
-                Media::IClockPullerTimestamp& aClockPuller, const Brx& aMode);
+    ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory,
+                Optional<IOhmTimestamper> aTimestamper, Optional<Media::IClockPullerTimestamp> aClockPuller,
+                const Brx& aMode);
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
-    void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard, TUint& aClockPullMultiplier) override;
+    void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) override;
 private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
@@ -45,7 +47,7 @@ private:
     TUint iJiffiesBeforeTimestampsReliable;
     TInt iTimestampDelta;
     TUint iMsgsTillLock;
-    Media::IClockPullerTimestamp& iClockPuller; // FIXME - change to reference
+    Media::IClockPullerTimestamp* iClockPuller;
 };
 
 } // namespace Av

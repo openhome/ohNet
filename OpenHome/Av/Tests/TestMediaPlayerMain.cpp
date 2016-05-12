@@ -74,6 +74,7 @@ void TestMediaPlayerThread::RunInThread()
         iOptions.TuneIn().Value(), iOptions.Tidal().Value(), iOptions.Qobuz().Value(),
         iOptions.UserAgent().Value());
     Media::AnimatorBasic* animator = new Media::AnimatorBasic(dvStack->Env(), tmp->Pipeline(), iOptions.ClockPull().Value());
+    tmp->SetPullableClock(*animator);
     tmp->Run();
     tmp->StopPipeline();
     delete animator;

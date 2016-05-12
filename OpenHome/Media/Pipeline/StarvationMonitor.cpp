@@ -140,8 +140,7 @@ MsgAudio* StarvationMonitor::ProcessAudioOut(MsgAudio* aMsg)
         }
         iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
         if (iJiffiesUntilNextHistoryPoint == 0) {
-            const TUint multiplier = iClockPuller->NotifySize(Jiffies());
-            aMsg->SetClockPull(multiplier);
+            iClockPuller->NotifySize(Jiffies());
             iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
         }
     }
@@ -268,7 +267,7 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     if (iClockPuller != nullptr) {
         iClockPuller->Stop();
     }
-    iClockPuller = aMsg->ClockPullers().ReservoirRight();
+    iClockPuller = nullptr;// aMsg->ClockPullers().ReservoirRight();
     if (iClockPuller != nullptr) {
         iClockPuller->Start(kUtilisationSamplePeriodJiffies);
     }

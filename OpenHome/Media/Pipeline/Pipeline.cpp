@@ -13,7 +13,6 @@
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
-#include <OpenHome/Media/Pipeline/ClockPullerManual.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
@@ -194,8 +193,7 @@ TUint PipelineInitParams::SupportElements() const
     } while (0)
 
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
-                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell)
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -295,8 +293,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iLoggerDecodedAudioReservoir,
                    new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
-    ATTACH_ELEMENT(iClockPullerManual, new ClockPullerManual(*upstream, aShell),
-                   upstream, elementsSupported, EPipelineSupportElementsClockPullerManual);
     ATTACH_ELEMENT(iRamper, new Ramper(*upstream, aInitParams->RampLongJiffies()),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerRamper, new Logger(*iRamper, "Ramper"),
@@ -559,7 +555,6 @@ Pipeline::~Pipeline()
     delete iRampValidatorRamper;
     delete iLoggerRamper;
     delete iRamper;
-    delete iClockPullerManual;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;

@@ -45,17 +45,18 @@ private:
 class ClockPullerUtilisation : public IClockPullerReservoir, private IUtilisationHistoryObserver, private INonCopyable
 {
 public:
-    ClockPullerUtilisation(Environment& aEnv);
+    ClockPullerUtilisation(Environment& aEnv, IPullableClock& aPullableClock);
     ~ClockPullerUtilisation();
 private: // from IClockPullerReservoir
     void NewStream(TUint aSampleRate) override;
     void Reset() override;
     void Stop() override;
     void Start(TUint aNotificationFrequency) override;
-    TUint NotifySize(TUint aJiffies) override;
+    void NotifySize(TUint aJiffies) override;
 private: // from IUtilisationHistoryObserver
     void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;
 private:
+    IPullableClock& iPullableClock;
     UtilisationHistory* iUtilisation;
     TUint iUpdateFrequency;
     TUint iMultiplier;

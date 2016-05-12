@@ -19,7 +19,7 @@ class IClockPullerReservoir : public IClockPuller
 public:
     virtual ~IClockPullerReservoir() {}
     virtual void Start(TUint aNotificationFrequency) = 0;
-    virtual TUint NotifySize(TUint aJiffies) = 0;
+    virtual void NotifySize(TUint aJiffies) = 0;
 };
 
 class IClockPullerTimestamp : public IClockPuller
@@ -27,13 +27,12 @@ class IClockPullerTimestamp : public IClockPuller
 public:
     virtual ~IClockPullerTimestamp() {}
     virtual void Start() = 0;
-    virtual TUint NotifyTimestamp(TInt aDrift, TUint aNetwork) = 0;
+    virtual void NotifyTimestamp(TInt aDrift, TUint aNetwork) = 0;
 };
 
 class IPullableClock
 {
 public:
-    static const TUint kPullNone = 0; // no pull set
     static const TUint kNominalFreq = 1u<<31;
 public:
     virtual ~IPullableClock() {}
@@ -41,10 +40,10 @@ public:
      * Signal that the clock should be pulled.
      *
      * @param[in] aSampleRate  Nominal frequency for the stream.
-     * @param[in] aMultiplier  Amount to pull by as fix 1.31 value.
+     * @param[in] aMultiplier  Amount to pull by as fix 1.31 value (so, in the range [0..2)).
      *                         kNominalFreq implies no pull - i.e. run at nominal frequency.
      */
-    virtual void PullClock(TUint aSampleRate, TUint aMultiplier) = 0;
+    virtual void PullClock(TUint aMultiplier) = 0;
 };
 
 class ClockPullerUtils

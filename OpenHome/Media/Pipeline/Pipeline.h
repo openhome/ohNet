@@ -10,13 +10,9 @@
 #include <OpenHome/Media/Pipeline/Stopper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
-#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/MuteManager.h>
 
 namespace OpenHome {
-namespace Net {
-    class IShell;
-}
 namespace Media {
 
 enum EPipelineSupportElements {
@@ -26,7 +22,6 @@ enum EPipelineSupportElements {
     EPipelineSupportElementsRampValidator         = 1 << 2,
     EPipelineSupportElementsValidatorMinimal      = 1 << 3,
     EPipelineSupportElementsAudioDumper           = 1 << 4,
-    EPipelineSupportElementsClockPullerManual     = 1 << 5,
     EPipelineSupportElementsAll                   = 0x7fffffff
 };
 
@@ -99,7 +94,6 @@ class DecodedAudioValidator;
 class SampleRateValidator;
 class DecodedAudioAggregator;
 class DecodedAudioReservoir;
-class ClockPullerManual;
 class Ramper;
 class RampValidator;
 class Seeker;
@@ -155,8 +149,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kThreadCount             = 4; // CodecController, Gorger, StarvationRamper, FlywheelRamper
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
-             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell);
+             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter);
     virtual ~Pipeline();
     void AddContainer(Codec::ContainerBase* aContainer);
     void AddCodec(Codec::CodecBase* aCodec);
@@ -237,7 +230,6 @@ private:
     Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
-    ClockPullerManual* iClockPullerManual;
     Ramper* iRamper;
     Logger* iLoggerRamper;
     RampValidator* iRampValidatorRamper;

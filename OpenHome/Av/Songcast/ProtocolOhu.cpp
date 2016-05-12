@@ -22,7 +22,7 @@ using namespace OpenHome::Media;
 // ProtocolOhu
 
 ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode)
-    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, nullptr /* no timestamper required */, "ohu", aMode)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, Optional<IOhmTimestamper>() /* no timestamper required */, "ohu", aMode)
     , iLeaveLock("POHU")
 {
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired), "ProtocolOhuLeave");
@@ -244,10 +244,9 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-void ProtocolOhu::ProcessTimestamps(const OhmMsgAudio& /*aMsg*/, TBool& aDiscard, TUint& aClockPullMultiplier)
+void ProtocolOhu::ProcessTimestamps(const OhmMsgAudio& /*aMsg*/, TBool& aDiscard)
 {
     aDiscard = false;
-    aClockPullMultiplier = IPullableClock::kNominalFreq;
 }
 
 void ProtocolOhu::Interrupt(TBool aInterrupt)

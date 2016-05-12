@@ -2,6 +2,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Timer.h>
@@ -27,7 +28,7 @@ class OhmSenderDriver : public IOhmSenderDriver
     static const TUint kMaxAudioFrameBytes = 6 * 1024;
     static const TUint kMaxHistoryFrames = 100;
 public:
-    OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper);
+    OhmSenderDriver(Environment& aEnv, Optional<IOhmTimestamper> aTimestamper);
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName, TUint64 aSampleStart);
     void SendAudio(const TByte* aData, TUint aBytes, TBool aHalt = false);
     OhmMsgAudio* CreateAudio();
