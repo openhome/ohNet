@@ -641,16 +641,6 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     return DoOutputAudioPcm(audio);
 }
 
-TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset,
-                                        TUint aRxTimestamp, TUint aNetworkTimestamp)
-{
-    ASSERT(aChannels == iChannels);
-    ASSERT(aSampleRate == iSampleRate);
-    ASSERT(aBitDepth == iBitDepth);
-    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aNetworkTimestamp);
-    return DoOutputAudioPcm(audio);
-}
-
 TUint64 CodecController::OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset)
 {
     ASSERT(aChannels == iChannels);

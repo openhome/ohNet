@@ -147,25 +147,6 @@ public:
     /**
      * Add a block of decoded (PCM) audio to the pipeline.
      *
-     * Includes the same functionality as the 6-argument overload but also specifies
-     * timestamps, allowing for synchronised playback.
-     *
-     * @param[in] aData          PCM audio data.  Must contain an exact number of samples.
-     *                           i.e. aData.Bytes() % (aChannels * aBitDepth/8) == 0
-     * @param[in] aChannels      Number of channels.  Must be in the range [2..8].
-     * @param[in] aSampleRate    Sample rate.
-     * @param[in] aBitDepth      Number of bits of audio for a single sample for a single channel.
-     * @param[in] aEndian        Endianness of audio data.
-     * @param[in] aTrackOffset   Offset (in jiffies) into the stream at the start of aData.
-     * @param[in] aRxTimestamp   Time when encoded frame was received by this device.
-     * @param[in] aNetworkTimestamp  Time when the previous encoded frame was sent over the network
-     *
-     * @return     Number of jiffies of audio contained in aData.
-     */
-    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
-    /**
-     * Add a block of decoded (PCM) audio to the pipeline.
-     *
      * Only supported for encoded audio that is already big endian, packed PCM.
      *
      * @param[in] aMsg           Returned from ReadNextMsg().
@@ -361,7 +342,6 @@ private: // ICodecController
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aAnalogBypass) override;
     void OutputDelay(TUint aJiffies) override;
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset) override;
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) override;
     TUint64 OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset) override;
     void OutputBitRate(TUint aBitRate) override;
     void OutputWait() override;

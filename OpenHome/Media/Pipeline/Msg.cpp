@@ -1838,16 +1838,6 @@ void MsgAudioPcm::Aggregate(MsgAudioPcm* aMsg)
     aMsg->RemoveRef();
 }
 
-TBool MsgAudioPcm::TryGetTimestamps(TUint& aNetwork, TUint& aRx)
-{
-    if (iTimestamped) {
-        aNetwork = iNetworkTimestamp;
-        aRx = iRxTimestamp;
-        return true;
-    }
-    return false;
-}
-
 MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudioPcm* clone = static_cast<MsgAudioPcm*>(MsgAudio::Clone());
@@ -1876,14 +1866,6 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUi
     iSize = (numSubsamples / iNumChannels) * Jiffies::PerSample(iSampleRate);
     ASSERT(iSize > 0);
     iOffset = 0;
-    iTimestamped = false;
-}
-
-void MsgAudioPcm::SetTimestamps(TUint aRx, TUint aNetwork)
-{
-    iTimestamped = true;
-    iRxTimestamp = aRx;
-    iNetworkTimestamp = aNetwork;
 }
 
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
@@ -1905,7 +1887,6 @@ void MsgAudioPcm::Clear()
 {
     MsgAudio::Clear();
     iAudioData->RemoveRef();
-    iTimestamped = false;
 }
 
 Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
@@ -3133,13 +3114,6 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
 {
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aBitDepth, aEndian);
     return CreateMsgAudioPcm(decodedAudio, aChannels, aSampleRate, aBitDepth, aTrackOffset);
-}
-
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp)
-{
-    MsgAudioPcm* msg = CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
-    msg->SetTimestamps(aRxTimestamp, aNetworkTimestamp);
-    return msg;
 }
 
 MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset)

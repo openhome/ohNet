@@ -675,14 +675,12 @@ public:
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
-    TBool TryGetTimestamps(TUint& aNetwork, TUint& aRx);
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUint aBitDepth, TUint aChannels, TUint64 aTrackOffset,
                     Allocator<MsgPlayablePcm>& aAllocatorPlayablePcm,
                     Allocator<MsgPlayableSilence>& aAllocatorPlayableSilence);
-    void SetTimestamps(TUint aRx, TUint aNetwork);
 private: // from MsgAudio
     MsgAudio* Allocate() override;
     void SplitCompleted(MsgAudio& aRemaining) override;
@@ -694,9 +692,6 @@ private:
     Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
     Allocator<MsgPlayableSilence>* iAllocatorPlayableSilence;
     TUint64 iTrackOffset;
-    TBool iTimestamped;
-    TUint iRxTimestamp;
-    TUint iNetworkTimestamp;
 };
 
 class MsgPlayableSilence;
@@ -1547,7 +1542,6 @@ public:
     MsgDecodedStream* CreateMsgDecodedStream(MsgDecodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgBitRate* CreateMsgBitRate(TUint aBitRate);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset);
-    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     MsgAudioPcm* CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset); // aAudio must contain big endian pcm data
     MsgSilence* CreateMsgSilence(TUint& aSizeJiffies, TUint aSampleRate, TUint aBitDepth, TUint aChannels);
     MsgQuit* CreateMsgQuit();
