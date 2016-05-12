@@ -140,6 +140,7 @@ protected:
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
     RebootLogger iRebootHandler;
     Net::Shell* iShell;
+    Media::IPullableClock* iPullableClock;
 private:
     Semaphore iSemShutdown;
     Semaphore iDisabled;
@@ -149,7 +150,6 @@ private:
     const Brh iTidalId;
     const Brh iQobuzIdSecret;
     const Brh iUserAgent;
-    Media::IPullableClock* iPullableClock;
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;

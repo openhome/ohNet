@@ -120,13 +120,13 @@ const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
                                  const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
                                  TUint aMaxUiTabs, TUint aUiSendQueueSize)
-    : iSemShutdown("TMPS", 0)
+    : iPullableClock(nullptr)
+    , iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
     , iTuneInPartnerId(aTuneInPartnerId)
     , iTidalId(aTidalId)
     , iQobuzIdSecret(aQobuzIdSecret)
     , iUserAgent(aUserAgent)
-    , iPullableClock(nullptr)
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
     , iMaxUiTabs(aMaxUiTabs)
