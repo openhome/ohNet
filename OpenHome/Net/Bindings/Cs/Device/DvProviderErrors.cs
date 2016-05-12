@@ -26,7 +26,7 @@ namespace OpenHome.Net.Device
             Msg = aMessage;
         }
         public ActionError(uint aCode, string aMessage)
-            : base(String.Format("{0}: {1}", aCode, aMessage))
+            : base(String.Format("{0}: {1}", new object[] { aCode, aMessage }))
         {
             Code = aCode;
             Msg = aMessage;

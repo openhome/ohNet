@@ -66,7 +66,7 @@ namespace OpenHome.Net.Device.Providers
         /// </summary>
         /// <returns>Value of the <#=s.name#> property.</param>
         <#=argtype[s.type]#> Property<#=s.name#>();
-<#  } #>        
+<#  } #>
     }
     /// <summary>
     /// Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
@@ -263,13 +263,13 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, String.Format("Invalid value for property {0}", "<#=a.name#>"));
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", new object[] { "<#=a.name#>" }));
                 return -1;
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "<#=a.name#>", e.TargetSite.Name);
-                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown by {1}", new object[] { e, "<#=a.name#>" });
+                System.Diagnostics.Debug.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
                 return -1;
             }
             try
@@ -287,8 +287,8 @@ namespace OpenHome.Net.Device.Providers
             }
             catch (System.Exception e)
             {
-                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "<#=a.name#>", e.TargetSite.Name);
-                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown by {1}", new object[] { e, "<#=a.name#>" });
+                System.Diagnostics.Debug.WriteLine("       Only ActionError can be thrown by action response writer");
             }
             return 0;
         }
@@ -441,39 +441,39 @@ string ParameterAllowedValues(Variable v)
 string InArgsFull(Method a)
 {
     string result = "";
-    
+
     foreach (Argument i in a.inargs)
     {
         if (result.Length > 0)
         {
             result += ", ";
         }
-        
+
         result += argtype[i.variable.type];
         result += " ";
         result += "a" + i.name;
     }
-    
+
     return result;
-} 
+}
 
 string OutArgsFull(Method a)
 {
     string result = "";
-    
+
     foreach (Argument o in a.outargs)
     {
         if (result.Length > 0)
         {
             result += ", ";
         }
-        
+
         result += "out ";
         result += argtype[o.variable.type];
         result += " ";
         result += "a" + o.name;
     }
-    
+
     return result;
 }
 
@@ -547,15 +547,15 @@ bool RelatedVariableIsEvented(Argument arg, Document u)
 string TemplateArgument(string aName)
 {
     string[] args =  System.Environment.GetCommandLineArgs();
-        
+
     bool isarg = false;
-    
+
     foreach (string arg in args)
     {
         if (isarg)
         {
             string[] parts = arg.Split(new char[] {':'});
-            
+
             if (parts.Length == 2)
             {
                 if (parts[0] == aName)
@@ -563,17 +563,17 @@ string TemplateArgument(string aName)
                     return (parts[1]);
                 }
             }
-            
+
             isarg = false;
             continue;
         }
-        
+
         if (arg == "-a")
         {
             isarg = true;
         }
     }
-    
+
     throw (new ArgumentException(aName + " not specified"));
 }
 #>

@@ -70,7 +70,7 @@ namespace OpenHome.Net.ControlPoint
             CpDeviceCGetUdn(iHandle, out ptr, out len);
             return InteropUtils.PtrToStringUtf8(ptr, len);
         }
-        
+
         /// <summary>
         /// Claim a reference to a device.
         /// </summary>
@@ -80,7 +80,7 @@ namespace OpenHome.Net.ControlPoint
         {
             CpDeviceCAddRef(iHandle);
         }
-        
+
         /// <summary>
         /// Remove a reference to a device.
         /// </summary>
@@ -89,7 +89,7 @@ namespace OpenHome.Net.ControlPoint
         {
             CpDeviceCRemoveRef(iHandle);
         }
-        
+
         /// <summary>
         /// Query the value of one of the device's attributes
         /// </summary>
@@ -113,7 +113,7 @@ namespace OpenHome.Net.ControlPoint
             aValue = null;
             return false;
         }
-        
+
         /// <summary>
         /// Get the handle to the underlying native device
         /// </summary>
@@ -137,10 +137,10 @@ namespace OpenHome.Net.ControlPoint
     /// callback and remove the device in their 'removed' callback.
     /// Since CpDevice instances are reference counted, a reference must be claimed inside the
     /// 'added' callback and removed inside the 'removed' callback.
-    /// 
+    ///
     /// This class can't be directly instantiated.  Clients should instead use subclasses which
     /// will define policy on how to detect devices etc.
-    /// 
+    ///
     /// Dispose() must be called before Core.Library.Close().</remarks>
     public class CpDeviceList : ICpDeviceList, IDisposable
     {
@@ -173,7 +173,7 @@ namespace OpenHome.Net.ControlPoint
         /// </summary>
         /// <remarks>This may be a useful way to quickly update a list after a device has been removed
         /// abruptly from the network (without announcing its removal).
-        /// 
+        ///
         /// The 'added' callback may run any time after this is called to notify new devices.
         /// Any removed devices will be notified by a burst of calls to the 'removed' callback
         /// Core.InitParams::MsearchTimeSecs() seconds after this call is made.
@@ -241,7 +241,7 @@ namespace OpenHome.Net.ControlPoint
             }
             catch (ProxyError e)
             {
-                Console.WriteLine("WARNING: ProxyError ({0}:{1}) thrown from {2} in device list change delegate", e.Code, (e.Description != null ? e.Description : "<none>"), e.TargetSite.Name);
+                System.Diagnostics.Debug.WriteLine("WARNING: ProxyError thrown in device list change delegate: {0}", new object[] { e });
             }
         }
     }

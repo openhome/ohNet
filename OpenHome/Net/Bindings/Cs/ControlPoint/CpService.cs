@@ -24,7 +24,7 @@ namespace OpenHome.Net.ControlPoint
         {
             return iHandle;
         }
-        
+
         protected Argument()
         {
         }
@@ -585,8 +585,8 @@ namespace OpenHome.Net.ControlPoint
             }
             catch (Exception e)
             {
-                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
-                Console.WriteLine("         Only ProxyError can be thrown by action complete delegates");
+                System.Diagnostics.Debug.WriteLine("WARNING: unexpected exception {0} thrown", new object[] { e });
+                System.Diagnostics.Debug.WriteLine("         Only ProxyError can be thrown by action complete delegates");
             }
             gch.Free();
             self.iService.InvocationComplete(self);
@@ -619,7 +619,7 @@ namespace OpenHome.Net.ControlPoint
 
         private IntPtr iHandle;
         private List<Invocation> iActiveInvocations;
-        
+
         /// <summary>
         /// Constructor.  Only intended for use by CpProxy.
         /// </summary>
