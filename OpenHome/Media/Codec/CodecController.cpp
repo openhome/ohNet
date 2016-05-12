@@ -57,6 +57,11 @@ TBool EncodedStreamInfo::AnalogBypass() const
     return iAnalogBypass;
 }
 
+const Brx& EncodedStreamInfo::CodecName() const
+{
+    return iCodecName;
+}
+
 EncodedStreamInfo::EncodedStreamInfo()
     : iRawPcm(false)
     , iBitDepth(UINT_MAX)
@@ -68,7 +73,8 @@ EncodedStreamInfo::EncodedStreamInfo()
 {
 }
 
-void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass)
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian,
+                            TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
@@ -77,6 +83,7 @@ void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChanne
     iEndian = aEndian;
     iStartSample = aStartSample;
     iAnalogBypass = aAnalogBypass;
+    iCodecName.Replace(aCodecName);
 }
 
 
@@ -258,7 +265,8 @@ void CodecController::CodecThread()
             EncodedStreamInfo streamInfo;
             if (iRawPcm) {
                 streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(),
-                               iPcmStream.Endian(), iPcmStream.StartSample(), iPcmStream.AnalogBypass());
+                               iPcmStream.Endian(), iPcmStream.StartSample(), iPcmStream.AnalogBypass(),
+                               iPcmStream.CodecName());
             }
 
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);

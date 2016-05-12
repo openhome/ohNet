@@ -262,10 +262,12 @@ class MsgFactory;
 static const TUint kModeMaxBytes          = 32;
 static const TUint kTrackUriMaxBytes      = 1024;
 static const TUint kTrackMetaDataMaxBytes = 5 * 1024;
+static const TUint kMaxCodecNameBytes     = 32;
 
 typedef Bws<kModeMaxBytes>          BwsMode;
 typedef Bws<kTrackUriMaxBytes>      BwsTrackUri;
 typedef Bws<kTrackMetaDataMaxBytes> BwsTrackMetaData;
+typedef Bws<kMaxCodecNameBytes>     BwsCodecName;
 
 class Track : public Allocated
 {
@@ -409,6 +411,7 @@ public:
     PcmStreamInfo();
     void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample = 0);
     void SetAnalogBypass();
+    void SetCodecName(const Brx& aCodecName);
     void Clear();
     TUint BitDepth() const;
     TUint SampleRate() const;
@@ -416,6 +419,8 @@ public:
     AudioDataEndian Endian() const;
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
+    const Brx& CodecName() const;
+    void operator=(const PcmStreamInfo &);
 private:
     TUint iBitDepth;
     TUint iSampleRate;
@@ -423,6 +428,7 @@ private:
     AudioDataEndian iEndian;
     TUint64 iStartSample;
     TBool iAnalogBypass;
+    BwsCodecName iCodecName;
 };
 
 class MsgMetaText : public Msg
@@ -567,8 +573,6 @@ class DecodedStreamInfo
 {
     friend class MsgDecodedStream;
 public:
-    static const TUint kMaxCodecNameBytes = 32;
-public:
     TUint StreamId() const { return iStreamId; }
     TUint BitRate() const { return iBitRate; }
     TUint BitDepth() const { return iBitDepth; }
@@ -591,7 +595,7 @@ private:
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
-    Bws<kMaxCodecNameBytes> iCodecName;
+    BwsCodecName iCodecName;
     TUint64 iTrackLength; // jiffies
     TUint64 iSampleStart;
     TBool iLossless;

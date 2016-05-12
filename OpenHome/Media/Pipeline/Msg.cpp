@@ -1080,6 +1080,7 @@ void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, 
     iNumChannels = aNumChannels;
     iEndian = aEndian;
     iStartSample = aStartSample;
+    iCodecName.Replace(Brn("PCM"));
 }
 
 void PcmStreamInfo::SetAnalogBypass()
@@ -1087,11 +1088,17 @@ void PcmStreamInfo::SetAnalogBypass()
     iAnalogBypass = true;
 }
 
+void PcmStreamInfo::SetCodecName(const Brx& aCodecName)
+{
+    iCodecName.Replace(aCodecName);
+}
+
 void PcmStreamInfo::Clear()
 {
     iBitDepth = iSampleRate = iNumChannels = UINT_MAX;
     iEndian = AudioDataEndian::Invalid;
     iAnalogBypass = false;
+    iCodecName.Replace(Brx::Empty());
 }
 
 TUint PcmStreamInfo::BitDepth() const
@@ -1122,6 +1129,22 @@ TUint64 PcmStreamInfo::StartSample() const
 TBool PcmStreamInfo::AnalogBypass() const
 {
     return iAnalogBypass;
+}
+
+const Brx& PcmStreamInfo::CodecName() const
+{
+    return iCodecName;
+}
+
+void PcmStreamInfo::operator=(const PcmStreamInfo& aPcmStream)
+{
+    iBitDepth = aPcmStream.BitDepth();
+    iSampleRate = aPcmStream.SampleRate();
+    iNumChannels = aPcmStream.NumChannels();
+    iEndian = aPcmStream.Endian();
+    iStartSample = aPcmStream.StartSample();
+    iAnalogBypass = aPcmStream.AnalogBypass();
+    iCodecName.Replace(aPcmStream.CodecName());
 }
 
 

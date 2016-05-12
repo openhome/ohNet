@@ -229,9 +229,11 @@ public:
     AudioDataEndian Endian() const;
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
+    const Brx& CodecName() const;
 private:
     EncodedStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample,
+             TBool aAnalogBypass, const Brx& aCodecName);
 private:
     TBool iRawPcm;
     TUint iBitDepth;
@@ -240,6 +242,7 @@ private:
     AudioDataEndian iEndian;
     TUint64 iStartSample;
     TBool iAnalogBypass;
+    BwsCodecName iCodecName;
 };
     
 /**
