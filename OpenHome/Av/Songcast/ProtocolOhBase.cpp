@@ -473,6 +473,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
     }
     iSupply->OutputData(aMsg.Audio());
     if (aMsg.Halt()) {
+        iSupply->OutputWait();
         iSupply->OutputHalt();
     }
     aMsg.RemoveRef();
