@@ -16,6 +16,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/DviSubscription.h> // for DvSubscriptionError
 
 #include <list>
 #include <map>
@@ -288,6 +289,10 @@ void CpiSubscription::DoRenew()
         Schedule(eResubscribe);
     }
     catch (ReaderError&) {
+        Schedule(eResubscribe);
+    }
+    catch (DvSubscriptionError&) {
+        Log::Print("WARNING: CpiSubscription::DoRenew() caught DvSubscriptionError (has some other CP removed a subscription used by a CpDeviceDv?)\n");
         Schedule(eResubscribe);
     }
     catch (AssertionFailed&) {
