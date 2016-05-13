@@ -633,15 +633,13 @@ void DviDeviceMap::Remove(DviDevice& aDevice)
 
 DviDevice* DviDeviceMap::Find(const Brx& aUdn)
 {
-    DviDevice* device = NULL;
-    iLock.Wait();
+    AutoMutex _(iLock);
     Brn udn(aUdn);
     Map::iterator it = iMap.find(udn);
-    if (it != iMap.end()) {
-        device = it->second;
+    if (it != iMap.end() && it->second->Enabled()) {
+        return it->second;
     }
-    iLock.Signal();
-    return device;
+    return NULL;
 }
 
 std::map<Brn,DviDevice*,BufferCmp> DviDeviceMap::CopyMap() const
