@@ -42,7 +42,9 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSeqTrackValid(false)
     , iSeqTrack(UINT_MAX)
     , iLastSampleStart(UINT_MAX)
+    , iBitDepth(0)
     , iSampleRate(0)
+    , iNumChannels(0)
     , iLatency(0)
     , iRepairFirst(nullptr)
     , iPipelineEmpty("OHBS", 0)
@@ -188,7 +190,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iMetatext.Replace(Brx::Empty());
     iSeqTrack = UINT_MAX;
     iLastSampleStart = UINT_MAX;
-    iSampleRate = 0;
+    iBitDepth = iSampleRate = iNumChannels = 0;
     iLatency = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
@@ -434,7 +436,8 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
     }
 
     TBool startOfStream = false;
-    if (aMsg.SampleStart() < iLastSampleStart) {
+    if (aMsg.SampleStart() < iLastSampleStart || iBitDepth != aMsg.BitDepth() ||
+        iSampleRate != aMsg.SampleRate() || iNumChannels != aMsg.Channels()) {
         startOfStream = true;
         iStreamMsgDue = true;
     }
@@ -453,6 +456,9 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         pcmStream.SetCodecName(aMsg.Codec());
         iSupply->OutputPcmStream(iTrackUri, totalBytes, false/*seekable*/, true/*live*/, *this, iStreamId, pcmStream);
         iStreamMsgDue = false;
+        iBitDepth = aMsg.BitDepth();
+        // iSampleRate updated below
+        iNumChannels = aMsg.Channels();
     }
     if (iSampleRate != aMsg.SampleRate() || iLatency != aMsg.MediaLatency()) {
         iSampleRate = aMsg.SampleRate();

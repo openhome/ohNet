@@ -96,7 +96,9 @@ private:
     Bws<Media::MsgMetaText::kMaxBytes> iPendingMetatext;
     TUint iSeqTrack;
     TUint64 iLastSampleStart;
+    TUint iBitDepth;
     TUint iSampleRate;
+    TUint iNumChannels;
     TUint64 iLatency;
     OhmMsgAudio* iRepairFirst;
     std::vector<OhmMsgAudio*> iRepairFrames;
