@@ -67,6 +67,12 @@ void Supply::OutputMetadata(const Brx& aMetadata)
     iDownStreamElement.Push(msg);
 }
 
+void Supply::OutputHalt(TUint aHaltId)
+{
+    MsgHalt* msg = iMsgFactory.CreateMsgHalt(aHaltId);
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputFlush(TUint aFlushId)
 {
     MsgFlush* msg = iMsgFactory.CreateMsgFlush(aFlushId);

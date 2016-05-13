@@ -26,6 +26,7 @@ public: // from ISupply
     void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
     void OutputData(const Brx& aData) override;
     void OutputMetadata(const Brx& aMetadata) override;
+    void OutputHalt(TUint aHaltId = MsgHalt::kIdNone) override;
     void OutputFlush(TUint aFlushId) override;
     void OutputWait() override;
 private:

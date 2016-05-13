@@ -466,6 +466,9 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         iMetatextMsgDue = false;
     }
     iSupply->OutputData(aMsg.Audio());
+    if (aMsg.Halt()) {
+        iSupply->OutputHalt();
+    }
     aMsg.RemoveRef();
 }
 

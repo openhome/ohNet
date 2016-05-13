@@ -1206,6 +1206,15 @@ public:
      */
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     /**
+     * Push a Halt notification into the pipeline.
+     *
+     * This is called to indicate an expected discontinuity in audio (e.g. when a
+     * remote sender indicates they have paused).
+     *
+     * @param[in] aHaltId          Unique identifier for the pipeline msg that will be created.
+     */
+    virtual void OutputHalt(TUint aHaltId = MsgHalt::kIdNone) = 0;
+    /**
      * Push a Flush command into the pipeline.
      *
      * This is typically called after a call to TrySeek() or TryStop() from IStreamHandler.
