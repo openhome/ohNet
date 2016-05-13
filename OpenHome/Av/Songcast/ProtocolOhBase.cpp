@@ -426,6 +426,18 @@ void ProtocolOhBase::TimerRepairExpired()
     }
 }
 
+void ProtocolOhBase::AddRxTimestamp(OhmMsgAudio& aMsg)
+{
+    if (iTimestamper != nullptr) {
+        try {
+            aMsg.SetRxTimestamp(iTimestamper->Timestamp(aMsg.Frame()));
+        }
+        catch (OhmTimestampNotFound&) {
+            //LOG(kSongcast, "OHM - OhmTimestampNotFound for frame #%u\n", aMsg.Frame());
+        }
+    }
+}
+
 void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
 {
     TBool discard;
@@ -481,14 +493,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
 
 void ProtocolOhBase::Process(OhmMsgAudio& aMsg)
 {
-    if (iTimestamper != nullptr) {
-        try {
-            aMsg.SetRxTimestamp(iTimestamper->Timestamp(aMsg.Frame()));
-        }
-        catch (OhmTimestampNotFound&) {
-            LOG(kSongcast, "OHM - OhmTimestampNotFound for frame #%u\n", aMsg.Frame());
-        }
-    }
+    AddRxTimestamp(aMsg);
 
     iMutexTransport.Wait();
     if (!iRunning) {

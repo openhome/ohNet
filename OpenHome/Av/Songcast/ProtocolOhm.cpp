@@ -77,7 +77,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     // ...this helps keep a full player at membership of 4 multicast groups
     // ...matching hardware limits of some clients
     WaitForPipelineToEmpty();
-    iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
     iCheckForTimestamp = true;
     iStreamIsTimestamped = false;
@@ -97,6 +96,8 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                 iTimestamper->Stop();
                 iTimestamper->Start(iEndpoint);
             }
+            iSocket.Close();
+            iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
             ResetClockPuller();
 
             OhmHeader header;
@@ -119,8 +120,15 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                     case OhmHeader::kMsgTypeSlave:
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        /* ignore audio while joining - it might be from while we were waiting
-                           for the pipeline to empty if we're re-starting a stream following a drop-out */
+                    {
+                        /* Ignore audio while joining - it might be from while we were waiting
+                           for the pipeline to empty if we're re-starting a stream following a drop-out
+                           We do however need to check for timestamps, to avoid the timestamper
+                           filling up with out of date values */
+                        auto msg = iMsgFactory.CreateAudio(iReadBuffer, header);
+                        AddRxTimestamp(*msg);
+                        msg->RemoveRef();
+                    }
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         Add(iMsgFactory.CreateTrack(iReadBuffer, header));
@@ -222,9 +230,13 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
     const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
     if (iCheckForTimestamp) {
         iCheckForTimestamp = false;
-        iStreamIsTimestamped = msgTimestamped;
+        iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr  => expect timestamps
         if (iStreamIsTimestamped) {
             iClockPuller->Start();
+        }
+        else {
+            LOG(kSongcast, "ProtocolOhm::ProcessTimestamps - stream NOT timestamped\n");
+            iClockPuller->Stop();
         }
     }
 

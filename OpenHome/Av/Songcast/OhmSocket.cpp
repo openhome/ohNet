@@ -87,16 +87,12 @@ void OhmSocket::Close()
 {
     AutoMutex _(iLock);
     iInterrupt = false;
-    ASSERT(iReader != nullptr);
     delete iReader;
     iReader = nullptr;
-    ASSERT(iRxSocket != nullptr);
     delete iRxSocket;
     iRxSocket = nullptr;
-    if (iTxSocket != nullptr) {
-        delete iTxSocket;
-        iTxSocket = nullptr;
-    }
+    delete iTxSocket;
+    iTxSocket = nullptr;
 }
 
 void OhmSocket::Interrupt(TBool aInterrupt)

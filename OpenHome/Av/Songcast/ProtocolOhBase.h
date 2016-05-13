@@ -39,6 +39,7 @@ protected:
     void Send(TUint aType);
     TBool IsCurrentStream(TUint aStreamId) const;
     void WaitForPipelineToEmpty();
+    void AddRxTimestamp(OhmMsgAudio& aMsg);
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
     virtual void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) = 0;
