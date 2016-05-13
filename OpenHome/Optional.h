@@ -13,7 +13,7 @@ public:
     Optional(T* aReturnPtr) : iReturnPtr(aReturnPtr) {}
     TBool Ok() const { return iReturnPtr != nullptr; }
     T& Unwrap() const { ASSERT(Ok()); return *iReturnPtr; }
-    T* Ptr() const { return Ok()? &Unwrap() : nullptr; }
+    T* Ptr() const { return iReturnPtr; }
 private:
     T* iReturnPtr;
 };
