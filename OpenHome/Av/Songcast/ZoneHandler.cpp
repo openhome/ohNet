@@ -99,8 +99,13 @@ void ZoneHandler::StartMonitoring(const Brx& aZone)
     OhzHeader header(OhzHeader::kMsgTypeZoneQuery, headerZoneQuery.MsgBytes());
     header.Externalise(iWriteBuffer);
     headerZoneQuery.Externalise(iWriteBuffer);
-    iWriteBuffer.Write(aZone);
-    iWriteBuffer.WriteFlush();
+    try {
+        iWriteBuffer.Write(aZone);
+        iWriteBuffer.WriteFlush();
+    }
+    catch (WriterError&) {
+        LOG2(kSongcast, kError, "ZoneHandler::StartMonitoring(%.*s) WriterError\n", PBUF(aZone));
+    }
 }
 
 void ZoneHandler::StopMonitoring()
