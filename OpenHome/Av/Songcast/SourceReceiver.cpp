@@ -24,6 +24,8 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Private/Env.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 namespace OpenHome {
 namespace Media {
@@ -76,10 +78,12 @@ private:
     void EnsureActive();
     void UriChanged();
     void ZoneChangeThread();
+    void CurrentAdapterChanged();
 private:
     Mutex iLock;
     Mutex iActivationLock;
     Mutex iUriLock;
+    Environment& iEnv;
     ThreadFunctor* iZoneChangeThread;
     ZoneHandler* iZoneHandler;
     ProviderReceiver* iProviderReceiver;
@@ -97,6 +101,7 @@ private:
     Media::BwsTrackUri iPendingTrackUri;
     SongcastSender* iSender;
     StoreText* iStoreZone;
+    TUint iNacnId;
 };
 
 class SongcastSender : private Media::IPipelineObserver
@@ -188,6 +193,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     , iLock("SRX1")
     , iActivationLock("SRX2")
     , iUriLock("SRX3")
+    , iEnv(aMediaPlayer.Env())
     , iClockPuller(nullptr)
     , iTrackId(Track::kIdNone)
     , iPlaying(false)
@@ -216,6 +222,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iStoreZone->Get(iZone);
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), false);
 
     // Sender
     iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode());
@@ -224,6 +231,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
 SourceReceiver::~SourceReceiver()
 {
     delete iSender;
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
     delete iClockPuller;
     delete iStoreZone;
     delete iOhmMsgFactory;
@@ -434,6 +442,13 @@ void SourceReceiver::ZoneChangeThread()
         iTrackUri.Replace(iPendingTrackUri);
         iUriLock.Signal();
         UriChanged();
+    }
+}
+
+void SourceReceiver::CurrentAdapterChanged()
+{
+    if (IsActive() && iZone.Bytes() > 0) {
+        iZoneHandler->StartMonitoring(iZone);
     }
 }
 
