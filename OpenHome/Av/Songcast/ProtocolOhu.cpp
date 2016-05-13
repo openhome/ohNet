@@ -63,7 +63,7 @@ void ProtocolOhu::HandleSlave(const OhmHeader& aHeader)
 
     ReaderBinary reader(iReadBuffer);
     for (TUint i = 0; i < iSlaveCount; i++) {
-        TIpAddress address = reader.ReadUintLe(4);
+        TIpAddress address = reader.ReadUintBe(4);
         TUint port = reader.ReadUintBe(2);
         iSlaveList[i].SetAddress(address);
         iSlaveList[i].SetPort(port);

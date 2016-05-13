@@ -1265,7 +1265,7 @@ void OhmSender::SendSlaveList()
     headerSlave.Externalise(writer);
     WriterBinary binary(writer);
     for (TUint i = 0; i < iSlaveCount; i++) {
-        binary.WriteUint32Be(Arch::BigEndian4(iSlaveList[i].Address()));
+        binary.WriteUint32Be(iSlaveList[i].Address());
         binary.WriteUint16Be(iSlaveList[i].Port());
     }
     Send();
