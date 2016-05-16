@@ -240,7 +240,6 @@ def build(bld):
                 'OpenHome/Media/Pipeline/SampleRateValidator.cpp',
                 'OpenHome/Media/Pipeline/Seeker.cpp',
                 'OpenHome/Media/Pipeline/Skipper.cpp',
-                'OpenHome/Media/Pipeline/StarvationMonitor.cpp',
                 'OpenHome/Media/Pipeline/StarvationRamper.cpp',
                 'OpenHome/Media/Pipeline/Stopper.cpp',
                 'OpenHome/Media/Pipeline/TrackInspector.cpp',
@@ -636,7 +635,6 @@ def build(bld):
                 'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
-                'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
                 'OpenHome/Media/Tests/TestStarvationRamper.cpp',
                 'OpenHome/Media/Tests/TestSampleRateValidator.cpp',
                 'OpenHome/Media/Tests/TestSeeker.cpp',
@@ -710,11 +708,6 @@ def build(bld):
             source='OpenHome/Media/Tests/TestMsgMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMsg',
-            install_path=None)
-    bld.program(
-            source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStarvationMonitor',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestStarvationRamperMain.cpp',

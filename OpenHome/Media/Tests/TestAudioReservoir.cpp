@@ -138,7 +138,6 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IClockPullerReservoir
-    void NewStream(TUint aSampleRate) override;
     void Reset() override;
     void Stop() override;
     void Start(TUint aNotificationFrequency) override;
@@ -156,7 +155,6 @@ private:
     TUint iStreamId;
     TUint iSampleRate;
     TBool iStartCalled;
-    TBool iNewStreamCalled;
     TBool iNotifySizeCalled;
 };
 
@@ -610,7 +608,7 @@ void SuiteReservoirHistory::Test()
     static const TUint kPcmMsgCount = 15;
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
-    iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
+    iStartCalled = iNotifySizeCalled = false;
     ModeClockPullers clockPullers(this);
     iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, clockPullers, false, false));
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -640,7 +638,6 @@ void SuiteReservoirHistory::Test()
     }
     delete iThread;
     TEST(iStartCalled);
-    TEST(iNewStreamCalled);
     TEST(iNotifySizeCalled);
 }
 
@@ -761,12 +758,6 @@ void SuiteReservoirHistory::Start(TUint aNotificationFrequency)
 {
     TEST(aNotificationFrequency == iReservoir->kUtilisationSamplePeriodJiffies);
     iStartCalled = true;
-}
-
-void SuiteReservoirHistory::NewStream(TUint aSampleRate)
-{
-    TEST(aSampleRate == iSampleRate);
-    iNewStreamCalled = true;
 }
 
 void SuiteReservoirHistory::Reset()

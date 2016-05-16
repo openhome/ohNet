@@ -27,7 +27,6 @@
 #include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
-#include <OpenHome/Media/Pipeline/StarvationMonitor.h>
 #include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/Pipeline/Muter.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
@@ -388,20 +387,11 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iDecodedAudioValidatorPruner, new DecodedAudioValidator(*upstream, "Pruner"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
-#if FLYWHEEL
     ATTACH_ELEMENT(iStarvationRamper,
                    new StarvationRamper(*iMsgFactory, *upstream, *this, *iEventThread,
                                         aInitParams->StarvationRamperJiffies(), threadPriority,
                                         aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir()),
                                         upstream, elementsSupported, EPipelineSupportElementsMandatory);
-#else
-    ATTACH_ELEMENT(iStarvationRamper,
-                   new StarvationMonitor(*iMsgFactory, *upstream,
-                                         *this, *iEventThread,
-                                         threadPriority, Jiffies::kPerMs * 100, Jiffies::kPerMs * 20,
-                                         aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir()),
-                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
-#endif
     ATTACH_ELEMENT(iLoggerStarvationRamper, new Logger(*iStarvationRamper, "StarvationRamper"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iRampValidatorStarvationRamper, new RampValidator(*upstream, "StarvationRamper"),
@@ -842,7 +832,7 @@ void Pipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     iObserver.NotifyStreamInfo(aStreamInfo);
 }
 
-void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
+void Pipeline::NotifyStarvationRamperBuffering(TBool aBuffering)
 {
     iLock.Wait();
     iBuffering = aBuffering;

@@ -23,7 +23,6 @@ tests = '''
     TestReporter
     TestPruner
     TestGorger
-    TestStarvationMonitor
     TestStarvationRamper
     TestMuter
     TestAnalogBypassRamper
