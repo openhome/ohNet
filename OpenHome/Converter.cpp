@@ -1,6 +1,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -30,6 +31,10 @@ void Converter::ToXmlEscaped(IWriter& aWriter, TByte aValue)
     case '\"':
         aWriter.Write(Brn("&quot;"));
         break;
+    case '\r':
+    case '\n':
+        aWriter.Write(Brn("&#xA;"));
+        break;
     default:
         aWriter.Write(aValue);
         break;
@@ -57,6 +62,7 @@ TBool Converter::IsMultiByteChar(TByte aChar, TUint& aBytes)
 void Converter::ToXmlEscaped(IWriter& aWriter, const Brx& aValue)
 {
     TUint utf8CharBytesRemaining = 0;
+    TBool lastCharWasLineEnding = false;
     for(TUint i = 0; i < aValue.Bytes(); ++i) {
         TByte ch = aValue[i];
         if (utf8CharBytesRemaining == 0) {
@@ -65,13 +71,26 @@ void Converter::ToXmlEscaped(IWriter& aWriter, const Brx& aValue)
                 utf8CharBytesRemaining = bytes;
             }
         }
+
+        TBool lineEnding = false;
         if (utf8CharBytesRemaining > 0) {
             utf8CharBytesRemaining--;
             aWriter.Write(ch);
         }
+        else if (Ascii::IsLineEnding(ch)) {
+            // Encode any line ending into a single line feed.
+            // Set a marker so that any line endings following this are not
+            // also encoded.
+            if (!lastCharWasLineEnding) {
+                ToXmlEscaped(aWriter, '\n');
+            }
+            lineEnding = true;
+        }
         else {
             ToXmlEscaped(aWriter, aValue[i]);
         }
+
+        lastCharWasLineEnding = lineEnding;
     }
 }
 
@@ -216,6 +235,34 @@ void Converter::FromXmlEscaped(Bwx& aValue)
                                                 continue;
                                             }
                                         }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (aValue[i] == '#') {
+                if (++i < bytes) {
+                    if (aValue[i] == 'x') {
+                        if (++i < bytes) {
+                            if (aValue[i] == 'A') {
+                                if (++i < bytes) {
+                                    if (aValue[i] == ';') {
+                                        aValue[j++] = '\n';
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (aValue[i] == '1') {
+                        if (++i < bytes) {
+                            if (aValue[i] == '0') {
+                                if (++i < bytes) {
+                                    if (aValue[i] == ';') {
+                                        aValue[j++] = '\n';
+                                        continue;
                                     }
                                 }
                             }

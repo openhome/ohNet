@@ -120,6 +120,33 @@ void CpDevices::Test()
         proxy->SyncEchoString(valStr, result);
         ASSERT(result == valStr);
     }
+    // Test some end-of-line conversions.
+    // '\n', '\r', and '\r\n' should all be returned as a single '\n'.
+    Brn valLf("<tag>some\ntext</<tag>");
+    for (i=0; i<kTestIterations; i++) {
+        Brh result;
+        proxy->SyncEchoString(valLf, result);
+        ASSERT(result == valLf);
+    }
+    Brn valCr("<tag>some\rtext</<tag>");
+    for (i=0; i<kTestIterations; i++) {
+        Brh result;
+        proxy->SyncEchoString(valCr, result);
+        ASSERT(result == valLf);
+    }
+    Brn valCrLf("<tag>some\r\ntext</<tag>");
+    for (i=0; i<kTestIterations; i++) {
+        Brh result;
+        proxy->SyncEchoString(valCrLf, result);
+        ASSERT(result == valLf);
+    }
+    Brn valCrLfMultiple("<tag>some\r\nmore\r\ntext</<tag>");
+    Brn valCrLfMultipleExpected("<tag>some\nmore\ntext</<tag>");
+    for (i=0; i<kTestIterations; i++) {
+        Brh result;
+        proxy->SyncEchoString(valCrLfMultiple, result);
+        ASSERT(result == valCrLfMultipleExpected);
+    }
 
     Brh resStr;
     proxy->SyncEchoAllowedValueString(Brn("One"), resStr);
