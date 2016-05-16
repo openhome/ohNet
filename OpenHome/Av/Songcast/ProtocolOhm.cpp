@@ -224,7 +224,7 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
         iCheckForTimestamp = false;
         iStreamIsTimestamped = msgTimestamped;
         if (iStreamIsTimestamped) {
-            iClockPuller->Start();
+            //iClockPuller->Start();
         }
     }
 

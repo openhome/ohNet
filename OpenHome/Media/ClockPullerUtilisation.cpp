@@ -136,10 +136,6 @@ ClockPullerUtilisation::~ClockPullerUtilisation()
     delete iUtilisation;
 }
 
-void ClockPullerUtilisation::NewStream(TUint /*aSampleRate*/)
-{
-}
-
 void ClockPullerUtilisation::Reset()
 {
     iUtilisation->Reset();
@@ -151,15 +147,15 @@ void ClockPullerUtilisation::Stop()
     iUtilisation->Reset();
 }
 
-void ClockPullerUtilisation::Start(TUint aNotificationFrequency)
+void ClockPullerUtilisation::Start(TUint /*aExpectedPipelineJiffies*/)
 {
-    iUpdateFrequency = aNotificationFrequency;
+//    iUpdateFrequency = aNotificationFrequency;
     Reset();
 }
 
-void ClockPullerUtilisation::NotifySize(TUint aJiffies)
+void ClockPullerUtilisation::NotifySize(TUint /*aJiffies*/)
 {
-    iUtilisation->Add(aJiffies);
+//    iUtilisation->Add(aJiffies);
 }
 
 void ClockPullerUtilisation::NotifyClockDrift(UtilisationHistory* /*aHistory*/, TInt aDriftJiffies, TUint aNumSamples)

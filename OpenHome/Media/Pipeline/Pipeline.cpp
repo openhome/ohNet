@@ -266,7 +266,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
 
     // Construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir());
+    iDecodedAudioReservoir = new DecodedAudioReservoir(*iMsgFactory,
+                                                       aInitParams->DecodedReservoirJiffies(),
+                                                       aInitParams->MaxStreamsPerReservoir());
     downstream = iDecodedAudioReservoir;
 
     ATTACH_ELEMENT(iLoggerDecodedAudioAggregator,

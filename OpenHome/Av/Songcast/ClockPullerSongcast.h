@@ -18,7 +18,6 @@ public:
 private:
     inline Media::IClockPullerReservoir& Puller();
 private: // from IClockPullerReservoir
-    void NewStream(TUint aSampleRate) override;
     void Reset() override;
     void Stop() override;
     void Start(TUint aNotificationFrequency) override;
@@ -45,7 +44,7 @@ private: // from Media::IClockPullerTimestamp
     void NewStream(TUint aSampleRate) override;
     void Reset() override;
     void Stop() override;
-    void Start() override;
+    void Start(TUint aExpectedPipelineJiffies) override;
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
 private:
     ClockPullerNonTimestamped iPullerReservoirLeft;
