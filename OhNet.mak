@@ -16,18 +16,36 @@ openhome_architecture=x86
 !message Cannot tell if compiler is 32-bit or 64-bit. Please specify openhome_architecture=x64 or openhome_architecture=x86.
 !endif
 
+!if "$(windows_universal)"=="1"
+defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS
+error_handling = /EHsc
+additional_includes = /AI "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\store\references"
+universal_cppflags = /ZW /D "WINAPI_FAMILY=2"
+link_libs = Ws2_32.lib WindowsApp.lib
+link_opts = /APPCONTAINER /SAFESEH /DYNAMICBASE /NXCOMPAT
+static_or_dynamic = /MD
+!else
+defines_universal = -D_CRT_SECURE_NO_WARNINGS
+error_handling = /EHa
+additional_includes =
+universal_cppflags =
+link_libs = Ws2_32.lib Iphlpapi.lib Dbghelp.lib
+link_opts =
+static_or_dynamic = /MT
+!endif
+
 !if "$(debug)"=="1"
 link_flag_debug = /debug
 link_flag_debug_dll = $(link_flag_debug)
-debug_specific_cflags = /MTd /Z7 /Od /RTC1
+debug_specific_cflags = $(static_or_dynamic)d /Z7 /Od /RTC1
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 openhome_configuration = Debug
 android_ndk_debug = 1
 !else
 link_flag_debug =
-link_flag_debug_dll = /debug /opt:ref
-debug_specific_cflags = /MT /Ox
+link_flag_debug_dll = /opt:ref
+debug_specific_cflags = $(static_or_dynamic) /Ox
 debug_csharp = /optimize+ /debug:pdbonly
 build_dir = Release
 openhome_configuration = Release
@@ -38,9 +56,16 @@ android_ndk_debug = 0
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags_third_party = $(debug_specific_cflags) /W4 /EHa /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS
-cflags = $(cflags_third_party) /WX
-cppflags = $(cflags)
+cflags_third_party = $(debug_specific_cflags) /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
+cflags = $(cflags_third_party) $(additional_includes) /WX
+cppflags = $(cflags) $(universal_cppflags) /TP
+
+!if "$(windows_universal)"=="1"
+cflags_third_party_force_cpp_if_defined = $(cppflags)
+!else
+cflags_third_party_force_cpp_if_defined = $(cflags_third_party)
+!endif
+
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
@@ -50,18 +75,18 @@ osdir = Windows
 objext = obj
 libprefix =
 libext = lib
-sharedlibprefix = 
+sharedlibprefix =
 sharedlibext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
-link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /incremental:no
+link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map $(link_libs) $(link_opts) /incremental:no
 linkoutput = /out:
 dllprefix =
 dllext = dll
 linkopts_ohNet =
-link_dll = link /nologo $(link_flag_debug_dll) /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
+link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll
 csharp = csc /nologo /platform:anycpu
-csharpdefines = 
+csharpdefines =
 publicjavadir = OpenHome\Net\Bindings\Java^\
 includes_jni = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
 link_jvm = "$(JAVA_HOME)\lib\jvm.lib"

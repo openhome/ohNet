@@ -6,10 +6,15 @@
 #include <stdio.h>
 #include <assert.h>
 #include <Winsock2.h>
-#include <Windows.h>
 #include <Ws2tcpip.h>
+
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+#include <Processthreadsapi.h>
+#else
+#include <Windows.h>
 #include <Iphlpapi.h>
 #include <Dbghelp.h>
+#endif
 
 static const uint32_t kMinStackBytes = 1024 * 16;
 static const uint32_t kStackPaddingBytes = 1024 * 16;
@@ -48,11 +53,13 @@ OsContext* OsCreate()
     WSADATA wsaData;
     WORD ver = (2<<8)|2; // WinSock v2.2.  Standard on XP and later
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     char* noErrDlgs = getenv("OHNET_NO_ERROR_DIALOGS");
-    OsContext* ctx = malloc(sizeof(*ctx));
     if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
+#endif
+    OsContext* ctx = (OsContext*)malloc(sizeof(*ctx));
     if (ctx == NULL) {
         return NULL;
     }
@@ -85,12 +92,14 @@ OsContext* OsCreate()
         return NULL;
     }
     {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         HMODULE hModule = GetModuleHandle(NULL);
         CHAR path[MAX_PATH];
         GetModuleFileName(hModule, path, MAX_PATH);
         ctx->iDebugSymbolHandle = GetCurrentProcess();
         SymSetOptions(SYMOPT_FAIL_CRITICAL_ERRORS);
         (void)SymInitialize(ctx->iDebugSymbolHandle, /*NULL*/path, TRUE);
+#endif
     }
 
     return ctx;
@@ -101,7 +110,11 @@ void OsDestroy(OsContext* aContext)
     if (aContext == NULL) {
         return;
     }
+
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     (void)SymCleanup(aContext->iDebugSymbolHandle);
+#endif
+
     if (NULL != aContext->iInterfaceChangeObserver) {
         aContext->iInterfaceChangeObserver->iShutdown = 1;
         (void)WSASetEvent(aContext->iInterfaceChangeObserver->iShutdownEvent);
@@ -126,6 +139,27 @@ void OsQuit(OsContext* aContext)
     abort();
 }
 
+
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+typedef struct _SYMBOL_INFO {
+  ULONG   SizeOfStruct;
+  ULONG   TypeIndex;
+  ULONG64 Reserved[2];
+  ULONG   Index;
+  ULONG   Size;
+  ULONG64 ModBase;
+  ULONG   Flags;
+  ULONG64 Value;
+  ULONG64 Address;
+  ULONG   Register;
+  ULONG   Scope;
+  ULONG   Tag;
+  ULONG   NameLen;
+  ULONG   MaxNameLen;
+  TCHAR   Name[1];
+} SYMBOL_INFO, *PSYMBOL_INFO;
+#endif
+
 #define STACK_TRACE_MAX_DEPTH 32
 typedef struct OsStackTrace
 {
@@ -135,7 +169,9 @@ typedef struct OsStackTrace
     OsContext* iOsContext;
 } OsStackTrace;
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL
 #define STACK_TRACE_ENABLE
+#endif
 
 THandle OsStackTraceInitialise(OsContext* aContext)
 {
@@ -317,7 +353,7 @@ typedef struct
 
 THandle OsMutexCreate(OsContext* aContext, const char* aName)
 {
-    Mutex* mutex = calloc(1, sizeof(*mutex));
+    Mutex* mutex = (Mutex*)calloc(1, sizeof(*mutex));
     UNUSED(aContext);
     UNUSED(aName);
     if (NULL == mutex) {
@@ -920,10 +956,17 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
     return err;
 }
 
-int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
-{
+
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
+
+
+
+#ifndef DEFINE_WINDOWS_UNIVERSAL
+
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
+{
+
 
     MIB_IFTABLE* ifTable          = NULL;
     MIB_IPADDRTABLE* addrTable    = NULL;
@@ -962,34 +1005,9 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
     }
 
     for (i=0; i<addrTable->dwNumEntries; i++) {
-        MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
-        MIB_IFROW* ifRow = NULL;
         OsNetworkAdapter* nif;
         size_t len;
         DWORD j = 0;
-
-        for (; j< ifTable->dwNumEntries; j++) {
-            MIB_IFROW* tmp = &ifTable->table[j];
-            if (tmp->dwIndex == addrRow->dwIndex) {
-                ifRow = tmp;
-                break;
-            }
-        }
-        if (ifRow == NULL) {
-            fprintf(stderr, "Unable to match ifRow to addrRow\n");
-            continue;
-        }
-
-        if ((addrRow->dwAddr == loopbackAddr && includeLoopback == 0) ||
-            (addrRow->dwAddr != loopbackAddr && aUseLoopback == LOOPBACK_USE)) {
-            continue;
-        }
-        if (-1 != aContext->iTestInterfaceIndex && index++ != aContext->iTestInterfaceIndex) {
-            continue;
-        }
-        if (addrRow->dwAddr == 0 || addrRow->dwMask == 0) {
-            continue;
-        }
 
         nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
         if (nif == NULL) {
@@ -1048,7 +1066,38 @@ failure:
     free(ifTable);
     OsNetworkFreeInterfaces(head);
     return -1;
-}
+
+
+  }
+
+#else
+const TIpAddress testAddr = (TIpAddress)MakeIpAddress(10, 2, 10, 188);
+const TIpAddress testMask = (TIpAddress)MakeIpAddress(255, 255, 0, 0);
+#define IF_TYPE_ETHERNET_CSMACD 6
+
+  int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
+  {
+    UNUSED(aContext);
+    UNUSED(aUseLoopback);
+    OsNetworkAdapter* nif;
+    nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
+    if (nif == NULL) {
+        goto failure;
+    }
+    nif->iReserved = IF_TYPE_ETHERNET_CSMACD;
+    nif->iAddress = testAddr;
+    nif->iNetMask = testMask;
+    nif->iName = (char*)malloc(1);
+    nif->iName[0] = '\0';
+    *aInterfaces = nif;
+
+    return 0;
+  failure:
+    return -1;
+  }
+
+#endif
+
 
 void OsNetworkFreeInterfaces(OsNetworkAdapter* aInterfaces)
 {
