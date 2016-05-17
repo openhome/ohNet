@@ -819,7 +819,6 @@ Msg* CodecController::ProcessMsg(MsgStreamInterrupted* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
-    iStreamEnded = true;
     return aMsg;
 }
 
