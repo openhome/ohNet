@@ -92,12 +92,12 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         }
         iStoppedLock.Signal();
         try {
+            iSocket.Close();
+            iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
             if (iTimestamper != nullptr) {
                 iTimestamper->Stop();
                 iTimestamper->Start(iEndpoint);
             }
-            iSocket.Close();
-            iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
             ResetClockPuller();
 
             OhmHeader header;
@@ -230,9 +230,9 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
     const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
     if (iCheckForTimestamp) {
         iCheckForTimestamp = false;
-        iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr  => expect timestamps
+        iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr => expect timestamps
         if (iStreamIsTimestamped) {
-            //iClockPuller->Start();
+            iClockPuller->Start(0);
         }
         else {
             LOG(kSongcast, "ProtocolOhm::ProcessTimestamps - stream NOT timestamped\n");
