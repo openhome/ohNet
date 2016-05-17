@@ -1,7 +1,6 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -62,7 +61,7 @@ TBool Converter::IsMultiByteChar(TByte aChar, TUint& aBytes)
 void Converter::ToXmlEscaped(IWriter& aWriter, const Brx& aValue)
 {
     TUint utf8CharBytesRemaining = 0;
-    TBool lastCharWasLineEnding = false;
+    TBool lastCharWasCr = false;
     for(TUint i = 0; i < aValue.Bytes(); ++i) {
         TByte ch = aValue[i];
         if (utf8CharBytesRemaining == 0) {
@@ -72,25 +71,30 @@ void Converter::ToXmlEscaped(IWriter& aWriter, const Brx& aValue)
             }
         }
 
-        TBool lineEnding = false;
+        const TBool charWasCr = lastCharWasCr;
+        lastCharWasCr = false;
         if (utf8CharBytesRemaining > 0) {
             utf8CharBytesRemaining--;
             aWriter.Write(ch);
         }
-        else if (Ascii::IsLineEnding(ch)) {
+        else if (ch == '\n' || ch == '\r') {
             // Encode any line ending into a single line feed.
-            // Set a marker so that any line endings following this are not
-            // also encoded.
-            if (!lastCharWasLineEnding) {
+            // Set a marker so that single '\n' is output for '\r\n'.
+
+            if (ch == '\n' && charWasCr) {
+                // Do nothing.
+            }
+            else {
                 ToXmlEscaped(aWriter, '\n');
             }
-            lineEnding = true;
+
+            if (ch == '\r') {
+                lastCharWasCr = true;
+            }
         }
         else {
             ToXmlEscaped(aWriter, aValue[i]);
         }
-
-        lastCharWasLineEnding = lineEnding;
     }
 }
 
