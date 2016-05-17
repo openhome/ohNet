@@ -81,10 +81,7 @@ void Converter::ToXmlEscaped(IWriter& aWriter, const Brx& aValue)
             // Encode any line ending into a single line feed.
             // Set a marker so that single '\n' is output for '\r\n'.
 
-            if (ch == '\n' && charWasCr) {
-                // Do nothing.
-            }
-            else {
+            if (ch == '\r' || !charWasCr) {
                 ToXmlEscaped(aWriter, '\n');
             }
 
