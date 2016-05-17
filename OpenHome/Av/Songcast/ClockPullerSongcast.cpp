@@ -37,14 +37,6 @@ void ClockPullerNonTimestamped::SetEnabled(TBool aEnabled)
     }
 }
 
-void ClockPullerNonTimestamped::NewStream(TUint aSampleRate)
-{
-    AutoMutex _(iLock);
-    if (iEnabled) {
-        Puller().NewStream(aSampleRate);
-    }
-}
-
 void ClockPullerNonTimestamped::Reset()
 {
     AutoMutex _(iLock);
@@ -61,11 +53,11 @@ void ClockPullerNonTimestamped::Stop()
     }
 }
 
-void ClockPullerNonTimestamped::Start(TUint aNotificationFrequency)
+void ClockPullerNonTimestamped::Start(TUint aExpectedPipelineJiffies)
 {
     AutoMutex _(iLock);
     if (iEnabled) {
-        Puller().Start(aNotificationFrequency);
+        Puller().Start(aExpectedPipelineJiffies);
     }
 }
 
@@ -161,7 +153,7 @@ void ClockPullerSongcast::Stop()
     iPullerReservoirLeft.SetEnabled(true);
 }
 
-void ClockPullerSongcast::Start()
+void ClockPullerSongcast::Start(TUint /*aExpectedPipelineJiffies*/)
 {
     iUseTimestamps = true;
     iPullerReservoirLeft.SetEnabled(false);

@@ -232,7 +232,7 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
         iCheckForTimestamp = false;
         iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr  => expect timestamps
         if (iStreamIsTimestamped) {
-            iClockPuller->Start();
+            //iClockPuller->Start();
         }
         else {
             LOG(kSongcast, "ProtocolOhm::ProcessTimestamps - stream NOT timestamped\n");

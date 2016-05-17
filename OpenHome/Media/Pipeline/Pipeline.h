@@ -1,7 +1,5 @@
 #pragma once
 
-#define FLYWHEEL 1
-
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
@@ -9,7 +7,7 @@
 #include <OpenHome/Media/Pipeline/Waiter.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
-#include <OpenHome/Media/Pipeline/StarvationMonitor.h>
+#include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/MuteManager.h>
 
 namespace OpenHome {
@@ -110,7 +108,6 @@ class Drainer;
 class VariableDelay;
 class Pruner;
 class StarvationRamper;
-class StarvationMonitor;
 class Muter;
 class PreDriver;
 class ITrackObserver;
@@ -129,7 +126,7 @@ class Pipeline : public IPipelineElementDownstream
                , public IPostPipelineLatency
                , private IStopperObserver
                , private IPipelinePropertyObserver
-               , private IStarvationMonitorObserver
+               , private IStarvationRamperObserver
 {
     friend class SuitePipeline; // test code
 
@@ -200,8 +197,8 @@ private: // from IPipelinePropertyObserver
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
-private: // from IStarvationMonitorObserver
-    void NotifyStarvationMonitorBuffering(TBool aBuffering) override;
+private: // from IStarvationRamperObserver
+    void NotifyStarvationRamperBuffering(TBool aBuffering) override;
 private:
     enum EStatus
     {
@@ -274,11 +271,7 @@ private:
     Pruner* iPruner;
     Logger* iLoggerPruner;
     DecodedAudioValidator* iDecodedAudioValidatorPruner;
-#if FLYWHEEL
     StarvationRamper* iStarvationRamper;
-#else
-    StarvationMonitor* iStarvationRamper;
-#endif
     Logger* iLoggerStarvationRamper;
     RampValidator* iRampValidatorStarvationRamper;
     DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;

@@ -9,16 +9,15 @@ class IClockPuller
 {
 public:
     virtual ~IClockPuller() {}
-    virtual void NewStream(TUint aSampleRate) = 0;
-    virtual void Reset() = 0;
+    virtual void Start(TUint aExpectedPipelineJiffies) = 0;
     virtual void Stop() = 0;
+    virtual void Reset() = 0;
 };
 
 class IClockPullerReservoir : public IClockPuller
 {
 public:
     virtual ~IClockPullerReservoir() {}
-    virtual void Start(TUint aNotificationFrequency) = 0;
     virtual void NotifySize(TUint aJiffies) = 0;
 };
 
@@ -26,7 +25,7 @@ class IClockPullerTimestamp : public IClockPuller
 {
 public:
     virtual ~IClockPullerTimestamp() {}
-    virtual void Start() = 0;
+    virtual void NewStream(TUint aSampleRate) = 0;
     virtual void NotifyTimestamp(TInt aDrift, TUint aNetwork) = 0;
 };
 

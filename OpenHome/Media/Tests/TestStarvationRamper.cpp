@@ -5,7 +5,6 @@
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
-#include <OpenHome/Media/Pipeline/StarvationMonitor.h>
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
 
 #include <list>
@@ -22,7 +21,7 @@ class SuiteStarvationRamper : public SuiteUnitTest
                             , private IPipelineElementUpstream
                             , private IMsgProcessor
                             , private IStreamHandler
-                            , private IStarvationMonitorObserver
+                            , private IStarvationRamperObserver
 {
     static const TUint kMaxAudioBuffer = Jiffies::kPerMs * 10;
     static const TUint kRampUpDuration = Jiffies::kPerMs * 50;
@@ -63,8 +62,8 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
-private: // from IStarvationMonitorObserver
-    void NotifyStarvationMonitorBuffering(TBool aBuffering) override;
+private: // from IStarvationRamperObserver
+    void NotifyStarvationRamperBuffering(TBool aBuffering) override;
 private:
     enum EMsgType
     {
@@ -362,7 +361,7 @@ void SuiteStarvationRamper::NotifyStarving(const Brx& aMode, TUint aStreamId, TB
     iStarvingStreamId = aStreamId;
 }
 
-void SuiteStarvationRamper::NotifyStarvationMonitorBuffering(TBool aBuffering)
+void SuiteStarvationRamper::NotifyStarvationRamperBuffering(TBool aBuffering)
 {
     iBuffering = aBuffering;
 }

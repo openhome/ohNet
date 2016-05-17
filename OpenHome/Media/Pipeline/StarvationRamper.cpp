@@ -4,7 +4,6 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/FlywheelRamper.h>
-#include <OpenHome/Media/Pipeline/StarvationMonitor.h> // FIXME - for IStarvationMonitorObserver
 #include <OpenHome/Media/Pipeline/ElementObserver.h>
 #include <OpenHome/Media/Debug.h>
 //#include <OpenHome/Private/Timer.h>
@@ -403,7 +402,7 @@ const TUint StarvationRamper::kRampDownJiffies    = Jiffies::kPerMs * 20;
 const TUint StarvationRamper::kMaxAudioOutJiffies = Jiffies::kPerMs * 5;
 
 StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
-                                   IStarvationMonitorObserver& aObserver,
+                                   IStarvationRamperObserver& aObserver,
                                    IPipelineElementObserverThread& aObserverThread, TUint aSizeJiffies,
                                    TUint aThreadPriority, TUint aRampUpSize, TUint aMaxStreamCount)
     : iMsgFactory(aMsgFactory)
@@ -559,7 +558,7 @@ void StarvationRamper::EventCallback()
 {
     const TBool buffering = iEventBuffering.load();
     if (buffering != iLastEventBuffering) {
-        iObserver.NotifyStarvationMonitorBuffering(buffering);
+        iObserver.NotifyStarvationRamperBuffering(buffering);
         iLastEventBuffering = buffering;
     }
 }

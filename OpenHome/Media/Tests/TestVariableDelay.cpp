@@ -154,6 +154,8 @@ void SuiteVariableDelay::Setup()
     init.SetMsgSilenceCount(kMsgSilenceCount);
     init.SetMsgEncodedStreamCount(2);
     init.SetMsgDecodedStreamCount(2);
+    init.SetMsgModeCount(2);
+    init.SetMsgDelayCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kMinDelay, kRampDuration);
