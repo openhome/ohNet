@@ -11,6 +11,13 @@
 #ifdef DEFINE_WINDOWS_UNIVERSAL
 #include <Processthreadsapi.h>
 #include <Synchapi.h>
+#include <algorithm>
+#include "collection.h"
+using namespace Platform;
+using namespace Windows;
+using namespace Windows::Networking;
+using namespace Windows::Networking::Connectivity;
+using namespace Windows::Foundation::Collections;
 #else
 #include <Windows.h>
 #include <Iphlpapi.h>
@@ -473,7 +480,13 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
     if (NULL == data) {
         return kHandleNull;
     }
+//#ifndef DEFINE_WINDOWS_UNIVERSAL
     data->iName = _strdup(aName);
+//#else
+//     size_t length = strlen(aName);
+//     data->iName = new char[length + 1];
+//     memcpy_s(data->iName, length + 1, aName, length + 1);
+//#endif
     if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
         return kHandleNull;
     }
@@ -1086,29 +1099,121 @@ failure:
   }
 
 #else
-const TIpAddress testAddr = (TIpAddress)MakeIpAddress(10, 2, 10, 188);
-const TIpAddress testMask = (TIpAddress)MakeIpAddress(255, 255, 0, 0);
 #define IF_TYPE_ETHERNET_CSMACD 6
 
   int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
   {
     UNUSED(aContext);
     UNUSED(aUseLoopback);
-    OsNetworkAdapter* nif;
-    nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
-    if (nif == NULL) {
-        goto failure;
+
+    OsNetworkAdapter* head = NULL;
+
+    try
+    {
+        auto hostNames = NetworkInformation::GetHostNames();
+
+        for each (auto iter in hostNames)
+        {
+            HostName^ hostName = (HostName^)iter;
+            if (hostName != nullptr && hostName->Type == HostNameType::Ipv4 && hostName->IPInformation != nullptr)
+            {
+                TIpAddress address;
+
+                IPInformation^ ipInfo = hostName->IPInformation;                
+                int prefixLength = ipInfo->PrefixLength->Value;
+                String^ ipAddressString = hostName->CanonicalName;
+
+                // convert String ipAddressString to char*
+                auto wideData = ipAddressString->Data();                
+                int bufferSize = WideCharToMultiByte(CP_UTF8, 0, wideData, -1, nullptr, 0, NULL, NULL);
+                auto utf8 = std::make_unique<char[]>(bufferSize);
+                if (0 == WideCharToMultiByte(CP_UTF8, 0, wideData, -1, utf8.get(), bufferSize, NULL, NULL))
+                {
+                    return -1;
+                }
+                std::string ipAddrStdStr = std::string(utf8.get());
+                const char* ipAddressChars = ipAddrStdStr.c_str();
+                
+                if (0 != OsNetworkGetHostByName(ipAddressChars, &address))
+                {
+                    return -1;
+                }
+
+                TIpAddress netmask = 0xFFFFFFFF;
+                netmask <<= 32 - prefixLength;
+                netmask = htonl(netmask);
+
+                OsNetworkAdapter* nif;
+                nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
+                if (nif == NULL) {
+                    return -1;
+                }
+                nif->iReserved = IF_TYPE_ETHERNET_CSMACD;
+                nif->iAddress = address;
+                nif->iNetMask = netmask;
+                nif->iName = (char*)malloc(1);
+                nif->iName[0] = '\0';
+                if (head == NULL) 
+                {
+                    head = nif;
+                }
+                else 
+                {
+                    TIpAddress subnet = (nif->iAddress & nif->iNetMask);
+                    OsNetworkAdapter* p1 = head;
+                    OsNetworkAdapter* prev = NULL;
+                    while (NULL != p1) 
+                    {
+                        if ((p1->iAddress & p1->iNetMask) == subnet) 
+                        {
+                            while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) 
+                            {
+                                prev = p1;
+                                p1 = p1->iNext;
+                            }
+                            break;
+                        }
+                        prev = p1;
+                        p1 = p1->iNext;
+                    }
+                    if (NULL == prev) 
+                    {
+                        nif->iNext = head;
+                        head = nif;
+                    }
+                    else 
+                    {
+                        nif->iNext = prev->iNext;
+                        prev->iNext = nif;
+                    }
+                }
+
+
+                //wchar_t const* ipAddressChars = hostName->CanonicalName->Data();
+                //std::string charData(cName.Begin(), cName.End());
+
+                
+                //IPAddress^ parsed = IPAddress::Parse(ipInfo->CanonicalName);
+                //array<Byte>^ bytes = parsed->GetAddressBytes();
+                //TIpAddress address = MakeIpAddress(bytes[0],bytes[1],bytes[2],bytes[3]);
+
+
+
+
+                //IReference<unsigned char>^ prefixLength = ipInfo->PrefixLength; // convert this to netmask
+
+
+            }
+        }
     }
-    nif->iReserved = IF_TYPE_ETHERNET_CSMACD;
-    nif->iAddress = testAddr;
-    nif->iNetMask = testMask;
-    nif->iName = (char*)malloc(1);
-    nif->iName[0] = '\0';
-    *aInterfaces = nif;
+    catch (Exception^ ex)
+    {
+        return -1;
+    }
+
+    *aInterfaces = head;
 
     return 0;
-  failure:
-    return -1;
   }
 
 #endif
