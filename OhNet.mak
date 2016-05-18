@@ -20,9 +20,9 @@ openhome_architecture=x86
 defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS
 error_handling = /EHsc
 additional_includes = /AI "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\store\references"
-universal_cppflags = /ZW /D "WINAPI_FAMILY=2"
+universal_cppflags = /ZW /D "WINAPI_FAMILY=2" /Gy
 link_libs = Ws2_32.lib WindowsApp.lib
-link_opts = /APPCONTAINER /SAFESEH /DYNAMICBASE /NXCOMPAT
+link_opts = /APPCONTAINER /SAFESEH /DYNAMICBASE /NXCOMPAT 
 static_or_dynamic = /MD
 !else
 defines_universal = -D_CRT_SECURE_NO_WARNINGS
@@ -44,7 +44,7 @@ openhome_configuration = Debug
 android_ndk_debug = 1
 !else
 link_flag_debug =
-link_flag_debug_dll = /opt:ref
+link_flag_debug_dll = /OPT:REF
 debug_specific_cflags = $(static_or_dynamic) /Ox
 debug_csharp = /optimize+ /debug:pdbonly
 build_dir = Release
@@ -56,9 +56,9 @@ android_ndk_debug = 0
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags_third_party = $(debug_specific_cflags) /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
+cflags_third_party = $(debug_specific_cflags) /c /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
 cflags = $(cflags_third_party) $(additional_includes) /WX
-cppflags = $(cflags) $(universal_cppflags) /TP
+cppflags = $(cflags) $(universal_cppflags) /TP 
 
 !if "$(windows_universal)"=="1"
 cflags_third_party_force_cpp_if_defined = $(cppflags)
@@ -84,7 +84,7 @@ linkoutput = /out:
 dllprefix =
 dllext = dll
 linkopts_ohNet =
-link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll
+link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll 
 csharp = csc /nologo /platform:anycpu
 csharpdefines =
 publicjavadir = OpenHome\Net\Bindings\Java^\

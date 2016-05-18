@@ -10,6 +10,7 @@
 
 #ifdef DEFINE_WINDOWS_UNIVERSAL
 #include <Processthreadsapi.h>
+#include <Synchapi.h>
 #else
 #include <Windows.h>
 #include <Iphlpapi.h>
@@ -136,7 +137,11 @@ void OsDestroy(OsContext* aContext)
 void OsQuit(OsContext* aContext)
 {
     UNUSED(aContext);
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     abort();
+#else
+    // TODO: find an alternative to abort - as terminate, abort and exit all fail windows store validation
+#endif
 }
 
 
@@ -256,7 +261,9 @@ uint64_t OsTimeInUs(OsContext* aContext)
     /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
     if (now < aContext->iPrevTime) {
         diff = aContext->iPrevTime - now;
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         fprintf(stderr, "WARNING: clock moved backwards by %3llums\n", now / 10000);
+#endif
         aContext->iTimeAdjustment += diff;
     }
     aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
@@ -268,11 +275,17 @@ uint64_t OsTimeInUs(OsContext* aContext)
     return diff;
 }
 
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+void OsConsoleWrite(const char* /*aStr*/)
+{
+}
+#else
 void OsConsoleWrite(const char* aStr)
 {
     fprintf(stderr, "%s", aStr);
     fflush(stderr);
 }
+#endif
 
 void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aMajor, uint32_t* aMinor)
 {
@@ -551,7 +564,9 @@ static void SetSocketBlocking(SOCKET aSocket)
     u_long nonBlocking = 0;
     WSAEventSelect(aSocket, NULL, 0);
     if (-1 == ioctlsocket(aSocket, FIONBIO, &nonBlocking)) {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         fprintf(stdout, "SetSocketBlocking failed for socket %u\n", aSocket);
+#endif
     }
 }
 
