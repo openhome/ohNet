@@ -62,6 +62,7 @@ class VolumeProfile : public IVolumeProfile
     static const TUint kVolumeMilliDbPerStep = 1024;
     static const TUint kBalanceMax = 12;
     static const TUint kFadeMax = 10;
+    static const TBool kAlwaysOn = false;
 private: // from IVolumeProfile
     TUint VolumeMax() const override;
     TUint VolumeDefault() const override;
@@ -71,6 +72,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TBool AlwaysOn() const override;
 };
 
 class VolumeSinkLogger : public IVolume, public IBalance, public IFade
@@ -104,7 +106,6 @@ public:
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
     void SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper);
-    void SetSongcastTimestampMappers(IOhmTimestampMapper& aTxTsMapper, IOhmTimestampMapper& aRxTsMapper);
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
@@ -139,6 +140,7 @@ protected:
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
     RebootLogger iRebootHandler;
     Net::Shell* iShell;
+    Media::IPullableClock* iPullableClock;
 private:
     Semaphore iSemShutdown;
     Semaphore iDisabled;
@@ -151,8 +153,6 @@ private:
     IOhmTimestamper* iTxTimestamper;
     IOhmTimestamper* iRxTimestamper;
     VolumeSinkLogger iVolumeLogger;
-    IOhmTimestampMapper* iTxTsMapper;
-    IOhmTimestampMapper* iRxTsMapper;
     Bws<Uri::kMaxUriBytes+1> iPresentationUrl;
     Media::LoggingPipelineObserver* iPipelineObserver;
     Net::DvDeviceStandard* iDevice;

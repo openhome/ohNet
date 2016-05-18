@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -21,7 +22,7 @@ using namespace OpenHome::Media;
 // ProtocolOhu
 
 ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode)
-    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, nullptr /* no timestamper required */, "ohu", aMode)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, Optional<IOhmTimestamper>() /* no timestamper required */, "ohu", aMode)
     , iLeaveLock("POHU")
 {
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired), "ProtocolOhuLeave");
@@ -34,7 +35,7 @@ ProtocolOhu::~ProtocolOhu()
 
 void ProtocolOhu::HandleAudio(const OhmHeader& aHeader)
 {
-    Broadcast(iMsgFactory.CreateAudioBlob(iReadBuffer, aHeader));
+    Broadcast(iMsgFactory.CreateAudio(iReadBuffer, aHeader));
 
     AutoMutex a(iLeaveLock);
     if (iLeaving) {
@@ -62,7 +63,7 @@ void ProtocolOhu::HandleSlave(const OhmHeader& aHeader)
 
     ReaderBinary reader(iReadBuffer);
     for (TUint i = 0; i < iSlaveCount; i++) {
-        TIpAddress address = reader.ReadUintLe(4);
+        TIpAddress address = reader.ReadUintBe(4);
         TUint port = reader.ReadUintBe(2);
         iSlaveList[i].SetAddress(address);
         iSlaveList[i].SetPort(port);
@@ -241,6 +242,11 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
+}
+
+void ProtocolOhu::ProcessTimestamps(const OhmMsgAudio& /*aMsg*/, TBool& aDiscard)
+{
+    aDiscard = false;
 }
 
 void ProtocolOhu::Interrupt(TBool aInterrupt)

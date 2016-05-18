@@ -6,7 +6,6 @@
 #include <OpenHome/Media/Pipeline/RampArray.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
-#include <OpenHome/Media/Utils/Aggregator.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Net/Private/Shell.h>
@@ -129,12 +128,10 @@ private: // from IPipelineAnimator
 private: // from IAnalogBypassVolumeRamper
     void ApplyVolumeMultiplier(TUint aValue) override;
 private:
-    Net::ShellNull iShell;
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     PipelineInitParams* iInitParams;
     Pipeline* iPipeline;
-    Aggregator* iAggregator;
     TrackFactory* iTrackFactory;
     IPipelineElementUpstream* iPipelineEnd;
     TUint iSampleRate;
@@ -171,6 +168,36 @@ private:
     AudioDataEndian iEndian;
     TUint64 iTrackOffsetJiffies;
     TBool iSentDecodedInfo;
+};
+
+class PcmProcessorTestPipeline : public IPcmProcessor
+{
+public:
+    TUint FirstSubsample() const;
+    TUint LastSubsample() const;
+    TUint SampleCount() const;
+private:
+    inline TUint Subsample8(const TByte* aData) const;
+    inline TUint Subsample16(const TByte* aData) const;
+    inline TUint Subsample24(const TByte* aData) const;
+    inline TUint Subsample32(const TByte* aData) const;
+private: // from IPcmProcessor
+    void BeginBlock() override;
+    void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessFragment32(const Brx& aData, TUint aNumChannels) override;
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
+    void EndBlock() override;
+    void Flush() override;
+private:
+    TBool iSetFirstSubsample;
+    TUint iFirstSubsample;
+    TUint iLastSubsample;
+    TUint iSamples;
 };
 
 #undef LOG_PIPELINE_OBSERVER // enable this to check output from IPipelineObserver
@@ -301,14 +328,14 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iInitParams = PipelineInitParams::New();
+    iInitParams->SetLongRamp(Jiffies::kPerMs * 150); // reduced size to ensure that 1ms chunks of ramped audio show a change
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this, iShell);
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this);
     iPipeline->SetAnimator(*this);
-    iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little));
     iPipeline->Start(*this);
-    iPipelineEnd = iAggregator;
+    iPipelineEnd = iPipeline;
 }
 
 SuitePipeline::~SuitePipeline()
@@ -322,7 +349,6 @@ SuitePipeline::~SuitePipeline()
     iPipeline->Quit();
     iSemQuit.Wait();
     delete iSupplier;
-    delete iAggregator;
     delete iPipeline;
     delete iTrackFactory;
     delete th;
@@ -540,6 +566,9 @@ void SuitePipeline::PullUntilEnd(EState aState)
             // fallthrough
         case ERampDown:
             TEST(iFirstSubsample > iLastSubsample);
+            if (iFirstSubsample <= iLastSubsample) {
+                Print("Ramping down - first=%08x, last=%08x\n", iFirstSubsample, iLastSubsample);
+            }
             if (iLastSubsample == kSubsampleRampedDownFull) {
                 done = true;
             }
@@ -806,34 +835,12 @@ Msg* SuitePipeline::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
 {
     iLastMsgWasAudio = true;
-    ProcessorPcmBufTest pcmProcessor;
+    PcmProcessorTestPipeline pcmProcessor;
     aMsg->Read(pcmProcessor);
-    Brn buf(pcmProcessor.Buf());
-    ASSERT(buf.Bytes() == aMsg->Bytes());
+    iFirstSubsample = pcmProcessor.FirstSubsample();
+    iLastSubsample = pcmProcessor.LastSubsample();
     aMsg->RemoveRef();
-    const TByte* ptr = buf.Ptr();
-    const TUint bytes = buf.Bytes();
-    switch (iBitDepth)
-    {
-    case 8:
-        iFirstSubsample = ptr[0];
-        iLastSubsample = ptr[bytes-1];
-        break;
-    case 16:
-        iFirstSubsample = (ptr[0]<<8) | ptr[1];
-        iLastSubsample = (ptr[bytes-2]<<8) | ptr[bytes-1];
-        break;
-    case 24:
-        iFirstSubsample = (ptr[0]<<16) | (ptr[1]<<8) | ptr[2];
-        iLastSubsample = (ptr[bytes-3]<<16) | (ptr[bytes-2]<<8) | ptr[bytes-1];
-        break;
-    default:
-        ASSERTS();
-    }
-    const TUint bytesPerSample = (iBitDepth/8) * iNumChannels;
-    ASSERT(bytes % bytesPerSample == 0);
-    const TUint numSamples = bytes / bytesPerSample;
-    iLastMsgJiffies = Jiffies::PerSample(iSampleRate) * numSamples;
+    iLastMsgJiffies = Jiffies::PerSample(iSampleRate) * pcmProcessor.SampleCount();
     iJiffies += iLastMsgJiffies;
     return nullptr;
 }
@@ -920,6 +927,161 @@ TBool DummyCodec::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 {
     return false;
 }
+
+
+// PcmProcessorTestPipeline
+
+TUint PcmProcessorTestPipeline::FirstSubsample() const
+{
+    return iFirstSubsample;
+}
+
+TUint PcmProcessorTestPipeline::LastSubsample() const
+{
+    return iLastSubsample;
+}
+
+TUint PcmProcessorTestPipeline::SampleCount() const
+{
+    return iSamples;
+}
+
+void PcmProcessorTestPipeline::BeginBlock()
+{
+    iFirstSubsample = iLastSubsample = 0xffffffff;
+    iSetFirstSubsample = true;
+    iSamples = 0;
+}
+
+inline TUint PcmProcessorTestPipeline::Subsample8(const TByte* aData) const
+{
+    return *aData;
+}
+
+inline TUint PcmProcessorTestPipeline::Subsample16(const TByte* aData) const
+{
+    TUint subsample = *aData++ << 8;
+    subsample += *aData;
+    return subsample;
+}
+
+inline TUint PcmProcessorTestPipeline::Subsample24(const TByte* aData) const
+{
+    TUint subsample = *aData++ << 16;
+    subsample += *aData++ << 8;
+    subsample += *aData;
+    return subsample;
+}
+
+inline TUint PcmProcessorTestPipeline::Subsample32(const TByte* aData) const
+{
+    TUint subsample = *aData++ << 24;
+    subsample += *aData++ << 16;
+    subsample += *aData++ << 8;
+    subsample += *aData;
+    return subsample;
+}
+
+void PcmProcessorTestPipeline::ProcessFragment8(const Brx& aData, TUint aNumChannels)
+{
+    const TByte* start = aData.Ptr();
+    const TByte* end = start + aData.Bytes() - 1;
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample8(start);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample8(end);
+    iSamples += aData.Bytes() / aNumChannels;
+}
+
+void PcmProcessorTestPipeline::ProcessFragment16(const Brx& aData, TUint aNumChannels)
+{
+    const TByte* start = aData.Ptr();
+    const TByte* end = start + aData.Bytes() - 2;
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample16(start);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample16(end);
+    iSamples += aData.Bytes() / (aNumChannels * 2);
+}
+
+void PcmProcessorTestPipeline::ProcessFragment24(const Brx& aData, TUint aNumChannels)
+{
+    const TByte* start = aData.Ptr();
+    const TByte* end = start + aData.Bytes() - 3;
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample24(start);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample24(end);
+    iSamples += aData.Bytes() / (aNumChannels * 3);
+}
+
+void PcmProcessorTestPipeline::ProcessFragment32(const Brx& aData, TUint aNumChannels)
+{
+    const TByte* start = aData.Ptr();
+    const TByte* end = start + aData.Bytes() - 4;
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample32(start);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample32(end);
+    iSamples += aData.Bytes() / (aNumChannels * 4);
+}
+
+void PcmProcessorTestPipeline::ProcessSample8(const TByte* aSample, TUint aNumChannels)
+{
+    const TByte* end = aSample + aNumChannels - 1;
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample8(aSample);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample8(end);
+    iSamples++;
+}
+
+void PcmProcessorTestPipeline::ProcessSample16(const TByte* aSample, TUint aNumChannels)
+{
+    const TByte* end = aSample + ((aNumChannels-1) * 2);
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample16(aSample);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample16(end);
+    iSamples++;
+}
+
+void PcmProcessorTestPipeline::ProcessSample24(const TByte* aSample, TUint aNumChannels)
+{
+    const TByte* end = aSample + ((aNumChannels-1) * 3);
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample24(aSample);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample24(end);
+    iSamples++;
+}
+
+void PcmProcessorTestPipeline::ProcessSample32(const TByte* aSample, TUint aNumChannels)
+{
+    const TByte* end = aSample + ((aNumChannels-1) * 4);
+    if (iSetFirstSubsample) {
+        iFirstSubsample = Subsample32(aSample);
+        iSetFirstSubsample = false;
+    }
+    iLastSubsample = Subsample32(end);
+    iSamples++;
+}
+
+void PcmProcessorTestPipeline::EndBlock()
+{
+}
+
+void PcmProcessorTestPipeline::Flush()
+{
+}
+
 
 
 void TestPipeline()

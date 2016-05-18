@@ -33,9 +33,9 @@ private: // from IPipelineObserver
 private:
     Media::PipelineManager& iPipelineManager;
     Mutex iLock;
-    Bws<Media::kTrackUriMaxBytes> iTrackUri;
-    Bws<Media::kTrackMetaDataMaxBytes> iMetaData;
-    Bws<Media::DecodedStreamInfo::kMaxCodecNameBytes> iCodecName;
+    Media::BwsTrackUri iTrackUri;
+    Media::BwsTrackMetaData iMetaData;
+    Media::BwsCodecName iCodecName;
     Bws<Media::MsgMetaText::kMaxBytes> iMetaText;
 };
 

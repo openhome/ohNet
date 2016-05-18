@@ -15,7 +15,7 @@ using namespace OpenHome::Media;
 // UriProviderPlaylist
 
 UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver)
-    : UriProvider("Playlist", LatencyNotSupported, RealTimeNotSupported, NextSupported, PrevSupported)
+    : UriProvider("Playlist", Latency::NotSupported, RealTime::NotSupported, Next::Supported, Prev::Supported)
     , iLock("UPPL")
     , iDatabase(aDatabase)
     , iIdManager(aPipeline)
@@ -106,6 +106,8 @@ TBool UriProviderPlaylist::MoveNext()
     iPending = iDatabase.NextTrackRef(trackId);
     if (iPending != nullptr) {
         iPendingCanPlay = ePlayYes;
+        // allow additional loop round the playlist in case we've skipped discovering whether a track we started fetching is playable
+        iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
     }
     else {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
@@ -126,6 +128,8 @@ TBool UriProviderPlaylist::MovePrevious()
     iPending = iDatabase.PrevTrackRef(trackId);
     if (iPending != nullptr) {
         iPendingCanPlay = ePlayYes;
+        // allow additional loop round the playlist in case we've skipped discovering whether a track we started fetching is playable
+        iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
     }
     else {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);

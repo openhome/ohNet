@@ -32,9 +32,15 @@ AllocatorBase::~AllocatorBase()
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);
-        Allocated* ptr = Read();
-        //Log::Print("(%p)", ptr);
-        delete ptr;
+        try {
+            Allocated* ptr = Read();
+            //Log::Print("(%p)", ptr);
+            delete ptr;
+        }
+        catch (AssertionFailed&) {
+            Log::Print("...leak at %u of %u\n", i+1, slots);
+            throw;
+        }
     }
     LOG(kPipeline, "< ~AllocatorBase for %s\n", iName);
 }
@@ -124,7 +130,7 @@ Allocated* AllocatorBase::Read()
         p = iFree.Read();
     }
     catch (FifoReadError&) {
-        Log::Print("Allocator error for %s\n", iName);
+        Log::Print("Warning: Allocator error for %s\n", iName);
         ASSERTS();
     }
     return p;
@@ -277,6 +283,9 @@ void DecodedAudio::Construct(const Brx& aData, TUint aBitDepth, AudioDataEndian 
     else if (aBitDepth == 24) {
         CopyToBigEndian24(aData, ptr);
     }
+    else if (aBitDepth == 32) {
+        CopyToBigEndian32(aData, ptr);
+    }
     else { // unsupported bit depth
         ASSERTS();
     }
@@ -296,6 +305,17 @@ void DecodedAudio::CopyToBigEndian24(const Brx& aData, TByte* aDest)
 { // static
     const TByte* src = aData.Ptr();
     for (TUint i=0; i<aData.Bytes(); i+=3) {
+        *aDest++ = src[i+2];
+        *aDest++ = src[i+1];
+        *aDest++ = src[i];
+    }
+}
+
+void DecodedAudio::CopyToBigEndian32(const Brx& aData, TByte* aDest)
+{ // static
+    const TByte* src = aData.Ptr();
+    for (TUint i=0; i<aData.Bytes(); i+=4) {
+        *aDest++ = src[i+3];
         *aDest++ = src[i+2];
         *aDest++ = src[i+1];
         *aDest++ = src[i];
@@ -860,34 +880,31 @@ void ModeInfo::Clear()
 // ModeClockPullers
 
 ModeClockPullers::ModeClockPullers()
-    : iReservoirLeft(nullptr)
-    , iReservoirRight(nullptr)
-    , iTimestamp(nullptr)
+    : iEnabled(false)
+    , iReservoirLeft(nullptr)
 {
 }
 
-ModeClockPullers::ModeClockPullers(IClockPullerReservoir* aReservoirLeft,
-                                   IClockPullerReservoir* aReservoirRight,
-                                   IClockPullerTimestamp* aTimestamp)
-    : iReservoirLeft(aReservoirLeft)
-    , iReservoirRight(aReservoirRight)
-    , iTimestamp(aTimestamp)
+ModeClockPullers::ModeClockPullers(TBool aEnabled)
+    : iEnabled(aEnabled)
+    , iReservoirLeft(nullptr)
 {
+}
+
+ModeClockPullers::ModeClockPullers(IClockPullerReservoir* aReservoirLeft)
+    : iEnabled(aReservoirLeft != nullptr)
+    , iReservoirLeft(aReservoirLeft)
+{
+}
+
+TBool ModeClockPullers::Enabled() const
+{
+    return iEnabled;
 }
 
 IClockPullerReservoir* ModeClockPullers::ReservoirLeft() const
 {
     return iReservoirLeft;
-}
-
-IClockPullerReservoir* ModeClockPullers::ReservoirRight() const
-{
-    return iReservoirRight;
-}
-
-IClockPullerTimestamp* ModeClockPullers::Timestamp() const
-{
-    return iTimestamp;
 }
 
 
@@ -1060,6 +1077,7 @@ void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, 
     iNumChannels = aNumChannels;
     iEndian = aEndian;
     iStartSample = aStartSample;
+    iCodecName.Replace(Brn("PCM"));
 }
 
 void PcmStreamInfo::SetAnalogBypass()
@@ -1067,11 +1085,17 @@ void PcmStreamInfo::SetAnalogBypass()
     iAnalogBypass = true;
 }
 
+void PcmStreamInfo::SetCodecName(const Brx& aCodecName)
+{
+    iCodecName.Replace(aCodecName);
+}
+
 void PcmStreamInfo::Clear()
 {
     iBitDepth = iSampleRate = iNumChannels = UINT_MAX;
     iEndian = AudioDataEndian::Invalid;
     iAnalogBypass = false;
+    iCodecName.Replace(Brx::Empty());
 }
 
 TUint PcmStreamInfo::BitDepth() const
@@ -1102,6 +1126,22 @@ TUint64 PcmStreamInfo::StartSample() const
 TBool PcmStreamInfo::AnalogBypass() const
 {
     return iAnalogBypass;
+}
+
+const Brx& PcmStreamInfo::CodecName() const
+{
+    return iCodecName;
+}
+
+void PcmStreamInfo::operator=(const PcmStreamInfo& aPcmStream)
+{
+    iBitDepth = aPcmStream.BitDepth();
+    iSampleRate = aPcmStream.SampleRate();
+    iNumChannels = aPcmStream.NumChannels();
+    iEndian = aPcmStream.Endian();
+    iStartSample = aPcmStream.StartSample();
+    iAnalogBypass = aPcmStream.AnalogBypass();
+    iCodecName.Replace(aPcmStream.CodecName());
 }
 
 
@@ -1576,7 +1616,6 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
     remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
-    remaining->iClockPullMultiplier = iClockPullMultiplier;
     remaining->iSampleRate = iSampleRate;
     remaining->iBitDepth = iBitDepth;
     remaining->iNumChannels = iNumChannels;
@@ -1698,11 +1737,6 @@ const Media::Ramp& MsgAudio::Ramp() const
     return iRamp;
 }
 
-void MsgAudio::SetClockPull(TUint aMultiplier)
-{
-    iClockPullMultiplier = aMultiplier;
-}
-
 TUint MsgAudio::MedianRampMultiplier()
 {
     if (!iRamp.IsEnabled()) {
@@ -1725,7 +1759,6 @@ void MsgAudio::Initialise(TUint aSampleRate, TUint aBitDepth, TUint aChannels)
 {
     iNextAudio = nullptr;
     iRamp.Reset();
-    iClockPullMultiplier = IPullableClock::kPullNone;
     iSampleRate = aSampleRate;
     iBitDepth = aBitDepth;
     iNumChannels = aChannels;
@@ -1773,13 +1806,13 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     MsgPlayable* playable;
     if (iRamp.Direction() != Ramp::EMute) {
         MsgPlayablePcm* pcm = iAllocatorPlayablePcm->Allocate();
-        pcm->Initialise(iAudioData, sizeBytes, iBitDepth, iNumChannels, offsetBytes, iRamp, iClockPullMultiplier);
+        pcm->Initialise(iAudioData, sizeBytes, iBitDepth, iNumChannels, offsetBytes, iRamp);
         playable = pcm;
     }
     else {
         MsgPlayableSilence* silence = iAllocatorPlayableSilence->Allocate();
         Media::Ramp noRamp;
-        silence->Initialise(sizeBytes, iBitDepth, iNumChannels, noRamp, iClockPullMultiplier);
+        silence->Initialise(sizeBytes, iBitDepth, iNumChannels, noRamp);
         playable = silence;
     }
     if (iNextAudio != nullptr) {
@@ -1805,16 +1838,6 @@ void MsgAudioPcm::Aggregate(MsgAudioPcm* aMsg)
     aMsg->RemoveRef();
 }
 
-TBool MsgAudioPcm::TryGetTimestamps(TUint& aNetwork, TUint& aRx)
-{
-    if (iTimestamped) {
-        aNetwork = iNetworkTimestamp;
-        aRx = iRxTimestamp;
-        return true;
-    }
-    return false;
-}
-
 MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudioPcm* clone = static_cast<MsgAudioPcm*>(MsgAudio::Clone());
@@ -1822,7 +1845,6 @@ MsgAudio* MsgAudioPcm::Clone()
     clone->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     clone->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
     clone->iTrackOffset = iTrackOffset;
-    clone->iClockPullMultiplier = iClockPullMultiplier;
     iAudioData->AddRef();
     return clone;
 }
@@ -1844,14 +1866,6 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUi
     iSize = (numSubsamples / iNumChannels) * Jiffies::PerSample(iSampleRate);
     ASSERT(iSize > 0);
     iOffset = 0;
-    iTimestamped = false;
-}
-
-void MsgAudioPcm::SetTimestamps(TUint aRx, TUint aNetwork)
-{
-    iTimestamped = true;
-    iRxTimestamp = aRx;
-    iNetworkTimestamp = aNetwork;
 }
 
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
@@ -1873,7 +1887,6 @@ void MsgAudioPcm::Clear()
 {
     MsgAudio::Clear();
     iAudioData->RemoveRef();
-    iTimestamped = false;
 }
 
 Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
@@ -1901,7 +1914,7 @@ MsgPlayable* MsgSilence::CreatePlayable()
     // we don't risk losing any data doing this as each original MsgSilence had an integer number of samples
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
-    playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp, iClockPullMultiplier);
+    playable->Initialise(sizeBytes, iBitDepth, iNumChannels, iRamp);
     if (iNextAudio != nullptr) {
         MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable();
         playable->Add(child);
@@ -2021,11 +2034,6 @@ const Media::Ramp& MsgPlayable::Ramp() const
     return iRamp;
 }
 
-TUint MsgPlayable::ClockPullMultiplier() const
-{
-    return iClockPullMultiplier;
-}
-
 void MsgPlayable::Read(IPcmProcessor& aProcessor)
 {
     aProcessor.BeginBlock();
@@ -2043,7 +2051,7 @@ MsgPlayable::MsgPlayable(AllocatorBase& aAllocator)
 }
 
 void MsgPlayable::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                             TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier)
+                             TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
     iNextPlayable = nullptr;
     iSize = aSizeBytes;
@@ -2051,7 +2059,6 @@ void MsgPlayable::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChanne
     iNumChannels = aNumChannels;
     iOffset = aOffsetBytes;
     iRamp = aRamp;
-    iClockPullMultiplier = aClockPullMultiplier;
 }
 
 void MsgPlayable::RefAdded()
@@ -2087,9 +2094,9 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 }
 
 void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                                TUint aOffsetBytes, const Media::Ramp& aRamp, TUint aClockPullMultiplier)
+                                TUint aOffsetBytes, const Media::Ramp& aRamp)
 {
-    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, aOffsetBytes, aRamp, aClockPullMultiplier);
+    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, aOffsetBytes, aRamp);
     iAudioData = aDecodedAudio;
     iAudioData->AddRef();
 }
@@ -2187,9 +2194,9 @@ MsgPlayableSilence::MsgPlayableSilence(AllocatorBase& aAllocator)
 }
 
 void MsgPlayableSilence::Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                                    const Media::Ramp& aRamp, TUint aClockPullMultiplier)
+                                    const Media::Ramp& aRamp)
 {
-    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, 0, aRamp, aClockPullMultiplier);
+    MsgPlayable::Initialise(aSizeBytes, aBitDepth, aNumChannels, 0, aRamp);
     iBitDepth = aBitDepth;
     iNumChannels = aNumChannels;
 }
@@ -2254,33 +2261,28 @@ Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 }
 
 
-// MsgQueue
+// MsgQueueBase
 
-MsgQueue::MsgQueue()
-    : iLock("MSGQ")
-    , iSem("MSGQ", 0)
-    , iHead(nullptr)
+MsgQueueBase::MsgQueueBase()
+    : iHead(nullptr)
     , iTail(nullptr)
     , iNumMsgs(0)
 {
 }
 
-MsgQueue::~MsgQueue()
+MsgQueueBase::~MsgQueueBase()
 {
-    iLock.Wait();
     Msg* head = iHead;
     while (head != nullptr) {
         iHead = head->iNextMsg;
         head->RemoveRef();
         head = iHead;
     }
-    iLock.Signal();
 }
 
-void MsgQueue::Enqueue(Msg* aMsg)
+void MsgQueueBase::DoEnqueue(Msg* aMsg)
 {
     ASSERT(aMsg != nullptr);
-    AutoMutex a(iLock);
     CheckMsgNotQueued(aMsg); // duplicate checking
     if (iHead == nullptr) {
         iHead = aMsg;
@@ -2291,19 +2293,9 @@ void MsgQueue::Enqueue(Msg* aMsg)
     iTail = aMsg;
     aMsg->iNextMsg = nullptr;
     iNumMsgs++;
-    iSem.Signal();
 }
 
-Msg* MsgQueue::Dequeue()
-{
-    iSem.Wait();
-    iLock.Wait();
-    Msg* head = DequeueLocked();
-    iLock.Signal();
-    return head;
-}
-
-Msg* MsgQueue::DequeueLocked()
+Msg* MsgQueueBase::DoDequeue()
 {
     ASSERT(iHead != nullptr);
     Msg* head = iHead;
@@ -2316,10 +2308,9 @@ Msg* MsgQueue::DequeueLocked()
     return head;
 }
 
-void MsgQueue::EnqueueAtHead(Msg* aMsg)
+void MsgQueueBase::DoEnqueueAtHead(Msg* aMsg)
 {
     ASSERT(aMsg != nullptr);
-    AutoMutex a(iLock);
     CheckMsgNotQueued(aMsg); // duplicate checking
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
@@ -2327,34 +2318,28 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
         iTail = aMsg;
     }
     iNumMsgs++;
-    iSem.Signal();
 }
 
-TBool MsgQueue::IsEmpty() const
+TBool MsgQueueBase::IsEmpty() const
 {
-    iLock.Wait();
     const TBool empty = (iHead == nullptr);
-    iLock.Signal();
     return empty;
 }
 
-void MsgQueue::Clear()
+void MsgQueueBase::DoClear()
 {
-    AutoMutex _(iLock);
     while (iHead != nullptr) {
-        Msg* msg = DequeueLocked();
+        Msg* msg = DoDequeue();
         msg->RemoveRef();
     }
-    (void)iSem.Clear();
 }
 
-TUint MsgQueue::NumMsgs() const
+TUint MsgQueueBase::NumMsgs() const
 {
-    AutoMutex a(iLock);
     return iNumMsgs;
 }
 
-void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
+void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
 {
     // iLock must be held (using an AutoMutex)
     ASSERT(aMsg != iTail);
@@ -2366,24 +2351,78 @@ void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
         count++;
     }
     if (count != iNumMsgs) {    // ensure a msg mid-queue hasn't had iNextMsg
-                                // modified elsewhere
+        // modified elsewhere
         ASSERTS();
     }
 #endif
 }
 
 
+// MsgQueue
+
+MsgQueue::MsgQueue()
+    : iLock("MSGQ")
+    , iSem("MSGQ", 0)
+{
+}
+
+void MsgQueue::Enqueue(Msg* aMsg)
+{
+    AutoMutex _(iLock);
+    DoEnqueue(aMsg);
+    iSem.Signal();
+}
+
+Msg* MsgQueue::Dequeue()
+{
+    iSem.Wait();
+    AutoMutex _(iLock);
+    return MsgQueueBase::DoDequeue();
+}
+
+void MsgQueue::EnqueueAtHead(Msg* aMsg)
+{
+    AutoMutex _(iLock);
+    DoEnqueueAtHead(aMsg);
+    iSem.Signal();
+}
+
+TBool MsgQueue::IsEmpty() const
+{
+    AutoMutex _(iLock);
+    return MsgQueueBase::IsEmpty();
+}
+
+void MsgQueue::Clear()
+{
+    AutoMutex _(iLock);
+    DoClear();
+    (void)iSem.Clear();
+}
+
+TUint MsgQueue::NumMsgs() const
+{
+    AutoMutex _(iLock);
+    return MsgQueueBase::NumMsgs();
+}
+
+
 // MsgReservoir
 
 MsgReservoir::MsgReservoir()
-    : iLock("MQJF")
-    , iEncodedBytes(0)
+    : iEncodedBytes(0)
     , iJiffies(0)
     , iTrackCount(0)
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
     , iEncodedAudioCount(0)
 {
+    ASSERT(iEncodedBytes.is_lock_free());
+    ASSERT(iJiffies.is_lock_free());
+    ASSERT(iTrackCount.is_lock_free());
+    ASSERT(iEncodedStreamCount.is_lock_free());
+    ASSERT(iDecodedStreamCount.is_lock_free());
+    ASSERT(iEncodedAudioCount.is_lock_free());
 }
 
 MsgReservoir::~MsgReservoir()
@@ -2418,7 +2457,6 @@ void MsgReservoir::EnqueueAtHead(Msg* aMsg)
 
 TUint MsgReservoir::Jiffies() const
 {
-    AutoMutex a(iLock);
     return iJiffies;
 }
 
@@ -2434,41 +2472,22 @@ TBool MsgReservoir::IsEmpty() const
 
 TUint MsgReservoir::TrackCount() const
 {
-    AutoMutex a(iLock);
     return iTrackCount;
 }
 
 TUint MsgReservoir::EncodedStreamCount() const
 {
-    AutoMutex a(iLock);
     return iEncodedStreamCount;
 }
 
 TUint MsgReservoir::DecodedStreamCount() const
 {
-    AutoMutex a(iLock);
     return iDecodedStreamCount;
 }
 
 TUint MsgReservoir::EncodedAudioCount() const
 {
-    AutoMutex a(iLock);
     return iEncodedAudioCount;
-}
-
-void MsgReservoir::Add(TUint& aValue, TUint aAdded)
-{
-    iLock.Wait();
-    aValue += aAdded;
-    iLock.Signal();
-}
-
-void MsgReservoir::Remove(TUint& aValue, TUint aRemoved)
-{
-    iLock.Wait();
-    ASSERT(aValue >= aRemoved);
-    aValue -= aRemoved;
-    iLock.Signal();
 }
 
 void MsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)              { }
@@ -2517,9 +2536,7 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgMode* aMsg)               { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgTrack* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iTrackCount++;
-    iQueue.iLock.Signal();
     return aMsg;
 }
 
@@ -2528,18 +2545,14 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgDelay* aMsg)              { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedStreamCount++;
-    iQueue.iLock.Signal();
     return aMsg;
 }
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedAudioCount++;
-    iQueue.iLock.Signal();
-    iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
+    iQueue.iEncodedBytes += aMsg->Bytes();
     return aMsg;
 }
 
@@ -2551,9 +2564,7 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgWait* aMsg)               { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iDecodedStreamCount++;
-    iQueue.iLock.Signal();
     return aMsg;
 }
 
@@ -2561,13 +2572,13 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgBitRate* aMsg)            { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies += aMsg->Jiffies();
     return aMsg;
 }
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgSilence* aMsg)
 {
-    iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies += aMsg->Jiffies();
     return aMsg;
 }
 
@@ -2710,9 +2721,7 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMode* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iTrackCount--;
-    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2728,18 +2737,14 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDelay* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedStreamCount--;
-    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iEncodedAudioCount--;
-    iQueue.iLock.Signal();
-    iQueue.Remove(iQueue.iEncodedBytes, aMsg->Bytes());
+    iQueue.iEncodedBytes -= aMsg->Bytes();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2770,9 +2775,7 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgWait* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iQueue.iLock.Wait();
     iQueue.iDecodedStreamCount--;
-    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2783,13 +2786,13 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies -= aMsg->Jiffies();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
 {
-    iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
+    iQueue.iJiffies -= aMsg->Jiffies();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -3111,13 +3114,6 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
 {
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aBitDepth, aEndian);
     return CreateMsgAudioPcm(decodedAudio, aChannels, aSampleRate, aBitDepth, aTrackOffset);
-}
-
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp)
-{
-    MsgAudioPcm* msg = CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
-    msg->SetTimestamps(aRxTimestamp, aNetworkTimestamp);
-    return msg;
 }
 
 MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(MsgAudioEncoded* aAudio, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset)

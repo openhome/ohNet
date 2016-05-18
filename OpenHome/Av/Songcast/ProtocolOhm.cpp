@@ -12,6 +12,11 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
+
+#include <cstdlib>
+#include <limits>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -43,9 +48,15 @@ using namespace OpenHome::Media;
 
 // ProtocolOhm
 
-ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const Brx& aMode)
+const TInt ProtocolOhm::kLockingMaxDeviation = Jiffies::kPerMs / 2;
+const TUint ProtocolOhm::kLockingMsgCount = 4;
+
+ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFactory& aTrackFactory,
+                         Optional<IOhmTimestamper> aTimestamper, Optional<IClockPullerTimestamp> aClockPuller,
+                         const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
     , iStoppedLock("POHM")
+    , iClockPuller(aClockPuller.Ptr())
 {
 }
 
@@ -66,8 +77,9 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     // ...this helps keep a full player at membership of 4 multicast groups
     // ...matching hardware limits of some clients
     WaitForPipelineToEmpty();
-    iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     TBool firstJoin = true;
+    iCheckForTimestamp = true;
+    iStreamIsTimestamped = false;
 
     do {
         if (!firstJoin) {
@@ -80,10 +92,13 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         }
         iStoppedLock.Signal();
         try {
+            iSocket.Close();
+            iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
             if (iTimestamper != nullptr) {
                 iTimestamper->Stop();
                 iTimestamper->Start(iEndpoint);
             }
+            ResetClockPuller();
 
             OhmHeader header;
             SendJoin();
@@ -105,8 +120,15 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                     case OhmHeader::kMsgTypeSlave:
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        /* ignore audio while joining - it might be from while we were waiting
-                           for the pipeline to empty if we're re-starting a stream following a drop-out */
+                    {
+                        /* Ignore audio while joining - it might be from while we were waiting
+                           for the pipeline to empty if we're re-starting a stream following a drop-out
+                           We do however need to check for timestamps, to avoid the timestamper
+                           filling up with out of date values */
+                        auto msg = iMsgFactory.CreateAudio(iReadBuffer, header);
+                        AddRxTimestamp(*msg);
+                        msg->RemoveRef();
+                    }
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         Add(iMsgFactory.CreateTrack(iReadBuffer, header));
@@ -154,7 +176,7 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                         iTimerListen->FireIn((kTimerListenTimeoutMs >> 1) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen secondary timeout
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
+                        Add(iMsgFactory.CreateAudio(iReadBuffer, header));
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         Add(iMsgFactory.CreateTrack(iReadBuffer, header));
@@ -180,6 +202,9 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     if (iTimestamper != nullptr) {
         iTimestamper->Stop();
     }
+    if (iClockPuller != nullptr) {
+        iClockPuller->Stop();
+    }
 
     iReadBuffer.ReadFlush();
     iTimerJoin->Cancel();
@@ -194,6 +219,92 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         iSupply->OutputFlush(flushId);
     }
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
+}
+
+void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
+{
+    aDiscard = false;
+    if (iTimestamper == nullptr || iClockPuller == nullptr) {
+        return;
+    }
+    const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
+    if (iCheckForTimestamp) {
+        iCheckForTimestamp = false;
+        iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr => expect timestamps
+        if (iStreamIsTimestamped) {
+            iClockPuller->Start(0);
+        }
+        else {
+            LOG(kSongcast, "ProtocolOhm::ProcessTimestamps - stream NOT timestamped\n");
+            iClockPuller->Stop();
+        }
+    }
+
+    if (!iStreamIsTimestamped) {
+        return;
+    }
+
+    const TUint sampleRate = aMsg.SampleRate();
+    const TUint timestamperFreq = Jiffies::SongcastTicksPerSecond(sampleRate);
+    if (iTimestamperFreq != timestamperFreq) {
+        // any stored timestamps are unreliable - reset timestamper
+        (void)iTimestamper->SetSampleRate(sampleRate);
+        iTimestamper->Stop();
+        iTimestamper->Start(iEndpoint);
+        iClockPuller->NewStream(sampleRate); // despite function name, try only reporting changes in clock family
+
+        iTimestamperFreq = timestamperFreq;
+        iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
+        if (!aMsg.Timestamped2()) { // Original Linn sender.  Next MediaLatency() worth of timestamps may be wrong.
+            iJiffiesBeforeTimestampsReliable = static_cast<TUint>(Jiffies::FromSongcastTime(aMsg.MediaLatency(), sampleRate));
+        }
+        else {
+            // Single timestamp on clock family change may be unreliable.
+            // Set things up so that timestampReliable gets set false below
+            const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
+            iJiffiesBeforeTimestampsReliable = msgJiffies;
+        }
+    }
+
+    const TBool timestampReliable = (iJiffiesBeforeTimestampsReliable == 0);
+    if (!timestampReliable) {
+        const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
+        if (msgJiffies > iJiffiesBeforeTimestampsReliable) {
+            iJiffiesBeforeTimestampsReliable = 0;
+        }
+        else {
+            iJiffiesBeforeTimestampsReliable -= msgJiffies;
+        }
+    }
+
+    if (!iLockedToStream) {
+        if (!msgTimestamped) {
+            aDiscard = true;
+            return;
+        }
+        const TInt delta = static_cast<TInt>(aMsg.RxTimestamp() - aMsg.NetworkTimestamp());
+        if (iCalculateTimestampDelta) {
+            iTimestampDelta = delta;
+            iMsgsTillLock = kLockingMsgCount - 1;
+            iCalculateTimestampDelta = false;
+        }
+        else if ((TUint)std::abs(iTimestampDelta - delta) > iLockingMaxDeviation) {
+            iMsgsTillLock = kLockingMsgCount;
+            iCalculateTimestampDelta = true;
+            iTimestampDelta = 0;
+        }
+        else if (--iMsgsTillLock == 0) {
+            iLockedToStream = true;
+        }
+        aDiscard = true;
+        return;
+    }
+
+    if (timestampReliable && msgTimestamped) {
+        const TUint networkTimestamp = aMsg.NetworkTimestamp();
+        const TInt drift = iTimestampDelta - static_cast<TInt>(aMsg.RxTimestamp() - networkTimestamp);
+        iClockPuller->NotifyTimestamp(drift, networkTimestamp);
+    }
 }
 
 void ProtocolOhm::Interrupt(TBool aInterrupt)
@@ -220,4 +331,15 @@ TUint ProtocolOhm::TryStop(TUint aStreamId)
         iSocket.ReadInterrupt();
     }
     return iNextFlushId;
+}
+
+void ProtocolOhm::ResetClockPuller()
+{
+    iLockedToStream = false;
+    iCalculateTimestampDelta = true;
+    iTimestamperFreq = 0;
+    iLockingMaxDeviation = UINT_MAX;
+    iJiffiesBeforeTimestampsReliable = 0;
+    iTimestampDelta = 0;
+    iMsgsTillLock = 0;
 }

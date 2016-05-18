@@ -25,7 +25,7 @@ private:
     const TUint iOpenHomeMax;
 };
 
-class AnimatorBasic : public PipelineElement, private IPullableClock, public IPipelineAnimator
+class AnimatorBasic : public PipelineElement, public IPullableClock, public IPipelineAnimator
 {
     static const TUint kTimerFrequencyMs = 5;
     static const TUint kSupportedMsgTypes;
@@ -43,7 +43,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPullableClock
-    void PullClock(TUint aSampleRate, TUint aMultiplier) override;
+    void PullClock(TUint aMultiplier) override;
 private: // from IPipelineAnimator
     TUint PipelineAnimatorBufferJiffies() override;
     TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) override;

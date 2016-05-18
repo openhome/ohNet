@@ -44,6 +44,8 @@ private:
     TUint iChannels;
     TUint iSampleRate;
     TUint iBitDepth;
+    TBool iSupportsLatency;
+    TBool iAggregationDisabled;
 };
 
 }

@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 namespace OpenHome {
 namespace Media {
@@ -17,13 +18,13 @@ After a delay is actioned, audio spends RampDuration ramping up.
 FIXME - no handling of pause-resumes
 */
     
-class VariableDelay : public PipelineElement, public IPipelineElementUpstream
+class VariableDelay : public PipelineElement, public IPipelineElementUpstream, private IClockPullerReservoir
 {
     static const TUint kMaxMsgSilenceDuration = Jiffies::kPerMs * 5;
     friend class SuiteVariableDelay;
     static const TUint kSupportedMsgTypes;
 public:
-    VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
+    VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aMinDelay, TUint aRampDuration);
     virtual ~VariableDelay();
     void OverrideAnimatorLatency(TUint aJiffies); // 0 => do not override
 public: // from IPipelineElementUpstream
@@ -34,6 +35,7 @@ private:
     void RampMsg(MsgAudio* aMsg);
     void ResetStatusAndRamp();
     void SetupRamp();
+    void StartClockPuller();
 private: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
@@ -41,6 +43,11 @@ private: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
+private: // from IClockPullerReservoir
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
+    void Stop() override;
+    void Reset() override;
+    void NotifySize(TUint aJiffies) override;
 private:
     enum EStatus
     {
@@ -55,22 +62,21 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     Mutex iLock;
-    MsgQueue iQueue;
+    MsgQueueLite iQueue;
     TUint iDelayJiffies;
     TUint iDelayJiffiesTotal;
     TInt iDelayAdjustment;
     EStatus iStatus;
     Ramp::EDirection iRampDirection;
     const TUint iDownstreamDelay;
+    const TUint iMinDelay;
     const TUint iRampDuration;
     TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
     BwsMode iMode;
-    IStreamHandler* iStreamHandler;
-    TUint iSampleRate;
-    TUint iBitDepth;
-    TUint iNumChannels;
+    IClockPuller* iClockPuller;
+    MsgDecodedStream* iDecodedStream;
     TUint iAnimatorLatencyOverride;
     TBool iAnimatorOverridePending;
 };

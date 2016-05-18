@@ -44,13 +44,13 @@ ModeClockPullers UriProvider::ClockPullers()
 }
 
 UriProvider::UriProvider(const TChar* aMode,
-    LatencySupport aLatency, RealTimeSupport aRealTime,
-    NextSupport aNextSupported, PrevSupport aPrevSupported)
+                        Latency aLatency, RealTime aRealTime,
+                        Next aNextSupported, Prev aPrevSupported)
     : iMode(aMode)
-    , iSupportsLatency(aLatency == LatencySupported)
-    , iRealTime(aRealTime == RealTimeSupported)
-    , iSupportsNext(aNextSupported == NextSupported)
-    , iSupportsPrev(aPrevSupported == PrevSupported)
+    , iSupportsLatency(aLatency == Latency::Supported)
+    , iRealTime(aRealTime == RealTime::Supported)
+    , iSupportsNext(aNextSupported == Next::Supported)
+    , iSupportsPrev(aPrevSupported == Prev::Supported)
 {
 }
 

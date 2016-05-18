@@ -12,6 +12,7 @@ OhmMsg::OhmMsg(OhmMsgFactory& aFactory)
     : iFactory(&aFactory)
     , iRefCount(0)
 {
+    ASSERT(iRefCount.is_lock_free());
 }
 
 OhmMsg::~OhmMsg()
@@ -20,22 +21,14 @@ OhmMsg::~OhmMsg()
 
 void OhmMsg::AddRef()
 {
-    iFactory->Lock();
-
     iRefCount++;
-
-    iFactory->Unlock();
 }
 
 void OhmMsg::RemoveRef()
 {
-    iFactory->Lock();
-
     if (--iRefCount == 0) {
         iFactory->Destroy(*this);
     }
-
-    iFactory->Unlock();
 }
 
 void OhmMsg::Create()
@@ -83,6 +76,8 @@ void OhmMsgTimestamped::Create()
 
 OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
     : OhmMsgTimestamped(aFactory)
+    , iAudio(iUnifiedBuffer.Ptr() + kStreamHeaderBytes, kMaxSampleBytes)
+    , iHeaderSerialised(false)
 {
 }
 
@@ -96,15 +91,39 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     OhmMsgTimestamped::Create();
     ASSERT(aHeader.MsgType() == OhmHeader::kMsgTypeAudio ||
            aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
+
+    Bws<kStreamHeaderBytes> headerBuf;
+    WriterBuffer writer(headerBuf);
+    aHeader.Externalise(writer);
     ReaderBinary reader(aReader);
-    const TUint headerBytes = reader.ReadUintBe(1);
+    Bwn audioHeaderBuf(headerBuf.Ptr() + headerBuf.Bytes(), headerBuf.MaxBytes() - headerBuf.Bytes());
+    reader.ReadReplace(kHeaderBytes, audioHeaderBuf);
+    headerBuf.SetBytes(headerBuf.Bytes() + audioHeaderBuf.Bytes());
+    /* Externalise assumes that iUnifiedBuffer is a single contiguous block and that audio
+       starts kStreamHeaderBytes into the buffer.  Left pad the header to achieve this. */
+    const TUint codecBytes = headerBuf[headerBuf.Bytes()-1];
+    iStreamHeaderOffset = kStreamHeaderBytes - headerBuf.Bytes() - codecBytes;
+    iUnifiedBuffer.SetBytes(iStreamHeaderOffset);
+    iUnifiedBuffer.Append(headerBuf);
+    if (codecBytes > 0) {
+        reader.ReadReplace(codecBytes, iCodec);
+        iUnifiedBuffer.Append(iCodec);
+    }
+    else {
+        iCodec.Replace(Brx::Empty());
+    }
+
+    ReaderBuffer rb(audioHeaderBuf);
+    ReaderBinary reader2(rb);
+    const TUint headerBytes = reader2.ReadUintBe(1);
     ASSERT(headerBytes == kHeaderBytes);
 
     iHalt = false;
     iLossless = false;
     iTimestamped = false;
+    iTimestamped2 = false;
     iResent = false;
-    const TUint flags = reader.ReadUintBe(1);
+    const TUint flags = reader2.ReadUintBe(1);
     if (flags & kFlagHalt) {
         iHalt = true;
     }
@@ -114,46 +133,45 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     if (flags & kFlagTimestamped) {
         iTimestamped = true;
     }
+    if (flags & kFlagTimestamped2) {
+        iTimestamped2 = true;
+    }
     if (flags & kFlagResent) {
         iResent = true;
     }
 
-    iSamples = reader.ReadUintBe(2);
-    iFrame = reader.ReadUintBe(4);
-    iNetworkTimestamp = reader.ReadUintBe(4);
-    iMediaLatency = reader.ReadUintBe(4);
-    iMediaTimestamp = reader.ReadUintBe(4);
-    iSampleStart = reader.ReadUint64Be(8);
-    iSamplesTotal = reader.ReadUint64Be(8);
-    iSampleRate = reader.ReadUintBe(4);
-    iBitRate = reader.ReadUintBe(4);
-    iVolumeOffset = reader.ReadIntBe(2);
-    iBitDepth = reader.ReadUintBe(1);
-    iChannels = reader.ReadUintBe(1);
-    
-    const TUint reserved = reader.ReadUintBe(1);
+    iSamples = reader2.ReadUintBe(2);
+    iFrame = reader2.ReadUintBe(4);
+    iNetworkTimestamp = reader2.ReadUintBe(4);
+    iMediaLatency = reader2.ReadUintBe(4);
+    iMediaTimestamp = reader2.ReadUintBe(4);
+    iSampleStart = reader2.ReadUint64Be(8);
+    iSamplesTotal = reader2.ReadUint64Be(8);
+    iSampleRate = reader2.ReadUintBe(4);
+    iBitRate = reader2.ReadUintBe(4);
+    iVolumeOffset = reader2.ReadIntBe(2);
+    iBitDepth = reader2.ReadUintBe(1);
+    iChannels = reader2.ReadUintBe(1);
+    const TUint reserved = reader2.ReadUintBe(1);
     ASSERT (reserved == kReserved);
-
-    const TUint codec = reader.ReadUintBe(1);
-    if(codec > 0) {
-        reader.ReadReplace(codec, iCodec);
-    }
-    else {
-        iCodec.Replace(Brx::Empty());
-    }
     
-    const TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
-    reader.ReadReplace(audio, iAudio);
-    iStreamHeader.Replace(Brx::Empty());
+    const TUint audioBytes = aHeader.MsgBytes() - kHeaderBytes - codecBytes;
+    iAudio.Set(iUnifiedBuffer.Ptr() + kStreamHeaderBytes, audioBytes);
+    reader.ReadReplace(audioBytes, iAudio);
+    iUnifiedBuffer.SetBytes(iUnifiedBuffer.Bytes() + iAudio.Bytes());
+    iHeaderSerialised = true;
 }
 
-void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
+void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples,
+                         TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart,
+                         const Brx& aStreamHeader, const Brx& aAudio)
 {
     OhmMsgTimestamped::Create();
 
     iHalt = aHalt;
     iLossless = aLossless;
     iTimestamped = aTimestamped;
+    iTimestamped2 = iTimestamped; // assume that all senders other than original Linn have accurate timestamps
     iResent = aResent;
     iSamples = aSamples;
     iFrame = aFrame;
@@ -161,15 +179,23 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     iMediaLatency = aMediaLatency;
     iMediaTimestamp = 0;
     iSampleStart = aSampleStart;
-    iStreamHeader.Replace(aStreamHeader);
-    iAudio.Replace(aAudio);
+
+    iStreamHeaderOffset = kStreamHeaderBytes - aStreamHeader.Bytes();
+    iUnifiedBuffer.SetBytes(iStreamHeaderOffset);
+    iUnifiedBuffer.Append(aStreamHeader);
+    iUnifiedBuffer.Append(aAudio);
+    iAudio.SetBytes(aAudio.Bytes());
+    iHeaderSerialised = false;
 }
 
-void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader)
+void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent,
+                                     TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency,
+                                     TUint64 aSampleStart, const Brx& aStreamHeader)
 {
     iHalt = aHalt;
     iLossless = aLossless;
     iTimestamped = aTimestamped;
+    iTimestamped2 = iTimestamped; // assume that all senders other than original Linn have accurate timestamps
     iResent = aResent;
     iSamples = aSamples;
     iFrame = aFrame;
@@ -177,10 +203,15 @@ void OhmMsgAudio::ReinitialiseFields(TBool aHalt, TBool aLossless, TBool aTimest
     iMediaLatency = aMediaLatency;
     iMediaTimestamp = 0;
     iSampleStart = aSampleStart;
-    iStreamHeader.Replace(aStreamHeader);
+
+    iStreamHeaderOffset = kStreamHeaderBytes - aStreamHeader.Bytes();
+    iUnifiedBuffer.SetBytes(iStreamHeaderOffset);
+    iUnifiedBuffer.Append(aStreamHeader);
+    iHeaderSerialised = false;
 }
 
-void OhmMsgAudio::GetStreamHeader(Bwx& aBuf, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec)
+void OhmMsgAudio::GetStreamHeader(Bwx& aBuf, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate,
+                                  TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec)
 { // static
     WriterBuffer wb(aBuf);
     WriterBinary writer(wb);
@@ -210,6 +241,11 @@ TBool OhmMsgAudio::Lossless() const
 TBool OhmMsgAudio::Timestamped() const
 {
     return iTimestamped;
+}
+
+TBool OhmMsgAudio::Timestamped2() const
+{
+    return iTimestamped2;
 }
 
 TBool OhmMsgAudio::Resent() const
@@ -295,6 +331,9 @@ Bwx& OhmMsgAudio::Audio()
 void OhmMsgAudio::SetResent(TBool aValue)
 {
     iResent = aValue;
+    const TUint flagsIndex = iStreamHeaderOffset + 8 + 1; // +8 for Ohm header, +1 to skip audio header length
+    ASSERT((iUnifiedBuffer[flagsIndex] & 0xE8) == 0); // check that kFlagResent and unused bits aren't set (implying weflagsIndex is wrong)
+    iUnifiedBuffer[flagsIndex] |= kFlagResent;
 }
 
 void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
@@ -304,11 +343,32 @@ void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
+    Serialise(); // prepends the ohm header, now ready to send!
+    iUnifiedBuffer.SetBytes(kStreamHeaderBytes+iAudio.Bytes());
+    aWriter.Write(iUnifiedBuffer.Split(iStreamHeaderOffset));
+}
+
+void OhmMsgAudio::Serialise()
+{
+    if (iHeaderSerialised)
+        return;
+
     static const TUint kPerFrameBytes = 28; // binary values written between OhmHeader and iStreamHeader
-    OhmHeader header(OhmHeader::kMsgTypeAudio,
-                     kPerFrameBytes + iStreamHeader.Bytes() + iAudio.Bytes());
-    header.Externalise(aWriter);
-    WriterBinary writer(aWriter);
+
+    const TUint streamHeaderBytes = kStreamHeaderBytes - iStreamHeaderOffset;
+    const TUint additionalHeaderBytes = kPerFrameBytes + streamHeaderBytes + iAudio.Bytes();
+    OhmHeader header(OhmHeader::kMsgTypeAudio, additionalHeaderBytes);
+
+    // prepare to prepend
+    const TUint prependOffset = iStreamHeaderOffset - kPerFrameBytes - OhmHeader::kHeaderBytes;
+    const TByte* ptr = iUnifiedBuffer.Ptr() + prependOffset;
+
+    Bwn headerBuffer(ptr, kPerFrameBytes + OhmHeader::kHeaderBytes);
+
+    WriterBuffer writerBuffer(headerBuffer);
+
+    header.Externalise(writerBuffer);
+    WriterBinary writer(writerBuffer);
 
     TUint flags = 0;
     if (iHalt) {
@@ -323,7 +383,10 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
     if (iResent) {
         flags |= kFlagResent;
     }
-    
+    if (iTimestamped2) {
+        flags |= kFlagTimestamped2;
+    }
+
     writer.WriteUint8(kHeaderBytes);
     writer.WriteUint8(flags);
     writer.WriteUint16Be(iSamples);
@@ -332,13 +395,21 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
     writer.WriteUint32Be(iMediaLatency);
     writer.WriteUint32Be(iMediaTimestamp);
     writer.WriteUint64Be(iSampleStart);
-    ASSERT(iStreamHeader.Bytes() > 0);
-    writer.Write(iStreamHeader);
-    writer.Write(iAudio);
 
-    aWriter.WriteFlush();
+    iStreamHeaderOffset = prependOffset;
+
+    //Log::PrintHex(iUnifiedBuffer.Split(iStreamHeaderOffset, kStreamHeaderBytes-iStreamHeaderOffset));
+    //Log::Print("\n");
+
+    ASSERT(headerBuffer.BytesRemaining() == 0);
+    iHeaderSerialised = true;
 }
 
+Brn OhmMsgAudio::SendableBuffer()
+{
+    iUnifiedBuffer.SetBytes(kStreamHeaderBytes + iAudio.Bytes());
+    return iUnifiedBuffer.Split(iStreamHeaderOffset);
+}
 
 // OhmMsgAudioBlob
 
@@ -534,7 +605,6 @@ OhmMsgFactory::OhmMsgFactory(TUint aAudioCount, TUint aAudioBlobCount, TUint aTr
     , iFifoAudioBlob(aAudioBlobCount)
     , iFifoTrack(aTrackCount)
     , iFifoMetatext(aMetatextCount)
-    , iMutex("OHMF")
 {
     for (TUint i = 0; i < aAudioCount; i++) {
         iFifoAudio.Write(new OhmMsgAudio(*this));
@@ -622,10 +692,13 @@ OhmMsgMetatext* OhmMsgFactory::CreateMetatext(IReader& aReader, const OhmHeader&
     return msg;
 }
 
-OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
+OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent,
+                                        TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency,
+                                        TUint64 aSampleStart, const Brx& aStreamHeader, const Brx& aAudio)
 {
     OhmMsgAudio* msg = iFifoAudio.Read();
-    msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aSampleStart, aStreamHeader, aAudio);
+    msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp,
+                aMediaLatency, aSampleStart, aStreamHeader, aAudio);
     return msg;
 }
 
@@ -648,16 +721,6 @@ OhmMsgMetatext* OhmMsgFactory::CreateMetatext(TUint aSequence, const Brx& aMetat
     OhmMsgMetatext* msg = iFifoMetatext.Read();
     msg->Create(aSequence, aMetatext);
     return msg;
-}
-
-void OhmMsgFactory::Lock()
-{
-    iMutex.Wait();
-}
-
-void OhmMsgFactory::Unlock()
-{
-    iMutex.Signal();
 }
 
 void OhmMsgFactory::Destroy(OhmMsg& aMsg)

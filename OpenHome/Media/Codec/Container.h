@@ -98,6 +98,7 @@ class MsgAudioEncodedCache : public IMsgAudioEncodedCache, public IMsgProcessor,
 {
 public:
     MsgAudioEncodedCache(IPipelineElementUpstream& aUpstreamElement);
+    ~MsgAudioEncodedCache();
     void Reset();
     void SetFlushing(TUint aFlushId);
 private:

@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
@@ -18,7 +19,6 @@ class OhmSenderDriver;
 class OhmSender;
 class ZoneHandler;
 class IOhmTimestamper;
-class IOhmTimestampMapper;
 
 class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor, private INonCopyable
 {
@@ -26,7 +26,7 @@ class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProc
     static const Brn kConfigIdChannel;
     static const Brn kConfigIdMode;
     static const Brn kConfigIdPreset;
-    static const TInt kChannelMin = 1024;
+    static const TInt kChannelMin = 0;
     static const TInt kChannelMax = 65535;
     static const TInt kPresetMin = 0;
     static const TInt kPresetMax = 0x7fffffff;
@@ -38,8 +38,7 @@ public:
     Sender(Environment& aEnv,
            Net::DvDeviceStandard& aDevice,
            ZoneHandler& aZoneHandler,
-           IOhmTimestamper* aTimestamper,
-           IOhmTimestampMapper* aTsMapper,
+           Optional<IOhmTimestamper> aTimestamper,
            Configuration::IConfigInitialiser& aConfigInit,
            TUint aThreadPriority,
            const Brx& aName,

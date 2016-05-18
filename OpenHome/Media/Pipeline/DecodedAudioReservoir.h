@@ -3,18 +3,17 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Private/Thread.h>
 
 namespace OpenHome {
 namespace Media {
 
-class IClockPuller;
-
-class DecodedAudioReservoir : public AudioReservoir
+class DecodedAudioReservoir : public AudioReservoir, private IClockPullerReservoir
 {
     friend class SuiteReservoirHistory;
 public:
-    DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
+    DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMaxSize, TUint aMaxStreamCount);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
     void ProcessMsgIn(MsgTrack* aMsg) override;
@@ -23,22 +22,21 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgSilence* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
     Msg* ProcessMsgOut(MsgDrain* aMsg) override;
-    Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
-    Msg* ProcessMsgOut(MsgSilence* aMsg) override;
 private: // from AudioReservoir
     TBool IsFull() const override;
+private: // from IClockPullerReservoir
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
+    void Stop() override;
+    void Reset() override;
+    void NotifySize(TUint aJiffies) override;
 private:
-    void DoProcessMsgIn();
-    Msg* DoProcessMsgOut(MsgAudio* aMsg);
-private:
-    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond / 10;
+    MsgFactory& iMsgFactory;
+    Mutex iLockClockPuller;
     IClockPullerReservoir* iClockPuller;
-    Mutex iLock;
     const TUint iMaxJiffies;
     const TUint iMaxStreamCount;
-    TUint64 iJiffiesUntilNextUsageReport;
-    Thread* iThreadExcludeBlock;
+    TBool iClockPullerStarted;
 };
 
 } // namespace Media

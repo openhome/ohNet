@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.6.2037",
+        "version": "1.6.2059",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -53,7 +53,7 @@
         "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name":             "testharness",
-        "version":          "0.1.39",
+        "version":          "0.1.42",
         "cross-check":      false,
         "type":             "openhome",
         "archive-filename": "${name}-${version}.tar.gz",
@@ -92,7 +92,7 @@
     {
         "name": "FunctionalTest",
         "type": "openhome",
-        "version": "0.0.748",
+        "version": "0.0.750",
         "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FunctionalTest-${version}.zip",

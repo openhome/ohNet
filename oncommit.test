@@ -20,12 +20,10 @@ tests = '''
     TestSkipper
     TestStopper
     TestTrackInspector
-    TestTimestampInspector
     TestRamper
     TestReporter
     TestPruner
     TestGorger
-    TestStarvationMonitor
     TestStarvationRamper
     #3518 TestMuter
     TestAnalogBypassRamper
@@ -33,6 +31,7 @@ tests = '''
     TestPreDriver
     TestContentProcessor
     #3519 TestPipeline
+    TestPipelineConfig
     TestProtocolHls
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t quick
@@ -42,7 +41,7 @@ tests = '''
     TestSilencer
     TestIdProvider
     TestFiller
-    TestUpnpErrors
+    #4017 TestUpnpErrors
     TestTrackDatabase
     TestToneGenerator
     TestMuteManager

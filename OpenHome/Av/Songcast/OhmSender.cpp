@@ -11,6 +11,8 @@
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Optional.h>
 
 #include <stdio.h>
 
@@ -172,10 +174,7 @@ void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 
 // OhmSenderDriver
 
-const TUint OhmSenderDriver::kLatencyMultiplier44k1 = 44100 * 256;
-const TUint OhmSenderDriver::kLatencyMultiplier48k  = 48000 * 256;
-
-OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestamper, IOhmTimestampMapper* aTsMapper)
+OhmSenderDriver::OhmSenderDriver(Environment& aEnv, Optional<IOhmTimestamper> aTimestamper)
     : iMutex("OHMD")
     , iEnabled(false)
     , iActive(false)
@@ -191,9 +190,8 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, IOhmTimestamper* aTimestampe
     , iLatencyOhm(0)
     , iSocket(aEnv)
     , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
-    , iTimestamper(aTimestamper)
+    , iTimestamper(aTimestamper.Ptr())
     , iFirstFrame(true)
-    , iTsMapper(aTsMapper)
 {
 }
 
@@ -207,7 +205,7 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     AutoMutex mutex(iMutex);
 
     iSampleRate = aSampleRate;
-    iTimestampMultiplier = (aSampleRate % 441 == 0? kLatencyMultiplier44k1 : kLatencyMultiplier48k);
+    iTimestampMultiplier = Media::Jiffies::SongcastTicksPerSecond(aSampleRate);
     UpdateLatencyOhm();
     iBytesPerSample = aChannels * aBitDepth / 8;
     iLossless = aLossless;
@@ -215,6 +213,12 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
 
     iStreamHeader.Replace(Brx::Empty());
     OhmMsgAudio::GetStreamHeader(iStreamHeader, iSamplesTotal, aSampleRate, aBitRate, 0/*VolumeOffset*/, aBitDepth, aChannels, aCodecName);
+
+    if (iTimestamper != nullptr) {
+        // ignore return value below - false just implies iTimestamper->Timestamp will throw
+        // ...and we already have to deal with this
+        (void)iTimestamper->SetSampleRate(iSampleRate);
+    }
 }
 
 OhmMsgAudio* OhmSenderDriver::CreateAudio()
@@ -256,9 +260,6 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     else if (iTimestamper != nullptr) {
         try {
             timeStamp = iTimestamper->Timestamp(iFrame - 1);
-            if (iTsMapper != nullptr) {
-                timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
-            }
             isTimeStamped = true;
         }
         catch (OhmTimestampNotFound&) {}
@@ -278,13 +279,11 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         Brn(aData, aBytes)
     );
 
-    WriterBuffer writer(iBuffer);
-    writer.Flush();
-    msg->Externalise(writer);
+    msg->Serialise();
     msg->SetResent(true);
     iFifoHistory.Write(msg);
     try {
-        iSocket.Send(iBuffer, iEndpoint);
+        iSocket.Send(msg->SendableBuffer(), iEndpoint);
     }
     catch (NetworkError&) {
     }
@@ -326,9 +325,6 @@ void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
     else if (iTimestamper != nullptr) {
         try {
             timeStamp = iTimestamper->Timestamp(iFrame - 1);
-            if (iTsMapper != nullptr) {
-                timeStamp = iTsMapper->ToOhmTimestamp(timeStamp, iSampleRate);
-            }
             isTimeStamped = true;
         }
         catch (OhmTimestampNotFound&) {}
@@ -347,13 +343,11 @@ void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
         iStreamHeader
     );
 
-    WriterBuffer writer(iBuffer);
-    writer.Flush();
-    aMsg->Externalise(writer);
+    aMsg->Serialise();
     aMsg->SetResent(true);
     iFifoHistory.Write(aMsg);
     try {
-        iSocket.Send(iBuffer, iEndpoint);
+        iSocket.Send(aMsg->SendableBuffer(), iEndpoint);
     }
     catch (NetworkError&) {
     }
@@ -432,11 +426,9 @@ void OhmSenderDriver::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleSta
 
 void OhmSenderDriver::Resend(OhmMsgAudio& aMsg)
 {
-    WriterBuffer writer(iBuffer);
-    writer.Flush();
-    aMsg.Externalise(writer);
     try {
-        iSocket.Send(iBuffer, iEndpoint);
+        aMsg.Serialise();
+        iSocket.Send(aMsg.SendableBuffer(), iEndpoint);
     }
     catch (NetworkError&) {
     }
@@ -1273,7 +1265,7 @@ void OhmSender::SendSlaveList()
     headerSlave.Externalise(writer);
     WriterBinary binary(writer);
     for (TUint i = 0; i < iSlaveCount; i++) {
-        binary.WriteUint32Be(Arch::BigEndian4(iSlaveList[i].Address()));
+        binary.WriteUint32Be(iSlaveList[i].Address());
         binary.WriteUint16Be(iSlaveList[i].Port());
     }
     Send();

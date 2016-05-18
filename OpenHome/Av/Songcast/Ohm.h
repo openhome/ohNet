@@ -19,7 +19,7 @@ public:
     static const TUint kMaxTrackUriBytes = Media::kTrackUriMaxBytes;
     static const TUint kMaxTrackMetadataBytes = Media::kTrackMetaDataMaxBytes;
     static const TUint kMaxTrackMetatextBytes = Media::MsgMetaText::kMaxBytes;
-    static const TUint kMaxCodecNameBytes = Media::DecodedStreamInfo::kMaxCodecNameBytes;
+    static const TUint kMaxCodecNameBytes = Media::kMaxCodecNameBytes;
 };
 
 class OhmHeader

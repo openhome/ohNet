@@ -219,7 +219,6 @@ def build(bld):
                 'OpenHome/Media/Pipeline/AnalogBypassRamper.cpp',
                 'OpenHome/Media/Pipeline/AudioDumper.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
-                'OpenHome/Media/Pipeline/ClockPullerManual.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioValidator.cpp',
@@ -241,10 +240,8 @@ def build(bld):
                 'OpenHome/Media/Pipeline/SampleRateValidator.cpp',
                 'OpenHome/Media/Pipeline/Seeker.cpp',
                 'OpenHome/Media/Pipeline/Skipper.cpp',
-                'OpenHome/Media/Pipeline/StarvationMonitor.cpp',
                 'OpenHome/Media/Pipeline/StarvationRamper.cpp',
                 'OpenHome/Media/Pipeline/Stopper.cpp',
-                'OpenHome/Media/Pipeline/TimestampInspector.cpp',
                 'OpenHome/Media/Pipeline/TrackInspector.cpp',
                 'OpenHome/Media/Pipeline/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline/Waiter.cpp',
@@ -256,6 +253,7 @@ def build(bld):
                 'OpenHome/Media/SupplyAggregator.cpp',
                 'OpenHome/Media/Utils/AnimatorBasic.cpp',
                 'OpenHome/Media/Utils/ProcessorPcmUtils.cpp',
+                'OpenHome/Media/Utils/ClockPullerManual.cpp',
                 'OpenHome/Media/Codec/Mpeg4.cpp',
                 'OpenHome/Media/Codec/Container.cpp',
                 'OpenHome/Media/Codec/Id3v2.cpp',
@@ -370,7 +368,6 @@ def build(bld):
                 'OpenHome/Av/Songcast/ProtocolOhBase.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhu.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhm.cpp',
-                'OpenHome/Av/Songcast/CodecOhm.cpp',
                 'Generated/DvAvOpenhomeOrgReceiver1.cpp',
                 'OpenHome/Av/Songcast/ProviderReceiver.cpp',
                 'OpenHome/Av/Songcast/ZoneHandler.cpp',
@@ -638,7 +635,6 @@ def build(bld):
                 'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
-                'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
                 'OpenHome/Media/Tests/TestStarvationRamper.cpp',
                 'OpenHome/Media/Tests/TestSampleRateValidator.cpp',
                 'OpenHome/Media/Tests/TestSeeker.cpp',
@@ -650,7 +646,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
-                'OpenHome/Media/Tests/TestTimestampInspector.cpp',
                 'OpenHome/Media/Tests/TestRamper.cpp',
                 'OpenHome/Media/Tests/TestFlywheelRamper.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
@@ -663,6 +658,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestDrainer.cpp',
                 'OpenHome/Av/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
+                'OpenHome/Media/Tests/TestPipelineConfig.cpp',
                 'OpenHome/Media/Tests/TestProtocolHls.cpp',
                 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
@@ -712,11 +708,6 @@ def build(bld):
             source='OpenHome/Media/Tests/TestMsgMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMsg',
-            install_path=None)
-    bld.program(
-            source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStarvationMonitor',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestStarvationRamperMain.cpp',
@@ -772,11 +763,6 @@ def build(bld):
             source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestTrackInspector',
-            install_path=None)
-    bld.program(
-            source='OpenHome/Media/Tests/TestTimestampInspectorMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestTimestampInspector',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestRamperMain.cpp',
@@ -842,6 +828,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
             use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestPipelineConfigMain.cpp',
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestPipelineConfig',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',

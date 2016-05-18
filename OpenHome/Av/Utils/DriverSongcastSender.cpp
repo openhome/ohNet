@@ -11,6 +11,7 @@
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
+#include <OpenHome/Optional.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -45,7 +46,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
-    iOhmSenderDriver = new OhmSenderDriver(iEnv, nullptr, nullptr);
+    iOhmSenderDriver = new OhmSenderDriver(iEnv, Optional<IOhmTimestamper>());
 
     Bws<64> udn("Driver-");
     udn.Append(aName);

@@ -16,8 +16,8 @@ using namespace OpenHome::Media;
 
 // ClockPullerNonTimestamped
 
-ClockPullerNonTimestamped::ClockPullerNonTimestamped(Environment& aEnv)
-    : iPuller(aEnv)
+ClockPullerNonTimestamped::ClockPullerNonTimestamped(Environment& aEnv, Media::IPullableClock& aPullableClock)
+    : iPuller(aEnv, aPullableClock)
     , iLock("CPNT")
     , iEnabled(true)
 {
@@ -37,14 +37,6 @@ void ClockPullerNonTimestamped::SetEnabled(TBool aEnabled)
     }
 }
 
-void ClockPullerNonTimestamped::NewStream(TUint aSampleRate)
-{
-    AutoMutex _(iLock);
-    if (iEnabled) {
-        Puller().NewStream(aSampleRate);
-    }
-}
-
 void ClockPullerNonTimestamped::Reset()
 {
     AutoMutex _(iLock);
@@ -61,36 +53,35 @@ void ClockPullerNonTimestamped::Stop()
     }
 }
 
-void ClockPullerNonTimestamped::Start(TUint aNotificationFrequency)
+void ClockPullerNonTimestamped::Start(TUint aExpectedDecodedReservoirJiffies)
 {
     AutoMutex _(iLock);
     if (iEnabled) {
-        Puller().Start(aNotificationFrequency);
+        Puller().Start(aExpectedDecodedReservoirJiffies);
     }
 }
 
-TUint ClockPullerNonTimestamped::NotifySize(TUint aJiffies)
+void ClockPullerNonTimestamped::NotifySize(TUint aJiffies)
 {
     AutoMutex _(iLock);
     if (iEnabled) {
-        return Puller().NotifySize(aJiffies);
+        Puller().NotifySize(aJiffies);
     }
-    return IPullableClock::kNominalFreq;
 }
 
 
 // ClockPullerSongcast
 
-ClockPullerSongcast::ClockPullerSongcast(Environment& aEnv)
-    : iPullerReservoirLeft(aEnv)
-    , iPullerReservoirRight(aEnv)
+ClockPullerSongcast::ClockPullerSongcast(Environment& aEnv, Media::IPullableClock& aPullableClock)
+    : iPullerReservoirLeft(aEnv, aPullableClock)
+    , iPullableClock(aPullableClock)
 {
     iTimestampHistory.reserve(kMaxHistoryElements);
 }
 
 ModeClockPullers ClockPullerSongcast::ClockPullers()
 {
-    return ModeClockPullers(&iPullerReservoirLeft, &iPullerReservoirRight, this);
+    return ModeClockPullers(&iPullerReservoirLeft);
 }
 
 void ClockPullerSongcast::ResetTimestampHistory()
@@ -160,17 +151,15 @@ void ClockPullerSongcast::Stop()
     iUseTimestamps = false;
     Reset();
     iPullerReservoirLeft.SetEnabled(true);
-    iPullerReservoirRight.SetEnabled(true);
 }
 
-void ClockPullerSongcast::Start()
+void ClockPullerSongcast::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
 {
     iUseTimestamps = true;
     iPullerReservoirLeft.SetEnabled(false);
-    iPullerReservoirRight.SetEnabled(false);
 }
 
-TUint ClockPullerSongcast::NotifyTimestamp(TInt aDrift, TUint aNetwork)
+void ClockPullerSongcast::NotifyTimestamp(TInt aDrift, TUint aNetwork)
 {
     if (iStoreNetworkTimestamp) {
         iNetworkTimestampStart = aNetwork;
@@ -207,8 +196,8 @@ TUint ClockPullerSongcast::NotifyTimestamp(TInt aDrift, TUint aNetwork)
                 drift *= -1;
             }
             ClockPullerUtils::PullClock(iMultiplier, drift, period);
+            iPullableClock.PullClock(iMultiplier);
             ResetTimestampHistory();
         }
     }
-    return iMultiplier;
 }

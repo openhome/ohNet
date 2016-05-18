@@ -1,7 +1,5 @@
 #pragma once
 
-#define FLYWHEEL 1
-
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
@@ -9,15 +7,21 @@
 #include <OpenHome/Media/Pipeline/Waiter.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
-#include <OpenHome/Media/Pipeline/StarvationMonitor.h>
-#include <OpenHome/Media/ClockPuller.h>
+#include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/MuteManager.h>
 
 namespace OpenHome {
-namespace Net {
-    class IShell;
-}
 namespace Media {
+
+enum EPipelineSupportElements {
+    EPipelineSupportElementsMandatory             = 0,
+    EPipelineSupportElementsLogger                = 1 << 0,
+    EPipelineSupportElementsDecodedAudioValidator = 1 << 1,
+    EPipelineSupportElementsRampValidator         = 1 << 2,
+    EPipelineSupportElementsValidatorMinimal      = 1 << 3,
+    EPipelineSupportElementsAudioDumper           = 1 << 4,
+    EPipelineSupportElementsAll                   = 0x7fffffff
+};
 
 class PipelineInitParams
 {
@@ -45,6 +49,7 @@ public:
     void SetEmergencyRamp(TUint aJiffies);
     void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
     void SetMaxLatency(TUint aJiffies);
+    void SetSupportElements(TUint aElements); // EPipelineSupportElements members OR'd together
     // getters
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
@@ -56,6 +61,7 @@ public:
     TUint RampEmergencyJiffies() const;
     TUint ThreadPriorityMax() const;
     TUint MaxLatencyJiffies() const;
+    TUint SupportElements() const;
 private:
     PipelineInitParams();
 private:
@@ -69,6 +75,7 @@ private:
     TUint iRampEmergencyJiffies;
     TUint iThreadPriorityMax;
     TUint iMaxLatencyJiffies;
+    TUint iSupportElements;
 };
 
 namespace Codec {
@@ -83,10 +90,8 @@ class EncodedAudioReservoir;
 class Logger;
 class DecodedAudioValidator;
 class SampleRateValidator;
-class TimestampInspector;
 class DecodedAudioAggregator;
 class DecodedAudioReservoir;
-class ClockPullerManual;
 class Ramper;
 class RampValidator;
 class Seeker;
@@ -103,7 +108,6 @@ class Drainer;
 class VariableDelay;
 class Pruner;
 class StarvationRamper;
-class StarvationMonitor;
 class Muter;
 class PreDriver;
 class ITrackObserver;
@@ -122,7 +126,7 @@ class Pipeline : public IPipelineElementDownstream
                , public IPostPipelineLatency
                , private IStopperObserver
                , private IPipelinePropertyObserver
-               , private IStarvationMonitorObserver
+               , private IStarvationRamperObserver
 {
     friend class SuitePipeline; // test code
 
@@ -142,8 +146,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kThreadCount             = 4; // CodecController, Gorger, StarvationRamper, FlywheelRamper
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
-             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-             IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell);
+             IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter);
     virtual ~Pipeline();
     void AddContainer(Codec::ContainerBase* aContainer);
     void AddCodec(Codec::CodecBase* aCodec);
@@ -194,8 +197,8 @@ private: // from IPipelinePropertyObserver
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
-private: // from IStarvationMonitorObserver
-    void NotifyStarvationMonitorBuffering(TBool aBuffering) override;
+private: // from IStarvationRamperObserver
+    void NotifyStarvationRamperBuffering(TBool aBuffering) override;
 private:
     enum EStatus
     {
@@ -220,13 +223,10 @@ private:
     RampValidator* iRampValidatorCodec;
     SampleRateValidator* iSampleRateValidator;
     Logger* iLoggerSampleRateValidator;
-    TimestampInspector* iTimestampInspector;
-    Logger* iLoggerTimestampInspector;
     DecodedAudioAggregator* iDecodedAudioAggregator;
     Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
-    ClockPullerManual* iClockPullerManual;
     Ramper* iRamper;
     Logger* iLoggerRamper;
     RampValidator* iRampValidatorRamper;
@@ -271,11 +271,7 @@ private:
     Pruner* iPruner;
     Logger* iLoggerPruner;
     DecodedAudioValidator* iDecodedAudioValidatorPruner;
-#if FLYWHEEL
     StarvationRamper* iStarvationRamper;
-#else
-    StarvationMonitor* iStarvationRamper;
-#endif
     Logger* iLoggerStarvationRamper;
     RampValidator* iRampValidatorStarvationRamper;
     DecodedAudioValidator* iDecodedAudioValidatorStarvationRamper;
@@ -286,6 +282,7 @@ private:
     Logger* iLoggerAnalogBypassRamper;
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
+    IPipelineElementDownstream* iPipelineStart;
     IPipelineElementUpstream* iPipelineEnd;
     IMute* iMuteCounted;
     EStatus iState;

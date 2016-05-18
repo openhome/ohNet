@@ -58,7 +58,6 @@ using namespace OpenHome::Net;
 // MediaPlayer
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
-                         Net::IShell& aShell,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
@@ -88,7 +87,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigAutoPlay = new ConfigChoice(*iConfigManager, Product::kConfigIdAutoPlay, choices, Product::kAutoPlayDisable);
     iProduct = new Av::Product(aDvStack.Env(), aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory, aShell);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
     iVolumeManager = new Av::VolumeManager(aVolumeConsumer, iPipeline, *iVolumeConfig, aDevice, *iProduct, *iConfigManager, *iPowerManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);

@@ -10,6 +10,12 @@
 namespace OpenHome {
 namespace Media {
 
+class IStarvationRamperObserver
+{
+public:
+    virtual void NotifyStarvationRamperBuffering(TBool aBuffering) = 0;
+};
+
 class FlywheelInput : public IPcmProcessor
 {
     static const TUint kMaxSampleRate = 192000;
@@ -95,7 +101,7 @@ class StarvationRamper : public MsgReservoir, public IPipelineElementUpstream
     static const TUint kMaxAudioOutJiffies;
 public:
     StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
-                     IStarvationMonitorObserver& aObserver,
+                     IStarvationRamperObserver& aObserver,
                      IPipelineElementObserverThread& aObserverThread, TUint aSizeJiffies,
                      TUint aThreadPriority, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationRamper();
@@ -128,7 +134,7 @@ private:
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstream;
-    IStarvationMonitorObserver& iObserver;
+    IStarvationRamperObserver& iObserver;
     IPipelineElementObserverThread& iObserverThread;
     const TUint iSizeJiffies;
     const TUint iRampUpJiffies;

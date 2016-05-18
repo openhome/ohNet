@@ -31,6 +31,8 @@ DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDown
     , iChannels(0)
     , iSampleRate(0)
     , iBitDepth(0)
+    , iSupportsLatency(false)
+    , iAggregationDisabled(false)
 {
 }
 
@@ -46,6 +48,7 @@ void DecodedAudioAggregator::Push(Msg* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgMode* aMsg)
 {
     OutputAggregatedAudio();
+    iSupportsLatency = aMsg->Info().SupportsLatency();
     return aMsg;
 }
 
@@ -64,6 +67,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDrain* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 {
     OutputAggregatedAudio();
+    iAggregationDisabled = (iSupportsLatency && aMsg->RawPcm());
     return aMsg;
 }
 
@@ -120,9 +124,9 @@ TBool DecodedAudioAggregator::AggregatorFull(TUint aBytes, TUint aJiffies)
 
 MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
 {
-    // This method only looks at the byte capacity when deciding whether to
-    // buffer data. There is no point in chopping the data purely on a jiffy
-    // limit when buffer space could be used to output all jiffies together.
+    if (iAggregationDisabled) {
+        return aMsg;
+    }
 
     TUint jiffies = aMsg->Jiffies();
     const TUint jiffiesPerSample = Jiffies::PerSample(iSampleRate);

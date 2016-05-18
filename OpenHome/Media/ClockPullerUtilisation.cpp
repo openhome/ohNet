@@ -124,8 +124,9 @@ void UtilisationHistory::Smooth(TUint& aJiffies, TInt aIndexToSkip)
 
 // ClockPullerUtilisation
 
-ClockPullerUtilisation::ClockPullerUtilisation(Environment& aEnv)
-    : iMultiplier(IPullableClock::kNominalFreq)
+ClockPullerUtilisation::ClockPullerUtilisation(Environment& aEnv, IPullableClock& aPullableClock)
+    : iPullableClock(aPullableClock)
+    , iMultiplier(IPullableClock::kNominalFreq)
 {
     iUtilisation = new UtilisationHistory(aEnv, *this);
 }
@@ -133,10 +134,6 @@ ClockPullerUtilisation::ClockPullerUtilisation(Environment& aEnv)
 ClockPullerUtilisation::~ClockPullerUtilisation()
 {
     delete iUtilisation;
-}
-
-void ClockPullerUtilisation::NewStream(TUint /*aSampleRate*/)
-{
 }
 
 void ClockPullerUtilisation::Reset()
@@ -150,20 +147,20 @@ void ClockPullerUtilisation::Stop()
     iUtilisation->Reset();
 }
 
-void ClockPullerUtilisation::Start(TUint aNotificationFrequency)
+void ClockPullerUtilisation::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
 {
-    iUpdateFrequency = aNotificationFrequency;
+//    iUpdateFrequency = aNotificationFrequency;
     Reset();
 }
 
-TUint ClockPullerUtilisation::NotifySize(TUint aJiffies)
+void ClockPullerUtilisation::NotifySize(TUint /*aJiffies*/)
 {
-    iUtilisation->Add(aJiffies);
-    return iMultiplier;
+//    iUtilisation->Add(aJiffies);
 }
 
 void ClockPullerUtilisation::NotifyClockDrift(UtilisationHistory* /*aHistory*/, TInt aDriftJiffies, TUint aNumSamples)
 {
     const TUint64 periodJiffies = aNumSamples * static_cast<TUint64>(iUpdateFrequency);
     ClockPullerUtils::PullClock(iMultiplier, aDriftJiffies, periodJiffies);
+    iPullableClock.PullClock(iMultiplier);
 }

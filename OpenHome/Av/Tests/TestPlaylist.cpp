@@ -21,7 +21,6 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Av/VolumeManager.h>
-#include <OpenHome/Net/Private/Shell.h>
 
 #include <array>
 #include <limits.h>
@@ -137,7 +136,6 @@ private:
     DvDeviceStandard* iDevice;
     RamStore* iRamStore;
     ConfigRamStore* iConfigRamStore;
-    Net::ShellNull iShell;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
     VolumeNull iDummyVolume;
@@ -446,7 +444,7 @@ void SuitePlaylist::Setup()
     VolumeConsumer volumeInit;
     volumeInit.SetVolume(iDummyVolume);
     VolumeProfileNull volProfile;
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, iShell, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
                                    volumeInit, volProfile, udn, Brn("Main Room"), Brn("Softplayer"));
     iDriver = new DummyDriver(iMediaPlayer->Pipeline());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav(iMediaPlayer->MimeTypes()));

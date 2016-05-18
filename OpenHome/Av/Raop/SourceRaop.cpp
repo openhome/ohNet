@@ -15,8 +15,10 @@
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaopApple.h>
 #include <OpenHome/Media//ClockPullerUtilisation.h>
+#include <OpenHome/Optional.h>
 
 #include <limits.h>
+#include <memory>
 
 namespace OpenHome {
 namespace Av {
@@ -24,11 +26,11 @@ namespace Av {
 class UriProviderRaop : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRaop(IMediaPlayer& aMediaPlayer);
+    UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock);
 private: // from UriProvider
     Media::ModeClockPullers ClockPullers() override;
 private:
-    Media::ClockPullerUtilisation iClockPuller;
+    std::unique_ptr<Media::ClockPullerUtilisation> iClockPuller;
 };
 
 } // namespace Av
@@ -44,9 +46,10 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock,
+                                IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer);
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aFriendlyNameObservable, aMacAddr);
 }
@@ -57,15 +60,17 @@ const Brn SourceFactory::kSourceNameRaop("Net Aux");
 
 // UriProviderRaop
 
-UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer)
+UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock)
     : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
-    , iClockPuller(aMediaPlayer.Env())
 {
+    if (aPullableClock.Ok()) {
+        iClockPuller.reset(new ClockPullerUtilisation(aMediaPlayer.Env(), aPullableClock.Unwrap()));
+    }
 }
 
 ModeClockPullers UriProviderRaop::ClockPullers()
 {
-    return ModeClockPullers(&iClockPuller, nullptr, nullptr);
+    return ModeClockPullers(iClockPuller.get());
 }
 
 

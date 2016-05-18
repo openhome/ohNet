@@ -162,7 +162,7 @@ Msg* AnimatorBasic::ProcessMsg(MsgDrain* aMsg)
         iPlayable = nullptr;
     }
     if (iSampleRate != 0) {
-        PullClock(iSampleRate, IPullableClock::kNominalFreq);
+        PullClock(IPullableClock::kNominalFreq);
     }
     aMsg->ReportDrained();
     aMsg->RemoveRef();
@@ -191,9 +191,6 @@ Msg* AnimatorBasic::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* AnimatorBasic::ProcessMsg(MsgPlayable* aMsg)
 {
-    if (aMsg->ClockPullMultiplier() != IPullableClock::kPullNone) {
-        PullClock(iSampleRate, aMsg->ClockPullMultiplier());
-    }
     ProcessAudio(aMsg);
     return nullptr;
 }
@@ -207,7 +204,7 @@ Msg* AnimatorBasic::ProcessMsg(MsgQuit* aMsg)
     return nullptr;
 }
 
-void AnimatorBasic::PullClock(TUint /*aSampleRate*/, TUint aMultiplier)
+void AnimatorBasic::PullClock(TUint aMultiplier)
 {
     if (!iPullable || iPullValue == aMultiplier) {
         return;

@@ -17,17 +17,8 @@ public:
     virtual void Start(const Endpoint& aDst) = 0;
     virtual void Stop() = 0;
     virtual TUint Timestamp(TUint aFrame) = 0;
+    virtual TBool SetSampleRate(TUint aSampleRate) = 0;
 };
-
-
-class IOhmTimestampMapper
-{
-public:
-    virtual ~IOhmTimestampMapper() {}
-    virtual TUint ToOhmTimestamp(TUint aTimestamp, TUint aSampleRate) = 0;
-};
-
 
 } // namespace Av
 } // namespace OpenHome
-

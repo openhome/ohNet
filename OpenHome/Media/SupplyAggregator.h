@@ -20,6 +20,7 @@ public: // from ISupply
     void OutputDrain(Functor aCallback) override;
     void OutputDelay(TUint aJiffies) override;
     void OutputMetadata(const Brx& aMetadata) override;
+    void OutputHalt(TUint aHaltId = MsgHalt::kIdNone) override;
     void OutputFlush(TUint aFlushId) override;
     void OutputWait() override;
 protected:

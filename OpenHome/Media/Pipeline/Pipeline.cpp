@@ -13,8 +13,6 @@
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
-#include <OpenHome/Media/Pipeline/TimestampInspector.h>
-#include <OpenHome/Media/Pipeline/ClockPullerManual.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/RampValidator.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
@@ -29,7 +27,6 @@
 #include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
-#include <OpenHome/Media/Pipeline/StarvationMonitor.h>
 #include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/Pipeline/Muter.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
@@ -61,6 +58,7 @@ PipelineInitParams::PipelineInitParams()
     , iRampEmergencyJiffies(kEmergencyRampDurationDefault)
     , iThreadPriorityMax(kThreadPriorityMax)
     , iMaxLatencyJiffies(kMaxLatencyDefault)
+    , iSupportElements(EPipelineSupportElementsAll)
 {
 }
 
@@ -118,6 +116,11 @@ void PipelineInitParams::SetMaxLatency(TUint aJiffies)
     iMaxLatencyJiffies = aJiffies;
 }
 
+void PipelineInitParams::SetSupportElements(TUint aElements)
+{
+    iSupportElements = aElements;
+}
+
 TUint PipelineInitParams::EncodedReservoirBytes() const
 {
     return iEncodedReservoirBytes;
@@ -168,12 +171,28 @@ TUint PipelineInitParams::MaxLatencyJiffies() const
     return iMaxLatencyJiffies;
 }
 
+TUint PipelineInitParams::SupportElements() const
+{
+    return iSupportElements;
+}
+
 
 // Pipeline
 
+#define ATTACH_ELEMENT(elem, ctor, prev_elem, supported, type)  \
+    do {                                                        \
+        if ((supported & (type)) ||                             \
+            (type) == EPipelineSupportElementsMandatory) {      \
+            elem = ctor;                                        \
+            prev_elem = elem;                                   \
+        }                                                       \
+        else {                                                  \
+            elem = nullptr;                                     \
+        }                                                       \
+    } while (0)
+
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
-                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer,
-                   IUrlBlockWriter& aUrlBlockWriter, Net::IShell& aShell)
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -216,104 +235,190 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     TUint threadPriority = threadPriorityBase - 1; // -1 to allow for a gap between CodecController and Gorger
 
     iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
-    
+    IPipelineElementDownstream* downstream = nullptr;
+    IPipelineElementUpstream* upstream = nullptr;
+    const auto elementsSupported = aInitParams->SupportElements();
+
+    // disable "conditional expression is constant" warnings from ATTACH_ELEMENT
+#ifdef _WIN32
+# pragma warning( push )
+# pragma warning( disable : 4127)
+#endif // _WIN32
+
     // Construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(*iMsgFactory, *this, maxEncodedReservoirMsgs, aInitParams->MaxStreamsPerReservoir());
-    iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
+    upstream = iEncodedAudioReservoir;
+    ATTACH_ELEMENT(iLoggerEncodedAudioReservoir, new Logger(*upstream, "Encoded Audio Reservoir"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
 
     // Construct audio dumper out of sequence. It doesn't pull from left so doesn't need to know it's preceding element (but it does need to know the element it's pushing to).
-    iAudioDumper = new AudioDumper(*iEncodedAudioReservoir);
+    downstream = iEncodedAudioReservoir;
+    ATTACH_ELEMENT(iAudioDumper, new AudioDumper(*iEncodedAudioReservoir),
+                   downstream, elementsSupported, EPipelineSupportElementsAudioDumper);
+    iPipelineStart = iAudioDumper;
+    if (iPipelineStart == nullptr) {
+        iPipelineStart = iEncodedAudioReservoir;
+    }
+
+    ATTACH_ELEMENT(iContainer, new Codec::ContainerController(*iMsgFactory, *upstream, aUrlBlockWriter),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerContainer, new Logger(*iContainer, "Codec Container"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
 
     // Construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir());
-    iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
+    iDecodedAudioReservoir = new DecodedAudioReservoir(*iMsgFactory,
+                                                       aInitParams->DecodedReservoirJiffies(),
+                                                       aInitParams->MaxStreamsPerReservoir());
+    downstream = iDecodedAudioReservoir;
 
-    iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
-    iDecodedAudioAggregator = new DecodedAudioAggregator(*iLoggerDecodedAudioAggregator);
+    ATTACH_ELEMENT(iLoggerDecodedAudioAggregator,
+                   new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir),
+                   downstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iDecodedAudioAggregator, new DecodedAudioAggregator(*downstream),
+                   downstream, elementsSupported, EPipelineSupportElementsMandatory);
 
-    iLoggerTimestampInspector = new Logger("Timestamp Inspector", *iDecodedAudioAggregator);
-    iTimestampInspector = new TimestampInspector(*iMsgFactory, *iLoggerTimestampInspector);
-
-    iLoggerSampleRateValidator = new Logger("Sample Rate Validator", *iTimestampInspector);
-    iSampleRateValidator = new SampleRateValidator(*iMsgFactory, *iLoggerSampleRateValidator);
-
-    iContainer = new Codec::ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, aUrlBlockWriter);
-    iLoggerContainer = new Logger(*iContainer, "Codec Container");
+    ATTACH_ELEMENT(iLoggerSampleRateValidator, new Logger("Sample Rate Validator", *iDecodedAudioAggregator),
+                   downstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iSampleRateValidator, new SampleRateValidator(*iMsgFactory, *downstream),
+                   downstream, elementsSupported, EPipelineSupportElementsMandatory);
 
     // construct push logger slightly out of sequence
-    iRampValidatorCodec = new RampValidator("Codec Controller", *iSampleRateValidator);
-    iLoggerCodecController = new Logger("Codec Controller", *iRampValidatorCodec);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, threadPriority);
+    ATTACH_ELEMENT(iRampValidatorCodec, new RampValidator("Codec Controller", *iSampleRateValidator),
+                   downstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iLoggerCodecController, new Logger("Codec Controller", *downstream),
+                   downstream, elementsSupported, EPipelineSupportElementsLogger);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *upstream, *downstream, aUrlBlockWriter, threadPriority);
     threadPriority += 2; // leave a gap for any high priority on-device UI (e.g. text scrolling)
 
-    iClockPullerManual = new ClockPullerManual(*iLoggerDecodedAudioReservoir, aShell);
-    iRamper = new Ramper(*iClockPullerManual, aInitParams->RampLongJiffies());
-    iLoggerRamper = new Logger(*iRamper, "Ramper");
-    iRampValidatorRamper = new RampValidator(*iLoggerRamper, "Ramper");
-    iSeeker = new Seeker(*iMsgFactory, *iRampValidatorRamper, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
-    iLoggerSeeker = new Logger(*iSeeker, "Seeker");
-    iRampValidatorSeeker = new RampValidator(*iLoggerSeeker, "Seeker");
-    iDecodedAudioValidatorSeeker = new DecodedAudioValidator(*iRampValidatorSeeker, "Seeker");
-    iVariableDelay1 = new VariableDelay("VariableDelay1", *iMsgFactory, *iDecodedAudioValidatorSeeker, kSenderMinLatency, aInitParams->RampEmergencyJiffies());
-    iLoggerVariableDelay1 = new Logger(*iVariableDelay1, "VariableDelay1");
-    iRampValidatorDelay1 = new RampValidator(*iLoggerVariableDelay1, "VariableDelay1");
-    iDecodedAudioValidatorDelay1 = new DecodedAudioValidator(*iRampValidatorDelay1, "VariableDelay1");
-    iTrackInspector = new TrackInspector(*iDecodedAudioValidatorDelay1);
-    iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
-    iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, aInitParams->RampShortJiffies());
-    iLoggerSkipper = new Logger(*iSkipper, "Skipper");
-    iRampValidatorSkipper = new RampValidator(*iLoggerSkipper, "Skipper");
-    iDecodedAudioValidatorSkipper = new DecodedAudioValidator(*iRampValidatorSkipper, "Skipper");
-    iWaiter = new Waiter(*iMsgFactory, *iDecodedAudioValidatorSkipper, *this, *iEventThread, aInitParams->RampShortJiffies());
-    iLoggerWaiter = new Logger(*iWaiter, "Waiter");
-    iRampValidatorWaiter = new RampValidator(*iLoggerWaiter, "Waiter");
-    iDecodedAudioValidatorWaiter = new DecodedAudioValidator(*iRampValidatorWaiter, "Waiter");
-    iStopper = new Stopper(*iMsgFactory, *iDecodedAudioValidatorWaiter, *this, *iEventThread, aInitParams->RampLongJiffies());
+    upstream = iDecodedAudioReservoir;
+    ATTACH_ELEMENT(iLoggerDecodedAudioReservoir,
+                   new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRamper, new Ramper(*upstream, aInitParams->RampLongJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerRamper, new Logger(*iRamper, "Ramper"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorRamper, new RampValidator(*upstream, "Ramper"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iSeeker, new Seeker(*iMsgFactory, *upstream, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerSeeker, new Logger(*iSeeker, "Seeker"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorSeeker, new RampValidator(*upstream, "Seeker"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iDecodedAudioValidatorSeeker, new DecodedAudioValidator(*upstream, "Seeker"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iVariableDelay1,
+                   new VariableDelay("VariableDelay1", *iMsgFactory, *upstream,
+                                     kSenderMinLatency, 0, aInitParams->RampEmergencyJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerVariableDelay1, new Logger(*iVariableDelay1, "VariableDelay1"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorDelay1, new RampValidator(*upstream, "VariableDelay1"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iDecodedAudioValidatorDelay1, new DecodedAudioValidator(*upstream, "VariableDelay1"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iSkipper, new Skipper(*iMsgFactory, *upstream, aInitParams->RampShortJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerSkipper, new Logger(*iSkipper, "Skipper"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorSkipper, new RampValidator(*upstream, "Skipper"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iDecodedAudioValidatorSkipper, new DecodedAudioValidator(*upstream, "Skipper"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iTrackInspector, new TrackInspector(*upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerTrackInspector, new Logger(*iTrackInspector, "TrackInspector"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iWaiter, new Waiter(*iMsgFactory, *upstream, *this, *iEventThread, aInitParams->RampShortJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerWaiter, new Logger(*iWaiter, "Waiter"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorWaiter, new RampValidator(*upstream, "Waiter"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iDecodedAudioValidatorWaiter, new DecodedAudioValidator(*upstream, "Waiter"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iStopper, new Stopper(*iMsgFactory, *upstream, *this, *iEventThread, aInitParams->RampLongJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
-    iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iRampValidatorStopper = new RampValidator(*iLoggerStopper, "Stopper");
-    iDecodedAudioValidatorStopper = new DecodedAudioValidator(*iRampValidatorStopper, "Stopper");
-    iGorger = new Gorger(*iMsgFactory, *iDecodedAudioValidatorStopper, threadPriority, aInitParams->GorgeDurationJiffies());
+    ATTACH_ELEMENT(iLoggerStopper, new Logger(*iStopper, "Stopper"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorStopper, new RampValidator(*upstream, "Stopper"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iDecodedAudioValidatorStopper, new DecodedAudioValidator(*upstream, "Stopper"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iGorger, new Gorger(*iMsgFactory, *upstream, threadPriority, aInitParams->GorgeDurationJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
     threadPriority += 2; // StarvationRamper + FlywheelRamper threads
-    iLoggerGorger = new Logger(*iGorger, "Gorger");
-    iDecodedAudioValidatorGorger = new DecodedAudioValidator(*iLoggerGorger, "Gorger");
-    iSpotifyReporter = new Media::SpotifyReporter(*iDecodedAudioValidatorGorger, *iMsgFactory, aTrackFactory);
-    iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
-    iReporter = new Reporter(*iLoggerSpotifyReporter, *this, *iEventThread);
-    iLoggerReporter = new Logger(*iReporter, "Reporter");
-    iRouter = new Router(*iLoggerReporter);
-    iLoggerRouter = new Logger(*iRouter, "Router");
-    iDecodedAudioValidatorRouter = new DecodedAudioValidator(*iLoggerRouter, "Router");
-    iDrainer = new Drainer(*iMsgFactory, *iDecodedAudioValidatorRouter);
-    iLoggerDrainer = new Logger(*iDrainer, "Drainer");
-    iVariableDelay2 = new VariableDelay("VariableDelay2", *iMsgFactory, *iLoggerDrainer, 0, aInitParams->RampEmergencyJiffies());
-    iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
-    iRampValidatorDelay2 = new RampValidator(*iLoggerVariableDelay2, "VariableDelay2");
-    iDecodedAudioValidatorDelay2 = new DecodedAudioValidator(*iRampValidatorDelay2, "VariableDelay2");
-    iPruner = new Pruner(*iDecodedAudioValidatorDelay2);
-    iLoggerPruner = new Logger(*iPruner, "Pruner");
-    iDecodedAudioValidatorPruner = new DecodedAudioValidator(*iLoggerPruner, "Pruner");
-#if FLYWHEEL
-    iStarvationRamper = new StarvationRamper(*iMsgFactory, *iDecodedAudioValidatorPruner, *this, *iEventThread,
-                                               aInitParams->StarvationRamperJiffies(), threadPriority,
-                                               aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
-#else
-    iStarvationRamper = new StarvationMonitor(*iMsgFactory, *iDecodedAudioValidatorPruner,
-                                               *this, *iEventThread,
-                                               threadPriority, Jiffies::kPerMs * 100, Jiffies::kPerMs * 20,
-                                               aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
-#endif
-    iLoggerStarvationRamper = new Logger(*iStarvationRamper, "StarvationRamper");
-    iRampValidatorStarvationRamper = new RampValidator(*iLoggerStarvationRamper, "StarvationRamper");
-    iDecodedAudioValidatorStarvationRamper = new DecodedAudioValidator(*iRampValidatorStarvationRamper, "StarvationRamper");
-    iMuter = new Muter(*iMsgFactory, *iDecodedAudioValidatorStarvationRamper, aInitParams->RampLongJiffies());
-    iLoggerMuter = new Logger(*iMuter, "Muter");
-    iDecodedAudioValidatorMuter = new DecodedAudioValidator(*iLoggerMuter, "Muter");
-    iAnalogBypassRamper = new AnalogBypassRamper(*iMsgFactory, *iDecodedAudioValidatorMuter);
-    iLoggerAnalogBypassRamper = new Logger(*iAnalogBypassRamper, "AnalogBypassRamper");
-    iPreDriver = new PreDriver(*iLoggerAnalogBypassRamper);
+    ATTACH_ELEMENT(iLoggerGorger, new Logger(*iGorger, "Gorger"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iDecodedAudioValidatorGorger, new DecodedAudioValidator(*upstream, "Gorger"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iSpotifyReporter, new Media::SpotifyReporter(*upstream, *iMsgFactory, aTrackFactory),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerSpotifyReporter, new Logger(*iSpotifyReporter, "SpotifyReporter"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iReporter, new Reporter(*upstream, *this, *iEventThread),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerReporter, new Logger(*iReporter, "Reporter"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRouter, new Router(*upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerRouter, new Logger(*iRouter, "Router"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iDecodedAudioValidatorRouter, new DecodedAudioValidator(*upstream, "Router"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iDrainer, new Drainer(*iMsgFactory, *upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerDrainer, new Logger(*iDrainer, "Drainer"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iVariableDelay2,
+                   new VariableDelay("VariableDelay2", *iMsgFactory, *upstream,
+                                     0, aInitParams->StarvationRamperJiffies(),
+                                     aInitParams->RampEmergencyJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerVariableDelay2, new Logger(*iVariableDelay2, "VariableDelay2"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorDelay2, new RampValidator(*upstream, "VariableDelay2"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator);
+    ATTACH_ELEMENT(iDecodedAudioValidatorDelay2, new DecodedAudioValidator(*upstream, "VariableDelay2"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iPruner, new Pruner(*upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerPruner, new Logger(*iPruner, "Pruner"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iDecodedAudioValidatorPruner, new DecodedAudioValidator(*upstream, "Pruner"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iStarvationRamper,
+                   new StarvationRamper(*iMsgFactory, *upstream, *this, *iEventThread,
+                                        aInitParams->StarvationRamperJiffies(), threadPriority,
+                                        aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir()),
+                                        upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerStarvationRamper, new Logger(*iStarvationRamper, "StarvationRamper"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iRampValidatorStarvationRamper, new RampValidator(*upstream, "StarvationRamper"),
+                   upstream, elementsSupported, EPipelineSupportElementsRampValidator | EPipelineSupportElementsValidatorMinimal);
+    ATTACH_ELEMENT(iDecodedAudioValidatorStarvationRamper,
+                   new DecodedAudioValidator(*upstream, "StarvationRamper"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iMuter, new Muter(*iMsgFactory, *upstream, aInitParams->RampLongJiffies()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerMuter, new Logger(*iMuter, "Muter"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iDecodedAudioValidatorMuter, new DecodedAudioValidator(*upstream, "Muter"),
+                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator | EPipelineSupportElementsValidatorMinimal);
+    ATTACH_ELEMENT(iAnalogBypassRamper, new AnalogBypassRamper(*iMsgFactory, *upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerAnalogBypassRamper, new Logger(*iAnalogBypassRamper, "AnalogBypassRamper"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iPreDriver, new PreDriver(*upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
     ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
+
+#ifdef _WIN32
+# pragma warning( pop )
+#endif // _WIN32
 
     iPipelineEnd = iLoggerPreDriver;
     if (iPipelineEnd == nullptr) {
@@ -327,7 +432,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerSampleRateValidator->SetEnabled(true);
-    //iLoggerTimestampInspector->SetEnabled(true);
     //iLoggerDecodedAudioAggregator->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerSeeker->SetEnabled(true);
@@ -357,7 +461,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerSampleRateValidator->SetFilter(Logger::EMsgAll);
-    //iLoggerTimestampInspector->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioAggregator->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerSeeker->SetFilter(Logger::EMsgAll);
@@ -444,13 +547,10 @@ Pipeline::~Pipeline()
     delete iRampValidatorRamper;
     delete iLoggerRamper;
     delete iRamper;
-    delete iClockPullerManual;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;
     delete iDecodedAudioAggregator;
-    delete iLoggerTimestampInspector;
-    delete iTimestampInspector;
     delete iLoggerSampleRateValidator;
     delete iSampleRateValidator;
     delete iRampValidatorCodec;
@@ -634,7 +734,7 @@ void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
 
 void Pipeline::Push(Msg* aMsg)
 {
-    iAudioDumper->Push(aMsg);
+    iPipelineStart->Push(aMsg);
 }
 
 Msg* Pipeline::Pull()
@@ -734,7 +834,7 @@ void Pipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     iObserver.NotifyStreamInfo(aStreamInfo);
 }
 
-void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
+void Pipeline::NotifyStarvationRamperBuffering(TBool aBuffering)
 {
     iLock.Wait();
     iBuffering = aBuffering;

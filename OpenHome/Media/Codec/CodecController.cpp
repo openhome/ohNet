@@ -57,6 +57,11 @@ TBool EncodedStreamInfo::AnalogBypass() const
     return iAnalogBypass;
 }
 
+const Brx& EncodedStreamInfo::CodecName() const
+{
+    return iCodecName;
+}
+
 EncodedStreamInfo::EncodedStreamInfo()
     : iRawPcm(false)
     , iBitDepth(UINT_MAX)
@@ -68,7 +73,8 @@ EncodedStreamInfo::EncodedStreamInfo()
 {
 }
 
-void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample, TBool aAnalogBypass)
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian,
+                            TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
@@ -77,6 +83,7 @@ void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChanne
     iEndian = aEndian;
     iStartSample = aStartSample;
     iAnalogBypass = aAnalogBypass;
+    iCodecName.Replace(aCodecName);
 }
 
 
@@ -258,7 +265,8 @@ void CodecController::CodecThread()
             EncodedStreamInfo streamInfo;
             if (iRawPcm) {
                 streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(),
-                               iPcmStream.Endian(), iPcmStream.StartSample(), iPcmStream.AnalogBypass());
+                               iPcmStream.Endian(), iPcmStream.StartSample(), iPcmStream.AnalogBypass(),
+                               iPcmStream.CodecName());
             }
 
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);
@@ -633,16 +641,6 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     return DoOutputAudioPcm(audio);
 }
 
-TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset,
-                                        TUint aRxTimestamp, TUint aNetworkTimestamp)
-{
-    ASSERT(aChannels == iChannels);
-    ASSERT(aSampleRate == iSampleRate);
-    ASSERT(aBitDepth == iBitDepth);
-    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aNetworkTimestamp);
-    return DoOutputAudioPcm(audio);
-}
-
 TUint64 CodecController::OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset)
 {
     ASSERT(aChannels == iChannels);
@@ -821,7 +819,6 @@ Msg* CodecController::ProcessMsg(MsgStreamInterrupted* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
-    iStreamEnded = true;
     return aMsg;
 }
 

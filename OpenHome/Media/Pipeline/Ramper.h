@@ -34,7 +34,7 @@ private:
     const TUint iRampDuration;
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
-    MsgQueue iQueue;
+    MsgQueueLite iQueue;
 };
 
 } // namespace Media

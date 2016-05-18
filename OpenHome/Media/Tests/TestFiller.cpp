@@ -148,7 +148,7 @@ using namespace OpenHome::Media::TestFiller;
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
-    : UriProvider("Dummy", LatencyNotSupported, RealTimeNotSupported, NextNotSupported, PrevNotSupported)
+    : UriProvider("Dummy", Latency::NotSupported, RealTime::NotSupported, Next::NotSupported, Prev::NotSupported)
     , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)

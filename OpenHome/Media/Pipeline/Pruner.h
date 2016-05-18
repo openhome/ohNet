@@ -42,7 +42,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     IPipelineElementUpstream& iUpstreamElement;
-    MsgQueue iQueue;
+    MsgQueueLite iQueue;
     MsgMode* iPendingMode;
     TBool iWaitingForAudio;
     TBool iConsumeHalts;

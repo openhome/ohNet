@@ -113,7 +113,7 @@ private:
     const TUint iRampDuration;
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
-    MsgQueue iQueue; // empty unless we have to split a msg during a ramp
+    MsgQueueLite iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetHaltId;
     TUint iTrackId;
     TUint iStreamId;

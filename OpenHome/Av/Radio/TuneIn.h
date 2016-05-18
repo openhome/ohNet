@@ -53,6 +53,7 @@ public:
 private:
     void UpdateUsername(const Brx& aUsername);
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void CurrentAdapterChanged();
     void TimerCallback();
     void RefreshThread();
     void DoRefresh();
@@ -86,6 +87,7 @@ private:
     Media::BwsTrackUri iDbUri; // only required in a single function but too large for the stack
     Bws<2*1024> iDbMetaData;
     const Bws<kMaxPartnerIdBytes> iPartnerId;
+    TUint iNacnId;
 };
 
 class CredentialsTuneIn : public ICredentialConsumer, private INonCopyable

@@ -1,6 +1,7 @@
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -34,8 +35,7 @@ const Brn Sender::kConfigIdPreset("Sender.Preset");
 Sender::Sender(Environment& aEnv,
                Net::DvDeviceStandard& aDevice,
                ZoneHandler& aZoneHandler,
-               IOhmTimestamper* aTimestamper,
-               IOhmTimestampMapper* aTsMapper,
+               Optional<IOhmTimestamper> aTimestamper,
                Configuration::IConfigInitialiser& aConfigInit,
                TUint aThreadPriority,
                const Brx& aName,
@@ -50,7 +50,7 @@ Sender::Sender(Environment& aEnv,
     , iEnabled(true)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
-    iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper, aTsMapper);
+    iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aThreadPriority,
                                aName, defaultChannel, aMinLatencyMs, false/*unicast*/);

@@ -24,6 +24,7 @@ public:
     ~ProtocolOhu();
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
+    void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) override;
 private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler

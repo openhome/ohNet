@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -60,6 +61,12 @@ void SupplyAggregator::OutputMetadata(const Brx& aMetadata)
 {
     MsgMetaText* msg = iMsgFactory.CreateMsgMetaText(aMetadata);
     Output(msg);
+}
+
+void SupplyAggregator::OutputHalt(TUint aHaltId)
+{
+    MsgHalt* msg = iMsgFactory.CreateMsgHalt(aHaltId);
+    iDownStreamElement.Push(msg);
 }
 
 void SupplyAggregator::OutputFlush(TUint aFlushId)

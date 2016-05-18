@@ -3,6 +3,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Optional.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
@@ -18,9 +19,6 @@ namespace OpenHome {
     class Timer;
 namespace Av {
 
-class OhmMsgAudioBlob;
-class OhmMsg;
-
 class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
 {
     static const TUint kMaxRepairBacklogFrames = 200;
@@ -30,7 +28,8 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kTimerJoinTimeoutMs = 300;
     static const TUint kTtl = 2;
 protected:
-    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
+    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory,
+                   Optional<IOhmTimestamper> aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
     ~ProtocolOhBase();
     void Add(OhmMsg* aMsg);
     void ResendSeen();
@@ -40,8 +39,10 @@ protected:
     void Send(TUint aType);
     TBool IsCurrentStream(TUint aStreamId) const;
     void WaitForPipelineToEmpty();
+    void AddRxTimestamp(OhmMsgAudio& aMsg);
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
+    virtual void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) = 0;
 protected: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from Media::Protocol
@@ -55,9 +56,9 @@ private:
     void CurrentSubnetChanged();
     void RepairReset();
     void TimerRepairExpired();
-    TBool RepairBegin(OhmMsgAudioBlob& aMsg);
-    TBool Repair(OhmMsgAudioBlob& aMsg);
-    void OutputAudio(OhmMsgAudioBlob& aMsg);
+    TBool RepairBegin(OhmMsgAudio& aMsg);
+    TBool Repair(OhmMsgAudio& aMsg);
+    void OutputAudio(OhmMsgAudio& aMsg);
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
     void Process(OhmMsgAudioBlob& aMsg) override;
@@ -96,10 +97,13 @@ private:
     Bws<Media::MsgMetaText::kMaxBytes> iPendingMetatext;
     TUint iSeqTrack;
     TUint64 iLastSampleStart;
-    OhmMsgAudioBlob* iRepairFirst;
-    std::vector<OhmMsgAudioBlob*> iRepairFrames;
+    TUint iBitDepth;
+    TUint iSampleRate;
+    TUint iNumChannels;
+    TUint64 iLatency;
+    OhmMsgAudio* iRepairFirst;
+    std::vector<OhmMsgAudio*> iRepairFrames;
     Timer* iTimerRepair;
-    Bws<Media::EncodedAudio::kMaxBytes> iFrameBuf;
     TUint iAddr; // FIXME - should listen for subnet changes and update this value
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;

@@ -16,6 +16,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/MimeTypeList.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 #include <limits.h>
 
@@ -84,6 +85,8 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, const Brx& aPartnerId,
     iConfigUsername = new ConfigText(aConfigInit, kConfigKeyUsername, kMaxUserNameBytes, kConfigUsernameDefault);
     iListenerId = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &RadioPresetsTuneIn::UsernameChanged));
 
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &RadioPresetsTuneIn::CurrentAdapterChanged), false);
+
     new CredentialsTuneIn(aCredentialsManager, aPartnerId); // ownership transferred to aCredentialsManager
 }
 
@@ -93,6 +96,7 @@ RadioPresetsTuneIn::~RadioPresetsTuneIn()
     iSocket.Interrupt(true);
     iRefreshTimer->Cancel();
     iConfigUsername->Unsubscribe(iListenerId);
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
     delete iConfigUsername;
     delete iRefreshThread;
     delete iRefreshTimer;
@@ -119,6 +123,11 @@ void RadioPresetsTuneIn::UsernameChanged(KeyValuePair<const Brx&>& aKvp)
 void RadioPresetsTuneIn::Refresh()
 {
     iRefreshThread->Signal();
+}
+
+void RadioPresetsTuneIn::CurrentAdapterChanged()
+{
+    Refresh();
 }
 
 void RadioPresetsTuneIn::TimerCallback()

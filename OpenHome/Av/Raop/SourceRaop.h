@@ -8,6 +8,7 @@
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Optional.h>
 
 namespace OpenHome {
     class Environment;

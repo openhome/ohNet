@@ -52,6 +52,11 @@ MsgAudioEncodedCache::MsgAudioEncodedCache(IPipelineElementUpstream& aUpstreamEl
 {
 }
 
+MsgAudioEncodedCache::~MsgAudioEncodedCache()
+{
+    ASSERT(iAudioEncoded == nullptr);
+}
+
 void MsgAudioEncodedCache::Reset()
 {
     if (iAudioEncoded != nullptr) {
