@@ -1187,22 +1187,6 @@ failure:
                         prev->iNext = nif;
                     }
                 }
-
-
-                //wchar_t const* ipAddressChars = hostName->CanonicalName->Data();
-                //std::string charData(cName.Begin(), cName.End());
-
-                
-                //IPAddress^ parsed = IPAddress::Parse(ipInfo->CanonicalName);
-                //array<Byte>^ bytes = parsed->GetAddressBytes();
-                //TIpAddress address = MakeIpAddress(bytes[0],bytes[1],bytes[2],bytes[3]);
-
-
-
-
-                //IReference<unsigned char>^ prefixLength = ipInfo->PrefixLength; // convert this to netmask
-
-
             }
         }
     }
