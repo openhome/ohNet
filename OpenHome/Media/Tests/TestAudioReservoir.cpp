@@ -102,22 +102,30 @@ private:
     TUint64 iTrackOffset;
 };
 
-#if 0
-class SuiteReservoirHistory : public Suite, private IMsgProcessor, private IClockPullerReservoir
+class SuiteReservoirHistory : public SuiteUnitTest, private IMsgProcessor, private IClockPullerReservoir
 {
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
     static const TUint kBitDepth = 16;
     static const TUint kReservoirSize = Jiffies::kPerMs * 1000;
     static const TUint kMaxStreams = 5;
-    static const TUint kMaxHistorySamples = 10;
-    static const TUint kTotalHistoryUpdates = kMaxHistorySamples * 2;
 public:
     SuiteReservoirHistory();
     ~SuiteReservoirHistory();
-private: // from Suite
-    void Test() override;
+private: // from SuiteUnitTest
+    void Setup() override;
+    void TearDown() override;
 private:
+    void TestNotifySizeNotCalledUntilStarted();
+    void TestNotifySizeNotCalledAfterDownstreamStop();
+    void TestNotifySizeNotCalledAfterDrain();
+    void TestNotifySizeCalledTwicePerAudioMsg();
+private:
+    MsgMode* CreateMsgMode();
+    MsgTrack* CreateMsgTrack();
+    MsgDecodedStream* CreateMsgDecodedStream();
+    MsgAudioPcm* CreateMsgAudioPcm();
+    void WaitForReservoirToEmpty();
     void PullerThread();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
@@ -138,9 +146,9 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IClockPullerReservoir
-    void Reset() override;
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
     void Stop() override;
-    void Start(TUint aNotificationFrequency) override;
+    void Reset() override;
     void NotifySize(TUint aJiffies) override;
 private:
     MsgFactory* iMsgFactory;
@@ -148,16 +156,14 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     DecodedAudioReservoir* iReservoir;
     ThreadFunctor* iThread;
-    TUint64 iDequeuedJiffies;
-    TUint iHistoryPointCount;
-    TBool iStopAudioGeneration;
+    TBool iStopPullerThread;
     TByte iBuf[DecodedAudio::kMaxBytes];
-    TUint iStreamId;
-    TUint iSampleRate;
-    TBool iStartCalled;
-    TBool iNotifySizeCalled;
+    TUint64 iTrackOffset;
+    TUint iStartCount;
+    TUint iStopCount;
+    TUint iNotifySizeCount;
+    IClockPullerReservoir* iClockPuller;
 };
-#endif
 
 class SuiteEncodedReservoir : public SuiteUnitTest, private IStreamHandler, private IMsgProcessor, private IFlushIdProvider
 {
@@ -570,77 +576,191 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-#if 0
+
 // SuiteReservoirHistory
 
 SuiteReservoirHistory::SuiteReservoirHistory()
-    : Suite("DecodedReservoir History")
-    , iDequeuedJiffies(0)
-    , iHistoryPointCount(0)
-    , iStopAudioGeneration(false)
-    , iStreamId(UINT_MAX)
+    : SuiteUnitTest("DecodedReservoir History")
 {
-    MsgFactoryInitParams init;
-    init.SetMsgAudioPcmCount(200, 200);
-    init.SetMsgSilenceCount(20);
-    init.SetMsgDecodedStreamCount(2);
-    iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(*iMsgFactory, kReservoirSize, kMaxStreams);
-    memset(iBuf, 0xff, sizeof(iBuf));
+    AddTest(MakeFunctor(*this, &SuiteReservoirHistory::TestNotifySizeNotCalledUntilStarted), "TestNotifySizeNotCalledUntilStarted");
+    AddTest(MakeFunctor(*this, &SuiteReservoirHistory::TestNotifySizeNotCalledAfterDownstreamStop), "TestNotifySizeNotCalledAfterDownstreamStop");
+    AddTest(MakeFunctor(*this, &SuiteReservoirHistory::TestNotifySizeNotCalledAfterDrain), "TestNotifySizeNotCalledAfterDrain");
+    AddTest(MakeFunctor(*this, &SuiteReservoirHistory::TestNotifySizeCalledTwicePerAudioMsg), "TestNotifySizeCalledTwicePerAudioMsg");
 }
 
 SuiteReservoirHistory::~SuiteReservoirHistory()
 {
+}
+
+void SuiteReservoirHistory::Setup()
+{
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(20, 20);
+    init.SetMsgModeCount(2);
+    init.SetMsgDecodedStreamCount(2);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
+    iReservoir = new DecodedAudioReservoir(*iMsgFactory, kReservoirSize, kMaxStreams);
+    iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
+    iThread->Start();
+
+    memset(iBuf, 0xff, sizeof(iBuf));
+    iStopPullerThread = false;
+    iTrackOffset = 0;
+    iStartCount = iStopCount = iNotifySizeCount = 0;
+    iClockPuller = nullptr;
+}
+
+void SuiteReservoirHistory::TearDown()
+{
+    delete iThread;
     delete iReservoir;
     delete iMsgFactory;
     delete iTrackFactory;
 }
 
-void SuiteReservoirHistory::Test()
+void SuiteReservoirHistory::TestNotifySizeNotCalledUntilStarted()
 {
-    static const TUint kPcmMsgCount = 15;
-    iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
-    iThread->Start();
-    iStartCalled = iNotifySizeCalled = false;
-    ModeClockPullers clockPullers(this);
-    iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, clockPullers, false, false));
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
-    track->RemoveRef();
-    iReservoir->Push(msgTrack);
-    MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, false, nullptr);
-    iStreamId = msgStream->StreamInfo().StreamId();
-    iSampleRate = msgStream->StreamInfo().SampleRate();
-    iReservoir->Push(msgStream);
-    TUint pcmMsgs = kPcmMsgCount;
-    TUint64 trackOffset = 0;
-    Brn audioBuf(iBuf, sizeof(iBuf));
-    while (!iStopAudioGeneration) {
-        MsgAudio* audio;
-        if (pcmMsgs == 0) {
-            TUint size = 400 * Jiffies::kPerMs;
-            audio = iMsgFactory->CreateMsgSilence(size, kSampleRate, kBitDepth, kNumChannels);
-            pcmMsgs = kPcmMsgCount;
-        }
-        else {
-            audio = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, trackOffset);
-            pcmMsgs--;
-        }
-        trackOffset += audio->Jiffies();
-        iReservoir->Push(audio);
+    iReservoir->Push(CreateMsgMode());
+    iReservoir->Push(CreateMsgTrack());
+    iReservoir->Push(CreateMsgDecodedStream());
+    iReservoir->Push(CreateMsgAudioPcm());
+    TEST(iStartCount == 0);
+    TEST(iStopCount == 0);
+    WaitForReservoirToEmpty();
+    TEST(iStartCount == 0);
+    iClockPuller->Start(0);
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    TEST(iStartCount == 1);
+    TEST(iNotifySizeCount > 0);
+    iReservoir->Push(iMsgFactory->CreateMsgQuit());
+}
+
+void SuiteReservoirHistory::TestNotifySizeNotCalledAfterDownstreamStop()
+{
+    iReservoir->Push(CreateMsgMode());
+    iReservoir->Push(CreateMsgTrack());
+    iReservoir->Push(CreateMsgDecodedStream());
+    WaitForReservoirToEmpty();
+    iClockPuller->Start(0);
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    const TUint prevNotifySizeCount = iNotifySizeCount;
+    TEST(iNotifySizeCount > 0);
+    TEST(iStartCount == 1);
+    TEST(iStopCount == 0);
+
+    iClockPuller->Stop();
+    TEST(iStopCount == 1);
+    TEST(iStartCount == 1);
+    iReservoir->Push(CreateMsgAudioPcm());
+    iReservoir->Push(CreateMsgAudioPcm());
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    TEST(iStartCount == 1);
+    TEST(iStopCount == 1);
+    TEST(iNotifySizeCount == prevNotifySizeCount);
+
+    iReservoir->Push(iMsgFactory->CreateMsgQuit());
+}
+
+void SuiteReservoirHistory::TestNotifySizeNotCalledAfterDrain()
+{
+    iReservoir->Push(CreateMsgMode());
+    iReservoir->Push(CreateMsgTrack());
+    iReservoir->Push(CreateMsgDecodedStream());
+    WaitForReservoirToEmpty();
+    iClockPuller->Start(0);
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    const TUint prevNotifySizeCount = iNotifySizeCount;
+    TEST(iNotifySizeCount > 0);
+    TEST(iStartCount == 1);
+    TEST(iStopCount == 0);
+
+    iReservoir->Push(iMsgFactory->CreateMsgDrain(Functor()));
+    WaitForReservoirToEmpty();
+    TEST(iStopCount == 1);
+    TEST(iStartCount == 1);
+    iReservoir->Push(CreateMsgAudioPcm());
+    iReservoir->Push(CreateMsgAudioPcm());
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    TEST(iStopCount == 1);
+    TEST(iStartCount == 1);
+    TEST(iNotifySizeCount == prevNotifySizeCount);
+
+    iClockPuller->Start(0);
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    TEST(iStopCount == 1);
+    TEST(iStartCount == 2);
+    TEST(iNotifySizeCount > prevNotifySizeCount);
+
+    iReservoir->Push(iMsgFactory->CreateMsgQuit());
+}
+
+void SuiteReservoirHistory::TestNotifySizeCalledTwicePerAudioMsg()
+{
+    iReservoir->Push(CreateMsgMode());
+    iReservoir->Push(CreateMsgTrack());
+    iReservoir->Push(CreateMsgDecodedStream());
+    iReservoir->Push(CreateMsgAudioPcm());
+    WaitForReservoirToEmpty();
+    iClockPuller->Start(0);
+    TEST(iStartCount == 1);
+    TEST(iStopCount == 0);
+    TEST(iNotifySizeCount == 0);
+
+    static const TUint kAudioMsgCount = 10;
+    for (TUint i=0; i<kAudioMsgCount; i++) {
+        iReservoir->Push(CreateMsgAudioPcm());
     }
-    delete iThread;
-    TEST(iStartCalled);
-    TEST(iNotifySizeCalled);
+    WaitForReservoirToEmpty();
+    TEST(iStartCount == 1);
+    TEST(iStopCount == 0);
+    TEST(iNotifySizeCount == kAudioMsgCount * 2);
+
+    iReservoir->Push(iMsgFactory->CreateMsgQuit());
+}
+
+MsgMode* SuiteReservoirHistory::CreateMsgMode()
+{
+    return iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, ModeClockPullers(this), false, false);
+}
+
+MsgTrack* SuiteReservoirHistory::CreateMsgTrack()
+{
+    auto track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
+    auto msgTrack = iMsgFactory->CreateMsgTrack(*track);
+    track->RemoveRef();
+    return msgTrack;
+}
+
+MsgDecodedStream* SuiteReservoirHistory::CreateMsgDecodedStream()
+{
+    return iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, false, nullptr);
+}
+
+MsgAudioPcm* SuiteReservoirHistory::CreateMsgAudioPcm()
+{
+    Brn audioBuf(iBuf, sizeof(iBuf));
+    auto audio = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, iTrackOffset);
+    iTrackOffset += audio->Jiffies();
+    return audio;
+}
+
+void SuiteReservoirHistory::WaitForReservoirToEmpty()
+{
+    while (!iReservoir->IsEmpty()) {
+        Thread::Sleep(1);
+    }
 }
 
 void SuiteReservoirHistory::PullerThread()
 {
-    Thread::Sleep(200); /* We test below that history sizes are non-zero.  Give pushing
-                           thread a chance to fill the reservoir to limit the chances
-                           of it always being close to empty */
-    while (!iStopAudioGeneration) {
+    while (!iStopPullerThread) {
         Msg* msg = iReservoir->Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
@@ -661,19 +781,18 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iDequeuedJiffies += aMsg->Jiffies();
     return aMsg;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgSilence* aMsg)
+Msg* SuiteReservoirHistory::ProcessMsg(MsgSilence* /*aMsg*/)
 {
-    iDequeuedJiffies += aMsg->Jiffies();
-    return aMsg;
+    ASSERTS(); // don't expect anything upstream of DecodedAudioReservoir to generate silence
+    return nullptr;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
-    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    ASSERTS(); // only MsgAudioPcm expected in this test
     return nullptr;
 }
 
@@ -689,6 +808,7 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgMode* aMsg)
 {
+    iClockPuller = aMsg->ClockPullers().ReservoirLeft();
     return aMsg;
 }
 
@@ -743,38 +863,31 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgWait* /*aMsg*/)
     return nullptr;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
+Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* aMsg)
 {
-    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return nullptr;
+    iStopPullerThread = true;
+    return aMsg;
 }
-void SuiteReservoirHistory::Start(TUint aNotificationFrequency)
+
+void SuiteReservoirHistory::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
 {
-    TEST(aNotificationFrequency == iReservoir->kUtilisationSamplePeriodJiffies);
-    iStartCalled = true;
+    iStartCount++;
+}
+
+void SuiteReservoirHistory::Stop()
+{
+    iStopCount++;
 }
 
 void SuiteReservoirHistory::Reset()
 {
 }
 
-void SuiteReservoirHistory::NotifySize(TUint aJiffies)
+void SuiteReservoirHistory::NotifySize(TUint /*aJiffies*/)
 {
-    iHistoryPointCount++;
-    TEST(aJiffies != 0);
-    TEST(aJiffies < 0x40000000); // arbitrarily chosen value.  2^30 or ~17s of audio
-
-    if (iHistoryPointCount == kTotalHistoryUpdates) {
-        iStopAudioGeneration = true;
-    }
-    iNotifySizeCalled = true;
+    iNotifySizeCount++;
 }
 
-void SuiteReservoirHistory::Stop()
-{
-    ASSERTS(); // test only generates a single MsgMode so this shouldn't be called
-}
-#endif
 
 // SuiteEncodedReservoir
 
@@ -1004,7 +1117,7 @@ void TestAudioReservoir()
 {
     Runner runner("Decoded Audio Reservoir tests\n");
     runner.Add(new SuiteAudioReservoir());
-//    runner.Add(new SuiteReservoirHistory());
+    runner.Add(new SuiteReservoirHistory());
     runner.Add(new SuiteEncodedReservoir());
     runner.Run();
 }
