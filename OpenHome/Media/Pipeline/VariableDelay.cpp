@@ -234,7 +234,9 @@ void VariableDelay::StartClockPuller()
     AutoMutex _(iLock);
     if (   iDownstreamDelay == 0 // want to wait for the rightmost delay to be ready before calling upstream
         && iClockPuller != nullptr) {
-        iClockPuller->Start(iDelayJiffies);
+        TUint delayJiffies = std::max(iDelayJiffies, iMinDelay);
+        delayJiffies -= iMinDelay;
+        iClockPuller->Start(delayJiffies);
     }
 }
 
@@ -419,12 +421,12 @@ Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
     return aMsg;
 }
 
-void VariableDelay::Start(TUint aExpectedPipelineJiffies)
+void VariableDelay::Start(TUint aExpectedDecodedReservoirJiffies)
 {
     ASSERT(iDownstreamDelay != 0); // changes required to delay calculation if this is called on rightmost pipeline delay
     AutoMutex _(iLock);
     if (iClockPuller != nullptr) {
-        const TUint delay = aExpectedPipelineJiffies + iDelayJiffies;
+        const TUint delay = aExpectedDecodedReservoirJiffies + iDelayJiffies;
         iClockPuller->Start(delay);
     }
 }

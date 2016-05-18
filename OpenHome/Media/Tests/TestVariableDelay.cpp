@@ -2,6 +2,7 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Pipeline/VariableDelay.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
@@ -19,7 +20,10 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteVariableDelay : public SuiteUnitTest, private IPipelineElementUpstream, private IMsgProcessor
+class SuiteVariableDelay : public SuiteUnitTest
+                         , private IPipelineElementUpstream
+                         , private IMsgProcessor
+                         , private IClockPullerReservoir
 {
     static const TUint kDecodedAudioCount = 2;
     static const TUint kMsgAudioPcmCount  = 2;
@@ -27,7 +31,7 @@ class SuiteVariableDelay : public SuiteUnitTest, private IPipelineElementUpstrea
 
     static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kDownstreamDelay = 30 * Jiffies::kPerMs;
-    static const TUint kMinDelay = 2 * Jiffies::kPerMs;
+    static const TUint kMinDelay = 10 * Jiffies::kPerMs;
     static const TUint kMsgSilenceSize = Jiffies::kPerMs;
 
     static const TUint kSampleRate  = 44100;
@@ -60,6 +64,11 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
+private: // from IClockPullerReservoir
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
+    void Stop() override;
+    void Reset() override;
+    void NotifySize(TUint aJiffies) override;
 private:
     enum EMsgType
     {
@@ -97,6 +106,7 @@ private:
     void TestDelayShorterThanDownstream();
     void TestDelayShorterThanMinimum();
     void TestAnimatorOverride();
+    void TestClockPuller();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -113,7 +123,9 @@ private:
     TUint64 iTrackOffset;
     TBool iNextModeSupportsLatency;
     TUint iNextDelayAbsoluteJiffies;
+    IClockPullerReservoir* iNextModeClockPuller;
     TUint iLastPulledDelay;
+    TUint iLastExpectedDecodedReservoirJiffies;
     TUint iStreamId;
     TUint iNextStreamId;
 };
@@ -141,6 +153,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanDownstream), "TestDelayShorterThanDownstream");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanMinimum), "TestDelayShorterThanMinimum");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestAnimatorOverride), "TestAnimatorOverride");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestClockPuller), "TestClockPuller");
 }
 
 SuiteVariableDelay::~SuiteVariableDelay()
@@ -168,7 +181,9 @@ void SuiteVariableDelay::Setup()
     iTrackOffset = 0;
     iNextModeSupportsLatency = true;
     iNextDelayAbsoluteJiffies = 0;
+    iNextModeClockPuller = nullptr;
     iLastPulledDelay = 0;
+    iLastExpectedDecodedReservoirJiffies = 0;
     iStreamId = UINT_MAX;
     iNextStreamId = 0;
 }
@@ -197,7 +212,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 8, 44100, 2, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, ModeClockPullers(), false, false);
+        return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, ModeClockPullers(iNextModeClockPuller), false, false);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -379,6 +394,25 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)
 {
     iLastMsg = EMsgQuit;
     return aMsg;
+}
+
+void SuiteVariableDelay::Start(TUint aExpectedDecodedReservoirJiffies)
+{
+    iLastExpectedDecodedReservoirJiffies = aExpectedDecodedReservoirJiffies;
+}
+
+void SuiteVariableDelay::Stop()
+{
+}
+
+void SuiteVariableDelay::Reset()
+{
+    ASSERTS();
+}
+
+void SuiteVariableDelay::NotifySize(TUint /*aJiffies*/)
+{
+    ASSERTS();
 }
 
 void SuiteVariableDelay::PullNext()
@@ -636,6 +670,31 @@ void SuiteVariableDelay::TestDelayAppliedAfterDrain()
 void SuiteVariableDelay::TestDelayShorterThanDownstream()
 {
     PullNext(EMsgMode);
+    static const TUint kDelay = 40 * Jiffies::kPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    iNextGeneratedMsg = EMsgAudioPcm;
+    do {
+        PullNext();
+    } while (iLastMsg == EMsgSilence);
+    PullNext(EMsgAudioPcm);
+
+    iNextDelayAbsoluteJiffies = kDownstreamDelay - Jiffies::kPerMs;
+    PullNext(EMsgDelay);
+    TEST(iLastPulledDelay == iNextDelayAbsoluteJiffies);
+    if (iLastPulledDelay != iNextDelayAbsoluteJiffies) {
+        Print("Expected %ums, got %u\n", Jiffies::ToMs(iNextDelayAbsoluteJiffies), Jiffies::ToMs(iLastPulledDelay));
+    }
+    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    PullNext(EMsgAudioPcm);
+    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+}
+
+void SuiteVariableDelay::TestDelayShorterThanMinimum()
+{
+    PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
     static const TUint kDelay = kMinDelay - Jiffies::kPerMs;
@@ -649,11 +708,6 @@ void SuiteVariableDelay::TestDelayShorterThanDownstream()
     }
     PullNext();
     TEST(iLastMsg == EMsgAudioPcm);
-}
-
-void SuiteVariableDelay::TestDelayShorterThanMinimum()
-{
-
 }
 
 void SuiteVariableDelay::TestAnimatorOverride()
@@ -682,6 +736,38 @@ void SuiteVariableDelay::TestAnimatorOverride()
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 }
 
+void SuiteVariableDelay::TestClockPuller()
+{
+    *const_cast<TUint*>(&iVariableDelay->iDownstreamDelay) = 0;
+
+    iNextModeClockPuller = this;
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+
+    static const TUint kDelay = 20 * Jiffies::kPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+    TEST(iLastExpectedDecodedReservoirJiffies == 0);
+    iNextGeneratedMsg = EMsgAudioPcm;
+    do {
+        PullNext();
+    } while (iLastMsg == EMsgSilence);
+    TEST(iLastMsg == EMsgAudioPcm);
+    TEST(iLastExpectedDecodedReservoirJiffies == kDelay - kMinDelay);
+
+    iTrackOffset = 0;
+    PullNext(EMsgDecodedStream);
+    iNextDelayAbsoluteJiffies = kMinDelay;
+    PullNext(EMsgDelay);
+    iLastExpectedDecodedReservoirJiffies = 0;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    do {
+        PullNext();
+    } while (iLastMsg == EMsgSilence);
+    TEST(iLastMsg == EMsgAudioPcm);
+    TEST(iLastExpectedDecodedReservoirJiffies == 0); // smallest delay => all pipeline audio is in StarvationRamper
+}
 
 
 void TestVariableDelay()

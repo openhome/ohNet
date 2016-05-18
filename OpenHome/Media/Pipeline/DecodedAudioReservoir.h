@@ -26,7 +26,7 @@ private: // from MsgReservoir
 private: // from AudioReservoir
     TBool IsFull() const override;
 private: // from IClockPullerReservoir
-    void Start(TUint aExpectedPipelineJiffies) override;
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
     void Stop() override;
     void Reset() override;
     void NotifySize(TUint aJiffies) override;

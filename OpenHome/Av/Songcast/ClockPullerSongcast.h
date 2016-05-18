@@ -44,7 +44,7 @@ private: // from Media::IClockPullerTimestamp
     void NewStream(TUint aSampleRate) override;
     void Reset() override;
     void Stop() override;
-    void Start(TUint aExpectedPipelineJiffies) override;
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
 private:
     ClockPullerNonTimestamped iPullerReservoirLeft;

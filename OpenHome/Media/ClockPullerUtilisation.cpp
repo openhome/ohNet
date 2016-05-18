@@ -147,7 +147,7 @@ void ClockPullerUtilisation::Stop()
     iUtilisation->Reset();
 }
 
-void ClockPullerUtilisation::Start(TUint /*aExpectedPipelineJiffies*/)
+void ClockPullerUtilisation::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
 {
 //    iUpdateFrequency = aNotificationFrequency;
     Reset();

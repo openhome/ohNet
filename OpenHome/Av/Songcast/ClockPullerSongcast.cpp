@@ -53,11 +53,11 @@ void ClockPullerNonTimestamped::Stop()
     }
 }
 
-void ClockPullerNonTimestamped::Start(TUint aExpectedPipelineJiffies)
+void ClockPullerNonTimestamped::Start(TUint aExpectedDecodedReservoirJiffies)
 {
     AutoMutex _(iLock);
     if (iEnabled) {
-        Puller().Start(aExpectedPipelineJiffies);
+        Puller().Start(aExpectedDecodedReservoirJiffies);
     }
 }
 
@@ -153,7 +153,7 @@ void ClockPullerSongcast::Stop()
     iPullerReservoirLeft.SetEnabled(true);
 }
 
-void ClockPullerSongcast::Start(TUint /*aExpectedPipelineJiffies*/)
+void ClockPullerSongcast::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
 {
     iUseTimestamps = true;
     iPullerReservoirLeft.SetEnabled(false);

@@ -50,7 +50,7 @@ public:
 private: // from IClockPullerReservoir
     void Reset() override;
     void Stop() override;
-    void Start(TUint aExpectedPipelineJiffies) override;
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
     void NotifySize(TUint aJiffies) override;
 private: // from IUtilisationHistoryObserver
     void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;

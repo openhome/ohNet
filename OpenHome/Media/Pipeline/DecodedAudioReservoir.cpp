@@ -95,11 +95,11 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
     return aMsg;
 }
 
-void DecodedAudioReservoir::Start(TUint aExpectedPipelineJiffies)
+void DecodedAudioReservoir::Start(TUint aExpectedDecodedReservoirJiffies)
 {
     AutoMutex _(iLockClockPuller);
     if (iClockPuller != nullptr) {
-        iClockPuller->Start(aExpectedPipelineJiffies);
+        iClockPuller->Start(aExpectedDecodedReservoirJiffies);
         iClockPullerStarted = true;
     }
 }

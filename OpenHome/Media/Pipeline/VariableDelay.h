@@ -44,7 +44,7 @@ private: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
 private: // from IClockPullerReservoir
-    void Start(TUint aExpectedPipelineJiffies) override;
+    void Start(TUint aExpectedDecodedReservoirJiffies) override;
     void Stop() override;
     void Reset() override;
     void NotifySize(TUint aJiffies) override;

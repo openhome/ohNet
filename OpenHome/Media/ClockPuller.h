@@ -9,7 +9,7 @@ class IClockPuller
 {
 public:
     virtual ~IClockPuller() {}
-    virtual void Start(TUint aExpectedPipelineJiffies) = 0;
+    virtual void Start(TUint aExpectedDecodedReservoirJiffies) = 0;
     virtual void Stop() = 0;
     virtual void Reset() = 0;
 };
