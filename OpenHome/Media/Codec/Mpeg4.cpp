@@ -541,8 +541,14 @@ Msg* Mpeg4BoxStts::Process()
             iEntries = Converter::BeUint32At(iBuf, 0);
             iEntryCount = 0;
             iSeekTable.InitialiseAudioSamplesPerSample(iEntries);
-            iCache->Inspect(iBuf, iBuf.MaxBytes());
-            iState = eSampleCount;
+
+            if (iEntries > 0) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eSampleCount;
+            }
+            else {
+                iState = eComplete;
+            }
         }
         else if (iState == eSampleCount) {
             iOffset += iBuf.Bytes();
@@ -649,8 +655,14 @@ Msg* Mpeg4BoxStsc::Process()
             iEntries = Converter::BeUint32At(iBuf, 0);
             iEntryCount = 0;
             iSeekTable.InitialiseSamplesPerChunk(iEntries);
-            iCache->Inspect(iBuf, iBuf.MaxBytes());
-            iState = eFirstChunk;
+
+            if (iEntries > 0) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eFirstChunk;
+            }
+            else {
+                iState = eComplete;
+            }
         }
         else if (iState == eFirstChunk) {
             iOffset += iBuf.Bytes();
@@ -765,8 +777,14 @@ Msg* Mpeg4BoxStco::Process()
             iEntries = Converter::BeUint32At(iBuf, 0);
             iEntryCount = 0;
             iSeekTable.InitialiseOffsets(iEntries);
-            iCache->Inspect(iBuf, iBuf.MaxBytes());
-            iState = eChunkOffset;
+
+            if (iEntries > 0) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eChunkOffset;
+            }
+            else {
+                iState = eComplete;
+            }
         }
         else if (iState == eChunkOffset) {
             iOffset += iBuf.Bytes();
@@ -863,8 +881,14 @@ Msg* Mpeg4BoxCo64::Process()
             iEntries = Converter::BeUint32At(iBuf32, 0);
             iEntryCount = 0;
             iSeekTable.InitialiseOffsets(iEntries);
-            iCache->Inspect(iBuf64, iBuf64.MaxBytes());
-            iState = eChunkOffset;
+
+            if (iEntries > 0) {
+                iCache->Inspect(iBuf64, iBuf64.MaxBytes());
+                iState = eChunkOffset;
+            }
+            else {
+                iState = eComplete;
+            }
         }
         else if (iState == eChunkOffset) {
             iOffset += iBuf64.Bytes();
@@ -973,8 +997,14 @@ Msg* Mpeg4BoxStsz::Process()
             iOffset += iBuf.Bytes();
             const TUint entries = Converter::BeUint32At(iBuf, 0);
             iSampleSizeTable.Init(entries);
-            iCache->Inspect(iBuf, iBuf.MaxBytes());
-            iState = eEntry;
+
+            if (entries > 0) {
+                iCache->Inspect(iBuf, iBuf.MaxBytes());
+                iState = eEntry;
+            }
+            else {
+                iState = eComplete;
+            }
         }
         else if (iState == eEntry) {
             iOffset += iBuf.Bytes();
