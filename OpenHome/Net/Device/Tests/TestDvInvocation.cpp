@@ -140,12 +140,26 @@ void CpDevices::Test()
         proxy->SyncEchoString(valCrLf, result);
         ASSERT(result == valLf);
     }
-    Brn valCrLfMultiple("<tag>some\r\nmore\r\ntext</<tag>");
-    Brn valCrLfMultipleExpected("<tag>some\nmore\ntext</<tag>");
+    Brn valCrLfMultiple("<tag>some\r\n\r\ntext</<tag>");
+    Brn valCrLfMultipleExpected("<tag>some\n\ntext</<tag>");
     for (i=0; i<kTestIterations; i++) {
         Brh result;
         proxy->SyncEchoString(valCrLfMultiple, result);
         ASSERT(result == valCrLfMultipleExpected);
+    }
+    Brn valCrLfSplit("<tag>some\r\nmore\r\ntext</<tag>");
+    Brn valCrLfSplitExpected("<tag>some\nmore\ntext</<tag>");
+    for (i=0; i<kTestIterations; i++) {
+        Brh result;
+        proxy->SyncEchoString(valCrLfSplit, result);
+        ASSERT(result == valCrLfSplitExpected);
+    }
+    Brn valMixed("<tag>some\r\rmore\n\ntext</tag>");
+    Brn valMixedExpected("<tag>some\n\nmore\n\ntext</tag>");
+    for (i=0; i<kTestIterations; i++) {
+        Brh result;
+        proxy->SyncEchoString(valMixed, result);
+        ASSERT(result == valMixedExpected);
     }
 
     Brh resStr;
