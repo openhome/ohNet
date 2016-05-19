@@ -18,6 +18,10 @@ using namespace Windows;
 using namespace Windows::Networking;
 using namespace Windows::Networking::Connectivity;
 using namespace Windows::Foundation::Collections;
+
+#define InitializeCriticalSection(arg0) InitializeCriticalSectionEx(arg0, 0, 0)
+#define WaitForSingleObject(arg0, arg1) WaitForSingleObjectEx(arg0, arg1, false)
+
 #else
 #include <Windows.h>
 #include <Iphlpapi.h>
