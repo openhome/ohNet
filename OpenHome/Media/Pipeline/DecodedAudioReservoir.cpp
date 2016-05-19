@@ -79,8 +79,10 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDrain* aMsg)
 {
+    AutoMutex _(iLockClockPuller);
     if (iClockPuller != nullptr) {
-        iClockPuller->Reset();
+        iClockPullerStarted = false;
+        iClockPuller->Stop();
     }
     return aMsg;
 }
@@ -106,7 +108,9 @@ void DecodedAudioReservoir::Start(TUint aExpectedDecodedReservoirJiffies)
 
 void DecodedAudioReservoir::Stop()
 {
-    ASSERTS();
+    AutoMutex _(iLockClockPuller);
+    iClockPullerStarted = false;
+    iClockPuller->Stop();
 }
 
 void DecodedAudioReservoir::Reset()

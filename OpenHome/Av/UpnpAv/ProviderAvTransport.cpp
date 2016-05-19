@@ -594,10 +594,10 @@ void ProviderAvTransport::ModerationTimerExpired()
 void ProviderAvTransport::UpdateEventedState()
 {
     // Write the header for the event
-    iEventedState.Replace("<Event xmlns=\"urn:schemas-upnp-org:metadata-1-0/AVT/\">\n");
-    iEventedState.Append("    <InstanceID val=\"");
+    iEventedState.Replace("<Event xmlns=\"urn:schemas-upnp-org:metadata-1-0/AVT/\">");
+    iEventedState.Append("<InstanceID val=\"");
     Ascii::AppendDec(iEventedState, kInstanceId);
-    iEventedState.Append("\">\n");
+    iEventedState.Append("\">");
 
     if (iTransportStateOverride.Bytes() != 0) {
         Bws<128> buf("-- UpdateEventedState: iTransportStateOverride = ");
@@ -632,7 +632,7 @@ void ProviderAvTransport::UpdateEventedState()
     AddStateVariable(Brn("PossibleRecordQualityModes"), iPossibleRecordQualityModes);
 
     // End of event
-    iEventedState.Append("    </InstanceID>\n</Event>\n");
+    iEventedState.Append("</InstanceID></Event>");
 
     (void)SetPropertyLastChange(iEventedState);
 }
@@ -654,11 +654,11 @@ void ProviderAvTransport::AddStateVariable(const Brx& aName, TUint aValue)
 
 void ProviderAvTransport::AddStateVariableEscaped(const Brx& aName, const Brx& aValue)
 {
-    iEventedState.Append("        <");
+    iEventedState.Append("<");
     iEventedState.Append(aName);
     iEventedState.Append(" val=\"");
     iEventedState.Append(aValue);
-    iEventedState.Append("\"/>\n");
+    iEventedState.Append("\"/>");
 }
 
 void ProviderAvTransport::SecondsToTimeString(TUint aSeconds, Bwx& aTime)
