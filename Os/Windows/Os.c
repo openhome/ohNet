@@ -1129,6 +1129,7 @@ failure:
                 auto utf8 = std::make_unique<char[]>(bufferSize);
                 if (0 == WideCharToMultiByte(CP_UTF8, 0, wideData, -1, utf8.get(), bufferSize, NULL, NULL))
                 {
+                    OsNetworkFreeInterfaces(head);
                     return -1;
                 }
                 std::string ipAddrStdStr = std::string(utf8.get());
@@ -1136,6 +1137,7 @@ failure:
                 
                 if (0 != OsNetworkGetHostByName(ipAddressChars, &address))
                 {
+                    OsNetworkFreeInterfaces(head);
                     return -1;
                 }
 
@@ -1192,6 +1194,7 @@ failure:
     }
     catch (Exception^ ex)
     {
+        OsNetworkFreeInterfaces(head);
         return -1;
     }
 
