@@ -54,7 +54,7 @@ const Brn ProviderConfig::kErrorDescInvalidSelection("Expected value selected fr
 const Brn ProviderConfig::kErrorDescValueTooLong("Value too long");
 
 ProviderConfig::ProviderConfig(DvDevice& aDevice, Configuration::IConfigManager& aConfigManager)
-    : DvProviderAvOpenhomeOrgConfiguration1(aDevice)
+    : DvProviderAvOpenhomeOrgConfig1(aDevice)
     , iConfigManager(aConfigManager)
 {
     EnableActionGetKeys();
