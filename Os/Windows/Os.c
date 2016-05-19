@@ -480,13 +480,13 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
     if (NULL == data) {
         return kHandleNull;
     }
-//#ifndef DEFINE_WINDOWS_UNIVERSAL
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     data->iName = _strdup(aName);
-//#else
-//     size_t length = strlen(aName);
-//     data->iName = new char[length + 1];
-//     memcpy_s(data->iName, length + 1, aName, length + 1);
-//#endif
+#else
+     size_t length = strlen(aName);
+     data->iName = new char[length + 1];
+     memcpy_s(data->iName, length + 1, aName, length + 1);
+#endif
     if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
         return kHandleNull;
     }
