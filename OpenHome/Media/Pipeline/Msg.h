@@ -737,7 +737,6 @@ class MsgPlayable : public Msg
 public:
     MsgPlayable* Split(TUint aBytes); // returns block after aBytes
     void Add(MsgPlayable* aMsg); // combines MsgPlayable instances so they report longer durations etc
-    virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     TUint Jiffies() const;
     const Media::Ramp& Ramp() const;
@@ -788,7 +787,6 @@ private:
                     TUint aNumChannels, TUint aOffsetBytes, const Media::Ramp& aRamp,
                     Optional<IPipelineBufferObserver> aPipelineBufferObserver);
 private: // from MsgPlayable
-    MsgPlayable* Clone() override; // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     MsgPlayable* Allocate() override;
     void SplitCompleted(MsgPlayable& aRemaining) override;
     void ReadBlock(IPcmProcessor& aProcessor) override;

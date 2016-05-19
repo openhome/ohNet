@@ -2026,20 +2026,6 @@ void MsgPlayable::Add(MsgPlayable* aMsg)
     end->iNextPlayable = aMsg;
 }
 
-MsgPlayable* MsgPlayable::Clone()
-{
-    MsgPlayable* clone = Allocate();
-    clone->iSize = iSize;
-    clone->iSampleRate = iSampleRate;
-    clone->iBitDepth = iBitDepth;
-    clone->iNumChannels = iNumChannels;
-    clone->iOffset = iOffset;
-    clone->iRamp = iRamp;
-    clone->iPipelineBufferObserver = nullptr;
-    clone->iNextPlayable = (iNextPlayable == nullptr? nullptr : iNextPlayable->Clone());
-    return clone;
-}
-
 TUint MsgPlayable::Bytes() const
 {
     TUint bytes = iSize;
@@ -2155,14 +2141,6 @@ void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, T
                             aOffsetBytes, aRamp, aPipelineBufferObserver);
     iAudioData = aDecodedAudio;
     iAudioData->AddRef();
-}
-
-MsgPlayable* MsgPlayablePcm::Clone()
-{
-    MsgPlayable* clone = MsgPlayable::Clone();
-    static_cast<MsgPlayablePcm*>(clone)->iAudioData = iAudioData;
-    iAudioData->AddRef();
-    return clone;
 }
 
 void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
