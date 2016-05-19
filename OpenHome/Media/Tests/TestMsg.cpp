@@ -796,34 +796,6 @@ void SuiteMsgAudio::Test()
     TEST(jiffies == clone->Jiffies());
     clone->RemoveRef();
 
-    // Add 2 msgs.  Check their combined lengths are reported
-    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, Jiffies::kPerSecond);
-    clone = msg->Clone();
-    jiffies = msg->Jiffies();
-    TUint combinedJiffies = msg->Jiffies() + clone->Jiffies();
-    msg->Add(clone);
-    TEST(msg->Jiffies() == combinedJiffies);
-    // split inside clone
-    remaining = msg->Split(jiffies + 100);
-    TEST(msg->Jiffies() == jiffies + 100);
-    TEST(remaining->Jiffies() == combinedJiffies - (jiffies + 100));
-    // confirm clone is destroyed along with msg
-    msg->RemoveRef();
-    TEST(clone->Jiffies() == 0);
-    remaining->RemoveRef();
-    TEST(remaining->Jiffies() == 0);
-
-    // Add 2 msgs.  Split at their boundary.
-    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, Jiffies::kPerMs * 5);
-    MsgAudioPcm* msg2 = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, Jiffies::kPerMs * 2);
-    jiffies = msg->Jiffies();
-    msg->Add(msg2);
-    MsgAudio* split = msg->Split(jiffies);
-    TEST(msg->Jiffies() == jiffies);
-    TEST(split->Jiffies() == msg2->Jiffies());
-    msg->RemoveRef();
-    msg2->RemoveRef();
-
     // Aggregate 2 msgs. Check their combined lengths are reported.
     static const TUint dataSizeHalfDecodedAudio = DecodedAudio::kMaxBytes/2;
     static const TUint secondOffsetSamples = dataSizeHalfDecodedAudio / 2; // iBitDepth = 8 bits = 1 byte
@@ -894,17 +866,6 @@ void SuiteMsgAudio::Test()
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, AudioDataEndian::Little, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data3, 2, 44100, 8, AudioDataEndian::Little, secondsOffsetJiffies);
 
-    TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
-    msgAggregate1->RemoveRef();
-    msgAggregate2->RemoveRef();
-
-    // Try aggregate two msgs, where one has a msg chain
-    Bwh data4(dataSizeHalfDecodedAudio/2, dataSizeHalfDecodedAudio/2);
-    (void)memset((void*)data4.Ptr(), 0x04, data4.Bytes());
-    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, AudioDataEndian::Little, 0);
-    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, AudioDataEndian::Little, secondsOffsetJiffies);
-    MsgAudioPcm* msgChained = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, AudioDataEndian::Little, secondsOffsetJiffies);
-    msgAggregate2->Add(msgChained);
     TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
@@ -1042,30 +1003,6 @@ void SuiteMsgPlayable::Test()
     playable->RemoveRef();
     const TByte* ptr = pcmProcessor.Ptr();
     TUint subsampleVal = 0xff;
-    for (TUint i=0; i<data.Bytes(); i++) {
-        TEST(*ptr == subsampleVal);
-        ptr++;
-        subsampleVal--;
-    }
-
-    // Create multiple pcm msgs, then add together. Check content.
-    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, 0);
-    MsgAudioPcm* audioPcm2 = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, 0);
-    audioPcm->Add(audioPcm2);
-    playable = audioPcm->CreatePlayable();
-    TEST(playable->Bytes() == data.Bytes()*2);
-    playable->Read(pcmProcessor);
-    playable->RemoveRef();
-    ptr = pcmProcessor.Ptr();
-    subsampleVal = 0xff;
-    // first half of msg
-    for (TUint i=0; i<data.Bytes(); i++) {
-        TEST(*ptr == subsampleVal);
-        ptr++;
-        subsampleVal--;
-    }
-    // second half of msg
-    subsampleVal = 0xff;
     for (TUint i=0; i<data.Bytes(); i++) {
         TEST(*ptr == subsampleVal);
         ptr++;
