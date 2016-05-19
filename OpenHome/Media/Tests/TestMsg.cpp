@@ -47,6 +47,20 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
+class BufferObserver : public IPipelineBufferObserver
+{
+public:
+    BufferObserver() { Reset(); }
+    void Reset() { iSize = iNumCalls = 0; }
+    TUint Size() const { return iSize; }
+    TUint NumCalls() const { return iNumCalls; }
+private: // from IPipelineBufferObserver
+    void Update(TInt aDelta) override { iSize += aDelta; iNumCalls++; }
+private:
+    TInt iSize;
+    TUint iNumCalls;
+};
+
 class SuiteMsgAudio : public Suite
 {
     static const TUint kMsgCount = 8;
@@ -927,6 +941,50 @@ void SuiteMsgAudio::Test()
     msg->RemoveRef();
     playable->RemoveRef();
 
+    // IPipelineBufferObserver
+    BufferObserver bufferObserver;
+    const auto msgSize = 2 * Jiffies::kPerMs;
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 0);
+    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
+    bufferObserver.Reset();
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
+    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    TUint prevBufferSize = bufferObserver.Size();
+    remaining = msg->Split(msgSize/2);
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == remaining->Jiffies());
+    TEST(bufferObserver.NumCalls() == 2);
+    remaining->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 3);
+
+    bufferObserver.Reset();
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
+    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    clone = msg->Clone();
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    clone->RemoveRef();
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
     // clean destruction of class implies no leaked msgs
 }
 
@@ -1174,6 +1232,56 @@ void SuiteMsgPlayable::Test()
     playable->Add(silence->CreatePlayable());
     playable->Read(pcmProcessor);
     playable->RemoveRef();
+
+    // IPipelineBufferObserver
+    BufferObserver bufferObserver;
+    const auto msgSize = 2 * Jiffies::kPerMs;
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
+    audioPcm->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == audioPcm->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    auto prevBufferSize = bufferObserver.Size();
+    playable = audioPcm->CreatePlayable();
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    playable->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
+    bufferObserver.Reset();
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
+    audioPcm->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == audioPcm->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    prevBufferSize = bufferObserver.Size();
+    playable = audioPcm->CreatePlayable();
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    remainingPlayable = playable->Split(playable->Bytes() / 2);
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    playable->RemoveRef();
+    TEST(bufferObserver.Size() == prevBufferSize / 2);
+    TEST(bufferObserver.NumCalls() == 2);
+    remainingPlayable->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 3);
+
+    bufferObserver.Reset();
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
+    audioPcm->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == audioPcm->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    prevBufferSize = bufferObserver.Size();
+    audioPcm->SetMuted();
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    playable = audioPcm->CreatePlayable(); // muted => get playableSilence
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    playable->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
 
     // clean destruction of class implies no leaked msgs
 }

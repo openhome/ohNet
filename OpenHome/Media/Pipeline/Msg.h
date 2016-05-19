@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Optional.h>
 
 #include <limits.h>
 #include <atomic>
@@ -665,6 +666,13 @@ class MsgPlayable;
 class MsgPlayablePcm;
 class MsgPlayableSilence;
 
+class IPipelineBufferObserver
+{
+public:
+    virtual ~IPipelineBufferObserver() {}
+    virtual void Update(TInt aDelta) = 0;
+};
+
 class MsgAudioPcm : public MsgAudio
 {
     friend class MsgFactory;
@@ -675,6 +683,7 @@ public:
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
+    void SetObserver(IPipelineBufferObserver& aPipelineBufferObserver);
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
@@ -692,6 +701,7 @@ private:
     Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
     Allocator<MsgPlayableSilence>* iAllocatorPlayableSilence;
     TUint64 iTrackOffset;
+    IPipelineBufferObserver* iPipelineBufferObserver;
 };
 
 class MsgPlayableSilence;
@@ -729,6 +739,7 @@ public:
     void Add(MsgPlayable* aMsg); // combines MsgPlayable instances so they report longer durations etc
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
+    TUint Jiffies() const;
     const Media::Ramp& Ramp() const;
     /**
      * Extract pcm data from this msg.
@@ -743,23 +754,28 @@ public:
     void Read(IPcmProcessor& aProcessor);
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
-    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                    TUint aOffsetBytes, const Media::Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
+                    TUint aNumChannels, TUint aOffsetBytes, const Media::Ramp& aRamp,
+                    Optional<IPipelineBufferObserver> aPipelineBufferObserver);
 protected: // from Msg
     void RefAdded() override;
     void RefRemoved() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
+    void Clear() override;
 private:
+    TUint MsgJiffies() const;
     virtual MsgPlayable* Allocate() = 0;
     virtual void SplitCompleted(MsgPlayable& aRemaining);
     virtual void ReadBlock(IPcmProcessor& aProcessor) = 0;
 protected:
     MsgPlayable* iNextPlayable;
     TUint iSize; // Bytes
+    TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
     TUint iOffset; // Bytes
     Media::Ramp iRamp;
+    IPipelineBufferObserver* iPipelineBufferObserver;
 };
 
 class MsgPlayablePcm : public MsgPlayable
@@ -768,8 +784,9 @@ class MsgPlayablePcm : public MsgPlayable
 public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
-    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels,
-                    TUint aOffsetBytes, const Media::Ramp& aRamp);
+    void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
+                    TUint aNumChannels, TUint aOffsetBytes, const Media::Ramp& aRamp,
+                    Optional<IPipelineBufferObserver> aPipelineBufferObserver);
 private: // from MsgPlayable
     MsgPlayable* Clone() override; // create new MsgPlayable, take ref to DecodedAudio, copy size/offset
     MsgPlayable* Allocate() override;
@@ -788,13 +805,13 @@ class MsgPlayableSilence : public MsgPlayable
 public:
     MsgPlayableSilence(AllocatorBase& aAllocator);
 private:
-    void Initialise(TUint aSizeBytes, TUint aBitDepth, TUint aNumChannels, const Media::Ramp& aRamp);
+    void Initialise(TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
+                    TUint aNumChannels, const Media::Ramp& aRamp,
+                    Optional<IPipelineBufferObserver> aPipelineBufferObserver);
 private: // from MsgPlayable
     MsgPlayable* Allocate() override;
     void SplitCompleted(MsgPlayable& aRemaining) override;
     void ReadBlock(IPcmProcessor& aProcessor) override;
-private: // from Msg
-    void Clear() override;
 };
 
 /**
