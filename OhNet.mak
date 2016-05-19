@@ -17,12 +17,17 @@ openhome_architecture=x86
 !endif
 
 !if "$(windows_universal)"=="1"
-defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS
+defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS 
 error_handling = /EHsc
 additional_includes = /AI "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\store\references"
-universal_cppflags = /ZW /D "WINAPI_FAMILY=2" /Gy
+universal_cppflags = /ZW /D "WINAPI_FAMILY=WINAPI_FAMILY_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline
 link_libs = Ws2_32.lib WindowsApp.lib
-link_opts = /APPCONTAINER /SAFESEH /DYNAMICBASE /NXCOMPAT 
+machine = X86
+!if "$(openhome_architecture)"=="x64"
+machine = X64
+#todo: arm!
+!endif
+link_opts = /APPCONTAINER /SAFESEH /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS 
 static_or_dynamic = /MD
 !else
 defines_universal = -D_CRT_SECURE_NO_WARNINGS
