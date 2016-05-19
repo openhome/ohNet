@@ -27,7 +27,11 @@ machine = X86
 machine = X64
 #todo: arm!
 !endif
-link_opts = /APPCONTAINER /SAFESEH /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS 
+safeseh =
+!if "$(openhome_architecture)"=="x86"
+safeseh = /SAFESEH
+!endif
+link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS 
 static_or_dynamic = /MD
 !else
 defines_universal = -D_CRT_SECURE_NO_WARNINGS
