@@ -219,7 +219,7 @@ gParallel = False
 for arg in sys.argv[1:]:
     if arg == '--windows10':
         gWindows10 = 1
-    if arg == '-b' or arg == '--buildonly':
+    elif arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
     elif arg == '--debug':
         gDebugBuild = 1
