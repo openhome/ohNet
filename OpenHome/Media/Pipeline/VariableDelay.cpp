@@ -61,6 +61,15 @@ VariableDelayBase::~VariableDelayBase()
 
 Msg* VariableDelayBase::Pull()
 {
+    Msg* msg;
+    do {
+        msg = DoPull();
+    } while (msg == nullptr);
+    return msg;
+}
+
+Msg* VariableDelayBase::DoPull()
+{
     Msg* msg = nullptr;
     if (iWaitForAudioBeforeGeneratingSilence) {
         do {
@@ -105,9 +114,7 @@ Msg* VariableDelayBase::Pull()
         }
     }
     else if (msg == nullptr) {
-        do {
-            msg = NextMsg();
-        } while (msg == nullptr);
+        msg = NextMsg();
     }
 
     return msg;
@@ -145,6 +152,7 @@ void VariableDelayBase::ResetStatusAndRamp()
     iRampDirection = Ramp::ENone;
     iCurrentRampValue = Ramp::kMax;
     iRemainingRampSize = iRampDuration;
+    iLastPulledRampValue = Ramp::kMax;
 }
 
 void VariableDelayBase::SetupRamp()
@@ -156,13 +164,13 @@ void VariableDelayBase::SetupRamp()
     {
     case EStarting:
         iRampDirection = Ramp::ENone;
-        iCurrentRampValue = Ramp::kMax;
+        iCurrentRampValue = iLastPulledRampValue;
         iRemainingRampSize = iRampDuration;
         break;
     case ERunning:
         iStatus = ERampingDown;
         iRampDirection = Ramp::EDown;
-        iCurrentRampValue = Ramp::kMax;
+        iCurrentRampValue = iLastPulledRampValue;
         iRemainingRampSize = iRampDuration;
         break;
     case ERampingDown:
@@ -271,7 +279,8 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (iWaitForAudioBeforeGeneratingSilence) {
         iWaitForAudioBeforeGeneratingSilence = false;
-        return aMsg;
+        iQueue.EnqueueAtHead(aMsg);
+        return nullptr;
     }
 
     if (iStatus == EStarting && iDelayAdjustment < 0) {
@@ -285,7 +294,8 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
         iStatus = ERunning;
         // fallthrough
     case ERunning:
-        // nothing to do, allow the message to be passed out unchanged
+        iLastPulledRampValue = aMsg->Ramp().End();
+        // nothing more to do, allow the message to be passed out unchanged
         break;
     case ERampingDown:
     {
@@ -432,7 +442,7 @@ void VariableDelayLeft::StartClockPuller()
 
 VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
                                        TUint aRampDuration, IVariableDelayObserver& aObserver, TUint aMinDelay)
-    : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "left")
+    : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "right")
     , iObserver(aObserver)
     , iMinDelay(aMinDelay)
     , iAnimatorLatencyOverride(0)

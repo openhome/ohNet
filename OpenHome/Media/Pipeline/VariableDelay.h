@@ -42,6 +42,7 @@ protected:
     void HandleDelayChange(TUint aNewDelay);
     inline const TChar* Status() const;
 private:
+    Msg* DoPull();
     Msg* NextMsg();
     void ApplyAnimatorOverride();
     void RampMsg(MsgAudio* aMsg);
@@ -80,6 +81,7 @@ private:
     TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
+    TUint iLastPulledRampValue;
     BwsMode iMode;
     MsgDecodedStream* iDecodedStream;
 };
