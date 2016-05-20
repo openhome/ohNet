@@ -500,9 +500,9 @@ void SuiteStarvationRamper::TestBlocksWhenHasMaxAudio()
     
     do {
         PullNext(EMsgAudioPcm);
-    } while (!iStarvationRamper->IsEmpty());
-
-    Quit();
+    } while (iPendingMsgs.size() != 0 || !iStarvationRamper->IsEmpty());
+    AddPending(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
 }
 
 void SuiteStarvationRamper::TestNoRampAroundHalt()
@@ -525,11 +525,11 @@ void SuiteStarvationRamper::TestNoRampAroundHalt()
     PullNext(EMsgHalt);
     AddPending(CreateAudio());
     AddPending(CreateAudio());
+    AddPending(iMsgFactory->CreateMsgQuit());
     do {
         PullNext(EMsgAudioPcm);
     } while (iJiffies < iTrackOffset);
-
-    Quit();
+    PullNext(EMsgQuit);
 }
 
 void SuiteStarvationRamper::TestRampsAroundStarvation()
