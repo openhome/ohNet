@@ -2,6 +2,9 @@
 #
 
 openhome_system=Windows
+!if "$(windows_universal)"=="1"
+openhome_system=Windows10
+!endif
 
 !if [cl 2>&1 | find "for x64" > nul] == 0
 !message Detected 64-bit compiler.
@@ -12,6 +15,8 @@ openhome_architecture=x86
 !elseif [cl 2>&1 | find "for x86" > nul] == 0
 !message Detected 32-bit compiler.
 openhome_architecture=x86
+!elseif [cl 2>&1 | find "for ARM" > nul] == 0
+openhome_architecture=arm
 !else
 !message Cannot tell if compiler is 32-bit or 64-bit. Please specify openhome_architecture=x64 or openhome_architecture=x86.
 !endif
@@ -25,7 +30,8 @@ link_libs = Ws2_32.lib WindowsApp.lib
 machine = X86
 !if "$(openhome_architecture)"=="x64"
 machine = X64
-#todo: arm!
+!elseif "$(openhome_architecture)"=="arm"
+machine = ARM
 !endif
 safeseh =
 !if "$(openhome_architecture)"=="x86"
