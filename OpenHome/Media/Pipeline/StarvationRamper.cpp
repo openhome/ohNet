@@ -399,7 +399,7 @@ void RampGenerator::Flush()
 
 const TUint StarvationRamper::kTrainingJiffies    = Jiffies::kPerMs * 1;
 const TUint StarvationRamper::kRampDownJiffies    = Jiffies::kPerMs * 20;
-const TUint StarvationRamper::kMaxAudioOutJiffies = Jiffies::kPerMs * 5;
+const TUint StarvationRamper::kMaxAudioOutJiffies = Jiffies::kPerMs * 1;
 
 StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream,
                                    IStarvationRamperObserver& aObserver,
