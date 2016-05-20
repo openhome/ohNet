@@ -1037,9 +1037,34 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterface
     }
 
     for (i=0; i<addrTable->dwNumEntries; i++) {
+        MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
+        MIB_IFROW* ifRow = NULL;
         OsNetworkAdapter* nif;
         size_t len;
         DWORD j = 0;
+
+        for (; j< ifTable->dwNumEntries; j++) {
+            MIB_IFROW* tmp = &ifTable->table[j];
+            if (tmp->dwIndex == addrRow->dwIndex) {
+                ifRow = tmp;
+                break;
+            }
+        }
+        if (ifRow == NULL) {
+            fprintf(stderr, "Unable to match ifRow to addrRow\n");
+            continue;
+        }
+
+        if ((addrRow->dwAddr == loopbackAddr && includeLoopback == 0) ||
+            (addrRow->dwAddr != loopbackAddr && aUseLoopback == LOOPBACK_USE)) {
+            continue;
+        }
+        if (-1 != aContext->iTestInterfaceIndex && index++ != aContext->iTestInterfaceIndex) {
+            continue;
+        }
+        if (addrRow->dwAddr == 0 || addrRow->dwMask == 0) {
+            continue;
+        }
 
         nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
         if (nif == NULL) {
