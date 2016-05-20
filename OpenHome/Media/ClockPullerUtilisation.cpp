@@ -147,13 +147,13 @@ void ClockPullerUtilisation::Stop()
     iUtilisation->Reset();
 }
 
-void ClockPullerUtilisation::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
+void ClockPullerUtilisation::Start(TUint /*aExpectedPipelineJiffies*/)
 {
 //    iUpdateFrequency = aNotificationFrequency;
     Reset();
 }
 
-void ClockPullerUtilisation::NotifySize(TUint /*aJiffies*/)
+void ClockPullerUtilisation::Update(TInt /*aDelta*/)
 {
 //    iUtilisation->Add(aJiffies);
 }

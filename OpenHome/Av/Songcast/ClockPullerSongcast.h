@@ -10,18 +10,18 @@
 namespace OpenHome {
 namespace Av {
 
-class ClockPullerNonTimestamped : public Media::IClockPullerReservoir, private INonCopyable
+class ClockPullerNonTimestamped : public Media::IClockPuller, private INonCopyable
 {
 public:
     ClockPullerNonTimestamped(Environment& aEnv, Media::IPullableClock& aPullableClock);
     void SetEnabled(TBool aEnabled);
 private:
-    inline Media::IClockPullerReservoir& Puller();
-private: // from IClockPullerReservoir
+    inline Media::IClockPuller& Puller();
+private: // from IClockPuller
+    void Update(TInt aDelta) override;
     void Reset() override;
     void Stop() override;
     void Start(TUint aNotificationFrequency) override;
-    void NotifySize(TUint aJiffies) override;
 private:
     Media::ClockPullerUtilisation iPuller;
     Mutex iLock;
@@ -41,10 +41,11 @@ private:
     void ResetTimestampHistory();
     void SmoothTimestamps(TInt& aDrift, TInt aIndexToSkip);
 private: // from Media::IClockPullerTimestamp
+    void Update(TInt aDelta) override;
     void NewStream(TUint aSampleRate) override;
     void Reset() override;
     void Stop() override;
-    void Start(TUint aExpectedDecodedReservoirJiffies) override;
+    void Start(TUint aExpectedPipelineJiffies) override;
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
 private:
     ClockPullerNonTimestamped iPullerReservoirLeft;

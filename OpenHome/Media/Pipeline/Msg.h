@@ -310,19 +310,19 @@ private:
     TBool iSupportsPrev;
 };
 
-class IClockPullerReservoir;
+class IClockPuller;
 
 class ModeClockPullers
 {
 public:
     ModeClockPullers();
     ModeClockPullers(TBool aEnabled);
-    ModeClockPullers(IClockPullerReservoir* aReservoirLeft);
+    ModeClockPullers(IClockPuller* aPipelineBuffer);
     TBool Enabled() const;
-    IClockPullerReservoir* ReservoirLeft() const;
+    IClockPuller* PipelineBuffer() const;
 private:
     TBool iEnabled;
-    IClockPullerReservoir* iReservoirLeft;
+    IClockPuller* iPipelineBuffer;
 };
 
 class MsgMode : public Msg

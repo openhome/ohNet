@@ -882,19 +882,19 @@ void ModeInfo::Clear()
 
 ModeClockPullers::ModeClockPullers()
     : iEnabled(false)
-    , iReservoirLeft(nullptr)
+    , iPipelineBuffer(nullptr)
 {
 }
 
 ModeClockPullers::ModeClockPullers(TBool aEnabled)
     : iEnabled(aEnabled)
-    , iReservoirLeft(nullptr)
+    , iPipelineBuffer(nullptr)
 {
 }
 
-ModeClockPullers::ModeClockPullers(IClockPullerReservoir* aReservoirLeft)
-    : iEnabled(aReservoirLeft != nullptr)
-    , iReservoirLeft(aReservoirLeft)
+ModeClockPullers::ModeClockPullers(IClockPuller* aPipelineBuffer)
+    : iEnabled(aPipelineBuffer != nullptr)
+    , iPipelineBuffer(aPipelineBuffer)
 {
 }
 
@@ -903,9 +903,9 @@ TBool ModeClockPullers::Enabled() const
     return iEnabled;
 }
 
-IClockPullerReservoir* ModeClockPullers::ReservoirLeft() const
+IClockPuller* ModeClockPullers::PipelineBuffer() const
 {
-    return iReservoirLeft;
+    return iPipelineBuffer;
 }
 
 

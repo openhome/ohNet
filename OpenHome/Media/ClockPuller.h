@@ -1,24 +1,18 @@
 #pragma once
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
 namespace Media {
 
-class IClockPuller
+class IClockPuller : public IPipelineBufferObserver
 {
 public:
     virtual ~IClockPuller() {}
-    virtual void Start(TUint aExpectedDecodedReservoirJiffies) = 0;
-    virtual void Stop() = 0;
     virtual void Reset() = 0;
-};
-
-class IClockPullerReservoir : public IClockPuller
-{
-public:
-    virtual ~IClockPullerReservoir() {}
-    virtual void NotifySize(TUint aJiffies) = 0;
+    virtual void Start(TUint aExpectedPipelineJiffies) = 0;
+    virtual void Stop() = 0;
 };
 
 class IClockPullerTimestamp : public IClockPuller

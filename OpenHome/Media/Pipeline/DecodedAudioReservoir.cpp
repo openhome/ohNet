@@ -12,11 +12,11 @@ using namespace OpenHome::Media;
 
 DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMaxSize, TUint aMaxStreamCount)
     : iMsgFactory(aMsgFactory)
-    , iLockClockPuller("DCR1")
-    , iClockPuller(nullptr)
+    , iLock("DCR1")
     , iMaxJiffies(aMaxSize)
     , iMaxStreamCount(aMaxStreamCount)
-    , iClockPullerStarted(false)
+    , iClockPuller(nullptr)
+    , iStreamHandler(nullptr)
 {
 }
 
@@ -32,9 +32,26 @@ TBool DecodedAudioReservoir::IsFull() const
             DecodedStreamCount() >= iMaxStreamCount);
 }
 
+void DecodedAudioReservoir::ProcessMsgIn(MsgMode* aMsg)
+{
+    AutoMutex _(iLock);
+    if (iClockPuller != nullptr) {
+        iClockPuller->Stop();
+    }
+    iClockPuller = aMsg->ClockPullers().PipelineBuffer();
+}
+
 void DecodedAudioReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
     BlockIfFull();
+}
+
+void DecodedAudioReservoir::ProcessMsgIn(MsgDrain* /*aMsg*/)
+{
+    AutoMutex _(iLock);
+    if (iClockPuller != nullptr) {
+        iClockPuller->Stop();
+    }
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
@@ -45,10 +62,9 @@ void DecodedAudioReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
 void DecodedAudioReservoir::ProcessMsgIn(MsgAudioPcm* aMsg)
 {
     BlockIfFull();
-    AutoMutex _(iLockClockPuller);
-    if (iClockPuller != nullptr && iClockPullerStarted) {
-        const TUint size = Jiffies() + aMsg->Jiffies();
-        iClockPuller->NotifySize(size);
+    AutoMutex _(iLock);
+    if (iClockPuller != nullptr) {
+        aMsg->SetObserver(*iClockPuller);
     }
 }
 
@@ -57,68 +73,52 @@ void DecodedAudioReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
     ASSERTS(); // don't expect anything upstream to be generating silence
 }
 
-Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
+Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    if (iClockPuller != nullptr) {
-        iClockPuller->Stop();
-    }
-    AutoMutex _(iLockClockPuller);
-    iClockPuller = aMsg->ClockPullers().ReservoirLeft();
-    iClockPullerStarted = false;
-    if (iClockPuller != nullptr) {
-        const auto modeInfo = aMsg->Info();
-        MsgMode* msg = iMsgFactory.CreateMsgMode(aMsg->Mode(),
-                                                 modeInfo.SupportsLatency(), modeInfo.IsRealTime(),
-                                                 ModeClockPullers(this),
-                                                 modeInfo.SupportsNext(), modeInfo.SupportsPrev());
-        aMsg->RemoveRef();
-        aMsg = msg;
-    }
-    return aMsg;
-}
-
-Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDrain* aMsg)
-{
-    AutoMutex _(iLockClockPuller);
-    if (iClockPuller != nullptr) {
-        iClockPullerStarted = false;
-        iClockPuller->Stop();
-    }
-    return aMsg;
+    AutoMutex _(iLock);
+    iStreamHandler = aMsg->StreamInfo().StreamHandler();
+    auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
-    AutoMutex _(iLockClockPuller);
-    if (iClockPuller != nullptr && iClockPullerStarted) {
-        iClockPuller->NotifySize(Jiffies());
-    }
-
     return aMsg;
 }
 
-void DecodedAudioReservoir::Start(TUint aExpectedDecodedReservoirJiffies)
+EStreamPlay DecodedAudioReservoir::OkToPlay(TUint aStreamId)
 {
-    AutoMutex _(iLockClockPuller);
-    if (iClockPuller != nullptr) {
-        iClockPuller->Start(aExpectedDecodedReservoirJiffies);
-        iClockPullerStarted = true;
+    AutoMutex _(iLock);
+    if (iStreamHandler == nullptr) {
+        return ePlayNo;
     }
+    return iStreamHandler->OkToPlay(aStreamId);
 }
 
-void DecodedAudioReservoir::Stop()
-{
-    AutoMutex _(iLockClockPuller);
-    iClockPullerStarted = false;
-    iClockPuller->Stop();
-}
-
-void DecodedAudioReservoir::Reset()
+TUint DecodedAudioReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
-void DecodedAudioReservoir::NotifySize(TUint /*aJiffies*/)
+TUint DecodedAudioReservoir::TryStop(TUint aStreamId)
 {
-    ASSERTS();
+    AutoMutex _(iLock);
+    if (iStreamHandler == nullptr) {
+        return MsgFlush::kIdInvalid;
+    }
+    const TUint flushId = iStreamHandler->TryStop(aStreamId);
+    if (flushId != MsgFlush::kIdInvalid && iClockPuller != nullptr) {
+        iClockPuller->Stop();
+    }
+    return flushId;
+}
+
+void DecodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
+{
+    AutoMutex _(iLock);
+    if (iStreamHandler != nullptr) {
+        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    }
 }

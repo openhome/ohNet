@@ -23,9 +23,9 @@ ClockPullerNonTimestamped::ClockPullerNonTimestamped(Environment& aEnv, Media::I
 {
 }
 
-inline IClockPullerReservoir& ClockPullerNonTimestamped::Puller()
+inline IClockPuller& ClockPullerNonTimestamped::Puller()
 {
-    return static_cast<IClockPullerReservoir&>(iPuller);
+    return static_cast<IClockPuller&>(iPuller);
 }
 
 void ClockPullerNonTimestamped::SetEnabled(TBool aEnabled)
@@ -53,20 +53,20 @@ void ClockPullerNonTimestamped::Stop()
     }
 }
 
-void ClockPullerNonTimestamped::Start(TUint aExpectedDecodedReservoirJiffies)
+void ClockPullerNonTimestamped::Start(TUint aExpectedPipelineJiffies)
 {
     AutoMutex _(iLock);
     if (iEnabled) {
-        Puller().Start(aExpectedDecodedReservoirJiffies);
+        Puller().Start(aExpectedPipelineJiffies);
     }
 }
 
-void ClockPullerNonTimestamped::NotifySize(TUint aJiffies)
+void ClockPullerNonTimestamped::Update(TInt /*aDelta*/)
 {
-    AutoMutex _(iLock);
+    /*AutoMutex _(iLock);
     if (iEnabled) {
         Puller().NotifySize(aJiffies);
-    }
+    }*/
 }
 
 
@@ -130,6 +130,10 @@ void ClockPullerSongcast::SmoothTimestamps(TInt& aDrift, TInt aIndexToSkip)
     }
 }
 
+void ClockPullerSongcast::Update(TInt /*aDelta*/)
+{
+}
+
 void ClockPullerSongcast::NewStream(TUint aSampleRate)
 {
     // FIXME - should only need to reset if aSampleRate implies a change in clock from the audio producer
@@ -153,7 +157,7 @@ void ClockPullerSongcast::Stop()
     iPullerReservoirLeft.SetEnabled(true);
 }
 
-void ClockPullerSongcast::Start(TUint /*aExpectedDecodedReservoirJiffies*/)
+void ClockPullerSongcast::Start(TUint /*aExpectedPipelineJiffies*/)
 {
     iUseTimestamps = true;
     iPullerReservoirLeft.SetEnabled(false);

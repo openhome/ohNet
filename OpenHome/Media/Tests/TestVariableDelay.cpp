@@ -21,27 +21,27 @@ namespace OpenHome {
 namespace Media {
 
 class SuiteVariableDelay : public SuiteUnitTest
-                         , private IPipelineElementUpstream
+                         , protected IPipelineElementUpstream
                          , private IMsgProcessor
-                         , private IClockPullerReservoir
+                         , protected IClockPuller
 {
     static const TUint kDecodedAudioCount = 2;
     static const TUint kMsgAudioPcmCount  = 2;
     static const TUint kMsgSilenceCount   = 1;
 
-    static const TUint kRampDuration = Jiffies::kPerMs * 20;
-    static const TUint kDownstreamDelay = 30 * Jiffies::kPerMs;
-    static const TUint kMinDelay = 10 * Jiffies::kPerMs;
     static const TUint kMsgSilenceSize = Jiffies::kPerMs;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
 
     static const Brn kMode;
+protected:
+    static const TUint kRampDuration = Jiffies::kPerMs * 20;
 public:
-    SuiteVariableDelay();
     ~SuiteVariableDelay();
-private: // from SuiteUnitTest
+protected:
+    SuiteVariableDelay(const TChar* aId);
+protected: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
 private: // from IPipelineElementUpstream
@@ -64,12 +64,12 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
-private: // from IClockPullerReservoir
-    void Start(TUint aExpectedDecodedReservoirJiffies) override;
+private: // from IClockPuller
+    void Update(TInt aDelta) override;
+    void Start(TUint aExpectedPipelineJiffies) override;
     void Stop() override;
     void Reset() override;
-    void NotifySize(TUint aJiffies) override;
-private:
+protected:
     enum EMsgType
     {
         ENone
@@ -90,28 +90,17 @@ private:
        ,EMsgWait
        ,EMsgQuit
     };
-private:
+protected:
+    virtual void DoSetup() = 0;
     void PullNext();
     void PullNext(EMsgType aExpectedMsg);
-    MsgAudio* CreateAudio();
-    void TestAllMsgsPass();
-    void TestDelayFromRunning();
-    void TestDelayFromStarting();
-    void TestReduceDelayFromRunning();
-    void TestChangeDelayWhileRampingDown();
-    void TestChangeDelayWhileRampingUp();
-    void TestNewStreamCancelsRamp();
-    void TestNoSilenceInjectedBeforeDecodedStream();
-    void TestDelayAppliedAfterDrain();
-    void TestDelayShorterThanDownstream();
-    void TestDelayShorterThanMinimum();
-    void TestAnimatorOverride();
-    void TestClockPuller();
 private:
+    MsgAudio* CreateAudio();
+protected:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
-    VariableDelay* iVariableDelay;
+    VariableDelayBase* iVariableDelay;
     RampValidator* iRampValidator;
     DecodedAudioValidator* iDecodedAudioValidator;
     EMsgType iNextGeneratedMsg;
@@ -123,11 +112,52 @@ private:
     TUint64 iTrackOffset;
     TBool iNextModeSupportsLatency;
     TUint iNextDelayAbsoluteJiffies;
-    IClockPullerReservoir* iNextModeClockPuller;
+    IClockPuller* iNextModeClockPuller;
     TUint iLastPulledDelay;
-    TUint iLastExpectedDecodedReservoirJiffies;
+    TUint iLastExpectedPipelineJiffies;
+    TUint iClockPullStartCount;
+    TUint iClockPullStopCount;
     TUint iStreamId;
     TUint iNextStreamId;
+};
+
+class SuiteVariableDelayLeft : public SuiteVariableDelay
+{
+    static const TUint kDownstreamDelay = 30 * Jiffies::kPerMs;
+public:
+    SuiteVariableDelayLeft();
+private: // from SuiteVariableDelay
+    void DoSetup() override;
+private:
+    void TestAllMsgsPass();
+    void TestDelayFromRunning();
+    void TestDelayFromStarting();
+    void TestReduceDelayFromRunning();
+    void TestChangeDelayWhileRampingDown();
+    void TestChangeDelayWhileRampingUp();
+    void TestNewStreamCancelsRamp();
+    void TestNoSilenceInjectedBeforeDecodedStream();
+    void TestDelayAppliedAfterDrain();
+    void TestDelayShorterThanDownstream();
+};
+
+class SuiteVariableDelayRight : public SuiteVariableDelay
+                              , private IVariableDelayObserver
+{
+    static const TUint kMinDelay = 10 * Jiffies::kPerMs;
+public:
+    SuiteVariableDelayRight();
+private: // from SuiteVariableDelay
+    void DoSetup() override;
+private: // from IVariableDelayObserver
+    void NotifyDelayApplied(TUint aJiffies) override;
+private:
+    void TestDelayShorterThanMinimum();
+    void TestAnimatorOverride();
+    void TestReportsDelayToObserver();
+    void TestClockPuller();
+private:
+    TUint iDelayAppliedJiffies;
 };
 
 } // namespace Media
@@ -138,22 +168,9 @@ private:
 
 const Brn SuiteVariableDelay::kMode("VariableDelayMode");
 
-SuiteVariableDelay::SuiteVariableDelay()
-    : SuiteUnitTest("VariableDelay")
+SuiteVariableDelay::SuiteVariableDelay(const TChar* aId)
+    : SuiteUnitTest(aId)
 {
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestAllMsgsPass), "TestAllMsgsPass");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayFromRunning), "TestDelayFromRunning");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayFromStarting), "TestDelayFromStarting");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestReduceDelayFromRunning), "TestReduceDelayFromRunning");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestChangeDelayWhileRampingDown), "TestChangeDelayWhileRampingDown");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestChangeDelayWhileRampingUp), "TestChangeDelayWhileRampingUp");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNewStreamCancelsRamp), "TestNewStreamCancelsRamp");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayAppliedAfterDrain), "TestDelayAppliedAfterDrain");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanDownstream), "TestDelayShorterThanDownstream");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestDelayShorterThanMinimum), "TestDelayShorterThanMinimum");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestAnimatorOverride), "TestAnimatorOverride");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestClockPuller), "TestClockPuller");
 }
 
 SuiteVariableDelay::~SuiteVariableDelay()
@@ -171,7 +188,8 @@ void SuiteVariableDelay::Setup()
     init.SetMsgDelayCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iVariableDelay = new VariableDelay("Variable Delay", *iMsgFactory, *this, kDownstreamDelay, kMinDelay, kRampDuration);
+    DoSetup();
+    ASSERT(iVariableDelay != nullptr);
     iRampValidator = new RampValidator(*iVariableDelay, "RampValidator");
     iDecodedAudioValidator = new DecodedAudioValidator(*iRampValidator, "DecodedAudioValidator");
     iLastMsg = ENone;
@@ -183,7 +201,8 @@ void SuiteVariableDelay::Setup()
     iNextDelayAbsoluteJiffies = 0;
     iNextModeClockPuller = nullptr;
     iLastPulledDelay = 0;
-    iLastExpectedDecodedReservoirJiffies = 0;
+    iLastExpectedPipelineJiffies = 0;
+    iClockPullStartCount = iClockPullStopCount = 0;
     iStreamId = UINT_MAX;
     iNextStreamId = 0;
 }
@@ -223,6 +242,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgDrain:
         return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgDelay:
+        iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgDelay(iNextDelayAbsoluteJiffies);
     case EMsgEncodedStream:
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
@@ -355,20 +375,20 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 
     switch (iVariableDelay->iStatus)
     {
-    case VariableDelay::ERampingDown:
+    case VariableDelayBase::ERampingDown:
         TEST(firstSubsample > lastSubsample);
         break;
-    case VariableDelay::ERampingUp:
+    case VariableDelayBase::ERampingUp:
         TEST(firstSubsample < lastSubsample);
         break;
-    case VariableDelay::ERampedDown:
+    case VariableDelayBase::ERampedDown:
         break;
-    case VariableDelay::ERunning:
+    case VariableDelayBase::ERunning:
         if (iJiffies >= kRampDuration) {
             TEST(firstSubsample == lastSubsample);
         }
         break;
-    case VariableDelay::EStarting:
+    case VariableDelayBase::EStarting:
         TEST(firstSubsample == lastSubsample);
         break;
     }
@@ -396,21 +416,23 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-void SuiteVariableDelay::Start(TUint aExpectedDecodedReservoirJiffies)
-{
-    iLastExpectedDecodedReservoirJiffies = aExpectedDecodedReservoirJiffies;
-}
-
-void SuiteVariableDelay::Stop()
-{
-}
-
-void SuiteVariableDelay::Reset()
+void SuiteVariableDelay::Update(TInt /*aDelta*/)
 {
     ASSERTS();
 }
 
-void SuiteVariableDelay::NotifySize(TUint /*aJiffies*/)
+void SuiteVariableDelay::Start(TUint aExpectedPipelineJiffies)
+{
+    iClockPullStartCount++;
+    iLastExpectedPipelineJiffies = aExpectedPipelineJiffies;
+}
+
+void SuiteVariableDelay::Stop()
+{
+    iClockPullStopCount++;
+}
+
+void SuiteVariableDelay::Reset()
 {
     ASSERTS();
 }
@@ -431,7 +453,30 @@ void SuiteVariableDelay::PullNext(EMsgType aExpectedMsg)
     TEST(iLastMsg == aExpectedMsg);
 }
 
-void SuiteVariableDelay::TestAllMsgsPass()
+
+// SuiteVariableDelayLeft
+
+SuiteVariableDelayLeft::SuiteVariableDelayLeft()
+    : SuiteVariableDelay("VariableDelayLeft")
+{
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestAllMsgsPass), "TestAllMsgsPass");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestDelayFromRunning), "TestDelayFromRunning");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestDelayFromStarting), "TestDelayFromStarting");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestReduceDelayFromRunning), "TestReduceDelayFromRunning");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestChangeDelayWhileRampingDown), "TestChangeDelayWhileRampingDown");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestChangeDelayWhileRampingUp), "TestChangeDelayWhileRampingUp");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestNewStreamCancelsRamp), "TestNewStreamCancelsRamp");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestDelayAppliedAfterDrain), "TestDelayAppliedAfterDrain");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestDelayShorterThanDownstream), "TestDelayShorterThanDownstream");
+}
+
+void SuiteVariableDelayLeft::DoSetup()
+{
+    iVariableDelay = new VariableDelayLeft(*iMsgFactory, *this, kRampDuration, kDownstreamDelay);
+}
+
+void SuiteVariableDelayLeft::TestAllMsgsPass()
 {
     /* 'AllMsgs' excludes encoded & playable audio - VariableDelay is assumed only
        useful to the portion of the pipeline that deals in decoded audio */
@@ -444,50 +489,50 @@ void SuiteVariableDelay::TestAllMsgsPass()
     }
 }
 
-void SuiteVariableDelay::TestDelayFromRunning()
+void SuiteVariableDelayLeft::TestDelayFromRunning()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
     PullNext(EMsgAudioPcm);
     static const TUint kDelay = 60 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
 
     iJiffies = 0;
     do {
         PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    } while (iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     TEST(iJiffies == kRampDuration);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampedDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampedDown);
 
     iJiffies = 0;
     while (iJiffies < kDelay - kDownstreamDelay) {
         PullNext(EMsgSilence);
     }
     TEST(iJiffies == kDelay - kDownstreamDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingUp);
 
     iJiffies = 0;
     do {
         PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    } while (iVariableDelay->iStatus == VariableDelayBase::ERampingUp);
     TEST(iJiffies == kRampDuration);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
-void SuiteVariableDelay::TestDelayFromStarting()
+void SuiteVariableDelayLeft::TestDelayFromStarting()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
     static const TUint kDelay = 60 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
 
     iJiffies = 0;
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -495,12 +540,12 @@ void SuiteVariableDelay::TestDelayFromStarting()
         PullNext();
     }
     TEST(iJiffies == kDelay - kDownstreamDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
-void SuiteVariableDelay::TestReduceDelayFromRunning()
+void SuiteVariableDelayLeft::TestReduceDelayFromRunning()
 {
     TestDelayFromStarting();
     static const TUint kDelay = 40 * Jiffies::kPerMs;
@@ -509,14 +554,14 @@ void SuiteVariableDelay::TestReduceDelayFromRunning()
         PullNext();
     }
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
 
     iJiffies = 0;
     do {
         PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    } while (iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     TEST(iJiffies == kRampDuration);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampedDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampedDown);
 
     iJiffies = 0;
     const TUint64 prevOffset = iTrackOffset;
@@ -525,13 +570,13 @@ void SuiteVariableDelay::TestReduceDelayFromRunning()
     PullNext();
     TEST(iLastMsg == EMsgDecodedStream);
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingUp);
 
     do {
         PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    } while (iVariableDelay->iStatus == VariableDelayBase::ERampingUp);
     TEST(iJiffies == kRampDuration);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
     while (!iVariableDelay->iQueue.IsEmpty()) {
         PullNext();
     }
@@ -539,91 +584,91 @@ void SuiteVariableDelay::TestReduceDelayFromRunning()
     TEST(audioGenerated - iJiffies + queuedAudio == 20 * Jiffies::kPerMs);
 }
 
-void SuiteVariableDelay::TestChangeDelayWhileRampingDown()
+void SuiteVariableDelayLeft::TestChangeDelayWhileRampingDown()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
     PullNext(EMsgAudioPcm);
     static const TUint kDelay = 60 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
 
     iJiffies = 0;
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     static const TUint kDelay2 = 50 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay2;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     do {
         PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    } while (iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     TEST(iJiffies == kRampDuration);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampedDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampedDown);
 }
 
-void SuiteVariableDelay::TestChangeDelayWhileRampingUp()
+void SuiteVariableDelayLeft::TestChangeDelayWhileRampingUp()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
     PullNext(EMsgAudioPcm);
     static const TUint kDelay = 60 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
 
     iJiffies = 0;
     do {
         PullNext(EMsgAudioPcm);
-    } while (iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    } while (iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     TEST(iJiffies == kRampDuration);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampedDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampedDown);
 
     iJiffies = 0;
     while (iJiffies < kDelay - kDownstreamDelay) {
         PullNext(EMsgSilence);
     }
     TEST(iJiffies == kDelay - kDownstreamDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingUp);
     PullNext(EMsgAudioPcm);
     static const TUint kDelay2 = 70 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay2;
     const TUint remainingRamp = iVariableDelay->iRemainingRampSize;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     TEST(iVariableDelay->iRemainingRampSize == iVariableDelay->iRampDuration - remainingRamp);
 }
 
-void SuiteVariableDelay::TestNewStreamCancelsRamp()
+void SuiteVariableDelayLeft::TestNewStreamCancelsRamp()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
     PullNext(EMsgAudioPcm);
     static const TUint kDelay = 60 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
     iTrackOffset = 0;
     PullNext(EMsgDecodedStream);
-    while (iVariableDelay->iStatus == VariableDelay::EStarting) {
+    while (iVariableDelay->iStatus == VariableDelayBase::EStarting) {
         iNextGeneratedMsg = ENone;
         PullNext();
         TEST(iLastMsg == EMsgSilence);
     }
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
-void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
+void SuiteVariableDelayLeft::TestNoSilenceInjectedBeforeDecodedStream()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
@@ -634,16 +679,16 @@ void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
     PullNext(EMsgTrack);
 }
 
-void SuiteVariableDelay::TestDelayAppliedAfterDrain()
+void SuiteVariableDelayLeft::TestDelayAppliedAfterDrain()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
     static const TUint kDelay = 40 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::EStarting);
 
     iJiffies = 0;
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -651,7 +696,7 @@ void SuiteVariableDelay::TestDelayAppliedAfterDrain()
         PullNext();
     }
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
     PullNext(EMsgDrain);
     iNextGeneratedMsg = EMsgSilence;
     PullNext();
@@ -663,11 +708,11 @@ void SuiteVariableDelay::TestDelayAppliedAfterDrain()
         TEST(iLastMsg == EMsgSilence);
     }
     TEST(iJiffies == kDelay - kDownstreamDelay);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERampingUp);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingUp);
     PullNext(EMsgAudioPcm);
 }
 
-void SuiteVariableDelay::TestDelayShorterThanDownstream()
+void SuiteVariableDelayLeft::TestDelayShorterThanDownstream()
 {
     PullNext(EMsgMode);
     static const TUint kDelay = 40 * Jiffies::kPerMs;
@@ -687,92 +732,149 @@ void SuiteVariableDelay::TestDelayShorterThanDownstream()
     if (iLastPulledDelay != iNextDelayAbsoluteJiffies) {
         Print("Expected %ums, got %u\n", Jiffies::ToMs(iNextDelayAbsoluteJiffies), Jiffies::ToMs(iLastPulledDelay));
     }
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    // we previously had some delay applied.  iVariableDelay should ramp down, discard then ramp up.  No silence should be output
+    iNextGeneratedMsg = EMsgAudioPcm;
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERampingDown);
+    TBool pulledDecodedStream = false;
+    while (iVariableDelay->iStatus != VariableDelayBase::ERunning) {
+        PullNext();
+        if (iVariableDelay->iStatus == VariableDelayBase::ERampingUp && !pulledDecodedStream) {
+            TEST(iLastMsg == EMsgDecodedStream);
+            pulledDecodedStream = true;
+            iJiffies = 0;
+        }
+        else {
+            TEST(iLastMsg == EMsgAudioPcm);
+        }
+    }
+    PullNext(EMsgAudioPcm); // pull any msg fragment remaining following ramp up
+
+    // set another delay lower than downstream.  iVariableDelay is already at zero delay so remain in state Running
+    iNextDelayAbsoluteJiffies -= Jiffies::kPerMs;
+    PullNext(EMsgDelay);
+    TEST(iLastPulledDelay == iNextDelayAbsoluteJiffies);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
-void SuiteVariableDelay::TestDelayShorterThanMinimum()
+
+// SuiteVariableDelayRight
+
+SuiteVariableDelayRight::SuiteVariableDelayRight()
+    : SuiteVariableDelay("VariableDelayRight")
+{
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestDelayShorterThanMinimum), "TestDelayShorterThanMinimum");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestAnimatorOverride), "TestAnimatorOverride");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestReportsDelayToObserver), "TestReportsDelayToObserver");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestClockPuller), "TestClockPuller");
+}
+
+void SuiteVariableDelayRight::DoSetup()
+{
+    iVariableDelay = new VariableDelayRight(*iMsgFactory, *this, kRampDuration, *this, kMinDelay);
+    iDelayAppliedJiffies = UINT_MAX;
+}
+
+void SuiteVariableDelayRight::NotifyDelayApplied(TUint aJiffies)
+{
+    iDelayAppliedJiffies = aJiffies;
+}
+
+void SuiteVariableDelayRight::TestDelayShorterThanMinimum()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
     static const TUint kDelay = kMinDelay - Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
-    PullNext(EMsgDelay);
-    TEST(iLastPulledDelay == kMinDelay);
-    iNextGeneratedMsg = EMsgAudioPcm;
+    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
     while (iJiffies < kMinDelay) {
         PullNext();
         TEST(iLastMsg == EMsgSilence);
     }
-    PullNext();
+    PullNext(EMsgAudioPcm);
     TEST(iLastMsg == EMsgAudioPcm);
 }
 
-void SuiteVariableDelay::TestAnimatorOverride()
+void SuiteVariableDelayRight::TestAnimatorOverride()
 {
-    *const_cast<TUint*>(&iVariableDelay->iDownstreamDelay) = 0;
-
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
 
     static const TUint kAnimatorOverride = 10 * Jiffies::kPerMs;
-    iVariableDelay->OverrideAnimatorLatency(kAnimatorOverride);
+    static_cast<VariableDelayRight*>(iVariableDelay)->OverrideAnimatorLatency(kAnimatorOverride);
     static const TUint kDelay = 20 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
-    PullNext(EMsgDelay);
+    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
 
     iJiffies = 0;
-    iNextGeneratedMsg = EMsgAudioPcm;
     while (iJiffies < kDelay - kAnimatorOverride) {
         PullNext();
         TEST(iLastMsg == EMsgSilence);
     }
     TEST(iJiffies == kDelay - kAnimatorOverride);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
     PullNext(EMsgAudioPcm);
-    TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+    TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
-void SuiteVariableDelay::TestClockPuller()
+void SuiteVariableDelayRight::TestReportsDelayToObserver()
 {
-    *const_cast<TUint*>(&iVariableDelay->iDownstreamDelay) = 0;
-
-    iNextModeClockPuller = this;
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
 
+    static const TUint kDelay = kMinDelay + (15 * Jiffies::kPerMs);
+    iNextDelayAbsoluteJiffies = kDelay;
+    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
+    TEST(iLastExpectedPipelineJiffies == 0);
+    do {
+        PullNext();
+    } while (iLastMsg == EMsgSilence);
+    TEST(iLastMsg == EMsgAudioPcm);
+    TEST(iDelayAppliedJiffies == kDelay);
+
+    iJiffies = 0;
+    iNextDelayAbsoluteJiffies = kMinDelay;
+    iNextGeneratedMsg = EMsgDelay;
+    while (iVariableDelay->iStatus != VariableDelayBase::ERampingUp) {
+        PullNext();
+    }
+    TEST(iLastMsg == EMsgDecodedStream);
+    TEST(iDelayAppliedJiffies == kMinDelay);
+}
+
+void SuiteVariableDelayRight::TestClockPuller()
+{
+    iNextModeClockPuller = this;
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iClockPullStartCount == 0);
+    TEST(iClockPullStopCount == 0);
+
     static const TUint kDelay = 20 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
-    PullNext(EMsgDelay);
-    TEST(iLastExpectedDecodedReservoirJiffies == 0);
-    iNextGeneratedMsg = EMsgAudioPcm;
-    do {
+    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
+    for (;;) {
         PullNext();
-    } while (iLastMsg == EMsgSilence);
-    TEST(iLastMsg == EMsgAudioPcm);
-    TEST(iLastExpectedDecodedReservoirJiffies == kDelay - kMinDelay);
-
-    iTrackOffset = 0;
-    PullNext(EMsgDecodedStream);
-    iNextDelayAbsoluteJiffies = kMinDelay;
-    PullNext(EMsgDelay);
-    iLastExpectedDecodedReservoirJiffies = 0;
-    iNextGeneratedMsg = EMsgAudioPcm;
-    do {
-        PullNext();
-    } while (iLastMsg == EMsgSilence);
-    TEST(iLastMsg == EMsgAudioPcm);
-    TEST(iLastExpectedDecodedReservoirJiffies == 0); // smallest delay => all pipeline audio is in StarvationRamper
+        if (iLastMsg != EMsgSilence) {
+            break;
+        }
+        TEST(iClockPullStartCount == 0);
+        TEST(iClockPullStopCount == 1);
+    }
+    TEST(iDelayAppliedJiffies == kDelay); // upstream observer is responsible for starting clock puller
+    TEST(iClockPullStopCount == 1);
 }
 
 
 void TestVariableDelay()
 {
     Runner runner("Variable delay tests\n");
-    runner.Add(new SuiteVariableDelay());
+    runner.Add(new SuiteVariableDelayLeft());
+    runner.Add(new SuiteVariableDelayRight());
     runner.Run();
 }

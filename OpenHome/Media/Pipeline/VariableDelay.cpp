@@ -11,24 +11,24 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// VariableDelay
+// VariableDelayBase
 
-const TUint VariableDelay::kSupportedMsgTypes =   eMode
-                                                | eTrack
-                                                | eDrain
-                                                | eDelay
-                                                | eEncodedStream
-                                                | eAudioEncoded
-                                                | eMetatext
-                                                | eStreamInterrupted
-                                                | eHalt
-                                                | eFlush
-                                                | eWait
-                                                | eDecodedStream
-                                                | eBitRate
-                                                | eAudioPcm
-                                                | eSilence
-                                                | eQuit;
+const TUint VariableDelayBase::kSupportedMsgTypes =   eMode
+                                                    | eTrack
+                                                    | eDrain
+                                                    | eDelay
+                                                    | eEncodedStream
+                                                    | eAudioEncoded
+                                                    | eMetatext
+                                                    | eStreamInterrupted
+                                                    | eHalt
+                                                    | eFlush
+                                                    | eWait
+                                                    | eDecodedStream
+                                                    | eBitRate
+                                                    | eAudioPcm
+                                                    | eSilence
+                                                    | eQuit;
 
 static const TChar* kStatus[] = { "Starting"
                                  ,"Running"
@@ -36,52 +36,31 @@ static const TChar* kStatus[] = { "Starting"
                                  ,"RampedDown"
                                  ,"RampingUp" };
 
-VariableDelay::VariableDelay(const TChar* aId, MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aMinDelay, TUint aRampDuration)
+VariableDelayBase::VariableDelayBase(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, const TChar* aId)
     : PipelineElement(kSupportedMsgTypes)
-    , iId(aId)
     , iMsgFactory(aMsgFactory)
-    , iUpstreamElement(aUpstreamElement)
     , iLock("VDEL")
-    , iDelayJiffies(0)
-    , iDelayJiffiesTotal(0)
-    , iDelayAdjustment(0)
-    , iDownstreamDelay(aDownstreamDelay)
-    , iMinDelay(aMinDelay)
-    , iRampDuration(aRampDuration)
-    , iWaitForAudioBeforeGeneratingSilence(false)
     , iClockPuller(nullptr)
+    , iDelayJiffies(0)
+    , iUpstreamElement(aUpstreamElement)
+    , iRampDuration(aRampDuration)
+    , iId(aId)
+    , iDelayAdjustment(0)
+    , iWaitForAudioBeforeGeneratingSilence(false)
     , iDecodedStream(nullptr)
-    , iAnimatorLatencyOverride(0)
-    , iAnimatorOverridePending(false)
 {
     ResetStatusAndRamp();
 }
 
-VariableDelay::~VariableDelay()
+VariableDelayBase::~VariableDelayBase()
 {
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
     }
 }
 
-void VariableDelay::OverrideAnimatorLatency(TUint aJiffies)
+Msg* VariableDelayBase::Pull()
 {
-    iLock.Wait();
-    iAnimatorLatencyOverride = aJiffies;
-    iAnimatorOverridePending = true;
-    iLock.Signal();
-}
-
-Msg* VariableDelay::Pull()
-{
-    {
-        AutoMutex _(iLock);
-        if (iAnimatorOverridePending) {
-            ApplyAnimatorOverride();
-            iAnimatorOverridePending = false;
-        }
-    }
-
     Msg* msg = nullptr;
     if (iWaitForAudioBeforeGeneratingSilence) {
         do {
@@ -103,9 +82,14 @@ Msg* VariableDelay::Pull()
         TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         auto stream = iDecodedStream->StreamInfo();
         msg = iMsgFactory.CreateMsgSilence(size, stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
-        iDelayAdjustment -= size;
+        if (size > (TUint)iDelayAdjustment) { // sizes less than one sample will be rounded up
+            iDelayAdjustment = 0;
+        }
+        else {
+            iDelayAdjustment -= size;
+        }
         if (iDelayAdjustment == 0) {
-            StartClockPuller();
+            LocalDelayApplied();
             if (iStatus == ERampedDown) {
                 iStatus = ERampingUp;
                 iRampDirection = Ramp::EUp;
@@ -129,7 +113,7 @@ Msg* VariableDelay::Pull()
     return msg;
 }
 
-Msg* VariableDelay::NextMsg()
+Msg* VariableDelayBase::NextMsg()
 {
     Msg* msg;
     if (!iQueue.IsEmpty()) {
@@ -142,20 +126,7 @@ Msg* VariableDelay::NextMsg()
     return msg;
 }
 
-void VariableDelay::ApplyAnimatorOverride()
-{
-    ASSERT(iDownstreamDelay == 0); // only expect to support iAnimatorLatencyOverride in rightmost delay element
-    TUint delayJiffies = (iAnimatorLatencyOverride >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatencyOverride);
-    if (delayJiffies == iDelayJiffies) {
-        return;
-    }
-
-    iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
-    iDelayJiffies = delayJiffies;
-    SetupRamp();
-}
-
-void VariableDelay::RampMsg(MsgAudio* aMsg)
+void VariableDelayBase::RampMsg(MsgAudio* aMsg)
 {
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
@@ -168,7 +139,7 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     }
 }
 
-void VariableDelay::ResetStatusAndRamp()
+void VariableDelayBase::ResetStatusAndRamp()
 {
     iStatus = EStarting;
     iRampDirection = Ramp::ENone;
@@ -176,11 +147,11 @@ void VariableDelay::ResetStatusAndRamp()
     iRemainingRampSize = iRampDuration;
 }
 
-void VariableDelay::SetupRamp()
+void VariableDelayBase::SetupRamp()
 {
-    iWaitForAudioBeforeGeneratingSilence = true;
-    LOG(kMedia, "VariableDelay: iId=%s, delay=%u, adjustment=%d\n",
-        iId, iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
+    iWaitForAudioBeforeGeneratingSilence = (iDelayAdjustment > 0);
+    LOG(kMedia, "VariableDelay(%s), delay=%u, adjustment=%d\n",
+                iId, iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kPerMs);
     switch (iStatus)
     {
     case EStarting:
@@ -229,41 +200,46 @@ void VariableDelay::SetupRamp()
     }
 }
 
-void VariableDelay::StartClockPuller()
+void VariableDelayBase::HandleDelayChange(TUint aNewDelay)
 {
-    AutoMutex _(iLock);
-    if (   iDownstreamDelay == 0 // want to wait for the rightmost delay to be ready before calling upstream
-        && iClockPuller != nullptr) {
-        TUint delayJiffies = std::max(iDelayJiffies, iMinDelay);
-        delayJiffies -= iMinDelay;
-        iClockPuller->Start(delayJiffies);
+    if (aNewDelay == iDelayJiffies) {
+        return;
+    }
+
+    iDelayAdjustment += (TInt)(aNewDelay - iDelayJiffies);
+    iDelayJiffies = aNewDelay;
+    SetupRamp();
+    if (iDelayAdjustment != 0 && iClockPuller != nullptr) {
+        iClockPuller->Stop();
     }
 }
 
-Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
+inline const TChar* VariableDelayBase::Status() const
+{
+    return kStatus[iStatus];
+}
+
+Msg* VariableDelayBase::ProcessMsg(MsgMode* aMsg)
 {
     iMode.Replace(aMsg->Mode());
     iLock.Wait();
-    iClockPuller = aMsg->ClockPullers().ReservoirLeft();
-    iDelayJiffies = 0;
     if (iClockPuller != nullptr) {
-        const auto modeInfo = aMsg->Info();
-        MsgMode* msg = iMsgFactory.CreateMsgMode(iMode, modeInfo.SupportsLatency(), modeInfo.IsRealTime(),
-                                                 ModeClockPullers(this),
-                                                 modeInfo.SupportsNext(), modeInfo.SupportsPrev());
-        aMsg->RemoveRef();
-        aMsg = msg;
+        iClockPuller->Stop();
     }
+    iClockPuller = aMsg->ClockPullers().PipelineBuffer();
+    iDelayJiffies = 0;
     iLock.Signal();
-    iDelayJiffiesTotal = 0;
     iDelayAdjustment = 0;
     iWaitForAudioBeforeGeneratingSilence = true;
     ResetStatusAndRamp();
     return aMsg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
+Msg* VariableDelayBase::ProcessMsg(MsgDrain* aMsg)
 {
+    if (iClockPuller != nullptr) {
+        iClockPuller->Stop();
+    }
     iDelayAdjustment = iDelayJiffies;
     if (iDelayAdjustment == 0) {
         iWaitForAudioBeforeGeneratingSilence = false;
@@ -280,37 +256,7 @@ Msg* VariableDelay::ProcessMsg(MsgDrain* aMsg)
     return aMsg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
-{
-    const TUint msgDelayJiffies = aMsg->DelayJiffies();
-    TUint delayJiffies = std::max(msgDelayJiffies, iMinDelay);
-    iDelayJiffiesTotal = delayJiffies;
-    const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
-    const TUint downstream = (iDownstreamDelay > 0? iDownstreamDelay :
-                                                    iAnimatorLatencyOverride > 0? iAnimatorLatencyOverride :
-                                                                                  animatorDelay);
-    auto msg = iMsgFactory.CreateMsgDelay(std::min(downstream, delayJiffies), animatorDelay);
-    aMsg->RemoveRef();
-    delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
-    delayJiffies = std::max(delayJiffies, iMinDelay);
-    LOG(kMedia, "VariableDelay::ProcessMsg(MsgDelay(%u, %u): iId=%s, : delay=%u(%u), downstreamDelay=%u(%u), iDelayJiffies=%u(%u), iStatus=%s\n",
-        msgDelayJiffies, animatorDelay, iId,
-        delayJiffies, Jiffies::ToMs(delayJiffies),
-        downstream, Jiffies::ToMs(downstream),
-        iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
-        kStatus[iStatus]);
-    if (delayJiffies == iDelayJiffies) {
-        return msg;
-    }
-
-    iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
-    iDelayJiffies = delayJiffies;
-    SetupRamp();
-
-    return msg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* VariableDelayBase::ProcessMsg(MsgDecodedStream* aMsg)
 {
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
@@ -321,11 +267,15 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (iWaitForAudioBeforeGeneratingSilence) {
         iWaitForAudioBeforeGeneratingSilence = false;
         return aMsg;
+    }
+
+    if (iStatus == EStarting && iDelayAdjustment < 0) {
+        iStatus = ERampedDown;
     }
 
     MsgAudioPcm* msg = aMsg;
@@ -333,7 +283,7 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
     {
     case EStarting:
         iStatus = ERunning;
-        break;
+        // fallthrough
     case ERunning:
         // nothing to do, allow the message to be passed out unchanged
         break;
@@ -362,8 +312,9 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
             iQueue.EnqueueAtHead(remaining);
         }
         iDelayAdjustment += jiffies;
+        iDelayAdjustment = std::min(iDelayAdjustment, 0); // Split() may round up positions that are less than one sample
         if (iDelayAdjustment == 0) {
-            StartClockPuller();
+            LocalDelayApplied();
             iStatus = ERampingUp;
             iRampDirection = Ramp::EUp;
             iRemainingRampSize = iRampDuration;
@@ -398,7 +349,7 @@ Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
     return msg;
 }
 
-Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
+Msg* VariableDelayBase::ProcessMsg(MsgSilence* aMsg)
 {
     if (iStatus == ERampingUp) {
         iRemainingRampSize = 0;
@@ -421,30 +372,132 @@ Msg* VariableDelay::ProcessMsg(MsgSilence* aMsg)
     return aMsg;
 }
 
-void VariableDelay::Start(TUint aExpectedDecodedReservoirJiffies)
+
+// VariableDelayLeft
+
+VariableDelayLeft::VariableDelayLeft(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, TUint aDownstreamDelay)
+    : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "left")
+    , iDownstreamDelay(aDownstreamDelay)
+    , iDownstreamDelayCurrent(0)
 {
-    ASSERT(iDownstreamDelay != 0); // changes required to delay calculation if this is called on rightmost pipeline delay
+}
+
+Msg* VariableDelayLeft::ProcessMsg(MsgMode* aMsg)
+{
+    iDownstreamDelayCurrent = 0;
+    return VariableDelayBase::ProcessMsg(aMsg);
+}
+
+Msg* VariableDelayLeft::ProcessMsg(MsgDelay* aMsg)
+{
+    const TUint msgDelayJiffies = aMsg->DelayJiffies();
+    const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
+    aMsg->RemoveRef();
+    auto msg = iMsgFactory.CreateMsgDelay(std::min(iDownstreamDelay, msgDelayJiffies), animatorDelay);
+    TUint delayJiffies = (iDownstreamDelay >= msgDelayJiffies? 0 : msgDelayJiffies - iDownstreamDelay);
+    LOG(kMedia, "VariableDelayLeft::ProcessMsg(MsgDelay(%u, %u): delay=%u(%u), prev=%u(%u), iStatus=%s\n",
+                msgDelayJiffies, animatorDelay,
+                delayJiffies, Jiffies::ToMs(delayJiffies),
+                iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
+                Status());
+
+    HandleDelayChange(delayJiffies);
+
+    return msg;
+}
+
+void VariableDelayLeft::LocalDelayApplied()
+{
     AutoMutex _(iLock);
+    StartClockPuller();
+}
+
+void VariableDelayLeft::NotifyDelayApplied(TUint aJiffies)
+{
+    AutoMutex _(iLock);
+    iDownstreamDelayCurrent = aJiffies;
+    StartClockPuller();
+}
+
+void VariableDelayLeft::StartClockPuller()
+{
     if (iClockPuller != nullptr) {
-        const TUint delay = aExpectedDecodedReservoirJiffies + iDelayJiffies;
-        iClockPuller->Start(delay);
+        const TUint pipelineDelay = iDelayJiffies + iDownstreamDelayCurrent;
+        iClockPuller->Start(pipelineDelay);
     }
 }
 
-void VariableDelay::Stop()
+
+// VariableDelayRight
+
+VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
+                                       TUint aRampDuration, IVariableDelayObserver& aObserver, TUint aMinDelay)
+    : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "left")
+    , iObserver(aObserver)
+    , iMinDelay(aMinDelay)
+    , iAnimatorLatencyOverride(0)
+    , iAnimatorOverridePending(false)
 {
-    AutoMutex _(iLock);
-    if (iClockPuller != nullptr) {
-        iClockPuller->Stop();
+}
+
+void VariableDelayRight::OverrideAnimatorLatency(TUint aJiffies)
+{
+    iLock.Wait();
+    iAnimatorLatencyOverride = aJiffies;
+    iAnimatorOverridePending = true;
+    iLock.Signal();
+}
+
+Msg* VariableDelayRight::Pull()
+{
+    {
+        AutoMutex _(iLock);
+        if (iAnimatorOverridePending) {
+            ApplyAnimatorOverride();
+            iAnimatorOverridePending = false;
+        }
     }
+    return VariableDelayBase::Pull();
 }
 
-void VariableDelay::Reset()
+Msg* VariableDelayRight::ProcessMsg(MsgMode* aMsg)
 {
-    ASSERTS();
+    iDelayJiffiesTotal = 0;
+    return VariableDelayBase::ProcessMsg(aMsg);
 }
 
-void VariableDelay::NotifySize(TUint /*aJiffies*/)
+Msg* VariableDelayRight::ProcessMsg(MsgDelay* aMsg)
 {
-    ASSERTS();
+    const TUint msgDelayJiffies = aMsg->DelayJiffies();
+    TUint delayJiffies = std::max(msgDelayJiffies, iMinDelay);
+    iDelayJiffiesTotal = delayJiffies;
+    const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
+    const TUint downstream = (iAnimatorLatencyOverride > 0? iAnimatorLatencyOverride :
+                                                            animatorDelay);
+    aMsg->RemoveRef();
+    delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
+    delayJiffies = std::max(delayJiffies, iMinDelay);
+    LOG(kMedia, "VariableDelayRight::ProcessMsg(MsgDelay(%u, %u): delay=%u(%u), downstream=%u(%u), prev=%u(%u), iStatus=%s\n",
+                msgDelayJiffies, animatorDelay,
+                delayJiffies, Jiffies::ToMs(delayJiffies),
+                downstream, Jiffies::ToMs(downstream),
+                iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
+                Status());
+
+    HandleDelayChange(delayJiffies);
+
+    return nullptr;
+}
+
+void VariableDelayRight::LocalDelayApplied()
+{
+    const TUint delayJiffies = std::max(iDelayJiffies, iMinDelay);
+    iObserver.NotifyDelayApplied(delayJiffies);
+}
+
+void VariableDelayRight::ApplyAnimatorOverride()
+{
+    TUint delayJiffies = (iAnimatorLatencyOverride >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatencyOverride);
+    delayJiffies = std::max(delayJiffies, iMinDelay);
+    HandleDelayChange(delayJiffies);
 }

@@ -42,16 +42,16 @@ private:
     TUint iDeviationCount;
 };
 
-class ClockPullerUtilisation : public IClockPullerReservoir, private IUtilisationHistoryObserver, private INonCopyable
+class ClockPullerUtilisation : public IClockPuller, private IUtilisationHistoryObserver, private INonCopyable
 {
 public:
     ClockPullerUtilisation(Environment& aEnv, IPullableClock& aPullableClock);
     ~ClockPullerUtilisation();
-private: // from IClockPullerReservoir
-    void Reset() override;
+private: // from IClockPuller
+    void Update(TInt aDelta) override;
+    void Start(TUint aExpectedPipelineJiffies) override;
     void Stop() override;
-    void Start(TUint aExpectedDecodedReservoirJiffies) override;
-    void NotifySize(TUint aJiffies) override;
+    void Reset() override;
 private: // from IUtilisationHistoryObserver
     void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;
 private:

@@ -309,8 +309,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iDecodedAudioValidatorSeeker, new DecodedAudioValidator(*upstream, "Seeker"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
     ATTACH_ELEMENT(iVariableDelay1,
-                   new VariableDelay("VariableDelay1", *iMsgFactory, *upstream,
-                                     kSenderMinLatency, 0, aInitParams->RampEmergencyJiffies()),
+                   new VariableDelayLeft(*iMsgFactory, *upstream,
+                                         aInitParams->RampEmergencyJiffies(), kSenderMinLatency),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerVariableDelay1, new Logger(*iVariableDelay1, "VariableDelay1"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
@@ -373,9 +373,10 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iLoggerDrainer, new Logger(*iDrainer, "Drainer"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iVariableDelay2,
-                   new VariableDelay("VariableDelay2", *iMsgFactory, *upstream,
-                                     0, aInitParams->StarvationRamperJiffies(),
-                                     aInitParams->RampEmergencyJiffies()),
+                   new VariableDelayRight(*iMsgFactory, *upstream,
+                                          aInitParams->RampEmergencyJiffies(),
+                                          *iVariableDelay1,
+                                          aInitParams->StarvationRamperJiffies()),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerVariableDelay2, new Logger(*iVariableDelay2, "VariableDelay2"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
