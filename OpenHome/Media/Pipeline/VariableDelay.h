@@ -91,6 +91,7 @@ class VariableDelayLeft : public VariableDelayBase, public IVariableDelayObserve
 public:
     VariableDelayLeft(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, TUint aDownstreamDelay);
 private: // from PipelineElement (IMsgProcessor)
+    using VariableDelayBase::ProcessMsg;
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
 private: // from VariableDelayBase
@@ -112,6 +113,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from PipelineElement (IMsgProcessor)
+    using VariableDelayBase::ProcessMsg;
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
 private: // from VariableDelayBase
