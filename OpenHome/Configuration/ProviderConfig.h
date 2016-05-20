@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Generated/DvAvOpenhomeOrgConfiguration1.h>
+#include <Generated/DvAvOpenhomeOrgConfig1.h>
 #include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Av/Utils/Json.h>
@@ -19,7 +19,7 @@ private:
     IWriter& iWriter;
 };
 
-class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguration1, public Av::IProvider
+class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfig1, public Av::IProvider
 {
 public:
     ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigManager);
