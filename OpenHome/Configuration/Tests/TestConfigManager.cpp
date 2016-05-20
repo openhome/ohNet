@@ -74,6 +74,8 @@ private:
     void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
     void TestSubscription();
+    void TestInvalidValueFromStore();
+    void TestInvalidDefaultValue();
     void TestInvalidRange();
     void TestValueOutOfRangeConstructor();
     void TestValueFromStore();
@@ -115,6 +117,8 @@ private:
     void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
     void TestSubscription();
+    void TestInvalidValueFromStore();
+    void TestInvalidDefaultValue();
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestAdd();
@@ -153,6 +157,8 @@ private:
     void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
     void TestSubscription();
+    void TestInvalidValueFromStore();
+    void TestInvalidDefaultValue();
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestMaxLength();
@@ -389,6 +395,8 @@ SuiteConfigNum::SuiteConfigNum()
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorNotCalledAtConstruction), "TestInternalFunctorNotCalledAtConstruction");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription), "TestSubscription");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidValueFromStore), "TestInvalidValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidDefaultValue), "TestInvalidDefaultValue");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange), "TestInvalidRange");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor), "TestValueOutOfRangeConstructor");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueFromStore), "TestValueFromStore");
@@ -461,6 +469,33 @@ void SuiteConfigNum::TestSubscription()
     TEST(iChangedCount == changedCount+1);
     TEST(iLastChangeVal == kVal);
     iConfigVal->Unsubscribe(id);
+}
+
+void SuiteConfigNum::TestInvalidValueFromStore()
+{
+    // Place val in store that is out of allowed range.
+    const Brn key("conf.num.1");
+    const TInt storeVal = kMax+1;
+    Bws<sizeof(TInt)> valBuf;
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(storeVal);
+    iStore->Write(key, valBuf);
+    TEST_THROWS(ConfigNum num(*iConfigManager, key, kMin, kMax, kVal), AssertionFailed);
+
+    // Before assertion was thrown, default value should have been written to store.
+    TEST(IntFromStore(key) == kVal);
+
+    // Attempt to create value again. Should be fine this time.
+    ConfigNum num(*iConfigManager, key, kMin, kMax, kVal);
+}
+
+void SuiteConfigNum::TestInvalidDefaultValue()
+{
+    // No value in store and attempt to pass in invalid default.
+    const Brn kKey("conf.num.1");
+    static const TInt kInvalid = kMax+1;
+    TEST_THROWS(ConfigNum num(*iConfigManager, kKey, kMin, kMax, kInvalid), AssertionFailed);
 }
 
 void SuiteConfigNum::TestInvalidRange()
@@ -720,6 +755,8 @@ SuiteConfigChoice::SuiteConfigChoice()
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorNotCalledAtConstruction), "TestInternalFunctorNotCalledAtConstruction");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription), "TestSubscription");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInvalidValueFromStore), "TestInvalidValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInvalidDefaultValue), "TestInvalidDefaultValue");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore), "TestValueFromStore");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore), "TestValueWrittenToStore");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd), "TestAdd");
@@ -798,6 +835,43 @@ void SuiteConfigChoice::TestSubscription()
     TEST(iChangedCount == changedCount+1);
     TEST(iLastChangeVal == kDefault);
     iConfigVal->Unsubscribe(id);
+}
+
+void SuiteConfigChoice::TestInvalidValueFromStore()
+{
+    // Place val in store that is out of allowed range.
+    const Brn key("conf.choice.1");
+    const TUint storeVal = 3;
+    Bws<sizeof(TUint)> valBuf;
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(storeVal);
+    iStore->Write(key, valBuf);
+
+    std::vector<TUint> choices;
+    choices.push_back(kChoice1);
+    choices.push_back(kChoice2);
+    choices.push_back(kChoice3);
+    TEST_THROWS(ConfigChoice choice(*iConfigManager, key, choices, kDefault), AssertionFailed);
+
+    // Before assertion was thrown, default value should have been written to store.
+    TEST(UintFromStore(key) == kDefault);
+
+    // Attempt to create value again. Should be fine this time.
+    ConfigChoice choice(*iConfigManager, key, choices, kDefault);
+}
+
+void SuiteConfigChoice::TestInvalidDefaultValue()
+{
+    // No value in store and attempt to pass in invalid default.
+    const Brn kKey("conf.choice.1");
+    static const TInt kInvalid = 3;
+
+    std::vector<TUint> choices;
+    choices.push_back(kChoice1);
+    choices.push_back(kChoice2);
+    choices.push_back(kChoice3);
+    TEST_THROWS(ConfigChoice choice(*iConfigManager, kKey, choices, kInvalid), AssertionFailed);
 }
 
 void SuiteConfigChoice::TestValueFromStore()
@@ -1030,6 +1104,8 @@ SuiteConfigText::SuiteConfigText()
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorNotCalledAtConstruction), "TestInternalFunctorNotCalledAtConstruction");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription), "TestSubscription");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestInvalidValueFromStore), "TestInvalidValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestInvalidDefaultValue), "TestInvalidDefaultValue");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore), "TestValueFromStore");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore), "TestValueWrittenToStore");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength), "TestMaxLength");
@@ -1090,6 +1166,43 @@ void SuiteConfigText::TestSubscription()
     TEST(iChangedCount == changedCount+1);
     TEST(iLastChangeVal == kDefault);
     iConfigVal->Unsubscribe(id);
+}
+
+void SuiteConfigText::TestInvalidValueFromStore()
+{
+    // Place val in store that is out of allowed range.
+    const Brn key("conf.text.1");
+    Bws<kMaxLength+1> storeVal;
+    // Create val of form "01234567890123456789...".
+    for (TUint i=0; i<storeVal.MaxBytes(); i++) {
+        const TUint val = i % 10;
+        Ascii::AppendDec(storeVal, val);
+    }
+    iStore->Write(key, storeVal);
+
+    TEST_THROWS(ConfigText text(*iConfigManager, key, kMaxLength, kDefault), AssertionFailed);
+
+    // Before assertion was thrown, default value should have been written to store.
+    Bwh valBuf(kMaxLength);
+    iStore->Read(key, valBuf);
+    TEST(valBuf == kDefault);
+
+    // Attempt to create value again. Should be fine this time.
+    ConfigText text(*iConfigManager, key, kMaxLength, kDefault);
+}
+
+void SuiteConfigText::TestInvalidDefaultValue()
+{
+    // No value in store and attempt to pass in invalid default.
+    const Brn kKey("conf.text.1");
+    Bws<kMaxLength+1> invalidVal;
+    // Create val of form "01234567890123456789...".
+    for (TUint i=0; i<invalidVal.MaxBytes(); i++) {
+        const TUint val = i % 10;
+        Ascii::AppendDec(invalidVal, val);
+    }
+
+    TEST_THROWS(ConfigText text(*iConfigManager, kKey, kMaxLength, invalidVal), AssertionFailed);
 }
 
 void SuiteConfigText::TestValueFromStore()

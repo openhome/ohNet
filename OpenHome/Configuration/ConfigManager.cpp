@@ -21,6 +21,7 @@ ConfigNum::ConfigNum(IConfigInitialiser& aManager, const Brx& aKey, TInt aMin, T
     , iMutex("CVNM")
 {
     ASSERT(iMax >= iMin);
+    ASSERT(IsValid(iDefault));
 
     Bws<sizeof(TInt)> initialBuf;
     Bws<sizeof(TInt)> defaultBuf;
@@ -30,7 +31,15 @@ ConfigNum::ConfigNum(IConfigInitialiser& aManager, const Brx& aKey, TInt aMin, T
     iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TInt initialVal = Converter::BeUint32At(initialBuf, 0);
 
-    ASSERT(IsValid(initialVal));
+    if (!IsValid(initialVal)) {
+        // Bad value. Write default to store (so that there is no assertion in
+        // future) and ASSERT() here to highlight programmer error.
+        KvpNum kvp(iKey, iDefault);
+        Write(kvp);
+        Log::Print("ConfigNum::ConfigNum invalid initial value: %d\n", initialVal);
+        ASSERTS();
+    }
+
     iConfigManager.Add(*this);
     iVal = initialVal;
 
@@ -167,6 +176,8 @@ IConfigChoiceMapper& ConfigChoice::Mapper() const
 
 void ConfigChoice::Init(TUint aDefault)
 {
+    ASSERT(IsValid(iDefault));
+
     Bws<sizeof(TUint)> initialBuf;
     Bws<sizeof(TUint)> defaultBuf;
     WriterBuffer writerBuf(defaultBuf);
@@ -175,7 +186,15 @@ void ConfigChoice::Init(TUint aDefault)
     iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
 
-    ASSERT(IsValid(initialVal));
+    if (!IsValid(initialVal)) {
+        // Bad value. Write default to store (so that there is no assertion in
+        // future) and ASSERT() here to highlight programmer error.
+        KvpChoice kvp(iKey, iDefault);
+        Write(kvp);
+        Log::Print("ConfigChoice::Init invalid initial value: %u\n", initialVal);
+        ASSERTS();
+    }
+
     iConfigManager.Add(*this);
     iSelected = initialVal;
 
@@ -244,10 +263,25 @@ ConfigText::ConfigText(IConfigInitialiser& aManager, const Brx& aKey, TUint aMax
     , iMutex("CVTM")
 {
     ASSERT(aMaxLength <= kMaxBytes);
-    Bwh initialBuf(aMaxLength);
-    iConfigManager.FromStore(iKey, initialBuf, aDefault);
+    ASSERT(IsValid(iDefault));
 
-    ASSERT(IsValid(initialBuf));
+    Bwh initialBuf(aMaxLength);
+    try {
+        iConfigManager.FromStore(iKey, initialBuf, aDefault);
+    }
+    catch (StoreReadBufferUndersized&) {
+        // This can only happen if store value is longer than aMaxLength.
+        // Write (valid) default to store and assert on this occasion.
+
+        // Size of value in store is unknown, and buffer used here was too
+        // small to accomodate it, so unable to print the value for debugging
+        // purposes.
+        KvpText kvp(iKey, iDefault);
+        Write(kvp);
+        ASSERTS();
+    }
+
+    // Initial value fits into initial buf, so it is within max length limit.
     iConfigManager.Add(*this);
     iText.Replace(initialBuf);
 

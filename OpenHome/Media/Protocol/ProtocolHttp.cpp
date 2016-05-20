@@ -595,7 +595,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         }
         Http::WriteHeaderConnectionClose(iWriterRequest);
         if (!nonAudioUri) {
-            // Suppress ICY metadata and Range header for things such playlist files.
+            // Suppress ICY metadata and Range header for resources such as playlist files.
             HeaderIcyMetadata::Write(iWriterRequest);
             Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
         }
