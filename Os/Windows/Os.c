@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
+#include <Windows.h>
 
 #ifdef DEFINE_WINDOWS_UNIVERSAL
 #include <Processthreadsapi.h>
@@ -23,7 +24,6 @@ using namespace Windows::Foundation::Collections;
 #define WaitForSingleObject(arg0, arg1) WaitForSingleObjectEx(arg0, arg1, false)
 
 #else
-#include <Windows.h>
 #include <Iphlpapi.h>
 #include <Dbghelp.h>
 #endif
