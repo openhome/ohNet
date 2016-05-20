@@ -32,6 +32,8 @@ def buildArgs():
     buildArgs = ''
     if gDebugBuild == 1:
         buildArgs += ' debug=1'
+    if gWindows10 == 1:
+        buildArgs += ' windows_universal=1 ohNet.net.dll'
     if gMac64 == 1:
         buildArgs += ' mac-64=1'
     if giOsArmv7 == 1:
@@ -207,6 +209,7 @@ giOsArm64 = 0
 giOsx86 = 0
 gAndroid = 0
 gQnap = 0
+gWindows10 = 0
 try:
     gPlatform = os.environ['PLATFORM']
 except KeyError:
@@ -214,6 +217,8 @@ except KeyError:
 gCore = 0
 gParallel = False
 for arg in sys.argv[1:]:
+    if arg == '--windows10':
+        gWindows10 = 1
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
     elif arg == '--debug':

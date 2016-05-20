@@ -220,7 +220,7 @@ class JenkinsBuild():
         if os_platform == 'Core':
             args.append('--core')
         if os_platform == 'windows10':
-            args.append('windows_universal=1 ohNet.dll')
+            args.append('--windows10')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
