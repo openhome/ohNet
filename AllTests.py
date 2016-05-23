@@ -33,7 +33,7 @@ def buildArgs():
     if gDebugBuild == 1:
         buildArgs += ' debug=1'
     if gWindows10 == 1:
-        buildArgs += ' windows_universal=1 ohNet.net.dll'
+        buildArgs += ' windows_universal=1'
     if gMac64 == 1:
         buildArgs += ' mac-64=1'
     if giOsArmv7 == 1:
@@ -81,6 +81,8 @@ def runBuilds():
         build('copy_build_includes')
     if gCore == 1:
         build('ohNet TestFramework Shell', gParallel)
+    elif gWindows10 == 1:
+        build('ohNet.net.dll', gParallel)
     else:
         build('all', gParallel)
     if (gRunJavaTests == 1):
