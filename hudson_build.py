@@ -148,12 +148,15 @@ class JenkinsBuild():
         if os_platform == 'windows10' and arch == 'x86':
             args.append('vcvarsall.bat')
             args.append('amd64_x86')
+            args.append('store')
         if os_platform == 'windows10' and arch == 'x64':
             args.append('vcvarsall.bat')
             args.append('amd64')
+            args.append('store')
         if os_platform == 'windows10' and arch == 'arm':
             args.append('vcvarsall.bat')
             args.append('amd64_arm')
+            args.append('store')
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'linux' and arch == 'armhf':

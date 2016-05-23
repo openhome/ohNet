@@ -22,10 +22,19 @@ using namespace Windows::Foundation::Collections;
 
 #define InitializeCriticalSection(arg0) InitializeCriticalSectionEx(arg0, 0, 0)
 #define WaitForSingleObject(arg0, arg1) WaitForSingleObjectEx(arg0, arg1, false)
+#define M_CreateSemaphore(arg0, arg1, arg2, arg3) CreateSemaphoreEx(arg0, arg1, arg2, arg3, 0, (SYNCHRONIZE | SEMAPHORE_MODIFY_STATE))
+#define M_CreateEvent(arg0, arg1, arg2, arg3) CreateEventEx(arg0, arg3, 0 | (arg1 ? CREATE_EVENT_MANUAL_RESET : 0) | (arg2 ? CREATE_EVENT_INITIAL_SET : 0), (SYNCHRONIZE | EVENT_MODIFY_STATE))
+
+#define TlsAlloc() FlsAlloc(NULL)
+#define TlsFree(arg0) FlsFree(arg0)
+#define TlsSetValue(arg0, arg1) FlsSetValue(arg0, arg1)
+#define TlsGetValue(arg0) FlsGetValue(arg0)
 
 #else
 #include <Iphlpapi.h>
 #include <Dbghelp.h>
+#define M_CreateSemaphore(arg0, arg1, arg2, arg3) CreateSemaphore(arg0, arg1, arg2, arg3)
+#define M_CreateEvent(arg0, arg1, arg2, arg3) CreateEvent(arg0, arg1, arg2, arg3)
 #endif
 
 static const uint32_t kMinStackBytes = 1024 * 16;
@@ -325,7 +334,7 @@ THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCoun
 {
     UNUSED(aContext);
     UNUSED(aName);
-    return (THandle)CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
+    return (THandle)M_CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
 }
 
 void OsSemaphoreDestroy(THandle aSem)
@@ -1291,12 +1300,12 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
 
     icobs->iSocket = socket(AF_INET, SOCK_DGRAM, 0);
     SetSocketBlocking(icobs->iSocket);
-    icobs->iEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    icobs->iShutdownEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    icobs->iEvent = M_CreateEvent(NULL, FALSE, FALSE, NULL);
+    icobs->iShutdownEvent = M_CreateEvent(NULL, FALSE, FALSE, NULL);
     icobs->iCallback = aCallback;
     icobs->iArg = aArg;
     icobs->iShutdown = 0;
-    icobs->iSem = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
+    icobs->iSem = M_CreateSemaphore(NULL, 0, INT32_MAX, NULL);
     (void)WSAEventSelect(icobs->iSocket, icobs->iEvent, FD_ADDRESS_LIST_CHANGE);
     (void)CreateThread(NULL, 16*1024, (LPTHREAD_START_ROUTINE)&interfaceChangeThread, icobs, 0, NULL);
     aContext->iInterfaceChangeObserver = icobs;
