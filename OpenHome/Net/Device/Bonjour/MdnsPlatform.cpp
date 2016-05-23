@@ -596,7 +596,6 @@ MdnsPlatform::Status MdnsPlatform::Init()
     Functor functorAdapter = MakeFunctor(*this, &MdnsPlatform::CurrentAdapterChanged);
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter);
 
-    static const TChar* kNifCookie = "Bonjour";
     NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
     if (current == NULL) { // Listening on all adapters.
         std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
