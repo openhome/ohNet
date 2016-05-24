@@ -373,6 +373,7 @@ def build(bld):
                 'OpenHome/Av/Songcast/SourceReceiver.cpp',
                 'OpenHome/Av/Songcast/Splitter.cpp',
                 'OpenHome/Av/Songcast/Sender.cpp',
+                'OpenHome/Av/Songcast/SenderThread.cpp',
                 'OpenHome/Av/Songcast/ClockPullerSongcast.cpp',
                 'OpenHome/Av/Utils/DriverSongcastSender.cpp',
             ],

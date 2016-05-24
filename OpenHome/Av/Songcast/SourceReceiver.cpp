@@ -18,6 +18,7 @@
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
 #include <OpenHome/Av/Songcast/Splitter.h>
+#include <OpenHome/Av/Songcast/SenderThread.h>
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -131,6 +132,7 @@ private:
     void UpdateSenderName();
 private:
     Mutex iLock;
+    SenderThread* iSenderThread;
     Sender* iSender;
     Product& iProduct;
     Media::Logger* iLoggerSender;
@@ -470,7 +472,8 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);
-    iSplitter = new Splitter(*iLoggerSender, aMode);
+    iSenderThread = new SenderThread(*iLoggerSender, priorityMin);
+    iSplitter = new Splitter(*iSenderThread, aMode);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iSplitter->SetUpstream(pipeline.InsertElements(*iLoggerSplitter));
     //iLoggerSplitter->SetEnabled(true);
@@ -485,6 +488,7 @@ SongcastSender::~SongcastSender()
 {
     delete iLoggerSplitter;
     delete iSplitter;
+    delete iSenderThread;
     delete iLoggerSender;
     delete iSender;
 }
