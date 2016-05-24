@@ -322,7 +322,7 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
             iQueue.EnqueueAtHead(remaining);
         }
         iDelayAdjustment += jiffies;
-        iDelayAdjustment = std::min(iDelayAdjustment, 0); // Split() may round up positions that are less than one sample
+        iDelayAdjustment = std::min(iDelayAdjustment, (TInt)0); // Split() may round up positions that are less than one sample
         if (iDelayAdjustment == 0) {
             LocalDelayApplied();
             iStatus = ERampingUp;

@@ -500,7 +500,7 @@ void SuiteStarvationRamper::TestBlocksWhenHasMaxAudio()
     
     do {
         PullNext(EMsgAudioPcm);
-    } while (!iStarvationRamper->IsEmpty());
+    } while (iPendingMsgs.size() != 0 || !iStarvationRamper->IsEmpty());
     AddPending(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
