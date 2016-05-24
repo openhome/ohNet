@@ -2324,7 +2324,6 @@ TUint MsgQueueBase::NumMsgs() const
 
 void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
 {
-    // iLock must be held (using an AutoMutex)
     ASSERT(aMsg != iTail);
     ASSERT(aMsg != iHead);
 #ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
@@ -2333,8 +2332,9 @@ void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
         ASSERT(aMsg != msg);
         count++;
     }
-    if (count != iNumMsgs) {    // ensure a msg mid-queue hasn't had iNextMsg
-        // modified elsewhere
+    if (count != iNumMsgs) {
+        Log::Print("MsgQueueBase::CheckMsgNotQueued - iNumMsgs=%u, found %u\n",
+                   iNumMsgs, count);
         ASSERTS();
     }
 #endif
