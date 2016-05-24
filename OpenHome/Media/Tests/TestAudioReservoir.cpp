@@ -173,6 +173,89 @@ private:
     TByte iAudioDest[EncodedAudio::kMaxBytes];
 };
 
+class SuiteGorger : public SuiteUnitTest, private IStreamHandler, private IMsgProcessor
+{
+    static const TUint kGorgeSize = Jiffies::kPerMs * 100; // production code will likely use a much larger size
+    static const TUint kSampleRate = 44100;
+    static const TUint kNumChannels = 2;
+    static const Brn kModeRealTime;
+    static const Brn kModeGorgable;
+public:
+    SuiteGorger();
+    ~SuiteGorger();
+private: // from SuiteUnitTest
+    void Setup() override;
+    void TearDown() override;
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
+private:
+    enum EMsgType
+    {
+        ENone
+        , EMsgMode
+        , EMsgTrack
+        , EMsgDrain
+        , EMsgDelay
+        , EMsgEncodedStream
+        , EMsgAudioEncoded
+        , EMsgMetaText
+        , EMsgStreamInterrupted
+        , EMsgHalt
+        , EMsgFlush
+        , EMsgWait
+        , EMsgDecodedStream
+        , EMsgBitRate
+        , EMsgAudioPcm
+        , EMsgSilence
+        , EMsgPlayable
+        , EMsgQuit
+    };
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
+private:
+    void Queue(Msg* aMsg);
+    void PullNext(EMsgType aExpectedMsg);
+    Msg* CreateMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    Msg* CreateTrack();
+    Msg* CreateDecodedStream();
+    Msg* CreateAudio();
+    void TestAllMsgsPassWhileNotGorging();
+    void TestNewModeUpdatesGorgeStatus();
+    void TestGorgingEndsWithSufficientAudio();
+    void TestGorgingEndsWithNewMode();
+    void TestHaltEnablesGorging();
+    void TestStarvationEnablesGorging();
+private:
+    Mutex iLock;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
+    MsgFactory* iMsgFactory;
+    DecodedAudioReservoir* iDecodedReservoir;
+    EMsgType iLastPulledMsg;
+    TUint64 iTrackOffset;
+    TUint iNextStreamId;
+    TUint iStarvationNotifications;
+};
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -193,7 +276,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     init.SetMsgModeCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(*iMsgFactory, kReservoirSize, kMaxStreams);
+    iReservoir = new DecodedAudioReservoir(*iMsgFactory, kReservoirSize, kMaxStreams, 0);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
@@ -229,9 +312,9 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == nullptr);
 
     // Check that uninteresting msgs are passed through.
-    EMsgType types[] = { EMsgDecodedStream, EMsgBitRate, EMsgMode,
-                         EMsgTrack, EMsgDrain, EMsgDelay, EMsgEncodedStream,
-                         EMsgMetaText, EMsgStreamInterrupted, EMsgFlush, EMsgWait,
+    EMsgType types[] = { EMsgMode, EMsgTrack, EMsgDrain, EMsgEncodedStream,
+                         EMsgDecodedStream, EMsgDelay, EMsgBitRate, EMsgMetaText,
+                         EMsgStreamInterrupted, EMsgFlush, EMsgWait,
                          EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         EMsgType msgType = types[i];
@@ -737,11 +820,419 @@ void SuiteEncodedReservoir::TestNewStreamInterruptsSeek()
 }
 
 
+// SuiteGorger
+
+const Brn SuiteGorger::kModeRealTime("RealTime");
+const Brn SuiteGorger::kModeGorgable("Gorgable");
+
+SuiteGorger::SuiteGorger()
+    : SuiteUnitTest("Gorger")
+    , iLock("TGRG")
+{
+    AddTest(MakeFunctor(*this, &SuiteGorger::TestAllMsgsPassWhileNotGorging), "TestAllMsgsPassWhileNotGorging");
+    AddTest(MakeFunctor(*this, &SuiteGorger::TestNewModeUpdatesGorgeStatus), "TestNewModeUpdatesGorgeStatus");
+    AddTest(MakeFunctor(*this, &SuiteGorger::TestGorgingEndsWithSufficientAudio), "TestGorgingEndsWithSufficientAudio");
+    AddTest(MakeFunctor(*this, &SuiteGorger::TestGorgingEndsWithNewMode), "TestGorgingEndsWithNewMode");
+    AddTest(MakeFunctor(*this, &SuiteGorger::TestHaltEnablesGorging), "TestHaltEnablesGorging");
+    AddTest(MakeFunctor(*this, &SuiteGorger::TestStarvationEnablesGorging), "TestStarvationEnablesGorging");
+}
+
+SuiteGorger::~SuiteGorger()
+{
+}
+
+void SuiteGorger::Setup()
+{
+    iTrackFactory = new TrackFactory(iInfoAggregator, 5);
+    MsgFactoryInitParams init;
+    init.SetMsgAudioPcmCount(52, 50);
+    init.SetMsgDecodedStreamCount(3);
+    init.SetMsgTrackCount(2);
+    init.SetMsgEncodedStreamCount(2);
+    init.SetMsgMetaTextCount(2);
+    init.SetMsgHaltCount(2);
+    init.SetMsgFlushCount(2);
+    init.SetMsgModeCount(3);
+    iMsgFactory = new MsgFactory(iInfoAggregator, init);
+    iDecodedReservoir = new DecodedAudioReservoir(*iMsgFactory, kGorgeSize * 3, 10, kGorgeSize);
+    iLastPulledMsg = ENone;
+    iTrackOffset = 0;
+    iNextStreamId = 1;
+    iStarvationNotifications = 0;
+}
+
+void SuiteGorger::TearDown()
+{
+    delete iDecodedReservoir;
+    delete iMsgFactory;
+    delete iTrackFactory;
+}
+
+EStreamPlay SuiteGorger::OkToPlay(TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return ePlayNo;
+}
+
+TUint SuiteGorger::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteGorger::TryStop(TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool aStarving)
+{
+    if (aStarving) {
+        iStarvationNotifications++;
+    }
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgMode* aMsg)
+{
+    iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastPulledMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgDrain* aMsg)
+{
+    iLastPulledMsg = EMsgDrain;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgDelay* aMsg)
+{
+    iLastPulledMsg = EMsgDelay;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgEncodedStream;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    iLastPulledMsg = EMsgAudioEncoded;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgStreamInterrupted* aMsg)
+{
+    iLastPulledMsg = EMsgStreamInterrupted;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastPulledMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgWait* aMsg)
+{
+    iLastPulledMsg = EMsgWait;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgBitRate* aMsg)
+{
+    iLastPulledMsg = EMsgBitRate;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iLastPulledMsg = EMsgAudioPcm;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgSilence* aMsg)
+{
+    iLastPulledMsg = EMsgSilence;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgPlayable* aMsg)
+{
+    iLastPulledMsg = EMsgPlayable;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgQuit* aMsg)
+{
+    iLastPulledMsg = EMsgQuit;
+    return aMsg;
+}
+
+void SuiteGorger::Queue(Msg* aMsg)
+{
+    iDecodedReservoir->Push(aMsg);
+}
+
+void SuiteGorger::PullNext(EMsgType aExpectedMsg)
+{
+    Msg* msg = iDecodedReservoir->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastPulledMsg == aExpectedMsg);
+}
+
+Msg* SuiteGorger::CreateMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    return iMsgFactory->CreateMsgMode(aMode, aSupportsLatency, aRealTime, ModeClockPullers(), false, false);
+}
+
+Msg* SuiteGorger::CreateTrack()
+{
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
+    track->RemoveRef();
+    return msg;
+}
+
+Msg* SuiteGorger::CreateDecodedStream()
+{
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, this);
+}
+
+Msg* SuiteGorger::CreateAudio()
+{
+    static const TUint kDataBytes = 3 * 1024;
+    TByte encodedAudioData[kDataBytes];
+    (void)memset(encodedAudioData, 0x7f, kDataBytes);
+    Brn encodedAudioBuf(encodedAudioData, kDataBytes);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, AudioDataEndian::Little, iTrackOffset);
+    iTrackOffset += audio->Jiffies();
+    return audio;
+}
+
+void SuiteGorger::TestAllMsgsPassWhileNotGorging()
+{
+    Queue(CreateMode(kModeRealTime, false, true));
+    Queue(CreateTrack());
+    Queue(iMsgFactory->CreateMsgDrain(Functor()));
+    Queue(iMsgFactory->CreateMsgDelay(0));
+    Queue(CreateDecodedStream());
+    Queue(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    Queue(iMsgFactory->CreateMsgStreamInterrupted());
+    Queue(iMsgFactory->CreateMsgBitRate(42));
+    Queue(CreateAudio());
+    Queue(iMsgFactory->CreateMsgHalt());
+    Queue(iMsgFactory->CreateMsgWait());
+    Queue(iMsgFactory->CreateMsgQuit());
+
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDrain);
+    PullNext(EMsgDelay);
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgMetaText);
+    PullNext(EMsgStreamInterrupted);
+    PullNext(EMsgBitRate);
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgHalt);
+    PullNext(EMsgWait);
+    PullNext(EMsgQuit);
+}
+
+void SuiteGorger::TestNewModeUpdatesGorgeStatus()
+{
+    TEST(!iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+
+    TBool realTime = false;
+    Queue(CreateMode(kModeGorgable, false, realTime));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+    PullNext(EMsgMode);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+
+    realTime = true;
+    Queue(CreateMode(kModeRealTime, false, realTime));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iDecodedReservoir->iCanGorge);
+    while (iDecodedReservoir->iGorging) {
+        Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
+    }
+    TEST(!iDecodedReservoir->iGorging);
+    PullNext(EMsgMode);
+    TEST(!iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(!iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+}
+
+void SuiteGorger::TestGorgingEndsWithSufficientAudio()
+{
+    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(iDecodedReservoir->iGorging);
+
+    TUint numAudioMsgs = 0;
+    while (iTrackOffset < kGorgeSize) {
+        Queue(CreateAudio());
+        numAudioMsgs++;
+    }
+    do {
+        PullNext(EMsgAudioPcm);
+    } while (--numAudioMsgs > 0);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+    Queue(CreateAudio());
+    PullNext(EMsgAudioPcm);
+
+    Queue(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+}
+
+void SuiteGorger::TestGorgingEndsWithNewMode()
+{
+    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(iDecodedReservoir->iGorging);
+
+    Queue(CreateAudio());
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(iDecodedReservoir->iGorging);
+
+    Queue(CreateMode(kModeRealTime, false, true));
+    PullNext(EMsgAudioPcm);
+    while (iDecodedReservoir->iGorging) {
+        Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
+    }
+    TEST(!iDecodedReservoir->iGorging);
+    TEST(!iDecodedReservoir->iGorging);
+    PullNext(EMsgMode);
+
+    Queue(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+}
+
+void SuiteGorger::TestHaltEnablesGorging()
+{
+    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(iDecodedReservoir->iGorging);
+    TUint numAudioMsgs = 0;
+    while (iTrackOffset < kGorgeSize) {
+        Queue(CreateAudio());
+        numAudioMsgs++;
+    }
+    do {
+        PullNext(EMsgAudioPcm);
+    } while (--numAudioMsgs > 0);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+
+    Queue(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    TEST(iDecodedReservoir->iGorging);
+    Queue(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+}
+
+void SuiteGorger::TestStarvationEnablesGorging()
+{
+    Queue(CreateMode(kModeRealTime, false, true));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(!iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+    iDecodedReservoir->NotifyStarving(kModeRealTime, 1, true);
+    TEST(!iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+    TEST(iStarvationNotifications == 1);
+
+    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateTrack());
+    Queue(CreateDecodedStream());
+    PullNext(EMsgMode);
+    TEST(iDecodedReservoir->iCanGorge);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iDecodedReservoir->iGorging);
+    TUint numAudioMsgs = 0;
+    while (iTrackOffset < kGorgeSize) {
+        Queue(CreateAudio());
+        numAudioMsgs++;
+    }
+    do {
+        PullNext(EMsgAudioPcm);
+    } while (--numAudioMsgs > 0);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(!iDecodedReservoir->iGorging);
+    iDecodedReservoir->NotifyStarving(kModeGorgable, 2, true);
+    TEST(iDecodedReservoir->iCanGorge);
+    TEST(iDecodedReservoir->iGorging);
+    TEST(iStarvationNotifications == 2);
+
+    Queue(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+}
+
+
 
 void TestAudioReservoir()
 {
     Runner runner("Decoded Audio Reservoir tests\n");
     runner.Add(new SuiteAudioReservoir());
     runner.Add(new SuiteEncodedReservoir());
+    runner.Add(new SuiteGorger());
     runner.Run();
 }

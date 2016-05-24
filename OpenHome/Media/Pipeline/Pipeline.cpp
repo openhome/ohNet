@@ -20,7 +20,6 @@
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
-#include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Router.h>
@@ -268,7 +267,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     // Construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(*iMsgFactory,
                                                        aInitParams->DecodedReservoirJiffies(),
-                                                       aInitParams->MaxStreamsPerReservoir());
+                                                       aInitParams->MaxStreamsPerReservoir(),
+                                                       aInitParams->GorgeDurationJiffies());
     downstream = iDecodedAudioReservoir;
 
     ATTACH_ELEMENT(iLoggerDecodedAudioAggregator,
@@ -347,13 +347,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iDecodedAudioValidatorStopper, new DecodedAudioValidator(*upstream, "Stopper"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
-    ATTACH_ELEMENT(iGorger, new Gorger(*iMsgFactory, *upstream, threadPriority, aInitParams->GorgeDurationJiffies()),
-                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
     threadPriority += 2; // StarvationRamper + FlywheelRamper threads
-    ATTACH_ELEMENT(iLoggerGorger, new Logger(*iGorger, "Gorger"),
-                   upstream, elementsSupported, EPipelineSupportElementsLogger);
-    ATTACH_ELEMENT(iDecodedAudioValidatorGorger, new DecodedAudioValidator(*upstream, "Gorger"),
-                   upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
     ATTACH_ELEMENT(iSpotifyReporter, new Media::SpotifyReporter(*upstream, *iMsgFactory, aTrackFactory),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerSpotifyReporter, new Logger(*iSpotifyReporter, "SpotifyReporter"),
@@ -442,7 +436,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerWaiter->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerRamper->SetEnabled(true);
-    //iLoggerGorger->SetEnabled(true);
     //iLoggerSpotifyReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerRouter->SetEnabled(true);
@@ -471,7 +464,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerWaiter->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerRamper->SetFilter(Logger::EMsgAll);
-    //iLoggerGorger->SetFilter(Logger::EMsgAll);
     //iLoggerSpotifyReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerRouter->SetFilter(Logger::EMsgAll);
@@ -520,9 +512,6 @@ Pipeline::~Pipeline()
     delete iReporter;
     delete iLoggerSpotifyReporter;
     delete iSpotifyReporter;
-    delete iDecodedAudioValidatorGorger;
-    delete iLoggerGorger;
-    delete iGorger;
     delete iDecodedAudioValidatorStopper;
     delete iRampValidatorStopper;
     delete iLoggerStopper;
@@ -847,8 +836,7 @@ void Pipeline::NotifyStarvationRamperBuffering(TBool aBuffering)
         if (aBuffering && !iWaiting) {
             const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
             const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
-            const TUint gorgedMs = Jiffies::ToMs(iGorger->SizeInJiffies());
-            Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, gorgedMs=%u\n", encodedBytes, decodedMs, gorgedMs);
+            Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u\n", encodedBytes, decodedMs);
         }
 #endif
     }

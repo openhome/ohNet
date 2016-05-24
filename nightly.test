@@ -22,7 +22,6 @@ tests = '''
     TestRamper
     TestReporter
     TestPruner
-    TestGorger
     TestStarvationRamper
     TestMuter
     TestAnalogBypassRamper
