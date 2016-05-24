@@ -817,7 +817,7 @@ void SuiteConfigUi::Setup()
     Brn domainName;
     Brn type;
     TUint ver;
-    if (Ssdp::ParseUrnService(Brn("av.openhome.org:service:Configuration:1"), domainName, type, ver)) {
+    if (Ssdp::ParseUrnService(Brn("av.openhome.org:service:Config:1"), domainName, type, ver)) {
         CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(iCpStack, domainName, type, ver, added, removed);
         Blocker* blocker = new Blocker(iCpStack.Env());
         blocker->Wait(iCpStack.Env().InitParams()->MsearchTimeSecs());
