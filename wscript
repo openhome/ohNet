@@ -402,7 +402,8 @@ def build(bld):
                 'Generated/DvUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
-                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp'
+                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp',
+                'OpenHome/Av/UpnpAv/FriendlyNameUpnpAv.cpp'
             ],
             use=['OHNET', 'ohMediaPlayer'],
             target='SourceUpnpAv')

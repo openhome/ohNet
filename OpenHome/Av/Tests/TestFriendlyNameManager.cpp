@@ -217,29 +217,22 @@ void SuiteFriendlyNameManager::TestDvUpdate()
 
     DeviceBasic* deviceBasic1 = new DeviceBasic(iDvStack);
     DvDevice& dvDevice1 = deviceBasic1->Device();
-    DeviceBasic* deviceBasic2 = new DeviceBasic(iDvStack);
-    DvDevice& dvDevice2 = deviceBasic2->Device();
 
     iObservable->SetRoomName(Brn("Room"));
     iObservable->SetProductName(Brn("Product"));
 
     // construct updaters for different device types
     auto updater1 = new FriendlyNameAttributeUpdater(*iFriendlyNameManager, dvDevice1);
-    auto updater2 = new FriendlyNameAttributeUpdater(*iFriendlyNameManager, dvDevice2, Brn(":MediaRenderer"));
 
     // check initial updates
     TEST(WaitForNameChange(dvDevice1, Brn("Room:Product")) == true);
-    TEST(WaitForNameChange(dvDevice2, Brn("Room:Product:MediaRenderer")) == true);
 
     iObservable->SetRoomName(Brn("NewRoom"));
 
     // check updates after room name modified
     TEST(WaitForNameChange(dvDevice1, Brn("NewRoom:Product")) == true);
-    TEST(WaitForNameChange(dvDevice2, Brn("NewRoom:Product:MediaRenderer")) == true);
 
-    delete updater2;
     delete updater1;
-    delete deviceBasic2;
     delete deviceBasic1;
 }
 

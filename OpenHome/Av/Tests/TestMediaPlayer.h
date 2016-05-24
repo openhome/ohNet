@@ -16,6 +16,7 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/FriendlyNameAdapter.h>
+#include <OpenHome/Av/UpnpAv/FriendlyNameUpnpAv.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/Raop/Raop.h>
@@ -158,6 +159,7 @@ private:
     Net::DvDeviceStandard* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
     Av::FriendlyNameAttributeUpdater* iFnUpdaterStandard;
+    FriendlyNameManagerUpnpAv* iFnManagerUpnpAv;
     Av::FriendlyNameAttributeUpdater* iFnUpdaterUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;

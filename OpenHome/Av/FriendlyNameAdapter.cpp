@@ -1,20 +1,19 @@
-
 #include <OpenHome/Av/FriendlyNameAdapter.h>
-#include <OpenHome/Private/Debug.h>
-
+#include <OpenHome/Types.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Standard.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Av/Product.h>
+#include <OpenHome/Net/Core/DvDevice.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
-using namespace OpenHome::Net;
 
 
-FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(
-        IFriendlyNameObservable& aFriendlyNameObservable,
-        DvDevice& aDvDevice,
-        const Brx& aAppend)
+FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(IFriendlyNameObservable& aFriendlyNameObservable,
+                                                           Net::DvDevice& aDvDevice)
     : iFriendlyNameObservable(aFriendlyNameObservable)
     , iDvDevice(aDvDevice)
-    , iAppend(aAppend)
     , iLock("DNCL")
 {
     iThread = new ThreadFunctor("UpnpNameChanger", MakeFunctor(*this, &FriendlyNameAttributeUpdater::Run));
@@ -22,13 +21,6 @@ FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(
 
     iId = iFriendlyNameObservable.RegisterFriendlyNameObserver(
         MakeFunctorGeneric<const Brx&>(*this, &FriendlyNameAttributeUpdater::Observer));
-}
-
-FriendlyNameAttributeUpdater::FriendlyNameAttributeUpdater(
-        IFriendlyNameObservable& aFriendlyNameObservable,
-        DvDevice& aDvDevice)
-    : FriendlyNameAttributeUpdater(aFriendlyNameObservable, aDvDevice, Brx::Empty())
-{
 }
 
 FriendlyNameAttributeUpdater::~FriendlyNameAttributeUpdater()
@@ -41,7 +33,6 @@ void FriendlyNameAttributeUpdater::Observer(const Brx& aNewFriendlyName)
 {
     AutoMutex a(iLock);
     iFullName.Replace(aNewFriendlyName);
-    iFullName.Append(iAppend);
 
     iThread->Signal();
 }
