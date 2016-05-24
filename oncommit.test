@@ -57,7 +57,7 @@ tests = '''
     TestSpotifyReporter
     TestVolumeManager
     TestWebAppFramework
-    #TestConfigUi   # fails on non-desktop platforms
+    TestConfigUi
     TestFlywheelRamper
     '''
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
