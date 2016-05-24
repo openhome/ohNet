@@ -56,7 +56,7 @@ tests = '''
     TestSpotifyReporter
     TestVolumeManager
     TestWebAppFramework
-    TestConfigUi
+    #TestConfigUi
     TestFlywheelRamper
     TestFriendlyNameManager
     '''
