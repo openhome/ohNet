@@ -46,12 +46,11 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock,
-                                IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock, const Brx& aMacAddr)
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer, *raopUriProvider, aFriendlyNameObservable, aMacAddr);
+    return new SourceRaop(aMediaPlayer, *raopUriProvider, aMacAddr);
 }
 
 const TChar* SourceFactory::kSourceTypeRaop = "NetAux";
@@ -78,7 +77,7 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 
 const Brn SourceRaop::kRaopPrefix("raop://");
 
-SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const Brx& aMacAddr)
     : Source(SourceFactory::kSourceNameRaop, SourceFactory::kSourceTypeRaop, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
@@ -94,7 +93,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 
     IVolumeManager& volManager = aMediaPlayer.VolumeManager();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aFriendlyNameObservable, aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aMediaPlayer.FriendlyNameObservable(), aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();

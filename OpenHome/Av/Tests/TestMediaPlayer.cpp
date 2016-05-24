@@ -386,8 +386,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     hostName.Replace(iDevice->Udn());
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, Optional<IPullableClock>(iPullableClock),
-                                             iMediaPlayer->FriendlyNameObservable(), macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, Optional<IPullableClock>(iPullableClock), macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer,
                                                  Optional<IPullableClock>(iPullableClock),

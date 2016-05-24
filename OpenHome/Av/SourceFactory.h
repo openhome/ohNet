@@ -26,8 +26,7 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock);
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock,
-                            IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock, const Brx& aMacAddr);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
                                 Optional<Media::IPullableClock> aPullableClock,
                                 Optional<IOhmTimestamper> aTxTimestamper,
