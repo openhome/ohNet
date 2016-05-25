@@ -130,8 +130,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iUserAgent(aUserAgent)
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
-    , iFnManagerUpnpAv(nullptr)
-    , iFnUpdaterUpnpAv(nullptr)
     , iMaxUiTabs(aMaxUiTabs)
     , iUiSendQueueSize(aUiSendQueueSize)
 {
@@ -193,9 +191,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
-    iFnUpdaterStandard = new Av::FriendlyNameAttributeUpdater(iMediaPlayer->FriendlyNameObservable(), *iDevice);
+    iFnUpdaterStandard = new FriendlyNameAttributeUpdater(iMediaPlayer->FriendlyNameObservable(), *iDevice);
     iFnManagerUpnpAv = new FriendlyNameManagerUpnpAv(iMediaPlayer->Product());
-    iFnUpdaterUpnpAv = new Av::FriendlyNameAttributeUpdater(*iFnManagerUpnpAv, *iDeviceUpnpAv);
+    iFnUpdaterUpnpAv = new FriendlyNameAttributeUpdater(*iFnManagerUpnpAv, *iDeviceUpnpAv);
 
     // Register with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
