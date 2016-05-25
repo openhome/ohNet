@@ -589,7 +589,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     }
     if (!DoValidate()) {
 
-        Log::Print("Ramp::Set(%u, %u, %u, %u) created invalid ramp.\n", aStart, aFragmentSize, aRemainingDuration, aDirection);
+        Log::Print("Ramp::Set(%08x, %u, %u, %u) created invalid ramp.\n", aStart, aFragmentSize, aRemainingDuration, aDirection);
         Log::Print("  before: [%08x..%08x], direction=%u\n", before.iStart, before.iEnd, before.iDirection);
         Log::Print("  after:  [%08x..%08x], direction=%u\n", iStart, iEnd, iDirection);
         Log::Print("  split:  [%08x..%08x], direction=%u\n", aSplit.iStart, aSplit.iEnd, aSplit.iDirection);
