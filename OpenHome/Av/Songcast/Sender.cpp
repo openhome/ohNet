@@ -40,13 +40,15 @@ Sender::Sender(Environment& aEnv,
                TUint aThreadPriority,
                const Brx& aName,
                TUint aMinLatencyMs,
-               const Brx& aSongcastMode)
+               const Brx& aSongcastMode,
+               Functor aUnicastOverrideEnabled)
     : iAudioBuf(nullptr)
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
     , iSongcastMode(aSongcastMode)
+    , iUnicastOverrideEnabled(aUnicastOverrideEnabled)
     , iEnabled(true)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
@@ -120,6 +122,9 @@ Msg* Sender::ProcessMsg(MsgMode* aMsg)
     if (wasEnabled && !iEnabled) {
         SendPendingAudio(true);
         iOhmSender->EnableUnicastOverride(true);
+        if (iUnicastOverrideEnabled) {
+            iUnicastOverrideEnabled();
+        }
     }
     else if (!wasEnabled && iEnabled) {
         iOhmSender->EnableUnicastOverride(false);

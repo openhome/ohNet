@@ -109,7 +109,8 @@ class SongcastSender : private Media::IPipelineObserver
 {
 public:
     SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
-                   Optional<IOhmTimestamper> aTxTimestamper, const Brx& aMode);
+                   Optional<IOhmTimestamper> aTxTimestamper, const Brx& aMode,
+                   Functor aUnicastOverrideEnabled);
     ~SongcastSender();
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
@@ -208,7 +209,8 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
-    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode()));
+    auto protocolOhm = new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode());
+    iPipeline.Add(protocolOhm);
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));
     iStoreZone = new StoreText(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(), kPowerPriorityNormal,
                                Brn("Receiver.Zone"), Brx::Empty(), iZone.MaxBytes());
@@ -218,7 +220,8 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), false);
 
     // Sender
-    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode());
+    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode(),
+                                 MakeFunctor(*protocolOhm, &ProtocolOhm::SenderUnicastOverrideEnabled));
 }
 
 SourceReceiver::~SourceReceiver()
@@ -448,7 +451,8 @@ void SourceReceiver::CurrentAdapterChanged()
 // SongcastSender
 
 SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
-                               Optional<IOhmTimestamper> aTxTimestamper, const Brx& aMode)
+                               Optional<IOhmTimestamper> aTxTimestamper, const Brx& aMode,
+                               Functor aUnicastOverrideEnabled)
     : iLock("STX1")
     , iProduct(aMediaPlayer.Product())
 {
@@ -458,7 +462,8 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     const TUint senderThreadPriority = priorityMin - 1;
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
-                         Brx::Empty(), pipeline.SenderMinLatencyMs(), aMode);
+                         Brx::Empty(), pipeline.SenderMinLatencyMs(), aMode,
+                         aUnicastOverrideEnabled);
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);

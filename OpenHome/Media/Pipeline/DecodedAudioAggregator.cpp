@@ -3,6 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -67,7 +68,12 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDrain* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 {
     OutputAggregatedAudio();
+    const auto wasAggregationDisabled = iAggregationDisabled;
     iAggregationDisabled = (iSupportsLatency && aMsg->RawPcm());
+    if (wasAggregationDisabled != iAggregationDisabled) {
+        LOG(kMedia, "DecodedAudioAggregator::ProcessMsg(MsgEncodedStream* ): iAggregationDisabled=%u\n",
+                    iAggregationDisabled);
+    }
     return aMsg;
 }
 

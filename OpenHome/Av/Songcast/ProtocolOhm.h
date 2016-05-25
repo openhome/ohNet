@@ -21,6 +21,7 @@ class ProtocolOhm : public ProtocolOhBase
 public:
     ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory,
                 Optional<IOhmTimestamper> aTimestamper, const Brx& aMode);
+    void SenderUnicastOverrideEnabled();
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
     void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) override;
@@ -34,6 +35,7 @@ private:
     TUint iNextFlushId;
     TBool iStopped;
     Mutex iStoppedLock;
+    Semaphore iSenderUnicastOverride;
     // clock pulling
     static const TInt kLockingMaxDeviation;
     static const TUint kLockingMsgCount;
