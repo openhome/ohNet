@@ -20,8 +20,7 @@ class ProtocolOhm : public ProtocolOhBase
 {
 public:
     ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory,
-                Optional<IOhmTimestamper> aTimestamper, Optional<Media::IClockPullerTimestamp> aClockPuller,
-                const Brx& aMode);
+                Optional<IOhmTimestamper> aTimestamper, const Brx& aMode);
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
     void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) override;
@@ -47,7 +46,6 @@ private:
     TUint iJiffiesBeforeTimestampsReliable;
     TInt iTimestampDelta;
     TUint iMsgsTillLock;
-    Media::IClockPullerTimestamp* iClockPuller;
 };
 
 } // namespace Av

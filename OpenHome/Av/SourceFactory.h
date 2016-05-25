@@ -10,6 +10,7 @@ namespace Net {
     class DvDevice;
 }
 namespace Media {
+    class IClockPuller;
     class IPullableClock;
 }
 namespace Av {
@@ -23,13 +24,12 @@ class SourceFactory
 {
 public:
     static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock, const Brx& aTuneInPartnerId);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock,
-                            IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
-                                Optional<Media::IPullableClock> aPullableClock,
+                                Optional<Media::IClockPuller> aClockPuller,
                                 Optional<IOhmTimestamper> aTxTimestamper,
                                 Optional<IOhmTimestamper> aRxTimestamper);
 

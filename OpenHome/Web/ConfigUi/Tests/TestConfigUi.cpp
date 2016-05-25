@@ -817,7 +817,7 @@ void SuiteConfigUi::Setup()
     Brn domainName;
     Brn type;
     TUint ver;
-    if (Ssdp::ParseUrnService(Brn("av.openhome.org:service:Configuration:1"), domainName, type, ver)) {
+    if (Ssdp::ParseUrnService(Brn("av.openhome.org:service:Config:1"), domainName, type, ver)) {
         CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(iCpStack, domainName, type, ver, added, removed);
         Blocker* blocker = new Blocker(iCpStack.Env());
         blocker->Wait(iCpStack.Env().InitParams()->MsearchTimeSecs());
@@ -857,7 +857,7 @@ void SuiteConfigUi::TestGetStaticResource()
 {
     for (auto& uri : iUris) {
         UriRetriever uriRetriever(iDvStack.Env(), *uri);
-        Bws<1024> responseBuffer;
+        Bws<2048> responseBuffer;
         WriterBuffer writerBuf(responseBuffer);
         TUint code = uriRetriever.Retrieve(Brn("index.html"), Http::kMethodGet, Brx::Empty(), writerBuf);
         TEST(code == HttpStatus::kOk.Code());
@@ -874,7 +874,8 @@ void SuiteConfigUi::TestGetStaticResource()
 
         p.Next('<');    // skip remainder of DOCTYPE
         Brn htmlOpen = p.Next('>');
-        TEST(htmlOpen == Brn("html"));
+        Log::Print(htmlOpen);
+        TEST(htmlOpen == Brn("html xmlns=\"http://www.w3.org/1999/xhtml\""));
 
         Bws<100> tag;
         p.Next('<');    // find start of next tag

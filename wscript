@@ -225,7 +225,6 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Drainer.cpp',
                 'OpenHome/Media/Pipeline/EncodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/Flusher.cpp',
-                'OpenHome/Media/Pipeline/Gorger.cpp',
                 'OpenHome/Media/Pipeline/Logger.cpp',
                 'OpenHome/Media/Pipeline/Msg.cpp',
                 'OpenHome/Media/Pipeline/Muter.cpp',
@@ -271,8 +270,6 @@ def build(bld):
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
-                'OpenHome/Media/ClockPuller.cpp',
-                'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/FlywheelRamper.cpp',
                 'OpenHome/Media/MimeTypeList.cpp',
@@ -374,7 +371,7 @@ def build(bld):
                 'OpenHome/Av/Songcast/SourceReceiver.cpp',
                 'OpenHome/Av/Songcast/Splitter.cpp',
                 'OpenHome/Av/Songcast/Sender.cpp',
-                'OpenHome/Av/Songcast/ClockPullerSongcast.cpp',
+                'OpenHome/Av/Songcast/SenderThread.cpp',
                 'OpenHome/Av/Utils/DriverSongcastSender.cpp',
             ],
             use=['OHNET', 'ohMediaPlayer'],
@@ -402,7 +399,8 @@ def build(bld):
                 'Generated/DvUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
-                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp'
+                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp',
+                'OpenHome/Av/UpnpAv/FriendlyNameUpnpAv.cpp'
             ],
             use=['OHNET', 'ohMediaPlayer'],
             target='SourceUpnpAv')
@@ -651,7 +649,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestSpotifyReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
-                'OpenHome/Media/Tests/TestGorger.cpp',
                 'OpenHome/Media/Tests/TestPruner.cpp',
                 'OpenHome/Media/Tests/TestAnalogBypassRamper.cpp',
                 'OpenHome/Media/Tests/TestMuter.cpp',
@@ -793,11 +790,6 @@ def build(bld):
             source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPreDriver',
-            install_path=None)
-    bld.program(
-            source='OpenHome/Media/Tests/TestGorgerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestGorger',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPrunerMain.cpp',

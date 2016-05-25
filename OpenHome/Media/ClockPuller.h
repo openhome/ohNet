@@ -15,14 +15,6 @@ public:
     virtual void Stop() = 0;
 };
 
-class IClockPullerTimestamp : public IClockPuller
-{
-public:
-    virtual ~IClockPullerTimestamp() {}
-    virtual void NewStream(TUint aSampleRate) = 0;
-    virtual void NotifyTimestamp(TInt aDrift, TUint aNetwork) = 0;
-};
-
 class IPullableClock
 {
 public:
@@ -39,13 +31,5 @@ public:
     virtual void PullClock(TUint aMultiplier) = 0;
 };
 
-class ClockPullerUtils
-{
-    static const TInt kMaxPull = IPullableClock::kNominalFreq / 20; // only allow pulls in the range (-5%..5%)
-public:
-    static void PullClock(TUint& aMultiplier, TInt aDriftJiffies, TUint64 aPeriodJiffies);
-};
-
 } // namespace Media
 } // namespace OpenHome
-

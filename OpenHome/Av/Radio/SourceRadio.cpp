@@ -13,7 +13,6 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Media//ClockPullerUtilisation.h>
 #include <OpenHome/Optional.h>
 
 #include <limits.h>
@@ -25,11 +24,11 @@ namespace Av {
 class UriProviderRadio : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRadio(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock);
+    UriProviderRadio(IMediaPlayer& aMediaPlayer);
 private: // from UriProvider
     Media::ModeClockPullers ClockPullers() override;
 private:
-    std::unique_ptr<Media::ClockPullerUtilisation> iClockPuller;
+    Optional<Media::IClockPuller> iClockPuller;
 };
 
 } // namespace Av
@@ -44,19 +43,16 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer,
-                                 Optional<Media::IPullableClock> aPullableClock)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer, *radioUriProvider, Brx::Empty());
 }
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer,
-                                 Optional<Media::IPullableClock> aPullableClock,
-                                 const Brx& aTuneInPartnerId)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer, *radioUriProvider, aTuneInPartnerId);
 }
@@ -66,19 +62,14 @@ const Brn SourceFactory::kSourceNameRadio("Radio");
 
 // UriProviderRadio
 
-UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock)
+UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
     : UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory())
 {
-    if (aPullableClock.Ok()) {
-        iClockPuller.reset(new ClockPullerUtilisation(aMediaPlayer.Env(), aPullableClock.Unwrap()));
-    }
 }
 
 ModeClockPullers UriProviderRadio::ClockPullers()
 {
-    // FIXME - temporarily disable clock pulling on radio until clock puller is fixed - #3855
     return ModeClockPullers();
-    //return ModeClockPullers(iClockPuller.get());
 }
 
 

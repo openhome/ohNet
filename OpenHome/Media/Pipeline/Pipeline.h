@@ -26,7 +26,7 @@ enum EPipelineSupportElements {
 class PipelineInitParams
 {
     static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
-    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 1536; // some clock pulling algorithms will prefer this is larger than kGorgerSizeDefault
+    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 2560;
     static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1024;
     static const TUint kStarvationRamperSizeDefault     = Jiffies::kPerMs * 20;
     static const TUint kMaxReservoirStreamsDefault      = 10;
@@ -41,7 +41,7 @@ public:
     // setters
     void SetEncodedReservoirSize(TUint aBytes);
     void SetDecodedReservoirSize(TUint aJiffies);
-    void SetGorgerDuration(TUint aJiffies);
+    void SetGorgerDuration(TUint aJiffies); // amount of audio required before non-pullable sources will start playing
     void SetStarvationRamperSize(TUint aJiffies);
     void SetMaxStreamsPerReservoir(TUint aCount);
     void SetLongRamp(TUint aJiffies);
@@ -100,7 +100,6 @@ class TrackInspector;
 class Skipper;
 class Waiter;
 class Stopper;
-class Gorger;
 class Reporter;
 class SpotifyReporter;
 class Router;
@@ -132,7 +131,7 @@ class Pipeline : public IPipelineElementDownstream
 
     static const TUint kSenderMinLatency        = Jiffies::kPerMs * 150;
     static const TUint kReceiverMaxLatency      = Jiffies::kPerSecond;
-    static const TUint kReservoirCount          = 5; // Encoded + Decoded + Gorger + StarvationRamper + spare
+    static const TUint kReservoirCount          = 5; // Encoded + Decoded + (optional) Songcast sender + StarvationRamper + spare
     static const TUint kSongcastFrameJiffies    = Jiffies::kPerMs * 5; // effectively hard-coded by volkano1
     static const TUint kRewinderMaxMsgs         = 100;
 
@@ -143,7 +142,7 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kMsgCountMode            = 20;
     static const TUint kMsgCountQuit            = 1;
     static const TUint kMsgCountDrain           = 5;
-    static const TUint kThreadCount             = 4; // CodecController, Gorger, StarvationRamper, FlywheelRamper
+    static const TUint kThreadCount             = 4; // CodecController, StarvationRamper, FlywheelRamper
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter);
@@ -252,9 +251,6 @@ private:
     Logger* iLoggerStopper;
     RampValidator* iRampValidatorStopper;
     DecodedAudioValidator* iDecodedAudioValidatorStopper;
-    Gorger* iGorger;
-    Logger* iLoggerGorger;
-    DecodedAudioValidator* iDecodedAudioValidatorGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
     Media::SpotifyReporter* iSpotifyReporter;

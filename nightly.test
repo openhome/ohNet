@@ -22,7 +22,6 @@ tests = '''
     TestRamper
     TestReporter
     TestPruner
-    TestGorger
     TestStarvationRamper
     TestMuter
     TestAnalogBypassRamper
@@ -56,7 +55,7 @@ tests = '''
     TestSpotifyReporter
     TestVolumeManager
     TestWebAppFramework
-    #TestConfigUi   # fails on non-desktop platforms
+    #TestConfigUi
     TestFlywheelRamper
     TestFriendlyNameManager
     '''

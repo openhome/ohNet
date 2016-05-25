@@ -588,7 +588,8 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
         }
     }
     if (!DoValidate()) {
-        Log::Print("Ramp::Set created invalid ramp.\n");
+
+        Log::Print("Ramp::Set(%u, %u, %u, %u) created invalid ramp.\n", aStart, aFragmentSize, aRemainingDuration, aDirection);
         Log::Print("  before: [%08x..%08x], direction=%u\n", before.iStart, before.iEnd, before.iDirection);
         Log::Print("  after:  [%08x..%08x], direction=%u\n", iStart, iEnd, iDirection);
         Log::Print("  split:  [%08x..%08x], direction=%u\n", aSplit.iStart, aSplit.iEnd, aSplit.iDirection);
@@ -2323,7 +2324,6 @@ TUint MsgQueueBase::NumMsgs() const
 
 void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
 {
-    // iLock must be held (using an AutoMutex)
     ASSERT(aMsg != iTail);
     ASSERT(aMsg != iHead);
 #ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
@@ -2332,8 +2332,9 @@ void MsgQueueBase::CheckMsgNotQueued(Msg* aMsg) const
         ASSERT(aMsg != msg);
         count++;
     }
-    if (count != iNumMsgs) {    // ensure a msg mid-queue hasn't had iNextMsg
-        // modified elsewhere
+    if (count != iNumMsgs) {
+        Log::Print("MsgQueueBase::CheckMsgNotQueued - iNumMsgs=%u, found %u\n",
+                   iNumMsgs, count);
         ASSERTS();
     }
 #endif

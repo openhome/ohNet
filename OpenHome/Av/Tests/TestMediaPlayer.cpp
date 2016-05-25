@@ -27,6 +27,7 @@
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Web/ConfigUi/ConfigUiMediaPlayer.h>
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
+#include <OpenHome/Av/UpnpAv/FriendlyNameUpnpAv.h>
 
 #undef LPEC_ENABLE
 
@@ -129,6 +130,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iUserAgent(aUserAgent)
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
+    , iFnManagerUpnpAv(nullptr)
+    , iFnUpdaterUpnpAv(nullptr)
     , iMaxUiTabs(aMaxUiTabs)
     , iUiSendQueueSize(aUiSendQueueSize)
 {
@@ -191,7 +194,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
     iFnUpdaterStandard = new Av::FriendlyNameAttributeUpdater(iMediaPlayer->FriendlyNameObservable(), *iDevice);
-    iFnUpdaterUpnpAv = new Av::FriendlyNameAttributeUpdater(iMediaPlayer->FriendlyNameObservable(), *iDeviceUpnpAv, Brn(":MediaRenderer"));
+    iFnManagerUpnpAv = new FriendlyNameManagerUpnpAv(iMediaPlayer->Product());
+    iFnUpdaterUpnpAv = new Av::FriendlyNameAttributeUpdater(*iFnManagerUpnpAv, *iDeviceUpnpAv);
 
     // Register with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
@@ -209,6 +213,7 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iPowerObserver;
     delete iFnUpdaterStandard;
     delete iFnUpdaterUpnpAv;
+    delete iFnManagerUpnpAv;
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
     delete iPipelineObserver;
@@ -369,22 +374,22 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer));
     if (iTuneInPartnerId.Bytes() == 0) {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, Optional<IPullableClock>(iPullableClock)));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer));
     }
     else {
-        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, Optional<IPullableClock>(iPullableClock), iTuneInPartnerId));
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, iTuneInPartnerId));
     }
+
     iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv));
 
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, Optional<IPullableClock>(iPullableClock),
-                                             iMediaPlayer->FriendlyNameObservable(), macAddr));
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, Optional<IClockPuller>(nullptr), macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer,
-                                                 Optional<IPullableClock>(iPullableClock),
+                                                 Optional<IClockPuller>(nullptr),
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
                                                  Optional<IOhmTimestamper>(iRxTimestamper)));
 

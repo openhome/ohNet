@@ -52,11 +52,9 @@ const TInt ProtocolOhm::kLockingMaxDeviation = Jiffies::kPerMs / 2;
 const TUint ProtocolOhm::kLockingMsgCount = 4;
 
 ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFactory& aTrackFactory,
-                         Optional<IOhmTimestamper> aTimestamper, Optional<IClockPullerTimestamp> aClockPuller,
-                         const Brx& aMode)
+                         Optional<IOhmTimestamper> aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
     , iStoppedLock("POHM")
-    , iClockPuller(aClockPuller.Ptr())
 {
 }
 
@@ -202,9 +200,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     if (iTimestamper != nullptr) {
         iTimestamper->Stop();
     }
-    if (iClockPuller != nullptr) {
-        iClockPuller->Stop();
-    }
 
     iReadBuffer.ReadFlush();
     iTimerJoin->Cancel();
@@ -224,20 +219,13 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
 void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
 {
     aDiscard = false;
-    if (iTimestamper == nullptr || iClockPuller == nullptr) {
+    if (iTimestamper == nullptr) {
         return;
     }
     const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
     if (iCheckForTimestamp) {
         iCheckForTimestamp = false;
         iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr => expect timestamps
-        if (iStreamIsTimestamped) {
-            iClockPuller->Start(0);
-        }
-        else {
-            LOG(kSongcast, "ProtocolOhm::ProcessTimestamps - stream NOT timestamped\n");
-            iClockPuller->Stop();
-        }
     }
 
     if (!iStreamIsTimestamped) {
@@ -251,7 +239,6 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
         (void)iTimestamper->SetSampleRate(sampleRate);
         iTimestamper->Stop();
         iTimestamper->Start(iEndpoint);
-        iClockPuller->NewStream(sampleRate); // despite function name, try only reporting changes in clock family
 
         iTimestamperFreq = timestamperFreq;
         iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
@@ -275,6 +262,8 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
         else {
             iJiffiesBeforeTimestampsReliable -= msgJiffies;
         }
+        aDiscard = true;
+        return;
     }
 
     if (!iLockedToStream) {
@@ -296,14 +285,10 @@ void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
         else if (--iMsgsTillLock == 0) {
             iLockedToStream = true;
         }
-        aDiscard = true;
-        return;
-    }
-
-    if (timestampReliable && msgTimestamped) {
-        const TUint networkTimestamp = aMsg.NetworkTimestamp();
-        const TInt drift = iTimestampDelta - static_cast<TInt>(aMsg.RxTimestamp() - networkTimestamp);
-        iClockPuller->NotifyTimestamp(drift, networkTimestamp);
+        if (!iLockedToStream) {
+            aDiscard = true;
+            return;
+        }
     }
 }
 

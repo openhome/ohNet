@@ -14,7 +14,6 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaopApple.h>
-#include <OpenHome/Media//ClockPullerUtilisation.h>
 #include <OpenHome/Optional.h>
 
 #include <limits.h>
@@ -26,11 +25,11 @@ namespace Av {
 class UriProviderRaop : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock);
+    UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller);
 private: // from UriProvider
     Media::ModeClockPullers ClockPullers() override;
 private:
-    std::unique_ptr<Media::ClockPullerUtilisation> iClockPuller;
+    Optional<Media::IClockPuller> iClockPuller;
 };
 
 } // namespace Av
@@ -46,12 +45,11 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock,
-                                IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aClockPuller);
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer, *raopUriProvider, aFriendlyNameObservable, aMacAddr);
+    return new SourceRaop(aMediaPlayer, *raopUriProvider, aMacAddr);
 }
 
 const TChar* SourceFactory::kSourceTypeRaop = "NetAux";
@@ -60,17 +58,15 @@ const Brn SourceFactory::kSourceNameRaop("Net Aux");
 
 // UriProviderRaop
 
-UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock)
+UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller)
     : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
+    , iClockPuller(aClockPuller)
 {
-    if (aPullableClock.Ok()) {
-        iClockPuller.reset(new ClockPullerUtilisation(aMediaPlayer.Env(), aPullableClock.Unwrap()));
-    }
 }
 
 ModeClockPullers UriProviderRaop::ClockPullers()
 {
-    return ModeClockPullers(iClockPuller.get());
+    return ModeClockPullers(iClockPuller.Ptr());
 }
 
 
@@ -78,7 +74,7 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 
 const Brn SourceRaop::kRaopPrefix("raop://");
 
-SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const Brx& aMacAddr)
     : Source(SourceFactory::kSourceNameRaop, SourceFactory::kSourceTypeRaop, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
@@ -94,7 +90,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 
     IVolumeManager& volManager = aMediaPlayer.VolumeManager();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aFriendlyNameObservable, aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aMediaPlayer.FriendlyNameObservable(), aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();

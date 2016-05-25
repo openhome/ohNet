@@ -9,7 +9,6 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
-#include <OpenHome/Av/Songcast/ClockPullerSongcast.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
@@ -18,6 +17,7 @@
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
 #include <OpenHome/Av/Songcast/Splitter.h>
+#include <OpenHome/Av/Songcast/SenderThread.h>
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -37,11 +37,11 @@ namespace Av {
 class UriProviderSongcast : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderSongcast(IMediaPlayer& aMediaPlayer, ClockPullerSongcast* aClockPuller);
+    UriProviderSongcast(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller);
 private: // from UriProvider
     Media::ModeClockPullers ClockPullers() override;
 private:
-    ClockPullerSongcast* iClockPuller;
+    Optional<Media::IClockPuller> iClockPuller;
 };
 
 class SongcastSender;
@@ -51,7 +51,7 @@ class SourceReceiver : public Source, private ISourceReceiver, private IZoneList
     static const TChar* kProtocolInfo;
 public:
     SourceReceiver(IMediaPlayer& aMediaPlayer,
-                   Optional<Media::IPullableClock> aPullableClock,
+                   Optional<Media::IClockPuller> aClockPuller,
                    Optional<IOhmTimestamper> aTxTimestamper,
                    Optional<IOhmTimestamper> aRxTimestamper);
     ~SourceReceiver();
@@ -87,7 +87,6 @@ private:
     ThreadFunctor* iZoneChangeThread;
     ZoneHandler* iZoneHandler;
     ProviderReceiver* iProviderReceiver;
-    ClockPullerSongcast* iClockPuller;
     UriProviderSongcast* iUriProvider;
     OhmMsgFactory* iOhmMsgFactory;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
@@ -131,6 +130,7 @@ private:
     void UpdateSenderName();
 private:
     Mutex iLock;
+    SenderThread* iSenderThread;
     Sender* iSender;
     Product& iProduct;
     Media::Logger* iLoggerSender;
@@ -153,11 +153,11 @@ using namespace OpenHome::Configuration;
 // SourceFactory
 
 ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
-                                    Optional<IPullableClock> aPullableClock,
+                                    Optional<IClockPuller> aClockPuller,
                                     Optional<IOhmTimestamper> aTxTimestamper,
                                     Optional<IOhmTimestamper> aRxTimestamper)
 { // static
-    return new SourceReceiver(aMediaPlayer, aPullableClock, aTxTimestamper, aRxTimestamper);
+    return new SourceReceiver(aMediaPlayer, aClockPuller, aTxTimestamper, aRxTimestamper);
 }
 
 const TChar* SourceFactory::kSourceTypeReceiver = "Receiver";
@@ -166,7 +166,7 @@ const Brn SourceFactory::kSourceNameReceiver("Songcast");
 
 // UriProviderSongcast
 
-UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer, ClockPullerSongcast* aClockPuller)
+UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller)
     : UriProviderSingleTrack(SourceFactory::kSourceTypeReceiver, true, true, aMediaPlayer.TrackFactory())
     , iClockPuller(aClockPuller)
 {
@@ -174,10 +174,7 @@ UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer, ClockPuller
 
 ModeClockPullers UriProviderSongcast::ClockPullers()
 {
-    if (iClockPuller == nullptr) {
-        return ModeClockPullers();
-    }
-    return iClockPuller->ClockPullers();
+    return ModeClockPullers(iClockPuller.Ptr());
 }
 
 
@@ -186,7 +183,7 @@ ModeClockPullers UriProviderSongcast::ClockPullers()
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
 SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
-                               Optional<IPullableClock> aPullableClock,
+                               Optional<Media::IClockPuller> aClockPuller,
                                Optional<IOhmTimestamper> aTxTimestamper,
                                Optional<IOhmTimestamper> aRxTimestamper)
     : Source(SourceFactory::kSourceNameReceiver, SourceFactory::kSourceTypeReceiver, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
@@ -194,7 +191,6 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     , iActivationLock("SRX2")
     , iUriLock("SRX3")
     , iEnv(aMediaPlayer.Env())
-    , iClockPuller(nullptr)
     , iTrackId(Track::kIdNone)
     , iPlaying(false)
     , iQuit(false)
@@ -208,14 +204,11 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
 
     // Receiver
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
-    if (aPullableClock.Ok()) {
-        iClockPuller = new ClockPullerSongcast(aMediaPlayer.Env(), aPullableClock.Unwrap());
-    }
-    iUriProvider = new UriProviderSongcast(aMediaPlayer, iClockPuller);
+    iUriProvider = new UriProviderSongcast(aMediaPlayer, aClockPuller);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
-    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, *iClockPuller, iUriProvider->Mode()));
+    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode()));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));
     iStoreZone = new StoreText(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(), kPowerPriorityNormal,
                                Brn("Receiver.Zone"), Brx::Empty(), iZone.MaxBytes());
@@ -232,7 +225,6 @@ SourceReceiver::~SourceReceiver()
 {
     delete iSender;
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
-    delete iClockPuller;
     delete iStoreZone;
     delete iOhmMsgFactory;
     iZoneHandler->RemoveListener(*this);
@@ -470,7 +462,8 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);
-    iSplitter = new Splitter(*iLoggerSender, aMode);
+    iSenderThread = new SenderThread(*iLoggerSender, priorityMin);
+    iSplitter = new Splitter(*iSenderThread, aMode);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iSplitter->SetUpstream(pipeline.InsertElements(*iLoggerSplitter));
     //iLoggerSplitter->SetEnabled(true);
@@ -485,6 +478,7 @@ SongcastSender::~SongcastSender()
 {
     delete iLoggerSplitter;
     delete iSplitter;
+    delete iSenderThread;
     delete iLoggerSender;
     delete iSender;
 }
