@@ -152,7 +152,6 @@ void VariableDelayBase::ResetStatusAndRamp()
     iRampDirection = Ramp::ENone;
     iCurrentRampValue = Ramp::kMax;
     iRemainingRampSize = iRampDuration;
-    iLastPulledRampValue = Ramp::kMax;
 }
 
 void VariableDelayBase::SetupRamp()
@@ -164,13 +163,11 @@ void VariableDelayBase::SetupRamp()
     {
     case EStarting:
         iRampDirection = Ramp::ENone;
-        iCurrentRampValue = iLastPulledRampValue;
         iRemainingRampSize = iRampDuration;
         break;
     case ERunning:
         iStatus = ERampingDown;
         iRampDirection = Ramp::EDown;
-        iCurrentRampValue = iLastPulledRampValue;
         iRemainingRampSize = iRampDuration;
         break;
     case ERampingDown:
@@ -294,8 +291,7 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
         iStatus = ERunning;
         // fallthrough
     case ERunning:
-        iLastPulledRampValue = aMsg->Ramp().End();
-        // nothing more to do, allow the message to be passed out unchanged
+        // nothing to do, allow the message to be passed out unchanged
         break;
     case ERampingDown:
     {
@@ -328,6 +324,7 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
             iStatus = ERampingUp;
             iRampDirection = Ramp::EUp;
             iRemainingRampSize = iRampDuration;
+            iCurrentRampValue = Ramp::kMin;
             auto s = iDecodedStream->StreamInfo();
             const auto sampleStart = Jiffies::ToSamples(msg->TrackOffset() + msg->Jiffies(), s.SampleRate());
             msg->RemoveRef();
