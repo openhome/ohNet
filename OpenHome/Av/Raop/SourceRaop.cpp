@@ -14,7 +14,6 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaopApple.h>
-#include <OpenHome/Media//ClockPullerUtilisation.h>
 #include <OpenHome/Optional.h>
 
 #include <limits.h>
@@ -26,11 +25,11 @@ namespace Av {
 class UriProviderRaop : public Media::UriProviderSingleTrack
 {
 public:
-    UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock);
+    UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller);
 private: // from UriProvider
     Media::ModeClockPullers ClockPullers() override;
 private:
-    std::unique_ptr<Media::ClockPullerUtilisation> iClockPuller;
+    Optional<Media::IClockPuller> iClockPuller;
 };
 
 } // namespace Av
@@ -46,9 +45,9 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aPullableClock);
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aClockPuller);
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aMacAddr);
 }
@@ -59,17 +58,15 @@ const Brn SourceFactory::kSourceNameRaop("Net Aux");
 
 // UriProviderRaop
 
-UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IPullableClock> aPullableClock)
+UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller)
     : UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory())
+    , iClockPuller(aClockPuller)
 {
-    if (aPullableClock.Ok()) {
-        iClockPuller.reset(new ClockPullerUtilisation(aMediaPlayer.Env(), aPullableClock.Unwrap()));
-    }
 }
 
 ModeClockPullers UriProviderRaop::ClockPullers()
 {
-    return ModeClockPullers(iClockPuller.get());
+    return ModeClockPullers(iClockPuller.Ptr());
 }
 
 
