@@ -5,17 +5,14 @@
 #include <OpenHome/Optional.h>
 
 namespace OpenHome {
-    class IObservableBrx;
 namespace Net {
     class DvDevice;
 }
 namespace Media {
     class IClockPuller;
-    class IPullableClock;
 }
 namespace Av {
 
-class IFriendlyNameObservable;
 class ISource;
 class IMediaPlayer;
 class IOhmTimestamper;
