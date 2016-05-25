@@ -13,7 +13,7 @@ class SenderThread : public Media::IPipelineElementDownstream
                    , private Media::IMsgProcessor
                    , private INonCopyable
 {
-    static const TUint kMaxMsgBacklog = 100; // asserts if ever exceeded
+    static const TUint kMaxMsgBacklog; // asserts if ever exceeded
 public:
     SenderThread(Media::IPipelineElementDownstream& aDownstream,
                  TUint aThreadPriority);
@@ -43,7 +43,7 @@ private: // from Media::IMsgProcessor
 private:
     Media::IPipelineElementDownstream& iDownstream;
     ThreadFunctor* iThread;
-    FifoLite<Media::Msg*, kMaxMsgBacklog> iFifo;
+    Fifo<Media::Msg*> iFifo;
     Semaphore iShutdownSem;
     TBool iQuit;
 };

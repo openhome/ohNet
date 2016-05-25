@@ -10,9 +10,12 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
+const TUint SenderThread::kMaxMsgBacklog = 100;
+
 SenderThread::SenderThread(IPipelineElementDownstream& aDownstream,
                            TUint aThreadPriority)
     : iDownstream(aDownstream)
+    , iFifo(kMaxMsgBacklog)
     , iShutdownSem("SGSN", 0)
     , iQuit(false)
 {
