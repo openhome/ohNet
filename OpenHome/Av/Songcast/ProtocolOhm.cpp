@@ -55,7 +55,13 @@ ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFa
                          Optional<IOhmTimestamper> aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
     , iStoppedLock("POHM")
+    , iSenderUnicastOverride("POM2", 0)
 {
+}
+
+void ProtocolOhm::SenderUnicastOverrideEnabled()
+{
+    iSenderUnicastOverride.Signal();
 }
 
 ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
@@ -74,7 +80,9 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     // ...to ensure any songcast sender first stops, removing membership of their multicast group
     // ...this helps keep a full player at membership of 4 multicast groups
     // ...matching hardware limits of some clients
+    (void)iSenderUnicastOverride.Clear();
     WaitForPipelineToEmpty();
+    iSenderUnicastOverride.Wait();
     TBool firstJoin = true;
     iCheckForTimestamp = true;
     iStreamIsTimestamped = false;

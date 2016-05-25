@@ -43,7 +43,8 @@ public:
            TUint aThreadPriority,
            const Brx& aName,
            TUint aMinLatencyMs,
-           const Brx& aSongcastMode);
+           const Brx& aSongcastMode,
+           Functor aUnicastOverrideEnabled);
     ~Sender();
     void SetName(const Brx& aName);
     void SetImageUri(const Brx& aUri);
@@ -133,6 +134,7 @@ private:
     TUint iNumChannels;
     const TUint iMinLatencyMs;
     const Media::BwsMode iSongcastMode;
+    Functor iUnicastOverrideEnabled;
     TBool iEnabled;
 };
 
