@@ -81,7 +81,6 @@ private:
     TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
-    TUint iLastPulledRampValue;
     BwsMode iMode;
     MsgDecodedStream* iDecodedStream;
 };
