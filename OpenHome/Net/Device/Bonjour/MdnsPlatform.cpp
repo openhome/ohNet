@@ -70,7 +70,25 @@ void MdnsPlatform::MdnsService::Set(MdnsServiceAction aAction, TUint aHandle, Se
     iAction = aAction;
     iHandle = aHandle;
     iService = &aService;
-    iName.Replace((aName == NULL) ? "" : aName);
+
+    if(aName==NULL)
+    {
+        iName.Replace(Brx::Empty());
+    }
+    else
+    {
+        // truncate the name if necessary
+        Brn name(aName);
+        TUint maxBytes = iName.MaxBytes()-1; // leave room for NULL terminator
+
+        if (name.Bytes()>maxBytes)
+        {
+            name.Set((TByte*)aName, maxBytes);
+        }
+
+        iName.Replace(name);
+    }
+
     iType.Replace((aType == NULL) ? "" : aType);
     iInterface = aInterface;
     iPort = aPort;
@@ -368,12 +386,12 @@ void MdnsPlatform::ServiceThread()
 void MdnsPlatform::Listen()
 {
     LOG(kBonjour, "Bonjour             Listen\n");
-    
+
     mDNSAddr dst;
     mDNSIPPort dstport;
     SetAddress(dst, iMulticast);
     SetPort(dstport, iMulticast);
-    
+
     mDNSAddr src;
     mDNSIPPort srcport;
     while (!iStop) {
@@ -438,7 +456,7 @@ void MdnsPlatform::SetPort(mDNSIPPort& aPort, TUint aValue)
 void MdnsPlatform::SetDomainLabel(domainlabel& aLabel, const TChar* aBuffer)
 {
     LOG(kBonjour, "Bonjour             SetDomainLabel: %s\n", aBuffer);
-    MakeDomainLabelFromLiteralString(&aLabel, aBuffer);   
+    MakeDomainLabelFromLiteralString(&aLabel, aBuffer);
     LOG(kBonjour, "Bonjour             SetDomainLabel Length: %d\n", aLabel.c[0]);
 }
 
@@ -501,7 +519,7 @@ void MdnsPlatform::DeregisterService(TUint aHandle)
     iServicesLock.Signal();
     LOG(kBonjour, "Bonjour             DeregisterService - Complete\n");
 }
-    
+
 void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo)
 {
     LOG(kBonjour, "Bonjour             RegisterService\n");
@@ -739,9 +757,9 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
         LOG(kBonjour, "Bonjour             mDNSPlatformSendUDP - local only, ignore\n");
         return 0;
     }
-    
+
     LOG(kBonjour, "Bonjour             mDNSPlatformSendUDP\n");
-    
+
     MdnsPlatform& platform = *(MdnsPlatform*)m->p;
     Brn buffer((const TByte*)aMessage, (TUint)((const TByte*)aEnd - (const TByte*)aMessage));
     ASSERT(aAddress->type == mDNSAddrType_IPv4);
@@ -751,7 +769,7 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
         aAddress->ip.v4.b[1],
         aAddress->ip.v4.b[2],
         aAddress->ip.v4.b[3] );
-    
+
     Endpoint endpoint(Arch::BigEndian2(aPort.NotAnInteger), address);
     mStatus status;
     try{
