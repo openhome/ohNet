@@ -76,10 +76,10 @@ OsContext* OsCreate()
 
 #ifndef DEFINE_WINDOWS_UNIVERSAL
     char* noErrDlgs = getenv("OHNET_NO_ERROR_DIALOGS");
+    OsContext* ctx = malloc(sizeof(*ctx));
     if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
-    OsContext* ctx = malloc(sizeof(*ctx));
 #else
     OsContext* ctx = (OsContext*)malloc(sizeof(*ctx));
 #endif
