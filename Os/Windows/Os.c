@@ -157,11 +157,7 @@ void OsDestroy(OsContext* aContext)
 void OsQuit(OsContext* aContext)
 {
     UNUSED(aContext);
-#ifndef DEFINE_WINDOWS_UNIVERSAL
     abort();
-#else
-    // TODO: find an alternative to abort - as terminate, abort and exit all fail windows store validation
-#endif
 }
 
 
