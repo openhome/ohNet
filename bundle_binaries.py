@@ -39,12 +39,12 @@ ALL_TARGETS = {
         BuildTarget("Windows", "x86",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
         BuildTarget("Windows", "x64",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
 
-        BuildTarget("Windows10", "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
-        BuildTarget("Windows10", "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
-        BuildTarget("Windows10", "arm",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
-        BuildTarget("Windows10", "x86",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
-        BuildTarget("Windows10", "x64",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
-        BuildTarget("Windows10", "arm",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
+        BuildTarget("Windows81", "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
+        BuildTarget("Windows81", "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
+        BuildTarget("Windows81", "arm",   "Debug"):   BuildInfo(builddir="Build/Obj/Windows/Debug"),
+        BuildTarget("Windows81", "x86",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
+        BuildTarget("Windows81", "x64",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
+        BuildTarget("Windows81", "arm",   "Release"): BuildInfo(builddir="Build/Obj/Windows/Release"),
 
         BuildTarget("Linux",   "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
         BuildTarget("Linux",   "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),

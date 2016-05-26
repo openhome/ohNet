@@ -3,7 +3,7 @@
 
 openhome_system=Windows
 !if "$(windows_universal)"=="1"
-openhome_system=Windows10
+openhome_system=Windows81
 !endif
 
 !if [cl 2>&1 | find "for x64" > nul] == 0
@@ -22,22 +22,27 @@ openhome_architecture=arm
 !endif
 
 !if "$(windows_universal)"=="1"
-defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D_WIN32_WINNT=0x0603 /D "_UNICODE" /D "UNICODE" 
+defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_WINDLL" /D "_UNICODE" /D "UNICODE" 
 error_handling = /EHsc
-additional_includes = /AI "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\store\references" /FU Platform.winmd /FU Windows.winmd
-universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_PC_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
-link_libs = Ws2_32.lib WindowsApp.lib
+additional_includes = /FU"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1\ExtensionSDKs\Microsoft.VCLibs\12.0\References\CommonConfiguration\neutral\platform.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" 
+universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
+link_libs = Ws2_32.lib kernel32.lib 
 machine = X86
+lib_path_root = 
+store_lib_path = store
 !if "$(openhome_architecture)"=="x64"
 machine = X64
+store_lib_path = $(store_lib_path)\amd64
 !elseif "$(openhome_architecture)"=="arm"
 machine = ARM
+store_lib_path = $(store_lib_path)\arm
 !endif
+additional_lib_path = "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\lib\$(store_lib_path)"
 safeseh =
 !if "$(openhome_architecture)"=="x86"
 safeseh = /SAFESEH
 !endif
-link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS 
+link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS /LIBPATH:$(additional_lib_path)
 static_or_dynamic = /MD
 !else
 defines_universal = -D_CRT_SECURE_NO_WARNINGS

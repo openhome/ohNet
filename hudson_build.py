@@ -111,9 +111,9 @@ class JenkinsBuild():
                 'Linux-ppc32': { 'os':'linux', 'arch':'ppc32', 'publish':True, 'system':'Linux'},
                 'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True, 'system':'Windows'},
                 'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True, 'system':'Windows'},
-                'Windows10-x86': { 'os': 'windows10', 'arch':'x86', 'publish':True, 'system':'Windows10'},
-                'Windows10-x64': { 'os': 'windows10', 'arch':'x64', 'publish':True, 'system':'Windows10'},
-                'Windows10-arm': { 'os': 'windows10', 'arch':'arm', 'publish':True, 'system':'Windows10'},
+                'Windows81-x86': { 'os': 'Windows81', 'arch':'x86', 'publish':True, 'system':'Windows81'},
+                'Windows81-x64': { 'os': 'Windows81', 'arch':'x64', 'publish':True, 'system':'Windows81'},
+                'Windows81-arm': { 'os': 'Windows81', 'arch':'arm', 'publish':True, 'system':'Windows81'},
                 'Macos-x64': { 'os': 'macos', 'arch':'x86', 'publish':False, 'system':'Mac'}, # Old Jenkins label
                 'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
@@ -145,18 +145,15 @@ class JenkinsBuild():
             args.append('vcvarsall.bat')
             args.append('amd64')
             os.environ['CS_PLATFORM'] = 'x64'
-        if os_platform == 'windows10' and arch == 'x86':
+        if os_platform == 'Windows81' and arch == 'x86':
             args.append('vcvarsall.bat')
             args.append('amd64_x86')
-            args.append('store')
-        if os_platform == 'windows10' and arch == 'x64':
+        if os_platform == 'Windows81' and arch == 'x64':
             args.append('vcvarsall.bat')
             args.append('amd64')
-            args.append('store')
-        if os_platform == 'windows10' and arch == 'arm':
+        if os_platform == 'Windows81' and arch == 'arm':
             args.append('vcvarsall.bat')
             args.append('amd64_arm')
-            args.append('store')
         if os_platform == 'linux' and arch == 'armel':
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'linux' and arch == 'armhf':
@@ -185,7 +182,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32']) or (os_platform == 'Android') or (os_platform == 'windows10'):
+        if (arch in ['armel', 'armhf', 'armv7', 'arm64', 'armv5', 'armv6', 'mipsel', 'ppc32']) or (os_platform == 'Android') or (os_platform == 'Windows81'):
             args.append('--buildonly')
         elif arch == 'x64':
             if os_platform  == 'macos':
@@ -222,8 +219,8 @@ class JenkinsBuild():
             args.extend(['--qnap','--buildonly'])
         if os_platform == 'Core':
             args.append('--core')
-        if os_platform == 'windows10':
-            args.append('--windows10')
+        if os_platform == 'Windows81':
+            args.append('--Windows81')
         if nightly == '1':
             args.append('--full')
             if os_platform == 'linux' and arch == 'x86':
