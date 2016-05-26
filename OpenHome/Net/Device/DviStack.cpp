@@ -32,7 +32,9 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     iDviServerWebSocket = new DviServerWebSocket(*this);
     const TChar* hostName = NULL;
     if (initParams->DvIsBonjourEnabled(hostName)) {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         iMdns = new OpenHome::Net::MdnsProvider(iEnv, hostName);
+#endif
     }
     if (initParams->DvNumLpecThreads() == 0) {
         iLpecServer = NULL;
@@ -46,7 +48,9 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
 DvStack::~DvStack()
 {
     delete iLpecServer;
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     delete iMdns;
+#endif
     delete iDviServerWebSocket;
     delete iDviServerUpnp;
     delete iDviDeviceMap;

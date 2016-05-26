@@ -30,10 +30,16 @@ void Converter::ToXmlEscaped(IWriter& aWriter, TByte aValue)
     case '\"':
         aWriter.Write(Brn("&quot;"));
         break;
+#if 0
+    // (May 2016) Disable escaping line breaks for now.
+    // Devices that use this will require that control points are able to unescape.
+    // CPs that use ohNet won't be able to unescape until they update their ohNet version.
+    // This can be re-enabled once CPs have had a reasonable time to update.
     case '\r':
     case '\n':
         aWriter.Write(Brn("&#xA;"));
         break;
+#endif
     default:
         aWriter.Write(aValue);
         break;

@@ -2,6 +2,9 @@
 #
 
 openhome_system=Windows
+!if "$(windows_universal)"=="1"
+openhome_system=Windows81
+!endif
 
 !if [cl 2>&1 | find "for x64" > nul] == 0
 !message Detected 64-bit compiler.
@@ -12,22 +15,59 @@ openhome_architecture=x86
 !elseif [cl 2>&1 | find "for x86" > nul] == 0
 !message Detected 32-bit compiler.
 openhome_architecture=x86
+!elseif [cl 2>&1 | find "for ARM" > nul] == 0
+openhome_architecture=arm
 !else
 !message Cannot tell if compiler is 32-bit or 64-bit. Please specify openhome_architecture=x64 or openhome_architecture=x86.
+!endif
+
+!if "$(windows_universal)"=="1"
+defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_WINDLL" /D "_UNICODE" /D "UNICODE" 
+error_handling = /EHsc
+additional_includes = /FU"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1\ExtensionSDKs\Microsoft.VCLibs\12.0\References\CommonConfiguration\neutral\platform.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" 
+universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
+link_libs = Ws2_32.lib kernel32.lib 
+machine = X86
+lib_path_root = 
+store_lib_path = store
+!if "$(openhome_architecture)"=="x64"
+machine = X64
+store_lib_path = $(store_lib_path)\amd64
+!elseif "$(openhome_architecture)"=="arm"
+machine = ARM
+store_lib_path = $(store_lib_path)\arm
+!endif
+additional_lib_path = "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\lib\$(store_lib_path)"
+safeseh =
+!if "$(openhome_architecture)"=="x86"
+safeseh = /SAFESEH
+!endif
+link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS /LIBPATH:$(additional_lib_path)
+static_or_dynamic = /MD
+force_cpp = /TP
+!else
+defines_universal = -D_CRT_SECURE_NO_WARNINGS
+error_handling = /EHa
+additional_includes =
+universal_cppflags =
+link_libs = Ws2_32.lib Iphlpapi.lib Dbghelp.lib
+link_opts =
+static_or_dynamic = /MT
+force_cpp = 
 !endif
 
 !if "$(debug)"=="1"
 link_flag_debug = /debug
 link_flag_debug_dll = $(link_flag_debug)
-debug_specific_cflags = /MTd /Z7 /Od /RTC1
+debug_specific_cflags = $(static_or_dynamic)d /Z7 /Od /RTC1
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 openhome_configuration = Debug
 android_ndk_debug = 1
 !else
 link_flag_debug =
-link_flag_debug_dll = /debug /opt:ref
-debug_specific_cflags = /MT /Ox
+link_flag_debug_dll = /OPT:REF
+debug_specific_cflags = $(static_or_dynamic) /Ox
 debug_csharp = /optimize+ /debug:pdbonly
 build_dir = Release
 openhome_configuration = Release
@@ -38,9 +78,17 @@ android_ndk_debug = 0
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags_third_party = $(debug_specific_cflags) /W4 /EHa /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS
-cflags = $(cflags_third_party) /WX
-cppflags = $(cflags)
+cflags_tp = $(debug_specific_cflags) /c /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
+cflags = $(cflags_tp) $(additional_includes) /WX
+cppflags = $(cflags) $(universal_cppflags) $(force_cpp) 
+
+# force everything through cpp compiler if building winrt
+!if "$(windows_universal)"=="1"
+cflags_third_party = $(cppflags)
+!else
+cflags_third_party = $(cflags_tp)
+!endif
+
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
@@ -50,18 +98,18 @@ osdir = Windows
 objext = obj
 libprefix =
 libext = lib
-sharedlibprefix = 
+sharedlibprefix =
 sharedlibext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
-link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /incremental:no
+link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map $(link_libs) $(link_opts) /incremental:no
 linkoutput = /out:
 dllprefix =
 dllext = dll
 linkopts_ohNet =
-link_dll = link /nologo $(link_flag_debug_dll) /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
+link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll 
 csharp = csc /nologo /platform:anycpu
-csharpdefines = 
+csharpdefines =
 publicjavadir = OpenHome\Net\Bindings\Java^\
 includes_jni = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
 link_jvm = "$(JAVA_HOME)\lib\jvm.lib"

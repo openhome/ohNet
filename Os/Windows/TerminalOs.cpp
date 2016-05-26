@@ -16,7 +16,11 @@ TerminalOs::~TerminalOs()
 
 TChar TerminalOs::GetChar()
 {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     return (TChar) (_getch());
+#else
+  return (TChar)'\0';
+#endif
 }
 
 void TerminalOs::Print(const Brx& aBuffer)

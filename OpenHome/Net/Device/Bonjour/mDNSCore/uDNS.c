@@ -32,6 +32,9 @@
 #endif
 #include "uDNS.h"
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+
+
 #if(defined(_MSC_VER))
 	// Disable "assignment within conditional expression".
 	// Other compilers understand the convention that if you place the assignment expression within an extra pair
@@ -4934,3 +4937,7 @@ struct CompileTimeAssertionChecks_uDNS
 	char sizecheck_tcpInfo_t     [(sizeof(tcpInfo_t)      <=  9056) ? 1 : -1];
 	char sizecheck_SearchListElem[(sizeof(SearchListElem) <=  5000) ? 1 : -1];
 	};
+
+#else // DEFINE_WINDOWS_UNIVERSAL
+
+#endif // DEFINE_WINDOWS_UNIVERSAL

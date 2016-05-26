@@ -317,12 +317,12 @@ const Brx& DviProtocolUpnp::ProtocolName() const
 void DviProtocolUpnp::Enable()
 {
     iLock.Wait();
-    
+
     // check we have at least the basic attributes requried for advertisement
     ASSERT(Domain().Bytes() > 0);
     ASSERT(Type().Bytes() > 0);
     ASSERT(Version() > 0);
-    
+
     for (TUint i=0; i<iAdapters.size(); i++) {
         DviProtocolUpnpAdapterSpecificData* adapter = iAdapters[i];
         Bws<Uri::kMaxUriBytes> uriBase;
@@ -684,7 +684,9 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(DvStack& 
     , iMask(aAdapter.Mask())
     , iUriBase(aUriBase)
     , iServerPort(aServerPort)
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     , iBonjourWebPage(0)
+#endif
     , iDevice(NULL)
 {
     iListener = &(iDvStack.Env().MulticastListenerClaim(aAdapter.Address()));
@@ -702,10 +704,12 @@ void DviProtocolUpnpAdapterSpecificData::Destroy()
 
 DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
 {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
         delete iBonjourWebPage;
     }
+#endif
     iListener->RemoveMsearchHandler(iId);
     iDvStack.Env().MulticastListenerRelease(iAdapter);
 }
@@ -765,6 +769,18 @@ void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
     lock.Signal();
 }
 
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+
+void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* /*aName*/, const Brx& /*aUdn*/, const Brx& /*aProtocol*/, const Brx& /*aResourceDir*/)
+{
+}
+
+void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
+{
+}
+
+#else
+
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
 {
     if (aName != NULL) {
@@ -789,12 +805,15 @@ void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, con
     }
 }
 
+
 void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 {
     if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
     }
 }
+
+#endif
 
 void DviProtocolUpnpAdapterSpecificData::SendByeByeThenAlive(DviProtocolUpnp& aDevice)
 {

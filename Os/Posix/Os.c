@@ -566,9 +566,13 @@ static THandle DoThreadCreate(OsContext* aContext, const char* aName, uint32_t a
     }
     (void)pthread_attr_destroy(&attr);
 
+#if 0
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) && !defined(__ANDROID__)
     char name[kMaxThreadNameChars] = {0};
     strncpy(name, aName, kMaxThreadNameChars-1); // leave trailing \0
     (void)pthread_setname_np(data->iThread, name);
+#endif /* !PLATFORM_MACOSX_GNU && !PLATFORM_IOS && !__ANDROID__ */
+#endif
 
     return (THandle)data;
 }

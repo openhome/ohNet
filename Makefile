@@ -187,7 +187,7 @@ ifeq ($(platform),IntelMac)
 		openhome_architecture = x64
 	else
 		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.7
-		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration		
+		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration
 		osbuilddir = Mac-x86
 		openhome_architecture = x86
 	endif
@@ -351,7 +351,7 @@ else
 	dllext = so
 endif
 exeext = elf
-linkoutput = -o 
+linkoutput = -o
 dllprefix = lib
 ifeq ($(MACHINE), Darwin)
 	link_dll = $(version_specific_library_path) clang++ -pthread  $(platform_linkflags) -shared -stdlib=libc++
@@ -367,13 +367,13 @@ csharpdefines ?=
 publicjavadir = OpenHome/Net/Bindings/Java/
 
 ifeq ($(platform), IntelMac)
-	platform_java_cflags = -Wno-self-assign 
+	platform_java_cflags = -Wno-self-assign
 	includes_jni = -I${MACOSX_SDK}/System/Library/Frameworks/JavaVM.framework/Headers -I${MACOSX_SDK}/usr/include/malloc
 	link_jvm = ${MACOSX-SDK}/System/Library/Frameworks/JavaVM.framework/JavaVM
 	javac = /usr/bin/javac
 	jar = /usr/bin/jar
 else
-	platform_java_cflags = 
+	platform_java_cflags =
 	includes_jni = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
         ifeq ($(platform), Linux-ppc32)
             libjvm_dir ?= $(JAVA_HOME)/jre/lib/ppc/server
@@ -552,11 +552,11 @@ install-pkgconf : tt
 
 install-libs :
 	$(mkdir) $(installlibdir)
-	$(cp) $(objdir)* $(installlibdir) 
+	$(cp) $(objdir)* $(installlibdir)
 
 install-includes :
 	$(mkdir) $(installincludedir)
-	$(cp) -r $(inc_build)/* $(installincludedir) 
+	$(cp) -r $(inc_build)/* $(installincludedir)
 
 uninstall-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"

@@ -2,6 +2,15 @@
 
 namespace OpenHome {
 
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+
+IFile* IFile::Open(const TChar* /*aFilename*/, FileMode /*aFileMode*/)
+{
+  return (IFile*)NULL;
+}
+
+#else
+
 IFile* IFile::Open(const TChar* aFilename, FileMode aFileMode)
 {
     // check for names that came from file:// uris so may have the form /[drive]:/
@@ -11,5 +20,6 @@ IFile* IFile::Open(const TChar* aFilename, FileMode aFileMode)
     return new FileAnsii(aFilename, aFileMode);
 }
 
-} // namespace OpenHome
+#endif
 
+} // namespace OpenHome

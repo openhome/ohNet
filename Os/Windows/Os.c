@@ -6,10 +6,36 @@
 #include <stdio.h>
 #include <assert.h>
 #include <Winsock2.h>
-#include <Windows.h>
 #include <Ws2tcpip.h>
+#include <Windows.h>
+
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+#include <Processthreadsapi.h>
+#include <Synchapi.h>
+#include <algorithm>
+#include "collection.h"
+using namespace Platform;
+using namespace Windows;
+using namespace Windows::Networking;
+using namespace Windows::Networking::Connectivity;
+using namespace Windows::Foundation::Collections;
+
+#define InitializeCriticalSection(arg0) InitializeCriticalSectionEx(arg0, 0, 0)
+#define WaitForSingleObject(arg0, arg1) WaitForSingleObjectEx(arg0, arg1, false)
+#define M_CreateSemaphore(arg0, arg1, arg2, arg3) CreateSemaphoreEx(arg0, arg1, arg2, arg3, 0, (SYNCHRONIZE | SEMAPHORE_MODIFY_STATE))
+#define M_CreateEvent(arg0, arg1, arg2, arg3) CreateEventEx(arg0, arg3, 0 | (arg1 ? CREATE_EVENT_MANUAL_RESET : 0) | (arg2 ? CREATE_EVENT_INITIAL_SET : 0), (SYNCHRONIZE | EVENT_MODIFY_STATE))
+
+#define TlsAlloc() FlsAlloc(NULL)
+#define TlsFree(arg0) FlsFree(arg0)
+#define TlsSetValue(arg0, arg1) FlsSetValue(arg0, arg1)
+#define TlsGetValue(arg0) FlsGetValue(arg0)
+
+#else
 #include <Iphlpapi.h>
 #include <Dbghelp.h>
+#define M_CreateSemaphore(arg0, arg1, arg2, arg3) CreateSemaphore(arg0, arg1, arg2, arg3)
+#define M_CreateEvent(arg0, arg1, arg2, arg3) CreateEvent(arg0, arg1, arg2, arg3)
+#endif
 
 static const uint32_t kMinStackBytes = 1024 * 16;
 static const uint32_t kStackPaddingBytes = 1024 * 16;
@@ -48,11 +74,15 @@ OsContext* OsCreate()
     WSADATA wsaData;
     WORD ver = (2<<8)|2; // WinSock v2.2.  Standard on XP and later
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     char* noErrDlgs = getenv("OHNET_NO_ERROR_DIALOGS");
     OsContext* ctx = malloc(sizeof(*ctx));
     if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
+#else
+    OsContext* ctx = (OsContext*)malloc(sizeof(*ctx));
+#endif
     if (ctx == NULL) {
         return NULL;
     }
@@ -85,12 +115,14 @@ OsContext* OsCreate()
         return NULL;
     }
     {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         HMODULE hModule = GetModuleHandle(NULL);
         CHAR path[MAX_PATH];
         GetModuleFileName(hModule, path, MAX_PATH);
         ctx->iDebugSymbolHandle = GetCurrentProcess();
         SymSetOptions(SYMOPT_FAIL_CRITICAL_ERRORS);
         (void)SymInitialize(ctx->iDebugSymbolHandle, /*NULL*/path, TRUE);
+#endif
     }
 
     return ctx;
@@ -101,7 +133,11 @@ void OsDestroy(OsContext* aContext)
     if (aContext == NULL) {
         return;
     }
+
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     (void)SymCleanup(aContext->iDebugSymbolHandle);
+#endif
+
     if (NULL != aContext->iInterfaceChangeObserver) {
         aContext->iInterfaceChangeObserver->iShutdown = 1;
         (void)WSASetEvent(aContext->iInterfaceChangeObserver->iShutdownEvent);
@@ -126,6 +162,27 @@ void OsQuit(OsContext* aContext)
     abort();
 }
 
+
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+typedef struct _SYMBOL_INFO {
+  ULONG   SizeOfStruct;
+  ULONG   TypeIndex;
+  ULONG64 Reserved[2];
+  ULONG   Index;
+  ULONG   Size;
+  ULONG64 ModBase;
+  ULONG   Flags;
+  ULONG64 Value;
+  ULONG64 Address;
+  ULONG   Register;
+  ULONG   Scope;
+  ULONG   Tag;
+  ULONG   NameLen;
+  ULONG   MaxNameLen;
+  TCHAR   Name[1];
+} SYMBOL_INFO, *PSYMBOL_INFO;
+#endif
+
 #define STACK_TRACE_MAX_DEPTH 32
 typedef struct OsStackTrace
 {
@@ -135,7 +192,9 @@ typedef struct OsStackTrace
     OsContext* iOsContext;
 } OsStackTrace;
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL
 #define STACK_TRACE_ENABLE
+#endif
 
 THandle OsStackTraceInitialise(OsContext* aContext)
 {
@@ -220,7 +279,9 @@ uint64_t OsTimeInUs(OsContext* aContext)
     /* if time has moved backwards, calculate by how much and add this to aContext->iTimeAdjustment */
     if (now < aContext->iPrevTime) {
         diff = aContext->iPrevTime - now;
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         fprintf(stderr, "WARNING: clock moved backwards by %3llums\n", now / 10000);
+#endif
         aContext->iTimeAdjustment += diff;
     }
     aContext->iPrevTime = now; /* stash current time to allow the next call to spot any backwards move */
@@ -232,11 +293,17 @@ uint64_t OsTimeInUs(OsContext* aContext)
     return diff;
 }
 
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+void OsConsoleWrite(const char* /*aStr*/)
+{
+}
+#else
 void OsConsoleWrite(const char* aStr)
 {
     fprintf(stderr, "%s", aStr);
     fflush(stderr);
 }
+#endif
 
 void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aMajor, uint32_t* aMinor)
 {
@@ -265,7 +332,7 @@ THandle OsSemaphoreCreate(OsContext* aContext, const char* aName, uint32_t aCoun
 {
     UNUSED(aContext);
     UNUSED(aName);
-    return (THandle)CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
+    return (THandle)M_CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
 }
 
 void OsSemaphoreDestroy(THandle aSem)
@@ -317,7 +384,7 @@ typedef struct
 
 THandle OsMutexCreate(OsContext* aContext, const char* aName)
 {
-    Mutex* mutex = calloc(1, sizeof(*mutex));
+    Mutex* mutex = (Mutex*)calloc(1, sizeof(*mutex));
     UNUSED(aContext);
     UNUSED(aName);
     if (NULL == mutex) {
@@ -424,7 +491,13 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
     if (NULL == data) {
         return kHandleNull;
     }
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     data->iName = _strdup(aName);
+#else
+     size_t length = strlen(aName);
+     data->iName = new char[length + 1];
+     memcpy_s(data->iName, length + 1, aName, length + 1);
+#endif
     if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
         return kHandleNull;
     }
@@ -515,7 +588,9 @@ static void SetSocketBlocking(SOCKET aSocket)
     u_long nonBlocking = 0;
     WSAEventSelect(aSocket, NULL, 0);
     if (-1 == ioctlsocket(aSocket, FIONBIO, &nonBlocking)) {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
         fprintf(stdout, "SetSocketBlocking failed for socket %u\n", aSocket);
+#endif
     }
 }
 
@@ -920,10 +995,17 @@ int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
     return err;
 }
 
-int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
-{
+
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
+
+
+
+#ifndef DEFINE_WINDOWS_UNIVERSAL
+
+int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
+{
+
 
     MIB_IFTABLE* ifTable          = NULL;
     MIB_IPADDRTABLE* addrTable    = NULL;
@@ -1048,7 +1130,117 @@ failure:
     free(ifTable);
     OsNetworkFreeInterfaces(head);
     return -1;
-}
+
+
+  }
+
+#else
+#define IF_TYPE_ETHERNET_CSMACD 6
+
+  int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
+  {
+    UNUSED(aContext);
+    UNUSED(aUseLoopback);
+
+    OsNetworkAdapter* head = NULL;
+
+    try
+    {
+        auto hostNames = NetworkInformation::GetHostNames();
+
+        for each (auto iter in hostNames)
+        {
+            HostName^ hostName = (HostName^)iter;
+            if (hostName != nullptr && hostName->Type == HostNameType::Ipv4 && hostName->IPInformation != nullptr)
+            {
+                TIpAddress address;
+
+                IPInformation^ ipInfo = hostName->IPInformation;                
+                int prefixLength = ipInfo->PrefixLength->Value;
+                String^ ipAddressString = hostName->CanonicalName;
+
+                // convert String ipAddressString to char*
+                auto wideData = ipAddressString->Data();                
+                int bufferSize = WideCharToMultiByte(CP_UTF8, 0, wideData, -1, nullptr, 0, NULL, NULL);
+                auto utf8 = std::make_unique<char[]>(bufferSize);
+                if (0 == WideCharToMultiByte(CP_UTF8, 0, wideData, -1, utf8.get(), bufferSize, NULL, NULL))
+                {
+                    OsNetworkFreeInterfaces(head);
+                    return -1;
+                }
+                std::string ipAddrStdStr = std::string(utf8.get());
+                const char* ipAddressChars = ipAddrStdStr.c_str();
+                
+                if (0 != OsNetworkGetHostByName(ipAddressChars, &address))
+                {
+                    OsNetworkFreeInterfaces(head);
+                    return -1;
+                }
+
+                TIpAddress netmask = 0xFFFFFFFF;
+                netmask <<= 32 - prefixLength;
+                netmask = htonl(netmask);
+
+                OsNetworkAdapter* nif;
+                nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
+                if (nif == NULL) {
+                    return -1;
+                }
+                nif->iReserved = IF_TYPE_ETHERNET_CSMACD;
+                nif->iAddress = address;
+                nif->iNetMask = netmask;
+                nif->iName = (char*)malloc(1);
+                nif->iName[0] = '\0';
+                if (head == NULL) 
+                {
+                    head = nif;
+                }
+                else 
+                {
+                    TIpAddress subnet = (nif->iAddress & nif->iNetMask);
+                    OsNetworkAdapter* p1 = head;
+                    OsNetworkAdapter* prev = NULL;
+                    while (NULL != p1) 
+                    {
+                        if ((p1->iAddress & p1->iNetMask) == subnet) 
+                        {
+                            while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) 
+                            {
+                                prev = p1;
+                                p1 = p1->iNext;
+                            }
+                            break;
+                        }
+                        prev = p1;
+                        p1 = p1->iNext;
+                    }
+                    if (NULL == prev) 
+                    {
+                        nif->iNext = head;
+                        head = nif;
+                    }
+                    else 
+                    {
+                        nif->iNext = prev->iNext;
+                        prev->iNext = nif;
+                    }
+                }
+            }
+        }
+    }
+    catch (Exception^ ex)
+    {
+        OsNetworkFreeInterfaces(head);
+        return -1;
+    }
+
+    *aInterfaces = head;
+
+    return 0;
+  }
+
+#endif
+
 
 void OsNetworkFreeInterfaces(OsNetworkAdapter* aInterfaces)
 {
@@ -1106,12 +1298,12 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
 
     icobs->iSocket = socket(AF_INET, SOCK_DGRAM, 0);
     SetSocketBlocking(icobs->iSocket);
-    icobs->iEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    icobs->iShutdownEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    icobs->iEvent = M_CreateEvent(NULL, FALSE, FALSE, NULL);
+    icobs->iShutdownEvent = M_CreateEvent(NULL, FALSE, FALSE, NULL);
     icobs->iCallback = aCallback;
     icobs->iArg = aArg;
     icobs->iShutdown = 0;
-    icobs->iSem = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
+    icobs->iSem = M_CreateSemaphore(NULL, 0, INT32_MAX, NULL);
     (void)WSAEventSelect(icobs->iSocket, icobs->iEvent, FD_ADDRESS_LIST_CHANGE);
     (void)CreateThread(NULL, 16*1024, (LPTHREAD_START_ROUTINE)&interfaceChangeThread, icobs, 0, NULL);
     aContext->iInterfaceChangeObserver = icobs;

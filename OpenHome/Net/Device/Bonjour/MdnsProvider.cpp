@@ -20,7 +20,11 @@ void MdnsProvider::MdnsSetHostName(const TChar* aName)
 
 TUint MdnsProvider::MdnsCreateService()
 {
+#ifdef DEFINE_WINDOWS_UNIVERSAL
+    return 0;
+#else
     return iPlatform.CreateService();
+#endif
 }
 
 void MdnsProvider::MdnsDestroyService(TUint aHandle)
