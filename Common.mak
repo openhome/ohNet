@@ -243,9 +243,9 @@ $(objdir)Buffer.$(objext) : OpenHome/Buffer.cpp $(headers)
 $(objdir)Converter.$(objext) : OpenHome/Converter.cpp $(headers)
 	$(compiler)Converter.$(objext) -c $(cppflags) $(includes) OpenHome/Converter.cpp
 $(objdir)cencode.$(objext) : thirdparty/libb64/cencode.c $(headers)
-	$(compiler)cencode.$(objext) -c $(cflags_third_party_force_cpp_if_defined) $(includes) thirdparty/libb64/cencode.c
+	$(compiler)cencode.$(objext) -c $(cflags_third_party) $(includes) thirdparty/libb64/cencode.c
 $(objdir)cdecode.$(objext) : thirdparty/libb64/cdecode.c $(headers)
-	$(compiler)cdecode.$(objext) -c $(cflags_third_party_force_cpp_if_defined) $(includes) thirdparty/libb64/cdecode.c
+	$(compiler)cdecode.$(objext) -c $(cflags_third_party) $(includes) thirdparty/libb64/cdecode.c
 $(objdir)Discovery.$(objext) : OpenHome/Net/Discovery.cpp $(headers)
 	$(compiler)Discovery.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Discovery.cpp
 $(objdir)Debug.$(objext) : OpenHome/Debug.cpp $(headers)
@@ -361,11 +361,11 @@ $(objdir)mDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/mDNS.c $(headers)
 $(objdir)uDNS.$(objext) : OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c $(headers)
 	$(compiler)uDNS.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c
 $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $(headers)
-	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party_force_cpp_if_defined) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
+	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)
 	$(compiler)MdnsProvider.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Bonjour/MdnsProvider.cpp
 $(objdir)Md5.$(objext) : OpenHome/md5.c $(headers)
-	$(compiler)Md5.$(objext) -c $(cflags_third_party_force_cpp_if_defined) $(includes) OpenHome/md5.c
+	$(compiler)Md5.$(objext) -c $(cflags_third_party) $(includes) OpenHome/md5.c
 $(objdir)NetworkAdapterList.$(objext) : OpenHome/NetworkAdapterList.cpp $(headers)
 	$(compiler)NetworkAdapterList.$(objext) -c $(cppflags) $(includes) OpenHome/NetworkAdapterList.cpp
 $(objdir)Network.$(objext) : OpenHome/Network.cpp $(headers)
@@ -383,7 +383,7 @@ $(objdir)Service.$(objext) : OpenHome/Net/Service.cpp $(headers)
 $(objdir)ServiceC.$(objext) : OpenHome/Net/Bindings/C/ServiceC.cpp $(headers)
 	$(compiler)ServiceC.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Bindings/C/ServiceC.cpp
 $(objdir)sha1.$(objext) : OpenHome/sha1.c $(headers)
-	$(compiler)sha1.$(objext) -c $(cflags_third_party_force_cpp_if_defined) $(includes) OpenHome/sha1.c
+	$(compiler)sha1.$(objext) -c $(cflags_third_party) $(includes) OpenHome/sha1.c
 $(objdir)Ssdp.$(objext) : OpenHome/Net/Ssdp.cpp $(headers)
 	$(compiler)Ssdp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Ssdp.cpp
 $(objdir)SsdpDv.$(objext) : OpenHome/Net/SsdpDv.cpp $(headers)
@@ -425,7 +425,7 @@ $(objdir)OhNetCCombined.$(objext) : OpenHome/Net/Bindings/C/OhNetCCombined.cpp $
 $(objdir)OsWrapper.$(objext) : Os/OsWrapper.cpp $(headers)
 	$(compiler)OsWrapper.$(objext) -c $(cppflags) $(includes) Os/OsWrapper.cpp
 $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
-	$(compiler)Os.$(objext) -c $(cflags_third_party_force_cpp_if_defined) $(includes) Os/$(osdir)/Os.c
+	$(compiler)Os.$(objext) -c $(cflags_third_party) $(includes) Os/$(osdir)/Os.c
 $(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)
 	$(compiler)File.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/File.cpp
 $(objdir)TerminalOs.$(objext) : Os/$(osdir)/TerminalOs.cpp $(headers)

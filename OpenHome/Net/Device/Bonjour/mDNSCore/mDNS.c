@@ -46,6 +46,8 @@
 #include "DNSCommon.h"                  // Defines general DNS untility routines
 #include "uDNS.h"						// Defines entry points into unicast-specific routines
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+
 // Disable certain benign warnings with Microsoft compilers
 #if(defined(_MSC_VER))
 	// Disable "conditional expression is constant" warning for debug macros.
@@ -11550,3 +11552,69 @@ mDNSexport void mDNS_FinalExit(mDNS *const m)
 
 	LogInfo("mDNS_FinalExit: done");
 	}
+
+#else // DEFINE_WINDOWS_UNIVERSAL
+
+mDNSexport mStatus mDNS_Init(mDNS *const /*m*/, mDNS_PlatformSupport *const /*p*/,
+	CacheEntity * /*rrcachestorage*/, mDNSu32 /*rrcachesize*/,
+	mDNSBool /*AdvertiseLocalAddresses*/, mDNSCallback * /*Callback*/, void * /*Context*/)
+	{
+		return mStatus_NoError;
+	}
+
+mDNSexport void mDNS_StartExit(mDNS *const /*m*/)
+	{
+	}
+
+mDNSexport void mDNS_FinalExit(mDNS *const /*m*/)
+	{
+	}
+
+mDNSexport mDNSs32 mDNS_Execute(mDNS *const /*m*/)
+	{
+		return mStatus_NoError;
+	}
+
+mDNSexport mStatus mDNS_RegisterService(mDNS *const /*m*/, ServiceRecordSet * /*sr*/,
+	const domainlabel *const /*name*/, const domainname *const /*type*/, const domainname *const /*domain*/,
+	const domainname *const /*host*/, mDNSIPPort /*port*/, const mDNSu8 /*txtinfo*/[], mDNSu16 /*txtlen*/,
+	AuthRecord * /*SubTypes*/, mDNSu32 /*NumSubTypes*/,
+	mDNSInterfaceID /*InterfaceID*/, mDNSServiceCallback /*Callback*/, void * /*Context*/, mDNSu32 /*flags*/)
+	{
+		return mStatus_NoError;
+	}
+
+mDNSexport mStatus mDNS_RenameAndReregisterService(mDNS *const /*m*/, ServiceRecordSet *const /*sr*/, const domainlabel * /*newname*/)
+	{
+		return mStatus_NoError;
+	}
+
+mDNSexport mStatus mDNS_DeregisterService_drt(mDNS *const /*m*/, ServiceRecordSet * /*sr*/, mDNS_Dereg_type /*drt*/)
+	{
+		return mStatus_NoError;
+	}
+
+mDNSexport void mDNS_SetFQDN(mDNS *const /*m*/)
+	{
+ 	}
+
+mDNSexport mStatus mDNS_RegisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, mDNSBool /*flapping*/)
+	{	
+		return mStatus_NoError;	
+	}
+	
+mDNSexport void mDNS_DeregisterInterface(mDNS *const /*m*/, NetworkInterfaceInfo * /*set*/, mDNSBool /*flapping*/)
+	{
+	}
+
+mDNSexport void mDNSCoreInitComplete(mDNS *const /*m*/, mStatus /*result*/)
+	{		
+	}
+
+mDNSexport void mDNSCoreReceive(mDNS *const /*m*/, void *const /*pkt*/, const mDNSu8 *const /*end*/,
+	const mDNSAddr *const /*srcaddr*/, const mDNSIPPort /*srcport*/, const mDNSAddr * /*dstaddr*/, const mDNSIPPort /*dstport*/,
+	const mDNSInterfaceID /*InterfaceID*/)
+	{		
+	}
+
+#endif //DEFINE_WINDOWS_UNIVERSAL

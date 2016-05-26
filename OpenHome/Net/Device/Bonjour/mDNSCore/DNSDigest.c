@@ -29,6 +29,9 @@ extern "C" {
 #include "mDNSEmbeddedAPI.h"
 #include "DNSCommon.h"
 
+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+
+
 // Disable certain benign warnings with Microsoft compilers
 #if(defined(_MSC_VER))
 	// Disable "conditional expression is constant" warning for debug macros.
@@ -1588,6 +1591,10 @@ exit:
 
 	return ok;
 	}
+
+#else // DEFINE_WINDOWS_UNIVERSAL
+
+#endif //DEFINE_WINDOWS_UNIVERSAL
 
 
 #ifdef __cplusplus

@@ -76,14 +76,15 @@ android_ndk_debug = 0
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags_third_party = $(debug_specific_cflags) /c /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
-cflags = $(cflags_third_party) $(additional_includes) /WX
+cflags_tp = $(debug_specific_cflags) /c /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
+cflags = $(cflags_tp) $(additional_includes) /WX
 cppflags = $(cflags) $(universal_cppflags) /TP 
 
+# force everything through cpp compiler if building winrt
 !if "$(windows_universal)"=="1"
-cflags_third_party_force_cpp_if_defined = $(cppflags)
+cflags_third_party = $(cppflags)
 !else
-cflags_third_party_force_cpp_if_defined = $(cflags_third_party)
+cflags_third_party = $(cflags_tp)
 !endif
 
 objdirbare = Build\Obj\Windows\$(build_dir)

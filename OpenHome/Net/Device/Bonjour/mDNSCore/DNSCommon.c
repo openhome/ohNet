@@ -25,6 +25,7 @@
 #define mDNS_InstantiateInlines 1
 #include "DNSCommon.h"
 
+
 // Disable certain benign warnings with Microsoft compilers
 #if (defined(_MSC_VER))
 	// Disable "conditional expression is constant" warning for debug macros.
@@ -46,6 +47,7 @@ mDNSexport const mDNSInterfaceID mDNSInterfaceMark       = (mDNSInterfaceID)-1;
 mDNSexport const mDNSInterfaceID mDNSInterface_LocalOnly = (mDNSInterfaceID)-2;
 mDNSexport const mDNSInterfaceID mDNSInterface_Unicast   = (mDNSInterfaceID)-3;
 mDNSexport const mDNSInterfaceID mDNSInterface_P2P       = (mDNSInterfaceID)-4;
+
 
 // Note: Microsoft's proposed "Link Local Multicast Name Resolution Protocol" (LLMNR) is essentially a limited version of
 // Multicast DNS, using the same packet formats, naming syntax, and record types as Multicast DNS, but on a different UDP
@@ -117,6 +119,9 @@ mDNSexport const mDNSOpaque64 zeroOpaque64    = { { 0 } };
 #pragma mark -
 #pragma mark - General Utility Functions
 #endif
+
+#ifndef DEFINE_WINDOWS_UNIVERSAL // cannot build as c++ on winrt arm so def it out...
+
 
 // return true for RFC1918 private addresses
 mDNSexport mDNSBool mDNSv4AddrIsRFC1918(mDNSv4Addr *addr)
@@ -3160,3 +3165,23 @@ mDNSexport mDNSu32 mDNS_snprintf(char *sbuffer, mDNSu32 buflen, const char *fmt,
 	
 	return(length);
 	}
+
+
+#else // DEFINE_WINDOWS_UNIVERSAL
+
+mDNSexport mDNSBool MakeDomainLabelFromLiteralString(domainlabel *const /*label*/, const char * /*cstr*/)
+  {
+  	return (mDNSBool)1;
+  }
+
+ mDNSexport mDNSu8 *MakeDomainNameFromDNSNameString(domainname *const /*name*/, const char * /*cstr*/)
+	{
+		return (mDNSu8)0;
+	}
+
+mDNSexport mDNSu32 mDNS_vsnprintf(char * /*sbuffer*/, mDNSu32 /*buflen*/, const char * /*fmt*/, va_list /*arg*/)  	
+	{
+		return (mDNSu32)0;
+	}
+
+#endif //DEFINE_WINDOWS_UNIVERSAL
