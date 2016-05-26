@@ -38,11 +38,11 @@ public:
 private: // from IMp3HeaderExtended
     TUint64 SamplesTotal() const override { return iSamplesTotal; }
     TUint64 SampleToByte(TUint64 aSample) const override;
-    TUint BitRate() const override { return iBitRate; }
+    TUint BitRate() const override { return iByteRate*8; }
 private:
     TUint64 iSamplesTotal;
-    TUint iBitRate;
-    TUint iBytesPerSample;
+    TUint iSampleRate;
+    TUint iByteRate;
 };
 
 class Mp3HeaderExtendedBareNonSeekable : public IMp3HeaderExtended
@@ -186,39 +186,41 @@ CodecBase* CodecFactory::NewMp3(IMimeTypeList& aMimeTypeList)
 
 Mp3HeaderExtendedBare::Mp3HeaderExtendedBare()
     : iSamplesTotal(0)
-    , iBitRate(0)
-    , iBytesPerSample(0)
+    , iSampleRate(0)
+    , iByteRate(0)
 {
 }
 
 void Mp3HeaderExtendedBare::Clear()
 {
     iSamplesTotal = 0;
-    iBitRate = 0;
-    iBytesPerSample = 0;
+    iSampleRate = 0;
+    iByteRate = 0;
 }
 
 void Mp3HeaderExtendedBare::Replace(TUint64 aTotalBytes, TUint aByteRate, TUint aSampleRate)
 {
-    iBitRate = aByteRate*8;
+    iSampleRate = aSampleRate;
+    iByteRate = aByteRate;
     /* Provide an estimate of the total samples.  This won't be valid for all
     files, but it's a worst case guess if we don't have further information
     in another header.  This isn't prefectly accurate because of the mp3
     header in each frame as well as any id3 or similar tags included in the
     file.  However, it's close enough for our seeking purposes. */
     TUint64 seconds = 0;
-    if (aByteRate != 0) {
-        seconds = aTotalBytes / aByteRate;
+    if (iByteRate != 0) {
+        seconds = aTotalBytes / iByteRate;
     }
-    iSamplesTotal = seconds * aSampleRate;
-    iBytesPerSample = aByteRate / aSampleRate;
-    //LOG(kCodec, "Mp3HeaderExtendedBare::Mp3HeaderExtendedBare: iSamplesTotal: %lld, iBytesPerSample: %f\n", iSamplesTotal, iBytesPerSample);
+    iSamplesTotal = seconds * iSampleRate;
+    //LOG(kCodec, "Mp3HeaderExtendedBare::Mp3HeaderExtendedBare: iSamplesTotal: %llu, iSampleRate: %u, iByteRate: %u\n", iSamplesTotal, iSampleRate, iByteRate);
 }
 
 TUint64 Mp3HeaderExtendedBare::SampleToByte(TUint64 aSample) const
 {
-    //LOG(kCodec, "Mp3HeaderExtendedBare::SampleToByte(%lld), iBytesPerSample: %f\n", aSample, iBytesPerSample);
-    TUint64 byte = (TUint64)(aSample * iBytesPerSample);
+    // This means seeking will only be accurate to within 1s with CBR files.
+    // It will be entirely arbitrary with VBR files.
+    const TUint64 seconds = aSample / iSampleRate;
+    const TUint64 byte = seconds * iByteRate;
     return byte;
 }
 
