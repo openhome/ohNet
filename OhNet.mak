@@ -44,6 +44,7 @@ safeseh = /SAFESEH
 !endif
 link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS /LIBPATH:$(additional_lib_path)
 static_or_dynamic = /MD
+force_cpp = /TP
 !else
 defines_universal = -D_CRT_SECURE_NO_WARNINGS
 error_handling = /EHa
@@ -52,6 +53,7 @@ universal_cppflags =
 link_libs = Ws2_32.lib Iphlpapi.lib Dbghelp.lib
 link_opts =
 static_or_dynamic = /MT
+force_cpp = 
 !endif
 
 !if "$(debug)"=="1"
@@ -78,7 +80,7 @@ android_ndk_debug = 0
 ar = lib /nologo /out:$(objdir)
 cflags_tp = $(debug_specific_cflags) /c /W4 $(error_handling) /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(defines_universal)
 cflags = $(cflags_tp) $(additional_includes) /WX
-cppflags = $(cflags) $(universal_cppflags) /TP 
+cppflags = $(cflags) $(universal_cppflags) $(force_cpp) 
 
 # force everything through cpp compiler if building winrt
 !if "$(windows_universal)"=="1"
