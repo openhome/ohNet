@@ -33,6 +33,7 @@ private:
     IPipelineAnimator* iAnimator;
     TUint iTargetFlushId;
     TBool iFlushing;
+    TBool iOutputMsgDelayOnAnimatorDelayChange;
     TUint iDelayJiffies;
     TUint iAnimatorDelayJiffies;
 };

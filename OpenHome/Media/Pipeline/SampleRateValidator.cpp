@@ -29,6 +29,7 @@ SampleRateValidator::SampleRateValidator(MsgFactory& aMsgFactory, IPipelineEleme
     , iAnimator(nullptr)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iFlushing(false)
+    , iOutputMsgDelayOnAnimatorDelayChange(false)
     , iDelayJiffies(0)
     , iAnimatorDelayJiffies(0)
 {
@@ -50,6 +51,8 @@ void SampleRateValidator::Push(Msg* aMsg)
 Msg* SampleRateValidator::ProcessMsg(MsgMode* aMsg)
 {
     iFlushing = false;
+    iOutputMsgDelayOnAnimatorDelayChange = false;
+    iAnimatorDelayJiffies = 0;
     return aMsg;
 }
 
@@ -61,6 +64,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
 
 Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
 {
+    iOutputMsgDelayOnAnimatorDelayChange = true;
     if (aMsg->AnimatorDelayJiffies() == iAnimatorDelayJiffies) {
         return aMsg;
     }
@@ -93,7 +97,7 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
                                                                                    streamInfo.BitDepth(),
                                                                                    streamInfo.NumChannels());
         iFlushing = false;
-        if (iAnimatorDelayJiffies != animatorDelayJiffies) {
+        if (iAnimatorDelayJiffies != animatorDelayJiffies && iOutputMsgDelayOnAnimatorDelayChange) {
             iAnimatorDelayJiffies = animatorDelayJiffies;
             iDownstream.Push(iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies));
         }
