@@ -140,7 +140,6 @@ ProtocolStreamResult ProtocolQobuz::Stream(const Brx& aUri)
     iUri.Replace(aUri);
 
     if (iUri.Scheme() != Brn("qobuz")) {
-        LOG(kMedia, "ProtocolQobuz::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
     LOG(kMedia, "ProtocolQobuz::Stream(%.*s)\n", PBUF(aUri));

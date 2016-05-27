@@ -136,7 +136,6 @@ ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
     iUri.Replace(aUri);
 
     if (iUri.Scheme() != Brn("tidal")) {
-        LOG2(kMedia, kError, "ProtocolTidal::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
     LOG(kMedia, "ProtocolTidal::Stream(%.*s)\n", PBUF(aUri));
