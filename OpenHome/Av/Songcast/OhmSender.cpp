@@ -280,7 +280,6 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     );
 
     msg->Serialise();
-    msg->SetResent(true);
     iFifoHistory.Write(msg);
     try {
         iSocket.Send(msg->SendableBuffer(), iEndpoint);
@@ -288,6 +287,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
     catch (NetworkError&) {
     }
 
+    msg->SetResent(true);
     iSampleStart += samples;
     iFrame++;
 }
@@ -344,7 +344,6 @@ void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
     );
 
     aMsg->Serialise();
-    aMsg->SetResent(true);
     iFifoHistory.Write(aMsg);
     try {
         iSocket.Send(aMsg->SendableBuffer(), iEndpoint);
@@ -352,6 +351,7 @@ void OhmSenderDriver::SendAudio(OhmMsgAudio* aMsg, TBool aHalt)
     catch (NetworkError&) {
     }
 
+    aMsg->SetResent(true);
     iSampleStart += samples;
     iFrame++;
 }
