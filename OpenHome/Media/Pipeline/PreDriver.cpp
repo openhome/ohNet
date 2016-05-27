@@ -27,7 +27,7 @@ PreDriver::PreDriver(IPipelineElementUpstream& aUpstreamElement)
     , iBitDepth(0)
     , iNumChannels(0)
     , iShutdownSem("PDSD", 0)
-    , iSilenceSinceLastDrain(0)
+    , iSilenceSinceLastPcm(0)
     , iSilenceSincePcm(false)
     , iQuit(false)
 {
@@ -47,8 +47,9 @@ Msg* PreDriver::Pull()
         const TBool silenceSincePcm = iSilenceSincePcm;
         msg = msg->Process(*this);
         if (silenceSincePcm && !iSilenceSincePcm) {
-            const TUint ms = Jiffies::ToMs(iSilenceSinceLastDrain);
-            LOG(kPipeline, "PreDriver: silence since last drain - %ums\n", ms);
+            const TUint ms = Jiffies::ToMs(iSilenceSinceLastPcm);
+            iSilenceSinceLastPcm = 0;
+            LOG(kPipeline, "PreDriver: silence since last audio - %ums\n", ms);
         }
         if (iQuit) {
             iShutdownSem.Signal();
@@ -60,7 +61,7 @@ Msg* PreDriver::Pull()
 
 Msg* PreDriver::ProcessMsg(MsgDrain* aMsg)
 {
-    iSilenceSinceLastDrain = 0;
+    iSilenceSinceLastPcm = 0;
     iSilenceSincePcm = false;
     return aMsg;
 }
@@ -97,7 +98,7 @@ Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
     iSilenceSincePcm = true;
-    iSilenceSinceLastDrain += aMsg->Jiffies();
+    iSilenceSinceLastPcm += aMsg->Jiffies();
     return aMsg->CreatePlayable();
 }
 

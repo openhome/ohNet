@@ -36,7 +36,7 @@ private:
     TUint iBitDepth;
     TUint iNumChannels;
     Semaphore iShutdownSem;
-    TUint64 iSilenceSinceLastDrain;
+    TUint64 iSilenceSinceLastPcm;
     TBool iSilenceSincePcm;
     TBool iQuit;
 };
