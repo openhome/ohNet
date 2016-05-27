@@ -55,10 +55,10 @@ PipelineInitParams::PipelineInitParams()
     , iRampLongJiffies(kLongRampDurationDefault)
     , iRampShortJiffies(kShortRampDurationDefault)
     , iRampEmergencyJiffies(kEmergencyRampDurationDefault)
-    , iThreadPriorityMax(kThreadPriorityMax)
     , iMaxLatencyJiffies(kMaxLatencyDefault)
     , iSupportElements(EPipelineSupportElementsAll)
 {
+    SetThreadPriorityMax(kThreadPriorityMax);
 }
 
 PipelineInitParams::~PipelineInitParams()
@@ -107,7 +107,16 @@ void PipelineInitParams::SetEmergencyRamp(TUint aJiffies)
 
 void PipelineInitParams::SetThreadPriorityMax(TUint aPriority)
 {
-    iThreadPriorityMax = aPriority;
+    iThreadPriorityStarvationRamper = aPriority;
+    iThreadPriorityCodec            = iThreadPriorityStarvationRamper - 1;
+    iThreadPriorityEvent            = iThreadPriorityCodec - 1;
+}
+
+void PipelineInitParams::SetThreadPriorities(TUint aStarvationRamper, TUint aCodec, TUint aEvent)
+{
+    iThreadPriorityStarvationRamper = aStarvationRamper;
+    iThreadPriorityCodec            = aCodec;
+    iThreadPriorityEvent            = aEvent;
 }
 
 void PipelineInitParams::SetMaxLatency(TUint aJiffies)
@@ -160,9 +169,19 @@ TUint PipelineInitParams::RampEmergencyJiffies() const
     return iRampEmergencyJiffies;
 }
 
-TUint PipelineInitParams::ThreadPriorityMax() const
+TUint PipelineInitParams::ThreadPriorityStarvationRamper() const
 {
-    return iThreadPriorityMax;
+    return iThreadPriorityStarvationRamper;
+}
+
+TUint PipelineInitParams::ThreadPriorityCodec() const
+{
+    return iThreadPriorityCodec;
+}
+
+TUint PipelineInitParams::ThreadPriorityEvent() const
+{
+    return iThreadPriorityEvent;
 }
 
 TUint PipelineInitParams::MaxLatencyJiffies() const
@@ -230,10 +249,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     msgInit.SetMsgPlayableCount(kMsgCountPlayablePcm, kMsgCountPlayableSilence);
     msgInit.SetMsgQuitCount(kMsgCountQuit);
     iMsgFactory = new MsgFactory(aInfoAggregator, msgInit);
-    const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
-    TUint threadPriority = threadPriorityBase - 1; // -1 to allow for a gap between CodecController and Gorger
 
-    iEventThread = new PipelineElementObserverThread(threadPriorityBase-1);
+    iEventThread = new PipelineElementObserverThread(aInitParams->ThreadPriorityEvent());
     IPipelineElementDownstream* downstream = nullptr;
     IPipelineElementUpstream* upstream = nullptr;
     const auto elementsSupported = aInitParams->SupportElements();
@@ -287,8 +304,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    downstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iLoggerCodecController, new Logger("Codec Controller", *downstream),
                    downstream, elementsSupported, EPipelineSupportElementsLogger);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *upstream, *downstream, aUrlBlockWriter, threadPriority);
-    threadPriority += 2; // leave a gap for any high priority on-device UI (e.g. text scrolling)
+    iCodecController = new Codec::CodecController(*iMsgFactory, *upstream, *downstream, aUrlBlockWriter, aInitParams->ThreadPriorityCodec());
 
     upstream = iDecodedAudioReservoir;
     ATTACH_ELEMENT(iLoggerDecodedAudioReservoir,
@@ -347,7 +363,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iDecodedAudioValidatorStopper, new DecodedAudioValidator(*upstream, "Stopper"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
-    threadPriority += 2; // StarvationRamper + FlywheelRamper threads
     ATTACH_ELEMENT(iSpotifyReporter, new Media::SpotifyReporter(*upstream, *iMsgFactory, aTrackFactory),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerSpotifyReporter, new Logger(*iSpotifyReporter, "SpotifyReporter"),
@@ -386,7 +401,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
     ATTACH_ELEMENT(iStarvationRamper,
                    new StarvationRamper(*iMsgFactory, *upstream, *this, *iEventThread,
-                                        aInitParams->StarvationRamperJiffies(), threadPriority,
+                                        aInitParams->StarvationRamperJiffies(),
+                                        aInitParams->ThreadPriorityStarvationRamper(),
                                         aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir()),
                                         upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerStarvationRamper, new Logger(*iStarvationRamper, "StarvationRamper"),
@@ -409,7 +425,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iPreDriver, new PreDriver(*upstream),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
-    ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
 #ifdef _WIN32
 # pragma warning( pop )
@@ -718,8 +733,8 @@ TUint Pipeline::SenderMinLatencyMs() const
 
 void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
 {
-    aMax = iInitParams->ThreadPriorityMax();
-    aMin = aMax - kThreadCount;
+    aMax = iInitParams->ThreadPriorityStarvationRamper();
+    aMin = iInitParams->ThreadPriorityCodec();
 }
 
 void Pipeline::Push(Msg* aMsg)
@@ -817,6 +832,15 @@ void Pipeline::NotifyMetaText(const Brx& aText)
 void Pipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
     iObserver.NotifyTime(aSeconds, aTrackDurationSeconds);
+#if 0
+    if (aSeconds % 8 == 0) {
+        const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
+        const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
+        const TUint starvationMs = Jiffies::ToMs(iStarvationRamper->SizeInJiffies());
+        Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, starvationRamper=%u\n",
+                   encodedBytes, decodedMs, starvationMs);
+    }
+#endif
 }
 
 void Pipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)

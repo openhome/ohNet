@@ -48,6 +48,7 @@ public:
     void SetShortRamp(TUint aJiffies);
     void SetEmergencyRamp(TUint aJiffies);
     void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
+    void SetThreadPriorities(TUint aStarvationRamper, TUint aCodec, TUint aEvent);
     void SetMaxLatency(TUint aJiffies);
     void SetSupportElements(TUint aElements); // EPipelineSupportElements members OR'd together
     // getters
@@ -59,7 +60,10 @@ public:
     TUint RampLongJiffies() const;
     TUint RampShortJiffies() const;
     TUint RampEmergencyJiffies() const;
-    TUint ThreadPriorityMax() const;
+    TUint ThreadPriorityFlywheel() const;
+    TUint ThreadPriorityStarvationRamper() const;
+    TUint ThreadPriorityCodec() const;
+    TUint ThreadPriorityEvent() const;
     TUint MaxLatencyJiffies() const;
     TUint SupportElements() const;
 private:
@@ -73,7 +77,9 @@ private:
     TUint iRampLongJiffies;
     TUint iRampShortJiffies;
     TUint iRampEmergencyJiffies;
-    TUint iThreadPriorityMax;
+    TUint iThreadPriorityStarvationRamper;
+    TUint iThreadPriorityCodec;
+    TUint iThreadPriorityEvent;
     TUint iMaxLatencyJiffies;
     TUint iSupportElements;
 };
@@ -142,7 +148,6 @@ class Pipeline : public IPipelineElementDownstream
     static const TUint kMsgCountMode            = 20;
     static const TUint kMsgCountQuit            = 1;
     static const TUint kMsgCountDrain           = 5;
-    static const TUint kThreadCount             = 4; // CodecController, StarvationRamper, FlywheelRamper
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
              IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter);
