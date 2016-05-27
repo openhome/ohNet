@@ -105,6 +105,7 @@ public:
                      IPipelineElementObserverThread& aObserverThread, TUint aSizeJiffies,
                      TUint aThreadPriority, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationRamper();
+    TUint SizeInJiffies() const;
 private:
     inline TBool IsFull() const;
     void PullerThread();

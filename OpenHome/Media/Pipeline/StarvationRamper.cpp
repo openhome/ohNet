@@ -447,6 +447,11 @@ StarvationRamper::~StarvationRamper()
     delete iRampGenerator;
 }
 
+TUint StarvationRamper::SizeInJiffies() const
+{
+    return Jiffies(); 
+}
+
 inline TBool StarvationRamper::IsFull() const
 {
     return (Jiffies() >= iSizeJiffies || DecodedStreamCount() == iMaxStreamCount);
