@@ -332,6 +332,7 @@ void SuiteSampleRateValidator::ExpectedFlushConsumed()
 
 void SuiteSampleRateValidator::ChangeInAnimatorDelay()
 {
+    PushMsg(EMsgDelay);
     PushMsg(EMsgDecodedStream);
     TEST(iLastMsg == EMsgDecodedStream);
     TEST(iAnimatorDelayJiffiesPulled == 0);
