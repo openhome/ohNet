@@ -332,7 +332,7 @@ void OhmMsgAudio::SetResent(TBool aValue)
 {
     iResent = aValue;
     const TUint flagsIndex = iStreamHeaderOffset + 8 + 1; // +8 for Ohm header, +1 to skip audio header length
-    ASSERT((iUnifiedBuffer[flagsIndex] & 0xE8) == 0); // check that kFlagResent and unused bits aren't set (implying weflagsIndex is wrong)
+    ASSERT((iUnifiedBuffer[flagsIndex] & 0xE8) == 0); // check that kFlagResent and unused bits aren't set (implying flagsIndex is wrong)
     iUnifiedBuffer[flagsIndex] |= kFlagResent;
 }
 
