@@ -4,6 +4,7 @@
 #include <OpenHome/Optional.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
+#include <OpenHome/Av/Songcast/ProtocolOhm.h> // for IUnicastOverrideObserver
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
@@ -41,14 +42,14 @@ Sender::Sender(Environment& aEnv,
                const Brx& aName,
                TUint aMinLatencyMs,
                const Brx& aSongcastMode,
-               Functor aUnicastOverrideEnabled)
+               IUnicastOverrideObserver& aUnicastOverrideObserver)
     : iAudioBuf(nullptr)
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
     , iSongcastMode(aSongcastMode)
-    , iUnicastOverrideEnabled(aUnicastOverrideEnabled)
+    , iUnicastOverrideObserver(aUnicastOverrideObserver)
     , iEnabled(true)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
@@ -122,12 +123,11 @@ Msg* Sender::ProcessMsg(MsgMode* aMsg)
     if (wasEnabled && !iEnabled) {
         SendPendingAudio(true);
         iOhmSender->EnableUnicastOverride(true);
-        if (iUnicastOverrideEnabled) {
-            iUnicastOverrideEnabled();
-        }
+        iUnicastOverrideObserver.UnicastOverrideEnabled();
     }
     else if (!wasEnabled && iEnabled) {
         iOhmSender->EnableUnicastOverride(false);
+        iUnicastOverrideObserver.UnicastOverrideDisabled();
     }
     aMsg->RemoveRef();
     return nullptr;

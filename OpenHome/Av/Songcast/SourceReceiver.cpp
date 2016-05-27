@@ -110,7 +110,7 @@ class SongcastSender : private Media::IPipelineObserver
 public:
     SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
                    Optional<IOhmTimestamper> aTxTimestamper, const Brx& aMode,
-                   Functor aUnicastOverrideEnabled);
+                   IUnicastOverrideObserver& aUnicastOverrideObserver);
     ~SongcastSender();
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
@@ -220,8 +220,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), false);
 
     // Sender
-    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode(),
-                                 MakeFunctor(*protocolOhm, &ProtocolOhm::SenderUnicastOverrideEnabled));
+    iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode(), *protocolOhm);
 }
 
 SourceReceiver::~SourceReceiver()
@@ -452,7 +451,7 @@ void SourceReceiver::CurrentAdapterChanged()
 
 SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHandler,
                                Optional<IOhmTimestamper> aTxTimestamper, const Brx& aMode,
-                               Functor aUnicastOverrideEnabled)
+                               IUnicastOverrideObserver& aUnicastOverrideObserver)
     : iLock("STX1")
     , iProduct(aMediaPlayer.Product())
 {
@@ -463,7 +462,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
                          Brx::Empty(), pipeline.SenderMinLatencyMs(), aMode,
-                         aUnicastOverrideEnabled);
+                         aUnicastOverrideObserver);
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);

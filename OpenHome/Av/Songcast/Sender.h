@@ -19,6 +19,7 @@ class OhmSenderDriver;
 class OhmSender;
 class ZoneHandler;
 class IOhmTimestamper;
+class IUnicastOverrideObserver;
 
 class Sender : public Media::IPipelineElementDownstream, private Media::IMsgProcessor, private Media::IPcmProcessor, private INonCopyable
 {
@@ -44,7 +45,7 @@ public:
            const Brx& aName,
            TUint aMinLatencyMs,
            const Brx& aSongcastMode,
-           Functor aUnicastOverrideEnabled);
+           IUnicastOverrideObserver& aUnicastOverrideObserver);
     ~Sender();
     void SetName(const Brx& aName);
     void SetImageUri(const Brx& aUri);
@@ -134,7 +135,7 @@ private:
     TUint iNumChannels;
     const TUint iMinLatencyMs;
     const Media::BwsMode iSongcastMode;
-    Functor iUnicastOverrideEnabled;
+    IUnicastOverrideObserver& iUnicastOverrideObserver;
     TBool iEnabled;
 };
 
