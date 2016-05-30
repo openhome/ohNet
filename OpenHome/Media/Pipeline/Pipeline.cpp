@@ -385,9 +385,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iVariableDelay2,
                    new VariableDelayRight(*iMsgFactory, *upstream,
                                           aInitParams->RampEmergencyJiffies(),
-                                          *iVariableDelay1,
                                           aInitParams->StarvationRamperJiffies()),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    iVariableDelay1->SetObserver(*iVariableDelay2);
     ATTACH_ELEMENT(iLoggerVariableDelay2, new Logger(*iVariableDelay2, "VariableDelay2"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iRampValidatorDelay2, new RampValidator(*upstream, "VariableDelay2"),

@@ -122,13 +122,15 @@ protected:
     TInt iBufferSize;
 };
 
-class SuiteVariableDelayLeft : public SuiteVariableDelay
+class SuiteVariableDelayLeft : public SuiteVariableDelay, private IVariableDelayObserver
 {
     static const TUint kDownstreamDelay = 30 * Jiffies::kPerMs;
 public:
     SuiteVariableDelayLeft();
 private: // from SuiteVariableDelay
     void DoSetup() override;
+private: // from IVariableDelayObserver
+    void NotifyDelayApplied(TUint aJiffies) override;
 private:
     void TestAllMsgsPass();
     void TestDelayFromRunning();
@@ -140,25 +142,22 @@ private:
     void TestNoSilenceInjectedBeforeDecodedStream();
     void TestDelayAppliedAfterDrain();
     void TestDelayShorterThanDownstream();
+    void TestReportsDelayToObserver();
+private:
+    TUint iDelayAppliedJiffies;
 };
 
 class SuiteVariableDelayRight : public SuiteVariableDelay
-                              , private IVariableDelayObserver
 {
     static const TUint kMinDelay = 10 * Jiffies::kPerMs;
 public:
     SuiteVariableDelayRight();
 private: // from SuiteVariableDelay
     void DoSetup() override;
-private: // from IVariableDelayObserver
-    void NotifyDelayApplied(TUint aJiffies) override;
 private:
     void TestDelayShorterThanMinimum();
     void TestAnimatorOverride();
-    void TestReportsDelayToObserver();
     void TestClockPuller();
-private:
-    TUint iDelayAppliedJiffies;
 };
 
 } // namespace Media
@@ -472,11 +471,19 @@ SuiteVariableDelayLeft::SuiteVariableDelayLeft()
     AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
     AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestDelayAppliedAfterDrain), "TestDelayAppliedAfterDrain");
     AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestDelayShorterThanDownstream), "TestDelayShorterThanDownstream");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayLeft::TestReportsDelayToObserver), "TestReportsDelayToObserver");
 }
 
 void SuiteVariableDelayLeft::DoSetup()
 {
     iVariableDelay = new VariableDelayLeft(*iMsgFactory, *this, kRampDuration, kDownstreamDelay);
+    static_cast<VariableDelayLeft*>(iVariableDelay)->SetObserver(*this);
+    iDelayAppliedJiffies = UINT_MAX;
+}
+
+void SuiteVariableDelayLeft::NotifyDelayApplied(TUint aJiffies)
+{
+    iDelayAppliedJiffies = aJiffies;
 }
 
 void SuiteVariableDelayLeft::TestAllMsgsPass()
@@ -761,6 +768,23 @@ void SuiteVariableDelayLeft::TestDelayShorterThanDownstream()
     TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
+void SuiteVariableDelayLeft::TestReportsDelayToObserver()
+{
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+
+    static const TUint kDelay = kDownstreamDelay + 15 * Jiffies::kPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+    TEST(iLastExpectedPipelineJiffies == 0);
+    do {
+        PullNext();
+    } while (iLastMsg == EMsgSilence);
+    TEST(iLastMsg == EMsgAudioPcm);
+    TEST(iDelayAppliedJiffies == kDelay - kDownstreamDelay);
+}
+
 
 // SuiteVariableDelayRight
 
@@ -769,19 +793,12 @@ SuiteVariableDelayRight::SuiteVariableDelayRight()
 {
     AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestDelayShorterThanMinimum), "TestDelayShorterThanMinimum");
     AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestAnimatorOverride), "TestAnimatorOverride");
-    AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestReportsDelayToObserver), "TestReportsDelayToObserver");
     AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestClockPuller), "TestClockPuller");
 }
 
 void SuiteVariableDelayRight::DoSetup()
 {
-    iVariableDelay = new VariableDelayRight(*iMsgFactory, *this, kRampDuration, *this, kMinDelay);
-    iDelayAppliedJiffies = UINT_MAX;
-}
-
-void SuiteVariableDelayRight::NotifyDelayApplied(TUint aJiffies)
-{
-    iDelayAppliedJiffies = aJiffies;
+    iVariableDelay = new VariableDelayRight(*iMsgFactory, *this, kRampDuration, kMinDelay);
 }
 
 void SuiteVariableDelayRight::TestDelayShorterThanMinimum()
@@ -823,32 +840,6 @@ void SuiteVariableDelayRight::TestAnimatorOverride()
     TEST(iVariableDelay->iStatus == VariableDelayBase::ERunning);
 }
 
-void SuiteVariableDelayRight::TestReportsDelayToObserver()
-{
-    PullNext(EMsgMode);
-    PullNext(EMsgTrack);
-    PullNext(EMsgDecodedStream);
-
-    static const TUint kDelay = kMinDelay + (15 * Jiffies::kPerMs);
-    iNextDelayAbsoluteJiffies = kDelay;
-    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
-    TEST(iLastExpectedPipelineJiffies == 0);
-    do {
-        PullNext();
-    } while (iLastMsg == EMsgSilence);
-    TEST(iLastMsg == EMsgAudioPcm);
-    TEST(iDelayAppliedJiffies == kDelay);
-
-    iJiffies = 0;
-    iNextDelayAbsoluteJiffies = kMinDelay;
-    iNextGeneratedMsg = EMsgDelay;
-    while (iVariableDelay->iStatus != VariableDelayBase::ERampingUp) {
-        PullNext();
-    }
-    TEST(iLastMsg == EMsgDecodedStream);
-    TEST(iDelayAppliedJiffies == kMinDelay);
-}
-
 void SuiteVariableDelayRight::TestClockPuller()
 {
     iNextModeClockPuller = this;
@@ -866,10 +857,9 @@ void SuiteVariableDelayRight::TestClockPuller()
         if (iLastMsg != EMsgSilence) {
             break;
         }
-        TEST(iClockPullStartCount == 0);
         TEST(iClockPullStopCount == 1);
     }
-    TEST(iDelayAppliedJiffies == kDelay); // upstream observer is responsible for starting clock puller
+    TEST(iClockPullStartCount == 1);
     TEST(iClockPullStopCount == 1);
 }
 

@@ -42,10 +42,10 @@ VariableDelayBase::VariableDelayBase(MsgFactory& aMsgFactory, IPipelineElementUp
     , iLock("VDEL")
     , iClockPuller(nullptr)
     , iDelayJiffies(0)
+    , iDelayAdjustment(0)
     , iUpstreamElement(aUpstreamElement)
     , iRampDuration(aRampDuration)
     , iId(aId)
-    , iDelayAdjustment(0)
     , iWaitForAudioBeforeGeneratingSilence(false)
     , iDecodedStream(nullptr)
 {
@@ -386,17 +386,17 @@ Msg* VariableDelayBase::ProcessMsg(MsgSilence* aMsg)
 
 // VariableDelayLeft
 
-VariableDelayLeft::VariableDelayLeft(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, TUint aDownstreamDelay)
+VariableDelayLeft::VariableDelayLeft(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
+                                     TUint aRampDuration, TUint aDownstreamDelay)
     : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "left")
     , iDownstreamDelay(aDownstreamDelay)
-    , iDownstreamDelayCurrent(0)
+    , iObserver(nullptr)
 {
 }
 
-Msg* VariableDelayLeft::ProcessMsg(MsgMode* aMsg)
+void VariableDelayLeft::SetObserver(IVariableDelayObserver& aObserver)
 {
-    iDownstreamDelayCurrent = 0;
-    return VariableDelayBase::ProcessMsg(aMsg);
+    iObserver = &aObserver;
 }
 
 Msg* VariableDelayLeft::ProcessMsg(MsgDelay* aMsg)
@@ -419,35 +419,20 @@ Msg* VariableDelayLeft::ProcessMsg(MsgDelay* aMsg)
 
 void VariableDelayLeft::LocalDelayApplied()
 {
-    AutoMutex _(iLock);
-    StartClockPuller();
-}
-
-void VariableDelayLeft::NotifyDelayApplied(TUint aJiffies)
-{
-    AutoMutex _(iLock);
-    iDownstreamDelayCurrent = aJiffies;
-    StartClockPuller();
-}
-
-void VariableDelayLeft::StartClockPuller()
-{
-    if (iClockPuller != nullptr) {
-        const TUint pipelineDelay = iDelayJiffies + iDownstreamDelayCurrent;
-        iClockPuller->Start(pipelineDelay);
-    }
+    ASSERT(iObserver != nullptr);
+    iObserver->NotifyDelayApplied(iDelayJiffies);
 }
 
 
 // VariableDelayRight
 
 VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
-                                       TUint aRampDuration, IVariableDelayObserver& aObserver, TUint aMinDelay)
+                                       TUint aRampDuration, TUint aMinDelay)
     : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "right")
-    , iObserver(aObserver)
     , iMinDelay(aMinDelay)
     , iAnimatorLatencyOverride(0)
     , iAnimatorOverridePending(false)
+    , iUpstreamDelayCurrent(0)
 {
 }
 
@@ -474,6 +459,7 @@ Msg* VariableDelayRight::Pull()
 Msg* VariableDelayRight::ProcessMsg(MsgMode* aMsg)
 {
     iDelayJiffiesTotal = 0;
+    iUpstreamDelayCurrent = 0;
     return VariableDelayBase::ProcessMsg(aMsg);
 }
 
@@ -502,8 +488,16 @@ Msg* VariableDelayRight::ProcessMsg(MsgDelay* aMsg)
 
 void VariableDelayRight::LocalDelayApplied()
 {
-    const TUint delayJiffies = std::max(iDelayJiffies, iMinDelay);
-    iObserver.NotifyDelayApplied(delayJiffies);
+    StartClockPuller();
+}
+
+void VariableDelayRight::NotifyDelayApplied(TUint aJiffies)
+{
+    AutoMutex _(iLock);
+    iUpstreamDelayCurrent = aJiffies;
+    if (iDelayAdjustment == 0) {
+        StartClockPuller();
+    }
 }
 
 void VariableDelayRight::ApplyAnimatorOverride()
@@ -511,4 +505,13 @@ void VariableDelayRight::ApplyAnimatorOverride()
     TUint delayJiffies = (iAnimatorLatencyOverride >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatencyOverride);
     delayJiffies = std::max(delayJiffies, iMinDelay);
     HandleDelayChange(delayJiffies);
+}
+
+void VariableDelayRight::StartClockPuller()
+{
+    if (iClockPuller != nullptr) {
+        const TUint delayJiffies = std::max(iDelayJiffies, iMinDelay);
+        const TUint pipelineDelay = delayJiffies + iUpstreamDelayCurrent;
+        iClockPuller->Start(pipelineDelay);
+    }
 }
