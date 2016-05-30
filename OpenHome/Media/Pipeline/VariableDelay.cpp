@@ -90,7 +90,11 @@ Msg* VariableDelayBase::DoPull()
     if ((iStatus == EStarting || iStatus == ERampedDown) && iDelayAdjustment > 0) {
         TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         auto stream = iDecodedStream->StreamInfo();
-        msg = iMsgFactory.CreateMsgSilence(size, stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
+        auto silence = iMsgFactory.CreateMsgSilence(size, stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
+        if (iClockPuller != nullptr) {
+            silence->SetObserver(*iClockPuller);
+        }
+        msg = silence;
         if (size > (TUint)iDelayAdjustment) { // sizes less than one sample will be rounded up
             iDelayAdjustment = 0;
         }

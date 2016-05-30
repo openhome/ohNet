@@ -1597,6 +1597,13 @@ Msg* MsgBitRate::Process(IMsgProcessor& aProcessor)
 
 // MsgAudio
 
+void MsgAudio::SetObserver(IPipelineBufferObserver& aPipelineBufferObserver)
+{
+    ASSERT(iPipelineBufferObserver == nullptr);
+    iPipelineBufferObserver = &aPipelineBufferObserver;
+    iPipelineBufferObserver->Update((TInt)iSize);
+}
+
 MsgAudio* MsgAudio::Split(TUint aJiffies)
 {
     ASSERT(aJiffies > 0);
@@ -1607,6 +1614,7 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     remaining->iSampleRate = iSampleRate;
     remaining->iBitDepth = iBitDepth;
     remaining->iNumChannels = iNumChannels;
+    remaining->iPipelineBufferObserver = iPipelineBufferObserver;
     if (iRamp.IsEnabled()) {
         remaining->iRamp = iRamp.Split(aJiffies, iSize);
     }
@@ -1627,6 +1635,7 @@ MsgAudio* MsgAudio::Clone()
     clone->iSampleRate = iSampleRate;
     clone->iBitDepth = iBitDepth;
     clone->iNumChannels = iNumChannels;
+    clone->iPipelineBufferObserver = nullptr;
     return clone;
 }
 
@@ -1729,10 +1738,15 @@ void MsgAudio::Initialise(TUint aSampleRate, TUint aBitDepth, TUint aChannels)
     iSampleRate = aSampleRate;
     iBitDepth = aBitDepth;
     iNumChannels = aChannels;
+    iPipelineBufferObserver = nullptr;
 }
 
 void MsgAudio::Clear()
 {
+    if (iPipelineBufferObserver != nullptr) {
+        TInt jiffies = (TInt)iSize;
+        iPipelineBufferObserver->Update(-jiffies);
+    }
     iSize = 0;
 }
 
@@ -1797,20 +1811,12 @@ void MsgAudioPcm::Aggregate(MsgAudioPcm* aMsg)
     aMsg->RemoveRef();
 }
 
-void MsgAudioPcm::SetObserver(IPipelineBufferObserver& aPipelineBufferObserver)
-{
-    ASSERT(iPipelineBufferObserver == nullptr);
-    iPipelineBufferObserver = &aPipelineBufferObserver;
-    iPipelineBufferObserver->Update((TInt)iSize);
-}
-
 MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudioPcm* clone = static_cast<MsgAudioPcm*>(MsgAudio::Clone());
     clone->iAudioData = iAudioData;
     clone->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     clone->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
-    clone->iPipelineBufferObserver = nullptr;
     clone->iTrackOffset = iTrackOffset;
     iAudioData->AddRef();
     return clone;
@@ -1825,7 +1831,6 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUi
     iAllocatorPlayableSilence = &aAllocatorPlayableSilence;
     iAudioData = aDecodedAudio;
     iTrackOffset = aTrackOffset;
-    iPipelineBufferObserver = nullptr;
     const TUint bytes = iAudioData->Bytes();
     const TUint byteDepth = iBitDepth / 8;
     ASSERT(bytes % byteDepth == 0);
@@ -1844,7 +1849,6 @@ void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
     remaining.iTrackOffset = iTrackOffset + iSize;
     remaining.iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     remaining.iAllocatorPlayableSilence = iAllocatorPlayableSilence;
-    remaining.iPipelineBufferObserver = iPipelineBufferObserver;
 }
 
 MsgAudio* MsgAudioPcm::Allocate()
@@ -1854,10 +1858,6 @@ MsgAudio* MsgAudioPcm::Allocate()
 
 void MsgAudioPcm::Clear()
 {
-    if (iPipelineBufferObserver != nullptr) {
-        TInt jiffies = (TInt)iSize;
-        iPipelineBufferObserver->Update(-jiffies);
-    }
     MsgAudio::Clear();
     iAudioData->RemoveRef();
 }

@@ -616,10 +616,18 @@ private:
     DecodedStreamInfo iStreamInfo;
 };
 
+class IPipelineBufferObserver
+{
+public:
+    virtual ~IPipelineBufferObserver() {}
+    virtual void Update(TInt aDelta) = 0;
+};
+
 class MsgAudio : public Msg
 {
     friend class MsgFactory;
 public:
+    void SetObserver(IPipelineBufferObserver& aPipelineBufferObserver);
     MsgAudio* Split(TUint aJiffies); // returns block after aAt
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
@@ -643,6 +651,7 @@ protected:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
+    IPipelineBufferObserver* iPipelineBufferObserver;
 };
 
 class MsgBitRate : public Msg
@@ -664,13 +673,6 @@ class MsgPlayable;
 class MsgPlayablePcm;
 class MsgPlayableSilence;
 
-class IPipelineBufferObserver
-{
-public:
-    virtual ~IPipelineBufferObserver() {}
-    virtual void Update(TInt aDelta) = 0;
-};
-
 class MsgAudioPcm : public MsgAudio
 {
     friend class MsgFactory;
@@ -681,7 +683,6 @@ public:
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
-    void SetObserver(IPipelineBufferObserver& aPipelineBufferObserver);
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
@@ -699,7 +700,6 @@ private:
     Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
     Allocator<MsgPlayableSilence>* iAllocatorPlayableSilence;
     TUint64 iTrackOffset;
-    IPipelineBufferObserver* iPipelineBufferObserver;
 };
 
 class MsgPlayableSilence;

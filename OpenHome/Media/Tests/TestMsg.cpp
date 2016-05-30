@@ -908,7 +908,7 @@ void SuiteMsgAudio::Test()
     msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
     TEST(bufferObserver.Size() == 0);
     TEST(bufferObserver.NumCalls() == 0);
-    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    msg->SetObserver(bufferObserver);
     TEST(bufferObserver.Size() == msg->Jiffies());
     TEST(bufferObserver.NumCalls() == 1);
     msg->RemoveRef();
@@ -917,7 +917,7 @@ void SuiteMsgAudio::Test()
 
     bufferObserver.Reset();
     msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
-    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    msg->SetObserver(bufferObserver);
     TEST(bufferObserver.Size() == msg->Jiffies());
     TEST(bufferObserver.NumCalls() == 1);
     TUint prevBufferSize = bufferObserver.Size();
@@ -933,7 +933,50 @@ void SuiteMsgAudio::Test()
 
     bufferObserver.Reset();
     msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
-    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    msg->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    clone = msg->Clone();
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    clone->RemoveRef();
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
+    bufferObserver.Reset();
+    jiffies = msgSize;
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 0);
+    msg->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
+    bufferObserver.Reset();
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
+    msg->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    prevBufferSize = bufferObserver.Size();
+    remaining = msg->Split(msgSize/2);
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == remaining->Jiffies());
+    TEST(bufferObserver.NumCalls() == 2);
+    remaining->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 3);
+
+    bufferObserver.Reset();
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
+    msg->SetObserver(bufferObserver);
     TEST(bufferObserver.Size() == msg->Jiffies());
     TEST(bufferObserver.NumCalls() == 1);
     clone = msg->Clone();

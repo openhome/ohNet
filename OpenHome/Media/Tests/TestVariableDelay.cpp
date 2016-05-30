@@ -119,6 +119,7 @@ protected:
     TUint iClockPullStopCount;
     TUint iStreamId;
     TUint iNextStreamId;
+    TInt iBufferSize;
 };
 
 class SuiteVariableDelayLeft : public SuiteVariableDelay
@@ -205,10 +206,12 @@ void SuiteVariableDelay::Setup()
     iClockPullStartCount = iClockPullStopCount = 0;
     iStreamId = UINT_MAX;
     iNextStreamId = 0;
+    iBufferSize = 0;
 }
 
 void SuiteVariableDelay::TearDown()
 {
+    TEST(iBufferSize == 0);
     delete iDecodedAudioValidator;
     delete iRampValidator;
     delete iVariableDelay;
@@ -416,9 +419,9 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-void SuiteVariableDelay::Update(TInt /*aDelta*/)
+void SuiteVariableDelay::Update(TInt aDelta)
 {
-    ASSERTS();
+    iBufferSize += aDelta;
 }
 
 void SuiteVariableDelay::Start(TUint aExpectedPipelineJiffies)
