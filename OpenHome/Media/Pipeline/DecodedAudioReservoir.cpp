@@ -119,11 +119,14 @@ void DecodedAudioReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgDrain* /*aMsg*/)
 {
-    AutoMutex _(iLock);
+    iLock.Wait();
     if (iClockPuller != nullptr) {
         iClockPuller->Stop();
     }
+    iLock.Signal();
+    iGorgeLock.Wait();
     iPriorityMsgCount++;
+    iGorgeLock.Signal();
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
