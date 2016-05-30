@@ -124,7 +124,6 @@ private:
     TUint iDelayJiffiesTotal;
     TUint iAnimatorLatencyOverride;
     TBool iAnimatorOverridePending;
-    TUint iUpstreamDelayCurrent;
 };
 
 } // namespace Media

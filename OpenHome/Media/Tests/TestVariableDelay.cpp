@@ -66,7 +66,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IClockPuller
     void Update(TInt aDelta) override;
-    void Start(TUint aExpectedPipelineJiffies) override;
+    void Start() override;
     void Stop() override;
     void Reset() override;
 protected:
@@ -114,7 +114,6 @@ protected:
     TUint iNextDelayAbsoluteJiffies;
     IClockPuller* iNextModeClockPuller;
     TUint iLastPulledDelay;
-    TUint iLastExpectedPipelineJiffies;
     TUint iClockPullStartCount;
     TUint iClockPullStopCount;
     TUint iStreamId;
@@ -201,7 +200,6 @@ void SuiteVariableDelay::Setup()
     iNextDelayAbsoluteJiffies = 0;
     iNextModeClockPuller = nullptr;
     iLastPulledDelay = 0;
-    iLastExpectedPipelineJiffies = 0;
     iClockPullStartCount = iClockPullStopCount = 0;
     iStreamId = UINT_MAX;
     iNextStreamId = 0;
@@ -423,10 +421,9 @@ void SuiteVariableDelay::Update(TInt aDelta)
     iBufferSize += aDelta;
 }
 
-void SuiteVariableDelay::Start(TUint aExpectedPipelineJiffies)
+void SuiteVariableDelay::Start()
 {
     iClockPullStartCount++;
-    iLastExpectedPipelineJiffies = aExpectedPipelineJiffies;
 }
 
 void SuiteVariableDelay::Stop()
@@ -777,7 +774,6 @@ void SuiteVariableDelayLeft::TestReportsDelayToObserver()
     static const TUint kDelay = kDownstreamDelay + 15 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
-    TEST(iLastExpectedPipelineJiffies == 0);
     do {
         PullNext();
     } while (iLastMsg == EMsgSilence);

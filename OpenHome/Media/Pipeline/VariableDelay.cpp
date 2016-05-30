@@ -432,7 +432,6 @@ VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElement
     , iMinDelay(aMinDelay)
     , iAnimatorLatencyOverride(0)
     , iAnimatorOverridePending(false)
-    , iUpstreamDelayCurrent(0)
 {
 }
 
@@ -459,7 +458,6 @@ Msg* VariableDelayRight::Pull()
 Msg* VariableDelayRight::ProcessMsg(MsgMode* aMsg)
 {
     iDelayJiffiesTotal = 0;
-    iUpstreamDelayCurrent = 0;
     return VariableDelayBase::ProcessMsg(aMsg);
 }
 
@@ -491,10 +489,9 @@ void VariableDelayRight::LocalDelayApplied()
     StartClockPuller();
 }
 
-void VariableDelayRight::NotifyDelayApplied(TUint aJiffies)
+void VariableDelayRight::NotifyDelayApplied(TUint /*aJiffies*/)
 {
     AutoMutex _(iLock);
-    iUpstreamDelayCurrent = aJiffies;
     if (iDelayAdjustment == 0) {
         StartClockPuller();
     }
@@ -510,8 +507,6 @@ void VariableDelayRight::ApplyAnimatorOverride()
 void VariableDelayRight::StartClockPuller()
 {
     if (iClockPuller != nullptr) {
-        const TUint delayJiffies = std::max(iDelayJiffies, iMinDelay);
-        const TUint pipelineDelay = delayJiffies + iUpstreamDelayCurrent;
-        iClockPuller->Start(pipelineDelay);
+        iClockPuller->Start();
     }
 }
