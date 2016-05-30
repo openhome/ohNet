@@ -505,15 +505,8 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
 void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
 {
     if (!iDevice->Enabled()) {
-        // FIXME - can only set Product attribute once (meaning no updates on subnet change)
-        const TBool firstChange = (iPresentationUrl.Bytes() == 0);
         iPresentationUrl.Replace(aUrl);
         iDevice->SetAttribute("Upnp.PresentationUrl", iPresentationUrl.PtrZ());
-        if (firstChange) {
-            Bws<128> configAtt("App:Config=");
-            configAtt.Append(iPresentationUrl);
-            iMediaPlayer->Product().AddAttribute(configAtt);
-        }
     }
 }
 
