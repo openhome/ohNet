@@ -97,9 +97,11 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
                                                                                    streamInfo.BitDepth(),
                                                                                    streamInfo.NumChannels());
         iFlushing = false;
-        if (iAnimatorDelayJiffies != animatorDelayJiffies && iOutputMsgDelayOnAnimatorDelayChange) {
+        if (iAnimatorDelayJiffies != animatorDelayJiffies) {
             iAnimatorDelayJiffies = animatorDelayJiffies;
-            iDownstream.Push(iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies));
+            if (iOutputMsgDelayOnAnimatorDelayChange) {
+                iDownstream.Push(iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies));
+            }
         }
     }
     catch (SampleRateUnsupported&) {
