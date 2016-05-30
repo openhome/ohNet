@@ -207,9 +207,33 @@ void RadioPresetsTuneIn::DoRefresh()
             std::fill(iAllocatedPresets.begin(), iAllocatedPresets.end(), 0);
         }
         try {
+            // Find the default container (there may be multiple containers if TuneIn folders are used)
+            TBool foundDefault = false;
+            for (; !foundDefault;) {
+                iReaderUntil.ReadUntil('<');
+                buf.Set(iReaderUntil.ReadUntil('>'));
+                const TBool isContainer = buf.BeginsWith(Brn("outline type=\"container\""));
+                if (!isContainer) {
+                    continue;
+                }
+                Parser parser(buf);
+                Brn attr;
+                static const Brn kAttrDefault("is_default=\"true\"");
+                while (parser.Remaining().Bytes() > 0) {
+                    attr.Set(parser.Next());
+                    if (attr == kAttrDefault) {
+                        foundDefault = true;
+                        break;
+                    }
+                }
+            }
+            // Read presets for the current container only
             for (;;) {
                 iReaderUntil.ReadUntil('<');
                 buf.Set(iReaderUntil.ReadUntil('>'));
+                if (buf == Brn("/outline")) {
+                    break;
+                }
                 const TBool isAudio = buf.BeginsWith(Brn("outline type=\"audio\""));
                 const TBool isLink = buf.BeginsWith(Brn("outline type=\"link\""));
                 if (!(isAudio || isLink)) {
