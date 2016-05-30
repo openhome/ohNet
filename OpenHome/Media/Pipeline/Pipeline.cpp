@@ -209,6 +209,7 @@ TUint PipelineInitParams::SupportElements() const
         }                                                       \
     } while (0)
 
+static Pipeline* gPipeline = nullptr;
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
     : iInitParams(aInitParams)
@@ -227,8 +228,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint maxEncodedReservoirMsgs = encodedAudioCount;
     encodedAudioCount += kRewinderMaxMsgs; // this may only be required on platforms that don't guarantee priority based thread scheduling
     const TUint msgEncodedAudioCount = encodedAudioCount + 100; // +100 allows for Split()ing by Container and CodecController
-    const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationRamperJiffies();
-    const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
+    const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->StarvationRamperJiffies();
+    const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 200; // +200 allows for songcast sender, some smaller msgs and some buffering in non-reservoir elements
     const TUint msgAudioPcmCount = decodedAudioCount + 100; // +100 allows for Split()ing in various elements
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
     MsgFactoryInitParams msgInit;
@@ -435,6 +436,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
         iPipelineEnd = iPreDriver;
     }
     iMuteCounted = new MuteCounted(*iMuter);
+
+    gPipeline = this;
 
     //iAudioDumper->SetEnabled(true);
 
@@ -737,6 +740,20 @@ void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
     aMin = iInitParams->ThreadPriorityCodec();
 }
 
+void PipelineLogBuffers()
+{
+    gPipeline->LogBuffers();
+}
+
+void Pipeline::LogBuffers() const
+{
+    const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
+    const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
+    const TUint starvationMs = Jiffies::ToMs(iStarvationRamper->SizeInJiffies());
+    Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, starvationRamper=%u\n",
+               encodedBytes, decodedMs, starvationMs);
+}
+
 void Pipeline::Push(Msg* aMsg)
 {
     iPipelineStart->Push(aMsg);
@@ -834,11 +851,7 @@ void Pipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
     iObserver.NotifyTime(aSeconds, aTrackDurationSeconds);
 #if 0
     if (aSeconds % 8 == 0) {
-        const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
-        const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
-        const TUint starvationMs = Jiffies::ToMs(iStarvationRamper->SizeInJiffies());
-        Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, starvationRamper=%u\n",
-                   encodedBytes, decodedMs, starvationMs);
+        LogBuffers();
     }
 #endif
 }
