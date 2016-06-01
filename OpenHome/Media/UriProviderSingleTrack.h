@@ -12,7 +12,7 @@ namespace Media {
 class UriProviderSingleTrack : public UriProvider
 {
 public:
-    UriProviderSingleTrack(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime, TrackFactory& aTrackFactory);
+    UriProviderSingleTrack(const TChar* aMode, TBool aSupportsLatency, TrackFactory& aTrackFactory);
     ~UriProviderSingleTrack();
     Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
     void SetTrack(Track* aTrack);

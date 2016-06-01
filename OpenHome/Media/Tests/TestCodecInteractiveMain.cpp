@@ -199,8 +199,7 @@ Msg* ElementFileReader::Pull()
     if (iMode == eMode) {
         const Brn mode("Playlist");
         const TBool supportsLatency = false;
-        const TBool realTime = false;
-        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, realTime, ModeClockPullers(), false, false);
+        msg = iMsgFactory.CreateMsgMode(mode, supportsLatency, ModeClockPullers(), false, false);
         iMode = eTrack;
     }
     else if (iMode == eTrack) {

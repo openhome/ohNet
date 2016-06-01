@@ -23,7 +23,6 @@ public:
     virtual ~UriProvider();
     const Brx& Mode() const;
     TBool SupportsLatency() const;
-    TBool IsRealTime() const;
     TBool SupportsNext() const;
     TBool SupportsPrev() const;
     virtual ModeClockPullers ClockPullers();
@@ -35,16 +34,14 @@ public:
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
 protected:
     enum class Latency  { Supported, NotSupported };
-    enum class RealTime { Supported, NotSupported };
     enum class Next     { Supported, NotSupported };
     enum class Prev     { Supported, NotSupported };
 protected:
-    UriProvider(const TChar* aMode, Latency aLatency, RealTime aRealTime,
+    UriProvider(const TChar* aMode, Latency aLatency,
                 Next aNextSupported, Prev aPrevSupported);
 private:
     BwsMode iMode;
     TBool iSupportsLatency;
-    TBool iRealTime;
     TBool iSupportsNext;
     TBool iSupportsPrev;
 };

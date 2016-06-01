@@ -245,7 +245,7 @@ private: // from IFlushIdProvider
 private:
     void Queue(Msg* aMsg);
     void PullNext(EMsgType aExpectedMsg);
-    Msg* CreateMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    Msg* CreateMode(const Brx& aMode, TBool aSupportsLatency);
     Msg* CreateTrack();
     Msg* CreateDecodedStream();
     Msg* CreateAudio();
@@ -464,7 +464,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgBitRate(1);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
         break;
     case EMsgTrack:
     {
@@ -1075,9 +1075,9 @@ void SuiteGorger::PullNext(EMsgType aExpectedMsg)
     TEST(iLastPulledMsg == aExpectedMsg);
 }
 
-Msg* SuiteGorger::CreateMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+Msg* SuiteGorger::CreateMode(const Brx& aMode, TBool aSupportsLatency)
 {
-    return iMsgFactory->CreateMsgMode(aMode, aSupportsLatency, aRealTime, ModeClockPullers(), false, false);
+    return iMsgFactory->CreateMsgMode(aMode, aSupportsLatency, ModeClockPullers(), false, false);
 }
 
 Msg* SuiteGorger::CreateTrack()
@@ -1106,7 +1106,7 @@ Msg* SuiteGorger::CreateAudio()
 
 void SuiteGorger::TestAllMsgsPassWhileNotGorging()
 {
-    Queue(CreateMode(kModeRealTime, false, true));
+    Queue(CreateMode(kModeRealTime, true));
     Queue(CreateTrack());
     Queue(iMsgFactory->CreateMsgDrain(Functor()));
     Queue(iMsgFactory->CreateMsgDelay(0));
@@ -1139,7 +1139,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     TEST(!iDecodedReservoir->iGorging);
 
     TBool realTime = false;
-    Queue(CreateMode(kModeGorgable, false, realTime));
+    Queue(CreateMode(kModeGorgable, realTime));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -1147,7 +1147,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
     TEST(!iDecodedReservoir->iGorging);
 
     realTime = true;
-    Queue(CreateMode(kModeRealTime, false, realTime));
+    Queue(CreateMode(kModeRealTime, realTime));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
 
@@ -1169,7 +1169,7 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
 
 void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 {
-    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateMode(kModeGorgable, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -1197,7 +1197,7 @@ void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 
 void SuiteGorger::TestGorgingEndsWithNewMode()
 {
-    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateMode(kModeGorgable, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -1210,7 +1210,7 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
     TEST(iDecodedReservoir->iCanGorge);
     TEST(iDecodedReservoir->iGorging);
 
-    Queue(CreateMode(kModeRealTime, false, true));
+    Queue(CreateMode(kModeRealTime, true));
     PullNext(EMsgAudioPcm);
     while (iDecodedReservoir->iGorging) {
         Thread::Sleep(10); // wait for new Mode to be pulled, cancelling gorging
@@ -1225,7 +1225,7 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
 
 void SuiteGorger::TestHaltEnablesGorging()
 {
-    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateMode(kModeGorgable, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -1253,7 +1253,7 @@ void SuiteGorger::TestHaltEnablesGorging()
 
 void SuiteGorger::TestStarvationEnablesGorging()
 {
-    Queue(CreateMode(kModeRealTime, false, true));
+    Queue(CreateMode(kModeRealTime, true));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -1266,7 +1266,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     TEST(!iDecodedReservoir->iGorging);
     TEST(iStarvationNotifications == 1);
 
-    Queue(CreateMode(kModeGorgable, false, false));
+    Queue(CreateMode(kModeGorgable, false));
     Queue(CreateTrack());
     Queue(CreateDecodedStream());
     PullNext(EMsgMode);

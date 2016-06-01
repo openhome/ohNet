@@ -181,7 +181,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 {
     iGorgeLock.Wait();
     iMode.Replace(aMsg->Mode());
-    iCanGorge = !aMsg->Info().IsRealTime();
+    iCanGorge = !aMsg->Info().SupportsLatency();
     iShouldGorge = iCanGorge;
     iPriorityMsgCount--;
     iGorgeLock.Signal();

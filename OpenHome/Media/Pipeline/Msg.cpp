@@ -862,10 +862,9 @@ ModeInfo::ModeInfo()
     Clear();
 }
 
-void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext, TBool aSupportsPrev)
+void ModeInfo::Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iSupportsLatency = aSupportsLatency;
-    iRealTime        = aRealTime;
     iSupportsNext    = aSupportsNext;
     iSupportsPrev    = aSupportsPrev;
 }
@@ -873,7 +872,6 @@ void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext,
 void ModeInfo::Clear()
 {
     iSupportsLatency = false;
-    iRealTime        = false;
     iSupportsNext    = false;
     iSupportsPrev    = false;
 }
@@ -932,10 +930,10 @@ const ModeClockPullers& MsgMode::ClockPullers() const
     return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iMode.Replace(aMode);
-    iInfo.Set(aSupportsLatency, aIsRealTime, aSupportsNext, aSupportsPrev);
+    iInfo.Set(aSupportsLatency, aSupportsNext, aSupportsPrev);
     iClockPullers = aClockPullers;
 }
 
@@ -2969,10 +2967,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPullers, aSupportsNext, aSupportsPrev);
+    msg->Initialise(aMode, aSupportsLatency, aClockPullers, aSupportsNext, aSupportsPrev);
     return msg;
 }
 

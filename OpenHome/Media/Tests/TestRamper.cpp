@@ -325,7 +325,7 @@ Msg* SuiteRamper::CreateAudio()
 
 void SuiteRamper::TestNonAudioMsgsPass()
 {
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, false, ModeClockPullers(), false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brn("Mode"), true, ModeClockPullers(), false, false));
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDrain(Functor()));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 100));

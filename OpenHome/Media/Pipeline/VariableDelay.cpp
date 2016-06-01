@@ -103,7 +103,7 @@ Msg* AudioDiscarder::ProcessMsg(MsgAudioPcm* aMsg)
     iTrackOffset = audio->TrackOffset() + audio->Jiffies();
     return audio;
 }
-Msg* AudioDiscarder::ProcessMsg(MsgSilence* aMsg)             
+Msg* AudioDiscarder::ProcessMsg(MsgSilence* aMsg)
 {
     return ProcessAudio(aMsg);
 }

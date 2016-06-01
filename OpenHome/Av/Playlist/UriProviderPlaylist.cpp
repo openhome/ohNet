@@ -15,7 +15,7 @@ using namespace OpenHome::Media;
 // UriProviderPlaylist
 
 UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver)
-    : UriProvider("Playlist", Latency::NotSupported, RealTime::NotSupported, Next::Supported, Prev::Supported)
+    : UriProvider("Playlist", Latency::NotSupported, Next::Supported, Prev::Supported)
     , iLock("UPPL")
     , iDatabase(aDatabase)
     , iIdManager(aPipeline)
