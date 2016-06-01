@@ -60,6 +60,7 @@ private: // from IMsgProcessor
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IStarvationRamperObserver
@@ -343,6 +344,12 @@ EStreamPlay SuiteStarvationRamper::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint SuiteStarvationRamper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteStarvationRamper::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;

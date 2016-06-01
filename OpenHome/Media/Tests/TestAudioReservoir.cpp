@@ -21,7 +21,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteAudioReservoir : public Suite, private IMsgProcessor
+class SuiteAudioReservoir : public Suite, private IMsgProcessor, private IFlushIdProvider
 {
     static const TUint kDecodedAudioCount = 512;
     static const TUint kMsgAudioPcmCount  = 512;
@@ -54,6 +54,8 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
+private: // from IFlushIdProvider
+    TUint NextFlushId() override;
 private:
     enum EMsgType
     {
@@ -93,6 +95,7 @@ private:
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     DecodedAudioReservoir* iReservoir;
+    TUint iNextFlushId;
     ThreadFunctor* iThread;
     EMsgGenerationState iMsgGenerationState;
     EMsgType iNextGeneratedMsg;
@@ -100,6 +103,10 @@ private:
     Semaphore iSemUpstream;
     Semaphore iSemUpstreamComplete;
     TUint64 iTrackOffset;
+    IStreamHandler* iStreamHandler;
+    TUint64 iLastPulledTrackPos;
+    TUint iLastPulledJiffies;
+    TUint iLastFlushId;
 };
 
 class SuiteEncodedReservoir : public SuiteUnitTest, private IStreamHandler, private IMsgProcessor, private IFlushIdProvider
@@ -114,6 +121,7 @@ private: // from SuiteUnitTest
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
@@ -173,7 +181,7 @@ private:
     TByte iAudioDest[EncodedAudio::kMaxBytes];
 };
 
-class SuiteGorger : public SuiteUnitTest, private IStreamHandler, private IMsgProcessor
+class SuiteGorger : public SuiteUnitTest, private IStreamHandler, private IMsgProcessor, private IFlushIdProvider
 {
     static const TUint kGorgeSize = Jiffies::kPerMs * 100; // production code will likely use a much larger size
     static const TUint kSampleRate = 44100;
@@ -189,6 +197,7 @@ private: // from SuiteUnitTest
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
@@ -231,6 +240,8 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg) override;
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
+private: // from IFlushIdProvider
+    TUint NextFlushId() override;
 private:
     void Queue(Msg* aMsg);
     void PullNext(EMsgType aExpectedMsg);
@@ -250,6 +261,7 @@ private:
     TrackFactory* iTrackFactory;
     MsgFactory* iMsgFactory;
     DecodedAudioReservoir* iDecodedReservoir;
+    TUint iNextFlushId;
     EMsgType iLastPulledMsg;
     TUint64 iTrackOffset;
     TUint iNextStreamId;
@@ -268,6 +280,10 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iSemUpstream("TRSV", 0)
     , iSemUpstreamComplete("TRSV", 0)
     , iTrackOffset(0)
+    , iStreamHandler(nullptr)
+    , iLastPulledTrackPos(0)
+    , iLastPulledJiffies(0)
+    , iLastFlushId(0)
 {
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(kMsgAudioPcmCount, kDecodedAudioCount);
@@ -276,7 +292,8 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     init.SetMsgModeCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(*iMsgFactory, kReservoirSize, kMaxStreams, 0);
+    iReservoir = new DecodedAudioReservoir(*iMsgFactory, *this, kReservoirSize, kMaxStreams, 0);
+    iNextFlushId = MsgFlush::kIdInvalid;
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
@@ -336,6 +353,25 @@ void SuiteAudioReservoir::Test()
     // ...sleep for a while then check size of reservoir is unchanged
     Thread::Sleep(25);
     TEST(iReservoir->Jiffies() == jiffies);
+
+    // tell reservoir to discard some of its audio content
+    const TUint kDiscardJiffies = 100 * Jiffies::kPerMs;
+    const TUint64 prevTrackPos = iLastPulledTrackPos;
+    const TUint flushId = iStreamHandler->TryDiscard(kDiscardJiffies);
+    TEST(flushId != MsgFlush::kIdInvalid);
+    msg = iReservoir->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastMsg == EMsgFlush);
+    TEST(iLastFlushId == flushId);
+    msg = iReservoir->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastMsg == EMsgDecodedStream);
+    TEST(iLastPulledTrackPos == prevTrackPos + kDiscardJiffies);
+    msg = iReservoir->Pull();
+    msg = msg->Process(*this);
+    TEST(iLastMsg == EMsgAudioPcm);
 
     // Pull single msg to unblock iThread
     msg = iReservoir->Pull();
@@ -421,7 +457,8 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     }
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
+        iTrackOffset = 0;
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 16, kSampleRate, kNumChannels, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(1);
@@ -536,6 +573,7 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
+    iLastFlushId = aMsg->Id();
     return aMsg;
 }
 
@@ -548,6 +586,9 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastMsg = EMsgDecodedStream;
+    const auto info = aMsg->StreamInfo();
+    iStreamHandler = info.StreamHandler();
+    iLastPulledTrackPos = info.SampleStart() * Jiffies::PerSample(info.SampleRate());
     return aMsg;
 }
 
@@ -560,6 +601,9 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgBitRate* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastMsg = EMsgAudioPcm;
+    iLastPulledJiffies = aMsg->Jiffies();
+    iLastPulledTrackPos += iLastPulledJiffies;
+
     MsgPlayable* playable = aMsg->CreatePlayable();
     ProcessorPcmBufTest pcmProcessor;
     playable->Read(pcmProcessor);
@@ -594,6 +638,11 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
 {
    iLastMsg = EMsgQuit;
     return aMsg;
+}
+
+TUint SuiteAudioReservoir::NextFlushId()
+{
+    return ++iNextFlushId;
 }
 
 
@@ -643,6 +692,12 @@ TUint SuiteEncodedReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     iTrySeekCount++;
     return kTrySeekResponse;
+}
+
+TUint SuiteEncodedReservoir::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 TUint SuiteEncodedReservoir::TryStop(TUint /*aStreamId*/)
@@ -854,7 +909,8 @@ void SuiteGorger::Setup()
     init.SetMsgFlushCount(2);
     init.SetMsgModeCount(3);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iDecodedReservoir = new DecodedAudioReservoir(*iMsgFactory, kGorgeSize * 3, 10, kGorgeSize);
+    iDecodedReservoir = new DecodedAudioReservoir(*iMsgFactory, *this, kGorgeSize * 3, 10, kGorgeSize);
+    iNextFlushId = MsgFlush::kIdInvalid;
     iLastPulledMsg = ENone;
     iTrackOffset = 0;
     iNextStreamId = 1;
@@ -875,6 +931,12 @@ EStreamPlay SuiteGorger::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint SuiteGorger::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteGorger::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
@@ -993,6 +1055,11 @@ Msg* SuiteGorger::ProcessMsg(MsgQuit* aMsg)
 {
     iLastPulledMsg = EMsgQuit;
     return aMsg;
+}
+
+TUint SuiteGorger::NextFlushId()
+{
+    return ++iNextFlushId;
 }
 
 void SuiteGorger::Queue(Msg* aMsg)

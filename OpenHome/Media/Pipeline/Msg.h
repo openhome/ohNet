@@ -1330,6 +1330,19 @@ public:
      */
     virtual TUint TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     /**
+     * Attempt to reduce latency by discarding buffered content.
+     *
+     * All calls will be within the same thread pipeline elements normally run in.
+     * No synchronisation is required.
+     *
+     * @param[in] aJiffies         Amount of audio to discard.
+     *
+     * @return  Flush id.  MsgFlush::kIdInvalid if the request failed.  Any other value
+     *                     indicates success.  Pulling MsgFlush with this id informs the
+     *                     caller that all data has been discarded.
+     */
+    virtual TUint TryDiscard(TUint aJiffies) = 0;
+    /**
      * Attempt to stop delivery of the currently playing stream.
      *
      * This may be called from a different thread.  The implementor is responsible for any synchronisation.

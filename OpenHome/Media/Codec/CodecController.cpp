@@ -911,6 +911,12 @@ TUint CodecController::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint CodecController::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint CodecController::TryStop(TUint aStreamId)
 {
     AutoMutex a(iLock);

@@ -114,6 +114,11 @@ TUint Drainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint Drainer::TryDiscard(TUint aJiffies)
+{
+    return iStreamHandler->TryDiscard(aJiffies);
+}
+
 TUint Drainer::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();

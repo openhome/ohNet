@@ -466,6 +466,12 @@ TUint Filler::NullTrackStreamHandler::TrySeek(TUint /*aStreamId*/, TUint64 /*aOf
     return MsgFlush::kIdInvalid;
 }
 
+TUint Filler::NullTrackStreamHandler::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aStreamId*/)
 {
     return MsgFlush::kIdInvalid;

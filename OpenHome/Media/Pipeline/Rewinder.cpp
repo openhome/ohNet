@@ -559,6 +559,12 @@ TUint Rewinder::TrySeek(TUint aStreamId, TUint64 aOffset)
     return iStreamHandler->TrySeek(aStreamId, aOffset);
 }
 
+TUint Rewinder::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint Rewinder::TryStop(TUint aStreamId)
 {
     AutoMutex a(iLock);

@@ -382,6 +382,12 @@ TUint Stopper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint Stopper::TryDiscard(TUint aJiffies)
+{
+    // no need for locking - this is guaranteed to only be called from the same thread as Pull()
+    return iStreamHandler->TryDiscard(aJiffies);
+}
+
 TUint Stopper::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();

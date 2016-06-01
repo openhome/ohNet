@@ -720,6 +720,12 @@ TUint ContainerController::TrySeek(TUint aStreamId, TUint64 aOffset)
     return iExpectedFlushId;
 }
 
+TUint ContainerController::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint ContainerController::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ContainerController::TryStop aStreamId: %u\n", aStreamId);

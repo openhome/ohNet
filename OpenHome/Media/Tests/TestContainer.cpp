@@ -98,6 +98,7 @@ public: // from IPipelineIdProvider
 public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 public:
@@ -486,6 +487,12 @@ TUint TestContainerProvider::TrySeek(TUint aStreamId, TUint64 aOffset)
     iLastSeekStreamId = aStreamId;
     iLastSeekOffset = aOffset;
     return iCurrentFlushId++;
+}
+
+TUint TestContainerProvider::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 TUint TestContainerProvider::TryStop(TUint /*aStreamId*/)
