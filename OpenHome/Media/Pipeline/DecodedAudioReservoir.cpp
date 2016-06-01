@@ -209,7 +209,12 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
     iGorgeLock.Wait();
     iPriorityMsgCount--;
     iGorgeLock.Signal();
-    return aMsg;
+
+    AutoMutex _(iLock);
+    iStreamHandler = aMsg->StreamHandler();
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)

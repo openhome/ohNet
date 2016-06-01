@@ -290,6 +290,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     init.SetMsgSilenceCount(kMsgSilenceCount);
     init.SetMsgDecodedStreamCount(kMaxStreams+2);
     init.SetMsgModeCount(2);
+    init.SetMsgEncodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(*iMsgFactory, *this, kReservoirSize, kMaxStreams, 0);
