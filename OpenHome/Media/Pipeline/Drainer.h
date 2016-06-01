@@ -36,7 +36,6 @@ private:
     IStreamHandler* iStreamHandler;
     TBool iGenerateDrainMsg;
     TBool iWaitForDrained;
-    TBool iIgnoreNextStarving;
 };
 
 } // namespace Media
