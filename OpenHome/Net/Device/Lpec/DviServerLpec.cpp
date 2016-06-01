@@ -375,8 +375,7 @@ void DviSessionLpec::Run()
         iDeviceLock.Wait();
         iDeviceMap = iDvStack.DeviceMap().CopyMap();
         iDeviceLock.Signal();
-        std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin();
-        while (it != iDeviceMap.end()) {
+        for (std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin() ; it != iDeviceMap.end() ; ++it) {
             if (!it->second->Enabled()) {
                 continue;
             }
@@ -396,7 +395,6 @@ void DviSessionLpec::Run()
             iWriteBuffer->Write(it->second->Udn());
             iWriteBuffer->Write(Lpec::kMsgTerminator);
             iWriteBuffer->WriteFlush();
-            it++;
         }
         for (;;) {
             Brn req = Ascii::Trim(iReaderUntil->ReadUntil(Ascii::kLf));
