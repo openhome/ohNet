@@ -87,7 +87,7 @@ private:
     class MdnsService
     {
     public:
-        MdnsService(mDNS& aMdns, MdnsPlatform& aPlatform);
+        MdnsService(mDNS& aMdns);
         void Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
         TUint PerformAction();
     private:
@@ -97,7 +97,6 @@ private:
     private:
         // NOTE: all buffer sizes taken from mDNSEmbeddedAPI.h
         mDNS& iMdns;
-        MdnsPlatform& iPlatform;
         MdnsServiceAction iAction;
         TUint iHandle;
         ServiceRecordSet* iService;

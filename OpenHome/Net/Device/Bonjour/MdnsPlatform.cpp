@@ -21,8 +21,6 @@ using namespace OpenHome::Net;
 
 // MdnsPlatform
 
-static const mDNSInterfaceID kInterfaceId = (mDNSInterfaceID)2;
-
 MdnsPlatform::Nif::Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo)
     : iNif(aNif)
     , iMdnsInfo(aMdnsInfo)
@@ -58,9 +56,8 @@ TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 
 
 // MdnsPlatform::MdnsService
-MdnsPlatform::MdnsService::MdnsService(mDNS& aMdns, MdnsPlatform& aPlatform)
+MdnsPlatform::MdnsService::MdnsService(mDNS& aMdns)
     : iMdns(aMdns)
-    , iPlatform(aPlatform)
     , iAction(eInvalid)
 {
 }
@@ -175,7 +172,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     LOG(kBonjour, "Bonjour             Constructor completed\n");
 
     for (TUint i=0; i<kMaxQueueLength; i++) {
-        iFifoFree.Write(new MdnsService(*iMdns, *this));
+        iFifoFree.Write(new MdnsService(*iMdns));
     }
 
     LOG(kBonjour, "Bonjour             Init - Start service thread\n");
