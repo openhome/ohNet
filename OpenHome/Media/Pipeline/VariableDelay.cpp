@@ -21,7 +21,7 @@ public:
 private:
     AudioDiscarder(MsgQueueLite& aQueue, TUint aMaxJiffies, TUint64& aTrackOffset);
     TUint Process();
-    MsgAudio* AudioDiscarder::ProcessAudio(MsgAudio* aMsg);
+    MsgAudio* ProcessAudio(MsgAudio* aMsg);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
