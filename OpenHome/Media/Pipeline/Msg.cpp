@@ -162,18 +162,14 @@ void AllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 
 void Allocated::AddRef()
 {
-    iLock.Wait();
     iRefCount++;
-    iLock.Signal();
     RefAdded();
 }
 
 void Allocated::RemoveRef()
 {
     ASSERT_DEBUG(iRefCount != 0);
-    iLock.Wait();
     TBool free = (--iRefCount == 0);
-    iLock.Signal();
     RefRemoved();
     if (free) {
         Clear();
@@ -195,9 +191,9 @@ void Allocated::Clear()
 
 Allocated::Allocated(AllocatorBase& aAllocator)
     : iAllocator(aAllocator)
-    , iLock("ALOC")
     , iRefCount(0)
 {
+    ASSERT(iRefCount.is_lock_free());
 }
 
 Allocated::~Allocated()

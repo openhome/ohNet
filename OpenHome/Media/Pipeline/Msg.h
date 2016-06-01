@@ -95,9 +95,8 @@ private:
     virtual void Clear();
 protected:
     AllocatorBase& iAllocator;
-    mutable Mutex iLock;
 private:
-    TUint iRefCount;
+    std::atomic<TUint> iRefCount;
 };
 
 enum class AudioDataEndian
