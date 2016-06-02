@@ -26,8 +26,8 @@ enum EPipelineSupportElements {
 class PipelineInitParams
 {
     static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
-    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 2048;
-    static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1024;
+    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 2000;
+    static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1000;
     static const TUint kStarvationRamperSizeDefault     = Jiffies::kPerMs * 20;
     static const TUint kMaxReservoirStreamsDefault      = 10;
     static const TUint kLongRampDurationDefault         = Jiffies::kPerMs * 500;
