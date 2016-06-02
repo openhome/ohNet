@@ -56,18 +56,12 @@ void AllocatorBase::Free(Allocated* aPtr)
 
 TUint AllocatorBase::CellsTotal() const
 {
-    iLock.Wait();
-    TUint cellsTotal = iCellsTotal;
-    iLock.Signal();
-    return cellsTotal;
+    return iCellsTotal;
 }
 
 TUint AllocatorBase::CellBytes() const
 {
-    iLock.Wait();
-    TUint cellBytes = iCellBytes;
-    iLock.Signal();
-    return cellBytes;
+    return iCellBytes;
 }
 
 TUint AllocatorBase::CellsUsed() const
@@ -88,9 +82,9 @@ TUint AllocatorBase::CellsUsedMax() const
 
 void AllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const
 {
-    iLock.Wait();
     aCellsTotal = iCellsTotal;
     aCellBytes = iCellBytes;
+    iLock.Wait();
     aCellsUsed = iCellsUsed;
     aCellsUsedMax = iCellsUsedMax;
     iLock.Signal();

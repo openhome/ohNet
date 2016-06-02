@@ -44,8 +44,8 @@ protected:
 private:
     mutable Mutex iLock;
     const TChar* iName;
-    TUint iCellsTotal;
-    TUint iCellBytes;
+    const TUint iCellsTotal;
+    const TUint iCellBytes;
     TUint iCellsUsed;
     TUint iCellsUsedMax;
 };
