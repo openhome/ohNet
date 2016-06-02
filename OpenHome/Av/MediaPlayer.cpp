@@ -2,7 +2,6 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -62,6 +61,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
                          VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
+                         Media::IInfoAggregator& aInfoAggregator,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
                          const Brx& aDefaultName)
@@ -74,9 +74,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigStartupSource(nullptr)
     , iBufferedLogger(nullptr)
 {
-    iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
+    iTrackFactory = new Media::TrackFactory(aInfoAggregator, kTrackCount);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager(*iConfigManager);
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
@@ -87,7 +86,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigAutoPlay = new ConfigChoice(*iConfigManager, Product::kConfigIdAutoPlay, choices, Product::kAutoPlayDisable);
     iProduct = new Av::Product(aDvStack.Env(), aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory);
+    iPipeline = new PipelineManager(aPipelineInitParams, aInfoAggregator, *iTrackFactory);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
     iVolumeManager = new Av::VolumeManager(aVolumeConsumer, iPipeline, *iVolumeConfig, aDevice, *iProduct, *iConfigManager, *iPowerManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
@@ -128,7 +127,6 @@ MediaPlayer::~MediaPlayer()
     delete iConfigManager;
     delete iTrackFactory;
     delete iKvpStore;
-    delete iInfoLogger;
     delete iBufferedLogger;
 }
 
@@ -195,11 +193,6 @@ Net::DvStack& MediaPlayer::DvStack()
 Net::DvDeviceStandard& MediaPlayer::Device()
 {
     return iDevice;
-}
-
-Media::IInfoAggregator& MediaPlayer::InfoAggregator()
-{
-    return *iInfoLogger;
 }
 
 Media::PipelineManager& MediaPlayer::Pipeline()
