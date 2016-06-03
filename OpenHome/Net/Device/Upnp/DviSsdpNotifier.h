@@ -86,7 +86,7 @@ private:
     void Start(ISsdpNotify& aNotifier, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, TUint aMsgInterval);
 private: // from DviMsg
     TUint NextMsg();
-    void NotifyComplete(TBool aCancelled) override;
+    void NotifyComplete(TBool aCancelled);
 private:
     static const TUint kMaxUriBytes = 256;
     SsdpNotifier iSsdpNotifier;
