@@ -26,23 +26,26 @@ class SsdpNotifierScheduler : private INonCopyable
 public:
     virtual ~SsdpNotifierScheduler();
     void Stop();
+    void SetUdn(const Brx& aUdn);
 protected:
-    SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener);
+    SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener, const TChar* aId);
     void Start(TUint aDuration, TUint aMsgCount);
 private:
     virtual TUint NextMsg() = 0;
-    virtual void NotifyComplete();
+    virtual void NotifyComplete(TBool aCancelled);
     void SendNextMsg();
     void ScheduleNextTimer(TUint aRemainingMsgs) const;
 protected:
     void LogNotifierStart(const TChar* aType);
     const TChar* iType;
+    const TChar* iId;
 private:
     Timer* iTimer;
     DvStack& iDvStack;
     TUint iEndTimeMs;
     ISsdpNotifyListener& iListener;
     TBool iStop;
+    Brn iUdn;
 };
 
 
@@ -77,13 +80,13 @@ class DeviceAnnouncement : public SsdpNotifierScheduler
 public:
     DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& aListener);
     void StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId);
-    void StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted);
-    void StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted);
+    void StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted);
+    void StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted);
 private:
     void Start(ISsdpNotify& aNotifier, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, TUint aMsgInterval);
 private: // from DviMsg
     TUint NextMsg();
-    void NotifyComplete();
+    void NotifyComplete(TBool aCancelled) override;
 private:
     static const TUint kMaxUriBytes = 256;
     SsdpNotifier iSsdpNotifier;
@@ -93,7 +96,7 @@ private:
     IUpnpAnnouncementData* iAnnouncementData;
     Bws<kMaxUriBytes> iUri;
     ISsdpNotify* iCurrentNotifier;
-    Functor iCompleted;
+    FunctorGeneric<TBool> iCompleted;
     TUint iTotalMsgs;
     TUint iNextMsgIndex;
 };
@@ -104,8 +107,8 @@ public:
     DviSsdpNotifierManager(DvStack& aDvStack);
     ~DviSsdpNotifierManager();
     void AnnouncementAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId);
-    void AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted);
-    void AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted);
+    void AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted);
+    void AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted);
     void MsearchResponseAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);
     void MsearchResponseRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);
     void MsearchResponseUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);

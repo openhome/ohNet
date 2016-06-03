@@ -160,7 +160,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     aKey += name.Bytes() + 1;
     if (name == Brn("Core")) {
         static const char* longPollEnable = "LongPollEnable";
-        if (iProviderSubscriptionLongPoll == NULL && 
+        if (iProviderSubscriptionLongPoll == NULL &&
             strncmp(aKey, longPollEnable, sizeof(longPollEnable)-1) == 0) {
             iProviderSubscriptionLongPoll = new DviProviderSubscriptionLongPoll(*this);
             ConfigChanged();

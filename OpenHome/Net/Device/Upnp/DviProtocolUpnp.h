@@ -68,7 +68,7 @@ public: // from IUpnpAnnouncementData
     Brn Domain() const;
     Brn Type() const;
     TUint Version() const;
-    void SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Functor aCompleted);
+    void SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, FunctorGeneric<TBool> aCompleted);
     void SendAlives(TIpAddress aAdapter, const Brx& aUriBase);
 private:
     DviProtocolUpnpAdapterSpecificData* AddInterface(const NetworkAdapter& aAdapter);
@@ -76,8 +76,8 @@ private:
     TInt FindAdapter(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aAdapterList);
     TInt FindListenerForSubnet(TIpAddress aSubnet);
     TInt FindListenerForInterface(TIpAddress aSubnet);
-    void SubnetDisabled();
-    void SubnetUpdated();
+    void SubnetDisabled(TBool aCancelled);
+    void SubnetUpdated(TBool aCancelled);
     void SendAliveNotifications();
     void QueueAliveTimer();
     void SendUpdateNotifications();
@@ -139,7 +139,7 @@ public:
 private:
     ~DviProtocolUpnpAdapterSpecificData();
     IUpnpMsearchHandler* Handler();
-    void ByeByesComplete();
+    void ByeByesComplete(TBool aCancelled);
     TBool IsLocationReachable(const Endpoint& aEndpoint);
 private: // from ISsdpMsearchHandler
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx);

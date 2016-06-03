@@ -23,13 +23,19 @@ SsdpNotifierScheduler::~SsdpNotifierScheduler()
     delete iTimer;
 }
 
-SsdpNotifierScheduler::SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener)
+SsdpNotifierScheduler::SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener, const TChar* aId)
     : iType(NULL)
+    , iId(aId)
     , iDvStack(aDvStack)
     , iListener(aListener)
 {
     Functor functor = MakeFunctor(*this, &SsdpNotifierScheduler::SendNextMsg);
     iTimer = new Timer(iDvStack.Env(), functor, "SsdpNotifierScheduler");
+}
+
+void SsdpNotifierScheduler::SetUdn(const Brx& aUdn)
+{
+    iUdn.Set(aUdn);
 }
 
 void SsdpNotifierScheduler::Start(TUint aDuration, TUint aMsgCount)
@@ -44,7 +50,7 @@ void SsdpNotifierScheduler::Stop()
     iStop = true;
 }
 
-void SsdpNotifierScheduler::NotifyComplete()
+void SsdpNotifierScheduler::NotifyComplete(TBool aCancelled)
 {
 }
 
@@ -53,15 +59,18 @@ void SsdpNotifierScheduler::SendNextMsg()
     TUint remaining = 0;
     TBool stop = true;
     try {
-        stop = (iStop || (remaining = NextMsg()) == 0);
+        stop = (iStop || ((remaining = NextMsg()) == 0));
     }
     catch (WriterError&) {}
     catch (NetworkError&) {}
-    if (stop) {
 #ifdef NOTIFIER_LOG_ENABLE
-        Log::Print("++ Notifier completed - %s (%p)\n", iType, this);
+        //if( (strcmp(iType, "StartAlive")==0) || (strcmp(iType, "StartByeBye")==0) )
+        {
+            Log::Print("++ Notifier completed - %s (%p) %s  %.*s remaining=%u  stop=%d\n", iType, this, iId, PBUF(iUdn), remaining, stop);
+        }
 #endif
-        NotifyComplete();
+    if (stop) {
+        NotifyComplete(iStop);
         iListener.NotifySchedulerComplete(this);
         return;
     }
@@ -100,7 +109,10 @@ void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType)
 {
     iType = aType;
 #ifdef NOTIFIER_LOG_ENABLE
-    Log::Print("++ %s (%p)\n", iType, this);
+    //if( (strcmp(iType, "StartAlive")==0) || (strcmp(iType, "StartByeBye")==0) )
+    {
+        Log::Print("++ Notifier starting - %s (%p) %s %.*s\n", iType, this, iId, PBUF(iUdn));
+    }
 #endif
 }
 
@@ -113,7 +125,7 @@ void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType)
 #define NEXT_MSG_SERVICE_TYPE (3)
 
 MsearchResponse::MsearchResponse(DvStack& aDvStack, ISsdpNotifyListener& aListener)
-    : SsdpNotifierScheduler(aDvStack, aListener)
+    : SsdpNotifierScheduler(aDvStack, aListener, "MSearchResponse")
     , iAnnouncementData(NULL)
 {
     iNotifier = new SsdpMsearchResponder(aDvStack);
@@ -205,7 +217,7 @@ TUint MsearchResponse::NextMsg()
 // DeviceAnnouncement
 
 DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& aListener)
-    : SsdpNotifierScheduler(aDvStack, aListener)
+    : SsdpNotifierScheduler(aDvStack, aListener, "DevAnounce")
     , iSsdpNotifier(aDvStack)
     , iNotifierAlive(iSsdpNotifier)
     , iNotifierByeBye(iSsdpNotifier)
@@ -217,18 +229,18 @@ DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& a
 void DeviceAnnouncement::StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
 {
     LogNotifierStart("StartAlive");
-    iCompleted = Functor();
+    iCompleted = FunctorGeneric<TBool>();
     Start(iNotifierAlive, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsAlive);
 }
 
-void DeviceAnnouncement::StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
+void DeviceAnnouncement::StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
     LogNotifierStart("StartByeBye");
     iCompleted = aCompleted;
     Start(iNotifierByeBye, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsByeBye);
 }
 
-void DeviceAnnouncement::StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
+void DeviceAnnouncement::StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
     LogNotifierStart("StartUpdate");
     iCompleted = aCompleted;
@@ -269,10 +281,10 @@ TUint DeviceAnnouncement::NextMsg()
     return (iTotalMsgs - iNextMsgIndex);
 }
 
-void DeviceAnnouncement::NotifyComplete()
+void DeviceAnnouncement::NotifyComplete(TBool aCancelled)
 {
     if (iCompleted) {
-        iCompleted();
+        iCompleted(aCancelled);
     }
 }
 
@@ -289,7 +301,7 @@ DviSsdpNotifierManager::DviSsdpNotifierManager(DvStack& aDvStack)
 DviSsdpNotifierManager::~DviSsdpNotifierManager()
 {
     iShutdownSem.Wait();
-    
+
     // nasty way of ensuring NotifySchedulerComplete has released iLock
     iLock.Wait();
     iLock.Signal();
@@ -315,7 +327,7 @@ void DviSsdpNotifierManager::AnnouncementAlive(IUpnpAnnouncementData& aAnnouncem
     }
 }
 
-void DviSsdpNotifierManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
+void DviSsdpNotifierManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
@@ -330,7 +342,7 @@ void DviSsdpNotifierManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnounce
     }
 }
 
-void DviSsdpNotifierManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
+void DviSsdpNotifierManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, FunctorGeneric<TBool>& aCompleted)
 {
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
@@ -497,6 +509,7 @@ TBool DviSsdpNotifierManager::Notifier::MatchesDevice(const Brx& aUdn) const
 void DviSsdpNotifierManager::Notifier::SetActive(const Brx& aUdn)
 {
     iUdn.Set(aUdn);
+    iScheduler->SetUdn(iUdn);
 }
 
 void DviSsdpNotifierManager::Notifier::SetInactive()
