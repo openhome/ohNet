@@ -134,7 +134,7 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
     }
 
     CallFatalErrorHandler((msg!=NULL? msg : buf));
-    delete msg;
+    delete[] msg;
 }
 
 void OpenHome::UnhandledExceptionHandler(std::exception& aException)
