@@ -50,7 +50,7 @@ void SsdpNotifierScheduler::Stop()
     iStop = true;
 }
 
-void SsdpNotifierScheduler::NotifyComplete(TBool aCancelled)
+void SsdpNotifierScheduler::NotifyComplete(TBool /*aCancelled*/)
 {
 }
 

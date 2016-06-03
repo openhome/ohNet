@@ -470,7 +470,7 @@ void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh&
     }
 }
 
-void DviProtocolUpnp::SubnetDisabled(TBool aCancelled)
+void DviProtocolUpnp::SubnetDisabled(TBool)
 {
     iLock.Wait();
     ASSERT(iSubnetDisableCount != 0);
