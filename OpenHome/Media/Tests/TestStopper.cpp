@@ -132,6 +132,7 @@ private:
     TUint iStoppedCount;
     TUint iPlayingCount;
     TUint iOkToPlayCount;
+    Stopper::EEventedState iLastState;
     EStreamPlay iNextCanPlay;
     Semaphore iSemHalted;
     ThreadFunctor* iThreadHalted;
@@ -199,6 +200,7 @@ void SuiteStopper::Setup()
     iNextStreamId = 1;
     iJiffies = 0;
     iPausedCount = iStoppedCount = iPlayingCount = iOkToPlayCount = 0;
+    iLastState = Stopper::EEventNone;
     iNextCanPlay = ePlayYes;
     iSemHalted.Clear();
 }
@@ -223,17 +225,29 @@ Msg* SuiteStopper::Pull()
 
 void SuiteStopper::PipelinePaused()
 {
+    if (iLastState == Stopper::EEventPaused) {
+        return;
+    }
     iPausedCount++;
+    iLastState = Stopper::EEventPaused;
 }
 
 void SuiteStopper::PipelineStopped()
 {
+    if (iLastState == Stopper::EEventStopped) {
+        return;
+    }
     iStoppedCount++;
+    iLastState = Stopper::EEventStopped;
 }
 
 void SuiteStopper::PipelinePlaying()
 {
+    if (iLastState == Stopper::EEventPlaying) {
+        return;
+    }
     iPlayingCount++;
+    iLastState = Stopper::EEventPlaying;
 }
 
 EStreamPlay SuiteStopper::OkToPlay(TUint /*aStreamId*/)
