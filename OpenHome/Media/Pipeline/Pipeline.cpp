@@ -216,6 +216,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     , iObserver(aObserver)
     , iLock("PLMG")
     , iState(EStopped)
+    , iLastReportedState(EPipelineStateCount)
     , iBuffering(false)
     , iWaiting(false)
     , iQuitting(false)
@@ -603,27 +604,31 @@ void Pipeline::Quit()
 void Pipeline::NotifyStatus()
 {
     EPipelineState state;
-    iLock.Wait();
-    if (iQuitting) {
-        iLock.Signal();
-        return;
-    }
-    switch (iState)
     {
-    case EPlaying:
-        state = (iWaiting? EPipelineWaiting : (iBuffering? EPipelineBuffering : EPipelinePlaying));
-        break;
-    case EPaused:
-        state = EPipelinePaused;
-        break;
-    case EStopped:
-        state = EPipelineStopped;
-        break;
-    default:
-        ASSERTS();
-        state = EPipelineBuffering; // will never reach here but the compiler doesn't realise this
+        AutoMutex _(iLock);
+        if (iQuitting) {
+            return;
+        }
+        switch (iState)
+        {
+        case EPlaying:
+            state = (iWaiting? EPipelineWaiting : (iBuffering? EPipelineBuffering : EPipelinePlaying));
+            break;
+        case EPaused:
+            state = EPipelinePaused;
+            break;
+        case EStopped:
+            state = EPipelineStopped;
+            break;
+        default:
+            ASSERTS();
+            state = EPipelineBuffering; // will never reach here but the compiler doesn't realise this
+        }
+        if (state == iLastReportedState) {
+            return;
+        }
+        iLastReportedState = state;
     }
-    iLock.Signal();
     iObserver.NotifyPipelineState(state);
 }
 

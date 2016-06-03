@@ -27,7 +27,6 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iStreamHandler(nullptr)
     , iBuffering(false)
     , iQuit(false)
-    , iLastEventedState(EEventNone)
 {
     iState = EStopped;
     iEventState.store(EEventNone);
@@ -522,22 +521,19 @@ void Stopper::ScheduleEvent(EEventedState aState)
 void Stopper::ReportEvent()
 {
     EEventedState state = iEventState.exchange(EEventNone);
-    if (state != iLastEventedState) {
-        iLastEventedState = state;
-        switch (state)
-        {
-        case EEventPlaying:
-            iObserver.PipelinePlaying();
-            break;
-        case EEventPaused:
-            iObserver.PipelinePaused();
-            break;
-        case EEventStopped:
-            iObserver.PipelineStopped();
-            break;
-        case EEventNone:
-            break;
-        }
+    switch (state)
+    {
+    case EEventPlaying:
+        iObserver.PipelinePlaying();
+        break;
+    case EEventPaused:
+        iObserver.PipelinePaused();
+        break;
+    case EEventStopped:
+        iObserver.PipelineStopped();
+        break;
+    case EEventNone:
+        break;
     }
 }
 

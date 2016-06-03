@@ -288,6 +288,7 @@ private:
     IPipelineElementUpstream* iPipelineEnd;
     IMute* iMuteCounted;
     EStatus iState;
+    EPipelineState iLastReportedState;
     TBool iBuffering;
     TBool iWaiting;
     TBool iQuitting;

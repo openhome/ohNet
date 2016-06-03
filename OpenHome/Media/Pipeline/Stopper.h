@@ -126,7 +126,6 @@ private:
     TBool iQuit;
     TUint iEventId;
     std::atomic<EEventedState> iEventState;
-    EEventedState iLastEventedState;
 };
 
 } // namespace Media
