@@ -323,7 +323,8 @@ void DecodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TB
             && aMode == iMode
             && iCanGorge
             && iPriorityMsgCount == 0
-            && !iStartOfMode) {
+            && !iStartOfMode
+            && Jiffies() < iGorgeSize) {
             SetGorging(true, "NotifyStarving");
         }
     }
