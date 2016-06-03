@@ -366,7 +366,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
         TUint i;
         iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
         iSubnetDisableCount = (TUint)iAdapters.size();
-        Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetDisabled);
+        FunctorGeneric<TBool> functor = MakeFunctorGeneric<TBool>(*this, &DviProtocolUpnp::SubnetDisabled);
         for (i=0; i<iSubnetDisableCount; i++) {
             LogMulticastNotification("byebye");
             Bws<kMaxUriBytes> uri;
@@ -470,7 +470,7 @@ void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh&
     }
 }
 
-void DviProtocolUpnp::SubnetDisabled()
+void DviProtocolUpnp::SubnetDisabled(TBool)
 {
     iLock.Wait();
     ASSERT(iSubnetDisableCount != 0);
@@ -481,7 +481,7 @@ void DviProtocolUpnp::SubnetDisabled()
     }
 }
 
-void DviProtocolUpnp::SubnetUpdated()
+void DviProtocolUpnp::SubnetUpdated(TBool)
 {
     iLock.Wait();
     ASSERT(iUpdateCount != 0);
@@ -526,7 +526,7 @@ void DviProtocolUpnp::SendUpdateNotifications()
     iDvStack.UpdateBootId();
     const TUint numAdapters = (TUint)iAdapters.size();
     iUpdateCount += numAdapters; // its possible this'll be called while previous updates are still being processed
-    Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
+    FunctorGeneric<TBool> functor = MakeFunctorGeneric<TBool>(*this, &DviProtocolUpnp::SubnetUpdated);
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bws<kMaxUriBytes> uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
@@ -534,7 +534,7 @@ void DviProtocolUpnp::SendUpdateNotifications()
     }
 }
 
-void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Functor aCompleted)
+void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, FunctorGeneric<TBool> aCompleted)
 {
     Bws<kMaxUriBytes> uri;
     GetUriDeviceXml(uri, aUriBase);
@@ -543,7 +543,7 @@ void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Func
     }
     catch (NetworkError&) {
         if (aCompleted) {
-            aCompleted();
+            aCompleted(true);
         }
     }
 }
@@ -819,17 +819,19 @@ void DviProtocolUpnpAdapterSpecificData::SendByeByeThenAlive(DviProtocolUpnp& aD
 {
     iDevice = &aDevice;
     iRefCount++;
-    Functor functor = MakeFunctor(*this, &DviProtocolUpnpAdapterSpecificData::ByeByesComplete);
+    FunctorGeneric<TBool> functor = MakeFunctorGeneric<TBool>(*this, &DviProtocolUpnpAdapterSpecificData::ByeByesComplete);
     iDevice->SendByeByes(iAdapter, iUriBase, functor);
 }
 
-void DviProtocolUpnpAdapterSpecificData::ByeByesComplete()
+void DviProtocolUpnpAdapterSpecificData::ByeByesComplete(TBool aCancelled)
 {
     if (--iRefCount == 0) {
         delete this;
     }
     else {
-        iDevice->SendAlives(iAdapter, iUriBase);
+        if (!aCancelled) {
+            iDevice->SendAlives(iAdapter, iUriBase);
+        }
     }
 }
 
