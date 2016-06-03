@@ -32,9 +32,12 @@ FriendlyNameAttributeUpdater::~FriendlyNameAttributeUpdater()
 void FriendlyNameAttributeUpdater::Observer(const Brx& aNewFriendlyName)
 {
     AutoMutex a(iLock);
-    iFullName.Replace(aNewFriendlyName);
+    if (iFullName!=aNewFriendlyName)
+    {
+        iFullName.Replace(aNewFriendlyName);
+        iThread->Signal();
+    }
 
-    iThread->Signal();
 }
 
 void FriendlyNameAttributeUpdater::Run()

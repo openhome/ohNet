@@ -17,8 +17,9 @@ FriendlyNameManagerUpnpAv::FriendlyNameManagerUpnpAv(Product& aProduct)
     , iNextObserverId(1)
     , iMutex("FNHM")
 {
-    aProduct.AddNameObserver(*this); // Observer methods called during registration.
-    aProduct.AddObserver(*this);
+    // Observer methods called during registration.
+    aProduct.AddNameObserver(*this);  // Callbacks: RoomChanged, NameChanged
+    aProduct.AddObserver(*this);  // Callbacks: Started, SourceIndexChanged, SourceXmlChanged
 }
 
 FriendlyNameManagerUpnpAv::~FriendlyNameManagerUpnpAv()
@@ -45,9 +46,12 @@ void FriendlyNameManagerUpnpAv::DeregisterFriendlyNameObserver(TUint aId)
 void FriendlyNameManagerUpnpAv::RoomChanged(const Brx& aRoom)
 {
     AutoMutex a(iMutex);
-    iRoom.Replace(aRoom);
-    ConstructFriendlyNameLocked();
-    NotifyObserversLocked();
+    if (iRoom!=aRoom)
+    {
+        iRoom.Replace(aRoom);
+        ConstructFriendlyNameLocked();
+        NotifyObserversLocked();
+    }
 }
 
 void FriendlyNameManagerUpnpAv::NameChanged(const Brx& /*aName*/)
@@ -72,10 +76,12 @@ void FriendlyNameManagerUpnpAv::SourceXmlChanged()
     const TUint count = iProduct.SourceCount();
     for (TUint i=0; i<count; i++) {
         iProduct.GetSourceDetails(i, systemName, type, name, visible);
-        if (type == targetType) {
-            iSourceName.Replace(name);
-            ConstructFriendlyNameLocked();
-            NotifyObserversLocked();
+        if ((type == targetType)) {
+            if (iSourceName != name) {
+                iSourceName.Replace(name);
+                ConstructFriendlyNameLocked();
+                NotifyObserversLocked();
+            }
             break;
         }
     }
