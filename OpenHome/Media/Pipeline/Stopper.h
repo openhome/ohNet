@@ -70,6 +70,7 @@ private: // from IMsgProcessor
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:

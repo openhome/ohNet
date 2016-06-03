@@ -40,6 +40,7 @@ namespace Media {
     class PipelineManager;
     class DriverSongcastSender;
     class IPullableClock;
+    class AllocatorInfoLogger;
 }
 namespace Configuration {
     class ConfigRamStore;
@@ -142,6 +143,7 @@ protected:
     RebootLogger iRebootHandler;
     Net::Shell* iShell;
     Media::IPullableClock* iPullableClock;
+    Media::AllocatorInfoLogger* iInfoLogger;
 private:
     Semaphore iSemShutdown;
     Semaphore iDisabled;

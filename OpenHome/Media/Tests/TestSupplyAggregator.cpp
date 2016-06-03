@@ -19,6 +19,7 @@ class DummyStreamHandler : public IStreamHandler
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 };
@@ -109,6 +110,12 @@ EStreamPlay DummyStreamHandler::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint DummyStreamHandler::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint DummyStreamHandler::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;

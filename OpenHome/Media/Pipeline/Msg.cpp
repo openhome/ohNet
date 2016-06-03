@@ -56,18 +56,12 @@ void AllocatorBase::Free(Allocated* aPtr)
 
 TUint AllocatorBase::CellsTotal() const
 {
-    iLock.Wait();
-    TUint cellsTotal = iCellsTotal;
-    iLock.Signal();
-    return cellsTotal;
+    return iCellsTotal;
 }
 
 TUint AllocatorBase::CellBytes() const
 {
-    iLock.Wait();
-    TUint cellBytes = iCellBytes;
-    iLock.Signal();
-    return cellBytes;
+    return iCellBytes;
 }
 
 TUint AllocatorBase::CellsUsed() const
@@ -88,9 +82,9 @@ TUint AllocatorBase::CellsUsedMax() const
 
 void AllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const
 {
-    iLock.Wait();
     aCellsTotal = iCellsTotal;
     aCellBytes = iCellBytes;
+    iLock.Wait();
     aCellsUsed = iCellsUsed;
     aCellsUsedMax = iCellsUsedMax;
     iLock.Signal();
@@ -162,18 +156,14 @@ void AllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 
 void Allocated::AddRef()
 {
-    iLock.Wait();
     iRefCount++;
-    iLock.Signal();
     RefAdded();
 }
 
 void Allocated::RemoveRef()
 {
     ASSERT_DEBUG(iRefCount != 0);
-    iLock.Wait();
     TBool free = (--iRefCount == 0);
-    iLock.Signal();
     RefRemoved();
     if (free) {
         Clear();
@@ -195,9 +185,9 @@ void Allocated::Clear()
 
 Allocated::Allocated(AllocatorBase& aAllocator)
     : iAllocator(aAllocator)
-    , iLock("ALOC")
     , iRefCount(0)
 {
+    ASSERT(iRefCount.is_lock_free());
 }
 
 Allocated::~Allocated()
@@ -862,10 +852,9 @@ ModeInfo::ModeInfo()
     Clear();
 }
 
-void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext, TBool aSupportsPrev)
+void ModeInfo::Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iSupportsLatency = aSupportsLatency;
-    iRealTime        = aRealTime;
     iSupportsNext    = aSupportsNext;
     iSupportsPrev    = aSupportsPrev;
 }
@@ -873,7 +862,6 @@ void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext,
 void ModeInfo::Clear()
 {
     iSupportsLatency = false;
-    iRealTime        = false;
     iSupportsNext    = false;
     iSupportsPrev    = false;
 }
@@ -932,10 +920,10 @@ const ModeClockPullers& MsgMode::ClockPullers() const
     return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iMode.Replace(aMode);
-    iInfo.Set(aSupportsLatency, aIsRealTime, aSupportsNext, aSupportsPrev);
+    iInfo.Set(aSupportsLatency, aSupportsNext, aSupportsPrev);
     iClockPullers = aClockPullers;
 }
 
@@ -2969,10 +2957,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPullers, aSupportsNext, aSupportsPrev);
+    msg->Initialise(aMode, aSupportsLatency, aClockPullers, aSupportsNext, aSupportsPrev);
     return msg;
 }
 

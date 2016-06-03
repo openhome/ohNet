@@ -36,7 +36,6 @@ Drainer::Drainer(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstream)
     , iStreamHandler(nullptr)
     , iGenerateDrainMsg(false)
     , iWaitForDrained(false)
-    , iIgnoreNextStarving(false)
 {
 }
 
@@ -56,7 +55,6 @@ Msg* Drainer::Pull()
     {
         AutoMutex _(iLock);
         if (iGenerateDrainMsg) {
-            iIgnoreNextStarving = true;
             iGenerateDrainMsg = false;
             iWaitForDrained = true;
             return iMsgFactory.CreateMsgDrain(MakeFunctor(iSem, &Semaphore::Signal));
@@ -76,7 +74,6 @@ Msg* Drainer::Pull()
            on the next msg. */
         AutoMutex _(iLock);
         if (iGenerateDrainMsg) {
-            iIgnoreNextStarving = true;
             iGenerateDrainMsg = false;
             iWaitForDrained = true;
             iPending = msg;
@@ -114,6 +111,11 @@ TUint Drainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint Drainer::TryDiscard(TUint aJiffies)
+{
+    return iStreamHandler->TryDiscard(aJiffies);
+}
+
 TUint Drainer::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -124,13 +126,8 @@ void Drainer::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex _(iLock);
     if (aStarving) {
-        if (iIgnoreNextStarving) {
-            iIgnoreNextStarving = false;
-        }
-        else {
-            LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
-            iGenerateDrainMsg = true;
-        }
+        LOG(kPipeline, "Drainer enabled (NotifyStarving)\n");
+        iGenerateDrainMsg = true;
     }
     if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);

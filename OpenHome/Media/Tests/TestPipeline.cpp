@@ -38,6 +38,7 @@ private: // from Thread
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
@@ -295,6 +296,12 @@ EStreamPlay Supplier::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint Supplier::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint Supplier::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;

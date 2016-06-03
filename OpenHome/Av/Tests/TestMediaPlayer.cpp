@@ -5,6 +5,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
@@ -137,6 +138,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShell = new Shell(aDvStack.Env(), 0);
     Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
+    iInfoLogger = new Media::AllocatorInfoLogger();
 
     // Do NOT set UPnP friendly name attributes at this stage.
     // (Wait until MediaPlayer is created so that friendly name can be observed.)
@@ -186,8 +188,10 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationRamperSize(100 * Jiffies::kPerMs); // larger StarvationRamper size useful for desktop
                                                                   // platforms with slightly unpredictable thread scheduling
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, pipelineInit,
-                                   volumeInit, volumeProfile, aUdn, Brn(aRoom), Brn(aProductName));
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore,
+                                   *iConfigRamStore, pipelineInit,
+                                   volumeInit, volumeProfile, *iInfoLogger,
+                                   aUdn, Brn(aRoom), Brn(aProductName));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -215,6 +219,7 @@ TestMediaPlayer::~TestMediaPlayer()
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
     delete iPipelineObserver;
+    delete iInfoLogger;
     delete iShellDebug;
     delete iShell;
     delete iDevice;
@@ -401,7 +406,7 @@ void TestMediaPlayer::InitialiseSubsystems()
 IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
 {
     FileResourceHandlerFactory resourceHandlerFactory;
-    return new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->Env(), iMediaPlayer->Product(),
+    return new ConfigAppMediaPlayer(*iInfoLogger, iMediaPlayer->Env(), iMediaPlayer->Product(),
                                     iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources,
                                     Brn("Softplayer"), aResourceDir,
                                     aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);

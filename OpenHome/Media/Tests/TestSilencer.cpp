@@ -142,7 +142,7 @@ void SuiteSilencer::TearDown()
 
 void SuiteSilencer::TestMsgsPassedOn()
 {
-    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false));
+    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(), false, false));
     QueuePendingMsg(iMsgFactory->CreateMsgDrain(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());
@@ -207,7 +207,7 @@ void SuiteSilencer::TestPassesMsgsAfterSilenceGeneration()
     PullNext(EMsgDecodedStream);
     PullNextNoWait(EMsgPlayable);
 
-    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false));
+    QueuePendingMsg(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(), false, false));
     QueuePendingMsg(iMsgFactory->CreateMsgDrain(Functor()));
     QueuePendingMsg(CreateDecodedStream());
     QueuePendingMsg(CreateAudio());

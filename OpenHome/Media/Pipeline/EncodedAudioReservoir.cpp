@@ -153,6 +153,12 @@ TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
     return MsgFlush::kIdInvalid;
 }
 
+TUint EncodedAudioReservoir::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint EncodedAudioReservoir::TryStop(TUint aStreamId)
 {
     IStreamHandler* streamHandler = StreamHandler();

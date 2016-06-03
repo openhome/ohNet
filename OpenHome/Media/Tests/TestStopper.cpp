@@ -43,6 +43,7 @@ private: // from IStopperObserver
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
@@ -242,6 +243,12 @@ EStreamPlay SuiteStopper::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint SuiteStopper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteStopper::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
@@ -484,7 +491,7 @@ void SuiteStopper::TestHalted()
 void SuiteStopper::TestMsgsPassWhilePlaying()
 {
     iStopper->Play();
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);

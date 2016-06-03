@@ -149,7 +149,6 @@ void SuiteVolumeScaler::TestRangeOverflow()
     }
 
     // Test small overflows.
-    TEST_THROWS(VolumeScaler(*iReporter, *iOffset, 1, 65536), AssertionFailed);
     TEST_THROWS(VolumeScaler(*iReporter, *iOffset, kMaxUint/2+1, 2), AssertionFailed);
     
     // Test larger overflows.
@@ -168,7 +167,7 @@ void SuiteVolumeScaler::TestEnable()
     scaler.SetVolume(25);
     TEST(iOffset->Offset() == 0);
     scaler.SetVolumeEnabled(true);
-    TEST(iOffset->Offset() == -38400);
+    TEST(iOffset->Offset() == -25600);
 
     scaler.SetVolumeEnabled(false);
     TEST(iOffset->Offset() == 0);
@@ -270,13 +269,13 @@ void SuiteVolumeScaler::TestUserVolumeChanges()
     scaler.VolumeChanged(vol0);
     TEST(iOffset->Offset() == 0);
     scaler.VolumeChanged(vol25);
-    TEST(iOffset->Offset() == -19200);
+    TEST(iOffset->Offset() == -12800);
     scaler.VolumeChanged(vol50);
-    TEST(iOffset->Offset() == -38400);
+    TEST(iOffset->Offset() == -25600);
     scaler.VolumeChanged(vol75);
-    TEST(iOffset->Offset() == -57600);
+    TEST(iOffset->Offset() == -38400);
     scaler.VolumeChanged(vol100);
-    TEST(iOffset->Offset() == -76800);
+    TEST(iOffset->Offset() == -51200);
 
     // External vol at 100.
     scaler.SetVolume(100);
@@ -317,11 +316,11 @@ void SuiteVolumeScaler::TestExternalVolumeChanges()
     scaler.SetVolume(0);
     TEST(iOffset->Offset() == -51200);
     scaler.SetVolume(25);
-    TEST(iOffset->Offset() == -48000);
-    scaler.SetVolume(50);
     TEST(iOffset->Offset() == -38400);
+    scaler.SetVolume(50);
+    TEST(iOffset->Offset() == -25600);
     scaler.SetVolume(75);
-    TEST(iOffset->Offset() == -22400);
+    TEST(iOffset->Offset() == -12800);
     scaler.SetVolume(100);
     TEST(iOffset->Offset() == 0);
 
@@ -331,11 +330,11 @@ void SuiteVolumeScaler::TestExternalVolumeChanges()
     scaler.SetVolume(0);
     TEST(iOffset->Offset() == -102400);
     scaler.SetVolume(25);
-    TEST(iOffset->Offset() == -96000);
-    scaler.SetVolume(50);
     TEST(iOffset->Offset() == -76800);
+    scaler.SetVolume(50);
+    TEST(iOffset->Offset() == -51200);
     scaler.SetVolume(75);
-    TEST(iOffset->Offset() == -44800);
+    TEST(iOffset->Offset() == -25600);
     scaler.SetVolume(100);
     TEST(iOffset->Offset() == 0);
 }

@@ -112,8 +112,8 @@ void LoggingPipelineObserver::NotifyMode(const Brx& aMode, const ModeInfo& aInfo
     if (!iEnable) {
         return;
     }
-    Log::Print("Pipeline report property: MODE {mode=%.*s; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
-               PBUF(aMode), aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
+    Log::Print("Pipeline report property: MODE {mode=%.*s; supportsLatency=%u; supportsNext=%u; supportsPrev=%u}\n",
+               PBUF(aMode), aInfo.SupportsLatency(), aInfo.SupportsNext(), aInfo.SupportsPrev());
 }
 
 void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)

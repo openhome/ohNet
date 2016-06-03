@@ -53,6 +53,7 @@ private: // from IUriStreamer
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
@@ -73,7 +74,6 @@ public:
     TUint LastStreamId() const;
     const Brx& LastMode() const;
     TBool LastSupportsLatency() const;
-    TBool LastIsRealTime() const;
     TUint LastDelayJiffies() const;
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
@@ -98,7 +98,6 @@ private: // from IMsgProcessor
 private:
     BwsMode iLastMode;
     TBool iLastSupportsLatency;
-    TBool iLastRealTime;
     BwsTrackUri iLastTrackUri;
     TUint iLastTrackId;
     TUint iLastStreamId;
@@ -148,7 +147,7 @@ using namespace OpenHome::Media::TestFiller;
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
-    : UriProvider("Dummy", Latency::NotSupported, RealTime::NotSupported, Next::NotSupported, Prev::NotSupported)
+    : UriProvider("Dummy", Latency::NotSupported, Next::NotSupported, Prev::NotSupported)
     , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
@@ -286,6 +285,12 @@ TUint DummyUriStreamer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint DummyUriStreamer::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint DummyUriStreamer::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -332,11 +337,6 @@ TBool DummySupply::LastSupportsLatency() const
     return iLastSupportsLatency;
 }
 
-TBool DummySupply::LastIsRealTime() const
-{
-    return iLastRealTime;
-}
-
 TUint DummySupply::LastDelayJiffies() const
 {
     return iLastDelayJiffies;
@@ -353,7 +353,6 @@ Msg* DummySupply::ProcessMsg(MsgMode* aMsg)
     iLastMode.Replace(aMsg->Mode());
     const ModeInfo& info = aMsg->Info();
     iLastSupportsLatency = info.SupportsLatency();
-    iLastRealTime = info.IsRealTime();
     return aMsg;
 }
 
@@ -497,7 +496,6 @@ void SuiteFiller::Test()
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastMode() == iUriProvider->Mode());
     TEST(iDummySupply->LastSupportsLatency() == iUriProvider->SupportsLatency());
-    TEST(iDummySupply->LastIsRealTime() == iUriProvider->IsRealTime());
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(0));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());

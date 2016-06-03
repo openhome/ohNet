@@ -5,11 +5,111 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Private/Standard.h>
 
 #include <algorithm>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+// AudioDiscarder
+
+class AudioDiscarder : public IMsgProcessor, private INonCopyable
+{
+public:
+    static TUint Run(MsgQueueLite& aQueue, TUint aMaxJiffies, TUint64& aTrackOffset);
+private:
+    AudioDiscarder(MsgQueueLite& aQueue, TUint aMaxJiffies, TUint64& aTrackOffset);
+    TUint Process();
+    MsgAudio* ProcessAudio(MsgAudio* aMsg);
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDrain* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgBitRate* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
+private:
+    MsgQueueLite& iQueue;
+    const TUint iMaxJiffies;
+    TUint64& iTrackOffset;
+    TUint iJiffies;
+    TBool iComplete;
+};
+
+TUint AudioDiscarder::Run(MsgQueueLite& aQueue, TUint aMaxJiffies, TUint64& aTrackOffset)
+{
+    AudioDiscarder self(aQueue, aMaxJiffies, aTrackOffset);
+    self.Process();
+    return self.iJiffies;
+}
+AudioDiscarder::AudioDiscarder(MsgQueueLite& aQueue, TUint aMaxJiffies, TUint64& aTrackOffset)
+    : iQueue(aQueue)
+    , iMaxJiffies(aMaxJiffies)
+    , iTrackOffset(aTrackOffset)
+    , iJiffies(0)
+    , iComplete(false)
+{}
+TUint AudioDiscarder::Process()
+{
+    while (!iComplete && !iQueue.IsEmpty()) {
+        Msg* msg = iQueue.Dequeue();
+        msg = msg->Process(*this);
+        msg->RemoveRef();
+    }
+    return iJiffies;
+}
+MsgAudio* AudioDiscarder::ProcessAudio(MsgAudio* aMsg)
+{
+    const TUint msgJiffies = aMsg->Jiffies();
+    if (iJiffies + msgJiffies > iMaxJiffies) {
+        const TUint splitPos = iMaxJiffies - iJiffies;
+        Msg* split = aMsg->Split(splitPos);
+        iQueue.EnqueueAtHead(split);
+    }
+    iJiffies += aMsg->Jiffies();
+    if (iJiffies == iMaxJiffies) {
+        iComplete = true;
+    }
+    return aMsg;
+}
+Msg* AudioDiscarder::ProcessMsg(MsgMode* aMsg)                { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgTrack* aMsg)               { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgDrain* aMsg)               { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgDelay* aMsg)               { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgEncodedStream* aMsg)       { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgAudioEncoded* aMsg)        { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgMetaText* aMsg)            { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgStreamInterrupted* aMsg)   { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgHalt* aMsg)                { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgFlush* aMsg)               { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgWait* aMsg)                { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgDecodedStream* aMsg)       { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgBitRate* aMsg)             { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    MsgAudioPcm* audio = static_cast<MsgAudioPcm*>(ProcessAudio(aMsg));
+    iTrackOffset = audio->TrackOffset() + audio->Jiffies();
+    return audio;
+}
+Msg* AudioDiscarder::ProcessMsg(MsgSilence* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+Msg* AudioDiscarder::ProcessMsg(MsgPlayable* aMsg)            { ASSERTS(); return aMsg; }
+Msg* AudioDiscarder::ProcessMsg(MsgQuit* aMsg)                { ASSERTS(); return aMsg; }
+
 
 // VariableDelayBase
 
@@ -48,6 +148,8 @@ VariableDelayBase::VariableDelayBase(MsgFactory& aMsgFactory, IPipelineElementUp
     , iId(aId)
     , iWaitForAudioBeforeGeneratingSilence(false)
     , iDecodedStream(nullptr)
+    , iPendingStream(nullptr)
+    , iTargetFlushId(MsgFlush::kIdInvalid)
 {
     ResetStatusAndRamp();
 }
@@ -127,7 +229,12 @@ Msg* VariableDelayBase::DoPull()
 Msg* VariableDelayBase::NextMsg()
 {
     Msg* msg;
-    if (!iQueue.IsEmpty()) {
+    if (iPendingStream != nullptr) {
+        msg = iPendingStream;
+        iPendingStream = nullptr;
+        return msg; // avoid calling ProcessMsg and resetting iStatus
+    }
+    else if (!iQueue.IsEmpty()) {
         msg = iQueue.Dequeue();
     }
     else {
@@ -209,6 +316,20 @@ void VariableDelayBase::SetupRamp()
     }
 }
 
+MsgDecodedStream* VariableDelayBase::UpdateDecodedStream(TUint64 aTrackOffset)
+{
+    auto s = iDecodedStream->StreamInfo();
+    const auto sampleStart = Jiffies::ToSamples(aTrackOffset, s.SampleRate());
+    auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
+        s.NumChannels(), s.CodecName(), s.TrackLength(),
+        sampleStart, s.Lossless(), s.Seekable(), s.Live(),
+        s.AnalogBypass(), s.StreamHandler());
+    iDecodedStream->RemoveRef();
+    iDecodedStream = stream;
+    iDecodedStream->AddRef();
+    return stream;
+}
+
 void VariableDelayBase::HandleDelayChange(TUint aNewDelay)
 {
     if (aNewDelay == iDelayJiffies) {
@@ -265,6 +386,21 @@ Msg* VariableDelayBase::ProcessMsg(MsgDrain* aMsg)
     return aMsg;
 }
 
+Msg* VariableDelayBase::ProcessMsg(MsgFlush* aMsg)
+{
+    if (iTargetFlushId != MsgFlush::kIdInvalid && aMsg->Id() == iTargetFlushId) {
+        LocalDelayApplied();
+        aMsg->RemoveRef();
+        ASSERT(iStatus == ERampedDown);
+        iStatus = ERampingUp;
+        iRampDirection = Ramp::EUp;
+        iCurrentRampValue = Ramp::kMin;
+        iRemainingRampSize = iRampDuration;
+        return nullptr;
+    }
+    return aMsg;
+}
+
 Msg* VariableDelayBase::ProcessMsg(MsgDecodedStream* aMsg)
 {
     if (iDecodedStream != nullptr) {
@@ -272,7 +408,10 @@ Msg* VariableDelayBase::ProcessMsg(MsgDecodedStream* aMsg)
     }
     iDecodedStream = aMsg;
     iDecodedStream->AddRef();
-    ResetStatusAndRamp();
+    if (iStatus != ERampingUp && iCurrentRampValue == Ramp::kMin) {
+        // if we're ramped down, assume that a new stream indicates that audio has been discarded upstream
+        ResetStatusAndRamp();
+    }
     return aMsg;
 }
 
@@ -303,6 +442,28 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
         if (iRemainingRampSize == 0) {
             if (iDelayAdjustment != 0) {
                 iStatus = ERampedDown;
+                if (iDelayAdjustment < 0) {
+                    TUint64 trackOffset;
+                    iDelayAdjustment += AudioDiscarder::Run(iQueue, -iDelayAdjustment, trackOffset);
+                    const TUint discard = -iDelayAdjustment;
+                    if (discard == 0) {
+                        iDelayAdjustment = 0;
+                        LocalDelayApplied();
+                        iStatus = ERampingUp;
+                        iRampDirection = Ramp::EUp;
+                        iCurrentRampValue = Ramp::kMin;
+                        iRemainingRampSize = iRampDuration;
+                        auto stream = UpdateDecodedStream(trackOffset);
+                        ASSERT(iPendingStream == nullptr);
+                        iPendingStream = stream;
+                    }
+                    else {
+                        iTargetFlushId = iDecodedStream->StreamInfo().StreamHandler()->TryDiscard(discard);
+                        if (iTargetFlushId != MsgFlush::kIdInvalid) {
+                            iDelayAdjustment += discard;
+                        }
+                    }
+                }
             }
             else {
                 iStatus = ERampingUp;
@@ -329,16 +490,9 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
             iRampDirection = Ramp::EUp;
             iRemainingRampSize = iRampDuration;
             iCurrentRampValue = Ramp::kMin;
-            auto s = iDecodedStream->StreamInfo();
-            const auto sampleStart = Jiffies::ToSamples(msg->TrackOffset() + msg->Jiffies(), s.SampleRate());
+            const TUint64 trackOffset = msg->TrackOffset() + msg->Jiffies();
             msg->RemoveRef();
-            auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
-                                                             s.NumChannels(), s.CodecName(), s.TrackLength(),
-                                                             sampleStart, s.Lossless(), s.Seekable(), s.Live(),
-                                                             s.AnalogBypass(), s.StreamHandler());
-            iDecodedStream->RemoveRef();
-            iDecodedStream = stream;
-            iDecodedStream->AddRef();
+            auto stream = UpdateDecodedStream(trackOffset);
             return stream;
         }
         msg->RemoveRef();

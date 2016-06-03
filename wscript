@@ -678,7 +678,7 @@ def build(bld):
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/Tests/TestTrackDatabase.cpp',
-                'OpenHome/Av/Tests/TestPlaylist.cpp',
+                #'OpenHome/Av/Tests/TestPlaylist.cpp',
                 'Generated/CpAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerOptions.cpp',
@@ -916,11 +916,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestTrackDatabase',
             install_path=None)
-    bld.program(
-            source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
-            target='TestPlaylist',
-            install_path=None)
+    #bld.program(
+    #        source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
+    #        use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+    #        target='TestPlaylist',
+    #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceUpnpAv'],

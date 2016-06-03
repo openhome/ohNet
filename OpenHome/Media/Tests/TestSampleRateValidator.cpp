@@ -88,6 +88,7 @@ private: // from IPipelineAnimator
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
@@ -161,7 +162,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
     switch (aType)
     {
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, ModeClockPullers(), false, false);
+        msg = iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(), false, false);
         break;
     case EMsgTrack:
     {
@@ -476,6 +477,12 @@ EStreamPlay SuiteSampleRateValidator::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint SuiteSampleRateValidator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteSampleRateValidator::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;

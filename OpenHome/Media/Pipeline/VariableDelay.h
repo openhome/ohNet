@@ -48,9 +48,11 @@ private:
     void RampMsg(MsgAudio* aMsg);
     void ResetStatusAndRamp();
     void SetupRamp();
+    MsgDecodedStream* UpdateDecodedStream(TUint64 aTrackOffset);
 protected: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
@@ -83,6 +85,8 @@ private:
     TUint iRemainingRampSize;
     BwsMode iMode;
     MsgDecodedStream* iDecodedStream;
+    MsgDecodedStream* iPendingStream;
+    TUint iTargetFlushId;
 };
 
 class VariableDelayLeft : public VariableDelayBase

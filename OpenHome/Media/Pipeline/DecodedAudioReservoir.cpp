@@ -11,13 +11,18 @@ using namespace OpenHome::Media;
 
 // DecodedAudioReservoir
 
-DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMaxSize, TUint aMaxStreamCount, TUint aGorgeSize)
+DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider,
+                                             TUint aMaxSize, TUint aMaxStreamCount, TUint aGorgeSize)
     : iMsgFactory(aMsgFactory)
+    , iFlushIdProvider(aFlushIdProvider)
     , iLock("DCR1")
     , iMaxJiffies(aMaxSize)
     , iMaxStreamCount(aMaxStreamCount)
     , iClockPuller(nullptr)
     , iStreamHandler(nullptr)
+    , iDecodedStream(nullptr)
+    , iDiscardJiffies(0)
+    , iPostDiscardFlush(MsgFlush::kIdInvalid)
     , iGorgeLock("DCR2")
     , iGorgeSize(aGorgeSize)
     , iSemOut("DCR3", 0)
@@ -27,6 +32,13 @@ DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMax
     , iGorging(false)
     , iPriorityMsgCount(0)
 {
+}
+
+DecodedAudioReservoir::~DecodedAudioReservoir()
+{
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
 }
 
 TUint DecodedAudioReservoir::SizeInJiffies() const
@@ -169,7 +181,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 {
     iGorgeLock.Wait();
     iMode.Replace(aMsg->Mode());
-    iCanGorge = !aMsg->Info().IsRealTime();
+    iCanGorge = !aMsg->Info().SupportsLatency();
     iShouldGorge = iCanGorge;
     iPriorityMsgCount--;
     iGorgeLock.Signal();
@@ -197,7 +209,12 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
     iGorgeLock.Wait();
     iPriorityMsgCount--;
     iGorgeLock.Signal();
-    return aMsg;
+
+    AutoMutex _(iLock);
+    iStreamHandler = aMsg->StreamHandler();
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
@@ -205,7 +222,10 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
     AutoMutex _(iLock);
     iStreamHandler = aMsg->StreamInfo().StreamHandler();
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
-    aMsg->RemoveRef();
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
+    iDecodedStream = aMsg;
 
     iGorgeLock.Wait();
     iPriorityMsgCount--;
@@ -226,7 +246,35 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgHalt* aMsg)
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
-    return aMsg;
+    if (iDiscardJiffies == 0) {
+        return aMsg;
+    }
+
+    if (aMsg->Jiffies() > iDiscardJiffies) {
+        auto split = aMsg->Split(iDiscardJiffies);
+        EnqueueAtHead(split);
+    }
+    if (aMsg->Jiffies() > iDiscardJiffies) {
+        iDiscardJiffies = 0;
+    }
+    else {
+        iDiscardJiffies -= aMsg->Jiffies();
+    }
+    Msg* ret = nullptr;
+    if (iDiscardJiffies == 0) {
+        auto s = iDecodedStream->StreamInfo();
+        const TUint64 sampleStart = (aMsg->TrackOffset() + aMsg->Jiffies()) / Jiffies::PerSample(s.SampleRate());
+        auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
+                                                         s.NumChannels(), s.CodecName(), s.TrackLength(),
+                                                         sampleStart, s.Lossless(), s.Seekable(), s.Live(),
+                                                         s.AnalogBypass(), s.StreamHandler());
+        EnqueueAtHead(stream);
+
+        ret = iMsgFactory.CreateMsgFlush(iPostDiscardFlush);
+        iPostDiscardFlush = MsgFlush::kIdInvalid;
+    }
+    aMsg->RemoveRef();
+    return ret;
 }
 
 EStreamPlay DecodedAudioReservoir::OkToPlay(TUint aStreamId)
@@ -242,6 +290,16 @@ TUint DecodedAudioReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
+}
+
+TUint DecodedAudioReservoir::TryDiscard(TUint aJiffies)
+{
+    if (aJiffies > Jiffies()) {
+        return MsgFlush::kIdInvalid;
+    }
+    iDiscardJiffies += aJiffies;
+    iPostDiscardFlush = iFlushIdProvider.NextFlushId();
+    return iPostDiscardFlush;
 }
 
 TUint DecodedAudioReservoir::TryStop(TUint aStreamId)

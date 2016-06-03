@@ -350,7 +350,7 @@ Msg* SuiteSpotifyReporter::Pull()
     switch (iNextGeneratedMsg)
     {
     case EMsgMode:
-        iLastMsg = iMsgFactory->CreateMsgMode(iMode, false, true, ModeClockPullers(), false, false);
+        iLastMsg = iMsgFactory->CreateMsgMode(iMode, false, ModeClockPullers(), false, false);
         return iLastMsg;
     case EMsgTrack:
     {
