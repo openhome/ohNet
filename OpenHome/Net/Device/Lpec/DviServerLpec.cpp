@@ -782,12 +782,12 @@ void DviSessionLpec::InvocationWriteStart()
 {
     iWriteLock.Wait();
     iWriteBuffer->Write(Lpec::kMethodResponse);
-    iWriteBuffer->Write(' ');
     iResponseStarted = true;
 }
 
 void DviSessionLpec::InvocationWriteBool(const TChar* /*aName*/, TBool aValue)
 {
+    iWriteBuffer->Write(' ');
     iWriteBuffer->Write(Lpec::kArgumentDelimiter);
     iWriteBuffer->Write(aValue? Lpec::kBoolTrue : Lpec::kBoolFalse);
     iWriteBuffer->Write(Lpec::kArgumentDelimiter);
@@ -795,6 +795,7 @@ void DviSessionLpec::InvocationWriteBool(const TChar* /*aName*/, TBool aValue)
 
 void DviSessionLpec::InvocationWriteInt(const TChar* /*aName*/, TInt aValue)
 {
+    iWriteBuffer->Write(' ');
     iWriteBuffer->Write(Lpec::kArgumentDelimiter);
     Bws<Ascii::kMaxIntStringBytes> val;
     (void)Ascii::AppendDec(val, aValue);
@@ -804,6 +805,7 @@ void DviSessionLpec::InvocationWriteInt(const TChar* /*aName*/, TInt aValue)
 
 void DviSessionLpec::InvocationWriteUint(const TChar* /*aName*/, TUint aValue)
 {
+    iWriteBuffer->Write(' ');
     iWriteBuffer->Write(Lpec::kArgumentDelimiter);
     Bws<Ascii::kMaxUintStringBytes> val;
     (void)Ascii::AppendDec(val, aValue);
@@ -813,6 +815,7 @@ void DviSessionLpec::InvocationWriteUint(const TChar* /*aName*/, TUint aValue)
 
 void DviSessionLpec::InvocationWriteBinaryStart(const TChar* /*aName*/)
 {
+    iWriteBuffer->Write(' ');
     iWriteBuffer->Write(Lpec::kArgumentDelimiter);
 }
 
@@ -833,6 +836,7 @@ void DviSessionLpec::InvocationWriteBinaryEnd(const TChar* /*aName*/)
 
 void DviSessionLpec::InvocationWriteStringStart(const TChar* /*aName*/)
 {
+    iWriteBuffer->Write(' ');
     iWriteBuffer->Write(Lpec::kArgumentDelimiter);
 }
 
