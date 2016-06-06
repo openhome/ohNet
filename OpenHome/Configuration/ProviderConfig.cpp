@@ -9,9 +9,8 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-IProvider* ProviderFactory::NewConfiguration(Product& aProduct, DvDevice& aDevice, IConfigManager& aConfigReader)
+IProvider* ProviderFactory::NewConfiguration(DvDevice& aDevice, IConfigManager& aConfigReader)
 { // static
-    aProduct.AddAttribute("Configuration");
     return new ProviderConfig(aDevice, aConfigReader);
 }
 
