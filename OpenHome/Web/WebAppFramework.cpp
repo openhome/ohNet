@@ -607,6 +607,7 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, T
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
     , iServer(nullptr)
+    , iDefaultApp(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
     , iMutex("webapp")
@@ -673,6 +674,18 @@ TIpAddress WebAppFramework::Interface() const
     return iServer->Interface();
 }
 
+void WebAppFramework::SetDefaultApp(const Brx& aResourcePrefix)
+{
+    AutoMutex amx(iMutex);
+    ASSERT(!iStarted);
+    ASSERT(iDefaultApp == nullptr); // Don't want clashes in setting default app.
+    WebAppMap::const_iterator it = iWebApps.find(&aResourcePrefix);
+    if (it == iWebApps.cend()) {
+        THROW(InvalidAppPrefix);
+    }
+    iDefaultApp = it->second;
+}
+
 void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
 {
     AutoMutex amx(iMutex);
@@ -712,6 +725,11 @@ IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
 {
     AutoMutex amx(iMutex);
     ASSERT(iStarted);
+
+    if (aResourcePrefix.Bytes() == 0 && iDefaultApp != nullptr) {
+        return *iDefaultApp;
+    }
+
     WebAppMap::const_iterator it = iWebApps.find(&aResourcePrefix);
     if (it == iWebApps.cend()) {
         THROW(InvalidAppPrefix);
@@ -726,8 +744,22 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
     ASSERT(iStarted);
     Parser p(aResource);
     p.Next('/');    // skip leading '/'
-    Brn prefix = p.Next('/');
+
+    Brn prefix;
+    if (Ascii::Contains(p.Remaining(), '/')) {
+        // There is a resource prefix.
+        prefix = p.Next('/');
+    }
     Brn tail = p.Next('?'); // Read up to query string (if any).
+
+    if (prefix.Bytes() == 0) {
+        if (iDefaultApp != nullptr) {
+            return iDefaultApp->CreateResourceHandler(tail);
+        }
+        else {
+            THROW(ResourceInvalid);
+        }
+    }
 
     WebAppMap::const_iterator it = iWebApps.find(&prefix);
     if (it == iWebApps.cend()) {
@@ -998,12 +1030,15 @@ void HttpSession::Post()
     const Brx& uri = iReaderRequest->Uri();
     Parser uriParser(uri);
     uriParser.Next('/');    // skip leading '/'
-    Brn uriPrefix = uriParser.Next('/');
-    Brn uriTail = uriParser.NextToEnd();
+    Brn uriPrefix;
+    if (Ascii::Contains(uriParser.Remaining(), '/')) {
+        uriPrefix = uriParser.Next('/');
+    }
+    Brn uriTail = uriParser.Next('?'); // Read up to query string (if any).
 
     if (uriTail == Brn("lpcreate")) {
         try {
-            IWebApp& app = iAppManager.GetApp(uriPrefix); // FIXME - pass full uri to this instead of prefix?
+            IWebApp& app = iAppManager.GetApp(uriPrefix);
             TUint id = iTabManager.CreateTab(app, iHeaderAcceptLanguage.LanguageList());
             iResponseStarted = true;
             WriteLongPollHeaders();
