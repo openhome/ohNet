@@ -621,6 +621,8 @@ private:
     static const TUint kMaxResourcePrefixBytes = 25;
     static const Brn kLangRoot;
     static const Brn kDefaultLanguage;
+    typedef std::pair<Brn, Brn> ResourcePair;
+    typedef std::map<Brn, Brn, BufferCmp> ResourceMap;
 protected:
     ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
     ~ConfigAppBase();
@@ -654,6 +656,7 @@ private:
     std::vector<ILanguageResourceReader*> iLanguageResourceHandlers;
     std::vector<ConfigTab*> iTabs;
     std::vector<IConfigUiVal*> iUiVals;
+    ResourceMap iResourceMappings;
     Mutex iLock;
 };
 

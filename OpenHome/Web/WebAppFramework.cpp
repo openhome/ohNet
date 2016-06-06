@@ -744,12 +744,7 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
     ASSERT(iStarted);
     Parser p(aResource);
     p.Next('/');    // skip leading '/'
-
-    Brn prefix;
-    if (Ascii::Contains(p.Remaining(), '/')) {
-        // There is a resource prefix.
-        prefix = p.Next('/');
-    }
+    Brn prefix = p.Next('/');
     Brn tail = p.Next('?'); // Read up to query string (if any).
 
     if (prefix.Bytes() == 0) {
@@ -763,6 +758,12 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
 
     WebAppMap::const_iterator it = iWebApps.find(&prefix);
     if (it == iWebApps.cend()) {
+        // Didn't find an app with the given prefix.
+        // Maybe it wasn't a prefix and was actually a URI tail for the default app.
+        Brn tail = prefix;
+        if (iDefaultApp != nullptr) {
+            return iDefaultApp->CreateResourceHandler(tail);
+        }
         THROW(ResourceInvalid);
     }
 
@@ -1030,11 +1031,21 @@ void HttpSession::Post()
     const Brx& uri = iReaderRequest->Uri();
     Parser uriParser(uri);
     uriParser.Next('/');    // skip leading '/'
-    Brn uriPrefix;
-    if (Ascii::Contains(uriParser.Remaining(), '/')) {
-        uriPrefix = uriParser.Next('/');
-    }
+    Brn uriPrefix = uriParser.Next('/');
     Brn uriTail = uriParser.Next('?'); // Read up to query string (if any).
+
+    // Try retrieve IWebApp using assumed prefix, in case it was actually the
+    // URI tail and there is no prefix as the assumed app is the default app.
+    try {
+        (void)iAppManager.GetApp(uriPrefix);
+    }
+    catch (InvalidAppPrefix&) {
+        // There was no app with the given uriPrefix, so maybe it's the default
+        // app and the uriPrefix is actually uriTail.
+        (void)iAppManager.GetApp(Brx::Empty());    // See if default app set.
+        uriTail.Set(uriPrefix);         // Default app set, so assume uriPrefix is actually uriTail.
+        uriPrefix.Set(Brx::Empty());    // Default app.
+    }
 
     if (uriTail == Brn("lpcreate")) {
         try {
@@ -1052,6 +1063,8 @@ void HttpSession::Post()
             iResponseEnded = true;
         }
         catch (InvalidAppPrefix&) {
+            // FIXME - just respond with error instead of asserting?
+
             // Programmer error/misuse by client.
             // Long-polling can only be initiated from a page served up by this framework (which implies that it must have a valid app prefix!).
             ASSERTS();
