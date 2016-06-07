@@ -5,6 +5,7 @@
 #include <OpenHome/Av/Qobuz/Qobuz.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
+#include <OpenHome/UnixTimestamp.h>
 
 namespace OpenHome {
 namespace Av {
@@ -21,6 +22,7 @@ private: // from ICredentialsState
 private:
     Configuration::ConfigRamStore* iStore;
     Configuration::ConfigManager* iConfigManager;
+    UnixTimestamp* iUnixTimestamp;
     Qobuz* iQobuz;
 };
 
@@ -35,12 +37,14 @@ TestQobuz::TestQobuz(Environment& aEnv, const Brx& aId, const Brx& aSecret)
 {
     iStore = new Configuration::ConfigRamStore();
     iConfigManager = new Configuration::ConfigManager(*iStore);
-    iQobuz = new Qobuz(aEnv, aId, aSecret, *this, *iConfigManager);
+    iUnixTimestamp = new UnixTimestamp(aEnv);
+    iQobuz = new Qobuz(aEnv, aId, aSecret, *this, *iConfigManager, *iUnixTimestamp);
 }
 
 TestQobuz::~TestQobuz()
 {
     delete iQobuz;
+    delete iUnixTimestamp;
     delete iConfigManager;
     delete iStore;
 }

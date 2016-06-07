@@ -20,6 +20,7 @@
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/MimeTypeList.h>
 #include <OpenHome/Av/Logger.h>
+#include <OpenHome/UnixTimestamp.h>
 
 #include <memory>
 
@@ -49,6 +50,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigStartupSource(nullptr)
     , iLoggerBuffered(nullptr)
 {
+    iUnixTimestamp = new OpenHome::UnixTimestamp(iDvStack.Env());
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(aInfoAggregator, kTrackCount);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
@@ -102,6 +104,7 @@ MediaPlayer::~MediaPlayer()
     delete iTrackFactory;
     delete iKvpStore;
     delete iLoggerBuffered;
+    delete iUnixTimestamp;
 }
 
 void MediaPlayer::Quit()
@@ -240,4 +243,9 @@ void MediaPlayer::Add(UriProvider* aUriProvider)
 RingBufferLogger* MediaPlayer::LogBuffer()
 {
     return (iLoggerBuffered ? &iLoggerBuffered->LogBuffer() : nullptr);
+}
+
+IUnixTimestamp& MediaPlayer::UnixTimestamp()
+{
+    return *iUnixTimestamp;
 }

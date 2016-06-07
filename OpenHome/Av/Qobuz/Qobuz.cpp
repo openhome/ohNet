@@ -9,7 +9,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Av/Qobuz/UnixTimestamp.h>
+#include <OpenHome/UnixTimestamp.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/md5.h>
@@ -30,11 +30,14 @@ const Brn Qobuz::kConfigKeySoundQuality("qobuz.com.SoundQuality");
 
 static const TUint kQualityValues[] ={ 5, 6, 7, 27 };
 
-Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICredentialsState& aCredentialsState, IConfigInitialiser& aConfigInitialiser)
+Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret,
+             ICredentialsState& aCredentialsState, IConfigInitialiser& aConfigInitialiser,
+             IUnixTimestamp& aUnixTimestamp)
     : iEnv(aEnv)
     , iLock("QBZ1")
     , iLockConfig("QBZ2")
     , iCredentialsState(aCredentialsState)
+    , iUnixTimestamp(aUnixTimestamp)
     , iReaderBuf(iSocket)
     , iReaderUntil1(iReaderBuf)
     , iWriterBuf(iSocket)
@@ -42,7 +45,6 @@ Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICrede
     , iReaderResponse(aEnv, iReaderUntil1)
     , iDechunker(iReaderUntil1)
     , iReaderUntil2(iDechunker)
-    , iUnixTimestamp(aEnv)
     , iAppId(aAppId)
     , iAppSecret(aAppSecret)
 {

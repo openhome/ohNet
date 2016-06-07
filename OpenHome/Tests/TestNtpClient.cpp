@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Types.h>
-#include <OpenHome/Av/Qobuz/NtpClient.h>
+#include <OpenHome/NtpClient.h>
 
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)

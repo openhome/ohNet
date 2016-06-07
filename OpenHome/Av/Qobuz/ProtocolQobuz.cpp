@@ -1,5 +1,6 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
+#include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
@@ -14,13 +15,16 @@
 #include <OpenHome/Media/SupplyAggregator.h>
 
 namespace OpenHome {
+    class IUnixTimestamp;
 namespace Av {
 
 class ProtocolQobuz : public Media::ProtocolNetwork, private IReader
 {
     static const TUint kTcpConnectTimeoutMs = 10 * 1000;
 public:
-    ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
+    ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret,
+                  Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser,
+                  IUnixTimestamp& aUnixTimestamp);
     ~ProtocolQobuz();
 private: // from Media::Protocol
     void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;
@@ -79,15 +83,19 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
 
-Protocol* ProtocolFactory::NewQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser)
+Protocol* ProtocolFactory::NewQobuz(const Brx& aAppId, const Brx& aAppSecret, Av::IMediaPlayer& aMediaPlayer)
 { // static
-    return new ProtocolQobuz(aEnv, aAppId, aAppSecret, aCredentialsManager, aConfigInitialiser);
+    return new ProtocolQobuz(aMediaPlayer.Env(), aAppId, aAppSecret,
+                             aMediaPlayer.CredentialsManager(), aMediaPlayer.ConfigInitialiser(),
+                             aMediaPlayer.UnixTimestamp());
 }
 
 
 // ProtocolQobuz
 
-ProtocolQobuz::ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser)
+ProtocolQobuz::ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret,
+                             Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser,
+                             IUnixTimestamp& aUnixTimestamp)
     : ProtocolNetwork(aEnv)
     , iSupply(nullptr)
     , iWriterRequest(iWriterBuf)
@@ -101,7 +109,7 @@ ProtocolQobuz::ProtocolQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aA
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 
-    iQobuz = new Qobuz(aEnv, aAppId, aAppSecret, aCredentialsManager, aConfigInitialiser);
+    iQobuz = new Qobuz(aEnv, aAppId, aAppSecret, aCredentialsManager, aConfigInitialiser, aUnixTimestamp);
     aCredentialsManager.Add(iQobuz);
 }
 

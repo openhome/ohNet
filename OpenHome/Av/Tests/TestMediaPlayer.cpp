@@ -361,7 +361,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 
     // only add Tidal if we have a token to use with login
     if (iTidalId.Bytes() > 0) {
-        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, *iMediaPlayer));
     }
     // ...likewise, only add Qobuz if we have ids for login
     if (iQobuzIdSecret.Bytes() > 0) {
@@ -373,7 +373,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
         Log::Print(", appSecret = ");
         Log::Print(appSecret);
         Log::Print("\n");
-        iMediaPlayer->Add(ProtocolFactory::NewQobuz(aEnv, appId, appSecret, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
+        iMediaPlayer->Add(ProtocolFactory::NewQobuz(appId, appSecret, *iMediaPlayer));
     }
 
     // Add sources

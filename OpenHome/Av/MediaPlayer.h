@@ -11,6 +11,7 @@ namespace OpenHome {
     class IPowerManager;
     class PowerManager;
     class RingBufferLogger;
+    class IUnixTimestamp;
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
@@ -85,6 +86,7 @@ public:
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
     virtual ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) = 0; // must be called before Start()
+    virtual IUnixTimestamp& UnixTimestamp() = 0;
 };
 
 class MediaPlayer : public IMediaPlayer, private INonCopyable
@@ -127,6 +129,7 @@ public: // from IMediaPlayer
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
     ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
+    IUnixTimestamp& UnixTimestamp() override;
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
@@ -150,6 +153,7 @@ private:
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
     LoggerBuffered* iLoggerBuffered;
+    IUnixTimestamp* iUnixTimestamp;
     //TransportControl* iTransportControl;
 };
 
