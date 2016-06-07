@@ -48,8 +48,8 @@ private: // from ILoggerSerial
 private:
     void LogFunctor(const TChar*);
 private: // from IShellCommandHandler
-    void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
-    void DisplayHelp(IWriter& aResponse);
+    void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) override;
+    void DisplayHelp(IWriter& aResponse) override;
 private:
     Net::IShell& iShell;
     FunctorMsg iDownstream;
