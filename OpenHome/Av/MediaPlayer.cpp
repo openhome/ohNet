@@ -96,7 +96,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
-    iProduct->AddAttribute("Configuration");
     //iTransportControl = new TransportControl(aDevice, *iPipeline);
     //iProduct->AddAttribute("TransportControl");
 }
