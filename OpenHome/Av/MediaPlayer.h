@@ -3,6 +3,8 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MimeTypeList.h>
+#include <OpenHome/Optional.h>
+#include <OpenHome/Av/Logger.h>
 
 namespace OpenHome {
     class Environment;
@@ -13,6 +15,7 @@ namespace Net {
     class DvStack;
     class DvDeviceStandard;
     class IShell;
+    class DvProvider;
 }
 namespace Media {
     class PipelineManager;
@@ -38,9 +41,6 @@ namespace Configuration {
     class ConfigChoice;
     class ProviderConfig;
 }
-namespace Net {
-    class DvProvider;
-}
 namespace Av {
 
 class IFriendlyNameObservable;
@@ -62,7 +62,6 @@ class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
 class ConfigStartupSource;
-class BufferedLogger;
 
 class IMediaPlayer
 {
@@ -85,6 +84,7 @@ public:
     virtual Media::MimeTypeList& MimeTypes() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
+    virtual ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) = 0; // must be called before Start()
 };
 
 class MediaPlayer : public IMediaPlayer, private INonCopyable
@@ -106,7 +106,6 @@ public:
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);
-    void BufferLogOutput(TUint aBytes); // must be called before Start()
     RingBufferLogger* LogBuffer(); // an optional component. returns nullptr if not available. no transfer of ownership.
     void Start();
 public: // from IMediaPlayer
@@ -127,6 +126,7 @@ public: // from IMediaPlayer
     Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
+    ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster); // must be called before Start()
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
@@ -149,7 +149,7 @@ private:
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
-    BufferedLogger* iBufferedLogger;
+    LoggerBuffered* iLoggerBuffered;
     //TransportControl* iTransportControl;
 };
 

@@ -300,6 +300,7 @@ def build(bld):
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
+                'OpenHome/Av/Logger.cpp',
                 'Generated/DvAvOpenhomeOrgConfig1.cpp',
                 'OpenHome/Av/Utils/Json.cpp',
                 'OpenHome/Av/Utils/FormUrl.cpp',

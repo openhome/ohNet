@@ -19,34 +19,9 @@
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/MimeTypeList.h>
-#include <OpenHome/Av/ProviderDebug.h>
+#include <OpenHome/Av/Logger.h>
 
 #include <memory>
-
-namespace OpenHome {
-namespace Av {
-
-class BufferedLogger
-{
-public:
-    BufferedLogger(Net::DvDevice& aDevice, Product& aProduct, TUint aBytes)
-    {
-        iRingBufferLogger.reset(new RingBufferLogger(aBytes));
-        iProviderDebug.reset(new ProviderDebug(aDevice, *iRingBufferLogger));
-        aProduct.AddAttribute("Debug");
-    }
-    RingBufferLogger* LogBuffer()
-    {
-        return iRingBufferLogger.get();
-    }
-private:
-    std::unique_ptr<RingBufferLogger> iRingBufferLogger;
-    std::unique_ptr<ProviderDebug> iProviderDebug;
-};
-
-}
-}
-
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -72,7 +47,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigProductName(nullptr)
     , iConfigAutoPlay(nullptr)
     , iConfigStartupSource(nullptr)
-    , iBufferedLogger(nullptr)
+    , iLoggerBuffered(nullptr)
 {
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(aInfoAggregator, kTrackCount);
@@ -127,7 +102,7 @@ MediaPlayer::~MediaPlayer()
     delete iConfigManager;
     delete iTrackFactory;
     delete iKvpStore;
-    delete iBufferedLogger;
+    delete iLoggerBuffered;
 }
 
 void MediaPlayer::Quit()
@@ -161,9 +136,10 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
     iProduct->AddAttribute(aAttribute);
 }
 
-void MediaPlayer::BufferLogOutput(TUint aBytes)
+ILoggerSerial& MediaPlayer::BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster)
 {
-    iBufferedLogger = new BufferedLogger(iDevice, *iProduct, aBytes);
+    iLoggerBuffered = new LoggerBuffered(aBytes, iDevice, *iProduct, aShell, aLogPoster);
+    return iLoggerBuffered->LoggerSerial();
 }
 
 void MediaPlayer::Start()
@@ -264,5 +240,5 @@ void MediaPlayer::Add(UriProvider* aUriProvider)
 
 RingBufferLogger* MediaPlayer::LogBuffer()
 {
-    return (iBufferedLogger ? iBufferedLogger->LogBuffer() : nullptr);
+    return (iLoggerBuffered ? &iLoggerBuffered->LogBuffer() : nullptr);
 }

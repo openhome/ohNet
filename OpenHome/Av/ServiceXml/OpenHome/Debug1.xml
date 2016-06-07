@@ -15,6 +15,16 @@
         </argument>
       </argumentList>
     </action>
+    <action>
+      <name>SendLog</name>
+      <argumentList>
+        <argument>
+          <name>Data</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
   </actionList>
   <serviceStateTable>
     <stateVariable sendEvents="no">

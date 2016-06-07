@@ -265,6 +265,7 @@ void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
     AddConfigApp();
+    InitialiseLogger();
     iMediaPlayer->Start();
     InitialiseSubsystems();
 
@@ -395,8 +396,6 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
                                                  Optional<IClockPuller>(nullptr),
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
                                                  Optional<IOhmTimestamper>(iRxTimestamper)));
-
-    iMediaPlayer->BufferLogOutput(128 * 1024);
 }
 
 void TestMediaPlayer::InitialiseSubsystems()
@@ -410,6 +409,11 @@ IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSource
                                     iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources,
                                     Brn("Softplayer"), aResourceDir,
                                     aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
+}
+
+void TestMediaPlayer::InitialiseLogger()
+{
+    (void)iMediaPlayer->BufferLogOutput(128 * 1024, *iShell, Optional<ILogPoster>(nullptr));
 }
 
 void TestMediaPlayer::DestroyAppFramework()
