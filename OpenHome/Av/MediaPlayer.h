@@ -126,7 +126,7 @@ public: // from IMediaPlayer
     Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
-    ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster); // must be called before Start()
+    ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
