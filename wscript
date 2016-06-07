@@ -304,8 +304,8 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgConfig1.cpp',
                 'OpenHome/Av/Utils/Json.cpp',
                 'OpenHome/Av/Utils/FormUrl.cpp',
-                'OpenHome/Av/Utils/NtpClient.cpp',
-                'OpenHome/Av/Utils/UnixTimestamp.cpp',
+                'OpenHome/NtpClient.cpp',
+                'OpenHome/UnixTimestamp.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
                 'OpenHome/PowerManager.cpp',
                 'OpenHome/Av/Credentials.cpp',
@@ -983,7 +983,7 @@ def build(bld):
             target='TestQobuz',
             install_path=None)
     bld.program(
-            source='OpenHome/Av/Tests/TestNtpClient.cpp',
+            source='OpenHome/Tests/TestNtpClient.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestNtpClient',
             install_path=None)
