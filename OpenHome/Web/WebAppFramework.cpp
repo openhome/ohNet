@@ -760,7 +760,10 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
     if (it == iWebApps.cend()) {
         // Didn't find an app with the given prefix.
         // Maybe it wasn't a prefix and was actually a URI tail for the default app.
-        Brn tail = prefix;
+        // Need to re-parse aResource in case there were multiple '/' in it.
+        Parser p(aResource);
+        p.Next('/');    // skip leading '/'
+        Brn tail = p.Next('?'); // Read up to query string (if any).
         if (iDefaultApp != nullptr) {
             return iDefaultApp->CreateResourceHandler(tail);
         }
