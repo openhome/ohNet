@@ -274,6 +274,7 @@ void TestMediaPlayer::Run()
     configManager.Print();
     configManager.DumpToStore();
 
+
     iAppFramework->Start();
     iMediaPlayer->PowerManager().StandbyDisable(StandbyDisableReason::Boot);
     iDevice->SetEnabled();
@@ -469,6 +470,7 @@ void TestMediaPlayer::AddConfigApp()
     // FIXME - take resource dir as param or copy res dir to build dir
     auto configUi = CreateConfigApp(sourcesBufs, Brn("res/"), iMaxUiTabs, iUiSendQueueSize);
     iAppFramework->Add(configUi, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    iAppFramework->SetDefaultApp(configUi->ResourcePrefix());
     for (TUint i=0;i<sourcesBufs.size(); i++) {
         delete sourcesBufs[i];
     }

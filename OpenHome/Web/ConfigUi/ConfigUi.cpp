@@ -1453,6 +1453,8 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
     for (TUint i=0; i<aMaxTabs; i++) {
         iLanguageResourceHandlers.push_back(aResourceHandlerFactory.NewLanguageReader(iLangResourceDir));
     }
+
+    iResourceMappings.insert(ResourcePair(Brn(""), Brn("index.html")));
 }
 
 ConfigAppBase::~ConfigAppBase()
@@ -1501,13 +1503,20 @@ const Brx& ConfigAppBase::ResourcePrefix() const
     return iResourcePrefix;
 }
 
-IResourceHandler& ConfigAppBase::CreateResourceHandler(const OpenHome::Brx& aResource)
+IResourceHandler& ConfigAppBase::CreateResourceHandler(const Brx& aResource)
 {
     AutoMutex a(iLock);
+
+    Brn resource(aResource);
+    ResourceMap::iterator it = iResourceMappings.find(Brn(aResource));
+    if (it != iResourceMappings.end()) {
+        resource.Set(it->second);
+    }
+
     for (TUint i=0; i<iResourceHandlers.size(); i++) {
         if (!iResourceHandlers[i]->Allocated()) {
             IResourceHandler& handler = *iResourceHandlers[i];
-            handler.SetResource(aResource);
+            handler.SetResource(resource);
             return handler;
         }
     }
