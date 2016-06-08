@@ -6,6 +6,8 @@
 #include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -55,7 +57,7 @@ private:
     const TUint iMaxJiffies;
     const TUint iMaxStreamCount;
     IClockPuller* iClockPuller;
-    IStreamHandler* iStreamHandler;
+    std::atomic<IStreamHandler*> iStreamHandler;
     MsgDecodedStream *iDecodedStream;
     TUint iDiscardJiffies;
     TUint iPostDiscardFlush;

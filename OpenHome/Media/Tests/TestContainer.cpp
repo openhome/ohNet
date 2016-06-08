@@ -195,7 +195,6 @@ protected: // Tests
     void TestNormalOperation();
     void TestMsgOrdering();
     void TestStreamHandling();
-    void TestEndOfStreamQuit();
     void TestNewStream();
     void TestFlushPending();
     void TestFlushPendingStreamHandler();
@@ -653,7 +652,6 @@ void SuiteContainerBase::AddBaseTests()
     AddTest(MakeFunctor(*this, &SuiteContainerBase::TestNormalOperation), "TestNormalOperation");
     AddTest(MakeFunctor(*this, &SuiteContainerBase::TestMsgOrdering), "TestMsgOrdering");
     AddTest(MakeFunctor(*this, &SuiteContainerBase::TestStreamHandling), "TestStreamHandling");
-    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestEndOfStreamQuit), "TestEndOfStreamQuit");
     AddTest(MakeFunctor(*this, &SuiteContainerBase::TestNewStream), "TestNewStream");
     AddTest(MakeFunctor(*this, &SuiteContainerBase::TestFlushPending), "TestFlushPending");
     AddTest(MakeFunctor(*this, &SuiteContainerBase::TestFlushPendingStreamHandler), "TestFlushPendingStreamHandler");
@@ -856,38 +854,6 @@ void SuiteContainerBase::TestStreamHandling()
     while (iMsgRcvdCount < msgOrder.size()) { // pull remainder through
         PullAndProcess();
     }
-}
-
-void SuiteContainerBase::TestEndOfStreamQuit()
-{
-    // Populate vector with normal type/order of stream msgs, ending with a quit.
-    // all buffered MsgAudioEncoded should be passed down before the quit
-    // (and TryStop/TrySeek/OkToPlay should not be passed up for current stream
-    // once a quit has been pulled)
-    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
-    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
-
-    iGenerator->SetMsgOrder(msgOrder);
-
-    while (iMsgRcvdCount < msgOrder.size()) {
-        PullAndProcess();
-    }
-
-    // OkToPlay/TrySeek/TryStop should fail after a MsgQuit has been pulled as no stream should be active (nor will any stream be active again) and no other msg will be sent into pipeline.
-    EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iStreamId);
-    TEST(iOkToPlayRes == ePlayNo);
-    TEST(iProvider->OkToPlayCount() == 0);
-    TUint iSeekRes = iContainer->TrySeek(iStreamId, 0);
-    TEST(iSeekRes == MsgFlush::kIdInvalid);
-    TEST(iProvider->SeekCount() == 0);
-    TUint iStopRes = iContainer->TryStop(iStreamId);
-    TEST(iStopRes == MsgFlush::kIdInvalid);
-    TEST(iProvider->StopCount() == 0);
 }
 
 void SuiteContainerBase::TestNewStream()

@@ -8,6 +8,7 @@
 #include <OpenHome/Media/Pipeline/Rewinder.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 
+#include <atomic>
 #include <vector>
 
 EXCEPTION(CodecStreamCorrupt);
@@ -212,7 +213,7 @@ private:
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
     ContainerNull* iContainerNull;
-    IStreamHandler* iStreamHandler;
+    std::atomic<IStreamHandler*> iStreamHandler;
     Bws<Uri::kMaxUriBytes> iUrl;
     TBool iPassThrough;
     TBool iRecognising;
@@ -221,7 +222,6 @@ private:
     TBool iStreamEnded;
     TUint iStreamId;
     TUint iExpectedFlushId;
-    TBool iQuit;
     Mutex iLock;
 };
 

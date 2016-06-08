@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -17,7 +19,6 @@ public:
     EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, TUint aMsgCount, TUint aMaxStreamCount);
     TUint SizeInBytes() const;
 private:
-    inline IStreamHandler* StreamHandler();
     Msg* EndSeek(Msg* aMsg);
 private: // from AudioReservoir
     TBool IsFull() const override;
@@ -40,7 +41,7 @@ private:
     const TUint iMsgCount;
     const TUint iMaxStreamCount;
     Mutex iLock2;
-    IStreamHandler* iStreamHandler; // FIXME - thread safety
+    std::atomic<IStreamHandler*> iStreamHandler;
     TUint iStreamId;
     TUint64 iStreamPos;
     TUint iNextFlushId;
