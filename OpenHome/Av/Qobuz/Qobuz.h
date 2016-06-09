@@ -8,10 +8,10 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Av/Qobuz/UnixTimestamp.h>
 
 namespace OpenHome {
     class Environment;
+    class IUnixTimestamp;
 namespace Configuration {
     class IConfigInitialiser;
     class ConfigChoice;
@@ -34,7 +34,9 @@ class Qobuz : public ICredentialConsumer
 public:
     static const Brn kConfigKeySoundQuality;
 public:
-    Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, ICredentialsState& aCredentialsState, Configuration::IConfigInitialiser& aConfigInitialiser);
+    Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret,
+          ICredentialsState& aCredentialsState, Configuration::IConfigInitialiser& aConfigInitialiser,
+          IUnixTimestamp& aUnixTimestamp);
     ~Qobuz();
     TBool TryLogin();
     TBool TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl);
@@ -57,6 +59,7 @@ private:
     Mutex iLock;
     Mutex iLockConfig;
     ICredentialsState& iCredentialsState;
+    IUnixTimestamp& iUnixTimestamp;
     SocketTcpClient iSocket;
     Srs<1024> iReaderBuf;
     ReaderUntilS<1024> iReaderUntil1;
@@ -67,7 +70,6 @@ private:
     ReaderUntilS<kReadBufferBytes> iReaderUntil2;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
-    UnixTimestamp iUnixTimestamp;
     const Bws<32> iAppId;
     const Bws<32> iAppSecret;
     Bws<kMaxUsernameBytes> iUsername;

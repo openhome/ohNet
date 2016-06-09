@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -69,7 +71,7 @@ private: // from IStreamHandler
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
-    IStreamHandler* iStreamHandler;
+    std::atomic<IStreamHandler*> iStreamHandler;
     TBool iBuffering;
     Mutex iLock;
     RewinderReservoir* iQueueCurrent;    // new Msgs still to be passed on

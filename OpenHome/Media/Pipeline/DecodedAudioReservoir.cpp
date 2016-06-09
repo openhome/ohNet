@@ -32,6 +32,7 @@ DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdPr
     , iGorging(false)
     , iPriorityMsgCount(0)
 {
+    ASSERT(iStreamHandler.is_lock_free());
 }
 
 DecodedAudioReservoir::~DecodedAudioReservoir()
@@ -210,8 +211,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
     iPriorityMsgCount--;
     iGorgeLock.Signal();
 
-    AutoMutex _(iLock);
-    iStreamHandler = aMsg->StreamHandler();
+    iStreamHandler.store(aMsg->StreamHandler());
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     aMsg->RemoveRef();
     return msg;
@@ -219,9 +219,9 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    AutoMutex _(iLock);
-    iStreamHandler = aMsg->StreamInfo().StreamHandler();
+    iStreamHandler.store(aMsg->StreamInfo().StreamHandler());
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
+    AutoMutex _(iLock);
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
     }
@@ -279,11 +279,11 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
 
 EStreamPlay DecodedAudioReservoir::OkToPlay(TUint aStreamId)
 {
-    AutoMutex _(iLock);
-    if (iStreamHandler == nullptr) {
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler == nullptr) {
         return ePlayNo;
     }
-    return iStreamHandler->OkToPlay(aStreamId);
+    return streamHandler->OkToPlay(aStreamId);
 }
 
 TUint DecodedAudioReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -304,11 +304,12 @@ TUint DecodedAudioReservoir::TryDiscard(TUint aJiffies)
 
 TUint DecodedAudioReservoir::TryStop(TUint aStreamId)
 {
-    AutoMutex _(iLock);
-    if (iStreamHandler == nullptr) {
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler == nullptr) {
         return MsgFlush::kIdInvalid;
     }
-    const TUint flushId = iStreamHandler->TryStop(aStreamId);
+    const TUint flushId = streamHandler->TryStop(aStreamId);
+    AutoMutex _(iLock);
     if (flushId != MsgFlush::kIdInvalid && iClockPuller != nullptr) {
         iClockPuller->Stop();
     }
@@ -328,8 +329,8 @@ void DecodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TB
             SetGorging(true, "NotifyStarving");
         }
     }
-    AutoMutex _(iLock);
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler != nullptr) {
+        streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }

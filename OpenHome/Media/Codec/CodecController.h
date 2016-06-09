@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/Rewinder.h>
 
+#include <atomic>
 #include <vector>
 
 EXCEPTION(CodecStreamStart);
@@ -406,7 +407,7 @@ private:
     TBool iLive;
     TBool iRawPcm;
     PcmStreamInfo iPcmStream;
-    IStreamHandler* iStreamHandler;
+    std::atomic<IStreamHandler*> iStreamHandler;
     TUint iStreamId;
     BwsTrackUri iTrackUri;
     TUint iChannels;    // Only for detecting out-of-sequence MsgAudioPcm.

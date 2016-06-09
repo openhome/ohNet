@@ -1,9 +1,9 @@
-#include <OpenHome/Av/Qobuz/UnixTimestamp.h>
+#include <OpenHome/UnixTimestamp.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Timer.h>
-#include <OpenHome/Av/Qobuz/NtpClient.h>
+#include <OpenHome/NtpClient.h>
 
 #include <limits.h>
 

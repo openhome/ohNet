@@ -1,4 +1,4 @@
-#include <OpenHome/Av/Qobuz/NtpClient.h>
+#include <OpenHome/NtpClient.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Network.h>

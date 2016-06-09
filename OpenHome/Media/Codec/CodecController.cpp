@@ -147,6 +147,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamPos(0)
     , iTrackId(UINT_MAX)
 {
+    ASSERT(iStreamHandler.is_lock_free());
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
     //iLoggerRewinder->SetEnabled(true);
@@ -315,8 +316,9 @@ void CodecController::CodecThread()
                 }
                 iLock.Wait();
                 if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-                    (void)iStreamHandler->OkToPlay(iStreamId);
-                    iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
+                    auto streamHandler = iStreamHandler.load();
+                    (void)streamHandler->OkToPlay(iStreamId);
+                    iExpectedFlushId = streamHandler->TryStop(iStreamId);
                     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                         iConsumeExpectedFlush = true;
                     }
@@ -388,7 +390,8 @@ void CodecController::CodecThread()
         if (!iStreamStarted && !iStreamEnded) {
             iLock.Wait();
             if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-                iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
+                auto streamHandler = iStreamHandler.load();
+                iExpectedFlushId = streamHandler->TryStop(iStreamId);
                 if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                     iConsumeExpectedFlush = true;
                 }
@@ -561,19 +564,20 @@ TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
         }
     }
 
+    auto streamHandler = iStreamHandler.load();
     if (aStreamId == iStreamId && aBytePos >= iStreamLength) {
         // Seek on valid stream, but aBytePos is beyond end of file.
         LOG(kPipeline, "CodecController::TrySeekTo(%u, %llu) - failure: seek point is beyond the end of stream (streamLen=%llu)\n",
                        aStreamId, aBytePos, iStreamLength);
         LOG(kPipeline, "...skip forwards to next stream\n");
         iStreamEnded = true;
-        iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
+        iExpectedFlushId = streamHandler->TryStop(iStreamId);
         if (iExpectedFlushId != MsgFlush::kIdInvalid) {
             iConsumeExpectedFlush = true;
         }
         return false;
     }
-    TUint flushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
+    TUint flushId = streamHandler->TrySeek(aStreamId, aBytePos);
     LOG(kPipeline, "CodecController::TrySeekTo(%u, %llu) returning %u\n", aStreamId, aBytePos, flushId);
     if (flushId != MsgFlush::kIdInvalid) {
         ReleaseAudioEncoded();
@@ -773,7 +777,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamLength = aMsg->TotalBytes();
     iSeekable = aMsg->Seekable();
     iLive = aMsg->Live();
-    iStreamHandler = aMsg->StreamHandler();
+    iStreamHandler.store(aMsg->StreamHandler());
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     iRawPcm = aMsg->RawPcm();
     if (iRawPcm) {
@@ -899,8 +903,8 @@ Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 
 EStreamPlay CodecController::OkToPlay(TUint aStreamId)
 {
-    ASSERT(iStreamHandler != nullptr);
-    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    auto streamHandler = iStreamHandler.load();
+    EStreamPlay canPlay = streamHandler->OkToPlay(aStreamId);
     //Log::Print("CodecController::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
 }
@@ -923,11 +927,12 @@ TUint CodecController::TryStop(TUint aStreamId)
     if (iStreamId == aStreamId) {
         iStreamStopped = true;
     }
-    if (iStreamHandler == nullptr) {
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler == nullptr) {
         LOG(kMedia, "CodecController::TryStop returning MsgFlush::kIdInvalid (no stream handler)\n");
         return MsgFlush::kIdInvalid;
     }
-    const TUint flushId = iStreamHandler->TryStop(aStreamId);
+    const TUint flushId = streamHandler->TryStop(aStreamId);
     if (flushId != MsgFlush::kIdInvalid) {
         iExpectedFlushId = flushId;
         iConsumeExpectedFlush = false;
@@ -940,9 +945,9 @@ TUint CodecController::TryStop(TUint aStreamId)
 
 void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    AutoMutex a(iLock);
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler != nullptr) {
+        streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }
 

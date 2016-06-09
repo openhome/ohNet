@@ -3,7 +3,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
-#include <Generated/DvAvOpenhomeOrgProduct1.h>
+#include <Generated/DvAvOpenhomeOrgProduct2.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Private/Thread.h>
@@ -14,7 +14,7 @@ namespace OpenHome {
 
 namespace Av {
 
-class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1
+class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct2
                       , private IProductObserver
                       , private IProductNameObserver
                       , private IStandbyHandler
