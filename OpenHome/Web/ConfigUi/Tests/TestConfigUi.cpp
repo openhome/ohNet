@@ -402,7 +402,7 @@ TBool HelperLanguageResourceReader::Allocated() const
     return iAllocated;
 }
 
-void HelperLanguageResourceReader::Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer)
+void HelperLanguageResourceReader::Process(const Brx& /*aKey*/, IResourceFileConsumer& aResourceConsumer)
 {
     for (;;) {
         Brn line = iParser.Next('\n');
