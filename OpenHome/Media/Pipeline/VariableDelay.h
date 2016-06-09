@@ -48,9 +48,11 @@ private:
     void RampMsg(MsgAudio* aMsg);
     void ResetStatusAndRamp();
     void SetupRamp();
+    MsgDecodedStream* UpdateDecodedStream(TUint64 aTrackOffset);
 protected: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
@@ -70,12 +72,12 @@ protected:
     Mutex iLock;
     IClockPuller* iClockPuller;
     TUint iDelayJiffies;
+    TInt iDelayAdjustment;
 private:
     IPipelineElementUpstream& iUpstreamElement;
     const TUint iRampDuration;
     const TChar* iId;
     MsgQueueLite iQueue;
-    TInt iDelayAdjustment;
     EStatus iStatus;
     Ramp::EDirection iRampDirection;
     TBool iWaitForAudioBeforeGeneratingSilence;
@@ -83,31 +85,30 @@ private:
     TUint iRemainingRampSize;
     BwsMode iMode;
     MsgDecodedStream* iDecodedStream;
+    MsgDecodedStream* iPendingStream;
+    TUint iTargetFlushId;
 };
 
-class VariableDelayLeft : public VariableDelayBase, public IVariableDelayObserver
+class VariableDelayLeft : public VariableDelayBase
 {
 public:
-    VariableDelayLeft(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, TUint aDownstreamDelay);
+    VariableDelayLeft(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
+                      TUint aRampDuration, TUint aDownstreamDelay);
+    void SetObserver(IVariableDelayObserver& aObserver);
 private: // from PipelineElement (IMsgProcessor)
     using VariableDelayBase::ProcessMsg;
-    Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
 private: // from VariableDelayBase
     void LocalDelayApplied() override;
-private: // from IVariableDelayObserver
-    void NotifyDelayApplied(TUint aJiffies) override;
-private:
-    void StartClockPuller();
 private:
     const TUint iDownstreamDelay; // leave this much delay for downstream
-    TUint iDownstreamDelayCurrent;
+    IVariableDelayObserver* iObserver;
 };
 
-class VariableDelayRight : public VariableDelayBase
+class VariableDelayRight : public VariableDelayBase, public IVariableDelayObserver
 {
 public:
-    VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, IVariableDelayObserver& aObserver, TUint aMinDelay);
+    VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, TUint aMinDelay);
     void OverrideAnimatorLatency(TUint aJiffies); // 0 => do not override
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
@@ -117,10 +118,12 @@ private: // from PipelineElement (IMsgProcessor)
     Msg* ProcessMsg(MsgDelay* aMsg) override;
 private: // from VariableDelayBase
     void LocalDelayApplied() override;
+private: // from IVariableDelayObserver
+    void NotifyDelayApplied(TUint aJiffies) override;
 private:
     void ApplyAnimatorOverride();
+    void StartClockPuller();
 private:
-    IVariableDelayObserver& iObserver;
     const TUint iMinDelay;
     TUint iDelayJiffiesTotal;
     TUint iAnimatorLatencyOverride;

@@ -264,11 +264,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, public IVolumeScalerEnabler, private INonCopyable
 {
 public:
-    static const TInt kVolMin = -30;
-    static const TInt kVolMax = 0;
-    static const TInt kMute = -144;
-
-    static const TUint kVolMaxScaled = 30;
+    static const TUint kVolMaxScaled = 1000;
 public:
     RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMaxMilliDb);
     virtual ~RaopDiscovery();

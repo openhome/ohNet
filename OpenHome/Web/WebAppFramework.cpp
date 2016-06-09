@@ -607,6 +607,7 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, T
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
     , iServer(nullptr)
+    , iDefaultApp(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
     , iMutex("webapp")
@@ -673,6 +674,18 @@ TIpAddress WebAppFramework::Interface() const
     return iServer->Interface();
 }
 
+void WebAppFramework::SetDefaultApp(const Brx& aResourcePrefix)
+{
+    AutoMutex amx(iMutex);
+    ASSERT(!iStarted);
+    ASSERT(iDefaultApp == nullptr); // Don't want clashes in setting default app.
+    WebAppMap::const_iterator it = iWebApps.find(&aResourcePrefix);
+    if (it == iWebApps.cend()) {
+        THROW(InvalidAppPrefix);
+    }
+    iDefaultApp = it->second;
+}
+
 void WebAppFramework::Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor)
 {
     AutoMutex amx(iMutex);
@@ -712,6 +725,11 @@ IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
 {
     AutoMutex amx(iMutex);
     ASSERT(iStarted);
+
+    if (aResourcePrefix.Bytes() == 0 && iDefaultApp != nullptr) {
+        return *iDefaultApp;
+    }
+
     WebAppMap::const_iterator it = iWebApps.find(&aResourcePrefix);
     if (it == iWebApps.cend()) {
         THROW(InvalidAppPrefix);
@@ -729,8 +747,26 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
     Brn prefix = p.Next('/');
     Brn tail = p.Next('?'); // Read up to query string (if any).
 
+    if (prefix.Bytes() == 0) {
+        if (iDefaultApp != nullptr) {
+            return iDefaultApp->CreateResourceHandler(tail);
+        }
+        else {
+            THROW(ResourceInvalid);
+        }
+    }
+
     WebAppMap::const_iterator it = iWebApps.find(&prefix);
     if (it == iWebApps.cend()) {
+        // Didn't find an app with the given prefix.
+        // Maybe it wasn't a prefix and was actually a URI tail for the default app.
+        // Need to re-parse aResource in case there were multiple '/' in it.
+        Parser p(aResource);
+        p.Next('/');    // skip leading '/'
+        Brn tail = p.Next('?'); // Read up to query string (if any).
+        if (iDefaultApp != nullptr) {
+            return iDefaultApp->CreateResourceHandler(tail);
+        }
         THROW(ResourceInvalid);
     }
 
@@ -811,8 +847,7 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderUntilPreChunker);
     iReaderChunked = new ReaderHttpChunked(*iReaderUntilPreChunker);
     iReaderUntil = new ReaderUntilS<kMaxRequestBytes>(*iReaderChunked);
-    iWriterChunked = new WriterHttpChunked(*this);
-    iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
+    iWriterBuffer = new Sws<kMaxResponseBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
     iReaderRequest->AddMethod(Http::kMethodGet);
@@ -829,7 +864,6 @@ HttpSession::~HttpSession()
 {
     delete iWriterResponse;
     delete iWriterBuffer;
-    delete iWriterChunked;
     delete iReaderUntil;
     delete iReaderChunked;
     delete iReaderRequest;
@@ -847,7 +881,6 @@ void HttpSession::Run()
 {
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
-    iWriterChunked->SetChunked(false);
     iResourceWriterHeadersOnly = false;
     // check headers
     try {
@@ -956,8 +989,6 @@ void HttpSession::Get()
     LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
     // Write response headers.
-
-    // FIXME - should it be possible to send long poll requests via GETs?
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
     IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
@@ -965,24 +996,14 @@ void HttpSession::Get()
     //writer.Write(Brn("; charset=\"utf-8\""));
     writer.WriteFlush();
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-    //WriteServerHeader(*iWriterResponse);
-    if (reqVersion == Http::eHttp11) {
-        iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
-    }
-    else { // Http::eHttp10
-        const TUint len = resourceHandler.Bytes();
-        if (len > 0) {
-            Http::WriteHeaderContentLength(*iWriterResponse, len);
-        }
-    }
+    const TUint len = resourceHandler.Bytes();
+    ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
+    Http::WriteHeaderContentLength(*iWriterResponse, len);
     iWriterResponse->WriteFlush();
 
     // Write content.
-    if (reqVersion == Http::eHttp11) {
-        iWriterChunked->SetChunked(true);
-    }
-    resourceHandler.Write(*iWriterChunked);
-    iWriterChunked->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
+    resourceHandler.Write(*iWriterBuffer);
+    iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
     resourceHandler.Destroy();
     iResponseEnded = true;
 }
@@ -999,11 +1020,24 @@ void HttpSession::Post()
     Parser uriParser(uri);
     uriParser.Next('/');    // skip leading '/'
     Brn uriPrefix = uriParser.Next('/');
-    Brn uriTail = uriParser.NextToEnd();
+    Brn uriTail = uriParser.Next('?'); // Read up to query string (if any).
+
+    // Try retrieve IWebApp using assumed prefix, in case it was actually the
+    // URI tail and there is no prefix as the assumed app is the default app.
+    try {
+        (void)iAppManager.GetApp(uriPrefix);
+    }
+    catch (InvalidAppPrefix&) {
+        // There was no app with the given uriPrefix, so maybe it's the default
+        // app and the uriPrefix is actually uriTail.
+        (void)iAppManager.GetApp(Brx::Empty());    // See if default app set.
+        uriTail.Set(uriPrefix);         // Default app set, so assume uriPrefix is actually uriTail.
+        uriPrefix.Set(Brx::Empty());    // Default app.
+    }
 
     if (uriTail == Brn("lpcreate")) {
         try {
-            IWebApp& app = iAppManager.GetApp(uriPrefix); // FIXME - pass full uri to this instead of prefix?
+            IWebApp& app = iAppManager.GetApp(uriPrefix);
             TUint id = iTabManager.CreateTab(app, iHeaderAcceptLanguage.LanguageList());
             iResponseStarted = true;
             WriteLongPollHeaders();
@@ -1017,6 +1051,8 @@ void HttpSession::Post()
             iResponseEnded = true;
         }
         catch (InvalidAppPrefix&) {
+            // FIXME - just respond with error instead of asserting?
+
             // Programmer error/misuse by client.
             // Long-polling can only be initiated from a page served up by this framework (which implies that it must have a valid app prefix!).
             ASSERTS();

@@ -63,7 +63,7 @@ const Brn SourceFactory::kSourceNameRadio("Radio");
 // UriProviderRadio
 
 UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
-    : UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory())
+    : UriProviderSingleTrack("Radio", false, aMediaPlayer.TrackFactory())
 {
 }
 

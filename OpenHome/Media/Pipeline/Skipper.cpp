@@ -260,6 +260,7 @@ Msg* Skipper::ProcessMsg(MsgQuit* aMsg)
 
 EStreamPlay Skipper::OkToPlay(TUint aStreamId)
 {
+    // no need for locking - this is guaranteed to only be called from the same thread as Pull()
     return iStreamHandler->OkToPlay(aStreamId);
 }
 
@@ -269,8 +270,15 @@ TUint Skipper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint Skipper::TryDiscard(TUint aJiffies)
+{
+    // no need for locking - this is guaranteed to only be called from the same thread as Pull()
+    return iStreamHandler->TryDiscard(aJiffies);
+}
+
 TUint Skipper::TryStop(TUint aStreamId)
 {
+    // no need for locking - this is guaranteed to only be called from the same thread as Pull()
     return iStreamHandler->TryStop(aStreamId);
 }
 

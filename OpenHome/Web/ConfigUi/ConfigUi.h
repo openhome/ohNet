@@ -30,7 +30,7 @@ class ILanguageResourceReader
 public:
     virtual void SetResource(const Brx& aUriTail) = 0;
     virtual TBool Allocated() const = 0;
-    virtual void Process(IResourceFileConsumer& aResourceConsumer) = 0;
+    virtual void Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer) = 0;
     virtual ~ILanguageResourceReader() {}
 };
 
@@ -621,6 +621,8 @@ private:
     static const TUint kMaxResourcePrefixBytes = 25;
     static const Brn kLangRoot;
     static const Brn kDefaultLanguage;
+    typedef std::pair<Brn, Brn> ResourcePair;
+    typedef std::map<Brn, Brn, BufferCmp> ResourceMap;
 protected:
     ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
     ~ConfigAppBase();
@@ -654,6 +656,7 @@ private:
     std::vector<ILanguageResourceReader*> iLanguageResourceHandlers;
     std::vector<ConfigTab*> iTabs;
     std::vector<IConfigUiVal*> iUiVals;
+    ResourceMap iResourceMappings;
     Mutex iLock;
 };
 

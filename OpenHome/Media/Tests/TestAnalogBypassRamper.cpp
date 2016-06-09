@@ -162,7 +162,7 @@ Msg* SuiteAnalogBypassRamper::Pull()
     switch (iNextMsg)
     {
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, ModeClockPullers(), false, false);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), false, ModeClockPullers(), false, false);
     case EMsgDrain:
         return iMsgFactory->CreateMsgDrain(MakeFunctor(*this, &SuiteAnalogBypassRamper::DrainCallback));
     case EMsgStreamInterrupted:

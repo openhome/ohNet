@@ -5,6 +5,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
@@ -137,6 +138,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShell = new Shell(aDvStack.Env(), 0);
     Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
+    iInfoLogger = new Media::AllocatorInfoLogger();
 
     // Do NOT set UPnP friendly name attributes at this stage.
     // (Wait until MediaPlayer is created so that friendly name can be observed.)
@@ -186,8 +188,10 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationRamperSize(100 * Jiffies::kPerMs); // larger StarvationRamper size useful for desktop
                                                                   // platforms with slightly unpredictable thread scheduling
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, pipelineInit,
-                                   volumeInit, volumeProfile, aUdn, Brn(aRoom), Brn(aProductName));
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore,
+                                   *iConfigRamStore, pipelineInit,
+                                   volumeInit, volumeProfile, *iInfoLogger,
+                                   aUdn, Brn(aRoom), Brn(aProductName));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -215,6 +219,7 @@ TestMediaPlayer::~TestMediaPlayer()
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
     delete iPipelineObserver;
+    delete iInfoLogger;
     delete iShellDebug;
     delete iShell;
     delete iDevice;
@@ -260,6 +265,7 @@ void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
     AddConfigApp();
+    InitialiseLogger();
     iMediaPlayer->Start();
     InitialiseSubsystems();
 
@@ -267,6 +273,7 @@ void TestMediaPlayer::Run()
     IConfigManager& configManager = iMediaPlayer->ConfigManager();
     configManager.Print();
     configManager.DumpToStore();
+
 
     iAppFramework->Start();
     iMediaPlayer->PowerManager().StandbyDisable(StandbyDisableReason::Boot);
@@ -354,7 +361,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 
     // only add Tidal if we have a token to use with login
     if (iTidalId.Bytes() > 0) {
-        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, *iMediaPlayer));
     }
     // ...likewise, only add Qobuz if we have ids for login
     if (iQobuzIdSecret.Bytes() > 0) {
@@ -366,7 +373,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
         Log::Print(", appSecret = ");
         Log::Print(appSecret);
         Log::Print("\n");
-        iMediaPlayer->Add(ProtocolFactory::NewQobuz(aEnv, appId, appSecret, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
+        iMediaPlayer->Add(ProtocolFactory::NewQobuz(appId, appSecret, *iMediaPlayer));
     }
 
     // Add sources
@@ -390,8 +397,6 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
                                                  Optional<IClockPuller>(nullptr),
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
                                                  Optional<IOhmTimestamper>(iRxTimestamper)));
-
-    iMediaPlayer->BufferLogOutput(128 * 1024);
 }
 
 void TestMediaPlayer::InitialiseSubsystems()
@@ -401,10 +406,15 @@ void TestMediaPlayer::InitialiseSubsystems()
 IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
 {
     FileResourceHandlerFactory resourceHandlerFactory;
-    return new ConfigAppMediaPlayer(iMediaPlayer->InfoAggregator(), iMediaPlayer->Env(), iMediaPlayer->Product(),
+    return new ConfigAppMediaPlayer(*iInfoLogger, iMediaPlayer->Env(), iMediaPlayer->Product(),
                                     iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources,
                                     Brn("Softplayer"), aResourceDir,
                                     aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
+}
+
+void TestMediaPlayer::InitialiseLogger()
+{
+    (void)iMediaPlayer->BufferLogOutput(128 * 1024, *iShell, Optional<ILogPoster>(nullptr));
 }
 
 void TestMediaPlayer::DestroyAppFramework()
@@ -460,6 +470,7 @@ void TestMediaPlayer::AddConfigApp()
     // FIXME - take resource dir as param or copy res dir to build dir
     auto configUi = CreateConfigApp(sourcesBufs, Brn("res/"), iMaxUiTabs, iUiSendQueueSize);
     iAppFramework->Add(configUi, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
+    iAppFramework->SetDefaultApp(configUi->ResourcePrefix());
     for (TUint i=0;i<sourcesBufs.size(); i++) {
         delete sourcesBufs[i];
     }
@@ -505,15 +516,8 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
 void TestMediaPlayer::PresentationUrlChanged(const Brx& aUrl)
 {
     if (!iDevice->Enabled()) {
-        // FIXME - can only set Product attribute once (meaning no updates on subnet change)
-        const TBool firstChange = (iPresentationUrl.Bytes() == 0);
         iPresentationUrl.Replace(aUrl);
         iDevice->SetAttribute("Upnp.PresentationUrl", iPresentationUrl.PtrZ());
-        if (firstChange) {
-            Bws<128> configAtt("App:Config=");
-            configAtt.Append(iPresentationUrl);
-            iMediaPlayer->Product().AddAttribute(configAtt);
-        }
     }
 }
 

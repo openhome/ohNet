@@ -209,12 +209,14 @@ TUint PipelineInitParams::SupportElements() const
         }                                                       \
     } while (0)
 
+static Pipeline* gPipeline = nullptr;
 Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
     , iState(EStopped)
+    , iLastReportedState(EPipelineStateCount)
     , iBuffering(false)
     , iWaiting(false)
     , iQuitting(false)
@@ -227,8 +229,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     const TUint maxEncodedReservoirMsgs = encodedAudioCount;
     encodedAudioCount += kRewinderMaxMsgs; // this may only be required on platforms that don't guarantee priority based thread scheduling
     const TUint msgEncodedAudioCount = encodedAudioCount + 100; // +100 allows for Split()ing by Container and CodecController
-    const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationRamperJiffies();
-    const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
+    const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->StarvationRamperJiffies();
+    const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 200; // +200 allows for songcast sender, some smaller msgs and some buffering in non-reservoir elements
     const TUint msgAudioPcmCount = decodedAudioCount + 100; // +100 allows for Split()ing in various elements
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
     MsgFactoryInitParams msgInit;
@@ -282,7 +284,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
 
     // Construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(*iMsgFactory,
+    iDecodedAudioReservoir = new DecodedAudioReservoir(*iMsgFactory, *this,
                                                        aInitParams->DecodedReservoirJiffies(),
                                                        aInitParams->MaxStreamsPerReservoir(),
                                                        aInitParams->GorgeDurationJiffies());
@@ -384,9 +386,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iVariableDelay2,
                    new VariableDelayRight(*iMsgFactory, *upstream,
                                           aInitParams->RampEmergencyJiffies(),
-                                          *iVariableDelay1,
                                           aInitParams->StarvationRamperJiffies()),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    iVariableDelay1->SetObserver(*iVariableDelay2);
     ATTACH_ELEMENT(iLoggerVariableDelay2, new Logger(*iVariableDelay2, "VariableDelay2"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iRampValidatorDelay2, new RampValidator(*upstream, "VariableDelay2"),
@@ -435,6 +437,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
         iPipelineEnd = iPreDriver;
     }
     iMuteCounted = new MuteCounted(*iMuter);
+
+    gPipeline = this;
 
     //iAudioDumper->SetEnabled(true);
 
@@ -600,27 +604,31 @@ void Pipeline::Quit()
 void Pipeline::NotifyStatus()
 {
     EPipelineState state;
-    iLock.Wait();
-    if (iQuitting) {
-        iLock.Signal();
-        return;
-    }
-    switch (iState)
     {
-    case EPlaying:
-        state = (iWaiting? EPipelineWaiting : (iBuffering? EPipelineBuffering : EPipelinePlaying));
-        break;
-    case EPaused:
-        state = EPipelinePaused;
-        break;
-    case EStopped:
-        state = EPipelineStopped;
-        break;
-    default:
-        ASSERTS();
-        state = EPipelineBuffering; // will never reach here but the compiler doesn't realise this
+        AutoMutex _(iLock);
+        if (iQuitting) {
+            return;
+        }
+        switch (iState)
+        {
+        case EPlaying:
+            state = (iWaiting? EPipelineWaiting : (iBuffering? EPipelineBuffering : EPipelinePlaying));
+            break;
+        case EPaused:
+            state = EPipelinePaused;
+            break;
+        case EStopped:
+            state = EPipelineStopped;
+            break;
+        default:
+            ASSERTS();
+            state = EPipelineBuffering; // will never reach here but the compiler doesn't realise this
+        }
+        if (state == iLastReportedState) {
+            return;
+        }
+        iLastReportedState = state;
     }
-    iLock.Signal();
     iObserver.NotifyPipelineState(state);
 }
 
@@ -737,6 +745,20 @@ void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
     aMin = iInitParams->ThreadPriorityCodec();
 }
 
+void PipelineLogBuffers()
+{
+    gPipeline->LogBuffers();
+}
+
+void Pipeline::LogBuffers() const
+{
+    const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
+    const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
+    const TUint starvationMs = Jiffies::ToMs(iStarvationRamper->SizeInJiffies());
+    Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, starvationRamper=%u\n",
+               encodedBytes, decodedMs, starvationMs);
+}
+
 void Pipeline::Push(Msg* aMsg)
 {
     iPipelineStart->Push(aMsg);
@@ -834,11 +856,7 @@ void Pipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
     iObserver.NotifyTime(aSeconds, aTrackDurationSeconds);
 #if 0
     if (aSeconds % 8 == 0) {
-        const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
-        const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
-        const TUint starvationMs = Jiffies::ToMs(iStarvationRamper->SizeInJiffies());
-        Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, starvationRamper=%u\n",
-                   encodedBytes, decodedMs, starvationMs);
+        LogBuffers();
     }
 #endif
 }

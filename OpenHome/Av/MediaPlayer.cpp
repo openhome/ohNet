@@ -2,7 +2,6 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -20,34 +19,10 @@
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Av/Credentials.h>
 #include <OpenHome/Media/MimeTypeList.h>
-#include <OpenHome/Av/ProviderDebug.h>
+#include <OpenHome/Av/Logger.h>
+#include <OpenHome/UnixTimestamp.h>
 
 #include <memory>
-
-namespace OpenHome {
-namespace Av {
-
-class BufferedLogger
-{
-public:
-    BufferedLogger(Net::DvDevice& aDevice, Product& aProduct, TUint aBytes)
-    {
-        iRingBufferLogger.reset(new RingBufferLogger(aBytes));
-        iProviderDebug.reset(new ProviderDebug(aDevice, *iRingBufferLogger));
-        aProduct.AddAttribute("Debug");
-    }
-    RingBufferLogger* LogBuffer()
-    {
-        return iRingBufferLogger.get();
-    }
-private:
-    std::unique_ptr<RingBufferLogger> iRingBufferLogger;
-    std::unique_ptr<ProviderDebug> iProviderDebug;
-};
-
-}
-}
-
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -62,6 +37,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
                          VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
+                         Media::IInfoAggregator& aInfoAggregator,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
                          const Brx& aDefaultName)
@@ -72,11 +48,11 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigProductName(nullptr)
     , iConfigAutoPlay(nullptr)
     , iConfigStartupSource(nullptr)
-    , iBufferedLogger(nullptr)
+    , iLoggerBuffered(nullptr)
 {
-    iInfoLogger = new AllocatorInfoLogger();
+    iUnixTimestamp = new OpenHome::UnixTimestamp(iDvStack.Env());
     iKvpStore = new KvpStore(aStaticDataSource);
-    iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
+    iTrackFactory = new Media::TrackFactory(aInfoAggregator, kTrackCount);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager(*iConfigManager);
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, aDefaultRoom);
@@ -87,7 +63,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigAutoPlay = new ConfigChoice(*iConfigManager, Product::kConfigIdAutoPlay, choices, Product::kAutoPlayDisable);
     iProduct = new Av::Product(aDvStack.Env(), aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iFriendlyNameManager = new Av::FriendlyNameManager(*iProduct);
-    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory);
+    iPipeline = new PipelineManager(aPipelineInitParams, aInfoAggregator, *iTrackFactory);
     iVolumeConfig = new VolumeConfig(aReadWriteStore, *iConfigManager, *iPowerManager, aVolumeProfile);
     iVolumeManager = new Av::VolumeManager(aVolumeConsumer, iPipeline, *iVolumeConfig, aDevice, *iProduct, *iConfigManager, *iPowerManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
@@ -97,7 +73,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
-    iProduct->AddAttribute("Configuration");
     //iTransportControl = new TransportControl(aDevice, *iPipeline);
     //iProduct->AddAttribute("TransportControl");
 }
@@ -128,8 +103,8 @@ MediaPlayer::~MediaPlayer()
     delete iConfigManager;
     delete iTrackFactory;
     delete iKvpStore;
-    delete iInfoLogger;
-    delete iBufferedLogger;
+    delete iLoggerBuffered;
+    delete iUnixTimestamp;
 }
 
 void MediaPlayer::Quit()
@@ -163,9 +138,10 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
     iProduct->AddAttribute(aAttribute);
 }
 
-void MediaPlayer::BufferLogOutput(TUint aBytes)
+ILoggerSerial& MediaPlayer::BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster)
 {
-    iBufferedLogger = new BufferedLogger(iDevice, *iProduct, aBytes);
+    iLoggerBuffered = new LoggerBuffered(aBytes, iDevice, *iProduct, aShell, aLogPoster);
+    return iLoggerBuffered->LoggerSerial();
 }
 
 void MediaPlayer::Start()
@@ -195,11 +171,6 @@ Net::DvStack& MediaPlayer::DvStack()
 Net::DvDeviceStandard& MediaPlayer::Device()
 {
     return iDevice;
-}
-
-Media::IInfoAggregator& MediaPlayer::InfoAggregator()
-{
-    return *iInfoLogger;
 }
 
 Media::PipelineManager& MediaPlayer::Pipeline()
@@ -271,5 +242,10 @@ void MediaPlayer::Add(UriProvider* aUriProvider)
 
 RingBufferLogger* MediaPlayer::LogBuffer()
 {
-    return (iBufferedLogger ? iBufferedLogger->LogBuffer() : nullptr);
+    return (iLoggerBuffered ? &iLoggerBuffered->LogBuffer() : nullptr);
+}
+
+IUnixTimestamp& MediaPlayer::UnixTimestamp()
+{
+    return *iUnixTimestamp;
 }

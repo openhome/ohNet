@@ -60,6 +60,7 @@ private: // from IMsgProcessor
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IStarvationRamperObserver
@@ -348,6 +349,12 @@ TUint SuiteStarvationRamper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint SuiteStarvationRamper::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint SuiteStarvationRamper::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -446,7 +453,7 @@ void SuiteStarvationRamper::Quit()
 
 void SuiteStarvationRamper::TestMsgsPassWhenRunning()
 {
-    AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(iMsgFactory->CreateMsgDrain(Functor()));
     AddPending(CreateDecodedStream());
@@ -472,7 +479,7 @@ void SuiteStarvationRamper::TestMsgsPassWhenRunning()
 
 void SuiteStarvationRamper::TestBlocksWhenHasMaxAudio()
 {
-    AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -507,7 +514,7 @@ void SuiteStarvationRamper::TestBlocksWhenHasMaxAudio()
 
 void SuiteStarvationRamper::TestNoRampAroundHalt()
 {
-    AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
     AddPending(CreateAudio());
@@ -535,7 +542,7 @@ void SuiteStarvationRamper::TestNoRampAroundHalt()
 void SuiteStarvationRamper::TestRampsAroundStarvation()
 {
     // ramps down after > kMaxAudioBuffer of prior audio, ramp down takes StarvationRamper::kRampDownJiffies
-    AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
     do {
@@ -597,7 +604,7 @@ void SuiteStarvationRamper::TestRampsAroundStarvation()
 void SuiteStarvationRamper::TestNotifyStarvingAroundStarvation()
 {
     TEST(!iStarving);
-    AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -630,7 +637,7 @@ void SuiteStarvationRamper::TestNotifyStarvingAroundStarvation()
 void SuiteStarvationRamper::TestReportsBuffering()
 {
     TEST(iBuffering);
-    AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
     AddPending(CreateTrack());
     AddPending(CreateDecodedStream());
     PullNext(EMsgMode);
@@ -720,7 +727,7 @@ void SuiteStarvationRamper::TestAllSampleRates()
             Print("\nbitDepth=%2u, sampleRate=%6u\n", iBitDepth, iSampleRate);
             iTrackOffset = 0;
             iJiffies = 0;
-            AddPending(iMsgFactory->CreateMsgMode(kMode, false, true, ModeClockPullers(), false, false));
+            AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
             AddPending(CreateTrack());
             AddPending(CreateDecodedStream());
             do {

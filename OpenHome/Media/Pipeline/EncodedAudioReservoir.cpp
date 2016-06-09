@@ -23,19 +23,12 @@ EncodedAudioReservoir::EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdPr
     , iPostSeekFlushId(MsgFlush::kIdInvalid)
     , iPostSeekStreamPos(0)
 {
+    ASSERT(iStreamHandler.is_lock_free());
 }
 
 TUint EncodedAudioReservoir::SizeInBytes() const
 {
     return EncodedBytes();
-}
-
-inline IStreamHandler* EncodedAudioReservoir::StreamHandler()
-{
-    iLock2.Wait();
-    auto streamHandler = iStreamHandler;
-    iLock2.Signal();
-    return streamHandler;
 }
 
 Msg* EncodedAudioReservoir::EndSeek(Msg* aMsg)
@@ -76,7 +69,7 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
         if (iNextFlushId != MsgFlush::kIdInvalid) {
             return EndSeek(aMsg);
         }
-        iStreamHandler = aMsg->StreamHandler();
+        iStreamHandler.store(aMsg->StreamHandler());
         iStreamId = aMsg->StreamId();
         iStreamPos = aMsg->StartPos();
     }
@@ -122,7 +115,7 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgFlush* aMsg)
 
 EStreamPlay EncodedAudioReservoir::OkToPlay(TUint aStreamId)
 {
-    IStreamHandler* streamHandler = StreamHandler();
+    IStreamHandler* streamHandler = iStreamHandler.load();
     if (streamHandler != nullptr) {
         return streamHandler->OkToPlay(aStreamId);
     }
@@ -142,8 +135,9 @@ TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
                         aStreamId, aOffset, iStreamPos, lastBufferedPos);
         return iNextFlushId;
     }
-    if (iStreamHandler != nullptr) {
-        const TUint flushId = iStreamHandler->TrySeek(aStreamId, aOffset);
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler != nullptr) {
+        const TUint flushId = streamHandler->TrySeek(aStreamId, aOffset);
         if (flushId != MsgFlush::kIdInvalid) {
             iPostSeekFlushId = flushId;
             iPostSeekStreamPos = aOffset;
@@ -153,9 +147,15 @@ TUint EncodedAudioReservoir::TrySeek(TUint aStreamId, TUint64 aOffset)
     return MsgFlush::kIdInvalid;
 }
 
+TUint EncodedAudioReservoir::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint EncodedAudioReservoir::TryStop(TUint aStreamId)
 {
-    IStreamHandler* streamHandler = StreamHandler();
+    IStreamHandler* streamHandler = iStreamHandler.load();
     if (streamHandler != nullptr) {
         return streamHandler->TryStop(aStreamId);
     }
@@ -164,7 +164,7 @@ TUint EncodedAudioReservoir::TryStop(TUint aStreamId)
 
 void EncodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    IStreamHandler* streamHandler = StreamHandler();
+    IStreamHandler* streamHandler = iStreamHandler.load();
     if (streamHandler != nullptr) {
         streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }

@@ -23,11 +23,6 @@ TBool UriProvider::SupportsLatency() const
     return iSupportsLatency;
 }
 
-TBool UriProvider::IsRealTime() const
-{
-    return iRealTime;
-}
-
 TBool UriProvider::SupportsNext() const
 {
     return iSupportsNext;
@@ -43,12 +38,10 @@ ModeClockPullers UriProvider::ClockPullers()
     return ModeClockPullers();
 }
 
-UriProvider::UriProvider(const TChar* aMode,
-                        Latency aLatency, RealTime aRealTime,
+UriProvider::UriProvider(const TChar* aMode, Latency aLatency,
                         Next aNextSupported, Prev aPrevSupported)
     : iMode(aMode)
     , iSupportsLatency(aLatency == Latency::Supported)
-    , iRealTime(aRealTime == RealTime::Supported)
     , iSupportsNext(aNextSupported == Next::Supported)
     , iSupportsPrev(aPrevSupported == Prev::Supported)
 {
@@ -280,7 +273,7 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, ModeClockPullers(), false, false));
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false));
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
@@ -294,11 +287,7 @@ void Filler::Run()
                 iUriStreamer->Interrupt(false);
                 if (iChangedMode) {
                     const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
-                    const TBool realTime = iActiveUriProvider->IsRealTime();
-                    ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
-                                                             hard/impossible if the Gorger was allowed to buffer
-                                                             content between the two VariableDelays */
-                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPullers(),
+                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, iActiveUriProvider->ClockPullers(),
                                                              iActiveUriProvider->SupportsNext(), iActiveUriProvider->SupportsPrev()));
                     if (!supportsLatency) {
                         iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
@@ -463,6 +452,12 @@ EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint aStreamId)
 
 TUint Filler::NullTrackStreamHandler::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
+    return MsgFlush::kIdInvalid;
+}
+
+TUint Filler::NullTrackStreamHandler::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 

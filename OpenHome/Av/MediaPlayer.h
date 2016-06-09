@@ -3,16 +3,20 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MimeTypeList.h>
+#include <OpenHome/Optional.h>
+#include <OpenHome/Av/Logger.h>
 
 namespace OpenHome {
     class Environment;
     class IPowerManager;
     class PowerManager;
     class RingBufferLogger;
+    class IUnixTimestamp;
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
     class IShell;
+    class DvProvider;
 }
 namespace Media {
     class PipelineManager;
@@ -26,7 +30,6 @@ namespace Media {
         class CodecBase;
     }
     class IInfoAggregator;
-    class AllocatorInfoLogger;
     class LoggingPipelineObserver;
     class TrackFactory;
 }
@@ -38,9 +41,6 @@ namespace Configuration {
     class ConfigText;
     class ConfigChoice;
     class ProviderConfig;
-}
-namespace Net {
-    class DvProvider;
 }
 namespace Av {
 
@@ -63,7 +63,6 @@ class VolumeConsumer;
 class IVolumeManager;
 class IVolumeProfile;
 class ConfigStartupSource;
-class BufferedLogger;
 
 class IMediaPlayer
 {
@@ -72,7 +71,6 @@ public:
     virtual Environment& Env() = 0;
     virtual Net::DvStack& DvStack() = 0;
     virtual Net::DvDeviceStandard& Device() = 0;
-    virtual Media::IInfoAggregator& InfoAggregator() = 0;
     virtual Media::PipelineManager& Pipeline() = 0;
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
@@ -87,6 +85,8 @@ public:
     virtual Media::MimeTypeList& MimeTypes() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
+    virtual ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) = 0; // must be called before Start()
+    virtual IUnixTimestamp& UnixTimestamp() = 0;
 };
 
 class MediaPlayer : public IMediaPlayer, private INonCopyable
@@ -98,6 +98,7 @@ public:
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
                 VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
+                Media::IInfoAggregator& aInfoAggregator,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -107,14 +108,12 @@ public:
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(ISource* aSource);
-    void BufferLogOutput(TUint aBytes); // must be called before Start()
     RingBufferLogger* LogBuffer(); // an optional component. returns nullptr if not available. no transfer of ownership.
     void Start();
 public: // from IMediaPlayer
     Environment& Env() override;
     Net::DvStack& DvStack() override;
     Net::DvDeviceStandard& Device() override;
-    Media::IInfoAggregator& InfoAggregator() override;
     Media::PipelineManager& Pipeline() override;
     Media::TrackFactory& TrackFactory() override;
     IReadStore& ReadStore() override;
@@ -129,10 +128,11 @@ public: // from IMediaPlayer
     Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
+    ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
+    IUnixTimestamp& UnixTimestamp() override;
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
-    Media::AllocatorInfoLogger* iInfoLogger;
     KvpStore* iKvpStore;
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
@@ -152,7 +152,8 @@ private:
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     Configuration::ProviderConfig* iProviderConfig;
-    BufferedLogger* iBufferedLogger;
+    LoggerBuffered* iLoggerBuffered;
+    IUnixTimestamp* iUnixTimestamp;
     //TransportControl* iTransportControl;
 };
 

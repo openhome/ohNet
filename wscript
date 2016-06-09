@@ -160,7 +160,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/AVTransport1.xml',       'upnp.org',        'AVTransport',       '1', 'UpnpOrgAVTransport1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org',        'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/RenderingControl1.xml',  'upnp.org',        'RenderingControl',  '1', 'UpnpOrgRenderingControl1'),
-        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product2.xml',       'av.openhome.org', 'Product',           '1', 'AvOpenhomeOrgProduct1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product2.xml',       'av.openhome.org', 'Product',           '2', 'AvOpenhomeOrgProduct2'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Radio1.xml',         'av.openhome.org', 'Radio',             '1', 'AvOpenhomeOrgRadio1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml',        'av.openhome.org', 'Sender',            '1', 'AvOpenhomeOrgSender1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Playlist1.xml',      'av.openhome.org', 'Playlist',          '1', 'AvOpenhomeOrgPlaylist1'),
@@ -290,7 +290,7 @@ def build(bld):
                 'OpenHome/Av/KvpStore.cpp',
                 'OpenHome/Av/ProviderUtils.cpp',
                 'OpenHome/Av/Product.cpp',
-                'Generated/DvAvOpenhomeOrgProduct1.cpp',
+                'Generated/DvAvOpenhomeOrgProduct2.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
                 'Generated/DvAvOpenhomeOrgTime1.cpp',
                 'OpenHome/Av/ProviderTime.cpp',
@@ -300,9 +300,12 @@ def build(bld):
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
+                'OpenHome/Av/Logger.cpp',
                 'Generated/DvAvOpenhomeOrgConfig1.cpp',
                 'OpenHome/Av/Utils/Json.cpp',
                 'OpenHome/Av/Utils/FormUrl.cpp',
+                'OpenHome/NtpClient.cpp',
+                'OpenHome/UnixTimestamp.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
                 'OpenHome/PowerManager.cpp',
                 'OpenHome/Av/Credentials.cpp',
@@ -330,8 +333,6 @@ def build(bld):
                 'OpenHome/Av/Tidal/Tidal.cpp',
                 'OpenHome/Av/Tidal/ProtocolTidal.cpp',
                 'OpenHome/Av/Qobuz/Qobuz.cpp',
-                'OpenHome/Av/Qobuz/NtpClient.cpp',
-                'OpenHome/Av/Qobuz/UnixTimestamp.cpp',
                 'OpenHome/Av/Qobuz/ProtocolQobuz.cpp'
             ],
             use=['OHNET', 'ohMediaPlayer'],
@@ -678,7 +679,7 @@ def build(bld):
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/Tests/TestTrackDatabase.cpp',
-                'OpenHome/Av/Tests/TestPlaylist.cpp',
+                #'OpenHome/Av/Tests/TestPlaylist.cpp',
                 'Generated/CpAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerOptions.cpp',
@@ -916,11 +917,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestTrackDatabase',
             install_path=None)
-    bld.program(
-            source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
-            target='TestPlaylist',
-            install_path=None)
+    #bld.program(
+    #        source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
+    #        use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+    #        target='TestPlaylist',
+    #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceUpnpAv'],
@@ -982,7 +983,7 @@ def build(bld):
             target='TestQobuz',
             install_path=None)
     bld.program(
-            source='OpenHome/Av/Qobuz/TestNtpClient.cpp',
+            source='OpenHome/Tests/TestNtpClient.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestNtpClient',
             install_path=None)

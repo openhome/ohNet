@@ -30,7 +30,7 @@ public:
 class ProviderFactory
 {
 public:
-    static IProvider* NewConfiguration(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader);
+    static IProvider* NewConfiguration(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader);
 };
 
 } // namespace Av

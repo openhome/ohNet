@@ -44,8 +44,8 @@ protected:
 private:
     mutable Mutex iLock;
     const TChar* iName;
-    TUint iCellsTotal;
-    TUint iCellBytes;
+    const TUint iCellsTotal;
+    const TUint iCellBytes;
     TUint iCellsUsed;
     TUint iCellsUsedMax;
 };
@@ -95,9 +95,8 @@ private:
     virtual void Clear();
 protected:
     AllocatorBase& iAllocator;
-    mutable Mutex iLock;
 private:
-    TUint iRefCount;
+    std::atomic<TUint> iRefCount;
 };
 
 enum class AudioDataEndian
@@ -296,16 +295,14 @@ class ModeInfo
     friend class MsgMode;
 public:
     TBool SupportsLatency() const { return iSupportsLatency; }
-    TBool IsRealTime() const      { return iRealTime; }
     TBool SupportsNext() const    { return iSupportsNext; }
     TBool SupportsPrev() const    { return iSupportsPrev; }
 private:
     ModeInfo();
-    void Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext, TBool aSupportsPrev);
+    void Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev);
     void Clear();
 private:
     TBool iSupportsLatency;
-    TBool iRealTime;
     TBool iSupportsNext;
     TBool iSupportsPrev;
 };
@@ -334,7 +331,7 @@ public:
     const ModeInfo& Info() const;
     const ModeClockPullers& ClockPullers() const;
 private:
-    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
@@ -616,10 +613,18 @@ private:
     DecodedStreamInfo iStreamInfo;
 };
 
+class IPipelineBufferObserver
+{
+public:
+    virtual ~IPipelineBufferObserver() {}
+    virtual void Update(TInt aDelta) = 0;
+};
+
 class MsgAudio : public Msg
 {
     friend class MsgFactory;
 public:
+    void SetObserver(IPipelineBufferObserver& aPipelineBufferObserver);
     MsgAudio* Split(TUint aJiffies); // returns block after aAt
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
@@ -643,6 +648,7 @@ protected:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
+    IPipelineBufferObserver* iPipelineBufferObserver;
 };
 
 class MsgBitRate : public Msg
@@ -664,13 +670,6 @@ class MsgPlayable;
 class MsgPlayablePcm;
 class MsgPlayableSilence;
 
-class IPipelineBufferObserver
-{
-public:
-    virtual ~IPipelineBufferObserver() {}
-    virtual void Update(TInt aDelta) = 0;
-};
-
 class MsgAudioPcm : public MsgAudio
 {
     friend class MsgFactory;
@@ -681,7 +680,6 @@ public:
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
-    void SetObserver(IPipelineBufferObserver& aPipelineBufferObserver);
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
@@ -699,7 +697,6 @@ private:
     Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
     Allocator<MsgPlayableSilence>* iAllocatorPlayableSilence;
     TUint64 iTrackOffset;
-    IPipelineBufferObserver* iPipelineBufferObserver;
 };
 
 class MsgPlayableSilence;
@@ -1330,6 +1327,19 @@ public:
      */
     virtual TUint TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     /**
+     * Attempt to reduce latency by discarding buffered content.
+     *
+     * All calls will be within the same thread pipeline elements normally run in.
+     * No synchronisation is required.
+     *
+     * @param[in] aJiffies         Amount of audio to discard.
+     *
+     * @return  Flush id.  MsgFlush::kIdInvalid if the request failed.  Any other value
+     *                     indicates success.  Pulling MsgFlush with this id informs the
+     *                     caller that all data has been discarded.
+     */
+    virtual TUint TryDiscard(TUint aJiffies) = 0;
+    /**
      * Attempt to stop delivery of the currently playing stream.
      *
      * This may be called from a different thread.  The implementor is responsible for any synchronisation.
@@ -1546,7 +1556,7 @@ class MsgFactory
 public:
     MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitParams& aInitParams);
 
-    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies, TUint aAnimatorDelayJiffies = 0);

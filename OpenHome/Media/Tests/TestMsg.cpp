@@ -194,6 +194,7 @@ public:
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
@@ -908,7 +909,7 @@ void SuiteMsgAudio::Test()
     msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
     TEST(bufferObserver.Size() == 0);
     TEST(bufferObserver.NumCalls() == 0);
-    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    msg->SetObserver(bufferObserver);
     TEST(bufferObserver.Size() == msg->Jiffies());
     TEST(bufferObserver.NumCalls() == 1);
     msg->RemoveRef();
@@ -917,7 +918,7 @@ void SuiteMsgAudio::Test()
 
     bufferObserver.Reset();
     msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
-    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    msg->SetObserver(bufferObserver);
     TEST(bufferObserver.Size() == msg->Jiffies());
     TEST(bufferObserver.NumCalls() == 1);
     TUint prevBufferSize = bufferObserver.Size();
@@ -933,7 +934,50 @@ void SuiteMsgAudio::Test()
 
     bufferObserver.Reset();
     msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, AudioDataEndian::Little, msgSize);
-    static_cast<MsgAudioPcm*>(msg)->SetObserver(bufferObserver);
+    msg->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    clone = msg->Clone();
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    clone->RemoveRef();
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
+    bufferObserver.Reset();
+    jiffies = msgSize;
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 0);
+    msg->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 2);
+
+    bufferObserver.Reset();
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
+    msg->SetObserver(bufferObserver);
+    TEST(bufferObserver.Size() == msg->Jiffies());
+    TEST(bufferObserver.NumCalls() == 1);
+    prevBufferSize = bufferObserver.Size();
+    remaining = msg->Split(msgSize/2);
+    TEST(bufferObserver.Size() == prevBufferSize);
+    TEST(bufferObserver.NumCalls() == 1);
+    msg->RemoveRef();
+    TEST(bufferObserver.Size() == remaining->Jiffies());
+    TEST(bufferObserver.NumCalls() == 2);
+    remaining->RemoveRef();
+    TEST(bufferObserver.Size() == 0);
+    TEST(bufferObserver.NumCalls() == 3);
+
+    bufferObserver.Reset();
+    msg = iMsgFactory->CreateMsgSilence(jiffies, 44100, 8, 2);
+    msg->SetObserver(bufferObserver);
     TEST(bufferObserver.Size() == msg->Jiffies());
     TEST(bufferObserver.NumCalls() == 1);
     clone = msg->Clone();
@@ -1845,21 +1889,19 @@ SuiteMode::~SuiteMode()
 void SuiteMode::Test()
 {
     Brn mode("First");
-    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true, ModeClockPullers(), true, true);
+    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, ModeClockPullers(), true, true);
     TEST(msg->Mode() == mode);
     const ModeInfo& info = msg->Info();
     TEST(info.SupportsLatency());
-    TEST(info.IsRealTime());
     TEST(info.SupportsNext());
     TEST(info.SupportsPrev());
     msg->RemoveRef();
     TEST(msg->Mode() != mode);
 
     Brn mode2("Second");
-    msg = iMsgFactory->CreateMsgMode(mode2, false, false, ModeClockPullers(), false, false);
+    msg = iMsgFactory->CreateMsgMode(mode2, false, ModeClockPullers(), false, false);
     TEST(msg->Mode() == mode2);
     TEST(!info.SupportsLatency());
-    TEST(!info.IsRealTime());
     TEST(!info.SupportsNext());
     TEST(!info.SupportsPrev());
     msg->RemoveRef();
@@ -1999,6 +2041,12 @@ TUint SuiteDecodedStream::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint SuiteDecodedStream::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
 TUint SuiteDecodedStream::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -2064,7 +2112,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
+    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
@@ -2674,7 +2722,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::ENone);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
+    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
@@ -3113,7 +3161,7 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
     case ProcessorMsgType::ENone:
         break;
     case ProcessorMsgType::EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false);
     case ProcessorMsgType::EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());

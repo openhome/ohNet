@@ -11,7 +11,7 @@ class IClockPuller : public IPipelineBufferObserver
 public:
     virtual ~IClockPuller() {}
     virtual void Reset() = 0;
-    virtual void Start(TUint aExpectedPipelineJiffies) = 0;
+    virtual void Start() = 0;
     virtual void Stop() = 0;
 };
 

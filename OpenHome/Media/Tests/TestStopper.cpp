@@ -43,6 +43,7 @@ private: // from IStopperObserver
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
@@ -131,6 +132,7 @@ private:
     TUint iStoppedCount;
     TUint iPlayingCount;
     TUint iOkToPlayCount;
+    Stopper::EEventedState iLastState;
     EStreamPlay iNextCanPlay;
     Semaphore iSemHalted;
     ThreadFunctor* iThreadHalted;
@@ -198,6 +200,7 @@ void SuiteStopper::Setup()
     iNextStreamId = 1;
     iJiffies = 0;
     iPausedCount = iStoppedCount = iPlayingCount = iOkToPlayCount = 0;
+    iLastState = Stopper::EEventNone;
     iNextCanPlay = ePlayYes;
     iSemHalted.Clear();
 }
@@ -222,17 +225,29 @@ Msg* SuiteStopper::Pull()
 
 void SuiteStopper::PipelinePaused()
 {
+    if (iLastState == Stopper::EEventPaused) {
+        return;
+    }
     iPausedCount++;
+    iLastState = Stopper::EEventPaused;
 }
 
 void SuiteStopper::PipelineStopped()
 {
+    if (iLastState == Stopper::EEventStopped) {
+        return;
+    }
     iStoppedCount++;
+    iLastState = Stopper::EEventStopped;
 }
 
 void SuiteStopper::PipelinePlaying()
 {
+    if (iLastState == Stopper::EEventPlaying) {
+        return;
+    }
     iPlayingCount++;
+    iLastState = Stopper::EEventPlaying;
 }
 
 EStreamPlay SuiteStopper::OkToPlay(TUint /*aStreamId*/)
@@ -242,6 +257,12 @@ EStreamPlay SuiteStopper::OkToPlay(TUint /*aStreamId*/)
 }
 
 TUint SuiteStopper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteStopper::TryDiscard(TUint /*aJiffies*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
@@ -484,7 +505,7 @@ void SuiteStopper::TestHalted()
 void SuiteStopper::TestMsgsPassWhilePlaying()
 {
     iStopper->Play();
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, ModeClockPullers(), false, false));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, ModeClockPullers(), false, false));
     PullNext(EMsgMode);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);

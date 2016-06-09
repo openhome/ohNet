@@ -3,7 +3,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Av/Qobuz/NtpClient.h>
+#include <OpenHome/NtpClient.h>
 
 EXCEPTION(UnixTimestampUnavailable);
 
@@ -12,14 +12,23 @@ namespace OpenHome {
 class Environment;
 class Timer;
 
-class UnixTimestamp
+class IUnixTimestamp
+{
+public:
+    virtual ~IUnixTimestamp() {}
+    virtual TUint Now() = 0;
+    virtual void Reset() = 0;
+};
+
+class UnixTimestamp : public IUnixTimestamp
 {
     static const TUint kSecsBetweenNtpAndUnixEpoch = 2208988800; // secs between 1900 and 1970
 public:
     UnixTimestamp(Environment& aEnv);
     ~UnixTimestamp();
-    void Reset();
-    TUint Now();
+public: // from IUnixTimestamp
+    TUint Now() override;
+    void Reset() override;
 private:
     void TimestampExpired();
 private:

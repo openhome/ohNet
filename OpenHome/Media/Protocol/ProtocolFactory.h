@@ -5,12 +5,14 @@
 namespace OpenHome {
     class Environment;
     class Brx;
+    class IUnixTimestamp;
 namespace Configuration {
     class IStoreReadOnly;
     class IConfigInitialiser;
 }
 namespace Av {
     class Credentials;
+    class IMediaPlayer;
 }
 namespace Media {
 
@@ -25,8 +27,8 @@ public:
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
-    static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
-    static Protocol* NewQobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
+    static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, Av::IMediaPlayer& aMediaPlayer);
+    static Protocol* NewQobuz(const Brx& aAppId, const Brx& aAppSecret, Av::IMediaPlayer& aMediaPlayer);
 };
 
 } // namespace Media

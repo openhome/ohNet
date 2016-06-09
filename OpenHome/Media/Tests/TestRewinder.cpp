@@ -67,6 +67,7 @@ public: // from IPipelineElementUpstream
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IMsgProcessor
@@ -243,6 +244,12 @@ TUint SuiteRewinder::TrySeek(TUint /*aStreamId*/, TUint64 aOffset)
     iTrySeekCount++;
     iLastSeekOffset = aOffset;
     return ++iCurrentFlushId;
+}
+
+TUint SuiteRewinder::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 TUint SuiteRewinder::TryStop(TUint /*aStreamId*/)

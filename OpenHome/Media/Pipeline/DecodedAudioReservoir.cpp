@@ -11,13 +11,18 @@ using namespace OpenHome::Media;
 
 // DecodedAudioReservoir
 
-DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMaxSize, TUint aMaxStreamCount, TUint aGorgeSize)
+DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider,
+                                             TUint aMaxSize, TUint aMaxStreamCount, TUint aGorgeSize)
     : iMsgFactory(aMsgFactory)
+    , iFlushIdProvider(aFlushIdProvider)
     , iLock("DCR1")
     , iMaxJiffies(aMaxSize)
     , iMaxStreamCount(aMaxStreamCount)
     , iClockPuller(nullptr)
     , iStreamHandler(nullptr)
+    , iDecodedStream(nullptr)
+    , iDiscardJiffies(0)
+    , iPostDiscardFlush(MsgFlush::kIdInvalid)
     , iGorgeLock("DCR2")
     , iGorgeSize(aGorgeSize)
     , iSemOut("DCR3", 0)
@@ -27,6 +32,14 @@ DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMax
     , iGorging(false)
     , iPriorityMsgCount(0)
 {
+    ASSERT(iStreamHandler.is_lock_free());
+}
+
+DecodedAudioReservoir::~DecodedAudioReservoir()
+{
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
 }
 
 TUint DecodedAudioReservoir::SizeInJiffies() const
@@ -119,11 +132,14 @@ void DecodedAudioReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgDrain* /*aMsg*/)
 {
-    AutoMutex _(iLock);
+    iLock.Wait();
     if (iClockPuller != nullptr) {
         iClockPuller->Stop();
     }
+    iLock.Signal();
+    iGorgeLock.Wait();
     iPriorityMsgCount++;
+    iGorgeLock.Signal();
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
@@ -166,7 +182,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
 {
     iGorgeLock.Wait();
     iMode.Replace(aMsg->Mode());
-    iCanGorge = !aMsg->Info().IsRealTime();
+    iCanGorge = !aMsg->Info().SupportsLatency();
     iShouldGorge = iCanGorge;
     iPriorityMsgCount--;
     iGorgeLock.Signal();
@@ -194,15 +210,22 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
     iGorgeLock.Wait();
     iPriorityMsgCount--;
     iGorgeLock.Signal();
-    return aMsg;
+
+    iStreamHandler.store(aMsg->StreamHandler());
+    auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    AutoMutex _(iLock);
-    iStreamHandler = aMsg->StreamInfo().StreamHandler();
+    iStreamHandler.store(aMsg->StreamInfo().StreamHandler());
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
-    aMsg->RemoveRef();
+    AutoMutex _(iLock);
+    if (iDecodedStream != nullptr) {
+        iDecodedStream->RemoveRef();
+    }
+    iDecodedStream = aMsg;
 
     iGorgeLock.Wait();
     iPriorityMsgCount--;
@@ -223,16 +246,44 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgHalt* aMsg)
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
-    return aMsg;
+    if (iDiscardJiffies == 0) {
+        return aMsg;
+    }
+
+    if (aMsg->Jiffies() > iDiscardJiffies) {
+        auto split = aMsg->Split(iDiscardJiffies);
+        EnqueueAtHead(split);
+    }
+    if (aMsg->Jiffies() > iDiscardJiffies) {
+        iDiscardJiffies = 0;
+    }
+    else {
+        iDiscardJiffies -= aMsg->Jiffies();
+    }
+    Msg* ret = nullptr;
+    if (iDiscardJiffies == 0) {
+        auto s = iDecodedStream->StreamInfo();
+        const TUint64 sampleStart = (aMsg->TrackOffset() + aMsg->Jiffies()) / Jiffies::PerSample(s.SampleRate());
+        auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
+                                                         s.NumChannels(), s.CodecName(), s.TrackLength(),
+                                                         sampleStart, s.Lossless(), s.Seekable(), s.Live(),
+                                                         s.AnalogBypass(), s.StreamHandler());
+        EnqueueAtHead(stream);
+
+        ret = iMsgFactory.CreateMsgFlush(iPostDiscardFlush);
+        iPostDiscardFlush = MsgFlush::kIdInvalid;
+    }
+    aMsg->RemoveRef();
+    return ret;
 }
 
 EStreamPlay DecodedAudioReservoir::OkToPlay(TUint aStreamId)
 {
-    AutoMutex _(iLock);
-    if (iStreamHandler == nullptr) {
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler == nullptr) {
         return ePlayNo;
     }
-    return iStreamHandler->OkToPlay(aStreamId);
+    return streamHandler->OkToPlay(aStreamId);
 }
 
 TUint DecodedAudioReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -241,13 +292,24 @@ TUint DecodedAudioReservoir::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
-TUint DecodedAudioReservoir::TryStop(TUint aStreamId)
+TUint DecodedAudioReservoir::TryDiscard(TUint aJiffies)
 {
-    AutoMutex _(iLock);
-    if (iStreamHandler == nullptr) {
+    if (aJiffies > Jiffies()) {
         return MsgFlush::kIdInvalid;
     }
-    const TUint flushId = iStreamHandler->TryStop(aStreamId);
+    iDiscardJiffies += aJiffies;
+    iPostDiscardFlush = iFlushIdProvider.NextFlushId();
+    return iPostDiscardFlush;
+}
+
+TUint DecodedAudioReservoir::TryStop(TUint aStreamId)
+{
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler == nullptr) {
+        return MsgFlush::kIdInvalid;
+    }
+    const TUint flushId = streamHandler->TryStop(aStreamId);
+    AutoMutex _(iLock);
     if (flushId != MsgFlush::kIdInvalid && iClockPuller != nullptr) {
         iClockPuller->Stop();
     }
@@ -262,12 +324,13 @@ void DecodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TB
             && aMode == iMode
             && iCanGorge
             && iPriorityMsgCount == 0
-            && !iStartOfMode) {
+            && !iStartOfMode
+            && Jiffies() < iGorgeSize) {
             SetGorging(true, "NotifyStarving");
         }
     }
-    AutoMutex _(iLock);
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler != nullptr) {
+        streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }

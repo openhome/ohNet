@@ -365,6 +365,7 @@ Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iBuffering(false)
     , iLock("REWI")
 {
+    ASSERT(iStreamHandler.is_lock_free());
     iQueueCurrent = new RewinderReservoir(kMaxEncodedAudioMsgs);
     iQueueNext = new RewinderReservoir(kMaxEncodedAudioMsgs);
 }
@@ -445,7 +446,7 @@ Msg* Rewinder::ProcessMsg(MsgDelay* aMsg)
 
 Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iStreamHandler = aMsg->StreamHandler();
+    iStreamHandler.store(aMsg->StreamHandler());
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     aMsg->RemoveRef();
     TryBuffer(msg);
@@ -547,28 +548,37 @@ void Rewinder::Stop()
 
 EStreamPlay Rewinder::OkToPlay(TUint aStreamId)
 {
-    ASSERT(iStreamHandler != nullptr);
-    EStreamPlay canPlay = iStreamHandler->OkToPlay(aStreamId);
+    auto streamHandler = iStreamHandler.load();
+    ASSERT(streamHandler != nullptr);
+    EStreamPlay canPlay = streamHandler->OkToPlay(aStreamId);
     //Log::Print("Rewinder::OkToPlay(%u) returned %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
 }
 
 TUint Rewinder::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
-    AutoMutex a(iLock);
-    return iStreamHandler->TrySeek(aStreamId, aOffset);
+    auto streamHandler = iStreamHandler.load();
+    ASSERT(streamHandler != nullptr);
+    return streamHandler->TrySeek(aStreamId, aOffset);
+}
+
+TUint Rewinder::TryDiscard(TUint /*aJiffies*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 TUint Rewinder::TryStop(TUint aStreamId)
 {
-    AutoMutex a(iLock);
-    return iStreamHandler->TryStop(aStreamId);
+    auto streamHandler = iStreamHandler.load();
+    ASSERT(streamHandler != nullptr);
+    return streamHandler->TryStop(aStreamId);
 }
 
 void Rewinder::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
-    AutoMutex a(iLock);
-    if (iStreamHandler != nullptr) {
-        iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    auto streamHandler = iStreamHandler.load();
+    if (streamHandler != nullptr) {
+        streamHandler->NotifyStarving(aMode, aStreamId, aStarving);
     }
 }

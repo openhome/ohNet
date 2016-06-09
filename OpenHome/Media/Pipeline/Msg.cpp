@@ -56,18 +56,12 @@ void AllocatorBase::Free(Allocated* aPtr)
 
 TUint AllocatorBase::CellsTotal() const
 {
-    iLock.Wait();
-    TUint cellsTotal = iCellsTotal;
-    iLock.Signal();
-    return cellsTotal;
+    return iCellsTotal;
 }
 
 TUint AllocatorBase::CellBytes() const
 {
-    iLock.Wait();
-    TUint cellBytes = iCellBytes;
-    iLock.Signal();
-    return cellBytes;
+    return iCellBytes;
 }
 
 TUint AllocatorBase::CellsUsed() const
@@ -88,9 +82,9 @@ TUint AllocatorBase::CellsUsedMax() const
 
 void AllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const
 {
-    iLock.Wait();
     aCellsTotal = iCellsTotal;
     aCellBytes = iCellBytes;
+    iLock.Wait();
     aCellsUsed = iCellsUsed;
     aCellsUsedMax = iCellsUsedMax;
     iLock.Signal();
@@ -162,18 +156,14 @@ void AllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
 
 void Allocated::AddRef()
 {
-    iLock.Wait();
     iRefCount++;
-    iLock.Signal();
     RefAdded();
 }
 
 void Allocated::RemoveRef()
 {
     ASSERT_DEBUG(iRefCount != 0);
-    iLock.Wait();
     TBool free = (--iRefCount == 0);
-    iLock.Signal();
     RefRemoved();
     if (free) {
         Clear();
@@ -195,9 +185,9 @@ void Allocated::Clear()
 
 Allocated::Allocated(AllocatorBase& aAllocator)
     : iAllocator(aAllocator)
-    , iLock("ALOC")
     , iRefCount(0)
 {
+    ASSERT(iRefCount.is_lock_free());
 }
 
 Allocated::~Allocated()
@@ -862,10 +852,9 @@ ModeInfo::ModeInfo()
     Clear();
 }
 
-void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext, TBool aSupportsPrev)
+void ModeInfo::Set(TBool aSupportsLatency, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iSupportsLatency = aSupportsLatency;
-    iRealTime        = aRealTime;
     iSupportsNext    = aSupportsNext;
     iSupportsPrev    = aSupportsPrev;
 }
@@ -873,7 +862,6 @@ void ModeInfo::Set(TBool aSupportsLatency, TBool aRealTime, TBool aSupportsNext,
 void ModeInfo::Clear()
 {
     iSupportsLatency = false;
-    iRealTime        = false;
     iSupportsNext    = false;
     iSupportsPrev    = false;
 }
@@ -932,10 +920,10 @@ const ModeClockPullers& MsgMode::ClockPullers() const
     return iClockPullers;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     iMode.Replace(aMode);
-    iInfo.Set(aSupportsLatency, aIsRealTime, aSupportsNext, aSupportsPrev);
+    iInfo.Set(aSupportsLatency, aSupportsNext, aSupportsPrev);
     iClockPullers = aClockPullers;
 }
 
@@ -1597,6 +1585,13 @@ Msg* MsgBitRate::Process(IMsgProcessor& aProcessor)
 
 // MsgAudio
 
+void MsgAudio::SetObserver(IPipelineBufferObserver& aPipelineBufferObserver)
+{
+    ASSERT(iPipelineBufferObserver == nullptr);
+    iPipelineBufferObserver = &aPipelineBufferObserver;
+    iPipelineBufferObserver->Update((TInt)iSize);
+}
+
 MsgAudio* MsgAudio::Split(TUint aJiffies)
 {
     ASSERT(aJiffies > 0);
@@ -1607,6 +1602,7 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     remaining->iSampleRate = iSampleRate;
     remaining->iBitDepth = iBitDepth;
     remaining->iNumChannels = iNumChannels;
+    remaining->iPipelineBufferObserver = iPipelineBufferObserver;
     if (iRamp.IsEnabled()) {
         remaining->iRamp = iRamp.Split(aJiffies, iSize);
     }
@@ -1627,6 +1623,7 @@ MsgAudio* MsgAudio::Clone()
     clone->iSampleRate = iSampleRate;
     clone->iBitDepth = iBitDepth;
     clone->iNumChannels = iNumChannels;
+    clone->iPipelineBufferObserver = nullptr;
     return clone;
 }
 
@@ -1729,10 +1726,15 @@ void MsgAudio::Initialise(TUint aSampleRate, TUint aBitDepth, TUint aChannels)
     iSampleRate = aSampleRate;
     iBitDepth = aBitDepth;
     iNumChannels = aChannels;
+    iPipelineBufferObserver = nullptr;
 }
 
 void MsgAudio::Clear()
 {
+    if (iPipelineBufferObserver != nullptr) {
+        TInt jiffies = (TInt)iSize;
+        iPipelineBufferObserver->Update(-jiffies);
+    }
     iSize = 0;
 }
 
@@ -1797,20 +1799,12 @@ void MsgAudioPcm::Aggregate(MsgAudioPcm* aMsg)
     aMsg->RemoveRef();
 }
 
-void MsgAudioPcm::SetObserver(IPipelineBufferObserver& aPipelineBufferObserver)
-{
-    ASSERT(iPipelineBufferObserver == nullptr);
-    iPipelineBufferObserver = &aPipelineBufferObserver;
-    iPipelineBufferObserver->Update((TInt)iSize);
-}
-
 MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudioPcm* clone = static_cast<MsgAudioPcm*>(MsgAudio::Clone());
     clone->iAudioData = iAudioData;
     clone->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     clone->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
-    clone->iPipelineBufferObserver = nullptr;
     clone->iTrackOffset = iTrackOffset;
     iAudioData->AddRef();
     return clone;
@@ -1825,7 +1819,6 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUi
     iAllocatorPlayableSilence = &aAllocatorPlayableSilence;
     iAudioData = aDecodedAudio;
     iTrackOffset = aTrackOffset;
-    iPipelineBufferObserver = nullptr;
     const TUint bytes = iAudioData->Bytes();
     const TUint byteDepth = iBitDepth / 8;
     ASSERT(bytes % byteDepth == 0);
@@ -1844,7 +1837,6 @@ void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
     remaining.iTrackOffset = iTrackOffset + iSize;
     remaining.iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     remaining.iAllocatorPlayableSilence = iAllocatorPlayableSilence;
-    remaining.iPipelineBufferObserver = iPipelineBufferObserver;
 }
 
 MsgAudio* MsgAudioPcm::Allocate()
@@ -1854,10 +1846,6 @@ MsgAudio* MsgAudioPcm::Allocate()
 
 void MsgAudioPcm::Clear()
 {
-    if (iPipelineBufferObserver != nullptr) {
-        TInt jiffies = (TInt)iSize;
-        iPipelineBufferObserver->Update(-jiffies);
-    }
     MsgAudio::Clear();
     iAudioData->RemoveRef();
 }
@@ -2969,10 +2957,10 @@ MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator, const MsgFactoryInitPar
 {
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPullers, aSupportsNext, aSupportsPrev);
+    msg->Initialise(aMode, aSupportsLatency, aClockPullers, aSupportsNext, aSupportsPrev);
     return msg;
 }
 

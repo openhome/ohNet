@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Av/VolumeManager.h>
+#include <math.h>
 
 #include <openssl/evp.h>
 
@@ -453,29 +454,37 @@ void RaopDiscoverySession::Run()
                         Parser parser(data);
                         Brn entry = parser.Next(':');
                         if(entry == Brn("volume")) {
-                            Brn volIntBuf = parser.Next('.');
-                            Brn volFractBuf = parser.Next();
-                            TInt volInt = 0;
+                            TInt vol = 0;
                             try {
-                                volInt = Ascii::Int(volIntBuf);
-                                //TInt volFract = Ascii::Int(volFractBuf);
-                                //volFract;
-                                // FIXME - do something sensible with volFract - such as pass both into SetRaopVolume() and let it handle them.
+                                // volume range is -30 to 0, < -30 == mute
+                                // get int part plus first digit after dp
+                                Bws<10> vStr(parser.Next('.'));
+                                vStr.Append(parser.At(0));
 
-                                if (volInt == RaopDiscovery::kMute) {
-                                    iVolume.SetVolume(0);
+                                vol = Ascii::Int(vStr);
+
+                                // convert to logorithmic scale to give even volume steps
+                                vol = -vol;         // range 300 to 0
+                                if(vol > 300) {
+                                    vol = 300;      // muted
                                 }
-                                else {
-                                    iVolume.SetVolume(volInt+RaopDiscovery::kVolMaxScaled); // Scale RAOP volume into range expected by volume scaler.
+                                vol = 300 - vol;    // 300 = max
+                                double dvol = log10(((double)vol+1.0)/301.0);
+                                double dvol2 = 1000.0 + dvol * 600.0;           //convert to 0-1000 range and bias to match Volkano1
+                                vol = (TInt)dvol2;
+                                if(vol < 0) {
+                                    vol = 0;        // muted
                                 }
+                                //Log::Print("dvol %f, dvol2 %f, vol %d\n", dvol, dvol2, vol);
+                                iVolume.SetVolume(vol);
                             }
                             catch (AsciiError&) {
                                 // Couldn't parse volume. Ignore it.
-                                LOG(kMedia, "RaopDiscoverySession::Run %u. AsciiError while parsing volume. volIntBuf: %.*s volFractBuf: %.*s\n", iInstance, PBUF(volIntBuf), PBUF(volFractBuf));
+                                LOG(kMedia, "RaopDiscoverySession::Run %u. AsciiError while parsing volume\n", iInstance);
                             }
                             catch (RaopVolumeInvalid&) {
                                 // Invalid volume passed in.
-                                LOG(kMedia, "RaopDiscoverySession::Run %u/ RaopVolumeInvalid %d\n", iInstance, volInt);
+                                LOG(kMedia, "RaopDiscoverySession::Run %u/ RaopVolumeInvalid %d\n", iInstance, vol);
                             }
                         }
                     }

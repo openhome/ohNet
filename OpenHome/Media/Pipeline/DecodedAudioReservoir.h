@@ -6,6 +6,8 @@
 #include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -13,7 +15,9 @@ class DecodedAudioReservoir : public AudioReservoir, private IStreamHandler
 {
     friend class SuiteGorger;
 public:
-    DecodedAudioReservoir(MsgFactory& aMsgFactory, TUint aMaxSize, TUint aMaxStreamCount, TUint aGorgeSize);
+    DecodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider,
+                          TUint aMaxSize, TUint aMaxStreamCount, TUint aGorgeSize);
+    ~DecodedAudioReservoir();
     TUint SizeInJiffies() const;
 private: // from AudioReservoir
     TBool IsFull() const override;
@@ -43,15 +47,20 @@ private: // from MsgReservoir
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
     TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryDiscard(TUint aJiffies) override;
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
     MsgFactory& iMsgFactory;
+    IFlushIdProvider& iFlushIdProvider;
     Mutex iLock;
     const TUint iMaxJiffies;
     const TUint iMaxStreamCount;
     IClockPuller* iClockPuller;
-    IStreamHandler* iStreamHandler;
+    std::atomic<IStreamHandler*> iStreamHandler;
+    MsgDecodedStream *iDecodedStream;
+    TUint iDiscardJiffies;
+    TUint iPostDiscardFlush;
     Mutex iGorgeLock;
     TUint iGorgeSize;
     Semaphore iSemOut;

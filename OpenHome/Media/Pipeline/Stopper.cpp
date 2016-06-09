@@ -27,7 +27,6 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iStreamHandler(nullptr)
     , iBuffering(false)
     , iQuit(false)
-    , iLastEventedState(EEventNone)
 {
     iState = EStopped;
     iEventState.store(EEventNone);
@@ -382,6 +381,12 @@ TUint Stopper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
     return MsgFlush::kIdInvalid;
 }
 
+TUint Stopper::TryDiscard(TUint aJiffies)
+{
+    // no need for locking - this is guaranteed to only be called from the same thread as Pull()
+    return iStreamHandler->TryDiscard(aJiffies);
+}
+
 TUint Stopper::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -516,22 +521,19 @@ void Stopper::ScheduleEvent(EEventedState aState)
 void Stopper::ReportEvent()
 {
     EEventedState state = iEventState.exchange(EEventNone);
-    if (state != iLastEventedState) {
-        iLastEventedState = state;
-        switch (state)
-        {
-        case EEventPlaying:
-            iObserver.PipelinePlaying();
-            break;
-        case EEventPaused:
-            iObserver.PipelinePaused();
-            break;
-        case EEventStopped:
-            iObserver.PipelineStopped();
-            break;
-        case EEventNone:
-            break;
-        }
+    switch (state)
+    {
+    case EEventPlaying:
+        iObserver.PipelinePlaying();
+        break;
+    case EEventPaused:
+        iObserver.PipelinePaused();
+        break;
+    case EEventStopped:
+        iObserver.PipelineStopped();
+        break;
+    case EEventNone:
+        break;
     }
 }
 

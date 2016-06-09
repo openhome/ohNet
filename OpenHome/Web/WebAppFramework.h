@@ -380,6 +380,11 @@ public:
     WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
     ~WebAppFramework();
     void Start();
+    /**
+     * Set the app that requests should be directed to if no resource prefix is
+     * provided in the request path.
+     */
+    void SetDefaultApp(const Brx& aResourcePrefix); // THROWS InvalidAppPrefix
 public: // from IWebAppFramework
     void Add(IWebApp* aWebApp, FunctorPresentationUrl aFunctor) override;
 private: // from IWebAppManager
@@ -405,6 +410,7 @@ private:
 
     WebAppMap iWebApps; // FIXME - need comparator
     std::vector<std::reference_wrapper<HttpSession>> iSessions;
+    IWebApp* iDefaultApp;
     TBool iStarted;
     NetworkAdapter* iCurrentAdapter;
     mutable Mutex iMutex;
@@ -443,7 +449,6 @@ private:
     ReaderHttpRequest* iReaderRequest;
     ReaderHttpChunked* iReaderChunked;
     ReaderUntil* iReaderUntil;
-    WriterHttpChunked* iWriterChunked;
     Sws<kMaxResponseBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;
     HttpHeaderHost iHeaderHost;
