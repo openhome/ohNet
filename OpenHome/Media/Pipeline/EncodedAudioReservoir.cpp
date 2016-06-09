@@ -23,7 +23,6 @@ EncodedAudioReservoir::EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdPr
     , iPostSeekFlushId(MsgFlush::kIdInvalid)
     , iPostSeekStreamPos(0)
 {
-    ASSERT(iStreamHandler.is_lock_free());
 }
 
 TUint EncodedAudioReservoir::SizeInBytes() const

@@ -147,7 +147,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamPos(0)
     , iTrackId(UINT_MAX)
 {
-    ASSERT(iStreamHandler.is_lock_free());
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
     //iLoggerRewinder->SetEnabled(true);

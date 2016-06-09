@@ -365,7 +365,6 @@ Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iBuffering(false)
     , iLock("REWI")
 {
-    ASSERT(iStreamHandler.is_lock_free());
     iQueueCurrent = new RewinderReservoir(kMaxEncodedAudioMsgs);
     iQueueNext = new RewinderReservoir(kMaxEncodedAudioMsgs);
 }

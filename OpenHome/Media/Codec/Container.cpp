@@ -389,7 +389,6 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iLock("COCO")
 {
-    ASSERT(iStreamHandler.is_lock_free());
     iContainerNull = new ContainerNull();
     iContainerNull->Construct(iCache, iMsgFactory, *this, *this, *this);
     iContainers.push_back(iContainerNull);

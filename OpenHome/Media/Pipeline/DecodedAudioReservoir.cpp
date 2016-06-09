@@ -32,7 +32,6 @@ DecodedAudioReservoir::DecodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdPr
     , iGorging(false)
     , iPriorityMsgCount(0)
 {
-    ASSERT(iStreamHandler.is_lock_free());
 }
 
 DecodedAudioReservoir::~DecodedAudioReservoir()
