@@ -115,7 +115,7 @@ TBool LanguageResourceFileReader::Allocated() const
     return iAllocated;
 }
 
-void LanguageResourceFileReader::Process(IResourceFileConsumer& aResourceConsumer)
+void LanguageResourceFileReader::Process(const Brx& /*aKey*/, IResourceFileConsumer& aResourceConsumer)
 {
     AutoMutex _(iLock);
     try {

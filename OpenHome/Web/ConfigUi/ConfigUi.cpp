@@ -773,7 +773,7 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
         ConfigChoiceMappingWriterJson mappingWriter;
         ConfigChoiceMapperResourceFile mapper(key, iChoice.Choices(), aWriter, mappingWriter);
         ILanguageResourceReader* resourceHandler = &aLanguageResourceManager.CreateLanguageResourceHandler(kConfigOptionsFile, aLanguageList);
-        resourceHandler->Process(mapper);
+        resourceHandler->Process(key, mapper);
         //resourceHandler->Destroy();
     }
     aWriter.Write('}');

@@ -30,7 +30,7 @@ class ILanguageResourceReader
 public:
     virtual void SetResource(const Brx& aUriTail) = 0;
     virtual TBool Allocated() const = 0;
-    virtual void Process(IResourceFileConsumer& aResourceConsumer) = 0;
+    virtual void Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer) = 0;
     virtual ~ILanguageResourceReader() {}
 };
 

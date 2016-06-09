@@ -39,7 +39,7 @@ public:
 public: // from ILanguageResourceReader
     void SetResource(const Brx& aUriTail) override;
     TBool Allocated() const override;
-    void Process(IResourceFileConsumer& aResourceConsumer) override;
+    void Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer) override;
 private:
     Brn iRootDir;
     FileStream iFileStream;

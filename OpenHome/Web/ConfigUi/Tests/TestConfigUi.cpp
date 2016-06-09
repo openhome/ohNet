@@ -86,7 +86,7 @@ public:
 public: // from ILanguageResourceReader
     void SetResource(const Brx& aUriTail) override;
     TBool Allocated() const override;
-    void Process(IResourceFileConsumer& aResourceConsumer) override;
+    void Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer) override;
 private:
     const Brx& iLanguageMap;
     ILanguageResourceReaderDestroyer& iDestroyer;
@@ -402,7 +402,7 @@ TBool HelperLanguageResourceReader::Allocated() const
     return iAllocated;
 }
 
-void HelperLanguageResourceReader::Process(IResourceFileConsumer& aResourceConsumer)
+void HelperLanguageResourceReader::Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer)
 {
     for (;;) {
         Brn line = iParser.Next('\n');
