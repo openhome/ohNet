@@ -449,7 +449,6 @@ private:
     ReaderHttpRequest* iReaderRequest;
     ReaderHttpChunked* iReaderChunked;
     ReaderUntil* iReaderUntil;
-    WriterHttpChunked* iWriterChunked;
     Sws<kMaxResponseBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;
     HttpHeaderHost iHeaderHost;

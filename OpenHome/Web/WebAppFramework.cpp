@@ -847,8 +847,7 @@ HttpSession::HttpSession(Environment& aEnv, IWebAppManager& aAppManager, ITabMan
     iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderUntilPreChunker);
     iReaderChunked = new ReaderHttpChunked(*iReaderUntilPreChunker);
     iReaderUntil = new ReaderUntilS<kMaxRequestBytes>(*iReaderChunked);
-    iWriterChunked = new WriterHttpChunked(*this);
-    iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
+    iWriterBuffer = new Sws<kMaxResponseBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
     iReaderRequest->AddMethod(Http::kMethodGet);
@@ -865,7 +864,6 @@ HttpSession::~HttpSession()
 {
     delete iWriterResponse;
     delete iWriterBuffer;
-    delete iWriterChunked;
     delete iReaderUntil;
     delete iReaderChunked;
     delete iReaderRequest;
@@ -883,7 +881,6 @@ void HttpSession::Run()
 {
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
-    iWriterChunked->SetChunked(false);
     iResourceWriterHeadersOnly = false;
     // check headers
     try {
@@ -992,8 +989,6 @@ void HttpSession::Get()
     LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
     // Write response headers.
-
-    // FIXME - should it be possible to send long poll requests via GETs?
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
     IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
@@ -1001,24 +996,14 @@ void HttpSession::Get()
     //writer.Write(Brn("; charset=\"utf-8\""));
     writer.WriteFlush();
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-    //WriteServerHeader(*iWriterResponse);
-    if (reqVersion == Http::eHttp11) {
-        iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
-    }
-    else { // Http::eHttp10
-        const TUint len = resourceHandler.Bytes();
-        if (len > 0) {
-            Http::WriteHeaderContentLength(*iWriterResponse, len);
-        }
-    }
+    const TUint len = resourceHandler.Bytes();
+    ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
+    Http::WriteHeaderContentLength(*iWriterResponse, len);
     iWriterResponse->WriteFlush();
 
     // Write content.
-    if (reqVersion == Http::eHttp11) {
-        iWriterChunked->SetChunked(true);
-    }
-    resourceHandler.Write(*iWriterChunked);
-    iWriterChunked->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
+    resourceHandler.Write(*iWriterBuffer);
+    iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
     resourceHandler.Destroy();
     iResponseEnded = true;
 }
