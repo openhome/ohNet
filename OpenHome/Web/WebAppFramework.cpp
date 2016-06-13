@@ -486,7 +486,11 @@ TUint TabManager::CreateTab(ITabCreator& aTabCreator, const std::vector<char*>& 
 
 void TabManager::LongPoll(TUint aId, IWriter& aWriter)
 {
-    ASSERT(aId != IFrameworkTab::kInvalidTabId);
+    if (aId == IFrameworkTab::kInvalidTabId) {
+        LOG(kHttp, "TabManager::LongPoll kInvalidTabId\n");
+        THROW(InvalidTabId);
+    }
+
     LOG(kHttp, "TabManager::LongPoll aId: %u\n", aId);
     IFrameworkTab* tab = nullptr;
     {
@@ -512,7 +516,11 @@ void TabManager::LongPoll(TUint aId, IWriter& aWriter)
 
 void TabManager::Receive(TUint aId, const Brx& aMessage)
 {
-    ASSERT(aId != IFrameworkTab::kInvalidTabId);
+    if (aId == IFrameworkTab::kInvalidTabId) {
+        LOG(kHttp, "TabManager::Receive kInvalidTabId, aMessage: %.*s\n", PBUF(aMessage));
+        THROW(InvalidTabId);
+    }
+
     LOG(kHttp, "TabManager::Receive aId: %u\n", aId);
     {
         AutoMutex a(iLock);
@@ -533,7 +541,11 @@ void TabManager::Receive(TUint aId, const Brx& aMessage)
 
 void TabManager::Destroy(TUint aId)
 {
-    ASSERT(aId != IFrameworkTab::kInvalidTabId);
+    if (aId == IFrameworkTab::kInvalidTabId) {
+        LOG(kHttp, "TabManager::Destroy kInvalidTabId\n");
+        THROW(InvalidTabId);
+    }
+
     LOG(kHttp, "TabManager::Destroy aId: %u\n", aId);
     {
         AutoMutex a(iLock);
