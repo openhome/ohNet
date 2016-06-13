@@ -60,7 +60,7 @@
         "dest":             "dependencies/AnyPlatform/"
     },
     {   "name":             "Reprog",
-        "version":          "0.1.30",
+        "version":          "0.1.70",
         "cross-check":      false,
         "type":             "internal",
         "archive-filename": "${name}-${version}-${host-platform}-Release.tar.gz",
