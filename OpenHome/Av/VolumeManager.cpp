@@ -526,12 +526,10 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
     iFadeMax              = aProfile.FadeMax();
     iAlwaysOn             = aProfile.AlwaysOn();
 
-    iVolumeStartup = new ConfigNum(aConfigInit, kKeyStartupValue, 0, iVolumeMax, iVolumeDefault);
+
     std::vector<TUint> choices;
     choices.push_back(eStringIdYes);
     choices.push_back(eStringIdNo);
-    iVolumeStartupEnabled = new ConfigChoice(aConfigInit, kKeyStartupEnabled, choices, eStringIdYes);
-    iVolumeLimit = new ConfigNum(aConfigInit, kKeyLimit, 0, iVolumeMax, iVolumeDefaultLimit);
 
     if (iAlwaysOn) {
         iVolumeControlEnabled = true;
@@ -545,32 +543,44 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
         iVolumeEnabled->Unsubscribe(id);
     }
 
-    const TInt maxBalance = iBalanceMax;
-    if (maxBalance == 0) {
-        iBalance = nullptr;
-    }
-    else {
-        iBalance = new ConfigNum(aConfigInit, kKeyBalance, -maxBalance, maxBalance, 0);
-    }
-    const TInt maxFade = iFadeMax;
-    if (maxFade == 0) {
-        iFade = nullptr;
-    }
-    else {
-        iFade = new ConfigNum(aConfigInit, kKeyFade, -maxFade, maxFade, 0);
+    if (iVolumeControlEnabled)
+    {
+        iVolumeStartup = new ConfigNum(aConfigInit, kKeyStartupValue, 0, iVolumeMax, iVolumeDefault);
+
+        iVolumeStartupEnabled = new ConfigChoice(aConfigInit, kKeyStartupEnabled, choices, eStringIdYes);
+        iVolumeLimit = new ConfigNum(aConfigInit, kKeyLimit, 0, iVolumeMax, iVolumeDefaultLimit);
+
+
+        const TInt maxBalance = iBalanceMax;
+        if (maxBalance == 0) {
+            iBalance = nullptr;
+        }
+        else {
+            iBalance = new ConfigNum(aConfigInit, kKeyBalance, -maxBalance, maxBalance, 0);
+        }
+        const TInt maxFade = iFadeMax;
+        if (maxFade == 0) {
+            iFade = nullptr;
+        }
+        else {
+            iFade = new ConfigNum(aConfigInit, kKeyFade, -maxFade, maxFade, 0);
+        }
     }
 }
 
 VolumeConfig::~VolumeConfig()
 {
-    delete iVolumeStartup;
-    delete iVolumeStartupEnabled;
-    delete iVolumeLimit;
+    if (iVolumeControlEnabled) {
+        delete iVolumeStartup;
+        delete iVolumeStartupEnabled;
+        delete iVolumeLimit;
+        delete iBalance;
+        delete iFade;
+    }
+
     if (!iAlwaysOn) {
         delete iVolumeEnabled;
     }
-    delete iBalance;
-    delete iFade;
 }
 
 StoreInt& VolumeConfig::StoreUserVolume()
@@ -641,20 +651,24 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
                              IPowerManager& aPowerManager)
     : iVolumeConfig(aVolumeConfig)
 {
-    IBalance* balance = aVolumeConsumer.Balance();
-    if (balance == nullptr) {
-        iBalanceUser = nullptr;
+    TBool volumeControlEnabled = aVolumeConfig.VolumeControlEnabled();
+
+    iBalanceUser = nullptr;
+    iFadeUser = nullptr;
+
+    if (volumeControlEnabled)
+    {
+        IBalance* balance = aVolumeConsumer.Balance();
+        if (balance != nullptr) {
+            iBalanceUser = new BalanceUser(*balance, aConfigReader);
+        }
+
+        IFade* fade = aVolumeConsumer.Fade();
+        if (fade != nullptr) {
+            iFadeUser = new FadeUser(*fade, aConfigReader);
+        }
     }
-    else {
-        iBalanceUser = new BalanceUser(*balance, aConfigReader);
-    }
-    IFade* fade = aVolumeConsumer.Fade();
-    if (fade == nullptr) {
-        iFadeUser = nullptr;
-    }
-    else {
-        iFadeUser = new FadeUser(*fade, aConfigReader);
-    }
+
     if (aMute == nullptr) {
         iMuteReporter = nullptr;
         iMuteUser = nullptr;
