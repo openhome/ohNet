@@ -170,7 +170,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 #endif
 
     // create read/write store.  This creates a number of static (constant) entries automatically
-    // FIXME - to be removed; this only exists to populate static data
     iRamStore = new RamStore(kSongcastSenderIconFileName);
 
     // create a read/write store using the new config framework

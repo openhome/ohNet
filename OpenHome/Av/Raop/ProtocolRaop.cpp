@@ -428,8 +428,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iFlushSeq = 0;
                     iFlushTime = 0;
 
-                    // FIXME - is this correct uri for track/stream?
-                    track = iTrackFactory.CreateTrack(iUri.AbsoluteUri(), Brx::Empty());
+                    // Report blank URI.
+                    track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
                     streamId = iStreamId = iIdProvider->NextStreamId();
                     latency = iLatency = iControlServer.Latency();
                     uri.Replace(iUri.AbsoluteUri());
