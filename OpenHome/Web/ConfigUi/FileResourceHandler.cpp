@@ -115,19 +115,25 @@ TBool LanguageResourceFileReader::Allocated() const
     return iAllocated;
 }
 
-void LanguageResourceFileReader::Process(const Brx& /*aKey*/, IResourceFileConsumer& aResourceConsumer)
+void LanguageResourceFileReader::Process(const Brx& aKey, IResourceFileConsumer& aResourceConsumer)
 {
+    TBool entryProcessed = false;
     AutoMutex _(iLock);
     try {
         for (;;) {
             Brn line = iReaderText.ReadLine();
             if (!aResourceConsumer.ProcessLine(line)) {
+                entryProcessed = true;
                 break;
             }
         }
     }
     catch (ReaderError&) {
         LOG(kHttp, "LanguageResourceFileReader::Run ReaderError\n");
+    }
+    if (!entryProcessed) {
+        Log::Print("LanguageResourceFileReader::Process Failed to process key: %.*s\n", PBUF(aKey));
+        ASSERTS();
     }
     iReaderText.ReadFlush();
     iFileStream.CloseFile();
