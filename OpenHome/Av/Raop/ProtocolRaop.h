@@ -433,6 +433,7 @@ private:
     IRepairerTimer& iTimer;
     IRepairable* iRepairFirst;
     std::vector<IRepairable*> iRepairFrames;
+    std::vector<IRepairable*> iOutput;
     std::vector<ResendRange*> iResend;              // Ranges to be requested.
     std::vector<const IResendRange*> iResendConst;  // Populated at same time as iResend, and used to pass immutable resend list to resend requester.
     FifoLite<ResendRange*, kMaxMissedRanges> iFifoResend;
@@ -440,6 +441,7 @@ private:
     TBool iRepairing;
     TUint iFrame;
     Mutex iMutexTransport;
+    Mutex iMutexAudioOutput;
 };
 
 // Repairer
@@ -454,6 +456,7 @@ template <TUint MaxFrames> Repairer<MaxFrames>::Repairer(Environment& aEnv, IRes
     , iRepairing(false)
     , iFrame(0)
     , iMutexTransport("REPL")
+    , iMutexAudioOutput("REAO")
 {
     for (TUint i=0; i<kMaxMissedRanges; i++) {
         iFifoResend.Write(new ResendRange());
@@ -472,37 +475,53 @@ template <TUint MaxFrames> Repairer<MaxFrames>::~Repairer()
 
 template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aRepairable)
 {
-    AutoMutex a(iMutexTransport);
-    if (!iRunning) {
-        iFrame = aRepairable.Frame();
-        iRunning = true;
-        iAudioSupply.OutputAudio(aRepairable.Data());
-        aRepairable.Destroy();
-        return;
-    }
-    if (iRepairing) {
-        iRepairing = Repair(aRepairable);
-        return;
+    // Must only be held by this method to protect iOutput.
+    AutoMutex ao(iMutexAudioOutput);
+
+    {
+        AutoMutex a(iMutexTransport);
+        if (!iRunning) {
+            iFrame = aRepairable.Frame();
+            iRunning = true;
+            iOutput.push_back(&aRepairable);
+        }
+        if (iRepairing) {
+            iRepairing = Repair(aRepairable);
+        }
+
+        // The above code may result in audio being pushed into iOutput.
+        // If that's the case, aRepairable was incorporated into messages to be
+        // output, so don't want to enter the code blocks below.
+        if (iOutput.size() == 0) {
+            const TInt diff = aRepairable.Frame() - iFrame;
+            if (diff == 1) {
+                iFrame++;
+                iOutput.push_back(&aRepairable);
+            }
+            else if (diff < 1) {
+                if (!aRepairable.Resend()) {
+                    // A frame in the past that is not a resend implies that the sender has reset their frame count
+                    aRepairable.Destroy();  // FIXME - dropping packet. Is it possible to save this packet?
+                    // accept the next received frame as the start of a new stream
+                    iRunning = false;
+                    THROW(RepairerStreamRestarted);
+                }
+                aRepairable.Destroy();
+            }
+            else {
+                iRepairing = RepairBegin(aRepairable);
+            }
+        }
     }
 
-    const TInt diff = aRepairable.Frame() - iFrame;
-    if (diff == 1) {
-        iFrame++;
-        iAudioSupply.OutputAudio(aRepairable.Data());
-        aRepairable.Destroy();
-    }
-    else if (diff < 1) {
-        if (!aRepairable.Resend()) {
-            // A frame in the past that is not a resend implies that the sender has reset their frame count
-            aRepairable.Destroy();  // FIXME - dropping packet. Is it possible to save this packet?
-            // accept the next received frame as the start of a new stream
-            iRunning = false;
-            THROW(RepairerStreamRestarted);
+    // Must NOT hold iMutexTransport while calling iAudioSupply.OutputAudio()
+    // in case this class receives an interrupt of some form (such as DropAudio()).
+    if (iOutput.size() > 0) {
+        for (auto* repairable : iOutput) {
+            iAudioSupply.OutputAudio(repairable->Data());
+            repairable->Destroy();
         }
-        aRepairable.Destroy();
-    }
-    else {
-        iRepairing = RepairBegin(aRepairable);
+        iOutput.clear();
     }
 }
 
@@ -565,14 +584,12 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
     if (diff == 1) {
         // incoming frame is one greater than the last frame sent down the pipeline, so send this ...
         iFrame++;
-        iAudioSupply.OutputAudio(aRepairable.Data());
-        aRepairable.Destroy();
+        iOutput.push_back(&aRepairable);
         // ... and see if the current first waiting frame is now also ready to be sent
         while (iRepairFirst->Frame() == iFrame + 1) {
             // ... yes, it is, so send it
             iFrame++;
-            iAudioSupply.OutputAudio(iRepairFirst->Data());
-            iRepairFirst->Destroy();
+            iOutput.push_back(iRepairFirst);
             // ... and see if there are further messages waiting
             if (iRepairFrames.size() == 0) {
                 // ... no, so we have completed the repair
