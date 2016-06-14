@@ -492,7 +492,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
         // The above code may result in audio being pushed into iOutput.
         // If that's the case, aRepairable was incorporated into messages to be
         // output, so don't want to enter the code blocks below.
-        if (iOutput.size() == 0) {
+        if (!iRepairing && iOutput.size() == 0) {
             const TInt diff = aRepairable.Frame() - iFrame;
             if (diff == 1) {
                 iFrame++;
