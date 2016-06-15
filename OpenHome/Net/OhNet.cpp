@@ -407,6 +407,11 @@ void InitialisationParams::SetTimerManagerPriority(uint32_t aPriority)
     iTimerManagerThreadPriority = aPriority;
 }
 
+void InitialisationParams::SetUserAgent(const TChar* aUserAgent)
+{
+    iUserAgent.Set(aUserAgent);
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -580,6 +585,11 @@ bool InitialisationParams::IsHostUdpLowQuality()
 uint32_t InitialisationParams::TimerManagerPriority() const
 {
     return iTimerManagerThreadPriority;
+}
+
+const TChar* InitialisationParams::UserAgent() const
+{
+    return iUserAgent.CString();
 }
 
 #if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)

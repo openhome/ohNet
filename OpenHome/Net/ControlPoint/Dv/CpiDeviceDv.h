@@ -74,6 +74,7 @@ private: // IDviInvocation
     TIpAddress Adapter() const;
     const char* ResourceUriPrefix() const;
     Endpoint ClientEndpoint() const;
+    virtual Brhz ClientUserAgent() const;
 
     void InvocationReadStart();
     TBool InvocationReadBool(const TChar* aName);

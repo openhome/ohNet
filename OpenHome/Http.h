@@ -114,6 +114,7 @@ public:
     static void WriteHeaderContentLength(WriterHttpHeader& aWriter, TUint aLength);
     static void WriteHeaderContentType(WriterHttpHeader& aWriter, const Brx& aType);
     static void WriteHeaderConnectionClose(WriterHttpHeader& aWriter);
+    static void WriteHeaderUserAgent(WriterHttpHeader& aWriter, const Brx& aUserAgent);
 };
 
 class HttpStatus
@@ -448,6 +449,18 @@ private:
 private:
     static const TUint kMaxMethodBytes = 32;
     Bws<kMaxMethodBytes> iMethod;
+};
+
+class HttpHeaderUserAgent : public HttpHeader
+{
+    static const TUint kMaxUserAgentBytes = 1000;
+public:
+    const Brx& UserAgent() const;
+private:
+    virtual TBool Recognise(const Brx& aHeader);
+    virtual void Process(const Brx& aValue);
+private:
+    Bws<kMaxUserAgentBytes> iUserAgent;
 };
 
 class ReaderHttpChunked : public IReader

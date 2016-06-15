@@ -179,6 +179,11 @@ void Http::WriteHeaderConnectionClose(WriterHttpHeader& aWriter)
     aWriter.WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
 }
 
+void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, const Brx& aUserAgent)
+{
+    aWriter.WriteHeader(Http::kHeaderUserAgent, aUserAgent);
+}
+
 // HttpStatus
 
 TUint HttpStatus::Code() const
@@ -927,6 +932,29 @@ void HttpHeaderAccessControlRequestMethod::Process(const Brx& aValue)
 }
 
 
+// HttpHeaderUserAgent
+
+const Brx& HttpHeaderUserAgent::UserAgent() const
+{
+    return (iUserAgent);
+}
+
+TBool HttpHeaderUserAgent::Recognise(const Brx& aHeader)
+{
+    return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderUserAgent);
+}
+
+void HttpHeaderUserAgent::Process(const Brx& aValue)
+{
+    try {
+        iUserAgent.ReplaceThrow(aValue);
+        SetReceived();
+    }
+    catch (BufferOverflow&) {
+    }
+}
+
+
 // ReaderHttpChunked
 
 ReaderHttpChunked::ReaderHttpChunked(IReader& aReader)
@@ -1193,7 +1221,7 @@ TUint HttpReader::WriteRequest(const Uri& aUri)
         iWriterRequest.WriteMethod(Http::kMethodGet, aUri.PathAndQuery(), Http::eHttp11);
         Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), port);
         if (iUserAgent.Bytes() > 0) {
-            iWriterRequest.WriteHeader(Http::kHeaderUserAgent, iUserAgent);
+            Http::WriteHeaderUserAgent(iWriterRequest, iUserAgent);
         }
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();

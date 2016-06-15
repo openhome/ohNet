@@ -191,6 +191,18 @@ void STDCALL DvInvocationGetClientEndpoint(DvInvocationC aInvocation, TIpAddress
     *aPort = ep.Port();
 }
 
+void STDCALL DvInvocationGetClientUserAgent(DvInvocationC aInvocation, const char** aUserAgent, uint32_t* aLen)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    *aLen = invocation->ClientUserAgent().Bytes();
+    if (*aLen <= 0) {
+        *aUserAgent = NULL;
+    }
+    else {
+        *aUserAgent = (const char*)invocation->ClientUserAgent().Ptr();
+    }
+}
+
 int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
