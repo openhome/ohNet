@@ -297,12 +297,12 @@ VolumeUnityGain::VolumeUnityGain(IVolume& aVolume, IConfigManager& aConfigReader
     : VolumeUnityGainBase(aVolume, aUnityGainValue)
     , iConfigVolumeControlEnabled(aConfigReader.GetChoice(VolumeConfig::kKeyEnabled))
 {
-    iSubscriberId = iConfigVolumeControlEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUnityGain::EnabledChanged));
+    TUint subscriberId = iConfigVolumeControlEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUnityGain::EnabledChanged));
+    iConfigVolumeControlEnabled.Unsubscribe(subscriberId);
 }
 
 VolumeUnityGain::~VolumeUnityGain()
 {
-    iConfigVolumeControlEnabled.Unsubscribe(iSubscriberId);
 }
 
 void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)

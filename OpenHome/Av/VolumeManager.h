@@ -276,7 +276,6 @@ private:
     void EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
     Configuration::ConfigChoice& iConfigVolumeControlEnabled;
-    TUint iSubscriberId;
 };
 
 class IVolumeSourceUnityGain
