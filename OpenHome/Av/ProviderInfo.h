@@ -12,6 +12,7 @@ namespace Av {
 
 class ProviderInfo : public Net::DvProviderAvOpenhomeOrgInfo1, private Media::IPipelineObserver
 {
+    static const TUint kMaxReportedBitDepth;
 public:
     ProviderInfo(Net::DvDevice& aDevice, Media::PipelineManager& aPipelineManager);
     ~ProviderInfo();

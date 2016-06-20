@@ -1,9 +1,13 @@
 #include <OpenHome/Av/ProviderInfo.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
+
+const TUint ProviderInfo::kMaxReportedBitDepth = 24;
 
 ProviderInfo::ProviderInfo(DvDevice& aDevice, PipelineManager& aPipelineManager)
     : DvProviderAvOpenhomeOrgInfo1(aDevice)
@@ -198,7 +202,8 @@ void ProviderInfo::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     GetPropertyDetailsCount(n);
     SetPropertyDetailsCount(n + 1);
     SetPropertyBitRate(aStreamInfo.BitRate());
-    SetPropertyBitDepth(aStreamInfo.BitDepth());
+    const auto bitDepth = std::min(aStreamInfo.BitDepth(), kMaxReportedBitDepth);
+    SetPropertyBitDepth(bitDepth);
     SetPropertySampleRate(aStreamInfo.SampleRate());
     SetPropertyLossless(aStreamInfo.Lossless());
     iCodecName.Replace(aStreamInfo.CodecName());
