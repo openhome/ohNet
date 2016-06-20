@@ -113,7 +113,7 @@ Msg* Pruner::ProcessMsg(MsgHalt* aMsg)
         return nullptr;
     }
     iConsumeHalts = true;
-    return TryQueue(aMsg);
+    return TryQueueCancelWaiting(aMsg);
 }
 
 Msg* Pruner::ProcessMsg(MsgWait* aMsg)

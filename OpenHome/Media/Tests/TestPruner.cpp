@@ -159,12 +159,10 @@ void SuitePruner::QuitDoesntWaitForAudio()
 
 void SuitePruner::HaltPassedOn()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgHalt };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgHalt);
-    TEST(iPendingMsgs.size() == 0);
-    TEST(DoPull() == EMsgAudioPcm);
 }
 
 void SuitePruner::DrainPassedOn()
@@ -195,7 +193,7 @@ void SuitePruner::DecodedStreamPassedOn()
 
 void SuitePruner::TrackWithoutAudioAllMsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -214,7 +212,8 @@ void SuitePruner::SilenceUnblocksStreamMsgs()
 
 void SuitePruner::ModeWithoutAudioAllMsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgTrack, EMsgDecodedStream,
+                        EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -224,8 +223,7 @@ void SuitePruner::ModeWithoutAudioAllMsgsDiscarded()
 
 void SuitePruner::StreamWithoutAudioAllMsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgDecodedStream,
-                        EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] ={ EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
