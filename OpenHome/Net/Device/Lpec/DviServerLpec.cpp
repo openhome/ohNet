@@ -448,7 +448,7 @@ void DviSessionLpec::Run()
     iDeviceMap.clear();
     iDeviceLock.Signal();
     iSubscriptionLock.Wait();
-    for (TUint i=0; i<iSubscriptions.size(); i++) {
+    while (iSubscriptions.size() != 0) {
         DoUnsubscribe(0, false);
     }
     iSubscriptions.clear();
