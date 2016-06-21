@@ -54,8 +54,13 @@ void Stopper::Play()
     case ERunning:
         break;
     case ERampingDown:
-        SetState(ERampingUp);
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        if (iRemainingRampSize == 0) {
+            SetState(ERunning);
+        }
+        else {
+            SetState(ERampingUp);
+        }
         // don't change iCurrentRampValue - just start ramp up from whatever value it is already at
         break;
     case ERampingUp:
