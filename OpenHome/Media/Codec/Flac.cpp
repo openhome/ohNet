@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/MimeTypeList.h>
 
+#include <algorithm>
 #include <string.h>
 
 namespace OpenHome {
@@ -17,6 +18,7 @@ namespace Codec {
 
 class CodecFlac : public CodecBase
 {
+    static const TUint kMaxOutputChannels;
 public:
     CodecFlac(IMimeTypeList& aMimeTypeList);
     ~CodecFlac();
@@ -129,6 +131,8 @@ void CallbackError(const FLAC__StreamDecoder *aDecoder,
 
 
 // CodecFlac
+
+const TUint CodecFlac::kMaxOutputChannels = 2;
 
 CodecFlac::CodecFlac(IMimeTypeList& aMimeTypeList)
     : CodecBase("FLAC")
@@ -345,7 +349,9 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
                                                         const FLAC__Frame* aFrame, 
                                                         const TInt32* const aBuffer[])
 {
-    const TUint channels = aFrame->header.channels;
+    const TUint channels = std::min(kMaxOutputChannels,
+                                    aFrame->header.channels); /* don't want to support multi-channel
+                                                                 ...at least until songcast sender can downmix to stereo */
     TUint samplesToWrite = aFrame->header.blocksize;
     const TUint bitDepth = aFrame->header.bits_per_sample;
     const TUint sampleRate = aFrame->header.sample_rate;
@@ -415,7 +421,10 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
     iSampleRate = streamInfo->sample_rate;
     const TUint bitRate = iSampleRate * streamInfo->bits_per_sample * streamInfo->channels;
     iTrackLengthJiffies = (streamInfo->total_samples * Jiffies::kPerSecond) / iSampleRate;
+    const TUint channels = std::min(kMaxOutputChannels,
+                                    streamInfo->channels); /* don't want to support multi-channel
+                                                              ...at least until songcast sender can downmix to stereo */
 
-    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, streamInfo->channels, iName, iTrackLengthJiffies, iSampleStart, true);
+    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true);
     iStreamMsgDue = false;
 }
