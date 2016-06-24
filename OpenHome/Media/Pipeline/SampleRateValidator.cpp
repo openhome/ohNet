@@ -1,5 +1,6 @@
 #include <OpenHome/Media/Pipeline/SampleRateValidator.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 using namespace OpenHome;
@@ -64,11 +65,11 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
 
 Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
 {
+    iDelayJiffies = aMsg->DelayJiffies();
     iOutputMsgDelayOnAnimatorDelayChange = true;
     if (aMsg->AnimatorDelayJiffies() == iAnimatorDelayJiffies) {
         return aMsg;
     }
-    iDelayJiffies = aMsg->DelayJiffies();
     aMsg->RemoveRef();
     return iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies);
 }
