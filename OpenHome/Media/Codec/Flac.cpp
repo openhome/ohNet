@@ -349,9 +349,9 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
                                                         const FLAC__Frame* aFrame, 
                                                         const TInt32* const aBuffer[])
 {
-    const TUint channels = std::min(kMaxOutputChannels,
-                                    aFrame->header.channels); /* don't want to support multi-channel
-                                                                 ...at least until songcast sender can downmix to stereo */
+    const TUint channels = std::min((TUint)aFrame->header.channels,
+                                    kMaxOutputChannels); /* don't want to support multi-channel
+                                                            ...at least until songcast sender can downmix to stereo */
     TUint samplesToWrite = aFrame->header.blocksize;
     const TUint bitDepth = aFrame->header.bits_per_sample;
     const TUint sampleRate = aFrame->header.sample_rate;
@@ -421,9 +421,9 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
     iSampleRate = streamInfo->sample_rate;
     const TUint bitRate = iSampleRate * streamInfo->bits_per_sample * streamInfo->channels;
     iTrackLengthJiffies = (streamInfo->total_samples * Jiffies::kPerSecond) / iSampleRate;
-    const TUint channels = std::min(kMaxOutputChannels,
-                                    streamInfo->channels); /* don't want to support multi-channel
-                                                              ...at least until songcast sender can downmix to stereo */
+    const TUint channels = std::min((TUint)streamInfo->channels,
+                                    kMaxOutputChannels); /* don't want to support multi-channel
+                                                            ...at least until songcast sender can downmix to stereo */
 
     iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true);
     iStreamMsgDue = false;
