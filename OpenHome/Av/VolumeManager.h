@@ -9,7 +9,7 @@
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
-
+#include <functional>
 #include <vector>
 
 //
@@ -258,6 +258,7 @@ public:  // from IVolume
     void SetVolume(TUint aValue) override;
 protected:
     void SetEnabled(TBool aEnabled);
+    TBool GetEnabled();
 private:
     Mutex iLock;
     IVolume& iVolume;
@@ -278,11 +279,27 @@ private:
     Configuration::ConfigChoice& iConfigVolumeControlEnabled;
 };
 
-class IVolumeSourceUnityGain
+class IUnityGainObserver
+{
+public:
+    virtual void UnityGainChanged(TBool aValue) = 0;
+    virtual ~IUnityGainObserver() {}
+};
+
+class IUnityGainReporter
+{
+public:
+    virtual void AddUnityGainObserver(IUnityGainObserver& aObserver) = 0;
+    virtual ~IUnityGainReporter() {}    
+};
+
+class IVolumeSourceUnityGain : public IUnityGainReporter
 {
 public:
     virtual void SetUnityGain(TBool aEnabled) = 0;
     virtual ~IVolumeSourceUnityGain() {}
+public: //from IUnityGainReporter
+    virtual void AddUnityGainObserver(IUnityGainObserver& aObserver) = 0;
 };
 
 // per-source switch between pass-through and override with unity gain
@@ -292,6 +309,9 @@ public:
     VolumeSourceUnityGain(IVolume& aVolume, TUint aUnityGainValue);
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
+    void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
+private:
+    std::vector<std::reference_wrapper<IUnityGainObserver>> iObservers;
 };
 
 class AnalogBypassRamper : public IVolume
@@ -463,6 +483,7 @@ public: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 public: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
+    void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
 private: // from IVolumeProfile
     TUint VolumeMax() const override;
     TUint VolumeDefault() const override;

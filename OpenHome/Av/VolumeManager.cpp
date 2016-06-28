@@ -290,6 +290,11 @@ void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
     }
 }
 
+TBool VolumeUnityGainBase::GetEnabled()
+{
+    AutoMutex _(iLock);
+    return iVolumeControlEnabled;
+}
 
 // VolumeUnityGain
 
@@ -303,6 +308,7 @@ VolumeUnityGain::VolumeUnityGain(IVolume& aVolume, IConfigManager& aConfigReader
 
 VolumeUnityGain::~VolumeUnityGain()
 {
+
 }
 
 void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
@@ -323,9 +329,16 @@ VolumeSourceUnityGain::VolumeSourceUnityGain(IVolume& aVolume, TUint aUnityGainV
 void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
 {
     SetEnabled(!aEnable);
+    for(auto observer: iObservers){
+        observer.get().UnityGainChanged(GetEnabled());
+    }
 }
 
-
+void VolumeSourceUnityGain::AddUnityGainObserver(IUnityGainObserver& aObserver)
+{
+    aObserver.UnityGainChanged(GetEnabled());
+    iObservers.push_back(aObserver);
+}
 // AnalogBypassRamper
 
 AnalogBypassRamper::AnalogBypassRamper(IVolume& aVolume)
@@ -746,6 +759,15 @@ void VolumeManager::AddMuteObserver(Media::IMuteObserver& aObserver)
     }
 }
 
+void VolumeManager::AddUnityGainObserver(IUnityGainObserver& aObserver)
+{
+    if(iVolumeSourceUnityGain == nullptr){
+        aObserver.UnityGainChanged(false);
+    }
+    else{
+        iVolumeSourceUnityGain->AddUnityGainObserver(aObserver);
+    }
+}
 void VolumeManager::SetVolumeOffset(TInt aValue)
 {
     if (iVolumeSourceOffset != nullptr) {
