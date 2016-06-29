@@ -16,9 +16,11 @@ SenderThread::SenderThread(IPipelineElementDownstream& aDownstream,
                            TUint aThreadPriority)
     : iDownstream(aDownstream)
     , iFifo(kMaxMsgBacklog)
+    , iFifoSlotsUsed(0)
     , iShutdownSem("SGSN", 0)
     , iQuit(false)
 {
+    ASSERT(iFifoSlotsUsed.is_lock_free());
     iThread = new ThreadFunctor("SongcastSender", MakeFunctor(*this, &SenderThread::Run), aThreadPriority);
     iThread->Start();
 }
@@ -31,7 +33,9 @@ SenderThread::~SenderThread()
 
 void SenderThread::Push(Msg* aMsg)
 {
+    ASSERT(iFifoSlotsUsed < kMaxMsgBacklog);
     iFifo.Write(aMsg);
+    iFifoSlotsUsed++;
     iThread->Signal();
 }
 
@@ -40,6 +44,7 @@ void SenderThread::Run()
     do {
         iThread->Wait();
         auto msg = iFifo.Read();
+        iFifoSlotsUsed--;
         msg = msg->Process(*this);
         iDownstream.Push(msg);
     } while (!iQuit);
