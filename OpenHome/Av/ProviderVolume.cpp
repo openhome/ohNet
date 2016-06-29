@@ -31,7 +31,7 @@ const Brn  kVolumeNotSupportedMsg("Volume not supported");
 
 ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
                                IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade)
-    : DvProviderAvOpenhomeOrgVolume1(aDevice)
+    : DvProviderAvOpenhomeOrgVolume2(aDevice)
     , iLock("PVOL")
     , iVolume(aVolumeManager)
     , iBalance(aBalance)
@@ -50,6 +50,7 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnablePropertyVolumeMilliDbPerStep();
     EnablePropertyBalanceMax();
     EnablePropertyFadeMax();
+    EnablePropertyUnityGain();
 
     EnableActionCharacteristics();
     EnableActionSetVolume();
@@ -67,10 +68,11 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnableActionSetMute();
     EnableActionMute();
     EnableActionVolumeLimit();
+    EnableActionUnityGain();
 
     aVolumeManager.AddVolumeObserver(*this);
     aVolumeManager.AddMuteObserver(*this);
-
+    aVolumeManager.AddUnityGainObserver(*this);
     iConfigVolumeLimit = &aConfigReader.GetNum(VolumeConfig::kKeyLimit);
     iSubscriberIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::VolumeLimitChanged));
     if (iBalance == nullptr) {
@@ -254,6 +256,15 @@ void ProviderVolume::VolumeLimit(IDvInvocation& aInvocation, IDvInvocationRespon
     aInvocation.EndResponse();
 }
 
+void ProviderVolume::UnityGain(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue)
+{
+    TBool unityGain = false;
+    GetPropertyUnityGain(unityGain);
+    aInvocation.StartResponse();
+    aValue.Write(unityGain);
+    aInvocation.EndResponse();
+}
+
 void ProviderVolume::VolumeChanged(const IVolumeValue& aVolume)
 {
     SetPropertyVolume(aVolume.VolumeUser());
@@ -264,6 +275,10 @@ void ProviderVolume::MuteChanged(TBool aValue)
     SetPropertyMute(aValue);
 }
 
+void ProviderVolume::UnityGainChanged(TBool aValue)
+{
+    SetPropertyUnityGain(aValue);
+}
 void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume, ErrorOutOfRange aReportOutOfRange)
 {
     try {

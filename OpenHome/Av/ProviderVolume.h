@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Generated/DvAvOpenhomeOrgVolume1.h>
+#include <Generated/DvAvOpenhomeOrgVolume2.h>
 #include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -20,7 +20,7 @@ namespace Net {
 
 namespace Av {
 
-class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider, private IVolumeObserver, private Media::IMuteObserver
+class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume2, public IProvider, private IVolumeObserver, private Media::IMuteObserver, private IUnityGainObserver
 {
 private:
     static const Brn kPowerDownVolume;
@@ -57,10 +57,14 @@ private: // from DvProviderAvOpenhomeOrgVolume1
     void Mute(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
 
     void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+
+    void UnityGain(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
 private: // from IVolumeObserver
     void VolumeChanged(const IVolumeValue& aVolume) override;
 private: // from Media::IMuteObserver
     void MuteChanged(TBool aValue) override;
+private: // from IUnityGainObserver
+    void UnityGainChanged(TBool aValue) override;
 private:
     enum class ErrorOutOfRange {
         Report,

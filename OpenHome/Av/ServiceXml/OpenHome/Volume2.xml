@@ -149,6 +149,16 @@
                 </argument>
          </argumentList>
       </action>
+      <action>
+         <name>UnityGain</name>
+         <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>UnityGain</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
    </actionList>
    <serviceStateTable>
       <stateVariable sendEvents="yes">
@@ -194,6 +204,10 @@
       <stateVariable sendEvents="yes">
          <name>FadeMax</name>
          <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+        <name>UnityGain</name>
+        <dataType>boolean</dataType>
       </stateVariable>
    </serviceStateTable>
 </scpd>

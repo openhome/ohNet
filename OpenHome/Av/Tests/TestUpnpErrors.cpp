@@ -83,6 +83,7 @@ private: // from IVolumeSourceOffset
     void SetVolumeOffset(TInt aValue) override;
 private: // from IVolumeSourceUnityGain
     void SetUnityGain(TBool aEnable) override;
+    void AddUnityGainObserver(IUnityGainObserver& aObserver) override;
 private: // from IAnalogBypassVolumeRamper
     void ApplyVolumeMultiplier(TUint aValue) override;
 private: // from Media::IMute
@@ -211,6 +212,7 @@ TBool DummyVolumeManager::AlwaysOn() const                           { return fa
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
 void DummyVolumeManager::SetVolumeOffset(TInt /*aValue*/)            {}
 void DummyVolumeManager::SetUnityGain(TBool /*aEnable*/)             {}
+void DummyVolumeManager::AddUnityGainObserver(IUnityGainObserver&)   {}
 void DummyVolumeManager::ApplyVolumeMultiplier(TUint /*aValue*/)     {}
 void DummyVolumeManager::Mute()                                      {}
 void DummyVolumeManager::Unmute()                                    {}
