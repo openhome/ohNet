@@ -237,7 +237,16 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgHalt* aMsg)
 {
     iGorgeLock.Wait();
+    iShouldGorge = iCanGorge;
     iPriorityMsgCount--;
+    iShouldGorge = iCanGorge;
+    iGorgeLock.Signal();
+    return aMsg;
+}
+
+Msg* DecodedAudioReservoir::ProcessMsgOut(MsgFlush* aMsg)
+{
+    iGorgeLock.Wait();
     iShouldGorge = iCanGorge;
     iGorgeLock.Signal();
     return aMsg;
@@ -322,10 +331,14 @@ void DecodedAudioReservoir::NotifyStarving(const Brx& aMode, TUint aStreamId, TB
         if (aStarving
             && aMode == iMode
             && iCanGorge
-            && iPriorityMsgCount == 0
             && !iStartOfMode
             && Jiffies() < iGorgeSize) {
-            SetGorging(true, "NotifyStarving");
+            if (iPriorityMsgCount == 0) {
+                SetGorging(true, "NotifyStarving");
+            }
+            else {
+                iShouldGorge = iCanGorge;
+            }
         }
     }
     auto streamHandler = iStreamHandler.load();
