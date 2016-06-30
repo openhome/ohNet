@@ -98,6 +98,14 @@ TBool DecodedAudioReservoir::IsFull() const
             DecodedStreamCount() >= iMaxStreamCount);
 }
 
+void DecodedAudioReservoir::HandleBlocked()
+{
+    if (iGorging && Jiffies() >= iGorgeSize) {
+        iGorging = false;
+        iSemOut.Signal();
+    }
+}
+
 void DecodedAudioReservoir::SetGorging(TBool aGorging, const TChar* aId)
 {
     const TBool unblockRight = (iGorging && !aGorging);

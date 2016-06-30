@@ -21,6 +21,7 @@ public:
     TUint SizeInJiffies() const;
 private: // from AudioReservoir
     TBool IsFull() const override;
+    void HandleBlocked() override;
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from IPipelineElementDownstream

@@ -42,6 +42,7 @@ void AudioReservoir::BlockIfFull()
     (void)iSem.Clear();
     iLock.Signal();
     if (full) {
+        HandleBlocked();
         iSem.Wait();
     }
 }
@@ -52,4 +53,8 @@ void AudioReservoir::UnblockIfNotFull()
     if (!IsFull()) {
         iSem.Signal();
     }
+}
+
+void AudioReservoir::HandleBlocked()
+{
 }
