@@ -2,6 +2,10 @@
 
 #undef ATTEMPT_THREAD_PRIORITIES
 #undef ATTEMPT_THREAD_NICENESS
+#undef SET_PTHREAD_NAMES
+
+//#define ATTEMPT_THREAD_PRIORITIES
+//#define SET_PTHREAD_NAMES
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,7 +46,7 @@
 
 #define kMinStackBytes (1024 * 512)
 #define kThreadSchedPolicy (SCHED_RR)
-#define kMaxThreadNameChars 50
+#define kMaxThreadNameChars 16
 
 #define TEMP_FAILURE_RETRY_2(expression, handle)                            \
     (__extension__                                                          \
@@ -506,7 +510,13 @@ static void* threadEntrypoint(void* aArg)
         param.sched_priority = priority;
         int status = pthread_setschedparam(data->iThread, kThreadSchedPolicy, &param);
         if (status != 0) {
-            printf("Attempt to set thread priority to %d failed with %d(%d)\n", priority, status, errno);
+            char name[kMaxThreadNameChars] = {0};
+#if defined(SET_PTHREAD_NAMES)
+            pthread_getname_np(data->iThread, name, sizeof(name));
+#else
+            strncpy(name, "UNKNOWN", kMaxThreadNameChars-1);
+#endif
+            printf("Attempt to set thread priority for '%s' to %d failed with %d(%d)\n", name, priority, status, errno);
         }
     }
 #elif defined(ATTEMPT_THREAD_NICENESS) // ATTEMPT_THREAD_PRIORITIES
@@ -566,7 +576,7 @@ static THandle DoThreadCreate(OsContext* aContext, const char* aName, uint32_t a
     }
     (void)pthread_attr_destroy(&attr);
 
-#if 0
+#if defined(SET_PTHREAD_NAMES)
 #if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) && !defined(__ANDROID__)
     char name[kMaxThreadNameChars] = {0};
     strncpy(name, aName, kMaxThreadNameChars-1); // leave trailing \0
@@ -1354,6 +1364,7 @@ static void SetInterfaceChangedObserver_Linux(OsContext* aContext, InterfaceList
 {
     struct sockaddr_nl addr;
     int sock = 0;
+    uint32_t minPrio, maxPrio;
 
     aContext->iInterfaceChangedObserver = (InterfaceChangedObserver*) calloc(1, sizeof(InterfaceChangedObserver));
     if (aContext->iInterfaceChangedObserver == NULL) {
@@ -1377,11 +1388,13 @@ static void SetInterfaceChangedObserver_Linux(OsContext* aContext, InterfaceList
         goto Error;
     }
 
+    OsThreadGetPriorityRange(aContext, &minPrio, &maxPrio);
+
     aContext->iInterfaceChangedObserver->iCallback = aCallback;
     aContext->iInterfaceChangedObserver->iArg = aArg;
     if ((aContext->iInterfaceChangedObserver->iThread = DoThreadCreate(aContext,
                                                             "AdapterChangeObserverThread",
-                                                            100, 16 * 1024, 1,
+                                                            (maxPrio - minPrio) / 2, 16 * 1024, 1,
                                                             adapterChangeObserverThread,
                                                             aContext->iInterfaceChangedObserver)) == NULL) {
         goto Error;
