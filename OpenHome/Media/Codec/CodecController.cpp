@@ -711,6 +711,7 @@ void CodecController::OutputStreamInterrupted()
 
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 {
+    ASSERT(iExpectedFlushId == MsgFlush::kIdInvalid);
     if (iRecognising) {
         iStreamEnded = true;
         aMsg->RemoveRef();

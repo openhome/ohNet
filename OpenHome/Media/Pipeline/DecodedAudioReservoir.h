@@ -21,6 +21,7 @@ public:
     TUint SizeInJiffies() const;
 private: // from AudioReservoir
     TBool IsFull() const override;
+    void HandleBlocked() override;
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 public: // from IPipelineElementDownstream
@@ -42,6 +43,7 @@ private: // from MsgReservoir
     Msg* ProcessMsgOut(MsgDrain* aMsg) override;
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
+    Msg* ProcessMsgOut(MsgFlush* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
 private: // from IStreamHandler

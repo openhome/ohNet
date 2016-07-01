@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <atomic>
+
 namespace OpenHome {
     class ThreadFunctor;
 namespace Av {
@@ -44,6 +46,7 @@ private:
     Media::IPipelineElementDownstream& iDownstream;
     ThreadFunctor* iThread;
     Fifo<Media::Msg*> iFifo;
+    std::atomic<TUint> iFifoSlotsUsed;
     Semaphore iShutdownSem;
     TBool iQuit;
 };

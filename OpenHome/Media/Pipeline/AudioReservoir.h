@@ -31,6 +31,7 @@ protected:
     void UnblockIfNotFull();
 private:
     virtual TBool IsFull() const = 0;
+    virtual void HandleBlocked();
 private:
     Mutex iLock;
     Semaphore iSem;
