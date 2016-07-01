@@ -51,8 +51,10 @@ DllExport THandle STDCALL CpProxyService(THandle aProxy);
  * the set of variables you are interested in.
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
+ *
+ * @return  0 on success; -1 on unrecoverable error (service with no properties)
  */
-DllExport void STDCALL CpProxySubscribe(THandle aHandle);
+DllExport int32_t STDCALL CpProxySubscribe(THandle aHandle);
 
 /**
  * Unsubscribe from notifications of changes in state variables for a given

@@ -53,6 +53,9 @@ ProxyError& ProxyError::operator=(const ProxyError& aProxyError)
 
 void CpProxy::Subscribe()
 {
+    if (iProperties.size() == 0) {
+        THROW(SubscriptionErrorUnrecoverable);
+    }
     if (iInitialEventLock == NULL) {
         iInitialEventLock = new OpenHome::Mutex("PRX4");
     }

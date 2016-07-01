@@ -8,6 +8,8 @@
 
 #include <map>
 
+EXCEPTION(SubscriptionErrorUnrecoverable)
+
 namespace OpenHome {
 class Mutex;
 namespace Net {

@@ -174,7 +174,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySubscri
 	aEnv = aEnv;
 	aClass = aClass;
 
-	CpProxySubscribe(proxy);
+	(void)CpProxySubscribe(proxy);
 }
 
 /*

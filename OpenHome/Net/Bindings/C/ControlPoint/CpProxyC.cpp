@@ -49,11 +49,17 @@ THandle STDCALL CpProxyService(THandle aProxy)
     return (THandle)proxyC->Service();
 }
 
-void STDCALL CpProxySubscribe(THandle aHandle)
+int32_t STDCALL CpProxySubscribe(THandle aHandle)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->Subscribe();
+    try {
+        proxyC->Subscribe();
+    }
+    catch (SubscriptionErrorUnrecoverable&) {
+        return -1;
+    }
+    return 0;
 }
 
 void STDCALL CpProxyUnsubscribe(THandle aHandle)

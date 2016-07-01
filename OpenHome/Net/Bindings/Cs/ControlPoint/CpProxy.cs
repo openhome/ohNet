@@ -26,6 +26,11 @@ namespace OpenHome.Net.ControlPoint
         }
     }
 
+    public class SubscriptionException : Exception
+    {
+
+    }
+
     /// <summary>
     /// Base interface for all proxies
     /// </summary>
@@ -84,7 +89,7 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern void CpProxySubscribe(IntPtr aHandle);
+        static extern int CpProxySubscribe(IntPtr aHandle);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -155,7 +160,11 @@ namespace OpenHome.Net.ControlPoint
             {
                 iSubscriptionStatus = SubscriptionStatus.eSubscribing;
             }
-            CpProxySubscribe(iHandle);
+            int ret = CpProxySubscribe(iHandle);
+            if (ret == -1)
+            {
+                throw new SubscriptionException();
+            }
         }
 
         public void Unsubscribe()
