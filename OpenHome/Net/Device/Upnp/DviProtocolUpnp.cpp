@@ -979,7 +979,8 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
     if (serviceCount > 0) {
         iWriter.Write("<serviceList>");
         for (TUint i=0; i<serviceCount; i++) {
-            const OpenHome::Net::ServiceType& serviceType = iDeviceUpnp.iDevice.Service(i).ServiceType();
+            DviService& service = iDeviceUpnp.iDevice.Service(i);
+            const OpenHome::Net::ServiceType& serviceType = service.ServiceType();
             iWriter.Write("<service>");
             iWriter.Write("<serviceType>");
             iWriter.Write(serviceType.FullNameUpnp());
@@ -998,20 +999,24 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
             iWriter.Write(DviProtocolUpnp::kServiceXmlName);
             iWriter.Write("</SCPDURL>");
             iWriter.Write("<controlURL>");
-            iWriter.Write('/');
-            Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
-            iWriter.Write('/');
-            iWriter.Write(serviceType.PathUpnp());
-            iWriter.Write('/');
-            iWriter.Write(DviProtocolUpnp::kControlUrlTail);
+            if (service.DvActions().size() > 0) {
+                iWriter.Write('/');
+                Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
+                iWriter.Write('/');
+                iWriter.Write(serviceType.PathUpnp());
+                iWriter.Write('/');
+                iWriter.Write(DviProtocolUpnp::kControlUrlTail);
+                }
             iWriter.Write("</controlURL>");
             iWriter.Write("<eventSubURL>");
-            iWriter.Write('/');
-            Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
-            iWriter.Write('/');
-            iWriter.Write(serviceType.PathUpnp());
-            iWriter.Write('/');
-            iWriter.Write(DviProtocolUpnp::kEventUrlTail);
+            if (service.Properties().size() > 0) {
+                iWriter.Write('/');
+                Uri::Escape(iWriter, iDeviceUpnp.iDevice.Udn());
+                iWriter.Write('/');
+                iWriter.Write(serviceType.PathUpnp());
+                iWriter.Write('/');
+                iWriter.Write(DviProtocolUpnp::kEventUrlTail);
+            }
             iWriter.Write("</eventSubURL>");
             iWriter.Write("</service>");
         }
