@@ -86,8 +86,8 @@ void DviSubscription::Start(DviService& aService)
 
 void DviSubscription::Stop()
 {
-    iLock.Wait();
     iTimer->Cancel();
+    iLock.Wait();
     if (iService != NULL) {
         iService->RemoveRef();
         iService = NULL;

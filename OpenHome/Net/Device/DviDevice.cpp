@@ -66,8 +66,8 @@ DviDevice::~DviDevice()
 
 void DviDevice::Destroy()
 {
-    iLock.Wait();
     iDvStack.DeviceMap().Remove(*this);
+    iLock.Wait();
     for (TUint i=0; i<iDevices.size(); i++) {
         iDevices[i]->Destroy();
     }
