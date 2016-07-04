@@ -48,25 +48,31 @@ TUint DecodedAudioReservoir::SizeInJiffies() const
 
 Msg* DecodedAudioReservoir::Pull()
 {
-    iGorgeLock.Wait();
-    TBool wait = (iGorging && Jiffies() < iGorgeSize);
-    if (wait) {
-        (void)iSemOut.Clear();
+    TBool wait = false;
+    {
+        AutoMutex _(iGorgeLock);
+        TBool wait = (iGorging && Jiffies() < iGorgeSize);
+        if (wait) {
+            (void)iSemOut.Clear();
+        }
     }
-    iGorgeLock.Signal();
+
     if (wait) {
         iSemOut.Wait();
     }
     Msg* msg = AudioReservoir::Pull();
-    iGorgeLock.Wait();
-    if (iShouldGorge
-        && iPriorityMsgCount == 0
-        && !iStartOfMode
-        && Jiffies() < iGorgeSize) {
-        iShouldGorge = false;
-        SetGorging(true, "Pull");
+
+    {
+        AutoMutex _(iGorgeLock);
+        if (iShouldGorge
+            && iPriorityMsgCount == 0
+            && !iStartOfMode
+            && Jiffies() < iGorgeSize) {
+            iShouldGorge = false;
+            SetGorging(true, "Pull");
+        }
     }
-    iGorgeLock.Signal();
+
     return msg;
 }
 
@@ -75,7 +81,9 @@ void DecodedAudioReservoir::Push(Msg* aMsg)
     iGorgeLock.Wait();
     const TUint oldPriorityMsgCount = iPriorityMsgCount;
     iGorgeLock.Signal();
+    
     DoEnqueue(aMsg);
+    
     iGorgeLock.Wait();
     if (iGorging) {
         if (Jiffies() >= iGorgeSize) {
@@ -100,6 +108,7 @@ TBool DecodedAudioReservoir::IsFull() const
 
 void DecodedAudioReservoir::HandleBlocked()
 {
+    AutoMutex _(iGorgeLock);
     if (iGorging && Jiffies() >= iGorgeSize) {
         iGorging = false;
         iSemOut.Signal();
@@ -119,16 +128,20 @@ void DecodedAudioReservoir::SetGorging(TBool aGorging, const TChar* aId)
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgMode* aMsg)
 {
-    AutoMutex _(iLock);
-    if (iClockPuller != nullptr) {
-        iClockPuller->Stop();
-    }
-    iClockPuller = aMsg->ClockPullers().PipelineBuffer();
+    {
+        AutoMutex _(iLock);
+        if (iClockPuller != nullptr) {
+            iClockPuller->Stop();
+        }
+        iClockPuller = aMsg->ClockPullers().PipelineBuffer();
 
-    iStartOfMode = true;
-    iShouldGorge = false;
-    iPriorityMsgCount++;
+        iStartOfMode = true;
+        iShouldGorge = false;
+        iPriorityMsgCount++;
+    }
+    iGorgeLock.Wait();
     SetGorging(false, "ModeIn");
+    iGorgeLock.Signal();
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
