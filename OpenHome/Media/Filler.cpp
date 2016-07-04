@@ -284,7 +284,9 @@ void Filler::Run()
                 iLock.Signal();
             }
             else {
+                iLock.Signal();
                 iUriStreamer->Interrupt(false);
+                iLock.Wait();
                 if (iChangedMode) {
                     const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
                     iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, iActiveUriProvider->ClockPullers(),
