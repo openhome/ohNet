@@ -14,6 +14,7 @@
 #include <OpenHome/Private/Debug.h>
 
 #include <limits>
+#include <algorithm>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -523,10 +524,12 @@ void ConfigUiValBase::ValueChanged(const Brx& aValue)
 }
 
 TUint ConfigUiValBase::AddObserver(IConfigUiValObserver& aObserver)
-{
-    AutoMutex a(iLockObservers);
-    const TUint id = iNextObserverId++;
-    iObservers.insert(std::pair<TUint, IConfigUiValObserver*>(id, &aObserver));
+{   TUint id;
+    {
+        AutoMutex a(iLockObservers);
+        id = iNextObserverId++;
+        iObservers.insert(std::pair<TUint, IConfigUiValObserver*>(id, &aObserver));
+    } //Automutex in block as ObserverAdded has own lock
     ObserverAdded(aObserver);
     return id;
 }
@@ -615,9 +618,11 @@ ConfigUiValRoUpdatable::ConfigUiValRoUpdatable(const Brx& aKey, const Brx& aValu
 
 void ConfigUiValRoUpdatable::Update(const Brx& aValue)
 {
-    AutoMutex a(iLock);
-    iValue.Replace(aValue);
-    UpdateJsonValLocked();
+    {
+        AutoMutex a(iLock);
+        iValue.Replace(aValue);
+        UpdateJsonValLocked();
+    } //Automutex in block as ValueChanged has its own automutex
     ValueChanged(iJsonValue);
 }
 
@@ -690,10 +695,12 @@ void ConfigUiValNum::WriteMeta(IWriter& aWriter, ILanguageResourceManager& /*aLa
 
 void ConfigUiValNum::Update(Configuration::ConfigNum::KvpNum& aKvp)
 {
-    AutoMutex a(iLock);
-    iVal = aKvp.Value();
     Bws<Ascii::kMaxIntStringBytes> val;
-    Ascii::AppendDec(val, iVal);
+    {
+        AutoMutex a(iLock);
+        iVal = aKvp.Value();
+        Ascii::AppendDec(val, iVal);
+    }
     ValueChanged(val);
 }
 
@@ -783,10 +790,12 @@ void ConfigUiValChoice::WriteMeta(IWriter& aWriter, ILanguageResourceManager& aL
 
 void ConfigUiValChoice::Update(Configuration::ConfigChoice::KvpChoice& aKvp)
 {
-    AutoMutex a(iLock);
-    iVal = aKvp.Value();
     Bws<Ascii::kMaxIntStringBytes> val;
-    Ascii::AppendDec(val, iVal);
+    {
+        AutoMutex a(iLock);
+        iVal = aKvp.Value();
+        Ascii::AppendDec(val, iVal);
+    }
     ValueChanged(val);
 }
 
@@ -1487,17 +1496,29 @@ ConfigAppBase::~ConfigAppBase()
 
 ITab& ConfigAppBase::Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList)
 {
-    AutoMutex a(iLock);
-    for (TUint i=0; i<iTabs.size(); i++) {
-        if (!iTabs[i]->Allocated()) {
-            // FIXME - won't be cleared until a new handler is set.
-            // Shouldn't matter as only thing that can call tab handler is the
-            // tab, which gets destroyed when it is no longer in use.
-            iTabs[i]->SetHandler(aHandler, aLanguageList);
-            return *iTabs[i];
-        }
+    auto allocatedTab = iTabs.begin();
+    TBool allocatorFull;
+    {
+        AutoMutex a(iLock);
+        allocatedTab = std::find_if(iTabs.begin(), iTabs.end(), [](ConfigTab* tab){return !tab->Allocated();});
+        allocatorFull = (allocatedTab == iTabs.end());
     }
-    THROW(TabAllocatorFull);
+    if(allocatorFull) {
+        THROW(TabAllocatorFull);
+    }
+    else{
+        (*allocatedTab)->SetHandler(aHandler, aLanguageList);
+        return **allocatedTab;
+    }
+    // for (TUint i=0; i<iTabs.size(); i++) {
+    //     if (!iTabs[i]->Allocated()) {
+    //         // FIXME - won't be cleared until a new handler is set.
+    //         // Shouldn't matter as only thing that can call tab handler is the
+    //         // tab, which gets destroyed when it is no longer in use.
+    //         iTabs[i]->SetHandler(aHandler, aLanguageList);
+    //         return *iTabs[i];
+    //     }
+    // }
 }
 
 const Brx& ConfigAppBase::ResourcePrefix() const
