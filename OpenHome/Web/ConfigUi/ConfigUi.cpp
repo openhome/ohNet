@@ -1498,29 +1498,16 @@ ConfigAppBase::~ConfigAppBase()
 
 ITab& ConfigAppBase::Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList)
 {
-    auto allocatedTab = iTabs.begin();
-    TBool allocatorFull;
-    {
-        AutoMutex a(iLock);
-        allocatedTab = std::find_if(iTabs.begin(), iTabs.end(), [](ConfigTab* tab){return !tab->Allocated();});
-        allocatorFull = (allocatedTab == iTabs.end());
+    for (TUint i=0; i<iTabs.size(); i++) {
+        if (!iTabs[i]->Allocated()) {
+            // FIXME - won't be cleared until a new handler is set.
+            // Shouldn't matter as only thing that can call tab handler is the
+            // tab, which gets destroyed when it is no longer in use.
+            iTabs[i]->SetHandler(aHandler, aLanguageList);
+            return *iTabs[i];
+        }
     }
-    if(allocatorFull) {
-        THROW(TabAllocatorFull);
-    }
-    else{
-        (*allocatedTab)->SetHandler(aHandler, aLanguageList);
-        return **allocatedTab;
-    }
-    // for (TUint i=0; i<iTabs.size(); i++) {
-    //     if (!iTabs[i]->Allocated()) {
-    //         // FIXME - won't be cleared until a new handler is set.
-    //         // Shouldn't matter as only thing that can call tab handler is the
-    //         // tab, which gets destroyed when it is no longer in use.
-    //         iTabs[i]->SetHandler(aHandler, aLanguageList);
-    //         return *iTabs[i];
-    //     }
-    // }
+    THROW(TabAllocatorFull);
 }
 
 const Brx& ConfigAppBase::ResourcePrefix() const
