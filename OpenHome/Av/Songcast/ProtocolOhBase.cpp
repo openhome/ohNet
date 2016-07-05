@@ -50,8 +50,6 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iPipelineEmpty("OHBS", 0)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
-    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
-    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
     iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired), "ProtocolOhBaseRepair");
     iRepairFrames.reserve(kMaxRepairBacklogFrames);
     iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendJoin), "ProtocolOhBaseJoin");
