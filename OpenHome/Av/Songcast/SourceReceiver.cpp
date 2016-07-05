@@ -466,7 +466,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);
-    iSenderThread = new SenderThread(*iLoggerSender, priorityMin+1);
+    iSenderThread = new SenderThread(*iLoggerSender, priorityMax-2);
     iSplitter = new Splitter(*iSenderThread, aMode);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iSplitter->SetUpstream(pipeline.InsertElements(*iLoggerSplitter));
