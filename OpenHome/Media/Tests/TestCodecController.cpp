@@ -109,6 +109,7 @@ protected:
     };
 protected:
     void Queue(Msg* aMsg);
+    void PullNext();
     void PullNext(EMsgType aExpectedMsg);
     void PullNext(EMsgType aExpectedMsg, TUint64 aExpectedJiffies);
     Msg* CreateTrack();
@@ -134,6 +135,7 @@ protected:
     IStreamHandler* iStreamHandler;
     std::list<Msg*> iPendingMsgs;
     std::list<Msg*> iReceivedMsgs;
+    EMsgType iLastReceivedMsg;
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -141,7 +143,6 @@ private:
     Semaphore* iSemReceived;
     Mutex* iLockPending;
     Mutex* iLockReceived;
-    EMsgType iLastReceivedMsg;
     TUint iNextStreamId;
     TBool iSeekable;
 };
@@ -300,7 +301,7 @@ void SuiteCodecControllerBase::Setup()
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
     MsgFactoryInitParams init;
     init.SetMsgAudioEncodedCount(400, 400);
-    init.SetMsgAudioPcmCount(100, 100);
+    init.SetMsgAudioPcmCount(600, 600);
     init.SetMsgSilenceCount(10);
     init.SetMsgPlayableCount(50, 0);
     init.SetMsgTrackCount(2);
@@ -310,7 +311,7 @@ void SuiteCodecControllerBase::Setup()
     init.SetMsgFlushCount(2);
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iController = new CodecController(*iMsgFactory, *this, *this, *this, kPriorityNormal);
+    iController = new CodecController(*iMsgFactory, *this, *this, *this, Jiffies::kPerMs * 5, kPriorityNormal);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
@@ -330,7 +331,9 @@ void SuiteCodecControllerBase::Setup()
 void SuiteCodecControllerBase::TearDown()
 {
     Queue(iMsgFactory->CreateMsgQuit());
-    PullNext(EMsgQuit);
+    do {
+        PullNext();
+    } while (iLastReceivedMsg != EMsgQuit);
 
     iLockPending->Wait();
     ASSERT(iPendingMsgs.size() == 0);
@@ -534,7 +537,7 @@ void SuiteCodecControllerBase::Queue(Msg* aMsg)
     iSemPending->Signal();
 }
 
-void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg)
+void SuiteCodecControllerBase::PullNext()
 {
     iSemReceived->Wait(kSemWaitMs);
     iLockReceived->Wait();
@@ -546,6 +549,11 @@ void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg)
     msg = msg->Process(*this);
     msg->RemoveRef();
     //Log::Print("SuiteCodecControllerBase::PullNext iLastReceivedMsg: %u, aExpectedMsg: %u\n", iLastReceivedMsg, aExpectedMsg);
+}
+
+void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg)
+{
+    PullNext();
     TEST(iLastReceivedMsg == aExpectedMsg);
 }
 
@@ -693,7 +701,7 @@ Msg* SuiteCodecControllerStream::CreateAudio(TBool aValidHeader, TUint aDataByte
         (void)memcpy(encodedAudioData, header.Ptr(), headerBytes);
 
         // update data byte count
-        dataBytes = kMaxMsgBytes - headerBytes;
+        dataBytes -= headerBytes;
     }
 
     // Only output iTotalBytes-kWavHeaderBytes of audio in total.
@@ -735,7 +743,9 @@ void SuiteCodecControllerStream::TestStreamSuccessful()
     // Pushing a MsgEncodedAudio should cause a MsgDecodedStream to be pushed
     // out other end of CodecController.
     PullNext(EMsgDecodedStream);
-    PullNext(EMsgAudioPcm);
+    do {
+        PullNext(EMsgAudioPcm);
+    } while (iJiffies < iTrackOffset);
 
     ASSERT(iTrackOffsetBytes == kAudioBytes);
     TEST(iJiffies == iTrackOffset);
@@ -813,7 +823,7 @@ void SuiteCodecControllerStream::TestTruncatedStream()
     PullNext(EMsgEncodedStream);
 
     // Only send one msg (i.e., a truncated stream).
-    Queue(CreateAudio(true, kMaxMsgBytes));
+    Queue(CreateAudio(true, 400));
     PullNext(EMsgDecodedStream);
 
     // Flush remaining audio from stream out by sending a new MsgTrack.
@@ -851,9 +861,9 @@ void SuiteCodecControllerStream::TestTrackEncodedStreamMetatext()
     // MsgMetaText should be buffered until audio is recognised.
     Queue(iMsgFactory->CreateMsgMetaText(Brn("dummy")));
 
-    static const TUint kAudioBytes = 6144;
+    static const TUint kAudioBytes = 200;
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
-    Queue(CreateAudio(true, kMaxMsgBytes));
+    Queue(CreateAudio(true, iTotalBytes));
     // Start-of-stream audio should be recognised, so MsgMetaText should be passed on.
     PullNext(EMsgMetaText);
     PullNext(EMsgDecodedStream);
@@ -938,7 +948,9 @@ void SuiteCodecControllerStream::TestSeek()
     TEST(offsetAfter == jiffiesBefore);
 
     // MsgFlush and MsgDecodedStream follow a successful seek.
-    PullNext(EMsgFlush);
+    do {
+        PullNext();
+    } while (iLastReceivedMsg != EMsgFlush);
     PullNext(EMsgDecodedStream);
 
     // Adjust jiffy total to account for seek.
@@ -955,6 +967,9 @@ void SuiteCodecControllerStream::TestSeek()
         TUint64 jiffiesBefore = iJiffies;
         PullNext(EMsgAudioPcm);
         TUint64 offsetAfter = iMsgOffset + jiffiesOffset - offsetAfterSeek;
+        if (offsetAfter != jiffiesBefore) {
+            Print("offsetAfter %llu, jiffiesBefore %llu\n", offsetAfter, jiffiesBefore);
+        }
         TEST(offsetAfter == jiffiesBefore);
     }
 
@@ -1024,7 +1039,9 @@ void SuiteCodecControllerStream::TestSeekNewStream()
 
     // Flush to signify seek end.
     Queue(CreateFlush());
-    PullNext(EMsgFlush);
+    do {
+        PullNext();
+    } while (iLastReceivedMsg != EMsgFlush);
 
     // Start new stream.
     iTrackOffsetBytes = 0;
@@ -1046,7 +1063,10 @@ void SuiteCodecControllerStream::TestSeekNewStream()
     PullNext(EMsgAudioPcm);
     Queue(CreateEncodedStream());
     PullNext(EMsgAudioPcm);
-    PullNext(EMsgEncodedStream);
+    do {
+        PullNext();
+    } while (iLastReceivedMsg == EMsgAudioPcm);
+    TEST(iLastReceivedMsg == EMsgEncodedStream);
 }
 
 

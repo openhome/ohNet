@@ -16,7 +16,7 @@ public:
                                     // kMaxMs may be violated if it's possible to add
                                     // a MsgAudioPcm without chopping it (and without
                                     // violating kMaxBytes).
-    static const TUint kMaxJiffies = Jiffies::kPerMs * kMaxMs;
+    static const TUint kMaxJiffies = (Jiffies::kPerMs * kMaxMs) - Jiffies::kMaxJiffiesPerSample;
     static const TUint kSupportedMsgTypes;
 public:
     DecodedAudioAggregator(IPipelineElementDownstream& aDownstreamElement);

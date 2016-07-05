@@ -189,6 +189,8 @@ private:
 
     static const TUint kSongcastTicksPerSec44k = 44100 * 256;
     static const TUint kSongcastTicksPerSec48k = 48000 * 256;
+public:
+    static const TUint kMaxJiffiesPerSample = kJiffies7350; // Jiffies for lowest supported sample rate
 };
 
 class IMsgProcessor;

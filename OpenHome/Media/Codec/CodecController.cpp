@@ -122,7 +122,7 @@ void CodecBase::Construct(ICodecController& aController)
 // CodecController
 
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
-                                 IUrlBlockWriter& aUrlBlockWriter, TUint aThreadPriority)
+                                 IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority)
     : iMsgFactory(aMsgFactory)
     , iRewinder(aMsgFactory, aUpstreamElement)
     , iDownstreamElement(aDownstreamElement)
@@ -146,6 +146,8 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamLength(0)
     , iStreamPos(0)
     , iTrackId(UINT_MAX)
+    , iMaxOutputBytes(0)
+    , iMaxOutputJiffies(aMaxOutputJiffies)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
@@ -625,6 +627,9 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
         iPostSeekStreamInfo = msg;
     }
     iLock.Signal();
+
+    const TUint maxSamples = Jiffies::ToSamples(iMaxOutputJiffies, aSampleRate);
+    iMaxOutputBytes = maxSamples * (aBitDepth/8) * aNumChannels;
 }
 
 void CodecController::OutputDelay(TUint aJiffies)
@@ -640,8 +645,23 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     ASSERT(aChannels == iChannels);
     ASSERT(aSampleRate == iSampleRate);
     ASSERT(aBitDepth == iBitDepth);
-    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
-    return DoOutputAudioPcm(audio);
+
+    Brn data(aData);
+    const TUint64 offsetBefore = aTrackOffset;
+    const TByte* p = data.Ptr();
+    TUint remaining = data.Bytes();
+    do {
+        const TUint bytes = std::min(iMaxOutputBytes, data.Bytes());
+        Brn buf(p, bytes);
+        MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(buf, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
+        const TUint64 jiffies = DoOutputAudioPcm(audio);
+        aTrackOffset += jiffies;
+        p += bytes;
+        remaining -= bytes;
+        data.Set(p, remaining);
+    } while (remaining > 0);
+
+    return aTrackOffset - offsetBefore;
 }
 
 TUint64 CodecController::OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset)

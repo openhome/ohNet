@@ -280,7 +280,7 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     iContainer = new ContainerController(*iMsgFactory, *iLoggerEncodedAudioReservoir, *this);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     iLoggerCodecController = new Logger("Codec Controller", *iElementDownstream);
-    iController = new CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, kPriorityNormal);
+    iController = new CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, *this, Jiffies::kPerMs * 5, kPriorityNormal);
     iFiller = new TestCodecFiller(aEnv, *iReservoir, *iMsgFactory, *iFlushIdProvider, *iInfoAggregator);
 
     //iLoggerEncodedAudioReservoir->SetEnabled(true);

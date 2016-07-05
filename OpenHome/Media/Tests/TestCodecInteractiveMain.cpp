@@ -622,7 +622,7 @@ Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
 
     // Construct push logger slightly out of sequence.
     iLoggerCodecController = new Logger("Codec Controller", aDownstreamElement);
-    iCodecController = new Codec::CodecController(aMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, kThreadPriorityMax);
+    iCodecController = new Codec::CodecController(aMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, Jiffies::kPerMs * 5, kThreadPriorityMax);
 
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);

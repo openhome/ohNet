@@ -306,7 +306,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    downstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iLoggerCodecController, new Logger("Codec Controller", *downstream),
                    downstream, elementsSupported, EPipelineSupportElementsLogger);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *upstream, *downstream, aUrlBlockWriter, aInitParams->ThreadPriorityCodec());
+    iCodecController = new Codec::CodecController(*iMsgFactory, *upstream, *downstream, aUrlBlockWriter,
+                                                  kSongcastFrameJiffies, aInitParams->ThreadPriorityCodec());
 
     upstream = iDecodedAudioReservoir;
     ATTACH_ELEMENT(iLoggerDecodedAudioReservoir,

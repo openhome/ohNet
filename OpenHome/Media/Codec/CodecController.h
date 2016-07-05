@@ -317,7 +317,7 @@ class CodecController : public ISeeker, private ICodecController, private IMsgPr
 {
 public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
-                    IUrlBlockWriter& aUrlBlockWriter, TUint aThreadPriority);
+                    IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority);
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
@@ -374,7 +374,6 @@ private: // IStreamHandler
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private:
-    static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
     Rewinder iRewinder;
     Logger* iLoggerRewinder;
@@ -416,6 +415,8 @@ private:
     TUint64 iStreamLength;
     TUint64 iStreamPos;
     TUint iTrackId;
+    TUint iMaxOutputBytes;
+    const TUint iMaxOutputJiffies;
 };
 
 class CodecBufferedReader : public IReader, private INonCopyable
