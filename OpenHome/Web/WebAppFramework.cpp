@@ -70,8 +70,9 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
     iTimer.Start(iSendTimeoutMs, *this);
 
     TBool msgOutput = false;
-
     for (;;) {
+        TBool cancelTimer = false;
+        TBool slotsZero = false;
         iSemRead.Wait();
         {
             // Check if this was interrupted.
@@ -92,7 +93,7 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 if (!msgOutput) {
                     // Now committed to sending a msg in response to this lp.
                     // Cancel timer and clear polling state.
-                    iTimer.Cancel();
+                    cancelTimer = true;
                     aWriter.Write(Brn("["));
                     msgOutput = true;
                 }
@@ -107,6 +108,9 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 // appropriate action.
                 msg->Destroy();
                 iSemWrite.Signal();
+                if(cancelTimer) {
+                    iTimer.Cancel();
+                }
                 throw;
             }
             msg->Destroy();
@@ -119,8 +123,16 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 if (msgOutput) {
                     aWriter.Write(Brn("]"));
                 }
-                return;
+                slotsZero = true;
             }
+        }
+        if(cancelTimer)
+        {
+            iTimer.Cancel();
+        }
+        if(slotsZero)
+        {
+            return;
         }
     }
 }
@@ -128,13 +140,17 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
 void FrameworkTabHandler::Disable()
 {
     // Set interrupted state so that no further polls/sends can take place.
+    TBool polling;
     {
         AutoMutex a(iLock);
         iEnabled = false;
-        if (iPolling) {
-            iTimer.Cancel();
-            iPolling = false;
-        }
+        polling = iPolling;
+    }
+
+    if(polling){
+        iTimer.Cancel();
+        AutoMutex a(iLock);
+        iPolling = false;
     }
 
     // Only need to signal iSemRead here. When FIFO is cleared, iSemWrite will be signalled.
@@ -199,7 +215,6 @@ FrameworkTimer::FrameworkTimer(Environment& aEnv, const TChar* aStringId, TUint 
 
 FrameworkTimer::~FrameworkTimer()
 {
-    AutoMutex a(iLock);
     iTimer.Cancel();
 }
 
@@ -215,11 +230,20 @@ void FrameworkTimer::Start(TUint aDurationMs, IFrameworkTimerHandler& aHandler)
 void FrameworkTimer::Cancel()
 {
     //LOG(kHttp, "FrameworkTimer::Cancel iStringId: %s, iNumericId: %u\n", iStringId, iNumericId);
-    AutoMutex a(iLock);
-    if (iHandler != nullptr) {
+    TBool nullHandler;
+    {
+        AutoMutex a(iLock);
+        nullHandler = (iHandler == nullptr);
+    } //Mutex must be split over two blocks, because iTimer has callback mutex
+
+    if (!nullHandler) {
         iTimer.Cancel();
     }
-    iHandler = nullptr;
+
+    {
+        AutoMutex b(iLock);
+        iHandler = nullptr;
+    }
 }
 
 void FrameworkTimer::Complete()
