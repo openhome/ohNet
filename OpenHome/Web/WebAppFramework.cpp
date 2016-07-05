@@ -212,7 +212,6 @@ FrameworkTimer::FrameworkTimer(Environment& aEnv, const TChar* aStringId, TUint 
 
 FrameworkTimer::~FrameworkTimer()
 {
-    //    AutoMutex a(iLock);
     iTimer.Cancel();
 }
 

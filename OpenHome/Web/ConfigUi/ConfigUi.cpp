@@ -618,12 +618,14 @@ ConfigUiValRoUpdatable::ConfigUiValRoUpdatable(const Brx& aKey, const Brx& aValu
 
 void ConfigUiValRoUpdatable::Update(const Brx& aValue)
 {
+    Bws<kMaxValueBytes> jsonVal;
     {
         AutoMutex a(iLock);
         iValue.Replace(aValue);
         UpdateJsonValLocked();
+        jsonVal.Replace(iJsonValue);
     } //Automutex in block as ValueChanged has its own automutex
-    ValueChanged(iJsonValue);
+    ValueChanged(jsonVal);
 }
 
 void ConfigUiValRoUpdatable::ObserverAdded(IConfigUiValObserver& aObserver)
