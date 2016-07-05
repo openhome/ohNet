@@ -666,8 +666,8 @@ void SuiteFrameworkTabHandler::TestBlockingSendOneMessage()
 
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Start 5")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
-    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->ExpectEmpty());
 }
 
@@ -700,8 +700,8 @@ void SuiteFrameworkTabHandler::TestBlockingSendMultipleMessages()
 
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Start 5")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
-    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
     TEST(iTestPipe->ExpectEmpty());
@@ -731,8 +731,8 @@ void SuiteFrameworkTabHandler::TestBlockingSendQueueFull()
 
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Start 5")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
-    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     for (TUint i=0; i<kSendQueueSize-1; i++) {
         TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
         TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
@@ -766,8 +766,8 @@ void SuiteFrameworkTabHandler::TestBlockingSendNewMessageQueued()
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait WRITE")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal READ")));
-    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->ExpectEmpty());
 }
 
@@ -789,8 +789,8 @@ void SuiteFrameworkTabHandler::TestWriterDisconnected()
     TEST_THROWS(tabHandler.LongPoll(writer), WriterError);
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Start 5")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Wait READ")));
-    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
     TEST(iTestPipe->Expect(Brn("TestHelperFrameworkSemaphore::Signal WRITE")));
+    TEST(iTestPipe->Expect(Brn("TestHelperFrameworkTimer::Cancel")));
 
     TEST(iTestPipe->ExpectEmpty());
 }

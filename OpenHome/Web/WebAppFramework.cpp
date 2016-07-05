@@ -108,6 +108,9 @@ void FrameworkTabHandler::LongPoll(IWriter& aWriter)
                 // appropriate action.
                 msg->Destroy();
                 iSemWrite.Signal();
+                if(cancelTimer) {
+                    iTimer.Cancel();
+                }
                 throw;
             }
             msg->Destroy();
