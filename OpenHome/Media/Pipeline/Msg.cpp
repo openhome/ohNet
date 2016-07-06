@@ -2387,6 +2387,7 @@ MsgReservoir::MsgReservoir()
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
     , iEncodedAudioCount(0)
+    , iDecodedAudioCount(0)
 {
     ASSERT(iEncodedBytes.is_lock_free());
     ASSERT(iJiffies.is_lock_free());
@@ -2394,6 +2395,7 @@ MsgReservoir::MsgReservoir()
     ASSERT(iEncodedStreamCount.is_lock_free());
     ASSERT(iDecodedStreamCount.is_lock_free());
     ASSERT(iEncodedAudioCount.is_lock_free());
+    ASSERT(iDecodedAudioCount.is_lock_free());
 }
 
 MsgReservoir::~MsgReservoir()
@@ -2459,6 +2461,11 @@ TUint MsgReservoir::DecodedStreamCount() const
 TUint MsgReservoir::EncodedAudioCount() const
 {
     return iEncodedAudioCount;
+}
+
+TUint MsgReservoir::DecodedAudioCount() const
+{
+    return iDecodedAudioCount;
 }
 
 void MsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)              { }
@@ -2543,12 +2550,14 @@ Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgBitRate* aMsg)            { r
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    iQueue.iDecodedAudioCount++;
     iQueue.iJiffies += aMsg->Jiffies();
     return aMsg;
 }
 
 Msg* MsgReservoir::ProcessorEnqueue::ProcessMsg(MsgSilence* aMsg)
 {
+    iQueue.iDecodedAudioCount++;
     iQueue.iJiffies += aMsg->Jiffies();
     return aMsg;
 }
@@ -2757,12 +2766,14 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgBitRate* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    iQueue.iDecodedAudioCount--;
     iQueue.iJiffies -= aMsg->Jiffies();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
 {
+    iQueue.iDecodedAudioCount--;
     iQueue.iJiffies -= aMsg->Jiffies();
     return iQueue.ProcessMsgOut(aMsg);
 }

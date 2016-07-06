@@ -968,6 +968,7 @@ protected:
     TUint EncodedStreamCount() const;
     TUint DecodedStreamCount() const;
     TUint EncodedAudioCount() const;
+    TUint DecodedAudioCount() const;
 private:
     virtual void ProcessMsgIn(MsgMode* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
@@ -1083,6 +1084,7 @@ private:
     std::atomic<TUint> iEncodedStreamCount;
     std::atomic<TUint> iDecodedStreamCount;
     std::atomic<TUint> iEncodedAudioCount;
+    std::atomic<TUint> iDecodedAudioCount;
 };
 
 class PipelineElement : protected IMsgProcessor
