@@ -24,7 +24,7 @@ class FlywheelInput : public IPcmProcessor
 public:
     FlywheelInput(TUint aMaxJiffies);
     ~FlywheelInput();
-    const Brx& Prepare(MsgQueue& aQueue, TUint aJiffies, TUint aSampleRate, TUint aBitDepth, TUint aNumChannels);
+    const Brx& Prepare(MsgQueueLite& aQueue, TUint aJiffies, TUint aSampleRate, TUint aBitDepth, TUint aNumChannels);
 private:
     inline static void AppendSubsample8(TByte*& aDest, const TByte*& aSrc);
     inline static void AppendSubsample16(TByte*& aDest, const TByte*& aSrc);
@@ -145,7 +145,7 @@ private:
     FlywheelInput iFlywheelInput;
     RampGenerator* iRampGenerator;
     ThreadFunctor* iPullerThread;
-    MsgQueue iRecentAudio;
+    MsgQueueLite iRecentAudio;
     TUint iRecentAudioJiffies;
     IStreamHandler* iStreamHandler;
     State iState;

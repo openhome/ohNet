@@ -912,7 +912,7 @@ protected:
     void DoEnqueueAtHead(Msg* aMsg);
     TBool IsEmpty() const;
     void DoClear();
-    TUint NumMsgs() const; // test/debug use only
+    TUint NumMsgs() const;
 private:
     void CheckMsgNotQueued(Msg* aMsg) const;
 private:
@@ -929,6 +929,7 @@ public:
     void EnqueueAtHead(Msg* aMsg)   { DoEnqueueAtHead(aMsg); }
     TBool IsEmpty() const           { return MsgQueueBase::IsEmpty(); }
     void Clear()                    { MsgQueueBase::DoClear(); }
+    TUint NumMsgs() const           { return MsgQueueBase::NumMsgs(); }
 };
 
 class MsgQueue : public MsgQueueBase
