@@ -241,7 +241,6 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     iStreamHandler.store(aMsg->StreamInfo().StreamHandler());
     auto msg = iMsgFactory.CreateMsgDecodedStream(aMsg, this);
-    AutoMutex _(iLock);
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
     }
