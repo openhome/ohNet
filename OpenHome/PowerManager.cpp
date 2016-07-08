@@ -17,6 +17,8 @@ const Brn PowerManager::kConfigKey("Device.StartupMode");
 const TUint PowerManager::kConfigIdStartupStandbyEnabled = 0;
 const TUint PowerManager::kConfigIdStartupStandbyDisabled  = 1;
 
+#define LOGV(fmt, ...) { if (iLogVerbose.load()) { Log::Print(fmt, __VA_ARGS__); } }
+
 PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     : iNextPowerId(0)
     , iNextStandbyId(0)
@@ -24,6 +26,8 @@ PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     , iStandby(Standby::Undefined)
     , iLock("PMLO")
 {
+    ASSERT(iLogVerbose.is_lock_free());
+    iLogVerbose.store(false);
     const int arr[] = { kConfigIdStartupStandbyEnabled, kConfigIdStartupStandbyDisabled };
     std::vector<TUint> options(arr, arr + sizeof(arr)/sizeof(arr[0]));
     iConfigStartupStandby = new ConfigChoice(aConfigInit, kConfigKey, options, kConfigIdStartupStandbyEnabled);
@@ -64,8 +68,10 @@ void PowerManager::StandbyEnable()
     }
     iStandby = Standby::On;
     for (auto it = iStandbyObservers.rbegin(); it != iStandbyObservers.rend(); ++it) {
+        LOGV("PowerManager::StandbyEnable %s\n", (*it)->ClientId());
         (*it)->Handler().StandbyEnabled();
     }
+    LOGV("PowerManager::StandbyEnable complete\n");
 }
 
 void PowerManager::StandbyDisable(StandbyDisableReason aReason)
@@ -77,8 +83,10 @@ void PowerManager::StandbyDisable(StandbyDisableReason aReason)
     iStandby = Standby::Off;
     iLastDisableReason = aReason;
     for (auto it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
+        LOGV("PowerManager::StandbyDisable %s\n", (*it)->ClientId());
         (*it)->Handler().StandbyDisabled(aReason);
     }
+    LOGV("PowerManager::StandbyDisable complete\n");
 }
 
 IPowerManagerObserver* PowerManager::RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority)
@@ -137,6 +145,11 @@ IStandbyObserver* PowerManager::RegisterStandbyHandler(IStandbyHandler& aHandler
     return observer;
 }
 
+void PowerManager::LogVerbose(TBool aEnable)
+{
+    iLogVerbose.store(aEnable);
+}
+
 // Called from destructor of PowerManagerObserver.
 void PowerManager::DeregisterPower(TUint aId)
 {
@@ -162,6 +175,7 @@ void PowerManager::DeregisterStandby(TUint aId)
     AutoMutex _(iLock);
     for (auto it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
         if ((*it)->Id() == aId) {
+            LOGV("PowerManager::DeregisterStandby %s\n", (*it)->ClientId());
             iStandbyObservers.erase(it);
             return;
         }
