@@ -90,6 +90,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct, 
     iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityLowest, "ProviderProduct");
     iProduct.AddObserver(*this);
     iProduct.AddNameObserver(*this);
+    iProduct.AddAttributesObserver(*this);
 }
 
 ProviderProduct::~ProviderProduct()
@@ -267,7 +268,10 @@ void ProviderProduct::Source(IDvInvocation& aInvocation, TUint aIndex, IDvInvoca
 void ProviderProduct::Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue)
 {
     aInvocation.StartResponse();
-    aValue.Write(iProduct.Attributes());
+    {
+        AutoMutex _(iLock);
+        aValue.Write(iAttributes);
+    }
     aValue.WriteFlush();
     aInvocation.EndResponse();
 }
@@ -283,7 +287,6 @@ void ProviderProduct::Started()
 {
     SetPropertySourceIndex(iProduct.CurrentSourceIndex());
     SetPropertySourceCount(iProduct.SourceCount());
-    SetPropertyAttributes(iProduct.Attributes());
     SourceXmlChanged();
 }
 
@@ -335,6 +338,13 @@ void ProviderProduct::RoomChanged(const Brx& aRoom)
 void ProviderProduct::NameChanged(const Brx& aName)
 {
     SetPropertyProductName(aName);
+}
+
+void ProviderProduct::AttributesChanged()
+{
+    AutoMutex _(iLock);
+    iProduct.GetAttributes(iAttributes);
+    SetPropertyAttributes(iAttributes);
 }
 
 void ProviderProduct::StandbyEnabled()

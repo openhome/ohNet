@@ -48,6 +48,13 @@ public:
     virtual ~IProductNameObservable() {}
 };
 
+class IProductAttributesObserver
+{
+public:
+    virtual ~IProductAttributesObserver() {}
+    virtual void AttributesChanged() = 0;
+};
+
 class IProductObserver
 {
 public:
@@ -78,7 +85,6 @@ class Product : private IProduct
 {
 private:
     static const Brn kKeyLastSelectedSource;
-    static const TUint kMaxAttributeBytes = 1024;
     static const TUint kCurrentSourceNone;
 public:
     static const Brn kConfigIdRoomBase;
@@ -90,17 +96,20 @@ public:
     static const TUint kMaxRoomBytes = 40;
     static const TUint kMaxSourceXmlBytes = 1024 * 3;
     static const TUint kMaxUriBytes = 128;
+    static const TUint kMaxAttributeBytes = 1024;
 public:
     Product(Environment& aEnv, Net::DvDeviceStandard& aDevice, IReadStore& aReadStore,
             Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManager& aConfigReader,
             Configuration::IConfigInitialiser& aConfigInit, IPowerManager& aPowerManager);
     ~Product();
     void AddObserver(IProductObserver& aObserver);
+    void AddAttributesObserver(IProductAttributesObserver& aObserver);
     void Start();
     void Stop();
     void AddSource(ISource* aSource);
     void AddAttribute(const TChar* aAttribute);
     void AddAttribute(const Brx& aAttribute);
+    void SetConfigAppUrl(const Brx& aUrl);
     void GetManufacturerDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri);
     void GetModelDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri);
     void GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Bwx& aImageUri);
@@ -112,7 +121,7 @@ public:
     void SetCurrentSourceByName(const Brx& aName);
     void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
     void GetSourceDetails(const Brx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible) const;
-    const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
+    void GetAttributes(Bwx& aAttributes) const;
     TUint SourceXmlChangeCount();
 private:
     TBool DoSetCurrentSourceLocked(TUint aIndex); // returns true if aIndex wasn't already active
@@ -149,8 +158,11 @@ private:
     IStandbyObserver* iStandbyObserver;
     std::vector<IProductObserver*> iObservers;
     std::vector<IProductNameObserver*> iNameObservers;
+    std::vector<IProductAttributesObserver*> iAttributeObservers;
     std::vector<ISource*> iSources;
     Bws<kMaxAttributeBytes> iAttributes;
+    Endpoint::AddressBuf iConfigAppAddress;
+    Bws<256> iConfigAppUrlTail;
     TBool iStarted;
     TBool iStandby;
     TBool iAutoPlay;

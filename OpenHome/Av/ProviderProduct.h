@@ -17,6 +17,7 @@ namespace Av {
 class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct2
                       , private IProductObserver
                       , private IProductNameObserver
+                      , IProductAttributesObserver
                       , private IStandbyHandler
 {
 public:
@@ -45,6 +46,8 @@ private: // from IProductObserver
 private: // from IProductNameObserver
     void RoomChanged(const Brx& aRoom) override;
     void NameChanged(const Brx& aName) override;
+private: // from IProductAttributesObserver
+    void AttributesChanged() override;
 private: // from IStandbyHandler
     void StandbyEnabled() override;
     void StandbyDisabled(StandbyDisableReason aReason) override;
@@ -54,6 +57,7 @@ private:
     Mutex iLock;
     Bws<Product::kMaxSourceXmlBytes> iSourceXml;
     IStandbyObserver* iStandbyObserver;
+    Bws<Product::kMaxAttributeBytes> iAttributes;
 };
 
 } // namespace Av

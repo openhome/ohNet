@@ -106,6 +106,11 @@ void Product::AddObserver(IProductObserver& aObserver)
     iObservers.push_back(&aObserver);
 }
 
+void Product::AddAttributesObserver(IProductAttributesObserver& aObserver)
+{
+    iAttributeObservers.push_back(&aObserver);
+}
+
 void Product::Start()
 {
     // All sources must have been registered; construct startup source config val.
@@ -183,6 +188,16 @@ void Product::AddAttribute(const Brx& aAttribute)
         iAttributes.Append(' ');
     }
     iAttributes.Append(aAttribute);
+}
+
+void Product::SetConfigAppUrl(const Brx& aUrl)
+{
+    iLock.Wait();
+    iConfigAppUrlTail.Replace(aUrl);
+    iLock.Signal();
+    for (auto it=iAttributeObservers.begin(); it!=iAttributeObservers.end(); ++it) {
+        (*it)->AttributesChanged();
+    }
 }
 
 void Product::GetManufacturerDetails(Brn& aName, Brn& aInfo, Bwx& aUrl, Bwx& aImageUri)
@@ -296,17 +311,23 @@ void Product::CurrentAdapterChanged()
     {
         AutoMutex _(iLock);
         AutoNetworkAdapterRef ar(iEnv, "Av::Product");
+        iConfigAppAddress.Replace(Brx::Empty());
         auto current = ar.Adapter();
         if (current == nullptr) {
             iUriPrefix.Set("");
         }
         else {
             iDevice.GetResourceManagerUri(*current, iUriPrefix);
+            Endpoint ep(0, current->Address());
+            ep.AppendAddress(iConfigAppAddress);
         }
     }
 
     for (auto it=iObservers.begin(); it!=iObservers.end(); ++it) {
         (*it)->ProductUrisChanged();
+    }
+    for (auto it=iAttributeObservers.begin(); it!=iAttributeObservers.end(); ++it) {
+        (*it)->AttributesChanged();
     }
 }
 
@@ -426,9 +447,16 @@ void Product::GetSourceDetails(const Brx& aSystemName, Bwx& aType, Bwx& aName, T
     THROW(AvSourceNotFound);
 }
 
-const Brx& Product::Attributes() const
+void Product::GetAttributes(Bwx& aAttributes) const
 {
-    return iAttributes;
+    AutoMutex _(iLock);
+    aAttributes.Replace(iAttributes);
+    if (iConfigAppAddress.Bytes() > 0) {
+        aAttributes.Append(" App:Config ");
+        aAttributes.Append("http://");
+        aAttributes.Append(iConfigAppAddress);
+        aAttributes.Append(iConfigAppUrlTail);
+    }
 }
 
 TUint Product::SourceXmlChangeCount()
