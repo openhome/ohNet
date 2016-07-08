@@ -1362,7 +1362,7 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 TBool DviServerUpnp::TryMapPath(const Brx& aReqPath, Bwx& aMappedPath)
 {
     if (iPathMapper == NULL) {
-        return NULL;
+        return false;
     }
     return iPathMapper->TryMapPath(aReqPath, aMappedPath);
 }
