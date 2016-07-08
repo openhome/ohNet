@@ -17,7 +17,8 @@ const Brn PowerManager::kConfigKey("Device.StartupMode");
 const TUint PowerManager::kConfigIdStartupStandbyEnabled = 0;
 const TUint PowerManager::kConfigIdStartupStandbyDisabled  = 1;
 
-#define LOGV(fmt, ...) { if (iLogVerbose.load()) { Log::Print(fmt, __VA_ARGS__); } }
+#define LOGVA(fmt, ...) { if (iLogVerbose.load()) { Log::Print(fmt, __VA_ARGS__); } }
+#define LOGV(str)       { if (iLogVerbose.load()) { Log::Print(str); } }
 
 PowerManager::PowerManager(IConfigInitialiser& aConfigInit)
     : iNextPowerId(0)
@@ -68,7 +69,7 @@ void PowerManager::StandbyEnable()
     }
     iStandby = Standby::On;
     for (auto it = iStandbyObservers.rbegin(); it != iStandbyObservers.rend(); ++it) {
-        LOGV("PowerManager::StandbyEnable %s\n", (*it)->ClientId());
+        LOGVA("PowerManager::StandbyEnable %s\n", (*it)->ClientId());
         (*it)->Handler().StandbyEnabled();
     }
     LOGV("PowerManager::StandbyEnable complete\n");
@@ -83,7 +84,7 @@ void PowerManager::StandbyDisable(StandbyDisableReason aReason)
     iStandby = Standby::Off;
     iLastDisableReason = aReason;
     for (auto it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
-        LOGV("PowerManager::StandbyDisable %s\n", (*it)->ClientId());
+        LOGVA("PowerManager::StandbyDisable %s\n", (*it)->ClientId());
         (*it)->Handler().StandbyDisabled(aReason);
     }
     LOGV("PowerManager::StandbyDisable complete\n");
@@ -175,7 +176,7 @@ void PowerManager::DeregisterStandby(TUint aId)
     AutoMutex _(iLock);
     for (auto it = iStandbyObservers.begin(); it != iStandbyObservers.end(); ++it) {
         if ((*it)->Id() == aId) {
-            LOGV("PowerManager::DeregisterStandby %s\n", (*it)->ClientId());
+            LOGVA("PowerManager::DeregisterStandby %s\n", (*it)->ClientId());
             iStandbyObservers.erase(it);
             return;
         }
