@@ -145,6 +145,8 @@ protected:
     Net::Shell* iShell;
     Media::IPullableClock* iPullableClock;
     Media::AllocatorInfoLogger* iInfoLogger;
+    Net::DvDeviceStandard* iDevice;
+    Net::DvDevice* iDeviceUpnpAv;
 private:
     Semaphore iSemShutdown;
     Semaphore iDisabled;
@@ -159,8 +161,6 @@ private:
     VolumeSinkLogger iVolumeLogger;
     Bws<Uri::kMaxUriBytes+1> iPresentationUrl;
     Media::LoggingPipelineObserver* iPipelineObserver;
-    Net::DvDeviceStandard* iDevice;
-    Net::DvDevice* iDeviceUpnpAv;
     Av::FriendlyNameAttributeUpdater* iFnUpdaterStandard;
     FriendlyNameManagerUpnpAv* iFnManagerUpnpAv;
     Av::FriendlyNameAttributeUpdater* iFnUpdaterUpnpAv;
