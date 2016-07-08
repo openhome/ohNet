@@ -515,10 +515,11 @@ void PropertyWriterFactory::RemoveRef()
 
 // DviSessionUpnp
 
-DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IRedirector& aRedirector)
+DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IPathMapperUpnp& aPathMapper, IRedirector& aRedirector)
     : iDvStack(aDvStack)
     , iInterface(aInterface)
     , iPort(aPort)
+    , iPathMapper(aPathMapper)
     , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
 {
@@ -893,6 +894,10 @@ void DviSessionUpnp::Renew()
 void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, DviService** aService)
 {
     Parser parser(iReaderRequest->Uri());
+    if (iPathMapper.TryMapPath(iReaderRequest->Uri(), iMappedRequestUri)) {
+        parser.Set(iMappedRequestUri);
+    }
+
     Brn tmp = parser.Next('/');
     if (tmp.Bytes() > 0) {
         Error(HttpStatus::kPreconditionFailed);
@@ -1321,8 +1326,14 @@ void DviSessionUpnp::InvocationWriteEnd()
 DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
     : DviServer(aDvStack)
     , iPort(aPort)
+    , iPathMapper(NULL)
 {
     Initialise();
+}
+
+void DviServerUpnp::SetPathMapper(IPathMapperUpnp& aPathMapper)
+{
+    iPathMapper = &aPathMapper;
 }
 
 void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
@@ -1343,9 +1354,17 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("UpnpSession %d", i);
         thName.PtrZ();
-        server->Add((const TChar*)thName.Ptr(), new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *this));
+        server->Add((const TChar*)thName.Ptr(), new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *this, *this));
     }
     return server;
+}
+
+TBool DviServerUpnp::TryMapPath(const Brx& aReqPath, Bwx& aMappedPath)
+{
+    if (iPathMapper == NULL) {
+        return NULL;
+    }
+    return iPathMapper->TryMapPath(aReqPath, aMappedPath);
 }
 
 TBool DviServerUpnp::RedirectUri(const Brx& aUri, Brn& aRedirectTo)

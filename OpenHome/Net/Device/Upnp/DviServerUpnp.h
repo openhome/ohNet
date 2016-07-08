@@ -24,7 +24,14 @@ class IRedirector
 public:
     virtual TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo) = 0;
 };
-    
+
+class IPathMapperUpnp
+{
+public:
+    virtual ~IPathMapperUpnp() {}
+    virtual TBool TryMapPath(const Brx& aReqPath, Bwx& aMappedPath) = 0;
+};
+
 class HeaderSoapAction : public HttpHeader
 {
 public:
@@ -155,7 +162,7 @@ private:
 class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation
 {
 public:
-    DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IRedirector& aRedirector);
+    DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IPathMapperUpnp& aPathMapper, IRedirector& aRedirector);
     ~DviSessionUpnp();
 private:
     void Run();
@@ -203,10 +210,12 @@ private:
     static const TUint kMaxRequestBytes = 64*1024;
     static const TUint kMaxResponseBytes = 4*1024;
     static const TUint kReadTimeoutMs = 5 * 1000;
+    static const TUint kMaxRequestPathBytes = 256;
 private:
     DvStack& iDvStack;
     TIpAddress iInterface;
     TUint iPort;
+    IPathMapperUpnp& iPathMapper;
     IRedirector& iRedirector;
     Srx* iReadBuffer;
     ReaderUntil* iReaderUntil;
@@ -230,6 +239,7 @@ private:
     TBool iResponseStarted;
     TBool iResponseEnded;
     Bws<kMaxRequestBytes> iSoapRequest;
+    Bws<kMaxRequestPathBytes> iMappedRequestUri;
     DviDevice* iInvocationDevice;
     DviService* iInvocationService;
     mutable Bws<128> iResourceUriPrefix;
@@ -239,17 +249,21 @@ private:
 };
 
 
-class DviServerUpnp : public DviServer, private IRedirector
+class DviServerUpnp : public DviServer, private IPathMapperUpnp, private IRedirector
 {
 public:
     DviServerUpnp(DvStack& aDvStack, TUint aPort = 0);
+    void SetPathMapper(IPathMapperUpnp& aPathMapper);
     void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
-private:
+private: // from IPathMapperUpnp
+    TBool TryMapPath(const Brx& aReqPath, Bwx& aMappedPath);
+private: // from IRedirector
     TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo);
 private:
     TUint iPort;
+    IPathMapperUpnp* iPathMapper;
     Brh iRedirectUriRequested;
     Brh iRedirectUriRedirectedTo;
 };
