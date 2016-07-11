@@ -452,7 +452,7 @@ void Product::GetAttributes(Bwx& aAttributes) const
     AutoMutex _(iLock);
     aAttributes.Replace(iAttributes);
     if (iConfigAppAddress.Bytes() > 0) {
-        aAttributes.Append(" App:Config ");
+        aAttributes.Append(" App:Config=");
         aAttributes.Append("http://");
         aAttributes.Append(iConfigAppAddress);
         aAttributes.Append(iConfigAppUrlTail);
