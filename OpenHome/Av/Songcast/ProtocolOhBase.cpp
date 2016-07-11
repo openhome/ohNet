@@ -482,11 +482,15 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         iMetatextMsgDue = false;
     }
     iSupply->OutputData(aMsg.Audio());
-    if (aMsg.Halt()) {
+    const TBool halt = aMsg.Halt();
+    if (halt) {
         iSupply->OutputWait();
         iSupply->OutputHalt();
     }
     aMsg.RemoveRef();
+    if (halt) {
+        THROW(OhmDiscontinuity);
+    }
 }
 
 void ProtocolOhBase::Process(OhmMsgAudio& aMsg)
