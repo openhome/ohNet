@@ -36,13 +36,11 @@ void SenderThread::Push(Msg* aMsg)
     ASSERT(iFifoSlotsUsed < kMaxMsgBacklog);
     iFifo.Write(aMsg);
     iFifoSlotsUsed++;
-    iThread->Signal();
 }
 
 void SenderThread::Run()
 {
     do {
-        iThread->Wait();
         auto msg = iFifo.Read();
         iFifoSlotsUsed--;
         msg = msg->Process(*this);
