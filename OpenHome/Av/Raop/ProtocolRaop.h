@@ -439,7 +439,7 @@ private:
     FifoLite<ResendRange*, kMaxMissedRanges> iFifoResend;
     TBool iRunning;
     TBool iRepairing;
-    TUint iFrame;
+    TUint16 iFrame;     // RAOP seq no is 16-bit uint.
     Mutex iMutexTransport;
     Mutex iMutexAudioOutput;
 };
@@ -481,7 +481,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
     {
         AutoMutex a(iMutexTransport);
         if (!iRunning) {
-            iFrame = aRepairable.Frame();
+            iFrame = static_cast<TUint16>(aRepairable.Frame());
             iRunning = true;
             iOutput.push_back(&aRepairable);
         }
@@ -493,7 +493,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
         // If that's the case, aRepairable was incorporated into messages to be
         // output, so don't want to enter the code blocks below.
         if (!iRepairing && iOutput.size() == 0) {
-            const TInt diff = aRepairable.Frame() - iFrame;
+            const TInt16 diff = static_cast<TUint16>(aRepairable.Frame()) - iFrame;
             if (diff == 1) {
                 iFrame++;
                 iOutput.push_back(&aRepairable);
@@ -501,7 +501,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
             else if (diff < 1) {
                 if (!aRepairable.Resend()) {
                     // A frame in the past that is not a resend implies that the sender has reset their frame count
-                    aRepairable.Destroy();  // FIXME - dropping packet. Is it possible to save this packet?
+                    aRepairable.Destroy();
                     // accept the next received frame as the start of a new stream
                     iRunning = false;
                     THROW(RepairerStreamRestarted);
@@ -556,25 +556,25 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::RepairReset()
     }
     iRepairFrames.clear();
     iRunning = false;
-    iRepairing = false; // FIXME - not absolutely required as test for iRunning takes precedence in OutputAudio()
+    iRepairing = false;
 }
 
 template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepairable)
 {
     // get the incoming frame number
-    const TUint frame = aRepairable.Frame();
+    const TUint16 frame = static_cast<TUint16>(aRepairable.Frame());
     LOG(kMedia, "Repairer::Repair GOT %d\n", frame);
 
     // get difference between this and the last frame sent down the pipeline
-    TInt diff = frame - iFrame;
+    TInt16 diff = frame - iFrame;
     if (diff < 1) {
         TBool repairing = true;
         if (!aRepairable.Resend()) {
             // A frame in the past that is not a resend implies that the sender has reset their frame count
             RepairReset();
             repairing = false;
-            aRepairable.Destroy();  // FIXME - dropping packet. Is it possible to save this packet?
-            THROW(RepairerStreamRestarted); // Ownership of aRepairable is passed back to caller.
+            aRepairable.Destroy();
+            THROW(RepairerStreamRestarted);
         }
         // incoming frames is equal to or earlier than the last frame sent down the pipeline
         // in other words, it's a duplicate, so discard it and continue
@@ -586,7 +586,7 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
         iFrame++;
         iOutput.push_back(&aRepairable);
         // ... and see if the current first waiting frame is now also ready to be sent
-        while (iRepairFirst->Frame() == iFrame + 1) {
+        while (static_cast<TUint16>(iRepairFirst->Frame()) == static_cast<TUint16>(iFrame + 1)) {
             // ... yes, it is, so send it
             iFrame++;
             iOutput.push_back(iRepairFirst);
@@ -607,7 +607,7 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
 
     // Ok, its a frame that needs to be put into the backlog, but where?
     // compare it to the current first waiting frame
-    diff = frame - iRepairFirst->Frame();
+    diff = frame - static_cast<TUint16>(iRepairFirst->Frame());
     if (diff == 0) {
         // it's equal to the currently first waiting frame, so discard it - it's a duplicate
         aRepairable.Destroy();
@@ -636,7 +636,7 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
     }
     // ok, so the backlog is not empty
     // is it a duplicate of the last frame in the backlog?
-    diff = frame - iRepairFrames[iRepairFrames.size()-1]->Frame();
+    diff = frame - static_cast<TUint16>(iRepairFrames[iRepairFrames.size()-1]->Frame());
     if (diff == 0) {
         // ... yes, so discard
         aRepairable.Destroy();
@@ -657,7 +657,7 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
     // ... no, so it has to go somewhere in the middle of the backlog, so iterate through and inject it at the right place (if there is space)
     TUint count = iRepairFrames.size();
     for (auto it = iRepairFrames.begin(); it != iRepairFrames.end(); ++it) {
-        diff = frame - (*it)->Frame();
+        diff = frame - static_cast<TUint16>((*it)->Frame());
         if (diff > 0) {
             continue;
         }
