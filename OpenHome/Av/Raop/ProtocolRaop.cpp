@@ -898,8 +898,9 @@ void RepairerTimer::Cancel()
 
 void RepairerTimer::TimerFired()
 {
-    iFunctor();
-    iFunctor = Functor();
+    Functor functor = iFunctor;
+    iFunctor = Functor();   // Clear iFunctor member here in case Start() is called within functor callback.
+    functor();
 }
 
 
