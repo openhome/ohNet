@@ -134,6 +134,7 @@ private:
     void TestResendPacketBufferOverflowLast();
     void TestResendBufferOverflowRecover();
     void TestResendPacketsOutOfOrder();
+    void TestDropPacketWhileAwaitingResend();
     void TestResendPacketsAlreadySeen();
     void TestStreamReset();   // Receiving a packet already seen but is not a resend.
     void TestStreamResetResendPending();
@@ -397,6 +398,7 @@ SuiteRaopResend::SuiteRaopResend(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestResendPacketBufferOverflowLast), "TestResendPacketBufferOverflowLast");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestResendBufferOverflowRecover), "TestResendBufferOverflowRecover");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestResendPacketsOutOfOrder), "TestResendPacketsOutOfOrder");
+    AddTest(MakeFunctor(*this, &SuiteRaopResend::TestDropPacketWhileAwaitingResend), "TestDropPacketWhileAwaitingResend");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestResendPacketsAlreadySeen), "TestResendPacketsAlreadySeen");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestStreamReset), "TestStreamReset");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestStreamResetResendPending), "TestStreamResetResendPending");
@@ -924,6 +926,62 @@ void SuiteRaopResend::TestResendPacketsOutOfOrder()
     TEST(iTestPipe->Expect(Brn("MR::Destroy 3")));
     TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 4")));
     TEST(iTestPipe->Expect(Brn("MR::Destroy 4")));
+
+    TEST(iTestPipe->ExpectEmpty());
+}
+
+void SuiteRaopResend::TestDropPacketWhileAwaitingResend()
+{
+    // Drop a packet between putting out a resend request and receiving the
+    // resent packet (and before resend timer fires again)
+
+    iRepairer->OutputAudio(*iAllocator->Allocate(0, false, Brn("0")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 0")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 0")));
+
+    // Miss a packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(2, false, Brn("2")));
+    TEST(iTestPipe->Expect(Brn("MRT::Start")));
+
+    // Fire timer.
+    iTimer->Fire();
+    TEST(iTestPipe->Expect(Brn("MRR::ReqestResend 1->1")));
+    TEST(iTestPipe->Expect(Brn("MRT::Start")));
+
+    // Send in a couple more packets.
+    iRepairer->OutputAudio(*iAllocator->Allocate(3, false, Brn("3")));
+    iRepairer->OutputAudio(*iAllocator->Allocate(4, false, Brn("4")));
+    // Miss a packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(6, false, Brn("6")));
+    TEST(iTestPipe->ExpectEmpty());
+
+    // Now, receive resent packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(1, true, Brn("1")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 1")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 1")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 2")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 2")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 3")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 3")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 4")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 4")));
+
+    // Send in another packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(7, false, Brn("7")));
+
+    // Fire timer again, should still be repairing.
+    iTimer->Fire();
+    TEST(iTestPipe->Expect(Brn("MRR::ReqestResend 5->5")));
+    TEST(iTestPipe->Expect(Brn("MRT::Start")));
+
+    // Now, send in requested packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(5, true, Brn("5")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 5")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 5")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 6")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 6")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 7")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 7")));
 
     TEST(iTestPipe->ExpectEmpty());
 }
