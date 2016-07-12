@@ -9,6 +9,8 @@ using namespace OpenHome::Media;
 
 // EncodedAudioReservoir
 
+const TUint EncodedAudioReservoir::kEncodedBytesInvalid = 0x80000000;
+
 EncodedAudioReservoir::EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, TUint aMsgCount, TUint aMaxStreamCount)
     : iMsgFactory(aMsgFactory)
     , iFlushIdProvider(aFlushIdProvider)
@@ -23,6 +25,7 @@ EncodedAudioReservoir::EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdPr
     , iPostSeekFlushId(MsgFlush::kIdInvalid)
     , iPostSeekStreamPos(0)
 {
+    ASSERT(iMsgCount * AudioData::kMaxBytes < kEncodedBytesInvalid);
 }
 
 TUint EncodedAudioReservoir::SizeInBytes() const
@@ -97,6 +100,7 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
         UnblockIfNotFull();
         return nullptr;
     }
+    ASSERT(EncodedBytes() < kEncodedBytesInvalid);
     iStreamPos = newStreamPos;
     return aMsg;
 }

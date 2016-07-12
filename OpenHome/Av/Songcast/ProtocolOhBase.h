@@ -3,6 +3,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Optional.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -13,6 +14,8 @@
 #include <OpenHome/Media/Supply.h>
 
 #include <vector>
+
+EXCEPTION(OhmDiscontinuity);
 
 namespace OpenHome {
     class Environment;

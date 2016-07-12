@@ -213,6 +213,8 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         }
         catch (ReaderError&) {
         }
+        catch (OhmDiscontinuity&) {
+        }
     } while (!iStopped);
 
     if (iTimestamper != nullptr) {

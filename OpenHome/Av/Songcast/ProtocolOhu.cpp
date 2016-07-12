@@ -219,6 +219,9 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         catch (ReaderError&) {
             LOG2(kSongcast, kError, "OHU: ReaderError.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
         }
+        catch (OhmDiscontinuity&) {
+            LOG2(kSongcast, kError, "OHU: Sender Halted.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
+        }
     } while (!iStopped);
     
     Interrupt(false); // cancel any interrupt to allow SendLeave to succeed
