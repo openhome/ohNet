@@ -175,7 +175,10 @@ void IdManager::InvalidateAfter(TUint aId)
 
     // if matched, advance past any additional streams for the same track
     if (matched) {
-        while (index != iIndexTail && iActiveStreams[index].Id() == aId && streamId < iActiveStreams[index].StreamId()) {
+        while (   index != iIndexTail
+               && iActiveStreams[index].Id() == aId
+               && streamId < iActiveStreams[index].StreamId()
+               && iActiveStreams[index].PlayNow()) {
             streamId = iActiveStreams[index].StreamId();
             UpdateIndex(index);
         }
