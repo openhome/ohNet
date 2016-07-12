@@ -223,6 +223,7 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
 
 OhmMsgAudio* OhmSenderDriver::CreateAudio()
 {
+    AutoMutex mutex(iMutex);
     if (iFifoHistory.SlotsUsed() == kMaxHistoryFrames) {
         iFifoHistory.Read()->RemoveRef();
     }
