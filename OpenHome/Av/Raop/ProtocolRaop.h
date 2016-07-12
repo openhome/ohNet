@@ -686,8 +686,8 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
         LOG(kMedia, ">Repairer::TimerRepairExpired REQUEST RESEND");
 
         TUint rangeCount = 0;
-        TUint start = iFrame + 1;
-        TUint end = iRepairFirst->Frame();
+        TUint16 start = iFrame + 1;
+        TUint16 end = static_cast<TUint16>(iRepairFirst->Frame());
 
         // phase 1 - request the frames between the last sent down the pipeline and the first waiting frame
         ResendRange* range = iFifoResend.Read();
@@ -701,7 +701,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
         for (TUint i=0; rangeCount < kMaxMissedRanges && i < iRepairFrames.size(); i++) {
             IRepairable* repairable = iRepairFrames[i];
             start = end + 1;
-            end = repairable->Frame();
+            end = static_cast<TUint16>(repairable->Frame());
 
             if (end-start > 0) {
                 ResendRange* range = iFifoResend.Read();
