@@ -149,6 +149,7 @@ public:
     virtual void KeepAlive() = 0;
     virtual void Close() = 0;
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
+    virtual ~IRaopDiscovery() {}
 };
 
 class RaopDiscoveryServer;
@@ -220,7 +221,7 @@ class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, privat
 {
 public:
     RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume);
-    virtual ~RaopDiscoveryServer();
+    ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
     void PowerDown();
@@ -267,9 +268,7 @@ public:
     static const TUint kVolMaxScaled = 1000;
 public:
     RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMaxMilliDb);
-    virtual ~RaopDiscovery();
-    void Enable();
-    void Disable();
+    ~RaopDiscovery();
     void AddObserver(IRaopObserver& aObserver);
 public: // from IRaopDiscovery
     TBool Active() override;

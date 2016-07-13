@@ -928,26 +928,6 @@ RaopDiscovery::~RaopDiscovery()
     }
 }
 
-void RaopDiscovery::Enable()
-{
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->Enable();
-        ++it;
-    }
-}
-
-void RaopDiscovery::Disable()
-{
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->Disable();
-        ++it;
-    }
-}
-
 void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
 {
     AutoMutex a(iObserversLock);
