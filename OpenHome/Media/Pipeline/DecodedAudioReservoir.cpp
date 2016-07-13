@@ -51,7 +51,7 @@ Msg* DecodedAudioReservoir::Pull()
     TBool wait = false;
     {
         AutoMutex _(iGorgeLock);
-        TBool wait = (iGorging && Jiffies() < iGorgeSize);
+        wait = (iGorging && Jiffies() < iGorgeSize);
         if (wait) {
             (void)iSemOut.Clear();
         }
@@ -87,13 +87,11 @@ void DecodedAudioReservoir::Push(Msg* aMsg)
     iGorgeLock.Wait();
     if (iGorging) {
         if (Jiffies() >= iGorgeSize) {
-            iGorging = false;
-            iSemOut.Signal();
+            SetGorging(false, "push (full)");
         }
         else if (oldPriorityMsgCount == 0 && iPriorityMsgCount > 0) {
-            iGorging = false;
             iShouldGorge = true;
-            iSemOut.Signal();
+            SetGorging(false, "push (priority msg)");
         }
     }
     iGorgeLock.Signal();
@@ -110,8 +108,7 @@ void DecodedAudioReservoir::HandleBlocked()
 {
     AutoMutex _(iGorgeLock);
     if (iGorging && Jiffies() >= iGorgeSize) {
-        iGorging = false;
-        iSemOut.Signal();
+        SetGorging(false, "push (full - HandleBlocked)");
     }
 }
 
