@@ -82,7 +82,6 @@ private:
     TUint iTargetHaltId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
-    TBool iPassGeneratedHalt;
     TBool iRunning;
 };
 

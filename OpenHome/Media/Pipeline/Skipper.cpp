@@ -22,7 +22,6 @@ Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(nullptr)
-    , iPassGeneratedHalt(false)
     , iRunning(false)
 {
 }
@@ -61,7 +60,6 @@ void Skipper::RemoveAll(TUint aHaltId, TBool aRampDown)
     AutoMutex a(iLock);
     LOG(kPipeline, "Skipper::RemoveAll() - flush until haltId %u\n", aHaltId);
     iTargetHaltId = aHaltId;
-    iPassGeneratedHalt = false;
     (void)TryRemoveCurrentStream(aRampDown);
 }
 
@@ -156,10 +154,6 @@ Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
         iTargetHaltId = MsgHalt::kIdInvalid;
         iState = eRunning;
         // don't consume this - downstream elements may also be waiting on it
-        return aMsg;
-    }
-    if (iPassGeneratedHalt) {
-        iPassGeneratedHalt = false;
         return aMsg;
     }
     return aMsg;
@@ -320,7 +314,6 @@ void Skipper::StartFlushing(TBool aSendHalt)
     if (aSendHalt) {
         iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
                                                         that any subsequent break in audio is expected */
-        iPassGeneratedHalt = true;
     }
     iState = eFlushing;
     iTargetFlushId = (iStreamHandler==nullptr? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
