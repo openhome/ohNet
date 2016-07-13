@@ -45,7 +45,8 @@ private: // from Media::IMsgProcessor
 private:
     Media::IPipelineElementDownstream& iDownstream;
     ThreadFunctor* iThread;
-    Fifo<Media::Msg*> iFifo;
+    Mutex iLock;
+    FifoLiteDynamic<Media::Msg*> iFifo;
     std::atomic<TUint> iFifoSlotsUsed;
     Semaphore iShutdownSem;
     TBool iQuit;

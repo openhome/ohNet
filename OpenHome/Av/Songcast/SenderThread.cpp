@@ -15,6 +15,7 @@ const TUint SenderThread::kMaxMsgBacklog = 100;
 SenderThread::SenderThread(IPipelineElementDownstream& aDownstream,
                            TUint aThreadPriority)
     : iDownstream(aDownstream)
+    , iLock("SCST")
     , iFifo(kMaxMsgBacklog)
     , iFifoSlotsUsed(0)
     , iShutdownSem("SGSN", 0)
@@ -33,16 +34,21 @@ SenderThread::~SenderThread()
 
 void SenderThread::Push(Msg* aMsg)
 {
+    AutoMutex _(iLock);
     ASSERT(iFifoSlotsUsed < kMaxMsgBacklog);
     iFifo.Write(aMsg);
     iFifoSlotsUsed++;
+    iThread->Signal();
 }
 
 void SenderThread::Run()
 {
     do {
+        iThread->Wait();
+        iLock.Wait();
         auto msg = iFifo.Read();
         iFifoSlotsUsed--;
+        iLock.Signal();
         msg = msg->Process(*this);
         iDownstream.Push(msg);
     } while (!iQuit);

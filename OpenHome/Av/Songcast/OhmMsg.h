@@ -258,10 +258,11 @@ private: // from IOhmMsgProcessor
     void Process(OhmMsgTrack& aMsg) override;
     void Process(OhmMsgMetatext& aMsg) override;
 private:
-    Fifo<OhmMsgAudio*> iFifoAudio;
-    Fifo<OhmMsgAudioBlob*> iFifoAudioBlob;
-    Fifo<OhmMsgTrack*> iFifoTrack;
-    Fifo<OhmMsgMetatext*> iFifoMetatext;
+    Mutex iLock;
+    FifoLiteDynamic<OhmMsgAudio*> iFifoAudio;
+    FifoLiteDynamic<OhmMsgAudioBlob*> iFifoAudioBlob;
+    FifoLiteDynamic<OhmMsgTrack*> iFifoTrack;
+    FifoLiteDynamic<OhmMsgMetatext*> iFifoMetatext;
 };
 
 } // namespace Av

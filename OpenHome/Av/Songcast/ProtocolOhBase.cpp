@@ -169,7 +169,14 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     }
     iStarving = false;
     iSocket.Interrupt(false);
-    Endpoint ep(iUri.Port(), iUri.Host());
+    Endpoint ep;
+    try {
+        ep.SetPort(iUri.Port());
+        ep.SetAddress(iUri.Host());
+    }
+    catch (NetworkError&) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
     ProtocolStreamResult res;
     do {
         iMutexTransport.Wait();

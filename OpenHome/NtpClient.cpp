@@ -37,14 +37,17 @@ NtpClient::~NtpClient()
 TBool NtpClient::TryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetworkDelayMs)
 {
     TBool success = false;
-    iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[iNextServerIndex]));
-    iNextServerIndex = (iNextServerIndex+1) % kNumServers;
     const TUint loopedIndex = iNextServerIndex;
     do {
-        success = DoTryGetNetworkTime(aNetworkTime, aNetworkDelayMs);
-        iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[iNextServerIndex]));
-        iNextServerIndex = (iNextServerIndex+1) % kNumServers;
+        try {
+            const TUint index = iNextServerIndex;
+            iNextServerIndex = (iNextServerIndex+1) % kNumServers;
+            iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[index]));
+            success = DoTryGetNetworkTime(aNetworkTime, aNetworkDelayMs);
+        }
+        catch (NetworkError&) {}
     } while (!success && iNextServerIndex != loopedIndex);
+    iNextServerIndex = (iNextServerIndex+1) % kNumServers;
     return success;
 }
 
@@ -53,18 +56,23 @@ void NtpClient::TestAllServers()
     iLogEnable = true;
     for (;;) {
         for (TUint i=0; i<kNumServers; i++) {
-            NtpTimestamp ts;
-            TUint networkDelayMs;
-            iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[i]));
-            Endpoint::AddressBuf buf;
-            iServerEndpoint.AppendAddress(buf);
-            Log::Print("\n%s:\n", buf.PtrZ());
-            if (DoTryGetNetworkTime(ts, networkDelayMs)) {
-                Log::Print("seconds = %u, networkDelayMs = %u\n", ts.Seconds(), networkDelayMs);
-                ASSERT(ts.Seconds() != 0);
+            try {
+                NtpTimestamp ts;
+                TUint networkDelayMs;
+                iServerEndpoint = Endpoint(kNtpPort, Brn(kNtpServers[i]));
+                Endpoint::AddressBuf buf;
+                iServerEndpoint.AppendAddress(buf);
+                Log::Print("\n%s:\n", buf.PtrZ());
+                if (DoTryGetNetworkTime(ts, networkDelayMs)) {
+                    Log::Print("seconds = %u, networkDelayMs = %u\n", ts.Seconds(), networkDelayMs);
+                    ASSERT(ts.Seconds() != 0);
+                }
+                else {
+                    Log::Print("FAILED\n");
+                }
             }
-            else {
-                Log::Print("FAILED\n");
+            catch (NetworkError&) {
+                Log::Print("NetworkError for %s\n", kNtpServers[i]);
             }
         }
         Thread::Sleep(1000);
