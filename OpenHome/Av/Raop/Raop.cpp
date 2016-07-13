@@ -572,6 +572,7 @@ void RaopDiscoverySession::Deactivate()
     LOG(kMedia, "RaopDiscoverySession::Deactivate %u, iActive: %u\n", iInstance, iActive);
     iDeactivateTimer->Cancel();     // reset timeout
     iActive = false;
+    iDiscovery.NotifySessionEnd();  // Notify observers that session has timed-out (ended).
 }
 
 
@@ -788,8 +789,6 @@ void RaopDiscoveryServer::PowerDown()
 {
     // called on power failure
     iRaopDevice->Deregister();
-    //iRaopDiscoverySession1->Close();
-    //iRaopDiscoverySession2->Close();
 }
 
 void RaopDiscoveryServer::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
