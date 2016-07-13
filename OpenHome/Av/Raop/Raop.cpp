@@ -320,6 +320,8 @@ void RaopDiscoverySession::GetRsa()
 
 RaopDiscoverySession::~RaopDiscoverySession()
 {
+    iDeactivateTimer->Cancel();     // reset timeout
+    iReaderRequest->Interrupt();    // terminate run()
     Interrupt(true);
     iShutdownSem.Wait();
     delete iDeactivateTimer;
@@ -563,9 +565,8 @@ void RaopDiscoverySession::DeactivateCallback()
 {
     LOG(kMedia, "RaopDiscoverySession::DeactivateCallback %u\n", iInstance);
     Deactivate();
-    iReaderRequest->Interrupt(); //terminate run()
+    iReaderRequest->Interrupt();    // terminate run()
 }
-
 
 void RaopDiscoverySession::Deactivate()
 {
@@ -769,7 +770,7 @@ RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvSta
 RaopDiscoveryServer::~RaopDiscoveryServer()
 {
     iRaopDevice->Deregister();
-    delete iRaopDiscoveryServer;
+    delete iRaopDiscoveryServer;    // Deletes iRaopDiscoverySessionX, which deactivates itself in destructor.
     delete iRaopDevice;
     iAdapter.RemoveRef(kAdapterCookie);
 }
@@ -857,7 +858,6 @@ void RaopDiscoveryServer::Enable()
 void RaopDiscoveryServer::Disable()
 {
     iRaopDevice->Deregister();
-    Deactivate();
 }
 
 void RaopDiscoveryServer::KeepAlive()
