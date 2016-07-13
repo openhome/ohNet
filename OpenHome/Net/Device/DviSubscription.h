@@ -103,7 +103,7 @@ private:
 class Publisher : public Thread
 {
 public:
-    Publisher(const TChar* aName, Fifo<Publisher*>& aFree);
+    Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree);
     ~Publisher();
     void Publish(DviSubscription* aSubscription);
 private:

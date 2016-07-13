@@ -375,8 +375,8 @@ void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
 
 // Publisher
 
-Publisher::Publisher(const TChar* aName, Fifo<Publisher*>& aFree)
-    : Thread(aName)
+Publisher::Publisher(const TChar* aName, TUint aPriority, Fifo<Publisher*>& aFree)
+    : Thread(aName, aPriority)
     , iFree(aFree)
 {
 }
@@ -442,13 +442,14 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     , iFree(aDvStack.Env().InitParams()->DvNumPublisherThreads())
 {
     const TUint numPublisherThreads = iDvStack.Env().InitParams()->DvNumPublisherThreads();
+    const TUint priority = iDvStack.Env().InitParams()->DvPublisherThreadPriority();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
     for (TUint i=0; i<numPublisherThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("Publisher %d", i);
         thName.PtrZ();
-        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), iFree);
+        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), priority, iFree);
         iFree.Write(iPublishers[i]);
         iPublishers[i]->Start();
     }
