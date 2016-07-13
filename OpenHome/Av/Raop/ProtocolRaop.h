@@ -739,7 +739,7 @@ class IVolumeScalerEnabler;
 // - Timing
 // However, the timing channel was never monitored in the previous codebase,
 // so no RaopTiming class exists here.
-class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendReceiver, public IAudioSupply
+class ProtocolRaop : public Media::Protocol, public IRaopResendReceiver, public IAudioSupply
 {
 private:
     static const TUint kSampleRate = 44100;     // Always 44.1KHz. Can get this from fmtp field.
@@ -750,6 +750,7 @@ public:
     ~ProtocolRaop();
     TUint SendFlush(TUint aSeq, TUint aTime);
 private: // from Protocol
+    void Interrupt(TBool aInterrupt) override;
     void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
@@ -798,6 +799,7 @@ private:
     TBool iWaiting;
     TBool iResumePending;
     TBool iStopped;
+    TBool iInterrupted;
     mutable Mutex iLockRaop;
     Semaphore iSemDrain;
 
