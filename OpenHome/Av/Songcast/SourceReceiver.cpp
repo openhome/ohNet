@@ -319,7 +319,14 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
     }
     // FIXME - may later want to handle a 'preset' scheme to allow presets to be selected from UI code
     if (iUri.Scheme() == ZoneHandler::kProtocolZone) {
-        Endpoint ep(iUri.Port(), iUri.Host());
+        Endpoint ep;
+        try {
+            ep.SetPort(iUri.Port());
+            ep.SetAddress(iUri.Host());
+        }
+        catch (NetworkError&) {
+            THROW(UriError);
+        }
         const Endpoint& tgt = iZoneHandler->MulticastEndpoint();
         if (ep.Address() != tgt.Address() || ep.Port() != tgt.Port()) {
             THROW(UriError);
