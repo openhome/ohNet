@@ -974,7 +974,7 @@ void RaopDiscovery::Deactivate()
     AutoMutex a(iServersLock);
     std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
     while (it != iServers.end()) {
-        (*it)->Enable();    // FIXME - should this be Disable()?
+        (*it)->Disable();
         ++it;
     }
 }
