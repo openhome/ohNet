@@ -91,7 +91,7 @@ Msg* Skipper::ProcessMsg(MsgMode* aMsg)
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
     if (RemoveAllPending()) {
-        StartFlushing(true);
+        StartFlushing();
         aMsg->RemoveRef();
         return nullptr;
     }
@@ -111,7 +111,7 @@ Msg* Skipper::ProcessMsg(MsgDelay* aMsg)
 Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
 {
     if (RemoveAllPending()) {
-        StartFlushing(true);
+        StartFlushing();
         aMsg->RemoveRef();
         return nullptr;
     }
@@ -147,7 +147,7 @@ Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
         /* A Halt signals a potential discontinuity in audio.
           Appropriate ramps must already have been applied by the creator of this msg
           ...so we can terminate our ramp */
-        StartFlushing(true);
+        StartFlushing();
     }
     if (iTargetHaltId != MsgHalt::kIdInvalid && aMsg->Id() == iTargetHaltId) {
         LOG(kPipeline, "Skipper - completed flush (pulled haltId %u)\n", iTargetHaltId);
@@ -178,7 +178,7 @@ Msg* Skipper::ProcessMsg(MsgWait* aMsg)
         /* A Wait signals a potential discontinuity in audio.
            Appropriate ramps must already have been applied by the creator of this msg
            ...so we can terminate our ramp */
-        StartFlushing(true);
+        StartFlushing();
     }
     return aMsg;
 }
@@ -219,7 +219,7 @@ Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
             split->RemoveRef(); // we're going to flush the rest of the stream so no need to add split to iQueue
         }
         if (iRemainingRampSize == 0) {
-            StartFlushing(true);
+            StartFlushing();
         }
         return aMsg;
     }
@@ -235,7 +235,7 @@ Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
     else if (iState == eRamping) {
         iRemainingRampSize = 0;
         iCurrentRampValue = Ramp::kMin;
-        StartFlushing(true);
+        StartFlushing();
     }
     return ProcessFlushable(aMsg);
 }
@@ -284,7 +284,7 @@ void Skipper::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
             iRunning = false;
             if (iState == eRamping) {
                 // FIXME - consider queueing StreamInterrupted.  But how to do this in a thread safe way?
-                StartFlushing(true);
+                StartFlushing();
             }
         }
     }
@@ -299,7 +299,7 @@ TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
     LOG(kMedia, "Skipper::TryRemoveCurrentStream(%u), iState=%u, iRunning=%u\n", aRampDown, iState, iRunning);
     EState state = iState;
     if (!aRampDown || iState == eStarting) {
-        StartFlushing(false); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
+        StartFlushing();
     }
     else if (iState == eRunning) {
         iState = eRamping;
@@ -309,12 +309,10 @@ TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
     return (state != iState);
 }
 
-void Skipper::StartFlushing(TBool aSendHalt)
+void Skipper::StartFlushing()
 {
-    if (aSendHalt) {
-        iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
-                                                        that any subsequent break in audio is expected */
-    }
+    iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
+                                                    that any subsequent break in audio is expected */
     iState = eFlushing;
     iTargetFlushId = (iStreamHandler==nullptr? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
     if (iTargetHaltId != MsgHalt::kIdNone && iTargetHaltId != MsgHalt::kIdInvalid) {

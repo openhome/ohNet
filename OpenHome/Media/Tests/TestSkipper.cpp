@@ -587,11 +587,8 @@ void SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass()
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
     TEST(iSkipper->TryRemoveStream(iStreamId, false));
-    // don't expect a Halt - not ramping implies that the pipeline is already halted (or buffering)
-    TEST(iSkipper->iQueue.IsEmpty());
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(CreateSilence(Jiffies::kPerMs * 3));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId+1));
     PullNext(EMsgHalt);
@@ -681,7 +678,6 @@ void SuiteSkipper::TestTryRemoveNoRampValidStream()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(CreateSilence(Jiffies::kPerMs * 3));
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId)); // should be consumed by Skipper
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId+1));
     PullNext(EMsgHalt);
