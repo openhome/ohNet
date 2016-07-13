@@ -660,7 +660,7 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
 {
-    LOG(kMedia, ">ProtocolRaop::ReceiveResend timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
+    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
     IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
     try {
         iRepairer.OutputAudio(*repairable);
