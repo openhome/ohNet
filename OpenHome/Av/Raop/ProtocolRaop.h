@@ -686,8 +686,8 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
         LOG(kMedia, ">Repairer::TimerRepairExpired REQUEST RESEND");
 
         TUint rangeCount = 0;
-        TUint start = iFrame + 1;
-        TUint end = iRepairFirst->Frame();
+        TUint16 start = iFrame + 1;
+        TUint16 end = static_cast<TUint16>(iRepairFirst->Frame());
 
         // phase 1 - request the frames between the last sent down the pipeline and the first waiting frame
         ResendRange* range = iFifoResend.Read();
@@ -701,7 +701,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::TimerRepairExpired()
         for (TUint i=0; rangeCount < kMaxMissedRanges && i < iRepairFrames.size(); i++) {
             IRepairable* repairable = iRepairFrames[i];
             start = end + 1;
-            end = repairable->Frame();
+            end = static_cast<TUint16>(repairable->Frame());
 
             if (end-start > 0) {
                 ResendRange* range = iFifoResend.Read();
@@ -739,7 +739,7 @@ class IVolumeScalerEnabler;
 // - Timing
 // However, the timing channel was never monitored in the previous codebase,
 // so no RaopTiming class exists here.
-class ProtocolRaop : public Media::ProtocolNetwork, public IRaopResendReceiver, public IAudioSupply
+class ProtocolRaop : public Media::Protocol, public IRaopResendReceiver, public IAudioSupply
 {
 private:
     static const TUint kSampleRate = 44100;     // Always 44.1KHz. Can get this from fmtp field.
@@ -750,6 +750,7 @@ public:
     ~ProtocolRaop();
     TUint SendFlush(TUint aSeq, TUint aTime);
 private: // from Protocol
+    void Interrupt(TBool aInterrupt) override;
     void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
@@ -798,6 +799,7 @@ private:
     TBool iWaiting;
     TBool iResumePending;
     TBool iStopped;
+    TBool iInterrupted;
     mutable Mutex iLockRaop;
     Semaphore iSemDrain;
 

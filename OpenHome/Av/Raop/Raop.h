@@ -141,7 +141,6 @@ class IRaopDiscovery
 {
 public:
     virtual TBool Active() = 0;
-    virtual void Deactivate() = 0;
     virtual TUint AesSid() = 0;
     virtual const Brx& Aeskey() = 0;
     virtual const Brx& Aesiv() = 0;
@@ -149,6 +148,7 @@ public:
     virtual void KeepAlive() = 0;
     virtual void Close() = 0;
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
+    virtual ~IRaopDiscovery() {}
 };
 
 class RaopDiscoveryServer;
@@ -160,6 +160,7 @@ class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
 public:
     RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolume& aVolume);
     ~RaopDiscoverySession();
+    void Deactivate();
 private: // from SocketTcpSession
     void Run() override;
 public: // from IRaopDiscovery
@@ -168,7 +169,6 @@ public: // from IRaopDiscovery
     const Brx& Fmtp() override;
     TBool Active() override;
     void KeepAlive() override;
-    void Deactivate() override;
     TUint AesSid() override;
     void Close() override;
     void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) override;
@@ -220,19 +220,19 @@ class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, privat
 {
 public:
     RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume);
-    virtual ~RaopDiscoveryServer();
+    ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
     void PowerDown();
     void Enable();
     void Disable();
     void AddObserver(IRaopObserver& aObserver);
+    void Deactivate();
 public: // from IRaopDiscovery
     const Brx& Aeskey() override;
     const Brx& Aesiv() override;
     const Brx& Fmtp() override;
     TBool Active() override;
-    void Deactivate() override;
     void KeepAlive() override;
     TUint AesSid() override;
     void Close() override;
@@ -267,13 +267,10 @@ public:
     static const TUint kVolMaxScaled = 1000;
 public:
     RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMaxMilliDb);
-    virtual ~RaopDiscovery();
-    void Enable();
-    void Disable();
+    ~RaopDiscovery();
     void AddObserver(IRaopObserver& aObserver);
 public: // from IRaopDiscovery
     TBool Active() override;
-    void Deactivate() override;
     TUint AesSid() override;
     const Brx& Aeskey() override;
     const Brx& Aesiv() override;

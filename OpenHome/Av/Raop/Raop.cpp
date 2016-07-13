@@ -320,6 +320,8 @@ void RaopDiscoverySession::GetRsa()
 
 RaopDiscoverySession::~RaopDiscoverySession()
 {
+    iDeactivateTimer->Cancel();     // reset timeout
+    iReaderRequest->Interrupt();    // terminate run()
     Interrupt(true);
     iShutdownSem.Wait();
     delete iDeactivateTimer;
@@ -563,15 +565,15 @@ void RaopDiscoverySession::DeactivateCallback()
 {
     LOG(kMedia, "RaopDiscoverySession::DeactivateCallback %u\n", iInstance);
     Deactivate();
-    iReaderRequest->Interrupt(); //terminate run()
+    iReaderRequest->Interrupt();    // terminate run()
 }
-
 
 void RaopDiscoverySession::Deactivate()
 {
     LOG(kMedia, "RaopDiscoverySession::Deactivate %u, iActive: %u\n", iInstance, iActive);
     iDeactivateTimer->Cancel();     // reset timeout
     iActive = false;
+    iDiscovery.NotifySessionEnd();  // Notify observers that session has timed-out (ended).
 }
 
 
@@ -768,7 +770,7 @@ RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvSta
 RaopDiscoveryServer::~RaopDiscoveryServer()
 {
     iRaopDevice->Deregister();
-    delete iRaopDiscoveryServer;
+    delete iRaopDiscoveryServer;    // Deletes iRaopDiscoverySessionX, which deactivates itself in destructor.
     delete iRaopDevice;
     iAdapter.RemoveRef(kAdapterCookie);
 }
@@ -788,8 +790,6 @@ void RaopDiscoveryServer::PowerDown()
 {
     // called on power failure
     iRaopDevice->Deregister();
-    //iRaopDiscoverySession1->Close();
-    //iRaopDiscoverySession2->Close();
 }
 
 void RaopDiscoveryServer::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
@@ -858,7 +858,6 @@ void RaopDiscoveryServer::Enable()
 void RaopDiscoveryServer::Disable()
 {
     iRaopDevice->Deregister();
-    Deactivate();
 }
 
 void RaopDiscoveryServer::KeepAlive()
@@ -929,26 +928,6 @@ RaopDiscovery::~RaopDiscovery()
     }
 }
 
-void RaopDiscovery::Enable()
-{
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->Enable();
-        ++it;
-    }
-}
-
-void RaopDiscovery::Disable()
-{
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->Disable();
-        ++it;
-    }
-}
-
 void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
 {
     AutoMutex a(iObserversLock);
@@ -967,17 +946,6 @@ TBool RaopDiscovery::Active()
         return iCurrent->Active();
     //}
     //return false;
-}
-
-void RaopDiscovery::Deactivate()
-{
-    // Deactivate all servers, rather than just currently selected.
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->Enable();    // FIXME - should this be Disable()?
-        ++it;
-    }
 }
 
 TUint RaopDiscovery::AesSid()

@@ -270,7 +270,7 @@ TUint RaopPacketAudio::Ssrc() const
 // ProtocolRaop
 
 ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IVolumeScalerEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
-    : ProtocolNetwork(aEnv)
+    : Protocol(aEnv)
     , iTrackFactory(aTrackFactory)
     , iVolumeEnabled(false)
     , iVolume(aVolume)
@@ -295,10 +295,18 @@ ProtocolRaop::~ProtocolRaop()
 void ProtocolRaop::DoInterrupt()
 {
     LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
-
     iAudioServer.DoInterrupt();
     iControlServer.DoInterrupt();
     iRepairer.DropAudio();
+}
+
+void ProtocolRaop::Interrupt(TBool /*aInterrupt*/)
+{
+    {
+        AutoMutex a(iLockRaop);
+        iInterrupted = true;
+    }
+    DoInterrupt();
 }
 
 void ProtocolRaop::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
@@ -343,6 +351,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             TUint flushId = MsgFlush::kIdInvalid;
             TBool waiting = false;
             TBool stopped = false;
+            TBool interrupted = false;
             {
                 AutoMutex a(iLockRaop);
 
@@ -358,6 +367,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 if (iWaiting) {
                     waiting = true;
                     iWaiting = false;
+                }
+                if (iInterrupted) {
+                    interrupted = true;
                 }
             }
 
@@ -380,6 +392,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     ASSERTS();  // Shouldn't be flushing in any other state.
                 }
             }
+            if (interrupted) {
+                return EProtocolStreamStopped;
+            }
         }
 
         try {
@@ -391,7 +406,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
                 {
-                    AutoMutex a(iLock);
+                    AutoMutex a(iLockRaop);
                     iActive = false;
                     iStopped = true;
                 }
@@ -423,7 +438,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 TUint streamId = 0;
                 Uri uri;
                 {
-                    AutoMutex a(iLock);
+                    AutoMutex a(iLockRaop);
                     iResumePending = false;
                     iFlushSeq = 0;
                     iFlushTime = 0;
@@ -515,6 +530,7 @@ void ProtocolRaop::Reset()
     iWaiting = false;
     iResumePending = false;
     iStopped = false;
+    iInterrupted = false;
 }
 
 void ProtocolRaop::StartStream()
@@ -660,7 +676,7 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
 {
-    LOG(kMedia, ">ProtocolRaop::ReceiveResend timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
+    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
     IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
     try {
         iRepairer.OutputAudio(*repairable);
