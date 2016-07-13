@@ -141,7 +141,6 @@ class IRaopDiscovery
 {
 public:
     virtual TBool Active() = 0;
-    virtual void Deactivate() = 0;
     virtual TUint AesSid() = 0;
     virtual const Brx& Aeskey() = 0;
     virtual const Brx& Aesiv() = 0;
@@ -161,6 +160,7 @@ class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
 public:
     RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolume& aVolume);
     ~RaopDiscoverySession();
+    void Deactivate();
 private: // from SocketTcpSession
     void Run() override;
 public: // from IRaopDiscovery
@@ -169,7 +169,6 @@ public: // from IRaopDiscovery
     const Brx& Fmtp() override;
     TBool Active() override;
     void KeepAlive() override;
-    void Deactivate() override;
     TUint AesSid() override;
     void Close() override;
     void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) override;
@@ -228,12 +227,12 @@ public:
     void Enable();
     void Disable();
     void AddObserver(IRaopObserver& aObserver);
+    void Deactivate();
 public: // from IRaopDiscovery
     const Brx& Aeskey() override;
     const Brx& Aesiv() override;
     const Brx& Fmtp() override;
     TBool Active() override;
-    void Deactivate() override;
     void KeepAlive() override;
     TUint AesSid() override;
     void Close() override;
@@ -272,7 +271,6 @@ public:
     void AddObserver(IRaopObserver& aObserver);
 public: // from IRaopDiscovery
     TBool Active() override;
-    void Deactivate() override;
     TUint AesSid() override;
     const Brx& Aeskey() override;
     const Brx& Aesiv() override;

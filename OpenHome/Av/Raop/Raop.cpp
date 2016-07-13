@@ -948,17 +948,6 @@ TBool RaopDiscovery::Active()
     //return false;
 }
 
-void RaopDiscovery::Deactivate()
-{
-    // Deactivate all servers, rather than just currently selected.
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->Disable();
-        ++it;
-    }
-}
-
 TUint RaopDiscovery::AesSid()
 {
     ASSERT(iCurrent != nullptr);
