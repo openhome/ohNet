@@ -114,7 +114,7 @@ class SuiteRaopResend : public TestFramework::SuiteUnitTest, private INonCopyabl
 {
 private:
     static const TUint kMaxFrames = 5;
-    static const TUint kMaxFrameBytes = 2;  // Only expect to store ASCII chars 0..99.
+    static const TUint kMaxFrameBytes = 5;  // Only expect to store string vals 0..65535.
     static const TUint kMaxTestPipeMessages = 50;
 public:
     SuiteRaopResend(Environment& aEnv);
@@ -139,6 +139,8 @@ private:
     void TestStreamReset();   // Receiving a packet already seen but is not a resend.
     void TestStreamResetResendPending();
     void TestDropAudio();
+    void TestSequenceNumberWrapping();
+    void TestSequenceNumberWrappingDuringRepair();
 private:
     Environment& iEnv;
     TestPipeDynamic* iTestPipe;
@@ -403,6 +405,8 @@ SuiteRaopResend::SuiteRaopResend(Environment& aEnv)
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestStreamReset), "TestStreamReset");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestStreamResetResendPending), "TestStreamResetResendPending");
     AddTest(MakeFunctor(*this, &SuiteRaopResend::TestDropAudio), "TestDropAudio");
+    AddTest(MakeFunctor(*this, &SuiteRaopResend::TestSequenceNumberWrapping), "TestSequenceNumberWrapping");
+    AddTest(MakeFunctor(*this, &SuiteRaopResend::TestSequenceNumberWrappingDuringRepair), "TestSequenceNumberWrappingDuringRepair");
 }
 
 void SuiteRaopResend::Setup()
@@ -1119,6 +1123,49 @@ void SuiteRaopResend::TestDropAudio()
 
     TEST(iTestPipe->ExpectEmpty());
 }
+
+void SuiteRaopResend::TestSequenceNumberWrapping()
+{
+    // RAOP sequence number is a 16-bit uint and wraps from 65535 to 0.
+    // Check that repairer deals with that correctly and does not believe
+    // there's been a dropout or a stream restart.
+
+    iRepairer->OutputAudio(*iAllocator->Allocate(65535, false, Brn("65535")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 5 65535")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 65535")));
+    iRepairer->OutputAudio(*iAllocator->Allocate(0, false, Brn("0")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 0")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 0")));
+    TEST(iTestPipe->ExpectEmpty());
+}
+
+void SuiteRaopResend::TestSequenceNumberWrappingDuringRepair()
+{
+    // Test sequence number wrapping while repair is active.
+    iRepairer->OutputAudio(*iAllocator->Allocate(65533, false, Brn("65533")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 5 65533")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 65533")));
+    // Miss a packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(65535, false, Brn("65535")));
+    TEST(iTestPipe->Expect(Brn("MRT::Start")));
+    // Fire timer.
+    iTimer->Fire();
+    TEST(iTestPipe->Expect(Brn("MRR::ReqestResend 65534->65534")));
+    TEST(iTestPipe->Expect(Brn("MRT::Start")));
+    // Send in another packet, which wraps sequence no.
+    iRepairer->OutputAudio(*iAllocator->Allocate(0, false, Brn("0")));
+
+    // Send in missing packet.
+    iRepairer->OutputAudio(*iAllocator->Allocate(65534, false, Brn("65534")));
+    // Missing packet should be output, allong with all others.
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 5 65534")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 65534")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 5 65535")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 65535")));
+    TEST(iTestPipe->Expect(Brn("MAS::OutputAudio 1 0")));
+    TEST(iTestPipe->Expect(Brn("MR::Destroy 0")));
+}
+
 
 
 void TestRaop(Environment& aEnv)

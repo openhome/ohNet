@@ -268,7 +268,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudio& aMsg)
     TInt diff = frame - iFrame;
     if (diff < 1) {
         TBool repairing = true;
-        if (aMsg.Resent()) {
+        if (!aMsg.Resent()) {
             // A frame in the past that is not a resend implies that the sender has reset their frame count
             RepairReset();
             repairing = false;
