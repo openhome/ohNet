@@ -269,6 +269,7 @@ void Supplier::Run()
     iDrain.Wait();
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
     iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
+    iDownstream.Push(iMsgFactory.CreateMsgDelay(Jiffies::kPerMs * 20));
     track->RemoveRef();
     iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, false, this));
     while (!iQuit) {
@@ -695,23 +696,16 @@ void SuitePipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: MODE {mode=");
     Log::Print(aMode);
-    Log::Print("; supportsLatency=%u; realTime=%u; supportsNext=%u; supportsPrev=%u}\n",
-        aInfo.SupportsLatency(), aInfo.IsRealTime(), aInfo.SupportsNext(), aInfo.SupportsPrev());
+    Log::Print("; supportsLatency=%u; supportsNext=%u; supportsPrev=%u}\n",
+               aInfo.SupportsLatency(),aInfo.SupportsNext(), aInfo.SupportsPrev());
 #endif
 }
 
 void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool /*aStartOfStream*/)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Print("Pipeline report property: TRACK {uri=");
-    Print(aTrack.Uri());
-    Print("; metadata=");
-    Print(aTrack.MetaData());
-    Print("; mode=");
-    Print(aMode);
-    Print("; providerId=");
-    Print(aTrack.ProviderId());
-    Print("\n");
+    Print("Pipeline report property: TRACK {uri=%.*s; metadata=%.*s; mode=%.*s}\n",
+          PBUF(aTrack.Uri()), PBUF(aTrack.MetaData()), PBUF(aMode));
 #endif
 }
 
@@ -734,10 +728,9 @@ void SuitePipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 void SuitePipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
-           aFormat.BitRate(), aFormat.BitDepth(), aFormat.SampleRate(), aFormat.NumChannels());
-    Print(aFormat.CodecName());
-    Print("; trackLength=%llx, lossless=%u}\n", aFormat.TrackLength(), aFormat.Lossless());
+    Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u; sampleRate=%u; numChannels=%u; codec=%.*s; trackLength=%llx; lossless=%u}\n",
+          aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels(),
+          PBUF(aStreamInfo.CodecName()), aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
 }
 
@@ -841,14 +834,16 @@ Msg* SuitePipeline::ProcessMsg(MsgSilence* /*aMsg*/)
 
 Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
 {
-    iLastMsgWasAudio = true;
     PcmProcessorTestPipeline pcmProcessor;
     aMsg->Read(pcmProcessor);
     iFirstSubsample = pcmProcessor.FirstSubsample();
     iLastSubsample = pcmProcessor.LastSubsample();
     aMsg->RemoveRef();
-    iLastMsgJiffies = Jiffies::PerSample(iSampleRate) * pcmProcessor.SampleCount();
-    iJiffies += iLastMsgJiffies;
+    iLastMsgWasAudio = (iFirstSubsample != 0 || iLastSubsample != 0);
+    if (iLastMsgWasAudio) {
+        iLastMsgJiffies = Jiffies::PerSample(iSampleRate) * pcmProcessor.SampleCount();
+        iJiffies += iLastMsgJiffies;
+    }
     return nullptr;
 }
 
@@ -1093,7 +1088,7 @@ void PcmProcessorTestPipeline::Flush()
 
 void TestPipeline()
 {
-    //Debug::SetLevel(Debug::kPipeline);
+    //Debug::SetLevel(Debug::kPipeline | Debug::kMedia);
     Runner runner("Pipeline integration tests\n");
     runner.Add(new SuitePipeline());
     runner.Run();

@@ -48,7 +48,7 @@ public:
     void SetShortRamp(TUint aJiffies);
     void SetEmergencyRamp(TUint aJiffies);
     void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
-    void SetThreadPriorities(TUint aStarvationRamper, TUint aCodec, TUint aEvent);
+    void SetThreadPriorities(TUint aStarvationRamper, TUint aDelay, TUint aCodec, TUint aEvent);
     void SetMaxLatency(TUint aJiffies);
     void SetSupportElements(TUint aElements); // EPipelineSupportElements members OR'd together
     // getters
@@ -62,6 +62,7 @@ public:
     TUint RampEmergencyJiffies() const;
     TUint ThreadPriorityFlywheel() const;
     TUint ThreadPriorityStarvationRamper() const;
+    TUint ThreadPriorityDelay() const;
     TUint ThreadPriorityCodec() const;
     TUint ThreadPriorityEvent() const;
     TUint MaxLatencyJiffies() const;
@@ -78,6 +79,7 @@ private:
     TUint iRampShortJiffies;
     TUint iRampEmergencyJiffies;
     TUint iThreadPriorityStarvationRamper;
+    TUint iThreadPriorityDelay;
     TUint iThreadPriorityCodec;
     TUint iThreadPriorityEvent;
     TUint iMaxLatencyJiffies;
@@ -110,6 +112,7 @@ class Reporter;
 class SpotifyReporter;
 class Router;
 class Drainer;
+class DelayReservoir;
 class VariableDelayRight;
 class Pruner;
 class StarvationRamper;
@@ -137,7 +140,7 @@ class Pipeline : public IPipelineElementDownstream
 
     static const TUint kSenderMinLatency        = Jiffies::kPerMs * 150;
     static const TUint kReceiverMaxLatency      = Jiffies::kPerSecond;
-    static const TUint kReservoirCount          = 5; // Encoded + Decoded + (optional) Songcast sender + StarvationRamper + spare
+    static const TUint kReservoirCount          = 6; // Encoded + Decoded + (optional) Songcast sender + Delay + StarvationRamper + spare
     static const TUint kSongcastFrameJiffies    = Jiffies::kPerMs * 5; // effectively hard-coded by volkano1
     static const TUint kRewinderMaxMsgs         = 100;
 
@@ -266,6 +269,8 @@ private:
     DecodedAudioValidator* iDecodedAudioValidatorRouter;
     Drainer* iDrainer;
     Logger* iLoggerDrainer;
+    DelayReservoir* iDelayReservoir;
+    Logger* iLoggerDelayReservoir;
     VariableDelayRight* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
     RampValidator* iRampValidatorDelay2;
