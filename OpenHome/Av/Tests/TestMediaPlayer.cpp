@@ -187,6 +187,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     auto pipelineInit = PipelineInitParams::New();
     pipelineInit->SetStarvationRamperSize(100 * Jiffies::kPerMs); // larger StarvationRamper size useful for desktop
                                                                   // platforms with slightly unpredictable thread scheduling
+    pipelineInit->SetGorgerDuration(pipelineInit->DecodedReservoirJiffies());
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore,
                                    *iConfigRamStore, pipelineInit,
                                    volumeInit, volumeProfile, *iInfoLogger,
