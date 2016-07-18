@@ -74,7 +74,6 @@ public:
     virtual void StandbyDisable(StandbyDisableReason aReason) = 0;
     virtual IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) = 0;
     virtual IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority, const TChar* aClientId) = 0;
-    virtual void LogVerbose(TBool aEnable) = 0;
     virtual ~IPowerManager() {}
 };
 
@@ -98,7 +97,6 @@ public: // from IPowerManager
     void StandbyDisable(StandbyDisableReason aReason) override;
     IPowerManagerObserver* RegisterPowerHandler(IPowerHandler& aHandler, TUint aPriority) override;
     IStandbyObserver* RegisterStandbyHandler(IStandbyHandler& aHandler, TUint aPriority, const TChar* aClientId) override;
-    void LogVerbose(TBool aEnable) override;
 private:
     void DeregisterPower(TUint aId);
     void DeregisterStandby(TUint aId);
