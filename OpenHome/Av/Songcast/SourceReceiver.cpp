@@ -217,7 +217,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iStoreZone->Get(iZone);
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
-    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), false);
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), "SourceReceiver", false);
 
     // Sender
     iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode(), *protocolOhm);

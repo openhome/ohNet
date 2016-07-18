@@ -40,6 +40,7 @@ void CodecAiffBase::StreamInitialise()
     iNumChannels = 0;
     iSamplesTotal = 0;
     iBitDepth = 0;
+    iBytesPerSampleFrame = 0;
     iSampleRate = 0;
     iBitRate = 0;
     iAudioBytesTotal = 0;
@@ -62,14 +63,14 @@ void CodecAiffBase::Process()
     if (iAudioBytesRemaining == 0) {
         THROW(CodecStreamEnded);
     }
-    TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % (iNumChannels * (iBitDepth/8)));
+    TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % iBytesPerSampleFrame);
     ASSERT_DEBUG(chunkSize <= iReadBuf.MaxBytes());
     iReadBuf.SetBytes(0);
-    const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
+    const TUint bytes = (chunkSize < iAudioBytesRemaining ? chunkSize : (TUint)iAudioBytesRemaining);
     iController->Read(iReadBuf, bytes);
 
     // Truncate to a sensible sample boundary.
-    TUint remainder = iReadBuf.Bytes() % (iNumChannels * (iBitDepth/8));
+    TUint remainder = iReadBuf.Bytes() % iBytesPerSampleFrame;
     Brn split = iReadBuf.Split(iReadBuf.Bytes()-remainder);
     iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
 
@@ -85,8 +86,7 @@ void CodecAiffBase::Process()
 
 TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    const TUint byteDepth = iBitDepth/8;
-    const TUint64 bytePos = aSample * iNumChannels * byteDepth;
+    const TUint64 bytePos = aSample * iBytesPerSampleFrame;
 
     // Some bounds checking.
     const TUint64 seekPosJiffies = Jiffies::PerSample(iSampleRate)*aSample;
@@ -98,7 +98,7 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
         return false;
     }
     iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
-    iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
+    iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iBytesPerSampleFrame);
     iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
@@ -224,8 +224,15 @@ void CodecAiffBase::ParseCommChunk(TUint aChunkSize)
     iSamplesTotal = Converter::BeUint32At(iReadBuf, 2);
     iBitDepth = Converter::BeUint16At(iReadBuf, 6);
 
+    iBytesPerSampleFrame = iNumChannels * (iBitDepth/8);
+
+    iAudioBytesTotal = iSamplesTotal * iBytesPerSampleFrame;
+    iAudioBytesRemaining = iAudioBytesTotal;
+
     //the sample rate is expressed as a 80-bit floating point number
     iSampleRate = DetermineRate(Converter::BeUint16At(iReadBuf, 8), Converter::BeUint32At(iReadBuf, 10));
+
+    iTrackLengthJiffies = ((TUint64)iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
 
     switch(iBitDepth) {
     case 8:
@@ -239,8 +246,7 @@ void CodecAiffBase::ParseCommChunk(TUint aChunkSize)
         THROW(CodecStreamFeatureUnsupported);
     }
 
-    TUint bytesPerSample = iNumChannels * (iBitDepth/8);
-    TUint bytesPerSec = iSampleRate * bytesPerSample;
+    TUint bytesPerSec = iSampleRate * iBytesPerSampleFrame;
     iBitRate = bytesPerSec * 8;
 
     iTrackStart += aChunkSize + 8;
@@ -262,10 +268,11 @@ void CodecAiffBase::ProcessSsndChunk()
 {
     // Find the sound chunk
     TUint ssndChunkBytes = FindChunk(Brn("SSND"));
+    TUint chunkDataBytes = ssndChunkBytes - 8;
 
-    // There are 8 bytes included for offset and blocksize in this number
-    iAudioBytesTotal = ssndChunkBytes - 8;
-    iAudioBytesRemaining = iAudioBytesTotal;
+    if (iAudioBytesTotal > chunkDataBytes) {
+        THROW(CodecStreamCorrupt);
+    }
 
     iReadBuf.SetBytes(0);
     iController->Read(iReadBuf, 8); // read in offset and blocksize
@@ -274,17 +281,6 @@ void CodecAiffBase::ProcessSsndChunk()
     }
 
     iTrackStart += 16;
-
-    if (iAudioBytesTotal % (iNumChannels * (iBitDepth/8)) != 0) {
-        // There aren't an exact number of samples in the file => file is corrupt
-        THROW(CodecStreamCorrupt);
-    }
-
-    const TUint numSamples = iAudioBytesTotal / (iNumChannels * (iBitDepth/8));
-    if (numSamples != iSamplesTotal) {
-        THROW(CodecStreamCorrupt);
-    }
-    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kPerSecond) / iSampleRate;
 }
 
 void CodecAiffBase::SendMsgDecodedStream(TUint64 aStartSample)

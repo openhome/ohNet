@@ -656,7 +656,7 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, T
 
     Functor functor = MakeFunctor(*this, &WebAppFramework::CurrentAdapterChanged);
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
+    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, "WebAppFramework", false);
 
     CurrentAdapterChanged();    // Force to set iCurrentAdapter, as not called at point of subscription.
     // no need to call AddSessions() - this happens inside CurrentAdapterChanged()

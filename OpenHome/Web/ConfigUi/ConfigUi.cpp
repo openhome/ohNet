@@ -1151,7 +1151,7 @@ ConfigUiValRoIpAddress::ConfigUiValRoIpAddress(NetworkAdapterList& aAdapterList)
 {
     // Initialise with dummy value.
     iUiVal = new ConfigUiValRoUpdatable(kKey, Brx::Empty());
-    iListenerId = iAdapterList.AddCurrentChangeListener(MakeFunctor(*this, &ConfigUiValRoIpAddress::CurrentAdapterChanged));
+    iListenerId = iAdapterList.AddCurrentChangeListener(MakeFunctor(*this, &ConfigUiValRoIpAddress::CurrentAdapterChanged), "ConfigUiValRoIpAddress");
 
     // Callback isn't made when registering observer.
     // Make callback internally to get newest val.

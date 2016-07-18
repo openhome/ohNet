@@ -111,8 +111,8 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 
     NetworkAdapterList& adapterList = iEnv.NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &SourceRaop::HandleInterfaceChange);
-    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
+    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor, "SourceRaop-current");
+    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor, "SourceRaop-subnet");
 }
 
 SourceRaop::~SourceRaop()
