@@ -162,6 +162,7 @@ static void LogSubnet(const TChar* aPrefix, TIpAddress aSubnet)
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
+    Debug::AddLevel(Debug::kAdapterChange);
     aInitParams->SetIncludeLoopbackNetworkAdapter();
     UpnpLibrary::Initialise(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();

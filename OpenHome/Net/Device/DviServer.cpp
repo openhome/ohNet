@@ -51,8 +51,8 @@ void DviServer::Initialise()
 {
     Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
     NetworkAdapterList& nifList = iDvStack.Env().NetworkAdapterList();
-    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor, "DviServer-current");
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor, "DviServer-subnet");
     AutoMutex a(iLock);
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::Initialise");
     NetworkAdapter* current = ref.Adapter();

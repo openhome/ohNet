@@ -42,8 +42,8 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     iServer = &(iDvStack.ServerUpnp());
     NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::HandleInterfaceChange);
-    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
+    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor, "DviProtocolUpnp-current");
+    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor, "DviProtocolUpnp-subnet");
     std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();

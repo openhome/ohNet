@@ -100,15 +100,15 @@ Environment::Environment(InitialisationParams* aInitParams)
     }
     FunctorNetworkAdapter &subnetAddedListener = iInitParams->SubnetAddedListener();
     if (subnetAddedListener) {
-        iNetworkAdapterList->AddSubnetAddedListener(subnetAddedListener);
+        iNetworkAdapterList->AddSubnetAddedListener(subnetAddedListener, "Env");
     }
     FunctorNetworkAdapter &subnetRemovedListener = iInitParams->SubnetRemovedListener();
     if (subnetRemovedListener) {
-        iNetworkAdapterList->AddSubnetRemovedListener(subnetRemovedListener);
+        iNetworkAdapterList->AddSubnetRemovedListener(subnetRemovedListener, "Env");
     }
     FunctorNetworkAdapter &networkAdapterChangeListener = iInitParams->NetworkAdapterChangedListener();
     if (networkAdapterChangeListener) {
-        iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener);
+        iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener, "Env");
     }
 }
 

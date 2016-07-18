@@ -117,12 +117,12 @@ void NetworkAdapterList::Refresh()
     HandleInterfaceListChanged();
 }
 
-TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor, TBool aInternalClient)
+TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor, const TChar* aId, TBool aInternalClient)
 {
     if (aInternalClient) {
-        return AddListener(aFunctor, iListenersCurrentInternal);
+        return AddListener(aFunctor, aId, iListenersCurrentInternal);
     }
-    return AddListener(aFunctor, iListenersCurrentExternal);
+    return AddListener(aFunctor, aId, iListenersCurrentExternal);
 }
 
 void NetworkAdapterList::RemoveCurrentChangeListener(TUint aId)
@@ -132,12 +132,12 @@ void NetworkAdapterList::RemoveCurrentChangeListener(TUint aId)
     }
 }
 
-TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor, TBool aInternalClient)
+TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor, const TChar* aId, TBool aInternalClient)
 {
     if (aInternalClient) {
-        return AddListener(aFunctor, iListenersSubnetInternal);
+        return AddListener(aFunctor, aId, iListenersSubnetInternal);
     }
-    return AddListener(aFunctor, iListenersSubnetExternal);
+    return AddListener(aFunctor, aId, iListenersSubnetExternal);
 }
 
 void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId)
@@ -147,9 +147,9 @@ void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId)
     }
 }
 
-TUint NetworkAdapterList::AddSubnetAddedListener(FunctorNetworkAdapter aFunctor)
+TUint NetworkAdapterList::AddSubnetAddedListener(FunctorNetworkAdapter aFunctor, const TChar* aId)
 {
-    return AddSubnetListener(aFunctor, iListenersAdded);
+    return AddSubnetListener(aFunctor, aId, iListenersAdded);
 }
 
 void NetworkAdapterList::RemoveSubnetAddedListener(TUint aId)
@@ -157,9 +157,9 @@ void NetworkAdapterList::RemoveSubnetAddedListener(TUint aId)
     RemoveSubnetListener(aId, iListenersAdded);
 }
 
-TUint NetworkAdapterList::AddSubnetRemovedListener(FunctorNetworkAdapter aFunctor)
+TUint NetworkAdapterList::AddSubnetRemovedListener(FunctorNetworkAdapter aFunctor, const TChar* aId)
 {
-    return AddSubnetListener(aFunctor, iListenersRemoved);
+    return AddSubnetListener(aFunctor, aId, iListenersRemoved);
 }
 
 void NetworkAdapterList::RemoveSubnetRemovedListener(TUint aId)
@@ -167,9 +167,9 @@ void NetworkAdapterList::RemoveSubnetRemovedListener(TUint aId)
     RemoveSubnetListener(aId, iListenersRemoved);
 }
 
-TUint NetworkAdapterList::AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor)
+TUint NetworkAdapterList::AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor, const TChar* aId)
 {
-    return AddSubnetListener(aFunctor, iListenersAdapterChanged);
+    return AddSubnetListener(aFunctor, aId, iListenersAdapterChanged);
 }
 
 void NetworkAdapterList::RemoveNetworkAdapterChangeListener(TUint aId)
@@ -209,11 +209,12 @@ std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const
     return list;
 }
 
-TUint NetworkAdapterList::AddListener(Functor aFunctor, VectorListener& aList)
+TUint NetworkAdapterList::AddListener(Functor aFunctor, const TChar* aId, VectorListener& aList)
 {
     iListenerLock.Wait();
     TUint id = iNextListenerId;
-    aList.push_back(std::pair<TUint, Functor>(id, aFunctor));
+    Listener listener(aFunctor, aId);
+    aList.push_back(std::pair<TUint, Listener>(id, listener));
     iNextListenerId++;
     iListenerLock.Signal();
     return id;
@@ -236,11 +237,12 @@ TBool NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, VectorListen
     return removed;
 }
 
-TUint NetworkAdapterList::AddSubnetListener(FunctorNetworkAdapter aFunctor, MapNetworkAdapter& aMap)
+TUint NetworkAdapterList::AddSubnetListener(FunctorNetworkAdapter aFunctor, const TChar* aId, MapNetworkAdapter& aMap)
 {
     iListenerLock.Wait();
     TUint id = iNextListenerId;
-    aMap.insert(std::pair<TUint,FunctorNetworkAdapter>(id, aFunctor));
+    ListenerNetworkAdapter listener(aFunctor, aId);
+    aMap.insert(std::pair<TUint, ListenerNetworkAdapter>(id, listener));
     iNextListenerId++;
     iListenerLock.Signal();
     return id;
@@ -461,7 +463,8 @@ void NetworkAdapterList::DoRunCallbacks(const VectorListener& aCallbacks)
     AutoMutex a(iListenerLock);
     VectorListener::const_iterator it = aCallbacks.begin();
     while (it != aCallbacks.end()) {
-        it->second();
+        LOG(kAdapterChange, "NetworkAdapterList::DoRunCallbacks - client is %s\n", it->second.iId);
+        it->second.iFunctor();
         it++;
     }
 }
@@ -471,7 +474,8 @@ void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdap
     AutoMutex a(iListenerLock);
     MapNetworkAdapter::iterator it = aMap.begin();
     while (it != aMap.end()) {
-        it->second(aAdapter);
+        LOG(kAdapterChange, "NetworkAdapterList::RunSubnetCallbacks - client is %s\n", it->second.iId);
+        it->second.iFunctor(aAdapter);
         it++;
     }
 }

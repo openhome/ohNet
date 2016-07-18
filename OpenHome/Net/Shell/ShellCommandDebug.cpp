@@ -39,7 +39,7 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application7", Debug::kApplication7);
     AddLevel("Application8", Debug::kApplication8);
     AddLevel("Application9", Debug::kApplication9);
-    AddLevel("Application12", Debug::kApplication12);
+    AddLevel("AdapterChange", Debug::kAdapterChange);
     AddLevel("Application13", Debug::kApplication13);
     AddLevel("Application14", Debug::kApplication14);
     AddLevel("Application15", Debug::kApplication15);

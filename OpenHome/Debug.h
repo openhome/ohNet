@@ -118,7 +118,7 @@ public:
     static const TUint   kApplication9   = 1<<29;
     static const TUint   kError          = 1<<30;
     static const TUint   kVerbose        = 0x80000000;
-    static const TUint64 kApplication12  = static_cast<TUint64>(1)<<32;
+    static const TUint64 kAdapterChange  = static_cast<TUint64>(1)<<32;
     static const TUint64 kApplication13  = static_cast<TUint64>(1)<<33;
     static const TUint64 kApplication14  = static_cast<TUint64>(1)<<34;
     static const TUint64 kApplication15  = static_cast<TUint64>(1)<<35;

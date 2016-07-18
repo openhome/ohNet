@@ -531,9 +531,9 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiSubscriptionManager ctor");
     const NetworkAdapter* currentInterface = ref.Adapter();
     Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkAdapterChanged);
-    iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
+    iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor, "CpiSubscriptionManager-current");
     functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
-    iSubnetListenerId = ifList.AddSubnetListChangeListener(functor);
+    iSubnetListenerId = ifList.AddSubnetListChangeListener(functor, "CpiSubscriptionManager-subnet");
     iCpStack.Env().AddSuspendObserver(*this);
     iCpStack.Env().AddResumeObserver(*this);
     if (currentInterface == NULL) {

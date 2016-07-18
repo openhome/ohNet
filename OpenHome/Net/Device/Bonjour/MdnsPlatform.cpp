@@ -607,9 +607,9 @@ MdnsPlatform::Status MdnsPlatform::Init()
     Status status = mStatus_NoError;
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     Functor functorSubnet = MakeFunctor(*this, &MdnsPlatform::SubnetListChanged);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functorSubnet);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functorSubnet, "MdnsPlatform-subnet");
     Functor functorAdapter = MakeFunctor(*this, &MdnsPlatform::CurrentAdapterChanged);
-    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter, "MdnsPlatform-current");
 
     NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
     if (current == NULL) { // Listening on all adapters.
