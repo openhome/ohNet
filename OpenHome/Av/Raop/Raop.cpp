@@ -519,7 +519,7 @@ void RaopDiscoverySession::Run()
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
                     Deactivate();
-                    iDiscovery.NotifySessionEnd();
+                    //iDiscovery.NotifySessionEnd();    // Happens in Deactivate() call above.
                     LOG(kMedia, "RaopDiscoverySession::Run %u. kTeardown\n", iInstance);
                     break;
                 }
