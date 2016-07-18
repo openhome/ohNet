@@ -1120,6 +1120,7 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
     try {
         LOG(kHttp, "-HttpReader::Connect connecting...\n");
         iTcpClient.Connect(aEndpoint, kConnectTimeoutMs);
+        iTcpClient.SetRecvTimeout(kReceiveTimeoutMs);
     }
     catch (NetworkTimeout&) {
         Close();

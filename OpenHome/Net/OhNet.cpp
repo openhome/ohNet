@@ -361,6 +361,13 @@ void InitialisationParams::SetDvNumPublisherThreads(uint32_t aNumThreads)
     iDvNumPublisherThreads = aNumThreads;
 }
 
+void InitialisationParams::SetDvPublisherThreadPriority(uint32_t aPriority)
+{
+    ASSERT(aPriority > kPrioritySystemLowest);
+    ASSERT(aPriority < kPrioritySystemHighest);
+    iDvPublisherThreadPriority = aPriority;
+}
+
 void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
 {
     iDvNumWebSocketThreads = aNumThreads;
@@ -532,6 +539,11 @@ uint32_t InitialisationParams::DvNumPublisherThreads() const
     return iDvNumPublisherThreads;
 }
 
+uint32_t InitialisationParams::DvPublisherThreadPriority() const
+{
+    return iDvPublisherThreadPriority;
+}
+
 uint32_t InitialisationParams::DvNumWebSocketThreads() const
 {
     return iDvNumWebSocketThreads;
@@ -607,6 +619,7 @@ InitialisationParams::InitialisationParams()
     , iDvMaxUpdateTimeSecs(1800)
     , iDvNumServerThreads(4)
     , iDvNumPublisherThreads(4)
+    , iDvPublisherThreadPriority(kPriorityNormal)
     , iDvNumWebSocketThreads(0)
     , iCpUpnpEventServerPort(0)
     , iDvUpnpWebServerPort(0)

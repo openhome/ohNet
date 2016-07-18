@@ -499,6 +499,7 @@ private:
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
     static const TUint kResponseTimeoutMs = 60 * 1000;
+    static const TUint kReceiveTimeoutMs = 10*1000;
 
 public:
     HttpReader(Environment& aEnv);

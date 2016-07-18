@@ -309,6 +309,10 @@ public:
      */
     void SetDvNumPublisherThreads(uint32_t aNumThreads);
     /**
+     * Set the priority of event publisher threads.
+     */
+    void SetDvPublisherThreadPriority(uint32_t aPriority);
+    /**
      * Set the number of threads which will be dedicated to published
      * changes to state variables via WebSockets
      * One thread will be used per active (web browser) connection so a higher
@@ -395,6 +399,7 @@ public:
     uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
+    uint32_t DvPublisherThreadPriority() const;
     uint32_t DvNumWebSocketThreads() const;
     uint32_t CpUpnpEventServerPort() const;
     uint32_t DvUpnpServerPort() const;
@@ -435,6 +440,7 @@ private:
     uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
     uint32_t iDvNumPublisherThreads;
+    uint32_t iDvPublisherThreadPriority;
     uint32_t iDvNumWebSocketThreads;
     uint32_t iCpUpnpEventServerPort;
     uint32_t iDvUpnpWebServerPort;
