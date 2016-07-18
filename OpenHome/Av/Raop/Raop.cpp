@@ -1063,8 +1063,8 @@ void RaopDiscovery::PowerUp()
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
-    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor, "RaopDiscovery-current");
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor, "RaopDiscovery-subnet");
 
     AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
     NetworkAdapter* current = ref.Adapter();
