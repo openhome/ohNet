@@ -42,7 +42,7 @@ ZoneHandler::ZoneHandler(Environment& aEnv, const Brx& aSenderZone)
     , iSendPresetInfoCount(0)
 {
     LOG(kSongcast, "ZoneHandler.  SenderZone is %.*s\n", PBUF(aSenderZone));
-    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ZoneHandler::CurrentSubnetChanged), false);
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ZoneHandler::CurrentSubnetChanged), "ZoneHandler", false);
     iTimerZoneUri = new Timer(aEnv, MakeFunctor(*this, &ZoneHandler::TimerZoneUriExpired), "ZoneHandlerUri");
     iTimerPresetInfo = new Timer(aEnv, MakeFunctor(*this, &ZoneHandler::TimerPresetInfoExpired), "ZoneHandlerPresetInfo");
     CurrentSubnetChanged(); // start listening on any initial subnet

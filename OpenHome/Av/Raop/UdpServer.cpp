@@ -63,7 +63,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 
     Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
+    iAdapterListenerId = nifList.AddCurrentChangeListener(functor, "SocketUdpServer", false);
 }
 
 SocketUdpServer::~SocketUdpServer()
