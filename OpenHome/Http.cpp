@@ -1120,7 +1120,6 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
     try {
         LOG(kHttp, "-HttpReader::Connect connecting...\n");
         iTcpClient.Connect(aEndpoint, kConnectTimeoutMs);
-        iTcpClient.SetRecvTimeout(kReceiveTimeoutMs);
     }
     catch (NetworkTimeout&) {
         Close();
@@ -1131,6 +1130,12 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
         Close();
         LOG(kHttp, "<HttpReader::Connect connection error\n");
         return false;
+    }
+    try {
+        iTcpClient.SetRecvTimeout(kReceiveTimeoutMs);
+    }
+    catch (NetworkError&) {
+        LOG(kHttp, "Unable to set recv timeout of %u\n", kConnectTimeoutMs);
     }
 
     LOG(kHttp, "<HttpReader::Connect\n");
