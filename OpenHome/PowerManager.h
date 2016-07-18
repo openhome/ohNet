@@ -9,7 +9,6 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include <atomic>
 
 namespace OpenHome {
 
@@ -114,7 +113,6 @@ private:
     TUint iNextPowerId;
     TUint iNextStandbyId;
     TBool iPowerDown;
-    std::atomic<TBool> iLogVerbose;
     Standby iStandby;
     StandbyDisableReason iLastDisableReason;
     mutable Mutex iLock;
