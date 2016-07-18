@@ -44,10 +44,11 @@ private:
     TUint iNumChannels;
     TUint64 iSamplesTotal;
     TUint iBitDepth;
+    TUint iBytesPerSampleFrame;
     TUint iSampleRate;
     TUint iBitRate;
-    TUint iAudioBytesTotal;
-    TUint iAudioBytesRemaining;
+    TUint64 iAudioBytesTotal;
+    TUint64 iAudioBytesRemaining;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
 };
