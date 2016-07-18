@@ -756,6 +756,7 @@ private: // from Protocol
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IRaopResendReceiver
     void ResendReceive(const RaopPacketAudio& aPacket) override;
 private: // from IAudioSupply
@@ -800,6 +801,7 @@ private:
     TBool iResumePending;
     TBool iStopped;
     TBool iInterrupted;
+    TBool iDiscontinuity;
     mutable Mutex iLockRaop;
     Semaphore iSemDrain;
 

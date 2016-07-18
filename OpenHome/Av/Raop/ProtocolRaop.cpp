@@ -352,6 +352,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             TBool waiting = false;
             TBool stopped = false;
             TBool interrupted = false;
+            TBool discontinuity = false;
             {
                 AutoMutex a(iLockRaop);
 
@@ -370,6 +371,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 }
                 if (iInterrupted) {
                     interrupted = true;
+                }
+                if (iDiscontinuity) {
+                    discontinuity = true;
+                    iDiscontinuity = false;
                 }
             }
 
@@ -392,6 +397,12 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     ASSERTS();  // Shouldn't be flushing in any other state.
                 }
             }
+
+            if (discontinuity) {
+                OutputDiscontinuity();
+                LOG(kMedia, "ProtocolRaop::Stream signalled end of starvation.\n");
+            }
+
             if (interrupted) {
                 return EProtocolStreamStopped;
             }
@@ -428,10 +439,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             const TBool resumePending = iResumePending;
             iLockRaop.Signal();
             if (start || resumePending) {
-                LOG(kMedia, "ProtocolRaop::Stream starting new stream\n");
+                LOG(kMedia, "ProtocolRaop::Stream starting new stream start: %u, resumePending: %u\n", start, resumePending);
                 UpdateSessionId(audioPacket.Ssrc());
                 iAudioDecryptor.Init(iDiscovery.Aeskey(), iDiscovery.Aesiv());
-                start = false;
 
                 Track* track = nullptr;
                 TUint latency = 0;
@@ -443,10 +453,13 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iFlushSeq = 0;
                     iFlushTime = 0;
 
-                    // Report blank URI.
-                    track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
+                    if (start) {
+                        // Report blank URI.
+                        track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
+                        latency = iLatency = iControlServer.Latency();
+                    }
+                    // Always output a new stream ID on start or resume pending (to avoid CodecStreamCorrupt exceptions).
                     streamId = iStreamId = iIdProvider->NextStreamId();
-                    latency = iLatency = iControlServer.Latency();
                     uri.Replace(iUri.AbsoluteUri());
                 }
 
@@ -454,11 +467,16 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                  * NOTE - outputting MsgTrack then MsgEncodedStream causes accumulated time reported by pipeline to be reset to 0.
                  * Not necessarily desirable when pausing or seeking.
                  */
-                iSupply->OutputDelay(Delay(latency));
-                iSupply->OutputTrack(*track, !resumePending);
+                if (start) {
+                    iSupply->OutputDelay(Delay(latency));
+                    iSupply->OutputTrack(*track, !resumePending);
+                    track->RemoveRef();
+                }
+                // Always output a new stream ID on start or resume pending (to avoid CodecStreamCorrupt exceptions).
                 iSupply->OutputStream(uri.AbsoluteUri(), 0, 0, false, false, *this, streamId);
                 OutputContainer(iDiscovery.Fmtp());
-                track->RemoveRef();
+
+                start = false;
             }
             iDiscovery.KeepAlive();
 
@@ -531,6 +549,7 @@ void ProtocolRaop::Reset()
     iResumePending = false;
     iStopped = false;
     iInterrupted = false;
+    iDiscontinuity = false;
 }
 
 void ProtocolRaop::StartStream()
@@ -617,18 +636,24 @@ void ProtocolRaop::OutputDiscontinuity()
 {
     LOG(kMedia, ">ProtocolRaop::OutputDiscontinuity\n");
     iAudioServer.Close();
+    iControlServer.Close();
+    iRepairer.DropAudio();  // Drop any audio buffered in repairer.
+    iSupply->Discard();
+
     {
         AutoMutex a(iLockRaop);
         iResumePending = true;
     }
 
     Semaphore sem("PRWS", 0);
+
     iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
     sem.Wait();
 
     // Only reopen audio server if a TryStop() hasn't come in.
     AutoMutex a(iLockRaop);
     if (!iStopped) {
+        iControlServer.Open();
         iAudioServer.Open();
     }
     LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
@@ -674,6 +699,16 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
+void ProtocolRaop::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
+{
+    LOG(kMedia, ">ProtocolRaop::NotifyStarving mode: %.*s, sid: %u, starving: %u\n", PBUF(aMode), aStreamId, aStarving);
+    AutoMutex a(iLockRaop);
+    if (aStarving) {
+        iDiscontinuity = true;
+        DoInterrupt();
+    }
+}
+
 void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
 {
     LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
@@ -683,11 +718,13 @@ void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
     }
     catch (RepairerBufferFull&) {
         LOG(kMedia, "ProtocolRaop::ResendReceive RepairerBufferFull\n");
-        OutputDiscontinuity();
+        AutoMutex a(iLockRaop);
+        iDiscontinuity = true;
     }
     catch (RepairerStreamRestarted&) {
         LOG(kMedia, "ProtocolRaop::ResendReceive RepairerStreamRestarted\n");
-        OutputDiscontinuity();
+        AutoMutex a(iLockRaop);
+        iDiscontinuity = true;
     }
 }
 
