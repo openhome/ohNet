@@ -24,6 +24,7 @@
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Router.h>
 #include <OpenHome/Media/Pipeline/Drainer.h>
+#include <OpenHome/Media/Pipeline/DelayReservoir.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationRamper.h>
@@ -108,13 +109,16 @@ void PipelineInitParams::SetEmergencyRamp(TUint aJiffies)
 void PipelineInitParams::SetThreadPriorityMax(TUint aPriority)
 {
     iThreadPriorityStarvationRamper = aPriority;
-    iThreadPriorityCodec            = iThreadPriorityStarvationRamper - 1;
+    iThreadPriorityDelay            = iThreadPriorityStarvationRamper - 1;
+    iThreadPriorityCodec            = iThreadPriorityDelay - 1;
     iThreadPriorityEvent            = iThreadPriorityCodec - 1;
 }
 
-void PipelineInitParams::SetThreadPriorities(TUint aStarvationRamper, TUint aCodec, TUint aEvent)
+void PipelineInitParams::SetThreadPriorities(TUint aStarvationRamper, TUint aDelay,
+                                             TUint aCodec, TUint aEvent)
 {
     iThreadPriorityStarvationRamper = aStarvationRamper;
+    iThreadPriorityDelay            = aDelay;
     iThreadPriorityCodec            = aCodec;
     iThreadPriorityEvent            = aEvent;
 }
@@ -174,6 +178,11 @@ TUint PipelineInitParams::ThreadPriorityStarvationRamper() const
     return iThreadPriorityStarvationRamper;
 }
 
+TUint PipelineInitParams::ThreadPriorityDelay() const
+{
+    return iThreadPriorityDelay;
+}
+
 TUint PipelineInitParams::ThreadPriorityCodec() const
 {
     return iThreadPriorityCodec;
@@ -230,7 +239,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     encodedAudioCount += kRewinderMaxMsgs; // this may only be required on platforms that don't guarantee priority based thread scheduling
     const TUint msgEncodedAudioCount = encodedAudioCount + 100; // +100 allows for Split()ing by Container and CodecController
     const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->StarvationRamperJiffies();
-    const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 200; // +200 allows for songcast sender, some smaller msgs and some buffering in non-reservoir elements
+    const TUint decodedAudioCount = ((decodedReservoirSize + kSenderMinLatency) / DecodedAudioAggregator::kMaxJiffies) + 200; // +200 allows for songcast sender, some smaller msgs and some buffering in non-reservoir elements
     const TUint msgAudioPcmCount = decodedAudioCount + 100; // +100 allows for Split()ing in various elements
     const TUint msgHaltCount = perStreamMsgCount * 2; // worst case is tiny Vorbis track with embedded metatext in a single-track playlist with repeat
     MsgFactoryInitParams msgInit;
@@ -384,6 +393,13 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerDrainer, new Logger(*iDrainer, "Drainer"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iDelayReservoir,
+                   new DelayReservoir(*upstream,
+                                      aInitParams->ThreadPriorityDelay(),
+                                      aInitParams->MaxStreamsPerReservoir()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerDelayReservoir, new Logger(*iDelayReservoir, "DelayReservoir"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iVariableDelay2,
                    new VariableDelayRight(*iMsgFactory, *upstream,
                                           aInitParams->RampEmergencyJiffies(),
@@ -460,6 +476,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerReporter->SetEnabled(true);
     //iLoggerRouter->SetEnabled(true);
     //iLoggerDrainer->SetEnabled(true);
+    //iLoggerDelayReservoir->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationRamper->SetEnabled(true);
@@ -488,6 +505,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerRouter->SetFilter(Logger::EMsgAll);
     //iLoggerDrainer->SetFilter(Logger::EMsgAll);
+    //iLoggerDelayReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationRamper->SetFilter(Logger::EMsgAll);
@@ -523,6 +541,8 @@ Pipeline::~Pipeline()
     delete iRampValidatorDelay2;
     delete iLoggerVariableDelay2;
     delete iVariableDelay2;
+    delete iLoggerDelayReservoir;
+    delete iDelayReservoir;
     delete iLoggerDrainer;
     delete iDrainer;
     delete iDecodedAudioValidatorRouter;
@@ -755,9 +775,10 @@ void Pipeline::LogBuffers() const
 {
     const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
     const TUint decodedMs = Jiffies::ToMs(iDecodedAudioReservoir->SizeInJiffies());
+    const TUint delayMs = Jiffies::ToMs(iDelayReservoir->SizeInJiffies());
     const TUint starvationMs = Jiffies::ToMs(iStarvationRamper->SizeInJiffies());
-    Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, starvationRamper=%u\n",
-               encodedBytes, decodedMs, starvationMs);
+    Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, delayMs=%u, starvationRamper=%u\n",
+               encodedBytes, decodedMs, delayMs, starvationMs);
 }
 
 void Pipeline::Push(Msg* aMsg)

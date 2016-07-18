@@ -119,7 +119,7 @@ void Product::Start()
 
     iLock.Wait();
     const Bws<ISource::kMaxSystemNameBytes> startupSourceVal(iStartupSourceVal);
-    iAdapterChangeListenerId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &Product::CurrentAdapterChanged), false);
+    iAdapterChangeListenerId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &Product::CurrentAdapterChanged), "OpenHome::Av::Product", false);
     iLock.Signal();
     CurrentAdapterChanged(); // NetworkAdapterList doesn't run callbacks on registration
 

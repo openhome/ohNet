@@ -217,7 +217,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iStoreZone->Get(iZone);
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
-    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), false);
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &SourceReceiver::CurrentAdapterChanged), "SourceReceiver", false);
 
     // Sender
     iSender = new SongcastSender(aMediaPlayer, *iZoneHandler, aTxTimestamper, iUriProvider->Mode(), *protocolOhm);
@@ -473,7 +473,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);
-    iSenderThread = new SenderThread(*iLoggerSender, priorityMax-2);
+    iSenderThread = new SenderThread(*iLoggerSender, priorityMax-3);
     iSplitter = new Splitter(*iSenderThread, aMode);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iSplitter->SetUpstream(pipeline.InsertElements(*iLoggerSplitter));
