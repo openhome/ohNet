@@ -39,6 +39,38 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application7", Debug::kApplication7);
     AddLevel("Application8", Debug::kApplication8);
     AddLevel("Application9", Debug::kApplication9);
+    AddLevel("Application12", Debug::kApplication12);
+    AddLevel("Application13", Debug::kApplication13);
+    AddLevel("Application14", Debug::kApplication14);
+    AddLevel("Application15", Debug::kApplication15);
+    AddLevel("Application16", Debug::kApplication16);
+    AddLevel("Application17", Debug::kApplication17);
+    AddLevel("Application18", Debug::kApplication18);
+    AddLevel("Application19", Debug::kApplication19);
+    AddLevel("Application20", Debug::kApplication20);
+    AddLevel("Application21", Debug::kApplication21);
+    AddLevel("Application22", Debug::kApplication22);
+    AddLevel("Application23", Debug::kApplication23);
+    AddLevel("Application24", Debug::kApplication24);
+    AddLevel("Application25", Debug::kApplication25);
+    AddLevel("Application26", Debug::kApplication26);
+    AddLevel("Application27", Debug::kApplication27);
+    AddLevel("Application28", Debug::kApplication28);
+    AddLevel("Application29", Debug::kApplication29);
+    AddLevel("Application30", Debug::kApplication30);
+    AddLevel("Application31", Debug::kApplication31);
+    AddLevel("Application32", Debug::kApplication32);
+    AddLevel("Application33", Debug::kApplication33);
+    AddLevel("Application34", Debug::kApplication34);
+    AddLevel("Application35", Debug::kApplication35);
+    AddLevel("Application36", Debug::kApplication36);
+    AddLevel("Application37", Debug::kApplication37);
+    AddLevel("Application38", Debug::kApplication38);
+    AddLevel("Application39", Debug::kApplication39);
+    AddLevel("Application40", Debug::kApplication40);
+    AddLevel("Application41", Debug::kApplication41);
+    AddLevel("Application42", Debug::kApplication42);
+    AddLevel("Application43", Debug::kApplication43);
 
     // Debug::kAll level includes Debug::kNetwork, which will crash device if
     // activated via shell.
@@ -79,7 +111,7 @@ void ShellCommandDebug::HandleShellCommand(Brn aCommand, const std::vector<Brn>&
     Brn level = aArgs[1];
     LevelMap::iterator it = iLevels.find(level);
     if (it != iLevels.end()) {
-        TUint val = it->second->Value();
+        TUint64 val = it->second->Value();
         if (set) {
             Debug::AddLevel(val);
         }
@@ -109,7 +141,7 @@ void ShellCommandDebug::DisplayHelp(IWriter& aResponse)
     aResponse.Write(Brn("  Note that any number of levels may be set via repeated calls to debug set.\n"));
 }
 
-void ShellCommandDebug::AddLevel(const TChar* aName, TUint aValue)
+void ShellCommandDebug::AddLevel(const TChar* aName, TUint64 aValue)
 {
     Level* level = new Level(aName, aValue);
     Brn name(aName);
@@ -119,7 +151,7 @@ void ShellCommandDebug::AddLevel(const TChar* aName, TUint aValue)
 
 // ShellCommandDebug::Level
 
-ShellCommandDebug::Level::Level(const TChar* aName, TUint aValue)
+ShellCommandDebug::Level::Level(const TChar* aName, TUint64 aValue)
     : iName(aName)
     , iValue(aValue)
 {
@@ -130,7 +162,7 @@ const TChar* ShellCommandDebug::Level::Name() const
     return iName;
 }
 
-TUint ShellCommandDebug::Level::Value() const
+TUint64 ShellCommandDebug::Level::Value() const
 {
     return iValue;
 }
