@@ -5,38 +5,28 @@
 
 using namespace OpenHome;
 
-TUint Debug::iLevel = Debug::kNone;
-TBool Debug::iBreak = false;
+TUint64 Debug::iLevel = Debug::kNone;
 
-TUint Debug::Level()
+TUint64 Debug::Level()
 {
     return iLevel;
 }
 
-void Debug::SetLevel(TUint aLevel)
+void Debug::SetLevel(TUint64 aLevel)
 {
     iLevel = aLevel;
 }
 
-void Debug::AddLevel(TUint aLevel)
+void Debug::AddLevel(TUint64 aLevel)
 {
     iLevel |= aLevel;
 }
 
-void Debug::RemoveLevel(TUint aLevel)
+void Debug::RemoveLevel(TUint64 aLevel)
 {
     iLevel &= ~aLevel;
 }
 
-TBool Debug::TestLevel(TUint aLevel)
-{
-    if ((iLevel & aLevel) != 0) 
-    {
-        return true;
-    }
-    
-    return false;   
-}
 
 AutoLog::AutoLog(TUint aLevel, const TChar* aString)
     : iLevel(aLevel)
