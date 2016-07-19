@@ -592,6 +592,7 @@ VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElement
 void VariableDelayRight::OverrideAnimatorLatency(TUint aJiffies)
 {
     iLock.Wait();
+    LOG(kPipeline, "VariableDelayRight::OverrideAnimatorLatency - %u (%ums)\n", aJiffies, Jiffies::ToMs(aJiffies));
     iAnimatorLatencyOverride = aJiffies;
     iAnimatorOverridePending = true;
     iLock.Signal();
