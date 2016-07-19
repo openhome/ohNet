@@ -475,7 +475,7 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
         break;
     case ERampedDown:
     {
-        ASSERT(iDelayAdjustment < 0);
+        ASSERT_VA(iDelayAdjustment < 0, "iDelayAdjustment=%d\n", iDelayAdjustment);
         TUint jiffies = msg->Jiffies();
         if (jiffies >(TUint)(-iDelayAdjustment)) {
             MsgAudio* remaining = msg->Split((TUint)(-iDelayAdjustment));
