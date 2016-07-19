@@ -1181,12 +1181,14 @@ void ConfigUiValRoIpAddress::RemoveObserver(TUint aObserverId)
 
 void ConfigUiValRoIpAddress::CurrentAdapterChanged()
 {
-    NetworkAdapter* adpt = iAdapterList.CurrentAdapter(kCookie);
-    const TIpAddress addr = adpt->Address();
-    adpt->RemoveRef(kCookie);
-
     iAddress.SetBytes(0);
-    Endpoint::AppendAddress(iAddress, addr);
+
+    NetworkAdapter* adpt = iAdapterList.CurrentAdapter(kCookie);
+    if (adpt != nullptr) {
+        Endpoint::AppendAddress(iAddress, adpt->Address());
+        adpt->RemoveRef(kCookie);
+    }
+
     iUiVal->Update(Brn(iAddress));
 }
 
