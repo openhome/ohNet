@@ -23,13 +23,14 @@ private:
     void Run();
 private:
     static const TUint kMaxFriendlyNameDeviceType = 30;
+    static const TUint kMaxNameBytes = IFriendlyNameObservable::kMaxFriendlyNameBytes + kMaxFriendlyNameDeviceType;
 
     IFriendlyNameObservable& iFriendlyNameObservable;
     Net::DvDevice& iDvDevice;
     TUint iId;
     Mutex iLock;
     ThreadFunctor* iThread;
-    Bws<IFriendlyNameObservable::kMaxFriendlyNameBytes+kMaxFriendlyNameDeviceType+1> iFullName;
+    Bws<kMaxNameBytes> iFullName;
 };
 
 }

@@ -43,10 +43,14 @@ void FriendlyNameAttributeUpdater::Observer(const Brx& aNewFriendlyName)
 void FriendlyNameAttributeUpdater::Run()
 {
     try {
+        Bws<kMaxNameBytes+1> fullName; // +1 for nul terminator added by PtrZ()
         for (;;) {
             iThread->Wait();
-            AutoMutex a(iLock);
-            iDvDevice.SetAttribute("Upnp.FriendlyName", iFullName.PtrZ());
+            {
+                AutoMutex a(iLock);
+                fullName.Replace(iFullName);
+            }
+            iDvDevice.SetAttribute("Upnp.FriendlyName", fullName.PtrZ());
         }
     }
     catch (ThreadKill&) {}
