@@ -10,7 +10,7 @@ namespace Media {
 class DelayReservoir : public MsgReservoir, public IPipelineElementUpstream
 {
 public:
-    DelayReservoir(IPipelineElementUpstream& aUpstream, TUint aThreadPriority, TUint aMaxStreamCount);
+    DelayReservoir(IPipelineElementUpstream& aUpstream, TUint aMaxSize, TUint aThreadPriority, TUint aMaxStreamCount);
     ~DelayReservoir();
     TUint SizeInJiffies() const;
 private:
@@ -19,12 +19,11 @@ private:
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgDelay* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
 private:
     IPipelineElementUpstream& iUpstream;
+    const TUint iMaxJiffies;
     const TUint iMaxStreamCount;
-    TUint iMaxJiffies;
     Mutex iLock;
     Semaphore iSem;
     ThreadFunctor* iPullerThread;

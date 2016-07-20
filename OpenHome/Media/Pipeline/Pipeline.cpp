@@ -393,13 +393,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerDrainer, new Logger(*iDrainer, "Drainer"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
-    ATTACH_ELEMENT(iDelayReservoir,
-                   new DelayReservoir(*upstream,
-                                      aInitParams->ThreadPriorityDelay(),
-                                      aInitParams->MaxStreamsPerReservoir()),
-                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
-    ATTACH_ELEMENT(iLoggerDelayReservoir, new Logger(*iDelayReservoir, "DelayReservoir"),
-                   upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iVariableDelay2,
                    new VariableDelayRight(*iMsgFactory, *upstream,
                                           aInitParams->RampEmergencyJiffies(),
@@ -412,6 +405,14 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iDecodedAudioValidatorDelay2, new DecodedAudioValidator(*upstream, "VariableDelay2"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+    ATTACH_ELEMENT(iDelayReservoir,
+                   new DelayReservoir(*upstream,
+                                      kSenderMinLatency,
+                                      aInitParams->ThreadPriorityDelay(),
+                                      aInitParams->MaxStreamsPerReservoir()),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerDelayReservoir, new Logger(*iDelayReservoir, "DelayReservoir"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iPruner, new Pruner(*upstream),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerPruner, new Logger(*iPruner, "Pruner"),

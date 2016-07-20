@@ -450,6 +450,11 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
                     const TUint discard = -iDelayAdjustment;
                     if (discard == 0) {
                         iDelayAdjustment = 0;
+                        LocalDelayApplied();
+                        iStatus = ERampingUp;
+                        iRampDirection = Ramp::EUp;
+                        iCurrentRampValue = Ramp::kMin;
+                        iRemainingRampSize = iRampDuration;
                         auto stream = UpdateDecodedStream(trackOffset);
                         ASSERT(iPendingStream == nullptr);
                         iPendingStream = stream;
@@ -459,13 +464,6 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
                         if (iTargetFlushId != MsgFlush::kIdInvalid) {
                             iDelayAdjustment += discard;
                         }
-                    }
-                    if (iDelayAdjustment == 0) {
-                        LocalDelayApplied();
-                        iStatus = ERampingUp;
-                        iRampDirection = Ramp::EUp;
-                        iCurrentRampValue = Ramp::kMin;
-                        iRemainingRampSize = iRampDuration;
                     }
                 }
             }

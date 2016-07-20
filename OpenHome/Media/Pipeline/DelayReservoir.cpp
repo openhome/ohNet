@@ -9,10 +9,11 @@ using namespace OpenHome::Media;
 
 // DelayReservoir
 
-DelayReservoir::DelayReservoir(IPipelineElementUpstream& aUpstream, TUint aThreadPriority, TUint aMaxStreamCount)
+DelayReservoir::DelayReservoir(IPipelineElementUpstream& aUpstream, TUint aMaxSize,
+                               TUint aThreadPriority, TUint aMaxStreamCount)
     : iUpstream(aUpstream)
+    , iMaxJiffies(aMaxSize)
     , iMaxStreamCount(aMaxStreamCount)
-    , iMaxJiffies(0)
     , iLock("DLY1")
     , iSem("DLY2", 0)
     , iExit(false)
@@ -65,11 +66,6 @@ Msg* DelayReservoir::Pull()
     }
     iLock.Signal();
     return msg;
-}
-
-void DelayReservoir::ProcessMsgIn(MsgDelay* aMsg)
-{
-    iMaxJiffies = aMsg->DelayJiffies();
 }
 
 void DelayReservoir::ProcessMsgIn(MsgQuit* /*aMsg*/)
