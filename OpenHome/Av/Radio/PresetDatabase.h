@@ -74,6 +74,8 @@ public: // from IPresetDatabaseWriter
     void ClearPreset(TUint aIndex) override;
     void EndSetPresets() override;
 private:
+    TBool TryGetPresetByIdLocked(TUint aId, Bwx& aMetaData) const;
+private:
     class Preset
     {
         static const TUint kMaxMetaDataBytes = 1024 * 2;

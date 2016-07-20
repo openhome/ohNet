@@ -76,6 +76,11 @@ TUint PresetDatabase::GetPresetNumber(TUint aPresetId) const
 TBool PresetDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
 {
     AutoMutex a(iLock);
+    return TryGetPresetByIdLocked(aId, aMetaData);
+}
+
+TBool PresetDatabase::TryGetPresetByIdLocked(TUint aId, Bwx& aMetaData) const
+{
     for (TUint i=0; i<kMaxPresets; i++) {
         if (iPresets[i].Id() == aId) {
             aMetaData.Replace(iPresets[i].MetaData());
@@ -102,7 +107,7 @@ TBool PresetDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TU
 {
     AutoMutex a(iLock);
     if (iSeq != aSeq) {
-        return TryGetPresetById(aId, aMetaData);
+        return TryGetPresetByIdLocked(aId, aMetaData);
     }
     for (TUint i=aIndex; i<kMaxPresets; i++) {
         if (iPresets[i].Id() == aId) {
