@@ -944,16 +944,13 @@ void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
 
 TBool RaopDiscovery::Active()
 {
-    // FIXME - this assertion is true if we switch adapters while playing a
-    // track. So need to either:
-    // - allow iCurrent to be nullptr when ProtocolRaop calls these functions, OR
-    // - ensure ProtocolRaop is stopped before it can call any of these
-    // functions
-    ASSERT(iCurrent != nullptr);
-    //if (iCurrent != nullptr) {
+    // If switching adapters while playing a track, this call may come in before
+    // one of the newly-created sessions has been set active (iCurrent == nullptr).
+    // So, return false in that case, as neither session is active.
+    if (iCurrent != nullptr) {
         return iCurrent->Active();
-    //}
-    //return false;
+    }
+    return false;
 }
 
 TUint RaopDiscovery::AesSid()

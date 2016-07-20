@@ -310,8 +310,5 @@ private:
     VolumeScaler iVolume;
 };
 
-
 } // namespace Av
 } // namespace OpenHome
-
-
