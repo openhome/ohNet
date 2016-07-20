@@ -185,7 +185,7 @@ Msg* VariableDelayBase::DoPull()
                 }
             }
         } while (msg == nullptr && iWaitForAudioBeforeGeneratingSilence);
-        msg = nullptr; // DoEnqueue() above passed ownership of msg back to reservoir
+        msg = nullptr; // Enqueue() above passed ownership of msg back to reservoir
     }
 
     // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
@@ -277,9 +277,11 @@ void VariableDelayBase::SetupRamp()
         iRemainingRampSize = iRampDuration;
         break;
     case ERunning:
-        iStatus = ERampingDown;
-        iRampDirection = Ramp::EDown;
-        iRemainingRampSize = iRampDuration;
+        if (iDelayAdjustment != 0) {
+            iStatus = ERampingDown;
+            iRampDirection = Ramp::EDown;
+            iRemainingRampSize = iRampDuration;
+        }
         break;
     case ERampingDown:
         if (iDelayAdjustment == 0) {
@@ -448,11 +450,6 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
                     const TUint discard = -iDelayAdjustment;
                     if (discard == 0) {
                         iDelayAdjustment = 0;
-                        LocalDelayApplied();
-                        iStatus = ERampingUp;
-                        iRampDirection = Ramp::EUp;
-                        iCurrentRampValue = Ramp::kMin;
-                        iRemainingRampSize = iRampDuration;
                         auto stream = UpdateDecodedStream(trackOffset);
                         ASSERT(iPendingStream == nullptr);
                         iPendingStream = stream;
@@ -462,6 +459,13 @@ Msg* VariableDelayBase::ProcessMsg(MsgAudioPcm* aMsg)
                         if (iTargetFlushId != MsgFlush::kIdInvalid) {
                             iDelayAdjustment += discard;
                         }
+                    }
+                    if (iDelayAdjustment == 0) {
+                        LocalDelayApplied();
+                        iStatus = ERampingUp;
+                        iRampDirection = Ramp::EUp;
+                        iCurrentRampValue = Ramp::kMin;
+                        iRemainingRampSize = iRampDuration;
                     }
                 }
             }
