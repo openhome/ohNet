@@ -21,7 +21,9 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
+
 // RaopDevice
+
 RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, IFriendlyNameObservable& aFriendlyNameObservable, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
     , iFriendlyNameObservable(aFriendlyNameObservable)
@@ -30,6 +32,11 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, IFriendlyNa
     , iRegistered(false)
     , iLock("RADL")
 {
+    //Endpoint ep(aDiscoveryPort, aIpAddr);
+    //Bws<Endpoint::kMaxEndpointBytes> epBuf;
+    //ep.AppendEndpoint(epBuf);
+    //LOG(kMedia, "RaopDevice::RaopDevice ep: %.*s\n", PBUF(epBuf));
+
     ASSERT(&iProvider); // Cannot function without MDNS
     iHandleRaop = iProvider.MdnsCreateService();
 
@@ -39,6 +46,7 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, IFriendlyNa
 
 RaopDevice::~RaopDevice()
 {
+    Deregister();   // Call this just in case owning object forgot to call it.
     iFriendlyNameObservable.DeregisterFriendlyNameObserver(iFriendlyNameId);
 }
 
@@ -66,7 +74,7 @@ void RaopDevice::FriendlyNameUpdate(const Brx& aNewFriendlyName)
 void RaopDevice::Register()
 {
     AutoMutex am(iLock);
-    if(iRegistered) {
+    if (iRegistered) {
         return; // already registered
     }
     DoRegister();
@@ -100,7 +108,7 @@ void RaopDevice::DoRegister()
 void RaopDevice::Deregister()
 {
     AutoMutex am(iLock);
-    if(iRegistered) {
+    if (!iRegistered) {
         return; // already registered
     }
     DoDeregister();
@@ -936,16 +944,13 @@ void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
 
 TBool RaopDiscovery::Active()
 {
-    // FIXME - this assertion is true if we switch adapters while playing a
-    // track. So need to either:
-    // - allow iCurrent to be nullptr when ProtocolRaop calls these functions, OR
-    // - ensure ProtocolRaop is stopped before it can call any of these
-    // functions
-    ASSERT(iCurrent != nullptr);
-    //if (iCurrent != nullptr) {
+    // If switching adapters while playing a track, this call may come in before
+    // one of the newly-created sessions has been set active (iCurrent == nullptr).
+    // So, return false in that case, as neither session is active.
+    if (iCurrent != nullptr) {
         return iCurrent->Active();
-    //}
-    //return false;
+    }
+    return false;
 }
 
 TUint RaopDiscovery::AesSid()
