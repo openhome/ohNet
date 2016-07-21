@@ -363,7 +363,6 @@ Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iUpstreamElement(aUpstreamElement)
     , iStreamHandler(nullptr)
     , iBuffering(false)
-    , iLock("REWI")
 {
     iQueueCurrent = new RewinderReservoir(kMaxEncodedAudioMsgs);
     iQueueNext = new RewinderReservoir(kMaxEncodedAudioMsgs);
@@ -388,7 +387,6 @@ Msg* Rewinder::Pull()
     Msg* msg = nullptr;
     do {
         {
-            AutoMutex _(iLock);
             if (iBuffering && iQueueNext->IsFull()) {
                 return nullptr;
             }
@@ -410,9 +408,7 @@ Msg* Rewinder::Pull()
         if (msg == nullptr) {
             msg = iUpstreamElement.Pull();
             if (msg != nullptr) {
-                iLock.Wait();
                 msg = msg->Process(*this);
-                iLock.Signal();
             }
         }
     } while (msg == nullptr);
@@ -523,7 +519,6 @@ Msg* Rewinder::ProcessMsg(MsgQuit* aMsg)
 
 void Rewinder::Rewind()
 {
-    AutoMutex a(iLock);
     ASSERT(iBuffering == true);
 
     while (!iQueueCurrent->IsEmpty()) {
@@ -537,7 +532,6 @@ void Rewinder::Rewind()
 void Rewinder::Stop()
 {
     // Discard any msgs that have been re-buffered - don't want to see them again.
-    AutoMutex a(iLock);
     ASSERT(iBuffering);
     while (!iQueueNext->IsEmpty()) {
         iQueueNext->Dequeue()->RemoveRef();

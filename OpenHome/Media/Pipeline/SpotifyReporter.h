@@ -5,6 +5,8 @@
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -107,8 +109,8 @@ private: // PipelineElement
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
-    void ClearDecodedStreamLocked();
-    void UpdateDecodedStreamLocked(MsgDecodedStream& aMsg);
+    void ClearDecodedStream();
+    void UpdateDecodedStream(MsgDecodedStream& aMsg);
     TUint64 TrackLengthJiffiesLocked() const;
     MsgDecodedStream* CreateMsgDecodedStreamLocked() const;
 private:
@@ -122,7 +124,7 @@ private:
     TBool iMsgTrackPending;
     TBool iMsgDecodedStreamPending;
     MsgDecodedStream* iDecodedStream;
-    TUint64 iSubSamples;
+    std::atomic<TUint64> iSubSamples;
     TBool iInterceptMode;
     TBool iPipelineTrackSeen;
     mutable Mutex iLock;

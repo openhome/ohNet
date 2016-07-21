@@ -6,6 +6,8 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/ClockPuller.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -127,7 +129,7 @@ private:
     const TUint iMinDelay;
     TUint iDelayJiffiesTotal;
     TUint iAnimatorLatencyOverride;
-    TBool iAnimatorOverridePending;
+    std::atomic<TBool> iAnimatorOverridePending;
 };
 
 } // namespace Media

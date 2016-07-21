@@ -589,6 +589,7 @@ VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElement
     , iAnimatorLatencyOverride(0)
     , iAnimatorOverridePending(false)
 {
+    ASSERT(iAnimatorOverridePending.is_lock_free());
 }
 
 void VariableDelayRight::OverrideAnimatorLatency(TUint aJiffies)
@@ -596,19 +597,18 @@ void VariableDelayRight::OverrideAnimatorLatency(TUint aJiffies)
     iLock.Wait();
     LOG(kPipeline, "VariableDelayRight::OverrideAnimatorLatency - %u (%ums)\n", aJiffies, Jiffies::ToMs(aJiffies));
     iAnimatorLatencyOverride = aJiffies;
-    iAnimatorOverridePending = true;
+    iAnimatorOverridePending.store(true);
     iLock.Signal();
 }
 
 Msg* VariableDelayRight::Pull()
 {
-    {
+    if (iAnimatorOverridePending.load()) {
         AutoMutex _(iLock);
-        if (iAnimatorOverridePending) {
-            ApplyAnimatorOverride();
-            iAnimatorOverridePending = false;
-        }
+        ApplyAnimatorOverride();
+        iAnimatorOverridePending.store(false);
     }
+
     return VariableDelayBase::Pull();
 }
 

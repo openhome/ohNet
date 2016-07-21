@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <atomic>
+
 namespace OpenHome {
 namespace Media {
 
@@ -30,11 +32,10 @@ private: // from IStreamHandler
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstream;
-    Mutex iLock;
     Semaphore iSem;
     Msg* iPending;
-    IStreamHandler* iStreamHandler;
-    TBool iGenerateDrainMsg;
+    std::atomic<IStreamHandler*> iStreamHandler;
+    std::atomic<TBool> iGenerateDrainMsg;
     TBool iWaitForDrained;
 };
 

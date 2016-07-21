@@ -229,6 +229,7 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iPipelineTrackSeen(false)
     , iLock("SARL")
 {
+    ASSERT(iSubSamples.is_lock_free());
 }
 
 SpotifyReporter::~SpotifyReporter()
@@ -284,7 +285,7 @@ Msg* SpotifyReporter::Pull()
                     if (iDecodedStream != nullptr) {
                         iMsgDecodedStreamPending = false;
                         MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
-                        UpdateDecodedStreamLocked(*msg);
+                        UpdateDecodedStream(*msg);
                         return iDecodedStream;
                     }
                 }
@@ -299,14 +300,13 @@ Msg* SpotifyReporter::Pull()
 
 TUint64 SpotifyReporter::SubSamples() const
 {
-    AutoMutex a(iLock);
-    return iSubSamples;
+    return iSubSamples.load();
 }
 
 TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
 {
     AutoMutex a(iLock);
-    const TUint64 subSamples = iSubSamples;
+    const TUint64 subSamples = iSubSamples.load();
     ASSERT(subSamples >= aPrevSubSamples);
     return subSamples - aPrevSubSamples;
 }
@@ -328,6 +328,7 @@ void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata,
 
 void SpotifyReporter::NotifySeek(TUint aOffsetMs)
 {
+    AutoMutex a(iLock);
     iStartOffset.SetMs(aOffsetMs);
 }
 
@@ -343,9 +344,9 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     iPipelineTrackSeen = false;
     iMsgTrackPending = true;
     iMsgDecodedStreamPending = true;
-    ClearDecodedStreamLocked();
+    ClearDecodedStream();
 
-    iSubSamples = 0;
+    iSubSamples.store(0);
     return aMsg;
 }
 
@@ -363,10 +364,10 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
     ASSERT(info.NumChannels() != 0);
     AutoMutex a(iLock);
     // Clear any previous cached MsgDecodedStream and cache the one received.
-    UpdateDecodedStreamLocked(*aMsg);
+    UpdateDecodedStream(*aMsg);
 
     if (iInterceptMode) {
-        aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
+        aMsg->RemoveRef();  // UpdateDecodedStream() adds its own reference.
         iMsgDecodedStreamPending = true;    // Set flag so that a MsgDecodedStream with updated attributes is output in place of this.
         return nullptr;
     }
@@ -375,18 +376,15 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    AutoMutex a(iLock);
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     TUint samples = aMsg->Jiffies()/Jiffies::PerSample(info.SampleRate());
 
-    TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
-    ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
     return aMsg;
 }
 
-void SpotifyReporter::ClearDecodedStreamLocked()
+void SpotifyReporter::ClearDecodedStream()
 {
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
@@ -394,9 +392,9 @@ void SpotifyReporter::ClearDecodedStreamLocked()
     }
 }
 
-void SpotifyReporter::UpdateDecodedStreamLocked(MsgDecodedStream& aMsg)
+void SpotifyReporter::UpdateDecodedStream(MsgDecodedStream& aMsg)
 {
-    ClearDecodedStreamLocked();
+    ClearDecodedStream();
     iDecodedStream = &aMsg;
     iDecodedStream->AddRef();
 }
