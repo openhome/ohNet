@@ -42,27 +42,26 @@ public:
     void SetEncodedReservoirSize(TUint aBytes);
     void SetDecodedReservoirSize(TUint aJiffies);
     void SetGorgerDuration(TUint aJiffies); // amount of audio required before non-pullable sources will start playing
-    void SetStarvationRamperSize(TUint aJiffies);
+    void SetStarvationRamperMinSize(TUint aJiffies);
     void SetMaxStreamsPerReservoir(TUint aCount);
     void SetLongRamp(TUint aJiffies);
     void SetShortRamp(TUint aJiffies);
     void SetEmergencyRamp(TUint aJiffies);
     void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
-    void SetThreadPriorities(TUint aStarvationRamper, TUint aDelay, TUint aCodec, TUint aEvent);
+    void SetThreadPriorities(TUint aStarvationRamper, TUint aCodec, TUint aEvent);
     void SetMaxLatency(TUint aJiffies);
     void SetSupportElements(TUint aElements); // EPipelineSupportElements members OR'd together
     // getters
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
     TUint GorgeDurationJiffies() const;
-    TUint StarvationRamperJiffies() const;
+    TUint StarvationRamperMinJiffies() const;
     TUint MaxStreamsPerReservoir() const;
     TUint RampLongJiffies() const;
     TUint RampShortJiffies() const;
     TUint RampEmergencyJiffies() const;
     TUint ThreadPriorityFlywheel() const;
     TUint ThreadPriorityStarvationRamper() const;
-    TUint ThreadPriorityDelay() const;
     TUint ThreadPriorityCodec() const;
     TUint ThreadPriorityEvent() const;
     TUint MaxLatencyJiffies() const;
@@ -73,13 +72,12 @@ private:
     TUint iEncodedReservoirBytes;
     TUint iDecodedReservoirJiffies;
     TUint iGorgeDurationJiffies;
-    TUint iStarvationRamperJiffies;
+    TUint iStarvationRamperMinJiffies;
     TUint iMaxStreamsPerReservoir;
     TUint iRampLongJiffies;
     TUint iRampShortJiffies;
     TUint iRampEmergencyJiffies;
     TUint iThreadPriorityStarvationRamper;
-    TUint iThreadPriorityDelay;
     TUint iThreadPriorityCodec;
     TUint iThreadPriorityEvent;
     TUint iMaxLatencyJiffies;
@@ -112,7 +110,6 @@ class Reporter;
 class SpotifyReporter;
 class Router;
 class Drainer;
-class DelayReservoir;
 class VariableDelayRight;
 class Pruner;
 class StarvationRamper;
@@ -269,8 +266,6 @@ private:
     DecodedAudioValidator* iDecodedAudioValidatorRouter;
     Drainer* iDrainer;
     Logger* iLoggerDrainer;
-    DelayReservoir* iDelayReservoir;
-    Logger* iLoggerDelayReservoir;
     VariableDelayRight* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
     RampValidator* iRampValidatorDelay2;

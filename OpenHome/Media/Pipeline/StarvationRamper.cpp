@@ -409,7 +409,7 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     , iUpstream(aUpstream)
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
-    , iSizeJiffies(aSizeJiffies)
+    , iMaxJiffies(aSizeJiffies)
     , iRampUpJiffies(aRampUpSize)
     , iMaxStreamCount(aMaxStreamCount)
     , iLock("SRM1")
@@ -454,7 +454,7 @@ TUint StarvationRamper::SizeInJiffies() const
 
 inline TBool StarvationRamper::IsFull() const
 {
-    return (Jiffies() >= iSizeJiffies || DecodedStreamCount() == iMaxStreamCount);
+    return (Jiffies() >= iMaxJiffies || DecodedStreamCount() == iMaxStreamCount);
 }
 
 void StarvationRamper::PullerThread()
@@ -603,6 +603,11 @@ Msg* StarvationRamper::Pull()
     return msg;
 }
 
+void StarvationRamper::ProcessMsgIn(MsgDelay* aMsg)
+{
+    iMaxJiffies = aMsg->DelayJiffies();
+}
+
 void StarvationRamper::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
     iExit = true;
@@ -619,6 +624,12 @@ Msg* StarvationRamper::ProcessMsgOut(MsgTrack* aMsg)
 {
     NewStream();
     return aMsg;
+}
+
+Msg* StarvationRamper::ProcessMsgOut(MsgDelay* aMsg)
+{
+    aMsg->RemoveRef();
+    return nullptr;
 }
 
 Msg* StarvationRamper::ProcessMsgOut(MsgHalt* aMsg)

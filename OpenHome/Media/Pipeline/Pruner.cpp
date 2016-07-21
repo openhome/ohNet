@@ -93,12 +93,6 @@ Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
     return nullptr;
 }
 
-Msg* Pruner::ProcessMsg(MsgDelay* aMsg)
-{
-    aMsg->RemoveRef();
-    return nullptr;
-}
-
 Msg* Pruner::ProcessMsg(MsgMetaText* aMsg)
 {
     aMsg->RemoveRef();

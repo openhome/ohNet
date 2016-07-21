@@ -908,7 +908,7 @@ void SuiteVariableDelayRight::TestDelayShorterThanMinimum()
     PullNext(EMsgDecodedStream);
     static const TUint kDelay = kMinDelay - Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
-    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
+    PullNext(EMsgDelay);
     while (iJiffies < kMinDelay) {
         PullNext();
         TEST(iLastMsg == EMsgSilence);
@@ -927,7 +927,7 @@ void SuiteVariableDelayRight::TestAnimatorOverride()
     static_cast<VariableDelayRight*>(iVariableDelay)->OverrideAnimatorLatency(kAnimatorOverride);
     static const TUint kDelay = 20 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
-    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
+    PullNext(EMsgDelay);
 
     iJiffies = 0;
     while (iJiffies < kDelay - kAnimatorOverride) {
@@ -951,7 +951,7 @@ void SuiteVariableDelayRight::TestClockPuller()
 
     static const TUint kDelay = 20 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
-    iNextGeneratedMsg = EMsgDelay; // will be consumed by VariableDelay
+    PullNext(EMsgDelay);
     for (;;) {
         PullNext();
         if (iLastMsg != EMsgSilence) {

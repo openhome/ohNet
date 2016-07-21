@@ -117,9 +117,11 @@ private:
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgDelay* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
     Msg* ProcessMsgOut(MsgTrack* aMsg) override;
+    Msg* ProcessMsgOut(MsgDelay* aMsg) override;
     Msg* ProcessMsgOut(MsgHalt* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
@@ -137,7 +139,7 @@ private:
     IPipelineElementUpstream& iUpstream;
     IStarvationRamperObserver& iObserver;
     IPipelineElementObserverThread& iObserverThread;
-    const TUint iSizeJiffies;
+    TUint iMaxJiffies;
     const TUint iRampUpJiffies;
     const TUint iMaxStreamCount;
     Mutex iLock;

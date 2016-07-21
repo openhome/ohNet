@@ -49,6 +49,7 @@ private:
     void QuitDoesntWaitForAudio();
     void HaltPassedOn();
     void DrainPassedOn();
+    void DelayPassedOn();
     void StreamInterruptedPassedOn();
     void DecodedStreamPassedOn();
     void TrackWithoutAudioAllMsgsDiscarded();
@@ -98,6 +99,7 @@ SuitePruner::SuitePruner()
     AddTest(MakeFunctor(*this, &SuitePruner::QuitDoesntWaitForAudio), "QuitDoesntWaitForAudio");
     AddTest(MakeFunctor(*this, &SuitePruner::HaltPassedOn), "HaltPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::DrainPassedOn), "DrainPassedOn");
+    AddTest(MakeFunctor(*this, &SuitePruner::DelayPassedOn), "DelayPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::StreamInterruptedPassedOn), "StreamInterruptedPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::DecodedStreamPassedOn), "DecodedStreamPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::TrackWithoutAudioAllMsgsDiscarded), "TrackWithoutAudioAllMsgsDiscarded");
@@ -141,7 +143,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgBitRate, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDecodedStream, EMsgMetaText, EMsgWait, EMsgBitRate, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgDecodedStream);
@@ -167,9 +169,17 @@ void SuitePruner::HaltPassedOn()
 
 void SuitePruner::DrainPassedOn()
 {
-    EMsgType msgs[] ={ EMsgTrack, EMsgDrain };
+    EMsgType msgs[] = { EMsgTrack, EMsgDrain };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgDrain);
+    TEST(iPendingMsgs.size() == 0);
+}
+
+void SuitePruner::DelayPassedOn()
+{
+    EMsgType msgs[] = { EMsgTrack, EMsgDelay };
+    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgDelay);
     TEST(iPendingMsgs.size() == 0);
 }
 
@@ -382,7 +392,7 @@ Msg* SuitePruner::Pull()
     case EMsgDrain:
         return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgDelay:
-        return iMsgFactory->CreateMsgDelay(0);
+        return iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 10);
     case EMsgEncodedStream:
     {
         return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, 0, kStreamId, kSeekable, kLive, nullptr);

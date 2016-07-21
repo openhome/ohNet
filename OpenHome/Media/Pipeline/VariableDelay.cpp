@@ -638,7 +638,7 @@ Msg* VariableDelayRight::ProcessMsg(MsgDelay* aMsg)
 
     HandleDelayChange(delayJiffies);
 
-    return nullptr;
+    return iMsgFactory.CreateMsgDelay(delayJiffies, downstream);
 }
 
 void VariableDelayRight::LocalDelayApplied()
