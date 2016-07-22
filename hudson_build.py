@@ -30,10 +30,12 @@ class PostActions():
         if ret != 0:
             print ret
             sys.exit(10)
-        ret = rem.rsync_gc('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs')
-        if ret != 0:
-            print ret
-            sys.exit(10)
+        print 'WARNING: publication of API docs disabled'
+        # Uncomment following code once we decide where API docs should live (broken by segmentation of openhome.org)
+        #ret = rem.rsync_gc('hudson-rsync','openhome.org','Build/Docs/','~/build/nightly/docs')
+        #if ret != 0:
+        #    print ret
+        #    sys.exit(10)
 
     def armel_tests(self,type,release):
         self.__remote_tests('sheeva010.linn.co.uk', 'root', type, release)
