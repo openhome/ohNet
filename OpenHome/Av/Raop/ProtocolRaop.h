@@ -197,6 +197,8 @@ private:
     static const TUint kPriority = kPriorityNormal-1;
     static const TUint kSessionStackBytes = 10 * 1024;
     static const TUint kInvalidServerPort = 0;
+    //static const TUint kDefaultLatencySamples = 88200;  // 2000ms at 44.1KHz.
+    static const TUint kDefaultLatencySamples = 77175;  // 1750ms at 44.1KHz
 private:
     enum EType {
         ESync = 0x54,
@@ -745,6 +747,7 @@ private:
     static const TUint kSampleRate = 44100;     // Always 44.1KHz. Can get this from fmtp field.
     static const TUint kMaxFrameBytes = 2048;
     static const TUint kMaxRepairFrames = 50;
+    static const TUint kMinDelayChangeSamples = 441; // Require min change of 10 ms at 44.1KHz to cause delay value to be updated/output.
 public:
     ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IVolumeScalerEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();

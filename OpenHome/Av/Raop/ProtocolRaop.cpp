@@ -542,7 +542,7 @@ void ProtocolRaop::Reset()
 
     iSessionId = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iLatency = 0;
+    iLatency = iControlServer.Latency();    // Get last known (or default) latency.
     iFlushSeq = 0;
     iFlushTime = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
@@ -617,18 +617,33 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
      * That makes for an unpleasant listening experience. Better to just
      * potentially allow stream to go a few ms out of sync.
      */
-    //TBool outputDelay = false;
-    //TUint latency = iControlServer.Latency();
-    //{
-    //    AutoMutex a(iLockRaop);
-    //    if (latency != iLatency) {
-    //        iLatency = latency;
-    //        outputDelay = true;
-    //    }
-    //}
-    //if (outputDelay) {
-    //    iSupply->OutputDelay(Delay(latency));
-    //}
+    TBool outputDelay = false;
+    TUint latency = iControlServer.Latency();
+    {
+        AutoMutex a(iLockRaop);
+        if (latency != iLatency) {
+
+            TUint diffSamples = 0;
+            if (latency > iLatency) {
+                diffSamples = latency - iLatency;
+            }
+            else {
+                diffSamples = iLatency - latency;
+            }
+            //LOG(kMedia, "ProtocolRaop::OutputAudio diffSamples: %u\n", diffSamples);
+
+            // Some senders may toggle latency by a small amount when unpausing.
+            // To avoid unnecessary ramp down/up as delay changes, only change
+            // if a threshold is exceeded.
+            if (diffSamples >= kMinDelayChangeSamples) {
+                iLatency = latency;
+                outputDelay = true;
+            }
+        }
+    }
+    if (outputDelay) {
+        iSupply->OutputDelay(Delay(latency));
+    }
 
     iAudioDecryptor.Decrypt(aAudio, iAudioDecrypted);
     iSupply->OutputData(iAudioDecrypted);
@@ -766,7 +781,7 @@ RaopControlServer::RaopControlServer(SocketUdpServer& aServer, IRaopResendReceiv
     : iClientPort(kInvalidServerPort)
     , iServer(aServer)
     , iResendReceiver(aResendReceiver)
-    , iLatency(0)
+    , iLatency(kDefaultLatencySamples)
     , iLock("RACL")
     , iOpen(false)
     , iExit(false)
@@ -815,7 +830,7 @@ void RaopControlServer::Reset(TUint aClientPort)
 {
     AutoMutex a(iLock);
     iClientPort = aClientPort;
-    iLatency = 0;
+    //iLatency = kDefaultLatencySamples; // Persist previous latency on assumption that next device to connect will have same (or similar) latency to last device. Attempts to avoid audio ramp down/up caused by unnecessarily changing delay.
 }
 
 void RaopControlServer::Run()
@@ -844,7 +859,7 @@ void RaopControlServer::Run()
                     //LOG(kMedia, "RaopControlServer::Run packet.Extension(): %u\n", packet.Header().Extension());
 
                     AutoMutex a(iLock);
-                    TUint latency = iLatency;
+                    const TUint latency = iLatency;
                     iLatency = syncPacket.RtpTimestamp()-syncPacket.RtpTimestampMinusLatency();
 
                     if (iLatency != latency) {
