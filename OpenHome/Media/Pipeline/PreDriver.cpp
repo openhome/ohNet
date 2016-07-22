@@ -29,6 +29,7 @@ PreDriver::PreDriver(IPipelineElementUpstream& aUpstreamElement)
     , iShutdownSem("PDSD", 0)
     , iSilenceSinceLastPcm(0)
     , iSilenceSincePcm(false)
+    , iModeHasPullableClock(false)
     , iQuit(false)
 {
 }
@@ -57,6 +58,18 @@ Msg* PreDriver::Pull()
 
     } while (msg == nullptr);
     return msg;
+}
+
+Msg* PreDriver::ProcessMsg(MsgMode* aMsg)
+{
+    if (iModeHasPullableClock) {
+        /* if we're changing from a mode that used a pullable clock, make sure the next
+           DecodedStream is passed on.  Without this, we'd risk leaving the new mode
+           playing at a skewed clock rate set by the previous clock puller. */
+        iSampleRate = iBitDepth = iNumChannels = 0;
+    }
+    iModeHasPullableClock = aMsg->ClockPullers().Enabled();
+    return aMsg;
 }
 
 Msg* PreDriver::ProcessMsg(MsgDrain* aMsg)

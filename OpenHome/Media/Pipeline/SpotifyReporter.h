@@ -107,8 +107,8 @@ private: // PipelineElement
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
-    void ClearDecodedStreamLocked();
-    void UpdateDecodedStreamLocked(MsgDecodedStream& aMsg);
+    void ClearDecodedStream();
+    void UpdateDecodedStream(MsgDecodedStream& aMsg);
     TUint64 TrackLengthJiffiesLocked() const;
     MsgDecodedStream* CreateMsgDecodedStreamLocked() const;
 private:

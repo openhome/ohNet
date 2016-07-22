@@ -24,6 +24,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDrain* aMsg) override;
     Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
@@ -38,6 +39,7 @@ private:
     Semaphore iShutdownSem;
     TUint64 iSilenceSinceLastPcm;
     TBool iSilenceSincePcm;
+    TBool iModeHasPullableClock;
     TBool iQuit;
 };
 

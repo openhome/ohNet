@@ -284,7 +284,7 @@ Msg* SpotifyReporter::Pull()
                     if (iDecodedStream != nullptr) {
                         iMsgDecodedStreamPending = false;
                         MsgDecodedStream* msg = CreateMsgDecodedStreamLocked();
-                        UpdateDecodedStreamLocked(*msg);
+                        UpdateDecodedStream(*msg);
                         return iDecodedStream;
                     }
                 }
@@ -328,6 +328,7 @@ void SpotifyReporter::TrackChanged(const Brx& aUri, ISpotifyMetadata* aMetadata,
 
 void SpotifyReporter::NotifySeek(TUint aOffsetMs)
 {
+    AutoMutex a(iLock);
     iStartOffset.SetMs(aOffsetMs);
 }
 
@@ -343,7 +344,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     iPipelineTrackSeen = false;
     iMsgTrackPending = true;
     iMsgDecodedStreamPending = true;
-    ClearDecodedStreamLocked();
+    ClearDecodedStream();
 
     iSubSamples = 0;
     return aMsg;
@@ -363,10 +364,10 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
     ASSERT(info.NumChannels() != 0);
     AutoMutex a(iLock);
     // Clear any previous cached MsgDecodedStream and cache the one received.
-    UpdateDecodedStreamLocked(*aMsg);
+    UpdateDecodedStream(*aMsg);
 
     if (iInterceptMode) {
-        aMsg->RemoveRef();  // UpdateDecodedStreamLocked() adds its own reference.
+        aMsg->RemoveRef();  // UpdateDecodedStream() adds its own reference.
         iMsgDecodedStreamPending = true;    // Set flag so that a MsgDecodedStream with updated attributes is output in place of this.
         return nullptr;
     }
@@ -386,7 +387,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     return aMsg;
 }
 
-void SpotifyReporter::ClearDecodedStreamLocked()
+void SpotifyReporter::ClearDecodedStream()
 {
     if (iDecodedStream != nullptr) {
         iDecodedStream->RemoveRef();
@@ -394,9 +395,9 @@ void SpotifyReporter::ClearDecodedStreamLocked()
     }
 }
 
-void SpotifyReporter::UpdateDecodedStreamLocked(MsgDecodedStream& aMsg)
+void SpotifyReporter::UpdateDecodedStream(MsgDecodedStream& aMsg)
 {
-    ClearDecodedStreamLocked();
+    ClearDecodedStream();
     iDecodedStream = &aMsg;
     iDecodedStream->AddRef();
 }

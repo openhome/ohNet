@@ -73,7 +73,6 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     std::atomic<IStreamHandler*> iStreamHandler;
     TBool iBuffering;
-    Mutex iLock;
     RewinderReservoir* iQueueCurrent;    // new Msgs still to be passed on
     RewinderReservoir* iQueueNext;       // Msgs passed on but buffered in case of rewind
 };

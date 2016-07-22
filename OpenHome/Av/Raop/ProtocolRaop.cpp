@@ -363,7 +363,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     stopped = true;
                     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
                     iActive = false;
-                    iStopped = false;
                 }
                 if (iWaiting) {
                     waiting = true;
@@ -371,6 +370,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 }
                 if (iInterrupted) {
                     interrupted = true;
+                    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+                    iActive = false;
+                    iStopped = true;
                 }
                 if (iDiscontinuity) {
                     discontinuity = true;
