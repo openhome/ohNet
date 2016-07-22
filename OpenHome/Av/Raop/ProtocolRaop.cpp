@@ -620,8 +620,23 @@ void ProtocolRaop::OutputAudio(const Brx& aAudio)
     {
         AutoMutex a(iLockRaop);
         if (latency != iLatency) {
-            iLatency = latency;
-            outputDelay = true;
+
+            TUint diffSamples = 0;
+            if (latency > iLatency) {
+                diffSamples = latency - iLatency;
+            }
+            else {
+                diffSamples = iLatency - latency;
+            }
+            //LOG(kMedia, "ProtocolRaop::OutputAudio diffSamples: %u\n", diffSamples);
+
+            // Some senders may toggle latency by a small amount when unpausing.
+            // To avoid unnecessary ramp down/up as delay changes, only change
+            // if a threshold is exceeded.
+            if (diffSamples >= kMinDelayChangeSamples) {
+                iLatency = latency;
+                outputDelay = true;
+            }
         }
     }
     if (outputDelay) {
