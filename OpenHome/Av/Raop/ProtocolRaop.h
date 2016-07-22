@@ -197,6 +197,8 @@ private:
     static const TUint kPriority = kPriorityNormal-1;
     static const TUint kSessionStackBytes = 10 * 1024;
     static const TUint kInvalidServerPort = 0;
+    //static const TUint kDefaultLatencySamples = 88200;  // 2000ms at 44.1KHz.
+    static const TUint kDefaultLatencySamples = 77175;  // 1750ms at 44.1KHz
 private:
     enum EType {
         ESync = 0x54,
