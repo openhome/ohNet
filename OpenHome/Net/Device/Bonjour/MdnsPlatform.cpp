@@ -245,8 +245,10 @@ void MdnsPlatform::SubnetListChanged()
     if (current != NULL) {
         if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
             AddInterface(current);
-            iClient.SetMulticastIf(current->Address());
         }
+        // Set multicast iface in case current adapter was previously in a list
+        // subnets so no multicast iface was set.
+        iClient.SetMulticastIf(current->Address());
         current->RemoveRef(kNifCookie);
     }
     iInterfacesLock.Signal();
@@ -273,8 +275,10 @@ void MdnsPlatform::CurrentAdapterChanged()
         }
         if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
             AddInterface(current);
-            iClient.SetMulticastIf(current->Address());
         }
+        // Set multicast iface in case current adapter was previously in a list
+        // subnets so no multicast iface was set.
+        iClient.SetMulticastIf(current->Address());
         current->RemoveRef(kNifCookie);
     }
     else {
