@@ -411,6 +411,7 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgSilence* aMsg)
 {
     iLastPulledMsg = EMsgSilence;
+    iLastSubsample = 0;
     return aMsg;
 }
 
