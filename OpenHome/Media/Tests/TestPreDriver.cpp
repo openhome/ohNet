@@ -48,19 +48,19 @@ private:
     enum EMsgType
     {
         ENone
-       ,EMsgAudioPcm
-       ,EMsgSilence
-       ,EMsgPlayable
-       ,EMsgDecodedStream
        ,EMsgMode
        ,EMsgTrack
        ,EMsgDrain
-       ,EMsgEncodedStream
        ,EMsgMetaText
+       ,EMsgEncodedStream
        ,EMsgStreamInterrupted
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
+       ,EMsgDecodedStream
+       ,EMsgAudioPcm
+       ,EMsgSilence
+       ,EMsgPlayable
        ,EMsgQuit
     };
 private:
@@ -78,6 +78,7 @@ private:
     TUint iNumChannels;
     TUint iAudioMsgSizeJiffies;
     TUint iNextMsgSilenceSize;
+    TBool iNextModePullable;
 };
 
 } // namespace Media
@@ -104,6 +105,7 @@ SuitePreDriver::SuitePreDriver()
     audio->RemoveRef();
     iNextMsgSilenceSize = iAudioMsgSizeJiffies;
     iPreDriver = new PreDriver(*this);
+    iNextModePullable = false;
 }
 
 SuitePreDriver::~SuitePreDriver()
@@ -173,29 +175,39 @@ void SuitePreDriver::Test()
     iNextGeneratedMsg = EMsgDecodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
+
+    // Mode (non-pullable) -> Mode (pullable) - duplicate DecodedStream suppressed
+    iNextGeneratedMsg = EMsgMode;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgMode);
+    iSampleRate = 44100;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgDecodedStream);
+    iNextModePullable = true;
+    iNextGeneratedMsg = EMsgMode;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgMode);
+    iNextGeneratedMsg = EMsgDecodedStream;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgPlayable);
+
+    // Mode (pullable) -> Mode (non-pullable) - duplicate DecodedStream passed on
+    iNextGeneratedMsg = EMsgMode;
+    iNextModePullable = false;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgMode);
+    iNextGeneratedMsg = EMsgDecodedStream;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgDecodedStream);
 }
 
 Msg* SuitePreDriver::Pull()
 {
     switch (iNextGeneratedMsg)
     {
-    default:
-    case ENone:
-    case EMsgPlayable:
-        ASSERTS();
-        return nullptr;
-    case EMsgAudioPcm:
-        return CreateAudio();
-    case EMsgSilence:
-    {
-        TUint size = iNextMsgSilenceSize;
-        return iMsgFactory->CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
-    }
-    case EMsgDecodedStream:
-        iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, nullptr);
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(), false, false);
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(iNextModePullable), false, false);
     case EMsgDrain:
         return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgEncodedStream:
@@ -213,8 +225,23 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgFlush(1);
     case EMsgWait:
         return iMsgFactory->CreateMsgWait();
+    case EMsgDecodedStream:
+        iNextGeneratedMsg = EMsgSilence;
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, nullptr);
+    case EMsgAudioPcm:
+        return CreateAudio();
+    case EMsgSilence:
+    {
+        TUint size = iNextMsgSilenceSize;
+        return iMsgFactory->CreateMsgSilence(size, iSampleRate, iBitDepth, iNumChannels);
+    }
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
+    default:
+    case ENone:
+    case EMsgPlayable:
+        ASSERTS();
+        return nullptr;
     }
 }
 
