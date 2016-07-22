@@ -229,7 +229,6 @@ SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, Msg
     , iPipelineTrackSeen(false)
     , iLock("SARL")
 {
-    ASSERT(iSubSamples.is_lock_free());
 }
 
 SpotifyReporter::~SpotifyReporter()
@@ -300,13 +299,14 @@ Msg* SpotifyReporter::Pull()
 
 TUint64 SpotifyReporter::SubSamples() const
 {
-    return iSubSamples.load();
+    AutoMutex a(iLock);
+    return iSubSamples;
 }
 
 TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples) const
 {
     AutoMutex a(iLock);
-    const TUint64 subSamples = iSubSamples.load();
+    const TUint64 subSamples = iSubSamples;
     ASSERT(subSamples >= aPrevSubSamples);
     return subSamples - aPrevSubSamples;
 }
@@ -346,7 +346,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     iMsgDecodedStreamPending = true;
     ClearDecodedStream();
 
-    iSubSamples.store(0);
+    iSubSamples = 0;
     return aMsg;
 }
 
@@ -376,11 +376,14 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    AutoMutex a(iLock);
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
     TUint samples = aMsg->Jiffies()/Jiffies::PerSample(info.SampleRate());
 
+    TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*info.NumChannels();
+    ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
     return aMsg;
 }
 

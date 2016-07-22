@@ -104,15 +104,22 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     iNextFlushId = MsgFlush::kIdInvalid;
     iLeaveLock.Signal();
     iEndpoint.Replace(aEndpoint);
-    iSocket.OpenUnicast(aInterface, aTtl);
     TBool firstJoin = true;
     do {
+        if (!firstJoin) {
+            /* allow lower priority threads to run.  If all network operations are failing
+               (say because we have no IP address), this high priority thread will loop. */
+            Thread::Sleep(50);
+        }
         WaitForPipelineToEmpty();
         iLeaveLock.Wait();
         if (iStarving && !iStopped) {
             iStarving = false;
             iSocket.Interrupt(false);
         }
+        iSocket.Close();
+        iSocket.OpenUnicast(aInterface, aTtl);
+
         iLeaveLock.Signal();
         try {
             OhmHeader header;
@@ -215,6 +222,9 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
                     LOG2(kSongcast, kError, "OHU: OhmError while playing\n");
                 }
             }
+        }
+        catch (NetworkError&) { // from OpenUnicast only
+            LOG2(kSongcast, kError, "OHU: NetworkError.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
         }
         catch (ReaderError&) {
             LOG2(kSongcast, kError, "OHU: ReaderError.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
