@@ -1034,7 +1034,7 @@ void RaopDiscovery::NotifySessionStart(const NetworkAdapter& aNif, TUint aContro
         // FIXME - should we also disable all other servers when one is
         // selected, and only re-enable on a subnet list/adapter change?
 
-        ASSERT(it != iServers.end()); // NotifySessionStart should only come from an active server
+        ASSERT(it != iServers.end()); // NotifySessionStart should only come from a server owned by this.
     }
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
@@ -1047,8 +1047,8 @@ void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
-    //iCurrent = nullptr;
+    //ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
+    iCurrent = nullptr;
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionEnd();
@@ -1060,7 +1060,7 @@ void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TU
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
+    //ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionWait(aSeq, aTime);
