@@ -12,7 +12,7 @@
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
 
-EXCEPTION(RaopNoActiveSession);
+EXCEPTION(RaopError);
 EXCEPTION(RaopVolumeInvalid);
 
 namespace OpenHome {
