@@ -380,6 +380,7 @@ private:
     IPipelineElementDownstream& iDownstreamElement;
     IUrlBlockWriter& iUrlBlockWriter;
     Mutex iLock;
+    Semaphore iShutdownSem;
     std::vector<CodecBase*> iCodecs;
     ThreadFunctor* iDecoderThread;
     CodecBase* iActiveCodec;

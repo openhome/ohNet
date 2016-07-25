@@ -102,8 +102,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
             /* allow lower priority threads to run.  If all network operations are failing
             (say because we have no IP address), this high priority thread will loop. */
             Thread::Sleep(50);
-        }
-        else {
             WaitForPipelineToEmpty();
         }
         iStoppedLock.Wait();

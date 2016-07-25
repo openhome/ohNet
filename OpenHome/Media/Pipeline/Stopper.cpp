@@ -68,6 +68,7 @@ void Stopper::Play()
         break;
     case EPaused:
         SetState(ERampingUp);
+        iCurrentRampValue = Ramp::kMin;
         iRemainingRampSize = iRampDuration;
         iSem.Signal();
         break;

@@ -560,6 +560,7 @@ Pipeline::~Pipeline()
     delete iLoggerRamper;
     delete iRamper;
     delete iLoggerDecodedAudioReservoir;
+    delete iCodecController; // out of order - the start of a chain of pushers from iLoggerCodecController to iDecodedAudioReservoir
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;
     delete iDecodedAudioAggregator;
@@ -567,7 +568,6 @@ Pipeline::~Pipeline()
     delete iSampleRateValidator;
     delete iRampValidatorCodec;
     delete iLoggerCodecController;
-    delete iCodecController;
     delete iLoggerContainer;
     delete iContainer;
     delete iAudioDumper;
