@@ -880,6 +880,13 @@ void RaopControlServer::Run()
                 iServer.WaitForOpen();
             }
         }
+        catch (NetworkError&) {
+            LOG(kMedia, "RaopControlServer::Run caught NetworkError\n");
+            iServer.ReadFlush();
+            if (!iServer.IsOpen()) {
+                iServer.WaitForOpen();
+            }
+        }
     }
 }
 
