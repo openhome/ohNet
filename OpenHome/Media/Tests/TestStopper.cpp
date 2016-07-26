@@ -396,7 +396,7 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
     }
     else if (iRampingUp) {
         TEST(iLastSubsample > firstSubsample);
-        iRampingUp = (iLastSubsample < 0x7f7f7e); // FIXME - see #830
+        iRampingUp = (iLastSubsample < 0x7f7e00); // FIXME - see #830
     }
     else if (iMuted) {
         TEST(iLastSubsample == firstSubsample);

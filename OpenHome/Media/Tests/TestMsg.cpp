@@ -854,7 +854,7 @@ void SuiteMsgAudio::Test()
     // Try aggregate two msgs, where one has a ramp set
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, AudioDataEndian::Little, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, AudioDataEndian::Little, secondsOffsetJiffies);
-    TUint rampRemaining = Ramp::kMax;
+    TUint rampRemaining = msgAggregate1->Jiffies() * 3;
     MsgAudio* msgRemaining = nullptr;
     msgAggregate2->SetRamp(0, rampRemaining, Ramp::EUp, msgRemaining);
     TEST_THROWS(msgAggregate1->Aggregate(msgAggregate2), AssertionFailed);
@@ -1376,6 +1376,27 @@ void SuiteRamp::Test()
     }
     TEST(sampleVal == 0);
 
+    // Repeat the above test, but for negative subsample values
+    TByte audioDataSigned[kAudioDataSize];
+    (void)memset(audioDataSigned, 0xff, kAudioDataSize);
+    Brn audioBufSigned(audioDataSigned, kAudioDataSize);
+    ramp.Reset();
+    TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    prevSampleVal = 0xff;
+    numSamples = applicator.Start(audioBufSigned, 8, 2);
+    for (TUint i=0; i<numSamples; i++) {
+        applicator.GetNextSample(sample);
+        sampleVal = sample[0];
+        if (i==0) {
+            TEST(sampleVal >= 0xfd); // test that start of ramp is close to initial value
+        }
+        TEST((sampleVal & 0x80) != 0 || sampleVal == 0); // all ramped samples must remain <=0
+        TEST(sampleVal == sample[1]);
+        TEST(prevSampleVal >= sampleVal);
+        prevSampleVal = sampleVal;
+    }
+    TEST(sampleVal == 0);
+
     // Repeat the above test, but for 16-bit subsamples
     ramp.Reset();
     TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
@@ -1444,7 +1465,7 @@ void SuiteRamp::Test()
             TEST(sampleVal >= 0x7d); // test that start of ramp is close to max
         }
     }
-    TUint endValGuess = (((TUint64)0x7f * kRampArray[256])>>31);
+    TUint endValGuess = (((TUint64)0x7f * kRampArray[256])>>15);
     TEST(endValGuess - sampleVal <= 0x02);
 
     // Apply ramp [Min...50%].  Check start/end values
@@ -1459,7 +1480,7 @@ void SuiteRamp::Test()
             TEST(sampleVal <= 0x02); // test that start of ramp is close to zero
         }
     }
-    endValGuess = (((TUint64)0x7f * kRampArray[256])>>31);
+    endValGuess = (((TUint64)0x7f * kRampArray[256])>>15);
     TEST(endValGuess - sampleVal <= 0x02);
 
     // Apply ramp [50%...25%].  Check start/end values
@@ -1471,11 +1492,11 @@ void SuiteRamp::Test()
         applicator.GetNextSample(sample);
         sampleVal = sample[0];
         if (i==0) {
-            TUint startValGuess = (((TUint64)0x7f * kRampArray[256])>>31);
+            TUint startValGuess = (((TUint64)0x7f * kRampArray[256])>>15);
             TEST(startValGuess - sampleVal < 0x02);
         }
     }
-    endValGuess = (((TUint64)0x7f * kRampArray[384])>>31);
+    endValGuess = (((TUint64)0x7f * kRampArray[384])>>15);
     TEST(endValGuess - sampleVal <= 0x02);
 
     // Create [50%...Min] ramp.  Add [Min...50%] ramp.  Check this splits into [Min...25%], [25%...Min]
@@ -1590,6 +1611,7 @@ void SuiteRamp::Test()
     silence->RemoveRef();
     silence2->RemoveRef();
 
+#if 0 // test removed - Ramp::kMax is now lower than values from #3118
     // see #3118
     ramp.Reset();
     ramp.iStart = 0x3529a489;
@@ -1597,6 +1619,7 @@ void SuiteRamp::Test()
     ramp.iDirection = Ramp::EUp;
     ramp.iEnabled = true;
     ramp.Set(0x33cf3a6c, 0x00044e80, 0x0009c300, Ramp::EDown, split, splitPos); // asserts
+#endif
 
     // muted ramp
     ramp.Reset();
@@ -3233,9 +3256,9 @@ void TestMsg()
     Runner runner("Basic Msg tests\n");
     runner.Add(new SuiteAllocator());
     runner.Add(new SuiteMsgAudioEncoded());
+    runner.Add(new SuiteRamp());
     runner.Add(new SuiteMsgAudio());
     runner.Add(new SuiteMsgPlayable());
-    runner.Add(new SuiteRamp());
     runner.Add(new SuiteAudioStream());
     runner.Add(new SuiteMetaText());
     runner.Add(new SuiteTrack());

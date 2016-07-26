@@ -339,7 +339,7 @@ Msg* SuiteWaiter::ProcessMsg(MsgAudioPcm* aMsg)
     }
     else if (iRampingUp) {
         TEST(iLastSubsample > firstSubsample);
-        iRampingUp = (iLastSubsample < 0x7f7f7e); // FIXME - see #830
+        iRampingUp = (iLastSubsample < 0x7f7e00); // FIXME - see #830
     }
     else {
         TEST(firstSubsample == 0x7f7f7f);

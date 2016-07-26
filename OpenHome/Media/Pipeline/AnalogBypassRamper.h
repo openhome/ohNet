@@ -13,7 +13,7 @@ namespace Media {
 class IAnalogBypassVolumeRamper
 {
 public:
-    static const TUint kMultiplierFull = 1u<<31;
+    static const TUint kMultiplierFull = 1u<<15;
     static const TUint kMultiplierZero = 0;
 public:
     virtual void ApplyVolumeMultiplier(TUint aValue) = 0;

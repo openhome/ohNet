@@ -580,9 +580,9 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     if (!DoValidate()) {
 
         Log::Print("Ramp::Set(%08x, %u, %u, %u) created invalid ramp.\n", aStart, aFragmentSize, aRemainingDuration, aDirection);
-        Log::Print("  before: [%08x..%08x], direction=%u\n", before.iStart, before.iEnd, before.iDirection);
-        Log::Print("  after:  [%08x..%08x], direction=%u\n", iStart, iEnd, iDirection);
-        Log::Print("  split:  [%08x..%08x], direction=%u\n", aSplit.iStart, aSplit.iEnd, aSplit.iDirection);
+        Log::Print("  before: [%04x..%04x], direction=%u\n", before.iStart, before.iEnd, before.iDirection);
+        Log::Print("  after:  [%04x..%04x], direction=%u\n", iStart, iEnd, iDirection);
+        Log::Print("  split:  [%04x..%04x], direction=%u\n", aSplit.iStart, aSplit.iEnd, aSplit.iDirection);
         ASSERTS();
     }
     return aSplit.IsEnabled();
@@ -613,8 +613,8 @@ void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
 void Ramp::Validate(const TChar* aId)
 {
     if (!DoValidate()) {
-        Log::Print("Ramp::Validate failure %%s)\n", aId);
-        Log::Print("  ramp: [%08x..%08x], direction=%u\n", iStart, iEnd, iDirection);
+        Log::Print("Ramp::Validate failure %s)\n", aId);
+        Log::Print("  ramp: [%04x..%04x], direction=%u\n", iStart, iEnd, iDirection);
         ASSERTS();
     }
 }
@@ -677,7 +677,7 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
         iDirection = ENone;
     }
     remaining.iStart = iEnd; // FIXME - remaining.iStart is one sample on from iEnd so should have a ramp value that progresses one 'step'
-    //Log::Print("Split [%08x : %08x] ramp into [%08x : %08x] and [%08x : %08x]\n", start, end, iStart, iEnd, remaining.iStart, remaining.iEnd);
+    //Log::Print("Split [%04x : %04x] ramp into [%04x : %04x] and [%04x : %04x]\n", start, end, iStart, iEnd, remaining.iStart, remaining.iEnd);
     Validate("Split");
     remaining.Validate("Split - remaining");
     return remaining;
@@ -685,6 +685,8 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
 
 
 // RampApplicator
+
+const TUint RampApplicator::kFullRampSpan = Ramp::kMax - Ramp::kMin;
 
 RampApplicator::RampApplicator(const Media::Ramp& aRamp)
     : iRamp(aRamp)
@@ -698,9 +700,8 @@ TUint RampApplicator::Start(const Brx& aData, TUint aBitDepth, TUint aNumChannel
     iBitDepth = aBitDepth;
     iNumChannels = aNumChannels;
     ASSERT_DEBUG(aData.Bytes() % ((iBitDepth/8) * iNumChannels) == 0);
-    iNumSamples = aData.Bytes() / ((iBitDepth/8) * iNumChannels);
-    iTotalRamp = iRamp.Start() - iRamp.End();
-    iFullRampSpan = Ramp::kMax - Ramp::kMin;
+    iNumSamples = (TInt)(aData.Bytes() / ((iBitDepth/8) * iNumChannels));
+    iTotalRamp = (iRamp.Start() - iRamp.End());
     iLoopCount = 0;
     return iNumSamples;
 }
@@ -708,67 +709,58 @@ TUint RampApplicator::Start(const Brx& aData, TUint aBitDepth, TUint aNumChannel
 void RampApplicator::GetNextSample(TByte* aDest)
 {
     ASSERT_DEBUG(iPtr != nullptr);
-    const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
-    //Log::Print(" %08x ", ramp);
-    const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
+    const TUint16 ramp = (iNumSamples==1? (TUint16)iRamp.Start() : (TUint16)(iRamp.Start() - ((iLoopCount * iTotalRamp)/(iNumSamples-1))));
+    //Log::Print(" %04x ", ramp);
+    const TUint rampIndex = std::min(kRampArrayCount-1, (kFullRampSpan - ramp + (1<<4)) >> 5); // assumes fullRampSpan==2^14 and kRampArray has 512 (2^9) items. (1<<4 allows rounding up)
     for (TUint i=0; i<iNumChannels; i++) {
-        TInt subsample = 0;
+        TInt16 subsample16 = 0;
         switch (iBitDepth)
         {
         case 8:
-            subsample = *iPtr << 24;
-            iPtr++;
+            subsample16 = *iPtr++ << 8;
             break;
         case 16:
-            subsample = *iPtr << 24;
-            iPtr++;
-            subsample += *iPtr << 16;
-            iPtr++;
+            subsample16 = *iPtr++ << 8;
+            subsample16 += *iPtr++;
             break;
         case 24:
-            subsample = *iPtr << 24;
-            iPtr++;
-            subsample += *iPtr << 16;
-            iPtr++;
-            subsample += *iPtr << 8;
+            subsample16 = *iPtr++ << 8;
+            subsample16 += *iPtr++;
             iPtr++;
             break;
         case 32:
-            subsample = *iPtr << 24;
+            subsample16 = *iPtr++ << 8;
+            subsample16 += *iPtr++;
             iPtr++;
-            subsample += *iPtr << 16;
-            iPtr++;
-            subsample += *iPtr << 8;
-            iPtr++;
-            subsample += *iPtr << 0;
             iPtr++;
             break;
         default:
             ASSERTS();
         }
         //Log::Print(" %03u ", rampIndex);
-        TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
-        //Log::Print("Original=%08x (%d), ramped=%08x (%d), rampIndex=%u\n", subsample, subsample, rampedSubsample, rampedSubsample, rampIndex);
+        const TUint16 rampMult = static_cast<TUint16>(kRampArray[rampIndex]);
+        TInt rampedSubsample = (rampIndex==512? 0 : (subsample16 * rampMult) >> 15);
+        //Log::Print("Original=%04x (%d), ramped=%04x (%d), rampIndex=%u\n", subsample, subsample, rampedSubsample, rampedSubsample, rampIndex);
 
         switch (iBitDepth)
         {
         case 8:
-            *aDest++ = (TByte)(rampedSubsample >> 24);
+            *aDest++ = (TByte)(rampedSubsample >> 8);
             break;
         case 16:
-            *aDest++ = (TByte)(rampedSubsample >> 24);
-            *aDest++ = (TByte)(rampedSubsample >> 16);
+            *aDest++ = (TByte)(rampedSubsample >> 8);
+            *aDest++ = (TByte)rampedSubsample;
             break;
         case 24:
-            *aDest++ = (TByte)(rampedSubsample >> 24);
-            *aDest++ = (TByte)(rampedSubsample >> 16);
             *aDest++ = (TByte)(rampedSubsample >> 8);
+            *aDest++ = (TByte)rampedSubsample;
+            *aDest++ = (TByte)0;
             break;
         case 32:
-            *aDest++ = (TByte)(rampedSubsample >> 24);
-            *aDest++ = (TByte)(rampedSubsample >> 16);
             *aDest++ = (TByte)(rampedSubsample >> 8);
-            *aDest++ = (TByte)(rampedSubsample);
+            *aDest++ = (TByte)rampedSubsample;
+            *aDest++ = (TByte)0;
+            *aDest++ = (TByte)0;
             break;
         default:
             ASSERTS();
@@ -795,7 +787,7 @@ TUint RampApplicator::MedianMultiplier(const Media::Ramp& aRamp)
         medRamp = aRamp.Start();
         break;
     }
-    const TUint rampIndex = (Ramp::kMax - Ramp::kMin - medRamp + (1<<20)) >> 21; // assumes (Ramp::kMax - Ramp::kMin)==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
+    const TUint rampIndex = (Ramp::kMax - Ramp::kMin - medRamp + (1<<4)) >> 5; // assumes (Ramp::kMax - Ramp::kMin)==2^14 and kRampArray has 512 (2^9) items. (1<<4 allows rounding up)
     return kRampArray[rampIndex];
 }
 
@@ -1705,7 +1697,7 @@ const Media::Ramp& MsgAudio::Ramp() const
 TUint MsgAudio::MedianRampMultiplier()
 {
     if (!iRamp.IsEnabled()) {
-        return 0x80000000; // see RampArray.h
+        return 0x8000; // see RampArray.h
     }
     else if (iRamp.Direction() == Ramp::EMute) {
         return 0;
