@@ -703,7 +703,7 @@ TUint RaopDiscoverySession::AesSid()
 const Brx &RaopDiscoverySession::Aeskey()
 {
     if(!iAeskeyPresent) {
-        THROW(HttpError); // should be RoapError but need to add handling everywhere so just throw http, same as rtsp
+        THROW(RaopError);
     }
     return iAeskey;
 }
@@ -711,7 +711,7 @@ const Brx &RaopDiscoverySession::Aeskey()
 const Brx &RaopDiscoverySession::Aesiv()
 {
     if(!iAeskeyPresent) {
-        THROW(HttpError); // should be RoapError but need to add handling everywhere so just throw http, same as rtsp
+        THROW(RaopError);
     }
     return iSdpInfo.Aesiv();
 }
@@ -719,7 +719,7 @@ const Brx &RaopDiscoverySession::Aesiv()
 const Brx &RaopDiscoverySession::Fmtp()
 {
     if(!iAeskeyPresent) {
-        THROW(HttpError); // should be RoapError but need to add handling everywhere so just throw http, same as rtsp
+        THROW(RaopError);
     }
     return iSdpInfo.Fmtp();
 }
@@ -900,7 +900,7 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
         return *iRaopDiscoverySession2;
     }
     else {
-        THROW(RaopNoActiveSession);
+        THROW(RaopError);
     }
 }
 
@@ -955,31 +955,41 @@ TBool RaopDiscovery::Active()
 
 TUint RaopDiscovery::AesSid()
 {
-    ASSERT(iCurrent != nullptr);
+    if (iCurrent == nullptr) {
+        THROW(RaopError);
+    }
     return iCurrent->AesSid();
 }
 
 const Brx& RaopDiscovery::Aeskey()
 {
-    ASSERT(iCurrent != nullptr);
+    if (iCurrent == nullptr) {
+        THROW(RaopError);
+    }
     return iCurrent->Aeskey();
 }
 
 const Brx& RaopDiscovery::Aesiv()
 {
-    ASSERT(iCurrent != nullptr);
+    if (iCurrent == nullptr) {
+        THROW(RaopError);
+    }
     return iCurrent->Aesiv();
 }
 
 const Brx& RaopDiscovery::Fmtp()
 {
-    ASSERT(iCurrent != nullptr);
+    if (iCurrent == nullptr) {
+        THROW(RaopError);
+    }
     return iCurrent->Fmtp();
 }
 
 void RaopDiscovery::KeepAlive()
 {
-    ASSERT(iCurrent != nullptr);
+    if (iCurrent == nullptr) {
+        THROW(RaopError);
+    }
     return iCurrent->KeepAlive();
 }
 
@@ -1024,7 +1034,7 @@ void RaopDiscovery::NotifySessionStart(const NetworkAdapter& aNif, TUint aContro
         // FIXME - should we also disable all other servers when one is
         // selected, and only re-enable on a subnet list/adapter change?
 
-        ASSERT(it != iServers.end()); // NotifySessionStart should only come from an active server
+        ASSERT(it != iServers.end()); // NotifySessionStart should only come from a server owned by this.
     }
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
@@ -1033,12 +1043,12 @@ void RaopDiscovery::NotifySessionStart(const NetworkAdapter& aNif, TUint aContro
     }
 }
 
-void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
+void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& /*aNif*/)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
-    //iCurrent = nullptr;
+    //ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
+    iCurrent = nullptr;
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionEnd();
@@ -1046,11 +1056,11 @@ void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
     }
 }
 
-void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime)
+void RaopDiscovery::NotifySessionWait(const NetworkAdapter& /*aNif*/, TUint aSeq, TUint aTime)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
-    ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
+    //ASSERT((iCurrent == nullptr) || NifsMatch(aNif, iCurrent->Adapter()));
     std::vector<IRaopObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
         (*it)->NotifySessionWait(aSeq, aTime);
@@ -1396,7 +1406,7 @@ void HeaderRtpInfo::Process(const Brx& aValue)
         }
         else if (Ascii::Contains(entry, kRtpTimeStr)) {
             Brn val = ParameterValue(entry);
-            iRtpTime = Ascii::Uint(val); // FIXME - is this in network order?
+            iRtpTime = Ascii::Uint(val);
         }
     } while (entry != Brx::Empty());
 }
