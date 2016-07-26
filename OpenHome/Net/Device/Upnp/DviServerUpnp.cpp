@@ -524,7 +524,7 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
     , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<1024>(*this);
-    iReaderUntil = new ReaderUntilS<1024>(*iReadBuffer);
+    iReaderUntil = new ReaderUntilS<4096>(*iReadBuffer);
     iReaderRequest = new ReaderHttpRequest(aDvStack.Env(), *iReaderUntil);
     iDechunker = new ReaderHttpChunked(*iReaderUntil);
     iWriterChunked = new WriterHttpChunked(*this);
