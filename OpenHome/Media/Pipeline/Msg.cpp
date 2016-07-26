@@ -1675,6 +1675,10 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     if (aDirection == Ramp::EDown && iRamp.End() == Ramp::kMin) {
         aRemainingDuration = 0;
     }
+    else if (aDirection == Ramp::EUp && iRamp.End() == Ramp::kMax) {
+        // shorter ramp range now allows ramps up to complete a few samples early
+        aRemainingDuration = 0;
+    }
 
     return iRamp.End();
 }
