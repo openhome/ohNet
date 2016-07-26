@@ -519,6 +519,9 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             LOG(kMedia, "ProtocolRaop::Stream sdp not received\n");
             // ignore and continue - sender should stop on a closed connection! wait for sender to re-select device
         }
+        catch (RaopError&) {
+            LOG(kMedia, "ProtocolRaop::Stream RaopError\n");
+        }
     }
 }
 
@@ -887,6 +890,13 @@ void RaopControlServer::Run()
         }
         catch (ReaderError&) {
             LOG(kMedia, "RaopControlServer::Run caught ReaderError\n");
+            iServer.ReadFlush();
+            if (!iServer.IsOpen()) {
+                iServer.WaitForOpen();
+            }
+        }
+        catch (NetworkError&) {
+            LOG(kMedia, "RaopControlServer::Run caught NetworkError\n");
             iServer.ReadFlush();
             if (!iServer.IsOpen()) {
                 iServer.WaitForOpen();

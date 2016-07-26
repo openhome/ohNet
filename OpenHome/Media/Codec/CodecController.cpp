@@ -128,6 +128,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iDownstreamElement(aDownstreamElement)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iLock("CDCC")
+    , iShutdownSem("CDC2", 0)
     , iActiveCodec(nullptr)
     , iPendingMsg(nullptr)
     , iSeekObserver(nullptr)
@@ -157,6 +158,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
 
 CodecController::~CodecController()
 {
+    iShutdownSem.Wait();
     delete iDecoderThread;
     ASSERT(iPendingMsg == nullptr);
     for (size_t i=0; i<iCodecs.size(); i++) {
@@ -441,6 +443,9 @@ Msg* CodecController::PullMsg()
 void CodecController::Queue(Msg* aMsg)
 {
     iDownstreamElement.Push(aMsg);
+    if (iQuit) {
+        iShutdownSem.Signal();
+    }
 }
 
 TBool CodecController::QueueTrackData() const

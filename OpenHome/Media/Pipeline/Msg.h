@@ -210,7 +210,7 @@ class Ramp
 {
     friend class SuiteRamp;
 public:
-    static const TUint kMax = 1<<30;
+    static const TUint kMax = 1<<14;
     static const TUint kMin = 0;
     enum EDirection
     {
@@ -242,6 +242,7 @@ private:
 
 class RampApplicator : private INonCopyable
 {
+    static const TUint kFullRampSpan;
 public:
     RampApplicator(const Media::Ramp& aRamp);
     TUint Start(const Brx& aData, TUint aBitDepth, TUint aNumChannels); // returns number of samples
@@ -252,10 +253,9 @@ private:
     const TByte* iPtr;
     TUint iBitDepth;
     TUint iNumChannels;
-    TUint iNumSamples;
+    TInt iNumSamples;
     TInt iTotalRamp;
-    TUint iFullRampSpan;
-    TUint iLoopCount;
+    TInt iLoopCount;
 };
 
 class MsgFactory;

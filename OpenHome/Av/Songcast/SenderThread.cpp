@@ -73,7 +73,6 @@ Msg* SenderThread::ProcessMsg(MsgSilence* aMsg)           { return aMsg; }
 Msg* SenderThread::ProcessMsg(MsgPlayable* aMsg)          { return aMsg; }
 Msg* SenderThread::ProcessMsg(MsgQuit* aMsg)
 {
-    Log::Print("++ SenderThread::ProcessMsg(MsgQuit* )\n");
     iQuit = true;
     return aMsg;
 }

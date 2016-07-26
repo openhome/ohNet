@@ -504,41 +504,40 @@ void ProtocolOhBase::Process(OhmMsgAudio& aMsg)
 {
     AddRxTimestamp(aMsg);
 
-    iMutexTransport.Wait();
-    if (!iRunning) {
-        iFrame = aMsg.Frame();
-        iRunning = true;
-        iMutexTransport.Signal();
-        OutputAudio(aMsg);
-        return;
-    }
-    if (iRepairing) {
-        iRepairing = Repair(aMsg);
-        iMutexTransport.Signal();
-        return;
-    }
-
-    const TInt diff = aMsg.Frame() - iFrame;
-    if (diff == 1) {
-        iFrame++;
-        iMutexTransport.Signal();
-        OutputAudio(aMsg);
-        return;
-    }
-    if (diff < 1) {
-        const TBool resent = aMsg.Resent();
-        aMsg.RemoveRef();
-        if (!resent) {
-            // A frame in the past that is not a resend implies that the sender has reset their frame count
-            // force recently output audio to ramp down
-            iMutexTransport.Signal();
-            THROW(ReaderError);
+    TBool outputAudio = false;
+    {
+        AutoMutex _(iMutexTransport);
+        if (!iRunning) {
+            iFrame = aMsg.Frame();
+            iRunning = true;
+            outputAudio = true;
+        }
+        else if (iRepairing) {
+            iRepairing = Repair(aMsg);
+        }
+        else {
+            const TInt diff = aMsg.Frame() - iFrame;
+            if (diff == 1) {
+                iFrame++;
+                outputAudio = true;
+            }
+            else if (diff < 1) {
+                const TBool resent = aMsg.Resent();
+                aMsg.RemoveRef();
+                if (!resent) {
+                    // A frame in the past that is not a resend implies that the sender has reset their frame count
+                    // force recently output audio to ramp down
+                    THROW(ReaderError);
+                }
+            }
+            else {
+                iRepairing = RepairBegin(aMsg);
+            }
         }
     }
-    else {
-        iRepairing = RepairBegin(aMsg);
+    if (outputAudio) {
+        OutputAudio(aMsg);
     }
-    iMutexTransport.Signal();
 }
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& /*aMsg*/)

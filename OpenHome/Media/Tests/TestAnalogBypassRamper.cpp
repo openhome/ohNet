@@ -469,7 +469,7 @@ void SuiteAnalogBypassRamper::TestRampsVolumeUpOnAudioRampUp()
 
     } while (iRampRemaining > 0);
     PullNext(EMsgAudioPcm);
-    TEST(iLastRampMultiplier == IAnalogBypassVolumeRamper::kMultiplierFull);
+    TEST(IAnalogBypassVolumeRamper::kMultiplierFull - iLastRampMultiplier < IAnalogBypassVolumeRamper::kMultiplierFull/8);
 }
 
 
