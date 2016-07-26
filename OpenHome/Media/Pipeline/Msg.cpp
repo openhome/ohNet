@@ -2089,28 +2089,38 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
     const TUint numChannels = iNumChannels;
     const TUint bitDepth = iBitDepth;
     if (iRamp.IsEnabled()) {
-        // we need calculate each subsample value when ramped so there is no option to process as a single fragment
-        TByte sample[DecodedAudio::kMaxNumChannels * 4]; // largest possible sample - 32-bit, 8 channel
+        Bws<256> rampedBuf;
         RampApplicator ra(iRamp);
         const TUint numSamples = ra.Start(audioBuf, bitDepth, numChannels);
+        const TUint bytesPerSample = (bitDepth/8) * numChannels;
+        const TUint samplesPerFragment = rampedBuf.MaxBytes() / bytesPerSample;
+        TByte* ptr = (TByte*)rampedBuf.Ptr();
+        TUint fragmentSamples = 0;
         for (TUint i=0; i<numSamples; i++) {
-            ra.GetNextSample(sample);
-            switch (bitDepth)
-            {
-            case 8:
-                aProcessor.ProcessSample8(sample, numChannels);
-                break;
-            case 16:
-                aProcessor.ProcessSample16(sample, numChannels);
-                break;
-            case 24:
-                aProcessor.ProcessSample24(sample, numChannels);
-                break;
-            case 32:
-                aProcessor.ProcessSample32(sample, numChannels);
-                break;
-            default:
-                ASSERTS();
+            ra.GetNextSample(ptr);
+            fragmentSamples++;
+            ptr += bytesPerSample;
+            if (fragmentSamples == samplesPerFragment || i == numSamples-1) {
+                rampedBuf.SetBytes(fragmentSamples * bytesPerSample);
+                switch (bitDepth)
+                {
+                case 8:
+                    aProcessor.ProcessFragment8(rampedBuf, numChannels);
+                    break;
+                case 16:
+                    aProcessor.ProcessFragment16(rampedBuf, numChannels);
+                    break;
+                case 24:
+                    aProcessor.ProcessFragment24(rampedBuf, numChannels);
+                    break;
+                case 32:
+                    aProcessor.ProcessFragment32(rampedBuf, numChannels);
+                    break;
+                default:
+                    ASSERTS();
+                }
+                ptr = (TByte*)rampedBuf.Ptr();
+                fragmentSamples = 0;
             }
         }
     }
