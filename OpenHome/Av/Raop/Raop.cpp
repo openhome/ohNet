@@ -1043,7 +1043,7 @@ void RaopDiscovery::NotifySessionStart(const NetworkAdapter& aNif, TUint aContro
     }
 }
 
-void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
+void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& /*aNif*/)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
@@ -1056,7 +1056,7 @@ void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
     }
 }
 
-void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime)
+void RaopDiscovery::NotifySessionWait(const NetworkAdapter& /*aNif*/, TUint aSeq, TUint aTime)
 {
     AutoMutex mutexServers(iServersLock);
     AutoMutex mutexObservers(iObserversLock);
@@ -1406,7 +1406,7 @@ void HeaderRtpInfo::Process(const Brx& aValue)
         }
         else if (Ascii::Contains(entry, kRtpTimeStr)) {
             Brn val = ParameterValue(entry);
-            iRtpTime = Ascii::Uint(val); // FIXME - is this in network order?
+            iRtpTime = Ascii::Uint(val);
         }
     } while (entry != Brx::Empty());
 }
