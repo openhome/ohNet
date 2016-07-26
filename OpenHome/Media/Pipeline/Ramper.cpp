@@ -90,7 +90,7 @@ Msg* Ramper::ProcessMsg(MsgAudioPcm* aMsg)
         if (split != nullptr) {
             iQueue.EnqueueAtHead(split);
         }
-        if (iRemainingRampSize == 0) {
+        if (iRemainingRampSize == 0 || iCurrentRampValue == Ramp::kMax) {
             iRamping = false;
         }
     }
