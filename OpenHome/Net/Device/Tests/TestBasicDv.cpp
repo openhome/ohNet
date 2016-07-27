@@ -268,3 +268,8 @@ const Brx& DeviceBasic::Udn() const
 {
     return iDevice->Udn();
 }
+
+DvDevice& DeviceBasic::Device()
+{
+    return *iDevice;
+}

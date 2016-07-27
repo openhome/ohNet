@@ -44,6 +44,7 @@ public:
     DeviceBasic(DvStack& aDvStack);
     ~DeviceBasic();
     const Brx& Udn() const;
+    DvDevice& Device();
 private:
     DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;

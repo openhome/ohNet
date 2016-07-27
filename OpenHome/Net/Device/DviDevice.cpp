@@ -371,7 +371,7 @@ void DviDevice::SetEnabledLocked()
         // It'd be potentially fiddly for each protocol to halt a disable.
         // ...so we prefer to waste a little time but avoid complex code by waiting for the disable to complete
         Semaphore sem("DSEL", 0);
-        iDisableComplete = MakeFunctor(sem, &Semaphore::Signal);
+        iDisableComplete.push_back(MakeFunctor(sem, &Semaphore::Signal));
         iLock.Signal();
         sem.Wait();
         iLock.Wait();
@@ -400,28 +400,30 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     if (!aLocked) {
         iLock.Wait();
     }
-    iDisableComplete = aCompleted;
-    TUint protocolDisableCount = 0;
+    iDisableLock.Wait();
     TBool changedState = false;
-    switch (iEnabled)
-    {
-    case eDisabled:
-        break;
-    case eDisabling:
-        ASSERTS();
-        break;
-    case eEnabled:
-        iEnabled = eDisabling;
-        protocolDisableCount = (TUint)iProtocols.size();
-        changedState = true;
-        break;
+    if (iEnabled != eDisabled) {
+        if (iEnabled == eEnabled) {
+            iEnabled = eDisabling;
+            iProtocolDisableCount = (TUint)iProtocols.size();
+            if (iProtocolDisableCount == 0) {
+                iEnabled = eDisabled;
+            }
+            changedState = true;
+        }
     }
+    const TBool disabled = (iEnabled == eDisabled);
+    if (!disabled) {
+        iDisableComplete.push_back(aCompleted);
+    }
+    iDisableLock.Signal();
     if (!aLocked) {
         iLock.Signal();
     }
-    if (protocolDisableCount == 0) {
-        if (iDisableComplete) {
-            iDisableComplete();
+
+    if (disabled) {
+        if (aCompleted) {
+            aCompleted();
         }
         if (changedState) {
             iDisableLock.Wait();
@@ -429,14 +431,11 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
             iDisableLock.Signal();
         }
     }
-    else {
+    else if (changedState) {
         if (aLocked) {
             // unlock around calls to Disable in case any call back to ProtocolDisabled synchronously
             iLock.Signal();
         }
-        iDisableLock.Wait();
-        iProtocolDisableCount = protocolDisableCount;
-        iDisableLock.Signal();
         Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
         for (TUint i=0; i<iProtocols.size(); i++) {
             iProtocols[i]->Disable(functor);
@@ -445,6 +444,7 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
             iLock.Wait();
         }
     }
+
     // Tell services not to accept further action invocations
     for (TUint i=0; i<iServices.size(); i++) {
         iServices[i]->Disable();
@@ -457,9 +457,13 @@ void DviDevice::ProtocolDisabled()
     ASSERT(iProtocolDisableCount != 0);
     if (--iProtocolDisableCount == 0) {
         iEnabled = eDisabled;
-        if (iDisableComplete) {
-            iDisableComplete();
+        for (TUint i=0; i<iDisableComplete.size(); i++) {
+            Functor& f = iDisableComplete[i];
+            if (f) {
+                f();
+            }
         }
+        iDisableComplete.clear();
         iShutdownSem.Signal();
     }
 }

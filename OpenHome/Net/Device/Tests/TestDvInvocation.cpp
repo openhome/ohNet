@@ -233,6 +233,16 @@ void TestDvInvocation(CpStack& aCpStack, DvStack& aDvStack)
     delete list;
     delete deviceList;
     delete sem;
+
+    // validate fixes for hangs/crashes with overlapping calls to SetDisabled
+    Print("  Overlapping calls to SetDisabled...\n");
+    Semaphore sem2("SEM2", 0);
+    Semaphore sem3("SEM3", 0);
+    device->Device().SetDisabled(MakeFunctor(sem2, &Semaphore::Signal));
+    device->Device().SetDisabled(MakeFunctor(sem3, &Semaphore::Signal));
+    sem2.Wait();
+    sem3.Wait();
+
     delete device;
 
     Print("TestDvInvocation - completed\n");

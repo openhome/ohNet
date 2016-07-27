@@ -102,7 +102,7 @@ private:
     std::vector<IDvProtocol*> iProtocols;
     IResourceManager* iResourceManager;
     TUint iProtocolDisableCount;
-    Functor iDisableComplete;
+    std::vector<Functor> iDisableComplete;
     Mutex iDisableLock;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
