@@ -96,6 +96,7 @@ private:
     void TestMsgsPassWhenRunning();
     void TestBlocksWhenHasMaxAudio();
     void TestNoRampAroundHalt();
+    void TestRampBeforeDrain();
     void TestRampsAroundStarvation();
     void TestNotifyStarvingAroundStarvation();
     void TestReportsBuffering();
@@ -139,6 +140,7 @@ SuiteStarvationRamper::SuiteStarvationRamper()
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestMsgsPassWhenRunning), "TestMsgsPassWhenRunning");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestBlocksWhenHasMaxAudio), "TestBlocksWhenHasMaxAudio");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestNoRampAroundHalt), "TestNoRampAroundHalt");
+    AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestRampBeforeDrain), "TestRampBeforeDrain");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestRampsAroundStarvation), "TestRampsAroundStarvation");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestNotifyStarvingAroundStarvation), "TestNotifyStarvingAroundStarvation");
     AddTest(MakeFunctor(*this, &SuiteStarvationRamper::TestReportsBuffering), "TestReportsBuffering");
@@ -536,6 +538,36 @@ void SuiteStarvationRamper::TestNoRampAroundHalt()
     do {
         PullNext(EMsgAudioPcm);
     } while (iJiffies < iTrackOffset);
+    PullNext(EMsgQuit);
+}
+
+void SuiteStarvationRamper::TestRampBeforeDrain()
+{
+    AddPending(iMsgFactory->CreateMsgMode(kMode, false, ModeClockPullers(), false, false));
+    AddPending(CreateTrack());
+    AddPending(CreateDecodedStream());
+    AddPending(CreateAudio());
+    AddPending(CreateAudio());
+    AddPending(iMsgFactory->CreateMsgDrain(Functor()));
+    ASSERT(!iRampingDown);
+    ASSERT(!iRampingUp);
+
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    do {
+        PullNext(EMsgAudioPcm);
+    } while (iJiffies < iTrackOffset);
+
+    // ramp down then Halt should be generated before Drain is passed on
+    iRampingDown = true;
+    do {
+        PullNext(EMsgAudioPcm);
+    } while (iRampingDown);
+    PullNext(EMsgHalt);
+    PullNext(EMsgDrain);
+
+    AddPending(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
 

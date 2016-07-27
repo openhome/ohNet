@@ -2415,14 +2415,14 @@ void MsgReservoir::DoEnqueue(Msg* aMsg)
     iQueue.Enqueue(msg);
 }
 
-Msg* MsgReservoir::DoDequeue()
+Msg* MsgReservoir::DoDequeue(TBool aAllowNull)
 {
     Msg* msg;
     do {
         msg = iQueue.Dequeue();
         ProcessorQueueOut procOut(*this);
         msg = msg->Process(procOut);
-    } while (msg == nullptr);
+    } while (!aAllowNull && msg == nullptr);
     return msg;
 }
 

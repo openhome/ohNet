@@ -946,7 +946,7 @@ protected:
     MsgReservoir();
     virtual ~MsgReservoir();
     void DoEnqueue(Msg* aMsg);
-    Msg* DoDequeue();
+    Msg* DoDequeue(TBool aAllowNull = false);
     void EnqueueAtHead(Msg* aMsg);
     TUint Jiffies() const;
     TUint EncodedBytes() const;

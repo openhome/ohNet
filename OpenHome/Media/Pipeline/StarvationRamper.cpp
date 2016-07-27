@@ -465,6 +465,9 @@ void StarvationRamper::StartFlywheelRamp()
 //    const TUint flywheelEnd = Time::Now(*gEnv);
     iState = State::RampingDown;
 //    Log::Print("StarvationRamper::StartFlywheelRamp rampStart=%08x, prepTime=%ums, flywheelTime=%ums\n", rampStart, prepEnd - startTime, flywheelEnd - prepEnd);
+
+    iStarving = true;
+    iStreamHandler->NotifyStarving(iMode, iStreamId, true);
 }
 
 void StarvationRamper::NewStream()
@@ -526,28 +529,28 @@ Msg* StarvationRamper::Pull()
             (iState == State::RampingUp && iCurrentRampValue != Ramp::kMin))
             && !iExit) {
             StartFlywheelRamp();
-            iStarving = true;
-            iStreamHandler->NotifyStarving(iMode, iStreamId, true);
         }
     }
 
     Msg* msg = nullptr;
-    if (iRampGenerator->TryGetAudio(msg)) {
-        return msg;
-    }
-    else if (iState == State::RampingDown) {
-        iState = State::RampingUp;
-        iCurrentRampValue = Ramp::kMin;
-        iRemainingRampSize = iRampUpJiffies;
-        return iMsgFactory.CreateMsgHalt();
-    }
+    do {
+        if (iRampGenerator->TryGetAudio(msg)) {
+            return msg;
+        }
+        else if (iState == State::RampingDown) {
+            iState = State::RampingUp;
+            iCurrentRampValue = Ramp::kMin;
+            iRemainingRampSize = iRampUpJiffies;
+            return iMsgFactory.CreateMsgHalt();
+        }
 
-    msg = DoDequeue();
-    iLock.Wait();
-    if (!IsFull()) {
-        iSem.Signal();
-    }
-    iLock.Signal();
+        msg = DoDequeue(true);
+        iLock.Wait();
+        if (!IsFull()) {
+            iSem.Signal();
+        }
+        iLock.Signal();
+    } while (msg == nullptr);
     return msg;
 }
 
@@ -571,6 +574,18 @@ Msg* StarvationRamper::ProcessMsgOut(MsgMode* aMsg)
 Msg* StarvationRamper::ProcessMsgOut(MsgTrack* aMsg)
 {
     NewStream();
+    return aMsg;
+}
+
+Msg* StarvationRamper::ProcessMsgOut(MsgDrain* aMsg)
+{
+    if (iState == State::Running ||
+        (iState == State::RampingUp && iCurrentRampValue != Ramp::kMin)) {
+        EnqueueAtHead(aMsg);
+        SetBuffering(true);
+        StartFlywheelRamp();
+        return nullptr;
+    }
     return aMsg;
 }
 
