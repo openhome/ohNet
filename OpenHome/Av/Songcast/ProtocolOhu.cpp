@@ -91,9 +91,9 @@ void ProtocolOhu::Broadcast(OhmMsg* aMsg)
     Add(aMsg);
 }
 
-ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
+ProtocolStreamResult ProtocolOhu::Play(TIpAddress /*aInterface*/, TUint aTtl, const Endpoint& aEndpoint)
 {
-    LOG(kSongcast, "OHU: Play(%08x, %u, %08x:%u\n", aInterface, aTtl, aEndpoint.Address(), aEndpoint.Port());
+    LOG(kSongcast, "OHU: Play(%08x, %u, %08x:%u\n", iAddr, aTtl, aEndpoint.Address(), aEndpoint.Port());
     if (aEndpoint.Address() == 0) {
         // ohu null address, return immediately
         return EProtocolStreamStopped;
@@ -104,6 +104,15 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     iNextFlushId = MsgFlush::kIdInvalid;
     iLeaveLock.Signal();
     iEndpoint.Replace(aEndpoint);
+    TIpAddress iface;
+    try {
+        AutoMutex _(iMutexTransport);
+        iSocket.OpenUnicast(iAddr, aTtl);
+        iface = iAddr;
+    }
+    catch (NetworkError&) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
     TBool firstJoin = true;
     do {
         if (!firstJoin) {
@@ -117,8 +126,15 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
             iStarving = false;
             iSocket.Interrupt(false);
         }
-        iSocket.Close();
-        iSocket.OpenUnicast(aInterface, aTtl);
+
+        {
+            AutoMutex _(iMutexTransport);
+            if (iface != iAddr) {
+                iSocket.Close();
+                iSocket.OpenUnicast(iAddr, aTtl);
+                iface = iAddr;
+            }
+        }
 
         iLeaveLock.Signal();
         try {

@@ -75,6 +75,7 @@ protected:
     IOhmMsgFactory& iMsgFactory;
     Media::Supply* iSupply;
     OhmSocket iSocket;
+    TIpAddress iAddr;
     Srs<kMaxFrameBytes> iReadBuffer;
     Endpoint iEndpoint;
     Timer* iTimerJoin;
@@ -107,7 +108,6 @@ private:
     OhmMsgAudio* iRepairFirst;
     std::vector<OhmMsgAudio*> iRepairFrames;
     Timer* iTimerRepair;
-    TUint iAddr; // FIXME - should listen for subnet changes and update this value
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;
     Semaphore iPipelineEmpty;
