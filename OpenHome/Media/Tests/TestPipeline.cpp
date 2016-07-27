@@ -188,10 +188,6 @@ private: // from IPcmProcessor
     void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment32(const Brx& aData, TUint aNumChannels) override;
-    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
-    void ProcessSample32(const TByte* aSample, TUint aNumChannels) override;
     void EndBlock() override;
     void Flush() override;
 private:
@@ -1030,50 +1026,6 @@ void PcmProcessorTestPipeline::ProcessFragment32(const Brx& aData, TUint aNumCha
     }
     iLastSubsample = Subsample32(end);
     iSamples += aData.Bytes() / (aNumChannels * 4);
-}
-
-void PcmProcessorTestPipeline::ProcessSample8(const TByte* aSample, TUint aNumChannels)
-{
-    const TByte* end = aSample + aNumChannels - 1;
-    if (iSetFirstSubsample) {
-        iFirstSubsample = Subsample8(aSample);
-        iSetFirstSubsample = false;
-    }
-    iLastSubsample = Subsample8(end);
-    iSamples++;
-}
-
-void PcmProcessorTestPipeline::ProcessSample16(const TByte* aSample, TUint aNumChannels)
-{
-    const TByte* end = aSample + ((aNumChannels-1) * 2);
-    if (iSetFirstSubsample) {
-        iFirstSubsample = Subsample16(aSample);
-        iSetFirstSubsample = false;
-    }
-    iLastSubsample = Subsample16(end);
-    iSamples++;
-}
-
-void PcmProcessorTestPipeline::ProcessSample24(const TByte* aSample, TUint aNumChannels)
-{
-    const TByte* end = aSample + ((aNumChannels-1) * 3);
-    if (iSetFirstSubsample) {
-        iFirstSubsample = Subsample24(aSample);
-        iSetFirstSubsample = false;
-    }
-    iLastSubsample = Subsample24(end);
-    iSamples++;
-}
-
-void PcmProcessorTestPipeline::ProcessSample32(const TByte* aSample, TUint aNumChannels)
-{
-    const TByte* end = aSample + ((aNumChannels-1) * 4);
-    if (iSetFirstSubsample) {
-        iFirstSubsample = Subsample32(aSample);
-        iSetFirstSubsample = false;
-    }
-    iLastSubsample = Subsample32(end);
-    iSamples++;
 }
 
 void PcmProcessorTestPipeline::EndBlock()

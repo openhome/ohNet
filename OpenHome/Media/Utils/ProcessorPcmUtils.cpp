@@ -60,123 +60,12 @@ void ProcessorPcmBufTest::ProcessFragment32(const Brx& aData, TUint /*aNumChanne
     ProcessFragment(aData);
 }
 
-void ProcessorPcmBufTest::ProcessSample8(const TByte* aSample, TUint aNumChannels)
-{
-    Brn sample(aSample, aNumChannels);
-    ProcessFragment(sample);
-}
-
-void ProcessorPcmBufTest::ProcessSample16(const TByte* aSample, TUint aNumChannels)
-{
-    Brn sample(aSample, 2*aNumChannels);
-    ProcessFragment(sample);
-}
-
-void ProcessorPcmBufTest::ProcessSample24(const TByte* aSample, TUint aNumChannels)
-{
-    Brn sample(aSample, 3*aNumChannels);
-    ProcessFragment(sample);
-}
-
-void ProcessorPcmBufTest::ProcessSample32(const TByte* aSample, TUint aNumChannels)
-{
-    Brn sample(aSample, 4*aNumChannels);
-    ProcessFragment(sample);
-}
-
 void ProcessorPcmBufTest::EndBlock()
 {
 }
 
 void ProcessorPcmBufTest::Flush()
 {
-}
-
-
-// ProcessorSample
-
-ProcessorSample::ProcessorSample(IPcmProcessor& aDownstream)
-    : iDownstream(aDownstream)
-{
-}
-
-void ProcessorSample::BeginBlock()
-{
-    iDownstream.BeginBlock();
-}
-
-void ProcessorSample::ProcessFragment8(const Brx& aData, TUint aNumChannels)
-{
-    const TUint bytesPerSample = aNumChannels;
-    const TUint numSamples = aData.Bytes() / bytesPerSample;
-    const TByte* ptr = aData.Ptr();
-    for (TUint i=0; i<numSamples; i++) {
-        iDownstream.ProcessSample8(ptr, bytesPerSample);
-        ptr += bytesPerSample;
-    }
-}
-
-void ProcessorSample::ProcessFragment16(const Brx& aData, TUint aNumChannels)
-{
-    const TUint bytesPerSample = 2 * aNumChannels;
-    const TUint numSamples = aData.Bytes() / bytesPerSample;
-    const TByte* ptr = aData.Ptr();
-    for (TUint i=0; i<numSamples; i++) {
-        iDownstream.ProcessSample16(ptr, bytesPerSample);
-        ptr += bytesPerSample;
-    }
-}
-
-void ProcessorSample::ProcessFragment24(const Brx& aData, TUint aNumChannels)
-{
-    const TUint bytesPerSample = 3 * aNumChannels;
-    const TUint numSamples = aData.Bytes() / bytesPerSample;
-    const TByte* ptr = aData.Ptr();
-    for (TUint i=0; i<numSamples; i++) {
-        iDownstream.ProcessSample24(ptr, bytesPerSample);
-        ptr += bytesPerSample;
-    }
-}
-
-void ProcessorSample::ProcessFragment32(const Brx& aData, TUint aNumChannels)
-{
-    const TUint bytesPerSample = 4 * aNumChannels;
-    const TUint numSamples = aData.Bytes() / bytesPerSample;
-    const TByte* ptr = aData.Ptr();
-    for (TUint i=0; i<numSamples; i++) {
-        iDownstream.ProcessSample32(ptr, bytesPerSample);
-        ptr += bytesPerSample;
-    }
-}
-
-void ProcessorSample::ProcessSample8(const TByte* aSample, TUint aNumChannels)
-{
-    iDownstream.ProcessSample8(aSample, aNumChannels);
-}
-
-void ProcessorSample::ProcessSample16(const TByte* aSample, TUint aNumChannels)
-{
-    iDownstream.ProcessSample16(aSample, aNumChannels);
-}
-
-void ProcessorSample::ProcessSample24(const TByte* aSample, TUint aNumChannels)
-{
-    iDownstream.ProcessSample24(aSample, aNumChannels);
-}
-
-void ProcessorSample::ProcessSample32(const TByte* aSample, TUint aNumChannels)
-{
-    iDownstream.ProcessSample32(aSample, aNumChannels);
-}
-
-void ProcessorSample::EndBlock()
-{
-    iDownstream.EndBlock();
-}
-
-void ProcessorSample::Flush()
-{
-    iDownstream.Flush();
 }
 
 
@@ -283,57 +172,6 @@ void ProcessorAggregateUnpacked::ProcessFragment32(const Brx& aData, TUint aNumC
         ProcessUnpackedSample(sample, aNumChannels);
         p += sampleBytes;
     }
-}
-
-void ProcessorAggregateUnpacked::ProcessSample8(const TByte* aSample, TUint aNumChannels)
-{
-    const TUint unpackedSampleBytes = 4 * aNumChannels;
-    TByte unpackedSample[kMaxSampleBytes];
-    TByte* s = unpackedSample;
-    for (TUint j=0; j<aNumChannels; j++) {
-        *s++ = *aSample++;
-        *s++ = 0;
-        *s++ = 0;
-        *s++ = 0;
-    }
-    Brn sample(unpackedSample, unpackedSampleBytes);
-    ProcessUnpackedSample(sample, aNumChannels);
-}
-
-void ProcessorAggregateUnpacked::ProcessSample16(const TByte* aSample, TUint aNumChannels)
-{
-    const TUint unpackedSampleBytes = 4 * aNumChannels;
-    TByte unpackedSample[kMaxSampleBytes];
-    TByte* s = unpackedSample;
-    for (TUint j=0; j<aNumChannels; j++) {
-        *s++ = *aSample++;
-        *s++ = *aSample++;
-        *s++ = 0;
-        *s++ = 0;
-    }
-    Brn sample(unpackedSample, unpackedSampleBytes);
-    ProcessUnpackedSample(sample, aNumChannels);
-}
-
-void ProcessorAggregateUnpacked::ProcessSample24(const TByte* aSample, TUint aNumChannels)
-{
-    const TUint unpackedSampleBytes = 4 * aNumChannels;
-    TByte unpackedSample[kMaxSampleBytes];
-    TByte* s = unpackedSample;
-    for (TUint j=0; j<aNumChannels; j++) {
-        *s++ = *aSample++;
-        *s++ = *aSample++;
-        *s++ = *aSample++;
-        *s++ = 0;
-    }
-    Brn sample(unpackedSample, unpackedSampleBytes);
-    ProcessUnpackedSample(sample, aNumChannels);
-}
-
-void ProcessorAggregateUnpacked::ProcessSample32(const TByte* aSample, TUint aNumChannels)
-{
-    Brn sample(aSample, aNumChannels*4);
-    ProcessUnpackedSample(sample, aNumChannels);
 }
 
 void ProcessorAggregateUnpacked::EndBlock()

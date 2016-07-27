@@ -861,13 +861,12 @@ public:
     /**
      * Called once per call to MsgPlayable::Read.
      *
-     * Will be called before any calls to ProcessFragment or ProcessSample.
+     * Will be called before any calls to ProcessFragment.
      */
     virtual void BeginBlock() = 0;
     /**
-     * Optional function.  Gives the processor a chance to copy memory in a single block.
+     * Copy a block of audio data.
      *
-     * Is not guaranteed to be called so all processors must implement ProcessSample.
      * Bit depth is indicated in function name; number of channels is passed as a parameter.
      *
      * @param aData         Packed big endian pcm data.  Will always be a complete number of samples.
@@ -878,21 +877,9 @@ public:
     virtual void ProcessFragment24(const Brx& aData, TUint aNumChannels) = 0;
     virtual void ProcessFragment32(const Brx& aData, TUint aNumChannels) = 0;
     /**
-     * Process a single sample of audio.
-     *
-     * Data is packed and big endian.
-     * Bit depth is indicated in function name; number of channels is passed as a parameter.
-     *
-     * @param aSample  Pcm data for a single sample.  Length will be (bitDepth * numChannels).
-     */
-    virtual void ProcessSample8(const TByte* aSample, TUint aNumChannels) = 0;
-    virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) = 0;
-    virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) = 0;
-    virtual void ProcessSample32(const TByte* aSample, TUint aNumChannels) = 0;
-    /**
      * Called once per call to MsgPlayable::Read.
      *
-     * No more calls to ProcessFragment or ProcessSample will be made after this.
+     * No more calls to ProcessFragment will be made after this.
      */
     virtual void EndBlock() = 0;
     /**
