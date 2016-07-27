@@ -403,12 +403,13 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     iDisableComplete = aCompleted;
     TUint protocolDisableCount = 0;
     TBool changedState = false;
+    TBool pollUntilDisabled = false;
     switch (iEnabled)
     {
     case eDisabled:
         break;
     case eDisabling:
-        ASSERTS();
+        pollUntilDisabled = true; // no support for multiple async callbacks once disabled
         break;
     case eEnabled:
         iEnabled = eDisabling;
@@ -418,6 +419,21 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     }
     if (!aLocked) {
         iLock.Signal();
+    }
+    if (pollUntilDisabled) {
+        if (aLocked) {
+            iLock.Signal();
+        }
+        for (;;) {
+            Thread::Sleep(50);
+            AutoMutex _(iDisableLock);
+            if (iEnabled == eDisabled) {
+                break;
+            }
+        }
+        if (aLocked) {
+            iLock.Wait();
+        }
     }
     if (protocolDisableCount == 0) {
         if (iDisableComplete) {
