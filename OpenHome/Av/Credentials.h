@@ -96,6 +96,7 @@ private: // from ICredentialObserver
 private:
     Credential* Find(const Brx& aId) const;
     void CreateKey(Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, TUint aKeyBits);
+    void CurrentAdapterChanged();
     void ModerationTimerCallback();
     void CredentialsThread();
 private:
@@ -125,6 +126,7 @@ private:
     KeyParams iKeyParams;
     ThreadFunctor* iThread;
     Fifo<Credential*> iFifo;
+    TUint iAdapterChangeListenerId;
     TBool iStarted;
 };
 

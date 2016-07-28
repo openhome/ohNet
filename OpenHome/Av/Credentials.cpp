@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
@@ -297,11 +298,14 @@ Credentials::Credentials(Environment& aEnv, Net::DvDevice& aDevice, IStoreReadWr
 {
     iProvider = new ProviderCredentials(aDevice, *this);
     iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &Credentials::ModerationTimerCallback), "Credentials");
+    Functor f = MakeFunctor(*this, &Credentials::CurrentAdapterChanged);
+    iAdapterChangeListenerId = iEnv.NetworkAdapterList().AddCurrentChangeListener(f, "Credentials", false);
 }
 
 Credentials::~Credentials()
 {
     iModerationTimerStarted = true; // prevent further callbacks being queued
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iAdapterChangeListenerId);
     delete iModerationTimer;
     iFifo.ReadInterrupt();
     delete iThread;
@@ -441,6 +445,13 @@ void Credentials::CreateKey(IStoreReadWrite& aStore, const Brx& aEntropy, TUint 
     WriteToStore(aStore, kKeyRsaPublic, bio);
     BIO_free(bio);
     iKey = (void*)rsa;
+}
+
+void Credentials::CurrentAdapterChanged()
+{
+    for (auto it=iCredentials.begin(); it!=iCredentials.end(); ++it) {
+        iFifo.Write(*it);
+    }
 }
 
 void Credentials::ModerationTimerCallback()
