@@ -366,6 +366,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
         TUint i;
         iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
         iSubnetDisableCount = (TUint)iAdapters.size();
+        completeNow = (iSubnetDisableCount == 0);
         FunctorGeneric<TBool> functor = MakeFunctorGeneric<TBool>(*this, &DviProtocolUpnp::SubnetDisabled);
         for (i=0; i<iSubnetDisableCount; i++) {
             LogMulticastNotification("byebye");
@@ -470,7 +471,7 @@ void DviProtocolUpnp::GetResourceManagerUri(const NetworkAdapter& aAdapter, Brh&
     }
 }
 
-void DviProtocolUpnp::SubnetDisabled(TBool)
+void DviProtocolUpnp::SubnetDisabled(TBool /*aNotificationsCompleted*/)
 {
     iLock.Wait();
     ASSERT(iSubnetDisableCount != 0);

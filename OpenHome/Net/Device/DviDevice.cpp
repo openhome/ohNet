@@ -402,15 +402,13 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     }
     iDisableLock.Wait();
     TBool changedState = false;
-    if (iEnabled != eDisabled) {
-        if (iEnabled == eEnabled) {
-            iEnabled = eDisabling;
-            iProtocolDisableCount = (TUint)iProtocols.size();
-            if (iProtocolDisableCount == 0) {
-                iEnabled = eDisabled;
-            }
-            changedState = true;
+    if (iEnabled == eEnabled) {
+        iEnabled = eDisabling;
+        iProtocolDisableCount = (TUint)iProtocols.size();
+        if (iProtocolDisableCount == 0) {
+            iEnabled = eDisabled;
         }
+        changedState = true;
     }
     const TBool disabled = (iEnabled == eDisabled);
     if (!disabled) {
