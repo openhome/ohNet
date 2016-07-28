@@ -526,6 +526,9 @@ void SuitePipeline::TestJiffies(TUint aTarget)
     // MsgPlayable instances are grouped together into msgs of kDriverMaxAudioJiffies
     // This means that msgs don't typically end at the end of a ramp
     // ...so we'll read a bit more data than expected when checking ramp durations
+    if (aTarget > iJiffies) {
+        Print("  Expected %u (%u), got %u (%u)\n", aTarget, Jiffies::ToMs(aTarget), iJiffies, Jiffies::ToMs(iJiffies));
+    }
     TEST(aTarget <= iJiffies);
     TEST(iJiffies - aTarget <= kDriverMaxAudioJiffies);
 }
@@ -544,7 +547,7 @@ void SuitePipeline::PullNextAudio()
 
 void SuitePipeline::PullUntilEnd(EState aState)
 {
-    static const TUint kSubsampleRampUpFinal = (TUint)(((TUint64)kSubsampleRampedUpFull * kRampArray[0]) >> 31) & kSubsampleRampedUpFull;
+    static const TUint kSubsampleRampUpFinal = (TUint)(((TUint64)kSubsampleRampedUpFull * kRampArray[0]) >> 15) & kSubsampleRampedUpFull;
     TBool ramping = (aState == ERampDown || aState == ERampUp);
     TBool done = false;
     do {
