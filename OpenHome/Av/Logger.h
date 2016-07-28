@@ -6,7 +6,6 @@
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Optional.h>
-//#include <OpenHome/Av/ProviderDebug.h>
 
 #include <atomic>
 #include <vector>
@@ -60,20 +59,24 @@ private:
 class Product;
 class ProviderDebug;
 
-class LoggerBuffered
+class LoggerBuffered : private Net::IShellCommandHandler
 {
+    static const TChar* kShellCommandLog;
 public:
     LoggerBuffered(TUint aBytes, Net::DvDevice& aDevice, Product& aProduct,
                    Net::IShell& aShell, Optional<ILogPoster> aLogPoster);
     ~LoggerBuffered();
     ILoggerSerial& LoggerSerial();
     RingBufferLogger& LogBuffer();
+private: // from IShellCommandHandler
+    void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) override;
+    void DisplayHelp(IWriter& aResponse) override;
 private:
+    Net::IShell& iShell;
     Av::LoggerSerial* iLoggerSerial;
     RingBufferLogger* iLoggerRingBuffer;
     ProviderDebug* iProviderDebug;
 };
-
 
 }
 } // namespace OpenHome

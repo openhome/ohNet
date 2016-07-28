@@ -79,9 +79,13 @@ void LoggerSerial::DisplayHelp(IWriter& aResponse)
 
 // LoggerBuffered
 
+const TChar* LoggerBuffered::kShellCommandLog = "log";
+
 LoggerBuffered::LoggerBuffered(TUint aBytes, Net::DvDevice& aDevice, Product& aProduct,
                                Net::IShell& aShell, Optional<ILogPoster> aLogPoster)
+    : iShell(aShell)
 {
+    iShell.AddCommandHandler(kShellCommandLog, *this);
     iLoggerSerial = new Av::LoggerSerial(aShell);
     iLoggerRingBuffer = new RingBufferLogger(aBytes);
     iProviderDebug = new ProviderDebug(aDevice, *iLoggerRingBuffer, aLogPoster);
@@ -90,6 +94,7 @@ LoggerBuffered::LoggerBuffered(TUint aBytes, Net::DvDevice& aDevice, Product& aP
 
 LoggerBuffered::~LoggerBuffered()
 {
+    iShell.RemoveCommandHandler(kShellCommandLog);
     delete iProviderDebug;
     delete iLoggerRingBuffer;
     delete iLoggerSerial;
@@ -103,4 +108,25 @@ ILoggerSerial& LoggerBuffered::LoggerSerial()
 RingBufferLogger& LoggerBuffered::LogBuffer()
 {
     return *iLoggerRingBuffer;
+}
+
+void LoggerBuffered::HandleShellCommand(Brn /*aCommand*/, const std::vector<Brn>& aArgs, IWriter& aResponse)
+{
+    if (aArgs.size() != 1) {
+        aResponse.Write(Brn("Unexpected number of arguments for command \'log\'\n"));
+        return;
+    }
+    if (aArgs[0] != Brn("print")) {
+        aResponse.Write(Brn("Unexpected command for \'log\': "));
+        aResponse.Write(aArgs[0]);
+        aResponse.Write(Brn("\n"));
+        return;
+    }
+    iLoggerRingBuffer->Read(aResponse);
+}
+
+void LoggerBuffered::DisplayHelp(IWriter& aResponse)
+{
+    aResponse.Write(Brn("log print\n"));
+    aResponse.Write(Brn("  display all recently logged content\n"));
 }
