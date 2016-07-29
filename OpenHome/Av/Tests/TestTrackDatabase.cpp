@@ -86,6 +86,8 @@ private:
     void TrackRefByIndexInvalidId();
     void TrackRefByIndexSortedValidId();
     void TrackRefByIndexSortedInvalidId();
+    void IsValidValidId();
+    void IsValidInvalidId();
 private:
     static const TUint kNumTracks = 3;
     Media::AllocatorInfoLogger iInfoAggregator;
@@ -561,6 +563,8 @@ SuiteTrackReader::SuiteTrackReader()
     AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexInvalidId), "TrackRefByIndexInvalidId");
     AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexSortedValidId), "TrackRefByIndexSortedValidId");
     AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexSortedInvalidId), "TrackRefByIndexSortedInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::IsValidValidId), "IsValidValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::IsValidInvalidId), "IsValidInvalidId");
 }
 
 void SuiteTrackReader::Setup()
@@ -684,6 +688,16 @@ void SuiteTrackReader::TrackRefByIndexSortedValidId()
 void SuiteTrackReader::TrackRefByIndexSortedInvalidId()
 {
     TEST_THROWS(iReader->TrackRefByIndexSorted(kNumTracks), AssertionFailed);
+}
+
+void SuiteTrackReader::IsValidValidId()
+{
+    TEST(iReader->IsValid(iIds[0]));
+}
+
+void SuiteTrackReader::IsValidInvalidId()
+{
+    TEST(!iReader->IsValid(iIds[kNumTracks-1]+1));
 }
 
 

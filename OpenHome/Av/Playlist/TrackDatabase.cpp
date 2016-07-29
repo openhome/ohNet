@@ -246,6 +246,18 @@ Track* TrackDatabase::TrackRefByIndexSorted(TUint /*aIndex*/)
     return nullptr;
 }
 
+TBool TrackDatabase::IsValid(TUint aId) const
+{
+    AutoMutex _(iLock);
+    try {
+        (void)TrackListUtils::IndexFromId(iTrackList, aId);
+        return true;
+    }
+    catch (TrackDbIdNotFound&) {
+        return false;
+    }
+}
+
 TBool TrackDatabase::TryGetTrackById(TUint aId, Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const
 {
     for (TUint i=aStartIndex; i<aEndIndex; i++) {
@@ -435,6 +447,11 @@ Track* Shuffler::TrackRefByIndexSorted(TUint aIndex)
     return track;
 }
 
+TBool Shuffler::IsValid(TUint aId) const
+{
+    return iReader.IsValid(aId);
+}
+
 void Shuffler::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfter)
 {
     TUint idBefore = aIdBefore;
@@ -587,6 +604,16 @@ Track* Repeater::NextTrackRef(TUint aId)
     return track;
 }
 
+Track* Repeater::PrevTrackRef(TUint aId)
+{
+    AutoMutex a(iLock);
+    Track* track = iReader.PrevTrackRef(aId);
+    if (track == nullptr && iRepeat) {
+        track = iReader.TrackRefByIndexSorted(iTrackCount-1);
+    }
+    return track;
+}
+
 Track* Repeater::TrackRefByIndex(TUint aIndex)
 {
     return iReader.TrackRefByIndex(aIndex);
@@ -598,14 +625,9 @@ Track* Repeater::TrackRefByIndexSorted(TUint /*aIndex*/)
     return nullptr;
 }
 
-Track* Repeater::PrevTrackRef(TUint aId)
+TBool Repeater::IsValid(TUint aId) const
 {
-    AutoMutex a(iLock);
-    Track* track = iReader.PrevTrackRef(aId);
-    if (track == nullptr && iRepeat) {
-        track = iReader.TrackRefByIndexSorted(iTrackCount-1);
-    }
-    return track;
+    return iReader.IsValid(aId);
 }
 
 void Repeater::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfter)

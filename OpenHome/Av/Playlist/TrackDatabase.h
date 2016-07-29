@@ -55,6 +55,7 @@ public:
     virtual Media::Track* PrevTrackRef(TUint aId) = 0;
     virtual Media::Track* TrackRefByIndex(TUint aIndex) = 0;
     virtual Media::Track* TrackRefByIndexSorted(TUint aIndex) = 0;
+    virtual TBool IsValid(TUint aId) const = 0;
 };
 
 class IRepeater
@@ -85,6 +86,7 @@ private: // from ITrackDatabaseReader
     Media::Track* PrevTrackRef(TUint aId) override;
     Media::Track* TrackRefByIndex(TUint aIndex) override;
     Media::Track* TrackRefByIndexSorted(TUint aIndex) override;
+    TBool IsValid(TUint aId) const override;
 private:
     void GetTrackByIdLocked(TUint aId, Media::Track*& aTrack) const;
     TBool TryGetTrackById(TUint aId, Media::Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const;
@@ -114,6 +116,7 @@ private: // from ITrackDatabaseReader
     Media::Track* PrevTrackRef(TUint aId) override;
     Media::Track* TrackRefByIndex(TUint aIndex) override;
     Media::Track* TrackRefByIndexSorted(TUint aIndex) override;
+    TBool IsValid(TUint aId) const override;
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
@@ -145,6 +148,7 @@ private: // from ITrackDatabaseReader
     Media::Track* PrevTrackRef(TUint aId) override;
     Media::Track* TrackRefByIndex(TUint aIndex) override;
     Media::Track* TrackRefByIndexSorted(TUint aIndex) override;
+    TBool IsValid(TUint aId) const override;
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;

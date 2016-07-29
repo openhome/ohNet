@@ -26,6 +26,7 @@ public:
     TBool SupportsNext() const;
     TBool SupportsPrev() const;
     virtual ModeClockPullers ClockPullers();
+    virtual TBool IsValid(TUint aTrackId) const;
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -50,7 +51,8 @@ class Filler : private Thread, public IPipelineElementDownstream, private IMsgPr
 {
     static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider,
+    Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aPipelineIdTracker,
+           IPipelineIdManager& aPipelineIdManager, IFlushIdProvider& aFlushIdProvider,
            MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
            IPipelineIdProvider& aIdProvider, TUint aThreadPriority, TUint aDefaultDelay);
     ~Filler();
@@ -110,6 +112,7 @@ private:
     mutable Mutex iLock;
     IPipelineElementDownstream& iPipeline;
     IPipelineIdTracker& iPipelineIdTracker;
+    IPipelineIdManager& iPipelineIdManager;
     IFlushIdProvider& iFlushIdProvider;
     MsgFactory& iMsgFactory;
     std::vector<UriProvider*> iUriProviders;

@@ -104,6 +104,15 @@ private:
     TUint iLastDelayJiffies;
 };
 
+class DummyIdManager : public IPipelineIdManager
+{
+private: // from IPipelineIdManager
+    void InvalidateAt(TUint /*aId*/) override       {}
+    void InvalidateAfter(TUint /*aId*/) override    {}
+    void InvalidatePending() override               {}
+    void InvalidateAll() override                   {}
+};
+
 class SuiteFiller : public Suite, private IPipelineIdTracker, private IFlushIdProvider, private IStreamPlayObserver, private IPipelineIdProvider
 {
     static const TUint kDefaultLatency = Jiffies::kPerMs * 150;
@@ -132,6 +141,7 @@ private:
     DummyUriProvider* iUriProvider;
     DummyUriStreamer* iUriStreamer;
     DummySupply* iDummySupply;
+    DummyIdManager iDummyIdManager;
     TUint iTrackId;
     TUint iStreamId;
     TBool iPlayNow;
@@ -464,7 +474,7 @@ SuiteFiller::SuiteFiller()
     MsgFactoryInitParams init;
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, *this, kPriorityNormal, kDefaultLatency);
+    iFiller = new Filler(*iDummySupply, *this, iDummyIdManager, *this, *iMsgFactory, *iTrackFactory, *this, *this, kPriorityNormal, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iMsgFactory, *iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);

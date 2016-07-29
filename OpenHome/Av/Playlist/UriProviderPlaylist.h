@@ -26,6 +26,7 @@ public:
     ~UriProviderPlaylist();
     void SetActive(TBool aActive);
 public: // from UriProvider
+    TBool IsValid(TUint aTrackId) const override;
     void Begin(TUint aTrackId) override;
     void BeginLater(TUint aTrackId) override;
     Media::EStreamPlay GetNext(Media::Track*& aTrack) override;

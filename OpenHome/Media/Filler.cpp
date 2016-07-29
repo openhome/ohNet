@@ -38,6 +38,11 @@ ModeClockPullers UriProvider::ClockPullers()
     return ModeClockPullers();
 }
 
+TBool UriProvider::IsValid(TUint /*aTrackId*/) const
+{
+    return true;
+}
+
 UriProvider::UriProvider(const TChar* aMode, Latency aLatency,
                         Next aNextSupported, Prev aPrevSupported)
     : iMode(aMode)
@@ -54,13 +59,15 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider,
+Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTracker,
+               IPipelineIdManager& aPipelineIdManager, IFlushIdProvider& aFlushIdProvider,
                MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
                IPipelineIdProvider& aIdProvider, TUint aThreadPriority, TUint aDefaultDelay)
     : Thread("Filler", aThreadPriority)
     , iLock("FILL")
     , iPipeline(aPipeline)
     , iPipelineIdTracker(aIdTracker)
+    , iPipelineIdManager(aPipelineIdManager)
     , iFlushIdProvider(aFlushIdProvider)
     , iMsgFactory(aMsgFactory)
     , iActiveUriProvider(nullptr)
@@ -361,9 +368,16 @@ Msg* Filler::ProcessMsg(MsgDelay* aMsg)
 Msg* Filler::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iWaitingForAudio = true;
-    iPipelineIdTracker.AddStream(iTrack->Id(), aMsg->StreamId(), (iTrackPlayStatus==ePlayYes));
-    iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
-                                    subsequent streams should be played immediately */
+    const TUint trackId = iTrack->Id();
+    iPipelineIdTracker.AddStream(trackId, aMsg->StreamId(), (iTrackPlayStatus==ePlayYes));
+    if (iActiveUriProvider->IsValid(trackId)) {
+        iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
+                                        subsequent streams should be played immediately */
+
+    }
+    else {
+        iPipelineIdManager.InvalidateAt(trackId);
+    }
     return aMsg;
 }
 

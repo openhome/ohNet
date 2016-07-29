@@ -45,6 +45,12 @@ void UriProviderPlaylist::SetActive(TBool aActive)
     iLock.Signal();
 }
 
+TBool UriProviderPlaylist::IsValid(TUint aTrackId) const
+{
+    AutoMutex a(iLock);
+    return iDatabase.IsValid(aTrackId);
+}
+
 void UriProviderPlaylist::Begin(TUint aTrackId)
 {
     DoBegin(aTrackId, ePlayYes);
