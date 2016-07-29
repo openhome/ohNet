@@ -66,7 +66,7 @@ void SupplyAggregator::OutputMetadata(const Brx& aMetadata)
 void SupplyAggregator::OutputHalt(TUint aHaltId)
 {
     MsgHalt* msg = iMsgFactory.CreateMsgHalt(aHaltId);
-    iDownStreamElement.Push(msg);
+    Output(msg);
 }
 
 void SupplyAggregator::OutputFlush(TUint aFlushId)
