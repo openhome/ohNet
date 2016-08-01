@@ -209,6 +209,7 @@ public: // from StoreVal
     void Write() override;
 private:
     TInt iVal;
+    TInt iLastWritten;
     TBool iChanged;
 };
 
@@ -228,6 +229,7 @@ public: // from StoreVal
     void Write() override;
 private:
     Bwh iVal;
+    Bwh iLastWritten;
     TBool iChanged;
 };
 

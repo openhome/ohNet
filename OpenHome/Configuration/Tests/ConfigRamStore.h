@@ -19,6 +19,7 @@ public:
     ConfigRamStore();
     virtual ~ConfigRamStore();
     void Print() const;
+    TUint WriteCount() const;
 public: // from IStoreReadWrite
     void Read(const Brx& aKey, Bwx& aDest) override;
     void Write(const Brx& aKey, const Brx& aSource) override;
@@ -29,6 +30,7 @@ private:
     typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
     Map iMap;
     mutable Mutex iLock;
+    TUint iWriteCount;
 };
 
 } // namespace Configuration

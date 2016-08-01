@@ -179,6 +179,7 @@ private:
     void TestValueFromStore();
     void TestValueWrittenToStoreWhenChanged();
     void TestValueNotWrittenToStoreWhenDefault();
+    void TestValueNotWrittenToStoreWhenToggled();
     void TestGet();
     void TestSet();
     void TestWrite();
@@ -214,6 +215,7 @@ private:
     void TestValueFromStore();
     void TestValueWrittenToStoreWhenChanged();
     void TestValueNotWrittenToStoreWhenDefault();
+    void TestValueNotWrittenToStoreWhenToggled();
     void TestGet();
     void TestSet();
     void TestWrite();
@@ -802,6 +804,7 @@ SuiteStoreInt::SuiteStoreInt()
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueFromStore), "TestValueFromStore");
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueWrittenToStoreWhenChanged), "TestValueWrittenToStoreWhenChanged");
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueNotWrittenToStoreWhenDefault), "TestValueNotWrittenToStoreWhenDefault");
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueNotWrittenToStoreWhenToggled), "TestValueNotWrittenToStoreWhenToggled");
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestGet), "TestGet");
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestSet), "TestSet");
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestWrite), "TestWrite");
@@ -861,6 +864,20 @@ void SuiteStoreInt::TestValueNotWrittenToStoreWhenDefault()
 {
     // Test that the default value has not been written out to store at creation.
     TEST_THROWS(IntFromStore(*iStore, kKey), StoreKeyNotFound);
+}
+
+void SuiteStoreInt::TestValueNotWrittenToStoreWhenToggled()
+{
+    TInt val = 42;
+    TInt alt = 1234;
+    iStoreInt->Set(val);
+    iStoreInt->Write();
+    const TUint writeCount = iStore->WriteCount();
+    TEST(writeCount == 1);
+    iStoreInt->Set(alt);
+    iStoreInt->Set(val);
+    iStoreInt->Write();
+    TEST(writeCount == iStore->WriteCount());
 }
 
 void SuiteStoreInt::TestGet()
@@ -950,6 +967,7 @@ SuiteStoreText::SuiteStoreText()
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueFromStore), "TestValueFromStore");
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueWrittenToStoreWhenChanged), "TestValueWrittenToStoreWhenChanged");
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueNotWrittenToStoreWhenDefault), "TestValueNotWrittenToStoreWhenDefault");
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueNotWrittenToStoreWhenToggled), "TestValueNotWrittenToStoreWhenToggled");
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestGet), "TestGet");
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestSet), "TestSet");
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestWrite), "TestWrite");
@@ -1005,6 +1023,20 @@ void SuiteStoreText::TestValueNotWrittenToStoreWhenDefault()
     // Test that the default value has not been written out to store at creation.
     Bws<kMaxLength> buf;
     TEST_THROWS(iStore->Read(kKey, buf), StoreKeyNotFound);
+}
+
+void SuiteStoreText::TestValueNotWrittenToStoreWhenToggled()
+{
+    Bws<kMaxLength> val("foo");
+    Bws<kMaxLength> alt("bar");
+    iStoreText->Set(val);
+    iStoreText->Write();
+    const TUint writeCount = iStore->WriteCount();
+    TEST(writeCount == 1);
+    iStoreText->Set(alt);
+    iStoreText->Set(val);
+    iStoreText->Write();
+    TEST(writeCount == iStore->WriteCount());
 }
 
 void SuiteStoreText::TestGet()

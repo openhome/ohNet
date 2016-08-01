@@ -9,6 +9,7 @@ using namespace OpenHome::Configuration;
 
 ConfigRamStore::ConfigRamStore()
     : iLock("RAMS")
+    , iWriteCount(0)
 {
 }
 
@@ -41,6 +42,12 @@ void ConfigRamStore::Print() const
     Log::Print("]\n");
 }
 
+TUint ConfigRamStore::WriteCount() const
+{
+    AutoMutex _(iLock);
+    return iWriteCount;
+}
+
 void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
 {
     Brn key(aKey);
@@ -63,6 +70,8 @@ void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
     Brh* val = new Brh(aSource);
 
     AutoMutex a(iLock);
+
+    iWriteCount++;
 
     // std::map doesn't insert a value if key exists, so first remove existing
     // key-value pair, if new value is different

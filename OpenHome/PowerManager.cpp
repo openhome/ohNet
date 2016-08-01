@@ -309,6 +309,7 @@ void StoreVal::StandbyDisabled(StandbyDisableReason /*aReason*/)
 StoreInt::StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
     : StoreVal(aStore, aKey)
     , iVal(aDefault)
+    , iLastWritten(aDefault)
     , iChanged(false)
 {
     RegisterPowerHandlers(aPowerManager, aPriority);
@@ -351,6 +352,7 @@ void StoreInt::PowerUp()
     try {
         iStore.Read(iKey, buf);
         iVal = Converter::BeUint32At(buf, 0);
+        iLastWritten = iVal;
     }
     catch (StoreKeyNotFound&) {}
 }
@@ -359,7 +361,10 @@ void StoreInt::Write()
 {
     AutoMutex _(iLock);
     if (iChanged) {
-        Write(iKey, iVal, iStore);
+        if (iVal != iLastWritten) {
+            Write(iKey, iVal, iStore);
+            iLastWritten = iVal;
+        }
         iChanged = true;
     }
 }
@@ -370,9 +375,11 @@ void StoreInt::Write()
 StoreText::StoreText(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength)
     : StoreVal(aStore, aKey)
     , iVal(aMaxLength)
+    , iLastWritten(aMaxLength)
     , iChanged(false)
 {
     iVal.Replace(aDefault);
+    iLastWritten.Replace(aDefault);
     RegisterPowerHandlers(aPowerManager, aPriority);
 }
 
@@ -402,6 +409,7 @@ void StoreText::PowerUp()
     AutoMutex _(iLock);
     try {
         iStore.Read(iKey, iVal);
+        iLastWritten.Replace(iVal);
     }
     catch (StoreKeyNotFound&) {}
 }
@@ -410,7 +418,10 @@ void StoreText::Write()
 {
     AutoMutex a(iLock);
     if (iChanged) {
-        iStore.Write(iKey, iVal);
+        if (iVal != iLastWritten) {
+            iStore.Write(iKey, iVal);
+            iLastWritten.Replace(iVal);
+        }
         iChanged = false;
     }
 }
