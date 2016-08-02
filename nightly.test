@@ -35,7 +35,6 @@ tests = '''
     TestCodec               -s {ws_hostname} -p {ws_port} -t full
     TestCodecController
     TestDecodedAudioAggregator
-    TestAggregator
     TestSilencer
     TestIdProvider
     TestFiller
