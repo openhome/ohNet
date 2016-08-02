@@ -281,14 +281,20 @@ void SourceReceiver::Play()
 {
     LOG(kSongcast, "SourceReceiver::Play()\n");
     EnsureActive();
-    AutoMutex a(iLock);
-    iPlaying = true;
-    if (iZone.Bytes() > 0) {
-        iZoneHandler->StartMonitoring(iZone);
+    TBool doPlay = false;
+    {
+        AutoMutex a(iLock);
+        iPlaying = true;
+        if (iZone.Bytes() > 0) {
+            iZoneHandler->StartMonitoring(iZone);
+        }
+        if (iTrackUri.Bytes() > 0) {
+            iZoneHandler->SetCurrentSenderUri(iTrackUri);
+            iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+            doPlay = true;
+        }
     }
-    if (iTrackUri.Bytes() > 0) {
-        iZoneHandler->SetCurrentSenderUri(iTrackUri);
-        iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+    if (doPlay) {
         DoPlay();
     }
 }
@@ -426,7 +432,12 @@ void SourceReceiver::UriChanged()
         if (IsActive() && iPlaying) {
             iPipeline.RemoveAll();
             iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+            iLock.Signal();
+            /* DoPlay calls PowerManager::StandbyDisable, which calls standby handlers with a PowerManager lock held
+               Another thread may be running Enabled standby handlers with the same PowerManager lock held.  One of
+               these callbacks can call SourceReceiver::Stop, which waits on iLock. */
             DoPlay();
+            iLock.Wait();
         }
     }
 }
