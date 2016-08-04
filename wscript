@@ -301,7 +301,7 @@ def build(bld):
                 'OpenHome/Av/MediaPlayer.cpp',
                 'OpenHome/Av/Logger.cpp',
                 'Generated/DvAvOpenhomeOrgConfig1.cpp',
-                'OpenHome/Av/Utils/Json.cpp',
+                'OpenHome/Json.cpp',
                 'OpenHome/Av/Utils/FormUrl.cpp',
                 'OpenHome/NtpClient.cpp',
                 'OpenHome/UnixTimestamp.cpp',
@@ -688,7 +688,7 @@ def build(bld):
                 'OpenHome/Tests/TestSsl.cpp',
                 'OpenHome/Av/Tests/TestCredentials.cpp',
                 'Generated/CpAvOpenhomeOrgCredentials1.cpp',
-                'OpenHome/Av/Tests/TestJson.cpp',
+                'OpenHome/Tests/TestJson.cpp',
                 'OpenHome/Av/Tests/TestRaop.cpp',
                 'OpenHome/Av/Tests/TestVolumeManager.cpp',
             ],
@@ -966,7 +966,7 @@ def build(bld):
             target='TestTidal',
             install_path=None)
     bld.program(
-            source='OpenHome/Av/Tests/TestJsonMain.cpp',
+            source='OpenHome/Tests/TestJsonMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestJson',
             install_path=None)

@@ -6,7 +6,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>
-#include <OpenHome/Av/Utils/Json.h>
+#include <OpenHome/Json.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -1244,7 +1244,7 @@ void ConfigUiValStartupSource::WriteMeta(IWriter& aWriter, ILanguageResourceMana
     aWriter.Write('{');
     aWriter.Write(Brn("\"default\":"));
     aWriter.Write(Brn("\""));
-    Av::Json::Escape(aWriter, iText.Default());
+    Json::Escape(aWriter, iText.Default());
     aWriter.Write(Brn("\""));
     aWriter.Write(Brn(","));
     aWriter.Write(Brn("\"maxlength\":"));

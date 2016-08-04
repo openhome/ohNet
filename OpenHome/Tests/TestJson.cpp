@@ -1,13 +1,11 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Av/Utils/Json.h>
+#include <OpenHome/Json.h>
 #include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
-using namespace OpenHome::Av;
 
 namespace OpenHome {
-namespace Av {
 
 class SuiteJsonEncode : public Suite, private IWriter
 {
@@ -35,7 +33,6 @@ private:
     static void DecodeChar(const TChar* aEncoded, TByte aDecoded);
 };
 
-} // namespace Av
 } // namespace OpenHome
 
 
