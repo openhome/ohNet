@@ -144,7 +144,7 @@ void JsonParser::Reset()
 inline void JsonParser::Add(const Brn& aKey, const TByte* aValStart, TUint aValBytes)
 {
     Brn val(aValStart, aValBytes);
-    Log::Print("Add %.*s, %.*s\n", PBUF(aKey), PBUF(val));
+//    Log::Print("Add %.*s, %.*s\n", PBUF(aKey), PBUF(val));
     iPairs.insert(std::pair<Brn, Brn>(aKey, val));
 }
 
