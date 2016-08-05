@@ -150,6 +150,8 @@ inline void JsonParser::Add(const Brn& aKey, const TByte* aValStart, TUint aValB
 
 void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
 {
+    Reset();
+
     const TByte* ptr = aJson.Ptr();
     const TByte* end = ptr + aJson.Bytes();
 
