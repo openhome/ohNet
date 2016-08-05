@@ -162,7 +162,10 @@ void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
 {
     AutoMutex _(iLock);
     iLimit = aKvp.Value() * iMilliDbPerStep;
-    DoSetVolume(iUpstreamVolume);
+    try {
+        DoSetVolume(iUpstreamVolume);
+    }
+    catch (VolumeNotSupported&) {}
 }
 
 void VolumeLimiter::DoSetVolume(TUint aValue)
@@ -282,12 +285,15 @@ void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
 {
     AutoMutex _(iLock);
     iVolumeControlEnabled = aEnabled;
-    if (iVolumeControlEnabled) {
-        iVolume.SetVolume(iUpstreamVolume);
+    try {
+        if (iVolumeControlEnabled) {
+            iVolume.SetVolume(iUpstreamVolume);
+        }
+        else {
+            iVolume.SetVolume(iUnityGain);
+        }
     }
-    else {
-        iVolume.SetVolume(iUnityGain);
-    }
+    catch (VolumeNotSupported&) {}
 }
 
 TBool VolumeUnityGainBase::GetEnabled()
@@ -406,7 +412,10 @@ void BalanceUser::SetBalance(TInt aBalance)
 
 void BalanceUser::BalanceChanged(ConfigNum::KvpNum& aKvp)
 {
-    iBalance.SetBalance(aKvp.Value());
+    try {
+        iBalance.SetBalance(aKvp.Value());
+    }
+    catch (BalanceNotSupported&) {}
 }
 
 
@@ -436,7 +445,10 @@ void FadeUser::SetFade(TInt aFade)
 
 void FadeUser::FadeChanged(ConfigNum::KvpNum& aKvp)
 {
-    iFade.SetFade(aKvp.Value());
+    try {
+        iFade.SetFade(aKvp.Value());
+    }
+    catch (FadeNotSupported&) {}
 }
 
 
