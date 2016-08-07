@@ -60,13 +60,13 @@ class JsonWriter : private INonCopyable
     static const Brn kQuote;
 public:
     JsonWriter(IWriter& aWriter);
+    void WriteKey(const TChar* aKey);
     void WriteString(const TChar* aKey, const TChar* aValue);
     void WriteString(const TChar* aKey, const Brx& aValue);
     void WriteInt(const TChar* aKey, TInt aValue);
     void WriteEnd();
 private:
     void CheckStarted();
-    void WriteKey(const TChar* aKey);
 private:
     IWriter& iWriter;
     TBool iStarted;

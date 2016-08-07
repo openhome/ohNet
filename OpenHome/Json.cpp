@@ -358,6 +358,19 @@ JsonWriter::JsonWriter(IWriter& aWriter)
 {
 }
 
+void JsonWriter::WriteKey(const TChar* aKey)
+{
+    if (iWrittenFirstKey) {
+        iWriter.Write(Brn(","));
+    }
+    iWriter.Write(kQuote);
+    Brn key(aKey);
+    iWriter.Write(key);
+    iWriter.Write(kQuote);
+    iWriter.Write(Brn(":"));
+    iWrittenFirstKey = true;
+}
+
 void JsonWriter::WriteString(const TChar* aKey, const TChar* aValue)
 {
     Brn val(aValue);
@@ -398,17 +411,4 @@ void JsonWriter::CheckStarted()
         iWriter.Write(Brn("{"));
         iStarted = true;
     }
-}
-
-void JsonWriter::WriteKey(const TChar* aKey)
-{
-    if (iWrittenFirstKey) {
-        iWriter.Write(Brn(","));
-    }
-    iWriter.Write(kQuote);
-    Brn key(aKey);
-    iWriter.Write(key);
-    iWriter.Write(kQuote);
-    iWriter.Write(Brn(":"));
-    iWrittenFirstKey = true;
 }
