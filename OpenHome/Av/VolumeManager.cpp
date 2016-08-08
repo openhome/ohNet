@@ -118,6 +118,7 @@ void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
         iVolume.SetVolume(startupVolume);
     }
     catch (VolumeNotSupported&) { }
+    catch (VolumeOutOfRange&) { } // ignore any errors caused by volume limit being set lower than startup volume
 }
 
 void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)
