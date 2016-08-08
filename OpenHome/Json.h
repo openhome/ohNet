@@ -3,6 +3,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Private/Stream.h>
 
 #include <map>
 
@@ -55,23 +56,78 @@ private:
     std::map<Brn, Brn, BufferCmp> iPairs;
 };
 
-class JsonWriter : private INonCopyable
+class WriterJson
 {
-    static const Brn kQuote;
 public:
-    JsonWriter(IWriter& aWriter);
+    static const Brn kQuote;
+    static const Brn kSeparator;
+    static const Brn kBoolTrue;
+    static const Brn kBoolFalse;
+    static const Brn kNull;
+public:
+    static void WriteValueInt(IWriter& aWriter, TInt aValue);
+    static void WriteValueString(IWriter& aWriter, const Brx& aValue);
+    static void WriteValueBool(IWriter& aWriter, TBool aValue);
+};
+
+class WriterJsonArray;
+
+class WriterJsonObject
+{
+    friend class WriterJsonArray;
+public:
     void WriteKey(const TChar* aKey);
+    void WriteKey(const Brx& aKey);
+    void WriteInt(const TChar* aKey, TInt aValue);
+    void WriteInt(const Brx& aKey, TInt aValue);
     void WriteString(const TChar* aKey, const TChar* aValue);
     void WriteString(const TChar* aKey, const Brx& aValue);
-    void WriteInt(const TChar* aKey, TInt aValue);
+    void WriteString(const Brx& aKey, const Brx& aValue);
+    void WriteBool(const TChar* aKey, TBool aValue);
+    void WriteBool(const Brx& aKey, TBool aValue);
+    WriterJsonArray CreateArray(const TChar* aKey);
+    WriterJsonArray CreateArray(const Brx& aKey);
+    WriterJsonObject CreateObject(const TChar* aKey);
+    WriterJsonObject CreateObject(const Brx& aKey);
     void WriteEnd();
-private:
+protected:
+    WriterJsonObject(IWriter& aWriter);
     void CheckStarted();
-private:
-    IWriter& iWriter;
+protected:
+    static const Brn kObjectStart;
+    static const Brn kObjectEnd;
+    IWriter* iWriter;
     TBool iStarted;
     TBool iEnded;
     TBool iWrittenFirstKey;
+};
+
+class WriterJsonDocument : public WriterJsonObject
+{
+public:
+    WriterJsonDocument(IWriter& aWriter);
+    void WriteEnd();
+};
+
+class WriterJsonArray
+{
+    friend class WriterJsonObject;
+public:
+    WriterJsonArray(IWriter& aWriter);
+    void WriteInt(TInt aValue);
+    void WriteString(const Brx& aValue);
+    void WriteBool(TBool aValue);
+    WriterJsonArray CreateArray();
+    WriterJsonObject CreateObject();
+    void WriteEnd();
+private:
+    void WriteStartOrSeparator();
+private:
+    static const Brn kArrayStart;
+    static const Brn kArrayEnd;
+    IWriter* iWriter;
+    TBool iStarted;
+    TBool iEnded;
 };
 
 } // namespace OpenHome
