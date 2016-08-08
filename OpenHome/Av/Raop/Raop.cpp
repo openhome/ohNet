@@ -466,27 +466,52 @@ void RaopDiscoverySession::Run()
                         if(entry == Brn("volume")) {
                             TInt vol = 0;
                             try {
+                                Brn remaining = parser.Remaining();
+
                                 // volume range is -30 to 0, < -30 == mute
                                 // get int part plus first digit after dp
-                                Bws<10> vStr(parser.Next('.'));
-                                vStr.Append(parser.At(0));
 
-                                vol = Ascii::Int(vStr);
+                                TBool validVolString = false;
+                                Bws<Ascii::kMaxIntStringBytes> volBuf;
+                                Brn integerPart = parser.Next('.');
+                                Brn fractionalPart = parser.Remaining();
 
-                                // convert to logorithmic scale to give even volume steps
-                                vol = -vol;         // range 300 to 0
-                                if(vol > 300) {
-                                    vol = 300;      // muted
+                                // Get the integer and fractional parts into a
+                                // string.
+                                const TUint intBytes = integerPart.Bytes();
+                                if (intBytes > 0 && intBytes <= volBuf.MaxBytes()) {
+                                    volBuf.Replace(integerPart);
+
+                                    // Integer part was okay. Now try append
+                                    // first digit from fractional part.
+                                    const TUint capacity = volBuf.MaxBytes()-volBuf.Bytes();
+                                    if (fractionalPart.Bytes() > 0 && capacity >= 1) {
+                                        volBuf.Append(fractionalPart[0]);
+                                        validVolString = true;
+                                    }
                                 }
-                                vol = 300 - vol;    // 300 = max
-                                double dvol = log10(((double)vol+1.0)/301.0);
-                                double dvol2 = 1000.0 + dvol * 600.0;           //convert to 0-1000 range and bias to match Volkano1
-                                vol = (TInt)dvol2;
-                                if(vol < 0) {
-                                    vol = 0;        // muted
+
+                                if (validVolString) {
+                                    vol = Ascii::Int(volBuf);
+
+                                    // convert to logorithmic scale to give even volume steps
+                                    vol = -vol;         // range 300 to 0
+                                    if (vol > 300) {
+                                        vol = 300;      // muted
+                                    }
+                                    vol = 300 - vol;    // 300 = max
+                                    double dvol = log10(((double)vol+1.0)/301.0);
+                                    double dvol2 = 1000.0 + dvol * 600.0;           //convert to 0-1000 range and bias to match Volkano1
+                                    vol = (TInt)dvol2;
+                                    if (vol < 0) {
+                                        vol = 0;        // muted
+                                    }
+                                    //Log::Print("dvol %f, dvol2 %f, vol %d\n", dvol, dvol2, vol);
+                                    iVolume.SetVolume(vol);
                                 }
-                                //Log::Print("dvol %f, dvol2 %f, vol %d\n", dvol, dvol2, vol);
-                                iVolume.SetVolume(vol);
+                                else {
+                                    LOG(kMedia, "RaopDiscoverySession::Run %u. Invalid volume string encountered: %.*s\n", iInstance, PBUF(remaining));
+                                }
                             }
                             catch (AsciiError&) {
                                 // Couldn't parse volume. Ignore it.

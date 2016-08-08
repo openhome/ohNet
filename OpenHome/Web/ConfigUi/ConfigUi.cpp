@@ -484,6 +484,11 @@ ConfigUiValBase::ConfigUiValBase(const IWritable& aAdditionalJson)
 {
 }
 
+void ConfigUiValBase::WriteHidden(IWriter& aWriter)
+{
+    aWriter.Write(Brn("false"));
+}
+
 void ConfigUiValBase::WriteAdditional(IWriter& aWriter)
 {
     iAdditionalJson.Write(aWriter);
@@ -511,6 +516,10 @@ void ConfigUiValBase::WriteJson(IWriter& aWriter, IConfigUiUpdateWriter& aValWri
 
     aWriter.Write(Brn("\"info\":"));
     WriteAdditional(aWriter);
+    aWriter.Write(Brn(","));
+
+    aWriter.Write(Brn("\"hidden\":"));
+    WriteHidden(aWriter);
 
     aWriter.Write(Brn("}"));
 }

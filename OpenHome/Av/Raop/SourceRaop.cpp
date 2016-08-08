@@ -15,6 +15,7 @@
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Av/Raop/CodecRaopApple.h>
 #include <OpenHome/Optional.h>
+#include <OpenHome/Private/Converter.h>
 
 #include <limits.h>
 #include <memory>
@@ -86,8 +87,6 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-    GenerateMetadata();
-
     IVolumeManager& volManager = aMediaPlayer.VolumeManager();
 
     iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aMediaPlayer.FriendlyNameObservable(), aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
@@ -152,6 +151,7 @@ void SourceRaop::Activate(TBool aAutoPlay)
             iTrack->RemoveRef();
             iTrack = nullptr;
         }
+        GenerateMetadata(); // Updates iDidlLite.
         iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
         const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
         iLock.Signal();
@@ -188,10 +188,17 @@ void SourceRaop::GenerateMetadata()
  * Helper method - should only be called during construction.
  */
 {
+    // Get current system name.
     iDidlLite.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
     iDidlLite.Append("<item id=\"\" parentID=\"\" restricted=\"True\">");
     iDidlLite.Append("<dc:title>");
-    iDidlLite.Append(SourceFactory::kSourceNameRaop);
+
+    // Append name.
+    Bws<kMaxSourceNameBytes> name;
+    Name(name);
+    WriterBuffer writerBuf(iDidlLite);
+    Converter::ToXmlEscaped(writerBuf, name);
+
     iDidlLite.Append("</dc:title>");
     iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
     iDidlLite.Append("</item>");
@@ -206,6 +213,7 @@ void SourceRaop::StartNewTrack()
         iTrack = nullptr;
     }
 
+    GenerateMetadata(); // Updates iDidlLite.
     iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
     const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
     iPipeline.Begin(iUriProvider.Mode(), trackId);
