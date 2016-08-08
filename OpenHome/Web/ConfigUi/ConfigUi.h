@@ -297,6 +297,7 @@ protected:
     virtual void WriteKey(IWriter& aWriter) = 0;
     virtual void WriteType(IWriter& aWriter) = 0;
     virtual void WriteMeta(IWriter& aWriter, ILanguageResourceManager& aLanguageResourceManager, std::vector<Bws<10>>& aLanguageList) = 0;
+    virtual void WriteHidden(IWriter& aWriter); // Writes "false" by default. Override to write "true".
 private:
     void WriteAdditional(IWriter& aWriter);
 public: // from IConfigUiVal
