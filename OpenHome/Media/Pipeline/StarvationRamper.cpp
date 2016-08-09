@@ -88,7 +88,7 @@ FlywheelInput::~FlywheelInput()
 
 const Brx& FlywheelInput::Prepare(MsgQueueLite& aQueue, TUint aJiffies, TUint aSampleRate, TUint /*aBitDepth*/, TUint aNumChannels)
 {
-    ASSERT(aNumChannels < kMaxChannels);
+    ASSERT(aNumChannels <= kMaxChannels);
     const TUint numSamples = aJiffies / Jiffies::PerSample(aSampleRate);
     const TUint channelBytes = numSamples * kSubsampleBytes;
     TByte* p = iPtr;
