@@ -672,18 +672,18 @@ void RaopDiscoverySession::GenerateAppleResponse(const Brx& aChallenge)
                 buf.AppendPrintf("%02x, ", response[i]);
             }
         }
-        LOG(kMedia, "%.*s\n", PBUF(buf));
+        buf.Append("\n");
+        // Print fully-formatted buf directly to output full buf. (If using
+        // format specifiers (e.g., "%.*s") output is truncated to 1024 bytes).
+        LOG(kMedia, buf);
     }
 
-    if(res > 0) {
+    if (res > 0) {
         iResponse.Replace(response, res);
 
         unsigned char decrypted[256];
         GetRsa();
         res = RSA_public_decrypt(256, response, decrypted, iRsa, RSA_PKCS1_PADDING);
-        if (Debug::TestLevel(Debug::kMedia)) {
-            Bws<400> buf("decrypted response %d:%d:");
-        }
 
         if (Debug::TestLevel(Debug::kMedia)) {
             Bws<1280> buf("decrypted response");
@@ -699,7 +699,8 @@ void RaopDiscoverySession::GenerateAppleResponse(const Brx& aChallenge)
                     buf.AppendPrintf("%02x, ", decrypted[i]);
                 }
             }
-            LOG(kMedia, "%.*s\n", PBUF(buf));
+            buf.Append("\n");
+            LOG(kMedia, buf);
         }
     }
 }
