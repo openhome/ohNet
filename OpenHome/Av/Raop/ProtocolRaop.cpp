@@ -298,6 +298,7 @@ void ProtocolRaop::DoInterrupt()
     iAudioServer.DoInterrupt();
     iControlServer.DoInterrupt();
     iRepairer.DropAudio();
+    iSupply->Discard();
 }
 
 void ProtocolRaop::Interrupt(TBool /*aInterrupt*/)
