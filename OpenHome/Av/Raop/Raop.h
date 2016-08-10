@@ -155,8 +155,10 @@ class RaopDiscoveryServer;
 
 class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
 {
+private:
     static const TUint kMaxReadBufferBytes = 12000;
     static const TUint kMaxWriteBufferBytes = 4000;
+    static const unsigned char kRsaKeyPrivate[];
 public:
     RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolume& aVolume);
     ~RaopDiscoverySession();
@@ -178,7 +180,6 @@ private:
     void ReadSdp(Media::ISdpHandler& aSdpHandler);
     void GenerateAppleResponse(const Brx& aChallenge);
     void DecryptAeskey();
-    void GetRsa();
     void DeactivateCallback();
 private:
     static const TUint kMaxPortNumBytes = 5;

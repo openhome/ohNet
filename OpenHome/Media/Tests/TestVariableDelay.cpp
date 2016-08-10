@@ -75,7 +75,6 @@ private: // from IClockPuller
     void Update(TInt aDelta) override;
     void Start() override;
     void Stop() override;
-    void Reset() override;
 protected:
     enum EMsgType
     {
@@ -480,11 +479,6 @@ void SuiteVariableDelay::Start()
 void SuiteVariableDelay::Stop()
 {
     iClockPullStopCount++;
-}
-
-void SuiteVariableDelay::Reset()
-{
-    ASSERTS();
 }
 
 void SuiteVariableDelay::PullNext()
