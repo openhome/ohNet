@@ -417,18 +417,18 @@ void CodecController::Rewind()
 
 Msg* CodecController::PullMsg()
 {
-    iLock.Wait();
-    if (iRecognising && iExpectedFlushId != MsgFlush::kIdInvalid) {
-        /* waiting for a Flush causes QueueTrackData() to discard all msgs.
-           If we're trying to recognise a new stream, Rewinder is active and will buffer all
-           the msgs we're busily discarding.  We'll probably run out of memory at this point.
-           Even if we don't, we don't want to be able to replay msgs that are certain to be
-           discarded.  Throwing here allows us to break out of the recognise loop and safely
-           allow QueueTrackData() to discard as much data as it wants. */
-        iLock.Signal();
-        THROW(CodecStreamFlush);
+    {
+        AutoMutex _(iLock);
+        if (iRecognising && iExpectedFlushId != MsgFlush::kIdInvalid) {
+            /* waiting for a Flush causes QueueTrackData() to discard all msgs.
+               If we're trying to recognise a new stream, Rewinder is active and will buffer all
+               the msgs we're busily discarding.  We'll probably run out of memory at this point.
+               Even if we don't, we don't want to be able to replay msgs that are certain to be
+               discarded.  Throwing here allows us to break out of the recognise loop and safely
+               allow QueueTrackData() to discard as much data as it wants. */
+            THROW(CodecStreamFlush);
+        }
     }
-    iLock.Signal();
     Msg* msg = iLoggerRewinder->Pull();
     if (msg == nullptr) {
         ASSERT(iRecognising);
@@ -622,16 +622,17 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     iChannels = aNumChannels;
     iSampleRate = aSampleRate;
     iBitDepth = aBitDepth;
-    if (!iSeekInProgress) {
-        Queue(msg);
-    }
-    else {
+    const TBool queue = !iSeekInProgress;
+    if (iSeekInProgress) {
         if (iPostSeekStreamInfo != nullptr) {
             iPostSeekStreamInfo->RemoveRef();
         }
         iPostSeekStreamInfo = msg;
     }
     iLock.Signal();
+    if (queue) {
+        Queue(msg);
+    }
 
     const TUint maxSamples = Jiffies::ToSamples(iMaxOutputJiffies, aSampleRate);
     iMaxOutputBytes = maxSamples * (aBitDepth/8) * aNumChannels;
@@ -639,10 +640,8 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
 
 void CodecController::OutputDelay(TUint aJiffies)
 {
-    iLock.Wait();
     MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
     Queue(msg);
-    iLock.Signal();
 }
 
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset)

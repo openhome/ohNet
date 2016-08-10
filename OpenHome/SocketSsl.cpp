@@ -264,8 +264,11 @@ void SocketSslImpl::Close()
             SSL_free(iSsl);
             iSsl = nullptr;
         }
-        iConnected = false; // following line can throw if socket isn't open
-        iSocketTcp.Close();
+        iConnected = false;
+        try {
+            iSocketTcp.Close();
+        }
+        catch (NetworkError&) {}
     }
 }
 
