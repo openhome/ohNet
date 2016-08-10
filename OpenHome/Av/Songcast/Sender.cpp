@@ -210,7 +210,8 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iSampleRate = streamInfo.SampleRate();
-    iBitDepth = streamInfo.BitDepth();
+    iBitDepth = std::min(streamInfo.BitDepth(), (TUint)24); /* 32-bit audio is assumed to be padded
+                                                               and converted to 24-bit before transmission */
     iNumChannels = streamInfo.NumChannels();
     const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::PerSample(iSampleRate);
     iOhmSender->SetTrackPosition(samplesTotal, streamInfo.SampleStart());
@@ -351,12 +352,13 @@ void Sender::ProcessFragment32(const Brx& aData, TUint aNumChannels)
 {
     TByte* p = const_cast<TByte*>(iAudioBuf->Ptr());
     const TByte* src = aData.Ptr();
-    TUint bytes = iAudioBuf->Bytes();
+    TUint bytes = aData.Bytes();
     const TUint numSamples = bytes / (4 * aNumChannels);
     for (TUint i=0; i<numSamples; i++) {
         ProcessSample32LeftAligned(p, src, aNumChannels);
     }
     bytes = 3 * aNumChannels * numSamples;
+    bytes += iAudioBuf->Bytes();
     iAudioBuf->SetBytes(bytes);
 }
 
