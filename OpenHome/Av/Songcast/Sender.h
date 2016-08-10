@@ -78,7 +78,10 @@ private:
     void ConfigModeChanged(Configuration::KeyValuePair<TUint>& aStringId);
     void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
     static inline void ProcessSample32LeftAligned(TByte*& aDest, const TByte*& aSrc, TUint aNumChannels);
-private: // from IPcmProcessor
+private:
+    static TUint ChannelsToSendMask(TUint aNumChannels);
+    void ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesPerSample);
+    // from IPcmProcessor
     void BeginBlock() override;
     void ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
     void ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
@@ -127,12 +130,11 @@ private:
     std::vector<Media::MsgAudio*> iPendingAudio;
     Bwx* iAudioBuf;
     TUint iSampleRate;
-    TUint iBitDepth;
-    TUint iNumChannels;
     const TUint iMinLatencyMs;
     const Media::BwsMode iSongcastMode;
     IUnicastOverrideObserver& iUnicastOverrideObserver;
     TBool iEnabled;
+    TUint iSenderChannelMask;
 };
 
 } // namespace Av

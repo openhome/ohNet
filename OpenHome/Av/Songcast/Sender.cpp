@@ -19,6 +19,8 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
+static const TUint kMaxSenderChannels = 2;
+
 
 enum StringIdsSongcastMode
 {
@@ -45,12 +47,11 @@ Sender::Sender(Environment& aEnv,
                IUnicastOverrideObserver& aUnicastOverrideObserver)
     : iAudioBuf(nullptr)
     , iSampleRate(0)
-    , iBitDepth(0)
-    , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
     , iSongcastMode(aSongcastMode)
     , iUnicastOverrideObserver(aUnicastOverrideObserver)
     , iEnabled(true)
+    , iSenderChannelMask(0)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
     iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper);
@@ -210,12 +211,14 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iSampleRate = streamInfo.SampleRate();
-    iBitDepth = streamInfo.BitDepth();
-    iNumChannels = streamInfo.NumChannels();
+    const TUint bitDepth = std::min(streamInfo.BitDepth(), (TUint)24); /* 32-bit audio is assumed to be padded
+                                                                          and converted to 24-bit before transmission */
+    const TUint numChannels = streamInfo.NumChannels();
     const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::PerSample(iSampleRate);
+    iSenderChannelMask = ChannelsToSendMask(numChannels);
     iOhmSender->SetTrackPosition(samplesTotal, streamInfo.SampleStart());
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), iNumChannels,
-                                     iBitDepth, streamInfo.Lossless(), streamInfo.CodecName(),
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), std::min(numChannels, kMaxSenderChannels),
+                                     bitDepth, streamInfo.Lossless(), streamInfo.CodecName(),
                                      streamInfo.SampleStart());
 
     return aMsg;
@@ -327,37 +330,63 @@ inline void Sender::ProcessSample32LeftAligned(TByte*& aDest, const TByte*& aSrc
     }
 }
 
+// FIXME: review how this mapping is generated
+TUint Sender::ChannelsToSendMask(TUint aNumChannels)
+{
+    if (aNumChannels < 2) {
+        // Mono: only one channel available
+        return 0x1;
+    }
+    else if (aNumChannels < 10) {
+        // Pick the first 2 channels
+        return 0x3;
+    }
+    else {
+        // 10 channels: pick the last 2 channels
+        return (0x3 << 8);
+    }
+}
+
+void Sender::ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesPerSample)
+{
+    const TByte* src = aData.Ptr();
+    const TUint numSamples = aData.Bytes() / (aBytesPerSample * aNumChannels);
+
+    TUint copyBytes = std::min(aBytesPerSample, (TUint)3);
+    for (TUint i=0; i<numSamples; i++) {
+        for (TUint j = 0; j < aNumChannels; j++) {
+            if (iSenderChannelMask & (1 << j)) {
+                iAudioBuf->Append(src, copyBytes);
+            }
+            src += aBytesPerSample;
+        }
+    }
+
+}
+
 void Sender::BeginBlock()
 {
     ASSERT(iAudioBuf);
 }
 
-void Sender::ProcessFragment8(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment8(const Brx& aData, TUint aNumChannels)
 {
-    iAudioBuf->Append(aData);
+    ProcessFragment(aData, aNumChannels, 1);
 }
 
-void Sender::ProcessFragment16(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment16(const Brx& aData, TUint aNumChannels)
 {
-    iAudioBuf->Append(aData);
+    ProcessFragment(aData, aNumChannels, 2);
 }
 
-void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
+void Sender::ProcessFragment24(const Brx& aData, TUint aNumChannels)
 {
-    iAudioBuf->Append(aData);
+    ProcessFragment(aData, aNumChannels, 3);
 }
 
 void Sender::ProcessFragment32(const Brx& aData, TUint aNumChannels)
 {
-    TByte* p = const_cast<TByte*>(iAudioBuf->Ptr());
-    const TByte* src = aData.Ptr();
-    TUint bytes = iAudioBuf->Bytes();
-    const TUint numSamples = bytes / (4 * aNumChannels);
-    for (TUint i=0; i<numSamples; i++) {
-        ProcessSample32LeftAligned(p, src, aNumChannels);
-    }
-    bytes = 3 * aNumChannels * numSamples;
-    iAudioBuf->SetBytes(bytes);
+    ProcessFragment(aData, aNumChannels, 4);
 }
 
 void Sender::EndBlock()
