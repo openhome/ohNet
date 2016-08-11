@@ -77,7 +77,6 @@ private:
     void ConfigChannelChanged(Configuration::KeyValuePair<TInt>& aValue);
     void ConfigModeChanged(Configuration::KeyValuePair<TUint>& aStringId);
     void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
-    static inline void ProcessSample32LeftAligned(TByte*& aDest, const TByte*& aSrc, TUint aNumChannels);
 private:
     static TUint ChannelsToSendMask(TUint aNumChannels);
     void ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesPerSample);

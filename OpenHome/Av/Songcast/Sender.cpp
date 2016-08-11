@@ -320,16 +320,6 @@ void Sender::ConfigPresetChanged(KeyValuePair<TInt>& aKvp)
     iOhmSender->SetPreset(aKvp.Value());
 }
 
-inline void Sender::ProcessSample32LeftAligned(TByte*& aDest, const TByte*& aSrc, TUint aNumChannels)
-{ // static
-    for (TUint i=0; i<aNumChannels; i++) {
-        *aDest++ = *aSrc++;
-        *aDest++ = *aSrc++;
-        *aDest++ = *aSrc++;
-        aSrc++;
-    }
-}
-
 // FIXME: review how this mapping is generated
 TUint Sender::ChannelsToSendMask(TUint aNumChannels)
 {
