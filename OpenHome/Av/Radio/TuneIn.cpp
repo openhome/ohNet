@@ -334,6 +334,7 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDidlLite.Append("</item>");
                 iDidlLite.Append("</DIDL-Lite>");
 
+                //Log::Print("++ Add preset #%u: %.*s\n", presetIndex, PBUF(iPresetUrl));
                 iDbWriter.SetPreset(presetIndex, iPresetUrl, iDidlLite);
             }
         }
