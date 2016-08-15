@@ -393,6 +393,10 @@ Msg* Filler::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* Filler::ProcessMsg(MsgMetaText* aMsg)
 {
+    if (iNoAudioBeforeNextTrack) {
+        aMsg->RemoveRef();
+        return nullptr;
+    }
     return aMsg;
 }
 

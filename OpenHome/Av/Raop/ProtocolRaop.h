@@ -767,7 +767,6 @@ private: // from IAudioSupply
 private:
     void Reset();
     void Start();
-    void StartStream();
     void UpdateSessionId(TUint aSessionId);
     TBool IsValidSession(TUint aSessionId) const;
     TBool ShouldFlush(TUint aSeq, TUint aTimestamp) const;

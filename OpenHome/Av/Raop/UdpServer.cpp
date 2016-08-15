@@ -89,12 +89,14 @@ SocketUdpServer::~SocketUdpServer()
     delete iServerThread;
 
     iReadyLock.Wait();
+    iFifoReady.ReadInterrupt(false); // Clear read interrupt so that FIFO can be emptied.
     while (iFifoReady.SlotsUsed() > 0) {
         MsgUdp* msg = iFifoReady.Read();
         delete msg;
     }
     iReadyLock.Signal();
 
+    iFifoWaiting.ReadInterrupt(false); // Clear read interrupt so that FIFO can be emptied.
     while (iFifoWaiting.SlotsUsed() > 0) {
         MsgUdp* msg = iFifoWaiting.Read();
         delete msg;

@@ -137,7 +137,7 @@ class Pipeline : public IPipelineElementDownstream
 
     static const TUint kSenderMinLatency        = Jiffies::kPerMs * 150;
     static const TUint kReceiverMaxLatency      = Jiffies::kPerSecond;
-    static const TUint kReservoirCount          = 6; // Encoded + Decoded + (optional) Songcast sender + Delay + StarvationRamper + spare
+    static const TUint kReservoirCount          = 5; // Encoded + Decoded + (optional) Songcast sender + StarvationRamper + spare
     static const TUint kSongcastFrameJiffies    = Jiffies::kPerMs * 5; // effectively hard-coded by volkano1
     static const TUint kRewinderMaxMsgs         = 100;
 
