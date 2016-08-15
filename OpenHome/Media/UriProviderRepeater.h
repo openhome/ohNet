@@ -7,32 +7,32 @@
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 
 namespace OpenHome {
-namespace Av {
+namespace Media {
 
-class UriProviderRepeater : public Media::UriProvider, public Media::ITrackObserver
+class UriProviderRepeater : public UriProvider, public ITrackObserver
 {
 public:
-    UriProviderRepeater(const TChar* aMode, Media::TrackFactory& aTrackFactory);
+    UriProviderRepeater(const TChar* aMode, TBool aSupportsLatency, TrackFactory& aTrackFactory);
     ~UriProviderRepeater();
-    Media::Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
-    void SetTrack(Media::Track* aTrack);
+    Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
+    void SetTrack(Track* aTrack);
 private: // from UriProvider
     void Begin(TUint aTrackId) override;
     void BeginLater(TUint aTrackId) override;
-    Media::EStreamPlay GetNext(Media::Track*& aTrack) override;
+    EStreamPlay GetNext(Track*& aTrack) override;
     TUint CurrentTrackId() const override;
     TBool MoveNext() override;
     TBool MovePrevious() override;
-private: // from Media::ITrackObserver
-    void NotifyTrackPlay(Media::Track& aTrack) override;
-    void NotifyTrackFail(Media::Track& aTrack) override;
+private: // from ITrackObserver
+    void NotifyTrackPlay(Track& aTrack) override;
+    void NotifyTrackFail(Track& aTrack) override;
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
     TBool MoveCursor();
 private:
     mutable Mutex iLock;
-    Media::TrackFactory& iTrackFactory;
-    Media::Track* iTrack;
+    TrackFactory& iTrackFactory;
+    Track* iTrack;
     TBool iRetrieved;
     TBool iPlayLater;
     TBool iFailed;

@@ -1,17 +1,18 @@
-#include <OpenHome/Av/UpnpAv/UriProviderRepeater.h>
+#include <OpenHome/Media/UriProviderRepeater.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Filler.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 // UriProviderRepeater
 
-UriProviderRepeater::UriProviderRepeater(const TChar* aMode, TrackFactory& aTrackFactory)
-    : UriProvider(aMode, Latency::NotSupported, Next::NotSupported, Prev::NotSupported)
+UriProviderRepeater::UriProviderRepeater(const TChar* aMode, TBool aSupportsLatency, TrackFactory& aTrackFactory)
+    : UriProvider(aMode,
+                  aSupportsLatency? Latency::Supported : Latency::NotSupported,
+                  Next::NotSupported, Prev::NotSupported)
     , iLock("UPRP")
     , iTrackFactory(aTrackFactory)
     , iTrack(nullptr)

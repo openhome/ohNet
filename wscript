@@ -267,6 +267,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/Rtsp.cpp',
                 'OpenHome/Media/Protocol/ProtocolRtsp.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
+                'OpenHome/Media/UriProviderRepeater.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
@@ -399,7 +400,6 @@ def build(bld):
                 'Generated/DvUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
-                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp',
                 'OpenHome/Av/UpnpAv/FriendlyNameUpnpAv.cpp'
             ],
             use=['OHNET', 'ohMediaPlayer'],
@@ -670,6 +670,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
+                'OpenHome/Media/Tests/TestUriProviderRepeater.cpp',
                 'OpenHome/Av/Tests/TestFriendlyNameManager.cpp',
                 'OpenHome/Av/Tests/TestUdpServer.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
@@ -681,7 +682,6 @@ def build(bld):
                 'Generated/CpAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerOptions.cpp',
-                'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
@@ -916,7 +916,7 @@ def build(bld):
     #        target='TestPlaylist',
     #        install_path=None)
     bld.program(
-            source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',
+            source='OpenHome/Media/Tests/TestUriProviderRepeaterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceUpnpAv'],
             target='TestUriProviderRepeater',
             install_path=None)
