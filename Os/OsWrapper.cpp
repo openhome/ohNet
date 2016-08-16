@@ -149,7 +149,7 @@ void OpenHome::Os::NetworkTcpSetNoDelay(THandle aHandle)
 {
     int32_t err = OsNetworkTcpSetNoDelay(aHandle);
     if(err != 0) {
-        LOG2F(kNetwork, kError, "Os::OsNetworkTcpSetNoDelay H = %d, RETURN VALUE = %d\n", aHandle, err);
+        //LOG2F(kNetwork, kError, "Os::OsNetworkTcpSetNoDelay H = %d, RETURN VALUE = %d\n", aHandle, err);
         THROW(NetworkError);
     }
 }

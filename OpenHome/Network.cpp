@@ -500,7 +500,7 @@ static void TryNetworkTcpSetNoDelay(THandle aHandle)
         OpenHome::Os::NetworkTcpSetNoDelay(aHandle);
     }
     catch (NetworkError&) {
-        LOG2F(kNetwork, kError, "Warning -> could not set TCP NODELAY on %d\n", aHandle);
+        //LOG2F(kNetwork, kError, "Warning -> could not set TCP NODELAY on %d\n", aHandle);
     }
 }
 
