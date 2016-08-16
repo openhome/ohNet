@@ -78,7 +78,7 @@ private:
     void ConfigModeChanged(Configuration::KeyValuePair<TUint>& aStringId);
     void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
 private:
-    static TUint ChannelsToSendMask(TUint aNumChannels);
+    static TUint FirstChannelToSend(TUint aNumChannels);
     void ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesPerSample);
     // from IPcmProcessor
     void BeginBlock() override;
@@ -133,7 +133,7 @@ private:
     const Media::BwsMode iSongcastMode;
     IUnicastOverrideObserver& iUnicastOverrideObserver;
     TBool iEnabled;
-    TUint iSenderChannelMask;
+    TUint iFirstChannelIndex;
 };
 
 } // namespace Av

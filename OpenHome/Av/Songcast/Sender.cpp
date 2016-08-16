@@ -51,7 +51,7 @@ Sender::Sender(Environment& aEnv,
     , iSongcastMode(aSongcastMode)
     , iUnicastOverrideObserver(aUnicastOverrideObserver)
     , iEnabled(true)
-    , iSenderChannelMask(0)
+    , iFirstChannelIndex(0)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
     iOhmSenderDriver = new OhmSenderDriver(aEnv, aTimestamper);
@@ -215,7 +215,8 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
                                                                           and converted to 24-bit before transmission */
     const TUint numChannels = streamInfo.NumChannels();
     const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::PerSample(iSampleRate);
-    iSenderChannelMask = ChannelsToSendMask(numChannels);
+    iFirstChannelIndex = FirstChannelToSend(numChannels);
+
     iOhmSender->SetTrackPosition(samplesTotal, streamInfo.SampleStart());
     iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), std::min(numChannels, kMaxSenderChannels),
                                      bitDepth, streamInfo.Lossless(), streamInfo.CodecName(),
@@ -321,20 +322,9 @@ void Sender::ConfigPresetChanged(KeyValuePair<TInt>& aKvp)
 }
 
 // FIXME: review how this mapping is generated
-TUint Sender::ChannelsToSendMask(TUint aNumChannels)
+TUint Sender::FirstChannelToSend(TUint aNumChannels)
 {
-    if (aNumChannels < 2) {
-        // Mono: only one channel available
-        return 0x1;
-    }
-    else if (aNumChannels < 10) {
-        // Pick the first 2 channels
-        return 0x3;
-    }
-    else {
-        // 10 channels: pick the last 2 channels
-        return (0x3 << 8);
-    }
+    return (aNumChannels < 10) ? 0 : 8;
 }
 
 void Sender::ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesPerSample)
@@ -345,7 +335,7 @@ void Sender::ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesP
     TUint copyBytes = std::min(aBytesPerSample, (TUint)3);
     for (TUint i=0; i<numSamples; i++) {
         for (TUint j = 0; j < aNumChannels; j++) {
-            if (iSenderChannelMask & (1 << j)) {
+            if ((j >= iFirstChannelIndex) && (j < (iFirstChannelIndex + kMaxSenderChannels))) {
                 iAudioBuf->Append(src, copyBytes);
             }
             src += aBytesPerSample;
