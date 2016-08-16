@@ -19,7 +19,7 @@ public:
 class FlywheelInput : public IPcmProcessor
 {
     static const TUint kMaxSampleRate = 192000;
-    static const TUint kMaxChannels = 8;
+    static const TUint kMaxChannels = 10;
     static const TUint kSubsampleBytes = 4;
 public:
     FlywheelInput(TUint aMaxJiffies);
