@@ -125,7 +125,7 @@ void PropertyWriterFactoryLpec::Disable()
     RemoveRef();
 }
 
-IPropertyWriter* PropertyWriterFactoryLpec::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
+IPropertyWriter* PropertyWriterFactoryLpec::ClaimWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
     {
         AutoMutex a(iLock);
@@ -151,6 +151,11 @@ IPropertyWriter* PropertyWriterFactoryLpec::CreateWriter(const IDviSubscriptionU
         throw;
     }
     return this;
+}
+
+void PropertyWriterFactoryLpec::ReleaseWriter(IPropertyWriter* aWriter)
+{
+    delete aWriter;
 }
 
 void PropertyWriterFactoryLpec::NotifySubscriptionCreated(const Brx& /*aSid*/)

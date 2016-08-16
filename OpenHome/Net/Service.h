@@ -184,8 +184,6 @@ public:
     virtual void PropertyWriteBool(const Brx& aName, TBool aValue) = 0;
     virtual void PropertyWriteBinary(const Brx& aName, const Brx& aValue) = 0;
     virtual void PropertyWriteEnd() = 0;
-    virtual void Release() = 0;
-protected:
     virtual ~IPropertyWriter() {}
 };
 

@@ -83,7 +83,8 @@ public:
     void SubscriptionAdded(DviSubscription& aSubscription);
     void Disable();
 private: // from IPropertyWriterFactory
-    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
+    IPropertyWriter* ClaimWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
+    void ReleaseWriter(IPropertyWriter* aWriter);
     void NotifySubscriptionCreated(const Brx& aSid);
     void NotifySubscriptionDeleted(const Brx& aSid);
     void NotifySubscriptionExpired(const Brx& aSid);

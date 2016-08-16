@@ -281,10 +281,6 @@ EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
     : iTcpServer(aCpStack.Env(), "EventServer", aCpStack.Env().InitParams()->CpUpnpEventServerPort(), aInterface)
 {
     const TUint numThread = aCpStack.Env().InitParams()->NumEventSessionThreads();
-#ifndef _WIN32
-    // nothing terribly bad would happen if this assertion failed so its not worth a separate Windows implementation
-    ASSERT(numThread < 10);
-#endif
     for (TUint i=0; i<numThread; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("EventSession %d", i);

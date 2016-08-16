@@ -960,9 +960,14 @@ void DviSessionWebSocket::WritePropertyUpdates()
     }
 }
 
-IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
+IPropertyWriter* DviSessionWebSocket::ClaimWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
     return PropertyWriterWs::Create(*this, aSid, aSequenceNumber);
+}
+
+void DviSessionWebSocket::ReleaseWriter(IPropertyWriter* aWriter)
+{
+    delete aWriter;
 }
 
 void DviSessionWebSocket::NotifySubscriptionCreated(const Brx& /*aSid*/)

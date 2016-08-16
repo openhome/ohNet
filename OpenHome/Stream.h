@@ -239,8 +239,10 @@ class WriterBwh : public IWriter
 {
 public:
     WriterBwh(TInt aGranularity);
+    void Reset();
     void TransferTo(Bwh& aDest);
     void TransferTo(Brh& aDest);
+    const Brx& Buffer() const;
     void Write(const TChar* aBuffer);
 public: // from IWriter
     void Write(TByte aValue);

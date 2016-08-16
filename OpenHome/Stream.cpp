@@ -603,6 +603,11 @@ WriterBwh::WriterBwh(TInt aGranularity)
 {
 }
 
+void WriterBwh::Reset()
+{
+    iBuf.SetBytes(0);
+}
+
 void WriterBwh::TransferTo(Bwh& aDest)
 {
     iBuf.TransferTo(aDest);
@@ -611,6 +616,11 @@ void WriterBwh::TransferTo(Bwh& aDest)
 void WriterBwh::TransferTo(Brh& aDest)
 {
     iBuf.TransferTo(aDest);
+}
+
+const Brx& WriterBwh::Buffer() const
+{
+    return iBuf;
 }
 
 void WriterBwh::Write(const TChar* aBuffer)

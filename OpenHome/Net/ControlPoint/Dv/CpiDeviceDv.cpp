@@ -151,13 +151,13 @@ void CpiDeviceDv::Release()
     delete this;
 }
 
-IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/,
-                                           const Brx& aSid, TUint aSequenceNumber)
+IPropertyWriter* CpiDeviceDv::ClaimWriter(const IDviSubscriptionUserData* /*aUserData*/,
+                                          const Brx& aSid, TUint aSequenceNumber)
 {
     Brn sid(aSid);
     SubscriptionMap::iterator it = iSubscriptions.find(sid);
     if (it == iSubscriptions.end()) {
-        Log::Print("!!! CpiDeviceDv::CreateWriter failed to find subscription\n");
+        Log::Print("!!! CpiDeviceDv::ClaimWriter failed to find subscription\n");
         return NULL;
     }
     Subscription* subscription = it->second;
@@ -168,6 +168,11 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUs
     }
     subscription->iCp->Unlock();
     return new PropertyWriterDv(*(subscription->iCp));
+}
+
+void CpiDeviceDv::ReleaseWriter(IPropertyWriter* aWriter)
+{
+    delete aWriter;
 }
 
 void CpiDeviceDv::NotifySubscriptionCreated(const Brx& /*aSid*/)

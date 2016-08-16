@@ -65,6 +65,13 @@ void CpDevices::Test()
 {
     ASSERT(iList.size() == 1);
     CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*(iList[0]));
+    // reset state of provider such that setters below result in evented updates
+    proxy->SyncSetUint(0);
+    proxy->SyncSetInt(0);
+    proxy->SyncSetBool(false);
+    proxy->SyncSetString(Brx::Empty());
+    proxy->SyncSetBinary(Brx::Empty());
+    //
     Functor functor = MakeFunctor(*this, &CpDevices::UpdatesComplete);
     proxy->SetPropertyChanged(functor);
     proxy->Subscribe();
@@ -77,7 +84,7 @@ void CpDevices::Test()
          check that the getter action matches the property
     */
 
-    Print("Uint...\n");
+    Print("  Uint...\n");
     proxy->SyncSetUint(1);
     iUpdatesComplete.Wait();
     TUint propUint;
@@ -87,7 +94,7 @@ void CpDevices::Test()
     proxy->SyncGetUint(valUint);
     ASSERT(propUint == valUint);
 
-    Print("Int...\n");
+    Print("  Int...\n");
     proxy->SyncSetInt(-99);
     iUpdatesComplete.Wait();
     TInt propInt;
@@ -97,7 +104,7 @@ void CpDevices::Test()
     proxy->SyncGetInt(valInt);
     ASSERT(propInt == valInt);
 
-    Print("Bool...\n");
+    Print("  Bool...\n");
     proxy->SyncSetBool(true);
     iUpdatesComplete.Wait();
     TBool propBool;
@@ -107,7 +114,7 @@ void CpDevices::Test()
     proxy->SyncGetBool(valBool);
     ASSERT(valBool);
 
-    Print("String...\n");
+    Print("  String...\n");
     Brn str("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
             "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in "
@@ -125,7 +132,7 @@ void CpDevices::Test()
     proxy->SyncGetString(valStr);
     ASSERT(propStr == valStr);
 
-    Print("Binary...\n");
+    Print("  Binary...\n");
     char bin[256];
     for (TUint i=0; i<256; i++) {
         bin[i] = (char)i;
@@ -143,7 +150,7 @@ void CpDevices::Test()
     proxy->SyncGetBinary(valBin);
     ASSERT(propBin == valBin);
 
-    Print("Multiple...\n");
+    Print("  Multiple...\n");
     proxy->SyncSetMultiple(15, 658, false);
     iUpdatesComplete.Wait();
     proxy->PropertyVarUint(propUint);
@@ -203,7 +210,10 @@ void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack)
                 new CpDeviceListUpnpServiceType(aCpStack, domainName, serviceType, ver, added, removed);
     sem->Wait(30*1000); // allow up to 30 seconds to issue the msearch and receive a response
     delete sem;
-    deviceList->Test();
+    for (TUint i=0; i<100; i++) {
+        Print(" loop #%u\n", i);
+        deviceList->Test();
+    }
     delete list;
     delete deviceList;
     delete device;

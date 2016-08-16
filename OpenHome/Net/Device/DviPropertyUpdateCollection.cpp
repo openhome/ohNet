@@ -406,13 +406,18 @@ PropertyUpdatesFlattened* DviPropertyUpdateCollection::FindBySid(const Brx& aSid
     return NULL;
 }
 
-IPropertyWriter* DviPropertyUpdateCollection::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
+IPropertyWriter* DviPropertyUpdateCollection::ClaimWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
     AutoMutex a(iLock);
     if (FindBySid(aSid) != NULL) {
         return new PropertyWriter2(*this, aSid, aSequenceNumber);
     }
     return NULL;
+}
+
+void DviPropertyUpdateCollection::ReleaseWriter(IPropertyWriter* aWriter)
+{
+    delete aWriter;
 }
 
 void DviPropertyUpdateCollection::NotifySubscriptionCreated(const Brx& /*aSid*/)

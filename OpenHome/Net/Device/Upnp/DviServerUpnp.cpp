@@ -296,107 +296,122 @@ void SubscriptionDataUpnp::Release()
 
 // PropertyWriterUpnp
 
-PropertyWriterUpnp* PropertyWriterUpnp::Create(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
-                                               const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber)
-{ // static
-    PropertyWriterUpnp* self = new PropertyWriterUpnp(aDvStack);
-    try {
-        self->Connect(aSubscriber);
-        self->WriteHeaders(aPublisher, aSubscriberPath, aHttpVersion, aSid, aSequenceNumber);
-    }
-    catch (NetworkTimeout&) {
-        delete self;
-        throw;
-    }
-    catch (NetworkError&) {
-        delete self;
-        throw;
-    }
-    catch (WriterError&) {
-        delete self;
-        throw;
-    }
-    return self;
-}
-
-PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack)
-    : iDvStack(aDvStack)
-    , iWriteBuffer(NULL)
-    , iWriterEvent(NULL)
-    , iWriterChunked(NULL)
+PropertyWriterUpnp::PropertyWriterUpnp(Environment& aEnv)
+    : iEnv(aEnv)
+    , iEventBody(kWriteGranularity)
 {
+    iWriteBuffer = new Sws<kWriteGranularity>(iSocket);
+    iWriterEvent = new WriterHttpRequest(*iWriteBuffer);
+    SetWriter(iEventBody);
 }
 
-void PropertyWriterUpnp::Connect(const Endpoint& aSubscriber)
+void PropertyWriterUpnp::Initialise(const Endpoint& aPublisher, const Endpoint& aSubscriber,
+                                    const Brx& aSubscriberPath, Http::EVersion aHttpVersion,
+                                    const Brx& aSid, TUint aSequenceNumber)
+{
+    iPublisher = aPublisher;
+    iSubscriber = aSubscriber;
+    iSubscriberPath.Set(aSubscriberPath);
+    iHttpVersion = aHttpVersion;
+    iSid.Set(aSid);
+    iSequenceNumber = aSequenceNumber;
+
+    iEventBody.Write("<?xml version=\"1.0\"?>");
+    iEventBody.Write("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">");
+}
+
+void PropertyWriterUpnp::Reset()
+{
+    try {
+        iSocket.Close();
+    }
+    catch (NetworkError&) {}
+    iEventBody.Reset();
+}
+
+void PropertyWriterUpnp::Connect()
 {
 #if 0
     Endpoint::AddressBuf buf;
-    aSubscriber.AppendAddress(buf);
+    iSubscriber.AppendAddress(buf);
     Log::Print("PropertyWriterUpnp connecting to %s\n", buf.Ptr());
 #endif
-    iSocket.Open(iDvStack.Env());
-    iSocket.Connect(aSubscriber, iDvStack.Env().InitParams()->TcpConnectTimeoutMs());
+    iSocket.Open(iEnv);
+    iSocket.Connect(iSubscriber, iEnv.InitParams()->TcpConnectTimeoutMs());
+    //iSocket.LogVerbose(true);
 }
 
-void PropertyWriterUpnp::WriteHeaders(const Endpoint& aPublisher, const Brx& aSubscriberPath,
-                                      const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber)
+void PropertyWriterUpnp::WriteHeaders(TUint aContentLength)
 {
-    iWriterChunked = new WriterHttpChunked(iSocket);
-    iWriteBuffer = new Sws<kMaxRequestBytes>(*iWriterChunked);
-    iWriterEvent = new WriterHttpRequest(*iWriteBuffer);
-    SetWriter(*iWriteBuffer);
-
-    iWriterEvent->WriteMethod(kUpnpMethodNotify, aSubscriberPath, Http::eHttp11);
+    iWriterEvent->WriteMethod(kUpnpMethodNotify, iSubscriberPath, iHttpVersion);
 
     IWriterAscii& writer = iWriterEvent->WriteHeaderField(Http::kHeaderHost);
     Endpoint::EndpointBuf buf;
-    aPublisher.AppendEndpoint(buf);
+    iPublisher.AppendEndpoint(buf);
     writer.Write(buf);
     writer.WriteFlush();
 
     iWriterEvent->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
+    Http::WriteHeaderContentLength(*iWriterEvent, aContentLength);
     iWriterEvent->WriteHeader(kUpnpHeaderNt, Brn("upnp:event"));
     iWriterEvent->WriteHeader(kUpnpHeaderNts, Brn("upnp:propchange"));
 
     writer = iWriterEvent->WriteHeaderField(HeaderSid::kHeaderSid);
     writer.Write(HeaderSid::kFieldSidPrefix);
-    writer.Write(aSid);
+    writer.Write(iSid);
     writer.WriteFlush();
 
-    if (aHttpVersion == Http::eHttp11) {
-        iWriterEvent->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
-    }
-
     writer = iWriterEvent->WriteHeaderField(kUpnpHeaderSeq);
-    writer.WriteUint(aSequenceNumber);
+    writer.WriteUint(iSequenceNumber);
     writer.WriteFlush();
 
     iWriterEvent->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
     iWriterEvent->WriteFlush();
-    if (aHttpVersion == Http::eHttp11) {
-        iWriterChunked->SetChunked(true);
-    }
-
-    iWriteBuffer->Write(Brn("<?xml version=\"1.0\"?>"));
-    iWriteBuffer->Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
 }
 
 PropertyWriterUpnp::~PropertyWriterUpnp()
 {
     delete iWriterEvent;
     delete iWriteBuffer;
-    delete iWriterChunked;
-    iSocket.Close();
+    try {
+        iSocket.Close();
+    }
+    catch (NetworkError&) {}
 }
 
 void PropertyWriterUpnp::PropertyWriteEnd()
 {
-    iWriteBuffer->Write(Brn("</e:propertyset>"));
-    iWriteBuffer->WriteFlush();
+    iEventBody.Write("</e:propertyset>");
+
+    Endpoint::AddressBuf subscriberAddress;
+    iSubscriber.AppendAddress(subscriberAddress);
+    try {
+        Connect();
+        //iSocket.LogVerbose(true);
+        const Brx& body = iEventBody.Buffer();
+        WriteHeaders(body.Bytes());
+        iSocket.Write(body);
+    }
+    catch (NetworkTimeout&) {
+        LOG2(kDvEvent, kError, "PropertyWriterUpnp - NetworkTimeout eventing to %.*s\n", PBUF(subscriberAddress));
+        THROW(WriterError);
+    }
+    catch (NetworkError&) {
+        LOG2(kDvEvent, kError, "PropertyWriterUpnp - NetworkError eventing to %.*s\n", PBUF(subscriberAddress));
+        THROW(WriterError);
+    }
+    catch (HttpError&) {
+        LOG2(kDvEvent, kError, "PropertyWriterUpnp - HttpError eventing to %.*s\n", PBUF(subscriberAddress));
+        THROW(WriterError);
+    }
+    catch (WriterError&) {
+        LOG2(kDvEvent, kError, "PropertyWriterUpnp - WriterError eventing to %.*s\n", PBUF(subscriberAddress));
+        throw;
+    }
 
     Srs<kMaxResponseBytes> readBuffer(iSocket);
     ReaderUntilS<kMaxResponseBytes> readerUntil(readBuffer);
-    ReaderHttpResponse readerResponse(iDvStack.Env(), readerUntil);
+    ReaderHttpResponse readerResponse(iEnv, readerUntil);
     readerResponse.Read(kReadTimeoutMs);
     const HttpStatus& status = readerResponse.Status();
     if (status != HttpStatus::kOk) {
@@ -415,7 +430,17 @@ PropertyWriterFactory::PropertyWriterFactory(DvStack& aDvStack, TIpAddress aAdap
     , iAdapter(aAdapter)
     , iPort(aPort)
     , iSubscriptionMapLock("DMSL")
+    , iFifo(aDvStack.Env().InitParams()->DvNumPublisherThreads())
 {
+    const TUint numWriters = iFifo.Slots();
+    for (TUint i=0; i<numWriters; i++) {
+        iFifo.Write(new PropertyWriterUpnp(aDvStack.Env()));
+    }
+}
+
+TUint PropertyWriterFactory::Adapter() const
+{
+    return iAdapter;
 }
 
 void PropertyWriterFactory::SubscriptionAdded(DviSubscription& aSubscription)
@@ -452,7 +477,7 @@ void PropertyWriterFactory::Disable()
     RemoveRef();
 }
 
-IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
+IPropertyWriter* PropertyWriterFactory::ClaimWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber)
 {
     Mutex& lock = iDvStack.Env().Mutex();
     lock.Wait();
@@ -463,7 +488,16 @@ IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserD
     }
     Endpoint publisher(iPort, iAdapter);
     const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
-    return PropertyWriterUpnp::Create(iDvStack, publisher, data->Subscriber(), data->SubscriberPath(), data->HttpVersion(), aSid, aSequenceNumber);
+    PropertyWriterUpnp* writer = iFifo.Read();
+    writer->Initialise(publisher, data->Subscriber(), data->SubscriberPath(), data->HttpVersion(), aSid, aSequenceNumber);
+    return writer;
+}
+
+void PropertyWriterFactory::ReleaseWriter(IPropertyWriter* aWriter)
+{
+    PropertyWriterUpnp* writer = static_cast<PropertyWriterUpnp*>(aWriter);
+    writer->Reset();
+    iFifo.Write(writer);
 }
 
 void PropertyWriterFactory::NotifySubscriptionCreated(const Brx& /*aSid*/)
@@ -490,6 +524,10 @@ void PropertyWriterFactory::NotifySubscriptionExpired(const Brx& /*aSid*/)
 
 PropertyWriterFactory::~PropertyWriterFactory()
 {
+    const TUint numWriters = iFifo.Slots();
+    for (TUint i=0; i<numWriters; i++) {
+        delete iFifo.Read();
+    }
 }
 
 void PropertyWriterFactory::AddRef()
@@ -515,10 +553,13 @@ void PropertyWriterFactory::RemoveRef()
 
 // DviSessionUpnp
 
-DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort, IPathMapperUpnp& aPathMapper, IRedirector& aRedirector)
+DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint aPort,
+                               PropertyWriterFactory& aPropertyWriterFactory,
+                               IPathMapperUpnp& aPathMapper, IRedirector& aRedirector)
     : iDvStack(aDvStack)
     , iInterface(aInterface)
     , iPort(aPort)
+    , iPropertyWriterFactory(aPropertyWriterFactory)
     , iPathMapper(aPathMapper)
     , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
@@ -548,14 +589,11 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
     iReaderRequest->AddHeader(iHeaderNt);
     iReaderRequest->AddHeader(iHeaderCallback);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
-
-    iPropertyWriterFactory = new PropertyWriterFactory(iDvStack, aInterface, aPort);
 }
 
 DviSessionUpnp::~DviSessionUpnp()
 {
     Interrupt(true);
-    iPropertyWriterFactory->Disable();
     iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
@@ -768,8 +806,8 @@ void DviSessionUpnp::Subscribe()
     Brh sid;
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri(), iReaderRequest->Version());
-    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *iPropertyWriterFactory, data, sid);
-    iPropertyWriterFactory->SubscriptionAdded(*subscription);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, iPropertyWriterFactory, data, sid);
+    iPropertyWriterFactory.SubscriptionAdded(*subscription);
     iDvStack.SubscriptionManager().AddSubscription(*subscription);
     subscription->SetDuration(duration);
 
@@ -1349,14 +1387,27 @@ void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirected
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "UpnpServer", iPort, aNif.Address());
+    PropertyWriterFactory* pwf = new PropertyWriterFactory(iDvStack, aNif.Address(), server->Port());
+    iPropertyWriterFactories.push_back(pwf);
     const TUint numWsThreads = iDvStack.Env().InitParams()->DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("UpnpSession %d", i);
         thName.PtrZ();
-        server->Add((const TChar*)thName.Ptr(), new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *this, *this));
+        server->Add((const TChar*)thName.Ptr(), new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *pwf, *this, *this));
     }
     return server;
+}
+
+void DviServerUpnp::NotifyServerDeleted(TIpAddress aInterface)
+{
+    for (std::vector<PropertyWriterFactory*>::iterator it=iPropertyWriterFactories.begin(); it!=iPropertyWriterFactories.end(); ++it) {
+        if ((*it)->Adapter() == aInterface) {
+            (*it)->Disable();
+            iPropertyWriterFactories.erase(it);
+            break;
+        }
+    }
 }
 
 TBool DviServerUpnp::TryMapPath(const Brx& aReqPath, Bwx& aMappedPath)

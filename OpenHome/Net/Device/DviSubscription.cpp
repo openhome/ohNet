@@ -191,7 +191,7 @@ void DviSubscription::WriteChanges()
     catch(WriterError&) {}
     catch(ReaderError&) {}
     if (writer != NULL) {
-        writer->Release();
+        iWriterFactory.ReleaseWriter(writer);
     }
 }
 
@@ -228,7 +228,7 @@ IPropertyWriter* DviSubscription::CreateWriter()
         LOG(kDvEvent, "Found no changes to publish\n");
         return NULL;
     }
-    IPropertyWriter* writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
+    IPropertyWriter* writer = iWriterFactory.ClaimWriter(iUserData, iSid, iSequenceNumber);
     if (writer == NULL) {
         THROW(WriterError);
     }
@@ -359,11 +359,6 @@ void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
     Brh buf;
     writer.TransferTo(buf);
     WriteVariable(aName, buf);
-}
-
-void PropertyWriter::Release()
-{
-    delete this;
 }
 
 void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
