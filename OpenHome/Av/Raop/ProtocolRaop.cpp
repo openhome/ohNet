@@ -419,15 +419,22 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
+                TUint flushId = MsgFlush::kIdInvalid;
                 {
                     AutoMutex a(iLockRaop);
                     iActive = false;
                     iStopped = true;
+                    flushId = iNextFlushId;
+                    iNextFlushId = MsgFlush::kIdInvalid;
                 }
 
                 iControlServer.Close();
                 iAudioServer.Close();
 
+                // Output any pending flush ID, then wait for pipeline to drain.
+                if (flushId != MsgFlush::kIdInvalid) {
+                    iSupply->OutputFlush(flushId);
+                }
                 WaitForDrain();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 iDiscovery.Close();
@@ -556,18 +563,6 @@ void ProtocolRaop::Reset()
     iStopped = false;
     iInterrupted = false;
     iDiscontinuity = false;
-}
-
-void ProtocolRaop::StartStream()
-{
-    LOG(kMedia, "ProtocolRaop::StartStream\n");
-    TUint streamId = IPipelineIdProvider::kStreamIdInvalid;;
-    {
-        AutoMutex a(iLockRaop);
-        iStreamId = iIdProvider->NextStreamId();
-        streamId = iStreamId;
-    }
-    iSupply->OutputStream(iUri.AbsoluteUri(), 0, 0, false, false, *this, streamId);
 }
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
