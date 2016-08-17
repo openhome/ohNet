@@ -183,9 +183,12 @@ void Socket::Close()
     // close connection and allow caller to handle any exceptions
     LOGF(kNetwork, "Socket::Close H = %d\n", iHandle);
     iLock.Wait();
-    TInt err = OpenHome::Os::NetworkClose(iHandle);
+    TInt err = 0;
     THandle handle = iHandle;
-    iHandle = kHandleNull;
+    if (iHandle != kHandleNull){
+        err = OpenHome::Os::NetworkClose(iHandle);
+        iHandle = kHandleNull;
+    }
     iLock.Signal();
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", handle, err);
