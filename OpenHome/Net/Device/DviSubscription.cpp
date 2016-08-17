@@ -288,6 +288,7 @@ DviSubscription::~DviSubscription()
 
 void DviSubscription::Expired()
 {
+    LOG(kDvEvent, "Subscription %.*s expired\n", PBUF(iSid));
     iExpired = true;
     // reads/writes of iExpired assumed not to require thread safety
     // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock

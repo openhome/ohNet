@@ -606,7 +606,7 @@ void WriterHttpHeader::WriteFlush()
 
 void WriterHttpHeader::WriteHeader(const Brx& aField, const Brx& aValue)
 {
-    LOG(kHttp, "Http Write Header   ");
+    LOG(kHttp, "Http Write Header %.*s: %.*s\n", PBUF(aField), PBUF(aValue));
 
     iWriter.Write(aField);
     iWriter.Write(Http::kHeaderSeparator);
@@ -626,7 +626,7 @@ void WriterHttpHeader::WriteHeaderBase64(const Brx& aField, const Brx& aValue)
 
 IWriterAscii& WriterHttpHeader::WriteHeaderField(const Brx& aField)
 {
-    LOG(kHttp, "Http Write Header  ");
+    LOG(kHttp, "Http Write Header %.*s\n", PBUF(aField));
 
     iWriter.Write(aField);
     iWriter.Write(Http::kHeaderSeparator);
@@ -642,7 +642,7 @@ WriterHttpRequest::WriterHttpRequest(IWriter& aWriter) : WriterHttpHeader(aWrite
 
 void WriterHttpRequest::WriteMethod(const Brx& aMethod, const Brx& aUri, Http::EVersion aVersion)
 {
-    LOG(kHttp, "Http Write Method   ");
+    LOG(kHttp, "Http Write Method - %.*s  ", PBUF(aMethod));
 
     iWriter.Write(aMethod);
     iWriter.WriteSpace();
@@ -660,7 +660,7 @@ WriterHttpResponse::WriterHttpResponse(IWriter& aWriter) : WriterHttpHeader(aWri
 
 void WriterHttpResponse::WriteStatus(const HttpStatus& aStatus, Http::EVersion aVersion)
 {
-    LOG(kHttp, "Http Write Status   ");
+    LOG(kHttp, "Http Write Status %u %.*s  ", aStatus.Code(), PBUF(aStatus.Reason()));
 
     iWriter.Write(Http::Version(aVersion));
     iWriter.WriteSpace();
