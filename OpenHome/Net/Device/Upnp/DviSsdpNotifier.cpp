@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/Ssdp.h>
+#include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/OsWrapper.h>
 
@@ -61,8 +62,14 @@ void SsdpNotifierScheduler::SendNextMsg()
     try {
         stop = (iStop || ((remaining = NextMsg()) == 0));
     }
-    catch (WriterError&) {}
-    catch (NetworkError&) {}
+    catch (WriterError&) {
+        stop = true;
+        LOG2(kError, kDvDevice, "WriterError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
+    }
+    catch (NetworkError&) {
+        stop = true;
+        LOG2(kError, kDvDevice, "NetworkError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
+    }
 #ifdef NOTIFIER_LOG_ENABLE
         //if( (strcmp(iType, "StartAlive")==0) || (strcmp(iType, "StartByeBye")==0) )
         {
