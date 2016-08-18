@@ -350,7 +350,7 @@ void Sender::ProcessFragment24(const Brx& aData, TUint /*aNumChannels*/)
 
 void Sender::ProcessFragment32(const Brx& aData, TUint aNumChannels)
 {
-    TByte* p = const_cast<TByte*>(iAudioBuf->Ptr());
+    TByte* p = const_cast<TByte*>(iAudioBuf->Ptr() + iAudioBuf->Bytes());
     const TByte* src = aData.Ptr();
     TUint bytes = aData.Bytes();
     const TUint numSamples = bytes / (4 * aNumChannels);
