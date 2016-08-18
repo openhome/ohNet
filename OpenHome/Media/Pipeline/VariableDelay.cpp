@@ -586,6 +586,7 @@ VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElement
                                        TUint aRampDuration, TUint aMinDelay)
     : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "right")
     , iMinDelay(aMinDelay)
+    , iDelayJiffiesTotal(0)
     , iAnimatorLatencyOverride(0)
     , iAnimatorOverridePending(false)
 {

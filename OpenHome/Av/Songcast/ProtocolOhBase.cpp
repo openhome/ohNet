@@ -55,11 +55,9 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendJoin), "ProtocolOhBaseJoin");
     iTimerListen = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendListen), "ProtocolOhBaseListen");
 
-    static const TChar* kOhmCookie = "Songcast";
-    NetworkAdapter* current = aEnv.NetworkAdapterList().CurrentAdapter(kOhmCookie);
-    ASSERT(current != nullptr); // FIXME
-    iAddr = current->Address();
-    current->RemoveRef(kOhmCookie);
+    AutoNetworkAdapterRef ref(iEnv, "Songcast");
+    const auto current = ref.Adapter();
+    iAddr = (current == nullptr? 0 : current->Address());
 }
 
 ProtocolOhBase::~ProtocolOhBase()
@@ -182,6 +180,10 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         iMutexTransport.Wait();
         TIpAddress addr = iAddr;
         iMutexTransport.Signal();
+        if (addr == 0) {
+            // no current subnet so no hope of listening to another device
+            return EProtocolStreamErrorUnrecoverable;
+        }
         res = Play(addr, kTtl, ep);
     } while (res != EProtocolStreamStopped);
 
@@ -226,13 +228,11 @@ void ProtocolOhBase::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aSt
 
 void ProtocolOhBase::CurrentSubnetChanged()
 {
-    static const TChar* kNifCookie = "ProtocolOhBase";
-    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
-    ASSERT(current != nullptr); // assumes we switch to loopback if not external interface is available
+    AutoNetworkAdapterRef ref(iEnv, "ProtocolOhBase");
     iMutexTransport.Wait();
-    iAddr = current->Address();
+    const auto current = ref.Adapter();
+    iAddr = (current == nullptr? 0 : current->Address());
     iMutexTransport.Signal();
-    current->RemoveRef(kNifCookie);
     iSocket.ReadInterrupt();
 }
 
