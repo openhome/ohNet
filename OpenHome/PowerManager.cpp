@@ -49,11 +49,13 @@ void PowerManager::NotifyPowerDown()
     // FIXME - the caller of power down should provide some kind of interrupt
     // for stopping any non-essential store tasks in progress
     AutoMutex _(iLock);
-    ASSERT(!iPowerDown);
-    iPowerDown = true;
-    for (auto it = iPowerObservers.cbegin(); it != iPowerObservers.cend(); ++it) {
-        IPowerHandler& handler = (*it)->PowerHandler();
-        handler.PowerDown();
+    if (!iPowerDown)
+    {
+        iPowerDown = true;
+        for (auto it = iPowerObservers.cbegin(); it != iPowerObservers.cend(); ++it) {
+            IPowerHandler& handler = (*it)->PowerHandler();
+            handler.PowerDown();
+        }
     }
 }
 
