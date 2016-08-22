@@ -1,5 +1,5 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Av/UpnpAv/UriProviderRepeater.h>
+#include <OpenHome/Media/UriProviderRepeater.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
@@ -7,15 +7,10 @@
 
 #include <vector>
 
-using namespace OpenHome;
-using namespace OpenHome::TestFramework;
-using namespace OpenHome::Av;
-using namespace OpenHome::Media;
-
 namespace OpenHome {
-namespace Av {
+namespace Media {
 
-class SuiteUriProviderRepeater : public SuiteUnitTest
+class SuiteUriProviderRepeater : public TestFramework::SuiteUnitTest
 {
 public:
     SuiteUriProviderRepeater();
@@ -47,6 +42,10 @@ private:
 } // namespace OpenHome
 
 
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
+using namespace OpenHome::Media;
+
 // SuiteUriProviderRepeater
 
 const Brn SuiteUriProviderRepeater::kUri("http://a.test.uri");
@@ -69,7 +68,7 @@ SuiteUriProviderRepeater::SuiteUriProviderRepeater()
 void SuiteUriProviderRepeater::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, kTrackCount);
-    iUriProviderRepeater = new UriProviderRepeater("SuiteUriProviderRepeater", *iTrackFactory);
+    iUriProviderRepeater = new UriProviderRepeater("SuiteUriProviderRepeater", false, *iTrackFactory);
     iUriProvider = iUriProviderRepeater;
 }
 

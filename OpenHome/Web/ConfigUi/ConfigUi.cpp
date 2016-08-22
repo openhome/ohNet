@@ -423,6 +423,8 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
 {
     // FIXME - backdoor trickery going on here. Accessing iConfigManager directly, when should really be updating value via IConfigUiVal object.
 
+    LOG(kHttp, "ConfigTab::Receive\n\taKey: %.*s\n\taValue: %.*s\n", PBUF(aKey), PBUF(aValue));
+
     // TabManager in HttpFramework should handle any race between Destroy() and
     // Receive() being called, as it will defer destruction of a tab until all
     // references are removed.
@@ -434,20 +436,25 @@ void ConfigTab::Receive(const Brx& aKey, const Brx& aValue)
         // No exceptions should be thrown because all input verification should
         // be handled by browser side.
         catch (ConfigNotANumber&) {
-            ASSERTS();
+            LOG(kHttp, "ConfigTab::Receive caught ConfigNotANumber \n\taKey: %.*s\n\taValue: %.*s\n", PBUF(aKey), PBUF(aValue));
+            //ASSERTS();
         }
         catch (ConfigValueOutOfRange&) {
-            ASSERTS();
+            LOG(kHttp, "ConfigTab::Receive caught ConfigValueOutOfRange \n\taKey: %.*s\n\taValue: %.*s\n", PBUF(aKey), PBUF(aValue));
+            //ASSERTS();
         }
         catch (ConfigValueTooLong&) {
-            ASSERTS();
+            LOG(kHttp, "ConfigTab::Receive caught ConfigValueTooLong \n\taKey: %.*s\n\taValue: %.*s\n", PBUF(aKey), PBUF(aValue));
+            //ASSERTS();
         }
         catch (ConfigInvalidSelection&) {
-            ASSERTS();
+            LOG(kHttp, "ConfigTab::Receive caught ConfigInvalidSelection \n\taKey: %.*s\n\taValue: %.*s\n", PBUF(aKey), PBUF(aValue));
+            //ASSERTS();
         }
     }
     else {
-        ASSERTS(); // Browser code tried to pass in an invalid ConfigVal. Developer error.
+        LOG(kHttp, "ConfigTab::Receive unrecognised input\n\taKey: %.*s\n\taValue: %.*s\n", PBUF(aKey), PBUF(aValue));
+        //ASSERTS(); // Browser code tried to pass in an invalid ConfigVal. Developer error.
     }
 }
 

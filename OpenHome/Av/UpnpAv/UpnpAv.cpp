@@ -4,10 +4,10 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Media/UriProviderRepeater.h>
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
-#include <OpenHome/Av/UpnpAv/UriProviderRepeater.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
@@ -22,7 +22,7 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice)
 { // static
-    UriProviderRepeater* uriProvider = new UriProviderRepeater(kSourceTypeUpnpAv, aMediaPlayer.TrackFactory());
+    UriProviderRepeater* uriProvider = new UriProviderRepeater(kSourceTypeUpnpAv, false, aMediaPlayer.TrackFactory());
     aMediaPlayer.Pipeline().AddObserver(*uriProvider);
     aMediaPlayer.Add(uriProvider);
     return new SourceUpnpAv(aMediaPlayer, aDevice, *uriProvider, aMediaPlayer.MimeTypes());
