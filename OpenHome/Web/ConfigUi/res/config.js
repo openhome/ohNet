@@ -55,7 +55,9 @@ Config = function() {
             request.request = {};
             request.request.type = "reboot";
             WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, CallbackError);
-            WebUi.RestartLongPolling();
+
+            // Removing next vline fixes #4222 : "Reboot button on Konfig does not always reboot the device"
+            //WebUi.RestartLongPolling();   // causing tabs to be destroyed before the reboot is executed.
         }
     };
 
