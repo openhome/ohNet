@@ -294,11 +294,12 @@ ProtocolRaop::~ProtocolRaop()
 
 void ProtocolRaop::DoInterrupt()
 {
-    LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
+    LOG(kMedia, ">ProtocolRaop::DoInterrupt\n");
     iAudioServer.DoInterrupt();
     iControlServer.DoInterrupt();
-    iRepairer.DropAudio();
+    iRepairer.DropAudio();  // FIXME - maybe don't tell repairer to drop or supply to discard here. Maybe do it on thread calling Stream() method and do it when flushing/stopped/interrupted
     iSupply->Discard();
+    LOG(kMedia, "<ProtocolRaop::DoInterrupt\n");
 }
 
 void ProtocolRaop::Interrupt(TBool /*aInterrupt*/)
@@ -412,10 +413,12 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         }
 
         try {
+            LOG(kMedia, "ProcotolRaop::Stream before ReadPacket()\n");
             iPacketBuf.SetBytes(0);
             iAudioServer.ReadPacket(iPacketBuf);
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
+            LOG(kMedia, "ProcotolRaop::Stream after ReadPacket(): %u\n", audioPacket.Header().Seq());
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -490,9 +493,11 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             }
             iDiscovery.KeepAlive();
 
-
+            // FIXME - for airplay dropout, are these values being set appropriately and dropping the received packets?
             const TBool validSession = IsValidSession(audioPacket.Ssrc());
             const TBool shouldFlush = ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp());
+
+            LOG(kMedia, "ProtocolRaop::Stream validSession: %u, shouldFlush: %u\n", validSession, shouldFlush);
 
             if (validSession && !shouldFlush) {
                 IRepairable* repairable = iRepairableAllocator.Allocate(audioPacket);
@@ -587,7 +592,7 @@ TBool ProtocolRaop::IsValidSession(TUint aSessionId) const
 TBool ProtocolRaop::ShouldFlush(TUint aSeq, TUint aTimestamp) const
 {
     AutoMutex a(iLockRaop);
-    if (iResumePending) {
+    if (iResumePending) {   // FIXME - is this valid? Should we not just be discarding these packets anyway?
         const TBool seqInFlushRange = (aSeq <= iFlushSeq);
         const TBool timeInFlushRange = (aTimestamp <= iFlushTime);
         const TBool shouldFlush = (seqInFlushRange && timeInFlushRange);
@@ -663,8 +668,13 @@ void ProtocolRaop::OutputDiscontinuity()
 
     Semaphore sem("PRWS", 0);
 
-    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+    // FIXME - need to send a flush before doing this?
+
+    LOG(kMedia, "ProtocolRaop::OutputDiscontinuity before OutputDrain()\n");
+    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal)); // FIXME - what if doing this while waiter is flushing?
+    LOG(kMedia, "ProtocolRaop::OutputDiscontinuity after OutputDrain()\n");
     sem.Wait();
+    LOG(kMedia, "ProtocolRaop::OutputDiscontinuity after sem.Wait()\n");
 
     // Only reopen audio server if a TryStop() hasn't come in.
     AutoMutex a(iLockRaop);
@@ -672,6 +682,8 @@ void ProtocolRaop::OutputDiscontinuity()
         iControlServer.Open();
         iAudioServer.Open();
     }
+
+    // FIXME - if doing lots of skips, don't seem to return from this.
     LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
 }
 
@@ -725,9 +737,9 @@ void ProtocolRaop::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStar
     }
 }
 
-void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
+void ProtocolRaop::ResendReceive(const RaopPacketResendResponse& aPacket)
 {
-    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
+    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.AudioPacket().Timestamp(), aPacket.AudioPacket().Header().Seq());
     IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
     try {
         iRepairer.OutputAudio(*repairable);
@@ -769,7 +781,7 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 
     // FIXME - clear any resend-related members here?
 
-    DoInterrupt();
+    DoInterrupt();  // FIXME - need to do an interrupt here?
     return iNextFlushId;
 }
 
@@ -869,9 +881,8 @@ void RaopControlServer::Run()
                 }
                 else if (packet.Header().Type() == EResendResponse) {
                     // Resend response packet contains a full audio packet as payload.
-                    RaopPacketResendResponse resendResponsePacket(packet);
-                    const RaopPacketAudio& audioPacket = resendResponsePacket.AudioPacket();
-                    iResendReceiver.ResendReceive(audioPacket);
+                    const RaopPacketResendResponse resendResponsePacket(packet);
+                    iResendReceiver.ResendReceive(resendResponsePacket);
                 }
                 else {
                     LOG(kMedia, "RaopControlServer::Run unexpected packet type: %u\n", packet.Header().Type());

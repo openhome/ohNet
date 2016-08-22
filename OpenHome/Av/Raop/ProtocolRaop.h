@@ -179,7 +179,7 @@ private:
 class IRaopResendReceiver
 {
 public:
-    virtual void ResendReceive(const RaopPacketAudio& aPacket) = 0;
+    virtual void ResendReceive(const RaopPacketResendResponse& aPacket) = 0;
     virtual ~IRaopResendReceiver() {}
 };
 
@@ -326,6 +326,7 @@ template <TUint RepairableCount, TUint DataBytes> RaopRepairableAllocator<Repair
 
 template <TUint RepairableCount, TUint DataBytes> IRepairable*  RaopRepairableAllocator<RepairableCount,DataBytes>::Allocate(const RaopPacketAudio& aPacket)
 {
+    LOG(kMedia, "RaopRepairableAllocator::Allocate RaopPacketAudio\n");
     AutoMutex a(iLock);
     IRepairableAllocatable* repairable = iFifo.Read();
     repairable->Set(aPacket.Header().Seq(), false, aPacket.Payload());
@@ -334,9 +335,10 @@ template <TUint RepairableCount, TUint DataBytes> IRepairable*  RaopRepairableAl
 
 template <TUint RepairableCount, TUint DataBytes> IRepairable* RaopRepairableAllocator<RepairableCount,DataBytes>::Allocate(const RaopPacketResendResponse& aPacket)
 {
+    LOG(kMedia, "RaopRepairableAllocator::Allocate RaopPacketResendResponse\n");
     AutoMutex a(iLock);
     IRepairableAllocatable* repairable = iFifo.Read();
-    repairable->Set(aPacket.Header().Seq(), true, aPacket.AudioPacket().Payload());
+    repairable->Set(aPacket.AudioPacket().Header().Seq(), true, aPacket.AudioPacket().Payload());
     return repairable;
 }
 
@@ -502,6 +504,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
             }
             else if (diff < 1) {
                 if (!aRepairable.Resend()) {
+                    LOG(kMedia, "Repairer::OutputAudio RepairerStreamRestarted frame: %u, resend: %u\n", aRepairable.Frame(), aRepairable.Resend());
                     // A frame in the past that is not a resend implies that the sender has reset their frame count
                     aRepairable.Destroy();
                     // accept the next received frame as the start of a new stream
@@ -520,6 +523,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
     // in case this class receives an interrupt of some form (such as DropAudio()).
     if (iOutput.size() > 0) {
         for (auto* repairable : iOutput) {
+            LOG(kMedia, "Repairer<MaxFrames>::OutputAudio %u\n", repairable->Frame());
             iAudioSupply.OutputAudio(repairable->Data());
             repairable->Destroy();
         }
@@ -575,6 +579,7 @@ template <TUint MaxFrames> TBool Repairer<MaxFrames>::Repair(IRepairable& aRepai
             // A frame in the past that is not a resend implies that the sender has reset their frame count
             RepairReset();
             repairing = false;
+            LOG(kMedia, "Repairer::OutputAudio Repair frame: %u, resend: %u\n", aRepairable.Frame(), aRepairable.Resend());
             aRepairable.Destroy();
             THROW(RepairerStreamRestarted);
         }
@@ -761,7 +766,7 @@ private: // from IStreamHandler
     TUint TryStop(TUint aStreamId) override;
     void NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving) override;
 private: // from IRaopResendReceiver
-    void ResendReceive(const RaopPacketAudio& aPacket) override;
+    void ResendReceive(const RaopPacketResendResponse& aPacket) override;
 private: // from IAudioSupply
     void OutputAudio(const Brx& aAudio) override;
 private:
