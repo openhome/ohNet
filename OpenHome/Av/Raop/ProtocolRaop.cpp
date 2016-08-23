@@ -294,12 +294,22 @@ ProtocolRaop::~ProtocolRaop()
 
 void ProtocolRaop::DoInterrupt()
 {
+    // Only interrupt network sockets here.
+    // Do NOT call RepairReset() here, as that should only happen within
+    // Stream() method.
     LOG(kMedia, ">ProtocolRaop::DoInterrupt\n");
     iAudioServer.DoInterrupt();
     iControlServer.DoInterrupt();
-    iRepairer.DropAudio();  // FIXME - maybe don't tell repairer to drop or supply to discard here. Maybe do it on thread calling Stream() method and do it when flushing/stopped/interrupted
-    iSupply->Discard();
     LOG(kMedia, "<ProtocolRaop::DoInterrupt\n");
+}
+
+void ProtocolRaop::RepairReset()
+{
+    // This must only be called from Stream() method to avoid deadlock (in
+    // particular, to avoid Repairer being blocked by timer lock when it
+    // cancels its timer, and to avoid simultaneous calls to iSupply).
+    iRepairer.DropAudio();
+    iSupply->Discard();
 }
 
 void ProtocolRaop::Interrupt(TBool /*aInterrupt*/)
@@ -339,6 +349,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     Reset();
     WaitForDrain();
+    RepairReset();
     iControlServer.Open();
     iAudioServer.Open();
 
@@ -380,6 +391,13 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     discontinuity = true;
                     iDiscontinuity = false;
                 }
+                if (iStarving) {
+                    iStarving = false;
+                    // No need to "un-interrupt" sockets here.
+
+                    // Pipeline has already starved, so should be no need to
+                    // output a drain msg here (as should be no glitching).
+                }
             }
 
 
@@ -393,6 +411,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     return EProtocolStreamStopped;
                 }
                 else if (waiting) {
+                    LOG(kMedia, "ProtocolRaop::Stream waiting.\n");
                     OutputDiscontinuity();
                     // Resume normal operation.
                     LOG(kMedia, "ProtocolRaop::Stream signalled end of wait.\n");
@@ -400,25 +419,30 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 else {
                     ASSERTS();  // Shouldn't be flushing in any other state.
                 }
+
+                RepairReset();
             }
 
             if (discontinuity) {
+                LOG(kMedia, "ProtocolRaop::Stream discontinuity.\n");
                 OutputDiscontinuity();
+                RepairReset();
                 LOG(kMedia, "ProtocolRaop::Stream signalled end of starvation.\n");
             }
 
             if (interrupted) {
+                RepairReset();
                 return EProtocolStreamStopped;
             }
         }
 
         try {
-            LOG(kMedia, "ProcotolRaop::Stream before ReadPacket()\n");
+            //LOG(kMedia, "ProcotolRaop::Stream before ReadPacket()\n");
             iPacketBuf.SetBytes(0);
             iAudioServer.ReadPacket(iPacketBuf);
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
-            LOG(kMedia, "ProcotolRaop::Stream after ReadPacket(): %u\n", audioPacket.Header().Seq());
+            //LOG(kMedia, "ProcotolRaop::Stream after ReadPacket(): %u\n", audioPacket.Header().Seq());
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -439,6 +463,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iSupply->OutputFlush(flushId);
                 }
                 WaitForDrain();
+                RepairReset();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 iDiscovery.Close();
                 return EProtocolStreamStopped;
@@ -497,7 +522,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             const TBool validSession = IsValidSession(audioPacket.Ssrc());
             const TBool shouldFlush = ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp());
 
-            LOG(kMedia, "ProtocolRaop::Stream validSession: %u, shouldFlush: %u\n", validSession, shouldFlush);
+            //LOG(kMedia, "ProtocolRaop::Stream validSession: %u, shouldFlush: %u\n", validSession, shouldFlush);
 
             if (validSession && !shouldFlush) {
                 IRepairable* repairable = iRepairableAllocator.Allocate(audioPacket);
@@ -507,11 +532,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 catch (RepairerBufferFull&) {
                     LOG(kMedia, "ProtocolRaop::Stream RepairerBufferFull\n");
                     // Set state so that no more audio is output until a MsgDrain followed by a MsgEncodedStream.
-                    OutputDiscontinuity();
+                    AutoMutex a(iLockRaop);
+                    iDiscontinuity = true;
+                    //OutputDiscontinuity();
                 }
                 catch (RepairerStreamRestarted&) {
                     LOG(kMedia, "ProtocolRaop::Stream RepairerStreamRestarted\n");
-                    OutputDiscontinuity();
+                    AutoMutex a(iLockRaop);
+                    iDiscontinuity = true;
+                    //OutputDiscontinuity();
                 }
             }
         }
@@ -568,6 +597,7 @@ void ProtocolRaop::Reset()
     iStopped = false;
     iInterrupted = false;
     iDiscontinuity = false;
+    iStarving = false;
 }
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
@@ -658,8 +688,10 @@ void ProtocolRaop::OutputDiscontinuity()
     LOG(kMedia, ">ProtocolRaop::OutputDiscontinuity\n");
     iAudioServer.Close();
     iControlServer.Close();
-    iRepairer.DropAudio();  // Drop any audio buffered in repairer.
-    iSupply->Discard();
+
+    // These are called AFTER OutputDiscontinuity().
+    //iRepairer.DropAudio();  // Drop any audio buffered in repairer.
+    //iSupply->Discard();
 
     {
         AutoMutex a(iLockRaop);
@@ -683,7 +715,7 @@ void ProtocolRaop::OutputDiscontinuity()
         iAudioServer.Open();
     }
 
-    // FIXME - if doing lots of skips, don't seem to return from this.
+    // FIXME - if doing lots of skips, don't seem to return from this. See #4348.
     LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
 }
 
@@ -729,10 +761,36 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
+    /*
+     * The pipeline calls into this method.
+     *
+     * Calling Repairer::DropAudio() will result in Repairer calling Cancel()
+     * on its retry timer.
+     *
+     * However, it's possible that a timer callback in RAOP discovery code will
+     * have triggered a call into SourceRaop to tell the pipeline to Stop().
+     *
+     * That can cause a deadlock where the RAOP discovery timer callback is
+     * waiting for the pipeline to stop (as Stopper is waiting on a mutex), and
+     * Stopper already holds mutex for this NotifyStarving() call and
+     * Repairer::DropAudio() is trying to cancel its timer but the timer
+     * callback already holds the timer mutex!
+     *
+     * Solution for ProtocolRaop:
+     * - Set a flag here (iDiscontinuity).
+     * - Only interrupt network sockets.
+     * - Call Repairer::DropAudio() from thread running ProtocolRaop::Stream().
+     * Solution for RAOP discovery and SourceRaop:
+     * - When a TEARDOWN request comes in, or timer times out, do NOT call
+     *   NotifySessionEnd() (in fact, never call NotifySessionEnd(), as only
+     *   ever want to stop pipeline in Net Aux mode when swithcing to
+     *   different source).
+     */
     LOG(kMedia, ">ProtocolRaop::NotifyStarving mode: %.*s, sid: %u, starving: %u\n", PBUF(aMode), aStreamId, aStarving);
     AutoMutex a(iLockRaop);
     if (aStarving) {
-        iDiscontinuity = true;
+        //iDiscontinuity = true;    // FIXME - if enabling this and, say, forcing Repairer to throw a RepairerBufferFull after every 1000 packets, protocol goes into an infinite restart loop as it ends up blocked waiting for MsgDrain to reach end up pipeline before it can output anymore audio.
+        iStarving = true;
         DoInterrupt();
     }
 }

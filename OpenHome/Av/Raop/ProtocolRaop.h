@@ -326,7 +326,7 @@ template <TUint RepairableCount, TUint DataBytes> RaopRepairableAllocator<Repair
 
 template <TUint RepairableCount, TUint DataBytes> IRepairable*  RaopRepairableAllocator<RepairableCount,DataBytes>::Allocate(const RaopPacketAudio& aPacket)
 {
-    LOG(kMedia, "RaopRepairableAllocator::Allocate RaopPacketAudio\n");
+    //LOG(kMedia, "RaopRepairableAllocator::Allocate RaopPacketAudio\n");
     AutoMutex a(iLock);
     IRepairableAllocatable* repairable = iFifo.Read();
     repairable->Set(aPacket.Header().Seq(), false, aPacket.Payload());
@@ -335,7 +335,7 @@ template <TUint RepairableCount, TUint DataBytes> IRepairable*  RaopRepairableAl
 
 template <TUint RepairableCount, TUint DataBytes> IRepairable* RaopRepairableAllocator<RepairableCount,DataBytes>::Allocate(const RaopPacketResendResponse& aPacket)
 {
-    LOG(kMedia, "RaopRepairableAllocator::Allocate RaopPacketResendResponse\n");
+    //LOG(kMedia, "RaopRepairableAllocator::Allocate RaopPacketResendResponse\n");
     AutoMutex a(iLock);
     IRepairableAllocatable* repairable = iFifo.Read();
     repairable->Set(aPacket.AudioPacket().Header().Seq(), true, aPacket.AudioPacket().Payload());
@@ -497,6 +497,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
         // If that's the case, aRepairable was incorporated into messages to be
         // output, so don't want to enter the code blocks below.
         if (!iRepairing && iOutput.size() == 0) {
+
             const TInt16 diff = static_cast<TUint16>(aRepairable.Frame()) - iFrame;
             if (diff == 1) {
                 iFrame++;
@@ -523,7 +524,7 @@ template <TUint MaxFrames> void Repairer<MaxFrames>::OutputAudio(IRepairable& aR
     // in case this class receives an interrupt of some form (such as DropAudio()).
     if (iOutput.size() > 0) {
         for (auto* repairable : iOutput) {
-            LOG(kMedia, "Repairer<MaxFrames>::OutputAudio %u\n", repairable->Frame());
+            //LOG(kMedia, "Repairer<MaxFrames>::OutputAudio %u\n", repairable->Frame());
             iAudioSupply.OutputAudio(repairable->Data());
             repairable->Destroy();
         }
@@ -779,6 +780,7 @@ private:
     void OutputDiscontinuity();
     void OutputContainer(const Brx& aFmtp);
     void DoInterrupt();
+    void RepairReset();
     void WaitForDrain();
     void InputChanged();
     void ResendTimerFired();
@@ -809,6 +811,7 @@ private:
     TBool iStopped;
     TBool iInterrupted;
     TBool iDiscontinuity;
+    TBool iStarving;
     mutable Mutex iLockRaop;
     Semaphore iSemDrain;
 
