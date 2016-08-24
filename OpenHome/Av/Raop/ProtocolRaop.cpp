@@ -432,6 +432,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
             if (interrupted) {
                 RepairReset();
+                iDiscovery.Close();
                 return EProtocolStreamStopped;
             }
         }
