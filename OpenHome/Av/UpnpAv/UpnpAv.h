@@ -15,9 +15,9 @@ namespace OpenHome {
 namespace Media {
     class PipelineManager;
     class MimeTypeList;
+    class UriProviderRepeater;
 }
 namespace Av {
-    class UriProviderRepeater;
 
 class ISourceUpnpAv
 {
@@ -40,7 +40,7 @@ class ProviderRenderingControl;
 class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipelineObserver
 {
 public:
-    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList);
+    SourceUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, Media::UriProviderRepeater& aUriProvider, Media::MimeTypeList& aMimeTypeList);
     ~SourceUpnpAv();
 private:
     void EnsureActive();
@@ -69,7 +69,7 @@ private:
     Mutex iLock;
     Mutex iActivationLock;
     Net::DvDevice& iDevice;
-    UriProviderRepeater& iUriProvider;
+    Media::UriProviderRepeater& iUriProvider;
     Media::Track* iTrack;
     ProviderAvTransport* iProviderAvTransport;
     ProviderConnectionManager* iProviderConnectionManager;

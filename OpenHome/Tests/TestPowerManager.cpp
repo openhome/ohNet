@@ -23,6 +23,7 @@ public:
 public:
     TUint64 Time() const;
     TUint PowerUpCount() const;
+    TUint PowerDownCount() const;
 public: // from IPowerHandler
     void PowerUp();
     void PowerDown();
@@ -31,6 +32,7 @@ private:
     Environment& iEnv;
     TUint64 iTime;
     TUint iPowerUpCount;
+    TUint iPowerDownCount;
 };
 
 class IStandbyHandlerObserver
@@ -253,6 +255,7 @@ HelperPowerHandler::HelperPowerHandler(Environment& aEnv)
     : iEnv(aEnv)
     , iTime(0)
     , iPowerUpCount(0)
+    , iPowerDownCount(0)
 {
 }
 
@@ -266,6 +269,11 @@ TUint HelperPowerHandler::PowerUpCount() const
     return iPowerUpCount;
 }
 
+TUint HelperPowerHandler::PowerDownCount() const
+{
+    return iPowerDownCount;
+}
+
 void HelperPowerHandler::PowerUp()
 {
     iPowerUpCount++;
@@ -273,6 +281,7 @@ void HelperPowerHandler::PowerUp()
 
 void HelperPowerHandler::PowerDown()
 {
+    iPowerDownCount++;
     iTime = Os::TimeInUs(iEnv.OsCtx());
     Thread::Sleep(kSleepTime);
 }
@@ -557,8 +566,9 @@ void SuitePowerManager::TestPowerDownTwice()
     iPowerManager->NotifyPowerDown();
     TEST(iHandler1->Time() > 0);
 
-    // Call NotifyPowerDown() again. Should ASSERT this time.
-    TEST_THROWS(iPowerManager->NotifyPowerDown(), AssertionFailed);
+    TUint count = iHandler1->PowerDownCount();
+    iPowerManager->NotifyPowerDown();
+    TEST(count == iHandler1->PowerDownCount());
     delete observer;
 }
 

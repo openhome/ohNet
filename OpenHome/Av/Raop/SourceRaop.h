@@ -18,20 +18,20 @@ namespace Net {
 }
 namespace Media {
     class PipelineManager;
-    class UriProviderSingleTrack;
 }
 namespace Av {
     class IMediaPlayer;
     class IRaopDiscovery;
     class RaopDiscovery;
     class ProtocolRaop;
+    class UriProviderRaop;
 
 class SourceRaop : public Source, public IRaopObserver, private Media::IPipelineObserver
 {
 private:
     static const Brn kRaopPrefix;
 public:
-    SourceRaop(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const Brx& aMacAddr);
+    SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider, const Brx& aMacAddr);
     ~SourceRaop();
     IRaopDiscovery& Discovery();
 private: // from ISource
@@ -65,7 +65,7 @@ private:
     static const TUint kMaxUriBytes = kRaopPrefixBytes+kMaxPortBytes*2+1;   // raop://xxxxx.yyyyy
     Environment& iEnv;
     Mutex iLock;
-    Media::UriProviderSingleTrack& iUriProvider;
+    UriProviderRaop& iUriProvider;
     RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;
