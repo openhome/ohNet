@@ -336,31 +336,9 @@ void PropertyWriterUpnp::Connect()
     iSubscriber.AppendAddress(buf);
     Log::Print("PropertyWriterUpnp connecting to %s\n", buf.Ptr());
 #endif
-    static const TUint kInitialEventConnectRetries = 3;
-    TUint retries = (iSequenceNumber == 0? kInitialEventConnectRetries : 0);
-    for (;;) {
-        try {
-            iSocket.Open(iEnv);
-            iSocket.Connect(iSubscriber, iEnv.InitParams()->TcpConnectTimeoutMs());
-            //iSocket.LogVerbose(true);
-            return;
-        }
-        catch (NetworkTimeout&) {
-            if (retries == 0) {
-                throw;
-            }
-        }
-        catch (NetworkError&) {
-            if (retries == 0) {
-                throw;
-            }
-        }
-        --retries;
-        try {
-            iSocket.Close();
-        }
-        catch (NetworkError&) {}
-    }
+    iSocket.Open(iEnv);
+    iSocket.Connect(iSubscriber, iEnv.InitParams()->TcpConnectTimeoutMs());
+    //iSocket.LogVerbose(true);
 }
 
 void PropertyWriterUpnp::WriteHeaders(TUint aContentLength)
