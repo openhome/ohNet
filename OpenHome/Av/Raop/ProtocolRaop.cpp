@@ -294,9 +294,20 @@ ProtocolRaop::~ProtocolRaop()
 
 void ProtocolRaop::DoInterrupt()
 {
-    LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
+    // Only interrupt network sockets here.
+    // Do NOT call RepairReset() here, as that should only happen within
+    // Stream() method.
+    LOG(kMedia, ">ProtocolRaop::DoInterrupt\n");
     iAudioServer.DoInterrupt();
     iControlServer.DoInterrupt();
+    LOG(kMedia, "<ProtocolRaop::DoInterrupt\n");
+}
+
+void ProtocolRaop::RepairReset()
+{
+    // This must only be called from Stream() method to avoid deadlock (in
+    // particular, to avoid Repairer being blocked by timer lock when it
+    // cancels its timer, and to avoid simultaneous calls to iSupply).
     iRepairer.DropAudio();
     iSupply->Discard();
 }
@@ -338,6 +349,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     Reset();
     WaitForDrain();
+    RepairReset();
     iControlServer.Open();
     iAudioServer.Open();
 
@@ -379,6 +391,13 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     discontinuity = true;
                     iDiscontinuity = false;
                 }
+                if (iStarving) {
+                    iStarving = false;
+                    // No need to "un-interrupt" sockets here.
+
+                    // Pipeline has already starved, so should be no need to
+                    // output a drain msg here (as should be no glitching).
+                }
             }
 
 
@@ -392,6 +411,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     return EProtocolStreamStopped;
                 }
                 else if (waiting) {
+                    LOG(kMedia, "ProtocolRaop::Stream waiting.\n");
                     OutputDiscontinuity();
                     // Resume normal operation.
                     LOG(kMedia, "ProtocolRaop::Stream signalled end of wait.\n");
@@ -399,23 +419,31 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 else {
                     ASSERTS();  // Shouldn't be flushing in any other state.
                 }
+
+                RepairReset();
             }
 
             if (discontinuity) {
+                LOG(kMedia, "ProtocolRaop::Stream discontinuity.\n");
                 OutputDiscontinuity();
+                RepairReset();
                 LOG(kMedia, "ProtocolRaop::Stream signalled end of starvation.\n");
             }
 
             if (interrupted) {
+                RepairReset();
+                iDiscovery.Close();
                 return EProtocolStreamStopped;
             }
         }
 
         try {
+            //LOG(kMedia, "ProcotolRaop::Stream before ReadPacket()\n");
             iPacketBuf.SetBytes(0);
             iAudioServer.ReadPacket(iPacketBuf);
             RtpPacketRaop rtpPacket(iPacketBuf);
             RaopPacketAudio audioPacket(rtpPacket);
+            //LOG(kMedia, "ProcotolRaop::Stream after ReadPacket(): %u\n", audioPacket.Header().Seq());
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -436,6 +464,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     iSupply->OutputFlush(flushId);
                 }
                 WaitForDrain();
+                RepairReset();
                 LOG(kMedia, "<ProtocolRaop::Stream !iDiscovery.Active()\n");
                 iDiscovery.Close();
                 return EProtocolStreamStopped;
@@ -490,9 +519,11 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             }
             iDiscovery.KeepAlive();
 
-
+            // FIXME - for airplay dropout, are these values being set appropriately and dropping the received packets?
             const TBool validSession = IsValidSession(audioPacket.Ssrc());
             const TBool shouldFlush = ShouldFlush(audioPacket.Header().Seq(), audioPacket.Timestamp());
+
+            //LOG(kMedia, "ProtocolRaop::Stream validSession: %u, shouldFlush: %u\n", validSession, shouldFlush);
 
             if (validSession && !shouldFlush) {
                 IRepairable* repairable = iRepairableAllocator.Allocate(audioPacket);
@@ -502,11 +533,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 catch (RepairerBufferFull&) {
                     LOG(kMedia, "ProtocolRaop::Stream RepairerBufferFull\n");
                     // Set state so that no more audio is output until a MsgDrain followed by a MsgEncodedStream.
-                    OutputDiscontinuity();
+                    AutoMutex a(iLockRaop);
+                    iDiscontinuity = true;
+                    //OutputDiscontinuity();
                 }
                 catch (RepairerStreamRestarted&) {
                     LOG(kMedia, "ProtocolRaop::Stream RepairerStreamRestarted\n");
-                    OutputDiscontinuity();
+                    AutoMutex a(iLockRaop);
+                    iDiscontinuity = true;
+                    //OutputDiscontinuity();
                 }
             }
         }
@@ -563,6 +598,7 @@ void ProtocolRaop::Reset()
     iStopped = false;
     iInterrupted = false;
     iDiscontinuity = false;
+    iStarving = false;
 }
 
 void ProtocolRaop::UpdateSessionId(TUint aSessionId)
@@ -587,7 +623,7 @@ TBool ProtocolRaop::IsValidSession(TUint aSessionId) const
 TBool ProtocolRaop::ShouldFlush(TUint aSeq, TUint aTimestamp) const
 {
     AutoMutex a(iLockRaop);
-    if (iResumePending) {
+    if (iResumePending) {   // FIXME - is this valid? Should we not just be discarding these packets anyway?
         const TBool seqInFlushRange = (aSeq <= iFlushSeq);
         const TBool timeInFlushRange = (aTimestamp <= iFlushTime);
         const TBool shouldFlush = (seqInFlushRange && timeInFlushRange);
@@ -653,8 +689,10 @@ void ProtocolRaop::OutputDiscontinuity()
     LOG(kMedia, ">ProtocolRaop::OutputDiscontinuity\n");
     iAudioServer.Close();
     iControlServer.Close();
-    iRepairer.DropAudio();  // Drop any audio buffered in repairer.
-    iSupply->Discard();
+
+    // These are called AFTER OutputDiscontinuity().
+    //iRepairer.DropAudio();  // Drop any audio buffered in repairer.
+    //iSupply->Discard();
 
     {
         AutoMutex a(iLockRaop);
@@ -663,8 +701,13 @@ void ProtocolRaop::OutputDiscontinuity()
 
     Semaphore sem("PRWS", 0);
 
-    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal));
+    // FIXME - need to send a flush before doing this?
+
+    LOG(kMedia, "ProtocolRaop::OutputDiscontinuity before OutputDrain()\n");
+    iSupply->OutputDrain(MakeFunctor(sem, &Semaphore::Signal)); // FIXME - what if doing this while waiter is flushing?
+    LOG(kMedia, "ProtocolRaop::OutputDiscontinuity after OutputDrain()\n");
     sem.Wait();
+    LOG(kMedia, "ProtocolRaop::OutputDiscontinuity after sem.Wait()\n");
 
     // Only reopen audio server if a TryStop() hasn't come in.
     AutoMutex a(iLockRaop);
@@ -672,6 +715,8 @@ void ProtocolRaop::OutputDiscontinuity()
         iControlServer.Open();
         iAudioServer.Open();
     }
+
+    // FIXME - if doing lots of skips, don't seem to return from this. See #4348.
     LOG(kMedia, "<ProtocolRaop::OutputDiscontinuity\n");
 }
 
@@ -717,17 +762,43 @@ TUint ProtocolRaop::TryStop(TUint aStreamId)
 
 void ProtocolRaop::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
+    /*
+     * The pipeline calls into this method.
+     *
+     * Calling Repairer::DropAudio() will result in Repairer calling Cancel()
+     * on its retry timer.
+     *
+     * However, it's possible that a timer callback in RAOP discovery code will
+     * have triggered a call into SourceRaop to tell the pipeline to Stop().
+     *
+     * That can cause a deadlock where the RAOP discovery timer callback is
+     * waiting for the pipeline to stop (as Stopper is waiting on a mutex), and
+     * Stopper already holds mutex for this NotifyStarving() call and
+     * Repairer::DropAudio() is trying to cancel its timer but the timer
+     * callback already holds the timer mutex!
+     *
+     * Solution for ProtocolRaop:
+     * - Set a flag here (iDiscontinuity).
+     * - Only interrupt network sockets.
+     * - Call Repairer::DropAudio() from thread running ProtocolRaop::Stream().
+     * Solution for RAOP discovery and SourceRaop:
+     * - When a TEARDOWN request comes in, or timer times out, do NOT call
+     *   NotifySessionEnd() (in fact, never call NotifySessionEnd(), as only
+     *   ever want to stop pipeline in Net Aux mode when swithcing to
+     *   different source).
+     */
     LOG(kMedia, ">ProtocolRaop::NotifyStarving mode: %.*s, sid: %u, starving: %u\n", PBUF(aMode), aStreamId, aStarving);
     AutoMutex a(iLockRaop);
     if (aStarving) {
-        iDiscontinuity = true;
+        //iDiscontinuity = true;    // FIXME - if enabling this and, say, forcing Repairer to throw a RepairerBufferFull after every 1000 packets, protocol goes into an infinite restart loop as it ends up blocked waiting for MsgDrain to reach end up pipeline before it can output anymore audio.
+        iStarving = true;
         DoInterrupt();
     }
 }
 
-void ProtocolRaop::ResendReceive(const RaopPacketAudio& aPacket)
+void ProtocolRaop::ResendReceive(const RaopPacketResendResponse& aPacket)
 {
-    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.Timestamp(), aPacket.Header().Seq());
+    LOG(kMedia, ">ProtocolRaop::ResendReceive timestamp: %u, seq: %u\n", aPacket.AudioPacket().Timestamp(), aPacket.AudioPacket().Header().Seq());
     IRepairable* repairable = iRepairableAllocator.Allocate(aPacket);
     try {
         iRepairer.OutputAudio(*repairable);
@@ -769,7 +840,7 @@ TUint ProtocolRaop::SendFlush(TUint aSeq, TUint aTime)
 
     // FIXME - clear any resend-related members here?
 
-    DoInterrupt();
+    DoInterrupt();  // FIXME - need to do an interrupt here?
     return iNextFlushId;
 }
 
@@ -869,9 +940,8 @@ void RaopControlServer::Run()
                 }
                 else if (packet.Header().Type() == EResendResponse) {
                     // Resend response packet contains a full audio packet as payload.
-                    RaopPacketResendResponse resendResponsePacket(packet);
-                    const RaopPacketAudio& audioPacket = resendResponsePacket.AudioPacket();
-                    iResendReceiver.ResendReceive(audioPacket);
+                    const RaopPacketResendResponse resendResponsePacket(packet);
+                    iResendReceiver.ResendReceive(resendResponsePacket);
                 }
                 else {
                     LOG(kMedia, "RaopControlServer::Run unexpected packet type: %u\n", packet.Header().Type());

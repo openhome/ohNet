@@ -7,7 +7,7 @@
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/PipelineManager.h>
-#include <OpenHome/Media/UriProviderSingleTrack.h>
+#include <OpenHome/Media/UriProviderRepeater.h>
 #include <OpenHome/Av/Raop/ProtocolRaop.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/SourceFactory.h>
@@ -23,7 +23,7 @@
 namespace OpenHome {
 namespace Av {
 
-class UriProviderRaop : public Media::UriProviderSingleTrack
+class UriProviderRaop : public Media::UriProviderRepeater
 {
 public:
     UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller);
@@ -48,7 +48,7 @@ using namespace OpenHome::Net;
 
 ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer, aClockPuller);
+    UriProviderRaop* raopUriProvider = new UriProviderRaop(aMediaPlayer, aClockPuller);
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aMacAddr);
 }
@@ -60,7 +60,7 @@ const Brn SourceFactory::kSourceNameRaop("Net Aux");
 // UriProviderRaop
 
 UriProviderRaop::UriProviderRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller)
-    : UriProviderSingleTrack("RAOP", true, aMediaPlayer.TrackFactory())
+    : UriProviderRepeater("RAOP", true, aMediaPlayer.TrackFactory())
     , iClockPuller(aClockPuller)
 {
 }
@@ -75,7 +75,7 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 
 const Brn SourceRaop::kRaopPrefix("raop://");
 
-SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider, const Brx& aMacAddr)
     : Source(SourceFactory::kSourceNameRaop, SourceFactory::kSourceTypeRaop, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
@@ -223,6 +223,7 @@ void SourceRaop::StartNewTrack()
 
 void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
+    LOG(kMedia, ">SourceRaop::NotifySessionStart aControlPort: %u, aTimingPort: %u\n", aControlPort, aTimingPort);
     if (!IsActive()) {
         DoActivate();
     }
@@ -240,10 +241,12 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
     }
 
     DoPlay();
+    LOG(kMedia, "<SourceRaop::NotifySessionStart\n");
 }
 
 void SourceRaop::NotifySessionEnd()
 {
+    LOG(kMedia, ">SourceRaop::NotifySessionEnd\n");
     iLock.Wait();
     iNextTrackUri.SetBytes(0);
 
@@ -263,10 +266,12 @@ void SourceRaop::NotifySessionEnd()
     if (shouldStop) {
         iPipeline.Stop();
     }
+    LOG(kMedia, "<SourceRaop::NotifySessionEnd\n");
 }
 
 void SourceRaop::NotifySessionWait(TUint aSeq, TUint aTime)
 {
+    LOG(kMedia, ">SourceRaop::NotifySessionWait aSeq: %u, aTime: %u\n", aSeq, aTime);
     // This call will only come in while session should be active.
     // However, it's possible that the pipeline may not have recognised the
     // stream and asked ProtocolRaop to TryStop(), which will have caused it to
@@ -289,6 +294,7 @@ void SourceRaop::NotifySessionWait(TUint aSeq, TUint aTime)
     if (flushId != MsgFlush::kIdInvalid) {
         iPipeline.Wait(flushId);
     }
+    LOG(kMedia, "<SourceRaop::NotifySessionWait\n");
 }
 
 void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)

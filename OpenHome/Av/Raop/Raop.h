@@ -262,6 +262,24 @@ private:
     Mutex iObserversLock;
 };
 
+/**
+ * RAOP uses a TCP channel to discover device capabilities and control
+ * streaming session (starting/stopping/flushing/etc.).
+ *
+ * This class creates a TCP server which contains two sessions. When a request
+ * comes in, a TCP session's Run() method is called. That Run() method keeps
+ * iterating in a loop while a streaming session is in progress, being queried
+ * by the sender and having commands sent to it.
+ *
+ * Only one TCP session may be active at any time. There are two TCP sessions
+ * to allow for an alternative sender (or, the same sender if there is a
+ * network issue) to come in on the second session and disable the first
+ * session.
+ *
+ * As the discovery sessions are held open in their Run() method, there is a
+ * 10s keep-alive timeout implemented here, so that if no query is received
+ * in that time period, the session is freed up for alternative connections.
+ */
 class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, public IVolumeScalerEnabler, private INonCopyable
 {
 public:
