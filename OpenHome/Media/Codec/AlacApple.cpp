@@ -146,15 +146,35 @@ void CodecAlacApple::StreamInitialise()
         // Current buffer size doesn't support more than kMaxChannels.
         THROW(CodecStreamCorrupt);
     }
-    iBitDepth = info.BitDepth();
+
+
+    // Bit depth has already been read from outer "alac" box in MPEG4 container
+    // and is stored within info.BitDepth(). However, that is not always
+    // correct! There is a byte at index 9 of the inner "alac" box (whose
+    // contents are contained within info.StreamDescriptor()) which seems to be
+    // correct, so use that instead.
+    //
+    // Could alternatively access this value from iDecoder->mConfig.bitDepth
+    // after iDecoder->Init() has been called, but that is directly accessing
+    // a member variable of the decoder, and we already have access to the raw
+    // data here.
+
+    //iBitDepth = info.BitDepth();
+    static const TUint kBitDepthOffset = 9;
+    if (info.StreamDescriptor().Bytes() <= kBitDepthOffset) {
+        THROW(CodecStreamCorrupt);
+    }
+    iBitDepth = info.StreamDescriptor()[kBitDepthOffset];
+
+
     iBytesPerSample = info.Channels()*iBitDepth/8;
     iSampleRate = info.Timescale();
     iSamplesWrittenTotal = 0;
     iTrackLengthJiffies = (info.Duration() * Jiffies::kPerSecond) / info.Timescale();
 
 
-    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, info.BitDepth(), info.Timescale(), info.Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
+    //LOG(kCodec, "CodecAlac::StreamInitialise iBitDepth %u, iSampleRate: %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
+    iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecAlacApple::TrySeek(TUint aStreamId, TUint64 aSample)
