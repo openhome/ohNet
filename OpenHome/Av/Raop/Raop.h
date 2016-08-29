@@ -282,7 +282,7 @@ private:
  * 10s keep-alive timeout implemented here, so that if no query is received
  * in that time period, the session is freed up for alternative connections.
  */
-class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, public IVolumeScalerEnabler, private INonCopyable
+class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
     static const TUint kVolMaxScaled = 256;
