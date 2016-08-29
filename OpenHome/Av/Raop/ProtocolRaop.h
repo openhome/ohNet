@@ -790,6 +790,14 @@ private:
     TBool iVolumeEnabled;
     IVolumeScalerEnabler& iVolume;
     IRaopDiscovery& iDiscovery;
+    // FIXME - can the UDP servers be done away with?
+    // The UDP servers really need to run at same priority as Filler thread (to
+    // avoid dropouts), but that requires instantiators of SourceRaop to have
+    // knowledge of Filler thread priority - undesirable coupling.
+    // Solution is just to have UDP sockets serviced in Stream() method, as
+    // that already runs in Filler thread. Would just need to add interleaving
+    // for servicing control channel, as that is currently handled on its on
+    // thread.
     UdpServerManager& iServerManager;
     Bws<RtpPacketRaop::kMaxPacketBytes> iPacketBuf;
     Bws<RtpPacketRaop::kMaxPacketBytes> iAudioDecrypted;
