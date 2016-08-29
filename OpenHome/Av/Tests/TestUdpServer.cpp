@@ -157,7 +157,7 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
 void SuiteSocketUdpServer::Setup()
 {
     iSender = new SocketUdp(iEnv);
-    iServer = new SocketUdpServer(iEnv, kMaxMsgSize, kMaxMsgCount, kPort, iInterface);
+    iServer = new SocketUdpServer(iEnv, kMaxMsgSize, kMaxMsgCount, ThreadPriority::kPriorityNormal, kPort, iInterface);
     try {
         iServer->SetRecvBufBytes(kUdpRecvBufSize);
     }
@@ -579,7 +579,7 @@ SuiteUdpServerManager::SuiteUdpServerManager(Environment& aEnv, TIpAddress aInte
 
 void SuiteUdpServerManager::Setup()
 {
-    iManager = new UdpServerManager(iEnv, kMaxMsgSize, kMaxMsgCount);
+    iManager = new UdpServerManager(iEnv, kMaxMsgSize, kMaxMsgCount, ThreadPriority::kPriorityNormal);
 }
 
 void SuiteUdpServerManager::TearDown()

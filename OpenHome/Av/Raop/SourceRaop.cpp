@@ -46,11 +46,11 @@ using namespace OpenHome::Net;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr, TUint aUdpThreadPriority)
 { // static
     UriProviderRaop* raopUriProvider = new UriProviderRaop(aMediaPlayer, aClockPuller);
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer, *raopUriProvider, aMacAddr);
+    return new SourceRaop(aMediaPlayer, *raopUriProvider, aMacAddr, aUdpThreadPriority);
 }
 
 const TChar* SourceFactory::kSourceTypeRaop = "NetAux";
@@ -75,12 +75,12 @@ ModeClockPullers UriProviderRaop::ClockPullers()
 
 const Brn SourceRaop::kRaopPrefix("raop://");
 
-SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider, const Brx& aMacAddr, TUint aUdpThreadPriority)
     : Source(SourceFactory::kSourceNameRaop, SourceFactory::kSourceTypeRaop, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager(), false)
     , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
     , iUriProvider(aUriProvider)
-    , iServerManager(aMediaPlayer.Env(), kMaxUdpSize, kMaxUdpPackets)
+    , iServerManager(aMediaPlayer.Env(), kMaxUdpSize, kMaxUdpPackets, aUdpThreadPriority)
     , iSessionActive(false)
     , iTrack(nullptr)
     , iTrackPosSeconds(0)
