@@ -230,6 +230,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Muter.cpp',
                 'OpenHome/Media/Pipeline/PreDriver.cpp',
                 'OpenHome/Media/Pipeline/Pruner.cpp',
+                'OpenHome/Media/Pipeline/Attenuator.cpp',
                 'OpenHome/Media/Pipeline/Ramper.cpp',
                 'OpenHome/Media/Pipeline/Reporter.cpp',
                 'OpenHome/Media/Pipeline/SpotifyReporter.cpp',

@@ -23,6 +23,7 @@ using namespace OpenHome::Media;
 
 const TChar* OpenHome::Media::kStreamPlayNames[] = { "Yes", "No", "Later" };
 
+
 // AllocatorBase
 
 const Brn AllocatorBase::kQueryMemory = Brn("memory");
@@ -701,6 +702,9 @@ TUint RampApplicator::Start(const Brx& aData, TUint aBitDepth, TUint aNumChannel
     ASSERT_DEBUG(aData.Bytes() % ((iBitDepth/8) * iNumChannels) == 0);
     iNumSamples = (TInt)(aData.Bytes() / ((iBitDepth/8) * iNumChannels));
     iTotalRamp = (iRamp.Start() - iRamp.End());
+    if(iTotalRamp != 0) {
+//        Log::Print("iTotalRamp %d\n", iTotalRamp);
+    }
     iLoopCount = 0;
     return iNumSamples;
 }
@@ -1742,6 +1746,7 @@ void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 // MsgAudioPcm
 
 const TUint64 MsgAudioPcm::kTrackOffsetInvalid = UINT64_MAX;
+const TUint16 MsgAudioPcm::kUnityAttenuation = 256;
 
 MsgAudioPcm::MsgAudioPcm(AllocatorBase& aAllocator)
     : MsgAudio(aAllocator)
@@ -1767,7 +1772,7 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     MsgPlayable* playable;
     if (iRamp.Direction() != Ramp::EMute) {
         MsgPlayablePcm* pcm = iAllocatorPlayablePcm->Allocate();
-        pcm->Initialise(iAudioData, sizeBytes, iSampleRate, iBitDepth, iNumChannels, offsetBytes, iRamp, bufferObserver);
+        pcm->Initialise(iAudioData, sizeBytes, iSampleRate, iBitDepth, iNumChannels, offsetBytes, iAttenuation, iRamp, bufferObserver);
         playable = pcm;
     }
     else {
@@ -1801,6 +1806,7 @@ MsgAudio* MsgAudioPcm::Clone()
     clone->iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     clone->iAllocatorPlayableSilence = iAllocatorPlayableSilence;
     clone->iTrackOffset = iTrackOffset;
+    clone->iAttenuation = iAttenuation;
     iAudioData->AddRef();
     return clone;
 }
@@ -1814,6 +1820,7 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSampleRate, TUi
     iAllocatorPlayableSilence = &aAllocatorPlayableSilence;
     iAudioData = aDecodedAudio;
     iTrackOffset = aTrackOffset;
+    iAttenuation = MsgAudioPcm::kUnityAttenuation;
     const TUint bytes = iAudioData->Bytes();
     const TUint byteDepth = iBitDepth / 8;
     ASSERT(bytes % byteDepth == 0);
@@ -1832,6 +1839,7 @@ void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
     remaining.iTrackOffset = iTrackOffset + iSize;
     remaining.iAllocatorPlayablePcm = iAllocatorPlayablePcm;
     remaining.iAllocatorPlayableSilence = iAllocatorPlayableSilence;
+    remaining.iAttenuation = iAttenuation;
 }
 
 MsgAudio* MsgAudioPcm::Allocate()
@@ -1850,6 +1858,10 @@ Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
     return aProcessor.ProcessMsg(this);
 }
 
+void MsgAudioPcm::SetAttenuation(TUint16 aAttenuation)
+{
+    iAttenuation = aAttenuation;
+}
 
 // MsgSilence
 
@@ -2069,26 +2081,49 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 }
 
 void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
-                                TUint aNumChannels, TUint aOffsetBytes, const Media::Ramp& aRamp,
+                                TUint aNumChannels, TUint aOffsetBytes, TUint16 aAttenuation, const Media::Ramp& aRamp,
                                 Optional<IPipelineBufferObserver> aPipelineBufferObserver)
 {
     MsgPlayable::Initialise(aSizeBytes, aSampleRate, aBitDepth, aNumChannels,
                             aOffsetBytes, aRamp, aPipelineBufferObserver);
     iAudioData = aDecodedAudio;
     iAudioData->AddRef();
+    iAttenuation = aAttenuation;
+}
+
+Brn MsgPlayablePcm::ApplyAttenuation(Brn aData)
+{
+    static Bws<AudioData::kMaxBytes> attenuatedData; //what is the best type for this buffer!
+
+    if(iAttenuation != MsgAudioPcm::kUnityAttenuation) {
+        switch (iBitDepth) {
+        case 16:
+            {
+                TInt16* source = (TInt16*)aData.Ptr();
+                TInt16* dest = (TInt16*)attenuatedData.Ptr();
+                TUint samples = aData.Bytes()/2;
+                attenuatedData.SetBytes(aData.Bytes());
+                for(TUint i = 0; i < samples; i++) {
+                    dest[i] = (TInt16)((TInt32)source[i] * iAttenuation / MsgAudioPcm::kUnityAttenuation);
+                }
+            }
+            break;
+
+        default:
+            ASSERTS();  //only supports 16 bit data (for AirPlay)
+            break;
+        }
+        return Brn(attenuatedData);  // return modified data buffer
+    }
+    else {
+        return aData;           // return original data buffer
+    }
 }
 
 void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
 {
-    Brn audioBuf(iAudioData->Ptr(iOffset), iSize);
-    /*{
-        const TUint testBytes = audioBuf.Bytes();
-        for (TUint i=0; i<testBytes; i++) {
-            if (audioBuf[i] == 0xcd) {
-                _asm int 3;
-            }
-        }
-    }*/
+    Brn audioBuf = ApplyAttenuation(Brn(iAudioData->Ptr(iOffset), iSize));
+
     const TUint numChannels = iNumChannels;
     const TUint bitDepth = iBitDepth;
     if (iRamp.IsEnabled()) {
@@ -2101,6 +2136,7 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
         TUint fragmentSamples = 0;
         for (TUint i=0; i<numSamples; i++) {
             ra.GetNextSample(ptr);
+
             fragmentSamples++;
             ptr += bytesPerSample;
             if (fragmentSamples == samplesPerFragment || i == numSamples-1) {
@@ -2146,6 +2182,7 @@ void MsgPlayablePcm::ReadBlock(IPcmProcessor& aProcessor)
             ASSERTS();
         }
     }
+
 }
 
 MsgPlayable* MsgPlayablePcm::Allocate()

@@ -334,6 +334,11 @@ void PipelineManager::SetPostPipelineLatency(TUint aLatencyJiffies)
     iPipeline->SetPostPipelineLatency(aLatencyJiffies);
 }
 
+void PipelineManager::SetAttenuation(TUint aAttenuation)
+{
+    iPipeline->SetAttenuation(aAttenuation);
+}
+
 void PipelineManager::NotifyPipelineState(EPipelineState aState)
 {
     for (TUint i=0; i<iObservers.size(); i++) {
