@@ -30,39 +30,23 @@ Attenuator::Attenuator(IPipelineElementUpstream& aUpstreamElement)
 {
 }
 
-Attenuator::~Attenuator()
-{
-}
-
 void Attenuator::SetAttenuation(TUint aAttenuation)
 {
-    Log::Print("Attenuator::SetAttenuation(%d)\n", aAttenuation);
     iAttenuation = aAttenuation;
 }
 
 Msg* Attenuator::Pull()
 {
-    Msg* msg;
-    if (!iQueue.IsEmpty()) {
-        msg = iQueue.Dequeue();
-    }
-    else {
-        msg = iUpstreamElement.Pull();
-    }
-    msg = msg->Process(*this);
+    Msg* msg = iUpstreamElement.Pull()->Process(*this);
+
     ASSERT(msg != nullptr);
     return msg;
 }
 
 Msg* Attenuator::ProcessMsg(MsgMode* aMsg)
 {
-    Log::Print("Attenuator::ProcessMsg("); Log::Print(aMsg->Mode()); Log::Print(")\n");
-    if (aMsg->Mode() == Brn("RAOP")) {
-        iActive = true;
-    }
-    else {
-        iActive = false;
-    }
+    iActive = aMsg->Mode() == Brn("RAOP");
+
     return aMsg;
 }
 

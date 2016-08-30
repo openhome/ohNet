@@ -702,9 +702,6 @@ TUint RampApplicator::Start(const Brx& aData, TUint aBitDepth, TUint aNumChannel
     ASSERT_DEBUG(aData.Bytes() % ((iBitDepth/8) * iNumChannels) == 0);
     iNumSamples = (TInt)(aData.Bytes() / ((iBitDepth/8) * iNumChannels));
     iTotalRamp = (iRamp.Start() - iRamp.End());
-    if(iTotalRamp != 0) {
-//        Log::Print("iTotalRamp %d\n", iTotalRamp);
-    }
     iLoopCount = 0;
     return iNumSamples;
 }
@@ -1746,7 +1743,7 @@ void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 // MsgAudioPcm
 
 const TUint64 MsgAudioPcm::kTrackOffsetInvalid = UINT64_MAX;
-const TUint16 MsgAudioPcm::kUnityAttenuation = 256;
+const TUint MsgAudioPcm::kUnityAttenuation = 256;
 
 MsgAudioPcm::MsgAudioPcm(AllocatorBase& aAllocator)
     : MsgAudio(aAllocator)
@@ -1858,7 +1855,7 @@ Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
     return aProcessor.ProcessMsg(this);
 }
 
-void MsgAudioPcm::SetAttenuation(TUint16 aAttenuation)
+void MsgAudioPcm::SetAttenuation(TUint aAttenuation)
 {
     iAttenuation = aAttenuation;
 }
@@ -2081,7 +2078,7 @@ MsgPlayablePcm::MsgPlayablePcm(AllocatorBase& aAllocator)
 }
 
 void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
-                                TUint aNumChannels, TUint aOffsetBytes, TUint16 aAttenuation, const Media::Ramp& aRamp,
+                                TUint aNumChannels, TUint aOffsetBytes, TUint aAttenuation, const Media::Ramp& aRamp,
                                 Optional<IPipelineBufferObserver> aPipelineBufferObserver)
 {
     MsgPlayable::Initialise(aSizeBytes, aSampleRate, aBitDepth, aNumChannels,
@@ -2093,7 +2090,9 @@ void MsgPlayablePcm::Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, T
 
 Brn MsgPlayablePcm::ApplyAttenuation(Brn aData)
 {
-    static Bws<AudioData::kMaxBytes> attenuatedData; //what is the best type for this buffer!
+    // Note: A static buffer is used here for performance reasons.
+    // This method must only be called from a single thread to ensure data validity.
+    static Bws<AudioData::kMaxBytes> attenuatedData;
 
     if(iAttenuation != MsgAudioPcm::kUnityAttenuation) {
         switch (iBitDepth) {

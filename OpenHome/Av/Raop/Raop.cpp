@@ -492,7 +492,7 @@ void RaopDiscoverySession::Run()
 
                                     vol = 300 + vol; // range 0-300
                                     if(vol < 0) {
-                                        vol = 0;    // muted
+                                        vol = 0;    // muted if less than -300
                                     }
                                     vol *= vol;     // convert from linear scale
                                     vol /= 90; // range 0-1000
@@ -500,7 +500,6 @@ void RaopDiscoverySession::Run()
                                     vol *= IAttenuator::kUnityAttenuation;
                                     vol /= 1000; // convert so that 100% = 256 for efficient scaling
 
-                                    //Log::Print("dvol %f, dvol2 %f, vol %d\n", dvol, dvol2, vol);
                                     iAttenuator.SetAttenuation((TUint)vol);
                                 }
                                 else {

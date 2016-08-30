@@ -27,8 +27,6 @@ class Attenuator : public PipelineElement, public IPipelineElementUpstream, publ
     static const TUint kSupportedMsgTypes;
 public:
     Attenuator(IPipelineElementUpstream& aUpstreamElement);
-    virtual ~Attenuator();
-//    void SetAttenuation(TUint16 aAttenuation);
 public: // from IAttenuator
     void SetAttenuation(TUint aAttenuation) override;
 public: // from IPipelineElementUpstream
@@ -38,9 +36,8 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
     IPipelineElementUpstream& iUpstreamElement;
-    MsgQueueLite iQueue;
-    TUint16 iAttenuation;
-    std::atomic<TBool> iActive;
+    std::atomic<TUint> iAttenuation;
+    TBool iActive;
 };
 
 } // namespace Media
