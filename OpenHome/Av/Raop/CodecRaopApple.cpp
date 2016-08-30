@@ -98,12 +98,13 @@ void CodecRaopApple::StreamInitialise()
 
     iBytesPerSample = iChannels*iBitDepth / 8;
     iSamplesWrittenTotal = 0;
+    iBitRate = iSampleRate * iBytesPerSample * 8;
     iTrackLengthJiffies = 0;// (iDuration * Jiffies::kPerSecond) / iTimescale;
 
 
-    /*LOG(kCodec, "CodecRaopApple::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n",
+    /*LOG(kCodec, "CodecRaopApple::StreamInitialise  iBitRate: %u, iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitRate, 
                   iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);*/
-    iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecRaopApple::TrySeek(TUint aStreamId, TUint64 aSample)
