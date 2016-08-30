@@ -170,7 +170,7 @@ void CodecAlacApple::StreamInitialise()
     iBytesPerSample = info.Channels()*iBitDepth/8;
     iSampleRate = info.Timescale();
     iSamplesWrittenTotal = 0;
-    iBitRate = iSampleRate * iBytesPerSample * 8;
+    iBitRate = iSampleRate * iBytesPerSample * 8;   // NOTE: This is not the true ALAC bitrate. It's actually the PCM equivalent! (Which is fine in this case, given that ALAC is lossless.)
     iTrackLengthJiffies = (info.Duration() * Jiffies::kPerSecond) / info.Timescale();
 
 
