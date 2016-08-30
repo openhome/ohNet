@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Av/VolumeManager.h>
+#include <atomic>
 
 namespace OpenHome {
 namespace Media {
@@ -39,6 +40,7 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgQueueLite iQueue;
     TUint16 iAttenuation;
+    std::atomic<TBool> iActive;
 };
 
 } // namespace Media

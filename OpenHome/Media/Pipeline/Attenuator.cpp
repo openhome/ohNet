@@ -26,6 +26,7 @@ Attenuator::Attenuator(IPipelineElementUpstream& aUpstreamElement)
     : PipelineElement(kSupportedMsgTypes)
     , iUpstreamElement(aUpstreamElement)
     , iAttenuation(kUnityAttenuation)
+    , iActive(false)
 {
 }
 
@@ -57,10 +58,10 @@ Msg* Attenuator::ProcessMsg(MsgMode* aMsg)
 {
     Log::Print("Attenuator::ProcessMsg("); Log::Print(aMsg->Mode()); Log::Print(")\n");
     if (aMsg->Mode() == Brn("RAOP")) {
-        iAttenuation = 0;
+        iActive = true;
     }
     else {
-        iAttenuation = MsgAudioPcm::kUnityAttenuation;
+        iActive = false;
     }
     return aMsg;
 }
@@ -68,6 +69,8 @@ Msg* Attenuator::ProcessMsg(MsgMode* aMsg)
 
 Msg* Attenuator::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    aMsg->SetAttenuation(iAttenuation);
+    if (iActive) {
+        aMsg->SetAttenuation(iAttenuation);
+    }
     return aMsg;
 }
