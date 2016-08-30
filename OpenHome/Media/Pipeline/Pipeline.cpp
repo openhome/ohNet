@@ -25,6 +25,7 @@
 #include <OpenHome/Media/Pipeline/Router.h>
 #include <OpenHome/Media/Pipeline/Drainer.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
+#include <OpenHome/Media/Pipeline/Attenuator.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/Pipeline/Muter.h>
@@ -378,6 +379,10 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerRouter, new Logger(*iRouter, "Router"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iAttenuator, new Attenuator(*upstream),
+                   upstream, elementsSupported, EPipelineSupportElementsMandatory);
+    ATTACH_ELEMENT(iLoggerAttenuator, new Logger(*iAttenuator, "Attenuator"),
+                   upstream, elementsSupported, EPipelineSupportElementsLogger);
     ATTACH_ELEMENT(iDecodedAudioValidatorRouter, new DecodedAudioValidator(*upstream, "Router"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
     ATTACH_ELEMENT(iDrainer, new Drainer(*iMsgFactory, *upstream),
@@ -459,6 +464,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerSpotifyReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerRouter->SetEnabled(true);
+    //iLoggerAttenuator->SetEnabled(true);
     //iLoggerDrainer->SetEnabled(true);
     //iLoggerDelayReservoir->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
@@ -488,6 +494,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerSpotifyReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerRouter->SetFilter(Logger::EMsgAll);
+    //iLoggerAttenuator->SetFilter(Logger::EMsgAll);
     //iLoggerDrainer->SetFilter(Logger::EMsgAll);
     //iLoggerDelayReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
@@ -521,6 +528,8 @@ Pipeline::~Pipeline()
     delete iDecodedAudioValidatorPruner;
     delete iLoggerPruner;
     delete iPruner;
+    delete iLoggerAttenuator;
+    delete iAttenuator;
     delete iDecodedAudioValidatorDelay2;
     delete iRampValidatorDelay2;
     delete iLoggerVariableDelay2;
@@ -837,6 +846,11 @@ void Pipeline::Unmute()
 void Pipeline::SetPostPipelineLatency(TUint aLatencyJiffies)
 {
     iVariableDelay2->OverrideAnimatorLatency(aLatencyJiffies);
+}
+
+void Pipeline::SetAttenuation(TUint aAttenuation)
+{
+    iAttenuator->SetAttenuation(aAttenuation);
 }
 
 void Pipeline::NotifyMode(const Brx& aMode, const ModeInfo& aInfo)

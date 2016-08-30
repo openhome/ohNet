@@ -87,16 +87,14 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-    IVolumeManager& volManager = aMediaPlayer.VolumeManager();
-
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aMediaPlayer.FriendlyNameObservable(), aMacAddr, volManager, volManager, volManager.VolumeMax()*volManager.VolumeMilliDbPerStep());
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aMediaPlayer.FriendlyNameObservable(), aMacAddr, aMediaPlayer.Pipeline());
     iRaopDiscovery->AddObserver(*this);
 
     iAudioId = iServerManager.CreateServer();
     iControlId = iServerManager.CreateServer();
     iTimingId = iServerManager.CreateServer();
 
-    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), *iRaopDiscovery, *iRaopDiscovery, iServerManager, iAudioId, iControlId);   // creating directly, rather than through ProtocolFactory
+    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), *iRaopDiscovery, iServerManager, iAudioId, iControlId);   // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
     // Only one RAOP codec should be added. Only the first will be used.
     //iPipeline.Add(new CodecRaop());

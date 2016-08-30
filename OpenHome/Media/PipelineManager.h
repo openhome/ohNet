@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/Pipeline/Attenuator.h>
 
 #include <vector>
 
@@ -51,6 +52,7 @@ class PipelineManager : public IPipeline
                       , public IPipelineIdManager
                       , public IMute
                       , public IPostPipelineLatency
+                      , public IAttenuator
                       , private IPipelineObserver
                       , private ISeekRestreamer
                       , private IUrlBlockWriter
@@ -256,6 +258,8 @@ private: // from IMute
     void Unmute() override;
 private: // from IPostPipelineLatency
     void SetPostPipelineLatency(TUint aLatencyJiffies) override;
+private: // from IAttenuator
+    void SetAttenuation(TUint aAttenuation) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
     void NotifyMode(const Brx& aMode, const ModeInfo& aInfo) override;

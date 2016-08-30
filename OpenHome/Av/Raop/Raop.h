@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/VolumeManager.h>
+#include <OpenHome/Media/Pipeline/Attenuator.h>
 
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
@@ -160,7 +161,7 @@ private:
     static const TUint kMaxWriteBufferBytes = 4000;
     static const unsigned char kRsaKeyPrivate[];
 public:
-    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolume& aVolume);
+    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, Media::IAttenuator& aAttenuator);
     ~RaopDiscoverySession();
     void Deactivate();
 private: // from SocketTcpSession
@@ -214,13 +215,13 @@ private:
     TUint iTimingPort;
     TUint iClientControlPort;
     TUint iClientTimingPort;
-    IVolume& iVolume;
+    Media::IAttenuator& iAttenuator;
 };
 
 class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume);
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, Media::IAttenuator& aAttenuator);
     ~RaopDiscoveryServer();
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
@@ -262,6 +263,7 @@ private:
     Mutex iObserversLock;
 };
 
+
 /**
  * RAOP uses a TCP channel to discover device capabilities and control
  * streaming session (starting/stopping/flushing/etc.).
@@ -280,12 +282,12 @@ private:
  * 10s keep-alive timeout implemented here, so that if no query is received
  * in that time period, the session is freed up for alternative connections.
  */
-class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, public IVolumeScalerEnabler, private INonCopyable
+class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
-    static const TUint kVolMaxScaled = 1000;
+    static const TUint kVolMaxScaled = 256;
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMaxMilliDb);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, Media::IAttenuator& aAttenuator);
     ~RaopDiscovery();
     void AddObserver(IRaopObserver& aObserver);
 public: // from IRaopDiscovery
@@ -301,8 +303,6 @@ public: // from IRaopObserver
     void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort) override;
     void NotifySessionEnd(const NetworkAdapter& aNif) override;
     void NotifySessionWait(const NetworkAdapter& aNif, TUint aSeq, TUint aTime) override;
-public: // from IVolumeScalerEnabler
-    void SetVolumeEnabled(TBool aEnabled) override;
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;
@@ -326,7 +326,7 @@ private:
     IPowerManagerObserver* iPowerObserver;
     Mutex iServersLock;
     Mutex iObserversLock;
-    VolumeScaler iVolume;
+    Media::IAttenuator& iAttenuator;
 };
 
 } // namespace Av
