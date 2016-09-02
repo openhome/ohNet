@@ -60,7 +60,7 @@ public:
     {
     }
 };
-    
+
 const LpecError LpecError::kCommandNotRecognised = LpecErrorMaker(101, "Command not recognised");
 const LpecError LpecError::kServiceNotSpecified = LpecErrorMaker(102, "Service not specified");
 const LpecError LpecError::kServiceNotFound = LpecErrorMaker(103, "Service not found");
@@ -155,7 +155,6 @@ IPropertyWriter* PropertyWriterFactoryLpec::ClaimWriter(const IDviSubscriptionUs
 
 void PropertyWriterFactoryLpec::ReleaseWriter(IPropertyWriter* aWriter)
 {
-    delete aWriter;
 }
 
 void PropertyWriterFactoryLpec::NotifySubscriptionCreated(const Brx& /*aSid*/)
