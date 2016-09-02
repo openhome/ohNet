@@ -153,7 +153,7 @@ IPropertyWriter* PropertyWriterFactoryLpec::ClaimWriter(const IDviSubscriptionUs
     return this;
 }
 
-void PropertyWriterFactoryLpec::ReleaseWriter(IPropertyWriter* aWriter)
+void PropertyWriterFactoryLpec::ReleaseWriter(IPropertyWriter* /*aWriter*/)
 {
 }
 
