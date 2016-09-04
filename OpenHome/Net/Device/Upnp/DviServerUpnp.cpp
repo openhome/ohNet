@@ -1369,6 +1369,11 @@ DviServerUpnp::DviServerUpnp(DvStack& aDvStack, TUint aPort)
     Initialise();
 }
 
+DviServerUpnp::~DviServerUpnp()
+{
+    Deinitialise();
+}
+
 void DviServerUpnp::SetPathMapper(IPathMapperUpnp& aPathMapper)
 {
     iPathMapper = &aPathMapper;

@@ -946,8 +946,14 @@ SocketTcpServer* DviServerLpec::CreateServer(const NetworkAdapter& aNif)
     return server;
 }
 
+DviServerLpec::~DviServerLpec()
+{
+    Deinitialise();
+}
+
 void DviServerLpec::NotifyServerDeleted(TIpAddress aInterface)
 {
+    Log::Print("NotifyServerDeleted\n");
     for (TUint i=0; i<iAdapterData.size(); i++) {
         AdapterData* ad = iAdapterData[i];
         if (ad->iInterface == aInterface) {

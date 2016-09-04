@@ -288,7 +288,7 @@ void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack)
 {
     Print("TestDvLpec - starting\n");
 
-    Debug::SetLevel(Debug::kLpec | Debug::kError | Debug::kEvent);
+    //Debug::SetLevel(Debug::kLpec | Debug::kError | Debug::kEvent);
     Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceLpec* device = new DeviceLpec(aDvStack);
     NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter("TestDvLpec");
@@ -300,7 +300,7 @@ void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack)
     sem->Wait(5*1000); // allow up to 5 seconds to connect to LPEC server and receive initial ALIVE message
     delete sem;
     cpDevice->TestActions();
-    //cpDevice->TestSubscriptions();
+    cpDevice->TestSubscriptions();
     delete cpDevice;
     delete device;
 

@@ -15,6 +15,10 @@ using namespace OpenHome::Net;
 
 DviServer::~DviServer()
 {
+}
+
+void DviServer::Deinitialise()
+{
     iLock.Wait();
     iDvStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iDvStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
@@ -70,6 +74,7 @@ void DviServer::Initialise()
 
 void DviServer::NotifyServerDeleted(TIpAddress /*aInterface*/)
 {
+
 }
 
 void DviServer::AddServer(NetworkAdapter& aNif)

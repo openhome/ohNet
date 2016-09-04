@@ -222,6 +222,7 @@ class DviServerLpec : public DviServer
 {
 public:
     DviServerLpec(DvStack& aDvStack, TUint aPort = 0);
+    ~DviServerLpec();
     void NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn);
     TUint Port() const;
 private: // from DviServerUpnp

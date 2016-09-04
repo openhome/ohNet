@@ -21,6 +21,7 @@ public:
 protected:
     DviServer(DvStack& aDvStack);
     void Initialise();
+    void Deinitialise();
     virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif) = 0;
     virtual void NotifyServerDeleted(TIpAddress aInterface);
 private:
