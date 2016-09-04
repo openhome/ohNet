@@ -80,6 +80,9 @@ static void RunTestXmlParser(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
+    aInitParams->SetDvNumLpecThreads(4);    // from TestDvLpecMain
+    aInitParams->SetDvLpecServerPort(2324); // from TestDvLpecMain
+
     Library* lib = new Library(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
