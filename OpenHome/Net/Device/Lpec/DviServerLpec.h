@@ -215,7 +215,7 @@ private:
     mutable Bws<128> iResourceUriPrefix;
     std::vector<SubscriptionData> iSubscriptions;
 };
-    
+
 class DvStack;
 
 class DviServerLpec : public DviServer

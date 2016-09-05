@@ -953,7 +953,6 @@ DviServerLpec::~DviServerLpec()
 
 void DviServerLpec::NotifyServerDeleted(TIpAddress aInterface)
 {
-    Log::Print("NotifyServerDeleted\n");
     for (TUint i=0; i<iAdapterData.size(); i++) {
         AdapterData* ad = iAdapterData[i];
         if (ad->iInterface == aInterface) {
