@@ -344,10 +344,7 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(Codec::CodecFactory::NewAifc(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewAac(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts(iMediaPlayer->MimeTypes()));
-    // NOTE - only one of Alac or AlacApple should be added; the first added will be the only one used.
-    //iMediaPlayer->Add(Codec::CodecFactory::NewAlac(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewAlacApple(iMediaPlayer->MimeTypes()));
-    iMediaPlayer->Add(Codec::CodecFactory::NewMp3(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewPcm());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis(iMediaPlayer->MimeTypes()));
 
@@ -400,6 +397,13 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
                                                  Optional<IClockPuller>(nullptr),
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
                                                  Optional<IOhmTimestamper>(iRxTimestamper)));
+
+    // Special case.
+    // MP3 codec frequently does false-positive recognition on non-MPEG streams.
+    // Add the MP3 codec as last plugin to give other codecs (including those
+    // added by source modules, i.e., RAOP) the opportunity to recognise their
+    // own streams.
+    iMediaPlayer->Add(Codec::CodecFactory::NewMp3(iMediaPlayer->MimeTypes()));
 }
 
 void TestMediaPlayer::InitialiseSubsystems()
