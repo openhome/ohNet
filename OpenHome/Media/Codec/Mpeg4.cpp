@@ -2699,6 +2699,7 @@ void Mpeg4Container::Reset()
     iSeekTable.Deinitialise();
     iRecognitionStarted = false;
     iRecognitionSuccess = false;
+    iState = EState::eProcessing;
 }
 
 TBool Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
@@ -2722,7 +2723,24 @@ TBool Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
 
 Msg* Mpeg4Container::Pull()
 {
-    return iBoxRoot.Process();
+    if (iState == EState::eProcessing) {
+        try {
+            return iBoxRoot.Process();
+        }
+        catch (MediaMpeg4FileInvalid&) {
+            iState = EState::eDiscarding;
+            return DiscardRemaining();
+        }
+    }
+    else if (iState == EState::eDiscarding) {
+        return DiscardRemaining();
+    }
+    else {
+        // Unsupported state.
+        ASSERTS();
+    }
+    ASSERTS();
+    return nullptr;
 }
 
 MsgAudioEncoded* Mpeg4Container::GetMetadata()
@@ -2789,4 +2807,23 @@ MsgAudioEncoded* Mpeg4Container::WriteSeekTable() const
 
     MsgAudioEncoded* msg = writerMsg.Msg();
     return msg;
+}
+
+Msg* Mpeg4Container::DiscardRemaining()
+{
+    // Pulls and discards MsgAudioEncoded until another msg type is seen.
+
+    MsgAudioEncodedRecogniser recogniser;
+    for (;;) {
+        Msg* msgIn = iCache->Pull();
+        if (msgIn != nullptr) {
+            Msg* msgOut = msgIn->Process(recogniser);
+            if (msgOut != nullptr) {
+                return msgOut;
+            }
+            else {
+                recogniser.AudioEncoded()->RemoveRef();
+            }
+        }
+    }
 }

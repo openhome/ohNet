@@ -890,6 +890,12 @@ private: // from IMpeg4ChunkSeekObservable
 private:
     MsgAudioEncoded* WriteSampleSizeTable() const;
     MsgAudioEncoded* WriteSeekTable() const;    // FIXME - require this until CodecController/IStreamHandler can pass a seek pos in samples instead of, or as well as, in bytes.
+    Msg* DiscardRemaining();
+private:
+    enum class EState {
+        eProcessing,
+        eDiscarding
+    };
 private:
     Mpeg4BoxProcessorFactory iProcessorFactory;
     Mpeg4BoxSwitcherRoot iBoxRoot;  // Pull directly from this. All other processors should reside inside a factory that lives within this.
@@ -904,6 +910,7 @@ private:
     Bws<4> iRecogBuf;
     TBool iRecognitionStarted;
     TBool iRecognitionSuccess;
+    EState iState;
     mutable Mutex iLock;
 };
 
