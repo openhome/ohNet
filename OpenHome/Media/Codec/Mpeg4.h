@@ -420,6 +420,7 @@ private:
     TUint iBytes;
     TUint iOffset;
     Bws<4> iBuf;
+    TUint iSampleSize;
 };
 
 class IMpeg4DurationSettable

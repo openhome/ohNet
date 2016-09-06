@@ -983,27 +983,38 @@ Msg* Mpeg4BoxStsz::Process()
         }
         else if (iState == eSampleSize) {
             iOffset += iBuf.Bytes();
-            const TUint sampleSize = Converter::BeUint32At(iBuf, 0);
-            if (sampleSize != 0) {
-                // Don't support constant sample size.
-                iCache->Discard(iBytes - iOffset);
-                iOffset = iBytes;
-                THROW(MediaMpeg4FileInvalid); // FIXME - not very accurate. File is valid, it just isn't supported in this code.
-            }
+            iSampleSize = Converter::BeUint32At(iBuf, 0);
             iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eEntryCount;
         }
         else if (iState == eEntryCount) {
             iOffset += iBuf.Bytes();
             const TUint entries = Converter::BeUint32At(iBuf, 0);
-            iSampleSizeTable.Init(entries);
 
             if (entries > 0) {
-                iCache->Inspect(iBuf, iBuf.MaxBytes());
-                iState = eEntry;
+                iSampleSizeTable.Init(entries);
+
+                // If iSampleSize == 0, there follows an array of sample size entries.
+                // If iSampleSize > 0, there are <entries> entries each of size <iSampleSize> (and no array follows).
+                if (iSampleSize > 0) {
+                    // Sample size table currently doesn't support a cheap way of having
+                    // a fixed iSampleSize, so just perform a pseudo-population of it here.
+                    for (TUint i=0; i<entries; i++) {
+                        iSampleSizeTable.AddSampleSize(iSampleSize);
+                    }
+                    iState = eComplete;
+                }
+                else {
+                    // Array of sample size entries follows; prepare to read it.
+                    iCache->Inspect(iBuf, iBuf.MaxBytes());
+                    iState = eEntry;
+                }
             }
             else {
-                iState = eComplete;
+                // Can't play a file with no sample size entries.
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
             }
         }
         else if (iState == eEntry) {
@@ -1041,6 +1052,7 @@ void Mpeg4BoxStsz::Reset()
     iBytes = 0;
     iOffset = 0;
     iBuf.SetBytes(0);
+    iSampleSize = 0;
 }
 
 TBool Mpeg4BoxStsz::Recognise(const Brx& aBoxId) const
@@ -1933,9 +1945,7 @@ TUint Mpeg4BoxMdat::ChunkBytes() const
     // Samples start from 1. However, tables here are indexed from 0.
     for (TUint i = startSample; i < startSample + chunkSamples; i++) {
         const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
-        ASSERT(
-                chunkBytes + sampleBytes <= std::numeric_limits < TUint
-                        > ::max());    // Ensure no overflow.
+        ASSERT(chunkBytes + sampleBytes <= std::numeric_limits<TUint>::max());  // Ensure no overflow.
         chunkBytes += sampleBytes;
     }
     return chunkBytes;
