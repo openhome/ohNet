@@ -17,6 +17,7 @@ public: // from ContainerBase
     Msg* Recognise() override;
     TBool Recognised() const override;
     void Reset() override;
+    void Init(TUint64 aStreamBytes) override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 private:

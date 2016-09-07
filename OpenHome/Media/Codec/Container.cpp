@@ -66,7 +66,7 @@ void MsgAudioEncodedCache::Reset()
     iDiscardBytesRemaining = 0;
     iInspectBytesRemaining = 0;
     iAccumulateBytesRemaining = 0;
-    iBuffer = nullptr;  // Acutal buffer is owned by another class.
+    iBuffer = nullptr;  // Actual buffer is owned by another class.
     iExpectedFlushId = MsgFlush::kIdInvalid;
 }
 
@@ -356,6 +356,10 @@ void ContainerNull::Reset()
 {
 }
 
+void ContainerNull::Init(TUint64 /*aStreamBytes*/)
+{
+}
+
 TBool ContainerNull::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     return iSeekHandler->TrySeekTo(aStreamId, aOffset);
@@ -387,6 +391,10 @@ TBool ContainerDiscard::Recognised() const
 }
 
 void ContainerDiscard::Reset()
+{
+}
+
+void ContainerDiscard::Init(TUint64 /*aStreamBytes*/)
 {
 }
 
@@ -509,6 +517,7 @@ Msg* ContainerController::RecogniseContainer()
                         }
 
                         if (container->Recognised()) {
+                            container->Init(iStreamBytes);
                             iActiveContainer = container;
                             iRewinder.Rewind();
                             iRewinder.Stop();
@@ -611,6 +620,20 @@ Msg* ContainerController::Pull()
         }
         return msg;
     }
+    catch (ContainerStreamCorrupt&) {
+        // A container encountered a stream error. Discard remainder of stream.
+        iActiveContainer = iContainerDiscard;
+        iActiveContainer->Reset();
+
+        Msg* msg = nullptr;
+        while (msg == nullptr) {
+            ASSERT(iActiveContainer != nullptr);
+            msg = iActiveContainer->Pull();
+            ASSERT(msg != nullptr);
+            msg = msg->Process(*this);
+        }
+        return msg;
+    }
 }
 
 Msg* ContainerController::ProcessMsg(MsgMode* aMsg)
@@ -670,6 +693,7 @@ Msg* ContainerController::ProcessMsg(MsgEncodedStream* aMsg)
         return nullptr;
     }
     iRecognising = true;
+    iStreamBytes = aMsg->TotalBytes();
     iState = eRecognitionStart;
     iUrl.Replace(aMsg->Uri());  // Required to allow containers to do an out-of-band read.
 

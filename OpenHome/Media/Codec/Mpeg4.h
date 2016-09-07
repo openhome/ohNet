@@ -186,9 +186,11 @@ public:
 class Mpeg4BoxSwitcherRoot : public IBoxOffsetProvider
 {
 public:
+    static const TChar* kNoTargetId;
+public:
     Mpeg4BoxSwitcherRoot(IMpeg4BoxProcessorFactory& aProcessorFactory);
     void Reset();
-    void Set(IMsgAudioEncodedCache& aCache);
+    void Set(IMsgAudioEncodedCache& aCache, const TChar* aTargetId);
     Msg* Process();
 private: // from IBoxOffsetProvider
     TUint64 BoxOffset() const;
@@ -203,6 +205,7 @@ private:
 private:
     IMpeg4BoxProcessorFactory& iProcessorFactory;
     IMsgAudioEncodedCache* iCache;
+    Brn iTargetId;
     Mpeg4BoxHeaderReader iHeaderReader;
     IMpeg4BoxProcessor* iProcessor;
     EState iState;
@@ -692,10 +695,12 @@ public:
     virtual ~IMpeg4ChunkSeekObservable() {}
 };
 
+class Mpeg4OutOfBandReader;
+
 class Mpeg4BoxMdat : public IMpeg4BoxRecognisable, public IMpeg4ChunkSeekObserver, private INonCopyable
 {
 public:
-    Mpeg4BoxMdat(Mpeg4BoxSwitcherRoot& aBoxSwitcher, IMpeg4MetadataChecker& aMetadataChecker, IMpeg4MetadataProvider& aMetadataProvider, IMpeg4ChunkSeekObservable& aChunkSeeker, IBoxOffsetProvider& aOffsetProvider, MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aUrlBlockWriter, SeekTable& aSeekTable, SampleSizeTable& aSampleSizeTable);
+    Mpeg4BoxMdat(Mpeg4BoxSwitcherRoot& aBoxSwitcher, IMpeg4MetadataChecker& aMetadataChecker, IMpeg4MetadataProvider& aMetadataProvider, IMpeg4ChunkSeekObservable& aChunkSeeker, IBoxOffsetProvider& aOffsetProvider, SeekTable& aSeekTable, SampleSizeTable& aSampleSizeTable, Mpeg4OutOfBandReader& aOutOfBandReader);
 public: // from IMpeg4BoxRecognisable
     Msg* Process() override;
     TBool Complete() const override;
@@ -723,10 +728,9 @@ private:
     IMpeg4MetadataChecker& iMetadataChecker;
     IMpeg4MetadataProvider& iMetadataProvider;
     IBoxOffsetProvider& iOffsetProvider;
-    MsgFactory& iMsgFactory;
-    IContainerUrlBlockWriter& iUrlBlockWriter;
     SeekTable& iSeekTable;
     SampleSizeTable& iSampleSizeTable;
+    Mpeg4OutOfBandReader& iOutOfBandReader;
     IMsgAudioEncodedCache* iCache;
     MsgAudioEncodedRecogniser iAudioEncodedRecogniser;
     EState iState;
@@ -840,7 +844,9 @@ private:
     static const TUint kReadBytes = 1024;
     static const TUint kMaxAccumulateBytes = 1024;
 public:
-    Mpeg4OutOfBandReader(MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset);
+    Mpeg4OutOfBandReader(MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aBlockWriter);
+    void Reset(TUint64 aStreamBytes);
+    void SetReadOffset(TUint64 aStartOffset);
 public: // from IMsgAudioEncodedCache
     void Discard(TUint aBytes) override;
     void Inspect(Bwx& aBuf, TUint aBytes) override;
@@ -852,6 +858,7 @@ private:
     MsgFactory& iMsgFactory;
     IContainerUrlBlockWriter& iBlockWriter;
     TUint64 iOffset;
+    TUint64 iStreamBytes;
     TUint iDiscardBytes;
     TUint iInspectBytes;
     TUint iAccumulateBytes;
@@ -877,11 +884,13 @@ class Mpeg4Container : public ContainerBase, public IMpeg4MetadataProvider, publ
 {
 public:
     Mpeg4Container(IMimeTypeList& aMimeTypeList);
+    ~Mpeg4Container();
 public: // from ContainerBase
     void Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper) override;
     Msg* Recognise() override;
     TBool Recognised() const override;
     void Reset() override;
+    void Init(TUint64 aStreamBytes) override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 private: // from IMpeg4MetadataProvider
@@ -891,12 +900,6 @@ private: // from IMpeg4ChunkSeekObservable
 private:
     MsgAudioEncoded* WriteSampleSizeTable() const;
     MsgAudioEncoded* WriteSeekTable() const;    // FIXME - require this until CodecController/IStreamHandler can pass a seek pos in samples instead of, or as well as, in bytes.
-    Msg* DiscardRemaining();
-private:
-    enum class EState {
-        eProcessing,
-        eDiscarding
-    };
 private:
     Mpeg4BoxProcessorFactory iProcessorFactory;
     Mpeg4BoxSwitcherRoot iBoxRoot;  // Pull directly from this. All other processors should reside inside a factory that lives within this.
@@ -907,11 +910,11 @@ private:
     Mpeg4CodecInfo iCodecInfo;
     SampleSizeTable iSampleSizeTable;
     SeekTable iSeekTable;
+    Mpeg4OutOfBandReader* iOutOfBandReader;
     IMpeg4ChunkSeekObserver* iSeekObserver;
     Bws<4> iRecogBuf;
     TBool iRecognitionStarted;
     TBool iRecognitionSuccess;
-    EState iState;
     mutable Mutex iLock;
 };
 

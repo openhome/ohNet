@@ -926,6 +926,10 @@ void MpegTsContainer::Reset()
     iMpegPes->Reset();
 }
 
+void MpegTsContainer::Init(TUint64 /*aStreamBytes*/)
+{
+}
+
 TBool MpegTsContainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     // Seeking currently unsupported.
