@@ -21,6 +21,7 @@ public:
     static CodecBase* NewFlac(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewMp3(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewPcm();
+    static CodecBase* NewRaop();
     static CodecBase* NewVorbis(IMimeTypeList& aMimeTypeList);
     static CodecBase* NewWav(IMimeTypeList& aMimeTypeList);
 };

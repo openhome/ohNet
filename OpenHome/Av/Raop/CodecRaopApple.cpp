@@ -22,6 +22,12 @@ using namespace OpenHome::Media::Codec;
 using namespace OpenHome::Av;
 
 
+CodecBase* CodecFactory::NewRaop()
+{ // static
+    return new CodecRaopApple();
+}
+
+
 // CodecRaopApple
 
 CodecRaopApple::CodecRaopApple()

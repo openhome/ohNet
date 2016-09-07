@@ -96,9 +96,6 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider
 
     iProtocol = new ProtocolRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory(), *iRaopDiscovery, iServerManager, iAudioId, iControlId);   // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
-    // Only one RAOP codec should be added. Only the first will be used.
-    //iPipeline.Add(new CodecRaop());
-    iPipeline.Add(new CodecRaopApple());
     iPipeline.AddObserver(*this);
 
     SocketUdpServer& serverAudio = iServerManager.Find(iAudioId);

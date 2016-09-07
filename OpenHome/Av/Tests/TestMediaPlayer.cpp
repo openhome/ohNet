@@ -347,6 +347,11 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(Codec::CodecFactory::NewAlacApple(iMediaPlayer->MimeTypes()));
     iMediaPlayer->Add(Codec::CodecFactory::NewPcm());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis(iMediaPlayer->MimeTypes()));
+    // RAOP source must be added towards end of source list.
+    // However, must add RAOP codec before MP3 codec to avoid false-positives.
+    iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
+    // Add MP3 codec last, as it can cause false-positives (with RAOP in particular).
+    iMediaPlayer->Add(Codec::CodecFactory::NewMp3(iMediaPlayer->MimeTypes()));
 
     // Add protocol modules (Radio source can require several stacked Http instances)
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
@@ -397,13 +402,6 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
                                                  Optional<IClockPuller>(nullptr),
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
                                                  Optional<IOhmTimestamper>(iRxTimestamper)));
-
-    // Special case.
-    // MP3 codec frequently does false-positive recognition on non-MPEG streams.
-    // Add the MP3 codec as last plugin to give other codecs (including those
-    // added by source modules, i.e., RAOP) the opportunity to recognise their
-    // own streams.
-    iMediaPlayer->Add(Codec::CodecFactory::NewMp3(iMediaPlayer->MimeTypes()));
 }
 
 void TestMediaPlayer::InitialiseSubsystems()
