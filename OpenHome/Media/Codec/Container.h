@@ -13,6 +13,7 @@
 
 EXCEPTION(CodecStreamCorrupt);
 EXCEPTION(CodecPulledNullMsg);
+EXCEPTION(AudioCacheException); // Thrown if IMsgAudioEncodedCache implementation can't fulfill a request during a Pull() (e.g., trying to perform an out-of-band read from a server which does not support partial gets).
 
 namespace OpenHome {
 namespace Media {
@@ -156,6 +157,22 @@ public: // from ContainerBase
     Msg* Pull() override;
 };
 
+/**
+ * Container that can be used to discard all audio from a stream but still pass
+ * on non-audio messages.
+ */
+class ContainerDiscard : public ContainerBase
+{
+public:
+    ContainerDiscard();
+public: // from ContainerBase
+    Msg* Recognise() override;
+    TBool Recognised() const override;
+    void Reset() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Pull() override;
+};
+
 class ContainerController : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, public IContainerSeekHandler, public IContainerUrlBlockWriter, public IContainerStopper, private INonCopyable
 {
 public:
@@ -213,6 +230,7 @@ private:
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
     ContainerNull* iContainerNull;
+    ContainerDiscard* iContainerDiscard;
     std::atomic<IStreamHandler*> iStreamHandler;
     Bws<Uri::kMaxUriBytes> iUrl;
     TBool iPassThrough;

@@ -843,8 +843,8 @@ void Mpeg4BoxStco::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
 
 // Mpeg4BoxCo64
 
-Mpeg4BoxCo64::Mpeg4BoxCo64(SeekTable& aSeekTable) :
-        iSeekTable(aSeekTable)
+Mpeg4BoxCo64::Mpeg4BoxCo64(SeekTable& aSeekTable)
+    : iSeekTable(aSeekTable)
 {
     Reset();
 }
@@ -950,8 +950,8 @@ void Mpeg4BoxCo64::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
 
 // Mpeg4BoxStsz
 
-Mpeg4BoxStsz::Mpeg4BoxStsz(SampleSizeTable& aSampleSizeTable) :
-        iSampleSizeTable(aSampleSizeTable)
+Mpeg4BoxStsz::Mpeg4BoxStsz(SampleSizeTable& aSampleSizeTable)
+    : iSampleSizeTable(aSampleSizeTable)
 {
     Reset();
 }
@@ -1997,7 +1997,7 @@ void SampleSizeTable::AddSampleSize(TUint aSize)
 TUint32 SampleSizeTable::SampleSize(TUint aIndex) const
 {
     if (aIndex > iTable.size() - 1) {
-        THROW(MediaMpeg4FileInvalid); // FIXME - sign of corrupt file or programmer error (i.e., should ASSERT)?
+        THROW(MediaMpeg4FileInvalid);
     }
     return iTable[aIndex];
 }
@@ -2550,7 +2550,7 @@ Msg* Mpeg4OutOfBandReader::Pull()
             return nullptr;
         }
         else {
-            return nullptr; // Not very helpful for detecting error.
+            THROW(AudioCacheException);
         }
     }
 
@@ -2558,12 +2558,12 @@ Msg* Mpeg4OutOfBandReader::Pull()
         const TBool success = PopulateBuffer(iAccumulateBuffer, iAccumulateBytes);
         iAccumulateBytes = 0;
         if (success) {
-            MsgAudioEncoded* msg =iMsgFactory.CreateMsgAudioEncoded(iAccumulateBuffer);
+            MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(iAccumulateBuffer);
             iAccumulateBuffer.SetBytes(0);
             return msg;
         }
         else {
-            return nullptr; // Not very helpful for detecting error.
+            THROW(AudioCacheException);
         }
     }
     ASSERTS();
@@ -2575,11 +2575,6 @@ TBool Mpeg4OutOfBandReader::PopulateBuffer(Bwx& aBuf, TUint aBytes)
     while (aBytes > 0) {
         TBool success = true;
         if (iReadBuffer.Bytes() == 0) {
-            TUint bytes = iReadBuffer.MaxBytes();
-            if (aBytes < bytes) {
-                bytes = aBytes;
-            }
-            ASSERT(bytes > 0);
             WriterBuffer writerBuffer(iReadBuffer);
             // For efficiency, always try fully populate read buffer.
             success = iBlockWriter.TryGetUrl(writerBuffer, iOffset, iReadBuffer.MaxBytes());
