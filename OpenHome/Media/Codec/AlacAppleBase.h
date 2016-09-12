@@ -43,6 +43,7 @@ protected:
     TUint iChannels;
     TUint iBitDepth;
     TUint iBytesPerSample;
+    TUint iBitRate;
     TUint iSampleRate;
     TUint64 iSamplesWrittenTotal;
     TUint64 iTrackLengthJiffies;

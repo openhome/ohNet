@@ -91,14 +91,14 @@ WebUi = function() {
     var CreateRetryFunction = function(aLongPoll)
     {
         return function() {
-            aLongPoll.SendCreate();
+           aLongPoll.SendCreate();
         }
     }
 
     var LongPoll = function(aCallbackStarted, aCallbackSuccess, aCallbackFailure)
     {
         this.kRetryTimeoutMs = 1000;
-        this.kSessionIdStart = 0
+        this.kSessionIdStart = 0;
         this.kSessionIdInvalid = Number.MAX_SAFE_INTEGER;
         this.iSessionId = this.kSessionIdStart;
         this.iCallbackStarted = aCallbackStarted;
@@ -142,6 +142,7 @@ WebUi = function() {
     LongPoll.prototype.SendSessionId = function(aRequest)
     {
         var sessionId = this.ConstructSessionId();
+        console.log("sessionId: "+sessionId);
         aRequest.SetRequestHeader("Content-type", "text/plain");
         //aRequest.SetRequestHeader("Connection", "close");
         aRequest.Send(sessionId+"\r\n");
@@ -149,20 +150,61 @@ WebUi = function() {
 
     LongPoll.prototype.SendCreate = function()
     {
-        console.log(">LongPoll.SendCreate\n")
-        var request = LongPoll.CreateLongPollRequest(this);
-        // FIXME - need to send URI prefix here
+        console.log("LongPoll.SendCreate \n");
+        var request = new HttpRequest();
+
+        var Response = function(aLongPoll)
+        {
+            if (request.ReadyState() == 4)
+            {
+                if (request.Status() == 200)
+                {
+                    var lines = request.ResponseText().split("\r\n");
+                    var session = lines[1].split(":");
+                    if (session.length == 2)
+                    {
+                        var sessionVal = session[1].split(" ");
+                        if ( (session[0] == "session-id") && (sessionVal.length == 2) )
+                        {
+                            aLongPoll.iSessionId = parseInt(sessionVal[1].trim());
+                            aLongPoll.iCallbackStarted();
+                            aLongPoll.SendPoll();
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    // Covers status of 0, i.e., network issues.
+                    CreateRetry(aLongPoll);
+                }
+            }
+            else if (request.ReadyState() == 0)
+            {
+                // Unable to send request for some reason.
+                CreateRetry(aLongPoll);
+            }
+        }
+
+
+        var CreateRetry = function(aLongPoll)
+        {
+            console.log("LongPoll.CreateFailure");
+            // this is actually a "pre-timeout" (ie delay before calling CreateRetryFunction)
+            setTimeout(CreateRetryFunction(aLongPoll), aLongPoll.kRetryTimeoutMs);
+        }
+
+        var CreateResponseCallback = function(aLongPoll)
+        {
+            return function() {
+                Response(aLongPoll);
+            }
+        }
+
+        request.SetOnReadyStateChange(CreateResponseCallback(this));
         request.Open("POST", "lpcreate", true);
-        try {
-            request.Send()
-            console.log("LongPoll.SendCreate Request sent\n")
-        }
-        catch (err) { // InvalidStateError
-            // Failure; retry.
-            // FIXME - pass error up and have something else retry?
-            console.log("LongPoll.SendCreate Request failed. Retrying.\n")
-            setTimeout(CreateRetryFunction(this), this.kRetryTimeoutMs);
-        }
+        request.SetRequestHeader("Content-type", "text/plain");
+        request.Send();
     }
 
     LongPoll.prototype.SendTerminate = function(aAsynchronous)
@@ -233,7 +275,6 @@ WebUi = function() {
         console.log("LongPoll.Restart this.iSessionId: " + this.iSessionId + " this.kSessionIdInvalid " + this.kSessionIdInvalid);
         if (this.iSessionId !== this.kSessionIdInvalid) {
             var asynchronous = true;
-            this.SendTerminate(asynchronous);
             this.iSessionId = this.kSessionIdStart;
         }
 
@@ -286,19 +327,7 @@ WebUi = function() {
                 var lines = aRequest.ResponseText().split("\r\n");
                 var request = lines[0];
 
-                if (request == 'lpcreate') {
-                    var session = lines[1].split(":");
-                    if (session.length == 2) {
-                        var sessionVal = session[1].split(" ");
-                        if (session[0] == "session-id" && sessionVal.length == 2) {
-                            this.iSessionId = parseInt(sessionVal[1].trim());
-                            this.iCallbackStarted();
-                            this.SendPoll();
-                            return;
-                        }
-                    }
-                }
-                else if (request == 'lp') {
+                if (request == 'lp') {
                     // FIXME - check session ID?
                     // Split string after request line, as the response (i.e., any JSON) may contain newlines.
                     var json = aRequest.ResponseText().substring(lines[0].length+2);    // +2 to account for stripped \r\n

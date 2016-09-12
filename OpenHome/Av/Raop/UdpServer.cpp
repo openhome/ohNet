@@ -35,7 +35,8 @@ Endpoint& MsgUdp::Endpoint()
 
 
 // SocketUdpServer
-SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort, TIpAddress aInterface)
+
+SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aThreadPriority, TUint aPort, TIpAddress aInterface)
     : iEnv(aEnv)
     , iSocket(aEnv, aPort, aInterface)
     , iMaxSize(aMaxSize)
@@ -57,7 +58,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 
     iDiscard = new MsgUdp(iMaxSize);
 
-    iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread));
+    iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread), aThreadPriority);
     iServerThread->Start();
     iSemaphore.Wait();
 
@@ -409,10 +410,11 @@ void SocketUdpServer::CurrentAdapterChanged()
 
 // UdpServerManager
 
-UdpServerManager::UdpServerManager(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets)
+UdpServerManager::UdpServerManager(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aThreadPriority)
     : iEnv(aEnv)
     , iMaxSize(aMaxSize)
     , iMaxPackets(aMaxPackets)
+    , iThreadPriority(aThreadPriority)
     , iLock("USML")
 {
 }
@@ -428,7 +430,7 @@ UdpServerManager::~UdpServerManager()
 TUint UdpServerManager::CreateServer(TUint aPort, TIpAddress aInterface)
 {
     AutoMutex a(iLock);
-    SocketUdpServer* server = new SocketUdpServer(iEnv, iMaxSize, iMaxPackets, aPort, aInterface);
+    SocketUdpServer* server = new SocketUdpServer(iEnv, iMaxSize, iMaxPackets, iThreadPriority, aPort, aInterface);
     iServers.push_back(server);
     return iServers.size()-1;
 }

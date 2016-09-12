@@ -269,11 +269,9 @@ TUint RaopPacketAudio::Ssrc() const
 
 // ProtocolRaop
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IVolumeScalerEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
     : Protocol(aEnv)
     , iTrackFactory(aTrackFactory)
-    , iVolumeEnabled(false)
-    , iVolume(aVolume)
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
     , iAudioServer(iServerManager.Find(aAudioId))
@@ -730,8 +728,6 @@ void ProtocolRaop::WaitForDrain()
 void ProtocolRaop::InputChanged()
 {
     // Only called while WaitForDrain() is blocking main thread, so no need to lock this.
-    iVolumeEnabled = !iVolumeEnabled;   // Toggle volume.
-    iVolume.SetVolumeEnabled(iVolumeEnabled);
     iSemDrain.Signal();
 }
 

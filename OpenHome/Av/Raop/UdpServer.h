@@ -31,7 +31,7 @@ private:
 class SocketUdpServer : public IReaderSource
 {
 public:
-    SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
+    SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aThreadPriority, TUint aPort, TIpAddress aInterface);
     ~SocketUdpServer();
     void Open();
     void Close();
@@ -89,7 +89,7 @@ private:
 class UdpServerManager
 {
 public:
-    UdpServerManager(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets);
+    UdpServerManager(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aThreadPriority);
     ~UdpServerManager();
     TUint CreateServer(TUint aPort = 0, TIpAddress aInterface = 0); // return ID of server
     SocketUdpServer& Find(TUint aId); // find server by ID
@@ -98,8 +98,9 @@ public:
 private:
     std::vector<SocketUdpServer*> iServers;
     Environment& iEnv;
-    TUint iMaxSize;
-    TUint iMaxPackets;
+    const TUint iMaxSize;
+    const TUint iMaxPackets;
+    const TUint iThreadPriority;
     Mutex iLock;
 };
 

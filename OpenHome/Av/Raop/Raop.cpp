@@ -225,7 +225,7 @@ const unsigned char RaopDiscoverySession::kRsaKeyPrivate[] ={
     0x18, 0x8E, 0x10, 0x46, 0xBA, 0x1B, 0xE4, 0x58, 0xA6, 0x97, 0x4F, 0x26
 };
 
-RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IVolume& aVolume)
+RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance, IAttenuator& aAttenuator)
     : iAeskeyPresent(false)
     , iAesSid(0)
     //, iRaopObserver(aObserver)
@@ -239,7 +239,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServe
     , iTimingPort(0)
     , iClientControlPort(0)
     , iClientTimingPort(0)
-    , iVolume(aVolume)
+    , iAttenuator(aAttenuator)
 {
     iReaderBuffer = new Srs<1024>(*this);
     iReaderUntil = new ReaderUntilS<kMaxReadBufferBytes>(*iReaderBuffer);
@@ -490,20 +490,17 @@ void RaopDiscoverySession::Run()
                                 if (validVolString) {
                                     vol = Ascii::Int(volBuf);
 
-                                    // convert to logorithmic scale to give even volume steps
-                                    vol = -vol;         // range 300 to 0
-                                    if (vol > 300) {
-                                        vol = 300;      // muted
+                                    vol = 300 + vol; // range 0-300
+                                    if(vol < 0) {
+                                        vol = 0;    // muted if less than -300
                                     }
-                                    vol = 300 - vol;    // 300 = max
-                                    double dvol = log10(((double)vol+1.0)/301.0);
-                                    double dvol2 = 1000.0 + dvol * 600.0;           //convert to 0-1000 range and bias to match Volkano1
-                                    vol = (TInt)dvol2;
-                                    if (vol < 0) {
-                                        vol = 0;        // muted
-                                    }
-                                    //Log::Print("dvol %f, dvol2 %f, vol %d\n", dvol, dvol2, vol);
-                                    iVolume.SetVolume(vol);
+                                    vol *= vol;     // convert from linear scale
+                                    vol /= 90; // range 0-1000
+
+                                    vol *= IAttenuator::kUnityAttenuation;
+                                    vol /= 1000; // convert so that 100% = 256 for efficient scaling
+
+                                    iAttenuator.SetAttenuation((TUint)vol);
                                 }
                                 else {
                                     LOG(kMedia, "RaopDiscoverySession::Run %u. Invalid volume string encountered: %.*s\n", iInstance, PBUF(remaining));
@@ -766,7 +763,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
 
-RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolume& aVolume)
+RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IAttenuator& aAttenuator)
     : iEnv(aEnv)
     , iAdapter(aNif)
     , iObserversLock("RDOL")
@@ -779,10 +776,10 @@ RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvSta
 
     // Require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging.
     TUint nextSessionId = 1;
-    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolume);
+    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aAttenuator);
     iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
 
-    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aVolume);
+    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, nextSessionId++, aAttenuator);
     iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
 
     TIpAddress ipAddr = iAdapter.Address();
@@ -923,7 +920,7 @@ RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 
 
 // RaopDiscovery
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IVolumeReporter& aVolumeReporter, IVolumeSourceOffset& aVolumeOffset, TUint aVolumeMaxMilliDb)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, IFriendlyNameObservable& aFriendlyNameObservable, const Brx& aMacAddr, IAttenuator& aAttenuator)
     : iEnv(aEnv)
     , iDvStack(aDvStack)
     , iFriendlyNameObservable(aFriendlyNameObservable)
@@ -931,7 +928,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iCurrent(nullptr)
     , iServersLock("RDSL")
     , iObserversLock("RDOL")
-    , iVolume(aVolumeReporter, aVolumeOffset, aVolumeMaxMilliDb, kVolMaxScaled)
+    , iAttenuator(aAttenuator)
 {
     // NOTE: iRaopDevice is not registered by default
     iPowerObserver = aPowerManager.RegisterPowerHandler(*this, kPowerPriorityLowest);
@@ -1085,11 +1082,6 @@ void RaopDiscovery::NotifySessionWait(const NetworkAdapter& /*aNif*/, TUint aSeq
     }
 }
 
-void RaopDiscovery::SetVolumeEnabled(TBool aEnabled)
-{
-    iVolume.SetVolumeEnabled(aEnabled);
-}
-
 void RaopDiscovery::PowerUp()
 {
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
@@ -1219,7 +1211,7 @@ void RaopDiscovery::HandleInterfaceChange()
 
 void RaopDiscovery::AddAdapter(NetworkAdapter& aNif)
 {
-    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iFriendlyNameObservable, iMacAddr, iVolume);
+    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iFriendlyNameObservable, iMacAddr, iAttenuator);
     iServers.push_back(server);
     server->Enable();
     server->AddObserver(*this);

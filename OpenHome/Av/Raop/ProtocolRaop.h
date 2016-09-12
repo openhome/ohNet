@@ -755,7 +755,7 @@ private:
     static const TUint kMaxRepairFrames = 50;
     static const TUint kMinDelayChangeSamples = 441; // Require min change of 10 ms at 44.1KHz to cause delay value to be updated/output.
 public:
-    ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IVolumeScalerEnabler& aVolume, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
+    ProtocolRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
     TUint SendFlush(TUint aSeq, TUint aTime);
 private: // from Protocol
@@ -787,9 +787,15 @@ private:
     static TUint Delay(TUint aSamples);
 private:
     Media::TrackFactory& iTrackFactory;
-    TBool iVolumeEnabled;
-    IVolumeScalerEnabler& iVolume;
     IRaopDiscovery& iDiscovery;
+    // FIXME - can the UDP servers be done away with?
+    // The UDP servers really need to run at same priority as Filler thread (to
+    // avoid dropouts), but that requires instantiators of SourceRaop to have
+    // knowledge of Filler thread priority - undesirable coupling.
+    // Solution is just to have UDP sockets serviced in Stream() method, as
+    // that already runs in Filler thread. Would just need to add interleaving
+    // for servicing control channel, as that is currently handled on its on
+    // thread.
     UdpServerManager& iServerManager;
     Bws<RtpPacketRaop::kMaxPacketBytes> iPacketBuf;
     Bws<RtpPacketRaop::kMaxPacketBytes> iAudioDecrypted;

@@ -24,7 +24,7 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer);
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, Optional<Media::IClockPuller> aClockPuller, const Brx& aMacAddr, TUint aUdpThreadPriority);
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
                                 Optional<Media::IClockPuller> aClockPuller,
                                 Optional<IOhmTimestamper> aTxTimestamper,

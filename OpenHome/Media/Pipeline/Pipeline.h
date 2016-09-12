@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/Pipeline/Attenuator.h>
 
 namespace OpenHome {
 namespace Media {
@@ -109,6 +110,7 @@ class Stopper;
 class Reporter;
 class SpotifyReporter;
 class Router;
+class Attenuator;
 class Drainer;
 class VariableDelayRight;
 class Pruner;
@@ -129,6 +131,7 @@ class Pipeline : public IPipelineElementDownstream
                , public IStopper
                , public IMute
                , public IPostPipelineLatency
+               , public IAttenuator
                , private IStopperObserver
                , private IPipelinePropertyObserver
                , private IStarvationRamperObserver
@@ -189,6 +192,8 @@ private: // from IMute
     void Unmute() override;
 public: // from IPostPipelineLatency
     void SetPostPipelineLatency(TUint aLatencyJiffies) override;
+public: // from IAttenuator
+    void SetAttenuation(TUint aAttenuation) override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();
@@ -263,6 +268,8 @@ private:
     Logger* iLoggerSpotifyReporter;
     Router* iRouter;
     Logger* iLoggerRouter;
+    Attenuator* iAttenuator;
+    Logger* iLoggerAttenuator;
     DecodedAudioValidator* iDecodedAudioValidatorRouter;
     Drainer* iDrainer;
     Logger* iLoggerDrainer;

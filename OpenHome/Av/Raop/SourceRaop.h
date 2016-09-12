@@ -31,7 +31,7 @@ class SourceRaop : public Source, public IRaopObserver, private Media::IPipeline
 private:
     static const Brn kRaopPrefix;
 public:
-    SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider, const Brx& aMacAddr);
+    SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider, const Brx& aMacAddr, TUint aUdpThreadPriority);
     ~SourceRaop();
     IRaopDiscovery& Discovery();
 private: // from ISource

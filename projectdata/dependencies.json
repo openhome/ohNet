@@ -28,7 +28,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.6.339",
+        "version": "0.8.374",
         "cross-check": false,
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
@@ -38,7 +38,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.216",
+        "version":          "0.1.231",
         "cross-check":      false,
         "archive-suffix":   "-Release",
         "platform-ignore": {

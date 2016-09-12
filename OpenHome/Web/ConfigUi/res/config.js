@@ -47,14 +47,16 @@ Config = function() {
             // there has been an error, so ignore aCallbackError and provide a
             // custom error handler that redirects errors to aCallbackResponse.
 
-            var CallbackError = function(aString, aResponseText, aResponseStatus) {
+            var CallbackResponse = function(aString, aResponseText, aResponseStatus) {
+                console.log("Reboot: CallbackResponse \n");
                 aCallbackResponse(aString, "");
+                WebUi.RestartLongPolling();
             }
 
             var request = {};
             request.request = {};
             request.request.type = "reboot";
-            WebUi.SendUpdateToServer(JSON.stringify(request), aCallbackResponse, CallbackError);
+            WebUi.SendUpdateToServer(JSON.stringify(request), CallbackResponse, CallbackResponse);
 
             // Removing next vline fixes #4222 : "Reboot button on Konfig does not always reboot the device"
             //WebUi.RestartLongPolling();   // causing tabs to be destroyed before the reboot is executed.

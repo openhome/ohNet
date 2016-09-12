@@ -238,6 +238,7 @@ private:
     TUint iEnd;
     EDirection iDirection;
     TBool iEnabled;
+    TUint iAttenuation;
 };
 
 class RampApplicator : private INonCopyable
@@ -677,11 +678,13 @@ class MsgAudioPcm : public MsgAudio
     friend class MsgFactory;
 public:
     static const TUint64 kTrackOffsetInvalid;
+    static const TUint kUnityAttenuation;
 public:
     MsgAudioPcm(AllocatorBase& aAllocator);
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm* aMsg); // append aMsg to the end of this msg, removes ref on aMsg
+    void SetAttenuation(TUint aAttenuation);
 public: // from MsgAudio
     MsgAudio* Clone() override; // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
@@ -699,6 +702,7 @@ private:
     Allocator<MsgPlayablePcm>* iAllocatorPlayablePcm;
     Allocator<MsgPlayableSilence>* iAllocatorPlayableSilence;
     TUint64 iTrackOffset;
+    TUint iAttenuation;
 };
 
 class MsgPlayableSilence;
@@ -781,7 +785,7 @@ public:
     MsgPlayablePcm(AllocatorBase& aAllocator);
 private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint aSizeBytes, TUint aSampleRate, TUint aBitDepth,
-                    TUint aNumChannels, TUint aOffsetBytes, const Media::Ramp& aRamp,
+                    TUint aNumChannels, TUint aOffsetBytes, TUint aAttenuation, const Media::Ramp& aRamp,
                     Optional<IPipelineBufferObserver> aPipelineBufferObserver);
 private: // from MsgPlayable
     MsgPlayable* Allocate() override;
@@ -790,7 +794,9 @@ private: // from MsgPlayable
 private: // from Msg
     void Clear() override;
 private:
+    Brn ApplyAttenuation(Brn aData);
     DecodedAudio* iAudioData;
+    TUint iAttenuation;
 };
 
 class MsgPlayableSilence : public MsgPlayable
