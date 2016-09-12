@@ -34,14 +34,18 @@ public:
 /*
     FIXME - limited support for objects
             limited support for arrays
-            no unit tests
 */
 
+// FIXME - assumes all JSON must be contained within an object.
 class JsonParser
 {
 public:
     JsonParser();
-    void Reset();
+    void Reset(); // FIXME - Called internally at start of Parse(). Therefore can/should this be private?
+    // FIXME - if aUnescapeInPlace, MUST pass in a Bwx, but possible to pass in a const Brx and then attempt to modify const memory, resulting in difficult-to-trace crash.
+    // Should probably split into 2 methods analogous to the following:
+    // void Parse(const Brx& aJson);
+    // void ParseAndUnescape(Bwx& aJson);
     void Parse(const Brx& aJson, TBool aUnescapeInPlace);
     TBool HasKey(const TChar* aKey) const;
     TBool HasKey(const Brx& aKey) const;
@@ -76,6 +80,7 @@ class WriterJsonObject
 {
     friend class WriterJsonArray;
 public:
+    // FIXME - why are these WriteKey() methods public, as it appears keys are created when writing a particular entry type?
     void WriteKey(const TChar* aKey);
     void WriteKey(const Brx& aKey);
     void WriteInt(const TChar* aKey, TInt aValue);
@@ -102,6 +107,7 @@ protected:
     TBool iWrittenFirstKey;
 };
 
+// FIXME - a JSON document does not necessarily need to be enclosed within an object (it may, for example, be enclosed in an array).
 class WriterJsonDocument : public WriterJsonObject
 {
 public:
