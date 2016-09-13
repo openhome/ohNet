@@ -28,7 +28,9 @@ public: // from IPowerHandler
     void PowerUp();
     void PowerDown();
 private:
-    static const TUint kSleepTime = 1; // sleep time during callbacks to artificially increase env time
+    // Have seen scenarios where using 1 ms sleep can result in a subsequent
+    // call reportedly happening within the same ms. So use 2 ms instead.
+    static const TUint kSleepTime = 2; // sleep time during callbacks to artificially increase env time
     Environment& iEnv;
     TUint64 iTime;
     TUint iPowerUpCount;
@@ -155,7 +157,9 @@ private:
     public: // from IStoreReadWrite
         void Write(const Brx& aKey, const Brx& aSource);
     private:
-        static const TUint kSleepTime = 1;
+        // Have seen scenarios where using 1 ms sleep can result in a subsequent
+        // call reportedly happening within the same ms. So use 2 ms instead.
+        static const TUint kSleepTime = 2;
         Environment& iEnv;
     };
 protected:
