@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <atomic>
 #include <memory>
 
 using namespace OpenHome;
@@ -16,23 +17,37 @@ using namespace OpenHome::Configuration;
 
 namespace OpenHome {
 
+class IMockTicker
+{
+public:
+    virtual TUint GetTick() = 0;
+    virtual ~IMockTicker() {}
+};
+
+class MockTicker : public IMockTicker
+{
+public:
+    MockTicker();
+public: // from IMockTicker
+    TUint GetTick() override;
+private:
+    std::atomic<TUint> iTick;
+};
+
 class HelperPowerHandler : public IPowerHandler, public INonCopyable
 {
 public:
-    HelperPowerHandler(Environment& aEnv);
+    HelperPowerHandler(IMockTicker& aTicker);
 public:
-    TUint64 Time() const;
+    TUint Time() const;
     TUint PowerUpCount() const;
     TUint PowerDownCount() const;
 public: // from IPowerHandler
     void PowerUp();
     void PowerDown();
 private:
-    // Have seen scenarios where using 1 ms sleep can result in a subsequent
-    // call reportedly happening within the same ms. So use 2 ms instead.
-    static const TUint kSleepTime = 2; // sleep time during callbacks to artificially increase env time
-    Environment& iEnv;
-    TUint64 iTime;
+    IMockTicker& iTicker;
+    TUint iTime;
     TUint iPowerUpCount;
     TUint iPowerDownCount;
 };
@@ -88,7 +103,7 @@ private:
 class SuitePowerManager : public SuiteUnitTest, private IStandbyHandlerObserver, public INonCopyable
 {
 public:
-    SuitePowerManager(Environment& aEnv);
+    SuitePowerManager();
 private: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
@@ -116,9 +131,9 @@ private:
     void TestShutdownNoCallbackOnDuplicateStateSet();
     void TestStandbyHandlerPriorities();
 private:
-    Environment& iEnv;
     ConfigStartupStandby* iDummyConfigManager;
     PowerManager* iPowerManager;
+    MockTicker* iMockTicker;
     HelperPowerHandler* iHandler1;
     HelperPowerHandler* iHandler2;
     HelperPowerHandler* iHandler3;
@@ -143,7 +158,7 @@ protected:
 class SuiteStoreValOrdering : public SuiteUnitTest, private INonCopyable
 {
 protected:
-    SuiteStoreValOrdering(const TChar* aName, Environment& aEnv);
+    SuiteStoreValOrdering(const TChar* aName);
 protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -153,24 +168,20 @@ private:
     class OrderingRamStore : public ConfigRamStore
     {
     public:
-        OrderingRamStore(Environment& aEnv);
+        OrderingRamStore(IMockTicker& aTicker);
     public: // from IStoreReadWrite
         void Write(const Brx& aKey, const Brx& aSource);
     private:
-        // Have seen scenarios where using 1 ms sleep can result in a subsequent
-        // call reportedly happening within the same ms. So use 2 ms instead.
-        static const TUint kSleepTime = 2;
-        Environment& iEnv;
+        IMockTicker& iTicker;
     };
 protected:
     static const Brn kKey1;
     static const Brn kKey2;
     static const Brn kKey3;
+    MockTicker* iTicker;
     OrderingRamStore* iStore;
     ConfigStartupStandby* iDummyConfigManager;
     PowerManager* iPowerManager;
-private:
-    Environment& iEnv;
 };
 
 class SuiteStoreInt : public SuiteStoreVal
@@ -198,7 +209,7 @@ private:
 class SuiteStoreIntOrdering : public SuiteStoreValOrdering
 {
 public:
-    SuiteStoreIntOrdering(Environment& aEnv);
+    SuiteStoreIntOrdering();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -235,7 +246,7 @@ private:
 class SuiteStoreTextOrdering : public SuiteStoreValOrdering
 {
 public:
-    SuiteStoreTextOrdering(Environment& aEnv);
+    SuiteStoreTextOrdering();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -253,17 +264,30 @@ private:
 
 
 
+// MockTicker
+
+MockTicker::MockTicker()
+    : iTick(1)
+{
+}
+
+TUint MockTicker::GetTick()
+{
+    return iTick++;
+}
+
+
 // HelperPowerHandler
 
-HelperPowerHandler::HelperPowerHandler(Environment& aEnv)
-    : iEnv(aEnv)
+HelperPowerHandler::HelperPowerHandler(IMockTicker& aTicker)
+    : iTicker(aTicker)
     , iTime(0)
     , iPowerUpCount(0)
     , iPowerDownCount(0)
 {
 }
 
-TUint64 HelperPowerHandler::Time() const
+TUint HelperPowerHandler::Time() const
 {
     return iTime;
 }
@@ -286,8 +310,7 @@ void HelperPowerHandler::PowerUp()
 void HelperPowerHandler::PowerDown()
 {
     iPowerDownCount++;
-    iTime = Os::TimeInUs(iEnv.OsCtx());
-    Thread::Sleep(kSleepTime);
+    iTime = iTicker.GetTick();
 }
 
 
@@ -398,9 +421,8 @@ void ConfigStartupStandby::Delete(const Brx& /*aKey*/)
 
 // SuitePowerManager
 
-SuitePowerManager::SuitePowerManager(Environment& aEnv)
+SuitePowerManager::SuitePowerManager()
     : SuiteUnitTest("SuitePowerManager")
-    , iEnv(aEnv)
 {
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownNothingRegistered), "TestPowerDownNothingRegistered");
     AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityLowest), "TestPriorityLowest");
@@ -428,14 +450,16 @@ void SuitePowerManager::Setup()
 {
     iDummyConfigManager = new ConfigStartupStandby();
     iPowerManager = new PowerManager(*iDummyConfigManager);
-    iHandler1 = new HelperPowerHandler(iEnv);
-    iHandler2 = new HelperPowerHandler(iEnv);
-    iHandler3 = new HelperPowerHandler(iEnv);
+    iMockTicker = new MockTicker();
+    iHandler1 = new HelperPowerHandler(*iMockTicker);
+    iHandler2 = new HelperPowerHandler(*iMockTicker);
+    iHandler3 = new HelperPowerHandler(*iMockTicker);
 }
 
 void SuitePowerManager::TearDown()
 {
     iStandbyHandlerRunOrder.clear();
+    delete iMockTicker;
     delete iHandler3;
     delete iHandler2;
     delete iHandler1;
@@ -498,7 +522,7 @@ void SuitePowerManager::TestMultipleFunctorsAddedInOrder()
     IPowerManagerObserver* observer2 = iPowerManager->RegisterPowerHandler(*iHandler2, kPowerPriorityNormal);
     IPowerManagerObserver* observer3 = iPowerManager->RegisterPowerHandler(*iHandler3, kPowerPriorityLowest);
     iPowerManager->NotifyPowerDown();
-    Log::Print("TestMultipleFunctorsAddedInOrder iTimes (us): %llu | %llu | %llu\n", iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
+    Log::Print("TestMultipleFunctorsAddedInOrder iTimes: %u | %u | %u\n", iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
     TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
     TEST(iHandler1->Time() < iHandler2->Time());
     TEST(iHandler2->Time() < iHandler3->Time());
@@ -515,7 +539,7 @@ void SuitePowerManager::TestMultipleFunctorsAddedInReverseOrder()
     IPowerManagerObserver* observer2 = iPowerManager->RegisterPowerHandler(*iHandler2, kPowerPriorityNormal);
     IPowerManagerObserver* observer3 = iPowerManager->RegisterPowerHandler(*iHandler1, kPowerPriorityHighest);
     iPowerManager->NotifyPowerDown();
-    Log::Print("TestMultipleFunctorsAddedInReverseOrder iTimes (us): %llu | %llu | %llu\n",
+    Log::Print("TestMultipleFunctorsAddedInReverseOrder iTimes: %u | %u | %u\n",
                iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
     TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
     TEST(iHandler1->Time() < iHandler2->Time());
@@ -533,7 +557,7 @@ void SuitePowerManager::TestMultipleFunctorsAddedOutOfOrder()
     IPowerManagerObserver* observer2 = iPowerManager->RegisterPowerHandler(*iHandler1, kPowerPriorityHighest);
     IPowerManagerObserver* observer3 = iPowerManager->RegisterPowerHandler(*iHandler3, kPowerPriorityLowest);
     iPowerManager->NotifyPowerDown();
-    Log::Print("TestMultipleFunctorsAddedOutOfOrder iTimes (us): %llu | %llu | %llu\n",
+    Log::Print("TestMultipleFunctorsAddedOutOfOrder iTimes: %u | %u | %u\n",
                iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
     TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
     TEST(iHandler1->Time() < iHandler2->Time());
@@ -552,7 +576,7 @@ void SuitePowerManager::TestMultipleFunctorsSamePriority()
     IPowerManagerObserver* observer2 = iPowerManager->RegisterPowerHandler(*iHandler2, kPowerPriorityNormal);
     IPowerManagerObserver* observer3 = iPowerManager->RegisterPowerHandler(*iHandler3, kPowerPriorityNormal);
     iPowerManager->NotifyPowerDown();
-    Log::Print("TestMultipleFunctorsSamePriority iTimes (us): %llu | %llu | %llu\n",
+    Log::Print("TestMultipleFunctorsSamePriority iTimes: %u | %u | %u\n",
                iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
     TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
     TEST(iHandler1->Time() < iHandler2->Time());
@@ -594,7 +618,7 @@ void SuitePowerManager::TestPowerDownNotCalledTwice()
     // again when its observer is destroyed.
     IPowerManagerObserver* observer = iPowerManager->RegisterPowerHandler(*iHandler1, kPowerPriorityNormal);
     iPowerManager->NotifyPowerDown();
-    TUint64 time = iHandler1->Time();
+    TUint time = iHandler1->Time();
     TEST(time != 0);
     delete observer;
     TEST(iHandler1->Time() == time);
@@ -607,7 +631,7 @@ void SuitePowerManager::TestPowerDownNotCalledAfterDeregistering()
     // called on the IPowerHandler again.
     IPowerManagerObserver* observer = iPowerManager->RegisterPowerHandler(*iHandler1, kPowerPriorityNormal);
     delete observer;
-    TUint64 time = iHandler1->Time();
+    TUint time = iHandler1->Time();
     TEST(time != 0);
     iPowerManager->NotifyPowerDown();
     TEST(iHandler1->Time() == time);
@@ -748,21 +772,20 @@ void SuiteStoreVal::TearDown()
 
 // SuiteStoreValOrdering::OrderingRamStore
 
-SuiteStoreValOrdering::OrderingRamStore::OrderingRamStore(Environment& aEnv)
+SuiteStoreValOrdering::OrderingRamStore::OrderingRamStore(IMockTicker& aTicker)
     : ConfigRamStore()
-    , iEnv(aEnv)
+    , iTicker(aTicker)
 {
 }
 
 void SuiteStoreValOrdering::OrderingRamStore::Write(const Brx& aKey, const Brx& /*aSource*/)
 {
-    TUint time = Os::TimeInMs(iEnv.OsCtx());
+    TUint time = iTicker.GetTick();
     Bws<sizeof(TInt)> buf;
     WriterBuffer writerBuf(buf);
     WriterBinary writerBin(writerBuf);
     writerBin.WriteUint32Be(time);
     ConfigRamStore::Write(aKey, buf);
-    Thread::Sleep(kSleepTime);
 }
 
 
@@ -772,16 +795,16 @@ const Brn SuiteStoreValOrdering::kKey1("store.val.key1");
 const Brn SuiteStoreValOrdering::kKey2("store.val.key2");
 const Brn SuiteStoreValOrdering::kKey3("store.val.key3");
 
-SuiteStoreValOrdering::SuiteStoreValOrdering(const TChar* aName, Environment& aEnv)
+SuiteStoreValOrdering::SuiteStoreValOrdering(const TChar* aName)
     : SuiteUnitTest(aName)
-    , iEnv(aEnv)
 {
     AddTest(MakeFunctor(*this, &SuiteStoreValOrdering::TestPriorityPassedCorrectly), "TestPriorityPassedCorrectly");
 }
 
 void SuiteStoreValOrdering::Setup()
 {
-    iStore = new OrderingRamStore(iEnv);
+    iTicker = new MockTicker();
+    iStore = new OrderingRamStore(*iTicker);
     iDummyConfigManager = new ConfigStartupStandby();
     iPowerManager = new PowerManager(*iDummyConfigManager);
 }
@@ -791,6 +814,7 @@ void SuiteStoreValOrdering::TearDown()
     delete iPowerManager;
     delete iDummyConfigManager;
     delete iStore;
+    delete iTicker;
 }
 
 void SuiteStoreValOrdering::TestPriorityPassedCorrectly()
@@ -804,7 +828,7 @@ void SuiteStoreValOrdering::TestPriorityPassedCorrectly()
     TUint time1 = SuiteStoreInt::IntFromStore(*iStore, kKey3);
     TUint time2 = SuiteStoreInt::IntFromStore(*iStore, kKey1);
     TUint time3 = SuiteStoreInt::IntFromStore(*iStore, kKey2);
-    Log::Print("TestPriorityPassedCorrectly times (ms): %u | %u | %u\n", time1, time2, time3);
+    Log::Print("TestPriorityPassedCorrectly times: %u | %u | %u\n", time1, time2, time3);
     TEST(time1 < time2);
     TEST(time2 < time3);
 }
@@ -946,8 +970,8 @@ void SuiteStoreInt::TestNormalShutdown()
 
 // SuiteStoreIntOrdering
 
-SuiteStoreIntOrdering::SuiteStoreIntOrdering(Environment& aEnv)
-    : SuiteStoreValOrdering("SuiteStoreIntOrdering", aEnv)
+SuiteStoreIntOrdering::SuiteStoreIntOrdering()
+    : SuiteStoreValOrdering("SuiteStoreIntOrdering")
 {
 }
 
@@ -1131,8 +1155,8 @@ const Brn SuiteStoreTextOrdering::kVal1("abc");
 const Brn SuiteStoreTextOrdering::kVal2("def");
 const Brn SuiteStoreTextOrdering::kVal3("ghi");
 
-SuiteStoreTextOrdering::SuiteStoreTextOrdering(Environment& aEnv)
-    : SuiteStoreValOrdering("SuiteStoreTextOrdering", aEnv)
+SuiteStoreTextOrdering::SuiteStoreTextOrdering()
+    : SuiteStoreValOrdering("SuiteStoreTextOrdering")
 {
 }
 
@@ -1157,13 +1181,13 @@ void SuiteStoreTextOrdering::TearDown()
 
 
 
-void TestPowerManager(Environment& aEnv)
+void TestPowerManager()
 {
     Runner runner("PowerManager tests\n");
-    runner.Add(new SuitePowerManager(aEnv));
+    runner.Add(new SuitePowerManager());
     runner.Add(new SuiteStoreInt());
-    runner.Add(new SuiteStoreIntOrdering(aEnv));
+    runner.Add(new SuiteStoreIntOrdering());
     runner.Add(new SuiteStoreText());
-    runner.Add(new SuiteStoreTextOrdering(aEnv));
+    runner.Add(new SuiteStoreTextOrdering());
     runner.Run();
 }
