@@ -13,6 +13,8 @@
 
 EXCEPTION(CodecStreamCorrupt);
 EXCEPTION(CodecPulledNullMsg);
+EXCEPTION(AudioCacheException); // Thrown if IMsgAudioEncodedCache implementation can't fulfill a request during a Pull() (e.g., trying to perform an out-of-band read from a server which does not support partial gets).
+EXCEPTION(ContainerStreamCorrupt);
 
 namespace OpenHome {
 namespace Media {
@@ -79,6 +81,7 @@ public:
     virtual Msg* Recognise() = 0;   // Returns nullptr upon recognition complete.
     virtual TBool Recognised() const = 0; // Can only be called after Recognise() returns nullptr.
     virtual void Reset() = 0;
+    virtual void Init(TUint64 aStreamBytes) = 0;
     virtual TBool TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     const Brx& Id() const;
 protected:
@@ -152,6 +155,24 @@ public: // from ContainerBase
     Msg* Recognise() override;
     TBool Recognised() const override;
     void Reset() override;
+    void Init(TUint64 aStreamBytes) override;
+    TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    Msg* Pull() override;
+};
+
+/**
+ * Container that can be used to discard all audio from a stream but still pass
+ * on non-audio messages.
+ */
+class ContainerDiscard : public ContainerBase
+{
+public:
+    ContainerDiscard();
+public: // from ContainerBase
+    Msg* Recognise() override;
+    TBool Recognised() const override;
+    void Reset() override;
+    void Init(TUint64 aStreamBytes) override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 };
@@ -213,6 +234,7 @@ private:
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
     ContainerNull* iContainerNull;
+    ContainerDiscard* iContainerDiscard;
     std::atomic<IStreamHandler*> iStreamHandler;
     Bws<Uri::kMaxUriBytes> iUrl;
     TBool iPassThrough;
@@ -221,6 +243,7 @@ private:
     TUint iRecogIdx;
     TBool iStreamEnded;
     TUint iStreamId;
+    TUint64 iStreamBytes;
     TUint iExpectedFlushId;
     Mutex iLock;
 };

@@ -236,6 +236,7 @@ public: // from SuiteContainerBase
     Msg* Recognise() override;
     TBool Recognised() const override;
     void Reset() override;
+    void Init(TUint64 aStreamBytes) override;
     TBool TrySeek(TUint aStreamId, TUint64 aOffset) override;
     Msg* Pull() override;
 private:
@@ -1074,6 +1075,10 @@ TBool TestDummyContainer::Recognised() const
 void TestDummyContainer::Reset()
 {
     iResetCount++;
+}
+
+void TestDummyContainer::Init(TUint64 /*aStreamBytes*/)
+{
 }
 
 TBool TestDummyContainer::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)

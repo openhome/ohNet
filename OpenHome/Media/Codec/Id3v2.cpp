@@ -64,6 +64,10 @@ void Id3v2::Reset()
     iBuf.SetBytes(0);
 }
 
+void Id3v2::Init(TUint64 /*aStreamBytes*/)
+{
+}
+
 Msg* Id3v2::Pull()
 {
     /**

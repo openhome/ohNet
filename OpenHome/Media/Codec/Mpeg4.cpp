@@ -239,9 +239,12 @@ const Brx& Mpeg4BoxHeaderReader::Id() const
 
 // Mpeg4BoxSwitcherRoot
 
-Mpeg4BoxSwitcherRoot::Mpeg4BoxSwitcherRoot(
-        IMpeg4BoxProcessorFactory& aProcessorFactory) :
-        iProcessorFactory(aProcessorFactory), iCache(nullptr)
+const TChar* Mpeg4BoxSwitcherRoot::kNoTargetId = "";
+
+Mpeg4BoxSwitcherRoot::Mpeg4BoxSwitcherRoot(IMpeg4BoxProcessorFactory& aProcessorFactory)
+    : iProcessorFactory(aProcessorFactory)
+    , iCache(nullptr)
+    , iTargetId(kNoTargetId)
 {
     Reset();
 }
@@ -253,9 +256,10 @@ void Mpeg4BoxSwitcherRoot::Reset()
     iOffset = 0;
 }
 
-void Mpeg4BoxSwitcherRoot::Set(IMsgAudioEncodedCache& aCache)
+void Mpeg4BoxSwitcherRoot::Set(IMsgAudioEncodedCache& aCache, const TChar* aTargetId)
 {
     iCache = &aCache;
+    iTargetId.Set(aTargetId);
 }
 
 Msg* Mpeg4BoxSwitcherRoot::Process()
@@ -310,11 +314,19 @@ Msg* Mpeg4BoxSwitcherRoot::Process()
             }
         }
         else if (iState == eBox) {
-            // Read next box.
+            // If found target box ID, mark as complete. Otherwise, read next box.
             iOffset += iHeaderReader.Bytes();
-            iProcessor = nullptr;
-            iHeaderReader.Reset(*iCache);
-            iState = eHeader;
+
+            if (iHeaderReader.Id() == iTargetId) {
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eComplete;
+            }
+            else {
+                iProcessor = nullptr;
+                iHeaderReader.Reset(*iCache);
+                iState = eHeader;
+            }
         }
         else {
             // Unhandled state.
@@ -843,8 +855,8 @@ void Mpeg4BoxStco::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
 
 // Mpeg4BoxCo64
 
-Mpeg4BoxCo64::Mpeg4BoxCo64(SeekTable& aSeekTable) :
-        iSeekTable(aSeekTable)
+Mpeg4BoxCo64::Mpeg4BoxCo64(SeekTable& aSeekTable)
+    : iSeekTable(aSeekTable)
 {
     Reset();
 }
@@ -950,8 +962,8 @@ void Mpeg4BoxCo64::Set(IMsgAudioEncodedCache& aCache, TUint aBoxBytes)
 
 // Mpeg4BoxStsz
 
-Mpeg4BoxStsz::Mpeg4BoxStsz(SampleSizeTable& aSampleSizeTable) :
-        iSampleSizeTable(aSampleSizeTable)
+Mpeg4BoxStsz::Mpeg4BoxStsz(SampleSizeTable& aSampleSizeTable)
+    : iSampleSizeTable(aSampleSizeTable)
 {
     Reset();
 }
@@ -983,27 +995,38 @@ Msg* Mpeg4BoxStsz::Process()
         }
         else if (iState == eSampleSize) {
             iOffset += iBuf.Bytes();
-            const TUint sampleSize = Converter::BeUint32At(iBuf, 0);
-            if (sampleSize != 0) {
-                // Don't support constant sample size.
-                iCache->Discard(iBytes - iOffset);
-                iOffset = iBytes;
-                THROW(MediaMpeg4FileInvalid); // FIXME - not very accurate. File is valid, it just isn't supported in this code.
-            }
+            iSampleSize = Converter::BeUint32At(iBuf, 0);
             iCache->Inspect(iBuf, iBuf.MaxBytes());
             iState = eEntryCount;
         }
         else if (iState == eEntryCount) {
             iOffset += iBuf.Bytes();
             const TUint entries = Converter::BeUint32At(iBuf, 0);
-            iSampleSizeTable.Init(entries);
 
             if (entries > 0) {
-                iCache->Inspect(iBuf, iBuf.MaxBytes());
-                iState = eEntry;
+                iSampleSizeTable.Init(entries);
+
+                // If iSampleSize == 0, there follows an array of sample size entries.
+                // If iSampleSize > 0, there are <entries> entries each of size <iSampleSize> (and no array follows).
+                if (iSampleSize > 0) {
+                    // Sample size table currently doesn't support a cheap way of having
+                    // a fixed iSampleSize, so just perform a pseudo-population of it here.
+                    for (TUint i=0; i<entries; i++) {
+                        iSampleSizeTable.AddSampleSize(iSampleSize);
+                    }
+                    iState = eComplete;
+                }
+                else {
+                    // Array of sample size entries follows; prepare to read it.
+                    iCache->Inspect(iBuf, iBuf.MaxBytes());
+                    iState = eEntry;
+                }
             }
             else {
-                iState = eComplete;
+                // Can't play a file with no sample size entries.
+                iCache->Discard(iBytes - iOffset);
+                iOffset = iBytes;
+                THROW(MediaMpeg4FileInvalid);
             }
         }
         else if (iState == eEntry) {
@@ -1041,6 +1064,7 @@ void Mpeg4BoxStsz::Reset()
     iBytes = 0;
     iOffset = 0;
     iBuf.SetBytes(0);
+    iSampleSize = 0;
 }
 
 TBool Mpeg4BoxStsz::Recognise(const Brx& aBoxId) const
@@ -1730,15 +1754,14 @@ void Mpeg4CodecInfo::SetCodecInfo(MsgAudioEncoded* aMsg)
 
 // Mpeg4BoxMdat
 
-Mpeg4BoxMdat::Mpeg4BoxMdat(Mpeg4BoxSwitcherRoot& aBoxSwitcher, IMpeg4MetadataChecker& aMetadataChecker, IMpeg4MetadataProvider& aMetadataProvider, IMpeg4ChunkSeekObservable& aChunkSeeker, IBoxOffsetProvider& aOffsetProvider, MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aUrlBlockWriter, SeekTable& aSeekTable, SampleSizeTable& aSampleSizeTable)
+Mpeg4BoxMdat::Mpeg4BoxMdat(Mpeg4BoxSwitcherRoot& aBoxSwitcher, IMpeg4MetadataChecker& aMetadataChecker, IMpeg4MetadataProvider& aMetadataProvider, IMpeg4ChunkSeekObservable& aChunkSeeker, IBoxOffsetProvider& aOffsetProvider, SeekTable& aSeekTable, SampleSizeTable& aSampleSizeTable, Mpeg4OutOfBandReader& aOutOfBandReader)
     : iBoxSwitcher(aBoxSwitcher)
     , iMetadataChecker(aMetadataChecker)
     , iMetadataProvider(aMetadataProvider)
     , iOffsetProvider(aOffsetProvider)
-    , iMsgFactory(aMsgFactory)
-    , iUrlBlockWriter(aUrlBlockWriter)
     , iSeekTable(aSeekTable)
     , iSampleSizeTable(aSampleSizeTable)
+    , iOutOfBandReader(aOutOfBandReader)
     , iLock("MP4D")
 {
     aChunkSeeker.RegisterChunkSeekObserver(*this);
@@ -1767,9 +1790,9 @@ Msg* Mpeg4BoxMdat::Process()
             }
         }
         else if (iState == eRetrieveMetadata) {
-            Mpeg4OutOfBandReader reader(iMsgFactory, iUrlBlockWriter, iFileReadOffset+iBytes);
+            iOutOfBandReader.SetReadOffset(iFileReadOffset+iBytes);
             iBoxSwitcher.Reset();
-            iBoxSwitcher.Set(reader);
+            iBoxSwitcher.Set(iOutOfBandReader, "moov");
             Msg* msg = iBoxSwitcher.Process();
             ASSERT(msg == nullptr); // Shouldn't get any msgs from out-of-band reader.
 
@@ -1933,9 +1956,7 @@ TUint Mpeg4BoxMdat::ChunkBytes() const
     // Samples start from 1. However, tables here are indexed from 0.
     for (TUint i = startSample; i < startSample + chunkSamples; i++) {
         const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
-        ASSERT(
-                chunkBytes + sampleBytes <= std::numeric_limits < TUint
-                        > ::max());    // Ensure no overflow.
+        ASSERT(chunkBytes + sampleBytes <= std::numeric_limits<TUint>::max());  // Ensure no overflow.
         chunkBytes += sampleBytes;
     }
     return chunkBytes;
@@ -1987,7 +2008,7 @@ void SampleSizeTable::AddSampleSize(TUint aSize)
 TUint32 SampleSizeTable::SampleSize(TUint aIndex) const
 {
     if (aIndex > iTable.size() - 1) {
-        THROW(MediaMpeg4FileInvalid); // FIXME - sign of corrupt file or programmer error (i.e., should ASSERT)?
+        THROW(MediaMpeg4FileInvalid);
     }
     return iTable[aIndex];
 }
@@ -2475,15 +2496,32 @@ void MsgAudioEncodedWriter::AllocateMsg()
 
 // Mpeg4OutOfBandReader
 
-Mpeg4OutOfBandReader::Mpeg4OutOfBandReader(MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aBlockWriter, TUint64 aStartOffset)
+Mpeg4OutOfBandReader::Mpeg4OutOfBandReader(MsgFactory& aMsgFactory, IContainerUrlBlockWriter& aBlockWriter)
     : iMsgFactory(aMsgFactory)
     , iBlockWriter(aBlockWriter)
-    , iOffset(aStartOffset)
+    , iOffset(0)
+    , iStreamBytes(0)
     , iDiscardBytes(0)
     , iInspectBytes(0)
     , iAccumulateBytes(0)
     , iInspectBuffer(nullptr)
 {
+}
+
+void Mpeg4OutOfBandReader::Reset(TUint64 aStreamBytes)
+{
+    iStreamBytes = aStreamBytes;
+    iDiscardBytes = 0;
+    iInspectBytes = 0;
+    iAccumulateBytes = 0;
+    iInspectBuffer = nullptr;
+    iReadBuffer.SetBytes(0);
+    iAccumulateBuffer.SetBytes(0);
+}
+
+void Mpeg4OutOfBandReader::SetReadOffset(TUint64 aStartOffset)
+{
+    iOffset = aStartOffset;
 }
 
 void Mpeg4OutOfBandReader::Discard(TUint aBytes)
@@ -2540,7 +2578,7 @@ Msg* Mpeg4OutOfBandReader::Pull()
             return nullptr;
         }
         else {
-            return nullptr; // Not very helpful for detecting error.
+            THROW(AudioCacheException);
         }
     }
 
@@ -2548,12 +2586,12 @@ Msg* Mpeg4OutOfBandReader::Pull()
         const TBool success = PopulateBuffer(iAccumulateBuffer, iAccumulateBytes);
         iAccumulateBytes = 0;
         if (success) {
-            MsgAudioEncoded* msg =iMsgFactory.CreateMsgAudioEncoded(iAccumulateBuffer);
+            MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(iAccumulateBuffer);
             iAccumulateBuffer.SetBytes(0);
             return msg;
         }
         else {
-            return nullptr; // Not very helpful for detecting error.
+            THROW(AudioCacheException);
         }
     }
     ASSERTS();
@@ -2565,14 +2603,21 @@ TBool Mpeg4OutOfBandReader::PopulateBuffer(Bwx& aBuf, TUint aBytes)
     while (aBytes > 0) {
         TBool success = true;
         if (iReadBuffer.Bytes() == 0) {
-            TUint bytes = iReadBuffer.MaxBytes();
-            if (aBytes < bytes) {
-                bytes = aBytes;
-            }
-            ASSERT(bytes > 0);
             WriterBuffer writerBuffer(iReadBuffer);
-            // For efficiency, always try fully populate read buffer.
-            success = iBlockWriter.TryGetUrl(writerBuffer, iOffset, iReadBuffer.MaxBytes());
+
+            // For efficiency, try fill entire read buffer in case more reads come in.
+            TUint bytes = iReadBuffer.MaxBytes();
+            TUint64 fileBytesRemaining = 0;
+            if (iStreamBytes > iOffset) {
+                fileBytesRemaining = iStreamBytes - iOffset;
+            }
+            // Don't want to read beyond end of stream, as TryGetUrl() will return false.
+            if (fileBytesRemaining < bytes) {
+                // If we get here, fileBytesRemaining MUST fit within TUint.
+                bytes = static_cast<TUint>(fileBytesRemaining);
+            }
+            success = iBlockWriter.TryGetUrl(writerBuffer, iOffset, bytes);
+            //success = iBlockWriter.TryGetUrl(writerBuffer, iOffset, iReadBuffer.MaxBytes());
             iOffset += iReadBuffer.Bytes();
         }
 
@@ -2625,15 +2670,23 @@ Mpeg4Container::Mpeg4Container(IMimeTypeList& aMimeTypeList)
     : ContainerBase(Brn("MP4"))
     , iBoxRoot(iProcessorFactory)
     , iBoxRootOutOfBand(iProcessorFactory) // Share factory; okay here as neither should access the same box simultaneously.
+    , iOutOfBandReader(nullptr)
     , iSeekObserver(nullptr)
     , iLock("MP4L")
 {
     aMimeTypeList.Add("audio/mp4");
 }
 
+Mpeg4Container::~Mpeg4Container()
+{
+    delete iOutOfBandReader;
+}
+
 void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFactory, IContainerSeekHandler& aSeekHandler, IContainerUrlBlockWriter& aUrlBlockWriter, IContainerStopper& aContainerStopper)
 {
     ContainerBase::Construct(aCache, aMsgFactory, aSeekHandler, aUrlBlockWriter, aContainerStopper);
+
+    iOutOfBandReader = new Mpeg4OutOfBandReader(aMsgFactory, aUrlBlockWriter);
 
     iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("trak")));
     iProcessorFactory.Add(new Mpeg4BoxSwitcher(iProcessorFactory, Brn("mdia")));
@@ -2648,7 +2701,7 @@ void Mpeg4Container::Construct(IMsgAudioEncodedCache& aCache, MsgFactory& aMsgFa
     iProcessorFactory.Add(new Mpeg4BoxStsz(iSampleSizeTable));
     iProcessorFactory.Add(new Mpeg4BoxMdhd(iDurationInfo));
     iProcessorFactory.Add(
-        new Mpeg4BoxMdat(iBoxRootOutOfBand, iMetadataChecker, *this, *this, iBoxRoot, *iMsgFactory, *iUrlBlockWriter, iSeekTable, iSampleSizeTable));
+        new Mpeg4BoxMdat(iBoxRootOutOfBand, iMetadataChecker, *this, *this, iBoxRoot, iSeekTable, iSampleSizeTable, *iOutOfBandReader));
 
     ASSERT(iSeekObserver != nullptr);
 
@@ -2689,7 +2742,7 @@ void Mpeg4Container::Reset()
 {
     iProcessorFactory.Reset();
     iBoxRoot.Reset();
-    iBoxRoot.Set(*iCache);
+    iBoxRoot.Set(*iCache, Mpeg4BoxSwitcherRoot::kNoTargetId);
     iBoxRootOutOfBand.Reset();
     iMetadataChecker.Reset();
     iDurationInfo.Reset();
@@ -2699,6 +2752,11 @@ void Mpeg4Container::Reset()
     iSeekTable.Deinitialise();
     iRecognitionStarted = false;
     iRecognitionSuccess = false;
+}
+
+void Mpeg4Container::Init(TUint64 aStreamBytes)
+{
+    iOutOfBandReader->Reset(aStreamBytes);
 }
 
 TBool Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
@@ -2722,7 +2780,12 @@ TBool Mpeg4Container::TrySeek(TUint aStreamId, TUint64 aOffset)
 
 Msg* Mpeg4Container::Pull()
 {
-    return iBoxRoot.Process();
+    try {
+        return iBoxRoot.Process();
+    }
+    catch (MediaMpeg4FileInvalid&) {
+        THROW(ContainerStreamCorrupt);
+    }
 }
 
 MsgAudioEncoded* Mpeg4Container::GetMetadata()

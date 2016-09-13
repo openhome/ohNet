@@ -66,7 +66,7 @@ void MsgAudioEncodedCache::Reset()
     iDiscardBytesRemaining = 0;
     iInspectBytesRemaining = 0;
     iAccumulateBytesRemaining = 0;
-    iBuffer = nullptr;  // Acutal buffer is owned by another class.
+    iBuffer = nullptr;  // Actual buffer is owned by another class.
     iExpectedFlushId = MsgFlush::kIdInvalid;
 }
 
@@ -356,6 +356,10 @@ void ContainerNull::Reset()
 {
 }
 
+void ContainerNull::Init(TUint64 /*aStreamBytes*/)
+{
+}
+
 TBool ContainerNull::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     return iSeekHandler->TrySeekTo(aStreamId, aOffset);
@@ -369,6 +373,58 @@ Msg* ContainerNull::Pull()
 }
 
 
+// ContainerDiscard
+
+ContainerDiscard::ContainerDiscard()
+    : ContainerBase(Brn("DISC"))
+{
+}
+
+Msg* ContainerDiscard::Recognise()
+{
+    return nullptr;
+}
+
+TBool ContainerDiscard::Recognised() const
+{
+    return true;
+}
+
+void ContainerDiscard::Reset()
+{
+}
+
+void ContainerDiscard::Init(TUint64 /*aStreamBytes*/)
+{
+}
+
+TBool ContainerDiscard::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    // This is used to discard an unsupported stream, so definitely should not
+    // attempt to seek.
+    return false;
+}
+
+Msg* ContainerDiscard::Pull()
+{
+    // Just keep pulling and discard MsgAudioEncoded until a non-audio message
+    // is seen.
+    MsgAudioEncodedRecogniser recogniser;
+    for (;;) {
+        Msg* msgIn = iCache->Pull();
+        if (msgIn != nullptr) {
+            Msg* msgOut = msgIn->Process(recogniser);
+            if (msgOut != nullptr) {
+                return msgOut;
+            }
+            else {
+                recogniser.AudioEncoded()->RemoveRef();
+            }
+        }
+    }
+}
+
+
 // ContainerController
 
 ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter)
@@ -379,6 +435,7 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     , iCache(iLoggerRewinder)
     , iActiveContainer(nullptr)
     , iContainerNull(nullptr)
+    , iContainerDiscard(nullptr)
     , iStreamHandler(nullptr)
     , iPassThrough(false)
     , iRecognising(false)
@@ -393,6 +450,11 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     iContainerNull->Construct(iCache, iMsgFactory, *this, *this, *this);
     iContainers.push_back(iContainerNull);
     iActiveContainer = iContainerNull;
+
+    // Container discard should never be part of recognition sequence, as it
+    // should only be used for corrupt streams.
+    iContainerDiscard = new ContainerDiscard();
+    iContainerDiscard->Construct(iCache, iMsgFactory, *this, *this, *this);
 
     //iLoggerRewinder.SetEnabled(true);
     //iLoggerRewinder.SetFilter(Logger::EMsgAll);
@@ -415,6 +477,7 @@ ContainerController::~ContainerController()
     for (auto container : iContainers) {
         delete container;
     }
+    delete iContainerDiscard;
     iCache.Reset();
 }
 
@@ -454,6 +517,7 @@ Msg* ContainerController::RecogniseContainer()
                         }
 
                         if (container->Recognised()) {
+                            container->Init(iStreamBytes);
                             iActiveContainer = container;
                             iRewinder.Rewind();
                             iRewinder.Stop();
@@ -470,6 +534,18 @@ Msg* ContainerController::RecogniseContainer()
                         const Brx& id = container->Id();
                         LOG(kMedia, "ContainerController::RecogniseContainer Rewinder exhausted while attempting to recognise %.*s\n", PBUF(id));
 
+                        iRecogIdx++;
+                        iState = eRecognitionSelectContainer;
+                    }
+                    catch (AudioCacheException&) {
+                        // Cache could not fulfil request while current
+                        // container trying to recognise.
+
+                        const Brx& id = container->Id();
+                        ASSERT(id != Brn("NULL"));  // NULL container should never cause msg cache to throw exception.
+                        LOG(kMedia, "ContainerController::RecogniseContainer AudioCacheException while attempting to recognise %.*s\n", PBUF(id));
+
+                        // Move to next container.
                         iRecogIdx++;
                         iState = eRecognitionSelectContainer;
                     }
@@ -500,30 +576,64 @@ Msg* ContainerController::Pull()
         recognising = iRecognising;
     }
 
-    Msg* msg = nullptr;
-    while (recognising) {
-        msg = RecogniseContainer();
-        if (msg == nullptr) { // Completed recognition.
-            iRecognising = false;
-            iStreamEnded = false;
-            recognising = false;
-        }
-        else {
-            msg = msg->Process(*this);
-            if (msg != nullptr) {
-                return msg;
+    try {
+        Msg* msg = nullptr;
+        while (recognising) {
+            msg = RecogniseContainer();
+            if (msg == nullptr) { // Completed recognition.
+                iRecognising = false;
+                iStreamEnded = false;
+                recognising = false;
+            }
+            else {
+                msg = msg->Process(*this);
+                if (msg != nullptr) {
+                    return msg;
+                }
             }
         }
-    }
 
-    while (msg == nullptr) {
-        ASSERT(iActiveContainer != nullptr);
-        msg = iActiveContainer->Pull();
-        ASSERT(msg != nullptr);
-        msg = msg->Process(*this);
-    }
+        while (msg == nullptr) {
+            ASSERT(iActiveContainer != nullptr);
+            msg = iActiveContainer->Pull();
+            ASSERT(msg != nullptr);
+            msg = msg->Process(*this);
+        }
 
-    return msg;
+        return msg;
+    }
+    catch (AudioCacheException&) {
+        // A container encountered an issue while trying to read from the msg
+        // cache because the msg cache couldn't fulfil the request (i.e., the
+        // stream must be corrupt).
+        // Use special "discard" container to throw away any remaining audio
+        // in stream.
+        iActiveContainer = iContainerDiscard;
+        iActiveContainer->Reset();
+
+        Msg* msg = nullptr;
+        while (msg == nullptr) {
+            ASSERT(iActiveContainer != nullptr);
+            msg = iActiveContainer->Pull();
+            ASSERT(msg != nullptr);
+            msg = msg->Process(*this);
+        }
+        return msg;
+    }
+    catch (ContainerStreamCorrupt&) {
+        // A container encountered a stream error. Discard remainder of stream.
+        iActiveContainer = iContainerDiscard;
+        iActiveContainer->Reset();
+
+        Msg* msg = nullptr;
+        while (msg == nullptr) {
+            ASSERT(iActiveContainer != nullptr);
+            msg = iActiveContainer->Pull();
+            ASSERT(msg != nullptr);
+            msg = msg->Process(*this);
+        }
+        return msg;
+    }
 }
 
 Msg* ContainerController::ProcessMsg(MsgMode* aMsg)
@@ -583,6 +693,7 @@ Msg* ContainerController::ProcessMsg(MsgEncodedStream* aMsg)
         return nullptr;
     }
     iRecognising = true;
+    iStreamBytes = aMsg->TotalBytes();
     iState = eRecognitionStart;
     iUrl.Replace(aMsg->Uri());  // Required to allow containers to do an out-of-band read.
 
