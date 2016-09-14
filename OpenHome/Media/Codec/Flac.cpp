@@ -365,7 +365,8 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
         iStreamMsgDue = false;
     }
     
-    const TUint maxSamples = sizeof(iBuf) / ((bitDepth/8) * channels);
+    const TUint bytesPerSample = (bitDepth/8) * channels;
+    const TUint maxSamples = sizeof(iBuf) / bytesPerSample;
     TUint startI=0, endI;
     while (samplesToWrite > 0) {
         const TUint samples = (samplesToWrite > maxSamples? maxSamples : samplesToWrite);
@@ -394,7 +395,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
                 }
             }
         }
-        const TUint bytes = samples * (bitDepth/8) * channels;
+        const TUint bytes = samples * bytesPerSample;
         Brn encodedAudio(iBuf, bytes);
         iTrackOffset += iController->OutputAudioPcm(encodedAudio, channels, sampleRate,
                                                     bitDepth, AudioDataEndian::Big, iTrackOffset);
