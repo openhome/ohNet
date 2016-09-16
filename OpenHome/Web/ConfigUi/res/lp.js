@@ -104,7 +104,7 @@ WebUi = function() {
         this.iCallbackStarted = aCallbackStarted;
         this.iCallbackSuccess = aCallbackSuccess;
         this.iCallbackFailure = aCallbackFailure;
-
+        this.iPollTimeout = null;
 
 
         this.EStates = {
@@ -112,6 +112,27 @@ WebUi = function() {
             eLongPoll: "performing long polling",
             eTerminate: "terminating long polling",
         };
+    }
+
+    LongPoll.prototype.StartPollTimeout = function()
+    {
+        console.log("StartPollTimeout");
+        this.iPollTimeout = setTimeout(CreateRetryFunction(this), 20000);
+    }
+
+    LongPoll.prototype.StopPollTimeout = function()
+    {
+        console.log("StopPollTimeout");
+        if (this.iPollTimeout != null)
+        {
+            clearTimeout(this.iPollTimeout);
+        }
+    }
+
+    LongPoll.prototype.RestartPollTimeout = function()
+    {
+        this.StopPollTimeout();
+        this.StartPollTimeout();
     }
 
     LongPoll.CreateLongPollRequest = function(aLongPoll)
@@ -151,6 +172,7 @@ WebUi = function() {
     LongPoll.prototype.SendCreate = function()
     {
         console.log("LongPoll.SendCreate \n");
+        this.StopPollTimeout();
         var request = new HttpRequest();
 
         var Response = function(aLongPoll)
@@ -219,6 +241,7 @@ WebUi = function() {
     LongPoll.prototype.SendPoll = function()
     {
         console.log("LongPoll.SendPoll\n");
+        this.RestartPollTimeout();
         var request = LongPoll.CreateLongPollRequest(this);
         request.Open("POST", "lp", true);
         this.SendSessionId(request);
