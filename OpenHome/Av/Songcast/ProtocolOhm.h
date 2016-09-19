@@ -47,18 +47,6 @@ private:
     Mutex iStoppedLock;
     Semaphore iSemSenderUnicastOverride;
     std::atomic<TBool> iSenderUnicastOverrideEnabled;
-    // clock pulling
-    static const TInt kLockingMaxDeviation;
-    static const TUint kLockingMsgCount;
-    TBool iCheckForTimestamp;
-    TBool iStreamIsTimestamped;
-    TBool iLockedToStream;
-    TBool iCalculateTimestampDelta;
-    TUint iTimestamperFreq;
-    TUint iLockingMaxDeviation;
-    TUint iJiffiesBeforeTimestampsReliable;
-    TInt iTimestampDelta;
-    TUint iMsgsTillLock;
 };
 
 } // namespace Av
