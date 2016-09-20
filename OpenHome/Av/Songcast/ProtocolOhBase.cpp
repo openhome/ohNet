@@ -445,13 +445,6 @@ void ProtocolOhBase::AddRxTimestamp(OhmMsgAudio& aMsg)
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
 {
-    TBool discard;
-    ProcessTimestamps(aMsg, discard);
-    if (discard) {
-        aMsg.RemoveRef();
-        return;
-    }
-
     TBool startOfStream = false;
     if (aMsg.SampleStart() < iLastSampleStart || iBitDepth != aMsg.BitDepth() ||
         iSampleRate != aMsg.SampleRate() || iNumChannels != aMsg.Channels()) {

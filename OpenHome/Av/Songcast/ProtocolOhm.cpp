@@ -235,11 +235,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
-{
-    aDiscard = false;
-}
-
 void ProtocolOhm::Interrupt(TBool aInterrupt)
 {
     //LOG(kSongcast, "OHM: Interrupt(%u)\n", aInterrupt);
