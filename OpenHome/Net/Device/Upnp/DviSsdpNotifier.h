@@ -30,9 +30,9 @@ public:
 protected:
     SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener, const TChar* aId);
     void Start(TUint aDuration, TUint aMsgCount);
+    virtual void NotifyComplete(TBool aCancelled);
 private:
     virtual TUint NextMsg() = 0;
-    virtual void NotifyComplete(TBool aCancelled);
     void SendNextMsg();
     void ScheduleNextTimer(TUint aRemainingMsgs) const;
 protected:

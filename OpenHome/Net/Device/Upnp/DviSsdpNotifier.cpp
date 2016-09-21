@@ -15,7 +15,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-#undef NOTIFIER_LOG_ENABLE
+#undef NOTIFIER_LOG_VERBOSE
 
 // SsdpNotifierScheduler
 
@@ -51,8 +51,9 @@ void SsdpNotifierScheduler::Stop()
     iStop = true;
 }
 
-void SsdpNotifierScheduler::NotifyComplete(TBool /*aCancelled*/)
+void SsdpNotifierScheduler::NotifyComplete(TBool aCancelled)
 {
+    LOG(kDvSsdpNotifier, "SsdpNotifier completed (cancelled=%u) - %s (%p) %s %.*s\n", aCancelled, iType, this, iId, PBUF(iUdn));
 }
 
 void SsdpNotifierScheduler::SendNextMsg()
@@ -70,11 +71,8 @@ void SsdpNotifierScheduler::SendNextMsg()
         stop = true;
         LOG2(kError, kDvDevice, "NetworkError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
     }
-#ifdef NOTIFIER_LOG_ENABLE
-        //if( (strcmp(iType, "StartAlive")==0) || (strcmp(iType, "StartByeBye")==0) )
-        {
-            Log::Print("++ Notifier completed - %s (%p) %s  %.*s remaining=%u  stop=%d\n", iType, this, iId, PBUF(iUdn), remaining, stop);
-        }
+#ifdef NOTIFIER_LOG_VERBOSE
+        Log::Print("++ Notifier completed - %s (%p) %s  %.*s remaining=%u  stop=%d\n", iType, this, iId, PBUF(iUdn), remaining, stop);
 #endif
     if (stop) {
         NotifyComplete(iStop);
@@ -114,13 +112,7 @@ void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 
 void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType)
 {
-    iType = aType;
-#ifdef NOTIFIER_LOG_ENABLE
-    //if( (strcmp(iType, "StartAlive")==0) || (strcmp(iType, "StartByeBye")==0) )
-    {
-        Log::Print("++ Notifier starting - %s (%p) %s %.*s\n", iType, this, iId, PBUF(iUdn));
-    }
-#endif
+    LOG(kDvSsdpNotifier, "SsdpNotifier starting - %s (%p) %s %.*s\n", aType, this, iId, PBUF(iUdn));
 }
 
 
@@ -290,6 +282,7 @@ TUint DeviceAnnouncement::NextMsg()
 
 void DeviceAnnouncement::NotifyComplete(TBool aCancelled)
 {
+    SsdpNotifierScheduler::NotifyComplete(aCancelled);
     if (iCompleted) {
         iCompleted(aCancelled);
     }
@@ -401,6 +394,7 @@ void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& a
 
 void DviSsdpNotifierManager::Stop(const Brx& aUdn)
 {
+    LOG(kDvSsdpNotifier, "DviSsdpNotifierManager::Stop(%.*s)\n", PBUF(aUdn));
     iLock.Wait();
     Stop(iActiveResponders, aUdn);
     Stop(iActiveAnnouncers, aUdn);

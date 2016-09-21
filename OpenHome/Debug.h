@@ -99,7 +99,7 @@ public:
     static const TUint   kXmlFetch       = 1<<9;
     static const TUint   kService        = 1<<10;
     static const TUint   kEvent          = 1<<11;
-    //static const TUint unused        = 1<<12;
+    static const TUint   kDvSsdpNotifier = 1<<12;
     static const TUint   kDvInvocation   = 1<<13;
     static const TUint   kDvEvent        = 1<<14;
     static const TUint   kDvWebSocket    = 1<<15;
