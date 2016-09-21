@@ -72,7 +72,7 @@ void SsdpNotifierScheduler::SendNextMsg()
         LOG2(kError, kDvDevice, "NetworkError from SsdpNotifierScheduler::SendNextMsg() id=%s\n", iId);
     }
 #ifdef NOTIFIER_LOG_VERBOSE
-        Log::Print("++ Notifier completed - %s (%p) %s  %.*s remaining=%u  stop=%d\n", iType, this, iId, PBUF(iUdn), remaining, stop);
+    LOG(kDvSsdpNotifier, "Ssdp notification sent - %s (%p) %s  %.*s remaining=%u  stop=%d\n", iType, this, iId, PBUF(iUdn), remaining, stop);
 #endif
     if (stop) {
         NotifyComplete(iStop);
