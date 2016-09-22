@@ -59,18 +59,12 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
     if (device == NULL) {
         aInvocation.Error(kErrorCodeBadDevice, kErrorDescBadDevice);
     }
-    DviService* service = NULL;
-    const TUint serviceCount = device->ServiceCount();
-    for (TUint i=0; i<serviceCount; i++) {
-        DviService* s = &device->Service(i);
-        if (s->ServiceType().PathUpnp() == aService) {
-            service = s;
-            break;
-        }
-    }
+    AutoDeviceRef d(device);
+    DviService* service = device->ServiceReference(aService);
     if (service == NULL) {
         aInvocation.Error(kErrorCodeBadService, kErrorDescBadService);
     }
+    AutoServiceRef s(service);
     Brh sid;
     device->CreateSid(sid);
     TUint timeout = aRequestedDuration;

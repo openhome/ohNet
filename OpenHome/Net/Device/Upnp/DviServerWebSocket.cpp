@@ -842,18 +842,12 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     if (device == NULL) {
         THROW(WebSocketError);
     }
-    DviService* service = NULL;
-    const TUint serviceCount = device->ServiceCount();
-    for (TUint i=0; i<serviceCount; i++) {
-        DviService* s = &device->Service(i);
-        if (s->ServiceType().PathUpnp() == serviceId) {
-            service = s;
-            break;
-        }
-    }
+    AutoDeviceRef d(device);
+    DviService* service = device->ServiceReference(serviceId);
     if (service == NULL) {
         THROW(WebSocketError);
     }
+    AutoServiceRef s(service);
     Brh sid;
     device->CreateSid(sid);
     DviSubscription* subscription = new DviSubscription(iDvStack, *device, *this, NULL, sid);

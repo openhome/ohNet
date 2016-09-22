@@ -290,6 +290,22 @@ void DviService::ListObjectDetails() const
 }
 
 
+// AutoServiceRef
+
+AutoServiceRef::AutoServiceRef(DviService*& aService)
+    : iService(aService)
+{
+}
+
+AutoServiceRef::~AutoServiceRef()
+{
+    if (iService != NULL) {
+        iService->RemoveRef();
+        iService = NULL;
+    }
+}
+
+
 // DviInvocation
 
 DviInvocation::DviInvocation(IDviInvocation& aInvocation)

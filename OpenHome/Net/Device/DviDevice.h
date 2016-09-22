@@ -49,6 +49,7 @@ public:
     TUint ServiceCount() const;
     DviService& Service(TUint aIndex) const;
     DviService* ServiceReference(const ServiceType& aServiceType);
+    DviService* ServiceReference(const Brx& aServiceName);
     void AddService(DviService* aService);
     void AddDevice(DviDevice* aDevice); // embedded device
     TUint DeviceCount() const;
@@ -107,6 +108,22 @@ private:
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
     DviProviderSubscriptionLongPoll* iProviderSubscriptionLongPoll;
+};
+
+/**
+ * Utility class.
+ *
+ * Create an AutoDeviceRef on the stack using a reference to a DviDevice. It will
+ * automatically call RemoveWeakRef on stack cleanup (ie on return or when an
+ * exception passes up).
+ */
+class AutoDeviceRef : public INonCopyable
+{
+public:
+    AutoDeviceRef(DviDevice*& aDevice);
+    ~AutoDeviceRef();
+private:
+    DviDevice*& iDevice;
 };
 
 class DviDeviceStandard : public DviDevice

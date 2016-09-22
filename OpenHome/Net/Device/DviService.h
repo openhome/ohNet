@@ -114,6 +114,22 @@ private:
     Semaphore iDisabledSem;
 };
 
+/**
+ * Utility class.
+ *
+ * Create an AutoServiceRef on the stack using a reference to a DviService.
+ * It will automatically call RemoveRef on stack cleanup (ie on return or when
+ * an exception passes up).
+ */
+class AutoServiceRef : public INonCopyable
+{
+public:
+    AutoServiceRef(DviService*& aService);
+    ~AutoServiceRef();
+private:
+    DviService*& iService;
+};
+
 class DllExportClass DviInvocation : public IDvInvocation, private INonCopyable
 {
 public:

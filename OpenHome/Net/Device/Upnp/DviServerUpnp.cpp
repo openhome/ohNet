@@ -729,7 +729,9 @@ void DviSessionUpnp::Post()
     }
 
     ParseRequestUri(DviProtocolUpnp::kControlUrlTail, &iInvocationDevice, &iInvocationService);
+    AutoDeviceRef d(iInvocationDevice);
     if (iInvocationDevice != NULL && iInvocationService != NULL) {
+        AutoServiceRef s(iInvocationService);
         try {
             if (iHeaderExpect.Continue()) {
                 iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
@@ -799,6 +801,8 @@ void DviSessionUpnp::Subscribe()
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
+    AutoDeviceRef d(device);
+    AutoServiceRef s(service);
     if (device == NULL || !device->Enabled() || service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
@@ -855,6 +859,8 @@ void DviSessionUpnp::Unsubscribe()
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
+    AutoDeviceRef d(device);
+    AutoServiceRef s(service);
     if (device == NULL  || !device->Enabled()|| service == NULL) {
         LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
@@ -893,6 +899,8 @@ void DviSessionUpnp::Renew()
     DviDevice* device;
     DviService* service;
     ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
+    AutoDeviceRef d(device);
+    AutoServiceRef s(service);
     if (device == NULL  || !device->Enabled()|| service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
@@ -950,14 +958,7 @@ void DviSessionUpnp::ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, D
     if (parser.Remaining() != aUrlTail) {
         Error(HttpStatus::kPreconditionFailed);
     }
-    const TUint count = device->ServiceCount();
-    for (TUint i=0; i<count; i++) {
-        DviService& service = device->Service(i);
-        if (service.ServiceType().PathUpnp() == serviceName) {
-            *aService = &service;
-            break;
-        }
-    }
+    *aService = device->ServiceReference(serviceName);
 }
 
 void DviSessionUpnp::WriteServerHeader(IWriterHttpHeader& aWriter)

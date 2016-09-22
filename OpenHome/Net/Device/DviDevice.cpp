@@ -234,6 +234,23 @@ DviService* DviDevice::ServiceReference(const ServiceType& aServiceType)
     return service;
 }
 
+DviService* DviDevice::ServiceReference(const Brx& aServiceName)
+{
+    DviService* service = NULL;
+    iServiceLock.Wait();
+    const TUint count = (TUint)iServices.size();
+    for (TUint i=0; i<count; i++) {
+        DviService* s = iServices[i];
+        if (s->ServiceType().PathUpnp() == aServiceName) {
+            s->AddRef();
+            service = s;
+            break;
+        }
+    }
+    iServiceLock.Signal();
+    return service;
+}
+
 void DviDevice::AddDevice(DviDevice* aDevice)
 {
     ASSERT(!Enabled());
@@ -603,6 +620,22 @@ void AttributeMap::Attribute::UpdateValue(const TChar* aValue)
 }
 
 
+// AutoDeviceRef
+
+AutoDeviceRef::AutoDeviceRef(DviDevice*& aDevice)
+    : iDevice(aDevice)
+{
+}
+
+AutoDeviceRef::~AutoDeviceRef()
+{
+    if (iDevice != NULL) {
+        iDevice->RemoveWeakRef();
+        iDevice = NULL;
+    }
+}
+
+
 // DviDeviceMap
 
 DviDeviceMap::DviDeviceMap()
@@ -639,7 +672,9 @@ DviDevice* DviDeviceMap::Find(const Brx& aUdn)
     Brn udn(aUdn);
     Map::iterator it = iMap.find(udn);
     if (it != iMap.end() && it->second->Enabled()) {
-        return it->second;
+        DviDevice* device = it->second;
+        device->AddWeakRef();
+        return device;
     }
     return NULL;
 }
