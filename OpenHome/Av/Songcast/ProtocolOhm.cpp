@@ -48,9 +48,6 @@ using namespace OpenHome::Media;
 
 // ProtocolOhm
 
-const TInt ProtocolOhm::kLockingMaxDeviation = Jiffies::kPerMs / 2;
-const TUint ProtocolOhm::kLockingMsgCount = 4;
-
 ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFactory& aTrackFactory,
                          Optional<IOhmTimestamper> aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
@@ -94,8 +91,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
         iSemSenderUnicastOverride.Wait();
     }
     TBool firstJoin = true;
-    iCheckForTimestamp = true;
-    iStreamIsTimestamped = false;
 
     do {
         if (!firstJoin) {
@@ -117,7 +112,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
                 iTimestamper->Stop();
                 iTimestamper->Start(iEndpoint);
             }
-            ResetClockPuller();
 
             OhmHeader header;
             SendJoin();
@@ -241,82 +235,6 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-void ProtocolOhm::ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard)
-{
-    aDiscard = false;
-    if (iTimestamper == nullptr) {
-        return;
-    }
-    const TBool msgTimestamped = (aMsg.Timestamped() && aMsg.RxTimestamped());
-    if (iCheckForTimestamp) {
-        iCheckForTimestamp = false;
-        iStreamIsTimestamped = aMsg.Timestamped(); // Tx timestamp && iTimestamper!==nullptr => expect timestamps
-    }
-
-    if (!iStreamIsTimestamped) {
-        return;
-    }
-
-    const TUint sampleRate = aMsg.SampleRate();
-    const TUint timestamperFreq = Jiffies::SongcastTicksPerSecond(sampleRate);
-    if (iTimestamperFreq != timestamperFreq) {
-        // any stored timestamps are unreliable - reset timestamper
-        (void)iTimestamper->SetSampleRate(sampleRate);
-        iTimestamper->Stop();
-        iTimestamper->Start(iEndpoint);
-
-        iTimestamperFreq = timestamperFreq;
-        iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
-        if (!aMsg.Timestamped2()) { // Original Linn sender.  Next MediaLatency() worth of timestamps may be wrong.
-            iJiffiesBeforeTimestampsReliable = static_cast<TUint>(Jiffies::FromSongcastTime(aMsg.MediaLatency(), sampleRate));
-        }
-        else {
-            // Single timestamp on clock family change may be unreliable.
-            // Set things up so that timestampReliable gets set false below
-            const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
-            iJiffiesBeforeTimestampsReliable = msgJiffies;
-        }
-    }
-
-    const TBool timestampReliable = (iJiffiesBeforeTimestampsReliable == 0);
-    if (!timestampReliable) {
-        const TUint msgJiffies = aMsg.Samples() * Jiffies::PerSample(sampleRate);
-        if (msgJiffies > iJiffiesBeforeTimestampsReliable) {
-            iJiffiesBeforeTimestampsReliable = 0;
-        }
-        else {
-            iJiffiesBeforeTimestampsReliable -= msgJiffies;
-        }
-        aDiscard = true;
-        return;
-    }
-
-    if (!iLockedToStream) {
-        if (!msgTimestamped) {
-            aDiscard = true;
-            return;
-        }
-        const TInt delta = static_cast<TInt>(aMsg.RxTimestamp() - aMsg.NetworkTimestamp());
-        if (iCalculateTimestampDelta) {
-            iTimestampDelta = delta;
-            iMsgsTillLock = kLockingMsgCount - 1;
-            iCalculateTimestampDelta = false;
-        }
-        else if ((TUint)std::abs(iTimestampDelta - delta) > iLockingMaxDeviation) {
-            iMsgsTillLock = kLockingMsgCount;
-            iCalculateTimestampDelta = true;
-            iTimestampDelta = 0;
-        }
-        else if (--iMsgsTillLock == 0) {
-            iLockedToStream = true;
-        }
-        if (!iLockedToStream) {
-            aDiscard = true;
-            return;
-        }
-    }
-}
-
 void ProtocolOhm::Interrupt(TBool aInterrupt)
 {
     //LOG(kSongcast, "OHM: Interrupt(%u)\n", aInterrupt);
@@ -343,13 +261,3 @@ TUint ProtocolOhm::TryStop(TUint aStreamId)
     return iNextFlushId;
 }
 
-void ProtocolOhm::ResetClockPuller()
-{
-    iLockedToStream = false;
-    iCalculateTimestampDelta = true;
-    iTimestamperFreq = 0;
-    iLockingMaxDeviation = UINT_MAX;
-    iJiffiesBeforeTimestampsReliable = 0;
-    iTimestampDelta = 0;
-    iMsgsTillLock = 0;
-}

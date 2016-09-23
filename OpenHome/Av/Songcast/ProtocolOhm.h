@@ -34,7 +34,6 @@ private: // from IUnicastOverrideObserver
     void UnicastOverrideDisabled() override;
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
-    void ProcessTimestamps(const OhmMsgAudio& aMsg, TBool& aDiscard) override;
 private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
@@ -47,18 +46,6 @@ private:
     Mutex iStoppedLock;
     Semaphore iSemSenderUnicastOverride;
     std::atomic<TBool> iSenderUnicastOverrideEnabled;
-    // clock pulling
-    static const TInt kLockingMaxDeviation;
-    static const TUint kLockingMsgCount;
-    TBool iCheckForTimestamp;
-    TBool iStreamIsTimestamped;
-    TBool iLockedToStream;
-    TBool iCalculateTimestampDelta;
-    TUint iTimestamperFreq;
-    TUint iLockingMaxDeviation;
-    TUint iJiffiesBeforeTimestampsReliable;
-    TInt iTimestampDelta;
-    TUint iMsgsTillLock;
 };
 
 } // namespace Av
