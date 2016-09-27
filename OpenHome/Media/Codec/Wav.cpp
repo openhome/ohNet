@@ -294,18 +294,25 @@ TUint CodecWav::FindChunk(const Brx& aChunkId)
             return bytes;
         }
         else {
-            iReadBuf.SetBytes(0);
-            if (iReadBuf.MaxBytes() < bytes) {
-                // FIXME - chunk is larger than expected, so whatever chunk
-                // we're looking for is likely after the (audio) data chunk.
-                // We don't currently support headers/metadata after audio
-                // data.
-                THROW(CodecStreamFeatureUnsupported);
+            // Discard remainder of chunk.
+            TUint bytesRemaining = bytes;
+            while (bytesRemaining > 0) {
+                iReadBuf.SetBytes(0);
+
+                TUint readBytes = bytesRemaining;
+                if (readBytes > iReadBuf.MaxBytes()) {
+                    readBytes = iReadBuf.MaxBytes();
+                }
+                iController->Read(iReadBuf, readBytes);
+
+                // Check if all data was delivered. (If not, the stream ended.)
+                if (iReadBuf.Bytes() < readBytes) {
+                    THROW(CodecStreamEnded);
+                }
+
+                bytesRemaining -= readBytes;
             }
-            iController->Read(iReadBuf, bytes);
-            if (iReadBuf.Bytes() < bytes) {
-                THROW(CodecStreamEnded);
-            }
+
             iTrackStart += 8 + bytes;
         }
     }
