@@ -273,11 +273,6 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress /*aInterface*/, TUint aTtl, co
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-void ProtocolOhu::ProcessTimestamps(const OhmMsgAudio& /*aMsg*/, TBool& aDiscard)
-{
-    aDiscard = false;
-}
-
 void ProtocolOhu::Interrupt(TBool aInterrupt)
 {
     LOG(kSongcast, "OHU: Interrupt(%u)\n", aInterrupt);

@@ -6,6 +6,7 @@
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Av/RebootHandler.h>
+#include <OpenHome/Av/Qobuz/Qobuz.h>
 
 #include <vector>
 
@@ -42,7 +43,7 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
     AddConfigChoiceConditional(Brn("Sender.Mode"));
     AddConfigChoiceConditional(Brn("Source.NetAux.Auto"));
     AddConfigChoiceConditional(Av::VolumeConfig::kKeyStartupEnabled);
-    AddConfigChoiceConditional(Brn("qobuz.com.AudioQuality"));
+    AddConfigChoiceConditional(Qobuz::kConfigKeySoundQuality);
     AddConfigChoiceConditional(Brn("qobuz.com.Enabled"));
     AddConfigChoiceConditional(Brn("tidalhifi.com.SoundQuality"));
     AddConfigChoiceConditional(Brn("tidalhifi.com.Enabled"));
