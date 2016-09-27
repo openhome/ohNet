@@ -1991,8 +1991,9 @@ void SuiteDecodedStream::Test()
     TBool lossless = true;
     TBool seekable = true;
     TBool live = true;
+    SpeakerProfile profile = SpeakerProfile::eStereo;
     IStreamHandler* handler = this;
-    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, false, handler);
+    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, false, profile, handler);
     TEST(msg != nullptr);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -2005,6 +2006,7 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() == lossless);
     TEST(msg->StreamInfo().Seekable() == seekable);
     TEST(msg->StreamInfo().Live() == live);
+    TEST(msg->StreamInfo().Profile() == profile);
     TEST(msg->StreamInfo().StreamHandler() == handler);
     msg->RemoveRef();
 
@@ -2035,7 +2037,8 @@ void SuiteDecodedStream::Test()
     lossless = false;
     seekable = false;
     live = false;
-    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, false, handler);
+    profile = SpeakerProfile::e5P1;
+    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, false, profile, handler);
     TEST(msg != nullptr);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -2048,6 +2051,7 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() == lossless);
     TEST(msg->StreamInfo().Seekable() == seekable);
     TEST(msg->StreamInfo().Live() == live);
+    TEST(msg->StreamInfo().Profile() == profile);
     TEST(msg->StreamInfo().StreamHandler() == handler);
         msg->RemoveRef();
 }
@@ -2130,7 +2134,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
+    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, SpeakerProfile::eStereo, nullptr);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
@@ -2776,7 +2780,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->EncodedStreamCount() == 1);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    msg = iMsgFactory->CreateMsgDecodedStream(3, 128, 16, 44100, 2, Brn("test codec"), 1<<16, 0, true, true, false, false, nullptr);
+    msg = iMsgFactory->CreateMsgDecodedStream(3, 128, 16, 44100, 2, Brn("test codec"), 1<<16, 0, true, true, false, false, SpeakerProfile::eStereo, nullptr);
     TEST(queue->DecodedStreamCount() == 0);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);
@@ -3217,7 +3221,7 @@ Msg* SuitePipelineElement::CreateMsg(ProcessorMsgType::EMsgType aType)
     case ProcessorMsgType::EMsgWait:
         return iMsgFactory->CreateMsgWait();
     case ProcessorMsgType::EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, false, SpeakerProfile::eStereo, nullptr);
     case ProcessorMsgType::EMsgBitRate:
         return iMsgFactory->CreateMsgBitRate(1234);
     case ProcessorMsgType::EMsgAudioPcm:

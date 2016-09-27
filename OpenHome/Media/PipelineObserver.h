@@ -85,6 +85,12 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
 
+class ChannelInfo
+{
+public:
+    static const TChar* FromSpeakerProfile(SpeakerProfile aProfile);
+};
+
 class TransportState
 {
 public:

@@ -729,7 +729,7 @@ void CodecMp3::StreamInitialise()
     iHeader.Replace(iInput, iHeaderBytes, iController->StreamLength());
 
     iTrackLengthJiffies = (iHeader.SamplesTotal() * Jiffies::kPerSecond) / iHeader.SampleRate();
-    iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, 0, false);
+    iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, 0, false, DeriveProfile(iHeader.Channels()));
 }
 
 void CodecMp3::StreamCompleted()
@@ -766,7 +766,7 @@ TBool CodecMp3::TrySeek(TUint aStreamId, TUint64 aSample)
         iOutput.SetBytes(0);
         iSamplesWrittenTotal = aSample;
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iHeader.SampleRate();
-        iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, aSample, false);
+        iController->OutputDecodedStream(iHeader.BitRate(), kBitDepth, iHeader.SampleRate(), iHeader.Channels(), iHeader.Name(), iTrackLengthJiffies, aSample, false, DeriveProfile(iHeader.Channels()));
     }
     return canSeek;
 }

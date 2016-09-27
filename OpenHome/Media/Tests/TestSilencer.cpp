@@ -79,6 +79,7 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
+    SpeakerProfile iProfile;
     TUint iLastPulledBytes;
     TUint iLastPulledJiffies;
     TBool iLastPlayableWasSilence;
@@ -97,6 +98,7 @@ SuiteSilencer::SuiteSilencer()
     , iLastMsg(ENone)
     , iTrackOffset(0)
     , iNumChannels(2)
+    , iProfile(SpeakerProfile::eStereo)
 {
     AddTest(MakeFunctor(*this, &SuiteSilencer::TestMsgsPassedOn), "TestMsgsPassedOn");
     AddTest(MakeFunctor(*this, &SuiteSilencer::TestSilenceGeneratedWhenNoMsgAvailable), "TestSilenceGeneratedWhenNoMsgAvailable");
@@ -114,6 +116,7 @@ void SuiteSilencer::Setup()
     iSampleRate = 44100;
     iBitDepth = 16;
     iNumChannels = 2;
+    iProfile = SpeakerProfile::eStereo;
     iTrackOffset = 0;
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(10, 10);
@@ -194,6 +197,7 @@ void SuiteSilencer::TestSilenceDurationIsCorrect()
     TEST(iLastPlayableWasSilence);
 
     iNumChannels = 1;
+    iProfile = SpeakerProfile::eMono;
     QueuePendingMsg(CreateDecodedStream());
     PullNext(EMsgDecodedStream);
     PullNextNoWait(EMsgPlayable);
@@ -252,7 +256,7 @@ MsgPlayable* SuiteSilencer::CreateAudio()
 
 Msg* SuiteSilencer::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, iProfile, nullptr);
 }
 
 void SuiteSilencer::PullNext(EMsgType aExpectedMsg)
@@ -356,6 +360,7 @@ Msg* SuiteSilencer::ProcessMsg(MsgDecodedStream* aMsg)
     TEST(aMsg->StreamInfo().BitDepth() == iBitDepth);
     TEST(aMsg->StreamInfo().SampleRate() == iSampleRate);
     TEST(aMsg->StreamInfo().NumChannels() == iNumChannels);
+    TEST(aMsg->StreamInfo().Profile() == iProfile);
     iLastMsg = EMsgDecodedStream;
     return aMsg;
 }

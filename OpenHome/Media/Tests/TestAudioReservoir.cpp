@@ -32,6 +32,7 @@ class SuiteAudioReservoir : public Suite, private IMsgProcessor, private IFlushI
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 public:
     SuiteAudioReservoir();
     ~SuiteAudioReservoir();
@@ -186,6 +187,7 @@ class SuiteGorger : public SuiteUnitTest, private IStreamHandler, private IMsgPr
     static const TUint kGorgeSize = Jiffies::kPerMs * 100; // production code will likely use a much larger size
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static const Brn kModeRealTime;
     static const Brn kModeGorgable;
 public:
@@ -459,7 +461,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
     case EMsgDecodedStream:
         iTrackOffset = 0;
-        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 16, kSampleRate, kNumChannels, Brx::Empty(), 0, 0, false, false, false, false, nullptr);
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 16, kSampleRate, kNumChannels, Brx::Empty(), 0, 0, false, false, false, false, kProfile, nullptr);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(1);
@@ -1091,7 +1093,7 @@ Msg* SuiteGorger::CreateTrack()
 
 Msg* SuiteGorger::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, this);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, kProfile, this);
 }
 
 Msg* SuiteGorger::CreateAudio()

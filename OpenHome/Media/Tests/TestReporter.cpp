@@ -27,6 +27,7 @@ class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPi
     static const TUint64 kTrackLength = Jiffies::kPerSecond * 60;
     static const TBool kLossless      = true;
     static const TUint kNumChannels   = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 #define kMetaText "SuiteReporter sample metatext"
     static const TUint kTimeoutMs = 5000;
     static const TUint kThreadPriorityReporter = kPriorityNormal;
@@ -340,7 +341,7 @@ Msg* SuiteReporter::Pull()
     case EMsgDecodedStream:
     {
         const TUint64 sampleStart = iTrackOffset / Jiffies::PerSample(kSampleRate);
-        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, false, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, false, kProfile, nullptr);
     }
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brn(kMode), true, ModeClockPullers(), true, false);

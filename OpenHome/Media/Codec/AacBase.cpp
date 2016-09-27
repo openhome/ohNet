@@ -270,7 +270,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
     if (sampleRate != iOutputSampleRate) {
         iOutputSampleRate = sampleRate;
         if (!aParseOnly) {
-            iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+            iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false, DeriveProfile(iChannels));
         }
     }
     numOutSamples = frameSize;

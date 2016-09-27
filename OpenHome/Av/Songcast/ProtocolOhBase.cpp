@@ -462,7 +462,9 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         const TUint64 totalBytes = static_cast<TUint64>(aMsg.SamplesTotal()) * aMsg.Channels() * aMsg.BitDepth()/8;
         iStreamId = iIdProvider->NextStreamId();
         PcmStreamInfo pcmStream;
-        pcmStream.Set(aMsg.BitDepth(), aMsg.SampleRate(), aMsg.Channels(), AudioDataEndian::Big, aMsg.SampleStart());
+        // Hard-code speaker profile to 'stereo'
+        // Do we only support 2 channels here?
+        pcmStream.Set(aMsg.BitDepth(), aMsg.SampleRate(), aMsg.Channels(), AudioDataEndian::Big, (aMsg.Channels() == 1) ? SpeakerProfile::eMono : SpeakerProfile::eStereo, aMsg.SampleStart());
         pcmStream.SetCodecName(aMsg.Codec());
         iSupply->OutputPcmStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId, pcmStream);
         iStreamMsgDue = false;

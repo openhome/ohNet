@@ -361,7 +361,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
            iStreamMsgDue is still true) we must have picked up a file mid-stream.
            Therefore, put out a MsgDecodedStream on the basis of what we know mid-stream. */
         const TUint bitRate = sampleRate * bitDepth * channels;
-        iController->OutputDecodedStream(bitRate, bitDepth, sampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true);
+        iController->OutputDecodedStream(bitRate, bitDepth, sampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true, DeriveProfile(channels));
         iStreamMsgDue = false;
     }
     
@@ -426,6 +426,6 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
                                     kMaxOutputChannels); /* don't want to support multi-channel
                                                             ...at least until songcast sender can downmix to stereo */
 
-    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true);
+    iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, channels, iName, iTrackLengthJiffies, iSampleStart, true, DeriveProfile(channels));
     iStreamMsgDue = false;
 }

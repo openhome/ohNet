@@ -339,6 +339,7 @@ Msg* SuiteTrackInspector::Pull()
     static const TBool kLossless      = true;
     static const TBool kSeekable      = false;
     static const TUint kNumChannels   = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static TUint64 iTrackOffset = 0;
 
     switch (iNextGeneratedMsg)
@@ -355,7 +356,7 @@ Msg* SuiteTrackInspector::Pull()
     }
     case EMsgDecodedStream:
     {
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, false, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, false, kProfile, nullptr);
     }
     case EMsgTrack:
     {

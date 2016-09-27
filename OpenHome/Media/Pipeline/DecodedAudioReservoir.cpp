@@ -292,7 +292,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
         auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
                                                          s.NumChannels(), s.CodecName(), s.TrackLength(),
                                                          sampleStart, s.Lossless(), s.Seekable(), s.Live(),
-                                                         s.AnalogBypass(), s.StreamHandler());
+                                                         s.AnalogBypass(), s.Profile(), s.StreamHandler());
         EnqueueAtHead(stream);
 
         ret = iMsgFactory.CreateMsgFlush(iPostDiscardFlush);

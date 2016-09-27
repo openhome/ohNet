@@ -175,7 +175,7 @@ void CodecAlacApple::StreamInitialise()
 
 
     //LOG(kCodec, "CodecAlac::StreamInitialise iBitRate: %u, iBitDepth %u, iSampleRate: %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitRate, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
-    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true);
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, 0, true, DeriveProfile(iChannels));
 }
 
 TBool CodecAlacApple::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -193,7 +193,7 @@ TBool CodecAlacApple::TrySeek(TUint aStreamId, TUint64 aSample)
             iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
             iInBuf.SetBytes(0);
             iDecodedBuf.SetBytes(0);
-            iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, aSample, true);
+            iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iChannels, kCodecAlac, iTrackLengthJiffies, aSample, true, DeriveProfile(iChannels));
         }
         return canSeek;
     }

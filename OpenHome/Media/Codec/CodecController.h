@@ -117,10 +117,11 @@ public:
      * @param[in] aLength        Number of bytes in the encoded stream.  Reported to UI code; not used by the pipeline.
      * @param[in] aSampleStart   The first sample number in the next audio data to be output.  0 at the start of a stream.
      * @param[in] aLossless      Whether the stream is in a lossless format.  Reported to UI code; not used by the pipeline.
+     * @param[i]  aProfile       Speaker profile (channel allocation) of the decoded stream
      * @param[in] aAnalogBypass  Whether the stream being played is entirely in the analog domain.  (This stream will still
      *                           be used for casting to other devices and to help control volume ramping.)
      */
-    virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aLength, TUint64 aSampleStart, TBool aLossless, TBool aAnalogBypass = false) = 0;
+    virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aLength, TUint64 aSampleStart, TBool aLossless, SpeakerProfile aProfile, TBool aAnalogBypass = false) = 0;
     /**
      * Notify the pipeline of a change in delay (latency).
      *
@@ -209,19 +210,21 @@ public:
     TUint SampleRate() const;
     TUint NumChannels() const;
     AudioDataEndian Endian() const;
+    SpeakerProfile Profile() const;
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
     const Brx& CodecName() const;
 private:
     EncodedStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample,
-             TBool aAnalogBypass, const Brx& aCodecName);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, SpeakerProfile aProfile,
+            TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName);
 private:
     TBool iRawPcm;
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
     AudioDataEndian iEndian;
+    SpeakerProfile iProfile;
     TUint64 iStartSample;
     TBool iAnalogBypass;
     BwsCodecName iCodecName;
@@ -304,6 +307,7 @@ public:
     const TChar* Id() const;
 protected:
     CodecBase(const TChar* aId, RecognitionComplexity aRecognitionCost=kCostMedium);
+    static SpeakerProfile DeriveProfile(TUint aChannels);
 private:
     void Construct(ICodecController& aController);
 protected:
@@ -340,7 +344,7 @@ private: // ICodecController
     TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos) override;
     TUint64 StreamLength() const override;
     TUint64 StreamPos() const override;
-    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aAnalogBypass) override;
+    void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, SpeakerProfile aProfile, TBool aAnalogBypass) override;
     void OutputDelay(TUint aJiffies) override;
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset) override;
     TUint64 OutputAudioPcm(MsgAudioEncoded* aMsg, TUint aChannels, TUint aSampleRate, TUint aBitDepth, TUint64 aTrackOffset) override;

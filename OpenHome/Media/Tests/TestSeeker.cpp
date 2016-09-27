@@ -23,6 +23,7 @@ class SuiteSeeker : public SuiteUnitTest, private IPipelineElementUpstream, priv
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static const TUint kTrackDurationSeconds = 180;
 public:
     SuiteSeeker();
@@ -432,7 +433,7 @@ Msg* SuiteSeeker::CreateEncodedStream()
 Msg* SuiteSeeker::CreateDecodedStream()
 {
     const TUint64 sampleStart = iTrackOffset / Jiffies::PerSample(kSampleRate);
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), iTrackLengthJiffies, sampleStart, true, iSeekable, false, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), iTrackLengthJiffies, sampleStart, true, iSeekable, false, false, kProfile, nullptr);
 }
 
 Msg* SuiteSeeker::CreateAudio()

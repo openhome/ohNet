@@ -34,6 +34,7 @@ class SuiteVariableDelay : public SuiteUnitTest
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 
     static const Brn kMode;
 protected:
@@ -240,7 +241,7 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgSilence(size, kSampleRate, 16, kNumChannels);
     }
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 8, 44100, 2, Brx::Empty(), 0, iNextStreamSampleStart, false, false, false, false, this);
+        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 8, 44100, 2, Brx::Empty(), 0, iNextStreamSampleStart, false, false, false, false, kProfile, this);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, ModeClockPullers(iNextModeClockPuller), false, false);
     case EMsgTrack:

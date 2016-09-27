@@ -25,6 +25,7 @@ class SuiteStopper : public SuiteUnitTest, private IPipelineElementUpstream, pri
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static const TUint kBitDepth = 24;
     static const TUint kDataBytes = 960;
     static const TUint kJiffiesPerMsg;
@@ -457,7 +458,7 @@ Msg* SuiteStopper::CreateEncodedStream()
 
 Msg* SuiteStopper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, kProfile, nullptr);
 }
 
 Msg* SuiteStopper::CreateAudio()

@@ -22,6 +22,7 @@ class SuiteSkipper : public SuiteUnitTest, private IPipelineElementUpstream, pri
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 public:
     SuiteSkipper();
     ~SuiteSkipper();
@@ -389,7 +390,7 @@ Msg* SuiteSkipper::CreateEncodedStream()
 
 Msg* SuiteSkipper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, this);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, kProfile, this);
 }
 
 Msg* SuiteSkipper::CreateAudio()

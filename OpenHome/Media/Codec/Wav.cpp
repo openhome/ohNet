@@ -313,5 +313,5 @@ TUint CodecWav::FindChunk(const Brx& aChunkId)
 
 void CodecWav::SendMsgDecodedStream(TUint64 aStartSample)
 {
-    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), iTrackLengthJiffies, aStartSample, true);
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, Brn("WAV"), iTrackLengthJiffies, aStartSample, true, DeriveProfile(iNumChannels));
 }

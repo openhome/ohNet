@@ -85,6 +85,7 @@ class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstre
     static const TUint kByteDepth = kBitDepth/8;
     static const TUint kDefaultSampleRate = 44100;
     static const TUint kDefaultNumChannels = 2;
+    static const SpeakerProfile kDefaultProfile = SpeakerProfile::eStereo;
     static const TUint kDefaultBitrate = kBitDepth * kDefaultSampleRate;
     static const TUint kDefaultTrackLength = Jiffies::kPerSecond * 10;
     static const TUint kDefaultSampleStart = 0;
@@ -148,6 +149,7 @@ private:
     Bws<1024> iTrackUri;
     TUint iSampleRate;
     TUint iNumChannels;
+    SpeakerProfile iProfile;
     TUint iBitRate;
     TUint64 iTrackLength;
     TUint64 iSampleStart;
@@ -326,6 +328,7 @@ void SuiteSpotifyReporter::Setup()
     iTrackOffset = 0;
     iSampleRate = kDefaultSampleRate;
     iNumChannels = kDefaultNumChannels;
+    iProfile = kDefaultProfile;
     iBitRate = kDefaultBitrate;
     iTrackLength = kDefaultTrackLength;
     iSampleStart = kDefaultSampleStart;
@@ -382,7 +385,7 @@ Msg* SuiteSpotifyReporter::Pull()
         iLastMsg = iMsgFactory->CreateMsgWait();
         return iLastMsg;
     case EMsgDecodedStream:
-        iLastMsg = iMsgFactory->CreateMsgDecodedStream(0, iBitRate, kBitDepth, iSampleRate, iNumChannels, Brn(kCodecName), iTrackLength, iSampleStart, kLossless, false, false, false, nullptr);
+        iLastMsg = iMsgFactory->CreateMsgDecodedStream(0, iBitRate, kBitDepth, iSampleRate, iNumChannels, Brn(kCodecName), iTrackLength, iSampleStart, kLossless, false, false, false, iProfile, nullptr);
         return iLastMsg;
     case EMsgAudioPcm:
         iLastMsg = CreateAudio();
@@ -677,6 +680,7 @@ void SuiteSpotifyReporter::TestNumChannelsChange()
 
     // Now, change sample rate and send more audio.
     iNumChannels = 1;
+    iProfile = SpeakerProfile::eMono;
     EMsgType reinitTypes[] = {
         EMsgTrack,
         EMsgDecodedStream,

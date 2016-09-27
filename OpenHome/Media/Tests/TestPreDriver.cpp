@@ -76,6 +76,7 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
+    SpeakerProfile iProfile;
     TUint iAudioMsgSizeJiffies;
     TUint iNextMsgSilenceSize;
     TBool iNextModePullable;
@@ -92,6 +93,7 @@ SuitePreDriver::SuitePreDriver()
     , iLastMsg(ENone)
     , iTrackOffset(0)
     , iNumChannels(2)
+    , iProfile(SpeakerProfile::eStereo)
 {
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(10, 10);
@@ -227,7 +229,7 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, iProfile, nullptr);
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:

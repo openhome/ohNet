@@ -24,6 +24,7 @@ class SuiteWaiter : public SuiteUnitTest, private IPipelineElementUpstream
     static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 public:
     SuiteWaiter();
 private: // from SuiteUnitTest
@@ -391,7 +392,7 @@ Msg* SuiteWaiter::CreateEncodedStream()
 
 Msg* SuiteWaiter::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, kProfile, nullptr);
 }
 
 Msg* SuiteWaiter::CreateAudio()

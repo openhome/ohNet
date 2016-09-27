@@ -47,6 +47,12 @@ AudioDataEndian EncodedStreamInfo::Endian() const
     return iEndian;
 }
 
+SpeakerProfile EncodedStreamInfo::Profile() const
+{
+    ASSERT(iRawPcm);
+    return iProfile;
+}
+
 TUint64 EncodedStreamInfo::StartSample() const
 {
     return iStartSample;
@@ -68,19 +74,21 @@ EncodedStreamInfo::EncodedStreamInfo()
     , iSampleRate(UINT_MAX)
     , iNumChannels(UINT_MAX)
     , iEndian(AudioDataEndian::Invalid)
+    , iProfile(SpeakerProfile::eStereo)
     , iStartSample(0)
     , iAnalogBypass(false)
 {
 }
 
 void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian,
-                            TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName)
+                            SpeakerProfile aProfile, TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
     iSampleRate = aSampleRate;
     iNumChannels = aNumChannels;
     iEndian = aEndian;
+    iProfile = aProfile;
     iStartSample = aStartSample;
     iAnalogBypass = aAnalogBypass;
     iCodecName.Replace(aCodecName);
@@ -116,6 +124,11 @@ CodecBase::CodecBase(const TChar* aId, RecognitionComplexity aRecognitionCost)
 void CodecBase::Construct(ICodecController& aController)
 {
     iController = &aController;
+}
+
+SpeakerProfile CodecBase::DeriveProfile(TUint aChannels)
+{
+    return (aChannels == 1) ? SpeakerProfile::eMono : SpeakerProfile::eStereo;
 }
 
 
@@ -269,7 +282,7 @@ void CodecController::CodecThread()
             EncodedStreamInfo streamInfo;
             if (iRawPcm) {
                 streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(),
-                               iPcmStream.Endian(), iPcmStream.StartSample(), iPcmStream.AnalogBypass(),
+                               iPcmStream.Endian(), iPcmStream.Profile(), iPcmStream.StartSample(), iPcmStream.AnalogBypass(),
                                iPcmStream.CodecName());
             }
 
@@ -609,7 +622,7 @@ TUint64 CodecController::StreamPos() const
 void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate,
                                           TUint aNumChannels, const Brx& aCodecName,
                                           TUint64 aTrackLength, TUint64 aSampleStart,
-                                          TBool aLossless, TBool aAnalogBypass)
+                                          TBool aLossless, SpeakerProfile aProfile, TBool aAnalogBypass)
 {
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
         THROW(CodecStreamCorrupt);
@@ -617,7 +630,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     MsgDecodedStream* msg =
         iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels,
                                            aCodecName, aTrackLength, aSampleStart,
-                                           aLossless, iSeekable, iLive, aAnalogBypass, this);
+                                           aLossless, iSeekable, iLive, aAnalogBypass, aProfile, this);
     iLock.Wait();
     iChannels = aNumChannels;
     iSampleRate = aSampleRate;

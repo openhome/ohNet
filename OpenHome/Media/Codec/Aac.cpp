@@ -246,7 +246,7 @@ void CodecAac::StreamInitialise()
     iTrackOffset = 0;
 
     LOG(kCodec, "CodecAac::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
-    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false, DeriveProfile(iChannels));
 }
 
 void CodecAac::StreamCompleted()
@@ -276,7 +276,7 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
             iInBuf.SetBytes(0);
             iDecodedBuf.SetBytes(0);
             iOutBuf.SetBytes(0);
-            iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
+            iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, aSample, false, DeriveProfile(iChannels));
         }
         return canSeek;
     }

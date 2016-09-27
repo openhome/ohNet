@@ -285,5 +285,5 @@ void CodecAiffBase::ProcessSsndChunk()
 
 void CodecAiffBase::SendMsgDecodedStream(TUint64 aStartSample)
 {
-    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, Brn("AIFF"), iTrackLengthJiffies, aStartSample, true);
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, Brn("AIFF"), iTrackLengthJiffies, aStartSample, true, DeriveProfile(iNumChannels));
 }

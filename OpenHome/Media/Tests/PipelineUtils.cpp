@@ -248,7 +248,7 @@ void TestProtocol::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     Log::Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u, sampleRate=%u, numChannels=%u, codec=",
            aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels());
     Log::Print(aStreamInfo.CodecName());
-    Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
+    Log::Print("; trackLength=%llx, lossless=%u, channelConfig=%s}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless(), ChannelInfo::FromSpeakerProfile(aStreamInfo.Profile()));
 #endif
 }
 

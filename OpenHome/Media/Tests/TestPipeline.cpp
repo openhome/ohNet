@@ -66,6 +66,7 @@ class SuitePipeline : public Suite
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static const TUint kDriverMaxAudioJiffies = Jiffies::kPerMs * 5;
     static const TUint kSubsampleRampedUpFull = 0x7f7f7f;
     static const TUint kSubsampleRampedDownFull = 0;
@@ -155,7 +156,7 @@ private:
 class DummyCodec : public CodecBase
 {
 public:
-    DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian);
+    DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, SpeakerProfile aProfile);
 private: // from CodecBase
     void StreamInitialise();
     TBool Recognise(const EncodedStreamInfo& aStreamInfo);
@@ -167,6 +168,7 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     AudioDataEndian iEndian;
+    SpeakerProfile iProfile;
     TUint64 iTrackOffsetJiffies;
     TBool iSentDecodedInfo;
 };
@@ -337,7 +339,7 @@ SuitePipeline::SuitePipeline()
     iPipeline = new Pipeline(iInitParams, iInfoAggregator, *iTrackFactory, *this, *this, *this, *this);
     iPipeline->SetAnimator(*this);
     iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
-    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little));
+    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, AudioDataEndian::Little, kProfile));
     iPipeline->Start(*this);
     iPipelineEnd = iPipeline;
 }
@@ -727,9 +729,9 @@ void SuitePipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 void SuitePipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u; sampleRate=%u; numChannels=%u; codec=%.*s; trackLength=%llx; lossless=%u}\n",
+    Print("Pipeline report property: FORMAT {bitRate=%u; bitDepth=%u; sampleRate=%u; numChannels=%u; codec=%.*s; trackLength=%llx; lossless=%u, channelConfig=%s}\n",
           aStreamInfo.BitRate(), aStreamInfo.BitDepth(), aStreamInfo.SampleRate(), aStreamInfo.NumChannels(),
-          PBUF(aStreamInfo.CodecName()), aStreamInfo.TrackLength(), aStreamInfo.Lossless());
+          PBUF(aStreamInfo.CodecName()), aStreamInfo.TrackLength(), aStreamInfo.Lossless(), ChannelInfo::FromSpeakerProfile(aStreamInfo.Profile()));
 #endif
 }
 
@@ -889,12 +891,13 @@ void SuitePipeline::ApplyVolumeMultiplier(TUint /*aValue*/)
 
 // DummyCodec
 
-DummyCodec::DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian)
+DummyCodec::DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, SpeakerProfile aProfile)
     : CodecBase("Dummy")
     , iChannels(aChannels)
     , iSampleRate(aSampleRate)
     , iBitDepth(aBitDepth)
     , iEndian(aEndian)
+    , iProfile(aProfile)
 {
 }
 
@@ -913,7 +916,7 @@ void DummyCodec::Process()
 {
     if (!iSentDecodedInfo) {
         const TUint bitRate = iSampleRate * iBitDepth * iChannels;
-        iController->OutputDecodedStream(bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, true);
+        iController->OutputDecodedStream(bitRate, iBitDepth, iSampleRate, iChannels, Brn("dummy codec"), 1LL<<34, 0, true, iProfile);
         iSentDecodedInfo = true;
     }
     else {

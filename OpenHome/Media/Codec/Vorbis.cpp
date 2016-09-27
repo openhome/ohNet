@@ -281,7 +281,7 @@ void CodecVorbis::StreamInitialise()
     }
 
     LOG(kCodec, "CodecVorbis::StreamInitialise iBitrateAverage %u, kBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, kBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
-    iController->OutputDecodedStream(iBitrateAverage, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+    iController->OutputDecodedStream(iBitrateAverage, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false, DeriveProfile(iChannels));
 }
 
 void CodecVorbis::StreamCompleted()
@@ -321,7 +321,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
         iInBuf.SetBytes(0);
         iOutBuf.SetBytes(0);
-        iController->OutputDecodedStream(0, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
+        iController->OutputDecodedStream(0, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false, DeriveProfile(iChannels));
     }
     return canSeek;
 }
@@ -493,7 +493,7 @@ void CodecVorbis::Process()
                 // FIXME - output MsgBitrate here if iBitrateAverage has changed.
 
                 if (infoChanged) {
-                    iController->OutputDecodedStream(iBitrateAverage, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+                    iController->OutputDecodedStream(iBitrateAverage, kBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false, DeriveProfile(iChannels));
                 }
 
                 OutputMetaData();

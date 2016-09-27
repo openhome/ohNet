@@ -374,6 +374,7 @@ Msg* SuitePruner::Pull()
     static const TBool kSeekable      = false;
     static const TBool kLive          = false;
     static const TUint kNumChannels   = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static TUint64 iTrackOffset = 0;
 
     EMsgType msgType = iPendingMsgs[0];
@@ -408,7 +409,7 @@ Msg* SuitePruner::Pull()
     case EMsgWait:
         return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, false, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, false, kProfile, nullptr);
     case EMsgBitRate:
         return iMsgFactory->CreateMsgBitRate(kBitRate + 1000);
     case EMsgAudioPcm:

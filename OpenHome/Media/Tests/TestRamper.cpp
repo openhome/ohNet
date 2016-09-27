@@ -22,6 +22,7 @@ class SuiteRamper : public SuiteUnitTest, private IPipelineElementUpstream, priv
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 public:
     SuiteRamper();
     ~SuiteRamper();
@@ -309,7 +310,7 @@ Msg* SuiteRamper::CreateTrack()
 
 Msg* SuiteRamper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, iSampleStart, true, true, iLive, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, iSampleStart, true, true, iLive, false, kProfile, nullptr);
 }
 
 Msg* SuiteRamper::CreateAudio()

@@ -1052,12 +1052,13 @@ PcmStreamInfo::PcmStreamInfo()
     Clear();
 }
 
-void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, TUint64 aStartSample)
+void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, SpeakerProfile aProfile, TUint64 aStartSample)
 {
     iBitDepth = aBitDepth;
     iSampleRate = aSampleRate;
     iNumChannels = aNumChannels;
     iEndian = aEndian;
+    iProfile = aProfile;
     iStartSample = aStartSample;
     iCodecName.Replace(Brn("PCM"));
 }
@@ -1100,6 +1101,11 @@ AudioDataEndian PcmStreamInfo::Endian() const
     return iEndian;
 }
 
+SpeakerProfile PcmStreamInfo::Profile() const
+{
+    return iProfile;
+}
+
 TUint64 PcmStreamInfo::StartSample() const
 {
     return iStartSample;
@@ -1121,6 +1127,7 @@ void PcmStreamInfo::operator=(const PcmStreamInfo& aPcmStream)
     iSampleRate = aPcmStream.SampleRate();
     iNumChannels = aPcmStream.NumChannels();
     iEndian = aPcmStream.Endian();
+    iProfile = aPcmStream.Profile();
     iStartSample = aPcmStream.StartSample();
     iAnalogBypass = aPcmStream.AnalogBypass();
     iCodecName.Replace(aPcmStream.CodecName());
@@ -1498,7 +1505,7 @@ DecodedStreamInfo::DecodedStreamInfo()
 {
 }
 
-void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler)
+void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, SpeakerProfile aProfile, IStreamHandler* aStreamHandler)
 {
     iStreamId = aStreamId;
     iBitRate = aBitRate;
@@ -1512,6 +1519,7 @@ void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TU
     iSeekable = aSeekable;
     iLive = aLive;
     iAnalogBypass = aAnalogBypass;
+    iProfile = aProfile;
     iStreamHandler = aStreamHandler;
 }
 
@@ -1528,15 +1536,15 @@ const DecodedStreamInfo& MsgDecodedStream::StreamInfo() const
     return iStreamInfo;
 }
 
-void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler)
+void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, SpeakerProfile aProfile, IStreamHandler* aStreamHandler)
 {
-    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aStreamHandler);
+    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aProfile, aStreamHandler);
 }
 
 void MsgDecodedStream::Clear()
 {
 #ifdef DEFINE_DEBUG
-    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, false, nullptr);
+    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, false, SpeakerProfile::eStereo, nullptr);
 #endif
 }
 
@@ -3109,10 +3117,10 @@ MsgWait* MsgFactory::CreateMsgWait()
     return iAllocatorMsgWait.Allocate();
 }
 
-MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, IStreamHandler* aStreamHandler)
+MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, SpeakerProfile aProfile, IStreamHandler* aStreamHandler)
 {
     MsgDecodedStream* msg = iAllocatorMsgDecodedStream.Allocate();
-    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aStreamHandler);
+    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aProfile, aStreamHandler);
     return msg;
 }
 
@@ -3122,7 +3130,7 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(MsgDecodedStream* aMsg, ISt
     auto msg = CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
         stream.SampleRate(), stream.NumChannels(), stream.CodecName(),
         stream.TrackLength(), stream.SampleStart(), stream.Lossless(),
-        stream.Seekable(), stream.Live(), stream.AnalogBypass(), aStreamHandler);
+        stream.Seekable(), stream.Live(), stream.AnalogBypass(), stream.Profile(), aStreamHandler);
     return msg;
 }
 

@@ -24,6 +24,7 @@ class SuiteSampleRateValidator : public SuiteUnitTest
     static const TUint kBitrate = 256;
     static const TUint kSampleRate = 44100;
     static const TUint kChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static const TUint kBitDepth = 16;
 public:
     SuiteSampleRateValidator();
@@ -196,7 +197,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, this);
+        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, kProfile, this);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(123);

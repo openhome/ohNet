@@ -31,6 +31,7 @@ private:
     TUint iSampleRate;
     TUint iNumChannels;
     AudioDataEndian iEndian;
+    SpeakerProfile iProfile;
     TUint iBitRate;
     TUint64 iStartSample;
     TUint64 iTrackOffset;
@@ -71,6 +72,7 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
     iSampleRate = aStreamInfo.SampleRate();
     iNumChannels = aStreamInfo.NumChannels();
     iEndian = aStreamInfo.Endian();
+    iProfile = aStreamInfo.Profile();
     iStartSample = aStreamInfo.StartSample();
     iAnalogBypass = aStreamInfo.AnalogBypass();
     iCodecName.Replace(aStreamInfo.CodecName());
@@ -131,7 +133,7 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
 
 void CodecPcm::SendMsgDecodedStream(TUint64 aStartSample)
 {
-    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, iCodecName, iTrackLengthJiffies, aStartSample, true, iAnalogBypass);
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, iCodecName, iTrackLengthJiffies, aStartSample, true, iProfile, iAnalogBypass);
 }
 
 TUint64 CodecPcm::ToJiffies(TUint64 aSample)

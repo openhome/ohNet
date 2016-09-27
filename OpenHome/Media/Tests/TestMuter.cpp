@@ -25,6 +25,7 @@ class SuiteMuter : public SuiteUnitTest
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
 public:
     SuiteMuter();
     ~SuiteMuter();
@@ -416,7 +417,7 @@ Msg* SuiteMuter::CreateTrack()
 
 Msg* SuiteMuter::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, kProfile, nullptr);
 }
 
 Msg* SuiteMuter::CreateAudio()

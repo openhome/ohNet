@@ -29,6 +29,7 @@ class SuiteStarvationRamper : public SuiteUnitTest
     static const TUint kSampleRateDefault = 48000;
     static const TUint kBitDepthDefault = 16;
     static const TUint kNumChannels = 2;
+    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
     static const TUint kAudioPcmBytesDefault = 960; // 5ms of 48k, 16-bit stereo
     static const Brn kMode;
 public:
@@ -433,7 +434,7 @@ Msg* SuiteStarvationRamper::CreateTrack()
 
 Msg* SuiteStarvationRamper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, iBitDepth, iSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, this);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, iBitDepth, iSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, kProfile, this);
 }
 
 Msg* SuiteStarvationRamper::CreateAudio()
