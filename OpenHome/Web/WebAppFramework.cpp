@@ -639,7 +639,6 @@ const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
 WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
     : iEnv(aEnv)
-    , iPollTimer(iEnv, "WebAppFrameworkPollTimer", 0)
     , iPort(aPort)
     , iMaxLpSessions(aMaxSessions)
     , iServer(nullptr)

@@ -399,7 +399,6 @@ private:
     void CurrentAdapterChanged();
 private:
     Environment& iEnv;
-    FrameworkTimer iPollTimer; // FIXME  remove
     const TUint iPort;
     const TUint iMaxLpSessions;
     TUint iAdapterListenerId;
