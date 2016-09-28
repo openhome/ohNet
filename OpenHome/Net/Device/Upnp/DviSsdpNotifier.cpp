@@ -179,12 +179,18 @@ void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData,
     Start(aAnnouncementData, 1, NEXT_MSG_SERVICE_TYPE + index, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
+Endpoint MsearchResponse::Remote() const
+{
+    return iRemote;
+}
+
 void MsearchResponse::Start(IUpnpAnnouncementData& aAnnouncementData, TUint aTotalMsgs, TUint aNextMsgIndex, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     iAnnouncementData = &aAnnouncementData;
     iNextMsgIndex = aNextMsgIndex;
     iRemainingMsgs = aTotalMsgs;
     static_cast<SsdpMsearchResponder*>(iNotifier)->SetRemote(aRemote, aConfigId, aAdapter);
+    iRemote = aRemote;
     iUri.Replace(aUri);
     SsdpNotifierScheduler::Start(aMx * 1000, iRemainingMsgs);
 }
@@ -291,6 +297,8 @@ void DeviceAnnouncement::NotifyComplete(TBool aCancelled)
 
 // DviSsdpNotifierManager
 
+const TUint DviSsdpNotifierManager::kMaxMsearchResponsesPerEndpoint = 5;
+
 DviSsdpNotifierManager::DviSsdpNotifierManager(DvStack& aDvStack)
     : iDvStack(aDvStack)
     , iLock("DVDM")
@@ -359,37 +367,52 @@ void DviSsdpNotifierManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnounce
 
 void DviSsdpNotifierManager::MsearchResponseAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    AutoMutex a(iLock);
-    Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartAll(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    try {
+        AutoMutex a(iLock);
+        Responder* responder = GetResponder(aAnnouncementData, aRemote);
+        responder->Response().StartAll(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    }
+    catch (MsearchResponseLimit&) {}
 }
 
 void DviSsdpNotifierManager::MsearchResponseRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    AutoMutex a(iLock);
-    Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartRoot(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    try {
+        AutoMutex a(iLock);
+        Responder* responder = GetResponder(aAnnouncementData, aRemote);
+        responder->Response().StartRoot(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    }
+    catch (MsearchResponseLimit&) {}
 }
 
 void DviSsdpNotifierManager::MsearchResponseUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    AutoMutex a(iLock);
-    Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartUuid(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    try {
+        AutoMutex a(iLock);
+        Responder* responder = GetResponder(aAnnouncementData, aRemote);
+        responder->Response().StartUuid(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    }
+    catch (MsearchResponseLimit&) {}
 }
 
 void DviSsdpNotifierManager::MsearchResponseDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    AutoMutex a(iLock);
-    Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartDeviceType(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    try {
+        AutoMutex a(iLock);
+        Responder* responder = GetResponder(aAnnouncementData, aRemote);
+        responder->Response().StartDeviceType(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
+    }
+    catch (MsearchResponseLimit&) {}
 }
 
 void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
-    AutoMutex a(iLock);
-    Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId, aAdapter);
+    try {
+        AutoMutex a(iLock);
+        Responder* responder = GetResponder(aAnnouncementData, aRemote);
+        responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId, aAdapter);
+    }
+    catch (MsearchResponseLimit&) {}
 }
 
 void DviSsdpNotifierManager::Stop(const Brx& aUdn)
@@ -421,8 +444,21 @@ void DviSsdpNotifierManager::Delete(std::list<Notifier*>& aList)
     }
 }
 
-DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnnouncementData& aAnnouncementData)
+DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote)
 {
+    TUint responsesPerEndpoint = 0;
+    for (std::list<Notifier*>::iterator it = iActiveResponders.begin(); it != iActiveResponders.end(); ++it) {
+        Endpoint remote = static_cast<Responder*>(*it)->Response().Remote();
+        if (remote == aRemote) {
+            if (++responsesPerEndpoint > kMaxMsearchResponsesPerEndpoint) {
+                Endpoint::EndpointBuf epBuf;
+                remote.AppendEndpoint(epBuf);
+                LOG(kDvSsdpNotifier, "DviSsdpNotifierManager ignoring excess msearch from %.*s\n", PBUF(epBuf));
+                THROW(MsearchResponseLimit);
+            }
+        }
+    }
+
     DviSsdpNotifierManager::Responder* responder;
     if (iFreeResponders.size() == 0) {
         MsearchResponse* msr = new MsearchResponse(iDvStack, *this);

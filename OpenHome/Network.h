@@ -46,6 +46,7 @@ public:
     void SetAddress(const Endpoint& aEndpoint);          // set address from other endpoint
     void Replace(const Endpoint& aEndpoint);             // set endpoint from other endpoint
     TBool Equals(const Endpoint& aEndpoint) const;       // test if this endpoint is equal to the specified endpoint
+    inline TBool operator==(const Endpoint& aEndpoint) const { return Equals(aEndpoint); }
     TIpAddress Address() const;
     TUint16 Port() const;                                // return port as a network order uint16
     void AppendAddress(Bwx& aAddress) const;

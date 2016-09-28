@@ -5,9 +5,12 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Net/Private/Ssdp.h>
 
 #include <vector>
+
+EXCEPTION(MsearchResponseLimit)
 
 namespace OpenHome {
 namespace Net {
@@ -59,6 +62,7 @@ public:
     void StartUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);
     void StartDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);
     void StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);
+    Endpoint Remote() const;
 private:
     void Start(IUpnpAnnouncementData& aAnnouncementData, TUint aTotalMsgs, TUint aNextMsgIndex, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter);
 private: // from DviMsg
@@ -67,6 +71,7 @@ private:
     static const TUint kMaxUriBytes = 256;
     IUpnpAnnouncementData* iAnnouncementData;
     ISsdpNotify* iNotifier;
+    Endpoint iRemote;
     Bws<kMaxUriBytes> iUri;
     TUint iRemainingMsgs;
     TUint iNextMsgIndex;
@@ -103,6 +108,7 @@ private:
 
 class DviSsdpNotifierManager : private ISsdpNotifyListener
 {
+    static const TUint kMaxMsearchResponsesPerEndpoint;
 public:
     DviSsdpNotifierManager(DvStack& aDvStack);
     ~DviSsdpNotifierManager();
@@ -146,7 +152,7 @@ private:
 private:
     void Stop(std::list<Notifier*>& aList, const Brx& aUdn);
     void Delete(std::list<Notifier*>& aList);
-    Responder* GetResponder(IUpnpAnnouncementData& aAnnouncementData);
+    Responder* GetResponder(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote);
     Announcer* GetAnnouncer(IUpnpAnnouncementData& aAnnouncementData);
     TBool TryMove(SsdpNotifierScheduler* aScheduler, std::list<Notifier*>& aFrom, std::list<Notifier*>& aTo);
 private: // from ISsdpNotifyListener
