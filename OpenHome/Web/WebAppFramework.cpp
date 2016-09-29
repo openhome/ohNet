@@ -631,26 +631,99 @@ const Brx& WebAppInternal::ResourcePrefix() const
 }
 
 
+// WebAppFrameworkInitParams
+
+WebAppFrameworkInitParams::WebAppFrameworkInitParams()
+    : iPort(kDefaultPort)
+    , iThreadResourcesCount(kDefaultMinServerThreadsResources)
+    , iThreadLongPollCount(kDefaultMaxServerThreadsLongPoll)
+    , iSendQueueSize(kDefaultSendQueueSize)
+    , iSendTimeoutMs(kDefaultSendTimeoutMs)
+    , iLongPollTimeoutMs(kDefaultLongPollTimeoutMs)
+{
+}
+
+void WebAppFrameworkInitParams::SetPort(TUint aPort)
+{
+    iPort = aPort;
+}
+
+void WebAppFrameworkInitParams::SetMinServerThreadsResources(TUint aThreadResourcesCount)
+{
+    iThreadResourcesCount = aThreadResourcesCount;
+}
+
+void WebAppFrameworkInitParams::SetMaxServerThreadsLongPoll(TUint aThreadLongPollCount)
+{
+    iThreadLongPollCount = aThreadLongPollCount;
+}
+
+void WebAppFrameworkInitParams::SetSendQueueSize(TUint aSendQueueSize)
+{
+    iSendQueueSize = aSendQueueSize;
+}
+
+void WebAppFrameworkInitParams::SetSendTimeoutMs(TUint aSendTimeoutMs)
+{
+    iSendTimeoutMs = aSendTimeoutMs;
+}
+
+void WebAppFrameworkInitParams::SetLongPollTimeoutMs(TUint aLongPollTimeoutMs)
+{
+    iLongPollTimeoutMs = aLongPollTimeoutMs;
+}
+
+TUint WebAppFrameworkInitParams::Port() const
+{
+    return iPort;
+}
+
+TUint WebAppFrameworkInitParams::MinServerThreadsResources() const
+{
+    return iThreadResourcesCount;
+}
+
+TUint WebAppFrameworkInitParams::MaxServerThreadsLongPoll() const
+{
+    return iThreadLongPollCount;
+}
+
+TUint WebAppFrameworkInitParams::SendQueueSize() const
+{
+    return iSendQueueSize;
+}
+
+TUint WebAppFrameworkInitParams::SendTimeoutMs() const
+{
+    return iSendTimeoutMs;
+}
+
+TUint WebAppFrameworkInitParams::LongPollTimeoutMs() const
+{
+    return iLongPollTimeoutMs;
+}
+
+
 // WebAppFramework
 
 const TChar* WebAppFramework::kName("WebUiServer");
 const TChar* WebAppFramework::kAdapterCookie("WebAppFramework");
 const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
-WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMinResourceServerThreads, TUint aMaxLongPollServerThreads, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
+WebAppFramework::WebAppFramework(Environment& aEnv, WebAppFrameworkInitParams* aInitParams)
     : iEnv(aEnv)
-    , iPort(aPort)
-    , iMinResourceServerThreads(aMinResourceServerThreads)
-    , iMaxLongPollServerThreads(aMaxLongPollServerThreads)
+    , iInitParams(aInitParams)
     , iServer(nullptr)
     , iDefaultApp(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
     , iMutex("webapp")
 {
+    ASSERT(iInitParams != nullptr);
+
     // A server isn't much use without any serving threads.
-    ASSERT(iMinResourceServerThreads > 0);
-    ASSERT(aMaxLongPollServerThreads > 0);
+    ASSERT(iInitParams->MinServerThreadsResources() > 0);
+    ASSERT(iInitParams->MaxServerThreadsLongPoll() > 0);
 
     // Create iMaxLongPollServerThreads tabs. From now on in, the TabManager
     // will enforce the limitations by refusing to create new tabs when its tab
@@ -658,8 +731,8 @@ WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, T
     // (Similarly, if a request comes in for a tab that isn't in the TabManager
     // it will be immediately rejected, therefore not blocking any thread.)
     std::vector<IFrameworkTab*> tabs;
-    for (TUint i=0; i<iMaxLongPollServerThreads; i++) {
-        tabs.push_back(new FrameworkTabFull(aEnv, i, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs));
+    for (TUint i=0; i<iInitParams->MaxServerThreadsLongPoll(); i++) {
+        tabs.push_back(new FrameworkTabFull(aEnv, i, iInitParams->SendQueueSize(), iInitParams->SendTimeoutMs(), iInitParams->LongPollTimeoutMs()));
     }
     iTabManager = new TabManager(tabs); // Takes ownership.
 
@@ -694,6 +767,8 @@ WebAppFramework::~WebAppFramework()
         // First elem is pointer to ref.
         delete it->second;
     }
+
+    delete iInitParams;
 }
 
 void WebAppFramework::Start()
@@ -821,7 +896,7 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
 
 void WebAppFramework::AddSessions()
 {
-    for (TUint i=0; i<iMinResourceServerThreads+iMaxLongPollServerThreads; i++) {
+    for (TUint i=0; i<iInitParams->MinServerThreadsResources()+iInitParams->MaxServerThreadsLongPoll(); i++) {
         Bws<kMaxSessionNameBytes> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
         auto* session = new HttpSession(iEnv, *this, *iTabManager, *this);
@@ -865,7 +940,7 @@ void WebAppFramework::CurrentAdapterChanged()
     if (current != nullptr) {
         delete iServer;
         iSessions.clear();
-        iServer = new SocketTcpServer(iEnv, kName, iPort, current->Address());
+        iServer = new SocketTcpServer(iEnv, kName, iInitParams->Port(), current->Address());
         AddSessions();
         if (iStarted) {
             for (HttpSession& s : iSessions) {

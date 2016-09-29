@@ -205,9 +205,12 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iPowerObserver = powerManager.RegisterPowerHandler(*this, kPowerPriorityLowest);
 
     // Set up config app.
-    static const TUint addr = 0;    // Bind to all addresses.
-    static const TUint port = 0;    // Bind to whatever free port the OS allocates to the framework server.
-    iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, aMinWebUiResourceThreads, aMaxWebUiTabs, aUiSendQueueSize);
+    WebAppFrameworkInitParams* initParams = new WebAppFrameworkInitParams();
+    initParams->SetPort(0); // Bind to whatever free port the OS allocates to the web server.
+    initParams->SetMinServerThreadsResources(aMinWebUiResourceThreads);
+    initParams->SetMaxServerThreadsLongPoll(aMaxWebUiTabs);
+    initParams->SetSendQueueSize(aUiSendQueueSize);
+    iAppFramework = new WebAppFramework(aDvStack.Env(), initParams);
 }
 
 TestMediaPlayer::~TestMediaPlayer()

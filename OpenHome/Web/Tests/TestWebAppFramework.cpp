@@ -1978,7 +1978,8 @@ SuiteWebAppFramework::SuiteWebAppFramework(Environment& aEnv)
 void SuiteWebAppFramework::Setup()
 {
     iPresentationUrl.SetBytes(0);
-    iFramework = new WebAppFramework(iEnv);
+    WebAppFrameworkInitParams* initParams = new WebAppFrameworkInitParams();
+    iFramework = new WebAppFramework(iEnv, initParams);
     TestHelperWebApp* webApp = new TestHelperWebApp();
     iFramework->Add(webApp, MakeFunctorGeneric(*this, &SuiteWebAppFramework::PresentationUrlChanged));
 }

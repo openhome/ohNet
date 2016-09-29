@@ -355,6 +355,38 @@ private:
 
 class HttpSession;
 
+class WebAppFrameworkInitParams
+{
+private:
+    static const TUint kDefaultPort = 0;
+    static const TUint kDefaultMinServerThreadsResources = 1;
+    static const TUint kDefaultMaxServerThreadsLongPoll = 1;
+    static const TUint kDefaultSendQueueSize = 1024;
+    static const TUint kDefaultSendTimeoutMs = 5000;
+    static const TUint kDefaultLongPollTimeoutMs = 5000;
+public:
+    WebAppFrameworkInitParams();
+    void SetPort(TUint aPort);
+    void SetMinServerThreadsResources(TUint aThreadResourcesCount);
+    void SetMaxServerThreadsLongPoll(TUint aThreadLongPollCount);
+    void SetSendQueueSize(TUint aSendQueueSize);
+    void SetSendTimeoutMs(TUint aSendTimeoutMs);
+    void SetLongPollTimeoutMs(TUint aLongPollTimeoutMs);
+    TUint Interface() const;
+    TUint Port() const;
+    TUint MinServerThreadsResources() const;
+    TUint MaxServerThreadsLongPoll() const;
+    TUint SendQueueSize() const;
+    TUint SendTimeoutMs() const;
+    TUint LongPollTimeoutMs() const;
+private:
+    TUint iPort;
+    TUint iThreadResourcesCount;
+    TUint iThreadLongPollCount;
+    TUint iSendQueueSize;
+    TUint iSendTimeoutMs;
+    TUint iLongPollTimeoutMs;
+};
 
 /*
  * FIXME - If we wish to support multiple WebApps in the WebAppFramework, there are two approaches to tab limits:
@@ -397,7 +429,8 @@ private:
     typedef std::pair<const Brx*, WebAppInternal*> WebAppPair;
     typedef std::map<const Brx*, WebAppInternal*, BrxPtrCmp> WebAppMap;
 public:
-    WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMinResourceServerThreads = kDefaultMinResourceServerThreads, TUint aMaxLongPollServerThreads = kDefaultLongPollServerThreads, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
+    // FIXME - replace this with an init params object, similar to what ohNet and the pipeline take.
+    WebAppFramework(Environment& aEnv, WebAppFrameworkInitParams* aInitParms);
     ~WebAppFramework();
     void Start();
     /**
@@ -419,15 +452,10 @@ private:
     void CurrentAdapterChanged();
 private:
     Environment& iEnv;
-    const TUint iPort;
-    const TUint iMinResourceServerThreads;
-    const TUint iMaxLongPollServerThreads;
+    WebAppFrameworkInitParams* iInitParams;
     TUint iAdapterListenerId;
     SocketTcpServer* iServer;
     TabManager* iTabManager;    // Should there be one tab manager for ALL apps, or one TabManager per app? (And, similarly, one set of server sessions for all apps, or a set of server sessions per app? Also, need at least one extra session for receiving (and declining) additional long polling requests.)
-
-    // FIXME - what if this is created with a max of 4 tabs and an app is added that is only capable of creating 3 apps and 4 clients try to load apps?
-
     WebAppMap iWebApps;
     std::vector<std::reference_wrapper<HttpSession>> iSessions;
     IWebApp* iDefaultApp;

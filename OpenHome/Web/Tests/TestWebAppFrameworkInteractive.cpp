@@ -88,7 +88,7 @@ public:
 private:
     static const OpenHome::Brn kResourcePrefix;
 public:
-    TestHttpApp(TUint aMaxSessions, const OpenHome::Brx& aResourceDir);
+    TestHttpApp(TUint aMaxResourceHandlers, TUint aMaxSessions, const OpenHome::Brx& aResourceDir);
     ~TestHttpApp();
 public: // from IWebApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList);
@@ -226,13 +226,15 @@ void TestTab::Destroy()
 
 const Brn TestHttpApp::kResourcePrefix("TestHttpApp");
 
-TestHttpApp::TestHttpApp(TUint aMaxSessions, const OpenHome::Brx& aResourceDir)
+TestHttpApp::TestHttpApp(TUint aMaxResourceHandlers, TUint aMaxSessions, const OpenHome::Brx& aResourceDir)
     : iMsgAllocator(kMaxMessages, kMaxMessageBytes)
     , iLock("THAL")
 {
+    for (TUint i=0; i<aMaxResourceHandlers; i++) {
+        iResourceHandlers.push_back(new FileResourceHandler(aResourceDir));
+    }
     for (TUint i=0; i<aMaxSessions; i++) {
         iTabs.push_back(new TestTab(i, iMsgAllocator));
-        iResourceHandlers.push_back(new FileResourceHandler(aResourceDir));
     }
 }
 
@@ -318,14 +320,19 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Set up the server.
     Debug::SetLevel(Debug::kHttp);
-    static const TIpAddress addr = 0;    // bind to all interfaces
-    static const TUint port = 0;         // bind to OS-assigned port
-    static const TUint maxSessions = 4;
-    static const TUint bufferBytes = 1024;
 
-    WebAppFramework* server = new WebAppFramework(env, addr, port, maxSessions, bufferBytes);
+    static const TUint kMinResourceThreads = 1;
+    static const TUint kMaxTabs = 1;
 
-    TestHttpApp* app = new TestHttpApp(maxSessions, optionDir.Value());  // read files from posix-style filesystem
+    WebAppFrameworkInitParams* wafInitParams = new WebAppFrameworkInitParams();
+    wafInitParams->SetPort(0);  // bind to OS-assigned port
+    wafInitParams->SetMinServerThreadsResources(kMinResourceThreads);
+    wafInitParams->SetMaxServerThreadsLongPoll(kMaxTabs);
+    wafInitParams->SetSendQueueSize(1024);
+
+    WebAppFramework* server = new WebAppFramework(env, wafInitParams);
+
+    TestHttpApp* app = new TestHttpApp(kMinResourceThreads, kMaxTabs, optionDir.Value());  // read files from posix-style filesystem
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership
