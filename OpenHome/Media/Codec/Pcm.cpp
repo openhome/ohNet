@@ -38,6 +38,7 @@ private:
     TUint64 iTrackLengthJiffies;
     TBool iAnalogBypass;
     BwsCodecName iCodecName;
+    TBool iLossless;
 };
 
 } // namespace Codec
@@ -76,6 +77,7 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
     iStartSample = aStreamInfo.StartSample();
     iAnalogBypass = aStreamInfo.AnalogBypass();
     iCodecName.Replace(aStreamInfo.CodecName());
+    iLossless = aStreamInfo.Lossless();
     //Log::Print("CodecPcm::Recognise iBitDepth %d, iSampleRate %d, iNumChannels %d, iEndian %d, iStartSample %d, iAnalogBypass %d\n", iBitDepth, iSampleRate, iNumChannels, iEndian, iStartSample, iAnalogBypass);
     return true;
 }
@@ -133,7 +135,7 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
 
 void CodecPcm::SendMsgDecodedStream(TUint64 aStartSample)
 {
-    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, iCodecName, iTrackLengthJiffies, aStartSample, true, iProfile, iAnalogBypass);
+    iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, iCodecName, iTrackLengthJiffies, aStartSample, iLossless, iProfile, iAnalogBypass);
 }
 
 TUint64 CodecPcm::ToJiffies(TUint64 aSample)

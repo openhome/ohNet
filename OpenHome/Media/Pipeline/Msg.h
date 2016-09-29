@@ -430,7 +430,7 @@ public:
     PcmStreamInfo();
     void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, SpeakerProfile aProfile, TUint64 aStartSample = 0);
     void SetAnalogBypass();
-    void SetCodecName(const Brx& aCodecName);
+    void SetCodec(const Brx& aCodecName, TBool aLossless);
     void Clear();
     TUint BitDepth() const;
     TUint SampleRate() const;
@@ -440,6 +440,7 @@ public:
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
     const Brx& CodecName() const;
+    TBool Lossless() const;
     void operator=(const PcmStreamInfo &);
 private:
     TUint iBitDepth;
@@ -450,6 +451,7 @@ private:
     TUint64 iStartSample;
     TBool iAnalogBypass;
     BwsCodecName iCodecName;
+    TBool iLossless;
 };
 
 class MsgMetaText : public Msg

@@ -65,7 +65,14 @@ TBool EncodedStreamInfo::AnalogBypass() const
 
 const Brx& EncodedStreamInfo::CodecName() const
 {
+    ASSERT(iRawPcm);
     return iCodecName;
+}
+
+TBool EncodedStreamInfo::Lossless() const
+{
+    ASSERT(iRawPcm);
+    return iLossless;
 }
 
 EncodedStreamInfo::EncodedStreamInfo()
@@ -77,11 +84,12 @@ EncodedStreamInfo::EncodedStreamInfo()
     , iProfile(SpeakerProfile::eStereo)
     , iStartSample(0)
     , iAnalogBypass(false)
+    , iLossless(false)
 {
 }
 
-void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian,
-                            SpeakerProfile aProfile, TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName)
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, SpeakerProfile aProfile,
+                            TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName, TBool aLossless)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
@@ -92,6 +100,7 @@ void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChanne
     iStartSample = aStartSample;
     iAnalogBypass = aAnalogBypass;
     iCodecName.Replace(aCodecName);
+    iLossless = aLossless;
 }
 
 
@@ -283,7 +292,7 @@ void CodecController::CodecThread()
             if (iRawPcm) {
                 streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(),
                                iPcmStream.Endian(), iPcmStream.Profile(), iPcmStream.StartSample(), iPcmStream.AnalogBypass(),
-                               iPcmStream.CodecName());
+                               iPcmStream.CodecName(), iPcmStream.Lossless());
             }
 
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);
