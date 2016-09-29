@@ -66,7 +66,7 @@ class Mp3HeaderExtendedXing : public IMp3HeaderExtended
 public:
     Mp3HeaderExtendedXing();
     void Clear();
-    void Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate);
+    void Replace(const Brx& aHeaderData, const Mp3Header& aHeader);
 private: // from IMp3HeaderExtended
     TUint64 SamplesTotal() const override { return iSamplesTotal; }
     TUint64 SampleToByte(TUint64 aSample) const override;
@@ -268,9 +268,8 @@ void Mp3HeaderExtendedXing::Clear()
     iBitRate = 0;
 }
 
-void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint aByteRate)
+void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader)
 {
-    iBitRate = aByteRate*8;
     // We already know we have at least an mp3 file (checked by CodecMp3::Recognise)
     // See if there is a XING or INFO header at any of the common positions
     // Byte Pos of "XING" or "INFO" for LAYER 3 ONLY
@@ -351,6 +350,15 @@ void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHe
     TUint32 samplesPerFrame = aHeader.SamplesPerFrame();
     iSampleRate = aHeader.SampleRate();
     iSamplesTotal = iFrames * samplesPerFrame;
+
+    // NOTE: This calculation may result in a bitrate of 0 if the bytes field
+    // (above) isn't set. No worse than previous codebase.
+    // Could attempt to work round this by passing in StreamLength() value to
+    // this method.
+    TUint64 bitRate = static_cast<TUint64>(iBytes) * iSampleRate;
+    bitRate *= 8;
+    bitRate /= iSamplesTotal;
+    iBitRate = static_cast<TUint32>(bitRate);
 
     //LOG(kCodec, "Mp3HeaderExtendedXing: frames: %d, bytes: %d, SamplesTotal: %lld, BitRate: %d\n", iFrames, iBytes, iSamplesTotal, iBitRate);
 }
@@ -522,7 +530,7 @@ void Mp3Header::Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTot
     }
     else {
         try {
-            iExtendedXing.Replace(aHeaderData, *this, byteRate);
+            iExtendedXing.Replace(aHeaderData, *this);
             iExtended = &iExtendedXing;
         }
         catch (CodecExtendedHeaderNotFound&) {
