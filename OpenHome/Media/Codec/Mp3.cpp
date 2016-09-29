@@ -66,7 +66,7 @@ class Mp3HeaderExtendedXing : public IMp3HeaderExtended
 public:
     Mp3HeaderExtendedXing();
     void Clear();
-    void Replace(const Brx& aHeaderData, const Mp3Header& aHeader);
+    void Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint64 aTotalBytes);
 private: // from IMp3HeaderExtended
     TUint64 SamplesTotal() const override { return iSamplesTotal; }
     TUint64 SampleToByte(TUint64 aSample) const override;
@@ -74,8 +74,8 @@ private: // from IMp3HeaderExtended
 private:
     TUint iSampleRate;
     TUint64 iSamplesTotal;
-    TUint iFrames; // total number of frames
-    TUint iBytes;  // number of bytes in the mp3 audio data _only_ no tags included
+    TUint iFrames;  // total number of frames
+    TUint64 iBytes; // number of bytes in the mp3 audio data _only_ no tags included
     TUint iBitRate;
     Bws<100> iToc;
 };
@@ -268,7 +268,7 @@ void Mp3HeaderExtendedXing::Clear()
     iBitRate = 0;
 }
 
-void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader)
+void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHeader, TUint64 aTotalBytes)
 {
     // We already know we have at least an mp3 file (checked by CodecMp3::Recognise)
     // See if there is a XING or INFO header at any of the common positions
@@ -330,10 +330,17 @@ void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHe
         // present, which makes doing anything else with this header pointless.
         THROW(CodecExtendedHeaderNotFound);
     }
-    // If neither of the following fields are present, then seeking will be inaccurate.
+    // If neither of the "bytes" or "TOC" fields are present, then seeking will
+    // be inaccurate.
     if ((flags & 0x02) == 0x02) { // Bytes field present
         offBytes += 4;
         iBytes = Converter::BeUint32At(aHeaderData, offBytes);
+    }
+    else {
+        // There was no bytes field present. However, we know the stream
+        // length, so use that instead, although it means other calculations
+        // (bitrate, seek pos) won't be as accurate.
+        iBytes = aTotalBytes;
     }
     if ((flags & 0x04) == 0x04) { // Toc present
         offBytes += 4;
@@ -351,11 +358,8 @@ void Mp3HeaderExtendedXing::Replace(const Brx& aHeaderData, const Mp3Header& aHe
     iSampleRate = aHeader.SampleRate();
     iSamplesTotal = iFrames * samplesPerFrame;
 
-    // NOTE: This calculation may result in a bitrate of 0 if the bytes field
-    // (above) isn't set. No worse than previous codebase.
-    // Could attempt to work round this by passing in StreamLength() value to
-    // this method.
-    TUint64 bitRate = static_cast<TUint64>(iBytes) * iSampleRate;
+    // Estimate VBR bitrate based on file size and number of samples reported.
+    TUint64 bitRate = iBytes * iSampleRate;
     bitRate *= 8;
     bitRate /= iSamplesTotal;
     iBitRate = static_cast<TUint32>(bitRate);
@@ -530,7 +534,7 @@ void Mp3Header::Replace(const Brx& aHeaderData, TUint aHeaderBytes, TUint64 aTot
     }
     else {
         try {
-            iExtendedXing.Replace(aHeaderData, *this);
+            iExtendedXing.Replace(aHeaderData, *this, aTotalBytes-iHeaderBytes);
             iExtended = &iExtendedXing;
         }
         catch (CodecExtendedHeaderNotFound&) {
