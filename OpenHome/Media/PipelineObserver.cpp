@@ -8,7 +8,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-static std::map<SpeakerProfile, const TChar*> speakerProfileStrings = {
+static const std::map<SpeakerProfile, const TChar*> speakerProfileStrings = {
             {SpeakerProfile::eMono,   "mono"},
             {SpeakerProfile::eStereo, "stereo"},
             {SpeakerProfile::e2S0P1,  "2/0.1"},
