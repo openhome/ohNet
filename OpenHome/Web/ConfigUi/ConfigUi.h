@@ -625,7 +625,7 @@ private:
     typedef std::pair<Brn, Brn> ResourcePair;
     typedef std::map<Brn, Brn, BufferCmp> ResourceMap;
 protected:
-    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
@@ -668,7 +668,7 @@ public:
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
-                   TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+                   TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 class ConfigAppSources : public ConfigAppBasic
@@ -681,7 +681,7 @@ public:
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,
                      const Brx& aResourcePrefix, const Brx& aResourceDir,
-                     TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+                     TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 } // namespace Web

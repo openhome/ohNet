@@ -637,18 +637,28 @@ const TChar* WebAppFramework::kName("WebUiServer");
 const TChar* WebAppFramework::kAdapterCookie("WebAppFramework");
 const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
-WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
+WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMinResourceServerThreads, TUint aMaxLongPollServerThreads, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
     : iEnv(aEnv)
     , iPort(aPort)
-    , iMaxLpSessions(aMaxSessions)
+    , iMinResourceServerThreads(aMinResourceServerThreads)
+    , iMaxLongPollServerThreads(aMaxLongPollServerThreads)
     , iServer(nullptr)
     , iDefaultApp(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
     , iMutex("webapp")
 {
+    // A server isn't much use without any serving threads.
+    ASSERT(iMinResourceServerThreads > 0);
+    ASSERT(aMaxLongPollServerThreads > 0);
+
+    // Create iMaxLongPollServerThreads tabs. From now on in, the TabManager
+    // will enforce the limitations by refusing to create new tabs when its tab
+    // limit is exhausted.
+    // (Similarly, if a request comes in for a tab that isn't in the TabManager
+    // it will be immediately rejected, therefore not blocking any thread.)
     std::vector<IFrameworkTab*> tabs;
-    for (TUint i=0; i<iMaxLpSessions; i++) {
+    for (TUint i=0; i<iMaxLongPollServerThreads; i++) {
         tabs.push_back(new FrameworkTabFull(aEnv, i, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs));
     }
     iTabManager = new TabManager(tabs); // Takes ownership.
@@ -811,10 +821,7 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
 
 void WebAppFramework::AddSessions()
 {
-    // Add iMaxLpSessions+kSpareSessions to create spare session(s) for when
-    // iMaxLpSessions are in use to allow processing of user input and
-    // rejection of new connections.
-    for (TUint i=0; i<iMaxLpSessions+kSpareSessions; i++) {
+    for (TUint i=0; i<iMinResourceServerThreads+iMaxLongPollServerThreads; i++) {
         Bws<kMaxSessionNameBytes> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
         auto* session = new HttpSession(iEnv, *this, *iTabManager, *this);
@@ -849,6 +856,10 @@ void WebAppFramework::CurrentAdapterChanged()
             iCurrentAdapter->AddRef(kAdapterCookie);
         }
     }
+
+    // Shouldn't need to clear any active tabs here.
+    // Could potentially resume session. In the worst case, they will time out
+    // and be recreated, which is what would otherwise be done here anyway.
 
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
     if (current != nullptr) {
@@ -1086,17 +1097,17 @@ void HttpSession::Post()
             iResponseEnded = true;
         }
         catch (InvalidAppPrefix&) {
-            // FIXME - just respond with error instead of asserting?
+            // FIXME - just respond with error instead of asserting? Yes - report a 404.
 
             // Programmer error/misuse by client.
             // Long-polling can only be initiated from a page served up by this framework (which implies that it must have a valid app prefix!).
             ASSERTS();
         }
-        catch (TabAllocatorFull&) { // FIXME - do something to distinguish between this (an IWebApp having all tabs allocated) vs TabManagerFull (the WebAppFramework has had its available tabs exhausted).
+        catch (TabAllocatorFull&) { // Thrown when an IWebApp fails to Create() a new tab, due to resource exhaustion in that particular app.
             Error(HttpStatus::kServiceUnavailable);
         }
-        catch (TabManagerFull&) {
-            Error(HttpStatus::kServiceUnavailable); // FIXME - if we return this state, Javascript code should keep attempting to poll
+        catch (TabManagerFull&) {   // Thrown when TabManager fails to Create() a new tab, due to long poll server thread exhaustion.
+            Error(HttpStatus::kServiceUnavailable);
         }
         catch (InvalidTabId&) {
             ASSERTS();  // shouldn't happen - we've just created the tab

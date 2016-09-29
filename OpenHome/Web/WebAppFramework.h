@@ -355,6 +355,20 @@ private:
 
 class HttpSession;
 
+
+/*
+ * FIXME - If we wish to support multiple WebApps in the WebAppFramework, there are two approaches to tab limits:
+ * - WebAppFramework dictates how many tabs each WebApp must support (i.e., memory usage is: WAF tab limit * app count).
+ * -- Forces fixed minimum bounds of memory usage.
+ * -- Guarantees that only limit exceeded will be number of long poll server threads.
+ * - Each WebApp can define how many tabs it will provide.
+ * -- Different apps can support different requirements to minimise memory usage.
+ * -- Must have a way of distinguishing when WebApp has exhausted available tabs and when WebAppFramework has exhausted available long poll server threads (e.g., WAF supports 4 long poll tabs, but app only supports 3 tabs, and client tries to load 4 tabs).
+ * -- HttpSession::Post() should probably send up a status string, along with the 503 error, along the lines of the following for the respective conditions above:
+ * --- When TabAllocatorFull caught: "Error: Too many instances of Konfig app open. Please close an instance of Konfig.", where "Konfig" is replaced with relevant app's user-friendly name.
+ * --- When TabManagerFull caught: "Error: Too many server requests for apps. Please close an existing app."
+ */
+
 // FIXME - handle redirects from "/" to "/index.html"? - job of resource handler
 class WebAppFramework : public IWebAppFramework, public IWebAppManager, public IResourceManager, public IServer
 {
@@ -363,6 +377,15 @@ public:
     static const TChar* kAdapterCookie;
     static const Brn kSessionPrefix;
 private:
+    // NOTE: No need for a "spare" session. Impossible to enforce such a
+    // feature, and as long as normal server threads >= 1, will always
+    // (eventually) serve all requests, as there will be no calls which block
+    // for long periods.
+    // NOTE: This is the MINIMUM number of server resource threads, because the
+    // server will also use long poll threads for serving static resources, if
+    // there are any free.
+    static const TUint kDefaultMinResourceServerThreads = 1;
+    static const TUint kDefaultLongPollServerThreads = 1;
     static const TUint kMaxSessionNameBytes = 32;  // Should be capable of storing string of form kSessionPrefix + ID (0-99) + '\0', e.g., "WebUiSession01\0".
 private:
     class BrxPtrCmp
@@ -371,13 +394,10 @@ private:
         TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
     };
 private:
-    // Spare session(s) for receiving user input and rejecting new long polling
-    // connections when iMaxLpSessions in use.
-    static const TUint kSpareSessions = 1;
-    typedef std::pair<const Brx*,WebAppInternal*> WebAppPair;
-    typedef std::map<const Brx*,WebAppInternal*, BrxPtrCmp> WebAppMap;
+    typedef std::pair<const Brx*, WebAppInternal*> WebAppPair;
+    typedef std::map<const Brx*, WebAppInternal*, BrxPtrCmp> WebAppMap;
 public:
-    WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
+    WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMinResourceServerThreads = kDefaultMinResourceServerThreads, TUint aMaxLongPollServerThreads = kDefaultLongPollServerThreads, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
     ~WebAppFramework();
     void Start();
     /**
@@ -400,14 +420,15 @@ private:
 private:
     Environment& iEnv;
     const TUint iPort;
-    const TUint iMaxLpSessions;
+    const TUint iMinResourceServerThreads;
+    const TUint iMaxLongPollServerThreads;
     TUint iAdapterListenerId;
     SocketTcpServer* iServer;
     TabManager* iTabManager;    // Should there be one tab manager for ALL apps, or one TabManager per app? (And, similarly, one set of server sessions for all apps, or a set of server sessions per app? Also, need at least one extra session for receiving (and declining) additional long polling requests.)
 
     // FIXME - what if this is created with a max of 4 tabs and an app is added that is only capable of creating 3 apps and 4 clients try to load apps?
 
-    WebAppMap iWebApps; // FIXME - need comparator
+    WebAppMap iWebApps;
     std::vector<std::reference_wrapper<HttpSession>> iSessions;
     IWebApp* iDefaultApp;
     TBool iStarted;

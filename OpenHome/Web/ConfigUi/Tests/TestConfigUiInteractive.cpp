@@ -95,6 +95,7 @@ int CDECL main(int aArgc, char* aArgv[])
     Debug::SetLevel(Debug::kHttp);
     const TIpAddress addr = 0;    // bind to all interfaces
     const TUint port = 0;         // bind on OS-allocated port
+    const TUint maxResourceHandlers = 1;
     const TUint maxSessions = 1;
     const TUint sendQueueSize = 32;
     ConfigRamStore* configRamStore = new ConfigRamStore();
@@ -113,7 +114,7 @@ int CDECL main(int aArgc, char* aArgv[])
      // once ALL ConfigVals have been registered).
     FileResourceHandlerFactory resourceHandlerFactory;
     Brn resourcePrefix("SoftPlayerBasic");
-    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize, rebootHandler);
+    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), maxResourceHandlers, maxSessions, sendQueueSize, rebootHandler);
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership
