@@ -176,8 +176,6 @@ private:
 class TestHelperResourceHandler : public IResourceHandler
 {
 public: // from IResourceHandler
-    TBool Allocated() override;
-    void SetResource(const Brx& aUri) override;
     TUint Bytes() override;
     void Write(IWriter& aWriter) override;
     void Destroy() override;
@@ -190,7 +188,7 @@ public:
 public:
     ~TestHelperWebApp();
 public: // from IWebApp
-    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
+    IResourceHandler* CreateResourceHandler(const Brx& aResource) override;
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
 private:
@@ -805,15 +803,6 @@ void SuiteFrameworkTabHandler::LongPollThread()
 
 // TestHelperResourceHandler
 
-TBool TestHelperResourceHandler::Allocated()
-{
-    return true;
-}
-
-void TestHelperResourceHandler::SetResource(const Brx& /*aUri*/)
-{
-}
-
 TUint TestHelperResourceHandler::Bytes()
 {
     return 0;
@@ -842,14 +831,14 @@ TestHelperWebApp::~TestHelperWebApp()
     }
 }
 
-IResourceHandler& TestHelperWebApp::CreateResourceHandler(const Brx& /*aResource*/)
+IResourceHandler* TestHelperWebApp::CreateResourceHandler(const Brx& /*aResource*/)
 {
     // Currently no tests that retrieve valid static resources.
     THROW(ResourceInvalid);
 
     //IResourceHandler* handler = new TestHelperResourceHandler();
     //iResourceHandlers.push_back(handler);
-    //return *handler;
+    //return handler;
 }
 
 ITab& TestHelperWebApp::Create(ITabHandler& /*aHandler*/, const std::vector<Bws<10>>& /*aLanguageList*/)

@@ -1,6 +1,8 @@
+#include <OpenHome/Web/ConfigUi/ConfigUi.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Web/ConfigUi/ConfigUi.h>
+#include <OpenHome/Web/ResourceHandler.h>
+#include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Parser.h>
@@ -1479,9 +1481,7 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
 
     iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, *this);
 
-    for (TUint i=0; i<aResourceHandlersCount; i++) {
-        iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
-    }
+    iResourceManager = new BlockingResourceManager(aResourceHandlerFactory, aResourceHandlersCount, aResourceDir);
 
     for (TUint i=0; i<aMaxTabs; i++) {
         iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, aRebootHandler));
@@ -1499,8 +1499,9 @@ ConfigAppBase::~ConfigAppBase()
 
     for (TUint i=0; i<iTabs.size(); i++) {
         delete iTabs[i];
-        delete iResourceHandlers[i];
     }
+
+    delete iResourceManager;
 
     for (auto val : iUiVals) {
         delete val;
@@ -1536,7 +1537,7 @@ const Brx& ConfigAppBase::ResourcePrefix() const
     return iResourcePrefix;
 }
 
-IResourceHandler& ConfigAppBase::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* ConfigAppBase::CreateResourceHandler(const Brx& aResource)
 {
     AutoMutex a(iLock);
 
@@ -1546,17 +1547,8 @@ IResourceHandler& ConfigAppBase::CreateResourceHandler(const Brx& aResource)
         resource.Set(it->second);
     }
 
-    for (TUint i=0; i<iResourceHandlers.size(); i++) {
-        if (!iResourceHandlers[i]->Allocated()) {
-            IResourceHandler& handler = *iResourceHandlers[i];
-            handler.SetResource(resource);
-            return handler;
-        }
-    }
-    ASSERTS();  // FIXME - throw exception instead?
-    // Could throw a ResourceHandlerFull if temporarily unavailable, and send an appropriate error response to browser.
-    // However, in most cases, this should never happen. If it does (repeatedly) it likely means resource handlers aren't being returned/Destroy()ed.
-    return *iResourceHandlers[0];   // unreachable
+    // Blocks until an IResourceHandler is available.
+    return iResourceManager->CreateResourceHandler(resource);
 }
 
 ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList)

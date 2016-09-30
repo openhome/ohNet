@@ -615,7 +615,7 @@ void WebAppInternal::SetPresentationUrl(const Brx& aPresentationUrl)
     iFunctor(aPresentationUrl);
 }
 
-IResourceHandler& WebAppInternal::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* WebAppInternal::CreateResourceHandler(const Brx& aResource)
 {
     return iWebApp->CreateResourceHandler(aResource);
 }
@@ -858,7 +858,7 @@ IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
     return *(it->second);
 }
 
-IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* WebAppFramework::CreateResourceHandler(const Brx& aResource)
 {
     AutoMutex amx(iMutex);
     ASSERT(iStarted);
@@ -1104,7 +1104,7 @@ void HttpSession::Get()
 
     // Try access requested resource.
     const Brx& uri = iReaderRequest->Uri();
-    IResourceHandler& resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
+    IResourceHandler* resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
 
     Brn mimeType = MimeUtils::MimeTypeFromUri(uri);
     LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
@@ -1117,15 +1117,15 @@ void HttpSession::Get()
     //writer.Write(Brn("; charset=\"utf-8\""));
     writer.WriteFlush();
     iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-    const TUint len = resourceHandler.Bytes();
+    const TUint len = resourceHandler->Bytes();
     ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
     Http::WriteHeaderContentLength(*iWriterResponse, len);
     iWriterResponse->WriteFlush();
 
     // Write content.
-    resourceHandler.Write(*iWriterBuffer);
+    resourceHandler->Write(*iWriterBuffer);
     iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
-    resourceHandler.Destroy();
+    resourceHandler->Destroy();
     iResponseEnded = true;
 }
 

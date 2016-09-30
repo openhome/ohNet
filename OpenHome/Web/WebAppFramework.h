@@ -8,10 +8,10 @@
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
+#include <OpenHome/Web/ResourceHandler.h>
 
 #include <functional>
 
-EXCEPTION(ResourceInvalid);
 EXCEPTION(TabAllocatorFull);    // Thrown by an IWebApp when its allocator is full.
 EXCEPTION(TabManagerFull);
 EXCEPTION(InvalidTabId);
@@ -24,25 +24,6 @@ namespace OpenHome {
     class NetworkAdapter;
 
 namespace Web {
-
-class IResourceHandler
-{
-public:
-    virtual TBool Allocated() = 0;
-    virtual void SetResource(const Brx& aUri) = 0;
-    virtual TUint Bytes() = 0; // 0 => unknown size
-    virtual void Write(IWriter& aWriter) = 0;    // THROWS WriterError
-    virtual void Destroy() = 0;
-    virtual ~IResourceHandler() {}
-};
-
-class IResourceManager
-{
-public:
-    virtual IResourceHandler& CreateResourceHandler(const Brx& aResourceTail) = 0;  // THROWS ResourceInvalid
-    virtual ~IResourceManager() {}
-};
-
 // Interfaces and abstract classes relevant to clients wishing to make use of
 // the HttpFramework.
 
@@ -345,7 +326,7 @@ public:
     ~WebAppInternal();
     void SetPresentationUrl(const Brx& aPresentationUrl);
 public: // from IWebApp
-    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
+    IResourceHandler* CreateResourceHandler(const Brx& aResource) override;
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
 private:
@@ -443,7 +424,7 @@ public: // from IWebAppFramework
 private: // from IWebAppManager
     IWebApp& GetApp(const Brx& aResourcePrefix) override;  // THROWS InvalidAppPrefix
 private: // from IResourceManager
-    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;  // THROWS ResourceInvalid
+    IResourceHandler* CreateResourceHandler(const Brx& aResource) override;  // THROWS ResourceInvalid
 public: // from IServer
     TUint Port() const override;
     TIpAddress Interface() const override;

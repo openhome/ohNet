@@ -93,11 +93,11 @@ public:
 public: // from IWebApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList);
     const OpenHome::Brx& ResourcePrefix() const;
-    IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource);
+    IResourceHandler* CreateResourceHandler(const OpenHome::Brx& aResource);
 private:
     TestTabMessageAllocator iMsgAllocator;
     std::vector<TestTab*> iTabs;
-    std::vector<FileResourceHandler*> iResourceHandlers;
+    BlockingResourceManager* iResourceManager;
     OpenHome::Mutex iLock;
 };
 
@@ -230,9 +230,8 @@ TestHttpApp::TestHttpApp(TUint aMaxResourceHandlers, TUint aMaxSessions, const O
     : iMsgAllocator(kMaxMessages, kMaxMessageBytes)
     , iLock("THAL")
 {
-    for (TUint i=0; i<aMaxResourceHandlers; i++) {
-        iResourceHandlers.push_back(new FileResourceHandler(aResourceDir));
-    }
+    FileResourceHandlerFactory factory;
+    iResourceManager = new BlockingResourceManager(factory, aMaxResourceHandlers, aResourceDir);
     for (TUint i=0; i<aMaxSessions; i++) {
         iTabs.push_back(new TestTab(i, iMsgAllocator));
     }
@@ -243,8 +242,8 @@ TestHttpApp::~TestHttpApp()
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
         delete iTabs[i];
-        delete iResourceHandlers[i];
     }
+    delete iResourceManager;
 }
 
 ITab& TestHttpApp::Create(ITabHandler& aHandler, const std::vector<Bws<10>>& /*aLanguageList*/)
@@ -266,18 +265,9 @@ const Brx& TestHttpApp::ResourcePrefix() const
     return kResourcePrefix;
 }
 
-IResourceHandler& TestHttpApp::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* TestHttpApp::CreateResourceHandler(const Brx& aResource)
 {
-    AutoMutex a(iLock);
-    for (TUint i=0; i<iResourceHandlers.size(); i++) {
-        if (!iResourceHandlers[i]->Allocated()) {
-            FileResourceHandler& handler = *iResourceHandlers[i];
-            handler.SetResource(aResource);
-            return handler;
-        }
-    }
-    ASSERTS();  // FIXME - throw exception instead?
-    return *iResourceHandlers[0];   // won't be reached
+    return iResourceManager->CreateResourceHandler(aResource);
 }
 
 
