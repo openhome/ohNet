@@ -48,8 +48,8 @@ class ResourceHandlerBase : public IResourceHandler
 protected:
     ResourceHandlerBase(const Brx& aRootDir, IResourceHandlerDeallocator& aDeallocator);
 public: // from IResourceHandlerReusable
-    virtual TUint Bytes() = 0;
-    virtual void Write(IWriter& aWriter) = 0;
+    virtual TUint Bytes() override = 0;
+    virtual void Write(IWriter& aWriter) override = 0;
     virtual void Destroy() override;
 public:
     virtual void SetResource(const Brx& aResourceTail) = 0;
