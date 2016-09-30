@@ -55,10 +55,10 @@ public:
     virtual void SetResource(const Brx& aResourceTail) = 0;
 protected:
     virtual void Clear() = 0;
-private:
-    IResourceHandlerDeallocator& iDeallocator;
 protected:
     OpenHome::Brh iRootDir;
+private:
+    IResourceHandlerDeallocator& iDeallocator;
 };
 
 /**
