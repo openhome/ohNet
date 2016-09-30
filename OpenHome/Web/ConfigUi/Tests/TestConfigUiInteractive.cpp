@@ -93,10 +93,9 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Set up the server.
     Debug::SetLevel(Debug::kHttp);
-    const TIpAddress addr = 0;    // bind to all interfaces
-    const TUint port = 0;         // bind on OS-allocated port
-    const TUint maxSessions = 1;
-    const TUint sendQueueSize = 32;
+    const TUint kMinResourceHandlers = 1;
+    const TUint kMaxSessions = 1;
+    const TUint kSendQueueSize = 32;
     ConfigRamStore* configRamStore = new ConfigRamStore();
     ConfigManager* confMgr = new ConfigManager(*configRamStore);
 
@@ -107,13 +106,20 @@ int CDECL main(int aArgc, char* aArgv[])
     confMgr->Print();
     confMgr->Open();
 
-    WebAppFramework* server = new WebAppFramework(env, addr, port, maxSessions, sendQueueSize);
+
+    WebAppFrameworkInitParams* wafInitParams = new WebAppFrameworkInitParams();
+    wafInitParams->SetPort(0);  // bind to OS-assigned port
+    wafInitParams->SetMinServerThreadsResources(kMinResourceHandlers);
+    wafInitParams->SetMaxServerThreadsLongPoll(kMaxSessions);
+    wafInitParams->SetSendQueueSize(1024);
+
+    WebAppFramework* server = new WebAppFramework(env, wafInitParams);
 
      // Web App should only be initialised once ConfigManager is opened (i.e.,
      // once ALL ConfigVals have been registered).
     FileResourceHandlerFactory resourceHandlerFactory;
     Brn resourcePrefix("SoftPlayerBasic");
-    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), maxSessions, sendQueueSize, rebootHandler);
+    ConfigAppBasic* app = new ConfigAppBasic(infoAggregator, *confMgr, resourceHandlerFactory, resourcePrefix, optionDir.Value(), kMinResourceHandlers, kMaxSessions, kSendQueueSize, rebootHandler);
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership

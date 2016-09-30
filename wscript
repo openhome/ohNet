@@ -597,6 +597,7 @@ def build(bld):
     # WebAppFramework
     bld.stlib(
         source=[
+            'OpenHome/Web/ResourceHandler.cpp',
             'OpenHome/Web/WebAppFramework.cpp',
         ],
         use=['ohNetCore', 'OHNET', 'OHMEDIAPLAYER', 'PLATFORM', 'WebUiStatic'],

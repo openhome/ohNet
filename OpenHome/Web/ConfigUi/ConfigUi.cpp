@@ -1,6 +1,8 @@
+#include <OpenHome/Web/ConfigUi/ConfigUi.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Web/ConfigUi/ConfigUi.h>
+#include <OpenHome/Web/ResourceHandler.h>
+#include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Parser.h>
@@ -1458,13 +1460,16 @@ void ConfigUiValStartupSourceDelayed::RemoveObserver(TUint aObserverId)
 const Brn ConfigAppBase::kLangRoot("lang");
 const Brn ConfigAppBase::kDefaultLanguage("en-gb");
 
-ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
     : iConfigManager(aConfigManager)
     , iRebootRequired(true)
     , iLangResourceDir(aResourceDir.Bytes()+1+kLangRoot.Bytes()+1)  // "<aResourceDir>/<kLangRoot>/"
     , iResourcePrefix(aResourcePrefix)
     , iLock("COAL")
 {
+    ASSERT(aResourceHandlersCount > 0);
+    ASSERT(aMaxTabs > 0);
+
     Log::Print("ConfigAppBase::ConfigAppBase iResourcePrefix: %.*s\n", PBUF(iResourcePrefix));
 
     iLangResourceDir.Replace(aResourceDir);
@@ -1476,12 +1481,10 @@ ConfigAppBase::ConfigAppBase(IInfoAggregator& aInfoAggregator, IConfigManager& a
 
     iMsgAllocator = new ConfigMessageAllocator(aInfoAggregator, aSendQueueSize, *this);
 
-    for (TUint i=0; i<aMaxTabs; i++) {
-        iResourceHandlers.push_back(aResourceHandlerFactory.NewResourceHandler(aResourceDir));
-        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, aRebootHandler));
-    }
+    iResourceManager = new BlockingResourceManager(aResourceHandlerFactory, aResourceHandlersCount, aResourceDir);
 
     for (TUint i=0; i<aMaxTabs; i++) {
+        iTabs.push_back(new ConfigTab(i, *iMsgAllocator, iConfigManager, aRebootHandler));
         iLanguageResourceHandlers.push_back(aResourceHandlerFactory.NewLanguageReader(iLangResourceDir));
     }
 
@@ -1496,8 +1499,9 @@ ConfigAppBase::~ConfigAppBase()
 
     for (TUint i=0; i<iTabs.size(); i++) {
         delete iTabs[i];
-        delete iResourceHandlers[i];
     }
+
+    delete iResourceManager;
 
     for (auto val : iUiVals) {
         delete val;
@@ -1533,7 +1537,7 @@ const Brx& ConfigAppBase::ResourcePrefix() const
     return iResourcePrefix;
 }
 
-IResourceHandler& ConfigAppBase::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* ConfigAppBase::CreateResourceHandler(const Brx& aResource)
 {
     AutoMutex a(iLock);
 
@@ -1543,17 +1547,8 @@ IResourceHandler& ConfigAppBase::CreateResourceHandler(const Brx& aResource)
         resource.Set(it->second);
     }
 
-    for (TUint i=0; i<iResourceHandlers.size(); i++) {
-        if (!iResourceHandlers[i]->Allocated()) {
-            IResourceHandler& handler = *iResourceHandlers[i];
-            handler.SetResource(resource);
-            return handler;
-        }
-    }
-    ASSERTS();  // FIXME - throw exception instead?
-    // Could throw a ResourceHandlerFull if temporarily unavailable, and send an appropriate error response to browser.
-    // However, in most cases, this should never happen. If it does (repeatedly) it likely means resource handlers aren't being returned/Destroy()ed.
-    return *iResourceHandlers[0];   // unreachable
+    // Blocks until an IResourceHandler is available.
+    return iResourceManager->CreateResourceHandler(resource);
 }
 
 ILanguageResourceReader& ConfigAppBase::CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList)
@@ -1649,8 +1644,8 @@ void ConfigAppBase::AddConfigTextConditional(const Brx& aKey, TBool aRebootRequi
 
 // ConfigAppBasic
 
-ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBase(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aResourceHandlersCount, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     AddConfigText(Brn("Product.Name"));
     AddConfigText(Brn("Product.Room"));
@@ -1659,8 +1654,8 @@ ConfigAppBasic::ConfigAppBasic(IInfoAggregator& aInfoAggregator, IConfigManager&
 
 // ConfigAppSources
 
-ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+ConfigAppSources::ConfigAppSources(IInfoAggregator& aInfoAggregator, IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const std::vector<const Brx*>& aSources, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppBasic(aInfoAggregator, aConfigManager, aResourceHandlerFactory, aResourcePrefix, aResourceDir, aResourceHandlersCount, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     // Get all product names.
     for (TUint i=0; i<aSources.size(); i++) {

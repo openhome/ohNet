@@ -121,7 +121,7 @@ const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
                                  const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
-                                 TUint aMaxUiTabs, TUint aUiSendQueueSize)
+                                 TUint aMinWebUiResourceThreads, TUint aMaxWebUiTabs, TUint aUiSendQueueSize)
     : iPullableClock(nullptr)
     , iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
@@ -131,7 +131,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iUserAgent(aUserAgent)
     , iTxTimestamper(nullptr)
     , iRxTimestamper(nullptr)
-    , iMaxUiTabs(aMaxUiTabs)
+    , iMinWebUiResourceThreads(aMinWebUiResourceThreads)
+    , iMaxWebUiTabs(aMaxWebUiTabs)
     , iUiSendQueueSize(aUiSendQueueSize)
 {
     // create a shell
@@ -204,9 +205,12 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iPowerObserver = powerManager.RegisterPowerHandler(*this, kPowerPriorityLowest);
 
     // Set up config app.
-    static const TUint addr = 0;    // Bind to all addresses.
-    static const TUint port = 0;    // Bind to whatever free port the OS allocates to the framework server.
-    iAppFramework = new WebAppFramework(aDvStack.Env(), addr, port, aMaxUiTabs, aUiSendQueueSize);
+    WebAppFrameworkInitParams* initParams = new WebAppFrameworkInitParams();
+    initParams->SetPort(0); // Bind to whatever free port the OS allocates to the web server.
+    initParams->SetMinServerThreadsResources(aMinWebUiResourceThreads);
+    initParams->SetMaxServerThreadsLongPoll(aMaxWebUiTabs);
+    initParams->SetSendQueueSize(aUiSendQueueSize);
+    iAppFramework = new WebAppFramework(aDvStack.Env(), initParams);
 }
 
 TestMediaPlayer::~TestMediaPlayer()
@@ -408,13 +412,13 @@ void TestMediaPlayer::InitialiseSubsystems()
 {
 }
 
-IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize)
+IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMinWebUiResourceThreads, TUint aMaxWebUiTabs, TUint aMaxSendQueueSize)
 {
     FileResourceHandlerFactory resourceHandlerFactory;
     return new ConfigAppMediaPlayer(*iInfoLogger, iMediaPlayer->Env(), iMediaPlayer->Product(),
                                     iMediaPlayer->ConfigManager(), resourceHandlerFactory, aSources,
                                     Brn("Softplayer"), aResourceDir,
-                                    aMaxUiTabs, aMaxSendQueueSize, iRebootHandler);
+                                    aMinWebUiResourceThreads, aMaxWebUiTabs, aMaxSendQueueSize, iRebootHandler);
 }
 
 void TestMediaPlayer::InitialiseLogger()
@@ -473,7 +477,7 @@ void TestMediaPlayer::AddConfigApp()
         sourcesBufs.push_back(new Brh(systemName));
     }
     // FIXME - take resource dir as param or copy res dir to build dir
-    auto configUi = CreateConfigApp(sourcesBufs, Brn("res/"), iMaxUiTabs, iUiSendQueueSize);
+    auto configUi = CreateConfigApp(sourcesBufs, Brn("res/"), iMinWebUiResourceThreads, iMaxWebUiTabs, iUiSendQueueSize);
     iAppFramework->Add(configUi, MakeFunctorGeneric(*this, &TestMediaPlayer::PresentationUrlChanged));
     iAppFramework->SetDefaultApp(configUi->ResourcePrefix());
     for (TUint i=0;i<sourcesBufs.size(); i++) {

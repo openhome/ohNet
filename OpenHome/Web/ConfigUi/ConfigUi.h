@@ -2,6 +2,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Web/ResourceHandler.h>
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Fifo.h>
@@ -260,16 +261,17 @@ class IConfigApp : public IWebApp
 public: // from IWebApp
     virtual ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override = 0;
     virtual const Brx& ResourcePrefix() const override = 0;
-    virtual IResourceHandler& CreateResourceHandler(const Brx& aResource) override = 0;
+    virtual IResourceHandler* CreateResourceHandler(const Brx& aResource) override = 0;
 public:
     virtual ~IConfigApp() {}
 };
 
-class IConfigAppResourceHandlerFactory
+class ResourceHandlerBase;
+
+class IConfigAppResourceHandlerFactory : public IResourceHandlerFactory
 {
 public:
     virtual ~IConfigAppResourceHandlerFactory() {}
-    virtual IResourceHandler* NewResourceHandler(const Brx& aResourceDir) = 0;
     virtual ILanguageResourceReader* NewLanguageReader(const Brx& aResourceDir) = 0;
 };
 
@@ -625,12 +627,12 @@ private:
     typedef std::pair<Brn, Brn> ResourcePair;
     typedef std::map<Brn, Brn, BufferCmp> ResourceMap;
 protected:
-    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
-    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
+    IResourceHandler* CreateResourceHandler(const Brx& aResource) override;
 public: // from ILanguageResourceManager
     ILanguageResourceReader& CreateLanguageResourceHandler(const Brx& aResourceUriTail, std::vector<Bws<10>>& aLanguageList) override;
 protected:
@@ -653,7 +655,7 @@ private:
     ConfigMessageAllocator* iMsgAllocator;
     Bwh iLangResourceDir;
     const Bws<kMaxResourcePrefixBytes> iResourcePrefix;
-    std::vector<IResourceHandler*> iResourceHandlers;
+    BlockingResourceManager* iResourceManager;
     std::vector<ILanguageResourceReader*> iLanguageResourceHandlers;
     std::vector<ConfigTab*> iTabs;
     std::vector<IConfigUiVal*> iUiVals;
@@ -668,7 +670,7 @@ public:
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
-                   TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+                   TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 class ConfigAppSources : public ConfigAppBasic
@@ -681,7 +683,7 @@ public:
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,
                      const Brx& aResourcePrefix, const Brx& aResourceDir,
-                     TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+                     TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 } // namespace Web
