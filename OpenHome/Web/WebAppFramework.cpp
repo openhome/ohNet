@@ -1106,27 +1106,34 @@ void HttpSession::Get()
     const Brx& uri = iReaderRequest->Uri();
     IResourceHandler* resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
 
-    Brn mimeType = MimeUtils::MimeTypeFromUri(uri);
-    LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
+    try {
+        Brn mimeType = MimeUtils::MimeTypeFromUri(uri);
+        LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
-    // Write response headers.
-    iResponseStarted = true;
-    iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
-    IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
-    writer.Write(mimeType);
-    //writer.Write(Brn("; charset=\"utf-8\""));
-    writer.WriteFlush();
-    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-    const TUint len = resourceHandler->Bytes();
-    ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
-    Http::WriteHeaderContentLength(*iWriterResponse, len);
-    iWriterResponse->WriteFlush();
+        // Write response headers.
+        iResponseStarted = true;
+        iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
+        IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
+        writer.Write(mimeType);
+        //writer.Write(Brn("; charset=\"utf-8\""));
+        writer.WriteFlush();
+        iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
+        const TUint len = resourceHandler->Bytes();
+        ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
+        Http::WriteHeaderContentLength(*iWriterResponse, len);
+        iWriterResponse->WriteFlush();
 
-    // Write content.
-    resourceHandler->Write(*iWriterBuffer);
-    iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
-    resourceHandler->Destroy();
-    iResponseEnded = true;
+        // Write content.
+        resourceHandler->Write(*iWriterBuffer);
+        iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
+        resourceHandler->Destroy();
+        iResponseEnded = true;
+    }
+    catch (Exception&) {
+        // If ANY exception occurs need to free up resources.
+        resourceHandler->Destroy();
+        throw;
+    }
 }
 
 void HttpSession::Post()
