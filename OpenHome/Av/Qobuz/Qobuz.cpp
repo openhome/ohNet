@@ -122,7 +122,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     try {
         const TUint code = WriteRequestReadResponse(Http::kMethodGet, iPathAndQuery);
         if (code != 200) {
-            LOG(kError, "Http error - %d - in response to Qobuz::TryGetStreamUrl.  Some/all of response is:\n", code);
+            LOG2(kPipeline, kError, "Http error - %d - in response to Qobuz::TryGetStreamUrl.  Some/all of response is:\n", code);
             Brn buf = iDechunker.Read(kReadBufferBytes);
             LOG2(kPipeline, kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);
