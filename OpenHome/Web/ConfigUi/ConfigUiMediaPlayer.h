@@ -28,7 +28,7 @@ public:
                          IConfigAppResourceHandlerFactory& aResourceFactory,
                          const std::vector<const Brx*>& aSources,
                          const Brx& aResourcePrefix, const OpenHome::Brx& aResourceDir,
-                         TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+                         TUint aResourceHandlerCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
 };
 
 } // namespace Web

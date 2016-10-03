@@ -1,7 +1,9 @@
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
-#include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Web/ResourceHandler.h>
+#include <OpenHome/Web/WebAppFramework.h>
+#include <OpenHome/Web/ConfigUi/ConfigUi.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -11,32 +13,10 @@ using namespace OpenHome::Web;
 
 // FileResourceHandler
 
-FileResourceHandler::FileResourceHandler(const OpenHome::Brx& aRootDir)
-    : iRootDir(aRootDir)
+FileResourceHandler::FileResourceHandler(const Brx& aRootDir, IResourceHandlerDeallocator& aDeallocator)
+    : ResourceHandlerBase(aRootDir, aDeallocator)
     , iFile(nullptr)
 {
-}
-
-TBool FileResourceHandler::Allocated()
-{
-    return (iFile != nullptr);
-}
-
-void FileResourceHandler::SetResource(const Brx& aUri)
-{
-    ASSERT(iFile == nullptr);
-    Bwh filename(iRootDir.Bytes()+aUri.Bytes()+1);
-    filename.Replace(iRootDir);
-    filename.Append(aUri);
-
-    try {
-        // FIXME - dynamic allocation!
-        iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
-    }
-    catch (FileOpenError&) {
-        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: %.*s\n", PBUF(filename));
-        THROW(ResourceInvalid);
-    }
 }
 
 TUint FileResourceHandler::Bytes()
@@ -70,12 +50,28 @@ void FileResourceHandler::Write(IWriter& aWriter)
     }
 }
 
-void FileResourceHandler::Destroy()
+void FileResourceHandler::SetResource(const Brx& aResourceTail)
 {
-    if (iFile != nullptr) {
-        delete iFile;
-        iFile = nullptr;
+    ASSERT(iFile == nullptr);
+    Bwh filename(iRootDir.Bytes()+aResourceTail.Bytes()+1);
+    filename.Replace(iRootDir);
+    filename.Append(aResourceTail);
+
+    try {
+        // FIXME - dynamic allocation!
+        iFile = new FileAnsii(filename.PtrZ(), eFileReadOnly); // asserts if a file is already open
     }
+    catch (FileOpenError&) {
+        LOG(kHttp, "FileResourceHandler::SetResource failed to open resource: %.*s\n", PBUF(filename));
+        THROW(ResourceInvalid);
+    }
+}
+
+void FileResourceHandler::Clear()
+{
+    ASSERT(iFile != nullptr);
+    delete iFile;
+    iFile = nullptr;
 }
 
 
@@ -143,9 +139,9 @@ void LanguageResourceFileReader::Process(const Brx& aKey, IResourceFileConsumer&
 
 // FileResourceHandlerFactory
 
-IResourceHandler* FileResourceHandlerFactory::NewResourceHandler(const Brx& aResourceDir)
+ResourceHandlerBase* FileResourceHandlerFactory::NewResourceHandler(const Brx& aRootDir, IResourceHandlerDeallocator& aDeallocator)
 {
-    return new FileResourceHandler(aResourceDir);
+    return new FileResourceHandler(aRootDir, aDeallocator);
 }
 
 ILanguageResourceReader* FileResourceHandlerFactory::NewLanguageReader(const Brx& aResourceDir)

@@ -88,16 +88,16 @@ public:
 private:
     static const OpenHome::Brn kResourcePrefix;
 public:
-    TestHttpApp(TUint aMaxSessions, const OpenHome::Brx& aResourceDir);
+    TestHttpApp(TUint aMaxResourceHandlers, TUint aMaxSessions, const OpenHome::Brx& aResourceDir);
     ~TestHttpApp();
 public: // from IWebApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList);
     const OpenHome::Brx& ResourcePrefix() const;
-    IResourceHandler& CreateResourceHandler(const OpenHome::Brx& aResource);
+    IResourceHandler* CreateResourceHandler(const OpenHome::Brx& aResource);
 private:
     TestTabMessageAllocator iMsgAllocator;
     std::vector<TestTab*> iTabs;
-    std::vector<FileResourceHandler*> iResourceHandlers;
+    BlockingResourceManager* iResourceManager;
     OpenHome::Mutex iLock;
 };
 
@@ -226,13 +226,14 @@ void TestTab::Destroy()
 
 const Brn TestHttpApp::kResourcePrefix("TestHttpApp");
 
-TestHttpApp::TestHttpApp(TUint aMaxSessions, const OpenHome::Brx& aResourceDir)
+TestHttpApp::TestHttpApp(TUint aMaxResourceHandlers, TUint aMaxSessions, const OpenHome::Brx& aResourceDir)
     : iMsgAllocator(kMaxMessages, kMaxMessageBytes)
     , iLock("THAL")
 {
+    FileResourceHandlerFactory factory;
+    iResourceManager = new BlockingResourceManager(factory, aMaxResourceHandlers, aResourceDir);
     for (TUint i=0; i<aMaxSessions; i++) {
         iTabs.push_back(new TestTab(i, iMsgAllocator));
-        iResourceHandlers.push_back(new FileResourceHandler(aResourceDir));
     }
 }
 
@@ -241,8 +242,8 @@ TestHttpApp::~TestHttpApp()
     AutoMutex a(iLock);
     for (TUint i=0; i<iTabs.size(); i++) {
         delete iTabs[i];
-        delete iResourceHandlers[i];
     }
+    delete iResourceManager;
 }
 
 ITab& TestHttpApp::Create(ITabHandler& aHandler, const std::vector<Bws<10>>& /*aLanguageList*/)
@@ -264,18 +265,9 @@ const Brx& TestHttpApp::ResourcePrefix() const
     return kResourcePrefix;
 }
 
-IResourceHandler& TestHttpApp::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* TestHttpApp::CreateResourceHandler(const Brx& aResource)
 {
-    AutoMutex a(iLock);
-    for (TUint i=0; i<iResourceHandlers.size(); i++) {
-        if (!iResourceHandlers[i]->Allocated()) {
-            FileResourceHandler& handler = *iResourceHandlers[i];
-            handler.SetResource(aResource);
-            return handler;
-        }
-    }
-    ASSERTS();  // FIXME - throw exception instead?
-    return *iResourceHandlers[0];   // won't be reached
+    return iResourceManager->CreateResourceHandler(aResource);
 }
 
 
@@ -318,14 +310,19 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Set up the server.
     Debug::SetLevel(Debug::kHttp);
-    static const TIpAddress addr = 0;    // bind to all interfaces
-    static const TUint port = 0;         // bind to OS-assigned port
-    static const TUint maxSessions = 4;
-    static const TUint bufferBytes = 1024;
 
-    WebAppFramework* server = new WebAppFramework(env, addr, port, maxSessions, bufferBytes);
+    static const TUint kMinResourceThreads = 1;
+    static const TUint kMaxTabs = 1;
 
-    TestHttpApp* app = new TestHttpApp(maxSessions, optionDir.Value());  // read files from posix-style filesystem
+    WebAppFrameworkInitParams* wafInitParams = new WebAppFrameworkInitParams();
+    wafInitParams->SetPort(0);  // bind to OS-assigned port
+    wafInitParams->SetMinServerThreadsResources(kMinResourceThreads);
+    wafInitParams->SetMaxServerThreadsLongPoll(kMaxTabs);
+    wafInitParams->SetSendQueueSize(1024);
+
+    WebAppFramework* server = new WebAppFramework(env, wafInitParams);
+
+    TestHttpApp* app = new TestHttpApp(kMinResourceThreads, kMaxTabs, optionDir.Value());  // read files from posix-style filesystem
 
     TestPresentationUrlHandler* urlHandler = new TestPresentationUrlHandler();
     server->Add(app, MakeFunctorGeneric(*urlHandler, &TestPresentationUrlHandler::PresentationUrlChanged));   // takes ownership

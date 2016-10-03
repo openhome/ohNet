@@ -22,8 +22,8 @@ ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregat
                                            IConfigAppResourceHandlerFactory& aResourceFactory,
                                            const std::vector<const Brx*>& aSources,
                                            const Brx& aResourcePrefix, const Brx& aResourceDir,
-                                           TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
-    : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aMaxTabs, aSendQueueSize, aRebootHandler)
+                                           TUint aResourceHandlerCount, TUint aMaxTabs, TUint aSendQueueSize, IRebootHandler& aRebootHandler)
+    : ConfigAppSources(aInfoAggregator, aConfigManager, aResourceFactory, aSources, aResourcePrefix, aResourceDir, aResourceHandlerCount, aMaxTabs, aSendQueueSize, aRebootHandler)
 {
     AddValue(new ConfigUiValRoModelIcon(aProduct));
     AddValue(new ConfigUiValRoModelName(aProduct));
