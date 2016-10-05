@@ -22,7 +22,7 @@ class SuiteRamper : public SuiteUnitTest, private IPipelineElementUpstream, priv
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 public:
     SuiteRamper();
     ~SuiteRamper();
@@ -100,6 +100,8 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
+
+const SpeakerProfile SuiteRamper::kProfile(2);
 
 SuiteRamper::SuiteRamper()
     : SuiteUnitTest("Ramper")

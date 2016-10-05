@@ -25,7 +25,7 @@ class SuiteStopper : public SuiteUnitTest, private IPipelineElementUpstream, pri
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kBitDepth = 24;
     static const TUint kDataBytes = 960;
     static const TUint kJiffiesPerMsg;
@@ -144,6 +144,7 @@ private:
 
 
 const TUint SuiteStopper::kJiffiesPerMsg = kDataBytes/kNumChannels/(kBitDepth/8) * Jiffies::PerSample(kSampleRate);
+const SpeakerProfile SuiteStopper::kProfile(2);
 
 SuiteStopper::SuiteStopper()
     : SuiteUnitTest("Stopper")

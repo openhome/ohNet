@@ -93,7 +93,7 @@ private:
     static const TUint kWavHeaderBytes = 44;
     static const TUint kSampleRate = 44100;
     static const TUint kChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kBitDepth = 16;
     static const TUint kExpectedFlushId = 5;
     static const TUint kSemWaitMs = 5000;   // only required in case tests fail
@@ -123,6 +123,8 @@ private:
 
 
 // SuiteDecodedAudioAggregator
+
+const SpeakerProfile SuiteDecodedAudioAggregator::kProfile(2);
 
 SuiteDecodedAudioAggregator::SuiteDecodedAudioAggregator()
     : SuiteUnitTest("SuiteDecodedAudioAggregator")
@@ -536,7 +538,7 @@ void SuiteDecodedAudioAggregator::TestRawPcmNotAggregated()
     Queue(iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, ModeClockPullers(), false, false));
     Queue(CreateTrack());
     PcmStreamInfo pcmStream;
-    pcmStream.Set(32, 48000, 2, AudioDataEndian::Big, SpeakerProfile::eStereo, 0LL);
+    pcmStream.Set(32, 48000, 2, AudioDataEndian::Big, SpeakerProfile(), 0LL);
     Queue(iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this, pcmStream));
     Queue(CreateDecodedStream());
     Queue(CreateAudio(8, 48000, 32, 2)); // one sample for 32-bit stereo

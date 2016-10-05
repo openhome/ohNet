@@ -98,7 +98,6 @@ SuiteSilencer::SuiteSilencer()
     , iLastMsg(ENone)
     , iTrackOffset(0)
     , iNumChannels(2)
-    , iProfile(SpeakerProfile::eStereo)
 {
     AddTest(MakeFunctor(*this, &SuiteSilencer::TestMsgsPassedOn), "TestMsgsPassedOn");
     AddTest(MakeFunctor(*this, &SuiteSilencer::TestSilenceGeneratedWhenNoMsgAvailable), "TestSilenceGeneratedWhenNoMsgAvailable");
@@ -116,7 +115,7 @@ void SuiteSilencer::Setup()
     iSampleRate = 44100;
     iBitDepth = 16;
     iNumChannels = 2;
-    iProfile = SpeakerProfile::eStereo;
+    iProfile = SpeakerProfile(2);
     iTrackOffset = 0;
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(10, 10);
@@ -197,7 +196,7 @@ void SuiteSilencer::TestSilenceDurationIsCorrect()
     TEST(iLastPlayableWasSilence);
 
     iNumChannels = 1;
-    iProfile = SpeakerProfile::eMono;
+    iProfile = SpeakerProfile(1);   // mono
     QueuePendingMsg(CreateDecodedStream());
     PullNext(EMsgDecodedStream);
     PullNextNoWait(EMsgPlayable);

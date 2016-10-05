@@ -374,7 +374,7 @@ Msg* SuitePruner::Pull()
     static const TBool kSeekable      = false;
     static const TBool kLive          = false;
     static const TUint kNumChannels   = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static TUint64 iTrackOffset = 0;
 
     EMsgType msgType = iPendingMsgs[0];

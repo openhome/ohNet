@@ -28,7 +28,7 @@ private:
     static const TChar* kId;
 public:
     TestCodecControllerDummyCodec(TUint aReadBufBytes);
-    void SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndianness, SpeakerProfile aProfile);
+    void SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndianness, const SpeakerProfile& aProfile);
 public: // from CodecBase
     TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
@@ -121,7 +121,7 @@ protected:
     static const TUint kWavHeaderBytes = 44;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kExpectedFlushId = 5;
     static const TUint kSemWaitMs = 5000;   // only required in case tests fail
     MsgFactory* iMsgFactory;
@@ -291,6 +291,8 @@ private:
 
 
 // SuiteCodecControllerBase
+
+const SpeakerProfile SuiteCodecControllerBase::kProfile(2);
 
 SuiteCodecControllerBase::SuiteCodecControllerBase(const TChar* aName)
     : SuiteUnitTest(aName)
@@ -1156,12 +1158,11 @@ TestCodecControllerDummyCodec::TestCodecControllerDummyCodec(TUint aReadBufBytes
     , iSampleRate(0)
     , iBitDepth(0)
     , iEndianness(AudioDataEndian::Invalid)
-    , iProfile(SpeakerProfile::eStereo)
     , iTrackOffset(0)
 {
 }
 
-void TestCodecControllerDummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndianness, SpeakerProfile aProfile)
+void TestCodecControllerDummyCodec::SetStreamInfo(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndianness, const SpeakerProfile& aProfile)
 {
     ASSERT(aReadBytes <= iReadBuf.MaxBytes());
     iReadBytes = aReadBytes;
@@ -1207,7 +1208,7 @@ TBool TestCodecControllerDummyCodec::TrySeek(TUint aStreamId, TUint64 aSample)
     // Tests expect CodecController to do it on behalf of this codec.
     TBool canSeek = iController->TrySeekTo(aStreamId, byte);
     if (canSeek) {
-        iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true, SpeakerProfile::eStereo);
+        iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true, iProfile);
         return true;
     }
     return false;
@@ -1263,7 +1264,7 @@ void SuiteCodecControllerStopDuringStreamInit::TearDown()
 
 void SuiteCodecControllerStopDuringStreamInit::TestStopDuringStreamInit()
 {
-    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, AudioDataEndian::Little, SpeakerProfile::eStereo);
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, AudioDataEndian::Little, SpeakerProfile());
 
     Queue(CreateTrack());
     PullNext(EMsgTrack);
@@ -1288,7 +1289,7 @@ void SuiteCodecControllerStopDuringStreamInit::TestStopDuringStreamInit()
 
     // Start pulling new track.
     // Locking in DummyCodec ensures StreamInitialise() call above must return before SetStreamInfo() happens.
-    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 48000, 16, AudioDataEndian::Little, SpeakerProfile::eStereo);
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 48000, 16, AudioDataEndian::Little, SpeakerProfile());
     Queue(CreateTrack());
     PullNext(EMsgTrack);
     Queue(CreateEncodedStream());
@@ -1351,7 +1352,7 @@ void SuiteCodecControllerSeekInvalid::NotifySeekComplete(TUint aHandle, TUint aF
 
 void SuiteCodecControllerSeekInvalid::TestSeekInvalid()
 {
-    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, AudioDataEndian::Little, SpeakerProfile::eStereo);
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, AudioDataEndian::Little, SpeakerProfile());
 
     Queue(CreateTrack());
     PullNext(EMsgTrack);
@@ -1473,7 +1474,7 @@ void SuiteCodecControllerUnexpectedFlush::TearDown()
 
 void SuiteCodecControllerUnexpectedFlush::TestUnexpectedFlush()
 {
-    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, AudioDataEndian::Little, SpeakerProfile::eStereo);
+    iCodec->SetStreamInfo(kAudioBytesPerMsg, 2, 44100, 16, AudioDataEndian::Little, SpeakerProfile());
 
     Queue(CreateTrack());
     PullNext(EMsgTrack);

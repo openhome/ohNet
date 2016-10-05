@@ -66,7 +66,7 @@ class SuitePipeline : public Suite
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kDriverMaxAudioJiffies = Jiffies::kPerMs * 5;
     static const TUint kSubsampleRampedUpFull = 0x7f7f7f;
     static const TUint kSubsampleRampedDownFull = 0;
@@ -317,6 +317,8 @@ void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/, TBool /
 
 
 // SuitePipeline
+
+const SpeakerProfile SuitePipeline::kProfile(2);
 
 SuitePipeline::SuitePipeline()
     : Suite("Pipeline integration tests")

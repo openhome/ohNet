@@ -23,7 +23,7 @@ class SuiteSeeker : public SuiteUnitTest, private IPipelineElementUpstream, priv
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kTrackDurationSeconds = 180;
 public:
     SuiteSeeker();
@@ -130,6 +130,8 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
+
+const SpeakerProfile SuiteSeeker::kProfile(2);
 
 SuiteSeeker::SuiteSeeker()
     : SuiteUnitTest("Seeker")

@@ -29,7 +29,7 @@ class SuiteStarvationRamper : public SuiteUnitTest
     static const TUint kSampleRateDefault = 48000;
     static const TUint kBitDepthDefault = 16;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kAudioPcmBytesDefault = 960; // 5ms of 48k, 16-bit stereo
     static const Brn kMode;
 public:
@@ -132,6 +132,7 @@ private:
 
 
 const Brn SuiteStarvationRamper::kMode("DummyMode");
+const SpeakerProfile SuiteStarvationRamper::kProfile(2);
 
 SuiteStarvationRamper::SuiteStarvationRamper()
     : SuiteUnitTest("StarvationRamper")

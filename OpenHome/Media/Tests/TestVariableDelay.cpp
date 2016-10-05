@@ -34,7 +34,7 @@ class SuiteVariableDelay : public SuiteUnitTest
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 
     static const Brn kMode;
 protected:
@@ -175,6 +175,7 @@ private:
 // SuiteVariableDelay
 
 const Brn SuiteVariableDelay::kMode("VariableDelayMode");
+const SpeakerProfile SuiteVariableDelay::kProfile(2);
 
 SuiteVariableDelay::SuiteVariableDelay(const TChar* aId)
     : SuiteUnitTest(aId)

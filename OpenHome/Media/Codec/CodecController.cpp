@@ -81,7 +81,6 @@ EncodedStreamInfo::EncodedStreamInfo()
     , iSampleRate(UINT_MAX)
     , iNumChannels(UINT_MAX)
     , iEndian(AudioDataEndian::Invalid)
-    , iProfile(SpeakerProfile::eStereo)
     , iStartSample(0)
     , iAnalogBypass(false)
     , iLossless(false)
@@ -137,7 +136,7 @@ void CodecBase::Construct(ICodecController& aController)
 
 SpeakerProfile CodecBase::DeriveProfile(TUint aChannels)
 {
-    return (aChannels == 1) ? SpeakerProfile::eMono : SpeakerProfile::eStereo;
+    return (aChannels == 1) ? SpeakerProfile(1) : SpeakerProfile(2);
 }
 
 

@@ -93,7 +93,6 @@ SuitePreDriver::SuitePreDriver()
     , iLastMsg(ENone)
     , iTrackOffset(0)
     , iNumChannels(2)
-    , iProfile(SpeakerProfile::eStereo)
 {
     MsgFactoryInitParams init;
     init.SetMsgAudioPcmCount(10, 10);

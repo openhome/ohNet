@@ -398,28 +398,28 @@ private:
     TUint iAnimatorDelayJiffies;
 };
 
-enum class SpeakerProfile {
-    eMono,       // 1/0:
-    eStereo,     // 2/0:   FL, FR
-    e5P1,        // 3/2.1: FL, FC, FR, RL, RR, LFE
-    e7P1,        // 3/4.1: FL, FC, FR, RL, RLC, RRC, RR, LFE
-    e2S0P1,      // 2/0.1: FL, FR, LFE
-    e3S0,        // 3/0:   FL, FC, FR
-    e3S0P1,      // 3/0.1: FL, FC, FR, LFE
-    e2S1,        // 2/1:   FL, FR, RC
-    e2S1P1,      // 2/1.1: FL, FR, RC, LFE
-    e3S1,        // 3/1:   FL, FC, FR, RC
-    e3S1P1,      // 3/1.1: FL, FC, FR, RC, LFE
-    e2S2,        // 2/2:   FL, FR, RL, RR
-    e2S2P1,      // 2/2.1: FL, FR, RL, RR, LFE
-    e3S2,        // 3/2:   FL, FC, FR, RL, RR
-    e2S3,        // 2/3:   FL, FR, RL, RC, RR
-    e2S3P1,      // 2/3.1: FL, FR, RL, RC, RR, LFE
-    e3S3,        // 3/3:   FL, FC, FR, RL, RC, RR
-    e3S3P1,      // 3/3.1: FL, FC, FR, RL, RC, RR, LFE
-    e2S4,        // 2/4:   FL, FR, RL, RLC, RRC, RR
-    e2S4P1,      // 2/4.1: FL, FR, RL, RLC, RRC, RR, LFE
-    e3S4         // 3/4:   FL, FC, FR, RL, RLC, RRC, RR
+class SpeakerProfile
+{
+public:
+    SpeakerProfile(TUint aNumFronts = 2);
+    SpeakerProfile(TUint aNumFronts, TUint aNumSurrounds, TUint aNumSubs);
+
+    TUint NumFronts() const;
+    TUint NumSurrounds() const;
+    TUint NumSubs() const;
+    const TChar* ToString() const;
+
+    TBool operator==(const SpeakerProfile& aOther) const;
+    TBool operator!=(const SpeakerProfile& aOther) const;
+
+    const SpeakerProfile& operator=(const SpeakerProfile& aOther);
+
+private:
+    static const TUint kMaxNameLen = 10;
+    TUint iNumFronts;
+    TUint iNumSurrounds;
+    TUint iNumSubs;
+    Bws<kMaxNameLen> iName;
 };
 
 class IStreamHandler;
@@ -428,7 +428,7 @@ class PcmStreamInfo
 {
 public:
     PcmStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, SpeakerProfile aProfile, TUint64 aStartSample = 0);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, const SpeakerProfile& aProfile, TUint64 aStartSample = 0);
     void SetAnalogBypass();
     void SetCodec(const Brx& aCodecName, TBool aLossless);
     void Clear();
@@ -436,7 +436,7 @@ public:
     TUint SampleRate() const;
     TUint NumChannels() const;
     AudioDataEndian Endian() const;
-    SpeakerProfile Profile() const;
+    const SpeakerProfile& Profile() const;
     TUint64 StartSample() const;
     TBool AnalogBypass() const;
     const Brx& CodecName() const;
@@ -606,11 +606,11 @@ public:
     TBool Seekable() const { return iSeekable; }
     TBool Live() const { return iLive; }
     TBool AnalogBypass() const { return iAnalogBypass; }
-    SpeakerProfile Profile() const { return iProfile; }
+    const SpeakerProfile& Profile() const { return iProfile; }
     IStreamHandler* StreamHandler() const { return iStreamHandler;}
 private:
     DecodedStreamInfo();
-    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, SpeakerProfile aProfile, IStreamHandler* aStreamHandler);
+    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler);
 private:
     TUint iStreamId;
     TUint iBitRate;
@@ -638,7 +638,7 @@ public:
     MsgDecodedStream(AllocatorBase& aAllocator);
     const DecodedStreamInfo& StreamInfo() const;
 private:
-    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, SpeakerProfile aProfile, IStreamHandler* aStreamHandler);
+    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
@@ -1598,7 +1598,7 @@ public:
     MsgHalt* CreateMsgHalt(TUint aId, Functor aCallback);
     MsgFlush* CreateMsgFlush(TUint aId);
     MsgWait* CreateMsgWait();
-    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, SpeakerProfile aProfile, IStreamHandler* aStreamHandler);
+    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler);
     MsgDecodedStream* CreateMsgDecodedStream(MsgDecodedStream* aMsg, IStreamHandler* aStreamHandler);
     MsgBitRate* CreateMsgBitRate(TUint aBitRate);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, AudioDataEndian aEndian, TUint64 aTrackOffset);

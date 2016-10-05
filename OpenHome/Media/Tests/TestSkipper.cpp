@@ -22,7 +22,7 @@ class SuiteSkipper : public SuiteUnitTest, private IPipelineElementUpstream, pri
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 public:
     SuiteSkipper();
     ~SuiteSkipper();
@@ -114,6 +114,8 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
+
+const SpeakerProfile SuiteSkipper::kProfile(2);
 
 static const TChar* kMsgTypes[] = {  "None"
                                     ,"Mode"

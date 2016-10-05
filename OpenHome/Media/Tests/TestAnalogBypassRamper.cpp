@@ -24,7 +24,7 @@ class SuiteAnalogBypassRamper : public SuiteUnitTest
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kVolumeMultiplierUninitialised = IAnalogBypassVolumeRamper::kMultiplierFull + 1;
     static const TUint kRampDuration = Jiffies::kPerMs * 100;
 public:
@@ -114,6 +114,8 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
+
+const SpeakerProfile SuiteAnalogBypassRamper::kProfile(2);
 
 SuiteAnalogBypassRamper::SuiteAnalogBypassRamper()
     : SuiteUnitTest("AnalogBypassRamper")

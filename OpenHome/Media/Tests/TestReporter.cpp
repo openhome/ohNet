@@ -27,7 +27,7 @@ class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPi
     static const TUint64 kTrackLength = Jiffies::kPerSecond * 60;
     static const TBool kLossless      = true;
     static const TUint kNumChannels   = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 #define kMetaText "SuiteReporter sample metatext"
     static const TUint kTimeoutMs = 5000;
     static const TUint kThreadPriorityReporter = kPriorityNormal;
@@ -93,6 +93,8 @@ private:
 
 
 // SuiteReporter
+
+const SpeakerProfile SuiteReporter::kProfile(2);
 
 SuiteReporter::SuiteReporter()
     : Suite("Reporter tests")

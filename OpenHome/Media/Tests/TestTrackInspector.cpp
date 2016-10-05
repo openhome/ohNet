@@ -339,7 +339,7 @@ Msg* SuiteTrackInspector::Pull()
     static const TBool kLossless      = true;
     static const TBool kSeekable      = false;
     static const TUint kNumChannels   = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static TUint64 iTrackOffset = 0;
 
     switch (iNextGeneratedMsg)

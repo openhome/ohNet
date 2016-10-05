@@ -25,7 +25,7 @@ class SuiteMuter : public SuiteUnitTest
     static const TUint kExpectedFlushId = 5;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 public:
     SuiteMuter();
     ~SuiteMuter();
@@ -117,6 +117,8 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
+
+const SpeakerProfile SuiteMuter::kProfile(2);
 
 SuiteMuter::SuiteMuter()
     : SuiteUnitTest("Muter")

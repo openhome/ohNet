@@ -85,7 +85,7 @@ class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstre
     static const TUint kByteDepth = kBitDepth/8;
     static const TUint kDefaultSampleRate = 44100;
     static const TUint kDefaultNumChannels = 2;
-    static const SpeakerProfile kDefaultProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kDefaultProfile;
     static const TUint kDefaultBitrate = kBitDepth * kDefaultSampleRate;
     static const TUint kDefaultTrackLength = Jiffies::kPerSecond * 10;
     static const TUint kDefaultSampleStart = 0;
@@ -301,6 +301,8 @@ void MockSpotifyMetadata::Destroy()
 
 
 // SuiteSpotifyReporter
+
+const SpeakerProfile SuiteSpotifyReporter::kDefaultProfile(2);
 
 SuiteSpotifyReporter::SuiteSpotifyReporter()
     : SuiteUnitTest("SuiteSpotifyReporter")
@@ -680,7 +682,7 @@ void SuiteSpotifyReporter::TestNumChannelsChange()
 
     // Now, change sample rate and send more audio.
     iNumChannels = 1;
-    iProfile = SpeakerProfile::eMono;
+    iProfile = SpeakerProfile(1);  // mono
     EMsgType reinitTypes[] = {
         EMsgTrack,
         EMsgDecodedStream,

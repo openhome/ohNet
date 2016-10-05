@@ -24,7 +24,7 @@ class SuiteSampleRateValidator : public SuiteUnitTest
     static const TUint kBitrate = 256;
     static const TUint kSampleRate = 44100;
     static const TUint kChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const TUint kBitDepth = 16;
 public:
     SuiteSampleRateValidator();
@@ -115,6 +115,8 @@ private:
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+
+const SpeakerProfile SuiteSampleRateValidator::kProfile(2);
 
 SuiteSampleRateValidator::SuiteSampleRateValidator()
     : SuiteUnitTest("SampleRateValidator tests")

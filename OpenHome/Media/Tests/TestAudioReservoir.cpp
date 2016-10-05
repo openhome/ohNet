@@ -32,7 +32,7 @@ class SuiteAudioReservoir : public Suite, private IMsgProcessor, private IFlushI
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 public:
     SuiteAudioReservoir();
     ~SuiteAudioReservoir();
@@ -187,7 +187,7 @@ class SuiteGorger : public SuiteUnitTest, private IStreamHandler, private IMsgPr
     static const TUint kGorgeSize = Jiffies::kPerMs * 100; // production code will likely use a much larger size
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
     static const Brn kModeRealTime;
     static const Brn kModeGorgable;
 public:
@@ -275,6 +275,8 @@ private:
 
 
 // SuiteAudioReservoir
+
+const SpeakerProfile SuiteAudioReservoir::kProfile(2);
 
 SuiteAudioReservoir::SuiteAudioReservoir()
     : Suite("Decoded Audio Reservoir tests")
@@ -882,6 +884,7 @@ void SuiteEncodedReservoir::TestNewStreamInterruptsSeek()
 
 const Brn SuiteGorger::kModeRealTime("RealTime");
 const Brn SuiteGorger::kModeGorgable("Gorgable");
+const SpeakerProfile SuiteGorger::kProfile(2);
 
 SuiteGorger::SuiteGorger()
     : SuiteUnitTest("Gorger")

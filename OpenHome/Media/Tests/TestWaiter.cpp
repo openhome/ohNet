@@ -24,7 +24,7 @@ class SuiteWaiter : public SuiteUnitTest, private IPipelineElementUpstream
     static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
-    static const SpeakerProfile kProfile = SpeakerProfile::eStereo;
+    static const SpeakerProfile kProfile;
 public:
     SuiteWaiter();
 private: // from SuiteUnitTest
@@ -127,6 +127,8 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
+
+const SpeakerProfile SuiteWaiter::kProfile(2);
 
 SuiteWaiter::SuiteWaiter()
     : SuiteUnitTest("SuiteWaiter")
