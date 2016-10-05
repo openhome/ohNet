@@ -31,7 +31,7 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     if (aVersion != iServiceType.Version()) {
         const Brx& serviceName = iServiceType.FullName();
         const Brx& udn = iDevice.Udn();
-        LOG(kService, "CpiService: addr=%p, serviceType=%.*s, device=%.*s, presenting proxy v%u as v%u\n",
+        LOG(kService, "CpiService: addr=%p, serviceType=%.*s, device=%.*s, proxy: v%u, device: v%u\n",
                       this, PBUF(serviceName), PBUF(udn), aVersion, iServiceType.Version());
     }
 }
