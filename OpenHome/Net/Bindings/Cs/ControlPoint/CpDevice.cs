@@ -8,13 +8,22 @@ using ObjCRuntime;
 
 namespace OpenHome.Net.ControlPoint
 {
+    public interface ICpDevice
+    {
+        String Udn();
+        void AddRef();
+        void RemoveRef();
+        bool GetAttribute(string aKey, out string aValue);
+        IntPtr Handle();
+    }
+
     /// <summary>
     /// Protocol-independent device
     /// </summary>
     /// <remarks>Instance of this class are reference counted and are automatically deleted
     /// when the reference count falls to zero.
     /// All references to class instances must have been removed before Core.Library.Close() is called.</remarks>
-    public class CpDevice
+    public class CpDevice : ICpDevice
     {
 #if IOS
         [DllImport("__Internal")]
@@ -166,7 +175,7 @@ namespace OpenHome.Net.ControlPoint
 
         protected delegate void CallbackDevice(IntPtr aPtr, IntPtr aHandle);
 
-        public delegate void ChangeHandler(CpDeviceList aList, CpDevice aDevice);
+        public delegate void ChangeHandler(CpDeviceList aList, ICpDevice aDevice);
 
         /// <summary>
         /// Refresh the contents of the list.

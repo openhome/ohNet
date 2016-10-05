@@ -25,7 +25,7 @@ namespace OpenHome.Net
 
     class Runner
     {
-        private List<ControlPoint.CpDevice> iDeviceList;
+        private List<ControlPoint.ICpDevice> iDeviceList;
         private uint iActionCount;
         private uint iSubscriptionCount;
         private ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1 iConnMgr;
@@ -40,7 +40,7 @@ namespace OpenHome.Net
         public Runner(int aMsearchTimeSecs)
         {
             iListFrozen = false;
-            iDeviceList = new List<ControlPoint.CpDevice>();
+            iDeviceList = new List<ControlPoint.ICpDevice>();
             ControlPoint.CpDeviceList.ChangeHandler added = new ControlPoint.CpDeviceList.ChangeHandler(DeviceAdded);
             ControlPoint.CpDeviceList.ChangeHandler removed = new ControlPoint.CpDeviceList.ChangeHandler(DeviceRemoved);
             ControlPoint.CpDeviceListUpnpServiceType list = new ControlPoint.CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, added, removed);
@@ -97,7 +97,7 @@ namespace OpenHome.Net
                 Console.Write("No devices found, so nothing to test\n");
                 return;
             }
-            ControlPoint.CpDevice device = iDeviceList[0];
+            ControlPoint.ICpDevice device = iDeviceList[0];
             Console.Write("\n\nSync call to device " + device.Udn() + "\n");
             ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1 connMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
             try
@@ -122,7 +122,7 @@ namespace OpenHome.Net
             timer.AutoReset = false;
             for (int i=0; i<iDeviceList.Count; i++)
             {
-                ControlPoint.CpDevice device = iDeviceList[i];
+                ControlPoint.ICpDevice device = iDeviceList[i];
                 uint countBefore = iActionCount;
                 Console.Write("Device " + device.Udn());
                 iConnMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
@@ -154,7 +154,7 @@ namespace OpenHome.Net
             iSubscriptionSem = new Semaphore(0, 1);
             for (int i=0; i<iDeviceList.Count; i++)
             {
-                ControlPoint.CpDevice device = iDeviceList[i];
+                ControlPoint.ICpDevice device = iDeviceList[i];
                 string udn = device.Udn();
                 if (udn == "896659847466-a4badbeaacbc-737837" ||
                     udn == "541d0cb5-3b34-4264-8ff0-d8653acf6425")
@@ -227,7 +227,7 @@ namespace OpenHome.Net
             iSubscriptionSem.Release();
         }
 
-        private void DeviceAdded(ControlPoint.CpDeviceList aList, ControlPoint.CpDevice aDevice)
+        private void DeviceAdded(ControlPoint.CpDeviceList aList, ControlPoint.ICpDevice aDevice)
         {
             lock (this)
             {
@@ -240,7 +240,7 @@ namespace OpenHome.Net
             }
         }
 
-        private void DeviceRemoved(ControlPoint.CpDeviceList aList, ControlPoint.CpDevice aDevice)
+        private void DeviceRemoved(ControlPoint.CpDeviceList aList, ControlPoint.ICpDevice aDevice)
         {
             lock (this)
             {
@@ -262,7 +262,7 @@ namespace OpenHome.Net
             }
         }
 
-        private void PrintDeviceInfo(string aPrologue, ControlPoint.CpDevice aDevice)
+        private void PrintDeviceInfo(string aPrologue, ControlPoint.ICpDevice aDevice)
         {
             string location;
             aDevice.GetAttribute("Upnp.Location", out location);

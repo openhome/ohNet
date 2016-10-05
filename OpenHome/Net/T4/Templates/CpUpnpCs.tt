@@ -128,7 +128,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
-        public <#=className#>(CpDevice aDevice)
+        public <#=className#>(ICpDevice aDevice)
             : base("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice)
         {
 <#  if (u.methods.Count > 0) #>

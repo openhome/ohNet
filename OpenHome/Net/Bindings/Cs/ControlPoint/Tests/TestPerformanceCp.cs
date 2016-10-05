@@ -11,7 +11,7 @@ namespace OpenHome.Net.ControlPoint
     {
         class ThreadArgs
         {
-            public CpDevice Device { get; private set; }
+            public ICpDevice Device { get; private set; }
             public int Count
             {
                 get { lock (this) { return iCount; } }
@@ -20,7 +20,7 @@ namespace OpenHome.Net.ControlPoint
             private DateTime iStopTime;
             private int iCount;
 
-            public ThreadArgs(CpDevice aDevice, double aDurationMs)
+            public ThreadArgs(ICpDevice aDevice, double aDurationMs)
             {
                 Device = aDevice;
                 iStopTime = DateTime.Now.AddMilliseconds(aDurationMs);
@@ -52,7 +52,7 @@ namespace OpenHome.Net.ControlPoint
                 uint subnet = nif.Subnet();
                 subnetList.Dispose();
                 var deviceListFactory = new CpUpnpDeviceListFactory(lib.StartCp(subnet));
-                CpDevice device = null;
+                ICpDevice device = null;
                 Semaphore sem = new Semaphore(0, 1);
                 var deviceList = deviceListFactory.CreateListServiceType("openhome.org", "TestBasic", 1,
                         (aDeviceList, aDevice) =>

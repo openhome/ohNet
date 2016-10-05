@@ -33,14 +33,14 @@ namespace OpenHome.Net.Device
 
     class Runner
     {
-        private List<CpDevice> iDeviceList;
+        private List<ICpDevice> iDeviceList;
 
         public Runner()
         {
             Console.Write("TestDvDeviceCs - starting\n");
 
             DeviceBasic device = new DeviceBasic();
-            iDeviceList = new List<CpDevice>();
+            iDeviceList = new List<ICpDevice>();
             CpDeviceList.ChangeHandler added = new CpDeviceList.ChangeHandler(DeviceAdded);
             CpDeviceList.ChangeHandler removed = new CpDeviceList.ChangeHandler(DeviceRemoved);
             CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("openhome.org", "TestBasic", 1, added, removed);
@@ -63,7 +63,7 @@ namespace OpenHome.Net.Device
             Console.Write("TestDvDeviceCs - completed\n");
         }
 
-        private void DeviceAdded(CpDeviceList aList, CpDevice aDevice)
+        private void DeviceAdded(CpDeviceList aList, ICpDevice aDevice)
         {
             lock (this)
             {
@@ -75,7 +75,7 @@ namespace OpenHome.Net.Device
             }
         }
 
-        private void DeviceRemoved(CpDeviceList aList, CpDevice aDevice)
+        private void DeviceRemoved(CpDeviceList aList, ICpDevice aDevice)
         {
             /* The device stack sends byebyes then alives for each newly enabled device.
                These can be interleaved with responses to a msearch and can cause tests to misbehave,

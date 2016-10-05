@@ -12,10 +12,10 @@ namespace OpenHome.Net
     class TestBasicCp
     {
         private Semaphore iUpdatesComplete;
-        private CpDevice iDevice;
+        private ICpDevice iDevice;
         private const uint kTestIterations = 10;
 
-        public TestBasicCp(CpDevice aDevice)
+        public TestBasicCp(ICpDevice aDevice)
         {
             iDevice = aDevice;
             iUpdatesComplete = new Semaphore(0, Int32.MaxValue);
