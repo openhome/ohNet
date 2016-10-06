@@ -79,7 +79,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
 {
     TBool success = false;
     if (!TryConnect()) {
-        LOG2(kPipeline, kError, "Qobuz::TryLogin - connection failure\n");
+        LOG2(kPipeline, kError, "Qobuz::TryGetStreamUrl - connection failure\n");
         return false;
     }
     AutoSocketReader _(iSocket, iReaderUntil2);
@@ -90,7 +90,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         timestamp = iUnixTimestamp.Now();
     }
     catch (UnixTimestampUnavailable&) {
-        LOG2(kPipeline, kError, "Qobuz::TryLogin - failure to determine network time\n");
+        LOG2(kPipeline, kError, "Qobuz::TryGetStreamUrl - failure to determine network time\n");
         return false;
     }
     Bws<Ascii::kMaxUintStringBytes> audioFormatBuf;
