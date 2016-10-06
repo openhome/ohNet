@@ -5,6 +5,8 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Timer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 
@@ -117,8 +119,10 @@ TBool NtpClient::DoTryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetwork
         aNetworkDelayMs = (Time::Now(iEnv) - txTime) / 2; // assume delay is spliy evenly over tx/rx 
     }
     catch (WriterError&) {
+        LogError("WriterError");
     }
     catch (ReaderError&) {
+        LogError("ReaderError");
     }
 
     return success;
@@ -126,6 +130,7 @@ TBool NtpClient::DoTryGetNetworkTime(NtpTimestamp& aNetworkTime, TUint& aNetwork
 
 void NtpClient::ReadTimeout()
 {
+    LogError("Timeout");
     iSocket.Interrupt(true);
 }
 
@@ -162,6 +167,13 @@ void NtpClient::Log(const TChar* aId, TUint64 aVal, TUint aBytes) const
     }
     buf.Append('\n');
     Log::Print(buf);
+}
+
+void NtpClient::LogError(const TChar* aEx) const
+{
+    Endpoint::AddressBuf buf;
+    iServerEndpoint.AppendAddress(buf);
+    LOG2(kPipeline, kError, "%s from NtpClient::DoTryGetNetworkTime. Server is %.*s\n", aEx, PBUF(buf));
 }
 
 
