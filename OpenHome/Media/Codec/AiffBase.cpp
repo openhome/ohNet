@@ -121,18 +121,25 @@ TUint CodecAiffBase::FindChunk(const Brx& aChunkId)
             return bytes;
         }
         else {
-            iReadBuf.SetBytes(0);
-            if (iReadBuf.MaxBytes() < bytes) {
-                // FIXME - this could be the case if, e.g., COMM comes after SSND
-                // don't want to exhaust MsgAudioEncodeds by trying to skip over
-                // an extremely large amount of data
-                // FIXME - CodecStreamFeatureUnsupported appears to be unhandled
-                THROW(CodecStreamFeatureUnsupported);
+            // Discard remainder of chunk.
+            TUint bytesRemaining = bytes;
+            while (bytesRemaining > 0) {
+                iReadBuf.SetBytes(0);
+
+                TUint readBytes = bytesRemaining;
+                if (readBytes > iReadBuf.MaxBytes()) {
+                    readBytes = iReadBuf.MaxBytes();
+                }
+                iController->Read(iReadBuf, readBytes);
+
+                // Check if all data was delivered. (If not, the stream ended.)
+                if (iReadBuf.Bytes() < readBytes) {
+                    THROW(CodecStreamEnded);
+                }
+
+                bytesRemaining -= readBytes;
             }
-            iController->Read(iReadBuf, bytes);
-            if (iReadBuf.Bytes() < bytes) {
-                THROW(CodecStreamEnded);
-            }
+
             iTrackStart += 8 + bytes;
         }
     }

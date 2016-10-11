@@ -98,13 +98,13 @@ class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler/*, p
 private:
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
-    // FIXME - make at least kMaxUiTabs a parameter?
-    static const TUint kMaxUiTabs = 4;
+    static const TUint kMinWebUiResourceThreads = 4;
+    static const TUint kMaxWebUiTabs = 4;
     static const TUint kUiSendQueueSize = 100;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aQobuzIdSecret, const Brx& aUserAgent,
-                    TUint aMaxUiTabs=kMaxUiTabs, TUint aUiSendQueueSize=kUiSendQueueSize);
+                    TUint aMinWebUiResourceThreads=kMinWebUiResourceThreads, TUint aMaxWebUiTabs=kMaxWebUiTabs, TUint aUiSendQueueSize=kUiSendQueueSize);
     virtual ~TestMediaPlayer();
     void SetPullableClock(Media::IPullableClock& aPullableClock);
     void SetSongcastTimestampers(IOhmTimestamper& aTxTimestamper, IOhmTimestamper& aRxTimestamper);
@@ -117,7 +117,7 @@ public:
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
     virtual void InitialiseSubsystems();
-    virtual Web::IWebApp* CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
+    virtual Web::IWebApp* CreateConfigApp(const std::vector<const Brx*>& aSources, const Brx& aResourceDir, TUint aMinWebUiResourceThreads, TUint aMaxUiTabs, TUint aMaxSendQueueSize);
     virtual void InitialiseLogger();
     void DestroyAppFramework();
 private: // from Net::IResourceManager
@@ -166,7 +166,8 @@ private:
     Av::FriendlyNameAttributeUpdater* iFnUpdaterUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
-    TUint iMaxUiTabs;
+    TUint iMinWebUiResourceThreads;
+    TUint iMaxWebUiTabs;
     TUint iUiSendQueueSize;
 };
 

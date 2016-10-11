@@ -615,7 +615,7 @@ void WebAppInternal::SetPresentationUrl(const Brx& aPresentationUrl)
     iFunctor(aPresentationUrl);
 }
 
-IResourceHandler& WebAppInternal::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* WebAppInternal::CreateResourceHandler(const Brx& aResource)
 {
     return iWebApp->CreateResourceHandler(aResource);
 }
@@ -631,26 +631,108 @@ const Brx& WebAppInternal::ResourcePrefix() const
 }
 
 
+// WebAppFrameworkInitParams
+
+WebAppFrameworkInitParams::WebAppFrameworkInitParams()
+    : iPort(kDefaultPort)
+    , iThreadResourcesCount(kDefaultMinServerThreadsResources)
+    , iThreadLongPollCount(kDefaultMaxServerThreadsLongPoll)
+    , iSendQueueSize(kDefaultSendQueueSize)
+    , iSendTimeoutMs(kDefaultSendTimeoutMs)
+    , iLongPollTimeoutMs(kDefaultLongPollTimeoutMs)
+{
+}
+
+void WebAppFrameworkInitParams::SetPort(TUint aPort)
+{
+    iPort = aPort;
+}
+
+void WebAppFrameworkInitParams::SetMinServerThreadsResources(TUint aThreadResourcesCount)
+{
+    iThreadResourcesCount = aThreadResourcesCount;
+}
+
+void WebAppFrameworkInitParams::SetMaxServerThreadsLongPoll(TUint aThreadLongPollCount)
+{
+    iThreadLongPollCount = aThreadLongPollCount;
+}
+
+void WebAppFrameworkInitParams::SetSendQueueSize(TUint aSendQueueSize)
+{
+    iSendQueueSize = aSendQueueSize;
+}
+
+void WebAppFrameworkInitParams::SetSendTimeoutMs(TUint aSendTimeoutMs)
+{
+    iSendTimeoutMs = aSendTimeoutMs;
+}
+
+void WebAppFrameworkInitParams::SetLongPollTimeoutMs(TUint aLongPollTimeoutMs)
+{
+    iLongPollTimeoutMs = aLongPollTimeoutMs;
+}
+
+TUint WebAppFrameworkInitParams::Port() const
+{
+    return iPort;
+}
+
+TUint WebAppFrameworkInitParams::MinServerThreadsResources() const
+{
+    return iThreadResourcesCount;
+}
+
+TUint WebAppFrameworkInitParams::MaxServerThreadsLongPoll() const
+{
+    return iThreadLongPollCount;
+}
+
+TUint WebAppFrameworkInitParams::SendQueueSize() const
+{
+    return iSendQueueSize;
+}
+
+TUint WebAppFrameworkInitParams::SendTimeoutMs() const
+{
+    return iSendTimeoutMs;
+}
+
+TUint WebAppFrameworkInitParams::LongPollTimeoutMs() const
+{
+    return iLongPollTimeoutMs;
+}
+
+
 // WebAppFramework
 
 const TChar* WebAppFramework::kName("WebUiServer");
 const TChar* WebAppFramework::kAdapterCookie("WebAppFramework");
 const Brn WebAppFramework::kSessionPrefix("WebUiSession");
 
-WebAppFramework::WebAppFramework(Environment& aEnv, TIpAddress /*aInterface*/, TUint aPort, TUint aMaxSessions, TUint aSendQueueSize, TUint aSendTimeoutMs, TUint aPollTimeoutMs)
+WebAppFramework::WebAppFramework(Environment& aEnv, WebAppFrameworkInitParams* aInitParams)
     : iEnv(aEnv)
-    , iPollTimer(iEnv, "WebAppFrameworkPollTimer", 0)
-    , iPort(aPort)
-    , iMaxLpSessions(aMaxSessions)
+    , iInitParams(aInitParams)
     , iServer(nullptr)
     , iDefaultApp(nullptr)
     , iStarted(false)
     , iCurrentAdapter(nullptr)
     , iMutex("webapp")
 {
+    ASSERT(iInitParams != nullptr);
+
+    // A server isn't much use without any serving threads.
+    ASSERT(iInitParams->MinServerThreadsResources() > 0);
+    ASSERT(iInitParams->MaxServerThreadsLongPoll() > 0);
+
+    // Create iMaxLongPollServerThreads tabs. From now on in, the TabManager
+    // will enforce the limitations by refusing to create new tabs when its tab
+    // limit is exhausted.
+    // (Similarly, if a request comes in for a tab that isn't in the TabManager
+    // it will be immediately rejected, therefore not blocking any thread.)
     std::vector<IFrameworkTab*> tabs;
-    for (TUint i=0; i<iMaxLpSessions; i++) {
-        tabs.push_back(new FrameworkTabFull(aEnv, i, aSendQueueSize, aSendTimeoutMs, aPollTimeoutMs));
+    for (TUint i=0; i<iInitParams->MaxServerThreadsLongPoll(); i++) {
+        tabs.push_back(new FrameworkTabFull(aEnv, i, iInitParams->SendQueueSize(), iInitParams->SendTimeoutMs(), iInitParams->LongPollTimeoutMs()));
     }
     iTabManager = new TabManager(tabs); // Takes ownership.
 
@@ -685,6 +767,8 @@ WebAppFramework::~WebAppFramework()
         // First elem is pointer to ref.
         delete it->second;
     }
+
+    delete iInitParams;
 }
 
 void WebAppFramework::Start()
@@ -774,7 +858,7 @@ IWebApp& WebAppFramework::GetApp(const Brx& aResourcePrefix)
     return *(it->second);
 }
 
-IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
+IResourceHandler* WebAppFramework::CreateResourceHandler(const Brx& aResource)
 {
     AutoMutex amx(iMutex);
     ASSERT(iStarted);
@@ -812,10 +896,7 @@ IResourceHandler& WebAppFramework::CreateResourceHandler(const Brx& aResource)
 
 void WebAppFramework::AddSessions()
 {
-    // Add iMaxLpSessions+kSpareSessions to create spare session(s) for when
-    // iMaxLpSessions are in use to allow processing of user input and
-    // rejection of new connections.
-    for (TUint i=0; i<iMaxLpSessions+kSpareSessions; i++) {
+    for (TUint i=0; i<iInitParams->MinServerThreadsResources()+iInitParams->MaxServerThreadsLongPoll(); i++) {
         Bws<kMaxSessionNameBytes> name(kSessionPrefix);
         Ascii::AppendDec(name, i+1);
         auto* session = new HttpSession(iEnv, *this, *iTabManager, *this);
@@ -851,11 +932,15 @@ void WebAppFramework::CurrentAdapterChanged()
         }
     }
 
+    // Shouldn't need to clear any active tabs here.
+    // Could potentially resume session. In the worst case, they will time out
+    // and be recreated, which is what would otherwise be done here anyway.
+
     // Don't rebind if we have nothing to rebind to - should this ever be the case?
     if (current != nullptr) {
         delete iServer;
         iSessions.clear();
-        iServer = new SocketTcpServer(iEnv, kName, iPort, current->Address());
+        iServer = new SocketTcpServer(iEnv, kName, iInitParams->Port(), current->Address());
         AddSessions();
         if (iStarted) {
             for (HttpSession& s : iSessions) {
@@ -1019,29 +1104,36 @@ void HttpSession::Get()
 
     // Try access requested resource.
     const Brx& uri = iReaderRequest->Uri();
-    IResourceHandler& resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
+    IResourceHandler* resourceHandler = iResourceManager.CreateResourceHandler(uri);    // throws ResourceInvalid
 
-    Brn mimeType = MimeUtils::MimeTypeFromUri(uri);
-    LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
+    try {
+        Brn mimeType = MimeUtils::MimeTypeFromUri(uri);
+        LOG(kHttp, "HttpSession::Get URI: %.*s  Content-Type: %.*s\n", PBUF(uri), PBUF(mimeType));
 
-    // Write response headers.
-    iResponseStarted = true;
-    iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
-    IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
-    writer.Write(mimeType);
-    //writer.Write(Brn("; charset=\"utf-8\""));
-    writer.WriteFlush();
-    iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
-    const TUint len = resourceHandler.Bytes();
-    ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
-    Http::WriteHeaderContentLength(*iWriterResponse, len);
-    iWriterResponse->WriteFlush();
+        // Write response headers.
+        iResponseStarted = true;
+        iWriterResponse->WriteStatus(HttpStatus::kOk, reqVersion);
+        IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
+        writer.Write(mimeType);
+        //writer.Write(Brn("; charset=\"utf-8\""));
+        writer.WriteFlush();
+        iWriterResponse->WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
+        const TUint len = resourceHandler->Bytes();
+        ASSERT(len > 0);    // Resource handler reporting incorrect byte count or corrupt resource.
+        Http::WriteHeaderContentLength(*iWriterResponse, len);
+        iWriterResponse->WriteFlush();
 
-    // Write content.
-    resourceHandler.Write(*iWriterBuffer);
-    iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
-    resourceHandler.Destroy();
-    iResponseEnded = true;
+        // Write content.
+        resourceHandler->Write(*iWriterBuffer);
+        iWriterBuffer->WriteFlush(); // FIXME - move into iResourceWriter.Write()?
+        resourceHandler->Destroy();
+        iResponseEnded = true;
+    }
+    catch (Exception&) {
+        // If ANY exception occurs need to free up resources.
+        resourceHandler->Destroy();
+        throw;
+    }
 }
 
 void HttpSession::Post()
@@ -1087,17 +1179,17 @@ void HttpSession::Post()
             iResponseEnded = true;
         }
         catch (InvalidAppPrefix&) {
-            // FIXME - just respond with error instead of asserting?
+            // FIXME - just respond with error instead of asserting? Yes - report a 404.
 
             // Programmer error/misuse by client.
             // Long-polling can only be initiated from a page served up by this framework (which implies that it must have a valid app prefix!).
             ASSERTS();
         }
-        catch (TabAllocatorFull&) { // FIXME - do something to distinguish between this (an IWebApp having all tabs allocated) vs TabManagerFull (the WebAppFramework has had its available tabs exhausted).
+        catch (TabAllocatorFull&) { // Thrown when an IWebApp fails to Create() a new tab, due to resource exhaustion in that particular app.
             Error(HttpStatus::kServiceUnavailable);
         }
-        catch (TabManagerFull&) {
-            Error(HttpStatus::kServiceUnavailable); // FIXME - if we return this state, Javascript code should keep attempting to poll
+        catch (TabManagerFull&) {   // Thrown when TabManager fails to Create() a new tab, due to long poll server thread exhaustion.
+            Error(HttpStatus::kServiceUnavailable);
         }
         catch (InvalidTabId&) {
             ASSERTS();  // shouldn't happen - we've just created the tab

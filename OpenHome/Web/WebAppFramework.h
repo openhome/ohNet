@@ -8,10 +8,10 @@
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
+#include <OpenHome/Web/ResourceHandler.h>
 
 #include <functional>
 
-EXCEPTION(ResourceInvalid);
 EXCEPTION(TabAllocatorFull);    // Thrown by an IWebApp when its allocator is full.
 EXCEPTION(TabManagerFull);
 EXCEPTION(InvalidTabId);
@@ -24,25 +24,6 @@ namespace OpenHome {
     class NetworkAdapter;
 
 namespace Web {
-
-class IResourceHandler
-{
-public:
-    virtual TBool Allocated() = 0;
-    virtual void SetResource(const Brx& aUri) = 0;
-    virtual TUint Bytes() = 0; // 0 => unknown size
-    virtual void Write(IWriter& aWriter) = 0;    // THROWS WriterError
-    virtual void Destroy() = 0;
-    virtual ~IResourceHandler() {}
-};
-
-class IResourceManager
-{
-public:
-    virtual IResourceHandler& CreateResourceHandler(const Brx& aResourceTail) = 0;  // THROWS ResourceInvalid
-    virtual ~IResourceManager() {}
-};
-
 // Interfaces and abstract classes relevant to clients wishing to make use of
 // the HttpFramework.
 
@@ -345,7 +326,7 @@ public:
     ~WebAppInternal();
     void SetPresentationUrl(const Brx& aPresentationUrl);
 public: // from IWebApp
-    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;
+    IResourceHandler* CreateResourceHandler(const Brx& aResource) override;
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
     const Brx& ResourcePrefix() const override;
 private:
@@ -355,6 +336,52 @@ private:
 
 class HttpSession;
 
+class WebAppFrameworkInitParams
+{
+private:
+    static const TUint kDefaultPort = 0;
+    static const TUint kDefaultMinServerThreadsResources = 1;
+    static const TUint kDefaultMaxServerThreadsLongPoll = 1;
+    static const TUint kDefaultSendQueueSize = 1024;
+    static const TUint kDefaultSendTimeoutMs = 5000;
+    static const TUint kDefaultLongPollTimeoutMs = 5000;
+public:
+    WebAppFrameworkInitParams();
+    void SetPort(TUint aPort);
+    void SetMinServerThreadsResources(TUint aThreadResourcesCount);
+    void SetMaxServerThreadsLongPoll(TUint aThreadLongPollCount);
+    void SetSendQueueSize(TUint aSendQueueSize);
+    void SetSendTimeoutMs(TUint aSendTimeoutMs);
+    void SetLongPollTimeoutMs(TUint aLongPollTimeoutMs);
+    TUint Interface() const;
+    TUint Port() const;
+    TUint MinServerThreadsResources() const;
+    TUint MaxServerThreadsLongPoll() const;
+    TUint SendQueueSize() const;
+    TUint SendTimeoutMs() const;
+    TUint LongPollTimeoutMs() const;
+private:
+    TUint iPort;
+    TUint iThreadResourcesCount;
+    TUint iThreadLongPollCount;
+    TUint iSendQueueSize;
+    TUint iSendTimeoutMs;
+    TUint iLongPollTimeoutMs;
+};
+
+/*
+ * FIXME - If we wish to support multiple WebApps in the WebAppFramework, there are two approaches to tab limits:
+ * - WebAppFramework dictates how many tabs each WebApp must support (i.e., memory usage is: WAF tab limit * app count).
+ * -- Forces fixed minimum bounds of memory usage.
+ * -- Guarantees that only limit exceeded will be number of long poll server threads.
+ * - Each WebApp can define how many tabs it will provide.
+ * -- Different apps can support different requirements to minimise memory usage.
+ * -- Must have a way of distinguishing when WebApp has exhausted available tabs and when WebAppFramework has exhausted available long poll server threads (e.g., WAF supports 4 long poll tabs, but app only supports 3 tabs, and client tries to load 4 tabs).
+ * -- HttpSession::Post() should probably send up a status string, along with the 503 error, along the lines of the following for the respective conditions above:
+ * --- When TabAllocatorFull caught: "Error: Too many instances of Konfig app open. Please close an instance of Konfig.", where "Konfig" is replaced with relevant app's user-friendly name.
+ * --- When TabManagerFull caught: "Error: Too many server requests for apps. Please close an existing app."
+ */
+
 // FIXME - handle redirects from "/" to "/index.html"? - job of resource handler
 class WebAppFramework : public IWebAppFramework, public IWebAppManager, public IResourceManager, public IServer
 {
@@ -363,6 +390,15 @@ public:
     static const TChar* kAdapterCookie;
     static const Brn kSessionPrefix;
 private:
+    // NOTE: No need for a "spare" session. Impossible to enforce such a
+    // feature, and as long as normal server threads >= 1, will always
+    // (eventually) serve all requests, as there will be no calls which block
+    // for long periods.
+    // NOTE: This is the MINIMUM number of server resource threads, because the
+    // server will also use long poll threads for serving static resources, if
+    // there are any free.
+    static const TUint kDefaultMinResourceServerThreads = 1;
+    static const TUint kDefaultLongPollServerThreads = 1;
     static const TUint kMaxSessionNameBytes = 32;  // Should be capable of storing string of form kSessionPrefix + ID (0-99) + '\0', e.g., "WebUiSession01\0".
 private:
     class BrxPtrCmp
@@ -371,13 +407,11 @@ private:
         TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
     };
 private:
-    // Spare session(s) for receiving user input and rejecting new long polling
-    // connections when iMaxLpSessions in use.
-    static const TUint kSpareSessions = 1;
-    typedef std::pair<const Brx*,WebAppInternal*> WebAppPair;
-    typedef std::map<const Brx*,WebAppInternal*, BrxPtrCmp> WebAppMap;
+    typedef std::pair<const Brx*, WebAppInternal*> WebAppPair;
+    typedef std::map<const Brx*, WebAppInternal*, BrxPtrCmp> WebAppMap;
 public:
-    WebAppFramework(Environment& aEnv, TIpAddress aInterface = 0, TUint aPort = 0, TUint aMaxSessions = 6, TUint aSendQueueSize = 1024, TUint aSendTimeoutMs = 5000, TUint aPollTimeoutMs = 5000);
+    // FIXME - replace this with an init params object, similar to what ohNet and the pipeline take.
+    WebAppFramework(Environment& aEnv, WebAppFrameworkInitParams* aInitParms);
     ~WebAppFramework();
     void Start();
     /**
@@ -390,7 +424,7 @@ public: // from IWebAppFramework
 private: // from IWebAppManager
     IWebApp& GetApp(const Brx& aResourcePrefix) override;  // THROWS InvalidAppPrefix
 private: // from IResourceManager
-    IResourceHandler& CreateResourceHandler(const Brx& aResource) override;  // THROWS ResourceInvalid
+    IResourceHandler* CreateResourceHandler(const Brx& aResource) override;  // THROWS ResourceInvalid
 public: // from IServer
     TUint Port() const override;
     TIpAddress Interface() const override;
@@ -399,16 +433,11 @@ private:
     void CurrentAdapterChanged();
 private:
     Environment& iEnv;
-    FrameworkTimer iPollTimer; // FIXME  remove
-    const TUint iPort;
-    const TUint iMaxLpSessions;
+    WebAppFrameworkInitParams* iInitParams;
     TUint iAdapterListenerId;
     SocketTcpServer* iServer;
     TabManager* iTabManager;    // Should there be one tab manager for ALL apps, or one TabManager per app? (And, similarly, one set of server sessions for all apps, or a set of server sessions per app? Also, need at least one extra session for receiving (and declining) additional long polling requests.)
-
-    // FIXME - what if this is created with a max of 4 tabs and an app is added that is only capable of creating 3 apps and 4 clients try to load apps?
-
-    WebAppMap iWebApps; // FIXME - need comparator
+    WebAppMap iWebApps;
     std::vector<std::reference_wrapper<HttpSession>> iSessions;
     IWebApp* iDefaultApp;
     TBool iStarted;
