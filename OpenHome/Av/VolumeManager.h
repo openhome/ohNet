@@ -144,6 +144,7 @@ private: // from IStandbyHandler
 private:
     void StartupVolumeChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void StartupVolumeEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
+    void ApplyStartupVolume();
 private:
     IVolume& iVolume;
     Configuration::ConfigNum& iConfigStartupVolume;
@@ -153,6 +154,7 @@ private:
     TUint iSubscriberIdStartupVolumeEnabled;
     StoreInt& iStoreUserVolume;
     TBool iStartupVolumeEnabled;
+    TBool iStartupVolumeReported;
     TUint iStartupVolume;
     const TUint iMaxVolume;
     const TUint iMilliDbPerStep;
