@@ -23,6 +23,7 @@ protected: // from UriProvider
     TUint CurrentTrackId() const override;
     TBool MoveNext() override;
     TBool MovePrevious() override;
+    TBool MoveTo(const Brx& aCommand) override;
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
     TBool MoveCursor();

@@ -2,6 +2,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h> // for PipelineStreamNotPausable
 #include <OpenHome/Av/Playlist/TrackDatabase.h>
 #include <OpenHome/Av/Playlist/ProviderPlaylist.h>
 #include <OpenHome/Av/Playlist/UriProviderPlaylist.h>
@@ -287,7 +288,10 @@ void SourcePlaylist::Pause()
     iLock.Wait();
     iTransportState = EPipelinePaused;
     iLock.Signal();
-    iPipeline.Pause();
+    try {
+        iPipeline.Pause();
+    }
+    catch (PipelineStreamNotPausable&) {}
 }
 
 void SourcePlaylist::Stop()

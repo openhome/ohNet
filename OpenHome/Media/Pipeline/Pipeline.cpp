@@ -677,7 +677,12 @@ void Pipeline::DoPlay(TBool aQuit)
 
 void Pipeline::Pause()
 {
-    iStopper->BeginPause();
+    try {
+        iStopper->BeginPause();
+    }
+    catch (StopperStreamNotPausable&) {
+        THROW(PipelineStreamNotPausable);
+    }
 }
 
 void Pipeline::Wait(TUint aFlushId)

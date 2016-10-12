@@ -2,6 +2,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h> // for PipelineStreamNotPausable
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Av/Radio/ProviderRadio.h>
 #include <OpenHome/Av/Radio/TuneIn.h>
@@ -248,7 +249,10 @@ void SourceRadio::Pause()
             iPipeline.Stop();
         }
         else {
-            iPipeline.Pause();
+            try {
+                iPipeline.Pause();
+            }
+            catch (PipelineStreamNotPausable&) {}
         }
     }
 }

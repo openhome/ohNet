@@ -103,6 +103,20 @@ TBool UriProviderRepeater::MovePrevious()
     return MoveCursor();
 }
 
+TBool UriProviderRepeater::MoveTo(const Brx& aCommand)
+{
+    if (aCommand.Bytes() != 0) {
+        THROW(FillerInvalidCommand);
+    }
+    AutoMutex a(iLock);
+    if (iTrack == nullptr) {
+        return false;
+    }
+    iRetrieved = false;
+    iPlayLater = false;
+    return true;
+}
+
 void UriProviderRepeater::NotifyTrackPlay(Media::Track& aTrack)
 {
     AutoMutex a(iLock);

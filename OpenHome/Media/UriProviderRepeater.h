@@ -23,6 +23,7 @@ private: // from UriProvider
     TUint CurrentTrackId() const override;
     TBool MoveNext() override;
     TBool MovePrevious() override;
+    TBool MoveTo(const Brx& aCommand) override;
 private: // from ITrackObserver
     void NotifyTrackPlay(Track& aTrack) override;
     void NotifyTrackFail(Track& aTrack) override;

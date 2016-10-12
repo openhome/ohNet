@@ -10,6 +10,7 @@
 #include <vector>
 
 EXCEPTION(FillerInvalidMode);
+EXCEPTION(FillerInvalidCommand);
 EXCEPTION(UriProviderInvalidId);
 
 namespace OpenHome {
@@ -33,6 +34,7 @@ public:
     virtual TUint CurrentTrackId() const = 0; // Id of last delivered track.  Or of pending track requested via Begin or Move[After|Before]
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-nullptr track and ePlayYes
+    virtual TBool MoveTo(const Brx& aCommand); // returns true if GetNext would return a non-nullptr track and ePlayYes
 protected:
     enum class Latency  { Supported, NotSupported };
     enum class Next     { Supported, NotSupported };
@@ -61,6 +63,7 @@ public:
     void Quit();
     void Play(const Brx& aMode, TUint aTrackId);
     void PlayLater(const Brx& aMode, TUint aTrackId);
+    TBool Play(const Brx& aMode, const Brx& aCommand);
     TUint Stop(); // Stops filler and encourages protocols to stop.  Returns haltId iff filler was active
     TUint Flush(); // Stops filler, encourages protocols to stop.  Returns flushId.  MsgFlush will be delivered once protocol is stopped.
     TBool Next(const Brx& aMode);

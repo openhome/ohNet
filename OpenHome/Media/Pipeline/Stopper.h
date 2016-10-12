@@ -1,10 +1,13 @@
 #pragma once
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 #include <atomic>
+
+EXCEPTION(StopperStreamNotPausable)
 
 namespace OpenHome {
 namespace Media {
@@ -123,6 +126,7 @@ private:
     TBool iHaltPending;
     TBool iFlushStream;
     TBool iBuffering;
+    TBool iStreamIsLive;
     TBool iQuit;
     TUint iEventId;
     std::atomic<EEventedState> iEventState;
