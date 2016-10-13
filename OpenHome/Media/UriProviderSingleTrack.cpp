@@ -107,6 +107,7 @@ TBool UriProviderSingleTrack::MoveTo(const Brx& aCommand)
         return false;
     }
     iIgnoreNext = false;
+    iPlayLater = false;
     return true;
 }
 
