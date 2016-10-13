@@ -345,6 +345,7 @@ def build(bld):
             source=[
                 'OpenHome/Av/Radio/SourceRadio.cpp',
                 'OpenHome/Av/Radio/PresetDatabase.cpp',
+                'OpenHome/Av/Radio/UriProviderRadio.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
                 'OpenHome/Av/Radio/ContentAsx.cpp',
                 'OpenHome/Av/Radio/ContentM3u.cpp',

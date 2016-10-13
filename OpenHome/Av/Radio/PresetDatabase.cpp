@@ -9,8 +9,9 @@ using namespace OpenHome::Av;
 
 // PresetDatabase
 
-PresetDatabase::PresetDatabase()
-    : iLock("RADB")
+PresetDatabase::PresetDatabase(Media::TrackFactory& aTrackFactory)
+    : iTrackFactory(aTrackFactory)
+    , iLock("RADB")
     , iNextId(kPresetIdNone + 1)
     , iSeq(0)
     , iUpdated(false)
@@ -197,6 +198,78 @@ void PresetDatabase::EndSetPresets()
             (*it)->PresetDatabaseChanged();
         }
     }
+}
+
+Media::Track* PresetDatabase::TrackRefById(TUint aId)
+{
+    AutoMutex _(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        const Preset& preset = iPresets[i];
+        if (preset.Id() == aId) {
+            return iTrackFactory.CreateTrack(preset.Uri(), preset.MetaData());
+        }
+    }
+    return nullptr;
+}
+
+Media::Track* PresetDatabase::NextTrackRef(TUint aId)
+{
+    AutoMutex _(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        const Preset& preset = iPresets[i];
+        if (preset.Id() == aId) {
+            for (TUint j=i+1; j<kMaxPresets; j++) {
+                const Preset& preset2 = iPresets[j];
+                if (!preset2.IsEmpty()) {
+                    return iTrackFactory.CreateTrack(preset2.Uri(), preset2.MetaData());
+                }
+            }
+            return nullptr;
+        }
+    }
+    return nullptr;
+}
+
+Media::Track* PresetDatabase::PrevTrackRef(TUint aId)
+{
+    AutoMutex _(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        const Preset& preset = iPresets[i];
+        if (preset.Id() == aId) {
+            for (TInt j=i-1; j>=0; j--) {
+                const Preset& preset2 = iPresets[j];
+                if (!preset2.IsEmpty()) {
+                    return iTrackFactory.CreateTrack(preset2.Uri(), preset2.MetaData());
+                }
+            }
+            return nullptr;
+        }
+    }
+    return nullptr;
+}
+
+Media::Track* PresetDatabase::FirstTrackRef()
+{
+    AutoMutex _(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        const Preset& preset = iPresets[i];
+        if (!preset.IsEmpty()) {
+            return iTrackFactory.CreateTrack(preset.Uri(), preset.MetaData());
+        }
+    }
+    return nullptr;
+}
+
+Media::Track* PresetDatabase::LastTrackRef()
+{
+    AutoMutex _(iLock);
+    for (TInt i=kMaxPresets-1; i>=0; i--) {
+        const Preset& preset = iPresets[i];
+        if (!preset.IsEmpty()) {
+            return iTrackFactory.CreateTrack(preset.Uri(), preset.MetaData());
+        }
+    }
+    return nullptr;
 }
 
 
