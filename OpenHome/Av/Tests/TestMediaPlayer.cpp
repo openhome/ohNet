@@ -405,7 +405,8 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer,
                                                  Optional<IClockPuller>(nullptr),
                                                  Optional<IOhmTimestamper>(iTxTimestamper),
-                                                 Optional<IOhmTimestamper>(iRxTimestamper)));
+                                                 Optional<IOhmTimestamper>(iRxTimestamper),
+                                                 Optional<IOhmMsgProcessor>()));
 }
 
 void TestMediaPlayer::InitialiseSubsystems()

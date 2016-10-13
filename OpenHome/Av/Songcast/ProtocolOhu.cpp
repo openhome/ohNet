@@ -21,8 +21,8 @@ using namespace OpenHome::Media;
 
 // ProtocolOhu
 
-ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode)
-    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, Optional<IOhmTimestamper>() /* no timestamper required */, "ohu", aMode)
+ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, Optional<IOhmTimestamper> aTimestamper, const Brx& aMode, Optional<Av::IOhmMsgProcessor> aOhmMsgProcessor)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohu", aMode, aOhmMsgProcessor)
     , iLeaveLock("POHU")
 {
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired), "ProtocolOhuLeave");
@@ -136,6 +136,11 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress /*aInterface*/, TUint aTtl, co
             }
         }
 
+        if (iTimestamper != nullptr) {
+            iTimestamper->Stop();
+            iTimestamper->Start(iSocket.This());
+        }
+
         iLeaveLock.Signal();
         try {
             OhmHeader header;
@@ -157,8 +162,15 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress /*aInterface*/, TUint aTtl, co
                     case OhmHeader::kMsgTypeLeave:
                         break;
                     case OhmHeader::kMsgTypeAudio:
-                        /* ignore audio while joining - it might be from while we were waiting
-                        for the pipeline to empty if we're re-starting a stream following a drop-out */
+                    {
+                        /* Ignore audio while joining - it might be from while we were waiting
+                           for the pipeline to empty if we're re-starting a stream following a drop-out
+                           We do however need to check for timestamps, to avoid the timestamper
+                           filling up with out of date values */
+                        auto lmsg = iMsgFactory.CreateAudio(iReadBuffer, header);
+                        AddRxTimestamp(*lmsg);
+                        lmsg->RemoveRef();
+                    }
                         break;
                     case OhmHeader::kMsgTypeTrack:
                         LOG(kSongcast, "OHU: Joining, received track\n");
@@ -249,6 +261,10 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress /*aInterface*/, TUint aTtl, co
             LOG2(kSongcast, kError, "OHU: Sender Halted.  Stopped=%u, starving=%u, leaving=%u\n", iStopped, iStarving, iLeaving);
         }
     } while (!iStopped);
+
+    if (iTimestamper != nullptr) {
+        iTimestamper->Stop();
+    }
     
     Interrupt(false); // cancel any interrupt to allow SendLeave to succeed
     iReadBuffer.ReadFlush();

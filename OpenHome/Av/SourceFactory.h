@@ -16,6 +16,7 @@ namespace Av {
 class ISource;
 class IMediaPlayer;
 class IOhmTimestamper;
+class IOhmMsgProcessor;
 
 class SourceFactory
 {
@@ -28,7 +29,8 @@ public:
     static ISource* NewReceiver(IMediaPlayer& aMediaPlayer,
                                 Optional<Media::IClockPuller> aClockPuller,
                                 Optional<IOhmTimestamper> aTxTimestamper,
-                                Optional<IOhmTimestamper> aRxTimestamper);
+                                Optional<IOhmTimestamper> aRxTimestamper,
+                                Optional<IOhmMsgProcessor> aOhmMsgObserver);
 
     static const TChar* kSourceTypePlaylist;
     static const TChar* kSourceTypeRadio;
