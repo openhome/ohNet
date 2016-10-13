@@ -32,7 +32,8 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kTtl = 2;
 protected:
     ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory,
-                   Optional<IOhmTimestamper> aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
+                   Optional<IOhmTimestamper> aTimestamper, const TChar* aSupportedScheme, const Brx& aMode,
+                   Optional<Av::IOhmMsgProcessor> aOhmMsgProcessor);
     ~ProtocolOhBase();
     void Add(OhmMsg* aMsg);
     void ResendSeen();
@@ -110,6 +111,7 @@ private:
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;
     Semaphore iPipelineEmpty;
+    Optional<Av::IOhmMsgProcessor> iOhmMsgProcessor;
 };
 
 } // namespace Av
