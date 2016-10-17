@@ -1,4 +1,4 @@
-# Makefile for T4 on linux
+    # Makefile for T4 on linux
 # Could be extended to support Mac in future
 
 # Macros used by T4.mak
@@ -32,7 +32,7 @@ dllsources =	OpenHome/Net/T4/TextTemplating/Mono.TextTemplating/AssemblyInfo.cs 
 
 $(toolsDir)Mono.TextTemplating.dll : $(dllsources)
 	$(mkdir) $(toolsDir)
-	dmcs /t:library -out:$(toolsDir)Mono.TextTemplating.dll $(dllsources)
+	mcs /t:library -out:$(toolsDir)Mono.TextTemplating.dll $(dllsources)
 
  
 exesources =	OpenHome/Net/T4/TextTemplating/TextTransform/AssemblyInfo.cs \
