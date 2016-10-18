@@ -70,7 +70,7 @@ class BuildOhmp( BASE.CommonBuild ):
         buildCmd  = [goCmd, 'build']
         buildCmd.extend( buildOpts )
         self._Execute( ['git', 'pull'], ohmpPath, 'Updating source to latest' )
-        self._Execute( cleanDeps, ohmpPath, 'Cleaning dependencies' )
+        # self._Execute( cleanDeps, ohmpPath, 'Cleaning dependencies' ) - not necessary post ohdevtools v80
         self._Execute( buildCmd, ohmpPath, 'Executing build' )
 
     def Cleanup( self ):
