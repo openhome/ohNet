@@ -86,6 +86,7 @@ public:
     DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
     const std::vector<DvAction>& DvActions() const;
     void Invoke(IDviInvocation& aInvocation, const Brx& aActionName);
+    void InvokeDirect(IDviInvocation& aInvocation, const Brx& aActionName); // intended for CpDeviceDv + LPEC only
 
     void PropertiesLock();
     void PropertiesUnlock();
@@ -97,6 +98,7 @@ public:
     void RemoveSubscription(const Brx& aSid);
 private:
     ~DviService();
+    void Invoke(IDviInvocation& aInvocation, const Brx& aActionName, TBool aIgnoreEnableState);
     void InvocationCompleted();
     TBool AssertPropertiesInitialised() const;
 private: // from IStackObject

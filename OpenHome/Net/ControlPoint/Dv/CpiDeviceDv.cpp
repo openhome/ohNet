@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
@@ -42,6 +43,8 @@ void CpiDeviceDv::InvokeAction(Invocation& aInvocation)
     const OpenHome::Net::ServiceType& serviceType = aInvocation.ServiceType();
     DviService* service = iDeviceDv.ServiceReference(serviceType);
     if (service == NULL) {
+        LOG2(kCpDeviceDv, kError, "CpiDeviceDv::InvokeAction failed lookup for service %.*s:%.*s:%u\n",
+                                  PBUF(serviceType.Domain()), PBUF(serviceType.Name()), serviceType.Version());
         const HttpStatus& err = HttpStatus::kNotFound;
         aInvocation.SetError(Error::eUpnp, err.Code(), err.Reason());
     }
@@ -216,7 +219,7 @@ void InvocationDv::Invoke()
 {
     const Brx& actionName = iInvocation.Action().Name();
     try {
-        iService.Invoke(*this, actionName);
+        iService.InvokeDirect(*this, actionName);
     }
     catch (InvocationError&) {}
     catch (ParameterValidationError&) {

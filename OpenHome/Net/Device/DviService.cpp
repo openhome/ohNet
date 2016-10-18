@@ -161,11 +161,20 @@ const std::vector<DvAction>& DviService::DvActions() const
 
 void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
 {
+    Invoke(aInvocation, aActionName, false);
+}
+
+void DviService::InvokeDirect(IDviInvocation& aInvocation, const Brx& aActionName)
+{
+    Invoke(aInvocation, aActionName, true);
+}
+
+void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName, TBool aIgnoreEnableState)
+{
     iLock.Wait();
     LOG(kDvInvocation, "Service: %.*s, Action: %.*s\n",
                        PBUF(iServiceType.Name()), PBUF(aActionName));
-    TBool disabled = iDisabled;
-    if (disabled) {
+    if (!aIgnoreEnableState && iDisabled) {
         iLock.Signal();
         aInvocation.InvocationReportError(502, Brn("Action not available"));
     }

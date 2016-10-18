@@ -70,7 +70,7 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("Application40", Debug::kApplication40);
     AddLevel("Application41", Debug::kApplication41);
     AddLevel("Application42", Debug::kApplication42);
-    AddLevel("Application43", Debug::kApplication43);
+    AddLevel("CpDeviceDv", Debug::kCpDeviceDv);
 
     // Debug::kAll level includes Debug::kNetwork, which will crash device if
     // activated via shell.

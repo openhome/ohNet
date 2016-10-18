@@ -662,7 +662,7 @@ void DviSessionLpec::ReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 void DviSessionLpec::Invoke()
 {
     Brn actionName = iParser.Next(' ');
-    iTargetService->Invoke(*this, actionName);
+    iTargetService->InvokeDirect(*this, actionName);
 }
 
 TUint DviSessionLpec::Version() const

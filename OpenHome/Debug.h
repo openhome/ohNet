@@ -149,7 +149,7 @@ public:
     static const TUint64 kApplication40  = static_cast<TUint64>(1)<<60;
     static const TUint64 kApplication41  = static_cast<TUint64>(1)<<61;
     static const TUint64 kApplication42  = static_cast<TUint64>(1)<<62;
-    static const TUint64 kApplication43  = static_cast<TUint64>(1)<<63;
+    static const TUint64 kCpDeviceDv     = static_cast<TUint64>(1)<<63;
     static const TUint64 kAll            = 0xFFFFFFFF7FFFFFFFull;
 
     static TBool TestLevel(TUint aLevel)   { return ((iLevel & aLevel) != 0); }
