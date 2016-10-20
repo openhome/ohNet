@@ -99,9 +99,23 @@
         "dest": "dependencies/AnyPlatform/FunctionalTest"
     },
     {
+        "name": "FTDataPublic",
+        "type": "openhome",
+        "version": "0.0.15",
+        "cross-check": false,
+        "platform-specific": false,
+        "archive-filename": "FTDataPublic-${version}.zip",
+        "dest": "dependencies/AnyPlatform/FunctionalTestData",
+        "platform-ignore": {
+            "Linux-ppc32": true,
+            "Linux-armhf": true,
+            "*": false },
+        "ignore":           "${platform-ignore[$platform]}"
+    },
+    {
         "name": "FTDataPrivate",
         "type": "internal",
-        "version": "0.0.19",
+        "version": "0.0.21",
         "cross-check": false,
         "platform-specific": false,
         "archive-filename": "FTDataPrivate-${version}.zip",
