@@ -525,8 +525,8 @@ private:
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderLocation iHeaderLocation;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
-    Srs<1024> iReadBuffer;
-    ReaderUntilS<1024> iReaderUntil;
+    Srs<kReadBufferBytes> iReadBuffer;
+    ReaderUntilS<kReadBufferBytes> iReaderUntil;
     ReaderHttpResponse iReaderResponse;
     Sws<kWriteBufferBytes> iWriteBuffer;
     WriterHttpRequest iWriterRequest;
