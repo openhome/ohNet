@@ -1528,7 +1528,7 @@ Msg* Mpeg4BoxStsd::Process()
     while (!Complete()) {
         Msg* msg = nullptr;
 
-        // All pulling calls below returns nullptr when there is something of interest for this class.
+        // All pulling calls below return nullptr when there is something of interest for this class.
         if (iState == eHeader) {
             msg = iHeaderReader.ReadHeader();
         }
@@ -2378,9 +2378,10 @@ TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
 
 // SeekTableInitialiser
 
-SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable,
-        IReader& aReader) :
-        iSeekTable(aSeekTable), iReader(aReader), iInitialised(false)
+SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable, IReader& aReader)
+    : iSeekTable(aSeekTable)
+    , iReader(aReader)
+    , iInitialised(false)
 {
 }
 
