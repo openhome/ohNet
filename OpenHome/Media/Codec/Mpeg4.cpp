@@ -1004,6 +1004,18 @@ Msg* Mpeg4BoxStsz::Process()
             const TUint entries = Converter::BeUint32At(iBuf, 0);
 
             if (entries > 0) {
+                if (iSampleSizeTable.Count() > 0) {
+                    // Table already initialised.
+                    // Can't currently play all files with >1 "trak" atoms, so
+                    // give up on this file.
+
+                    // FIXME - See #4779.
+                    iCache->Discard(iBytes - iOffset);
+                    iOffset = iBytes;
+                    THROW(MediaMpeg4FileInvalid);
+                }
+
+
                 iSampleSizeTable.Init(entries);
 
                 // If iSampleSize == 0, there follows an array of sample size entries.
