@@ -129,7 +129,7 @@ ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const 
     , iMapper(nullptr)
     , iMutex("CVCM")
 {
-    Init(aDefault);
+    Init();
 }
 
 ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault, IConfigChoiceMapper& aMapper)
@@ -139,7 +139,7 @@ ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const 
     , iMapper(&aMapper)
     , iMutex("CVCM")
 {
-    Init(aDefault);
+    Init();
 }
 
 const std::vector<TUint>& ConfigChoice::Choices() const
@@ -174,7 +174,7 @@ IConfigChoiceMapper& ConfigChoice::Mapper() const
     return *iMapper;
 }
 
-void ConfigChoice::Init(TUint aDefault)
+void ConfigChoice::Init()
 {
     ASSERT(IsValid(iDefault));
 
@@ -182,7 +182,7 @@ void ConfigChoice::Init(TUint aDefault)
     Bws<sizeof(TUint)> defaultBuf;
     WriterBuffer writerBuf(defaultBuf);
     WriterBinary writerBin(writerBuf);
-    writerBin.WriteUint32Be(aDefault);
+    writerBin.WriteUint32Be(iDefault);
     iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
 
