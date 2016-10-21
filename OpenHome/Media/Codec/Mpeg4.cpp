@@ -1015,7 +1015,6 @@ Msg* Mpeg4BoxStsz::Process()
                     THROW(MediaMpeg4FileInvalid);
                 }
 
-
                 iSampleSizeTable.Init(entries);
 
                 // If iSampleSize == 0, there follows an array of sample size entries.
@@ -1298,7 +1297,9 @@ Msg* Mpeg4BoxCodecBase::Process()
             // Box processing is complete.
             iOffset += iHeaderReader.Bytes();
 
-            ASSERT(iOffset <= iBytes);
+            if (iOffset > iBytes) {
+                THROW(MediaMpeg4FileInvalid);
+            }
             if (iOffset == iBytes) {
                 iState = eComplete;
             }
@@ -1320,7 +1321,9 @@ Msg* Mpeg4BoxCodecBase::Process()
 
 TBool Mpeg4BoxCodecBase::Complete() const
 {
-    ASSERT(iOffset <= iBytes);
+    if (iOffset > iBytes) {
+        THROW(MediaMpeg4FileInvalid);
+    }
     return iOffset == iBytes;
 }
 
