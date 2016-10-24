@@ -33,7 +33,7 @@ private:
     TUint FindChunk(const Brx& aChunkId);
     void SendMsgDecodedStream(TUint64 aStartSample);
 private:
-    Bws<DecodedAudio::kMaxBytes> iReadBuf;
+    Bws<DecodedAudio::kMaxBytes + 40> iReadBuf; // +40 to accommodate a fragment of a following (10ch, 32-bit) sample
     TUint iNumChannels;
     TUint iSampleRate;
     TUint iBitDepth;
@@ -116,23 +116,18 @@ void CodecWav::Process()
         if (iAudioBytesRemaining == 0) {
             THROW(CodecStreamEnded);
         }
-        TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % (iNumChannels * (iBitDepth/8)));
-        ASSERT_DEBUG(chunkSize <= iReadBuf.MaxBytes());
-        iReadBuf.SetBytes(0);
-        const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
-        iController->Read(iReadBuf, bytes);
+        Bwn readBuf(iReadBuf.Ptr() + iReadBuf.Bytes(), iReadBuf.MaxBytes() - iReadBuf.Bytes());
+        iController->ReadNextMsg(readBuf);
+        iReadBuf.SetBytes(iReadBuf.Bytes() + readBuf.Bytes());
 
         // Truncate to a sensible sample boundary.
-        TUint remainder = iReadBuf.Bytes() % (iNumChannels * (iBitDepth/8));
+        const TUint remainder = iReadBuf.Bytes() % (iNumChannels * (iBitDepth/8));
         Brn split = iReadBuf.Split(iReadBuf.Bytes()-remainder);
         iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
 
         iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, AudioDataEndian::Little, iTrackOffset);
         iAudioBytesRemaining -= iReadBuf.Bytes();
-
-        if (iReadBuf.Bytes() < bytes) { // stream ended unexpectedly
-            THROW(CodecStreamEnded);
-        }
+        iReadBuf.Replace(split);
     }
 }
 
