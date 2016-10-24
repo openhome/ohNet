@@ -74,13 +74,16 @@ VolumeUser::VolumeUser(IVolume& aVolume, IConfigManager& aConfigReader, IPowerMa
     , iConfigStartupVolume(aConfigReader.GetNum(VolumeConfig::kKeyStartupValue))
     , iConfigStartupVolumeEnabled(aConfigReader.GetChoice(VolumeConfig::kKeyStartupEnabled))
     , iStoreUserVolume(aStoreUserVolume)
+    , iStartupVolumeReported(false)
     , iMaxVolume(aMaxVolume)
     , iMilliDbPerStep(aMilliDbPerStep)
 {
     iSubscriberIdStartupVolume = iConfigStartupVolume.Subscribe(MakeFunctorConfigNum(*this, &VolumeUser::StartupVolumeChanged));
     iSubscriberIdStartupVolumeEnabled = iConfigStartupVolumeEnabled.Subscribe(MakeFunctorConfigChoice(*this, &VolumeUser::StartupVolumeEnabledChanged));
     iStandbyObserver = aPowerManager.RegisterStandbyHandler(*this, kStandbyHandlerPriorityNormal, "VolumeUser");
-    // StandbyDisabled will be called either inside the call above or when we later exit standby
+    if (!iStartupVolumeReported) {
+        ApplyStartupVolume(); // set volume immediately to avoid reporting volume==0 until we exit standby
+    }
 }
 
 VolumeUser::~VolumeUser()
@@ -106,19 +109,7 @@ void VolumeUser::StandbyEnabled()
 
 void VolumeUser::StandbyDisabled(StandbyDisableReason /*aReason*/)
 {
-    TUint startupVolume;
-    if (iStartupVolumeEnabled) {
-        startupVolume = iStartupVolume * iMilliDbPerStep;
-    }
-    else {
-        startupVolume = iStoreUserVolume.Get();
-    }
-
-    try {
-        iVolume.SetVolume(startupVolume);
-    }
-    catch (VolumeNotSupported&) { }
-    catch (VolumeOutOfRange&) { } // ignore any errors caused by volume limit being set lower than startup volume
+    ApplyStartupVolume();
 }
 
 void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)
@@ -129,6 +120,24 @@ void VolumeUser::StartupVolumeChanged(ConfigNum::KvpNum& aKvp)
 void VolumeUser::StartupVolumeEnabledChanged(ConfigChoice::KvpChoice& aKvp)
 {
     iStartupVolumeEnabled = (aKvp.Value() == eStringIdYes);
+}
+
+void VolumeUser::ApplyStartupVolume()
+{
+    TUint startupVolume;
+    if (iStartupVolumeEnabled) {
+        startupVolume = iStartupVolume * iMilliDbPerStep;
+    }
+    else {
+        startupVolume = iStoreUserVolume.Get();
+    }
+
+    try {
+        iVolume.SetVolume(startupVolume);
+        iStartupVolumeReported = true;
+    }
+    catch (VolumeNotSupported&) {}
+    catch (VolumeOutOfRange&) {} // ignore any errors caused by volume limit being set lower than startup volume
 }
 
 

@@ -28,7 +28,8 @@ class ProtocolOhm : public ProtocolOhBase, public IUnicastOverrideObserver
 {
 public:
     ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory,
-                Optional<IOhmTimestamper> aTimestamper, const Brx& aMode);
+                Optional<IOhmTimestamper> aTimestamper, const Brx& aMode,
+                Optional<Av::IOhmMsgProcessor> aOhmMsgProcessor);
 private: // from IUnicastOverrideObserver
     void UnicastOverrideEnabled() override;
     void UnicastOverrideDisabled() override;

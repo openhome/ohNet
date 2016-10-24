@@ -79,7 +79,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
 {
     TBool success = false;
     if (!TryConnect()) {
-        LOG2(kPipeline, kError, "Qobuz::TryLogin - connection failure\n");
+        LOG2(kPipeline, kError, "Qobuz::TryGetStreamUrl - connection failure\n");
         return false;
     }
     AutoSocketReader _(iSocket, iReaderUntil2);
@@ -90,7 +90,7 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         timestamp = iUnixTimestamp.Now();
     }
     catch (UnixTimestampUnavailable&) {
-        LOG2(kPipeline, kError, "Qobuz::TryLogin - failure to determine network time\n");
+        LOG2(kPipeline, kError, "Qobuz::TryGetStreamUrl - failure to determine network time\n");
         return false;
     }
     Bws<Ascii::kMaxUintStringBytes> audioFormatBuf;
@@ -122,7 +122,9 @@ TBool Qobuz::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     try {
         const TUint code = WriteRequestReadResponse(Http::kMethodGet, iPathAndQuery);
         if (code != 200) {
-            LOG(kError, "Http error - %d - in response to Qobuz::TryGetStreamUrl.  Some/all of response is:\n", code);
+            LOG2(kPipeline, kError, "Http error - %d - in response to Qobuz::TryGetStreamUrl.\n", code);
+            LOG2(kPipeline, kError, "...path/query is %.*s\n", PBUF(iPathAndQuery));
+            LOG2(kPipeline, kError, "Some/all of response is:\n");
             Brn buf = iDechunker.Read(kReadBufferBytes);
             LOG2(kPipeline, kError, "%.*s\n", PBUF(buf));
             THROW(ReaderError);

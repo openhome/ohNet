@@ -27,6 +27,7 @@ private:
     inline void Log(const TChar* aId, TUint aVal) const { Log(aId, aVal, sizeof(aVal)); }
     inline void Log(const TChar* aId, TUint64 aVal) const { Log(aId, aVal, sizeof(aVal)); }
     void Log(const TChar* aId, TUint64 aVal, TUint aBytes) const;
+    void LogError(const TChar* aEx) const;
 private: // from IWriter
     void Write(TByte aValue) override;
     void Write(const Brx& aBuffer) override;

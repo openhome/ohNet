@@ -142,7 +142,7 @@ void RadioPresetsTuneIn::RefreshThread()
         iRefreshTimer->FireIn(kRefreshRateMs);
         try {
             iSocket.Open(iEnv);
-            DoRefresh();
+            DoRefresh(); // doesn't throw
             iSocket.Close();
         }
         catch (NetworkError&) {

@@ -139,7 +139,7 @@ void SourceRaop::Activate(TBool aAutoPlay)
     if (iSessionActive) {
         StartNewTrack();
         iLock.Signal();
-        DoPlay();
+        iPipeline.Play();
     }
     else {
         if (iTrack != nullptr) {
