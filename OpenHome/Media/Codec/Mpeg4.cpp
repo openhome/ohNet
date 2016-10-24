@@ -1964,14 +1964,20 @@ TUint Mpeg4BoxMdat::BytesUntilChunk() const
 
 TUint Mpeg4BoxMdat::ChunkBytes() const
 {
-    ASSERT(iChunk < iSeekTable.ChunkCount());
+    if (iChunk >= iSeekTable.ChunkCount()) {
+        THROW(MediaMpeg4FileInvalid);
+    }
     const TUint chunkSamples = iSeekTable.SamplesPerChunk(iChunk);
     const TUint startSample = iSeekTable.StartSample(iChunk); // NOTE: this assumes first sample == 0 (which is valid with how our tables are setup), but in MPEG4 spec, first sample == 1.
     TUint chunkBytes = 0;
     // Samples start from 1. However, tables here are indexed from 0.
     for (TUint i = startSample; i < startSample + chunkSamples; i++) {
         const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
-        ASSERT(chunkBytes + sampleBytes <= std::numeric_limits<TUint>::max());  // Ensure no overflow.
+
+        if ((std::numeric_limits<TUint>::max() - chunkBytes) < sampleBytes) {
+            // Wrapping will occur.
+            THROW(MediaMpeg4FileInvalid);
+        }
         chunkBytes += sampleBytes;
     }
     return chunkBytes;
