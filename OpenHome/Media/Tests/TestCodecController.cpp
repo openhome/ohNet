@@ -305,7 +305,7 @@ void SuiteCodecControllerBase::Setup()
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
     MsgFactoryInitParams init;
     init.SetMsgAudioEncodedCount(400, 400);
-    init.SetMsgAudioPcmCount(600, 600);
+    init.SetMsgAudioPcmCount(900, 900);
     init.SetMsgSilenceCount(10);
     init.SetMsgPlayableCount(50, 0);
     init.SetMsgTrackCount(2);
