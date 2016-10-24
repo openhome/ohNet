@@ -427,11 +427,6 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
         catch (AsciiError&) {
             aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
         }
-        if (aUnit == kSeekModeRelTime) {
-            iLock.Wait();
-            secs += iRelativeTimeSeconds;
-            iLock.Signal();
-        }
     }
     else {
         aInvocation.Error(kInvalidSeekModeCode, kInvalidSeekModeMsg);
