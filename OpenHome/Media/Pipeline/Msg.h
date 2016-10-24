@@ -109,7 +109,7 @@ enum class AudioDataEndian
 class AudioData : public Allocated
 {
 public: 
-    static const TUint kMaxBytes = 10 * 1024;
+    static const TUint kMaxBytes = 7680; // max of 2ms/10ch/96/32 and 5ms/2ch/192/24 (Songcast supporting earliest receiver)
 public:
     AudioData(AllocatorBase& aAllocator);
     const TByte* Ptr(TUint aOffsetBytes) const;
