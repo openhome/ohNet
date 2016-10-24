@@ -228,7 +228,7 @@ TUint Mpeg4BoxHeaderReader::Bytes() const
 
 TUint Mpeg4BoxHeaderReader::PayloadBytes() const
 {
-    if (iBytes >= kHeaderBytes) {
+    if (iBytes < kHeaderBytes) {
         THROW(MediaMpeg4FileInvalid);
     }
     return iBytes - kHeaderBytes;
