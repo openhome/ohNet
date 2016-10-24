@@ -228,7 +228,9 @@ TUint Mpeg4BoxHeaderReader::Bytes() const
 
 TUint Mpeg4BoxHeaderReader::PayloadBytes() const
 {
-    ASSERT(iBytes >= kHeaderBytes);
+    if (iBytes < kHeaderBytes) {
+        THROW(MediaMpeg4FileInvalid);
+    }
     return iBytes - kHeaderBytes;
 }
 
@@ -1004,6 +1006,17 @@ Msg* Mpeg4BoxStsz::Process()
             const TUint entries = Converter::BeUint32At(iBuf, 0);
 
             if (entries > 0) {
+                if (iSampleSizeTable.Count() > 0) {
+                    // Table already initialised.
+                    // Can't currently play all files with >1 "trak" atoms, so
+                    // give up on this file.
+
+                    // FIXME - See #4779.
+                    iCache->Discard(iBytes - iOffset);
+                    iOffset = iBytes;
+                    THROW(MediaMpeg4FileInvalid);
+                }
+
                 iSampleSizeTable.Init(entries);
 
                 // If iSampleSize == 0, there follows an array of sample size entries.
@@ -1286,7 +1299,9 @@ Msg* Mpeg4BoxCodecBase::Process()
             // Box processing is complete.
             iOffset += iHeaderReader.Bytes();
 
-            ASSERT(iOffset <= iBytes);
+            if (iOffset > iBytes) {
+                THROW(MediaMpeg4FileInvalid);
+            }
             if (iOffset == iBytes) {
                 iState = eComplete;
             }
@@ -1308,7 +1323,9 @@ Msg* Mpeg4BoxCodecBase::Process()
 
 TBool Mpeg4BoxCodecBase::Complete() const
 {
-    ASSERT(iOffset <= iBytes);
+    if (iOffset > iBytes) {
+        THROW(MediaMpeg4FileInvalid);
+    }
     return iOffset == iBytes;
 }
 
@@ -1528,7 +1545,7 @@ Msg* Mpeg4BoxStsd::Process()
     while (!Complete()) {
         Msg* msg = nullptr;
 
-        // All pulling calls below returns nullptr when there is something of interest for this class.
+        // All pulling calls below return nullptr when there is something of interest for this class.
         if (iState == eHeader) {
             msg = iHeaderReader.ReadHeader();
         }
@@ -1949,14 +1966,20 @@ TUint Mpeg4BoxMdat::BytesUntilChunk() const
 
 TUint Mpeg4BoxMdat::ChunkBytes() const
 {
-    ASSERT(iChunk < iSeekTable.ChunkCount());
+    if (iChunk >= iSeekTable.ChunkCount()) {
+        THROW(MediaMpeg4FileInvalid);
+    }
     const TUint chunkSamples = iSeekTable.SamplesPerChunk(iChunk);
     const TUint startSample = iSeekTable.StartSample(iChunk); // NOTE: this assumes first sample == 0 (which is valid with how our tables are setup), but in MPEG4 spec, first sample == 1.
     TUint chunkBytes = 0;
     // Samples start from 1. However, tables here are indexed from 0.
     for (TUint i = startSample; i < startSample + chunkSamples; i++) {
         const TUint sampleBytes = iSampleSizeTable.SampleSize(i);
-        ASSERT(chunkBytes + sampleBytes <= std::numeric_limits<TUint>::max());  // Ensure no overflow.
+
+        if ((std::numeric_limits<TUint>::max() - chunkBytes) < sampleBytes) {
+            // Wrapping will occur.
+            THROW(MediaMpeg4FileInvalid);
+        }
         chunkBytes += sampleBytes;
     }
     return chunkBytes;
@@ -2378,9 +2401,10 @@ TUint SeekTable::AudioSampleFromCodecSample(TUint aCodecSample) const
 
 // SeekTableInitialiser
 
-SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable,
-        IReader& aReader) :
-        iSeekTable(aSeekTable), iReader(aReader), iInitialised(false)
+SeekTableInitialiser::SeekTableInitialiser(SeekTable& aSeekTable, IReader& aReader)
+    : iSeekTable(aSeekTable)
+    , iReader(aReader)
+    , iInitialised(false)
 {
 }
 
