@@ -21,6 +21,8 @@ namespace Av {
 
 class UriProviderPlaylist : public Media::UriProvider, private ITrackDatabaseObserver, private Media::IPipelineObserver, private Media::ITrackObserver
 {
+    static const Brn kCommandId;
+    static const Brn kCommandIndex;
 public:
     UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Media::PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver);
     ~UriProviderPlaylist();
@@ -33,6 +35,7 @@ public: // from UriProvider
     TUint CurrentTrackId() const override;
     TBool MoveNext() override;
     TBool MovePrevious() override;
+    TBool MoveTo(const Brx& aCommand) override;
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
@@ -50,6 +53,9 @@ private: // from Media::ITrackObserver
 private:
     void DoBegin(TUint aTrackId, Media::EStreamPlay aPendingCanPlay);
     TUint CurrentTrackIdLocked() const;
+    TUint ParseCommand(const Brx& aCommand) const;
+    Media::Track* ProcessCommandId(const Brx& aCommand);
+    Media::Track* ProcessCommandIndex(const Brx& aCommand);
 private:
     enum EPendingDirection
     {

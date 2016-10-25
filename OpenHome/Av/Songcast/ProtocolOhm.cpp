@@ -49,8 +49,9 @@ using namespace OpenHome::Media;
 // ProtocolOhm
 
 ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, TrackFactory& aTrackFactory,
-                         Optional<IOhmTimestamper> aTimestamper, const Brx& aMode)
-    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
+                         Optional<IOhmTimestamper> aTimestamper, const Brx& aMode,
+                         Optional<Av::IOhmMsgProcessor> aOhmMsgProcessor)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode, aOhmMsgProcessor)
     , iStoppedLock("POHM")
     , iSemSenderUnicastOverride("POM2", 0)
     , iSenderUnicastOverrideEnabled(false)

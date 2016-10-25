@@ -2,7 +2,9 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h> // for PipelineStreamNotPausable
 #include <OpenHome/Av/Radio/PresetDatabase.h>
+#include <OpenHome/Av/Radio/UriProviderRadio.h>
 #include <OpenHome/Av/Radio/ProviderRadio.h>
 #include <OpenHome/Av/Radio/TuneIn.h>
 #include <OpenHome/Media/PipelineManager.h>
@@ -18,22 +20,6 @@
 #include <limits.h>
 #include <memory>
 
-namespace OpenHome {
-namespace Av {
-
-class UriProviderRadio : public Media::UriProviderSingleTrack
-{
-public:
-    UriProviderRadio(IMediaPlayer& aMediaPlayer);
-private: // from UriProvider
-    Media::ModeClockPullers ClockPullers() override;
-private:
-    Optional<Media::IClockPuller> iClockPuller;
-};
-
-} // namespace Av
-} // namespace OpenHome
-
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -45,40 +31,23 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
-    aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer, *radioUriProvider, Brx::Empty());
+    return new SourceRadio(aMediaPlayer, Brx::Empty());
 }
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
-    aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer, *radioUriProvider, aTuneInPartnerId);
+    return new SourceRadio(aMediaPlayer, aTuneInPartnerId);
 }
 
 const TChar* SourceFactory::kSourceTypeRadio = "Radio";
 const Brn SourceFactory::kSourceNameRadio("Radio");
 
-// UriProviderRadio
-
-UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
-    : UriProviderSingleTrack("Radio", false, aMediaPlayer.TrackFactory())
-{
-}
-
-ModeClockPullers UriProviderRadio::ClockPullers()
-{
-    return ModeClockPullers();
-}
-
-
 // SourceRadio
 
-SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId)
+SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId)
     : Source(SourceFactory::kSourceNameRadio, SourceFactory::kSourceTypeRadio, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRAD")
-    , iUriProvider(aUriProvider)
+    , iUriProvider(nullptr)
     , iTrack(nullptr)
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
@@ -103,8 +72,12 @@ SourceRadio::SourceRadio(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUr
                                   kPowerPriorityNormal, Brn("Radio.PresetId"),
                                   IPresetDatabaseReader::kPresetIdNone);
 
-    iPresetDatabase = new PresetDatabase();
+    iPresetDatabase = new PresetDatabase(aMediaPlayer.TrackFactory());
     iPresetDatabase->AddObserver(*this);
+
+    iUriProvider = new UriProviderRadio(aMediaPlayer.TrackFactory(), *iPresetDatabase);
+    aMediaPlayer.Add(iUriProvider);
+
     iProviderRadio = new ProviderRadio(aMediaPlayer.Device(), *this, *iPresetDatabase);
     mimeTypes.AddUpnpProtocolInfoObserver(MakeFunctorGeneric(*iProviderRadio, &ProviderRadio::NotifyProtocolInfo));
     if (aTuneInPartnerId.Bytes() == 0) {
@@ -138,7 +111,7 @@ void SourceRadio::Activate(TBool aAutoPlay)
     iActive = true;
     iAutoPlay = aAutoPlay;
     const TUint trackId = (iTrack==nullptr? Track::kIdNone : iTrack->Id());
-    iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+    iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
     if (trackId != Track::kIdNone && aAutoPlay) {
         iPipeline.Play();
     }
@@ -198,9 +171,9 @@ void SourceRadio::FetchLocked(const Brx& aUri, const Brx& aMetaData)
         if (iTrack != nullptr) {
             iTrack->RemoveRef();
         }
-        iTrack = iUriProvider.SetTrack(aUri, aMetaData);
+        iTrack = iUriProvider->SetTrack(aUri, aMetaData);
         if (iTrack != nullptr) {
-            iPipeline.StopPrefetch(iUriProvider.Mode(), iTrack->Id());
+            iPipeline.StopPrefetch(iUriProvider->Mode(), iTrack->Id());
         }
     }
 }
@@ -237,7 +210,7 @@ void SourceRadio::Play()
      * which is just a false-positive in this scenario.
      */
     iPipeline.RemoveAll();
-    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+    iPipeline.Begin(iUriProvider->Mode(), iTrack->Id());
     DoPlay();
 }
 
@@ -248,7 +221,10 @@ void SourceRadio::Pause()
             iPipeline.Stop();
         }
         else {
-            iPipeline.Pause();
+            try {
+                iPipeline.Pause();
+            }
+            catch (PipelineStreamNotPausable&) {}
         }
     }
 }
@@ -305,7 +281,7 @@ void SourceRadio::PresetDatabaseChanged()
         iPipeline.Play();
     }
     else {
-        iTrack = iUriProvider.SetTrack(iPresetUri, iPresetMetadata);
+        iTrack = iUriProvider->SetTrack(iPresetUri, iPresetMetadata);
     }
 }
 

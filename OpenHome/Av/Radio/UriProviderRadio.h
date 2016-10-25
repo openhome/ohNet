@@ -7,34 +7,35 @@
 #include <OpenHome/Private/Thread.h>
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
-class UriProviderSingleTrack : public UriProvider
+class IPresetDatabaseReaderTrack;
+
+class UriProviderRadio : public Media::UriProvider
 {
+    static const Brn kCommandId;
 public:
-    UriProviderSingleTrack(const TChar* aMode, TBool aSupportsLatency, TrackFactory& aTrackFactory);
-    ~UriProviderSingleTrack();
-    Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
-    void SetTrack(Track* aTrack);
+    UriProviderRadio(Media::TrackFactory& aTrackFactory, IPresetDatabaseReaderTrack& aDbReader);
+    ~UriProviderRadio();
+    Media::Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
 protected: // from UriProvider
     void Begin(TUint aTrackId) override;
     void BeginLater(TUint aTrackId) override;
-    EStreamPlay GetNext(Track*& aTrack) override;
+    Media::EStreamPlay GetNext(Media::Track*& aTrack) override;
     TUint CurrentTrackId() const override;
     TBool MoveNext() override;
     TBool MovePrevious() override;
     TBool MoveTo(const Brx& aCommand) override;
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
-    TBool MoveCursor();
 private:
     mutable Mutex iLock;
-    TrackFactory& iTrackFactory;
-    Track* iTrack;
+    Media::TrackFactory& iTrackFactory;
+    IPresetDatabaseReaderTrack& iDbReader;
+    Media::Track* iTrack;
     TBool iIgnoreNext;
     TBool iPlayLater;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
-

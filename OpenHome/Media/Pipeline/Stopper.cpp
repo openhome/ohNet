@@ -26,6 +26,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(nullptr)
     , iBuffering(false)
+    , iStreamIsLive(false)
     , iQuit(false)
 {
     iState = EStopped;
@@ -87,6 +88,11 @@ void Stopper::BeginPause()
 {
     AutoMutex a(iLock);
     LOG(kPipeline, "Stopper::BeginPause(), iState=%s\n", State());
+
+    if (iStreamIsLive) {
+        THROW(StopperStreamNotPausable);
+    }
+
     if (iQuit) {
         return;
     }
@@ -258,7 +264,8 @@ Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
     NewStream();
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
-    if (aMsg->Live()) {
+    iStreamIsLive = aMsg->Live();
+    if (iStreamIsLive) {
         /* we won't receive MsgDecodedStream (or anything else) until we call OkToPlay
            Don't want to do this unconditionally, as waiting for MsgDecodedStream for
            non-live streams allows additional metadata to make it to the Reporter before

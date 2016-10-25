@@ -20,7 +20,8 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory,
-                               Optional<IOhmTimestamper> aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
+                               Optional<IOhmTimestamper> aTimestamper, const TChar* aSupportedScheme, const Brx& aMode,
+                               Optional<Av::IOhmMsgProcessor> aOhmMsgProcessor)
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
@@ -48,6 +49,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iLatency(0)
     , iRepairFirst(nullptr)
     , iPipelineEmpty("OHBS", 0)
+    , iOhmMsgProcessor(aOhmMsgProcessor)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), "ProtocolOhBase", false);
     iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired), "ProtocolOhBaseRepair");
@@ -72,6 +74,9 @@ ProtocolOhBase::~ProtocolOhBase()
 void ProtocolOhBase::Add(OhmMsg* aMsg)
 {
     aMsg->Process(*this);
+    if (iOhmMsgProcessor.Ok()) {
+        aMsg->Process(iOhmMsgProcessor.Unwrap());
+    }
 }
 
 void ProtocolOhBase::ResendSeen()
@@ -450,6 +455,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         iSampleRate != aMsg.SampleRate() || iNumChannels != aMsg.Channels()) {
         startOfStream = true;
         iStreamMsgDue = true;
+
     }
     if (startOfStream || iTrackMsgDue) {
         Track* track = iTrackFactory.CreateTrack(iTrackUri, iTrackMetadata);
@@ -475,6 +481,9 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         iLatency = aMsg.MediaLatency();
         const TUint delayJiffies = static_cast<TUint>(Jiffies::FromSongcastTime(iLatency, iSampleRate));
         iSupply->OutputDelay(delayJiffies);
+        if (iTimestamper != nullptr) {
+            iTimestamper->SetSampleRate(iSampleRate);
+        }
     }
     if (iMetatextMsgDue) {
         iSupply->OutputMetadata(iPendingMetatext);

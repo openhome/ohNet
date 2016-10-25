@@ -437,7 +437,6 @@ ProtocolStreamResult ProtocolHttp::DoStream()
         LOG(kMedia, "ProtocolHttp::DoStream 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
     }
     if (iHeaderIcyMetadata.Received()) {
-        ASSERT(iTotalBytes == 0); // if non-live streams contain icy data, we'll need to adjust totalBytes passed to content processor
         iStreamIncludesMetaData = true;
         iDataChunkSize = iDataChunkRemaining = iHeaderIcyMetadata.Bytes();
     }

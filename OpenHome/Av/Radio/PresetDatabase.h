@@ -2,12 +2,16 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 #include <array>
 
 namespace OpenHome {
 class Environment;
+namespace Media {
+    class TrackFactory;
+}
 namespace Av {
 
 class IPresetDatabaseObserver
@@ -47,13 +51,27 @@ public:
     virtual TBool TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const = 0;
 };
 
-class PresetDatabase : public IPresetDatabaseWriter, public IPresetDatabaseReader
+class IPresetDatabaseReaderTrack
+{
+public:
+    virtual ~IPresetDatabaseReaderTrack() {}
+    virtual Media::Track* TrackRefById(TUint aId) = 0;
+    virtual Media::Track* NextTrackRef(TUint aId) = 0;
+    virtual Media::Track* PrevTrackRef(TUint aId) = 0;
+    virtual Media::Track* FirstTrackRef() = 0;
+    virtual Media::Track* LastTrackRef() = 0;
+};
+
+class PresetDatabase : public IPresetDatabaseWriter
+                     , public IPresetDatabaseReader
+                     , public IPresetDatabaseReaderTrack
+                     , private INonCopyable
 {
 public:
     static const TUint kMaxPresets = 100;
     static const TUint kPresetIdNone = 0;
 public:
-    PresetDatabase();
+    PresetDatabase(Media::TrackFactory& aTrackFactory);
     ~PresetDatabase();
     void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData, TUint& aId);
 public: // from IPresetDatabaseReader
@@ -73,6 +91,12 @@ public: // from IPresetDatabaseWriter
     void ReadPreset(TUint aIndex, Bwx& aUri, Bwx& aMetaData) override; // required to enable writers to check for near duplicates
     void ClearPreset(TUint aIndex) override;
     void EndSetPresets() override;
+public: // from IPresetDatabaseReaderTrack
+    Media::Track* TrackRefById(TUint aId) override;
+    Media::Track* NextTrackRef(TUint aId) override;
+    Media::Track* PrevTrackRef(TUint aId) override;
+    Media::Track* FirstTrackRef() override;
+    Media::Track* LastTrackRef() override;
 private:
     TBool TryGetPresetByIdLocked(TUint aId, Bwx& aMetaData) const;
 private:
@@ -83,6 +107,7 @@ private:
         Preset();
         void Set(TUint aId, const Brx& aUri, const Brx& aMetaData);
         TUint Id() const { return iId; }
+        TBool IsEmpty() const { return iId != IPresetDatabaseReader::kPresetIdNone; }
         const Brx& Uri() const { return iUri; }
         const Brx& MetaData() const { return iMetaData; }
     private:
@@ -91,6 +116,7 @@ private:
         Bws<kMaxMetaDataBytes> iMetaData;
     };
 private:
+    Media::TrackFactory& iTrackFactory;
     mutable Mutex iLock;
     std::vector<IPresetDatabaseObserver*> iObservers;
     Preset iPresets[kMaxPresets];

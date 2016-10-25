@@ -1,6 +1,8 @@
 #include <OpenHome/Av/Playlist/UriProviderPlaylist.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -13,6 +15,9 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 // UriProviderPlaylist
+
+const Brn UriProviderPlaylist::kCommandId("id");
+const Brn UriProviderPlaylist::kCommandIndex("index");
 
 UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver)
     : UriProvider("Playlist", Latency::NotSupported, Next::Supported, Prev::Supported)
@@ -145,6 +150,29 @@ TBool UriProviderPlaylist::MovePrevious()
     return (iPendingCanPlay == ePlayYes);
 }
 
+TBool UriProviderPlaylist::MoveTo(const Brx& aCommand)
+{
+    Track* track = nullptr;
+    if (aCommand.BeginsWith(kCommandId)) {
+        track = ProcessCommandId(aCommand);
+    }
+    else if (aCommand.BeginsWith(kCommandIndex)) {
+        track = ProcessCommandIndex(aCommand);
+    }
+    else {
+        THROW(FillerInvalidCommand);
+    }
+
+    ASSERT(track != nullptr); // ProcessCommandXxx should have thrown in this case
+    if (iPending != nullptr) {
+        iPending->RemoveRef();
+    }
+    iPending = track;
+    iPendingCanPlay = ePlayYes;
+    iPendingDirection = eJumpTo;
+    return true;
+}
+
 void UriProviderPlaylist::DoBegin(TUint aTrackId, EStreamPlay aPendingCanPlay)
 {
     AutoMutex a(iLock);
@@ -167,6 +195,39 @@ TUint UriProviderPlaylist::CurrentTrackIdLocked() const
         id = iPending->Id();
     }
     return id;
+}
+
+TUint UriProviderPlaylist::ParseCommand(const Brx& aCommand) const
+{
+    Parser parser(aCommand);
+    Brn buf = parser.Next('=');
+    try {
+        return Ascii::Uint(buf);
+    }
+    catch (AsciiError&) {
+        THROW(FillerInvalidCommand);
+    }
+}
+
+Track* UriProviderPlaylist::ProcessCommandId(const Brx& aCommand)
+{
+    const TUint id = ParseCommand(aCommand);
+    try {
+        return iDatabase.TrackRef(id);
+    }
+    catch (TrackDbIdNotFound&) {
+        THROW(FillerInvalidCommand);
+    }
+}
+
+Track* UriProviderPlaylist::ProcessCommandIndex(const Brx& aCommand)
+{
+    const TUint index = ParseCommand(aCommand);
+    auto track = iDatabase.TrackRefByIndex(index);
+    if (track == nullptr) {
+        THROW(FillerInvalidCommand);
+    }
+    return track;
 }
 
 void UriProviderPlaylist::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfter)

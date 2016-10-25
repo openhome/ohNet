@@ -43,6 +43,11 @@ TBool UriProvider::IsValid(TUint /*aTrackId*/) const
     return true;
 }
 
+TBool UriProvider::MoveTo(const Brx& /*aCommand*/)
+{
+    THROW(FillerInvalidCommand);
+}
+
 UriProvider::UriProvider(const TChar* aMode, Latency aLatency,
                         Next aNextSupported, Prev aPrevSupported)
     : iMode(aMode)
@@ -137,6 +142,17 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
     iPrefetchTrackId = aTrackId;
     iStopped = false;
     Signal();
+}
+
+TBool Filler::Play(const Brx& aMode, const Brx& aCommand)
+{
+    LOG(kMedia, "Filler::Play(%.*s, %.*s)\n", PBUF(aMode), PBUF(aCommand));
+    AutoMutex _(iLock);
+    UpdateActiveUriProvider(aMode);
+    const TBool ret = iActiveUriProvider->MoveTo(aCommand);
+    iStopped = false;
+    Signal();
+    return ret;
 }
 
 TUint Filler::Stop()

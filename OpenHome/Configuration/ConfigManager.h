@@ -327,7 +327,7 @@ public:
     TBool HasInternalMapping() const;
     IConfigChoiceMapper& Mapper() const;
 private:
-    void Init(TUint aDefault);
+    void Init();
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Default() const override;

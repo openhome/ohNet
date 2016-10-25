@@ -97,6 +97,20 @@ TBool UriProviderSingleTrack::MovePrevious()
     return MoveCursor();
 }
 
+TBool UriProviderSingleTrack::MoveTo(const Brx& aCommand)
+{
+    if (aCommand.Bytes() != 0) {
+        THROW(FillerInvalidCommand);
+    }
+    AutoMutex a(iLock);
+    if (iTrack == nullptr) {
+        return false;
+    }
+    iIgnoreNext = false;
+    iPlayLater = false;
+    return true;
+}
+
 void UriProviderSingleTrack::DoBegin(TUint aTrackId, TBool aLater)
 {
     iLock.Wait();

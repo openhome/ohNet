@@ -16,7 +16,6 @@ namespace Net {
 }
 namespace Media {
     class PipelineManager;
-    class UriProviderSingleTrack;
     class MimeTypeList;
 }
 namespace Av {
@@ -37,6 +36,7 @@ public:
 class ProviderRadio;
 class RadioPresetsTuneIn;
 class IMediaPlayer;
+class UriProviderRadio;
 
 class SourceRadio : public Source
                   , private ISourceRadio
@@ -44,7 +44,7 @@ class SourceRadio : public Source
                   , private IPresetDatabaseObserver
 {
 public:
-    SourceRadio(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const Brx& aTuneInPartnerId);
+    SourceRadio(IMediaPlayer& aMediaPlayer, const Brx& aTuneInPartnerId);
     ~SourceRadio();
 private: // from ISource
     void Activate(TBool aAutoPlay) override;
@@ -72,7 +72,7 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     Mutex iLock;
-    Media::UriProviderSingleTrack& iUriProvider;
+    UriProviderRadio* iUriProvider;
     ProviderRadio* iProviderRadio;
     PresetDatabase* iPresetDatabase;
     RadioPresetsTuneIn* iTuneIn;

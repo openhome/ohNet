@@ -53,7 +53,8 @@ public:
     SourceReceiver(IMediaPlayer& aMediaPlayer,
                    Optional<Media::IClockPuller> aClockPuller,
                    Optional<IOhmTimestamper> aTxTimestamper,
-                   Optional<IOhmTimestamper> aRxTimestamper);
+                   Optional<IOhmTimestamper> aRxTimestamper,
+                   Optional<IOhmMsgProcessor> aOhmMsgObserver);
     ~SourceReceiver();
 private: // from ISource
     void Activate(TBool aAutoPlay) override;
@@ -156,9 +157,10 @@ using namespace OpenHome::Configuration;
 ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer,
                                     Optional<IClockPuller> aClockPuller,
                                     Optional<IOhmTimestamper> aTxTimestamper,
-                                    Optional<IOhmTimestamper> aRxTimestamper)
+                                    Optional<IOhmTimestamper> aRxTimestamper,
+                                    Optional<IOhmMsgProcessor> aOhmMsgObserver)
 { // static
-    return new SourceReceiver(aMediaPlayer, aClockPuller, aTxTimestamper, aRxTimestamper);
+    return new SourceReceiver(aMediaPlayer, aClockPuller, aTxTimestamper, aRxTimestamper, aOhmMsgObserver);
 }
 
 const TChar* SourceFactory::kSourceTypeReceiver = "Receiver";
@@ -186,7 +188,8 @@ const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
                                Optional<Media::IClockPuller> aClockPuller,
                                Optional<IOhmTimestamper> aTxTimestamper,
-                               Optional<IOhmTimestamper> aRxTimestamper)
+                               Optional<IOhmTimestamper> aRxTimestamper,
+                               Optional<IOhmMsgProcessor> aOhmMsgObserver)
     : Source(SourceFactory::kSourceNameReceiver, SourceFactory::kSourceTypeReceiver, aMediaPlayer.Pipeline(), aMediaPlayer.PowerManager())
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -209,9 +212,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
-    auto protocolOhm = new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode());
+    auto protocolOhm = new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode(), aOhmMsgObserver);
     iPipeline.Add(protocolOhm);
-    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode()));
+    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode(), aOhmMsgObserver));
     iStoreZone = new StoreText(aMediaPlayer.ReadWriteStore(), aMediaPlayer.PowerManager(), kPowerPriorityNormal,
                                Brn("Receiver.Zone"), Brx::Empty(), iZone.MaxBytes());
     iStoreZone->Get(iZone);

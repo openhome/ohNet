@@ -171,8 +171,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Config1.xml',        'av.openhome.org', 'Config',            '1', 'AvOpenhomeOrgConfig1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Credentials1.xml',   'av.openhome.org', 'Credentials',       '1', 'AvOpenhomeOrgCredentials1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Debug1.xml',         'av.openhome.org', 'Debug',             '1', 'AvOpenhomeOrgDebug1'),
-        #GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Eriskay/TransportControl1.xml', 'openhome.org.eriskay', 'TransportControl', '1', 'OpenhomeOrgEriskayTransportControl1'),
-        #GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Eriskay/Transport1.xml', 'openhome.org.eriskay', 'Transport', '1', 'OpenhomeOrgEriskayTransport1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Transport1.xml',     'av.openhome.org', 'Transport',         '1', 'AvOpenhomeOrgTransport1'),
     ]
 
 def build(bld):
@@ -297,6 +296,8 @@ def build(bld):
                 'OpenHome/Av/ProviderTime.cpp',
                 'Generated/DvAvOpenhomeOrgInfo1.cpp',
                 'OpenHome/Av/ProviderInfo.cpp',
+                'Generated/DvAvOpenhomeOrgTransport1.cpp',
+                'OpenHome/Av/ProviderTransport.cpp',
                 'Generated/DvAvOpenhomeOrgVolume2.cpp',
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
@@ -344,6 +345,7 @@ def build(bld):
             source=[
                 'OpenHome/Av/Radio/SourceRadio.cpp',
                 'OpenHome/Av/Radio/PresetDatabase.cpp',
+                'OpenHome/Av/Radio/UriProviderRadio.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
                 'OpenHome/Av/Radio/ContentAsx.cpp',
                 'OpenHome/Av/Radio/ContentM3u.cpp',

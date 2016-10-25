@@ -2,6 +2,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/Waiter.h>
@@ -10,6 +11,8 @@
 #include <OpenHome/Media/Pipeline/StarvationRamper.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/Pipeline/Attenuator.h>
+
+EXCEPTION(PipelineStreamNotPausable)
 
 namespace OpenHome {
 namespace Media {

@@ -98,6 +98,7 @@ private:
     void TestMsgsPassWhilePlaying();
     void TestPlayFromStoppedNoRampUp();
     void TestPauseRamps();
+    void TestPauseLiveStreamThrows();
     void TestInterruptRamps();
     void TestSilenceEndsRamp();
     void TestPauseFromStoppedIgnored();
@@ -167,6 +168,7 @@ SuiteStopper::SuiteStopper()
     AddTest(MakeFunctor(*this, &SuiteStopper::TestMsgsPassWhilePlaying), "TestMsgsPassWhilePlaying");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayFromStoppedNoRampUp), "TestPlayFromStoppedNoRampUp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPauseRamps), "TestPauseRamps");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestPauseLiveStreamThrows), "TestPauseLiveStreamThrows");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestInterruptRamps), "TestInterruptRamps");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestSilenceEndsRamp), "TestSilenceEndsRamp");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPauseFromStoppedIgnored), "TestPauseFromStoppedIgnored");
@@ -596,6 +598,18 @@ void SuiteStopper::TestPauseRamps()
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 2);
     TEST(iJiffies == kRampDuration);
+}
+
+void SuiteStopper::TestPauseLiveStreamThrows()
+{
+    iStopper->Play();
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iLiveStream = true;
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+    TEST_THROWS(iStopper->BeginPause(), StopperStreamNotPausable);
 }
 
 void SuiteStopper::TestInterruptRamps()
