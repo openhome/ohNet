@@ -13,8 +13,8 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Net;
 using namespace OpenHome::Media;
 
-static const TUint kCodeNotSupportedByMode = 801;
-static const Brn kMsgNotSupportedByMode("Action not supported by current mode");
+//static const TUint kCodeNotSupportedByMode = 801;
+//static const Brn kMsgNotSupportedByMode("Action not supported by current mode");
 static const TUint kCodeNotSupportedByStream = 802;
 static const Brn kMsgNotSupportedByStream("Action not supported by current stream");
 static const TUint kCodeBadStreamId = 803;
