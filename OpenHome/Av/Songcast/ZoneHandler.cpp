@@ -282,7 +282,10 @@ void ZoneHandler::CurrentSubnetChanged()
 void ZoneHandler::InitialiseSockets(TIpAddress aInterface)
 {
     iRxSocket = new SocketUdpMulticast(iEnv, aInterface, iEndpoint);
-    iTxSocket.ReBind(0, aInterface);
+    {
+        AutoMutex a(iLockTxSocket);
+        iTxSocket.ReBind(0, aInterface);
+    }
     iReader.SetSocket(*iRxSocket);
     iSem.Signal();
 }
