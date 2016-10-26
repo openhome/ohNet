@@ -9,6 +9,7 @@
 #include <OpenHome/Av/ProviderVolume.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <vector>
 #include <algorithm>
@@ -95,6 +96,7 @@ VolumeUser::~VolumeUser()
 
 void VolumeUser::SetVolume(TUint aVolume)
 {
+    LOG(kVolume, "VolumeUser::SetVolume aVolume: %u\n", aVolume);
     if (aVolume > iMaxVolume) {
         THROW(VolumeOutOfRange);
     }
@@ -160,6 +162,7 @@ VolumeLimiter::~VolumeLimiter()
 
 void VolumeLimiter::SetVolume(TUint aValue)
 {
+    LOG(kVolume, "VolumeLimiter::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
     if (aValue > iLimit && iUpstreamVolume >= iLimit) {
         THROW(VolumeOutOfRange);
@@ -222,6 +225,7 @@ void VolumeReporter::AddVolumeObserver(IVolumeObserver& aObserver)
 
 void VolumeReporter::SetVolume(TUint aVolume)
 {
+    LOG(kVolume, "VolumeReporter::SetVolume aVolume: %u\n", aVolume);
     iVolume.SetVolume(aVolume);
     iUpstreamVolume = aVolume;
     const VolumeValue vol(iUpstreamVolume / iMilliDbPerStep, iUpstreamVolume);
@@ -243,6 +247,7 @@ VolumeSourceOffset::VolumeSourceOffset(IVolume& aVolume)
 
 void VolumeSourceOffset::SetVolume(TUint aValue)
 {
+    LOG(kVolume, "VolumeSourceOffset::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
     DoSetVolume(aValue);
     iUpstreamVolume = aValue;
@@ -283,6 +288,7 @@ VolumeUnityGainBase::VolumeUnityGainBase(IVolume& aVolume, TUint aUnityGainValue
 
 void VolumeUnityGainBase::SetVolume(TUint aValue)
 {
+    LOG(kVolume, "VolumeUnityGainBase::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
     if (!iVolumeControlEnabled) {
         THROW(VolumeNotSupported);
@@ -367,6 +373,7 @@ AnalogBypassRamper::AnalogBypassRamper(IVolume& aVolume)
 
 void AnalogBypassRamper::SetVolume(TUint aValue)
 {
+    LOG(kVolume, "AnalogBypassRamper::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
     iUpstreamVolume = aValue;
     SetVolume();
@@ -374,6 +381,7 @@ void AnalogBypassRamper::SetVolume(TUint aValue)
 
 void AnalogBypassRamper::ApplyVolumeMultiplier(TUint aValue)
 {
+    LOG(kVolume, "AnalogBypassRamper::ApplyVolumeMultiplier aValue: %u\n", aValue);
     AutoMutex _(iLock);
     if (iMultiplier == aValue) {
         return;
@@ -851,6 +859,7 @@ TBool VolumeManager::AlwaysOn() const
 
 void VolumeManager::SetVolume(TUint aValue)
 {
+    LOG(kVolume, "VolumeManager::SetVolume aValue: %u\n", aValue);
     if (iVolumeUser == nullptr) {
         THROW(VolumeNotSupported);
     }
@@ -924,6 +933,7 @@ VolumeScaler::VolumeScaler(IVolumeReporter& aVolumeReporter, IVolumeSourceOffset
 
 void VolumeScaler::SetVolume(TUint aVolume)
 {
+    LOG(kVolume, "VolumeScaler::SetVolume aVolume: %u\n", aVolume);
     ASSERT(aVolume <= iVolMaxExternal);
     // Scale volume to within range of system volume.
     AutoMutex a(iLock);

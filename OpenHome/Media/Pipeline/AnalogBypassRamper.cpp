@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -81,9 +82,11 @@ Msg* AnalogBypassRamper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     if (iAnalogBypassEnabled) {
         const TUint rampMultiplier = aMsg->MedianRampMultiplier();
+        LOG(kVolume, "AnalogBypassRamper::ProcessMsg(MsgAudioPcm*) iAnalogBypassEnabled rampMultiplier: %u\n", rampMultiplier);
         iVolumeRamper->ApplyVolumeMultiplier(rampMultiplier);
     }
     else if (iHalted) {
+        LOG(kVolume, "AnalogBypassRamper::ProcessMsg(MsgAudioPcm*) iHalted rampMultiplier: %u\n", IAnalogBypassVolumeRamper::kMultiplierFull);
         iHalted = false;
         iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierFull);
     }
@@ -93,6 +96,7 @@ Msg* AnalogBypassRamper::ProcessMsg(MsgAudioPcm* aMsg)
 Msg* AnalogBypassRamper::ProcessMsg(MsgSilence* aMsg)
 {
     if (iAnalogBypassEnabled) {
+        LOG(kVolume, "AnalogBypassRamper::ProcessMsg(MsgSilence*) iAnalogBypassEnabled rampMultiplier: %u\n", IAnalogBypassVolumeRamper::kMultiplierZero);
         iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierZero);
     }
     return aMsg;
@@ -121,6 +125,7 @@ void AnalogBypassRamper::Halted()
 void AnalogBypassRamper::CheckForHalted()
 {
     if (iHalting) {
+        LOG(kVolume, "AnalogBypassRamper::CheckForHalted iHalting, rampMultiplier: %u\n", IAnalogBypassVolumeRamper::kMultiplierZero);
         iHalted = true;
         iVolumeRamper->ApplyVolumeMultiplier(IAnalogBypassVolumeRamper::kMultiplierZero);
     }
