@@ -128,6 +128,8 @@ private:
     TBool iInterrupted;
     TBool iError;
     Mutex iLock;
+
+    TUint iSocketConnectTime;
 };
 
 } // namespace Media

@@ -14,6 +14,9 @@
 #include <OpenHome/Media/Supply.h>
 #include <OpenHome/Media/Tests/TestProtocolHls.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Os.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <algorithm>
 
@@ -625,6 +628,7 @@ void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
     iSegmentUriProvider = &aSegmentUriProvider;
     iTotalBytes = 0;
     iOffset = 0;
+    iSocketConnectTime = 0;
 }
 
 TBool SegmentStreamer::Error() const
@@ -653,7 +657,19 @@ Brn SegmentStreamer::Read(TUint aBytes)
         LOG(kMedia, "SegmentStreamer::Read HlsDiscontinuityError\n");
         THROW(ReaderError);
     }
+
+    OsContext* osCtx = gEnv->OsCtx();
+    const TUint readStartMs = Os::TimeInMs(osCtx);
     Brn buf = iReader.Read(aBytes);
+    const TUint readEndMs = Os::TimeInMs(osCtx);
+
+    // Log info about slow Read() calls.
+    const TUint durationMs = readEndMs - readStartMs;
+    static const TUint kExceptionalReadMs = 100;
+    if (durationMs >= kExceptionalReadMs) {
+        LOG(kMedia, "SegmentStreamer::Read exceptional read. aBytes: %u, buf.Bytes(): %u, duration: %u ms (start: %u, end: %u).\n", aBytes, buf.Bytes(), durationMs, readStartMs, readEndMs);
+    }
+
     iOffset += buf.Bytes();
     return buf;
 }
@@ -734,13 +750,23 @@ void SegmentStreamer::GetNextSegment()
         iError = true;
         THROW(HlsSegmentError);
     }
+
+    OsContext* osCtx = gEnv->OsCtx();
+    iSocketConnectTime = Os::TimeInMs(osCtx);
+    LOG(kMedia, "<SegmentStreamer::GetNextSegment iTotalBytes: %llu, iSocketConnectTime: %llu\n", iTotalBytes, iSocketConnectTime);
 }
 
 void SegmentStreamer::EnsureSegmentIsReady()
 {
     // FIXME - what if iTotalBytes == 0?
     if (iOffset == iTotalBytes) {
+        OsContext* osCtx = gEnv->OsCtx();
+        const TUint timeNow = Os::TimeInMs(osCtx);
+        const TUint duration = timeNow - iSocketConnectTime;
+
+        LOG(kMedia, "SegmentStreamer::EnsureSegmentIsReady iTotalBytes: %llu, iOffset: %llu, iSocketConnectTime: %llu, duration: %llu ms\n", iTotalBytes, iSocketConnectTime, iOffset, duration);
         iOffset = 0;
+        iSocketConnectTime = 0;
         //Close();
         GetNextSegment();
     }
