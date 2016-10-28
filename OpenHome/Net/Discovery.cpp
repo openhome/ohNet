@@ -151,15 +151,15 @@ void SsdpListenerMulticast::Run()
             if (iExiting) {
                 break;
             }
-            if (iRecreateSocket) {
-                try {
-                    iSocket.Interrupt(false);
-                    iSocket.ReCreate();
-                    iRecreateSocket = false;
-                }
-                catch (NetworkError&) {
-                    LOG2(kSsdpMulticast, kError, "SSDP Multicast      failed to recreate socket after library Resumed\n");
-                }
+        }
+        if (iRecreateSocket) {
+            try {
+                iSocket.Interrupt(false);
+                iSocket.ReCreate();
+                iRecreateSocket = false;
+            }
+            catch (NetworkError&) {
+                LOG2(kSsdpMulticast, kError, "SSDP Multicast      failed to recreate socket after library Resumed\n");
             }
         }
     }
@@ -579,20 +579,20 @@ void SsdpListenerUnicast::Run()
             if (iExiting) {
                 break;
             }
-            if (iRecreateSocket) {
-                try {
-                    AutoMutex a(iWriterLock);
-                    iSocket.Interrupt(false);
-                    iSocket.ReBind(iSocket.Port(), iInterface);
-                    iRecreateSocket = false;
-                }
-                catch (NetworkError&) {
-                    LOG2(kSsdpUnicast, kError, "SSDP Unicast      failed to recreate socket after library Resumed\n");
-                }
-            }
         }
         catch (WriterError&) {
             LOG2(kSsdpUnicast, kError, "SSDP Unicast        WriterError\n");
+        }
+        if (iRecreateSocket) {
+            try {
+                AutoMutex a(iWriterLock);
+                iSocket.Interrupt(false);
+                iSocket.ReBind(iSocket.Port(), iInterface);
+                iRecreateSocket = false;
+            }
+            catch (NetworkError&) {
+                LOG2(kSsdpUnicast, kError, "SSDP Unicast      failed to recreate socket after library Resumed\n");
+            }
         }
     }
 }
