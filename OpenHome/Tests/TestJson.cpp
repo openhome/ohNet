@@ -54,6 +54,7 @@ private:
     void TestGetInvalidNum();
     void TestGetStringAsNum();
     void TestGetNumAsString();
+    void TestGetValidBool();
     void TestCorruptInput();
 private:
     JsonParser* iParser;
@@ -231,6 +232,7 @@ SuiteJsonParser::SuiteJsonParser()
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetInvalidNum), "TestGetInvalidNum");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetStringAsNum), "TestGetStringAsNum");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetNumAsString), "TestGetNumAsString");
+    AddTest(MakeFunctor(*this, &SuiteJsonParser::TestGetValidBool), "TestGetValidBool");
     AddTest(MakeFunctor(*this, &SuiteJsonParser::TestCorruptInput), "TestCorruptInput");
 }
 
@@ -271,30 +273,28 @@ void SuiteJsonParser::TestParseNoUnescapeInPlace()
 
 void SuiteJsonParser::TestParseArray()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("[\"val1\", 2, false, \"val4\"]");
 
     // FIXME - arrays appear to be unsupported.
     // FIXME - maybe throw a JsonUnsupported instead?
-    TEST_THROWS(iParser->Parse(json, unescapeInPlace), JsonCorrupt);
+    TEST_THROWS(iParser->Parse(json), JsonCorrupt);
 }
 
 void SuiteJsonParser::TestParseObject()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("{\"key1\":{\"key2\":{\"key3\": 3, \"key4\":\"val4\"}}}");
 
-    iParser->Parse(json, unescapeInPlace);
+    iParser->Parse(json);
     TEST(iParser->HasKey("key1"));
     Brn nextObject = iParser->String("key1");
     TEST(nextObject == Brn("{\"key2\":{\"key3\": 3, \"key4\":\"val4\"}}"));
 
-    iParser->Parse(nextObject, unescapeInPlace);
+    iParser->Parse(nextObject);
     TEST(iParser->HasKey("key2"));
     nextObject = iParser->String("key2");
     TEST(nextObject == Brn("{\"key3\": 3, \"key4\":\"val4\"}"));
 
-    iParser->Parse(nextObject, unescapeInPlace);
+    iParser->Parse(nextObject);
     TEST(iParser->HasKey("key3"));
     TEST(iParser->Num("key3") == 3);
 
@@ -334,40 +334,36 @@ void SuiteJsonParser::TestParseObject()
 
 void SuiteJsonParser::TestValidKey()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("{\"key1\":\"val1\"}");
 
-    iParser->Parse(json, unescapeInPlace);
+    iParser->Parse(json);
     TEST(iParser->HasKey("key1"));
     TEST(iParser->HasKey(Brn("key1")));
 }
 
 void SuiteJsonParser::TestInvalidKey()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("{\"key1\":\"val1\"}");
 
-    iParser->Parse(json, unescapeInPlace);
+    iParser->Parse(json);
     TEST(iParser->HasKey("key2") == false);
     TEST(iParser->HasKey(Brn("key2")) == false);
 }
 
 void SuiteJsonParser::TestGetValidString()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("{\"key1\":\"val1\"}");
 
-    iParser->Parse(json, unescapeInPlace);
+    iParser->Parse(json);
     TEST(iParser->String("key1") == Brn("val1"));
     TEST(iParser->String(Brn("key1")) == Brn("val1"));
 }
 
 void SuiteJsonParser::TestGetInvalidString()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("{\"key1\":\"val1\"}");
 
-    iParser->Parse(json, unescapeInPlace);
+    iParser->Parse(json);
     TEST_THROWS(iParser->String("key2"), JsonKeyNotFound);
     TEST_THROWS(iParser->String(Brn("key2")), JsonKeyNotFound);
 }
@@ -398,10 +394,9 @@ void SuiteJsonParser::TestGetInvalidNum()
 
 void SuiteJsonParser::TestGetStringAsNum()
 {
-    const TBool unescapeInPlace = false;
     const Brn json("{\"key1\":\"val1\"}");
 
-    iParser->Parse(json, unescapeInPlace);
+    iParser->Parse(json);
     TEST_THROWS(iParser->Num("key2"), JsonKeyNotFound);
     TEST_THROWS(iParser->Num(Brn("key2")), JsonKeyNotFound);
 }
@@ -417,19 +412,27 @@ void SuiteJsonParser::TestGetNumAsString()
     //TEST_THROWS(iParser->String(Brn("key2")), JsonKeyNotFound);
 }
 
+void SuiteJsonParser::TestGetValidBool()
+{
+    const Brn json("{\"key1\":true,\"key2\":false}");
+
+    iParser->Parse(json);
+    TEST(iParser->Bool("key1"));
+    TEST(!iParser->Bool("key2"));
+    TEST_THROWS(iParser->Bool("key3"), JsonKeyNotFound);
+}
+
 void SuiteJsonParser::TestCorruptInput()
 {
-    const TBool unescapeInPlace = false;
-
-    TEST_THROWS(iParser->Parse(Brn("{\"key1:1}"), unescapeInPlace), JsonCorrupt);   // No closing quote around key string.
-    TEST_THROWS(iParser->Parse(Brn("\"key1\":1"), unescapeInPlace), JsonCorrupt);   // Unenclosed object.
-    TEST_THROWS(iParser->Parse(Brn("\"key1\":1}"), unescapeInPlace), JsonCorrupt);  // Object not opened.
-    TEST_THROWS(iParser->Parse(Brn("{\"key1\":1"), unescapeInPlace), JsonCorrupt);  // Object not closed.
-    TEST_THROWS(iParser->Parse(Brn("{\"key1\":}"), unescapeInPlace), JsonCorrupt);  // No value.
-    TEST_THROWS(iParser->Parse(Brn("{:1}"), unescapeInPlace), JsonCorrupt);         // No key.
-    TEST_THROWS(iParser->Parse(Brn("{\"key1\" 1"), unescapeInPlace), JsonCorrupt);  // No separator.
-    TEST_THROWS(iParser->Parse(Brn("{1:2}"), unescapeInPlace), JsonCorrupt);        // Number as key.
-    TEST_THROWS(iParser->Parse(Brn("{true:2}"), unescapeInPlace), JsonCorrupt);     // Boolean as key.
+    TEST_THROWS(iParser->Parse(Brn("{\"key1:1}")), JsonCorrupt);   // No closing quote around key string.
+    TEST_THROWS(iParser->Parse(Brn("\"key1\":1")), JsonCorrupt);   // Unenclosed object.
+    TEST_THROWS(iParser->Parse(Brn("\"key1\":1}")), JsonCorrupt);  // Object not opened.
+    TEST_THROWS(iParser->Parse(Brn("{\"key1\":1")), JsonCorrupt);  // Object not closed.
+    TEST_THROWS(iParser->Parse(Brn("{\"key1\":}")), JsonCorrupt);  // No value.
+    TEST_THROWS(iParser->Parse(Brn("{:1}")), JsonCorrupt);         // No key.
+    TEST_THROWS(iParser->Parse(Brn("{\"key1\" 1")), JsonCorrupt);  // No separator.
+    TEST_THROWS(iParser->Parse(Brn("{1:2}")), JsonCorrupt);        // Number as key.
+    TEST_THROWS(iParser->Parse(Brn("{true:2}")), JsonCorrupt);     // Boolean as key.
 }
 
 

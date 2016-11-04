@@ -39,21 +39,23 @@ public:
 // FIXME - assumes all JSON must be contained within an object.
 class JsonParser
 {
+    static const Brn kBoolValTrue;
+    static const Brn kBoolValFalse;
 public:
     JsonParser();
-    void Reset(); // FIXME - Called internally at start of Parse(). Therefore can/should this be private?
-    // FIXME - if aUnescapeInPlace, MUST pass in a Bwx, but possible to pass in a const Brx and then attempt to modify const memory, resulting in difficult-to-trace crash.
-    // Should probably split into 2 methods analogous to the following:
-    // void Parse(const Brx& aJson);
-    // void ParseAndUnescape(Bwx& aJson);
-    void Parse(const Brx& aJson, TBool aUnescapeInPlace);
+    void Parse(const Brx& aJson);
+    void ParseAndUnescape(Bwx& aJson);
     TBool HasKey(const TChar* aKey) const;
     TBool HasKey(const Brx& aKey) const;
     Brn String(const TChar* aKey) const;
     Brn String(const Brx& aKey) const;
     TInt Num(const TChar* aKey) const;
     TInt Num(const Brx& aKey) const;
+    TBool Bool(const TChar* aKey) const;
+    TBool Bool(const Brx& aKey) const;
 private:
+    void Reset();
+    void Parse(const Brx& aJson, TBool aUnescapeInPlace);
     inline void Add(const Brn& aKey, const TByte* aValStart, TUint aValBytes);
     Brn Value(const Brx& aKey) const;
 private:
