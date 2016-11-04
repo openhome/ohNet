@@ -23,6 +23,10 @@ class CodecAacBase : public CodecBase
 private:
     static const TUint kSamplesPerFrame = 1024; // FIXME - could also be 960.
     static const TUint kInputBufBytes = 4096;   // Input buf size used by third-party decoder examples.
+    static const TUint kMaxChannels = 2;
+    static const TUint kMaxBytesPerSample = 2;
+    static const TUint kSbrSampleMultiplier = 4;    // this is possibly a maximum of 2
+    static const TUint kMaxDecodedBytesPerFrame = kSamplesPerFrame*kMaxChannels*kMaxBytesPerSample*kSbrSampleMultiplier;
 public:
     static const Brn kCodecAac;
 protected:
@@ -47,7 +51,7 @@ private:
                   Word16 *channels);
 protected:
     Bws<kInputBufBytes> iInBuf;
-    Bws<16*10240> iDecodedBuf;
+    Bws<kMaxDecodedBytesPerFrame> iDecodedBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
     TUint iFrameCounter;
 
