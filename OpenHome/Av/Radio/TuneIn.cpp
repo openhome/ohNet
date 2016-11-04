@@ -319,9 +319,13 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDidlLite.Append("<dc:title>");
                 iDidlLite.Append(iPresetTitle);
                 iDidlLite.Append("</dc:title>");
-                iDidlLite.Append("<res protocolInfo=\"*:*:*:*\" bitrate=\"");
-                iDidlLite.Append(byteRateBuf);
-                iDidlLite.Append("\">");
+                iDidlLite.Append("<res protocolInfo=\"*:*:*:*\"");
+                if (byteRateBuf.Bytes() > 0) {
+                    iDidlLite.Append(" bitrate=\"");
+                    iDidlLite.Append(byteRateBuf);
+                    iDidlLite.Append('\"');
+                }
+                iDidlLite.Append('>');
                 WriterBuffer writer(iDidlLite);
                 Converter::ToXmlEscaped(writer, iPresetUrl);
                 iDidlLite.Append("</res>");
