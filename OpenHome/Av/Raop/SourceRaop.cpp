@@ -86,6 +86,9 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
+    , iSemDoActivate("SRDA", 0)
+    , iSemDoPlay("SRDP", 0)
+    , iQuit(false)
 {
     iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aMediaPlayer.FriendlyNameObservable(), aMacAddr, aMediaPlayer.Pipeline());
     iRaopDiscovery->AddObserver(*this);
@@ -107,10 +110,22 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderRaop& aUriProvider
     Functor functor = MakeFunctor(*this, &SourceRaop::HandleInterfaceChange);
     iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor, "SourceRaop-current");
     iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor, "SourceRaop-subnet");
+
+    iThreadDoActivate = new ThreadFunctor("RaopDoActivate", MakeFunctor(*this, &SourceRaop::DoActivateThread));
+    iThreadDoActivate->Start();
+
+    iThreadDoPlay = new ThreadFunctor("RaopDoPlay", MakeFunctor(*this, &SourceRaop::DoPlayThread));
+    iThreadDoPlay->Start();
 }
 
 SourceRaop::~SourceRaop()
 {
+    iQuit = true;
+    iSemDoPlay.Signal();
+    delete iThreadDoPlay;
+    iSemDoActivate.Signal();
+    delete iThreadDoActivate;
+
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     delete iRaopDiscovery;
@@ -220,7 +235,7 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
     LOG(kMedia, ">SourceRaop::NotifySessionStart aControlPort: %u, aTimingPort: %u\n", aControlPort, aTimingPort);
     if (!IsActive()) {
-        DoActivate();
+        DoActivateAsynchronous();
     }
 
     {
@@ -235,7 +250,7 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
         StartNewTrack();
     }
 
-    DoPlay();
+    DoPlayAsynchronous();
     LOG(kMedia, "<SourceRaop::NotifySessionStart\n");
 }
 
@@ -340,4 +355,48 @@ void SourceRaop::HandleInterfaceChange()
     SocketUdpServer& serverControl = iServerManager.Find(iControlId);
     SocketUdpServer& serverTiming = iServerManager.Find(iTimingId);    // never Open() this
     iRaopDiscovery->SetListeningPorts(serverAudio.Port(), serverControl.Port(), serverTiming.Port());
+}
+
+void SourceRaop::DoActivateAsynchronous()
+{
+    iSemDoActivate.Signal();
+}
+
+void SourceRaop::DoActivateThread()
+{
+    // DoActivate() may cause product to come out of standby, which could take
+    // a considerable time (several seconds). Don't want to block RAOP
+    // initialisation during that time in case sender decides to drop
+    // connection, or in case RAOP code decides to timeout connection.
+    for (;;) {
+        iSemDoActivate.Wait();
+
+        if (iQuit) {
+            return;
+        }
+
+        DoActivate();
+    }
+}
+
+void SourceRaop::DoPlayAsynchronous()
+{
+    iSemDoPlay.Signal();
+}
+
+void SourceRaop::DoPlayThread()
+{
+    // DoPlay() may cause product to come out of standby, which could take
+    // a considerable time (several seconds). Don't want to block RAOP
+    // initialisation during that time in case sender decides to drop
+    // connection, or in case RAOP code decides to timeout connection.
+    for (;;) {
+        iSemDoPlay.Wait();
+
+        if (iQuit) {
+            return;
+        }
+
+        DoPlay();
+    }
 }
