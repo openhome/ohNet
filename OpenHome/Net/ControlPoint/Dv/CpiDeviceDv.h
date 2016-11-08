@@ -41,6 +41,14 @@ private: // IPropertyWriterFactory
     void NotifySubscriptionDeleted(const Brx& aSid);
     void NotifySubscriptionExpired(const Brx& aSid);
 private:
+    class Invocable : public IInvocable, private INonCopyable
+    {
+    public:
+        Invocable(CpiDeviceDv& aDevice);
+        virtual void InvokeAction(Invocation& aInvocation);
+    private:
+        CpiDeviceDv& iDevice;
+    };
     class Subscription
     {
     public:
@@ -59,6 +67,8 @@ private:
     SubscriptionMap iSubscriptions;
     Mutex iLock;
     Semaphore iShutdownSem;
+    Invocable* iInvocable;
+    friend class Invocable;
 };
 
 class Argument;

@@ -26,11 +26,13 @@ CpiDeviceDv::CpiDeviceDv(CpStack& aCpStack, DviDevice& aDevice)
     iDeviceDv.AddWeakRef();
     iDeviceCp = new CpiDevice(aCpStack, iDeviceDv.Udn(), *this, *this, NULL);
     iDeviceCp->SetReady();
+    iInvocable = new Invocable(*this);
 }
 
 CpiDeviceDv::~CpiDeviceDv()
 {
     iShutdownSem.Wait(); // blocks until all DviSubscriptions are deleted
+    delete iInvocable;
 }
 
 CpiDevice& CpiDeviceDv::Device()
@@ -40,20 +42,8 @@ CpiDevice& CpiDeviceDv::Device()
 
 void CpiDeviceDv::InvokeAction(Invocation& aInvocation)
 {
-    const OpenHome::Net::ServiceType& serviceType = aInvocation.ServiceType();
-    DviService* service = iDeviceDv.ServiceReference(serviceType);
-    if (service == NULL) {
-        LOG2(kCpDeviceDv, kError, "CpiDeviceDv::InvokeAction failed lookup for service %.*s:%.*s:%u\n",
-                                  PBUF(serviceType.Domain()), PBUF(serviceType.Name()), serviceType.Version());
-        const HttpStatus& err = HttpStatus::kNotFound;
-        aInvocation.SetError(Error::eUpnp, err.Code(), err.Reason());
-    }
-    else {
-        InvocationDv stream(aInvocation, *service);
-        stream.Start();
-        service->RemoveRef();
-    }
-    aInvocation.SignalCompleted();
+    aInvocation.SetInvoker(*iInvocable);
+    iDeviceCp->GetCpStack().InvocationManager().Invoke(&aInvocation);
 }
 
 TBool CpiDeviceDv::GetAttribute(const char* aKey, Brh& aValue) const
@@ -198,6 +188,31 @@ void CpiDeviceDv::NotifySubscriptionDeleted(const Brx& aSid)
 
 void CpiDeviceDv::NotifySubscriptionExpired(const Brx& /*aSid*/)
 {
+}
+
+
+// class CpiDeviceDv::Invocable
+
+CpiDeviceDv::Invocable::Invocable(CpiDeviceDv& aDevice)
+    : iDevice(aDevice)
+{
+}
+
+void CpiDeviceDv::Invocable::InvokeAction(Invocation& aInvocation)
+{
+    const OpenHome::Net::ServiceType& serviceType = aInvocation.ServiceType();
+    DviService* service = iDevice.iDeviceDv.ServiceReference(serviceType);
+    if (service == NULL) {
+        LOG2(kCpDeviceDv, kError, "CpiDeviceDv::Invocable::InvokeAction failed lookup for service %.*s:%.*s:%u\n",
+                                  PBUF(serviceType.Domain()), PBUF(serviceType.Name()), serviceType.Version());
+        const HttpStatus& err = HttpStatus::kNotFound;
+        aInvocation.SetError(Error::eUpnp, err.Code(), err.Reason());
+    }
+    else {
+        InvocationDv stream(aInvocation, *service);
+        stream.Start();
+        service->RemoveRef();
+    }
 }
 
 
