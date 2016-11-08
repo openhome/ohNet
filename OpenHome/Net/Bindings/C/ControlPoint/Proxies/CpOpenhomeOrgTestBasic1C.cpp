@@ -1570,35 +1570,35 @@ void CpProxyOpenhomeOrgTestBasic1C::SetPropertyVarBinChanged(Functor& aFunctor)
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarUint(TUint& aVarUint) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aVarUint = iVarUint->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarInt(TInt& aVarInt) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aVarInt = iVarInt->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarBool(TBool& aVarBool) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aVarBool = iVarBool->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarStr(Brhz& aVarStr) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aVarStr.Set(iVarStr->Value());
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarBin(Brh& aVarBin) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aVarBin.Set(iVarBin->Value());
 }
 
@@ -2593,45 +2593,75 @@ void STDCALL CpProxyOpenhomeOrgTestBasic1SetPropertyVarBinChanged(THandle aHandl
     proxyC->SetPropertyVarBinChanged(functor);
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHandle, uint32_t* aVarUint)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHandle, uint32_t* aVarUint)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->PropertyVarUint(*aVarUint);
+    try {
+        proxyC->PropertyVarUint(*aVarUint);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
+    return 0;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandle, int32_t* aVarInt)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandle, int32_t* aVarInt)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->PropertyVarInt(*aVarInt);
+    try {
+        proxyC->PropertyVarInt(*aVarInt);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
+    return 0;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint32_t* aVarBool)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint32_t* aVarBool)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     TBool VarBool;
-    proxyC->PropertyVarBool(VarBool);
+    try {
+        proxyC->PropertyVarBool(VarBool);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aVarBool = VarBool? 1 : 0;
+    return 0;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char** aVarStr)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char** aVarStr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aVarStr;
-    proxyC->PropertyVarStr(buf_aVarStr);
+    try {
+        proxyC->PropertyVarStr(buf_aVarStr);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aVarStr = buf_aVarStr.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBin(THandle aHandle, char** aVarBin, uint32_t* aLen)
+int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBin(THandle aHandle, char** aVarBin, uint32_t* aLen)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aVarBin;
-    proxyC->PropertyVarBin(buf_aVarBin);
+    try {
+        proxyC->PropertyVarBin(buf_aVarBin);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aLen = buf_aVarBin.Bytes();
     *aVarBin = buf_aVarBin.Extract();
+    return 0;
 }
 

@@ -1426,35 +1426,45 @@ void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarBinChanged(Functor& aFunctor)
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarUint(TUint& aVarUint) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarUint = iVarUint->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarInt(TInt& aVarInt) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarInt = iVarInt->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarBool(TBool& aVarBool) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarBool = iVarBool->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarStr(Brhz& aVarStr) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarStr.Set(iVarStr->Value());
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarBin(Brh& aVarBin) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarBin.Set(iVarBin->Value());
 }
 

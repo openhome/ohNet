@@ -50,7 +50,7 @@ DllExport void STDCALL CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle);
  * @param[out] aSource
  * @param[out] aSink
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink);
@@ -93,7 +93,7 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THa
  * @param[out] aAVTransportID
  * @param[out] aRcsID
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
@@ -135,7 +135,7 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndPrepareForConnectio
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[in]  aConnectionID
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID);
@@ -171,7 +171,7 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndConnectionComplete(
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aConnectionIDs
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs);
@@ -214,7 +214,7 @@ DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectio
  * @param[out] aDirection
  * @param[out] aStatus
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
@@ -291,8 +291,10 @@ DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnect
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSourceProtocolInfo
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo);
 /**
  * Query the value of the SinkProtocolInfo property.
  *
@@ -301,8 +303,10 @@ DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInf
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSinkProtocolInfo
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo);
 /**
  * Query the value of the CurrentConnectionIDs property.
  *
@@ -311,8 +315,10 @@ DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aCurrentConnectionIDs
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs);
 
 /* @} */
 

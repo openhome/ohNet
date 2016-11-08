@@ -115,7 +115,7 @@ DllExport void STDCALL <#=className#>Destroy(THandle aHandle);
 <#          } #>
 <#      } #>
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
@@ -187,13 +187,18 @@ DllExport void STDCALL <#=className#>SetProperty<#=s.name#>Changed(THandle aHand
 <#      if (s.type == "bin.base64") #>
 <#      { #>
  * @param[out] aLen
+ *
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>, uint32_t* aLen);
+DllExport int32_t STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>, uint32_t* aLen);
 <#      } #>
 <#      else #>
 <#      { #>
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
+DllExport int32_t STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
 <#      } #>
 <#  } #>
 

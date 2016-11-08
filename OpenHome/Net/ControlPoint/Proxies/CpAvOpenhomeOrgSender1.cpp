@@ -395,35 +395,45 @@ void CpProxyAvOpenhomeOrgSender1::SetPropertyAttributesChanged(Functor& aFunctor
 void CpProxyAvOpenhomeOrgSender1::PropertyPresentationUrl(Brhz& aPresentationUrl) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aPresentationUrl.Set(iPresentationUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1::PropertyMetadata(Brhz& aMetadata) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aMetadata.Set(iMetadata->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1::PropertyAudio(TBool& aAudio) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aAudio = iAudio->Value();
 }
 
 void CpProxyAvOpenhomeOrgSender1::PropertyStatus(Brhz& aStatus) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aStatus.Set(iStatus->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1::PropertyAttributes(Brhz& aAttributes) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aAttributes.Set(iAttributes->Value());
 }
 

@@ -1232,126 +1232,126 @@ void CpProxyAvOpenhomeOrgProduct1C::SetPropertyAttributesChanged(Functor& aFunct
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerName(Brhz& aManufacturerName) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aManufacturerName.Set(iManufacturerName->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerInfo(Brhz& aManufacturerInfo) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aManufacturerInfo.Set(iManufacturerInfo->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerUrl(Brhz& aManufacturerUrl) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aManufacturerUrl.Set(iManufacturerUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerImageUri(Brhz& aManufacturerImageUri) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aManufacturerImageUri.Set(iManufacturerImageUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelName(Brhz& aModelName) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aModelName.Set(iModelName->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelInfo(Brhz& aModelInfo) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aModelInfo.Set(iModelInfo->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelUrl(Brhz& aModelUrl) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aModelUrl.Set(iModelUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelImageUri(Brhz& aModelImageUri) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aModelImageUri.Set(iModelImageUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductRoom(Brhz& aProductRoom) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aProductRoom.Set(iProductRoom->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductName(Brhz& aProductName) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aProductName.Set(iProductName->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductInfo(Brhz& aProductInfo) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aProductInfo.Set(iProductInfo->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductUrl(Brhz& aProductUrl) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aProductUrl.Set(iProductUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductImageUri(Brhz& aProductImageUri) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aProductImageUri.Set(iProductImageUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyStandby(TBool& aStandby) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aStandby = iStandby->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertySourceIndex(TUint& aSourceIndex) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aSourceIndex = iSourceIndex->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertySourceCount(TUint& aSourceCount) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aSourceCount = iSourceCount->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertySourceXml(Brhz& aSourceXml) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aSourceXml.Set(iSourceXml->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyAttributes(Brhz& aAttributes) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aAttributes.Set(iAttributes->Value());
 }
 
@@ -2218,161 +2218,269 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle aH
     proxyC->SetPropertyAttributesChanged(functor);
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aManufacturerName;
-    proxyC->PropertyManufacturerName(buf_aManufacturerName);
+    try {
+        proxyC->PropertyManufacturerName(buf_aManufacturerName);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aManufacturerName = buf_aManufacturerName.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aManufacturerInfo;
-    proxyC->PropertyManufacturerInfo(buf_aManufacturerInfo);
+    try {
+        proxyC->PropertyManufacturerInfo(buf_aManufacturerInfo);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aManufacturerInfo = buf_aManufacturerInfo.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aManufacturerUrl;
-    proxyC->PropertyManufacturerUrl(buf_aManufacturerUrl);
+    try {
+        proxyC->PropertyManufacturerUrl(buf_aManufacturerUrl);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aManufacturerUrl = buf_aManufacturerUrl.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aManufacturerImageUri;
-    proxyC->PropertyManufacturerImageUri(buf_aManufacturerImageUri);
+    try {
+        proxyC->PropertyManufacturerImageUri(buf_aManufacturerImageUri);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aManufacturerImageUri = buf_aManufacturerImageUri.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aModelName;
-    proxyC->PropertyModelName(buf_aModelName);
+    try {
+        proxyC->PropertyModelName(buf_aModelName);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aModelName = buf_aModelName.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aModelInfo;
-    proxyC->PropertyModelInfo(buf_aModelInfo);
+    try {
+        proxyC->PropertyModelInfo(buf_aModelInfo);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aModelInfo = buf_aModelInfo.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aModelUrl;
-    proxyC->PropertyModelUrl(buf_aModelUrl);
+    try {
+        proxyC->PropertyModelUrl(buf_aModelUrl);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aModelUrl = buf_aModelUrl.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aModelImageUri;
-    proxyC->PropertyModelImageUri(buf_aModelImageUri);
+    try {
+        proxyC->PropertyModelImageUri(buf_aModelImageUri);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aModelImageUri = buf_aModelImageUri.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductRoom;
-    proxyC->PropertyProductRoom(buf_aProductRoom);
+    try {
+        proxyC->PropertyProductRoom(buf_aProductRoom);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aProductRoom = buf_aProductRoom.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductName;
-    proxyC->PropertyProductName(buf_aProductName);
+    try {
+        proxyC->PropertyProductName(buf_aProductName);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aProductName = buf_aProductName.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductInfo;
-    proxyC->PropertyProductInfo(buf_aProductInfo);
+    try {
+        proxyC->PropertyProductInfo(buf_aProductInfo);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aProductInfo = buf_aProductInfo.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductUrl;
-    proxyC->PropertyProductUrl(buf_aProductUrl);
+    try {
+        proxyC->PropertyProductUrl(buf_aProductUrl);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aProductUrl = buf_aProductUrl.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductImageUri;
-    proxyC->PropertyProductImageUri(buf_aProductImageUri);
+    try {
+        proxyC->PropertyProductImageUri(buf_aProductImageUri);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aProductImageUri = buf_aProductImageUri.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     TBool Standby;
-    proxyC->PropertyStandby(Standby);
+    try {
+        proxyC->PropertyStandby(Standby);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aStandby = Standby? 1 : 0;
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->PropertySourceIndex(*aSourceIndex);
+    try {
+        proxyC->PropertySourceIndex(*aSourceIndex);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->PropertySourceCount(*aSourceCount);
+    try {
+        proxyC->PropertySourceCount(*aSourceCount);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aSourceXml;
-    proxyC->PropertySourceXml(buf_aSourceXml);
+    try {
+        proxyC->PropertySourceXml(buf_aSourceXml);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aSourceXml = buf_aSourceXml.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes)
+int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aAttributes;
-    proxyC->PropertyAttributes(buf_aAttributes);
+    try {
+        proxyC->PropertyAttributes(buf_aAttributes);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aAttributes = buf_aAttributes.Transfer();
+    return 0;
 }
 

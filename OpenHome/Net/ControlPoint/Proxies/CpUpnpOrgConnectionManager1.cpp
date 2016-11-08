@@ -456,21 +456,27 @@ void CpProxyUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDsChanged(Fu
 void CpProxyUpnpOrgConnectionManager1::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
 }
 

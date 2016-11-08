@@ -50,7 +50,7 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1Destroy(THandle aHandle);
  * @param[in]  aValue
  * @param[out] aResult
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncIncrement(THandle aHandle, uint32_t aValue, uint32_t* aResult);
@@ -88,7 +88,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndIncrement(THandle aHand
  * @param[in]  aValue
  * @param[out] aResult
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoAllowedRangeUint(THandle aHandle, uint32_t aValue, uint32_t* aResult);
@@ -126,7 +126,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoAllowedRangeUint(TH
  * @param[in]  aValue
  * @param[out] aResult
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncDecrement(THandle aHandle, int32_t aValue, int32_t* aResult);
@@ -164,7 +164,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndDecrement(THandle aHand
  * @param[in]  aValue
  * @param[out] aResult
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggle(THandle aHandle, uint32_t aValue, uint32_t* aResult);
@@ -202,7 +202,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndToggle(THandle aHandle,
  * @param[in]  aValue
  * @param[out] aResult
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoString(THandle aHandle, const char* aValue, char** aResult);
@@ -240,7 +240,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoString(THandle aHan
  * @param[in]  aValue
  * @param[out] aResult
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoAllowedValueString(THandle aHandle, const char* aValue, char** aResult);
@@ -280,7 +280,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoAllowedValueString(
  * @param[out] aResult
  * @param[out] aResultLen
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoBinary(THandle aHandle, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen);
@@ -319,7 +319,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoBinary(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[in]  aValueUint
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetUint(THandle aHandle, uint32_t aValueUint);
@@ -355,7 +355,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetUint(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aValueUint
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetUint(THandle aHandle, uint32_t* aValueUint);
@@ -391,7 +391,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetUint(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[in]  aValueInt
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetInt(THandle aHandle, int32_t aValueInt);
@@ -427,7 +427,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetInt(THandle aHandle,
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aValueInt
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetInt(THandle aHandle, int32_t* aValueInt);
@@ -463,7 +463,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetInt(THandle aHandle,
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[in]  aValueBool
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetBool(THandle aHandle, uint32_t aValueBool);
@@ -499,7 +499,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetBool(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aValueBool
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBool(THandle aHandle, uint32_t* aValueBool);
@@ -537,7 +537,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetBool(THandle aHandle
  * @param[in]  aValueInt
  * @param[in]  aValueBool
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetMultiple(THandle aHandle, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool);
@@ -577,7 +577,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetMultiple(THandle aHa
  * @param[out] aValueInt
  * @param[out] aValueBool
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetMultiple(THandle aHandle, uint32_t* aValueUint, int32_t* aValueInt, uint32_t* aValueBool);
@@ -615,7 +615,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetMultiple(THandle aHa
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[in]  aValueStr
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetString(THandle aHandle, const char* aValueStr);
@@ -651,7 +651,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetString(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aValueStr
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetString(THandle aHandle, char** aValueStr);
@@ -688,7 +688,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetString(THandle aHand
  * @param[in]  aValueBin
  * @param[in]  aValueBinLen
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncSetBinary(THandle aHandle, const char* aValueBin, uint32_t aValueBinLen);
@@ -726,7 +726,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetBinary(THandle aHand
  * @param[out] aValueBin
  * @param[out] aValueBinLen
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBinary(THandle aHandle, char** aValueBin, uint32_t* aValueBinLen);
@@ -762,7 +762,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetBinary(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggleBool(THandle aHandle);
@@ -798,7 +798,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndToggleBool(THandle aHan
  * @param[in]  aData
  * @param[in]  aFileFullName
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncWriteFile(THandle aHandle, const char* aData, const char* aFileFullName);
@@ -834,7 +834,7 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndWriteFile(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncShutdown(THandle aHandle);
@@ -925,8 +925,10 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1SetPropertyVarBinChanged(THan
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarUint
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHandle, uint32_t* aVarUint);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHandle, uint32_t* aVarUint);
 /**
  * Query the value of the VarInt property.
  *
@@ -935,8 +937,10 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarInt
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandle, int32_t* aVarInt);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandle, int32_t* aVarInt);
 /**
  * Query the value of the VarBool property.
  *
@@ -945,8 +949,10 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandl
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarBool
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint32_t* aVarBool);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint32_t* aVarBool);
 /**
  * Query the value of the VarStr property.
  *
@@ -955,8 +961,10 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarStr
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char** aVarStr);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char** aVarStr);
 /**
  * Query the value of the VarBin property.
  *
@@ -966,8 +974,11 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandl
  * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarBin
  * @param[out] aLen
+ *
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBin(THandle aHandle, char** aVarBin, uint32_t* aLen);
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBin(THandle aHandle, char** aVarBin, uint32_t* aLen);
 
 /* @} */
 

@@ -454,35 +454,35 @@ void CpProxyAvOpenhomeOrgSender1C::SetPropertyAttributesChanged(Functor& aFuncto
 void CpProxyAvOpenhomeOrgSender1C::PropertyPresentationUrl(Brhz& aPresentationUrl) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aPresentationUrl.Set(iPresentationUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyMetadata(Brhz& aMetadata) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aMetadata.Set(iMetadata->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyAudio(TBool& aAudio) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aAudio = iAudio->Value();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyStatus(Brhz& aStatus) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aStatus.Set(iStatus->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyAttributes(Brhz& aAttributes) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
     aAttributes.Set(iAttributes->Value());
 }
 
@@ -782,48 +782,78 @@ void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyAttributesChanged(THandle aHa
     proxyC->SetPropertyAttributesChanged(functor);
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aPresentationUrl;
-    proxyC->PropertyPresentationUrl(buf_aPresentationUrl);
+    try {
+        proxyC->PropertyPresentationUrl(buf_aPresentationUrl);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aPresentationUrl = buf_aPresentationUrl.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aMetadata;
-    proxyC->PropertyMetadata(buf_aMetadata);
+    try {
+        proxyC->PropertyMetadata(buf_aMetadata);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aMetadata = buf_aMetadata.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     TBool Audio;
-    proxyC->PropertyAudio(Audio);
+    try {
+        proxyC->PropertyAudio(Audio);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aAudio = Audio? 1 : 0;
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aStatus;
-    proxyC->PropertyStatus(buf_aStatus);
+    try {
+        proxyC->PropertyStatus(buf_aStatus);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aStatus = buf_aStatus.Transfer();
+    return 0;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes)
+int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes)
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aAttributes;
-    proxyC->PropertyAttributes(buf_aAttributes);
+    try {
+        proxyC->PropertyAttributes(buf_aAttributes);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aAttributes = buf_aAttributes.Transfer();
+    return 0;
 }
 

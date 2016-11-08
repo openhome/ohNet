@@ -52,7 +52,7 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1Destroy(THandle aHandle);
  * @param[out] aUrl
  * @param[out] aImageUri
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
@@ -94,7 +94,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aH
  * @param[out] aUrl
  * @param[out] aImageUri
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
@@ -137,7 +137,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, 
  * @param[out] aUrl
  * @param[out] aImageUri
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
@@ -177,7 +177,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue);
@@ -213,7 +213,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue);
@@ -249,7 +249,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue);
@@ -285,7 +285,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHa
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue);
@@ -321,7 +321,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue);
@@ -357,7 +357,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHa
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue);
@@ -393,7 +393,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue);
@@ -433,7 +433,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(TH
  * @param[out] aName
  * @param[out] aVisible
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
@@ -473,7 +473,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle,
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue);
@@ -509,7 +509,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue);
@@ -744,8 +744,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerName
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName);
 /**
  * Query the value of the ManufacturerInfo property.
  *
@@ -754,8 +756,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THan
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerInfo
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo);
 /**
  * Query the value of the ManufacturerUrl property.
  *
@@ -764,8 +768,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THan
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerUrl
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl);
 /**
  * Query the value of the ManufacturerImageUri property.
  *
@@ -774,8 +780,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerImageUri
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri);
 /**
  * Query the value of the ModelName property.
  *
@@ -784,8 +792,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelName
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName);
 /**
  * Query the value of the ModelInfo property.
  *
@@ -794,8 +804,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelInfo
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo);
 /**
  * Query the value of the ModelUrl property.
  *
@@ -804,8 +816,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelUrl
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl);
 /**
  * Query the value of the ModelImageUri property.
  *
@@ -814,8 +828,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHan
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelImageUri
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri);
 /**
  * Query the value of the ProductRoom property.
  *
@@ -824,8 +840,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductRoom
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom);
 /**
  * Query the value of the ProductName property.
  *
@@ -834,8 +852,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle a
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductName
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName);
 /**
  * Query the value of the ProductInfo property.
  *
@@ -844,8 +864,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle a
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductInfo
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo);
 /**
  * Query the value of the ProductUrl property.
  *
@@ -854,8 +876,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle a
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductUrl
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl);
 /**
  * Query the value of the ProductImageUri property.
  *
@@ -864,8 +888,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aH
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductImageUri
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri);
 /**
  * Query the value of the Standby property.
  *
@@ -874,8 +900,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aStandby
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby);
 /**
  * Query the value of the SourceIndex property.
  *
@@ -884,8 +912,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceIndex
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex);
 /**
  * Query the value of the SourceCount property.
  *
@@ -894,8 +924,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle a
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceCount
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount);
 /**
  * Query the value of the SourceXml property.
  *
@@ -904,8 +936,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle a
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceXml
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml);
 /**
  * Query the value of the Attributes property.
  *
@@ -914,8 +948,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHa
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aAttributes
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes);
 
 /* @} */
 

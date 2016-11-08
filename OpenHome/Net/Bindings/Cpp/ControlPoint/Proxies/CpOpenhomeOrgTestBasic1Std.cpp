@@ -1454,28 +1454,36 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::SetPropertyVarBinChanged(Functor& aFunctor
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarUint(uint32_t& aVarUint) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarUint = iVarUint->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarInt(int32_t& aVarInt) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarInt = iVarInt->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarBool(bool& aVarBool) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aVarBool = iVarBool->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarStr(std::string& aVarStr) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     const Brx& val = iVarStr->Value();
     aVarStr.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -1483,7 +1491,9 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarStr(std::string& aVarStr) const
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarBin(std::string& aVarBin) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     const Brx& val = iVarBin->Value();
     aVarBin.assign((const char*)val.Ptr(), val.Bytes());
 }

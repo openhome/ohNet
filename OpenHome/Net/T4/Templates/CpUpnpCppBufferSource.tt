@@ -252,7 +252,9 @@ void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
     a<#=s.name#>.Set(i<#=s.name#>->Value());

@@ -221,20 +221,20 @@ void CpProxy::EventUpdatePrepareForDelete()
 
 CpiService& CpProxy::GetService() const
 {
-  return *iService;
+    return *iService;
 }
 
 IInvocable& CpProxy::GetInvocable() const
 {
-  return iInvocable;
+    return iInvocable;
 }
 
 Mutex& CpProxy::GetLock() const
 {
-  return *iLock;
+    return *iLock;
 }
 
 CpProxy::SubscriptionStatus CpProxy::GetSubscriptionStatus() const
 {
-  return iCpSubscriptionStatus;
+    return iCpSubscriptionStatus;
 }

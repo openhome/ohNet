@@ -49,7 +49,7 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgSender1Destroy(THandle aHandle);
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncPresentationUrl(THandle aHandle, char** aValue);
@@ -85,7 +85,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndPresentationUrl(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncMetadata(THandle aHandle, char** aValue);
@@ -121,7 +121,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndMetadata(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* aValue);
@@ -157,7 +157,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndAudio(THandle aHandle, O
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncStatus(THandle aHandle, char** aValue);
@@ -193,7 +193,7 @@ DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndStatus(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncAttributes(THandle aHandle, char** aValue);
@@ -285,8 +285,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyAttributesChanged(T
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aPresentationUrl
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl);
 /**
  * Query the value of the Metadata property.
  *
@@ -295,8 +297,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandl
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aMetadata
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata);
 /**
  * Query the value of the Audio property.
  *
@@ -305,8 +309,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aAudio
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio);
 /**
  * Query the value of the Status property.
  *
@@ -315,8 +321,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle,
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aStatus
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus);
 /**
  * Query the value of the Attributes property.
  *
@@ -325,8 +333,10 @@ DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aAttributes
+ * @return  0 if the function succeeded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
  */
-DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes);
 
 /* @} */
 

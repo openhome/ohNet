@@ -30,7 +30,7 @@ protected:
     DllExport void DestroyService() { iProxy->DestroyService(); }
     DllExport IInvocable& Invocable() { return iProxy->iInvocable; }
     DllExport void ReportEvent(Functor aFunctor) { iProxy->ReportEvent(aFunctor); }
-    DllExport TBool IsSubscribed() const { return iProxy->iCpSubscriptionStatus == CpProxy::eSubscribed; }
+    DllExport void CheckSubscribed() const { if (iProxy->iCpSubscriptionStatus != CpProxy::eSubscribed) { THROW(ProxyNotSubscribed); } }
 protected:
     CpProxy* iProxy;
     CpDevice* iDevice;

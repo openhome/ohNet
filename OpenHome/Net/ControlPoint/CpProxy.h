@@ -9,6 +9,7 @@
 #include <map>
 
 EXCEPTION(SubscriptionErrorUnrecoverable)
+EXCEPTION(ProxyNotSubscribed);
 
 namespace OpenHome {
 class Mutex;

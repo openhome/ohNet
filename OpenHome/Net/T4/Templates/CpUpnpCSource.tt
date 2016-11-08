@@ -289,7 +289,7 @@ void <#=className#>C::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 void <#=className#>C::Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const
 {
     AutoMutex a(GetPropertyReadLock());
-    ASSERT(IsSubscribed());
+    CheckSubscribed();
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
     a<#=s.name#>.Set(i<#=s.name#>->Value());
@@ -484,45 +484,69 @@ void STDCALL <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetC
 
 <#      if (s.type == "string" || s.type == "uri") #>
 <#      { #>
-void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
+int32_t STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_a<#=s.name#>;
-    proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
+    try {
+        proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *a<#=s.name#> = buf_a<#=s.name#>.Transfer();
+    return 0;
 }
 <#      } #>
 <#      else if (s.type=="bin.base64") #>
 <#      { #>
-void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
+int32_t STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_a<#=s.name#>;
-    proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
+    try {
+        proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *aLen = buf_a<#=s.name#>.Bytes();
     *a<#=s.name#> = buf_a<#=s.name#>.Extract();
+    return 0;
 }
 <#      } #>
 <#      else if (s.type=="boolean") #>
 <#      { #>
-void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+int32_t STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     TBool <#=s.name#>;
-    proxyC->Property<#=s.name#>(<#=s.name#>);
+    try {
+        proxyC->Property<#=s.name#>(<#=s.name#>);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
     *a<#=s.name#> = <#=s.name#>? 1 : 0;
+    return 0;
 }
 <#      } #>
 <#      else #>
 <#      { #>
-void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+int32_t STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->Property<#=s.name#>(*a<#=s.name#>);
+    try {
+        proxyC->Property<#=s.name#>(*a<#=s.name#>);
+    }
+    catch (ProxyNotSubscribed&) {
+        return -1;
+    }
+    return 0;
 }
 <#      } #>
 <#  } #>

@@ -399,7 +399,9 @@ void CpProxyAvOpenhomeOrgSender1Cpp::SetPropertyAttributesChanged(Functor& aFunc
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyPresentationUrl(std::string& aPresentationUrl) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     const Brx& val = iPresentationUrl->Value();
     aPresentationUrl.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -407,7 +409,9 @@ void CpProxyAvOpenhomeOrgSender1Cpp::PropertyPresentationUrl(std::string& aPrese
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyMetadata(std::string& aMetadata) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     const Brx& val = iMetadata->Value();
     aMetadata.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -415,14 +419,18 @@ void CpProxyAvOpenhomeOrgSender1Cpp::PropertyMetadata(std::string& aMetadata) co
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyAudio(bool& aAudio) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     aAudio = iAudio->Value();
 }
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyStatus(std::string& aStatus) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     const Brx& val = iStatus->Value();
     aStatus.assign((const char*)val.Ptr(), val.Bytes());
 }
@@ -430,7 +438,9 @@ void CpProxyAvOpenhomeOrgSender1Cpp::PropertyStatus(std::string& aStatus) const
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyAttributes(std::string& aAttributes) const
 {
     AutoMutex a(iCpProxy.PropertyReadLock());
-    ASSERT(iCpProxy.GetSubscriptionStatus() == CpProxy::eSubscribed);
+    if (iCpProxy.GetSubscriptionStatus() != CpProxy::eSubscribed) {
+        THROW(ProxyNotSubscribed);
+    }
     const Brx& val = iAttributes->Value();
     aAttributes.assign((const char*)val.Ptr(), val.Bytes());
 }
