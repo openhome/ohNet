@@ -39,6 +39,7 @@ private:
     TUint iBitDepth;
     TUint iAudioBytesTotal;
     TUint iAudioBytesRemaining;
+    TUint iFileSize;
     TUint iBitRate;
     TUint64 iTrackStart;
     TUint64 iTrackOffset;
@@ -100,6 +101,7 @@ void CodecWav::StreamInitialise()
     iBitDepth = 0;
     iAudioBytesTotal = 0;
     iAudioBytesRemaining = 0;
+    iFileSize = 0;
     iTrackStart = 0;
     iTrackOffset = 0;
     iReadBuf.SetBytes(0);
@@ -113,13 +115,19 @@ void CodecWav::Process()
         iReadBuf.SetBytes(0);
     }
     else {
-        if (iAudioBytesRemaining == 0) {
+        if ((iAudioBytesRemaining == 0) && (iFileSize != 0)) {  // check for end of file unless continuous streaming - ie iFileSize == 0
             THROW(CodecStreamEnded);
         }
         TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % (iNumChannels * (iBitDepth/8)));
         ASSERT_DEBUG(chunkSize <= iReadBuf.MaxBytes());
         iReadBuf.SetBytes(0);
-        const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
+        TUint bytes;
+        if(iFileSize == 0) {
+            bytes = chunkSize;      //streaming, so attempt to read full chunk
+        }
+        else {
+            bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
+        }
         iController->Read(iReadBuf, bytes);
 
         // Truncate to a sensible sample boundary.
@@ -128,7 +136,9 @@ void CodecWav::Process()
         iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
 
         iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, AudioDataEndian::Little, iTrackOffset);
-        iAudioBytesRemaining -= iReadBuf.Bytes();
+        if(iFileSize != 0) {
+            iAudioBytesRemaining -= iReadBuf.Bytes();
+        }
 
         if (iReadBuf.Bytes() < bytes) { // stream ended unexpectedly
             THROW(CodecStreamEnded);
@@ -151,7 +161,10 @@ TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
         return false;
     }
     iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
-    iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
+    if(iFileSize != 0) {    // UI should not allow seeking within streamed audio, but check before updating track length anyhow
+        iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
+    }
+
     iReadBuf.SetBytes(0);
     SendMsgDecodedStream(aSample);
     return true;
@@ -188,8 +201,8 @@ void CodecWav::ProcessRiffChunk()
     //This isn't a track corrupt issue as it was previously checked by Recognise
     ASSERT(strncmp((const TChar*)header, "RIFF", 4) == 0);
 
-    // Get the file size (FIXME - disabled for now since we're not considering continuous streams yet)
-    //TUint bytesTotal = (header[7]<<24) | (header[6]<<16) | (header[5]<<8) | header[4];
+    // Get the file size
+    iFileSize = (header[7]<<24) | (header[6]<<16) | (header[5]<<8) | header[4]; // file size of zero indicates a continuous stream
 
     //We shouldn't be in the wav codec unless this says 'WAVE'
     //This isn't a track corrupt issue as it was previously checked by Recognise
@@ -264,7 +277,13 @@ void CodecWav::ProcessDataChunk()
     // Find the "data" chunk.
     TUint dataChunkBytes = FindChunk(Brn("data"));
 
-    iAudioBytesTotal = dataChunkBytes;
+    if(iFileSize == 0) {        //streaming
+        iAudioBytesTotal = 0;
+    }
+    else {
+        iAudioBytesTotal = dataChunkBytes;
+    }
+
     iAudioBytesRemaining = iAudioBytesTotal;
 
     iTrackStart += 8;
