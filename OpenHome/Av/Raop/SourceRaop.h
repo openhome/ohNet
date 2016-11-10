@@ -57,10 +57,8 @@ private:
     void ActivateIfInactive();
     void DeactivateIfActive();
     void HandleInterfaceChange();
-    void DoActivateAsynchronous();
-    void DoActivateThread();
-    void DoPlayAsynchronous();
-    void DoPlayThread();
+    void SessionStartAsynchronous();
+    void SessionStartThread();
 private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
@@ -85,10 +83,8 @@ private:
     TUint iAudioId;
     TUint iControlId;
     TUint iTimingId;
-    ThreadFunctor* iThreadDoActivate;
-    Semaphore iSemDoActivate;
-    ThreadFunctor* iThreadDoPlay;
-    Semaphore iSemDoPlay;
+    ThreadFunctor* iThreadSessionStart;
+    Semaphore iSemSessionStart;
     std::atomic<TBool> iQuit;
 };
 
