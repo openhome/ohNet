@@ -197,6 +197,7 @@ private: // IDviInvocation
     TIpAddress Adapter() const;
     const char* ResourceUriPrefix() const;
     Endpoint ClientEndpoint() const;
+    const Brx& ClientUserAgent() const;
     void InvocationReadStart();
     TBool InvocationReadBool(const TChar* aName);
     void InvocationReadString(const TChar* aName, Brhz& aString);
@@ -248,6 +249,7 @@ private:
     HeaderNt iHeaderNt;
     HeaderCallback iHeaderCallback;
     HeaderAcceptLanguage iHeaderAcceptLanguage;
+    HttpHeaderUserAgent iHeaderUserAgent;
     const HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;

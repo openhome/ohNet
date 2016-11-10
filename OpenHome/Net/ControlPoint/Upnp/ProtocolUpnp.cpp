@@ -71,7 +71,7 @@ void InvocationUpnp::WriteRequest(const Uri& aUri)
 
     try {
         InvocationBodyWriter::Write(iInvocation, body);
-        WriteHeaders(writerRequest, aUri, body.Bytes());
+        WriteHeaders(writerRequest, aUri, body.Bytes(), iCpStack.Env());
         writeBuffer.Write(body);
         writeBuffer.WriteFlush();
     }
@@ -168,7 +168,7 @@ void InvocationUpnp::ReadResponse()
     }
 }
 
-void InvocationUpnp::WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& aUri, TUint aBodyBytes)
+void InvocationUpnp::WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& aUri, TUint aBodyBytes, Environment& aEnv)
 {
     ASSERT(aUri.Port()!=Uri::kPortNotSpecified);
     const Brn kContentType("text/xml; charset=\"utf-8\"");
@@ -179,6 +179,7 @@ void InvocationUpnp::WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& 
     Http::WriteHeaderHostAndPort(aWriterRequest, aUri.Host(), aUri.Port());
     Http::WriteHeaderContentLength(aWriterRequest, aBodyBytes);
     Http::WriteHeaderContentType(aWriterRequest, kContentType);
+    Http::WriteHeaderUserAgent(aWriterRequest, aEnv);
 
     IWriterAscii& writerField = aWriterRequest.WriteHeaderField(kSoapAction);
     writerField.Write('\"');

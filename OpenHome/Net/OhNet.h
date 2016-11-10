@@ -368,11 +368,14 @@ public:
      * signal that devices have been removed in fewer circumstances).
      */
     void SetHostUdpIsLowQuality(TBool aLow);
-
     /**
      * Set TimerManager priority.
      */
     void SetTimerManagerPriority(uint32_t aPriority);
+    /**
+     * Set UserAgent header to be reported by HTTP clients
+     */
+    void SetHttpUserAgent(const Brx& aUserAgent);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -409,6 +412,7 @@ public:
     uint32_t DvLpecServerPort();
     bool IsHostUdpLowQuality();
     uint32_t TimerManagerPriority() const;
+    const Brx& HttpUserAgent() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -451,6 +455,7 @@ private:
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;
     uint32_t iTimerManagerThreadPriority;
+    Brh iUserAgent;
 };
 
 class CpStack;

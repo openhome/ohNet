@@ -16,6 +16,7 @@ public:
     virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
     virtual void GetClientEndpoint(TIpAddress& aClientAddress, uint32_t& aClientPort) const = 0;
+    virtual std::string ClientUserAgent() const = 0;
     virtual void ReportError(uint32_t aCode, const std::string& aDescription) = 0; // throws
     virtual ~IDvInvocationStd() {}
 };
@@ -30,6 +31,7 @@ private:
     TIpAddress Adapter() const;
     const char* ResourceUriPrefix() const;
     void GetClientEndpoint(TIpAddress& aClientAddress, uint32_t& aClientPort) const;
+    std::string ClientUserAgent() const;
     void ReportError(uint32_t aCode, const std::string& aDescription);
 private:
     DvInvocationStd(const DvInvocationStd &);

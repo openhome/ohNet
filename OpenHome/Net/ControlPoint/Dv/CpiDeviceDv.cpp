@@ -262,6 +262,11 @@ Endpoint InvocationDv::ClientEndpoint() const
     return Endpoint(0, 0);
 }
 
+const Brx& InvocationDv::ClientUserAgent() const
+{
+    return Brx::Empty();
+}
+
 void InvocationDv::InvocationReadStart()
 {
     iReadIndex = 0;

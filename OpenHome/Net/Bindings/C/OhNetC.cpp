@@ -277,6 +277,13 @@ void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, co
     ip->SetDvEnableBonjour(aHostName);
 }
 
+void STDCALL OhNetInitParamsSetHttpUserAgent(OhNetHandleInitParams aParams, const char* aUserAgent)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    Brn userAgent(aUserAgent);
+    ip->SetHttpUserAgent(userAgent);
+}
+
 uint32_t STDCALL OhNetInitParamsTcpConnectTimeoutMs(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);

@@ -470,6 +470,7 @@ DllExport void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams a
 
 /**
  * Enable use of Bonjour.
+ *
  * All DvDevice instances with a resource manager will be published using Bonjour.
  * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
  * Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
@@ -479,6 +480,17 @@ DllExport void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams a
  * @param[in] aHostName        mDNS host name
  */
 DllExport void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName);
+
+/**
+* Set HTTP user agent string.
+*
+* This will be reported by any HTTP clients run by ohNet.
+* It may also be used by some ohNet clients.
+*
+* @param[in] aParams          Initialisation params
+* @param[in] aUserAgent       User agent
+*/
+DllExport void STDCALL OhNetInitParamsSetHttpUserAgent(OhNetHandleInitParams aParams, const char* aUserAgent);
 
 /**
  * Query the tcp connection timeout

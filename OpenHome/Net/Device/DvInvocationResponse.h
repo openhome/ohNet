@@ -22,6 +22,7 @@ public:
     virtual void EndResponse() = 0;
     virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
+    virtual const Brx& ClientUserAgent() const = 0;
     virtual ~IDvInvocation() {}
 };
 

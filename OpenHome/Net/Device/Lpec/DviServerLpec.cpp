@@ -699,6 +699,11 @@ Endpoint DviSessionLpec::ClientEndpoint() const
     return ep;
 }
 
+const Brx& DviSessionLpec::ClientUserAgent() const
+{
+    return Brx::Empty();
+}
+
 void DviSessionLpec::InvocationReadStart()
 {
     // nothing to do here

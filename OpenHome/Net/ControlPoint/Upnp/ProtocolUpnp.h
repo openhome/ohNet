@@ -30,7 +30,7 @@ public:
 private:
     void WriteRequest(const Uri& aUri);
     void ReadResponse();
-    void WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& aUri, TUint aBodyBytes);
+    void WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& aUri, TUint aBodyBytes, Environment& aEnv);
     // IInterruptHandler
     void Interrupt();
 private:

@@ -357,6 +357,11 @@ Endpoint DviInvocation::ClientEndpoint() const
     return iInvocation.ClientEndpoint();
 }
 
+const Brx& DviInvocation::ClientUserAgent() const
+{
+    return iInvocation.ClientUserAgent();
+}
+
 
 // DviInvocationResponseBool
 

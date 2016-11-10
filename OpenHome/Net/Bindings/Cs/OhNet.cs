@@ -529,6 +529,11 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <remarks>Only used if DvEnableBonjour is true.</remarks>
         public string DvMdnsHostName { private get; set; }
+        /// <summary>
+        /// Set User-Agent reported by HTTP clients
+        /// </summary>
+        /// <remarks>Only used if DvEnableBonjour is true.</remarks>
+        public string HttpUserAgent { get; set; }
 
         private uint iDvUpnpWebServerPort;
 
@@ -718,6 +723,12 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
 #endif
         static extern void OhNetInitParamsSetIncludeLoopbackNetworkAdapter(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
+        static extern void OhNetInitParamsSetHttpUserAgent(IntPtr aParams, IntPtr aHostName);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -925,6 +936,12 @@ namespace OpenHome.Net.Core
                 IntPtr hostName = InteropUtils.StringToHGlobalUtf8(DvMdnsHostName);
                 OhNetInitParamsSetDvEnableBonjour(nativeParams, hostName);
                 Marshal.FreeHGlobal(hostName);
+            }
+            if (!String.IsNullOrEmpty(HttpUserAgent))
+            {
+                IntPtr userAgent = InteropUtils.StringToHGlobalUtf8(HttpUserAgent);
+                OhNetInitParamsSetHttpUserAgent(nativeParams, userAgent);
+                Marshal.FreeHGlobal(userAgent);
             }
             if (UseLoopbackNetworkAdapter)
             {

@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <ctype.h>
 #include <algorithm>
@@ -178,6 +179,18 @@ void Http::WriteHeaderConnectionClose(WriterHttpHeader& aWriter)
 {
     aWriter.WriteHeader(Http::kHeaderConnection, Http::kConnectionClose);
 }
+
+void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv)
+{
+    Net::InitialisationParams* initParams = aEnv.InitParams();
+    if (initParams != NULL) {
+        const Brx& userAgent = initParams->HttpUserAgent();
+        if (userAgent.Bytes() != 0) {
+            aWriter.WriteHeader(Http::kHeaderUserAgent, userAgent);
+        }
+    }
+}
+
 
 // HttpStatus
 
@@ -924,6 +937,29 @@ void HttpHeaderAccessControlRequestMethod::Process(const Brx& aValue)
 {
     SetReceived();
     iMethod.Append(aValue);
+}
+
+
+// HttpHeaderUserAgent
+
+const Brx& HttpHeaderUserAgent::UserAgent() const
+{
+    return iUserAgent;
+}
+
+TBool HttpHeaderUserAgent::Recognise(const Brx& aHeader)
+{
+    return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderUserAgent);
+}
+
+void HttpHeaderUserAgent::Process(const Brx& aValue)
+{
+    try {
+        iUserAgent.ReplaceThrow(aValue);
+        SetReceived();
+    }
+    catch (BufferOverflow&) {
+    }
 }
 
 

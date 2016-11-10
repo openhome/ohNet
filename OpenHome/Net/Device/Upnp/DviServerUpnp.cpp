@@ -589,6 +589,7 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
     iReaderRequest->AddHeader(iHeaderNt);
     iReaderRequest->AddHeader(iHeaderCallback);
     iReaderRequest->AddHeader(iHeaderAcceptLanguage);
+    iReaderRequest->AddHeader(iHeaderUserAgent);
 }
 
 DviSessionUpnp::~DviSessionUpnp()
@@ -1070,6 +1071,14 @@ Endpoint DviSessionUpnp::ClientEndpoint() const
 {
     Endpoint ep(SocketTcpSession::ClientEndpoint());
     return ep;
+}
+
+const Brx& DviSessionUpnp::ClientUserAgent() const
+{
+    if (!iHeaderUserAgent.Received()) {
+        return Brx::Empty();
+    }
+    return iHeaderUserAgent.UserAgent();
 }
 
 void DviSessionUpnp::InvocationReadStart()
