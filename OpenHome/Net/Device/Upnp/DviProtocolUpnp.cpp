@@ -47,24 +47,23 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
     std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
-    if (current != NULL) {
-        AddInterface(*current);
-    }
-    else {
-        for (TUint i=0; i<subnetList->size(); i++) {
-            NetworkAdapter* subnet = (*subnetList)[i];
-            try {
-                AddInterface(*subnet);
-            }
-            catch (NetworkError& ) {
-                // some hosts may have adapters that don't support multicast
-                // we can't differentiate between no support ever and transient failure
-                // (typical on Windows & Mac after hibernation) so just ignore this exception
-                // and trust that we'll get advertised on another interface.
-                char* adapterName = subnet->FullName();
-                LOG2(kTrace, kError, "DvDevice unable to use adapter %s\n", adapterName);
-                delete adapterName;
-            }
+    const TIpAddress kLoopbackAddr = MakeIpAddress(127, 0, 0, 1);
+    for (TUint i=0; i<subnetList->size(); i++) {
+        NetworkAdapter* subnet = (*subnetList)[i];
+        if (current != NULL && subnet->Address() != current->Address() && subnet->Address() != kLoopbackAddr) {
+            continue;
+        }
+        try {
+            AddInterface(*subnet);
+        }
+        catch (NetworkError&) {
+            // some hosts may have adapters that don't support multicast
+            // we can't differentiate between no support ever and transient failure
+            // (typical on Windows & Mac after hibernation) so just ignore this exception
+            // and trust that we'll get advertised on another interface.
+            char* adapterName = subnet->FullName();
+            LOG2(kTrace, kError, "DvDevice unable to use adapter %s\n", adapterName);
+            delete adapterName;
         }
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
@@ -150,63 +149,44 @@ void DviProtocolUpnp::HandleInterfaceChange()
     TBool update = false;
     std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     {
+        const TIpAddress kLoopbackAddr = MakeIpAddress(127, 0, 0, 1);
         AutoMutex a(iLock);
         NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
         AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp::HandleInterfaceChange");
         const NetworkAdapter* current = ref.Adapter();
         TUint i = 0;
-        if (adapterList.SingleSubnetModeEnabled()) {
-            // remove listeners whose interface is no longer available
-            while (i<iAdapters.size()) {
-                if (current != NULL && iAdapters[i]->Interface() == current->Address()) {
-                    i++;
-                }
-                else {
-                    iAdapters[i]->SetPendingDelete();
-                    pendingDelete.push_back(iAdapters[i]);
-                    iAdapters.erase(iAdapters.begin() + i);
-                }
+        std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
+        std::vector<NetworkAdapter*>* adapters = adapterList.CreateNetworkAdapterList();
+        // remove listeners whose interface is no longer available
+        while (i<iAdapters.size()) {
+            if (FindAdapter(iAdapters[i]->Interface(), *adapters) != -1
+                && (!adapterList.SingleSubnetModeEnabled() ||
+                (current != NULL && iAdapters[i]->Interface() == current->Address()) ||
+                iAdapters[i]->Interface() == kLoopbackAddr)) {
+                i++;
             }
-            // add listener if 'current' is a new subnet
-            if (iAdapters.size() == 0 && current != NULL) {
-                iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
-                DviProtocolUpnpAdapterSpecificData* adapter = AddInterface(*current);
-                if (iDevice.Enabled()) {
-                    adapter->SendByeByeThenAlive(*this);
-                }
+            else {
+                iAdapters[i]->SetPendingDelete();
+                pendingDelete.push_back(iAdapters[i]);
+                iAdapters.erase(iAdapters.begin() + i);
             }
         }
-        else {
-            std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-            std::vector<NetworkAdapter*>* adapters = adapterList.CreateNetworkAdapterList();
-            // remove listeners whose interface is no longer available
-            while (i<iAdapters.size()) {
-                if (FindAdapter(iAdapters[i]->Interface(), *adapters) != -1) {
-                    i++;
-                }
-                else {
-                    iAdapters[i]->SetPendingDelete();
-                    pendingDelete.push_back(iAdapters[i]);
-                    iAdapters.erase(iAdapters.begin() + i);
-                }
-            }
 
-            // add listeners for new subnets
-            for (i=0; i<subnetList->size(); i++) {
-                NetworkAdapter* subnet = (*subnetList)[i];
-                if (FindListenerForSubnet(subnet->Subnet()) == -1) {
-                    AddInterface(*subnet);
-                    update = iDevice.Enabled();
-                }
+        // add listeners for new subnets
+        for (i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            if (FindListenerForSubnet(subnet->Subnet()) == -1) {
+                AddInterface(*subnet);
+                update = iDevice.Enabled();
             }
-            NetworkAdapterList::DestroyNetworkAdapterList(adapters);
-            NetworkAdapterList::DestroySubnetList(subnetList);
-            if (update) {
-                // halt any ssdp broadcasts/responses that are currently in progress
-                // (in case they're for a subnet that's no longer valid)
-                // they'll be advertised again by the SendUpdateNotifications() call below
-                iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
-            }
+        }
+        NetworkAdapterList::DestroyNetworkAdapterList(adapters);
+        NetworkAdapterList::DestroySubnetList(subnetList);
+        if (update) {
+            // halt any ssdp broadcasts/responses that are currently in progress
+            // (in case they're for a subnet that's no longer valid)
+            // they'll be advertised again by the SendUpdateNotifications() call below
+            iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
         }
     }
 
