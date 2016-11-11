@@ -169,14 +169,14 @@ public: // from IVolume
     void SetVolume(TUint aValue) override;
 private:
     void LimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
-    void DoSetVolume(TUint aValue);
+    void DoSetVolume();
 private:
     Mutex iLock;
     IVolume& iVolume;
     const TUint iMilliDbPerStep;
     Configuration::ConfigNum& iConfigLimit;
     TUint iSubscriberIdLimit;
-    TUint iUpstreamVolume;
+    TUint iCurrentVolume;
     TUint iLimit;
 };
 

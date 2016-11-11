@@ -150,7 +150,7 @@ VolumeLimiter::VolumeLimiter(IVolume& aVolume, TUint aMilliDbPerStep, IConfigMan
     , iVolume(aVolume)
     , iMilliDbPerStep(aMilliDbPerStep)
     , iConfigLimit(aConfigReader.GetNum(VolumeConfig::kKeyLimit))
-    , iUpstreamVolume(0)
+    , iCurrentVolume(0)
 {
     iSubscriberIdLimit = iConfigLimit.Subscribe(MakeFunctorConfigNum(*this, &VolumeLimiter::LimitChanged));
 }
@@ -164,11 +164,11 @@ void VolumeLimiter::SetVolume(TUint aValue)
 {
     LOG(kVolume, "VolumeLimiter::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
-    if (aValue > iLimit && iUpstreamVolume >= iLimit) {
+    if (aValue > iLimit && iCurrentVolume >= iLimit) {
         THROW(VolumeOutOfRange);
     }
-    DoSetVolume(aValue);
-    iUpstreamVolume = aValue;
+    iCurrentVolume = aValue;
+    DoSetVolume();
 }
 
 void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
@@ -176,15 +176,15 @@ void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
     AutoMutex _(iLock);
     iLimit = aKvp.Value() * iMilliDbPerStep;
     try {
-        DoSetVolume(iUpstreamVolume);
+        DoSetVolume();
     }
     catch (VolumeNotSupported&) {}
 }
 
-void VolumeLimiter::DoSetVolume(TUint aValue)
+void VolumeLimiter::DoSetVolume()
 {
-    const TUint volume = std::min(aValue, iLimit);
-    iVolume.SetVolume(volume);
+    iCurrentVolume = std::min(iCurrentVolume, iLimit);
+    iVolume.SetVolume(iCurrentVolume);
 }
 
 
