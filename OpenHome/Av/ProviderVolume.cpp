@@ -279,6 +279,7 @@ void ProviderVolume::UnityGainChanged(TBool aValue)
 {
     SetPropertyUnityGain(aValue);
 }
+
 void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume, ErrorOutOfRange aReportOutOfRange)
 {
     try {

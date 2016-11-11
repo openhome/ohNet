@@ -297,7 +297,7 @@ void VolumeUnityGainBase::SetVolume(TUint aValue)
     iUpstreamVolume = aValue;
 }
 
-void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
+void VolumeUnityGainBase::SetVolumeControlEnabled(TBool aEnabled)
 {
     AutoMutex _(iLock);
     iVolumeControlEnabled = aEnabled;
@@ -312,11 +312,12 @@ void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
     catch (VolumeNotSupported&) {}
 }
 
-TBool VolumeUnityGainBase::GetEnabled()
+TBool VolumeUnityGainBase::VolumeControlEnabled() const
 {
     AutoMutex _(iLock);
     return iVolumeControlEnabled;
 }
+
 
 // VolumeUnityGain
 
@@ -336,7 +337,7 @@ VolumeUnityGain::~VolumeUnityGain()
 void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
 {
     const TBool enabled = (aKvp.Value() == eStringIdYes);
-    SetEnabled(enabled);
+    SetVolumeControlEnabled(enabled);
 }
 
 
@@ -345,22 +346,25 @@ void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
 VolumeSourceUnityGain::VolumeSourceUnityGain(IVolume& aVolume, TUint aUnityGainValue)
     : VolumeUnityGainBase(aVolume, aUnityGainValue)
 {
-    SetEnabled(true);
+    SetVolumeControlEnabled(true);
 }
 
 void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
 {
-    SetEnabled(!aEnable);
+    SetVolumeControlEnabled(!aEnable);
     for(auto observer: iObservers){
-        observer.get().UnityGainChanged(GetEnabled());
+        observer.get().UnityGainChanged(VolumeControlEnabled());
     }
 }
 
 void VolumeSourceUnityGain::AddUnityGainObserver(IUnityGainObserver& aObserver)
 {
-    aObserver.UnityGainChanged(GetEnabled());
+    const TBool unityGain = !VolumeControlEnabled();
+    aObserver.UnityGainChanged(unityGain);
     iObservers.push_back(aObserver);
 }
+
+
 // AnalogBypassRamper
 
 AnalogBypassRamper::AnalogBypassRamper(IVolume& aVolume)

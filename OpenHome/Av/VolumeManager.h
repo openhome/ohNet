@@ -259,10 +259,10 @@ public:
 public:  // from IVolume
     void SetVolume(TUint aValue) override;
 protected:
-    void SetEnabled(TBool aEnabled);
-    TBool GetEnabled();
+    void SetVolumeControlEnabled(TBool aEnabled);
+    TBool VolumeControlEnabled() const;
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     IVolume& iVolume;
     const TUint iUnityGain;
     TUint iUpstreamVolume;
