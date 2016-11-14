@@ -352,8 +352,9 @@ VolumeSourceUnityGain::VolumeSourceUnityGain(IVolume& aVolume, TUint aUnityGainV
 void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
 {
     SetVolumeControlEnabled(!aEnable);
-    for(auto observer: iObservers){
-        observer.get().UnityGainChanged(VolumeControlEnabled());
+    const TBool unityGain = !VolumeControlEnabled();
+    for (auto observer: iObservers){
+        observer.get().UnityGainChanged(unityGain);
     }
 }
 
