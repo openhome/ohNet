@@ -19,8 +19,6 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
-static const TUint kMaxSenderChannels = 2;
-
 
 enum StringIdsSongcastMode
 {
@@ -218,7 +216,7 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
     iFirstChannelIndex = FirstChannelToSend(numChannels);
 
     iOhmSender->SetTrackPosition(samplesTotal, streamInfo.SampleStart());
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), std::min(numChannels, kMaxSenderChannels),
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), std::min(numChannels, (TUint)2),
                                      bitDepth, streamInfo.Lossless(), streamInfo.CodecName(),
                                      streamInfo.SampleStart());
 
@@ -329,19 +327,16 @@ TUint Sender::FirstChannelToSend(TUint aNumChannels)
 
 void Sender::ProcessFragment(const Brx& aData, TUint aNumChannels, TUint aBytesPerSample)
 {
-    const TByte* src = aData.Ptr();
-    const TUint numSamples = aData.Bytes() / (aBytesPerSample * aNumChannels);
+    const TByte* src = aData.Ptr() + aBytesPerSample*iFirstChannelIndex;
+    const TUint stride = aBytesPerSample * aNumChannels;
+    const TUint numSamples = aData.Bytes() / stride;
+    const TUint copyBytes = std::min(aBytesPerSample, (TUint)3);
 
-    TUint copyBytes = std::min(aBytesPerSample, (TUint)3);
     for (TUint i=0; i<numSamples; i++) {
-        for (TUint j = 0; j < aNumChannels; j++) {
-            if ((j >= iFirstChannelIndex) && (j < (iFirstChannelIndex + kMaxSenderChannels))) {
-                iAudioBuf->Append(src, copyBytes);
-            }
-            src += aBytesPerSample;
-        }
+        iAudioBuf->Append(src, copyBytes);
+        iAudioBuf->Append(src + aBytesPerSample, copyBytes);
+        src += stride;
     }
-
 }
 
 void Sender::BeginBlock()
