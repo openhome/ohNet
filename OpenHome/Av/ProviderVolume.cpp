@@ -24,18 +24,55 @@ const Brn  kInvalidBalanceMsg("Balance invalid");
 const TInt kInvalidFadeCode = 813;
 const Brn  kInvalidFadeMsg("Fade invalid");
 
-
 const TInt kVolumeNotSupportedCode = 814;
 const Brn  kVolumeNotSupportedMsg("Volume not supported");
 
+const TInt kVolumeOffsetsNotSupportedCode = 815;
+const Brn  kVolumeOffsetsNotSupportedMsg("Volume offsets not supported");
 
-ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
-                               IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade)
-    : DvProviderAvOpenhomeOrgVolume2(aDevice)
+const TInt kInvalidChannelCode = 816;
+const Brn  kInvalidChannelMsg("Channel invalid");
+
+const TInt kVolumeOffsetOutOfRangeCode = 817;
+const Brn  kVolumeOffsetOutOfRangeMsg("Volume offset out of range");
+
+
+// OffsetsWriterJson
+
+const TChar* OffsetsWriterJson::kKeyChannel = "channel";
+const TChar* OffsetsWriterJson::kKeyOffset = "offset";
+
+OffsetsWriterJson::OffsetsWriterJson(IWriter& aWriter)
+    : iWriter(aWriter)
+{
+}
+
+void OffsetsWriterJson::WriteStart()
+{
+    // WriterJsonArray automatically writes appropriate start.
+}
+
+void OffsetsWriterJson::WriteEnd()
+{
+    iWriter.WriteEnd();
+}
+
+void OffsetsWriterJson::Visit(const Brx& aChannel, TInt aOffsetBinaryMilliDb)
+{
+    WriterJsonObject obj = iWriter.CreateObject();
+    obj.WriteString(kKeyChannel, aChannel);
+    obj.WriteInt(kKeyOffset, aOffsetBinaryMilliDb);
+    obj.WriteEnd();
+}
+
+
+ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader, IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade, IVolumeOffsetter* aVolumeOffsetter)
+    : DvProviderAvOpenhomeOrgVolume3(aDevice)
     , iLock("PVOL")
     , iVolume(aVolumeManager)
     , iBalance(aBalance)
     , iFade(aFade)
+    , iVolumeOffsetter(aVolumeOffsetter)
     , iUserMute(aVolumeManager)
     , iVolumeMax(aVolumeManager.VolumeMax())
 {
@@ -51,6 +88,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnablePropertyBalanceMax();
     EnablePropertyFadeMax();
     EnablePropertyUnityGain();
+    EnablePropertyVolumeOffsets();
+    EnablePropertyVolumeOffsetMax();
 
     EnableActionCharacteristics();
     EnableActionSetVolume();
@@ -69,6 +108,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     EnableActionMute();
     EnableActionVolumeLimit();
     EnableActionUnityGain();
+    EnableActionVolumeOffset();
+    EnableActionSetVolumeOffset();
 
     aVolumeManager.AddVolumeObserver(*this);
     aVolumeManager.AddMuteObserver(*this);
@@ -92,12 +133,22 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
         iSubscriberIdFade = iConfigFade->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::FadeChanged));
     }
 
+    if (iVolumeOffsetter == nullptr) {
+        SetPropertyVolumeOffsets(Brn("[]")); // Empty JSON array.
+    }
+    else {
+        // Registering with the IVolumeOffsetterObservable will result in
+        // initial callback, which will call SetPropertyVolumeOffsets().
+        iVolumeOffsetter->AddVolumeOffsetterObserver(*this);
+    }
+
     SetPropertyVolumeMax(aVolumeManager.VolumeMax());
     SetPropertyVolumeUnity(aVolumeManager.VolumeUnity());
     SetPropertyVolumeSteps(aVolumeManager.VolumeStep());
     SetPropertyVolumeMilliDbPerStep(aVolumeManager.VolumeMilliDbPerStep());
     SetPropertyBalanceMax(aVolumeManager.BalanceMax());
     SetPropertyFadeMax(aVolumeManager.FadeMax());
+    SetPropertyVolumeOffsetMax(aVolumeManager.OffsetMax());
 }
 
 ProviderVolume::~ProviderVolume()
@@ -265,6 +316,44 @@ void ProviderVolume::UnityGain(IDvInvocation& aInvocation, IDvInvocationResponse
     aInvocation.EndResponse();
 }
 
+void ProviderVolume::VolumeOffset(IDvInvocation& aInvocation, const Brx& aChannel, IDvInvocationResponseInt& aVolumeOffsetBinaryMilliDb)
+{
+    if (iVolumeOffsetter == nullptr) {
+        aInvocation.Error(kVolumeOffsetsNotSupportedCode, kVolumeOffsetsNotSupportedMsg);
+        return;
+    }
+
+    try {
+        const TInt offset = iVolumeOffsetter->GetVolumeOffset(aChannel);
+        aInvocation.StartResponse();
+        aVolumeOffsetBinaryMilliDb.Write(offset);
+        aInvocation.EndResponse();
+    }
+    catch (ChannelInvalid&) {
+        aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
+    }
+}
+
+void ProviderVolume::SetVolumeOffset(IDvInvocation& aInvocation, const Brx& aChannel, TInt aVolumeOffsetBinaryMilliDb)
+{
+    if (iVolumeOffsetter == nullptr) {
+        aInvocation.Error(kVolumeOffsetsNotSupportedCode, kVolumeOffsetsNotSupportedMsg);
+        return;
+    }
+
+    try {
+        iVolumeOffsetter->SetVolumeOffset(aChannel, aVolumeOffsetBinaryMilliDb);
+        aInvocation.StartResponse();
+        aInvocation.EndResponse();
+    }
+    catch (ChannelInvalid&) {
+        aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
+    }
+    catch (VolumeOffsetOutOfRange&) {
+        aInvocation.Error(kVolumeOffsetOutOfRangeCode, kVolumeOffsetOutOfRangeMsg);
+    }
+}
+
 void ProviderVolume::VolumeChanged(const IVolumeValue& aVolume)
 {
     SetPropertyVolume(aVolume.VolumeUser());
@@ -279,6 +368,20 @@ void ProviderVolume::UnityGainChanged(TBool aValue)
 {
     SetPropertyUnityGain(aValue);
 }
+
+void ProviderVolume::VolumeOffsetsChanged(IVolumeOffsetterVisitable& aVisitable)
+{
+    Bws<512> offsets;
+    WriterBuffer writerBuffer(offsets);
+    OffsetsWriterJson writerJson(writerBuffer);
+
+    writerJson.WriteStart();
+    aVisitable.AcceptVolumeOffsetterVisitor(writerJson);
+    writerJson.WriteEnd();
+
+    SetPropertyVolumeOffsets(offsets);
+}
+
 void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolume, ErrorOutOfRange aReportOutOfRange)
 {
     try {

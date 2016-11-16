@@ -64,6 +64,7 @@ class VolumeProfile : public IVolumeProfile
     static const TUint kVolumeMilliDbPerStep = 1024;
     static const TUint kBalanceMax = 12;
     static const TUint kFadeMax = 10;
+    static const TUint kOffsetMax = 15;
     static const TBool kAlwaysOn = false;
 private: // from IVolumeProfile
     TUint VolumeMax() const override;
@@ -74,6 +75,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TUint OffsetMax() const override;
     TBool AlwaysOn() const override;
 };
 

@@ -51,6 +51,7 @@ namespace Net {
     class DvDevice;
 }
 namespace Av {
+    class IVolumeOffsetter;
     class Product;
     class ProviderVolume;
 
@@ -88,6 +89,7 @@ public:
     virtual TUint VolumeMilliDbPerStep() const = 0;
     virtual TUint BalanceMax() const = 0;
     virtual TUint FadeMax() const = 0;
+    virtual TUint OffsetMax() const = 0;
     virtual TBool AlwaysOn() const = 0;
     virtual ~IVolumeProfile() {}
 };
@@ -99,13 +101,16 @@ public:
     void SetVolume(IVolume& aVolume);
     void SetBalance(IBalance& aBalance);
     void SetFade(IFade& aFade);
+    void SetVolumeOffsetter(IVolumeOffsetter& aVolumeOffsetter);
     IVolume* Volume();
     IBalance* Balance();
     IFade* Fade();
+    IVolumeOffsetter* VolumeOffsetter();
 private:
     IVolume* iVolume;
     IBalance* iBalance;
     IFade* iFade;
+    IVolumeOffsetter* iVolumeOffsetter;
 };
 
 class VolumeNull : public IVolume
@@ -125,6 +130,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override { return 0; }
     TUint BalanceMax() const override           { return 0; }
     TUint FadeMax() const override              { return 0; }
+    TUint OffsetMax() const override            { return 0; }
     TBool AlwaysOn() const override             { return false; }
 };
 
@@ -431,6 +437,7 @@ public: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TUint OffsetMax() const override;
     TBool AlwaysOn() const override;
 private:
     void EnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
@@ -450,6 +457,7 @@ private:
     TUint iVolumeMilliDbPerStep;
     TUint iBalanceMax;
     TUint iFadeMax;
+    TUint iOffsetMax;
     TBool iAlwaysOn;
     TBool iVolumeControlEnabled;
 };
@@ -495,6 +503,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TUint OffsetMax() const override;
     TBool AlwaysOn() const override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;

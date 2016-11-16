@@ -24,6 +24,7 @@ VolumeConsumer::VolumeConsumer()
     : iVolume(nullptr)
     , iBalance(nullptr)
     , iFade(nullptr)
+    , iVolumeOffsetter(nullptr)
 {
 }
 
@@ -42,6 +43,11 @@ void VolumeConsumer::SetFade(IFade& aFade)
     iFade = &aFade;
 }
 
+void VolumeConsumer::SetVolumeOffsetter(IVolumeOffsetter& aVolumeOffsetter)
+{
+    iVolumeOffsetter = &aVolumeOffsetter;
+}
+
 IVolume* VolumeConsumer::Volume()
 {
     return iVolume;
@@ -55,6 +61,11 @@ IBalance* VolumeConsumer::Balance()
 IFade* VolumeConsumer::Fade()
 {
     return iFade;
+}
+
+IVolumeOffsetter* VolumeConsumer::VolumeOffsetter()
+{
+    return iVolumeOffsetter;
 }
 
 
@@ -567,6 +578,7 @@ VolumeConfig::VolumeConfig(IStoreReadWrite& aStore, IConfigInitialiser& aConfigI
     iVolumeMilliDbPerStep = aProfile.VolumeMilliDbPerStep();
     iBalanceMax           = aProfile.BalanceMax();
     iFadeMax              = aProfile.FadeMax();
+    iOffsetMax            = aProfile.OffsetMax();
     iAlwaysOn             = aProfile.AlwaysOn();
 
 
@@ -676,6 +688,11 @@ TUint VolumeConfig::FadeMax() const
     return iFadeMax;
 }
 
+TUint VolumeConfig::OffsetMax() const
+{
+    return iOffsetMax;
+}
+
 TBool VolumeConfig::AlwaysOn() const
 {
     return iAlwaysOn;
@@ -737,7 +754,7 @@ VolumeManager::VolumeManager(VolumeConsumer& aVolumeConsumer, IMute* aMute, Volu
         iVolumeUser = new VolumeUser(*iVolumeLimiter, aConfigReader, aPowerManager,
                                      aVolumeConfig.StoreUserVolume(),
                                      iVolumeConfig.VolumeMax() * milliDbPerStep, milliDbPerStep);
-        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser);
+        iProviderVolume = new ProviderVolume(aDevice, aConfigReader, *this, iBalanceUser, iFadeUser, aVolumeConsumer.VolumeOffsetter());
         aProduct.AddAttribute("Volume");
     }
     else {
@@ -850,6 +867,11 @@ TUint VolumeManager::BalanceMax() const
 TUint VolumeManager::FadeMax() const
 {
     return iVolumeConfig.FadeMax();
+}
+
+TUint VolumeManager::OffsetMax() const
+{
+    return iVolumeConfig.OffsetMax();
 }
 
 TBool VolumeManager::AlwaysOn() const

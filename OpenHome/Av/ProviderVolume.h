@@ -1,11 +1,13 @@
 #pragma once
 
-#include <Generated/DvAvOpenhomeOrgVolume2.h>
+#include <Generated/DvAvOpenhomeOrgVolume3.h>
 #include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Av/VolumeManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Av/VolumeOffsets.h>
+#include <OpenHome/Json.h>
 
 EXCEPTION(InvalidVolumeLimit);
 
@@ -20,14 +22,29 @@ namespace Net {
 
 namespace Av {
 
-class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume2, public IProvider, private IVolumeObserver, private Media::IMuteObserver, private IUnityGainObserver
+class OffsetsWriterJson : public IVolumeOffsetterVisitor
+{
+private:
+    static const TChar* kKeyChannel;
+    static const TChar* kKeyOffset;
+public:
+    OffsetsWriterJson(IWriter& aWriter);
+    void WriteStart();
+    void WriteEnd();
+public: // from IVolumeOffsetterVisitor
+    void Visit(const Brx& aChannel, TInt aOffsetBinaryMilliDb) override;
+private:
+    WriterJsonArray iWriter;
+};
+
+class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume3, public IProvider, private IVolumeObserver, private Media::IMuteObserver, private IUnityGainObserver, private IVolumeOffsetterObserver
 {
 private:
     static const Brn kPowerDownVolume;
     static const Brn kPowerDownMute;
 public:
     ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigReader,
-                   IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade);
+        IVolumeManager& aVolumeManager, IBalance* aBalance, IFade* aFade, IVolumeOffsetter* aVolumeOffsetter);
     ~ProviderVolume();
 private: // from DvProviderAvOpenhomeOrgVolume1
     void Characteristics(Net::IDvInvocation& aInvocation
@@ -59,12 +76,17 @@ private: // from DvProviderAvOpenhomeOrgVolume1
     void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 
     void UnityGain(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
+
+    void VolumeOffset(Net::IDvInvocation& aInvocation, const Brx& aChannel, Net::IDvInvocationResponseInt& aVolumeOffsetBinaryMilliDb) override;
+    void SetVolumeOffset(Net::IDvInvocation& aInvocation, const Brx& aChannel, TInt aVolumeOffsetBinaryMilliDb) override;
 private: // from IVolumeObserver
     void VolumeChanged(const IVolumeValue& aVolume) override;
 private: // from Media::IMuteObserver
     void MuteChanged(TBool aValue) override;
 private: // from IUnityGainObserver
     void UnityGainChanged(TBool aValue) override;
+private: // from IVolumeOffsetterObserver
+    void VolumeOffsetsChanged(IVolumeOffsetterVisitable& aVisitable) override;
 private:
     enum class ErrorOutOfRange {
         Report,
@@ -82,6 +104,7 @@ private:
     IVolume& iVolume;
     IBalance* iBalance;
     IFade* iFade;
+    IVolumeOffsetter* iVolumeOffsetter;
     Media::IMute& iUserMute;
     const TUint iVolumeMax;
     Configuration::ConfigNum* iConfigVolumeLimit;
@@ -94,4 +117,3 @@ private:
 
 } // namespace Av
 } // namespace OpenHome
-

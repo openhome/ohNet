@@ -83,6 +83,11 @@ TUint VolumeProfile::FadeMax() const
     return kFadeMax;
 }
 
+TUint VolumeProfile::OffsetMax() const
+{
+    return kOffsetMax;
+}
+
 TBool VolumeProfile::AlwaysOn() const
 {
     return kAlwaysOn;

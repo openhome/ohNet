@@ -76,6 +76,7 @@ private: // from IVolumeProfile
     TUint VolumeMilliDbPerStep() const override;
     TUint BalanceMax() const override;
     TUint FadeMax() const override;
+    TUint OffsetMax() const override;
     TBool AlwaysOn() const override;
 private: // from IVolume
     void SetVolume(TUint aValue) override;
@@ -208,6 +209,7 @@ TUint DummyVolumeManager::VolumeStep() const                         { return 1;
 TUint DummyVolumeManager::VolumeMilliDbPerStep() const               { return 1024; }
 TUint DummyVolumeManager::BalanceMax() const                         { return 5; }
 TUint DummyVolumeManager::FadeMax() const                            { return 4; }
+TUint DummyVolumeManager::OffsetMax() const                          { return 3; }
 TBool DummyVolumeManager::AlwaysOn() const                           { return false; }
 void DummyVolumeManager::SetVolume(TUint /*aValue*/)                 {}
 void DummyVolumeManager::SetVolumeOffset(TInt /*aValue*/)            {}
