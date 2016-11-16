@@ -211,7 +211,7 @@ TUint PipelineInitParams::SupportElements() const
     } while (0)
 
 static Pipeline* gPipeline = nullptr;
-Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, IPipelineObserver& aObserver,
+Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& /*aTrackFactory*/, IPipelineObserver& aObserver,
                    IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IUrlBlockWriter& aUrlBlockWriter)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
@@ -367,10 +367,20 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                    upstream, elementsSupported, EPipelineSupportElementsRampValidator);
     ATTACH_ELEMENT(iDecodedAudioValidatorStopper, new DecodedAudioValidator(*upstream, "Stopper"),
                    upstream, elementsSupported, EPipelineSupportElementsDecodedAudioValidator);
+#if 1
+    /* SpotifyReporter takes 2 locks per Pull().
+       This equates to 2000 mutex operations per second for external inputs.
+       ...which contributes to 10 channel 96k content being close to 100% cpu on some platforms.
+       If v2 Spotify API still requires out of band setting of track info, SpotifyReporter should be reworked
+       to reduce its locking. */
+    iSpotifyReporter = nullptr;
+    iLoggerSpotifyReporter = nullptr;
+#else
     ATTACH_ELEMENT(iSpotifyReporter, new Media::SpotifyReporter(*upstream, *iMsgFactory, aTrackFactory),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerSpotifyReporter, new Logger(*iSpotifyReporter, "SpotifyReporter"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
+#endif
     ATTACH_ELEMENT(iReporter, new Reporter(*upstream, *this, *iEventThread),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerReporter, new Logger(*iReporter, "Reporter"),

@@ -303,7 +303,17 @@ void RampGenerator::ProcessFragment24(const Brx& /*aData*/, TUint /*aNumChannels
 
 void RampGenerator::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
 {
-    iFlywheelAudio->Append(aData);
+    // Pipeline only guarantees to support up to 24-bit audio so discard least significant byte
+    const TUint subsamples = aData.Bytes() / 4;
+    const TByte* src = aData.Ptr();
+    TByte* dest = const_cast<TByte*>(iFlywheelAudio->Ptr() + iFlywheelAudio->Bytes());
+    for (TUint i=0; i<subsamples; i++) {
+        *dest++ = *src++;
+        *dest++ = *src++;
+        *dest++ = *src++;
+        src++;
+    }
+    iFlywheelAudio->SetBytes(iFlywheelAudio->Bytes() + (subsamples * 3));
     //Log::Print("++ RampGenerator::ProcessFragment32 numSamples=%u\n", aData.Bytes() / 8);
 #if 0
     if (aNumChannels == 2) {
@@ -324,7 +334,7 @@ void RampGenerator::ProcessFragment32(const Brx& aData, TUint /*aNumChannels*/)
 
 void RampGenerator::EndBlock()
 {
-    auto audio = iMsgFactory.CreateMsgAudioPcm(*iFlywheelAudio, iNumChannels, iSampleRate, 32, AudioDataEndian::Big, MsgAudioPcm::kTrackOffsetInvalid);
+    auto audio = iMsgFactory.CreateMsgAudioPcm(*iFlywheelAudio, iNumChannels, iSampleRate, 24, AudioDataEndian::Big, MsgAudioPcm::kTrackOffsetInvalid);
     if (iCurrentRampValue == Ramp::kMin) {
         audio->SetMuted();
     }

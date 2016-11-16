@@ -24,6 +24,7 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(Track::kIdNone)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
+    , iStreamIsSeekable(false)
     , iSeekConsecutiveFailureCount(0)
     , iMsgStream(nullptr)
     , iSeekInNextStream(false)
@@ -82,7 +83,7 @@ Msg* Seeker::Pull()
 {
     Msg* msg;
     do {
-        msg = (iQueue.IsEmpty()? iFlusher.Pull() : iQueue.Dequeue());
+        msg = ((iStreamIsSeekable && !iQueue.IsEmpty())? iQueue.Dequeue() : iFlusher.Pull());
         iLock.Wait();
         msg = msg->Process(*this);
         iLock.Signal();

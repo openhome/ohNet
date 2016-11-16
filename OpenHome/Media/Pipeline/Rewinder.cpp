@@ -83,6 +83,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 };
 
+
 class RewinderReservoir : public MsgReservoir
 {
 public:
@@ -93,6 +94,55 @@ public:
     TBool IsFull() const;
 private:
     const TUint iMaxEncodedAudio;
+    TUint iEncodedAudioCount;
+    MsgQueueLite iQueue;
+};
+
+class ProcessorRewinderReservoirBase : public IMsgProcessor, protected INonCopyable
+{
+protected:
+    ProcessorRewinderReservoirBase()                        {}
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override                 { return aMsg; }
+    Msg* ProcessMsg(MsgTrack* aMsg) override                { return aMsg; }
+    Msg* ProcessMsg(MsgDrain* aMsg) override                { return aMsg; }
+    Msg* ProcessMsg(MsgDelay* aMsg) override                { return aMsg; }
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override        { return aMsg; }
+    Msg* ProcessMsg(MsgStreamInterrupted* aMsg) override    { return aMsg; }
+    Msg* ProcessMsg(MsgMetaText* aMsg) override             { return aMsg; }
+    Msg* ProcessMsg(MsgHalt* aMsg) override                 { return aMsg; }
+    Msg* ProcessMsg(MsgFlush* aMsg) override                { return aMsg; }
+    Msg* ProcessMsg(MsgWait* aMsg) override                 { return aMsg; }
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override        { ASSERTS(); return aMsg; }
+    Msg* ProcessMsg(MsgBitRate* aMsg) override              { ASSERTS(); return aMsg; }
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override             { ASSERTS(); return aMsg; }
+    Msg* ProcessMsg(MsgSilence* aMsg) override              { ASSERTS(); return aMsg; }
+    Msg* ProcessMsg(MsgPlayable* aMsg) override             { ASSERTS(); return aMsg; }
+    Msg* ProcessMsg(MsgQuit* aMsg) override                 { return aMsg; }
+};
+
+class ProcessorRewinderReservoirIn : public ProcessorRewinderReservoirBase
+{
+public:
+    ProcessorRewinderReservoirIn(TUint& aEncodedAudioCount)
+        : iEncodedAudioCount(aEncodedAudioCount)
+    {}
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override         { ++iEncodedAudioCount; return aMsg; }
+private:
+    TUint& iEncodedAudioCount;
+};
+
+class ProcessorRewinderReservoirOut : public ProcessorRewinderReservoirBase
+{
+public:
+    ProcessorRewinderReservoirOut(TUint& aEncodedAudioCount)
+        : iEncodedAudioCount(aEncodedAudioCount)
+    {}
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override         { --iEncodedAudioCount; return aMsg; }
+private:
+    TUint& iEncodedAudioCount;
 };
 
 } // namespace Media
@@ -329,30 +379,33 @@ Msg* RewinderBufferProcessor::ProcessMsg(MsgQuit* /*aMsg*/)
 
 RewinderReservoir::RewinderReservoir(TUint aMaxEncodedAudio)
     : iMaxEncodedAudio(aMaxEncodedAudio)
+    , iEncodedAudioCount(0)
 {
 }
 
 void RewinderReservoir::Enqueue(Msg* aMsg)
 {
-    DoEnqueue(aMsg);
+    iQueue.Enqueue(aMsg);
+    ProcessorRewinderReservoirIn proc(iEncodedAudioCount);
+    (void)aMsg->Process(proc);
 }
 
 Msg* RewinderReservoir::Dequeue()
 {
-    return DoDequeue();
+    auto msg = iQueue.Dequeue();
+    ProcessorRewinderReservoirOut proc(iEncodedAudioCount);
+    (void)msg->Process(proc);
+    return msg;
 }
 
 TBool RewinderReservoir::IsEmpty() const
 {
-    return MsgReservoir::IsEmpty();
+    return iQueue.IsEmpty();
 }
 
 TBool RewinderReservoir::IsFull() const
 {
-    if (EncodedAudioCount() < iMaxEncodedAudio) {
-        return false;
-    }
-    return true;
+    return (iEncodedAudioCount == iMaxEncodedAudio);
 }
 
 
