@@ -161,7 +161,7 @@ VolumeLimiter::VolumeLimiter(IVolume& aVolume, TUint aMilliDbPerStep, IConfigMan
     , iVolume(aVolume)
     , iMilliDbPerStep(aMilliDbPerStep)
     , iConfigLimit(aConfigReader.GetNum(VolumeConfig::kKeyLimit))
-    , iUpstreamVolume(0)
+    , iCurrentVolume(0)
 {
     iSubscriberIdLimit = iConfigLimit.Subscribe(MakeFunctorConfigNum(*this, &VolumeLimiter::LimitChanged));
 }
@@ -175,11 +175,11 @@ void VolumeLimiter::SetVolume(TUint aValue)
 {
     LOG(kVolume, "VolumeLimiter::SetVolume aValue: %u\n", aValue);
     AutoMutex _(iLock);
-    if (aValue > iLimit && iUpstreamVolume >= iLimit) {
+    if (aValue > iLimit && iCurrentVolume >= iLimit) {
         THROW(VolumeOutOfRange);
     }
-    DoSetVolume(aValue);
-    iUpstreamVolume = aValue;
+    iCurrentVolume = aValue;
+    DoSetVolume();
 }
 
 void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
@@ -187,15 +187,15 @@ void VolumeLimiter::LimitChanged(ConfigNum::KvpNum& aKvp)
     AutoMutex _(iLock);
     iLimit = aKvp.Value() * iMilliDbPerStep;
     try {
-        DoSetVolume(iUpstreamVolume);
+        DoSetVolume();
     }
     catch (VolumeNotSupported&) {}
 }
 
-void VolumeLimiter::DoSetVolume(TUint aValue)
+void VolumeLimiter::DoSetVolume()
 {
-    const TUint volume = std::min(aValue, iLimit);
-    iVolume.SetVolume(volume);
+    iCurrentVolume = std::min(iCurrentVolume, iLimit);
+    iVolume.SetVolume(iCurrentVolume);
 }
 
 
@@ -308,7 +308,7 @@ void VolumeUnityGainBase::SetVolume(TUint aValue)
     iUpstreamVolume = aValue;
 }
 
-void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
+void VolumeUnityGainBase::SetVolumeControlEnabled(TBool aEnabled)
 {
     AutoMutex _(iLock);
     iVolumeControlEnabled = aEnabled;
@@ -323,11 +323,12 @@ void VolumeUnityGainBase::SetEnabled(TBool aEnabled)
     catch (VolumeNotSupported&) {}
 }
 
-TBool VolumeUnityGainBase::GetEnabled()
+TBool VolumeUnityGainBase::VolumeControlEnabled() const
 {
     AutoMutex _(iLock);
     return iVolumeControlEnabled;
 }
+
 
 // VolumeUnityGain
 
@@ -347,7 +348,7 @@ VolumeUnityGain::~VolumeUnityGain()
 void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
 {
     const TBool enabled = (aKvp.Value() == eStringIdYes);
-    SetEnabled(enabled);
+    SetVolumeControlEnabled(enabled);
 }
 
 
@@ -356,22 +357,26 @@ void VolumeUnityGain::EnabledChanged(ConfigChoice::KvpChoice& aKvp)
 VolumeSourceUnityGain::VolumeSourceUnityGain(IVolume& aVolume, TUint aUnityGainValue)
     : VolumeUnityGainBase(aVolume, aUnityGainValue)
 {
-    SetEnabled(true);
+    SetVolumeControlEnabled(true);
 }
 
 void VolumeSourceUnityGain::SetUnityGain(TBool aEnable)
 {
-    SetEnabled(!aEnable);
-    for(auto observer: iObservers){
-        observer.get().UnityGainChanged(GetEnabled());
+    SetVolumeControlEnabled(!aEnable);
+    const TBool unityGain = !VolumeControlEnabled();
+    for (auto observer: iObservers){
+        observer.get().UnityGainChanged(unityGain);
     }
 }
 
 void VolumeSourceUnityGain::AddUnityGainObserver(IUnityGainObserver& aObserver)
 {
-    aObserver.UnityGainChanged(GetEnabled());
+    const TBool unityGain = !VolumeControlEnabled();
+    aObserver.UnityGainChanged(unityGain);
     iObservers.push_back(aObserver);
 }
+
+
 // AnalogBypassRamper
 
 AnalogBypassRamper::AnalogBypassRamper(IVolume& aVolume)

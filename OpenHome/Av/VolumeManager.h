@@ -175,14 +175,14 @@ public: // from IVolume
     void SetVolume(TUint aValue) override;
 private:
     void LimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
-    void DoSetVolume(TUint aValue);
+    void DoSetVolume();
 private:
     Mutex iLock;
     IVolume& iVolume;
     const TUint iMilliDbPerStep;
     Configuration::ConfigNum& iConfigLimit;
     TUint iSubscriberIdLimit;
-    TUint iUpstreamVolume;
+    TUint iCurrentVolume;
     TUint iLimit;
 };
 
@@ -265,10 +265,10 @@ public:
 public:  // from IVolume
     void SetVolume(TUint aValue) override;
 protected:
-    void SetEnabled(TBool aEnabled);
-    TBool GetEnabled();
+    void SetVolumeControlEnabled(TBool aEnabled);
+    TBool VolumeControlEnabled() const;
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     IVolume& iVolume;
     const TUint iUnityGain;
     TUint iUpstreamVolume;
