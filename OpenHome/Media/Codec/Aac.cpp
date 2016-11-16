@@ -239,6 +239,10 @@ void CodecAac::StreamInitialise()
     //iChannels = iMp4->Channels();     // not valid !!!
     iSamplesTotal = info.Duration();
 
+    if(iChannels == 0) {
+        THROW(CodecStreamCorrupt);  // invalid for an audio file type
+    }
+
     iBytesPerSample = iChannels*iBitDepth/8;
     InitialiseDecoder();
 

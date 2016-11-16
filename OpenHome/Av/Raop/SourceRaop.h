@@ -57,6 +57,8 @@ private:
     void ActivateIfInactive();
     void DeactivateIfActive();
     void HandleInterfaceChange();
+    void SessionStartAsynchronous();
+    void SessionStartThread();
 private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
@@ -81,6 +83,9 @@ private:
     TUint iAudioId;
     TUint iControlId;
     TUint iTimingId;
+    ThreadFunctor* iThreadSessionStart;
+    Semaphore iSemSessionStart;
+    std::atomic<TBool> iQuit;
 };
 
 } // namespace Av

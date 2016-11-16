@@ -132,6 +132,9 @@ void Json::Unescape(Bwx& aValue)
 
 // JsonParser
 
+const Brn JsonParser::kBoolValTrue("true");
+const Brn JsonParser::kBoolValFalse("false");
+
 JsonParser::JsonParser()
 {
 }
@@ -146,6 +149,16 @@ inline void JsonParser::Add(const Brn& aKey, const TByte* aValStart, TUint aValB
     Brn val(aValStart, aValBytes);
 //    Log::Print("Add %.*s, %.*s\n", PBUF(aKey), PBUF(val));
     iPairs.insert(std::pair<Brn, Brn>(aKey, val));
+}
+
+void JsonParser::Parse(const Brx& aJson)
+{
+    Parse(aJson, false);
+}
+
+void JsonParser::ParseAndUnescape(Bwx& aJson)
+{
+    Parse(aJson, true);
 }
 
 void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
@@ -240,6 +253,13 @@ void JsonParser::Parse(const Brx& aJson, TBool aUnescapeInPlace)
                 Add(key, valStart, ptr - valStart - 1);
                 state = KeyStart;
             }
+            else if (ch == '}') {
+                if (nestCount != 0) {
+                    THROW(JsonUnsupported);
+                }
+                Add(key, valStart, ptr - valStart - 1);
+                state = Complete;
+            }
             break;
         case StringEnd:
             if (ch == '\"') {
@@ -333,6 +353,24 @@ TInt JsonParser::Num(const Brx& aKey) const
     catch (AsciiError&) {
         THROW(JsonCorrupt);
     }
+}
+
+TBool JsonParser::Bool(const TChar* aKey) const
+{
+    Brn key(aKey);
+    return Bool(key);
+}
+
+TBool JsonParser::Bool(const Brx& aKey) const
+{
+    Brn buf = Value(aKey);
+    if (buf == kBoolValTrue) {
+        return true;
+    }
+    else if (buf == kBoolValFalse) {
+        return false;
+    }
+    THROW(JsonCorrupt);
 }
 
 Brn JsonParser::Value(const Brx& aKey) const
