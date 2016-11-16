@@ -220,14 +220,27 @@ DviService* DviDevice::ServiceReference(const ServiceType& aServiceType)
 {
     DviService* service = NULL;
     iServiceLock.Wait();
-    const Brx& fullNameUpnp = aServiceType.FullNameUpnp();
+
+    // ServiceType::Domain() should be dot-separated, but some control point
+    // proxies are generated with UPnP-style domains. For ease, convert both
+    // domains into UPnP-style domains here for comparison purposes.
+    Bwh upnpDomain(aServiceType.Domain().Bytes() + 10);
+    Ssdp::CanonicalDomainToUpnp(aServiceType.Domain(), upnpDomain);
+    const Brx& name = aServiceType.Name();
+    const TUint version = aServiceType.Version();
     const TUint count = (TUint)iServices.size();
     for (TUint i=0; i<count; i++) {
         DviService* s = iServices[i];
-        if (s->ServiceType().FullNameUpnp() == fullNameUpnp) {
-            s->AddRef();
-            service = s;
-            break;
+        ServiceType type = s->ServiceType();
+        Bwh serviceUpnpDomain(type.Domain().Bytes() + 10);
+        Ssdp::CanonicalDomainToUpnp(type.Domain(), serviceUpnpDomain);
+
+        if (serviceUpnpDomain == upnpDomain && type.Name() == name) {
+            if (type.Version() >= version) {
+                s->AddRef();
+                service = s;
+                break;
+            }
         }
     }
     iServiceLock.Signal();
@@ -238,13 +251,34 @@ DviService* DviDevice::ServiceReference(const Brx& aServiceName)
 {
     DviService* service = NULL;
     iServiceLock.Wait();
+
+    Parser p(aServiceName);
+    const Brn domain = p.Next('-');
+    Bwh upnpDomain(domain.Bytes() + 10);
+    Ssdp::CanonicalDomainToUpnp(domain, upnpDomain);
+    const Brn name = p.Next('-');
+    const Brn versionBuf = p.Next();
+    TUint version = 0;
+    try {
+        version = Ascii::Uint(versionBuf);
+    }
+    catch (AsciiError&) {
+        return service;
+    }
+
     const TUint count = (TUint)iServices.size();
     for (TUint i=0; i<count; i++) {
         DviService* s = iServices[i];
-        if (s->ServiceType().PathUpnp() == aServiceName) {
-            s->AddRef();
-            service = s;
-            break;
+        ServiceType type = s->ServiceType();
+        Bwh serviceUpnpDomain(type.Domain().Bytes() + 10);
+        Ssdp::CanonicalDomainToUpnp(type.Domain(), serviceUpnpDomain);
+
+        if (serviceUpnpDomain == upnpDomain && type.Name() == name) {
+            if (type.Version() >= version) {
+                s->AddRef();
+                service = s;
+                break;
+            }
         }
     }
     iServiceLock.Signal();
