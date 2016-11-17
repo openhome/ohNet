@@ -189,7 +189,7 @@ OhmSenderDriver::OhmSenderDriver(Environment& aEnv, Optional<IOhmTimestamper> aT
     , iLatencyMs(0)
     , iLatencyOhm(0)
     , iSocket(aEnv)
-    , iFactory(100, 10, 10, 10) // FIXME - rationale for msg counts??
+    , iFactory(110, 10, 10) // FIXME - rationale for msg counts??
     , iTimestamper(aTimestamper.Ptr())
     , iFirstFrame(true)
 {

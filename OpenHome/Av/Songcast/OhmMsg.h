@@ -13,7 +13,6 @@ namespace OpenHome {
 namespace Av {
 
 class OhmMsgAudio;
-class OhmMsgAudioBlob;
 class OhmMsgTrack;
 class OhmMsgMetatext;
 class OhmMsgFactory;
@@ -23,7 +22,6 @@ class IOhmMsgProcessor
 public:
     virtual ~IOhmMsgProcessor() {}
     virtual void Process(OhmMsgAudio& aMsg) = 0;
-    virtual void Process(OhmMsgAudioBlob& aMsg) = 0;
     virtual void Process(OhmMsgTrack& aMsg) = 0;
     virtual void Process(OhmMsgMetatext& aMsg) = 0;
 };
@@ -64,7 +62,6 @@ private:
 class OhmMsgAudio : public OhmMsgTimestamped
 {
     friend class OhmMsgFactory;
-    friend class OhmMsgAudioBlob;
 public:
     static const TUint kMaxSampleBytes    = 5760; // 5ms of 192/24 stereo
     static const TUint kMaxCodecBytes     = 30-1;
@@ -143,30 +140,6 @@ private:
     TBool iHeaderSerialised;
 };
 
-class OhmMsgAudioBlob : public OhmMsgTimestamped
-{
-    friend class OhmMsgFactory;
-public:
-    static const TUint kMaxBytes = (6 * 1024) - 16; // externalised object to fit into 6k pipeline msg
-public:
-    TByte Flags() const { return iFlags; }
-    TUint Frame() const { return iFrame; }
-    TUint64 SampleStart() const { return iSampleStart; }
-    void ExternaliseAsBlob(IWriter& aWriter);
-public: // from OhmMsg
-    void Process(IOhmMsgProcessor& aProcessor) override;
-    void Externalise(IWriter& aWriter) override;
-private:
-    OhmMsgAudioBlob(OhmMsgFactory& aFactory);
-    void Create(IReader& aReader, const OhmHeader& aHeader);
-    static void Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader);
-private:
-    TByte iFlags;
-    TUint iFrame;
-    TUint64 iSampleStart;
-    Bws<kMaxBytes> iBlob;
-};
-
 class OhmMsgTrack : public OhmMsg
 {
     friend class OhmMsgFactory;
@@ -218,8 +191,6 @@ public:
     virtual ~IOhmMsgFactory() {}
     virtual OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader) = 0;
-    virtual OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader) = 0;
-    virtual OhmMsgAudio* CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent,
@@ -235,13 +206,11 @@ class OhmMsgFactory : public IOhmMsgFactory, public IOhmMsgProcessor
     friend class OhmMsg;
 
 public:
-    OhmMsgFactory(TUint aAudioCount, TUint aAudioBlobCount, TUint aTrackCount, TUint aMetatextCount);
+    OhmMsgFactory(TUint aAudioCount, TUint aTrackCount, TUint aMetatextCount);
     ~OhmMsgFactory();
 public: // from IOhmMsgFactory
     OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader) override;
-    OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader) override;
-    OhmMsgAudio* CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) override;
     OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples,
@@ -254,13 +223,11 @@ private:
     void Destroy(OhmMsg& aMsg);
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
-    void Process(OhmMsgAudioBlob& aMsg) override;
     void Process(OhmMsgTrack& aMsg) override;
     void Process(OhmMsgMetatext& aMsg) override;
 private:
     Mutex iLock;
     FifoLiteDynamic<OhmMsgAudio*> iFifoAudio;
-    FifoLiteDynamic<OhmMsgAudioBlob*> iFifoAudioBlob;
     FifoLiteDynamic<OhmMsgTrack*> iFifoTrack;
     FifoLiteDynamic<OhmMsgMetatext*> iFifoMetatext;
 };

@@ -542,11 +542,6 @@ void ProtocolOhBase::Process(OhmMsgAudio& aMsg)
     }
 }
 
-void ProtocolOhBase::Process(OhmMsgAudioBlob& /*aMsg*/)
-{
-    ASSERTS();
-}
-
 void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 {
     if (!iSeqTrackValid || iSeqTrack != aMsg.Sequence()) {

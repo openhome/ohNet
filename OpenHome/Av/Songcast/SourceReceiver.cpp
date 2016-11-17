@@ -210,7 +210,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer,
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
     iUriProvider = new UriProviderSongcast(aMediaPlayer, aClockPuller);
     iPipeline.Add(iUriProvider);
-    iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
+    iOhmMsgFactory = new OhmMsgFactory(210, 10, 10);
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     auto protocolOhm = new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aRxTimestamper, iUriProvider->Mode(), aOhmMsgObserver);
     iPipeline.Add(protocolOhm);

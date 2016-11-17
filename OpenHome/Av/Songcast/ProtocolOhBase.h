@@ -64,7 +64,6 @@ private:
     void OutputAudio(OhmMsgAudio& aMsg);
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg) override;
-    void Process(OhmMsgAudioBlob& aMsg) override;
     void Process(OhmMsgTrack& aMsg) override;
     void Process(OhmMsgMetatext& aMsg) override;
 protected:

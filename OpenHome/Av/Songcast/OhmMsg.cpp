@@ -411,66 +411,6 @@ Brn OhmMsgAudio::SendableBuffer()
     return iUnifiedBuffer.Split(iStreamHeaderOffset);
 }
 
-// OhmMsgAudioBlob
-
-void OhmMsgAudioBlob::ExternaliseAsBlob(IWriter& aWriter)
-{
-    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes());  // deliberately omit RxTimestamp().
-    header.Externalise(aWriter);                                    // This allows us to (hackily) reuse OhmMsgAudio's internalise later
-
-    aWriter.Write(iBlob);
-
-    WriterBinary wb(aWriter);
-    const TUint8 rxTimeStamped = RxTimestamped()? 1 : 0;
-    wb.WriteUint8(rxTimeStamped);
-    if (rxTimeStamped) {
-        wb.WriteUint32Be(RxTimestamp());
-    }
-}
-
-void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
-{
-    aProcessor.Process(*this);
-}
-
-void OhmMsgAudioBlob::Externalise(IWriter& aWriter)
-{
-    OhmHeader header(OhmHeader::kMsgTypeAudio, iBlob.Bytes());
-
-    header.Externalise(aWriter);
-    aWriter.Write(iBlob);
-}
-
-OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)
-    : OhmMsgTimestamped(aFactory)
-    , iFlags(0)
-    , iFrame(0)
-{
-}
-
-void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
-{
-    OhmMsgTimestamped::Create();
-    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
-
-    ReaderBinary reader(aReader);
-    reader.ReadReplace(aHeader.MsgBytes(), iBlob);
-    iFlags = iBlob[1];
-    iFrame = Converter::BeUint32At(iBlob, 4);
-    iSampleStart = Converter::BeUint64At(iBlob, 20);
-}
-
-void OhmMsgAudioBlob::Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader)
-{ // static
-    ASSERT(aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
-    aMsg.Create(aReader, aHeader);
-    ReaderBinary reader(aReader);
-    const TBool timestamped = (aReader.Read(1)[0] != 0);
-    if (timestamped) {
-        aMsg.SetRxTimestamp(reader.ReadUintBe(4));
-    }
-}
-
 
 // OhmMsgTrack
 
@@ -600,18 +540,14 @@ void OhmMsgMetatext::Externalise(IWriter& aWriter)
 
 // OhmMsgFactory
 
-OhmMsgFactory::OhmMsgFactory(TUint aAudioCount, TUint aAudioBlobCount, TUint aTrackCount, TUint aMetatextCount)
+OhmMsgFactory::OhmMsgFactory(TUint aAudioCount, TUint aTrackCount, TUint aMetatextCount)
     : iLock("OHMF")
     , iFifoAudio(aAudioCount)
-    , iFifoAudioBlob(aAudioBlobCount)
     , iFifoTrack(aTrackCount)
     , iFifoMetatext(aMetatextCount)
 {
     for (TUint i = 0; i < aAudioCount; i++) {
         iFifoAudio.Write(new OhmMsgAudio(*this));
-    }
-    for (TUint i = 0; i < aAudioBlobCount; i++) {
-        iFifoAudioBlob.Write(new OhmMsgAudioBlob(*this));
     }
     for (TUint i = 0; i < aTrackCount; i++) {
         iFifoTrack.Write(new OhmMsgTrack(*this));
@@ -626,10 +562,6 @@ OhmMsgFactory::~OhmMsgFactory()
     TUint slots = iFifoAudio.Slots();
     for (TUint i = 0; i < slots; i++) {
         delete iFifoAudio.Read();
-    }
-    slots = iFifoAudioBlob.Slots();
-    for (TUint i = 0; i < slots; i++) {
-        delete iFifoAudioBlob.Read();
     }
     slots = iFifoTrack.Slots();
     for (TUint i = 0; i < slots; i++) {
@@ -664,24 +596,6 @@ OhmMsgAudio* OhmMsgFactory::CreateAudio(IReader& aReader, const OhmHeader& aHead
     OhmMsgAudio* msg = iFifoAudio.Read();
     iLock.Signal();
     msg->Create(aReader, aHeader);
-    return msg;
-}
-
-OhmMsgAudioBlob* OhmMsgFactory::CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader)
-{
-    iLock.Wait();
-    OhmMsgAudioBlob* msg = iFifoAudioBlob.Read();
-    iLock.Signal();
-    msg->Create(aReader, aHeader);
-    return msg;
-}
-
-OhmMsgAudio* OhmMsgFactory::CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader)
-{
-    iLock.Wait();
-    OhmMsgAudio* msg = iFifoAudio.Read();
-    iLock.Signal();
-    OhmMsgAudioBlob::Create(*msg, aReader, aHeader);
     return msg;
 }
 
@@ -751,13 +665,6 @@ void OhmMsgFactory::Process(OhmMsgAudio& aMsg)
 {
     iLock.Wait();
     iFifoAudio.Write(&aMsg);
-    iLock.Signal();
-}
-
-void OhmMsgFactory::Process(OhmMsgAudioBlob& aMsg)
-{
-    iLock.Wait();
-    iFifoAudioBlob.Write(&aMsg);
     iLock.Signal();
 }
 
