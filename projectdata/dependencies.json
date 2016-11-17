@@ -72,10 +72,10 @@
     },
     {
         "name":             "hardware",
-        "version":          "0.0.113",
+        "version":          "0.0.367",
         "cross-check": false,
         "type":             "internal",
-        "archive-filename": "${name}-Lib-${version}.tar.gz",
+        "archive-filename": "${name}-Volkano2-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name":             "transmute",
