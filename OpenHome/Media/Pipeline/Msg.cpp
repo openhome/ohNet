@@ -1229,6 +1229,11 @@ TBool MsgEncodedStream::Live() const
     return iLive;
 }
 
+Multiroom MsgEncodedStream::Multiroom() const
+{
+    return iMultiroom;
+}
+
 IStreamHandler* MsgEncodedStream::StreamHandler() const
 {
     return iStreamHandler;
@@ -1245,7 +1250,7 @@ const PcmStreamInfo& MsgEncodedStream::PcmStream() const
     return iPcmStreamInfo;
 }
 
-void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, Media::Multiroom aMultiroom, IStreamHandler* aStreamHandler)
 {
     iUri.Replace(aUri);
     iMetaText.Replace(aMetaText);
@@ -1254,12 +1259,13 @@ void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64
     iStreamId = aStreamId;
     iSeekable = aSeekable;
     iLive = aLive;
+    iMultiroom = aMultiroom;
     iStreamHandler = aStreamHandler;
     iRawPcm = false;
     iPcmStreamInfo.Clear();
 }
 
-void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream)
+void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, Media::Multiroom aMultiroom, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream)
 {
     iUri.Replace(aUri);
     iMetaText.Replace(aMetaText);
@@ -1268,6 +1274,7 @@ void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64
     iStreamId = aStreamId;
     iSeekable = aSeekable;
     iLive = aLive;
+    iMultiroom = aMultiroom;
     iStreamHandler = aStreamHandler;
     iRawPcm = true;
     iPcmStreamInfo = aPcmStream;
@@ -1558,7 +1565,11 @@ DecodedStreamInfo::DecodedStreamInfo()
 {
 }
 
-void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler)
+void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate,
+                            TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength,
+                            TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive,
+                            TBool aAnalogBypass, Media::Multiroom aMultiroom,
+                            const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler)
 {
     iStreamId = aStreamId;
     iBitRate = aBitRate;
@@ -1572,6 +1583,7 @@ void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TU
     iSeekable = aSeekable;
     iLive = aLive;
     iAnalogBypass = aAnalogBypass;
+    iMultiroom = aMultiroom;
     iProfile = aProfile;
     iStreamHandler = aStreamHandler;
 }
@@ -1589,15 +1601,19 @@ const DecodedStreamInfo& MsgDecodedStream::StreamInfo() const
     return iStreamInfo;
 }
 
-void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler)
+void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate,
+                                  TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength,
+                                  TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive,
+                                  TBool aAnalogBypass, Media::Multiroom aMultiroom,
+                                  const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler)
 {
-    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aProfile, aStreamHandler);
+    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aMultiroom, aProfile, aStreamHandler);
 }
 
 void MsgDecodedStream::Clear()
 {
 #ifdef DEFINE_DEBUG
-    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, false, SpeakerProfile(), nullptr);
+    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false, false, Multiroom::Allowed, SpeakerProfile(), nullptr);
 #endif
 }
 
@@ -3098,17 +3114,17 @@ MsgDelay* MsgFactory::CreateMsgDelay(TUint aDelayJiffies, TUint aAnimatorDelayJi
     return msg;
 }
 
-MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, Media::Multiroom aMultiroom, IStreamHandler* aStreamHandler)
 {
     MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
-    msg->Initialise(aUri, aMetaText, aTotalBytes, aStartPos, aStreamId, aSeekable, aLive, aStreamHandler);
+    msg->Initialise(aUri, aMetaText, aTotalBytes, aStartPos, aStreamId, aSeekable, aLive, aMultiroom, aStreamHandler);
     return msg;
 }
 
-MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream)
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aStartPos, TUint aStreamId, TBool aSeekable, TBool aLive, Media::Multiroom aMultiroom, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream)
 {
     MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
-    msg->Initialise(aUri, aMetaText, aTotalBytes, aStartPos, aStreamId, aSeekable, aLive, aStreamHandler, aPcmStream);
+    msg->Initialise(aUri, aMetaText, aTotalBytes, aStartPos, aStreamId, aSeekable, aLive, aMultiroom, aStreamHandler, aPcmStream);
     return msg;
 }
 
@@ -3116,10 +3132,10 @@ MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(MsgEncodedStream* aMsg, ISt
 {
     MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
     if (aMsg->RawPcm()) {
-        msg->Initialise(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StartPos(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), aStreamHandler, aMsg->PcmStream());
+        msg->Initialise(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StartPos(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), aMsg->Multiroom(), aStreamHandler, aMsg->PcmStream());
     }
     else {
-        msg->Initialise(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StartPos(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), aStreamHandler);
+        msg->Initialise(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StartPos(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), aMsg->Multiroom(), aStreamHandler);
     }
     return msg;
 }
@@ -3170,10 +3186,10 @@ MsgWait* MsgFactory::CreateMsgWait()
     return iAllocatorMsgWait.Allocate();
 }
 
-MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler)
+MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, TBool aAnalogBypass, Media::Multiroom aMultiroom, const SpeakerProfile& aProfile, IStreamHandler* aStreamHandler)
 {
     MsgDecodedStream* msg = iAllocatorMsgDecodedStream.Allocate();
-    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aProfile, aStreamHandler);
+    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive, aAnalogBypass, aMultiroom, aProfile, aStreamHandler);
     return msg;
 }
 
@@ -3183,7 +3199,8 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(MsgDecodedStream* aMsg, ISt
     auto msg = CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
         stream.SampleRate(), stream.NumChannels(), stream.CodecName(),
         stream.TrackLength(), stream.SampleStart(), stream.Lossless(),
-        stream.Seekable(), stream.Live(), stream.AnalogBypass(), stream.Profile(), aStreamHandler);
+        stream.Seekable(), stream.Live(), stream.AnalogBypass(),
+        stream.Multiroom(), stream.Profile(), aStreamHandler);
     return msg;
 }
 

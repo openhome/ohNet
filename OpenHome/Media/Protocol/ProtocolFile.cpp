@@ -138,7 +138,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     
     ProtocolStreamResult res = EProtocolStreamErrorRecoverable;
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), fileSize, iSeekPos, true, false, *this, iStreamId);
+    iSupply->OutputStream(iUri.AbsoluteUri(), fileSize, iSeekPos, true, false, Multiroom::Allowed, *this, iStreamId);
     contentProcessor = iProtocolManager->GetAudioProcessor();
     TUint remaining = fileSize;
     while (res == EProtocolStreamErrorRecoverable) {

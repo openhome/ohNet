@@ -31,6 +31,7 @@ Msg* Splitter::Pull()
         // pass on the MsgMode that signals the branch being disabled
         // ...OhmSender needs to be halted to reduce demand on multicast sockets on old hardware targets
         // ...and we can't disable the sender outide the pipeline without risking audio glitches
+        // Also pass on MsgDecodedStream that signals a non-sharable stream
         Msg* copy = MsgCloner::NewRef(*msg);
         iBranch.Push(copy);
     }
@@ -97,6 +98,7 @@ Msg* Splitter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Splitter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    iBranchEnabled = (aMsg->StreamInfo().Multiroom() == Multiroom::Allowed);
     return aMsg;
 }
 

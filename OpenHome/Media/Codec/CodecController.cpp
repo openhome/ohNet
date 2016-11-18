@@ -77,13 +77,13 @@ TBool EncodedStreamInfo::Lossless() const
 
 EncodedStreamInfo::EncodedStreamInfo()
     : iRawPcm(false)
+    , iAnalogBypass(false)
+    , iLossless(false)
     , iBitDepth(UINT_MAX)
     , iSampleRate(UINT_MAX)
     , iNumChannels(UINT_MAX)
     , iEndian(AudioDataEndian::Invalid)
     , iStartSample(0)
-    , iAnalogBypass(false)
-    , iLossless(false)
 {
 }
 
@@ -638,7 +638,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     MsgDecodedStream* msg =
         iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels,
                                            aCodecName, aTrackLength, aSampleStart,
-                                           aLossless, iSeekable, iLive, aAnalogBypass, aProfile, this);
+                                           aLossless, iSeekable, iLive, aAnalogBypass, iMultiroom, aProfile, this);
     iLock.Wait();
     iChannels = aNumChannels;
     iSampleRate = aSampleRate;
@@ -825,6 +825,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler.store(aMsg->StreamHandler());
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     iRawPcm = aMsg->RawPcm();
+    iMultiroom = aMsg->Multiroom();
     if (iRawPcm) {
         iPcmStream = aMsg->PcmStream();
     }

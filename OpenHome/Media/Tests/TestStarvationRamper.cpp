@@ -435,7 +435,7 @@ Msg* SuiteStarvationRamper::CreateTrack()
 
 Msg* SuiteStarvationRamper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, iBitDepth, iSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, kProfile, this);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, iBitDepth, iSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, Multiroom::Allowed, kProfile, this);
 }
 
 Msg* SuiteStarvationRamper::CreateAudio()

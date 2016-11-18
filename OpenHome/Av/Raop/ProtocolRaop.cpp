@@ -510,7 +510,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                     track->RemoveRef();
                 }
                 // Always output a new stream ID on start or resume pending (to avoid CodecStreamCorrupt exceptions).
-                iSupply->OutputStream(uri.AbsoluteUri(), 0, 0, false, false, *this, streamId);
+                iSupply->OutputStream(uri.AbsoluteUri(), 0, 0, false, false, Multiroom::Allowed, *this, streamId);
                 OutputContainer(iDiscovery.Fmtp());
 
                 start = false;

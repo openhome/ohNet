@@ -117,11 +117,13 @@ public:
      * @param[in] aLength        Number of bytes in the encoded stream.  Reported to UI code; not used by the pipeline.
      * @param[in] aSampleStart   The first sample number in the next audio data to be output.  0 at the start of a stream.
      * @param[in] aLossless      Whether the stream is in a lossless format.  Reported to UI code; not used by the pipeline.
-     * @param[i]  aProfile       Speaker profile (channel allocation) of the decoded stream
+     * @param[in] aProfile       Speaker profile (channel allocation) of the decoded stream
      * @param[in] aAnalogBypass  Whether the stream being played is entirely in the analog domain.  (This stream will still
      *                           be used for casting to other devices and to help control volume ramping.)
      */
-    virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aLength, TUint64 aSampleStart, TBool aLossless, SpeakerProfile aProfile, TBool aAnalogBypass = false) = 0;
+    virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels,
+                                     const Brx& aCodecName, TUint64 aLength, TUint64 aSampleStart, TBool aLossless,
+                                     SpeakerProfile aProfile, TBool aAnalogBypass = false) = 0;
     /**
      * Notify the pipeline of a change in delay (latency).
      *
@@ -218,18 +220,18 @@ public:
 private:
     EncodedStreamInfo();
     void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, AudioDataEndian aEndian, SpeakerProfile aProfile,
-            TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName, TBool aLossless);
+             TUint64 aStartSample, TBool aAnalogBypass, const Brx& aCodecName, TBool aLossless);
 private:
     TBool iRawPcm;
+    TBool iAnalogBypass;
+    TBool iLossless;
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
     AudioDataEndian iEndian;
     SpeakerProfile iProfile;
     TUint64 iStartSample;
-    TBool iAnalogBypass;
     BwsCodecName iCodecName;
-    TBool iLossless;
 };
     
 /**
@@ -412,6 +414,7 @@ private:
     TBool iSeekable;
     TBool iLive;
     TBool iRawPcm;
+    Media::Multiroom iMultiroom;
     PcmStreamInfo iPcmStream;
     std::atomic<IStreamHandler*> iStreamHandler;
     TUint iStreamId;

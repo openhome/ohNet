@@ -580,7 +580,7 @@ Msg* SuiteCodecControllerBase::CreateTrack()
 
 Msg* SuiteCodecControllerBase::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, Multiroom::Allowed, this);
 }
 
 MsgFlush* SuiteCodecControllerBase::CreateFlush()

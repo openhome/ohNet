@@ -312,7 +312,7 @@ Msg* SuiteRamper::CreateTrack()
 
 Msg* SuiteRamper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, iSampleStart, true, true, iLive, false, kProfile, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, iSampleStart, true, true, iLive, false, Multiroom::Allowed, kProfile, nullptr);
 }
 
 Msg* SuiteRamper::CreateAudio()

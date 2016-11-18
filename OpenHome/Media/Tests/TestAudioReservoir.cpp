@@ -463,7 +463,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
     case EMsgDecodedStream:
         iTrackOffset = 0;
-        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 16, kSampleRate, kNumChannels, Brx::Empty(), 0, 0, false, false, false, false, kProfile, nullptr);
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 16, kSampleRate, kNumChannels, Brx::Empty(), 0, 0, false, false, false, false, Multiroom::Allowed, kProfile, nullptr);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(1);
@@ -485,7 +485,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, 0, false, false, Multiroom::Allowed, nullptr);
         break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -770,7 +770,7 @@ void SuiteEncodedReservoir::PullNext(EMsgType aType)
 
 void SuiteEncodedReservoir::PushEncodedStream()
 {
-    auto msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1234567LL, 0, kStreamId, true/*seekable*/, false/*live*/, this/*stream handler*/);
+    auto msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1234567LL, 0, kStreamId, true/*seekable*/, false/*live*/, Multiroom::Allowed, this/*stream handler*/);
     iReservoir->Push(msg);
 }
 
@@ -1096,7 +1096,7 @@ Msg* SuiteGorger::CreateTrack()
 
 Msg* SuiteGorger::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, kProfile, this);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, false, Multiroom::Allowed, kProfile, this);
 }
 
 Msg* SuiteGorger::CreateAudio()

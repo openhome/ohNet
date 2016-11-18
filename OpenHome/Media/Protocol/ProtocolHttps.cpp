@@ -256,7 +256,7 @@ ProtocolStreamResult ProtocolHttps::DoStream()
 
         iStreamId = iIdProvider->NextStreamId();
         const TUint64 totalBytes = iHeaderContentLength.ContentLength();
-        iSupply->OutputStream(iUri.AbsoluteUri(), totalBytes, 0, false/*seekable*/, false/*live*/, *this, iStreamId);
+        iSupply->OutputStream(iUri.AbsoluteUri(), totalBytes, 0, false/*seekable*/, false/*live*/, Multiroom::Allowed, *this, iStreamId);
         iDechunker.SetChunked(iHeaderTransferEncoding.IsChunked());
         cp = iProtocolManager->GetAudioProcessor();
         res = cp->Stream(*this, totalBytes);

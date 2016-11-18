@@ -220,7 +220,7 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
         iSupply->OutputDelay(kDelayJiffies);
         break;
     case EMsgEncodedStream:
-        iSupply->OutputStream(Brn(kUri), kTotalBytes, 0, kSeekable, kLive, iDummyStreamHandler, kStreamId);
+        iSupply->OutputStream(Brn(kUri), kTotalBytes, 0, kSeekable, kLive, Multiroom::Allowed, iDummyStreamHandler, kStreamId);
         break;
     case EMsgMetaText:
         iSupply->OutputMetadata(Brn(kMetaData));

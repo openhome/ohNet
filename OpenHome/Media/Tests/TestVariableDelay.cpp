@@ -242,7 +242,7 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgSilence(size, kSampleRate, 16, kNumChannels);
     }
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 8, 44100, 2, Brx::Empty(), 0, iNextStreamSampleStart, false, false, false, false, kProfile, this);
+        return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 8, 44100, 2, Brx::Empty(), 0, iNextStreamSampleStart, false, false, false, false, Multiroom::Allowed, kProfile, this);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, ModeClockPullers(iNextModeClockPuller), false, false);
     case EMsgTrack:
@@ -258,7 +258,7 @@ Msg* SuiteVariableDelay::Pull()
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgDelay(iNextDelayAbsoluteJiffies);
     case EMsgEncodedStream:
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, Multiroom::Allowed, nullptr);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgStreamInterrupted:

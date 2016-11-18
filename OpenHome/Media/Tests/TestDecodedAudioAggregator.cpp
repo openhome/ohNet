@@ -382,13 +382,13 @@ Msg* SuiteDecodedAudioAggregator::CreateTrack()
 
 Msg* SuiteDecodedAudioAggregator::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, Multiroom::Allowed, this);
 }
 
 MsgDecodedStream* SuiteDecodedAudioAggregator::CreateDecodedStream()
 {
     static const TUint kBitrate = 256;
-    return iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, kProfile, this);
+    return iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, Multiroom::Allowed, kProfile, this);
 }
 
 MsgFlush* SuiteDecodedAudioAggregator::CreateFlush()
@@ -539,7 +539,7 @@ void SuiteDecodedAudioAggregator::TestRawPcmNotAggregated()
     Queue(CreateTrack());
     PcmStreamInfo pcmStream;
     pcmStream.Set(32, 48000, 2, AudioDataEndian::Big, SpeakerProfile(), 0LL);
-    Queue(iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this, pcmStream));
+    Queue(iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, Multiroom::Allowed, this, pcmStream));
     Queue(CreateDecodedStream());
     Queue(CreateAudio(8, 48000, 32, 2)); // one sample for 32-bit stereo
     PullNext(EMsgMode);

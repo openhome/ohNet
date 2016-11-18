@@ -49,6 +49,8 @@ Sender::Sender(Environment& aEnv,
     , iSongcastMode(aSongcastMode)
     , iUnicastOverrideObserver(aUnicastOverrideObserver)
     , iEnabled(true)
+    , iStreamForbidden(false)
+    , iEnabledLock("SSND")
     , iFirstChannelIndex(0)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
@@ -209,6 +211,19 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iSampleRate = streamInfo.SampleRate();
+    {
+        AutoMutex _(iEnabledLock);
+        const TBool streamForbidden = (streamInfo.Multiroom() == Multiroom::Forbidden);
+        if (streamForbidden != iStreamForbidden) {
+            iStreamForbidden = streamForbidden;
+            const TBool enabled = iUserEnabled && !iStreamForbidden;
+            iOhmSender->SetEnabled(enabled);
+            if (iStreamForbidden) {
+                return aMsg;
+            }
+        }
+    }
+
     const TUint bitDepth = std::min(streamInfo.BitDepth(), (TUint)24); /* 32-bit audio is assumed to be padded
                                                                           and converted to 24-bit before transmission */
     const TUint numChannels = streamInfo.NumChannels();
@@ -299,8 +314,13 @@ void Sender::SendPendingAudio(TBool aHalt)
 
 void Sender::ConfigEnabledChanged(KeyValuePair<TUint>& aStringId)
 {
-    const TBool enabled = (aStringId.Value() == eStringIdYes);
-    iOhmSender->SetEnabled(enabled);
+    AutoMutex _(iEnabledLock);
+    const TBool configEnabled = (aStringId.Value() == eStringIdYes);
+    if (configEnabled != iUserEnabled) {
+        iUserEnabled = configEnabled;
+        const TBool enabled = iUserEnabled && !iStreamForbidden;
+        iOhmSender->SetEnabled(enabled);
+    }
 }
 
 void Sender::ConfigChannelChanged(KeyValuePair<TInt>& aKvp)
