@@ -345,10 +345,11 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
         iDisableComplete = aComplete;
         TUint i;
         iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
-        iSubnetDisableCount = (TUint)iAdapters.size();
-        completeNow = (iSubnetDisableCount == 0);
+        TUint subnetDisableCount = (TUint)iAdapters.size(); // workaround for bizarre issue on qnap arm - take local copy of adapters size and use it to update iSubnetDisableCount instead of using iSubnetDisableCount directly within the lock
+        iSubnetDisableCount = subnetDisableCount;
+        completeNow = (subnetDisableCount == 0);
         FunctorGeneric<TBool> functor = MakeFunctorGeneric<TBool>(*this, &DviProtocolUpnp::SubnetDisabled);
-        for (i=0; i<iSubnetDisableCount; i++) {
+        for (i=0; i<subnetDisableCount; i++) {
             LogMulticastNotification("byebye");
             Bws<kMaxUriBytes> uri;
             GetUriDeviceXml(uri, iAdapters[i]->UriBase());
@@ -367,10 +368,12 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
         if (name != NULL) {
             iDvStack.MdnsProvider()->MdnsSetHostName("");
         }*/
+        if (completeNow) {
+            iSubnetDisableCount = 0;
+        }
     }
     if (completeNow) {
-        iSubnetDisableCount = 0;
-        iDisableComplete();
+        aComplete();
     }
 }
 
@@ -456,9 +459,10 @@ void DviProtocolUpnp::SubnetDisabled(TBool /*aNotificationsCompleted*/)
     iLock.Wait();
     ASSERT(iSubnetDisableCount != 0);
     TBool signal = (--iSubnetDisableCount == 0);
+    Functor disableComplete = iDisableComplete;
     iLock.Signal();
     if (signal) {
-        iDisableComplete();
+        disableComplete();
     }
 }
 
