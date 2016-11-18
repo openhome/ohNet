@@ -631,7 +631,7 @@ void SuiteContainerBase::Setup()
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
     iUrlBlockWriter = new TestUrlBlockWriter();
-    iContainer = new ContainerController(*iMsgFactory, *iGenerator, *iUrlBlockWriter);
+    iContainer = new ContainerController(*iMsgFactory, *iGenerator, *iUrlBlockWriter, true);
     iStreamId = 0;
     iStreamHandler = nullptr;
     iMsgRcvdCount = 0;

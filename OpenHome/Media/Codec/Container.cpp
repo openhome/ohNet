@@ -427,12 +427,11 @@ Msg* ContainerDiscard::Pull()
 
 // ContainerController
 
-ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter)
+ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter, TBool aLogger)
     : iMsgFactory(aMsgFactory)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iRewinder(iMsgFactory, aUpstreamElement)
-    , iLoggerRewinder(iRewinder, "Codec Container Rewinder")
-    , iCache(iLoggerRewinder)
+    , iLoggerRewinder(nullptr)
     , iActiveContainer(nullptr)
     , iContainerNull(nullptr)
     , iContainerDiscard(nullptr)
@@ -446,23 +445,29 @@ ContainerController::ContainerController(MsgFactory& aMsgFactory, IPipelineEleme
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iLock("COCO")
 {
+    IPipelineElementUpstream* upstream = &iRewinder;
+    if (aLogger) {
+        iLoggerRewinder = new Logger(iRewinder, "Codec Container Rewinder");
+        upstream = iLoggerRewinder;
+        //iLoggerRewinder->SetEnabled(true);
+        //iLoggerRewinder->SetFilter(Logger::EMsgAll);
+    }
+    iCache = new MsgAudioEncodedCache(*upstream);
+
     iContainerNull = new ContainerNull();
-    iContainerNull->Construct(iCache, iMsgFactory, *this, *this, *this);
+    iContainerNull->Construct(*iCache, iMsgFactory, *this, *this, *this);
     iContainers.push_back(iContainerNull);
     iActiveContainer = iContainerNull;
 
     // Container discard should never be part of recognition sequence, as it
     // should only be used for corrupt streams.
     iContainerDiscard = new ContainerDiscard();
-    iContainerDiscard->Construct(iCache, iMsgFactory, *this, *this, *this);
-
-    //iLoggerRewinder.SetEnabled(true);
-    //iLoggerRewinder.SetFilter(Logger::EMsgAll);
+    iContainerDiscard->Construct(*iCache, iMsgFactory, *this, *this, *this);
 }
 
 void ContainerController::AddContainer(ContainerBase* aContainer)
 {
-    aContainer->Construct(iCache, iMsgFactory, *this, *this, *this);
+    aContainer->Construct(*iCache, iMsgFactory, *this, *this, *this);
 
      // Pop ContainerNull from end and re-attach after aContainer.
      ASSERT(iContainers.size() >= 1);
@@ -478,7 +483,9 @@ ContainerController::~ContainerController()
         delete container;
     }
     delete iContainerDiscard;
-    iCache.Reset();
+    iCache->Reset();
+    delete iCache;
+    delete iLoggerRewinder;
 }
 
 Msg* ContainerController::RecogniseContainer()
@@ -487,7 +494,7 @@ Msg* ContainerController::RecogniseContainer()
         // No recognition on streams that support latency.
         iActiveContainer = iContainerNull;
         iRewinder.Stop();
-        iCache.Reset();
+        iCache->Reset();
         iActiveContainer->Reset();
         return nullptr;
     }
@@ -503,7 +510,7 @@ Msg* ContainerController::RecogniseContainer()
                 auto& container = iContainers[iRecogIdx];
                 iStreamEnded = false;
                 iRewinder.Rewind();
-                iCache.Reset();
+                iCache->Reset();
                 container->Reset();
                 iState = eRecognitionContainer;
             }
@@ -521,7 +528,7 @@ Msg* ContainerController::RecogniseContainer()
                             iActiveContainer = container;
                             iRewinder.Rewind();
                             iRewinder.Stop();
-                            iCache.Reset();
+                            iCache->Reset();
                             iState = eRecognitionComplete;
                             return nullptr;
                         }
@@ -855,7 +862,7 @@ TBool ContainerController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
         return false;
     }
     iExpectedFlushId = flushId;
-    iCache.SetFlushing(iExpectedFlushId);
+    iCache->SetFlushing(iExpectedFlushId);
     return true;
 }
 
@@ -874,7 +881,7 @@ void ContainerController::ContainerTryStop()
     if (flushId != MsgFlush::kIdInvalid) {
         // Could try consume this flush ID, as no downstream elements should care about it.
         iExpectedFlushId = flushId;
-        iCache.SetFlushing(iExpectedFlushId);
+        iCache->SetFlushing(iExpectedFlushId);
     }
 }
 

@@ -588,12 +588,12 @@ void ProcessorPcmSwpEndianPacked::SwapEndianness24(const Brx& aData)
 
 Decoder::Decoder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, IUrlBlockWriter& aUrlBlockWriter)
 {
-    iContainer = new ContainerController(aMsgFactory, aUpstreamElement, aUrlBlockWriter);
+    iContainer = new ContainerController(aMsgFactory, aUpstreamElement, aUrlBlockWriter, true);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // Construct push logger slightly out of sequence.
     iLoggerCodecController = new Logger("Codec Controller", aDownstreamElement);
-    iCodecController = new Codec::CodecController(aMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, Jiffies::kPerMs * 5, kThreadPriorityMax);
+    iCodecController = new Codec::CodecController(aMsgFactory, *iLoggerContainer, *iLoggerCodecController, aUrlBlockWriter, Jiffies::kPerMs * 5, kThreadPriorityMax, true);
 
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);

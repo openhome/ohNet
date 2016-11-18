@@ -180,7 +180,7 @@ public: // from ContainerBase
 class ContainerController : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, public IContainerSeekHandler, public IContainerUrlBlockWriter, public IContainerStopper, private INonCopyable
 {
 public:
-    ContainerController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter);
+    ContainerController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IUrlBlockWriter& aUrlBlockWriter, TBool aLogger);
     ~ContainerController();
     void AddContainer(ContainerBase* aContainer);
 private:
@@ -229,8 +229,8 @@ private:
     MsgFactory& iMsgFactory;
     IUrlBlockWriter& iUrlBlockWriter;
     Rewinder iRewinder;
-    Logger iLoggerRewinder;
-    MsgAudioEncodedCache iCache;
+    Logger* iLoggerRewinder;
+    MsgAudioEncodedCache* iCache;
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
     ContainerNull* iContainerNull;

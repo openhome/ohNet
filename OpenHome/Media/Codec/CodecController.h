@@ -325,7 +325,7 @@ class CodecController : public ISeeker, private ICodecController, private IMsgPr
 {
 public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
-                    IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority);
+                    IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority, TBool aLogger);
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
@@ -385,6 +385,7 @@ private:
     MsgFactory& iMsgFactory;
     Rewinder iRewinder;
     Logger* iLoggerRewinder;
+    IPipelineElementUpstream* iUpstream;
     IPipelineElementDownstream& iDownstreamElement;
     IUrlBlockWriter& iUrlBlockWriter;
     Mutex iLock;

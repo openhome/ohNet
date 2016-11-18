@@ -143,9 +143,11 @@ SpeakerProfile CodecBase::DeriveProfile(TUint aChannels)
 // CodecController
 
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
-                                 IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority)
+                                 IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority, TBool aLogger)
     : iMsgFactory(aMsgFactory)
     , iRewinder(aMsgFactory, aUpstreamElement)
+    , iLoggerRewinder(nullptr)
+    , iUpstream(&iRewinder)
     , iDownstreamElement(aDownstreamElement)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iLock("CDCC")
@@ -172,9 +174,12 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iMaxOutputJiffies(aMaxOutputJiffies)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
-    iLoggerRewinder = new Logger(iRewinder, "Rewinder");
-    //iLoggerRewinder->SetEnabled(true);
-    //iLoggerRewinder->SetFilter(Logger::EMsgAll);
+    if (aLogger) {
+        iLoggerRewinder = new Logger(iRewinder, "Rewinder");
+        iUpstream = iLoggerRewinder;
+        //iLoggerRewinder->SetEnabled(true);
+        //iLoggerRewinder->SetFilter(Logger::EMsgAll);
+    }
 }
 
 CodecController::~CodecController()
@@ -450,7 +455,7 @@ Msg* CodecController::PullMsg()
             THROW(CodecStreamFlush);
         }
     }
-    Msg* msg = iLoggerRewinder->Pull();
+    Msg* msg = iUpstream->Pull();
     if (msg == nullptr) {
         ASSERT(iRecognising);
         THROW(CodecRecognitionOutOfData);

@@ -279,7 +279,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
         iPipelineStart = iEncodedAudioReservoir;
     }
 
-    ATTACH_ELEMENT(iContainer, new Codec::ContainerController(*iMsgFactory, *upstream, aUrlBlockWriter),
+    const TBool createLoggers = (elementsSupported & EPipelineSupportElementsLogger);
+    ATTACH_ELEMENT(iContainer, new Codec::ContainerController(*iMsgFactory, *upstream, aUrlBlockWriter, createLoggers),
                    upstream, elementsSupported, EPipelineSupportElementsMandatory);
     ATTACH_ELEMENT(iLoggerContainer, new Logger(*iContainer, "Codec Container"),
                    upstream, elementsSupported, EPipelineSupportElementsLogger);
@@ -308,7 +309,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     ATTACH_ELEMENT(iLoggerCodecController, new Logger("Codec Controller", *downstream),
                    downstream, elementsSupported, EPipelineSupportElementsLogger);
     iCodecController = new Codec::CodecController(*iMsgFactory, *upstream, *downstream, aUrlBlockWriter,
-                                                  kSongcastFrameJiffies, aInitParams->ThreadPriorityCodec());
+                                                  kSongcastFrameJiffies, aInitParams->ThreadPriorityCodec(),
+                                                  createLoggers);
 
     upstream = iDecodedAudioReservoir;
     ATTACH_ELEMENT(iLoggerDecodedAudioReservoir,
