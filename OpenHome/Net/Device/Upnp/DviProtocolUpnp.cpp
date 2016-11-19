@@ -1120,7 +1120,8 @@ void DviProtocolUpnpDeviceXmlWriter::WriteResourceEnd()
 
 void DviProtocolUpnpServiceXmlWriter::Write(const DviService& aService, const DviProtocolUpnp& aDevice, IResourceWriter& aResourceWriter)
 {
-    WriterBwh writer(1024);
+    static const TUint kBufGranularity = 1024 * 8;
+    WriterBwh writer(kBufGranularity);
     WriteServiceXml(writer, aService, aDevice);
     Brh xml;
     writer.TransferTo(xml);
