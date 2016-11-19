@@ -88,14 +88,18 @@ public:
 protected:
     PropertyWriter();
     void SetWriter(IWriter& aWriter);
+private:
+    inline void WriteVariable(const Brx& aName, const Brx& aValue);
+    inline void WriteVariableStart(const Brx& aName);
+    inline void WriteVariableEnd(const Brx& aName);
+    static void WriteVariableStart(IWriter& aWriter, const Brx& aName);
+    static void WriteVariableEnd(IWriter& aWriter, const Brx& aName);
 private: // IPropertyWriter
     void PropertyWriteString(const Brx& aName, const Brx& aValue);
     void PropertyWriteInt(const Brx& aName, TInt aValue);
     void PropertyWriteUint(const Brx& aName, TUint aValue);
     void PropertyWriteBool(const Brx& aName, TBool aValue);
     void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
-private:
-    void WriteVariable(const Brx& aName, const Brx& aValue);
 private:
     IWriter* iWriter;
 };

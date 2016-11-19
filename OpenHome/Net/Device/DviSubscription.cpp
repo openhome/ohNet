@@ -314,24 +314,49 @@ void PropertyWriter::SetWriter(IWriter& aWriter)
 
 void PropertyWriter::WriteVariable(IWriter& aWriter, const Brx& aName, const Brx& aValue)
 { // static
-    aWriter.Write(Brn("<e:property>"));
-    aWriter.Write('<');
+    WriteVariableStart(aWriter, aName);
+    aWriter.Write(aValue);
+    WriteVariableEnd(aWriter, aName);
+}
+
+void PropertyWriter::WriteVariableStart(IWriter& aWriter, const Brx& aName)
+{ // static
+    static const Brn kPropertyStart("<e:property><");
+    aWriter.Write(kPropertyStart);
     aWriter.Write(aName);
     aWriter.Write('>');
-    aWriter.Write(aValue);
+}
+
+void PropertyWriter::WriteVariableEnd(IWriter& aWriter, const Brx& aName)
+{ // static
+    static const Brn kPropertyEnd("></e:property>");
     aWriter.Write(Brn("</"));
     aWriter.Write(aName);
-    aWriter.Write('>');
-    aWriter.Write(Brn("</e:property>"));
+    aWriter.Write(kPropertyEnd);
+}
+
+inline void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
+{
+    ASSERT(iWriter != NULL);
+    WriteVariable(*iWriter, aName, aValue);
+}
+
+inline void PropertyWriter::WriteVariableStart(const Brx& aName)
+{
+    ASSERT(iWriter != NULL);
+    WriteVariableStart(*iWriter, aName);
+}
+
+inline void PropertyWriter::WriteVariableEnd(const Brx& aName)
+{
+    WriteVariableEnd(*iWriter, aName);
 }
 
 void PropertyWriter::PropertyWriteString(const Brx& aName, const Brx& aValue)
 {
-    WriterBwh writer(1024);
-    Converter::ToXmlEscaped(writer, aValue);
-    Brh buf;
-    writer.TransferTo(buf);
-    WriteVariable(aName, buf);
+    WriteVariableStart(aName);
+    Converter::ToXmlEscaped(*iWriter, aValue);
+    WriteVariableEnd(aName);
 }
 
 void PropertyWriter::PropertyWriteInt(const Brx& aName, TInt aValue)
@@ -355,17 +380,9 @@ void PropertyWriter::PropertyWriteBool(const Brx& aName, TBool aValue)
 
 void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
 {
-    WriterBwh writer(1024);
-    Converter::ToBase64(writer, aValue);
-    Brh buf;
-    writer.TransferTo(buf);
-    WriteVariable(aName, buf);
-}
-
-void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
-{
-    ASSERT(iWriter != NULL);
-    WriteVariable(*iWriter, aName, aValue);
+    WriteVariableStart(aName);
+    Converter::ToBase64(*iWriter, aValue);
+    WriteVariableEnd(aName);
 }
 
 
