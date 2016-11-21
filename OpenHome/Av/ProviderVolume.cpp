@@ -148,7 +148,7 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManager& aConfigReader,
     SetPropertyVolumeMilliDbPerStep(aVolumeManager.VolumeMilliDbPerStep());
     SetPropertyBalanceMax(aVolumeManager.BalanceMax());
     SetPropertyFadeMax(aVolumeManager.FadeMax());
-    SetPropertyVolumeOffsetMax(aVolumeManager.OffsetMax());
+    SetPropertyVolumeOffsetMax(aVolumeManager.OffsetMax()*aVolumeManager.VolumeMilliDbPerStep());
 }
 
 ProviderVolume::~ProviderVolume()
