@@ -10,6 +10,7 @@
 #include <OpenHome/Media/MimeTypeList.h>
 
 #include <string.h>
+#include <algorithm>
 
 namespace OpenHome {
 namespace Media {
@@ -124,8 +125,10 @@ void CodecWav::Process()
 
         // Truncate to a sensible sample boundary.
         const TUint remainder = iReadBuf.Bytes() % (iNumChannels * (iBitDepth/8));
-        Brn split = iReadBuf.Split(iReadBuf.Bytes()-remainder);
-        iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
+        TUint bufBytes = iReadBuf.Bytes() - remainder;
+        bufBytes = std::min(bufBytes, iAudioBytesRemaining);
+        Brn split = iReadBuf.Split(bufBytes);
+        iReadBuf.SetBytes(bufBytes);
 
         iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, AudioDataEndian::Little, iTrackOffset);
         if(iFileSize != 0) {
