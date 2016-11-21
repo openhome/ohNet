@@ -416,7 +416,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgDelay;
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory.CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, iPipelineIdProvider.NextStreamId(), false, false, &iStreamHandler);
+        msg = iMsgFactory.CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, iPipelineIdProvider.NextStreamId(), false, false, Multiroom::Allowed, &iStreamHandler);
         iLastMsgType = EMsgEncodedStream;
         break;
     case EMsgAudioEncoded:
@@ -631,7 +631,7 @@ void SuiteContainerBase::Setup()
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
     iUrlBlockWriter = new TestUrlBlockWriter();
-    iContainer = new ContainerController(*iMsgFactory, *iGenerator, *iUrlBlockWriter);
+    iContainer = new ContainerController(*iMsgFactory, *iGenerator, *iUrlBlockWriter, true);
     iStreamId = 0;
     iStreamHandler = nullptr;
     iMsgRcvdCount = 0;

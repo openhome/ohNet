@@ -36,7 +36,7 @@ void ProtocolRtsp::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstrea
 void ProtocolRtsp::OutputStream() {
     LOG(kMedia, "ProtocolRaop::OutputStream\n");
     iStreamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), 0, 0, false, true, *this, iStreamId);
+    iSupply->OutputStream(iUri.AbsoluteUri(), 0, 0, false, true, Multiroom::Allowed, *this, iStreamId);
 }
 
 ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)

@@ -470,7 +470,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudio& aMsg)
         PcmStreamInfo pcmStream;
         pcmStream.Set(aMsg.BitDepth(), aMsg.SampleRate(), aMsg.Channels(), AudioDataEndian::Big, SpeakerProfile((aMsg.Channels() == 1) ? 1 : 2), aMsg.SampleStart());
         pcmStream.SetCodec(aMsg.Codec(), true);
-        iSupply->OutputPcmStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId, pcmStream);
+        iSupply->OutputPcmStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, Multiroom::Forbidden, *this, iStreamId, pcmStream);
         iStreamMsgDue = false;
         iBitDepth = aMsg.BitDepth();
         // iSampleRate updated below

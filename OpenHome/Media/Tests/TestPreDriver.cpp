@@ -213,7 +213,7 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgDrain(Functor());
     case EMsgEncodedStream:
         iNextGeneratedMsg = EMsgAudioPcm;
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, 0, false, false, Multiroom::Allowed, nullptr);
     case EMsgMetaText:
         iNextGeneratedMsg = EMsgAudioPcm;
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
@@ -228,7 +228,7 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, iProfile, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, false, Multiroom::Allowed, iProfile, nullptr);
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:

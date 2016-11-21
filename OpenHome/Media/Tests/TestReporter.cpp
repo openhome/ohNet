@@ -343,7 +343,7 @@ Msg* SuiteReporter::Pull()
     case EMsgDecodedStream:
     {
         const TUint64 sampleStart = iTrackOffset / Jiffies::PerSample(kSampleRate);
-        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, false, kProfile, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, sampleStart, kLossless, false, false, false, Multiroom::Allowed, kProfile, nullptr);
     }
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brn(kMode), true, ModeClockPullers(), true, false);

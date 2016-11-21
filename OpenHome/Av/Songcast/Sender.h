@@ -133,6 +133,9 @@ private:
     const Media::BwsMode iSongcastMode;
     IUnicastOverrideObserver& iUnicastOverrideObserver;
     TBool iEnabled;
+    TBool iUserEnabled; // user config allows songcast sending
+    TBool iStreamForbidden; // current stream does not allow broadcast to other players
+    Mutex iEnabledLock; // for iConfigEnabled + iStreamForbidden
     TUint iFirstChannelIndex;
 };
 

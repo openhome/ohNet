@@ -171,7 +171,7 @@ Msg* SuiteAnalogBypassRamper::Pull()
     case EMsgStreamInterrupted:
         return iMsgFactory->CreateMsgStreamInterrupted();
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(1, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, iAnalogBypassEnable, kProfile, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(1, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, iAnalogBypassEnable, Multiroom::Allowed, kProfile, nullptr);
     case EMsgAudioPcm:
         return CreateAudio();
     case EMsgSilence:

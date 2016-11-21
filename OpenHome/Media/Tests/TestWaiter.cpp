@@ -389,12 +389,12 @@ Msg* SuiteWaiter::CreateTrack()
 
 Msg* SuiteWaiter::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, true, iLiveStream, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, true, iLiveStream, Multiroom::Allowed, this);
 }
 
 Msg* SuiteWaiter::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, kProfile, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, iLiveStream, false, Multiroom::Allowed, kProfile, nullptr);
 }
 
 Msg* SuiteWaiter::CreateAudio()

@@ -429,13 +429,13 @@ Msg* SuiteSeeker::CreateTrack()
 
 Msg* SuiteSeeker::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, Multiroom::Allowed, this);
 }
 
 Msg* SuiteSeeker::CreateDecodedStream()
 {
     const TUint64 sampleStart = iTrackOffset / Jiffies::PerSample(kSampleRate);
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), iTrackLengthJiffies, sampleStart, true, iSeekable, false, false, kProfile, nullptr);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), iTrackLengthJiffies, sampleStart, true, iSeekable, false, false, Multiroom::Allowed, kProfile, nullptr);
 }
 
 Msg* SuiteSeeker::CreateAudio()

@@ -325,7 +325,7 @@ MsgDecodedStream* VariableDelayBase::UpdateDecodedStream(TUint64 aTrackOffset)
     auto stream = iMsgFactory.CreateMsgDecodedStream(s.StreamId(), s.BitRate(), s.BitDepth(), s.SampleRate(),
         s.NumChannels(), s.CodecName(), s.TrackLength(),
         sampleStart, s.Lossless(), s.Seekable(), s.Live(),
-        s.AnalogBypass(), s.Profile(), s.StreamHandler());
+        s.AnalogBypass(), s.Multiroom(), s.Profile(), s.StreamHandler());
     iDecodedStream->RemoveRef();
     iDecodedStream = stream;
     iDecodedStream->AddRef();

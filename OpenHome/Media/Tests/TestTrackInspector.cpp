@@ -356,7 +356,7 @@ Msg* SuiteTrackInspector::Pull()
     }
     case EMsgDecodedStream:
     {
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, false, kProfile, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, false, Multiroom::Allowed, kProfile, nullptr);
     }
     case EMsgTrack:
     {

@@ -269,7 +269,7 @@ void Supplier::Run()
     iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
     iDownstream.Push(iMsgFactory.CreateMsgDelay(Jiffies::kPerMs * 20));
     track->RemoveRef();
-    iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, false, this));
+    iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, false, Multiroom::Allowed, this));
     while (!iQuit) {
         CheckForKill();
         if (iBlock) {
@@ -278,7 +278,7 @@ void Supplier::Run()
         if (iFlushId != MsgFlush::kIdInvalid) {
             iDownstream.Push(iMsgFactory.CreateMsgFlush(iFlushId));
             iFlushId = MsgFlush::kIdInvalid;
-            iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, true, this));
+            iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 0, 1, false, true, Multiroom::Allowed, this));
         }
         else {
             iDownstream.Push(iMsgFactory.CreateMsgAudioEncoded(encodedAudioBuf));

@@ -77,13 +77,13 @@ TBool EncodedStreamInfo::Lossless() const
 
 EncodedStreamInfo::EncodedStreamInfo()
     : iRawPcm(false)
+    , iAnalogBypass(false)
+    , iLossless(false)
     , iBitDepth(UINT_MAX)
     , iSampleRate(UINT_MAX)
     , iNumChannels(UINT_MAX)
     , iEndian(AudioDataEndian::Invalid)
     , iStartSample(0)
-    , iAnalogBypass(false)
-    , iLossless(false)
 {
 }
 
@@ -143,9 +143,11 @@ SpeakerProfile CodecBase::DeriveProfile(TUint aChannels)
 // CodecController
 
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement,
-                                 IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority)
+                                 IUrlBlockWriter& aUrlBlockWriter, TUint aMaxOutputJiffies, TUint aThreadPriority, TBool aLogger)
     : iMsgFactory(aMsgFactory)
     , iRewinder(aMsgFactory, aUpstreamElement)
+    , iLoggerRewinder(nullptr)
+    , iUpstream(&iRewinder)
     , iDownstreamElement(aDownstreamElement)
     , iUrlBlockWriter(aUrlBlockWriter)
     , iLock("CDCC")
@@ -172,9 +174,12 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iMaxOutputJiffies(aMaxOutputJiffies)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
-    iLoggerRewinder = new Logger(iRewinder, "Rewinder");
-    //iLoggerRewinder->SetEnabled(true);
-    //iLoggerRewinder->SetFilter(Logger::EMsgAll);
+    if (aLogger) {
+        iLoggerRewinder = new Logger(iRewinder, "Rewinder");
+        iUpstream = iLoggerRewinder;
+        //iLoggerRewinder->SetEnabled(true);
+        //iLoggerRewinder->SetFilter(Logger::EMsgAll);
+    }
 }
 
 CodecController::~CodecController()
@@ -450,7 +455,7 @@ Msg* CodecController::PullMsg()
             THROW(CodecStreamFlush);
         }
     }
-    Msg* msg = iLoggerRewinder->Pull();
+    Msg* msg = iUpstream->Pull();
     if (msg == nullptr) {
         ASSERT(iRecognising);
         THROW(CodecRecognitionOutOfData);
@@ -638,7 +643,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     MsgDecodedStream* msg =
         iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels,
                                            aCodecName, aTrackLength, aSampleStart,
-                                           aLossless, iSeekable, iLive, aAnalogBypass, aProfile, this);
+                                           aLossless, iSeekable, iLive, aAnalogBypass, iMultiroom, aProfile, this);
     iLock.Wait();
     iChannels = aNumChannels;
     iSampleRate = aSampleRate;
@@ -825,6 +830,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler.store(aMsg->StreamHandler());
     auto msg = iMsgFactory.CreateMsgEncodedStream(aMsg, this);
     iRawPcm = aMsg->RawPcm();
+    iMultiroom = aMsg->Multiroom();
     if (iRawPcm) {
         iPcmStream = aMsg->PcmStream();
     }

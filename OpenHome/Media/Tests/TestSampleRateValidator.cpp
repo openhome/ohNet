@@ -178,7 +178,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDrain(Functor());
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, iNextStreamId, false, true, nullptr);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, iNextStreamId, false, true, Multiroom::Allowed, nullptr);
         break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(iDelayJiffies);
@@ -199,7 +199,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, kProfile, this);
+        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("Dummy"), 0, 0, true, true, false, false, Multiroom::Allowed, kProfile, this);
         break;
     case EMsgBitRate:
         msg = iMsgFactory->CreateMsgBitRate(123);

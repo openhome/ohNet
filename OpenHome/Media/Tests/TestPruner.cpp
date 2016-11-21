@@ -396,7 +396,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 10);
     case EMsgEncodedStream:
     {
-        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, 0, kStreamId, kSeekable, kLive, nullptr);
+        return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, 0, kStreamId, kSeekable, kLive, Multiroom::Allowed, nullptr);
     }
     case EMsgMetaText:
     {
@@ -409,7 +409,7 @@ Msg* SuitePruner::Pull()
     case EMsgWait:
         return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, false, kProfile, nullptr);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, false, Multiroom::Allowed, kProfile, nullptr);
     case EMsgBitRate:
         return iMsgFactory->CreateMsgBitRate(kBitRate + 1000);
     case EMsgAudioPcm:

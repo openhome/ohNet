@@ -315,7 +315,7 @@ void SuiteCodecControllerBase::Setup()
     init.SetMsgFlushCount(2);
     init.SetMsgDecodedStreamCount(2);
     iMsgFactory = new MsgFactory(iInfoAggregator, init);
-    iController = new CodecController(*iMsgFactory, *this, *this, *this, Jiffies::kPerMs * 5, kPriorityNormal);
+    iController = new CodecController(*iMsgFactory, *this, *this, *this, Jiffies::kPerMs * 5, kPriorityNormal, true);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
@@ -580,7 +580,7 @@ Msg* SuiteCodecControllerBase::CreateTrack()
 
 Msg* SuiteCodecControllerBase::CreateEncodedStream()
 {
-    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, this);
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, 0, ++iNextStreamId, iSeekable, false, Multiroom::Allowed, this);
 }
 
 MsgFlush* SuiteCodecControllerBase::CreateFlush()

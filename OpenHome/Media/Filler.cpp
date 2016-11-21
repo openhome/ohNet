@@ -300,7 +300,7 @@ void Filler::Run()
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
-                iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
+                iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, Multiroom::Forbidden, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                 iStopped = true;
