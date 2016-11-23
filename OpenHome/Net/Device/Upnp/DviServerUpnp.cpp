@@ -1265,7 +1265,7 @@ void DviSessionUpnp::InvocationWriteBool(const TChar* aName, TBool aValue)
     Brn name(aName);
     iWriterBuffer->Write('<');
     iWriterBuffer->Write(name);
-    iWriterBuffer->Write(aValue ? Brn(">true</") : Brn(">false</"));
+    iWriterBuffer->Write(aValue ? Brn(">1</") : Brn(">0</"));
     iWriterBuffer->Write(name);
     iWriterBuffer->Write('>');
 }
