@@ -469,13 +469,15 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
     , iExiting(false)
     , iRecreateSocket(false)
 {
-    iSocket.SetMulticastIf(aInterface);
+    try {
+        iSocket.SetMulticastIf(aInterface);
+    }
+    catch (NetworkError&) {} // risk startup crashes if we don't suppress errors here
     iSocket.SetTtl(aEnv.InitParams()->MsearchTtl());
-    try
-    {
+    try {
         iSocket.SetRecvBufBytes(kRecvBufBytes);
     }
-    catch ( NetworkError ) {}
+    catch (NetworkError&) {}
     aEnv.AddResumeObserver(*this);
     
     iReaderResponse.AddHeader(iHeaderCacheControl);
