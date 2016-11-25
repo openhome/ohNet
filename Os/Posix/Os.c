@@ -488,6 +488,7 @@ typedef struct
     void*            iArg;
     uint32_t         iPriority;
     OsContext*       iCtx;
+    THandle          iSemaHandle;
 } ThreadData;
 
 /* __thread void* tlsThreadArg; */
@@ -561,6 +562,12 @@ static THandle DoThreadCreate(OsContext* aContext, const char* aName, uint32_t a
     data->iArg        = aArg;
     data->iPriority   = aPriority;
     data->iCtx        = aContext;
+    data->iSemaHandle = OsSemaphoreCreate(aContext, "tls_sem", 0);
+
+    if (data->iSemaHandle == kHandleNull) {
+        free(data);
+        return kHandleNull;
+    }
 
     pthread_attr_t attr;
     (void)pthread_attr_init(&attr);
@@ -587,6 +594,24 @@ static THandle DoThreadCreate(OsContext* aContext, const char* aName, uint32_t a
     return (THandle)data;
 }
 
+void OsThreadWait(THandle aThread, uint32_t aConsumePolicy)
+{
+    THandle sema = ((ThreadData*) aThread)->iSemaHandle;
+
+    OsSemaphoreWait(sema);
+
+    if (aConsumePolicy == eConsumeAll) {
+        OsSemaphoreClear(sema);
+    }
+}
+
+void OsThreadSignal(THandle aThread)
+{
+    THandle sema = ((ThreadData*) aThread)->iSemaHandle;
+
+    OsSemaphoreSignal(sema);
+}
+
 THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
 {
     return DoThreadCreate(aContext, aName, aPriority, aStackBytes, 0, aEntryPoint, aArg);
@@ -600,8 +625,10 @@ void* OsThreadTls(OsContext* aContext)
 
 void OsThreadDestroy(THandle aThread)
 {
+    ThreadData* data = (ThreadData*) aThread;
+    OsSemaphoreDestroy(data->iSemaHandle);
     // no call to pthread_exit as it will have been implicitly called when the thread exited
-    free((ThreadData*)aThread);
+    free(data);
 }
 
 int32_t OsThreadSupportsPriorities(OsContext* aContext)

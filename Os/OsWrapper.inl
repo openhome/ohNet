@@ -65,6 +65,10 @@ inline void Os::ThreadInstallSignalHandlers()
 { OsThreadInstallSignalHandlers(); }
 inline void* Os::ThreadTls(OsContext* aContext)
 { return OsThreadTls(aContext); }
+inline void Os::ThreadWait(THandle aHandle, TBool aConsumeAll)
+{ OsThreadWait(aHandle, aConsumeAll ? eConsumeAll : eConsumeSingle); }
+inline void Os::ThreadSignal(THandle aHandle)
+{ OsThreadSignal(aHandle); }
 inline void Os::ThreadDestroy(THandle aThread)
 { OsThreadDestroy(aThread); }
 inline TBool Os::ThreadSupportsPriorities(OsContext* aContext)

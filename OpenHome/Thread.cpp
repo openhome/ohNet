@@ -104,16 +104,33 @@ const TUint OpenHome::Thread::kDefaultStackBytes = 32 * 1024;
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
     , iSema("TSEM", 0)
-    , iTerminated(aName, 1)
+    , iProceedSema("proceed", 0)
+    , iTerminated(aName, 0)
     , iKill(false)
-    , iStackBytes(aStackBytes)
     , iKillMutex("KMTX")
 {
     ASSERT(aName != NULL);
     const TUint bytes = std::min(iName.MaxBytes(), (TUint)strlen(aName));
     iName.Replace((TByte*)aName, bytes);
     iName.PtrZ();
-    iPriority = OpenHome::gEnv->PriorityArbitrator().CalculatePriority(aName, aPriority);
+    const TUint priority = OpenHome::gEnv->PriorityArbitrator().CalculatePriority(aName, aPriority);
+    iHandle = OpenHome::Os::ThreadCreate(OpenHome::gEnv->OsCtx(), (TChar*)iName.Ptr(), priority, aStackBytes, &Thread::EntryPoint, this);
+    ASSERT(iHandle != kHandleNull);
+}
+
+void Thread::NotifyWait()
+{
+    Os::ThreadWait(iHandle, false);
+}
+
+void Thread::NotifyWaitAll()
+{
+    Os::ThreadWait(iHandle, true);
+}
+
+void Thread::NotifySignal()
+{
+    Os::ThreadSignal(iHandle);
 }
 
 void Thread::Run()
@@ -130,24 +147,23 @@ Thread::~Thread()
     LOG(kThread, "> Thread::~Thread() called for thread: %p\n", this);
     Kill();
     Join();
-    if ( iHandle != kHandleNull ) {
-        OpenHome::Os::ThreadDestroy(iHandle);
-    }
+    OpenHome::Os::ThreadDestroy(iHandle);
     LOG(kThread, "< Thread::~Thread() called for thread: %p\n", this);
 }
 
 void Thread::Start()
 {
-    iTerminated.Wait();
-    ASSERT(iHandle == kHandleNull);
-    iHandle = OpenHome::Os::ThreadCreate(OpenHome::gEnv->OsCtx(), (TChar*)iName.Ptr(), iPriority, iStackBytes, &Thread::EntryPoint, this);
+    iProceedSema.Signal();
 }
 
 void Thread::EntryPoint(void* aArg)
 { // static
     Thread* self = (Thread*)aArg;
+    self->iProceedSema.Wait();
+
     Os::ThreadInstallSignalHandlers();
     try {
+        self->CheckForKill();
         self->Run();
     }
     catch(ThreadKill&) {
@@ -248,6 +264,7 @@ void Thread::Kill()
     LOG(kThread, "Thread::Kill() called for thread: %p\n", this);
     AutoMutex _amtx(iKillMutex);
     iKill = true;
+    iProceedSema.Signal();
     Signal();
 }
 

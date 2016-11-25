@@ -42,6 +42,8 @@ public:
     static void ThreadGetPriorityRange(OsContext* aContext, TUint& aHostMin, TUint& aHostMax);
     inline static THandle ThreadCreate(OsContext* aContext, const TChar* aName, TUint aPriority,
                                        TUint aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
+    inline static void ThreadWait(THandle aHandle, TBool aConsumeAll);
+    inline static void ThreadSignal(THandle aHandle);
     inline static void ThreadInstallSignalHandlers();
     inline static void* ThreadTls(OsContext* aContext);
     inline static void ThreadDestroy(THandle aThread);

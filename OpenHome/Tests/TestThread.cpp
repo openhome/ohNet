@@ -980,6 +980,30 @@ TUint SuitePriorityArbitrator::HostRange() const
     return iHostRange;
 }
 
+class SuiteNotify : public Suite
+{
+public:
+    SuiteNotify() : Suite("Thread::Notify{Wait,Signal}") {}
+    void Test();
+    void BodySignaller();
+private:
+    Thread* iSignalTargetThread;
+};
+
+void SuiteNotify::BodySignaller()
+{
+    Thread::Sleep(100);
+    iSignalTargetThread->NotifySignal();
+}
+
+void SuiteNotify::Test()
+{
+    iSignalTargetThread = Thread::Current();
+    ASSERT(iSignalTargetThread);
+    ThreadFunctor signaller("sig", MakeFunctor(*this, &SuiteNotify::BodySignaller));
+    signaller.Start();
+    iSignalTargetThread->NotifyWait(); // ourselves
+}
 
 class MainTestThread : public Thread
 {
@@ -1000,6 +1024,7 @@ void MainTestThread::Run()
     runner.Add(new SuiteMutex());
     runner.Add(new SuiteAutoMutex());
     runner.Add(new SuiteAutoSemaphore());
+    runner.Add(new SuiteNotify());
     if (iFull) {
         runner.Add(new SuiteStartStop());
     }

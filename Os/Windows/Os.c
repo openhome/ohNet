@@ -432,6 +432,7 @@ typedef struct
     void*            iArg;
     uint32_t         iPriority;
     OsContext*       iCtx;
+    THandle          iSemaHandle;
 } ThreadData;
 
 void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t* aHostMax)
@@ -498,6 +499,12 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
      data->iName = new char[length + 1];
      memcpy_s(data->iName, length + 1, aName, length + 1);
 #endif
+
+    if (data->iName == NULL) {
+        free(data);
+        return kHandleNull;
+    }
+
     if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
         return kHandleNull;
     }
@@ -509,12 +516,40 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
     data->iArg        = aArg;
     data->iPriority   = aPriority;
     data->iCtx        = aContext;
+    data->iSemaHandle = OsSemaphoreCreate(aContext, "tls_sem", 0);
+
+    if (data->iSemaHandle == kHandleNull) {
+        free(data->iName);
+        free(data);
+        return kHandleNull;
+    }
 
     data->iThread = CreateThread(NULL, aStackBytes, (LPTHREAD_START_ROUTINE)&threadEntrypoint, data, 0, NULL);
     if (0 == data->iThread) {
+        OsSemaphoreDestroy(data->iSemaHandle);
+        free(data->iName);
         free(data);
+	return kHandleNull;
     }
     return (THandle)data;
+}
+
+void OsThreadWait(THandle aThread, uint32_t aConsumePolicy)
+{
+    THandle sema = ((ThreadData*) aThread)->iSemaHandle;
+
+    OsSemaphoreWait(sema);
+
+    if (aConsumePolicy == eConsumeAll) {
+        OsSemaphoreClear(sema);
+    }
+}
+
+void OsThreadSignal(THandle aThread)
+{
+    THandle sema = ((ThreadData*) aThread)->iSemaHandle;
+
+    OsSemaphoreSignal(sema);
 }
 
 void* OsThreadTls(OsContext* aContext)
@@ -526,6 +561,7 @@ void OsThreadDestroy(THandle aThread)
 {
     ThreadData* data = (ThreadData*)aThread;
     if (data != NULL) {
+        OsSemaphoreDestroy(data->iSemaHandle);
         free(data->iName);
         free(data);
     }

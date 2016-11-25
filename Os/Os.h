@@ -316,6 +316,25 @@ void OsThreadGetPriorityRange(OsContext* aContext, uint32_t* aHostMin, uint32_t*
 THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriority,
                        uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
 
+typedef enum
+{
+    eConsumeSingle = 0 /**< When semaphore is non-empty, consume one entry */
+   ,eConsumeAll    = 1 /**< When semaphore is non-empty, consume all entries (reset) */
+} OsThreadSemaphoreConsumePolicy;
+
+/**
+ * Cause calling thread to wait on platform-specific thread-local semaphore.
+ * Will only ever be called when aHandle corresponds to the current thread.
+ *
+ */
+void OsThreadWait(THandle aHandle, uint32_t aConsumePolicy);
+
+/**
+ * Signal the destination thread's platform-specific thread-local semaphore.
+ *
+ */
+void OsThreadSignal(THandle aThread);
+
 /**
  * Allow platform code to install any per-thread signal handlers or equivalent.
  *

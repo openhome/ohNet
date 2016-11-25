@@ -108,6 +108,26 @@ public:
     TBool TryWait();
 
     /**
+     * Wait on the per-thread high-performance semaphore.
+     * Does _not_ check for kill.
+     * May only be called on the Thread object associated with the current thread.
+     */
+    void NotifyWait();
+
+    /**
+     * Wait on the per-thread high-performance semaphore.
+     * Clears semaphore before returning.
+     * Does _not_ check for kill.
+     * May only be called on the Thread object associated with the current thread.
+     */
+    void NotifyWaitAll();
+
+    /**
+     * Completes one (current or future) caller to NotifyWait() or NotifyWaitAll().
+     */
+    void NotifySignal();
+
+    /**
      * Pause the current thread.  Won't automatically block other threads but may
      * block some if this thread holds resources they are waiting for.
      *
@@ -180,10 +200,9 @@ protected:
     Bws<kMaxNameBytes+1> iName;
     Semaphore iSema;
 private:
+    Semaphore iProceedSema;
     Semaphore iTerminated;
     TBool     iKill;
-    TUint     iStackBytes;
-    TUint     iPriority;
     mutable Mutex iKillMutex;
 };
 
