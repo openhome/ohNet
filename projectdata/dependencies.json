@@ -72,7 +72,7 @@
     },
     {
         "name":             "hardware",
-        "version":          "0.0.367",
+        "version":          "0.0.376",
         "cross-check": false,
         "type":             "internal",
         "archive-filename": "${name}-Volkano2-${version}.tar.gz",
