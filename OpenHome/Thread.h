@@ -201,6 +201,7 @@ protected:
     Semaphore iSema;
 private:
     Semaphore iProceedSema;
+    Semaphore iRunningSema;
     Semaphore iTerminated;
     TBool     iKill;
     mutable Mutex iKillMutex;

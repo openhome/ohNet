@@ -105,6 +105,7 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
     , iSema("TSEM", 0)
     , iProceedSema("proceed", 0)
+    , iRunningSema("running", 0)
     , iTerminated(aName, 0)
     , iKill(false)
     , iKillMutex("KMTX")
@@ -154,16 +155,18 @@ Thread::~Thread()
 void Thread::Start()
 {
     iProceedSema.Signal();
+    iRunningSema.Wait();
 }
 
 void Thread::EntryPoint(void* aArg)
 { // static
     Thread* self = (Thread*)aArg;
-    self->iProceedSema.Wait();
-
     Os::ThreadInstallSignalHandlers();
+
     try {
+        self->iProceedSema.Wait();
         self->CheckForKill();
+        self->iRunningSema.Signal();
         self->Run();
     }
     catch(ThreadKill&) {
@@ -188,6 +191,8 @@ void Thread::EntryPoint(void* aArg)
             }
         }
     }
+
+    self->iRunningSema.Signal();
     self->iTerminated.Signal();
 }
 
