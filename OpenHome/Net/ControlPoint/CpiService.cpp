@@ -90,13 +90,11 @@ void CpiService::Unsubscribe()
 
 void CpiService::InvocationCompleted()
 {
-    TBool signal;
     iLock.Wait();
-    signal = (--iPendingInvocations == 0);
-    iLock.Signal();
-    if (signal) {
+    if (--iPendingInvocations == 0) {
         iShutdownSignal.Signal();
     }
+    iLock.Signal();
 }
 
 TBool CpiService::Interrupt() const
