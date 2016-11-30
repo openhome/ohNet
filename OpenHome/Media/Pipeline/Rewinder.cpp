@@ -102,7 +102,7 @@ class ProcessorRewinderReservoirBase : public IMsgProcessor, protected INonCopya
 {
 protected:
     ProcessorRewinderReservoirBase()                        {}
-private: // from IMsgProcessor
+protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override                 { return aMsg; }
     Msg* ProcessMsg(MsgTrack* aMsg) override                { return aMsg; }
     Msg* ProcessMsg(MsgDrain* aMsg) override                { return aMsg; }
@@ -128,6 +128,7 @@ public:
         : iEncodedAudioCount(aEncodedAudioCount)
     {}
 private: // from IMsgProcessor
+    using ProcessorRewinderReservoirBase::ProcessMsg;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override         { ++iEncodedAudioCount; return aMsg; }
 private:
     TUint& iEncodedAudioCount;
@@ -140,6 +141,7 @@ public:
         : iEncodedAudioCount(aEncodedAudioCount)
     {}
 private: // from IMsgProcessor
+    using ProcessorRewinderReservoirBase::ProcessMsg;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override         { --iEncodedAudioCount; return aMsg; }
 private:
     TUint& iEncodedAudioCount;
