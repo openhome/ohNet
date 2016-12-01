@@ -713,9 +713,6 @@ void DviSessionUpnp::Get()
         iWriterResponse->WriteFlush();
         iResponseEnded = true;
     }
-    if (iResponseStarted) {
-        ASSERT(iResponseEnded);
-    }
 }
 
 void DviSessionUpnp::Post()
