@@ -133,7 +133,7 @@ class Pipeline : public IPipelineElementDownstream
                , public IWaiterObserver
                , public IStopper
                , public IMute
-               , public IPostPipelineLatency
+               , public IPostPipelineLatencyObserver
                , public IAttenuator
                , private IStopperObserver
                , private IPipelinePropertyObserver
@@ -193,8 +193,8 @@ private: // from IStopper
 private: // from IMute
     void Mute() override;
     void Unmute() override;
-public: // from IPostPipelineLatency
-    void SetPostPipelineLatency(TUint aLatencyJiffies) override;
+public: // from IPostPipelineLatencyObserver
+    void PostPipelineLatencyChanged() override;
 public: // from IAttenuator
     void SetAttenuation(TUint aAttenuation) override;
 private:

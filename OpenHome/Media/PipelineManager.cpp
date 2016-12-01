@@ -329,9 +329,9 @@ void PipelineManager::Unmute()
     static_cast<IMute*>(iPipeline)->Unmute();
 }
 
-void PipelineManager::SetPostPipelineLatency(TUint aLatencyJiffies)
+void PipelineManager::PostPipelineLatencyChanged()
 {
-    iPipeline->SetPostPipelineLatency(aLatencyJiffies);
+    iPipeline->PostPipelineLatencyChanged();
 }
 
 void PipelineManager::SetAttenuation(TUint aAttenuation)

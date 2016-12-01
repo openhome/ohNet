@@ -860,9 +860,10 @@ void Pipeline::Unmute()
     iMuteCounted->Unmute();
 }
 
-void Pipeline::SetPostPipelineLatency(TUint aLatencyJiffies)
+void Pipeline::PostPipelineLatencyChanged()
 {
-    iVariableDelay2->OverrideAnimatorLatency(aLatencyJiffies);
+    // FIXME - must notify variable delay to fetch new latency.
+    //iVariableDelay2->OverrideAnimatorLatency(aLatencyJiffies);
 }
 
 void Pipeline::SetAttenuation(TUint aAttenuation)
