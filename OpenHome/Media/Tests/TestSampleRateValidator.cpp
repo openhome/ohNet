@@ -62,7 +62,6 @@ private:
     void MsgsPassWhileFlushing();
     void MsgsEndFlush();
     void ExpectedFlushConsumed();
-    void ChangeInAnimatorDelay();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
@@ -103,10 +102,6 @@ private:
     TUint64 iTrackOffsetTx;
     TBool iRateSupported;
     TUint iExpectedFlushId;
-    TUint iAnimatorDelayJiffiesReported;
-    TUint iAnimatorDelayJiffiesPulled;
-    TUint iDelayJiffies;
-    TUint iDelayJiffiesPulled;
 };
 
 } // namespace Media
@@ -128,7 +123,6 @@ SuiteSampleRateValidator::SuiteSampleRateValidator()
     AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::MsgsPassWhileFlushing), "MsgsPassWhileFlushing");
     AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::MsgsEndFlush), "MsgsEndFlush");
     AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::ExpectedFlushConsumed), "ExpectedFlushConsumed");
-    AddTest(MakeFunctor(*this, &SuiteSampleRateValidator::ChangeInAnimatorDelay), "ChangeInAnimatorDelay");
 }
 
 void SuiteSampleRateValidator::Setup()
@@ -147,9 +141,6 @@ void SuiteSampleRateValidator::Setup()
     iTrackOffsetTx = 0;
     iRateSupported = true;
     iExpectedFlushId = MsgFlush::kIdInvalid;
-    iAnimatorDelayJiffiesReported = iAnimatorDelayJiffiesPulled = 0;
-    iDelayJiffies = Jiffies::kPerMs * 300;
-    iDelayJiffiesPulled = 0;
 }
 
 void SuiteSampleRateValidator::TearDown()
@@ -181,7 +172,7 @@ void SuiteSampleRateValidator::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, iNextStreamId, false, true, Multiroom::Allowed, nullptr);
         break;
     case EMsgDelay:
-        msg = iMsgFactory->CreateMsgDelay(iDelayJiffies);
+        msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 20);
         break;
     case EMsgMetaText:
         msg = iMsgFactory->CreateMsgMetaText(Brn("dummy metatext"));
@@ -334,23 +325,6 @@ void SuiteSampleRateValidator::ExpectedFlushConsumed()
     TEST(iLastMsg == EMsgFlush);
 }
 
-void SuiteSampleRateValidator::ChangeInAnimatorDelay()
-{
-    PushMsg(EMsgDelay);
-    PushMsg(EMsgDecodedStream);
-    TEST(iLastMsg == EMsgDecodedStream);
-    TEST(iAnimatorDelayJiffiesPulled == 0);
-
-    TUint animatorDelay = Jiffies::kPerMs * 10;
-    iDelayJiffies = Jiffies::kPerMs * 40;
-    iAnimatorDelayJiffiesReported = animatorDelay;
-    PushMsg(EMsgDecodedStream);
-    TEST(iAnimatorDelayJiffiesPulled == animatorDelay);
-    PushMsg(EMsgDelay);
-    TEST(iAnimatorDelayJiffiesPulled == animatorDelay);
-    TEST(iDelayJiffiesPulled == iDelayJiffies);
-}
-
 void SuiteSampleRateValidator::Push(Msg* aMsg)
 {
     aMsg = aMsg->Process(*this);
@@ -378,8 +352,6 @@ Msg* SuiteSampleRateValidator::ProcessMsg(MsgDrain* aMsg)
 Msg* SuiteSampleRateValidator::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
-    iDelayJiffiesPulled = aMsg->DelayJiffies();
-    iAnimatorDelayJiffiesPulled = aMsg->AnimatorDelayJiffies();
     return aMsg;
 }
 
@@ -471,7 +443,7 @@ TUint SuiteSampleRateValidator::PipelineAnimatorDelayJiffies(TUint /*aSampleRate
     if (!iRateSupported) {
         THROW(SampleRateUnsupported);
     }
-    return iAnimatorDelayJiffiesReported;
+    return Jiffies::kPerMs * 5;
 }
 
 EStreamPlay SuiteSampleRateValidator::OkToPlay(TUint /*aStreamId*/)

@@ -19,7 +19,6 @@ private: // from IPipelineElementDownstream
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgTrack* aMsg) override;
-    Msg* ProcessMsg(MsgDelay* aMsg) override;
     Msg* ProcessMsg(MsgMetaText* aMsg) override;
     Msg* ProcessMsg(MsgFlush* aMsg) override;
     Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
@@ -33,9 +32,6 @@ private:
     IPipelineAnimator* iAnimator;
     TUint iTargetFlushId;
     TBool iFlushing;
-    TBool iOutputMsgDelayOnAnimatorDelayChange;
-    TUint iDelayJiffies;
-    TUint iAnimatorDelayJiffies;
 };
 
 } // namespace Media

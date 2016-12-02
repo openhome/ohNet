@@ -30,9 +30,6 @@ SampleRateValidator::SampleRateValidator(MsgFactory& aMsgFactory, IPipelineEleme
     , iAnimator(nullptr)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iFlushing(false)
-    , iOutputMsgDelayOnAnimatorDelayChange(false)
-    , iDelayJiffies(0)
-    , iAnimatorDelayJiffies(0)
 {
 }
 
@@ -52,8 +49,6 @@ void SampleRateValidator::Push(Msg* aMsg)
 Msg* SampleRateValidator::ProcessMsg(MsgMode* aMsg)
 {
     iFlushing = false;
-    iOutputMsgDelayOnAnimatorDelayChange = false;
-    iAnimatorDelayJiffies = 0;
     return aMsg;
 }
 
@@ -61,17 +56,6 @@ Msg* SampleRateValidator::ProcessMsg(MsgTrack* aMsg)
 {
     iFlushing = false;
     return aMsg;
-}
-
-Msg* SampleRateValidator::ProcessMsg(MsgDelay* aMsg)
-{
-    iDelayJiffies = aMsg->DelayJiffies();
-    iOutputMsgDelayOnAnimatorDelayChange = true;
-    if (aMsg->AnimatorDelayJiffies() == iAnimatorDelayJiffies) {
-        return aMsg;
-    }
-    aMsg->RemoveRef();
-    return iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies);
 }
 
 Msg* SampleRateValidator::ProcessMsg(MsgMetaText* aMsg)
@@ -94,16 +78,10 @@ Msg* SampleRateValidator::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     try {
         ASSERT(iAnimator != nullptr);
-        const TUint animatorDelayJiffies = iAnimator->PipelineAnimatorDelayJiffies(streamInfo.SampleRate(),
-                                                                                   streamInfo.BitDepth(),
-                                                                                   streamInfo.NumChannels());
+        (void)iAnimator->PipelineAnimatorDelayJiffies(streamInfo.SampleRate(),
+                                                      streamInfo.BitDepth(),
+                                                      streamInfo.NumChannels());
         iFlushing = false;
-        if (iAnimatorDelayJiffies != animatorDelayJiffies) {
-            iAnimatorDelayJiffies = animatorDelayJiffies;
-            if (iOutputMsgDelayOnAnimatorDelayChange) {
-                iDownstream.Push(iMsgFactory.CreateMsgDelay(iDelayJiffies, iAnimatorDelayJiffies));
-            }
-        }
     }
     catch (SampleRateUnsupported&) {
         iFlushing = true;
