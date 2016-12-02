@@ -387,15 +387,13 @@ class MsgDelay : public Msg
 public:
     MsgDelay(AllocatorBase& aAllocator);
     TUint DelayJiffies() const;
-    TUint AnimatorDelayJiffies() const;
 private:
-    void Initialise(TUint aDelayJiffies, TUint aAnimatorDelayJiffies);
+    void Initialise(TUint aDelayJiffies);
 private: // from Msg
     void Clear() override;
     Msg* Process(IMsgProcessor& aProcessor) override;
 private:
     TUint iDelayJiffies;
-    TUint iAnimatorDelayJiffies;
 };
 
 class SpeakerProfile
@@ -1599,7 +1597,7 @@ public:
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, ModeClockPullers aClockPullers, TBool aSupportsNext, TBool aSupportsPrev);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDrain* CreateMsgDrain(Functor aCallback);
-    MsgDelay* CreateMsgDelay(TUint aDelayJiffies, TUint aAnimatorDelayJiffies = 0);
+    MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, Media::Multiroom aMultiroom, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint64 aOffset, TUint aStreamId, TBool aSeekable, TBool aLive, Media::Multiroom aMultiroom, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgEncodedStream* CreateMsgEncodedStream(MsgEncodedStream* aMsg, IStreamHandler* aStreamHandler);
