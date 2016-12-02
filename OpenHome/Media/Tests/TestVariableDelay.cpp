@@ -155,17 +155,24 @@ private:
     TUint iDelayAppliedJiffies;
 };
 
-class SuiteVariableDelayRight : public SuiteVariableDelay
+class SuiteVariableDelayRight : public SuiteVariableDelay, private IPipelineAnimator
 {
     static const TUint kMinDelay = 10 * Jiffies::kPerMs;
 public:
     SuiteVariableDelayRight();
 private: // from SuiteVariableDelay
     void DoSetup() override;
+private: // from IPipelineAnimator
+    TUint PipelineAnimatorBufferJiffies() override;
+    TUint PipelineAnimatorDelayJiffies(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels) override;
 private:
     void TestDelayShorterThanMinimum();
+    void TestAnimatorCalledOnStreamChange();
     void TestAnimatorOverride();
     void TestClockPuller();
+private:
+    TUint iAnimatorDelayJiffies;
+    TUint iNumAnimatorDelayJiffiesCalls;
 };
 
 } // namespace Media
@@ -888,13 +895,30 @@ SuiteVariableDelayRight::SuiteVariableDelayRight()
     : SuiteVariableDelay("VariableDelayRight")
 {
     AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestDelayShorterThanMinimum), "TestDelayShorterThanMinimum");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestAnimatorCalledOnStreamChange), "TestAnimatorCalledOnStreamChange");
     AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestAnimatorOverride), "TestAnimatorOverride");
     AddTest(MakeFunctor(*this, &SuiteVariableDelayRight::TestClockPuller), "TestClockPuller");
 }
 
 void SuiteVariableDelayRight::DoSetup()
 {
-    iVariableDelay = new VariableDelayRight(*iMsgFactory, *this, kRampDuration, kMinDelay);
+    auto variableDelay = new VariableDelayRight(*iMsgFactory, *this, kRampDuration, kMinDelay);
+    variableDelay->SetAnimator(*this);
+    iVariableDelay = variableDelay;
+    iAnimatorDelayJiffies = 0;
+    iNumAnimatorDelayJiffiesCalls = 0;
+}
+
+TUint SuiteVariableDelayRight::PipelineAnimatorBufferJiffies()
+{
+    ASSERTS();
+    return 0;
+}
+
+TUint SuiteVariableDelayRight::PipelineAnimatorDelayJiffies(TUint /*aSampleRate*/, TUint /*aBitDepth*/, TUint /*aNumChannels*/)
+{
+    iNumAnimatorDelayJiffiesCalls++;
+    return iAnimatorDelayJiffies;
 }
 
 void SuiteVariableDelayRight::TestDelayShorterThanMinimum()
@@ -913,17 +937,41 @@ void SuiteVariableDelayRight::TestDelayShorterThanMinimum()
     TEST(iLastMsg == EMsgAudioPcm);
 }
 
+void SuiteVariableDelayRight::TestAnimatorCalledOnStreamChange()
+{
+    TEST(iNumAnimatorDelayJiffiesCalls == 0);
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
+    TEST(iNumAnimatorDelayJiffiesCalls == 1);
+
+    static const TUint kDelay = kMinDelay - Jiffies::kPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+    while (iJiffies < kMinDelay) {
+        PullNext();
+        TEST(iLastMsg == EMsgSilence);
+    }
+    PullNext(EMsgAudioPcm);
+    TEST(iLastMsg == EMsgAudioPcm);
+
+    TEST(iNumAnimatorDelayJiffiesCalls == 1);
+}
+
 void SuiteVariableDelayRight::TestAnimatorOverride()
 {
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
     PullNext(EMsgDecodedStream);
+    TEST(iNumAnimatorDelayJiffiesCalls == 1);
 
     static const TUint kAnimatorOverride = 10 * Jiffies::kPerMs;
-    static_cast<VariableDelayRight*>(iVariableDelay)->OverrideAnimatorLatency(kAnimatorOverride);
+    iAnimatorDelayJiffies = kAnimatorOverride;
+    static_cast<VariableDelayRight*>(iVariableDelay)->PostPipelineLatencyChanged();
     static const TUint kDelay = 20 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
+    TEST(iNumAnimatorDelayJiffiesCalls == 2);
 
     iJiffies = 0;
     while (iJiffies < kDelay - kAnimatorOverride) {
@@ -941,9 +989,10 @@ void SuiteVariableDelayRight::TestClockPuller()
     iNextModeClockPuller = this;
     PullNext(EMsgMode);
     PullNext(EMsgTrack);
+    TEST(iClockPullStopCount == 0);
     PullNext(EMsgDecodedStream);
     TEST(iClockPullStartCount == 0);
-    TEST(iClockPullStopCount == 0);
+    TEST(iClockPullStopCount == 1);
 
     static const TUint kDelay = 20 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
@@ -953,10 +1002,10 @@ void SuiteVariableDelayRight::TestClockPuller()
         if (iLastMsg != EMsgSilence) {
             break;
         }
-        TEST(iClockPullStopCount == 1);
+        TEST(iClockPullStopCount == 2);
     }
     TEST(iClockPullStartCount == 1);
-    TEST(iClockPullStopCount == 1);
+    TEST(iClockPullStopCount == 2);
 }
 
 

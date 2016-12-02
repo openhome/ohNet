@@ -143,11 +143,11 @@ VariableDelayBase::VariableDelayBase(MsgFactory& aMsgFactory, IPipelineElementUp
     , iClockPuller(nullptr)
     , iDelayJiffies(0)
     , iDelayAdjustment(0)
+    , iDecodedStream(nullptr)
     , iUpstreamElement(aUpstreamElement)
     , iRampDuration(aRampDuration)
     , iId(aId)
     , iWaitForAudioBeforeGeneratingSilence(false)
-    , iDecodedStream(nullptr)
     , iPendingStream(nullptr)
     , iTargetFlushId(MsgFlush::kIdInvalid)
 {
@@ -582,32 +582,29 @@ void VariableDelayLeft::LocalDelayApplied()
 
 // VariableDelayRight
 
-VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement,
+VariableDelayRight::VariableDelayRight(MsgFactory& aMsgFactory,
+                                       IPipelineElementUpstream& aUpstreamElement,
                                        TUint aRampDuration, TUint aMinDelay)
     : VariableDelayBase(aMsgFactory, aUpstreamElement, aRampDuration, "right")
     , iMinDelay(aMinDelay)
+    , iAnimator(nullptr)
     , iDelayJiffiesTotal(0)
-    , iAnimatorLatencyOverride(0)
-    , iAnimatorOverridePending(false)
+    , iPostPipelineLatencyChanged(false)
+    , iAnimatorLatency(0)
 {
-    ASSERT(iAnimatorOverridePending.is_lock_free());
+    ASSERT(iPostPipelineLatencyChanged.is_lock_free());
 }
 
-void VariableDelayRight::OverrideAnimatorLatency(TUint aJiffies)
+void VariableDelayRight::SetAnimator(IPipelineAnimator& aAnimator)
 {
-    iLock.Wait();
-    LOG(kPipeline, "VariableDelayRight::OverrideAnimatorLatency - %u (%ums)\n", aJiffies, Jiffies::ToMs(aJiffies));
-    iAnimatorLatencyOverride = aJiffies;
-    iAnimatorOverridePending.store(true);
-    iLock.Signal();
+    iAnimator = &aAnimator;
 }
 
 Msg* VariableDelayRight::Pull()
 {
-    if (iAnimatorOverridePending.load()) {
-        AutoMutex _(iLock);
-        ApplyAnimatorOverride();
-        iAnimatorOverridePending.store(false);
+    TBool changed = true;
+    if (iPostPipelineLatencyChanged.compare_exchange_strong(changed, false)) {
+        AdjustDelayForAnimatorLatency();
     }
 
     return VariableDelayBase::Pull();
@@ -624,22 +621,26 @@ Msg* VariableDelayRight::ProcessMsg(MsgDelay* aMsg)
     const TUint msgDelayJiffies = aMsg->DelayJiffies();
     TUint delayJiffies = std::max(msgDelayJiffies, iMinDelay);
     iDelayJiffiesTotal = delayJiffies;
-    const TUint animatorDelay = aMsg->AnimatorDelayJiffies();
-    const TUint downstream = (iAnimatorLatencyOverride > 0? iAnimatorLatencyOverride :
-                                                            animatorDelay);
     aMsg->RemoveRef();
-    delayJiffies = (downstream >= delayJiffies? 0 : delayJiffies - downstream);
+    delayJiffies = (iAnimatorLatency >= delayJiffies? 0 : delayJiffies - iAnimatorLatency);
     delayJiffies = std::max(delayJiffies, iMinDelay);
     LOG(kMedia, "VariableDelayRight::ProcessMsg(MsgDelay(%u, %u): delay=%u(%u), downstream=%u(%u), prev=%u(%u), iStatus=%s\n",
-                msgDelayJiffies, animatorDelay,
+        msgDelayJiffies, iAnimatorLatency,
                 delayJiffies, Jiffies::ToMs(delayJiffies),
-                downstream, Jiffies::ToMs(downstream),
+                iAnimatorLatency, Jiffies::ToMs(iAnimatorLatency),
                 iDelayJiffies, Jiffies::ToMs(iDelayJiffies),
                 Status());
 
     HandleDelayChange(delayJiffies);
 
-    return iMsgFactory.CreateMsgDelay(delayJiffies, downstream);
+    return iMsgFactory.CreateMsgDelay(delayJiffies, iAnimatorLatency);
+}
+
+Msg* VariableDelayRight::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    Msg* msg = VariableDelayBase::ProcessMsg(aMsg);
+    AdjustDelayForAnimatorLatency();
+    return msg;
 }
 
 void VariableDelayRight::LocalDelayApplied()
@@ -655,11 +656,26 @@ void VariableDelayRight::NotifyDelayApplied(TUint /*aJiffies*/)
     }
 }
 
-void VariableDelayRight::ApplyAnimatorOverride()
+void VariableDelayRight::PostPipelineLatencyChanged()
 {
-    TUint delayJiffies = (iAnimatorLatencyOverride >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatencyOverride);
-    delayJiffies = std::max(delayJiffies, iMinDelay);
-    HandleDelayChange(delayJiffies);
+    iPostPipelineLatencyChanged.store(true);
+}
+
+void VariableDelayRight::AdjustDelayForAnimatorLatency()
+{
+    try {
+        if (iDecodedStream != nullptr) {
+            auto streamInfo = iDecodedStream->StreamInfo();
+            ASSERT(iAnimator != nullptr);
+            iAnimatorLatency = iAnimator->PipelineAnimatorDelayJiffies(streamInfo.SampleRate(),
+                                                                       streamInfo.BitDepth(),
+                                                                       streamInfo.NumChannels());
+            TUint delayJiffies = (iAnimatorLatency >= iDelayJiffiesTotal? 0 : iDelayJiffiesTotal - iAnimatorLatency);
+            delayJiffies = std::max(delayJiffies, iMinDelay);
+            HandleDelayChange(delayJiffies);
+        }
+    }
+    catch (SampleRateUnsupported&) {}
 }
 
 void VariableDelayRight::StartClockPuller()

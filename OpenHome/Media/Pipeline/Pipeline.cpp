@@ -801,6 +801,7 @@ Msg* Pipeline::Pull()
 void Pipeline::SetAnimator(IPipelineAnimator& aAnimator)
 {
     iSampleRateValidator->SetAnimator(aAnimator);
+    iVariableDelay2->SetAnimator(aAnimator);
     iMuter->SetAnimator(aAnimator);
 }
 
@@ -862,8 +863,7 @@ void Pipeline::Unmute()
 
 void Pipeline::PostPipelineLatencyChanged()
 {
-    // FIXME - must notify variable delay to fetch new latency.
-    //iVariableDelay2->OverrideAnimatorLatency(aLatencyJiffies);
+    iVariableDelay2->PostPipelineLatencyChanged();
 }
 
 void Pipeline::SetAttenuation(TUint aAttenuation)

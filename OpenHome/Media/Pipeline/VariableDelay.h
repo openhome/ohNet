@@ -75,6 +75,7 @@ protected:
     IClockPuller* iClockPuller;
     TUint iDelayJiffies;
     TInt iDelayAdjustment;
+    MsgDecodedStream* iDecodedStream;
 private:
     IPipelineElementUpstream& iUpstreamElement;
     const TUint iRampDuration;
@@ -86,7 +87,6 @@ private:
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
     BwsMode iMode;
-    MsgDecodedStream* iDecodedStream;
     MsgDecodedStream* iPendingStream;
     TUint iTargetFlushId;
 };
@@ -107,31 +107,38 @@ private:
     IVariableDelayObserver* iObserver;
 };
 
-class VariableDelayRight : public VariableDelayBase, public IVariableDelayObserver
+class VariableDelayRight : public VariableDelayBase
+                         , public IVariableDelayObserver
+                         , public IPostPipelineLatencyObserver
 {
 public:
-    VariableDelayRight(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration, TUint aMinDelay);
-    void OverrideAnimatorLatency(TUint aJiffies); // 0 => do not override
+    VariableDelayRight(MsgFactory& aMsgFactory,
+                       IPipelineElementUpstream& aUpstreamElement,
+                       TUint aRampDuration, TUint aMinDelay);
+    void SetAnimator(IPipelineAnimator& aAnimator);
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from PipelineElement (IMsgProcessor)
     using VariableDelayBase::ProcessMsg;
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
 private: // from VariableDelayBase
     void LocalDelayApplied() override;
 private: // from IVariableDelayObserver
     void NotifyDelayApplied(TUint aJiffies) override;
+public: // from IPostPipelineLatencyObserver
+    void PostPipelineLatencyChanged() override;
 private:
-    void ApplyAnimatorOverride();
+    void AdjustDelayForAnimatorLatency();
     void StartClockPuller();
 private:
     const TUint iMinDelay;
+    IPipelineAnimator* iAnimator;
     TUint iDelayJiffiesTotal;
-    TUint iAnimatorLatencyOverride;
-    std::atomic<TBool> iAnimatorOverridePending;
+    std::atomic<TBool> iPostPipelineLatencyChanged;
+    TUint iAnimatorLatency;
 };
 
 } // namespace Media
 } // namespace OpenHome
-
