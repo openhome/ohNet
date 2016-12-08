@@ -871,7 +871,8 @@ $(objdir)ohNet.net.dll: make_obj_dir \
 	$(csDv)DvServerUpnp.cs \
 	$(csShared)OhNet.cs \
 	$(csShared)SubnetList.cs \
-	$(csCp)CpDeviceDv.cs
+	$(csCp)CpDeviceDv.cs \
+	$(csShared)AssemblyAttributes.cs
 	$(csharp) /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
 		$(csCp)CpDevice.cs \
@@ -885,7 +886,8 @@ $(objdir)ohNet.net.dll: make_obj_dir \
 		$(csShared)Service.cs \
 		$(csShared)OhNet.cs \
 		$(csShared)SubnetList.cs \
-		$(csCp)CpDeviceDv.cs
+		$(csCp)CpDeviceDv.cs \
+		$(csShared)AssemblyAttributes.cs 
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
