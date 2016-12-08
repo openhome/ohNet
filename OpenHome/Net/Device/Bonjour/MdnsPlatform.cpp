@@ -121,8 +121,11 @@ TUint MdnsPlatform::MdnsService::Register()
     SetDomainName(domain, "local");
     SetDomainName(host, "");
     SetPort(port, iPort);
-
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, (mDNSInterfaceID)iInterface, &MdnsPlatform::ServiceCallback, this, 0);
+#else // DEFINE_WINDOWS_UNIVERSAL
+    return 0;
+#endif // DEFINE_WINDOWS_UNIVERSAL
 }
 
 TUint MdnsPlatform::MdnsService::Deregister()
@@ -308,7 +311,9 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
 {
     Status status;
     NetworkInterfaceInfo* nifInfo = (NetworkInterfaceInfo*)calloc(1, sizeof(*nifInfo));
+#ifndef DEFINE_WINDOWS_UNIVERSAL
     nifInfo->InterfaceID = (mDNSInterfaceID)aNif->Address();
+#endif // DEFINE_WINDOWS_UNIVERSAL    
     SetAddress(nifInfo->ip, Endpoint(0, aNif->Address()));
     SetAddress(nifInfo->mask, Endpoint(0, aNif->Mask()));
     size_t len = strlen(aNif->Name());
@@ -411,7 +416,9 @@ void MdnsPlatform::Listen()
             mDNSInterfaceID interfaceId = (mDNSInterfaceID)0;
             for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
                 if (iInterfaces[i]->ContainsAddress(senderAddr)) {
+#ifndef DEFINE_WINDOWS_UNIVERSAL
                     interfaceId = (mDNSInterfaceID)iInterfaces[i]->Address();
+#endif // DEFINE_WINDOWS_UNIVERSAL
                     break;
                 }
             }
