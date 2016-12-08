@@ -16,6 +16,15 @@ const Brn kBrnEmpty((TByte*)"EMPTY", 0);
 
 #define OhNetStrlen(s) (TUint)strlen(s)
 
+// malloc is allowed to return NULL when allocating 0 bytes, which
+// could cause trouble for some buffer classes.
+// OhNetMalloc is guaranteed to return a non-null ptr if possible,
+// by allocating a minimum of 1 byte.
+static void* OhNetMalloc(size_t aBytes)
+{
+    return malloc(aBytes ? aBytes : 1);
+}
+
 // Brx
 
 const Brn& Brx::Empty()
@@ -119,7 +128,7 @@ Brh::Brh(const TChar* aPtr)
 void Brh::Set(const TByte* aPtr, TUint aBytes)
 {
     free((void*)iPtr);
-    iPtr = (TByte*)malloc(aBytes);
+    iPtr = (TByte*)OhNetMalloc(aBytes);
     ASSERT(iPtr != NULL);
     memcpy((void*)iPtr, aPtr, aBytes);
     iBytes = aBytes;
@@ -464,13 +473,13 @@ Bwh::Bwh() : Bwx(0,0), iPtr(0)
 
 Bwh::Bwh(TUint aMaxBytes) : Bwx(0, aMaxBytes)
 {
-    iPtr = (TByte*)malloc(aMaxBytes);
+    iPtr = (TByte*)OhNetMalloc(aMaxBytes);
     ASSERT(iPtr != NULL);
 }
 
 Bwh::Bwh(TUint aBytes, TUint aMaxBytes) : Bwx(aBytes, aMaxBytes)
 {
-    iPtr = (TByte*)malloc(aMaxBytes);
+    iPtr = (TByte*)OhNetMalloc(aMaxBytes);
     ASSERT(iPtr != NULL);
 }
 
@@ -486,28 +495,28 @@ const TByte* Bwh::Ptr() const
 
 Bwh::Bwh(const TChar* aStr) : Bwx(0, OhNetStrlen(aStr))
 {
-    iPtr = (TByte*)malloc(iMaxBytes);
+    iPtr = (TByte*)OhNetMalloc(iMaxBytes);
     ASSERT(iPtr != NULL);
     Replace(aStr);
 }
 
 Bwh::Bwh(const TByte* aPtr, TUint aBytes) : Bwx(aBytes, aBytes)
 {
-    iPtr = (TByte*)malloc(aBytes);
+    iPtr = (TByte*)OhNetMalloc(aBytes);
     ASSERT(iPtr != NULL);
     Replace(aPtr, aBytes);
 }
 
 Bwh::Bwh(const Brx& aBrx) : Bwx(aBrx.Bytes(), aBrx.Bytes())
 {
-    iPtr = (TByte*)malloc(aBrx.Bytes());
+    iPtr = (TByte*)OhNetMalloc(aBrx.Bytes());
     ASSERT(iPtr != NULL);
     Replace(aBrx);
 }
 
 Bwh::Bwh(const Bwh& aBuf) : Bwx(aBuf.Bytes(), aBuf.Bytes())
 {
-    iPtr = (TByte*)malloc(aBuf.Bytes());
+    iPtr = (TByte*)OhNetMalloc(aBuf.Bytes());
     ASSERT(iPtr != NULL);
     Replace(aBuf);
 }
@@ -520,7 +529,7 @@ void Bwh::Grow(TUint aMaxBytes)
     if(iPtr) {
         if(aMaxBytes > iMaxBytes) {
             const TByte* oldPtr = iPtr;
-            iPtr = (TByte*)malloc(aMaxBytes);
+            iPtr = (TByte*)OhNetMalloc(aMaxBytes);
             ASSERT(iPtr != NULL);
             Replace(oldPtr, Bytes());
             free((void*)oldPtr);
@@ -528,7 +537,7 @@ void Bwh::Grow(TUint aMaxBytes)
         }
     }
     else {
-        iPtr = (TByte*)malloc(aMaxBytes);
+        iPtr = (TByte*)OhNetMalloc(aMaxBytes);
         ASSERT(iPtr != NULL);
         iMaxBytes = aMaxBytes;
     }
