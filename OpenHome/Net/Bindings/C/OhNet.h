@@ -482,6 +482,19 @@ DllExport void STDCALL OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams a
 DllExport void STDCALL OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams, const char* aHostName);
 
 /**
+ * Disable control point stack inferring device removal.
+ *
+ * UPnP relies on devices sending regular UDP multicast messages confirming their continued availability.
+ * It is reasonably easy to lose these messages on misconfigured networks.  This option allows an
+ * application to disable inferred device removal altogether.  This risks device lists showing too many
+ * devices but can sometime reduce customer support effort.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aLowQuality      0 => good quality networking (default); 1 => unreliable multicast reception
+ */
+DllExport void STDCALL OhNetInitParamsSetHostUdpIsLowQuality(OhNetHandleInitParams aParams, int32_t aLowQuality);
+
+/**
 * Set HTTP user agent string.
 *
 * This will be reported by any HTTP clients run by ohNet.
@@ -654,6 +667,15 @@ DllExport uint32_t STDCALL OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams 
  * @return  1 if Bonjour is enabled; 0 otherwise
  */
 DllExport uint32_t STDCALL OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams);
+
+/**
+* Query state of HostUdpIsLowQuality (so whether device lists will infer device removal)
+*
+* @param[in] aParams          Initialisation params
+*
+* @return  1 if low quality mode is enabled; 0 otherwise
+*/
+DllExport uint32_t STDCALL OhNetInitParamsIsHostUdpLowQuality(OhNetHandleInitParams aParams);
 
 /* @} */
 

@@ -534,6 +534,11 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <remarks></remarks>
         public string HttpUserAgent { get; set; }
+        /// <summary>
+        /// Set true to disable inferred BYEBYEs from device lists
+        /// </summary>
+        /// <remarks></remarks>
+        public bool HostUdpIsLowQuality { get; set; }
 
         private uint iDvUpnpWebServerPort;
 
@@ -734,6 +739,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetInitParamsSetHostUdpIsLowQuality(IntPtr aParams, int aHostName);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsTcpConnectTimeoutMs(IntPtr aParams);
 #if IOS
         [DllImport("__Internal")]
@@ -837,6 +848,12 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
 #endif
         static extern uint OhNetInitParamsDvIsBonjourEnabled(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
+        static extern int OhNetInitParamsIsHostUdpLowQuality(IntPtr aParams);
 
         public InitParams()
         {
@@ -871,6 +888,7 @@ namespace OpenHome.Net.Core
             UseLoopbackNetworkAdapter = false; // FIXME: No getter?
             IncludeLoopbackNetworkAdapter = false;
             DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0;
+            HostUdpIsLowQuality = OhNetInitParamsIsHostUdpLowQuality(defaultParams) != 0;
 
             OhNetInitParamsDestroy(defaultParams);
         }
@@ -943,6 +961,7 @@ namespace OpenHome.Net.Core
                 OhNetInitParamsSetHttpUserAgent(nativeParams, userAgent);
                 Marshal.FreeHGlobal(userAgent);
             }
+            OhNetInitParamsSetHostUdpIsLowQuality(nativeParams, HostUdpIsLowQuality ? 1 : 0);
             if (UseLoopbackNetworkAdapter)
             {
                 OhNetInitParamsSetUseLoopbackNetworkAdapter(nativeParams);
