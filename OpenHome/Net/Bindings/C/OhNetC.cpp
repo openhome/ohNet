@@ -284,6 +284,13 @@ void STDCALL OhNetInitParamsSetHttpUserAgent(OhNetHandleInitParams aParams, cons
     ip->SetHttpUserAgent(userAgent);
 }
 
+void STDCALL OhNetInitParamsSetHostUdpIsLowQuality(OhNetHandleInitParams aParams, int32_t aLowQuality)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    const TBool lowQuality = (aLowQuality != 0);
+    ip->SetHostUdpIsLowQuality(lowQuality);
+}
+
 uint32_t STDCALL OhNetInitParamsTcpConnectTimeoutMs(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -391,6 +398,12 @@ uint32_t STDCALL OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     const TChar* ignore = NULL;
     return (ip->DvIsBonjourEnabled(ignore)? 1 : 0);
+}
+
+uint32_t STDCALL OhNetInitParamsIsHostUdpLowQuality(OhNetHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    return (ip->IsHostUdpLowQuality()? 1 : 0);
 }
 
 TIpAddress STDCALL OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
