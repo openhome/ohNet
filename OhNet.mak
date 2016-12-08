@@ -76,7 +76,7 @@ force_cpp =
 !endif
 
 csharp_pcl_profile = PCLProfileNone
-!if "$(windows_universal)"=="1"
+!if "$(windows_store_10)"=="1"
 csharp_pcl_profile = PCLProfile259
 !endif
 
@@ -134,7 +134,7 @@ linkopts_ohNet =
 link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll 
 csharp = csc /nologo /platform:anycpu
 csharpdefines =
-!if "$(windows_universal)"=="1"
+!if "$(windows_store_10)"=="1"
 portable45refs=c:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.5\ 
 profile259refs=$(portable45refs)Profile\Profile259\ 
 portablerefs = /reference:"$(portable45refs)mscorlib.dll" /reference:"$(profile259refs)mscorlib.dll" /reference:"$(profile259refs)System.dll" /reference:"$(profile259refs)System.Core.dll" /reference:"$(portable45refs)System.Runtime.InteropServices.dll" /reference:"$(profile259refs)System.Runtime.dll" /reference:"$(profile259refs)System.Collections.dll" /reference:"$(profile259refs)Microsoft.CSharp.dll" /reference:"$(profile259refs)System.ComponentModel.dll" /reference:"$(profile259refs)System.ComponentModel.EventBasedAsync.dll" /reference:"$(profile259refs)System.Diagnostics.Contracts.dll" /reference:"$(profile259refs)System.Diagnostics.Debug.dll" /reference:"$(profile259refs)System.Diagnostics.Tools.dll"  /reference:"$(profile259refs)System.Dynamic.Runtime.dll" /reference:"$(profile259refs)System.Globalization.dll" /reference:"$(profile259refs)System.IO.dll" /reference:"$(profile259refs)System.Linq.dll" /reference:"$(profile259refs)System.Linq.Expressions.dll" /reference:"$(profile259refs)System.Linq.Queryable.dll" /reference:"$(profile259refs)System.Net.dll" /reference:"$(profile259refs)System.Net.NetworkInformation.dll" /reference:"$(profile259refs)System.Net.Primitives.dll" /reference:"$(profile259refs)System.Net.Requests.dll" /reference:"$(profile259refs)System.ObjectModel.dll" /reference:"$(profile259refs)System.Reflection.dll" /reference:"$(profile259refs)System.Reflection.Extensions.dll" /reference:"$(profile259refs)System.Reflection.Primitives.dll" /reference:"$(profile259refs)System.Resources.ResourceManager.dll" /reference:"$(profile259refs)System.Runtime.Extensions.dll" /reference:"$(profile259refs)System.Runtime.InteropServices.WindowsRuntime.dll" /reference:"$(profile259refs)System.Runtime.Serialization.dll" /reference:"$(profile259refs)System.Runtime.Serialization.Json.dll" /reference:"$(profile259refs)System.Runtime.Serialization.Primitives.dll" /reference:"$(profile259refs)System.Runtime.Serialization.Xml.dll" /reference:"$(profile259refs)System.Security.Principal.dll" /reference:"$(profile259refs)System.ServiceModel.Web.dll" /reference:"$(profile259refs)System.Text.Encoding.dll" /reference:"$(profile259refs)System.Text.Encoding.Extensions.dll" /reference:"$(profile259refs)System.Text.RegularExpressions.dll" /reference:"$(profile259refs)System.Threading.dll" /reference:"$(profile259refs)System.Threading.Tasks.dll" /reference:"$(profile259refs)System.Windows.dll" /reference:"$(profile259refs)System.Xml.dll" /reference:"$(profile259refs)System.Xml.Linq.dll" /reference:"$(profile259refs)System.Xml.ReaderWriter.dll" /reference:"$(profile259refs)System.Xml.Serialization.dll" /reference:"$(profile259refs)System.Xml.XDocument.dll" /reference:"$(profile259refs)System.Xml.XmlSerializer.dll" 
