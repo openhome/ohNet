@@ -296,15 +296,15 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false));
                 iChangedMode = true;
+                iStopped = true;
+                iLock.Signal();
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, ModeClockPullers(), false, false));
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, Multiroom::Forbidden, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgMetaText(Brx::Empty()));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
-                iStopped = true;
-                iLock.Signal();
             }
             else {
                 iLock.Signal();
