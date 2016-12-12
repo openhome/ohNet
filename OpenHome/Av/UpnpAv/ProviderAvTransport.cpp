@@ -93,6 +93,7 @@ ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aE
     , iSourceUpnpAv(aSourceUpnpAv)
     , iLock("UpAv")
     , iModerationTimerStarted(false)
+    , iXmlEscapedStateVar(1024)
     , iTransportStateOverride(Brx::Empty())
     , iTargetTransportState(Brx::Empty())
     , iTransportState(kTransportStateNoMediaPresent)
@@ -634,10 +635,9 @@ void ProviderAvTransport::UpdateEventedState()
 
 void ProviderAvTransport::AddStateVariable(const Brx& aName, const Brx& aValue)
 {
-    iXmlEscapedStateVar.SetBytes(0);
-    WriterBuffer writer(iXmlEscapedStateVar);
-    Converter::ToXmlEscaped(writer, aValue);
-    AddStateVariableEscaped(aName, iXmlEscapedStateVar);
+    iXmlEscapedStateVar.Reset();
+    Converter::ToXmlEscaped(iXmlEscapedStateVar, aValue);
+    AddStateVariableEscaped(aName, iXmlEscapedStateVar.Buffer());
 }
 
 void ProviderAvTransport::AddStateVariable(const Brx& aName, TUint aValue)

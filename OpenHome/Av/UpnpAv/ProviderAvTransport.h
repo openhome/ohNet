@@ -82,7 +82,7 @@ private:
     Mutex iLock;
     Timer* iModerationTimer;
     TBool iModerationTimerStarted;
-    Bws<6*1024> iXmlEscapedStateVar;
+    WriterBwh iXmlEscapedStateVar;
 
     // These state variables are currently implemented and their values change
     Brn iTransportStateOverride;    // used when reporting PAUSED state when new track is queued
@@ -122,7 +122,7 @@ private:
     const TInt32 iAbsoluteCounterPosition;
 
     // buffer storing an aggregated version of the above state variables
-    Bws<20*1024> iEventedState;
+    Bws<32*1024> iEventedState;
 };
 
 } // namespace Av
