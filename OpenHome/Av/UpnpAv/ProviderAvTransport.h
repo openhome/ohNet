@@ -13,7 +13,7 @@ namespace Av {
 
 class ProviderAvTransport : public Net::DvProviderUpnpOrgAVTransport1, public Media::IPipelineObserver
 {
-    typedef Bws<7> BwsTime; // H:MM:SS format
+    typedef Bws<10> BwsTime; // HHHH:MM:SS format
 public:
     static const Brn kNotImplemented;
     static const Brn kTransportStateStopped;
