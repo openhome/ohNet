@@ -774,6 +774,13 @@ void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
     aMin = iInitParams->ThreadPriorityCodec();
 }
 
+void Pipeline::GetThreadPriorities(TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent)
+{
+    aStarvationRamper = iInitParams->ThreadPriorityStarvationRamper();
+    aCodec = iInitParams->ThreadPriorityCodec();
+    aEvent = iInitParams->ThreadPriorityEvent();
+}
+
 void PipelineLogBuffers()
 {
     gPipeline->LogBuffers();

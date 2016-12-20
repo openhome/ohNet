@@ -54,9 +54,10 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
     iIdManager = new IdManager(*iPipeline);
     TUint min, max;
     iPipeline->GetThreadPriorityRange(min, max);
+    iFillerPriority = min-1;
     iFiller = new Filler(*iPipeline, *iIdManager, *iIdManager, *iPipeline,
                          iPipeline->Factory(), aTrackFactory, *iPrefetchObserver,
-                         *iIdManager, min-1, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
+                         *iIdManager, iFillerPriority, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
@@ -287,6 +288,12 @@ TUint PipelineManager::SenderMinLatencyMs() const
 void PipelineManager::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
 {
     iPipeline->GetThreadPriorityRange(aMin, aMax);
+}
+
+void PipelineManager::GetThreadPriorities(TUint& aFiller, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent)
+{
+    aFiller = iFillerPriority;
+    iPipeline->GetThreadPriorities(aStarvationRamper, aCodec, aEvent);
 }
 
 Msg* PipelineManager::Pull()

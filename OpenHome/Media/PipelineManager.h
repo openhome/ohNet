@@ -243,6 +243,7 @@ public:
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
+    void GetThreadPriorities(TUint& aFiller, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent);
 private:
     void RemoveAllLocked();
 private: // from IPipeline
@@ -294,6 +295,7 @@ private:
     Mutex iPublicLock;
     Pipeline* iPipeline;
     ProtocolManager* iProtocolManager;
+    TUint iFillerPriority;
     Filler* iFiller;
     IdManager* iIdManager;
     std::vector<UriProvider*> iUriProviders;
