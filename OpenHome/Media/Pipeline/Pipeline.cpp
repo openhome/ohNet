@@ -774,9 +774,10 @@ void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
     aMin = iInitParams->ThreadPriorityCodec();
 }
 
-void Pipeline::GetThreadPriorities(TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent)
+void Pipeline::GetThreadPriorities(TUint& aFlywheelRamper, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent)
 {
-    aStarvationRamper = iInitParams->ThreadPriorityStarvationRamper();
+    aFlywheelRamper = iStarvationRamper->ThreadPriorityFlywheelRamper();
+    aStarvationRamper = iStarvationRamper->ThreadPriorityStarvationRamper();
     aCodec = iInitParams->ThreadPriorityCodec();
     aEvent = iInitParams->ThreadPriorityEvent();
 }

@@ -243,7 +243,7 @@ public:
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
-    void GetThreadPriorities(TUint& aFiller, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent);
+    void GetThreadPriorities(TUint& aFiller, TUint& aFlywheelRamper, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent);
 private:
     void RemoveAllLocked();
 private: // from IPipeline

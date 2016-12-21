@@ -290,10 +290,10 @@ void PipelineManager::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
     iPipeline->GetThreadPriorityRange(aMin, aMax);
 }
 
-void PipelineManager::GetThreadPriorities(TUint& aFiller, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent)
+void PipelineManager::GetThreadPriorities(TUint& aFiller, TUint& aFlywheelRamper, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent)
 {
     aFiller = iFillerPriority;
-    iPipeline->GetThreadPriorities(aStarvationRamper, aCodec, aEvent);
+    iPipeline->GetThreadPriorities(aFlywheelRamper, aStarvationRamper, aCodec, aEvent);
 }
 
 Msg* PipelineManager::Pull()

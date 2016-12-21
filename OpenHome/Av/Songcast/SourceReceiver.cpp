@@ -478,10 +478,11 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
 {
     Media::PipelineManager& pipeline = aMediaPlayer.Pipeline();
     TUint priorityFiller = 0;
+    TUint priorityFlywheelRamper = 0;
     TUint priorityStarvationRamper = 0;
     TUint priorityCodec = 0;
     TUint priorityEvent = 0;
-    pipeline.GetThreadPriorities(priorityFiller, priorityStarvationRamper, priorityCodec, priorityEvent);
+    pipeline.GetThreadPriorities(priorityFiller, priorityFlywheelRamper, priorityStarvationRamper, priorityCodec, priorityEvent);
     const TUint senderThreadPriority = priorityFiller;
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aMediaPlayer.ConfigInitialiser(), senderThreadPriority,

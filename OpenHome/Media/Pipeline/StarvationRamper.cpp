@@ -368,6 +368,8 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     , iObserver(aObserver)
     , iObserverThread(aObserverThread)
     , iMaxJiffies(aSizeJiffies)
+    , iThreadPriorityFlywheelRamper(aThreadPriority)
+    , iThreadPriorityStarvationRamper(iThreadPriorityFlywheelRamper-1)
     , iRampUpJiffies(aRampUpSize)
     , iMaxStreamCount(aMaxStreamCount)
     , iLock("SRM1")
@@ -392,10 +394,10 @@ StarvationRamper::StarvationRamper(MsgFactory& aMsgFactory, IPipelineElementUpst
     iEventBuffering.store(false); // ensure SetBuffering call below detects a state change
     SetBuffering(true);
 
-    iRampGenerator = new RampGenerator(aMsgFactory, kTrainingJiffies, kRampDownJiffies, aThreadPriority);
+    iRampGenerator = new RampGenerator(aMsgFactory, kTrainingJiffies, kRampDownJiffies, iThreadPriorityFlywheelRamper);
     iPullerThread = new ThreadFunctor("StarvationRamper",
                                       MakeFunctor(*this, &StarvationRamper::PullerThread),
-                                      aThreadPriority-1);
+                                      iThreadPriorityStarvationRamper);
     iPullerThread->Start();
 }
 
@@ -408,6 +410,16 @@ StarvationRamper::~StarvationRamper()
 TUint StarvationRamper::SizeInJiffies() const
 {
     return Jiffies();
+}
+
+TUint StarvationRamper::ThreadPriorityFlywheelRamper() const
+{
+    return iThreadPriorityFlywheelRamper;
+}
+
+TUint StarvationRamper::ThreadPriorityStarvationRamper() const
+{
+    return iThreadPriorityStarvationRamper;
 }
 
 inline TBool StarvationRamper::IsFull() const
