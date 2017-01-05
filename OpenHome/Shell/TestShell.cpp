@@ -82,6 +82,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 {
     aInitParams->SetDvNumLpecThreads(4);    // from TestDvLpecMain
     aInitParams->SetDvLpecServerPort(2324); // from TestDvLpecMain
+    aInitParams->SetEnableShell(Shell::kServerPortDefault, kPriorityHigh);
 
     Library* lib = new Library(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
@@ -96,7 +97,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     DvStack* dvStack = NULL;
     lib->StartCombined(subnet, cpStack, dvStack);
 
-    Shell* shell = new Shell(cpStack->Env(), Shell::kServerPortDefault, kPriorityHigh);
+    Shell* shell = lib->Env().Shell();
     Semaphore* blocker = new Semaphore("BLCK", 0);
 
     std::vector<ShellTest> shellTests;
@@ -132,6 +133,5 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     delete cmdWatchDog;
     delete cmdQuit;
     delete cmdRun;
-    delete shell;
     delete lib;
 }
