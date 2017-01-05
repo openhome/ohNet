@@ -419,6 +419,13 @@ void InitialisationParams::SetHttpUserAgent(const Brx& aUserAgent)
     iUserAgent.Set(aUserAgent);
 }
 
+void InitialisationParams::SetEnableShell(TUint aPort, TUint aSessionPriority)
+{
+    iEnableShell = true;
+    iShellPort = aPort;
+    iShellSessionPriority = aSessionPriority;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -604,6 +611,13 @@ const Brx& InitialisationParams::HttpUserAgent() const
     return iUserAgent;
 }
 
+TBool InitialisationParams::IsShellEnabled(TUint& aPort, TUint& aSessionPriority) const
+{
+    aPort = iShellPort;
+    aSessionPriority = iShellSessionPriority;
+    return iEnableShell;
+}
+
 #if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)
 /* Assume that all Apple products have poor quality networking.
    This won't be the case for a wired Mac desktop but we'd need a way of signalling which
@@ -639,6 +653,9 @@ InitialisationParams::InitialisationParams()
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
     , iTimerManagerThreadPriority(kPriorityHigh)
+    , iEnableShell(false)
+    , iShellPort(0)
+    , iShellSessionPriority(kPriorityNormal)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);

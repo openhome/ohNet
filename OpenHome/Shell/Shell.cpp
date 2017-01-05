@@ -1,11 +1,10 @@
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Net;
 
 // WriterShellResponse
 
@@ -93,7 +92,7 @@ void ShellSession::Log(const char* aMsg)
 
 void ShellSession::Run()
 {
-    FunctorMsg logger = MakeFunctorMsg(*this, &OpenHome::Net::ShellSession::Log);
+    FunctorMsg logger = MakeFunctorMsg(*this, &OpenHome::ShellSession::Log);
     FunctorMsg oldLogger = Log::SwapOutput(logger);
     iShutdownSem.Wait();
     for (;;) {

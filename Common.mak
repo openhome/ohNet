@@ -119,6 +119,9 @@ objects_core = \
 	$(objdir)OsWrapper.$(objext) \
 	$(objdir)Os.$(objext) \
 	$(objdir)SignalHandlers.$(objext) \
+	$(objdir)Shell.$(objext) \
+	$(objdir)InfoProvider.$(objext) \
+	$(objdir)ShellCommandDebug.$(objext)
 
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
@@ -432,6 +435,12 @@ $(objdir)TerminalOs.$(objext) : Os/$(osdir)/TerminalOs.cpp $(headers)
 	$(compiler)TerminalOs.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/TerminalOs.cpp
 $(objdir)SignalHandlers.$(objext) : Os/$(osdir)/SignalHandlers.cpp $(headers)
 	$(compiler)SignalHandlers.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/SignalHandlers.cpp
+$(objdir)Shell.$(objext) : OpenHome/Shell/Shell.cpp $(headers)
+	$(compiler)Shell.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/Shell.cpp
+$(objdir)InfoProvider.$(objext) : OpenHome/Shell/InfoProvider.cpp $(headers)
+	$(compiler)InfoProvider.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/InfoProvider.cpp
+$(objdir)ShellCommandDebug.$(objext) : OpenHome/Shell/ShellCommandDebug.cpp $(headers)
+	$(compiler)ShellCommandDebug.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandDebug.cpp
 
 ohNetDllImpl: ohNetCore
 	$(link_dll) $(linkopts_ohNet) $(linkoutput)$(objdir)$(dllprefix)ohNet.$(dllext) $(objects_core)
@@ -443,8 +452,18 @@ ohNet: proxies devices
 
 TestFramework: $(libprefix)TestFramework.$(libext)
 
-$(libprefix)TestFramework.$(libext): $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext) $(objdir)TimerFactoryMock.$(objext)
-	$(ar)$(libprefix)TestFramework.$(libext) $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext) $(objdir)TimerFactoryMock.$(objext)
+objects_test_framework =                \
+    $(objdir)TestFramework.$(objext)    \
+    $(objdir)Main.$(objext)             \
+    $(objdir)OptionParser.$(objext)     \
+    $(objdir)SuiteUnitTest.$(objext)    \
+    $(objdir)TimerFactoryMock.$(objext) \
+    $(objdir)ShellCommandRun.$(objext)  \
+    $(objdir)ShellCommandQuit.$(objext) \
+    $(objdir)ShellCommandWatchDog.$(objext)
+
+$(libprefix)TestFramework.$(libext): $(objects_test_framework)
+	$(ar)$(libprefix)TestFramework.$(libext) $(objects_test_framework)
 $(objdir)TestFramework.$(objext) : OpenHome/TestFramework/TestFramework.cpp $(headers)
 	$(compiler)TestFramework.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/TestFramework.cpp
 $(objdir)Main.$(objext) : Os/$(osdir)/Main.cpp $(headers)
@@ -455,7 +474,12 @@ $(objdir)SuiteUnitTest.$(objext) : OpenHome/TestFramework/SuiteUnitTest.cpp $(he
 	$(compiler)SuiteUnitTest.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/SuiteUnitTest.cpp
 $(objdir)TimerFactoryMock.$(objext) : OpenHome/TestFramework/TimerFactoryMock.cpp $(headers)
 	$(compiler)TimerFactoryMock.$(objext) -c $(cppflags) $(includes) OpenHome/TestFramework/TimerFactoryMock.cpp
-
+$(objdir)ShellCommandRun.$(objext) : OpenHome/Shell/ShellCommandRun.cpp $(headers)
+	$(compiler)ShellCommandRun.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandRun.cpp
+$(objdir)ShellCommandQuit.$(objext) : OpenHome/Shell/ShellCommandQuit.cpp $(headers)
+	$(compiler)ShellCommandQuit.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandQuit.cpp
+$(objdir)ShellCommandWatchDog.$(objext) : OpenHome/Shell/ShellCommandWatchDog.cpp $(headers)
+	$(compiler)ShellCommandWatchDog.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/ShellCommandWatchDog.cpp
 
 TestBuffer: $(objdir)TestBuffer.$(exeext)
 $(objdir)TestBuffer.$(exeext) :  ohNetCore $(objdir)TestBuffer.$(objext) $(objdir)TestBufferMain.$(objext) $(libprefix)TestFramework.$(libext)
@@ -792,31 +816,10 @@ $(objdir)TestKazooServer.$(objext) : OpenHome/Tests/TestKazooServer.cpp $(header
 	$(compiler)TestKazooServer.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestKazooServer.cpp
 
 TestShell: $(objdir)TestShell.$(exeext)
-$(objdir)TestShell.$(exeext) :  Shell ShellCommandRun $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext) TestsCore
-	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)$(libprefix)Shell.$(libext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
-$(objdir)TestShell.$(objext) : OpenHome/Net/Shell/TestShell.cpp $(headers)
-	$(compiler)TestShell.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Shell/TestShell.cpp
-
-Shell: ohNetCore $(objdir)Shell.$(objext) ShellCommandDebug ShellCommandQuit ShellCommandRun ShellCommandWatchDog
-	$(ar)$(libprefix)Shell.$(libext) $(objdir)Shell.$(objext) $(objdir)ShellCommandDebug.$(objext) $(objdir)ShellCommandQuit.$(objext) $(objdir)ShellCommandRun.$(objext) $(objdir)ShellCommandWatchDog.$(objext)
-$(objdir)Shell.$(objext) : OpenHome/Net/Shell/Shell.cpp $(headers)
-	$(compiler)Shell.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Shell/Shell.cpp
-
-ShellCommandRun: $(objdir)ShellCommandRun.$(objext)
-$(objdir)ShellCommandRun.$(objext) : OpenHome/Net/Shell/ShellCommandRun.cpp $(headers)
-	$(compiler)ShellCommandRun.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Shell/ShellCommandRun.cpp
-
-ShellCommandDebug: $(objdir)ShellCommandDebug.$(objext)
-$(objdir)ShellCommandDebug.$(objext) : OpenHome/Net/Shell/ShellCommandDebug.cpp $(headers)
-	$(compiler)ShellCommandDebug.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Shell/ShellCommandDebug.cpp
-
-ShellCommandQuit: $(objdir)ShellCommandQuit.$(objext)
-$(objdir)ShellCommandQuit.$(objext) : OpenHome/Net/Shell/ShellCommandQuit.cpp $(headers)
-	$(compiler)ShellCommandQuit.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Shell/ShellCommandQuit.cpp
-
-ShellCommandWatchDog: $(objdir)ShellCommandWatchDog.$(objext)
-$(objdir)ShellCommandWatchDog.$(objext) : OpenHome/Net/Shell/ShellCommandWatchDog.cpp $(headers)
-	$(compiler)ShellCommandWatchDog.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Shell/ShellCommandWatchDog.cpp
+$(objdir)TestShell.$(exeext) :  $(objdir)ShellCommandRun.$(objext) $(objdir)TestShell.$(objext) $(libprefix)TestFramework.$(libext) TestsCore
+	$(link) $(linkoutput)$(objdir)TestShell.$(exeext) $(objdir)TestShell.$(objext) $(objdir)ohNetTestsCore.$(libext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestShell.$(objext) : OpenHome/Shell/TestShell.cpp $(headers)
+	$(compiler)TestShell.$(objext) -c $(cppflags) $(includes) OpenHome/Shell/TestShell.cpp
 
 
 tests_core = \

@@ -1,7 +1,7 @@
 #ifndef HEADER_SHELL_COMMAND_WATCHDOG
 #define HEADER_SHELL_COMMAND_WATCHDOG
 
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
@@ -9,8 +9,8 @@
 #include <vector>
 
 namespace OpenHome {
+
 class IWriter;
-namespace Net {
 
 class ShellCommandWatchDog : private IShellCommandHandler
 {
@@ -27,7 +27,6 @@ private:
     WatchDog*   iWatchDog;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_SHELL_COMMAND_WATCHDOG

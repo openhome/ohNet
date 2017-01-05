@@ -1,9 +1,8 @@
-#include <OpenHome/Net/Private/ShellCommandDebug.h>
+#include <OpenHome/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Net;
 
 // ShellCommandDebug
 

@@ -1,4 +1,4 @@
-#include <OpenHome/Net/Private/ShellCommandRun.h>
+#include <OpenHome/Private/ShellCommandRun.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 
@@ -34,7 +34,7 @@ ShellCommandRun::~ShellCommandRun()
 void ShellCommandRun::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse)
 {
     iResponseWriter = &aResponse;
-    FunctorMsg logger = MakeFunctorMsg(*this, &OpenHome::Net::ShellCommandRun::Log);
+    FunctorMsg logger = MakeFunctorMsg(*this, &OpenHome::ShellCommandRun::Log);
     OpenHome::TestFramework::SetPrinter(logger);
     if (aArgs.size() == 0) {
         aResponse.Write(Brn("No program specified for command \'run\'\n"));

@@ -1,7 +1,7 @@
 #ifndef HEADER_SHELL_COMMAND_DEBUG
 #define HEADER_SHELL_COMMAND_DEBUG
 
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
@@ -10,7 +10,6 @@
 
 namespace OpenHome {
 class IWriter;
-namespace Net {
 
 class ShellCommandDebug : private IShellCommandHandler
 {
@@ -39,7 +38,6 @@ private:
     LevelMap iLevels;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_SHELL_COMMAND_DEBUG

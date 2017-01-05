@@ -1,9 +1,8 @@
-#include <OpenHome/Net/Private/ShellCommandQuit.h>
+#include <OpenHome/Private/ShellCommandQuit.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Net;
 
 // ShellCommandQuit
 

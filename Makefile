@@ -481,7 +481,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/FunctorAsync.h $(inc_build)/OpenHome/Net/Cpp
 	$(cp) OpenHome/Net/OhNet.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/OhNet.h $(inc_build)/OpenHome/Net/Cpp
-	$(cp) OpenHome/Net/Shell/*.h $(inc_build)/OpenHome/Net/Private
+	$(cp) OpenHome/Shell/*.h $(inc_build)/OpenHome/Private
 	$(cp) OpenHome/Net/ControlPoint/AsyncPrivate.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/CpStack.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/ControlPoint/CpDevice.h $(inc_build)/OpenHome/Net/Core

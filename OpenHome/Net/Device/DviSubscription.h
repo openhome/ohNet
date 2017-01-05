@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Private/InfoProvider.h>
 
 #include <vector>
 #include <map>
@@ -59,6 +60,7 @@ public:
     void Renew(TUint& aSeconds);
     void WriteChanges();
     const Brx& Sid() const;
+    void Log(IWriter& aWriter);
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
@@ -118,8 +120,9 @@ private:
     DviSubscription* iSubscription;
 };
 
-class DviSubscriptionManager : public Thread
+class DviSubscriptionManager : public Thread, private IInfoProvider
 {
+    static const Brn kQuerySubscriptions;
 public:
     DviSubscriptionManager(DvStack& aDvStack);
     ~DviSubscriptionManager();
@@ -127,12 +130,14 @@ public:
     void RemoveSubscription(DviSubscription& aSubscription);
     DviSubscription* Find(const Brx& aSid);
     void QueueUpdate(DviSubscription& aSubscription);
+private: // from IInfoProvider
+    void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
     void Run();
 private:
     DvStack& iDvStack;
     Mutex iLock;
-    std::list<DviSubscription*> iList;
+    std::list<DviSubscription*> iPengingUpdates;
     Fifo<Publisher*> iFree;
     Publisher** iPublishers;
     typedef std::map<Brn,DviSubscription*,BufferCmp> Map;

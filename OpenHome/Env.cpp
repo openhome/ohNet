@@ -9,6 +9,9 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Shell.h>
+#include <OpenHome/Private/InfoProvider.h>
+#include <OpenHome/Private/ShellCommandDebug.h>
 
 #ifdef PLATFORM_MACOSX_GNU
 # include <sys/time.h>
@@ -60,6 +63,9 @@ Environment::Environment(FunctorMsg& aLogOutput)
     , iInitParams(NULL)
     , iTimerManager(NULL)
     , iNetworkAdapterList(NULL)
+    , iShell(NULL)
+    , iInfoAggregator(NULL)
+    , iShellCommandDebug(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -110,6 +116,18 @@ Environment::Environment(InitialisationParams* aInitParams)
     if (networkAdapterChangeListener) {
         iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener, "Env");
     }
+
+    TUint shellPort, shellSessionPriority;
+    if (iInitParams->IsShellEnabled(shellPort, shellSessionPriority)) {
+        iShell = new OpenHome::Shell(*this, shellPort, shellSessionPriority);
+        iInfoAggregator = new OpenHome::InfoAggregator(*iShell);
+        iShellCommandDebug = new ShellCommandDebug(*iShell);
+    }
+    else {
+        iShell = NULL;
+        iInfoAggregator = NULL;
+        iShellCommandDebug = NULL;
+    }
 }
 
 Environment* Environment::Create(InitialisationParams* aInitParams)
@@ -139,6 +157,9 @@ Environment::~Environment()
     iPublicLock->Signal();
     delete iCpStack;
     delete iDvStack;
+    delete iShellCommandDebug;
+    delete iInfoAggregator;
+    delete iShell;
     delete iNetworkAdapterList;
     if (iObjectMap.size() != 0) {
         Log::Print("ERROR: destroying stack before some owned objects\n");
@@ -192,6 +213,16 @@ NetworkAdapterList& Environment::NetworkAdapterList()
 ThreadPriorityArbitrator& Environment::PriorityArbitrator()
 {
     return *iThreadPriorityArbitrator;
+}
+
+OpenHome::Shell* Environment::Shell()
+{
+    return iShell;
+}
+
+IInfoAggregator* Environment::InfoAggregator()
+{
+    return iInfoAggregator;
 }
 
 Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInterface)

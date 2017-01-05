@@ -14,7 +14,6 @@
 EXCEPTION(ShellCommandAlreadyRegistered)
 
 namespace OpenHome {
-namespace Net {
 
 class IShellCommandHandler : public INonCopyable
 {
@@ -57,7 +56,7 @@ private:
     WriterShellResponse* iWriterResponse;
     Semaphore iShutdownSem;
 };
-    
+
 class ShellCommandHelp;
 
 class IShell
@@ -113,7 +112,6 @@ public: // from IShell
     void RemoveCommandHandler(const TChar* aCommand);
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_SHELL

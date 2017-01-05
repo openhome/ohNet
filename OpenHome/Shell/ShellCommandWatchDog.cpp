@@ -1,10 +1,9 @@
-#include <OpenHome/Net/Private/ShellCommandWatchDog.h>
+#include <OpenHome/Private/ShellCommandWatchDog.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Net;
 
 
 class ShellCommandWatchDog::WatchDog
@@ -83,7 +82,7 @@ void ShellCommandWatchDog::HandleShellCommand(Brn aCommand, const std::vector<Br
         DisplayHelp(aResponse);
         return;
     }
-    
+
     if ( aArgs[0] == Brn("feed") )
     {
         if ( aArgs.size() != 1 )
@@ -113,7 +112,7 @@ void ShellCommandWatchDog::HandleShellCommand(Brn aCommand, const std::vector<Br
         }
         // read integer, update watchdog.
         iWatchDog->Update(Ascii::Uint(aArgs[1]));
-    } 
+    }
 }
 
 void ShellCommandWatchDog::DisplayHelp(IWriter& aResponse)

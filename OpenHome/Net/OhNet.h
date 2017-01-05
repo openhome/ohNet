@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Core/FunctorAsync.h>
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/FunctorNetworkAdapter.h>
+#include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/C/OhNet.h> // for OhNetCallbackFreeExternal only
 
 #include <vector>
@@ -376,6 +377,10 @@ public:
      * Set UserAgent header to be reported by HTTP clients
      */
     void SetHttpUserAgent(const Brx& aUserAgent);
+    /**
+     * Enable use of debug shell
+     */
+    void SetEnableShell(TUint aPort = 0, TUint aSessionPriority = kPriorityNormal);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -413,6 +418,7 @@ public:
     bool IsHostUdpLowQuality();
     uint32_t TimerManagerPriority() const;
     const Brx& HttpUserAgent() const;
+    TBool IsShellEnabled(TUint& aPort, TUint& aSessionPriority) const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -456,6 +462,9 @@ private:
     uint32_t iDvLpecServerPort;
     uint32_t iTimerManagerThreadPriority;
     Brh iUserAgent;
+    TBool iEnableShell;
+    TUint iShellPort;
+    TUint iShellSessionPriority;
 };
 
 class CpStack;

@@ -21,6 +21,9 @@ class ThreadPriorityArbitrator;
 class Log;
 class MListener;
 class IStackObject;
+class Shell;
+class IInfoAggregator;
+class ShellCommandDebug;
 
 class IStack
 {
@@ -67,6 +70,8 @@ public:
     Log& Logger();
     OpenHome::NetworkAdapterList& NetworkAdapterList();
     ThreadPriorityArbitrator& PriorityArbitrator();
+    OpenHome::Shell* Shell();
+    IInfoAggregator* InfoAggregator();
     Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
     void AddSuspendObserver(ISuspendObserver& aObserver);
@@ -100,6 +105,9 @@ private:
     OpenHome::Mutex* iPublicLock;
     OpenHome::NetworkAdapterList* iNetworkAdapterList;
     ThreadPriorityArbitrator* iThreadPriorityArbitrator;
+    OpenHome::Shell* iShell;
+    IInfoAggregator* iInfoAggregator;
+    ShellCommandDebug* iShellCommandDebug;
     std::vector<MListener*> iMulticastListeners;
     std::vector<ISuspendObserver*> iSuspendObservers;
     std::vector<IResumeObserver*> iResumeObservers;

@@ -1,10 +1,10 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Types.h>
-#include <OpenHome/Net/Private/Shell.h>
-#include <OpenHome/Net/Private/ShellCommandRun.h>
-#include <OpenHome/Net/Private/ShellCommandDebug.h>
-#include <OpenHome/Net/Private/ShellCommandQuit.h>
-#include <OpenHome/Net/Private/ShellCommandWatchDog.h>
+#include <OpenHome/Private/Shell.h>
+#include <OpenHome/Private/ShellCommandRun.h>
+#include <OpenHome/Private/ShellCommandDebug.h>
+#include <OpenHome/Private/ShellCommandQuit.h>
+#include <OpenHome/Private/ShellCommandWatchDog.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
 
@@ -124,7 +124,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestXmlParser", RunTestXmlParser));
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
-    ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
     ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, 60); // default to 60s watchdog. This can be changed at runtime by client.
     blocker->Wait();
@@ -132,7 +131,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     delete blocker;
     delete cmdWatchDog;
     delete cmdQuit;
-    delete cmdDebug;
     delete cmdRun;
     delete shell;
     delete lib;

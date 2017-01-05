@@ -1,7 +1,7 @@
 #ifndef HEADER_SHELL_COMMAND_QUIT
 #define HEADER_SHELL_COMMAND_QUIT
 
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
@@ -10,7 +10,6 @@
 
 namespace OpenHome {
 class IWriter;
-namespace Net {
 
 class ShellCommandQuit : private IShellCommandHandler
 {
@@ -25,7 +24,6 @@ private:
     Semaphore& iBlocker;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_SHELL_COMMAND_QUIT

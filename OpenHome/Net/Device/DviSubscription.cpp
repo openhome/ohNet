@@ -7,6 +7,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 
 #include <vector>
@@ -256,6 +257,32 @@ const Brx& DviSubscription::Sid() const
     return iSid;
 }
 
+void DviSubscription::Log(IWriter& aWriter)
+{
+    AutoMutex _(iLock);
+
+    aWriter.Write(Brn("sid: "));
+    aWriter.Write(iSid);
+
+    aWriter.Write(Brn(", service: "));
+    if (iService == NULL) {
+        aWriter.Write(Brn(""));
+    }
+    else {
+        aWriter.Write(iService->ServiceType().Name());
+    }
+
+    aWriter.Write(Brn(", seq: "));
+    Bws<Ascii::kMaxUintStringBytes> seqBuf;
+    (void)Ascii::AppendDec(seqBuf, iSequenceNumber);
+    aWriter.Write(seqBuf);
+
+    aWriter.Write(Brn(", expired: "));
+    static const Brn kTrue("true");
+    static const Brn kFalse("false");
+    aWriter.Write(iExpired? kTrue : kFalse);
+}
+
 void DviSubscription::ListObjectDetails() const
 {
     Log::Print("  DviSubscription: addr=%p, serviceType=", this);
@@ -448,12 +475,20 @@ void Publisher::Run()
 
 // DviSubscriptionManager
 
+const Brn DviSubscriptionManager::kQuerySubscriptions("subscriptions");
+
 DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     : Thread("DvSubscriptionMgr")
     , iDvStack(aDvStack)
     , iLock("DSBM")
     , iFree(aDvStack.Env().InitParams()->DvNumPublisherThreads())
 {
+    IInfoAggregator* infoAggregator = iDvStack.Env().InfoAggregator();
+    if (infoAggregator != NULL) {
+        std::vector<Brn> queries;
+        queries.push_back(kQuerySubscriptions);
+        infoAggregator->Register(*this, queries);
+    }
     const TUint numPublisherThreads = iDvStack.Env().InitParams()->DvNumPublisherThreads();
     const TUint priority = iDvStack.Env().InitParams()->DvPublisherThreadPriority();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
@@ -484,7 +519,7 @@ DviSubscriptionManager::~DviSubscriptionManager()
     }
     free(iPublishers);
 
-    for (std::list<DviSubscription*>::iterator it = iList.begin(); it != iList.end(); ++it) {
+    for (std::list<DviSubscription*>::iterator it = iPengingUpdates.begin(); it != iPengingUpdates.end(); ++it) {
         (*it)->RemoveRef();
     }
 
@@ -530,9 +565,30 @@ void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
 {
     aSubscription.AddRef();
     iLock.Wait();
-    iList.push_back(&aSubscription);
+    iPengingUpdates.push_back(&aSubscription);
     Signal();
     iLock.Signal();
+}
+
+void DviSubscriptionManager::QueryInfo(const Brx& aQuery, IWriter& aWriter)
+{
+    if (aQuery != kQuerySubscriptions) {
+        return;
+    }
+    AutoMutex _(iLock);
+    Map::iterator it;
+    aWriter.Write(Brn("All:"));
+    for (it=iMap.begin(); it!=iMap.end(); ++it) {
+        aWriter.Write(Brn("\n\t"));
+        it->second->Log(aWriter);
+    }
+    aWriter.Write(Brn("\n\nPending updates:"));
+    std::list<DviSubscription*>::iterator it2;
+    for (it2=iPengingUpdates.begin(); it2!=iPengingUpdates.end(); ++it2) {
+        aWriter.Write(Brn("\n\t"));
+        it->second->Log(aWriter);
+    }
+    aWriter.Write(Brn("\n"));
 }
 
 void DviSubscriptionManager::Run()
@@ -541,8 +597,8 @@ void DviSubscriptionManager::Run()
         Wait();
         Publisher* publisher = iFree.Read();
         iLock.Wait();
-        DviSubscription* subscription = iList.front();
-        iList.pop_front();
+        DviSubscription* subscription = iPengingUpdates.front();
+        iPengingUpdates.pop_front();
         iLock.Signal();
         publisher->Publish(subscription);
     }
