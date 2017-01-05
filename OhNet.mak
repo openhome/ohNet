@@ -2,8 +2,13 @@
 #
 
 openhome_system=Windows
-!if "$(windows_universal)"=="1"
+!if "$(windows_store_81)"=="1"
+windows_universal=1
 openhome_system=Windows81
+!endif
+!if "$(windows_store_10)"=="1"
+windows_universal=1
+openhome_system=Windows10
 !endif
 
 !if [cl 2>&1 | find "for x64" > nul] == 0
@@ -22,11 +27,21 @@ openhome_architecture=arm
 !endif
 
 !if "$(windows_universal)"=="1"
+!if "$(openhome_system)"=="Windows81"
 defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_WINDLL" /D "_UNICODE" /D "UNICODE" 
+!else
+defines_universal = -DDEFINE_WINDOWS_UNIVERSAL -D_CRT_SECURE_NO_WARNINGS /D "_UNICODE" /D "UNICODE" 
+!endif
 error_handling = /EHsc
+!if "$(openhome_system)"=="Windows81"
 additional_includes = /FU"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1\ExtensionSDKs\Microsoft.VCLibs\12.0\References\CommonConfiguration\neutral\platform.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" /FU"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral\Windows.winmd" 
 universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
 link_libs = Ws2_32.lib kernel32.lib 
+!else
+additional_includes = /AI "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\store\references" /FU Platform.winmd /FU Windows.winmd
+universal_cppflags = /ZW /ZW:nostdlib /D "WINAPI_FAMILY=WINAPI_FAMILY_PC_APP" /D "__WRL_NO_DEFAULT_LIB__" /Gy /Zc:inline /Zc:wchar_t 
+link_libs = Ws2_32.lib WindowsApp.lib
+!endif
 machine = X86
 lib_path_root = 
 store_lib_path = store
@@ -42,7 +57,11 @@ safeseh =
 !if "$(openhome_architecture)"=="x86"
 safeseh = /SAFESEH
 !endif
+!if "$(openhome_system)"=="Windows81"
 link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS /LIBPATH:$(additional_lib_path)
+!else
+link_opts = /APPCONTAINER $(SAFESEH) /DYNAMICBASE /NXCOMPAT /MACHINE:$(machine) /SUBSYSTEM:WINDOWS
+!endif
 static_or_dynamic = /MD
 force_cpp = /TP
 !else
@@ -56,11 +75,16 @@ static_or_dynamic = /MT
 force_cpp = 
 !endif
 
+csharp_pcl_profile = PCLProfileNone
+!if "$(windows_store_10)"=="1"
+csharp_pcl_profile = PCLProfile259
+!endif
+
 !if "$(debug)"=="1"
 link_flag_debug = /debug
 link_flag_debug_dll = $(link_flag_debug)
 debug_specific_cflags = $(static_or_dynamic)d /Z7 /Od /RTC1
-debug_csharp = /define:DEBUG /debug+
+debug_csharp = /define:DEBUG,$(csharp_pcl_profile) /debug+
 build_dir = Debug
 openhome_configuration = Debug
 android_ndk_debug = 1
@@ -68,7 +92,7 @@ android_ndk_debug = 1
 link_flag_debug =
 link_flag_debug_dll = /OPT:REF
 debug_specific_cflags = $(static_or_dynamic) /Ox
-debug_csharp = /optimize+ /debug:pdbonly
+debug_csharp = /define:$(csharp_pcl_profile) /optimize+ /debug:pdbonly
 build_dir = Release
 openhome_configuration = Release
 android_ndk_debug = 0
@@ -110,6 +134,12 @@ linkopts_ohNet =
 link_dll = link /nologo $(link_flag_debug_dll) /map $(link_libs) $(link_opts) /dll 
 csharp = csc /nologo /platform:anycpu
 csharpdefines =
+!if "$(windows_store_10)"=="1"
+portable45refs=c:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.5\ 
+profile259refs=$(portable45refs)Profile\Profile259\ 
+portablerefs = /reference:"$(portable45refs)mscorlib.dll" /reference:"$(profile259refs)mscorlib.dll" /reference:"$(profile259refs)System.dll" /reference:"$(profile259refs)System.Core.dll" /reference:"$(portable45refs)System.Runtime.InteropServices.dll" /reference:"$(profile259refs)System.Runtime.dll" /reference:"$(profile259refs)System.Collections.dll" /reference:"$(profile259refs)Microsoft.CSharp.dll" /reference:"$(profile259refs)System.ComponentModel.dll" /reference:"$(profile259refs)System.ComponentModel.EventBasedAsync.dll" /reference:"$(profile259refs)System.Diagnostics.Contracts.dll" /reference:"$(profile259refs)System.Diagnostics.Debug.dll" /reference:"$(profile259refs)System.Diagnostics.Tools.dll"  /reference:"$(profile259refs)System.Dynamic.Runtime.dll" /reference:"$(profile259refs)System.Globalization.dll" /reference:"$(profile259refs)System.IO.dll" /reference:"$(profile259refs)System.Linq.dll" /reference:"$(profile259refs)System.Linq.Expressions.dll" /reference:"$(profile259refs)System.Linq.Queryable.dll" /reference:"$(profile259refs)System.Net.dll" /reference:"$(profile259refs)System.Net.NetworkInformation.dll" /reference:"$(profile259refs)System.Net.Primitives.dll" /reference:"$(profile259refs)System.Net.Requests.dll" /reference:"$(profile259refs)System.ObjectModel.dll" /reference:"$(profile259refs)System.Reflection.dll" /reference:"$(profile259refs)System.Reflection.Extensions.dll" /reference:"$(profile259refs)System.Reflection.Primitives.dll" /reference:"$(profile259refs)System.Resources.ResourceManager.dll" /reference:"$(profile259refs)System.Runtime.Extensions.dll" /reference:"$(profile259refs)System.Runtime.InteropServices.WindowsRuntime.dll" /reference:"$(profile259refs)System.Runtime.Serialization.dll" /reference:"$(profile259refs)System.Runtime.Serialization.Json.dll" /reference:"$(profile259refs)System.Runtime.Serialization.Primitives.dll" /reference:"$(profile259refs)System.Runtime.Serialization.Xml.dll" /reference:"$(profile259refs)System.Security.Principal.dll" /reference:"$(profile259refs)System.ServiceModel.Web.dll" /reference:"$(profile259refs)System.Text.Encoding.dll" /reference:"$(profile259refs)System.Text.Encoding.Extensions.dll" /reference:"$(profile259refs)System.Text.RegularExpressions.dll" /reference:"$(profile259refs)System.Threading.dll" /reference:"$(profile259refs)System.Threading.Tasks.dll" /reference:"$(profile259refs)System.Windows.dll" /reference:"$(profile259refs)System.Xml.dll" /reference:"$(profile259refs)System.Xml.Linq.dll" /reference:"$(profile259refs)System.Xml.ReaderWriter.dll" /reference:"$(profile259refs)System.Xml.Serialization.dll" /reference:"$(profile259refs)System.Xml.XDocument.dll" /reference:"$(profile259refs)System.Xml.XmlSerializer.dll" 
+csharpdefines = /nostdlib+ $(portablerefs)
+!endif
 publicjavadir = OpenHome\Net\Bindings\Java^\
 includes_jni = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
 link_jvm = "$(JAVA_HOME)\lib\jvm.lib"
