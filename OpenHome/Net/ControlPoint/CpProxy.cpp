@@ -184,20 +184,38 @@ void CpProxy::EventUpdateEnd()
     TBool changed = false;
     PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
-        changed = changed | it->second->ReportChanged();
+        try {
+            changed = changed | it->second->ReportChanged();
+        }
+        catch (AssertionFailed&) {
+            throw;
+        }
+        catch (Exception&) {}
         it++;
     }
     if (changed || !iInitialEventDelivered) {
         iLock->Wait();
         if (iPropertyChanged) {
-            iPropertyChanged();
+            try {
+                iPropertyChanged();
+            }
+            catch (AssertionFailed&) {
+                throw;
+            }
+            catch (Exception&) {}
         }
         iLock->Signal();
         if (!iInitialEventDelivered) {
             iInitialEventDelivered = true;
             iInitialEventLock->Wait();
             if (iInitialEvent) {
-                iInitialEvent();
+                try {
+                    iInitialEvent();
+                }
+                catch (AssertionFailed&) {
+                    throw;
+                }
+                catch (Exception&) {}
             }
             iInitialEventLock->Signal();
             delete iInitialEventLock;
