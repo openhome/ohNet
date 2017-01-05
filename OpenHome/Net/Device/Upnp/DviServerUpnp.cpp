@@ -618,6 +618,8 @@ void DviSessionUpnp::Run()
     iDechunker->ReadFlush();
     iResponseStarted = false;
     iResponseEnded = false;
+    Brn method;
+    Brn reqUri;
     // check headers
     try {
         try {
@@ -629,10 +631,10 @@ void DviSessionUpnp::Run()
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kMethodNotAllowed);
         }
-        const Brx& method = iReaderRequest->Method();
+        method.Set(iReaderRequest->Method());
         iReaderRequest->UnescapeUri();
 
-        const Brx& reqUri = iReaderRequest->Uri();
+        reqUri.Set(iReaderRequest->Uri());
         LOG(kDvDevice, "Method: %.*s, uri: %.*s\n", PBUF(method), PBUF(reqUri));
 
         if (method == Http::kMethodGet) {
@@ -653,16 +655,19 @@ void DviSessionUpnp::Run()
         }
     }
     catch (HttpError&) {
+        LOG2(kDvDevice, kDvEvent, "HttpError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
         if (iErrorStatus == &HttpStatus::kOk) {
             iErrorStatus = &HttpStatus::kBadRequest;
         }
     }
     catch (ReaderError&) {
+        LOG2(kDvDevice, kDvEvent, "ReaderError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
         if (iErrorStatus == &HttpStatus::kOk) {
             iErrorStatus = &HttpStatus::kBadRequest;
         }
     }
     catch (WriterError&) {
+        LOG2(kDvDevice, kDvEvent, "WriterError handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
     }
     try {
         if (!iResponseStarted) {
@@ -677,7 +682,9 @@ void DviSessionUpnp::Run()
             iWriterResponse->WriteFlush();
         }
     }
-    catch (WriterError&) {}
+    catch (WriterError&) {
+        LOG2(kDvDevice, kDvEvent, "WriterError(2) handling %.*s for %.*s\n", PBUF(method), PBUF(reqUri));
+    }
     iShutdownSem.Signal();
 }
 
@@ -781,13 +788,17 @@ void DviSessionUpnp::Subscribe()
         Endpoint::EndpointBuf ep;
         iHeaderCallback.Endpoint().AppendEndpoint(ep);
         const Brx& callback = iHeaderCallback.Uri();
-        LOG(kDvEvent, "Subscription request from %s%.*s\n", reinterpret_cast<const TChar*>(ep.Ptr()), PBUF(callback));
+        LOG(kDvEvent, "Subscription request from %s%.*s for %.*s\n",
+                      reinterpret_cast<const TChar*>(ep.Ptr()),
+                      PBUF(callback),
+                      PBUF(iReaderRequest->Uri()));
     }
     if (iHeaderSid.Received()) {
         try {
             Renew();
         }
         catch (DvSubscriptionError&) {
+            LOG2(kDvEvent, kError, "DvSubscriptionError\n");
             iErrorStatus = &HttpStatus::kPreconditionFailed;
         }
         return;
