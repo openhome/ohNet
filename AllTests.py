@@ -82,7 +82,7 @@ def runBuilds():
     if gParallel:
         build('copy_build_includes')
     if gCore == 1:
-        build('ohNet TestFramework Shell', gParallel)
+        build('ohNet TestFramework', gParallel)
     elif gWindows81 == 1 or gWindows10 == 1:
         build('ohNet.net.dll', gParallel)
     else:
