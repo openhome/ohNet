@@ -98,6 +98,8 @@ public:
                      TUint aThreadPriority, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationRamper();
     TUint SizeInJiffies() const;
+    TUint ThreadPriorityFlywheelRamper() const;
+    TUint ThreadPriorityStarvationRamper() const;
 private:
     inline TBool IsFull() const;
     void PullerThread();
@@ -133,6 +135,8 @@ private:
     IStarvationRamperObserver& iObserver;
     IPipelineElementObserverThread& iObserverThread;
     TUint iMaxJiffies;
+    const TUint iThreadPriorityFlywheelRamper;
+    const TUint iThreadPriorityStarvationRamper;
     const TUint iRampUpJiffies;
     const TUint iMaxStreamCount;
     Mutex iLock;

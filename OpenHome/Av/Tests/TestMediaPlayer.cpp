@@ -395,9 +395,14 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     hostName.Replace(iDevice->Udn());
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
-    TUint min, max;
-    iMediaPlayer->Pipeline().GetThreadPriorityRange(min, max);
-    const TUint raopUdpPriority = min-1;    // Same priority as Filler from PipelineManager.
+
+    TUint priorityFiller = 0;
+    TUint priorityFlywheelRamper = 0;
+    TUint priorityStarvationRamper = 0;
+    TUint priorityCodec = 0;
+    TUint priorityEvent = 0;
+    iMediaPlayer->Pipeline().GetThreadPriorities(priorityFiller, priorityFlywheelRamper, priorityStarvationRamper, priorityCodec, priorityEvent);
+    const TUint raopUdpPriority = priorityFiller;
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, Optional<IClockPuller>(nullptr), macAddr, raopUdpPriority));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer,

@@ -477,9 +477,13 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     , iProduct(aMediaPlayer.Product())
 {
     Media::PipelineManager& pipeline = aMediaPlayer.Pipeline();
-    TUint priorityMin, priorityMax;
-    pipeline.GetThreadPriorityRange(priorityMin, priorityMax);
-    const TUint senderThreadPriority = priorityMin - 1;
+    TUint priorityFiller = 0;
+    TUint priorityFlywheelRamper = 0;
+    TUint priorityStarvationRamper = 0;
+    TUint priorityCodec = 0;
+    TUint priorityEvent = 0;
+    pipeline.GetThreadPriorities(priorityFiller, priorityFlywheelRamper, priorityStarvationRamper, priorityCodec, priorityEvent);
+    const TUint senderThreadPriority = priorityFiller;
     iSender = new Sender(aMediaPlayer.Env(), aMediaPlayer.Device(), aZoneHandler,
                          aTxTimestamper, aMediaPlayer.ConfigInitialiser(), senderThreadPriority,
                          Brx::Empty(), pipeline.SenderMinLatencyMs(), aMode,
@@ -487,7 +491,7 @@ SongcastSender::SongcastSender(IMediaPlayer& aMediaPlayer, ZoneHandler& aZoneHan
     iLoggerSender = new Logger("Sender", *iSender);
     //iLoggerSender->SetEnabled(true);
     //iLoggerSender->SetFilter(Logger::EMsgAll);
-    iSenderThread = new SenderThread(*iLoggerSender, priorityMax-2);
+    iSenderThread = new SenderThread(*iLoggerSender, priorityStarvationRamper-1);
     iSplitter = new Splitter(*iSenderThread, aMode);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iSplitter->SetUpstream(pipeline.InsertElements(*iLoggerSplitter));

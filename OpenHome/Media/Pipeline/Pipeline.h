@@ -64,7 +64,6 @@ public:
     TUint RampLongJiffies() const;
     TUint RampShortJiffies() const;
     TUint RampEmergencyJiffies() const;
-    TUint ThreadPriorityFlywheel() const;
     TUint ThreadPriorityStarvationRamper() const;
     TUint ThreadPriorityCodec() const;
     TUint ThreadPriorityEvent() const;
@@ -178,6 +177,7 @@ public:
     IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
+    void GetThreadPriorities(TUint& aFlywheelRamper, TUint& aStarvationRamper, TUint& aCodec, TUint& aEvent);
     void LogBuffers() const;
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
