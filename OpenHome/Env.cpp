@@ -82,6 +82,9 @@ Environment::Environment(InitialisationParams* aInitParams)
     : iOsContext(NULL)
     , iInitParams(aInitParams)
     , iNetworkAdapterList(NULL)
+    , iShell(NULL)
+    , iInfoAggregator(NULL)
+    , iShellCommandDebug(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -117,17 +120,7 @@ Environment::Environment(InitialisationParams* aInitParams)
         iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener, "Env");
     }
 
-    TUint shellPort, shellSessionPriority;
-    if (iInitParams->IsShellEnabled(shellPort, shellSessionPriority)) {
-        iShell = new OpenHome::Shell(*this, shellPort, shellSessionPriority);
-        iInfoAggregator = new OpenHome::InfoAggregator(*iShell);
-        iShellCommandDebug = new ShellCommandDebug(*iShell);
-    }
-    else {
-        iShell = NULL;
-        iInfoAggregator = NULL;
-        iShellCommandDebug = NULL;
-    }
+    CreateShell();
 }
 
 Environment* Environment::Create(InitialisationParams* aInitParams)
@@ -385,6 +378,20 @@ void Environment::ListObjects()
     iPrivateLock->Signal();
 }
 
+void Environment::CreateShell()
+{
+    if (iShell != NULL) {
+        return;
+    }
+    TUint shellPort, shellSessionPriority;
+    if (!iInitParams->IsShellEnabled(shellPort, shellSessionPriority)) {
+        return;
+    }
+    iShell = new OpenHome::Shell(*this, shellPort, shellSessionPriority);
+    iInfoAggregator = new OpenHome::InfoAggregator(*iShell);
+    iShellCommandDebug = new ShellCommandDebug(*iShell);
+}
+
 void Environment::SetCpStack(IStack* aStack)
 {
     iCpStack = aStack;
@@ -409,6 +416,7 @@ void Environment::SetInitParams(InitialisationParams* aInitParams)
 {
     delete iInitParams;
     iInitParams = aInitParams;
+    CreateShell();
 }
 
 
