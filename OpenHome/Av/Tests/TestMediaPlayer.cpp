@@ -569,7 +569,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(const TChar* aRoom, T
     if (aLoopback == true) {
         initParams->SetUseLoopbackNetworkAdapter();
     }
-    initParams->SetEnableShell();
+    initParams->SetEnableShell(0);
 #ifdef LPEC_ENABLE
     initParams->SetDvNumLpecThreads(4);
     initParams->SetDvLpecServerPort(2324);
