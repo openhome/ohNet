@@ -7,14 +7,12 @@
 #include <vector>
 
 namespace OpenHome {
+    class IInfoAggregator;
 namespace Av {
-        class IRebootHandler;
-    }
+    class IRebootHandler;
+}
 namespace Configuration {
     class IConfigManager;
-}
-namespace Media {
-    class IInfoAggregator;
 }
 namespace Web {
 
