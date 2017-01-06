@@ -12,6 +12,7 @@
 #include <OpenHome/FunctorNetworkAdapter.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/C/OhNet.h> // for OhNetCallbackFreeExternal only
+#include <OpenHome/Private/Shell.h> // for Shell::kServerPortDefault only
 
 #include <vector>
 
@@ -380,7 +381,7 @@ public:
     /**
      * Enable use of debug shell
      */
-    void SetEnableShell(TUint aPort = 0, TUint aSessionPriority = kPriorityNormal);
+    void SetEnableShell(TUint aPort = Shell::kServerPortDefault, TUint aSessionPriority = kPriorityNormal);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
