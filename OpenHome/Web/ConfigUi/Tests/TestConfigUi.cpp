@@ -15,7 +15,6 @@
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Web/WebAppFramework.h>
 #include <OpenHome/Web/ConfigUi/ConfigUi.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Av/Tests/TestMediaPlayer.h>
 
 
@@ -66,10 +65,10 @@ private:
     TUint iBytesPrinted;
 };
 
-class MockInfoAggregator : public Media::IInfoAggregator
+class MockInfoAggregator : public IInfoAggregator
 {
 public: // from IInfoAggregator
-    void Register(Media::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries) override;
+    void Register(IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries) override;
 };
 
 class ILanguageResourceReaderDestroyer
@@ -377,7 +376,7 @@ void HelperWriterPrinter::WriteFlush()
 
 // MockInfoAggregator
 
-void MockInfoAggregator::Register(Media::IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
+void MockInfoAggregator::Register(IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
 {
 }
 

@@ -1,5 +1,4 @@
 #include <OpenHome/Media/Tests/TestCodec.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/Logger.h>

@@ -10,7 +10,6 @@
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Json.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Av/RebootHandler.h>
 #include <OpenHome/Private/Debug.h>

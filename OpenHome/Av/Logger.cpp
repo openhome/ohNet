@@ -3,7 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Av/ProviderDebug.h>
 #include <OpenHome/Av/Product.h>
@@ -20,7 +20,7 @@ const TChar* LoggerSerial::kShellCmdSerial = "serial";
 const Brn LoggerSerial::kShellCmdSerialOn("on");
 const Brn LoggerSerial::kShellCmdSerialOff("off");
 
-LoggerSerial::LoggerSerial(Net::IShell& aShell)
+LoggerSerial::LoggerSerial(IShell& aShell)
     : iShell(aShell)
 {
     iShell.AddCommandHandler(kShellCmdSerial, *this);
@@ -82,7 +82,7 @@ void LoggerSerial::DisplayHelp(IWriter& aResponse)
 const TChar* LoggerBuffered::kShellCommandLog = "log";
 
 LoggerBuffered::LoggerBuffered(TUint aBytes, Net::DvDevice& aDevice, Product& aProduct,
-                               Net::IShell& aShell, Optional<ILogPoster> aLogPoster)
+                               IShell& aShell, Optional<ILogPoster> aLogPoster)
     : iShell(aShell)
 {
     iShell.AddCommandHandler(kShellCommandLog, *this);

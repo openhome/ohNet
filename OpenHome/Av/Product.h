@@ -5,10 +5,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Av/Source.h>
@@ -80,7 +80,6 @@ private:
 class Product : private IProduct
               , public IProductNameObservable
               , private IStandbyHandler
-              , private Media::IInfoProvider
               , private INonCopyable
 {
 private:
@@ -143,8 +142,6 @@ public: // from IProductNameObservable
 private: // from IStandbyHandler
     void StandbyEnabled() override;
     void StandbyDisabled(StandbyDisableReason aReason) override;
-private: // from Media::IInfoProvider
-    void QueryInfo(const Brx& aQuery, IWriter& aWriter) override;
 private:
     Environment& iEnv;
     Net::DvDeviceStandard& iDevice; // do we need to store this?

@@ -1,6 +1,6 @@
 #include <OpenHome/Types.h>
-#include <OpenHome/Net/Private/Shell.h>
-#include <OpenHome/Net/Private/ShellCommandRun.h>
+#include <OpenHome/Private/Shell.h>
+#include <OpenHome/Private/ShellCommandRun.h>
 
 #include <vector>
 
@@ -24,7 +24,7 @@ namespace Media {
 
 static const TUint kTestShellTimeout = 60; // initial timeout for TestShell. This is increased  by testharness once running.
 
-void ExecuteTestShell(Net::InitialisationParams* aInitParams, std::vector<Net::ShellTest>& aTests);
+void ExecuteTestShell(Net::InitialisationParams* aInitParams, std::vector<ShellTest>& aTests);
 
 } // namespace Media
 } // namespace OpenHome

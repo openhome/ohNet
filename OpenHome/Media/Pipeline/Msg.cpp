@@ -4,7 +4,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Optional.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Arch.h>

@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Utils/ClockPullerManual.h>
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/Debug.h>
@@ -9,7 +9,7 @@ using namespace OpenHome::Media;
 
 const TChar ClockPullerManual::kShellCommand[] = "clock_pull";
 
-ClockPullerManual::ClockPullerManual(IPullableClock& aPullableClock, Net::IShell& aShell)
+ClockPullerManual::ClockPullerManual(IPullableClock& aPullableClock, IShell& aShell)
     : iPullableClock(aPullableClock)
     , iShell(aShell)
 {

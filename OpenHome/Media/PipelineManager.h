@@ -10,9 +10,7 @@
 #include <vector>
 
 namespace OpenHome {
-namespace Av {
     class IInfoAggregator;
-}
 namespace Media {
     namespace Codec {
         class ContainerBase;

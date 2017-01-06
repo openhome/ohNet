@@ -15,11 +15,9 @@ EXCEPTION(LanguageResourceInvalid);
 EXCEPTION(JsonStringError);
 
 namespace OpenHome {
+    class IInfoAggregator;
 namespace Av {
     class IRebootHandler;
-}
-namespace Media {
-    class IInfoAggregator;
 }
 namespace Web {
 
@@ -188,7 +186,7 @@ private:
 class ConfigMessageAllocator : public IConfigMessageAllocator
 {
 public:
-    ConfigMessageAllocator(Media::IInfoAggregator& aInfoAggregator, TUint aMsgCount, ILanguageResourceManager& aLanguageResourceManager);
+    ConfigMessageAllocator(IInfoAggregator& aInfoAggregator, TUint aMsgCount, ILanguageResourceManager& aLanguageResourceManager);
 public: // from IConfigMessageAllocator
     ITabMessage* AllocateMessage(IConfigUiVal& aUiVal, const Brx& aUpdatedVal, std::vector<Bws<10>>& aLanguageList) override;
 private:
@@ -627,7 +625,7 @@ private:
     typedef std::pair<Brn, Brn> ResourcePair;
     typedef std::map<Brn, Brn, BufferCmp> ResourceMap;
 protected:
-    ConfigAppBase(Media::IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
+    ConfigAppBase(IInfoAggregator& aInfoAggregator, Configuration::IConfigManager& aConfigManager, IConfigAppResourceHandlerFactory& aResourceHandlerFactory, const Brx& aResourcePrefix, const Brx& aResourceDir, TUint aResourceHandlersCount, TUint aMaxTabs, TUint aSendQueueSize, Av::IRebootHandler& aRebootHandler);
     ~ConfigAppBase();
 public: // from IConfigApp
     ITab& Create(ITabHandler& aHandler, const std::vector<Bws<10>>& aLanguageList) override;
@@ -666,7 +664,7 @@ private:
 class ConfigAppBasic : public ConfigAppBase
 {
 public:
-    ConfigAppBasic(Media::IInfoAggregator& aInfoAggregator,
+    ConfigAppBasic(IInfoAggregator& aInfoAggregator,
                    Configuration::IConfigManager& aConfigManager,
                    IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                    const Brx& aResourcePrefix, const Brx& aResourceDir,
@@ -678,7 +676,7 @@ class ConfigAppSources : public ConfigAppBasic
 private:
     static const TUint kMaxSourceNameBytes = Av::ISource::kMaxSourceNameBytes;
 public:
-    ConfigAppSources(Media::IInfoAggregator& aInfoAggregator,
+    ConfigAppSources(IInfoAggregator& aInfoAggregator,
                      Configuration::IConfigManager& aConfigManager,
                      IConfigAppResourceHandlerFactory& aResourceHandlerFactory,
                      const std::vector<const Brx*>& aSources,

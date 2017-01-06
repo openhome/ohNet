@@ -21,7 +21,7 @@ namespace Web {
 class ConfigAppMediaPlayer : public ConfigAppSources
 {
 public:
-    ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregator,
+    ConfigAppMediaPlayer(IInfoAggregator& aInfoAggregator,
                          Environment& aEnv,
                          Av::Product& aProduct,
                          Configuration::IConfigManager& aConfigManager,

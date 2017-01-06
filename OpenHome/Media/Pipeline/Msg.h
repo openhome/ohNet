@@ -7,7 +7,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Optional.h>
 
 #include <limits.h>

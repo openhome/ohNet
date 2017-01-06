@@ -92,8 +92,6 @@ def configure(conf):
         'thirdparty/flac-1.2.1/include',
         ]
 
-    conf.env.STLIB_SHELL = ['Shell']
-
     # Setup Apple ALAC
     # Using http://svn.macosforge.org/repository/alac/trunk
     # Revision: 4
@@ -214,7 +212,6 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
-                'OpenHome/Media/InfoProvider.cpp',
                 'OpenHome/Media/Pipeline/AnalogBypassRamper.cpp',
                 'OpenHome/Media/Pipeline/AudioDumper.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
@@ -701,7 +698,7 @@ def build(bld):
 
     bld.program(
             source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'WebAppFrameworkTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'WebAppFrameworkTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
             target='TestShell',
             install_path=None)
     bld.program(
@@ -821,12 +818,12 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipeline',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPipelineConfigMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPipelineConfig',
             install_path=None)
     bld.program(
@@ -916,7 +913,7 @@ def build(bld):
             install_path=None)
     #bld.program(
     #        source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-    #        use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+    #        use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
     #        target='TestPlaylist',
     #        install_path=None)
     bld.program(
@@ -926,7 +923,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'WebAppFramework', 'ConfigUi'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -1001,7 +998,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source=['OpenHome/Web/ConfigUi/Tests/TestConfigUiMain.cpp'],
-            use=['OHNET', 'SHELL', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
+            use=['OHNET', 'PLATFORM', 'OPENSSL', 'ConfigUiTestUtils', 'WebAppFrameworkTestUtils', 'ConfigUi', 'WebAppFramework', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayer'],
             target='TestConfigUi',
             install_path=None)
     bld.program(

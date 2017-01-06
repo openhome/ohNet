@@ -4,7 +4,6 @@
 #include <OpenHome/Web/ConfigUi/ConfigUi.h>
 #include <OpenHome/Web/ConfigUi/FileResourceHandler.h>
 #include <OpenHome/Av/VolumeManager.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Av/RebootHandler.h>
 #include <OpenHome/Av/Qobuz/Qobuz.h>
 
@@ -15,7 +14,7 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Web;
 
 
-ConfigAppMediaPlayer::ConfigAppMediaPlayer(Media::IInfoAggregator& aInfoAggregator,
+ConfigAppMediaPlayer::ConfigAppMediaPlayer(IInfoAggregator& aInfoAggregator,
                                            Environment& aEnv,
                                            Product& aProduct,
                                            Configuration::IConfigManager& aConfigManager,

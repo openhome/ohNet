@@ -2,7 +2,6 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 

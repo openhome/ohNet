@@ -12,10 +12,11 @@ namespace OpenHome {
     class PowerManager;
     class RingBufferLogger;
     class IUnixTimestamp;
+    class IShell;
+    class IInfoAggregator;
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
-    class IShell;
     class DvProvider;
 }
 namespace Media {
@@ -29,7 +30,6 @@ namespace Media {
         class ContainerBase;
         class CodecBase;
     }
-    class IInfoAggregator;
     class LoggingPipelineObserver;
     class TrackFactory;
 }
@@ -85,7 +85,7 @@ public:
     virtual Media::MimeTypeList& MimeTypes() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
-    virtual ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) = 0; // must be called before Start()
+    virtual ILoggerSerial& BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster) = 0; // must be called before Start()
     virtual IUnixTimestamp& UnixTimestamp() = 0;
 };
 
@@ -98,7 +98,7 @@ public:
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
                 VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
-                Media::IInfoAggregator& aInfoAggregator,
+                IInfoAggregator& aInfoAggregator,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -128,7 +128,7 @@ public: // from IMediaPlayer
     Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
-    ILoggerSerial& BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
+    ILoggerSerial& BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster) override; // must be called before Start()
     IUnixTimestamp& UnixTimestamp() override;
 private:
     Net::DvStack& iDvStack;

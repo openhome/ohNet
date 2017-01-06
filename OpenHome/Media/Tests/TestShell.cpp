@@ -2,9 +2,8 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/CpiStack.h>
-#include <OpenHome/Net/Private/ShellCommandDebug.h>
-#include <OpenHome/Net/Private/ShellCommandQuit.h>
-#include <OpenHome/Net/Private/ShellCommandWatchDog.h>
+#include <OpenHome/Private/ShellCommandQuit.h>
+#include <OpenHome/Private/ShellCommandWatchDog.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -12,6 +11,7 @@ using namespace OpenHome::Media;
 
 void OpenHome::Media::ExecuteTestShell(Net::InitialisationParams* aInitParams, std::vector<ShellTest>& aTests)
 {
+    aInitParams->SetEnableShell(Shell::kServerPortDefault);
     Library* lib = new Library(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
@@ -24,13 +24,12 @@ void OpenHome::Media::ExecuteTestShell(Net::InitialisationParams* aInitParams, s
     CpStack* cpStack = nullptr;
     DvStack* dvStack = nullptr;
     lib->StartCombined(subnet, cpStack, dvStack);
+    Shell* shell = lib->Env().Shell();
 
-    Shell* shell = new Shell(cpStack->Env());
     Semaphore* blocker = new Semaphore("BLCK", 0);
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, aTests);
 
-    ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
     ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, kTestShellTimeout);
     blocker->Wait();
@@ -38,8 +37,6 @@ void OpenHome::Media::ExecuteTestShell(Net::InitialisationParams* aInitParams, s
     delete blocker;
     delete cmdWatchDog;
     delete cmdQuit;
-    delete cmdDebug;
     delete cmdRun;
-    delete shell;
     delete lib;
 }

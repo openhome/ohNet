@@ -3,7 +3,6 @@
 #include <OpenHome/Media/Protocol/ProtocolHls.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Private/Http.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>

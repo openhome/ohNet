@@ -1,6 +1,6 @@
 #pragma once
 
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Types.h>
 
@@ -9,19 +9,19 @@ namespace Media {
 
 class IPullableClock;
 
-class ClockPullerManual : private Net::IShellCommandHandler
+class ClockPullerManual : private IShellCommandHandler
 {
     static const TUint kSupportedMsgTypes;
     static const TChar kShellCommand[];
 public:
-    ClockPullerManual(IPullableClock& aPullableClock, Net::IShell& aShell);
+    ClockPullerManual(IPullableClock& aPullableClock, IShell& aShell);
     ~ClockPullerManual();
-private: // from Net::IShellCommandHandler
+private: // from IShellCommandHandler
     void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse) override;
     void DisplayHelp(IWriter& aResponse) override;
 private:
     IPullableClock& iPullableClock;
-    Net::IShell& iShell;
+    IShell& iShell;
 };
 
 } // namespace Media

@@ -560,10 +560,6 @@ void Product::StandbyDisabled(StandbyDisableReason aReason)
     }
 }
 
-void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)
-{
-}
-
 
 // FriendlyNameManager
 

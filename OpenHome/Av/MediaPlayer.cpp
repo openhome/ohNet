@@ -37,7 +37,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
                          VolumeConsumer& aVolumeConsumer, IVolumeProfile& aVolumeProfile,
-                         Media::IInfoAggregator& aInfoAggregator,
+                         IInfoAggregator& aInfoAggregator,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
                          const Brx& aDefaultName)
@@ -138,7 +138,7 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
     iProduct->AddAttribute(aAttribute);
 }
 
-ILoggerSerial& MediaPlayer::BufferLogOutput(TUint aBytes, Net::IShell& aShell, Optional<ILogPoster> aLogPoster)
+ILoggerSerial& MediaPlayer::BufferLogOutput(TUint aBytes, IShell& aShell, Optional<ILogPoster> aLogPoster)
 {
     iLoggerBuffered = new LoggerBuffered(aBytes, iDevice, *iProduct, aShell, aLogPoster);
     return iLoggerBuffered->LoggerSerial();

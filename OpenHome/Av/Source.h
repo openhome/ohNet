@@ -2,7 +2,6 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
 namespace OpenHome {

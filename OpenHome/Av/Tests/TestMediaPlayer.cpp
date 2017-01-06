@@ -18,8 +18,6 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Av/Utils/IconDriverSongcastSender.h>
-#include <OpenHome/Net/Private/Shell.h>
-#include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Debug.h>
@@ -140,10 +138,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iMaxWebUiTabs(aMaxWebUiTabs)
     , iUiSendQueueSize(aUiSendQueueSize)
 {
-    // create a shell
-    iShell = new Shell(aDvStack.Env(), 0);
-    Log::Print("Shell running on port %u\n", iShell->Port());
-    iShellDebug = new ShellCommandDebug(*iShell);
+    Log::Print("Shell running on port %u\n", aDvStack.Env().Shell()->Port());
     iInfoLogger = new Media::AllocatorInfoLogger();
 
     // Do NOT set UPnP friendly name attributes at this stage.
@@ -229,8 +224,6 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iMediaPlayer;
     delete iPipelineObserver;
     delete iInfoLogger;
-    delete iShellDebug;
-    delete iShell;
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;
@@ -429,7 +422,7 @@ IWebApp* TestMediaPlayer::CreateConfigApp(const std::vector<const Brx*>& aSource
 
 void TestMediaPlayer::InitialiseLogger()
 {
-    (void)iMediaPlayer->BufferLogOutput(128 * 1024, *iShell, Optional<ILogPoster>(nullptr));
+    (void)iMediaPlayer->BufferLogOutput(128 * 1024, *(iMediaPlayer->Env().Shell()), Optional<ILogPoster>(nullptr));
 }
 
 void TestMediaPlayer::DestroyAppFramework()
@@ -571,6 +564,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(const TChar* aRoom, T
     if (aLoopback == true) {
         initParams->SetUseLoopbackNetworkAdapter();
     }
+    initParams->SetEnableShell();
 #ifdef LPEC_ENABLE
     initParams->SetDvNumLpecThreads(4);
     initParams->SetDvLpecServerPort(2324);

@@ -33,8 +33,6 @@ namespace Net {
     class DviServerUpnp;
     class DvStack;
     class DvDevice;
-    class Shell;
-    class ShellCommandDebug;
 }
 namespace Media {
     class PipelineManager;
@@ -144,7 +142,6 @@ protected:
     MediaPlayer* iMediaPlayer;
     Web::WebAppFramework* iAppFramework;    // FIXME - add getter to IMediaPlayer and make private
     RebootLogger iRebootHandler;
-    Net::Shell* iShell;
     Media::IPullableClock* iPullableClock;
     Media::AllocatorInfoLogger* iInfoLogger;
     Net::DvDeviceStandard* iDevice;
@@ -153,7 +150,6 @@ private:
     Semaphore iSemShutdown;
     Semaphore iDisabled;
     IPowerManagerObserver* iPowerObserver;
-    Net::ShellCommandDebug* iShellDebug;
     const Brh iTuneInPartnerId;
     const Brh iTidalId;
     const Brh iQobuzIdSecret;

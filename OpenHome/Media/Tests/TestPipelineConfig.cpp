@@ -4,7 +4,6 @@
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 

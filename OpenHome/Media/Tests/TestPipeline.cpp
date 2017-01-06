@@ -1,14 +1,13 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/RampArray.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Debug.h>
-#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Private/Shell.h>
 #include <OpenHome/Media/Pipeline/AnalogBypassRamper.h>
 
 #include <string.h>

@@ -2,7 +2,7 @@
 
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Private/InfoProvider.h>
 #include <OpenHome/Private/Stream.h>
 
 #include <vector>

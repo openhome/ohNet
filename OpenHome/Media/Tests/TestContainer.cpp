@@ -1,4 +1,3 @@
-#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
