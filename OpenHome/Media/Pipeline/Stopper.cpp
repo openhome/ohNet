@@ -409,21 +409,16 @@ TUint Stopper::TryStop(TUint /*aStreamId*/)
 void Stopper::NotifyStarving(const Brx& aMode, TUint aStreamId, TBool aStarving)
 {
     AutoMutex _(iLock);
-    if (aStarving) {
-        if (iState != ERampingDown) {
-            iBuffering = true;
-        }
-        else {
-            if (iTargetHaltId == MsgHalt::kIdInvalid) {
-                HandlePaused();
-            }
-            else {
-                HandleStopped();
-            }
-        }
-    }
     if (iStreamHandler != nullptr) {
         iStreamHandler->NotifyStarving(aMode, aStreamId, aStarving);
+    }
+    if (aStarving) {
+        if (iState == ERampingDown) {
+            RampCompleted();
+        }
+        else {
+            iBuffering = true;
+        }
     }
 }
 
