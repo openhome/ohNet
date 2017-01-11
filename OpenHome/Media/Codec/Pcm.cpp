@@ -89,7 +89,7 @@ void CodecPcm::StreamInitialise()
         const TUint64 lenBytes = iController->StreamLength();
         const TUint bytesPerSample = (iBitDepth * iNumChannels) / 8;
         const TUint64 numSamples = lenBytes / bytesPerSample;
-        iBitRate = iBitDepth * iNumChannels * iSampleRate;
+        iBitRate = (iProfile.NumFronts() + iProfile.NumSurrounds() + iProfile.NumSubs()) * iBitDepth  * iSampleRate;
         iTrackLengthJiffies = numSamples * Jiffies::PerSample(iSampleRate);
         iTrackOffset = ToJiffies(iStartSample);
         SendMsgDecodedStream(iStartSample);
