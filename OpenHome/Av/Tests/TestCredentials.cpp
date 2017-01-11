@@ -82,10 +82,10 @@ private:
     Credentials& iCredentials;
     Semaphore& iCredChanged;
     Semaphore& iStatusChanged;
-    Bws<ICredentials::kMaxUsernameBytes> iUsername;
-    Bws<ICredentials::kMaxPasswordBytes> iPassword;
-    Bws<ICredentials::kMaxStatusBytes> iStatus;
-    Bws<ICredentials::kMaxTokenBytes> iToken;
+    Bws<64> iUsername;
+    Bws<64> iPassword;
+    Bws<512> iStatus;
+    Bws<128> iToken;
 };
 
 

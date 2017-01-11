@@ -13,6 +13,8 @@ static const TUint kIdNotFoundCode = 800;
 static const Brn kIdNotFoundMsg("Id not found");
 static const TUint kLoginFailedCode = 801;
 static const Brn kLoginFailedMsg("Login failed");
+static const TUint kUsernamePasswordTooLongCode = 802;
+static const Brn kUsernamePasswordTooLongMsg("Username or password too long");
 
 ProviderCredentials::ProviderCredentials(DvDevice& aDevice, ICredentials& aCredentials)
     : DvProviderAvOpenhomeOrgCredentials1(aDevice)
@@ -68,6 +70,9 @@ void ProviderCredentials::Set(IDvInvocation& aInvocation, const Brx& aId, const 
     catch (CredentialsIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
+    catch (CredentialsTooLong&) {
+        aInvocation.Error(kUsernamePasswordTooLongCode, kUsernamePasswordTooLongMsg);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -98,28 +103,24 @@ void ProviderCredentials::SetEnabled(IDvInvocation& aInvocation, const Brx& aId,
 
 void ProviderCredentials::Get(IDvInvocation& aInvocation, const Brx& aId, IDvInvocationResponseString& aUsername, IDvInvocationResponseBinary& aPassword, IDvInvocationResponseBool& aEnabled, IDvInvocationResponseString& aStatus, IDvInvocationResponseString& aData)
 {
-    Bws<ICredentials::kMaxUsernameBytes> userName;
-    Bws<ICredentials::kMaxPasswordEncryptedBytes> password;
-    TBool enabled = false;
-    Bws<ICredentials::kMaxStatusBytes> status;
-    Bws<ICredentials::kMaxDataBytes> data;
     try {
-        iCredentialsManager.Get(aId, userName, password, enabled, status, data);
+        auto& state = iCredentialsManager.State(aId);
+        AutoCredentialState _(state);
+        aInvocation.StartResponse();
+        state.Username(aUsername);
+        aUsername.WriteFlush();
+        state.Password(aPassword);
+        aPassword.WriteFlush();
+        aEnabled.Write(state.Enabled());
+        state.Status(aStatus);
+        aStatus.WriteFlush();
+        state.Data(aData);
+        aData.WriteFlush();
+        aInvocation.EndResponse();
     }
     catch (CredentialsIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
-    aInvocation.StartResponse();
-    aUsername.Write(userName);
-    aUsername.WriteFlush();
-    aPassword.Write(password);
-    aPassword.WriteFlush();
-    aEnabled.Write(enabled);
-    aStatus.Write(status);
-    aStatus.WriteFlush();
-    aData.Write(data);
-    aData.WriteFlush();
-    aInvocation.EndResponse();
 }
 
 void ProviderCredentials::Login(IDvInvocation& aInvocation, const Brx& aId, IDvInvocationResponseString& aToken)

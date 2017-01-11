@@ -37,6 +37,8 @@ Tidal::Tidal(Environment& aEnv, const Brx& aToken, ICredentialsState& aCredentia
     , iWriterRequest(iSocket)
     , iReaderResponse(aEnv, iReaderUntil)
     , iToken(aToken)
+    , iUsername(kGranularityUsername)
+    , iPassword(kGranularityPassword)
 {
     iReaderResponse.AddHeader(iHeaderContentLength);
     const int arr[] = {0, 1, 2};
@@ -140,8 +142,10 @@ const Brx& Tidal::Id() const
 void Tidal::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
     AutoMutex _(iLockConfig);
-    iUsername.Replace(aUsername);
-    iPassword.Replace(aPassword);
+    iUsername.Reset();
+    iUsername.Write(aUsername);
+    iPassword.Reset();
+    iPassword.Write(aPassword);
 }
 
 void Tidal::UpdateStatus()
@@ -149,7 +153,7 @@ void Tidal::UpdateStatus()
     AutoMutex _(iLock);
     (void)TryLogoutLocked(iSessionId);
     iLockConfig.Wait();
-    const TBool noCredentials = (iUsername.Bytes() == 0 && iPassword.Bytes() == 0);
+    const TBool noCredentials = (iUsername.Buffer().Bytes() == 0 && iPassword.Buffer().Bytes() == 0);
     iLockConfig.Signal();
     if (noCredentials) {
         iCredentialsState.SetState(kId, Brx::Empty(), Brx::Empty());
@@ -221,9 +225,9 @@ TBool Tidal::TryLoginLocked()
         Bws<280> reqBody(Brn("username="));
         WriterBuffer writer(reqBody);
         iLockConfig.Wait();
-        FormUrl::Encode(writer, iUsername);
+        FormUrl::Encode(writer, iUsername.Buffer());
         reqBody.Append(Brn("&password="));
-        FormUrl::Encode(writer, iPassword);
+        FormUrl::Encode(writer, iPassword.Buffer());
         iLockConfig.Signal();
 
         Bws<128> pathAndQuery("/v1/login/username?token=");
@@ -236,7 +240,7 @@ TBool Tidal::TryLoginLocked()
             iReaderResponse.Read();
             const TUint code = iReaderResponse.Status().Code();
             if (code != 200) {
-                Bws<ICredentials::kMaxStatusBytes> status;
+                Bws<kMaxStatusBytes> status;
                 const TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
                 if (len > 0) {
                     status.Replace(iReaderUntil.Read(len));
@@ -326,7 +330,7 @@ TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
 TBool Tidal::TryGetSubscriptionLocked()
 {
     TBool updateStatus = false;
-    Bws<ICredentials::kMaxStatusBytes> error;
+    Bws<kMaxStatusBytes> error;
     TBool success = false;
     if (!TryConnect(kPort)) {
         LOG2(kMedia, kError, "Tidal::TryGetSubscriptionLocked - connection failure\n");
@@ -346,7 +350,7 @@ TBool Tidal::TryGetSubscriptionLocked()
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
-            Bws<ICredentials::kMaxStatusBytes> status;
+            Bws<kMaxStatusBytes> status;
             const TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
             if (len > 0) {
                 error.Replace(iReaderUntil.Read(len));

@@ -24,9 +24,10 @@ class Tidal : public ICredentialConsumer
     static const TUint kConnectTimeoutMs = 10000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
     static const Brn kHost;
     static const TUint kPort = 443;
-    static const TUint kMaxUsernameBytes = 128;
-    static const TUint kMaxPasswordBytes = 128;
+    static const TUint kGranularityUsername = 128;
+    static const TUint kGranularityPassword = 128;
     static const Brn kId;
+    static const TUint kMaxStatusBytes = 512;
 public:
     static const Brn kConfigKeySoundQuality;
 public:
@@ -65,8 +66,8 @@ private:
     ReaderHttpResponse iReaderResponse;
     HttpHeaderContentLength iHeaderContentLength;
     const Bws<32> iToken;
-    Bws<kMaxUsernameBytes> iUsername;
-    Bws<kMaxPasswordBytes> iPassword;
+    WriterBwh iUsername;
+    WriterBwh iPassword;
     TUint iSoundQuality;
     TUint iMaxSoundQuality;
     Bws<16> iUserId;

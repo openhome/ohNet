@@ -3,6 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
@@ -19,13 +20,18 @@
 namespace OpenHome {
 namespace Av {
 
-class Credential
+class Credential : private ICredentialState
 {
     friend class Credentials;
 
     static const TUint kEventModerationMs = 500;
     static const TUint kEnableNo;
     static const TUint kEnableYes;
+    static const TUint kGranularityUsername             = 64;
+    static const TUint kGranularityMaxPassword          = 64;
+    static const TUint kGranularityPasswordEncrypted    = 512;
+    static const TUint kGranularityStatus               = 512;
+    static const TUint kGranularityData                 = 128;
 public:
     Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~Credential();
@@ -35,10 +41,17 @@ public:
     void Set(const Brx& aUsername, const Brx& aPassword);
     void Clear();
     void Enable(TBool aEnable);
-    void Get(Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData);
     void SetState(const Brx& aStatus, const Brx& aData);
     void Login(Bwx& aToken);
     void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken);
+    ICredentialState& GetState();
+private: // from ICredentialState
+    void Unlock() override;
+    void Username(IWriter& aWriter) override;
+    void Password(IWriter& aWriter) override;
+    TBool Enabled() const override;
+    void Status(IWriter& aWriter) override;
+    void Data(IWriter& aWriter) override;
 private:
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
@@ -59,11 +72,11 @@ private:
     TUint iSubscriberIdPassword;
     TUint iSubscriberIdEnable;
     Timer* iModerationTimer;
-    Bws<ICredentials::kMaxUsernameBytes> iUsername;
-    Bws<ICredentials::kMaxPasswordBytes> iPassword;
-    Bws<ICredentials::kMaxPasswordEncryptedBytes> iPasswordEncrypted;
-    Bws<ICredentials::kMaxStatusBytes> iStatus;
-    Bws<ICredentials::kMaxDataBytes> iData;
+    WriterBwh iUsername;
+    Bwh iPassword;
+    WriterBwh iPasswordEncrypted;
+    WriterBwh iStatus;
+    WriterBwh iData;
     TBool iEnabled;
     TBool iModerationTimerStarted;
 };
@@ -74,6 +87,20 @@ private:
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
+
+
+// AutoCredentialState
+
+AutoCredentialState::AutoCredentialState(ICredentialState& aState)
+    : iState(aState)
+{
+}
+
+AutoCredentialState::~AutoCredentialState()
+{
+    iState.Unlock();
+}
+
 
 // Credential
 
@@ -89,6 +116,10 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
     , iSubscriberIdUsername(IConfigManager::kSubscriptionIdInvalid)
     , iSubscriberIdPassword(IConfigManager::kSubscriptionIdInvalid)
     , iSubscriberIdEnable(IConfigManager::kSubscriptionIdInvalid)
+    , iUsername(kGranularityUsername)
+    , iPasswordEncrypted(kGranularityPasswordEncrypted)
+    , iStatus(kGranularityStatus)
+    , iData(kGranularityData)
     , iEnabled(true)
     , iModerationTimerStarted(false)
 {
@@ -96,11 +127,11 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
     Bws<64> key(aConsumer->Id());
     key.Append('.');
     key.Append(Brn("Username"));
-    iConfigUsername = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
+    iConfigUsername = new ConfigText(aConfigInitialiser, key, ConfigText::kMaxBytes, Brx::Empty());
     key.Replace(iConsumer->Id());
     key.Append('.');
     key.Append(Brn("Password"));
-    iConfigPassword = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
+    iConfigPassword = new ConfigText(aConfigInitialiser, key, ConfigText::kMaxBytes, Brx::Empty());
     key.Replace(iConsumer->Id());
     key.Append('.');
     key.Append(Brn("Enabled"));
@@ -144,21 +175,31 @@ const Brx& Credential::Id() const
 void Credential::Set(const Brx& aUsername)
 {
     iEnabled = true;
-    iStatus.Replace(Brx::Empty());
-    iConfigUsername->Set(aUsername);
+    iStatus.Reset();
+    try {
+        iConfigUsername->Set(aUsername);
+    }
+    catch (ConfigValueTooLong&) {
+        THROW(CredentialsTooLong);
+    }
 }
 
 void Credential::Set(const Brx& aUsername, const Brx& aPassword)
 {
     iEnabled = true;
-    iStatus.Replace(Brx::Empty());
-    iConfigUsername->Set(aUsername);
-    iConfigPassword->Set(aPassword);
+    iStatus.Reset();
+    try {
+        iConfigUsername->Set(aUsername);
+        iConfigPassword->Set(aPassword);
+    }
+    catch (ConfigValueTooLong&) {
+        THROW(CredentialsTooLong);
+    }
 }
 
 void Credential::Clear()
 {
-    iStatus.Replace(Brx::Empty());
+    iStatus.Reset();
     iConfigUsername->Set(Brx::Empty());
     iConfigPassword->Set(Brx::Empty());
 }
@@ -174,24 +215,16 @@ void Credential::Enable(TBool aEnable)
     ReportChangesLocked();
 }
 
-void Credential::Get(Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData)
-{
-    AutoMutex _(iLock);
-    aUsername.Replace(iUsername);
-    aPassword.Replace(iPasswordEncrypted);
-    aEnabled = iEnabled;
-    aStatus.Replace(iStatus);
-    aData.Replace(iData);
-}
-
 void Credential::SetState(const Brx& aStatus, const Brx& aData)
 {
     AutoMutex _(iLock);
-    if (iStatus == aStatus && iData == aData) {
+    if (iStatus.Buffer() == aStatus && iData.Buffer() == aData) {
         return;
     }
-    iStatus.Replace(aStatus);
-    iData.Replace(aData);
+    iStatus.Reset();
+    iStatus.Write(aStatus);
+    iData.Reset();
+    iData.Write(aData);
     iObserver.CredentialChanged();
 }
 
@@ -205,10 +238,47 @@ void Credential::ReLogin(const Brx& aCurrentToken, Bwx& aNewToken)
     iConsumer->ReLogin(aCurrentToken, aNewToken);
 }
 
+ICredentialState& Credential::GetState()
+{
+    iLock.Wait();
+    return *this;
+}
+
+void Credential::Unlock()
+{
+    iLock.Signal();
+}
+
+void Credential::Username(IWriter& aWriter)
+{
+    aWriter.Write(iUsername.Buffer());
+}
+
+void Credential::Password(IWriter& aWriter)
+{
+    aWriter.Write(iPasswordEncrypted.Buffer());
+}
+
+TBool Credential::Enabled() const
+{
+    return iEnabled;
+}
+
+void Credential::Status(IWriter& aWriter)
+{
+    aWriter.Write(iStatus.Buffer());
+}
+
+void Credential::Data(IWriter& aWriter)
+{
+    aWriter.Write(iData.Buffer());
+}
+
 void Credential::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
 {
     iLock.Wait();
-    iUsername.Replace(aKvp.Value());
+    iUsername.Reset();
+    iUsername.Write(aKvp.Value());
     iObserver.CredentialChanged();
     if (!iModerationTimerStarted) {
         iModerationTimer->FireIn(kEventModerationMs);
@@ -220,13 +290,18 @@ void Credential::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
 void Credential::PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
 {
     AutoMutex _(iLock);
-    iPasswordEncrypted.Replace(aKvp.Value());
-    if (iPasswordEncrypted.Bytes() == 0) {
+    iPasswordEncrypted.Reset();
+    iPasswordEncrypted.Write(aKvp.Value());
+    const Brx& passwordEncrypted = iPasswordEncrypted.Buffer();
+    if (passwordEncrypted.Bytes() == 0) {
         iPassword.SetBytes(0);
     }
     else {
         ASSERT(iRsa != nullptr);
-        const int decryptedLen = RSA_private_decrypt(iPasswordEncrypted.Bytes(), iPasswordEncrypted.Ptr(), const_cast<TByte*>(iPassword.Ptr()), iRsa, RSA_PKCS1_OAEP_PADDING);
+        if (iPassword.MaxBytes() < passwordEncrypted.Bytes()) {
+            iPassword.Grow(passwordEncrypted.Bytes());
+        }
+        const int decryptedLen = RSA_private_decrypt(passwordEncrypted.Bytes(), passwordEncrypted.Ptr(), const_cast<TByte*>(iPassword.Ptr()), iRsa, RSA_PKCS1_OAEP_PADDING);
         if (decryptedLen < 0) {
             const Brx& id = Id();
             LOG(kError, "Failed to decrypt password for %.*s\n", PBUF(id));
@@ -272,7 +347,7 @@ void Credential::CheckStatus()
 void Credential::ReportChangesLocked()
 {
     if (iEnabled) {
-        iConsumer->CredentialsChanged(iUsername, iPassword);
+        iConsumer->CredentialsChanged(iUsername.Buffer(), iPassword);
     }
     else {
         iConsumer->CredentialsChanged(Brx::Empty(), Brx::Empty());
@@ -370,10 +445,10 @@ void Credentials::Enable(const Brx& aId, TBool aEnable)
     credential->Enable(aEnable);
 }
 
-void Credentials::Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData)
+ICredentialState& Credentials::State(const Brx& aId)
 {
     Credential* credential = Find(aId);
-    credential->Get(aUsername, aPassword, aEnabled, aStatus, aData);
+    return credential->GetState();
 }
 
 void Credentials::Login(const Brx& aId, Bwx& aToken)

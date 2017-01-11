@@ -4,15 +4,18 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
 
 #include <vector>
 
 EXCEPTION(CredentialsIdNotFound);
+EXCEPTION(CredentialsTooLong);
 EXCEPTION(CredentialsLoginFailed);
 
 namespace OpenHome {
     class Environment;
+    class IWriter;
     class Timer;
     class ThreadFunctor;
 namespace Net {
@@ -35,21 +38,37 @@ public:
     virtual void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) = 0;
 };
 
+class ICredentialState
+{
+public:
+    virtual ~ICredentialState() {}
+    virtual void Unlock() = 0;
+    virtual void Username(IWriter& aWriter) = 0;
+    virtual void Password(IWriter& aWriter) = 0;
+    virtual TBool Enabled() const = 0;
+    virtual void Status(IWriter& aWriter) = 0;
+    virtual void Data(IWriter& aWriter) = 0;
+};
+
+class AutoCredentialState : private INonCopyable
+{
+public:
+    AutoCredentialState(ICredentialState& aState);
+    ~AutoCredentialState();
+private:
+    ICredentialState& iState;
+};
+
 class ICredentials
 {
 public:
-    static const TUint kMaxUsernameBytes = 64;
-    static const TUint kMaxPasswordBytes = 64;
-    static const TUint kMaxPasswordEncryptedBytes = 512;
-    static const TUint kMaxStatusBytes = 512;
-    static const TUint kMaxDataBytes = 128;
-    static const TUint kMaxTokenBytes = 128;
+    static const TUint kMaxTokenBytes = 256;
 public:
     virtual void Set(const Brx& aId, const Brx& aUsername) = 0;
     virtual void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) = 0;
     virtual void Clear(const Brx& aId) = 0;
     virtual void Enable(const Brx& aId, TBool aEnable) = 0;
-    virtual void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData) = 0;
+    virtual ICredentialState& State(const Brx& aId) = 0;
     virtual void Login(const Brx& aId, Bwx& aToken) = 0;
     virtual void ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken) = 0;
 };
@@ -86,7 +105,7 @@ private: // from ICredentials
     void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted
     void Clear(const Brx& aId) override;
     void Enable(const Brx& aId, TBool aEnable) override;
-    void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData) override;
+    ICredentialState& State(const Brx& aId) override;
     void Login(const Brx& aId, Bwx& aToken) override;
     void ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken) override;
 public: // from ICredentialsState

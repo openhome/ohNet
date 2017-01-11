@@ -26,11 +26,12 @@ class Qobuz : public ICredentialConsumer
     static const TUint kConnectTimeoutMs = 10000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
     static const Brn kHost;
     static const TUint kPort = 80;
-    static const TUint kMaxUsernameBytes = 128;
-    static const TUint kMaxPasswordBytes = 128;
+    static const TUint kGranularityUsername = 128;
+    static const TUint kGranularityPassword = 128;
     static const Brn kId;
     static const Brn kVersionAndFormat;
     static const TUint kSecsBetweenNtpAndUnixEpoch = 2208988800; // secs between 1900 and 1970
+    static const TUint kMaxStatusBytes = 512;
 public:
     static const Brn kConfigKeySoundQuality;
 public:
@@ -72,8 +73,8 @@ private:
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     const Bws<32> iAppId;
     const Bws<32> iAppSecret;
-    Bws<kMaxUsernameBytes> iUsername;
-    Bws<kMaxPasswordBytes> iPassword;
+    WriterBwh iUsername;
+    WriterBwh iPassword;
     TUint iSoundQuality;
     Bws<128> iAuthToken;
     Bws<512> iPathAndQuery; // slightly too large for the stack; requires that all network operations are serialised

@@ -47,6 +47,8 @@ Qobuz::Qobuz(Environment& aEnv, const Brx& aAppId, const Brx& aAppSecret,
     , iReaderUntil2(iDechunker)
     , iAppId(aAppId)
     , iAppSecret(aAppSecret)
+    , iUsername(kGranularityUsername)
+    , iPassword(kGranularityPassword)
 {
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
@@ -164,15 +166,17 @@ const Brx& Qobuz::Id() const
 void Qobuz::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
     AutoMutex _(iLockConfig);
-    iUsername.Replace(aUsername);
-    iPassword.Replace(aPassword);
+    iUsername.Reset();
+    iUsername.Write(aUsername);
+    iPassword.Reset();
+    iPassword.Write(aPassword);
 }
 
 void Qobuz::UpdateStatus()
 {
     AutoMutex _(iLock);
     iLockConfig.Wait();
-    const TBool noCredentials = (iUsername.Bytes() == 0 && iPassword.Bytes() == 0);
+    const TBool noCredentials = (iUsername.Buffer().Bytes() == 0 && iPassword.Buffer().Bytes() == 0);
     iLockConfig.Signal();
     if (noCredentials) {
         iCredentialsState.SetState(kId, Brx::Empty(), Brx::Empty());
@@ -238,15 +242,15 @@ TBool Qobuz::TryLoginLocked()
     iPathAndQuery.Append(iAppId);
     iPathAndQuery.Append("&username=");
     iLockConfig.Wait();
-    iPathAndQuery.Append(iUsername);
+    iPathAndQuery.Append(iUsername.Buffer());
     iPathAndQuery.Append("&password=");
-    AppendMd5(iPathAndQuery, iPassword);
+    AppendMd5(iPathAndQuery, iPassword.Buffer());
     iLockConfig.Signal();
 
     try {
         const TUint code = WriteRequestReadResponse(Http::kMethodGet, iPathAndQuery);
         if (code != 200) {
-            Bws<ICredentials::kMaxStatusBytes> status;
+            Bws<kMaxStatusBytes> status;
             TUint len = std::min(status.MaxBytes(), iHeaderContentLength.ContentLength());
             if (len > 0) {
                 status.Replace(iDechunker.Read(len));
