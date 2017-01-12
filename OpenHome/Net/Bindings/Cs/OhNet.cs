@@ -1314,6 +1314,7 @@ namespace OpenHome.Net.Core
             XmlFetch       = 1<<9,
             Service        = 1<<10,
             Event          = 1<<11,
+            SsdpNotifier   = 1<<12,
             DvInvocation   = 1<<13,
             DvEvent        = 1<<14,
             DvWebSocket    = 1<<15,
