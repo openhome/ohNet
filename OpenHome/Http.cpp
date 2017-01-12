@@ -510,6 +510,7 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
 
 void ReaderHttpResponse::ReadTimeout()
 {
+    LOG2(kHttp, kError, "HTTP response read timeout\n");
     iReader.ReadInterrupt();
 }
 
