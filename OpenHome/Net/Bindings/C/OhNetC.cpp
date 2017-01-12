@@ -65,6 +65,13 @@ void STDCALL OhNetLibraryRenewSubscriptions(void)
     gCpStack->SubscriptionManager().RenewAll();
 }
 
+void STDCALL OhNetLibrarySetHttpUserAgent(const char* aUserAgent)
+{
+    ASSERT(gEnv != NULL);
+    Brn userAgent(aUserAgent);
+    gEnv->SetHttpUserAgent(userAgent);
+}
+
 void STDCALL OhNetFree(void* aPtr)
 {
     free(aPtr);

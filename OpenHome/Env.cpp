@@ -128,6 +128,8 @@ Environment::Environment(InitialisationParams* aInitParams)
         iInfoAggregator = NULL;
         iShellCommandDebug = NULL;
     }
+
+    iHttpUserAgent.Replace(iInitParams->HttpUserAgent());
 }
 
 Environment* Environment::Create(InitialisationParams* aInitParams)
@@ -353,6 +355,26 @@ void Environment::SetRandomSeed(TUint aSeed)
 InitialisationParams* Environment::InitParams()
 {
     return iInitParams;
+}
+
+void Environment::SetHttpUserAgent(const Brx& aUserAgent)
+{
+    AutoMutex _(*iPrivateLock);
+    if (aUserAgent.Bytes() < iHttpUserAgent.MaxBytes()) {
+        iHttpUserAgent.Replace(aUserAgent);
+    }
+}
+
+TBool Environment::HasHttpUserAgent() const
+{
+    AutoMutex _(*iPrivateLock);
+    return (iHttpUserAgent.Bytes() > 0);
+}
+
+void Environment::WriteHttpUserAgent(IWriter& aWriter)
+{
+    AutoMutex _(*iPrivateLock);
+    aWriter.Write(iHttpUserAgent);
 }
 
 void Environment::AddObject(IStackObject* aObject)

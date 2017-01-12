@@ -182,12 +182,10 @@ void Http::WriteHeaderConnectionClose(WriterHttpHeader& aWriter)
 
 void Http::WriteHeaderUserAgent(WriterHttpHeader& aWriter, Environment& aEnv)
 {
-    Net::InitialisationParams* initParams = aEnv.InitParams();
-    if (initParams != NULL) {
-        const Brx& userAgent = initParams->HttpUserAgent();
-        if (userAgent.Bytes() != 0) {
-            aWriter.WriteHeader(Http::kHeaderUserAgent, userAgent);
-        }
+    if (aEnv.HasHttpUserAgent()) {
+        IWriterAscii& writer = aWriter.WriteHeaderField(Http::kHeaderUserAgent);
+        aEnv.WriteHttpUserAgent(writer);
+        writer.WriteNewline();
     }
 }
 

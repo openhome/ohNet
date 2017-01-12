@@ -8,6 +8,7 @@
 #define HEADER_STACK
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Buffer.h>
 
 #include <vector>
 #include <map>
@@ -24,6 +25,7 @@ class IStackObject;
 class Shell;
 class IInfoAggregator;
 class ShellCommandDebug;
+class IWriter;
 
 class IStack
 {
@@ -85,6 +87,9 @@ public:
     TUint Random(TUint aMaxValue, TUint aMinValue = 0);
     void SetRandomSeed(TUint aSeed);
     Net::InitialisationParams* InitParams();
+    void SetHttpUserAgent(const Brx& aUserAgent);
+    TBool HasHttpUserAgent() const;
+    void WriteHttpUserAgent(IWriter& aWriter);
     void AddObject(IStackObject* aObject);
     void RemoveObject(IStackObject* aObject);
     void ListObjects();
@@ -118,6 +123,7 @@ private:
     typedef std::map<IStackObject*,IStackObject*> ObjectMap;
     ObjectMap iObjectMap;
     OpenHome::Mutex* iPrivateLock;
+    Bws<128> iHttpUserAgent;
 };
 
 } // namespace OpenHome

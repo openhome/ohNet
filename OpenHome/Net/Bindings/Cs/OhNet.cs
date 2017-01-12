@@ -533,7 +533,7 @@ namespace OpenHome.Net.Core
         /// Set User-Agent reported by HTTP clients
         /// </summary>
         /// <remarks></remarks>
-        public string HttpUserAgent { get; set; }
+        public string HttpUserAgent { private get; set; }
         /// <summary>
         /// Set true to disable inferred BYEBYEs from device lists
         /// </summary>
@@ -1096,6 +1096,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetLibrarySetHttpUserAgent(IntPtr aPtr);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetFree(IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
@@ -1285,6 +1291,13 @@ namespace OpenHome.Net.Core
         public void NotifyResumed()
         {
             OhNetLibraryNotifyResumed();
+        }
+
+        public void SetHttpUserAgent(string aUserAgent)
+        {
+            IntPtr userAgent = InteropUtils.StringToHGlobalUtf8(aUserAgent);
+            OhNetLibrarySetHttpUserAgent(userAgent);
+            Marshal.FreeHGlobal(userAgent);
         }
 
         public enum DebugLevel: uint

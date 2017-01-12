@@ -142,6 +142,11 @@ DllExport void STDCALL OhNetLibraryNotifyResumed(void);
  */
 DllExport void STDCALL OhNetLibraryRenewSubscriptions(void);
 
+/**
+ * Override the HTTP user agent set in initialisation params
+ */
+DllExport void STDCALL OhNetLibrarySetHttpUserAgent(const char* aUserAgent);
+
 /* @} */
 /**
  * @addtogroup InitParams
