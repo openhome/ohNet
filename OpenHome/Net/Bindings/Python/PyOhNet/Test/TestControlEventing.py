@@ -40,7 +40,7 @@ class TestControlEventing:
         if dev:
             dev.Start()
             print '\n', dev, '\n'
-            self.testBasic = dev.testBasic
+            self.testBasic = dev.OpenhomeOrgTestBasic
             self.TestBasicProxy()
             dev.Shutdown()
         else:

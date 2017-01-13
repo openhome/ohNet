@@ -101,6 +101,7 @@ private:
     Environment(FunctorMsg& aLogOutput);
     Environment(Net::InitialisationParams* aInitParams);
     void Construct(FunctorMsg& aLogOutput);
+    void CreateShell();
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
 private:
