@@ -121,7 +121,7 @@ Environment::Environment(InitialisationParams* aInitParams)
     if (iInitParams->IsShellEnabled(shellPort, shellSessionPriority)) {
         iShell = new OpenHome::Shell(*this, shellPort, shellSessionPriority);
         iInfoAggregator = new OpenHome::InfoAggregator(*iShell);
-        iShellCommandDebug = new ShellCommandDebug(*iShell);
+        iShellCommandDebug = new OpenHome::ShellCommandDebug(*iShell);
     }
     else {
         iShell = NULL;
@@ -225,6 +225,11 @@ OpenHome::Shell* Environment::Shell()
 IInfoAggregator* Environment::InfoAggregator()
 {
     return iInfoAggregator;
+}
+
+OpenHome::ShellCommandDebug* Environment::ShellCommandDebug()
+{
+    return iShellCommandDebug;
 }
 
 Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInterface)

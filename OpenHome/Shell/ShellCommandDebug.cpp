@@ -23,6 +23,7 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("XmlFetch", Debug::kXmlFetch);
     AddLevel("Service", Debug::kService);
     AddLevel("Event", Debug::kEvent);
+    AddLevel("SsdpNotifier", Debug::kDvSsdpNotifier);
     AddLevel("DvInvocation", Debug::kDvInvocation);
     AddLevel("DvEvent", Debug::kDvEvent);
     AddLevel("DvWebSocket", Debug::kDvWebSocket);
@@ -88,6 +89,18 @@ ShellCommandDebug::~ShellCommandDebug()
     }
 }
 
+void ShellCommandDebug::SetAlias(const TChar* aName, TUint64 aValue)
+{
+    Level* level = new Level(aName, aValue);
+    Brn name(aName);
+    LevelMap::iterator it = iAlias.find(name);
+    if (it != iAlias.end()) {
+        delete it->second;
+        iAlias.erase(it);
+    }
+    iAlias.insert(std::pair<Brn, Level*>(name, level));
+}
+
 void ShellCommandDebug::HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse)
 {
     if (aArgs.size() != 2) {
@@ -108,9 +121,18 @@ void ShellCommandDebug::HandleShellCommand(Brn aCommand, const std::vector<Brn>&
         return;
     }
     Brn level = aArgs[1];
+    TUint64 val = 0;
     LevelMap::iterator it = iLevels.find(level);
     if (it != iLevels.end()) {
-        TUint64 val = it->second->Value();
+        val = it->second->Value();
+    }
+    else {
+        LevelMap::iterator it2 = iAlias.find(level);
+        if (it2 != iAlias.end()) {
+            val = it2->second->Value();
+        }
+    }
+    if (val != 0) {
         if (set) {
             Debug::AddLevel(val);
         }

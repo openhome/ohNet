@@ -74,6 +74,7 @@ public:
     ThreadPriorityArbitrator& PriorityArbitrator();
     OpenHome::Shell* Shell();
     IInfoAggregator* InfoAggregator();
+    OpenHome::ShellCommandDebug* ShellCommandDebug();
     Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
     void AddSuspendObserver(ISuspendObserver& aObserver);
@@ -112,7 +113,7 @@ private:
     ThreadPriorityArbitrator* iThreadPriorityArbitrator;
     OpenHome::Shell* iShell;
     IInfoAggregator* iInfoAggregator;
-    ShellCommandDebug* iShellCommandDebug;
+    OpenHome::ShellCommandDebug* iShellCommandDebug;
     std::vector<MListener*> iMulticastListeners;
     std::vector<ISuspendObserver*> iSuspendObservers;
     std::vector<IResumeObserver*> iResumeObservers;

@@ -16,6 +16,7 @@ class ShellCommandDebug : private IShellCommandHandler
 public:
     ShellCommandDebug(Shell& aShell);
     ~ShellCommandDebug();
+    void SetAlias(const TChar* aName, TUint64 aValue);
 private: // from IShellCommandHandler
     void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
     void DisplayHelp(IWriter& aResponse);
@@ -36,6 +37,7 @@ private:
     Shell& iShell;
     typedef std::map<Brn, Level*, BufferCmp> LevelMap;
     LevelMap iLevels;
+    LevelMap iAlias;
 };
 
 } // namespace OpenHome
