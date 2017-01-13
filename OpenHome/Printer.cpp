@@ -288,7 +288,8 @@ RingBufferLogger::RingBufferLogger(TUint aBytes)
     : iMutex("RingBufferLogger")
     , iBytes(aBytes)
     , iRingBuffer(aBytes)
-    , iTimestamp(false)
+    , iTimestampEnable(false)
+    , iTimestampDue(false)
 {
     // interpose our own handler, store old handler
     FunctorMsg functor = MakeFunctorMsg(*this, &RingBufferLogger::LogFunctor);
@@ -303,7 +304,8 @@ RingBufferLogger::~RingBufferLogger()
 
 void RingBufferLogger::PrefixTimestamp(TBool aEnable)
 {
-    iTimestamp = aEnable;
+    iTimestampEnable = aEnable;
+    iTimestampDue = true;
 }
 
 void RingBufferLogger::LogFunctor(const TChar* aMsg)
@@ -312,14 +314,16 @@ void RingBufferLogger::LogFunctor(const TChar* aMsg)
     iRingBuffer.Write(Brn(aMsg));
 
     // forward downstream
-    if (iTimestamp && aMsg[strlen(aMsg)-1] == '\n') {
+    if (iTimestampDue) {
 #ifdef _WIN32
 # define snprintf _snprintf_s
 #endif
         char buf[20];
         snprintf(buf, sizeof(buf), "%010lu: ", (unsigned long)Time::Now(*gEnv));
         iDownstreamFunctorMsg(buf);
+        iTimestampDue = false;
     }
+    iTimestampDue = (iTimestampEnable && aMsg[strlen(aMsg)-1] == '\n');
     iDownstreamFunctorMsg(aMsg);
 }
 

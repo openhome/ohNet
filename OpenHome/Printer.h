@@ -70,7 +70,8 @@ private:
     TUint iBytes;
     WriterRingBuffer iRingBuffer;
     FunctorMsg iDownstreamFunctorMsg;
-    TBool iTimestamp;
+    TBool iTimestampEnable;
+    TBool iTimestampDue;
 };
 
 class Log
