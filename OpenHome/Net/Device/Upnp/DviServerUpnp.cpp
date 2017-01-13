@@ -283,6 +283,26 @@ const Http::EVersion SubscriptionDataUpnp::HttpVersion() const
     return iHttpVersion;
 }
 
+void SubscriptionDataUpnp::Log(IWriter& aWriter) const
+{
+    aWriter.Write(Brn(", subscriber: "));
+    Endpoint::EndpointBuf epBuf;
+    iSubscriber.AppendEndpoint(epBuf);
+    aWriter.Write(epBuf);
+    aWriter.Write(iSubscriberPath);
+    aWriter.Write(Brn(" (HTTP/"));
+    if (iHttpVersion == Http::eHttp11) {
+        aWriter.Write(Brn("1.1"));
+    }
+    if (iHttpVersion == Http::eHttp10) {
+        aWriter.Write(Brn("1.0"));
+    }
+    if (iHttpVersion == Http::eHttp09) {
+        aWriter.Write(Brn("0.9"));
+    }
+    aWriter.Write(Brn(")"));
+}
+
 const void* SubscriptionDataUpnp::Data() const
 {
     return this;
@@ -520,6 +540,12 @@ void PropertyWriterFactory::NotifySubscriptionDeleted(const Brx& aSid)
 
 void PropertyWriterFactory::NotifySubscriptionExpired(const Brx& /*aSid*/)
 {
+}
+
+void PropertyWriterFactory::LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& aUserData)
+{
+    const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData.Data());
+    data->Log(aWriter);
 }
 
 PropertyWriterFactory::~PropertyWriterFactory()

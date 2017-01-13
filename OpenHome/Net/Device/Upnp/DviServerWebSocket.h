@@ -250,6 +250,7 @@ private: // IPropertyWriterFactory
     void NotifySubscriptionCreated(const Brx& aSid);
     void NotifySubscriptionDeleted(const Brx& aSid);
     void NotifySubscriptionExpired(const Brx& aSid);
+    void LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& aUserData);
 private:
     class SubscriptionWrapper
     {

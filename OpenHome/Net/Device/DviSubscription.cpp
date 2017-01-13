@@ -281,6 +281,8 @@ void DviSubscription::Log(IWriter& aWriter)
     static const Brn kTrue("true");
     static const Brn kFalse("false");
     aWriter.Write(iExpired? kTrue : kFalse);
+
+    iWriterFactory.LogUserData(aWriter, *iUserData);
 }
 
 void DviSubscription::ListObjectDetails() const
@@ -482,6 +484,7 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     , iDvStack(aDvStack)
     , iLock("DSBM")
     , iFree(aDvStack.Env().InitParams()->DvNumPublisherThreads())
+    , iCount(0)
 {
     IInfoAggregator* infoAggregator = iDvStack.Env().InfoAggregator();
     if (infoAggregator != NULL) {
@@ -532,6 +535,7 @@ void DviSubscriptionManager::AddSubscription(DviSubscription& aSubscription)
     Brn sid(aSubscription.Sid());
     iMap.insert(std::pair<Brn,DviSubscription*>(sid, &aSubscription));
     aSubscription.AddRef();
+    iCount++;
     iLock.Signal();
 }
 
@@ -577,7 +581,10 @@ void DviSubscriptionManager::QueryInfo(const Brx& aQuery, IWriter& aWriter)
     }
     AutoMutex _(iLock);
     Map::iterator it;
-    aWriter.Write(Brn("All:"));
+    Bws<80> summary;
+    summary.AppendPrintf("Subscriptions: %u current, %u since startup\n", iMap.size(), iCount);
+    aWriter.Write(summary);
+    aWriter.Write(Brn("Current:"));
     for (it=iMap.begin(); it!=iMap.end(); ++it) {
         aWriter.Write(Brn("\n\t"));
         it->second->Log(aWriter);

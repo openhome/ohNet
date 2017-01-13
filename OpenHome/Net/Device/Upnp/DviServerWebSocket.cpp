@@ -976,6 +976,10 @@ void DviSessionWebSocket::NotifySubscriptionExpired(const Brx& /*aSid*/)
 {
 }
 
+void DviSessionWebSocket::LogUserData(IWriter& /*aWriter*/, const IDviSubscriptionUserData& /*aUserData*/)
+{
+}
+
 
 // DviSessionWebSocket::SubscriptionWrapper
 

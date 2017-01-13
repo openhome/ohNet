@@ -88,6 +88,7 @@ private: // from IPropertyWriterFactory
     void NotifySubscriptionCreated(const Brx& aSid);
     void NotifySubscriptionDeleted(const Brx& aSid);
     void NotifySubscriptionExpired(const Brx& aSid);
+    void LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& aUserData);
 private: // from IPropertyWriter
     void PropertyWriteString(const Brx& aName, const Brx& aValue);
     void PropertyWriteInt(const Brx& aName, TInt aValue);

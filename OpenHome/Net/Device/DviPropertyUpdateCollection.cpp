@@ -442,6 +442,10 @@ void DviPropertyUpdateCollection::NotifySubscriptionExpired(const Brx& aSid)
     catch (InvalidSid&) { }
 }
 
+void DviPropertyUpdateCollection::LogUserData(IWriter& /*aWriter*/, const IDviSubscriptionUserData& /*aUserData*/)
+{
+}
+
 PropertyUpdate* DviPropertyUpdateCollection::MergeUpdate(PropertyUpdate* aUpdate)
 {
     AutoMutex a(iLock);

@@ -39,6 +39,7 @@ public:
     virtual void NotifySubscriptionCreated(const Brx& aSid) = 0;
     virtual void NotifySubscriptionDeleted(const Brx& aSid) = 0;
     virtual void NotifySubscriptionExpired(const Brx& aSid) = 0;
+    virtual void LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& aUserData) = 0;
 };
 
 class DviDevice;
@@ -142,6 +143,7 @@ private:
     Publisher** iPublishers;
     typedef std::map<Brn,DviSubscription*,BufferCmp> Map;
     Map iMap;
+    TUint iCount;
 };
 
 } // namespace Net

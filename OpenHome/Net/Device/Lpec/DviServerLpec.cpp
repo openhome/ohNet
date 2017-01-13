@@ -179,6 +179,11 @@ void PropertyWriterFactoryLpec::NotifySubscriptionExpired(const Brx& /*aSid*/)
 {
 }
 
+void PropertyWriterFactoryLpec::LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& /*aUserData*/)
+{
+    aWriter.Write(Brn(", protocol: LPEC"));
+}
+
 void PropertyWriterFactoryLpec::PropertyWriteString(const Brx& aName, const Brx& aValue)
 {
     try {

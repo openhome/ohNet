@@ -96,6 +96,7 @@ public:
     const Endpoint& Subscriber() const;
     const Brx& SubscriberPath() const;
     const Http::EVersion HttpVersion() const;
+    void Log(IWriter& aWriter) const;
     virtual const void* Data() const;
     virtual void Release();
 private:
@@ -152,6 +153,7 @@ private: // IPropertyWriterFactory
     void NotifySubscriptionCreated(const Brx& aSid);
     void NotifySubscriptionDeleted(const Brx& aSid);
     void NotifySubscriptionExpired(const Brx& aSid);
+    void LogUserData(IWriter& aWriter, const IDviSubscriptionUserData& aUserData);
 private:
     ~PropertyWriterFactory();
     void AddRef();
