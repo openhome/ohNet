@@ -311,19 +311,21 @@ void RingBufferLogger::PrefixTimestamp(TBool aEnable)
 void RingBufferLogger::LogFunctor(const TChar* aMsg)
 {
     AutoMutex amx(iMutex);
-    iRingBuffer.Write(Brn(aMsg));
 
-    // forward downstream
     if (iTimestampDue) {
 #ifdef _WIN32
 # define snprintf _snprintf_s
 #endif
-        char buf[20];
-        snprintf(buf, sizeof(buf), "%010lu: ", (unsigned long)Time::Now(*gEnv));
-        iDownstreamFunctorMsg(buf);
+        char ts[20];
+        snprintf(ts, sizeof(ts), "%010lu: ", (unsigned long)Time::Now(*gEnv));
+        iDownstreamFunctorMsg(ts);
+        Brn tsBuf(ts);
+        iRingBuffer.Write(tsBuf);
         iTimestampDue = false;
     }
-    iTimestampDue = (iTimestampEnable && aMsg[strlen(aMsg)-1] == '\n');
+    Brn msg(aMsg);
+    iTimestampDue = (iTimestampEnable && msg.Bytes() > 0 && msg[msg.Bytes()-1] == '\n');
+    iRingBuffer.Write(msg);
     iDownstreamFunctorMsg(aMsg);
 }
 
