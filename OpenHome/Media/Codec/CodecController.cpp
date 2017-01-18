@@ -638,7 +638,11 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
                                           TBool aLossless, SpeakerProfile aProfile, TBool aAnalogBypass)
 {
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
-        THROW(CodecStreamCorrupt);
+        THROW(CodecStreamFeatureUnsupported);
+    }
+    if (!iRawPcm && aNumChannels > 2) {
+        Log::Print("ERROR: encoded stream with %u channels cannot be played\n", aNumChannels);
+        THROW(CodecStreamFeatureUnsupported);
     }
     MsgDecodedStream* msg =
         iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels,

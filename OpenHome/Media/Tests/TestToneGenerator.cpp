@@ -472,22 +472,22 @@ SuiteGeneratorAny::SuiteGeneratorAny(const TChar* aName)
 SuiteGeneratorSilence::SuiteGeneratorSilence()
     : SuiteGeneratorAny("tone generator: silence")
 {
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_8bit_44100_50Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_50Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_24bit_44100_50Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_88200_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_176400_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_48000_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_96000_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_192000_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_1ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_6ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_8ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_2s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_8bit_44100_50Hz_2ch_1s), "8bit_44100_50Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_50Hz_2ch_1s), "16bit_44100_50Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_24bit_44100_50Hz_2ch_1s), "24bit_44100_50Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_440Hz_2ch_1s), "16bit_44100_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_88200_440Hz_2ch_1s), "16bit_88200_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_176400_440Hz_2ch_1s), "16bit_176400_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_48000_440Hz_2ch_1s), "16bit_48000_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_96000_440Hz_2ch_1s), "16bit_96000_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_192000_440Hz_2ch_1s), "16bit_192000_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_1ch_1s), "16bit_44100_120Hz_1ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_2ch_1s), "16bit_44100_120Hz_2ch_1s");
+    //AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_6ch_1s), "16bit_44100_120Hz_6ch_1s");
+    //AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_8ch_1s), "16bit_44100_120Hz_8ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_1s), "16bit_44100_60Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_2s), "16bit_44100_60Hz_2ch_2s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s), "16bit_44100_60Hz_2ch_5s");
 }
 
 void SuiteGeneratorAny::Setup()
@@ -887,26 +887,26 @@ SuiteGeneratorSquare::SuiteGeneratorSquare()
     , iCntSignalMin(0)
     , iCntSignalMax(0)
 {
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_8bit_44100_20Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_20Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_24bit_44100_20Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_88200_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_176400_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_48000_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_96000_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_192000_440Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_1ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_6ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_8ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_2s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_5s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_13Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_666Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_22050Hz_2ch_1s));
-    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_32000Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_8bit_44100_20Hz_2ch_1s), "8bit_44100_20Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_20Hz_2ch_1s), "16bit_44100_20Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_24bit_44100_20Hz_2ch_1s), "24bit_44100_20Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_440Hz_2ch_1s), "16bit_44100_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_88200_440Hz_2ch_1s), "16bit_88200_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_176400_440Hz_2ch_1s), "16bit_176400_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_48000_440Hz_2ch_1s), "16bit_48000_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_96000_440Hz_2ch_1s), "16bit_96000_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_192000_440Hz_2ch_1s), "16bit_192000_440Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_1ch_1s), "16bit_44100_120Hz_1ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_2ch_1s), "16bit_44100_120Hz_2ch_1s");
+    //AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_6ch_1s), "16bit_44100_120Hz_6ch_1s");
+    //AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_8ch_1s), "16bit_44100_120Hz_8ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_1s), "16bit_44100_60Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_2s), "16bit_44100_60Hz_2ch_2s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_5s), "16bit_44100_60Hz_2ch_5s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_13Hz_2ch_1s), "16bit_44100_13Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_666Hz_2ch_1s), "16bit_44100_666Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_22050Hz_2ch_1s), "16bit_44100_22050Hz_2ch_1s");
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_32000Hz_2ch_1s), "16bit_44100_32000Hz_2ch_1s");
 #if 0
     AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_44100Hz_2ch_1s));  // FAIL (Nyquist)
     AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_48000Hz_2ch_1s));  // FAIL (Nyquist)
