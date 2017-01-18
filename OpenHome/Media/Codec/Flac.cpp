@@ -392,7 +392,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
                     break;
                 default:
                     Log::Print("Unsupported bit depth in CodecFlac::CallbackWrite - %u\n", bitDepth);
-                    ASSERTS();
+                    THROW(CodecStreamFeatureUnsupported);
                 }
             }
         }
