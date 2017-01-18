@@ -196,7 +196,8 @@ Msg* Muter::ProcessMsg(MsgAudioPcm* aMsg)
         break;
     case eMuting:
         if (iJiffiesUntilMute == 0) {
-            PlayingSilence();
+            iState = eMuted;
+            iSemMuted.Signal();
         }
         else {
             iJiffiesUntilMute -= std::min(aMsg->Jiffies(), iJiffiesUntilMute);
@@ -219,20 +220,17 @@ Msg* Muter::ProcessMsg(MsgSilence* aMsg)
     case eMuted:
         break;
     case eRampingDown:
-        iState = eMuted;
+        iState = eMuting;
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMin;
         break;
     case eRampingUp:
         iState = eRunning;
+        iRemainingRampSize = 0;
+        iCurrentRampValue = Ramp::kMax;
         break;
     }
     return aMsg;
-}
-
-void Muter::PlayingSilence()
-{
-    iJiffiesUntilMute = 0;
-    iState = eMuted;
-    iSemMuted.Signal();
 }
 
 void Muter::PipelineHalted()
@@ -241,7 +239,9 @@ void Muter::PipelineHalted()
     if (iHalting) {
         iHalted = true;
     }
+    iJiffiesUntilMute = 0;
+    iSemMuted.Signal();
     if (iState == eMuting) {
-        PlayingSilence();
+        iState = eMuted;
     }
 }

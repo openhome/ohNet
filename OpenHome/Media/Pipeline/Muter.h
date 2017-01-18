@@ -36,7 +36,6 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsg(MsgSilence* aMsg) override;
 private:
-    void PlayingSilence();
     void PipelineHalted();
 private:
     enum EState
