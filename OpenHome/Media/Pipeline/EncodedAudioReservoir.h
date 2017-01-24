@@ -16,6 +16,7 @@ class EncodedAudioReservoir : public AudioReservoir, private IStreamHandler, pri
 {
     friend class SuiteEncodedReservoir;
     static const TUint kEncodedBytesInvalid; // values larger than this will have been caused by unsigned underflow (i.e. implementation error)
+    static const TUint kMsgCountInvalid; // values larger than this will have been caused by unsigned underflow (i.e. implementation error)
 public:
     EncodedAudioReservoir(MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, TUint aMsgCount, TUint aMaxStreamCount);
     TUint SizeInBytes() const;
@@ -27,6 +28,7 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgTrack* aMsg) override;
     void ProcessMsgIn(MsgEncodedStream* aMsg) override;
     void ProcessMsgIn(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioEncoded* aMsg) override;
     Msg* ProcessMsgOut(MsgFlush* aMsg) override;
