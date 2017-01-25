@@ -17,7 +17,7 @@ class BuildOhmp( BASE.CommonBuild ):
     def __init__( self ):
         """Constructor - initalise base class"""
         BASE.CommonBuild.__init__( self )
-        self.watchdogTime = 300  # secs
+        self.watchdogTime = 600  # secs
         self.excludes     = ['\\thirdparty\\',
                              "warning C4005: 'max' : macro redefinition",
                              "warning C4005: 'min' : macro redefinition",
