@@ -67,13 +67,13 @@ void EncodedAudioReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
 
 Msg* EncodedAudioReservoir::ProcessMsgOut(MsgTrack* aMsg)
 {
-    ASSERT(TrackCount() < kMsgCountInvalid);
+    ASSERT_VA(TrackCount() < kMsgCountInvalid, "TrackCount() = %08x\n", TrackCount());
     return aMsg;
 }
 
 Msg* EncodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
 {
-    ASSERT(EncodedStreamCount() < kMsgCountInvalid);
+    ASSERT_VA(EncodedStreamCount() < kMsgCountInvalid, "EncodedStreamCount() = %08x\n", EncodedStreamCount());
     {
         AutoMutex _(iLock2);
         if (iNextFlushId != MsgFlush::kIdInvalid) {
@@ -108,8 +108,8 @@ Msg* EncodedAudioReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
         UnblockIfNotFull();
         return nullptr;
     }
-    ASSERT(EncodedBytes() < kEncodedBytesInvalid);
-    ASSERT(EncodedAudioCount() < kMsgCountInvalid);
+    ASSERT_VA(EncodedBytes() < kEncodedBytesInvalid, "EncodedBytes() = %08x\n", EncodedBytes());
+    ASSERT_VA(EncodedAudioCount() < kMsgCountInvalid, "EncodedAudioCount() = %08x\n", EncodedAudioCount());
     iStreamPos = newStreamPos;
     return aMsg;
 }
