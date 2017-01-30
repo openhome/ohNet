@@ -163,7 +163,7 @@ void Allocated::AddRef()
 
 void Allocated::RemoveRef()
 {
-    ASSERT_DEBUG(iRefCount != 0);
+    ASSERT(iRefCount != 0);
     TBool free = (--iRefCount == 0);
     RefRemoved();
     if (free) {
