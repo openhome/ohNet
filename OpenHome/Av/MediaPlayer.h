@@ -23,7 +23,7 @@ namespace Media {
     class PipelineManager;
     class PipelineInitParams;
     class IPipelineAnimator;
-    class IMuteManager;
+    class IMute;
     class UriProvider;
     class Protocol;
     namespace Codec {
@@ -81,6 +81,7 @@ public:
     virtual Av::Product& Product() = 0;
     virtual Av::IFriendlyNameObservable& FriendlyNameObservable() = 0;
     virtual IVolumeManager& VolumeManager() = 0;
+    virtual Media::IMute& SystemMute() = 0;
     virtual Credentials& CredentialsManager() = 0;
     virtual Media::MimeTypeList& MimeTypes() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
@@ -124,6 +125,7 @@ public: // from IMediaPlayer
     Av::Product& Product() override;
     Av::IFriendlyNameObservable& FriendlyNameObservable() override;
     OpenHome::Av::IVolumeManager& VolumeManager() override;
+    Media::IMute& SystemMute() override;
     Credentials& CredentialsManager() override;
     Media::MimeTypeList& MimeTypes() override;
     void Add(Media::UriProvider* aUriProvider) override;

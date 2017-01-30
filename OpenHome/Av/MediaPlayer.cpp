@@ -224,6 +224,11 @@ IVolumeManager& MediaPlayer::VolumeManager()
     return *iVolumeManager;
 }
 
+Media::IMute& MediaPlayer::SystemMute()
+{
+    return *iPipeline;
+}
+
 Credentials& MediaPlayer::CredentialsManager()
 {
     ASSERT(iCredentials != nullptr);
