@@ -53,7 +53,7 @@ tests = '''
     TestUriProviderRepeater
     TestJson
     TestRaop
-    TestSpotifyReporter
+    #5103 TestSpotifyReporter
     TestVolumeManager
     TestWebAppFramework
     #TestConfigUi

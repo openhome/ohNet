@@ -247,11 +247,11 @@ Msg* SpotifyReporter::Pull()
     Msg* msg = nullptr;
     while (msg == nullptr) {
         {
-            AutoMutex a(iLock);
             // Don't output any generated MsgTrack or modified MsgDecodedStream
             // unless in Spotify mode, and seen a MsgTrack and MsgDecodedStream
             // arrive via pipeline.
             if (iInterceptMode && iPipelineTrackSeen && iDecodedStream != nullptr) {
+                AutoMutex a(iLock);
                 // Only want to output generated MsgTrack if it's pending and if stream format is known to get certain elements for track metadata.
                 if (iMsgTrackPending) {
                     ASSERT(iMetadata != nullptr);
@@ -352,6 +352,9 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
 {
+    if (!iInterceptMode) {
+        return aMsg;
+    }
     AutoMutex a(iLock);
     iPipelineTrackSeen = true;  // Only matters when in iInterceptMode. Ensures in-band MsgTrack is output before any are generated from out-of-band notifications.
     return aMsg;
@@ -359,6 +362,9 @@ Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    if (!iInterceptMode) {
+        return aMsg;
+    }
     const DecodedStreamInfo& info = aMsg->StreamInfo();
     ASSERT(info.SampleRate() != 0);
     ASSERT(info.NumChannels() != 0);
@@ -366,16 +372,16 @@ Msg* SpotifyReporter::ProcessMsg(MsgDecodedStream* aMsg)
     // Clear any previous cached MsgDecodedStream and cache the one received.
     UpdateDecodedStream(*aMsg);
 
-    if (iInterceptMode) {
-        aMsg->RemoveRef();  // UpdateDecodedStream() adds its own reference.
-        iMsgDecodedStreamPending = true;    // Set flag so that a MsgDecodedStream with updated attributes is output in place of this.
-        return nullptr;
-    }
-    return aMsg;
+    aMsg->RemoveRef();  // UpdateDecodedStream() adds its own reference.
+    iMsgDecodedStreamPending = true;    // Set flag so that a MsgDecodedStream with updated attributes is output in place of this.
+    return nullptr;
 }
 
 Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    if (!iInterceptMode) {
+        return aMsg;
+    }
     AutoMutex a(iLock);
     ASSERT(iDecodedStream != nullptr);  // Can't receive audio until MsgDecodedStream seen.
     const DecodedStreamInfo& info = iDecodedStream->StreamInfo();
